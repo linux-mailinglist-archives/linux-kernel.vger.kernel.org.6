@@ -1,166 +1,192 @@
-Return-Path: <linux-kernel+bounces-291802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0217295671C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DEC956720
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC286282C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CD328122A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C9315C151;
-	Mon, 19 Aug 2024 09:32:25 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A0615EFCD;
+	Mon, 19 Aug 2024 09:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K0jhXwOw"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707F715B57A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC6A15CD79
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724059945; cv=none; b=P2rV5I/4U0uuoPKb09uv0sH3vbszE2aIgzHZF2jAQlIkDI6J5uL8aVPiwbxaCjf94oXLmZeBpIYFGstK+zeFRTXtvX65K25EWGqX8NJNdeqYudBO58ZcRnpPvtgKZmViB0YUCgl3G5N9tlEIKNy1/DfYcq0o09bTBmWSw4BzxmY=
+	t=1724059955; cv=none; b=Ts/EM1gDaAf20RzpBrPmSHew8V4x6ed4etT7FDr9TDM8UM+oy2ACbs1BlqtLM8SCpO4HxRdVrPh+FvWhhYv8q3bJzRX5O9mdCt7+pHSNbS6ywMyGoE8rH3u9vVFe2DT6OQvqT/SfYLr0NQtGCIINtXfrDcYNuBAe/DVQVjmd2tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724059945; c=relaxed/simple;
-	bh=5rMARzXfjykrfd6VRs6OIjWAzoKwx9rwjE22ch6ES3w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LU4eXPdbqBn+3h9ZQqICnChrDU8yOadZpDLJISc3glEtZgqvPU0IC929LhGTBaFLQ+dc87tlDVaBl4c5unqmdujDj5jjROZIufWocMCg7LlQX6Vb/CjiqDZtHONlRIeYMNL4BIDnuiuBZKxwjnb8n7DFdpGXXu74/frYnty0i50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8223aed78e2so419485439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:32:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724059942; x=1724664742;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=31Ti/nVOY7JVVGXS7iHukqNPYzxM76JGPC6XDQTDHuY=;
-        b=mcojzxo246hz8DgTRBF0uKbE6Gja8QW/YZ0B+OqHZUIZfvWhxDWk8rnoa6EyjxbBCi
-         eK5fvu7k0j+RN08gODTpu8D2FAo9ZXsDW4f8LRbE4HI8TzRBGu/JMAGY+HDmhO83Tqks
-         XB9Vcmo2N3XF7/EJCH9zsuPZTh+1BX3/JUeADMf6tJGW3GrA8DHESlv/cMdq5Unoschb
-         HWmb7gkftV+2vm1Y27I4NmL8aMnoQYrc7lr3EoFBUF6NVe03jfeMxNdUMLkXmNjV9mbV
-         Ff0Xr5tDzNSzJt1Fq7Qot3rAhkdJIo4pIefCl+8X6P4JsA8VYgag7mjVmuLFqb41836O
-         HROg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpG1ih9wZRmQEt25jdhrmzGAomkKsa8RH3lkli7yLGGfzbeK/9/uKH6tj5osjS+yJo3RDZG6qOSrHmCLHP3IYV7DCRVWkN3gYhcv+G
-X-Gm-Message-State: AOJu0YwTTeic5CWE13Ytzwh33/Nrk5R4zqzQUFTC83nmX6fBickeWm2d
-	nH2Mtj+4vspTBphoiXE5J6AQwhUlG8Xc0YB3RuJT76PdoSnDS6TeYNvKYczkXVwN/Ugk9zhvA4s
-	n7P489pvh6YpYHFDalbVCLC29SajtuByy8VHftM4K3PZREU26uGsRZMc=
-X-Google-Smtp-Source: AGHT+IF6qveUhN2bNVUNT25upCC6vqQ9wkR5DddErz2BaGezXnt0SC16TLAqfzkPEwvNmJUpTTVpZ5GjGO2r+Pd99XrDX74fqQFT
+	s=arc-20240116; t=1724059955; c=relaxed/simple;
+	bh=y8FykAMCJQYb6V318MYDx5Syo5CHN0Ic/kpPbjonFI4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=aC02LhqgXPbV8sG6IGUfzaXaJJr4CBoTF+SIoJH0ze1r2WD1cE1FDkXQZvazS3ve3yMHFtKr/K3eD8GJKxH+g3mnGrE4Yzb+CT3fbm9+5hrDDAfSFMO7nMOzVteEQfzsiBhFHb+bhMpTUO7H2j1Zr4EOIhE5o6WS7IWOedIK+Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=K0jhXwOw; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240819093230epoutp0319f9e746fcb6b6838f9dc244c809c52b~tF2PgjoET0365103651epoutp03E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:32:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240819093230epoutp0319f9e746fcb6b6838f9dc244c809c52b~tF2PgjoET0365103651epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724059950;
+	bh=v6JcaDQvF7fnOy6LUz32eC5Yk1ca9Qh8Q9FuzWwFM5A=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=K0jhXwOwpazrnl9sBoQLSX9oPY574vci3DlgUrrL6qMVNclDH/87K77xV95ZtW4fw
+	 NljgZ/Py7n7aQd9E9mVyxGFHZkIZ6UcMpJZkDeubDWQdHK1DePqEyYvrjjnB4pYSum
+	 weMJ98JmWgFwbtU3LQCttVWCS8HhM/BXegPmeEl4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240819093229epcas1p11822c9de1b260023e3c5f23e0e8eb1bf~tF2Ox9MSR1392813928epcas1p1_;
+	Mon, 19 Aug 2024 09:32:29 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.232]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WnS702pgCz4x9Pt; Mon, 19 Aug
+	2024 09:32:28 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	28.C9.09734.C2113C66; Mon, 19 Aug 2024 18:32:28 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240819093227epcas1p3b744262db1ccf2d8735bdb0824b281e0~tF2NbIpXW0813608136epcas1p3B;
+	Mon, 19 Aug 2024 09:32:27 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240819093227epsmtrp2ab990302a791842a0208ad6eaa05aaf9~tF2NaQfJk2819928199epsmtrp2j;
+	Mon, 19 Aug 2024 09:32:27 +0000 (GMT)
+X-AuditID: b6c32a35-babff70000002606-94-66c3112cf518
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	37.BE.08456.B2113C66; Mon, 19 Aug 2024 18:32:27 +0900 (KST)
+Received: from [10.113.111.204] (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240819093227epsmtip164fcf2177353f5dc2e1e9f1eb6794b88~tF2NCe3at0330503305epsmtip1d;
+	Mon, 19 Aug 2024 09:32:27 +0000 (GMT)
+Message-ID: <7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
+Subject: Re: [PATCH v6 4/4] clk: samsung: add top clock support for
+ ExynosAuto v920 SoC
+From: Kwanghoon Son <k.son@samsung.com>
+To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+	Herring <robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 19 Aug 2024 18:32:27 +0900
+In-Reply-To: <20240819052416.2258976-5-sunyeal.hong@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:370f:b0:4b9:e5b4:67fd with SMTP id
- 8926c6da1cb9f-4cce15cdbd5mr540564173.1.1724059942654; Mon, 19 Aug 2024
- 02:32:22 -0700 (PDT)
-Date: Mon, 19 Aug 2024 02:32:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000742b9d062005fc1c@google.com>
-Subject: [syzbot] [ext4?] [ocfs2?] KASAN: null-ptr-deref Write in jbd2_journal_update_sb_log_tail
-From: syzbot <syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com>
-To: jack@suse.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmnq6O4OE0gxW3BCwezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
+	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
+	pCpk5BeX2CqlFqTkFJgW6BUn5haX5qXr5aWWWBkaGBiZAhUmZGc0TJ7NUtAgXDGz7RVTA+NR
+	gS5GTg4JAROJJ88PsHYxcnEICexglLjedYMNJCEk8IlRYv+leojEN0aJ1o7z7DAd599+YYRI
+	7GWU+DRhOhOE855R4s/8R6wgVbwCHhLn/n5hArGFBSIlni64wQxiswmoSyxpW8sO0iAi8IxJ
+	4tSjT2DLmQWWMkpMunINbDmLgKpE6+nXLF2MHBycAg4SvxuSQMLMAtoSyxa+BhskKiAv0fDw
+	BDPEMkGJkzOfsIDMkRBYyyFxZ8tmVohbXSSe7b8JZQtLvDq+BeoHKYnP7/ayQdjZEkc/wtgl
+	EtdnLYKqN5bYv3QyE8gNzAKaEut36UPcwCfx7msPK0hYQoBXoqNNCMKUl7jVWQ7RKCpx5ulH
+	Noiwh8SNldDQPcko8aN9D9sERvlZSJ6ZheSBWQi7FjAyr2IUSy0ozk1PLTYsMIRHanJ+7iZG
+	cFLVMt3BOPHtB71DjEwcjIcYJTiYlUR4u18eTBPiTUmsrEotyo8vKs1JLT7EaAoM0YnMUqLJ
+	+cC0nlcSb2hiaWBiZmRsYmFoZqgkznvmSlmqkEB6YklqdmpqQWoRTB8TB6dUA5OPV79AxgLx
+	QGPLK9t5Fv8LPrqsYcaZWzPvrz/Ne3b6qsxd6rpzskr7Rd3fiFzNbLrQs0Lx7v8rYXq1PEUt
+	+ydtT7r/oLT69gmzho6AH0+tDv76dbleUe7TuqnXr762yu9c/iKvuGTthecJnA2XzY4KvxGS
+	OnBaW8476dCVTX4ai8+E3Jia/2SSucZWDqb5CgrXK7gyZ/Kd9J9S8sHR69Esnl/XHF7qT6nf
+	ccpDPexL5F8GyxnK5cKt172ecMd6dyusvf3E/MzxvDMHp63bq7helb/O8J/Z5XurXji0Gj78
+	xH+rnT1pXX7X5ovrt/9+q7Bakrv5Bb/JSa3Dv3ZvyDhq/Gj9pn/iUpf+mZpOZZvUrsRSnJFo
+	qMVcVJwIANh0wh0zBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSnK624OE0g81L1S0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4MnYf
+	/8NW0CtU0b96K2sD4z7+LkZODgkBE4nzb78wdjFycQgJ7GaUODbhNjtEQlSi43IjUIIDyBaW
+	OHy4GKLmLaPE3gcHGEFqeAU8JM79/cIEYgsLREo8XXCDGcRmE1CXWNK2lh2kQUTgBZPE/yfL
+	WEESzALLGCUW32cBsVkEVCVaT79mAVnAKeAg8bshCSQsJHCaUWLTZxWIck2J1u2/2SFsbYll
+	C1+DzRcVkJdoeHiCGeIGQYmTM5+wTGAUnIWkZRaSlllIyhYwMq9ilEwtKM5Nzy02LDDKSy3X
+	K07MLS7NS9dLzs/dxAiOIy2tHYx7Vn3QO8TIxMF4iFGCg1lJhLf75cE0Id6UxMqq1KL8+KLS
+	nNTiQ4zSHCxK4rzfXvemCAmkJ5akZqemFqQWwWSZODilGpgk/7h/ZLm+VOfglWVdUexrE1b5
+	nUtw3KaxI1dnc/UjqYzrkkIras+6/5doFJl//XgtS7hfcO3tzRcNnspxOfBaPLRglCvkcbmr
+	P0lw/un32XkaC4M5mhV+e78qPHXDyKjpx8t/VUZzYmNUb/Hqvetu55q3XuRQaMCf332Kj0Ty
+	nniI7kjj2+DlLqB5W32v9E2hrM63EzyUf9/3Mlz3IP0lt4G47Vyd+PpLZsbTdrxdtcN3lpjM
+	jPZ4EWOOI27H+J9xxwrmO52aauUqaf9le6NI1K27xQp+4s7/Nny6cCy3/Htpo3q4/Rymlm8e
+	YgwsT6fPVztw6oZY5HUuzkcp0WdvzJ4zu+VDZMW9jRJ3i5VYijMSDbWYi4oTAbPsFi0SAwAA
+X-CMS-MailID: 20240819093227epcas1p3b744262db1ccf2d8735bdb0824b281e0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
+	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
 
-Hello,
+On Mon, 2024-08-19 at 14:24 +0900, Sunyeal Hong wrote:
+> This adds support for CMU_TOP which generates clocks for all the
+> function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
+> CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
+> and they will generate bus clocks.
+>=20
+> Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> ---
+>  drivers/clk/samsung/Makefile             =7C    1 +
+>  drivers/clk/samsung/clk-exynosautov920.c =7C 1173 ++++++++++++++++++++++
+>  2 files changed, 1174 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
+>=20
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 3056944a5a54..f1ba48758c78 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> =40=40 -21,6 +21,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D cl=
+k-exynos7.o
+>  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
+>  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
+>  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
+> +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov920.o
+>  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
+>  obj-=24(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
+>  obj-=24(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-audss.=
+o
+> diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsu=
+ng/clk-exynosautov920.c
+> new file mode 100644
+> index 000000000000..c17d25e3c9a0
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-exynosautov920.c
 
-syzbot found the following issue on:
+=5Bsnip=5D
 
-HEAD commit:    c3f2d783a459 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13736c29980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f1b191980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1042525b980000
+> +=7D;
+> +
+> +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D =7B
+> +	.mux_clks		=3D peric0_mux_clks,
+> +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
+> +	.div_clks		=3D peric0_div_clks,
+> +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
+> +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
+> +	.clk_regs		=3D peric0_clk_regs,
+> +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
+> +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-c3f2d783.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4d927f7c3cfd/vmlinux-c3f2d783.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ea54bdfad24b/bzImage-c3f2d783.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/562379f73e38/mount_0.gz
+same question.
+Isn't it =22noc=22?
+https://lore.kernel.org/linux-samsung-soc/58dfae564a4a624e464c7803a309f1f07=
+b5ae83d.camel=40samsung.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
-
-(syz-executor198,5100,0):ocfs2_check_volume:2481 ERROR: status = -22
-(syz-executor198,5100,0):ocfs2_mount_volume:1821 ERROR: status = -22
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: null-ptr-deref in test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
-BUG: KASAN: null-ptr-deref in trylock_buffer include/linux/buffer_head.h:420 [inline]
-BUG: KASAN: null-ptr-deref in lock_buffer include/linux/buffer_head.h:426 [inline]
-BUG: KASAN: null-ptr-deref in jbd2_journal_update_sb_log_tail+0x19b/0x360 fs/jbd2/journal.c:1889
-Write of size 8 at addr 0000000000000000 by task syz-executor198/5100
-
-CPU: 0 UID: 0 PID: 5100 Comm: syz-executor198 Not tainted 6.11.0-rc3-syzkaller-00338-gc3f2d783a459 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_report+0xe8/0x550 mm/kasan/report.c:491
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
- trylock_buffer include/linux/buffer_head.h:420 [inline]
- lock_buffer include/linux/buffer_head.h:426 [inline]
- jbd2_journal_update_sb_log_tail+0x19b/0x360 fs/jbd2/journal.c:1889
- __jbd2_update_log_tail+0x48/0x3f0 fs/jbd2/journal.c:1079
- jbd2_cleanup_journal_tail+0x230/0x2d0 fs/jbd2/checkpoint.c:334
- jbd2_journal_flush+0x290/0xc10 fs/jbd2/journal.c:2479
- ocfs2_journal_shutdown+0x443/0xbe0 fs/ocfs2/journal.c:1081
- ocfs2_mount_volume+0x169f/0x1940 fs/ocfs2/super.c:1842
- ocfs2_fill_super+0x483b/0x5880 fs/ocfs2/super.c:1084
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f69037ad16a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffed646ff58 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffed646ff70 RCX: 00007f69037ad16a
-RDX: 0000000020004480 RSI: 00000000200044c0 RDI: 00007ffed646ff70
-RBP: 0000000000000004 R08: 00007ffed646ffb0 R09: 0000000000004470
-R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-R13: 00007ffed646ffb0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+In my case(autov9),=C2=A0if=20put=20wrong=20clk_name=20dmesg=20will=20show=
+=20that,=0D=0Aexynos_arm64_register_cmu:=20could=20not=20enable=20bus=20clo=
+ck=20...;=20err=20=3D=20-2=0D=0A=0D=0AKwang.=0D=0A=0D=0A=0D=0A
 
