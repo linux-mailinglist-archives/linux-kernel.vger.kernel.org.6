@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-291931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBC995690C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FDE95690E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9692F1F22A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AFC1F22EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9AC1662F6;
-	Mon, 19 Aug 2024 11:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="THTsQOob"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A92166318;
+	Mon, 19 Aug 2024 11:10:58 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA54165F1D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FFE15B12B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724065821; cv=none; b=gVU42x43DSzjSpw9jdtWUgX2p6ZDMOwS1Ubx0JqxvlmObVF/E/15ivHR44r9wWlLbB5K80Qkl9FaDHUjxIkoGMPgpNYVXcrZGpl70DwKF5hw0DU7hLnSK/OWNsV+nZ11WUNMS1N4sk2sTbouAIAMLHGTOr9rvDCAGWY+TKcSViw=
+	t=1724065858; cv=none; b=c0OqwPyfdr1jPx4KPdOS+yLZliRmIV1S/WT/QhSn5oogKfYnB+f6ncYyn2PsNBqr0meojcgG0SMmfGSXEt5QoZspOWXZNsSsnxUL10iafizl08rXU3r/rse0dQJY/s45BPJUSIZzRUCWXnSoYn8adqWS16VmMQUQF66Oiop6Wt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724065821; c=relaxed/simple;
-	bh=zOlYH3GTgzKAHU8di3VALmbBP8ocav6kVwNdHek7zxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvZQkn2GKSr3RN/YtbPCFeBfT4SvUc5pZ3yLi5ut+49KwQfwoovtXDkeHay3wU7OLR5VUAerUI24XO2bbuYHYAF+JsAhks84MsqGEsaHNwt5+i+f2Y3ojidW7TtyI6o6Y2uED2/zYXCkZtTCadVlQ4CJBJqt299ZJisJWiV9jQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=THTsQOob; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530e2548dfdso4719527e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724065817; x=1724670617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XE2ug3irN3B0PzcH/qnDG30H87tv6xYk/Cf9lQioacg=;
-        b=THTsQOobrrifUcn+RgJmj6zAOqWzfiDCjRaXYBr+Q1JJediOe6MBj11XFNDyPMKBCg
-         G4swmIjtcNdTSGXkajU7Lr7kr1ZqcHZEeLWf2h+fSly9jdvq0ksOqlZkGqH9OQevJblI
-         hQvy+zrJzqAkkJp+RE8dCkhJpPFD2thP7ulVfORQnv2mrn4fA+aTKN6d4REmOEb1UGbl
-         ffRnScbZ/z4whweQewhjqJas1Z/8T+3TNKsnwQgJ67m3AP6x3VfAs1/wUMISFHe/18yy
-         BGp8GMfVWTbiheNIkISXFd05Y/FirXXFBMzNi2izqCl0Ze4DpwlHUibBQ5m46fMaPYD7
-         wpWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724065817; x=1724670617;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XE2ug3irN3B0PzcH/qnDG30H87tv6xYk/Cf9lQioacg=;
-        b=pyj2vlY7uF8/GJL8S6z3AdkgVs843ygPSZ68NFn9/VHEFmr/E7pDqtmLM13l1QAxJh
-         /SXaE5ID4Lf+WWo2stOeCjydkpwimkWMgK18JC8w+giKhvXoNyDHf2ToxcMNpdFVzR35
-         J8oDkTLEKyUyYlmoMSHfAddT9twBLARzRCj2614zWRq8FPeDELGpQlqY1OkiVeizejZ4
-         rTbBQiry8SEDg63nS+n4S/uCYUzweEmSuGFvj7XdAIVFDd0U8aVsIKtuBDgcGcJuwIYF
-         wM9SpeIbRULmlXPITvwFM0FpbYKv29yv563TMxz36k2wnQJEc+5t0jQWTuzU7PhwA7n/
-         IVNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2ZomJoJS1cSQntHTlfT96WJZuwYM+nX01BjjdjS9gHtn/2Wv54txKJf0XNmwbrTjsaiDkg6o1fYUEKQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO/wytBQ8iNhKRusqfJd6Kh8x41DtqLVEJ+2hDral7T+BEcQfb
-	T7ZHHaAV4weQJhCz0U3ylYSEsUa6esMCTMFY6MwsocLz02y6NXn+KR2Qj23LcL8=
-X-Google-Smtp-Source: AGHT+IFVSravI8lfSdiu804ftuzvsmERhC3uU+IGlqmkWfmDLfcT8JqBkHBmuPpnv9kff6wDZ8wXAQ==
-X-Received: by 2002:a05:6512:3e22:b0:52f:307:d5ee with SMTP id 2adb3069b0e04-5332df3699fmr4142624e87.4.1724065816798;
-        Mon, 19 Aug 2024 04:10:16 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6998sm627728366b.19.2024.08.19.04.10.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 04:10:16 -0700 (PDT)
-Message-ID: <e6377448-9af3-4807-a8fd-197f5b2b4aa4@tuxon.dev>
-Date: Mon, 19 Aug 2024 14:10:14 +0300
+	s=arc-20240116; t=1724065858; c=relaxed/simple;
+	bh=H4OKQ5TqcR6QQEOCrCSTgksuDNkl0f3l3Xg4DSYN6Z4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=b9Bv0zCiqnt/CDbJXateFYnYgRZd2W/pl2xcshgMpTnRIzvzi3k152WLavxW3A0poRGp3+T39eqIGyaNBWD5n+JRJALYdNB98N3MBuCUvpIQKXI1Z+AIEPwqQGASYMRjCWXDLdCfJRGKtOGJiWhzBOlHu2rOe5YgosUoq+JWKck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WnVBg48WQz1S8DW;
+	Mon, 19 Aug 2024 19:05:47 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5BBD21A0188;
+	Mon, 19 Aug 2024 19:10:46 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 19:10:45 +0800
+Message-ID: <414af857-30b5-d844-3e7a-15b425c4db51@huawei.com>
+Date: Mon, 19 Aug 2024 19:10:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next] firmware: arm_ffa: Fix beyond size of field warning
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
- <20240819102348.1592171-8-claudiu.beznea.uj@bp.renesas.com>
- <gxjlmdjicwzlexitsx673beyn7ijuf47637nao2luc5h6h6hvi@qstobttin7dw>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <gxjlmdjicwzlexitsx673beyn7ijuf47637nao2luc5h6h6hvi@qstobttin7dw>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240816100258.2159447-1-ruanjinjie@huawei.com>
+ <ZsMf1jIfbwwmqe1m@bogus> <5979b3b7-cd42-d01a-6c8f-5df7b698b324@huawei.com>
+In-Reply-To: <5979b3b7-cd42-d01a-6c8f-5df7b698b324@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
 
-On 19.08.2024 14:05, Krzysztof Kozlowski wrote:
-> On Mon, Aug 19, 2024 at 01:23:44PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
->> the version available on Renesas RZ/V2H (R9A09G075).
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v4:
->> - added comment near the fallback for RZ/G3S; because of this
->>   dropped Conor's tag
+On 2024/8/19 19:01, Jinjie Ruan wrote:
 > 
-> That's not a reason to request a re-review.
+> 
+> On 2024/8/19 18:35, Sudeep Holla wrote:
+>> On Fri, Aug 16, 2024 at 06:02:58PM +0800, Jinjie Ruan wrote:
+>>> An allmodconfig build of arm64 resulted in following warning:
+>>>
+>>> 	In function ‘fortify_memcpy_chk’,
+>>> 	    inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
+>>> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:488:2:
+>>> 	./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>>> 	  571 |                         __write_overflow_field(p_size_field, size);
+>>> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> 	In function ‘fortify_memcpy_chk’,
+>>> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:489:2:
+>>> 	./linux-next/include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>>> 	  571 |                         __write_overflow_field(p_size_field, size);
+>>> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>
+>>> Because ffa_msg_send_direct_req2() memcpy uuid_t and struct
+>>> ffa_send_direct_data2 data to unsigned long dst, the copy size is 2 or
+>>> or 14 unsigned long which beyond size of dst size, fix it by using a temp
+>>> array for memcpy.
+>>>
+>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>>> ---
+>>>  drivers/firmware/arm_ffa/driver.c | 14 ++++++++++++--
+>>>  1 file changed, 12 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+>>> index 1e3764852118..674fbe008ea6 100644
+>>> --- a/drivers/firmware/arm_ffa/driver.c
+>>> +++ b/drivers/firmware/arm_ffa/driver.c
+>>> @@ -480,13 +480,23 @@ static int ffa_msg_send2(u16 src_id, u16 dst_id, void *buf, size_t sz)
+>>>  static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
+>>>  				    struct ffa_send_direct_data2 *data)
+>>>  {
+>>> +	unsigned long args_data[14];
+>>> +	unsigned long args_uuid[2];
+>>> +	unsigned long *data_ptr;
+>>> +
+>>>  	u32 src_dst_ids = PACK_TARGET_INFO(src_id, dst_id);
+>>>  	ffa_value_t ret, args = {
+>>>  		.a0 = FFA_MSG_SEND_DIRECT_REQ2, .a1 = src_dst_ids,
+>>>  	};
+>>>  
+>>> -	export_uuid((u8 *)&args.a2, uuid);
+>>> -	memcpy(&args.a4, data, sizeof(*data));
+>>> +	memcpy(args_uuid, uuid, sizeof(uuid_t));
+>>> +	args.a2 = args_uuid[0];
+>>> +	args.a3 = args_uuid[1];
+>>> +
+>>> +	memcpy(args_data, data, sizeof(*data));
+>>> +	data_ptr = &args.a4;
+>>> +	for (int i = 0; i < 14; i++)
+>>> +		*data_ptr++ = args_data[i];
+>>>
+>>
+>> So we end up with double copy for both uuid and ffa_send_direct_data2 ?
+>> This is not correct and not needed.
+>>
+>> Which toolchain are you using ? I got error only for memcpy which I forgot
+>> to push to -next, now fixed. It must appear in -next soon.
+> 
+> Use the newest linux-next and  `make Image ARCH=arm64
+> CROSS_COMPILE=aarch64-linux-gnu-`, the above compile error occurs.
 
-Sorry for that, I wasn't aware of the procedure for this on bindings.
-
-Thank you,
-Claudiu Beznea
+`make allmodconfig ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-` at first.
 
 > 
-> Best regards,
-> Krzysztof
-> 
+>>
 
