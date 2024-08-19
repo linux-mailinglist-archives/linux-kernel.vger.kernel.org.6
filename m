@@ -1,191 +1,195 @@
-Return-Path: <linux-kernel+bounces-291812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590D6956742
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D333956748
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF74B20F06
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D6B1C2083A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3D815ECE8;
-	Mon, 19 Aug 2024 09:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC55615CD7C;
+	Mon, 19 Aug 2024 09:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t8qugMoa"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jCyG1q32"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8257515ECD5;
-	Mon, 19 Aug 2024 09:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1416115CD79
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724060410; cv=none; b=hIe8BJOnib1z09u0XE+e+KAc/eISizx8WT4aOB3HMjST4QoUHM49z1yB7p6HQM6ygJamIYfWgD47vPv0H4pP6MT6owtLdb7z11p40YllYftpPKOfqAK87ao885mM1ADiOl4A9Oq/hBmB7GTFPYeGyGgpGeIEwHv5RTQ8F86XVo8=
+	t=1724060448; cv=none; b=pEK4TWsHs5l22uC4DnqlXi9z38Nm/q8cHGVD0PI84/0An+9gzBHglUPNcoB4lvMRD87zpPkfHwYfMc8XZM9fqJSjSTQ2gMw6woG81ed2sus0uU0hWn3mPEG8/t7bMScbtIo3XLzMGjk+jkYjpV8wu4ZFOZz3tuCA/kMgE4R5ITQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724060410; c=relaxed/simple;
-	bh=CceIZBexaBuqrKOM3lnKaoJ/9+ed7zFoJNiu80vtbmE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=IZ14xmylK5Jwc1N4TN6o6ddMUhLOaxtadIb0c3IhFObBD2Nsxphb3lhdOoCcegW0stjH3vCu7Sf0c0pivxnsWq05l2MuzwQX206ZWCDHBJxUZbtsR0RsjJyuasKUqWjs2j20S28Jx14PbRa5WzYeZ3QNx+DdqQTnb1N6yz0N99M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t8qugMoa; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47J9e0OX114818;
-	Mon, 19 Aug 2024 04:40:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724060400;
-	bh=PcR3AOplWBTtVm25TAb+6FaDkyDmfWhdLfDcsTcmMXg=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=t8qugMoaboIc+9Gb9iDDFyYtJ3Qkx/FHTAIqQpwn+7wfXcY7kQNME3eJ9P2HLQU0M
-	 SXM3v3sf7agJZHHzoyVhqb/skErUg51PK45KrpIq5Pu0vjL8iaU/J5QC8Yx4ODeG2Q
-	 fUh//33oRqs0hoaS47I6//XBLxvaNQ0g21Rcg9Tw=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47J9e0P0130711
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 19 Aug 2024 04:40:00 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
- Aug 2024 04:40:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 19 Aug 2024 04:40:00 -0500
-Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47J9daOH082967;
-	Mon, 19 Aug 2024 04:39:57 -0500
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Mon, 19 Aug 2024 15:09:39 +0530
-Subject: [PATCH v4 5/5] arm64: dts: ti: Add support for J742S2 EVM board
+	s=arc-20240116; t=1724060448; c=relaxed/simple;
+	bh=JGbdVz/5+jitrQZrmv4Fv445Ge5RQuDOQPSGX7JoJQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uImQjB46q/EpKPMfAlxKe7ef6mIry59P32lhF+PE9jXWh8xV4zii2Zm1QcXNfnq4bAbFQsnOby7We0Y4wuZGCAqUOAJj1bpREKU0Mlrk/KPsYzY/GlrxZzgYyBEWzCJriEJYhock1lub7TfuuDCK11SDf26ELsgzr4NKWnF+p9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jCyG1q32; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724060446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cXW1cF8K+5+u4xFBSuc8nAxV8cU09T30MZM8Wz4ddbs=;
+	b=jCyG1q32GvoD4RP+8F1032aHJs3A2kAGGCWQzG9baDlBbWSqvYw/MzTA4zLXdSgORV4IVs
+	WL4lHlDRyB7YVz3d0jjrIVvw2zLLwnjXwKeFfsuJQMqxJOdN95u1ngK3+pD+fCZp51blQs
+	gDM7WDA2fBn5FFWeMy1noz+GsS/HSRE=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-500-r0Q_tlWqNqK10kxXS8AsBw-1; Mon, 19 Aug 2024 05:40:44 -0400
+X-MC-Unique: r0Q_tlWqNqK10kxXS8AsBw-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5bec5a6557cso1206068a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:40:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724060443; x=1724665243;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cXW1cF8K+5+u4xFBSuc8nAxV8cU09T30MZM8Wz4ddbs=;
+        b=niFwXKhiV0NrtvDPFBf/42Y6TxUyVL+pCM62e3fQrDnpZdRFWd7vHUY8jsE1CIMOzv
+         bBXdoJyMSCEuJyoFF0+OhY6nfJCBzRjdnVbfmigpzVfbOQyuSDaLHdX+n6BNqdx+3QLF
+         Vsdu039UIfAkATwD3sz0cIpEkT70MTdg9fAYMXw0TtfD9RiLcGuzD8e2zy062XDyv20L
+         stckaY7f4JHWZz9/MioLAOiJUACgUM8eVduSLh8kJ/jeyhw59LHmEYoW7+odoCRVfAS9
+         suuASX1ScCPE+u2T6lkCBQLaFgOTpY/aSSoqXHzcQG6Kaqyp/9qI6CKQr0fY+FfzCsiP
+         DL/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ3V6HvF5PG8dTrIoOGRGfPq6Jbr6wTULCHsy5PO8wn7J9CeODSsYJFOU0Egs66KQCf29Vlj4rInHpurFtcU9G2pSPlxg5twC02S0l
+X-Gm-Message-State: AOJu0YySZI2eKcNaoSSiOq0ZnaX+aRNVQya20NT7c3OR+p8XVRte5B3J
+	aOFnHaT/pep4kNIGS5HLTndDMg7v+n313lD/N4riHBpGJYs3KDJ1EJGYYeWfoStzcrlY22xdXkV
+	E9BJLZI1cUHOYWKZRPYhQP1KqBzR2s9ZdY07Y7TDvvIiqgza3ytrYdzYFbjQ9WQ==
+X-Received: by 2002:a05:6402:2681:b0:5be:dd2d:83 with SMTP id 4fb4d7f45d1cf-5bedd2d02e2mr4872626a12.6.1724060443419;
+        Mon, 19 Aug 2024 02:40:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGws/7I3pTXo8c3kRiarILZUokJINfdeWzMiZ6LGdatplCUWGCS+TvzBnyG3IssGsZDcV5ZzQ==
+X-Received: by 2002:a05:6402:2681:b0:5be:dd2d:83 with SMTP id 4fb4d7f45d1cf-5bedd2d02e2mr4872612a12.6.1724060442968;
+        Mon, 19 Aug 2024 02:40:42 -0700 (PDT)
+Received: from [100.81.188.195] ([178.24.249.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7ed31sm5569279a12.67.2024.08.19.02.40.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 02:40:42 -0700 (PDT)
+Message-ID: <966bfe10-6123-48db-95b7-ade2f794700d@redhat.com>
+Date: Mon, 19 Aug 2024 11:40:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] mm: khugepaged: use the number of pages in the folio
+ to check the reference count
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: hughd@google.com, willy@infradead.org, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
+ <c6038c7e823d4162f745147628616f7876585a97.1724054125.git.baolin.wang@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <c6038c7e823d4162f745147628616f7876585a97.1724054125.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240819-b4-upstream-j742s2-v4-5-f2284f6f771d@ti.com>
-References: <20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com>
-In-Reply-To: <20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Manorit Chawdhry <m-chawdhry@ti.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724060376; l=3564;
- i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=CceIZBexaBuqrKOM3lnKaoJ/9+ed7zFoJNiu80vtbmE=;
- b=KaRsO8q/wonUmLs7aoNKabiKp29xsErCsAreM0htKjbIql5o5MFesWwYJesgY+cAMnMsrcK+7
- pGGDrYNOx/1Bi0Ku9gJSjZJuw3OzBDHTHiUQO1+zYGIvNj9XK8b5TYF
-X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
- pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-J742S2 EVM board is designed for TI J742S2 SoC. It supports the following
-interfaces:
-* 16 GB DDR4 RAM
-* x2 Gigabit Ethernet interfaces capable of working in Switch and MAC mode
-* x1 Input Audio Jack, x1 Output Audio Jack
-* x1 USB2.0 Hub with two Type A host and x1 USB 3.1 Type-C Port
-* x1 4L PCIe connector
-* x1 UHS-1 capable micro-SD card slot
-* 512 Mbit OSPI flash, 1 Gbit Octal NAND flash, 512 Mbit QSPI flash,
-  UFS flash.
-* x6 UART through UART-USB bridge
-* XDS110 for onboard JTAG debug using USB
-* Temperature sensors, user push buttons and LEDs
-* x1 GESI expander, x2 Display connector
-* x1 15-pin CSI header
-* x6 MCAN instances
+On 19.08.24 10:14, Baolin Wang wrote:
+> Use the number of pages in the folio to check the reference count as
+> preparation for supporting shmem mTHP collapse.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   mm/khugepaged.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index f11b4f172e61..60d95f08610c 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1994,7 +1994,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>   		/*
+>   		 * We control three references to the folio:
 
-Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
-Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
-Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
----
- arch/arm64/boot/dts/ti/Makefile                    |  4 ++++
- arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           | 26 ++++++++++++++++++++++
- .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   |  3 ++-
- 3 files changed, 32 insertions(+), 1 deletion(-)
+^ "three" is wrong now.
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index e20b27ddf901..1bf645726a10 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -119,6 +119,9 @@ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
- 
-+# Boards with J742S2 SoC
-+dtb-$(CONFIG_ARCH_K3) += k3-j742s2-evm.dtb
-+
- # Build time test only, enabled by CONFIG_OF_ALL_DTBS
- k3-am625-beagleplay-csi2-ov5640-dtbs := k3-am625-beagleplay.dtb \
- 	k3-am625-beagleplay-csi2-ov5640.dtbo
-@@ -240,3 +243,4 @@ DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
- DTC_FLAGS_k3-j784s4-evm += -@
-+DTC_FLAGS_k3-j742s2-evm += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-new file mode 100644
-index 000000000000..fcb7f05d7faf
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ *
-+ * EVM Board Schematics: https://www.ti.com/lit/zip/SPAC001
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "k3-j742s2.dtsi"
-+#include "k3-j784s4-j742s2-evm-common.dtsi"
-+
-+/ {
-+	model = "Texas Instruments J742S2 EVM";
-+	compatible = "ti,j742s2-evm", "ti,j742s2";
-+
-+	memory@80000000 {
-+		/* 16G RAM */
-+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
-+		      <0x00000008 0x80000000 0x00000003 0x80000000>;
-+		device_type = "memory";
-+		bootph-all;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index 068ceed4ea15..a7bb1857b4e8 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -2,7 +2,8 @@
- /*
-  * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-  *
-- * EVM Board Schematics: https://www.ti.com/lit/zip/sprr458
-+ * EVM Board Schematics(j784s4): https://www.ti.com/lit/zip/sprr458
-+ * EVM Board Schematics(j742s2): https://www.ti.com/lit/zip/SPAC001
-  */
- / {
- 	chosen {
+>   		 *  - we hold a pin on it;
+> -		 *  - one reference from page cache;
+> +		 *  - nr_pages reference from page cache;
+>   		 *  - one from lru_isolate_folio;
+>   		 * If those are the only references, then any new usage
+>   		 * of the folio will have to fetch it from the page
+> @@ -2002,7 +2002,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>   		 * truncate, so any new usage will be blocked until we
+>   		 * unlock folio after collapse/during rollback.
+>   		 */
+> -		if (folio_ref_count(folio) != 3) {
+> +		if (folio_ref_count(folio) != 2 + folio_nr_pages(folio)) {
+>   			result = SCAN_PAGE_COUNT;
+>   			xas_unlock_irq(&xas);
+>   			folio_putback_lru(folio);
+> @@ -2185,7 +2185,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>   		folio_clear_active(folio);
+>   		folio_clear_unevictable(folio);
+>   		folio_unlock(folio);
+> -		folio_put_refs(folio, 3);
+> +		folio_put_refs(folio, 2 + folio_nr_pages(folio));
+>   	}
+>   
+>   	goto out;
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-2.46.0
+Cheers,
+
+David / dhildenb
 
 
