@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-292195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B34956C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E22D956C51
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E00283BAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:38:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C879F1C22959
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE64816C6A4;
-	Mon, 19 Aug 2024 13:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLMeI2yc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E6B16C866;
+	Mon, 19 Aug 2024 13:39:06 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A89D16B74D;
-	Mon, 19 Aug 2024 13:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105DE16C68E;
+	Mon, 19 Aug 2024 13:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074724; cv=none; b=EqQhtxT+sHmv1/nMbyDfiLexOBf7C4ICTa4GoJ9Jm97sU74ykV9OEE2cGG3uvC6Heni0iBbANFfFvt0HyJSoj/whdprypD5/0NdgSnhhTdhkerz6j/HJALqlV9296kjKOmuVmfAavLWABoG6SPNFTTrWUh3aU4aqX/5AVQcT4G4=
+	t=1724074745; cv=none; b=N4cdQ9HLDkk+8GWPasMldgkMi7GxLMXWNDe2O6yEHl8NACzwGciLiHjAj8m76ibeZq0jqZYBo89ldq1oqW0W59HvdYusmMpFJPRw3aDmPJdeJDGBgMJ9Fo+o4f2kfUHSUojCRo2OdWvS8JTglhoQtEldK7LWA83ZGCqgjJjpXG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074724; c=relaxed/simple;
-	bh=HnXHpBWJd9U3kd3NxwXtSvzJXtDDSPMfs14A0MtrVYM=;
+	s=arc-20240116; t=1724074745; c=relaxed/simple;
+	bh=Dn5X/Rbe4qEZx4tYwaZ22MjAOJh5R8ic3hzcjKEib38=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFJdknAeck/31fsukV7wX9iZXsoew190a0GO6fRuT7Lc9NN8tm/GSlcaT95wQwtS33nyB2jWxTsvoYOWl/UoTZEk/9Faq+qOKffDozO0Un0Q9n80icNItdwmw0tZrdj5FF6SeBT+RwCQ2dN2JL5AXoTUWJyUxYfmC29rDIwONGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLMeI2yc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8FDC4AF10;
-	Mon, 19 Aug 2024 13:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724074723;
-	bh=HnXHpBWJd9U3kd3NxwXtSvzJXtDDSPMfs14A0MtrVYM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZLMeI2yciU1w5rR1VogeDAC7sDNpYgWowCrd0sanjrciwnzGUMB5fVEsC2VJocG4O
-	 4BH5/klMMGTj4eDhfvNzXwMsa1CW/WsdD2Bo0OjX5HH3BG4X0PvITRubRPDmSz7sAL
-	 wqVf+NQ++vO7yeXpAjkmToVDbHajmK4oKYQli4RiVviLx8HGyjifxN+ngmwMteetbx
-	 NewD8eAI7Z175LYGgeXzuGr1imTSwg4qYsEsNh3orjo3O6Fp3Q1qV7bBgG4wiD/Nj6
-	 o2Ym3/Mv7g8484QiLuH5F6P2E4EwAQtxBmplhoA6gW9lB8WZmVb8xF8PbwqqWgK21G
-	 BFRiTB5UAVO3g==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f035ae0fd1so48732901fa.2;
-        Mon, 19 Aug 2024 06:38:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXeaZuGlR8JaCZ8X1aQpKxZfvT9TJPleo9a05V6UIvgDBM/IIso/kwYcnhi9bPc1smTG1pPhh6XLWbEurYtn9emye5Q5oJifoQ56teLSv9+Nu4TBMsfNpGh1vGupktRRYj2/9Iy5rGkUg==
-X-Gm-Message-State: AOJu0Yyh9KHvMHFSYV9yPl03sJ2FXwpYtu7qy2mKU90unI4zRV95o3Ex
-	XTF07ZlnL4CIrRoZNwSpPPfWj5/yfA/nlrA37K2EH2stq2M3jf2pLNFjpfHiKHucXi6S7kWqpdF
-	5UeDBrZb2VNA7Ub1jDK7dcdPkBA==
-X-Google-Smtp-Source: AGHT+IGa3K9gt89RK6o4xZ8EoS40LEXM1QdCH0OX9oHmervlw6KfmM/3z5RbDfsnlV0DTeLX2ktRdryZFtLoXNizcHE=
-X-Received: by 2002:a05:6512:6cc:b0:52c:952a:67da with SMTP id
- 2adb3069b0e04-5331c6e400fmr7761393e87.55.1724074721988; Mon, 19 Aug 2024
- 06:38:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=pbHVNuSgqom64cDeH777v7C2jZUv6WArTXekNOBPdxzLiNVZGTftftjdrQmFDSBWeW2Y5OmGThEWruSZRssmXqN8T7t05pKell2ozTZV0f4vvaJ4jK37fGj2gr9Yw49pR/6+iGnw1gjeb9fEMCseOz8TC+lZSqUL+y0sXy5rABY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6aab656687cso32916667b3.1;
+        Mon, 19 Aug 2024 06:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724074742; x=1724679542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GJXbsij2gSSJxop3NlYZ1IKN8Y1fPN3z13PwAIfyEvI=;
+        b=M//1x1KTkvnEOzRTFJCYJ1CnhCTMv8Xc7W9hRXkmU8igWKJXeOTcKQ7jBuMOa/ccnj
+         MW4nwosQJti7HoWfJY8CpD27mhPb4VnG8agaa7MzumfPOHE6rfHDezNMVjUGqZKd2xis
+         1lUyEKtMDIw/jiEuSS09QDbwAe61+u7ohOLOO3GqfX7ajRxc9oyHf5NRjkQvVCe3K1TX
+         YArFTpO9trMXGoLFA4p05EwDaPrjI0vv1DV459KstM3PaQFBTDyrCJgdlDnh6sVP0Tkd
+         SkfDid4oVaPRZgPDga5hCrT//JyE7BaoPDpdYQH9MTzlHdYvIz1Q+UtFIN1EOEHy27tu
+         aGkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh2uPnVWlm1YcyUV8DTrpXusbChMdS4yU2DmuskhY5IE1y7Ie7yxd0ZhqEOOGMRgN+In9esI+W2DBjLAk2/xrPVzZP/i4zznORtBXu7M/JwpLwPqstnOcKwyWkphqnpFigCJ3AdiXZrpi6uVci+js05dyK1zUqw4Z7rObAoTJtsyj+8IXGjhG8RgVcfLZkKuhRxjni966yVxDjH4nyLeMvgx4TQxON
+X-Gm-Message-State: AOJu0Yz6zJIXsY5BXyKQB0lgYGG4HaYkRvD928NePF8IjTJt1pS6fnzG
+	JigPz3RHAFOZveWp31Fwy6ynHBYzFNc9dUxHmKEQugybPc7OpuikfGkQR9cq
+X-Google-Smtp-Source: AGHT+IHJZZyJRDasdzStIpxNjuyoVReu2yPCDTCff6C8Wi0tnYC0UZdZFX3bh8xj/N/10hQm6wWhTA==
+X-Received: by 2002:a05:690c:3001:b0:62f:206e:c056 with SMTP id 00721157ae682-6af1b832404mr120463767b3.5.1724074742006;
+        Mon, 19 Aug 2024 06:39:02 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6af99f9e061sm15898977b3.53.2024.08.19.06.39.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 06:39:01 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b3afc6cd01so17579087b3.1;
+        Mon, 19 Aug 2024 06:39:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWEqezLooMdoeBlHHbcdLHDFjfPpjPlaR3UQzfnFk/ZIgsSmkljxtXqc9yOEaY/wxyR+7b0tgH70PXTWOIVc6XPj/EewlCKF9hTtEMCqJAdLc5lKfv5sXTF3ORGAwrAaJW8FRplgyxPlRCe17aNo1FDf4/tMgiE3WWPZ17oQIshogssO0+zQjHZoisuPsX/rWzxoZ3wC3IAWlil+pbmZ4GYOCwqqiqU
+X-Received: by 2002:a05:690c:3001:b0:62f:206e:c056 with SMTP id
+ 00721157ae682-6af1b832404mr120463467b3.5.1724074741182; Mon, 19 Aug 2024
+ 06:39:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP> <20240815140046.GA1603296-robh@kernel.org>
- <Zr4Sze8ea3q4d+Xk@standask-GA-A55M-S2HP>
-In-Reply-To: <Zr4Sze8ea3q4d+Xk@standask-GA-A55M-S2HP>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 19 Aug 2024 07:38:29 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKZEAOgEacGmfoJeuNpTpy9oXnG1ghJhAZP8Gkp700ynQ@mail.gmail.com>
-Message-ID: <CAL_JsqKZEAOgEacGmfoJeuNpTpy9oXnG1ghJhAZP8Gkp700ynQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: mfd: sprd,sc2731: convert to YAML
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240818172923.121867-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240818172923.121867-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Aug 2024 15:38:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU3V=ZO6me5LekUQN4NC82yw5_UYNd23gZwctUa-GiJ6g@mail.gmail.com>
+Message-ID: <CAMuHMdU3V=ZO6me5LekUQN4NC82yw5_UYNd23gZwctUa-GiJ6g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: add top-level constraints
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 8:38=E2=80=AFAM Stanislav Jakubek
-<stano.jakubek@gmail.com> wrote:
->
-> Hi Rob,
->
-> [skip]
->
-> > > ---
-> > > Depends on:
-> > >   - eFuse YAML conversion: https://lore.kernel.org/lkml/9fba73ce66f1f=
-3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com/
-> > >   - RTC YAML conversion: https://lore.kernel.org/lkml/ZrBzmQI0IAL7LI3=
-e@standask-GA-A55M-S2HP/
-> >
-> > These either have to be sent as 1 series for 1 maintainer to apply (Lee=
-)
-> > or you'll have to wait a cycle for the dependencies.
->
-> I've had this patch sitting on my harddrive for over a month now.
-> Both of the dependencies have been sitting on the mailing lists
-> pretty much unchanged for about a month as well...
-> Also, there are technically more dependencies, but they're in linux-next
-> already, so I didn't include them here.
+Hi Krzysztof,
 
-From who's tree? That affects who can apply this as well. I guess
-those are other child nodes.
-
-> Just wanted to get this out to get some feedback (and hope that it would
-> move the dependencies along).
-
-And now you have.
-
+On Sun, Aug 18, 2024 at 7:29=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clocks.
 >
-> [skip]
->
-> > The preference is one complete example here and drop any partial
-> > examples of the child nodes in the child node schemas.
->
-> I can add a more complete example here, sure.
-> But I don't understand the point of removing the examples in child node
-> bindings. Seems to me like all that would do is provide less documentatio=
-n.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-It's not less, it's just 1 copy instead of 2 (or more). The problem
-typically (in the old bindings) is that the parent node is shown, but
-is incomplete which is a problem once the schemas check the examples.
-And if some of the child nodes are required by the schema, then every
-child schema ends up with a complete example of the MFD. And then when
-we have to fix something later, there's more places to go fix it.
+Thanks for your patch!
 
-Rob
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -77,9 +77,13 @@ properties:
+>      minItems: 1
+>      maxItems: 3
+>
+> -  clocks: true
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 4
+>
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 4
+>
+>    dmas:
+>      minItems: 4
+
+I am a bit puzzled by all these add-top-level-constraint patches.
+E.g. this file already constrains all of them below.
+
+To me, it feels the same as a patch for driver code that would do:
+
+    +   if (param < 16 || param > 512)
+    +           return -EINVAL;
+    +
+        if (hw_variant_a) {
+                if (param < 16 || param > 256)
+                        return -EINVAL;
+                ...
+        } else if (hw_variant_b) {
+                if (param < 32 || param > 512)
+                        return -EINVAL;
+                ...
+        } else /* hw_variant_c */ {
+                if (param < 32 || param > 384)
+                        return -EINVAL;
+                ...
+        }
+
+What's the point?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
