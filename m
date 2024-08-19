@@ -1,82 +1,190 @@
-Return-Path: <linux-kernel+bounces-292463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C10B956FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6B7956FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F72B294B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948572836CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9733617837E;
-	Mon, 19 Aug 2024 16:03:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B337D17BEC5;
+	Mon, 19 Aug 2024 16:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A6aWgw3C"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B253B8287D;
-	Mon, 19 Aug 2024 16:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16DA8287D;
+	Mon, 19 Aug 2024 16:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083432; cv=none; b=iXlwbB+aCEwRd3gegLBxaiOUf8J0FKl5y6PIiYQx8VOATFbR5V+5YjqTYvNAEhEZ1IptliaUMiW0nYlLy18gPo0v8lNSsSamfTmUcQKT3qvwL4LimHAw0iH0S3smG7hJ6XWp24nnUN7EniVzyoT0hX0hKQM4h38H/2FroxtaSN8=
+	t=1724083456; cv=none; b=Gfgcu3o0GxyPHxh+CowD+Dx8wziJjjoK2zPlhQvMW0LNJG4jddZtIdkvFnfzE9ls8aJ1PpO3AGJPYz9XWfs4KW+7jB007VdP5xNleUliUyOamjyH4T0d4xfXjR/oTA1hxiyOUkRIUF0RMlwsyqY7mkNabDrthVQOF5ps9CjGGBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083432; c=relaxed/simple;
-	bh=iyVj6t3gLWhrXmv58HXZ8/Xpojru0XhNKSDKvqArBGI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+ocI9IFBMsmkJMAWsO5TITYikU1Qzg53TOyu1EaTNbHcRgDuZiAwjh8SNIksnfIJmkzrpnlPXECce9engLRcFSwAIdJdnaTe5IMzb7hMR/Ztka8ctY7lOF8RNf25oyqLTdtXdipM8/hvHGBWwcX2zYtIoyMuh8A884kEnJWE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WnclB6RBXz6K5Vy;
-	Tue, 20 Aug 2024 00:00:54 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6CC99140A87;
-	Tue, 20 Aug 2024 00:03:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 17:03:47 +0100
-Date: Mon, 19 Aug 2024 17:03:46 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 03/13] memory: samsung: exynos5422-dmc: simplify
- dmc->dev usage
-Message-ID: <20240819170346.00004d4b@Huawei.com>
-In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-3-9eed0ee16b78@linaro.org>
-References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
-	<20240816-cleanup-h-of-node-put-memory-v2-3-9eed0ee16b78@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724083456; c=relaxed/simple;
+	bh=vDXIl4RRqksl9TF+V8PT5XaM00nkF5KB2fS3seT/cLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bcf145GkrvHChYwAtcpSdzVmp8kuKfoDfHpn62izoh2dN6WxiY353IYb+kGIqlPkFLOVekqWk123XSjM5hOwzSsZZpX5Lx2USbIPBTkl//XQaEV0iUVNAlD/hNVp31+1esW0gRAsdlWa7G9lP9cAcv7AQGWKT4xOJ45fIzqO3ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A6aWgw3C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J7lU1x004974;
+	Mon, 19 Aug 2024 16:04:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=54Be2dpmjo9mL0wr244ka69/wSU
+	0fU9DoCogHKtHckM=; b=A6aWgw3CTImKMCmjrzxMk7vyRW2qUN1We4H6sk1OuGC
+	k7f+EvyCkg05ekTgRQmYHr4eXxfQPgHqIZJHqufZRh4Xafwi/yx33QLoeT03W99R
+	D9Yuaoi4IDmY360vxi/I2j7uJxDJDc92ocT8oqmWsq8RmXDeT0/UKxaFm2XwLwG6
+	oiypsocQV4XUjhrnRdxBlupmHk3Sx0txLtxhQvNytxQeIAZaaq2Te0MrvigYd549
+	p2d7uMTF6gMiat3OD7rbl5aOo25eH8c0kKxGUtYzqBFotJPV7OxK8zoHeS48mdVB
+	cUokkhuUlYC3yoW3pbGiWLhse07Se5tLvhvPCgMrnzA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4141y1j07m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 16:04:11 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47JG2kE8015393;
+	Mon, 19 Aug 2024 16:04:11 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4141y1j07f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 16:04:10 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCvgFe019123;
+	Mon, 19 Aug 2024 16:04:09 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376ppubh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 16:04:09 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47JG43EM19071386
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Aug 2024 16:04:06 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D0CB72004D;
+	Mon, 19 Aug 2024 16:04:03 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 52E2020043;
+	Mon, 19 Aug 2024 16:04:03 +0000 (GMT)
+Received: from darkmoore (unknown [9.171.95.91])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 19 Aug 2024 16:04:03 +0000 (GMT)
+Date: Mon, 19 Aug 2024 18:04:01 +0200
+From: Christoph Schlameuss <schlameuss@linux.ibm.com>
+To: Hariharan Mari <hari55@linux.ibm.com>, linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
+        frankja@linux.ibm.com, borntraeger@linux.ibm.com,
+        imbrenda@linux.ibm.com, david@redhat.com, pbonzini@redhat.com
+Subject: Re: [PATCH v1 5/5] KVM: s390: selftests: Add regression tests for
+ PLO subfunctions
+Message-ID: <ZsNs8aIXM71NCG4h@darkmoore>
+References: <20240819140040.1087552-1-hari55@linux.ibm.com>
+ <20240819140040.1087552-6-hari55@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819140040.1087552-6-hari55@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ubtjICqUtKbAucfSvVCBuALIUaOVAKLr
+X-Proofpoint-ORIG-GUID: -IznyxETvVyQV2-kCoIuZjbFi1H_ausN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_13,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190107
 
-On Fri, 16 Aug 2024 12:54:27 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On Mon Aug 19, 2024 at 3:54 PM CEST, Hariharan Mari wrote:
+> Extend the existing regression test framework for s390x CPU subfunctions
+> to include tests for the Perform Locked Operation (PLO) subfunction
+> functions.
+>
+> PLO was introduced in the very first 64-bit machine generation.
+> Hence it is assumed PLO is always installed in the Z Arch.
+> The test procedure follows the established pattern.
+>
+> Suggested-by: Janosch Frank <frankja@linux.ibm.com>
+> Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> ---
+>  .../kvm/s390x/cpumodel_subfuncs_test.c        | 36 ++++++++++++++++++-
+>  1 file changed, 35 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> index 901c99fe79d9..255984a52365 100644
+> --- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> +++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> @@ -20,6 +20,8 @@
+>  
+>  #include "kvm_util.h"
+>  
+> +#define U8_MAX  ((u8)~0U)
+> +
+>  /**
+>   * Query available CPU subfunctions
+>   */
+> @@ -37,6 +39,33 @@ static void get_cpu_machine_subfuntions(struct kvm_vm *vm,
+>  	TEST_ASSERT(!r, "Get cpu subfunctions failed r=%d errno=%d", r, errno);
+>  }
+>  
+> +static inline int plo_test_bit(unsigned char nr)
+> +{
+> +	unsigned long function = (unsigned long)nr | 0x100;
+> +	int cc;
+> +
+> +	asm volatile("	lgr	0,%[function]\n"
+> +			/* Parameter registers are ignored for "test bit" */
+> +			"	plo	0,0,0,0(0)\n"
+> +			"	ipm	%0\n"
+> +			"	srl	%0,28\n"
+> +			: "=d" (cc)
+> +			: [function] "d" (function)
+> +			: "cc", "0");
+> +	return cc == 0;
+> +}
+> +
+> +/*
+> + * Testing Perform Locked Operation (PLO) CPU subfunction's ASM block
+> + */
+> +static void test_plo_asm_block(u8 (*query)[32])
+> +{
+> +	for (int i = 0; i <= U8_MAX; ++i) {
+> +		if (plo_test_bit(i))
+> +			(*query)[i >> 3] |= 0x80 >> (i & 7);
+> +	}
+> +}
+> +
+>  /*
+>   * Testing Crypto Compute Message Authentication Code (KMAC) CPU subfunction's
+>   * ASM block
+> @@ -235,8 +264,13 @@ struct testdef {
+>  	u8 *subfunc_array;
+>  	size_t array_size;
+>  	testfunc_t test;
+> -	bool facility_bit;
+> +	int facility_bit;
 
-> Store 'dmc->dev' in local 'dev' variable, to make several pieces of code
-> using it shorter and easier to read.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Why change that to int here?
+
+>  } testlist[] = {
+> +	/*  PLO was introduced in the very first 64-bit machine generation.
+> +	 *  Hence it is assumed PLO is always installed in Z Arch .
+> +	 */
+> +	{ "PLO", cpu_subfunc.plo, sizeof(cpu_subfunc.plo),
+> +		test_plo_asm_block, 1 },
+>  	/* MSA - Facility bit 17 */
+>  	{ "KMAC", cpu_subfunc.kmac, sizeof(cpu_subfunc.kmac),
+>  		test_kmac_asm_block, 17 },
+
 
