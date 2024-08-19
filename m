@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-292114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D37956B47
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C8F956B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53481C220D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 971A71C2206A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD9816BE32;
-	Mon, 19 Aug 2024 12:53:02 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2872616C68F;
+	Mon, 19 Aug 2024 12:53:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AD516B3AC;
-	Mon, 19 Aug 2024 12:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FFA16BE3C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724071982; cv=none; b=uNMw9HbG8w4Lxj8xKxhzwRiW0LVG7v212jKBb5PvmlybDJxqHS7dJpMbP1e4oAdnBOMbm/ycnXKkdklA+UC129zxD5i0kmHKpLHoSQgcXUYyEkF5dxTCEuvOAFbQrkqDXi1abo6Bj/pZ1BB+vPzt4vZqDTHO3Vmv60fd+DCvha8=
+	t=1724071984; cv=none; b=M6x9ylXM4w3dzXeBJkecV98LYminy82T6MRIKTraUhOVl+frEs72bXpeillV9BD1MxseFO4G9lMy3Lmh15Iw6mrkYXr6hPDZcT35I4vOzoQg3raAtESB7wnhBj+eRm7sufn6efbvyC0sPK4U5dHH+uNcFpjJaLTJdCLYq3BhyWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724071982; c=relaxed/simple;
-	bh=LQrjW2DfJxg9W0ZJD1zXVuq95BIrA3U9FWfRRc4f4MM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSI4E6V7ppCvgHSRubSj15gMMu4V63u8qt/ZWk6SUD4Sb4jW+8nh8lrc+eANV3xvK7Xvs1u8XAwnADgQQER1d/GBO5AVNitroRYG4GIUu6OwqmfQOjKZA2uKkcQpQBANL8faXhcJ0VMs8sYQdS4z5N6Hca/aYFQpwgqFeYOwHMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-429e29933aaso32347785e9.0;
-        Mon, 19 Aug 2024 05:53:00 -0700 (PDT)
+	s=arc-20240116; t=1724071984; c=relaxed/simple;
+	bh=X5pABsohzN992YgymNgdYOqRC/dy+WQh62GZDXUg3y0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bQuDOs237xJvZDN3NyUS8uEDJGQesng+qTSzI7MVz5vJc8mUmhl7h8oAX6YkQCiBDTirrYPl9vkaycPs8nOTFWl/Yr4xLaoQT8GrYbTxt9phaenIvVo/v4hjfjTsHiH223VQrnKd/zqPh2l0AmeWlGu30xcj00Kj3KNw2s6iLf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-824cae494e3so407115539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:53:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724071979; x=1724676779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXCaTISKENHdz0jLwxzg835EYPXDRfoyijdiHgRnBeI=;
-        b=L3ql50cBjqBZO67GI2WWPlGfovXjk9ZAsvKQDgucgCeFfD7GzOnWZInM4enPFLrmbW
-         oRp2Llhiy+iDU/XDSlr22dnnhIuaAvYqz1xHHYFZk6/jx519UFtUenn/c8P5H+ywnbI2
-         eas/2ci4nXHiSCz7ZBuihw4ji4xJl2lzR74OCP45VO7CV7MExb9kCR6TWeuncgGH6dgu
-         fdDP7iKPrzyTQ9h7b+l35ahu6cywyhy0J8KJK3F807ON+AbEgoqjcvS1CkHXvnlXTTUr
-         Y37SuPZTqCktCyuf0P+lN0oiUoqbOXSGVkV5g2Z2TTuZJQjtgdHpNvxhtEqm/I6yJKxy
-         DuGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/K1VCs64/qOTWrMHDMNIZ98F4MFwP8jA+tLSCkioAxo+ff6WfHFGvsvsqXeqK/OmDZv348aMMbt3FAPOW1I6DQcanIh93FXLry9x879TMamTdFcvi7Z1rFTR5RTCbBGCnSw5WUZnSRrtVHVzCXdfywDKZ0rVL9iVV3iNZ5JZtyxpwdHReU3hlYK+Rg3yfkT+bbpkTeeisjP5wzed3lrFG0Jifa8a7Z/Y=
-X-Gm-Message-State: AOJu0YyWKnmKrcpRPcLQ56HE5rD9sUXAX15/FkcQNooclnb0UlwPheTJ
-	kPsdiaHelv3Z0Lc0kCW3dsKIhZsE5fvmALsetFFRhOLy2uXuvMTW
-X-Google-Smtp-Source: AGHT+IHo55QPwPgzGcTcFGwxtp0bdCvSuUcZoxolgjxKqkV5JJ3TofgJJ7gUigo4bQ8LxtEJt6jpEA==
-X-Received: by 2002:a05:6000:1286:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-37194315077mr6153147f8f.4.1724071978884;
-        Mon, 19 Aug 2024 05:52:58 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718983a13esm10500687f8f.22.2024.08.19.05.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 05:52:58 -0700 (PDT)
-Date: Mon, 19 Aug 2024 14:52:55 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 04/14] Input: samsung-keypad - use struct_size() helper
-Message-ID: <6gwb3xrviwjn2bsztrxibsx6qnfac3xxhyxb3kekh4adtdlw7m@n3xqf6ldqsrd>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-5-dmitry.torokhov@gmail.com>
+        d=1e100.net; s=20230601; t=1724071982; x=1724676782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K9Y9VvtUrbunpeMkUGrnk1PlairEHkTWeoZ7yal3l60=;
+        b=RI2q8MiPEoZjE5//w44be6W5KkooR2Br0UIUU7Mdg/ake0VQJP+6FByUfWpgekO2iU
+         Tbrzqy+CGgT1gE5AHl2zXLKykWNyoY2Vvtdm8tLsen86LrXhoAkGgbbZlHg7lFB0K5gm
+         VyZuR9H4DYhr1ryIdVblrUFcFvLIolOIs/ARPT00hlrSHyNHrIdAqFOAfIV3dHyLyZQu
+         WgUWuQBA04WsimaKXnOZtQKQFD023OMG0Dx6so2sjuJvr5+MhoTVdK+hWUidb2mgANe1
+         5XLhVEcASMyifynvnTA7YCkqkPAaN7BjD61wB4i4RVx5pGBKwoK0WjrhjIRjYODn++jx
+         sXvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzncE2cGBolZISvGvX9FVGXQaWhjOrDHWkocX5686hUzQfOzwFzLduhxfvakJIz3L8q6j8ueXzD3bCxm55GTIBrrjovtbhxN+BLYpi
+X-Gm-Message-State: AOJu0YwcV0p3LB00pkfYGbPfMZRVSlpCRpN8Z2VTTHhrEuOS4kRAseZq
+	YwX95pCx+I+zfP/Zpg/LwZLOz+gn5o4bFPwWIrX5rdRmSFRM09G82/Q6ZISWFN2LjCZgTNkABUK
+	T3TP97H6hg+Pk9Zm5jrxd8pv1LoqLPwBea89zq2e+tncm4u3qFrvtVps=
+X-Google-Smtp-Source: AGHT+IE1XgiBtkhxIO3hlcxpa9C6S8mIBn17MQjyMAA+VTY+qvp5T29PhcHOc/oH/vldkMe/Fd1kVjMEiAwQVvGzB9bxnFmR6OcC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240819045813.2154642-5-dmitry.torokhov@gmail.com>
+X-Received: by 2002:a05:6602:1541:b0:7f9:3fd9:ccf with SMTP id
+ ca18e2360f4ac-824f26fb839mr27386139f.2.1724071982380; Mon, 19 Aug 2024
+ 05:53:02 -0700 (PDT)
+Date: Mon, 19 Aug 2024 05:53:02 -0700
+In-Reply-To: <tencent_E16C702F5D6FE89404EB76ED62CECC783A0A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013c5aa062008ca65@google.com>
+Subject: Re: [syzbot] [ext4?] [ocfs2?] KASAN: null-ptr-deref Write in jbd2_journal_update_sb_log_tail
+From: syzbot <syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 18, 2024 at 09:58:01PM -0700, Dmitry Torokhov wrote:
-> When allocating memory for the keypad use struct_size() helper to be
-> protected from overflows.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/keyboard/samsung-keypad.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Hello,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Best regards,
-Krzysztof
+Reported-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
+Tested-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         c3f2d783 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14739d83980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14ef258d980000
+
+Note: testing is done by a robot and is best-effort only.
 
