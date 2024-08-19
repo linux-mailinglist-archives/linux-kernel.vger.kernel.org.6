@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-292179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89D0956C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFD2956C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DABA28660E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EF31F23761
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35299184528;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157B186E2F;
 	Mon, 19 Aug 2024 13:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bNLyT1w3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcKCEon0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B6A16C6A4;
-	Mon, 19 Aug 2024 13:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D6C16D338;
+	Mon, 19 Aug 2024 13:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074051; cv=none; b=UnkC6KlyZvcfhh+bsvAdZhUhXBMHykGruBPL6AJ58hgD/GSIWHQ2+6fjAw28/ZfjzTaVCr5ED04XDQaH2oL7mKVF23HH2pPIdDKgAATxNZrDm+NwMHQKuoH85bGhf8g6bpYnt15MDS5p3mT+7tQh6tCzkn8F/Z+qQJiUu+m5ir4=
+	t=1724074052; cv=none; b=lqMBv7xI1miZbSCeaL3+YXHdUj6AJSGq/cW3zBBYhvrGitb1zSN+UHf8F5uEaOePwoyC3FQMnG8RqRDaoiETmaP2mNh1XbjZSe+dmDSn5cVeXQNoQIuXh5QbVZaE1j6LkJ0jnDCnWms3WCSM0RvVTwFXbtf59s66/YeSrzMGzOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074051; c=relaxed/simple;
-	bh=B0j9K7GExfGAYgBtrNjM7+7B0fWDAGcEaGcch0O+NvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raq+WC7emr8neFDp/sHx/bHytY8HMpP9cRVneUs/q0GnR0+JkjSUJrvLBZusnHC0/GLEzO+GLrDv0QWmAryCV64mg64knrFO8pSrdj+EpJ5+wDGdqjHTodI/3RB3UvOTSEZPtVdVvHlqEG/VnbdyS/+O2hbdfkb0aYxmXPEPt9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bNLyT1w3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LWdTs2tc0joo/WW6zTQm3aElIk2DM2kN2a+neksw0uw=; b=bNLyT1w3Az6D+2sNOx6lY8pTfP
-	MJjPmPbKd4+Mj6bm/OqYOWNKnt2UqCAYLXxwD+1foeEIARC1FDdVbySs7r97LMWWcc6eZZWBJoWaZ
-	yFqu51bdUcSnSb7Gp8BPI3JLvByteoWm8nURRcstAkysKg5PA8cO4MUwjhBcOC/bqlbQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sg2Pl-00575a-Eh; Mon, 19 Aug 2024 15:27:17 +0200
-Date: Mon, 19 Aug 2024 15:27:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Pieter <vtpieter@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
- change_tag_protocol support
-Message-ID: <9e5cc632-3058-46b2-8920-30c521eb1bbd@lunn.ch>
-References: <20240819101238.1570176-1-vtpieter@gmail.com>
- <20240819101238.1570176-2-vtpieter@gmail.com>
- <20240819104112.gi2egnjbf3b67scu@skbuf>
- <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
- <90009327-df9d-4ed7-ac6c-be87065421ba@lunn.ch>
- <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+	s=arc-20240116; t=1724074052; c=relaxed/simple;
+	bh=zgzzTwzV0BQY6hxtHWFGekrmc1vx8F7yvRK80HBJQrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZINxj6uJsJ60lf7+wWUfO0bDla8oGhiNUuZmTjalh+WiRGOXdKAfcK1Wt0CHR7WOMXNzCl0N5fG87xK6OU8V71EwkH/EZDot4esiMyxBkkzgr9+WGyJpujlsfk2nVVQ8r8PSA9QssrOBWJttWw197p0p3iBv0nqdWT1zKQDRFZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcKCEon0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 553EEC4AF0F;
+	Mon, 19 Aug 2024 13:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724074051;
+	bh=zgzzTwzV0BQY6hxtHWFGekrmc1vx8F7yvRK80HBJQrQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NcKCEon0okn3rFKqjw1KT+EdjKM9uNNBqtsORdLntcwecBj9BUCQdwpKIdu7Cjs4o
+	 vMLd35t7x3feSipMIKbLDHd7YWQLqIivMqAunxzVib4+86J1w6GWEEzupwjcTNgs9V
+	 LrOmwSG4AIY5XEq4ZdPOAy+wcGuluRvnBzhAnol6VCc3Y/PvPuXhf4muXpBUHs6kfK
+	 lGr/t8dvyzH5H4WrG7pIqJxvbmbM0H33wo7vKjtQzYQT7FTd2sQfGY0UB29ysdbial
+	 VAEZrisslXPLoaekPRXBKSq6vLD4vQexdSZ8HBvPNp4aMEibMBmkZScZ71RNaWM0CQ
+	 vVj6KGIE2cC2g==
+Message-ID: <e481e29c-6904-43e9-8148-402b267ecc9e@kernel.org>
+Date: Mon, 19 Aug 2024 15:27:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] OF support for Surface System Aggregator Module
+To: Hans de Goede <hdegoede@redhat.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 03:21:51PM +0200, Pieter wrote:
-> Hi Andrew,
+On 19.08.2024 1:57 PM, Hans de Goede wrote:
+> Hi,
 > 
-> > > Previously I could not use DSA because of the macb driver limitation, now
-> > > fixed (max_mtu increase, submitted here). Once I got that working, I notice
-> > > that full DSA was not a compatible use case for my board because of
-> > > requiring the conduit interface to behave as a regular ethernet interface.
-> > > So it's really the unmanaged switch case, which I though I motivated well in
-> > > the patch description here (PHY library, ethtool and switch WoL management).
-> >
-> > If its an unmanaged switch, you don't need DSA, or anything at all
-> > other than MACB. Linux is just a plain host connected to a switch. It
-> > is a little unusual that the switch is integrated into the same box,
-> > rather than being a patch cable away, bit linux does not really see
-> > this difference compared to any other unmanaged switch.
+> On 8/14/24 12:27 PM, Konrad Dybcio wrote:
+>> Wire up OF support for SSAM drivers, to use with Surface Laptop 7 and
+>> other Qualcomm-based devices.
+>>
+>> Patch 3 references compatible strings introduced in [1]
+>>
+>> [1] https://lore.kernel.org/linux-arm-msm/20240809-topic-sl7-v1-1-2090433d8dfc@quicinc.com/T/#u
+>>
+>> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > 
-> That's true in theory but not in practice because without DSA I can't use
-> the ksz_spi.c driver which gives me access to the full register set. I need
-> this for the KSZ8794 I'm using to:
-> - apply the EEE link drop erratum from ksz8795.c
-> - active port WoL which is connected through its PME_N pin
-> - use iproute2 for PHY and connection debugging (link up/down,
->   packets statistics etc.)
+> Thank you for your patch-series, I've applied the series to my
+> review-hans branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+> 
+> I did notice the following compiler warning when test building:
+> 
+> drivers/platform/surface/surface_aggregator_registry.c:278:36: warning: ‘ssam_node_group_sl7’ defined but not used [-Wunused-variable]
+>   278 | static const struct software_node *ssam_node_group_sl7[] = {
+>       |                                    ^~~~~~~~~~~~~~~~~~~
+> 
+> One way to fix this would be add #ifdef CONFIG_OF around the definition
+> of ssam_node_group_sl7, but then future devicetree based surface devices
+> would need more #ifdef-s so instead I've solved it by squashing in this fix:
+> 
+> diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
+> index 495cb4300617..ac96e883cb57 100644
+> --- a/drivers/platform/surface/surface_aggregator_registry.c
+> +++ b/drivers/platform/surface/surface_aggregator_registry.c
+> @@ -415,14 +415,12 @@ static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
+>  
+> -#ifdef CONFIG_OF
+> -static const struct of_device_id ssam_platform_hub_of_match[] = {
+> +static const struct of_device_id ssam_platform_hub_of_match[] __maybe_unused = {
+>  	/* Surface Laptop 7 */
+>  	{ .compatible = "microsoft,romulus13", (void *)ssam_node_group_sl7 },
+>  	{ .compatible = "microsoft,romulus15", (void *)ssam_node_group_sl7 },
+>  	{ },
+>  };
+> -#endif
+>  
+>  static int ssam_platform_hub_probe(struct platform_device *pdev)
+>  {
+> 
+> Once I've run some tests on this branch the patches there will be
+> added to the platform-drivers-x86/for-next branch and eventually
+> will be included in the pdx86 pull-request to Linus for the next
+> merge-window.
 
-Then it is not an unmanaged switch. You are managing it.
+Thanks for pointing this out. Your fix seems to be the best solution
+I can think of, so I'm all for it
 
-> If there's another way to accomplish the above without DSA, I'd be
-> happy to learn about it.
-
-Its go back to the beginning. Why cannot use you DSA, and use it as a
-manage switch? None of your use-cases above are prevented by DSA.
-
-	Andrew
+Konrad
 
