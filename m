@@ -1,274 +1,271 @@
-Return-Path: <linux-kernel+bounces-291837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B3A9567D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:07:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3599B9567D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031062835BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:07:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE072835C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5980815B147;
-	Mon, 19 Aug 2024 10:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3151315E5BE;
+	Mon, 19 Aug 2024 10:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="tL4TS3Pl";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="UkcDI0kM"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKZ7IzIH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548F433C0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724062013; cv=fail; b=jJdqAGbQUSufAXKoGiP087gk9gyYFWRMshtDk0O+b5Mbk6ws0hFeHfn6X8zA04LnhLrYEUgLc+HrGtsXPefMfoF8+BFwE0hhdJhJhsoAF89hbxA1iqvc5CtPjE8Muwwr8Jp1b/eRXLh7PCDEQfGA5e4uTjymK+R2qv9EaHtdD/A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724062013; c=relaxed/simple;
-	bh=ppk4/Q+Vahctc7Kdtar/bEDTZavW0wvoQEWjT2LYP2o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TIXGlVBmSyIDhXDaUP/7FRS988dlL0OsRzlf2W9tmBioTLxnaehTGRhlYlJVYHQbbYphfBjCDU1wveFA7T+3toWzbOZjq4sCZBWWYdBbsXdQECjJL8CHKrZsRs9OLyGsqOJyUw5fAAb0zV+5mHdQxRSXX4V8dNUpA2XE7iYaLRE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=tL4TS3Pl; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=UkcDI0kM; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: bac5e0d85e1211ef8b96093e013ec31c-20240819
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=ppk4/Q+Vahctc7Kdtar/bEDTZavW0wvoQEWjT2LYP2o=;
-	b=tL4TS3PlDO74d2zFDc2HiW99dwfdL9pybz8/D3pyC69WEvpQhW2bgUREVUFHdQ1ADbh89ysNcmHaVd52np+dpSEhJlctMk0i/BSLxr8UNvdRkRIOz6ZdI6Vjsz5KxR7DKRkjcehQMS16bSzHhzlPFcaIozDrlsPZr/CVbPugyGk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:3138db8d-f1c1-486e-9e6e-aca7f5ccf5ca,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:a83c95be-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT
-X-CID-BAS: 1,FCT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: bac5e0d85e1211ef8b96093e013ec31c-20240819
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 540931291; Mon, 19 Aug 2024 18:06:40 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 19 Aug 2024 18:06:40 +0800
-Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 19 Aug 2024 18:06:40 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cfmy/3rhwWdQpjgH0di7MLJp2QQsV1SCqMUhfadpD52Kg1BjJB37ujmTmZXC6AuTs3roFNVSBa2KqSD7hWbZaObvNHrD3W9Y7MnreX4if2IrC0Ofmd+jYU1WUDEPlss3LeQGuQNcggQvdu5kX4fTQGyVOOdV69Gj+Vb9O7nNN6nkdjyr+Z9rYV9Psoqg+loaFkK6mxQ5iBN5cIU9scKZFm/8ssqoDtwU/OrKC5JW92wV2NDtHO/3Fd4AujEqu+qK8IavRpQNrwgVOTmCFlr6eAH7h3NvHDlSpGo2tuPfdGRc83QJ1vxEc8/QwRPe756gaHKaZMplR7pvCPLv8Yja0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ppk4/Q+Vahctc7Kdtar/bEDTZavW0wvoQEWjT2LYP2o=;
- b=t+7EUlePcTNx7V01lGTG4NWUcvpTCUUUAHmPECbAenYLiGOkszKfSwP5IAwOfTYD7rWYYJYYwKxX0KpzPcSVArPQrd+H+dpUCnkLPepABG3gT95CgziboxtCBbJfi7kEA7fY/woRS8SsGh+KAtkbhMPvENzV2CTQ5gQ8HUmtI9qAYnWnA8LB7Ft32Z3ZcHtZqWQQx/kk67RO5y7U69di633i6agwcBbo7klhZHQDVFPmrfH6wLDMhc9nl4nqPO1Kfz9VKKeqVNyKU6TVRcb1bkdQ8Sx6BG3mEYXCo8XbLAqFIWdOmPgwVIYLDEK+OHrBoqid/Bzte2/alMHF32r2JQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ppk4/Q+Vahctc7Kdtar/bEDTZavW0wvoQEWjT2LYP2o=;
- b=UkcDI0kM0vzK9LdvcRSigmiQSki3H5e+1cDzY0uGAhelzQUv/OCTD1bkVCVDOZoI7slRn0CQH3xmCGlsztKU9CrqCV6MLFwFQJPiJvSfr01x9O5ncdGdvppuS9hUUgbI7fA7kn1GziULfw/hFhupIQjqIxpKfP7nB/A7tAu2Xlk=
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com (2603:1096:101:149::11)
- by SI2PR03MB6614.apcprd03.prod.outlook.com (2603:1096:4:1e5::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 10:06:38 +0000
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6]) by SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6%4]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 10:06:38 +0000
-From: =?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-To: "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	=?utf-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
-	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
-	"jkardatzke@google.com" <jkardatzke@google.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] drm/mediatek: Fix missing configuration flags in
- mtk_crtc_ddp_config()
-Thread-Topic: [PATCH] drm/mediatek: Fix missing configuration flags in
- mtk_crtc_ddp_config()
-Thread-Index: AQHazTRqvcguJzpVYEGN9WuzArW0ZrIpiAoAgAUcgYA=
-Date: Mon, 19 Aug 2024 10:06:38 +0000
-Message-ID: <4c0867e2a53b70638504438e12fb55651fe4f0d1.camel@mediatek.com>
-References: <20240703103308.10198-1-jason-jh.lin@mediatek.com>
-	 <CAAOTY__xOVgdF1iEtcbXrmnM40og8XJGZ+-5K02q58XbYY3GGQ@mail.gmail.com>
-In-Reply-To: <CAAOTY__xOVgdF1iEtcbXrmnM40og8XJGZ+-5K02q58XbYY3GGQ@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR03MB7682:EE_|SI2PR03MB6614:EE_
-x-ms-office365-filtering-correlation-id: baf7e65c-380f-48a4-d566-08dcc0369d74
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UXlLcVhRSUM2a2hvTU9TYlh3eXgzdEdtb2lXUDlPRk1iU2VmSC85OXVmZ0hL?=
- =?utf-8?B?UnIrRW5OTzdOd0thMzhjOGgzTWw2aE5GWXdGWGpXbFU5VlhYeTEvRWhJaDc5?=
- =?utf-8?B?YThkWEl2VlFmRWdTOUpwSDVHYXpBT2I3VjFaSTBwc25OZ0xSaTY2aHlUL21B?=
- =?utf-8?B?MkRiSzNsRlVhUXFMTDY2d3RDdWJsNlhYTWo0OW03V0NQMUVqa2xVTEZDT0d5?=
- =?utf-8?B?VWx4eDNEMEw3ejdYV210bE54bkd1WkNpY0xmTGNodkx4aW9kV1F2ZjRmT1dN?=
- =?utf-8?B?U2R1RmJ4bU1Md3M0cnp0VlQwdjl1T3R3ZnFVbnF6SGcyUlZ6YlZFb0pGSG1w?=
- =?utf-8?B?Q3VGQm9lUEVwVUtzMnB2OVh0Y1htS09LZjQyNHE2UFdHS0RyZEJCRkZMeklh?=
- =?utf-8?B?cGpPdExWTklaUjlHcFpVcElKQUJOMnV4bm52SWlBc3padU00S1Y5SUZ0eVp6?=
- =?utf-8?B?UXB4RnBDemp3clIraHZmbStzaDZ3SVYybWxUVUdGVTM3NEJSSEJ5ZzdjaTdx?=
- =?utf-8?B?VWhjdFEyc0hlU2VTaGJ0dUNucnU1dGpDcDY5VDYxbnZRbXl0bDI0dnJGMGIx?=
- =?utf-8?B?NlAxQzFCelVxMFpsOEZ1YjR0amQvQkV3WmppVEw5aFYvaUNrV2lyR0UwT1Mr?=
- =?utf-8?B?Wm5YeUczSytnSGMwVjVjYThhamZwLzJMWDlpRUVFVXZ6bjNibkdpYURyb1NN?=
- =?utf-8?B?cVBkMzV5SFNxMTd3c2FZSFdqcHdtTU82b2FIdm9mc1pzSWx6T1JuQjFTdXhq?=
- =?utf-8?B?V055dW5wbGJrWUN4UE9ac2o5dHM2bTVkZWN4YlZPaU9UUDkwNmZzZnZNTkxt?=
- =?utf-8?B?a3FpMzJHY09CczFJRU5KeWVDdFJzVms2ZFR5M2lCU1BWT09LYUFoNDlic1Rn?=
- =?utf-8?B?WVZhc0dTc2Qzc3U0M2txZHc1RmhqUE52WWJKc0lxaXpNdStybDU1N1Uvd1Qx?=
- =?utf-8?B?L096aVYzdEZPVGZRbFlERUJtOHpzbFg3WWV4T3l3bWl0OG5zUnRKci8rdGlv?=
- =?utf-8?B?YmVjT29JSFgzWWd2UGYyaW1sZmVPWCtmOWJtK2ZOSkRPOHJrVStNdTl2b1lM?=
- =?utf-8?B?Rk5QUm5SbHRCME1vWE9ZdFpLN3lUQzRCaC9hT3FsZkhuTWlIYkR4QmdCODFp?=
- =?utf-8?B?cUtSa25YMHJHTGpWSXBnN0JaZ3plcCsxdnJWT05iaGJ4MHZKbE5id1kyUGdY?=
- =?utf-8?B?c1NUNWozYStuSjAzSnNpQThhVUdHRjVYcWpRSzUrcjJKMi9ObzZtYVdOVFZD?=
- =?utf-8?B?SzRFdnlvNkxBTVRCcFZtT0xDL1FuNDVGZUxEa3p2dFJjMVBFWGd6a2tBbC9y?=
- =?utf-8?B?ZUk1a09CZEw3UklPY0NMZHdvWlFpaUkySUJuV0hIZFR2YjA3OGdqWWxTU1pE?=
- =?utf-8?B?V1QzbEoyT0I2eXpZUXpiZ01hWUdBRWpHWjZVanRWOE9lQi8zZ2hSQkxnNXRR?=
- =?utf-8?B?dXNaSVJGNW9pTW9mc05vK0lmK3o1YzgvMVdvSkNRTzF5Ri9xT3IycFJYTVN3?=
- =?utf-8?B?YUMrNHNJOHRRd3NyemQwYmZGQUxYSlhzSXhUakJ6ZGFaU0pMaVlHUWx4ZCtv?=
- =?utf-8?B?bEFRL3lNbXBLUVFldTBDZWpwNFdMd2l6NXFib1FaQjdVVzE5K3k0WmlzTk5m?=
- =?utf-8?B?cjN3b29xQ2M1RUhUK0dBVXNpTCtMQXljNm1zclhrMit2YzJnMitKK0t2OVNJ?=
- =?utf-8?B?eXRtQW5ua0hSWEJIeUxLbFpwbEpvaHVWM2ZzSDF6cWpNVW94L3FvTGhMRnVN?=
- =?utf-8?B?LzJyQnpyTktqSytFclU3SnRmS1pFVlZnYnNYK0hxSDRBdmhyQUt4bmx3MkRi?=
- =?utf-8?B?TmhqRTRLTVp2TjVTYm94U0U4NGs5enNGWE4xNlFkNDh0NHArRnd3MTRiOTZ1?=
- =?utf-8?B?RmFXYkl6bVZaOXk2dWJ1N25tcC9mNnlVZUdPNEcxZ0NsQ2c9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR03MB7682.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z0x5aitycWpNLzJndjA1Y3lBelJhRllULzFCUXl1bURsenVnby9qRFpHU0Ja?=
- =?utf-8?B?cVVuUGx0VzZnc3hYWFlZazJrNlpqVWZ4VUdkVzlwNUFMMDFaZXVDNnl6WTFE?=
- =?utf-8?B?ZDJQTWozSUJwak9EZG9DZit1TlNrRVdOTFR4M3dLakRXdnE4SGxYV0RuWU1s?=
- =?utf-8?B?U0NiS0I5V0JPdlhnOUFHZm9yTnFjMlNUVkRneWhEQ25lWDJrQ1ZwTVhYTG1z?=
- =?utf-8?B?V290ZmJibitQNG5sVmVjMjFIVU9PeUxxd2U5WlAvZ1c5TCt2Vi9lK1ZmK2Jk?=
- =?utf-8?B?ME1jZGhmRnU0aEJEQm5TZjBoanQvaTUrczNSdVRjVFVOaUsyTWV6VSs5Tkls?=
- =?utf-8?B?ZlA0VjB3MmcvblFxU0xpOTZiRWthTmV4UVM5anRkK2hCVnV4MWJQZWdDSGRl?=
- =?utf-8?B?Z29PaiswWHU1QVQvUDQyYndnY1A0cXdjbVkzeHVFN3hRbUZnQ3lJdTV4N21S?=
- =?utf-8?B?M2doWWVsR0lhRHRpejVRWVc0SCs3VmJwSG10ZFhTRWVPSzJMQmFCQzhNN0Zo?=
- =?utf-8?B?Z1oyK1FzdHZhSFZzaHdISklhdmF5SHNYdmhYQ2x2YWRSYW96VXJISUtKaElF?=
- =?utf-8?B?ZFBYc042b01IRnU0SmN0ZkcvUHhSY1Zyb3ZRNUhLSVMzZUdBVWk1OHRlWk8x?=
- =?utf-8?B?WUVqemFaYWpCN1d4NXViVWFwK2tEVXBhSVZpdG1mSllHZy9QYlE2TGhlMkgr?=
- =?utf-8?B?S1FoL2xPNmZiV3hxMkRnUmgvYU04aVV6TmZxbHU3MmsvVi9FRlpQeHFKUUQv?=
- =?utf-8?B?RWVKem1OZGdaeldIVnRWWGZhQzBzeVR6ZE81K2ZSYkN4dEo4WXhrR3R5dEhQ?=
- =?utf-8?B?RmdxVVZzSXBPQzZ4R3VGMDFNVjk3Y3FBRG1HaDY1eGVZWkV4aTJsc3FBcXRG?=
- =?utf-8?B?THNIcXBqUklQMmxLZ0JyMUxJWjRsZ1oyWGdRZGowTjJYbzJGejJHeklxNU1Z?=
- =?utf-8?B?RU9VMUdPM05nL1I4M0owUGY0OEMyQUE5U3BtRnl3Ym42djY1Zng2NmcrNEE5?=
- =?utf-8?B?Zm4wUFVYTkZ1VS9jbnVwWnhEK2NaYWJaa3NrelNpeGtaejNibkNLSThCVVZZ?=
- =?utf-8?B?aGxwQUVvai9pVWRJeGhUNVI1ZDFWWWk5d0dWYXZoVzZqSC9SUTJHZXlHa0Ur?=
- =?utf-8?B?TjNmN3lMa29xK25lVkhPdjZJNEo3U2JmOFphajJHUmlVOGRsVUQ1OENhVE16?=
- =?utf-8?B?Y3F5QWZDZUlLL21vdDg4dlJpdWZxUzE5a2pIZGhDV2wrMjhIbHRDSDFuU1Nr?=
- =?utf-8?B?T2R6eWtWeGhZaWN2bTYwdTl4MXNleUVPNFNRcnR2VGc1T2Y4TDQ5NlNqdHc5?=
- =?utf-8?B?bm1XV1VRL3dMaHN0c3o2Y3lIUUR6dTlNSVVsQnBubHlDTXlydUh4RzN0eXZE?=
- =?utf-8?B?NVRHYW1nMVVHbzBKKzZ3VUNKcGdxRWs4NnJ6cXBWTm9idUNRcnRueVpGTytN?=
- =?utf-8?B?bHBaemFNU1luT29FQ01pQmZLQzFZUURUMHFEYytIOWYzR3BpVHhOdVIxSUt0?=
- =?utf-8?B?Z0V6VVdoWW1ZK0E1bmpzT0luMU1FcmVGVFpxNDZXbGVoTGhHL1h0ZzVxYXNm?=
- =?utf-8?B?U0NVYmJ2TU40U0FQVUdENmMyc0JuNWRycWV4VkpzNDBTWjI5YVBTQTZmamE0?=
- =?utf-8?B?WHNZT2hURWxwTGZTQU9BMXdGR0p0WXA5MHRxN0xyM2pmaW5vMmV6bk1hYUsw?=
- =?utf-8?B?QWN3OW56Y0RKRTVzTGU1M09laFErYk04VHVZb1E5SGd5bXAzMHNxSjBsbDJD?=
- =?utf-8?B?ME5xWTZRbDhsZGI2dktRTTdKdUticzBrVEdwNHlvMXlwOGFHVGRTUkNFdWNH?=
- =?utf-8?B?ZjZVdjA0V3RndkZrTy9TWDVJbkNGTTJYYS9UVURYL0dWTDZoY3BEczBOb3M5?=
- =?utf-8?B?Uy9XMkJHeXlFc0Q0R2I0VldqRTQ0cThNY0VYMzVoU1JGbll5MjhMaHRXSHJP?=
- =?utf-8?B?UWpTZ0JCem5vMCt5RUF1WDZzYll2bHJMMWo1S01SelgrWHAzYkhEVytFQytz?=
- =?utf-8?B?QUNhZ0FPc1l2NE96R1lBZFcvdjVIbitLTG9TSUQrRjczQXZuRWZOYkJaanZu?=
- =?utf-8?B?VVRIaDVrM3dtWlpvOE1rT0Y4a1JZM21OU0pha0QyeEdKTGhqd0hpRGVsRnBn?=
- =?utf-8?B?ZGZmeU5JWjBxSFZhNEJqNXFhY01MUVpPWCtUeXBrczJBLzE4eCtxME8yRUEy?=
- =?utf-8?B?TkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3D4460E6F6680C40833AD89C9F5918F9@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9B155337
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724062043; cv=none; b=u2zzHD8GeIPawQkVK40ghiVPIsHyNBXjF2QHMhnyZpDVlAWS5IqAVI6c/v+0n9L93u2UGesWpOoKXyZK23664HfZBQJuTY5XJIbV5nDN9FYeWGBHKxHSkUUV6NCBJYo0/Vy28nLD1zl8X0T/PwKqSw4OcUQR/5wpGtzQ+AA8+LE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724062043; c=relaxed/simple;
+	bh=OTZqu9i8iFAKDxGxV/EGk1joxUnibpwyhSnuvyz/Glo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=szCPBhcC63sHvY8aX5CQPeRSoGaI2Zt+GiagsiZkOPyTZv5wYeO4rCy9Z8g19rlKV3PqYD/iuyKA2Sa0o+nJJd6QqmZbwbB0FNQ479+x++crdbBqZEBPFneGAA4uBb2FceFMG94ZYGsuwEYdVlJz6wX4nOYwXaAdNKKfMJ8vELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKZ7IzIH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724062039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EysrvIUMNy8xKCLx+ThI/nbWm4SjR6GBQthz7OLg1Ks=;
+	b=DKZ7IzIH80RWKjeubPZt5Xi75Yf6Dxi1DWx/EGE+bMIZc3B3N+Eo5wPPj9TCNJVNeOrC67
+	+kq+eDP6kyulkjU7IPZKPI23SUUrFURGKu2rV0VJEkwwDMNZGcW1CA84UiqUUD7TVsLvwU
+	RkecomOoJIWcg9CnsgkviZg04+nIq8E=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-jfLZpQn-OWuHml5UiBLxRg-1; Mon, 19 Aug 2024 06:07:18 -0400
+X-MC-Unique: jfLZpQn-OWuHml5UiBLxRg-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f0276170f9so32520701fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:07:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724062037; x=1724666837;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EysrvIUMNy8xKCLx+ThI/nbWm4SjR6GBQthz7OLg1Ks=;
+        b=qMpOBxZ1oJQW1LUvQIcTAsq4DxsTkr0YUN7JOG1KxxKbv/liVwoav/CQT6xTVRA+3U
+         tsqfHWVEMXNtLNjeyGpRyQlLOyRH0hZxaTGT5E2hc/ha9niwlPlRcGFxi4uXqMjMs+ey
+         XhzyhN5DIEgvsJHbJDo8EgNdvpuc1spRu8SUq9TK/rs+EMTPGBOxMRN7OIK++0odxRHe
+         DS5t9Dy/yHnHHZ4ulZ2Oyiqr1674xHv31+boCkrbwf3qG6uBkrXjfQKK3l7gNPAeDV39
+         6yw/StfVXkBQkcKoYWov9uNERIDMKF7eWIBxI4k1IsvRZXvHtZDEIlwAb0kfctQV8KuQ
+         FjIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGPUgNt2N0t9Ve9Rx0JTD72d+z2xPoNn7Iyuqsgg2JE7Jiil5M6L1g6o+0EzYZiXsITd9ZOzqns2oYBM3SV1lrYVOTomNyJfjVP8pV
+X-Gm-Message-State: AOJu0YxOzYMlClPv3x5QaQSa5mVLy1z9FVZijoRoEDIj1pzyx69Nf6Ul
+	whXVAyzdUz+FIBSfva+xaw6y1z9E2WgBMjWUtdI/cbNYG0QcCFQ6gVTaVKBAcdHbqLWx8CCUQ0q
+	isCLtowEq099EnQRG//ReBEa6qFCVNKSCTOGm0UoX4hYj19lFPVLDFx3xpF2rfw==
+X-Received: by 2002:a2e:a9a0:0:b0:2f3:cabc:6158 with SMTP id 38308e7fff4ca-2f3cabc61b1mr52175261fa.11.1724062036877;
+        Mon, 19 Aug 2024 03:07:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTmhw3ITrEcIYKIb9VYX/r0K+S8SOMAw2LuUQxopyVE1WDUaUhvcIikl2IOIXVop8d3wWtIg==
+X-Received: by 2002:a2e:a9a0:0:b0:2f3:cabc:6158 with SMTP id 38308e7fff4ca-2f3cabc61b1mr52174991fa.11.1724062036210;
+        Mon, 19 Aug 2024 03:07:16 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbdfa4f1sm5371237a12.43.2024.08.19.03.07.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 03:07:15 -0700 (PDT)
+Message-ID: <4012a5af-c575-4c83-857b-2e922c3cd1de@redhat.com>
+Date: Mon, 19 Aug 2024 12:07:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR03MB7682.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: baf7e65c-380f-48a4-d566-08dcc0369d74
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 10:06:38.2006
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: P09Iqwkd1PEtfUxqVgJdvnVzYLqusx2NBA6OXnbNU73fUCYOLY8DVBvy8MWStA7u5G+ONYIrTon0rTg5shPFkpWnxP0HKT1AYFRJUrDKNBA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB6614
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86: intel/pmc: Remove unused param idx from
+ pmc_for_each_mode()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Xi Pardee <xi.pardee@linux.intel.com>,
+ Rajvi Jingar <rajvi.jingar@linux.intel.com>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Kane Chen <kane.chen@intel.com>, =?UTF-8?Q?Marek_Ma=C5=9Blanka?=
+ <mmaslanka@google.com>
+References: <20240806083047.1562-1-ilpo.jarvinen@linux.intel.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240806083047.1562-1-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgQ0ssDQoNCj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2NydGMuYw0K
-PiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfY3J0Yy5jDQo+ID4gQEAgLTMx
-NCwzMCArMzE0LDMyIEBAIHN0YXRpYyB2b2lkIGRkcF9jbWRxX2NiKHN0cnVjdCBtYm94X2NsaWVu
-dA0KPiAqY2wsIHZvaWQgKm1zc2cpDQo+ID4NCj4gPiAgICAgICAgIHN0YXRlID0gdG9fbXRrX2Ny
-dGNfc3RhdGUobXRrX2NydGMtPmJhc2Uuc3RhdGUpOw0KPiA+DQo+ID4gLSAgICAgICBzdGF0ZS0+
-cGVuZGluZ19jb25maWcgPSBmYWxzZTsNCj4gPiArICAgICAgIGlmICghbXRrX2NydGMtPmNvbmZp
-Z191cGRhdGluZykgew0KPiA+ICsgICAgICAgICAgICAgICBzdGF0ZS0+cGVuZGluZ19jb25maWcg
-PSBmYWxzZTsNCj4gDQo+IEkgdGhpbmsgaWYgbXRrX2NydGMtPmNvbmZpZ191cGRhdGluZyA9PSB0
-cnVlLCB0aGUgd2hvbGUgY2xlYXIgam9iDQo+IGNvdWxkIGJlIHNraXBwZWQuDQo+IEFuZCB1c2Ug
-c3Bpbl9sb2NrIHRvIHByb3RlY3QgdGhlIGNsZWFyIGpvYiBpbiBpcnEuDQo+IA0KPiAvKg0KPiBz
-cGluX2xvY2soKToNCj4gaWYgKG10a19jcnRjLT5jb25maWdfdXBkYXRpbmcpIHsNCj4gICAgICAg
-ICBzcGluX3VubG9jaygpOw0KPiAgICAgICAgIGdvdG8gb3V0Ow0KPiB9DQo+IA0KPiAvKiBjbGVh
-ciBqb2IgKi8NCj4gDQo+IHNwaW5fdW5sb2NrKCk7DQo+ICovDQo+IG91dDoNCj4gDQo+IEluIG10
-a19jcnRjX2NvbmZpZ191cGRhdGUoKSwgdXNlIHNwaW5fbG9jayB0byBwcm90ZWN0IG10a19jcnRj
-LQ0KPiA+Y29uZmlnX3VwZGF0aW5nOg0KPiANCj4gc3Bpbl9sb2NrKCk7DQo+IG10a19jcnRjLT5j
-b25maWdfdXBkYXRpbmcgPSB0cnVlOw0KPiBzcGluX3VubG9jaygpOw0KPiAuLi4NCj4gc3Bpbl9s
-b2NrKCk7DQo+IG10a19jcnRjLT5jb25maWdfdXBkYXRpbmcgPSBmYWxzZTsNCj4gc3Bpbl91bmxv
-Y2soKTsNCj4gDQoNClRoYW5rcyBmb3IgdGhlIHJldmlld3MuDQoNCkkgdGhpbmsgdGhhdCdzIG1v
-cmUgc29saWQgdG8gcHJvdGVjdCB0aGUgdXBkYXRpbmcgY29uZmlnIG9mIGNtZCBidWZmZXIuDQoN
-Ckkgd2lsbCBhbHNvIGFkZCBzcGluX2xvY2sgZm9yIHRoZSB3aG9sZSBzdGF0ZW1lbnQgaW4NCm10
-a19kcm1fZmluaXNoX3BhZ2VfZmxpcCgpIGJlY2F1c2UgY29uZmlnX3VwZGF0aW5nIGZsYWcgaXMg
-Y292ZXJlZCB0aGUNCnBlbmRpbmdfbmVlZF92YmxhbmsgZmxhZy4NCg0KUmVnYXJkcywNCkphc29u
-LUpILkxpbg0KDQo+IFJlZ2FyZHMsDQo+IENodW4tS3VhbmcuDQo+IA0KPiANCj4gPg0KPiA+IC0g
-ICAgICAgaWYgKG10a19jcnRjLT5wZW5kaW5nX3BsYW5lcykgew0KPiA+IC0gICAgICAgICAgICAg
-ICBmb3IgKGkgPSAwOyBpIDwgbXRrX2NydGMtPmxheWVyX25yOyBpKyspIHsNCj4gPiAtICAgICAg
-ICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSA9ICZtdGtfY3J0Yy0NCj4g
-PnBsYW5lc1tpXTsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgbXRrX3BsYW5l
-X3N0YXRlICpwbGFuZV9zdGF0ZTsNCj4gPiArICAgICAgICAgICAgICAgaWYgKG10a19jcnRjLT5w
-ZW5kaW5nX3BsYW5lcykgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGZvciAoaSA9IDA7
-IGkgPCBtdGtfY3J0Yy0+bGF5ZXJfbnI7IGkrKykgew0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgc3RydWN0IGRybV9wbGFuZSAqcGxhbmUgPQ0KPiAmbXRrX2NydGMtPnBsYW5l
-c1tpXTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBtdGtfcGxh
-bmVfc3RhdGUNCj4gKnBsYW5lX3N0YXRlOw0KPiA+DQo+ID4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgcGxhbmVfc3RhdGUgPSB0b19tdGtfcGxhbmVfc3RhdGUocGxhbmUtDQo+ID5zdGF0ZSk7DQo+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwbGFuZV9zdGF0ZSA9DQo+IHRvX210
-a19wbGFuZV9zdGF0ZShwbGFuZS0+c3RhdGUpOw0KPiA+DQo+ID4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgcGxhbmVfc3RhdGUtPnBlbmRpbmcuY29uZmlnID0gZmFsc2U7DQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPQ0KPiBm
-YWxzZTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVzID0gZmFsc2U7DQo+ID4gICAgICAgICAg
-ICAgICAgIH0NCj4gPiAtICAgICAgICAgICAgICAgbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVzID0g
-ZmFsc2U7DQo+ID4gLSAgICAgICB9DQo+ID4NCj4gPiAtICAgICAgIGlmIChtdGtfY3J0Yy0+cGVu
-ZGluZ19hc3luY19wbGFuZXMpIHsNCj4gPiAtICAgICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8
-IG10a19jcnRjLT5sYXllcl9ucjsgaSsrKSB7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAg
-c3RydWN0IGRybV9wbGFuZSAqcGxhbmUgPSAmbXRrX2NydGMtDQo+ID5wbGFuZXNbaV07DQo+ID4g
-LSAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IG10a19wbGFuZV9zdGF0ZSAqcGxhbmVfc3Rh
-dGU7DQo+ID4gKyAgICAgICAgICAgICAgIGlmIChtdGtfY3J0Yy0+cGVuZGluZ19hc3luY19wbGFu
-ZXMpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBmb3IgKGkgPSAwOyBpIDwgbXRrX2Ny
-dGMtPmxheWVyX25yOyBpKyspIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lID0NCj4gJm10a19jcnRjLT5wbGFuZXNbaV07DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlDQo+
-ICpwbGFuZV9zdGF0ZTsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHBsYW5lX3N0
-YXRlID0gdG9fbXRrX3BsYW5lX3N0YXRlKHBsYW5lLQ0KPiA+c3RhdGUpOw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgcGxhbmVfc3RhdGUgPQ0KPiB0b19tdGtfcGxhbmVfc3Rh
-dGUocGxhbmUtPnN0YXRlKTsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHBsYW5l
-X3N0YXRlLT5wZW5kaW5nLmFzeW5jX2NvbmZpZyA9IGZhbHNlOw0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgcGxhbmVfc3RhdGUtPnBlbmRpbmcuYXN5bmNfY29uZmlnID0NCj4g
-ZmFsc2U7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIG10a19jcnRjLT5wZW5kaW5nX2FzeW5jX3BsYW5lcyA9IGZhbHNlOw0KPiA+ICAg
-ICAgICAgICAgICAgICB9DQo+ID4gLSAgICAgICAgICAgICAgIG10a19jcnRjLT5wZW5kaW5nX2Fz
-eW5jX3BsYW5lcyA9IGZhbHNlOw0KPiA+ICAgICAgICAgfQ0KPiA+DQo+ID4gICAgICAgICBtdGtf
-Y3J0Yy0+Y21kcV92YmxhbmtfY250ID0gMDsNCj4gPiAtLQ0KPiA+IDIuMTguMA0KPiA+DQo=
+Hi,
+
+On 8/6/24 10:30 AM, Ilpo Järvinen wrote:
+> pmc_for_each_mode() takes i (index) variable name as a parameter but
+> the loop index is not used by any of the callers. Make the index
+> variable internal to pmc_for_each_mode().
+> 
+> This also changes the loop logic such that ->lpm_en_modes[] is never
+> read beyond num_lpm_modes.
+> 
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/platform/x86/intel/pmc/core.c       | 18 +++++++-----------
+>  drivers/platform/x86/intel/pmc/core.h       | 10 ++++++----
+>  drivers/platform/x86/intel/pmc/core_ssram.c |  4 ++--
+>  3 files changed, 15 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+> index 01ae71c6df59..0e88a89a236a 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -728,12 +728,11 @@ static int pmc_core_substate_res_show(struct seq_file *s, void *unused)
+>  	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+>  	const int lpm_adj_x2 = pmc->map->lpm_res_counter_step_x2;
+>  	u32 offset = pmc->map->lpm_residency_offset;
+> -	unsigned int i;
+>  	int mode;
+>  
+>  	seq_printf(s, "%-10s %-15s\n", "Substate", "Residency");
+>  
+> -	pmc_for_each_mode(i, mode, pmcdev) {
+> +	pmc_for_each_mode(mode, pmcdev) {
+>  		seq_printf(s, "%-10s %-15llu\n", pmc_lpm_modes[mode],
+>  			   adjust_lpm_residency(pmc, offset + (4 * mode), lpm_adj_x2));
+>  	}
+> @@ -787,11 +786,10 @@ DEFINE_SHOW_ATTRIBUTE(pmc_core_substate_l_sts_regs);
+>  static void pmc_core_substate_req_header_show(struct seq_file *s, int pmc_index)
+>  {
+>  	struct pmc_dev *pmcdev = s->private;
+> -	unsigned int i;
+>  	int mode;
+>  
+>  	seq_printf(s, "%30s |", "Element");
+> -	pmc_for_each_mode(i, mode, pmcdev)
+> +	pmc_for_each_mode(mode, pmcdev)
+>  		seq_printf(s, " %9s |", pmc_lpm_modes[mode]);
+>  
+>  	seq_printf(s, " %9s |\n", "Status");
+> @@ -833,14 +831,14 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
+>  			u32 req_mask = 0;
+>  			u32 lpm_status;
+>  			const struct pmc_bit_map *map;
+> -			int mode, idx, i, len = 32;
+> +			int mode, i, len = 32;
+>  
+>  			/*
+>  			 * Capture the requirements and create a mask so that we only
+>  			 * show an element if it's required for at least one of the
+>  			 * enabled low power modes
+>  			 */
+> -			pmc_for_each_mode(idx, mode, pmcdev)
+> +			pmc_for_each_mode(mode, pmcdev)
+>  				req_mask |= lpm_req_regs[mp + (mode * num_maps)];
+>  
+>  			/* Get the last latched status for this map */
+> @@ -863,7 +861,7 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
+>  				seq_printf(s, "pmc%d: %26s |", pmc_index, map[i].name);
+>  
+>  				/* Loop over the enabled states and display if required */
+> -				pmc_for_each_mode(idx, mode, pmcdev) {
+> +				pmc_for_each_mode(mode, pmcdev) {
+>  					bool required = lpm_req_regs[mp + (mode * num_maps)] &
+>  							bit_mask;
+>  					seq_printf(s, " %9s |", required ? "Required" : " ");
+> @@ -925,7 +923,6 @@ static int pmc_core_lpm_latch_mode_show(struct seq_file *s, void *unused)
+>  {
+>  	struct pmc_dev *pmcdev = s->private;
+>  	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+> -	unsigned int idx;
+>  	bool c10;
+>  	u32 reg;
+>  	int mode;
+> @@ -939,7 +936,7 @@ static int pmc_core_lpm_latch_mode_show(struct seq_file *s, void *unused)
+>  		c10 = true;
+>  	}
+>  
+> -	pmc_for_each_mode(idx, mode, pmcdev) {
+> +	pmc_for_each_mode(mode, pmcdev) {
+>  		if ((BIT(mode) & reg) && !c10)
+>  			seq_printf(s, " [%s]", pmc_lpm_modes[mode]);
+>  		else
+> @@ -960,7 +957,6 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+>  	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+>  	bool clear = false, c10 = false;
+>  	unsigned char buf[8];
+> -	unsigned int idx;
+>  	int m, mode;
+>  	u32 reg;
+>  
+> @@ -979,7 +975,7 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+>  	mode = sysfs_match_string(pmc_lpm_modes, buf);
+>  
+>  	/* Check string matches enabled mode */
+> -	pmc_for_each_mode(idx, m, pmcdev)
+> +	pmc_for_each_mode(m, pmcdev)
+>  		if (mode == m)
+>  			break;
+>  
+> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+> index ea04de7eb9e8..c8851f128adc 100644
+> --- a/drivers/platform/x86/intel/pmc/core.h
+> +++ b/drivers/platform/x86/intel/pmc/core.h
+> @@ -604,10 +604,12 @@ int lnl_core_init(struct pmc_dev *pmcdev);
+>  void cnl_suspend(struct pmc_dev *pmcdev);
+>  int cnl_resume(struct pmc_dev *pmcdev);
+>  
+> -#define pmc_for_each_mode(i, mode, pmcdev)		\
+> -	for (i = 0, mode = pmcdev->lpm_en_modes[i];	\
+> -	     i < pmcdev->num_lpm_modes;			\
+> -	     i++, mode = pmcdev->lpm_en_modes[i])
+> +#define pmc_for_each_mode(mode, pmcdev)						\
+> +	for (unsigned int __i = 0, __cond;					\
+> +	     __cond = __i < (pmcdev)->num_lpm_modes,				\
+> +	     __cond && ((mode) = (pmcdev)->lpm_en_modes[__i]),			\
+> +	     __cond;								\
+> +	     __i++)
+>  
+>  #define DEFINE_PMC_CORE_ATTR_WRITE(__name)				\
+>  static int __name ## _open(struct inode *inode, struct file *file)	\
+> diff --git a/drivers/platform/x86/intel/pmc/core_ssram.c b/drivers/platform/x86/intel/pmc/core_ssram.c
+> index 1bde86c54eb9..9eea5118653b 100644
+> --- a/drivers/platform/x86/intel/pmc/core_ssram.c
+> +++ b/drivers/platform/x86/intel/pmc/core_ssram.c
+> @@ -45,7 +45,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
+>  	struct telem_endpoint *ep;
+>  	const u8 *lpm_indices;
+>  	int num_maps, mode_offset = 0;
+> -	int ret, mode, i;
+> +	int ret, mode;
+>  	int lpm_size;
+>  	u32 guid;
+>  
+> @@ -116,7 +116,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
+>  	 *
+>  	 */
+>  	mode_offset = LPM_HEADER_OFFSET + LPM_MODE_OFFSET;
+> -	pmc_for_each_mode(i, mode, pmcdev) {
+> +	pmc_for_each_mode(mode, pmcdev) {
+>  		u32 *req_offset = pmc->lpm_req_regs + (mode * num_maps);
+>  		int m;
+>  
+
 
