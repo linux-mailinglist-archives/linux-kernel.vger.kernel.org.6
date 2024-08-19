@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-292739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55F69573BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50219573C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41C47B20B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988281F2420D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86C618A937;
-	Mon, 19 Aug 2024 18:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A60818990C;
+	Mon, 19 Aug 2024 18:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tf3yuuM1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d/0tM3A1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB87418991C;
-	Mon, 19 Aug 2024 18:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3604D189B97
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092832; cv=none; b=sCnf+Dtf7BhEQzWqAgLpQccpj5VGt033sq2pkL9UEuTEp77RQliUW1kNBGS2iSq/yx2ITMKe8cQ1pM9AbsiXabirAEo/9fexFjPG2bHCndvspudzuP3nO+G28r6tbDQ9nQoccpIoCToBwxv68E4O78ZZvj5rRAQThnaZoUyF1mk=
+	t=1724092864; cv=none; b=gfa7yFqunE5D2mL435quXCdjMNdsHllEt2j4/qWXNz8d6Zfxe7EwfL1uxAfe5txeQdf2/XRThB5e5Sc/J5NKujllDO7YSz/E9Qpjmi4ZT5vHvljdmuwCYWU0woWniY7qS9l3eN8yibbV6SHqg4vFww0azbDHAqrBTzgkYhC3V+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092832; c=relaxed/simple;
-	bh=ZMbADLpUAELxGABAgnkEdvEemGcRN8dlaJqTQh3jz20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzss3rAzZU99THSKMWbe88RxY5PP44Qzui7/pknI8/uKbbpscBpAb3HcYLNwP+LMBc52G19rMtdF6ECN9lk5bEmvw0+U+0SohFea8K0EXXlGZhJ5qfD2si9E6j5F6hbnvbiaZixroBIl2XOlUEeANW4Vm3N6wke/OCVO+bTcckI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tf3yuuM1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383A8C32782;
-	Mon, 19 Aug 2024 18:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724092831;
-	bh=ZMbADLpUAELxGABAgnkEdvEemGcRN8dlaJqTQh3jz20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tf3yuuM1xaQV1GST44D/askCKHwx3RLYMccgOWofU5ZQowzzd2wkHcAKj8q2/9jps
-	 dWoDaTIPRud5AuoFw1vcPgEABHC5VQ6LtZPVWI+Rd+61P7xfAM0XghusGTHqqGAXwa
-	 ZuWS1bQ5p18MAH42HP2ERd+ay+LdSVSO2DNyXUOlGZRZU+BWq8SAQ+pD1CzCsQNt0n
-	 Yl0QmavVLBDvxe1bnFz8uRC1/IMU9GRj+viqsIf26HyBNL+1YlG61oc5g45sk30HhE
-	 2aLe7pJ8xurVdeYOentskQg+vTtgtPrxjluAjbRzcxHR5eOHS8Yv8Xc/d6VU8RgR5J
-	 AKJCdvos/PpIQ==
-Date: Mon, 19 Aug 2024 12:40:28 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
-	palmer@dabbelt.com, Anup Patel <apatel@ventanamicro.com>,
-	linux-mips@vger.kernel.org, maz@kernel.org,
-	linux-riscv@lists.infradead.org, aou@eecs.berkeley.edu,
-	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-	saravanak@google.com, paul.walmsley@sifive.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3] of/irq: Support #msi-cells=<0> in of_msi_get_domain
-Message-ID: <172409282414.2143677.12162426898759329021.robh@kernel.org>
-References: <20240817074107.31153-2-ajones@ventanamicro.com>
+	s=arc-20240116; t=1724092864; c=relaxed/simple;
+	bh=EtHp0dvkqJP1sIWbjWPhI++PNyQPPV2egKwaGek1UNk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=a+Mi6lzch2NSqGgDjNHh0dJVnq6Y7kXWW8zsyms5T6cNNVX9g2QnDe76G4mTASvmpYbVe9+TQNLrC2TMC9kV5vLxJy5h9zbwFJNOYqaJB4dEyeTEpwL7Vyib2v4bYBnlAy5IAZ8+9qbOgXHf0NBZp8JSiLqVyuBWXKtdhqoVt9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d/0tM3A1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724092862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EtHp0dvkqJP1sIWbjWPhI++PNyQPPV2egKwaGek1UNk=;
+	b=d/0tM3A1KK5bKSqCLwN7KtTLEkAloKocSgLXsNPgO3fws/+Bnl9YIXuXwn2l2f2lRcBz+q
+	H2biD63H+dZJrC4yELu7Xg/DJ3J7diBgAEUumhK+f9ZNVgmKWpksR1mPX8Nw2bjWFQigAc
+	knrsfeX9sK+1Bgxsh5okbLK8gqgK8xg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-p-6e9FU6NQGsc8zERXSyNQ-1; Mon,
+ 19 Aug 2024 14:40:55 -0400
+X-MC-Unique: p-6e9FU6NQGsc8zERXSyNQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8547D1955D42;
+	Mon, 19 Aug 2024 18:40:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B149619560AD;
+	Mon, 19 Aug 2024 18:40:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240819163938.qtsloyko67cqrmb6@quentin>
+References: <20240819163938.qtsloyko67cqrmb6@quentin> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk> <3402933.1724068015@warthog.procyon.org.uk>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240817074107.31153-2-ajones@ventanamicro.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3458346.1724092844.1@warthog.procyon.org.uk>
+Date: Mon, 19 Aug 2024 19:40:44 +0100
+Message-ID: <3458347.1724092844@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Pankaj Raghav (Samsung) <kernel@pankajraghav.com> wrote:
 
-On Sat, 17 Aug 2024 09:41:08 +0200, Andrew Jones wrote:
-> An 'msi-parent' property with a single entry and no accompanying
-> '#msi-cells' property is considered the legacy definition as opposed
-> to its definition after being expanded with commit 126b16e2ad98
-> ("Docs: dt: add generic MSI bindings"). However, the legacy
-> definition is completely compatible with the current definition and,
-> since of_phandle_iterator_next() tolerates missing and present-but-
-> zero *cells properties since commit e42ee61017f5 ("of: Let
-> of_for_each_phandle fallback to non-negative cell_count"), there's no
-> need anymore to special case the legacy definition in
-> of_msi_get_domain().
-> 
-> Indeed, special casing has turned out to be harmful, because, as of
-> commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
-> as a MSI controller"), MSI controller DT bindings have started
-> specifying '#msi-cells' as a required property (even when the value
-> must be zero) as an effort to make the bindings more explicit. But,
-> since the special casing of 'msi-parent' only uses the existence of
-> '#msi-cells' for its heuristic, and not whether or not it's also
-> nonzero, the legacy path is not taken. Furthermore, the path to
-> support the new, broader definition isn't taken either since that
-> path has been restricted to the platform-msi bus.
-> 
-> But, neither the definition of 'msi-parent' nor the definition of
-> '#msi-cells' is platform-msi-specific (the platform-msi bus was just
-> the first bus that needed '#msi-cells'), so remove both the special
-> casing and the restriction. The code removal also requires changing
-> to of_parse_phandle_with_optional_args() in order to ensure the
-> legacy (but compatible) use of 'msi-parent' remains supported. This
-> not only simplifies the code but also resolves an issue with PCI
-> devices finding their MSI controllers on riscv, as the riscv,imsics
-> binding requires '#msi-cells=<0>'.
-> 
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
-> v3:
->  - switch to of_for_each_phandle() to further cleanup/simplify the
->    code [Rob]
-> v2:
->  - switch to of_parse_phandle_with_optional_args() to ensure the
->    absence of #msi-cells means count=0
-> 
->  drivers/of/irq.c | 35 ++++++++---------------------------
->  1 file changed, 8 insertions(+), 27 deletions(-)
-> 
+> I tried this code on XFS, and it is working as expected (I am getting
+> xxxx).
 
-Applied, thanks!
+XFS doesn't try to use mapping_set_release_always().
+
+David
 
 
