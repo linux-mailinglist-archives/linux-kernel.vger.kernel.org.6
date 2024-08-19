@@ -1,101 +1,80 @@
-Return-Path: <linux-kernel+bounces-292603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEB69571FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:20:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745B49571BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE91BB2BC23
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:13:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10AFC1F20FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E88B17BEC6;
-	Mon, 19 Aug 2024 17:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A67F17C992;
+	Mon, 19 Aug 2024 17:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ys22w7Ei"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QD+Lw64I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21E14AD02;
-	Mon, 19 Aug 2024 17:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533C614AD02;
+	Mon, 19 Aug 2024 17:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724087585; cv=none; b=Pzl+vCnAMI+OmMD2tfABz4VXu+euAdUTqb6FynAmXCN6bC+16SPpfIE96HLRLAARR8fiPCLJzvlHYS0PkPJzikSp2VOK2hjtgjIBQ4yYhoCKb82QDscMp5p2ZOfiJ5u9vE4zN+0EJ9jTqP8MCDZiwtU+e3VvsWn6x6/GDeowbuQ=
+	t=1724087603; cv=none; b=k797gdUmx78d6nSoaCHRgP95BxHKIbb1e+CiCOWC4hEg17WjHsey8puyB405aASsBhu/2Tu40PxBnOdib5LqyAO1l0WM3+3pbk7UaQJiHigQglrZqABKAEtzDdoLs/1ChpVNwEsIH5nwz6blGCfeT9sK5pvHuZKnhafQNmOl+ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724087585; c=relaxed/simple;
-	bh=1YUwhTkKQuYH/5TElmbzoXnn4fa4YlXoJnkDBxAa+zo=;
+	s=arc-20240116; t=1724087603; c=relaxed/simple;
+	bh=0AQJYAlIXcbZMvtZ4xKtLvaW0+JduxMJ8a48jn1+XLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rj0nfNDJ1RQYJfRF+8kjt28CwsxPCW1CqkuEKWN0D4Hc6JkzzxaJKnMQZEmbapZDaGyix4mr+fJv6D95AqjMHHi4HP0fWoTgH7+egtCdjeXoZFzaCZSE3KaAsf6m7UO2w14HVvprtz4czMOlxCVVl8Csz0zX46p6+l7I7jbRCA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ys22w7Ei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD86C32782;
-	Mon, 19 Aug 2024 17:13:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kmj1XshAaH6vgfFXunbMLcQea3PctuMVUdxQOP0D/aTLMQwIPDk/guChn3Q8ObomPZlGgz8TrSFv6XndY5NUHX9WLzjaW2+N2NiyqHVpRe3lNkeIlS5wy40lptbZkPAzcTKxcb3DmInRCyPTbZKGllCNlZ4VM1UulxWgLZaMEHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QD+Lw64I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DD5C32782;
+	Mon, 19 Aug 2024 17:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724087585;
-	bh=1YUwhTkKQuYH/5TElmbzoXnn4fa4YlXoJnkDBxAa+zo=;
+	s=k20201202; t=1724087602;
+	bh=0AQJYAlIXcbZMvtZ4xKtLvaW0+JduxMJ8a48jn1+XLQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ys22w7EiHHHRoGumTUbPFSawlSz7sDUgPDBI0K5FlkLh3SW923Fn+5EVdtrmy+1YM
-	 pb1f9NB32raKnuvPQYOyNsVXt4Olm0h7cmBcwxvfsJbfChoGXvwFg6dv+poAKJhIRc
-	 7jp0sDNQPYS2cccA81vdmR9dr11sAdZs+HNVKIzkKSJy7piE42x2qhOL8IcPAcaUuS
-	 IuHyxSkIipFeJFRB2+Bem4+z28idh91eKVRlbvT/kr95jtg/ZPzifHq5sXx24y/5ZY
-	 8elODxvlMXOPVT5zk9KVWXyckJrV1/0iYP9ZdXKqa67en/xKKvypriJrhzs9+ssvOZ
-	 SVsnDifu1MRKw==
-Date: Mon, 19 Aug 2024 18:12:59 +0100
-From: Conor Dooley <conor@kernel.org>
+	b=QD+Lw64IyUoJp6VBICF09TH2b0GfXpIJcA28OD1nPRIXiis7QIG8CdNTXNM34eY8A
+	 ry5tK+jYjdOpyJaUVEmc3aP+vtiI1DHyvH6RwbK5OfdLTlZdMQvOOCyCXFoMS7FW3c
+	 JTJ+TinmjOGib22X1WtzSmapoaArITU5r2rRnaFrUjhk2zpKECOwv3X00erfUFRapw
+	 l8sQ5ot/gNdAnj3n2+8/twPy7fVIX3+SImNW7Ra+LDNKxVBBuBknK4ra+1SYpxTAla
+	 7BF7hOfNduMyoTs8mi9WmcOpK4foSRHweCDKObYCLJyCa0i9uvVkorG8iFk5BcbWpy
+	 qjmLaCnuAEoeQ==
+Date: Mon, 19 Aug 2024 11:13:21 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: renesas,du: narrow interrupts
- and resets per variants
-Message-ID: <20240819-slam-pandemic-1e8464f8694f@spud>
-References: <20240818173003.122025-1-krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: add missing constraints
+Message-ID: <172408760022.1695969.194946037824659519.robh@kernel.org>
+References: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uDC2vKcryAk+Ed2e"
-Content-Disposition: inline
-In-Reply-To: <20240818173003.122025-1-krzysztof.kozlowski@linaro.org>
-
-
---uDC2vKcryAk+Ed2e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
 
-On Sun, Aug 18, 2024 at 07:30:02PM +0200, Krzysztof Kozlowski wrote:
-> Each variable-length property like interrupts or resets must have fixed
-> constraints on number of items for given variant in binding.  The
-> clauses in "if:then:" block should define both limits: upper and lower.
->=20
+
+On Sun, 18 Aug 2024 19:28:04 +0200, Krzysztof Kozlowski wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for reg, clocks and clock-names.
+> 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/soc/samsung/exynos-usi.yaml          | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
---uDC2vKcryAk+Ed2e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsN9GwAKCRB4tDGHoIJi
-0qPVAP98hiUU5eVPGOTJ1UGLU2LGxJEw1yP/JSQO5PogiR6iZAD/RzmaR4O4KwZp
-lvFvfmz3HHReF1QQAOG6BlAjM85Zqwk=
-=/aZ7
------END PGP SIGNATURE-----
-
---uDC2vKcryAk+Ed2e--
 
