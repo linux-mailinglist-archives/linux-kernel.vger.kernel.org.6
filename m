@@ -1,194 +1,193 @@
-Return-Path: <linux-kernel+bounces-292742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313C39573CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:45:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262F29573D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8621BB2636E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5771C2343A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6E4189F43;
-	Mon, 19 Aug 2024 18:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5400F1411E0;
+	Mon, 19 Aug 2024 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MMAfCJto"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7ei5VKY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2341D189F35
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6A2188CD9;
+	Mon, 19 Aug 2024 18:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724093003; cv=none; b=CqZdvwWpKcO/5w9QVK+yqZ0BWGxG+Aam1z+oTZm0yzJzrlxC3D0Ks9pOBzrbn9ZOtGuxR1DOaYTrmpNvCjkLaeBjKed7PgZy+2FrBdIijF4tZ9ruU/0/sv8qePtM/jCXZoC1ezHlEjQdvkM58IRZuWr8bgeHmCLIwhqlG4zZYN8=
+	t=1724093079; cv=none; b=Mdh+UTeoQTKIcYUHmlw2pdHqoytA21gFKSBSKu1CrzGqu5yrI4CO8RLPvggE2/TRH0YPE6BEd6EPuH8tWk82qDDsTiLcqdgAcWFvi4D7qTOo81qV/JMaoE0HTWAqB5t+Xi475P6CsJPW3LTc95ut021OwDV5Lmakqa6lj4U++zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724093003; c=relaxed/simple;
-	bh=ZA4Ddu6RTLMYnTBOiugiqP4MrcYzD3TCTNr77tOlBZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OkeOzegOkfAzASq/KY/6KGVUikUCleD0ZkNCI+v7lb19ZaLZ0G0VsAyohEqXxXFKSNZCNsyOOb5+AgzBSuEHyHPfQgYT636S/vE7FfE6CJCQM6xfma4sJ4nbMNb2KEKnfAsmbDktBkBrUVhst/S0FzVTpFC5z4mY1y3+IMkGsk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MMAfCJto; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724093001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntqvq2bnjwCbw4hyu3UVPxjEzgOFDjLoy4IE9avUl8U=;
-	b=MMAfCJtonQ9zW9qaXfWfVCzAPlUogMqrpX8C8N997br7hvV0L72AJht/IOFwTcJ0ZhBGvh
-	cJGD6G+MvmpF2jQ9fGbbwJc2KX2cVXUpbKPk5mpUg2ila2ankDAn0Z843P33cJEHhxzH+1
-	kOJpe6aV1zqirA1yi2Ce4EzcWHohlJc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-284-Q3HetUM8MQuL4Fd7RTJerQ-1; Mon,
- 19 Aug 2024 14:43:13 -0400
-X-MC-Unique: Q3HetUM8MQuL4Fd7RTJerQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F8B71955BFE;
-	Mon, 19 Aug 2024 18:43:10 +0000 (UTC)
-Received: from [10.2.16.112] (unknown [10.2.16.112])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5EC7D1955F44;
-	Mon, 19 Aug 2024 18:43:07 +0000 (UTC)
-Message-ID: <ca2721e6-b134-41a1-b303-988ddfe057b1@redhat.com>
-Date: Mon, 19 Aug 2024 14:43:07 -0400
+	s=arc-20240116; t=1724093079; c=relaxed/simple;
+	bh=IKWmLhqc4HOpXiXkRyYaCMwW6DA4gOKTOvY5fmT89wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVrqAFnxHycjADkT5R5CYqiOpEwv9kA2nu3vFTgg4iCiWMPsxHkKVMShl+WBtgRe9RbzoiE3OqorqEfZwWpBE2f8mq3HB7F/nuXuSRV1aMhg0lPuBeQPkkJFB3CaiH5Oy1sS3ZkdBsfMGQ0VO4U+7zp09TLa1XoHIMKot7u4dL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7ei5VKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E26B8C32782;
+	Mon, 19 Aug 2024 18:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724093079;
+	bh=IKWmLhqc4HOpXiXkRyYaCMwW6DA4gOKTOvY5fmT89wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K7ei5VKYMDzSGgV9i3asrWoMeBu383Lrjd2edttkn232HkXGW7Ez+FtOEaedNUT5N
+	 BCynaXPpDAhxoTnukSFFV3MoFeHa3biDvdlpiwUeLVpPM8oDWPEzCDUXK98tjkU+C2
+	 bWSVSmxFC2fz25AfEIPSN2WodpoqFOy6JX2KqcYftJGTdWs/FrcrDicjb19rE2Va1L
+	 +dUcto/YO85GX9hFc9S7U+8F6cLoUgs2DZc6zQoqdSUr7/trlQuL437Jkf2vWVw4T3
+	 xB6UmSavQDGeilqhbMklajFJVuYb/Yu/Hn59O2K6oOEIXhO9QGncrx94Yw+PEanw4X
+	 luNDH0OSETuLQ==
+Date: Mon, 19 Aug 2024 11:44:38 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
+	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH V4 2/2] xfs: Fix missing interval for missing_owner in
+ xfs fsmap
+Message-ID: <20240819184438.GR865349@frogsfrogsfrogs>
+References: <20240819005320.304211-1-wozizhi@huawei.com>
+ <20240819005320.304211-3-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 3/3] cgroup/cpuset: remove use_parent_ecpus of
- cpuset
-To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240816082727.2779-1-chenridong@huawei.com>
- <20240816082727.2779-4-chenridong@huawei.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240816082727.2779-4-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819005320.304211-3-wozizhi@huawei.com>
 
-On 8/16/24 04:27, Chen Ridong wrote:
-> use_parent_ecpus is used to track whether the children are using the
-> parent's effective_cpus. When a parent's effective_cpus is changed
-> due to changes in a child partition's effective_xcpus, any child
-> using parent'effective_cpus must call update_cpumasks_hier. However,
-> if a child is not a valid partition, it is sufficient to determine
-> whether to call update_cpumasks_hier based on whether the child's
-> effective_cpus is going to change. To make the code more succinct,
-> it is suggested to remove use_parent_ecpus.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+On Mon, Aug 19, 2024 at 08:53:20AM +0800, Zizhi Wo wrote:
+> In the fsmap query of xfs, there is an interval missing problem:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+>  EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
+>    0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
+>    1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
+>    2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
+>    3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
+>    4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
+>    5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
+>    6: 253:16 [104..127]:           free space                          0  (104..127)               24
+>    ......
+> 
+> BUG:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+> [root@fedora ~]#
+> Normally, we should be able to get [104, 107), but we got nothing.
+> 
+> The problem is caused by shifting. The query for the problem-triggered
+> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
+> unknown space in bnobt), which is obtained by subtraction (gap). For this
+> scenario, the interval is obtained by info->last. However, rec_daddr is
+> calculated based on the start_block recorded in key[1], which is converted
+> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
+> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
+> <= info->next_daddr, no records will be displayed. In the above example,
+> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
+> are reduced to 0 and the gap is ignored:
+> 
+>  before calculate ----------------> after shifting
+>  104(st)  107(ed)		      12(st/ed)
+>   |---------|				  |
+>   sector size			      block size
+> 
+> Resolve this issue by introducing the "end_daddr" field in
+> xfs_getfsmap_info. This records key[1].fmr_physical at the granularity of
+> sector. If the current query is the last, the rec_daddr is end_daddr to
+> prevent missing interval problems caused by shifting. We only need to focus
+> on the last query, because xfs disks are internally aligned with disk
+> blocksize that are powers of two and minimum 512, so there is no problem
+> with shifting in previous queries.
+> 
+> After applying this patch, the above problem have been solved:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+>  EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
+>    0: 253:16 [104..106]:      free space                        0  (104..106)           3
+> 
+> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
 > ---
->   kernel/cgroup/cpuset.c | 30 ++++--------------------------
->   1 file changed, 4 insertions(+), 26 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 8be0259065f5..71c24542966b 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -185,12 +185,6 @@ struct cpuset {
->   	/* partition root state */
->   	int partition_root_state;
->   
-> -	/*
-> -	 * Default hierarchy only:
-> -	 * use_parent_ecpus - set if using parent's effective_cpus
-> -	 */
-> -	int use_parent_ecpus;
-> -
->   	/*
->   	 * number of SCHED_DEADLINE tasks attached to this cpuset, so that we
->   	 * know when to rebuild associated root domain bandwidth information.
-> @@ -1505,11 +1499,8 @@ static void reset_partition_data(struct cpuset *cs)
->   		if (is_cpu_exclusive(cs))
->   			clear_bit(CS_CPU_EXCLUSIVE, &cs->flags);
->   	}
-> -	if (!cpumask_and(cs->effective_cpus,
-> -			 parent->effective_cpus, cs->cpus_allowed)) {
-> -		cs->use_parent_ecpus = true;
-> +	if (!cpumask_and(cs->effective_cpus, parent->effective_cpus, cs->cpus_allowed))
->   		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
-> -	}
->   }
->   
->   /*
-> @@ -1683,8 +1674,6 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->   	spin_lock_irq(&callback_lock);
->   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->   	list_add(&cs->remote_sibling, &remote_children);
-> -	if (cs->use_parent_ecpus)
-> -		cs->use_parent_ecpus = false;
->   	spin_unlock_irq(&callback_lock);
->   	update_unbound_workqueue_cpumask(isolcpus_updated);
->   
-> @@ -2309,13 +2298,8 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
->   		 * it is a partition root that has explicitly distributed
->   		 * out all its CPUs.
->   		 */
-> -		if (is_in_v2_mode() && !remote && cpumask_empty(tmp->new_cpus)) {
-> +		if (is_in_v2_mode() && !remote && cpumask_empty(tmp->new_cpus))
->   			cpumask_copy(tmp->new_cpus, parent->effective_cpus);
-> -			if (!cp->use_parent_ecpus)
-> -				cp->use_parent_ecpus = true;
-> -		} else if (cp->use_parent_ecpus) {
-> -			cp->use_parent_ecpus = false;
-> -		}
->   
->   		if (remote)
->   			goto get_css;
-> @@ -2452,8 +2436,7 @@ static void update_sibling_cpumasks(struct cpuset *parent, struct cpuset *cs,
->   	 * Check all its siblings and call update_cpumasks_hier()
->   	 * if their effective_cpus will need to be changed.
->   	 *
-> -	 * With the addition of effective_xcpus which is a subset of
-> -	 * cpus_allowed. It is possible a change in parent's effective_cpus
-> +	 * It is possible a change in parent's effective_cpus
->   	 * due to a change in a child partition's effective_xcpus will impact
->   	 * its siblings even if they do not inherit parent's effective_cpus
->   	 * directly.
-> @@ -2467,8 +2450,7 @@ static void update_sibling_cpumasks(struct cpuset *parent, struct cpuset *cs,
->   	cpuset_for_each_child(sibling, pos_css, parent) {
->   		if (sibling == cs)
->   			continue;
-> -		if (!sibling->use_parent_ecpus &&
-> -		    !is_partition_valid(sibling)) {
-> +		if (!is_partition_valid(sibling)) {
->   			compute_effective_cpumask(tmp->new_cpus, sibling,
->   						  parent);
->   			if (cpumask_equal(tmp->new_cpus, sibling->effective_cpus))
-> @@ -4128,7 +4110,6 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
->   	if (is_in_v2_mode()) {
->   		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
->   		cs->effective_mems = parent->effective_mems;
-> -		cs->use_parent_ecpus = true;
->   	}
->   	spin_unlock_irq(&callback_lock);
->   
-> @@ -4194,9 +4175,6 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
->   	    is_sched_load_balance(cs))
->   		update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
->   
-> -	if (cs->use_parent_ecpus)
-> -		cs->use_parent_ecpus = false;
-> -
->   	cpuset_dec();
->   	clear_bit(CS_ONLINE, &cs->flags);
->   
+>  fs/xfs/xfs_fsmap.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> index 3a30b36779db..4734f8d6303c 100644
+> --- a/fs/xfs/xfs_fsmap.c
+> +++ b/fs/xfs/xfs_fsmap.c
+> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
+>  	xfs_daddr_t		next_daddr;	/* next daddr we expect */
+>  	/* daddr of low fsmap key when we're using the rtbitmap */
+>  	xfs_daddr_t		low_daddr;
+> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
+>  	u64			missing_owner;	/* owner of holes */
+>  	u32			dev;		/* device id */
+>  	/*
+> @@ -294,6 +295,19 @@ xfs_getfsmap_helper(
+>  		return 0;
+>  	}
+>  
+> +	/*
+> +	 * For an info->last query, we're looking for a gap between the
+> +	 * last mapping emitted and the high key specified by userspace.
+> +	 * If the user's query spans less than 1 fsblock, then
+> +	 * info->high and info->low will have the same rm_startblock,
+> +	 * which causes rec_daddr and next_daddr to be the same.
+> +	 * Therefore, use the end_daddr that we calculated from
+> +	 * userspace's high key to synthesize the record.  Note that if
+> +	 * the btree query found a mapping, there won't be a gap.
+> +	 */
+> +	if (info->last && info->end_daddr != LLONG_MAX)
+> +		rec_daddr = info->end_daddr;
+> +
+>  	/* Are we just counting mappings? */
+>  	if (info->head->fmh_count == 0) {
+>  		if (info->head->fmh_entries == UINT_MAX)
+> @@ -946,6 +960,7 @@ xfs_getfsmap(
+>  
+>  	info.next_daddr = head->fmh_keys[0].fmr_physical +
+>  			  head->fmh_keys[0].fmr_length;
+> +	info.end_daddr = LLONG_MAX;
+>  	info.fsmap_recs = fsmap_recs;
+>  	info.head = head;
+>  
+> @@ -966,8 +981,10 @@ xfs_getfsmap(
+>  		 * low key, zero out the low key so that we get
+>  		 * everything from the beginning.
+>  		 */
+> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
+> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
+>  			dkeys[1] = head->fmh_keys[1];
+> +			info.end_daddr = dkeys[1].fmr_physical;
 
-LGTM
+Another problem that I found while testing this out is that if
+dkeys[1].fmr_physical extends a little bit beyond the end of what the
+filesystem thinks is the device size, this change results in fsmap
+reporting an "unknown" extent between that end point and whatever the
+user specified as fmr_physical.
 
-Reviewed-by: Waiman Long <longman@redhat.com>
+IOWs, let's say that the filesystem has 67G of space and 16G AGs.  This
+results in 4x 16G AGs, and a runt AG 4 that is 3G long.  If you initiate
+an fsmap query for [64G, 80G), it'll report "unknown" space between 67G
+and 80G, whereas previously it did not report that.  I noticed this due
+to a regression in xfs/566 with the rtgroups patchset applied, though it
+also seems to happen with that same test if the underlying device has a
+raid stripe configuration that causes runt AGs.
 
+I think this can be fixed by constraining end_daddr to the minimum of
+fmr_physical and XFS_FSB_TO_BB(dblocks/rblocks/logblocks).
+
+--D
+
+> +		}
+>  		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
+>  			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
+>  
+> -- 
+> 2.39.2
+> 
+> 
 
