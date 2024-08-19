@@ -1,231 +1,147 @@
-Return-Path: <linux-kernel+bounces-292769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D799995741A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B2C957421
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE58284C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990F51F2417A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9434B1D54F6;
-	Mon, 19 Aug 2024 19:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43E1D54EA;
+	Mon, 19 Aug 2024 19:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bL8jOzJD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dEb37k3D"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58A726AD3;
-	Mon, 19 Aug 2024 19:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0C11891D2
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724094345; cv=none; b=NeMnksUceGjXc7nw64kUh6Fc7LlWYJdL8Og9hQBMbQfG+s/+Us36KovU10zmOtXdC7Gq9wipehse39FxG417w7n95YekGaGpEtzmdWIwl8LaruKFZT4C8AE4JzNl5L5BMrv4qRpytYQTQ14+/UNQWjrNBQS7mG2KbtZ90tC95AY=
+	t=1724094385; cv=none; b=AE8e4GjxSThS3HVFVWgVf3KiEwkxcydYmsDK8fai+AAlJ7nhW1UYN1nwMXjeAhTRtKr9pb1PRBaENB0eUKXWfsSeFcrGYD8t58UsuTV9wbliDKGfOqKprD4F7EhMNKtVO+Ky3UMbE/sAJzYFDY+qeDM5YObZIMKbnPaVYffCTMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724094345; c=relaxed/simple;
-	bh=CLTJP9CT/7sCIJ8xHsZUBTA6B7x9HhHrdnrEr3HW0bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNYqhzDUJZAZPTSRkl1VMpB7KfHHEZe1rk2E2I9tL4YBaIZEqvRkPTmLwuWe5JR5qX5GOFwugarNqUHtzJOkSUy7IkWnPWjMrBERDLdAb8oYqBtDK8DIknEdatqZdeIARUWzgk7FQfOnFwBRBem9yqd9AiZGOPsUFpE95i7uvYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bL8jOzJD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724094343; x=1755630343;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CLTJP9CT/7sCIJ8xHsZUBTA6B7x9HhHrdnrEr3HW0bs=;
-  b=bL8jOzJDjzjZ1l7Fl+jezt+2U41+6h+YW3TQEwoIpVU7vDwejtME+hx+
-   g/nRqBC5rIujNQi2g1/pXkjKR6pL+qQ4rpNJKlus8NFrsFBsHiAoGNAD+
-   lW+G9VBNmxLwPxmEQELAdgopZ3tGrIi3XNowslZ533BEqN2ohqBE+FX0+
-   4bBStZ207P1ZIQHmjQTnRIlnYoi3VRhEwbAG0bZKkt2F7NxRHuEpIlx5L
-   7xg+pRQmkZpk4pGRAGDRUJidu8nMBeq5cNN3rmKmFrhWdIgfNpskbmLZk
-   sTfQNtsmzakOZ6Ys7kxK1aF00GKUyyiJrrEubdzBEYbND5exgs25OQKqI
-   A==;
-X-CSE-ConnectionGUID: +3UJ4wWBR7GxLEZBMMeofA==
-X-CSE-MsgGUID: dU3zvqy/RFO4/Djswab2aA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="13098808"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="13098808"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 12:05:42 -0700
-X-CSE-ConnectionGUID: aT4sIghGTiOkUK+cWy04Ow==
-X-CSE-MsgGUID: dS5yygMXQUKWZa26EgtDjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60124598"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.111.235]) ([10.125.111.235])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 12:05:40 -0700
-Message-ID: <63cfd343-763e-4f7a-a1cc-857927a7282c@intel.com>
-Date: Mon, 19 Aug 2024 12:05:38 -0700
+	s=arc-20240116; t=1724094385; c=relaxed/simple;
+	bh=VISjCPnbKrAiztzAFSiDft/7IotbQpEpNxABM+V65y4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GT8kOs65dY1cwJDpm6Mf2cA5hmFvi6yNFQ5l3+IR6hwJpVYxjgSL4G0ztuxGrirwwq/wVkHnW1qMV8geQGIrO/FoB7LjPnko3MZenNjFQBvNPZgUu9iaA4PXQrfojJvik7IzQYY0cs2uReZQ23WXoxhxk7vN8NH1A0xLWKmjlWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dEb37k3D; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so6358291a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724094382; x=1724699182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VISjCPnbKrAiztzAFSiDft/7IotbQpEpNxABM+V65y4=;
+        b=dEb37k3DTKLhz8943FgPqhFCqn/inW5/lh4q2piW4ieU3PxNsum/pDuOBxLn6OsUM+
+         eZSiU2IOIKdEbpRDk0L898hVGU9rNHKDwrni1G/vcuNyHD41NoOfFNOPO+mnsOi2i9lP
+         3srNcKxgGG4TQq2xZbsfzegoMc2h5bEDj4HP6gqn1WbhlJ83+l202SJYRkvkfuKUzZtv
+         hQezWimQM1NjAD9JlOk9yt306H0yKJLA5jPzAYAu/M3tQ5PIFHA8M41hSc5ehwsH4ZLF
+         MwDbuuwIaZ+nycZRhY89voLmmibkNPf2gJxL36zcU7mVW+dh3JIpSlhBPBjsIOQBQeDX
+         2fzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724094382; x=1724699182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VISjCPnbKrAiztzAFSiDft/7IotbQpEpNxABM+V65y4=;
+        b=PIk9y61QhDSw6isMr2gDt1IYxmuxNUy4jYEJ9h4RuEXjh4t4a3OT7UIqnOPeV4cO3m
+         yloa1hDFKPURfdSsEB562S5g8/8hHAHjAne1J961ljCdhVT4IVY37FI6nXdbEmiSsbeT
+         jbOMSpZcNVbJPncF72daIsndXgfrgoPHbKjuE97O/mYU8LbAubnZIsBxJoirQgmF3JHY
+         9q1nsAqWA5wVOB1BDVWe497UpcoCwsoYka9f8x9Vy2+G+nFJbp3eX4VJM8855qwS7K9g
+         3x1gvcg2EBxqvSE+WOgf3JZh5V9KU7FTuAd5FN4R78YEUZtUXi/OX4Yr0303puqMY7Tg
+         meOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLzc4srU1W0/jNObHNZq4tm80PoNUzWOR9rLb/VdQqzu0QDu7UOk+t67oqhkPq9YDRqAkpkBERCy6dLuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqlz+93dsEGgQVpCwYOfXxeLK0j6A2hSZHo188O1J5WJaZmFK1
+	RM7okpwHvdC4UjOs8qVCVxkNe8MmPRO2IkvvCAiBHoJWrDhyTLsvBkIIvP3+SH6c8T0R7QyCq1Q
+	9jD31zJvDvfe1ChTfu4sJpZ46LYhcZe1MwloXRHWLT4NAqnsvVA==
+X-Google-Smtp-Source: AGHT+IH0iRyJtUrU93XJ+DPiBi62y8rSBstCZOvrLtJz+l82/qtYFsRaQGGJ3beTy9fdroDR3Is5QPxMwnhk7Ke6ktU=
+X-Received: by 2002:a17:907:3f0d:b0:a7d:c464:d5f3 with SMTP id
+ a640c23a62f3a-a8643f7712amr60252866b.11.1724094381681; Mon, 19 Aug 2024
+ 12:06:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 19/25] cxl/region/extent: Expose region extent
- information in sysfs
-To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-19-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-19-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
+ <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
+ <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
+ <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
+ <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org>
+ <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com> <CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
+In-Reply-To: <CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 19 Aug 2024 12:05:44 -0700
+Message-ID: <CAJD7tkaY3FsL-9YeDuVG=QtCK-dgm71EJ2L_T3KfGUa9VW_JkA@mail.gmail.com>
+Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
+ parent cg too
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Yuan <me@yhndnzj.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 15, 2024 at 4:32=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Thu, Aug 15, 2024 at 3:10=E2=80=AFPM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 3:08=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Thu, 15 Aug 2024 12:12:26 -0700 Nhat Pham <nphamcs@gmail.com> wrot=
+e:
+> > >
+> > > > > Yeah, I thought about the other way around and reached the same
+> > > > > conclusion.
+> > > > > And there's permission boundary in the mix too - if root disables=
+ zswap
+> > > > > writeback for its cgroup, the subcgroups, which could possibly be=
+ owned
+> > > > > by other users, should not be able to reenable this.
+> > > >
+> > > > Hmm yeah, I think I agree with your and Yosry's reasonings :) It
+> > > > doesn't affect our use case AFAICS, and the code looks solid to me,
+> > > > so:
+> > > >
+> > > > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> > >
+> > > But you'd still like an update to Documentation/admin-guide/cgroup-v2=
+.rst?
+> >
+> >
+> > Yeah I'd rather see a v2 with updated docs, and hopefully a selftest
+> > if the existing tests problem is resolved.
+>
+> Ah yeah, I was thinking this could be done in a follow-up patch.
+>
+> But yes, please - documentation. Preferably everything together as v2.
+>
+> >
+> > Also, do we want a Fixes tag and to backport this so that current
+> > users get the new behavior ASAP?
+>
+> Hmm, I wonder if it's more confusing for users to change the behavior
+> in older kernels.
+>
+> (OTOH, if this already is what people expect, then yeah it's a good
+> idea to backport).
 
+My rationale is that if people will inevitably get the behavior change
+when they upgrade their kernel, I'd rather they get it sooner rather
+than later, before more users start depending on the old behavior.
 
-On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> Extent information can be helpful to the user to coordinate memory usage
-> with the external orchestrator and FM.
-> 
-> Expose the details of region extents by creating the following
-> sysfs entries.
-> 
->         /sys/bus/cxl/devices/dax_regionX/extentX.Y
->         /sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
->         /sys/bus/cxl/devices/dax_regionX/extentX.Y/length
->         /sys/bus/cxl/devices/dax_regionX/extentX.Y/tag
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes:
-> [iweiny: split this out]
-> [Jonathan: add documentation for extent sysfs]
-> [Jonathan/djbw: s/label/tag]
-> [Jonathan/djbw: treat tag as uuid]
-> [djbw: use __ATTRIBUTE_GROUPS]
-> [djbw: make tag invisible if it is empty]
-> [djbw/iweiny: use conventional id names for extents; extentX.Y]
-> ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 13 ++++++++
->  drivers/cxl/core/extent.c               | 58 +++++++++++++++++++++++++++++++++
->  2 files changed, 71 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index 3a5ee88e551b..e97e6a73c960 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -599,3 +599,16 @@ Description:
->  		See Documentation/ABI/stable/sysfs-devices-node. access0 provides
->  		the number to the closest initiator and access1 provides the
->  		number to the closest CPU.
-> +
-> +What:		/sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
-> +		/sys/bus/cxl/devices/dax_regionX/extentX.Y/length
-> +		/sys/bus/cxl/devices/dax_regionX/extentX.Y/tag
-
-I wonder consider an entry for each with their own descriptions, which seems to be the standard practice.
-
-DJ
-
-> +Date:		October, 2024
-> +KernelVersion:	v6.12
-> +Contact:	linux-cxl@vger.kernel.org
-> +Description:
-> +		(RO) [For Dynamic Capacity regions only]  Extent offset and
-> +		length within the region.  Users can use the extent information
-> +		to create DAX devices on specific extents.  This is done by
-> +		creating and destroying DAX devices in specific sequences and
-> +		looking at the mappings created.
-> diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
-> index 34456594cdc3..d7d526a51e2b 100644
-> --- a/drivers/cxl/core/extent.c
-> +++ b/drivers/cxl/core/extent.c
-> @@ -6,6 +6,63 @@
->  
->  #include "core.h"
->  
-> +static ssize_t offset_show(struct device *dev, struct device_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct region_extent *region_extent = to_region_extent(dev);
-> +
-> +	return sysfs_emit(buf, "%#llx\n", region_extent->hpa_range.start);
-> +}
-> +static DEVICE_ATTR_RO(offset);
-> +
-> +static ssize_t length_show(struct device *dev, struct device_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct region_extent *region_extent = to_region_extent(dev);
-> +	u64 length = range_len(&region_extent->hpa_range);
-> +
-> +	return sysfs_emit(buf, "%#llx\n", length);
-> +}
-> +static DEVICE_ATTR_RO(length);
-> +
-> +static ssize_t tag_show(struct device *dev, struct device_attribute *attr,
-> +			char *buf)
-> +{
-> +	struct region_extent *region_extent = to_region_extent(dev);
-> +
-> +	return sysfs_emit(buf, "%pUb\n", &region_extent->tag);
-> +}
-> +static DEVICE_ATTR_RO(tag);
-> +
-> +static struct attribute *region_extent_attrs[] = {
-> +	&dev_attr_offset.attr,
-> +	&dev_attr_length.attr,
-> +	&dev_attr_tag.attr,
-> +	NULL,
-> +};
-> +
-> +static uuid_t empty_tag = { 0 };
-> +
-> +static umode_t region_extent_visible(struct kobject *kobj,
-> +				     struct attribute *a, int n)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct region_extent *region_extent = to_region_extent(dev);
-> +
-> +	if (a == &dev_attr_tag.attr &&
-> +	    uuid_equal(&region_extent->tag, &empty_tag))
-> +		return 0;
-> +
-> +	return a->mode;
-> +}
-> +
-> +static const struct attribute_group region_extent_attribute_group = {
-> +	.attrs = region_extent_attrs,
-> +	.is_visible = region_extent_visible,
-> +};
-> +
-> +__ATTRIBUTE_GROUPS(region_extent_attribute);
-> +
->  static void cxled_release_extent(struct cxl_endpoint_decoder *cxled,
->  				 struct cxled_extent *ed_extent)
->  {
-> @@ -44,6 +101,7 @@ static void region_extent_release(struct device *dev)
->  static const struct device_type region_extent_type = {
->  	.name = "extent",
->  	.release = region_extent_release,
-> +	.groups = region_extent_attribute_groups,
->  };
->  
->  bool is_region_extent(struct device *dev)
-> 
+I am guessing there is a chance this is not what backports are meant
+for. Andrew, any thoughts on this?
 
