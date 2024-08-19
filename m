@@ -1,62 +1,71 @@
-Return-Path: <linux-kernel+bounces-292653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5549F95725E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACD2957262
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E887283E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DEA283E3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF44188CB1;
-	Mon, 19 Aug 2024 17:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C551891C3;
+	Mon, 19 Aug 2024 17:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E3YHG1wQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IRZaRE6W"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3C4D531;
-	Mon, 19 Aug 2024 17:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4898D531
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089731; cv=none; b=apHsil36Vog4lZZV2iHtTAU4bfUZh93Vv9XmAwFWH4c/K9o9GmC1EY1zyVQRg2MQ0Y/egrCtdgcTwNqAZieI1VS0KaVL2gdkbD7FBIbtm6ZM3RriE5Q8GKMjqYeLtUTg4SStDWwN/Fzph5vAcuwwdK+uryGUifsXqHvIAI53r5U=
+	t=1724089743; cv=none; b=rcNZymZ7yDYdwM7Hst8PwTxmJfdG4nEWFRcMjrJHRK6L0vzUsASPFToJsG5g8OcNcGWTjpyuzrH6xxDMgQJF956Ow5OV5K/JyCOFJKtThIjR8hDz36cJe0I2NNAuPc3uSrJMhNhRraw2g6E1N3plmkLQVRoUBMzEyIQElEbyUxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089731; c=relaxed/simple;
-	bh=ni4JnbQqKyxLORQSUYNl7oTbtxwxJwY0o1MFtkynE3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZKgmGFNtWReYIvlLZRqmP0OQN5GtH4c0pzLoed4mLS9MZgbefJEosYsW0/Nnx6S8c/tWfahu78VvhCGKv9FU1ZSsxrgMAAeKKKOzcZsRWoTLdFWUn/H30ByrmqaG5h0rje8uqNJB1cSjCDo2swC56yWBegpgVPvLe9a8KxC5q+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E3YHG1wQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCLLYQ000780;
-	Mon, 19 Aug 2024 17:48:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xb2HwpmO4diMmk7P1CzPpwyPXC67SiGk+A0s9ybBsAI=; b=E3YHG1wQSq9Z7Thc
-	HYCE9PMPpWOmZwFN9Lsh2hDQ2PpbsGxve1HKH+gycooteh9GglDQ3Ogzjoh/aMUm
-	s+uoDgZGDxLz6uy5qiSW47aqG6eer/a/IBzbIRlaXDv/FquWg+UdGVMEDTrF6Fum
-	0CHM7/JuYUn8HGh98umkKcLRM3fafqNUOa+xKnhCk3WDhxUdZtZ8ylfmCn2nVqz4
-	gutuHLip0ldTUgCHKlTPH7g4XAbs0tAczKS6Gvntgbm5b7rzk1OXl9bdWyCMzBTN
-	wl3V5D7wLTLQomuPS5qFc+ZwSBWNmxReX3pfcOwSgvz5xPw2Fj3r+Uz5AjAuNwy5
-	nRClrA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145yw8w0c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 17:48:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JHmSI7024113
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 17:48:28 GMT
-Received: from [10.216.31.248] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
- 2024 10:48:22 -0700
-Message-ID: <eb0d4f62-5dde-4a63-8515-23081ec9962c@quicinc.com>
-Date: Mon, 19 Aug 2024 23:18:15 +0530
+	s=arc-20240116; t=1724089743; c=relaxed/simple;
+	bh=hTkS8vP3YzXCEbFw1RgnxthdF3hAz+BTI113awHZorw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VeRhCNmjxU6+1wfdokNs/3FR6Kt6Ly0m37xqRUyRCEQ+I3BoDatjx7zvs+hVjPlHoIUKOVIjuUEO0FF4meeudFQ5s6Yx+icTu0ritRlSUQ7RyaOsB39VrrLi6m699eJampmKNGJjW9fgzHYWR+ToQza8bWug4mSSIJXrEPNo158=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IRZaRE6W; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1d024f775so350159685a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724089741; x=1724694541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kiYpity7QE9fjnTaEN0Otfc5NaWtjeUHbIZaw5EgeU=;
+        b=IRZaRE6W3/sgnt+/lDT3Uoi6ZTQ19xXjKsXTZJ4XJ15ZrMWTWYwnOnsjjlH0id9rm8
+         o7M2yfYkXrG4zHMfCmdfIvd0CPlB8LgBBcGyd18CBylZ5YmzFvp/ON9UCQnU4ZTB/bjU
+         bKbSpqVlRLOmPehp0d3xkMrlE68Zq7i7P+LN4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724089741; x=1724694541;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kiYpity7QE9fjnTaEN0Otfc5NaWtjeUHbIZaw5EgeU=;
+        b=KbWpsKw1QEnDgV0f7mVPv86bMpe6xNPZG4okp9yBADtDinSNzFjMaGgJqLb9uD1gnt
+         Nqt4AEWk/G/ZWySI0pjqPuFeH/BSviWXMISWW2r7j8S8QhUfW2LMJmTAllOJvt3sVc4m
+         J1KDJT8bQldIxiAOYCMZdAs4tIB3bL6PvcH0Mutk6GG2a52ksJ2FVqZkLxoFbc/cGm2c
+         mNv/gWLOtsPPY4qnELR4Y2P3TQiWtq4pdiOPTQla6kTln/6wryeTQiIn5vPP7OMSAV1Q
+         C8/MsK+jUJyrLvDMf9ePi2EIa/ssuc6QD1e0715EevPNl/pWjhcZ31vn4s81H0a1ooLO
+         zxAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPNdrsdwB9ZeWcbfAcrqZaa2qPqSB/8PlYpjOFMDdlPKanqMsqB/upegZTotDRB+SUl9msE/GMTvpbs9JYmUnQKm6KQg0Oucac2z5c
+X-Gm-Message-State: AOJu0Yw6QlWXKsA/XdTWLfJ1pVVj/11EE9GWRm7AG57QZA/3GHOIHMRL
+	l7aBRWqRg+i9OSIcczb/FLQJfuUWNOUEHr1yhX1uh76Nc3EKNpMdRup1QMtneg==
+X-Google-Smtp-Source: AGHT+IEjyKNVNzbiz9tq6nMYcRZoQu3gCMdJn9f0E8cT9KI+QQeYl6RdoIIb8dSnN6MK5wEoCPF6AQ==
+X-Received: by 2002:a05:620a:4312:b0:79c:fbf:6381 with SMTP id af79cd13be357-7a5069df09cmr1005035485a.70.1724089740635;
+        Mon, 19 Aug 2024 10:49:00 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4536a04e4f2sm42095151cf.69.2024.08.19.10.48.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 10:48:59 -0700 (PDT)
+Message-ID: <f1e8d543-6144-4664-934c-38f988550162@broadcom.com>
+Date: Mon, 19 Aug 2024 10:48:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,131 +73,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] usb: dwc3: core: Expose core driver as library
-To: Bjorn Andersson <andersson@kernel.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>, Wesley Cheng
-	<quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Felipe Balbi <balbi@kernel.org>
-References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
- <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
+Subject: Re: [PATCH v6 00/13] PCI: brcnstb: Enable STB 7712 SOC
+To: Jim Quinlan <james.quinlan@broadcom.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240816071822.GO2331@thinkpad>
+ <CA+-6iNz4+xP4abf6w6bcVwFxvjx8OhDZXNi5bwfaCNvyF2Mtng@mail.gmail.com>
 Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Hb7xCsL2sC1qB3aglQtyQeMS9rTytYnX
-X-Proofpoint-GUID: Hb7xCsL2sC1qB3aglQtyQeMS9rTytYnX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408190120
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <CA+-6iNz4+xP4abf6w6bcVwFxvjx8OhDZXNi5bwfaCNvyF2Mtng@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 8/12/2024 8:42 AM, Bjorn Andersson wrote:
-> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+On 8/19/24 10:44, Jim Quinlan wrote:
+> On Fri, Aug 16, 2024 at 3:18 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+>>
+>> On Thu, Aug 15, 2024 at 06:57:13PM -0400, Jim Quinlan wrote:
+>>> V6 Changes
+>>>    o Commit "Refactor for chips with many regular inbound windows"
+>>>      -- Use u8 for anything storing/counting # inbound windows (Stan)
+>>>      -- s/set_bar/add_inbound_win/g (Manivannan)
+>>>      -- Drop use of "inline" (Manivannan)
+>>>      -- Change cpu_beg to cpu_start, same with pcie_beg. (Manivannan)
+>>>      -- Used writel_relaxed() (Manivannan)
+>>>    o Use swinit reset if available
+>>>      -- Proper use of dev_err_probe() (Stan)
+>>>    o Commit "Use common error handling code in brcm_pcie_probe()"
+>>>      -- Rewrite commit msg in paragraph form (Manivannan)
+>>>      -- Refactor error path at end of probe func (Manivannan)
+>>>      -- Proper use of dev_err_probe() (Stan)
+>>>    o New commit "dt-bindings: PCI: Change brcmstb maintainer and cleanup"
+>>>      -- Break out maintainer change and small cleanup into a
+>>>         separate commit (Krzysztof)
+>>>
+>>
+>> Looks like you've missed adding the review tags...
 > 
-> The DWC3 IP block is handled by three distinct device drivers: XHCI,
-> DWC3 core and a platform specific (optional) DWC3 glue driver.
 > 
-> This has resulted in, at least in the case of the Qualcomm glue, the
-> presence of a number of layering violations, where the glue code either
-> can't handle, or has to work around, the fact that core might not probe
-> deterministically.
-> 
-> An example of this is that the suspend path should operate slightly
-> different depending on the device operating in host or peripheral mode,
-> and the only way to determine the operating state is to peek into the
-> core's drvdata.
-> 
-> The Qualcomm glue driver is expected to make updates in the qscratch
-> register region (the "glue" region) during role switch events, but with
-> the glue and core split using the driver model, there is no reasonable
-> way to introduce listeners for mode changes.
-> 
-> Split the dwc3 core platform_driver callbacks and their implementation
-> and export the implementation, to make it possible to deterministically
-> instantiate the dwc3 core as part of the dwc3 glue drivers and to
-> allow flattening of the DeviceTree representation.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> I didn't mention this in the cover letter but I update the review tags
+> at each version.  The problem is that if someone has reviewed a
+> commit, and then that commit is subsequently changed due to another
+> reviewer, I have to remove the existing tag of the first reviewer
+> because the code has changed.
 
-...
+It seems to me like you did the right thing here, the changes you did 
+between v5 and v6 were substantial enough they invalidated the 
+Reviewed-by tag(s) you had gotten previously.
+-- 
+Florian
 
-> -static int dwc3_probe(struct platform_device *pdev)
-> +struct dwc3 *dwc3_probe(struct platform_device *pdev, struct resource *res,
-> +			bool ignore_clocks_and_resets, void *glue)
->   {
->   	struct device		*dev = &pdev->dev;
-> -	struct resource		*res, dwc_res;
-> +	struct resource		dwc_res;
->   	unsigned int		hw_mode;
->   	void __iomem		*regs;
->   	struct dwc3		*dwc;
-> @@ -2087,15 +2089,10 @@ static int dwc3_probe(struct platform_device *pdev)
->   
->   	dwc = devm_kzalloc(dev, sizeof(*dwc), GFP_KERNEL);
->   	if (!dwc)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->   
->   	dwc->dev = dev;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res) {
-> -		dev_err(dev, "missing memory resource\n");
-> -		return -ENODEV;
-> -	}
-
-...
-
-> +static int dwc3_plat_probe(struct platform_device *pdev)
->   {
-> -	struct dwc3	*dwc = platform_get_drvdata(pdev);
-> +	struct resource *res;
-> +	struct dwc3 *dwc;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "missing memory resource\n");
-> +		return -ENODEV;
-> +	}
->   
-> -	pm_runtime_get_sync(&pdev->dev);
-> +	dwc = dwc3_probe(pdev, res, false, NULL);
-> +	if (IS_ERR(dwc))
-> +		return PTR_ERR(dwc);
-> +
-> +	platform_set_drvdata(pdev, dwc);
-
-This setting of platform drvdata is redundant I believe. We already do 
-it in dwc3_probe.
-
-> +
-> +	return 0;
-> +}
-> +
 
