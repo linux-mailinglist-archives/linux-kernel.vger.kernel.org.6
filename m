@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-292032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9BC956A5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:06:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D4A956A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B751C2388A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02970B25DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B006116A94A;
-	Mon, 19 Aug 2024 12:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CEA16B3B5;
+	Mon, 19 Aug 2024 12:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mI/j+Mt1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQDv8JBl"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13E816A945
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B6E166F3B;
+	Mon, 19 Aug 2024 12:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069074; cv=none; b=StglYBjBJlKfwvyaMSxz34hDy4hhlX6S0airk12rQsEL/xsIQXpCjyJkeHJCi/o3kfQT4BGuvyPcVaBjj7Sq9cE8SkyapYEfT/bHKmfXJLOmQFC84Iu29+j5nPOQt4RawN7yppziAtauCq7KmYmGvqbxw9jjTyftVihRaScJPSY=
+	t=1724069142; cv=none; b=sN4b3DyX5gt8KLxhKCLtuzKvL2AsMVB1ZfOlXct4dMRfyqkfVnakAAdok1nQ6GgJxHQ92aTc2ospSspBTOYWvWCltV4vPdbP3P8XHRUE3czdKsD6yT3z+TMIpRMbReOIZnaQvEsG9hWvEF1Kzk/dHkKYMhA6GRWCmGSyKyjxaHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069074; c=relaxed/simple;
-	bh=SsjO+MHpJemunwhEQxZru+/fv1kHC5YTFwrZhper4ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLrJPQD+0VUgcbGWXedCxb+frUYXxdedS8ZKUrb5UOQY+dPT94Jq1Ahby4l7EoycaeGcDrIggbyag7EyKS65PaPdMgK3bqiVy2Wfpnp6tW9Tf9Bh4sTAkdtbz511ichdcq8pzoG+3lQApkDpIG6mP0L9LKM1s+7Ysm9deayQs0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mI/j+Mt1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF711C4AF0E;
-	Mon, 19 Aug 2024 12:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724069073;
-	bh=SsjO+MHpJemunwhEQxZru+/fv1kHC5YTFwrZhper4ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mI/j+Mt1HxJqUOluHjwz4MiixVv1yjspokyjsR0oaFWhWTVXpWPBTqbLAVxUCtDgJ
-	 b7ETe9lQW+22y+uOk/wEAOvi1R6hE1U7bRChRWAQYmT2g+bSLrERK5ogEw3sU/zjuF
-	 +VYDVdC+ciRjijRM0njNTZuuPe8AHKMwtuQ6byKPi9aetrk/PvKGTEsaTx5wV/f0BM
-	 xNQ56UzcGfsuoY54QzF0rm4kymdYr3oi3/eY395e1XcyMkBYc6294fYmaYvpSNfKwa
-	 oKt2UeCwtJFabhbDamd2ykV6RKqAmW63nGg+zDJjw0hgbqQeTpzM/nNnvPMkC6QovP
-	 f8UunMweZ838Q==
-Date: Mon, 19 Aug 2024 13:04:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-	tony.luck@intel.com, bp@alien8.de, dan.j.williams@intel.com,
-	vishal.l.verma@intel.com, dave.jiang@intel.com,
-	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-	jgg@ziepe.ca, kevin.tian@intel.com, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, hch@lst.de, sagi@grimberg.me,
-	kch@nvidia.com, marcan@marcan.st, sven@svenpeter.dev,
-	alyssa@rosenzweig.io, ulf.hansson@linaro.org,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	michal.simek@amd.com, p.zabel@pengutronix.de, ira.weiny@intel.com,
-	Jonathan.Cameron@huawei.com, shiju.jose@huawei.com,
-	xueshuai@linux.alibaba.com, manikanta.guntupalli@amd.com,
-	u.kleine-koenig@pengutronix.de, tglx@linutronix.de,
-	julien.malik@unseenlabs.fr, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next 0/8] drivers: Fix some compile warnings
-Message-ID: <9091a674-6489-4dac-8028-649ae0ca5d81@sirena.org.uk>
-References: <20240819115913.3884804-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724069142; c=relaxed/simple;
+	bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tne9pkac/3rYJu1B90R/GVpJi0/fQJ30XWjeLEe+ufB854KydSHIquRhCPA5WW9dSEz1ToL7oAXFU50L8fyWU+v9har9nXqPnEd3VG4KRedHcx0GvZ4cvVfK5eJ7uclLb4S/L5/hioBaLom2SCOSpHzzr7gmHCVoWwDYi84bGG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQDv8JBl; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5b1e33fa8so2655181eaf.3;
+        Mon, 19 Aug 2024 05:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724069139; x=1724673939; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
+        b=dQDv8JBlLER0sdSMSC6liKxX+AFl6Vzc8zGcej84xEqKj7PpR0/o6TR12wGbGajDw6
+         KV8hPyJZ8zI++U3owYKgZYKq4lpTKqELdLelAwHecY7Pble2gtuVvOhDoGQa7Jij/V5W
+         hVAoUGsdF6aVO9rMnSsoNc4M2+9CeDFeiwHC87B3eDyzr1TBtiuN5k9WR2VIYx4DztwE
+         w0sqBZyr6GjOnInfAdlcFgrIR2VoCBNDQtHoxoqNF9DlqreDTR+/4FXnHxPeWmbheumQ
+         U/AmW5W7WMNUgMZU1EVBdlpWM/5BbMuOrnQduBwKA6IuhHKVN1P/beOpwpWCMB4YHHn0
+         SQdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724069139; x=1724673939;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
+        b=lLkX295ts0GJTI56udgGvIswbnhCxGb0JYveKBl3UKzoTLyNv4ETlk2DscPREfwEq2
+         Z69vWJUrgUvz9zCfz9zDxCXMdyHpfMUBlYtdb2C9UDcRpb03JEvZDV5TxCgy4q7Cg9nt
+         MKe9Y3YzD14c9UAyKJlNrZpwOzjaqAkmLqfSaK/ubg2cvu1w+1/R+8dhhyyqMDUIztZm
+         nMEt65T1O/r+H2PZuPMjPJ+yUbgckCGJZxlP95lqoH7eEk7u3uocqkY65EjUZpMa8ImI
+         DVo8OX5cXtkKrTRmqkKkyyAGR8o2SWNvZoCABOIczFbWf8QYZwh0mJiGyd6U4KBuDY32
+         dTuw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+5MahiSdyNwGt7wEBdcvOf0Xa84KPeWq4mfCDd8mGGRzchdauTSeH8cnV/R7BnDSkQaQNC+RbMrONLXwaOq6YZPKP0qX+lZMk4ouHxmhf6HDt++HgtltLHQJrNjhrEyBcZZkE
+X-Gm-Message-State: AOJu0YxTXtdV6BFkcnziopkitk4cwE5yI2ErnZiOOads8mBYWgC8BmG5
+	K8Xd6+mN0ZlJayciDSLffUfVuarEzv8P+99ZZffAvE/OsaI49nUm/rfoyxme5IlZY0JAhTnKudR
+	AyGM6TvCxD0RfKwS3LkzwUeXR7Ws=
+X-Google-Smtp-Source: AGHT+IHkgmz5Vw9oKF8SbH3YtZC93/ypDzV6fLmUrNwA2ETAak31GBVb1OW27J2DvgVtX7OQOC0dypQkngxHERsECog=
+X-Received: by 2002:a05:6820:168a:b0:5c4:4787:1cd with SMTP id
+ 006d021491bc7-5da98026986mr10184265eaf.7.1724069139649; Mon, 19 Aug 2024
+ 05:05:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h/ND11TuP53BfgY+"
-Content-Disposition: inline
-In-Reply-To: <20240819115913.3884804-1-ruanjinjie@huawei.com>
-X-Cookie: Interchangeable parts won't.
+References: <20240819101238.1570176-1-vtpieter@gmail.com> <20240819101238.1570176-2-vtpieter@gmail.com>
+ <20240819104112.gi2egnjbf3b67scu@skbuf>
+In-Reply-To: <20240819104112.gi2egnjbf3b67scu@skbuf>
+From: Pieter <vtpieter@gmail.com>
+Date: Mon, 19 Aug 2024 14:05:26 +0200
+Message-ID: <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
+ change_tag_protocol support
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, Pieter Van Trappen <pieter.van.trappen@cern.ch>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Vladimir,
 
---h/ND11TuP53BfgY+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi Pieter,
+>
+> > - DSA_TAG_PROTO_NONE
+> >
+> > When disabled, this can be used as a workaround for the 'Common
+> > pitfalls using DSA setups' [1] to use the conduit network interface as
+> > a regular one, admittedly forgoing most DSA functionality and using
+> > the device as an unmanaged switch whilst allowing control
+> > operations (ethtool, PHY management, WoL).
+>
+> Concretely, what is it that you wish to accomplish? I see you chose to
+> ignore my previous NACK due to the lack of a strong justification for
+> disabling the tagging protocol.
+> https://lore.kernel.org/netdev/20240801134401.h24ikzuoiakwg4i4@skbuf/
 
-On Mon, Aug 19, 2024 at 07:59:13PM +0800, Jinjie Ruan wrote:
-> Fix some sparse warnings.
->=20
-> Jinjie Ruan (8):
->   dax/bus.c: Make dax_region_rwsem and dax_dev_rwsem static
->   pmdomain: Make apple_pmgr_reset_ops static
->   iommufd/selftest: Make dirty_ops static
->   nvmet: Make nvmet_debugfs static
->   spi: cadence: Make cdns_mrvl_xspi_clk_div_list static
->   drm/panel: khadas-ts050: Make ts050_panel_data and ts050v2_panel_data
->     static
->   acpi/ghes: Make cxl_cper_fifo and cxl_cper_work static
->   serial: xilinx_uartps: Make cdns_rs485_supported static
+Sorry I definitely did not try to ignore your previous NACK but here the
+motivation and solution are both different, which is why I did not consider
+it a patch iteration of the previous one.
 
-Please don't group patches for unrelated subsystems into a series when
-there's no interrelationship between the patches.  It makes it a bit
-less clear how things should be handled and can confuse tooling, as well
-as making for massive CC lists.  Just send the relevant patches to each
-subsystem separately.
+Previously I could not use DSA because of the macb driver limitation, now
+fixed (max_mtu increase, submitted here). Once I got that working, I notice
+that full DSA was not a compatible use case for my board because of
+requiring the conduit interface to behave as a regular ethernet interface.
+So it's really the unmanaged switch case, which I though I motivated well in
+the patch description here (PHY library, ethtool and switch WoL management).
 
---h/ND11TuP53BfgY+
-Content-Type: application/pgp-signature; name="signature.asc"
+The solution is now the one you proposed earlier.
 
------BEGIN PGP SIGNATURE-----
+> > Implementing the new software-defined DSA tagging protocol tag_8021q
+> > [2] for these devices seems overkill for this use case at the time
+> > being.
+>
+> I think there's a misunderstanding about tag_8021q. It does not disable
+> the tagging protocol. But rather, it helps you implement a tagging
+> protocol when the hardware does not want to cooperate. So I don't see
+> how it would have helped you in your goal (whatever that is), and why
+> mention it.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbDNMYACgkQJNaLcl1U
-h9CgKQf8DK5AwmGisxZzXqa6jUgC6Z6LHtN8wG5l5VimmTL2EECM6XPgimfemHR7
-n5XY7Zi70HYeHJy9/++91/ippdAaCKV0Vfa0Wt93/Da091Strd4B6s7I6H4yoAxU
-crKwKRNp1W2kcVBeXTu+ttb1fLMHbGkv6CWb6y8N3if7gacgMc6TVfzgQLhD1NHN
-WLBoAVIbi4PW+ZQE5pm2zCBkeRCjliYifS7i4ik4haY6sswaw27sY0FmdKolqPfX
-QNDb2riA2tXc6ksUed+2JiPFqD1bjxXDn4jw8XsAxaPTFwsaaVdVwY5U2A/hzYc5
-benoonSS8ivnpkWLNKz1H2J0FKeWFA==
-=zgii
------END PGP SIGNATURE-----
+Right I understand, indeed a misunderstanding. Will remove this part.
 
---h/ND11TuP53BfgY+--
+> tag_8021q exists because it is my goal for DSA_TAG_PROTO_NONE to
+> eventually disappear. The trend is for drivers to be converted from
+> DSA_TAG_PROTO_NONE to something else (like DSA_TAG_PROTO_VSC73XX_8021Q),
+> not the other way around. It's a strong usability concern to not be able
+> to ping through the port net devices.
+>
+> At the very least we need consensus among the current DSA maintainers
+> that accepting 'none' as an alternative tagging protocol is acceptable.
+
+This of course I understand as well.
+
+Cheers, Pieter
 
