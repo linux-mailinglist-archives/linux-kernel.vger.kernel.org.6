@@ -1,81 +1,76 @@
-Return-Path: <linux-kernel+bounces-292261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C402956D2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D554E956DC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B322817B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871C21F21C54
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9C716F8FD;
-	Mon, 19 Aug 2024 14:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B39173332;
+	Mon, 19 Aug 2024 14:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6ez3x1d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a4YSnrJE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA95616EB72;
-	Mon, 19 Aug 2024 14:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226C8173326
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077626; cv=none; b=H7NYuewzZ9NopY6B+TFlyNBhD31n9atST1bj6Oho5q5eDs15Qx2t7172TH8TbmfXW0GmjQKvvWkS9TMwhmpZXPwvbgPPFmPIq6fyoLPLGY4E/lFzBj3i5fOVCx1qrJyqOI7Br8bFwhE1jVrHGtk7KUH2JyilvaCX4cMV+Wmxy1g=
+	t=1724078802; cv=none; b=FU+KvQVfENfn1U88nflv2k7DIncup5m3+q/ii8/xK4hi7P0uR3QtRFtOkdc0zpOYu1Q8w4ZQJazRApTjYIylWgLHHjmxgCErXykXymCeNpeSGIRWk7W6+s7bbfXJxgO4rcqBY0mqDlpW775ZZBcrDQgqKXsIZOZq6gSPcspv6qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077626; c=relaxed/simple;
-	bh=92vs1z9MJHYLppaZxpLGVPpoeizrEXIXxh58tBbHIPQ=;
+	s=arc-20240116; t=1724078802; c=relaxed/simple;
+	bh=dXCbV8piiQWmpeCw7SmqLNnEnUsqlk0VIhuEgQxA6PM=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W9QxRG5qhNYgpiYUcAnFVfKq7LMcD3cg/no8viBtdOp0YiD9VdcmoZOmCMArjtyyZrGufbD4eUj6iEsweBO87f4WfZwVebVgQq1pjUuFBvXcHuyYAvww1bqhTdl8oUfrxDT6rPUTtRVLGwvCCUYz1I4YbFrSJZ0KwBgpjuezG5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6ez3x1d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B0FC4AF0E;
-	Mon, 19 Aug 2024 14:27:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724077625;
-	bh=92vs1z9MJHYLppaZxpLGVPpoeizrEXIXxh58tBbHIPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=U6ez3x1dZDy/p53VrG8ygnkCFr4VSTtndIgIoOHzPp/XpI8ceHnY5yAsWsIiR8Les
-	 1mWcyLnAQspXe5CtrLaUdk8MgBujlHvEJYfUWw7qUP8rd0hcHgEW08w5LfTa6qf7Mo
-	 MeDcD2Qp/2QIw4RMvzs/3QRjPV+4A6fYGnhgIURfrDvDlH8S1420RBT8/NT0h98zpB
-	 KsoxGTHoOiMZrIWmFm8nbEKEePKLqEvHVxTZOUxlcrhy+fEup/Nyvy/KsWRFi5A/gA
-	 RvPXBERCxZVZxyF4sJqtzibSug7PntBKyczzt+grsLptxbJoA0YxLXJ0ghTpF2Ncto
-	 VgwOIQtQQQ9Ww==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sg3Lb-004wwP-LU;
-	Mon, 19 Aug 2024 15:27:03 +0100
-Date: Mon, 19 Aug 2024 15:27:03 +0100
-Message-ID: <86zfp8y4eg.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 17/19] irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor
-In-Reply-To: <20240819131924.372366-18-steven.price@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
-	<20240819131924.372366-18-steven.price@arm.com>
+	 MIME-Version:Content-Type; b=jI+LAf5wCb6pbUutaF/PBOnCdybwx7XDP1OV0oRlg7YZ4SoQ0FzOEf7K0Yfw7Kzck/TaHslYqodRDeYcqch5EYHAZLwB3UoiMu+uh/DT+43nuChfbWwp4BYHnJb5hwpqVStGv1NJbYly9LR7mCNvV8HxwMutbOruhwpaQ2kmpyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a4YSnrJE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724078801; x=1755614801;
+  h=date:message-id:from:to:cc:subject:in-reply-to:
+   references:mime-version;
+  bh=dXCbV8piiQWmpeCw7SmqLNnEnUsqlk0VIhuEgQxA6PM=;
+  b=a4YSnrJEx6FWkQMET7JfryaAP2pJajXivVbRbMLtNCBPBg/qm2O6zjZZ
+   s6an1dOOP23D3UAKnESv1pZc+uQwDeSdw8HvZxZcSUV+C/7+2L038i+L8
+   MLoPXJp3w9p/tAvXqZpoffcKKNntkVgQRDAu94ABeOET1QuarsSCHCAw3
+   wMnVJRbco2nlWDNKABkcWybqmvb2Zi6mAcbZpHKccR3W7AahNtLTbeOlc
+   9yaTN4a/sNyb3DrNGUXTlxmcyppelKLuGi/2uPhIYNTaslFQpKFsS+tYo
+   VHAOn7ph3KbnGqTqlOw+r/kAzxifxmY03uSdlJbwFEzmZaGBo8YI79HmH
+   A==;
+X-CSE-ConnectionGUID: v6yroeNiRXmYWDU/kZajQA==
+X-CSE-MsgGUID: gLt2iLzeRZuCKrxwotHXPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33486458"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="33486458"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:46:40 -0700
+X-CSE-ConnectionGUID: YjRvIG5vQqm1nA1Q9yWRug==
+X-CSE-MsgGUID: KVivW2jVSsWN+Vtoldbyvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="60975171"
+Received: from peterval-mobl1.amr.corp.intel.com (HELO adixit-arch.intel.com) ([10.124.114.37])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:46:39 -0700
+Date: Mon, 19 Aug 2024 07:28:45 -0700
+Message-ID: <87le0s8u3m.wl-ashutosh.dixit@intel.com>
+From: "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] drm/xe/oa: Use vma_pages() helper function in xe_oa_mmap()
+In-Reply-To: <20240819095751.539645-2-thorsten.blum@toblux.com>
+References: <20240819095751.539645-2-thorsten.blum@toblux.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/29.4 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,61 +78,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, 19 Aug 2024 14:19:22 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> Within a realm guest the ITS is emulated by the host. This means the
-> allocations must have been made available to the host by a call to
-> set_memory_decrypted(). Introduce an allocation function which performs
-> this extra call.
-> 
-> For the ITT use a custom genpool-based allocator that calls
-> set_memory_decrypted() for each page allocated, but then suballocates
-> the size needed for each ITT. Note that there is no mechanism
-> implemented to return pages from the genpool, but it is unlikely the
-> peak number of devices will so much larger than the normal level - so
-> this isn't expected to be an issue.
-> 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On Mon, 19 Aug 2024 02:57:52 -0700, Thorsten Blum wrote:
+>
+> Use the vma_pages() helper function and remove the following
+> Coccinelle/coccicheck warning reported by vma_pages.cocci:
+>
+>   WARNING: Consider using vma_pages helper on vma
+>
+> Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+
+Sorry Thorsten, looks like we forgot to merge it last time. I have merged
+this just now. Thanks for the patch.
+
 > ---
-> Changes since v3:
->  * Use BIT() macro.
->  * Use a genpool based allocator in its_create_device() to avoid
->    allocating a full page.
->  * Fix subject to drop "realm" and use gic-v3-its.
->  * Add error handling to ITS alloc/free.
-> Changes since v2:
->  * Drop 'shared' from the new its_xxx function names as they are used
->    for non-realm guests too.
->  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
->    should do the right thing.
->  * Drop a pointless (void *) cast.
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 139 ++++++++++++++++++++++++++-----
->  1 file changed, 116 insertions(+), 23 deletions(-)
-
-I think this patch and the next are pretty ripe, and shouldn't have to
-wait much longer.
-
-Can you please send them as a separate irqchip series, with the
-relevant people on Cc (realistically, tglx and me), with a
-
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-added to them?
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+>  drivers/gpu/drm/xe/xe_oa.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/xe/xe_oa.c b/drivers/gpu/drm/xe/xe_oa.c
+> index 6d69f751bf78..133292a9d687 100644
+> --- a/drivers/gpu/drm/xe/xe_oa.c
+> +++ b/drivers/gpu/drm/xe/xe_oa.c
+> @@ -1244,8 +1244,7 @@ static int xe_oa_mmap(struct file *file, struct vm_area_struct *vma)
+>	vm_flags_mod(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_DONTCOPY,
+>		     VM_MAYWRITE | VM_MAYEXEC);
+>
+> -	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages ==
+> -		  (vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
+> +	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages == vma_pages(vma));
+>	for (i = 0; i < bo->ttm.ttm->num_pages; i++) {
+>		ret = remap_pfn_range(vma, start, page_to_pfn(bo->ttm.ttm->pages[i]),
+>				      PAGE_SIZE, vma->vm_page_prot);
+> --
+> 2.46.0
+>
 
