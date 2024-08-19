@@ -1,140 +1,132 @@
-Return-Path: <linux-kernel+bounces-291418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5FC956252
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAF2956256
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C6A1F22317
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC061F224C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D207316E;
-	Mon, 19 Aug 2024 04:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpC1Qv5h"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D56B13D286;
+	Mon, 19 Aug 2024 04:07:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D948801
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6228801;
+	Mon, 19 Aug 2024 04:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724040353; cv=none; b=JfpC9JZmMp/antdyl74tyDgbZhSidLhuJMzkgxXx8wEwH5RebPvn92WnfS1dUdb7cxKbfQXdbtUvQSwc9ABIu9VRGrPglAjp7XWgOG7J3KBFwd8i+aL9U/YhJiTAise6ltALbEsWnpnM4WX5c7DXCumDMUKtju8FSAkyzuz4rF4=
+	t=1724040439; cv=none; b=LfYnC4COGlWtxnBEldQHWrfk5aMH6i+2j5Hhm9tLJTvGVgUGYved7Xj/ZNOo3e8bJ0p4U71N/NHEJmCjoMvAg70RHiaciGicYW7Umyga5FRg7/BvTb35z6T8Wkf612BxRYJTR12GHxQJiD9tmk4oAsJtL9QZJptL1HTtGbhr+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724040353; c=relaxed/simple;
-	bh=xQtrGjfhwIWJr12DH43PXIzRgVl9floq8Ftm+aYmDb4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JgzNsxKq5kzZUdkXrCJCTqkOIF5Oq43ou+I2JNsvK5HowTloFcs13FNVaiVRQnhcotaJCXgsm4l37BoKpaNiHdguhmNKVfv3H6G2UCBUzBtLncRCcqWmcABC+Kspe5QwuqgDppTt8c2vi7JsZAPfiG1Tdkd4+fp2ttwZoFrF8lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpC1Qv5h; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39b06af1974so15319015ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 21:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724040351; x=1724645151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+4LdY4h9yDY+hKUVhC9nqU4DzmhWAha2389eTWEX1II=;
-        b=LpC1Qv5hPUPqi3tLRIUqhboI182eNifvao3tC4XrqorbSCtkR8/43dOCaDyfYBV9Vw
-         Ye1UyWlY7upcUWInV6k6XIrY7LupoAXFuezDU9hL82tKNexE8IT12eYF3JiVGIFUWmiG
-         ka2PN5lNbjcz+s/i0ehxvH9tzwA5YUunqRDx51rQcV+NtvDSRtDQfEFqzARm5gKzptd9
-         S9O8Q/xiRZ4nh2xO5OOODU9rg3Xt2RWWUpNdUNxfPgg+Z+5pbZt9VIRFsboRKgRGZLCE
-         k8fSePsegMYyXBe3hWSmj60A9fVt4WQK/PKnZv9IzWz4vfAtNXR95cTaY38339Om39L0
-         fcsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724040351; x=1724645151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+4LdY4h9yDY+hKUVhC9nqU4DzmhWAha2389eTWEX1II=;
-        b=lVjas4d7tIypSwW7D39PpXlad8aDM8yA0i0upTg714t/8MvFQwRV8EbBDLIRcAiNqt
-         2JEYfUXLUUj0Z/xvtW7rh/8wZaN1fu+WRIs/s8nsws1AXdcd6btU8JqiSxuxuh6qUE47
-         5KW9RWr5v7qgwbHWALFDk+dIISZWAL5uaWeHN2bBFMfmEHBrrsQ6HRk9vt31u0fok46X
-         EUNnGV6BEaUgn6gdXx2GSDcNnR3yVina1QaTsdWEhjbvwSSPvZuNmXkhjioJRRGgEZg3
-         W3XSdZ3+Bw4zX4VnhLtJIREl5btR4+EKU/vjfb91HxPMm8A/cO1bt8AVPbea9hZAQiuE
-         Ex6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXApk3xcLuBWOho8SvmaZziILZCVZOC7SDVjQqB2cv773XA/Gz8LbfF8b7NfY0ILPKI/08GUhogHA650TgMNtFSoNRsIBvAt8oMQPOF
-X-Gm-Message-State: AOJu0Yyj7RtVDz5IbjX8068ZACxEqOZqNXLesi5UjAlIkWKVZFVX41eG
-	oIWLI6Y4VAj8J4kCJxvjnWrhqlHF7DMszBzUZ2sCh3CootYzWaQSzBAnhlTZ
-X-Google-Smtp-Source: AGHT+IEAjUCYT3zvHCA5MNy3LVXViK+m5Io+GneJY2cR8IqEQqYk4M3N0sbqa1ZdqpP75SHBKW+CiA==
-X-Received: by 2002:a05:6e02:1a41:b0:39a:ebcd:f2fa with SMTP id e9e14a558f8ab-39d26d64460mr124287575ab.20.1724040351297;
-        Sun, 18 Aug 2024 21:05:51 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae0e246sm5855581b3a.70.2024.08.18.21.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 21:05:50 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: shaggy@kernel.org,
-	dave.kleikamp@oracle.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] jfs: fix out-of-bounds in dbNextAG() and diAlloc()
-Date: Mon, 19 Aug 2024 13:05:46 +0900
-Message-Id: <20240819040546.182577-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724040439; c=relaxed/simple;
+	bh=YC4pg6rIZ6V7oITQ3r15iFjLXh/SwMR391VwGJ8UtSc=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=mstztF0A1T5lLvbqijk2GxfSLShvjgd+dkka0LjzFuLCoI4s9xIsCLxhmV69ragsPr0iZ4kJeUaB1dBk1990C7QhoCDbG7eK8CHD33Lz6bIgJ0SnmItsN/G9igwNI3UzPBIZXm7RUbm5LzYrmKJuqcqHmP7qqcgQWo/c+Zs+XnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WnJvL639szyR0y;
+	Mon, 19 Aug 2024 12:06:54 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 00D231800F2;
+	Mon, 19 Aug 2024 12:07:15 +0800 (CST)
+Received: from [10.67.120.126] (10.67.120.126) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 12:07:14 +0800
+Subject: Re: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in
+ progress
+To: Damien Le Moal <dlemoal@kernel.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+References: <20240817015019.3467765-1-liyihang9@huawei.com>
+ <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bvanassche@acm.org>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
+	<stable@vger.kernel.org>, <liyihang9@huawei.com>
+From: Yihang Li <liyihang9@huawei.com>
+Message-ID: <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
+Date: Mon, 19 Aug 2024 12:07:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
-In dbNextAG() , there is no check for the case where bmp->db_numag is 
-greater or same than MAXAG due to a polluted image, which causes an 
-out-of-bounds. Therefore, a bounds check should be added in dbMount().
 
-And in dbNextAG(), a check for the case where agpref is greater than 
-bmp->db_numag should be added, so an out-of-bounds exception should be 
-prevented.
 
-Additionally, a check for the case where agno is greater or same than 
-MAXAG should be added in diAlloc() to prevent out-of-bounds.
+On 2024/8/19 7:55, Damien Le Moal wrote:
+> On 8/17/24 10:50, Yihang Li wrote:
+>> If formatting a suspended disk (such as formatting with different DIF
+>> type), the disk will be resuming first, and then the format command will
+>> submit to the disk through SG_IO ioctl.
+>>
+>> When the disk is processing the format command, the system does not submit
+>> other commands to the disk. Therefore, the system attempts to suspend the
+>> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+> 
+> Why would the system try to suspend the disk with a request in flight ? Sounds
+> like there is a bug with PM reference counting, no ?
 
-Reported-by: Jeongjun Park <aha310510@gmail.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/jfs/jfs_dmap.c | 4 ++--
- fs/jfs/jfs_imap.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+According to my understand and test, the format command request is finished,
+so it is not in flight for the kernel. And the command need a few time to processing
+in the disk while no other commands are being sent.
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 5713994328cb..0625d1c0d064 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -187,7 +187,7 @@ int dbMount(struct inode *ipbmap)
- 	}
- 
- 	bmp->db_numag = le32_to_cpu(dbmp_le->dn_numag);
--	if (!bmp->db_numag) {
-+	if (!bmp->db_numag || bmp->db_numag >= MAXAG) {
- 		err = -EINVAL;
- 		goto err_release_metapage;
- 	}
-@@ -652,7 +652,7 @@ int dbNextAG(struct inode *ipbmap)
- 	 * average free space.
- 	 */
- 	for (i = 0 ; i < bmp->db_numag; i++, agpref++) {
--		if (agpref == bmp->db_numag)
-+		if (agpref >= bmp->db_numag)
- 			agpref = 0;
- 
- 		if (atomic_read(&bmp->db_active[agpref]))
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index 1407feccbc2d..a360b24ed320 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -1360,7 +1360,7 @@ int diAlloc(struct inode *pip, bool dir, struct inode *ip)
- 	/* get the ag number of this iag */
- 	agno = BLKTOAG(JFS_IP(pip)->agstart, JFS_SBI(pip->i_sb));
- 	dn_numag = JFS_SBI(pip->i_sb)->bmap->db_numag;
--	if (agno < 0 || agno > dn_numag)
-+	if (agno < 0 || agno > dn_numag || agno >= MAXAG)
- 		return -EIO;
- 
- 	if (atomic_read(&JFS_SBI(pip->i_sb)->bmap->db_active[agno])) {
---
+> 
+>> command will fail because the disk is in the formatting process, which
+>> will cause the runtime_status of the disk to error and it is difficult
+>> for user to recover it. Error info like:
+>>
+>> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+>> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+>> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+>> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+>>
+>> To solve the issue, retry the command until format command is finished.
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Yihang Li <liyihang9@huawei.com>
+>> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>> ---
+>> Changes since v3:
+>> - Add Cc tag for kernel stable.
+>>
+>> Changes since v2:
+>> - Add Reviewed-by for Bart.
+>>
+>> Changes since v1:
+>> - Updated and added error information to the patch description.
+>>
+>> ---
+>>  drivers/scsi/sd.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+>> index adeaa8ab9951..5cd88a8eea73 100644
+>> --- a/drivers/scsi/sd.c
+>> +++ b/drivers/scsi/sd.c
+>> @@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+>>  			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
+>>  				/* this is no error here */
+>>  				return 0;
+>> +
+>> +			/* retry if format in progress */
+>> +			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
+>> +				return -EBUSY;
+>> +
+>>  			/*
+>>  			 * This drive doesn't support sync and there's not much
+>>  			 * we can do because this is called during shutdown
+> 
 
