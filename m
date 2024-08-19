@@ -1,101 +1,78 @@
-Return-Path: <linux-kernel+bounces-292254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A84956D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:23:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BC0956D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65E61C21EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDB21F23ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE716D9B0;
-	Mon, 19 Aug 2024 14:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C616D9BC;
+	Mon, 19 Aug 2024 14:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dSQS94ec"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Oo3CeQMm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D381F16C844
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EB816D4F0;
+	Mon, 19 Aug 2024 14:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077396; cv=none; b=UrxPwLvQLIl1oJR7XzTvf/O8AarqaiDueFCnxgsiRybtEPFUNLwOPVZBSvPChtkPQFbekMm8JHT0rmZ2JKzJC2tM5R2ZGyBbdxXBTGNHnQdrO1Rv5sLmhu6hHB4IqxqUPNA9+/Z9AGP39vL5pddinmU/I3qDVobRrBkPFgt48KA=
+	t=1724077421; cv=none; b=HkHxwOHHvfRV3Il8XsPqGzeSU5WlLp203ouPtfjTC8R/G7KPTAkhG8YNxABCbpxI2mAjOiUMMIet5E6GjhvvpFxjDsVr3zNeYKXhAkjWx+oR2sf/0ya4wpPPLai4wuzetfhF1x7KWSr0x0Zj9Zr4lpFxVL5S2F4HDNfwaBkPRpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077396; c=relaxed/simple;
-	bh=1EgPlnWtYOrjtjYWHqFuxy5URcg14N1+9iLqbPZhBeY=;
+	s=arc-20240116; t=1724077421; c=relaxed/simple;
+	bh=gGZDsocDzpaQYqhsw+0xgjR/qwItyD0Y75zesYVV/68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAFf1newc+Z0Jxy+MoeO9tdB4ZLuennyQHmFVCt/Xi8AeZ8FH+tT2z5cDn9ekpyXTcTe6U6oeolUOmntCzbylqhz0Y8QazTPGBu1oXel17hTSp/BToFaKzDi6VLw2tJHZpfMqzF/dDxbQ4lPeywvdrs6d8oB2r5Mi478Hmx+1nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dSQS94ec; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ac10b7cso1493355e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1724077393; x=1724682193; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mu1Dv77/v+aGNumYuKz9BtkcW9O4WIITisX7d70NEY8=;
-        b=dSQS94ecDlpUYKkVA+aU2tyEpvKFHWJ3b37L7sVBjImQy4HwxXSNdRij2zVefubuzv
-         GS5d7VJF1fMKX4DK/Sbplhcjz+1yof8OHP1hGxIH0bESMZoIUHm5CqFLCBb19fw9tRAs
-         y0xZPNb2QpcU93ZDljKpQcT/9d1Z8nHzeqVn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724077393; x=1724682193;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mu1Dv77/v+aGNumYuKz9BtkcW9O4WIITisX7d70NEY8=;
-        b=nAjP3KlQjAEIbij2Qvx55MheKhHQEMMJkwTEvqWsTn2zXzMY/9ltg0BO5fbt36mfzs
-         KQ+tTA5+59bFPKvToG4k2IsfsSFGCMiOPmZcLmRH3HrUsIZ5Rl5DcUa8YP771xiPpNGt
-         1wZ17oWqF5zJEKqT+VvMHazsy4Ex/RYjnLl1bQLHXuC7rdPnoj3+MsggEhnoJfu2Wuik
-         3pC8xvwQ1MW5IDsV0TE5lyFopVG3Xv4EmyuQoOCL9liSGzrndv0RHTLCRIVWdWJsUe3o
-         jz7ottCoKKEQ0tfR7EIZ+crVHcTJQTigv8oB1ZsadjiQ+sV20ddIbmyrt4F/yUJNZ2Z4
-         FN2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWydx5ZnVskPGFz0yxRhFF9GV5qf4j9AK7cpJ16WY0ytS8ZkZDW6ttcvIkmClhg+7EW8nusySflQho/luU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMYQTNibeXnm1W0tvB3SxbEZNNdX30cRGvhYtbn847Rxxa57ft
-	OFMecCur2TzXBbI7Tx42OHku0c+Rw8rn+FwF4lF//p0mbqHDRGKR+85URWTzGrQ=
-X-Google-Smtp-Source: AGHT+IGOTBdNpg06e70Ewc3V/FepRlszCw1O4wXZJQ5pRmXl45gvZm7p5LblQvwGecCiIwcwO+f79Q==
-X-Received: by 2002:a05:600c:3b0f:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-429ed7f72ccmr47380995e9.4.1724077392871;
-        Mon, 19 Aug 2024 07:23:12 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6507c4sm114012625e9.15.2024.08.19.07.23.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 07:23:12 -0700 (PDT)
-Date: Mon, 19 Aug 2024 16:23:10 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-Subject: Re: [PATCH RFC 01/15] drm/vkms: Remove useles devres group
-Message-ID: <ZsNVTtigz4F4-npb@phenom.ffwll.local>
-Mail-Followup-To: Louis Chauvet <louis.chauvet@bootlin.com>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
- <20240814-google-remove-crtc-index-from-parameter-v1-1-6e179abf9fd4@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmBtBJHTqdKx7JWyGmqatzZq0/wufBWbgBc99U/qPWLWuVxZi7O/d3BWuCwYwXy2dbyfNJatXoAZgVgEXe2vD60kuhfTlUb2n1rZ5KB9mC4l3z4hJOZsG3tuea7WNWBWgzeNHO2IZWdbh+XkINWdPg60p+z8dq2QtO4VY+VHg54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Oo3CeQMm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=56aeBW2Nwfu08Vcfzw6WZhyzwb5I2iH2wgj1pLyfRu4=; b=Oo3CeQMmpXZ3kwqxSxbbqRYoOr
+	FT8VWPR3SfAwrzzPh7oT7BTmZwvIRT9trlO2wNHLsTstFOiz8Qti4z2EL0BIHSlUcWBBf/GuxgfUp
+	382v+5iOguTD4va99SN50C3W+urD9B1oWgo/XLUblufBBdoBC7dwMrS2KLLYqyDNd8LI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sg3Hw-0057SI-5q; Mon, 19 Aug 2024 16:23:16 +0200
+Date: Mon, 19 Aug 2024 16:23:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Linux-OMAP <linux-omap@vger.kernel.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	linux-samsung-soc@vger.kernel.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	debian-arm@lists.debian.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Message-ID: <a6316f7c-4064-4145-aa6a-d34197a3981a@lunn.ch>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <3413899.e9J7NaK4W3@earth>
+ <790bf2c4-2ecf-429c-8e28-ad5807ffed7a@app.fastmail.com>
+ <a8c009b5-ada0-4f78-92f7-7a6c5075ccf1@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,103 +81,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814-google-remove-crtc-index-from-parameter-v1-1-6e179abf9fd4@bootlin.com>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+In-Reply-To: <a8c009b5-ada0-4f78-92f7-7a6c5075ccf1@app.fastmail.com>
 
-On Wed, Aug 14, 2024 at 04:36:23PM +0200, Louis Chauvet wrote:
-> As the driver now uses drm managed allocation, the devres group is not
-> needed anymore, so remove it.
-
-drmm isn't devres, and you still have a devres managed resource here,
-namely devm_drm_dev_alloc. The reason I suggest in the review on google's
-series for configfs to nuke this is that they switched over to making vkms
-a proper platform driver, in which case you get a devres group
-automatically for your driver binding.
-
-But neither the explicit one or the driver binding is one devres too few
-:-)
-
-Cheers, Sima
+On Mon, Aug 19, 2024 at 04:12:10PM +0200, Arnd Bergmann wrote:
+> Two small additions:
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_drv.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
+> On Mon, Aug 19, 2024, at 11:17, Arnd Bergmann wrote:
+> > On Thu, Aug 15, 2024, at 21:53, jeremy@jeremypeper.com wrote:
+> > I expect that the terastation pro2 is going to be fairly easy to
+> > convert to DT as there is already support for similar Orion5x
+> > machines. In this case I would just remove all the Orion5x board
+> > files and you can add a dts file later on. The bit I'm unsure
+> > about here is legacy PCI support. I see that the board file enables
+> > both PCI and PCIe, but I don't know if both are actually used,
+> > or if everything is on PCIe.
+> >
+> > I have some old patches for separating orion legacy PCI from
+> > PCIe support, as only the latter has a modern driver (shared
+> > with kirkwood and armadaxp). If you can confirm that the machine
+> > actually uses PCI, I can dig those out from my backups.
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> index e79832e10f3c..7ac3ab7e16e5 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -297,16 +297,11 @@ static int vkms_create(struct vkms_config *config)
->  	if (IS_ERR(pdev))
->  		return PTR_ERR(pdev);
->  
-> -	if (!devres_open_group(&pdev->dev, NULL, GFP_KERNEL)) {
-> -		ret = -ENOMEM;
-> -		goto out_unregister;
-> -	}
-> -
->  	vkms_device = devm_drm_dev_alloc(&pdev->dev, &vkms_driver,
->  					 struct vkms_device, drm);
->  	if (IS_ERR(vkms_device)) {
->  		ret = PTR_ERR(vkms_device);
-> -		goto out_devres;
-> +		goto out_unregister;
->  	}
->  	vkms_device->platform = pdev;
->  	vkms_device->config = config;
-> @@ -317,32 +312,30 @@ static int vkms_create(struct vkms_config *config)
->  
->  	if (ret) {
->  		DRM_ERROR("Could not initialize DMA support\n");
-> -		goto out_devres;
-> +		goto out_unregister;
->  	}
->  
->  	ret = drm_vblank_init(&vkms_device->drm, 1);
->  	if (ret) {
->  		DRM_ERROR("Failed to vblank\n");
-> -		goto out_devres;
-> +		goto out_unregister;
->  	}
->  
->  	ret = vkms_modeset_init(vkms_device);
->  	if (ret)
-> -		goto out_devres;
-> +		goto out_unregister;
->  
->  	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
->  			      ARRAY_SIZE(vkms_config_debugfs_list));
->  
->  	ret = drm_dev_register(&vkms_device->drm, 0);
->  	if (ret)
-> -		goto out_devres;
-> +		goto out_unregister;
->  
->  	drm_fbdev_shmem_setup(&vkms_device->drm, 0);
->  
->  	return 0;
->  
-> -out_devres:
-> -	devres_release_group(&pdev->dev, NULL);
->  out_unregister:
->  	platform_device_unregister(pdev);
->  	return ret;
-> @@ -383,7 +376,6 @@ static void vkms_destroy(struct vkms_config *config)
->  
->  	drm_dev_unregister(&config->dev->drm);
->  	drm_atomic_helper_shutdown(&config->dev->drm);
-> -	devres_release_group(&pdev->dev, NULL);
->  	platform_device_unregister(pdev);
->  
->  	config->dev = NULL;
+> I did find this myself later, the machine does use an on-board
+> PCI connected SATA controller, which is obviously required to
+> make the machine useful.
 > 
-> -- 
-> 2.44.2
-> 
+> Doing a PCI host bridge driver with DT support correctly is
+> a lot of work, especially if there is only a single machine
+> using it. Since this uses the same drivers/ata/sata-mv.c
+> driver as the other orion/kirkwood machines, I wonder if we
+> can just pretend that this is a platform device and skip
+> all of the PCI probing. I think this only needs a few
+> small changes to the sata-mv.c driver, but it does require
+> that the PCI bus is left in a known state by the boot loader.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+It is a long time since i looked at Orion, so i could be wrong....
+
+As far as i remember, it has a PCI controller and a PCIe
+controller. They are slightly different. The PCIe part is i think
+simpler to support, it follows the standards better. I _think_ the PCI
+controller uses a GPIO for interrupt support, which causes a mess.
+
+If only PCIe is needed, it should not be too hard to make work. I
+would try to avoid the PCI controller is possible.
+
+      Andrew
 
