@@ -1,180 +1,369 @@
-Return-Path: <linux-kernel+bounces-292507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15A0957046
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB85957069
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B88E281072
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782731F2220E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE76017622D;
-	Mon, 19 Aug 2024 16:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F329186E21;
+	Mon, 19 Aug 2024 16:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pNmyTAYC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Q4/o6e+k"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339F946447
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368B2178364;
+	Mon, 19 Aug 2024 16:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085007; cv=none; b=qhuxcAVsTG2dOWj048bamCYow71kfEOGi3vuI1x71o/Eep6RtsS9ShEXJf4wGosD4++8fOlZF7/eKAWc/s1JdstEB0NmKwHpaKmehyXzxoRaY4K4bJdsDsrGoGy7oMDdIdNuR7u1ljk8IV9myvTWFQm61srM5sf8z1YvfF2i0uU=
+	t=1724085225; cv=none; b=vDjYtmUl+Qy3t+sZQCVij7cOoIpP43Kx+KzZOEX9U88o+lRxRhLNhwRnD9HAVKLx2UkLq00Xj1ldURvdXbhssdx0leETUTlDa2JxuE6M8W9XyV9F//Q82BPXU7ugBO6GS0rP4t7unkk0fGz/dOeeIxQ3l2mbHSMc9x38mCQuDbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085007; c=relaxed/simple;
-	bh=5uQK76DggjvF22mp3e17AZuc5pTrreNqIaDtoupLJW0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KCSoBn1w2hhtZ46fERrgEzqREKEiQ7GJXOAGCiL9v0hZEwVStwBymT+G8E8XJVs3K8ev/dUWxW9bHbgGDEKOsz91gnOHS+6lEOKDhGns1VSqvW7M0jqzp1fjuFMJBnFDpAVWHl+0AUIQNMkxP6MDSvY28WY3Ci/km3Cg8Ebt/KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pNmyTAYC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428e0d18666so35558685e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724085003; x=1724689803; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7r7S7wRPFk2pSvVl7ZU19q0fOw2MNDRQgJBqWmwGHPQ=;
-        b=pNmyTAYCKFu3Ra9LyFwW+9LL6H8v9UvrwsRwtIyrWP1ZN6HG0wsgfb6ED3QoMZHC7p
-         QmQuSB31pZVbtWCGAoWzRIGigisVzRoOhcoZpc4GoPtCZEDTD/5WlrNJUjLFyRU8rD0c
-         bZzHqYGKlpdlUq8exsqP7TBn8j+kv05kjiY9QsyiHPx4b88vSrUyE4lsGW493RhMOMtB
-         ZyGlPLvol4HCIndFTxTwSyRcn6vift/JdSXxsP3M7HlpMqr2gJPmy/dciD/hnDW19Vvu
-         KFGKHQefcGVMPNVsaXX45iHTE9xeiK/9XIINlk5Kp072EvA+Ei2qV03y/TnpvAZMpDT7
-         HKlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724085003; x=1724689803;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7r7S7wRPFk2pSvVl7ZU19q0fOw2MNDRQgJBqWmwGHPQ=;
-        b=A/ZYKMHUDgVMlu8YDTEQzkDBte5LkrRMFCsbANcUeoYHXCi+AncKTbX1BnVlGaLSLn
-         Bemb9ztIAS27ifpZGf5i6Y1yrzbxhhb8ght+DBbYUcFJ2YaGxIdBC5k3hFMuJeKuge87
-         CHklguhPu/JW/zTZgsioodEQhRx8kH+XfXccfcV87NYKXkzn3sOVK6EDaDE3pYs373+Z
-         4SrxLyfCtdWWGk0DWmXsMpOWSUbTlchPdbnbyynYvSFoisDZyHRpR4qe40HvWGk5z5ik
-         RT51KdIUMCLdqWZKlDCNI52vkSuGIoGB+0TuPwE+MSw5Q44gM9gkoAfIK/vkfA9V+XDG
-         bDcA==
-X-Gm-Message-State: AOJu0YwNPIxwfqPKeXdweEIwhXv4hCdpT4j8e6b4aG3ykK+ZfWjk9PKC
-	zuq5Png0c8g/ffPJvkAeNi+er+ZGJhq6kW0fpruZAccfFP8Ni5pmQ7pdXUfMKzk=
-X-Google-Smtp-Source: AGHT+IGMIVaSKllyXTJLYfxv8zWfWh7ofv0A8g8baFri8DEHir/qt24CJILAEMd+CXWxYTxmuGPIOw==
-X-Received: by 2002:a05:600c:548e:b0:425:69b7:3361 with SMTP id 5b1f17b1804b1-429ed7ae653mr89860125e9.18.1724085003029;
-        Mon, 19 Aug 2024 09:30:03 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed79d9a7sm114992515e9.39.2024.08.19.09.30.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:30:02 -0700 (PDT)
-Message-ID: <a6ca8b79-8b64-4427-a625-abd61ffa7b21@linaro.org>
-Date: Mon, 19 Aug 2024 18:30:01 +0200
+	s=arc-20240116; t=1724085225; c=relaxed/simple;
+	bh=tfOXbMKJK6HGHebhElcwFYLJN4SjdiC+niYNvwZCd/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QrOaFdt46CVQ+NX7IJjFfV3lgJ7Osfepl/HbUwhRsKRvo1oZlnX3+e1bSXn3vlX4RKmYX/YRNZzBuMGr+zi5D2Jm9LR9QZzQMPFXpqg4L1odFU9tEuUmOlT/UFgaGN7vMPZyTtZK6pL69p/hXysYF3Tml9xmKxxH2RCRNNZDKKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Q4/o6e+k reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 94dcc78f3caf74dd; Mon, 19 Aug 2024 18:33:41 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C4BC073B5D4;
+	Mon, 19 Aug 2024 18:33:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724085221;
+	bh=tfOXbMKJK6HGHebhElcwFYLJN4SjdiC+niYNvwZCd/s=;
+	h=From:Subject:Date;
+	b=Q4/o6e+kbDJ5fwxUpF/Q/2yvexfL417tQR/FHSvieui8vI62pWqdMPJAgYBpixwTN
+	 WNbGoXbZSVEq9bDcWycv/WDohazmaGOr/ArdFbvYsbDR8cJh5oQhJgZOt7oQOGxeli
+	 KkWFxOsJjP8cFPakQyyTd/hT6KU2JmMT/Kv6xTrjCFsB4e26R/hiGzPIcpecj0AA1f
+	 gfJw5pPbXpQDSuvnZxl0bMC/eYjSWjpstcWtBPwYxdCN+flfqGwzwJmnYahetC4sWB
+	 qj0BdQVGa65EKq+vfxZAo10eAgdO0u/bnwZYG06hXMyCM15f/EU5di7sgCUezqZk7D
+	 g0oEpRsMDpRpA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject:
+ [PATCH v3 12/14] thermal/of:  Use the .should_bind() thermal zone callback
+Date: Mon, 19 Aug 2024 18:30:18 +0200
+Message-ID: <2236794.NgBsaNRSFp@rjwysocki.net>
+In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
+References: <2205737.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 5/9] reset: amlogic: use reset number instead of
- register count
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-6-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240808102742.4095904-6-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
+ lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkiheslhhinhgrrhhordhorhhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On 08/08/2024 12:27, Jerome Brunet wrote:
-> The reset driver from audio clock controller may register less
-> reset than a register can hold. To avoid making any change while
-> switching to auxiliary support, use the number of reset instead of the
-> register count to define the bounds of the reset controller.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/reset/reset-meson.c | 11 +++++------
->   1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index 8addd100e601..5b6f934c0265 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
-> @@ -17,7 +17,7 @@
->   #include <linux/types.h>
->   
->   struct meson_reset_param {
-> -	unsigned int reg_count;
-> +	unsigned int reset_num;
->   	unsigned int reset_offset;
->   	unsigned int level_offset;
->   	bool level_low_reset;
-> @@ -87,21 +87,21 @@ static const struct reset_control_ops meson_reset_ops = {
->   };
->   
->   static const struct meson_reset_param meson8b_param = {
-> -	.reg_count	= 8,
-> +	.reset_num	= 256,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x7c,
->   	.level_low_reset = true,
->   };
->   
->   static const struct meson_reset_param meson_a1_param = {
-> -	.reg_count	= 3,
-> +	.reset_num	= 96,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
->   	.level_low_reset = true,
->   };
->   
->   static const struct meson_reset_param meson_s4_param = {
-> -	.reg_count	= 6,
-> +	.reset_num	= 192,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
->   	.level_low_reset = true,
-> @@ -148,8 +148,7 @@ static int meson_reset_probe(struct platform_device *pdev)
->   				     "can't init regmap mmio region\n");
->   
->   	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-> -		* regmap_config.reg_stride;
-> +	data->rcdev.nr_resets = data->param->reset_num;
->   	data->rcdev.ops = &meson_reset_ops;
->   	data->rcdev.of_node = dev->of_node;
->   
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Make the thermal_of driver use the .should_bind() thermal zone callback
+to provide the thermal core with the information on whether or not to
+bind the given cooling device to the given trip point in the given
+thermal zone.  If it returns 'true', the thermal core will bind the
+cooling device to the trip and the corresponding unbinding will be
+taken care of automatically by the core on the removal of the involved
+thermal zone or cooling device.
+
+This replaces the .bind() and .unbind() thermal zone callbacks which
+assumed the same trip points ordering in the driver and in the thermal
+core (that may not be true any more in the future).  The .bind()
+callback would walk the given thermal zone's cooling maps to find all
+of the valid trip point combinations with the given cooling device and
+it would call thermal_zone_bind_cooling_device() for all of them using
+trip point indices reflecting the ordering of the trips in the DT.
+
+The .should_bind() callback still walks the thermal zone's cooling maps,
+but it can use the trip object passed to it by the thermal core to find
+the trip in question in the first place and then it uses the
+corresponding 'cooling-device' entries to look up the given cooling
+device.  To be able to match the trip object provided by the thermal
+core to a specific device node, the driver sets the 'priv' field of each
+trip to the corresponding device node pointer during initialization.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v2 -> v3: Reorder (previously [14/17])
+
+v1 -> v2:
+   * Fix a build issue (undefined symbol)
+
+This patch only depends on the [06/14] introducing the .should_bind()
+thermal zone callback:
+
+https://lore.kernel.org/linux-pm/9334403.CDJkKcVGEf@rjwysocki.net/
+
+---
+ drivers/thermal/thermal_of.c |  171 ++++++++++---------------------------------
+ 1 file changed, 41 insertions(+), 130 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_of.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_of.c
++++ linux-pm/drivers/thermal/thermal_of.c
+@@ -20,37 +20,6 @@
+ 
+ /***   functions parsing device tree nodes   ***/
+ 
+-static int of_find_trip_id(struct device_node *np, struct device_node *trip)
+-{
+-	struct device_node *trips;
+-	struct device_node *t;
+-	int i = 0;
+-
+-	trips = of_get_child_by_name(np, "trips");
+-	if (!trips) {
+-		pr_err("Failed to find 'trips' node\n");
+-		return -EINVAL;
+-	}
+-
+-	/*
+-	 * Find the trip id point associated with the cooling device map
+-	 */
+-	for_each_child_of_node(trips, t) {
+-
+-		if (t == trip) {
+-			of_node_put(t);
+-			goto out;
+-		}
+-		i++;
+-	}
+-
+-	i = -ENXIO;
+-out:
+-	of_node_put(trips);
+-
+-	return i;
+-}
+-
+ /*
+  * It maps 'enum thermal_trip_type' found in include/linux/thermal.h
+  * into the device tree binding of 'trip', property type.
+@@ -119,6 +88,8 @@ static int thermal_of_populate_trip(stru
+ 
+ 	trip->flags = THERMAL_TRIP_FLAG_RW_TEMP;
+ 
++	trip->priv = np;
++
+ 	return 0;
+ }
+ 
+@@ -290,39 +261,9 @@ static struct device_node *thermal_of_zo
+ 	return tz_np;
+ }
+ 
+-static int __thermal_of_unbind(struct device_node *map_np, int index, int trip_id,
+-			       struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
+-{
+-	struct of_phandle_args cooling_spec;
+-	int ret;
+-
+-	ret = of_parse_phandle_with_args(map_np, "cooling-device", "#cooling-cells",
+-					 index, &cooling_spec);
+-
+-	if (ret < 0) {
+-		pr_err("Invalid cooling-device entry\n");
+-		return ret;
+-	}
+-
+-	of_node_put(cooling_spec.np);
+-
+-	if (cooling_spec.args_count < 2) {
+-		pr_err("wrong reference to cooling device, missing limits\n");
+-		return -EINVAL;
+-	}
+-
+-	if (cooling_spec.np != cdev->np)
+-		return 0;
+-
+-	ret = thermal_zone_unbind_cooling_device(tz, trip_id, cdev);
+-	if (ret)
+-		pr_err("Failed to unbind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
+-
+-	return ret;
+-}
+-
+-static int __thermal_of_bind(struct device_node *map_np, int index, int trip_id,
+-			     struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
++static bool thermal_of_get_cooling_spec(struct device_node *map_np, int index,
++					struct thermal_cooling_device *cdev,
++					struct cooling_spec *c)
+ {
+ 	struct of_phandle_args cooling_spec;
+ 	int ret, weight = THERMAL_WEIGHT_DEFAULT;
+@@ -334,104 +275,75 @@ static int __thermal_of_bind(struct devi
+ 
+ 	if (ret < 0) {
+ 		pr_err("Invalid cooling-device entry\n");
+-		return ret;
++		return false;
+ 	}
+ 
+ 	of_node_put(cooling_spec.np);
+ 
+ 	if (cooling_spec.args_count < 2) {
+ 		pr_err("wrong reference to cooling device, missing limits\n");
+-		return -EINVAL;
++		return false;
+ 	}
+ 
+ 	if (cooling_spec.np != cdev->np)
+-		return 0;
+-
+-	ret = thermal_zone_bind_cooling_device(tz, trip_id, cdev, cooling_spec.args[1],
+-					       cooling_spec.args[0],
+-					       weight);
+-	if (ret)
+-		pr_err("Failed to bind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
+-
+-	return ret;
+-}
+-
+-static int thermal_of_for_each_cooling_device(struct device_node *tz_np, struct device_node *map_np,
+-					      struct thermal_zone_device *tz, struct thermal_cooling_device *cdev,
+-					      int (*action)(struct device_node *, int, int,
+-							    struct thermal_zone_device *, struct thermal_cooling_device *))
+-{
+-	struct device_node *tr_np;
+-	int count, i, trip_id;
+-
+-	tr_np = of_parse_phandle(map_np, "trip", 0);
+-	if (!tr_np)
+-		return -ENODEV;
+-
+-	trip_id = of_find_trip_id(tz_np, tr_np);
+-	if (trip_id < 0)
+-		return trip_id;
+-
+-	count = of_count_phandle_with_args(map_np, "cooling-device", "#cooling-cells");
+-	if (count <= 0) {
+-		pr_err("Add a cooling_device property with at least one device\n");
+-		return -ENOENT;
+-	}
++		return false;
+ 
+-	/*
+-	 * At this point, we don't want to bail out when there is an
+-	 * error, we will try to bind/unbind as many as possible
+-	 * cooling devices
+-	 */
+-	for (i = 0; i < count; i++)
+-		action(map_np, i, trip_id, tz, cdev);
++	c->lower = cooling_spec.args[0];
++	c->upper = cooling_spec.args[1];
++	c->weight = weight;
+ 
+-	return 0;
++	return true;
+ }
+ 
+-static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
+-					    struct thermal_cooling_device *cdev,
+-					    int (*action)(struct device_node *, int, int,
+-							  struct thermal_zone_device *, struct thermal_cooling_device *))
++static bool thermal_of_should_bind(struct thermal_zone_device *tz,
++				   const struct thermal_trip *trip,
++				   struct thermal_cooling_device *cdev,
++				   struct cooling_spec *c)
+ {
+ 	struct device_node *tz_np, *cm_np, *child;
+-	int ret = 0;
++	bool result = false;
+ 
+ 	tz_np = thermal_of_zone_get_by_name(tz);
+ 	if (IS_ERR(tz_np)) {
+ 		pr_err("Failed to get node tz by name\n");
+-		return PTR_ERR(tz_np);
++		return false;
+ 	}
+ 
+ 	cm_np = of_get_child_by_name(tz_np, "cooling-maps");
+ 	if (!cm_np)
+ 		goto out;
+ 
++	/* Look up the trip and the cdev in the cooling maps. */
+ 	for_each_child_of_node(cm_np, child) {
+-		ret = thermal_of_for_each_cooling_device(tz_np, child, tz, cdev, action);
+-		if (ret) {
++		struct device_node *tr_np;
++		int count, i;
++
++		tr_np = of_parse_phandle(child, "trip", 0);
++		if (tr_np != trip->priv) {
+ 			of_node_put(child);
+-			break;
++			continue;
++		}
++
++		/* The trip has been found, look up the cdev. */
++		count = of_count_phandle_with_args(child, "cooling-device", "#cooling-cells");
++		if (count <= 0)
++			pr_err("Add a cooling_device property with at least one device\n");
++
++		for (i = 0; i < count; i++) {
++			result = thermal_of_get_cooling_spec(child, i, cdev, c);
++			if (result)
++				break;
+ 		}
++
++		of_node_put(child);
++		break;
+ 	}
+ 
+ 	of_node_put(cm_np);
+ out:
+ 	of_node_put(tz_np);
+ 
+-	return ret;
+-}
+-
+-static int thermal_of_bind(struct thermal_zone_device *tz,
+-			   struct thermal_cooling_device *cdev)
+-{
+-	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_bind);
+-}
+-
+-static int thermal_of_unbind(struct thermal_zone_device *tz,
+-			     struct thermal_cooling_device *cdev)
+-{
+-	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_unbind);
++	return result;
+ }
+ 
+ /**
+@@ -502,8 +414,7 @@ static struct thermal_zone_device *therm
+ 
+ 	thermal_of_parameters_init(np, &tzp);
+ 
+-	of_ops.bind = thermal_of_bind;
+-	of_ops.unbind = thermal_of_unbind;
++	of_ops.should_bind = thermal_of_should_bind;
+ 
+ 	ret = of_property_read_string(np, "critical-action", &action);
+ 	if (!ret)
+
+
+
 
