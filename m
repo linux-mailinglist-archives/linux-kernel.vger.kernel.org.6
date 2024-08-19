@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-292471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6247A956FDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82152956FE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946B11C22C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028EF1F257B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0EE174EDB;
-	Mon, 19 Aug 2024 16:11:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510A616D4F3;
+	Mon, 19 Aug 2024 16:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IXgg4bLr"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A4316C874;
-	Mon, 19 Aug 2024 16:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE216C6AD;
+	Mon, 19 Aug 2024 16:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083872; cv=none; b=OW2HggFd56decl0Y8iMoSDRrd05nWJi7uapvCWG5ygUHiAHl2tsR5N/Y3u9wph1K3DTiqFr06aNC5Eivx0zttxSklaG/EnlN7WChdy5oGu1j1Z0IcWYd8+37cJ8wuOCfNwsFmGJ/l1kqeWZ9ESjBenvrH063mNsL/20nu2D/xWo=
+	t=1724083899; cv=none; b=juAD6wZ8JAQU6BA5cy4vd3pHrgRypHxVIme8HiDMwMEXN7JFRddZW+PZWqIyHsMkJCFRiDpvqhKIrieAqu49onJjgOgUd15iJKJqvIS54FpepVxCseXJhSHCJl6nseKVIhMgq2kcOH3jpfndadGFovKgbzEzO9rY353SunR2ktA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083872; c=relaxed/simple;
-	bh=lsD3l0zy9n7q31pbaGfU5guogshI72B6C37og0kv7yY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=th30HNB3KB6fPOfOyfCsLnGvoeBSDsWMOddpPciHSLXEMzghSN/rf46P5lg6w0Wl0GgnX1t5oLJWT/qP5UNmyhH5gRsRlmo0xF13iM3uqq6aMrUmpsJ3xuJL9h9SKR4Es3fy3qaptVAirMa9q5bAXjMvRLOFPR36pvclt6mKIVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WncvR3GBnz67MmR;
-	Tue, 20 Aug 2024 00:08:03 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9E4F51400DB;
-	Tue, 20 Aug 2024 00:11:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 17:11:06 +0100
-Date: Mon, 19 Aug 2024 17:11:04 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Anup Patel
-	<anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
- Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 1/4] cpuidle: psci: Simplify with scoped for each OF
- child loop
-Message-ID: <20240819171104.0000625c@Huawei.com>
-In-Reply-To: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
-References: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724083899; c=relaxed/simple;
+	bh=GEoB++LDqQSoQo9jeGJ96QCwTXEp7CmnnqVXdqid5wQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uymVZK6qW0ndTZs3pNsKmxkvcHQdMcXPrjyCgIcQs8Pi9hXtQ+96dbALhXe/do4fAh/zijRqKUkY2ZMCKf79nzBRJqzKJlHe1ExjxGlvwjHb8ggxNxur0HcTf31epDF5w26svNfZx1jwIvWl09N6UKHG8ZJJjTQPjZmoFtAN/qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IXgg4bLr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2807720002;
+	Mon, 19 Aug 2024 16:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724083889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DfR9GdkWJJ+vheJl+e9402TxhERmDcjDDdvXV2mDGus=;
+	b=IXgg4bLrkJjhdtK5+1PV57T+G7rR7E/fzwrgt67rIO1toQ7tP++tofX0PhD0eeuwxmcQmX
+	UFd7subavNSQnrWmFlyUm0IyP9tMt8Nx6hhYYAOUCkpeiQLFIjvOwmIrC9UxUcimB/jMUI
+	hQQf/73QAdY0vUyPZfAOIcDOqYcqfSU9nsl/Z2AFIl44xlvAmEEMlaDS8bnfgfpbuNt0+m
+	vIS93bLSKxRq5Xq/CK55rHCCwDDVG+qy0aKhwQlGASMugVfSUqAcTx5ZumlajRviRor0K/
+	DfxRcDBNbLXS+ObZvc9fa9A5uC/yE1Ot8XonqzmNRxWWjKqvNdn0adT9f1nZbA==
+Message-ID: <34ba62f8-dc90-4a8a-914d-30df35d2956a@bootlin.com>
+Date: Mon, 19 Aug 2024 18:11:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] gpio: Congatec Board Controller gpio driver
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com
+References: <20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com>
+ <20240503-congatec-board-controller-v1-2-fec5236270e7@bootlin.com>
+ <CAMRc=MeC4q3BGxycxnOZCC8nD7p=8AO9rQasb5Gd4T1E+aKvHA@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <CAMRc=MeC4q3BGxycxnOZCC8nD7p=8AO9rQasb5Gd4T1E+aKvHA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Fri, 16 Aug 2024 17:09:28 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> Use scoped for_each_child_of_node_scoped() when iterating over device
-> nodes to make code a bit simpler.
+>> +static int cgbc_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +       struct cgbc_gpio_data *gpio = gpiochip_get_data(chip);
+>> +       struct cgbc_device_data *cgbc = gpio->cgbc;
+>> +       int ret;
+>> +       u8 val;
+>> +
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Looks fine,
-FWIW
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Can you use scoped_guard() here and elsewhere?
 
-If you are bored, the pr_err() at end of here seems like it should be
+Hi Bartosz,
 
-return dev_err_probe(pdev->dev, ret, "failed to create CPU PM domains\n");
+Thanks for the review.
 
-But that's obviously completely unrelated!
+For the next iteration I added scoped_guard() in cgbc_gpio_get(), and
+guard() in cgbc_gpio_set(), cgbc_gpio_direction_input(), and
+cgbc_gpio_direction_output().
 
-
-> ---
->  drivers/cpuidle/cpuidle-psci-domain.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/cpuidle/cpuidle-psci-domain.c b/drivers/cpuidle/cpuidle-psci-domain.c
-> index ea28b73ef3fb..146f97068022 100644
-> --- a/drivers/cpuidle/cpuidle-psci-domain.c
-> +++ b/drivers/cpuidle/cpuidle-psci-domain.c
-> @@ -142,7 +142,6 @@ static const struct of_device_id psci_of_match[] = {
->  static int psci_cpuidle_domain_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> -	struct device_node *node;
->  	bool use_osi = psci_has_osi_support();
->  	int ret = 0, pd_count = 0;
->  
-> @@ -153,15 +152,13 @@ static int psci_cpuidle_domain_probe(struct platform_device *pdev)
->  	 * Parse child nodes for the "#power-domain-cells" property and
->  	 * initialize a genpd/genpd-of-provider pair when it's found.
->  	 */
-> -	for_each_child_of_node(np, node) {
-> +	for_each_child_of_node_scoped(np, node) {
->  		if (!of_property_present(node, "#power-domain-cells"))
->  			continue;
->  
->  		ret = psci_pd_init(node, use_osi);
-> -		if (ret) {
-> -			of_node_put(node);
-> +		if (ret)
->  			goto exit;
-> -		}
->  
->  		pd_count++;
->  	}
+>> +       mutex_lock(&gpio->lock);
+>> +
+>> +       ret = cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_GET, (offset > 7) ? 1 : 0, 0, &val);
+>> +
+>> +       mutex_unlock(&gpio->lock);
+>> +
+>> +       offset %= 8;
+>> +
+>> +       if (ret)
+>> +               return ret;
+
+...
+
+>> +static int cgbc_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct cgbc_device_data *cgbc = dev_get_drvdata(dev->parent);
+>> +       struct cgbc_gpio_data *gpio;
+>> +       struct gpio_chip *chip;
+>> +       int ret;
+>> +
+>> +       gpio = devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
+>> +       if (!gpio)
+>> +               return -ENOMEM;
+>> +
+>> +       gpio->cgbc = cgbc;
+>> +
+>> +       platform_set_drvdata(pdev, gpio);
+>> +
+>> +       chip = &gpio->chip;
+>> +       chip->label = dev_name(&pdev->dev);
+>> +       chip->owner = THIS_MODULE;
+>> +       chip->parent = dev;
+>> +       chip->base = -1;
+>> +       chip->direction_input = cgbc_gpio_direction_input;
+>> +       chip->direction_output = cgbc_gpio_direction_output;
+>> +       chip->get_direction = cgbc_gpio_get_direction;
+>> +       chip->get = cgbc_gpio_get;
+>> +       chip->set = cgbc_gpio_set;
+>> +       chip->ngpio = CGBC_GPIO_NGPIO;
+>> +
+>> +       mutex_init(&gpio->lock);
+> 
+> Please use devm_mutex_init() so that it gets cleaned up at exit. It's
+> not strictly necessary but helps with lock debugging.
+
+Fixed in the next iteration.
+
+Regards,
+
+Thomas
+
+-- 
+Thomas Richard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
