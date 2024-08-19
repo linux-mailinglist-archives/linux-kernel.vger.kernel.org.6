@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-291623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FFA9564DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BAD9563D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF952817A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:42:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFA76B20FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9400158DA7;
-	Mon, 19 Aug 2024 07:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BLjJ3N/8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B549515575B;
+	Mon, 19 Aug 2024 06:44:46 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2A514AD3D;
-	Mon, 19 Aug 2024 07:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B77C14AD23;
+	Mon, 19 Aug 2024 06:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053323; cv=none; b=dB75/bMQukgPXf4659QRAm9jqwyfa8mSH8F8yXCSCoVySb5qXplNK1atCBy0K3WvCiq1nCE8t5JQ09dFPwZWfWmwbmivruSdeGuGFxq4FSIcxVteeNNGE2XZKnjfrHJst/jjOIlUIpOM0MpYQZoZXtkvtzklmHH6dAPNPEkBDt8=
+	t=1724049886; cv=none; b=XNMSsHvoEmQYHxmwCU+bB2wOxQqcoz7ACHsFsAf1a4kH3NaxH+df/bgnAZBHPbQiF/wV8yq/50PAB1x/inPdj/QesY+SHdZIlo6qjgPMWK5/j3YB+Y4IuftxSJ58lUPu/JUHlbxvmuEuWbAoqAS2OHti+LZ0PV6F+LuYXPvn9Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053323; c=relaxed/simple;
-	bh=XhaDNYPtumre+DlT/8KrzFiXd1NiecHLNyAbKknf9t4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=T7JzQxgq8civNrQRoWBLO0Tw2DdggBLZMU6lPA/kJJazY5pRIgH0G8b1iT/XOFwEITceJP6xBtsQeCcaD9RcjfcbHDt5sdAIJZ4JO4xhx81Ngxv1JZgdzHZD4wHAf/CY6XdzURW2wR1MalY4lCC0/7ADcgJhsDfgjKimEdNrH3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BLjJ3N/8; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724053322; x=1755589322;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=XhaDNYPtumre+DlT/8KrzFiXd1NiecHLNyAbKknf9t4=;
-  b=BLjJ3N/8fWv6uVzXAeYq9m7gK5NTGjbvFHvcYv/6JHstL1Jo4BaoB7iG
-   8BaLJcGUJRDN8PHwlX3sDNM9w4RY+CnPKcmN6xpDYp5O4P6FSD3ajcDJD
-   sowb+nq5MVCgNK2Kce782iJAlT66poKXe7UsdkHiLx31z0kDsRXe/YZYf
-   yQqWhYzyp3mo9NK4ohAH5DpaSAmpKE1Pn56eZoBHiKnHQmpBJrMCsnANb
-   fqdkHqLC+ITCPQZ1zhtmoYeJXO3/ck5CNs4KJCJUp532pLjFoEkijXkia
-   WFDMDB5g7a8JQfdyQV+ku8QfQoHprEMOmc1e43W6V5egMIm+mdwK861TH
-   w==;
-X-CSE-ConnectionGUID: CrmTB1SaR1mEWpTHDZ6www==
-X-CSE-MsgGUID: uNgA+5F8S+uwG/nRM/98aw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="26079155"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="26079155"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:42:02 -0700
-X-CSE-ConnectionGUID: 319Dz4XwQjqHxkKp+UQMeA==
-X-CSE-MsgGUID: PrS+ec61QxCHcWL8Trew/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="64677106"
-Received: from slindbla-desk.ger.corp.intel.com (HELO [10.245.246.57]) ([10.245.246.57])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:41:57 -0700
-Message-ID: <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
-Date: Mon, 19 Aug 2024 08:42:32 +0200
+	s=arc-20240116; t=1724049886; c=relaxed/simple;
+	bh=2bl5gl0mNYQ4ISUhz1fUgbt0jmAaZtG+6mJGM55o9RI=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TAjUZZ438rkMSHY5yLVbnGn/DfEf2/RkZzCBZZppFOFEKB1vh/HZswKZbDkI9C02AV1GPcorqvdXZWvcqXWuEhCgroLu5aENR8QoX/sWT5TmoyYHHEs9b2SsYw/3vdzpMT3j9RGqUky/xOkfQYzoI/5h8tlIwVemVgB7M8rodNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WnNHc044zz2CmYZ;
+	Mon, 19 Aug 2024 14:39:40 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C1F614011F;
+	Mon, 19 Aug 2024 14:44:38 +0800 (CST)
+Received: from [10.67.120.126] (10.67.120.126) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 14:44:37 +0800
+Subject: Re: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in
+ progress
+To: Damien Le Moal <dlemoal@kernel.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+References: <20240817015019.3467765-1-liyihang9@huawei.com>
+ <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
+ <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
+ <a3fc662c-fa98-4a6e-807b-babb9a344904@kernel.org>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bvanassche@acm.org>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
+	<stable@vger.kernel.org>, <liyihang9@huawei.com>
+From: Yihang Li <liyihang9@huawei.com>
+Message-ID: <676e37ba-a9c3-3d52-5c3b-0fa86cf1402e@huawei.com>
+Date: Mon, 19 Aug 2024 14:44:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory
- function
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, perex@perex.cz,
- tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com,
- festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
- broonie@kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
- <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <a3fc662c-fa98-4a6e-807b-babb9a344904@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
 
 
-On 8/16/24 12:42, Shengjiu Wang wrote:
-> Implement the ASRC memory to memory function using
-> the compress framework, user can use this function with
-> compress ioctl interface.
+On 2024/8/19 12:17, Damien Le Moal wrote:
+> On 8/19/24 13:07, Yihang Li wrote:
+>>
+>>
+>> On 2024/8/19 7:55, Damien Le Moal wrote:
+>>> On 8/17/24 10:50, Yihang Li wrote:
+>>>> If formatting a suspended disk (such as formatting with different DIF
+>>>> type), the disk will be resuming first, and then the format command will
+>>>> submit to the disk through SG_IO ioctl.
+>>>>
+>>>> When the disk is processing the format command, the system does not submit
+>>>> other commands to the disk. Therefore, the system attempts to suspend the
+>>>> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+>>>
+>>> Why would the system try to suspend the disk with a request in flight ? Sounds
+>>> like there is a bug with PM reference counting, no ?
+>>
+>> According to my understand and test, the format command request is finished,
+>> so it is not in flight for the kernel. And the command need a few time to processing
+>> in the disk while no other commands are being sent.
 > 
-> Define below private metadata key value for output
-> format, output rate and ratio modifier configuration.
-> ASRC_OUTPUT_FORMAT 0x80000001
-> ASRC_OUTPUT_RATE   0x80000002
-> ASRC_RATIO_MOD     0x80000003
+> OK, fine. But I think that retrying SYNC CACHE if the drive is formatting makes
+> absolutely no sense at all because there is nothing to flush in that case.
+> So what about simply ignoring the error ? I.e. something like this:
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 699f4f9674d9..1da267b8cd8a 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -1824,12 +1824,14 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+>                                 /* this is no error here */
+>                                 return 0;
+>                         /*
+> -                        * This drive doesn't support sync and there's not much
+> -                        * we can do because this is called during shutdown
+> -                        * or suspend so just return success so those operations
+> -                        * can proceed.
+> +                        * If a format is in progress (asc = LOGICAL UNIT NOT
+> +                        * READY, ascq = FORMAT IN PROGRESS) or if the drive
+> +                        * does not support sync, there is not much we can do
+> +                        * because this is called during shutdown or suspend. So
+> +                        * just return success so those operations can proceed.
+>                          */
+> -                       if (sshdr.sense_key == ILLEGAL_REQUEST)
+> +                       if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
+> +                           sshdr.sense_key == ILLEGAL_REQUEST)
+>                                 return 0;
+>                 }
+> 
 
-Can the output format/rate change at run-time?
+Thanks for your suggestion, it seems like good.
+I will send a new version based on this later.
 
-If no, then these parameters should be moved somewhere else - e.g.
-hw_params or something.
+Thanks,
 
-I am still not very clear on the expanding the SET_METADATA ioctl to
-deal with the ratio changes. This isn't linked to the control layer as
-suggested before, and there's no precedent of calling it multiple times
-during streaming.
-
-I also wonder how it was tested since tinycompress does not support this?
-
-
-> +static int fsl_asrc_m2m_fill_codec_caps(struct fsl_asrc *asrc,
-> +					struct snd_compr_codec_caps *codec)
-> +{
-> +	struct fsl_asrc_m2m_cap cap;
-> +	__u32 rates[MAX_NUM_BITRATES];
-> +	snd_pcm_format_t k;
-> +	int i = 0, j = 0;
-> +	int ret;
-> +
-> +	ret = asrc->m2m_get_cap(&cap);
-> +	if (ret)
-> +		return -EINVAL;
-> +
-> +	if (cap.rate_in & SNDRV_PCM_RATE_5512)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_5512);
-
-this doesn't sound compatible with the patch2 definitions?
-
-cap->rate_in = SNDRV_PCM_RATE_8000_768000;
-
-> +	if (cap.rate_in & SNDRV_PCM_RATE_8000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_8000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_11025)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_11025);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_16000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_16000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_22050)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_22050);
-
-missing 24 kHz
-
-> +	if (cap.rate_in & SNDRV_PCM_RATE_32000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_32000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_44100)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_44100);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_48000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_48000);
-
-missing 64kHz
-
-> +	if (cap.rate_in & SNDRV_PCM_RATE_88200)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_88200);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_96000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_96000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_176400)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_176400);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_192000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_192000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_352800)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_352800);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_384000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_384000);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_705600)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_705600);
-> +	if (cap.rate_in & SNDRV_PCM_RATE_768000)
-> +		rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_768000);
-> +
-> +	pcm_for_each_format(k) {
-> +		if (pcm_format_to_bits(k) & cap.fmt_in) {
-> +			codec->descriptor[j].max_ch = cap.chan_max;
-> +			memcpy(codec->descriptor[j].sample_rates, rates, i * sizeof(__u32));
-> +			codec->descriptor[j].num_sample_rates = i;
-> +			codec->descriptor[j].formats = k;
-> +			j++;
-> +		}
-> +	}
-> +
-> +	codec->codec = SND_AUDIOCODEC_PCM;
-> +	codec->num_descriptors = j;
-> +	return 0;
-
-
+Yihang.
 
