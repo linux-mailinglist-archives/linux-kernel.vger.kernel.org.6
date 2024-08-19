@@ -1,169 +1,180 @@
-Return-Path: <linux-kernel+bounces-292467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987A4956FD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:08:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0611C956FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9EB1F242ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A20D286558
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4AE17332A;
-	Mon, 19 Aug 2024 16:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBFF16C87B;
+	Mon, 19 Aug 2024 16:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7ICdLvd"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v0uYHoQ7"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F848287D;
-	Mon, 19 Aug 2024 16:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E552335C7
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083690; cv=none; b=VewLxqahePS54z9v7JVTYTPvHCK9QsZZ2fn0VhVI3LEDy7eT5j6pXhMe7oc7FXeoZprtN4eoxnte93soa4Hy60FtWT9pQtilcKMC+XWnJn1a352Tt0L11lpc8TqLq7/gM55Aoo9CNWdTMvg/6NcwbwMI7mYOvTHgxGLGk1b3lpc=
+	t=1724083720; cv=none; b=OnepbTK7ba2MWntxifN/RyKT3o4rBLqle0shlIUsNyXg77jocRtdnZO8Adq9fm4OsVPZFMzdL9gVGEMSe0KwHfpOSKP9kNcrz+6J9l564Oy6YMHDeBHgKaHpumN+tfj42nRp0h8gv4L2hS+SuV5IrvzCWmtaw5PaF8Nz16Y8My0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083690; c=relaxed/simple;
-	bh=yoBkZXERKr7bqbNe+5gAs9ggqERpCzVHPCNNXnlqfUg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mRrZZEysrEG5gADWj8IvldW75TW5+up78n0X9JncsM2jpfPERzOT85umZXUnSPGyISy/WK/lgc9KVx5n+e6Z8/BZOKIRRzJ3gBF+zHU2pHvyMigeFWnRxCzdkO41sY0O67wmOk8R66PSW61ZgFtJWd8LTDxE4UffRv9lUEUXQfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7ICdLvd; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a23fbb372dso2619622a12.0;
-        Mon, 19 Aug 2024 09:08:08 -0700 (PDT)
+	s=arc-20240116; t=1724083720; c=relaxed/simple;
+	bh=bylvFftKS/DVYzpK15b6nBMQQOhh1cso9YgFzNNXn34=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JgtqhnzXpioM5rvg89xyHih95BjI8SIQs+Vn3njQqN6w/kaIAEp3N0epfa3AzCAPOMhtozRQfThwp23nwt3AQvQPJtGWBi4egGrcfMhvnvUXowZPHaSIhgapzGh2uyvKPNYBkL9IfLH/Xpaf8bPLb9cGgs+JG4PXzrcIDAj0D04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v0uYHoQ7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428119da952so36078275e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:08:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724083688; x=1724688488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWG9imhLWmDvDlk9mM25jvvBh/M6NY5p5kOC4fBkFzE=;
-        b=h7ICdLvdGlg+F2Y6jjeyrZGTMG7Q5p+JXW8G5HWF/Hu1svLfoDWUrx6rBBNESbLyDp
-         w6UD3XgFVVjblpuq86P8SUkGXqU8zzEuT0sSMjsLpLk4yRdXoxs3qpG2tg+BN48JdMzj
-         7HhMgaKOT0FBvc7kdBBtVK3miGf0EETnUkdfcSy+sp5g7fiKmGVWP7JBUFSNNrkKq8Yd
-         zihyMat1jJJQd9J/2oEC8zQvu1KSwA5A2vuYNup0jFnpnlPrn4V4D2kKI5PiISee3Bab
-         0fsjSrr/58J/BJF56m4JFbERLPP7PDgwYtlnJ09oft7b7DQMQsc7v4kGqvTvRbcMmX5a
-         ER9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724083688; x=1724688488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1724083716; x=1724688516; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lWG9imhLWmDvDlk9mM25jvvBh/M6NY5p5kOC4fBkFzE=;
-        b=RZgPn7CNnc5cD+Mz25+iETTEy61bWrzvy1lqIkCF288FpjBjU8To6X0JrwnY0LcH6y
-         1JAuUtPt6rRitAWYTRdFNihh1RgpzBdZhItmX28gY3dDmPyJAGB/rZrh2SyTDgxCecq0
-         8x0XQc8fCmjeGFQW3PdirDw5YDMJsE+WG+GZl2URXaG7vBEQUoSButM6WGbTgVDwaO1v
-         G9UsMxI00WgoDZhlwbEEO1ySU8G6f1XN4dDzvcbotFISXVI8OupMUhdqpnyGh67bH9w6
-         OspuhGJiZFF9KmObeynv0U/D8aZ03a6iRMVtXs55WnCmtTFCNPsaySHhdIGdu3uZZFCc
-         lrzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhV2SBdNNfEwAOtJbOXfHcY/Bev7xj8naT/KqHC+N14S5R4yZ1+71IzyNlprz15a3pLT7rJMIBVzPlXi6h7HyHRNSaPMbc/xyZDMJx8QSmCXZ2HgbEljwbQZhp991oO7jD
-X-Gm-Message-State: AOJu0Yz2jST/CVfQDufEBRvJbmTJMtO1fj8jugN7Od3I5Z5p4aGR2Cqe
-	DU8SraFUrDbd+7p4yjcqM2IvSKLdVg4jk6x0j5NCLaBqHV4GXd6LOGojKxyoROc=
-X-Google-Smtp-Source: AGHT+IEm5K9AGKyTbpO1cOvx6o6INI1yTHRJPO7R31ZUmQX3rnMpnVm5D7Mugw+hTvEOc6AoZzIaAg==
-X-Received: by 2002:a17:90b:190a:b0:2c9:6ad9:b75b with SMTP id 98e67ed59e1d1-2d3e0e4210emr8406848a91.40.1724083687820;
-        Mon, 19 Aug 2024 09:08:07 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3274642sm7332961a91.33.2024.08.19.09.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 09:08:07 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org
-Cc: eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH bpf] bpf: Refactoring btf_name_valid_identifier() and btf_name_valid_section()
-Date: Tue, 20 Aug 2024 01:07:58 +0900
-Message-Id: <20240819160758.296567-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=zZXB9eWC3jaAHU2DUNdmRkIBaE/QcD6ULIBMGv3bqxc=;
+        b=v0uYHoQ7Xc0DRUXpF59pQtBWlee+vx1BO7iMIL94t6VOzoQUJgjkhoLJAJ5ZTV7prz
+         ONp3y8X2FJXQmr9cp3i9h9GpO9/9JKbR/6+9CaDzcrGBCmwQOJM0G0xMFZoy+oMguiEA
+         rh4eT3vW5gptU4aIsH3WW4SlBygQsOGDKoWBNdn8bQTEIwGoPY0pyHjqb54dP5UzMdT6
+         Y+WZNavQNVAaTWrAvVmIV1QPwbyVOhrDKWv7BM8QbFj7TytcM6729lgOc8U1Ahb5PJKt
+         oZIjY2Vp4xakbpygJr8CRgdnUurLTMdyQfcN2jINb5viKRHWT4yjX6OXJnvEZ1cbgRGH
+         Mb4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724083716; x=1724688516;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zZXB9eWC3jaAHU2DUNdmRkIBaE/QcD6ULIBMGv3bqxc=;
+        b=K4Pgp6poUjxlTyAemdrahXJ4yGZaZZ1+kKJPwITvpSrw3PyBo3KpJD8ne3FrmnjhR3
+         4eLEAf02BzVuNWbuQ7b0sB3OZ8yfm4BB/slmB/HyFfgxajFk7Slp/x4c/75N9RSeZ4Od
+         /PKc5C0Bc/8Kax7V+MAZi5fyL2U9JGbH3WHfUm/WajcxAQjKjlBDGRp88PjRksHSQM+u
+         czyvX/NFlnN5Sfk06F5GnPOQa2m0RLaCb5SmnWjh+JMpko8zQkYPpzROiRTkuM+Guxe/
+         1bsGgicBpryPZ+AJ4Km4TVgvVcekOMwHBPjdS7XeaPypPwBXw6onvFcGU+MSCD61Hmig
+         7xUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJjQr+1UVtQZSeaUrQ23GoFjdF6L9Z6EkRzbOkgbIXJFcvdTwmNCehGWeSpR/8NHk0smbFWWYYy0mLibEtHf8cMBJwPO6vUtqOQyDO
+X-Gm-Message-State: AOJu0Yx8B03LOZ0uiwgi7CqbSUFRkDRsE92/Nx7EGi5E7cqAubvxbhKF
+	6yMJqpVF/00eAQni+fISOHd4/8BfhlfQDHqFJtQ98qcYgc/Nd8KgM2Tz9MEP6KQ=
+X-Google-Smtp-Source: AGHT+IEctf6m+H+GvqS9ocINagd6WHDY07QHzWWDGizaBipSBKg2CM+6kL3bWVQiaT3seaoGIZrXQA==
+X-Received: by 2002:a05:600c:4445:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-429ed7891demr73947145e9.11.1724083716047;
+        Mon, 19 Aug 2024 09:08:36 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed785708sm114205685e9.37.2024.08.19.09.08.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 09:08:35 -0700 (PDT)
+Message-ID: <8d49f427-a0f8-44f4-bd46-86fbf385deab@linaro.org>
+Date: Mon, 19 Aug 2024 18:08:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 5/9] drm/meson: dw-hdmi: split resets out of hw init.
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240730125023.710237-1-jbrunet@baylibre.com>
+ <20240730125023.710237-6-jbrunet@baylibre.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240730125023.710237-6-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, btf_name_valid_identifier() and btf_name_valid_section() are
-written in a while loop and use pointer operations, so it takes a long
-time to understand the operation of the code. Therefore, I suggest
-refactoring the code to make it easier to maintain.
+On 30/07/2024 14:50, Jerome Brunet wrote:
+> This prepares the migration to regmap usage.
+> 
+> To properly setup regmap, the APB needs to be in working order.
+> This is easier handled if the resets are not mixed with hw init.
+> 
+> More checks are required to determine if the resets are needed
+> on resume or not. Add a note for this.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>   drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 +++++++++-----
+>   1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> index 5cd3264ab874..47aa3e184e98 100644
+> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> @@ -581,11 +581,6 @@ static void meson_dw_hdmi_init(struct meson_dw_hdmi *meson_dw_hdmi)
+>   	/* Bring HDMITX MEM output of power down */
+>   	regmap_update_bits(priv->hhi, HHI_MEM_PD_REG0, 0xff << 8, 0);
+>   
+> -	/* Reset HDMITX APB & TX & PHY */
+> -	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+> -	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+> -	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+> -
+>   	/* Enable APB3 fail on error */
+>   	if (!meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+>   		writel_bits_relaxed(BIT(15), BIT(15),
+> @@ -675,6 +670,10 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>   		return PTR_ERR(meson_dw_hdmi->hdmitx_phy);
+>   	}
+>   
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+> +
+>   	meson_dw_hdmi->hdmitx = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(meson_dw_hdmi->hdmitx))
+>   		return PTR_ERR(meson_dw_hdmi->hdmitx);
+> @@ -765,6 +764,11 @@ static int __maybe_unused meson_dw_hdmi_pm_resume(struct device *dev)
+>   	if (!meson_dw_hdmi)
+>   		return 0;
+>   
+> +	/* TODO: Is this really necessary/desirable on resume ? */
 
-In addition, btf_name_valid_section() does not check for the case where
-src[0] is a NULL value, resulting in an out-of-bounds vuln. Therefore, a
-check for this should be added.
+Yes to reset the HDMI controller to it's default state, not sure if the note is important here.
 
-Reported-by: Jeongjun Park <aha310510@gmail.com>
-Fixes: bd70a8fb7ca4 ("bpf: Allow all printable characters in BTF DATASEC names")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- kernel/bpf/btf.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+> +	reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+> +
+>   	meson_dw_hdmi_init(meson_dw_hdmi);
+>   
+>   	dw_hdmi_resume(meson_dw_hdmi->hdmi);
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 674b38c33c74..c1e2aead9141 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -794,21 +794,18 @@ static bool btf_name_valid_identifier(const struct btf *btf, u32 offset)
- {
- 	/* offset must be valid */
- 	const char *src = btf_str_by_offset(btf, offset);
--	const char *src_limit;
-+	int i;
- 
--	if (!__btf_name_char_ok(*src, true))
-+	if (!__btf_name_char_ok(src[0], true))
- 		return false;
- 
- 	/* set a limit on identifier length */
--	src_limit = src + KSYM_NAME_LEN;
--	src++;
--	while (*src && src < src_limit) {
--		if (!__btf_name_char_ok(*src, false))
-+	for (i = 1; i < KSYM_NAME_LEN && src[i]; i++) {
-+		if (!__btf_name_char_ok(src[i], false))
- 			return false;
--		src++;
- 	}
- 
--	return !*src;
-+	return !src[i];
- }
- 
- /* Allow any printable character in DATASEC names */
-@@ -816,18 +813,18 @@ static bool btf_name_valid_section(const struct btf *btf, u32 offset)
- {
- 	/* offset must be valid */
- 	const char *src = btf_str_by_offset(btf, offset);
--	const char *src_limit;
-+	int i;
-+
-+	if (!src[0])
-+		return false;
- 
- 	/* set a limit on identifier length */
--	src_limit = src + KSYM_NAME_LEN;
--	src++;
--	while (*src && src < src_limit) {
--		if (!isprint(*src))
-+	for (i = 1; i < KSYM_NAME_LEN && src[i]; i++) {
-+		if (!isprint(src[i]))
- 			return false;
--		src++;
- 	}
- 
--	return !*src;
-+	return !src[i];
- }
- 
- static const char *__btf_name_by_offset(const struct btf *btf, u32 offset)
---
 
