@@ -1,177 +1,100 @@
-Return-Path: <linux-kernel+bounces-291620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45489564D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50A49564CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 043E71C21786
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78CFF1F22C39
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8736158214;
-	Mon, 19 Aug 2024 07:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="RWFaWCVd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XuAcUDpE"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A9C158532;
+	Mon, 19 Aug 2024 07:39:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C627B14A605;
-	Mon, 19 Aug 2024 07:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B905115749C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053246; cv=none; b=Ta9z6mf65zreyvjC12H87+uWtecp/yyk0Q2DYZJ96DvPWVgUQbZjwCbvplXtkCRBhgBX6c4ZzX0UFxR7QO7/iB7V0sqKMUbhr05l4zhWZLK/uXCCYp2+KwxCd2Lr/cr/VTrE+Qupp4riSVwyNbS5pBX5eqGnL0d99bxTNChVzAE=
+	t=1724053162; cv=none; b=LbI/wcu2orP9jiz7bN6pnga0HO1i6snhDEsszuxjBJVoYQiFosm3wHH84XAa2t8fkVeQ/aYOlF3gPFTeSdOyUYA/NFh6FyQTHxf1EwtB8OTMjXeabYo69qRrQfJMw6ogV9W/+WnW6tG4BaNTw2KtGtSF17WhktdIBf2uDdamcZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053246; c=relaxed/simple;
-	bh=5C6hi9jVni636FVTIqqwW0CM1paMDr5oiHPxcLE6rcY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=E610XT72w5QxtFygsjnQMCLxGUfgoitAoqtg+4PPa3tl+usrAUDLEPFmeLJkbI5h7X5R0nQloljQZzlDpIjpKN8KQNmUSgEx9fo60rrl12la8RGSavg+HooZXu15EyGkkogeMECaVXi98Hoo5j8KYQK8y3Xq8sPpax76Zn4kPlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=RWFaWCVd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XuAcUDpE; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C84B7114EA2A;
-	Mon, 19 Aug 2024 03:40:43 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 03:40:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724053243;
-	 x=1724139643; bh=5rOgtNXqnl/XTtdpDxQ7vxXNP5y5q63LBK60m42hBYA=; b=
-	RWFaWCVdotq7usC8JKB5/ooUKrFWEMHvhs9+ek41MUU/PZnvHgSJwI5iYtSKRvf+
-	SRijzroUudyCNiGFU0eO0Ehc4P82tb32uiMk2xd3v08qd1PjeXa30aFH5uEpgsyz
-	8f52fDI6XvjOn7rwMlAi+j16lOvSikYCXfH2vVqOmmxJvb6Vh8rSsQyVUzBq/5ld
-	0QRKk4he/k3swJoIqA/kZ1eeIV5nV0CNq2T7XuIMgd/eFHNirQi6bpgGQwJcinIm
-	KR5dtZnm5XbudgEeGnGZ6E9F4lsnm0vJM8L38c39xM5FTRU+ZXlw+K1IKsWFFQWR
-	5TYH7T1n+gKcV69Jw1NeWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724053243; x=
-	1724139643; bh=5rOgtNXqnl/XTtdpDxQ7vxXNP5y5q63LBK60m42hBYA=; b=X
-	uAcUDpENxX3JeOBw3ghu3j2zTTh8HI3ttsk312poqBYDZVgB5JIreUdXj0LpCL9n
-	TQQvuRhAApUxltOolJuK2U0eekO9X2fE4ntnUbyyOSG38vNLew3wT/Jgt/qZwSTO
-	/rSZM9Q6+dessLRYdJrGgXAleCTYK3ZbIXXMuBSMIkIEAysW/kOpTUiZFhCrOGK1
-	FqiFpSPhI090DIaLw+os9Gw728TlbkYIwc/PobrSMSiQSfo9D+GDiZt/d7Ksg79Z
-	1+evdzrmTMUyu53tpWDR9U92mAC4ALfZDMsY33oPHxIwdSgjUfUGPlNZDpX8c0Pt
-	m4pbEJFRA7JhL6abaMRuA==
-X-ME-Sender: <xms:-vbCZknn1GfGbKx7_1df5aEvDlDW_s9xkUhyQlddmArQn-l_8zzwwg>
-    <xme:-vbCZj0stErkO9lplvqUoCmG9FNY90ez3JPxbY4k9oeVqQH1pDI1srlhK5arzsTx2
-    hGuUGjCk8N02CORtbk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddufedguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeevfeelhfelheekleeggefgjeeljeehiefgteev
-    feetueeihfekgedvieelhfdugeenucffohhmrghinhepuggvsghirghnrdhnvghtpdhlrg
-    hihhhurgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvjedpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnshhhrgifsegr
-    rhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhrugesrghrmh
-    drtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhr
-    tghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohepghhrvghgoh
-    hrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnihgtohes
-    fhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdhtohhrghhuvg
-    esfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrhiimhhikhes
-    fhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrih
-    hlrdgtohhm
-X-ME-Proxy: <xmx:-vbCZir8EVT-NEhPrM456o9YtVwjX4tVHQvn3BqnzDtH3fenZUO8FQ>
-    <xmx:-vbCZgmG0Rt_S4U8j7zMWNJrcFjCeuE4g7Hd3A0D_wwyVGwU8LeHGg>
-    <xmx:-vbCZi3sMbGBlcxtde0P8ut_c_sbypjpeBWtOFNuvg7iTCAl6COtZg>
-    <xmx:-vbCZnuZ1IyXddqtZznd53gK8LP7yOT5cH439SNqBSHzM8w7LdR_eQ>
-    <xmx:-_bCZmLqs-nTReoqfIKEPTaXlq3iafuMGqEncmxBUIjssGNEViHiBUrl>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5F01A16005E; Mon, 19 Aug 2024 03:40:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724053162; c=relaxed/simple;
+	bh=QC/eCvIe4Z0WaYM7c3KqLyuSj5z7rbLREK4iVQViOpg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GDr5GZTNgCfeSe38uUcj8HGaUSr38rjWXgrVaa4PU1mDHBwzJza/q/stv05NkNV2vkGTwKZcKmnonZB7bXGjomBmzFq0b5R3F/ipcult6V/ahSEbkzmjR94TyPhUoI1OSxOj0ql/glE/VpwKZCyiVaGiVWznvcCT7BZVbhg/fx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8d1720ebso390124639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:39:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724053160; x=1724657960;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TTfnb67k22MLpM3A85hXVfpyRYO3HcoiSS4BqkZT7R4=;
+        b=Op/sDlLERmhQGwWhmnmAyaJtJkaccDBzbQ67Z+ALxwc4bHYGmYjepnMlMAxseMHhFL
+         FYKuvEm4m0xWpTBNqtWezXuMhjRJoGT36Fe1O2z2twdQjBr+SvQeRaQW0ZnPSml+9yyQ
+         jMsh0p9gUZM9+nxnnDpgGpyOEpzgjITY75MxhmRJchnpJ1mbw15wzzb2tDkow0m6Tc4D
+         lTQY/gPKWhTXxsKRknwW17VlFKLKwDVBTSzKT7H7kbTjcUP31avt8iIa1mR91gZ3cdpy
+         oirF1PGgWj7YXsrd47lZUbGCNEitJZi/MO9tiyFdTSG+MkzKwuTXrO2QX3skQ07yDXh/
+         IbcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTFimPv+H0Vyz2If+WrxQjm6xe/x4ac84QdFn3cOkMJt7UMDAbsiYyhsH4zW8tS9WoK3JEu8z/RL+06w/0t2YZEosVltKZ+u2BBhRX
+X-Gm-Message-State: AOJu0YxGmNQS7C+5SavSsNoIc6GUn6d9Wx/X/jxtbA64tqHjU+P3QOhm
+	kZiqyu2WKOZK+hEkDWadp9Ff595FyduJ2eso2L3KjpIwUvMADPfrZUcrgSHBYg8WBa2hGqlsZyZ
+	L8TZHx9I29HD8Vx0e7vBfL65iiD1a0phChW3qGMZY9yY3M8pb+23lDvc=
+X-Google-Smtp-Source: AGHT+IG6HXxs/ynnoi6WxlCaOWgBlvHY1/o9En1pwTOHwPYo7qCr0D5hUxepeJHr8fPf5GSbahkgVaqYuuvx3Tz3+gkbFisCdzOs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 19 Aug 2024 09:37:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Matt Turner" <mattst88@gmail.com>, "Ard Biesheuvel" <ardb@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Earnshaw" <richard.earnshaw@arm.com>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Message-Id: <edb61f55-da54-4015-8f09-178a6644c2b0@app.fastmail.com>
-In-Reply-To: 
- <upt52224svue5ozyacrzm3qcavkcz7kojyi2yajoqb4y2pgffo@cy437r5ipdbm>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <upt52224svue5ozyacrzm3qcavkcz7kojyi2yajoqb4y2pgffo@cy437r5ipdbm>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:851d:b0:4c2:8e08:f579 with SMTP id
+ 8926c6da1cb9f-4cce15e045amr577793173.2.1724053159870; Mon, 19 Aug 2024
+ 00:39:19 -0700 (PDT)
+Date: Mon, 19 Aug 2024 00:39:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002b15070620046876@google.com>
+Subject: [syzbot] Monthly nfc report (Aug 2024)
+From: syzbot <syzbot+list6eb6e310c9acf922e970@syzkaller.appspotmail.com>
+To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 15, 2024, at 20:24, Matt Turner wrote:
-> On 07/31, Arnd Bergmann wrote:
->>=== iWMMXt ===
->>
->>I'm not aware of any remaining users for iWMMXt, and we dropped
->>support for ARMv7 PJ4 CPUs (MMP2, Berlin) already, so the
->>only supported hardware that even has this is Intel/Marvell
->>PXA and MMP1.
->
-> pixman had [1][2] iwMMXt paths that I optimized for the XO 1.75 and
-> would occasionally test on a CuBox over the years.
->
-> I'm surprised to see that commit b9920fdd5a75 ("ARM: 9352/1: iwmmxt:
-> Remove support for PJ4/PJ4B cores") landed with the claim that "there is
-> no v6/v7 user space that actually makes use of this". A quick Google
-> search reveals evidence of usage [3]. It doesn't seem like this should
-> have been backported to the stable branches in any case.
+Hello nfc maintainers/developers,
 
-Sorry for missing this one, I'm sure I spend more than a quick
-google search trying to find instances of this, but clearly didn't
-see this, and I now see that pixman is the only package listed in
-https://codesearch.debian.net that uses the compiler flags.
+This is a 31-day syzbot report for the nfc subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nfc
 
-I'm still not sure how your version worked on ARMv7, was this before
-or after the move to the hardfloat ABI? What I see on modern armhf
-gcc targets is that they reject -march=iwmmxt{,2} because those
-imply armv5 without vfp, while armhf toolchains require vfpv3d16
-as the minimum fpu.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 27 have been fixed so far.
 
-My guess is that the pixman code still works correctly for softfloat
-toolchains, but the meson.build check would fall back to the vfpv3
-version for armv7/hardfloat builds.
+Some of the still happening issues:
 
-gcc also rejects "-march=iwmmxt2+vfpv3-d16". While it accepts
-"-march=iwmmxt2 -mfpu=vfpv3-d16", I suspect that this combination
-has not been tested well.
+Ref Crashes Repro Title
+<1> 207     Yes   INFO: task hung in nfc_rfkill_set_block
+                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
+<2> 139     Yes   INFO: task hung in rfkill_unregister (3)
+                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
+<3> 30      Yes   INFO: task hung in rfkill_sync_work
+                  https://syzkaller.appspot.com/bug?extid=9ef743bba3a17c756174
+<4> 19      No    KMSAN: uninit-value in nci_ntf_packet (3)
+                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
 
-> I know that ffmpeg used to have iwMMXt paths as well, but I believe they
-> were removed a few years ago.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Right, apparently this was in 2012:
-https://gitlab.laihua.com/linshizhi/ffmpeg.wasm-core/commit/363bd1c62c1bcbac2dcb56f3dc47824f075888d2
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-   Arnd
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
