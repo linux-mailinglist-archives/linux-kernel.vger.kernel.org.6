@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-292565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428E6957155
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:00:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A69957169
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76531F2300A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047B5B26DF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DCE187871;
-	Mon, 19 Aug 2024 16:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81CA178399;
+	Mon, 19 Aug 2024 16:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TSX+Bcvx"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v4n92dJc"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2093732C8B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C568D17837D
 	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086799; cv=none; b=VVdtZ1CrnDfpeaYFmbbXXn0zvl1QHFt7LngDRxo8oSvE9+uHC4d5kZdhLfSLkV9ndOoDSWHzqda6F9fG7gJt2TB3N42kgZhmWsaIwPFz6DQoDZRhVWO8SBXjGE5Vn8STNpET/8EPRRs0HAlqZJc0cYX1bl4AloP1tOmU+JikyLE=
+	t=1724086796; cv=none; b=k44jWjzIeBQmzxRxJyDjSlBwn33gWSQrU802pqdRfaOY9m/HykP9p0TkoH5tbnU7zTtjdeNfgEWmw48/iRGlqk+IVUWSMHdd0R+YIGAGSsbf0Y9UgDXiMdZiB2F+gQp6UMc9uJ2uSlk7HSsesDf00MbSYteh33w7L2mGmGYYn8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086799; c=relaxed/simple;
-	bh=n731cSIpPTzFTMyno3qp4hLjr7DK+/a6BT0mOcXArEs=;
+	s=arc-20240116; t=1724086796; c=relaxed/simple;
+	bh=Q2Ap5z/7A7txTEKvvHdCh6MsQonmDtIL+y52IshIp0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DQ81/Vc7UBzc2j0AtdHqUbzCWvzko5ROVqN4uiqIBmZxBc8kRHWgevJuyz0BvoDdQszAsmH+DA4pGPWK4cWmVazCxe8C9x2zgji8EoT7ZzhWMmUCSO/RqLN+cGkLVeM4tesFQtq0srTvJjyBcuDoeXF4Du/UyxlkEnDwqYvFwZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TSX+Bcvx; arc=none smtp.client-ip=91.218.175.172
+	 MIME-Version; b=bEVyVTVopyKKGAJuCtKbjZGBP3zu9TLmzQotzw+MNVsljwueAKnHjruUzp1OCcCsM8ex4l267X0+PMoL5KaBj7JNxrift6uatR88bkPHFymGZnGQyfrCzC0+JMhVFM+Wxm/p+AOLapnyj2VfHzUw/qYcL/pTGTtDjEi4HhlD4Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v4n92dJc; arc=none smtp.client-ip=91.218.175.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724086792;
+	t=1724086793;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZNCCaVjvUekOAkBm/WVRQhN2Hqdw6JK2X7nthvgVO5w=;
-	b=TSX+BcvxSfjF7ameFNczV3W/kJO7D2GP4GMce0XhrQwJegLlu8srX/JlWjC/kSttRHbWLl
-	whh+XuSnsmpdeXSoaSJfDVtLi1j1Uh5iCJSsZHrdoLv6A8tNhItYn5In1+0e3IcyC9TsSm
-	ZSruQ2Jre3KW3YF6+8UWhSqzBUhJQYM=
+	bh=6y8BJGFrfNUpQt3vcVW5ZgcFN87o+Iw49kVkMeQe7aA=;
+	b=v4n92dJcj99TWULTM0T7QRl+8Rda+RvzlJAPzkF7yr/xrHFbDdJss9iZOBRJIXR2Q+Shoe
+	6DUB30bOVfqZOLHbDCgPpr4T1/hlOOL2xHzAB+MQk7UqTPDJHkWh9pC6hTPZxzDUQwu3tN
+	1+vg/PIBKbeZ6LmFWSv5yr7qVTKPkF0=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: rcu@vger.kernel.org
 Cc: Kent Overstreet <kent.overstreet@linux.dev>,
 	paulmck@kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] lib/generic-radix-tree.c: genradix_ptr_inlined()
-Date: Mon, 19 Aug 2024 12:59:27 -0400
-Message-ID: <20240819165939.745801-2-kent.overstreet@linux.dev>
+Subject: [PATCH 2/9] lib/generic-radix-tree.c: add preallocation
+Date: Mon, 19 Aug 2024 12:59:28 -0400
+Message-ID: <20240819165939.745801-3-kent.overstreet@linux.dev>
 In-Reply-To: <20240819165939.745801-1-kent.overstreet@linux.dev>
 References: <20240819165939.745801-1-kent.overstreet@linux.dev>
 Precedence: bulk
@@ -60,195 +60,142 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Provide an inlined fast path
-
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/generic-radix-tree.h | 75 ++++++++++++++++++++++++++++++
- lib/generic-radix-tree.c           | 64 +------------------------
- 2 files changed, 76 insertions(+), 63 deletions(-)
+ include/linux/generic-radix-tree.h | 39 +++++++++++++++++++++++++-----
+ lib/generic-radix-tree.c           | 16 ++++--------
+ 2 files changed, 38 insertions(+), 17 deletions(-)
 
 diff --git a/include/linux/generic-radix-tree.h b/include/linux/generic-radix-tree.h
-index f3512fddf3d7..8a3e1e886d1c 100644
+index 8a3e1e886d1c..340bba5c9735 100644
 --- a/include/linux/generic-radix-tree.h
 +++ b/include/linux/generic-radix-tree.h
-@@ -48,6 +48,49 @@ struct genradix_root;
- #define GENRADIX_NODE_SHIFT	9
- #define GENRADIX_NODE_SIZE	(1U << GENRADIX_NODE_SHIFT)
+@@ -41,6 +41,7 @@
+ #include <linux/limits.h>
+ #include <linux/log2.h>
+ #include <linux/math.h>
++#include <linux/slab.h>
+ #include <linux/types.h>
  
-+#define GENRADIX_ARY		(GENRADIX_NODE_SIZE / sizeof(struct genradix_node *))
-+#define GENRADIX_ARY_SHIFT	ilog2(GENRADIX_ARY)
-+
-+/* depth that's needed for a genradix that can address up to ULONG_MAX: */
-+#define GENRADIX_MAX_DEPTH	\
-+	DIV_ROUND_UP(BITS_PER_LONG - GENRADIX_NODE_SHIFT, GENRADIX_ARY_SHIFT)
-+
-+#define GENRADIX_DEPTH_MASK				\
-+	((unsigned long) (roundup_pow_of_two(GENRADIX_MAX_DEPTH + 1) - 1))
-+
-+static inline int genradix_depth_shift(unsigned depth)
-+{
-+	return GENRADIX_NODE_SHIFT + GENRADIX_ARY_SHIFT * depth;
-+}
-+
-+/*
-+ * Returns size (of data, in bytes) that a tree of a given depth holds:
-+ */
-+static inline size_t genradix_depth_size(unsigned depth)
-+{
-+	return 1UL << genradix_depth_shift(depth);
-+}
-+
-+static inline unsigned genradix_root_to_depth(struct genradix_root *r)
-+{
-+	return (unsigned long) r & GENRADIX_DEPTH_MASK;
-+}
-+
-+static inline struct genradix_node *genradix_root_to_node(struct genradix_root *r)
-+{
-+	return (void *) ((unsigned long) r & ~GENRADIX_DEPTH_MASK);
-+}
-+
-+struct genradix_node {
-+	union {
-+		/* Interior node: */
-+		struct genradix_node	*children[GENRADIX_ARY];
-+
-+		/* Leaf: */
-+		u8			data[GENRADIX_NODE_SIZE];
-+	};
+ struct genradix_root;
+@@ -81,6 +82,11 @@ static inline struct genradix_node *genradix_root_to_node(struct genradix_root *
+ 	return (void *) ((unsigned long) r & ~GENRADIX_DEPTH_MASK);
+ }
+ 
++struct __genradix {
++	struct genradix_root		*root;
++	rwlock_t			free_lock;
 +};
 +
- struct __genradix {
- 	struct genradix_root		*root;
+ struct genradix_node {
+ 	union {
+ 		/* Interior node: */
+@@ -91,9 +97,15 @@ struct genradix_node {
+ 	};
  };
-@@ -128,6 +171,30 @@ static inline size_t __idx_to_offset(size_t idx, size_t obj_size)
- #define __genradix_idx_to_offset(_radix, _idx)			\
- 	__idx_to_offset(_idx, __genradix_obj_size(_radix))
  
-+static inline void *__genradix_ptr_inlined(struct __genradix *radix, size_t offset)
+-struct __genradix {
+-	struct genradix_root		*root;
+-};
++static inline struct genradix_node *genradix_alloc_node(gfp_t gfp_mask)
 +{
-+	struct genradix_root *r = READ_ONCE(radix->root);
-+	struct genradix_node *n = genradix_root_to_node(r);
-+	unsigned level		= genradix_root_to_depth(r);
-+	unsigned shift		= genradix_depth_shift(level);
-+
-+	if (unlikely(ilog2(offset) >= genradix_depth_shift(level)))
-+		return NULL;
-+
-+	while (n && shift > GENRADIX_NODE_SHIFT) {
-+		shift -= GENRADIX_ARY_SHIFT;
-+		n = n->children[offset >> shift];
-+		offset &= (1UL << shift) - 1;
-+	}
-+
-+	return n ? &n->data[offset] : NULL;
++	return kzalloc(GENRADIX_NODE_SIZE, gfp_mask);
 +}
 +
-+#define genradix_ptr_inlined(_radix, _idx)			\
-+	(__genradix_cast(_radix)				\
-+	 __genradix_ptr_inlined(&(_radix)->tree,		\
-+			__genradix_idx_to_offset(_radix, _idx)))
++static inline void genradix_free_node(struct genradix_node *node)
++{
++	kfree(node);
++}
+ 
+ /*
+  * NOTE: currently, sizeof(_type) must not be larger than GENRADIX_NODE_SIZE:
+@@ -209,7 +221,8 @@ void *__genradix_ptr(struct __genradix *, size_t);
+ 	 __genradix_ptr(&(_radix)->tree,			\
+ 			__genradix_idx_to_offset(_radix, _idx)))
+ 
+-void *__genradix_ptr_alloc(struct __genradix *, size_t, gfp_t);
++void *__genradix_ptr_alloc(struct __genradix *, size_t,
++			   struct genradix_node **, gfp_t);
+ 
+ #define genradix_ptr_alloc_inlined(_radix, _idx, _gfp)			\
+ 	(__genradix_cast(_radix)					\
+@@ -217,7 +230,15 @@ void *__genradix_ptr_alloc(struct __genradix *, size_t, gfp_t);
+ 			__genradix_idx_to_offset(_radix, _idx)) ?:	\
+ 	  __genradix_ptr_alloc(&(_radix)->tree,				\
+ 			__genradix_idx_to_offset(_radix, _idx),		\
+-			_gfp)))
++			NULL, _gfp)))
 +
- void *__genradix_ptr(struct __genradix *, size_t);
- 
- /**
-@@ -144,6 +211,14 @@ void *__genradix_ptr(struct __genradix *, size_t);
- 
- void *__genradix_ptr_alloc(struct __genradix *, size_t, gfp_t);
- 
-+#define genradix_ptr_alloc_inlined(_radix, _idx, _gfp)			\
++#define genradix_ptr_alloc_preallocated_inlined(_radix, _idx, _new_node, _gfp)\
 +	(__genradix_cast(_radix)					\
 +	 (__genradix_ptr_inlined(&(_radix)->tree,			\
 +			__genradix_idx_to_offset(_radix, _idx)) ?:	\
 +	  __genradix_ptr_alloc(&(_radix)->tree,				\
 +			__genradix_idx_to_offset(_radix, _idx),		\
-+			_gfp)))
-+
++			_new_node, _gfp)))
+ 
  /**
   * genradix_ptr_alloc - get a pointer to a genradix entry, allocating it
-  *			if necessary
+@@ -232,7 +253,13 @@ void *__genradix_ptr_alloc(struct __genradix *, size_t, gfp_t);
+ 	(__genradix_cast(_radix)				\
+ 	 __genradix_ptr_alloc(&(_radix)->tree,			\
+ 			__genradix_idx_to_offset(_radix, _idx),	\
+-			_gfp))
++			NULL, _gfp))
++
++#define genradix_ptr_alloc_preallocated(_radix, _idx, _new_node, _gfp)\
++	(__genradix_cast(_radix)				\
++	 __genradix_ptr_alloc(&(_radix)->tree,			\
++			__genradix_idx_to_offset(_radix, _idx),	\
++			_new_node, _gfp))
+ 
+ struct genradix_iter {
+ 	size_t			offset;
 diff --git a/lib/generic-radix-tree.c b/lib/generic-radix-tree.c
-index fa692c86f069..4efae0663049 100644
+index 4efae0663049..79e067b51488 100644
 --- a/lib/generic-radix-tree.c
 +++ b/lib/generic-radix-tree.c
-@@ -5,75 +5,13 @@
- #include <linux/gfp.h>
- #include <linux/kmemleak.h>
- 
--#define GENRADIX_ARY		(GENRADIX_NODE_SIZE / sizeof(struct genradix_node *))
--#define GENRADIX_ARY_SHIFT	ilog2(GENRADIX_ARY)
--
--struct genradix_node {
--	union {
--		/* Interior node: */
--		struct genradix_node	*children[GENRADIX_ARY];
--
--		/* Leaf: */
--		u8			data[GENRADIX_NODE_SIZE];
--	};
--};
--
--static inline int genradix_depth_shift(unsigned depth)
--{
--	return GENRADIX_NODE_SHIFT + GENRADIX_ARY_SHIFT * depth;
--}
--
--/*
-- * Returns size (of data, in bytes) that a tree of a given depth holds:
-- */
--static inline size_t genradix_depth_size(unsigned depth)
--{
--	return 1UL << genradix_depth_shift(depth);
--}
--
--/* depth that's needed for a genradix that can address up to ULONG_MAX: */
--#define GENRADIX_MAX_DEPTH	\
--	DIV_ROUND_UP(BITS_PER_LONG - GENRADIX_NODE_SHIFT, GENRADIX_ARY_SHIFT)
--
--#define GENRADIX_DEPTH_MASK				\
--	((unsigned long) (roundup_pow_of_two(GENRADIX_MAX_DEPTH + 1) - 1))
--
--static inline unsigned genradix_root_to_depth(struct genradix_root *r)
--{
--	return (unsigned long) r & GENRADIX_DEPTH_MASK;
--}
--
--static inline struct genradix_node *genradix_root_to_node(struct genradix_root *r)
--{
--	return (void *) ((unsigned long) r & ~GENRADIX_DEPTH_MASK);
--}
--
- /*
-  * Returns pointer to the specified byte @offset within @radix, or NULL if not
-  * allocated
-  */
- void *__genradix_ptr(struct __genradix *radix, size_t offset)
- {
--	struct genradix_root *r = READ_ONCE(radix->root);
--	struct genradix_node *n = genradix_root_to_node(r);
--	unsigned level		= genradix_root_to_depth(r);
--
--	if (ilog2(offset) >= genradix_depth_shift(level))
--		return NULL;
--
--	while (1) {
--		if (!n)
--			return NULL;
--		if (!level)
--			break;
--
--		level--;
--
--		n = n->children[offset >> genradix_depth_shift(level)];
--		offset &= genradix_depth_size(level) - 1;
--	}
--
--	return &n->data[offset];
-+	return __genradix_ptr_inlined(radix, offset);
+@@ -15,27 +15,21 @@ void *__genradix_ptr(struct __genradix *radix, size_t offset)
  }
  EXPORT_SYMBOL(__genradix_ptr);
  
+-static inline struct genradix_node *genradix_alloc_node(gfp_t gfp_mask)
+-{
+-	return kzalloc(GENRADIX_NODE_SIZE, gfp_mask);
+-}
+-
+-static inline void genradix_free_node(struct genradix_node *node)
+-{
+-	kfree(node);
+-}
+-
+ /*
+  * Returns pointer to the specified byte @offset within @radix, allocating it if
+  * necessary - newly allocated slots are always zeroed out:
+  */
+ void *__genradix_ptr_alloc(struct __genradix *radix, size_t offset,
++			   struct genradix_node **preallocated,
+ 			   gfp_t gfp_mask)
+ {
+ 	struct genradix_root *v = READ_ONCE(radix->root);
+ 	struct genradix_node *n, *new_node = NULL;
+ 	unsigned level;
+ 
++	if (preallocated)
++		swap(new_node, *preallocated);
++
+ 	/* Increase tree depth if necessary: */
+ 	while (1) {
+ 		struct genradix_root *r = v, *new_root;
+@@ -219,7 +213,7 @@ int __genradix_prealloc(struct __genradix *radix, size_t size,
+ 	size_t offset;
+ 
+ 	for (offset = 0; offset < size; offset += GENRADIX_NODE_SIZE)
+-		if (!__genradix_ptr_alloc(radix, offset, gfp_mask))
++		if (!__genradix_ptr_alloc(radix, offset, NULL, gfp_mask))
+ 			return -ENOMEM;
+ 
+ 	return 0;
 -- 
 2.45.2
 
