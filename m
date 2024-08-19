@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-291280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57A895603E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:59:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2AB956046
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6921D1F21DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E3D281AB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E497156227;
-	Sun, 18 Aug 2024 23:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6971F26AD3;
+	Mon, 19 Aug 2024 00:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DaSvGV+5"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQa+KlO1"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA94155C83
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 23:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B444C10E0
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724025570; cv=none; b=kO/jxo6i0G+k3r9FMUEMaUNio6HCH9fZm00+LLlGUauPlclru7Xj0cYCik4e+sZNdUZJ8ceB8hekdhMZgrRrGyGTF9XE+mLs529EfG8Btu9vktAXPvh99lBFltkVqWmwU/sWzTea113h9mfGXknI5La7DsjcLUvGiJnx13k4IiM=
+	t=1724025674; cv=none; b=iJNQU+4Cag2OrBtKzglh6nhFRov3Ij0U/QLC5TEbmU+PC0OIwUWfgtf9UZDGGF/HTJtApl/0+B2CzyjRkqCPBRN9Ty9JUlH8MITVTO4ceyMRsBTX9v2NuQKdvLS74s+8DTLcdnH3sTtLNgFhUQW9d1lGMJyRrCvoaagmgnnsTNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724025570; c=relaxed/simple;
-	bh=sT/oyCUnRgtfYKJKOX5462XXnI6zqyx/EMbY8RHPp1c=;
+	s=arc-20240116; t=1724025674; c=relaxed/simple;
+	bh=6hYpg0m5Rt67g7Mxzu2ElLnjjv6XNz+ikayF+thPaug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5Owt9h9NiRRHJ4q4XWcj3x39GSo90MCWOjIaOFp6FudNGGA+yaKEkBLaZXz8Y2y13EB6QV22LhcGT4J5I1hTYG9e6brFpg7vTP8nBemxGMQBfnGPMd0VIjnmNVjhYJfn8hr+LKdrgHzzH3O+I2CzDXQYOaePGcFzcaqslxrUpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DaSvGV+5; arc=none smtp.client-ip=209.85.167.50
+	 In-Reply-To:Content-Type; b=LsFgh9B6VpV5XJANCORjIDUo+FA/fsLcHRcwXvehzrEBZOvTUDEiNfnv01Qx/dpDFSeQWb27uX+8WZcnNABdSQwOngUSIo34vGKT0h0hmZ7mQ0yBqgVpKHJ1n7i6BUvU8FSD+IFL5116Ny7a59R3LmigrqXcnh4bu8SXJ4rcW/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQa+KlO1; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ef9714673so634264e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 16:59:28 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efd2221efso201606e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 17:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724025567; x=1724630367; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1724025671; x=1724630471; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mPLEJui4qj3siq5852EmGCqYh8ZMXe+JH32SZh64r0o=;
-        b=DaSvGV+59Qquts5jSrA/hipoQQlbzutt3BS5NSmi4flYelabXVfo074iwtn1tngagF
-         /IWYX0/BQVhvMc6yzxe/z0jxSHf9jDzO6bquSInPM2veDKU8v3Et8pxuRuU/rVohDYxt
-         397YY9CxCSdYNMSSF1CLLd226zvOAL8dwUY2Fw3465UCWZsJW+EMBNfCm2cP0RVqSM4+
-         f1lT9WLG8MyL0xUbtwd6EEdTFyQ4wFsrDjsXSGmJLi7+bha13AnkBfhP1R8pZs4ojRlD
-         KqTxcCk1gsWPNhfkZ3Bpl5jJQ/GnymGBm8ZNuhekX2nvgAEZhmn+QPPtaZreLMI+A4wV
-         I9xA==
+        bh=BYOLFiuwIeABlNgpCgPMEdlJrY/ffM3olbhyHsVZ574=;
+        b=xQa+KlO1JetyXBB2uHz+pGrTwu6y07n3Ix+kUKNV9FG8gayQzC7Fk8CDC4M87imz+B
+         amkij1vOuTgmQlPEJeGHtGETavOXtH71qh363OmVr7ykfYFsFfggFqZsWhpJCOtOQtlo
+         gXP3u59enZppPNF62UBoob2CFm6+SdcxiD8X3Hvdldl1kA0+JFXeAbXDXM2Zf2mZjSR5
+         JjoBcTOt2VxpOjuCv96PVrXyC9fBksg1OS/K/ObwyY2PSsckl2hgae02MRgDro5dDy7S
+         XvF6qTT9KWeFZXdTiLsxHLRlydPdyN1JMY5I0JQLhNpXQaU1GEMnBt5tR2o4ETQ9Wj41
+         pWgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724025567; x=1724630367;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724025671; x=1724630471;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPLEJui4qj3siq5852EmGCqYh8ZMXe+JH32SZh64r0o=;
-        b=CAG9P69mYTFn6tcZckiaDOkmnrbvK3MQbQ8bHE0v05vViFtuvKp824FQDnFpBOKad8
-         qo5Ia1tvxm6oCXKp1lJd9U8dPzFOwijXleujG/IYLUbz6fkDXDSJ6+CPmb8y2hDrh8C8
-         AfnKq2AjxCYT9FypBRzHkXHwEznujfFUow8xlPyDzjC6Hhv482Sud30VjPFa7IfQ+3Hc
-         bzBnzZVYr4oyJuHyhfoXj6JzUlchon3/jUg44XU2CIyzZL78p68WsyDnmTWlg50nMadv
-         2d5USMAD8m5M7dsV5dWQZa8C8I/Ogbt0fMk2cjV2vOWat4LRMmChpy+RgHlhMi6wu7VL
-         wQWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW/EWSbHwmw4whF1Ip8d6rHsp37hYKHS2c+SpfK4GG7Lj1gfXF/xeqhJYqNOT7pF22RmxNrsNhx7M9faMzZTYwpA33HwCOYlTSDnTe
-X-Gm-Message-State: AOJu0YwH36HL0A0hxYFN7Td32PdbQgLYXqeDTfqUFuurbTu6l8M+cmU8
-	aJ4gIuAkr7uyfQvxospnwr0G8sFAVCOmFQYu4qXsJmQltmVQmOdVFx6y4SqAlmc=
-X-Google-Smtp-Source: AGHT+IEF/bSFvm9nm+za9qay0GFZHl420IAWGzAtfnnPgV8iifqYEaCxGZWLsPfCFwJhXLeV97MNpw==
-X-Received: by 2002:a05:6512:e9d:b0:52f:e5:3765 with SMTP id 2adb3069b0e04-5331c6d9503mr3378335e87.6.1724025566646;
-        Sun, 18 Aug 2024 16:59:26 -0700 (PDT)
+        bh=BYOLFiuwIeABlNgpCgPMEdlJrY/ffM3olbhyHsVZ574=;
+        b=XvJZIC9upFNdc6yskB6mo34eAkflwpHjSCC1O/nwvy/UOo/Z2RPh+AZ6JMbgpN4GT4
+         16i8izsSpDPxxt8/grDe3elb1lGM3zjxp0+l4pdZOtdzRMsqDZ16oU+0Avhg1G34hdL4
+         wWs9vqPXyoOwaFDq0/jtMJlzLcnIZwW4SnVHQsrfL0o1Vawx4adRzsC+ICU+yo/tEJHA
+         HDARZgs2uriP6Yjw1rtN3HSp8WFQVHk85sfr+y+WcL9BGyxpevTIFlfh6D4/0v9BY1py
+         ++gy8SE5yTjKSp/ggai4bSc+2vPHI08whIQ5a+jqH3Pw2J2y2cHhdwUAMZ0FWr9VVPcF
+         1M4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqnvwqvuryzX2FjvNMh2ERn4skx1Ogp6/y5oHQkNfCk+Z7/P8LpDMHQMoIVAzEtQnUfNBJhse+uHFGNsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyggEbuf3kaBs0RGmofiHhic3zNtTOvI4uBUggQFJBL/zP/Ex3N
+	ubOMvf5bCHfnjqKG+SHkbMC+XiW5cKq6yRSMvThc97EKaIgqG0GyRxH6DT6nqns=
+X-Google-Smtp-Source: AGHT+IFhCmHG6qv7yNoduE8Vmk9V9zmO0z2IBMuw/McbuDAD0EmCQtvNUBmXvNzXpFO744+oecAeYQ==
+X-Received: by 2002:a05:6512:1081:b0:530:e0fd:4a92 with SMTP id 2adb3069b0e04-5331c618ffemr3586968e87.0.1724025670471;
+        Sun, 18 Aug 2024 17:01:10 -0700 (PDT)
 Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d4202eesm1321910e87.234.2024.08.18.16.59.25
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d424c63sm1318158e87.259.2024.08.18.17.01.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 16:59:26 -0700 (PDT)
-Message-ID: <d54d299e-6634-4b0a-987e-2a1807734a38@linaro.org>
-Date: Mon, 19 Aug 2024 02:59:19 +0300
+        Sun, 18 Aug 2024 17:01:09 -0700 (PDT)
+Message-ID: <cc1484d4-7a61-4f5c-b617-a6ad99985bda@linaro.org>
+Date: Mon, 19 Aug 2024 03:01:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,74 +75,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] media: qcom: camss: csiphy-3ph: Use an offset
- variable to find common control regs
+Subject: Re: [PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY
+ variables to data field inside csiphy struct
+Content-Language: en-US
 To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
  todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
 Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
 References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-7-quic_depengs@quicinc.com>
-Content-Language: en-US
+ <20240812144131.369378-6-quic_depengs@quicinc.com>
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240812144131.369378-7-quic_depengs@quicinc.com>
+In-Reply-To: <20240812144131.369378-6-quic_depengs@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/12/24 17:41, Depeng Shao wrote:
 > From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > 
-> New versions of the CSIPHY locate the control registers at offset 0x1000
-> not offset 0x800.
+> A .data field in the csiphy device structure allows us to extend out the
+> register layout of the three phase capable CSIPHY layer.
 > 
-> Provide a variable to base an offset from for the purposes of redirecting
-> the base offset for the new PHY regs layout.
-> 
-> The existing setup bases from 0x800, the new from 0x1000 with some of the
-> 'EXT' registers dropped but the lower-order lane config regs at offset 0x00
-> and up the same as before.
+> Move the existing lane configuration structure to an encapsulating
+> structure -> struct csiphy_device_regs which is derived from the .data
+> field populated at PHY init time, as opposed to calculated at lane
+> configuration.
 > 
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 > ---
->   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 68 ++++++++++++-------
->   1 file changed, 44 insertions(+), 24 deletions(-)
+>   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 55 ++++++++++++-------
+>   .../media/platform/qcom/camss/camss-csiphy.h  |  1 +
+>   2 files changed, 36 insertions(+), 20 deletions(-)
 > 
 > diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index 93782ebfe0ea..1219a25ec55b 100644
+> index b60c32a195df..93782ebfe0ea 100644
 > --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
 > +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -42,11 +42,11 @@
->   #define CSIPHY_3PH_LNn_CSI_LANE_CTRL15(n)	(0x03c + 0x100 * (n))
->   #define CSIPHY_3PH_LNn_CSI_LANE_CTRL15_SWI_SOT_SYMBOL	0xb8
->   
-> -#define CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(n)	(0x800 + 0x4 * (n))
-> +#define CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(offset, n)	(offset + 0x4 * (n))
-
-Macro value above shall be this one: ((offset) + 0x4 * (n))
-
->   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE	BIT(7)
->   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_COMMON_PWRDN_B	BIT(0)
->   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_SHOW_REV_ID	BIT(1)
-> -#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(n)	(0x8b0 + 0x4 * (n))
-> +#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, n)	((offset + 0xb0) + 0x4 * (n))
-
-Macro value above shall be this one: ((offset) + 0xb0 + 0x4 * (n))
-
->   #define CSIPHY_DEFAULT_PARAMS		0
->   #define CSIPHY_LANE_ENABLE		1
-> @@ -66,6 +66,7 @@ struct csiphy_lane_regs {
->   struct csiphy_device_regs {
->   	const struct csiphy_lane_regs *lane_regs;
->   	int lane_array_size;
-> +	u32 offset;
+> @@ -63,6 +63,11 @@ struct csiphy_lane_regs {
+>   	u32 csiphy_param_type;
 >   };
 >   
+> +struct csiphy_device_regs {
+> +	const struct csiphy_lane_regs *lane_regs;
+> +	int lane_array_size;
+> +};
+> +
+>   /* GEN2 1.0 2PH */
+>   static const struct
+>   csiphy_lane_regs lane_regs_sdm845[] = {
+> @@ -470,28 +475,11 @@ static void csiphy_gen1_config_lanes(struct csiphy_device *csiphy,
+>   static void csiphy_gen2_config_lanes(struct csiphy_device *csiphy,
+>   				     u8 settle_cnt)
+>   {
+> -	const struct csiphy_lane_regs *r;
+> -	int i, array_size;
+> +	struct csiphy_device_regs *csiphy_regs = csiphy->data;
+> +	const struct csiphy_lane_regs *r = csiphy_regs->lane_regs;
+> +	int i, array_size = csiphy_regs->lane_array_size;
+>   	u32 val;
+>   
+> -	switch (csiphy->camss->res->version) {
+> -	case CAMSS_845:
+> -		r = &lane_regs_sdm845[0];
+> -		array_size = ARRAY_SIZE(lane_regs_sdm845);
+> -		break;
+> -	case CAMSS_8250:
+> -		r = &lane_regs_sm8250[0];
+> -		array_size = ARRAY_SIZE(lane_regs_sm8250);
+> -		break;
+> -	case CAMSS_8280XP:
+> -		r = &lane_regs_sc8280xp[0];
+> -		array_size = ARRAY_SIZE(lane_regs_sc8280xp);
+> -		break;
+> -	default:
+> -		WARN(1, "unknown cspi version\n");
+> -		return;
+> -	}
+> -
+>   	for (i = 0; i < array_size; i++, r++) {
+>   		switch (r->csiphy_param_type) {
+>   		case CSIPHY_SETTLE_CNT_LOWER_BYTE:
+> @@ -583,6 +571,33 @@ static void csiphy_lanes_disable(struct csiphy_device *csiphy,
+>   
+>   static int csiphy_init(struct csiphy_device *csiphy)
+>   {
+> +	struct device *dev = csiphy->camss->dev;
+> +	struct csiphy_device_regs *regs;
+> +
+> +	regs = devm_kmalloc(dev, sizeof(*regs), GFP_KERNEL);
+> +	if (!regs)
+> +		return -ENOMEM;
+> +
+> +	csiphy->data = regs;
+> +
+> +	switch (csiphy->camss->res->version) {
+> +	case CAMSS_845:
+> +		regs->lane_regs = &lane_regs_sdm845[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sdm845);
+> +		break;
+> +	case CAMSS_8250:
+> +		regs->lane_regs = &lane_regs_sm8250[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8250);
+> +		break;
+> +	case CAMSS_8280XP:
+> +		regs->lane_regs = &lane_regs_sc8280xp[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sc8280xp);
+> +		break;
+> +	default:
+> +		WARN(1, "unknown csiphy version\n");
+> +		return -ENODEV;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> index bdf9a9c8bacc..cac1f800b7d8 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> @@ -95,6 +95,7 @@ struct csiphy_device {
+>   	struct csiphy_config cfg;
+>   	struct v4l2_mbus_framefmt fmt[MSM_CSIPHY_PADS_NUM];
+>   	const struct csiphy_subdev_resources *res;
+> +	void *data;
 
-With two minor fixes above,
+I would suggest to make the type/name above explicit:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+struct csiphy_device_regs *regs;
+
+>   };
+>   
+>   struct camss_subdev_resources;
 
 --
 Best wishes,
