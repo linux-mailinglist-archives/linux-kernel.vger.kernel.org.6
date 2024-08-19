@@ -1,94 +1,74 @@
-Return-Path: <linux-kernel+bounces-291748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA1995664E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:05:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96B0956645
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2736328335D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:05:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDEA1F22C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9676815D5CE;
-	Mon, 19 Aug 2024 09:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PprDPzzL"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF5915CD4E;
+	Mon, 19 Aug 2024 09:04:29 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2784F15C125;
-	Mon, 19 Aug 2024 09:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0115C123;
+	Mon, 19 Aug 2024 09:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724058279; cv=none; b=ladVCd+xnN5r8/a+N/TLuWSSPk3e0J3qVlaTkNw7DbsgIIjFFk12UTxOJOX75d39tWrRQVxl9kg+Zuj8ahx8kQscFcDK7vzZwA+x9tVynS0V8TahPQKdd8aHiW7jY1tnZUNk9+PSMMZOyyEvy0F0CZGo8YllLRSI/9c4jd6aeo0=
+	t=1724058268; cv=none; b=uUrLXngZ1uzZ8hBYIh2Ewh6ubjeic3bNmyW2n6QRlyBniA+eQpJF/hEMCf2CiKy7JVL+WOtSH7GfoBQRCnc2/ghlfS60uOTyDSNwc6bwm9FLlNB66jQiG+X7RYFyyVr4gbb3G39CLZ5LgGfwwmgGUj9PFmOCDxCe7ES+Y/IkxVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724058279; c=relaxed/simple;
-	bh=k0kc+QTAqBx5aRP9ejxkGxkgN/n6bbv6rD4rzOSvbiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J/Quk3K5bs/7myP6Yd8uKRIgD3mAFFFbxPQ81tmZEiwhWKBzPIve+Sr8qlmj00R4imfr60FGXT8tFvrWSHn7h86nOcj7vwmMDQH8Ykh/DC6/g3jTY5sCXWu08QuCyxmPdmtwGRxU0uMH5Tr7qxsdMMU/UVAC2L4O7MD7fY7yM2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PprDPzzL; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1724058268; c=relaxed/simple;
+	bh=+UcLassjRBluQPTGIrIjg0Er/I51U3zFpt5pm0dIgqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JjjuwqMHoR8iA3KOAfjHwlWGAY3J499TaLGWJj9EWNCkbF7/Q3oTrdgXgeMTS4Ls2OOk06FaBsHFeZ3DFrgrOYHri9RSGSLfHj4Z3NVbSMEkkv7avPb1oWGtihLtAkCo519cselz9YAmcfB4BJNn8KtTDPHdFqrrLayvnGNK7/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so32334195e9.2;
-        Mon, 19 Aug 2024 02:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724058276; x=1724663076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zR4Ofv19bSC63uSv19yH+Zec5wT7Br2CN3wzGxETKgc=;
-        b=PprDPzzLxkbTok9EGMHFB3aPhCflcz9gdKT+evFd3teAQWrIOSnsW22VlCjL7Gv3jM
-         Uv3fqo7KkI8namMjVscV9wtlpysF4pJKNaCvEzHL0KsibWZ8DtCGA9cu+0Yr+OvFPGgM
-         YzS3BSeN5mTNea7/sA7jDVLpNqejP/LlGmu6nAXqjO+nHh3hC9bC6OqE+OWbPpYiu2+M
-         ryUoRHqPAVmGOmkWvPxMIfozACbS+Dz+3Jx9hnofIFVMGEO5D401qbAmh4VOqgUcTLaS
-         1ND++K8xd8QrNUVDSQ7+gYhs56JfFdrQP/Zop+rN+/QA8Pvg/9wtBo6J6pFLJvN9zM+1
-         XhVw==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a843bef98so436534366b.2;
+        Mon, 19 Aug 2024 02:04:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724058276; x=1724663076;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zR4Ofv19bSC63uSv19yH+Zec5wT7Br2CN3wzGxETKgc=;
-        b=bSwNxN75mVb7Lfg6vp/cd4Hy74NsIUFtYBXrfGEBRwzgMhFNkou4ys46FFtUYOOoYr
-         os6BTWGlsz3zIw/eIwYLryVr4NBEvhgKC5NB/eMCuJ8GtUo8XqKslwtBAZ7Sdbkjnvuc
-         rj/NPwb/V3dvesAE54jVs28jLcLzvfp09KaMZLpbCOMXaRMhVNRGcse1DmaWoYHw45pT
-         0NiqTcijnzUX17OuCXCelrmOsOikb3t4S9+kXeGrPPmeBEYykhUilYo9ZbAWSSW5uhiq
-         R4iZH1RrqT8fjYhFA4GouaNzCRfH1R4HeGMR0velNb8MPG0b0pCv1YzemmWQel9XgtrZ
-         Rk7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWkrp5EwQLzg2C2lReq3EgpaNvnU3sahdOCop5K3hwH8JxvqfSbBywmDWtuDjo/Bhjy/ZWYJdBochjuc4omhU1ZMLyNT0OsGItiwts0
-X-Gm-Message-State: AOJu0YywMu1MFelPAclsVyyCNEaDIOCl6VwgMhFaaMLfxPp3pKy4mVJM
-	EbqLpKUuGUwz1VM6ABJC2rKnn6zQ8m3QuWkBUSoW7EIbCkv/HgmL
-X-Google-Smtp-Source: AGHT+IH7JYzrD4WQ2IczOX6U7P1voHwlgUZmPc1foVjQrG13R7Z0iK1/sLxIgbdwHptG5vYiK5hczA==
-X-Received: by 2002:a05:600c:4712:b0:426:5fbe:bf75 with SMTP id 5b1f17b1804b1-429ed7d1eccmr71255425e9.23.1724058276061;
-        Mon, 19 Aug 2024 02:04:36 -0700 (PDT)
-Received: from eichest-laptop.toradex.int ([2a02:168:af72:0:a64c:8731:e4fb:38f1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded19627sm154672095e9.5.2024.08.19.02.04.35
+        d=1e100.net; s=20230601; t=1724058264; x=1724663064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SWS/V+Ywzifgu/GyKD8QbUixNLvCG9vfNA7TfibtEIE=;
+        b=UirT/tOK97H9ead759pZvHeRK9AYzT3OzCP40LzmYPO29ez2sTwKhNMwRbMkw1mYBZ
+         H400b8RbDMJggw1jWWXjxAPmfEXW+Q/FUO2sAWu9mVgHk2WEVamR/rsHLFjnVgqFBPrj
+         X+nwBZs+cz6Ef5B4i1wR1wy7Q+4dLh/HzfIjVlPfOMMhhtZZFfWvgBcb3STHyzb8CKyW
+         X576bL0XCNe+G4Ouh9w0rVUhKSN2WqASv+zamZ7Qf0dQlnE2isArEjhJgrNDmMkYHLsX
+         0RjpYs5U0J+YLLd+tdgxrWsqLo9oMaMJ/9I9euDkrGFC7vSSM+X61+7iuIwSzDp3X/x3
+         hNbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgu9brxVNSTHrasr/DX4YsszwH6/O8vrYl/D5QiJSiG8/SG3cyy+rFaG3nJ8RcV+qHg/coyjwvo3dITwxetEx2Qt6/6W1HrRjmHr+lD7S9r8nIrj7ZH+ZDcnjIGuxFshSqwOfy6B7GM6bUkcM4
+X-Gm-Message-State: AOJu0YznQqpoysrRSHZ2fcTC/Oiq8CbceH4oEiAQiwCZ4kDGcV1QgPrU
+	wOpkaZF9+SM6EaYCqo+0v1fxtjRnmK2/v8GfxKa1OBJyc6J3ozjW
+X-Google-Smtp-Source: AGHT+IHFL9Q1mrNm6xFWpn4g2IVzm+xgsNT4kBEWk2bsIIpeOilITOlsG57C0G2inioYahveoZ8D8w==
+X-Received: by 2002:a17:907:e6e6:b0:a7a:ae85:f245 with SMTP id a640c23a62f3a-a8392953cdfmr710386266b.38.1724058263737;
+        Mon, 19 Aug 2024 02:04:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839464d1sm614144766b.173.2024.08.19.02.04.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 02:04:35 -0700 (PDT)
-From: Stefan Eichenberger <eichest@gmail.com>
-To: hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	francesco.dolcini@toradex.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: [PATCH v1 3/3] PCI: imx6: reset link on resume
-Date: Mon, 19 Aug 2024 11:03:19 +0200
-Message-ID: <20240819090428.17349-4-eichest@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240819090428.17349-1-eichest@gmail.com>
-References: <20240819090428.17349-1-eichest@gmail.com>
+        Mon, 19 Aug 2024 02:04:23 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	liuhangbin@gmail.com,
+	petrm@nvidia.com,
+	matttbe@kernel.org,
+	Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org,
+	Willem de Bruijn <willemb@google.com>,
+	David Wei <dw@davidwei.uk>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH net-next v5] net: netconsole: selftests: Create a new netconsole selftest
+Date: Mon, 19 Aug 2024 02:03:53 -0700
+Message-ID: <20240819090406.1441297-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,92 +77,324 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Adds a selftest that creates two virtual interfaces, assigns one to a
+new namespace, and assigns IP addresses to both.
 
-According to the https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf errata,
-the i.MX6Q PCIe controller does not support suspend/resume. So suspend
-and resume was omitted. However, this does not seem to work because it
-looks like the PCIe link is still expecting a reset. If we do not reset
-the link, we end up with a frozen system after resume. The last message
-we see is:
-ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0,
-device inaccessible
+It listens on the destination interface using socat and configures a
+dynamic target on netconsole, pointing to the destination IP address.
 
-Besides resetting the link, we also need to enable msi again, otherwise
-DMA access will not work and we can still end up with a frozen system.
-With these changes we can suspend and resume the system properly with a
-PCIe device attached. This was tested with a Compex WLE900VX miniPCIe
-Wifi module.
+The test then checks if the message was received properly on the
+destination interface.
 
-Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 45 ++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index f17561791e35a..751243f4c519e 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -1213,14 +1213,57 @@ static int imx6_pcie_suspend_noirq(struct device *dev)
- 	return 0;
- }
+v5:
+ * Replace check_file_size() by "test -s" (Matthieu)
+
+v4:
+ * Avoid sleeping in waiting for sockets and files (Matthieu Baerts)
+ * Some other improvements (Matthieu Baerts)
+ * Add configfs as a dependency (Jakub)
+ * https://lore.kernel.org/all/20240816132450.346744-1-leitao@debian.org/
+
+v3:
+ * Defined CONFIGs in config file (Jakub)
+ * Identention fixes (Petr Machata)
+ * Use setup_ns in a better way (Matthieu Baerts)
+ * Add dependencies in TEST_INCLUDES (Hangbin Liu)
+ * https://lore.kernel.org/all/20240815095157.3064722-1-leitao@debian.org/
+
+v2:
+ * Change the location of the path (Jakub)
+ * Move from veth to netdevsim
+ * Other small changes in dependency checks and cleanup
+ * https://lore.kernel.org/all/20240813183825.837091-1-leitao@debian.org/
+
+v1:
+ * https://lore.kernel.org/all/ZqyUHN770pjSofTC@gmail.com/
+
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/drivers/net/Makefile  |   5 +-
+ tools/testing/selftests/drivers/net/config    |   4 +
+ .../selftests/drivers/net/netcons_basic.sh    | 225 ++++++++++++++++++
+ 4 files changed, 234 insertions(+), 1 deletion(-)
+ create mode 100755 tools/testing/selftests/drivers/net/netcons_basic.sh
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dbf23cf11c8..9a371ddd8719 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15772,6 +15772,7 @@ M:	Breno Leitao <leitao@debian.org>
+ S:	Maintained
+ F:	Documentation/networking/netconsole.rst
+ F:	drivers/net/netconsole.c
++F:	tools/testing/selftests/drivers/net/netcons_basic.sh
  
-+static int imx6_pcie_reset_link(struct imx6_pcie *imx6_pcie)
-+{
-+	int ret;
+ NETDEVSIM
+ M:	Jakub Kicinski <kuba@kernel.org>
+diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
+index e54f382bcb02..39fb97a8c1df 100644
+--- a/tools/testing/selftests/drivers/net/Makefile
++++ b/tools/testing/selftests/drivers/net/Makefile
+@@ -1,8 +1,11 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-TEST_INCLUDES := $(wildcard lib/py/*.py)
++TEST_INCLUDES := $(wildcard lib/py/*.py) \
++		 ../../net/net_helper.sh \
++		 ../../net/lib.sh \
+ 
+ TEST_PROGS := \
++	netcons_basic.sh \
+ 	ping.py \
+ 	queues.py \
+ 	stats.py \
+diff --git a/tools/testing/selftests/drivers/net/config b/tools/testing/selftests/drivers/net/config
+index f6a58ce8a230..a2d8af60876d 100644
+--- a/tools/testing/selftests/drivers/net/config
++++ b/tools/testing/selftests/drivers/net/config
+@@ -1,2 +1,6 @@
+ CONFIG_IPV6=y
+ CONFIG_NETDEVSIM=m
++CONFIG_CONFIGFS_FS=y
++CONFIG_NETCONSOLE=m
++CONFIG_NETCONSOLE_DYNAMIC=y
++CONFIG_NETCONSOLE_EXTENDED_LOG=y
+diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
+new file mode 100755
+index 000000000000..137875505663
+--- /dev/null
++++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
+@@ -0,0 +1,225 @@
++#!/usr/bin/env bash
++# SPDX-License-Identifier: GPL-2.0
 +
-+	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR1,
-+			   IMX6Q_GPR1_PCIE_TEST_PD, 1 << 18);
-+	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR1,
-+			   IMX6Q_GPR1_PCIE_REF_CLK_EN, 0 << 16);
++# This test creates two netdevsim virtual interfaces, assigns one of them (the
++# "destination interface") to a new namespace, and assigns IP addresses to both
++# interfaces.
++#
++# It listens on the destination interface using socat and configures a dynamic
++# target on netconsole, pointing to the destination IP address.
++#
++# Finally, it checks whether the message was received properly on the
++# destination interface.  Note that this test may pollute the kernel log buffer
++# (dmesg) and relies on dynamic configuration and namespaces being configured.
++#
++# Author: Breno Leitao <leitao@debian.org>
 +
-+	/* Reset the PCIe device */
-+	gpiod_set_value_cansleep(imx6_pcie->reset_gpiod, 1);
++set -euo pipefail
 +
-+	ret = imx6_pcie_enable_ref_clk(imx6_pcie);
-+	if (ret) {
-+		dev_err(imx6_pcie->pci->dev, "unable to enable pcie ref clock\n");
-+		return ret;
-+	}
++SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
 +
-+	imx6_pcie_deassert_reset_gpio(imx6_pcie);
++# Simple script to test dynamic targets in netconsole
++SRCIF="" # to be populated later
++SRCIP=192.168.1.1
++DSTIF="" # to be populated later
++DSTIP=192.168.1.2
 +
-+	/*
-+	 * Setup the root complex again and enable msi. Without this PCIe will
-+	 * not work in msi mode and drivers will crash if they try to access
-+	 * the device memory area
-+	 */
-+	dw_pcie_setup_rc(&imx6_pcie->pci->pp);
-+	if (pci_msi_enabled()) {
-+		u32 val;
-+		u8 offset = dw_pcie_find_capability(imx6_pcie->pci, PCI_CAP_ID_MSI);
++PORT="6666"
++MSG="netconsole selftest"
++TARGET=$(mktemp -u netcons_XXXXX)
++NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
++NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
++# NAMESPACE will be populated by setup_ns with a random value
++NAMESPACE=""
 +
-+		val = dw_pcie_readw_dbi(imx6_pcie->pci, offset + PCI_MSI_FLAGS);
-+		val |= PCI_MSI_FLAGS_ENABLE;
-+		dw_pcie_writew_dbi(imx6_pcie->pci, offset + PCI_MSI_FLAGS, val);
-+	}
++# IDs for netdevsim
++NSIM_DEV_1_ID=$((256 + RANDOM % 256))
++NSIM_DEV_2_ID=$((512 + RANDOM % 256))
 +
-+	return 0;
++# Used to create and delete namespaces
++source "${SCRIPTDIR}"/../../net/lib.sh
++source "${SCRIPTDIR}"/../../net/net_helper.sh
++
++# Create netdevsim interfaces
++create_ifaces() {
++	local NSIM_DEV_SYS_NEW=/sys/bus/netdevsim/new_device
++
++	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
++	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
++	udevadm settle 2> /dev/null || true
++
++	local NSIM1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_1_ID"
++	local NSIM2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_2_ID"
++
++	# These are global variables
++	SRCIF=$(find "$NSIM1"/net -maxdepth 1 -type d ! \
++		-path "$NSIM1"/net -exec basename {} \;)
++	DSTIF=$(find "$NSIM2"/net -maxdepth 1 -type d ! \
++		-path "$NSIM2"/net -exec basename {} \;)
 +}
 +
- static int imx6_pcie_resume_noirq(struct device *dev)
- {
- 	int ret;
- 	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
- 	struct dw_pcie_rp *pp = &imx6_pcie->pci->pp;
- 
-+	/*
-+	 * Even though the i.MX6Q does not support suspend/resume, we need to
-+	 * reset the link after resume or the memory mapped PCIe I/O space will
-+	 * be inaccessible. This will cause the system to freeze.
-+	 */
- 	if (!(imx6_pcie->drvdata->flags & IMX6_PCIE_FLAG_SUPPORTS_SUSPEND))
--		return 0;
-+		return imx6_pcie_reset_link(imx6_pcie);
- 
- 	ret = imx6_pcie_host_init(pp);
- 	if (ret)
++link_ifaces() {
++	local NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
++	local SRCIF_IFIDX=$(cat /sys/class/net/"$SRCIF"/ifindex)
++	local DSTIF_IFIDX=$(cat /sys/class/net/"$DSTIF"/ifindex)
++
++	exec {NAMESPACE_FD}</var/run/netns/"${NAMESPACE}"
++	exec {INITNS_FD}</proc/self/ns/net
++
++	# Bind the dst interface to namespace
++	ip link set "${DSTIF}" netns "${NAMESPACE}"
++
++	# Linking one device to the other one (on the other namespace}
++	if ! echo "${INITNS_FD}:$SRCIF_IFIDX $NAMESPACE_FD:$DSTIF_IFIDX"  > $NSIM_DEV_SYS_LINK
++	then
++		echo "linking netdevsim1 with netdevsim2 should succeed"
++		cleanup
++		exit "${ksft_skip}"
++	fi
++}
++
++function configure_ip() {
++	# Configure the IPs for both interfaces
++	ip netns exec "${NAMESPACE}" ip addr add "${DSTIP}"/24 dev "${DSTIF}"
++	ip netns exec "${NAMESPACE}" ip link set "${DSTIF}" up
++
++	ip addr add "${SRCIP}"/24 dev "${SRCIF}"
++	ip link set "${SRCIF}" up
++}
++
++function set_network() {
++	# setup_ns function is coming from lib.sh
++	setup_ns NAMESPACE
++
++	# Create both interfaces, and assign the destination to a different
++	# namespace
++	create_ifaces
++
++	# Link both interfaces back to back
++	link_ifaces
++
++	configure_ip
++}
++
++function create_dynamic_target() {
++	DSTMAC=$(ip netns exec "${NAMESPACE}" \
++		 ip link show "${DSTIF}" | awk '/ether/ {print $2}')
++
++	# Create a dynamic target
++	mkdir "${NETCONS_PATH}"
++
++	echo "${DSTIP}" > "${NETCONS_PATH}"/remote_ip
++	echo "${SRCIP}" > "${NETCONS_PATH}"/local_ip
++	echo "${DSTMAC}" > "${NETCONS_PATH}"/remote_mac
++	echo "${SRCIF}" > "${NETCONS_PATH}"/dev_name
++
++	echo 1 > "${NETCONS_PATH}"/enabled
++}
++
++function cleanup() {
++	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
++
++	# delete netconsole dynamic reconfiguration
++	echo 0 > "${NETCONS_PATH}"/enabled
++	# Remove the configfs entry
++	rmdir "${NETCONS_PATH}"
++
++	# Delete netdevsim devices
++	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
++	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
++
++	# this is coming from lib.sh
++	cleanup_all_ns
++}
++
++function listen_port_and_save_to() {
++	local OUTPUT=${1}
++	# Just wait for 2 seconds
++	timeout 2 ip netns exec "${NAMESPACE}" \
++		socat UDP-LISTEN:"${PORT}",fork "${OUTPUT}"
++}
++
++function validate_result() {
++	local TMPFILENAME="$1"
++
++	# Check if the file exists
++	if [ ! -f "$TMPFILENAME" ]; then
++		echo "FAIL: File was not generated." >&2
++		exit "${ksft_fail}"
++	fi
++
++	if ! grep -q "${MSG}" "${TMPFILENAME}"; then
++		echo "FAIL: ${MSG} not found in ${TMPFILENAME}" >&2
++		cat "${TMPFILENAME}" >&2
++		exit "${ksft_fail}"
++	fi
++
++	# Delete the file once it is validated, otherwise keep it
++	# for debugging purposes
++	rm "${TMPFILENAME}"
++	exit "${ksft_pass}"
++}
++
++function check_for_dependencies() {
++	if [ "$(id -u)" -ne 0 ]; then
++		echo "This test must be run as root" >&2
++		exit "${ksft_skip}"
++	fi
++
++	if ! which socat > /dev/null ; then
++		echo "SKIP: socat(1) is not available" >&2
++		exit "${ksft_skip}"
++	fi
++
++	if ! which ip > /dev/null ; then
++		echo "SKIP: ip(1) is not available" >&2
++		exit "${ksft_skip}"
++	fi
++
++	if ! which udevadm > /dev/null ; then
++		echo "SKIP: udevadm(1) is not available" >&2
++		exit "${ksft_skip}"
++	fi
++
++	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
++		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
++		exit "${ksft_skip}"
++	fi
++
++	if ip link show "${DSTIF}" 2> /dev/null; then
++		echo "SKIP: interface ${DSTIF} exists in the system. Not overwriting it." >&2
++		exit "${ksft_skip}"
++	fi
++}
++
++# ========== #
++# Start here #
++# ========== #
++modprobe netdevsim 2> /dev/null || true
++modprobe netconsole 2 > /dev/null || true
++
++# The content of kmsg will be save to the following file
++OUTPUT_FILE="/tmp/${TARGET}"
++
++# Check for basic system dependency and exit if not found
++check_for_dependencies
++# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
++echo "6 5" > /proc/sys/kernel/printk
++# Remove the namespace, interfaces and netconsole target on exit
++trap cleanup EXIT
++# Create one namespace and two interfaces
++set_network
++# Create a dynamic target for netconsole
++create_dynamic_target
++# Listed for netconsole port inside the namespace and destination interface
++listen_port_and_save_to "${OUTPUT_FILE}" &
++# Wait for socat to start and listen to the port.
++wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
++# Send the message
++echo "${MSG}: ${TARGET}" > /dev/kmsg
++# Wait until socat saves the file to disk
++busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
++
++# Make sure the message was received in the dst part
++# and exit
++validate_result "${OUTPUT_FILE}"
 -- 
-2.43.0
+2.43.5
 
 
