@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-292424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B471956F48
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E56D956F4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1521C22FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804FC1C2221D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D613210D;
-	Mon, 19 Aug 2024 15:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B071339B1;
+	Mon, 19 Aug 2024 15:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gCkWnB+W"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA1A12EBD6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C4W+Jqrw"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3969512B176;
+	Mon, 19 Aug 2024 15:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082817; cv=none; b=uaP8G+11ssPVrqQT01DQ2bfo7zLnyVzIjrStr2JS/FsixLBWtiV7ziMCUxrVko/++eKURWnNIkbOmsDgLysjU/985t8E5Kpda1jOyI9381djPO22tn5s4eifshAZqIDIUnklq0xMiM4FcKt9nqeljhGJxDaUqBaPeZeO5H6CCX0=
+	t=1724082869; cv=none; b=ggLSgDNHTseq+/cQpoSr0n2m5vGBtiXrF2Xil5Ov/2nPPCnKXNTztmHTRiS1JtKlKFZtr+j1aa/5FL+kd4wZTHrBg6DaBLPWOGAYqF5NMbwqcpCDSv/hMVkV37gDdArA1SctFxjDPJLTkW8IVGt4QaMpPMaAERFQ9gNDikmFKjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082817; c=relaxed/simple;
-	bh=0MqygOtxb2vrWsgnpTG1P7bZ4axPMOcPGvsm2uDa8JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n5z4+RRIXH/xpFggMG7gmurW683l0z3YiLlFUDMj6hYdVw5DknRzNeE0e3zyEUnzuwVWZe8YzM6YvyCFOOqk6famN5uT7HPi1MnVX54IUVz5hRZGlCB4wNKk9hohnELgXmauShyvQAWSB8ZW/9DTff7Ls2fqs0Dw4AKmF6IVfak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gCkWnB+W; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [20.236.11.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3F8F420B7165;
-	Mon, 19 Aug 2024 08:53:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3F8F420B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724082815;
-	bh=0MqygOtxb2vrWsgnpTG1P7bZ4axPMOcPGvsm2uDa8JM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gCkWnB+WGmxkR4W4vVyf11CNSigazVk5lEvS80+jfXFwUhHCshNRtHYWiWx9jOtVe
-	 0/6bm6+GjKeX1HyImZIhZtsSR1YB+rds4No4el46H3xZPgyWN3jdJipJ0NGlWqrLnG
-	 Vh/mjQlpAwdhO00JQvbIZPk5bT/8anRY2un56guY=
-Date: Mon, 19 Aug 2024 08:53:34 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Yi Liu <yi.l.liu@intel.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Tina Zhang <tina.zhang@intel.com>,
- Kevin Tian <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] iommu/vt-d: Introduce batched cache invalidation
-Message-ID: <20240819085334.247199c3@DESKTOP-0403QTC.>
-In-Reply-To: <03553755-6404-4bb3-badf-5091755f36b7@intel.com>
-References: <20240815065221.50328-1-tina.zhang@intel.com>
-	<20240815065221.50328-5-tina.zhang@intel.com>
-	<20240816093846.40dbd623@DESKTOP-0403QTC.>
-	<afec1d30-4bb3-4d39-9ff1-eb8ecb26bed3@linux.intel.com>
-	<03553755-6404-4bb3-badf-5091755f36b7@intel.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724082869; c=relaxed/simple;
+	bh=HS+GBwWvBK/+vgNF7OWoTTnd7v0GySP6wMtirTG29JA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q8LbieaoGwk5/v1nm1Mx62AS4SeDGt9X3LMb0M6VMKsAh15HcpeTxRy4JZKM8tl//ryLmk8UF9CuObVm2BQJSgo6nw6aK3LC6BKN6N9UfYkCeMiH3WwXXO0PWsXmTBBLwlUcI/bR/WrsC1x3eIPFVjtW8rLJcwqmI4HzMDTXx6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C4W+Jqrw; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47JFsCBj073351;
+	Mon, 19 Aug 2024 10:54:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724082852;
+	bh=ozAOveEx1TyVnZowYy63iIx8ITlS152xJXt0YCwvoVA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=C4W+JqrwJulz9V3MRKLCnuumiCAWWKkJqtJ7jacjOznGzcVZ0+dfcegLBU7lXCADW
+	 XTnoMlLpLmwbh2CJM/Nq9x4u6wSp4AKA7SsqJeNYmJYj+awO7mpL72O7Dn4e8q9M1x
+	 XnVWcXlWtTdr/Bj3xfr5jzfWznYnwz612ZP0rgTU=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47JFsC7D027482
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 19 Aug 2024 10:54:12 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
+ Aug 2024 10:54:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 19 Aug 2024 10:54:12 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47JFsBZ3089334;
+	Mon, 19 Aug 2024 10:54:11 -0500
+Message-ID: <98d65c2e-f5a2-4894-b76d-6fa0fb8b6daf@ti.com>
+Date: Mon, 19 Aug 2024 10:54:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/9] remoteproc: k3-m4: Add a remoteproc driver for
+ M4F subsystem
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Hari Nagalla <hnagalla@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240802152109.137243-1-afd@ti.com>
+ <20240802152109.137243-4-afd@ti.com> <Zr4w8Vj0mVo5sBsJ@p14s>
+ <Zr9j5HBjRqqRIoaD@p14s> <e5140426-7e69-41b0-858f-16f83eed871a@ti.com>
+ <ZsNlic5EbQP2BdFB@p14s> <f529c5ef-f61c-4c8b-a589-652aca162f07@kernel.org>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <f529c5ef-f61c-4c8b-a589-652aca162f07@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Yi,
+On 8/19/24 10:39 AM, Krzysztof Kozlowski wrote:
+> On 19/08/2024 17:32, Mathieu Poirier wrote:
+> 
+>>>>> Please remove.
+>>>> Forget this comment since it would cause an error in __rproc_detach().
+>>>>
+>>>>> Other than the above I'm good with this driver.  That said I can't move forward
+>>>>> without a nod from the DT crew.  I also noticed a fair amount of code
+>>>>> duplication with the k3_r5 and k3_dsp drivers.  Dealing with that should not be
+>>>>> part of the current work but will need to be done before another k3 driver can
+>>>>> be merged.
+>>>>>
+>>>
+>>>> The above still apply though.
+>>>
+>>> Me or Nishanth will pick up the SoC DT patches via TI SoC tree, once the
+>>> driver patches are merged. Feel free to ignore those but queue
+>>> dt-bindings (already has DT maintainers ack) and driver patches via
+>>> rproc tree.
+>>>
+>>
+>> Can you provide a link where the DT maintainers have acknowledged the bindings?
+> 
+> The reviewed-by tag serves as acknowledgment as well and the binding
+> patch has it. Conor gave it on some earlier version of the patchset. I
+> did not check if there were any significant changes in the meantime, though.
+> 
 
-On Mon, 19 Aug 2024 15:58:35 +0800
-Yi Liu <yi.l.liu@intel.com> wrote:
+Was reviewed in v8:
+https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240424190612.17349-2-afd@ti.com/#3302840
 
-> On 2024/8/17 11:28, Baolu Lu wrote:
-> > On 2024/8/17 0:38, Jacob Pan wrote: =20
-> >> On Thu, 15 Aug 2024 14:52:21 +0800
-> >> Tina Zhang <tina.zhang@intel.com> wrote:
-> >> =20
-> >>> @@ -270,7 +343,8 @@ static void cache_tag_flush_iotlb(struct
-> >>> dmar_domain *domain, struct cache_tag * u64 type =3D
-> >>> DMA_TLB_PSI_FLUSH; if (domain->use_first_level) {
-> >>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qi_flush_piotlb(iommu, ta=
-g->domain_id, tag->pasid,
-> >>> addr, pages, ih);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qi_batch_add_piotlb(iommu=
-, tag->domain_id,
-> >>> tag->pasid, addr,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pages, ih, domain->qi_batc=
-h);
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> >>> @@ -287,7 +361,8 @@ static void cache_tag_flush_iotlb(struct
-> >>> dmar_domain *domain, struct cache_tag * }
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ecap_qis(iommu->ecap))
-> >>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qi_flush_iotlb(iommu, tag=
-->domain_id, addr | ih,
-> >>> mask, type);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qi_batch_add_iotlb(iommu,=
- tag->domain_id, addr | ih,
-> >>> mask, type,
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 domain->qi_batch); =20
-> >> If I understand this correctly, IOTLB flush maybe deferred until
-> >> the batch array is full, right? If so, is there a security gap
-> >> where callers think the mapping is gone after the call returns? =20
-> > No. All related caches are flushed before function return. A domain
-> > can have multiple cache tags. Previously, we sent individual cache
-> > invalidation requests to hardware. This change combines all
-> > necessary invalidation requests into a single batch and raise them
-> > to hardware together to make it more efficient. =20
->=20
-> Hi Jacob,
->=20
-> Do you mean the configuration that iommu.strict=3D=3D0? :) As the above
-> explanation from Baolu, this patch is not for that although it uses
-> the term "batched". Also, it would reduce the VMExits that due to the
-> IOTLB/DevTLB invalidation a lot in the virtualization environment.
->=20
-No, I understand this is a different "batch", not for deferred flush.
-I am asking why it has to gather QI_MAX_BATCHED_DESC_COUNT before it
-does the flush. See my other reply.
+If there was any significant changes since I would have dropped the tag.
 
-Thanks,
+Andrew
 
-Jacob
-
-
-
+> 
+> Best regards,
+> Krzysztof
+> 
 
