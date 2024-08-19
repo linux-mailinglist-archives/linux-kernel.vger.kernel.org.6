@@ -1,124 +1,176 @@
-Return-Path: <linux-kernel+bounces-292403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80FD956F08
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 210C4956F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE541C2310E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412EC1C20EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC1415B995;
-	Mon, 19 Aug 2024 15:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B17716B753;
+	Mon, 19 Aug 2024 15:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FuLCwpim"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ED5135A53
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngAEwYIK"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83139768FC
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082065; cv=none; b=rhfDUEKevIfTId7iztxX/r03UTYHMpCN1/0ev8PPOOPGJ0bMNah2n3fVP7ru4aC+9O7cmgeb1ALsH0lcZ6aUBTqMzsuShqd/m6mD+uLZR4Q5DleOyt7ev49RdnMWfGAjlq8nNTlTCW5aNK6xHV7oy6B+T5RG9fH6va2fFKTON5k=
+	t=1724082073; cv=none; b=QZwiN/zalgmvJ9ymQeux3rH/Uw+W03fI8g0ivSB46Mvja6+A8Mks0sQwttH6Z/CBTQ69tlW86Q3TK4a53wdck8ZCfBMJBfjWO3hOX/jd0kYi9E8DwZP079mZE1Y3g6o1cJNoszoRtycOwsSQp50K3X6SgqACJqh/tS1YP99BhG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082065; c=relaxed/simple;
-	bh=GtDAaJmFfaH4+QMA7jpe2RwFm8+Al0atud9c5END1G0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YQVzm8VERDObiX7DLvJxxDZ4EkDYPtZiZgYOph6gJ1MUPIkAdN8xEuu2tfiX/xhizNrU7azK6XKkWs5i4GGuioeX3t4o9vbVCYnnF/F+IzeWwVkC8EOjGzsAAuI+27yIeeUJaEKPu0o5jGjgVJOVHG52sJ/s/EhURZARhHnVYvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FuLCwpim; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [20.236.11.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4A87C20B7165;
-	Mon, 19 Aug 2024 08:40:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4A87C20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724082057;
-	bh=sFr1FN+e4y3O4P7dVsVd8RcdSO7zZRmuxvlh01KKTlg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FuLCwpimvBAmMAe371Ecry1sq9La6BolAAOiA5LNynbEbdHnXTiq42makLKTwyu5o
-	 JCupL5q0Sr+7Da+0o3xxvts4W0Iae3QUkldS6zf+1TZPmGUajMyM4VDghENbpP6G+q
-	 DSNaqfdNj+kRmVylbYlg5PCKkA3X/QfQRFVm+lEM=
-Date: Mon, 19 Aug 2024 08:40:56 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Tina Zhang <tina.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] iommu/vt-d: Introduce batched cache invalidation
-Message-ID: <20240819084056.298a9924@DESKTOP-0403QTC.>
-In-Reply-To: <afec1d30-4bb3-4d39-9ff1-eb8ecb26bed3@linux.intel.com>
-References: <20240815065221.50328-1-tina.zhang@intel.com>
-	<20240815065221.50328-5-tina.zhang@intel.com>
-	<20240816093846.40dbd623@DESKTOP-0403QTC.>
-	<afec1d30-4bb3-4d39-9ff1-eb8ecb26bed3@linux.intel.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724082073; c=relaxed/simple;
+	bh=0D1MH02bz6Vy5wol/7/ekCDY5+vHDaQXLy5SNPCWagc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EH/eIvMWZe3QBWhwWXDeJYEDiTPjBoQXv1DlGa4E0b4TKf0073XpphpQTvJ5iZfvyP4AqEc093uriOdL7zwMKSANpQNI4JzvN37MgqZh4vyUmCZ5NwK2DMdq9NRaZoAUsmb3N3rSmBlJm7fTAq+ctsP9drt/XWE9x4TNeWNyGrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngAEwYIK; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371a9bea8d4so1135326f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724082070; x=1724686870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MrzATe8rYIud1EQmdYYD4F8xYF1fCvbf9TZacojasoA=;
+        b=ngAEwYIKo6Q0FRVMtp3ENoysSH7HgVh+rGsJ1utnrfrh5JVmwkJrDtuFkqLpbRKmkU
+         NUxWFuCuxmn2f6iM8oMySg/HYZfraaLUvA8TNEfOKjPQGKf7xGqkc5XzU6JBkKsSrNt5
+         S0HB2/ddhKeqkaUJxFZf3ijX+V/zeQnu9TfaBQ1x2dZuShqEC4X9B+rmXfPF+xGq1d9Q
+         vSrnTP6bqGrZ8m+WpVObe0gMMWR4gvsu1bsJ/emF53Ol+ndFKVcyFTyc/sP7bWdHOt9T
+         Sv4NRe+K19YfAteHMaWuLzl7W+/TPcQYNku7ihc3X4riHO+ywGJE+K44eQeLROB5p8XC
+         ob6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724082070; x=1724686870;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MrzATe8rYIud1EQmdYYD4F8xYF1fCvbf9TZacojasoA=;
+        b=O9xHj+039aRCbGCCfwxsXuevoNi443OvoOMKbJy8gjVV/anTxe4axcpWFSM702E8Pj
+         02Nzs+/g4AB4PblUxjdt8fcHprwpgSyTQooa8GlcHJ5XlA4ppbweQTPjSaM3EVEYjKy4
+         zi8jEXudrz8OVtfCUmvjh8OPftwsklRld9dsecq+UBp4OrJsmIHZARs1Zw9vsBb1V/4X
+         5MW4HLzuPZaCZAr1OBtmpgymxifN3xsEcjpQ+UTOV5v46WX3T0uC/xC7ASdDywsZAN9j
+         Y4begQa/vBQSk3p8gsyB+C9OKqh0D6UbL5lSPiU6siqZNXJAVvZNzFyjOFf0W7AqG8cp
+         QJZw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6JWD2VCfHmLQqUbo4mUIKoQUPM0hxnW+z7rcoqol0AVO81M/S0HsRRciaHwiMcmYPQ0Sy+dC1O6A/510=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ZSUyTflIrY/AO14rnkilopCIhAcCICERrONfJCFw2L73FVuU
+	dOAr4107W8MOfDMJ+pnHdwExwNvfsebpYWdfd05WbBqDAec029QMTkPjzG4q2Ek=
+X-Google-Smtp-Source: AGHT+IGbaGgDjlkcjOOxjw1s5hMx81Sydj4FWl7Oz+csh+yXsVHvtIbKTUYageb60ZuUGTwv5aH3nQ==
+X-Received: by 2002:a5d:408f:0:b0:368:5b80:b8d with SMTP id ffacd0b85a97d-37194456508mr6323850f8f.21.1724082069174;
+        Mon, 19 Aug 2024 08:41:09 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a286sm10817742f8f.54.2024.08.19.08.41.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 08:41:08 -0700 (PDT)
+Message-ID: <b783f932-851f-4ea5-a2cc-d39061c60652@linaro.org>
+Date: Mon, 19 Aug 2024 17:41:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm/panel: ili9341: Add comments for ILI9341 register
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
+ skhan@linuxfoundation.org, rbmarliere@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <20240812171019.561321-1-abhishektamboli9@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240812171019.561321-1-abhishektamboli9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sat, 17 Aug 2024 11:28:21 +0800
-Baolu Lu <baolu.lu@linux.intel.com> wrote:
+On 12/08/2024 19:10, Abhishek Tamboli wrote:
+> TODO : Add missing comments for ILI9341 register definition.
 
-> On 2024/8/17 0:38, Jacob Pan wrote:
-> > On Thu, 15 Aug 2024 14:52:21 +0800
-> > Tina Zhang <tina.zhang@intel.com> wrote:
-> >   
-> >> @@ -270,7 +343,8 @@ static void cache_tag_flush_iotlb(struct
-> >> dmar_domain *domain, struct cache_tag * u64 type =
-> >> DMA_TLB_PSI_FLUSH; 
-> >>   	if (domain->use_first_level) {
-> >> -		qi_flush_piotlb(iommu, tag->domain_id, tag->pasid,
-> >> addr, pages, ih);
-> >> +		qi_batch_add_piotlb(iommu, tag->domain_id,
-> >> tag->pasid, addr,
-> >> +				    pages, ih, domain->qi_batch);
-> >>   		return;
-> >>   	}
-> >>   
-> >> @@ -287,7 +361,8 @@ static void cache_tag_flush_iotlb(struct
-> >> dmar_domain *domain, struct cache_tag * }
-> >>   
-> >>   	if (ecap_qis(iommu->ecap))
-> >> -		qi_flush_iotlb(iommu, tag->domain_id, addr | ih,
-> >> mask, type);
-> >> +		qi_batch_add_iotlb(iommu, tag->domain_id, addr |
-> >> ih, mask, type,
-> >> +				   domain->qi_batch);
-> >>     
-> > If I understand this correctly, IOTLB flush maybe deferred until the
-> > batch array is full, right? If so, is there a security gap where
-> > callers think the mapping is gone after the call returns?  
-> No. All related caches are flushed before function return. A domain
-> can have multiple cache tags. Previously, we sent individual cache
-> invalidation requests to hardware. This change combines all necessary
-> invalidation requests into a single batch and raise them to hardware
-> together to make it more efficient.
-I was looking at the code below, if the index does not reach
-QI_MAX_BATCHED_DESC_COUNT. There will be no flush after
-cache_tag_flush_iotlb() returns, right?
+Please rephrase the commit message, and explain why in a proper english sentence.
 
-+static void qi_batch_increment_index(struct
-intel_iommu *iommu, struct qi_batch *batch) +{
-+	if (++batch->index == QI_MAX_BATCHED_DESC_COUNT)
-+		qi_batch_flush_descs(iommu, batch);
-+}
-+
-+static void qi_batch_add_iotlb(struct intel_iommu *iommu, u16 did, u64
-addr,
-+			       unsigned int size_order, u64 type,
-+			       struct qi_batch *batch)
-+{
-+	qi_desc_iotlb(iommu, did, addr, size_order, type,
-&(batch->descs[batch->index]));
-+	qi_batch_increment_index(iommu, batch);
-+}
+Neil
 
-> Thanks,
-> baolu
+> 
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> ---
+>   drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> index 775d5d5e828c..cba6a6952568 100644
+> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> @@ -121,19 +121,19 @@ struct ili9341_config {
+>   	const struct drm_display_mode mode;
+>   	/* ca: TODO: need comments for this register */
+>   	u8 ca[ILI9341_CA_LEN];
+> -	/* power_b: TODO: need comments for this register */
+> +	/* power_b: Power control B (CFh) */
+>   	u8 power_b[ILI9341_POWER_B_LEN];
+> -	/* power_seq: TODO: need comments for this register */
+> +	/* pdtcaower_seq: Power on sequence control (EDh) */
+>   	u8 power_seq[ILI9341_POWER_SEQ_LEN];
+> -	/* dtca: TODO: need comments for this register */
+> +	/* dtca: Driver timing control A (E8h) */
+>   	u8 dtca[ILI9341_DTCA_LEN];
+> -	/* dtcb: TODO: need comments for this register */
+> +	/* dtcb: Driver timing control B (EAh) */
+>   	u8 dtcb[ILI9341_DTCB_LEN];
+> -	/* power_a: TODO: need comments for this register */
+> +	/* power_a: Power control A (CBh) */
+>   	u8 power_a[ILI9341_POWER_A_LEN];
+>   	/* frc: Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
+>   	u8 frc[ILI9341_FRC_LEN];
+> -	/* prc: TODO: need comments for this register */
+> +	/* prc: Pump ratio control (F7h) */
+>   	u8 prc;
+>   	/* dfc_1: B6h DISCTRL (Display Function Control) */
+>   	u8 dfc_1[ILI9341_DFC_1_LEN];
+> @@ -147,7 +147,7 @@ struct ili9341_config {
+>   	u8 vcom_2;
+>   	/* address_mode: Memory Access Control (36h) */
+>   	u8 address_mode;
+> -	/* g3amma_en: TODO: need comments for this register */
+> +	/* g3amma_en: Enable 3G (F2h) */
+>   	u8 g3amma_en;
+>   	/* rgb_interface: RGB Interface Signal Control (B0h) */
+>   	u8 rgb_interface;
+> --
+> 2.34.1
+> 
 
 
