@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-291439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D70895628B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02D6956297
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D03280A04
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8078B1F2224B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D51713D2AF;
-	Mon, 19 Aug 2024 04:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7BC1459FA;
+	Mon, 19 Aug 2024 04:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqT9a7ah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q2jzsJRy"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BED38394;
-	Mon, 19 Aug 2024 04:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961EF13D62F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724041071; cv=none; b=YZ4zRiUC2Kku0Se9M8yq5qsVRrWPnM55ApvFmGkUP2u9Lz+cefkqXCtKxb2C99hMqSOqB8wNKGB+AP+iZnRxUSOCAoY8+BtmBoukaoU010mhPaiPeMp93jtEaR+bwOKetfwYgUe8cv8P6tFU0yzyPNPTjezfxtOZL+XT2hlczYE=
+	t=1724041563; cv=none; b=NWdrjfcJg0v8eT3jfAZ/0VVFPmbn61ne6lxByAYPZ8pX1GfuNw7+2hxyRxUw1T045AXm7SiWJocr9wr9wXMOObbSOQ1Cu9YegY9C8ayVwIHjoNZDqV/X0yN7v77jTxDkgDl0Mqr3Q8WDhntCZETvJCL1H0W0AYhRiuq/czYGLFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724041071; c=relaxed/simple;
-	bh=M3sfCsQ738NNzKcRDJ3YsMDynsmCYn+/KmSEAlKKgKU=;
+	s=arc-20240116; t=1724041563; c=relaxed/simple;
+	bh=+v4g0UjEWkLd7ZS9HwEmXjiwF0M6kB/Ghn8LHxLtirQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WY831PpgYNxFAlWdPvirtDbRDClP2W8Ze5prbQ9aCjpjq0OAL9nXcrB2rjatdN/WSx3iqUl3Y0TGg845OhW1gPwSSgcAa/Ha/kuT2R0bzL78NH4koJhz2SiTX1AIDYf9CRUtN2Luhj0cwh2Fd9KbHxvvWqueXZKy9yLlhl4oZtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqT9a7ah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E180FC32782;
-	Mon, 19 Aug 2024 04:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724041071;
-	bh=M3sfCsQ738NNzKcRDJ3YsMDynsmCYn+/KmSEAlKKgKU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pqT9a7ahbnjD9bJ7twx7zQZuTV1sg/2lUe+AbP+1wAHxwOBybH/0yMaNuSQZwoWcO
-	 7FvBeqMm9H8BDCXOPH4Bz4uUGzKTyR/vOBzhQ9GznCNF87NDpGVijlZmr6MGye02YE
-	 /6w4mfamIxDrUIIvQgv7oyxqdTAcydeINy0SeLcnLF93YtKkhALRWuGnK9PYKm6+CM
-	 fnNDyQcoPRWt/AudpT8iriWqSdznEADkam/eg7fUD/GtkqNwffF+WVmEuhuA9NAIkf
-	 ilGulrp1yuG3YIb1il/N392xPOvCghT3Dgy4AjCK0XpNzpRZeJEiGac/l//3EthyTR
-	 lc8XxnFUR6iyg==
-Message-ID: <a3fc662c-fa98-4a6e-807b-babb9a344904@kernel.org>
-Date: Mon, 19 Aug 2024 13:17:48 +0900
+	 In-Reply-To:Content-Type; b=LS782DfsxIQkwFy7plnJsxz175Rgrd1HdiEDSBWA+gZx7AcReUeT9x6zyoshrB1FSrt8dJxLSGwe993tolNmmQV21yTKBPnFI+Pk+kcm7oU6eoXtpQexO6TL7ivqZeTwHTywZOkTniXFAbICQTCwYwmAmFBd3jpg8aAIOl/RHBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q2jzsJRy; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5ed6f51cfso2647525eaf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 21:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724041560; x=1724646360; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SmSr10lXHgh748HKWduE5k/LDglQBiHBeWV9WGZodNo=;
+        b=Q2jzsJRybfuxCtA8rodmrn/oObXViFLTqbGZj46YOdewvEbZeh0MTzxn51PodYtNJW
+         xqZw3kDJsxFrSWLRSWYSvtmIUaLEoUW1NqJszKE50tTjlyu7NysQ4KRmjc62nMMXfIr/
+         RQ9HM+692ZqfSLVGh3p1LfL1RXUfpAdnwfIuCgxpn1+jzG5P7TX4cTyR2Yc2dWs+WOM/
+         aCPuA7hzbakR1FgeOY5jwlFc+yuxEAM4iHfiQRbB4eDdariIWv6NDNWwdHz5/RBs0TwT
+         ElNF0VBJi4NioRnlqF4xzcEHio5S7rBiHaGWxsY6i8bEE6ekhqWvTavMwfJFfnJwdk1U
+         aKfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724041560; x=1724646360;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SmSr10lXHgh748HKWduE5k/LDglQBiHBeWV9WGZodNo=;
+        b=MzAXipibTxvidrFQhkfU64dF/woHKwTEn80xzTs9Fqex4cQWT8189jvEIcbADG8mii
+         VX9S2SHZVYCaDC9a+iYtPkfpv41Y9mSBbj2xMl/hBm27MW/Y7nQjxSiBVGXrSIfcGNeN
+         JFQbhkPrHTi31yHzyZCCPdPWWSeDhuEctM+IaAEtuR6sUN4hj8TnnI0A/w7qiE+DA0jr
+         qo4RCFzo3d1WVkhZ+EOIZClBjmUJH5nlERcp7XN3C0DARWipa8uD4pq8d/uQZhJ0h682
+         ShNeFtTdddck5Z79MzCHOHCsf5PuA7bs9IxxKPXj2p+VH1SSlQW9dmSCyKuG8F6+vWLd
+         PMNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWBnyf8vZ93KN8eT1jjyW+1Esy/IL0BQuEbd3iU3y5SPugczJBba1Otc25+mt1fCkZoTxFqRpcsijLWXmHzUfZ6ZzpYD05uww/pnIO
+X-Gm-Message-State: AOJu0YwSiWEfT5p/Ys4/eycm0SgF5Pr1404Gch0j0KhDKqW3tOYygG5Z
+	ao38J98IYMYOKZwE5EzoZTN7NRdnm+sqV/puzoIutbBx2DpcAN9C2RuKkWCNn0M=
+X-Google-Smtp-Source: AGHT+IFKtrY7/fANJZ2uglCj/MVefnIjjROeE8YWIB38zjN915wjQ7cn3peazdZfU+eY9yL35G2vCA==
+X-Received: by 2002:a05:6358:478e:b0:1aa:c71e:2b2c with SMTP id e5c5f4694b2df-1b3931910edmr1475923955d.11.1724041560335;
+        Sun, 18 Aug 2024 21:26:00 -0700 (PDT)
+Received: from [10.68.122.106] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae08027sm5875279b3a.66.2024.08.18.21.25.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 21:25:59 -0700 (PDT)
+Message-ID: <b8f8c4a4-b272-454c-b2c7-59417461713b@bytedance.com>
+Date: Mon, 19 Aug 2024 12:25:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,121 +75,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in
- progress
-To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- bvanassche@acm.org, linuxarm@huawei.com, prime.zeng@huawei.com,
- stable@vger.kernel.org
-References: <20240817015019.3467765-1-liyihang9@huawei.com>
- <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
- <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [External] Re: [PATCH] bpf: cg_skb add get classid helper
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
+References: <20240814095038.64523-1-zhoufeng.zf@bytedance.com>
+ <be4d3e00-de84-420b-9979-277ecc9df6ce@linux.dev>
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
+In-Reply-To: <be4d3e00-de84-420b-9979-277ecc9df6ce@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/19/24 13:07, Yihang Li wrote:
-> 
-> 
-> On 2024/8/19 7:55, Damien Le Moal wrote:
->> On 8/17/24 10:50, Yihang Li wrote:
->>> If formatting a suspended disk (such as formatting with different DIF
->>> type), the disk will be resuming first, and then the format command will
->>> submit to the disk through SG_IO ioctl.
->>>
->>> When the disk is processing the format command, the system does not submit
->>> other commands to the disk. Therefore, the system attempts to suspend the
->>> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+在 2024/8/16 09:06, Martin KaFai Lau 写道:
+> On 8/14/24 2:50 AM, Feng zhou wrote:
+>> From: Feng Zhou <zhoufeng.zf@bytedance.com>
 >>
->> Why would the system try to suspend the disk with a request in flight ? Sounds
->> like there is a bug with PM reference counting, no ?
+>> At cg_skb hook point, can get classid for v1 or v2, allowing
+>> users to do more functions such as acl.
+>>
+>> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+>> ---
+>>   net/core/filter.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/net/core/filter.c b/net/core/filter.c
+>> index 78a6f746ea0b..d69ba589882f 100644
+>> --- a/net/core/filter.c
+>> +++ b/net/core/filter.c
+>> @@ -8111,6 +8111,12 @@ cg_skb_func_proto(enum bpf_func_id func_id, 
+>> const struct bpf_prog *prog)
+>>           return &bpf_get_listener_sock_proto;
+>>       case BPF_FUNC_skb_ecn_set_ce:
+>>           return &bpf_skb_ecn_set_ce_proto;
+>> +    case BPF_FUNC_get_cgroup_classid:
+>> +        return &bpf_get_cgroup_classid_proto;
+>> +#endif
+>> +#ifdef CONFIG_CGROUP_NET_CLASSID
+>> +    case BPF_FUNC_skb_cgroup_classid:
+>> +        return &bpf_skb_cgroup_classid_proto;
 > 
-> According to my understand and test, the format command request is finished,
-> so it is not in flight for the kernel. And the command need a few time to processing
-> in the disk while no other commands are being sent.
+> With this bpf_skb_cgroup_classid_proto, is the above 
+> bpf_get_cgroup_classid_proto necessary?
+> The cg_skb hook must have a skb->sk.
 
-OK, fine. But I think that retrying SYNC CACHE if the drive is formatting makes
-absolutely no sense at all because there is nothing to flush in that case.
-So what about simply ignoring the error ? I.e. something like this:
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 699f4f9674d9..1da267b8cd8a 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1824,12 +1824,14 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
-                                /* this is no error here */
-                                return 0;
-                        /*
--                        * This drive doesn't support sync and there's not much
--                        * we can do because this is called during shutdown
--                        * or suspend so just return success so those operations
--                        * can proceed.
-+                        * If a format is in progress (asc = LOGICAL UNIT NOT
-+                        * READY, ascq = FORMAT IN PROGRESS) or if the drive
-+                        * does not support sync, there is not much we can do
-+                        * because this is called during shutdown or suspend. So
-+                        * just return success so those operations can proceed.
-                         */
--                       if (sshdr.sense_key == ILLEGAL_REQUEST)
-+                       if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
-+                           sshdr.sense_key == ILLEGAL_REQUEST)
-                                return 0;
-                }
+Yes, just add bpf_skb_cgroup_classid_proto.
 
 > 
->>
->>> command will fail because the disk is in the formatting process, which
->>> will cause the runtime_status of the disk to error and it is difficult
->>> for user to recover it. Error info like:
->>>
->>> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
->>> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
->>> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
->>> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
->>>
->>> To solve the issue, retry the command until format command is finished.
->>>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Yihang Li <liyihang9@huawei.com>
->>> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
->>> ---
->>> Changes since v3:
->>> - Add Cc tag for kernel stable.
->>>
->>> Changes since v2:
->>> - Add Reviewed-by for Bart.
->>>
->>> Changes since v1:
->>> - Updated and added error information to the patch description.
->>>
->>> ---
->>>  drivers/scsi/sd.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->>> index adeaa8ab9951..5cd88a8eea73 100644
->>> --- a/drivers/scsi/sd.c
->>> +++ b/drivers/scsi/sd.c
->>> @@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
->>>  			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
->>>  				/* this is no error here */
->>>  				return 0;
->>> +
->>> +			/* retry if format in progress */
->>> +			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
->>> +				return -EBUSY;
->>> +
->>>  			/*
->>>  			 * This drive doesn't support sync and there's not much
->>>  			 * we can do because this is called during shutdown
->>
+> Please add a selftest and tag the subject with bpf-next.
+> 
 
--- 
-Damien Le Moal
-Western Digital Research
+Will do, thanks.
+
+> pw-bot: cr
+> 
+>>   #endif
+>>       default:
+>>           return sk_filter_func_proto(func_id, prog);
+> 
 
 
