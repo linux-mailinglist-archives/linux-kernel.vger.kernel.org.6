@@ -1,153 +1,279 @@
-Return-Path: <linux-kernel+bounces-291925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265979568F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CFC9568FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E5D1C21632
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADC61C21CDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28491684B4;
-	Mon, 19 Aug 2024 11:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jsuMToZs"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FAD165F14;
+	Mon, 19 Aug 2024 11:06:29 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76691166F3C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473CA14C58C;
+	Mon, 19 Aug 2024 11:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724065545; cv=none; b=YkF0AIoYQOvXhkZ6HwdoZFOsOSoZfeJQx1PrFXBlnxAzmyVxUPjAeAvF2A/TRCsYWe9+A1AZWGvVYizb91vJY3D/tU0pXpkt7eF7hFL1e+5pcQ3JjGkky6ji6PNrLXDD/4Uksyjr4STLA98mWHnROFMDLIuzDoN3T8rYWtg684o=
+	t=1724065588; cv=none; b=p1+FQU9l9VsVb1YkzMlEse1ONHXO0ol9LI3OBCIkAMU9Tubv5OAX6JmOtLifMtZUsh1wR5LdoFTKH1mxVdO4wjm10tbqmMPurBoWMfeZf2oZI1UoSlMGjRnKpqWsbbD3NGukUWvLQmDpB/Dk+iHxcKDwwGualFYGbw/3yVeaU0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724065545; c=relaxed/simple;
-	bh=Wmie4vQi8khalYM7ZEpgB85aomp+ZymWSL1n7Y0jJpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hu4W9gqQKBOaPVuEdVrkMHiMJNqy/fdvmi5kw/PWlTOz+MWLqE3NIQ+H/MxjIQvkMA+3lILg9To57hI5VnWto1MPNHqadTlr/okvbJrBF3tigJo12LRKUTb4Sn4m1KrGOvRcVIgi1Ihti+EHEM4O/9jxeS8pYyvbQCYO99R6R6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jsuMToZs; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so488690a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724065542; x=1724670342; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V/RN4zc1ht84kYj1RU0w9c6wanQUgBuvrRTNuKSSkaE=;
-        b=jsuMToZsoI7wVex+TiKt7wmaowtVk7838ebfJlNvtvGo8IGw5dbwiIVb5znVUZZFc8
-         iRPl5uuCeV62uVBDKaKljvXaAPBbN5Cm7oeVJYmIAW5H5nJAcj2Yb0vQv8XAIzVZuZ8Q
-         6/M4kEjn6KH873Azjy+D3Fe7wxg682boTGKY8wEjIvl1lXNfrfEH2WDc24UCwriq816a
-         G5U+tEKIs7D+MMRx8OMNcfeGQ3OPyms9rTKG92x1E8kxzIhaLANI+vRQKPYHb4JyRNAh
-         3rvpeywdEgRAdLfJHVddD+7bCDjLgxD2tdT25HPdGZW6Yg9xzawErjkjVisMVtEgfFHd
-         U6Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724065542; x=1724670342;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V/RN4zc1ht84kYj1RU0w9c6wanQUgBuvrRTNuKSSkaE=;
-        b=upKYc9yb+fQaqu6FICAf2OH+9r30+NI2N+RNhuGqxprRuCQAHZ7Z34N3MpeCeeIjEb
-         z8WQhXNOIGYVOF05fS9DvTnNLIxkxk3kP91XwhoyPtdcC2ffM7A8Qj9ym14HpbaOPHxK
-         OmgHlkFbAklYttUQeyKwgUePq3WKZUi/ZSGBE0kuIhoMkN/2JsULe65nrZAoV3q/bXJ1
-         ffN5CDpDG1lArzaUMndrvBgZ9QCH+TO96RTLkGt9B1B1TbP5N3ozKuJjHkDvjJFNRnB7
-         ZAflhMhBObQNkVmkI7AZzECu2r8Op3Gf0epTuaVy4pxjas1zS8djmlamRiJEE7crMMPP
-         t9kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUj+mVy7Rq6ggvF89BFTBQ77X3eFaq0Y0i8bT5lfAKlvSRHV0E4PWNZpkUI87/a5m5IqMu+j++ONDavJJVKmz4juVpNolCVXngDmY8y
-X-Gm-Message-State: AOJu0YxzATlpdJ0cGiWj60m5/svfr/K9BoGxDbluOiwodj5f2fYMUFvX
-	+iXZcphs7WpP1HK/oz2rAwhtT/hdSQhv3ibQ2Lfmr3Ju+1nyUxUIADXzZyZ5J2w=
-X-Google-Smtp-Source: AGHT+IHT4bsLbT2dy0r3Y23x2E40yvN/740yv6qZY4TwLwzbeopKnDHxvHh0ETWqYmTl4tCW5nTkdg==
-X-Received: by 2002:a05:6402:909:b0:5bb:9afd:8d05 with SMTP id 4fb4d7f45d1cf-5beca8c8457mr6625653a12.24.1724065541733;
-        Mon, 19 Aug 2024 04:05:41 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbde48fdsm5376711a12.28.2024.08.19.04.05.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 04:05:41 -0700 (PDT)
-Message-ID: <eba83b14-e704-464a-b4c4-19322e70d177@linaro.org>
-Date: Mon, 19 Aug 2024 12:05:40 +0100
+	s=arc-20240116; t=1724065588; c=relaxed/simple;
+	bh=QbuK6q65LYbdgNWFUcvkvZEJr0OQYdLRM5kZFLaqr4k=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=A+Im3msrti6hTKh4jXXtdLWmuTjfswIbrM6628ZQ7v0iHEWra4fWnUohfvua8ODHq6FB2Ne2RYCG5Y/E7k96IOZo4Qs4+aZGHK+eb6qDPMVMFmF6Z2nTD4mwvtarj1if4Tb2IQlyaMEiMSpnft0RfdJ/cxYnpZjIb8jziO3Fihs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WnVC25y5Tz4f3jry;
+	Mon, 19 Aug 2024 19:06:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D9D1F1A058E;
+	Mon, 19 Aug 2024 19:06:20 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoQrJ8Nm_Xt+CA--.65463S3;
+	Mon, 19 Aug 2024 19:06:20 +0800 (CST)
+Subject: Re: [PATCH RFC -next v2 11/41] md/md-bitmap: simplify
+ md_bitmap_create() + md_bitmap_load()
+To: Su Yue <l@damenly.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: mariusz.tkaczyk@linux.intel.com, hch@infradead.org, song@kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240814071113.346781-1-yukuai1@huaweicloud.com>
+ <20240814071113.346781-12-yukuai1@huaweicloud.com> <ikvxorrl.fsf@damenly.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c86bcd71-1efd-3794-774d-3a3d8882a8c8@huaweicloud.com>
+Date: Mon, 19 Aug 2024 19:06:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240812144131.369378-14-quic_depengs@quicinc.com>
+In-Reply-To: <ikvxorrl.fsf@damenly.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXPoQrJ8Nm_Xt+CA--.65463S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF18AF1kKFWkKFyDtFyftFb_yoW3Cw4Upr
+	4ktFy5Gry5Jr1rXr1UJryDAFyUJr1Dtwnrtr1xXa45Gr1UArn0gF48WF1jgw1UAr48JF4D
+	Xr15JrnrZr17Xr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 12/08/2024 15:41, Depeng Shao wrote:
-> +#define VFE_BUS_WM_CFG(n)		(BUS_REG_BASE + 0x200 + (n) * 0x100)
+Hi,
 
-<snip>
+在 2024/08/19 16:10, Su Yue 写道:
+> 
+> On Wed 14 Aug 2024 at 15:10, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Other than internal api get_bitmap_from_slot(), all other places will
+>> set returned bitmap to mddev->bitmap. So move the setting of
+>> mddev->bitmap into md_bitmap_create() to simplify code.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>  drivers/md/md-bitmap.c | 23 +++++++++++++++--------
+>>  drivers/md/md-bitmap.h |  2 +-
+>>  drivers/md/md.c        | 30 +++++++++---------------------
+>>  3 files changed, 25 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+>> index eed3b930ade4..75e58da9a1a5 100644
+>> --- a/drivers/md/md-bitmap.c
+>> +++ b/drivers/md/md-bitmap.c
+>> @@ -1879,7 +1879,7 @@ void md_bitmap_destroy(struct mddev *mddev)
+>>   * if this returns an error, bitmap_destroy must be called to   do 
+>> clean up
+>>   * once mddev->bitmap is set
+>>   */
+>> -struct bitmap *md_bitmap_create(struct mddev *mddev, int slot)
+>> +static struct bitmap *bitmap_create(struct mddev *mddev, int slot)
+>>  {
+>>      struct bitmap *bitmap;
+>>      sector_t blocks = mddev->resync_max_sectors;
+>> @@ -1966,6 +1966,17 @@ struct bitmap *md_bitmap_create(struct mddev 
+>> *mddev, int slot)
+>>      return ERR_PTR(err);
+>>  }
+>>
+>> +int md_bitmap_create(struct mddev *mddev, int slot)
+>>
+> NIT: We have two functions named md_bitmap_create() now. The static
+> one will be renamed to __md_bitmap_create in next patch. Better to rename
+> in this patch.
 
-> +#define RDI_WM(n)			((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
-> +
-> +static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct vfe_line *line)
-> +{
-> +	struct v4l2_pix_format_mplane *pix =
-> +		&line->video_out.active_fmt.fmt.pix_mp;
-> +
-> +	wm = RDI_WM(wm); /* map to actual WM used (from wm=RDI index) */
+The static is renamed to bitmap_create() in this patch. And in the next
+patch, the static is renamed to __bitmap_create() while the exported one
+is renamed to bitmap_create().
 
-OK so one more point here.
+I'll rename the static one to __bitmap_create() directly.
 
-The non-lite VFE has I think in the case of sm8550 twenty seven 
-different bus clients.
+Thanks!
+Kuai
+> 
+> -- 
+> Su
+> 
+>> +{
+>> +    struct bitmap *bitmap = bitmap_create(mddev, slot);
+>> +
+>> +    if (IS_ERR(bitmap))
+>> +        return PTR_ERR(bitmap);
+>> +
+>> +    mddev->bitmap = bitmap;
+>> +    return 0;
+>> +}
+>> +
+>>  int md_bitmap_load(struct mddev *mddev)
+>>  {
+>>      int err = 0;
+>> @@ -2030,7 +2041,7 @@ struct bitmap *get_bitmap_from_slot(struct mddev 
+>> *mddev, int slot)
+>>      int rv = 0;
+>>      struct bitmap *bitmap;
+>>
+>> -    bitmap = md_bitmap_create(mddev, slot);
+>> +    bitmap = bitmap_create(mddev, slot);
+>>      if (IS_ERR(bitmap)) {
+>>          rv = PTR_ERR(bitmap);
+>>          return ERR_PTR(rv);
+>> @@ -2381,7 +2392,6 @@ location_store(struct mddev *mddev, const char 
+>> *buf, size_t len)
+>>      } else {
+>>          /* No bitmap, OK to set a location */
+>>          long long offset;
+>> -        struct bitmap *bitmap;
+>>
+>>          if (strncmp(buf, "none", 4) == 0)
+>>              /* nothing to be done */;
+>> @@ -2408,13 +2418,10 @@ location_store(struct mddev *mddev, const char 
+>> *buf, size_t len)
+>>              }
+>>
+>>              mddev->bitmap_info.offset = offset;
+>> -            bitmap = md_bitmap_create(mddev, -1);
+>> -            if (IS_ERR(bitmap)) {
+>> -                rv = PTR_ERR(bitmap);
+>> +            rv = md_bitmap_create(mddev, -1);
+>> +            if (rv)
+>>                  goto out;
+>> -            }
+>>
+>> -            mddev->bitmap = bitmap;
+>>              rv = md_bitmap_load(mddev);
+>>              if (rv) {
+>>                  mddev->bitmap_info.offset = 0;
+>> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+>> index a8a5d4804174..e187f9099f2e 100644
+>> --- a/drivers/md/md-bitmap.h
+>> +++ b/drivers/md/md-bitmap.h
+>> @@ -252,7 +252,7 @@ struct bitmap_operations {
+>>  void mddev_set_bitmap_ops(struct mddev *mddev);
+>>
+>>  /* these are used only by md/bitmap */
+>> -struct bitmap *md_bitmap_create(struct mddev *mddev, int slot);
+>> +int md_bitmap_create(struct mddev *mddev, int slot);
+>>  int md_bitmap_load(struct mddev *mddev);
+>>  void md_bitmap_flush(struct mddev *mddev);
+>>  void md_bitmap_destroy(struct mddev *mddev);
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index f67f2540fd6c..6e130f6c2abd 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -6211,16 +6211,10 @@ int md_run(struct mddev *mddev)
+>>      }
+>>      if (err == 0 && pers->sync_request &&
+>>          (mddev->bitmap_info.file || mddev->bitmap_info.offset)) {
+>> -        struct bitmap *bitmap;
+>> -
+>> -        bitmap = md_bitmap_create(mddev, -1);
+>> -        if (IS_ERR(bitmap)) {
+>> -            err = PTR_ERR(bitmap);
+>> +        err = md_bitmap_create(mddev, -1);
+>> +        if (err)
+>>              pr_warn("%s: failed to create bitmap (%d)\n",
+>>                  mdname(mddev), err);
+>> -        } else
+>> -            mddev->bitmap = bitmap;
+>> -
+>>      }
+>>      if (err)
+>>          goto bitmap_abort;
+>> @@ -7275,14 +7269,10 @@ static int set_bitmap_file(struct mddev 
+>> *mddev, int fd)
+>>      err = 0;
+>>      if (mddev->pers) {
+>>          if (fd >= 0) {
+>> -            struct bitmap *bitmap;
+>> -
+>> -            bitmap = md_bitmap_create(mddev, -1);
+>> -            if (!IS_ERR(bitmap)) {
+>> -                mddev->bitmap = bitmap;
+>> +            err = md_bitmap_create(mddev, -1);
+>> +            if (!err)
+>>                  err = md_bitmap_load(mddev);
+>> -            } else
+>> -                err = PTR_ERR(bitmap);
+>> +
+>>              if (err) {
+>>                  md_bitmap_destroy(mddev);
+>>                  fd = -1;
+>> @@ -7291,6 +7281,7 @@ static int set_bitmap_file(struct mddev *mddev, 
+>> int fd)
+>>              md_bitmap_destroy(mddev);
+>>          }
+>>      }
+>> +
+>>      if (fd < 0) {
+>>          struct file *f = mddev->bitmap_info.file;
+>>          if (f) {
+>> @@ -7559,7 +7550,6 @@ static int update_array_info(struct mddev 
+>> *mddev, mdu_array_info_t *info)
+>>              goto err;
+>>          }
+>>          if (info->state & (1<<MD_SB_BITMAP_PRESENT)) {
+>> -            struct bitmap *bitmap;
+>>              /* add the bitmap */
+>>              if (mddev->bitmap) {
+>>                  rv = -EEXIST;
+>> @@ -7573,12 +7563,10 @@ static int update_array_info(struct mddev 
+>> *mddev, mdu_array_info_t *info)
+>>                  mddev->bitmap_info.default_offset;
+>>              mddev->bitmap_info.space =
+>>                  mddev->bitmap_info.default_space;
+>> -            bitmap = md_bitmap_create(mddev, -1);
+>> -            if (!IS_ERR(bitmap)) {
+>> -                mddev->bitmap = bitmap;
+>> +            rv = md_bitmap_create(mddev, -1);
+>> +            if (!rv)
+>>                  rv = md_bitmap_load(mddev);
+>> -            } else
+>> -                rv = PTR_ERR(bitmap);
+>> +
+>>              if (rv)
+>>                  md_bitmap_destroy(mddev);
+>>          } else {
+> .
+> 
 
-The above code takes a given index - take the example of index 0 meaning 
-RDI0 and
-
-1. Determines if is_lite() is true deriving a jump of 0 or 0x17
-2. Uses this index as a further offset to functions such as
-    VFE_BUS_WM_CFG(n)
-3. In no way articulates which bus client is which.
-
-So for a non lite case -> RDI0 is bus client # 23
-
-The code we have for CAMSS just assumes RDI is the only client we are 
-programming - which I'm not proposing to change for now, however the 
-code is very not obvious in what it is doing here.
-
-This BTW isn't a criticism of what you've done here but, even though I 
-have access to the registers in front of me, I had to spend about 30 
-minutes looking up and verifying these offsets.
-
-That's not sustainable.
-
-Could you please add a comment which details what each index relates to.
-
-/*
-  * Bus client mapping
-  *
-  * 0 = VID_Y ?
-  * 1 = VID_C
-  * .. etc
-  * .. etc
-  * 23 = RDI0
-  * 24 = RDI1
-  */
-
-I'll try to apply a similar level of index documentation for existing 
-upstream submissions so that working out client mappings is less tedious 
-and will be requiring these mappings for new VFE silicon enabling code 
-upstream.
-
----
-bod
 
