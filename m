@@ -1,255 +1,179 @@
-Return-Path: <linux-kernel+bounces-291392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2607795617C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456FE95617F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEC72827AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59221F217F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7122313D24E;
-	Mon, 19 Aug 2024 03:49:29 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7478D1804E;
+	Mon, 19 Aug 2024 03:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gPMcoojd"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6724409
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECF71CA8D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724039368; cv=none; b=APDXpJ5s9pMRW/UsyhLViQyaD5b/6tPbyW59hWf4TUoCXvClY1xHuc8iErlIw8DIy3xvi0EnstZXs34yLC44Z92KGtQ27PN3q6Ezho7FMtNPD+Hm3ph6l0ZUCByiZlyOP0uVx8cxsT3HPZ6GZVbZkonJiMOJuakDH/5MixyOHtI=
+	t=1724039412; cv=none; b=uh43PvZSsTz4o1qQVWYehHH8Wlq9i66LBUDL+cOC0TuU8VQcTkrEoN8z+jkxDcKoGXktSaydl0vXedvWzwaVho3w8DeYpLKezeGMADP+eqTFobcbvsy3bvKCT6Fe7dVwJTbXZ3Mv3kKxvEzQsDL9Afyh912qw38PMHUA+oV2krs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724039368; c=relaxed/simple;
-	bh=GKcip3kqBcX9sez0+sT2WsE576GsjlhS8PrcR++m1TU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N/AN/pxPjjRZrhdMttpUEJX3s8JKj9NHCETQh45iSbWEUgqDSQ0up9eFvWmxueinfrc9vUhDRgPqLdY+ZPs/GaYHIHnNtJOFqQ6NvDbn9k4n1vsST0NGco6C0iQtTGVHppNm3M8Yrza67I17T7PulGWlaL5j50kOWTnxfRLnjz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f8489097eso384242239f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:49:26 -0700 (PDT)
+	s=arc-20240116; t=1724039412; c=relaxed/simple;
+	bh=vj/nCK/rrnT92avMqYHiiN0EBuWCrYe+FPk2q3HVSdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=egoPI/om+eYOMUe8BXGAz/SZtvjGVQpW/5Zl7+qy7snP2hFyiq+9GrWVq1qn8TaTiVzoU1MKkAmU33L3I3/cmyMsda0Nkk6C/0FGwILXxROZE9ySsgW4bImnRrf8To9JzPmhR5A2VipEIBBBPwJS3fCgDoUx2etbFhrNHgYjlEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gPMcoojd; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371aa511609so943427f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724039409; x=1724644209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Akq/Bfulw+ZSro2Wdo4sH7ibDxXjrZD92qudwT0kTAQ=;
+        b=gPMcoojdD/UAuC6IfKLpWCMW18KXRygBSXWj8CJZPwkiGSZrvjOxU+qWrned3e8LTv
+         p+ihry9TpaaeHcK5IvFy51S7E94XEDCM+L8DUdD3y5pqCtbDMcO2Ji9yHTpf5Jq82Pa1
+         rpqQab28DotyuiaHluaktccXnaYn7hYRjkUq4bY/6SpIlCCKDA1BdedOyUqFMU2MDz5r
+         E7qiQVmG6CtAmMBsjNG9gj4CNaH4svHChGhkQ1XWlfJi19SStz+u8Fqz0Jzzwo0DCrn5
+         EG+xMAIujRMB9nfeCICug6Wr2nVyLhQCgFN414B6l5uBk1GRTf+ZQTZ5spiQe+D2sbxC
+         uxqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724039366; x=1724644166;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jdeZn6NHMH0T9WrkZ6buH4AV+etLAlaZ3gnjhbUDDEo=;
-        b=pSsMclr6FWPFh6c89du8FTaPuvmHOB1sMYV99KsgSiuCQ/mNvcV04g9O4/UDfYQGAo
-         OnIl1luJSUleFNVFP7fo+inrkbAa0rMc95+8nsSQKp7OThP2B/g4hT5hlycjYdrw+uDS
-         E2CQcXRb4Plkq2W2ASBD8FR/IDUAGBJ6+uTprqJxiOqCbSeHXYSBQ47dM7WBWo//Tu82
-         QYxSIqK/VvAn+1/aFTWj1d5XpSrIzHkCQw63Mn67QDjmDXLm7yHdxF2oMOc24Zsf/IKC
-         TzuOdoORoKdR0UwtGTSQbW0MwtwsBQM4xkeZ60Nbq4pvU7Dpaa2qEOowYFpk9OelgoyQ
-         67Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXcx+EB+AJFPuaAz8e2Twp5YWlbhxYlOKDq1AOzwzUOwV5TDTWbHpjEyyk9MTSmBz9IYkptEQcaL8rf4HldKQmolVJO6wmwfNs8m/lI
-X-Gm-Message-State: AOJu0YzbfZieWGVE168Li9dTZbvRYgUjAqrAC+qBOf1w8py5pmVJke+o
-	n6XZHxyIostoYC/W07K2ZLb1SlpUgo7XwlV8DPwoVPc85bdFMKMqeWqdoiL3cSn9MJtju5xF76J
-	IyPjbmkWI8bFAg/lN5jzbPCkj2mOJvupkvQ+X1EX3HmrevSPNYrCe3W0=
-X-Google-Smtp-Source: AGHT+IHNiqMz6BLwWNzsQ117kr+pqA4JM9l0PynBoRPsMklvAg021lX2U97Dd0Cp3iH3axY70VrU5IsoD1MPhgwPcnStsEWBFllG
+        d=1e100.net; s=20230601; t=1724039409; x=1724644209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Akq/Bfulw+ZSro2Wdo4sH7ibDxXjrZD92qudwT0kTAQ=;
+        b=lX7H1WbsKX5VvASfFW5FJjqbemnyVmWdY9DIbHoeon/FFHoGbfDd3MBkvlWB+CX9S7
+         328/kh2OOAnhhb+TtPt+lNc+75jquT4iWbNYOBWse5BFiLU3LmVxMPFYsxeLojPtbSYz
+         6+cb3bLKGc/zHWK5vzDweFQisgWPXpP9rZ9Ap6YRYNjf/HXjxHbMNFw2lJf0gYczFg7u
+         RqpHjg2gJ4wWixam78fqZlqeU4FsmZvZbKlJFExJgEHua/4tymZn7kWPosm01ZfylB4/
+         R7RH/P+OH1gPHKPwB3TL555UlSbO4i1SVYtMSLXWjABbyRRhuPiua8PhT/VwRBVqmcwK
+         y8KA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3w/pQf/LDh7XPYIZ7aQjkiSBAe8TdeByTDPQX4hqIAQA0+jE+54UN4YKFxfZ4Y+z21W47LlFw+8SNTyDlt8+lmcBrg/toKKA7U5oS
+X-Gm-Message-State: AOJu0Yx+F0waX4Yazm6pQt9xgOu/VofcQFG4+BxZLkcSqj1+iOhsStcS
+	VUayns/IusPptFNwNFBQMV7h18kvGhhdfLazGq4ntC8vJE0BEgMfIZN9e1Ueq+31tseVbNRG4Jb
+	xRHH2cCTDl7Lpe8FXLuBbIMBeevT8ab/9VawZY/kYcnaD86hw+0EavQ==
+X-Google-Smtp-Source: AGHT+IGP1r1vsd3FsMXgp+EG96vUOBK1F6/+3vOV0WXKU9/Rj0bDYdy6rXTS+Ytqvn2/2eeWwZC7z7VALGjKfXwS+lA=
+X-Received: by 2002:a5d:5e0f:0:b0:367:4d9d:56a5 with SMTP id
+ ffacd0b85a97d-371983d5ea0mr4456524f8f.44.1724039408991; Sun, 18 Aug 2024
+ 20:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3593:b0:4bd:4861:d7f8 with SMTP id
- 8926c6da1cb9f-4cce16a2b41mr571868173.4.1724039366377; Sun, 18 Aug 2024
- 20:49:26 -0700 (PDT)
-Date: Sun, 18 Aug 2024 20:49:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000311430620013217@google.com>
-Subject: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20240811101921.4031-1-songmuchun@bytedance.com>
+ <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
+In-Reply-To: <ZsKtllxojkTe3mpY@fedora>
+From: Muchun Song <songmuchun@bytedance.com>
+Date: Mon, 19 Aug 2024 11:49:32 +0800
+Message-ID: <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
+ and adding requests to hctx->dispatch
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, "open list:BLOCK LAYER" <linux-block@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, muchun.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Aug 19, 2024 at 10:28=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wro=
+te:
+>
+> Hi Muchun,
+>
+> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
+> > Supposing the following scenario with a virtio_blk driver.
+> >
+> > CPU0                                                                CPU=
+1
+> >
+> > blk_mq_try_issue_directly()
+> >     __blk_mq_issue_directly()
+> >         q->mq_ops->queue_rq()
+> >             virtio_queue_rq()
+> >                 blk_mq_stop_hw_queue()
+> >                                                                     vir=
+tblk_done()
+> >     blk_mq_request_bypass_insert()                                     =
+ blk_mq_start_stopped_hw_queues()
+> >         /* Add IO request to dispatch list */   1) store               =
+     blk_mq_start_stopped_hw_queue()
+> >                                                                        =
+         clear_bit(BLK_MQ_S_STOPPED)                 3) store
+> >     blk_mq_run_hw_queue()                                              =
+         blk_mq_run_hw_queue()
+> >         if (!blk_mq_hctx_has_pending())                                =
+             if (!blk_mq_hctx_has_pending())         4) load
+> >             return                                                     =
+                 return
+> >         blk_mq_sched_dispatch_requests()                               =
+             blk_mq_sched_dispatch_requests()
+> >             if (blk_mq_hctx_stopped())          2) load                =
+                 if (blk_mq_hctx_stopped())
+> >                 return                                                 =
+                     return
+> >             __blk_mq_sched_dispatch_requests()                         =
+                 __blk_mq_sched_dispatch_requests()
+> >
+> > The full memory barrier should be inserted between 1) and 2), as well a=
+s between
+> > 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is cleare=
+d or CPU1
+> > sees dispatch list or setting of bitmap of software queue. Otherwise, e=
+ither CPU
+> > will not re-run the hardware queue causing starvation.
+>
+> Yeah, it is one kind of race which is triggered when adding request into
+> ->dispatch list after returning STS_RESOURCE. We were troubled by lots of
+> such kind of race.
 
-syzbot found the following issue on:
+Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
 
-HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129dd7d9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=804764788c03071f
-dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+>
+> stopping queue is used in very less drivers, and its only purpose should
+> be for throttling hw queue in case that low level queue is busy. There se=
+ems
+> more uses of blk_mq_stop_hw_queues(), but most of them should be replaced
+> with blk_mq_quiesce_queue().
+>
+> IMO, fixing this kind of issue via memory barrier is too tricky to
+> maintain cause WRITE/READ dependency is very hard to follow. I'd suggest =
+to
+> make memory barrier solution as the last resort, and we can try to figure
+> out other easier & more reliable way first.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I do agree it is hard to maintain the dependencies in the future. We should
+propose an easy-maintainable solution. But I thought it is a long-term issu=
+e
+throughout different stable linux distros. Adding a mb is the easy way to f=
+ix
+the problem (the code footprint is really small), so it will be very
+easy for others
+to backport those bug fixes to different stable linux distros. Therefore, m=
+b
+should be an interim solution. Then, we could improve it based on the solut=
+ion
+you've proposed below. What do you think?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-1fb91896.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7b8fac7b5b8b/vmlinux-1fb91896.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/676950a147e6/Image-1fb91896.gz.xz
+Thanks,
+Muchun.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0 Not tainted
-------------------------------------------------------
-syz.0.5481/17612 is trying to acquire lock:
-ffff8000880033a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28 net/core/rtnetlink.c:79
-
-but task is already holding lock:
-ffff000010332b50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0xd8/0xcec net/smc/af_smc.c:3064
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
-       mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
-       smc_switch_to_fallback+0x34/0x80c net/smc/af_smc.c:902
-       smc_sendmsg+0xe4/0x8f8 net/smc/af_smc.c:2779
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0xc8/0x168 net/socket.c:745
-       __sys_sendto+0x1a8/0x254 net/socket.c:2204
-       __do_sys_sendto net/socket.c:2216 [inline]
-       __se_sys_sendto net/socket.c:2212 [inline]
-       __arm64_sys_sendto+0xc0/0x134 net/socket.c:2212
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
-       el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
-       lock_sock include/net/sock.h:1607 [inline]
-       sockopt_lock_sock net/core/sock.c:1061 [inline]
-       sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
-       do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
-       raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
-       sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
-       do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
-       __sys_setsockopt+0xdc/0x178 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
-       el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x2aa4/0x6340 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x48c/0x7a4 kernel/locking/lockdep.c:5724
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
-       mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
-       rtnl_lock+0x1c/0x28 net/core/rtnetlink.c:79
-       do_ipv6_setsockopt+0x1a04/0x3814 net/ipv6/ipv6_sockglue.c:566
-       ipv6_setsockopt+0xc8/0x140 net/ipv6/ipv6_sockglue.c:993
-       tcp_setsockopt+0x90/0xcc net/ipv4/tcp.c:3768
-       sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
-       smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
-       do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
-       __sys_setsockopt+0xdc/0x178 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
-       el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz.0.5481/17612:
- #0: ffff000010332b50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0xd8/0xcec net/smc/af_smc.c:3064
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 17612 Comm: syz.0.5481 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0x9c/0x11c arch/arm64/kernel/stacktrace.c:317
- show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xa4/0xf4 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- print_circular_bug+0x420/0x6f8 kernel/locking/lockdep.c:2059
- check_noncircular+0x2dc/0x364 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x2aa4/0x6340 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x48c/0x7a4 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
- mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
- rtnl_lock+0x1c/0x28 net/core/rtnetlink.c:79
- do_ipv6_setsockopt+0x1a04/0x3814 net/ipv6/ipv6_sockglue.c:566
- ipv6_setsockopt+0xc8/0x140 net/ipv6/ipv6_sockglue.c:993
- tcp_setsockopt+0x90/0xcc net/ipv4/tcp.c:3768
- sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
- smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
- do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
- __sys_setsockopt+0xdc/0x178 net/socket.c:2347
- __do_sys_setsockopt net/socket.c:2356 [inline]
- __se_sys_setsockopt net/socket.c:2353 [inline]
- __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> One idea I thought of is to call blk_mq_request_bypass_insert()(or rename
+> & export it) before calling blk_mq_stop_hw_queue() in driver, then
+> return new status code STS_STOP_DISPATCH for notifying blk-mq to stop
+> dispatch simply.
+>
+>
+> thanks,
+> Ming
+>
 
