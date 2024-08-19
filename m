@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-292915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C23195766B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB8D95766E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3386B2224F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2E81C21CF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE3C172BD3;
-	Mon, 19 Aug 2024 21:20:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EDC15A84E;
+	Mon, 19 Aug 2024 21:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1VW3GOw1"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472171591E3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8C2156875
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724102404; cv=none; b=p/W8hzxr9Kg5c4oUSCtJG65JIBYKk2jLu5+25pkDbli9JWUJv+Azq+d7s6v9SEAf1QBHn0s6JdwXGUs4prma8RuWys+7Mu1EvFgl3g2EhgM1qJrmCb2db0cklAa6xesZuJ0AH5OdMFegkIZq0WKmhvRs+a/54eXL2te6+yNVpBU=
+	t=1724102519; cv=none; b=SrrFDGOztzYnzAiyv6Yy9S3NNj4hWaWMGAvdtKeiN2sGfXUIKgGXlH0+3mZu4rjUda8eq9LYv+n2P6yNsFWw7Ob74w+t4MoMxa9yqXMh03lposbYt6Q/MtrvHZ08En/1yhUzeW4/zs/1+SMd2qQRJgrNwu9JTjJ9gBGR17x4Tm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724102404; c=relaxed/simple;
-	bh=geBg7oorSdiRSuO2UKmQ8oDVSavpaFjuxoK3dPTIuVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=os55TA8rLkuXOpFj4OCfogc/GPxfsDiPulShOjJneUXQc1bmnv7/Us1z2RIwYAxaW+v0nARPzKzQkLAmV3uM8ZcDlTKn+46yh8jMHwunxKUIbOYtRVA6nAEjclfZWNRVKuiwegGDP0MqQA3UA7wKemrA8yDrxTVxqdqOAjRldq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678EFC4AF0E;
-	Mon, 19 Aug 2024 21:20:03 +0000 (UTC)
-Date: Mon, 19 Aug 2024 17:20:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John 'Warthog9' Hawley <warthog9@kernel.org>
-Subject: [PATCH] ktest.pl: Always warn on build warnings
-Message-ID: <20240819172028.3a7fae09@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724102519; c=relaxed/simple;
+	bh=5XKIBNoaG4R5JVVTQc64zLa+V2lj3W+kGuH32KY6HMc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pChNY+r3KMO1qiKes5+RFX43rOV8Y70lUzgMoki3p6D4tvWr/YgcF/lvsvQrxkE9UJsRNXWPZz/P5dBkybSnkmuzSJIFxs9KLq7L4OIVBHj3KSU5ArNqN5W93yoskrSPqpVeMY+5/WA2rG5lJB+/TMOYaSH2ihwZvVX3JLfHBOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1VW3GOw1; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-713d24cf706so2543781b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724102517; x=1724707317; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4AzAZMJmHJCWkRdPSVGGUxyNqPy5aJjO1/T0EVTixE=;
+        b=1VW3GOw1fuVWj/kdhTm17panesC/AqFC+RfP9Y2iTAO+Jhe+ywMdD5B8/++1vDdmsG
+         LQlYLzXtz+mhzlixJWrIcLhkkODuz8so8nZcCvVOANuIKc4JwAo85JjbRfpIeK0grHyJ
+         Bem8lJ0JFCDDev6D0dizeYCS5bBNazqLNgrpu6rc5JTkJ6WUfNap2qXsKF997nnNtDIL
+         nUVpFXnUJiIVwCFTJROEuv9Pt1HL99d4vqanVFRJmU4LM8XqbDRv137njHBZ03TfkH0G
+         Fj2BS20EqigP+qz5h0OF5Xq0+IMi18Dm7weXWUZ/X/vOhadl1qYrDYHAk3kC9rlIQiTW
+         DJpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724102517; x=1724707317;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4AzAZMJmHJCWkRdPSVGGUxyNqPy5aJjO1/T0EVTixE=;
+        b=Yc1uZDeQFgOEcwb2VDlkLfn5rsom+Z/MiQTCvdBRlAHjDx3GSjFktRTKT4K5XYi/VH
+         sAKlphfBjIeeN1mI+uDmIUykBlZ1xverbaQOx9G1BSBTawcx7JkQdjpu+886zZRe2H4a
+         RAUcRJn8CyLOWMUB0hu0pkgTyHzAOAFSUVo8wcpukGAq9x2RzyuyiD55mIJ/7EYTH7gk
+         6NZ0CMl1UmK6NOeg6890ROHqO9XdgOrlcLdbv1rqnnqfoGSef8U5QOksSZj95KOR/+0e
+         9zA87pjzneDHkn21edc5IqxrkbkPqUHouMxzqH8p7HAg4sLs5RD5QGVlBQyy6Hyg4z37
+         Wotg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcvNBi3ApvIpunMTd9/KTAdVuICDr+F99LIpOtWlsNWaFJpoOJlAgVk/yeDL7WLzILH2nsegmfnpRk0qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuNq+F0zyvaAQU6yJ/KEQHXAccPahOXkf/aCbnxjVjx5p2U4xS
+	nDiSg3y7SeCqNYf/PY2r927nlFuEmqmCpSTXk0vj2UE/dE3afG8RpARhREBZ8amJZSEqvj3MkQ=
+	=
+X-Google-Smtp-Source: AGHT+IHVdZFJbhx0ZZIsFNXobSIO4TDW/chKSpNdRLkFdDPdp1nSBt5a9MdtoiNts0g4nXqy25ngtfrULg==
+X-Received: from sagi.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:241b])
+ (user=sagis job=sendgmr) by 2002:a05:6a00:91d3:b0:710:4d94:f9aa with SMTP id
+ d2e1a72fcca58-713c52bf136mr49398b3a.6.1724102517459; Mon, 19 Aug 2024
+ 14:21:57 -0700 (PDT)
+Date: Mon, 19 Aug 2024 14:21:56 -0700
+In-Reply-To: <cover.1723723470.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1723723470.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+Message-ID: <20240819212156.166703-1-sagis@google.com>
+Subject: [PATCH v5 0/5] TDX host: kexec() support
+From: Sagi Shahar <sagis@google.com>
+To: kai.huang@intel.com
+Cc: bp@alien8.de, dave.hansen@intel.com, hpa@zytor.com, 
+	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org, 
+	luto@kernel.org, mingo@redhat.com, pbonzini@redhat.com, peterz@infradead.org, 
+	seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Steven Rostedt <rostedt@goodmis.org>
+> Currently kexec() support and TDX host are muturally exclusive in the
+> Kconfig.  This series adds the TDX host kexec support so that they can
+> work together and can be enabled at the same time in the Kconfig.
 
-If a warning happens at build, give a warning at the end:
-
-  Build time:   1 minute 40 seconds
-  Install time: 17 seconds
-  Reboot time:  25 seconds
-
-  *** WARNING found in build: 1 ***
-
-  *******************************************
-  *******************************************
-  KTEST RESULT: TEST 1 SUCCESS!!!!   **
-  *******************************************
-  *******************************************
-
-This way, even if the test isn't made to fail on warnings during the
-build, a message is still displayed that warnings were found.
-
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
----
- tools/testing/ktest/ktest.pl | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index eb31cd9c977b..c82b8d55dddb 100755
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -222,6 +222,8 @@ my $install_time;
- my $reboot_time;
- my $test_time;
- 
-+my $warning_found = 0;
-+
- my $pwd;
- my $dirname = $FindBin::Bin;
- 
-@@ -729,11 +731,18 @@ sub print_times {
- 	show_time($test_time);
- 	doprint "\n";
-     }
-+    if ($warning_found) {
-+	doprint "\n*** WARNING";
-+	doprint "S" if ($warning_found > 1);
-+	doprint " found in build: $warning_found ***\n\n";
-+    }
-+
-     # reset for iterations like bisect
-     $build_time = 0;
-     $install_time = 0;
-     $reboot_time = 0;
-     $test_time = 0;
-+    $warning_found = 0;
- }
- 
- sub get_mandatory_configs {
-@@ -2460,8 +2469,6 @@ sub process_warning_line {
- # Returns 1 if OK
- #         0 otherwise
- sub check_buildlog {
--    return 1 if (!defined $warnings_file);
--
-     my %warnings_list;
- 
-     # Failed builds should not reboot the target
-@@ -2482,18 +2489,21 @@ sub check_buildlog {
- 	close(IN);
-     }
- 
--    # If warnings file didn't exist, and WARNINGS_FILE exist,
--    # then we fail on any warning!
--
-     open(IN, $buildlog) or dodie "Can't open $buildlog";
-     while (<IN>) {
- 	if (/$check_build_re/) {
- 	    my $warning = process_warning_line $_;
- 
- 	    if (!defined $warnings_list{$warning}) {
--		fail "New warning found (not in $warnings_file)\n$_\n";
--		$no_reboot = $save_no_reboot;
--		return 0;
-+		$warning_found++;
-+
-+		# If warnings file didn't exist, and WARNINGS_FILE exist,
-+		# then we fail on any warning!
-+		if (defined $warnings_file) {
-+		    fail "New warning found (not in $warnings_file)\n$_\n";
-+		    $no_reboot = $save_no_reboot;
-+		    return 0;
-+		}
- 	    }
- 	}
-     }
--- 
-2.43.0
-
+I tried testing the kexec functionality and noticed that the TDX module
+fails initialization on the second kernel so you can't actually kexec
+between 2 kernels that enable TDX. Is that the expected behavior? Are
+there future patches to enable that functionality?
 
