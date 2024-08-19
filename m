@@ -1,88 +1,86 @@
-Return-Path: <linux-kernel+bounces-292612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2D09571D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449BD9571DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556CC1F22999
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76FBF1C232D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BE3189903;
-	Mon, 19 Aug 2024 17:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEDD189F3E;
+	Mon, 19 Aug 2024 17:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="qKeMhBDu"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzQ+zbk7"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791B2184549
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99AC189BA1;
+	Mon, 19 Aug 2024 17:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724087664; cv=none; b=RRM/d7FqpKyEU4Y2ASA+Lrsm6xwLfGAMBVZYSm9Ws6mRQRT6NJ9n331mQzBf8MQD68CD69ypbqUnI4a2oe3R7HCEvVZezFO/i1V8cMPPXB8RNXEmCUOcTYw3t259bH3njWrUoV6+lyFDQJJqh53BS/1afkk8T8xPqLmHUb+acRA=
+	t=1724087671; cv=none; b=P8aae0hZQo1Et2qu6Lq1oc9xL//rMzj+UUUDd/OPJaxMzibpDIIqOmnQD9WsQiuX+h0pzMZSMHsJr8AubonXzlueaRE3SeS25p5oGj9jL73GCdgdKqm3/mKcjTUhauhBTGyjZNis1KxvYH88EGfCAL+fQ8yM9wjJGYQv6eqyuhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724087664; c=relaxed/simple;
-	bh=nh+gRWNzdRMKKXsE3Ts0ZFKhTFCE4L9POYyfgoiVfWg=;
+	s=arc-20240116; t=1724087671; c=relaxed/simple;
+	bh=GVD02NQubyS0tdG5zYO8erIAmlqeCCAzjJYLVCvYX3g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m0/NQlB5fmsMZLd5b+8XnzEG2CFMdf7aTe1Hkd/aRPrOB+/5Snj+dpQd6qcgFGgvQ1jgrUTiUKFUHacB29mUzqDjpDQ3eBNrhzvQPUU30IY1bmFLBKHkdFN/16CGiKmwKybhI+zGUKYLJCYxuYk3ymFQazhuF9Qy16+1Fob04zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=qKeMhBDu; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1d066a5daso310147285a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:14:22 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJDFwgvuduB8E/1JYW0ebQ5G0C49w/cI4f4gIzIqa04QzKVJghtyucgkaSI4BYiwuzrOeacuKbQUMbdDDqeLIm+Fjjz53I3jraiLioFAaVWUt3UU8XGuiRGe0cNSiapmxhbRfsIJ7cNz/8Q0s0RS681e6Mq8ewdXFC5KzW1wUvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzQ+zbk7; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201f2b7fe0dso29326455ad.1;
+        Mon, 19 Aug 2024 10:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724087661; x=1724692461; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724087669; x=1724692469; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/GihWfFT2JQRJVGd5Qh+JX9cl0KKWunLmdEFO1JdpRQ=;
-        b=qKeMhBDuysAIwF2sN9ffLeGHwiqf8lNNgHMhELuvqkOKp0DF6Oi41IRMV0eXSAHHF6
-         8VUkpzVeds/elAlgvtpuvxXy0ByIXhVFihD7IDV7B0MV15JWS36s2V15WHOCQRuwQcT2
-         Nf4XlWg8LAi9absaRJ19BZvE/dLq+bwCahiexlbQzzHNcBMtQnCTFRiW6CnW3XLkYIjm
-         P4qIdFyuDn1JYgOuLqsIytX1FNMUValzA9Vv5i5QNC25UIa48nPvisEUr5QOjWeE0bEv
-         o0ZdYQ28QPQRvooHiH7MpCX4WM5BCk0Uz3J0KMifJddd5BvirNXOsttW5MCirMTnFqz3
-         J0bw==
+        bh=T+1W3i8+g2sQNzk6r7xamyZJgO74Cx+unIizekLB9TE=;
+        b=LzQ+zbk7P2by+8NnmBElxU5qHX1mVm6SzKqnORXDToAPY9XIX8jmmxs2eXJDw2FTh5
+         /yMZ46lNvvO4A90aAvQjH+WWuxfOWi4ucokD3PH9aiy0qvpdh4/xTEJNlS8lk3b5u76G
+         HOkVT3XwlWauiyslMCia+6eiuVvB34KmjVz7lmE478CkpQEMT9C7igeFNvNXi2ZQdPED
+         xU9RP54ECRT8CHpnwVPWhXsJfHQnh0Qq2Nn6XbbzfqpFKt+RNFO6sQCjYRlhjH1ebva/
+         zxfSqq+9z2fgq2nv2WQk5V5WPLB8hgepAKWuyo1jjxduQ7vHPmuvFWKLM4mQIDWb4JrI
+         waSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724087661; x=1724692461;
+        d=1e100.net; s=20230601; t=1724087669; x=1724692469;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/GihWfFT2JQRJVGd5Qh+JX9cl0KKWunLmdEFO1JdpRQ=;
-        b=KVzpo8vBVmESEynYoq+4qQ3CemJpp5t2tBDVuPjFzGv233jeQjrmbcczjyLmaBAHr9
-         odk/s7EsCNsmRD/GO2JhcHZSHwvMPb/sdU2fIv3yt8Vqm6pPS5ljuN7q0+HrrAcP/pkb
-         KbmS9Afm61lQbOsrQMStzZjUP3xJnbqS+KKFs620EZJ2q0uVKwicT7lVeo0M86Zsq6BN
-         1qOUdq3ZhjGUWO2eYnpo4KTRlcZo+ByJSH5eKJEn0Lt22btTnT8npRWo5BUhfpr3Gczm
-         6h5gbuQUzSwlr3n2Q7Ms/HaEgb6ViBGYds3e2ozv48xgdE/i1qwHeKhpg/OLiQJhieXJ
-         OcEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlntbUM/wdCmYROhFuH0mU5CjcUlCRr9TUT/MPEbwqnJud6mDJkExinfMHgl9GE9L81t2lz4qT2QpPxKJTrQ6pa+MauXOIY9w7Ev+F
-X-Gm-Message-State: AOJu0YxRy6Ka28I5LuI+DgW3llaNVJ0D/Wot+QKiLdu5eZPF+Y2nXITQ
-	8dKjWR3hHj0Im9wYBBRxVzfI2H5n5oPiQhK1+o5jC1CKcIjLOVu+3+RSoZbL4A==
-X-Google-Smtp-Source: AGHT+IGA53pJwhjgqmspkp0hMkFPI/AKW9PRDR3cDUKgxT41z920S4TJaOjJUBdD3Q0JcLLF9QWZ0w==
-X-Received: by 2002:a05:620a:198c:b0:79f:14ee:7d08 with SMTP id af79cd13be357-7a5069ef8bcmr1265486385a.62.1724087661379;
-        Mon, 19 Aug 2024 10:14:21 -0700 (PDT)
-Received: from rowland.harvard.edu (wrls-249-137-8.wrls-client.fas.harvard.edu. [140.247.12.8])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff055c00sm445075785a.53.2024.08.19.10.14.20
+        bh=T+1W3i8+g2sQNzk6r7xamyZJgO74Cx+unIizekLB9TE=;
+        b=XuByH4Dn3G+lC7z62jAjYvgPX99+iUER/5ZRPr42UUZizxpP9cyHITj7QcUSK+DQbz
+         Q0ladsqVRNHzsw6CKFjg6j4aOkChLCIumpZ2c/ikA2e/X1O6sxvVtM1gBxRPyL8DItp8
+         Kg1Lhs+jNkOJYyrdwuVVS1U0dbGIH9m8rxgSQ4gtOSisr2KwYiivbgo0GzUtvom1820r
+         TtX3tSKjJqI+5v+z7h+vG3BHeS3rX9KJGQemA+X5WSCwz9w6IdEvgibMY6G7WRTFrnwy
+         dX8xMWanG2AK9d3DfQngpIODxz/dv410SLZEuwI8h023DWUW4vOdFFvGa3IQ/p3Vp3u7
+         yGAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA9VCj7s2m7F1kQtyxJjmIEGSDmLNZfv9T2yjR1qlAhG+dKvn6Nl4t2OvQDoQwLGyEsLptm55dyLWLNO39EDVN0c72Q6QWIQ8PCo+21EC8mOjJz/pch+g3SL+3DXRrBpQiQX/GsI9LexISP3aDhvojWVP76uZImmxgyxfdVKN/pNC3eWq1Tc0mnYrIHgcPqcehGWnYVxDfWCRk1NkC18usM8ZXSwTDe0E=
+X-Gm-Message-State: AOJu0YyAD7ZCHgAa+RyScLBOYrU8RkGgtdOo6mAD13f28bi4x2vQljf1
+	Hp0pJMQmJVkgHgUdPc/KuFQjLbvtLHtcFXoP08+djEKNAU6PtYgh
+X-Google-Smtp-Source: AGHT+IGbr2onx4ALkUToG2oYkiUzveBUM0PwKcKZAeoti+0kD3JnIpr3+bOL7x2PCFhQQkIUjj3OUg==
+X-Received: by 2002:a17:902:e84b:b0:202:18de:b419 with SMTP id d9443c01a7336-20218deb7a8mr81679975ad.63.1724087668636;
+        Mon, 19 Aug 2024 10:14:28 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f80c:1483:bced:7f88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-202592bdf7fsm6166015ad.181.2024.08.19.10.14.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 10:14:20 -0700 (PDT)
-Date: Mon, 19 Aug 2024 13:14:19 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
-Message-ID: <044260d2-4aa3-4937-9f5b-91e039a1df41@rowland.harvard.edu>
-References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
- <0000000000009f6f85061e684e92@google.com>
- <51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
- <1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
- <2024081909-afar-trolling-2a67@gregkh>
- <20240819101358.77aea582@foz.lan>
- <54c7e42c-465b-42fc-9707-d848ae53a00c@rowland.harvard.edu>
- <20240819182456.5e13315a@foz.lan>
+        Mon, 19 Aug 2024 10:14:28 -0700 (PDT)
+Date: Mon, 19 Aug 2024 10:14:25 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 09/14] dt-bindings: input: samsung,s3c6410-keypad:
+ introduce compact binding
+Message-ID: <ZsN9cXx2eoGP8ugW@google.com>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-10-dmitry.torokhov@gmail.com>
+ <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
+ <ZsNpdhKlLYegkosN@google.com>
+ <20240819-backstab-fanatic-54788c691f9c@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,50 +89,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819182456.5e13315a@foz.lan>
+In-Reply-To: <20240819-backstab-fanatic-54788c691f9c@spud>
 
-On Mon, Aug 19, 2024 at 06:24:56PM +0200, Mauro Carvalho Chehab wrote:
-> Basically, the actual SMS device type is given by this enum:
+On Mon, Aug 19, 2024 at 05:48:06PM +0100, Conor Dooley wrote:
+> On Mon, Aug 19, 2024 at 08:49:10AM -0700, Dmitry Torokhov wrote:
+> > On Mon, Aug 19, 2024 at 03:02:07PM +0200, Krzysztof Kozlowski wrote:
+> > > On Sun, Aug 18, 2024 at 09:58:06PM -0700, Dmitry Torokhov wrote:
 > 
-> 	enum sms_device_type_st {
-> 		SMS_UNKNOWN_TYPE = -1,
+> > > 
+> > > > +      - keypad,num-columns
+> > > > +      - keypad,num-rows
+> > > > +
+> > > >  required:
+> > > >    - compatible
+> > > >    - reg
+> > > >    - interrupts
+> > > > -  - samsung,keypad-num-columns
+> > > > -  - samsung,keypad-num-rows
+> > > > +
+> > > > +if:
+> > > 
+> > > put allOf: here and this within allOf, so you the "if" could grow in the
+> > > future.
+> > 
+> > Hmm, there is already "allOf" at the beginning of the file, so adding
+> > another one results in complaints about duplicate "allOf". I can move it
+> > all to the top, like this:
+> > 
+> > allOf:
+> >   - $ref: input.yaml#
+> >   - $ref: matrix-keymap.yaml#
+> >   - if:
+> >       required:
+> >         - linux,keymap
+> >     then:
+> >       properties:
+> >         samsung,keypad-num-columns: false
+> >         samsung,keypad-num-rows: false
+> >       patternProperties:
+> >         '^key-[0-9a-z]+$': false
+> >     else:
+> >       properties:
+> >         keypad,num-columns: false
+> >         keypad,num-rows: false
+> >       required:
+> >         - samsung,keypad-num-columns
+> >         - samsung,keypad-num-rows
+> > 
+> > Is this OK? I don't quite like that "tweaks" are listed before main
+> > body of properties.
 > 
-> 		SMS_STELLAR = 0,
-> 		SMS_NOVA_A0,
-> 		SMS_NOVA_B0,
-> 		SMS_VEGA,
-> 		SMS_VENICE,
-> 		SMS_MING,
-> 		SMS_PELE,
-> 		SMS_RIO,
-> 		SMS_DENVER_1530,
-> 		SMS_DENVER_2160,
-> 
-> 		SMS_NUM_OF_DEVICE_TYPES	/* This is just a count */
-> 	};
-> 
-> But I dunno if there are a 1:1 mapping between type and chipset 
-> number. The above type names probably match some vendor internal 
-> names, but we never had any tables associating them to a device number,
-> as the vendor never provided us such information.
-> 
-> Btw I vaguely remember I heard about a newer Siano chipsets (sm3xxx), 
-> but never saw such devices.
-> 
-> -
-> 
-> Now, I'm not sure about what endpoints this specific driver exports, as
-> I'm lacking vendor's documentation. What I said is that almost all DVB 
-> devices have isoc endpoints, but I dunno if this is the case of Siano.
+> The normal thing to do is to put the allOf at the end, not the start, in
+> cases like this, for the reason you mention.
 
-Currently the driver exports only bulk endpoints, even though it doesn't 
-check the endpoint type.  You can tell because the only routine in it 
-that calls usb_submit_urb() is smsusb_submit_urb(), and that routine 
-calls usb_fill_bulk_urb() before doing the submission.
+I see, thanks. It would be nice if it could combine several "allOf"s
+into one internally.
 
-Given this, I suggest merging the earlier patch submission from Nikita 
-Zhandarovich as-is.  If the driver ever evolves to include support for 
-isochronous endpoints, the probe function can be modified then.
+Thanks.
 
-Alan Stern
+-- 
+Dmitry
 
