@@ -1,239 +1,93 @@
-Return-Path: <linux-kernel+bounces-291731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C42E9565FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:49:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0714956603
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12D11C21FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:49:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70659B23415
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EF615B546;
-	Mon, 19 Aug 2024 08:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC4C15B980;
+	Mon, 19 Aug 2024 08:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="M6EsVpkH"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PF4C8kI0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194BD15B11D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEEB14BF8A;
+	Mon, 19 Aug 2024 08:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057383; cv=none; b=IjAUtRsecdwiHck6BHqkt36uBckxGOA/FL9IwDCNd4uABvitDLlvrHJ4GVQYUzfHeE5Ngzb4RmKeEI7ByxdiX1+wzzjtWV1m3vIim2Gdr498XAuekCiPT8M02D5maU32oYiuFNKLEhvQGOWRMlSc2tFV6Il1uLY4KJnTSNzY8r4=
+	t=1724057425; cv=none; b=FyTNy0PuRwtP+dOePmzqrd8Chk7WRjsT20WVE8TxYFx0680ZWAMbmfsxEXkzv1zZDsYaiVuAb3bvvvp7XkJf5u072LdFi2HKh/uzNMcRyYP7udMd2JjSHZz4eA/isEO91vp6N2ux1WWyFkH+hpmYwBh+dgPB+VvWhWNpW+by5bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057383; c=relaxed/simple;
-	bh=/qAUwM+GqYjEl6z2RGdxbVW5CHdC1JX2843MSUGR9ZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eCl4ZRy6CNutZIWEE/nDH+526JqSUR7x4rERLYDKFqxuziNSGHRwfevpysaJefrqszLaf91BLmx3o0gs0h2wDdWROO4ZlDcil6v/C0c3ZQm+6UMHyMKirMBK+51W0ySfvtRzPUpvqpy3C7+jWqLSxwBFuLu1znfUkhtjArGMWbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=M6EsVpkH; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724057380; x=1726649380;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/qAUwM+GqYjEl6z2RGdxbVW5CHdC1JX2843MSUGR9ZI=;
-	b=M6EsVpkHzpdBckEgfU0l8o+HCZJxTyPhsK66C4njhYCyPPaqeUNmpup6KcRjvSWy
-	kRctJ4OfxCz4b/mQ/FLHSywlCU/cZDC+keMv371xJ5xrt54TqSuSZRbErKCmaRQF
-	FF7bJjY8BlSwB+V4UAZDeCGCdrUgWB9qO78ShdCwRUk=;
-X-AuditID: ac14000a-03e52700000021bc-74-66c307248dd9
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 56.57.08636.42703C66; Mon, 19 Aug 2024 10:49:40 +0200 (CEST)
-Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
- 2024 10:49:38 +0200
-Message-ID: <da62f142-cf93-4d64-bb1e-71fa5270c09a@phytec.de>
-Date: Mon, 19 Aug 2024 10:49:37 +0200
+	s=arc-20240116; t=1724057425; c=relaxed/simple;
+	bh=OCRaPalAGsDxHnsThodnFYpon6u+zr5gMnTg0RBz0iU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=N37omILYWh9g6+pnV86ILH4Xsh1SZRXeohrOqto67YqSA6TvOb7e7NP/gDAWaX7O5iLkFLgL4+50K/1S2Y3Rs45fmghpM4AW/XBiGgg9/c+5V2/Q5k/KvCS9inyQrFalG1ZY1+gmvnpGHFQxXVwcYHAMPrnWKldSyJ27fcWoRn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PF4C8kI0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AABC32782;
+	Mon, 19 Aug 2024 08:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724057425;
+	bh=OCRaPalAGsDxHnsThodnFYpon6u+zr5gMnTg0RBz0iU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=PF4C8kI0co60PfDbF+RsNfA1uS7Y4OTN9qiSz/Cuv/mVcrnF5rc5aM5kcgXti4IAr
+	 oPZ91DiecIhisuFsQ3dItPlsTC8LqBbMLDwZ52iLSCb8JJLyA9iZMadmmIaazvOSsF
+	 hErhKQk7hnWuBNEDaB9xluI+D6IsdsiYus4b8nYdt3H8hdGuVB68qXxDlOYbVg3Pm1
+	 6hy2fBNtb0a1kXaa8k3jIvGDu7yPNLGCl7qDMgxQ7VVVEErHalSXE1ZZYy7ZxxxFqY
+	 hsT+AKbkpyu7xwLxvivZCsP+q3t/h4m0aEGzrghOqxGDA2NX0mnqVwCzIlVExBRsB1
+	 C+rOmk/yzok4w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD733823097;
+	Mon, 19 Aug 2024 08:50:25 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/9] remoteproc: k3: Factor out TI-SCI processor
- control OF get function
-To: Andrew Davis <afd@ti.com>, Bjorn Andersson <andersson@kernel.org>, Mathieu
- Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Hari
- Nagalla <hnagalla@ti.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240802152109.137243-1-afd@ti.com>
- <20240802152109.137243-3-afd@ti.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20240802152109.137243-3-afd@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWyRpKBR1eF/XCawdmf/BbvT01kt9jWYWOx
-	Zu85Jov5R86xWmw/0MlusfzzbHaLl7PusVlsenyN1eLyrjlsFs3nlSy27jnAZPHmx1kmi7v3
-	TrBY/N+zg93i/9kP7A78HptWdbJ53Lm2h81j85J6j/6/Bh7Hb2xn8vi8SS6ALYrLJiU1J7Ms
-	tUjfLoEr48ibc8wFi1Uqbj2YxNbA2C7bxcjJISFgInH2zy62LkYuDiGBJUwS044vYoJw7jJK
-	vNm2GMjh4OAVsJG4Mq0GpIFFQFVi48rPTCA2r4CgxMmZT1hAbFEBeYn7t2awg9jCAkkSpzd2
-	soLMERGYxixxduYUsA3MAn2MEt0TP7CCVAkJhEt8urQSrJtZQFzi1pP5YFPZBNQl7mz4BlbD
-	KWAo8ffya6gaC4nFbw6yQ9jyEtvfzmGGmCMv8eLSchaId+Qlpp17zQxhh0oc2bSaaQKj8Cwk
-	x85Csm4WkrGzkIxdwMiyilEoNzM5O7UoM1uvIKOyJDVZLyV1EyMoKkUYuHYw9s3xOMTIxMF4
-	iFGCg1lJhLf75cE0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryrO4JThQTSE0tSs1NTC1KLYLJM
-	HJxSDYzyC1L/Pgw7c2WFl5P3tO/cPe8b9LddVJnc3W6eFeOe8/rhnTvcb5tF6ysOPbVqvX9b
-	9Y7W+9Xsmk2T2xUecZ33vr+2guFQ2h6G23M+NlbMjvXbor60Sr/izVTu/R5TlIQ/xq0KMkma
-	W9j3RYOL92/oOt5bH1Svr7srKTH12Kc5xwv5P02fF/JBiaU4I9FQi7moOBEAA52mlLgCAAA=
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/1] dt-binding: ptp: fsl,ptp: add pci1957,ee02 compatible
+ string for fsl,enetc-ptp
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172405742451.466743.15434541397168706407.git-patchwork-notify@kernel.org>
+Date: Mon, 19 Aug 2024 08:50:24 +0000
+References: <20240814204619.4045222-1-Frank.Li@nxp.com>
+In-Reply-To: <20240814204619.4045222-1-Frank.Li@nxp.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: yangbo.lu@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, richardcochran@gmail.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Am 02.08.24 um 17:21 schrieb Andrew Davis:
-> Building the TSP structure is common for users of the TI-SCI processor
-> control interface. Factor out this function and put it with the rest
-> of the TI-SCI processor control functions.
+On Wed, 14 Aug 2024 16:46:18 -0400 you wrote:
+> fsl,enetc-ptp is embedded pcie device. Add compatible string pci1957,ee02.
 > 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-Tested-by: Wadim Egorov <w.egorov@phytec.de>
-
-> ---
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +----------------------
->   drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +----------------------
->   drivers/remoteproc/ti_sci_proc.h          | 26 +++++++++++++++++++++
->   3 files changed, 28 insertions(+), 54 deletions(-)
+> Fix warning:
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dtb: ethernet@0,4:
+> 	compatible:0: 'pci1957,ee02' is not one of ['fsl,etsec-ptp', 'fsl,fman-ptp-timer', 'fsl,dpaa2-ptp', 'fsl,enetc-ptp']
 > 
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index a22d41689a7d2..1585769092924 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -636,32 +636,6 @@ static void k3_dsp_release_tsp(void *data)
->   	ti_sci_proc_release(tsp);
->   }
->   
-> -static
-> -struct ti_sci_proc *k3_dsp_rproc_of_get_tsp(struct device *dev,
-> -					    const struct ti_sci_handle *sci)
-> -{
-> -	struct ti_sci_proc *tsp;
-> -	u32 temp[2];
-> -	int ret;
-> -
-> -	ret = of_property_read_u32_array(dev->of_node, "ti,sci-proc-ids",
-> -					 temp, 2);
-> -	if (ret < 0)
-> -		return ERR_PTR(ret);
-> -
-> -	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
-> -	if (!tsp)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	tsp->dev = dev;
-> -	tsp->sci = sci;
-> -	tsp->ops = &sci->ops.proc_ops;
-> -	tsp->proc_id = temp[0];
-> -	tsp->host_id = temp[1];
-> -
-> -	return tsp;
-> -}
-> -
->   static int k3_dsp_rproc_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
-> @@ -711,7 +685,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->   		return dev_err_probe(dev, PTR_ERR(kproc->reset),
->   				     "failed to get reset\n");
->   
-> -	kproc->tsp = k3_dsp_rproc_of_get_tsp(dev, kproc->ti_sci);
-> +	kproc->tsp = ti_sci_proc_of_get_tsp(dev, kproc->ti_sci);
->   	if (IS_ERR(kproc->tsp))
->   		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
->   				     "failed to construct ti-sci proc control\n");
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 39a47540c5900..dd6294ab81e2e 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1533,32 +1533,6 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
->   	return 0;
->   }
->   
-> -static
-> -struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
-> -					  const struct ti_sci_handle *sci)
-> -{
-> -	struct ti_sci_proc *tsp;
-> -	u32 temp[2];
-> -	int ret;
-> -
-> -	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
-> -					 temp, 2);
-> -	if (ret < 0)
-> -		return ERR_PTR(ret);
-> -
-> -	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
-> -	if (!tsp)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	tsp->dev = dev;
-> -	tsp->sci = sci;
-> -	tsp->ops = &sci->ops.proc_ops;
-> -	tsp->proc_id = temp[0];
-> -	tsp->host_id = temp[1];
-> -
-> -	return tsp;
-> -}
-> -
->   static int k3_r5_core_of_init(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
-> @@ -1633,7 +1607,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
->   		goto err;
->   	}
->   
-> -	core->tsp = k3_r5_core_of_get_tsp(dev, core->ti_sci);
-> +	core->tsp = ti_sci_proc_of_get_tsp(dev, core->ti_sci);
->   	if (IS_ERR(core->tsp)) {
->   		ret = PTR_ERR(core->tsp);
->   		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
-> diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
-> index 778558abcdcc5..f3911ce75252e 100644
-> --- a/drivers/remoteproc/ti_sci_proc.h
-> +++ b/drivers/remoteproc/ti_sci_proc.h
-> @@ -28,6 +28,32 @@ struct ti_sci_proc {
->   	u8 host_id;
->   };
->   
-> +static inline
-> +struct ti_sci_proc *ti_sci_proc_of_get_tsp(struct device *dev,
-> +					   const struct ti_sci_handle *sci)
-> +{
-> +	struct ti_sci_proc *tsp;
-> +	u32 temp[2];
-> +	int ret;
-> +
-> +	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
-> +					 temp, 2);
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
-> +
-> +	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
-> +	if (!tsp)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	tsp->dev = dev;
-> +	tsp->sci = sci;
-> +	tsp->ops = &sci->ops.proc_ops;
-> +	tsp->proc_id = temp[0];
-> +	tsp->host_id = temp[1];
-> +
-> +	return tsp;
-> +}
-> +
->   static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
->   {
->   	int ret;
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [1/1] dt-binding: ptp: fsl,ptp: add pci1957,ee02 compatible string for fsl,enetc-ptp
+    https://git.kernel.org/netdev/net-next/c/1bf8e07c382b
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
