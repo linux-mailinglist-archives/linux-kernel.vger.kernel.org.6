@@ -1,378 +1,236 @@
-Return-Path: <linux-kernel+bounces-291471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAB795630D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:13:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68B695630F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7358F1C21557
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:13:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDE16B21EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905D114A0B9;
-	Mon, 19 Aug 2024 05:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7301914A4C1;
+	Mon, 19 Aug 2024 05:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RrIPUN3B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yvwDzUZs"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E0B13C81B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724044380; cv=fail; b=hM4vbbeZTs4J5w5ubxbwi3eJrfl79mV8lXrUR1w1PVgUzyxYZd9ou0ERuYaRhoSrAhJSFE6u8oRNyl/UGnXQ7xZUDZK+2TRFa0FZ3UJlVgboFVJxqV4ZglLi41vGDwc13+AwmzUWQhCT/0g07G/PBKN5k8F5QMdj/PonDzDMA1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724044380; c=relaxed/simple;
-	bh=sa7v3adrnjYe4x9L24rCqOJwz4xcrZ3Kdw7ryOE3mUY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=E/QMpq0zLYC8SeStft7VUpAr6nYDgPiEn6LnwHKdMhpbTkQe8LE3nTsYEtpWS4gmlsc/Qx2tzQj3MUOHRlg/zx51sLw2ATKbiAa/t64YhX0CsgldmUQoGDFyAtCzU+7B7bL6VEVU5hesFwBBsdLqfr4ZE0HJMTfK9lXkiY49C6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RrIPUN3B; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724044378; x=1755580378;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sa7v3adrnjYe4x9L24rCqOJwz4xcrZ3Kdw7ryOE3mUY=;
-  b=RrIPUN3BvUn9lHmDFcq+FIvkk+DVuQRQ8z9DgQyVAjVcP6E9W4s2pdLk
-   Nb5aVJcn0GI9vgu9tOrpZx7JdHTwGiVxVLIO35JyQMf8D+VIUxMk6wCdD
-   WYzbZaNEMIsnO36dbunME3wEvl0UVvNiUgtri4LEn1AV8Q3UHfj8TcMvz
-   F1qceo1qEmrqlxnXYqUQLobNUeh2LAbSVkIDZqn1q4bTjrO5jzoIy60ii
-   k1adXwgvkwvdBuHKyDvly2eAWhzehGh33Bv4SIZeXHLzgK8DtOaO+nwAb
-   oB3dBjDuVIBgKDvPS6S4yJeUasfxk4vJak5mygYxTv9tmjyrEu5Pd6dqJ
-   Q==;
-X-CSE-ConnectionGUID: RUlsUxUfTCmYMtIeSjV9vw==
-X-CSE-MsgGUID: Xkdvb4b4RfGzG6v6VBdK3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="21890062"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="21890062"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 22:12:57 -0700
-X-CSE-ConnectionGUID: KA0rRzAMRH2sGG8UZ2kJVg==
-X-CSE-MsgGUID: XhK9ir6+Q2KZWnrnK5Cr0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="61023002"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Aug 2024 22:12:56 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 18 Aug 2024 22:12:55 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 18 Aug 2024 22:12:55 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 18 Aug 2024 22:12:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IdD20DQJvKMVgJuTM9pWsFzdh/j/ekoVEbYPMelZP6be3inlhO1I6VKoblvCc2apW0/hQFwF+X8liLLan3jmU991HHfQHJ4AFWrqyxQ2dY1QWfqYrcavBAozJeWo5KKUxA0k/qtE+ITYgvZreG9QwTeW+p5yT7HzripLflxwY3MZrWLcRr114VisctVIf/Pa+CxOBDnPMkW0U+C7Nc17/ZBEaGzwpZn4UiCyIlBCOFdgKgZ6VFOA+sVEk5TQjexMmqmWnN1RVg6d2CZWifdsOoff3R95muWoGvxMIaoeT4i/cLAIVZUccI2a08rJ6Q7+DXFI3MkEGvt23Wv/3CM/lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+1vWe8y2eDdNFgWhLrh6VDyWNs+Nu/2cKohuMglpZ10=;
- b=nsc2oSuVe/MnHXqTo/QF+mAxGEvqpW7k1cRzjY45ReSpWd8es3f4tDePmW6i4FmFBF97V1N09b4fZ2PwkmfJUHdiwNwC7XcZRG7hg4dHnWJrP/uEAmtJdi0ddvKA81s4iCk+3GTcG2fnZ+4RFALlXGtisCASnX5jSYRi3xeNFtqTvHswgCpIXwqrGu/ZK1Js+i2sUO3xrQHmpbfkP4caSyXqaAgpYTKH+PV+jBT7BgZkK4wLbBjvrXrC6v6tn4ksceRR7yo6/uLkDGMHeV3YNdVa9fbyPtbplL/VICfXo7hViiOeRM4XjLUGo9FZDNIPyNt5wCH3DmzVXtTflXZSFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
- by SA2PR11MB5051.namprd11.prod.outlook.com (2603:10b6:806:11f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Mon, 19 Aug
- 2024 05:12:53 +0000
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c%5]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 05:12:53 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai"
-	<nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>, "Sridhar, Kanchana P"
-	<kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-Thread-Topic: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-Thread-Index: AQHa8d3OD+uOh/WK5kyI6A6kVnXGhrIt6fDUgAAVm5A=
-Date: Mon, 19 Aug 2024 05:12:53 +0000
-Message-ID: <SJ0PR11MB5678BFAA984BEEBBFC2FC351C98C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
- <87msl9i4lw.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87msl9i4lw.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|SA2PR11MB5051:EE_
-x-ms-office365-filtering-correlation-id: 61ae37e8-891e-49b7-d9a9-08dcc00d9441
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?VxLx85bO+6B8SognIMy7C7+NuMKk/Y2MDDRBPR53VFGsU/Wqhf3di5/7zPSZ?=
- =?us-ascii?Q?995feV+SGi4Fvod0oHheRG+BvpG3WAYR+7tp5y0LBgSPyLPzMdDolEcpyCWs?=
- =?us-ascii?Q?FCN1Q+1xHduB8/1ZpBFtZzegZzS37kGsaST3Co1l9SyKPkrozEFqMwEj4WrI?=
- =?us-ascii?Q?K9DG54vW0RTYvDeFMh0qYLbsKsVjHWi+MQmyuOb3wVI5/Y+oPXIlwY2JAq6E?=
- =?us-ascii?Q?xDb09O7ctu1VFalgw1KA6Lxs9u4TR4F3ePVh8lI+54CawZ2/c7dctGdFJccJ?=
- =?us-ascii?Q?lrUoBoCgUUs/vSI80CRmtkXi9nrAPR7Ix/GGSNjPjT4MwRN6X9W2EBt5h7Hl?=
- =?us-ascii?Q?oF6a6zcsCJJJD7ajV2IU9InyJ7BtMdLP0yhCEk68bbJ4aQkkxekxVbBjLO0D?=
- =?us-ascii?Q?61fDmEnlQ+FnfUALGgBuZJeLBEWHG+Nm+BcmWpnTThE+qwi+YIhC1veuyZ9Z?=
- =?us-ascii?Q?sEJtGXMwxC3E5+uWNybYi/kpiGzPR3tNZsw9PVo1n5QTyxmjOSL4K46aUmXt?=
- =?us-ascii?Q?6W8/qRKHtYS6Pdjm9HimF+nRFeUPfHJgIRLTqCIwW6l99TetkOg9/PaYMDnP?=
- =?us-ascii?Q?zTMnfQDQe+m+7Xsw5o+1pV4OgVu4iZxjJIxx39Hw0afEZUVDSVOjnM2mdjs3?=
- =?us-ascii?Q?mRaokZNUkGIki5AE/lJTCcicRzfI1+/DTdzw+tQiQnnvTLhd1BkQBPwAzUtn?=
- =?us-ascii?Q?f7biIkods0+oJ1TXQgAI/eIBpDyaCGfEpoWLDBg6WVVG5kf7lqVQkwiiyH8j?=
- =?us-ascii?Q?jsnaHkLdc7wxizSlUaqiVc45DUUveH3VkvpSKvVHvKgbk6pBKEbOSXsZ30fh?=
- =?us-ascii?Q?qX+0r8jCsoIs1xLzE+vpxFvDPCsA8rALqo6g5sMZthHOnbRCPPIxAtAf0OhO?=
- =?us-ascii?Q?0/PDmnqE3Hrz8gBD2yNnCgEM/i0MrfZxRPG7wYML4hqykYl1n3iuw8i5J+iw?=
- =?us-ascii?Q?YSHkcaZgrwSxHFiyji9LBqqtL2rx/3Lrja6k8aLjFIZEx6WXv2p9fIW3P5la?=
- =?us-ascii?Q?ovaWIPuqXk408inIiRfbg/nrskckbFHm4TqCKeAlzqc821tnqk/LMlWeubcC?=
- =?us-ascii?Q?CKtnVqpgUlo7rMXICNZeBaIDLVWBVvEupvmegv7za0/TIGnx+GG1hljbbS1X?=
- =?us-ascii?Q?Po+BIZNDuwsLLeB45IyZEV82OjTyss6ZdIaFZBtA1IX8rhqU+eIG/3HLW51k?=
- =?us-ascii?Q?lPmo1XfDVVxo3VD/beoLGo4pN/TzP7g6WcZuNPwEfwJxEKHDUsgICuqxRReV?=
- =?us-ascii?Q?xb1twV8Zyw8pZ7XvT0JXXu22ecILpx3zOJuME/dTeqOSNPPuEj3lsfLeFjON?=
- =?us-ascii?Q?PI642P5NxThjUWoLYhrh7EmXWYIhQRz5XPyMjKLqw97+/k5cyDo15Ua8rTj1?=
- =?us-ascii?Q?PDqJasp59JFDKliP912vSS/WArX4eqfVtn9nD0zNmrac0T7daA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7PntMjlozXanM5bM97C+bNT1yjf9VEDWI36rbPJlBIok6c/PsML+QqL7xTkg?=
- =?us-ascii?Q?9xriyQlYh8PNBWtSqlIHBDAV2gduDNqtO07zmwWUqhsrkXJiaHXf5MG5Pc1H?=
- =?us-ascii?Q?BJW5gMa/8/9V3n2ItJJeYcNkZ2OBxYimMIb/ivWrfdab6ybWn/ssLovOJcb6?=
- =?us-ascii?Q?b+PqzSqeozbbaS6BZQ5U6c0RrwI9bQEDBa5c5RCXJBPQ7Fty44RoUm/BzhgX?=
- =?us-ascii?Q?gSQDLBz725QziSpNlMLaayHTmvn4U6iSOTl3kd+u8rNOKjHYlpg9qvLV+YfE?=
- =?us-ascii?Q?YouoLvgMnyc9bNMmHTyKfLjzeL7KaprfRZVnWa5GLTXl5BstnZc6ZMoKjmtw?=
- =?us-ascii?Q?NPsfSjaoYiWm5hql8SzEB+MXZMtEqhcAd3jbniuv/G3pQNb6DOI+CMqqArnO?=
- =?us-ascii?Q?DTyOtrktIvDLf5AW9sJXTF5cP4/BBc/+BG70ONMpAZlR70glyXTHr6OEhfmZ?=
- =?us-ascii?Q?gRBawP01R8KS5oBpphHRq+RTR2DtrX7Kit/9wkIxEVWUAHV0YIW+kL7jCwxR?=
- =?us-ascii?Q?Z2tvknFBZZFrUOxjQxjNQaLWjmWi76UYOkqvQ4gTL+FsXURUdq5u+0TWh/ON?=
- =?us-ascii?Q?Y097LrNniaVoxa1wLl+YIsUX3SMtqtI/0fVSBF3Ts5HuKzjGbY77oTqtOccv?=
- =?us-ascii?Q?DFQ/xEbz3BjkvoemvvC9rIxoRtfNo/sOVgQtmUnEMlXR3xfIQDwWlpeiAKhU?=
- =?us-ascii?Q?UVB5YzXXS0mXoHT7h2WyaLK9xM+0zfXds8aCr8xi9Qn/6ZlFk2cIt5mC08pj?=
- =?us-ascii?Q?rijaKWCQfKqPobxwTsw8kaF6o9FEHaRnLymnAcEUY+TcK+Yfz6CSnxxLb84F?=
- =?us-ascii?Q?5jjv2aDsvbtKa3YM6ZDtp/CwOqgJipFLA0zVFtUYIwWeqJfJATmN2g/6zNuB?=
- =?us-ascii?Q?xlOP8oQ8RzWnqwi3h4rWd9XFtkaVoU9kntgUgo1fKxLwnHM6dXtK6Pnx4fxq?=
- =?us-ascii?Q?6K5f/PQM5xCuz1GP8dAuOxNkkW+HA++qOPuNr302bqh4cIJ6k886wTdsdGaN?=
- =?us-ascii?Q?VTs++E86SzwNRkUdsYB5oN5M4NaKdEXFAhFe8GOuci9ksP1OD37oIVmYXIQT?=
- =?us-ascii?Q?cJSNCFxIpzfjMbfi9ait6BBsBnr2ghjM1fl56wmFQH2pKRhzryiDzMyPq1ZF?=
- =?us-ascii?Q?Y99+8YmJJj8F3aqX1cq41b9LWJs1B/S+lo9450UL2pwrG9OlRCxaMeW0jWzg?=
- =?us-ascii?Q?SwWM5rbWlAcprydTxDxARYRdrx68NrpcYIArDrLIPV04rItc3qrtgSnBIllj?=
- =?us-ascii?Q?rYNXu3q9lfcNfxpZt+iapXnscpH0ihLXyUJO7Ddl03j/pmIpKhoilla9Zhwa?=
- =?us-ascii?Q?qEbSDFQS6J1sQutvGligw67xKPF7OKcyY/+5K6KH/gWiMrPgzI4RdXJHWND4?=
- =?us-ascii?Q?NXTU9I7mPoVrG+yQmS0F0odLZomp2+PEWA8oXE7QvASGj8n9O4XlCYbZMMu4?=
- =?us-ascii?Q?4EggZt5Lnd7XNfTi8bbWsKhHx6FqVf5YuHKmo4ILDmoQX2L3brKS+L23pDtX?=
- =?us-ascii?Q?WARxWbskOoL7F5Vn38m2QEs8ZTL4c5Ij7Muiiwn8SWphWqm7DMxL7TnVPUut?=
- =?us-ascii?Q?n1UWbxN835PBY4oQ9HjM521eOna6/GGtUn9N7Xb9CNBhHsbK//MM58p8CK31?=
- =?us-ascii?Q?2Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC7E4594D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724044527; cv=none; b=aZIwr1I/bHhPPIyaIlmxLa5htPcL7wQN1gV+EJsuJ1dl+R72tu5lrirjXe81TMGEDPbntV1Gf/iR+9NpmOrl6S8WG9C/S/986YsZF4fs2atdKEBF1n2kZFhi4mMPE/slrkHg8ZRQgM6iL4smlQH7KSaqp7L2MC3B1WpVd6aGODM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724044527; c=relaxed/simple;
+	bh=FzZ4qlTaecWigV2DrkStJcoD+p2S6ozkt6fRhnLY/NY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=j0q2+LTG8h+tggnWs6HWHZg4iI81q1QYCvaDtRZjwtt+4iNPQGUz/KkWxJWcfAddYrEJeroU7MlUgmE2kbJYcJlI3Taig/dHQzSjsMAL5wq8NRxdDdzHHfIwdDfioPjWptCkYz62s9xtaaf2od7fQt2ILudzEH4j7GCDhW+pkwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yvwDzUZs; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so2686197a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724044523; x=1724649323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tr+CkCtT9RBXFTknHXbuRcbqHxZSSmq0kp0BMXuDtKM=;
+        b=yvwDzUZsoa0mLAE/1LApZ/nrjXp2hH8GDFuVF6PBKRc7weRoNYGb7vG4F1EKbFbLVj
+         immawH3IJu86O/iO1fIXkeI28RcS+BpXd3c+A1VQI5OPFCjXXavcignLWzm9roZh1m2o
+         3pBwKtzDQFKnT1rcaAVtUSouFQlH/YXajREFw4/Oqm3xVOjDBAGSQk6E+q1bp3tJOwDh
+         Lyvi4YF0mgI0WA2PJP41LjOrvG78YTj7eprYpFDLQuZkJA20ipem561E1EuUYlHtMoPS
+         CgoQ9oX//B/BvaMtO6j005Ucahh6QCbiaZMdjKi4hdNXEfgYA/H+g3e2Rczegex+zIpK
+         8mCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724044523; x=1724649323;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tr+CkCtT9RBXFTknHXbuRcbqHxZSSmq0kp0BMXuDtKM=;
+        b=peAi9RA71sIhZNBF/Na9eSh43+3u3v/fXVEhrK+wFdc93GJQY0lT9tOrC6Qo5tEwYH
+         H5tRMrec4tVstjHRyQRnYoAwcDFz/uMqMwRK9DtaPeaA9e+dqYW2CTfYklvBAtlaZXNl
+         gwY54mC+1buLREZLgRrvuLzd1GfVp7cm4DWg7cJ4lFWtqdUX6pWhFugWfDRh4zPRFLE6
+         C96372PjKNOfy4JXAj70weuRCLTUKVBCopN4tkg9Q+VwlZO+9i1b0B/E5pb26FfeYvTy
+         r1oKXJGTNc0Bh0EMURdqpx4omV97SoDf8gE7ofXeX4nW7MRzRz167busRYtTBIkPcwNO
+         R+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCC3El5V77OVrY/Z1tTrDXhadSNm/Nn+PyXukuSUDer7veX2yAHZI1OONwgKjWTR1zfLZD8vw11d5yBl2qnuAbfbKxBk5Ax5F+HoHa
+X-Gm-Message-State: AOJu0Yyam0Lk90FbiGEi+7qLc/u6Fnz4v6ZHUproNkr35sn3EjawcRI4
+	bZyIb8xkg1n3yTLFXKhB27UBpISU6NpaIa0hyzSDFABoL2K7QACq86aFMsq/xuk=
+X-Google-Smtp-Source: AGHT+IFpne2BuJmP7Itk6Z3q4Ea3k+P1Zu52GLijC8YDFNurZocTQQ6/oQutMR0qvEwq2dKko+7VxQ==
+X-Received: by 2002:a17:907:e2dd:b0:a7a:aa35:408d with SMTP id a640c23a62f3a-a839292f832mr612481366b.20.1724044522456;
+        Sun, 18 Aug 2024 22:15:22 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfa18sm591512366b.73.2024.08.18.22.15.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 22:15:21 -0700 (PDT)
+Date: Mon, 19 Aug 2024 08:15:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Frank Li <Frank.Li@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Parshuram Thombare <pthombar@cadence.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Conor Culhane <conor.culhane@silvaco.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 10/11] i3c: master: svc: wait for Manual ACK/NACK Done
+ before next step
+Message-ID: <fb18343b-9941-4acc-b0bb-f7cd58d3fde3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61ae37e8-891e-49b7-d9a9-08dcc00d9441
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 05:12:53.4194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oCgK72/S43v4g558ptaNTYtpMjt+++cK05laeEFEnLbg1HHn/rD6MQ0FZKh2CGuzavwDAj3Gu7/qzLmCiFvqWPRCdgpazzkUWmLecjZ8M7I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5051
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813-i3c_fix-v2-10-68fe4a050188@nxp.com>
 
-Hi Ying,
+Hi Frank,
 
-> -----Original Message-----
-> From: Huang, Ying <ying.huang@intel.com>
-> Sent: Sunday, August 18, 2024 8:17 PM
-> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> hannes@cmpxchg.org; yosryahmed@google.com; nphamcs@gmail.com;
-> ryan.roberts@arm.com; 21cnbao@gmail.com; akpm@linux-foundation.org;
-> Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
-> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
->=20
-> Kanchana P Sridhar <kanchana.p.sridhar@intel.com> writes:
->=20
-> [snip]
->=20
-> >
-> > Performance Testing:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > Testing of this patch-series was done with the v6.11-rc3 mainline, with=
-out
-> > and with this patch-series, on an Intel Sapphire Rapids server,
-> > dual-socket 56 cores per socket, 4 IAA devices per socket.
-> >
-> > The system has 503 GiB RAM, with a 4G SSD as the backing swap device fo=
-r
-> > ZSWAP. Core frequency was fixed at 2500MHz.
-> >
-> > The vm-scalability "usemem" test was run in a cgroup whose memory.high
-> > was fixed. Following a similar methodology as in Ryan Roberts'
-> > "Swap-out mTHP without splitting" series [2], 70 usemem processes were
-> > run, each allocating and writing 1G of memory:
-> >
-> >     usemem --init-time -w -O -n 70 1g
-> >
-> > Since I was constrained to get the 70 usemem processes to generate
-> > swapout activity with the 4G SSD, I ended up using different cgroup
-> > memory.high fixed limits for the experiments with 64K mTHP and 2M THP:
-> >
-> > 64K mTHP experiments: cgroup memory fixed at 60G
-> > 2M THP experiments  : cgroup memory fixed at 55G
-> >
-> > The vm/sysfs stats included after the performance data provide details
-> > on the swapout activity to SSD/ZSWAP.
-> >
-> > Other kernel configuration parameters:
-> >
-> >     ZSWAP Compressor  : LZ4, DEFLATE-IAA
-> >     ZSWAP Allocator   : ZSMALLOC
-> >     SWAP page-cluster : 2
-> >
-> > In the experiments where "deflate-iaa" is used as the ZSWAP compressor,
-> > IAA "compression verification" is enabled. Hence each IAA compression
-> > will be decompressed internally by the "iaa_crypto" driver, the crc-s
-> > returned by the hardware will be compared and errors reported in case o=
-f
-> > mismatches. Thus "deflate-iaa" helps ensure better data integrity as
-> > compared to the software compressors.
-> >
-> > Throughput reported by usemem and perf sys time for running the test
-> > are as follows, averaged across 3 runs:
-> >
-> >  64KB mTHP (cgroup memory.high set to 60G):
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >   ------------------------------------------------------------------
-> >  |                    |                   |            |            |
-> >  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
-> >  |                    |                   |       KB/s |            |
-> >  |--------------------|-------------------|------------|------------|
-> >  |v6.11-rc3 mainline  | SSD               |    335,346 |   Baseline |
-> >  |zswap-mTHP-Store    | ZSWAP lz4         |    271,558 |       -19% |
->=20
-> zswap throughput is worse than ssd swap?  This doesn't look right.
+kernel test robot noticed the following build warnings:
 
-I realize it might look that way, however, this is not an apples-to-apples =
-comparison,
-as explained in the latter part of my analysis (after the 2M THP data table=
-s).
-The primary reason for this is because of running the test under a fixed
-cgroup memory limit.
+url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/i3c-master-Remove-i3c_dev_disable_ibi_locked-olddev-on-device-hotjoin/20240814-234209
+base:   41c196e567fb1ea97f68a2ffb7faab451cd90854
+patch link:    https://lore.kernel.org/r/20240813-i3c_fix-v2-10-68fe4a050188%40nxp.com
+patch subject: [PATCH v2 10/11] i3c: master: svc: wait for Manual ACK/NACK Done before next step
+config: x86_64-randconfig-161-20240817 (https://download.01.org/0day-ci/archive/20240818/202408180012.ifcIOjgX-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-In the "Before" scenario, mTHP get swapped out to SSD. However, the disk sw=
-ap
-usage is not accounted towards checking if the cgroup's memory limit has be=
-en
-exceeded. Hence there are relatively fewer swap-outs, resulting mainly from=
- the
-1G allocations from each of the 70 usemem processes working with a 60G memo=
-ry
-limit on the parent cgroup.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202408180012.ifcIOjgX-lkp@intel.com/
 
-However, the picture changes in the "After" scenario. mTHPs will now get st=
-ored in
-zswap, which is accounted for in the cgroup's memory.current and counts
-towards the fixed memory limit in effect for the parent cgroup. As a result=
-, when
-mTHP get stored in zswap, the mTHP compressed data in the zswap zpool now
-count towards the cgroup's active memory and memory limit. This is in addit=
-ion
-to the 1G allocations from each of the 70 processes.
+New smatch warnings:
+drivers/i3c/master/svc-i3c-master.c:1165 svc_i3c_master_xfer() warn: missing error code 'ret'
 
-As you can see, this creates more memory pressure on the cgroup, resulting =
-in
-more swap-outs. With lz4 as the zswap compressor, this results in lesser th=
-roughput
-wrt "Before".
+vim +/ret +1165 drivers/i3c/master/svc-i3c-master.c
 
-However, with IAA as the zswap compressor, the throughout with zswap mTHP i=
-s
-better than "Before" because of better hardware compress latencies, which h=
-andle
-the higher swap-out activity without compromising on throughput.
+dd3c52846d5954a Miquel Raynal 2021-01-21  1123  static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+dd3c52846d5954a Miquel Raynal 2021-01-21  1124  			       bool rnw, unsigned int xfer_type, u8 addr,
+dd3c52846d5954a Miquel Raynal 2021-01-21  1125  			       u8 *in, const u8 *out, unsigned int xfer_len,
+6fb61734a74eaa3 Frank Li      2023-12-01  1126  			       unsigned int *actual_len, bool continued)
+dd3c52846d5954a Miquel Raynal 2021-01-21  1127  {
+2d15862dfba6bf1 Frank Li      2024-06-03  1128  	int retry = 2;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1129  	u32 reg;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1130  	int ret;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1131  
+5e5e3c92e748a6d Frank Li      2023-10-23  1132  	/* clean SVC_I3C_MINT_IBIWON w1c bits */
+5e5e3c92e748a6d Frank Li      2023-10-23  1133  	writel(SVC_I3C_MINT_IBIWON, master->regs + SVC_I3C_MSTATUS);
+5e5e3c92e748a6d Frank Li      2023-10-23  1134  
+2d15862dfba6bf1 Frank Li      2024-06-03  1135  
+2d15862dfba6bf1 Frank Li      2024-06-03  1136  	while (retry--) {
+dd3c52846d5954a Miquel Raynal 2021-01-21  1137  		writel(SVC_I3C_MCTRL_REQUEST_START_ADDR |
+dd3c52846d5954a Miquel Raynal 2021-01-21  1138  		       xfer_type |
+dd3c52846d5954a Miquel Raynal 2021-01-21  1139  		       SVC_I3C_MCTRL_IBIRESP_NACK |
+dd3c52846d5954a Miquel Raynal 2021-01-21  1140  		       SVC_I3C_MCTRL_DIR(rnw) |
+dd3c52846d5954a Miquel Raynal 2021-01-21  1141  		       SVC_I3C_MCTRL_ADDR(addr) |
+6fb61734a74eaa3 Frank Li      2023-12-01  1142  		       SVC_I3C_MCTRL_RDTERM(*actual_len),
+dd3c52846d5954a Miquel Raynal 2021-01-21  1143  		       master->regs + SVC_I3C_MCTRL);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1144  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1145  		ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+dd3c52846d5954a Miquel Raynal 2021-01-21  1146  				 SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1147  		if (ret)
+dd3c52846d5954a Miquel Raynal 2021-01-21  1148  			goto emit_stop;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1149  
+28a9dc69921b36a Frank Li      2024-08-13  1150  		/*
+28a9dc69921b36a Frank Li      2024-08-13  1151  		 * According to I3C spec ver 1.1.1, 5.1.2.2.3 Consequence of Controller Starting a
+28a9dc69921b36a Frank Li      2024-08-13  1152  		 * Frame with I3C Target Address.
+28a9dc69921b36a Frank Li      2024-08-13  1153  		 *
+28a9dc69921b36a Frank Li      2024-08-13  1154  		 * The I3C Controller normally should start a Frame, the Address may be arbitrated,
+28a9dc69921b36a Frank Li      2024-08-13  1155  		 * and so the Controller shall monitor to see whether an In-Band Interrupt request,
+28a9dc69921b36a Frank Li      2024-08-13  1156  		 * a Controller Role Request (i.e., Secondary Controller requests to become the
+28a9dc69921b36a Frank Li      2024-08-13  1157  		 * Active Controller), or a Hot-Join Request has been made.
+28a9dc69921b36a Frank Li      2024-08-13  1158  		 *
+28a9dc69921b36a Frank Li      2024-08-13  1159  		 * If missed IBIWON check, the wrong data will be return. When IBIWON happen, issue
+28a9dc69921b36a Frank Li      2024-08-13  1160  		 * repeat start. Address arbitrate only happen at START, never happen at REPEAT
+28a9dc69921b36a Frank Li      2024-08-13  1161  		 * start.
+28a9dc69921b36a Frank Li      2024-08-13  1162  		 */
+28a9dc69921b36a Frank Li      2024-08-13  1163  		if (SVC_I3C_MSTATUS_IBIWON(reg)) {
+4809f19e89760fb Frank Li      2024-08-13  1164  			if (svc_i3c_master_handle_ibi_won(master, reg))
+4809f19e89760fb Frank Li      2024-08-13 @1165  				goto emit_stop;
 
->=20
-> >  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    388,154 |        16% |
-> >  |------------------------------------------------------------------|
-> >  |                    |                   |            |            |
-> >  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
-> >  |                    |                   |        sec |            |
-> >  |--------------------|-------------------|------------|------------|
-> >  |v6.11-rc3 mainline  | SSD               |      91.37 |   Baseline |
-> >  |zswap-mTHP=3DStore    | ZSWAP lz4         |     265.43 |      -191% |
-> >  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     235.60 |      -158% |
-> >   ------------------------------------------------------------------
-> >
-> >   ---------------------------------------------------------------------=
---
-> >  | VMSTATS, mTHP ZSWAP/SSD stats|  v6.11-rc3 |  zswap-mTHP |  zswap-
-> mTHP |
-> >  |                              |   mainline |       Store |       Stor=
-e |
-> >  |                              |            |         lz4 | deflate-ia=
-a |
-> >  |---------------------------------------------------------------------=
---|
-> >  | pswpin                       |          0 |           0 |           =
-0 |
-> >  | pswpout                      |    174,432 |           0 |           =
-0 |
-> >  | zswpin                       |        703 |         534 |         72=
-1 |
-> >  | zswpout                      |      1,501 |   1,491,654 |   1,398,80=
-5 |
->=20
-> It appears that the number of swapped pages for zswap is much larger
-> than that of SSD swap.  Why?  I guess this is why zswap throughput is
-> worse.
+Does this need an error code?
 
-Your observation is correct. I hope the above explanation helps as to the
-reasoning behind this.
+28a9dc69921b36a Frank Li      2024-08-13  1166  			continue;
+28a9dc69921b36a Frank Li      2024-08-13  1167  		}
+28a9dc69921b36a Frank Li      2024-08-13  1168  
+49b472ebc61de3d Clark Wang    2023-05-17  1169  		if (readl(master->regs + SVC_I3C_MERRWARN) & SVC_I3C_MERRWARN_NACK) {
+2d15862dfba6bf1 Frank Li      2024-06-03  1170  			/*
+2d15862dfba6bf1 Frank Li      2024-06-03  1171  			 * According to I3C Spec 1.1.1, 11-Jun-2021, section: 5.1.2.2.3.
+2d15862dfba6bf1 Frank Li      2024-06-03  1172  			 * If the Controller chooses to start an I3C Message with an I3C Dynamic
+2d15862dfba6bf1 Frank Li      2024-06-03  1173  			 * Address, then special provisions shall be made because that same I3C
+2d15862dfba6bf1 Frank Li      2024-06-03  1174  			 * Target may be initiating an IBI or a Controller Role Request. So, one of
+2d15862dfba6bf1 Frank Li      2024-06-03  1175  			 * three things may happen: (skip 1, 2)
+2d15862dfba6bf1 Frank Li      2024-06-03  1176  			 *
+2d15862dfba6bf1 Frank Li      2024-06-03  1177  			 * 3. The Addresses match and the RnW bits also match, and so neither
+2d15862dfba6bf1 Frank Li      2024-06-03  1178  			 * Controller nor Target will ACK since both are expecting the other side to
+2d15862dfba6bf1 Frank Li      2024-06-03  1179  			 * provide ACK. As a result, each side might think it had "won" arbitration,
+2d15862dfba6bf1 Frank Li      2024-06-03  1180  			 * but neither side would continue, as each would subsequently see that the
+2d15862dfba6bf1 Frank Li      2024-06-03  1181  			 * other did not provide ACK.
+2d15862dfba6bf1 Frank Li      2024-06-03  1182  			 * ...
+2d15862dfba6bf1 Frank Li      2024-06-03  1183  			 * For either value of RnW: Due to the NACK, the Controller shall defer the
+2d15862dfba6bf1 Frank Li      2024-06-03  1184  			 * Private Write or Private Read, and should typically transmit the Target
+2d15862dfba6bf1 Frank Li      2024-06-03  1185  			 * Address again after a Repeated START (i.e., the next one or any one prior
+2d15862dfba6bf1 Frank Li      2024-06-03  1186  			 * to a STOP in the Frame). Since the Address Header following a Repeated
+2d15862dfba6bf1 Frank Li      2024-06-03  1187  			 * START is not arbitrated, the Controller will always win (see Section
+2d15862dfba6bf1 Frank Li      2024-06-03  1188  			 * 5.1.2.2.4).
+2d15862dfba6bf1 Frank Li      2024-06-03  1189  			 */
+2d15862dfba6bf1 Frank Li      2024-06-03  1190  			if (retry && addr != 0x7e) {
+2d15862dfba6bf1 Frank Li      2024-06-03  1191  				writel(SVC_I3C_MERRWARN_NACK, master->regs + SVC_I3C_MERRWARN);
+2d15862dfba6bf1 Frank Li      2024-06-03  1192  			} else {
+49b472ebc61de3d Clark Wang    2023-05-17  1193  				ret = -ENXIO;
+6d1a19d34e2cc07 Frank Li      2023-12-01  1194  				*actual_len = 0;
+49b472ebc61de3d Clark Wang    2023-05-17  1195  				goto emit_stop;
+49b472ebc61de3d Clark Wang    2023-05-17  1196  			}
+2d15862dfba6bf1 Frank Li      2024-06-03  1197  		} else {
+2d15862dfba6bf1 Frank Li      2024-06-03  1198  			break;
+2d15862dfba6bf1 Frank Li      2024-06-03  1199  		}
+2d15862dfba6bf1 Frank Li      2024-06-03  1200  	}
+49b472ebc61de3d Clark Wang    2023-05-17  1201  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1202  	if (rnw)
+dd3c52846d5954a Miquel Raynal 2021-01-21  1203  		ret = svc_i3c_master_read(master, in, xfer_len);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1204  	else
+dd3c52846d5954a Miquel Raynal 2021-01-21  1205  		ret = svc_i3c_master_write(master, out, xfer_len);
+d5e512574dd2eb0 Clark Wang    2021-12-27  1206  	if (ret < 0)
+dd3c52846d5954a Miquel Raynal 2021-01-21  1207  		goto emit_stop;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1208  
+d5e512574dd2eb0 Clark Wang    2021-12-27  1209  	if (rnw)
+6fb61734a74eaa3 Frank Li      2023-12-01  1210  		*actual_len = ret;
+d5e512574dd2eb0 Clark Wang    2021-12-27  1211  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1212  	ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+dd3c52846d5954a Miquel Raynal 2021-01-21  1213  				 SVC_I3C_MSTATUS_COMPLETE(reg), 0, 1000);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1214  	if (ret)
+dd3c52846d5954a Miquel Raynal 2021-01-21  1215  		goto emit_stop;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1216  
+d5e512574dd2eb0 Clark Wang    2021-12-27  1217  	writel(SVC_I3C_MINT_COMPLETE, master->regs + SVC_I3C_MSTATUS);
+d5e512574dd2eb0 Clark Wang    2021-12-27  1218  
+d5e512574dd2eb0 Clark Wang    2021-12-27  1219  	if (!continued) {
+dd3c52846d5954a Miquel Raynal 2021-01-21  1220  		svc_i3c_master_emit_stop(master);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1221  
+d5e512574dd2eb0 Clark Wang    2021-12-27  1222  		/* Wait idle if stop is sent. */
+d5e512574dd2eb0 Clark Wang    2021-12-27  1223  		readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+d5e512574dd2eb0 Clark Wang    2021-12-27  1224  				   SVC_I3C_MSTATUS_STATE_IDLE(reg), 0, 1000);
+d5e512574dd2eb0 Clark Wang    2021-12-27  1225  	}
+d5e512574dd2eb0 Clark Wang    2021-12-27  1226  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1227  	return 0;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1228  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1229  emit_stop:
+dd3c52846d5954a Miquel Raynal 2021-01-21  1230  	svc_i3c_master_emit_stop(master);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1231  	svc_i3c_master_clear_merrwarn(master);
+dd3c52846d5954a Miquel Raynal 2021-01-21  1232  
+dd3c52846d5954a Miquel Raynal 2021-01-21  1233  	return ret;
+dd3c52846d5954a Miquel Raynal 2021-01-21  1234  }
 
-Thanks,
-Kanchana
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
->=20
-> >  |---------------------------------------------------------------------=
---|
-> >  | thp_swpout                   |          0 |           0 |           =
-0 |
-> >  | thp_swpout_fallback          |          0 |           0 |           =
-0 |
-> >  | pgmajfault                   |      3,364 |       3,650 |       3,43=
-1 |
-> >  |---------------------------------------------------------------------=
---|
-> >  | hugepages-64kB/stats/zswpout |            |      63,200 |      63,24=
-4 |
-> >  |---------------------------------------------------------------------=
---|
-> >  | hugepages-64kB/stats/swpout  |     10,902 |           0 |           =
-0 |
-> >   ---------------------------------------------------------------------=
---
-> >
->=20
-> [snip]
->=20
-> --
-> Best Regards,
-> Huang, Ying
 
