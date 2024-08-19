@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-292352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96B0956E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FF9956E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5051C22142
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:09:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031F91C21F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8809018801E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BBA18801D;
 	Mon, 19 Aug 2024 15:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cwU7ib2z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c48Pserz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2803A176231;
-	Mon, 19 Aug 2024 15:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C02C17624C;
+	Mon, 19 Aug 2024 15:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080074; cv=none; b=fcMCwxNeUs4asWf+uGGyHQTptiTJjjS4sT4iqIF0aRMdkMnA/Omqp4iH2jlGVJK//z3wP/x1+NaZE17+LmdRpBGSHJga6AexsM8FLqJE/VENbY5V+gjbSlPS4yZnBQEwN+pv7yRjO3usG84LyTbtNsnJHJRYU/yrYRHY6Jt5C10=
+	t=1724080074; cv=none; b=kDBur3wRSf5Dzduq3O0bzsqku8G69gbOMLtXmOjnb/iMJU4PCRa0xd0KinePmET9FibouxyIvnfc5/3xbFvbzD0PIPElGkb4OXiHp1+oHYARhQmKbroA6ya2yhoyp58WLJpReG04QxQdGuUc7pRSJLt5+Qcfld/ytpeHgNDR+Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724080074; c=relaxed/simple;
-	bh=PsSb9lq5VWjaEqxKE/Tf9owkyuT4Q/NptnHcgWMV01M=;
+	bh=OPGogBzdLYo2LmBSCRmFUCqRPxUNDvsm1vgEBwTzMZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twOQG3ByfqBU5AEZZexYV15+/KAqwFHGATPu+XLwhA3YjCtttr1+6OGW2XIJKnlTSDJ/bb+wUrePos9pbXaqug6DNgpEZltdaYwCQWJ2EWiVTYWs7JReuFQqgJ+AWQdPsFxmCd/Jr+5b/jWHwSA2hXXtNIFDNel4BYcs+K1oWzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cwU7ib2z; arc=none smtp.client-ip=198.175.65.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFbmbPQDEV/0GCOUGPhZU4uN/TU17ROQk04xBJFNag7P/QNpBQcV8hhO6HEJZazxnLmFyjVeesaLAHiTlW367vZ/k+VgEprI1Q4p6ddjQXnANatk4IVgOx4NBVDa328Md5S3NJB9qtHD8umaQCUkMonAVMcFvds50xBjub43OmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c48Pserz; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724080071; x=1755616071;
+  t=1724080074; x=1755616074;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=PsSb9lq5VWjaEqxKE/Tf9owkyuT4Q/NptnHcgWMV01M=;
-  b=cwU7ib2zd5/pNkZTehwTRUcyKy2nTqYI7HBwlhiSeZnZj6s70aBG5J60
-   X3x7bWVHsq+T718bG9+UDCk5+tpAfAGkXlYHbKfMCFcP0cHi9dTVtpHX7
-   lQVzh63/0bcAbr09MkbULXrhPLv70Z2bQrVZ3bzWx/HoAxuRs4VPq+yk4
-   5NOnsj1kNI4eCkOD4BuPh9i3TlZCJnlCVi2sJM6nJZ758VpR9vnh7gBwl
-   wSV+i+5joC37OiBH/NsnYbA0GjCnuBMMUW1J1et3ULoUfh8FH9+OeR19c
-   obLvKh9HBaeIADBzi+U41E+aLDRvzDC/DwNF33YxkfOz63pnMuxnzN6sc
-   w==;
-X-CSE-ConnectionGUID: f2/RYm43TUaw9TySej4oqw==
-X-CSE-MsgGUID: Y5cbajTjT3a1v+dcjOTvqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22476578"
+   mime-version:in-reply-to;
+  bh=OPGogBzdLYo2LmBSCRmFUCqRPxUNDvsm1vgEBwTzMZA=;
+  b=c48PserzhyZvuJ4emmmbxeNAsROroh46AdGIJGFpNLjz/eX5ZwmM8qnd
+   QlZKmHj8BHQjKu3GcuA6QN8aawMHUbKkW0vFhe3XQmmy4+2Rgr3IrzKzk
+   wHyFdi7cK04f0twuSKNEslNKd2VuiJNrxf7l6A10myTI7P2R4Gc1NSWjD
+   ltwuRHdBTbxcmJuLx62zM4xdNpO419zDXbHkTXgVZ/djeb43JsUArVZJL
+   b7+k7GGTwPWxUDzj7VUMOMHXkr/I0SOA9XMH5K1wM4+teX26dZmDystoJ
+   vQaIG0/0bbJCRIWjp1TWESTqNi+IfU38otAMPpuDC5NGd9F1raPSmkSxW
+   A==;
+X-CSE-ConnectionGUID: ZXdNAXWfTnSFFDH/S7Lv6w==
+X-CSE-MsgGUID: ZR7oTUElSgCaCeKHZHwmKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22146677"
 X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="22476578"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:07:50 -0700
-X-CSE-ConnectionGUID: hCz563YERMGML/DfO+9aZw==
-X-CSE-MsgGUID: uh77pYOQSRm/ZFVkuvCdRQ==
+   d="scan'208";a="22146677"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:07:53 -0700
+X-CSE-ConnectionGUID: 6yWknJfcS8mOnr7Nz+28kQ==
+X-CSE-MsgGUID: MiWKthZaTK6BqyV8w+NvLg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="83606348"
+   d="scan'208";a="60099160"
 Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 19 Aug 2024 08:07:48 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 19 Aug 2024 08:07:47 -0700
 Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sg3yz-00096Q-1w;
+	id 1sg3yz-00096S-20;
 	Mon, 19 Aug 2024 15:07:45 +0000
 Date: Mon, 19 Aug 2024 23:07:19 +0800
 From: kernel test robot <lkp@intel.com>
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
-	krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
-	michael.hennerich@analog.com, gstols@baylibre.com,
-	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
- parts
-Message-ID: <202408192209.IrTzVL49-lkp@intel.com>
-References: <20240819064721.91494-8-aardelean@baylibre.com>
+To: Jijie Shao <shaojijie@huawei.com>, yisen.zhuang@huawei.com,
+	salil.mehta@huawei.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	shaojijie@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, andrew@lunn.ch,
+	jdamato@fastly.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 09/11] net: hibmcge: Add a Makefile and update
+ Kconfig for hibmcge
+Message-ID: <202408192219.zrGff7n1-lkp@intel.com>
+References: <20240819071229.2489506-10-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240819064721.91494-8-aardelean@baylibre.com>
+In-Reply-To: <20240819071229.2489506-10-shaojijie@huawei.com>
 
-Hi Alexandru,
+Hi Jijie,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on jic23-iio/togreg]
-[cannot apply to linus/master v6.11-rc4 next-20240819]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test ERROR on net-next/main]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardelean/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240819-145028
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240819064721.91494-8-aardelean%40baylibre.com
-patch subject: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18} parts
-config: i386-buildonly-randconfig-001-20240819 (https://download.01.org/0day-ci/archive/20240819/202408192209.IrTzVL49-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192209.IrTzVL49-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jijie-Shao/net-hibmcge-Add-pci-table-supported-in-this-module/20240819-152333
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240819071229.2489506-10-shaojijie%40huawei.com
+patch subject: [PATCH net-next 09/11] net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240819/202408192219.zrGff7n1-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192219.zrGff7n1-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408192209.IrTzVL49-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> drivers/iio/adc/ad7606.c:796:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-     796 |         int ret, ch;
-         |             ^
-   1 warning generated.
+   In file included from drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:9:
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c: In function 'hbg_hw_set_txrx_intr_enable':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:27:59: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+      27 |         regmap_write_bits((priv)->regmap, reg_addr, mask, FIELD_PREP(mask, val))
+         |                                                           ^~~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:101:9: note: in expansion of macro 'hbg_reg_write_field'
+     101 |         hbg_reg_write_field(priv, addr, HBG_REG_CF_IND_INT_STAT_CLR_MSK_B, enabld);
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c: In function 'hbg_hw_txrx_intr_is_enabled':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:24:9: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+      24 |         FIELD_GET(mask, hbg_reg_read(priv, reg_addr))
+         |         ^~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:109:16: note: in expansion of macro 'hbg_reg_read_field'
+     109 |         return hbg_reg_read_field(priv, addr, HBG_REG_CF_IND_INT_STAT_CLR_MSK_B);
+         |                ^~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c: In function 'hbg_init_tx_desc':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c:52:18: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+      52 |         word0 |= FIELD_PREP(HBG_TX_DESC_W0_WB_B, HBG_STATUS_ENABLE);
+         |                  ^~~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c: In function 'hbg_sync_data_from_hw':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c:233:16: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+     233 |         return FIELD_GET(HBG_RX_DESC_W2_PKT_LEN_M, rx_desc->word2) != 0;
+         |                ^~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
-vim +/ret +796 drivers/iio/adc/ad7606.c
+vim +/FIELD_PREP +27 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
 
-94168a5789874a Alexandru Ardelean 2024-08-19  790  
-94168a5789874a Alexandru Ardelean 2024-08-19  791  static int ad7606_sw_mode_setup(struct iio_dev *indio_dev, unsigned int id)
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  792  {
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  793  	unsigned int num_channels = indio_dev->num_channels - 1;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  794  	struct ad7606_state *st = iio_priv(indio_dev);
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  795  	unsigned int *scale_avail_show, num_scales_avail_show;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19 @796  	int ret, ch;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  797  
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  798  	if (!st->bops->sw_mode_config)
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  799  		return 0;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  800  
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  801  	st->sw_mode_en = device_property_present(st->dev, "adi,sw-mode");
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  802  	if (!st->sw_mode_en)
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  803  		return 0;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  804  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  805  	indio_dev->info = &ad7606_info_sw_mode;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  806  
-94168a5789874a Alexandru Ardelean 2024-08-19  807  	switch (id) {
-94168a5789874a Alexandru Ardelean 2024-08-19  808  	case ID_AD7606C_18:
-94168a5789874a Alexandru Ardelean 2024-08-19  809  		num_scales_avail_show = num_channels;
-94168a5789874a Alexandru Ardelean 2024-08-19  810  		ret = ad7606c_sw_mode_setup_channels(indio_dev,
-94168a5789874a Alexandru Ardelean 2024-08-19  811  						     ad7606c_18_chan_setup);
-94168a5789874a Alexandru Ardelean 2024-08-19  812  		break;
-94168a5789874a Alexandru Ardelean 2024-08-19  813  	case ID_AD7606C_16:
-94168a5789874a Alexandru Ardelean 2024-08-19  814  		num_scales_avail_show = num_channels;
-94168a5789874a Alexandru Ardelean 2024-08-19  815  		ret = ad7606c_sw_mode_setup_channels(indio_dev,
-94168a5789874a Alexandru Ardelean 2024-08-19  816  						     ad7606c_16_chan_setup);
-94168a5789874a Alexandru Ardelean 2024-08-19  817  		break;
-94168a5789874a Alexandru Ardelean 2024-08-19  818  	default:
-94168a5789874a Alexandru Ardelean 2024-08-19  819  		num_scales_avail_show = 1;
-94168a5789874a Alexandru Ardelean 2024-08-19  820  
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  821  		/* Scale of 0.076293 is only available in sw mode */
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  822  		/* After reset, in software mode, ±10 V is set by default */
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  823  		for (ch = 0; ch < num_channels; ch++) {
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  824  			struct ad7606_chan_scale *cs = &st->chan_scales[ch];
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  825  
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  826  			cs->scale_avail = ad7616_sw_scale_avail;
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  827  			cs->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  828  			cs->range = 2;
-36b63bb57295f7 Alexandru Ardelean 2024-08-19  829  		}
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  830  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  831  		ret = st->bops->sw_mode_config(indio_dev);
-94168a5789874a Alexandru Ardelean 2024-08-19  832  		break;
-94168a5789874a Alexandru Ardelean 2024-08-19  833  	}
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  834  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  835  	for (ch = 0; ch < num_channels; ch++) {
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  836  		struct ad7606_chan_scale *cs;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  837  		int i;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  838  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  839  		/* AD7606C supports different scales per channel */
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  840  		cs = &st->chan_scales[ch];
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  841  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  842  		if (num_scales_avail_show == 1 && ch > 0) {
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  843  			cs->scale_avail_show = scale_avail_show;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  844  			continue;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  845  		}
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  846  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  847  		scale_avail_show = devm_kcalloc(st->dev, cs->num_scales * 2,
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  848  						sizeof(*scale_avail_show),
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  849  						GFP_KERNEL);
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  850  		if (!scale_avail_show)
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  851  			return -ENOMEM;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  852  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  853  		/* Generate a scale_avail list for showing to userspace */
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  854  		for (i = 0; i < cs->num_scales; i++) {
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  855  			scale_avail_show[i * 2] = 0;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  856  			scale_avail_show[i * 2 + 1] = cs->scale_avail[i];
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  857  		}
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  858  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  859  		cs->scale_avail_show = scale_avail_show;
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  860  	}
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  861  
-09d11fa081ef17 Alexandru Ardelean 2024-08-19  862  	return 0;
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  863  }
-b5d2c422286d62 Alexandru Ardelean 2024-08-19  864  
+97e170277067a0 Jijie Shao 2024-08-19  19  
+97e170277067a0 Jijie Shao 2024-08-19  20  #define hbg_reg_write64(priv, reg_addr, value) \
+97e170277067a0 Jijie Shao 2024-08-19  21  	lo_hi_writeq(value, (priv)->io_base + (reg_addr))
+97e170277067a0 Jijie Shao 2024-08-19  22  
+44d1e0ec4b312d Jijie Shao 2024-08-19  23  #define hbg_reg_read_field(priv, reg_addr, mask) \
+44d1e0ec4b312d Jijie Shao 2024-08-19 @24  	FIELD_GET(mask, hbg_reg_read(priv, reg_addr))
+44d1e0ec4b312d Jijie Shao 2024-08-19  25  
+44d1e0ec4b312d Jijie Shao 2024-08-19  26  #define hbg_reg_write_field(priv, reg_addr, mask, val) \
+44d1e0ec4b312d Jijie Shao 2024-08-19 @27  	regmap_write_bits((priv)->regmap, reg_addr, mask, FIELD_PREP(mask, val))
+44d1e0ec4b312d Jijie Shao 2024-08-19  28  
 
 -- 
 0-DAY CI Kernel Test Service
