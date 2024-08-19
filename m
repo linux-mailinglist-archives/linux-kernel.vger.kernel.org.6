@@ -1,184 +1,134 @@
-Return-Path: <linux-kernel+bounces-292534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B7295708E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:40:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD738957094
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3869E1C23118
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C4CB27F5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F39176AB9;
-	Mon, 19 Aug 2024 16:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC87177982;
+	Mon, 19 Aug 2024 16:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="he7M3R6G"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NacPuJGz"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB0E13211A;
-	Mon, 19 Aug 2024 16:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377716C867
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085592; cv=none; b=PnuNTD+VklC5TCOgH9xXaWr2Rs2qKiCuBED8ta/JDFTgdXTAhpmOGUvZONiKbUW4uP+uNJ2dOm/0DGG0kXabI33TtuMoggWGraRSm0vEBajZNfQqQR37Bce3pRB+PTnn7K+tDJFBGi5n1SEUHEcJguXTZl6qYjgtwYIpD8eAqTk=
+	t=1724085608; cv=none; b=auxOzz2r1MQRsM22k1eTHaqupQhbMO12r4VzLw6lJqGo1zinB8BXabSFcpctloN5vTjT39O+1grI8DjUaPSa5wkyVdxhztEECKfMpRT6R2TYzkVJNpHVd/mDGHAabAVMujv3/i5XGTnJNVnSsHXRMs8NQfbq34Qths8tnmvnMs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085592; c=relaxed/simple;
-	bh=T59eX/EsBUKmee77GmmGHgFUj/XXmuXJCIw/1ikkTww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M2ZMmznm13yyOshYC0OrrZGMTsUbGShdki7Ru/6pbNNibtr05o6q4BZJ6gZcAsqh5szzSaLruXIK0GfuVv6cPxU9amZwcWQIF2d/SHWjtKpZ2HuFOawx2pQr7/065fAaPYQuJoSQ9CGU4Acmvkf+Qqxu0SySib/i6zqA8XQGP80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=he7M3R6G; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wndc12bHsz9sjQ;
-	Mon, 19 Aug 2024 18:39:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1724085585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHZf6l7SvG4/hCJDbBwd8yZbMsE33hc0REoLdH7Jm04=;
-	b=he7M3R6GWXkRiOlZobuMtaxrzuauIaRakC1efjnTxmG7tLGplbnh/x+KKh1VeGhIHLQqpe
-	SyypPhTNXZ1QdIPnxrQTOWfLI3BKLYHdQGvmhcIIIMcKmLefNdrlDGFU22PfT5ZqEHDfJO
-	u58h65RHaIDkizoqDgi0RTKgB2de5uACJQUj4wo0ocWpe7WHZuuETB1d16AebMCpwLJgCO
-	B3bhlfrFe2d+BVImcm8m5eefM2dshMT2FZx61L3s8zxOxcEV7tD9cGoGgjE2sPnic4+jei
-	he4Us/5cFvayLVzHw1BSCoprOTIhamRvxac1cQMqqfhB7H6N2x2l11U6qvfQ9w==
-Date: Mon, 19 Aug 2024 16:39:38 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Howells <dhowells@redhat.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-	ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
-Message-ID: <20240819163938.qtsloyko67cqrmb6@quentin>
-References: <20240818165124.7jrop5sgtv5pjd3g@quentin>
- <20240815090849.972355-1-kernel@pankajraghav.com>
- <2924797.1723836663@warthog.procyon.org.uk>
- <3402933.1724068015@warthog.procyon.org.uk>
+	s=arc-20240116; t=1724085608; c=relaxed/simple;
+	bh=+C/OxPV9HRCUwr7CvveR0sYY1XMqQ/b6denDFBJPH9Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GR4uN0pJOxN6p0MIQT0KdgMSg4rfrI4L46O0yplLh/daD47UaJ38tto4S3dE+FUz+gcuMVCpa1K9JIg5nIeGMN5FdmkV2yc+SK8cca+eCKB+JqETma2x8oHWfwY6EX+OUj9wr9OejmkO/h64r6jg9R94gveOCWGi37mM/5sJRus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NacPuJGz; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a9e25008aso569270966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724085604; x=1724690404; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLh1ABOmACJjGeaQQwCrzHZzMijH1c87qN+hdOaSDkU=;
+        b=NacPuJGzBrzlHYQjj/Tqf5JIfnXhNggaeRn1NgcoR80JLNw0T5CItbQWXnQIh4MATi
+         1TF6onjiT45helPPWhRSq8cHcpFXj/VDLRTFCcUL/foAQYJVKbW7qj6J+l7zem0UsWYH
+         QVjLQeKfZIqJxp3A5/gKTx/fiA1WNBAhjEj/Tew6PzeoM3AJQ4yKiL6qo1wf53ObGmql
+         gWKdpl9DDmMjAAh+/fwWoz6yhWOTiMNlN40V+XMzNmZqZLqyW4n5mMY1y27fmUyl93+T
+         LxLtu0CfDvv4hjo95gsvz5C7vezgVJuNGCc47YO/dJymGdEsBgTREq6nbeMoZqLiwoAz
+         FS8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724085604; x=1724690404;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLh1ABOmACJjGeaQQwCrzHZzMijH1c87qN+hdOaSDkU=;
+        b=IyLXWpgKQtcsetK6P67hlqQX6YISuGBkFUlX0KOYJHWD/69WKfnO6P2WDrwQ+MkBWX
+         GuiFNQewJhmY8KG3QvAk1mDDtJFlCOLtSD9Jf3cXb9sTQhURGp1k03v3cSktGCNnvGLY
+         fkwV71KMdoUQx4VD/20EmjeeJrJUACkR2xJThyZc9wtjDOurIT8Ru2IbD/p2u4/qu09g
+         mgY6MOT5JiLQdumrSUOJg4B9QwVJp53kZ4nJuekFTvcYnbivREvTqzrnTwHE4T7erTGs
+         ceeErUfs8Go4i47JaUC0lkszhwpDPaImTnntIJrow9JQ0+4sXuACRmn5hhTds8mej4g1
+         mXMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKkTNiiwOtHHznXZbq8DT0UGcCWdFKjjpkVzwmXazBo4rxpUFPfR3G6qqcobRARLxc01KJJ6g5dh/2aVBYXh4nQJunmQmZkwBDRxyy
+X-Gm-Message-State: AOJu0Yyv1ADK8/Zkn8j/0DwXyawakfMY70qdoZNuyzMODkxY3DWlou55
+	5qNlJ1AcidroEpFtWIchPVV21NPEgw6eBVFbvsAtNCTOhMYRUV+FjV+B89hgAc0=
+X-Google-Smtp-Source: AGHT+IEjMWa9M79IVLPR6gN4l2c9n59ko9vG22U11vCzOjCnsgrlvCivJJKeqjCLstcFqGUGSASwdQ==
+X-Received: by 2002:a17:907:6d02:b0:a80:f747:30c4 with SMTP id a640c23a62f3a-a83928a6336mr732337866b.1.1724085603415;
+        Mon, 19 Aug 2024 09:40:03 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:db8f:43f4:9b2e:fb1d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946a7dsm655387366b.181.2024.08.19.09.40.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 09:40:02 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
+ <sboyd@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/9] reset: amlogic: add driver parameters
+In-Reply-To: <614de1b0-fcaf-457c-9183-1f3cd7f91b38@linaro.org> (Neil
+	Armstrong's message of "Mon, 19 Aug 2024 17:57:40 +0200")
+References: <20240808102742.4095904-1-jbrunet@baylibre.com>
+	<20240808102742.4095904-5-jbrunet@baylibre.com>
+	<614de1b0-fcaf-457c-9183-1f3cd7f91b38@linaro.org>
+Date: Mon, 19 Aug 2024 18:40:02 +0200
+Message-ID: <1jzfp8wjod.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3402933.1724068015@warthog.procyon.org.uk>
+Content-Type: text/plain
 
-> ---
-> /* Distillation of the generic/393 xfstest */
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> 
-> #define ERR(x, y) do { if ((long)(x) == -1) { perror(y); exit(1); } } while(0)
-> 
-> static const char xxx[40] = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-> static const char yyy[40] = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
-> static const char dropfile[] = "/proc/sys/vm/drop_caches";
-> static const char droptype[] = "3";
-> static const char file[] = "/xfstest.test/wubble";
-> 
-> int main(int argc, char *argv[])
-> {
->         int fd, drop;
-> 
-> 	/* Fill in the second 8K block of the file... */
->         fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666);
->         ERR(fd, "open");
->         ERR(ftruncate(fd, 0), "pre-trunc $file");
->         ERR(pwrite(fd, yyy, sizeof(yyy), 0x2000), "write-2000");
->         ERR(close(fd), "close");
-> 
-> 	/* ... and drop the pagecache so that we get a streaming
-> 	 * write, attaching some private data to the folio.
-> 	 */
->         drop = open(dropfile, O_WRONLY);
->         ERR(drop, dropfile);
->         ERR(write(drop, droptype, sizeof(droptype) - 1), "write-drop");
->         ERR(close(drop), "close-drop");
-> 
->         fd = open(file, O_WRONLY, 0666);
->         ERR(fd, "reopen");
-> 	/* Make a streaming write on the first 8K block (needs O_WRONLY). */
->         ERR(pwrite(fd, xxx, sizeof(xxx), 0), "write-0");
-> 	/* Now use truncate to shrink and reexpand. */
->         ERR(ftruncate(fd, 4), "trunc-4");
->         ERR(ftruncate(fd, 4096), "trunc-4096");
->         ERR(close(fd), "close-2");
->         exit(0);
-> }
+On Mon 19 Aug 2024 at 17:57, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 
-I tried this code on XFS, and it is working as expected (I am getting
-xxxx).
+>> +	assert ^= data->param->level_low_reset;
+>>     	return regmap_update_bits(data->map, offset,
+>> -				  BIT(bit), assert ? 0 : BIT(bit));
+>> +				  BIT(bit), assert ? BIT(bit) : 0);
+>>   }
+>>     static int meson_reset_assert(struct reset_controller_dev *rcdev,
+>> @@ -84,17 +88,23 @@ static const struct reset_control_ops meson_reset_ops = {
+>>     static const struct meson_reset_param meson8b_param = {
+>>   	.reg_count	= 8,
+>> +	.reset_offset	= 0x0,
+>>   	.level_offset	= 0x7c,
+>> +	.level_low_reset = true,
+>>   };
+>>     static const struct meson_reset_param meson_a1_param = {
+>>   	.reg_count	= 3,
+>> +	.reset_offset	= 0x0,
+>>   	.level_offset	= 0x40,
+>> +	.level_low_reset = true,
+>>   };
+>>     static const struct meson_reset_param meson_s4_param = {
+>>   	.reg_count	= 6,
+>> +	.reset_offset	= 0x0,
+>>   	.level_offset	= 0x40,
+>> +	.level_low_reset = true,
+>
+> Just a comment, I would rather leave the "default" users of this driver with the default value
+> and use level_high_reset = true for the clock ones
 
-[nix-shell:~/xfstests]# hexdump -C /media/test/wubble
-00000000  78 78 78 78 00 00 00 00  00 00 00 00 00 00 00 00  |xxxx............|
-00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-00001000
+In every other place in the kernel, we specify that kind of thing if it
+is acitve low. Your request make things up-side-down and harder to
+follow IMO.
 
-I did some tracing as well and here are the results.
+There is no 'default' user, there is the platform ones and auxiliary ones.
+Platform ones tend to active low reset line. It is clearly shown above
+and hard to miss when adding new platforms.
 
-$ trace-cmd record -e xfs_file_fsync -e xfs_file_buffered_write -e xfs_setattr -e xfs_zero_eof -F -c ./a.out
+>
+> Neil
+>
+>>   };
+>>     static const struct of_device_id meson_reset_dt_ids[] = {
 
-[nix-shell:~/xfstests]# trace-cmd report
-cpus=4
-           a.out-3872  [003] 84120.161472: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x0
-           a.out-3872  [003] 84120.172109: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x20 
-           a.out-3872  [003] 84120.172151: xfs_zero_eof:         dev 259:0 ino 0x103 isize 0x0 disize 0x0 pos 0x0 bytecount 0x2000 // First truncate
-           a.out-3872  [003] 84120.172156: xfs_file_buffered_write: dev 259:0 ino 0x103 disize 0x0 pos 0x2000 bytecount 0x28
-           a.out-3872  [003] 84120.185423: xfs_file_buffered_write: dev 259:0 ino 0x103 disize 0x2028 pos 0x0 bytecount 0x28
-           a.out-3872  [003] 84120.185477: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x0
-           a.out-3872  [003] 84120.186493: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x20
-           a.out-3872  [003] 84120.186495: xfs_zero_eof:         dev 259:0 ino 0x103 isize 0x4 disize 0x4 pos 0x4 bytecount 0xffc // Third truncate
-
-First and third truncate result in calling xfs_zero_eof as we are
-increasing the size of the file.
-
-When we do the second ftruncate(fd, 4), we call into iomap_truncate_page() with
-offset 0:
-
-int
-iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
-		const struct iomap_ops *ops)
-{
-	unsigned int blocksize = i_blocksize(inode);
-	unsigned int off = pos & (blocksize - 1);
-
-	/* Block boundary? Nothing to do */
-	if (!off)
-		return 0;
-	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
-}
-
-As you can see, we take into account the blocksize (which is set as
-minorder during inode init) and make sure the sub-block zeroing is done
-correctly.
-
-Also if you see iomap_invalidate_folio(), we don't remove the folio
-private data until the whole folio is invalidated.
-
-I doubt we are doing anything wrong from the page cache layer with these
-patches.
-
-All we do with minorder support is to make sure we always allocate folios
-in the page cache that are at least min order in size and aligned to the
-min order (PATCH 2 and 3) and we maintain this even we do a split (PATCH
-4).
-
-I hope this helps!
-
---
-Pankaj
+-- 
+Jerome
 
