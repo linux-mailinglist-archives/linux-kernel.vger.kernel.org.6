@@ -1,128 +1,128 @@
-Return-Path: <linux-kernel+bounces-292255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BC0956D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:23:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214DC956D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDB21F23ACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:23:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543231C2381B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C616D9BC;
-	Mon, 19 Aug 2024 14:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AEF175D20;
+	Mon, 19 Aug 2024 14:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Oo3CeQMm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Evejkv+7"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EB816D4F0;
-	Mon, 19 Aug 2024 14:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126E716BE23
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077421; cv=none; b=HkHxwOHHvfRV3Il8XsPqGzeSU5WlLp203ouPtfjTC8R/G7KPTAkhG8YNxABCbpxI2mAjOiUMMIet5E6GjhvvpFxjDsVr3zNeYKXhAkjWx+oR2sf/0ya4wpPPLai4wuzetfhF1x7KWSr0x0Zj9Zr4lpFxVL5S2F4HDNfwaBkPRpo=
+	t=1724077933; cv=none; b=jJ3B8PYOkinwghnngIvFXa4FCPP244FVqUAwoOJdPws+TWx7ORUCKSGFUa9xAIIz6pvEupGfBo745XPCgHW4mgWDMQGvjzKoT/zBlbzB6WG/dHTv6E4gStB+KFNf2VU9LCNBCgkwDzTd9oU/M4GBorQvUDgcdN122/1j8bwEmSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077421; c=relaxed/simple;
-	bh=gGZDsocDzpaQYqhsw+0xgjR/qwItyD0Y75zesYVV/68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmBtBJHTqdKx7JWyGmqatzZq0/wufBWbgBc99U/qPWLWuVxZi7O/d3BWuCwYwXy2dbyfNJatXoAZgVgEXe2vD60kuhfTlUb2n1rZ5KB9mC4l3z4hJOZsG3tuea7WNWBWgzeNHO2IZWdbh+XkINWdPg60p+z8dq2QtO4VY+VHg54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Oo3CeQMm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=56aeBW2Nwfu08Vcfzw6WZhyzwb5I2iH2wgj1pLyfRu4=; b=Oo3CeQMmpXZ3kwqxSxbbqRYoOr
-	FT8VWPR3SfAwrzzPh7oT7BTmZwvIRT9trlO2wNHLsTstFOiz8Qti4z2EL0BIHSlUcWBBf/GuxgfUp
-	382v+5iOguTD4va99SN50C3W+urD9B1oWgo/XLUblufBBdoBC7dwMrS2KLLYqyDNd8LI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sg3Hw-0057SI-5q; Mon, 19 Aug 2024 16:23:16 +0200
-Date: Mon, 19 Aug 2024 16:23:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Richard Earnshaw <richard.earnshaw@arm.com>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Ramana Radhakrishnan <ramanara@nvidia.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Linux-OMAP <linux-omap@vger.kernel.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-samsung-soc@vger.kernel.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	debian-arm@lists.debian.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Message-ID: <a6316f7c-4064-4145-aa6a-d34197a3981a@lunn.ch>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <3413899.e9J7NaK4W3@earth>
- <790bf2c4-2ecf-429c-8e28-ad5807ffed7a@app.fastmail.com>
- <a8c009b5-ada0-4f78-92f7-7a6c5075ccf1@app.fastmail.com>
+	s=arc-20240116; t=1724077933; c=relaxed/simple;
+	bh=TiVdyzNEkM6+tVczXMOiTjp/nV4qc8PqqbF0CNqyKIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k4EaTvxByzig1f79P2nBGjzWSv1SQtyUdgEXnqm+T6mcLRuQtpo1Fh81oy+IzqFwWQ7tUW6coGsXaxnRhoMJ3+mlTmy+JIpT1MwT8IMQp+JcWM8XfnZgS3bwSEZp4BnjZ/WEkyIDig6dFGV1tBeLqhR/ummU378R1Dj+xWaHgRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Evejkv+7; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1724077471;
+	bh=TiVdyzNEkM6+tVczXMOiTjp/nV4qc8PqqbF0CNqyKIs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Evejkv+7ownZyLEGLIgaHTy+O65EDh15rlynU2H84+LbCkuVyIHndadvx+2hHS3ns
+	 fy0ymYYmdioJ9YqWoTW5OEVLrj7n50GVswbYd+cVhiAGn3kJq0b/nKhJTEauG0r9XN
+	 Jh24mSaTiJT/Ycj6CwTZpT3IlaZy7nyb0SWPU3IkpVpxu9pqR/aIhB9ZhZYOmV+OLg
+	 /BqGinBvfrSyu7pmCCFWr0LGiFLRiYqGZNPUe3cYMYC8DrGXAQtXKgvK51ltqGNG02
+	 h6kZses/bCQs10uqDys3JvWVOZI5xMknEEZzkhqUGRsHEbbG39AM/J0X1KaTFHbHkJ
+	 lMG7i0MsmsFWQ==
+Received: from thinkos.internal.efficios.com (109.56.13.38.mobile.3.dk [109.56.13.38])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WnZbx0JfZz1Hrw;
+	Mon, 19 Aug 2024 10:24:28 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: [RFC PATCH 0/5] sched: NUMA-aware concurrency IDs
+Date: Mon, 19 Aug 2024 16:24:01 +0200
+Message-Id: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8c009b5-ada0-4f78-92f7-7a6c5075ccf1@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 04:12:10PM +0200, Arnd Bergmann wrote:
-> Two small additions:
-> 
-> On Mon, Aug 19, 2024, at 11:17, Arnd Bergmann wrote:
-> > On Thu, Aug 15, 2024, at 21:53, jeremy@jeremypeper.com wrote:
-> > I expect that the terastation pro2 is going to be fairly easy to
-> > convert to DT as there is already support for similar Orion5x
-> > machines. In this case I would just remove all the Orion5x board
-> > files and you can add a dts file later on. The bit I'm unsure
-> > about here is legacy PCI support. I see that the board file enables
-> > both PCI and PCIe, but I don't know if both are actually used,
-> > or if everything is on PCIe.
-> >
-> > I have some old patches for separating orion legacy PCI from
-> > PCIe support, as only the latter has a modern driver (shared
-> > with kirkwood and armadaxp). If you can confirm that the machine
-> > actually uses PCI, I can dig those out from my backups.
-> 
-> I did find this myself later, the machine does use an on-board
-> PCI connected SATA controller, which is obviously required to
-> make the machine useful.
-> 
-> Doing a PCI host bridge driver with DT support correctly is
-> a lot of work, especially if there is only a single machine
-> using it. Since this uses the same drivers/ata/sata-mv.c
-> driver as the other orion/kirkwood machines, I wonder if we
-> can just pretend that this is a platform device and skip
-> all of the PCI probing. I think this only needs a few
-> small changes to the sata-mv.c driver, but it does require
-> that the PCI bus is left in a known state by the boot loader.
+The issue addressed by this series is the non-locality of NUMA accesses
+to data structures indexed by concurrency IDs: for example, in a
+scenario where a process has two threads, and they periodically run one
+after the other on different NUMA nodes, each will be assigned mm_cid=0.
+As a consequence, they will end up accessing the same pages, and thus at
+least one of the threads will need to perform remote NUMA accesses,
+which is inefficient.
 
-It is a long time since i looked at Orion, so i could be wrong....
+Solve this by making the rseq concurrency ID (mm_cid) NUMA-aware. On
+NUMA systems, when a NUMA-aware concurrency ID is observed by user-space
+to be associated with a NUMA node, guarantee that it never changes NUMA
+node unless either a kernel-level NUMA configuration change happens, or
+scheduler migrations end up migrating tasks across NUMA nodes.
 
-As far as i remember, it has a PCI controller and a PCIe
-controller. They are slightly different. The PCIe part is i think
-simpler to support, it follows the standards better. I _think_ the PCI
-controller uses a GPIO for interrupt support, which causes a mess.
+There is a tradeoff between NUMA locality and compactness of the
+concurrency ID allocation. Favor compactness over NUMA locality when
+the scheduler migrates tasks across NUMA nodes, as this does not cause
+the frequent remote NUMA accesses behavior. This is done by limiting the
+concurrency ID range to minimum between the number of threads belonging
+to the process and the number of allowed CPUs.
 
-If only PCIe is needed, it should not be too hard to make work. I
-would try to avoid the PCI controller is possible.
+This series applies on top of v6.10.3.
 
-      Andrew
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+
+Mathieu Desnoyers (5):
+  lib: Implement find_{first,next,nth}_notandnot_bit,
+    find_first_andnot_bit
+  cpumask: Implement cpumask_{first,next}_{not,}andnot
+  sched: NUMA-aware per-memory-map concurrency IDs
+  selftests/rseq: x86: Implement rseq_load_u32_u32
+  selftests/rseq: Implement NUMA node id vs mm_cid invariant test
+
+ include/linux/cpumask.h                       |  60 ++++++++
+ include/linux/find.h                          | 122 ++++++++++++++-
+ include/linux/mm_types.h                      |  57 ++++++-
+ kernel/sched/core.c                           |  10 +-
+ kernel/sched/sched.h                          | 139 +++++++++++++++--
+ lib/find_bit.c                                |  42 +++++
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../testing/selftests/rseq/basic_numa_test.c  | 144 ++++++++++++++++++
+ tools/testing/selftests/rseq/rseq-x86-bits.h  |  43 ++++++
+ tools/testing/selftests/rseq/rseq.h           |  14 ++
+ 11 files changed, 613 insertions(+), 21 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/basic_numa_test.c
+
+-- 
+2.39.2
 
