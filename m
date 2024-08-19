@@ -1,104 +1,187 @@
-Return-Path: <linux-kernel+bounces-292974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA77695774E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7171C957751
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090B61C22C19
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:17:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D171C22B06
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA6F1DD399;
-	Mon, 19 Aug 2024 22:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4271DD395;
+	Mon, 19 Aug 2024 22:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtydnUAp"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fSpaVk9H"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE9D1DD392;
-	Mon, 19 Aug 2024 22:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB8D1DC48F;
+	Mon, 19 Aug 2024 22:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105809; cv=none; b=UyXchaojReqkXQP9slHxga7JOiEJhSy+WEQ+tOrR0Sxjq+TXYfo+kW/p2dCzoOjm8XgRV9yky7NtHmNLg9oDsZ+OKfGmQf4vWe+YZVuWSP0encMNnyE06l4eJ1eU7fMTYU/GPSXWr0BRVwpx6rr1Utq4Vo9l4V5ZD9cjsy84Ljg=
+	t=1724105827; cv=none; b=YoAnx+EyGq5oj0djmowLQNlc9D45Y9/Pu7cYFNPfsS2fFwE2SQCby0V7AWo6tQs741IeynjMOgUsUshkVt3AAbSCFL+2DZRlh4jfol/8wfwnQa3lxh3eJFqyUMMXZPA3NCAcjcDzzIOLYwI5UXzA63N6l+lR2gav4PHlzqsckA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105809; c=relaxed/simple;
-	bh=Nzj+LfX9fQ4I6u8UfrKsEokzPiqN6N+T7dfDt0+HcGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1hmxKMPG0vZjgTSYK3aqI1QfGTDI8LFtnFHEHabqTNCUjyEmB6ehLLP5AarQQRZyh5A0E8c9lS23PPXnXDewcGQ5ATiQ9GK8TWqDwRVNnmFDIgFK9F19zJr/KK7V5S2iKu/bxHK9NxTj3E4qFvsyy61sL/2Tae2Eu2OTV4MFoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtydnUAp; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202376301e6so11502075ad.0;
-        Mon, 19 Aug 2024 15:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724105807; x=1724710607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1y5PlukJ+SOOumk/OeOAu3HmokrqkUm8pIwj2eltMFQ=;
-        b=gtydnUApq2FYHRtPrN/llkKEwrApM0dGkObO3QuKAA2FkWYsfcYHvbz6CedTILIEij
-         4koUp6MA9IKnHovs+BurFni0co8kSTc2W9sfVoUXk0io6KU82uZKwVA+DmXQzwUCHdOV
-         WFikqkWCgmUO/c2FHqMR2B+9IWtrZcatcaQG036NBb46dvxoUd0PBdJDRxOZuoYgTH0t
-         /HKgOIZ68SWx1agoHhUCdkG9L32iuKr722facINU1jfSqUtHc8MzzWKtQbzLS16xdLEh
-         u3Q6S3L0kfEX7NG7MkKKrlv5ILmBMSy/kzzQvp3R9TRZaxepsoIoh+armD+LJGdsOgnR
-         /f0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724105807; x=1724710607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1y5PlukJ+SOOumk/OeOAu3HmokrqkUm8pIwj2eltMFQ=;
-        b=oQIvYjFw4qlltc/3bWayM6N60psN4rp5I8vAVrRT7RVtiXR+71ToRGi8Tk03MZeTN8
-         3D4q+F4qmUDIOneBzPHgUzxGUqegXBi3brFBL0cClqjHglRt2tGvHn/Me6ps1jMWqrNg
-         OcoH0rzhV03cIIwNDG4+8sTgBameITrv6sPiuDhfGuTvAQedGGPnuBwdp0j+mw3vvTu3
-         JNIvt6FUVEGkVKeBtCTO+ZqcC2ZTLWG1xzx+PKl/1mu7fEMXrLHys3HaKG0xUFUVRSAR
-         ZMCcLke655hfzEwKe8LyFi/EdIyiNoJCGRZJmQ/5owwl9lJ540b0b3fFJrtp3zTE4wpl
-         u0Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQqd2tB2bkoZ2AZNEr8C2+qjHreKxSClEq50Q8wxiYSIuttMEjp6pBNeZeGlSFjSyEoVv4URs6@vger.kernel.org, AJvYcCX3eN9pCJ174GBCtpk+/Shqb0wclWvMGXm+4Fgil33789VB/bjdI6JUjkXnXXI9Idbx2VuNQdFuwmuRhn7e@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl6t3gWyOitPIe6UCdjtgctXq+RBBGPqgFsTZOluV3qtPzyYUI
-	qEpL8akZj1VO/cdBfRsI1vYWF9zsvzDijlhfz7e3Ed0BS9O6P/hkvpRVWg==
-X-Google-Smtp-Source: AGHT+IEGVnvKsQpc89YddCI2AsmSWtFvjvP2OkaNjfnWPY+W5uWvms2kpi+lBtJrvCygDGU1tqtYsw==
-X-Received: by 2002:a17:902:e881:b0:202:38be:7b20 with SMTP id d9443c01a7336-20238be7c70mr43545105ad.38.1724105807116;
-        Mon, 19 Aug 2024 15:16:47 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03793b6sm66617345ad.127.2024.08.19.15.16.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 15:16:46 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 19 Aug 2024 12:16:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
-	mkoutny@suse.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] cgroup: update some statememt about delegation
-Message-ID: <ZsPETdWAlUu2tDIU@slm.duckdns.org>
-References: <20240815131408.3151804-1-chenridong@huawei.com>
+	s=arc-20240116; t=1724105827; c=relaxed/simple;
+	bh=R7+8ejfm5LfwZRlzV24x9z+7Bhp5JEOgxQj3MwJpXfY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HKflnJa3q75A54BYbPRKZtweUnTL7/DKdxEGDfUOulsiJ57A8BN47FVB9Sb6stgRNLQwAss/nxVrHq4UB6V8Hi7+g2MUfuuW6ucxVLCrxUyu3QtrWpjs7I0pQoqSwmLWqlZHuzTswP0TijlU9fPJMitHT79Dh7Qe1uOo0HDxcgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fSpaVk9H; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724105817; x=1724365017;
+	bh=e89MVHldFWcJh7oiV5+C6cy/kXf0bXpmNDeqvqwSpoI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fSpaVk9HrII6K0E0c4wEwzkNsIpaS2sTNBW3fsPLOGV2qpW50VjvoyY1WIopc4Eq4
+	 Q1s/JCBiWaSXCpn+jv43MHh9SXp9DXaPbdnoPOq0rLLe86DVgX6GouBrpGabxyqaAQ
+	 1D5u9lAVRscjCqjAWkuCEnzJPwBM3d63OYxpdHkRfJ8ws5OhcoR8ZfrRwANJu83Fg+
+	 7VTVlhvlebzRnRpVLItK3sLYNCKeo+aKWs0VSNfQTkmFSbEsLsJWZFjaqZe9y95DCl
+	 /i7xQqOEYU2i1/kte/cwPBaz4EhzXBq62NqJdFWdpSwPjO2gsDWrZ00UrjNV/4uG6t
+	 TAwKwvMJ/WFeA==
+Date: Mon, 19 Aug 2024 22:16:53 +0000
+To: Sami Tolvanen <samitolvanen@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
+Message-ID: <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me>
+In-Reply-To: <20240819193851.GA4809@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-37-samitolvanen@google.com> <2024081600-grub-deskwork-4bae@gregkh> <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com> <2024081705-overarch-deceptive-6689@gregkh> <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me> <20240819193851.GA4809@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 7749e72b3fa03857e22ab659ccfdbfd44623f1cc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815131408.3151804-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 01:14:08PM +0000, Chen Ridong wrote:
-> The comment in cgroup_file_write is missing some interfaces, such as
-> 'cgroup.threads'. All delegatable files are listed in
-> '/sys/kernel/cgroup/delegate', so update the comment in cgroup_file_write.
-> Besides, add a statement that files outside the namespace shouldn't be
-> visible from inside the delegated namespace.
-> 
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+On 19.08.24 21:38, Sami Tolvanen wrote:
+> Hi Benno,
+>=20
+> On Sat, Aug 17, 2024 at 01:19:55PM +0000, Benno Lossin wrote:
+>>
+>> For this use-case (the one in the patch), I don't really know if we want
+>> to copy the approach from C. Do we even support exporting kABI from
+>> Rust? If yes, then we I would recommend we tag it in the source code
+>> instead of using a union. Here the example from the patch adapted:
+>>
+>>     #[repr(C)] // needed for layout stability
+>>     pub struct Struct1 {
+>>         a: u64,
+>>         #[kabi_reserved(u64)] // this marker is new
+>>         _reserved: u64,
+>>     }
+>>
+>> And then to use the reserved field, you would do this:
+>>
+>>     #[repr(C)]
+>>     pub struct Struct1 {
+>>         a: u64,
+>>         #[kabi_reserved(u64)]
+>>         b: Struct2,
+>>     }
+>>
+>>     #[repr(C)]
+>>     pub struct Struct2 {
+>>         b: i32,
+>>         v: i32,
+>>     }
+>>
+>> The attribute would check that the size of the two types match and
+>> gendwarfksyms would use the type given in "()" instead of the actual
+>> type.
+>=20
+> This definitely looks cleaner than unions in Rust, but how would this
+> scheme be visible in DWARF? You might also need to expand the annotation
+> to allow replacing one reserved field with multiple smaller ones without
+> using structs.
 
-Applied to cgroup/for-6.12 w/ text reflowed for consistency.
+Hmm that's a good question, I have no idea how DWARF works. The way you
+do it in this patch is just by the name of the field, right?
 
-Thanks.
+If Rust's DWARF output contains exact types names (I just checked this,
+I *think* that this is the case, but I have never used/seen DWARF
+before), we might be able to just create a `KAbiReserved<T, R>` type
+that you search for instead of the attribute. The usage would then be
+like this:
 
--- 
-tejun
+    #[repr(C)]
+    pub struct Struct1 {
+        a: u64,
+        _reserved: KAbiReserved<(), u64>,
+    }
+
+And then when adding a new field, you would do this:
+
+    #[repr(C)]
+    pub struct Struct1 {
+        a: u64,
+        b: KAbiReserved<Struct2, u64>,
+    }
+
+    /* Struct2 as above */
+
+The way `KAbiReserved` is implemented is via a `union` (maybe a bit
+ironic, considering what I said in my other replies, but in this case,
+we would provide a safe abstraction over this `union`, thus avoiding
+exposing users of this type to `unsafe`):
+
+    #[repr(C)]
+    pub union KAbiReserved<T, R> {
+        value: T,
+        _reserved: R,
+    }
+
+    impl<T, R> Drop for KAbiReserved<T, R> {
+        fn drop(&mut self) {
+            let val =3D &mut **self;
+            unsafe { ptr::drop_in_place(val) };
+        }
+    }
+
+    impl<T, R> Deref for KAbiReserved<T, R> {
+        type Target =3D T;
+
+        fn deref(&self) -> &Self::Target {
+            unsafe { &self.value }
+        }
+    }
+
+    impl<T, R> DerefMut for KAbiReserved<T, R> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            unsafe { &mut self.value }
+        }
+    }
+
+    impl<T, R> KAbiReserved<T, R> {
+        pub fn new(value: T) -> Self {
+            // we want to ensure that people don't accidentally use a bigge=
+r type.
+            build_assert!(size_of::<R>() >=3D size_of::<T>());
+            Self { value }
+        }
+
+        pub fn into_value(self) -> T {
+            unsafe { self.value }
+        }
+    }
+
+This needs some more work, but is a lot cleaner than having the users
+use raw unions + unsafe (essentially they would re-implement the code
+above).
+
+If you want me to turn the above into a patch let me know (also if you
+or someone else wants to give it a try, then please go ahead! If you
+need help, just send me a mail or a message on zulip).
+
+---
+Cheers,
+Benno
+
 
