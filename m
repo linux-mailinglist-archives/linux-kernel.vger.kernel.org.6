@@ -1,130 +1,143 @@
-Return-Path: <linux-kernel+bounces-292287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43502956D85
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCF0956D6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D11BBB246C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:40:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E091C1C2384D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133121741E0;
-	Mon, 19 Aug 2024 14:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A64A171E55;
+	Mon, 19 Aug 2024 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GaCCa29D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jySK18sj"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007E3172BDC;
-	Mon, 19 Aug 2024 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79A615F336;
+	Mon, 19 Aug 2024 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078403; cv=none; b=aJI1vn6Cu+W12WRFZ1LNY6j1goPgfqHrEW/mzpIOBn6TswC0oygvQDAWfa1DMf7oYlYmUu35tSjThUpepc757Wsvyg/WN7yP/8mNWOhrc81nD0F+lrw2Dm9V6AMqb3EjNpI3WaoSRRrLSjp8wPB6EbxZn6GtGeF7Zhnmj3JqTyE=
+	t=1724078131; cv=none; b=fLzWIvCXQhtkzKq7jL3yuFxAxNEdwJK+FnmdfZTWA9ypHVX7nha2jYXi+3buMaLBi/KF1GtQOZHW7EIuZKXNwPeigIK+fKGyXln2UziLDba9zc3vwZXZesbcJ60NaroCqQ+s1coOPpS/9Mrrjtej4gm2gjEXqQzWZubhgawPOw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078403; c=relaxed/simple;
-	bh=gUF3ERCTX5uqyQyYbzFQu+PY5KkzZ7VKjMcrKhHQ2/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EdiE7WmOuFDREJf+Ip/aLDQcgZxPXct+qiM3+WOVKYVvkbz3+eDOwUGcRRysEJTaXShDkomG1dyIOWNwyWTJSBsT7qPiaFaJtoLwy+2MBt2/0c8Wrtrm9I3ML/sE8FzY7hyMoB/OIJISaICe9Rhs5w7Xoo1FmZeEfTOVFA2s/Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GaCCa29D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCLLIk000780;
-	Mon, 19 Aug 2024 14:34:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gUF3ERCTX5uqyQyYbzFQu+PY5KkzZ7VKjMcrKhHQ2/4=; b=GaCCa29DV/IBosot
-	7hnJnBt22VNe4uyJSSMiD6pdW97Af5EBRhFya/YJh4TgX/vI3Wk1rKzS/GYMKOST
-	q9cj5032IWBhygOpiwnoFCPoBrWbyfE3jax42/zmDaTXq9WbNR69LyrHtiMjljK+
-	3IkWE8eBW8ekW0KrDw97/mtu8+/z4Ocf8cP/Bqd3rW4RFq0vFxrzg5VwT9K2uV7m
-	y7/i0Bng+pm5eQjjaFX3w4tVJnaLg6JbVRoG5n8ZnP++fFZVI2Ys+DKBGew1+M/D
-	p3cjmWDDcFj6A95TsD0aIss+6jlOx4DqjhkE+98mBCLaEo6IobXV8f66LL0Btzjx
-	uOzVDg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145yw89xm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:34:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JEYfZq009223
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:34:41 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
- 2024 07:34:40 -0700
-Message-ID: <fafa64ff-63ee-4af1-b669-939dc1933012@quicinc.com>
-Date: Mon, 19 Aug 2024 07:34:40 -0700
+	s=arc-20240116; t=1724078131; c=relaxed/simple;
+	bh=3AkAPvoBMlH9T0QqGV7Vz1juOc/YlsIVTFY5T19v/mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjG5NMcJ0l4Sf89X9uvJy9ntACa3SYMaIQ88AsTiHT8UmqBW2iYj1E1sjA8+oUjY2cWR/AwVqY4HiXvD1K7xUOhQyTjysyAcb1f5WKQJxFNnZbV4NPuUqLc7sQKH70cDETxxQ+Ao2fzizhor2uxhiqX0bd5TU6pHT66lqvUtBW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jySK18sj; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a83562f9be9so381046166b.0;
+        Mon, 19 Aug 2024 07:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724078128; x=1724682928; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jTUooqt+eY78HohIStaM/57XK4P3t1SVjvktkPox5Ug=;
+        b=jySK18sjPxfXCDluKxx5euu33tTFNqujN+TkNbgjoLSZtCzwkxQvhk42ujwRYa0Jao
+         s9ikqYBvqTgMw+/nY1b147dWs0fbPDKDEIoAJ2CdBW4ywiZi2SbhvajkZPYEPTlXBygm
+         LswG2F+KJPkKzDTodksTflJVHHXZlvVX4y/95GzSIMmVIuSGeCFlZLjhvuuDTnrPHcpc
+         mXWJPqVsWSKKbL9YN/vgeMZ8F1IaCu1hu4zVC32tb9/oAvVnmXuuGH/HnU1GE/rnIowY
+         BR4ck824wA6NkFexVtvVdmf88/X+nr1+pjfbVAc013n03CCEL63SyjmE2y3Nt4RW0Eke
+         cS0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724078128; x=1724682928;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jTUooqt+eY78HohIStaM/57XK4P3t1SVjvktkPox5Ug=;
+        b=CuvxBWSAkpfp9ANl+B2auaqKc/Prmn5Ab5DLUs/7u0PwdU6lerHGJJBCRiSvmRd89W
+         x4bLPKCpXSNoMvmhQj5WiIvOtLCVBp5s/zR9r2DjAZIUvpeDohbC1X2QFCPOE39DsOKh
+         m6+GT4C4Z5It8FepP9N0YytRYGRCtX2Ls2jN0larnzaiNIkOSk7cfIuRONTLWrckE2Cw
+         tGcPPyz0gLAGrvL1QSRLxthVjV8dus0QjbmnPURXRss69aQuF4m/QamwtlM5eXXMHC9r
+         LwEzKjHzR9c6NX6geNc91ED0g8DPwW5Z4LjXVz4LDST12slCI1L2VxqSCKaWxvBYe2HE
+         roiA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/o6AOD8ANlxKFbSzuoePKOOZGtjbgFVqdxYd9CtyyWinvO9Bjvse6QEvWRdW7+NsQoPJOl0Bw5v9AIRrcUby0qOcq5J4QSX4QbCNZe75c3K6IMTaieNb8ObFlZIWB5uGdmFew
+X-Gm-Message-State: AOJu0YwUaPV+yyn7guB3ebCjZ9WKAW3FdcfBdImXazAQ6/5ZY3oJXOv1
+	ybxq7Ws12BG4bXiSuiNNCxDeqP6G8f18tuy2Nj4f41P/K3R1jlgW
+X-Google-Smtp-Source: AGHT+IFK9alpT6hYq+n3YKi2nRz40t6HVvkBabJGL4Kb1JH3th6i+jOBlQUX8x+whMmO1JtuhV1GFw==
+X-Received: by 2002:a17:906:f599:b0:a7d:a21d:ffb8 with SMTP id a640c23a62f3a-a8392a4758amr528552866b.64.1724078127601;
+        Mon, 19 Aug 2024 07:35:27 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839356efsm642281466b.135.2024.08.19.07.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 07:35:27 -0700 (PDT)
+Date: Mon, 19 Aug 2024 17:35:24 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Pieter <vtpieter@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
+ change_tag_protocol support
+Message-ID: <20240819143524.wjuevpejxgqh3hws@skbuf>
+References: <20240819101238.1570176-1-vtpieter@gmail.com>
+ <20240819101238.1570176-2-vtpieter@gmail.com>
+ <20240819104112.gi2egnjbf3b67scu@skbuf>
+ <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
+ <90009327-df9d-4ed7-ac6c-be87065421ba@lunn.ch>
+ <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+ <9e5cc632-3058-46b2-8920-30c521eb1bbd@lunn.ch>
+ <CAHvy4Aq=as=K48NZHt3Ek8Yg_AzyFdsmTe92b8SFobzUBM9JNA@mail.gmail.com>
+ <20240819140536.f33prrex2n3ifi7i@skbuf>
+ <CAHvy4AqRbsjvU4mtRXHuu6dvPCgGfvZUUiDc3OPbk_PtdNBpPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/14] PGPLIB: Basic packet parser
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
-        <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
-        <linux-integrity@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
- <20240818165756.629203-5-roberto.sassu@huaweicloud.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240818165756.629203-5-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LFD3j4ArA-wnAkMZ6iTuxsk2fbFhuNSp
-X-Proofpoint-GUID: LFD3j4ArA-wnAkMZ6iTuxsk2fbFhuNSp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_13,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408190096
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHvy4AqRbsjvU4mtRXHuu6dvPCgGfvZUUiDc3OPbk_PtdNBpPg@mail.gmail.com>
 
-On 8/18/24 09:57, Roberto Sassu wrote:
-...
-> diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_keys/pgp_library.c
-> new file mode 100644
-> index 000000000000..33ed01f67654
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/pgp_library.c
-> @@ -0,0 +1,272 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* PGP packet parser (RFC 4880)
-> + *
-> + * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#define pr_fmt(fmt) "PGPL: "fmt
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +#include "pgplib.h"
-> +
-> +MODULE_LICENSE("GPL");
+On Mon, Aug 19, 2024 at 04:20:31PM +0200, Pieter wrote:
+> Hi Vladimir,
+> 
+> > On Mon, Aug 19, 2024 at 03:43:42PM +0200, Pieter wrote:
+> > > Right so I'm managing it but I don't care from which port the packets
+> > > originate, so I could disable the tagging in my case.
+> > >
+> > > My problem is that with tagging enabled, I cannot use the DSA conduit
+> > > interface as a regular one to open sockets etc.
+> >
+> > Open the socket on the bridge interface then?
+> 
+> Assuming this works,
 
-Missing MODULE_DESCRIPTION()
+You don't have to "assume" it works. You can test and verify that it works.
+We have a selftest for receiving all kinds of packets on standalone and
+bridged interfaces.
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/tree/tools/testing/selftests/net/forwarding/local_termination.sh
 
-Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-description is missing"), a module without a MODULE_DESCRIPTION() will
-result in a warning when built with make W=1. Recently, multiple
-developers have been eradicating these warnings treewide, and very few
-are left, so please don't introduce a new one :)
+> how to tell all user space programs to use br0 instead of eth0?
 
-/jeff
+Question does not compute, sorry. Is this answer what you're looking for?
+"Just like you tell them to use eth0, just that instead of eth0 you type br0".
+Or just like Andrew says. You don't explicitly bind IP sockets to
+interfaces, you let the routing layer pick the interface based on the
+routing table and the IP addresses on each interface. Ergo, for IP
+sockets you just need to put your IP address on the bridge interface.
+
+> Both interfaces are up and I can't do `ifdown eth0` without losing
+> all connectivity. I'm using busybox's ifup BTW and it says:
+> $ ifup br0
+> ifup: ignoring unknown interface br0
+
+busybox ifupdown reads the /etc/network/interfaces, it's saying that
+interface isn't there. Which it really isn't, maybe? I haven't really
+used busybox ifupdown and I don't know what it can do with bridges.
+
+The basic command to bring a network interface up is "ip link set dev $NAME up".
+This has no state/configuration file and just constructs netlink
+messages to pass through the rtnetlink socket to the kernel.
 
