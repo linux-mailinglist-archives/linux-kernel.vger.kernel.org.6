@@ -1,270 +1,181 @@
-Return-Path: <linux-kernel+bounces-291845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE539567EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7165956813
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B3E1C21B20
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D121F22B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576401607B7;
-	Mon, 19 Aug 2024 10:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD071662F2;
+	Mon, 19 Aug 2024 10:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTmVW/XW"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mhu9opnl"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011027.outbound.protection.outlook.com [52.103.33.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E97615F3EE;
-	Mon, 19 Aug 2024 10:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724062417; cv=none; b=bdMi2HmbpRq8F/6f14u6IQMz9T7ql1U5KDHh3EaZciMOFYywEFkZkaVEwNx4N2fBQH8vwaCo5gpP/FpqolTEQfHpxOxSTTaPW6hw0PFnHDKlpljOYL+H697RTSKwYecEwnBqgjcRcAfMKytyYfepwTAO/eb19or1om0nffUxBg4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724062417; c=relaxed/simple;
-	bh=RkzYIGUU5bJySGGjGxuvyvAREgbhVMdcv6+RZR9/W/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nDBp62/ZGrOABtPkS4Tg74pODMkI3FvxFHDyz8gZY5uFhwq8Ipu/1pj1QadKNvDT1zelyuoPJTmstlLp5VkigytaRfmMa/xvqOR0wNtsYXhx3pnaauGmAmzfbVzKevbJ4sycyo07FTRgptnUxmKFSTP5hc7KlbVj4zekUOtFvWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTmVW/XW; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so22530e87.0;
-        Mon, 19 Aug 2024 03:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724062413; x=1724667213; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37VBLD6AtZ7XziwZYJK3gfCo6k1sbxMLWhSaF5fGyIE=;
-        b=iTmVW/XWEKRmZqfowY8cRPdEz4huUYGQ+B264NZk3hS37H0IwzDUTnXjkmxBFH2uA/
-         2f4czOkVkkpntLNdDNECGDNo+cWlVvyqOPWeukeVkmzd8LyJKsKNGqzuHCKRWhvcq9N6
-         hmtuIFjlgj4to5sYc18wao4AgwbknGa8qOqSfLX9hLjyHI4FRHlUKbV+wKvUAJRDZXvW
-         xIB4snXiSL1bIdkVFdluowm9MwM3GeV93M6a9pa8clwuAo5asvPjhQzidH+1L+r6qrnL
-         8ajmU0uOX31qPhAQ3zvjyKTzv5/Fzn6NBcA0O8VpriWiXZZJKreJpBBPhfPt6BtNmpBF
-         klkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724062413; x=1724667213;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=37VBLD6AtZ7XziwZYJK3gfCo6k1sbxMLWhSaF5fGyIE=;
-        b=uuThlyFjacn2eSBe4lDEw8/KeVLAiRFAzEWbNDAMBx7jjY0KD9BuAnlVrvENlPxAQZ
-         lS7xGSNPjrSrpsoUsFzE8klydR1l7VF7RkVvnTjpNXXYTM5YUeXm/dS5jiOhUh+mtzQp
-         ++XMpQq71zSAJipd0R+VDsVG3axncHk7/vbOJz6bqJ6qneH8aWFRpQJdWMMGbwhDt4uo
-         BGBWatX5Q1Hef9l7S0Vp1GOBKCZs5l3ogeNgcbe9mQB8ESFN+m/7EZ/jjUeOqkIdjhl4
-         1efjEp8P48H0pZTqt1u8csTg8jHGPju3vzc4DJ9kC+1aYFGbp4yPSIvqER1chnMIDWB/
-         JS7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVclZVWOHixj888En16hh4mtg8JjsfOKBdIJpPs6ljPymlXvqLT5l9zaKoJMDxp/MAYAb+vnraU@vger.kernel.org, AJvYcCXGbakaKd+u23qnoPjc4yqRQv/Lja8ZBX0mz1GwtcwD27lJCkSavk9pnrEMNb2cimtaM8bQBzRnFrvS8NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDfvS9q1rMpVT7waFwTPu7I1MSjjALtz1WKzliE4w4og6D0sHZ
-	4+POaKqUBmNRIJvZGf/kcy7oIXAndzAWheoCKh+elJrT9xGsCa7L
-X-Google-Smtp-Source: AGHT+IFw9LOg0n/sgCPZQaEuvIgh+UKc+UMNfJOSnlW2WfMvbqWN0RlzEG3B0OZdM4lw/PSufF1Sbw==
-X-Received: by 2002:a05:6512:1085:b0:530:dfab:9315 with SMTP id 2adb3069b0e04-5331c691e63mr8844302e87.10.1724062413228;
-        Mon, 19 Aug 2024 03:13:33 -0700 (PDT)
-Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396d5a7sm612749366b.217.2024.08.19.03.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 03:13:32 -0700 (PDT)
-From: vtpieter@gmail.com
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	netdev@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38E1165F14;
+	Mon, 19 Aug 2024 10:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724062591; cv=fail; b=rDxU5Phy+8DajbVRN4KbxrHJIMwqMqeY9ZsrqAYWJbf6Dv87ScWbEwyDU+xL6/IWUNtuJJj9efobHF+WE/ptbD1FED6H4hahNpe87p2JVyyyAeA8q5Z3bdCQNq4hJiXLX+gDyrd6Z/FSycjnhbLhyDhoxykASJ9r+SlAvMDwEsY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724062591; c=relaxed/simple;
+	bh=KsQdJsgBkgsrgplVh4rZ+1UCcpaCmhEvl8mfS6/cNMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=INRP67TqQX+vivEK5YUOHKVJduBLIFbemo76DknmlncHvMiAO0SYNg15DA8LlQIaQUV13o51xu2fDRGYfpYLjXCcTLOrwqUe1ECWCPVOPyXSIUIWjt3HTNHdkzvEfac3BBr+6bN+xA2ZozczPHMhJ5jE/Di66wWkIiLyn7eOkI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mhu9opnl; arc=fail smtp.client-ip=52.103.33.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWGcdwFgS692x5Klf504x0b4e9sNuyxQeTY/FspvgMfISahUS+7b9DUwP2Hi770c18ERSVWMbsYUm8K5x0sreu2N9aoUwpvnFkbs4GO83++wvKsgK5lvRHUmekJAheORhmyObXm1GGvISHz5LxEo5FwzqE/A5jW7pwS7V5V57dZPvUvvWSnqjQHQu/jdC4R54FE2xVzhOxzPVCCI3ju9qj4iJZIv9UXm6CrIsF1vGnjEDAuiS49M4eyaOSp4+bJoq7C6XQ7QpDpDx53HLdvOFalE6BWE3H3f6kHmHdpaTtDWX3QZXmwhBYHROvvb3RfAPrMtvqJFT5GLDKcXgho6MA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WSO1Fp/Uii6BaHYkbchzc2eyOtlTYi0WWMedNvYDons=;
+ b=xwDqax3ME91WyW4a+Qe0Mfet9HEPkUxl64Rwq065jzXK3j+UFREtwYpsr+iTp84S+ISJrAvlqWRp79rKhBkUHXw0UaMg+hGlYUhe+ojgaXWad/yMJhilEvVcd2BSnFiL7F8bzfzjsggE8ShfFDFzOeguxZZsmRnbLBh0Co/XC4Q7fQRJxoDVfqt57kyd62t2i5DdWZIQUZxJpoQXYRmCelWIGJZvBtXYVaJHjVjClTdwfvZzsCZlL1rxaOh65bzXE4wS9gxxpp0P0ZWPSNtjA7xIZqctbIBeH+LiSDWr2pCZlmzueXhF6RXtk4/r1yVl7Yic0R1Kyrmszs+sXJ/cAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WSO1Fp/Uii6BaHYkbchzc2eyOtlTYi0WWMedNvYDons=;
+ b=mhu9opnlhDxaKaNWynsS+JGHcpKl8O3RuQYRnOF2ayXj8jBksoKLg+xrN0Bi/Lf/sRaeZGQMeZgXMuwneYnb+hCFOyzho7iZP5dMISjVhkOD9TQlFGJHYVpzZyNFXuTakNqR6vTrW/ncGqM68VFQ7hfvryS/WkDkeqobGyaysaRZ6dSXdOFe5RPdXdwW08ZjfLfTF9Qm/ePBxIztKUGUTqYIujpU82PM9zl0g4uXmKdsQFQ01kd9yMiORRXw9vIjHCGycCY80D4qrgcf+Z5rOpfenrUP0yDC6K406xLJ7aNm8Qffz9SeZwodrnYDUp8L1dz1mQPdf5s6iKL/eOJt6A==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by DB9PR03MB7291.eurprd03.prod.outlook.com (2603:10a6:10:221::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 10:16:23 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 10:16:23 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com
+Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8 change_tag_protocol support
-Date: Mon, 19 Aug 2024 12:12:35 +0200
-Message-ID: <20240819101238.1570176-2-vtpieter@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240819101238.1570176-1-vtpieter@gmail.com>
-References: <20240819101238.1570176-1-vtpieter@gmail.com>
+Subject: [PATCH bpf-next v2 1/2] bpf: Make the pointer returned by iter next method valid
+Date: Mon, 19 Aug 2024 11:13:52 +0100
+Message-ID:
+ <AM6PR03MB5848FD2C06A4AEF4D142EE91998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [wqRm7CFf1S7KHOwdTPMhVXW/T1gw0IwD]
+X-ClientProxiedBy: TYCPR01CA0095.jpnprd01.prod.outlook.com
+ (2603:1096:405:3::35) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240819101352.62730-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|DB9PR03MB7291:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6d3f162-3283-4c52-7141-08dcc037f9ae
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|8060799006|15080799003|461199028|5072599009|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	NtoUiFGpdX7sFCyWbRqrKBADYKhsd0/e0duRCEdsWlp8S/NdhvPAfFjCu9r2zC4tDDbaQ1skz9a2GwLl+Ioe44aAcNM9Ulgp0LoUOSEhJCKcgHxVBndxfvS1pFPIV1+qgVRFrG7RI4WW9lD9Illj8C/ZDXqQ55iHKZ88w1EbIdvOgidpT6sNkaTxYcqLgjCMCabjirmLrNIxpi11RKJGPL27VsdpucV+DeSvSFf1FUDTZOvAWi2wnjVHFoFKmIDLRYHU8JU8kO+OJ5osB5elOdolIQzIWBc2YNbWe0H/Y7d6T2WBJWMHtSWF/GjaU/4U1WOQIjditUiQJ2iYVJBYMzwi43fk+stfghOFDJagM6HkCrwUl4oHrRMrg8jlXU60xmAGRvV7FEwpK75d1KoKvt7/ObRjOLUnljDfp1E9qXthObVhsrys1fJh9faP5rHn+Uejg0+1oOPoJ4n95DMqFBHqgB6xL7DaMLvS9g7uLTR/M/twzrAi08r8ywxyMphh4RrWnHPf9UTZ7zwY/MpiPL/NU0y6rJX4yRvYSoH8rwJTsuXUsAqCgz3zYjhP3fwTNBR4ogJ+JeS+9k56TQzRQGaeKVnVlk8BWixLHkLC1KF/xULcV/OXeNECKTm8kxc5oxuGhbjgqWUQ5Q2/uU78dzuqQtZZWM0uS3iWLJR3aWnpVc6Fun1GGZj+ACWCS5rYCW9jhLt92/YwcLjUt39XDA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4qFOrlV6iVjz+re+Theb4EBTZRk4An1R7UJTddiSBfppNd+PQadIt8Hb4PXD?=
+ =?us-ascii?Q?AO3Zfw4c8IJvoJw02IYNuhv3hfS0sVFoDn7Pke7uhAa6npsSgIYo5CcoP3Pg?=
+ =?us-ascii?Q?7gRSQQ0lyJhSrTu4+BC/nTc9moUTofUsfvLNeA57deYO8HwRBwmhXFloTAgg?=
+ =?us-ascii?Q?RLFj+/xbFlKlh0xA4BDZCw8d76Fykyjzez34nKbYx7xaFI90W9RbdXgbfzZ/?=
+ =?us-ascii?Q?RXiwdmyahYzNUVFiRF0NSdmvioALsWpkUKS2Au1G4Sf/Bg0UQEEbrjubCjmd?=
+ =?us-ascii?Q?cQhJodFOLnz8PzcemY6dc4x8IdyBmDtPe3rsZsqlJRBBhwlclu0irTBXEW++?=
+ =?us-ascii?Q?e3MPig+6j4AxZ4LgT2763zZ5uF+7AsAnHbyNZgk1ePWscmpg1R9whL2nhlCg?=
+ =?us-ascii?Q?rwRsWdbg1A8DCn/F6o6nuDKZaBi1dGpgWP323B/vV+x4BfEVBuXBThBT67Ze?=
+ =?us-ascii?Q?K+1KhMaxF/wpwZ/88egkKlQFswfisN8D+fn5PITT8OamWEoUpky/bUZwHioJ?=
+ =?us-ascii?Q?gF3mUjIsdOLy+9pDdB6/ZT1CSXPijEDuQhLoXnG7oOyUdOpg3aiLyDGTar7k?=
+ =?us-ascii?Q?8kTS3TiWgnMqKwYa51UryAOA5Gp//vq6mQnGtP8SA2QdGBKCjf7T2YRmBoB1?=
+ =?us-ascii?Q?EyycjI3G9I1BWFHH6Eur6EHtTG5V3xN2JSAOa9BGHJyYrxbbWXasrmBNID2a?=
+ =?us-ascii?Q?AVEzRELy9zWQh3YQWB+IV9vyuBUgFBGeZky57NnK7VL9kaYdlGUsGfLNw/6Z?=
+ =?us-ascii?Q?seXNNcFNX4UYqB/0AydDCZ6pUjSekyEIToRTdB0PaY6IncMrrqm36cLSEFE8?=
+ =?us-ascii?Q?EOTNk4txpkYcBYszdWoGujebXQQBCjXWAFBzkuVTerLXa/gYflRM7nIhOANJ?=
+ =?us-ascii?Q?UlH9h+WvFyID9vycCTMAzYwabryp7pwQEbl6RegJoqq5fqFtPa3ve5D6egDy?=
+ =?us-ascii?Q?72BvieI4tL23jfsrFghhaT0+FYfLavZf/L7NB38amhqOqfd7bRp7iVZRJ9r1?=
+ =?us-ascii?Q?KVGrNA6A2c8/7jBSiHnNVx3MDOMYvMLYU7xaRZ2dQeF/VePNELrApwCZRHIn?=
+ =?us-ascii?Q?7/OnebI84haYqkODyIIthoT1IMbN7FKFuszrvbXAVOTqUUab5z7lcgvuKe/g?=
+ =?us-ascii?Q?XKjDdAfsXG6yCKjUxJDlIJN2Z/+CJmgr/L2rQUTrLJx9zpzJD+bsW86Aqrec?=
+ =?us-ascii?Q?ST7VQ6i13CDy+HygWw8VAWwRDCi6P5n3F1CSdL3vB5cg4YsmR/IA+s9mwu2I?=
+ =?us-ascii?Q?CmL6IxNVccKAnMtVy4wB?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6d3f162-3283-4c52-7141-08dcc037f9ae
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 10:16:23.0717
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR03MB7291
 
-From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+Currently we cannot pass the pointer returned by iter next method as
+argument to KF_TRUSTED_ARGS or KF_RCU kfuncs, because the pointer
+returned by iter next method is not "valid".
 
-Add support for changing the KSZ8 switches tag protocol. In fact
-these devices can only enable or disable the tail tag, so there's
-really only three supported protocols:
-- DSA_TAG_PROTO_KSZ8795 for KSZ87xx
-- DSA_TAG_PROTO_KSZ9893 for KSZ88x3
-- DSA_TAG_PROTO_NONE
+This patch sets the pointer returned by iter next method to be valid.
 
-When disabled, this can be used as a workaround for the 'Common
-pitfalls using DSA setups' [1] to use the conduit network interface as
-a regular one, admittedly forgoing most DSA functionality and using
-the device as an unmanaged switch whilst allowing control
-operations (ethtool, PHY management, WoL). Implementing the new
-software-defined DSA tagging protocol tag_8021q [2] for these devices
-seems overkill for this use case at the time being.
+This is based on the fact that if the iterator is implemented correctly,
+then the pointer returned from the iter next method should be valid.
 
-In addition, shorten certain dev->chip_id checks by using the existing
-ksz_is_ksz87xx instead.
+This does not make NULL pointer valid. If the iter next method has
+KF_RET_NULL flag, then the verifier will ask the ebpf program to
+check NULL pointer.
 
-Link: https://www.kernel.org/doc/html/latest/networking/dsa/dsa.html [1]
-Link: https://lpc.events/event/11/contributions/949/attachments/823/1555/paper.pdf [2]
-Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+KF_RCU_PROTECTED iterator is a special case, the pointer returned by
+iter next method should only be valid within RCU critical section,
+so it should be with MEM_RCU, not PTR_TRUSTED.
+
+The pointer returned by iter next method of other types of iterators
+is with PTR_TRUSTED.
+
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 ---
- drivers/net/dsa/microchip/ksz8.h       |  2 ++
- drivers/net/dsa/microchip/ksz8795.c    | 27 ++++++++++++++++++++++++++
- drivers/net/dsa/microchip/ksz_common.c | 24 +++++++++++++++++------
- drivers/net/dsa/microchip/ksz_common.h |  2 ++
- 4 files changed, 49 insertions(+), 6 deletions(-)
+v1 -> v2: Handle KF_RCU_PROTECTED case and add corresponding test cases
 
-diff --git a/drivers/net/dsa/microchip/ksz8.h b/drivers/net/dsa/microchip/ksz8.h
-index e1c79ff97123..14c7912b854e 100644
---- a/drivers/net/dsa/microchip/ksz8.h
-+++ b/drivers/net/dsa/microchip/ksz8.h
-@@ -57,6 +57,8 @@ int ksz8_change_mtu(struct ksz_device *dev, int port, int mtu);
- int ksz8_pme_write8(struct ksz_device *dev, u32 reg, u8 value);
- int ksz8_pme_pread8(struct ksz_device *dev, int port, int offset, u8 *data);
- int ksz8_pme_pwrite8(struct ksz_device *dev, int port, int offset, u8 data);
-+int ksz8_change_tag_protocol(struct ksz_device *dev,
-+			     enum dsa_tag_protocol proto);
- void ksz8_phylink_mac_link_up(struct phylink_config *config,
- 			      struct phy_device *phydev, unsigned int mode,
- 			      phy_interface_t interface, int speed, int duplex,
-diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-index a01079297a8c..41d163e88f03 100644
---- a/drivers/net/dsa/microchip/ksz8795.c
-+++ b/drivers/net/dsa/microchip/ksz8795.c
-@@ -194,6 +194,33 @@ int ksz8_change_mtu(struct ksz_device *dev, int port, int mtu)
- 	return -EOPNOTSUPP;
- }
- 
-+/**
-+ * ksz8_change_tag_protocol - Change tag protocol
-+ * @dev: The device structure.
-+ * @proto: The requested protocol.
-+ *
-+ * This function allows changing the tag protocol. In fact the ksz8
-+ * devices can only enable or disable the tail tag.
-+ *
-+ * Return: 0 on success, -EPROTONOSUPPORT in case protocol not supported.
-+ */
-+int ksz8_change_tag_protocol(struct ksz_device *dev,
-+			     enum dsa_tag_protocol proto)
-+{
-+	const u32 *masks = dev->info->masks;
-+	const u16 *regs = dev->info->regs;
+ kernel/bpf/verifier.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index ebec74c28ae3..d083925c2ba8 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -8233,6 +8233,12 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
+ 			verbose(env, "bug: bad parent state for iter next call");
+ 			return -EFAULT;
+ 		}
 +
-+	if ((proto == DSA_TAG_PROTO_KSZ8795 && ksz_is_ksz87xx(dev)) ||
-+	    (proto == DSA_TAG_PROTO_KSZ9893 && ksz_is_ksz88x3(dev)))
-+		ksz_cfg(dev, regs[S_TAIL_TAG_CTRL], masks[SW_TAIL_TAG_ENABLE], true);
-+	else if (proto == DSA_TAG_PROTO_NONE)
-+		ksz_cfg(dev, regs[S_TAIL_TAG_CTRL], masks[SW_TAIL_TAG_ENABLE], false);
-+	else
-+		return -EPROTONOSUPPORT;
++		if (cur_iter->type & MEM_RCU) /* KF_RCU_PROTECTED */
++			cur_fr->regs[BPF_REG_0].type |= MEM_RCU;
++		else
++			cur_fr->regs[BPF_REG_0].type |= PTR_TRUSTED;
 +
-+	return 0;
-+}
-+
- static int ksz8_port_queue_split(struct ksz_device *dev, int port, int queues)
- {
- 	u8 mask_4q, mask_2q;
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index cd3991792b69..e5194660ed99 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -310,6 +310,7 @@ static const struct ksz_dev_ops ksz88x3_dev_ops = {
- 	.pme_write8 = ksz8_pme_write8,
- 	.pme_pread8 = ksz8_pme_pread8,
- 	.pme_pwrite8 = ksz8_pme_pwrite8,
-+	.change_tag_protocol = ksz8_change_tag_protocol,
- };
- 
- static const struct ksz_dev_ops ksz87xx_dev_ops = {
-@@ -345,6 +346,7 @@ static const struct ksz_dev_ops ksz87xx_dev_ops = {
- 	.pme_write8 = ksz8_pme_write8,
- 	.pme_pread8 = ksz8_pme_pread8,
- 	.pme_pwrite8 = ksz8_pme_pwrite8,
-+	.change_tag_protocol = ksz8_change_tag_protocol,
- };
- 
- static void ksz9477_phylink_mac_link_up(struct phylink_config *config,
-@@ -2937,9 +2939,7 @@ static enum dsa_tag_protocol ksz_get_tag_protocol(struct dsa_switch *ds,
- 	struct ksz_device *dev = ds->priv;
- 	enum dsa_tag_protocol proto = DSA_TAG_PROTO_NONE;
- 
--	if (dev->chip_id == KSZ8795_CHIP_ID ||
--	    dev->chip_id == KSZ8794_CHIP_ID ||
--	    dev->chip_id == KSZ8765_CHIP_ID)
-+	if (ksz_is_ksz87xx(dev))
- 		proto = DSA_TAG_PROTO_KSZ8795;
- 
- 	if (dev->chip_id == KSZ8830_CHIP_ID ||
-@@ -2961,12 +2961,25 @@ static enum dsa_tag_protocol ksz_get_tag_protocol(struct dsa_switch *ds,
- 	return proto;
- }
- 
-+static int ksz_change_tag_protocol(struct dsa_switch *ds,
-+				   enum dsa_tag_protocol proto)
-+{
-+	struct ksz_device *dev = ds->priv;
-+
-+	if (dev->dev_ops->change_tag_protocol)
-+		return dev->dev_ops->change_tag_protocol(dev, proto);
-+	else
-+		return -EPROTONOSUPPORT;
-+}
-+
- static int ksz_connect_tag_protocol(struct dsa_switch *ds,
- 				    enum dsa_tag_protocol proto)
- {
- 	struct ksz_tagger_data *tagger_data;
- 
- 	switch (proto) {
-+	case DSA_TAG_PROTO_NONE:
-+		return 0;
- 	case DSA_TAG_PROTO_KSZ8795:
- 		return 0;
- 	case DSA_TAG_PROTO_KSZ9893:
-@@ -4208,6 +4221,7 @@ static int ksz_hsr_leave(struct dsa_switch *ds, int port,
- 
- static const struct dsa_switch_ops ksz_switch_ops = {
- 	.get_tag_protocol	= ksz_get_tag_protocol,
-+	.change_tag_protocol    = ksz_change_tag_protocol,
- 	.connect_tag_protocol   = ksz_connect_tag_protocol,
- 	.get_phy_flags		= ksz_get_phy_flags,
- 	.setup			= ksz_setup,
-@@ -4443,9 +4457,7 @@ static int ksz9477_drive_strength_write(struct ksz_device *dev,
- 		dev_warn(dev->dev, "%s is not supported by this chip variant\n",
- 			 props[KSZ_DRIVER_STRENGTH_IO].name);
- 
--	if (dev->chip_id == KSZ8795_CHIP_ID ||
--	    dev->chip_id == KSZ8794_CHIP_ID ||
--	    dev->chip_id == KSZ8765_CHIP_ID)
-+	if (ksz_is_ksz87xx(dev))
- 		reg = KSZ8795_REG_SW_CTRL_20;
- 	else
- 		reg = KSZ9477_REG_SW_IO_STRENGTH;
-diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
-index 8094d90d6ca4..e1178063e6e4 100644
---- a/drivers/net/dsa/microchip/ksz_common.h
-+++ b/drivers/net/dsa/microchip/ksz_common.h
-@@ -363,6 +363,8 @@ struct ksz_dev_ops {
- 			  u8 *data);
- 	int (*pme_pwrite8)(struct ksz_device *dev, int port, int offset,
- 			   u8 data);
-+	int (*change_tag_protocol)(struct ksz_device *dev,
-+				   enum dsa_tag_protocol proto);
- 	void (*freeze_mib)(struct ksz_device *dev, int port, bool freeze);
- 	void (*port_init_cnt)(struct ksz_device *dev, int port);
- 	void (*phylink_mac_link_up)(struct ksz_device *dev, int port,
+ 		/* Note cur_st->parent in the call below, it is necessary to skip
+ 		 * checkpoint created for cur_st by is_state_visited()
+ 		 * right at this instruction.
 -- 
-2.43.0
+2.39.2
 
 
