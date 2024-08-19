@@ -1,266 +1,143 @@
-Return-Path: <linux-kernel+bounces-291612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5850A9564BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:33:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EFD9564BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89742811A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454CC1C216B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44654158556;
-	Mon, 19 Aug 2024 07:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ECC157490;
+	Mon, 19 Aug 2024 07:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RY5C4ZbR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3FRYoNh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E222C42A8F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67837199B9;
+	Mon, 19 Aug 2024 07:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724052782; cv=none; b=HdvxNPP4x9vVAzK4G/VdBPtiGMJA92aEmRfuPTqrcArC19IQ1OwBy9JOZXs+jUBkN0VEBV2sJga4Gre08/VC0GNrAviIW35BrDqwVApvqdLz3rTJgDGxpclhnK0n6EzK8nD9cKXJN9IxsNp6JGp5DF0ia8BoF7Fe4F8uZuzwxTE=
+	t=1724052861; cv=none; b=dcwMNQ8y0ABc+E1EsdVW0bP1Zs9eis27AOUad6vC5hbnYp2pStsmfG78k0N5H96Mv0b9PqUHiQ/1gUYboRy2A62gyQ1ozTKIh1GypcOET+g++KkOCEtK85ZhKz60PSPdhRTtlt3ifM442nlWDBkofPDSRQQjRFL5MKWVosTShuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724052782; c=relaxed/simple;
-	bh=lqG59gpccqoJniQbhLyFTrxHLnQRRH2XLMNU6pCm0bc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=JEgka1qJrUTDxQAUcISR5Ne4+Kb6ZLQadnlsgo7OxwLwCefYDdhAikJltLFFvuRQIUtgyCr2PqCYka7AzthYg3gzbz0ZxSw3VnpQY0yv2RKRbFv6Q4tCtx4JtBiMg7mN1A7V8p9gWn1oQ6z2SeOLbIjX/8faOBWzLdUfCXqGnRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RY5C4ZbR; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710dc3015bfso2661783b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724052779; x=1724657579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bVF+vaplgIfDeqn8Jo/FGo4c3zDJgnAYKY22inJTgUE=;
-        b=RY5C4ZbRSr/qdLgu8HKFVmN4ewPDru+AGNit5VwvKAv2yzJ5q/1Cn2JD4O0PoDzNrg
-         n4Y17grSMdalKiNcQRoGY1BotaeUwRikPBKihx1dg8/kOI8cFFQ7cOINwIcQcwPz6OUe
-         JNHcgWqnG+vI0WGZTfC1te5jTgr/+qvUVyEATPyvbOQGd2Y8MIy076rdQCJELXEDZaEl
-         AhvDkVIut86r7ZILIBCWT9YqXW6hPQkuDOqNNRV8BCl6ppyolhV+DCukv+7kG1dJzlx1
-         ClnUL3F4dioS4qYew83d7I4Hns6b9mVujnudIg2oIyPPq0kpxc2NDFIapVoLxFCmEsRb
-         E10g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724052779; x=1724657579;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bVF+vaplgIfDeqn8Jo/FGo4c3zDJgnAYKY22inJTgUE=;
-        b=C7bwlXWplUa9KHhVLvSigEgVI0eOmqEZoV6WOw+QIw7kF/DsPbtleVNtqfLLdXDDqU
-         a2Jr+A/5ldcVfWN6EjkwLWErfLfWyrgW+4t8Xk+1vF89A+QC3ZMGUslVH5i1zPJ6DCgz
-         lirRLF3oeXru8Yo0yZ00CFL+HZ7fWXaJoMGNPdJCH+gRANrGpjMonVAFbG4uL7rAqqgu
-         UYMAj0kPxi9dIyf1R2Bpl1LbM9/MP7UoIYMjBfOiVdC92jVZNYzunV7xXitwDL3Ghrx/
-         G//P++TMotlvfihdUsCopaB+MyTWphIDw9kBOpcbPuHJqW7qDHCX7fjiMhpbCjFNAmth
-         fDNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeFdvZ6YULn0H03N/NIhW4a/+JIITXpuivfz3+tX5cWivW5s2aQfPXHlKIcOlZJ430J9vnpcw7BIgRq4UXmCvvhsxnQWzrVvnEAMPt
-X-Gm-Message-State: AOJu0YyzqT0oQmqLeKXJ3+plwooci4w5XNuQQoddR1nkXDVLX++W7bfo
-	2PobYG5LLSjWpaBfIpeEkwwJFZUJYmALH7ERad1jvDkr6Hx0hg6YkcHsO+LNTcc=
-X-Google-Smtp-Source: AGHT+IFfm2w3BSOecH3ZgllW9SAhYMQsRd/FMRvM7RHDXRP2ro3rXfQFvLQQyRy2k8EZr/AD4ObC6g==
-X-Received: by 2002:a05:6a00:17a7:b0:70e:98e2:c76e with SMTP id d2e1a72fcca58-713c66515f1mr15127310b3a.6.1724052779034;
-        Mon, 19 Aug 2024 00:32:59 -0700 (PDT)
-Received: from ?IPv6:::1? ([2405:9800:b900:a564:77f2:b46a:c9f8:ca95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127aef5787sm6111501b3a.120.2024.08.19.00.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 00:32:58 -0700 (PDT)
-Date: Mon, 19 Aug 2024 14:32:53 +0700
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
- Stephen Boyd <swboyd@chromium.org>, Amit Pundir <amit.pundir@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- stable@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/3=5D_usb=3A_typec=3A_ucsi=3A_M?=
- =?US-ASCII?Q?ove_unregister_out_of_atomic_section?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ZsK2jSheqBlCW7OC@hu-bjorande-lv.qualcomm.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com> <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com> <4F313FA4-C2C7-4BD8-8E42-64F98EACCBA2@linaro.org> <ZsK2jSheqBlCW7OC@hu-bjorande-lv.qualcomm.com>
-Message-ID: <A366AFBC-1775-421A-BEAC-274741DF3192@linaro.org>
+	s=arc-20240116; t=1724052861; c=relaxed/simple;
+	bh=jWCdw6+Mt7vTwAMd410byNxcR/efNsh0Co3i6REIQqE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GXVRoWGE9eqUp2RD/T5eLTNdsu76HH+3QNNSd2/BgkEOqyoi0pzdswPR/W4mdiQLafXWp6pu2ecFF2qHvRdqBGJ7NhIcgiGlRRKAt7XDVtY5VQISzdhGSsedSxSj4Y00Fcy6YT8szBqT7gZrxNmv6YELcCiDh5vMHSxsn2KEreM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3FRYoNh; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724052859; x=1755588859;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=jWCdw6+Mt7vTwAMd410byNxcR/efNsh0Co3i6REIQqE=;
+  b=Y3FRYoNhJ9Zjhq1jbTMr/rJNEf6RwPUe4hWt4u/A+YilWreXM6da3GmS
+   H9kMalzuuulCtvCS32f02sP3LTYHj/AKCrhe/bbx4kVAtLCctgzU+UTQt
+   6tBLiztABzatagXE/a4QRU9VR7Jw5m+75tvg/yDrpiFfSxX1HdGJ7YEog
+   QjG3rUnAuQ1TMsz+t5o0ez4uJVjRyh9hcCA1TzEoKMUM6yNmcmQCEv8xZ
+   yFIM8ACsul53PYYsejRpDRjF/QTwc1xga0T2+R/b6KSMDWApUza9+Oiy/
+   IM1rZugCVEksgG+MB2mJ4TXsbEBINXP9IXqMHonSNmy/vimDnCnEbXDUP
+   Q==;
+X-CSE-ConnectionGUID: a0zdzh9pTNSIQaQTDAuqPA==
+X-CSE-MsgGUID: RILr0rTbT72jlG56sk+ByQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22445177"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="22445177"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:34:19 -0700
+X-CSE-ConnectionGUID: O+B60iEqRGqYo4fRX3CQFg==
+X-CSE-MsgGUID: FTEnVBr5RkuC77QyZMAnGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="60587214"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.70])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:34:13 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: abid-sayyad <sayyad.abid16@gmail.com>, airlied@gmail.com
+Cc: daniel@ffwll.ch, dmitry.baryshkov@linaro.org, mripard@kernel.org,
+ ankit.k.nautiyal@intel.com, imre.deak@intel.com,
+ mitulkumar.ajitkumar.golani@intel.com, quic_abhinavk@quicinc.com,
+ dianders@chromium.org, marilene.agarcia@gmail.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+ skhan@linuxfoundation.org, abid-sayyad <sayyad.abid16@gmail.com>
+Subject: Re: [PATCH] fix member variable description warnings while building
+ docs
+In-Reply-To: <20240818112543.1089986-1-sayyad.abid16@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240818112543.1089986-1-sayyad.abid16@gmail.com>
+Date: Mon, 19 Aug 2024 10:34:09 +0300
+Message-ID: <87a5h96k5q.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On 19 August 2024 10:05:49 GMT+07:00, Bjorn Andersson <quic_bjorande@quicin=
-c=2Ecom> wrote:
->On Mon, Aug 19, 2024 at 08:16:25AM +0700, Dmitry Baryshkov wrote:
->> On 19 August 2024 06:17:38 GMT+07:00, Bjorn Andersson <quic_bjorande@qu=
-icinc=2Ecom> wrote:
->> >Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
->> >initialization")' moved the pmic_glink client list under a spinlock, a=
-s
->> >it is accessed by the rpmsg/glink callback, which in turn is invoked
->> >from IRQ context=2E
->> >
->> >This means that ucsi_unregister() is now called from IRQ context, whic=
-h
->> >isn't feasible as it's expecting a sleepable context=2E An effort is u=
-nder
->> >way to get GLINK to invoke its callbacks in a sleepable context, but
->> >until then lets schedule the unregistration=2E
->> >
->> >A side effect of this is that ucsi_unregister() can now happen
->> >after the remote processor, and thereby the communication link with it=
-, is
->> >gone=2E pmic_glink_send() is amended with a check to avoid the resulti=
-ng
->> >NULL pointer dereference, but it becomes expecting to see a failing se=
-nd
->> >upon shutting down the remote processor (e=2Eg=2E during a restart fol=
-lowing
->> >a firmware crash):
->> >
->> >  ucsi_glink=2Epmic_glink_ucsi pmic_glink=2Eucsi=2E0: failed to send U=
-CSI write request: -5
->> >
->> >Fixes: caa855189104 ("soc: qcom: pmic_glink: Fix race during initializ=
-ation")
->> >Cc: stable@vger=2Ekernel=2Eorg
->> >Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc=2Ecom>
->> >---
->> > drivers/soc/qcom/pmic_glink=2Ec       | 10 +++++++++-
->> > drivers/usb/typec/ucsi/ucsi_glink=2Ec | 28 +++++++++++++++++++++++---=
---
->> > 2 files changed, 32 insertions(+), 6 deletions(-)
->> >
->> >diff --git a/drivers/soc/qcom/pmic_glink=2Ec b/drivers/soc/qcom/pmic_g=
-link=2Ec
->> >index 58ec91767d79=2E=2Ee4747f1d3da5 100644
->> >--- a/drivers/soc/qcom/pmic_glink=2Ec
->> >+++ b/drivers/soc/qcom/pmic_glink=2Ec
->> >@@ -112,8 +112,16 @@ EXPORT_SYMBOL_GPL(pmic_glink_register_client);
->> > int pmic_glink_send(struct pmic_glink_client *client, void *data, siz=
-e_t len)
->> > {
->> > 	struct pmic_glink *pg =3D client->pg;
->> >+	int ret;
->> >=20
->> >-	return rpmsg_send(pg->ept, data, len);
->> >+	mutex_lock(&pg->state_lock);
->> >+	if (!pg->ept)
->> >+		ret =3D -ECONNRESET;
->> >+	else
->> >+		ret =3D rpmsg_send(pg->ept, data, len);
->> >+	mutex_unlock(&pg->state_lock);
->> >+
->> >+	return ret;
->> > }
->> > EXPORT_SYMBOL_GPL(pmic_glink_send);
->> >=20
->> >diff --git a/drivers/usb/typec/ucsi/ucsi_glink=2Ec b/drivers/usb/typec=
-/ucsi/ucsi_glink=2Ec
->> >index ac53a81c2a81=2E=2Ea33056eec83d 100644
->> >--- a/drivers/usb/typec/ucsi/ucsi_glink=2Ec
->> >+++ b/drivers/usb/typec/ucsi/ucsi_glink=2Ec
->> >@@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
->> >=20
->> > 	struct work_struct notify_work;
->> > 	struct work_struct register_work;
->> >+	spinlock_t state_lock;
->> >+	unsigned int pdr_state;
->> >+	unsigned int new_pdr_state;
->> >=20
->> > 	u8 read_buf[UCSI_BUF_SIZE];
->> > };
->> >@@ -244,8 +247,22 @@ static void pmic_glink_ucsi_notify(struct work_st=
-ruct *work)
->> > static void pmic_glink_ucsi_register(struct work_struct *work)
->> > {
->> > 	struct pmic_glink_ucsi *ucsi =3D container_of(work, struct pmic_glin=
-k_ucsi, register_work);
->> >+	unsigned long flags;
->> >+	unsigned int new_state;
->> >+
->> >+	spin_lock_irqsave(&ucsi->state_lock, flags);
->> >+	new_state =3D ucsi->new_pdr_state;
->> >+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
->> >+
->> >+	if (ucsi->pdr_state !=3D SERVREG_SERVICE_STATE_UP) {
->> >+		if (new_state =3D=3D SERVREG_SERVICE_STATE_UP)
->> >+			ucsi_register(ucsi->ucsi);
->> >+	} else {
->> >+		if (new_state =3D=3D SERVREG_SERVICE_STATE_DOWN)
->> >+			ucsi_unregister(ucsi->ucsi);
->> >+	}
->> >=20
->> >-	ucsi_register(ucsi->ucsi);
->> >+	ucsi->pdr_state =3D new_state;
->> > }
->>=20
->> Is there a chance if a race condition if the firmware is restarted quic=
-kly, but the system is under heavy mist:=20
->> - the driver gets DOWN event, updates the state and schedules the work,
->> - the work starts to execute, reads the state,
->> - the driver gets UP event, updates the state, but the work is not resc=
-heduled as it is still executing=20
->> - the worker finishes unregistering the UCSI=2E
->>=20
+On Sun, 18 Aug 2024, abid-sayyad <sayyad.abid16@gmail.com> wrote:
+> Fix the following warnings while building the docs :-
 >
->I was under the impression that if we reach the point where we start
->executing the worker, then a second schedule_work() would cause the
->worker to run again=2E But I might be mistaken here=2E
+> ./include/linux/jbd2.h:1303: warning: Function parameter or struct member
+> 		'j_transaction_overhead_buffers' not described in 'journal_s'
+> ./include/linux/jbd2.h:1303: warning: Excess struct member
+> 		'j_transaction_overhead' description in 'journal_s'
+>
+> Fix spelling error for j_transaction_overhead to j_transaction_overhead_buffers.
+>
+> ./include/drm/display/drm_dp_helper.h:127: warning: Function parameter or struct
+> 		member 'target_rr_divider' not described in 'drm_dp_as_sdp'
+>
+> Add description for the 'target_rr_divider' member.
 
-I don't have full source code at hand and the docs only speak about being =
-queued, so it is perfectly possible that I am mistaken here=2E
+Please send the two separately. They are part of two completely
+different subsystems.
+
+BR,
+Jani.
 
 >
->What I do expect though is that if we for some reason don't start
->executing the work before the state becomes UP again, the UCSI core
->wouldn't know that the firmware has been reset=2E
+> Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+> ---
+>  include/drm/display/drm_dp_helper.h | 1 +
+>  include/linux/jbd2.h                | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 >
+> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+> index ea03e1dd26ba..7f2567fa230d 100644
+> --- a/include/drm/display/drm_dp_helper.h
+> +++ b/include/drm/display/drm_dp_helper.h
+> @@ -112,6 +112,7 @@ struct drm_dp_vsc_sdp {
+>   * @target_rr: Target Refresh
+>   * @duration_incr_ms: Successive frame duration increase
+>   * @duration_decr_ms: Successive frame duration decrease
+> + * @target_rr_divider: Target refresh rate divider
+>   * @mode: Adaptive Sync Operation Mode
+>   */
+>  struct drm_dp_as_sdp {
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 5157d92b6f23..17662eae408f 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1086,7 +1086,7 @@ struct journal_s
+>  	int			j_revoke_records_per_block;
 >
->My proposal is to accept this risk for v6=2E11 (and get the benefit of
->things actually working) and then take a new swing at getting rid of all
->these workers for v6=2E12/13=2E Does that sound reasonable?
-
-
-Yes, makes sense to me=2E=20
-
-Reviewed-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
-
-
+>  	/**
+> -	 * @j_transaction_overhead:
+> +	 * @j_transaction_overhead_buffers:
+>  	 *
+>  	 * Number of blocks each transaction needs for its own bookkeeping
+>  	 */
+> --
+> 2.39.2
 >
->Regards,
->Bjorn
->
->>=20
->>=20
->> >=20
->> > static void pmic_glink_ucsi_callback(const void *data, size_t len, vo=
-id *priv)
->> >@@ -269,11 +286,12 @@ static void pmic_glink_ucsi_callback(const void =
-*data, size_t len, void *priv)
->> > static void pmic_glink_ucsi_pdr_notify(void *priv, int state)
->> > {
->> > 	struct pmic_glink_ucsi *ucsi =3D priv;
->> >+	unsigned long flags;
->> >=20
->> >-	if (state =3D=3D SERVREG_SERVICE_STATE_UP)
->> >-		schedule_work(&ucsi->register_work);
->> >-	else if (state =3D=3D SERVREG_SERVICE_STATE_DOWN)
->> >-		ucsi_unregister(ucsi->ucsi);
->> >+	spin_lock_irqsave(&ucsi->state_lock, flags);
->> >+	ucsi->new_pdr_state =3D state;
->> >+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
->> >+	schedule_work(&ucsi->register_work);
->> > }
->> >=20
->> > static void pmic_glink_ucsi_destroy(void *data)
->> >
->>=20
 
+-- 
+Jani Nikula, Intel
 
