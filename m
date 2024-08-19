@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-291410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902EC95623B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC9995623D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD59B20D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346801F214A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C1414AD23;
-	Mon, 19 Aug 2024 03:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5B14C58C;
+	Mon, 19 Aug 2024 03:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T1/nbitl"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhXJtE3C"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EA613D2BE;
-	Mon, 19 Aug 2024 03:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFCF14A4DD;
+	Mon, 19 Aug 2024 03:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724039814; cv=none; b=gTL0VH1wcEOZHXPopW5AlghW22OYNZL9+s2KwMsCpFQHzaSlDlTK+d2jDc6KbuQ5uWea3IgVfFvLv+M0rGiiG8i54XBSjfrZP+4TFp4CGeiqtreqjZqygdG/KYHi1VnmMkf9KEfbzUgHszw9ZpJ1hjbhJwEoeY24Vf4cEP0u9jE=
+	t=1724039816; cv=none; b=Ax89QAiyEUyBgJf4Se9xbfPfIAMNfnqrrPT63Z6Cu5hrj9NWgH8FolJ9PePcbWEuhp7CfhA+s7T6lHTT1XS3Z+mDiTjP4acphtf8fPkUq/XZ4WMo2h6VQveB9vil7RyPH28i5bcs0caWFB77RIExkreIIeL4pKA3wmwroXgEuug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724039814; c=relaxed/simple;
-	bh=VQlTy3JyL1JO54tUqyiMgXOrpUvf2/2jKwU1ZodpQFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DKE1wj/q5z8g0VJLJP5oftGdiEWospPGv+A0NjSTbMeXIHUZnC8oilSRIpL2jhBh/n7NPy6Z19ZLJN2xkJ0XLXW+TOmekhM30gtr/8PSsQoQ8z6yQznPCflaZhsg6tQ/8LoMrQqnDZomC48OLxaVwlkIhbnkGihTMyfBTbG1R7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T1/nbitl; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1724039816; c=relaxed/simple;
+	bh=dHF0Dci0tW6p0juExj6i/pnT77mPeGssho6khUDDIWc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Vv4brBVFtIYo+z3aU50BON+CaFcMtbewhh6J//h6S2IfrDo043DOfcfivMOJYHb26V5RSiUBpoGqklJqyMosMBwWm2gZg9jzmwLL3CECc3et7ADMDKhM/ORq4aPhCNS85QXPkWU9SGrI8XQMteO+aV7a8U0kXOUuKRGWPc3k2Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhXJtE3C; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201d5af11a4so36301385ad.3;
-        Sun, 18 Aug 2024 20:56:52 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20230059241so4078375ad.3;
+        Sun, 18 Aug 2024 20:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724039812; x=1724644612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMZ9rvcN3iR9Q8xwVCUJVcQ9FiUXOexqld6lBS5xZ1A=;
-        b=T1/nbitlMWd1lGv59RxRyNanAgumgTw1znYdnbsc2zdjQQTc7Jt4yjQV9+eqsqdfTV
-         V8CvSir0WDm/zUUQOIlCNIZpx6HCcdLryz4r919URIRWywPbF2oj0T9W+eY1TPVip6iP
-         N99/0tuIg+sq9tKOVbbOf3S+Jic7mn5FWAhOFmxBY6DWB3A+tw4MMRL1y+diBaUUoI9c
-         C+VsX9ufsmPPmXIyNQYoHObaafIMiDgljnOLEPE0X+L1K6V/1kpL1YwFAq8k3W1ig2ph
-         mpcWd2AuxCOFBV0SUqBW0BOWuGFkpqE9ev0umnCohCpyZguY27gil1klrzneU6bNE8HF
-         RKug==
+        d=gmail.com; s=20230601; t=1724039814; x=1724644614; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oD34vQIo66dqv4PnmDSmrEVQgpwvd9jgM7mrU60RqYs=;
+        b=JhXJtE3ClDZci22cJXbSioHxhWPwM9LnHRTZ3jfdOZNsqvW5GeTlLx/qnP0AGifhXe
+         HEZkgJxbxg61E6LzOzHQWvEGKKCFWoqwSEkx9/9+e5czYyNueNeWsx9IRm7Ul2YLvOcj
+         Cf/XJHDVXJmWivFGIMglWsU05QImifSDd003qvGO+/mS6KOVtmwZq04y73+I48LrV3D6
+         YA6C5gpAgAif+ltWiSu2Kd+czBTeWOsXxQn3DmsP8PpDxmKjISSQJCy4C3sTQsjvb0YK
+         8Ra0/kiwFLMSggAFdL6LZ8caPeBpVtWzdxyXJBWb+BeGdIbKoFi6Nx1OkFgyXHGUVivn
+         /7Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724039812; x=1724644612;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GMZ9rvcN3iR9Q8xwVCUJVcQ9FiUXOexqld6lBS5xZ1A=;
-        b=vOsN2UkOYAly5jxydHTYZ0VHDousgfykQ6Ot6ZuuqB3Jtk5XkeUN4qE/kE3SPmCDd9
-         gMfaFvh0HqEOfrwWxdbgqojwHIKsbPTG0cinADRaWafsAkEh+idB9LDKJ4Y6xMrvimNU
-         clctg/lWq28oq4sSphDhzAQvptiZzVzC4jS6Rs0XPawMfqY974sYJlIXE4uOHMmsPzDA
-         il1svGBY3yIq4i/T9VsD8nH8vG3pZI3mb0l8l+xfseYz9u1LvaERej1Is4IrOGAlGOup
-         sKNfx/Hbk82ucHazjZly6JbyypC2mjUknTap/3opesKL7OJ/8ZpOgnmaclR2u3t9z3Hm
-         Y4sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbGgJCYqSVpIN8OHd4HAu7Mm6nVVeqYEJ/pzTGBPghsoR8P9kAm4k/nQ8XmZf4ScVw51K0+Fi6Imo9tK/3IxHGu091qU8Ysq9V00pNJgTZ2n/WWpzfx2DbZjvJhgLNuPbk0LAUypqYSA==
-X-Gm-Message-State: AOJu0YxpgtNVD3RGkdvh7dez8ZE9pePtfLYcYQlektB61HsXRGQqrsI+
-	kBS4Pd3kRSApfKooYda92JiAsKldMlS2OWicnFEb2QtMnipBqIsr
-X-Google-Smtp-Source: AGHT+IEKBhYBnAvPKWan3AhEl+XTUbhdrUsrDNblATEFmLfYDep00piSaKlr6N+dv4Cf4D8iPzgKWQ==
-X-Received: by 2002:a17:903:41d2:b0:202:19a0:fcba with SMTP id d9443c01a7336-20219a0fe95mr62909075ad.41.1724039812219;
-        Sun, 18 Aug 2024 20:56:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724039814; x=1724644614;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oD34vQIo66dqv4PnmDSmrEVQgpwvd9jgM7mrU60RqYs=;
+        b=KxTh/8DoNUbXIYSOcnKE3N50WiGzGSi4FLZZ5YvZ8MGIgQZiwM3XpFuANioPUoFtkZ
+         mvhwlhlEznZOQLnIXBKNB6ARdnj92N3jX4Wm/TG57gmd+9iCDonoetJC/EdtYh9yfQGf
+         bj1iOyg9QK5Ftq9fzaaAhbLW6NwVyzpr8J5khxnAKWJR0o7Fl4wgUyijas/Bg8xXY/+x
+         rixH/9bbnrB3/YSp4G0i7KAceqDjCsi/ZmrFqnjDBphrVju15O3HAy3RSKhsZQ9nTaSS
+         4jAkxaPARsKigioqRTtUc9CHV3G0nUFYgPE76x3R05Hi8ZFTEON4GzdBt90HjEhWqmNl
+         igSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnbbx/csBBBbd743IhCvaomdy8Wb/iYkfhFYBivP8zFFWnwnni7RMO2wigfZXMyaAEeVNtvG3khNkVMNHeFgHKUB/PLEJ4yonT60WIpJOjnJpVsiZQoENpfkYloo3tzAAm7Zhro7cjqw==
+X-Gm-Message-State: AOJu0Ywc4Bz76B3IxTvV7gMMcNGk8xTw1W65EDH4iRqg6zvVaX28DCPz
+	xOc/cEf213uqNypgNkFVvNePB0GDBegiZd7c7RcidG0naRHnsCi3
+X-Google-Smtp-Source: AGHT+IFjBqP72MqkABZPQbwq5C54vt5eP10TWJUf+V6mIGbU756Wry/HOS140AR6rnx2vQw5Yruiwg==
+X-Received: by 2002:a17:903:360e:b0:201:dc7b:a8b9 with SMTP id d9443c01a7336-20203eab02amr85082785ad.25.1724039814359;
+        Sun, 18 Aug 2024 20:56:54 -0700 (PDT)
 Received: from a28aa0606c51.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375649sm55784435ad.124.2024.08.18.20.56.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375649sm55784435ad.124.2024.08.18.20.56.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 20:56:51 -0700 (PDT)
+        Sun, 18 Aug 2024 20:56:54 -0700 (PDT)
 From: Jacky Huang <ychuang570808@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -74,10 +76,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	soc@kernel.org,
 	schung@nuvoton.com,
 	ychuang3@nuvoton.com
-Subject: [PATCH 0/3] arm64: dts: nuvoton: Add pinctrl and gpio nodes for MA35D1
-Date: Mon, 19 Aug 2024 03:56:44 +0000
-Message-Id: <20240819035647.306-1-ychuang570808@gmail.com>
+Subject: [PATCH 1/3] arm64: dts: nuvoton: Add syscon to the system-management node
+Date: Mon, 19 Aug 2024 03:56:45 +0000
+Message-Id: <20240819035647.306-2-ychuang570808@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240819035647.306-1-ychuang570808@gmail.com>
+References: <20240819035647.306-1-ychuang570808@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,20 +92,27 @@ Content-Transfer-Encoding: 8bit
 
 From: Jacky Huang <ychuang3@nuvoton.com>
 
-This patch series adds pinctrl and gpio nodes to the device tree of
-the Nuvoton MA35D1 SoC. Additionally, it includes pin configuration
-for UART nodes now that the pinctrl node is available.
+According to the binding document, add the "syscon" compatible to the
+system-management node.
 
-Jacky Huang (3):
-  arm64: dts: nuvoton: Add syscon to the system-management node
-  arm64: dts: nuvoton: ma35d1: Add pinctrl and gpio nodes
-  arm64: dts: nuvoton: ma35d1: Add uart pinctrl settings
+Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+---
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../boot/dts/nuvoton/ma35d1-iot-512m.dts      |  80 +++++++++-
- .../boot/dts/nuvoton/ma35d1-som-256m.dts      |  83 +++++++++-
- arch/arm64/boot/dts/nuvoton/ma35d1.dtsi       | 151 +++++++++++++++++-
- 3 files changed, 305 insertions(+), 9 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+index 781cdae566a0..a6b34e3e8b10 100644
+--- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
++++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+@@ -83,7 +83,7 @@ soc {
+ 		ranges;
+ 
+ 		sys: system-management@40460000 {
+-			compatible = "nuvoton,ma35d1-reset";
++			compatible = "nuvoton,ma35d1-reset", "syscon";
+ 			reg = <0x0 0x40460000 0x0 0x200>;
+ 			#reset-cells = <1>;
+ 		};
 -- 
 2.34.1
 
