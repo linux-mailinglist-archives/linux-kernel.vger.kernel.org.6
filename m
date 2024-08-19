@@ -1,192 +1,193 @@
-Return-Path: <linux-kernel+bounces-291685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0823495658D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C88F956597
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9361C21A95
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E8D1C217F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3B115B97C;
-	Mon, 19 Aug 2024 08:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF91815B104;
+	Mon, 19 Aug 2024 08:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="shwREonM"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="oIj0YSW9"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4E315B0EB
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA40F13C8E8;
+	Mon, 19 Aug 2024 08:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055894; cv=none; b=C+l82WQV6NU0xynTTpoaoYRxKMiaOXmEeVFUmPRHOxfnJvtx4SnOFHdj3OCL7vtwzGTQfUNJbWNIh8/JbAEDEbzmbu8REx/GwlBVJrWsK0gt9KDbGisMqt2nj1ffkrpEjaxc272KE6OoEqoG97T981hlnuF8iQBTBff4Bs9+HLs=
+	t=1724056039; cv=none; b=PmhOd2cbK9VDgTlAetFWhPdIasYUgIOD3Gffd9e6MPNg9r2F8U9Aj57csAtxyS3JHWb4It+2nj4yzzB88XL6F79p8cXnhohrg9bBZqx8wKgIYIoArrhDGAApO8RapTKx81RT6aaluT26Mvs2JuWxuUafGC8uoNCw0+R4d6LUQ9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055894; c=relaxed/simple;
-	bh=VlEWS+I2qBUoAZu3MZiZFqikaq4uXZWuP6/ITJZxiQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hQLQ77jcpDd9JbGJMi0SKo0oEyUwOz9mDBlRMYv0tZpVSPtVfDLWFaGClB/G3EjdIa1GxbBKrAM6HVUDawPzbSUiunl+uLfQbaLx2jWEeXNxeqMV0whjeILitcMZ/5nB+7SQ9Jpj4jEOo+e5kvh1UHBbFWKhfOHfVzFbjQkreHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=shwREonM; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37195f88a17so1914873f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724055891; x=1724660691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=shwREonM23gbHLe1N7T/9wHhpCdWBD+QzoZnEleGkDhR0J78aNDGBmKUm1Atx69m/P
-         cfVD/cbkLRwFV2INk70RfEeBYrd55Gxue8+7OOaBgTm+/yZWivSbW9IAlfSvJA1oQwFj
-         wSk0/M6YuABQ9RKPCI2If9ExNunKh5YHkEznfEsXmXIBhSLnZ4CHwjzl/4S0TV0DyL8K
-         +BQyK1uXCOW8r0WWC1GfIUF5o/ruiteOWjZWWOBA7JanC+ZGU+YYbZt+SVXrWX/CPxHH
-         5VZhHfE6cBz8OV85O39vZ2cpKAAMUeLMDng70ak/kC2sVCzHndIQhv36zkLSPvEa2a7o
-         wWZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724055891; x=1724660691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=rtSy4P1nawj8bKHhfr1Kld058wZdQ7DZm10cQyfmc0e3xNbmwzyfdu4t5aTw6V9TvL
-         v9PxXIt5XfBXUBY+TKOMoMlq3qrP5iOPZOp7yO5/q/VzooNnP3IyifTB9a4HZ2BCMP40
-         CW3ju+0Ph8EVmdR0cm6slP/SHKG7sAcvzLL4XmcgnmQijU/zoQIFqWrJO88ADYeu68Y0
-         ZB2X4hQr/Aik7/S9X2OQasX8ITwDx+JJt9JADWiM7q0TFW26Q6MF1Mkecr2y+EHe1Gll
-         28scRFBJcd2EcBYLdCcJL54VfzQHm0zS0GYzMdtZHvamS+yqRflyiPKUxH7+9WZOSljI
-         mEWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+RiVg42qk8cW2g7sDLCLQEd7B5i/R5jw/EdYqacVy5/bJIzWMrRxS54e0eRPPMLP/Mrs5zZycHoPA2NmH3c1qFeWIMsS74W1yb5bv
-X-Gm-Message-State: AOJu0Yzh+5PfOwnyAFbDX9hRlIR5WHVo4iC+6w8sqHQM+9ncXgFHLDNr
-	tP3UtkY3LNUiDGsfkqU4ES6p93BYQLMZ2rkJpVQuI///TtTXEq4+ci+bsiK6C6M=
-X-Google-Smtp-Source: AGHT+IFVgF7niGJvoZowan0lPbSxtB3YSrW7+PmIqFLoVMhdafkr+QrJoILTdYPsvFiGEZpxfsdYjw==
-X-Received: by 2002:a5d:6602:0:b0:368:3194:8a85 with SMTP id ffacd0b85a97d-3719431769amr7258735f8f.7.1724055890365;
-        Mon, 19 Aug 2024 01:24:50 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7b55:8f70:3ecb:b4ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7d5a9sm153441175e9.43.2024.08.19.01.24.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 01:24:49 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v2 2/2] PCI/pwrctl: put the bus rescan on a different thread
-Date: Mon, 19 Aug 2024 10:24:44 +0200
-Message-ID: <20240819082445.10248-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240819082445.10248-1-brgl@bgdev.pl>
-References: <20240819082445.10248-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1724056039; c=relaxed/simple;
+	bh=/Hlpjr6PGF/ZP6Ap64n14/RLbP2iWefmb8Cxbg5fcAk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oaRVDJyRJdBYach9rkGjkjXxE40GxCBKfEJHWFmsSs1aMJaVu8gW7tRkIAjeAQJln+S/qG2WNV8bBRgz2usPz3BEiUJ5dVs2JQl50wxQYrTVyGUx1cSpP9nEntSTwmnobqzYpMsUaEHu92YjEJSYl5kZzIO/WZcF24iGU7Njhko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=oIj0YSW9; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d427515a5e0411ef8593d301e5c8a9c0-20240819
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Ei/MZnWMSf5WRtVHkVpfjkH2hPuZFQGSKj5kRjWhNkE=;
+	b=oIj0YSW9KpY3E+aC5y5tAK5bGTZd5OML4Q3xSA8pEG2XAylg1PYkmV8bSWBJC6vhxPrtqbLWteOOdcMEfJpjDBFyeCIAQ6LWL5DAkDHsvT4SBajJswgesydEIvwDPQMFT0I5m9RQMm5uQap89PAruQ3h3EtJb9qh6gRB6BjR6tA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:a70dacea-0b3d-40ff-b295-c4cd7cc0887a,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:2966d2ce-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: d427515a5e0411ef8593d301e5c8a9c0-20240819
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <tze-nan.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1526812794; Mon, 19 Aug 2024 16:27:10 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 19 Aug 2024 01:27:11 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 19 Aug 2024 16:27:11 +0800
+From: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+To: <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <bobule.chang@mediatek.com>, <wsd_upstream@mediatek.com>, Tze-nan Wu
+	<Tze-nan.Wu@mediatek.com>, Yanghui Li <yanghui.li@mediatek.com>, Cheng-Jui
+ Wang <cheng-jui.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<bpf@vger.kernel.org>
+Subject: [PATCH] net/socket: Acquire cgroup_lock in do_sock_getsockopt
+Date: Mon, 19 Aug 2024 16:25:12 +0800
+Message-ID: <20240819082513.27176-1-Tze-nan.Wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
+between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+`BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
 
-If we trigger the bus rescan from sysfs, we'll try to lock the PCI
-rescan mutex recursively and deadlock - the platform device will be
-populated and probed on the same thread that handles the sysfs write.
+If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
+"true"
+between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+`BPF_CGROUP_RUN_PROG_GETSOCKOPT`,
+`BPF_CGROUP_RUN_PROG_GETSOCKOPT` will receive an -EFAULT from
+`__cgroup_bpf_run_filter_getsockopt(max_optlen=0)` due to `get_user()`
+had not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
 
-Add a workqueue to the pwrctl code on which we schedule the rescan for
-controlled PCI devices. While at it: add a new interface for
-initializing the pwrctl context where we'd now assign the parent device
-address and initialize the workqueue.
+Scenario shown as below:
 
-Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+           `process A`                      `process B`
+           -----------                      ------------
+  BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
+                                            enable CGROUP_GETSOCKOPT
+  BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
+
+Prevent `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` change between
+`BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and `BPF_CGROUP_RUN_PROG_GETSOCKOPT`
+by acquiring cgroup_lock.
+
+Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
+Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
+Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+
 ---
- drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
- drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
- include/linux/pci-pwrctl.h             |  3 +++
- 3 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
-index feca26ad2f6a..01d913b60316 100644
---- a/drivers/pci/pwrctl/core.c
-+++ b/drivers/pci/pwrctl/core.c
-@@ -48,6 +48,28 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
- 	return NOTIFY_DONE;
+We have encountered this issue by observing that process A could sometimes
+get an -EFAULT from getsockopt() during our device boot-up, while another
+process B triggers the race condition by enabling CGROUP_GETSOCKOPT
+through bpf syscall at the same time.
+
+The race condition is shown below:
+
+           `process A`                        `process B`
+           -----------                        ------------
+  BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
+         
+                                              bpf syscall 
+                                        (CGROUP_GETSOCKOPT enabled)
+
+  BPF_CGROUP_RUN_PROG_GETSOCKOPT
+  -> __cgroup_bpf_run_filter_getsockopt
+    (-EFAULT)
+
+__cgroup_bpf_run_filter_getsockopt return -EFAULT at the line shown below:
+	if (optval && (ctx.optlen > max_optlen || ctx.optlen < 0)) {
+		if (orig_optlen > PAGE_SIZE && ctx.optlen >= 0) {
+			pr_info_once("bpf getsockopt: ignoring program buffer with optlen=%d (max_optlen=%d)\n",
+				     ctx.optlen, max_optlen);
+			ret = retval;
+			goto out;
+		}
+		ret = -EFAULT; <== return EFAULT here
+		goto out;
+	}
+
+This patch should fix the race but not sure if it introduces any potential
+side effects or regression.
+
+And we wondering if this is a real issue in do_sock_getsockopt or if
+getsockopt() is designed to expect such race conditions.
+Should the userspace caller always anticipate an -EFAULT from getsockopt()
+if another process enables CGROUP_GETSOCKOPT at the same time?
+
+Any comment will be appreciated!
+
+BTW, I added Chengjui and Yanghui to Co-developed due to we have several
+discussions on this issue. And we both spend some time on this issue.
+
+---
+ net/socket.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/net/socket.c b/net/socket.c
+index fcbdd5bc47ac..e0b2b16fd238 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2370,8 +2370,10 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+ 	if (err)
+ 		return err;
+ 
+-	if (!compat)
++	if (!compat) {
++		cgroup_lock();
+ 		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
++	}
+ 
+ 	ops = READ_ONCE(sock->ops);
+ 	if (level == SOL_SOCKET) {
+@@ -2387,10 +2389,12 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+ 				      optlen.user);
+ 	}
+ 
+-	if (!compat)
++	if (!compat) {
+ 		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
+ 						     optval, optlen, max_optlen,
+ 						     err);
++		cgroup_unlock();
++	}
+ 
+ 	return err;
  }
- 
-+static void rescan_work_func(struct work_struct *work)
-+{
-+	struct pci_pwrctl *pwrctl = container_of(work, struct pci_pwrctl, work);
-+
-+	pci_lock_rescan_remove();
-+	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-+	pci_unlock_rescan_remove();
-+}
-+
-+/**
-+ * pci_pwrctl_init() - Initialize the PCI power control context struct
-+ *
-+ * @pwrctl: PCI power control data
-+ * @dev: Parent device
-+ */
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev)
-+{
-+	pwrctl->dev = dev;
-+	INIT_WORK(&pwrctl->work, rescan_work_func);
-+}
-+EXPORT_SYMBOL_GPL(pci_pwrctl_init);
-+
- /**
-  * pci_pwrctl_device_set_ready() - Notify the pwrctl subsystem that the PCI
-  * device is powered-up and ready to be detected.
-@@ -74,9 +96,7 @@ int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
- 	if (ret)
- 		return ret;
- 
--	pci_lock_rescan_remove();
--	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
--	pci_unlock_rescan_remove();
-+	schedule_work(&pwrctl->work);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-index c7a113a76c0c..f07758c9edad 100644
---- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-+++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-@@ -50,7 +50,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	data->ctx.dev = dev;
-+	pci_pwrctl_init(&data->ctx, dev);
- 
- 	ret = devm_pci_pwrctl_device_set_ready(dev, &data->ctx);
- 	if (ret)
-diff --git a/include/linux/pci-pwrctl.h b/include/linux/pci-pwrctl.h
-index 45e9cfe740e4..0d23dddf59ec 100644
---- a/include/linux/pci-pwrctl.h
-+++ b/include/linux/pci-pwrctl.h
-@@ -7,6 +7,7 @@
- #define __PCI_PWRCTL_H__
- 
- #include <linux/notifier.h>
-+#include <linux/workqueue.h>
- 
- struct device;
- struct device_link;
-@@ -41,8 +42,10 @@ struct pci_pwrctl {
- 	/* Private: don't use. */
- 	struct notifier_block nb;
- 	struct device_link *link;
-+	struct work_struct work;
- };
- 
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev);
- int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl);
- void pci_pwrctl_device_unset_ready(struct pci_pwrctl *pwrctl);
- int devm_pci_pwrctl_device_set_ready(struct device *dev,
 -- 
-2.43.0
+2.45.2
 
 
