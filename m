@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-292248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405BE956D08
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:19:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE0B956D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73FC51C22BD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16326B22F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC0716CD1A;
-	Mon, 19 Aug 2024 14:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D0816CD15;
+	Mon, 19 Aug 2024 14:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="VIwZYXWv"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hBTjOdyn"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A727616CD02
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630E915CD75
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077166; cv=none; b=RiblvHazI/my+9DC5/ez4vgkg64FzZjDb8+ZXmInQiIr2st3GFPEXoEu5gjcD6NSHC54/r2337NZtnm/Th+PGhZOxObiEZQb6MxGsnSaDbsv6HVVQo0z093uNSX4avpRy8Y/WLJRq3VeGMr4q+Zs9Cg8e+/5GDPLg/ge98mHVTA=
+	t=1724077149; cv=none; b=tfb4ScxnXpOyzbBc30Y7eNUVESBLny2ETsKjdbyzJ7Yi+BmLbRULEMH9F0u0gvbQV47pizNdPHXyRL4vHGfW73NaqPR4206ULF88HyD0wQz/2RZfjb1euBHsrue/iKr+dzHKPHmrh1GiQxjC7CM8k1ZnPTxVRIqZE6zKU2l8VmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077166; c=relaxed/simple;
-	bh=qS7ZSrFqh4rU5Ft5q1twy5K9515FjzeEZNzbn0Q+UyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7igMXY9/X+BvBA2ktyqPxU2c4N3sR2LCAl7onyf0AX5XYZXdNYbRZe1unTryLdky6pBd8YPQRNbGnPZ1tWjLn0RjueGyPKZ7KmYz0YaPbZqRpRlsxcuGXPDiwHeuOvEszi0CIua/T6V+mJSaiFCvEc49luGID1Vs01KfGEMqMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=VIwZYXWv; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a86412d696cso8955566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:19:24 -0700 (PDT)
+	s=arc-20240116; t=1724077149; c=relaxed/simple;
+	bh=dhekefwMTSVQuGOPKfOzV1PmMypiOTQ84mIKdh7dtrA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c/XXBam11qe7un37Zilf561/QH8p/vT+5UwqiLC2NSj/lltse2AhmKtpLX5wI88CMh+O+v/WzpHxExh6sMxJaTXN3HXsu/wa2PyKyqZJ0Lpj/CqJwTZINwaeYvmYSGcQ07DGnl5rzfXucEXtS3ggHja5JWFqa6+OUmcmLMBH0sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hBTjOdyn; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d1da888717so4475240a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724077163; x=1724681963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFS3Wv8nLSrNGmJ2U9Jj6TGefpKqXVtUCaCEYux9qa8=;
-        b=VIwZYXWvtEY20GoQQfRDk+zFxgo1jSlxGLaxs7dYKKpbp0q0QV5owq4RXimhVurWy2
-         EQSGEjyzkx9YjRThWWEKP/QMnWmIQeI4DyMBjWCoGMKRwETwyMBelpoMHEbv8it4F/3G
-         dh7Owu074MH1F02i2xIke23pHxt8vLEb3PqXHkJeDKd4zQf+EWTBU9McpQ9WAzw6fvQL
-         Pm9AZ2AXHDwYOoyz74dpmTkovHxEHoVMeuUQXYmvcJuSepBhvTLG51itil37CfsQirs9
-         HxA4RXzJ+UtsrPa+S/8652QU/T2HNgLjFhayttMgheQIrc/mRQq8OZjoH494AmECRhPO
-         1H5w==
+        d=google.com; s=20230601; t=1724077148; x=1724681948; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9hLxUPog6ZfK1tAJoowXx9bJNhMgN4jUhRQI7FjOx9Y=;
+        b=hBTjOdynVn7olIuOORHzxjJbto6ZGN4x5k//tw+4Llmuae3ha4zD4NWfluh5UFZep5
+         pZWFg52bF8hHhleMxVCViPJl3pUMK5UVzESTda8DrtJ0mQtxh6ofJjZARHcq3eN+mkEM
+         5rz2bUocFTe75jwtCvzj6uoHkJdFZQq0S7AgL23eMJojt7G5TCkuzNAuZ0/qKDvgmyP7
+         sWhlnw2KRY25OmVqfruz3/w4YWLmmuDmMqrJfFHbl/y3I7QOef9RmTvGi8Sub8cKFiE9
+         qjSndVRKlFPWDRix9l1JhB6KwBQfXDwFsbf4e//JNlAav6oHHuAF8h7HoTgbuK3hhEzJ
+         YhsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724077163; x=1724681963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RFS3Wv8nLSrNGmJ2U9Jj6TGefpKqXVtUCaCEYux9qa8=;
-        b=oVH9PAn7K1nRB06iir4sGvCXzScw76EaK7TCxdKoSVRvsYZq6E67b3yrHHky9amqTA
-         M9eXQkNMBACBWnd+MAiT8SAzj2++xjdu+ndKQZrembziLRC3MYWO6j33xy9aa5uIZuHw
-         qpKsWuORS3z98gyfJZAsUvHZ0ZBh4kbkB+8PoARkoOdMGAyBDYH+lpRZWyUuu6vcGzEx
-         AbDqENAIKMQ6i4TwTHSloa8rYQnUohnHe1MAD9aW5cb9DHc5/E/xQbzOL13zdy1xffx9
-         LLF0caxW3sciFSa3AzqRKHhX/flWqLXv9cVpdCrkyqTC4zDQ9WUDZh+V/92gqc0k+KzO
-         nfOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgaGgUxbCvLvW2vJbZWSfoROiqWS0rQmEE+c318vDNxMLdXtXiYS8mpMeDe3d/I5mCg58Mv4cyvpmfqmlELxe6pUCcxisf83wyGrC+
-X-Gm-Message-State: AOJu0YwTXUYO9K1dk36C822u+e9U5HUEOz1LMKUdk3EbwZS7+FHp0PfT
-	V9N6Ubi7JdLV4uNFzIQWgt+5yhcUAmXceIC76g/2kAPFNYLNL2C2TWjPCyE6dRtyo0zg7ljUGd7
-	prJY=
-X-Google-Smtp-Source: AGHT+IEcN/Sjk7o3QNL1D2HctPW1wo0igtSMNE6KnvXG9XGrBUFPctC4HUtzHRg0JtJLyL/iKhgYUQ==
-X-Received: by 2002:a17:907:60d6:b0:a77:cd4f:e4ed with SMTP id a640c23a62f3a-a8392a47a15mr745465466b.63.1724077162735;
-        Mon, 19 Aug 2024 07:19:22 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383947799sm646235366b.177.2024.08.19.07.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 07:19:22 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] crypto: jitter - Use min() to simplify jent_read_entropy()
-Date: Mon, 19 Aug 2024 16:18:44 +0200
-Message-ID: <20240819141843.875665-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724077148; x=1724681948;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9hLxUPog6ZfK1tAJoowXx9bJNhMgN4jUhRQI7FjOx9Y=;
+        b=gTSFkktM42VfY1qDNkDKDBtZa0Pn8Fe8FAZSWhG/x1mbFKaahaBUUxE2LmMTp81n3y
+         dVRYw/kqxKDlq+iqFQqCeR8pi8KbzxCFMapTlTYRVrHs/UkGRLVUttfuOQqdCxsClhh2
+         ySOPclKXZq2Y5+RsXumix377NTYP4CnFQOYNVZ3gDZytwU625vwfRF6IIdEm15GyAMZd
+         9IZ/QTrJjB8jOS26SNAWymMXMQZiZctE5jRnx302jBhrjIkafHLqanjw5QJdsMZMwVjC
+         Aje9+UMwbj2eybnT0IqtaNJezr4dGlfsHFnpYDsw61mD79fMcQv39s+4Oc52BCWeaZie
+         Kkjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWrI+kiFzYKIZWufYAGTbLl47OlU7z3aqmwO/bdC8c4uIHcJ/aqUx4zapxVqW9+CtDEE7p5UGBZq9+uTma77QqMm/aPjF2LvAt2gs4
+X-Gm-Message-State: AOJu0Ywkkjmc/5oyg7TYPDx8dR1P7wKhI20LbsajQVEDRH2352zVtL+m
+	kfYjm2Z0EqNXBMXh1jnFLUhsgLMNvi0zabSS9XNz0HAQc34Fz+D13u+STei5NxGHxv/ko1M2W3j
+	MBg==
+X-Google-Smtp-Source: AGHT+IEiVhcjMIh5HUWd1g2HbFSvaK6Ja8HiHcoC9dIXWYuIbXgLvSwXqZaaLQxebIQg4YAxeY37LXgLQ40=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:d817:b0:2d3:cfe1:3205 with SMTP id
+ 98e67ed59e1d1-2d3e041dd44mr104680a91.7.1724077147516; Mon, 19 Aug 2024
+ 07:19:07 -0700 (PDT)
+Date: Mon, 19 Aug 2024 07:19:07 -0700
+In-Reply-To: <20240819121926.GG2032816@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240809160909.1023470-1-peterx@redhat.com> <20240809160909.1023470-7-peterx@redhat.com>
+ <b103edb7-c41b-4a5b-9d9f-9690c5b25eb7@redhat.com> <ZrZJqd8FBLU_GqFH@x1n>
+ <d9d1b682-cf3c-4808-ba50-56c75a406dae@redhat.com> <20240814130525.GH2032816@nvidia.com>
+ <81080764-7c94-463f-80d3-e3b2968ddf5f@redhat.com> <Zr9gXek8ScalQs33@x1n>
+ <d311645d-9677-44ca-9d86-6d37f971082c@redhat.com> <20240819121926.GG2032816@nvidia.com>
+Message-ID: <ZsNS86OE_sGzwZW2@google.com>
+Subject: Re: [PATCH 06/19] mm/pagewalk: Check pfnmap early for folio_walk_start()
+From: Sean Christopherson <seanjc@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Use the min() macro to simplify the jent_read_entropy() function and
-improve its readability.
+On Mon, Aug 19, 2024, Jason Gunthorpe wrote:
+> On Fri, Aug 16, 2024 at 07:56:30PM +0200, David Hildenbrand wrote:
+> 
+> > I think KVM does something nasty: if it something with a "struct page", and
+> > it's not PageReserved, it would take a reference (if I get
+> > kvm_pfn_to_refcounted_page()) independent if it's a "normal" or "not normal"
+> > page -- it essentially ignores the vm_normal_page() information in the page
+> > tables ...
+> 
+> Oh that's nasty. Nothing should be upgrading the output of the follow
+> functions to refcounted. That's what GUP is for.
+> 
+> And PFNMAP pages, even if they have struct pages for some reason,
+> should *NEVER* be refcounted because they are in a PFNMAP VMA. That is
+> completely against the whole point :\ If they could be safely
+> refcounted then it would be a MIXEDMAP.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- crypto/jitterentropy.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Yeah yeah, I'm working on it.
 
-diff --git a/crypto/jitterentropy.c b/crypto/jitterentropy.c
-index d7056de8c0d7..3b390bd6c119 100644
---- a/crypto/jitterentropy.c
-+++ b/crypto/jitterentropy.c
-@@ -146,6 +146,7 @@ struct rand_data {
- #define JENT_ENTROPY_SAFETY_FACTOR	64
- 
- #include <linux/fips.h>
-+#include <linux/minmax.h>
- #include "jitterentropy.h"
- 
- /***************************************************************************
-@@ -638,10 +639,7 @@ int jent_read_entropy(struct rand_data *ec, unsigned char *data,
- 			return -2;
- 		}
- 
--		if ((DATA_SIZE_BITS / 8) < len)
--			tocopy = (DATA_SIZE_BITS / 8);
--		else
--			tocopy = len;
-+		tocopy = min(DATA_SIZE_BITS / 8, len);
- 		if (jent_read_random_block(ec->hash_state, p, tocopy))
- 			return -1;
- 
--- 
-2.46.0
-
+https://lore.kernel.org/all/20240726235234.228822-1-seanjc@google.com
 
