@@ -1,277 +1,229 @@
-Return-Path: <linux-kernel+bounces-292888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CEA9575BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:34:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B129575BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360911F22715
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:34:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC511C218E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFF515956C;
-	Mon, 19 Aug 2024 20:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9ED15958D;
+	Mon, 19 Aug 2024 20:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="D+sxeH22";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="i/BVk+uS"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlO2eKbC"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A1D158216;
-	Mon, 19 Aug 2024 20:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724099666; cv=fail; b=B3xLnV7/ElZxVRv20G6PYz+CKILw2LTUKTbnycZpNc1oR4cbNnhRoXxQnlvoD5AMsxY3h4bSCpzgqwDMwYBs0yb+KOgYJaaIcecoU3KP3DxdUXXbxfP/Hh6ahff+l6bvvaQGjYUq1pM3f2Yc5CjpbaEIfINTFImS89sk9Q6s3Y0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724099666; c=relaxed/simple;
-	bh=xF8azsfpOfQnzjWRaNSUhQoJLoqQzgOK/gQmI8pjswI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tjqHP9IZyNwDN0C/DVrOEIYb+9E9wOupIkZzupaXdmvR20s7N2tuWS98MHe+HgNj7jTVC+qoy9IeIRY+RhOaM1iEVzzHs0+0zk4c4FdoK3pmEHrRZa4mYRnpfDlk7NYFmP/hqiOcXvABI9m/YcjBWg1qVvQNyz8wimZzxkONtRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=D+sxeH22; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=i/BVk+uS; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JKBVEu006809;
-	Mon, 19 Aug 2024 20:34:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=zFRO9orJ2ZMxO2G
-	4d+Cb3aUHUb5dqPtEaL/OyWfSR4s=; b=D+sxeH22Q5vmpIIuKUsDaMRZec9/XFT
-	P7kY6oqbkYC/KoqhKEyzMbgO5Er5/So7w/jT3igUVxb1a7AgMSYCrxZUZcdZaFl6
-	pnhz5oiPU9HATpCXad+hdCSJRb48G6KMdIsnIEA0McPSIu7cVF3qmwCr7i1Zn+4J
-	OTA0ZYZeGhNlAlq9zhk4idgeW/CDCrSx7qo3HO+pAbe8XspCUNcbFXHnZ8Fd3zHB
-	iecK/wGmkW6hLuMdiLyH35/MsM3fuDuMtXU2Dnac30V8qis2p4lVng+0Mrm7IAW8
-	jtsyKQhmzzVAwOfjxX63urzoDdEb+EiWmc7VGxC5X9fXnPOijv5ECvA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412mdsujkp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 20:34:09 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47JKHIig005537;
-	Mon, 19 Aug 2024 20:34:08 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2045.outbound.protection.outlook.com [104.47.56.45])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 414cy0rmub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 20:34:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uq46DXvlH7IWouJEtDFjDB4vNu1vKlyFu8alfcjvPqMpNk64bD9rNsxQPUNgwWYz/NJRx6Su0nYm1JBsKg6snN5tqIAsmQFq9jg9NhOrukTstJToLZHuEQkdCnlJUFVW8dYMyefYKHJsHzJpNqOoENBfbpdG+KMMLZRGqaGnDlTsb9E/iwel1uc0yzUe98LlPr81Vpymc8TeaCsH8L7Gjk2I2OcTDsubsML5Wr2gONjoyfDlbVmIhlsXtItLOdZ5kuaSzflHtuPO6ic0eLqkhkI1J2GUvBN0UuHrqDYGbXLfZbJYKdpkM6JywGNgrzerFJ7wJF5jJBhyVroNruVfoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zFRO9orJ2ZMxO2G4d+Cb3aUHUb5dqPtEaL/OyWfSR4s=;
- b=nT6v2lh+t1TMZceXRg9oqbPjowmzIAR1jOc1JUhqZU63AlgH4D4e9gADBZJmCAH8RCyaQsSz0mT/BcPDCnv3PwBJwYKKSK/9Gppi09WAh1fXGcs+cM21NT/1AhAJLVihL/TrqL5JBiju7V0D1QVWP206fqw4yjT2M79wXYAxReXd15AGsKOHKGMAR28RE+C1aYxQ25gnyDg8UCtNVr3t83MQctq2WQ8WHBzifzDG3GIa2HQDQ7kZwnQZFcRgs/gNLS2AbqRe/8q2W3j/jHgaYJCcyiImQpLK92cEwuBrH81ayFIBcRYRiQ5H1lbeu542k2xLpl24sj/KotoG4aQ3sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3011158216;
+	Mon, 19 Aug 2024 20:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724099712; cv=none; b=fCRgGUl3E3gw3kGZtLurM4o2KAE/vD1n/R97KVcwO8Jl3cA4yfbnzIRDhnmeD6LF81XUNtmEtBfYAvtxtI4rpiAXzjo49QaRnRT+zQo4UJYDvKayZAIez5fZPmOlVy46pSgV37Jx67wq/omFVANmZAHP2qgHhz/sd4Ca2S12EtU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724099712; c=relaxed/simple;
+	bh=Pd4LwYZUpfjrvY2IOV4MUo7zqr83SAkZktPyGVkDZmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BgqyaTq1z1+BH3FH5pCoq4XTsG+wYCRzhvXPX3GVdKjYNr2U6MbN2mv6ZYtjdIIStfekR+GKoOtAl9EeZEzw9eG4VyWbG9WTDvtKTe4KUmyFbAChrpGmMthjWzUFHqFmP7zzW2Zn9MYcdKH0NuIK9LLIu5bn7ioykOapAs2jmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlO2eKbC; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d46f2816c0so354279a91.2;
+        Mon, 19 Aug 2024 13:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zFRO9orJ2ZMxO2G4d+Cb3aUHUb5dqPtEaL/OyWfSR4s=;
- b=i/BVk+uSmBaj50oiGFAAjsOkWMigbp7KazAmV52IRxJqeBOVfHpKIQa1nJ1uUI1ctP3rAJYySDZYDu0oqjPZKS2Em7JPfXLgI8/XJXlJAz0/hblbEPED+BC3nugRm4UzD1xph6yAYqbL/AdJpBCeP84kEYpdJ0AzNTHmen5QmFQ=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by SJ0PR10MB4477.namprd10.prod.outlook.com (2603:10b6:a03:2df::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Mon, 19 Aug
- 2024 20:34:06 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7897.010; Mon, 19 Aug 2024
- 20:34:05 +0000
-Date: Mon, 19 Aug 2024 16:34:03 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        jeffxu@chromium.org, oliver.sang@intel.com,
-        torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 4/7] mm/mremap: Replace can_modify_mm with
- can_modify_vma
-Message-ID: <wjwf7eiu3kcd76tr3riddcusybbg65obpoo3of6xb5gswrjioc@r33dbsgu3zvk>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Pedro Falcato <pedro.falcato@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, jeffxu@chromium.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Kees Cook <kees@kernel.org>
-References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
- <20240817-mseal-depessimize-v3-4-d8d2e037df30@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240817-mseal-depessimize-v3-4-d8d2e037df30@gmail.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT1PR01CA0146.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2f::25) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+        d=gmail.com; s=20230601; t=1724099710; x=1724704510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nH6MJrjwaF1DExwqq1BAG9TBOgQJbeO0AdhOsYCARpQ=;
+        b=jlO2eKbCXof7f4BKEavBZX+YnswIPcRFFcSGWps9FMhr2EKqdJTIDvBmwdTigowT7n
+         sb3RKC4S+NS2gusjrICQdwiM6xFz5V2dZhr8ICxbmIOV1w6qUWU5tdcd8PNHmSaMcTc6
+         NXMqlGTJv9aliysJ2Fe49UWhwkfCMOGSGI+/FFNPj2aj4vbS04xydBJZIgjOjoIMGiqD
+         F1cPy/qN4Tz9rmbiNyFnkkg40Xdr+fT2GA6s7+ZZFj3matM/VPEZyDOs14UPfk21n2d0
+         nAgWqAMi9CJW6tJTL9Jiv4A6w3YOYplCfaOJ/Izx6N2d79co4che4cpozxK6M3JKstFB
+         /lPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724099710; x=1724704510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nH6MJrjwaF1DExwqq1BAG9TBOgQJbeO0AdhOsYCARpQ=;
+        b=iQfZN2EWyjxlnxNpPAYiJ8Aa4KXfkqUdnG3YkGTClvpt7Hb6s/O9e6A3yafm6lDEyt
+         XTOgUQjIsvMJXJrlH2hY0pHmLYFoT3HhByFCbYrQE+oPjqwYjXB1Q3lFc7Dcb8Lq4H+T
+         wa1URh6tA2v4J2vfwDjOvwig7kA3hhVXGAPezKR9nnEfcOzOZz9M3bVkaphE4NxvQRyN
+         hMLEcqkmEz3D4Kv3ZZfO2CzHmm5IYJu+cWGOFLR5wMssCIB02JqBZ+Vhs1qv0CYMzyrs
+         UtHesnWa9H9dpqeS5oYPRsyzqNgTtiGO5KpIkQhOuLjv1byV+uyOU1bO0iuDOIb3KQbK
+         YRCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9VAEPGWWDAiCXMVxHuMdyLReUec9jyBCPOZDTVQL4nVQ88u27hSnAfrHprP0QAwdRNM+XzsBGkpHkQJ/BmwzjZT/6gfJpvVFyzKXR/SbzqyUhPVBasVdOjpetE3560KqpYk5RT9TuG5JIHv9aIg65BOSSf/OnUc2uVgFjyQkWqnIBDSu
+X-Gm-Message-State: AOJu0YwX5j0lV01bgevkzMWK5KeMob/tJDfu5f+6LY36GrRQYNlDF098
+	XIDIwnVv1M+739lOSbgH4dwuMHabRQjDWnMiV2UKsrHzpsOoXsfCKt3atixY6O2MjrFBLn3uKN5
+	EYaeLwsiHNc7xlDH2LqPkYDbt2Xk=
+X-Google-Smtp-Source: AGHT+IGUFaAMZSC62zrt9/XK41cBx3H4cq8e6deI++UilY88ciWZUojNh5L48XclPwKgVRRXTxRm7ziIqLii28R7Rmk=
+X-Received: by 2002:a17:90a:bc81:b0:2c8:3f5:37d2 with SMTP id
+ 98e67ed59e1d1-2d3dfc75e41mr13272600a91.20.1724099710147; Mon, 19 Aug 2024
+ 13:35:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SJ0PR10MB4477:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa486f7f-a749-40ff-dd9f-08dcc08e4520
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yhzqqY6u9boVAMc50AvU5dnbmjVEGeVUwkbl2JY8E6f6nvyiHeq0isU+RfbO?=
- =?us-ascii?Q?vdNbLzH7DLxaz+SaKZZHT6ySkESNk6ZRYR1jTH1mrngBUJDuQWAIF2Slv1BQ?=
- =?us-ascii?Q?YrUd866vcPAC3NqHtaWnHPuMeodKN8ziKi0IxnzvDy+RBWjoNwouQgsQZyvK?=
- =?us-ascii?Q?hmPtDXmavV/QhyT2/p3IQZFeDC9kF3baOvHVOzyLzeX7ZZ+uA/g6Dwgzuoqx?=
- =?us-ascii?Q?vMl78/gFYeSErzmCc8ML8auNGUgrdHMN1v6JkNEf8srKrLTvKqCxPl2yDCHV?=
- =?us-ascii?Q?C8gFMhPtrz4+B+Exvs50U9hUYzlzh6DUt+RaP4Ci3c1lgPnv85elojiYc0Xt?=
- =?us-ascii?Q?p86e/4sZvdHi96FD4IPxbXfi0q9pBn1bRIpmDQhCTsrcAIoOITEyHCz30tnV?=
- =?us-ascii?Q?mRQq41JkTyOnyTXqrJcn/KdaTSnaIfVXidTKk/Mh0FjBxw/A494zMNquxLhr?=
- =?us-ascii?Q?14I74p9CWUN1BRK6kL+SyJP8jwpWOnJ9LEP0cdAcYDd1EIWNmAZYxGrAk/b/?=
- =?us-ascii?Q?dh01J6adusrlKgXyl2WS3EFJqaWd8hD1ZvDel9caPfNzn340MvEwWn/jouPj?=
- =?us-ascii?Q?mE2PkPt84BKNx3pVidRCj2Yl2fwDjt3T2i+FypSQ2QjKTTIyVyDVf0P187el?=
- =?us-ascii?Q?TSiYcQ9DavPChz+H1pXHMSxL+7UNeYIv6kcSxME+y0ZbHjVSJhqgEgKhVGEK?=
- =?us-ascii?Q?5+hwuSdrhpeKb0xUJVrLG21zmhraO6zIFlWVbTJqUK7I1tJe6FYH5KCIzRiM?=
- =?us-ascii?Q?a1L1aouZBbCoBrv/XeWaLtPtw57XNVaQYTBPRUtj66JF60WLYbvU6g89cLha?=
- =?us-ascii?Q?+HImNKguD0zkcTa73rcadz20Mjt1IbrxW7JTdjLVSN7YTQarq0WiryRmgsjg?=
- =?us-ascii?Q?SMFGtdEnnVv9kgA6wdMxUufGlbhHcSG0+cjNajHhUFTzXp/l/x3lxrMg/cdD?=
- =?us-ascii?Q?nVbfHuxkNjmYkXh+lxGf3cP1TqERV040zxUR6v88yQ9sUEYWXAnb9pDA+iT/?=
- =?us-ascii?Q?8NJu1AIhxWPsa9dPtnGLjBy2jO7c9FVssn+ys0Cj708M/O+W06oBvtlx+vMC?=
- =?us-ascii?Q?zGE4qPeGFhfvqpSeBZIsiWM4H/lUHs38nANA1Vvmp5yi5xPsrzaxefzve+me?=
- =?us-ascii?Q?o4EtoO7SKLIhIaVTcOde5F3kr2O3wJdg1gQwP3Lw7IPiS3zR+3rPkEVGqCQr?=
- =?us-ascii?Q?6iuBybWiAxUF83u0bZE++yi9QTbaQWXxi7R81z82yFkTo4D9LMM7G5QTry3D?=
- =?us-ascii?Q?Nxc9qQmexAVk1XgMunpHXKkrwKusrZK0zdF3iO5wWtHuEs83Jjcqc6h0jGXh?=
- =?us-ascii?Q?TWKOb3pSPHi4ucnWv8+EuAqVgyoxYRAqO8hIbXDw48h0KQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9H0t992SrLtRNaIvNC0oj4KcXrX+XwrAcaO8LbWP3IyKL3b8IMO5qEO41CO3?=
- =?us-ascii?Q?fpQ3VqnnuyOX5BRdqZAlIVYEncIXl+yM+PC72K1sIPy9Wni7E3QPbnzgWtQ7?=
- =?us-ascii?Q?RXtdBjXFvfQIs7+OrUE/9ADymZvKXS7PcvHjEajey5CCQmiqA6kSgr+e60Xr?=
- =?us-ascii?Q?Mz2QMyHp+7XrsywkgxjsHa8RCnA+FTAtijG7hFM/D3PA+ijhs6wsx/2JgnGc?=
- =?us-ascii?Q?8VdEbfBSTEHGgmqmJriDAPlcaQSF0jwtB21VWP/NIHFuUjRht1QAdUKAXIId?=
- =?us-ascii?Q?kz5BsLyLpjyAgm5DREn7eRKIYTuYjmwGfLgPiKSdY/JdxS3uuy+L5Z211keQ?=
- =?us-ascii?Q?vpf23fvoNc1FwNa/RupBuK7ZlaRxsdB2v3EEDQbyYWi66QoNdAHeRd/htonT?=
- =?us-ascii?Q?eCZqXhYw40O1P4xLWDU4vuTlzjW1pTvEmRGvPmCKivrpv5ynL2fbVi8a66Ds?=
- =?us-ascii?Q?t2/b/oU5DPqM0wXZoCIzj38FrWpbpPp8DR8ISeSf4CjVW5jZcY6AY878cn6A?=
- =?us-ascii?Q?vhRza7fxEkXOqRBnEzwMB7bk76UtCDeCNOrArkCLTjM1YN3vRi8hMsVL5JIx?=
- =?us-ascii?Q?1CMbGLyIaGUNDppcMeuP9Gr24I+lDAGqorlsVvawjX3L7RtnAf4ukBzO3lnf?=
- =?us-ascii?Q?Q/Acg0mDwP+qlfrOgPTsithlne0f55pT2lmddERi5ivrinRZVjV/y/NoZ2hO?=
- =?us-ascii?Q?zJwxuMwUGtTDAKUS6SWPfhpP/PqVytmF6qoNMdhKz72b2e7131Btka/RbOU6?=
- =?us-ascii?Q?DomgXzuTbMZKMAsTU/WVFOYEObE3abkAIfTYiTrC1V8kxK3Le5UyZnRTbuFK?=
- =?us-ascii?Q?/N+KnBgW4GPWvJBdAIinYFbgVGIC/qmVLPulr2Tx4lcxz2k4D8sAxaqTIdXp?=
- =?us-ascii?Q?OoP7k6Y/sT9/KcWYtqBC1+cyjww15ax6eVXGDVwG7QXHzR03VYWHCVCcgDAP?=
- =?us-ascii?Q?Tc/81dfmwzLMf/S1cf9Hk/4so0zZWE+Va1nVkxkqe+7TA8r+XxxZmpC6rRyj?=
- =?us-ascii?Q?XlI1a7Db8ykRJICwtEZHuobCk5Hlni45lUEWEtqtPplvWY0Tb7QlfEEMQyXQ?=
- =?us-ascii?Q?UOdTJZ343Hb3FKP7DnICUMDQ8n/3fNI+LqeZoYHjCq9JiYpRb1dBfrzWguRt?=
- =?us-ascii?Q?j2ZfJeILoEsCBnp26ElOEWz+6BaHsk0qCI6swsvRsN4D7cIiaEM8IChuQPUg?=
- =?us-ascii?Q?cP4G7PDKdAGK+WBNavBi5ACcpAi8MpsY3pd3UpHbVqhcJlbQQF1hGrPHWFjl?=
- =?us-ascii?Q?Jo7dTYg4tal+7wJQCkPx5NNas0WIDdDloq9+j56gBlyG4ZwPma5qhA+Nf3kP?=
- =?us-ascii?Q?yVl3S4SCoBZeZ7ndqCjsm2fcPoBYnmK3QLGmU8Ih9ZLNIAzSrbJpv/0rDSUK?=
- =?us-ascii?Q?HnObxTm1brh6d5rxS1c0oA1C6oyaWEVIoNnB3f9qy56vzfvpI8e2BojGjtIM?=
- =?us-ascii?Q?7MCyg+gtF+aCYSyTcTbd1oXPbI5jNPjwKnTuuu/wL8sR8QbHfOLEqKifimMs?=
- =?us-ascii?Q?h9Y0QC2YFLBOOiZcy/mzixUGJN0gaUtQeX7tAPIY6vC3966tYQxtEigfQkK9?=
- =?us-ascii?Q?gt8Bwif/KbEB6YwY6csumX6IPmn1k4h14OnTd/Az?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	FzqFhvoepmZwfyE2xjwBfSm3RR4P9+cKQlXrx8WNDbLq2ExahNfXEGrIw+SHCngJGW/fYjMqj8QLCMYFK7z3LZN/eDJrLXEMQxVdSX5nXa5KNKHasMswafBuxckFOVZtO7dQLw7pk4GOhwHfRv7t5jhnOfdTiuavMCtxu509aps3ETpFyXpXsgInrOCwu/AyOBrTgB2XvcEF/DgDdH2Zb4bq9n6X30unhn+VGnV/fnjJYMEZh4LqkUvWBsxK255ar3t77BQlBS5qnrMmEuZS2sZsbSK3Ilq04zvsQBFNfgQaGjZP8QPO+RQ83XyV0p1QBd08Di2jkh942ftHu5+tdAgefA1i7BZlC3SzT6QLuT1f83u9k2Z0AojscnQeynLODew390vgOIGhfqB2/x/WVUS5Bq1VKPhgVHL07Th+cvwEBFQGu4/7SPBsELFK//9FlpsnOz54+6FttKXhKVqe1SHXv0grB+HQEHKTxbpJ7WtIa19DGFdgedLKH9HWbWcUUZnt4ooIuuez1O279N1CtzwNnR51xqKvgDFl1LIwa7BU+kGar8UfJ50EFJL7dI3JcIOmjNWkoNoHRzyBUjzMc1/+C+h6oLEHUWjnCgtjwHU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa486f7f-a749-40ff-dd9f-08dcc08e4520
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 20:34:05.8876
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pykXMtIbszxzbTwZD0DWb7aT+ObMvCaVW39cXmz9i81X/+bqfzw/WtP/PQlMRCz7ocJIfKaHiF3pEh5FzAT8Cw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4477
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408190139
-X-Proofpoint-ORIG-GUID: MJU7zh7E0apxWNEKJa5hP_-Jv_fxLcj3
-X-Proofpoint-GUID: MJU7zh7E0apxWNEKJa5hP_-Jv_fxLcj3
+References: <20240813042917.506057-1-andrii@kernel.org> <20240813042917.506057-10-andrii@kernel.org>
+ <20240819134107.GB3515@redhat.com>
+In-Reply-To: <20240819134107.GB3515@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 19 Aug 2024 13:34:57 -0700
+Message-ID: <CAEf4BzYFXmCU83mr9YHy2JtF35WmYBvKpyrmBV4QxFuqubk_6A@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 09/13] uprobes: SRCU-protect uretprobe lifetime
+ (with timeout)
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Pedro Falcato <pedro.falcato@gmail.com> [240816 20:19]:
-> Delegate all can_modify checks to the proper places. Unmap checks are
-> done in do_unmap (et al). The source VMA check is done purposefully
-> before unmapping, to keep the original mseal semantics.
-> 
-> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+On Mon, Aug 19, 2024 at 6:41=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> On 08/12, Andrii Nakryiko wrote:
+> >
+> > Avoid taking refcount on uprobe in prepare_uretprobe(), instead take
+> > uretprobe-specific SRCU lock and keep it active as kernel transfers
+> > control back to user space.
+> ...
+> >  include/linux/uprobes.h |  49 ++++++-
+> >  kernel/events/uprobes.c | 294 ++++++++++++++++++++++++++++++++++------
+> >  2 files changed, 301 insertions(+), 42 deletions(-)
+>
+> Oh. To be honest I don't like this patch.
+>
+> I would like to know what other reviewers think, but to me it adds too ma=
+ny
+> complications that I can't even fully understand...
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Which parts? The atomic xchg() and cmpxchg() parts? What exactly do
+you feel like you don't fully understand?
 
+>
+> And how much does it help performance-wise?
+
+A lot, as we increase uprobe parallelism. Here's a subset of
+benchmarks for 1-4, 8, 16, 32, 64, and 80 threads firing uretprobe.
+With and without this SRCU change, but including all the other
+changes, including the lockless VMA lookup. It's noticeable already
+with just two competing CPUs/threads, and it just gets much worse from
+there.
+
+Of course in production you shouldn't come close to such rates of
+uprobe/uretprobe firing, so this is definitely a microbenchmark
+emphasizing the sharing between CPUs, but it still adds up. And we do
+have production use cases that would like to fire uprobes at 100K+ per
+second rates.
+
+WITH SRCU for uretprobes
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+uretprobe-nop         ( 1 cpus):    1.968 =C2=B1 0.001M/s  (  1.968M/s/cpu)
+uretprobe-nop         ( 2 cpus):    3.739 =C2=B1 0.003M/s  (  1.869M/s/cpu)
+uretprobe-nop         ( 3 cpus):    5.616 =C2=B1 0.003M/s  (  1.872M/s/cpu)
+uretprobe-nop         ( 4 cpus):    7.286 =C2=B1 0.002M/s  (  1.822M/s/cpu)
+uretprobe-nop         ( 8 cpus):   13.657 =C2=B1 0.007M/s  (  1.707M/s/cpu)
+uretprobe-nop         (32 cpus):   45.305 =C2=B1 0.066M/s  (  1.416M/s/cpu)
+uretprobe-nop         (64 cpus):   42.390 =C2=B1 0.922M/s  (  0.662M/s/cpu)
+uretprobe-nop         (80 cpus):   47.554 =C2=B1 2.411M/s  (  0.594M/s/cpu)
+
+WITHOUT SRCU for uretprobes
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+uretprobe-nop         ( 1 cpus):    2.197 =C2=B1 0.002M/s  (  2.197M/s/cpu)
+uretprobe-nop         ( 2 cpus):    3.325 =C2=B1 0.001M/s  (  1.662M/s/cpu)
+uretprobe-nop         ( 3 cpus):    4.129 =C2=B1 0.002M/s  (  1.376M/s/cpu)
+uretprobe-nop         ( 4 cpus):    6.180 =C2=B1 0.003M/s  (  1.545M/s/cpu)
+uretprobe-nop         ( 8 cpus):    7.323 =C2=B1 0.005M/s  (  0.915M/s/cpu)
+uretprobe-nop         (16 cpus):    6.943 =C2=B1 0.005M/s  (  0.434M/s/cpu)
+uretprobe-nop         (32 cpus):    5.931 =C2=B1 0.014M/s  (  0.185M/s/cpu)
+uretprobe-nop         (64 cpus):    5.145 =C2=B1 0.003M/s  (  0.080M/s/cpu)
+uretprobe-nop         (80 cpus):    4.925 =C2=B1 0.005M/s  (  0.062M/s/cpu)
+
+>
+> I'll try to take another look, and I'll try to think about other approach=
+es,
+> not that I have something better in mind...
+
+Ok.
+
+>
+>
+> But lets forgets this patch for the moment. The next one adds even more
+> complications, and I think it doesn't make sense.
+>
+
+"Even more complications" is a bit of an overstatement. It just
+applies everything we do for uretprobes in this patch to a very
+straightforward single-stepped case.
+
+> As I have already mentioned in the previous discussions, we can simply ki=
+ll
+> utask->active_uprobe. And utask->auprobe.
+
+I don't have anything against that, in principle, but let's benchmark
+and test that thoroughly. I'm a bit uneasy about the possibility that
+some arch-specific code will do container_of() on this arch_uprobe in
+order to get to uprobe, we'd need to audit all the code to make sure
+that can't happen. Also it's a bit unfortunate that we have to assume
+that struct arch_uprobe is small on all architectures, and there is no
+code that assumes it can't be moved, etc, etc. (I also don't get why
+you need memcpy
+
+>
+> So can't we start with the patch below? On top of your 08/13. It doesn't =
+kill
+> utask->auprobe yet, this needs a bit more trivial changes.
+>
+> What do you think?
+
+I think that single-stepped case isn't the main use case (typically
+uprobe/uretprobe will be installed on nop or push %rbp, both
+emulated). uretprobes, though, are the main use case (along with
+optimized entry uprobes). So what we do about single-stepped is a bit
+secondary (for me, looking at production use cases).
+
+But we do need to do something with uretprobes first and foremost.
+
+>
+> Oleg.
+>
+> -------------------------------------------------------------------------=
+------
+> From d7cb674eb6f7bb891408b2b6a5fb872a6c2f0f6c Mon Sep 17 00:00:00 2001
+> From: Oleg Nesterov <oleg@redhat.com>
+> Date: Mon, 19 Aug 2024 15:34:55 +0200
+> Subject: [RFC PATCH] uprobe: kill uprobe_task->active_uprobe
+>
+> Untested, not for inclusion yet, and I need to split it into 2 changes.
+> It does 2 simple things:
+>
+>         1. active_uprobe !=3D NULL is possible if and only if utask->stat=
+e !=3D 0,
+>            so it turns the active_uprobe checks into the utask->state che=
+cks.
+>
+>         2. handle_singlestep() doesn't really need ->active_uprobe, it on=
+ly
+>            needs uprobe->arch which is "const" after prepare_uprobe().
+>
+>            So this patch adds the new "arch_uprobe uarch" member into uta=
+sk
+>            and changes pre_ssout() to do memcpy(&utask->uarch, &uprobe->a=
+rch).
 > ---
->  mm/mremap.c | 32 ++++++--------------------------
->  1 file changed, 6 insertions(+), 26 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index e7ae140fc640..24712f8dbb6b 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -902,19 +902,6 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
->  	if ((mm->map_count + 2) >= sysctl_max_map_count - 3)
->  		return -ENOMEM;
->  
-> -	/*
-> -	 * In mremap_to().
-> -	 * Move a VMA to another location, check if src addr is sealed.
-> -	 *
-> -	 * Place can_modify_mm here because mremap_to()
-> -	 * does its own checking for address range, and we only
-> -	 * check the sealing after passing those checks.
-> -	 *
-> -	 * can_modify_mm assumes we have acquired the lock on MM.
-> -	 */
-> -	if (unlikely(!can_modify_mm(mm, addr, addr + old_len)))
-> -		return -EPERM;
-> -
->  	if (flags & MREMAP_FIXED) {
->  		/*
->  		 * In mremap_to().
-> @@ -1052,6 +1039,12 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
->  		goto out;
->  	}
->  
-> +	/* Don't allow remapping vmas when they have already been sealed */
-> +	if (!can_modify_vma(vma)) {
-> +		ret = -EPERM;
-> +		goto out;
-> +	}
-> +
->  	if (is_vm_hugetlb_page(vma)) {
->  		struct hstate *h __maybe_unused = hstate_vma(vma);
->  
-> @@ -1079,19 +1072,6 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
->  		goto out;
->  	}
->  
-> -	/*
-> -	 * Below is shrink/expand case (not mremap_to())
-> -	 * Check if src address is sealed, if so, reject.
-> -	 * In other words, prevent shrinking or expanding a sealed VMA.
-> -	 *
-> -	 * Place can_modify_mm here so we can keep the logic related to
-> -	 * shrink/expand together.
-> -	 */
-> -	if (unlikely(!can_modify_mm(mm, addr, addr + old_len))) {
-> -		ret = -EPERM;
-> -		goto out;
-> -	}
-> -
->  	/*
->  	 * Always allow a shrinking remap: that just unmaps
->  	 * the unnecessary pages..
-> 
-> -- 
-> 2.46.0
-> 
-> 
+>  include/linux/uprobes.h |  2 +-
+>  kernel/events/uprobes.c | 37 +++++++++++--------------------------
+>  2 files changed, 12 insertions(+), 27 deletions(-)
+
+[...]
 
