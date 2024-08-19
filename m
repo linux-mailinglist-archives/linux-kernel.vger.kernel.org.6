@@ -1,158 +1,232 @@
-Return-Path: <linux-kernel+bounces-292854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6407095754B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:08:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54CD957558
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D191F220B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6B31C22C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0727B1DD3A9;
-	Mon, 19 Aug 2024 20:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7051DF691;
+	Mon, 19 Aug 2024 20:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DupjDfdW"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="krpEkZ1b"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CEE187FF1;
-	Mon, 19 Aug 2024 20:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15C81DD39C;
+	Mon, 19 Aug 2024 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098071; cv=none; b=LfbUwGx3IWE27zd31UEP6yLlRNT1LKW+g5yX9ZVB/sg0Z7CiCEw+ubLKIh86J1nQ6sd3FypOkv4GMaW+KsmrIb0wucJGc14lTJaMts0Fg4hQrkhk/Es/jIw2AuSQf9v7NIOsS4r6SneAZskO//Hejnrie/68A/WE14dGpG/+94s=
+	t=1724098111; cv=none; b=Ni/80XCkR0gJVKVPDehKqz1OxbJDgE5XkQiDjKQh53bdbwpv0yLZo8o9dmfIBc3Lmun/SJ6sa5yvAIvoAXdg9jVKu3uv7bVXc1zWkUIovb9dgAW3WAPaic0IwGrEhSXu7xnZMNuRFEpwhaVRl5jE9SowGmOaYVqUMnS/6mCoNig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098071; c=relaxed/simple;
-	bh=rAPCRlcod+pfbPu210SomC+sQBvMBit2CDwdTkZs9WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+xXNaWBF9vTtXdJjnFBhoRvGqNtXHdWLd9FxG7KsaSHdAaXUjnxnUM+S/C2CBBLEXZj10bhY1UWTyk+OfJk+IqfQ8Xgl3aibTKQ1VZ0PoGN5SQsbvBRwnGVzoSxqaZZKdxBtX6HxOsAci4S9kJtkihLfKsURCPcYY2WuuQ63PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DupjDfdW; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so922571a12.0;
-        Mon, 19 Aug 2024 13:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724098068; x=1724702868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AXG6IXtrOjPM85KujCO90THzzqzY1pavUqqhKYUalFU=;
-        b=DupjDfdWerMwK5w3VidWTMW/SnbAzPXMPMu5hmhYPukmYW4C0Xp4ouyoiZhdrFr0df
-         3dhYfrh3WJoTWDtLNDoQVo2w5RZJfmdKNwCgEB6jguQ7ItPpkYvZntRcfRnpsTPwhkrg
-         QSBHZ5I3PYDyRPD2AhYLQJMhkwXzbWfgUs5XmMe4JM+tXQ6Vy5nmLKeV/zhoD9TgDRzJ
-         hyT8VhUCWbDCsOMS8SnOmaP3K44TpvMEcHVPwSDDAhFQcRnwKYYkthqDC9G22zSd2khP
-         n8qPOebCEi1x9UdpMvwcILerJaODruxmBj7Mb7pN1EIqau51o6SAeWf6NzOuyT7+Fh7x
-         xkLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724098068; x=1724702868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AXG6IXtrOjPM85KujCO90THzzqzY1pavUqqhKYUalFU=;
-        b=NxDX3LfcAtRtaQqUuEbtR7fT+ZkJJQsU9Z7lUUAXZxrtNVe7pDbm5UQYYe6khIIMp9
-         BHMzN0VYYyWoVQO9flE3yGvd1gD05M5tbMsCqEmuMr1RXiLJlv3FpFhfNiWw5Jzlb7Ym
-         FIN8Fw1YEE9/EKVgBesfONYBuOXop17mXtqot03/gy5Ll88pPF7498vid2QxeFU1kVvl
-         VwlZUI/H3SeAKKHsddRkJuOrYsz9A7/2JADt8oeC0vOn+znXE6c43kuibdAYs8hvin17
-         la3fzSFURSUhI/8RVPuAkRP7ECATugEsh6RB+Q7Ff4gmajDAdkU2ehYhDkkMAUX0CUXp
-         Yh4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGyvbbjxIFllUp2yG0gdkVBFsUk+7lQ3EZZ9vUk5fMKb2LOmq0cG6U3cOiPugCJ8LxiRZKdAFIREU3MIc3PLZP3tNTw+OJwtCYDD8irOqDQfzVjCdAoUsV6G4aorX+5jPfKGjtOIV54XBzUPXVr9BWuWbx02unt+srQGMdf2mafeQ9m6+NpKEOO0tq16Qz7cOs+z2wd2pPPdjL2O1V3RfdWbzXSgZ+oSy3z0bRC37nrETzbvmOHz2331+/fA34zRWH2sPmYqdx
-X-Gm-Message-State: AOJu0YxxQNwsMAx5LjX8okw57/NavCixE2jgTv4tSx9OnVzqmsErCZsW
-	MS/VEry/4yr/yf/BM7pr2bKOtyDUYI3+bznBwDfpyOSzAynM9MFD
-X-Google-Smtp-Source: AGHT+IGJ+Gfht/qOvEgwrpTVPJu3XY+E8gChTgsY9fwcJajAIgQx/hjZADakWsaqM4RF1z+rkUv/TQ==
-X-Received: by 2002:a05:6402:51c6:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-5bf0ac5b251mr753759a12.17.1724098067404;
-        Mon, 19 Aug 2024 13:07:47 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5becfc7cc93sm4516920a12.3.2024.08.19.13.07.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 13:07:46 -0700 (PDT)
-Message-ID: <6406891b-e116-4f10-99c7-1d434d7e8410@gmail.com>
-Date: Mon, 19 Aug 2024 22:07:45 +0200
+	s=arc-20240116; t=1724098111; c=relaxed/simple;
+	bh=VMywmaV2PC3+xgr4QRnO1wOmoE97PYvg4j7eQMJZDJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=PARhBP8kj94qF3+84brnDSNaY8iJ7AJ3oSbt68HTYM2JFmQqq1D+yF+idLY0lFXI0RZkk8ZmsnALfylLB823mupqSaMCj8Sxg/PDv9i1rtwJbjGGDohazanmhW8ow9+bI8mkRBS/l7ZzZvDIz3sxb4GEWql7PTWr9FQB4MVQMKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=krpEkZ1b; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBA2Ze022742;
+	Mon, 19 Aug 2024 20:08:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gZAnlzRN7R8Xgp/8ZFX6752e8W3mZV1F/mkGlAWZ5gc=; b=krpEkZ1bts/NCHMp
+	aHeJWcvpoCN2Ftcg+n01dZdC49kL4thjX+x0AzX5IHtpHR7NcLS0SXtQOx6Shjkr
+	NQ618YlAAXfXYFSMrDQqnr+9F+g+ueZGeSYZ5sqMQR1BHpXDmI+ymq+GomwJ4RW0
+	cuE34idqBBmPJxNjSSI0xXdHqr2uKa4rbhjRSBFoct0euSDPrz11SrjK4eXoB5rW
+	/g3fcmo4EcNdSF7SxB9A1gP8XPT1KUfiwLxisv5GgMWDFL1R1de6k5MtKFJI/aFt
+	6FdUn/bnYTrUIXcC127q8GKdpa5EDovGfirdNuV1lUD4Y8iGWz5d6wpvDpmChj/d
+	+hhcBQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m32ncy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:08:23 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JK8MJA019555
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:08:22 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 13:08:22 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+Date: Mon, 19 Aug 2024 13:07:46 -0700
+Subject: [PATCH v2 2/3] usb: typec: ucsi: Move unregister out of atomic
+ section
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] OF support for Surface System Aggregator Module
-To: Hans de Goede <hdegoede@redhat.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
- <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240819-pmic-glink-v6-11-races-v2-2-88fe3ab1f0e2@quicinc.com>
+References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
+In-Reply-To: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
+To: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Heikki
+ Krogerus" <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>, <stable@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724098101; l=4450;
+ i=quic_bjorande@quicinc.com; s=20230915; h=from:subject:message-id;
+ bh=VMywmaV2PC3+xgr4QRnO1wOmoE97PYvg4j7eQMJZDJg=;
+ b=YPEj0ic2lN+vc/rh4jE5Sn8CEocbodrM1U1FhY+i/Ye1mVIyi57uW2Uglyc5QfdDDiclMt+9I
+ o7n5qxTXaY2CruFadRpr4r0rv/nFnlExm7OI6tGLZPdmtkfln2iIEFb
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=ed25519;
+ pk=VkhObtljigy9k0ZUIE1Mvr0Y+E1dgBEH9WoLQnUtbIM=
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NtI19OLslqDwQ7WWPHLcSLRzxfbQ6WSy
+X-Proofpoint-ORIG-GUID: NtI19OLslqDwQ7WWPHLcSLRzxfbQ6WSy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxlogscore=999
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190137
 
-On 8/19/24 1:57 PM, Hans de Goede wrote:
-> Hi,
-> 
-> On 8/14/24 12:27 PM, Konrad Dybcio wrote:
->> Wire up OF support for SSAM drivers, to use with Surface Laptop 7 and
->> other Qualcomm-based devices.
->>
->> Patch 3 references compatible strings introduced in [1]
->>
->> [1] https://lore.kernel.org/linux-arm-msm/20240809-topic-sl7-v1-1-2090433d8dfc@quicinc.com/T/#u
->>
->> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> 
-> Thank you for your patch-series, I've applied the series to my
-> review-hans branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-> 
-> I did notice the following compiler warning when test building:
-> 
-> drivers/platform/surface/surface_aggregator_registry.c:278:36: warning: ‘ssam_node_group_sl7’ defined but not used [-Wunused-variable]
->    278 | static const struct software_node *ssam_node_group_sl7[] = {
->        |                                    ^~~~~~~~~~~~~~~~~~~
-> 
-> One way to fix this would be add #ifdef CONFIG_OF around the definition
-> of ssam_node_group_sl7, but then future devicetree based surface devices
-> would need more #ifdef-s so instead I've solved it by squashing in this fix:
-> 
-> diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
-> index 495cb4300617..ac96e883cb57 100644
-> --- a/drivers/platform/surface/surface_aggregator_registry.c
-> +++ b/drivers/platform/surface/surface_aggregator_registry.c
-> @@ -415,14 +415,12 @@ static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
->   };
->   MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
->   
-> -#ifdef CONFIG_OF
-> -static const struct of_device_id ssam_platform_hub_of_match[] = {
-> +static const struct of_device_id ssam_platform_hub_of_match[] __maybe_unused = {
->   	/* Surface Laptop 7 */
->   	{ .compatible = "microsoft,romulus13", (void *)ssam_node_group_sl7 },
->   	{ .compatible = "microsoft,romulus15", (void *)ssam_node_group_sl7 },
->   	{ },
->   };
-> -#endif
->   
->   static int ssam_platform_hub_probe(struct platform_device *pdev)
->   {
-> 
-> Once I've run some tests on this branch the patches there will be
-> added to the platform-drivers-x86/for-next branch and eventually
-> will be included in the pdx86 pull-request to Linus for the next
-> merge-window.
+Commit '635ce0db8956 ("soc: qcom: pmic_glink: don't traverse clients
+list without a lock")' moved the pmic_glink client list under a
+spinlock, as it is accessed by the rpmsg/glink callback, which in turn
+is invoked from IRQ context.
 
-I agree with Konrad, this looks like the best way to address this.
-Thanks!
+This means that ucsi_unregister() is now called from IRQ context, which
+isn't feasible as it's expecting a sleepable context. An effort is under
+way to get GLINK to invoke its callbacks in a sleepable context, but
+until then lets schedule the unregistration.
 
-Best regards,
-Max
+A side effect of this is that ucsi_unregister() can now happen
+after the remote processor, and thereby the communication link with it, is
+gone. pmic_glink_send() is amended with a check to avoid the resulting NULL
+pointer dereference.
+This does however result in the user being informed about this error by
+the following entry in the kernel log:
+
+  ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI write request: -5
+
+Fixes: 635ce0db8956 ("soc: qcom: pmic_glink: don't traverse clients list without a lock")
+Cc: stable@vger.kernel.org
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+ drivers/soc/qcom/pmic_glink.c       | 10 +++++++++-
+ drivers/usb/typec/ucsi/ucsi_glink.c | 27 ++++++++++++++++++++++-----
+ 2 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+index 58ec91767d79..e4747f1d3da5 100644
+--- a/drivers/soc/qcom/pmic_glink.c
++++ b/drivers/soc/qcom/pmic_glink.c
+@@ -112,8 +112,16 @@ EXPORT_SYMBOL_GPL(pmic_glink_register_client);
+ int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len)
+ {
+ 	struct pmic_glink *pg = client->pg;
++	int ret;
+ 
+-	return rpmsg_send(pg->ept, data, len);
++	mutex_lock(&pg->state_lock);
++	if (!pg->ept)
++		ret = -ECONNRESET;
++	else
++		ret = rpmsg_send(pg->ept, data, len);
++	mutex_unlock(&pg->state_lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pmic_glink_send);
+ 
+diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+index ac53a81c2a81..bb6244f21e0a 100644
+--- a/drivers/usb/typec/ucsi/ucsi_glink.c
++++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+@@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
+ 
+ 	struct work_struct notify_work;
+ 	struct work_struct register_work;
++	spinlock_t state_lock;
++	bool ucsi_registered;
++	bool pd_running;
+ 
+ 	u8 read_buf[UCSI_BUF_SIZE];
+ };
+@@ -244,8 +247,20 @@ static void pmic_glink_ucsi_notify(struct work_struct *work)
+ static void pmic_glink_ucsi_register(struct work_struct *work)
+ {
+ 	struct pmic_glink_ucsi *ucsi = container_of(work, struct pmic_glink_ucsi, register_work);
++	unsigned long flags;
++	bool pd_running;
+ 
+-	ucsi_register(ucsi->ucsi);
++	spin_lock_irqsave(&ucsi->state_lock, flags);
++	pd_running = ucsi->pd_running;
++	spin_unlock_irqrestore(&ucsi->state_lock, flags);
++
++	if (!ucsi->ucsi_registered && pd_running) {
++		ucsi_register(ucsi->ucsi);
++		ucsi->ucsi_registered = true;
++	} else if (ucsi->ucsi_registered && !pd_running) {
++		ucsi_unregister(ucsi->ucsi);
++		ucsi->ucsi_registered = false;
++	}
+ }
+ 
+ static void pmic_glink_ucsi_callback(const void *data, size_t len, void *priv)
+@@ -269,11 +284,12 @@ static void pmic_glink_ucsi_callback(const void *data, size_t len, void *priv)
+ static void pmic_glink_ucsi_pdr_notify(void *priv, int state)
+ {
+ 	struct pmic_glink_ucsi *ucsi = priv;
++	unsigned long flags;
+ 
+-	if (state == SERVREG_SERVICE_STATE_UP)
+-		schedule_work(&ucsi->register_work);
+-	else if (state == SERVREG_SERVICE_STATE_DOWN)
+-		ucsi_unregister(ucsi->ucsi);
++	spin_lock_irqsave(&ucsi->state_lock, flags);
++	ucsi->pd_running = state == SERVREG_SERVICE_STATE_UP;
++	spin_unlock_irqrestore(&ucsi->state_lock, flags);
++	schedule_work(&ucsi->register_work);
+ }
+ 
+ static void pmic_glink_ucsi_destroy(void *data)
+@@ -320,6 +336,7 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 	INIT_WORK(&ucsi->register_work, pmic_glink_ucsi_register);
+ 	init_completion(&ucsi->read_ack);
+ 	init_completion(&ucsi->write_ack);
++	spin_lock_init(&ucsi->state_lock);
+ 	mutex_init(&ucsi->lock);
+ 
+ 	ucsi->ucsi = ucsi_create(dev, &pmic_glink_ucsi_ops);
+
+-- 
+2.34.1
+
 
