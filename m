@@ -1,330 +1,389 @@
-Return-Path: <linux-kernel+bounces-291371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E8495614F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:05:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276B395614C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C6FFB20DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73787B20BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B57A13BACB;
-	Mon, 19 Aug 2024 03:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE6313B59A;
+	Mon, 19 Aug 2024 03:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VP9GuazG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Tph5QIDI"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E0C1CA8D;
-	Mon, 19 Aug 2024 03:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724036708; cv=none; b=K8+wUpbA5P+QoOtED6Xqb2xbJG8MQG/mK4gM+C7LHVcG0fRn73N0YP+CO1BilE8IMeLgXzqTY/zpcviVP3Ynn1MV3ZPW2PDcRgRDnrfqHPcRJ982F8eiJDm2kr407oeRZ+MgoQx9nJlq8D718ybhTJqMWusQlwMvS1cqvS/PiCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724036708; c=relaxed/simple;
-	bh=IrbpoFtZg9yDzWOu06DEHE2Ffob1DwNty5eagtHqG5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvoTw5hoWaXLdpOXSfMrJDNN7Pk9r5SjdmUU8n3PkhL48dMBsGEFvdgeZ67V6zhRMkH0FMa08tTt/02DrheDwYMFlWwifHLq8oeVf42jAoC+UWQyaThg0Mf6xGI5c7vuXKr38l648AcxnM9SIHiEn0438GAonPA6JoEjlPuK1NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VP9GuazG; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724036706; x=1755572706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IrbpoFtZg9yDzWOu06DEHE2Ffob1DwNty5eagtHqG5k=;
-  b=VP9GuazGpSaqGA11gbcdG/x6ijxUAAZRt9f817tykVfl44QXQmD2g2/Y
-   rYOgq7V6/Id2MH1dysk+m8gMOl0elhevWZEnWjSAq4RYjbyBkGtVFb6/F
-   0zPrW+mAtiXkLN24jXHzfhkNQidFJhCmaaf6WWAXt4fRhqTvfzJDjan0z
-   eUayZ9UFPELPiJFiUkaMVJ12Wh6MtiU8J8uAc4W1QcYEYROQzs+0Fy9O5
-   rkKgK+DgHb5XKFbkjga+2iOBv09JGF8lZmqup54Lwa1EY6Oc79PzGbZ2A
-   ddkl3LLKE5XUclcvyMtEIUlFHrOGb4ojxImjVR0iBDKk5JEzKSa8wJNb7
-   g==;
-X-CSE-ConnectionGUID: UDgKOseSRbOkx9g33gob8A==
-X-CSE-MsgGUID: xj0c+FFXTSKYYom1pZDU7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22416073"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="22416073"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 20:05:05 -0700
-X-CSE-ConnectionGUID: mQfS+lWhQ/aD4chIBURFbQ==
-X-CSE-MsgGUID: GQ17RcayQFucBNz3zJ9sog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60516213"
-Received: from linux.bj.intel.com ([10.238.157.71])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 20:05:02 -0700
-Date: Mon, 19 Aug 2024 10:59:49 +0800
-From: Tao Su <tao1.su@linux.intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
-	kai.huang@intel.com, isaku.yamahata@gmail.com,
-	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/25] KVM: x86: Introduce KVM_TDX_GET_CPUID
-Message-ID: <ZsK1JRf1amTEAW6q@linux.bj.intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-22-rick.p.edgecombe@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0D922F19;
+	Mon, 19 Aug 2024 03:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724036504; cv=fail; b=YD33xLhLBleFa9Mj615mrWjEH8CTDdVlEiW+OwbPhvztcsY2CrcpngO5o3rWzvRzcRZYlZN6eMzJug1+vWW+Ev0uUE8OHGMmOxjyLwWk5wkGfuM9SELxSx+8nzfyB5HxE/yYP+xRL8GjtaCO4/F6NwQEor/VB6EM4Ze1tKnDzFU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724036504; c=relaxed/simple;
+	bh=T7n+UXOqXjhjkHUQbnyb4gY/ggBIDNxiwA1Ur395K+o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WkkOxYGCLQA0foIzysfIiFOp90lWjAQ22u4TgQmdS3XN8Mjt97g/DicB1+bxr5jf21X3tQ5jGTGnPjc+uX7drF6TyOxg8ycK+7BF5zinXoApsgXZDhTs3pwEhRDY/ypVabykc0UbEGrr9Pr9v2O5OH9lNkwjE+/2VcQzm/C0W4M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Tph5QIDI; arc=fail smtp.client-ip=40.107.92.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Vh4I7uemfr7P+FtbeiNlspOgglEpLjoFdWEYSt6DUlYPJV0jvRsQAYIQmMlkC2gBsXHzkToYyD1rXgXx8niP1habA+OPMYg6oCXJUqvWmzSpqumR98bIbzM5WUcydUf/A5XxpNxLxiEopcPlIm6XzlQ7R5BdOHDqC2LPLmASUR7rpd3Yfd1EN6Kxj0rj0giuOwTbysDTz5UNlAnjilzVvsD7sgxt9Yx4AkWb5bUVyb22f9TItQq9UTJhDUwgKaPs+T4aXWRdvOcBNReKPEnxRY2cpafblzou1FWsz07kBMJYc8N5kBDNvdjEwDF7T0MUI4GjJ13RVIud5nzVLjp3TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sz6BICPrZX8Z2aCPNHvuBpLaUK8ACnAu6PpPVs9qC5o=;
+ b=b5HUV1NtSvaC45m7FCjaMw+76DEkaTG6vVerK5Y+aLqV9KipMNe8MWTFDzYJj4ZIGYv9PlIM9PiYCwGOXrVYhhfTAMHmZkf/iVRbKY8WWfwO7/yJD3cTMDCRLxEBSALNBVVT+Hwd1WiuobIn3uDVtDeRpOGGf1+pfupdzDFc+J6LFPS+36gzHLgJiOIQxRNSb1moOSZACMCveWjtR0P6YWefkbUbc8RPcwQs+/2/Y9Fxegru766lkq05EJOWRIOlcY7GqtizTiOQBqnfuB4nd+7tanXaJVoWK9U9y0jqKkoTDJXp2jW3tUZbZe5i7jy4GUx6tRJV+xn7voeCx/3Q8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sz6BICPrZX8Z2aCPNHvuBpLaUK8ACnAu6PpPVs9qC5o=;
+ b=Tph5QIDIAb12JFTKzxLtZkN3UmXvffzEjC0/rZO9RUdHTR5VwKFSCNghh4D4D1ZR3TJgoWMyr3kHBompKPuY/dOAzug7POb1lHfS+AKHdzicVi371MVWZg/cELUjSAprnL1iaUheDJm2eIxqpJoBGR/U3+ZMlhEwmd8ktzUMV1o=
+Received: from SJ0PR03CA0253.namprd03.prod.outlook.com (2603:10b6:a03:3a0::18)
+ by PH0PR12MB8152.namprd12.prod.outlook.com (2603:10b6:510:292::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 03:01:36 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:a03:3a0:cafe::f9) by SJ0PR03CA0253.outlook.office365.com
+ (2603:10b6:a03:3a0::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
+ Transport; Mon, 19 Aug 2024 03:01:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7897.11 via Frontend Transport; Mon, 19 Aug 2024 03:01:36 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 18 Aug
+ 2024 22:01:35 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sun, 18 Aug 2024 22:01:35 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH v3] remoteproc: xlnx: add sram support
+Date: Sun, 18 Aug 2024 20:01:19 -0700
+Message-ID: <20240819030119.3590783-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812224820.34826-22-rick.p.edgecombe@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|PH0PR12MB8152:EE_
+X-MS-Office365-Filtering-Correlation-Id: a941a374-ccf0-4b2f-7f6d-08dcbffb3d3b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+1UQwqBL+yizKhy6XAKuNZVMizFe094wWt45L65oRwA3RTfZYog+Z/4pbXdo?=
+ =?us-ascii?Q?7Zgsm4GSb0tcM2/qmZrAC6gg6OcIbEFDps2CQqQQ0ZfoaG4Xqe+rItZIBqTc?=
+ =?us-ascii?Q?OryNYoZTwqxlRyDCrCYsPa5gzk+HMN7m4LgeilUhmGI6MxClhgftRdmYA9/g?=
+ =?us-ascii?Q?aLQN+wQ4c9CVtPBSawbr/bZfwCCohpdNRodz4RxdV0g3HPCM72pqTb2U5Wd7?=
+ =?us-ascii?Q?l1RrW2B0MPzmXE+ZTtwXqmxMIKhUOU7oFbUoGzqnPtzUY/6kKz8KFJ2aMfkb?=
+ =?us-ascii?Q?J3HHzufvW2zY0dCR9zUCpg3JVlEb4Jno859ZFIISkwMz+3YFN7yKflQ7hrWy?=
+ =?us-ascii?Q?vm71vuWYWMHX4J+i+cFEgcZA7HIgHNBEGmF2S7JgMbTFukHRPmTgw3FIU4LX?=
+ =?us-ascii?Q?torlUDa/uI/MLwHaEIfp9yI8Bir3AhHCAcbhliy9MwE6pqN2yBtb/QjXjIYb?=
+ =?us-ascii?Q?g7/6u4kIO/ZzWu+BDhTJlDva5cMhHasBhiTb+czNLVoqjVk1sBUW1LnHollW?=
+ =?us-ascii?Q?z2KSkpbbSiM7IaRjDR23WZmwexUsOSeIrHlsNGuyxo3UcY1owdIgz3+SoHlJ?=
+ =?us-ascii?Q?NqZQ8r9bMockqY/8ScOAOaCKcJFOcWX7s8MELiwBAXuzzgxZxNqBgntGksb3?=
+ =?us-ascii?Q?pNa3Yjy8sS/i0X7p9+fZhzHNjl6lOLBknxViqSe4wklaqKIJIDY1N7x+zk5U?=
+ =?us-ascii?Q?YJfH6g87xQ9PHG1TS66ZQnlJpsXjr1qwRroTQ3Xz6F+yjOb3exKfeQ7h3KQE?=
+ =?us-ascii?Q?928r9aO2G/LK45PgcpMGO8M01z//qK1V61VekH9iM+0VdjwHpx3MPG8fOjnv?=
+ =?us-ascii?Q?mRRjY3Ta778POyxOIlIC7FSjDBua5ebA3kLHA19TBXkZQ29AtVhj/X9HnD2w?=
+ =?us-ascii?Q?0byTrH1bjrXT84j2FxwOAq38DABl1nzAhpfgFnQH73TkL5NypKQs1X8FKwLc?=
+ =?us-ascii?Q?xScQLNYzEmsrbFY/XmfEKYFA6H6rMVmcb3zLwghQa67Q4TGOmrgqoN0+QBuq?=
+ =?us-ascii?Q?eptqqWxzAAXrn2Ne8MqJkb5rpeEnNjovyrK2rSRKxxJKsyMWivM2SC0RVI7m?=
+ =?us-ascii?Q?qp/40OqSDPr9ctYXjSudNGRibYVjZxV9gzxH0kRt+84vJIS7yRCMAjk5350e?=
+ =?us-ascii?Q?7uuDxFSUqtHGdZPlmOSrd0W6AGvL9p7Fktr9qAvORkjpyWE3Y1YyfeZpoVg7?=
+ =?us-ascii?Q?2cgdfjOS3lmlLnLZDWyve+1xcyTJ8xYMAGK4HjNebWskxdhCRUd2kBwbL0pt?=
+ =?us-ascii?Q?Xxee2VmxfLaLuoN6CZswMZ4x6rDSfQXiO6cdlBaZLWz2CT5hXENVK2ob5SgG?=
+ =?us-ascii?Q?ARuR1VuAiqL081U9Qs/tba84WjPb13Kc8y6A38MWYNtE8pqPa5xslNZ1U/HR?=
+ =?us-ascii?Q?8/2daKH9Li9CdIauPeJcpmN6KexqkcJygLYhg30eE1JEI28sSzXGYf3VpC/+?=
+ =?us-ascii?Q?S/rTYuQfMXfg+rlNAoGyFGfF+/CWsrRu?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 03:01:36.3367
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a941a374-ccf0-4b2f-7f6d-08dcbffb3d3b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8152
 
-On Mon, Aug 12, 2024 at 03:48:16PM -0700, Rick Edgecombe wrote:
-> From: Xiaoyao Li <xiaoyao.li@intel.com>
-> 
-> Implement an IOCTL to allow userspace to read the CPUID bit values for a
-> configured TD.
-> 
-> The TDX module doesn't provide the ability to set all CPUID bits. Instead
-> some are configured indirectly, or have fixed values. But it does allow
-> for the final resulting CPUID bits to be read. This information will be
-> useful for userspace to understand the configuration of the TD, and set
-> KVM's copy via KVM_SET_CPUID2.
-> 
-> To prevent userspace from starting to use features that might not have KVM
-> support yet, filter the reported values by KVM's support CPUID bits.
-> 
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> uAPI breakout v1:
->  - New patch
-> ---
->  arch/x86/include/uapi/asm/kvm.h |   1 +
->  arch/x86/kvm/vmx/tdx.c          | 131 ++++++++++++++++++++++++++++++++
->  arch/x86/kvm/vmx/tdx.h          |   5 ++
->  arch/x86/kvm/vmx/tdx_arch.h     |   5 ++
->  arch/x86/kvm/vmx/tdx_errno.h    |   1 +
->  5 files changed, 143 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index b4f12997052d..39636be5c891 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -931,6 +931,7 @@ enum kvm_tdx_cmd_id {
->  	KVM_TDX_CAPABILITIES = 0,
->  	KVM_TDX_INIT_VM,
->  	KVM_TDX_INIT_VCPU,
-> +	KVM_TDX_GET_CPUID,
->  
->  	KVM_TDX_CMD_NR_MAX,
->  };
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index b2ed031ac0d6..fe2bbc2ced41 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -813,6 +813,76 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
->  	return ret;
->  }
->  
-> +static u64 tdx_td_metadata_field_read(struct kvm_tdx *tdx, u64 field_id,
-> +				      u64 *data)
-> +{
-> +	u64 err;
-> +
-> +	err = tdh_mng_rd(tdx, field_id, data);
-> +
-> +	return err;
-> +}
-> +
-> +#define TDX_MD_UNREADABLE_LEAF_MASK	GENMASK(30, 7)
-> +#define TDX_MD_UNREADABLE_SUBLEAF_MASK	GENMASK(31, 7)
-> +
-> +static int tdx_mask_cpuid(struct kvm_tdx *tdx, struct kvm_cpuid_entry2 *entry)
-> +{
-> +	u64 field_id = TD_MD_FIELD_ID_CPUID_VALUES;
-> +	u64 ebx_eax, edx_ecx;
-> +	u64 err = 0;
-> +
-> +	if (entry->function & TDX_MD_UNREADABLE_LEAF_MASK ||
-> +	    entry->index & TDX_MD_UNREADABLE_SUBLEAF_MASK)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * bit 23:17, REVSERVED: reserved, must be 0;
-> +	 * bit 16,    LEAF_31: leaf number bit 31;
-> +	 * bit 15:9,  LEAF_6_0: leaf number bits 6:0, leaf bits 30:7 are
-> +	 *                      implicitly 0;
-> +	 * bit 8,     SUBLEAF_NA: sub-leaf not applicable flag;
-> +	 * bit 7:1,   SUBLEAF_6_0: sub-leaf number bits 6:0. If SUBLEAF_NA is 1,
-> +	 *                         the SUBLEAF_6_0 is all-1.
-> +	 *                         sub-leaf bits 31:7 are implicitly 0;
-> +	 * bit 0,     ELEMENT_I: Element index within field;
-> +	 */
-> +	field_id |= ((entry->function & 0x80000000) ? 1 : 0) << 16;
-> +	field_id |= (entry->function & 0x7f) << 9;
-> +	if (entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX)
-> +		field_id |= (entry->index & 0x7f) << 1;
-> +	else
-> +		field_id |= 0x1fe;
-> +
-> +	err = tdx_td_metadata_field_read(tdx, field_id, &ebx_eax);
-> +	if (err) //TODO check for specific errors
-> +		goto err_out;
-> +
-> +	entry->eax &= (u32) ebx_eax;
-> +	entry->ebx &= (u32) (ebx_eax >> 32);
-> +
-> +	field_id++;
-> +	err = tdx_td_metadata_field_read(tdx, field_id, &edx_ecx);
-> +	/*
-> +	 * It's weird that reading edx_ecx fails while reading ebx_eax
-> +	 * succeeded.
-> +	 */
-> +	if (WARN_ON_ONCE(err))
-> +		goto err_out;
-> +
-> +	entry->ecx &= (u32) edx_ecx;
-> +	entry->edx &= (u32) (edx_ecx >> 32);
-> +	return 0;
-> +
-> +err_out:
-> +	entry->eax = 0;
-> +	entry->ebx = 0;
-> +	entry->ecx = 0;
-> +	entry->edx = 0;
-> +
-> +	return -EIO;
-> +}
-> +
->  static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
->  {
->  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> @@ -1038,6 +1108,64 @@ static int __maybe_unused tdx_get_kvm_supported_cpuid(struct kvm_cpuid2 **cpuid)
->  	return r;
->  }
->  
-> +static int tdx_vcpu_get_cpuid(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
-> +{
-> +	struct kvm_cpuid2 __user *output, *td_cpuid;
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
-> +	struct kvm_cpuid2 *supported_cpuid;
-> +	int r = 0, i, j = 0;
-> +
-> +	output = u64_to_user_ptr(cmd->data);
-> +	td_cpuid = kzalloc(sizeof(*td_cpuid) +
-> +			sizeof(output->entries[0]) * KVM_MAX_CPUID_ENTRIES,
-> +			GFP_KERNEL);
-> +	if (!td_cpuid)
-> +		return -ENOMEM;
-> +
-> +	r = tdx_get_kvm_supported_cpuid(&supported_cpuid);
-> +	if (r)
-> +		goto out;
-> +
-> +	for (i = 0; i < supported_cpuid->nent; i++) {
-> +		struct kvm_cpuid_entry2 *supported = &supported_cpuid->entries[i];
-> +		struct kvm_cpuid_entry2 *output_e = &td_cpuid->entries[j];
-> +
-> +		*output_e = *supported;
-> +
-> +		/* Only allow values of bits that KVM's supports to be exposed */
-> +		if (tdx_mask_cpuid(kvm_tdx, output_e))
-> +			continue;
-> +
-> +		/*
-> +		 * Work around missing support on old TDX modules, fetch
-> +		 * guest maxpa from gfn_direct_bits.
-> +		 */
-> +		if (output_e->function == 0x80000008) {
-> +			gpa_t gpa_bits = gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kvm));
-> +			unsigned int g_maxpa = __ffs(gpa_bits) + 1;
-> +
-> +			output_e->eax &= ~0x00ff0000;
-> +			output_e->eax |= g_maxpa << 16;
-> +		}
+AMD-Xilinx zynqmp platform contains on-chip sram memory (OCM).
+R5 cores can access OCM and access is faster than DDR memory but slower
+than TCM memories available. Sram region can have optional multiple
+power-domains. Platform management firmware is responsible
+to operate these power-domains.
 
-I suggest putting all guest_phys_bits related WA in a WA-only patch, which will
-be clearer.
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
 
-> +
-> +		j++;
-> +	}
-> +	td_cpuid->nent = j;
-> +
-> +	if (copy_to_user(output, td_cpuid, sizeof(*output))) {
-> +		r = -EFAULT;
-> +		goto out;
-> +	}
-> +	if (copy_to_user(output->entries, td_cpuid->entries,
-> +			 td_cpuid->nent * sizeof(struct kvm_cpuid_entry2)))
-> +		r = -EFAULT;
-> +
-> +out:
-> +	kfree(td_cpuid);
-> +	kfree(supported_cpuid);
-> +	return r;
-> +}
-> +
->  static int tdx_vcpu_init(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
->  {
->  	struct msr_data apic_base_msr;
-> @@ -1089,6 +1217,9 @@ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
->  	case KVM_TDX_INIT_VCPU:
->  		ret = tdx_vcpu_init(vcpu, &cmd);
->  		break;
-> +	case KVM_TDX_GET_CPUID:
-> +		ret = tdx_vcpu_get_cpuid(vcpu, &cmd);
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  		break;
-> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> index 8349b542836e..7eeb54fbcae1 100644
-> --- a/arch/x86/kvm/vmx/tdx.h
-> +++ b/arch/x86/kvm/vmx/tdx.h
-> @@ -25,6 +25,11 @@ struct kvm_tdx {
->  	bool finalized;
->  
->  	u64 tsc_offset;
-> +
-> +	/* For KVM_MAP_MEMORY and KVM_TDX_INIT_MEM_REGION. */
-> +	atomic64_t nr_premapped;
+Changes in v2:
+  - Expand commit message with power-domains related information.
 
-I don't see it is used in this patch set.
+Changes in v3:
 
-> +
-> +	struct kvm_cpuid2 *cpuid;
->  };
->  
->  struct vcpu_tdx {
-> diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
-> index d2d7f9cab740..815e74408a34 100644
-> --- a/arch/x86/kvm/vmx/tdx_arch.h
-> +++ b/arch/x86/kvm/vmx/tdx_arch.h
-> @@ -157,4 +157,9 @@ struct td_params {
->  
->  #define MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM	BIT_ULL(20)
->  
-> +/*
-> + * TD scope metadata field ID.
-> + */
-> +#define TD_MD_FIELD_ID_CPUID_VALUES		0x9410000300000000ULL
-> +
->  #endif /* __KVM_X86_TDX_ARCH_H */
-> diff --git a/arch/x86/kvm/vmx/tdx_errno.h b/arch/x86/kvm/vmx/tdx_errno.h
-> index dc3fa2a58c2c..f9dbb3a065cc 100644
-> --- a/arch/x86/kvm/vmx/tdx_errno.h
-> +++ b/arch/x86/kvm/vmx/tdx_errno.h
-> @@ -23,6 +23,7 @@
->  #define TDX_FLUSHVP_NOT_DONE			0x8000082400000000ULL
->  #define TDX_EPT_WALK_FAILED			0xC0000B0000000000ULL
->  #define TDX_EPT_ENTRY_STATE_INCORRECT		0xC0000B0D00000000ULL
-> +#define TDX_METADATA_FIELD_NOT_READABLE		0xC0000C0200000000ULL
->  
->  /*
->   * TDX module operand ID, appears in 31:0 part of error code as
-> -- 
-> 2.34.1
-> 
-> 
+- make @sram an array rather than an array of pointers
+- fix of_node_put usage to maintain proper refcount of node
+- s/proprty/property
+- Use gen pool framework for mapping sram address space.
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 155 ++++++++++++++++++++++++
+ 1 file changed, 155 insertions(+)
+
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 2cea97c746fd..1f704b99a67d 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/power/xlnx-zynqmp-power.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/firmware/xlnx-zynqmp.h>
++#include <linux/genalloc.h>
+ #include <linux/kernel.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/mailbox/zynqmp-ipi-message.h>
+@@ -56,6 +57,21 @@ struct mem_bank_data {
+ 	char *bank_name;
+ };
+ 
++/**
++ * struct zynqmp_sram_bank - sram bank description
++ *
++ * @sram_pool: gen pool for his sram
++ * @sram_res: sram address region information
++ * @va: virtual address of allocated genpool
++ * @da: device address of sram
++ */
++struct zynqmp_sram_bank {
++	struct gen_pool *sram_pool;
++	struct resource sram_res;
++	void __iomem *va;
++	u32 da;
++};
++
+ /**
+  * struct mbox_info
+  *
+@@ -120,6 +136,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+  * struct zynqmp_r5_core
+  *
+  * @rsc_tbl_va: resource table virtual address
++ * @sram: Array of sram memories assigned to this core
++ * @num_sram: number of sram for this core
+  * @dev: device of RPU instance
+  * @np: device node of RPU instance
+  * @tcm_bank_count: number TCM banks accessible to this RPU
+@@ -131,6 +149,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+  */
+ struct zynqmp_r5_core {
+ 	void __iomem *rsc_tbl_va;
++	struct zynqmp_sram_bank *sram;
++	int num_sram;
+ 	struct device *dev;
+ 	struct device_node *np;
+ 	int tcm_bank_count;
+@@ -494,6 +514,46 @@ static int add_mem_regions_carveout(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++static int add_sram_carveouts(struct rproc *rproc)
++{
++	struct zynqmp_r5_core *r5_core = rproc->priv;
++	struct rproc_mem_entry *rproc_mem;
++	struct zynqmp_sram_bank *sram;
++	size_t len, pool_size;
++	dma_addr_t dma_addr;
++	int da, i;
++
++	for (i = 0; i < r5_core->num_sram; i++) {
++		sram = &r5_core->sram[i];
++
++		dma_addr = (dma_addr_t)sram->sram_res.start;
++		len = resource_size(&sram->sram_res);
++		da = sram->da;
++
++		pool_size = gen_pool_size(sram[i].sram_pool);
++		sram->va = (void __iomem *)gen_pool_alloc(sram->sram_pool, pool_size);
++		if (!sram->va) {
++			dev_err(r5_core->dev, "failed to alloc sram idx %d pool\n", i);
++			return -ENOMEM;
++		}
++
++		/* Register associated reserved memory regions */
++		rproc_mem = rproc_mem_entry_init(&rproc->dev, sram->va,
++						 (dma_addr_t)dma_addr,
++						 len, da,
++						 NULL, NULL,
++						 sram->sram_res.name);
++
++		rproc_add_carveout(rproc, rproc_mem);
++		rproc_coredump_add_segment(rproc, da, len);
++
++		dev_dbg(&rproc->dev, "sram carveout %s addr=%llx, da=0x%x, size=0x%lx",
++			sram->sram_res.name, dma_addr, da, len);
++	}
++
++	return 0;
++}
++
+ /*
+  * tcm_mem_unmap()
+  * @rproc: single R5 core's corresponding rproc instance
+@@ -669,6 +729,12 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
++	ret = add_sram_carveouts(rproc);
++	if (ret) {
++		dev_err(&rproc->dev, "failed to get sram carveout %d\n", ret);
++		return ret;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -695,6 +761,12 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+ 				 "can't turn off TCM bank 0x%x", pm_domain_id);
+ 	}
+ 
++	for (i = 0; i < r5_core->num_sram; i++) {
++		gen_pool_free(r5_core->sram[i].sram_pool,
++			      (unsigned long)r5_core->sram[i].va,
++			      gen_pool_size(r5_core->sram[i].sram_pool));
++	}
++
+ 	return 0;
+ }
+ 
+@@ -881,6 +953,85 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+ 	return ERR_PTR(ret);
+ }
+ 
++static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
++{
++	struct device_node *np = r5_core->np;
++	struct device *dev = r5_core->dev;
++	struct zynqmp_sram_bank *sram;
++	struct device_node *sram_np;
++	int num_sram, i, ret;
++	u64 abs_addr, size;
++
++	/* "sram" is optional property. Do not fail, if unavailable. */
++	if (!of_property_present(r5_core->np, "sram"))
++		return 0;
++
++	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
++	if (num_sram <= 0) {
++		dev_err(dev, "Invalid sram property, ret = %d\n",
++			num_sram);
++		return -EINVAL;
++	}
++
++	sram = devm_kcalloc(dev, num_sram,
++			    sizeof(struct zynqmp_sram_bank), GFP_KERNEL);
++	if (!sram)
++		return -ENOMEM;
++
++	for (i = 0; i < num_sram; i++) {
++		sram_np = of_parse_phandle(np, "sram", i);
++		if (!sram_np) {
++			dev_err(dev, "failed to get sram %d phandle\n", i);
++			ret = -EINVAL;
++			goto fail_sram_get;
++		}
++
++		if (!of_device_is_available(sram_np)) {
++			dev_err(dev, "sram device not available\n");
++			ret = -EINVAL;
++			goto fail_sram_get;
++		}
++
++		ret = of_address_to_resource(sram_np, 0, &sram[i].sram_res);
++		if (ret) {
++			dev_err(dev, "addr to res failed\n");
++			goto fail_sram_get;
++		}
++
++		sram[i].sram_pool = of_gen_pool_get(np, "sram", i);
++		if (!sram[i].sram_pool) {
++			dev_err(dev, "failed to get sram idx %d gen pool\n", i);
++			ret = -ENOMEM;
++			goto fail_sram_get;
++		}
++
++		/* Get SRAM device address */
++		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
++		if (ret) {
++			dev_err(dev, "failed to get reg property\n");
++			goto fail_sram_get;
++		}
++
++		sram[i].da = (u32)abs_addr;
++
++		of_node_put(sram_np);
++
++		dev_dbg(dev, "sram %d: name=%s, addr=0x%llx, da=0x%x, size=0x%llx\n",
++			i, sram[i].sram_res.name, sram[i].sram_res.start,
++			sram[i].da, resource_size(&sram[i].sram_res));
++	}
++
++	r5_core->sram = sram;
++	r5_core->num_sram = num_sram;
++
++	return 0;
++
++fail_sram_get:
++	of_node_put(sram_np);
++
++	return ret;
++}
++
+ static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
+ {
+ 	int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
+@@ -1095,6 +1246,10 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+ 				return ret;
+ 			}
+ 		}
++
++		ret = zynqmp_r5_get_sram_banks(r5_core);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+
+base-commit: 1a491aaf1d1ce3a1cf5190394c36f21d805c7e96
+-- 
+2.25.1
+
 
