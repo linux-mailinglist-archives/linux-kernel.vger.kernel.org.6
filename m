@@ -1,57 +1,81 @@
-Return-Path: <linux-kernel+bounces-292381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C987956EB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:27:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133CC956EBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24C11F24101
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C498028234E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433B93F9CC;
-	Mon, 19 Aug 2024 15:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F56433A0;
+	Mon, 19 Aug 2024 15:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ql3peRzY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LnUxpx9G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824C31BC59;
-	Mon, 19 Aug 2024 15:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B33C482;
+	Mon, 19 Aug 2024 15:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724081269; cv=none; b=C/mzBkWC3DWKsQbLBteFjjxjrpBhI3sDMBGdFisHlD+Sttl0HzoLlCFXeTaBkF9PCCegXSmwmfjuiPXVr22QnsHjhwPA5t56S8d/Y0LSA1d118roaWdnZtG19XKgmFAJt8MO9cv1mOS/aSmGjFLVSIveiq5KDEnhSJleIwgtxOo=
+	t=1724081335; cv=none; b=HViDbwiFeMUkkiAMYIz+sayMgwX7FgP+VRoA1i68Z+hAiEhKn4Xz/7kD0Fm5zlcUrJR5izbzEe1gsBhjJbBuFKKamsBQOK0GDUZyz5WNNcvLif4OeUwtQEngYRLYzJwEKs+ptBD4BlxSrHyaGswCN3LDI2WudxF4Zcs9R1CzvDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724081269; c=relaxed/simple;
-	bh=qeQgtKomB5cd6jQ08sQEldXRUMgKAV4Meg42eZK5Yqs=;
+	s=arc-20240116; t=1724081335; c=relaxed/simple;
+	bh=I+/UT1olTGSkvbiVyjjw4uFqCudbOKfjOI1VeyWZTAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFt4TukjpUirI54Pix3GmYuAQhwB4WCAJcXhjve2VxQcqlttBn4nTBpfurEA4lCapUNXZs64WTcthzzljPy3qIbbFdigX0JceC2HOnrw5x6AYnHrAfXnF92IdOZcy7GWScZ5R5UEgiEFdhwgKWBIaGqFakbPCIdx28rvN6BvPHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ql3peRzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D81C32782;
-	Mon, 19 Aug 2024 15:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724081269;
-	bh=qeQgtKomB5cd6jQ08sQEldXRUMgKAV4Meg42eZK5Yqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ql3peRzYCiZzWaW5HHgk69sLXnu0TLikVLegHU83NRAojUt/h8OxLaBZ6GXtBYi+9
-	 clJAHYTC5a0kbph+aYFm5uMn8L9L7uVksW21taoM1gFYvuaEQoPC6QzrGB2xoma8X6
-	 tS4IdKThz4xWxMH/gna8U2fvUwfcOVPNBF6WQjg0+LVYnQflvQ8RDE+SNS1brrZHFP
-	 hsJLcQ3HYuhvz0bOU+CrEmTHWUctCeFjQUtDx45O4PVYjDefhszwtLX9B0lpGvfbH3
-	 VEvimfjMvaPYOJBQQ0/UhR38Z5rAcndQzOsAhxxX0bwv9FL9ihkGd3j7SAMko0vIfT
-	 a49ZIdDy+h+xA==
-Date: Mon, 19 Aug 2024 16:27:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
-	lcherian@marvell.com, ndabilpuram@marvell.com
-Subject: Re: [net PATCH v2] octeontx2-af: Fix CPT AF register offset
- calculation
-Message-ID: <20240819152744.GA543198@kernel.org>
-References: <20240819123237.490603-1-bbhushan2@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPNUKdjI0QT8HVC0phVjDphGCg3k2fTfDF+HcDA8Nxk2PSP6Wo2S0X/gLrNnuaMMgf8YwlcnW9HHcoZig/dRPMETre0z87x8RNjFvO55wL0El0KIdQd/jL9Yw9nZ6xwKGo06xZGnWWVZxTKJj+ki0km6WCkMftXSNP7RN7rTt7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LnUxpx9G; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724081334; x=1755617334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I+/UT1olTGSkvbiVyjjw4uFqCudbOKfjOI1VeyWZTAw=;
+  b=LnUxpx9GHpgvH1iSgUWH9MKbzna4qyl9kcSMAKchN3KkYnk8hXO8hvQK
+   cI846zz48oCyopDlCxH0fHFM5LOPaWt0u5OCNy3TrkL5oDFUqzF/gjle8
+   TdjxWUuUn/l0acy2uSz4EgGarMFDVAb/ELXT315Wi2scH2UOC8s7he/8d
+   izhI1ntCaBMJskwOgxdum8SYGBC8CtUgFdYAyBmJD/HDyIDmNVQcOTX9f
+   2LgMOpR/BQW69FCjEjQrxGVHHUz7tHmxkz2nG+djtl8DBOpLWrY9Rn2Br
+   b708MnU1qKapONYw8PhBhn5S497xu/elbR5c89SjCA0uIHVyPGMFpAaZd
+   A==;
+X-CSE-ConnectionGUID: f/jwWPcoRxCT7cviK0nn/w==
+X-CSE-MsgGUID: Bcw6GsO5RAeSxuC+janXpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22220504"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="22220504"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:28:53 -0700
+X-CSE-ConnectionGUID: PW1DYPY+RiyaSVjJm8L5vg==
+X-CSE-MsgGUID: +BYVAJ/nRKmj1g1pxVmTnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="97880937"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 19 Aug 2024 08:28:48 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg4JK-00097m-1F;
+	Mon, 19 Aug 2024 15:28:46 +0000
+Date: Mon, 19 Aug 2024 23:28:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, brendan.higgins@linux.dev,
+	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+	andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org,
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <202408192327.nZeNynmO-lkp@intel.com>
+References: <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,26 +84,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819123237.490603-1-bbhushan2@marvell.com>
+In-Reply-To: <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
 
-On Mon, Aug 19, 2024 at 06:02:37PM +0530, Bharat Bhushan wrote:
-> Some CPT AF registers are per LF and others are global.
-> Translation of PF/VF local LF slot number to actual LF slot
-> number is required only for accessing perf LF registers.
-> CPT AF global registers access do not require any LF
-> slot number.
-> 
-> Also there is no reason CPT PF/VF to know actual lf's register
-> offset.
-> 
-> Fixes: bc35e28af789 ("octeontx2-af: replace cpt slot with lf id on reg write")
-> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
-> ---
+Hi Ryan,
 
-Hi Bharat,
+kernel test robot noticed the following build errors:
 
-It would be very nice to have links (to lore) to earlier version and
-descriptions of what has changed between versions here.
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on linus/master v6.11-rc4 next-20240819]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Using b4 to manage patch submissions will help with this.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-i2c-aspeed-support-for-AST2600-i2cv2/20240819-173106
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240819092850.1590758-3-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register mode driver
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240819/202408192327.nZeNynmO-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192327.nZeNynmO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408192327.nZeNynmO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/i2c/busses/i2c-ast2600.c: In function 'ast2600_i2c_setup_buff_tx':
+>> drivers/i2c/busses/i2c-ast2600.c:442:46: error: implicit declaration of function 'get_unaligned_le32' [-Wimplicit-function-declaration]
+     442 |                                 wbuf_dword = get_unaligned_le32(wbuf);
+         |                                              ^~~~~~~~~~~~~~~~~~
+
+
+vim +/get_unaligned_le32 +442 drivers/i2c/busses/i2c-ast2600.c
+
+   411	
+   412	static int ast2600_i2c_setup_buff_tx(u32 cmd, struct ast2600_i2c_bus *i2c_bus)
+   413	{
+   414		struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
+   415		u32 wbuf_dword;
+   416		int xfer_len;
+   417		u8 wbuf[4];
+   418		int i;
+   419	
+   420		cmd |= AST2600_I2CM_PKT_EN;
+   421		xfer_len = msg->len - i2c_bus->master_xfer_cnt;
+   422		if (xfer_len > i2c_bus->buf_size) {
+   423			xfer_len = i2c_bus->buf_size;
+   424		} else {
+   425			if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
+   426				cmd |= AST2600_I2CM_STOP_CMD;
+   427		}
+   428	
+   429		if (cmd & AST2600_I2CM_START_CMD)
+   430			cmd |= AST2600_I2CM_PKT_ADDR(msg->addr);
+   431	
+   432		if (xfer_len) {
+   433			cmd |= AST2600_I2CM_TX_BUFF_EN | AST2600_I2CM_TX_CMD;
+   434			/*
+   435			 * The controller's buffer register supports dword writes only.
+   436			 * Therefore, write dwords to the buffer register in a 4-byte aligned,
+   437			 * and write the remaining unaligned data at the end.
+   438			 */
+   439			for (i = 0; i < xfer_len; i++) {
+   440				wbuf[i % 4] = msg->buf[i2c_bus->master_xfer_cnt + i];
+   441				if ((i % 4) == 3 || i == xfer_len - 1) {
+ > 442					wbuf_dword = get_unaligned_le32(wbuf);
+   443					writel(wbuf_dword, i2c_bus->buf_base + i - (i % 4));
+   444				}
+   445			}
+   446	
+   447			writel(AST2600_I2CC_SET_TX_BUF_LEN(xfer_len),
+   448			       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+   449		}
+   450	
+   451		writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+   452	
+   453		return 0;
+   454	}
+   455	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
