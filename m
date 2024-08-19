@@ -1,218 +1,292 @@
-Return-Path: <linux-kernel+bounces-291510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB1C95637B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:05:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4D995637E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF471C213C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD4B21A57
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A78514D283;
-	Mon, 19 Aug 2024 06:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ECD14C58C;
+	Mon, 19 Aug 2024 06:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="Y94B4Cel"
-Received: from esa15.fujitsucc.c3s2.iphmx.com (esa15.fujitsucc.c3s2.iphmx.com [68.232.156.107])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uD7w1lyd"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18C3142621
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.156.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724047521; cv=fail; b=SiVR3aVAMz4dkm9rp67Ko++0zl3MqhmwBQoVwW8nW1yn5w3PrCOWiuscE50V5h5gbuLrahHjPPo0yi/fmcGgSV3Q0LKxinCpkGvPntrkVbxds91nkaD4ecaIIC0ziV/pmBXWbPPoAnKZCjxklEusXnpdJIpRM5g+702w3WUcS+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724047521; c=relaxed/simple;
-	bh=SerTpHLLZdaZ61+lRIpZ94EAsJ6ZJu+/J5DuNKiOhjY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nGzC0gYeyIjwjp0MvvCgxffuwlqIUEWeHNIW5+3uy2StWeSINFHkwrdKBqLVUcSkOCFh2qyp04oANNGVGm2A6mzKuyTJ+IQrLEsG1ohD9VCWd3WIplxsXoIokzDqVv34dkv3tS+NB7maLJXd17zfPVXed13OiCscjW1p/fFfW0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=Y94B4Cel; arc=fail smtp.client-ip=68.232.156.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1724047518; x=1755583518;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=SerTpHLLZdaZ61+lRIpZ94EAsJ6ZJu+/J5DuNKiOhjY=;
-  b=Y94B4CelZTk9xiRW9d16WwTTKZgJjgmucoicd6L+0yCARyAScCrrR9AN
-   V59up11vyDNOeOtB1ITEcal0C01rxa06jAkp0sbDIWK1brvaIsw2tduPy
-   z4oijyp2g8C1+M/me9VLVFclb5jx4KgS8aYE1NfVcKyxPIiRvRQ7sqmrY
-   nRT6YWFZFY/xotVFxB4IUYkrvNqcLAMusBmBuIDCdLMR0IgtI9gpZ96kI
-   FBWWN94WzHnDToWt9p9x6+vJ/470jogPGVGujArT8B/VxbBRQI5sCpqTT
-   ECwEr+M0euBmlBMhQ3inWhMPiOP8QzukFoccZ55J2tSaUOMeP3gSyyqCW
-   A==;
-X-CSE-ConnectionGUID: 9tV3lUwaSK6toCTD7m3N0g==
-X-CSE-MsgGUID: LMjr4JsBTZSHms0yGMSWSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="128659134"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719846000"; 
-   d="scan'208";a="128659134"
-Received: from mail-japaneastazlp17011028.outbound.protection.outlook.com (HELO TYVP286CU001.outbound.protection.outlook.com) ([40.93.73.28])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 15:04:06 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=odckHILnYiLnt/ppenkayXH9S1JZT55ws5TdEZGmFF02+hDmd3pAs21FSJkkwU254ft7hTHlyD6I6TLHOvgCC50khkNiEARQfwKTPx2Fg5vNJwxbpnWP/+DqCw4vvFR7JpHFEQd5rebD+jwYDu9muxJ3asCYUFuNV6f5EtQCgBZ+CWDS/BoAIr4s/ijqW4wdfvwE77QlQlstYaHTjAZ4A4nFX0+UtyXm87threGgsvQx848XmPEnC+dspMXTKoAA4Z/lxyvJ+F12zQ0hc/jg6S6Pw8X0qLVSzTQZkKVO0CrkEwvF+pRd80ARdACZ6cMuOtTThCBuXz7zoMzWrnP2og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SerTpHLLZdaZ61+lRIpZ94EAsJ6ZJu+/J5DuNKiOhjY=;
- b=BW819WqP821CT3Pw92de56um7Z8fJcC8nWPqOjcynORchPuC78esMiobJwbtwDcmbOeDtbAloBNnqVRhQUZhz+mlM51TqxxuH/WDkafU77bbvz04vBDTzfvqK97WRI/CDUL9GOUdtZ97DpNPgELnw6nOcMHb/hkNPcnHjoENYeF8HChyyocVa/hpspUTZubI0QtLk2T5ojc6XUypevAQtygOCbHHiBteeMeBIVDGqSSOojD4YQAjjD4HcGzWHIm9SSQfhN0awpPc2a110lO9ZIMz0jYS1tISFhIiwt4EdnjuwU/RCaYbIabdhsPek2t1zmjWpjNO/6rTleh2oAaRjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (2603:1096:403:6::12)
- by TYYPR01MB13317.jpnprd01.prod.outlook.com (2603:1096:405:164::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 06:04:03 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::d9ba:425a:7044:6377]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::d9ba:425a:7044:6377%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 06:04:02 +0000
-From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
-To: Dan Williams <dan.j.williams@intel.com>, "nvdimm@lists.linux.dev"
-	<nvdimm@lists.linux.dev>
-CC: "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] nvdimm: Fix devs leaks in scan_labels()
-Thread-Topic: [PATCH v2 1/2] nvdimm: Fix devs leaks in scan_labels()
-Thread-Index: AQHa2X8zwa9xxtG/iUCzPF4J7ymSb7IfpsOAgAAEvACADpyvgA==
-Date: Mon, 19 Aug 2024 06:04:02 +0000
-Message-ID: <342511df-d321-4a77-b76a-77f3844d7fa3@fujitsu.com>
-References: <20240719015836.1060677-1-lizhijian@fujitsu.com>
- <66b69a6fc5710_257529458@dwillia2-xfh.jf.intel.com.notmuch>
- <66b69e681ea7a_25752943c@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <66b69e681ea7a_25752943c@dwillia2-xfh.jf.intel.com.notmuch>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY1PR01MB1562:EE_|TYYPR01MB13317:EE_
-x-ms-office365-filtering-correlation-id: d68b50f5-81ae-4676-5d41-08dcc014b9d0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|366016|38070700018|1580799027;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MXl3L24ra1Zvd3JtTUMxWWt5YnVVOE9zVTd6dWNCVnRxSkcxQ2NkcVc0czkz?=
- =?utf-8?B?WTNQckZiY294ZjN3Y2EwYUR2MjJCL2U2eUtnMCtXdENFYTRFZmdyaWFkYTdC?=
- =?utf-8?B?NlYzTno4MFRBeGRxUTdsNEdaSjhFcUlSZUtMZ2NhaDVCZ0NzM0xnU2wzSFdq?=
- =?utf-8?B?RVg0ODdhSlAweDgzeURnMU9md2dLSTRiWnFUdnEzNFdPTjJHUWJOUUxFK3F1?=
- =?utf-8?B?eUcreWRJckNMUzA0aEhLSVhESzBJajJnMlY1MFNEdHdVT3hiN3F3WGFzbVky?=
- =?utf-8?B?ak9qVjRweWY1L0hERnRkcXVMd05nbWJaQTdzeGkraTBzUGg0YjUzWk5Mb1VF?=
- =?utf-8?B?TWc0WGRBSEFIZlBoRFdHaEdleFJFVUo4QWJuc3hwemdpT1RYR1czS1dZQjdO?=
- =?utf-8?B?MEdKbW9JWDU0SlR6OHU5MExKbXZWc0hJU2ZXZytMVkI3YzZGcS8xOU1MOWNN?=
- =?utf-8?B?a2kreUVvTGlkVEpqSUtzQjdUWk0xeVZnWXV6aVcxb0RtcEwvQ0w0YUU2aG5K?=
- =?utf-8?B?VXI1d1UxZlRsT3ZoTmIyZ2lUYmtNZUd4TVdBU2diWE1QYXFjWjQ1N3IzVGs2?=
- =?utf-8?B?UFNKeTNvem1NQ0dYdERQdDRzZ1ZuZTZRMXpVbG9tN1J2R2d3NkgvUXl1VEpD?=
- =?utf-8?B?NG9PVlJnS3RWTlJyS2oxVVNrVlVNR3RxWTgrVVVLY2NsTE5GYmFZeDJIbWJU?=
- =?utf-8?B?d1AzQlVOZDdPd0JEVkhPSTlkbC9VZXo5anBWMHZuaWI5NmkycTdSYm9odUVN?=
- =?utf-8?B?ZmQvRFBuSTdvZWZjMTBnL2FsckdudE5ZMTdMMkFnVktGOWhDakJWL1dLQ0dN?=
- =?utf-8?B?S3AzTTkvQVUrd01YbVpMMk5mbGJuNFpzcFVoajhtbmNFNERXZVRSVWFaZ1RY?=
- =?utf-8?B?V3dYUnd0WUhSQTd4dVpERTFwaitqalpHRGJydnB2U0w3NWFzeTdqUFkyL1Q1?=
- =?utf-8?B?N1VRNnFlT2FTQnMzR0ptcXFVVzFtOExpSEJCNjNEK3lTbncyVlJGb0duOUt3?=
- =?utf-8?B?aVFSYmozSzIrNEFMbFIvbTFTWEVTNWVXSlp5cjFkNHc0TGdwVzVlWmxtbDRO?=
- =?utf-8?B?a0cwUEh0ckw0UzRnUW1iODNwd1pObHlTMGR1dmNEMDhuZWRmYjlJNjdTVlF0?=
- =?utf-8?B?N1ZZTGlwWjlmeGNqN3pYUVNvd2FOWmRDaFVWTllCbldhTWRHQ0pNazRQU0pY?=
- =?utf-8?B?ODVhTGZwVUk5QVJoQUl4cEd3YndCb1BTMDNJZU9XRS9SbCtML3QzMmN5VXNl?=
- =?utf-8?B?amdHOUxaVTRJV2xCOEFRbURRZzBQdXFqWGlNN2xRY2F0VUhmZFcxUllYMlA2?=
- =?utf-8?B?UFhkSmtOZDh2c0JkTGNEWTF6YkREU1R3RWEwMndSR3lOVEduUGlZYWtiZmhv?=
- =?utf-8?B?cW1VOU01RkNLT0pubnovWXNTSFM3U2prLzIzZkgyN01jTm45UGIyKzJaVjVF?=
- =?utf-8?B?THR3Z3pUeWZvTHdNRjVqYUd3L2xMdmhHZ2U4ZkJMWXdkWlN6OWMyUzFON0Rk?=
- =?utf-8?B?RWJ2UkVFZEc2VEo2ZHlqejlOYTExT2JVTFFnZk84TFd0RUE1WFpNTy9lVVJt?=
- =?utf-8?B?RkhFRFArS29jTUgwdGk0QnZMdkRQQlJyZDBuMjRnb2Uwdm13YXdaVldoamJF?=
- =?utf-8?B?eFEzUmlFaEdHbVF3ZGc2NXpLQzJxK1Y4WGg3WCtzd2YzWGVndms1cVNWRE9y?=
- =?utf-8?B?aFRzczVNUlUwd09LWmxrS2gzOU9vdWQ1a25TYTMzdjVGYlc2YThRR0M5Q2Uv?=
- =?utf-8?B?OUhiVlFWVitHQzg3TU9wOUN0VG5nd21tYXQ4ZGVOMUxJMkwrWWYzdmZvaWEw?=
- =?utf-8?B?MFZJdTNFR0NTbmhBRENHZHRYbldOM0ZCSzJ6SEtXbC9XSnFNLy9EQ3NSbEd2?=
- =?utf-8?B?VWFyK3VBMHR5SUNmdnJJU1kyKzYvVjZiSHRhT091UEs0Znd6ajF2TWVIRU5q?=
- =?utf-8?Q?s1wRQ0L6B0Y=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018)(1580799027);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UFB0U3V5eVlKbGh6OUxkaFdzWlBndU1FdlUvMTJua2E4RXhOYzF6TWhaOHdr?=
- =?utf-8?B?TFAvTDBiNkR5WGNOeHRWYWtWVG16bXBBcjFDditxbTlSR3pqSXBxZlIwRFpn?=
- =?utf-8?B?RnZEVVI5NlkxR0V2c1NBcmtqQklRaEV1SmtiK3ZCUFRrYjhFSjBhdDdzemZJ?=
- =?utf-8?B?a2V0SFQ0c09obHU5WDhhemtUVngzK1I3TVgwY0s3bThIdjQ1ODBNdk1Od3dJ?=
- =?utf-8?B?Y1hBVlhTSko0d1dWUy9FbzZ5VXljbzZkRjhmWlBLVnBxK1JrYjZPbDNvbXBG?=
- =?utf-8?B?dUhSdXdpSmNVbDkvRU9vRmlpWk1uRlVXVXM2RjBQc0hJZFQ3Y0V4L3cwV0sr?=
- =?utf-8?B?ZkZkeFJ1Q3paNlplcWJIR2pvUko5RFhRam1qTXV3a3ovZTR1Y1drYmlpTTZn?=
- =?utf-8?B?Uy9sWUtQQXZOTGNURUxuR0ZrTlR0STkzVTAweHRjR0NNNHRycStUV3NuUStv?=
- =?utf-8?B?YUJqNUNLcEtQZWxzRG9INGU1bFEzaU53RHVnekVUS3ZUL1c5dGdDR3Z4SExk?=
- =?utf-8?B?aGV6Q09FSUZGczFLMzBsTkkxTlk3MVdMYUFPcG42bEx2NmszTHVxcVdZNnZl?=
- =?utf-8?B?WGpqdmVIY1ZTNG5sZmlSV3dVM1BSR0hkZEhNZ2lQOUNhT1k4MDNhU0NVL2sw?=
- =?utf-8?B?YXJkNHg4aWlQbW11aDd0NlM2cjdMRUphOVdjVm50K083MTVRWkVRSFQwSVd5?=
- =?utf-8?B?Q2l5RnNaNExucjRJUHJ6RzMyK3FGUzRwaTJrK2JyTFpLLzlESUdhT1QrdlZi?=
- =?utf-8?B?dXRsUjhVVjhWbktrMzJCRlltd1Uvc29DYkRSQlg2RnlRTDN5aE16emNEdlBO?=
- =?utf-8?B?aTJpZnEyOXJhUG1QUDFueWVDMEhTRzJWNGhSL2lCRXlmYlRNRjEzTGxZTkU3?=
- =?utf-8?B?N1IxcmF6RDVLZ1MrZ0tSTXRacEpCSmFuSk9EQS96OUlGOHEycW1vTHowRHl1?=
- =?utf-8?B?N1ZYMFJHdlZwUjBGQ0Z3L0FTVGppZktpbklnc0l0N1QzK1JzdGxUWnIyWUVV?=
- =?utf-8?B?enhBbUwxMlN1am5ZWUF0YU4wd2VZM3Q4bTljcklEbERxbDdCQnR6cjFzQ2gy?=
- =?utf-8?B?cjRMZEhUa1o4cjdOc2pJb0VyaFFGVTdvaUFrOWFkZ3lWZ1AxcExXNzFKdE9a?=
- =?utf-8?B?QkhieGFPWGdJMWpva0lUeG02eGNvczJyY1d3ckNmTGYrN3RxOG80TVdtSXd2?=
- =?utf-8?B?V1lDajhXS0JhN054aUVjQUlENXV6MGY4R2tsUnljZElZYlA5RjFGMXhmRjZO?=
- =?utf-8?B?UFFSTXoram1MOEVQN0xydWNCaW9qTHg0NHpiYm5YNW9FK0RRS3YwWVlsb0xL?=
- =?utf-8?B?R0dsdUlSbnAxMDJ2Y2lwUE8rRkhvV1B6WXhlc0NqSGRLczJGRFFrcXlEcUxH?=
- =?utf-8?B?aVFGMGh1Uml5b3Q0YmpZSnJYVFpsUGdHRVZJNjA1aC9JUCtaUjJISWZuQXgr?=
- =?utf-8?B?Q2Y2YVppYUoxV2lmbWpnSzV1Q2p4UEZPTFhFMXZuY3c1RHlhanhULzBRYnp2?=
- =?utf-8?B?ME1oWmdEWEU1WHNLclNVRk5SVy9jRkQydWtWM1pabmwvR2t0RXM4bU9ydngw?=
- =?utf-8?B?WS80NmVoYUFIY0tXcng3dzRnT3RrMFY4d3hySGdlZ0U1YThxY21oQ2hvUEpu?=
- =?utf-8?B?SklQVmY1VnM0dWY3bTBaNzRGNWdVRDFSbE5sMFN0VjVPKzFrbEFWNmtRTVVM?=
- =?utf-8?B?Vys5SnZGNlRHTWVhQ3JPU3lGWUt0akx4Wlg1TmFvcklJdFlwWXpVclBUZ0Nw?=
- =?utf-8?B?VFZBRkpRbjBWTTFXcXd6enBRbll5TUpMRmgyeEhTL3U0L0JpNmVxYlJnQm1I?=
- =?utf-8?B?VGZBY0RxQzROdjdPQjNSQnNCQnFEdDJjMHR0TTBxcFB2b05pL3ByNDFRdXMz?=
- =?utf-8?B?SkFQbFRrVmIwNlZQYUxkME9YQmg0SHZzZHFzaGRYb01UWDNBUi9lWmVTeko0?=
- =?utf-8?B?VytDZ0ZwRkdjYWlRS2tRbE9NUjcxTngzYmZoZXVDaHBJeWR4YldCaDlISmwx?=
- =?utf-8?B?ZE5GdTdKZGNJMmV6RXBCb2VGSUM1ZDV6N2RjL1RlWlBsdnpWaVF3ZjVRa1Qw?=
- =?utf-8?B?UXJoaVdtcFJsWXAySUpSM0VxUklHTU9PUWxYRUh6cUsyYU5TY3pqcjRGNHhx?=
- =?utf-8?B?WmdvZHhHRWRxVit3U21Kc1BQMlNqSFd5RStHQjBRa1c2Qk5JdGpxR1R6Mnkx?=
- =?utf-8?B?U1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EE48EE3E95AEE94780883525ED867A82@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8882511CA0
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724048025; cv=none; b=b4g6A+kOgZYTKaJW5HAYE4X3e5RrCXfaX2AnUcVs45wpGc4g2b8IUs5wcDVAnJOoiRIynloTK5B2Vz9VB4YTAacwS27qJYjKLKIuJlQ81iZiEylzSd3hAp4WOW4xTseat9m5AYAtH1ly6yz+dBLkVurg2iIqiR3dfaBfH36VnVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724048025; c=relaxed/simple;
+	bh=X0+s0FHNCJ6IN3aBODkDM2oCKV3UBN5ESvfdU8fvCbA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iljANzdKTc89Cgw1C85Bk+vca1ISDegKy7P0pSQKyPRtygnV2mHVGbn+Ca2nrtPepsBeyC/GpDv3TqlYDjhQ8Ptag/xUC/6Im/I16Mmv329O1iVZKj7UMnXj+Vm2bIGimyU8iZ0pvrC/eSG5RpJwOu7a4o6JWxpI4v0WhiVUFx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uD7w1lyd; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2b1514d85df211ef8b96093e013ec31c-20240819
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=QE567wxaZYFj8kwiVIzL4/viZ/NIGTuq9+uq6fgydvM=;
+	b=uD7w1lydlSP/2HaaHdgw5Rl/slz44EK04KenunCh3Km88rbcdGskt9hh2mKcHbTtaUPF/lVNcyTWWYMTMU6prjB4Z994snwtJ8vcyFeydw1HkfXT/7mHgcQ4b6/VmXj09EQNgZQ+V8DYS4hA9xjE2+tt88sY3iJflwu7x6IIimc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:ddacd687-d0e5-4fc7-ab3c-6071fa2256b3,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:e578a95b-248b-45cb-bde8-d789f49f4e1e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 2b1514d85df211ef8b96093e013ec31c-20240819
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <shuijing.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1393039332; Mon, 19 Aug 2024 14:13:35 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 19 Aug 2024 14:13:35 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 19 Aug 2024 14:13:35 +0800
+From: Shuijing Li <shuijing.li@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Shuijing Li
+	<shuijing.li@mediatek.com>
+Subject: [PATCH v7] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
+Date: Mon, 19 Aug 2024 14:12:51 +0800
+Message-ID: <20240819061333.26069-1-shuijing.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	vAAbTXhUitvRTO9VI5k5YRiHoA1s2NCt4eRqX2hCWuq4huvGmIm/h2MuKKw/aUywpHIVR2xBc8bq8bOQwCV+rwzFdmPGwOC+DjOlpQChchhxn1k5Qtppy0WlW/NKiXmteoniY2pgmqX6uE76O3F+U8Y30Uw9af1ZXbfdUWju5km3QSN8fpsys7JRFMHDRQ7WFa6xfTPKBHcKVowsXCC2PVfUCYPJQsyKIn3GLKEg+qh5+OKpjsuOhxqygdRPJU4A+ClhP3GWHtyFs955wWvW7fGMmRhx7k0sAJTJiRe8PE3BIDGgP24VDwQxAJhKVe13DDC5a4SkNFsj/Iv9VKNbAydvmuApHV7gKqB8Qlbx5a5RvcoZJVZ5q7FHPTCSauS45xnIU8MBs/dQP+C+uG/etyB4mJp5ay07+lanI0zniRGXXHtDQsKbRdbO8QM/goB3BHsHWt5fXqB0XWpYxPcsIxQBEWOrj243CkhcVT+r6sLoF05V4NRlZMt/ScZ8rvelF+osxn24w78bUHA9zUhMC9oGdC4jI2MYI0MUgOeO+rktVJx4q/eZP1Fnf6+ZQ+FCBtE8TeGjqBdc49oFlmyre9J2IaBGE8ptxTyJ00f7Szc6bMda1tR7jSqlkuQnEU7z
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY1PR01MB1562.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d68b50f5-81ae-4676-5d41-08dcc014b9d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 06:04:02.8609
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d/PB34zPNSlKG/qWOalRVwqwIHQX8mN9MtWw3uGBOZNiovWJ5zKtiLs1nh5t1Qi1duk9Awad5RjAU4eTgFqaPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13317
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-DQoNCk9uIDEwLzA4LzIwMjQgMDY6NTUsIERhbiBXaWxsaWFtcyB3cm90ZToNCj4gRGFuIFdpbGxp
-YW1zIHdyb3RlOg0KPiBbLi5dDQo+PiBAQCAtMjAzNiwxMiArMjAzOCwxMCBAQCBzdGF0aWMgc3Ry
-dWN0IGRldmljZSAqKnNjYW5fbGFiZWxzKHN0cnVjdCBuZF9yZWdpb24gKm5kX3JlZ2lvbikNCj4g
-DQo+IC4uLm9mIGNvdXJzZSB5b3Ugd291bGQgYWxzbyBuZWVkIHNvbWV0aGluZyBsaWtlOg0KPiAN
-Cj4gaWYgKCFjb3VudCkgew0KPiAJa2ZyZWUoZGV2cyk7DQo+IAlyZXR1cm4gTlVMTDsNCj4gfQ0K
-DQpJdCBzZWVtcyB3ZSBkb24ndCBuZWVkIHRoaXMgY2xlYW51cCwgaW4gdGhlIGNvdW50PTAgY2Fz
-ZSwgd2Ugd291bGQgcmVhY2ggYGVycmAgdG8gZnJlZSBkZXZzLg0KDQpUaGFua3MNClpoaWppYW4N
-Cg0KDQo+IA0KPiAuLi5oZXJlLCBJJ2xsIGxlYXZlIHRoYXQgdG8geW91IHRvIGZpeCB1cCBhbmQg
-dGVzdC4NCj4gDQo+PiAgICAgICAgICByZXR1cm4gZGV2czsNCj4+ICAgDQo+PiAgICBlcnI6DQo+
-PiAtICAgICAgIGlmIChkZXZzKSB7DQo+PiAtICAgICAgICAgICAgICAgZm9yIChpID0gMDsgZGV2
-c1tpXTsgaSsrKQ0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAgbmFtZXNwYWNlX3BtZW1fcmVs
-ZWFzZShkZXZzW2ldKTsNCj4+IC0gICAgICAgICAgICAgICBrZnJlZShkZXZzKTsNCj4+IC0gICAg
-ICAgfQ0KPj4gLSAgICAgICByZXR1cm4gTlVMTDsNCj4+ICsgICAgICAgIGZvciAoaSA9IDA7IGRl
-dnNbaV07IGkrKykNCj4+ICsgICAgICAgICAgICAgICAgbmFtZXNwYWNlX3BtZW1fcmVsZWFzZShk
-ZXZzW2ldKTsNCj4+ICsgICAgICAgIGtmcmVlKGRldnMpOw0KPj4gKyAgICAgICAgcmV0dXJuIE5V
-TEw7DQo+PiAgIH0NCj4+ICAg
+Adding the per-frame lp function of mt8188, which can keep HFP in HS and
+reduce the time required for each line to enter and exit low power.
+Per Frame LP:
+  |<----------One Active Frame-------->|
+--______________________________________----___________________
+  ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
+
+Per Line LP:
+  |<---------------One Active Frame----------->|
+--______________--______________--______________----______________
+  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
+
+Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
+---
+Changes in v7:
+Fix code style and simplify the code per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240813022315.18502-1-shuijing.li@mediatek.com/
+Changes in v6:
+Simplify the code per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240812070341.26053-1-shuijing.li@mediatek.com/
+Changes in v5:
+Fix code style issue and add per-line-lp function to be symmetrical with per-frame-lp.
+per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.22372-1-shuijing.li@mediatek.com/
+Changes in v4:
+Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hactive *
+dsi_buf_bpp.
+Changes in v3:
+Use function in bitfield.h and get value from phy timing, per suggestion
+from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.22759-1-shuijing.li@mediatek.com/
+Changes in v2:
+Use bitfield macros and add new function for per prame lp and improve
+the format, per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.3315-1-shuijing.li@mediatek.com/
+---
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 110 +++++++++++++++++++++++++----
+ 1 file changed, 98 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index b6e3c011a12d..58518f3257a8 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -88,12 +88,15 @@
+ #define DSI_HSA_WC		0x50
+ #define DSI_HBP_WC		0x54
+ #define DSI_HFP_WC		0x58
++#define HFP_HS_VB_PS_WC		GENMASK(30, 16)
++#define HFP_HS_EN			BIT(31)
+ 
+ #define DSI_CMDQ_SIZE		0x60
+ #define CMDQ_SIZE			0x3f
+ #define CMDQ_SIZE_SEL		BIT(15)
+ 
+ #define DSI_HSTX_CKL_WC		0x64
++#define HSTX_CKL_WC			GENMASK(15, 2)
+ 
+ #define DSI_RX_DATA0		0x74
+ #define DSI_RX_DATA1		0x78
+@@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
+ 	bool has_shadow_ctl;
+ 	bool has_size_ctl;
+ 	bool cmdq_long_packet_ctl;
++	bool support_per_frame_lp;
+ };
+ 
+ struct mtk_dsi {
+@@ -426,7 +430,79 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, bool config_vact)
+ 	writel(ps_val, dsi->regs + DSI_PSCTRL);
+ }
+ 
+-static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
++static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
++{
++	u32 horizontal_sync_active_byte;
++	u32 horizontal_backporch_byte;
++	u32 horizontal_frontporch_byte;
++	u32 hfp_byte_adjust, v_active_adjust;
++	u32 cklp_wc_min_adjust, cklp_wc_max_adjust;
++	u32 dsi_tmp_buf_bpp;
++	unsigned int da_hs_trail;
++	unsigned int ps_wc, hs_vb_ps_wc;
++	u32 v_active_roundup, hstx_cklp_wc;
++	u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
++	struct videomode *vm = &dsi->vm;
++
++	if (dsi->format == MIPI_DSI_FMT_RGB565)
++		dsi_tmp_buf_bpp = 2;
++	else
++		dsi_tmp_buf_bpp = 3;
++
++	da_hs_trail = dsi->phy_timing.da_hs_trail;
++	ps_wc = vm->hactive * dsi_tmp_buf_bpp;
++
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
++		horizontal_sync_active_byte =
++			vm->hsync_len * dsi_tmp_buf_bpp - 10;
++		horizontal_backporch_byte =
++			vm->hback_porch * dsi_tmp_buf_bpp - 10;
++		hfp_byte_adjust = 12;
++		v_active_adjust = 32 + horizontal_sync_active_byte;
++		cklp_wc_min_adjust = 12 + 2 + 4 + horizontal_sync_active_byte;
++		cklp_wc_max_adjust = 20 + 6 + 4 + horizontal_sync_active_byte;
++	} else {
++		horizontal_sync_active_byte = vm->hsync_len * dsi_tmp_buf_bpp - 4;
++		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
++			dsi_tmp_buf_bpp - 10;
++		cklp_wc_min_adjust = 4;
++		cklp_wc_max_adjust = 12 + 4 + 4;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
++			hfp_byte_adjust = 18;
++			v_active_adjust = 28;
++		} else {
++			hfp_byte_adjust = 12;
++			v_active_adjust = 22;
++		}
++	}
++	horizontal_frontporch_byte = vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust;
++	v_active_roundup = (v_active_adjust + horizontal_backporch_byte + ps_wc +
++			   horizontal_frontporch_byte) % dsi->lanes;
++	if (v_active_roundup)
++		horizontal_backporch_byte += dsi->lanes - v_active_roundup;
++	hstx_cklp_wc_min = (DIV_ROUND_UP(cklp_wc_min_adjust, dsi->lanes) + da_hs_trail + 1)
++			   * dsi->lanes / 6 - 1;
++	hstx_cklp_wc_max = (DIV_ROUND_UP((cklp_wc_max_adjust + horizontal_backporch_byte +
++			   ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
++
++	hstx_cklp_wc = FIELD_GET(HSTX_CKL_WC, readl(dsi->regs + DSI_HSTX_CKL_WC));
++
++	if (hstx_cklp_wc <= hstx_cklp_wc_min || hstx_cklp_wc >= hstx_cklp_wc_max) {
++		hstx_cklp_wc = FIELD_PREP(HSTX_CKL_WC, (hstx_cklp_wc_min + hstx_cklp_wc_max) / 2);
++		writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
++	}
++
++	hs_vb_ps_wc = ps_wc - (dsi->phy_timing.lpx + dsi->phy_timing.da_hs_exit +
++		      dsi->phy_timing.da_hs_prepare + dsi->phy_timing.da_hs_zero + 2) * dsi->lanes;
++	horizontal_frontporch_byte |= FIELD_PREP(HFP_HS_EN, 1) |
++				      FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_ps_wc);
++
++	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
++	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
++	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
++}
++
++static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
+ {
+ 	u32 horizontal_sync_active_byte;
+ 	u32 horizontal_backporch_byte;
+@@ -436,7 +512,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	u32 dsi_tmp_buf_bpp, data_phy_cycles;
+ 	u32 delta;
+ 	struct mtk_phy_timing *timing = &dsi->phy_timing;
+-
+ 	struct videomode *vm = &dsi->vm;
+ 
+ 	if (dsi->format == MIPI_DSI_FMT_RGB565)
+@@ -444,16 +519,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	else
+ 		dsi_tmp_buf_bpp = 3;
+ 
+-	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
+-	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
+-	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
+-	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
+-
+-	if (dsi->driver_data->has_size_ctl)
+-		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
+-		       FIELD_PREP(DSI_WIDTH, vm->hactive),
+-		       dsi->regs + DSI_SIZE_CON);
+-
+ 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
+ 
+ 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+@@ -499,6 +564,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
+ 	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
+ 	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
++}
++
++static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
++{
++	struct videomode *vm = &dsi->vm;
++
++	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
++	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
++	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
++	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
++
++	if (dsi->driver_data->has_size_ctl)
++		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
++			FIELD_PREP(DSI_WIDTH, vm->hactive),
++			dsi->regs + DSI_SIZE_CON);
++
++	if (dsi->driver_data->support_per_frame_lp)
++		mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
++	else
++		mtk_dsi_config_vdo_timing_per_line_lp(dsi);
+ 
+ 	mtk_dsi_ps_control(dsi, false);
+ }
+@@ -1197,6 +1282,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_driver_data = {
+ 	.has_shadow_ctl = true,
+ 	.has_size_ctl = true,
+ 	.cmdq_long_packet_ctl = true,
++	.support_per_frame_lp = true,
+ };
+ 
+ static const struct of_device_id mtk_dsi_of_match[] = {
+-- 
+2.45.2
+
 
