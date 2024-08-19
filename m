@@ -1,176 +1,115 @@
-Return-Path: <linux-kernel+bounces-292651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BC2957254
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:46:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F4C95725A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36988B22E8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B131F23A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8938918800A;
-	Mon, 19 Aug 2024 17:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFA188CB5;
+	Mon, 19 Aug 2024 17:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fSCcoJE2"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B0216132E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fYyF7sjJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAB482EB;
+	Mon, 19 Aug 2024 17:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089580; cv=none; b=CgqEi6zHumaX4YtUguE2WC23iuiMX2mgN2u/vgUXemaYcQZnNSZ1IV8eQKyVCknMbbJn0ktgEyEj8XfywNpPDLnDGr+wVxn6c+/ge1QnH1fCiV68XLDRx8HzSBXtBomnuD/SlezXR0kyQNe0nbcAyhS/VusTWHvNHS/Pdr1zuj4=
+	t=1724089623; cv=none; b=m2J2VG3SBl1t8bRL9i3ouqO3Cpj3loHFjQHIlynrmX8rFqMs0QWhTK2teXd8+B5H+t6sVgxx5jRDXmGtcGwljFSQKD4DuT9iUpVY41q1cgrosyjsC9o+JPdfi64m3RAGG4Z+kUly0CHIZSH5ZBwuITP2CqBGr//NJ2U0O6bDICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089580; c=relaxed/simple;
-	bh=NMDNAwZ/85MrC2/KoFUt8yrMz0f+9BETGF/OtkHJWgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G9Im+sZFCq0BKyciSW/WRcuO7B2IvmYvaewzTsOiQTMzk7PgwCzxvgHjsuNdEnJLttRvXPRjN3W95kwFFHCYviPmj97heQYwKfwQ2zmqVyHxb7kXwX+Wt4Mc4WHecaZ/xFEM/7SbOP9WdozoNMEkoChh9TpfMZco6IejpfR+h1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fSCcoJE2; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so6672756e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724089576; x=1724694376; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=COSENzSSJEpGLSrW02jqlSSjde6gi4NT90YipkfQ9+Q=;
-        b=fSCcoJE2/EzVvIcCUo7Z6uC6v3rNLFJEL4UgXhEPdxVMq8T6QgDYlrbzdF17ijpMn9
-         EoK+sBsSNP05u7Zdz7aqY2JFvX1cTqjVDpKLe1xrvL3SmkYA4bNWOH4Htoh4Bp8MkAYD
-         /BI5HksApBUk9OIJuY0FYHfL2nFAPOIofWCKI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724089576; x=1724694376;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=COSENzSSJEpGLSrW02jqlSSjde6gi4NT90YipkfQ9+Q=;
-        b=Xwy92A6MUa8IaA5Allhm+MKkhuQZJJXAv151qTFAwCcjX1kbnVFOi/KlugyZz+J1tF
-         XKZZy83sXpZryuRUz/8cL9E13eXexvalyrH4NBRB+Ua9nG+NC1m9NJuPFDcj0lyrpLVg
-         eJl9fIKRgf6XJdMWlKWtwXvMyEGE6HZzu27LMaIb9R7f7S0XvTTPlKT7FIVrHYyP29z4
-         myQHa7xCZjlDoNmQwRuxR6Q4qpNYG2TY+JXWX25X1qv2TX9p1zYgLmy07RYn45+QaIAK
-         pr3f+65LJjrp5pmnVobb7l67gFcXGMFbjXoUqOe7l4C0XiPEfyTTAGtb6PBIHT47x0uX
-         MGtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7wv76nrcbdAx9U337UwZbr4FUe8W8OM75aCU6l7O86N1b36KBcPFTMSdJ/Ht9a/USQ8W5JdGSq7DndTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1nNHrbRztwpkU8VSakzA2vvKaIIyYbCzj2WL10Fb3n9PqfmRw
-	X81COGF9W2HnruMaeXIBuyDSU8N1HrEBgQjEslzeHvpGc1gLPAGMOw0aBj0RyBCHHUj/LBmICY2
-	9YD6TfQ==
-X-Google-Smtp-Source: AGHT+IG31RLoEAUhZMq8EfTkJZwNfhBF6V6UszjErCDhIO8cYHeFlrFpZ4RUzakfS8xGo9rcdZ8ozA==
-X-Received: by 2002:a05:6512:3b21:b0:52c:df8c:72cc with SMTP id 2adb3069b0e04-5331c6d98d3mr7258395e87.43.1724089576047;
-        Mon, 19 Aug 2024 10:46:16 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d41d86fsm1556487e87.185.2024.08.19.10.46.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 10:46:15 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so46734561fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:46:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXIpQ8GydPBPvXB5PgRQ7h8A6c0/EO+RUolZga7qLfwVkS+FFY3rBCrQa7B6iM7TkrQt3DFbKeIBif/+wQ=@vger.kernel.org
-X-Received: by 2002:a2e:6102:0:b0:2ec:42db:96a2 with SMTP id
- 38308e7fff4ca-2f3be5c13e4mr64640331fa.29.1724089574659; Mon, 19 Aug 2024
- 10:46:14 -0700 (PDT)
+	s=arc-20240116; t=1724089623; c=relaxed/simple;
+	bh=O/u/0h4UDWXzTlG+fyAEIwqdpcRuWTE+gYKDPyVqXGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UVUVV/sFbvDv3GbOLaViNMz2spWguXn3Xbiyp6Cje6aYUfBHGiSTLqIz/HWqsdGgf/2QSWEEfqGTkjqpLxjO2eMCw0WYg6TKC0afz+PbsqFRj0FEVqAYmJ+2N4M1NROylJUwPeG3MmsgJ2iPRSI3OrcrkqfmOFc7Rt5M1fbgp7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fYyF7sjJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A692F20B7165;
+	Mon, 19 Aug 2024 10:47:01 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A692F20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724089621;
+	bh=/Fg+0/px+hqNYUUfsmTiu8GgatTWcJCL0lwQFJVQ/tA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fYyF7sjJlyEoM0JAIp8iI+WSf7amJf7ETBZwTv6JAFSIU+FKmhSsw4HNzrhAYxlT4
+	 A5vyAPdyo2uFW5TfPI/HoeyeIVBWMk7SzosB2aa+PakJwYBTQzHf3wFXB4SYdLGd6N
+	 AUz5EsqW9VbFKhs/h6K9lmyUTJIROMLqTNlh8tQw=
+Message-ID: <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
+Date: Mon, 19 Aug 2024 10:47:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819053605.11706-1-neilb@suse.de> <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-In-Reply-To: <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 19 Aug 2024 10:45:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgLL5sA_GAEbFn+zELAxz9Jjf0umpORV4N1sQtRhDeZ2Q@mail.gmail.com>
-Message-ID: <CAHk-=wgLL5sA_GAEbFn+zELAxz9Jjf0umpORV4N1sQtRhDeZ2Q@mail.gmail.com>
-Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
-To: Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
+ signature data to LSMs
+To: Paul Moore <paul@paul-moore.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
+ <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
+ <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
+ <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com>
+ <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
+ <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 Aug 2024 at 01:16, Christian Brauner <brauner@kernel.org> wrote:
->
-> The problem is that we currently use wait_on_bit() and wake_up_bit() in
-> various places on i_state and all of these functions require an unsigned
-> long (probably because some architectures only handle atomic ops on
-> unsigned long).
 
-It's actually mostly because of endianness, not atomicity.
 
-The whole "flags in one single unsigned long" is a very traditional
-Linux pattern. Even originally, when "unsigned", "unsigned int", and
-"unsigned long" were all the same 32-bit thing, the pattern for the
-kernel was "unsigned long" for the native architecture accesses.
+On 8/18/2024 10:22 AM, Paul Moore wrote:
+> On Fri, Aug 16, 2024 at 3:11 PM Fan Wu <wufan@linux.microsoft.com> wrote:
+>> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
+> 
+> ...
+> 
+>>>>>>
+>>>>>> +#ifdef CONFIG_SECURITY
+>>>>>> +     u8 *root_digest_sig;    /* signature of the root digest */
+>>>>>> +#endif /* CONFIG_SECURITY */
+>>>>>>         unsigned int salt_size;
+>>>>>>         sector_t data_start;    /* data offset in 512-byte sectors */
+>>>>>>         sector_t hash_start;    /* hash start in blocks */
+>>>>>> @@ -58,6 +61,9 @@ struct dm_verity {
+>>>>>>         bool hash_failed:1;     /* set if hash of any block failed */
+>>>>>>         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
+>>>>>>         unsigned int digest_size;       /* digest size for the current hash algorithm */
+>>>>>> +#ifdef CONFIG_SECURITY
+>>>>>> +     unsigned int sig_size;  /* root digest signature size */
+>>>>>> +#endif /* CONFIG_SECURITY */
+>>>>>>         unsigned int hash_reqsize; /* the size of temporary space for crypto */
+>>>>>>         enum verity_mode mode;  /* mode for handling verification errors */
+>>>>>>         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+>>>
+>>> Just nit-picking: I would move "unsigned int sig_size" up, after "u8
+>>> *root_digest_sig" entry.
+>>>
+>>> Mikulas
+>>
+>> Sure, I can make these two fields together.
+> 
+> Fan, do you want me to move the @sig_size field when merging or are
+> you planning to submit another revision?  I'm happy to do it during
+> the merge, but I don't want to bother if you are going to post another
+> patchset.
+> 
 
-It may not be a *great* pattern, and arguably it should always have
-been "flags in a single unsigned int" (which was the same thing back
-in the days). But hey, hindsight is 20:20.
+Thanks, Paul. It seems moving the field during the merge can expedite 
+the process. Please go ahead with that. I appreciate your help with this!
 
-[ And I say "arguably", not "obviously".
-
-  The kernel basically takes the approach that "unsigned long" is the
-size of GP registers, and so "array of unsigned long" is in some
-respect fundamentally more efficient than "array of unsigned int",
-because you can very naturally do operations in bigger chunks.
-
-  So bitops working on some more architecture-neutral size like just
-bytes or "u32" or "unsigned int" would have advantages, but "unsigned
-long" in many ways is also a real advantage, and can have serious
-alignment advantages for the simple cases ]
-
-And it turns out byte order matters. Because you absolutely want to be
-able to mix things like simple initializers, ie
-
-     unsigned long flags = 1ul << BITPOS;
-     ...
-     clear_bit(BITPOS, &flags);
-
-then the clear_bit() really _fundamentally_ works only on arrays of
-"unsigned long", because on big-endian machines the bit position
-really depends on the chunk size.
-
-And yes, big-endianness is a disease (and yes, bit ordering is
-literally one of the reasons), and it's happily mostly gone, but sadly
-"mostly" is not "entirely".
-
-So we are more or less stuck with "bit operations fundamentally work
-on arrays of unsigned long", and no, you *cannot* use them on smaller
-types because of the horror that is big-endianness.
-
-Could we do "u32 bitops"? Yeah, but because of all the endianness
-problems, it really would end up having to be a whole new set of
-interfaces.
-
-We do, btw, have a special case: we support the notion of
-"little-endian bitmaps".  When you actually have data structures that
-are binary objects across architectures, you need to have a sane
-*portable* bitmap representation, and the only sane model is the
-little-endian one that basically is the same across any type size (ie
-"bit 0" is the same physical bit in a byte array as it is in a word
-array and in a unsigned long array).
-
-So you have things like filesystems use this model with test_bit_le()
-and friends. But note that that does add extra overhead on BE
-machines. And while we probably *should* have just said that the
-normal bitops are always little-endian, we didn't, because by the time
-BE machines were an issue, we already had tons of those simple
-initializers (that would now need to use some helper macro to do the
-bit swizzling on big-endian HW).
-
-So I suspect we're kind of stuck with it. If you use the bit
-operations - including the wait/wake_bit stuff - you *have* to use
-"unsigned long".
-
-Note that the "var_wait" versions don't actually care about the size
-of the variable. They never look at the value in memory, so they
-basically just treat the address of the variable as a cookie for
-waiting. So you can use the "var" versions with absolutely anything.
-
-[ Side note: the wake_up_bit() interface is broken garbage. It uses
-"void *word" for the word. That's very dangerous because it allows
-type mis-use without warnings. I didn't notice until I checked.
-Thankfully wait_on_bit() itself has the right signature, so hopefully
-nobody ever does that ]
-
-            Linus
+-Fan
 
