@@ -1,138 +1,167 @@
-Return-Path: <linux-kernel+bounces-291632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9666B9564F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2BA9564F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69361C217EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0172B1F22D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B015622E;
-	Mon, 19 Aug 2024 07:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059E71586CF;
+	Mon, 19 Aug 2024 07:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rRGdC/61";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dqfopL3N"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eODZ1V7S"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FC7182B3;
-	Mon, 19 Aug 2024 07:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B173614A62E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053770; cv=none; b=AyzUaL66Ptq+p/nTSbtyOMWfGNiQhULUx/hJ0bjWNMX3PXDGtFIrVPLMCNUWkAVtBEslbIsZBoHZgBaj6OewAO7eYWdw3XAzNijWflzHGt9uAs7Kk5NzTwU3yBx683nlmqzeTgYO19mYsX5eesYpAUwPu5Yj7Nhq473y37gCQys=
+	t=1724053770; cv=none; b=rzZoUwrjMdTBFHPIU5EwiOse2YUNwyhEUYGOJTQwYY7ZOC7hpLg1qYS3pKsJ+O6cA9gBg1gKdPHF85kHup67k0Gzio2whv+sfix1ifTnTUG6lvFb3UufhuK7Mj6Y/eQaw8Zf1OjguVP/aqcGDwfHBi1++DSvHLrD0ehxkKBLNw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724053770; c=relaxed/simple;
-	bh=Jc6StV0rBLL4w4KRqChFELfq5YYhIJeXdmN6Lv73xbI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=t2L8Eas13mgBk+qJwOihXApp1prlz0VgSyK+0ykaZJNQ3Q+QKgG6IVhOpaoQ6sfOHhjfxH6EF4IZHvBbuIOK1AeC8ePVlcGj4XegaJdtfol+y1czLmF8svaK5TMwOJUnEOnmhMo8xqn542e3rIUPEy7Y8x8U731s0NjH4OJZA5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rRGdC/61; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dqfopL3N; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8523A11518DD;
-	Mon, 19 Aug 2024 03:49:27 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 03:49:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724053767;
-	 x=1724140167; bh=lFQVYmYMNBA6Y8zAi5sckuXFeIU8lBmafp6xesMZWdg=; b=
-	rRGdC/61vkpx4/g9n5wjR9TLJwVPAqAxvP1IkMgQy31GMeN3IwQgQy2HZMFrOqk6
-	UK4LwSlLTEzL5rwbzJTtLtg0qMW4QRwm64N98vS0v7OeB9SF/Bwt9fuRd/askhz+
-	JCtUkneXLDeSFx9Vl39xkubFOa6/BTuL7NSD2Sb6phU16dHZETwssYaPDel8gki1
-	2jWLRA13NkelHfrMB8v1RbMJQxG2Piiqh22gde45hHkI30TDS1vj1p9IJ4gcvoRn
-	enBTmSXAtw3DZuxiQd1wwh4v2Kz6H20G9NxgSfA/ZuLc9OLpSypW7J9mtzbKYp37
-	/WjpQLODD2tggx4DGLKXjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724053767; x=
-	1724140167; bh=lFQVYmYMNBA6Y8zAi5sckuXFeIU8lBmafp6xesMZWdg=; b=d
-	qfopL3NfWSH+BiS3TMkZvBC5R0plQ+SQBiWdxR1Xn+t9sLim/j5Tj38Q2nkeb96o
-	ycUPKfHKD5A/pPZoqSuMVUF0wW5xSNCnNcEywdJWjFBx+ycVbfOTI6qt4QqOOwzR
-	zMuOThKzIaScaFNanjd2zRNMtGuCd/8T9/5imJ8ZgWCE7/8TLuS4XQH2UCJSMoNi
-	8jOBK/l8mxhSEgqUn18xPA7/Bj8oHKCg7V/YCpREluKYE+eaM4o0dZQhsyy9mWt3
-	dNMoubgyLR5IefASmxisidpY/6Zrl2szK7LJOWEgWt6Bhl4AZ5onI1PGAit9mdpg
-	NR9JozK0EFt8lobnLHeog==
-X-ME-Sender: <xms:B_nCZkTVxCfjoByi2nvkY_VS9Vq9kbzsugwBZDAwwqaUfgDZ1XM72w>
-    <xme:B_nCZhwCEKH8kzEUU_C49ze9__wTs6ZJsW618OZWtF-4i63UOhNnifDF4x8jKJdxK
-    gnfm3i5nDdyuggD-5w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddufedguddviecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
-    thhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepthhorhhvrghlug
-    hssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegrghhorhgu
-    vggvvheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopegsohhrnhhtrhgrvghgvg
-    hrsehlihhnuhigrdhisghmrdgtohhm
-X-ME-Proxy: <xmx:B_nCZh1m5ia70GnnE61lXo9ytp-nSoW5vIJ1ShpVzDNLkoEN1wcSwA>
-    <xmx:B_nCZoD0dh3ycDk8kfmhSJW0qQcilVSdXlJ6by6CBYf53C_dESnG9w>
-    <xmx:B_nCZtjelA2N82brvMGL2aRsRj_lmBUAwjpZnChlvKyc6qzi1htPuw>
-    <xmx:B_nCZkqOn8j4Dhx1VKmcqFGSxFVLIgTIo1GOBww8-DCukwgkVbmgpg>
-    <xmx:B_nCZmZHz8nUttmzFehecasjVXkUbrL5_LdGhAUuRvIz6pnYU9WP2nOP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E3A8D16005E; Mon, 19 Aug 2024 03:49:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	bh=dBBrPIfbp6qwkjh5voowEDdDMFxyyxt5vSOUgIS7qlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hrbK5VWrikArAB36O6lddVZlsdL2AlbFxuFVIyc9DwF/RbaobN91ZfUSQU93dO2PQ9B9Ew8yP8oDKY8W+QsWZYTTrkmPRGG+I3fOl2Jy7hV/6zDGv1OJNwMb/ZLW9xKV2D28KJkNyV63LwcW93tDSlYvPyc+dyH8egpshNgzhBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eODZ1V7S; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3b36f5366so2710492a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724053768; x=1724658568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YUVuHKHVrcEtqoNkxteJqRlTWi2IdXz9WHlXJpbxXpI=;
+        b=eODZ1V7SMZx3JS87TxqBgCHFFrbeMMJtJtXuc/9ftnSOgfTd0FO2qXzYex2IOAKsIs
+         vb9WlHHkAqNoM5/ltQFNJWYAKStkCPNQAa167gHsp5vANSihQ2SUkbc0AwYsrB66kRyo
+         nxdQxed2iRniy45Bg6EkOJvb6RCBuwudhN4m6Oud/BD06H4qwzORfrwPkjeRVYXr5hya
+         dYhiWqLdnZ529UUR1wpw4fT1kaEp0a6AJU9q14+sdj5+rFB6TiEk1Yx8l/vGEUKg+wOy
+         to9r2Fk7jQtwxXngpdl8rEFKxvSqdRS+WD5QakqTzCVd2UJXJNTxEKyt+46eJ0Ru92iR
+         bezQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724053768; x=1724658568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YUVuHKHVrcEtqoNkxteJqRlTWi2IdXz9WHlXJpbxXpI=;
+        b=tqHcvD6bkgY3cxjD4yXzmskRp0xrdv8xkPIgnh8CA9U1uiVHHmL781D51KnDVYR4EM
+         DCDAo3I72X+dM0UjU99/VJfX3BYK2AQuoC5Mt8qzCqn+VCpANQPHn7YGFK/vXojjRc6m
+         ZPu4RjW4DdmEGKhfp1etAtSlf1sLtRVGtt9ODcFgWf+r4X6sG1GdwOiMJqqmxUsQmhMS
+         3pF4K5pm+SZ+ZfTiel8V0N6KwiLxcldai5hFYjm1yZLuvooGyuo2MWiKh/pDu0k5Pyv4
+         4mpXXjymmz1/6Z9TaXDjBtBKL2OIv78KbtWJSfAH3d5+52vaEN1eYGwoNleachV9xFWM
+         gKxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYchXJz9U3bYCTQ+hyp6u5s5K2fOB7a3LXmSBnTn8QJuK6NoHDvf0Hm7Sih/geoj8Dxcm4O+hi4mtWDc8Y6iMzvaJ42ee3qlkL2ZE0
+X-Gm-Message-State: AOJu0YzWFh2qQEjNXXD6JQkR+OPHeYCVLD3YrQGsrfEN646C06QD2L9O
+	I9Aljd2mU3/LAIeS/dN9694mz8fnOlBLRVOnfTnGPvT5YkIai4lxYqntEx2SPQ402PQ+C2W+rPu
+	Anb2VcoTlXRpcQ51WBipZ/DTGuGRrsFZcgtclIQ==
+X-Google-Smtp-Source: AGHT+IGMUxO+SbJNNsJNOeCjlAxiHYJmrGmzXoT7AF6Cdx1Io2AIZBXwOGeT+8FzlSsn1R93xMpQ61uziEW80Qs3BTQ=
+X-Received: by 2002:a17:90a:c28b:b0:2d3:c4d3:de19 with SMTP id
+ 98e67ed59e1d1-2d3dfac98f0mr8696169a91.0.1724053767927; Mon, 19 Aug 2024
+ 00:49:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 19 Aug 2024 09:49:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Will Deacon" <will@kernel.org>, "Jann Horn" <jannh@google.com>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <befa0a09-369a-457c-900a-d350da6a40e9@app.fastmail.com>
-In-Reply-To: <20240816104132.GB23304@willie-the-truck>
-References: 
- <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
- <20240816104132.GB23304@willie-the-truck>
-Subject: Re: [PATCH] runtime constants: move list of constants to vmlinux.lds.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <CAPYmKFsTcurrUiWqM8cFj+GgqfRiaLqPDGOTSE+RLyKJGSKE2g@mail.gmail.com>
+ <B0C91D33-8C1C-4C67-B9B4-41206EFD8ECF@jrtc27.com>
+In-Reply-To: <B0C91D33-8C1C-4C67-B9B4-41206EFD8ECF@jrtc27.com>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Mon, 19 Aug 2024 15:49:16 +0800
+Message-ID: <CAPYmKFs7ZyHyKo8uULvYp3YK8ABOJo8+FWDG_cr2YU_cXgfRww@mail.gmail.com>
+Subject: Re: [External] Re: Some feedbacks on RISC-V IOMMU driver
+To: Jessica Clarke <jrtc27@jrtc27.com>
+Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Anup Patel <apatel@ventanamicro.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com, Will Deacon <will@kernel.org>, 
+	joro@8bytes.org, LKML <linux-kernel@vger.kernel.org>, 
+	Yongji Xie <xieyongji@bytedance.com>, iommu@lists.linux.dev, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, wangqian.rd@bytedance.com, 
+	linux-riscv <linux-riscv@lists.infradead.org>, robin.murphy@arm.com, 
+	Hangjing Li <lihangjing@bytedance.com>, baolu.lu@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024, at 12:41, Will Deacon wrote:
-> On Tue, Jul 30, 2024 at 10:15:16PM +0200, Jann Horn wrote:
->> Refactor the list of constant variables into a macro.
->> This should make it easier to add more constants in the future.
->> 
->> Signed-off-by: Jann Horn <jannh@google.com>
->> ---
->> I'm not sure whose tree this has to go through - I guess Arnd's?
+Hi Jessica,
+
+On Mon, Aug 19, 2024 at 1:17=E2=80=AFPM Jessica Clarke <jrtc27@jrtc27.com> =
+wrote:
 >
-> Acked-by: Will Deacon <will@kernel.org>
+> On 19 Aug 2024, at 04:56, Xu Lu <luxu.kernel@bytedance.com> wrote:
+> >
+> > Hi Tomasz,
+> >
+> > Thanks for your brilliant job on RISC-V IOMMU driver. It helps us a
+> > lot for what we are doing. Below is our feedback on the existing
+> > implementation[1].
+> >
+> > 1) Some IOMMU HW may only support 32-bit granularity access on its
+> > control registers (even when the register is 8 byte length). Maybe it
+> > is better to provide a 32-bit access method for 8 byte length
+> > registers like what opensbi does on ACLINT MTIME register.
 >
-> I'm assuming Arnd will pick this up.
+> That OpenSBI has to access MTIME piecewise is a workaround for a vendor
+> not implementing what the spec clearly intended, even if it wasn=E2=80=99=
+t
+> explicitly stated (but is now, in response to that). Repeating that
+> situation would be a pitiful mistake.
+>
+> The current IOMMU spec draft very clearly states:
+>
+>   "Registers that are 64-bit wide may be accessed using either a 32-bit
+>    or a 64-bit access.=E2=80=9D
+>
 
-I'm back from vacation now and applied it to the asm-generic
-tree for 6.12.
+The spec's description about this is pretty confusing.
+ "The 8 byte IOMMU registers are defined in such a way that software
+can perform two individual 4 byte accesses, or hardware can perform
+two independent 4 byte transactions resulting from an 8 byte access."
+It seems that there is no requirement to implement 8-byte access.
+It's OK then if we think this is not a problem.
 
-   Arnd
+> Jess
+>
+> > 2) In the IOMMU fault queue handling procedure, I wonder whether it is
+> > better to clear the fqmf/fqof bit first, and then clear the ipsr.fip
+> > bit. Otherwise the ipsr.fip can not be cleared and a redundant
+> > interrupt will be signaled.
+
+By the way, it seems the irq handler must clear ipsr.fip first to
+avoid missing out some faults no matter whether a redundant irq will
+be generated.
+
+If ipsr.fiq pending via fqof/fqmf is implemented as edge triggering,
+then ipsr.fiq can be cleared at first. In this case we can not clear
+ipsr.fip again after clearing fqof/fqmf bit, as it indicates a new
+fault to be handled.
+
+If ipsr.fiq pending via fqof/fqmf is implemented as level triggering,
+then ipsr.fiq can not be cleared at first and a redundant irq will be
+generated after this handler's return. But it is OK as no fault will
+be missed. Otherwise it is hard to detect whether the ipsr.fiq is an
+old one or a new one.
+
+Please correct me if I have any misunderstanding. Looking forward to
+the subsequent code.
+
+Best regards!
+
+> >
+> > Best regards!
+> > Xu Lu
+> >
+> > [1] https://lore.kernel.org/all/cover.1718388908.git.tjeznach@rivosinc.=
+com/
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
 
