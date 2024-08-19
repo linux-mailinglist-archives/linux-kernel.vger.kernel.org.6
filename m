@@ -1,226 +1,163 @@
-Return-Path: <linux-kernel+bounces-293058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1D9957A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C5A95771E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C88CCB2254C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894F31C22115
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7851E2128;
-	Mon, 19 Aug 2024 23:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mERexwoy"
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3174C1DB45C;
+	Mon, 19 Aug 2024 22:05:49 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE8B657;
-	Mon, 19 Aug 2024 23:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8CA14D70E;
+	Mon, 19 Aug 2024 22:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724111982; cv=none; b=XOF8bEeSb6NicyNCeMncWwAAFrom7/3bUVfTeXF3WP8bWa2T1OOuPShDHNBdbRbuIbrkyZ4Z783Tacmd5+8V1L6hnCvWZ5f+0Ifum0+wMisSiDc51WkVEtWszka42Flo3Tnmwo7mancmy1rHMztXt6NUFwfPRVEWUf1qGmdKgn8=
+	t=1724105148; cv=none; b=DOLSVXsTLB4Rz3mnOjNk4CjIFRTX8vUr6ix/jWH3O/LMoHfH3ZR/WfMKvfCouZP6vPmMvh7GKyTl3MmXXQsH/z7KKWezgWh1faN5JGuOlpXLuDr++f+7t+yHB1LTE0ScHF5oJFf5EZuLQMb3j3AvoSoC6fi1BP/rOWUM7ShEVyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724111982; c=relaxed/simple;
-	bh=yuIaNRdT2XsbRktrinM+nAtjGpiDnUSrUd78oiucAek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N2J//nk2eWjb5f7nQxAiHogMm1Tjrszgf//tPAvrXPYmGJzRbLMHXGuGGxbvTMyDwiKyBN56bG0ptxneE2X+KeII/szBvp+XurEd3YI1jwYVz0ZUj1kIvhXQPtaowFWJuFMsb7JveSu8rJJt6gmLaUxq2y/F5+JOX5xYHpoEenY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mERexwoy; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id g6yfszJBlQRySg6yfszKrO; Mon, 19 Aug 2024 20:19:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724091584;
-	bh=i2piStncb9aJgwDrvhVqFSwNM+FZr5qttsR8sW3kpiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=mERexwoyPzlfOebBUEnIZsOtSDCyALgn06bAE0XuHJCOZf7MgURweOtCYf6D5ucvJ
-	 hMxqf1tym0+N1Yh1Kbtxnt/uiEN5D/QjnWk+qeYU1kf9fnNGIcOfFfUV8ildjug1Wj
-	 +AeJZMCJpizoL16BT/5H1yRsJWk4bK4mOJMcJ5w1C1DdkuK+LTxHCusEYR4OwF84Ku
-	 +LejUCxpLFrzVaYKQL35SlVlnRKXCLRCjGATL+8fj/YDf1K9GFn7lWZ/Qy8KDoyJRY
-	 4PIjpQAMLXkiwAulAoaPdD5hVIViRIDkDDoFS+N0BjfpoxS/HV8fdzvU2do0815ek2
-	 I0eIZaE9SrODA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 19 Aug 2024 20:19:44 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <74e9109a-ac59-49e2-9b1d-d825c9c9f891@wanadoo.fr>
-Date: Mon, 19 Aug 2024 20:19:28 +0200
+	s=arc-20240116; t=1724105148; c=relaxed/simple;
+	bh=D4mzeqALWxf8qhSRtufcseiFNTV6DElEz2L+bTGS6N0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mo/UHciQMi+Fren9+RSIsGGoi7JGU3BC+ISnCykGnCBBWEhfXnzULrFgDpdpx/NP7aLsEpWhbMjjg2QdGQGJMr8+AHXJA4vz/xCTEDtk7UwZzWkBIbdGB9Tl3U2mMVZePQkvssCN/MhA8+1GpvzNfvQkpWBye7qM/yyW+Tlrhec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 13E6DFFA73;
+	Mon, 19 Aug 2024 22:05:43 +0000 (UTC)
+From: Max Staudt <max@enpas.org>
+To: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	max@enpas.org
+Subject: [PATCH v3] hid-playstation: DS4: Update rumble and lightbar together
+Date: Tue, 20 Aug 2024 00:05:18 +0200
+Message-Id: <20240819220518.13250-1-max@enpas.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] vdap: solidrun: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>, onathan Corbet <corbet@lwn.net>,
- Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>,
- Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
- Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko <andy@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Alvaro Karsz <alvaro.karsz@solid-run.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
- linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240819165148.58201-2-pstanner@redhat.com>
- <20240819165148.58201-10-pstanner@redhat.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240819165148.58201-10-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 19/08/2024 à 18:51, Philipp Stanner a écrit :
-> solidrun utilizes pcim_iomap_regions(), which has been deprecated by the
-> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()"), among other
-> things because it forces usage of quite a complicated bitmask mechanism.
-> The bitmask handling code can entirely be removed by replacing
-> pcim_iomap_regions() and pcim_iomap_table().
-> 
-> Replace pcim_iomap_regions() and pcim_iomap_table() with
-> pci_iomap_region().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->   drivers/vdpa/solidrun/snet_main.c | 47 +++++++++++--------------------
->   1 file changed, 16 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
-> index 99428a04068d..abf027ca35e1 100644
-> --- a/drivers/vdpa/solidrun/snet_main.c
-> +++ b/drivers/vdpa/solidrun/snet_main.c
-> @@ -556,33 +556,24 @@ static const struct vdpa_config_ops snet_config_ops = {
->   static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
->   {
->   	char name[50];
-> -	int ret, i, mask = 0;
-> +	int i;
-> +
-> +	snprintf(name, sizeof(name), "psnet[%s]-bars", pci_name(pdev));
-> +
->   	/* We don't know which BAR will be used to communicate..
->   	 * We will map every bar with len > 0.
->   	 *
->   	 * Later, we will discover the BAR and unmap all other BARs.
->   	 */
->   	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> -		if (pci_resource_len(pdev, i))
-> -			mask |= (1 << i);
-> -	}
-> -
-> -	/* No BAR can be used.. */
-> -	if (!mask) {
-> -		SNET_ERR(pdev, "Failed to find a PCI BAR\n");
-> -		return -ENODEV;
-> -	}
-> -
-> -	snprintf(name, sizeof(name), "psnet[%s]-bars", pci_name(pdev));
-> -	ret = pcim_iomap_regions(pdev, mask, name);
-> -	if (ret) {
-> -		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-> -		return ret;
-> -	}
-> +		if (pci_resource_len(pdev, i)) {
-> +			psnet->bars[i] = pcim_iomap_region(pdev, i, name);
+Some 3rd party gamepads expect updates to rumble and lightbar together,
+and setting one may cancel the other.
 
-Hi,
+Let's maximise compatibility by always sending rumble and lightbar
+updates together, even when only one has been scheduled.
 
-Unrelated to the patch, but is is safe to have 'name' be on the stack?
+Further background reading:
 
-pcim_iomap_region()
---> __pcim_request_region()
---> __pcim_request_region_range()
---> request_region() or __request_mem_region()
---> __request_region()
---> __request_region_locked()
---> res->name = name;
+- Apparently the PS4 always sends rumble and lightbar updates together:
 
-So an address on the stack ends in the 'name' field of a "struct resource".
+  https://eleccelerator.com/wiki/index.php?title=DualShock_4#0x11_2
 
-According to a few grep, it looks really unusual.
+- 3rd party gamepads may not implement lightbar_blink, and may simply
+  ignore updates with 0x07 set, according to:
 
-I don't know if it is used, but it looks strange to me.
+  https://github.com/Ryochan7/DS4Windows/pull/1839
 
+Signed-off-by: Max Staudt <max@enpas.org>
+---
+Changes in v2 -> v3:
+ - Introduced a quirk bit, so this hack only applies to controllers known
+   to be quirky.
+---
+ drivers/hid/hid-playstation.c | 50 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-If it is an issue, it was apparently already there before this patch.
-
-> +			if (IS_ERR(psnet->bars[i])) {
-> +				SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-> +				return PTR_ERR(psnet->bars[i]);
-> +			}
-> +		}
->   
-> -	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> -		if (mask & (1 << i))
-> -			psnet->bars[i] = pcim_iomap_table(pdev)[i];
->   	}
->   
->   	return 0;
-> @@ -591,18 +582,15 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
->   static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
->   {
->   	char name[50];
-> -	int ret;
->   
->   	snprintf(name, sizeof(name), "snet[%s]-bar", pci_name(pdev));
->   	/* Request and map BAR */
-> -	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
-> -	if (ret) {
-> +	snet->bar = pcim_iomap_region(pdev, snet->psnet->cfg.vf_bar, name);
-
-Same
-
-Just my 2c.
-
-CJ
-
-> +	if (IS_ERR(snet->bar)) {
->   		SNET_ERR(pdev, "Failed to request and map PCI BAR for a VF\n");
-> -		return ret;
-> +		return PTR_ERR(snet->bar);
->   	}
->   
-> -	snet->bar = pcim_iomap_table(pdev)[snet->psnet->cfg.vf_bar];
-> -
->   	return 0;
->   }
->   
-> @@ -650,15 +638,12 @@ static int psnet_detect_bar(struct psnet *psnet, u32 off)
->   
->   static void psnet_unmap_unused_bars(struct pci_dev *pdev, struct psnet *psnet)
->   {
-> -	int i, mask = 0;
-> +	int i;
->   
->   	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
->   		if (psnet->bars[i] && i != psnet->barno)
-> -			mask |= (1 << i);
-> +			pcim_iounmap_region(pdev, i);
->   	}
-> -
-> -	if (mask)
-> -		pcim_iounmap_regions(pdev, mask);
->   }
->   
->   /* Read SNET config from PCI BAR */
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index e7c309cfe3a0..79482c56fc40 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -356,6 +356,9 @@ struct dualsense_output_report {
+ #define DS4_TOUCHPAD_WIDTH	1920
+ #define DS4_TOUCHPAD_HEIGHT	942
+ 
++/* Quirks for third-party controllers */
++#define DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER	BIT(0)
++
+ enum dualshock4_dongle_state {
+ 	DONGLE_DISCONNECTED,
+ 	DONGLE_CALIBRATING,
+@@ -405,6 +408,8 @@ struct dualshock4 {
+ 	struct work_struct output_worker;
+ 	bool output_worker_initialized;
+ 	void *output_report_dmabuf;
++
++	unsigned long quirks;
+ };
+ 
+ struct dualshock4_touch_point {
+@@ -2143,6 +2148,28 @@ static void dualshock4_output_worker(struct work_struct *work)
+ 
+ 	spin_lock_irqsave(&ds4->base.lock, flags);
+ 
++	/*
++	 * Some 3rd party gamepads expect updates to rumble and lightbar
++	 * together, and setting one may cancel the other.
++	 *
++	 * Let's maximise compatibility by always sending rumble and lightbar
++	 * updates together, even when only one has been scheduled, resulting
++	 * in:
++	 *
++	 *   ds4->valid_flag0 >= 0x03
++	 *
++	 * Hopefully this will maximise compatibility with third-party pads.
++	 *
++	 * Any further update bits, such as 0x04 for lightbar blinking, will
++	 * be or'd on top of this like before.
++	 */
++	if (DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER) {
++		if (ds4->update_rumble || ds4->update_lightbar) {
++			ds4->update_rumble = true; /* 0x01 */
++			ds4->update_lightbar = true; /* 0x02 */
++		}
++	}
++
+ 	if (ds4->update_rumble) {
+ 		/* Select classic rumble style haptics and enable it. */
+ 		common->valid_flag0 |= DS4_OUTPUT_VALID_FLAG0_MOTOR;
+@@ -2558,6 +2585,29 @@ static struct ps_device *dualshock4_create(struct hid_device *hdev)
+ 	 */
+ 	hdev->version |= HID_PLAYSTATION_VERSION_PATCH;
+ 
++	/*
++	 * Some 3rd party gamepads expect updates to rumble and lightbar
++	 * together, and setting one may cancel the other.
++	 *
++	 * Set a quirk bit if this is a controller known to behave this way.
++	 */
++	if (hdev->vendor == USB_VENDOR_ID_SONY &&
++	    hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) {
++		/*
++		 * Match quirky controllers by their HID report descriptor.
++		 * Check for >= instead of == because there may be a trailing
++		 * 0x00 or the like.
++		 */
++		if (hdev->bus == BUS_USB && hdev->rsize >= 507 &&
++		    crc32_le(0xffffffff, hdev->rdesc, 507) == 0xabc63a20)
++			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
++
++		/* The descriptor via Bluetooth differs from the USB one. */
++		if (hdev->bus == BUS_BLUETOOTH && hdev->rsize >= 430 &&
++		    crc32_le(0xffffffff, hdev->rdesc, 430) == 0x4194b762)
++			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
++	}
++
+ 	ps_dev = &ds4->base;
+ 	ps_dev->hdev = hdev;
+ 	spin_lock_init(&ps_dev->lock);
+-- 
+2.39.2
 
 
