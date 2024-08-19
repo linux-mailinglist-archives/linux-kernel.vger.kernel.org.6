@@ -1,46 +1,62 @@
-Return-Path: <linux-kernel+bounces-292652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F4C95725A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5549F95725E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B131F23A2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E887283E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFA188CB5;
-	Mon, 19 Aug 2024 17:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF44188CB1;
+	Mon, 19 Aug 2024 17:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fYyF7sjJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAB482EB;
-	Mon, 19 Aug 2024 17:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E3YHG1wQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3C4D531;
+	Mon, 19 Aug 2024 17:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089623; cv=none; b=m2J2VG3SBl1t8bRL9i3ouqO3Cpj3loHFjQHIlynrmX8rFqMs0QWhTK2teXd8+B5H+t6sVgxx5jRDXmGtcGwljFSQKD4DuT9iUpVY41q1cgrosyjsC9o+JPdfi64m3RAGG4Z+kUly0CHIZSH5ZBwuITP2CqBGr//NJ2U0O6bDICo=
+	t=1724089731; cv=none; b=apHsil36Vog4lZZV2iHtTAU4bfUZh93Vv9XmAwFWH4c/K9o9GmC1EY1zyVQRg2MQ0Y/egrCtdgcTwNqAZieI1VS0KaVL2gdkbD7FBIbtm6ZM3RriE5Q8GKMjqYeLtUTg4SStDWwN/Fzph5vAcuwwdK+uryGUifsXqHvIAI53r5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089623; c=relaxed/simple;
-	bh=O/u/0h4UDWXzTlG+fyAEIwqdpcRuWTE+gYKDPyVqXGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVUVV/sFbvDv3GbOLaViNMz2spWguXn3Xbiyp6Cje6aYUfBHGiSTLqIz/HWqsdGgf/2QSWEEfqGTkjqpLxjO2eMCw0WYg6TKC0afz+PbsqFRj0FEVqAYmJ+2N4M1NROylJUwPeG3MmsgJ2iPRSI3OrcrkqfmOFc7Rt5M1fbgp7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fYyF7sjJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.106.151] (unknown [131.107.174.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A692F20B7165;
-	Mon, 19 Aug 2024 10:47:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A692F20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724089621;
-	bh=/Fg+0/px+hqNYUUfsmTiu8GgatTWcJCL0lwQFJVQ/tA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fYyF7sjJlyEoM0JAIp8iI+WSf7amJf7ETBZwTv6JAFSIU+FKmhSsw4HNzrhAYxlT4
-	 A5vyAPdyo2uFW5TfPI/HoeyeIVBWMk7SzosB2aa+PakJwYBTQzHf3wFXB4SYdLGd6N
-	 AUz5EsqW9VbFKhs/h6K9lmyUTJIROMLqTNlh8tQw=
-Message-ID: <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
-Date: Mon, 19 Aug 2024 10:47:01 -0700
+	s=arc-20240116; t=1724089731; c=relaxed/simple;
+	bh=ni4JnbQqKyxLORQSUYNl7oTbtxwxJwY0o1MFtkynE3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZKgmGFNtWReYIvlLZRqmP0OQN5GtH4c0pzLoed4mLS9MZgbefJEosYsW0/Nnx6S8c/tWfahu78VvhCGKv9FU1ZSsxrgMAAeKKKOzcZsRWoTLdFWUn/H30ByrmqaG5h0rje8uqNJB1cSjCDo2swC56yWBegpgVPvLe9a8KxC5q+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E3YHG1wQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCLLYQ000780;
+	Mon, 19 Aug 2024 17:48:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xb2HwpmO4diMmk7P1CzPpwyPXC67SiGk+A0s9ybBsAI=; b=E3YHG1wQSq9Z7Thc
+	HYCE9PMPpWOmZwFN9Lsh2hDQ2PpbsGxve1HKH+gycooteh9GglDQ3Ogzjoh/aMUm
+	s+uoDgZGDxLz6uy5qiSW47aqG6eer/a/IBzbIRlaXDv/FquWg+UdGVMEDTrF6Fum
+	0CHM7/JuYUn8HGh98umkKcLRM3fafqNUOa+xKnhCk3WDhxUdZtZ8ylfmCn2nVqz4
+	gutuHLip0ldTUgCHKlTPH7g4XAbs0tAczKS6Gvntgbm5b7rzk1OXl9bdWyCMzBTN
+	wl3V5D7wLTLQomuPS5qFc+ZwSBWNmxReX3pfcOwSgvz5xPw2Fj3r+Uz5AjAuNwy5
+	nRClrA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145yw8w0c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 17:48:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JHmSI7024113
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 17:48:28 GMT
+Received: from [10.216.31.248] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 10:48:22 -0700
+Message-ID: <eb0d4f62-5dde-4a63-8515-23081ec9962c@quicinc.com>
+Date: Mon, 19 Aug 2024 23:18:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,68 +64,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
- signature data to LSMs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- fsverity@lists.linux.dev, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
- <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
- <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
- <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com>
- <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
- <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] usb: dwc3: core: Expose core driver as library
+To: Bjorn Andersson <andersson@kernel.org>,
+        Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>, Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Saravana Kannan
+	<saravanak@google.com>,
+        Felipe Balbi <balbi@kernel.org>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
+ <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
 Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Hb7xCsL2sC1qB3aglQtyQeMS9rTytYnX
+X-Proofpoint-GUID: Hb7xCsL2sC1qB3aglQtyQeMS9rTytYnX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408190120
 
 
 
-On 8/18/2024 10:22 AM, Paul Moore wrote:
-> On Fri, Aug 16, 2024 at 3:11 PM Fan Wu <wufan@linux.microsoft.com> wrote:
->> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
+On 8/12/2024 8:42 AM, Bjorn Andersson wrote:
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
-> ...
+> The DWC3 IP block is handled by three distinct device drivers: XHCI,
+> DWC3 core and a platform specific (optional) DWC3 glue driver.
 > 
->>>>>>
->>>>>> +#ifdef CONFIG_SECURITY
->>>>>> +     u8 *root_digest_sig;    /* signature of the root digest */
->>>>>> +#endif /* CONFIG_SECURITY */
->>>>>>         unsigned int salt_size;
->>>>>>         sector_t data_start;    /* data offset in 512-byte sectors */
->>>>>>         sector_t hash_start;    /* hash start in blocks */
->>>>>> @@ -58,6 +61,9 @@ struct dm_verity {
->>>>>>         bool hash_failed:1;     /* set if hash of any block failed */
->>>>>>         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
->>>>>>         unsigned int digest_size;       /* digest size for the current hash algorithm */
->>>>>> +#ifdef CONFIG_SECURITY
->>>>>> +     unsigned int sig_size;  /* root digest signature size */
->>>>>> +#endif /* CONFIG_SECURITY */
->>>>>>         unsigned int hash_reqsize; /* the size of temporary space for crypto */
->>>>>>         enum verity_mode mode;  /* mode for handling verification errors */
->>>>>>         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
->>>
->>> Just nit-picking: I would move "unsigned int sig_size" up, after "u8
->>> *root_digest_sig" entry.
->>>
->>> Mikulas
->>
->> Sure, I can make these two fields together.
+> This has resulted in, at least in the case of the Qualcomm glue, the
+> presence of a number of layering violations, where the glue code either
+> can't handle, or has to work around, the fact that core might not probe
+> deterministically.
 > 
-> Fan, do you want me to move the @sig_size field when merging or are
-> you planning to submit another revision?  I'm happy to do it during
-> the merge, but I don't want to bother if you are going to post another
-> patchset.
+> An example of this is that the suspend path should operate slightly
+> different depending on the device operating in host or peripheral mode,
+> and the only way to determine the operating state is to peek into the
+> core's drvdata.
 > 
+> The Qualcomm glue driver is expected to make updates in the qscratch
+> register region (the "glue" region) during role switch events, but with
+> the glue and core split using the driver model, there is no reasonable
+> way to introduce listeners for mode changes.
+> 
+> Split the dwc3 core platform_driver callbacks and their implementation
+> and export the implementation, to make it possible to deterministically
+> instantiate the dwc3 core as part of the dwc3 glue drivers and to
+> allow flattening of the DeviceTree representation.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-Thanks, Paul. It seems moving the field during the merge can expedite 
-the process. Please go ahead with that. I appreciate your help with this!
+...
 
--Fan
+> -static int dwc3_probe(struct platform_device *pdev)
+> +struct dwc3 *dwc3_probe(struct platform_device *pdev, struct resource *res,
+> +			bool ignore_clocks_and_resets, void *glue)
+>   {
+>   	struct device		*dev = &pdev->dev;
+> -	struct resource		*res, dwc_res;
+> +	struct resource		dwc_res;
+>   	unsigned int		hw_mode;
+>   	void __iomem		*regs;
+>   	struct dwc3		*dwc;
+> @@ -2087,15 +2089,10 @@ static int dwc3_probe(struct platform_device *pdev)
+>   
+>   	dwc = devm_kzalloc(dev, sizeof(*dwc), GFP_KERNEL);
+>   	if (!dwc)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>   
+>   	dwc->dev = dev;
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		dev_err(dev, "missing memory resource\n");
+> -		return -ENODEV;
+> -	}
+
+...
+
+> +static int dwc3_plat_probe(struct platform_device *pdev)
+>   {
+> -	struct dwc3	*dwc = platform_get_drvdata(pdev);
+> +	struct resource *res;
+> +	struct dwc3 *dwc;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "missing memory resource\n");
+> +		return -ENODEV;
+> +	}
+>   
+> -	pm_runtime_get_sync(&pdev->dev);
+> +	dwc = dwc3_probe(pdev, res, false, NULL);
+> +	if (IS_ERR(dwc))
+> +		return PTR_ERR(dwc);
+> +
+> +	platform_set_drvdata(pdev, dwc);
+
+This setting of platform drvdata is redundant I believe. We already do 
+it in dwc3_probe.
+
+> +
+> +	return 0;
+> +}
+> +
 
