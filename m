@@ -1,248 +1,164 @@
-Return-Path: <linux-kernel+bounces-292826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0959574EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:50:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2449574D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330BFB25768
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B91F1C23C9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE3920126C;
-	Mon, 19 Aug 2024 19:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF121E7A24;
+	Mon, 19 Aug 2024 19:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Te+T++sB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="gePwJZtm"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559A020124E;
-	Mon, 19 Aug 2024 19:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4A01E673B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096770; cv=none; b=Kkdb+C30XorSwYU8zPG3o0he53eg2bfC6IpbsKFuXr6ef5GOuv8Y+ALE4l7flqfnAgSkT/jHoQwlT3YaR8XtUM6zklOINnJqAe0yznrA9Xrc27KqJqnInuJaQGpoV9/SF5QWm0DhbKpuurOYcWoDGXGpBWsbt/TdL1PCp24pFH0=
+	t=1724096755; cv=none; b=hznLgUuPlSBRIRudvHcWlOftctj2j5cr4NtYknHq278bB67JrDT8bSc9WelYw4FGo396v3m3xAtXuRLMZ10gZlWutwaI3T0PmZ0ALTj7m8JtRncMA+0nnZD5Nt16S5zy/+PYy6JyBiZMuhaYyRxK6KQRjlN3CzAT4SCdofa8mUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096770; c=relaxed/simple;
-	bh=S/G3H+zWXhU4Ysa/76xvg601REXC5HLy4Uhd8tkcCIY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g78GsheATKD7Q7cIgk2XMX//ggrqaxnzLxUj0pfPZh8BLCeURvKB0/OdYfvlBErcfzodPvTwR3O2z2059Ld3gtNmv70TW8E0uMmRXXCHOuO97Q+RfFmwLAr6DYAIhTKTeYVlkBNYmzYv3WizrdI65AEyKzAOfhuu4CosME8zbcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Te+T++sB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910A9C4AF13;
-	Mon, 19 Aug 2024 19:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724096770;
-	bh=S/G3H+zWXhU4Ysa/76xvg601REXC5HLy4Uhd8tkcCIY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Te+T++sBuBbkjdkdu+lo0RsreBVV1B0VE4LauCftSKVImsnXk+qHZ/ZW3W++kT1BE
-	 Jt09DP8+JS0okm1S1+FXCjfLAJ07wMJUlcSdKDfhZTKG0ZgdgLAw1Kjy6E0R9LInp5
-	 j+RtlSUeaEvtimHfup4u6+xo8SQd5ehVhbwrEpER4y0g+pEd8yAllBDfisiwBSyDMr
-	 e+tFTIva7mH4v+dN+2z79sLrnHcSwGOyev82dwJ68T/3pjcU9VWRJdmSQC6Mejx4uf
-	 /PQzUKDsfSMpVRm5szAhrOa723shz2nuPHYzMVqjFutahtunt8m1gUrWu3hC8sWl6C
-	 wUCloFAs2VaJQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 19 Aug 2024 21:45:32 +0200
-Subject: [PATCH net 14/14] mptcp: pm: avoid possible UaF when selecting
- endp
+	s=arc-20240116; t=1724096755; c=relaxed/simple;
+	bh=lTecfPNxz/9Cag59+bTURN1jXiWeeVQ2ATKzC2brS7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=klIo6G+YAnuNKvaaA/mpcUcBGmvyWoD88zzqDHBUZ7LO7k+qo9DRKqT2jeyn3MtRU69wKdDxlkssQpyG+qiQqJPW2fAAUZKjKpRck7Uu9YzCmjWapSWE0IsR836iPqQGdtmxLz5VUiF73nkRdpiY7AsVSULZ6HIH2QjS4R4Xst8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=gePwJZtm; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id g7boskI4Tg2lzg8K3sqpit; Mon, 19 Aug 2024 19:45:47 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id g8K2sOJedO7Crg8K2s5KuL; Mon, 19 Aug 2024 19:45:46 +0000
+X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66c3a0ea
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=YbEntRZnthKDSLyDuXIA:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RUlAOFc33w/tmOT1t5JjZy4p+QioE0DcmaHZnwv7Dzo=; b=gePwJZtm8M0knS6ufjRJYEUmWL
+	o5g2yEiytPKJ1AVmtnI/1AUbDseScBzOLSIrvIgi/XQt2jFYc9cY6+rbO2cYQkqkA1dQR2gYQRr/Y
+	DDIEYOVzQYPOmzMf3B3La8aZ7qQSpoW+xJfuEhQn4VYaQTkhdWMx4tBmGZ7Zz+vyhL7vPvffSETvZ
+	xQTsxZoPGsBOLgCBTYx8daTS1AA/0g/AvqlywqNTlKfXmvAi7nsKTItwwwBH4J+/wQ58YLE9/3Buf
+	jnNIayW9C8MSi9wig+DE4KOSuA4Re1DEc+cpYdW83c0QJlrGT35tcwTlyLUbuXkXgOYDwWZ3U1KLZ
+	vJrkWWJQ==;
+Received: from [201.172.173.139] (port=48098 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sg8K1-001FC5-1g;
+	Mon, 19 Aug 2024 14:45:45 -0500
+Message-ID: <574744fe-4df3-405c-b4fc-7209d48c1dff@embeddedor.com>
+Date: Mon, 19 Aug 2024 13:45:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZrOQa2gew5yadyt3@cute> <202408081146.09AA68D69@keescook>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202408081146.09AA68D69@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240819-net-mptcp-pm-reusing-id-v1-14-38035d40de5b@kernel.org>
-References: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
-In-Reply-To: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5507; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=S/G3H+zWXhU4Ysa/76xvg601REXC5HLy4Uhd8tkcCIY=;
- b=kA0DAAgB9reCT0JpoHMByyZiAGbDoNOjBCnpnGhGTWSMeyQztma46JXJb2M0L5L5ZU+o5onq/
- okCMwQAAQgAHRYhBOjLhfdodwV6bif3eva3gk9CaaBzBQJmw6DTAAoJEPa3gk9CaaBzMbUP/A3d
- MfwJcEXPb1VeckKa35cNxanJVUG6ocURH8bqw1oDbR76hX7BYgcu2Chbd+FGwOGgeegCkOIlyXi
- 5J/a1cHkrYyFOTXy1AnhP8SqtHOzF+/NG1Wn1Rb+M0g4EIxry5ly2dEBN4WwcFHwt6/bNZ6IP/p
- q+4N7jY0VCNsgNLyCM+kv9E+bqGKN4GHz1h0pcYyGBcGd5+JFStu0EyZc/s/sy3tn/8Zpp2cZnh
- 8X4i52eV1lAEvmz4Cly6tkK27hipVDU7L5vcfxnsXi1Nk9tHtGS6XoEiqYiwHQJTx/nn1Zw7Vud
- 5q/+Q3IAb3D3J3lEB6ky/n0IVSPKDrR55mZs4Y+UVUUGAK1SNNtj+HTM0tLz6U7a0cYaQize84k
- Zaks5McUTgBoap1lqIPMBREC5y59Uu+43g7iGRQ6Q5+GXdGjOLJQQeMGiJ9BswTxMkxe+5cNE0+
- 6eHJOpDVSpE3FdzMTUWbP/kXP+aOJtFZBD8GcjlL0WdY/Y8+NTt21SzPABKZEp9WH8qehFVcY3o
- tZbDo25HLD3udEFQlhAoC66KK5j6HRiSCLi74axmZQQP1lnyAQWvHTltQTGoQuEuvBM7UHri1mG
- WnNWPiYPDJhkc5wgSobo0QG1Z0W4gpRQ561pDKcHd9UY7nv+m9Plx5GUHYLGF+aBLWITzyngeL/
- yhwAp
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sg8K1-001FC5-1g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:48098
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBVSn387CnwNUVB1she9xV8jTqTe9oDwPslu+q0m3SPjOoWkBjOAPpClngh26TQ+kNea+/BTnWeFA+j2BAbqWKFm0SZy/en1+QFq6f1InLmbQkP9wwZs
+ zpEnbt6YJAMcrSJZx3EevRGrYiIO6UFcMQyLGawJCncDHZmV+5+1zezHLvEk9I1yZuM3LUZDRH2/OHt+64wzlUAItMzGiHoTnPghMl5tLGGY7phjbICsjYAm
 
-select_local_address() and select_signal_address() both select an
-endpoint entry from the list inside an RCU protected section, but return
-a reference to it, to be read later on. If the entry is dereferenced
-after the RCU unlock, reading info could cause a Use-after-Free.
 
-A simple solution is to copy the required info while inside the RCU
-protected section to avoid any risk of UaF later. The address ID might
-need to be modified later to handle the ID0 case later, so a copy seems
-OK to deal with.
 
-Reported-by: Paolo Abeni <pabeni@redhat.com>
-Closes: https://lore.kernel.org/45cd30d3-7710-491c-ae4d-a1368c00beb1@redhat.com
-Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
-Cc: stable@vger.kernel.org
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/pm_netlink.c | 64 +++++++++++++++++++++++++++-----------------------
- 1 file changed, 34 insertions(+), 30 deletions(-)
+On 08/08/24 12:51, Kees Cook wrote:
+> On Wed, Aug 07, 2024 at 09:19:07AM -0600, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> So, in order to avoid ending up with a flexible-array member in the
+>> middle of multiple other structs, we use the `__struct_group()`
+>> helper to create a new tagged `struct glink_msg_hdr`. This structure
+>> groups together all the members of the flexible `struct glink_msg`
+>> except the flexible array.
+>>
+>> As a result, the array is effectively separated from the rest of the
+>> members without modifying the memory layout of the flexible structure.
+>> We then change the type of the middle struct members currently causing
+>> trouble from `struct glink_msg` to `struct glink_msg_hdr`.
+>>
+>> We also want to ensure that when new members need to be added to the
+>> flexible structure, they are always included within the newly created
+>> tagged struct. For this, we use `static_assert()`. This ensures that the
+>> memory layout for both the flexible structure and the new tagged struct
+>> is the same after any changes.
+>>
+>> This approach avoids having to implement `struct glink_msg_hdr` as a
+>> completely separate structure, thus preventing having to maintain two
+>> independent but basically identical structures, closing the door to
+>> potential bugs in the future.
+>>
+>> We also use `container_of()` whenever we need to retrieve a pointer to
+>> the flexible structure, through which we can access the flexible-array
+>> member, if necessary.
+>>
+>> Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
+>> definition of a flexible structure where the size for the flexible-array
+>> member is known at compile-time.
+>>
+>> So, with these changes, fix the following warnings:
+>> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> 
+> Looks correct to me. As a separate change, I wonder if the strcpy()
+> should be replaced with strscpy_pad(), but I think it's all okay as-is,
+> since channel->name seems to be set from another fixed-size array that
+> is the same size.
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index a2e37ab1c40f..3e4ad801786f 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -143,11 +143,13 @@ static bool lookup_subflow_by_daddr(const struct list_head *list,
- 	return false;
- }
- 
--static struct mptcp_pm_addr_entry *
-+static bool
- select_local_address(const struct pm_nl_pernet *pernet,
--		     const struct mptcp_sock *msk)
-+		     const struct mptcp_sock *msk,
-+		     struct mptcp_pm_addr_entry *new_entry)
- {
--	struct mptcp_pm_addr_entry *entry, *ret = NULL;
-+	struct mptcp_pm_addr_entry *entry;
-+	bool found = false;
- 
- 	msk_owned_by_me(msk);
- 
-@@ -159,17 +161,21 @@ select_local_address(const struct pm_nl_pernet *pernet,
- 		if (!test_bit(entry->addr.id, msk->pm.id_avail_bitmap))
- 			continue;
- 
--		ret = entry;
-+		*new_entry = *entry;
-+		found = true;
- 		break;
- 	}
- 	rcu_read_unlock();
--	return ret;
-+
-+	return found;
- }
- 
--static struct mptcp_pm_addr_entry *
--select_signal_address(struct pm_nl_pernet *pernet, const struct mptcp_sock *msk)
-+static bool
-+select_signal_address(struct pm_nl_pernet *pernet, const struct mptcp_sock *msk,
-+		      struct mptcp_pm_addr_entry *new_entry)
- {
--	struct mptcp_pm_addr_entry *entry, *ret = NULL;
-+	struct mptcp_pm_addr_entry *entry;
-+	bool found = false;
- 
- 	rcu_read_lock();
- 	/* do not keep any additional per socket state, just signal
-@@ -184,11 +190,13 @@ select_signal_address(struct pm_nl_pernet *pernet, const struct mptcp_sock *msk)
- 		if (!(entry->flags & MPTCP_PM_ADDR_FLAG_SIGNAL))
- 			continue;
- 
--		ret = entry;
-+		*new_entry = *entry;
-+		found = true;
- 		break;
- 	}
- 	rcu_read_unlock();
--	return ret;
-+
-+	return found;
- }
- 
- unsigned int mptcp_pm_get_add_addr_signal_max(const struct mptcp_sock *msk)
-@@ -512,9 +520,10 @@ __lookup_addr(struct pm_nl_pernet *pernet, const struct mptcp_addr_info *info)
- 
- static void mptcp_pm_create_subflow_or_signal_addr(struct mptcp_sock *msk)
- {
--	struct mptcp_pm_addr_entry *local, *signal_and_subflow = NULL;
- 	struct sock *sk = (struct sock *)msk;
-+	struct mptcp_pm_addr_entry local;
- 	unsigned int add_addr_signal_max;
-+	bool signal_and_subflow = false;
- 	unsigned int local_addr_max;
- 	struct pm_nl_pernet *pernet;
- 	unsigned int subflows_max;
-@@ -565,23 +574,22 @@ static void mptcp_pm_create_subflow_or_signal_addr(struct mptcp_sock *msk)
- 		if (msk->pm.addr_signal & BIT(MPTCP_ADD_ADDR_SIGNAL))
- 			return;
- 
--		local = select_signal_address(pernet, msk);
--		if (!local)
-+		if (!select_signal_address(pernet, msk, &local))
- 			goto subflow;
- 
- 		/* If the alloc fails, we are on memory pressure, not worth
- 		 * continuing, and trying to create subflows.
- 		 */
--		if (!mptcp_pm_alloc_anno_list(msk, &local->addr))
-+		if (!mptcp_pm_alloc_anno_list(msk, &local.addr))
- 			return;
- 
--		__clear_bit(local->addr.id, msk->pm.id_avail_bitmap);
-+		__clear_bit(local.addr.id, msk->pm.id_avail_bitmap);
- 		msk->pm.add_addr_signaled++;
--		mptcp_pm_announce_addr(msk, &local->addr, false);
-+		mptcp_pm_announce_addr(msk, &local.addr, false);
- 		mptcp_pm_nl_addr_send_ack(msk);
- 
--		if (local->flags & MPTCP_PM_ADDR_FLAG_SUBFLOW)
--			signal_and_subflow = local;
-+		if (local.flags & MPTCP_PM_ADDR_FLAG_SUBFLOW)
-+			signal_and_subflow = true;
- 	}
- 
- subflow:
-@@ -592,26 +600,22 @@ static void mptcp_pm_create_subflow_or_signal_addr(struct mptcp_sock *msk)
- 		bool fullmesh;
- 		int i, nr;
- 
--		if (signal_and_subflow) {
--			local = signal_and_subflow;
--			signal_and_subflow = NULL;
--		} else {
--			local = select_local_address(pernet, msk);
--			if (!local)
--				break;
--		}
-+		if (signal_and_subflow)
-+			signal_and_subflow = false;
-+		else if (!select_local_address(pernet, msk, &local))
-+			break;
- 
--		fullmesh = !!(local->flags & MPTCP_PM_ADDR_FLAG_FULLMESH);
-+		fullmesh = !!(local.flags & MPTCP_PM_ADDR_FLAG_FULLMESH);
- 
- 		msk->pm.local_addr_used++;
--		__clear_bit(local->addr.id, msk->pm.id_avail_bitmap);
--		nr = fill_remote_addresses_vec(msk, &local->addr, fullmesh, addrs);
-+		__clear_bit(local.addr.id, msk->pm.id_avail_bitmap);
-+		nr = fill_remote_addresses_vec(msk, &local.addr, fullmesh, addrs);
- 		if (nr == 0)
- 			continue;
- 
- 		spin_unlock_bh(&msk->pm.lock);
- 		for (i = 0; i < nr; i++)
--			__mptcp_subflow_connect(sk, &local->addr, &addrs[i]);
-+			__mptcp_subflow_connect(sk, &local.addr, &addrs[i]);
- 		spin_lock_bh(&msk->pm.lock);
- 	}
- 	mptcp_pm_nl_check_work_pending(msk);
+Yes, I noticed the same after sending the patch. :p
 
--- 
-2.45.2
+> 
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> 
 
+Thanks!
+--
+Gustavo
 
