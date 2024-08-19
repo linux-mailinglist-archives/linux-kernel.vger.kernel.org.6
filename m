@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-291730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404D89565FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:49:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBE49565AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74913B23153
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5A82849F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C37515B140;
-	Mon, 19 Aug 2024 08:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2429615B561;
+	Mon, 19 Aug 2024 08:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="ZUPsHP7x"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6ROJ2HH"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AFB14BF8A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1138B15B14C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057349; cv=none; b=J8bBGSeajxN6/m72aQJDT9flBaf34cW38Z4pez8DEnn/LbdSbAFMwaHRKDXFIAg3xRnCMarekZKwpLR0egT72sI5d0qHoJ9+MVpz7uIblLs28xzCtB46QlrBPy7G4GiHdDO0sitry39zQvv5quh/2HPSUR/KpDaizxxykN0wL6Y=
+	t=1724056434; cv=none; b=O1FGkatB0d9p+/nPOJajWa4u5sMqgpkdG89qk13f/g4H5RzRagg44suGYBqeYUdEhqgbVCIAUe7axJrCXPvEXBWRhe9hnzby8BGG5AjUkAQ4Zm2iGHM6Z3v5uyjtzaaG0jHcksIalkIH9sG6g2BZgUG5o5+0b9l4UvoeeIOQM4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057349; c=relaxed/simple;
-	bh=bhYkbt/NfI1H8kYRGifKW3wSQpR5N/5WLn+jI521hXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kISgzcJ3B57KM8eMwDDUza61SFEr3nFzL3PkG6gGGJn5T9f7KP5TeWx0nNG3AR2EzlVH/xkGXbfZe3DgRxfWyYGY6IW2bOjzvpq3+Ay2UH4avmzhpYe4pAKU//4XrH+SWG5pMSq4wF+XwE+hew2ytp9xj8jwy44Zehb2xtXuoQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=ZUPsHP7x; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724056421; x=1726648421;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bhYkbt/NfI1H8kYRGifKW3wSQpR5N/5WLn+jI521hXs=;
-	b=ZUPsHP7xoa5bFiztIh5KPvKXnb7MExVMqMIxz4IgVimxMDYPBGPPRJyLHVwDRHAf
-	fRbME7VBYPoeQAa5eGTuszO1hzqxPBbfC/cKVf8LAqYASpPGiRFMm7Ao82DQAlNv
-	0dN8ayldlAaZM+oNg0RW6PnwBCoNs7WwiCmEyDQ1D2Q=;
-X-AuditID: ac14000a-03251700000021bc-fd-66c30364c81f
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id A4.27.08636.46303C66; Mon, 19 Aug 2024 10:33:40 +0200 (CEST)
-Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
- 2024 10:33:39 +0200
-Message-ID: <04bba41d-7e7f-4c3f-9f92-1b4165968c12@phytec.de>
-Date: Mon, 19 Aug 2024 10:33:38 +0200
+	s=arc-20240116; t=1724056434; c=relaxed/simple;
+	bh=lgzL4uzXijVTsYudgXt2cfQzrEqt774RO4sWgc4oiLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AtMjI3Ko5fpHJXg5OnOvjUnjqQMjtikepQxr5bola2AxvC6m+N7rplff5GHhHziqLfVBJUtHC8dIrWH9VW6ZfH/z0ysIPdWoMZyKtZoGsgsDlKd+2mZRLRM8n/wPSlHTqJPNeC/TqPRhkQn9YgzXG1eSJKd/O/iCxBHWvkSjpWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6ROJ2HH; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4928d2f45e2so1503128137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724056432; x=1724661232; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lgzL4uzXijVTsYudgXt2cfQzrEqt774RO4sWgc4oiLw=;
+        b=P6ROJ2HHf9f8zH3xbqz1g3vY/wWBZFdIHxxisgu3/3u4fA1qTG2vDcr7adqI5FxZO6
+         VdIcRGYDLTUehgkt5UqWsuNhwNZ3SEDe5TmZlnzbsh/3mgDjvJZk/9Gr0ecaLBMUM70g
+         d5UkMqBaQ8m55dtyDlIfKYAQMzkDHUaxSmehi0yt7Of2F44tLEzsp+mUf+q2TPHDR7W3
+         2Di9k7l4dN8q3yrZmQvl62hR+g4Dy3V0nijVj28FQKbF7KlfUmUapS6x+T57m5nz4TKE
+         C9wdBBPCSX0b3Xc9mgPOINaQn2FwWErDW0nErJzHEpi1KhFjEzXBjo/bPD3lcKk2upf2
+         w8GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724056432; x=1724661232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lgzL4uzXijVTsYudgXt2cfQzrEqt774RO4sWgc4oiLw=;
+        b=oOdXfu3SBagu0+nPmEun5Q8xT10j1cDLlDBu9X9HDnlE4AyynjJLD4NuwoISrhxHm7
+         5rbZPEwGOZdtBK8AGlcmwoBtXQ9ElR1FQgh4fhbqm1PM4AHnFtpBef+owGuPRyqPI2Ot
+         538AByX0jNAemZjdzDoeTWlGx14O8L3KUkBzE+bSnEHZS3HiLcJsvH+GNY9DiH+Y4Yjg
+         giD+7DKSXvFA5EoxBjtfcuR0C7F1EGrBnCX0WH7/wuSlHykGg/lqnbSiqgkjp7QZWe24
+         ww/RWV55FN3YubhUBUE5kEz8O2hSq6+p3DC7KVXDO2Jf5twb3tkLkzEX1LUN9Yf8t9EI
+         g1Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCXYTWjyW1NeJf42l5sM+ixoTOBuK+3eZjDzU7Igqn8JuUAJbVcbP1FcfuzIgMzv1X751VKuSbQit4w3LsDxfWgUvga2JG/JNkjFb8DS
+X-Gm-Message-State: AOJu0Ywf7whepDbQ9iML1HsPTxTfa52x4vcboaRbhcqCklHajF0SzPQT
+	LiL1YeCdM5sh/Y4sxA6lIieRt00ktzqk0YAcqPl6fK7ciNZAmXzcy3nX/vQ5yz9Y8e7Okjytj1T
+	8ce48SJ7VS5WR4lCOWWB5oAfFCRc=
+X-Google-Smtp-Source: AGHT+IEI88GcYXpuAKAXXoavc7nwZGFsvOC9nCPH3VZQsgA6YydWXyFZLO+NlIv3bCrheIqqSuSoocxttoieDHP8l2c=
+X-Received: by 2002:a05:6102:c4f:b0:48f:4218:4d06 with SMTP id
+ ada2fe7eead31-497799b0f1dmr12779926137.28.1724056431922; Mon, 19 Aug 2024
+ 01:33:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/9] TI K3 M4F support on AM62 and AM64 SoCs
-To: Andrew Davis <afd@ti.com>, Bjorn Andersson <andersson@kernel.org>, Mathieu
- Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Hari
- Nagalla <hnagalla@ti.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240802152109.137243-1-afd@ti.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20240802152109.137243-1-afd@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWyRpKBRzeF+XCawZI/FhbvT01kt9jWYWOx
-	Zu85Jov5R86xWmw/0MlusfzzbHaLl7PusVlsenyN1eLyrjlsFs3nlSy27jnAZPHmx1kmi7v3
-	TrBY/N+zg93i/9kP7A78HptWdbJ53Lm2h81j85J6j/6/Bh7Hb2xn8vi8SS6ALYrLJiU1J7Ms
-	tUjfLoEr43fDN+aCRZIVD9/fYmxg3C3cxcjBISFgIjHlfVEXIxeHkMASJonmvVfYIZy7jBKz
-	Dm1g6WLk5OAVsJHo/vKBCcRmEVCVOPv/EVRcUOLkzCdgtqiAvMT9WzPYQWxhAReJz5O7mUAG
-	iQhMY5Y4O3MKG4jDLNDHKNE98QMrSJWQgIHEtq2bmUFsZgFxiVtP5oNtYBNQl7iz4RtYDaeA
-	oUTL5o8sEDUWEovfHGSHsOUlmrfOZoaYIy/x4tJysBoJIHvaudfMEHaoxNYv25kmMArPQnLs
-	LCTrZiEZOwvJ2AWMLKsYhXIzk7NTizKz9QoyKktSk/VSUjcxgqJShIFrB2PfHI9DjEwcjIcY
-	JTiYlUR4u18eTBPiTUmsrEotyo8vKs1JLT7EKM3BoiTOu7ojOFVIID2xJDU7NbUgtQgmy8TB
-	KdXAKDPFaDlDaLv9tdNdTX75pR+8dG6Wfn/q16b3ZK7FZKHbvsdZuYuPKHwt3NmyYfcy3ZVO
-	JjIrnEK7/8/2zy31rnA9lBvIXhuhEK4ZL+d0zcP1+F23prtlLqufHjFrtVj5ipf3kLyhgnXK
-	/1uzgi/0KrxlVzuwrfH1eacCrTUsp5/6P/t15+wtJZbijERDLeai4kQAk74BbLgCAAA=
+References: <20240811224940.39876-1-21cnbao@gmail.com> <CAGsJ_4yMu=aaQZEXtcwCdMgrxUuqQ-9P1AiqyyVLfehD_-my9A@mail.gmail.com>
+ <c817bf05-a9fa-4fb9-b8c6-a1de5a44e59a@redhat.com>
+In-Reply-To: <c817bf05-a9fa-4fb9-b8c6-a1de5a44e59a@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 19 Aug 2024 20:33:40 +1200
+Message-ID: <CAGsJ_4xaTSu2_F3VaR7Y3bOz2+W9XRU9kS3j7Hatojc6ocpOWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] mm: collect the number of anon mTHP
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	Usama Arif <usamaarif642@gmail.com>, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
+	hanchuanhua@oppo.com, ioworker0@gmail.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com, 
+	v-songbaohua@oppo.com, ziy@nvidia.com, yuanshuai@oppo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 19, 2024 at 8:28=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 18.08.24 09:58, Barry Song wrote:
+> > Hi Andrew, David, Usama,
+> >
+> > I'm attempting to rebase this series on top of Usama's
+> > [PATCH v3 0/6] mm: split underutilized THPs[1]
+> >
+> > However, I feel it is impossible and we might be tackling things
+> > in the wrong order.
+>
+> Is just the ordering suboptimal (which can/will get resolved one way or
+> the other), or is there something fundamental that will make this series
+> here "impossible"?
 
+i think it is just the ordering suboptimal. Ideally, mTHP counters can go
+first, then the new partially_mapped feature will rebase on top of
+mTHP counters.
 
-Am 02.08.24 um 17:21 schrieb Andrew Davis:
-> Hello all,
-> 
-> This is the continuation of the M4F RProc support series from here[0].
-> I'm helping out with the upstream task for Hari and so versions (v8+)
-> is a little different than the previous(v7-) postings[0]. Most notable
-> change I've introduced being the patches factoring out common support
-> from the current K3 R5 and DSP drivers have been dropped. I'd like
-> to do that re-factor *after* getting this driver in shape, that way
-> we have 3 similar drivers to factor out from vs trying to make those
-> changes in parallel with the series adding M4 support.
-> 
-> Anyway, details on our M4F subsystem can be found the
-> the AM62 TRM in the section on the same:
-> 
-> AM62x Technical Reference Manual (SPRUIV7A – MAY 2022)
-> https://www.ti.com/lit/pdf/SPRUIV7A
-> 
-> Thanks,
-> Andrew
-> 
-> [0] https://lore.kernel.org/linux-arm-kernel/20240202175538.1705-5-hnagalla@ti.com/T/
-> 
-> Changes for v11:
->   - Added patch [2/9] factoring out a common function
->   - Addressed comments by Mathieu from v10
->   - Rebased on v6.11-rc1
->   - Small reworks in driver for readability
-
-Tested on a AM62x & AM64x using phycore-am62x & phycore-am64x, so
-
-Tested-by: Wadim Egorov <w.egorov@phytec.de>
-
-> 
-> Changes for v10:
->   - Rebased on v6.10-rc3
->   - Added AM64 M4 support in DT
->   - Addressed comments by Mathieu from v9
-> 
-> Changes for v9:
->   - Fixed reserved-memory.yaml text in [1/5]
->   - Split dts patch into one for SoC and one for board enable
->   - Corrected DT property order and formatting [4/5][5/5]
-> 
-> Andrew Davis (1):
->    remoteproc: k3: Factor out TI-SCI processor control OF get function
-> 
-> Hari Nagalla (7):
->    dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
->    arm64: dts: ti: k3-am62: Add M4F remoteproc node
->    arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
->    arm64: dts: ti: k3-am64: Add M4F remoteproc node
->    arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
->    arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
->    arm64: defconfig: Enable TI K3 M4 remoteproc driver
-> 
-> Martyn Welch (1):
->    remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
-> 
->   .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 ++++
->   arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  13 +
->   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
->   arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  13 +
->   arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  19 +
->   arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  19 +
->   arch/arm64/configs/defconfig                  |   1 +
->   drivers/remoteproc/Kconfig                    |  13 +
->   drivers/remoteproc/Makefile                   |   1 +
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c     |  28 +-
->   drivers/remoteproc/ti_k3_m4_remoteproc.c      | 667 ++++++++++++++++++
->   drivers/remoteproc/ti_k3_r5_remoteproc.c      |  28 +-
->   drivers/remoteproc/ti_sci_proc.h              |  26 +
->   13 files changed, 918 insertions(+), 54 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
->   create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
-> 
-
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
