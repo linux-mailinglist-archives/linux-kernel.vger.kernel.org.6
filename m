@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-292865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF92957575
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:14:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C00957578
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13631C23235
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2631F22313
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2581DD396;
-	Mon, 19 Aug 2024 20:13:57 +0000 (UTC)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D6B1DD3A0;
+	Mon, 19 Aug 2024 20:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="YBCsQiDQ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BDE15CD7D;
-	Mon, 19 Aug 2024 20:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A41891D9;
+	Mon, 19 Aug 2024 20:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098436; cv=none; b=j3c9PP6vGkHHE3kHZzVdvKeU6V73TiF1elYe+HRgllT/Ucf+Ga4/JVKF62nRDpsYcQ4j/ftPg3OyT6deWQLOvdWnFxzktlE/lHd47fgMjGU5w045MyVczxG/C5LdHBzkB0Ay/w5AxYl+/ZOG17o2qKFrWScl7cgbUB7SvHhNi20=
+	t=1724098464; cv=none; b=r87++zy6g31yW3QSeg0IyYx7v4STSCZZFqDyFWxPjKsLqGx5jL138xQeXcmWcvp1NpjNpOYljZ17opK2LVe6NllS3D/YmQgqr9YjB8KYQ7wi67P+FmvsgXKx2iaPixd7Uvg8WgRPLGhq2VnE/1mVEWLOWlSr2msGXbLD7XM/voQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098436; c=relaxed/simple;
-	bh=M9uXg93L5yDIbs1p1UszwZ5/EDy/jp0lYk/y50EU13M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h+a95ROnl2eAOZ+ucdouNRz5lFa8Lyg9T/uEwjP8fsE2hx3R9GcRwcLCmRq/Hq9Xq4I3qcSG/aJJRXqjNbNUkH9i3HbDXT3CYyQrRHHUCH7uORIjs3GJ0g4GrgfH+a4xJaJgB5fCVEEZsw9M7wPQxIb1CuKBAvapufP9rMc7Qqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso3702176a12.1;
-        Mon, 19 Aug 2024 13:13:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724098434; x=1724703234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DVLAp+x08r3C0Oaaue1WkB4sZ342wBkS+4HWzyJIOPU=;
-        b=Vrxtux413WfZBsK4pejA3ooCCu6T4A4KKZjubS6qviIjs7m8QaV73Pcnhyc9BArowR
-         iRL1jlYtklpmA5+e8h58diu3yQ7qRuTV5XVQYm/IkCJOyT6r8zVgC9zwl5dNmw8oy3B4
-         F21kr3h5Tphzquw77w7TVU+l/dBUIXsnB0PRYZ34yknwrU/ZspYUg4gRLgHjntSkyjKT
-         Ch+1LQD/A8aV4GrQi5yKIqaMkRY/sBDHQOMl1WXFbia86NiQT8awMZfLv/HVfo7ulntC
-         7LAHfrLAv5kzoc/jA50IVMgEkvjvD24CdRT4z71Wfz18Q91MPq6ycOpU8xj8w6kq4Iqa
-         US6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV2jdzJzWAV4kkZNRjleZh4viGZk7UEFAtm9cKqzBQFdqZZbiyJTZyYXwvzc6ZoaAyF+sq2+V+kIRGRIHTMcUNX1A==@vger.kernel.org, AJvYcCWIa1w1dlMtpCUvbzmpk3S+iiM/CVnuiVsFZpKa6+7QctldsorTVYiEgL6IfTU/fp6eQrXu1wOsBEbUd7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgIgRtlxAyruU41UI1MTM6tR/MKy3o7Vzo3n7BUw26IcoWGc3V
-	O2Shh0/8yqTT7Bj6CS7mATSmf9bJMALlQEh2SsgeXNCDyYPSHdrgmE5I03RDd5MA0gDqV8AwXnr
-	uPJfEFXrrhiEamkTTtNkP5W5dFxY=
-X-Google-Smtp-Source: AGHT+IGAhWI+IerFVi2+pOAA1I38csOzhRWzqnh3ZofL9A3cbKLdN5ZVPDphyrwf7ldy4qiZ4v1E1ZiZd3kBCFlw9PU=
-X-Received: by 2002:a17:90a:f289:b0:2d3:cc31:5fdc with SMTP id
- 98e67ed59e1d1-2d3dfc1f58dmr13399880a91.5.1724098434395; Mon, 19 Aug 2024
- 13:13:54 -0700 (PDT)
+	s=arc-20240116; t=1724098464; c=relaxed/simple;
+	bh=rwkk8LQNVQlD9RwFHTm1jcVQ1zV2YJJ4gWgj2o8KRL0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Ja+kIldelAk42PkN/WjlZmYjOiqF51aVDWJtufJJu1RZIyWh8Mo61etsCUJOY7HqPJuNE8IGPhgv8VXRDvarvh/nDvIRfutthCgnczUr85ezDtKzMD3SpsVEZk1vYfsHMfcP38zaHjJc8T19gFn7jpR2k3zKjmAGwdUgjkCPYnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=YBCsQiDQ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819033016.2427235-1-yangjihong@bytedance.com>
-In-Reply-To: <20240819033016.2427235-1-yangjihong@bytedance.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 19 Aug 2024 13:13:43 -0700
-Message-ID: <CAM9d7cjAVXAqDrT72vjpZvfccaGAZnw_jie5Qz5yX5vSfVWRMw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] perf sched timehist: Add --show-prio & --prio option
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	james.clark@arm.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1724098452;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vW7nBfaUoWGYI3LaABUbY8ys4mwOX5zqzPW9Oi+BnTM=;
+	b=YBCsQiDQMvk8FzjJcNLq/AItWxnGaj673csQreNjjDaZqjm3SpID+TQ/2C/Y8+6H14lUjO
+	pdpgmvvxSp8f9ohXDF4GfiQmrJD0kR7xlRf1Jow+J2ubvjlQ35jjWpAb8bJ5DsAr1mXZ0k
+	C47uWBPhPuK7ZNHVlnfNUwuXJk9ddm9wZD2qn/gw39KswaI3hMmego1JvNK2omhoZ/n/CW
+	Q/bQYvYpTydUQpdirL7JbbxrGciJB4xlLBzPZRprPgnHV1rs+1UmRTp72BBEnOeBF2za3T
+	9oOTqOJ/PlqtGb8wlUpi+xa56UqavY5PBjAjJZ5tRpqCKICw1HvgRChArqwmXg==
+Date: Mon, 19 Aug 2024 22:14:10 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Vicente Bergas <vicencb@gmail.com>
+Cc: Diederik de Haas <didi.debian@cknow.org>, Huang-Huang Bao <i@eh5.me>,
+ "Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-spi@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
+In-Reply-To: <CAAMcf8BAiva1GB_1AoVH-Nq8sp81KdtVe=rUMVjV2ZxCiM4NAg@mail.gmail.com>
+References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
+ <CAAMcf8DZu4B2AN+=8xP3wuknqUtD-e-v+Ej31=08ibPfyL+dGw@mail.gmail.com>
+ <CAAMcf8A59MqhZEswC5VmKZyThG7oG=ztEYd_yfuOwvGTvKzMow@mail.gmail.com>
+ <CAAMcf8Ctr9rOZ2oOzk48haakJOO2bzyNURb2oZTRxJ3tnafXUA@mail.gmail.com>
+ <D3JXD607339U.2F1IAKUSM59UP@cknow.org>
+ <CAAMcf8BAiva1GB_1AoVH-Nq8sp81KdtVe=rUMVjV2ZxCiM4NAg@mail.gmail.com>
+Message-ID: <164916293044ff73e8b35e9a9ab4283b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Sun, Aug 18, 2024 at 8:30=E2=80=AFPM Yang Jihong <yangjihong@bytedance.c=
-om> wrote:
->
-> This patch set adds --show-prio and --prio to show and filter task priori=
-ties.
-> Sometimes may only be interested in the scheduling of certain tasks
-> (such as RT tasks). Support for analyzing events of tasks with given prio=
-rity(ies)
-> only.
->
-> Both options are disabled by default, consistent with the original behavi=
-or.
->
-> Changes since v1:
->  - Rebase based on the latest perf-tools-next branch.
->  - Enhance documentation's --prio entry, add a description of how to use =
-multiple priorities. (suggested-by Namhyung)
->
-> Yang Jihong (2):
->   perf sched timehist: Add --show-prio option
->   perf sched timehist: Add --prio option
+On 2024-08-19 16:37, Vicente Bergas wrote:
+> On Mon, Aug 19, 2024 at 3:33 PM Diederik de Haas 
+> <didi.debian@cknow.org> wrote:
+>> 
+>> On Mon Aug 19, 2024 at 3:14 PM CEST, Vicente Bergas wrote:
+>> > On Mon, Aug 19, 2024 at 2:49 PM Vicente Bergas <vicencb@gmail.com> wrote:
+>> > > On Mon, Aug 19, 2024 at 4:12 AM Vicente Bergas <vicencb@gmail.com> wrote:
+>> > > > > i am a user of the CONFIG_SPI_SPIDEV device.
+>> > > > > It stopped working between 6.8 and 6.10.5.
+>> > > > > The SPI bus itself reports no errors to userspace, but no devices
+>> > > > > appear connected to the bus.
+>> > > > > The platform used is RK3328.
+>> > > > > The only spi-related message in dmesg is:
+>> > > > > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
+>> 
+>> FWIW: I've seen this issue as well.
+>> 
+>> > > Added:
+>> > > Huang-Huang Bao <i@eh5.me>
+>> > > Linus Walleij <linus.walleij@linaro.org>
+>> > > Sasha Levin <sashal@kernel.org>
+>> > >
+>> > > The first offending commit is:
+>> > > 29d8101fb9442544077e68e27839a1979f85633d pinctrl: rockchip: fix pinmux
+>> > > bits for RK3328 GPIO2-B pins
+>> > >
+>> > > I've also tested 6.10.6 with it reverted (and
+>> > > 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+>> > > 7127c68c76f120367b9a5053f524df0b603d4a48 as dependencies) and SPI
+>> > > works fine.
+>> >
+>> > Sorry for the noise:
+>> > reverting only 29d8101fb9442544077e68e27839a1979f85633d makes it work on 6.10.6.
+>> > Ignore what i said about 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+>> > 7127c68c76f120367b9a5053f524df0b603d4a48.
+>> 
+>> Please try if unreverting that commit and adding the following:
+>> https://lore.kernel.org/linux-rockchip/20240709105428.1176375-1-i@eh5.me/
+>> 
+>> fixes the issue as well.
+> 
+> I confirm that 6.10.6 without any reverts plus
+> 20240709105428.1176375-1-i@eh5.me also fixes the issue.
+> Thank you all.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
-
->
->  tools/perf/Documentation/perf-sched.txt |   9 ++
->  tools/perf/builtin-sched.c              | 163 +++++++++++++++++++++++-
->  2 files changed, 165 insertions(+), 7 deletions(-)
->
-> --
-> 2.25.1
->
+Great!  Could you, please, provide your Tested-by in the patch thread
+linked above?  That should help with getting that patch merged upstream.
 
