@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-292800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CB795748A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB24495748D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E78E286158
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D6A285FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225571DC473;
-	Mon, 19 Aug 2024 19:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41B51DC473;
+	Mon, 19 Aug 2024 19:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NN1MTT5i"
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iyT8C1zi"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6311D54E0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873D99460;
+	Mon, 19 Aug 2024 19:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096148; cv=none; b=XHyBEyQuMtj9LC+z8w51HMqpploq6RZZNwGzMyNeI3UkKsNPgFwmpmRFvjB86DmDUQx4MJ4J4f/xBRayWRH385Owa++bl4TQq0ekU+jF9lNamXC9omZ8HnlE85y6uTDZR0HijSTsQ6GMu1v2k7JBYHEQVTI7aMz1EVMAj0iDdwA=
+	t=1724096220; cv=none; b=h8sQFvLKsD2++8XUXWDMlfXnaWJjy1WMDW4Erie63+o8TaOayR7ESn7yFQdvquE31W3Dlnp/c4IExt2rv0M7bTzdBT2y/mp26hV2MxcrrWh3wl1il2VEwLkTSV6FaL1JmLn0KHCIW4VK95xZHmbPcB+3XXS2v7PttcSUvt74oNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096148; c=relaxed/simple;
-	bh=+OduYjndWEcDGzbPt9anuSkV41/HMehd87djU29DX1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8QnXsO3pjSpoKPjwpAcI9oXl52HPLJNrukUCnNOb7aUDVjCkG+8BuQEoEbGpyFrKQVc5vjGH/B0YlUPOmoNohNkfj4XeB9s5+qY5U3dwnpoeqm/7QE3HMjMGe3rN8W7e5KvA6hcMO9dqIQBaZWZ5Il4KsvTAgUOIUBkcl02J4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NN1MTT5i; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WnjVw0JMvzqX9;
-	Mon, 19 Aug 2024 21:35:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724096135;
-	bh=kftjJDEQR6D2YRsmwipISiaWD9LCAgzCHPuYKHHQ+v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NN1MTT5i0P2mpf3bAbV7biTOHt6zSx2wXDXXO/fkx3Lr0MrhQD8+QBkb5QWnI0a69
-	 7a/U/ctOYDvz9/jUw0reXobAg7TdieYVz6TtmT0/D384CuoQraCnlgLAxNNr64o8J6
-	 JV7DTbSMzdjW5MviquiGu/+iSLj3PAw/ldZq3yfA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WnjVt5WmqznwR;
-	Mon, 19 Aug 2024 21:35:34 +0200 (CEST)
-Date: Mon, 19 Aug 2024 21:35:29 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 1/5] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240819.Noon6Ewoodoh@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1724096220; c=relaxed/simple;
+	bh=uaT8W2cHmWPSMhnMFf+mMks8PU0cfLZOZSsqLBMc8Ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qAq0wYy/oNAIhk8jIbvr3eCnel+y6b3JL4xF2wL00NLwy0Y0cYY+IbvONgoyj1w1RONfc5UsRcZLxHs8WJb6W6rOZTOeJCqWdWp945dZjXekMdvaVXIQAyjApGF5kMr4uH+0vKqUjNZx8Z4kzzeG5gXyEBZTyfiIjSrp6+Qoe4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iyT8C1zi; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JIJvXc011235;
+	Mon, 19 Aug 2024 19:36:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=WfSDpCVRbLP2gF
+	yi+ViQVJY/cDfBP//dv0SZ/0dh2Ew=; b=iyT8C1zioEdqJU1S0f2AT8UnAExgef
+	xOIQqk18ORGGSyFwycSO0E9GwVsNEi5gCSMDJnmum2oC/Am82/hivFobk6zV8w3H
+	x5yfthR5GiId40c5h4njPzV5Mtiovnnzh+YlMcX+CSOT3vVXAnxVAGWy+vYJzD1d
+	ENDkS16xMBBBzygvK14JmMxGcFDNGk4qS/WgWtfb47IiMa3oToCHJfuu4VGHmk3M
+	KuiDQeJlUeWMEuEO30Yheul4LZJG9ggTYzY4wl6XjInbDXIUqLsyxgrf/jgWk7kY
+	t4ln1zWI4zqmf59FyDIsJMtoQeCRR4T7R447DF7QMtexRcwib6reOLIQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m67bdry-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Aug 2024 19:36:47 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47JI1BoD037641;
+	Mon, 19 Aug 2024 19:36:46 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 413h5shynh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Aug 2024 19:36:46 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47JJajjU028358;
+	Mon, 19 Aug 2024 19:36:45 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 413h5shym6-1;
+	Mon, 19 Aug 2024 19:36:45 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
+        Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
+        Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>,
+        Sonal Santan <sonal.santan@amd.com>, Max Zhen <max.zhen@amd.com>,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] dmaengine: xilinx: xdma: Fix IS_ERR() vs NULL bug in xdma_probe()
+Date: Mon, 19 Aug 2024 12:36:40 -0700
+Message-ID: <20240819193641.600176-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ spamscore=0 adultscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408190133
+X-Proofpoint-ORIG-GUID: nuWlg6L4e4M8i_2_jREaf2qEeNzMUwkQ
+X-Proofpoint-GUID: nuWlg6L4e4M8i_2_jREaf2qEeNzMUwkQ
 
-On Wed, Aug 14, 2024 at 12:22:19AM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
-> that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
-> abstract Unix sockets from connecting to a process outside of
-> the same landlock domain. It implements two hooks, unix_stream_connect
-> and unix_may_send to enforce this restriction.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> ---
+devm_regmap_init_mmio() returns error pointers on error, it doesn't
+return NULL. Update the error check.
 
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 03b470f5a85a..20d2a8b5aa42 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -97,8 +97,9 @@ static void build_check_abi(void)
->  	 */
->  	ruleset_size = sizeof(ruleset_attr.handled_access_fs);
->  	ruleset_size += sizeof(ruleset_attr.handled_access_net);
-> +	ruleset_size += sizeof(ruleset_attr.scoped);
->  	BUILD_BUG_ON(sizeof(ruleset_attr) != ruleset_size);
-> -	BUILD_BUG_ON(sizeof(ruleset_attr) != 16);
-> +	BUILD_BUG_ON(sizeof(ruleset_attr) != 24);
->  
->  	path_beneath_size = sizeof(path_beneath_attr.allowed_access);
->  	path_beneath_size += sizeof(path_beneath_attr.parent_fd);
-> @@ -149,7 +150,7 @@ static const struct file_operations ruleset_fops = {
->  	.write = fop_dummy_write,
->  };
->  
-> -#define LANDLOCK_ABI_VERSION 5
-> +#define LANDLOCK_ABI_VERSION 6
+Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/dma/xilinx/xdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Each test need to pass with each commit (not only this one BTW), so we
-need to update the abi_version test with this commit.  To be sure that
-everything is OK, you can run `check-linux.sh all` on each commit.
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 718842fdaf98..44fae351f0a0 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -1240,7 +1240,8 @@ static int xdma_probe(struct platform_device *pdev)
+ 
+ 	xdev->rmap = devm_regmap_init_mmio(&pdev->dev, reg_base,
+ 					   &xdma_regmap_config);
+-	if (!xdev->rmap) {
++	if (IS_ERR(xdev->rmap)) {
++		ret = PTR_ERR(xdev->rmap);
+ 		xdma_err(xdev, "config regmap failed: %d", ret);
+ 		goto failed;
+ 	}
+-- 
+2.39.3
+
 
