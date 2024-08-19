@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-291532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999779563C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB2C9563C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF791F22016
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:26:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CE41C21324
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AC6156644;
-	Mon, 19 Aug 2024 06:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3ehI++u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C48014B97D;
+	Mon, 19 Aug 2024 06:31:25 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2B31553BC;
-	Mon, 19 Aug 2024 06:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1C2142E83
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048790; cv=none; b=gnceA6Bg0Fwi/UmNnrFDZDy4QPQXQ1d5n7kdvaEz4wjbi08hjAkYTmLx43qqnENLzQ2TOev9n93Do/gJyX3nyeI75XC9oYB15S7aW+wS9EQWcJdRBxLFydTbBB27ndlQe/cX8tbOaqhOOaE3UR+kW6bvxxPxG/FX68ZCtG4zcBE=
+	t=1724049084; cv=none; b=Xch2w6LRzVdpWhAUy456clZBBSlE9QSs271M4on3g8KLRzGk1nKHulDLoI9szyvgP0BrhCuHdg72uWpnnvD76I4U6vvCNyHNapCiemgy6LrTWdaJwZVvvIQdG3XIsIrYLEeaA1ojCL6yQLRdYw2e/iIUNZsY5F6qdNCxQXZR2Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048790; c=relaxed/simple;
-	bh=YJwodULpM0LtppbLNbDxvxviJ16KqOL33RBA1HPJzrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otOU9UfPFLDEh8cuH1Bfn9Voj2hKGG/v6ghyuxdP85kxCyIkrAunKLF9PItQPwp4Y2e/Qwq21ZUyI9p/+AQptLbKu9/9tn4+93pEbXjFmKjcSm5UUbd4LDgBoak6Ap9VohJ3k9KdqF2kO/80g7c95wmuDTMvPGJY+4kblIbJyqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3ehI++u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCAEC32782;
-	Mon, 19 Aug 2024 06:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724048790;
-	bh=YJwodULpM0LtppbLNbDxvxviJ16KqOL33RBA1HPJzrw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X3ehI++uzcZydyXr+bm+yF4848kMDHc61dfQlQNMCTl6GoG495s1ND771bOpJLPBt
-	 dTpy/3CW3S3vhLnQobqkESXttwOQhTGGZxlqlD4xgtBlJrGTnV0GkndLmMdVby4hZM
-	 OduErWtIEguWUZh2ZYN/WRvjza33UYrEpLZtC+ELHGeTz1FShsXIzT9eO7p3A8Jne8
-	 poY9RtqOdsBvHZgzB+llUuuuI8PIidXEtPXEsE5XPwVy8KWPu892IPPFmTFEEvK3NX
-	 I5Xdh59Af4MiQ+8kf1yCN5PaG3d/q0pWexNHm8A1LEaWP1rH6qHXbXFJ/p1sHdLkvv
-	 Jcx2DYmxK9zvg==
-Message-ID: <e087b788-4002-4d12-bd8f-a40fc814856a@kernel.org>
-Date: Mon, 19 Aug 2024 08:26:19 +0200
+	s=arc-20240116; t=1724049084; c=relaxed/simple;
+	bh=vsnMNXrmrVmq1nWFbU3fJOAqveLwDgDbQvcaU9nbdzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uug21fSWPREGVBbMjOJ0V4rQp7LTfPPtAVhLObcO28QJX8W/dZCIOBRs3xsAd9iY90Zw1G/dUnIVdboq+4V/oTPY1JMhc87mV1VZ7zKFYDNDGO/hOolPy+Ru1KltwZfnQRbVO2GwpBieSmIz4vh+u26C26GZ9A7WieiaLkHAREs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WnN5J0Vvbz13Shv;
+	Mon, 19 Aug 2024 14:30:44 +0800 (CST)
+Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
+	by mail.maildlp.com (Postfix) with ESMTPS id 28AAC1800F2;
+	Mon, 19 Aug 2024 14:31:20 +0800 (CST)
+Received: from [10.45.182.171] (10.45.182.171) by
+ kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 14:31:19 +0800
+Message-ID: <004e1d6a-64ed-4024-b7f7-3f8ed1010e36@huawei.com>
+Date: Mon, 19 Aug 2024 14:30:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,113 +47,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
- hardware
-To: Jie Gan <quic_jiegan@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Tao Zhang <quic_taozha@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20240812024141.2867655-1-quic_jiegan@quicinc.com>
- <20240812024141.2867655-4-quic_jiegan@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240812024141.2867655-4-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/4] sched/core: change rq->nr_iowait type to
+ atomic_long_t on 64-bit
+To: Jens Axboe <axboe@kernel.dk>, <linux-kernel@vger.kernel.org>
+CC: <peterz@infradead.org>, <tglx@linutronix.de>
+References: <20240817204639.132794-1-axboe@kernel.dk>
+ <20240817204639.132794-3-axboe@kernel.dk>
+From: Zhang Qiao <zhangqiao22@huawei.com>
+In-Reply-To: <20240817204639.132794-3-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200007.china.huawei.com (7.202.181.34)
 
-On 12/08/2024 04:41, Jie Gan wrote:
-> +
-> +maintainers:
-> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
-> +  - Jie Gan <quic_jiegan@quicinc.com>
-> +
-> +description:
-> +  The Coresight TMC Control unit controls various Coresight behaviors.
-> +  It works as a helper device when connected to TMC ETR device.
-> +  It is responsible for controlling the data filter function based on
-> +  the source device's Trace ID for TMC ETR device. The trace data with
-> +  that Trace id can get into ETR's buffer while other trace data gets
-> +  ignored.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sa8775p-ctcu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +
-> +  in-ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    patternProperties:
-> +      '^port(@[0-7])?$':
+hi,
 
-I see only two ports in the example. How many are there in reality?
+在 2024/8/18 4:45, Jens Axboe 写道:
+> In preparation for storing two separate iowait states in there, bump the
+> size from a 32-bit to a 64-bit size, for 64-bit kernels.
+> 
+> Note that on 32-bit, the number of tasks are limited to 0x8000, which
+> fits just fine in even half of the existiing 32-bit atomic_t. For 64-bit,
+> no such limit exists, hence play it safe and make it a 64-bit atomic.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  kernel/sched/core.c  | 14 +++++++++++++-
+>  kernel/sched/sched.h |  4 ++++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 9bf1b67818d0..ddabf20cd9e0 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3543,17 +3543,29 @@ static inline bool rq_has_pinned_tasks(struct rq *rq)
+>  
+>  static void task_iowait_inc(struct task_struct *p)
+>  {
+> +#ifdef CONFIG_64BIT
+> +	atomic_long_inc(&task_rq(p)->nr_iowait);
+> +#else
+>  	atomic_inc(&task_rq(p)->nr_iowait);
+> +#endif>  }
+>  
+>  static void task_iowait_dec(struct task_struct *p)
+>  {
+> +#ifdef CONFIG_64BIT
+> +	atomic_long_dec(&task_rq(p)->nr_iowait);
+> +#else
+>  	atomic_dec(&task_rq(p)->nr_iowait);
+> +#endif
+>  }
+>  
+>  int rq_iowait(struct rq *rq)
+>  {
+> +#ifdef CONFIG_64BIT
+> +	return atomic_long_read(&rq->nr_iowait);
+> +#else
+>  	return atomic_read(&rq->nr_iowait);
+> +#endif
+>  }
+>  
+>  static void
+> @@ -8372,7 +8384,7 @@ void __init sched_init(void)
+>  #endif
+>  #endif /* CONFIG_SMP */
+>  		hrtick_rq_init(rq);
+> -		atomic_set(&rq->nr_iowait, 0);
+> +		atomic_long_set(&rq->nr_iowait, 0);
+>  		fair_server_init(rq);
+>  
+>  #ifdef CONFIG_SCHED_CORE
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index b6b3b565bcb1..6a90c2da1eb3 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1082,7 +1082,11 @@ struct rq {
+>  	u64			clock_idle_copy;
+>  #endif
+>  
+> +#ifdef CONFIG_64BIT
+> +	atomic_long_t		nr_iowait;
+> +#else
+>  	atomic_t		nr_iowait;
+> +#endif
 
-Best regards,
-Krzysztof
+When CONFIG_64BIT is not set, the type atomic_long_t as a synonym of the type atomic_t.
+Can you directly use atomic_long_t, is right?
 
+Thanks.
+Zhang Qiao.
+
+>  
+>  #ifdef CONFIG_SCHED_DEBUG
+>  	u64 last_seen_need_resched_ns;
 
