@@ -1,112 +1,145 @@
-Return-Path: <linux-kernel+bounces-292912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8F957662
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CA8957668
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1DF1C23764
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3639B283CD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860611591F3;
-	Mon, 19 Aug 2024 21:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B212D15AAB8;
+	Mon, 19 Aug 2024 21:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exXdrsJD"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fJzXbkF8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894151BDE6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94780156875;
+	Mon, 19 Aug 2024 21:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724102142; cv=none; b=YYJhA3kfH0YdpSWRWRDJ8pnklNehzuMkbmMOx/zK05FIhiHXnOnA45GKilvdhtH1iJpN5mAtrCB1KeHDKGw+HYZyPNe/q807jvzvNqewUX7QyywyHLDykW9WXdFE6Vo04imRRa9XlSCXXrI4D9TKjwdQbgwldWN023N5CiXtDKI=
+	t=1724102305; cv=none; b=daH7hmNPYOh4uuGS8ITsAnlLCOOqGoxJYKcEWCqebUJp+EsyClf3GB5taOJASGTfZztZE3eEXlORXkSnj42dHz3DKkbgo/MQ0Zv0ZvwO2MxMhoaSjT5mw65sm2WjqsZ2nE9Rie0oAM+hik54wng+JKeIsnyYXqBFYjFgEij9y8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724102142; c=relaxed/simple;
-	bh=Fd/61eUJ6PW49pjpCN8AQxHPxW9eOdpS8BxaJpAM3k0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NRnkIWX6REOVMYdznXx3eYW2xUrPiWM+yW+Yd+pMd4pgsEGhGSCb6ygIv5WvdACzj0oYphI1/mB6WSU9BCpxQ8f8ECUMLHvjIpLWvNPdZqfj9pdiO1OK6UtWJXu9kNkvv0H+sH8Ln5mZXBzGNzbMzBpi70FHG1E15ZTbdTzNxEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exXdrsJD; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so2788305a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:15:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724102141; x=1724706941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1zOwgzGSmJ7KgtSbVJyuU4FvpFfZcQaxz7K5MetwfQk=;
-        b=exXdrsJDvzB75dhWhip3Bz+npGuQzjOzSuoJh98vhXHuD/zKIGR16LatwduP4tC74d
-         ekfRGLSVxUoKTg+Is6OjVxQ6s6OWeUTonX+rpUSPclvQSi1OG2H9sMGW8XOCWKV2ojqu
-         XyELZ7KOmfRHKOYRlXf81PTDcNbwUOO2UGahFTdwoIaigqgPZIB0AFUIILtarC89kRbv
-         Ir95hMdbMUN+wG/Y1ph9+HarT6r6N2RraG6J0rxi360kLSiPOE3940ypdToFXGLKENHZ
-         GGvYp6RntTZT0UJNo7+pAz5tyb4iPMdAtbYNZbbHYaT9T6guw/Id2DvWvZK+kI0+7LON
-         XAog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724102141; x=1724706941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zOwgzGSmJ7KgtSbVJyuU4FvpFfZcQaxz7K5MetwfQk=;
-        b=B810lJT3FyXxPL+BLQMnZeO1OlgMxZ2RTOyxAG4aw2C2ULY6xtXtNltsB+btHN1RvV
-         aIzzkZdzKuGH71fiBt++pwKeCESEh0kJZb01tptNX6yLGG99rMiQS+nxp86oLi8DzlCx
-         n4l8meoq72CJ4TBaVoNUcvBIZkAnrqpLjR9+GQ0mMUxAlAikEm2JMDY7R6jPe4P4sIU2
-         tCaZnlE819YxRYs0klkPec+y5Ss4pcDQXcnMDdCjCJbkxAIUzsaw+1Mh3l0xlSQhGhNw
-         wC5m3UxtmokXjbMFjhU3qr5VBJ+XwEvrUSQg453741XzyLzmSAzPKPPsB6iItpCGy73U
-         M23Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYTcZKw/RUAb3/n2bbQ4X1QWRQ7R8+81I8tZsHRS9pwZdzcYTInkjyyhoB2/WmVnTtyLWa/bslDEmcRWFxaOOuFJWJ+slWamCaf2Gi
-X-Gm-Message-State: AOJu0Yw1SSwHxc8+jbFl4i3JOc2rJRgCD/6FKjv2p5E0ukq5AyxR3P9s
-	vwDjgawGe9pHIZh8tyzvDc5s51qE1euHNKMWVr8tlECkOU3hq/hY6sNhcA==
-X-Google-Smtp-Source: AGHT+IHA83RQh+1PtRX7Ljera7DNxEvbkB2ifkVfdWD0TTs5sDDDVw91akpJT15rqLRQwNaxsAMzkg==
-X-Received: by 2002:a17:90a:d98f:b0:2cd:27be:8218 with SMTP id 98e67ed59e1d1-2d3dfc378b0mr11448925a91.8.1724102140519;
-        Mon, 19 Aug 2024 14:15:40 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3bdaf8d1esm10907073a91.53.2024.08.19.14.15.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 14:15:40 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 19 Aug 2024 11:15:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: fix null-ptr-deref on __alloc_workqueue()
- error
-Message-ID: <ZsO1-gCkeGuskOnT@slm.duckdns.org>
-References: <20240815070339.346160-1-senozhatsky@chromium.org>
- <20240815070900.GB12106@google.com>
- <20240815072427.GC12106@google.com>
- <Zr4lN63t25Og5/0G@DUT025-TGLU.fm.intel.com>
- <Zr4rosIiK2a0sGhc@DUT025-TGLU.fm.intel.com>
- <20240816023831.GD12106@google.com>
- <Zr69QOysEfYXkMwb@DUT025-TGLU.fm.intel.com>
+	s=arc-20240116; t=1724102305; c=relaxed/simple;
+	bh=NKv3ZMAymczWxahWkkawV6Njp7ozBoz7s2Bkq+UfOFs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTOykXqsXn5O97kbMn/97IcMWQbDFV+AkP6NqHFDSdpDp+0wHyxfCrZppF5a/newxgnQ7oCsOvAa1T6HJ848oNYNcviQe4Ux8NCFgHboHt+M48WiN7VFbQXjhupFcF9rFiVwKiF01zN4pPKZYSGZq1RtqSCxiHgFJV0OlrPx7Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fJzXbkF8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JB1cBk009997;
+	Mon, 19 Aug 2024 21:18:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6uL/6P6FVGOscv8n/r+Tqfp2
+	w7fb3CYRdxbLi7UEZzY=; b=fJzXbkF87WMPhOI8SofyGYDbyqAr7oWp82BtMDnq
+	49k8RTjGfJpCQNfovfuWMDCCgPTUNuODLHdFLzGIFpCGF/uQGw9DedagNJpDyCsD
+	8x1ddgOcpXmR5bRpoJVyNsxtUyLTrJwj7GjOVweSiGHt6f8IdwsX6oGkpkesYwyY
+	ux3guhFvb9zOcENnpeD33OA6OBH06OEORDMYHMBNEf/jLIXE5F2udX3e9oQDRU65
+	L1xwc4Rsgu2KCKQKLXa0oIXTGvv6Inm7hIK6mdpxQ6M+AMj2M45yPIfmERQ2Q8OO
+	j+WRNVnaW68SwB7+aHQ/oaLFXQll2lkJwW+0qUVuEtSdQw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n585fbr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 21:18:01 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JLI1oQ025138
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 21:18:01 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 14:18:00 -0700
+Date: Mon, 19 Aug 2024 14:17:59 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Frank Li <Frank.li@nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, "Felipe
+ Balbi" <balbi@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        "Saravana
+ Kannan" <saravanak@google.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 5/7] usb: dwc3: qcom: Don't reply on drvdata during
+ probe
+Message-ID: <ZsO2h4AanWf2QK9s@hu-bjorande-lv.qualcomm.com>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
+ <20240811-dwc3-refactor-v2-5-91f370d61ad2@quicinc.com>
+ <ZrujhBR01MCs3iYE@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Zr69QOysEfYXkMwb@DUT025-TGLU.fm.intel.com>
+In-Reply-To: <ZrujhBR01MCs3iYE@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OrXMOMssPu9opz_jDayDqmZSrhTWSV1R
+X-Proofpoint-ORIG-GUID: OrXMOMssPu9opz_jDayDqmZSrhTWSV1R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011 spamscore=0
+ mlxlogscore=878 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190142
 
-Hello,
-
-On Fri, Aug 16, 2024 at 02:45:20AM +0000, Matthew Brost wrote:
-> > Tejun, how do you plan to handle this?  Would it be possible to
-> > drop current series from your tree so that Matthew can send an
-> > updated version (with all the fixes squashed)?
+On Tue, Aug 13, 2024 at 02:18:44PM -0400, Frank Li wrote:
+> On Sun, Aug 11, 2024 at 08:12:02PM -0700, Bjorn Andersson wrote:
+> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
+> >
+> > With the upcoming transition to a model where DWC3 core and glue operate
+> > on a single struct device the drvdata datatype will change to be owned
+> > by the core.
+> >
+> > The drvdata is however used by the Qualcomm DWC3 glue to pass the qcom
+> > glue context around before the core is allocated.
+> >
+> > Remove this problem, and clean up the code, by passing the dwc3_qcom
+> > struct around during probe, instead of acquiring it from the drvdata.
+> >
+> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> > ---
+> >  drivers/usb/dwc3/dwc3-qcom.c | 17 ++++++++---------
+> >  1 file changed, 8 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> > index 88fb6706a18d..33de03f2d782 100644
+> > --- a/drivers/usb/dwc3/dwc3-qcom.c
+> > +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> > @@ -546,9 +546,10 @@ static int dwc3_qcom_request_irq(struct dwc3_qcom *qcom, int irq,
+> >  	return ret;
+> >  }
+> >
+> > -static int dwc3_qcom_setup_port_irq(struct platform_device *pdev, int port_index, bool is_multiport)
+> > +static int dwc3_qcom_setup_port_irq(struct dwc3_qcom *qcom,
 > 
-> Tejun, yes let me know how to move forward with this as it is highly
-> desired for Intel Xe team to get this into 6.12.
+> If pass "qcom", do you need "pdev"? generaly, qcom should have pdev information.
+> 
 
-Can you just send a fixup patch?
+We're only carrying the struct device reference in the dwc3_qcom struct,
+as we don't have a use for the platform_device reference beyond probe.
 
-Thanks.
-
--- 
-tejun
+Regards,
+Bjorn
 
