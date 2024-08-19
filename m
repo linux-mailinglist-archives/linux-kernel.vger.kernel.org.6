@@ -1,85 +1,154 @@
-Return-Path: <linux-kernel+bounces-291991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C3D9569D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 206E19569DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE661F236C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A131F1F23799
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9F16848F;
-	Mon, 19 Aug 2024 11:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C48416BE29;
+	Mon, 19 Aug 2024 11:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EagovWvJ"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nbVPVWLs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aULxpoLS"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271D167296
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B82168491;
+	Mon, 19 Aug 2024 11:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068137; cv=none; b=tsOWb42+W4GFkFR4nDDdl0Z8Mvz60t7LW5/JtO4Zp9AIElDQuUohq3ZT0d21AWS9mQybjawUaJ0woKnKv8nHYj5nhPLqztTIVoQ0tfJJ3Xqg8Qu/l0iD79MRExn/fDT+b5up8BxA9AWicF1bIEE3pOz4u+ABVh1eS0NKoZ+tKOE=
+	t=1724068201; cv=none; b=OVNY5Zgwt457bdjHNxEGgkbxhF3JkTWPdtCpnC37j0mMu76xv8KUDRp3GywIG+3YEMEDslYrcvc3p3gOjJi4qDX2lz6AfAn1g7//lev0943fgyzU5pyq/eKmUqeAigYESgsRj1G5U1E65dvlWnYxPeo5SGBabLiOb3rr0LQqP5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068137; c=relaxed/simple;
-	bh=DIyGM3oLphN0IcFaV41gVZSTj16Lh7ziLSqCsdXfM88=;
-	h=From:To:Subject:Date:Message-Id; b=ObrcKiuqMSkTyrEpro1E4KoiyAynq69BGTuZLiNMRauXryxdvPAbkk+i2Afc46ddGNYJLQFSPOX0KAjro0NCK61a1Y8UtFWI7YeELkrhsOF79tRh4DDlMK1cEmJBeFTePiZ7ybqNbrpCDnUmdvNG5PKEWRK+t1CVc3mWdxBT7E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EagovWvJ; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724068128; h=From:To:Subject:Date:Message-Id;
-	bh=CsNYcfq73m8l6qFDgKhixVingNQS6pVlmbEOXs8aoQQ=;
-	b=EagovWvJuTUqWS1JYCu+wPqw+cge1DKx8Gl4eR2Yo8cuG011osiBcguD9LGcc2LWQkW4MG/t8//wXM8B6ZWnxKnaVIm0b16NuMrpYhKsAXghFHZVFQzxC9RAurc/zIIZbj4u6iZldsCGNw9bOLUYIqQfLvBRwuo+iUgwk1kKdi8=
-Received: from srmbuffer011165236051.sqa.net(mailfrom:renyu.zj@linux.alibaba.com fp:SMTPD_---0WDCpn08_1724068122)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 19:48:48 +0800
-From: Jing Zhang <renyu.zj@linux.alibaba.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>
-Subject: [PATCH] drivers/perf: Fix ali_drw_pmu driver interrupt status clearing
-Date: Mon, 19 Aug 2024 19:48:30 +0800
-Message-Id: <1724068110-45239-1-git-send-email-renyu.zj@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1724068201; c=relaxed/simple;
+	bh=NXVZGJpUGKoeZKg9ENrsCBddcCjKvwUct4Ch4+pBF7g=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LK+urQS84Z3ooZxn4H2UlNdVGDRiDIaJoPRAa8euoE3meCa89wB+yOFefdVzahlTJ5kwUXV7Aj5EMoUBZ8/h/L25uD0SjJQxzGAJqWVq2BXVEGl59cJYlTateo8tiMUkmTZB+MxhhlN63Y8OgncK7VSOSNamj1+V8c7rLYBwg88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nbVPVWLs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aULxpoLS; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id AF1E5138FFBB;
+	Mon, 19 Aug 2024 07:49:57 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 07:49:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724068197;
+	 x=1724154597; bh=swd2YP+u96aOXADsvOlWQ6iZc2iEqVwrlEkNVEMipWE=; b=
+	nbVPVWLsC2+f+evk1Jc7OzxyMBIvoO1m2DLBG+LlbV6ZimRNjdQvo79DAV/cvcXm
+	Lgh/gY6gbuZV12mlgcEC/O71VyFENVsRPlOiEEy8bp1XpGJBOJmsT70N/I7Ee0qq
+	veerz8kYySMI4egV/RYr8iA3Ry6pHkx3KwqMCKi3ORDf0yS5O5y1YVrSVPqKzdfN
+	L4rix2TwNsivMDl7s76/Ovj/efSt5SOmLF/2xerPW2fUUWNN8IuJ6ChhxFqMxHl8
+	03UFIizvAb1bugPsXe6fnW7x9+jD3jZXStPAnkzSOuDWDk5pw0QVKfPfr+724cAO
+	GzZU6H/MDugWn1yeeVgnww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724068197; x=
+	1724154597; bh=swd2YP+u96aOXADsvOlWQ6iZc2iEqVwrlEkNVEMipWE=; b=a
+	ULxpoLSWOi6OycCCOIHNiqKrtP2fixHgCJGaHhUVX7bAmY9n8OhbP197MmLs6LQk
+	zcXR4k4RkEOxCCQ3iSw/mpnSxqr+REVqTAMfDujQI2OwxamCRm+2wJVAnLHUqHkI
+	Z3hsMno3vs4WhE+0TKKBPuEY2IMzjFY/qdr1a2ld8BMCQCSwSj2WVqi7j7P96r9d
+	v31UpebcdzqJn5P64maDAz619/pCKC2LGYHl0yzR1B/nt1vgElvTVkWaSRITN+TG
+	gZvToGzNot54Y8Gf1sBhgikS+wuJLwSzeim8x1yejsMwA/U7lFgVpopxbtiJzH/l
+	eJ7VF9qpqx54iJ7zfCl4g==
+X-ME-Sender: <xms:ZDHDZqqq8u2w-52j0aYVsXjFwG3wwT6NWf6TwTEM-_ILz_N683uUYA>
+    <xme:ZDHDZoqCVV5tAqfBPPGlaKu41WklGuA6rP3TB15STbtD6VCop-0zgsGfLKMyxLDNV
+    ekAHJdnWcZbC8Tlnes>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
+    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
+    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
+    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
+    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
+    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:ZDHDZvPoSPgYUJIyJTClMjJpGaNDHm58Rx5P9ZROqTAZI-c_bF3NNw>
+    <xmx:ZDHDZp7tPPcPaCzC7ZaYII2JE49glN0M9xKoQYxJy6FaKIYYIGBuiQ>
+    <xmx:ZDHDZp7kWFDfB9ZXKb9_dnW5epZKhFOokcmDG2hMtSoqc0L8hdxRuw>
+    <xmx:ZDHDZpjnzVncYWNQQ9sXti9ifRE37sq_3jgO06wh1Ws_iJpEXIt7uQ>
+    <xmx:ZTHDZlHwNELX4juhF0hX3MNaSo5vEPAAkBoRhRxY2a9s9ALYLs9L-958>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6086916005E; Mon, 19 Aug 2024 07:49:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Date: Mon, 19 Aug 2024 13:49:36 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuntao Liu" <liuyuntao12@huawei.com>,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: "Corey Minyard" <minyard@acm.org>,
+ "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
+ "Vinod Koul" <vkoul@kernel.org>, "Daniel Mack" <daniel@zonque.org>,
+ "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>, morbidrsa@gmail.com,
+ "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
+ "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, codrin.ciubotariu@microchip.com,
+ "Andi Shyti" <andi.shyti@kernel.org>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <5cc72997-3449-4df4-954c-91afe1547c49@app.fastmail.com>
+In-Reply-To: <20240819113855.787149-2-liuyuntao12@huawei.com>
+References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+ <20240819113855.787149-2-liuyuntao12@huawei.com>
+Subject: Re: [PATCH -next 1/9] usb: ehci-mv: fix module autoloading
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The alibaba_uncore_pmu driver forgot to clear all interrupt status
-in the interrupt processing function. After the PMU counter overflow
-interrupt occurred, an interrupt storm occurred, causing the system
-to hang.
+On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from platform_device_id table.
+>
+> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> ---
+>  drivers/usb/host/ehci-mv.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
+> index 2f1fc7eb8b72..33d925316eec 100644
+> --- a/drivers/usb/host/ehci-mv.c
+> +++ b/drivers/usb/host/ehci-mv.c
+> @@ -260,6 +260,7 @@ static const struct platform_device_id ehci_id_table[] = {
+>  	{"pxa-sph", 0},
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(platform, ehci_id_table);
 
-Therefore, clear the correct interrupt status in the interrupt handling
-function to fix it.
+Neither of the two entries is used any more, so a better
+fix would be to remove the platform_device_id table.
 
-Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
----
- drivers/perf/alibaba_uncore_drw_pmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
-index 38a2947..c6ff1bc 100644
---- a/drivers/perf/alibaba_uncore_drw_pmu.c
-+++ b/drivers/perf/alibaba_uncore_drw_pmu.c
-@@ -400,7 +400,7 @@ static irqreturn_t ali_drw_pmu_isr(int irq_num, void *data)
- 			}
- 
- 			/* clear common counter intr status */
--			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, 1);
-+			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, status);
- 			writel(clr_status,
- 			       drw_pmu->cfg_base + ALI_DRW_PMU_OV_INTR_CLR);
- 		}
--- 
-1.8.3.1
-
+     Arnd
 
