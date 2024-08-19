@@ -1,88 +1,134 @@
-Return-Path: <linux-kernel+bounces-292111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F48956B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08AD956B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F3E1B2430F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5A5283616
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33ED516C686;
-	Mon, 19 Aug 2024 12:51:54 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D978616BE22;
+	Mon, 19 Aug 2024 12:52:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3B1171AA;
-	Mon, 19 Aug 2024 12:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAC9171AA;
+	Mon, 19 Aug 2024 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724071913; cv=none; b=VBPxG/imy6DHSYvSlrGTMzZDVQNcNPkLbNU1BGzBklVdlFRNNysKgBLcWdAaPOxV+RwTmgkBMGz8Ca0j9SQVtET2TzzQycD4oP2bXo0AoTpxlgJeuQ1NHSV9pSIJ00JJJrfGOBCxcCcWsTLaWS+tTb+qOa1n2EIyzLjjdmLeeY8=
+	t=1724071926; cv=none; b=A7s4Knet3Q8pOkG/GsERA1Tv6xhkI+YzZ3Qd4KN/vOw+vcWjWQGITuQqy2vhVq720nbF7NCr051OOU+fXuexLocLSYygMlphYrE0SYFssTxJ7AHeYHfwyE0nu1GJ3prKMb5lyidndwjIonTaofdmyl/nb4pOkm6iC3L+G45ElNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724071913; c=relaxed/simple;
-	bh=aD7eRSAeEz34K2b+ucFxCsBeMot/0COZmJO4dHpufxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3eNDSvGX/qC78aqps7GxyHtZINMBE8/R2GsIFIjWvvSeK2GoLIDxUxj2HR7VR5MN3C8WTYbu6n/WGd7HFVErhBpTeajavaXra/q3yxPnkIJpuTgfbyaHT/RChLg0i78EOmPwJpB80F10EpqzaCur70NQa35zIIu+pOFOMysla0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so32224085e9.2;
-        Mon, 19 Aug 2024 05:51:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724071910; x=1724676710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w+EC3bu3fnbMxKSLDfjnqISb791pQ0A0rqIMVWYbFSo=;
-        b=ukJyY8kulaB8zy9ara7PyyrujKT1NBKNYdRpTFmiC9CbgpiviYXj7oe7u72WVQQ7C/
-         Wf7cgmtZCQWinNxu1M6JhCxRWarUgKbw7/BoDlh+Xdj/KzXvFNfRH1dYCarZXhRKeLkF
-         II77EA1Q6laxWjwy7VFzhujd2aZOOXmM1HJXEFvuJfogRogm50U1h0fkjkaxK8WDiaT+
-         Emn0SXjCbafRSR/jH4pR5RiL6Beq7SdZkUcgdBUu7f4qc6kkWFKb+s0bwTghEFkyheQx
-         wONKt+CCzLoCgvHr5XH0voOSu4SSsdzAvZEOl4/+WxPTygyGcM++/z6AG5Sm+irZFlhx
-         UdBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFJpFm1JnRTic5KAEqCQyKZl/ZRD/0btx8ZnW/ZlM7YiikMwXQM4grbhfApjQoFW+GG3ouCZMFX3383uQQiPmnFrl0WtUgFL8/8yU8UZ1f/p1ayxZj0sXatcb6CzykisN4NJxsjK+lg50xkLIKTjQtVW8XOLsJA+FqfXkaeM9RVH3hcrUzv+fxDBtgIQaPfhD8W7gn2QdcYJKzgV0cCInMuvuMJGEq8NA=
-X-Gm-Message-State: AOJu0YwzlsUab7IzbHts2X7Gr7BsT8Cr+9oEc0D5PWGGSmol8X5rygLD
-	pBBV8cQ6Z5sFAgL9gRbOvlD2i07j9HPhJlhfbIM4vYaPva6kw3DN
-X-Google-Smtp-Source: AGHT+IGsdoSCFM1RsPR/SUFTfgbMSadWdUeXAhVs/U+QwRgFfME8wDjdTZgEqtzJ3ACZg8KuM3pP7A==
-X-Received: by 2002:a05:600c:4455:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-429ed7e43d7mr76931215e9.24.1724071910198;
-        Mon, 19 Aug 2024 05:51:50 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-371898aa496sm10423941f8f.89.2024.08.19.05.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 05:51:49 -0700 (PDT)
-Date: Mon, 19 Aug 2024 14:51:46 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 02/14] Input: samsung-keypad - do not set input device's
- parent explicitly
-Message-ID: <p5emvacgxom7muyxgnyh57wqey3egodplnk232dymbi7liacpr@47ezk7dyd6vg>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-3-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1724071926; c=relaxed/simple;
+	bh=i3Jdj4it8XyViTNpXMn7KKLgdUQcwr1kF2uoH5K2U9g=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PlptasGnZc44L70nNyuvH9WOjHm5SMujT153oijv9dap+LdcuNi/WrtPMssN5+HUX5g1RSjMu8SdmeR5f5zQTJvzSzas4Qol/SDBdxalhSLFDPFUFZX0twmiyEuQC0DJxr+lw/veN5T9fGq9z8TQ1zQTGa5F9fQGU/KUPdW20fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WnXY23LJTz4f3pC2;
+	Mon, 19 Aug 2024 20:51:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 0BA231A0568;
+	Mon, 19 Aug 2024 20:52:00 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP3 (Coremail) with SMTP id _Ch0CgCXRbTuP8NmZS08CA--.34959S2;
+	Mon, 19 Aug 2024 20:51:59 +0800 (CST)
+Subject: Re: [PATCH 2/2] ext4: Convert EXT4_B2C(sbi->s_stripe) users to
+ EXT4_NUM_B2C
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+ Theodore Ts'o <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
+References: <957d29b85e06f415ee125de141809d2b9e084003.1723794770.git.ojaswin@linux.ibm.com>
+ <02e5b5139294897985f2b99729c5f3da3dd4f6f9.1723794770.git.ojaswin@linux.ibm.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <94377e74-3159-8130-df96-7955b55755c2@huaweicloud.com>
+Date: Mon, 19 Aug 2024 20:51:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240819045813.2154642-3-dmitry.torokhov@gmail.com>
+In-Reply-To: <02e5b5139294897985f2b99729c5f3da3dd4f6f9.1723794770.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgCXRbTuP8NmZS08CA--.34959S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww47uF4UJr15trW3AF18Zrb_yoW8uFW3pr
+	WfJF1UJa45Gw10k3W7Wr1Ygr1vg3y8u3y3GrWxZr18WryaqFZ3Gr9Fqwn0kFyxJr4kG34r
+	X390vw1xArZrW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7I
+	JmUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Sun, Aug 18, 2024 at 09:57:59PM -0700, Dmitry Torokhov wrote:
-> The driver uses devm_input_allocate_device() to allocate instances of
-> input device, which sets the parent appropriately. Remove extraneous
-> assignment.
+
+
+on 8/16/2024 3:57 PM, Ojaswin Mujoo wrote:
+> Although we have checks to make sure s_stripe is a multiple of cluster
+> size, in case we accidentally end up with a scenario where this is not
+> the case, use EXT4_NUM_B2C() so that we don't end up with unexpected
+> cases where EXT4_B2C(stripe) becomes 0.
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+> Also make the is_stripe_aligned check in regular_allocator a bit more
+> robust while we are at it. This should ideally have no functional change
+> unless we have a bug somewhere causing (stripe % cluster_size != 0)
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>> ---
+>  fs/ext4/mballoc.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 9dda9cd68ab2..b2e836a4bd18 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -2553,7 +2553,7 @@ void ext4_mb_scan_aligned(struct ext4_allocation_context *ac,
+>  	do_div(a, sbi->s_stripe);
+>  	i = (a * sbi->s_stripe) - first_group_block;
+>  
+> -	stripe = EXT4_B2C(sbi, sbi->s_stripe);
+> +	stripe = EXT4_NUM_B2C(sbi, sbi->s_stripe);
+>  	i = EXT4_B2C(sbi, i);
+>  	while (i < EXT4_CLUSTERS_PER_GROUP(sb)) {
+>  		if (!mb_test_bit(i, bitmap)) {
+> @@ -2929,8 +2929,9 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
+>  				ext4_mb_simple_scan_group(ac, &e4b);
+>  			else {
+>  				bool is_stripe_aligned = sbi->s_stripe &&
+> +					sbi->s_stripe >= sbi->s_cluster_ratio &&
+sbi->s_cluster_ratio is >= 1, so sbi->s_stripe >= sbi->s_cluster_ratio could
+cover the case that sbi->s_stripe is non-zero. Non-zero check of sbi->s_stripe
+seems not needed.
+>  					!(ac->ac_g_ex.fe_len %
+> -					  EXT4_B2C(sbi, sbi->s_stripe));
+> +					  EXT4_NUM_B2C(sbi, sbi->s_stripe));
+>  
+>  				if ((cr == CR_GOAL_LEN_FAST ||
+>  				     cr == CR_BEST_AVAIL_LEN) &&
+> @@ -3707,7 +3708,7 @@ int ext4_mb_init(struct super_block *sb)
+>  	 */
+>  	if (sbi->s_stripe > 1) {
+>  		sbi->s_mb_group_prealloc = roundup(
+> -			sbi->s_mb_group_prealloc, EXT4_B2C(sbi, sbi->s_stripe));
+> +			sbi->s_mb_group_prealloc, EXT4_NUM_B2C(sbi, sbi->s_stripe));
+>  	}
+>  
+>  	sbi->s_locality_groups = alloc_percpu(struct ext4_locality_group);
+> 
 
 
