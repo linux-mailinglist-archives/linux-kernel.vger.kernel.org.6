@@ -1,57 +1,70 @@
-Return-Path: <linux-kernel+bounces-291549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C039563F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:49:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338D09563F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8DE1C214C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:49:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0FD2B21125
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611CB157469;
-	Mon, 19 Aug 2024 06:48:13 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65886156677;
+	Mon, 19 Aug 2024 06:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VdPERHyX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99533145336;
-	Mon, 19 Aug 2024 06:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A3917C77;
+	Mon, 19 Aug 2024 06:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724050093; cv=none; b=g6aTvVoBneP6f2stw3PtKXEzzt3axAggljOgHFCAYjm5SC3Ua25LaRhbDwmFfjgtkh7dPOH2nmd/2ReOF9iEfgvVzBFjDFvt1AcSsw9nAuo/qyI56rLqBDx7rVogaeIBNNPzKyTWqG55k378o40ZvKibfh/Jxd6w38DVYxk82sk=
+	t=1724050228; cv=none; b=nucsdRjgSm9ydKloD4qpEJ4nCsdpvBy2tXsYybnQEUD85fLNxZLNhb96yRfLAQ2Icv9/Ao821+b5GzUipY1nu0pd280IN+aJExM+DheEWNvsThGGeO8NCfjimGs00gTLAqaJzdCPaQuq1bDa7T7TbI8jz/s54s37saxMCiNuCDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724050093; c=relaxed/simple;
-	bh=XQcRKptzhGzWoDZkgoWTXwwakv5CcQmXtYtLcYuCm84=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K9gniO1JFNnVw7aORcazo5l9P94TMhkBd9jqTr/asqPm8jKAyRrE4un3L4Be5wNcHbSGjKnDHgaHylc/Sz75OdXCiS+T3GI7YOZMTKAeg3jFw5oYdkjSm5XGW54BzO+a/7wbbx0sKg21zRx5yEWUZox9oJFCX7aHuMQXCMkqurE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J6hCsJ016905;
-	Sun, 18 Aug 2024 23:47:57 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412q541a5g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 18 Aug 2024 23:47:57 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 18 Aug 2024 23:47:56 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sun, 18 Aug 2024 23:47:55 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>
-CC: <kent.overstreet@linux.dev>, <linux-bcachefs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
-Date: Mon, 19 Aug 2024 14:47:54 +0800
-Message-ID: <20240819064754.35606-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000071b7c5061ff83639@google.com>
-References: <00000000000071b7c5061ff83639@google.com>
+	s=arc-20240116; t=1724050228; c=relaxed/simple;
+	bh=vB6iA25ZkUrZfSpLhyAAcSbfWJ0e8+V/hzCHlgVzVrA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jlZvtAVMCdM2+b7sBOnwG0tKS/EYydMSqnptbAwVUIk79cqh6GF+/IZoTyrM7xVgZ3GbvTrJ5XpUh36u2hm8Fan4rfrGIkgUueWDb9FOTwMGWHjO+S0zqnRqdQJ5Wqm5YoMBq3j9ReHWmhwhfcG21bdLSjTxKwUSL6N9dgwaEmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VdPERHyX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J0Oa61002183;
+	Mon, 19 Aug 2024 06:50:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=foAA78XAhbb5WvEu158KFx
+	xJEnkhvquU0iRRmNiChJA=; b=VdPERHyXTN+wvv8AK3nMk32Dxf/sNLIMobXUTQ
+	nozE4yfHzbg08GvMbJKMHLb/W6g+WMI3vtpZGIGopJgCfj/vOD6xLtFT4bpe55sO
+	/RFB/vK6Q9SJBRj3bLUM/Fm8cnm8BPlUJ3edSsy2jXV5IatfQs2CKRHZ21D9/Lp4
+	M3Y2eyjDES22JjNYsFEsSopDOOzwWu2+ojUyrdfpjjXNxSuTkp5u3WyZk+Kxzg7W
+	PCrshKelLeU1ZNaLw8VsZEZCIz6MWwenT+WTTGGnWl/uXakii/HObuDyc+H/mRud
+	dyHa1U2F1oB3krDmlM5i597xAxouM+MO0GYig9MTNVQ+JAiQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412key38x3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 06:50:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47J6oJjU007131
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 06:50:19 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 18 Aug 2024 23:50:15 -0700
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+To: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <andersson@kernel.org>, <robh@kernel.org>, <konradybcio@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linus.walleij@linaro.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <quic_tengfan@quicinc.com>
+CC: <quic_jingyw@quicinc.com>
+Subject: [PATCH 0/2] pinctrl: qcom: Introduce Pinctrl for QCS8300
+Date: Mon, 19 Aug 2024 14:49:31 +0800
+Message-ID: <20240819064933.1778204-1-quic_jingyw@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,55 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: GPV5K47ay8fBZy-a21CvzZ3TvHcgsDaH
-X-Proofpoint-ORIG-GUID: GPV5K47ay8fBZy-a21CvzZ3TvHcgsDaH
-X-Authority-Analysis: v=2.4 cv=b+3g4cGx c=1 sm=1 tr=0 ts=66c2ea9d cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=HHOYXQOj0ksufGrR42kA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JbZhcyNank-Go8mNqbGbCmbWuvu1yBdI
+X-Proofpoint-GUID: JbZhcyNank-Go8mNqbGbCmbWuvu1yBdI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-19_04,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- phishscore=0 mlxlogscore=819 lowpriorityscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408190049
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ mlxlogscore=665 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408190049
 
-When journal v2 entry nr overflow, it will cause the value of ja->nr to
-be incorrect, this will result in the allocated memory to ja->buckets
-being too small, leading to out of bounds access.
+Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+QCS8300 SoC.
 
-Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=47ecc948aadfb2ab3efc
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 ---
- fs/bcachefs/journal.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Jingyi Wang (2):
+  dt-bindings: pinctrl: describe qcs8300-tlmm
+  pinctrl: qcom: add the tlmm driver for QCS8300 platforms
 
-diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-index 13669dd0e375..d4fb5a23b3f6 100644
---- a/fs/bcachefs/journal.c
-+++ b/fs/bcachefs/journal.c
-@@ -1307,8 +1307,18 @@ int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
- 	if (journal_buckets_v2) {
- 		unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
- 
--		for (unsigned i = 0; i < nr; i++)
-+		for (unsigned i = 0; i < nr; i++) {
- 			ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
-+			if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
-+				struct bch_fs *c = ca->fs;
-+				struct printbuf buf = PRINTBUF;
-+				prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
-+					le64_to_cpu(journal_buckets_v2->d[i].nr));
-+				bch_info(c, "%s", buf.buf);
-+				printbuf_exit(&buf);
-+				return -BCH_ERR_ENOMEM_dev_journal_init;
-+			}
-+		}
- 	} else if (journal_buckets) {
- 		ja->nr = bch2_nr_journal_buckets(journal_buckets);
- 	}
+ .../bindings/pinctrl/qcom,qcs8300-tlmm.yaml   |  118 ++
+ drivers/pinctrl/qcom/Kconfig.msm              |    7 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-qcs8300.c        | 1226 +++++++++++++++++
+ 4 files changed, 1352 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-qcs8300.c
+
 -- 
-2.43.0
+base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
+2.25.1
 
 
