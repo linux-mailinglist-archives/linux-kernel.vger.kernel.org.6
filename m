@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-291988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A6C9569CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF56D956980
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D92844C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:49:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDF21C2187E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA44716D4DD;
-	Mon, 19 Aug 2024 11:47:20 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D627166F32;
+	Mon, 19 Aug 2024 11:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aG1c9G9y"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CF816D314;
-	Mon, 19 Aug 2024 11:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F627157A48;
+	Mon, 19 Aug 2024 11:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068040; cv=none; b=dY4O+FX2FNLh/A7m/b9eA/DtDTzgjy2gbaqtRudnRmNPHjV2W0p0ktQxw8fffeQc3fj8cWu4dVKE9kIC+QfKBBerDPVuD/B+NaAKxMx+jIKkWos6FP+wBkcENzPqaDWAd6MF+ZfHj6z+3APHMMWYot9CcXClUQ/ZyqUXpRxMAtE=
+	t=1724067643; cv=none; b=lzp4yA56ZKrnjTm+5QxFIdIJK43jjpRmOyaymQk9rfF/KZs52SMZPlTNPf6OPc7K8MRUZQyOjzk69yzDN0wWAIZ81uVnhTQbpbF3vsxYO6HC9J/3x2R7ijLZjA4TUK5s9bzFttggl5P3+l6r3mwNwHhMuZ6FfF1U43aXAz5tAXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068040; c=relaxed/simple;
-	bh=FxkusQMvUe5wYHmZFBlnjdm/rzus8nNbq0ATgyGnGJk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AWuGkC56wl5XCe/CkIWKvKbwh6usafnlt7ocQdIq3AUzDAmHKqoajVeUTISl71tbBGqW7QzZCqPLNSw7OnVWko5Wi3zVzT8gfttIbHiS7rdyDGSGXJM+bOYk9UBrZUBwtlkiEVIdaR0Y2iqYnPRkPPgIy5R6WoaQSlj3MPkDkAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WnW0n6XCnz2Cmxf;
-	Mon, 19 Aug 2024 19:42:17 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 61F561A016C;
-	Mon, 19 Aug 2024 19:47:16 +0800 (CST)
-Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 19:47:15 +0800
-From: Yuntao Liu <liuyuntao12@huawei.com>
-To: <openipmi-developer@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<dmaengine@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <linux-usb@vger.kernel.org>
-CC: <minyard@acm.org>, <ludovic.desroches@microchip.com>, <vkoul@kernel.org>,
-	<daniel@zonque.org>, <haojian.zhuang@gmail.com>, <robert.jarzmik@free.fr>,
-	<morbidrsa@gmail.com>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<james.morse@arm.com>, <mchehab@kernel.org>, <rric@kernel.org>,
-	<codrin.ciubotariu@microchip.com>, <andi.shyti@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-	<stern@rowland.harvard.edu>, <u.kleine-koenig@pengutronix.de>,
-	<duje.mihanovic@skole.hr>, <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, <liuyuntao12@huawei.com>
-Subject: [PATCH -next 9/9] ipmi: ipmi_ssif: fix module autoloading
-Date: Mon, 19 Aug 2024 11:38:55 +0000
-Message-ID: <20240819113855.787149-10-liuyuntao12@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240819113855.787149-1-liuyuntao12@huawei.com>
-References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+	s=arc-20240116; t=1724067643; c=relaxed/simple;
+	bh=gV/zmEgbR6nXqHllg32Eb6Nn1O1SKGVRk7PnZngwO0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxdcX5RLrgssXZlmIpS7GJK7GtRF01kst1fsYlw1U3mQQk/ubP4WBIllSc143gWs5GFIeMdjWRm0XIDAK6o5LkBgmRQ/VCX2BOShCtf8YBiGQMRWPs5R5FTtoByJgtGJZMowFLxglt0KilZv91O4jGVQ7bMxWJoDc6yqq8NGpl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aG1c9G9y; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a94478a4eso909437466b.1;
+        Mon, 19 Aug 2024 04:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724067640; x=1724672440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1LPhpIw6zUplYseeK4Y27omRELGjVo6B0WUUXO19x8=;
+        b=aG1c9G9ywCsKKEx6SsQMTgzQxLCEym08MmRm6zpRfuCCFdJEUmzK5zfqe/cPnnSj0V
+         DajWDXqn+G1YjVmLREqDqg8rbrNo9iC6Q8mX3ZHm1dJsToOl+f6Ec3NqwbItJT8Qeghp
+         wcFahB8r+LQ4sbQHosNZ2JwSv9/fpbe/gfnyQRoe0tKBku/Hvi+0YLdOGc2oZ/J78bRc
+         dVj10x2YXlIhkYZkliKcrjvWGuT7QUzNXAHUjJa+Fl8s4bcK/T28UKbanAWo1xkkbJno
+         7Rw6qmHC3vz7kVPsMS55XOIvIHGVnaAnhFkULfl1m4enoC/hocI5fmd64Z7ZmMXbmI3v
+         IngQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724067640; x=1724672440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L1LPhpIw6zUplYseeK4Y27omRELGjVo6B0WUUXO19x8=;
+        b=gU7Krb58xm7X5QWgGnCT7h40n5woBBVHjhUPhFaQeSqnMH7yWc7fmMVrxyHIVYpZsL
+         710zNvEImxJBNikyX3bkYL/RGcUFSBG6WR5/dIEAS1A0ZTbW14vQWGOxIEHfeMqNp2Oq
+         r4tYnF6+cFbe58qFOeJL0i8FDj/kCJakehy7RUKFvY4t92q6oAvphSRDm9DHFwgj6iG/
+         XNAYCXBO5H19c3VYvI4k1st9wnPEUyUALK3Z6awaZ/t147GP5gYB/ZXeE7Kdor9vnEJN
+         esl4MEVPM5ig1zkANN9KaxeC0Frziq4zhbCTZeRXjFuJa7EVyFpod5/pU5eFP5pCsGa3
+         gacA==
+X-Forwarded-Encrypted: i=1; AJvYcCVADNMuDCBfXdGUclxZpYs5WCnrscibnBWx6kdD+igEPrO7ReHHDqaxsALCbqJNskeW+VWTScsAq0fAkdcCkzceSzC3LYlBbYTWhrXOGLQrCN7x0gpzegQWkwlc7WFqCRfE/vLj
+X-Gm-Message-State: AOJu0YzO8knZa7RRZiTRg1wEvVTyv5yWmFDzQ9uDhllk1ERodjkPBTc6
+	N3nugnY8Egsvo9qxBC3IClhZwHftT2BD7/u+WKBO4D60vgrfNm2N
+X-Google-Smtp-Source: AGHT+IF3kiosIQALUEVpVEF+AHu5uPDBEnwfKksdilsy2OZ6truteS3BEbGZJ5aRsdPuzaV7qhc0FA==
+X-Received: by 2002:a17:907:970b:b0:a7a:87c1:26c4 with SMTP id a640c23a62f3a-a8394e16cb8mr900443366b.17.1724067639927;
+        Mon, 19 Aug 2024 04:40:39 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c67d3sm624082966b.1.2024.08.19.04.40.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 04:40:39 -0700 (PDT)
+Date: Mon, 19 Aug 2024 14:40:36 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com
+Subject: Re: [PATCH net-next v3 7/7] net: stmmac: silence FPE kernel logs
+Message-ID: <20240819114036.af7gjv6j3p2r3c75@skbuf>
+References: <cover.1724051326.git.0x1207@gmail.com>
+ <375534116912f13cb744c386e33c856c953b258b.1724051326.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <375534116912f13cb744c386e33c856c953b258b.1724051326.git.0x1207@gmail.com>
 
-Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-based on the alias from platform_device_id table.
+On Mon, Aug 19, 2024 at 03:25:20PM +0800, Furong Xu wrote:
+> ethtool --show-mm can get real-time state of FPE.
+> Those kernel logs should keep quiet.
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
 
-Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
----
- drivers/char/ipmi/ipmi_ssif.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index 96ad571d041a..e8e7b832c060 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -2085,6 +2085,7 @@ static const struct platform_device_id ssif_plat_ids[] = {
-     { "dmi-ipmi-ssif", 0 },
-     { }
- };
-+MODULE_DEVICE_TABLE(platform, ssif_plat_ids);
- 
- static struct platform_driver ipmi_driver = {
- 	.driver = {
--- 
-2.34.1
-
+These prints are equally useless?
+	netdev_info(priv->dev, "FPE workqueue start");
+	netdev_info(priv->dev, "FPE workqueue stop");
 
