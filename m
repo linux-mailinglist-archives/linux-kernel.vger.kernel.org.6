@@ -1,111 +1,166 @@
-Return-Path: <linux-kernel+bounces-291907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F709568C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822CF9568C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96BA2B22520
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C92831A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4782165EF3;
-	Mon, 19 Aug 2024 10:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB453165EE3;
+	Mon, 19 Aug 2024 10:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0Pf+vdd"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FEdK/rV3"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E92161911;
-	Mon, 19 Aug 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567B4148315;
+	Mon, 19 Aug 2024 10:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064596; cv=none; b=LrN+vUCTk3krCoaT6ydS7btT6LsqlBa2UDyHR2ns1CIY9ndNe088Fnyx7+PDMGZ++b2Tb1W6JJ7akbJUmLd7H4RjJ9lyyqi2x+KbYnoHO5CjDaE9OZzeWh4aeiXLMuSIGTaAcxdcJ7ONEd5V4M2c4xixr0mKDU0Gbb8vuzmVUco=
+	t=1724064710; cv=none; b=SoLQfR1wExy8EvJuq6IBfO09JbYmLZbSg+9bV9uYbKM+uETSsK06c5e9QgS4ZAfvzqpEAdF0Zs8czIJOwaM+3bqhaukU/c2T2Z4uaZzXnVjQI8EuEsRFhUQGlZjn8/SbBB5moDgHiEOV5BPP+OvfZCFGAx2cM+0FQleHx7uMujA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064596; c=relaxed/simple;
-	bh=ejSnJSpZeJIHl/Wxrcnk77OEbJf52ZUES1NcfmT3oCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MXg4aWaTOAmgvaErJbesdoiVMpb4OgfVlEfc+mePCUBsOO8jgPDOrOlus/z9elF2b/ZAX96Vimq3WVmtL7uoh+7p15S/XVWWwqClY6Rpri2qhmXJS0Q3qLws9lD9JLYesd6TmnGuIWvNaxsWBt3Uxw6ymR9BIynWEAy0n8Ig/ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0Pf+vdd; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8251e23eaebso6802139f.3;
-        Mon, 19 Aug 2024 03:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724064594; x=1724669394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6r5TjXljmBlpCGH6gaZQoVB7sULh0ZU8/sd0GXa27M=;
-        b=J0Pf+vdd1cylNYIDOWKu2E8f3B3TTamfSk6iDLTvmT27b/Ia25MY1u1iXyE5z9UKR4
-         iTmKgVEdwV6IRCMXwLoDYya7vF0vEg2ANLVJnI+ePzHElZSvilBELk577cU+pl55neAF
-         VDinHmnjpPAues2QJfTK32bbp2QWgZtlI/Hq3Ul+gGMq2OFQPSdA8c4KMka46bE00XMc
-         ZmuaaZDR9kt1j4QC1t4d5viSIzUqEhijPIk3Qxvd81NFU26srU8+1FAT5nRPDT3N7Gr1
-         We1JkCDWLlIGGFdsjfpxwZmtlKota/P6ThSdbxRSJ4QcwPpnOlRa/0eGB7wAxJeP+Z8K
-         bO7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724064594; x=1724669394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6r5TjXljmBlpCGH6gaZQoVB7sULh0ZU8/sd0GXa27M=;
-        b=LmYR29Uevc4uQ66AmwKxikbEIMixhCXoQ8LVAJBwUOskqx/HRW3xKt024J9XByVIOC
-         y4TXsJqi2SmmrRmf/R3yBii5rqqbtaKCxBYV8Ai1VUIRrVrew2tOWUmXm/Nl6x0q7zE5
-         1wDP/VtrmqZkkB33mr58ZUX+WkXRw26xhfq+aqM/ebZN8cJPtLfp2pBfhQbkrZ+IKGvt
-         Jm+FQNrkzqdkTsnDOWJQ/XlN4r7w8kKL64CBWYIDqGt0e7qM9BXBFdmQft3EalcXrFYZ
-         AkwJcyT8OzUZT0e/Wi0S27F/HZ0+dqzTwPsiC7k/Vt0t+9pxXHbUxKsX+RtoFSfhABsL
-         qoDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmTfdCYyw/y4Hp8D4lc166297yVS4AsTNWoiXxr/sqoYM8TAuAPa0vLA45ICWqFeJbzmJyF0aVC3W3STLZRNPL6XzrPskzE5EdqYquGv1MzZ/bkmCEK6W81H5nMcCoXE9W7RX5xdacGxfsKvYQnVzmPFask3Cz1W+Sp6v/rglO+zbci/nhpFw=
-X-Gm-Message-State: AOJu0Yz0he3ptuxnXFIUSLoUfied5fMkH2423aMn8E7kWzFFjVIb+uok
-	DR1lGDuRTtJ5nVScfbCi124DdxBbM3eAJjS4VF0tjR+2itePX4pq4RIUXTgP5cd4b+Pxw4Rg4jr
-	qyqsEQIrqi4GnadyKFXPzjt5a+w==
-X-Google-Smtp-Source: AGHT+IFTNzLwiLc8D+K9WXfFP3/4W5slIKwubxgBS37z967zTlcM5145Xmkb3hQMUyxDqeZl5gsiW/pD6c5S0TfSWgg=
-X-Received: by 2002:a05:6602:2d94:b0:824:d6ed:e479 with SMTP id
- ca18e2360f4ac-824f266b92emr1021026539f.7.1724064593843; Mon, 19 Aug 2024
- 03:49:53 -0700 (PDT)
+	s=arc-20240116; t=1724064710; c=relaxed/simple;
+	bh=Md9Uzo/jv1nZu/djVH7ZwzcrA+B55XC/J0D3CVIPd6o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=mEGq+k9txK8MwoBa4TIqznYcLpSREz9IR5GszIbMYzOCvKCOrLEc71OWers0k+4AObx7sMX0VtXQvdpN6Zam6WYoW8iW/QFhGxzDzyZQVZdN7yFI+H6BLYCr4YEgvtvlr+ceNd1yr7D212Xg8QMavDUfKaGEcBi+5LbTAI/JS2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FEdK/rV3; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47JApTsU074689;
+	Mon, 19 Aug 2024 05:51:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724064689;
+	bh=RXta3I2bystr0uzK6BSwjLHhBReD4UWbpFShef858x4=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=FEdK/rV3JOxIBhayLJq6O9QxyFpjRM9mL29IdUyIGoafdEcP8+aYPA7ou3SGrn1M/
+	 Cxq/JUEcteh0bLS5jaBQ9GCfNGR5FUJCV7ZfpKHD2aR0lO3WipGqCg/hN6+UlQ1LL5
+	 pMuI6WdctF+oTK6cHHTCyd2ZCF+0Td3ry6waYhOg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47JApTHW037964
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 19 Aug 2024 05:51:29 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
+ Aug 2024 05:51:28 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 19 Aug 2024 05:51:28 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47JApMLd127341;
+	Mon, 19 Aug 2024 05:51:23 -0500
+Message-ID: <4c8b3eec-c221-4184-a6cf-492fcb664a8a@ti.com>
+Date: Mon, 19 Aug 2024 16:21:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2024080359-getaway-concave-623e@gregkh> <20240814055816.2786467-1-wirelessdonghack@gmail.com>
- <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
-In-Reply-To: <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
-From: color Ice <wirelessdonghack@gmail.com>
-Date: Mon, 19 Aug 2024 18:49:42 +0800
-Message-ID: <CAOV16XEsgkLWz3rOQsAdve-qKsPEDw-QxJNoo4hJfXdLnowHfw@mail.gmail.com>
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
- Dereference&Use-After-Free Vulnerability
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	mark.esler@canonical.com, stf_xl@wp.pl, tytso@mit.edu
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 4/7] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+From: "Anwar, Md Danish" <a0501179@ti.com>
+To: Andrew Lunn <andrew@lunn.ch>, MD Danish Anwar <danishanwar@ti.com>
+CC: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-5-danishanwar@ti.com>
+ <082f81fc-c9ad-40d7-8172-440765350b48@lunn.ch>
+ <1ae38c1d-1f10-4bb9-abd7-5876f710bcb7@ti.com>
+ <5128f815-f710-4ab7-9ca9-828506054db2@lunn.ch>
+ <c1125924-bf7b-46c5-89d0-e15a330af58c@ti.com>
+Content-Language: en-US
+In-Reply-To: <c1125924-bf7b-46c5-89d0-e15a330af58c@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-How is the patch development progressing? We would like to conduct a
-full verification test. It=E2=80=99s possible that many drivers have this
-issue, so you could try a simple fix, and we=E2=80=99ll see how it works.
-Recently, we tested some embedded devices where the operating systems,
-due to automated operations involving WiFi drivers, had UDEV rules
-built-in or granted significant permissions to USB. This allows the
-PoC to cause a kernel crash without needing root or sudo.
 
-Alan Stern <stern@rowland.harvard.edu> =E4=BA=8E2024=E5=B9=B48=E6=9C=8814=
-=E6=97=A5=E5=91=A8=E4=B8=89 22:55=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Aug 14, 2024 at 01:58:16PM +0800, LidongLI wrote:
-> >
-> > Dear
-> >
-> >
-> >
-> > When will the patch be released? We are waiting to test it.
->
-> Sorry it's taking so long.  I have been extremely busy with other things
-> during the last few weeks and have not had any time to work on this.
->
-> Alan Stern
+
+On 8/14/2024 8:24 PM, Anwar, Md Danish wrote:
+> 
+> 
+> On 8/14/2024 7:32 PM, Andrew Lunn wrote:
+>>> Yes, the icssg_init_ and many other APIs are common for switch and hsr.
+>>> They can be renamed to indicate that as well.
+>>>
+>>> How does icssg_init_switch_or_hsr_mode() sound?
+>>
+>> I would say it is too long. And when you add the next thing, say
+>> bonding, will it become icssg_init_switch_or_hsr_or_bond_mode()?
+>>
+>> Maybe name the function after what it actually does, not why you call
+>> it.
+>>
+
+Andrew, the functions are actually doing some configurations different
+than EMAC mode which are needed for offloading the frames for switch as
+well as HSR mode. icssg_init_emac_mode() doesn't do any configuration
+related to offloading. Perhaps naming these APIs to
+icssg_init_fw_offload_mode() will be a better fit?
+
+Other Similar APIs can also be changed to use _fw_offload instead of
+_switch. How does this sound?
+
+
+> Sure Andrew, I will try to come up with a proper name for these APIs.
+> 
+>>>>>  static struct icssg_firmwares icssg_switch_firmwares[] = {
+>>>>>  	{
+>>>>>  		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
+>>>>> @@ -152,6 +168,8 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>>>>>  
+>>>>>  	if (prueth->is_switch_mode)
+>>>>>  		firmwares = icssg_switch_firmwares;
+>>>>> +	else if (prueth->is_hsr_offload_mode)
+>>>>> +		firmwares = icssg_hsr_firmwares;
+>>>>
+>>>> Documentation/networking/netdev-features.rst
+>>>>
+>>>> * hsr-fwd-offload
+>>>>
+>>>> This should be set for devices which forward HSR (High-availability Seamless
+>>>> Redundancy) frames from one port to another in hardware.
+>>>>
+>>>> To me, this suggests if the flag is not set, you should keep in dual
+>>>> EMACS or switchdev mode and perform HSR in software.
+>>>
+>>>
+>>> Correct. This is the expected behavior. If the flag is not set we remain
+>>> in dual EMAC firmware and do HSR in software. Please see
+>>> prueth_hsr_port_link() for detail on this.
+>>
+>> O.K.
+>>
+>> 	Andrew
+> 
+
+-- 
+Thanks and Regards,
+Md Danish Anwar
 
