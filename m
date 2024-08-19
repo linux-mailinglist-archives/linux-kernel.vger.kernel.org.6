@@ -1,186 +1,192 @@
-Return-Path: <linux-kernel+bounces-292128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97B6956B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E013956B86
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E72DB222DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150251F22E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A76E16C697;
-	Mon, 19 Aug 2024 13:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U9kV81PN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A416C688;
+	Mon, 19 Aug 2024 13:09:50 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B3116A36E;
-	Mon, 19 Aug 2024 13:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A94166F39;
+	Mon, 19 Aug 2024 13:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724072880; cv=none; b=qSFvofLkCrdbBcEur6e3zpSzCSog/jPvmmKOoCa3g8sNnvbu3VYOGIkmZ+N16stuSjNlC7nTPfGqdTJyy/QMrAtrM6axzjlenQr9gMvnj6NeAxlFFI4nNHmvri5pzUhpTeDncGG2fwXKNI8ehxNd/AwhjgkaDnvbAMk+yGZaRhg=
+	t=1724072989; cv=none; b=VN2pkGlH13EJnA9O7lbSt64wslk3q9kji8Kw5CRbQ7gx5WfcIlae5XhJgh2a3oE8ezCmZcTIg4+Wp5XMJYPGiqp659PBkiXjPuVsC2CbNeT7qdt4jmq6MAiqCPOch7Fos1st13wSMylSf0YSZ9i+c7S0baa+xWJEnZ1fw5A0kwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724072880; c=relaxed/simple;
-	bh=2xqEHdOFiBcXyf6be6DUXlm93FRag2QMLOmGqWjxMNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CNEUUGnN7xz04JdBylEPEJd45qlnq31PU4p2M9TOk6CU9aFAn1JrmnOss9q0vPJ3yMmJeNalQYSUAZJ/QmDq1Eyb8/Fww1EE2RdO+PGG+Y4gJyUQO418jogKrTMzHiMYkM8H7lf7/Z7CE3R2276OQqBa4UuBPb8vAMVcGWtk0sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U9kV81PN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCLFbB032745;
-	Mon, 19 Aug 2024 13:07:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GAl+8aYYFCb3rvVJ1ZBeK55OJUfaICaKouVC58gy11Q=; b=U9kV81PNYKzU+/Fu
-	aUI69R8ctAhkROnXk9WmlA651iqkzk5bD7pyJcdDgAi8vFXhwM/t8p/5xJAo1QZF
-	OL83Ub/36DHtLn2w963jXWi+URR/ThUq1f3Y90l5S12t5A/LRr4DwKH5LKITg4Le
-	HwDshIYzJuvKcJYK/eN03FByef+/v3jBubdEqYLS8McH2ZY0OVEMgO9NAghzU2Md
-	Ja03DiVwJ/lCAaBMQvcFm7HcSQQHWxCcZU7lrE6W26dvz9fpP9Ny1lWC2rCL6dd6
-	z+VWSjnO8tJMSpi+iD62I8W2xB+YC0BZiaYeWjzhJQwN8QvkrBAG6vR/G404VcTr
-	uWrXIg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145yw82yk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 13:07:54 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JD7r93005563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 13:07:53 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
- 2024 06:07:47 -0700
-Message-ID: <60d737b2-4ae6-42aa-abc3-5843dde7f7b2@quicinc.com>
-Date: Mon, 19 Aug 2024 21:07:45 +0800
+	s=arc-20240116; t=1724072989; c=relaxed/simple;
+	bh=DOC54jYGZaWsMtc7059yc1yPA6AXPM92NKoC5lpbKNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMN6pfCv+0VNU/pydgg0ZTkp8xC5D/3kuvNxeC8BNTf4dGR71xY2Kc6EiaBR449Xppg6A34jb4xLLnhRvUEE+VXrBrL01G1Ip6USKXrNMAObtu+xvDO/BBt7uKSVu6gq4dFAHFzNy+xr7jwI3ogIZ0NSSmwmIWNHSBUfYe/iyhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-429e29933aaso32496075e9.0;
+        Mon, 19 Aug 2024 06:09:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724072986; x=1724677786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jB1MOx97YsHG48VJD/TdRi6Ad7SdIJCFhXTwmxEvExQ=;
+        b=ZE3I6bEVLTPrf/1lqsXIlQR/uE2ycm74FN3ckuOJWCmHA57pxptzHVZ1oonueSgfq4
+         Rqt95u+ZNwOoGtSj92RwxGWT0P0q3ExC23JIXATc8tOWpdJtIzqCQhvbLVVPPXe+U5uw
+         SdXyTGbE6ju/dYISOsO4UKu9s2MvQprXnxDRzbnFQHlLKlutdSh02mjcu1rIOt1J5uVo
+         tjBlKa+4JKmfy18RqRZzhKyfOEnNL7BeLZG+f7U7AKIxSNzw4DQ/Z7AfVGHK09OJYQ2t
+         LKxMJL0yxvxMvN94xr8snjrIF5fgFPeihUfNB4jTWOhD3xnWIBjPeTBApdl1xmH7c990
+         IXLw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8qpdi3V4Mok0YZ9lP4yHhCYSpfEYUyXbKSX7O7K1W3NQa5jYhxwSTbPzP3Z6Ho7LXgVDQlpoproYSjSRn6txPAjbzgE5eicyumwY5E06kjuOG3nF7fZWxijDoFa/VH+u5UHUZGGPI6A==
+X-Gm-Message-State: AOJu0YxynpSMh2BAmgrPfwOLxZ9S3SlTXCN4O1wqMwhR1Bic+ZOqqth4
+	wrYIbhSm170VwbmFWiFEEfnhUY0GFNQ+0odY/pE0pbclu2Q/MvciC5YJxA==
+X-Google-Smtp-Source: AGHT+IGCwFU1j+9a/YAjtVzVdQG8YtaPaT8qwMXTkcwI9NZ08PPlpySeqHwUvujcyRLUEjAp0hyJlQ==
+X-Received: by 2002:adf:e255:0:b0:371:9395:9c2d with SMTP id ffacd0b85a97d-371946a5ac4mr7472423f8f.55.1724072985949;
+        Mon, 19 Aug 2024 06:09:45 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718983a974sm10559731f8f.13.2024.08.19.06.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 06:09:45 -0700 (PDT)
+Date: Mon, 19 Aug 2024 15:09:42 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Subject: Re: [PATCH 6/7] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
+ compatible strings
+Message-ID: <zuvwoy5wtdel7qgkz6wa6valwjwajpwoqnizyoooiawghrxvc3@cuoswu32h4fl>
+References: <20240819064721.91494-1-aardelean@baylibre.com>
+ <20240819064721.91494-7-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <eba83b14-e704-464a-b4c4-19322e70d177@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <eba83b14-e704-464a-b4c4-19322e70d177@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DowNTWabrozRQLTz_kvGMfo4fehWnBvO
-X-Proofpoint-GUID: DowNTWabrozRQLTz_kvGMfo4fehWnBvO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_11,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 bulkscore=0 phishscore=0
- spamscore=0 malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408190088
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240819064721.91494-7-aardelean@baylibre.com>
 
-Hi Bryan,
+On Mon, Aug 19, 2024 at 09:47:16AM +0300, Alexandru Ardelean wrote:
+> The driver will support the AD7606C-16 and AD7606C-18.
+> This change adds the compatible strings for these devices.
+> 
+> The AD7606C-16,18 channels also support these (individually configurable)
+> types of channels:
+>  - bipolar single-ended
+>  - unipolar single-ended
+>  - bipolar differential
+> 
+> This DT adds support for 'channel@X' nodes'
+
+I don't understand this sentence, suggest to drop it.
 
 
-On 8/19/2024 7:05 PM, Bryan O'Donoghue wrote:
-> On 12/08/2024 15:41, Depeng Shao wrote:
->> +#define VFE_BUS_WM_CFG(n)        (BUS_REG_BASE + 0x200 + (n) * 0x100)
 > 
-> <snip>
+> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+> ---
+>  .../bindings/iio/adc/adi,ad7606.yaml          | 83 +++++++++++++++++++
+>  1 file changed, 83 insertions(+)
 > 
->> +#define RDI_WM(n)            ((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
->> +
->> +static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct 
->> vfe_line *line)
->> +{
->> +    struct v4l2_pix_format_mplane *pix =
->> +        &line->video_out.active_fmt.fmt.pix_mp;
->> +
->> +    wm = RDI_WM(wm); /* map to actual WM used (from wm=RDI index) */
-> 
-> OK so one more point here.
-> 
-> The non-lite VFE has I think in the case of sm8550 twenty seven 
-> different bus clients.
-> 
-> The above code takes a given index - take the example of index 0 meaning 
-> RDI0 and
-> 
-> 1. Determines if is_lite() is true deriving a jump of 0 or 0x17
-> 2. Uses this index as a further offset to functions such as
->     VFE_BUS_WM_CFG(n)
-> 3. In no way articulates which bus client is which.
-> 
-> So for a non lite case -> RDI0 is bus client # 23
-> 
-> The code we have for CAMSS just assumes RDI is the only client we are 
-> programming - which I'm not proposing to change for now, however the 
-> code is very not obvious in what it is doing here.
-> 
-> This BTW isn't a criticism of what you've done here but, even though I 
-> have access to the registers in front of me, I had to spend about 30 
-> minutes looking up and verifying these offsets.
-> 
-> That's not sustainable.
-> 
-> Could you please add a comment which details what each index relates to.
-> 
-> /*
->   * Bus client mapping
->   *
->   * 0 = VID_Y ?
->   * 1 = VID_C
->   * .. etc
->   * .. etc
->   * 23 = RDI0
->   * 24 = RDI1
->   */
-> 
-> I'll try to apply a similar level of index documentation for existing 
-> upstream submissions so that working out client mappings is less tedious 
-> and will be requiring these mappings for new VFE silicon enabling code 
-> upstream.
-> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index 69408cae3db9..f9e177de3f8c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -14,6 +14,8 @@ description: |
+>    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7605-4.pdf
+>    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606_7606-6_7606-4.pdf
+>    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7606B.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-16.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-18.pdf
+>    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7616.pdf
+>  
+>  properties:
+> @@ -24,6 +26,8 @@ properties:
+>        - adi,ad7606-6
+>        - adi,ad7606-8  # Referred to as AD7606 (without -8) in the datasheet
+>        - adi,ad7606b
+> +      - adi,ad7606c-16
+> +      - adi,ad7606c-18
+>        - adi,ad7616
+>  
+>    reg:
+> @@ -114,6 +118,30 @@ properties:
+>        assumed that the pins are hardwired to VDD.
+>      type: boolean
+>  
+> +patternProperties:
+> +  "^channel@([0-9a-f])$":
 
-Sure, I will add the comment for the bus client mapping in next version 
-patch.
+[0-7]
 
-But the comment will occupy too many lines, I will fold the comment, e.g.,
+> +    type: object
+> +    $ref: adc.yaml
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number.
+> +        minimum: 0
+> +        maximum: 7
+> +
+> +      diff-channel:
+> +        description: Channel is bipolar differential.
 
-/*
-  * Bus client mapping
-  *
-  * Full VFE:
-  * 0 = VID_Y, 1 = VID_C, 2 = VID 4:1, 3 = VID 16:1, 4 = DISP Y, 5 = 
-DISP C, 6 = DISP 4:1,
-  * 7 = DISP 16:1, 8 = FD_Y, 9 = FD_C, ...
-  * ...
-  * 23 = RDI0, 24 = RDI1, 25 = RDI2, 26 = LTM STATS
-  *
-  * VFE LITE:
-  * 0 = RDI0, 1 = RDI1, 2 = RDI3, 4 = RDI4
-  */
+There is diff-channels property, why do we need one more?
 
-Since the full VFE has many ports, can we just add comment for the RDI 
-client?
+> +        type: boolean
+> +
+> +      bipolar:
+> +        description: |
+> +          Channel is bipolar single-ended. If 'diff-channel' is set, then
+> +          the value of this property will be ignored.
+
+Then provide here allOf:if:then which makes it false if diff-channel(s)
+is present. And then drop entire property, because you duplicate what's
+in adc.yaml.
 
 
-Thanks,
-Depeng
+> +        type: boolean
+
+Blank line.
+
+> +    required:
+> +      - reg
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -170,6 +198,21 @@ allOf:
+>          adi,conversion-start-gpios:
+>            maxItems: 1
+>  
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - adi,ad7606c-16
+> +                - adi,ad7606c-18
+> +    then:
+> +      patternProperties:
+> +        "^channel@([0-9a-f])$":
+> +          properties:
+> +            diff-channels: false
+> +            bipolar: true
+
+? Drop, no clue what you want to say here. But more important, you are
+now adding channels to other variants. Split your commit between new
+device and new properties for existing devices.
+
+
+Best regards,
+Krzysztof
 
 
