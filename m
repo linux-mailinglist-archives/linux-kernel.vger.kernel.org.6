@@ -1,216 +1,167 @@
-Return-Path: <linux-kernel+bounces-291695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628B69565A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:31:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0435595659D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2CDB20EF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 284881C21566
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF30D15820F;
-	Mon, 19 Aug 2024 08:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFC415ADBB;
+	Mon, 19 Aug 2024 08:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bC58/J0V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSkthF6a"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD68DC125
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80FD15B57D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056296; cv=none; b=sM3TBWD0NOJ3aRLct73RZPN1hcXCO9a2b0ipkX6Sys4UilDFy09IF5p3QFF2GYeZrMxyMQv1MZsMfOpvpz/FqIJ8CPXKpvNjPI7R0dOrGn/kFdFRpgbBXX0xVOHYumricJmWXJjRSxJ6T+qbg293Jy6xOPjG28PFI47p10uA0RM=
+	t=1724056143; cv=none; b=KHEsuvt/qa7Ppzd9jaME6/Ca4cSl11wct9nUOAFwJcTNnCc/yy79w5vzc9xPCE+KuFgu3wLtkmY1oLJlsNc0e47EV/WJjRZ5mpXOafkqaVValJ5TqcFkvn7cehlNDEHxexwmkCxrpv6BkLB1WrLDb8MPAON599FQ5iv5/gYGDJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056296; c=relaxed/simple;
-	bh=DPL/TQRgsVVMVIwduDS8nxKOG8CATSsg8N7iUL3mjhw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XTyD4VjhGviJBgEvXTfVL0f4P77GLbV413WOjR3A7FZRgPpTBMoTn4YcLxyoTsVeYzpW+WbYnM22j6hv1+FrTobM6IMrkLAZilWp6FHXH+C44vtzSWoAj9Esy5i0Ua9Ct2KXx+Wln87RSGUwBbNjBEn46r4Ldns3EQjYlHliCrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bC58/J0V; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724056294; x=1755592294;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=DPL/TQRgsVVMVIwduDS8nxKOG8CATSsg8N7iUL3mjhw=;
-  b=bC58/J0VMo+Df94/T58b2d+b5MLmzxNHqHD+2nAxZ44ok3kDX5ak0/mQ
-   OwXGokjpbQJmiZCTjrUqyVpmFisWUaK98X+9+1KNsNCh6g2dq1zIw99mG
-   tUb11+u4fFTwoSoiM8nLsBEDJZ1btGeNskXg2eOMw2FXDh+4Fk19gtxTb
-   JNNPbC2/9CbIe3oT9QGLmvgJwRkcImBWGqzAHdoOjXW6QdxFhhFbFBGa+
-   6Sqdi8FsoYp5aDKLOOBwT0oocOASwlIAl023pcf+Cff6W6/MdKZF7pDvB
-   F1Rm92EQkAC0W1WYLiuqoU6O28yevtxjq7KcKxXv1nfAUksx5hZMX6DXF
-   Q==;
-X-CSE-ConnectionGUID: KSflvUP9QGqDbpqKW/Ps/A==
-X-CSE-MsgGUID: obgoznvgSf+WKeGKvRQ58g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22107687"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="22107687"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:31:31 -0700
-X-CSE-ConnectionGUID: jhKq1TzgRgGiwkV1rFXzBA==
-X-CSE-MsgGUID: VZzVHiKeRLyxkTdcKYl6gg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="91078117"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:31:28 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Chris Li <chrisl@kernel.org>,  Hugh Dickins <hughd@google.com>,  Andrew
- Morton <akpm@linux-foundation.org>,  Ryan Roberts <ryan.roberts@arm.com>,
-  Kalesh Singh <kaleshsingh@google.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap
- cluster order
-In-Reply-To: <CAMgjq7DJwF+kwxJkDKnH-cnp-36xdEObrNpKGrH_GvNKQtqjSw@mail.gmail.com>
-	(Kairui Song's message of "Mon, 19 Aug 2024 00:59:41 +0800")
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-	<87h6bw3gxl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
-	<87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbUenbKM+i5x6xR=2A=8tz4Eu2azDFAV_ksvn2TtrFsVOQ@mail.gmail.com>
-	<CAMgjq7DJwF+kwxJkDKnH-cnp-36xdEObrNpKGrH_GvNKQtqjSw@mail.gmail.com>
-Date: Mon, 19 Aug 2024 16:27:55 +0800
-Message-ID: <87ttfghq7o.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724056143; c=relaxed/simple;
+	bh=FVAVj1LvGkF/qSjcgZvVxOe72okf4eq3mAz9Bqo5X84=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=b6gTHBD+K6IKaPrl5HvTw9nswP1SxZrxMf16nE2N+NLHsRrdWFSh2ek9PwDXiWmrWbkZwJbKwbMsOZNCDM10/+jrdK4Uh+zJh5flSA4wq9e6fsbL4lA3OtS9UO/PTQ+0+6knXbDw3n2ZgJ5Kf3a7WguaqlQZZpdaLV5nNFIuGvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VSkthF6a; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4928fb6fdceso1216320137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724056140; x=1724660940; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UpX4LsrqwRDqFBD8C2IBSkZVW31sWUBwFvypF0QOuuo=;
+        b=VSkthF6asCwSTPAKFX1t68N7Vh8pc8g46pjvs5To9KyUAni9d9G0Tt0nrbRXnQPH8j
+         WAU2VIDjQA74RKCR4KaUnvAkq3QVP+JzOSFMI6f0eHDBP3VaT0MAv+ViDfiridmQk7NX
+         K1k5q3uHtlHPCMk9qvkmHxh8gKBGB1LnJYUf6pQAShGCPjS75dcZ/fWN5I0VAjAcozBP
+         Oc1hin6i9eCUbo6NfozIgXZeboXYJ+r9lO/+qpC7jEbNUjNNMlWj7fGeM7Zd8NCGtCvJ
+         8FWVz709Og3sWnMmqZD8OcBpzpb1LflsBfyquVqZ5QkE+usMIAH6+GGGTBQathoSOPCC
+         Kr5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724056140; x=1724660940;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UpX4LsrqwRDqFBD8C2IBSkZVW31sWUBwFvypF0QOuuo=;
+        b=Ywh54G6y6kN2Yr+OlbYW+htBTAxqCO9XVcMxKTeJCT2yLGYYEjcxrIFfgTGcZMUMFL
+         woB5NIBgc0qdosvtXan+u2MknaJ2iwNrl2q67rGUp9tm+p9roJMeE3ye0qUqxwkuAg6V
+         spf5meC80pWQ3EavOnQc9w38Vvepqx2BjQcKDLdXUlI1y7Xu1fG7vbOt5gkf3JjAizbH
+         IgVmboXFaDOer23a0ooCvs8Hghhbr9uX//h2ZIGKoL6PPZ8HhjISiHhMQGpYeW/L6k7r
+         Ny1Jd7DZnCrqUSF9pSiyoqLjcC/Sacqza0X+CjoYN6bWOwJd7JFb6jBASJH4Ylz0NwSd
+         eHCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaiCnYmgEg41l7H8UOgH7iQzsq9cALGbtFdf3JH82Y9jEDCc3BTK6938bkmEwyiH7iFf0TPzrIZKw4UY7mUglYeNJcE65QqGSXkv9t
+X-Gm-Message-State: AOJu0YyUugNIoISEODZ+m6HQ9t6+BsKaq6NuCr8hPrCz96/s2HJG/w20
+	rlm5ZTzPvibfBU7alRZvLpU1fW3tk4k59JUB7tny+Lk6zuyqmn+rCj3iPEEfOxgdRaqnFlJ838G
+	XptrrKxo6iwb9Q/onXd9GTjXZSaukZxwJCx1pxw==
+X-Google-Smtp-Source: AGHT+IHKVi6WKmdyAQ6QyA73ge60UMveA7EfNgA9AWldj2xZheTdlekHgzFhLgWv7yt/BTmNdTQkVOzDSqv76IZiO/8=
+X-Received: by 2002:a05:6102:5487:b0:495:6aeb:a0e9 with SMTP id
+ ada2fe7eead31-49779881408mr11886459137.4.1724056140489; Mon, 19 Aug 2024
+ 01:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 19 Aug 2024 13:58:49 +0530
+Message-ID: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
+Subject: gcc-8: mm/swapfile.c:863:40: error: array subscript 1 is above array
+ bounds of 'struct list_head[1]' [-Werror=array-bounds]
+To: linux-mm <linux-mm@kvack.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Kairui Song <kasong@tencent.com>, Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>, 
+	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Kairui Song <ryncsn@gmail.com> writes:
+The x86 builds failed with gcc-8 due to following build warnings / errors on
+Linux next-20240802 to next-20240819.
 
-> On Fri, Aug 16, 2024 at 3:53=E2=80=AFPM Chris Li <chrisl@kernel.org> wrot=
-e:
->>
->> On Thu, Aug 8, 2024 at 1:38=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
->> >
->> > Chris Li <chrisl@kernel.org> writes:
->> >
->> > > On Wed, Aug 7, 2024 at 12:59=E2=80=AFAM Huang, Ying <ying.huang@inte=
-l.com> wrote:
->> > >>
->> > >> Hi, Chris,
->> > >>
->> > >> Chris Li <chrisl@kernel.org> writes:
->> > >>
->> > >> > This is the short term solutions "swap cluster order" listed
->> > >> > in my "Swap Abstraction" discussion slice 8 in the recent
->> > >> > LSF/MM conference.
->> > >> >
->> > >> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
->> > >> > orders" is introduced, it only allocates the mTHP swap entries
->> > >> > from the new empty cluster list.  It has a fragmentation issue
->> > >> > reported by Barry.
->> > >> >
->> > >> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgM=
-QdSMp+Ah+NSgNQ@mail.gmail.com/
->> > >> >
->> > >> > The reason is that all the empty clusters have been exhausted whi=
-le
->> > >> > there are plenty of free swap entries in the cluster that are
->> > >> > not 100% free.
->> > >> >
->> > >> > Remember the swap allocation order in the cluster.
->> > >> > Keep track of the per order non full cluster list for later alloc=
-ation.
->> > >> >
->> > >> > This series gives the swap SSD allocation a new separate code path
->> > >> > from the HDD allocation. The new allocator use cluster list only
->> > >> > and do not global scan swap_map[] without lock any more.
->> > >>
->> > >> This sounds good.  Can we use SSD allocation method for HDD too?
->> > >> We may not need a swap entry allocator optimized for HDD.
->> > >
->> > > Yes, that is the plan as well. That way we can completely get rid of
->> > > the old scan_swap_map_slots() code.
->> >
->> > Good!
->> >
->> > > However, considering the size of the series, let's focus on the
->> > > cluster allocation path first, get it tested and reviewed.
->> >
->> > OK.
->> >
->> > > For HDD optimization, mostly just the new block allocations portion
->> > > need some separate code path from the new cluster allocator to not do
->> > > the per cpu allocation.  Allocating from the non free list doesn't
->> > > need to change too
->> >
->> > I suggest not consider HDD optimization at all.  Just use SSD algorithm
->> > to simplify.
->>
->> Adding a global next allocating CI rather than the per CPU next CI
->> pointer is pretty trivial as well. It is just a different way to fetch
->> the next cluster pointer.
->
-> Yes, if we enable the new cluster based allocator for HDD, we can
-> enable THP and mTHP for HDD too, and use a global cluster_next instead
-> of Per-CPU for it.
-> It's easy to do with minimal changes, and should actually boost
-> performance for HDD SWAP. Currently testing this locally.
+x86_64 defconfig gcc-8 build failed
+x86_64 defconfig gcc-13 build pass
 
-I think that it's better to start with SSD algorithm.  Then, you can add
-HDD specific optimization on top of it with supporting data.
+First seen on the next-20240802 tag.
 
-BTW, I don't know why HDD shouldn't use per-CPU cluster.  Sequential
-writing is more important for HDD.
+  GOOD: next-20240730
+  BAD:  next-20240802
 
->> > >>
->> > >> Hi, Hugh,
->> > >>
->> > >> What do you think about this?
->> > >>
->> > >> > This streamline the swap allocation for SSD. The code matches the
->> > >> > execution flow much better.
->> > >> >
->> > >> > User impact: For users that allocate and free mix order mTHP swap=
-ping,
->> > >> > It greatly improves the success rate of the mTHP swap allocation =
-after the
->> > >> > initial phase.
->> > >> >
->> > >> > It also performs faster when the swapfile is close to full, becau=
-se the
->> > >> > allocator can get the non full cluster from a list rather than sc=
-anning
->> > >> > a lot of swap_map entries.
->> > >>
->> > >> Do you have some test results to prove this?  Or which test below c=
-an
->> > >> prove this?
->> > >
->> > > The two zram tests are already proving this. The system time
->> > > improvement is about 2% on my low CPU count machine.
->> > > Kairui has a higher core count machine and the difference is higher
->> > > there. The theory is that higher CPU count has higher contentions.
->> >
->> > I will interpret this as the performance is better in theory.  But
->> > there's almost no measurable results so far.
->>
->> I am trying to understand why don't see the performance improvement in
->> the zram setup in my cover letter as a measurable result?
->
-> Hi Ying, you can check the test with the 32 cores AMD machine in the
-> cover letter, as Chris pointed out the performance gain is higher as
-> core number grows. The performance gain is still not much (*yet, based
-> on this design thing can go much faster after HDD codes are
-> dropped which enables many other optimizations, this series
-> is mainly focusing on the fragmentation issue), but I think a
-> stable ~4 - 8% improvement with a build linux kernel test
-> could be considered measurable?
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Is this the test result for "when the swapfile is close to full"?
+Build errors:
+--------
+mm/swapfile.c: In function 'scan_swap_map_slots.constprop':
+mm/swapfile.c:863:40: error: array subscript 1 is above array bounds
+of 'struct list_head[1]' [-Werror=array-bounds]
+   while (!list_empty(&si->frag_clusters[o])) {
+                       ~~~~~~~~~~~~~~~~~^~~
+mm/swapfile.c:872:43: error: array subscript 1 is above array bounds
+of 'struct list_head[1]' [-Werror=array-bounds]
+   while (!list_empty(&si->nonfull_clusters[o])) {
+                       ~~~~~~~~~~~~~~~~~~~~^~~
+In file included from include/linux/list.h:5,
+                 from include/linux/wait.h:7,
+                 from include/linux/wait_bit.h:8,
+                 from include/linux/fs.h:6,
+                 from include/linux/highmem.h:5,
+                 from include/linux/bvec.h:10,
+                 from include/linux/blk_types.h:10,
+                 from include/linux/blkdev.h:9,
+                 from mm/swapfile.c:9:
+include/linux/list.h:612:18: error: array subscript 1 is above array
+bounds of 'struct list_head[1]' [-Werror=array-bounds]
+  list_entry((ptr)->next, type, member)
+                  ^~
+include/linux/container_of.h:19:26: note: in definition of macro 'container_of'
+  void *__mptr = (void *)(ptr);     \
+                          ^~~
+include/linux/list.h:612:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^~~~~~~~~~
+mm/swapfile.c:873:9: note: in expansion of macro 'list_first_entry'
+    ci = list_first_entry(&si->nonfull_clusters[o],
+         ^~~~~~~~~~~~~~~~
+include/linux/list.h:612:18: error: array subscript 1 is above array
+bounds of 'struct list_head[1]' [-Werror=array-bounds]
+  list_entry((ptr)->next, type, member)
+                  ^~
+include/linux/container_of.h:19:26: note: in definition of macro 'container_of'
+  void *__mptr = (void *)(ptr);     \
+                          ^~~
+include/linux/list.h:612:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^~~~~~~~~~
+mm/swapfile.c:864:9: note: in expansion of macro 'list_first_entry'
+    ci = list_first_entry(&si->frag_clusters[o],
+         ^~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+Steps to reproduce:
+-------
+# tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-8
+--kconfig x86_64_defconfig
+
+Build log link,
+------
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240819/testrun/24918869/suite/build/test/gcc-8-x86_64_defconfig/log
+
+metadata:
+-----
+  git describe: next-20240802
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git short_log: f524a5e4dfb7 ("Add linux-next specific files for 20240802")
+  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2k6wLr4UFODrd3snUDTPPevXpPY/config
+  download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2k6wLr4UFODrd3snUDTPPevXpPY/
+  toolchain: gcc-8
+  arch: x86_64
 
 --
-Best Regards,
-Huang, Ying
+Linaro LKFT
+https://lkft.linaro.org
 
