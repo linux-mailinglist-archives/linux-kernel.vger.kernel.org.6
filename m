@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-291889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F589956895
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C55A956898
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61FC1F225F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56F61F2182D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8B215B15D;
-	Mon, 19 Aug 2024 10:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513B16193C;
+	Mon, 19 Aug 2024 10:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GK5SmFTx"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W0nK3+GN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90089142E77
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5611607B6
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724063588; cv=none; b=hpqME9LNhW31KwU248uwi51dMbQRMiuNbfB/kWyXgj+M3ZzjqTO/1zvj9jSe1sb01QBfC0Vmcpd6R1jRnzD2ThtBLQrWkTGmDfiqKnu7kAHS9Hi2w1om4B2hhYmXOjmZTI6uKi8F4dqqzRAvcS+jtcEpMTX5npZPM+YN+BuXu7I=
+	t=1724063611; cv=none; b=GE8eChyEd/qEk0m7RteMGsHaVU0qObHV7Xv77N8hsgomSCmMYjxQRhZptYs+m5MYGVJ8dbP26p9M/c2Ax890cURaz7nMwKrpsc77VPO2E2DogQYYA4R/izPCpsKBUwIK1OEVarAeLzcgsnIw5Wc+Ch0M8c6rLE0ilROyEBfAiOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724063588; c=relaxed/simple;
-	bh=WH0SKGJtO9gQRroBEoluyMAsBfs2VxCFcLR7XJcVrII=;
+	s=arc-20240116; t=1724063611; c=relaxed/simple;
+	bh=ksM9jUYsIPvfvdmnq7YYGhoJD+RKEJJHwouJTHkKhKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KDOnf3HpL+n7rRAOO/IED1VCCKgOGmBXZF5sOnc1y2Cqb0ZyAr0cWOyYPf9hCzJzEiXx6CIOAuZLhn4c4Gjzvjspq5MbokxiJhsAYgKC/vVp97ckRY9x95VgXpOMxZp+9bOT0rdB8o+vw5ap4NAGWIU20TMMCyTv9pXP5s+ur2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GK5SmFTx; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so31074485e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724063585; x=1724668385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1eZipzj07GzNWdtg8hKnzIybeawRK/Zart5hRuTPhrs=;
-        b=GK5SmFTxr7mtjuWYbnT0araa+5L7mQZH6vkkAXjNcZR2q4RqK7WM35mDwKkF9j7GqX
-         jVdwoNQ5LoPZ9FQfhBnunW239HJQTDEPSIE07AwDljaX7tAFdYGCBA+YVXeKpyR7o9SK
-         3KQBOJytYD1pXKbmy/YQUpHaITnFjLYWbc5TlpC+NICP+bq2UhBZxVCfTeBnSBreFJ5S
-         9aXP/ArR4q0/jzhK3eSEnk9R8c0og+3kAUGu+iw6FrVNJLtCrDHetBJFbt/Ago3hAG0E
-         q9XWX5mx3BKymvADpxBCfJ9JDIbpUgFwqXlkl1+v4BN0zML0+ka3X22z9ptLuc0mqYPd
-         cjhw==
+	 In-Reply-To:Content-Type; b=VCeLd1Y7d1+EZZGy6zPS46213jnHhiL0EVj6XmHTIc8HjoYhl+0ED5wn58vCngGJlPCC3d8bt7DctYSBX395sA6JqBwbrZazi3VL9ULYd1UFGxKV3kFsui5CvRwjZW1Y6Rb7Hkx3qHux3Uw7Yyk4oCSkFs6ouoLSo8aYLvaEwOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W0nK3+GN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724063608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wmIbOrxDtvXOoZbZMr4nmgxGDaAym4vjdVSm0EMN42I=;
+	b=W0nK3+GNHubyHaFctKZVydmvfEH+pFZI/+M/2wnltMDWDdkxjWfvAx5FiF9r3xOou8Z8Bu
+	me5NVzQ2fwMTK5rT2EpMzPGX5j1WEnqN1coipaCgTU5/gItRjLcTl+oZ16mcpUdiIFjlQa
+	cV16xA7OSVimDGeG3KDFGlW1nQ90zy4=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-102-VrvJsWF2MVa7fYKeYvFv_w-1; Mon, 19 Aug 2024 06:33:27 -0400
+X-MC-Unique: VrvJsWF2MVa7fYKeYvFv_w-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d406dc42f4so1719005a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:33:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724063585; x=1724668385;
+        d=1e100.net; s=20230601; t=1724063606; x=1724668406;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1eZipzj07GzNWdtg8hKnzIybeawRK/Zart5hRuTPhrs=;
-        b=k8auBSdnW2/qREVT0cdvH6P9tpu+8+sUH5inz8wzsI6YaBZuh0k/IgXfsivT9RFk0J
-         aNNxK+U86rX8lmNyB6e+OoZDd3ZUubbdgj5GbkH506iAe5KBrOdwDCr3OlwmqAq61r3f
-         57qYNrmYrlAt3cawCennyJh96hNSlQFmdRxEd6jMh8hDRp0w+gE+Md63BwKLVijrutCb
-         ELkfXXK+tFL7dO738G/cG9zE9SwUCph2G/CSLh+r2guLNT1nadvsLgiDnRhkZfqRfe+V
-         tiootBofQ29/kJl8Sufpb7H9gaZRuPI2JbQYMD1pY8VfoZRJbd7VOaJ0FkHW7fgPTKY0
-         SokA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLmIi6nnWHRj1pN293GOS/f0eL8Fb0mXzbuUGf+XwGDlJIZbi/fksLSLliApRVZBJ0lOrHfJvPvl/+f0qEYTZKgsu7WeOpONyLmLuT
-X-Gm-Message-State: AOJu0YyFB3VXpDE4G2VDzWQkMCuSHrDBHG4DW3G/k694VeuWWCuGjLcW
-	d45Ue5paS2tnroz1c8DvFiJ4cpO2szOVhAIqlV8kTR4hRr4DUaVmGdYN+TdSoHg=
-X-Google-Smtp-Source: AGHT+IExoZjz8aVKSxb4A/yodmwISVWDZie6lXaITvz4XBbczkl3kuP0YehMESEgRBdiWHoMBZTO1Q==
-X-Received: by 2002:a05:600c:4ed3:b0:426:6000:565a with SMTP id 5b1f17b1804b1-429ed7bb030mr62815185e9.16.1724063584418;
-        Mon, 19 Aug 2024 03:33:04 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ed794739sm103913605e9.43.2024.08.19.03.33.03
+        bh=wmIbOrxDtvXOoZbZMr4nmgxGDaAym4vjdVSm0EMN42I=;
+        b=M4V/cJDyDB1q2WBeHz1E26pG3LITA35egxBRzqVDsvwCiWFmyo2xFk1TyHL+zV3Thb
+         GS0HR95Ziij0q2LUdGPb+717O4joeG8oz+LerN6qcRxEnN529HiwsdAgl1Q+jaAL/ild
+         gyO3lmZ/mdKjDVUnJ8YxUomiqIZWTu0AC6tuqeanGlzWvyiQgGVoj3OjhkNOIRjIOv8G
+         m+j6KDChGWQTm12h6uM3GMeZih7noAWd4Jfyb7mEzr6IhmJRVTd3f6emcjz7iOD3EE6m
+         ZaJqqETLatxy6cd9rhMOvThm8ihfunW+87U+56UxvWpj1N8Bb6M70P11UEvrDXh+xIOF
+         BCTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAzux3vYzEgWPzDWrMFMOLUdkI+FDwSq51nFg/Yee4EIH6Dq0HoR7gVTFvyzwzvjDvpFdK+mtgWwKTInQDXsCXyjBUjXnu8JaW4ta8
+X-Gm-Message-State: AOJu0YxFXZxecbeXTG9bL9Zz32zMJ1/NOHA3Y+5C3JkTavRQUsloJIaM
+	prPbexVjDJkZLRVVEhn99JLpIgul7Ok28z1mI7rEF4vUsv9i1+BvlWrgeGZgQX39oJLuSTjq6HY
+	4solhaiWopLUHN8k63tOw45krWWwXdznbsSwKK8oMi/0LIbqp7bFW6cU4mysjzcJM3K7+uFGJ
+X-Received: by 2002:a17:90b:238d:b0:2c9:9eb3:8477 with SMTP id 98e67ed59e1d1-2d3dfc6b117mr8947530a91.16.1724063606052;
+        Mon, 19 Aug 2024 03:33:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqOEd9IUMwqTR7dUGvVwj2MvBYZAh4vjdUIO0TAjDZont7V9TKefsVCjoVrWsmSivBJiZCeg==
+X-Received: by 2002:a17:90b:238d:b0:2c9:9eb3:8477 with SMTP id 98e67ed59e1d1-2d3dfc6b117mr8947517a91.16.1724063605615;
+        Mon, 19 Aug 2024 03:33:25 -0700 (PDT)
+Received: from [10.72.116.30] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e4a39279sm6842266a91.3.2024.08.19.03.33.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 03:33:03 -0700 (PDT)
-Message-ID: <66f3361b-00f8-4527-aaa8-d1c302c8ea26@linaro.org>
-Date: Mon, 19 Aug 2024 12:33:03 +0200
+        Mon, 19 Aug 2024 03:33:25 -0700 (PDT)
+Message-ID: <9385a27a-da34-4bb3-96a4-9e54f5273d0c@redhat.com>
+Date: Mon, 19 Aug 2024 18:33:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,279 +81,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11] thermal/drivers/mediatek: add another get_temp ops
- for thermal sensors
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>
-References: <20240809-auxadc_thermal-v11-1-af36cc74f3a3@chromium.org>
+Subject: Re: [PATCH v2] ceph: fix memory in MDS client cap_auths
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,
+ Ilya Dryomov <idryomov@gmail.com>, Milind Changire <mchangir@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240819095217.6415-1-luis.henriques@linux.dev>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240809-auxadc_thermal-v11-1-af36cc74f3a3@chromium.org>
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20240819095217.6415-1-luis.henriques@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 09/08/2024 10:44, Hsin-Te Yuan wrote:
-> From: James Lo <james.lo@mediatek.com>
-> 
-> Provide thermal zone to read thermal sensor
-> in the SoC. We can read all the thermal sensors
-> value in the SoC by the node /sys/class/thermal/
 
-Please elaborate a bit more the description to stick to the changes.
-
-What is the difference between MT8183 Kukui devices and older ones, for 
-instance ?
-
-> Signed-off-by: Michael Kao <michael.kao@mediatek.com>
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
-> Signed-off-by: James Lo <james.lo@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+On 8/19/24 17:52, Luis Henriques (SUSE) wrote:
+> The cap_auths that are allocated during an MDS session opening are never
+> released, causing a memory leak detected by kmemleak.  Fix this by freeing
+> the memory allocated when shutting down the mds client.
+>
+> Fixes: 1d17de9534cb ("ceph: save cap_auths in MDS client when session is opened")
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 > ---
-> Resurrecting this patch specifically for MediaTek MT8183 Kukui devices.
-> 
-> Changes in V11:
->      - Rebase on kernel v6.11-rc2
->      - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
->        mtk_thermal_bank_temperature
->      - Change the error handling of devm_thermal_of_zone_register return
->        value
->      - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1-james.lo@mediatek.com/
-> 
-> Changes in V10:
->      - Rebase to kernel-v5.18-rc7
->      - Resend
-> 
-> Changes in V9:
->      - Rebase to kernel-v5.14-rc1
->      - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
->        data of struct mtk_thermal_data
->      - Remove duplicate struct 'mtk_thermal_bank'
->      - Remove unnecessary if condition check
->      - Return error if any thermal zone fail to register
-> 
-> Changes in V8:
->      - Rebase to kernel-v5.13-rc1
->      - Resend
-> 
-> Changes in v7:
->      - Fix build error in v6.
-> 
-> Changes in v6:
->      - Rebase to kernel-5.11-rc1.
->      - [1/3]
->          - add interrupts property.
->      - [2/3]
->          - add the Tested-by in the commit message.
->      - [3/3]
->          - use the mt->conf->msr[id] instead of conf->msr[id] in the
->            _get_sensor_temp and mtk_thermal_bank_temperature.
->          - remove the redundant space in _get_sensor_temp and
->            mtk_read_sensor_temp.
->          - change kmalloc to dev_kmalloc in mtk_thermal_probe.
-> 
-> Changes in v5:
->      - Rebase to kernel-5.9-rc1.
->      - Revise the title of cover letter.
->      - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCORESEL"
->      - [2/2]
->          -  Add the judgement to the version of raw_to_mcelsius.
-> 
-> Changes in v4:
->      - Rebase to kernel-5.6-rc1.
->      - [1/7]
->          - Squash thermal zone settings in the dtsi from [v3,5/8]
->            arm64: dts: mt8183: Increase polling frequency for CPU thermal zone.
->          - Remove the property of interrupts and mediatek,hw-reset-temp.
->      - [2/7]
->          - Correct commit message.
->      - [4/7]
->          - Change the target temperature to the 80C and change the commit message.
->      - [6/7]
->          - Adjust newline alignment.
->          - Fix the judgement on the return value of registering thermal zone.
-> 
-> Changes in v3:
->      - Rebase to kernel-5.5-rc1.
->      - [1/8]
->          - Update sustainable power of cpu, tzts1~5 and tztsABB.
->      - [7/8]
->          - Bypass the failure that non cpu_thermal sensor is not find in thermal-zones
->            in dts, which is normal for mt8173, so prompt a warning here instead of
->            failing.
-> 
->      Return -EAGAIN instead of -EACCESS on the first read of sensor that
->          often are bogus values. This can avoid following warning on boot:
-> 
->            thermal thermal_zone6: failed to read out thermal zone (-13)
-> 
-> Changes in v2:
->      - [1/8]
->          - Add the sustainable-power,trips,cooling-maps to the tzts1~tztsABB.
->      - [4/8]
->          - Add the min opp of cpu throttle.
-> ---
-> 
-> ---
->   drivers/thermal/mediatek/auxadc_thermal.c | 71 +++++++++++++++++++++++++++----
->   1 file changed, 63 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/thermal/mediatek/auxadc_thermal.c
-> index 9ee2e7283435..8b50d560bbf9 100644
-> --- a/drivers/thermal/mediatek/auxadc_thermal.c
-> +++ b/drivers/thermal/mediatek/auxadc_thermal.c
-> @@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
->   
->   static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
->   {
-> -	struct mtk_thermal *mt = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal *mt = bank->mt;
-
-Where is used this variable ?
-
->   	int i;
->   	int tempmax = INT_MIN;
->   
-> @@ -866,10 +867,46 @@ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
->   	return 0;
->   }
->   
-> +static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *temperature)
-> +{
-> +	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal *mt = bank->mt;
-> +	const struct mtk_thermal_data *conf = mt->conf;
-> +	int id = bank->id - 1;
-> +	int temp = INT_MIN;
-> +	u32 raw;
+> Changes since v1:
+>   * dropped mdsc->mutex locking as we don't need it at this point
+>
+>   fs/ceph/mds_client.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 276e34ab3e2c..2e4b3ee7446c 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -6015,6 +6015,18 @@ static void ceph_mdsc_stop(struct ceph_mds_client *mdsc)
+>   		ceph_mdsmap_destroy(mdsc->mdsmap);
+>   	kfree(mdsc->sessions);
+>   	ceph_caps_finalize(mdsc);
 > +
-> +	if (id < 0)
-> +		return  -EACCES;
-
-This test should not be done here:
-
-1. EACCES is permission denied
-
-2. The bank id should be checked at init time
-
+> +	if (mdsc->s_cap_auths) {
+> +		int i;
 > +
-> +	raw = readl(mt->thermal_base + conf->msr[id]);
-> +
-> +	temp = mt->raw_to_mcelsius(mt, id, raw);
-> +
-> +	/*
-> +	 * The first read of a sensor often contains very high bogus
-> +	 * temperature value. Filter these out so that the system does
-> +	 * not immediately shut down.
-> +	 */
-> +
-> +	if (!mtk_thermal_temp_is_valid(temp)) {
-
-unlikely(!mtk_thermal_temp_is_valid(temp)) ?
-
-> +		temp = THERMAL_TEMP_INVALID;
-
-What is the point of assigning this value and return just after ?
-
-> +		return -EAGAIN;
-> +	}
-> +
-> +	*temperature = temp;
-> +
-> +	return 0;
-> +}
-> +
->   static const struct thermal_zone_device_ops mtk_thermal_ops = {
->   	.get_temp = mtk_read_temp,
->   };
->   
-> +static const struct thermal_zone_device_ops mtk_thermal_sensor_ops = {
-> +	.get_temp = mtk_read_sensor_temp,
-> +};
-> +
->   static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
->   				  u32 apmixed_phys_base, u32 auxadc_phys_base,
->   				  int ctrl_id)
-> @@ -1199,6 +1236,7 @@ static int mtk_thermal_probe(struct platform_device *pdev)
->   	u64 auxadc_phys_base, apmixed_phys_base;
->   	struct thermal_zone_device *tzdev;
->   	void __iomem *apmixed_base, *auxadc_base;
-> +	struct mtk_thermal_bank *tz;
->   
->   	mt = devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
->   	if (!mt)
-> @@ -1285,14 +1323,31 @@ static int mtk_thermal_probe(struct platform_device *pdev)
->   			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
->   					      auxadc_phys_base, ctrl_id);
->   
-> -	tzdev = devm_thermal_of_zone_register(&pdev->dev, 0, mt,
-> -					      &mtk_thermal_ops);
-> -	if (IS_ERR(tzdev))
-> -		return PTR_ERR(tzdev);
-> +	for (i = 0; i < mt->conf->num_sensors + 1; i++) {
-
-Why "num_sensors + 1" ?
-
-> +		tz = devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL);
-> +		if (!tz)
-> +			return -ENOMEM;
-> +
-> +		tz->mt = mt;
-> +		tz->id = i;
-> +
-> +		tzdev = devm_thermal_of_zone_register(&pdev->dev, i,
-> +				tz, (i == 0) ?
-> +				&mtk_thermal_ops : &mtk_thermal_sensor_ops);
-
-Don't you want to keep the init routine and depending on the platform 
-add the loop with the extra sensors ? That may help to make the code 
-cleaner instead of doing tests like (i == 0) ? &mtk_thermal_ops : 
-&mtk_thermal_sensor_ops
-
-> +		if (IS_ERR(tzdev)) {
-> +			if (PTR_ERR(tzdev) == -ENODEV) {
-> +				dev_warn(&pdev->dev, "can't find thermal sensor %d\n", i);
-> +				continue;
-> +			}
-> +			if (PTR_ERR(tzdev) != -EACCES)
-
-The id correctness should be checked in this loop, not rely on a EACCES 
-returned by a implicit call to thermal_zone_get_temp()
-
-> +				return PTR_ERR(tzdev);
+> +		for (i = 0; i < mdsc->s_cap_auths_num; i++) {
+> +			kfree(mdsc->s_cap_auths[i].match.gids);
+> +			kfree(mdsc->s_cap_auths[i].match.path);
+> +			kfree(mdsc->s_cap_auths[i].match.fs_name);
 > +		}
->   
-> -	ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> -	if (ret)
-> -		dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs");
-> +		ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> +		if (ret)
-> +			dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs: %d\n", ret);
+> +		kfree(mdsc->s_cap_auths);
 > +	}
->   
->   	return 0;
+> +
+>   	ceph_pool_perm_destroy(mdsc);
 >   }
-> 
-> ---
-> base-commit: ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
-> change-id: 20240809-auxadc_thermal-9be338ec8b1c
-> 
-> Best regards,
+>   
+
+LGTM.
+
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
+Will apply to the testing branch and run the tests.
+
+Thanks Luis
+
+- Xiubo
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
