@@ -1,135 +1,104 @@
-Return-Path: <linux-kernel+bounces-291677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B426956570
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAAE956572
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EACF1C218FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EB51C218C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F0915990C;
-	Mon, 19 Aug 2024 08:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74ABD15B0E0;
+	Mon, 19 Aug 2024 08:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YazMikRt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OE/dkwGu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F0A157A67
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D5042A8F;
+	Mon, 19 Aug 2024 08:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055695; cv=none; b=klATKeRPMPYr7+WLWtXKxDvEmpy6gjaXnBph1cryNP6Wl1uSbMcciJuiCkJHJSsNXAI27yD8zKh//5uTcqGRlwXMoBSLDlzS3oHLNB/DxGf+futFWEtzI4MW02iWTtVBzns0Gboj0+A1vVUXh4ZL9o6gjXbsQ6q5/tBz7sNbBsI=
+	t=1724055717; cv=none; b=WeGQvsgc7lBjSN//SI0qLBsrzx07JMKZpu8idNw/vdlRk80kltxT2RGy6dmDVy2/6G/EJn+RZ1PQdcsMtPH3siR6K1pri2NJsSM491K4gNxygtSffijLUOKKE1P3icUsSChWqOb0V8SbN0iEGi1AWZJ9pt/Vgtc8BoCgKFaNWUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055695; c=relaxed/simple;
-	bh=FdmMdPYIoj7W27+BO4QGSsXKhs9rzS4dHO+SdICw1cw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YJD5MKRXW9eUGbdJTxUmS+7wT52lv0NuKPU0Lkaq2DaGU9NfS43ZJ1YCA1+Bsa4PvfY6mPrg3ZAgWcF/zEzZyNgNE7+yR1b9JaoWohw+aim3tV8RmPtTHvmcR9SWBsopWSw6UOQzW+Bd4XjdrRbNIBy12y91RIKG8kAKV08clLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YazMikRt; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1724055717; c=relaxed/simple;
+	bh=AdJE+GiK9l1UAd1pHCCn+qVf7sr3y/O4qipoHDjEQ18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+Q8ZUdXI9cyL5/WZG1gWmm3KJLb4LesxDwcAgNtbTCKKaBDhcmJZn3uD56a0qnJYigw0p4Dyh4s6btQ21WGLCJcDCIQwcq3g0/ws1H/tv7yyViI5N5qfuuno+vlav54amzZ++dAVrkIyEuT4Q6kxeHZLykmYuyC1JoR6l205Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OE/dkwGu; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724055694; x=1755591694;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=FdmMdPYIoj7W27+BO4QGSsXKhs9rzS4dHO+SdICw1cw=;
-  b=YazMikRtzglRCWK/V9J7tQSsDKo222wvPhkqGbJe2lDU7OuGJjX3wsn+
-   tuhAYUecgCkBGINu5rrNuKNQVsQ/b70fX09R+aYA+2++OYTi92dWT40Fx
-   A6P2w/G1sjm9oakqb/HFdWg6DOhOvFH6wRJjQPgPswk08CJtLpZ+tl6C3
-   QfKaoQ3lqoaSChO3G9jErLIidJkqmvDohPzpKRQuZ+bLCYOjsSfBHdZyh
-   5oRG92dNYBNPGu1b+jHiKEiRpGNh+GQT5giAO0uzIJi4RL2chFeZzvsf/
-   Hrk5WYQUy0kSFz4TlCoCJVm7kHJV6Gu9hCqsPgvyQGveQkOYSkFQdAMQS
-   A==;
-X-CSE-ConnectionGUID: 4cGyuw4YTHirK0Kjxw/unQ==
-X-CSE-MsgGUID: /I34+W6bTz+h+T6jkWKNkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="26047206"
+  t=1724055716; x=1755591716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AdJE+GiK9l1UAd1pHCCn+qVf7sr3y/O4qipoHDjEQ18=;
+  b=OE/dkwGuJ03P3wPQ02CbJu3Kf6sYS0Ds7MsZYGM0x12+OEI7SMTJCTKx
+   hbJZ7zsbMItfmZ1ivKGSrpQ3qz07XCZzn3ZODcg9B+yiIJ09io+I3nSoi
+   Zk5e1WzHhSitvP/9wvFOYqN6NYG77bl+LZWO0ze6mSRNK82auqeU9IZJU
+   jFwNOSFFz6LtETVxApQNfUw0uJP4LIoOWb1RKxlUHlyZ6hpfMqXtfOnEm
+   7T6hmVFDxqwJRsyP4j0xG11FIyD34KKoAEqu0/cfBZ0d7nSfQA5ib35NW
+   gXNdXirYsBTubYDB/00WIGBbb0vrdPOBXAw6wBV+c80n56m7baoicPJoZ
+   Q==;
+X-CSE-ConnectionGUID: HRjD4B4zQXumOAciSGmjQQ==
+X-CSE-MsgGUID: 1lnukO14SmiYhgwxEfBRCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="25195535"
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="26047206"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:21:32 -0700
-X-CSE-ConnectionGUID: VPQE/p4eTreE2cdmfee3Ow==
-X-CSE-MsgGUID: tBYwa13lSh2fj5S0e+5eUA==
+   d="scan'208";a="25195535"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:21:56 -0700
+X-CSE-ConnectionGUID: NK/AVTDgRQKDSc1viHFvGQ==
+X-CSE-MsgGUID: UPmxxrDkSsmSwK2Tt6IZhA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60454687"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.70])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:21:25 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Harry Wentland
- <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira
- <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
- Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, Aric Cyr
- <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng
- <Tony.Cheng@amd.com>, Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>,
- Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 03/12] drm/edid: constify argument of drm_edid_is_valid()
-In-Reply-To: <20240818-amdgpu-drm_edid-v1-3-aea66c1f7cf4@weissschuh.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
- <20240818-amdgpu-drm_edid-v1-3-aea66c1f7cf4@weissschuh.net>
-Date: Mon, 19 Aug 2024 11:21:21 +0300
-Message-ID: <877ccc7wji.fsf@intel.com>
+   d="scan'208";a="64965055"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:21:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sfxeB-0000000Goyx-22oM;
+	Mon, 19 Aug 2024 11:21:51 +0300
+Date: Mon, 19 Aug 2024 11:21:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: ukleinek@kernel.org, mika.westerberg@linux.intel.com,
+	jarkko.nikula@linux.intel.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] pwm: lpss: wait_for_update() before configuring pwm
+Message-ID: <ZsMAn3hQ4yDq-Gg6@smile.fi.intel.com>
+References: <20240819080412.15115-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819080412.15115-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, 18 Aug 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
-> drm_edid_is_valid() does not modify its argument, so mark it as const.
+On Mon, Aug 19, 2024 at 01:34:12PM +0530, Raag Jadav wrote:
+> Wait for SW_UPDATE bit to clear before configuring pwm channel instead of
 
-That's not true.
+PWM
 
-BR,
-Jani.
+> failing right away, which will reduce failure rates on early access.
 
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  drivers/gpu/drm/drm_edid.c | 2 +-
->  include/drm/drm_edid.h     | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index f68a41eeb1fa..69fb11741abd 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -2034,7 +2034,7 @@ EXPORT_SYMBOL(drm_edid_block_valid);
->   *
->   * Return: True if the EDID data is valid, false otherwise.
->   */
-> -bool drm_edid_is_valid(struct edid *edid)
-> +bool drm_edid_is_valid(const struct edid *edid)
->  {
->  	int i;
->=20=20
-> diff --git a/include/drm/drm_edid.h b/include/drm/drm_edid.h
-> index 6bdfa254a1c1..a5b377c4a342 100644
-> --- a/include/drm/drm_edid.h
-> +++ b/include/drm/drm_edid.h
-> @@ -442,7 +442,7 @@ int drm_add_modes_noedid(struct drm_connector *connec=
-tor,
->  int drm_edid_header_is_valid(const void *edid);
->  bool drm_edid_block_valid(u8 *raw_edid, int block, bool print_bad_edid,
->  			  bool *edid_corrupt);
-> -bool drm_edid_is_valid(struct edid *edid);
-> +bool drm_edid_is_valid(const struct edid *edid);
->  void drm_edid_get_monitor_name(const struct edid *edid, char *name,
->  			       int buflen);
->  struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
+So, what is the problem this patch solves (or is trying to solve)?
+Second, there are two important behavioural changes:
+- error code change (it's visible to user space);
+- an additional, quite a long by the way, timeout.
 
---=20
-Jani Nikula, Intel
+Second one does worry me a lot as it might add these 0.5s to the boot time
+or so per PWM in question.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
