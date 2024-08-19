@@ -1,272 +1,226 @@
-Return-Path: <linux-kernel+bounces-292428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21921956F5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:55:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A88956F6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E9BB23B79
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59901F22452
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897E0139D04;
-	Mon, 19 Aug 2024 15:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AD013A3F4;
+	Mon, 19 Aug 2024 15:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSg4jziL"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="e1Leuocs"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F924779F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1071130A47;
+	Mon, 19 Aug 2024 15:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082942; cv=none; b=NLehdUz1pBS/e6HoErmJ2IVAEx0Py1RCrB3EbQthNf4Zv/a/cqV9U+/71zMQDBqHKV3h05OLbojNvHW5m7ZZXyC5tGnJozPgBCTCRSUU23/YLpigW+eDuMM7F1MdV+tkt2WlIiYvZdEIDO9QfFUcYVkAiKK+bb3iqRbwOzh2izk=
+	t=1724083083; cv=none; b=lyAyhlPOoBkISwViTyf0KQXiTC2X+H7XysPS0EU37WiAVMiCwCOEbLBeLtwTaNH6bFh9rlw5Jo64KNzik1U3cXWNYaU1eA/OaWuT3+UgRf5N3s1fKgUXMNWI+UU0Xx1XnuX9x0Sy8QJ3YV/n8ErPF+Ut5vrUp5SGaU8VKT6r1GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082942; c=relaxed/simple;
-	bh=0ZPZcSBz0GA9QaquCLoHbf0kkp4RlgHigycxyhrDtvY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a1GAzsOphNFWz4Oc/GriGzUw0bryQw/siqg3LbRlhXAHPuipdWN7pVTHAp/YmvyUsIigcLcITZkcbCV59o2O/cUwUHTFe/YmD1J8NogfAkD/CfgbxTEU+B5QfKXSe1MXYYef0/3cQ4Sn7ymQWV9je356Ipj18NwxtYHHpEe+9h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MSg4jziL; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3718706cf8aso2860503f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724082939; x=1724687739; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qs5fWzggfiB2jX0FmUYwMsZ2TSBuyP8FCNq135EUvH4=;
-        b=MSg4jziLCvXOSnPZanNzd6Z8HKUtx4BKoyuV5feb7JAQYX3pDXSFmQ28s3leqm1CgE
-         mNQHQzklmKpsU85VOUH1kvvjxyl96nNrx7GX+lt1JL6aJe5hAzl7FajCeAOtI0NK3xhS
-         ksQw9Li1uMACCEGESMpWz/roxXxjDhft5IjIP+vCfNILiqmB2azArux8ERuE1v5WOixn
-         d9lRPuwyQopV/jropfELrLoqLdNCL1Eh58uD2IWeJfXymBcYW3k+1mfJNVUvwOfyNh4C
-         uRaXDQFrs1SIS9SX1mc6xXSvjw9T5rLVTs4fPrXfHzf7x+jobsQCPGWe/ESKvrpFVOPr
-         kJXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724082939; x=1724687739;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Qs5fWzggfiB2jX0FmUYwMsZ2TSBuyP8FCNq135EUvH4=;
-        b=lLLkqQtZcfhumet4EjyOfz5kyVWvdcswGs2aBmwzPmuaN+R7umI+6NX6EYwUy1P+yB
-         Hiur0o2KSe0iIalqIyv/KU2YvvJ9EB3gsIFIC+RjDob6p6fnDmlU98YXYRVLocTunMwl
-         vTxUkOPbrOiCPdaGvmioXuGtwtb7UIRTGrC4EGVxyAu3pIVVKdYCfVevkTMsUAMAktwS
-         bxROKLE+lt9oVwgpr0Pc8XKpFbyTXs1W7xfcW6zpXVvTVs6akoCQFuMh+96BJY0Sd+vd
-         mngP0LbIf493pC7mcAzPPgB49UOmqpG47v2Yyi2Sm4ApNmbR6xfdiTN+EpxowMpJXuKV
-         qU1g==
-X-Gm-Message-State: AOJu0Yy+OF77it3z5zhwVVB4g9huLPVUG1W0dJFiqzJna+s/OyoVxXlg
-	8p8zrml1rWB20+ck1kcy8laD3/9k1/nZnw7PPWqsy87HokQCYkHHR9hvd/9Cn6QSRCIjbF/YfR5
-	w
-X-Google-Smtp-Source: AGHT+IFJxTbaOFBT1xGu5oUq8Y1BTlG6M875inLI3Fd91V0wqoE+DkDHRodBrHYLtdnMm6jXgZ4Y4w==
-X-Received: by 2002:a05:6000:1289:b0:371:8845:a3af with SMTP id ffacd0b85a97d-371946a3f3dmr6254795f8f.39.1724082938471;
-        Mon, 19 Aug 2024 08:55:38 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849697sm10840891f8f.37.2024.08.19.08.55.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:55:38 -0700 (PDT)
-Message-ID: <7c598260-513a-4aad-962f-34e5de6731dd@linaro.org>
-Date: Mon, 19 Aug 2024 17:55:37 +0200
+	s=arc-20240116; t=1724083083; c=relaxed/simple;
+	bh=9/a6j+JL/sPh/4NhU63pS/cw+OH8Y7Txq/j04AYoE5k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YklL/0Etwrt9Tq2CGs4/NlVv3wW4CR7CeMcijHxauLCA6OGdSZQgLCk3KdILPEsynxCUadulZblL1NuUC7sdc08jipTunxCbZRT4n5iLY+WNEQ72Y+ozxlCd9tSAmid1L55DGKafY4QwNhXN3ARkn2Afn40RZI+xMrwQ9GH15jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=e1Leuocs; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: cbd668b25e4311ef8593d301e5c8a9c0-20240819
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0+OIEN25NHHHr0CCl7NuFmNlsvu4aPfi+XVI+Vm7J+s=;
+	b=e1Leuocss2Yp6NI/Ftq1ewrNASEPaLk78cN4lxmOcqaCK5Jx3IuNE9RlQoBPB4/RInB8PgC/MSmBkUELFY5WoHeuhYrPGWyoU2hLJsnkoppRyYrJ+dQmTTaAu8T4Cgl2XBHoEBg0lL4fYJNKa9thXd9sx2eBRHkwEiZUkzCOhT0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:4e2a682a-93c6-4423-9f6c-7b2fa85bf585,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6dc6a47,CLOUDID:283498be-d7af-4351-93aa-42531abf0c7b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: cbd668b25e4311ef8593d301e5c8a9c0-20240819
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <tze-nan.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 971798041; Mon, 19 Aug 2024 23:57:54 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 19 Aug 2024 08:57:53 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 19 Aug 2024 23:57:53 +0800
+From: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+To: <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Stanislav Fomichev <sdf@fomichev.me>
+CC: <bobule.chang@mediatek.com>, <wsd_upstream@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>, Tze-nan
+ Wu <Tze-nan.Wu@mediatek.com>, Yanghui Li <yanghui.li@mediatek.com>, Cheng-Jui
+ Wang <cheng-jui.wang@mediatek.com>
+Subject: [PATCH v2] net/socket: Check cgroup_bpf_enabled() only once in  do_sock_getsockopt
+Date: Mon, 19 Aug 2024 23:56:27 +0800
+Message-ID: <20240819155627.1367-1-Tze-nan.Wu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 1/9] reset: amlogic: convert driver to regmap
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-2-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240808102742.4095904-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 08/08/2024 12:27, Jerome Brunet wrote:
-> To allow using the same driver for the main reset controller and the
-> auxiliary ones embedded in the clock controllers, convert the
-> the Amlogic reset driver to regmap.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/reset/reset-meson.c | 79 ++++++++++++++++++++-----------------
->   1 file changed, 43 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index f78be97898bc..b47431a21b86 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
-> @@ -11,36 +11,43 @@
->   #include <linux/of.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->   #include <linux/reset-controller.h>
->   #include <linux/slab.h>
->   #include <linux/types.h>
->   
-> -#define BITS_PER_REG	32
-> -
->   struct meson_reset_param {
->   	int reg_count;
->   	int level_offset;
->   };
->   
->   struct meson_reset {
-> -	void __iomem *reg_base;
->   	const struct meson_reset_param *param;
->   	struct reset_controller_dev rcdev;
-> -	spinlock_t lock;
-> +	struct regmap *map;
->   };
->   
-> +static void meson_reset_offset_and_bit(struct meson_reset *data,
-> +				       unsigned long id,
-> +				       unsigned int *offset,
-> +				       unsigned int *bit)
-> +{
-> +	unsigned int stride = regmap_get_reg_stride(data->map);
-> +
-> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
-> +	*bit = id % (stride * BITS_PER_BYTE);
-> +}
-> +
->   static int meson_reset_reset(struct reset_controller_dev *rcdev,
-> -			      unsigned long id)
-> +			     unsigned long id)
->   {
->   	struct meson_reset *data =
->   		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
-> +	unsigned int offset, bit;
->   
-> -	writel(BIT(offset), reg_addr);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
->   
-> -	return 0;
-> +	return regmap_write(data->map, offset, BIT(bit));
->   }
->   
->   static int meson_reset_level(struct reset_controller_dev *rcdev,
-> @@ -48,25 +55,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->   {
->   	struct meson_reset *data =
->   		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr;
-> -	unsigned long flags;
-> -	u32 reg;
-> +	unsigned int offset, bit;
->   
-> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
-> +	offset += data->param->level_offset;
->   
-> -	spin_lock_irqsave(&data->lock, flags);
-> -
-> -	reg = readl(reg_addr);
-> -	if (assert)
-> -		writel(reg & ~BIT(offset), reg_addr);
-> -	else
-> -		writel(reg | BIT(offset), reg_addr);
-> -
-> -	spin_unlock_irqrestore(&data->lock, flags);
-> -
-> -	return 0;
-> +	return regmap_update_bits(data->map, offset,
-> +				  BIT(bit), assert ? 0 : BIT(bit));
->   }
->   
->   static int meson_reset_assert(struct reset_controller_dev *rcdev,
-> @@ -113,30 +108,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
->   };
->   MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
->   
-> +static const struct regmap_config regmap_config = {
-> +	.reg_bits   = 32,
-> +	.val_bits   = 32,
-> +	.reg_stride = 4,
-> +};
-> +
->   static int meson_reset_probe(struct platform_device *pdev)
->   {
-> +	struct device *dev = &pdev->dev;
->   	struct meson_reset *data;
-> +	void __iomem *base;
->   
-> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->   	if (!data)
->   		return -ENOMEM;
->   
-> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(data->reg_base))
-> -		return PTR_ERR(data->reg_base);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
->   
-> -	data->param = of_device_get_match_data(&pdev->dev);
-> +	data->param = of_device_get_match_data(dev);
->   	if (!data->param)
->   		return -ENODEV;
->   
-> -	spin_lock_init(&data->lock);
-> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
-> +	if (IS_ERR(data->map))
-> +		return dev_err_probe(dev, PTR_ERR(data->map),
-> +				     "can't init regmap mmio region\n");
->   
->   	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
-> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-> +		* regmap_config.reg_stride;
->   	data->rcdev.ops = &meson_reset_ops;
-> -	data->rcdev.of_node = pdev->dev.of_node;
-> +	data->rcdev.of_node = dev->of_node;
->   
-> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-> +	return devm_reset_controller_register(dev, &data->rcdev);
->   }
->   
->   static struct platform_driver meson_reset_driver = {
+The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
+between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+`BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
+"true" between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+`BPF_CGROUP_RUN_PROG_GETSOCKOPT`, `BPF_CGROUP_RUN_PROG_GETSOCKOPT` will
+receive an -EFAULT from `__cgroup_bpf_run_filter_getsockopt(max_optlen=0)`
+due to `get_user()` was not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
+
+Scenario shown as below:
+
+           `process A`                      `process B`
+           -----------                      ------------
+  BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
+                                            enable CGROUP_GETSOCKOPT
+  BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
+
+To prevent this, invoke `cgroup_bpf_enabled()` only once and cache the
+result in a newly added local variable `enabled`.
+Both `BPF_CGROUP_*` macros in `do_sock_getsockopt` will then check their
+condition using the same `enabled` variable as the condition variable,
+instead of using the return values from `cgroup_bpf_enabled` called by
+themselves as the condition variable(which could yield different results).
+This ensures that either both `BPF_CGROUP_*` macros pass the condition
+or neither does.
+
+Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
+Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
+Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+---
+
+Chagnes from v1 to v2: https://lore.kernel.org/all/20240819082513.27176-1-Tze-nan.Wu@mediatek.com/
+  Instead of using cgroup_lock in the fastpath, invoke cgroup_bpf_enabled
+  only once and cache the value in the variable `enabled`. `BPF_CGROUP_*`
+  macros in do_sock_getsockopt can then both check their condition with
+  the same variable, ensuring that either they both passing the condition
+  or both do not.
+
+Appreciate for reviewing this!
+This patch should make cgroup_bpf_enabled() only using once,
+but not sure if "BPF_CGROUP_*" is modifiable?(not familiar with code here)
+
+If it's not, then maybe I can come up another patch like below one:
+	+++ b/net/socket.c
+	  	int max_optlen __maybe_unused;
+	 	const struct proto_ops *ops;
+	 	int err;
+	+	bool enabled;
+	
+	 	err = security_socket_getsockopt(sock, level, optname);
+	 	if (err)
+	 		return err;
+	
+	-	if (!compat)
+	+	enabled = cgroup_bpf_enabled(CGROUP_GETSOCKOPT);
+	+   if (!compat && enabled)
+			max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
+
+But this will cause do_sock_getsockopt calling cgroup_bpf_enabled up to
+three times , Wondering which approach will be more acceptable?
+
+---
+ include/linux/bpf-cgroup.h | 13 ++++++-------
+ net/socket.c               |  9 ++++++---
+ 2 files changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+index fb3c3e7181e6..251632d52fa9 100644
+--- a/include/linux/bpf-cgroup.h
++++ b/include/linux/bpf-cgroup.h
+@@ -390,20 +390,19 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
+ 	__ret;								       \
+ })
+ 
+-#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)			       \
++#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled)			       \
+ ({									       \
+ 	int __ret = 0;							       \
+-	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))			       \
++	if (enabled)			       \
+ 		copy_from_sockptr(&__ret, optlen, sizeof(int));		       \
+ 	__ret;								       \
+ })
+ 
+ #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, optlen,   \
+-				       max_optlen, retval)		       \
++				       max_optlen, retval, enabled)		       \
+ ({									       \
+ 	int __ret = retval;						       \
+-	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT) &&			       \
+-	    cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))		       \
++	if (enabled && cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))		    \
+ 		if (!(sock)->sk_prot->bpf_bypass_getsockopt ||		       \
+ 		    !INDIRECT_CALL_INET_1((sock)->sk_prot->bpf_bypass_getsockopt, \
+ 					tcp_bpf_bypass_getsockopt,	       \
+@@ -518,9 +517,9 @@ static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
+ #define BPF_CGROUP_RUN_PROG_SOCK_OPS(sock_ops) ({ 0; })
+ #define BPF_CGROUP_RUN_PROG_DEVICE_CGROUP(atype, major, minor, access) ({ 0; })
+ #define BPF_CGROUP_RUN_PROG_SYSCTL(head,table,write,buf,count,pos) ({ 0; })
+-#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen) ({ 0; })
++#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled) ({ 0; })
+ #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, \
+-				       optlen, max_optlen, retval) ({ retval; })
++				       optlen, max_optlen, retval, enabled) ({ retval; })
+ #define BPF_CGROUP_RUN_PROG_GETSOCKOPT_KERN(sock, level, optname, optval, \
+ 					    optlen, retval) ({ retval; })
+ #define BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock, level, optname, optval, optlen, \
+diff --git a/net/socket.c b/net/socket.c
+index fcbdd5bc47ac..5336a2755bb4 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2365,13 +2365,16 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+ 	int max_optlen __maybe_unused;
+ 	const struct proto_ops *ops;
+ 	int err;
++	bool enabled;
+ 
+ 	err = security_socket_getsockopt(sock, level, optname);
+ 	if (err)
+ 		return err;
+ 
+-	if (!compat)
+-		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
++	if (!compat) {
++		enabled = cgroup_bpf_enabled(CGROUP_GETSOCKOPT);
++		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled);
++	}
+ 
+ 	ops = READ_ONCE(sock->ops);
+ 	if (level == SOL_SOCKET) {
+@@ -2390,7 +2393,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+ 	if (!compat)
+ 		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
+ 						     optval, optlen, max_optlen,
+-						     err);
++						     err, enabled);
+ 
+ 	return err;
+ }
+-- 
+2.45.2
+
 
