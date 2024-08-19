@@ -1,240 +1,138 @@
-Return-Path: <linux-kernel+bounces-291486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2073956337
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:32:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18D095633D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF7C1F22788
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531B6B225FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FB114B95E;
-	Mon, 19 Aug 2024 05:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pbNP/UWv"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA7014C58C;
+	Mon, 19 Aug 2024 05:32:55 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D939C1CF83
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1B171CD;
+	Mon, 19 Aug 2024 05:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724045542; cv=none; b=mn25KA+UWk4Qv9opkgdZMIo7uI12UNrJpLvnzHel8+8vfBEj4uF1hambxLwY3i0xXdmEiLJMOg4f/KCEQi7kJUKSqkMIHKAseFP8pRvxlZ4dZ2tZsni1KIVbAR2G9PZy/jEm3tuNw4Tp8Ts+89ff3Z5bIbcBcTb1kBG7qqk1to4=
+	t=1724045574; cv=none; b=h9Z/4Fn8HBV21V2qZaLkg3gizQrGeTZ0o+zaQQUQhryaELMJ31OGAI+ITO0HBYKdTYyNnVTJN9Fts7T0uje0g/Bb1WqGTn9/fgK2IintiUokH9rFLXWM7LAWTRUwNpl1k9rjdn6EFMB3iwFWJcqyt1qZvjvfPWPf5PXXRDs4NSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724045542; c=relaxed/simple;
-	bh=Yr2UJFtjMk51Pu9AFYzUDgjNMF0ekArNACfcgk2Anc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXiRSjVuagp27foBaEpOrkstnHFESMqN1Dc6IbNXU27zGxZb7lI4h3f+JnMjqVfMuSk1MdRP/IMq1y8GOitQNF0GcyWVE0unzbi1Zyb/ErjM0nObMrzlGFBnMf0moOjAydq9stF8/pcaU53cOAVvRtIMngBkNGyvN4pAAzupptQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pbNP/UWv; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1D0A63F0F8
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724045530;
-	bh=EXKeDjFAdMe+uEA7JaK4+hwIgSwG6+Aev5N69M36HiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=pbNP/UWvYuEsS/U3QzenyIxViHy2V+rJ3727HYgMrs7U3BaSYwdqUU9uhjd7rlXMk
-	 C+UsT8Nh+J7oKiNoT6hF0WecSiUrFJTjLU6NIV8w67+PFwaSDrnjCEpLvsf03Tfvai
-	 xzXjxIUMyPYTPT9tB43zYRwo/MCyoFrjddtsnOprH6t3F522+MeKTmH4zeMAUvxDPz
-	 xHT3sTJMd02XCp6j+7CVWE/VMySB4QRQkL02/3UHfG9dpMYHGeJXxeB/r/+0lw4VSf
-	 T9E5muu5NL04RtCYgT7RUJHMbFfM4RVTraR50U3hKRiQnnxgaNKjXa2jkVQJ8gyGfO
-	 rYp5EObKsxAHQ==
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-71271a3f15cso2837405b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:32:10 -0700 (PDT)
+	s=arc-20240116; t=1724045574; c=relaxed/simple;
+	bh=gFB+mSRNZo2G+e/subS3Hm+9LhOICBxVnyzpnQpYACU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ON88FIZLaTE8Yd5DJu6irC0iOIzorn07uPNY8JFDqWgEF/8Lsm4+Ms9Tj7jHHZrg705dk969odnEAPhGJjjs9C9z3c5MVXC5kk5jcGHshiv+CCmwYlYl3j2Gu6if/2pZM49hMZBEgsVleeHVbptgy8OmYtGmJIXVOMa0nsbLSUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso19871355e9.1;
+        Sun, 18 Aug 2024 22:32:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724045528; x=1724650328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EXKeDjFAdMe+uEA7JaK4+hwIgSwG6+Aev5N69M36HiM=;
-        b=XC3xEEG5qBtUj6fU6qyDl61b4WhBaAWXWOxYgeA1NqhoMPnLahWftvQ/AefTKkk2Ym
-         Icc7BgCtkh3mleaKT+SR4NvjglvP1pleEgoMNuvgcA6+Mxbu4WNmHoS9Pvb+j/pBR2xv
-         JO0xBrudr/HPzqr51eJ6++yq1qTPGM28naKUyY4YoY+ogy2BhA2TUu1iHg08E0VGV3rp
-         bFxz3D12rjyLUyqZuBpKRADId+MRWriGCUKj5Ly+HiYSfgIAQpumT44PzPxKc55G1/es
-         KjvYCgd7JCKHTW4pBYGpX1EdsZfgqs+l3z6Z9eyRMWqXqaHOHKFJygDet+I+MWUVIVtR
-         K+5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXyWcoWgsD/p1WsV4f1InCu/XavxOAFfY1EgHUNq00y3YRbZXst79lILRSyyOyBri/S/rAbLvlDw/DBrsngeyX2QljZ8aAG6pQ5jUQe
-X-Gm-Message-State: AOJu0YwVScBi2+ihiWLSNJ/NBttIzUZQJE/1HcwzTP4t2yhevMxA0kln
-	OeDCL64dwapQiGbGbw8y6pR3iMQyo/wvdX6iVZpCKYyrOzvoYEc2SayL0Pmc4GxL9lcyJoo3VWd
-	O4z7ZbvhWMGB0pW2UyzCXbwZa6A5RYxt1XHSWjplBQqBdtiWJmXe3VFttpbQMBWy0QvKpVpVd1T
-	N44GYYZunI6KUg94ghoUlsEjeHPqvK6Nmt9ipxm8787FgC3ikfqNgm
-X-Received: by 2002:a05:6300:4043:b0:1c6:a65f:299 with SMTP id adf61e73a8af0-1c904f90ef2mr8573471637.21.1724045528371;
-        Sun, 18 Aug 2024 22:32:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfY1mtazXzvZPKZXXvEgIN+BPCkjkxzP+b9taeLr8aFfpOnp+saDdQQE2L5lAzaE36b0XelSvG/TaA3sAYPBU=
-X-Received: by 2002:a05:6300:4043:b0:1c6:a65f:299 with SMTP id
- adf61e73a8af0-1c904f90ef2mr8573458637.21.1724045527922; Sun, 18 Aug 2024
- 22:32:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724045571; x=1724650371;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oqR1a1HiKAAgYWlHks8ofVwGaWEISuz4ja6NXbdxVZg=;
+        b=TjM2W7gVJE7S/XEhIg25vW8vO39F8uL3jBnMjfVnPJu4sExqV2AGqwvuNRmKGM/iHJ
+         4g5aWpgPSErYxycJi6ssGcnTmDKRLKCic5TTjwhMfEyuGa2BYfcQR7zwwwzCT94Lj50v
+         jHfkn1LOKNWvzk8gu6Qjymx0rloBKO6Oyp1NckfISJy/RGdAhGAT749lwOiAEZa/GShR
+         rf/CIVpACgexq0vcsXnsEmI218dQpJh1mRmu/cUBoIoOX4n0gJIbbsOt1wcryPUM+uIM
+         ejSk1L2/W4QkFUj4PM/kVkL4sbMonsh0K7UTwJAAmPsHHjd0aN0tvbSS0ZjHODZg0TQ6
+         HqzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXP/DDHd5GzYz88ZxD43aPIUHHnJg/ZZdw5y0nBEPggZLA3rDSyXTjrAvsI2kZ8ZjmCqGeuu1XyrSQdaMTnb/w7qXgLdAHdfTIb2vv1TPCG5TeC3Do71ZG2z/HTy4RBfQ/G1eTx2bnVfAF72w9Lk38ZyoVNljOFdGVhRilyu5X05fvi6aeC
+X-Gm-Message-State: AOJu0YwlOpKoqE/NCpONbEukAXMeZ5Y8V2L22ePtu5ZM3b1N+UCHx0oU
+	ndXATk54vyoexlekgSUnGVI63DRAhpz4w26KUOuUYM9KoO0uRC1n
+X-Google-Smtp-Source: AGHT+IHc46Hd7xYUEjHbb/SA+4dkb95sfFevgU5KmMo/m5s+/Or0UoAebrH/zswgvhC5QTOyr1fkyQ==
+X-Received: by 2002:a05:600c:4f52:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-429ed8a3958mr67251665e9.0.1724045570798;
+        Sun, 18 Aug 2024 22:32:50 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded287d0sm150001565e9.12.2024.08.18.22.32.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 22:32:50 -0700 (PDT)
+Message-ID: <e85236f6-ae6a-414d-9a0d-2aceb3311751@kernel.org>
+Date: Mon, 19 Aug 2024 07:32:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530085227.91168-1-kai.heng.feng@canonical.com> <20240816222800.GA75500@bhelgaas>
-In-Reply-To: <20240816222800.GA75500@bhelgaas>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Mon, 19 Aug 2024 13:31:55 +0800
-Message-ID: <CAAd53p7bdcJNH_XNNvSjon_=S_q-xaUBuctxXGabb7BKKh9eZA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PCI: ASPM: Allow OS to configure ASPM where BIOS is
- incapable of
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nirmal.patel@linux.intel.com, 
-	jonathan.derrick@linux.dev, ilpo.jarvinen@linux.intel.com, 
-	david.e.box@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] tty: Add N_TASHTALK line discipline for
+ TashTalk Localtalk serial driver
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Rodolfo Zitellini <rwz@xhero.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Doug Brown <doug@schmorgal.com>
+References: <20240817093258.9220-1-rwz@xhero.org>
+ <9f0e05fd-1e6b-4474-95e9-64af6ffa030d@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <9f0e05fd-1e6b-4474-95e9-64af6ffa030d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 17, 2024 at 6:28=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Thu, May 30, 2024 at 04:52:26PM +0800, Kai-Heng Feng wrote:
-> > Since commit f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM
-> > and LTR"), ASPM is configured for NVMe devices enabled in VMD domain.
-> >
-> > However, that doesn't cover the case when FADT has ACPI_FADT_NO_ASPM
-> > set.
-> >
-> > So add a new attribute to bypass aspm_disabled so OS can configure ASPM=
-.
-> >
-> > Fixes: f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM and LT=
-R")
-> > Link: https://lore.kernel.org/linux-pm/218aa81f-9c6-5929-578d-8dc15f83d=
-d48@panix.com/
-> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> > ---
-> >  drivers/pci/pcie/aspm.c | 8 ++++++--
-> >  include/linux/pci.h     | 1 +
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > index cee2365e54b8..e719605857b1 100644
-> > --- a/drivers/pci/pcie/aspm.c
-> > +++ b/drivers/pci/pcie/aspm.c
-> > @@ -1416,8 +1416,12 @@ static int __pci_enable_link_state(struct pci_de=
-v *pdev, int state, bool locked)
-> >        * the _OSC method), we can't honor that request.
-> >        */
-> >       if (aspm_disabled) {
-> > -             pci_warn(pdev, "can't override BIOS ASPM; OS doesn't have=
- ASPM control\n");
-> > -             return -EPERM;
-> > +             if (aspm_support_enabled && pdev->aspm_os_control)
-> > +                     pci_info(pdev, "BIOS can't program ASPM, let OS c=
-ontrol it\n");
-> > +             else {
-> > +                     pci_warn(pdev, "can't override BIOS ASPM; OS does=
-n't have ASPM control\n");
-> > +                     return -EPERM;
->
-> 1) I dislike having this VMD-specific special case in the generic
-> code.
+On 19. 08. 24, 7:16, Jiri Slaby wrote:
+> Where is 2/2?
+> 
+> It cannot be seen:
+> https://lore.kernel.org/all/20240817093258.9220-1-rwz@xhero.org/#r
 
-This can be generalized to "FDAT doesn't want OS to touch ASPM but
-exceptions should be made" like external PCIe devices connected via
-Thunderbolt:
-https://lore.kernel.org/linux-pci/20230615070421.1704133-1-kai.heng.feng@ca=
-nonical.com/
+It's a separate <20240817093316.9239-1-rwz@xhero.org>. Please fix 
+threading when sending next time.
 
->
-> 2) I think the "BIOS can't program ASPM ..." message is a little bit
-> misleading.  We're making the assumption that BIOS doesn't know about
-> devices below the VMD bridge, but we really don't know that.  BIOS
-> *could* have a VMD driver, and it could configure ASPM below the VMD.
-> We're just assuming that it doesn't.
->
-> It's also a little bit too verbose -- I think we get this message for
-> *every* device below VMD?  Maybe the vmd driver could print something
-> about ignoring the ACPI FADT "PCIe ASPM Controls" bit once per VMD?
-> Then it's clearly connected to something firmware folks know about.
+-- 
+js
+suse labs
 
-Will do in next revision.
-
->
-> 3) The code ends up looking like this:
->
->   if (aspm_disabled) {
->     if (aspm_support_enabled && pdev->aspm_os_control)
->       pci_info(pdev, "BIOS can't program ASPM, let OS control it\n");
->     else {
->       pci_warn(pdev, "can't override BIOS ASPM; OS doesn't have ASPM cont=
-rol\n");
->       return -EPERM;
->     }
->   }
->
-> and I think it's confusing to check "aspm_support_enabled" and
-> "pdev->aspm_os_control" after we've already decided that ASPM is
-> sort of disabled by "aspm_disabled".
->
-> Plus, we're left with questions about all the *other* tests of
-> "aspm_disabled" in pcie_aspm_sanity_check(),
-> pcie_aspm_pm_state_change(), pcie_aspm_powersave_config_link(),
-> __pci_disable_link_state(), etc.  Why do they *not* need this change?
-
-They all need similar change, yes.
-
->
-> And what about pcie_aspm_init_link_state()?  Why doesn't *it* pay
-> attention to "aspm_disabled"?  It's all very complicated.
-
-It's already very complicated by aspm_disabled, aspm_force and
-aspm_support_enabled.
-We should define the relation between _OSC/FADT/driver/user override, etc.
-
-Probably some helper functions to determine the ASPM status, instead
-of checking aspm_disabled and aspm_support_enabled directly.
-
->
-> This is similar in some ways to native_aer, native_pme, etc., which we
-> negotiate with _OSC.  I wonder if we could make something similar for
-> this, since it's another case where we want to make something specific
-> to a host bridge instead of global.
-
-I thinks it's possible by adding a new flag, but how should
-pcie_aspm_init_link_state() check it? Adding a new parameter or find
-the host bridge to check the new flag?
-
->
-> > +             }
-> >       }
-> >
-> >       if (!locked)
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index fb004fd4e889..58cbd4bea320 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -467,6 +467,7 @@ struct pci_dev {
-> >       unsigned int    no_command_memory:1;    /* No PCI_COMMAND_MEMORY =
-*/
-> >       unsigned int    rom_bar_overlap:1;      /* ROM BAR disable broken=
- */
-> >       unsigned int    rom_attr_enabled:1;     /* Display of ROM attribu=
-te enabled? */
-> > +     unsigned int    aspm_os_control:1;      /* Display of ROM attribu=
-te enabled? */
->
-> Comment is wrong (but I hope we can avoid a per-device bit anyway).
-
-Will make it right in next revision.
-
-Kai-Heng
-
->
-> >       pci_dev_flags_t dev_flags;
-> >       atomic_t        enable_cnt;     /* pci_enable_device has been cal=
-led */
-> >
-> > --
-> > 2.43.0
-> >
 
