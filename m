@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-291419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAF2956256
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE1B956258
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC061F224C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68EE81C21460
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D56B13D286;
-	Mon, 19 Aug 2024 04:07:20 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76EA13C901;
+	Mon, 19 Aug 2024 04:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpeTuXhY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6228801;
-	Mon, 19 Aug 2024 04:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010C98801;
+	Mon, 19 Aug 2024 04:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724040439; cv=none; b=LfYnC4COGlWtxnBEldQHWrfk5aMH6i+2j5Hhm9tLJTvGVgUGYved7Xj/ZNOo3e8bJ0p4U71N/NHEJmCjoMvAg70RHiaciGicYW7Umyga5FRg7/BvTb35z6T8Wkf612BxRYJTR12GHxQJiD9tmk4oAsJtL9QZJptL1HTtGbhr+4k=
+	t=1724040487; cv=none; b=n81ZpMlSag8myUzpSV8sRRRaT1GT/c/O1P1tzjFIyH5MScn1akf1gAZTantaoz3siizHgOx8RqUwl+VZl3SNO23or63KuLXKKYvBA4dQsT/UyJTBWn9XxTnRo2RYIOe+KK/V5K71uqXTwfl2A+aowExAhnHDnvIqmLo00Xq1dX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724040439; c=relaxed/simple;
-	bh=YC4pg6rIZ6V7oITQ3r15iFjLXh/SwMR391VwGJ8UtSc=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mstztF0A1T5lLvbqijk2GxfSLShvjgd+dkka0LjzFuLCoI4s9xIsCLxhmV69ragsPr0iZ4kJeUaB1dBk1990C7QhoCDbG7eK8CHD33Lz6bIgJ0SnmItsN/G9igwNI3UzPBIZXm7RUbm5LzYrmKJuqcqHmP7qqcgQWo/c+Zs+XnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WnJvL639szyR0y;
-	Mon, 19 Aug 2024 12:06:54 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 00D231800F2;
-	Mon, 19 Aug 2024 12:07:15 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 19 Aug 2024 12:07:14 +0800
-Subject: Re: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in
- progress
-To: Damien Le Moal <dlemoal@kernel.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240817015019.3467765-1-liyihang9@huawei.com>
- <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bvanassche@acm.org>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
-	<stable@vger.kernel.org>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
-Date: Mon, 19 Aug 2024 12:07:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1724040487; c=relaxed/simple;
+	bh=EdjsfFNyq71mMomOZiIHYI68CMDH/Zb5Vog4ryMsat8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QZ1t7NbtwsyJOer/RptgXv2rVi5Ix8Ydtnkfbh/9V+HE8RsIr1wkWnQodMVVjsBsdCIIKUL2doJnUCbe6Fm1EmDzFBJhZvxMnkuLGqQVPLtMUwWbp7uj88H4hxr5HNt5ChdDwQ1JKiisVA1wGoK6T1HfYM7iWwkHiabrH1i28xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpeTuXhY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D453CC32782;
+	Mon, 19 Aug 2024 04:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724040486;
+	bh=EdjsfFNyq71mMomOZiIHYI68CMDH/Zb5Vog4ryMsat8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KpeTuXhYkmanBaAwFma2Go5u0uQDbGwUcEd4/G7VugViYxmzDwFK2F8n5YVo/jjIS
+	 AuK+oCUT2B26M8NBeUbsZgu6cfg10dQLgq26uHAmvb9UEyvz/rnfQaNSXmnoCHAl4v
+	 o5HFeINmu8aa0AkMmCDhK18EIhqo9OFDoUbJGZL5BqBXnNlQOeX+8BXruEG4SKWi9t
+	 cY3awa+Ke42wAImV8Lumj3Pg9XHfjMeZ/kYFJy/fQMQjfatLYa9pPfY+ED/bDafOzz
+	 F0OSwQY2oD++gomMxUeRrFuK2uI7g+BH6zrc8uv2jnXtbAZdhgrth+r6UXVPNV9Anw
+	 nx3pua7c+5Psw==
+Message-ID: <55ca393e-e2e9-45ef-8eb0-050d79c92987@kernel.org>
+Date: Mon, 19 Aug 2024 13:08:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] zonefs: add support for FS_IOC_GETFSSYSFSPATH
+To: Liao Chen <liaochen4@huawei.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, naohiro.aota@wdc.com, jth@kernel.org
+References: <20240809013627.3546649-1-liaochen4@huawei.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240809013627.3546649-1-liaochen4@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf100013.china.huawei.com (7.185.36.179)
 
-
-
-On 2024/8/19 7:55, Damien Le Moal wrote:
-> On 8/17/24 10:50, Yihang Li wrote:
->> If formatting a suspended disk (such as formatting with different DIF
->> type), the disk will be resuming first, and then the format command will
->> submit to the disk through SG_IO ioctl.
->>
->> When the disk is processing the format command, the system does not submit
->> other commands to the disk. Therefore, the system attempts to suspend the
->> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+On 8/9/24 10:36, Liao Chen wrote:
+> FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
+> format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
+> standardizes exporting sysfs datas across filesystems.
 > 
-> Why would the system try to suspend the disk with a request in flight ? Sounds
-> like there is a bug with PM reference counting, no ?
-
-According to my understand and test, the format command request is finished,
-so it is not in flight for the kernel. And the command need a few time to processing
-in the disk while no other commands are being sent.
-
+> This patch wires up FS_IOC_GETFSSYSFSPATH for zonefs, it will output
+> "zonefs/<dev>".
 > 
->> command will fail because the disk is in the formatting process, which
->> will cause the runtime_status of the disk to error and it is difficult
->> for user to recover it. Error info like:
->>
->> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
->> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
->> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
->> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
->>
->> To solve the issue, retry the command until format command is finished.
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Yihang Li <liyihang9@huawei.com>
->> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
->> ---
->> Changes since v3:
->> - Add Cc tag for kernel stable.
->>
->> Changes since v2:
->> - Add Reviewed-by for Bart.
->>
->> Changes since v1:
->> - Updated and added error information to the patch description.
->>
->> ---
->>  drivers/scsi/sd.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->> index adeaa8ab9951..5cd88a8eea73 100644
->> --- a/drivers/scsi/sd.c
->> +++ b/drivers/scsi/sd.c
->> @@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
->>  			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
->>  				/* this is no error here */
->>  				return 0;
->> +
->> +			/* retry if format in progress */
->> +			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
->> +				return -EBUSY;
->> +
->>  			/*
->>  			 * This drive doesn't support sync and there's not much
->>  			 * we can do because this is called during shutdown
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> ---
+>  fs/zonefs/super.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index faf1eb87895d..e180daa39578 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -1262,6 +1262,7 @@ static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	sb->s_maxbytes = 0;
+>  	sb->s_op = &zonefs_sops;
+>  	sb->s_time_gran	= 1;
+> +	super_set_sysfs_name_id(sb);
+
+Can you resend the patch with this call moved to the beginning of
+zonefs_sysfs_register() in fs/zonefs/sysfs.c ?
+Thanks.
+
+>  
+>  	/*
+>  	 * The block size is set to the device zone write granularity to ensure
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
