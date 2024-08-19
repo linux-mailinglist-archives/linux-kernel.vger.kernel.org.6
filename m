@@ -1,125 +1,134 @@
-Return-Path: <linux-kernel+bounces-291649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B2795652F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEF4956531
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444F71C2185F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:05:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EB11C21718
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F97815ADA4;
-	Mon, 19 Aug 2024 08:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAB313E03E;
+	Mon, 19 Aug 2024 08:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhIPaXf2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WZMFY9Fs"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A2BA41;
-	Mon, 19 Aug 2024 08:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A1FA41
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724054735; cv=none; b=WNkKBoZqeqAIPdFug2/ZxeYh5VX/Ejb5+B2zgTmoCugQRw4cEdhqYjRxjkaktAs2oepwLHIyF30FsZX/QUnSZ87ocK50/j7E4w4rhJRpZmwBKwWISt93XE1sW66Ptldk74EMZg4JxKHNWjUTLvZ011zf2YQB1nGDNVYMIEMw6FM=
+	t=1724054794; cv=none; b=rsugYoRpLVHsD8Z/Muj5lKfaL7mXoQg2mcYC/f/vQk9jHhQWkZNKh/QlogAB9lxIi1cD6qDpWuV4rnfqVGI5b470MoWvPSx0dJylEKhsIsnnC0XbvrsDPaAaJQTNtqKXtn6r1xQ+ZvyWKKl+7mIhbZu55wSebg4rmynpF0ci7j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724054735; c=relaxed/simple;
-	bh=qTLlMvCknfzYIXgomDhar1yRYupQHhiL/5bujdbobYU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B9DbGuaGNmiFoN1bSL2O2jLxSZzUF0m3WbFvI/DLyWp/lLF3P+YVaVn+hFVGg70KdzkLQL+TeRlydWgV6HQGmoz5fFu5vO5Dq+vDUHoI6G2+Ha15QSL9jxyiJ4VoJkQhNn1MccaRQKnTc95z+9/FBOP8hEUqKwc4dtrfyyywS20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhIPaXf2; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724054734; x=1755590734;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qTLlMvCknfzYIXgomDhar1yRYupQHhiL/5bujdbobYU=;
-  b=WhIPaXf2vPaiyt4yLVu5tJ6rS37RXHX0HWHbKaMoH80dg3k8ki6Y8pC5
-   drRmEhMVBcikMsBe+o9tih2RVHpf2ag5k5EUZ460IFBppMAvT0hJBKoGT
-   TwEWFYhEea62UZeyOTewAooUs3lzr8jKJ1OsooVT421FiSn8mj0On1ZyO
-   +BCZ64/+fQ7e/8WXAkRi6iMrQyOC4NjgK4xztNi/vn2ZsvWFiEm7cZh6i
-   DN039F8PrPRxRTwiKVpP820QpqjHSCjxUwsgJPyX/pchFbPc2LJFwGj1u
-   x8uPuKM+6uMZZ6aDF5QE3A5t6ww4XfecpZjNnl+AftMq6rB1daNAN8wkW
-   Q==;
-X-CSE-ConnectionGUID: qKQ7fFjPSAuRHw7myF6GjA==
-X-CSE-MsgGUID: P35+yd8MS+ae9SlucZe7yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="32860711"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="32860711"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:05:33 -0700
-X-CSE-ConnectionGUID: 4suJzyIyQW6Xwew2GYdv0g==
-X-CSE-MsgGUID: fRHHfVNJQYOl9BiBhQvdMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="91066892"
-Received: from inesxmail01.iind.intel.com ([10.223.57.40])
-  by fmviesa001.fm.intel.com with ESMTP; 19 Aug 2024 01:05:31 -0700
-Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
-	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 3F74B15B51;
-	Mon, 19 Aug 2024 13:35:30 +0530 (IST)
-Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
-	id 3A21C1600101; Mon, 19 Aug 2024 13:35:30 +0530 (IST)
-From: Raag Jadav <raag.jadav@intel.com>
-To: ukleinek@kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	jarkko.nikula@linux.intel.com
-Cc: linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1] pwm: lpss: wait_for_update() before configuring pwm
-Date: Mon, 19 Aug 2024 13:34:12 +0530
-Message-Id: <20240819080412.15115-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1724054794; c=relaxed/simple;
+	bh=QrhkplzZ3C1wQsKojQLSkMO9AP8r2EkZYjP5r4HsDwg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ecvQlNgu3Vg1uD/KHkwsM4cNz7k6QoJZ9cyDfsTESTzcFisRi9hGX+/yAI0Y08cSgcSO2ALwwaAbIsWN5TCBvqDzwMzNsYHp/d4ZJFsbH52D8gWa9Bed9ytY4E9nA3QIyYPLP/TFsFjxhpR96q5OXg5KvD2XUEUzRjy5TQkfcPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WZMFY9Fs; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724054788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KGKlfmVH3LtzPnGo4UI3D1e5HnpdM5cATPN6KN5WYuo=;
+	b=WZMFY9FsjKIVqUC/CRbiorNOiNC+loMz1N+EbLC2aIU5q84BYb/2rfyLzwwBCa6Ycls+gv
+	6un6CeNucq7NwI9ArNkVjbj6vgEvRSaZ6PULDGvIEfYa0hI8jFhnKOs4l502Gin4DIgX+b
+	sCiK/CoqoVT9PaeML70C7QnZ0MUfhz4=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [syzbot] [cgroups?] [mm?] WARNING in folio_memcg
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <0000000000006f7e4d0620042b96@google.com>
+Date: Mon, 19 Aug 2024 16:05:41 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ cgroups@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>,
+ Muchun Song <songmuchun@bytedance.com>,
+ syzkaller-bugs@googlegroups.com,
+ Vlastimil Babka <vbabka@suse.cz>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B2518F6C-7652-4AE5-AE57-39380E79932D@linux.dev>
+References: <0000000000006f7e4d0620042b96@google.com>
+To: syzbot <syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Wait for SW_UPDATE bit to clear before configuring pwm channel instead of
-failing right away, which will reduce failure rates on early access.
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/pwm/pwm-lpss.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
-index 867e2bc8c601..4a634a43b133 100644
---- a/drivers/pwm/pwm-lpss.c
-+++ b/drivers/pwm/pwm-lpss.c
-@@ -111,16 +111,6 @@ static int pwm_lpss_wait_for_update(struct pwm_device *pwm)
- 	return err;
- }
- 
--static inline int pwm_lpss_is_updating(struct pwm_device *pwm)
--{
--	if (pwm_lpss_read(pwm) & PWM_SW_UPDATE) {
--		dev_err(pwmchip_parent(pwm->chip), "PWM_SW_UPDATE is still set, skipping update\n");
--		return -EBUSY;
--	}
--
--	return 0;
--}
--
- static void pwm_lpss_prepare(struct pwm_lpss_chip *lpwm, struct pwm_device *pwm,
- 			     int duty_ns, int period_ns)
- {
-@@ -168,7 +158,7 @@ static int pwm_lpss_prepare_enable(struct pwm_lpss_chip *lpwm,
- {
- 	int ret;
- 
--	ret = pwm_lpss_is_updating(pwm);
-+	ret = pwm_lpss_wait_for_update(pwm);
- 	if (ret)
- 		return ret;
- 
--- 
-2.35.3
+> On Aug 19, 2024, at 15:22, syzbot =
+<syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com> wrote:
+>=20
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    367b5c3d53e5 Add linux-next specific files for =
+20240816
+> git tree:       linux-next
+> console+strace: =
+https://syzkaller.appspot.com/x/log.txt?x=3D11be396b980000
+> kernel config:  =
+https://syzkaller.appspot.com/x/.config?x=3D61ba6f3b22ee5467
+> dashboard link: =
+https://syzkaller.appspot.com/bug?extid=3Def4ecf7b6bdc4157bfa4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+> syz repro:      =
+https://syzkaller.appspot.com/x/repro.syz?x=3D147469f5980000
+> C reproducer:   =
+https://syzkaller.appspot.com/x/repro.c?x=3D153c5ad5980000
+>=20
+> Downloadable assets:
+> disk image: =
+https://storage.googleapis.com/syzbot-assets/0b1b4e3cad3c/disk-367b5c3d.ra=
+w.xz
+> vmlinux: =
+https://storage.googleapis.com/syzbot-assets/5bb090f7813c/vmlinux-367b5c3d=
+.xz
+> kernel image: =
+https://storage.googleapis.com/syzbot-assets/6674cb0709b1/bzImage-367b5c3d=
+.xz
+>=20
+> The issue was bisected to:
+>=20
+> commit ebadc95608dc3ee87ad4e5dc4f2c665c709bb899
+> Author: Muchun Song <songmuchun@bytedance.com>
+> Date:   Wed Aug 14 09:34:15 2024 +0000
+>=20
+>    mm: kmem: add lockdep assertion to obj_cgroup_memcg
+>=20
+> bisection log:  =
+https://syzkaller.appspot.com/x/bisect.txt?x=3D170875f5980000
+> final oops:     =
+https://syzkaller.appspot.com/x/report.txt?x=3D148875f5980000
+> console output: =
+https://syzkaller.appspot.com/x/log.txt?x=3D108875f5980000
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the =
+commit:
+> Reported-by: syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com
+
+Thanks for your report. I've fixed this in patch [1].
+
+[1] =
+https://lore.kernel.org/linux-mm/20240819080415.44964-1-songmuchun@bytedan=
+ce.com/T/#u
 
 
