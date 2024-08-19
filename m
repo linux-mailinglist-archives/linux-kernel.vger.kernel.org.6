@@ -1,341 +1,359 @@
-Return-Path: <linux-kernel+bounces-291464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5109562F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:02:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70F39562FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3ABE1C212C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:02:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EF81F2236E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1E215B125;
-	Mon, 19 Aug 2024 04:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571AF149DF7;
+	Mon, 19 Aug 2024 05:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOegargB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTU2W4dB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5FF15A87F;
-	Mon, 19 Aug 2024 04:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353602556E;
+	Mon, 19 Aug 2024 05:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724043525; cv=none; b=RfwVOBZFEhFdVdjSgnWk6vA0BDppGyOtpl5fgiFzieYYxm56hn+wAj6ltD91uUiyrzPn3px6MlffWfhd+2oVy/1H9H1JimpfNoNUAQv1SwuaU6GtteLT7e0BmIpWgLSe9Tg2uMNUCgm7JXwgL4wIJcbXrre0aR6mtKXHYnb6I9o=
+	t=1724043862; cv=none; b=VCbHJoickP/mMvBuTP+2KNwpQVzNkyCS981LEnYIYaUI8XmBCCjoahtEfRPomx/Psz7PkXXo+TebvuZDS7L3JEsWLV8tDH1IJLKFcTIbSg5HswnGk6hsCUfCr7WGKPBUxRp9qEkaBy+i9TXZ4Y7Pgw6kcChjs9S71vnfBvpmQZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724043525; c=relaxed/simple;
-	bh=pujRvm4ARPdX6ZSe8VlYOOI1pXoBBQFVAweJDtzA4fA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gh3C1ybF8rnKkPqZ69AgsDdagsXSEMZaMllgQaS07JcstSVovNN/x9vG+7fS1yuOh4oiWnix4RDWTn9kHZnZCIjW+oYZM0Lk6nA7auoDWrb7zx0gmXmhenGvGX0E8Sc7NSQHnrkFWisbvPeAJBjo7KcI+0qHBDBbe1dl6nXQlIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOegargB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20219a0fe4dso12788645ad.2;
-        Sun, 18 Aug 2024 21:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724043523; x=1724648323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcaRHM3+7D0S7NodLplOw/AYGyYPhnOV3W4X3E8TpD0=;
-        b=XOegargB0Baubnb0XGTm1rpMhRq6rbFhv72wL28uR4VYZaeoDqrbgEaO2IxqBxt2ji
-         atLztTbLjvWcJ0nNKK886fLW3MVk2uPDPum5EWOks5JZHpAK8lckTYd1vXr/eaSC2Ega
-         KEeeVhHo7WyvXprFfbmTlhZxcdz8wL6FI5awDRhGTc/FpHv/NM/sralpaMGMyYuiATzE
-         XyY0mWVjHdWmtb0kGyCCG7i1Cgo55izVCzIUrUygxAO08CUIl+f0/T/UZ/4B2OzubcgX
-         SniGLzz68uHtAB3md4miRyHp3j6fthTSeevv9GxdQ+A6nCX9HLODl0108x+7tF/2hz30
-         Hh1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724043523; x=1724648323;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mcaRHM3+7D0S7NodLplOw/AYGyYPhnOV3W4X3E8TpD0=;
-        b=vvF7AN1s5yS6UYCRJRyLbAlzHcE18/R8MHu0iiEgSttOVOonxaFEFMF9cJSbc84PgH
-         zFS9Qy2y/zbaLb/tpLQ+/lKlJ0SqS28/F2q7PNr4cY1w/FxFdVE67PPx3aB1hT0m7EZe
-         czcj0Xbj7FIDW9c76I5BnvoWe+sgh4NHGhjFkeQcam+DKi+Ep4PaGNWo7WLfZsVChNY3
-         g/QZWMnATcqoPvhpzaKDwQywB0kdx4L8XIp06SFHHwa1UIz3tk2SLTSOVCB9y34vmf09
-         hIlQZrfOj7A40tSYJhPcm5JlSiZvKgA670ZmHarSKtRcQ+cqbDo4R8Dl6Sb8eCljGKSx
-         aVUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtoJrpgD7U5Nl5AD9FrP+GtApFm0dWdR2m1Pbzsx/0XlIRM1D4k/OfdNSWusyW6KQ+hIlLY8UE+JhdDrlPXqIHYQG1Iy6d1h2adYXcXItqRLceuXLMLlJ3ddN7ZjNUBPVtXaSn1RauLHAHCJ6YZsNI84BbUZp9v59p30xBhBjvMhvinwQiJqmM6nNS
-X-Gm-Message-State: AOJu0YwqkUP23cBFneZnrtkh2MxU6DJ8lU1M523XDYQnCkhqTdNm9Kez
-	xgoZzH+RRvdaN7fwVPMVx85DcRNs9RgDtVfKnZ2IvvJXEdrbqhtK
-X-Google-Smtp-Source: AGHT+IHM1aUHr6FlaVm7qvuOxYje+ccNPFOl/JhsZ8ri8UtXMzODBg9MkExumxB7dA0FrEYWROONhg==
-X-Received: by 2002:a17:902:cec9:b0:202:1033:8d25 with SMTP id d9443c01a7336-202195f9591mr81380085ad.35.1724043522899;
-        Sun, 18 Aug 2024 21:58:42 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:4eb5:4500:6efc:6c24])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-202068497b4sm43483445ad.269.2024.08.18.21.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 21:58:42 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: [PATCH 14/14] ARM: s3c: crag6410 - convert GPIO lookup tables to property entries
-Date: Sun, 18 Aug 2024 21:58:11 -0700
-Message-ID: <20240819045813.2154642-15-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1724043862; c=relaxed/simple;
+	bh=DB9WcJmbBlrGDUK/yLs+kZJ47/oOQAEYWS9fKe1ktAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8VdMUH26mhax+3RYlW2DUxkDGWprxXyRkOhKKGxfpHJgFMAhf3rz+L3YZG1c1y5Ksh3BxcJ8BfjpiFTJ9LXmZ2Sr3EUyEIvaLPGbCeh++v7NtFYmxNQVZ03HFwUrcXl+nVEHvjj5KAM6roi7f7X5FhrO/N8v3cX+kwZlPXTp0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTU2W4dB; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724043860; x=1755579860;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DB9WcJmbBlrGDUK/yLs+kZJ47/oOQAEYWS9fKe1ktAg=;
+  b=lTU2W4dBJWjXIdtK/omQUts6k99h/XDHHK65rusKjr8eA8BUE+hVAcjS
+   d3shGtTDlX2u9PdZH9u1+k0mmYZNmSRa1HjoHl7Ug6LmW6GWSjTjpT5My
+   GeHE2hf0tmowdSTZDA9WOd8LIgBlGI8eQZign+DdvS9zYJTR980Nr8YZs
+   6aGt/lD6EY9KmVdU0RwDbGlPxbGzOWd62Vd6wZFtzjFSc7ZfAoyDBmKPq
+   yjjoGhvPAqKOuN4GBFlqQiu4WPPaFls7KEUoIdbI1If10Ro2on6Fjv0FI
+   eOncqhwMc1vGDCFF+Xi7Lv6EODqQIIXSpsoBTuxVo3XauILa6TQdPmE2d
+   g==;
+X-CSE-ConnectionGUID: m+tjxytIQz+4FEuz2krePg==
+X-CSE-MsgGUID: UBm0QfAPQJSVX8G2ekWCfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="21889708"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="21889708"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 22:04:20 -0700
+X-CSE-ConnectionGUID: kyftsm2yQziOwMY9s8PX6g==
+X-CSE-MsgGUID: UdKmdW3PRImYy96mGm6DfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="61021709"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa008.jf.intel.com with ESMTP; 18 Aug 2024 22:04:17 -0700
+Date: Mon, 19 Aug 2024 13:02:02 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+	kai.huang@intel.com, isaku.yamahata@gmail.com,
+	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 21/25] KVM: x86: Introduce KVM_TDX_GET_CPUID
+Message-ID: <ZsLRyk5F9SRgafIO@yilunxu-OptiPlex-7050>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-22-rick.p.edgecombe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812224820.34826-22-rick.p.edgecombe@intel.com>
 
-Static property entries support defining GPIOs and are more similar to
-device tree properties and are not prone to losing link between device
-and a lookup table because of changes in device name. Convert the board
-to use them.
+On Mon, Aug 12, 2024 at 03:48:16PM -0700, Rick Edgecombe wrote:
+> From: Xiaoyao Li <xiaoyao.li@intel.com>
+> 
+> Implement an IOCTL to allow userspace to read the CPUID bit values for a
+> configured TD.
+> 
+> The TDX module doesn't provide the ability to set all CPUID bits. Instead
+> some are configured indirectly, or have fixed values. But it does allow
+> for the final resulting CPUID bits to be read. This information will be
+> useful for userspace to understand the configuration of the TD, and set
+> KVM's copy via KVM_SET_CPUID2.
+> 
+> To prevent userspace from starting to use features that might not have KVM
+> support yet, filter the reported values by KVM's support CPUID bits.
+> 
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v1:
+>  - New patch
+> ---
+>  arch/x86/include/uapi/asm/kvm.h |   1 +
+>  arch/x86/kvm/vmx/tdx.c          | 131 ++++++++++++++++++++++++++++++++
+>  arch/x86/kvm/vmx/tdx.h          |   5 ++
+>  arch/x86/kvm/vmx/tdx_arch.h     |   5 ++
+>  arch/x86/kvm/vmx/tdx_errno.h    |   1 +
+>  5 files changed, 143 insertions(+)
+> 
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index b4f12997052d..39636be5c891 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -931,6 +931,7 @@ enum kvm_tdx_cmd_id {
+>  	KVM_TDX_CAPABILITIES = 0,
+>  	KVM_TDX_INIT_VM,
+>  	KVM_TDX_INIT_VCPU,
+> +	KVM_TDX_GET_CPUID,
+>  
+>  	KVM_TDX_CMD_NR_MAX,
+>  };
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index b2ed031ac0d6..fe2bbc2ced41 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -813,6 +813,76 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
+>  	return ret;
+>  }
+>  
+> +static u64 tdx_td_metadata_field_read(struct kvm_tdx *tdx, u64 field_id,
+> +				      u64 *data)
+> +{
+> +	u64 err;
+> +
+> +	err = tdh_mng_rd(tdx, field_id, data);
+> +
+> +	return err;
+> +}
+> +
+> +#define TDX_MD_UNREADABLE_LEAF_MASK	GENMASK(30, 7)
+> +#define TDX_MD_UNREADABLE_SUBLEAF_MASK	GENMASK(31, 7)
+> +
+> +static int tdx_mask_cpuid(struct kvm_tdx *tdx, struct kvm_cpuid_entry2 *entry)
+> +{
+> +	u64 field_id = TD_MD_FIELD_ID_CPUID_VALUES;
+> +	u64 ebx_eax, edx_ecx;
+> +	u64 err = 0;
+> +
+> +	if (entry->function & TDX_MD_UNREADABLE_LEAF_MASK ||
+> +	    entry->index & TDX_MD_UNREADABLE_SUBLEAF_MASK)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * bit 23:17, REVSERVED: reserved, must be 0;
+> +	 * bit 16,    LEAF_31: leaf number bit 31;
+> +	 * bit 15:9,  LEAF_6_0: leaf number bits 6:0, leaf bits 30:7 are
+> +	 *                      implicitly 0;
+> +	 * bit 8,     SUBLEAF_NA: sub-leaf not applicable flag;
+> +	 * bit 7:1,   SUBLEAF_6_0: sub-leaf number bits 6:0. If SUBLEAF_NA is 1,
+> +	 *                         the SUBLEAF_6_0 is all-1.
+> +	 *                         sub-leaf bits 31:7 are implicitly 0;
+> +	 * bit 0,     ELEMENT_I: Element index within field;
+> +	 */
+> +	field_id |= ((entry->function & 0x80000000) ? 1 : 0) << 16;
+> +	field_id |= (entry->function & 0x7f) << 9;
+> +	if (entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX)
+> +		field_id |= (entry->index & 0x7f) << 1;
+> +	else
+> +		field_id |= 0x1fe;
+> +
+> +	err = tdx_td_metadata_field_read(tdx, field_id, &ebx_eax);
+> +	if (err) //TODO check for specific errors
+> +		goto err_out;
+> +
+> +	entry->eax &= (u32) ebx_eax;
+> +	entry->ebx &= (u32) (ebx_eax >> 32);
 
-This also fixes issue with recent conversion to GPIO descriptors
-where GPIO lookup tables were specifying incorrect GPIO chip name
-("GPIO<N>" vs "GP<N>").
+Some fields contains a N-bits wide value instead of a bitmask, why a &=
+just work?
 
-Fixes: 10a366f36e2a ("ASoC: wm1250-ev1: Convert to GPIO descriptors")
-Fixes: a45cf3cc72dd ("spi: s3c64xx: Convert to use GPIO descriptors")
-Fixes: 9a5ed0bac86e ("regulator: wm831x: Convert to use GPIO descriptors")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- arch/arm/mach-s3c/devs.c          |  35 ----------
- arch/arm/mach-s3c/devs.h          |   1 -
- arch/arm/mach-s3c/mach-crag6410.c | 108 ++++++++++++++++++------------
- 3 files changed, 67 insertions(+), 77 deletions(-)
+> +
+> +	field_id++;
+> +	err = tdx_td_metadata_field_read(tdx, field_id, &edx_ecx);
+> +	/*
+> +	 * It's weird that reading edx_ecx fails while reading ebx_eax
+> +	 * succeeded.
+> +	 */
+> +	if (WARN_ON_ONCE(err))
+> +		goto err_out;
+> +
+> +	entry->ecx &= (u32) edx_ecx;
+> +	entry->edx &= (u32) (edx_ecx >> 32);
+> +	return 0;
+> +
+> +err_out:
+> +	entry->eax = 0;
+> +	entry->ebx = 0;
+> +	entry->ecx = 0;
+> +	entry->edx = 0;
+> +
+> +	return -EIO;
+> +}
+> +
+>  static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>  {
+>  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> @@ -1038,6 +1108,64 @@ static int __maybe_unused tdx_get_kvm_supported_cpuid(struct kvm_cpuid2 **cpuid)
+>  	return r;
+>  }
+>  
+> +static int tdx_vcpu_get_cpuid(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
+> +{
+> +	struct kvm_cpuid2 __user *output, *td_cpuid;
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+> +	struct kvm_cpuid2 *supported_cpuid;
+> +	int r = 0, i, j = 0;
+> +
+> +	output = u64_to_user_ptr(cmd->data);
+> +	td_cpuid = kzalloc(sizeof(*td_cpuid) +
+> +			sizeof(output->entries[0]) * KVM_MAX_CPUID_ENTRIES,
+> +			GFP_KERNEL);
+> +	if (!td_cpuid)
+> +		return -ENOMEM;
+> +
+> +	r = tdx_get_kvm_supported_cpuid(&supported_cpuid);
 
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 31827cfc5700..e24967cc648b 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -336,38 +336,3 @@ void __init dwc2_hsotg_set_platdata(struct dwc2_hsotg_plat *pd)
- 		npd->phy_exit = s3c_usb_phy_exit;
- }
- #endif /* CONFIG_S3C_DEV_USB_HSOTG */
--
--#ifdef CONFIG_S3C64XX_DEV_SPI0
--static struct resource s3c64xx_spi0_resource[] = {
--	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
--	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
--};
--
--struct platform_device s3c64xx_device_spi0 = {
--	.name		= "s3c6410-spi",
--	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s3c64xx_spi0_resource),
--	.resource	= s3c64xx_spi0_resource,
--	.dev = {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	},
--};
--
--void __init s3c64xx_spi0_set_platdata(int src_clk_nr, int num_cs)
--{
--	struct s3c64xx_spi_info pd;
--
--	/* Reject invalid configuration */
--	if (!num_cs || src_clk_nr < 0) {
--		pr_err("%s: Invalid SPI configuration\n", __func__);
--		return;
--	}
--
--	pd.num_cs = num_cs;
--	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = s3c64xx_spi0_cfg_gpio;
--
--	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
--}
--#endif /* CONFIG_S3C64XX_DEV_SPI0 */
-diff --git a/arch/arm/mach-s3c/devs.h b/arch/arm/mach-s3c/devs.h
-index 2737990063b1..90a86ade3570 100644
---- a/arch/arm/mach-s3c/devs.h
-+++ b/arch/arm/mach-s3c/devs.h
-@@ -27,7 +27,6 @@ extern struct platform_device *s3c24xx_uart_src[];
- 
- extern struct platform_device s3c64xx_device_iis0;
- extern struct platform_device s3c64xx_device_iis1;
--extern struct platform_device s3c64xx_device_spi0;
- 
- extern struct platform_device s3c_device_fb;
- extern struct platform_device s3c_device_hsmmc0;
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 6aa74db08af9..a7a25239793e 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -435,7 +435,6 @@ static struct platform_device *crag6410_devs0[] __initdata = {
- 
- static struct platform_device *crag6410_devs1[] __initdata = {
- 	&crag6410_dm9k_device,
--	&s3c64xx_device_spi0,
- 	&crag6410_mmgpio,
- 	&crag6410_lcd_powerdev,
- 	&crag6410_backlight_device,
-@@ -654,22 +653,13 @@ static struct wm831x_pdata crag_pmic_pdata = {
- 	.touch = &touch_pdata,
- };
- 
--/*
-- * VDDARM is eventually ending up as a regulator hanging on the MFD cell device
-- * "wm831x-buckv.1" spawn from drivers/mfd/wm831x-core.c.
-- *
-- * From the note on the platform data we can see that this is clearly DVS1
-- * and assigned as dcdc1 resource to the MFD core which sets .id of the cell
-- * spawning the DVS1 platform device to 1, then the cell platform device
-- * name is calculated from 10*instance + id resulting in the device name
-- * "wm831x-buckv.11"
-- */
--static struct gpiod_lookup_table crag_pmic_gpiod_table = {
--	.dev_id = "wm831x-buckv.11",
--	.table = {
--		GPIO_LOOKUP("GPIOK", 0, "dvs", GPIO_ACTIVE_HIGH),
--		{ },
--	},
-+static const struct property_entry crag_pmic_properties[] = {
-+	PROPERTY_ENTRY_GPIO("dvs-gpios",
-+			    SAMSUNG_GPIO_NODE('K'), 0, GPIO_ACTIVE_HIGH),
-+	{ }
-+};
-+static const struct software_node crag_pmic_swnode = {
-+	.properties = crag_pmic_properties,
- };
- 
- static struct i2c_board_info i2c_devs0[] = {
-@@ -680,6 +670,7 @@ static struct i2c_board_info i2c_devs0[] = {
- 	{ I2C_BOARD_INFO("wm8312", 0x34),
- 	  .platform_data = &crag_pmic_pdata,
- 	  .irq = S3C_EINT(23),
-+	  .swnode = &crag_pmic_swnode,
- 	},
- };
- 
-@@ -774,17 +765,22 @@ static struct wm831x_pdata glenfarclas_pmic_pdata = {
- 	.disable_touch = true,
- };
- 
--static struct gpiod_lookup_table crag_wm1250_ev1_gpiod_table = {
--	/* The WM1250-EV1 is device 0027 on I2C bus 1 */
--	.dev_id = "1-0027",
--	.table = {
--		GPIO_LOOKUP("GPION", 12, "clk-ena", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 12, "clk-sel0", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 13, "clk-sel1", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 14, "osr", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 8, "master", GPIO_ACTIVE_HIGH),
--		{ },
--	},
-+static const struct property_entry crag_wm1250_ev1_properties[] = {
-+	PROPERTY_ENTRY_GPIO("clk-ena-gpios",
-+			    SAMSUNG_GPIO_NODE('N'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel0-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel1-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 13, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("osr-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 14, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("master-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 8, GPIO_ACTIVE_HIGH),
-+	{ }
-+};
-+
-+static const struct software_node crag_wm1250_ev1_swnode = {
-+	.properties = crag_wm1250_ev1_properties,
- };
- 
- static struct i2c_board_info i2c_devs1[] = {
-@@ -797,7 +793,8 @@ static struct i2c_board_info i2c_devs1[] = {
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x24) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x25) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x26) },
--	{ I2C_BOARD_INFO("wm1250-ev1", 0x27), },
-+	{ I2C_BOARD_INFO("wm1250-ev1", 0x27),
-+          .swnode = &crag_wm1250_ev1_swnode, },
- };
- 
- static struct s3c2410_platform_i2c i2c1_pdata = {
-@@ -887,15 +884,48 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 
- static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
- 
--static struct gpiod_lookup_table crag_spi0_gpiod_table = {
--	.dev_id = "s3c6410-spi.0",
--	.table = {
--		GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
--		GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
--		{ },
--	},
-+static const struct software_node_ref_args crag6410_spi0_gpio_refs[] = {
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('C'), 3, GPIO_ACTIVE_LOW),
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('N'), 5, GPIO_ACTIVE_LOW),
-+};
-+
-+static const struct property_entry crag6410_spi0_properties[] __initconst = {
-+	PROPERTY_ENTRY_REF_ARRAY("cs-gpios", crag6410_spi0_gpio_refs),
-+	{ }
- };
- 
-+static const struct resource crag6410_spi0_resource[] __initconst = {
-+	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
-+};
-+
-+static const struct s3c64xx_spi_info crag6410_spi0_platform_data __initconst = {
-+	.num_cs = 2,
-+	.cfg_gpio = s3c64xx_spi0_cfg_gpio,
-+};
-+
-+static const struct platform_device_info crag6410_spi0_info __initconst = {
-+	.name		= "s3c6410-spi",
-+	.id		= 0,
-+	.res		= crag6410_spi0_resource,
-+	.num_res	= ARRAY_SIZE(crag6410_spi0_resource),
-+	.data		= &crag6410_spi0_platform_data,
-+	.size_data	= sizeof(crag6410_spi0_platform_data),
-+	.dma_mask	= DMA_BIT_MASK(32),
-+	.properties	= crag6410_spi0_properties,
-+};
-+
-+static void __init crag6410_setup_spi0(void)
-+{
-+	struct platform_device *pd;
-+	int err;
-+
-+	pd = platform_device_register_full(&crag6410_spi0_info);
-+	err = PTR_ERR_OR_ZERO(pd);
-+	if (err)
-+		pr_err("failed to create spi0 device: %d\n", err);
-+}
-+
- static void __init crag6410_machine_init(void)
- {
- 	/* Open drain IRQs need pullups */
-@@ -922,19 +952,15 @@ static void __init crag6410_machine_init(void)
- 	s3c_fb_set_platdata(&crag6410_lcd_pdata);
- 	dwc2_hsotg_set_platdata(&crag6410_hsotg_pdata);
- 
--	gpiod_add_lookup_table(&crag_pmic_gpiod_table);
- 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
--	gpiod_add_lookup_table(&crag_wm1250_ev1_gpiod_table);
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
--	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
--	s3c64xx_spi0_set_platdata(0, 2);
--
- 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
- 	platform_add_devices(crag6410_devs0, ARRAY_SIZE(crag6410_devs0));
- 
- 	crag6410_setup_keypad();
- 	crag6410_setup_gpio_keys();
-+	crag6410_setup_spi0();
- 
- 	platform_add_devices(crag6410_devs1, ARRAY_SIZE(crag6410_devs1));
- 
--- 
-2.46.0.184.g6999bdac58-goog
+Personally I don't like the definition of this function. I need to look
+into the inner implementation to see if kfree(supported_cpuid); is needed
+or safe. How about:
 
+  supported_cpuid = tdx_get_kvm_supported_cpuid();
+  if (!supported_cpuid)
+	goto out_td_cpuid;
+
+> +	if (r)
+> +		goto out;
+> +
+> +	for (i = 0; i < supported_cpuid->nent; i++) {
+> +		struct kvm_cpuid_entry2 *supported = &supported_cpuid->entries[i];
+> +		struct kvm_cpuid_entry2 *output_e = &td_cpuid->entries[j];
+> +
+> +		*output_e = *supported;
+> +
+> +		/* Only allow values of bits that KVM's supports to be exposed */
+> +		if (tdx_mask_cpuid(kvm_tdx, output_e))
+> +			continue;
+> +
+> +		/*
+> +		 * Work around missing support on old TDX modules, fetch
+> +		 * guest maxpa from gfn_direct_bits.
+> +		 */
+> +		if (output_e->function == 0x80000008) {
+> +			gpa_t gpa_bits = gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kvm));
+> +			unsigned int g_maxpa = __ffs(gpa_bits) + 1;
+> +
+> +			output_e->eax &= ~0x00ff0000;
+> +			output_e->eax |= g_maxpa << 16;
+
+Is it possible this workaround escapes the KVM supported bits check?
+
+> +		}
+> +
+> +		j++;
+> +	}
+> +	td_cpuid->nent = j;
+> +
+> +	if (copy_to_user(output, td_cpuid, sizeof(*output))) {
+> +		r = -EFAULT;
+> +		goto out;
+> +	}
+> +	if (copy_to_user(output->entries, td_cpuid->entries,
+> +			 td_cpuid->nent * sizeof(struct kvm_cpuid_entry2)))
+> +		r = -EFAULT;
+> +
+> +out:
+> +	kfree(td_cpuid);
+> +	kfree(supported_cpuid);
+
+Traditionally we do:
+
+  out_supported_cpuid:
+	kfree(supported_cpuid);
+  out_td_cpuid:
+	kfree(td_cpuid);
+
+I'm not sure what's the advantage to make people think more about whether
+kfree is safe.
+
+> +	return r;
+> +}
+> +
+>  static int tdx_vcpu_init(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
+>  {
+>  	struct msr_data apic_base_msr;
+> @@ -1089,6 +1217,9 @@ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
+>  	case KVM_TDX_INIT_VCPU:
+>  		ret = tdx_vcpu_init(vcpu, &cmd);
+>  		break;
+> +	case KVM_TDX_GET_CPUID:
+> +		ret = tdx_vcpu_get_cpuid(vcpu, &cmd);
+> +		break;
+>  	default:
+>  		ret = -EINVAL;
+>  		break;
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index 8349b542836e..7eeb54fbcae1 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -25,6 +25,11 @@ struct kvm_tdx {
+>  	bool finalized;
+>  
+>  	u64 tsc_offset;
+> +
+> +	/* For KVM_MAP_MEMORY and KVM_TDX_INIT_MEM_REGION. */
+> +	atomic64_t nr_premapped;
+
+This doesn't belong to this patch.
+
+> +
+> +	struct kvm_cpuid2 *cpuid;
+
+Didn't find the usage of this field.
+
+Thanks,
+Yilun
+
+>  };
+>  
+>  struct vcpu_tdx {
+> diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+> index d2d7f9cab740..815e74408a34 100644
+> --- a/arch/x86/kvm/vmx/tdx_arch.h
+> +++ b/arch/x86/kvm/vmx/tdx_arch.h
+> @@ -157,4 +157,9 @@ struct td_params {
+>  
+>  #define MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM	BIT_ULL(20)
+>  
+> +/*
+> + * TD scope metadata field ID.
+> + */
+> +#define TD_MD_FIELD_ID_CPUID_VALUES		0x9410000300000000ULL
+> +
+>  #endif /* __KVM_X86_TDX_ARCH_H */
+> diff --git a/arch/x86/kvm/vmx/tdx_errno.h b/arch/x86/kvm/vmx/tdx_errno.h
+> index dc3fa2a58c2c..f9dbb3a065cc 100644
+> --- a/arch/x86/kvm/vmx/tdx_errno.h
+> +++ b/arch/x86/kvm/vmx/tdx_errno.h
+> @@ -23,6 +23,7 @@
+>  #define TDX_FLUSHVP_NOT_DONE			0x8000082400000000ULL
+>  #define TDX_EPT_WALK_FAILED			0xC0000B0000000000ULL
+>  #define TDX_EPT_ENTRY_STATE_INCORRECT		0xC0000B0D00000000ULL
+> +#define TDX_METADATA_FIELD_NOT_READABLE		0xC0000C0200000000ULL
+>  
+>  /*
+>   * TDX module operand ID, appears in 31:0 part of error code as
+> -- 
+> 2.34.1
+> 
+> 
 
