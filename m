@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-291906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802799568BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E51D9568B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FED8283141
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E32D1F22718
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE6C16193C;
-	Mon, 19 Aug 2024 10:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F75161911;
+	Mon, 19 Aug 2024 10:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aK5RBWAF"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Osn3x+p+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96F115B138;
-	Mon, 19 Aug 2024 10:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F36B1547DD
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064520; cv=none; b=Bphccp/qUKFq4o9WxugnEq5zyRp7HWrcSTtM3kqOdgdS+ThwpvQeDo1EB0poV50kxVWmB1Xdy8mURdOcKvy/fxc2IBw2SwwdshT7rZwi/Ym9LA9blL6NsJZ+xlHwnxRpNpD/+ZldE77VQ4W2+1sANECqo9o5q3m0WJD/yh/3ZLY=
+	t=1724064402; cv=none; b=lUBj9Y5g0do8SEbdb++ZXRM2Z2ir0iUjZmzkzAtRFmX0jn6OzN73shLMdfpxk6NbvyIMFDhOlWs5vqQzGjavyJ4/0S5LnHGUCh+immsMnOI96oLmNAzfuFozaLPdj/67GV8qc+gYjZgtTd94Eyo7eWOu0W8B0cD+5U63oz53DLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064520; c=relaxed/simple;
-	bh=Nj3xiPSoYEtxkGOEeiU2Eu9JpnPXqvdR31ixJzvMFkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tFaqAQD6RHlm1URnjtjOLmJ6Mg1AocmKlCvd17BJY8Q7vKtvgphqt4iQZ5uHEbRyKiazZxh2dmOrFNcD0+4a1u4EgfRu/F7BkbPmIsbRuUQsnNixLFbJelXnuZZxA7/oPEOCuWsn8dqCNF7wXrTYsDwC8uFECdqkwlpQ8G7MvPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aK5RBWAF; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3db50abf929so3093797b6e.2;
-        Mon, 19 Aug 2024 03:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724064518; x=1724669318; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDFNlrnnBewoOaJUJduUAuxeqCnWuQdb8/A7+0DdWAk=;
-        b=aK5RBWAF5ieAHXm8EgAjtTI4mna6MyzyEEl1gCVLQDTWK/B3iXsqxc14lkIQBrx5cf
-         Q8t7JrfWhL6ZITyLZ6meMMaXj/BU/+pAFkYELsB5FTalrNeiOBFTkxqjl4oJ2XlOFWLp
-         GSCJDj3f8qhEijI2R/FfXxpimNQNnRN4hmvOQayp31HQXMua6iu9k95gfXKRhaAR49Pf
-         dzPQ64yzM6y0m+iQjmCAGQoYgqphmMVlATpv6hfwhBr12EXjqiFZhFcq+72Pf6Do+q1t
-         +MIKvBDMfnbKNcXKpjHsLO0GJH9fLeM96VZZhLo0Y6a4/v31CSlg45fFIybuMUQsF3t9
-         CJxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724064518; x=1724669318;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rDFNlrnnBewoOaJUJduUAuxeqCnWuQdb8/A7+0DdWAk=;
-        b=Kuh/Gj/S2wBmLrSSYRrux4VxRnEdGcknS2YRnd+konZc/zogBYxaVJFzO1RchOj56V
-         lB9hiVONJUF4o+r0Bbkbvo1qIgw/iGE7NSZBgqsnhdmVeEcDeE+6jqnOtEYexhUttl57
-         S35r6qjJdZmDGCyg5cGOxM8wV1Gg028jjwKOa7cihqL4PvOaOlN3ycmQ8w9Makt6tSd1
-         UU03PprY0Y8WISaCuctIM/NgYzxnZxWQnhs8bhqtu4Hs2X6Swe3mk6grC6ak7FGe7CRP
-         a4GCMjnb9IO2bc/d3CpfOqWrB4HQtLCjPaesfnffW3zP0yLW/TPtlIJcujoXxd8DDe95
-         COoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiGgAE8JLVpqtAVbm+y+0le9nGYGzrl0IPN1gdgoeSF97Z8nGha0j9i5GpW4nuefpbpntLb2UZ1lQCqRLQ07kqy9cq3Hc/yOqGP7Mi
-X-Gm-Message-State: AOJu0Yx6qWkE956fzp/5QwIpijpXq5PHlXOSZamnW67+SdkNSwhqaPeR
-	vJDqjOCV5Oo7dMXJ5VGHrqJt7sEEPsLuCd8wjlbkuY2OWU2jN6Bt
-X-Google-Smtp-Source: AGHT+IH48RRsLHe6pXtimb9oroClbatZsfiSw2mL+xvJI8nFcl5Xr8mDI7Jo2qZcDMRy9XKbaUCmUA==
-X-Received: by 2002:a05:6808:1991:b0:3d9:da81:6d59 with SMTP id 5614622812f47-3dd3add4ecbmr11901379b6e.34.1724064517489;
-        Mon, 19 Aug 2024 03:48:37 -0700 (PDT)
-Received: from cosmo-ubuntu-2204.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61ce853sm7286031a12.37.2024.08.19.03.48.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 03:48:36 -0700 (PDT)
-From: Cosmo Chou <chou.cosmo@gmail.com>
-To: linux@roeck-us.net,
-	jdelvare@suse.com,
-	chou.cosmo@gmail.com
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cosmo.chou@quantatw.com
-Subject: [PATCH v2] hwmon: (pt5161l) Fix invalid temperature reading
-Date: Mon, 19 Aug 2024 18:46:30 +0800
-Message-Id: <20240819104630.2375441-1-chou.cosmo@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724064402; c=relaxed/simple;
+	bh=Yu5nTBsgUn2Xtj84XKelv1HG3KAz/acK86oeD6Eaopg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKntdyPY8Gor27qkhKOdKd9OnA6H3ObZzu1o9/ABT56PZe3JcuxsXymW6UCzA5nsJ99o8CFzJGizFnIrw50ju2cBRlxtJrUKnIjiKHGUMmH6Xo8/rs/pikA7iUsL/5T8VzykGjxNFWxxlcPHjrhems/PKBBsHabTud7+/WPO0R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Osn3x+p+; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724064401; x=1755600401;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yu5nTBsgUn2Xtj84XKelv1HG3KAz/acK86oeD6Eaopg=;
+  b=Osn3x+p+FSqJHhXn3sifDimX4Imi1wJ2IVGNUhVikE3NSl214TY1Ccft
+   nW7vuivd0OSyG7A7c/yF/BqVK8/F7O+vTMmSpL1uF+2Wxn+yPt7Xb4oGD
+   rmbQZPkeO5rmyZuQBLVSAojnKLeL3VgOieiHkmDnqDh+xq7Cy7ZRomCJB
+   +bxtU6Fdm/B/z3A4yN9nSZxE19qIdf+fK9Z0X93Rw3ZAo49BeyCekTzeg
+   A7qkPVEVK2ybKyTomMcL3bT/dKhPPE1rah0t0cqeMA/otecpjMhtnzZtz
+   CciPBHK/nJkOYQrVU4W9x4PTtsLgpi/BhqUAMKjFFDqV36lUi956EQVMp
+   A==;
+X-CSE-ConnectionGUID: P0kA7Pe3TbmL7CxTDTtCAg==
+X-CSE-MsgGUID: qMF+LOY/SQS7b8SmVKY3ZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="26058257"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="26058257"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 03:46:40 -0700
+X-CSE-ConnectionGUID: +WUgNBaaTSO5YPdUPdu8yQ==
+X-CSE-MsgGUID: OyVTecAgRQyAfZxBdqPfZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="60313074"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 19 Aug 2024 03:46:36 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id A9D9C2D8; Mon, 19 Aug 2024 13:46:34 +0300 (EEST)
+Date: Mon, 19 Aug 2024 13:46:34 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
+	decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v3 03/10] x86/tdx: Allow MMIO from userspace
+Message-ID: <kzd355wuaf5bphybast36u3svr76glvxr5fni6vfiiwbc7zotv@uikypstswh6h>
+References: <cover.1722862355.git.legion@kernel.org>
+ <cover.1723807851.git.legion@kernel.org>
+ <2a79d86c268d934644b8e4a5a8c59b4699fa0015.1723807851.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a79d86c268d934644b8e4a5a8c59b4699fa0015.1723807851.git.legion@kernel.org>
 
-The temperature reading function was using a signed long for the ADC
-code, which could lead to mishandling of invalid codes on 32-bit
-platforms. This allowed out-of-range ADC codes to be incorrectly
-interpreted as valid values and used in temperature calculations.
+On Fri, Aug 16, 2024 at 03:43:53PM +0200, Alexey Gladkov wrote:
+> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+> 
+> The MMIO emulation is only allowed for kernel space code. It is carried
+> out through a special API, which uses only certain instructions.
+> 
+> This does not allow userspace to work with virtual devices.
+> 
+> Allow userspace to use the same instructions as kernel space to access
+> MMIO. So far, no additional checks have been made.
+> 
+> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
 
-Change adc_code to u32 to ensure that invalid ADC codes are correctly
-identified on all platforms.
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Fixes: 1b2ca93cd059 ("hwmon: Add driver for Astera Labs PT5161L retimer")
-Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
----
-Change log:
+And you seem to lost Reviewed-by from Thomas:
 
-v2:
-  - Fix build warnings of dev_dbg().
+https://lore.kernel.org/all/874j867mnd.ffs@tglx
 
----
- drivers/hwmon/pt5161l.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/pt5161l.c b/drivers/hwmon/pt5161l.c
-index b0d58a26d499..a9f0b23f9e76 100644
---- a/drivers/hwmon/pt5161l.c
-+++ b/drivers/hwmon/pt5161l.c
-@@ -427,7 +427,7 @@ static int pt5161l_read(struct device *dev, enum hwmon_sensor_types type,
- 	struct pt5161l_data *data = dev_get_drvdata(dev);
- 	int ret;
- 	u8 buf[8];
--	long adc_code;
-+	u32 adc_code;
- 
- 	switch (attr) {
- 	case hwmon_temp_input:
-@@ -449,7 +449,7 @@ static int pt5161l_read(struct device *dev, enum hwmon_sensor_types type,
- 
- 		adc_code = buf[3] << 24 | buf[2] << 16 | buf[1] << 8 | buf[0];
- 		if (adc_code == 0 || adc_code >= 0x3ff) {
--			dev_dbg(dev, "Invalid adc_code %lx\n", adc_code);
-+			dev_dbg(dev, "Invalid adc_code %x\n", adc_code);
- 			return -EIO;
- 		}
- 
 -- 
-2.34.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
