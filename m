@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-292970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB81957746
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA96957748
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9C7282C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44BE31F2477A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45361DC488;
-	Mon, 19 Aug 2024 22:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3676F1DC48F;
+	Mon, 19 Aug 2024 22:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P06ujqIa"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h2LIGvMl"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF7D15DBC1;
-	Mon, 19 Aug 2024 22:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9DD1CF83
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105663; cv=none; b=m3t+u28FC8s1XvZHSuWkHmKBxBThGzA7lUbq+Pd0JlKvQSWqhPHqaiD5YrI7f5mPhioUR4nYYfWX9Eo5c/IsykVH2WCOApdddg/6FHmzdZVKsStkQOh8bhSVPg8daDK9cFXtORg7t4/ClP67fmyykYuzNNtRyIDwCkoozm8sGTg=
+	t=1724105754; cv=none; b=jyXz/DOcgSIlYcM32j05xoyKt8XMNWgi4rYxjt4uBrV/xKfI47NLQyw89b03Z5gTCuukqODUl+TyN38drwkJrnpcf/CDAnhV9Sbf9uCkxJKyeJUh4gf5oJLtHFYXHKcmVQvOsc0BAmrsWus3R4C9/8y6JYRs+j8mBK1+I0y8duI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105663; c=relaxed/simple;
-	bh=eDpXWJH5Og69OdCgqc1ewI53FjKhL2nBlcqDoKotG/Y=;
+	s=arc-20240116; t=1724105754; c=relaxed/simple;
+	bh=dhmWgF5o+4TJBNnJucLoSqJJ0PWGuqjfVYw+EUWZHqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/Oo/va9Uzc1OP623JiSTe5AkP1HP23Ol5IZ53ZT1GGR+WGjYJI4gWjEJ/6rI1UVy/unvWs1TzmHCO+HqJuMyyp5E3zPZY1Dz1ipwtcOqXRSbXhYlsmU87LlNGlZdGJqjIta1YXqGg/Rf44ufSqok5GQ054KRdB14W6+X6HLbkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P06ujqIa; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=T8kelMn0aXZni3gRXE84vY/+IeFnmfFNu5TyN7qOs0w=; b=P06ujqIakUyHb2eGA79WavfXFb
-	SU2jh5/U/l7f8cGczk00RYT6U5Kio7rs/I7SYZroheAOzwVGJuTIHqBvd10y6f/h91RVoL4aUupq1
-	wO0mNTIvqepCQGXt6M7M6EEwHCUeigOqBvbyL5woEMlBibS9qriNG05MYMqLH45mu3bxM2Ij58gT8
-	BGzNPDDUMLy53Nv4KKBZz2+vokNsV3G8ewG6diphNW9j1fET0TNKOB039Dla0aPj1OEbGTz1qR91z
-	WdJjhzMyjC0UlIX1WSJd2UhozBe60fcWUF3ALh7xx4ZQW3SyOh1iCFbli4rn8tqMZ51AYeUyiy664
-	jRnTluaw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgAdn-000000034xf-2eUM;
-	Mon, 19 Aug 2024 22:14:19 +0000
-Date: Mon, 19 Aug 2024 15:14:19 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] module: Split modules_install compression and
- in-kernel decompression
-Message-ID: <ZsPDu86poGWtmfCS@bombadil.infradead.org>
-References: <20240722090622.16524-1-petr.pavlu@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMoL2Sk734f40SqXw85hPBak0bdR+pllM8w5nKlMJfRor8r0QTLgPQ/jbvxraSY08eJWKGf1muDRe0eQT6TVhAImhm5BkNyej1Lf0pTL+qaheX1ZBfoq32Y2WLgaMUQ7q4Ll56aHk7XUphI1yVe6guVy/Fsm9h+o5epa6sQvqfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h2LIGvMl; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 19 Aug 2024 22:15:44 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724105750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gu8OxZt5OEjyJopGkCUwXelOpTcGPqYiU+pjfoBBknQ=;
+	b=h2LIGvMl4WF+Y+S6+Iuotq2Ms73M4Y+MI8I8gS48xI2CWVCvyOryWI4PHfYvXo5Fq0GKXS
+	20bl2ZJsoIkmBX9nOnnIOF66BlcH6RMMjZpK0W9+UtFj1GbHU3ALvv/xHmm/StjkMs7J+k
+	NU/QwrJB+fAJZyO4cbgicp6YsecU5rc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	kernel@collabora.com, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Anup Patel <anup@brainfault.org>
+Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for
+ unsupported arch
+Message-ID: <ZsPEEFvoGYjW3vfx@linux.dev>
+References: <20240819093030.2864163-1-usama.anjum@collabora.com>
+ <ZsNzzajqBkmuu5Xm@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +65,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240722090622.16524-1-petr.pavlu@suse.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <ZsNzzajqBkmuu5Xm@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 22, 2024 at 11:06:20AM +0200, Petr Pavlu wrote:
-> Allow enabling the in-kernel module decompression support separately,
-> without requiring to enable also the automatic compression during
-> 'make modules_install'.
+On Mon, Aug 19, 2024 at 09:33:17AM -0700, Sean Christopherson wrote:
+> And other KVM maintainers, the big question is: if we do the above, would now be
+> a decent time to bite the bullet and switch to the kernel's canonical arch paths,
+> i.e. arm64, s390, and x86?  I feel like if we're ever going to get away from
+> using aarch64, x86_64, and s390x, this is as about a good of an opportunity as
+> we're going to get.
 
-Applied and pushed, thanks!
+I'm pretty much indifferent on the matter, but I won't complain if you
+send out a change for this.
 
-  Luis
+-- 
+Thanks,
+Oliver
 
