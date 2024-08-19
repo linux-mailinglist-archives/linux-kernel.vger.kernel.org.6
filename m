@@ -1,136 +1,253 @@
-Return-Path: <linux-kernel+bounces-291498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34BA956353
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215A995635B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD81280DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5171F218E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F9158546;
-	Mon, 19 Aug 2024 05:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4EA14A4C6;
+	Mon, 19 Aug 2024 05:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FjYa4vYT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/skYaGj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638B156C65;
-	Mon, 19 Aug 2024 05:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394EE322A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724045890; cv=none; b=jFfEXpLqFYwCbUaA1mxlBFaJaw3ggzGkhM4UitXMaT+a7usCDqYoo+r6Aq2IJNUhm52avkxEOw/OEsxoqM9RgZOc3iyRLk/kWnijKDvw0kzZIlvUDkop+4Jqbu9cG7qpZahq0Kd4u6Fca/yd4rIqNELcyMxFGuUUJqkxI1GZXmA=
+	t=1724046936; cv=none; b=pNTkL13riYkIzuEyusRh4QKYAUPOjwZ86HN904JEzK8AgxJip2Lx1sSEW7O0PpNz+DVIaHY24gl4bouhpPyTujeYb0y9pRJ2+HC2wkl5Tpm1VNMPritoz7uoyPhtr9szh897ewMmG11KlkeK6y5hk3KKoTSRwEhk9moIS3Ew/dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724045890; c=relaxed/simple;
-	bh=ndVlNUFibYvE+W+MCflv+7hF3XBaaCGrOjNwNocdg6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A08mfugN8W1mBZA6XRQvuCod/9xGn8kYT8LhmQE7HSxQa1Wbje/dmxxPSGEldQnDy9vEU/7KMEAzBpsiyAqUQ93LxAlQstEguQroAiSMDjBljX1HGYy0mV7cjb4KYgv/JF19gb2FHhpUJMIC58bvGJfzQT3mr2kQVIcZvU4JDmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FjYa4vYT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47IMoNe0014094;
-	Mon, 19 Aug 2024 05:38:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	e/Dw1ICLUJJQZkBDhaiKiDg+TY8zAl1ju75hw75bZic=; b=FjYa4vYTIU0wD2SE
-	OmxWo9VsJ8KwaaEmwQbmXoPogaqWCo5vwFUXCNQXqNe3GZGXpbkUWiaesAE4h6+u
-	wF2RshMj1JgjQMBdjwIt8qjjKBOPd628hhck5x7i+DXloCMPvuuFrtbtGEqgoSdV
-	w4pDE74fvd6gezKQ6u5WKNBym8JAeYlwIKCm2yKYSdELF7opoZqgLQyoyCzduWdx
-	ntZnKtIY0EW+u7h4Bl7TdK1Elg4d2G3PSw6xK4sKIQ99C9DGH176R5wXJJfdiNl4
-	4HER3I0qhGlxNu/ndf9KdMV2yGQZ0X9XLJcCnmU7R6vse8z2A0hMstn8DTWJ1pVK
-	Bnd7DQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n1jtyg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 05:38:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47J5c3qg026279
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 05:38:03 GMT
-Received: from [10.218.35.239] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 18 Aug
- 2024 22:38:01 -0700
-Message-ID: <e222bd06-fd9f-32a3-02ca-66a01cf4ab5e@quicinc.com>
-Date: Mon, 19 Aug 2024 11:07:57 +0530
+	s=arc-20240116; t=1724046936; c=relaxed/simple;
+	bh=X02MtRRl0Mo5bfRc8CoEeI7t1dU83VhdLcL35gShkUw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D8714IpA/n0Hn2uCV+bA4xvkWAhFmrr61QRduYPyMhwiCOu2NQqJ/xqvVQSAx8lvvFAz5QMAjH0wl0guF0J8GOn3cGOZtoN103mmod8Ubxynsl/mAIKoSTJf49AehNcKyWp7ZvL20BE+5p1wn8HIHH6+5Gc6fqR8XiGnd1EKYWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/skYaGj; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724046934; x=1755582934;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=X02MtRRl0Mo5bfRc8CoEeI7t1dU83VhdLcL35gShkUw=;
+  b=Y/skYaGjk5rNtDPiIWxdx1EimDiqRZ+JWtjXjgdiVHFvVLiAHZUjMgkQ
+   cX8o8dzaD51GWI2L7NyrQFpLfRbr5UpwtL9++rhHPG+VG5Byrt2qdS7pi
+   ZOpdW96eQkN8Tk+qGoBSLq9axqiQT2zcAMHHKxwYRLWo6/hqjxZYEoCnF
+   x56h4iPUeNHCglmghc++GZRYcWirHNnWGal9hWRdqETis571fzYAm/z/j
+   ubBaQiqEYVoGQlQ3IyUS0CB6+z8z3e0u1p21m6NBe3IoSQpEGg2ilgzGq
+   zp7/m5PH6OZ3iR4sMzr/M1KI4nltmec38N3pNin5Hv2pfovvd3c1UkRsw
+   g==;
+X-CSE-ConnectionGUID: gk+CMP9tQ/iOiRBQWoZm6Q==
+X-CSE-MsgGUID: DmRKZsKGSZ+E9ynCP60sSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="32845565"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="32845565"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 22:55:33 -0700
+X-CSE-ConnectionGUID: 9Qvun1AxTjaWvydSp8WOUw==
+X-CSE-MsgGUID: kxh3FdgPRo29sRhPMXvKnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="60426092"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 22:55:30 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "linux-mm@kvack.org" <linux-mm@kvack.org>,  "hannes@cmpxchg.org"
+ <hannes@cmpxchg.org>,  "yosryahmed@google.com" <yosryahmed@google.com>,
+  "nphamcs@gmail.com" <nphamcs@gmail.com>,  "ryan.roberts@arm.com"
+ <ryan.roberts@arm.com>,  "21cnbao@gmail.com" <21cnbao@gmail.com>,
+  "akpm@linux-foundation.org" <akpm@linux-foundation.org>,  "Zou, Nanhai"
+ <nanhai.zou@intel.com>,  "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+  "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
+In-Reply-To: <SJ0PR11MB5678BFAA984BEEBBFC2FC351C98C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+	(Kanchana P. Sridhar's message of "Mon, 19 Aug 2024 13:12:53 +0800")
+References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
+	<87msl9i4lw.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<SJ0PR11MB5678BFAA984BEEBBFC2FC351C98C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+Date: Mon, 19 Aug 2024 13:51:57 +0800
+Message-ID: <87ikvxhxfm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [v2] usb: dwc3: Avoid waking up gadget during startxfer
-Content-Language: en-US
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240816062017.970364-1-quic_prashk@quicinc.com>
- <20240816214941.l3el46ittrugxqp5@synopsys.com>
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <20240816214941.l3el46ittrugxqp5@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GjUqhaIkt5YN1OPXoRcc9jjQvzU55aCi
-X-Proofpoint-GUID: GjUqhaIkt5YN1OPXoRcc9jjQvzU55aCi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_02,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- clxscore=1015 mlxlogscore=599 bulkscore=0 adultscore=0 spamscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190040
+Content-Type: text/plain; charset=ascii
 
+"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com> writes:
 
+> Hi Ying,
+>
+>> -----Original Message-----
+>> From: Huang, Ying <ying.huang@intel.com>
+>> Sent: Sunday, August 18, 2024 8:17 PM
+>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+>> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+>> hannes@cmpxchg.org; yosryahmed@google.com; nphamcs@gmail.com;
+>> ryan.roberts@arm.com; 21cnbao@gmail.com; akpm@linux-foundation.org;
+>> Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
+>> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+>> Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
+>> 
+>> Kanchana P Sridhar <kanchana.p.sridhar@intel.com> writes:
+>> 
+>> [snip]
+>> 
+>> >
+>> > Performance Testing:
+>> > ====================
+>> > Testing of this patch-series was done with the v6.11-rc3 mainline, without
+>> > and with this patch-series, on an Intel Sapphire Rapids server,
+>> > dual-socket 56 cores per socket, 4 IAA devices per socket.
+>> >
+>> > The system has 503 GiB RAM, with a 4G SSD as the backing swap device for
+>> > ZSWAP. Core frequency was fixed at 2500MHz.
+>> >
+>> > The vm-scalability "usemem" test was run in a cgroup whose memory.high
+>> > was fixed. Following a similar methodology as in Ryan Roberts'
+>> > "Swap-out mTHP without splitting" series [2], 70 usemem processes were
+>> > run, each allocating and writing 1G of memory:
+>> >
+>> >     usemem --init-time -w -O -n 70 1g
+>> >
+>> > Since I was constrained to get the 70 usemem processes to generate
+>> > swapout activity with the 4G SSD, I ended up using different cgroup
+>> > memory.high fixed limits for the experiments with 64K mTHP and 2M THP:
+>> >
+>> > 64K mTHP experiments: cgroup memory fixed at 60G
+>> > 2M THP experiments  : cgroup memory fixed at 55G
+>> >
+>> > The vm/sysfs stats included after the performance data provide details
+>> > on the swapout activity to SSD/ZSWAP.
+>> >
+>> > Other kernel configuration parameters:
+>> >
+>> >     ZSWAP Compressor  : LZ4, DEFLATE-IAA
+>> >     ZSWAP Allocator   : ZSMALLOC
+>> >     SWAP page-cluster : 2
+>> >
+>> > In the experiments where "deflate-iaa" is used as the ZSWAP compressor,
+>> > IAA "compression verification" is enabled. Hence each IAA compression
+>> > will be decompressed internally by the "iaa_crypto" driver, the crc-s
+>> > returned by the hardware will be compared and errors reported in case of
+>> > mismatches. Thus "deflate-iaa" helps ensure better data integrity as
+>> > compared to the software compressors.
+>> >
+>> > Throughput reported by usemem and perf sys time for running the test
+>> > are as follows, averaged across 3 runs:
+>> >
+>> >  64KB mTHP (cgroup memory.high set to 60G):
+>> >  ==========================================
+>> >   ------------------------------------------------------------------
+>> >  |                    |                   |            |            |
+>> >  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
+>> >  |                    |                   |       KB/s |            |
+>> >  |--------------------|-------------------|------------|------------|
+>> >  |v6.11-rc3 mainline  | SSD               |    335,346 |   Baseline |
+>> >  |zswap-mTHP-Store    | ZSWAP lz4         |    271,558 |       -19% |
+>> 
+>> zswap throughput is worse than ssd swap?  This doesn't look right.
+>
+> I realize it might look that way, however, this is not an apples-to-apples comparison,
+> as explained in the latter part of my analysis (after the 2M THP data tables).
+> The primary reason for this is because of running the test under a fixed
+> cgroup memory limit.
+>
+> In the "Before" scenario, mTHP get swapped out to SSD. However, the disk swap
+> usage is not accounted towards checking if the cgroup's memory limit has been
+> exceeded. Hence there are relatively fewer swap-outs, resulting mainly from the
+> 1G allocations from each of the 70 usemem processes working with a 60G memory
+> limit on the parent cgroup.
+>
+> However, the picture changes in the "After" scenario. mTHPs will now get stored in
+> zswap, which is accounted for in the cgroup's memory.current and counts
+> towards the fixed memory limit in effect for the parent cgroup. As a result, when
+> mTHP get stored in zswap, the mTHP compressed data in the zswap zpool now
+> count towards the cgroup's active memory and memory limit. This is in addition
+> to the 1G allocations from each of the 70 processes.
+>
+> As you can see, this creates more memory pressure on the cgroup, resulting in
+> more swap-outs. With lz4 as the zswap compressor, this results in lesser throughput
+> wrt "Before".
+>
+> However, with IAA as the zswap compressor, the throughout with zswap mTHP is
+> better than "Before" because of better hardware compress latencies, which handle
+> the higher swap-out activity without compromising on throughput.
+>
+>> 
+>> >  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    388,154 |        16% |
+>> >  |------------------------------------------------------------------|
+>> >  |                    |                   |            |            |
+>> >  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
+>> >  |                    |                   |        sec |            |
+>> >  |--------------------|-------------------|------------|------------|
+>> >  |v6.11-rc3 mainline  | SSD               |      91.37 |   Baseline |
+>> >  |zswap-mTHP=Store    | ZSWAP lz4         |     265.43 |      -191% |
+>> >  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     235.60 |      -158% |
+>> >   ------------------------------------------------------------------
+>> >
+>> >   -----------------------------------------------------------------------
+>> >  | VMSTATS, mTHP ZSWAP/SSD stats|  v6.11-rc3 |  zswap-mTHP |  zswap-
+>> mTHP |
+>> >  |                              |   mainline |       Store |       Store |
+>> >  |                              |            |         lz4 | deflate-iaa |
+>> >  |-----------------------------------------------------------------------|
+>> >  | pswpin                       |          0 |           0 |           0 |
+>> >  | pswpout                      |    174,432 |           0 |           0 |
+>> >  | zswpin                       |        703 |         534 |         721 |
+>> >  | zswpout                      |      1,501 |   1,491,654 |   1,398,805 |
+>> 
+>> It appears that the number of swapped pages for zswap is much larger
+>> than that of SSD swap.  Why?  I guess this is why zswap throughput is
+>> worse.
+>
+> Your observation is correct. I hope the above explanation helps as to the
+> reasoning behind this.
 
-On 17-08-24 03:19 am, Thinh Nguyen wrote:
-> On Fri, Aug 16, 2024, Prashanth K wrote:
->> When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
->> update link state immediately after receiving the wakeup interrupt. Since
->> wakeup event handler calls the resume callbacks, there is a chance that
->> function drivers can perform an ep queue, which in turn tries to perform
->> remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
->> DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
->> DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
->> during startxfer to prevent unnecessarily issuing remote wakeup to host.
->>
->> Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
->> Cc: <stable@vger.kernel.org>
->> Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
->> Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
->> ---
->> v2:  Refactored the patch as suggested in v1 discussion.
->>
->>  drivers/usb/dwc3/gadget.c | 24 ------------------------
->>  1 file changed, 24 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->> index 89fc690fdf34..3f634209c5b8 100644
->> --- a/drivers/usb/dwc3/gadget.c
->> +++ b/drivers/usb/dwc3/gadget.c
->> @@ -327,30 +327,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
->>  			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
-> 
-> Can you capture the notes I provided explaining why we can issue Start
-> Transfer without checking for L1/L2/U3 states on top of this function?
-> 
-I also thought the same initially, but didnt add since Greg usually adds
-the patch link to commit, so that the discussion would be captured in
-git log. I will add it on top of dwc3_send_gadget_ep_cmd and send V3,
-let me know if there's any other suggestion.
+Before:
+(174432 + 1501) * 4 / 1024 = 687.2 MB
 
-Thanks,
-Prashanth K
+After:
+1491654 * 4.0 / 1024 = 5826.8 MB
+
+From your previous words, 10GB memory should be swapped out.
+
+Even if the average compression ratio is 0, the swap-out count of zswap
+should be about 100% more than that of SSD.  However, the ratio here
+appears unreasonable.
+
+--
+Best Regards,
+Huang, Ying
+
+> Thanks,
+> Kanchana
+>
+>> 
+>> >  |-----------------------------------------------------------------------|
+>> >  | thp_swpout                   |          0 |           0 |           0 |
+>> >  | thp_swpout_fallback          |          0 |           0 |           0 |
+>> >  | pgmajfault                   |      3,364 |       3,650 |       3,431 |
+>> >  |-----------------------------------------------------------------------|
+>> >  | hugepages-64kB/stats/zswpout |            |      63,200 |      63,244 |
+>> >  |-----------------------------------------------------------------------|
+>> >  | hugepages-64kB/stats/swpout  |     10,902 |           0 |           0 |
+>> >   -----------------------------------------------------------------------
+>> >
+>> 
+>> [snip]
+>> 
+>> --
+>> Best Regards,
+>> Huang, Ying
 
