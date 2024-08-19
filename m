@@ -1,164 +1,252 @@
-Return-Path: <linux-kernel+bounces-292130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A11956B8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:11:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D946A956BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4421B20F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644A51F23D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6779716C680;
-	Mon, 19 Aug 2024 13:11:32 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDAC16C436;
+	Mon, 19 Aug 2024 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="o1I4OYUD"
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110516B396
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72D4171064;
+	Mon, 19 Aug 2024 13:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724073092; cv=none; b=mhkM+4bIHfDrzzLThpsJRxrbgd++cs780OTOAdu7HOxv9zZ1qlUwM+dEpU/ARkHWq/cyW7YK5cYhSLvlC4OA3cNhlBwo8YzArGVDc64I1dYPw8wOdZ2BWKsDLK5OtBnSJyxuX+ugNBlQiZLaetTUWyYXkjnUoz8D1aunwXJnN4w=
+	t=1724073622; cv=none; b=MeTn745IysbCEcW4JKGFaQVcArrmWvtRbu2dk1vGOkqroa4PNQ4Xsx0CCVR03fAjpTEAQfME6//2+pxPVu3kBaqNJkQQcjnEmvIGk76hzPLKqhL2JCyTYA/tVJP6FeIsUnIjKgjIfbxBa+0g0s/w9cSI/w5p5+SFRl1iaKCAJMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724073092; c=relaxed/simple;
-	bh=Yqe+VI0sMiV7eW0PR7AjDJZlREFFUV5MWREGUpPIa9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dpzCMHdcu93seRBw92YQQXh01p5HTkK4JQGm8kT+mI3L2rOSM4Izd+LYK14avmAOJeteF1klsFWOgD8hWPuwVEZChfHK5OlwD3MNkQM7TdlNjX41QygDEAIQFK4YmjfbhZoc26CkodOe//KJFT6a3UDFh1WprIU7pbPiDePXLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WnXyw0xzszyQDd;
-	Mon, 19 Aug 2024 21:10:48 +0800 (CST)
-Received: from kwepemm600017.china.huawei.com (unknown [7.193.23.234])
-	by mail.maildlp.com (Postfix) with ESMTPS id D292C140159;
-	Mon, 19 Aug 2024 21:11:24 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemm600017.china.huawei.com (7.193.23.234) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 19 Aug 2024 21:11:22 +0800
-Message-ID: <b3705724-0d5c-a08a-8703-acbcee3e7861@huawei.com>
-Date: Mon, 19 Aug 2024 21:11:21 +0800
+	s=arc-20240116; t=1724073622; c=relaxed/simple;
+	bh=8kwfI1TnELzZrOepQChYowYs/1X0jWSVXx7IzEPk/94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoTIUvoHeauzqqm8AolvF8OKckBw5dV8vw+DbfD4RXrJ80jhmIaP2q976aHrKFiPU4YtInPKGeGeyhIHBpB43hSy8QwsmErUITQ8O9ppdBvRDgkXfNRb1der79+YSCPm1pM4BHY1KTe00Rk2MXgLQEsxQSbA+bLgfoTaRzDJPjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=o1I4OYUD; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WnY1R4qpDz2Wn;
+	Mon, 19 Aug 2024 15:12:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1724073179;
+	bh=EGDgMGiI1rLi1QaH8sGZgwVoYVSJNKc5O3G8+N0zXSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o1I4OYUDu88R70pN4oV6zbPXrbNsfQsK1jdit2Ux663X12lHv/JZ3cnirv4eXF4xO
+	 V19M39L8hSCV4Tj+d5NrQeNSic5DtP5Mca5RwwMqGItGLu+Ab8G8ApWOobC2E27RYA
+	 Wuq6mD1cGE9bqMPx5G4tAn5s8uz6SqixsTodAIw4=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WnY1Q3Fv5z94q;
+	Mon, 19 Aug 2024 15:12:58 +0200 (CEST)
+Date: Mon, 19 Aug 2024 15:12:55 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
+	Liang Tang <lltang@meta.com>, Shankaran Gnanashanmugam <shankaran@meta.com>, 
+	LSM List <linux-security-module@vger.kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240819.Uohee1oongu4@digikod.net>
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
+ <20240819-keilen-urlaub-2875ef909760@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v12 1/6] uaccess: add generic fallback version of
- copy_mc_to_user()
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
-	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
- Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
-	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
- Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-References: <20240528085915.1955987-1-tongtiangen@huawei.com>
- <20240528085915.1955987-2-tongtiangen@huawei.com>
- <20240819105750.00001269@Huawei.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <20240819105750.00001269@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600017.china.huawei.com (7.193.23.234)
+In-Reply-To: <20240819-keilen-urlaub-2875ef909760@brauner>
+X-Infomaniak-Routing: alpha
 
-
-
-在 2024/8/19 17:57, Jonathan Cameron 写道:
-> On Tue, 28 May 2024 16:59:10 +0800
-> Tong Tiangen <tongtiangen@huawei.com> wrote:
+On Mon, Aug 19, 2024 at 01:16:04PM +0200, Christian Brauner wrote:
+> On Mon, Aug 19, 2024 at 07:18:40AM GMT, Song Liu wrote:
+> > Hi Christian, 
+> > 
+> > Thanks again for your suggestions here. I have got more questions on
+> > this work. 
+> > 
+> > > On Jul 29, 2024, at 6:46 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > [...]
+> > 
+> > >> I am not sure I follow the suggestion to implement this with 
+> > >> security_inode_permission()? Could you please share more details about
+> > >> this idea?
+> > > 
+> > > Given a path like /bin/gcc-6.9/gcc what that code currently does is:
+> > > 
+> > > * walk down to /bin/gcc-6.9/gcc
+> > > * walk up from /bin/gcc-6.9/gcc and then checking xattr labels for:
+> > >  gcc
+> > >  gcc-6.9/
+> > >  bin/
+> > >  /
+> > > 
+> > > That's broken because someone could've done
+> > > mv /bin/gcc-6.9/gcc /attack/ and when this walks back and it checks xattrs on
+> > > /attack even though the path lookup was for /bin/gcc-6.9. IOW, the
+> > > security_file_open() checks have nothing to do with the permission checks that
+> > > were done during path lookup.
+> > > 
+> > > Why isn't that logic:
+> > > 
+> > > * walk down to /bin/gcc-6.9/gcc and check for each component:
+> > > 
+> > >  security_inode_permission(/)
+> > >  security_inode_permission(gcc-6.9/)
+> > >  security_inode_permission(bin/)
+> > >  security_inode_permission(gcc)
+> > >  security_file_open(gcc)
+> > 
+> > I am trying to implement this approach. The idea, IIUC, is:
+> > 
+> > 1. For each open/openat, as we walk the path in do_filp_open=>path_openat, 
+> >    check xattr for "/", "gcc-6.9/", "bin/" for all given flags.
+> > 2. Save the value of the flag somewhere (for BPF, we can use inode local
+> >    storage). This is needed, because openat(dfd, ..) will not start from
+> >    root again. 
+> > 3. Propagate these flag to children. All the above are done at 
+> >    security_inode_permission. 
+> > 4. Finally, at security_file_open, check the xattr with the file, which 
+> >    is probably propagated from some parents.
+> > 
+> > Did I get this right? 
+> > 
+> > IIUC, there are a few issues with this approach. 
+> > 
+> > 1. security_inode_permission takes inode as parameter. However, we need 
+> >    dentry to get the xattr. Shall we change security_inode_permission
+> >    to take dentry instead? 
+> >    PS: Maybe we should change most/all inode hooks to take dentry instead?
 > 
->> x86/powerpc has it's implementation of copy_mc_to_user(), we add generic
->> fallback in include/linux/uaccess.h prepare for other architechures to
->> enable CONFIG_ARCH_HAS_COPY_MC.
->>
->> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
->> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-> Seems like a sensible approach to me given existing fallbacks in x86
-> if the relevant features are disabled.
+> security_inode_permission() is called in generic_permission() which in
+> turn is called from inode_permission() which in turn is called from
+> inode->i_op->permission() for various filesystems. So to make
+> security_inode_permission() take a dentry argument one would need to
+> change all inode->i_op->permission() to take a dentry argument for all
+> filesystems. NAK on that.
 > 
-> It may be worth exploring at some point if some of the special casing
-> in the callers of this function can also be remove now there
-> is a default version. There are some small differences but I've
-> not analyzed if they matter or not.
+> That's ignoring that it's just plain wrong to pass a dentry to
+> **inode**_permission() or security_**inode**_permission(). It's
+> permissions on the inode, not the dentry.
 > 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > 
+> > 2. There is no easy way to propagate data from parent. Assuming we already
+> >    changed security_inode_permission to take dentry, we still need some
+> >    mechanism to look up xattr from the parent, which is probably still 
+> >    something like bpf_dget_parent(). Or maybe we should add another hook 
+> >    with both parent and child dentry as input?
+> > 
+> > 3. Given we save the flag from parents in children's inode local storage, 
+> >    we may consume non-trivial extra memory. BPF inode local storage will 
+> >    be freed as the inode gets freed, so we will not leak any memory or 
+> >    overflow some hash map. However, this will probably increase the 
+> >    memory consumption of inode by a few percents. I think a "walk-up" 
+> >    based approach will not have this problem, as we don't need the extra
+> >    storage. Of course, this means more xattr lookups in some cases. 
+> > 
+> > > 
+> > > I think that dget_parent() logic also wouldn't make sense for relative path
+> > > lookups:
+> > > 
+> > > dfd = open("/bin/gcc-6.9", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+> > > 
+> > > This walks down to /bin/gcc-6.9 and then walks back up (subject to the
+> > > same problem mentioned earlier) and check xattrs for:
+> > > 
+> > >  gcc-6.9
+> > >  bin/
+> > >  /
+> > > 
+> > > then that dfd is passed to openat() to open "gcc":
+> > > 
+> > > fd = openat(dfd, "gcc", O_RDONLY);
+> > > 
+> > > which again walks up to /bin/gcc-6.9 and checks xattrs for:
+> > >  gcc
+> > >  gcc-6.9
+> > >  bin/
+> > >  /
+> > > 
+> > > Which means this code ends up charging relative lookups twice. Even if one
+> > > irons that out in the program this encourages really bad patterns.
+> > > Path lookup is iterative top down. One can't just randomly walk back up and
+> > > assume that's equivalent.
+> > 
+> > I understand that walk-up is not equivalent to walk down. But it is probably
+> > accurate enough for some security policies. For example, LSM LandLock uses
+> > similar logic in the file_open hook (file security/landlock/fs.c, function 
+> > is_access_to_paths_allowed). 
+> 
+> I'm not well-versed in landlock so I'll let Mickaël comment on this with
+> more details but there's very important restrictions and differences
+> here.
+> 
+> Landlock expresses security policies with file hierarchies and
+> security_inode_permission() doesn't and cannot have access to that.
+> 
+> Landlock is subject to the same problem that the BPF is here. Namely
+> that the VFS permission checking could have been done on a path walk
+> completely different from the path walk that is checked when walking
+> back up from security_file_open().
+> 
+> But because landlock works with a deny-by-default security policy this
+> is ok and it takes overmounts into account etc.
 
-copy_mc_to_user() and copy_to_user() have the same logic of copying the 
-memory. The main difference is that the MC version can handle the 
-hardware error.
-
-The implementation of MC version is related to the architecture. 
-Therefore, when the architecture does not implement the MC version, it 
-is logically correct to roll back to the no MC version.
-
-Thanks :)
+Correct. Another point is that Landlock uses the file's path (i.e.
+dentry + mnt) to walk down to the parent.  Only using the dentry would
+be incorrect for most use cases (i.e. any system with more than one
+mount point).
 
 > 
->> ---
->>   arch/powerpc/include/asm/uaccess.h | 1 +
->>   arch/x86/include/asm/uaccess.h     | 1 +
->>   include/linux/uaccess.h            | 8 ++++++++
->>   3 files changed, 10 insertions(+)
->>
->> diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
->> index de10437fd206..df42e6ad647f 100644
->> --- a/arch/powerpc/include/asm/uaccess.h
->> +++ b/arch/powerpc/include/asm/uaccess.h
->> @@ -381,6 +381,7 @@ copy_mc_to_user(void __user *to, const void *from, unsigned long n)
->>   
->>   	return n;
->>   }
->> +#define copy_mc_to_user copy_mc_to_user
->>   #endif
->>   
->>   extern long __copy_from_user_flushcache(void *dst, const void __user *src,
->> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
->> index 0f9bab92a43d..309f2439327e 100644
->> --- a/arch/x86/include/asm/uaccess.h
->> +++ b/arch/x86/include/asm/uaccess.h
->> @@ -497,6 +497,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned len);
->>   
->>   unsigned long __must_check
->>   copy_mc_to_user(void __user *to, const void *from, unsigned len);
->> +#define copy_mc_to_user copy_mc_to_user
->>   #endif
->>   
->>   /*
->> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
->> index 3064314f4832..0dfa9241b6ee 100644
->> --- a/include/linux/uaccess.h
->> +++ b/include/linux/uaccess.h
->> @@ -205,6 +205,14 @@ copy_mc_to_kernel(void *dst, const void *src, size_t cnt)
->>   }
->>   #endif
->>   
->> +#ifndef copy_mc_to_user
->> +static inline unsigned long __must_check
->> +copy_mc_to_user(void *dst, const void *src, size_t cnt)
->> +{
->> +	return copy_to_user(dst, src, cnt);
->> +}
->> +#endif
->> +
->>   static __always_inline void pagefault_disabled_inc(void)
->>   {
->>   	current->pagefault_disabled++;
+> > 
+> > To summary my thoughts here. I think we need:
+> > 
+> > 1. Change security_inode_permission to take dentry instead of inode. 
 > 
-> .
+> Sorry, no.
+> 
+> > 2. Still add bpf_dget_parent. We will use it with security_inode_permission
+> >    so that we can propagate flags from parents to children. We will need
+> >    a bpf_dput as well. 
+> > 3. There are pros and cons with different approaches to implement this
+> >    policy (tags on directory work for all files in it). We probably need 
+> >    the policy writer to decide with one to use. From BPF's POV, dget_parent
+> >    is "safe", because it won't crash the system. It may encourage some bad
+> >    patterns, but it appears to be required in some use cases. 
+> 
+> You cannot just walk a path upwards and check permissions and assume
+> that this is safe unless you have a clear idea what makes it safe in
+> this scenario. Landlock has afaict. But so far you only have a vague
+> sketch of checking permissions walking upwards and retrieving xattrs
+> without any notion of the problems involved.
+
+Something to keep in mind is that relying on xattr to label files
+requires to deny sanboxed processes to change this xattr, otherwise it
+would be trivial to bypass such a sandbox.  Sandboxing must be though as
+a whole and Landlock's design for file system access control takes into
+account all kind of file system operations that could bypass a sandbox
+policy (e.g. mount operations), and also protects from impersonations.
+
+What is the use case for this patch series?  Couldn't Landlock be used
+for that?
+
+> 
+> If you provide a bpf_get_parent() api for userspace to consume you'll
+> end up providing them with an api that is extremly easy to misuse.
 
