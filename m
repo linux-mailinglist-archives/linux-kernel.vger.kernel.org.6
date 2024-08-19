@@ -1,141 +1,111 @@
-Return-Path: <linux-kernel+bounces-291440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02D6956297
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:26:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B12B9562A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8078B1F2224B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:26:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20D71F22371
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7BC1459FA;
-	Mon, 19 Aug 2024 04:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99C713BACB;
+	Mon, 19 Aug 2024 04:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q2jzsJRy"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMlk48lS"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961EF13D62F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19E12BD19;
+	Mon, 19 Aug 2024 04:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724041563; cv=none; b=NWdrjfcJg0v8eT3jfAZ/0VVFPmbn61ne6lxByAYPZ8pX1GfuNw7+2hxyRxUw1T045AXm7SiWJocr9wr9wXMOObbSOQ1Cu9YegY9C8ayVwIHjoNZDqV/X0yN7v77jTxDkgDl0Mqr3Q8WDhntCZETvJCL1H0W0AYhRiuq/czYGLFg=
+	t=1724041908; cv=none; b=S/tI2GocIV5hnIZA1qag4BHIU6MAC13bbBtnGYWWsCLlCg9tKRx0X+Uy3HzaPVhTq5pxBYMs1PyKEG9qBY7+Uk8xWQK5a+gyZyeYSwheoBjBbsQwFr+Y+C0wbIjxr1IjsHvBws2J+DLpW8F/QHRd31ysBIlz87RrzCIO5Wq8EiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724041563; c=relaxed/simple;
-	bh=+v4g0UjEWkLd7ZS9HwEmXjiwF0M6kB/Ghn8LHxLtirQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LS782DfsxIQkwFy7plnJsxz175Rgrd1HdiEDSBWA+gZx7AcReUeT9x6zyoshrB1FSrt8dJxLSGwe993tolNmmQV21yTKBPnFI+Pk+kcm7oU6eoXtpQexO6TL7ivqZeTwHTywZOkTniXFAbICQTCwYwmAmFBd3jpg8aAIOl/RHBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q2jzsJRy; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5ed6f51cfso2647525eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 21:26:01 -0700 (PDT)
+	s=arc-20240116; t=1724041908; c=relaxed/simple;
+	bh=xDGFKcKC/DzR7T7hJJly8ZelHW74kQX7NcH/afVh8b8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHK3udGb63mUNTM6/Y98lVAaiQEmdIUzgNmbrCrXzUbO0mmMzJz5yKkrEx85Wb2+n0TiRGQ/dRKflcTj6JPm93UZ6+iIcw3ryDjMXlFiiTq1LTckl7p6mVPxKCfEYTewdssQxVOa/v8gNILRgyOtMOPE/zQISUcKm7oIzUc1MXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMlk48lS; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso2528557b3a.1;
+        Sun, 18 Aug 2024 21:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724041560; x=1724646360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SmSr10lXHgh748HKWduE5k/LDglQBiHBeWV9WGZodNo=;
-        b=Q2jzsJRybfuxCtA8rodmrn/oObXViFLTqbGZj46YOdewvEbZeh0MTzxn51PodYtNJW
-         xqZw3kDJsxFrSWLRSWYSvtmIUaLEoUW1NqJszKE50tTjlyu7NysQ4KRmjc62nMMXfIr/
-         RQ9HM+692ZqfSLVGh3p1LfL1RXUfpAdnwfIuCgxpn1+jzG5P7TX4cTyR2Yc2dWs+WOM/
-         aCPuA7hzbakR1FgeOY5jwlFc+yuxEAM4iHfiQRbB4eDdariIWv6NDNWwdHz5/RBs0TwT
-         ElNF0VBJi4NioRnlqF4xzcEHio5S7rBiHaGWxsY6i8bEE6ekhqWvTavMwfJFfnJwdk1U
-         aKfw==
+        d=gmail.com; s=20230601; t=1724041906; x=1724646706; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SfpJsY7O5Oh7P4xrQ0F5MpnYzbYc4Uv8Rvv2p35vvOI=;
+        b=nMlk48lSdR+KlnQ6EJOmV/uVZnQ0yK1Aelwo7b0wMa8EUBm2YM3g5GqVvluvyeBssZ
+         262YdoRx8ZxicEYrail7KC0nhLR2IPyGrv3hIYaoaGlV5mGG/zBnsZJxyBsKQZI8ys6z
+         3/WbifC2Up8Pllykgq1hRbsowKRL8nf8zLCbwg7QeC6O2LARRSzr561xjXKoaSMYrkse
+         yQZ+xnaft9VPXo2PUtHKxNhZddkCH8G5zZuERZcvdZW2qTiKgx+wmZZRBBObPRZ5OwrA
+         21L7rvsVTUBdYPW7rJjSy6cZkO3zPIznRMMP8qvjOA0UZGE25F0tst/HzzRTlDbbaYKd
+         BRgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724041560; x=1724646360;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SmSr10lXHgh748HKWduE5k/LDglQBiHBeWV9WGZodNo=;
-        b=MzAXipibTxvidrFQhkfU64dF/woHKwTEn80xzTs9Fqex4cQWT8189jvEIcbADG8mii
-         VX9S2SHZVYCaDC9a+iYtPkfpv41Y9mSBbj2xMl/hBm27MW/Y7nQjxSiBVGXrSIfcGNeN
-         JFQbhkPrHTi31yHzyZCCPdPWWSeDhuEctM+IaAEtuR6sUN4hj8TnnI0A/w7qiE+DA0jr
-         qo4RCFzo3d1WVkhZ+EOIZClBjmUJH5nlERcp7XN3C0DARWipa8uD4pq8d/uQZhJ0h682
-         ShNeFtTdddck5Z79MzCHOHCsf5PuA7bs9IxxKPXj2p+VH1SSlQW9dmSCyKuG8F6+vWLd
-         PMNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWBnyf8vZ93KN8eT1jjyW+1Esy/IL0BQuEbd3iU3y5SPugczJBba1Otc25+mt1fCkZoTxFqRpcsijLWXmHzUfZ6ZzpYD05uww/pnIO
-X-Gm-Message-State: AOJu0YwSiWEfT5p/Ys4/eycm0SgF5Pr1404Gch0j0KhDKqW3tOYygG5Z
-	ao38J98IYMYOKZwE5EzoZTN7NRdnm+sqV/puzoIutbBx2DpcAN9C2RuKkWCNn0M=
-X-Google-Smtp-Source: AGHT+IFKtrY7/fANJZ2uglCj/MVefnIjjROeE8YWIB38zjN915wjQ7cn3peazdZfU+eY9yL35G2vCA==
-X-Received: by 2002:a05:6358:478e:b0:1aa:c71e:2b2c with SMTP id e5c5f4694b2df-1b3931910edmr1475923955d.11.1724041560335;
-        Sun, 18 Aug 2024 21:26:00 -0700 (PDT)
-Received: from [10.68.122.106] ([203.208.167.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae08027sm5875279b3a.66.2024.08.18.21.25.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 21:25:59 -0700 (PDT)
-Message-ID: <b8f8c4a4-b272-454c-b2c7-59417461713b@bytedance.com>
-Date: Mon, 19 Aug 2024 12:25:51 +0800
+        d=1e100.net; s=20230601; t=1724041906; x=1724646706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SfpJsY7O5Oh7P4xrQ0F5MpnYzbYc4Uv8Rvv2p35vvOI=;
+        b=anvfojeHXit41+Ny2gJkm8do4tDGHakBPNWwRNyOfGVF6IfE7GXjOi5A0jUxDSMo/L
+         57Q1wdJTjhkwOL3vAZlIwym2WITNgM/LhqHfXF/4yH2b6j2qCsXuPKSGXlEIDzEHueaA
+         kNQkQo5yyg2SajZDprJKpsxE0+89OzjRAe61cobBVAnlwLLZHBQAtbym9PMsrh8EpomL
+         VcbELVaCobUsffOnpcAeKKmOANJyd82hVWpLjhpfcXpFLMKd+UY/3+ONfNjGwP0PNdOm
+         N1MoeGbb/iReiZ3yL5U3yUxMmzsS58ryqlHODg5Quj8BISLMtD5iEB5+jr7uHMWT4vGf
+         OiIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwA5zlcJlyMiKyo11ps3OOe4Lqg2VSRyerrRSz7LFtjgDFjKUpWZ/8hqzNFcxAeUdzJIdD7yoXaEI/f9B0eOeu874g6EPJf0o0S+qRPRvTOvIXUgPw9fAs/K6SpA1udIkQrCQoypwj0Rw=
+X-Gm-Message-State: AOJu0Yz1ywsuwbEcjYlap7xrye34sbh4z7V1qugaRz9OkSdQKtuni31g
+	ypElmFx2xxO32DKPWdu2Dxe92vaPNi4tKjxzvixfkcWWXSIlkiHU2IdhXg==
+X-Google-Smtp-Source: AGHT+IHfFFch7UZIeUDElc6M48fBXcbscYnICYgdhc7cmHLoookTU/hpwiBc+Kmq5+kciUO8UYdMMA==
+X-Received: by 2002:a05:6a21:9186:b0:1c3:b234:5f54 with SMTP id adf61e73a8af0-1c905053866mr9207037637.48.1724041905682;
+        Sun, 18 Aug 2024 21:31:45 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:4eb5:4500:6efc:6c24])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0376ad3sm56297815ad.175.2024.08.18.21.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 21:31:45 -0700 (PDT)
+Date: Sun, 18 Aug 2024 21:31:42 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: hdegoede@redhat.com, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] i8042: Add forcenorestore quirk to leave
+ controller untouched even on s3
+Message-ID: <ZsLKrnnsc1rh2KxW@google.com>
+References: <20240104183118.779778-1-wse@tuxedocomputers.com>
+ <20240104183118.779778-2-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] bpf: cg_skb add get classid helper
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
-References: <20240814095038.64523-1-zhoufeng.zf@bytedance.com>
- <be4d3e00-de84-420b-9979-277ecc9df6ce@linux.dev>
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
-In-Reply-To: <be4d3e00-de84-420b-9979-277ecc9df6ce@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240104183118.779778-2-wse@tuxedocomputers.com>
 
-在 2024/8/16 09:06, Martin KaFai Lau 写道:
-> On 8/14/24 2:50 AM, Feng zhou wrote:
->> From: Feng Zhou <zhoufeng.zf@bytedance.com>
->>
->> At cg_skb hook point, can get classid for v1 or v2, allowing
->> users to do more functions such as acl.
->>
->> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
->> ---
->>   net/core/filter.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/net/core/filter.c b/net/core/filter.c
->> index 78a6f746ea0b..d69ba589882f 100644
->> --- a/net/core/filter.c
->> +++ b/net/core/filter.c
->> @@ -8111,6 +8111,12 @@ cg_skb_func_proto(enum bpf_func_id func_id, 
->> const struct bpf_prog *prog)
->>           return &bpf_get_listener_sock_proto;
->>       case BPF_FUNC_skb_ecn_set_ce:
->>           return &bpf_skb_ecn_set_ce_proto;
->> +    case BPF_FUNC_get_cgroup_classid:
->> +        return &bpf_get_cgroup_classid_proto;
->> +#endif
->> +#ifdef CONFIG_CGROUP_NET_CLASSID
->> +    case BPF_FUNC_skb_cgroup_classid:
->> +        return &bpf_skb_cgroup_classid_proto;
+On Thu, Jan 04, 2024 at 07:31:17PM +0100, Werner Sembach wrote:
+> On s3 resume the i8042 driver tries to restore the controller to a known
+> state by reinitializing things, however this can confuse the controller
+> with different effects. Mostly occasionally unresponsive keyboards after
+> resume.
 > 
-> With this bpf_skb_cgroup_classid_proto, is the above 
-> bpf_get_cgroup_classid_proto necessary?
-> The cg_skb hook must have a skb->sk.
-
-Yes, just add bpf_skb_cgroup_classid_proto.
-
+> These issues do not rise on s0ix resume as here the controller is assumed
+> to preserved its state from before suspend.
 > 
-> Please add a selftest and tag the subject with bpf-next.
+> This patch adds a quirk for devices where the reinitialization on s3 resume
+> is not needed and might be harmful as described above. It does this by
+> using the s0ix resume code path at selected locations.
 > 
-
-Will do, thanks.
-
-> pw-bot: cr
+> This new quirk goes beyond what the preexisting reset=never quirk does,
+> which only skips some reinitialization steps.
 > 
->>   #endif
->>       default:
->>           return sk_filter_func_proto(func_id, prog);
-> 
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+> Cc: stable@vger.kernel.org
 
+Applied, thank you.
+
+-- 
+Dmitry
 
