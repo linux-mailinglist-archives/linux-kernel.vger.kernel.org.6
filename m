@@ -1,233 +1,232 @@
-Return-Path: <linux-kernel+bounces-292972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43C895774A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D4295774F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C32E282A12
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:16:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A382B22E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF95B1CF83;
-	Mon, 19 Aug 2024 22:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C7D1DD39F;
+	Mon, 19 Aug 2024 22:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nU6bWgRA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="CCvhVVrA"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B6E175D46
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105785; cv=fail; b=N3gFZOulRAVV0ZBN0sV8g1ALpczwS+KkGvdvv6EMXePL4vN75A2IoQtGsRdk+ACKs4GKIwGwX8kbwg6ZuygzE5av0MP2kHaeJG6+FssiOytqtLPOaQCKrbM7g0iS4oOwrW/4KfLau+3WMrFi60oaf3Mtv+uPJ3EnjoM0rBRfD6Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105785; c=relaxed/simple;
-	bh=KMWn9yO0WXb2IGs6gLkxWlNJxf/Mv7TuMCOOdWE6kDw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SYGis7jiR924q7xWs3aEjsq4vrRufXZjeqfCJiL0HGOiHoT/VVtnDn0JboJ3oAyOIel/cOgHB7zEVcKLhU3OoMDNiYdKc5ObXOPxHQ3xg0WA7Iy0h++zrpuKHd338us/X2xqHZjEcXlK857lwpXmX6NlF/WEUhGvALVF7H7gIZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nU6bWgRA; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724105784; x=1755641784;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KMWn9yO0WXb2IGs6gLkxWlNJxf/Mv7TuMCOOdWE6kDw=;
-  b=nU6bWgRA9JCcxV/IxM0sFvew+LjI8YrmUThgXN4IDkHX5w+TWTPSk+3F
-   kQLDE2C2NzGFrX4hVDSBMbTSC0ahO13eXd0e9ibYrOukRsW2sHAaK/UNn
-   snu3l6e3YWIqnZDztUNhbaGeRcoEbfLDWdaUER2f6R8OPG8sWkhhx/fdG
-   tHEmZHAwLcjwsH5CQWa7joxzXmhyhaZCRiIt7WMytTx95J4b3++LweJYj
-   0IZdZ1Lclx0mGfxo82643pHJQ152oxnugTq/xlg0FsD0v81HzQ7SdG/O5
-   pKIC5dw1L5ItMm4f0Oa1fqGyb6IPWd6LzmDyJGWtsiUcsRar1wBIi69Dt
-   w==;
-X-CSE-ConnectionGUID: wdBD5IOnSY2KX8du+jIaHg==
-X-CSE-MsgGUID: 8PSn31y9Rj6B90eh24s+Zg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22539732"
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="22539732"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 15:16:23 -0700
-X-CSE-ConnectionGUID: 1BUU6GxZR+m9Kw7wNcvh/A==
-X-CSE-MsgGUID: CDtjz8rkScmoejique6afA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="64901698"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Aug 2024 15:16:23 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 19 Aug 2024 15:16:22 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 19 Aug 2024 15:16:21 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 19 Aug 2024 15:16:21 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 19 Aug 2024 15:16:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pz8rzE2dcckyMg488qGRGEwdcXuJZxD62aUUIdzoUfbUGhk6IYQh/XRQhcJE+vNvUbTyrdT/O7oeXR2y1ugoHfp1hgW6r3MI0uGRdaQ+x3HrTuLITdXK+/yySzE1aCStxTtx5KwRfzBdL5+jcVkkmzzXsf+GaIG0Vk4qhz8wj2SERL4AAhiAIzavjJ51Khx1NHoNCkMD5MKdqWbPexMruIsPhkk/1UKhtIFrmcYJf1l18L+wVBFKfHjCwbFnzDwZfopXkBU+O+j71rSF7CBuSeC3UUixvAySbdBNajkClT3pXYtpCR8bm7rRtUx2DtLEtAEAmOjdx2vvZrVbytMK2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OP2FuSiIiNvce0aaC4mfaZNxkAp2rbWECE3uLNkmbOw=;
- b=wxkAa1pT4oJdbfGuWhtIJNKxermF+6XATAlGPHvmSD1+/SkdTW7nQiu5MC3plQAJ20BvMleo6O6mL5mi2H0UoDax+A5IXNMITikZhdpGP7c6rBjetOxqTttY2/XsW6Q+SVjc4f0jMMHBVPDseZ3pmdNABonuTEsmwmhJhZpvQKvhKqL+0Gnr7kJ7ArHFmI5P0Q44p8cDvHE4Vf14iFkpkIbPgsSm3cnNvJvJYbg4PS5Rs+ZiBr5JFVu8dbEomYfdsDTvSMtpF0QqkhqmD0kKmv/20qRDyGgmCWTbZc94To30As2QSEns0qS0dlebRRwRchjcbMb0iiEPKE1zGRlYFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by PH7PR11MB7964.namprd11.prod.outlook.com (2603:10b6:510:247::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 22:16:19 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 22:16:19 +0000
-Message-ID: <29fba60b-b024-417c-86e2-d76a23aa4d6c@intel.com>
-Date: Tue, 20 Aug 2024 10:16:10 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] TDX host: kexec() support
-To: Sagi Shahar <sagis@google.com>
-CC: <bp@alien8.de>, <dave.hansen@intel.com>, <hpa@zytor.com>,
-	<kirill.shutemov@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-	<luto@kernel.org>, <mingo@redhat.com>, <pbonzini@redhat.com>,
-	<peterz@infradead.org>, <seanjc@google.com>, <tglx@linutronix.de>,
-	<thomas.lendacky@amd.com>, <x86@kernel.org>
-References: <cover.1723723470.git.kai.huang@intel.com>
- <20240819212156.166703-1-sagis@google.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <20240819212156.166703-1-sagis@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0193.namprd05.prod.outlook.com
- (2603:10b6:a03:330::18) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE541DD384
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724105809; cv=none; b=coZ0HhuCLw8Bd2oxutdBM7sebrBCyo8kDke7IZjPnYpkkqcy8yD0FN8eDJDfMn0/9cTi3JyuFM/YchmVQMpH/XHi7LArBVnT2O0uNp6AKo0WP6gF5NCYmjAbNsQclq6JoTJDuc8g0Gc9STezvaYR0LyCsAMMqSreMfHRgVli0Nc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724105809; c=relaxed/simple;
+	bh=D77h7pBmJaIao3eORJWKIV3ZMv+UbgvImXknw1Nz2eY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VAQZKyWjN5gXcStYd8mWekw1DqnQSuLjDlUXBCEs3Rk29SyFrxNkYiUNso1YS9osx14C9G3myE402/Jit/oMCUhjxo/QYanCIkhkEltp6/gz18aB9Hz/wt/Mn3ssjQcVhUwHmf4/BNZOpQ8Tm3bayJ8XCxk2Cqqzo5k/vyk2hpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=CCvhVVrA; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc611a0f8cso36886735ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724105807; x=1724710607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/au4vGQhoGn9UetKPA7LukrmQexlvK/Tsm5BPGezUI=;
+        b=CCvhVVrAmrZJ+6GXR3ATeg/5JY3TBSL61eOU1VIOipJ3uZCxLAtiFlnIeeCCJkqClq
+         2unyqxbzmklhcNMwfArWxyajNigsZi6LTwxhdfjo+A34cf/TEqy0On7U40FHimJkCkNs
+         eLJKh9uDQxJPh96wuaDAHulHhDodGCXnPmAhcTgFnoZ/1AIPwm53OWzpPIKtCcHXPXEi
+         i15cLXnG7ZAN6Uiee8wTkWW6nLqZFZLvgb+cXV73s4ckOno6s5nXXdK1rVvkkjokwuVM
+         Vl+GEDY25TfhDFKotq4ccnPI9rYzAhuoVW9eFXzY2hiJSwyGna8AGaZrSr44fhdLbRDv
+         +aig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724105807; x=1724710607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N/au4vGQhoGn9UetKPA7LukrmQexlvK/Tsm5BPGezUI=;
+        b=ZibNugPDnbmSGoGe6KVaMSo8zo2xojDI5d8MIhXL3XLn7FV3bF47bSJZ13h+pt8OIg
+         xYMETnMycV+1vYgMTcFsSkkSMtXWxpKs/MOln4ii/Q2vklHuHM6xZ3JcnY2qPceHBA2V
+         CVeLgoXXVE1C/9A3Fdw9KgkV8T8whvFoZU2jSz+Nbz4kWZOfCBfNTdrkrq0L2z3RkE1c
+         ga+YHbMcLX7naodmiq7ZKniishxLAVqhuBwkwDMdqvAneIiprR+ZXfTUA+WBnxzKG9MW
+         5rcxU96u+OVqhaqf7Y14VomrzU+kx1T1lK9BqxlfIXTwYLTaRaVgZ1kmxjfbzg0dph7M
+         Mjxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdmnIt7bQBZu9hAGFzpYaYx4tXYwjJZO9KJ7WfV9MnfLcE3/b+oKQLzCcQ7reSi0iG5lotSET7RK3i6ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsyuqrVuQ7hGVwKfzUK6049yW6VrpWXydGLb+G7oNL/uxBcvBv
+	2YGjoom4j01hN0BWmmMBPe451Po0PwOC6a7VNLf7y37vTibJaImQLPodoaULvV4=
+X-Google-Smtp-Source: AGHT+IGfgnuZSDWnafemCvrXj6hQgzz1eqoQQciqUMGOGeM5FpILbGMtlACJqOVtqLBB8lz65PfHjA==
+X-Received: by 2002:a17:902:f791:b0:202:13d7:92aa with SMTP id d9443c01a7336-20213d795cdmr98949815ad.24.1724105806730;
+        Mon, 19 Aug 2024 15:16:46 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03795edsm66749105ad.153.2024.08.19.15.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 15:16:46 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sgAg7-005ZLT-1e;
+	Tue, 20 Aug 2024 08:16:43 +1000
+Date: Tue, 20 Aug 2024 08:16:43 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+837bcd54843dd6262f2f@syzkaller.appspotmail.com>
+Cc: chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] INFO: task hung in xfs_buf_item_unpin (2)
+Message-ID: <ZsPES2351eLXRYPz@dread.disaster.area>
+References: <0000000000008905bf061fc61371@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH7PR11MB7964:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8f36b9c-71a2-42db-a49f-08dcc09c8cde
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bDIxU3ZYcUFaQkY2YXNQV0xlcnVadzFnODlYNFFvNXRGbmY1a0o1dTY4RlM2?=
- =?utf-8?B?dk8vbkdmRVNJc3YwRStvZk5QejFMVUluN1JHWkVaUE9wWFQ0TGVTYitqOThp?=
- =?utf-8?B?bHJLc3NTRGNXYnh5YkRHdHp1N0NGWTZoZjF0RVdPaVk1RFJ5NWlnOC92Y256?=
- =?utf-8?B?VytDRkNZeHhTSDM3QmVsZVJsb1VJbm5EcnlKNVRGV2liRDBhRTNmb2kwdUh0?=
- =?utf-8?B?dnFWS2k3c1dSUkdqLy9PS09OeG45VTBGd3d3L3BIOWlsNmJVR3hiRzZ3VEdU?=
- =?utf-8?B?Yk5qc09JcFFJMU51enJXVjI3anBYMEwvaDY1M2hDNWkvS2tCTjEwSTdVN2xs?=
- =?utf-8?B?cGdVYVVKYkRBNFVpME41bmhwN1ZCZTA5RUtjVE5nQ1FkWWNNNm96YVFEazVH?=
- =?utf-8?B?NjVzdUgxL2J2UmlheW1pZUpsdUlHTWJqSEhnRk9HZEQvOEcxSkhGSWg1TWtF?=
- =?utf-8?B?RUJUTlE1d1BBS2FtSngvdGZLaWZmVjhwV2hjZzRWWkVJSk9GN1dNSm9jUDZt?=
- =?utf-8?B?QktTZjVPVThlb1Q2Mlg5M1k0b0k5dFF6K2lrbWYrWi80WGxnQWdkcmdYZEM0?=
- =?utf-8?B?aUt0VCttbUlONHpxb2c5TTN6dEQzZUprblY4aTBmaHdROExwZFpKVERHbXNk?=
- =?utf-8?B?QURIWkNNdmJXZmcxSmFTY1hFNkw5V0pJVUJFM0xFR29ub0ZMR0Z5Q3pLanlo?=
- =?utf-8?B?UFArMUw2d2hPaFlpUThwa1NRSzlUamFvUUhScDNubmtiNWx4RGVlVHpoY20v?=
- =?utf-8?B?cGdNOFRRRkdYQzRZUS9ZRlkrUUNXL2toeWhxREJQeTVjaEgrSmxpckIwNWZs?=
- =?utf-8?B?dVNOWEVUWjdGMEJaOUtpbzdxclhzeFh2NnZ1Nm9SanlER3VSNi83aUV4ZGY5?=
- =?utf-8?B?cndDRGxuVGFOMUwrbGFwM2FKZzcyL3ZweGZBWmlSdnJrcVlCU2h4dCtETVk2?=
- =?utf-8?B?YjBwaUFDTmRrVDI3NHpxQjUxSDQyYnVNREFUam1LRUdJL0pINy82V1ArT2FR?=
- =?utf-8?B?TlY3Rit2SGFNUnoxS1NwUi9ibUNLaUxiVlljVWhJbXpTZldQQ0dBRXpXc3Fu?=
- =?utf-8?B?NjJoYnJTZ1ZSZGF5djJtaFdQZ1oydFc5c0w4M21hK1VVRDlGZ3BWZ250M1Ev?=
- =?utf-8?B?bkVkTlo4NXJGTTlZODdudi9mK1lmQXk3RStobVhpcGpraWRuVysvRFV3blJ3?=
- =?utf-8?B?L2pWTmNmOE9mSmMrZHB2ViswMkE5RVZHTDlDS2JrUEVRNk9GTkhwTUxkeXdF?=
- =?utf-8?B?d1BCSjhBd2NpY0RkZzZXcnhtMUg3U0pmUmNpN05nRE9XTGsyemJ3dTVaSS96?=
- =?utf-8?B?RS90QnAzUkd4c0xpQ3lCTFdEbUQxUkd4VDhIYmxoUGVCMzVBUjRwYW91YTd0?=
- =?utf-8?B?UU5USEd0UEJFT1FlbWoyazhBbkxKclM1bDNXOXlYZzVmQU1DYTJpcTVCQTVw?=
- =?utf-8?B?K1FBekJqMmhhNEh4QlNKaXFGODdsSjBUL3phcnV2cjhmd1JaY1o5RmJoTndk?=
- =?utf-8?B?R1RkSGpXUGNuczNrdnR1bTJPeHRCTW5DdDliYnA5Um5Vck4zMEJkTXMwYy8r?=
- =?utf-8?B?SnlXSElHVy9pWjJaOFZzZ2I2ZlUwVUN2UXc2d1hyOGRDVlROK01Jdzl0RjAy?=
- =?utf-8?B?STNkRXJaUjAwVmdYZjJzNWNkaE1UQ1hhNlVrb0EzdEpqQUl0L2R1MUpGOUVQ?=
- =?utf-8?B?NG5pZExudDZML25MYWZIeDVMUzEwY0JpZGJ0TTNkNHUzTCtBZFQ1QWJXLzA1?=
- =?utf-8?B?UUdGaDkvbWJnK2Z5SGFtS0xGQ2hwRUI2NjJuOUlkQVUrQ2FaeDhKdmM5THZ6?=
- =?utf-8?B?UWh4d0MyUzdjbGNld3FIQT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eGxmNEo0bzJWdHJwSG5TNkdDZHFJY2tjOGw1eEZGY0hQT2g3MXZOSjlIVVJT?=
- =?utf-8?B?TkNCbUl2bTd6WTRQQ3F4R2YxWU5BSno3YmpBMFJCc1Y1Y2hjSWpZT3ltZFNK?=
- =?utf-8?B?R2xqV2d3MlBNRmhURTlmZ2ExMTgyZitJNko1OEo3b1hHNkxuTWxGckdBSU5F?=
- =?utf-8?B?b2tDRkJzVkljbTJVampObTVkWCtBcmhsVDVWQzdWbWNKclgzZ3RiUEV0Sk9C?=
- =?utf-8?B?ajl4bWs4N3cvTWNtdTZrcGRKM0hQYkFMU2toOWM1ckV1NXVtdDNmR1V5VHBJ?=
- =?utf-8?B?UjQ5Qkg5THVuSm14ZFQ4c01hTXZwTFQ3YnBiRUFYRkJDdHpHRDhLWjhTOTlT?=
- =?utf-8?B?cXJCdUR4QktaZWx0bE1WSFUrWmkycFFTOW4yMzliZmpoaUVCWnhiYU9IUlNp?=
- =?utf-8?B?bGtKclVMNkY5dnFoUnc4clloM0lRSWwxYXlSdnBTWmFSN2o4UW93TTFMWHhH?=
- =?utf-8?B?c2pIbnVYZVhGWjBSY1l4OUNUSmhHUFliNTdSbGFrMmhMK3Q1NUQzWFgwVjFY?=
- =?utf-8?B?bitYdllFcHMrRU1sbUJxS0tqWE5CRnJkK2xOME5ZbytoODJaR0prYzhYZ0RT?=
- =?utf-8?B?YitMWUlmVENaTUljNHhrRmRwY3gxd1pvYTZCanVXTXVGWEw5R3ZSc0FuWFVU?=
- =?utf-8?B?S2d2aTFva3B6K2dzRTBHNzVmeVJhN2JkMGpVWFJJR0tvU1F6SDcvZnNFZ0RM?=
- =?utf-8?B?K2R6b2ExRHhJRm9ldXZZS21NbVZYS2M5SFVqc1F5Ly9nK0NTNU5reGdIZThy?=
- =?utf-8?B?bmp4R2s3ZjFCYmt4Ui8xU2RIZ082N000SnNFVnYzNWtrZ2Y5aDdldm0wUTdO?=
- =?utf-8?B?UkgwMnJhQ21XUUNGL1lYeC9UeDJ5UEg3b0ttd25aaStWNGZLZUtMdzArcTAr?=
- =?utf-8?B?M1RWZlVBWGV6RG1Td3hvWGwvUlE5VkFOMWdtWmk5cjJwU1RRczRTbWloeGFY?=
- =?utf-8?B?TG5ybkJpMHJaeVJpTERCeFRKK1FpUmFIdGx3V3FwQ0tsZjh2WmRuZkFzUWFw?=
- =?utf-8?B?TFQxdTJRZm1SeDN3cWtaNFIwM2tNeElLbFR4ME42cW01WnMyUzNTSCtnUjBL?=
- =?utf-8?B?d0Y1UWlBRThrdGxMdVdkNHdCWExKV1pweTFHbHhqTFZ6UVNiWDdvcDgxQ1BZ?=
- =?utf-8?B?d3JCUEg5bWlJM0FVeWdxV0N3M1c3Ynd3TVBIRHAwK2t6b3R1eWIrVWN3aG1y?=
- =?utf-8?B?ekE4eS8weVhCRmpSbHU5RThFN1IyYnZ5SGg2VXM0Vno1aWNyb1YySmRFMlh2?=
- =?utf-8?B?RTRkU1d5Ti9sMVZsVkVyQ1ArelFnNmVQVjhrZ0NSeGpGVDVReWY5SEl5MWRt?=
- =?utf-8?B?ZlMzZTUrb01xVnhMNkpaSzluV0xCWHI5WlY0SmJETE16c3VUbDRDL1ZSTDBz?=
- =?utf-8?B?QkpwSldwQXpUUjNleHBtR3ZJOVFqdDNLVGZCNE96bmgvMWNJUGR2TGxHYlht?=
- =?utf-8?B?V01wWFo2V2JyRW9saGwzQkZGcWtrSmd3elNQQW9ZTW9SYXA3ZVNabG41aktU?=
- =?utf-8?B?cjlWRTdaTmliUnZxOFhxczVQaVBLM1BVMllmQVFjVWFIamVaYkhxb1lqNWpC?=
- =?utf-8?B?My9Gb0dNdENWVFE0VTg1NDIrN0dPWldSU2R6am5QUTY2RklJNG00U2x0N2Jy?=
- =?utf-8?B?VnJ0OVN6Y3pZazBUajcrSytFM0pvWDUzeFRzMldXRVZiOUg3UWhrTEdmQU5T?=
- =?utf-8?B?WGZ0UjhNZVVCazF6cmJac0tIaFhSYks4UmVMNXNLMGZFaWE5amxMNTk1dENz?=
- =?utf-8?B?Y3dqY3BtMVV4Q2J3SUhoQi9LRXIvYWtKR2tZZ2EzckJWZTdIT0hJaE1yUFIy?=
- =?utf-8?B?VTB4YVhlcFhQb2g2MmtWNTA0N3NCMHQ1R3hldVdEYVJkVVF1YnBPOFFLdWJo?=
- =?utf-8?B?K25TYzc3Rnh1bVZuUnB6T0dnR2FTQlEzZlQ5OFd4d1IxVDBhbDhTc2JuaGg3?=
- =?utf-8?B?TEpxaWZqZlJUL0cxWHVudFljMXFObUx2bWlaTzRnN3FLNWZ0THJVZlFCZ2pG?=
- =?utf-8?B?VWZFV1R1Y0VRTGtrVlVlUFBDQnJLTXpQOWdLS2R1VU96MFR0NWlzRkNwbEV2?=
- =?utf-8?B?WEVhYTR0czV5K25TaU5JSjVYUUJmeGRnMnVGVnlwZVdGTDlNRm9KSzhIUjhS?=
- =?utf-8?Q?XduUfS2UFQtB6ZGYEge1UMnKM?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8f36b9c-71a2-42db-a49f-08dcc09c8cde
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 22:16:19.2253
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v/SW7ecPzQN1s4xCwJRkq/cdEp/8sP7EkbmjV/cuYOXKFdM0iWFv6qAxre34T+vTGsYIvjM831NZVU2AJp+UDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7964
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000008905bf061fc61371@google.com>
 
-
-
-On 20/08/2024 9:21 am, Sagi Shahar wrote:
->> Currently kexec() support and TDX host are muturally exclusive in the
->> Kconfig.  This series adds the TDX host kexec support so that they can
->> work together and can be enabled at the same time in the Kconfig.
+On Thu, Aug 15, 2024 at 10:17:31PM -0700, syzbot wrote:
+> Hello,
 > 
-> I tried testing the kexec functionality and noticed that the TDX module
-> fails initialization on the second kernel so you can't actually kexec
-> between 2 kernels that enable TDX. Is that the expected behavior? Are
-> there future patches to enable that functionality?
+> syzbot found the following issue on:
 > 
+> HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=115e1429980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=92c0312151c4e32e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=837bcd54843dd6262f2f
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/7b0e9f1a37aa/disk-1fb91896.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/d554edb47a8e/vmlinux-1fb91896.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d1ec77d87b65/bzImage-1fb91896.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+837bcd54843dd6262f2f@syzkaller.appspotmail.com
+> 
+> INFO: task kworker/1:1H:43 blocked for more than 143 seconds.
+>       Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/1:1H    state:D stack:25320 pid:43    tgid:43    ppid:2      flags:0x00004000
+> Workqueue: xfs-log/loop4 xlog_ioend_work
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5188 [inline]
+>  __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
+>  __schedule_loop kernel/sched/core.c:6606 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6621
+>  schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+>  ___down_common kernel/locking/semaphore.c:225 [inline]
+>  __down_common+0x343/0x7f0 kernel/locking/semaphore.c:246
+>  down+0x84/0xc0 kernel/locking/semaphore.c:63
+>  xfs_buf_lock+0x164/0x510 fs/xfs/xfs_buf.c:1196
+>  xfs_buf_item_unpin+0x1dd/0x710 fs/xfs/xfs_buf_item.c:582
+>  xlog_cil_committed+0x82f/0xf00 fs/xfs/xfs_log_cil.c:910
+>  xlog_cil_process_committed+0x15c/0x1b0 fs/xfs/xfs_log_cil.c:941
+>  xlog_state_shutdown_callbacks+0x2ba/0x3b0 fs/xfs/xfs_log.c:487
+>  xlog_force_shutdown+0x32c/0x390 fs/xfs/xfs_log.c:3530
+>  xlog_ioend_work+0xad/0x100 fs/xfs/xfs_log.c:1244
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+>  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> INFO: task syz.4.26:5406 blocked for more than 144 seconds.
+>       Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.4.26        state:D stack:21208 pid:5406  tgid:5405  ppid:5216   flags:0x00004004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5188 [inline]
+>  __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
+>  __schedule_loop kernel/sched/core.c:6606 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6621
+>  xlog_wait fs/xfs/xfs_log_priv.h:587 [inline]
+>  xlog_wait_on_iclog+0x501/0x770 fs/xfs/xfs_log.c:840
+>  xlog_force_lsn+0x523/0x9e0 fs/xfs/xfs_log.c:3066
+>  xfs_log_force_seq+0x1da/0x450 fs/xfs/xfs_log.c:3103
+>  __xfs_trans_commit+0xb98/0x1290 fs/xfs/xfs_trans.c:900
+>  xfs_sync_sb_buf+0x2dc/0x370 fs/xfs/libxfs/xfs_sb.c:1178
+>  xfs_ioc_setlabel fs/xfs/xfs_ioctl.c:1143 [inline]
+>  xfs_file_ioctl+0x165b/0x19e0 fs/xfs/xfs_ioctl.c:1298
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks for testing!
+That XFS deadlock looks to have been there for a while.
 
-Yes this is the expected behaviour.  If the first kernel has enabled 
-TDX, then the second kernel will fail to init TDX.  The reason the first 
-SEAMCALL to initialize TDX module in the second kernel will fail due to 
-module having been initialized.
+The test case is setting the loop dev to zero size immediately after
+mount and then clearing the filesystem label. xfs_sync_sb_buf()
+calls xfs_trans_bhold() so the transaction commit does not unlock
+the buffer. The transaction is synchronous, so it issues the journal
+IO then goes to sleep waiting for journal IO completion with the
+superblock buffer locked.
 
-However if the first kernel has not enabled TDX, the second kernel is 
-able to enable it.
+The Journal IO errors out and runs a shutdown, which runs error
+handling on the items to error them out. That requires taking the
+buffer lock on buffer items, and that's already held by the log
+force waiting for IO completion...
+
+I think it can be fixed by doing something like this:
+
+ static void
+ xlog_state_shutdown_callbacks(
+         struct xlog             *log)
+ {
+         struct xlog_in_core     *iclog;
+         LIST_HEAD(cb_list);
+
+         iclog = log->l_iclog;
+         do {
+                 if (atomic_read(&iclog->ic_refcnt)) {
+                         /* Reference holder will re-run iclog callbacks. */
+                         continue;
+                 }
+                 list_splice_init(&iclog->ic_callbacks, &cb_list);
++
++		/*
++		 * Wake waiters before processing callbacks as synchronous
++		 * transactions might waiting on completion whilst holding
++		 * locks we need to error out log items here.
++		 */
++                wake_up_all(&iclog->ic_write_wait);
++                wake_up_all(&iclog->ic_force_wait);
+                 spin_unlock(&log->l_icloglock);
+
+                 xlog_cil_process_committed(&cb_list);
+
+                 spin_lock(&log->l_icloglock);
+-                wake_up_all(&iclog->ic_write_wait);
+-                wake_up_all(&iclog->ic_force_wait);
+         } while ((iclog = iclog->ic_next) != log->l_iclog);
+
+         wake_up_all(&log->l_flush_wait);
+ }
+
+The log is makred as shutdown before xlog_state_shutdown_callbacks()
+is run and xlog_wait_on_iclog() checks if the log is shut down
+after it is woken. Hence if we wake the waiters first, they'll see
+the shutdown, get -EIO returned from xfs_trans_commit() and unlock
+and release all the objects they have locked.
+
+Once they do this, the xfs_buf_item_unpin() call that is stuck
+waiting for the buffer lock to be released will gain the lock and
+make progress. This will allow the journal shutdown to complete, and
+the hang will go away.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
