@@ -1,487 +1,199 @@
-Return-Path: <linux-kernel+bounces-292350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FA5956E3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96B0956E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF211C21B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5051C22142
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD57186E2A;
-	Mon, 19 Aug 2024 15:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8809018801E;
+	Mon, 19 Aug 2024 15:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u5usl7tg"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cwU7ib2z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880F717920A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2803A176231;
+	Mon, 19 Aug 2024 15:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080053; cv=none; b=MgDRvvD+jzUbMwhH9CcyldIRfEbe+oiWhTnTy6tuWR3LsUA9lsemSv9lkUmqCoy1vI3IMUvOldBjN6wUOipQJyZU6IiM/69Zmw9ZZqLJkex+3KyTR1Fu+2GcKCz0DBhuofEI/4PdDinJc6K5b3DMSqjkPd4AHrDHEKQrjeKSavU=
+	t=1724080074; cv=none; b=fcMCwxNeUs4asWf+uGGyHQTptiTJjjS4sT4iqIF0aRMdkMnA/Omqp4iH2jlGVJK//z3wP/x1+NaZE17+LmdRpBGSHJga6AexsM8FLqJE/VENbY5V+gjbSlPS4yZnBQEwN+pv7yRjO3usG84LyTbtNsnJHJRYU/yrYRHY6Jt5C10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080053; c=relaxed/simple;
-	bh=yULzxhgqabfFUTtoN2cYbJ23pCpjO4bznnV2x8i2jxY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Nxe0QFfWtvQV3znpp3XPp8dFTsB4IumxZJRgXT+JaNBEDxWd4UjHWahLUNdu5NQGaTZnSb7Lmq6HIq+6eXw6YUm/51TL/2e6UOMGU8W/AVCmGdx5K6bu9V/MnOSuXrblDCt8XhsZr4vvhmjVf6ofzUwLtQrwyiFwJ5Ra3+r93AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u5usl7tg; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7a1d40f49f5so502929985a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724080050; x=1724684850; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho9lWkBHrnP95w04SuuVC92kMJhRKmYkeES5lEDr4BM=;
-        b=u5usl7tgh1HiwiQI7QN52aup6Cp7KeCLY6IwaVLWk7oz/okK2RszAc88LUCjfMzGMi
-         BpaZxeYjie9FA2fszVeuIivn9zWOO/OmOy+h5lHDEkda7+5l9liutJJMyi0hP5UzPtXT
-         8Ar7W9YJA+h5sNFmEaX6cxiVqjY316Y40b/6fkL1Y/lRaT83YkN7X0ingsduCJ7+6fY8
-         KaO/RsMNlivfoQ2Vk7wTOcjTqJSdJTA44rR5HHYSfkf4P+y6BXSasOfINgUjRFnUnk4Y
-         IlIsKTfOow8Chtp0yZcifUo3Vt39glOX+XuhK64nrSfXPpPoEH2+LmWViYMwreZwq4cA
-         iSOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724080050; x=1724684850;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho9lWkBHrnP95w04SuuVC92kMJhRKmYkeES5lEDr4BM=;
-        b=Pyg3I08dvYButL8+nukW89WBNOCk2FHX5tnN+Vm9Pf0TubNJYemTsmhFApssnG/OWh
-         rDZwrMsbqrgnTLmKjZ3mCXs6lWjb39tqlJwhr9JBTPHuRnfRG5juMJAOv5bqBCwp0DMb
-         xFRSx6yAJ5Z0z2Ko1iWVMB9A6SuNpVLjrMEyuMtRJiKAO2L2iQA+K+HMxWASaFCPtM+P
-         0b6edX6JxAhTN1qbV1p/h1cWAtORb0Zvot1u4Wzh6N0qCgzRKLldtjWAwfbqpih2KTIy
-         zb6yq+eGrvUtEsvg4O8DVVF1leNTBQJi5dRfXB30+3oUK++jgx9KMsAcBRmVTuXbaLuZ
-         XWJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgd87y1f+r+P9GHkaxNHqAvG1ImuKYsRmCNEzkVASN3am6/p2eeCHiiNG2l9yRgYs05ogtFWvt6zmwEbwCfC9aOLVOOKAYzd5p/PKz
-X-Gm-Message-State: AOJu0YwAyQPMl0dnDSnqepGXQfPuFZM/xdJs5yD3Q5oMSNohERdI0cOn
-	+lc11+0tqtKCB03ghLYNjAbB15MSZHk/4ryBWRlgkTOp60fxnsbUseQF4+Cet+P7APykrqbCHhB
-	XaGNxQFXVHTT7XaP1GaylHmXrmg==
-X-Google-Smtp-Source: AGHT+IE8L8y/XQdv1ohdKFo7fxMeiaKmkmmdw2vFHaITjBT6FZf7278cXZxzFaXpeGYNAA8KDOhURlaMjz4U9oQuUNE=
-X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
- (user=mattgilbride job=sendgmr) by 2002:a05:620a:9370:b0:79f:1863:701d with
- SMTP id af79cd13be357-7a506945dcbmr3258085a.7.1724080050623; Mon, 19 Aug 2024
- 08:07:30 -0700 (PDT)
-Date: Mon, 19 Aug 2024 15:07:13 +0000
-In-Reply-To: <20240819-b4-rbtree-v10-0-3b3b2c4d73af@google.com>
+	s=arc-20240116; t=1724080074; c=relaxed/simple;
+	bh=PsSb9lq5VWjaEqxKE/Tf9owkyuT4Q/NptnHcgWMV01M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twOQG3ByfqBU5AEZZexYV15+/KAqwFHGATPu+XLwhA3YjCtttr1+6OGW2XIJKnlTSDJ/bb+wUrePos9pbXaqug6DNgpEZltdaYwCQWJ2EWiVTYWs7JReuFQqgJ+AWQdPsFxmCd/Jr+5b/jWHwSA2hXXtNIFDNel4BYcs+K1oWzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cwU7ib2z; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724080071; x=1755616071;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PsSb9lq5VWjaEqxKE/Tf9owkyuT4Q/NptnHcgWMV01M=;
+  b=cwU7ib2zd5/pNkZTehwTRUcyKy2nTqYI7HBwlhiSeZnZj6s70aBG5J60
+   X3x7bWVHsq+T718bG9+UDCk5+tpAfAGkXlYHbKfMCFcP0cHi9dTVtpHX7
+   lQVzh63/0bcAbr09MkbULXrhPLv70Z2bQrVZ3bzWx/HoAxuRs4VPq+yk4
+   5NOnsj1kNI4eCkOD4BuPh9i3TlZCJnlCVi2sJM6nJZ758VpR9vnh7gBwl
+   wSV+i+5joC37OiBH/NsnYbA0GjCnuBMMUW1J1et3ULoUfh8FH9+OeR19c
+   obLvKh9HBaeIADBzi+U41E+aLDRvzDC/DwNF33YxkfOz63pnMuxnzN6sc
+   w==;
+X-CSE-ConnectionGUID: f2/RYm43TUaw9TySej4oqw==
+X-CSE-MsgGUID: Y5cbajTjT3a1v+dcjOTvqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22476578"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="22476578"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:07:50 -0700
+X-CSE-ConnectionGUID: hCz563YERMGML/DfO+9aZw==
+X-CSE-MsgGUID: uh77pYOQSRm/ZFVkuvCdRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="83606348"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 19 Aug 2024 08:07:48 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg3yz-00096Q-1w;
+	Mon, 19 Aug 2024 15:07:45 +0000
+Date: Mon, 19 Aug 2024 23:07:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
+	michael.hennerich@analog.com, gstols@baylibre.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
+ parts
+Message-ID: <202408192209.IrTzVL49-lkp@intel.com>
+References: <20240819064721.91494-8-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240819-b4-rbtree-v10-0-3b3b2c4d73af@google.com>
-X-Mailer: b4 0.13.0
-Message-ID: <20240819-b4-rbtree-v10-5-3b3b2c4d73af@google.com>
-Subject: [PATCH v10 5/5] rust: rbtree: add `RBTree::entry`
-From: Matt Gilbride <mattgilbride@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240819064721.91494-8-aardelean@baylibre.com>
 
-From: Alice Ryhl <aliceryhl@google.com>
+Hi Alexandru,
 
-This mirrors the entry API [1] from the Rust standard library on
-`RBTree`. This API can be used to access the entry at a specific key and
-make modifications depending on whether the key is vacant or occupied.
-This API is useful because it can often be used to avoid traversing the
-tree multiple times.
+kernel test robot noticed the following build warnings:
 
-This is used by binder to look up and conditionally access or insert a
-value, depending on whether it is there or not [2].
+[auto build test WARNING on jic23-iio/togreg]
+[cannot apply to linus/master v6.11-rc4 next-20240819]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Link: https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Entry.html [1]
-Link: https://android-review.googlesource.com/c/kernel/common/+/2849906 [2]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Tested-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Matt Gilbride <mattgilbride@google.com>
----
- rust/kernel/rbtree.rs | 310 ++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 235 insertions(+), 75 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardelean/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240819-145028
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240819064721.91494-8-aardelean%40baylibre.com
+patch subject: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+config: i386-buildonly-randconfig-001-20240819 (https://download.01.org/0day-ci/archive/20240819/202408192209.IrTzVL49-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192209.IrTzVL49-lkp@intel.com/reproduce)
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 754af0db86b5..db185b6b3c65 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -297,12 +297,19 @@ pub fn try_create_and_insert(
-     /// key/value pair). Returns [`None`] if a node with the same key didn't already exist.
-     ///
-     /// This function always succeeds.
--    pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
--        let node = Box::into_raw(node);
--        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
--        // the node is removed or replaced.
--        let node_links = unsafe { addr_of_mut!((*node).links) };
-+    pub fn insert(&mut self, node: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
-+        match self.raw_entry(&node.node.key) {
-+            RawEntry::Occupied(entry) => Some(entry.replace(node)),
-+            RawEntry::Vacant(entry) => {
-+                entry.insert(node);
-+                None
-+            }
-+        }
-+    }
- 
-+    fn raw_entry(&mut self, key: &K) -> RawEntry<'_, K, V> {
-+        let raw_self: *mut RBTree<K, V> = self;
-+        // The returned `RawEntry` is used to call either `rb_link_node` or `rb_replace_node`.
-         // The parameters of `bindings::rb_link_node` are as follows:
-         // - `node`: A pointer to an uninitialized node being inserted.
-         // - `parent`: A pointer to an existing node in the tree. One of its child pointers must be
-@@ -321,62 +328,56 @@ pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTree
-         // in the subtree of `parent` that `child_field_of_parent` points at. Once
-         // we find an empty subtree, we can insert the new node using `rb_link_node`.
-         let mut parent = core::ptr::null_mut();
--        let mut child_field_of_parent: &mut *mut bindings::rb_node = &mut self.root.rb_node;
--        while !child_field_of_parent.is_null() {
--            parent = *child_field_of_parent;
-+        let mut child_field_of_parent: &mut *mut bindings::rb_node =
-+            // SAFETY: `raw_self` is a valid pointer to the `RBTree` (created from `self` above).
-+            unsafe { &mut (*raw_self).root.rb_node };
-+        while !(*child_field_of_parent).is_null() {
-+            let curr = *child_field_of_parent;
-+            // SAFETY: All links fields we create are in a `Node<K, V>`.
-+            let node = unsafe { container_of!(curr, Node<K, V>, links) };
- 
--            // We need to determine whether `node` should be the left or right child of `parent`,
--            // so we will compare with the `key` field of `parent` a.k.a. `this` below.
--            //
--            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
--            // point to the links field of `Node<K, V>` objects.
--            let this = unsafe { container_of!(parent, Node<K, V>, links) };
--
--            // SAFETY: `this` is a non-null node so it is valid by the type invariants. `node` is
--            // valid until the node is removed.
--            match unsafe { (*node).key.cmp(&(*this).key) } {
--                // We would like `node` to be the left child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Less => child_field_of_parent = unsafe { &mut (*parent).rb_left },
--                // We would like `node` to be the right child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Greater => child_field_of_parent = unsafe { &mut (*parent).rb_right },
-+            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+            match key.cmp(unsafe { &(*node).key }) {
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Less => child_field_of_parent = unsafe { &mut (*curr).rb_left },
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Greater => child_field_of_parent = unsafe { &mut (*curr).rb_right },
-                 Ordering::Equal => {
--                    // There is an existing node in the tree with this key, and that node is
--                    // `parent`. Thus, we are replacing parent with a new node.
--                    //
--                    // INVARIANT: We are replacing an existing node with a new one, which is valid.
--                    // It remains valid because we "forgot" it with `Box::into_raw`.
--                    // SAFETY: All pointers are non-null and valid.
--                    unsafe { bindings::rb_replace_node(parent, node_links, &mut self.root) };
--
--                    // INVARIANT: The node is being returned and the caller may free it, however,
--                    // it was removed from the tree. So the invariants still hold.
--                    return Some(RBTreeNode {
--                        // SAFETY: `this` was a node in the tree, so it is valid.
--                        node: unsafe { Box::from_raw(this.cast_mut()) },
--                    });
-+                    return RawEntry::Occupied(OccupiedEntry {
-+                        rbtree: self,
-+                        node_links: curr,
-+                    })
-                 }
-             }
-+            parent = curr;
-         }
- 
--        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
--        // "forgot" it with `Box::into_raw`.
--        // SAFETY: All pointers are non-null and valid (`*child_field_of_parent` is null, but `child_field_of_parent` is a
--        // mutable reference).
--        unsafe { bindings::rb_link_node(node_links, parent, child_field_of_parent) };
-+        RawEntry::Vacant(RawVacantEntry {
-+            rbtree: raw_self,
-+            parent,
-+            child_field_of_parent,
-+            _phantom: PhantomData,
-+        })
-+    }
- 
--        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
--        unsafe { bindings::rb_insert_color(node_links, &mut self.root) };
--        None
-+    /// Gets the given key's corresponding entry in the map for in-place manipulation.
-+    pub fn entry(&mut self, key: K) -> Entry<'_, K, V> {
-+        match self.raw_entry(&key) {
-+            RawEntry::Occupied(entry) => Entry::Occupied(entry),
-+            RawEntry::Vacant(entry) => Entry::Vacant(VacantEntry { raw: entry, key }),
-+        }
-     }
- 
--    /// Returns a node with the given key, if one exists.
--    fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-+    /// Used for accessing the given node, if it exists.
-+    pub fn find_mut(&mut self, key: &K) -> Option<OccupiedEntry<'_, K, V>> {
-+        match self.raw_entry(key) {
-+            RawEntry::Occupied(entry) => Some(entry),
-+            RawEntry::Vacant(_entry) => None,
-+        }
-+    }
-+
-+    /// Returns a reference to the value corresponding to the key.
-+    pub fn get(&self, key: &K) -> Option<&V> {
-         let mut node = self.root.rb_node;
-         while !node.is_null() {
-             // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-@@ -388,47 +389,30 @@ fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-                 Ordering::Less => unsafe { (*node).rb_left },
-                 // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-                 Ordering::Greater => unsafe { (*node).rb_right },
--                Ordering::Equal => return NonNull::new(this.cast_mut()),
-+                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+                Ordering::Equal => return Some(unsafe { &(*this).value }),
-             }
-         }
-         None
-     }
- 
--    /// Returns a reference to the value corresponding to the key.
--    pub fn get(&self, key: &K) -> Option<&V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key).map(|node| unsafe { &node.as_ref().value })
--    }
--
-     /// Returns a mutable reference to the value corresponding to the key.
-     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key)
--            .map(|mut node| unsafe { &mut node.as_mut().value })
-+        self.find_mut(key).map(|node| node.into_mut())
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the node that was removed if one exists, or [`None`] otherwise.
--    fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
--        let mut node = self.find(key)?;
--
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        unsafe { bindings::rb_erase(&mut node.as_mut().links, &mut self.root) };
--
--        // INVARIANT: The node is being returned and the caller may free it, however, it was
--        // removed from the tree. So the invariants still hold.
--        Some(RBTreeNode {
--            // SAFETY: The `find` return value was a node in the tree, so it is valid.
--            node: unsafe { Box::from_raw(node.as_ptr()) },
--        })
-+    pub fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
-+        self.find_mut(key).map(OccupiedEntry::remove_node)
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the value that was removed if one exists, or [`None`] otherwise.
-     pub fn remove(&mut self, key: &K) -> Option<V> {
--        self.remove_node(key).map(|node| node.node.value)
-+        self.find_mut(key).map(OccupiedEntry::remove)
-     }
- 
-     /// Returns a cursor over the tree nodes based on the given key.
-@@ -1136,6 +1120,182 @@ unsafe impl<K: Send, V: Send> Send for RBTreeNode<K, V> {}
- // [`RBTreeNode`] without synchronization.
- unsafe impl<K: Sync, V: Sync> Sync for RBTreeNode<K, V> {}
- 
-+impl<K, V> RBTreeNode<K, V> {
-+    /// Drop the key and value, but keep the allocation.
-+    ///
-+    /// It then becomes a reservation that can be re-initialised into a different node (i.e., with
-+    /// a different key and/or value).
-+    ///
-+    /// The existing key and value are dropped in-place as part of this operation, that is, memory
-+    /// may be freed (but only for the key/value; memory for the node itself is kept for reuse).
-+    pub fn into_reservation(self) -> RBTreeNodeReservation<K, V> {
-+        RBTreeNodeReservation {
-+            node: Box::drop_contents(self.node),
-+        }
-+    }
-+}
-+
-+/// A view into a single entry in a map, which may either be vacant or occupied.
-+///
-+/// This enum is constructed from the [`RBTree::entry`].
-+///
-+/// [`entry`]: fn@RBTree::entry
-+pub enum Entry<'a, K, V> {
-+    /// This [`RBTree`] does not have a node with this key.
-+    Vacant(VacantEntry<'a, K, V>),
-+    /// This [`RBTree`] already has a node with this key.
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// Like [`Entry`], except that it doesn't have ownership of the key.
-+enum RawEntry<'a, K, V> {
-+    Vacant(RawVacantEntry<'a, K, V>),
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// A view into a vacant entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+pub struct VacantEntry<'a, K, V> {
-+    key: K,
-+    raw: RawVacantEntry<'a, K, V>,
-+}
-+
-+/// Like [`VacantEntry`], but doesn't hold on to the key.
-+///
-+/// # Invariants
-+/// - `parent` may be null if the new node becomes the root.
-+/// - `child_field_of_parent` is a valid pointer to the left-child or right-child of `parent`. If `parent` is
-+///     null, it is a pointer to the root of the [`RBTree`].
-+struct RawVacantEntry<'a, K, V> {
-+    rbtree: *mut RBTree<K, V>,
-+    /// The node that will become the parent of the new node if we insert one.
-+    parent: *mut bindings::rb_node,
-+    /// This points to the left-child or right-child field of `parent`, or `root` if `parent` is
-+    /// null.
-+    child_field_of_parent: *mut *mut bindings::rb_node,
-+    _phantom: PhantomData<&'a mut RBTree<K, V>>,
-+}
-+
-+impl<'a, K, V> RawVacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    ///
-+    /// The `node` must have a key such that inserting it here does not break the ordering of this
-+    /// [`RBTree`].
-+    fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
-+        // "forgot" it with `Box::into_raw`.
-+        // SAFETY: The type invariants of `RawVacantEntry` are exactly the safety requirements of `rb_link_node`.
-+        unsafe { bindings::rb_link_node(node_links, self.parent, self.child_field_of_parent) };
-+
-+        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
-+        unsafe { bindings::rb_insert_color(node_links, addr_of_mut!((*self.rbtree).root)) };
-+
-+        // SAFETY: The node is valid until we remove it from the tree.
-+        unsafe { &mut (*node).value }
-+    }
-+}
-+
-+impl<'a, K, V> VacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    pub fn insert(self, value: V, reservation: RBTreeNodeReservation<K, V>) -> &'a mut V {
-+        self.raw.insert(reservation.into_node(self.key, value))
-+    }
-+}
-+
-+/// A view into an occupied entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+///
-+/// # Invariants
-+/// - `node_links` is a valid, non-null pointer to a tree node in `self.rbtree`
-+pub struct OccupiedEntry<'a, K, V> {
-+    rbtree: &'a mut RBTree<K, V>,
-+    /// The node that this entry corresponds to.
-+    node_links: *mut bindings::rb_node,
-+}
-+
-+impl<'a, K, V> OccupiedEntry<'a, K, V> {
-+    /// Gets a reference to the value in the entry.
-+    pub fn get(&self) -> &V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - We have shared access to the underlying tree, and can thus give out a shared reference.
-+        unsafe { &(*container_of!(self.node_links, Node<K, V>, links)).value }
-+    }
-+
-+    /// Gets a mutable reference to the value in the entry.
-+    pub fn get_mut(&mut self) -> &mut V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - We have exclusive access to the underlying tree, and can thus give out a mutable reference.
-+        unsafe {
-+            &mut (*(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)).value
-+        }
-+    }
-+
-+    /// Converts the entry into a mutable reference to its value.
-+    ///
-+    /// If you need multiple references to the `OccupiedEntry`, see [`self#get_mut`].
-+    pub fn into_mut(self) -> &'a mut V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - This consumes the `&'a mut RBTree<K, V>`, therefore it can give out a mutable reference that lives for `'a`.
-+        unsafe {
-+            &mut (*(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)).value
-+        }
-+    }
-+
-+    /// Remove this entry from the [`RBTree`].
-+    pub fn remove_node(self) -> RBTreeNode<K, V> {
-+        // SAFETY: The node is a node in the tree, so it is valid.
-+        unsafe { bindings::rb_erase(self.node_links, &mut self.rbtree.root) };
-+
-+        // INVARIANT: The node is being returned and the caller may free it, however, it was
-+        // removed from the tree. So the invariants still hold.
-+        RBTreeNode {
-+            // SAFETY: The node was a node in the tree, but we removed it, so we can convert it
-+            // back into a box.
-+            node: unsafe {
-+                Box::from_raw(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)
-+            },
-+        }
-+    }
-+
-+    /// Takes the value of the entry out of the map, and returns it.
-+    pub fn remove(self) -> V {
-+        self.remove_node().node.value
-+    }
-+
-+    /// Swap the current node for the provided node.
-+    ///
-+    /// The key of both nodes must be equal.
-+    fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let new_node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // SAFETY: This updates the pointers so that `new_node_links` is in the tree where
-+        // `self.node_links` used to be.
-+        unsafe {
-+            bindings::rb_replace_node(self.node_links, new_node_links, &mut self.rbtree.root)
-+        };
-+
-+        // SAFETY:
-+        // - `self.node_ptr` produces a valid pointer to a node in the tree.
-+        // - Now that we removed this entry from the tree, we can convert the node to a box.
-+        let old_node = unsafe {
-+            Box::from_raw(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)
-+        };
-+
-+        RBTreeNode { node: old_node }
-+    }
-+}
-+
- struct Node<K, V> {
-     links: bindings::rb_node,
-     key: K,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408192209.IrTzVL49-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/adc/ad7606.c:796:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+     796 |         int ret, ch;
+         |             ^
+   1 warning generated.
+
+
+vim +/ret +796 drivers/iio/adc/ad7606.c
+
+94168a5789874a Alexandru Ardelean 2024-08-19  790  
+94168a5789874a Alexandru Ardelean 2024-08-19  791  static int ad7606_sw_mode_setup(struct iio_dev *indio_dev, unsigned int id)
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  792  {
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  793  	unsigned int num_channels = indio_dev->num_channels - 1;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  794  	struct ad7606_state *st = iio_priv(indio_dev);
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  795  	unsigned int *scale_avail_show, num_scales_avail_show;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19 @796  	int ret, ch;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  797  
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  798  	if (!st->bops->sw_mode_config)
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  799  		return 0;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  800  
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  801  	st->sw_mode_en = device_property_present(st->dev, "adi,sw-mode");
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  802  	if (!st->sw_mode_en)
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  803  		return 0;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  804  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  805  	indio_dev->info = &ad7606_info_sw_mode;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  806  
+94168a5789874a Alexandru Ardelean 2024-08-19  807  	switch (id) {
+94168a5789874a Alexandru Ardelean 2024-08-19  808  	case ID_AD7606C_18:
+94168a5789874a Alexandru Ardelean 2024-08-19  809  		num_scales_avail_show = num_channels;
+94168a5789874a Alexandru Ardelean 2024-08-19  810  		ret = ad7606c_sw_mode_setup_channels(indio_dev,
+94168a5789874a Alexandru Ardelean 2024-08-19  811  						     ad7606c_18_chan_setup);
+94168a5789874a Alexandru Ardelean 2024-08-19  812  		break;
+94168a5789874a Alexandru Ardelean 2024-08-19  813  	case ID_AD7606C_16:
+94168a5789874a Alexandru Ardelean 2024-08-19  814  		num_scales_avail_show = num_channels;
+94168a5789874a Alexandru Ardelean 2024-08-19  815  		ret = ad7606c_sw_mode_setup_channels(indio_dev,
+94168a5789874a Alexandru Ardelean 2024-08-19  816  						     ad7606c_16_chan_setup);
+94168a5789874a Alexandru Ardelean 2024-08-19  817  		break;
+94168a5789874a Alexandru Ardelean 2024-08-19  818  	default:
+94168a5789874a Alexandru Ardelean 2024-08-19  819  		num_scales_avail_show = 1;
+94168a5789874a Alexandru Ardelean 2024-08-19  820  
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  821  		/* Scale of 0.076293 is only available in sw mode */
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  822  		/* After reset, in software mode, ±10 V is set by default */
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  823  		for (ch = 0; ch < num_channels; ch++) {
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  824  			struct ad7606_chan_scale *cs = &st->chan_scales[ch];
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  825  
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  826  			cs->scale_avail = ad7616_sw_scale_avail;
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  827  			cs->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  828  			cs->range = 2;
+36b63bb57295f7 Alexandru Ardelean 2024-08-19  829  		}
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  830  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  831  		ret = st->bops->sw_mode_config(indio_dev);
+94168a5789874a Alexandru Ardelean 2024-08-19  832  		break;
+94168a5789874a Alexandru Ardelean 2024-08-19  833  	}
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  834  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  835  	for (ch = 0; ch < num_channels; ch++) {
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  836  		struct ad7606_chan_scale *cs;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  837  		int i;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  838  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  839  		/* AD7606C supports different scales per channel */
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  840  		cs = &st->chan_scales[ch];
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  841  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  842  		if (num_scales_avail_show == 1 && ch > 0) {
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  843  			cs->scale_avail_show = scale_avail_show;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  844  			continue;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  845  		}
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  846  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  847  		scale_avail_show = devm_kcalloc(st->dev, cs->num_scales * 2,
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  848  						sizeof(*scale_avail_show),
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  849  						GFP_KERNEL);
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  850  		if (!scale_avail_show)
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  851  			return -ENOMEM;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  852  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  853  		/* Generate a scale_avail list for showing to userspace */
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  854  		for (i = 0; i < cs->num_scales; i++) {
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  855  			scale_avail_show[i * 2] = 0;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  856  			scale_avail_show[i * 2 + 1] = cs->scale_avail[i];
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  857  		}
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  858  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  859  		cs->scale_avail_show = scale_avail_show;
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  860  	}
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  861  
+09d11fa081ef17 Alexandru Ardelean 2024-08-19  862  	return 0;
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  863  }
+b5d2c422286d62 Alexandru Ardelean 2024-08-19  864  
 
 -- 
-2.46.0.184.g6999bdac58-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
