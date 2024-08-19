@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-291383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107ED95616E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A16956170
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C767128268A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCB9282628
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1C13B7A1;
-	Mon, 19 Aug 2024 03:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFIqM1bd"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F4013B7A1;
+	Mon, 19 Aug 2024 03:27:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8795A5464A;
-	Mon, 19 Aug 2024 03:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370A722064
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724037907; cv=none; b=AYIIf7BEkDDYVkOpjZVx/43KTFfk8T/w6guTMKTSGV2EMZ1pI/GDnHU/kGGgiQS/KN14NPeRPicUJr92q2LoM9pa9Go/ZhOe9ep1PwnOb+oEJYTTNZBBlpGQbLlUy8asjrX7oyGAsj6Mj69Xy7RGeiOjD1wmPvsrUe3Qtjhq8h0=
+	t=1724038025; cv=none; b=h283RBBY1Cr7/aCzh9wigJMzdybF1GF/4HV3Id1ZRb1vjs7jFwiv1kb5lNeG1Kv+gsEPe46fLhXLMCcfkuJW1FbuG0Fp9nW6r2ASqxn+H3FMisRp4RR0OmxQIIz/IVqE0qWMPd67pMjSiy3XqxwUtOSSTeg7UDF81knICZcO+38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724037907; c=relaxed/simple;
-	bh=bgI0G8Fn72Rxqq87UXM49Ehflc/VPUK06RevINtBC1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atV+29cteTplbHojR3/JBbU0FrDr/i5nuHjzfL68aFOnn4VX7UlARUsXGBar3crzqHmKkYA7VvQBlwL51cKWXjnhVwnae37hPdCNbx8Av0Trsy5CK3l8D/6FCCt+JgHFKOnIS7b+raJrAYN5FZG9VP7UtS9FE4HYndfSs1T1LNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFIqM1bd; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-70968db52d0so4283471a34.3;
-        Sun, 18 Aug 2024 20:25:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724037905; x=1724642705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRa8lv4SQNw2ZtQDULmxx7KlayrTU8FifJF1b2nbCo8=;
-        b=CFIqM1bdE1RjZ5i/DV6RmrfSTI424qyaRox6IbgL5HZHfn8NcqGTpEGQr3R9wuynXH
-         gOubnkj6bOt3eP6KtxWxcEDa2xM6dQ6mVQt2ngqlvwac4eEbq5YgBE9x7RQQ19M+78Cq
-         dtRQmX89sZeNcnr0lbTMXGk39NUcaW86+We5Wq1qsx0CHNo84QVZdNXvVUFbZEvzXoXh
-         hua2Ap8sKAqFF6MlfyzPfDNWJCigvzFVrPedeVQyQoRbg6Hr5Jq9uQCUmELfrFeIedlT
-         WJHeB1ZIwE656pVnnNdXENokZapL6WKp7q9h9pCqVamM6MWlXfW/DbkdhgsUJR8/EYDD
-         jBkw==
+	s=arc-20240116; t=1724038025; c=relaxed/simple;
+	bh=8QmuNmqm65SMy7JLDenj439cDsItg7rWNJ3Z1rYvUXA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=u+9Vw8nNJvChMu/c8Gb2gn3+m0j0GkTs1Pl9WY15XKh49XpbB61Nv3946wwuSEYTxJmHRgH/jTa1qjtUTI+8l8wpMvDocdNeJhyCQ0C8ECRwktXPoulQ84+iZEaHq5b8lohf/JQOL5aZRB69/vPVEtEwc++rIE/+Lio0SqQzvdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b28ea6f37so40559705ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:27:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724037905; x=1724642705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LRa8lv4SQNw2ZtQDULmxx7KlayrTU8FifJF1b2nbCo8=;
-        b=q0OajxrjbxeI6hYu0OFnSjRskoS9ZUkHJboXM6pB6h2CgT6DdTIS0mt0RXFRScfv0r
-         vQfOYmNC0DnBJDxMj3CfbWKe55GaWSW79S7uu+DIw4S8jUjK7miLWBwWwWz7PSpsUByq
-         lwgb97LKLV2NesupaMGD07ln8rTbsONLAURbQkvzvFCCFkmSdeL1v5009rvweCMxrP7Z
-         HGFgjn29IPenfMAbDuYVJCY28e9DNk/RKss7/tfiiiIhKK9cgCDPqpu9BjGPKrj/8Bg+
-         3XDeTsDgoeFYE8rxjaxaINm5tDaIUSrtvDKSyupNys+vQza+jqpk/yrlYedkPE6J6IyH
-         p+yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUwBv0JUogQuHaGWoN/KwyV4KQ+EgS3n5QUz8bBVMdr3+6Ky8MrzaPQkaLf3wZ5BW/QHguPGaGyeF8qYSBh9LfKYDEljQgg+Sz8BCH
-X-Gm-Message-State: AOJu0Yz1CKyr2nP4hqyyLvR/jbypx3fdSi7mc79or5hrq/q21vOD7ywt
-	gcFPNuSM6LqZHwihwtDSaNQ4AOBvDD9qchfL6B/vu9erDuvVjC+C
-X-Google-Smtp-Source: AGHT+IF84DN8HQzV6zoD72eLq74bqYTaY+2ulQX/D4cbqR9Q1bhMZhzIhyY5niKl43jsZCkgi8Bxww==
-X-Received: by 2002:a05:6830:488b:b0:709:32c3:68ef with SMTP id 46e09a7af769-70cac8b67cemr12602626a34.30.1724037905237;
-        Sun, 18 Aug 2024 20:25:05 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:4eb5:4500:6efc:6c24])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61a70c0sm5831917a12.5.2024.08.18.20.25.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 20:25:04 -0700 (PDT)
-Date: Sun, 18 Aug 2024 20:25:02 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: i8042 - add Fujitsu Lifebook E756 to i8042 quirk
- table
-Message-ID: <ZsK7Dot6ZZoQ6Na4@google.com>
-References: <20240814100630.2048-1-tiwai@suse.de>
+        d=1e100.net; s=20230601; t=1724038023; x=1724642823;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0y33gPE0WW+jRIq8dDUYGb7EJaVpIvIur5WR3/RbDY=;
+        b=CJOqt1Qoy4p9dc1lvbRPi5Ps55Bo3Gmu2X7OesYcw8gpdPp2aBA3o8NoihtkjLARWg
+         I34C/t2t5gPV+/jq4Lpzit1qqter+NlqdUYvDsYV1+vLeR0i1j8NqiVKOjxXywKlEA3o
+         IPUWZXr6CjSMxN2b/qgl0D2q/23sMNXl9+2XO8joyPYkp3J4d80YJIgT0lPePVqNmZJ7
+         MkCPoH8t7h5klCNeGX3bYkOH8JfrWB4ybzUK039ggJW6CQ26WIrBgvm3nma+8Hxmf0xk
+         /vwQhfnYYw2fwCevD4XEGTDaVQfuntaD1L+YX8Y8TAILIBnpjC5sTrq+P8YE6ibBqhrx
+         9aCg==
+X-Gm-Message-State: AOJu0YwzZScx+zFKenHe2cDHHJq6SnrMHFLUzyyu6vI7uYtIMAwDOoGn
+	ykZztpBe2IlWrbtsMBvyGM1rTfNgDnXOpItlD+fLWL+GQYion/gEnetZDsI9tei+C5Opiv6hUV8
+	hmZ1FihAVeSH5nbWOlwZBHPZa71LOQRlzq1E0pFjOp5uOdx56icQOyY0=
+X-Google-Smtp-Source: AGHT+IFeJpHNWXl1XuTz7teEIUbOVoVqlf8mk3/nRygTYgpq/jXzxd7MSXJkiVy7zXLWc3CkqKe1cdy033gDejz88okBXCQzjeY9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814100630.2048-1-tiwai@suse.de>
+X-Received: by 2002:a05:6e02:1a6e:b0:385:ffe:4516 with SMTP id
+ e9e14a558f8ab-39d26ce52e0mr5407665ab.2.1724038023334; Sun, 18 Aug 2024
+ 20:27:03 -0700 (PDT)
+Date: Sun, 18 Aug 2024 20:27:03 -0700
+In-Reply-To: <00000000000071b7c5061ff83639@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f5d890062000e13f@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write
+ in bch2_dev_journal_init
+From: syzbot <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 14, 2024 at 12:06:19PM +0200, Takashi Iwai wrote:
-> Yet another quirk entry for Fujitsu laptop.  Lifebook E756 requires
-> i8041.nomux for keeping the touchpad working after suspend/resume.
-> 
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229056
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Applied, thank you.
+***
 
--- 
-Dmitry
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write in bch2_dev_journal_init
+Author: lizhi.xu@windriver.com
+
+two obj are null ?
+
+#syz test: upstream c3f2d783a459
+
+diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+index 13669dd0e375..1219f921690a 100644
+--- a/fs/bcachefs/journal.c
++++ b/fs/bcachefs/journal.c
+@@ -1304,6 +1304,10 @@ int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
+ 
+ 	ja->nr = 0;
+ 
++	struct printbuf buf = PRINTBUF;
++	prt_printf(&buf, "ja nr: %u, %s\n", ja->nr, journal_buckets_v2, journal_buckets, __func__);
++	printbuf_exit(&buf);
++
+ 	if (journal_buckets_v2) {
+ 		unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+ 
+@@ -1311,7 +1315,8 @@ int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
+ 			ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
+ 	} else if (journal_buckets) {
+ 		ja->nr = bch2_nr_journal_buckets(journal_buckets);
+-	}
++	} else
++		return -EINVAL;
+ 
+ 	ja->bucket_seq = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
+ 	if (!ja->bucket_seq)
 
