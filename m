@@ -1,142 +1,101 @@
-Return-Path: <linux-kernel+bounces-291366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA20C95613D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:52:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A9995613B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099F91C20EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532691C210A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F6A446A1;
-	Mon, 19 Aug 2024 02:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBnx85WV"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017F329D0C;
+	Mon, 19 Aug 2024 02:51:40 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2226D3BBEF;
-	Mon, 19 Aug 2024 02:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33271BDC8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724035909; cv=none; b=d/s1gBwLtPE7SOhM6dqaoq09PbyhrH38SlTwlHDr2A4ex1VfCih23dafttwQAukg8abhc+DBj9qwHW8IpfdQlZBHwWcjFU8f8ILrI0fMPVT8c7sOxXIzhPwGVdWi5o3DV+BkL2jUmezQRx7HxcAQq073BW5jho14QmVvYBYm/mE=
+	t=1724035899; cv=none; b=IbCzSI4GFdwmtxaXzWefHFCDQfhPK5g39OwH0ndwztG4WRbtKNugAV/xtG/4/BiPe0a6mvHxGta4u7gjYf5KjAzCWXNTpnkGtUXGPnJilyV8vAcddJT6ldzK4q+ftzgVcp72W4RXx0tFs/QcbSp6zmZDG9IBD8uEman8rSaA4mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724035909; c=relaxed/simple;
-	bh=iOAky0YuVIdmBSLAN1+x9Uot0I0GbwCG6AuRV+YGhic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a1CALLGEJwKQ2bnWMWdx7citFDzLdjVMWOcLhbbm69goUXpXjHinlTFqTcl8VcrMTvne22SHy4nSY8QqpnZzkqbVLRzlcaOmsuG1VuExZbanDT4OCKttpfTqZxHc5NYCfn5F2I0WIJ4vKHeOMMkIsh37n92JCEp4I8iFqLaMn/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBnx85WV; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37195f88a17so1774354f8f.3;
-        Sun, 18 Aug 2024 19:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724035906; x=1724640706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iOAky0YuVIdmBSLAN1+x9Uot0I0GbwCG6AuRV+YGhic=;
-        b=UBnx85WVYcxEALrAGB85y7YHq9bqUCHaIjBo0dnfAPkKKBCSFEUzLOtRd7EO0csqlz
-         KhSt0lC29ijgH50EHUnzUhufGZgRmBzR5W8gdncVAK4l53w/OXDAUov9uVHeFMzPKkI+
-         sBQjgtv5K0hbER5WY4zbChczqf0XMrtTYqgzitHEcO1g3ERxOVCKJWlgzbwZpFQY3X8Q
-         4x5DbqjYgmhiZi/dIdsqffULTpm0Dozlo0klviJYLdFpmN0UwaiOAbABnyeqE9LUNAgd
-         8cIdtDqBniUH0xNUVEqOgskTuBSoAB0CAWXQ1Tu/Dnn7benmHXR9l87sN/6/IOvpmCOU
-         hFrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724035906; x=1724640706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iOAky0YuVIdmBSLAN1+x9Uot0I0GbwCG6AuRV+YGhic=;
-        b=fUi+IlfYHspmU383lQhI3L8iLz/iNak/Q1amvrKYRHKCqSm/n9Umnx0DRBqA3V1rMf
-         sE9XCQF3BQTF8NbP0S39zCvDnxnbMVubx7rqM1hcJaU1eTX+Pe16sBpZo1KW5skVjTuq
-         lQrqA2iRO2BOflGHDu80IjYtqp4qefauZbk8ZwZDSfjjFS5VYz5qQ4glaQ0jF64+WzJ1
-         a9W6Dj7KUACfsSLi4mxJF3aJph0KH8lYs22BXQF4zr7miJxykTCMvjtR2aRq1QtcWal6
-         9JoNvi4c7KadSyMa/TkdAQNkxNl53tM9lM3J/2WByyw6Pjyq1VQT8EjcLSI6pt9Sg4sD
-         qrCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnkBMPUocD4UOc/NkU0q/Ecfk35HjyxfLHuJQdN9ksPU6bJ0IKW5FRmxTR3HtwUEghPqJuDLFrBRAFU9H3qucgKZ6qO6wDMXqc4nCNtFgvZYQZsGw/qQryqpR70fyatfiysq91B1fsC/q9hGGadkP502WgtidH/VjbbW52RKdRLFv3JCMh
-X-Gm-Message-State: AOJu0YxWk6e24xu6K8UhqMBn270wiAHQZ2r+wmezOaJGmuU0m/efRrsa
-	8cWY2vdCpsNe6Kgdnw3cepOgxy4sdwx/OzyWdXOuLykkDV/ue+G54dIXg8ij0mGjGqE+5ZoKbTb
-	WEW2EP9v2dz+9rukhGYod8KaaOKk=
-X-Google-Smtp-Source: AGHT+IH619dt1C/HugVRab8KXzPRU/jfFMZu/ooXKNJwmcmoQBV7Gqj1VMZBI8HGX8T1g7AECYwMYGRs0fV589TfrJA=
-X-Received: by 2002:a05:6000:186:b0:367:8ff0:e022 with SMTP id
- ffacd0b85a97d-371946b0ddcmr5515014f8f.63.1724035905695; Sun, 18 Aug 2024
- 19:51:45 -0700 (PDT)
+	s=arc-20240116; t=1724035899; c=relaxed/simple;
+	bh=MphJWY7xAAzYAOlHBN+3IDylWkzUrc1HBNy+kvyO6Gg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZnpENpkPvM8GorCQ/sk+gzJrCkaeZJ3PGw18zxVBc+opqrFEbsYvrwYNBPdFwUHSqot8RKjXFOKMOHj+cJdrad6+XKooke2q63LI8qQzxHLFofN7bmu0oQGIEQu06XeByJZ4Mg10tEcIMeOiExc1CIWaHNk596KTv23ZvbzRZ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J2oG11005096;
+	Sun, 18 Aug 2024 19:51:16 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412q5415vc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 18 Aug 2024 19:51:15 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 18 Aug 2024 19:51:15 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Sun, 18 Aug 2024 19:51:13 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>
+CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
+        <linux-kernel@vger.kernel.org>, <mark@fasheh.com>,
+        <ocfs2-devel@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] ocfs2: remove unreasonable unlock
+Date: Mon, 19 Aug 2024 10:51:12 +0800
+Message-ID: <20240819025112.2505463-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007541d9061ff83615@google.com>
+References: <0000000000007541d9061ff83615@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-loongson1-nand-v8-0-c96dea418b41@gmail.com>
- <20240808-loongson1-nand-v8-1-c96dea418b41@gmail.com> <20240808-backyard-unglue-3cf429ad8da5@spud>
- <CAJhJPsVOTAj9ePzeHkwDX049FKd=9Rs_NjQE2qwQL76GKSC66Q@mail.gmail.com>
- <20240809-smuggler-patrol-067003f0ba9b@spud> <20240814091231.1d9525be@xps-13>
-In-Reply-To: <20240814091231.1d9525be@xps-13>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Mon, 19 Aug 2024 10:51:09 +0800
-Message-ID: <CAJhJPsWBKNZmDQreigABVxLqUg_F+BGT7dUnO9C09pNDovbxMQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Conor Dooley <conor@kernel.org>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: jzCXM0XNVvJZ3nJtd9lJGbqoee7L3OYB
+X-Proofpoint-ORIG-GUID: jzCXM0XNVvJZ3nJtd9lJGbqoee7L3OYB
+X-Authority-Analysis: v=2.4 cv=b+3g4cGx c=1 sm=1 tr=0 ts=66c2b323 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=HuAlKsfkTx2sNoB5ci0A:9 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-18_24,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=933 lowpriorityscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408190019
 
-On Wed, Aug 14, 2024 at 3:12=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> Hi,
->
-> > > > When I first read "nfc" here I thought it was a copy-paste mistake,=
- as
-> > > > "nfc" is a technology of it's own. I think it would make sense to r=
-ename
-> > > > to "loongson,ls1b-nand-controller" etc to remove that sort of confu=
-sion.
-> > > > These devices might not implement NFC, but what's to say that a fut=
-ure
-> > > > device will not?
->
-> I believe the nfc (also, nc) abbreviation pre-dates the NFC spec. But I
-> agree, it may be misleading. Even though I don't foresee any NAND
-> controller with NFC coming, it's probably bad for newcomers/people who
-> are not already deeply into the mtd details to use these confusing
-> letters, especially in a binding.
->
-> So, Ack.
->
-> > > Sorry for the confusion.
-> > > The string "loongson,ls1b-nand-controller" might be too long.
-> >
-> > It "might"? Why do you think it is too long?
->
-> Yeah, why would it be too long? Let's call a cat a cat. This is a
-> compatible for a NAND controller. So I expect the string to mention
-> it's a NAND controller because it's clearer. For quite some time there
-> has been a confusion between the NAND controller and the NAND
-> flash/chip, but these are two different hardware components.
->
-> > > May I rename it to "loongson,ls1b-nand"?
->
-> For the above reason, no :)
+There was a lock release before exiting, so remove the unreasonable unlock.
 
-Will change it to "loongson,ls1b-nand-controller" and rename the
-filename accordingly.
-Thanks!
->
-> Thanks,
-> Miqu=C3=A8l
+Reported-and-tested-by: syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ab134185af9ef88dfed5
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/ocfs2/buffer_head_io.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index cdb9b9bdea1f..e62c7e1de4eb 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -235,7 +235,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		if (bhs[i] == NULL) {
+ 			bhs[i] = sb_getblk(sb, block++);
+ 			if (bhs[i] == NULL) {
+-				ocfs2_metadata_cache_io_unlock(ci);
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+ 				/* Don't forget to put previous bh! */
+-- 
+2.43.0
 
-
---=20
-Best regards,
-
-Keguang Zhang
 
