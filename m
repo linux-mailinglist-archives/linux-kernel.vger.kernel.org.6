@@ -1,302 +1,171 @@
-Return-Path: <linux-kernel+bounces-291903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6619568B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874AB9568B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12241C218F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E855283E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA61649BF;
-	Mon, 19 Aug 2024 10:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="miVRjeOK"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011039.outbound.protection.outlook.com [52.103.33.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184A61649CC;
+	Mon, 19 Aug 2024 10:42:15 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4F161900;
-	Mon, 19 Aug 2024 10:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064201; cv=fail; b=MIkAvmAfTTEUYqAcEMqqm3cx+At085PbmXj6njaaN7U+Au1WgnxYMjg+g2eEAWgDS4c32c90BOSzHViibHARUH89mxeu6Dws90NAE8FTwrQWrKlLiklxdVTCamz4LgqMDStp/xRI4kweWjVYFNI24GUBwyc01mzLZgQyYMyZiX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064201; c=relaxed/simple;
-	bh=rdaIFE0NiWpP51C0uxD01pnWASTMvM1e6sRI3rnWPsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bW2o91iL3cthPw16Q6/XlHuj7AwhFEKnewirAa+hz+7q8SESjqghIbveLNATuu8h161E4+zTF5tsjYTK+plDrO4uzAXz6OefPgSId2Hj8Gv1xSlUOVn6BYIA5Wzc+EaU26skkszB5VBamD3xaD/0x63UObtaQNVN7C9RyKyJfOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=miVRjeOK; arc=fail smtp.client-ip=52.103.33.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a2rRQUJTMJC/26+lEnH+s5cKguoUDJYO9pStgFxudgsVoReG147uOfl14C8NPyASsSwhexGEtqETsDw2ZUaUlKnMaQtpjusqHig13ggPVGSZdk5h1ySi2p1I9X/jSuDB/tTQTyV0ECqxGvvA5oQ2zfKNhTpYVoV3qRTGoLzUEZhknieKK8gH1F9k+dBVjgEYCd9izkUfVGMx+JS02si7LysXAE2MyafFmF7esvmJipBiaw+VkT8HPNNgM2KYd7cReKG6a0BZcrtT8YwSrwTyFhJMs1vakx7KCWXvfLaD+5xyKGw4t/B9Cm1PHSR9IeFC3Jf4Vc5U5pVg6fJUxYOupw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lr8RHn1jNbnFR1V9rxx6tiA2Jy6z3HKTSJC8moorins=;
- b=E+sVERavS39Xptw67HlB4XcN0dNqNYpRP9zOhrYWh+29bsG95fWwWtGMT5nFxZvRLhYAk/4qBpTcRlg72zI2qz08wegp0Gam2jkuccwHjwL6VhXhXftFjUWMDkoFb6tSubT/Lh4tbxTonq1DOPZHnIQJksz12TO/ZXtxyfFNf+tSB6wUfFUdLFDKLRWq+gX4+ZCnKjLgk+QfKs+CaBD9GNUUKFax7vPi2K9wPw+iDLEyQ8zsUsrYaXxMOa6UqJk591XTIYTu4t+9HGaV0a4C1vKzHTwqsOOX89RPOynpP0E0vqWNf5Gf4pmsuHye/T2ocSXdpCluTCoaR2y4kQ5n4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lr8RHn1jNbnFR1V9rxx6tiA2Jy6z3HKTSJC8moorins=;
- b=miVRjeOKXwHTJmf0Q9Le4KrPEr7zQKHNuFzx9aj+CpGls3N+S5bqC3CZBAsjUuDcYaNInQWpOfN+WsK1cKJkUVuRKjc9Z8K0s7NYBjf1/XoY9+mdnM5kH3Z+xvhcGPVaQmLlmVCo+F6K9O7V8zqRbY79GAwck2slbFBZkM+9wxC5kL/iOKvhgSJ371G14bCW6IU1RvOtX8GOAIjjfd2fnceGCp5TodSg2NZcLoFCrvLk9+FDi9tGDkJo85XEXh/P5oC38vmYHYazV3E02RrwrlyGPJMzTkgCD8IX/SwwULC2zxmwHwf3mjptOmpq4PkVr5VaoZyMkYsna6rtjROs0g==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by AM7PR03MB6401.eurprd03.prod.outlook.com (2603:10a6:20b:1c3::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 10:43:17 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 10:43:17 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH bpf-next 2/2] selftests/bpf: Add tests for KF_OBTAIN kfunc
-Date: Mon, 19 Aug 2024 11:41:58 +0100
-Message-ID:
- <AM6PR03MB58486DBFF75942D1174DCBF2998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <AM6PR03MB5848B74668D71BB307BE59BE998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
-References: <AM6PR03MB5848B74668D71BB307BE59BE998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [tLXumzPO+D8h377sEV9yjnBIka084yQd]
-X-ClientProxiedBy: SG2PR02CA0045.apcprd02.prod.outlook.com
- (2603:1096:3:18::33) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240819104158.67204-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9881148315;
+	Mon, 19 Aug 2024 10:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724064134; cv=none; b=UsAjYIvABkqa5/OchJVBFTYHyhtnhmnW+mIPN11OG8heZ21WfpWDOAPCCk8YevFzi6lfS4OCQUjruOaj5aS4nSgNNCmVBXCe9aK+o9Ph+VCaiIF9HZUtlyn6/lF1Yu2cUQGksIW8mItZW2dsow7SWqAYf+GxeXQP+47LZxVO0sQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724064134; c=relaxed/simple;
+	bh=l7Ql1mIGfaPSt2QQTgs1xmnZHKxxOACzYVFRwxsJ9gM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=obSQYM3q7wW6OR9IIdRgYXTltM6sX9OD6CTPv6zEClJlkER0EasD30Y7It1tyscW8lKnLZAAi8fX4oa2sZ/Q+7j0bdEa4YP3DocztAtYsZsifhiq/iaviEU8P4mRmhtMSdXLpw3NRoYVy3iP6roszSNzhctuM9umhlRY+qPT5MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42803bbf842so45738385e9.1;
+        Mon, 19 Aug 2024 03:42:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724064131; x=1724668931;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hSWAU5qK0iWSsif1szT/JjL1rzCg3Rp3z8a+YH2/aXA=;
+        b=rz4E+d3iW7d9NwWDbzFqvCrKkPacPzT5BuOcLiNcmNNjz+sn1rB+XBRUWgAuCx6R0C
+         th//N5ED2urnkB4umHz8mctSxLLckrNWYcrBKF8/fw++ErWgD6z6g2KhWSzE0E4ex2dG
+         pmaUzPSXW0QG7sGaDpnAsdwIb4q0reRDm4Br59HPMp1Cm/TCzveM4jxLnBUkoKSYQRie
+         kXbFzcvhKcO9dYRP18vyL8a7FBFMYabklxVM2six3zTqchT81ZgvjOBkL0QWtNC813Xw
+         6O6SJ82xDaHl/yUNOkXs25hZj66bJEnLbW7L5evSTfOxFYVDsf3wX7WwdLlw1DWTBY1S
+         vWGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfVNzo6bgqrffaXpEyceYkz/BOXX0mDTM6JAEvwbxrh2Qb/Fxz32A52FQjTBQSzc5WlqSBZ614CpNVbN/zhzviobTVUdBbuTMFNXXdKMV/mAnuWO4++vGqRK7A1fIXyDSQAN34+Fh7yc0MMHjluyzgHjLLnOiKbj4VGpfOdvqtEY3MId87
+X-Gm-Message-State: AOJu0YxFV2sU4gFK9A0fT89oH7j8j/AlNAvDiNVTZE9p0ZEOy3mbeU0B
+	nfBxSyD/vT4650P+MN4ZCOa25afL4erICy9k+xdbNzhFQX5y7yxribv1tE4+
+X-Google-Smtp-Source: AGHT+IFP55HL9ypXyfQTAGXPFvRPfc3j0EFRScDGsW6xJIkj165reDVyseN0xdyShPdrLgbNDIcJsA==
+X-Received: by 2002:a05:600c:314a:b0:429:a3e:c786 with SMTP id 5b1f17b1804b1-429ed7d63efmr94341935e9.24.1724064130884;
+        Mon, 19 Aug 2024 03:42:10 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded19670sm159508745e9.9.2024.08.19.03.42.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 03:42:10 -0700 (PDT)
+Message-ID: <dc936358-a718-4f1c-a2a6-695bbae1d2ec@kernel.org>
+Date: Mon, 19 Aug 2024 12:42:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AM7PR03MB6401:EE_
-X-MS-Office365-Filtering-Correlation-Id: bda3fec5-0b6b-4639-0263-08dcc03bbbe5
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|5072599009|15080799003|8060799006|461199028|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	0bj0pT6qB3elGbXpSqwpGEwtDRZgdg6sfMwoc2QKshQdcyBuXqgJRC7GN+eU/mtvqzzf4aEAfImNa3NPOGBqUqqiKS7gQanRBVDvnFVktv2+0rHkH/XhLvXbaS2h1PZ7crhVefpEfNxjeE74O+fLVIgt0VDK36mWdRX651hRq9hZerplEHwGpk9p856JA5dEGf5ekQHnfU7COjWL/dESZOyOYBR+zzShEK+Vve1Hyn5WsGuY5rCmYv3M04Nc5I6AUNeM/yoquAUo498W9Z19CHAVcgZ1/G8nGuGBlExsiRCbhIUGmHSlfxSACYHwtITQKfQngkMN1JdybTi1f9j+CUuLvKlY3eqqPsNq9TB1dy6CC/fruq9mNwylfFsv10IVYJia50565TBZR+bkprqhV9ZXlM9wehoQWdShp2ZS/8CoBcBmGSEBogX6J0z/tdgESfBIUsbk5eFam96mtI3bPY4cKUi7HXh/XpD9SbbcOMou1hIXdSF1fSP9LEZlVvKLssbqtbmlocHZ6Kbe5v7ZVLJx/RSSJvvU4LMmqror3+sPyFtkYUlnUrWG93paq/jW1QUIYrPi5J7MZIgfV8Fg4nq5T9ZJNSFkl4N6N2aIbHgFSyQCKTjtfJ7GjeComtKWvVxTWlAt5eTipowStX1HZAKmwx508nLvfpOV/dvlmkjFRmrMNsSRVolAOSw/prfmAjQbL0mNPD+1hRD9neqdwQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yeCy0W4f4xw6+mr00wOcmpBUPHaHOOgyhVhXY6P0u8l56UOm4NyTSzetpF+0?=
- =?us-ascii?Q?wSV9cdK+sdDjgDwJH3ANX86lodbv/y9ZKv/SGpLNmrW3qpBY2zyirY1CvzLT?=
- =?us-ascii?Q?u/1ha3qm86HIDn1OLnRNkt/dub8y6Ow69whawtFQ4j5mxGi30EmjfeFjNaOS?=
- =?us-ascii?Q?7cr6XdueJIHn+f64hWqGIpe0HiJ8LGqR4h4x14Y6C8H+RbdnTOeIa9HBHHEU?=
- =?us-ascii?Q?8Kdybk1GRNgKbyPM2hmDWo3Eh/jEIlFyAXgXjTEBBF5+kgziRkTye+DuHEZ+?=
- =?us-ascii?Q?bpEWiWe166g893Q42mCebF9WkvDIvFlJafqcLUGm1YXLRLUeAaAvtiXug4dS?=
- =?us-ascii?Q?BlCT4Iq1Xcy6x1FEFW+gWGRtYow1pEvpkMUsE/hjp2K8OTIuNrjcBH7Pkr8m?=
- =?us-ascii?Q?i0x53KlQrIRc8yb9AbIykHBWiUm41MY3PQzsyqxbvRk9Z5jMmiZ/0g01BwyD?=
- =?us-ascii?Q?jGTkj+GPKgM24I9UOUcTQp9Li+XhSECfl8a3BdwDo5IHeezo9GB07nCWehGy?=
- =?us-ascii?Q?a5bXdXPvt09t0HCQf44CMRSyW+L16Z2nOz1leEXrlf1Sc+HxEjpKaFszESMy?=
- =?us-ascii?Q?McZeokbKwvLwf1KuaxGUTy8eaW8rGgi8i9zZIXGUMNuvSD8b5lEGsQprqN+W?=
- =?us-ascii?Q?ZoSAqP+ZxFTG+82EtLzmOqEXdQhL0X/KcRNh2XeiLnx30Y3snHkB3aEvYs6j?=
- =?us-ascii?Q?3Jwx1ZvvTjwEqlNtHbtBteqsoI/BYB3ktuOiUNdxIB7Y6aoztmxIxN15x6Dc?=
- =?us-ascii?Q?YOldaMClvvmHse4vcVEMtq+eGNLhmCMcb56iKoYQHNBbc71gFQIVTARryks+?=
- =?us-ascii?Q?EDuoczGQTn3vTnUjWCFUGeYtuzlJJJH4KNzCJJ78XoCQQQ1r68xg+SVrSsG/?=
- =?us-ascii?Q?WgtHMhyk6OQIyDBENzERZkBVLeaYES7O1M2PL0UYTIuP8DHUAq0PRr+khZQ8?=
- =?us-ascii?Q?108KFoBVciJ9CaecT8+urD0i3RNM49voBV58z7dxTicomw+TGk24+tbW/hpf?=
- =?us-ascii?Q?SYWwelXr81aMmk2QHA6zQngo+aSusZGo4cg1k5JLRccDtZr2IBE6kCMPSy3r?=
- =?us-ascii?Q?vMdkcYIRDDUdnKl8b+obpQAnaPG0g7BV9cYSRGZHr0nH1kUgi0crUAWK5j1d?=
- =?us-ascii?Q?ndcRGvNqaOPp+rAyykr2Dp1XUhKlq8CK2YN5HzWm40rxuw/poXnCBfz4ub1k?=
- =?us-ascii?Q?pLYZr/ccuEZtIccAHeV9sVeHrAwfPnTXF1dTflwsMTC1dNLZ0P66gLQyctSz?=
- =?us-ascii?Q?tC+/S1itB+Js5y98wj+U?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bda3fec5-0b6b-4639-0263-08dcc03bbbe5
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 10:43:17.0228
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR03MB6401
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+ <20240807-v6-10-topic-usb-serial-serdev-v1-1-ed2cc5da591f@pengutronix.de>
+ <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
+ <20240819101946.cf7x7xecdn2pfa4t@pengutronix.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20240819101946.cf7x7xecdn2pfa4t@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch adds test cases for KF_OBTAIN kfunc. Note that these test
-cases are only used to test KF_OBTAIN and are not related to actual
-usage scenarios.
+On 19. 08. 24, 12:19, Marco Felsch wrote:
+> Hi,
+> 
+> sorry for not replying earlier.
+> 
+> On 24-08-08, Jiri Slaby wrote:
+>> On 07. 08. 24, 16:08, Marco Felsch wrote:
+>>> The purpose of serdev is to provide kernel drivers for particular serial
+>>> device, serdev-ttyport is no exception here. Make use of the
+>>> tty_kopen_exclusive() funciton to mark this tty device as kernel
+>>> internal device.
+>>>
+>>> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+>>> ---
+>>>    drivers/tty/serdev/serdev-ttyport.c | 9 ++++++---
+>>>    1 file changed, 6 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+>>> index 3d7ae7fa5018..94c43d25ddbe 100644
+>>> --- a/drivers/tty/serdev/serdev-ttyport.c
+>>> +++ b/drivers/tty/serdev/serdev-ttyport.c
+>>> @@ -103,11 +103,14 @@ static int ttyport_write_room(struct serdev_controller *ctrl)
+>>>    static int ttyport_open(struct serdev_controller *ctrl)
+>>>    {
+>>>    	struct serport *serport = serdev_controller_get_drvdata(ctrl);
+>>> +	struct tty_driver *tty_drv = serport->tty_drv;
+>>>    	struct tty_struct *tty;
+>>>    	struct ktermios ktermios;
+>>> +	dev_t dev;
+>>>    	int ret;
+>>> -	tty = tty_init_dev(serport->tty_drv, serport->tty_idx);
+>>> +	dev = MKDEV(tty_drv->major, tty_drv->minor_start + serport->tty_idx);
+>>> +	tty = tty_kopen_exclusive(dev);
+>>
+>> I believe that the now added tty_lookup_driver() has negligible impact in
+>> this anyway slow path, right?
+> 
+> Can you please elaborate a bit more? I don't see how the
+> tty_lookup_driver() is involved in the serdev-ctrl open path anyway.
 
-kfunc_obtain_not_trusted is used to test that KF_OBTAIN kfunc only
-accepts valid pointers.
+It's called now in of tty_kopen_exclusive()->tty_kopen(). 
+(tty_lookup_driver() is the major difference between the raw 
+tty_init_dev() and tty_kopen_exclusive().)
 
-kfunc_obtain_use_after_release is used to test that the returned pointer
-becomes invalid after the pointer passed to KF_OBTAIN kfunc is released.
-
-kfunc_obtain_trusted is the correct usage, valid pointers must be passed
-to KF_OBTAIN kfunc and the returned pointer is only used if the passed
-pointer has not been released.
-
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- .../selftests/bpf/bpf_testmod/bpf_testmod.c   | 12 +++
- .../bpf/bpf_testmod/bpf_testmod_kfunc.h       |  3 +
- .../bpf/prog_tests/kfunc_obtain_test.c        | 10 +++
- .../selftests/bpf/progs/kfunc_obtain.c        | 74 +++++++++++++++++++
- 4 files changed, 99 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
- create mode 100644 tools/testing/selftests/bpf/progs/kfunc_obtain.c
-
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-index a80b0d2c6f38..2e8a72d94c28 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-@@ -176,6 +176,16 @@ __bpf_kfunc void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr,
- {
- }
- 
-+struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task)
-+{
-+	return task->mm;
-+}
-+
-+struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task)
-+{
-+	return task;
-+}
-+
- __bpf_kfunc struct bpf_testmod_ctx *
- bpf_testmod_ctx_create(int *err)
- {
-@@ -533,6 +543,8 @@ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_next, KF_ITER_NEXT | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_iter_testmod_seq_destroy, KF_ITER_DESTROY)
- BTF_ID_FLAGS(func, bpf_kfunc_common_test)
- BTF_ID_FLAGS(func, bpf_kfunc_dynptr_test)
-+BTF_ID_FLAGS(func, bpf_kfunc_obtain_test, KF_OBTAIN)
-+BTF_ID_FLAGS(func, bpf_get_untrusted_task_test)
- BTF_ID_FLAGS(func, bpf_testmod_ctx_create, KF_ACQUIRE | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_testmod_ctx_release, KF_RELEASE)
- BTF_KFUNCS_END(bpf_testmod_common_kfunc_ids)
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-index e587a79f2239..cb38a211a9f3 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-@@ -144,4 +144,7 @@ void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr, struct bpf_dynptr *ptr__nulla
- struct bpf_testmod_ctx *bpf_testmod_ctx_create(int *err) __ksym;
- void bpf_testmod_ctx_release(struct bpf_testmod_ctx *ctx) __ksym;
- 
-+struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task) __ksym;
-+struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task) __ksym;
-+
- #endif /* _BPF_TESTMOD_KFUNC_H */
-diff --git a/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
-new file mode 100644
-index 000000000000..debc92fc1acc
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include "kfunc_obtain.skel.h"
-+
-+void test_kfunc_obtain(void)
-+{
-+	if (env.has_testmod)
-+		RUN_TESTS(kfunc_obtain);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/kfunc_obtain.c b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
-new file mode 100644
-index 000000000000..8f0e074928ce
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "../bpf_testmod/bpf_testmod_kfunc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
-+void bpf_task_release(struct task_struct *p) __ksym;
-+
-+/* The following test cases are only used to test KF_OBTAIN
-+ * and are not related to actual usage scenarios.
-+ */
-+
-+SEC("syscall")
-+__failure __msg("must be referenced or trusted")
-+int BPF_PROG(kfunc_obtain_not_trusted)
-+{
-+	struct task_struct *cur_task, *untrusted_task;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	untrusted_task = bpf_get_untrusted_task_test(cur_task);
-+
-+	bpf_kfunc_obtain_test(untrusted_task);
-+
-+	return 0;
-+}
-+
-+SEC("syscall")
-+__success
-+int BPF_PROG(kfunc_obtain_trusted)
-+{
-+	struct task_struct *cur_task, *trusted_task;
-+	struct mm_struct *mm;
-+	int map_count = 0;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	trusted_task = bpf_task_from_pid(cur_task->pid);
-+	if (trusted_task == NULL)
-+		return 0;
-+
-+	mm = bpf_kfunc_obtain_test(trusted_task);
-+
-+	map_count = mm->map_count;
-+
-+	bpf_task_release(trusted_task);
-+
-+	return map_count;
-+}
-+
-+SEC("syscall")
-+__failure __msg("invalid mem access 'scalar'")
-+int BPF_PROG(kfunc_obtain_use_after_release)
-+{
-+	struct task_struct *cur_task, *trusted_task;
-+	struct mm_struct *mm;
-+	int map_count = 0;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	trusted_task = bpf_task_from_pid(cur_task->pid);
-+	if (trusted_task == NULL)
-+		return 0;
-+
-+	mm = bpf_kfunc_obtain_test(trusted_task);
-+
-+	bpf_task_release(trusted_task);
-+
-+	map_count = mm->map_count;
-+
-+	return map_count;
-+}
 -- 
-2.39.2
+js
+suse labs
 
 
