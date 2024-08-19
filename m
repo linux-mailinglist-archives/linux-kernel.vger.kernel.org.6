@@ -1,79 +1,138 @@
-Return-Path: <linux-kernel+bounces-292711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20AD95734E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D656957357
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB70282279
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69241F235B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA74642D;
-	Mon, 19 Aug 2024 18:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XGzQeY/n"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035618991C;
+	Mon, 19 Aug 2024 18:32:16 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B828187859
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDFB172BD3;
+	Mon, 19 Aug 2024 18:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092322; cv=none; b=GwXZPLrRn8Lc5gsj5XHFyIxk+v/xLJvL3a975d6V6+iyjOhpYpX8gwYtzWEk4aekcr7Va86bhC5YBzE8psX06ndxoWOY3HqCrujxb7kJQorNVmb1Smi1SASK/l20QElgwOLjIJtEmtOXaGSIlryliPyfnMOFpXaB7Pqx3pFGfy4=
+	t=1724092335; cv=none; b=Gxfl/wk59ha7oSQHG335ingCr7oBiPX/2ukFPY9gqx+2ezOlZLk6+sm0eJ9XX7MN0avmqJq3ov7vOqrSj23UMvKIRZk8gmTQ0TA9yMVtHQjjSmqllbCdvNtdwa7MJZcrVTkifJtWt4ly1rjMngaMYqQkuMBcdzlV2hZ70lvXK4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092322; c=relaxed/simple;
-	bh=nN+02BORUmu8AW+VDg5ihHazNdGoAb+E0EBL91hES1Q=;
+	s=arc-20240116; t=1724092335; c=relaxed/simple;
+	bh=rtd2oKSROMxwpdH8HLDaSnEdSnaSDrRN61pn9MW5gNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdB1Lar3cjVxZd6Cs6EFT2jHPJtthgPl7lPnQexB5tkRinQtdYmLnpAxwQkzoOrcsTYun0psSAhFg6ulCSd+vfgxvUNqEhF8iiPVC9T5DwM0nk16L/S75VLslrmMCf+312S4dQXTKF6SRFQoPyDi6dJBoqbXXqJ/+QHQLj50oDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XGzQeY/n; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724092310;
-	bh=nN+02BORUmu8AW+VDg5ihHazNdGoAb+E0EBL91hES1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XGzQeY/nLMZ3EX1gs6dxRr3gqfowOv7gwV6HAOwF1Kb0+NOFaxVXPM9Ty2asI8LmP
-	 CJsFsNOGZZMkpXNHmOeOjU7OkE7u2yG6cQXOsS0vrUeAMyrfsaAL84Bn+W5UDsbsUy
-	 lCIlUHLO4srw9DlwNEraLnNrFZplcVV0RCwk8G24=
-Date: Mon, 19 Aug 2024 20:31:49 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, 
-	Aric Cyr <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, 
-	Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/12] drm/edid: constify argument of drm_edid_is_valid()
-Message-ID: <00438587-4e9c-411b-bc67-82cabf251c8a@t-8ch.de>
-References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
- <20240818-amdgpu-drm_edid-v1-3-aea66c1f7cf4@weissschuh.net>
- <877ccc7wji.fsf@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZaTuR+c+FtFnjLFSJnPLEsdq9cY14m6PbU5OYK2CVJC+jqoAS5O+Fpp71fzvmGNR4R3rj4hOnQdwS2JMXKHdJDZHdoMSLeIrYmrdxk66LbC2zy3Q/vaLwjx8TNsH9uW30IRuo3BZ/T8rtldbIu30Hj2OVv0eLAgUq1QEUJC/YiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: QbJlRi1TRGyx36TkZ7R7mQ==
+X-CSE-MsgGUID: Y1eYKzgBSvuH2xOjo/I/Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="25262298"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="25262298"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:32:13 -0700
+X-CSE-ConnectionGUID: unP6c30QShqG8DAeLj6ypQ==
+X-CSE-MsgGUID: SuOqqpoaRYS2gC4EwtVmfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="61238502"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:32:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1sg7Ae-0000000H2PV-0kWc;
+	Mon, 19 Aug 2024 21:32:00 +0300
+Date: Mon, 19 Aug 2024 21:31:59 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH 8/9] vdap: solidrun: Replace deprecated PCI functions
+Message-ID: <ZsOPnwQO8sppwI8u@smile.fi.intel.com>
+References: <20240819165148.58201-2-pstanner@redhat.com>
+ <20240819165148.58201-10-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <877ccc7wji.fsf@intel.com>
+In-Reply-To: <20240819165148.58201-10-pstanner@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2024-08-19 11:21:21+0000, Jani Nikula wrote:
-> On Sun, 18 Aug 2024, Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > drm_edid_is_valid() does not modify its argument, so mark it as const.
+On Mon, Aug 19, 2024 at 06:51:48PM +0200, Philipp Stanner wrote:
+> solidrun utilizes pcim_iomap_regions(), which has been deprecated by the
+> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()"), among other
+> things because it forces usage of quite a complicated bitmask mechanism.
+> The bitmask handling code can entirely be removed by replacing
+> pcim_iomap_regions() and pcim_iomap_table().
 > 
-> That's not true.
+> Replace pcim_iomap_regions() and pcim_iomap_table() with
+> pci_iomap_region().
 
-Indeed, thanks for noticing.
-It turns out this patch is not necessary anyways and I dropped it for
-the next revision.
+...
+
+> -	int ret, i, mask = 0;
+> +	int i;
+
+Make it signed?
+
+...
+
+>  	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> +		if (pci_resource_len(pdev, i)) {
+> +			psnet->bars[i] = pcim_iomap_region(pdev, i, name);
+> +			if (IS_ERR(psnet->bars[i])) {
+> +				SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
+> +				return PTR_ERR(psnet->bars[i]);
+> +			}
+> +		}
+
+>  
+
+Blank line leftover.
+
+>  	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Thomas
 
