@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-291918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63099568DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:01:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4364F9568E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B611C20F0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:01:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444E2B20A60
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8031607A8;
-	Mon, 19 Aug 2024 11:01:35 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9309A165EE4;
+	Mon, 19 Aug 2024 11:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+uG3ule"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513B82209F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6DE15B125;
+	Mon, 19 Aug 2024 11:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724065294; cv=none; b=m/iutwFyXYXr1d/7OGOennpG9HV/e/KCCJweDl2KpXy8FnKPu0qH7MgLjddPUQcONI41qs4gxAGTzyRtU5XNh8LT8094Ow7c4o64QNLx/SPe2GIaDnaE7gqoaf2tCuK4icpzbZ4mkWJ3bou90SsfJP+N9CX4RWbooS6P1dcAXcc=
+	t=1724065315; cv=none; b=mByPiBsiaPrlYwI6lkySSFluNjbSmPuDnIeUWhBE7qiUeA1WZeUlf27nrdhZwHIkD5r7Pyr/qgFj4zO6j1FFXBVmXKnuToW6hArTS1khf33o3LIszw4PQDcpPvYwSwA0TqqJFRQZRlWLGK/rgNVxOBD5RqCmfGIi+niGJx0lFGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724065294; c=relaxed/simple;
-	bh=EtvArQ+SF3IzzDH6SCdaYGOCFeGvtWum697XI/0UB8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BtFruX1jQn2pE/hmF4RpnRexG705+wl59ssiBSeBgQX65BIcSLWolg2eweXXDaeqjx4g7QXeCAhUEBYJR0JW5v01tvYGxnNKoYbeANZ+I+HUUEgKqaGt+lSd/kVsDrfe5NBh788EfNwmt7CfQL8+z610jNe0cEkVtlgII3kkBl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WnV3W6nFkz1xvTm;
-	Mon, 19 Aug 2024 18:59:35 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90FEC140109;
-	Mon, 19 Aug 2024 19:01:29 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 19 Aug 2024 19:01:29 +0800
-Message-ID: <5979b3b7-cd42-d01a-6c8f-5df7b698b324@huawei.com>
-Date: Mon, 19 Aug 2024 19:01:28 +0800
+	s=arc-20240116; t=1724065315; c=relaxed/simple;
+	bh=RKjobX7+cX15lxVhF/xFB6okKKom6P4UVqu82yq3zr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PJKN4qMfOjvh+FDhqmAISuJ6oZOPDtb6AxlumPHfRgU4DMDTFZCoZHTd3q/wcvOvleRf8utOhwj5h6nx6qy//NK1FydrBXuXZ65BDtjk6JOTmk/hhCDKVF7jnBWrtGZKfGI1qHp6dIMboxZdTwGwQ0zWkZkDhUXeGGZrVgXURGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+uG3ule; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616A0C32782;
+	Mon, 19 Aug 2024 11:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724065315;
+	bh=RKjobX7+cX15lxVhF/xFB6okKKom6P4UVqu82yq3zr0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S+uG3uleWXjeur9lX+9XwXwxgSHehaXUwK+vFzMctal4HzHStOMls2jxPEzk0Wjfo
+	 Bu/h9UZC0pCV6jNe5Bg1rHMUO8gI/M/5Sbt2+B40OcTSu8N5wzCYg1qQKGFtqvVkUq
+	 QmWI8CXEu/xi4bPLtz2PRSnXB7VeXD/RsJ8A7ohg03DWcpMEDbEFNquRY2BcrxfGEe
+	 TbLGt2xeH91Lv1R73kGteOt/rnUy6Etc2p/1FmRHxdxp/pFcM/4sryD40sFRa5Kqr9
+	 flmplLT4BzvhyUrZQbpk4w94J1Bapnux9sHIHeqxHWXP045OHXcRJcDhPmjoSFIx41
+	 qFykD+krjPjtg==
+Message-ID: <737ad178-1198-4103-b1ee-46a67ecf12e4@kernel.org>
+Date: Mon, 19 Aug 2024 20:01:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] firmware: arm_ffa: Fix beyond size of field warning
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] ata: pata_macio: Use WARN instead of BUG
+To: Michael Ellerman <mpe@ellerman.id.au>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, hch@lst.de, linux-ppc@kolla.no,
+ vidra@ufal.mff.cuni.cz
+References: <20240819101913.489513-1-mpe@ellerman.id.au>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240816100258.2159447-1-ruanjinjie@huawei.com>
- <ZsMf1jIfbwwmqe1m@bogus>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZsMf1jIfbwwmqe1m@bogus>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Organization: Western Digital Research
+In-Reply-To: <20240819101913.489513-1-mpe@ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/8/19 18:35, Sudeep Holla wrote:
-> On Fri, Aug 16, 2024 at 06:02:58PM +0800, Jinjie Ruan wrote:
->> An allmodconfig build of arm64 resulted in following warning:
->>
->> 	In function ‘fortify_memcpy_chk’,
->> 	    inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
->> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:488:2:
->> 	./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->> 	  571 |                         __write_overflow_field(p_size_field, size);
->> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> 	In function ‘fortify_memcpy_chk’,
->> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:489:2:
->> 	./linux-next/include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->> 	  571 |                         __write_overflow_field(p_size_field, size);
->> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->> Because ffa_msg_send_direct_req2() memcpy uuid_t and struct
->> ffa_send_direct_data2 data to unsigned long dst, the copy size is 2 or
->> or 14 unsigned long which beyond size of dst size, fix it by using a temp
->> array for memcpy.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  drivers/firmware/arm_ffa/driver.c | 14 ++++++++++++--
->>  1 file changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
->> index 1e3764852118..674fbe008ea6 100644
->> --- a/drivers/firmware/arm_ffa/driver.c
->> +++ b/drivers/firmware/arm_ffa/driver.c
->> @@ -480,13 +480,23 @@ static int ffa_msg_send2(u16 src_id, u16 dst_id, void *buf, size_t sz)
->>  static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
->>  				    struct ffa_send_direct_data2 *data)
->>  {
->> +	unsigned long args_data[14];
->> +	unsigned long args_uuid[2];
->> +	unsigned long *data_ptr;
->> +
->>  	u32 src_dst_ids = PACK_TARGET_INFO(src_id, dst_id);
->>  	ffa_value_t ret, args = {
->>  		.a0 = FFA_MSG_SEND_DIRECT_REQ2, .a1 = src_dst_ids,
->>  	};
->>  
->> -	export_uuid((u8 *)&args.a2, uuid);
->> -	memcpy(&args.a4, data, sizeof(*data));
->> +	memcpy(args_uuid, uuid, sizeof(uuid_t));
->> +	args.a2 = args_uuid[0];
->> +	args.a3 = args_uuid[1];
->> +
->> +	memcpy(args_data, data, sizeof(*data));
->> +	data_ptr = &args.a4;
->> +	for (int i = 0; i < 14; i++)
->> +		*data_ptr++ = args_data[i];
->>
+On 8/19/24 19:19, Michael Ellerman wrote:
+> The overflow/underflow conditions in pata_macio_qc_prep() should never
+> happen. But if they do there's no need to kill the system entirely, a
+> WARN and failing the IO request should be sufficient and might allow the
+> system to keep running.
 > 
-> So we end up with double copy for both uuid and ffa_send_direct_data2 ?
-> This is not correct and not needed.
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  drivers/ata/pata_macio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> Which toolchain are you using ? I got error only for memcpy which I forgot
-> to push to -next, now fixed. It must appear in -next soon.
+> Not sure if AC_ERR_OTHER is the right error code to use?
 
-Use the newest linux-next and  `make Image ARCH=arm64
-CROSS_COMPILE=aarch64-linux-gnu-`, the above compile error occurs.
+Given that this would trigger if the command split has is buggy, I think that
+AC_ERR_SYSTEM would be better. Can you resend with the change and no "RFC" ?
 
 > 
+> diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+> index eaffa510de49..552e3ac0d391 100644
+> --- a/drivers/ata/pata_macio.c
+> +++ b/drivers/ata/pata_macio.c
+> @@ -554,7 +554,8 @@ static enum ata_completion_errors pata_macio_qc_prep(struct ata_queued_cmd *qc)
+>  
+>  		while (sg_len) {
+>  			/* table overflow should never happen */
+> -			BUG_ON (pi++ >= MAX_DCMDS);
+> +			if (WARN_ON_ONCE(pi >= MAX_DCMDS))
+> +				return AC_ERR_OTHER;
+>  
+>  			len = (sg_len < MAX_DBDMA_SEG) ? sg_len : MAX_DBDMA_SEG;
+>  			table->command = cpu_to_le16(write ? OUTPUT_MORE: INPUT_MORE);
+> @@ -566,11 +567,13 @@ static enum ata_completion_errors pata_macio_qc_prep(struct ata_queued_cmd *qc)
+>  			addr += len;
+>  			sg_len -= len;
+>  			++table;
+> +			++pi;
+>  		}
+>  	}
+>  
+>  	/* Should never happen according to Tejun */
+> -	BUG_ON(!pi);
+> +	if (WARN_ON_ONCE(!pi))
+> +		return AC_ERR_OTHER;
+>  
+>  	/* Convert the last command to an input/output */
+>  	table--;
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
