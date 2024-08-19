@@ -1,403 +1,228 @@
-Return-Path: <linux-kernel+bounces-292600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D89571AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B5995719C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CFA01F219E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959281F2207A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B59548CFC;
-	Mon, 19 Aug 2024 17:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4960414AD02;
+	Mon, 19 Aug 2024 17:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WpcSqYq7"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2047.outbound.protection.outlook.com [40.107.236.47])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gQXtsKUz"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2073.outbound.protection.outlook.com [40.107.92.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744F017335E;
-	Mon, 19 Aug 2024 17:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727C13FEC
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.73
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724087479; cv=fail; b=kQ8mFfkJQ+i9tbuIiOh8JVZ9Yo7N1JuqSA+yGuGwCvb/tShgklzfW6ExyY/6Ulp59XNPrugRh9aQbk7MsaprWkXHbU4akKB3tiy4phyhjJkwpflhfUZtyMH/pUD7yuIRsBZz47i/eSJtMp/uORWHwInaOOjhJM27UocH6nSQP4c=
+	t=1724087386; cv=fail; b=hLmZNP1CjUwfDxFaFq8hckvu7Aegyi9lL8hhyxiydJY5BiB2Y4Zw0m4IxPcphg5gIbaCP0pN5CcpnNGfnQPT/q5ZR9zQc6yzN9TQ7wKMaLsLl/04bsMGXI9K4BtJE2wC4zsoAUO/o/G7LGhlXtli4t9OiccokY3fybwDSXJl3S4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724087479; c=relaxed/simple;
-	bh=pjbgv4dUNAcOsjDKjQkS7t+1GkVWCt2wECcQuLzo71A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HS+iv7dI+BVIYRxT/kGe+Z2eawaenY09f3YR+LB4O4vZdhIaBn42hFoqlfbKXVXtbepdouVUZ0YymdftnkbU3S68ZEJch/CvR/WVg8ZSGRLE3fNadmnXTC3FS/UfhWht685xSH4GQOH7Nh7RGuVQq7jfIylFlIR8NLodJUI+vj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WpcSqYq7; arc=fail smtp.client-ip=40.107.236.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1724087386; c=relaxed/simple;
+	bh=gqyJNHFef7y+zzXN2FeQ1JR7JpbFKmzvILkXT6TG9Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=r7Q0px6twj7dNVfs9QnvLbNwKBVVg5xpTgUAoHUzg3LOmna/vxBgQeAkxxmTEv7C6nmFeXO/N/7oYS7zZGqzFXnIgtETYYDvJJpU8zKsCbFSW5Ow84Q8DhoW3mt7eIccXn6F5ASfJ4dz9HLQtyYmiTepOGse5E3+c8pai5fKfJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gQXtsKUz; arc=fail smtp.client-ip=40.107.92.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=THfS2ZXo8Xo1K9KDstx0e0RwoQn0l5KQGnHcsyf/LJdUABvO1qNeet+sYDzu/P2BOB+W2zwKG19mnzaA/3/NeROcJs0qcyB6Ef4kwJbTCSeTPMeXgJw4pa/VllQv8iEypOcDyLOCw0tNlZEIpInLtpt1Dw4tDqunti3VkAmMAeBGh/mBqMBLBu9dDxhf9NSfkggWaEBWxIhyaqoGJwa/PG/GqKymimEpQCaj3Ye+K7HJNVBzxosvMBo2xwGfv7jYW9xGl0W1Pnm9XWAKdmW7/2dIWmsLxzPULNOlxPQghUnTMU3sOtZ0EBV5wQC0EnNy3QPQwyZ5R6+piFTzh/747Q==
+ b=urfthnu2QQtNVUs63uPLAo65SUGhIggqm8waxjia1iaVOD0Oc2xwyZlwsq4bRifGLxhdvzGVyvAE1Kjm3Hu0UAqcFKbPDI47OOgOwrZsEw7SSW6nvH54PE+1krZ6Iwx20o/c4pbLNKa+IpDIRmPUDplShUYdO6B66XUw1Rz1liiZfTitMj10GAax00qRvEHlugt9ADxHpet2HftG2yALblndLFavaDZEUdWnsjVjaDpml1yraG0Bykanqjp/EZ88ntavTvVBx7K355BB7QqaCaciGsZXZCuwBK/k5TqyuKc4tNx5tsza5hSmMFOHm1TBSnV1xAUwWVst/1aNOAC2xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zcp0/hZ2aVSu17/K24KOVs0eMgbfeVh73rdfRWo3vfw=;
- b=l94bZxoi0STwcimq9Kp/3h7B2BMrbuZuGg2qEJscLWYhNUfU+FuLlXKhkBQvb+cWMccymB8dkQpvEGpgG4VZcJGN5+oBe1y6fuZOe0+DrF8dv++qSx8CLaJ9qB8G+vwSDAF0KX2VGVLaCMYG7wuFfmcdSzNbX+KQAawvZnOBJj0xQBRcGLPT4mRTfaMMEhYB233abwxkQLhxksm1enrQp/aaxxr6zfMbPSP2aQNCfk52l/PVfOX57qFYJijt/0j0M3ATDV6BObZeAHOh4/0CLOz/eL1IuGSssE5lvcrHxt9wfiV4GVpq4q+veeedB49qCDY4YudQhz+Dd0RW3a2pyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=v/y/cM/nnMFfbjcC2PDEJrIw60BlNnmdlTDVj0Xr+5o=;
+ b=tWFJLIRL3yODxvu1879zh7UoSQ7kAkZdcyR+DTosZ8IRJxqn64OHnjNaY8hTuzgmoUOSfqet+ghHKScwch7qfJY1JOktYAnm8kfXV57Bh95HpWtw4UJo+dpFguld6J2es4Pb0YKvvBx+JzkeZyQobIQ6sKm1NNgXL2VpAvPCGOSekC/IeIxw/1Vae4vH0Di1NRAGN/D2Wa7eLhVytZ30mvjy/BpddpJhCVpMb5eEE1YzeO25zPmWQYWmE5ScPyBKBP1CIFQ6fF/doG8PBaIaZMrTKRVGLj5tkX12+VLq/8V3JFY2IOYZmcbLBoTBMC/LwUoFFcJug2Ou5mjhLeqaiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zcp0/hZ2aVSu17/K24KOVs0eMgbfeVh73rdfRWo3vfw=;
- b=WpcSqYq7MLjpodFuBcYdy1nMvQvsKDBPtIXapFTRhftUPJ447HJhnzOhwreRjo/i5Y5SG0XogudhvASa9TeqxxxfF2FNXLgHMJQtVqbopsJZXUpg0B7HD1HBAdWPbzlDw4Vxycz+h5YIwtjgduj5ib8WVciAfkIUQocpxODivpI=
-Received: from SN6PR05CA0008.namprd05.prod.outlook.com (2603:10b6:805:de::21)
- by IA0PR12MB8351.namprd12.prod.outlook.com (2603:10b6:208:40e::5) with
+ bh=v/y/cM/nnMFfbjcC2PDEJrIw60BlNnmdlTDVj0Xr+5o=;
+ b=gQXtsKUzpFxmELl+cwX7OWuQTH520BmrhrvnI1SUK9PHvrpi0FtbBlHxnML/BGoyVlcTyAFGhti43udRGhjW8Hi9nmxXooiP77yaJuQqW6NB9yMjdvzH+eS0LvJ/ZRDFHnsv8xEzDSbYHVinHQvlJCODjxFI1PNWN6gb+GNzwwMsHptbva1H7kCluKIAp2tBT+xQldPh8gUMCjVbJBKnBV+lTWu9kMSRLm9UeATk9RKMp4IiyyPsCU7IKyrxJ+oFibHsv8NJWI81oJ7UfjMOglxXYQVmTL6NDhNddHan2EqKol/ACzbm96I8Gupcywz3lWG/C7ECJ3wu3Hj7ukoFiA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by PH8PR12MB6986.namprd12.prod.outlook.com (2603:10b6:510:1bd::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Mon, 19 Aug
- 2024 17:11:04 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:805:de:cafe::c7) by SN6PR05CA0008.outlook.office365.com
- (2603:10b6:805:de::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13 via Frontend
- Transport; Mon, 19 Aug 2024 17:11:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Mon, 19 Aug 2024 17:11:04 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 19 Aug
- 2024 12:11:03 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 19 Aug 2024 12:11:03 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH v4] remoteproc: xlnx: add sram support
-Date: Mon, 19 Aug 2024 10:09:38 -0700
-Message-ID: <20240819170937.3666806-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 17:09:41 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 17:09:40 +0000
+Date: Mon, 19 Aug 2024 14:09:39 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH] iommu/amd: Modify set_dte_entry() to use 128-bit cmpxchg
+ operation
+Message-ID: <20240819170939.GI2032816@nvidia.com>
+References: <20240819161839.4657-1-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819161839.4657-1-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: BLAP220CA0027.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:32c::32) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|IA0PR12MB8351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88fca1b5-79c0-4b19-39a5-08dcc071e874
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|PH8PR12MB6986:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54799c4f-7de4-4a37-dba8-08dcc071b68c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?u7Y9JmmyORfmfcpVgB5tprqRr3/2Xnt89CUTxVnzXFTl6459WBUBFB+TpuxE?=
- =?us-ascii?Q?RaS5Bnyare9StiZvqb7zf31h15YLQyPQh4u/BLKcD23Dfy3qKczg3bOEvC88?=
- =?us-ascii?Q?gDHjPuiyPrt7xz3NogDW9Ib8qRHc3TUbzClQmKlET0EWyabizIgVdJxkJ4mJ?=
- =?us-ascii?Q?eeIRsx7pNMwhny8+pKUV5ZAOKy1mMbsTw8UbNFNBv4mI4ps3yvU6hPgXU5uC?=
- =?us-ascii?Q?Ywd4DH2yr56vK3B6oUghWn6l3juA9yFuPR2GtzQ1Zk0gfuqt7GVM8kYOAIJC?=
- =?us-ascii?Q?jfl2+PKuWR9slWOShhaSpr0+FX5Yi13CejTYn+UJSCctEtDUoIGPvSb278zs?=
- =?us-ascii?Q?mmYisSHoHELy0jgVqJO+m1zZT5HWWsIZW/fsKow582YmhfHIk9/633ADCzmG?=
- =?us-ascii?Q?cx0Elr5W6dmaSgJtdaF9ygcPArg4laPX2T+0WRSaDjMit7h77fMgMFfVzWhw?=
- =?us-ascii?Q?GdoQnUMWRvmEtRPWUpyF08LZQHEjBbxObMMsEJt8ODVWSnu+4HjrRD1OkAXL?=
- =?us-ascii?Q?D8LsZEMJXhjMkEQPupYH0LDsedG84jVqI4eqgXmqACTLccyXePePEPy8PaQm?=
- =?us-ascii?Q?YVH8QfD2BaiBOtAxaqBAbOVecBeJB5lvlbaRTlMTi3FAoAenY1+VhcW7o80s?=
- =?us-ascii?Q?UAMaG1+D4hDDE7xzAKO1QnO9db3PKjO9OhWQoZZF8IPv0C03KQTmt/Uqbqn6?=
- =?us-ascii?Q?oqOP9nbPRhc6fYpBcLGp43HUvetLUO+oYUCpinLVRm+H2NhS0bBRmTEXUrEe?=
- =?us-ascii?Q?0Od/aVxz2/tRS5UBW8hawQXwx7NwhClu8/advLdGfVNoHCe0Xf/jf4e71tHV?=
- =?us-ascii?Q?BQGrcVEWeV1hifq9mcGCB308I5kg5Z/R5VJCVN4VT+T5MrDUuP1rT96iJgEY?=
- =?us-ascii?Q?ZKBJTr/4aHrBGSbgwKhQt6OobsPIzsViJIf/R2pU7V4wzj24akoa6lNQfeWQ?=
- =?us-ascii?Q?FGHVBT5h2HvgoslLYOYjl43WCn8hvw4vQWnU2Tjno0e/HjCm+ecY+A1VLg4Y?=
- =?us-ascii?Q?1HnAMgsta8nU1hmffZ1Q2oVx97SaYRRSgQupC0DmLPUGUjjdE7M1oL9yBx1O?=
- =?us-ascii?Q?zrK4CMQbuhLyoTdQ/ui0nfEIrF5x+Lli6ZEoBRHLtgKC9EzFoRVLFB1fnpRi?=
- =?us-ascii?Q?iTALKrMaJ88MgkCAagytdLfqlQKCtzFuc5Ln+DUB5yuNCOgKt7ySCZxmZG4N?=
- =?us-ascii?Q?zKwqZcSmtQFDX/+HcfTznEe5FunV+mg6cglKc9+LxACk6AXeK6kYVpR95lvG?=
- =?us-ascii?Q?rlgI8/vI2GvyhK0FD/tAMrESS0krRU0kga7k4PZBQNj9xvpiOZqqogzxzuvU?=
- =?us-ascii?Q?d8qr+TeTvvtc8eE9+R0jnPIFuGnNi/1n/1LFLV9yyLaRsVn+hLXbOXi5Wdjl?=
- =?us-ascii?Q?RjS5E41sBeL5f55wqKiOfYlly/meIaIkH3Nrx2MUGcbyWZC0AbF92YioFi7p?=
- =?us-ascii?Q?+G8TFl4ws+YeuYu9BSOfSpBzdGdqvexX?=
+	=?us-ascii?Q?q/Ek5OoRkNswmE5jL6UjdHwFoZnhK3RX+whsOghZ5p9GQf8e/0BreFKFU5gm?=
+ =?us-ascii?Q?xPOfkjCvcVDE3zaZJEcHJS+L4CztYImfLhK3vYrHRDuWBuiQZGZ2tYmzvMyN?=
+ =?us-ascii?Q?201UYnD8RpfPewJ2jtDaDrECgJkewaQyVPRzaYtqBw4SYr+eKYqsDOZYCWJ7?=
+ =?us-ascii?Q?tSqj6ABvZXoB25fMnXgXOalNszuMRacLmHo2SQCIgWi88R/9o57N3IY6qsMa?=
+ =?us-ascii?Q?wEm8ccTi9sySfuVeNIN7MJ9p6G7WKilxYJXY4IOD/T9OV2axTGSPbuKolcqw?=
+ =?us-ascii?Q?zObSM+FvfmfTw3c+/1Qg9C8eIi4m93I7YaI+nsECUD/+TMKNPI1Nri9+CNwT?=
+ =?us-ascii?Q?eKVZ0JRBQGMPee9WO4xqbHDgtq1Ms863dJeJnzWHEW6BGBZ6S8vvED0iFZtM?=
+ =?us-ascii?Q?bLxsD5eYqLkFbrMX0uf1+tG2YrHnFCk9Y6J6icv7mT0oGqZEeVwxLpqupOxk?=
+ =?us-ascii?Q?6z129u6EAHW2gjX5/Sy5dXSdZf00z/SMPMsjzCXnNuCmVBI9mh0eTluZug9M?=
+ =?us-ascii?Q?w4zzZT2JDm33noYmhZVXgsKkyHtCYdp6xgn9odglsE1QSrU8BMJtRVC8Y50p?=
+ =?us-ascii?Q?rbZaQwH/ORw+y6hfozlnC8HKDrSIw07UjLxHzURdxQZ1Zg1IWlLycOw++MnU?=
+ =?us-ascii?Q?s2vOsWup2zUFGbKaybGCxyt4VBTGu2Cps0A5mDExFCS5SZk5eB+tKg0k2viH?=
+ =?us-ascii?Q?iq4cWzcc1KxXfLaypAO7cmKL63etTCSnvONa5JdVEIgllyzo4xkAyQ+P8VPq?=
+ =?us-ascii?Q?Y44AaEM8JlmyHf3Jei5S1Yh/jJUlWaRHl0KbJ6DtrUFKfV8vyiX9hoXcOVrV?=
+ =?us-ascii?Q?TfDHeN2hcfQMBWlyHFf4k5wPOgcJ3M/ADaT36fo9QdHGhwtFUJTcLp+cZ0jE?=
+ =?us-ascii?Q?ilF+dBvoW8oZU8tZstlxWh4u0YBckm9t3urlnXFwC0tV6IAxVA/yPRqKFDTy?=
+ =?us-ascii?Q?g9BCRSKv1esoYv4V/0aVulH4VgvcZ8NgVgL1rMHnkf80XYWni/0T+DHrGqGI?=
+ =?us-ascii?Q?H6t1k6J2M86Lari/qILFcioYKzm38X2uQo/5qKFwhHEXGaDP/SkO0DcKkQwC?=
+ =?us-ascii?Q?mhmc7NYioUTqfkkVM0JOUoYBQLEi/lM9Uil2V6Wz0AzIBHkxLNlEBKa/vIlF?=
+ =?us-ascii?Q?L5N9j56ccIwPpo2/yr8yQLvB/jqp21d9Os8oqFVpyMHmQS2FSY4SWO/ybycL?=
+ =?us-ascii?Q?piZdfrrN/YdSWdbmgIYQjUuRvYNUff+YQo+CBvoRqe5uIzd5/742nze08iei?=
+ =?us-ascii?Q?cO+Otl4Gh9S/mTab6vcbDqcNUL3Cox2eTUbkAe3nQ7dowfzRnuTlOPmSEhSu?=
+ =?us-ascii?Q?ULIiVFsaPaHXaestsFuR8hPBKb7QO36rB6XHGoBSvfalUg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 17:11:04.2755
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZTWAh/x0Tlci4Ah3X7mO/itLi/68+Y1DgSGxm/ISsQ/1UkXFsuG0wyvbit0O?=
+ =?us-ascii?Q?qqqe+ZoX0jeQvFq7XH5qpoSZsBVdq9zsO7M7lGISzL+h6LHZPMR98QiMrsJ2?=
+ =?us-ascii?Q?2NZpGItrZHV3NOBIxl0kkBmOCav+nfPei7ggG7EKXZTadX0WSpZQNmftx7N6?=
+ =?us-ascii?Q?KK2l8xpct9mVbykeJXs8LABaRydtYpTaWzMJmVzW1Y4aktURXfH7CRraVC2F?=
+ =?us-ascii?Q?qk6dggrVvUt+iC6a2l17aqv7BQwRbkjKcRLFuOvXf7ZuGWn84t6dLOj0PYHa?=
+ =?us-ascii?Q?wC7Qsqo0GhsR7G/K8AMc2ZBYyd04AKdSau6obuDP1ldW6QNQRrtmICPx2z7o?=
+ =?us-ascii?Q?33YDcQp/Sk5gRj7F0dFAmz+nWQvdmG00DhwHtiXw95v2La0sYU2E2/U4RWW8?=
+ =?us-ascii?Q?zRH2482IrR7qObHUXCN4SUCL7VRfSbFFro6gW+ei5ChbamJ//m3NFu8WHFTy?=
+ =?us-ascii?Q?7gTgDUy+W6toJLblvQnVl31gJ71yB/psXRyMFHlGl3QhOgszHvr4YmchrVme?=
+ =?us-ascii?Q?PZ9lfw8zT3yU1w14YtH2peHdYVkgViGDcRZ6KHxk5X5kzFTy276ZhWTeoGI+?=
+ =?us-ascii?Q?hvZNsDT2HbtLGfb14r/4LSgUZkvZ02mJjklLTNqXqTu5uUBChvnT99v2NHHg?=
+ =?us-ascii?Q?5Y6TdCUtlTBvrPKFHcb7dfVsuoLgIIsBzbI+wlHQv47i++KS27bU63VcWSjN?=
+ =?us-ascii?Q?YUrHp5BQmNdmXJF9TFi80DhfrF+wr2NuI1iaa5rqDctZ4XfmG5bqrWKX38u3?=
+ =?us-ascii?Q?Ja7uejByLeTAIK/rGa8KljThk1Za160DwzMqDqNwhz0z6tSRkad0U9WcWAm8?=
+ =?us-ascii?Q?3Z6/VbUP7z2RVt4RKJiiigzWv2hcjrEFum7Wls7Zrd8bs1ptbWnC+60HSSwP?=
+ =?us-ascii?Q?afukYonRYmbYZyOHRajbzmy3suKu9EelqMFIS/3p6RcLkeYpLXlSDv8lC3vC?=
+ =?us-ascii?Q?Vbd9RKxPX3mRZxrhdH3tndThYf+VVhwRJ7RF78tpf6Arqbjy+cKxtKAwS2Bi?=
+ =?us-ascii?Q?jjdXDvXmNnSaowHHbFebjgHdBjoCNKBDzlleX7Py5Mh24fLxj5836Cd0LpAQ?=
+ =?us-ascii?Q?Oj8squgmtKHCKjP8l7WTydt9zhvkivSLOPLmlYlvPLFY3h14b0U7UedC99Rm?=
+ =?us-ascii?Q?w7+7CNFXDMOkbHz399Jh42PfTLkUgZVDAWG8Zw5hm7y45hyx/f5lLyJOS7ar?=
+ =?us-ascii?Q?ybFyIk4SlxupTIYWInk2gSmVdDHdxpNx5UtQbwFDzs+QHJDmtHWaypCEWr6s?=
+ =?us-ascii?Q?rAGLmjkLbyLYhjcDx1NcpMPLK2RU9LkEluXnM+fwDME+s99s4JStGkmJoW0i?=
+ =?us-ascii?Q?eyKMa/3L13yRbB88KrTd6oM28PFTeOK2G4Yh3kZ9y374Rq9r/ZPOjCRMGxTB?=
+ =?us-ascii?Q?SvC59QchtrvpHuEC2s5qCAXrLLdFx7HKog5OSc8nhzDe0kW69JxNHqV1KZHN?=
+ =?us-ascii?Q?2iJEWVlWPLhJ6OqWGHc+kidEMi25T8/9hxPNt7QAqKGnsN6sT3aZfqZvzztQ?=
+ =?us-ascii?Q?1azxkXPindO3BsWxzNImSG9sOPzZ5sQbvTJxVKZCR5q5YulQLeV2pgs2czNq?=
+ =?us-ascii?Q?MsxefPHrC4Lsx1eokkloZN8FaSdzJucQfOaSG+JN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54799c4f-7de4-4a37-dba8-08dcc071b68c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 17:09:40.7794
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88fca1b5-79c0-4b19-39a5-08dcc071e874
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8351
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LsZ5PIlSfCHuLcGbKn+o+9tXv8sXnHAkT/qzfTLjEKvirI4ShZs0DZEbYvkg00XE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6986
 
-AMD-Xilinx zynqmp platform contains on-chip sram memory (OCM).
-R5 cores can access OCM and access is faster than DDR memory but slower
-than TCM memories available. Sram region can have optional multiple
-power-domains. Platform management firmware is responsible
-to operate these power-domains.
+On Mon, Aug 19, 2024 at 04:18:39PM +0000, Suravee Suthikulpanit wrote:
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
+> +struct dte256 {
 
-Changes in v4:
-  - Free previously allocalted genpool if adding carveouts fail for any
-    sram.
-  - add comment about sram size used in creating carveouts.
+[..]
 
-Changes in v3:
-  - make @sram an array rather than an array of pointers
-  - fix of_node_put usage to maintain proper refcount of node
-  - s/proprty/property
-  - Use gen pool framework for mapping sram address space.
+This would be alot better as just
 
-Changes in v2:
-  - Expand commit message with power-domains related information.
-
- drivers/remoteproc/xlnx_r5_remoteproc.c | 165 ++++++++++++++++++++++++
- 1 file changed, 165 insertions(+)
-
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 2cea97c746fd..6d2ac7b85c8a 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -7,6 +7,7 @@
- #include <dt-bindings/power/xlnx-zynqmp-power.h>
- #include <linux/dma-mapping.h>
- #include <linux/firmware/xlnx-zynqmp.h>
-+#include <linux/genalloc.h>
- #include <linux/kernel.h>
- #include <linux/mailbox_client.h>
- #include <linux/mailbox/zynqmp-ipi-message.h>
-@@ -56,6 +57,21 @@ struct mem_bank_data {
- 	char *bank_name;
+struct dte {
+ union {
+     u64 data[4];
+     u128 data128[2];
  };
- 
-+/**
-+ * struct zynqmp_sram_bank - sram bank description
-+ *
-+ * @sram_pool: gen pool for his sram
-+ * @sram_res: sram address region information
-+ * @va: virtual address of allocated genpool
-+ * @da: device address of sram
-+ */
-+struct zynqmp_sram_bank {
-+	struct gen_pool *sram_pool;
-+	struct resource sram_res;
-+	void __iomem *va;
-+	u32 da;
-+};
-+
- /**
-  * struct mbox_info
-  *
-@@ -120,6 +136,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  * struct zynqmp_r5_core
-  *
-  * @rsc_tbl_va: resource table virtual address
-+ * @sram: Array of sram memories assigned to this core
-+ * @num_sram: number of sram for this core
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-@@ -131,6 +149,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  */
- struct zynqmp_r5_core {
- 	void __iomem *rsc_tbl_va;
-+	struct zynqmp_sram_bank *sram;
-+	int num_sram;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
-@@ -494,6 +514,56 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int add_sram_carveouts(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct rproc_mem_entry *rproc_mem;
-+	struct zynqmp_sram_bank *sram;
-+	size_t len, pool_size;
-+	dma_addr_t dma_addr;
-+	int da, i;
-+
-+	for (i = 0; i < r5_core->num_sram; i++) {
-+		sram = &r5_core->sram[i];
-+
-+		dma_addr = (dma_addr_t)sram->sram_res.start;
-+
-+		/* Use actual resource size, as genpool size can be rounded up */
-+		len = resource_size(&sram->sram_res);
-+		da = sram->da;
-+
-+		pool_size = gen_pool_size(sram[i].sram_pool);
-+		sram->va = (void __iomem *)gen_pool_alloc(sram->sram_pool, pool_size);
-+		if (!sram->va) {
-+			dev_err(r5_core->dev, "failed to alloc sram idx %d pool\n", i);
-+			goto fail_add_sram_carveouts;
-+		}
-+
-+		rproc_mem = rproc_mem_entry_init(&rproc->dev, sram->va,
-+						 (dma_addr_t)dma_addr,
-+						 len, da,
-+						 NULL, NULL,
-+						 sram->sram_res.name);
-+
-+		rproc_add_carveout(rproc, rproc_mem);
-+		rproc_coredump_add_segment(rproc, da, len);
-+
-+		dev_dbg(&rproc->dev, "sram carveout %s addr=%llx, da=0x%x, size=0x%lx",
-+			sram->sram_res.name, dma_addr, da, len);
-+	}
-+
-+	return 0;
-+
-+fail_add_sram_carveouts:
-+	while (--i > 0) {
-+		pool_size = gen_pool_size(sram[i].sram_pool);
-+		gen_pool_free(sram[i].sram_pool,
-+			      (unsigned long)r5_core->sram[i].va, pool_size);
-+	}
-+
-+	return -ENOMEM;
-+}
-+
- /*
-  * tcm_mem_unmap()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -669,6 +739,12 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
- 
-+	ret = add_sram_carveouts(rproc);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to get sram carveout %d\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -695,6 +771,12 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 				 "can't turn off TCM bank 0x%x", pm_domain_id);
- 	}
- 
-+	for (i = 0; i < r5_core->num_sram; i++) {
-+		gen_pool_free(r5_core->sram[i].sram_pool,
-+			      (unsigned long)r5_core->sram[i].va,
-+			      gen_pool_size(r5_core->sram[i].sram_pool));
-+	}
-+
- 	return 0;
- }
- 
-@@ -881,6 +963,85 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	return ERR_PTR(ret);
- }
- 
-+static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
-+{
-+	struct device_node *np = r5_core->np;
-+	struct device *dev = r5_core->dev;
-+	struct zynqmp_sram_bank *sram;
-+	struct device_node *sram_np;
-+	int num_sram, i, ret;
-+	u64 abs_addr, size;
-+
-+	/* "sram" is optional property. Do not fail, if unavailable. */
-+	if (!of_property_present(r5_core->np, "sram"))
-+		return 0;
-+
-+	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
-+	if (num_sram <= 0) {
-+		dev_err(dev, "Invalid sram property, ret = %d\n",
-+			num_sram);
-+		return -EINVAL;
-+	}
-+
-+	sram = devm_kcalloc(dev, num_sram,
-+			    sizeof(struct zynqmp_sram_bank), GFP_KERNEL);
-+	if (!sram)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_sram; i++) {
-+		sram_np = of_parse_phandle(np, "sram", i);
-+		if (!sram_np) {
-+			dev_err(dev, "failed to get sram %d phandle\n", i);
-+			ret = -EINVAL;
-+			goto fail_sram_get;
-+		}
-+
-+		if (!of_device_is_available(sram_np)) {
-+			dev_err(dev, "sram device not available\n");
-+			ret = -EINVAL;
-+			goto fail_sram_get;
-+		}
-+
-+		ret = of_address_to_resource(sram_np, 0, &sram[i].sram_res);
-+		if (ret) {
-+			dev_err(dev, "addr to res failed\n");
-+			goto fail_sram_get;
-+		}
-+
-+		sram[i].sram_pool = of_gen_pool_get(np, "sram", i);
-+		if (!sram[i].sram_pool) {
-+			dev_err(dev, "failed to get sram idx %d gen pool\n", i);
-+			ret = -ENOMEM;
-+			goto fail_sram_get;
-+		}
-+
-+		/* Get SRAM device address */
-+		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
-+		if (ret) {
-+			dev_err(dev, "failed to get reg property\n");
-+			goto fail_sram_get;
-+		}
-+
-+		sram[i].da = (u32)abs_addr;
-+
-+		of_node_put(sram_np);
-+
-+		dev_dbg(dev, "sram %d: name=%s, addr=0x%llx, da=0x%x, size=0x%llx\n",
-+			i, sram[i].sram_res.name, sram[i].sram_res.start,
-+			sram[i].da, resource_size(&sram[i].sram_res));
-+	}
-+
-+	r5_core->sram = sram;
-+	r5_core->num_sram = num_sram;
-+
-+	return 0;
-+
-+fail_sram_get:
-+	of_node_put(sram_np);
-+
-+	return ret;
-+}
-+
- static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
- {
- 	int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
-@@ -1095,6 +1256,10 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 				return ret;
- 			}
- 		}
-+
-+		ret = zynqmp_r5_get_sram_banks(r5_core);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return 0;
+};
 
-base-commit: 1a491aaf1d1ce3a1cf5190394c36f21d805c7e96
--- 
-2.25.1
+And don't make a new type. IIRC the cmpxchg likes to have alignment
+and the u128 provides that..
 
+> +static void update_dte256(struct amd_iommu *iommu, u16 devid, struct dte256 *new)
+> +{
+> +	struct dev_table_entry *dev_table = get_dev_table(iommu);
+> +	struct dte256 *ptr = (struct dte256 *)&dev_table[devid];
+> +	struct dte256 old = {
+> +		.qw_lo.data = ptr->qw_lo.data,
+> +		.qw_hi.data = ptr->qw_hi.data,
+> +	};
+> +
+> +	/* Update qw_lo */
+> +	if (!try_cmpxchg128(&ptr->qw_lo.data, &old.qw_lo.data, new->qw_lo.data))
+> +		goto err_out;
+> +
+> +	/* Update qw_hi */
+> +	if (!try_cmpxchg128(&ptr->qw_hi.data, &old.qw_hi.data, new->qw_hi.data)) {
+> +		/* Restore qw_lo */
+> +		try_cmpxchg128(&ptr->qw_lo.data, &new->qw_lo.data, old.qw_lo.data);
+> +		goto err_out;
+> +	}
+
+I don't think this is going to work like this, the interrupt remapping
+code can asynchronously change the values (it is an existing race bug)
+and if it races that will cause these to fail too, and this doesn't
+handle that case at all.
+
+IMHO the simple solution would hold the spinlock and transfer the
+interrupt remapping fields then directly write them without a failable
+cmpxchg. Maybe you could also use a cmpxchg loop to transfer the interrupt
+remapping bits without a lock..
+
+Can you assume cmpxchg 128 is available on all CPUs that have the
+iommu? I see google says some early AMD 64 bit CPUs don't have it? Do
+they have iommu's? I had wondered if the doc intended that some 128
+bit SSE/MMX store store would be used here??
+
+If cmpxchg128 is safe checking that cap and refusing to probe the
+iommu driver would be appropriate. Otherwise a 64 bit flow still has
+to work?
+
+Finally, the order of programming the two 128s depends on what you are
+programming. The first 128 contains the valid bit so you shouldn't be
+writing the second 128 after, and vice versa. This will make
+undesirable races around Guest Paging Mode and eventually viommuen at
+least.
+
+If you have to solve the 64 bit case too, then you really should use
+the programmer from SMMUv3. Everyone seems to need this logic and it
+should be generalized. I can help you do it.. I have a patch to make
+that logic use 128 bit stores too someplace.
+
+Otherwise you can possibly open code the 128 bit path with some more
+care to check the valid bits and set the order, plus the interrupt
+remapping locking.
+
+Jason
 
