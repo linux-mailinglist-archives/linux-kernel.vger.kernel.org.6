@@ -1,369 +1,240 @@
-Return-Path: <linux-kernel+bounces-292519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB85957069
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6118957052
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782731F2220E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624591F22983
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F329186E21;
-	Mon, 19 Aug 2024 16:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Q4/o6e+k"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395CB178CEC;
+	Mon, 19 Aug 2024 16:31:10 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368B2178364;
-	Mon, 19 Aug 2024 16:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2A032C8B;
+	Mon, 19 Aug 2024 16:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085225; cv=none; b=vDjYtmUl+Qy3t+sZQCVij7cOoIpP43Kx+KzZOEX9U88o+lRxRhLNhwRnD9HAVKLx2UkLq00Xj1ldURvdXbhssdx0leETUTlDa2JxuE6M8W9XyV9F//Q82BPXU7ugBO6GS0rP4t7unkk0fGz/dOeeIxQ3l2mbHSMc9x38mCQuDbg=
+	t=1724085069; cv=none; b=rLiqnos3vnFwg94i2/uae2uTep2Yd4uiQJZd+1NIww2j4nxbWwVaNmnNfrtUPp7aVZjzdgPMoIU1ZIqfMh8b43YyZ8PvNfFsEoaVRaSV7MplIluWf3EV0qv35QxqKNWGQWfDzRrf0VYsijv06M6fw2n6U8zpMHV8pwqI3EaBg0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085225; c=relaxed/simple;
-	bh=tfOXbMKJK6HGHebhElcwFYLJN4SjdiC+niYNvwZCd/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QrOaFdt46CVQ+NX7IJjFfV3lgJ7Osfepl/HbUwhRsKRvo1oZlnX3+e1bSXn3vlX4RKmYX/YRNZzBuMGr+zi5D2Jm9LR9QZzQMPFXpqg4L1odFU9tEuUmOlT/UFgaGN7vMPZyTtZK6pL69p/hXysYF3Tml9xmKxxH2RCRNNZDKKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Q4/o6e+k reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 94dcc78f3caf74dd; Mon, 19 Aug 2024 18:33:41 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C4BC073B5D4;
-	Mon, 19 Aug 2024 18:33:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724085221;
-	bh=tfOXbMKJK6HGHebhElcwFYLJN4SjdiC+niYNvwZCd/s=;
-	h=From:Subject:Date;
-	b=Q4/o6e+kbDJ5fwxUpF/Q/2yvexfL417tQR/FHSvieui8vI62pWqdMPJAgYBpixwTN
-	 WNbGoXbZSVEq9bDcWycv/WDohazmaGOr/ArdFbvYsbDR8cJh5oQhJgZOt7oQOGxeli
-	 KkWFxOsJjP8cFPakQyyTd/hT6KU2JmMT/Kv6xTrjCFsB4e26R/hiGzPIcpecj0AA1f
-	 gfJw5pPbXpQDSuvnZxl0bMC/eYjSWjpstcWtBPwYxdCN+flfqGwzwJmnYahetC4sWB
-	 qj0BdQVGa65EKq+vfxZAo10eAgdO0u/bnwZYG06hXMyCM15f/EU5di7sgCUezqZk7D
-	 g0oEpRsMDpRpA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- [PATCH v3 12/14] thermal/of:  Use the .should_bind() thermal zone callback
-Date: Mon, 19 Aug 2024 18:30:18 +0200
-Message-ID: <2236794.NgBsaNRSFp@rjwysocki.net>
-In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
-References: <2205737.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1724085069; c=relaxed/simple;
+	bh=KayCsSrw/wPS7vuoxUC8St036JAJ2fqsYzR9mza+wY0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uSX2QED7kp7KxgZ1Dz0LKiVEYOYZBMaZoUc3QTYi662xumeAwJPJlvi4AIBqwOwwr5DeSKz97RTkJIahoNpbs/eJ17JNd1djKxUXEHO7Dtg4jFZvkT0InGsZEMzu/Usi79t9B3WIV2u1h89KLQdnIvaMZGVycWWzVl86m4aRvHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Wnd035HvWz9v7NP;
+	Tue, 20 Aug 2024 00:12:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id E131314065B;
+	Tue, 20 Aug 2024 00:30:53 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwD3E8Exc8NmeuqEAQ--.28899S2;
+	Mon, 19 Aug 2024 17:30:52 +0100 (CET)
+Message-ID: <d0070fb3b46aa9d8f02ee9d0558cd6107af74a73.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+	davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Mon, 19 Aug 2024 18:30:38 +0200
+In-Reply-To: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
- lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkiheslhhinhgrrhhordhorhhg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+X-CM-TRANSID:GxC2BwD3E8Exc8NmeuqEAQ--.28899S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw4xtF43GF47CF4xXFW8Zwb_yoW3Jr4fpF
+	4rKr98JF98Gr92kFWfJw1xu3y5Ars5Aw43Gwnagw15A3sIqF1vya92kF43uF9xGr18Xr4F
+	qrZYqr1UCw1Yy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGbCqngH4gAAsV
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sun, 2024-08-18 at 18:57 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Support for PGP keys and signatures was proposed by David long time ago,
+> before the decision of using PKCS#7 for kernel modules signatures
+> verification was made. After that, there has been not enough interest to
+> support PGP too.
+>=20
+> Lately, when discussing a proposal of introducing fsverity signatures in
+> Fedora [1], developers expressed their preference on not having a separat=
+e
+> key for signing, which would complicate the management of the distributio=
+n.
+> They would be more in favor of using the same PGP key, currently used for
+> signing RPM headers, also for file-based signatures (not only fsverity, b=
+ut
+> also IMA ones).
 
-Make the thermal_of driver use the .should_bind() thermal zone callback
-to provide the thermal core with the information on whether or not to
-bind the given cooling device to the given trip point in the given
-thermal zone.  If it returns 'true', the thermal core will bind the
-cooling device to the trip and the corresponding unbinding will be
-taken care of automatically by the core on the removal of the involved
-thermal zone or cooling device.
+Update: since Fedora 39, IMA file signatures are supported on an
+independent key infrastructure.
 
-This replaces the .bind() and .unbind() thermal zone callbacks which
-assumed the same trip points ordering in the driver and in the thermal
-core (that may not be true any more in the future).  The .bind()
-callback would walk the given thermal zone's cooling maps to find all
-of the valid trip point combinations with the given cooling device and
-it would call thermal_zone_bind_cooling_device() for all of them using
-trip point indices reflecting the ordering of the trips in the DT.
+Roberto
 
-The .should_bind() callback still walks the thermal zone's cooling maps,
-but it can use the trip object passed to it by the thermal core to find
-the trip in question in the first place and then it uses the
-corresponding 'cooling-device' entries to look up the given cooling
-device.  To be able to match the trip object provided by the thermal
-core to a specific device node, the driver sets the 'priv' field of each
-trip to the corresponding device node pointer during initialization.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3: Reorder (previously [14/17])
-
-v1 -> v2:
-   * Fix a build issue (undefined symbol)
-
-This patch only depends on the [06/14] introducing the .should_bind()
-thermal zone callback:
-
-https://lore.kernel.org/linux-pm/9334403.CDJkKcVGEf@rjwysocki.net/
-
----
- drivers/thermal/thermal_of.c |  171 ++++++++++---------------------------------
- 1 file changed, 41 insertions(+), 130 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_of.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_of.c
-+++ linux-pm/drivers/thermal/thermal_of.c
-@@ -20,37 +20,6 @@
- 
- /***   functions parsing device tree nodes   ***/
- 
--static int of_find_trip_id(struct device_node *np, struct device_node *trip)
--{
--	struct device_node *trips;
--	struct device_node *t;
--	int i = 0;
--
--	trips = of_get_child_by_name(np, "trips");
--	if (!trips) {
--		pr_err("Failed to find 'trips' node\n");
--		return -EINVAL;
--	}
--
--	/*
--	 * Find the trip id point associated with the cooling device map
--	 */
--	for_each_child_of_node(trips, t) {
--
--		if (t == trip) {
--			of_node_put(t);
--			goto out;
--		}
--		i++;
--	}
--
--	i = -ENXIO;
--out:
--	of_node_put(trips);
--
--	return i;
--}
--
- /*
-  * It maps 'enum thermal_trip_type' found in include/linux/thermal.h
-  * into the device tree binding of 'trip', property type.
-@@ -119,6 +88,8 @@ static int thermal_of_populate_trip(stru
- 
- 	trip->flags = THERMAL_TRIP_FLAG_RW_TEMP;
- 
-+	trip->priv = np;
-+
- 	return 0;
- }
- 
-@@ -290,39 +261,9 @@ static struct device_node *thermal_of_zo
- 	return tz_np;
- }
- 
--static int __thermal_of_unbind(struct device_node *map_np, int index, int trip_id,
--			       struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
--{
--	struct of_phandle_args cooling_spec;
--	int ret;
--
--	ret = of_parse_phandle_with_args(map_np, "cooling-device", "#cooling-cells",
--					 index, &cooling_spec);
--
--	if (ret < 0) {
--		pr_err("Invalid cooling-device entry\n");
--		return ret;
--	}
--
--	of_node_put(cooling_spec.np);
--
--	if (cooling_spec.args_count < 2) {
--		pr_err("wrong reference to cooling device, missing limits\n");
--		return -EINVAL;
--	}
--
--	if (cooling_spec.np != cdev->np)
--		return 0;
--
--	ret = thermal_zone_unbind_cooling_device(tz, trip_id, cdev);
--	if (ret)
--		pr_err("Failed to unbind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
--
--	return ret;
--}
--
--static int __thermal_of_bind(struct device_node *map_np, int index, int trip_id,
--			     struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
-+static bool thermal_of_get_cooling_spec(struct device_node *map_np, int index,
-+					struct thermal_cooling_device *cdev,
-+					struct cooling_spec *c)
- {
- 	struct of_phandle_args cooling_spec;
- 	int ret, weight = THERMAL_WEIGHT_DEFAULT;
-@@ -334,104 +275,75 @@ static int __thermal_of_bind(struct devi
- 
- 	if (ret < 0) {
- 		pr_err("Invalid cooling-device entry\n");
--		return ret;
-+		return false;
- 	}
- 
- 	of_node_put(cooling_spec.np);
- 
- 	if (cooling_spec.args_count < 2) {
- 		pr_err("wrong reference to cooling device, missing limits\n");
--		return -EINVAL;
-+		return false;
- 	}
- 
- 	if (cooling_spec.np != cdev->np)
--		return 0;
--
--	ret = thermal_zone_bind_cooling_device(tz, trip_id, cdev, cooling_spec.args[1],
--					       cooling_spec.args[0],
--					       weight);
--	if (ret)
--		pr_err("Failed to bind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
--
--	return ret;
--}
--
--static int thermal_of_for_each_cooling_device(struct device_node *tz_np, struct device_node *map_np,
--					      struct thermal_zone_device *tz, struct thermal_cooling_device *cdev,
--					      int (*action)(struct device_node *, int, int,
--							    struct thermal_zone_device *, struct thermal_cooling_device *))
--{
--	struct device_node *tr_np;
--	int count, i, trip_id;
--
--	tr_np = of_parse_phandle(map_np, "trip", 0);
--	if (!tr_np)
--		return -ENODEV;
--
--	trip_id = of_find_trip_id(tz_np, tr_np);
--	if (trip_id < 0)
--		return trip_id;
--
--	count = of_count_phandle_with_args(map_np, "cooling-device", "#cooling-cells");
--	if (count <= 0) {
--		pr_err("Add a cooling_device property with at least one device\n");
--		return -ENOENT;
--	}
-+		return false;
- 
--	/*
--	 * At this point, we don't want to bail out when there is an
--	 * error, we will try to bind/unbind as many as possible
--	 * cooling devices
--	 */
--	for (i = 0; i < count; i++)
--		action(map_np, i, trip_id, tz, cdev);
-+	c->lower = cooling_spec.args[0];
-+	c->upper = cooling_spec.args[1];
-+	c->weight = weight;
- 
--	return 0;
-+	return true;
- }
- 
--static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
--					    struct thermal_cooling_device *cdev,
--					    int (*action)(struct device_node *, int, int,
--							  struct thermal_zone_device *, struct thermal_cooling_device *))
-+static bool thermal_of_should_bind(struct thermal_zone_device *tz,
-+				   const struct thermal_trip *trip,
-+				   struct thermal_cooling_device *cdev,
-+				   struct cooling_spec *c)
- {
- 	struct device_node *tz_np, *cm_np, *child;
--	int ret = 0;
-+	bool result = false;
- 
- 	tz_np = thermal_of_zone_get_by_name(tz);
- 	if (IS_ERR(tz_np)) {
- 		pr_err("Failed to get node tz by name\n");
--		return PTR_ERR(tz_np);
-+		return false;
- 	}
- 
- 	cm_np = of_get_child_by_name(tz_np, "cooling-maps");
- 	if (!cm_np)
- 		goto out;
- 
-+	/* Look up the trip and the cdev in the cooling maps. */
- 	for_each_child_of_node(cm_np, child) {
--		ret = thermal_of_for_each_cooling_device(tz_np, child, tz, cdev, action);
--		if (ret) {
-+		struct device_node *tr_np;
-+		int count, i;
-+
-+		tr_np = of_parse_phandle(child, "trip", 0);
-+		if (tr_np != trip->priv) {
- 			of_node_put(child);
--			break;
-+			continue;
-+		}
-+
-+		/* The trip has been found, look up the cdev. */
-+		count = of_count_phandle_with_args(child, "cooling-device", "#cooling-cells");
-+		if (count <= 0)
-+			pr_err("Add a cooling_device property with at least one device\n");
-+
-+		for (i = 0; i < count; i++) {
-+			result = thermal_of_get_cooling_spec(child, i, cdev, c);
-+			if (result)
-+				break;
- 		}
-+
-+		of_node_put(child);
-+		break;
- 	}
- 
- 	of_node_put(cm_np);
- out:
- 	of_node_put(tz_np);
- 
--	return ret;
--}
--
--static int thermal_of_bind(struct thermal_zone_device *tz,
--			   struct thermal_cooling_device *cdev)
--{
--	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_bind);
--}
--
--static int thermal_of_unbind(struct thermal_zone_device *tz,
--			     struct thermal_cooling_device *cdev)
--{
--	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_unbind);
-+	return result;
- }
- 
- /**
-@@ -502,8 +414,7 @@ static struct thermal_zone_device *therm
- 
- 	thermal_of_parameters_init(np, &tzp);
- 
--	of_ops.bind = thermal_of_bind;
--	of_ops.unbind = thermal_of_unbind;
-+	of_ops.should_bind = thermal_of_should_bind;
- 
- 	ret = of_property_read_string(np, "critical-action", &action);
- 	if (!ret)
-
-
+> Another envisioned use case would be to add the ability to appraise RPM
+> headers with their existing PGP signature, so that they can be used as an
+> authenticated source of reference values for appraising remaining
+> files [2].
+>=20
+> To make these use cases possible, introduce support for PGP keys and
+> signatures in the kernel, and load provided PGP keys in the built-in
+> keyring, so that PGP signatures of RPM headers, fsverity digests, and IMA
+> digests can be verified from this trust anchor.
+>=20
+> In addition to the original version of the patch set, also introduce
+> support for signature verification of PGP keys, so that those keys can be
+> added to keyrings with a signature-based restriction (e.g. .ima). PGP key=
+s
+> are searched with partial IDs, provided with signature subtype 16 (Issuer=
+).
+> Search with full IDs could be supported with
+> draft-ietf-openpgp-rfc4880bis-10, by retrieving the information from
+> signature subtype 33 (Issuer Fingerprint). Due to the possibility of ID
+> collisions, the key_or_keyring restriction is not supported.
+>=20
+> The patch set includes two preliminary patches: patch 1 introduces
+> mpi_key_length(), to get the number of bits and bytes of an MPI; patch 2
+> introduces rsa_parse_priv_key_raw() and rsa_parse_pub_key_raw(), to parse
+> an RSA key in RAW format if the ASN.1 parser returns an error.
+>=20
+> Patches 3-5 introduce the library necessary to parse PGP keys and
+> signatures, whose support is added with patches 6-10. Patch 11 introduces
+> verify_pgp_signature() to be used by kernel subsystems (e.g. fsverity and
+> IMA). Patch 12 is for testing of PGP signatures. Finally, patches 13-14
+> allow loading a set of PGP keys from a supplied blob at boot time.
+>=20
+> Changelog
+>=20
+> v1 [4]:
+> - Remove quiet_cmd_extract_certs (redundant, likely leftover from
+>   conflict resolution)
+> - Load PGP keys embedded in the kernel image within load_module_cert()
+>   and load_system_certificate_list(), instead of using a separate initcal=
+l
+> - Style bug fixes found by checkpatch.pl
+> - Add <crypto/pgp.h> include in crypto/asymmetric_keys/pgp_preload.c, to
+>   remove no previous prototype warning
+> - Correctly check returned tfm in pgp_generate_fingerprint()
+> - Fix printing message in pgp_generate_fingerprint()
+> - Don't create a public key if the key blob does not contain a PGP key
+>   packet
+> - Remove unused pgp_pubkey_hash array
+> - Set KEY_EFLAG_DIGITALSIG key flag if the key has the capability
+> - Allow PGP_SIG_GENERAL_CERT_OF_UID_PUBKEY signature type (for key sigs)
+> - Add is_key_sig parameter to pgp_sig_get_sig() to ensure the key
+>   signature type is PGP_SIG_GENERAL_CERT_OF_UID_PUBKEY or
+>   PGP_SIG_POSTITIVE_CERT_OF_UID_PUBKEY
+>=20
+> v0 [3]:
+> - style fixes
+> - move include/linux/pgp.h and pgplib.h to crypto/asymmetric_keys
+> - introduce verify_pgp_signature()
+> - replace KEY_ALLOC_TRUSTED flag with KEY_ALLOC_BUILT_IN
+> - don't fetch PGP subkeys
+> - drop support for DSA
+> - store number of MPIs in pgp_key_algo_p_num_mpi array
+> - replace dynamic memory allocations with static ones in
+>   pgp_generate_fingerprint()
+> - store only keys with capability of verifying signatures
+> - remember selection of PGP signature packet and don't repeat parsing
+> - move search of the PGP key to verify the signature from the beginning
+>   to the end of the verification process (to be similar with PKCS#7)
+> - don't retry key search in the session keyring from the signature
+>   verification code, let the caller pass the desired keyring
+> - for the PGP signature test key type, retry the key search in the sessio=
+n
+>   keyring
+> - retry key search in restrict_link_by_signature() with a partial ID
+>   (provided in the PGP signature)
+>=20
+> [1] https://fedoraproject.org/wiki/Changes/FsVerityRPM
+> [2] https://lore.kernel.org/linux-integrity/20240415142436.2545003-1-robe=
+rto.sassu@huaweicloud.com/
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsig=
+n.git/log/?h=3Dpgp-parser
+> [4] https://lore.kernel.org/linux-integrity/20220111180318.591029-1-rober=
+to.sassu@huawei.com/
+>=20
+> David Howells (8):
+>   PGPLIB: PGP definitions (RFC 4880)
+>   PGPLIB: Basic packet parser
+>   PGPLIB: Signature parser
+>   KEYS: PGP data parser
+>   KEYS: Provide PGP key description autogeneration
+>   KEYS: PGP-based public key signature verification
+>   PGP: Provide a key type for testing PGP signatures
+>   KEYS: Provide a function to load keys from a PGP keyring blob
+>=20
+> Roberto Sassu (6):
+>   mpi: Introduce mpi_key_length()
+>   rsa: add parser of raw format
+>   KEYS: Retry asym key search with partial ID in
+>     restrict_link_by_signature()
+>   KEYS: Calculate key digest and get signature of the key
+>   verification: introduce verify_pgp_signature()
+>   KEYS: Introduce load_pgp_public_keyring()
+>=20
+>  MAINTAINERS                             |   1 +
+>  certs/Kconfig                           |  11 +
+>  certs/Makefile                          |   7 +
+>  certs/system_certificates.S             |  18 +
+>  certs/system_keyring.c                  |  93 ++++
+>  crypto/asymmetric_keys/Kconfig          |  38 ++
+>  crypto/asymmetric_keys/Makefile         |  13 +
+>  crypto/asymmetric_keys/pgp.h            | 206 ++++++++
+>  crypto/asymmetric_keys/pgp_library.c    | 620 ++++++++++++++++++++++++
+>  crypto/asymmetric_keys/pgp_parser.h     |  18 +
+>  crypto/asymmetric_keys/pgp_preload.c    | 111 +++++
+>  crypto/asymmetric_keys/pgp_public_key.c | 492 +++++++++++++++++++
+>  crypto/asymmetric_keys/pgp_signature.c  | 505 +++++++++++++++++++
+>  crypto/asymmetric_keys/pgp_test_key.c   | 129 +++++
+>  crypto/asymmetric_keys/pgplib.h         |  74 +++
+>  crypto/asymmetric_keys/restrict.c       |  10 +-
+>  crypto/rsa.c                            |  14 +-
+>  crypto/rsa_helper.c                     |  69 +++
+>  include/crypto/internal/rsa.h           |   6 +
+>  include/crypto/pgp.h                    |  36 ++
+>  include/linux/mpi.h                     |   2 +
+>  include/linux/verification.h            |  23 +
+>  lib/crypto/mpi/mpicoder.c               |  33 +-
+>  23 files changed, 2516 insertions(+), 13 deletions(-)
+>  create mode 100644 crypto/asymmetric_keys/pgp.h
+>  create mode 100644 crypto/asymmetric_keys/pgp_library.c
+>  create mode 100644 crypto/asymmetric_keys/pgp_parser.h
+>  create mode 100644 crypto/asymmetric_keys/pgp_preload.c
+>  create mode 100644 crypto/asymmetric_keys/pgp_public_key.c
+>  create mode 100644 crypto/asymmetric_keys/pgp_signature.c
+>  create mode 100644 crypto/asymmetric_keys/pgp_test_key.c
+>  create mode 100644 crypto/asymmetric_keys/pgplib.h
+>  create mode 100644 include/crypto/pgp.h
+>=20
 
 
