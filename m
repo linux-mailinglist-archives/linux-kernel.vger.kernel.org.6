@@ -1,389 +1,108 @@
-Return-Path: <linux-kernel+bounces-292206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC4A956C6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:49:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F17956C73
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA22D1F22994
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237DD1C216AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3535316C86B;
-	Mon, 19 Aug 2024 13:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB9116C868;
+	Mon, 19 Aug 2024 13:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2689hdt"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqaRB/he"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DA516A920;
-	Mon, 19 Aug 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF7D154C19;
+	Mon, 19 Aug 2024 13:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724075365; cv=none; b=pBsdFgm0K0IUdZDW8VN8HxPLexxgJJf4erlEoeSTdgBQ0WPY/iSHwhUvNmPTbKjdgmuKVQFWSmYSR+2pNzxipS1cUmMIS9WBUe6m+qKsyVr152pmWHJ+o8RSV1qDxep/y3VLVIjZ6YRsrMThfofI2ZYfvzDR8ZTMPdQlfKZMc1k=
+	t=1724075408; cv=none; b=Y32XEDKSHp3tmjD2R3Jb8UjhSX3T2K7E+UCIxScKRnvc6CBrLR/KEtFNHtpxbyqNvKKMeKiQx0wynMZy6CubxG2EKMVAmyfv2ntnTg1M30ywfPyecWbaFgn3kFcEouP5bzGbz0CmBjwqIcCrZGH1C7/g3MWFr6eAt8w+a3UxdhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724075365; c=relaxed/simple;
-	bh=98KBjpfeb+jau8Vn/lG+FAiapdT8hW6FKtash7zz2/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIC10asBlEv2F7rfcv0yO8Exwto19+XX85lT74SK75kbjkM1nT+UQKCaXa6JrtnXDe3Hlrgnll6n/oB7xK0gabaJ+3bu+kL10eyuRRG9P9SkGBg+bEmb2BjvhWfUNhHwis323oanom953jbFFl0ZEKiLeHo1aDbp0hb+ZKAKHVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2689hdt; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so5793662e87.2;
-        Mon, 19 Aug 2024 06:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724075361; x=1724680161; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GgellENjkAC0oDUu9zDn0Phd3BGDigsPQFZK0uSyBck=;
-        b=b2689hdtiJmSwxsGF8vfhCK9bNaJyyEXSwo2IFGfZsa3i7uZ+5HQ7Lar3zQKYNLjhF
-         20gV7KoW6Rxg1uN5+uGA3oXRSgS1KGh7Nxd7zUf7Zxw4hQUjueO4cm1V7c9s5RCkIXhh
-         6Qtsm6d67XVmsA4hMLY6Hj6F0US+lhNfTU4abTDtJjya+EF+Zg2tMtqb+uQNhvnKNHR9
-         FiKwL2FXEuq8LeWyYtYMQKm+VxIa3sMYgSmGDFMqjYJf8AKyKOd5chz4hAirtDbs/F15
-         h4umnqIDTz0wqOfks9/7ncfEt5W2n0Rmbv+Ey1z6kC5htVwvy5Nc2SSU2vaeEvG4eD9Q
-         etmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724075361; x=1724680161;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GgellENjkAC0oDUu9zDn0Phd3BGDigsPQFZK0uSyBck=;
-        b=Sk3hy/6oa08B6Y284P6GcqE3wSt6BKX0qGswf0mwrCWAbuM5uJThcGSGSinbkWCiGr
-         NB1yKTPGcZGLGLXJAdzGPjiLzvNdvhuHIh72wk6CSeGv5xZC1z4f/eW3Ngk5Q8hZNmzi
-         jsZ7QE9cHN3F6vG/qXBl72AHrnT6fMOUUzJJNb0Xz0FTXOPWdBX632O+iO9cD7D2p/iz
-         haRUYilq3DEPO7Xo2d4v5zuYgi9lMOe5l6YUrsMxw5MNX97lKrE2r7EZv7nUverksjZ1
-         Zv0OAI5/maM7y3pFuydVPzBTImyeVEiHQiukZJAtehOHP6YIk9jUe3Yb79Zd9dloNzeB
-         3JYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFKIvMaPHffJOpceKEAN6XuMq+a6V7cOw2usc+RicZTmpizOVJP66LPcFAqYMzDXbXVDU2pg7svA203MMWwX5PI1IoXGNVp7qmXg9unRCVXWsv+OL4b3ZJZdOEFcmOSOuOrV7
-X-Gm-Message-State: AOJu0YwQ3/AvBxueAS6z+xTJ6V70O45pzx1CS4RVzQuanLh/xOMvxOJY
-	0e0jVGR6NOGMmRB978n2SKqaQAjFMV5SHpGrzF0gKwin2UviW1k27Xa5UQ==
-X-Google-Smtp-Source: AGHT+IGAQqDu7sXGRuHXtxrXdNIvNzsAl6f2Ihb5sjbF/DzRnYJtYwL6ynEv8wGX5nbPkA2r68rMSQ==
-X-Received: by 2002:a05:6512:2821:b0:52c:dfe6:6352 with SMTP id 2adb3069b0e04-5331c6dca19mr8251869e87.48.1724075360523;
-        Mon, 19 Aug 2024 06:49:20 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3b905fsm1546414e87.98.2024.08.19.06.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 06:49:19 -0700 (PDT)
-Date: Mon, 19 Aug 2024 16:49:17 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Giuseppe CAVALLARO <peppe.cavallaro@st.com>, Russell King <linux@armlinux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: stmmac: Fix false "invalid port speed" warning
-Message-ID: <wbjdg3woviamust2ukw3og7jlrho2cxruxdz2xxcwgbtik7lwf@6ipyg4nml6c4>
-References: <20240809192150.32756-1-fancer.lancer@gmail.com>
- <32bevr5jxmmm3ynnj3idpk3wdyaddoynyb7hv5tro3n7tsswwd@bbly52u3mzmn>
- <tcneleue5kvsn4ygf2mrrt6gpz5f47zz6sp2wveav5wr5glbhi@7thgrb44kt3m>
- <kawkk44ngexucxsrybieysvp356rdfi3ypyskcx3l3dhe4g6sp@avjjgcb2ci7p>
+	s=arc-20240116; t=1724075408; c=relaxed/simple;
+	bh=WjhiTawlAIfuToCLmbnvKr5mf+reukg5NfmPH0NilqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u+RcM07SVg2s+WGmbzPXJQXR4nzJc5XP/zgoT6/ikhHE5GXKnBPOltvD4CabpysnjyzKbpUmWm7InXnhzh0VH+aN3VhgibBTUZ06dDWBHupnEbFLw880pbKJO8UJE+TD8EVW91kNtIX1porFW5rxoo+D3jW1JMvEkKUWtnuqvko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqaRB/he; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5BEC4AF10;
+	Mon, 19 Aug 2024 13:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724075407;
+	bh=WjhiTawlAIfuToCLmbnvKr5mf+reukg5NfmPH0NilqY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aqaRB/hew/WcK84AMNulZ6tw3hgHRAwa5MomJWFqpf+VLIr3ZC1NZTek4GTxFvDkO
+	 K+7lWVQCrMeM/nKK3lS9PRmEEcPRnIVd4yUPjWa8w4LBWSpFVpz4CXwfh2xjBQui+C
+	 df3w6iKW2JfHS0Lqu3bSnhRqS3qmvaajF4agH6qtOL7qmyGybgDtd9M36jwgAaQEY0
+	 lXLsY87pOt6mujSay7yfNezkJ9fR6iqJm5ucAhEru53gjKojnjc9H3L6u1mP6z0ixT
+	 1unljzxS2RL3wZb81caw67KTbpILZO/0j1resdvJ41W8xuCod3KwZFqyZMl/Ri736v
+	 j9YV2QFrxNimA==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2635abdc742so544119fac.2;
+        Mon, 19 Aug 2024 06:50:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXdD4a/ehijq38KKzBANcyHM5eYOv6nXWB0U7r2TsiWA0ROYB0Tp3nfXOezI7+fUe2j/WFP4vta8EhueF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk9HGY0N/fT3vnHvyeb1i/KKz0ECxsPiZ69j3ofPP7aJdwqabo
+	5S+Kt6S1h9GtTI938JoUzjdi6VCqn1hS7Wf5XGuwVtnHeLUFRaRPXx4UiJGoMeT64dSPPkk3ZEN
+	OY5Kh5bpbTj7d2x61txAfPC0IWkM=
+X-Google-Smtp-Source: AGHT+IGcxvquucdhiO2i1h1zL1skFlN8Lo10S6HsHc6valnsvoyWSdQxP3XnhACp2aBS+6HQxuJddm5ENowjFXYUEuA=
+X-Received: by 2002:a05:6871:548:b0:25e:b7e1:d20d with SMTP id
+ 586e51a60fabf-2701c09ff65mr5731197fac.0.1724075407157; Mon, 19 Aug 2024
+ 06:50:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kawkk44ngexucxsrybieysvp356rdfi3ypyskcx3l3dhe4g6sp@avjjgcb2ci7p>
+References: <6065927.lOV4Wx5bFT@rjwysocki.net>
+In-Reply-To: <6065927.lOV4Wx5bFT@rjwysocki.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 19 Aug 2024 15:49:53 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i2C2jbYeg=pTOTOwMFh+G4vkYn3tG5TzN+=r-7AYXLAA@mail.gmail.com>
+Message-ID: <CAJZ5v0i2C2jbYeg=pTOTOwMFh+G4vkYn3tG5TzN+=r-7AYXLAA@mail.gmail.com>
+Subject: Re: [PATCH v1] thermal: Introduce a debugfs-based testing facility
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 08:05:36PM -0500, Andrew Halaney wrote:
-> On Mon, Aug 12, 2024 at 07:48:34PM GMT, Serge Semin wrote:
-> > Hi Andrew
-> > 
-> > On Fri, Aug 09, 2024 at 03:41:04PM -0500, Andrew Halaney wrote:
-> > > On Fri, Aug 09, 2024 at 10:21:39PM GMT, Serge Semin wrote:
-> > > > If the internal SGMII/TBI/RTBI PCS is available in a DW GMAC or DW QoS Eth
-> > > > instance and there is no "snps,ps-speed" property specified (or the
-> > > > plat_stmmacenet_data::mac_port_sel_speed field is left zero), then the
-> > > > next warning will be printed to the system log:
-> > > > 
-> > > > > [  294.611899] stmmaceth 1f060000.ethernet: invalid port speed
-> > > > 
-> > > > By the original intention the "snps,ps-speed" property was supposed to be
-> > > > utilized on the platforms with the MAC2MAC link setup to fix the link
-> > > > speed with the specified value. But since it's possible to have a device
-> > > > with the DW *MAC with the SGMII/TBI/RTBI interface attached to a PHY, then
-> > > > the property is actually optional (which is also confirmed by the DW MAC
-> > > > DT-bindings). Thus it's absolutely normal to have the
-> > > > plat_stmmacenet_data::mac_port_sel_speed field zero initialized indicating
-> > > > that there is no need in the MAC-speed fixing and the denoted warning is
-> > > > false.
-> > > 
-> > 
-> > > Can you help me understand what snps,ps-speed actually does? Its turned
-> > > into a bool and pushed down into srgmi_ral right now:
-> > > 
-> > > 	/**
-> > > 	 * dwmac_ctrl_ane - To program the AN Control Register.
-> > > 	 * @ioaddr: IO registers pointer
-> > > 	 * @reg: Base address of the AN Control Register.
-> > > 	 * @ane: to enable the auto-negotiation
-> > > 	 * @srgmi_ral: to manage MAC-2-MAC SGMII connections.
-> > > 	 * @loopback: to cause the PHY to loopback tx data into rx path.
-> > > 	 * Description: this is the main function to configure the AN control register
-> > > 	 * and init the ANE, select loopback (usually for debugging purpose) and
-> > > 	 * configure SGMII RAL.
-> > > 	 */
-> > > 	static inline void dwmac_ctrl_ane(void __iomem *ioaddr, u32 reg, bool ane,
-> > > 					  bool srgmi_ral, bool loopback)
-> > > 	{
-> > > 		u32 value = readl(ioaddr + GMAC_AN_CTRL(reg));
-> > > 
-> > > 		/* Enable and restart the Auto-Negotiation */
-> > > 		if (ane)
-> > > 			value |= GMAC_AN_CTRL_ANE | GMAC_AN_CTRL_RAN;
-> > > 		else
-> > > 			value &= ~GMAC_AN_CTRL_ANE;
-> > > 
-> > > 		/* In case of MAC-2-MAC connection, block is configured to operate
-> > > 		 * according to MAC conf register.
-> > > 		 */
-> > > 		if (srgmi_ral)
-> > > 			value |= GMAC_AN_CTRL_SGMRAL;
-> > > 
-> > > 		if (loopback)
-> > > 			value |= GMAC_AN_CTRL_ELE;
-> > > 
-> > > 		writel(value, ioaddr + GMAC_AN_CTRL(reg));
-> > > 	}
-> > > 
-> > > 
-> > 
-> > In addition to the method above there are three more places related to
-> > the SGMRAL flag (SGMII Rate Adaptation Layer Control flag) setting up:
-> > 
-> > 2. drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> > stmmac_probe_config_dt():
-> >   of_property_read_u32(np, "snps,ps-speed", &plat->mac_port_sel_speed);
-> > 
-> > Description: Retrieve the fixed speed of the MAC-2-MAC SGMII
-> > connection from DT-file.
-> > 
-> > 3. drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:
-> > stmmac_hw_setup():
-> >    if (priv->hw->pcs) {
-> > 	int speed = priv->plat->mac_port_sel_speed;
-> > 
-> > 	if ((speed == SPEED_10) || (speed == SPEED_100) ||
-> > 	    (speed == SPEED_1000)) {
-> > 		priv->hw->ps = speed;
-> > 	} else {
-> > 		dev_warn(priv->device, "invalid port speed\n");
-> > 		priv->hw->ps = 0;
-> > 	}
-> >    }
-> > 
-> > Description: Parse the speed specified via the "snps,ps-speed"
-> > property to make sure it's of one of the permitted values. Note it's
-> > executed only if the priv->hw->pcs flag is set which due to the
-> > current stmmac_check_pcs_mode() implementation is only possible if
-> > the DW GMAC/QoS Eth supports the SGMII PHY interface.
-> > 
-> > 4. drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c:
-> >    drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c:
-> >    drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:
-> > dwmac*_core_init():
-> >    if (hw->ps) {
-> > 	value |= GMAC_CONTROL_TE;
-> 
+On Fri, Aug 2, 2024 at 8:05=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.net=
+> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Introduce a facility allowing the thermal core functionality to be
+> exercised in a controlled way in order to verify its behavior, without
+> affecting its regular users noticeably.
+>
+> It is based on the idea of preparing thermal zone templates along with
+> their trip points by writing to files in debugfs.  When ready, those
+> templates can be used for registering test thermal zones with the
+> thermal core.
+>
+> The temperature of a test thermal zone created this way can be adjusted
+> via debugfs, which also triggers a __thermal_zone_device_update() call
+> for it.  By manipulating the temperature of a test thermal zone, one can
+> check if the thermal core reacts to the changes of it as expected.
+>
+> Concise "howto" documentation is included in one of the source files.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> In its current form, this is quite limited, but still quite useful at
+> least for me.  In the future, it can be extended to allow "mock" test
+> cooling devices to be registered and bound to trip points in "mock"
+> test thermal zones, so that governor response can be tested at least
+> in some scenarios.  On top of that, a test scripts can be developed
+> for automated testing of the thermal core.  IOW, it's just a start.
 
-> Might have missed it today when looking at this, but what's the
-> GMAC_CONTROL_TE bit about? Otherwise, I agree that mac_link_up()
-> basically does similar work at different times in the driver.
+Due to the lack of comments for the last 2 weeks I gather that this is
+not controversial.
 
-This bit enables the DW GMAC Transmission engine: "When this bit is
-set, the transmit state machine of the MAC is enabled for transmission
-on the GMII or MII." So by setting that flag the driver actually
-_actiavates_ the MAC to transmission the data to the link. I have very
-much doubt whether it's legitimate to do that at this stage.
-
-Honestly this is the most mysterious part for me in the MAC2MAC
-implementation, because I failed to find any reason of why it was
-necessary to activate the transmissions so early before any of the
-following up configs are done. This is normally done at the tail of
-the MAC-link up initialization procedure (see the stmmac_mac_set()
-method calls). So there is a good chance that the code author confused
-the GMAC_CONTROL.TE flag with GMAC_CONTROL.TC flag. The later flag is
-actually responsible for the GMAC duplex, speed and link up/down
-setups transmission to the RGMII/SGMII/TBI/RTBI link-partner (PHY or
-another MAC in the MAC2MAC config). So IMO the GMAC_CONTROL.TC flag
-should have be set here instead. But I don't have a device to try it
-out.
-
-> 
-> > 
-> > 	value &= ~hw->link.speed_mask;
-> > 	switch (hw->ps) {
-> > 	case SPEED_1000:
-> > 		value |= hw->link.speed1000;
-> > 		break;
-> > 	case SPEED_100:
-> > 		value |= hw->link.speed100;
-> > 		break;
-> > 	case SPEED_10:
-> > 		value |= hw->link.speed10;
-> > 		break;
-> > 	}
-> >    }
-> > 
-> > Description: Pre-initialize the MAC speed with the value retrieved from
-> > the "snps,ps-speed" property. The speed is then fixed in the SGMII
-> > Rate adaptation Layer by setting up the SGMIRAL flag performed in the
-> > dwmac_ctrl_ane() method you cited. 
-> > Note the same register fields (MAC_CONTROL.{PS,FES}) are touched in
-> > the stmmac_mac_link_up() method in the framework of the MAC-link up
-> > procedure (phylink_mac_ops::mac_link_up). But AFAICS the procedure is
-> > done too late, and after the SGMIRAL flag is set in the framework of
-> > the stmmac_open()->stmmac_hw_setup()->dwmac_ctrl_ane() call. That's
-> > probably why the MAC2MAC mode developer needed the speed being
-> > pre-initialized earlier in the dwmac*_core_init() functions.
-> > 
-> > 
-> > To sum up the MAC-2-MAC mode implementation can be described as
-> > follows:
-> > 1. The platform firmware defines the fixed link speed by means of the
-> > "snps,ps-speed" property (or by pre-initializing the
-> > plat_stmmacenet_data::mac_port_sel_speed field in the glue driver).
-> > 2. If the SGMII PHY interface is supported by the DW GMAC/QoS Eth
-> > controller, the speed will be fixed right at the network interface
-> > open() procedure execution by subsequently calling the
-> > stmmac_core_init() and stmmac_pcs_ctrl_ane() methods.
-> > 
-> > Please note I can't immediately tell of how that functionality gets to
-> > live with the phylink-based link setup procedure, in the framework of
-> > which the link speed is also setup in stmmac_mac_link_up(). Alas I
-> > don't have any SGMII-based device to test it out. But I guess that it
-> > lives well until the pre-initialized in the "snps,ps-speed"
-> > speed matches to the speed negotiated between the connected PHYs. If
-> > the speeds don't match, then I can't tell for sure what would happen
-> > without a hardware at hands.
-> > 
-> > > What is that bit doing exactly?
-> > 
-> > Here is what the DW MAC databook says about the bit:
-> > 
-> > "SGMII RAL Control
-> > 
-> > When set, this bit forces the SGMII RAL block to operate in the speed
-> > configured in the MAC Configuration register's Speed and Port Select
-> > bits. This is useful when the SGMII interface is used in a direct
-> > MAC-MAC connection (without a PHY) and any MAC must reconfigure the
-> > speed.
-> > 
-> > When reset, the SGMII RAL block operates according to the link speed
-> > status received on the SGMII (from the PHY)."
-> > 
-> > Shortly speaking the flag enables the SGMII Rate adaptation layer
-> > (SGMII RAL) to stop selecting the speed based on the info retrieved
-> > from the PHY and instead to fix the speed with the value specified in
-> > the MAC_CTRL_REG register.
-> > 
-> > > The only user upstream I see is
-> > > sa8775p-ride variants, but they're all using a phy right now (not
-> > > fixed-link aka MAC2MAC iiuc)... so I should probably remove it from
-> > > there too.
-> > 
-> > Right, there is only a single user of that property in the kernel. But
-> > I don't know what was the actual reason of having the "snps,ps-speed"
-> > specified in that case. From one side it seems contradicting to the
-> > original MAC-2-MAC semantics since the phy-handle property is also
-> > specified in the ethernet controller DT-node, but from another side it
-> > might have been caused by some HW-related problem so there was a need
-> > to fix the speed. It would be better to ask Bartosz Golaszewski about
-> > that since it was him who submitted the patch adding the sa8775p-ride
-> > Ethernet DT-nodes.
-> > 
-> > > 
-> > 
-> > > I feel like that property really (if I'm following right) should be just
-> > > taken from a proper fixed-link devicetree description? i.e. we already
-> > > specify a speed in that case. Maybe this predates that (or reinvents it)
-> > > and should be marked as deprecated in the dt-bindings.
-> > 
-> > Exactly my thoughts of the way it should have been implemented in the
-> > first place. The fixed-linked semantics was exactly suitable for the
-> > MAC-2-MAC HW-setup since both of them implies the link-speed being
-> > fixed to a single value with no PHY-node required.
-> > 
-> > Note if the respective code conversion is planned to be done then I
-> > guess it would be better to do after the Russell' series
-> > https://lore.kernel.org/netdev/ZrCoQZKo74zvKMhT@shell.armlinux.org.uk/
-> > is merged in, since the changes are related.
-> > 
-> > > 
-> > > But I'm struggling to understand what the bit is really doing based
-> > > on the original commit that added it, so I don't know if my logic is
-> > > solid. i.e., what's different in the phy case vs mac2mac with this
-> > > particular bit?
-> > 
-> > Please see my notes above for more details about the SGMRAL bit
-> > semantics. Shortly speaking The difference is basically in the way the
-> > link-speed is established:
-> > - If the SGMRAL bit is set the MAC' SGMII RAL will operate with the
-> >   speed specified in the Speed and Port Select bits of the
-> >   MAC_CTRL_REG register.
-> > - If the SGMRAL bit is reset the SGMII RAL will operate according to
-> >   the link speed status received on SGMII (from the PHY).
-> 
-> I think with all of that in mind, long term it might make sense to:
-> 
-
->     1. Remove ps-speed handling
-
-I guess this can't be completely dropped due to the DT backward
-compatibility requirement.
-
->     2. Program GMAC_AN_CTRL in mac_link_up() as specified in the
->        kerneldoc (i.e. iiuc only in !phylink_autoneg_inband(@mode) case)
->     3. Program SGMRAL bit in pcs_config as specified in the kernel doc
->        (iiuc mode == PHYLINK_PCS_NEG_OUTBAND)
-
-(mode == MLO_AN_FIXED) seems more appropriate.
-
-> 
-> I'm probably misunderstanding the phylink interactions while reading
-> on the plane today (and hence may have misunderstood what callbacks
-> should configure that and when), but in general sounds like the forward
-> looking step would be to build on top of Russell's PCS changes and rip out the
-> ps-speed stuff, relying on phylink to indicate what the speed / port
-> select stuff needs to be in the PCS and MAC in the various configs
-> possible (i.e. stop treating fixed-link special here).
-
-Sounds like a plan. But please note that it's normally prohibited to
-break the DT properties functionality so the kernel would work on the
-older platforms (although I have doubts there is any real device with
-the MAC-2-MAC setup). In anyway it's better to wait for the Russell'
-series to be merged in, and then think of the "snps,ps-speed"-related
-code refactoring (perhaps in a dedicated emailing thread).
-
-> 
-> Maybe Qualcomm can help with testing the SGMII fixed-link setup, as I
-> think they're the only folks I know of with a board with that at least.
-> I have acess to a sa8775p-ride, but that has SGMII with a phy so its not
-> going to cover all testing.
-
-Very much hope they will, but there is a good chance they don't have
-an appropriate device either (with the MAC-2-MAC setup). The original
-code author was Giuseppe Cavallaro - former driver maintainer from
-STmicroelectronics, who hasn't been activate in the driver support for
-years. Alas there is no info left in the mailing list archive for what
-device he has introduced the ps-speed property functionality.
-
-> 
-> FYI.. I'm traveling the next two weeks, sorry in advance if I disappear
-> for a bit :)
-
-No worries. I am quite busy currently too.)
-
--Serge(y)
-
-> 
-> Thanks,
-> Andrew
-> 
+Since I want it in, I'll go ahead and put it into my linux-next
+branch, but if there are any comments still, please let me know.
 
