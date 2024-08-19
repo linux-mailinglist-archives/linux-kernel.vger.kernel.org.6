@@ -1,249 +1,110 @@
-Return-Path: <linux-kernel+bounces-291669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB2395655A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:15:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE45D95655D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A26B233D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBB62831BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D576215CD55;
-	Mon, 19 Aug 2024 08:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE515B130;
+	Mon, 19 Aug 2024 08:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lzaVWQPw"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr/xWu/4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DCA15B97B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5D158538;
+	Mon, 19 Aug 2024 08:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055302; cv=none; b=Tqnq6ZXLzRPn6mw2+HV+/zS2UQk1TemL/QXG8Q07fSq6tXcgKCygteXdWGjRE2NJXjYAkALhx/y8locVLNrHNvyM5H9fXUpyyfYM5hPMavfU3mIfLO63/p/C7jFVSB0nOpQjmxlFVdMFFV2/sfC73fZEqBFRL1eEoPjpGORgph4=
+	t=1724055317; cv=none; b=fVG4y65zwJlhVEhwMiXKwVw2izEubCRF4dUwoTJejUGUXk3Na8TyuuGCXPbsk5RCjhWfVo8uJVDiyFJyQBFirnXpTk9cwnaMoUSFTthIWCvN7X5hloelsOv0cV+EI9jHT1YT4zRDD9F/nYH3ZEKNeZOErOzZVxcjpLUKsBkLwNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055302; c=relaxed/simple;
-	bh=0ewCSOF2c1G2qY1J0DIuEJ+k7ukyWOpw1yoCOGS9yLM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nmvNQe8I11IirYCCxDs0LMGE+FudDMFheP0XTQL3cFaE++8LtSuyC9z/WZfX6FuITvgn56KkHZ2A6/dmXf4B4aco2jw2tfxAKtaaLb1VS1JTLsOsDvqmJPYSLowwVHTZ2b8tpsxNrqvb0psKIgz6H15WXBd4Vt6Id/Wen11yQtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lzaVWQPw; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724055290; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=NETcifOYIb+Yf9TxOqDeY39PaKApxrCiukqpjtRmh74=;
-	b=lzaVWQPwQl6Q1jSXpNxmtZPMNhrOnYTDm+NOLlsqSDpWYALMnsbcw5yRTWdJe6dcUbVk1PMMiJlYaeh/VsKB43Nc+a7Lkr6D2cBL22EXgeCYfaVZI6chNArhqUEqE/jp1VxoiwXNdqS+fbk8yd4WZ8qrbUL0q+cXA0yvxfREyV8=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WD9CrJE_1724055289)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 16:14:50 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org
-Cc: hughd@google.com,
-	willy@infradead.org,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] selftests: mm: support shmem mTHP collapse testing
-Date: Mon, 19 Aug 2024 16:14:06 +0800
-Message-Id: <12ec6a8b5fe51cd17db1a82c3ffa5006d4b22de3.1724054125.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
-References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1724055317; c=relaxed/simple;
+	bh=uUjOUhqNuYQkT3tijVkTub3u4TjTMOVy0LCez1Ku3fY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b3otyARxehfbvaJ/z2g3sw9iv5b2A1/V133/HXf0CeQKD1e7tIDaQEmKjec1NnvW7+/Y7Hq+n0lN4J6rW0wBT9c/cSOlDc67Vku6rwOX1WfMTfVnn4Z+aeIDjojNglaiO7wH9UcOx5EPhMqpC7sqw6sl2CpcPdlP4x27DjDJjgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr/xWu/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9D5C32782;
+	Mon, 19 Aug 2024 08:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724055316;
+	bh=uUjOUhqNuYQkT3tijVkTub3u4TjTMOVy0LCez1Ku3fY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Jr/xWu/4BSgH7i41+5/IDArM500AJbEw5UKqKN7F4WwZRBAlUrN4pVNqYW4reJSF2
+	 rAl/TWDnpULY4JvtTPRipAY6OUv+IThFFX0FfLFRJACJqje/Kqqrw4oJnmdX/7ly+4
+	 +P8lnwS8s7sJ1SG7sovGX5KM/fWZOOVIWaNpY+4T3D2+W54/Lm4asxhS2Nh6DLKVMq
+	 9qj351TTO5xb05bG7RFRec0GfZLfSPdHfaszFPHUQoIKiH+mgjE7utq1JLwWRd2HpZ
+	 C73r+tjtMBAvla3bjh1LAvvthGIZS4aLrNy/UBJpuJ2TV3gCN/OAhYaDqt/YivXbUE
+	 Pv+Qd1vaSTpbg==
+Date: Mon, 19 Aug 2024 10:15:11 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, syzbot
+ <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
+Message-ID: <20240819101358.77aea582@foz.lan>
+In-Reply-To: <2024081909-afar-trolling-2a67@gregkh>
+References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
+	<0000000000009f6f85061e684e92@google.com>
+	<51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
+	<1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
+	<2024081909-afar-trolling-2a67@gregkh>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add shmem mTHP collpase testing. Similar to the anonymous page, users can use
-the '-s' parameter to specify the shmem mTHP size for testing.
+Em Mon, 19 Aug 2024 05:11:47 +0200
+Greg KH <gregkh@linuxfoundation.org> escreveu:
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- tools/testing/selftests/mm/khugepaged.c   |  4 +-
- tools/testing/selftests/mm/thp_settings.c | 46 ++++++++++++++++++++---
- tools/testing/selftests/mm/thp_settings.h |  9 ++++-
- 3 files changed, 51 insertions(+), 8 deletions(-)
+> On Sun, Aug 18, 2024 at 02:20:44PM -0400, Alan Stern wrote:
+> > Greg and Mauro:
+> > 
+> > Was this patch ever applied?  It doesn't appear in the current -rc 
+> > kernel.  Was there some confusion about which tree it should be merged 
+> > through?
+> > 
+> > Here's a link to the original submission:
+> > 
+> > https://lore.kernel.org/all/51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu/  
+> 
+> I never took it as it was touching a file that I'm not the maintainer
+> of.  But I will be glad to do so if Mauro doesn't want to take it
+> through his tree, just let me know.
 
-diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-index 829320a519e7..56d4480e8d3c 100644
---- a/tools/testing/selftests/mm/khugepaged.c
-+++ b/tools/testing/selftests/mm/khugepaged.c
-@@ -1095,7 +1095,7 @@ static void usage(void)
- 	fprintf(stderr,	"\n\tSupported Options:\n");
- 	fprintf(stderr,	"\t\t-h: This help message.\n");
- 	fprintf(stderr,	"\t\t-s: mTHP size, expressed as page order.\n");
--	fprintf(stderr,	"\t\t    Defaults to 0. Use this size for anon allocations.\n");
-+	fprintf(stderr,	"\t\t    Defaults to 0. Use this size for anon or shmem allocations.\n");
- 	exit(1);
- }
- 
-@@ -1209,6 +1209,8 @@ int main(int argc, char **argv)
- 	default_settings.khugepaged.pages_to_scan = hpage_pmd_nr * 8;
- 	default_settings.hugepages[hpage_pmd_order].enabled = THP_INHERIT;
- 	default_settings.hugepages[anon_order].enabled = THP_ALWAYS;
-+	default_settings.shmem_hugepages[hpage_pmd_order].enabled = SHMEM_INHERIT;
-+	default_settings.shmem_hugepages[anon_order].enabled = SHMEM_ALWAYS;
- 
- 	save_settings();
- 	thp_push_settings(&default_settings);
-diff --git a/tools/testing/selftests/mm/thp_settings.c b/tools/testing/selftests/mm/thp_settings.c
-index a4163438108e..577eaab6266f 100644
---- a/tools/testing/selftests/mm/thp_settings.c
-+++ b/tools/testing/selftests/mm/thp_settings.c
-@@ -33,10 +33,11 @@ static const char * const thp_defrag_strings[] = {
- };
- 
- static const char * const shmem_enabled_strings[] = {
-+	"never",
- 	"always",
- 	"within_size",
- 	"advise",
--	"never",
-+	"inherit",
- 	"deny",
- 	"force",
- 	NULL
-@@ -200,6 +201,7 @@ void thp_write_num(const char *name, unsigned long num)
- void thp_read_settings(struct thp_settings *settings)
- {
- 	unsigned long orders = thp_supported_orders();
-+	unsigned long shmem_orders = thp_shmem_supported_orders();
- 	char path[PATH_MAX];
- 	int i;
- 
-@@ -234,12 +236,24 @@ void thp_read_settings(struct thp_settings *settings)
- 		settings->hugepages[i].enabled =
- 			thp_read_string(path, thp_enabled_strings);
- 	}
-+
-+	for (i = 0; i < NR_ORDERS; i++) {
-+		if (!((1 << i) & shmem_orders)) {
-+			settings->shmem_hugepages[i].enabled = SHMEM_NEVER;
-+			continue;
-+		}
-+		snprintf(path, PATH_MAX, "hugepages-%ukB/shmem_enabled",
-+			(getpagesize() >> 10) << i);
-+		settings->shmem_hugepages[i].enabled =
-+			thp_read_string(path, shmem_enabled_strings);
-+	}
- }
- 
- void thp_write_settings(struct thp_settings *settings)
- {
- 	struct khugepaged_settings *khugepaged = &settings->khugepaged;
- 	unsigned long orders = thp_supported_orders();
-+	unsigned long shmem_orders = thp_shmem_supported_orders();
- 	char path[PATH_MAX];
- 	int enabled;
- 	int i;
-@@ -271,6 +285,15 @@ void thp_write_settings(struct thp_settings *settings)
- 		enabled = settings->hugepages[i].enabled;
- 		thp_write_string(path, thp_enabled_strings[enabled]);
- 	}
-+
-+	for (i = 0; i < NR_ORDERS; i++) {
-+		if (!((1 << i) & shmem_orders))
-+			continue;
-+		snprintf(path, PATH_MAX, "hugepages-%ukB/shmem_enabled",
-+			(getpagesize() >> 10) << i);
-+		enabled = settings->shmem_hugepages[i].enabled;
-+		thp_write_string(path, shmem_enabled_strings[enabled]);
-+	}
- }
- 
- struct thp_settings *thp_current_settings(void)
-@@ -324,17 +347,18 @@ void thp_set_read_ahead_path(char *path)
- 	dev_queue_read_ahead_path[sizeof(dev_queue_read_ahead_path) - 1] = '\0';
- }
- 
--unsigned long thp_supported_orders(void)
-+static unsigned long __thp_supported_orders(bool is_shmem)
- {
- 	unsigned long orders = 0;
- 	char path[PATH_MAX];
- 	char buf[256];
--	int ret;
--	int i;
-+	int ret, i;
-+	char anon_dir[] = "enabled";
-+	char shmem_dir[] = "shmem_enabled";
- 
- 	for (i = 0; i < NR_ORDERS; i++) {
--		ret = snprintf(path, PATH_MAX, THP_SYSFS "hugepages-%ukB/enabled",
--			(getpagesize() >> 10) << i);
-+		ret = snprintf(path, PATH_MAX, THP_SYSFS "hugepages-%ukB/%s",
-+			       (getpagesize() >> 10) << i, is_shmem ? shmem_dir : anon_dir);
- 		if (ret >= PATH_MAX) {
- 			printf("%s: Pathname is too long\n", __func__);
- 			exit(EXIT_FAILURE);
-@@ -347,3 +371,13 @@ unsigned long thp_supported_orders(void)
- 
- 	return orders;
- }
-+
-+unsigned long thp_supported_orders(void)
-+{
-+	return __thp_supported_orders(false);
-+}
-+
-+unsigned long thp_shmem_supported_orders(void)
-+{
-+	return __thp_supported_orders(true);
-+}
-diff --git a/tools/testing/selftests/mm/thp_settings.h b/tools/testing/selftests/mm/thp_settings.h
-index 71cbff05f4c7..876235a23460 100644
---- a/tools/testing/selftests/mm/thp_settings.h
-+++ b/tools/testing/selftests/mm/thp_settings.h
-@@ -22,10 +22,11 @@ enum thp_defrag {
- };
- 
- enum shmem_enabled {
-+	SHMEM_NEVER,
- 	SHMEM_ALWAYS,
- 	SHMEM_WITHIN_SIZE,
- 	SHMEM_ADVISE,
--	SHMEM_NEVER,
-+	SHMEM_INHERIT,
- 	SHMEM_DENY,
- 	SHMEM_FORCE,
- };
-@@ -46,6 +47,10 @@ struct khugepaged_settings {
- 	unsigned long pages_to_scan;
- };
- 
-+struct shmem_hugepages_settings {
-+	enum shmem_enabled enabled;
-+};
-+
- struct thp_settings {
- 	enum thp_enabled thp_enabled;
- 	enum thp_defrag thp_defrag;
-@@ -54,6 +59,7 @@ struct thp_settings {
- 	struct khugepaged_settings khugepaged;
- 	unsigned long read_ahead_kb;
- 	struct hugepages_settings hugepages[NR_ORDERS];
-+	struct shmem_hugepages_settings shmem_hugepages[NR_ORDERS];
- };
- 
- int read_file(const char *path, char *buf, size_t buflen);
-@@ -76,5 +82,6 @@ void thp_save_settings(void);
- 
- void thp_set_read_ahead_path(char *path);
- unsigned long thp_supported_orders(void);
-+unsigned long thp_shmem_supported_orders(void);
- 
- #endif /* __THP_SETTINGS_H__ */
--- 
-2.39.3
+This patch is duplicated of this one:
 
+https://patchwork.linuxtv.org/project/linux-media/patch/20240409143634.33230-1-n.zhandarovich@fintech.ru/
+
+The part I didn't like with such approach is that it checks only for
+bulk endpoints. Most media devices have also isoc. Now, I'm not sure
+about Siano devices. There are 3 different major chipsets supported
+by this driver (sm1000, sm11xx, sm2xxx). Among them, sm1000 has one
+USB ID for cold boot, and, once firmware is loaded, it gains another
+USB ID for a a warm boot.
+
+Your patch and the previously submitted one are not only checking
+for the direction, but it is also discarding isoc endpoints.
+Applying a change like that without testing with real hardware of
+those three types just to make fuzz testing happy, sounded a little 
+bit risky to my taste.
+
+I would be more willing to pick it if the check would either be
+tested on real hardware or if the logic would be changed to
+accept either bulk or isoc endpoints, just like the current code.
+
+Thanks,
+Mauro
 
