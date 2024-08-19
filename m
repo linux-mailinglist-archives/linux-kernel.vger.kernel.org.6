@@ -1,157 +1,115 @@
-Return-Path: <linux-kernel+bounces-292738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19809573BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55F69573BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9CF1F24470
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41C47B20B2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4F718A933;
-	Mon, 19 Aug 2024 18:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86C618A937;
+	Mon, 19 Aug 2024 18:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CbM97Au7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tf3yuuM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0686189F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB87418991C;
+	Mon, 19 Aug 2024 18:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092780; cv=none; b=XO3QFQz189xe1egHyh9wXWzqp9vKtWGOCPrvV4iQIAutcnByEiacfBRV74SaaXMovneRd2G4P6yEgcYLTj5br1FA0AYR7NwWUzj132xuwj8oJh6oAPB1QiggkK++YrmZm+i2EEHB/qJamN7DacisKN3hvOSjvSyHjRdtQXymPnM=
+	t=1724092832; cv=none; b=sCnf+Dtf7BhEQzWqAgLpQccpj5VGt033sq2pkL9UEuTEp77RQliUW1kNBGS2iSq/yx2ITMKe8cQ1pM9AbsiXabirAEo/9fexFjPG2bHCndvspudzuP3nO+G28r6tbDQ9nQoccpIoCToBwxv68E4O78ZZvj5rRAQThnaZoUyF1mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092780; c=relaxed/simple;
-	bh=Ltk+QjD6TRFkUieOvzjHHGmhAHcUXUyF1zlxMr4s/ak=;
+	s=arc-20240116; t=1724092832; c=relaxed/simple;
+	bh=ZMbADLpUAELxGABAgnkEdvEemGcRN8dlaJqTQh3jz20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7KNjqgTBweztkp/jCcAsvOYjfd1tYBr0ceVJqwSCVCDIyrHKPgL/A9zr35hsZr6wMXnSUvwZTqWO7mDNWhHug6DCub7q1ze51pxRjylwCk4EXpl1lm2zFZUVM++qQgst33MgHmTDILhR4qepjVN8vN/1SPAARmOpiCFY0XnaTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=CbM97Au7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724092775;
-	bh=Ltk+QjD6TRFkUieOvzjHHGmhAHcUXUyF1zlxMr4s/ak=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzss3rAzZU99THSKMWbe88RxY5PP44Qzui7/pknI8/uKbbpscBpAb3HcYLNwP+LMBc52G19rMtdF6ECN9lk5bEmvw0+U+0SohFea8K0EXXlGZhJ5qfD2si9E6j5F6hbnvbiaZixroBIl2XOlUEeANW4Vm3N6wke/OCVO+bTcckI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tf3yuuM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383A8C32782;
+	Mon, 19 Aug 2024 18:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724092831;
+	bh=ZMbADLpUAELxGABAgnkEdvEemGcRN8dlaJqTQh3jz20=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CbM97Au747P0rOaRji839hbO98/BxUXvWF9WV/wWVTPme6eer9Z0LvQ/K2qStjoKj
-	 1O5DMBb+SZmGnY8bjAGoR/FZbrS2Y+kY5L9lcgkeD5sqL5rt4zC/4AGNaKsQHitgvq
-	 h2G/EJ6INozifm97jdsmsp3RZDgphxUT9t/sF8+A=
-Date: Mon, 19 Aug 2024 20:39:34 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Melissa Wen <mwen@igalia.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, 
-	Aric Cyr <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, 
-	Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] drm/amd: Switch over to struct drm_edid
-Message-ID: <f2664caa-8bf5-4f6d-903c-3de01977e89e@t-8ch.de>
-References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
- <3v3yvr6adlnqgbwbnvhfwj3ylpptunqyvosazyebvov3osdprb@znkx32uxku5q>
+	b=tf3yuuM1xaQV1GST44D/askCKHwx3RLYMccgOWofU5ZQowzzd2wkHcAKj8q2/9jps
+	 dWoDaTIPRud5AuoFw1vcPgEABHC5VQ6LtZPVWI+Rd+61P7xfAM0XghusGTHqqGAXwa
+	 ZuWS1bQ5p18MAH42HP2ERd+ay+LdSVSO2DNyXUOlGZRZU+BWq8SAQ+pD1CzCsQNt0n
+	 Yl0QmavVLBDvxe1bnFz8uRC1/IMU9GRj+viqsIf26HyBNL+1YlG61oc5g45sk30HhE
+	 2aLe7pJ8xurVdeYOentskQg+vTtgtPrxjluAjbRzcxHR5eOHS8Yv8Xc/d6VU8RgR5J
+	 AKJCdvos/PpIQ==
+Date: Mon, 19 Aug 2024 12:40:28 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+	palmer@dabbelt.com, Anup Patel <apatel@ventanamicro.com>,
+	linux-mips@vger.kernel.org, maz@kernel.org,
+	linux-riscv@lists.infradead.org, aou@eecs.berkeley.edu,
+	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	saravanak@google.com, paul.walmsley@sifive.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] of/irq: Support #msi-cells=<0> in of_msi_get_domain
+Message-ID: <172409282414.2143677.12162426898759329021.robh@kernel.org>
+References: <20240817074107.31153-2-ajones@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3v3yvr6adlnqgbwbnvhfwj3ylpptunqyvosazyebvov3osdprb@znkx32uxku5q>
+In-Reply-To: <20240817074107.31153-2-ajones@ventanamicro.com>
 
-Hi Melissa,
 
-On 2024-08-19 11:31:44+0000, Melissa Wen wrote:
-> On 08/18, Thomas Weißschuh wrote:
-> > The AMD DRM drivers use 'struct edid', raw pointers and even custom
-> > structs to represent EDID data.
-> > Uniformly switch to the safe and recommended "struct drm_edid".
-> > 
-> > Some uses of "struct edid" are left because some ad-hoc parsing is still
-> > being done inside the drivers.
+On Sat, 17 Aug 2024 09:41:08 +0200, Andrew Jones wrote:
+> An 'msi-parent' property with a single entry and no accompanying
+> '#msi-cells' property is considered the legacy definition as opposed
+> to its definition after being expanded with commit 126b16e2ad98
+> ("Docs: dt: add generic MSI bindings"). However, the legacy
+> definition is completely compatible with the current definition and,
+> since of_phandle_iterator_next() tolerates missing and present-but-
+> zero *cells properties since commit e42ee61017f5 ("of: Let
+> of_for_each_phandle fallback to non-negative cell_count"), there's no
+> need anymore to special case the legacy definition in
+> of_msi_get_domain().
 > 
-> Hi Thomas,
+> Indeed, special casing has turned out to be harmful, because, as of
+> commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
+> as a MSI controller"), MSI controller DT bindings have started
+> specifying '#msi-cells' as a required property (even when the value
+> must be zero) as an effort to make the bindings more explicit. But,
+> since the special casing of 'msi-parent' only uses the existence of
+> '#msi-cells' for its heuristic, and not whether or not it's also
+> nonzero, the legacy path is not taken. Furthermore, the path to
+> support the new, broader definition isn't taken either since that
+> path has been restricted to the platform-msi bus.
 > 
-> It's great to see more people working on removing raw edid from amd
-> display driver in favor of drm_edid.
+> But, neither the definition of 'msi-parent' nor the definition of
+> '#msi-cells' is platform-msi-specific (the platform-msi bus was just
+> the first bus that needed '#msi-cells'), so remove both the special
+> casing and the restriction. The code removal also requires changing
+> to of_parse_phandle_with_optional_args() in order to ensure the
+> legacy (but compatible) use of 'msi-parent' remains supported. This
+> not only simplifies the code but also resolves an issue with PCI
+> devices finding their MSI controllers on riscv, as the riscv,imsics
+> binding requires '#msi-cells=<0>'.
 > 
-> I glanced over your series and I found it similar to my recent proposal
-> to migrate amdgpu_dm_connector from edid to drm_edid. You can find the
-> v5 of this work here:
-> https://lore.kernel.org/amd-gfx/20240807203207.2830-1-mwen@igalia.com/
-
-thanks for the pointer.
-
-> I believe it's more productive if we can join efforts and improve that
-> proposal instead of duplicating work. I'll look at your patches more
-> carefully this week. If you can review my work, I'd be happy to hear
-> your feedback too.
-
-Indeed. I'll take a look at your patches.
-Let's see how they can be combined.
-
-> Thanks,
+> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+> v3:
+>  - switch to of_for_each_phandle() to further cleanup/simplify the
+>    code [Rob]
+> v2:
+>  - switch to of_parse_phandle_with_optional_args() to ensure the
+>    absence of #msi-cells means count=0
 > 
-> Melissa
+>  drivers/of/irq.c | 35 ++++++++---------------------------
+>  1 file changed, 8 insertions(+), 27 deletions(-)
 > 
-> > 
-> > The patch "drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid"
-> > will conflict with my backlight quirk series [0].
-> > The conflict will result in an obvious and easy to fix build failure.
-> > 
-> > Patches 1 and 2 delete some dead code.
-> > Patches 3 to 6 constify some arguments and shuffle around some code.
-> > The remaining patches perform the actual conversion in steps.
-> > 
-> > [0] https://lore.kernel.org/lkml/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net/
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > Thomas Weißschuh (12):
-> >       drm/amd/display: remove spurious definition for dm_helpers_get_sbios_edid()
-> >       drm/amd/display: Remove EDID members of ddc_service
-> >       drm/edid: constify argument of drm_edid_is_valid()
-> >       drm/amd/display: Simplify raw_edid handling in dm_helpers_parse_edid_caps()
-> >       drm/amd/display: Constify raw_edid handling in dm_helpers_parse_edid_caps()
-> >       drm/amd/display: Constify 'struct edid' in parsing functions
-> >       drm/amd/display: Use struct edid in dc_link_add_remote_sink()
-> >       drm/amdgpu: Switch amdgpu_connector to struct drm_edid
-> >       drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid
-> >       drm/edid: add a helper to compare two EDIDs
-> >       drm/amd/display: Switch dc_sink to struct drm_edid
-> >       drm/amd/display: Switch dc_link_add_remote_sink() to struct drm_edid
-> > 
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c     | 56 ++++++++-------
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h           |  3 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |  4 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |  4 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |  4 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |  4 +-
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 84 +++++++++++-----------
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  5 +-
-> >  .../drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c  | 34 +++++----
-> >  .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 28 ++++----
-> >  .../gpu/drm/amd/display/dc/core/dc_link_exports.c  |  5 +-
-> >  drivers/gpu/drm/amd/display/dc/dc.h                |  8 +--
-> >  drivers/gpu/drm/amd/display/dc/dc_ddc_types.h      |  7 --
-> >  drivers/gpu/drm/amd/display/dc/dc_types.h          |  5 --
-> >  drivers/gpu/drm/amd/display/dc/dm_helpers.h        |  4 +-
-> >  drivers/gpu/drm/amd/display/dc/inc/link.h          |  3 +-
-> >  .../gpu/drm/amd/display/dc/link/link_detection.c   | 42 ++++-------
-> >  .../gpu/drm/amd/display/dc/link/link_detection.h   |  3 +-
-> >  drivers/gpu/drm/drm_edid.c                         | 20 +++++-
-> >  include/drm/drm_edid.h                             |  3 +-
-> >  20 files changed, 155 insertions(+), 171 deletions(-)
-> > ---
-> > base-commit: 207565ee2594ac47261cdfc8a5048f4dc322c878
-> > change-id: 20240615-amdgpu-drm_edid-32d969dfb899
-> > 
-> > Best regards,
-> > -- 
-> > Thomas Weißschuh <linux@weissschuh.net>
-> > 
+
+Applied, thanks!
+
 
