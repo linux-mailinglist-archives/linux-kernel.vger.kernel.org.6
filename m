@@ -1,177 +1,435 @@
-Return-Path: <linux-kernel+bounces-292494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B933957024
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB5B957027
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3861F2266A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7895282318
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B3E175D5D;
-	Mon, 19 Aug 2024 16:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A8A172BCC;
+	Mon, 19 Aug 2024 16:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVRBK5/3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVY0P8d2"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1730A16D307;
-	Mon, 19 Aug 2024 16:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD08172BCE
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084705; cv=none; b=Whu7ONXNiMIFCu1ykfaBCtpfpWIVoLb9jxdN1bQepfrx2V17vaVlH6BVpx99Xu2vW8MZHGDcDdmEtdz/JK0RmKZ6Ofusitb0ExbZnyMqaA4UOquxafoA7Edi1kzZn86DqJ0bTuDp9QNU3uhM2ytYUa8pNWeSIHNVbPyJZnmsbjA=
+	t=1724084730; cv=none; b=FRBVRR4j3Vygwx6yFhVopJ6k4AAcGHSYHzHvDOgRanLv6scKTOCUVMnygBrlaw+znWqP95hIbgig8UtqQVhzG0n6JRFF5zYLC7geJ927g2IyAKRJekRuRjtyITmexBSMc3YZzqmia6my4WY3lyzjSUjeeozALhcG2siKc/czPyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084705; c=relaxed/simple;
-	bh=WGe0v6H3T/2YiBVe4JIwGeKG4yeuSR6dQ9wH2L9jyuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WNQebAcxhGdsjhA/uWJ+/9G8E2d4ERlHx8So/3JA2Dvu7RIXpX4c/wEYJReNCFBUAq3Uf6+ntcV0ujbHaEwhS1FpGmXBzTQfEi9LN5CdZCO4HuyD7VgWEeiNf0kcCAx48pi6Gymmz8U8Q11kdrUtHYAyKk+eg+0y4FBWJqZY9TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVRBK5/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7BAC32782;
-	Mon, 19 Aug 2024 16:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724084704;
-	bh=WGe0v6H3T/2YiBVe4JIwGeKG4yeuSR6dQ9wH2L9jyuk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oVRBK5/3jDwy4aPzOGAuBWP8NULcTWmKWaD2Ikgfvqqf9RQdobNFiE5OMMErWMOdP
-	 0fqbqGC+aThxxd/c5Vp+qCs6mmibUBZ9U5UpRpb8z/YDxZ8htxeQ7iqvNcdUp6ssyt
-	 tNXi9mHMU78eQrpD24e03CPfMoYkgAjNDeqGh0FeLmEvL9gwHr1X0SKk5TdJR0upmq
-	 3jJqHgWM9+ragIx0kp1s2SWzytuReqxL1J2EDstxMhBCFeMzso7YSPybdqZz2TKnsU
-	 /vIYgzYJOin+UVUmkSt8XkFbVdTpaI8H0J5XuOhMZaecEgBcS7X4/ytXjJuVLFMGzU
-	 1xSPOWg154vCg==
-Date: Mon, 19 Aug 2024 18:24:56 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, syzbot
- <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
-Message-ID: <20240819182456.5e13315a@foz.lan>
-In-Reply-To: <54c7e42c-465b-42fc-9707-d848ae53a00c@rowland.harvard.edu>
-References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
-	<0000000000009f6f85061e684e92@google.com>
-	<51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
-	<1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
-	<2024081909-afar-trolling-2a67@gregkh>
-	<20240819101358.77aea582@foz.lan>
-	<54c7e42c-465b-42fc-9707-d848ae53a00c@rowland.harvard.edu>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724084730; c=relaxed/simple;
+	bh=DDdt5Eloc4PgFXpzOohtgA+X+IxMv4HWRGF69NGP4x8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JSFD+wpq7+ocbI/O2ihvZdRWNK+z2dyWvZhixhxS9bxt6mgA9qeHrnbwdiUBOli9KLRGZzXLfGzc47aJllQI1FiMjUUJabyM0GB9lO2DbLL/LfTXV2+PcsAJpbTHGj+qU6TVSSykntqMJ9r3S7A5vtHfPCUlBtfpnYFf1azA7jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FVY0P8d2; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42819654737so35206325e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724084727; x=1724689527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAfOoil+xSJAR5q6nqnB5mON1LAsc+BRD3hYB0z83rk=;
+        b=FVY0P8d2/6Oc6cziPixCh6MwnJvzdxlXk6DA1tQta6G6DK/TU33xmDp/01KSin6H1b
+         OUg4ylaEmHnHxXEWxNRRFyUmkxZfzlIBa+TwPD7KJEKiSPNDA1gJlgIFrH71Rif2+7Ii
+         hShVU4esKMyNm8vIUinTcRgewD7BFQq5ESKY1FDw9ISYPUDlNCN+/leyYgwdW6b2tlWb
+         QahDwDhVfnylX/C6vSujbSDK1vbasCFmX8+9AJ34TU7J5KY9ANSWqo4mAuAtdznDxqLm
+         QcJL/2s0f4JIt/5zNu1rjSVJo8eClfVi94xMuiMVDykLPFfuC1i7vc/Q6eFo2Em5glJL
+         78uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724084727; x=1724689527;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zAfOoil+xSJAR5q6nqnB5mON1LAsc+BRD3hYB0z83rk=;
+        b=HRGRD7fO4fxNiubto7PVr2+svWqs7Cs0frQVb6F1iCQoYzMeRuEwP+LpgLn3784D5j
+         grI4iHqclf9neyx2qM+cYflCE3AIxG59ql5gRaXuRqi861UqdzwPsnxbD37EuwL1LH/k
+         d0g67i2mP1Ss4hvFUDZHrFnBuOW1TQ+vV+zuJQDkdJ2+QFK/6X24uL+LPwqzFQpWQncr
+         jiggAKjMQBDVDOFyyOb7xyZo47N0DiUMdOJ3Pjrj94iDnZECoPx6192S8cweixSl2fju
+         qnSoY648Li6tfaZp9erXGVQxeiJxQ20iL+c5rmypajj1XXQvILihrMZ6WuyY9t+foclr
+         a4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrhXY+C7xK8Yni9rzqoLJjDBXdwo4Ux0b0rumT15lX0bblgc1G06PXryhwRgViJ/8+G+a/qYb8umHzMVjZGdXWTlFaysSqe/hnPJKF
+X-Gm-Message-State: AOJu0YxNCVJZHnt2PUTm4ERjlc1nUqTRow2sp/NDluFZOyNzwIiyVo8z
+	WPobrExd2UpGPfOu6HplQ+U0Q0KGVaiPnpqdiW5idNlv+OBE9SpqBg0hoCmuer4=
+X-Google-Smtp-Source: AGHT+IF9jZI0YvkqOqKNcUIzh3MIcJmPZrFWhWk6bQhrpuZ7zBxPQ+ACZHBt4NdBuWl0n7DZDvHV2g==
+X-Received: by 2002:a05:600c:4ecb:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-429ed7dba98mr80500315e9.31.1724084725718;
+        Mon, 19 Aug 2024 09:25:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6585d1sm114210995e9.22.2024.08.19.09.25.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 09:25:25 -0700 (PDT)
+Message-ID: <0e6afba4-4312-49b4-bd92-23f12faf449a@linaro.org>
+Date: Mon, 19 Aug 2024 18:25:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 7/9] drm/meson: dw-hdmi: use matched data
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240730125023.710237-1-jbrunet@baylibre.com>
+ <20240730125023.710237-8-jbrunet@baylibre.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240730125023.710237-8-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Em Mon, 19 Aug 2024 10:32:05 -0400
-Alan Stern <stern@rowland.harvard.edu> escreveu:
+On 30/07/2024 14:50, Jerome Brunet wrote:
+> Using several string comparisons with if/else if/else clauses
+> is fairly inefficient and does not scale well.
 
-> On Mon, Aug 19, 2024 at 10:15:11AM +0200, Mauro Carvalho Chehab wrote:
-> > This patch is duplicated of this one:
-> > 
-> > https://patchwork.linuxtv.org/project/linux-media/patch/20240409143634.33230-1-n.zhandarovich@fintech.ru/
-> > 
-> > The part I didn't like with such approach is that it checks only for
-> > bulk endpoints. Most media devices have also isoc. Now, I'm not sure
-> > about Siano devices. There are 3 different major chipsets supported
-> > by this driver (sm1000, sm11xx, sm2xxx). Among them, sm1000 has one
-> > USB ID for cold boot, and, once firmware is loaded, it gains another
-> > USB ID for a a warm boot.  
+Inefficient in which way ? speed ? code size ?
+
+It doesn't scale, but AFAIK Amlogic stopped using the Synopsys DWC controller after the G12B SoCs....
+
 > 
-> Are you sure about all this?  The one source file in 
-> drivers/media/usb/siano refers only to bulk endpoints, and the files in 
-> drivers/media/common/siano don't refer to endpoints or URBs at all.  
-> Nothing in either directory refers to isochronous endpoints.  Is there 
-> some other place I should be looking?
-> Also, while there are many constants in those files whose names start 
-> with SMS1, there aren't any whose names start with SMS2 or SM2 (or their 
-> lowercase equivalents).  And the Kconfig help text mentions only Siano 
-> SMS1xxx.
-> >
-> > Your patch and the previously submitted one are not only checking
-> > for the direction, but it is also discarding isoc endpoints.
-> > Applying a change like that without testing with real hardware of
-> > those three types just to make fuzz testing happy, sounded a little 
-> > bit risky to my taste.
-> > 
-> > I would be more willing to pick it if the check would either be
-> > tested on real hardware or if the logic would be changed to
-> > accept either bulk or isoc endpoints, just like the current code.  
+> Use matched data to tweak the driver depending on the matched
+> SoC instead.
+
+This leads to a very overcomplicated code I'll need some time to review and understand
+
 > 
-> If the driver did apply to devices that used isochronous transfers, the 
-> ideal approach would be to check the endpoint type against the device 
-> type.  However, as it stands this doesn't seem to be necessary.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>   drivers/gpu/drm/meson/meson_dw_hdmi.c | 209 +++++++++++++++++---------
+>   1 file changed, 139 insertions(+), 70 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> index 7c39e5c99043..ef059c5ef520 100644
+> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> @@ -125,8 +125,17 @@
+>   #define HHI_HDMI_PHY_CNTL4	0x3b0 /* 0xec */
+>   #define HHI_HDMI_PHY_CNTL5	0x3b4 /* 0xed */
+>   
+> +struct meson_dw_hdmi_speed {
+> +	const struct reg_sequence *regs;
+> +	unsigned int reg_num;
+> +	unsigned int limit;
+> +};
+> +
+>   struct meson_dw_hdmi_data {
+>   	int (*reg_init)(struct device *dev);
+> +	const struct meson_dw_hdmi_speed *speeds;
+> +	unsigned int speed_num;
+> +	bool use_drm_infoframe;
+>   	u32 cntl0_init;
+>   	u32 cntl1_init;
+>   };
+> @@ -185,78 +194,33 @@ struct meson_dw_hdmi {
+>   	struct regmap *top;
+>   };
+>   
+> -static inline int dw_hdmi_is_compatible(struct meson_dw_hdmi *dw_hdmi,
+> -					const char *compat)
+> -{
+> -	return of_device_is_compatible(dw_hdmi->dev->of_node, compat);
+> -}
+> -
+> -/* Bridge */
+> -
+>   /* Setup PHY bandwidth modes */
+> -static void meson_hdmi_phy_setup_mode(struct meson_dw_hdmi *dw_hdmi,
+> +static int meson_hdmi_phy_setup_mode(struct meson_dw_hdmi *dw_hdmi,
+>   				      const struct drm_display_mode *mode,
+>   				      bool mode_is_420)
+>   {
+>   	struct meson_drm *priv = dw_hdmi->priv;
+>   	unsigned int pixel_clock = mode->clock;
+> +	int i;
+>   
+>   	/* For 420, pixel clock is half unlike venc clock */
+> -	if (mode_is_420) pixel_clock /= 2;
+> -
+> -	if (dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
+> -	    dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxm-dw-hdmi")) {
+> -		if (pixel_clock >= 371250) {
+> -			/* 5.94Gbps, 3.7125Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x333d3282);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2136315b);
+> -		} else if (pixel_clock >= 297000) {
+> -			/* 2.97Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33303382);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2036315b);
+> -		} else if (pixel_clock >= 148500) {
+> -			/* 1.485Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33303362);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2016315b);
+> -		} else {
+> -			/* 742.5Mbps, and below */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33604142);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x0016315b);
+> -		}
+> -	} else if (dw_hdmi_is_compatible(dw_hdmi,
+> -					 "amlogic,meson-gxbb-dw-hdmi")) {
+> -		if (pixel_clock >= 371250) {
+> -			/* 5.94Gbps, 3.7125Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33353245);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2100115b);
+> -		} else if (pixel_clock >= 297000) {
+> -			/* 2.97Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33634283);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0xb000115b);
+> -		} else {
+> -			/* 1.485Gbps, and below */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33632122);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2000115b);
+> -		}
+> -	} else if (dw_hdmi_is_compatible(dw_hdmi,
+> -					 "amlogic,meson-g12a-dw-hdmi")) {
+> -		if (pixel_clock >= 371250) {
+> -			/* 5.94Gbps, 3.7125Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x37eb65c4);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2ab0ff3b);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL5, 0x0000080b);
+> -		} else if (pixel_clock >= 297000) {
+> -			/* 2.97Gbps */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33eb6262);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2ab0ff3b);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL5, 0x00000003);
+> -		} else {
+> -			/* 1.485Gbps, and below */
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL0, 0x33eb4242);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL3, 0x2ab0ff3b);
+> -			regmap_write(priv->hhi, HHI_HDMI_PHY_CNTL5, 0x00000003);
+> -		}
+> +	if (mode_is_420)
+> +		pixel_clock /= 2;
+> +
+> +	for (i = 0; i < dw_hdmi->data->speed_num; i++) {
+> +		if (pixel_clock >= dw_hdmi->data->speeds[i].limit)
+> +			break;
+>   	}
+> +
+> +	/* No match found - Last entry should have a 0 limit */
+> +	if (WARN_ON(i == dw_hdmi->data->speed_num))
+> +		return -EINVAL;
+> +
+> +	regmap_multi_reg_write(priv->hhi,
+> +			       dw_hdmi->data->speeds[i].regs,
+> +			       dw_hdmi->data->speeds[i].reg_num);
+> +
+> +	return 0;
+>   }
+>   
+>   static inline void meson_dw_hdmi_phy_reset(struct meson_dw_hdmi *dw_hdmi)
+> @@ -543,22 +507,133 @@ static int meson_dw_init_regmap_g12(struct device *dev)
+>   	return 0;
+>   }
+>   
+> +static const struct reg_sequence gxbb_3g7_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33353245 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2100115b },
+> +};
+> +
+> +static const struct reg_sequence gxbb_3g_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33634283 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0xb000115b },
+> +};
+> +
+> +static const struct reg_sequence gxbb_def_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33632122 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2000115b },
+> +};
+> +
+> +static const struct meson_dw_hdmi_speed gxbb_speeds[] = {
+> +	{
+> +		.limit = 371250,
+> +		.regs = gxbb_3g7_regs,
+> +		.reg_num = ARRAY_SIZE(gxbb_3g7_regs)
+> +	}, {
+> +		.limit = 297000,
+> +		.regs = gxbb_3g_regs,
+> +		.reg_num = ARRAY_SIZE(gxbb_3g_regs)
+> +	}, {
+> +		.regs = gxbb_def_regs,
+> +		.reg_num = ARRAY_SIZE(gxbb_def_regs)
+> +	}
+> +};
+> +
+>   static const struct meson_dw_hdmi_data meson_dw_hdmi_gxbb_data = {
+>   	.reg_init = meson_dw_init_regmap_gx,
+>   	.cntl0_init = 0x0,
+>   	.cntl1_init = PHY_CNTL1_INIT | PHY_INVERT,
+> +	.use_drm_infoframe = false,
+> +	.speeds = gxbb_speeds,
+> +	.speed_num = ARRAY_SIZE(gxbb_speeds),
+> +};
+> +
+> +static const struct reg_sequence gxl_3g7_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x333d3282 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2136315b },
+> +};
+> +
+> +static const struct reg_sequence gxl_3g_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33303382 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2036315b },
+> +};
+> +
+> +static const struct reg_sequence gxl_def_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33303362 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2016315b },
+> +};
+> +
+> +static const struct reg_sequence gxl_270m_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33604142 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x0016315b },
+> +};
+> +
+> +static const struct meson_dw_hdmi_speed gxl_speeds[] = {
+> +	{
+> +		.limit = 371250,
+> +		.regs = gxl_3g7_regs,
+> +		.reg_num = ARRAY_SIZE(gxl_3g7_regs)
+> +	}, {
+> +		.limit = 297000,
+> +		.regs = gxl_3g_regs,
+> +		.reg_num = ARRAY_SIZE(gxl_3g_regs)
+> +	}, {
+> +		.limit = 148500,
+> +		.regs = gxl_def_regs,
+> +		.reg_num = ARRAY_SIZE(gxl_def_regs)
+> +	}, {
+> +		.regs = gxl_270m_regs,
+> +		.reg_num = ARRAY_SIZE(gxl_270m_regs)
+> +	}
+>   };
+>   
+>   static const struct meson_dw_hdmi_data meson_dw_hdmi_gxl_data = {
+>   	.reg_init = meson_dw_init_regmap_gx,
+>   	.cntl0_init = 0x0,
+>   	.cntl1_init = PHY_CNTL1_INIT,
+> +	.use_drm_infoframe = true,
+> +	.speeds = gxl_speeds,
+> +	.speed_num = ARRAY_SIZE(gxl_speeds),
+> +};
+> +
+> +static const struct reg_sequence g12a_3g7_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x37eb65c4 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2ab0ff3b },
+> +	{ .reg = HHI_HDMI_PHY_CNTL5, .def = 0x0000080b },
+> +};
+> +
+> +static const struct reg_sequence g12a_3g_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33eb6262 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2ab0ff3b },
+> +	{ .reg = HHI_HDMI_PHY_CNTL5, .def = 0x00000003 },
+> +};
+> +
+> +static const struct reg_sequence g12a_def_regs[] = {
+> +	{ .reg = HHI_HDMI_PHY_CNTL0, .def = 0x33eb4242 },
+> +	{ .reg = HHI_HDMI_PHY_CNTL3, .def = 0x2ab0ff3b },
+> +	{ .reg = HHI_HDMI_PHY_CNTL5, .def = 0x00000003 },
+> +};
+> +
+> +static const struct meson_dw_hdmi_speed g12a_speeds[] = {
+> +	{
+> +		.limit = 371250,
+> +		.regs = g12a_3g7_regs,
+> +		.reg_num = ARRAY_SIZE(g12a_3g7_regs)
+> +	}, {
+> +		.limit = 297000,
+> +		.regs = g12a_3g_regs,
+> +		.reg_num = ARRAY_SIZE(g12a_3g_regs)
+> +	}, {
+> +		.regs = g12a_def_regs,
+> +		.reg_num = ARRAY_SIZE(g12a_def_regs)
+> +	}
+>   };
+>   
+>   static const struct meson_dw_hdmi_data meson_dw_hdmi_g12a_data = {
+>   	.reg_init = meson_dw_init_regmap_g12,
+>   	.cntl0_init = 0x000b4242, /* Bandgap */
+>   	.cntl1_init = PHY_CNTL1_INIT,
+> +	.use_drm_infoframe = true,
+> +	.speeds = g12a_speeds,
+> +	.speed_num = ARRAY_SIZE(g12a_speeds),
+>   };
+>   
+>   static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+> @@ -590,7 +665,6 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>   	platform_set_drvdata(pdev, meson_dw_hdmi);
+>   
+>   	meson_dw_hdmi->priv = priv;
+> -	meson_dw_hdmi->dev = dev;
 
-The initial driver had support only for SM1000 and SM11xx. There is a small 
-note there about the sm1000 devices there (I guess this is the chipset
-number of Stellar, but my memories might be tricking me), but without
-a real association with the chipset number:
+Unrelated change
 
-	/* This device is only present before firmware load */
-	{ USB_DEVICE(0x187f, 0x0010),
-		.driver_info = SMS1XXX_BOARD_SIANO_STELLAR_ROM },
-	/* This device pops up after firmware load */
-	{ USB_DEVICE(0x187f, 0x0100),
-		.driver_info = SMS1XXX_BOARD_SIANO_STELLAR },
+>   	meson_dw_hdmi->data = match;
+>   	dw_plat_data = &meson_dw_hdmi->dw_plat_data;
+>   
+> @@ -650,7 +724,6 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>   	meson_dw_hdmi_init(meson_dw_hdmi);
+>   
+>   	/* Bridge / Connector */
+> -
 
-Years later, support for sm2xxx was added.
+Unrelated change
 
-Those two boards, for instance (see drivers/media/common/siano/sms-cards.c)
-are variants of sm2xxx (one of them is sm2270, if I'm not mistaken) that
-supports Brazilian TV standard:
+>   	dw_plat_data->priv_data = meson_dw_hdmi;
+>   	dw_plat_data->phy_ops = &meson_dw_hdmi_phy_ops;
+>   	dw_plat_data->phy_name = "meson_dw_hdmi_phy";
+> @@ -659,11 +732,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>   	dw_plat_data->ycbcr_420_allowed = true;
+>   	dw_plat_data->disable_cec = true;
+>   	dw_plat_data->output_port = 1;
+> -
+> -	if (dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
+> -	    dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxm-dw-hdmi") ||
+> -	    dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-g12a-dw-hdmi"))
+> -		dw_plat_data->use_drm_infoframe = true;
+> +	dw_plat_data->use_drm_infoframe = meson_dw_hdmi->data->use_drm_infoframe;
 
-	[SMS1XXX_BOARD_SIANO_PELE] = {
-		.name = "Siano Pele Digital Receiver",
-		.type = SMS_PELE,
-		.default_mode = DEVICE_MODE_ISDBT_BDA,
-	},
-	[SMS1XXX_BOARD_SIANO_RIO] = {
-		.name = "Siano Rio Digital Receiver",
-		.type = SMS_RIO,
-		.default_mode = DEVICE_MODE_ISDBT_BDA,
-	},
+Move this to a separate patch
 
-There are some boards there with a different version of sm22xx
-that supports only DVB (can't remember anymore what boards).
+>   
+>   	meson_dw_hdmi->hdmi = dw_hdmi_probe(pdev, &meson_dw_hdmi->dw_plat_data);
+>   	if (IS_ERR(meson_dw_hdmi->hdmi))
 
-Basically, the actual SMS device type is given by this enum:
-
-	enum sms_device_type_st {
-		SMS_UNKNOWN_TYPE = -1,
-
-		SMS_STELLAR = 0,
-		SMS_NOVA_A0,
-		SMS_NOVA_B0,
-		SMS_VEGA,
-		SMS_VENICE,
-		SMS_MING,
-		SMS_PELE,
-		SMS_RIO,
-		SMS_DENVER_1530,
-		SMS_DENVER_2160,
-
-		SMS_NUM_OF_DEVICE_TYPES	/* This is just a count */
-	};
-
-But I dunno if there are a 1:1 mapping between type and chipset 
-number. The above type names probably match some vendor internal 
-names, but we never had any tables associating them to a device number,
-as the vendor never provided us such information.
-
-Btw I vaguely remember I heard about a newer Siano chipsets (sm3xxx), 
-but never saw such devices.
-
--
-
-Now, I'm not sure about what endpoints this specific driver exports, as
-I'm lacking vendor's documentation. What I said is that almost all DVB 
-devices have isoc endpoints, but I dunno if this is the case of Siano.
-
-Thanks,
-Mauro
 
