@@ -1,922 +1,312 @@
-Return-Path: <linux-kernel+bounces-292572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D6C95715B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A0A95715F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAC61F23279
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D011F22670
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC39D189B9E;
-	Mon, 19 Aug 2024 17:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E24D186284;
+	Mon, 19 Aug 2024 17:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ED1eBYT1"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hR/ilOzC"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025A61891C0;
-	Mon, 19 Aug 2024 17:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E50176AA3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086806; cv=none; b=uKw885NXAN/M1dfWm/tU/apovfNpo3B0zQwvYDYUzgJDUsySxGHLLWKhsNrJCeiVRDJv6IqV3zWluxCI70J5SKXq6tr0Duuylv5oqzyGRfa93oudRbC/Id9Oj9Zl1iCCKCKfRuBrdfAVU8N/RzvzLZQPr1EfM/worcR2Scx+SYM=
+	t=1724086867; cv=none; b=Vgg+f3O/7X+Fi+0QTLwXg5wgiuy1va25R1yXQJJNjWvfwRx/1g7Bb2xGHbg2Bfm1C/OZI/6Ed7AHJ41ryioIv3YXfTTJPndEaCf2hvSfPHxhVvHIaQTXH6CK16QsiOp/oKxABwXxLCez22ZIlYDQT2w2mjFbz9RKXPg61IbM+qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086806; c=relaxed/simple;
-	bh=FyD2Cpb4OTFup8rJppDDO2lZC+c2yWfKkmLb/g8oBcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TqJz7uAMXkTlOKhC7/0aF0/r+3NIor0FqXukmaXti/XnS6miJxYkqCrB3lcyphXjILuVuFxgvOSpenJoKj7PUTtNwxTfkLxKi1Q+2DnbAbOD3xzmxIIiLygR+E/UTsc2nQms8X9nbYi4WYpQFO6Jn1zGKMOQl3NyHmeZbOFKz6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ED1eBYT1; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724086799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6SAhTb9ppWesVdXmNBBYAwCQxLFepr/p0dV890VSrpc=;
-	b=ED1eBYT1Z8VAqDP3iDI+DWca9c9om3a9o4lMCrnjrdZt1ppA9fV4lvwZdCFCkhsnhNJbcE
-	vhZL78igQO3nuRHLuHhuulH+CMZMY4w1PWnYM9qU5xcIST4Bnv9s6QwZOqO0QAESjEVopo
-	P9gqNAjtwPuf1v12SBX+uzmrGOiydtY=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: rcu@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	paulmck@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] rcu: Switch kvfree_rcu() to new rcu_pending
-Date: Mon, 19 Aug 2024 12:59:35 -0400
-Message-ID: <20240819165939.745801-10-kent.overstreet@linux.dev>
-In-Reply-To: <20240819165939.745801-1-kent.overstreet@linux.dev>
-References: <20240819165939.745801-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1724086867; c=relaxed/simple;
+	bh=ZtX2zam0FT/hFX74bfMDbN5fKKbjL8LUsshVOfW6MUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmyqsCEal+3Soj/md1VI6uHN5pMU2BsPmlNlP518ejryHW24A1hSlRjuoT27ZRCfTn24L7tvA1kua6dadAX44O0d393qsib2X8DprrYjQka+x8/PVWJUp3kcgsLsePMXBvW1NbPXOp3WdLtUnNd/wBajr9DpGZzu5cVSAyobBSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hR/ilOzC; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2021537a8e6so24784985ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724086865; x=1724691665; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8kCQe9G/ESsT5mGMR2/0Q1jS/fZ3F9lMSZDT/xQTaFw=;
+        b=hR/ilOzCBUfBR13kj4mjTSRfnb6k8SHsA/Sh18pGmU117LUbDakCyWgFKV6VVVizYP
+         oq5cpNct7fYMNgAIzpoJ0T3GaYpeqc8NnPr6TvSXI/sYdZ1UL1TxA+hXAshgtRe4HC6A
+         HwYTLJmD9s5xrttCLxKX/J8MAXMFjTX0zi/ouTxoOAsB9XTQyExUa27JlTQNUMlRsNCt
+         ezO8c0iSEYJbVsAiKPtF9kzHC/qXhchxUkVSSojAK5KeaOi4T2sMCYxUy9FFi1Nq9Y2U
+         xaN10UKBUBYbEZlVtz6TAElINektYMtDF6caB39BowQG9WPaWq9a700ESnjnR9wShO0Z
+         Cylg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724086865; x=1724691665;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kCQe9G/ESsT5mGMR2/0Q1jS/fZ3F9lMSZDT/xQTaFw=;
+        b=AKGHthHv6fNuF3bEtWwOekMUlzzGJ08lylVPNzWY5iK1SQfgA5oiPTX4X8GlgxThjl
+         et53VivTP8XQisx/aPQmqjNw+n0uq2XBfIos5HKWH9wKkrxK15GCWbrmICGVeVWFe5Me
+         OVM9aEbneBkC4fpmunEj7rGvGuebyF7dDV8C68wfpuWwg4rr2I08kj4Qo7P87craCHlC
+         o7qZb3lhuuXbi2sNyUdzaGkPIsWTRFjdVsAQfKaty5Uu1OiUvRM6CZMPyOjq/L02g8JO
+         aKFHVhquVhPrTyn0l12kNIY9yNTX/lIovCOjkRdey1PYiSqOu3wr+/aOHsyZPOCoYBY7
+         Sqeg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9prLotFKZJu6a/5Lr7P0H4t15a4g18wO2o0TqQ+HN2KQS5AjXOZXr8+VtQlvdWPSQWCGFjfOxX4LFxnqXiHO9tZssCsC/mdtni8Mx
+X-Gm-Message-State: AOJu0Yw4Vh2eSMERdTc7Yc2NuebeQjt+KO4aq3CCY4SNBoaGdPN3DV3W
+	qVSlOKSyKi+MGuDLAAf0wh2Ot32KsuKUdutzCf3gFn405boy7f4g4roaag8Ok2w=
+X-Google-Smtp-Source: AGHT+IHut0PifcKMMGeqhfJ8yiuVWQ7wXVh2IejTYX1LXvOUkkJjf0fMHibwkq8TDuAnUw+VWMtRMQ==
+X-Received: by 2002:a17:902:e74d:b0:202:244e:a0b3 with SMTP id d9443c01a7336-202244ea2admr94263185ad.46.1724086864336;
+        Mon, 19 Aug 2024 10:01:04 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4d5sm65079055ad.41.2024.08.19.10.01.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 10:01:03 -0700 (PDT)
+Date: Mon, 19 Aug 2024 10:00:55 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Levi Zim <rsworktech@outlook.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, cyy@cyyself.name,
+	alexghiti@rivosinc.com, Paul Walmsley <paul.walmsley@sifive.com>,
+	aou@eecs.berkeley.edu, shuah@kernel.org, corbet@lwn.net,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] riscv: mm: Use hint address in mmap if available
+Message-ID: <ZsN6R8IliKzAKKMb@ghost>
+References: <mhng-5d9bb6c0-9f40-44b2-b9dc-3823cf6dbdef@palmer-ri-x1c9>
+ <MEYP282MB2312106710775098261AB348C68C2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <MEYP282MB2312106710775098261AB348C68C2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
 
-This nets us a slight performance increase, and converts to common
-code.
+On Mon, Aug 19, 2024 at 01:55:57PM +0800, Levi Zim wrote:
+> On 2024-03-22 22:06, Palmer Dabbelt wrote:
+> > On Thu, 01 Feb 2024 18:28:06 PST (-0800), Charlie Jenkins wrote:
+> > > On Wed, Jan 31, 2024 at 11:59:43PM +0800, Yangyu Chen wrote:
+> > > > On Wed, 2024-01-31 at 22:41 +0800, Yangyu Chen wrote:
+> > > > > On Tue, 2024-01-30 at 17:07 -0800, Charlie Jenkins wrote:
+> > > > > > On riscv it is guaranteed that the address returned by mmap is less
+> > > > > > than
+> > > > > > the hint address. Allow mmap to return an address all the way up to
+> > > > > > addr, if provided, rather than just up to the lower address space.
+> > > > > > > > This provides a performance benefit as well, allowing
+> > > > mmap to exit
+> > > > > > after
+> > > > > > checking that the address is in range rather than searching for a
+> > > > > > valid
+> > > > > > address.
+> > > > > > > > It is possible to provide an address that uses at most the same
+> > > > > > number
+> > > > > > of bits, however it is significantly more computationally expensive
+> > > > > > to
+> > > > > > provide that number rather than setting the max to be the hint
+> > > > > > address.
+> > > > > > There is the instruction clz/clzw in Zbb that returns the highest
+> > > > > > set
+> > > > > > bit
+> > > > > > which could be used to performantly implement this, but it would
+> > > > > > still
+> > > > > > be slower than the current implementation. At worst case, half of
+> > > > > > the
+> > > > > > address would not be able to be allocated when a hint address is
+> > > > > > provided.
+> > > > > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > > > > > ---
+> > > > > >  arch/riscv/include/asm/processor.h | 27 +++++++++++---------------
+> > > > > > -
+> > > > > >  1 file changed, 11 insertions(+), 16 deletions(-)
+> > > > > > > > diff --git a/arch/riscv/include/asm/processor.h
+> > > > > > b/arch/riscv/include/asm/processor.h
+> > > > > > index f19f861cda54..8ece7a8f0e18 100644
+> > > > > > --- a/arch/riscv/include/asm/processor.h
+> > > > > > +++ b/arch/riscv/include/asm/processor.h
+> > > > > > @@ -14,22 +14,16 @@
+> > > > > >
+> > > > > >  #include <asm/ptrace.h>
+> > > > > >
+> > > > > > -#ifdef CONFIG_64BIT
+> > > > > > -#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+> > > > > > -#define STACK_TOP_MAX        TASK_SIZE_64
+> > > > > > -
+> > > > > >  #define arch_get_mmap_end(addr, len, flags)            \
+> > > > > >  ({                                \
+> > > > > >      unsigned long
+> > > > > > mmap_end;                    \
+> > > > > >      typeof(addr) _addr = (addr);                \
+> > > > > > -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+> > > > > > is_compat_task())) \
+> > > > > > +    if ((_addr) == 0 ||                    \
+> > > > > > +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
+> > > > > > +        ((_addr + len) > BIT(VA_BITS -
+> > > > > > 1)))            \
+> > > > > >          mmap_end = STACK_TOP_MAX;            \
+> > > > > > -    else if ((_addr) >= VA_USER_SV57) \
+> > > > > > -        mmap_end = STACK_TOP_MAX;            \
+> > > > > > -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
+> > > > > > VA_BITS_SV48)) \
+> > > > > > -        mmap_end = VA_USER_SV48;            \
+> > > > > >      else                            \
+> > > > > > -        mmap_end = VA_USER_SV39;            \
+> > > > > > +        mmap_end = (_addr + len);            \
+> > > > > >      mmap_end;                        \
+> > > > > >  })
+> > > > > >
+> > > > > > @@ -39,17 +33,18 @@
+> > > > > >      typeof(addr) _addr = (addr);                \
+> > > > > >      typeof(base) _base = (base);                \
+> > > > > >      unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);    \
+> > > > > > -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+> > > > > > is_compat_task())) \
+> > > > > > +    if ((_addr) == 0 ||                    \
+> > > > > > +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
+> > > > > > +        ((_addr + len) > BIT(VA_BITS -
+> > > > > > 1)))            \
+> > > > > >          mmap_base = (_base);                \
+> > > > > > -    else if (((_addr) >= VA_USER_SV57) && (VA_BITS >=
+> > > > > > VA_BITS_SV57)) \
+> > > > > > -        mmap_base = VA_USER_SV57 - rnd_gap; \
+> > > > > > -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
+> > > > > > VA_BITS_SV48)) \
+> > > > > > -        mmap_base = VA_USER_SV48 - rnd_gap; \
+> > > > > >      else                            \
+> > > > > > -        mmap_base = VA_USER_SV39 - rnd_gap; \
+> > > > > > +        mmap_base = (_addr + len) - rnd_gap; \
+> > > > > >      mmap_base;                        \
+> > > > > >  })
+> > > > > >
+> > > > > > +#ifdef CONFIG_64BIT
+> > > > > > +#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+> > > > > > +#define STACK_TOP_MAX        TASK_SIZE_64
+> > > > > >  #else
+> > > > > >  #define DEFAULT_MAP_WINDOW    TASK_SIZE
+> > > > > >  #define STACK_TOP_MAX        TASK_SIZE
+> > > > > > > > I have carefully tested your patch on qemu with sv57. A
+> > > > bug that
+> > > > > needs
+> > > > > to be solved is that mmap with the same hint address without
+> > > > > MAP_FIXED
+> > > > > set will fail the second time.
+> > > > > > Userspace code to reproduce the bug:
+> > > > > > #include <sys/mman.h>
+> > > > > #include <stdio.h>
+> > > > > #include <stdint.h>
+> > > > > > void test(char *addr) {
+> > > > >     char *res = mmap(addr, 4096, PROT_READ | PROT_WRITE,
+> > > > > MAP_ANONYMOUS
+> > > > > > MAP_PRIVATE, -1, 0);
+> > > > >     printf("hint %p got %p.\n", addr, res);
+> > > > > }
+> > > > > > int main (void) {
+> > > > >     test(1<<30);
+> > > > >     test(1<<30);
+> > > > >     test(1<<30);
+> > > > >     return 0;
+> > > > > }
+> > > > > > output:
+> > > > > > hint 0x40000000 got 0x40000000.
+> > > > > hint 0x40000000 got 0xffffffffffffffff.
+> > > > > hint 0x40000000 got 0xffffffffffffffff.
+> > > > > > output on x86:
+> > > > > > hint 0x40000000 got 0x40000000.
+> > > > > hint 0x40000000 got 0x7f9171363000.
+> > > > > hint 0x40000000 got 0x7f9171362000.
+> > > > > > It may need to implement a special arch_get_unmapped_area and
+> > > > > arch_get_unmapped_area_topdown function.
+> > > > >
+> > > > This is because hint address < rnd_gap. I have tried to let mmap_base =
+> > > > min((_addr + len), (base) + TASK_SIZE - DEFAULT_MAP_WINDOW). However it
+> > > > does not work for bottom-up while ulimit -s is unlimited. You said this
+> > > > behavior is expected from patch v2 review. However it brings a new
+> > > > regression even on sv39 systems.
+> > > > 
+> > > > I still don't know the reason why use addr+len as the upper-bound. I
+> > > > think solution like x86/arm64/powerpc provide two address space switch
+> > > > based on whether hint address above the default map window is enough.
+> > > > 
+> > > 
+> > > Yep this is expected. It is up to the maintainers to decide.
+> > 
+> > Sorry I forgot to reply to this, I had a buffer sitting around somewhere
+> > but I must have lost it.
+> > 
+> > I think Charlie's approach is the right way to go.  Putting my userspace
+> > hat on, I'd much rather have my allocations fail rather than silently
+> > ignore the hint when there's memory pressure.
+> > 
+> > If there's some real use case that needs these low hints to be silently
+> > ignored under VA pressure then we can try and figure something out that
+> > makes those applications work.
+> 
+> I could confirm that this patch has broken chromium's partition allocator on
+> riscv64. The minimal reproduction I use is chromium-mmap.c:
+> 
+> #include <stdio.h>
+> #include <sys/mman.h>
+> 
+> int main() {
+>     void* expected = (void*)0x400000000;
+>     void* addr = mmap(expected, 17179869184, PROT_NONE,
+> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+>     if (addr != expected) {
 
-Todo - re-add the shrinker, so that memory reclaim can free expired
-objects and expedite a grace period when necessary.
+It is not valid to assume that the address returned by mmap will be the
+hint address. If the hint address is not available, mmap will return a
+different address.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- include/linux/rcu_pending.h |   2 +
- init/main.c                 |   2 +
- kernel/rcu/pending.c        |  20 +
- kernel/rcu/tree.c           | 746 ------------------------------------
- kernel/rcu/update.c         |   1 -
- 5 files changed, 24 insertions(+), 747 deletions(-)
+>         printf("Not expected address: %p != %p\n", addr, expected);
+>     }
+>     expected = (void*)0x3fffff000;
+>     addr = mmap(expected, 17179873280, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS,
+> -1, 0);
+>     if (addr != expected) {
+>         printf("Not expected address: %p != %p\n", addr, expected);
+>     }
+>     return 0;
+> }
+> 
+> The second mmap fails with ENOMEM. Manually reverting this commit fixes the
+> issue for me. So I think it's clearly a regression and breaks userspace.
+> 
 
-diff --git a/include/linux/rcu_pending.h b/include/linux/rcu_pending.h
-index a875c640da8d..5ef6392ce180 100644
---- a/include/linux/rcu_pending.h
-+++ b/include/linux/rcu_pending.h
-@@ -22,4 +22,6 @@ int rcu_pending_init(struct rcu_pending *pending,
- 		     struct srcu_struct *srcu,
- 		     rcu_pending_process_fn process);
- 
-+void __init kvfree_rcu_pending_init(void);
-+
- #endif /* _LINUX_RCU_PENDING_H */
-diff --git a/init/main.c b/init/main.c
-index 206acdde51f5..a3f0fd6ec3da 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -43,6 +43,7 @@
- #include <linux/profile.h>
- #include <linux/kfence.h>
- #include <linux/rcupdate.h>
-+#include <linux/rcu_pending.h>
- #include <linux/srcu.h>
- #include <linux/moduleparam.h>
- #include <linux/kallsyms.h>
-@@ -993,6 +994,7 @@ void start_kernel(void)
- 	workqueue_init_early();
- 
- 	rcu_init();
-+	kvfree_rcu_pending_init();
- 
- 	/* Trace events are available after this */
- 	trace_init();
-diff --git a/kernel/rcu/pending.c b/kernel/rcu/pending.c
-index c0e2351ba198..9c57f373d494 100644
---- a/kernel/rcu/pending.c
-+++ b/kernel/rcu/pending.c
-@@ -601,3 +601,23 @@ int rcu_pending_init(struct rcu_pending *pending,
- 
- 	return 0;
- }
-+
-+#ifndef CONFIG_TINY_RCU
-+/* kvfree_rcu */
-+
-+static struct rcu_pending kvfree_rcu_pending;
-+
-+void kvfree_call_rcu(struct rcu_head *head, void *ptr)
-+{
-+	BUG_ON(!ptr);
-+
-+	__rcu_pending_enqueue(&kvfree_rcu_pending, head, ptr, head == NULL);
-+}
-+EXPORT_SYMBOL_GPL(kvfree_call_rcu);
-+
-+void __init kvfree_rcu_pending_init(void)
-+{
-+	if (rcu_pending_init(&kvfree_rcu_pending, NULL, RCU_PENDING_KVFREE_FN))
-+		panic("%s failed\n", __func__);
-+}
-+#endif
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 52f9f0bf1b8e..3bb6c81e2d30 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3216,702 +3216,6 @@ EXPORT_SYMBOL_GPL(call_rcu);
- #define KFREE_N_BATCHES 2
- #define FREE_N_CHANNELS 2
- 
--/**
-- * struct kvfree_rcu_bulk_data - single block to store kvfree_rcu() pointers
-- * @list: List node. All blocks are linked between each other
-- * @gp_snap: Snapshot of RCU state for objects placed to this bulk
-- * @nr_records: Number of active pointers in the array
-- * @records: Array of the kvfree_rcu() pointers
-- */
--struct kvfree_rcu_bulk_data {
--	struct list_head list;
--	struct rcu_gp_oldstate gp_snap;
--	unsigned long nr_records;
--	void *records[];
--};
--
--/*
-- * This macro defines how many entries the "records" array
-- * will contain. It is based on the fact that the size of
-- * kvfree_rcu_bulk_data structure becomes exactly one page.
-- */
--#define KVFREE_BULK_MAX_ENTR \
--	((PAGE_SIZE - sizeof(struct kvfree_rcu_bulk_data)) / sizeof(void *))
--
--/**
-- * struct kfree_rcu_cpu_work - single batch of kfree_rcu() requests
-- * @rcu_work: Let queue_rcu_work() invoke workqueue handler after grace period
-- * @head_free: List of kfree_rcu() objects waiting for a grace period
-- * @head_free_gp_snap: Grace-period snapshot to check for attempted premature frees.
-- * @bulk_head_free: Bulk-List of kvfree_rcu() objects waiting for a grace period
-- * @krcp: Pointer to @kfree_rcu_cpu structure
-- */
--
--struct kfree_rcu_cpu_work {
--	struct rcu_work rcu_work;
--	struct rcu_head *head_free;
--	struct rcu_gp_oldstate head_free_gp_snap;
--	struct list_head bulk_head_free[FREE_N_CHANNELS];
--	struct kfree_rcu_cpu *krcp;
--};
--
--/**
-- * struct kfree_rcu_cpu - batch up kfree_rcu() requests for RCU grace period
-- * @head: List of kfree_rcu() objects not yet waiting for a grace period
-- * @head_gp_snap: Snapshot of RCU state for objects placed to "@head"
-- * @bulk_head: Bulk-List of kvfree_rcu() objects not yet waiting for a grace period
-- * @krw_arr: Array of batches of kfree_rcu() objects waiting for a grace period
-- * @lock: Synchronize access to this structure
-- * @monitor_work: Promote @head to @head_free after KFREE_DRAIN_JIFFIES
-- * @initialized: The @rcu_work fields have been initialized
-- * @head_count: Number of objects in rcu_head singular list
-- * @bulk_count: Number of objects in bulk-list
-- * @bkvcache:
-- *	A simple cache list that contains objects for reuse purpose.
-- *	In order to save some per-cpu space the list is singular.
-- *	Even though it is lockless an access has to be protected by the
-- *	per-cpu lock.
-- * @page_cache_work: A work to refill the cache when it is empty
-- * @backoff_page_cache_fill: Delay cache refills
-- * @work_in_progress: Indicates that page_cache_work is running
-- * @hrtimer: A hrtimer for scheduling a page_cache_work
-- * @nr_bkv_objs: number of allocated objects at @bkvcache.
-- *
-- * This is a per-CPU structure.  The reason that it is not included in
-- * the rcu_data structure is to permit this code to be extracted from
-- * the RCU files.  Such extraction could allow further optimization of
-- * the interactions with the slab allocators.
-- */
--struct kfree_rcu_cpu {
--	// Objects queued on a linked list
--	// through their rcu_head structures.
--	struct rcu_head *head;
--	unsigned long head_gp_snap;
--	atomic_t head_count;
--
--	// Objects queued on a bulk-list.
--	struct list_head bulk_head[FREE_N_CHANNELS];
--	atomic_t bulk_count[FREE_N_CHANNELS];
--
--	struct kfree_rcu_cpu_work krw_arr[KFREE_N_BATCHES];
--	raw_spinlock_t lock;
--	struct delayed_work monitor_work;
--	bool initialized;
--
--	struct delayed_work page_cache_work;
--	atomic_t backoff_page_cache_fill;
--	atomic_t work_in_progress;
--	struct hrtimer hrtimer;
--
--	struct llist_head bkvcache;
--	int nr_bkv_objs;
--};
--
--static DEFINE_PER_CPU(struct kfree_rcu_cpu, krc) = {
--	.lock = __RAW_SPIN_LOCK_UNLOCKED(krc.lock),
--};
--
--static __always_inline void
--debug_rcu_bhead_unqueue(struct kvfree_rcu_bulk_data *bhead)
--{
--#ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD
--	int i;
--
--	for (i = 0; i < bhead->nr_records; i++)
--		debug_rcu_head_unqueue((struct rcu_head *)(bhead->records[i]));
--#endif
--}
--
--static inline struct kfree_rcu_cpu *
--krc_this_cpu_lock(unsigned long *flags)
--{
--	struct kfree_rcu_cpu *krcp;
--
--	local_irq_save(*flags);	// For safely calling this_cpu_ptr().
--	krcp = this_cpu_ptr(&krc);
--	raw_spin_lock(&krcp->lock);
--
--	return krcp;
--}
--
--static inline void
--krc_this_cpu_unlock(struct kfree_rcu_cpu *krcp, unsigned long flags)
--{
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--}
--
--static inline struct kvfree_rcu_bulk_data *
--get_cached_bnode(struct kfree_rcu_cpu *krcp)
--{
--	if (!krcp->nr_bkv_objs)
--		return NULL;
--
--	WRITE_ONCE(krcp->nr_bkv_objs, krcp->nr_bkv_objs - 1);
--	return (struct kvfree_rcu_bulk_data *)
--		llist_del_first(&krcp->bkvcache);
--}
--
--static inline bool
--put_cached_bnode(struct kfree_rcu_cpu *krcp,
--	struct kvfree_rcu_bulk_data *bnode)
--{
--	// Check the limit.
--	if (krcp->nr_bkv_objs >= rcu_min_cached_objs)
--		return false;
--
--	llist_add((struct llist_node *) bnode, &krcp->bkvcache);
--	WRITE_ONCE(krcp->nr_bkv_objs, krcp->nr_bkv_objs + 1);
--	return true;
--}
--
--static int
--drain_page_cache(struct kfree_rcu_cpu *krcp)
--{
--	unsigned long flags;
--	struct llist_node *page_list, *pos, *n;
--	int freed = 0;
--
--	if (!rcu_min_cached_objs)
--		return 0;
--
--	raw_spin_lock_irqsave(&krcp->lock, flags);
--	page_list = llist_del_all(&krcp->bkvcache);
--	WRITE_ONCE(krcp->nr_bkv_objs, 0);
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--	llist_for_each_safe(pos, n, page_list) {
--		free_page((unsigned long)pos);
--		freed++;
--	}
--
--	return freed;
--}
--
--static void
--kvfree_rcu_bulk(struct kfree_rcu_cpu *krcp,
--	struct kvfree_rcu_bulk_data *bnode, int idx)
--{
--	unsigned long flags;
--	int i;
--
--	if (!WARN_ON_ONCE(!poll_state_synchronize_rcu_full(&bnode->gp_snap))) {
--		debug_rcu_bhead_unqueue(bnode);
--		rcu_lock_acquire(&rcu_callback_map);
--		if (idx == 0) { // kmalloc() / kfree().
--			trace_rcu_invoke_kfree_bulk_callback(
--				rcu_state.name, bnode->nr_records,
--				bnode->records);
--
--			kfree_bulk(bnode->nr_records, bnode->records);
--		} else { // vmalloc() / vfree().
--			for (i = 0; i < bnode->nr_records; i++) {
--				trace_rcu_invoke_kvfree_callback(
--					rcu_state.name, bnode->records[i], 0);
--
--				vfree(bnode->records[i]);
--			}
--		}
--		rcu_lock_release(&rcu_callback_map);
--	}
--
--	raw_spin_lock_irqsave(&krcp->lock, flags);
--	if (put_cached_bnode(krcp, bnode))
--		bnode = NULL;
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--	if (bnode)
--		free_page((unsigned long) bnode);
--
--	cond_resched_tasks_rcu_qs();
--}
--
--static void
--kvfree_rcu_list(struct rcu_head *head)
--{
--	struct rcu_head *next;
--
--	for (; head; head = next) {
--		void *ptr = (void *) head->func;
--		unsigned long offset = (void *) head - ptr;
--
--		next = head->next;
--		debug_rcu_head_unqueue((struct rcu_head *)ptr);
--		rcu_lock_acquire(&rcu_callback_map);
--		trace_rcu_invoke_kvfree_callback(rcu_state.name, head, offset);
--
--		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset)))
--			kvfree(ptr);
--
--		rcu_lock_release(&rcu_callback_map);
--		cond_resched_tasks_rcu_qs();
--	}
--}
--
--/*
-- * This function is invoked in workqueue context after a grace period.
-- * It frees all the objects queued on ->bulk_head_free or ->head_free.
-- */
--static void kfree_rcu_work(struct work_struct *work)
--{
--	unsigned long flags;
--	struct kvfree_rcu_bulk_data *bnode, *n;
--	struct list_head bulk_head[FREE_N_CHANNELS];
--	struct rcu_head *head;
--	struct kfree_rcu_cpu *krcp;
--	struct kfree_rcu_cpu_work *krwp;
--	struct rcu_gp_oldstate head_gp_snap;
--	int i;
--
--	krwp = container_of(to_rcu_work(work),
--		struct kfree_rcu_cpu_work, rcu_work);
--	krcp = krwp->krcp;
--
--	raw_spin_lock_irqsave(&krcp->lock, flags);
--	// Channels 1 and 2.
--	for (i = 0; i < FREE_N_CHANNELS; i++)
--		list_replace_init(&krwp->bulk_head_free[i], &bulk_head[i]);
--
--	// Channel 3.
--	head = krwp->head_free;
--	krwp->head_free = NULL;
--	head_gp_snap = krwp->head_free_gp_snap;
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--	// Handle the first two channels.
--	for (i = 0; i < FREE_N_CHANNELS; i++) {
--		// Start from the tail page, so a GP is likely passed for it.
--		list_for_each_entry_safe(bnode, n, &bulk_head[i], list)
--			kvfree_rcu_bulk(krcp, bnode, i);
--	}
--
--	/*
--	 * This is used when the "bulk" path can not be used for the
--	 * double-argument of kvfree_rcu().  This happens when the
--	 * page-cache is empty, which means that objects are instead
--	 * queued on a linked list through their rcu_head structures.
--	 * This list is named "Channel 3".
--	 */
--	if (head && !WARN_ON_ONCE(!poll_state_synchronize_rcu_full(&head_gp_snap)))
--		kvfree_rcu_list(head);
--}
--
--static bool
--need_offload_krc(struct kfree_rcu_cpu *krcp)
--{
--	int i;
--
--	for (i = 0; i < FREE_N_CHANNELS; i++)
--		if (!list_empty(&krcp->bulk_head[i]))
--			return true;
--
--	return !!READ_ONCE(krcp->head);
--}
--
--static bool
--need_wait_for_krwp_work(struct kfree_rcu_cpu_work *krwp)
--{
--	int i;
--
--	for (i = 0; i < FREE_N_CHANNELS; i++)
--		if (!list_empty(&krwp->bulk_head_free[i]))
--			return true;
--
--	return !!krwp->head_free;
--}
--
--static int krc_count(struct kfree_rcu_cpu *krcp)
--{
--	int sum = atomic_read(&krcp->head_count);
--	int i;
--
--	for (i = 0; i < FREE_N_CHANNELS; i++)
--		sum += atomic_read(&krcp->bulk_count[i]);
--
--	return sum;
--}
--
--static void
--schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
--{
--	long delay, delay_left;
--
--	delay = krc_count(krcp) >= KVFREE_BULK_MAX_ENTR ? 1:KFREE_DRAIN_JIFFIES;
--	if (delayed_work_pending(&krcp->monitor_work)) {
--		delay_left = krcp->monitor_work.timer.expires - jiffies;
--		if (delay < delay_left)
--			mod_delayed_work(system_wq, &krcp->monitor_work, delay);
--		return;
--	}
--	queue_delayed_work(system_wq, &krcp->monitor_work, delay);
--}
--
--static void
--kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
--{
--	struct list_head bulk_ready[FREE_N_CHANNELS];
--	struct kvfree_rcu_bulk_data *bnode, *n;
--	struct rcu_head *head_ready = NULL;
--	unsigned long flags;
--	int i;
--
--	raw_spin_lock_irqsave(&krcp->lock, flags);
--	for (i = 0; i < FREE_N_CHANNELS; i++) {
--		INIT_LIST_HEAD(&bulk_ready[i]);
--
--		list_for_each_entry_safe_reverse(bnode, n, &krcp->bulk_head[i], list) {
--			if (!poll_state_synchronize_rcu_full(&bnode->gp_snap))
--				break;
--
--			atomic_sub(bnode->nr_records, &krcp->bulk_count[i]);
--			list_move(&bnode->list, &bulk_ready[i]);
--		}
--	}
--
--	if (krcp->head && poll_state_synchronize_rcu(krcp->head_gp_snap)) {
--		head_ready = krcp->head;
--		atomic_set(&krcp->head_count, 0);
--		WRITE_ONCE(krcp->head, NULL);
--	}
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--	for (i = 0; i < FREE_N_CHANNELS; i++) {
--		list_for_each_entry_safe(bnode, n, &bulk_ready[i], list)
--			kvfree_rcu_bulk(krcp, bnode, i);
--	}
--
--	if (head_ready)
--		kvfree_rcu_list(head_ready);
--}
--
--/*
-- * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
-- */
--static void kfree_rcu_monitor(struct work_struct *work)
--{
--	struct kfree_rcu_cpu *krcp = container_of(work,
--		struct kfree_rcu_cpu, monitor_work.work);
--	unsigned long flags;
--	int i, j;
--
--	// Drain ready for reclaim.
--	kvfree_rcu_drain_ready(krcp);
--
--	raw_spin_lock_irqsave(&krcp->lock, flags);
--
--	// Attempt to start a new batch.
--	for (i = 0; i < KFREE_N_BATCHES; i++) {
--		struct kfree_rcu_cpu_work *krwp = &(krcp->krw_arr[i]);
--
--		// Try to detach bulk_head or head and attach it, only when
--		// all channels are free.  Any channel is not free means at krwp
--		// there is on-going rcu work to handle krwp's free business.
--		if (need_wait_for_krwp_work(krwp))
--			continue;
--
--		// kvfree_rcu_drain_ready() might handle this krcp, if so give up.
--		if (need_offload_krc(krcp)) {
--			// Channel 1 corresponds to the SLAB-pointer bulk path.
--			// Channel 2 corresponds to vmalloc-pointer bulk path.
--			for (j = 0; j < FREE_N_CHANNELS; j++) {
--				if (list_empty(&krwp->bulk_head_free[j])) {
--					atomic_set(&krcp->bulk_count[j], 0);
--					list_replace_init(&krcp->bulk_head[j],
--						&krwp->bulk_head_free[j]);
--				}
--			}
--
--			// Channel 3 corresponds to both SLAB and vmalloc
--			// objects queued on the linked list.
--			if (!krwp->head_free) {
--				krwp->head_free = krcp->head;
--				get_state_synchronize_rcu_full(&krwp->head_free_gp_snap);
--				atomic_set(&krcp->head_count, 0);
--				WRITE_ONCE(krcp->head, NULL);
--			}
--
--			// One work is per one batch, so there are three
--			// "free channels", the batch can handle. It can
--			// be that the work is in the pending state when
--			// channels have been detached following by each
--			// other.
--			queue_rcu_work(system_wq, &krwp->rcu_work);
--		}
--	}
--
--	raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--	// If there is nothing to detach, it means that our job is
--	// successfully done here. In case of having at least one
--	// of the channels that is still busy we should rearm the
--	// work to repeat an attempt. Because previous batches are
--	// still in progress.
--	if (need_offload_krc(krcp))
--		schedule_delayed_monitor_work(krcp);
--}
--
--static enum hrtimer_restart
--schedule_page_work_fn(struct hrtimer *t)
--{
--	struct kfree_rcu_cpu *krcp =
--		container_of(t, struct kfree_rcu_cpu, hrtimer);
--
--	queue_delayed_work(system_highpri_wq, &krcp->page_cache_work, 0);
--	return HRTIMER_NORESTART;
--}
--
--static void fill_page_cache_func(struct work_struct *work)
--{
--	struct kvfree_rcu_bulk_data *bnode;
--	struct kfree_rcu_cpu *krcp =
--		container_of(work, struct kfree_rcu_cpu,
--			page_cache_work.work);
--	unsigned long flags;
--	int nr_pages;
--	bool pushed;
--	int i;
--
--	nr_pages = atomic_read(&krcp->backoff_page_cache_fill) ?
--		1 : rcu_min_cached_objs;
--
--	for (i = READ_ONCE(krcp->nr_bkv_objs); i < nr_pages; i++) {
--		bnode = (struct kvfree_rcu_bulk_data *)
--			__get_free_page(GFP_KERNEL | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
--
--		if (!bnode)
--			break;
--
--		raw_spin_lock_irqsave(&krcp->lock, flags);
--		pushed = put_cached_bnode(krcp, bnode);
--		raw_spin_unlock_irqrestore(&krcp->lock, flags);
--
--		if (!pushed) {
--			free_page((unsigned long) bnode);
--			break;
--		}
--	}
--
--	atomic_set(&krcp->work_in_progress, 0);
--	atomic_set(&krcp->backoff_page_cache_fill, 0);
--}
--
--static void
--run_page_cache_worker(struct kfree_rcu_cpu *krcp)
--{
--	// If cache disabled, bail out.
--	if (!rcu_min_cached_objs)
--		return;
--
--	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
--			!atomic_xchg(&krcp->work_in_progress, 1)) {
--		if (atomic_read(&krcp->backoff_page_cache_fill)) {
--			queue_delayed_work(system_wq,
--				&krcp->page_cache_work,
--					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
--		} else {
--			hrtimer_init(&krcp->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--			krcp->hrtimer.function = schedule_page_work_fn;
--			hrtimer_start(&krcp->hrtimer, 0, HRTIMER_MODE_REL);
--		}
--	}
--}
--
--// Record ptr in a page managed by krcp, with the pre-krc_this_cpu_lock()
--// state specified by flags.  If can_alloc is true, the caller must
--// be schedulable and not be holding any locks or mutexes that might be
--// acquired by the memory allocator or anything that it might invoke.
--// Returns true if ptr was successfully recorded, else the caller must
--// use a fallback.
--static inline bool
--add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
--	unsigned long *flags, void *ptr, bool can_alloc)
--{
--	struct kvfree_rcu_bulk_data *bnode;
--	int idx;
--
--	*krcp = krc_this_cpu_lock(flags);
--	if (unlikely(!(*krcp)->initialized))
--		return false;
--
--	idx = !!is_vmalloc_addr(ptr);
--	bnode = list_first_entry_or_null(&(*krcp)->bulk_head[idx],
--		struct kvfree_rcu_bulk_data, list);
--
--	/* Check if a new block is required. */
--	if (!bnode || bnode->nr_records == KVFREE_BULK_MAX_ENTR) {
--		bnode = get_cached_bnode(*krcp);
--		if (!bnode && can_alloc) {
--			krc_this_cpu_unlock(*krcp, *flags);
--
--			// __GFP_NORETRY - allows a light-weight direct reclaim
--			// what is OK from minimizing of fallback hitting point of
--			// view. Apart of that it forbids any OOM invoking what is
--			// also beneficial since we are about to release memory soon.
--			//
--			// __GFP_NOMEMALLOC - prevents from consuming of all the
--			// memory reserves. Please note we have a fallback path.
--			//
--			// __GFP_NOWARN - it is supposed that an allocation can
--			// be failed under low memory or high memory pressure
--			// scenarios.
--			bnode = (struct kvfree_rcu_bulk_data *)
--				__get_free_page(GFP_KERNEL | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
--			raw_spin_lock_irqsave(&(*krcp)->lock, *flags);
--		}
--
--		if (!bnode)
--			return false;
--
--		// Initialize the new block and attach it.
--		bnode->nr_records = 0;
--		list_add(&bnode->list, &(*krcp)->bulk_head[idx]);
--	}
--
--	// Finally insert and update the GP for this page.
--	bnode->records[bnode->nr_records++] = ptr;
--	get_state_synchronize_rcu_full(&bnode->gp_snap);
--	atomic_inc(&(*krcp)->bulk_count[idx]);
--
--	return true;
--}
--
--/*
-- * Queue a request for lazy invocation of the appropriate free routine
-- * after a grace period.  Please note that three paths are maintained,
-- * two for the common case using arrays of pointers and a third one that
-- * is used only when the main paths cannot be used, for example, due to
-- * memory pressure.
-- *
-- * Each kvfree_call_rcu() request is added to a batch. The batch will be drained
-- * every KFREE_DRAIN_JIFFIES number of jiffies. All the objects in the batch will
-- * be free'd in workqueue context. This allows us to: batch requests together to
-- * reduce the number of grace periods during heavy kfree_rcu()/kvfree_rcu() load.
-- */
--void kvfree_call_rcu(struct rcu_head *head, void *ptr)
--{
--	unsigned long flags;
--	struct kfree_rcu_cpu *krcp;
--	bool success;
--
--	/*
--	 * Please note there is a limitation for the head-less
--	 * variant, that is why there is a clear rule for such
--	 * objects: it can be used from might_sleep() context
--	 * only. For other places please embed an rcu_head to
--	 * your data.
--	 */
--	if (!head)
--		might_sleep();
--
--	// Queue the object but don't yet schedule the batch.
--	if (debug_rcu_head_queue(ptr)) {
--		// Probable double kfree_rcu(), just leak.
--		WARN_ONCE(1, "%s(): Double-freed call. rcu_head %p\n",
--			  __func__, head);
--
--		// Mark as success and leave.
--		return;
--	}
--
--	kasan_record_aux_stack_noalloc(ptr);
--	success = add_ptr_to_bulk_krc_lock(&krcp, &flags, ptr, !head);
--	if (!success) {
--		run_page_cache_worker(krcp);
--
--		if (head == NULL)
--			// Inline if kvfree_rcu(one_arg) call.
--			goto unlock_return;
--
--		head->func = ptr;
--		head->next = krcp->head;
--		WRITE_ONCE(krcp->head, head);
--		atomic_inc(&krcp->head_count);
--
--		// Take a snapshot for this krcp.
--		krcp->head_gp_snap = get_state_synchronize_rcu();
--		success = true;
--	}
--
--	/*
--	 * The kvfree_rcu() caller considers the pointer freed at this point
--	 * and likely removes any references to it. Since the actual slab
--	 * freeing (and kmemleak_free()) is deferred, tell kmemleak to ignore
--	 * this object (no scanning or false positives reporting).
--	 */
--	kmemleak_ignore(ptr);
--
--	// Set timer to drain after KFREE_DRAIN_JIFFIES.
--	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING)
--		schedule_delayed_monitor_work(krcp);
--
--unlock_return:
--	krc_this_cpu_unlock(krcp, flags);
--
--	/*
--	 * Inline kvfree() after synchronize_rcu(). We can do
--	 * it from might_sleep() context only, so the current
--	 * CPU can pass the QS state.
--	 */
--	if (!success) {
--		debug_rcu_head_unqueue((struct rcu_head *) ptr);
--		synchronize_rcu();
--		kvfree(ptr);
--	}
--}
--EXPORT_SYMBOL_GPL(kvfree_call_rcu);
--
--static unsigned long
--kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
--{
--	int cpu;
--	unsigned long count = 0;
--
--	/* Snapshot count of all CPUs */
--	for_each_possible_cpu(cpu) {
--		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
--
--		count += krc_count(krcp);
--		count += READ_ONCE(krcp->nr_bkv_objs);
--		atomic_set(&krcp->backoff_page_cache_fill, 1);
--	}
--
--	return count == 0 ? SHRINK_EMPTY : count;
--}
--
--static unsigned long
--kfree_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
--{
--	int cpu, freed = 0;
--
--	for_each_possible_cpu(cpu) {
--		int count;
--		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
--
--		count = krc_count(krcp);
--		count += drain_page_cache(krcp);
--		kfree_rcu_monitor(&krcp->monitor_work.work);
--
--		sc->nr_to_scan -= count;
--		freed += count;
--
--		if (sc->nr_to_scan <= 0)
--			break;
--	}
--
--	return freed == 0 ? SHRINK_STOP : freed;
--}
--
--void __init kfree_rcu_scheduler_running(void)
--{
--	int cpu;
--
--	for_each_possible_cpu(cpu) {
--		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
--
--		if (need_offload_krc(krcp))
--			schedule_delayed_monitor_work(krcp);
--	}
--}
--
- /*
-  * During early boot, any blocking grace-period wait automatically
-  * implies a grace period.
-@@ -5567,62 +4871,12 @@ static void __init rcu_dump_rcu_node_tree(void)
- 
- struct workqueue_struct *rcu_gp_wq;
- 
--static void __init kfree_rcu_batch_init(void)
--{
--	int cpu;
--	int i, j;
--	struct shrinker *kfree_rcu_shrinker;
--
--	/* Clamp it to [0:100] seconds interval. */
--	if (rcu_delay_page_cache_fill_msec < 0 ||
--		rcu_delay_page_cache_fill_msec > 100 * MSEC_PER_SEC) {
--
--		rcu_delay_page_cache_fill_msec =
--			clamp(rcu_delay_page_cache_fill_msec, 0,
--				(int) (100 * MSEC_PER_SEC));
--
--		pr_info("Adjusting rcutree.rcu_delay_page_cache_fill_msec to %d ms.\n",
--			rcu_delay_page_cache_fill_msec);
--	}
--
--	for_each_possible_cpu(cpu) {
--		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
--
--		for (i = 0; i < KFREE_N_BATCHES; i++) {
--			INIT_RCU_WORK(&krcp->krw_arr[i].rcu_work, kfree_rcu_work);
--			krcp->krw_arr[i].krcp = krcp;
--
--			for (j = 0; j < FREE_N_CHANNELS; j++)
--				INIT_LIST_HEAD(&krcp->krw_arr[i].bulk_head_free[j]);
--		}
--
--		for (i = 0; i < FREE_N_CHANNELS; i++)
--			INIT_LIST_HEAD(&krcp->bulk_head[i]);
--
--		INIT_DELAYED_WORK(&krcp->monitor_work, kfree_rcu_monitor);
--		INIT_DELAYED_WORK(&krcp->page_cache_work, fill_page_cache_func);
--		krcp->initialized = true;
--	}
--
--	kfree_rcu_shrinker = shrinker_alloc(0, "rcu-kfree");
--	if (!kfree_rcu_shrinker) {
--		pr_err("Failed to allocate kfree_rcu() shrinker!\n");
--		return;
--	}
--
--	kfree_rcu_shrinker->count_objects = kfree_rcu_shrink_count;
--	kfree_rcu_shrinker->scan_objects = kfree_rcu_shrink_scan;
--
--	shrinker_register(kfree_rcu_shrinker);
--}
--
- void __init rcu_init(void)
- {
- 	int cpu = smp_processor_id();
- 
- 	rcu_early_boot_tests();
- 
--	kfree_rcu_batch_init();
- 	rcu_bootup_announce();
- 	sanitize_kthread_prio();
- 	rcu_init_geometry();
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index f8436969e0c8..82ca9f490d7c 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -273,7 +273,6 @@ static int __init rcu_set_runtime_mode(void)
- {
- 	rcu_test_sync_prims();
- 	rcu_scheduler_active = RCU_SCHEDULER_RUNNING;
--	kfree_rcu_scheduler_running();
- 	rcu_test_sync_prims();
- 	return 0;
- }
--- 
-2.45.2
+The issue here is that overlapping memory is being requested. This
+second mmap will never be able to provide an address at 0x3fffff000 with
+a size of 0x400001000 since mmap just provided an address at 0x400000000
+with a size of 0x400000000.
 
+Before this patch, this request causes mmap to return a completely
+arbitrary value. There is no reason to use a hint address in this manner
+because the hint can never be respected. Since an arbitrary address is
+desired, a hint of zero should be used.
+
+This patch causes the behavior to be more deterministic. Instead of
+providing an arbitrary address, it causes the address to be less than or
+equal to the hint address. This allows for applications to make
+assumptions about the returned address.
+
+This code is unfortunately relying on the previously mostly undefined
+behavior of the hint address in mmap. The goal of this patch is to help
+developers have more consistent mmap behavior, but maybe it is necessary
+to hide this behavior behind an mmap flag.
+
+- Charlie
+
+> See also https://github.com/riscv-forks/electron/issues/4
+> 
+> > > 
+> > > - Charlie
+> 
+> Sincerely,
+> Levi
+> 
 
