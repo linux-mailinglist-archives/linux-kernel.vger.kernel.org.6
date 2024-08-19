@@ -1,94 +1,118 @@
-Return-Path: <linux-kernel+bounces-292623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9259571F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:18:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B6A9571F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59741F230E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117611C208C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FCE18C32D;
-	Mon, 19 Aug 2024 17:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1742418784A;
+	Mon, 19 Aug 2024 17:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdwbf33i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lm0vSoUf"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6AE18B47F;
-	Mon, 19 Aug 2024 17:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C407414AD02;
+	Mon, 19 Aug 2024 17:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724087749; cv=none; b=HIJC2+mxc3cmnhp4vEFZljTIxHa3ptjuXaY6ms31Ftva16ezRZiokhZmCbic4PlOwFnsPzQ9kPEJVpBNEBRUjzW/VrTYIH8PQtbRz2kHlM2Z/Fd7XSLEE2bBT4wCtzbHouG34CBu8g5ES325xxykWquuqTsRh8Zl2jFa2lHJZi8=
+	t=1724087820; cv=none; b=ehXMRcSqjEj9Fv0cel1r6pDofESnbvSDFwHVM7vdlQLhHiSxNEfsIpWJ7YjDUTuffXDl5iLseIQlmA0YVcFlpp4QA21PDYKziS46hRyRBtOnrsLxzjv++AJtxHW45dPHX9el6BNDRTWrZgQ+vOM5trQPd4mOdQ7VwqRaSbOR7Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724087749; c=relaxed/simple;
-	bh=iAc4Go6gGj1yfEzYX9FwCyQdx12hEgORikYJg534+cQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SsK+7N0023LKB1oefiu3eutQe+tCKXPQN0Kxt3WuRAvWwG7ivHA6GzW8RsAGQDZOlfzqDNYz3IMVCwvwRKHInghjDT4MlDoHutATNwxYxwbb2/PJeCwY+2J6UJ6uhzefFzduoHaJAr/NevPLlKBk2aZrPHvdlfTOghNdtQ94Yas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdwbf33i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC76C4AF0E;
-	Mon, 19 Aug 2024 17:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724087748;
-	bh=iAc4Go6gGj1yfEzYX9FwCyQdx12hEgORikYJg534+cQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qdwbf33iX7zKKXHhm22kZjyl1OCaCkbh3dR2JQvdmTvUB0mhkeyRet2tWG4BHMV0x
-	 oafJsUe0jN7oKCgXhWT2w2yggZPMB1kt68svcSVNjOQLeHVlUL6jkNlY3fHgyua85R
-	 45JzgoTzwTQJ2DQQiL5jSqemwc8QDdqO+I/JcYd7yKDY66+Lyd/mYMs/bFSR5AwzM0
-	 ylZwyFQEufK+2dG7BoCy7lbUKJnV5iW1UHMRG8q5DKsQcNKMgZWiLWb58fPfhHdtrZ
-	 M4sukG+s1tqrG9hVgKgLFaqg1Alszu05ykKq91SWVyRzItSw1ogbqRL5n/hRE+TtN4
-	 1xAQhdE0y7i9g==
-Date: Mon, 19 Aug 2024 11:15:46 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next 4/4] dt-bindings: net: socionext,uniphier-ave4:
- add top-level constraints
-Message-ID: <172408774631.1700340.17970674186244279627.robh@kernel.org>
-References: <20240818172905.121829-1-krzysztof.kozlowski@linaro.org>
- <20240818172905.121829-4-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1724087820; c=relaxed/simple;
+	bh=3j0MwIaF5flvoEFlc+jOXgQ5I4ibWXlbNTvWQlJ/gk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gWiw1KvpXl4nyNFRXPDytO9jL6ffOcFLX8BfOJcTbSURThCfpVn6mGGrEvrmwDc2y5Hv3qC7S1DGWGMEx5xLTaX1oFT0VELnRhegs9WvUDHQRT+Y74cHb1xG2E1sezxqx3bDp06RuoCi8wxpZsIJsWwXbPzoHP0sSG6XVQSwsDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lm0vSoUf; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso37443185e9.1;
+        Mon, 19 Aug 2024 10:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724087817; x=1724692617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3j0MwIaF5flvoEFlc+jOXgQ5I4ibWXlbNTvWQlJ/gk4=;
+        b=Lm0vSoUflgyfScZG5UjV1b4Z+tVcM2snthoDougHPvJRRo6kqJOiDjf4JPLiImGoqU
+         rm4u6ZvMn1e5EK2KYpzx2DiSu4x7fckQPHtqTdoprSSc1l98Cg5VjeOEFQsozjHc15/k
+         vYp7Jf0+5b9HIgs2B/kUZDiidpctnIugAXocWEZaYEkrHCO9oxw7VDG5Ju1d3v357UUx
+         fYjEJrInbfKhOPF4/4NHmlthJ4+eyufpSsLDHe/sy7QQHvatfQXnNoXzKroUcDevlXNP
+         pnN4SefFvYnRXhdvhKfCcVgr22JvRcsGccFReAYsDMu0zANMC7l2PLXjjD/QIjJzmWD8
+         okVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724087817; x=1724692617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3j0MwIaF5flvoEFlc+jOXgQ5I4ibWXlbNTvWQlJ/gk4=;
+        b=F1TA6Kl7WeBAjHgIurM4tbsu6Gmzgv0X+lZv/49iFBJvgK11Mf27rFadDLBQk/XcHz
+         I8jzM4RLweeUDZN4AkpedVVcMhYUWBTB7c7oWPFlyyrSX/dUvmGiuNKU9icfA1wsMrR5
+         JlzwPHi2FCJz+/g49UEXH/nR+SKvA0vDt8ZsWEMTeSBbsQFe6/P42pe9fAlLaYCgAWEj
+         HP+QiW2q+92FDtzldGhWPmHyM3AaoPb7NePvE3h3i0kjeyY1S0yqcF96SfvzHlfT/708
+         tzkD7U5CYoixHWSF34XysAFctq3X16WaWoiE4C56T9/aAL08D0j1vZyEeoZKWnR59Vs3
+         eWsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKBJQxF5vDDQg3gvX3PMOt+PQ5XdYCKz8AVr3/tNZmPrMoKzluRo9PPpXGIp1fDWklltQjD6BfL9P9Kd90J3jLMZr8m++s0yjH/Ivd
+X-Gm-Message-State: AOJu0YxQ9Jy2yRNginuaJ5g5MWwGxER4QByTXIZEmfvuSJZdxfja1/mO
+	DBrK816viqk0yavnBdCVovDck5rw4KI107R71WUhjz3mtCvo/AMy+q3nbQu4no8Tyrx4F3tx3AE
+	UhHlaunxFFeEc20WthxWV9TU09ms=
+X-Google-Smtp-Source: AGHT+IFujZ+Qj7RACHbHumGciMl58LZ73pQK3L/ob2jWLQkIBaDCHriED8vX6Z+fXVPttH1i8+X9QQTmGUvXjMkIwc8=
+X-Received: by 2002:a05:6000:bc9:b0:368:4da3:a3ac with SMTP id
+ ffacd0b85a97d-3719468ed4cmr6064898f8f.40.1724087816412; Mon, 19 Aug 2024
+ 10:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818172905.121829-4-krzysztof.kozlowski@linaro.org>
+References: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
+ <aa331200-205e-4b00-ae02-343c96c52ae8@web.de> <CALTg27kAMd-0tQdJ+k4Ur9i=kZ0qY_vffhm3ZT+_CX6tD_874Q@mail.gmail.com>
+ <e0ccc03a-7479-4243-bd12-4d77b47308f4@web.de>
+In-Reply-To: <e0ccc03a-7479-4243-bd12-4d77b47308f4@web.de>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Mon, 19 Aug 2024 18:16:44 +0100
+Message-ID: <CALTg27n965pGk4UVLOWKRe1MDr0=Y870k1zVC3LP9b9Q7q9djg@mail.gmail.com>
+Subject: Re: HID: corsair-void: Add Corsair Void headset family driver
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+> How will applications of macro variants evolve further?
 
-On Sun, 18 Aug 2024 19:29:05 +0200, Krzysztof Kozlowski wrote:
-> Properties with variable number of items per each device are expected to
-> have widest constraints in top-level "properties:" block and further
-> customized (narrowed) in "if:then:".  Add missing top-level constraints
-> for clock-names and reset-names.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/net/socionext,uniphier-ave4.yaml  | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
+Sorry to get you to clarify again, but I'm not sure what you're asking.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Stuart
 
+On Mon, Aug 19, 2024 at 6:53=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> >> How do you think about to distinguish properties any further for avail=
+able
+> >> device attributes?
+> >> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/driver=
+-api/driver-model/device.rst#L38
+> >
+> > Sorry I'm not sure I follow you're saying
+>
+> I became curious about system fine-tuning possibilities.
+>
+>
+> =E2=80=A6
+> >> * Can the macro =E2=80=9CDEVICE_ATTR_RO=E2=80=9D be applied?
+> >
+> > Done, also applied DEVICE_ATTR_WO
+> =E2=80=A6
+>
+>
+> How will applications of macro variants evolve further?
+>
+> Regards,
+> Markus
 
