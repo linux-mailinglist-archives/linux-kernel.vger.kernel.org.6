@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-292478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32FE957004
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8429D956FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAAC5B29F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6C421C22BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E762171E73;
-	Mon, 19 Aug 2024 16:13:21 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C516CD25;
+	Mon, 19 Aug 2024 16:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MmAJsDMY"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A9F16C87B;
-	Mon, 19 Aug 2024 16:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810668287D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084001; cv=none; b=oq8h4jusaWDxn09K2Ao9cbIo+W0Td6XsRSZdakmFlV+WDCCq/9xGzPHlOcuQlfiXvA8kg9ZnYlQrFrfhI+BuWpIFZxPuGKbdq1DDjculht84FoShpgokpLS7+GUTL7C1hERdgoGTc09ys1PvDdo8XgQ1x7h/FypQfIiEsDOYIfo=
+	t=1724084092; cv=none; b=Is7xaWS7PEOK965KqbhIsODNYWk4IsY8DfPwHVrpXUTLikK271V8/t9f/3O0YDrozK1+CgvyYib7wg25YLvAAQmf1EOgQEb0WvTw8gT46VkIrYgjGyUW8DCY/emjiKtp8D3wOLQY0A7npaddDW23C5bQvkKn6x3S8uoGlMIWL0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084001; c=relaxed/simple;
-	bh=q6Oz7X2Bvs4xfrEmNDgXRRjpjAiOMMeGtsxMTa4V4Xw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i4K0BAMqkzfC9623awVeMezuuaW3jJR92ZFRTejIdOzU7uaA/AudV9mHW2Q4cUoUmQfsTPNIxC5A4XMw6iQQNCR4D7aE/wdVqpx4DYr5mWyudnh+9jZA9WxYLO7RKq/Wnn2uTfLtkZSBliE2D8rHeWHzlnsgE+dNDZF8+c+OD58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WncxM0V7Rz6J6jB;
-	Tue, 20 Aug 2024 00:09:43 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id C9AC31400DB;
-	Tue, 20 Aug 2024 00:13:15 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 17:13:15 +0100
-Date: Mon, 19 Aug 2024 17:13:13 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Anup Patel
-	<anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
- Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 2/4] cpuidle: riscv-sbi: Use scoped device node handling
- to simplify error paths
-Message-ID: <20240819171313.00004677@Huawei.com>
-In-Reply-To: <20240816150931.142208-2-krzysztof.kozlowski@linaro.org>
-References: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
-	<20240816150931.142208-2-krzysztof.kozlowski@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724084092; c=relaxed/simple;
+	bh=2wHrl71jmtaGRaC9bBPlFwfuaOlpD2ILBryCkczRsW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6z4fA52wAlwrg5njx7uSShrC0OivUMRFimNUg5lJuIVkVsbcjhlkjRPLG4dKT1ka74jEUICIP30doY1bEzgDWUdNq5AOQS0yfcbnKnlze9A4x0J4fRxIlgFSzXRTlyx1As5ULO4K0X9rAk3sQZle6NrCXReVuIn6gx9MFauIPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MmAJsDMY; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a20b8fa6dcso300590485a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724084088; x=1724688888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qIO91E6aNJoytIdsntCTP0hK3bjqHc3xM1HLhirFIT0=;
+        b=MmAJsDMYUiRfCRL2UccmUrl2lo7vG/f54wNAgNk9Lb1SBSfUewy5IlXL+jH+q9HSaq
+         lZzNxq3+nNv0Dkzsr0ck4AGPV360TEq5olnApUKZa5B9znf1jGJ/UIDqtWepGFX2SrAT
+         VXGh8WKzUCKr3aT+TeY0VBMg00zLDvb2bViY8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724084088; x=1724688888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qIO91E6aNJoytIdsntCTP0hK3bjqHc3xM1HLhirFIT0=;
+        b=K8segdnUSYIiR2j6OSPN0aqF0H8TaDVO91H66Ru7qqJUpgBoKTZ5rn2teYnHDrwGLk
+         KSK/A1tBNCReKyERKCSJHrFsW1Rvf09sWy6tH4yetN7CC+rcp0sgvj+THLw3AzZhE4Jn
+         HLhplC/c9mw3KrvpbdAcJw1ykJfFeBfO69Ha2rZYcxvd42dmlOHcOhIvLm8Lg0xCr5vL
+         A7rs64lwNhEe1XZi4uucqRsiUyPgGAqPcti24cS34u3G3XL6otrv026uNw8ZS6qCbtYA
+         eEfAaDtdZwWrDUOp24W19frycN4HQ5gon7/ST7707Dm6JE9blSv+YJfbtBzeJCxo6Y+L
+         /8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHZR9fJHxnS814h5mTGvMYp+E4vxZ3KTc6t65z//n2KiOnYTSAKCnTB6MXJp9Vmw6ic0MI94qpXTt4PU/JmjSXKcgLVvfSDOpgCIWx
+X-Gm-Message-State: AOJu0Yy3iaOwk3bcVbojLUhzSGf8Ef5orLbwKnrdNTpaaAxYkL+gx9hx
+	jdULEka1roDFsk43aaBFiRF6XvDUgHEfSLaXCA5GgxpPlFnHM1YopV1lpdVRRRVdtZ9MZg12iYs
+	=
+X-Google-Smtp-Source: AGHT+IFuIKR4NkLdS30SwnlAqN6V1gZ903qn9Js+iz6lSsyWQNN0HTf11mKl99IiYpju8oTde8kNtw==
+X-Received: by 2002:a05:620a:1a21:b0:7a2:a50:53cd with SMTP id af79cd13be357-7a50690675bmr1206416185a.14.1724084087762;
+        Mon, 19 Aug 2024 09:14:47 -0700 (PDT)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff0e0982sm442799185a.98.2024.08.19.09.14.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 09:14:46 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bf6beda038so27453236d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:14:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbMw3sn5BevHXuKSNN2gm0OIPN6vNt4VexC3qASd5BkeZ5K3jMr8znHiVuLfpxcAbZwX5c2G+AMCGGiKbFjQZTfzu8/64rhbFBmgEF
+X-Received: by 2002:a05:6214:3a06:b0:6bf:836b:2c18 with SMTP id
+ 6a1803df08f44-6bf836b2d69mr91124376d6.14.1724084086193; Mon, 19 Aug 2024
+ 09:14:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240818072356.870465-1-tejasvipin76@gmail.com> <4be2f1d1-534c-4c99-a35e-f354c75c88b4@linaro.org>
+In-Reply-To: <4be2f1d1-534c-4c99-a35e-f354c75c88b4@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 19 Aug 2024 09:14:31 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UaYCW3hDp-eV9Wio-3iB2-PViy5Jj9VZxPEK2j+PPLkA@mail.gmail.com>
+Message-ID: <CAD=FV=UaYCW3hDp-eV9Wio-3iB2-PViy5Jj9VZxPEK2j+PPLkA@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: mantix-mlaf057we51: transition to mipi_dsi
+ wrapped functions
+To: neil.armstrong@linaro.org
+Cc: Tejas Vipin <tejasvipin76@gmail.com>, agx@sigxcpu.org, kernel@puri.sm, 
+	quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 Aug 2024 17:09:29 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hi,
 
-> Obtain the device node reference with scoped/cleanup.h to reduce error
-> handling and make the code a bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-The original code looks suspect. See below.
+On Mon, Aug 19, 2024 at 8:36=E2=80=AFAM <neil.armstrong@linaro.org> wrote:
+>
+> Hi,
+>
+> On 18/08/2024 09:23, Tejas Vipin wrote:
+> > Changes the mantix-mlaf057we51 panel to use multi style functions for
+> > improved error handling.
+> >
+> > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> > ---
+> >   .../gpu/drm/panel/panel-mantix-mlaf057we51.c  | 79 +++++++-----------=
+-
+> >   1 file changed, 27 insertions(+), 52 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers=
+/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> > index ea4a6bf6d35b..4db852ffb0f6 100644
+> > --- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> > +++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> > @@ -23,7 +23,7 @@
+> >
+> >   /* Manufacturer specific Commands send via DSI */
+> >   #define MANTIX_CMD_OTP_STOP_RELOAD_MIPI 0x41
+> > -#define MANTIX_CMD_INT_CANCEL           0x4C
+> > +#define MANTIX_CMD_INT_CANCEL           0x4c
+>
+> Please move cleanups to separate patches
 
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> index a6e123dfe394..5bb3401220d2 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -8,6 +8,7 @@
->  
->  #define pr_fmt(fmt) "cpuidle-riscv-sbi: " fmt
->  
-> +#include <linux/cleanup.h>
->  #include <linux/cpuhotplug.h>
->  #include <linux/cpuidle.h>
->  #include <linux/cpumask.h>
-> @@ -236,19 +237,16 @@ static int sbi_cpuidle_dt_init_states(struct device *dev,
->  {
->  	struct sbi_cpuidle_data *data = per_cpu_ptr(&sbi_cpuidle_data, cpu);
->  	struct device_node *state_node;
-> -	struct device_node *cpu_node;
->  	u32 *states;
->  	int i, ret;
->  
-> -	cpu_node = of_cpu_device_node_get(cpu);
-> +	struct device_node *cpu_node __free(device_node) = of_cpu_device_node_get(cpu);
->  	if (!cpu_node)
->  		return -ENODEV;
->  
->  	states = devm_kcalloc(dev, state_count, sizeof(*states), GFP_KERNEL);
-> -	if (!states) {
-> -		ret = -ENOMEM;
-> -		goto fail;
-> -	}
-> +	if (!states)
-> +		return -ENOMEM;
->  
->  	/* Parse SBI specific details from state DT nodes */
->  	for (i = 1; i < state_count; i++) {
-> @@ -264,10 +262,8 @@ static int sbi_cpuidle_dt_init_states(struct device *dev,
->  
->  		pr_debug("sbi-state %#x index %d\n", states[i], i);
->  	}
-> -	if (i != state_count) {
-> -		ret = -ENODEV;
-> -		goto fail;
-> -	}
-> +	if (i != state_count)
-> +		return -ENODEV;
->  
->  	/* Initialize optional data, used for the hierarchical topology. */
->  	ret = sbi_dt_cpu_init_topology(drv, data, state_count, cpu);
-The handling of error ret from here doesn't free the node.
+LOL, in a previous patch series I had the upper-to-lowercase in a
+separate patch and someone yelled at me to do the opposite and squash
+it together [1]. It doesn't really matter too much to me, but given
+the previous feedback I've just been suggesting that Tejas squash it
+together with his conversions. I'm OK either way, though.
 
-Bug or something subtle I'm missing?
+[1] https://lore.kernel.org/r/CAA8EJpo4WzMPNjpnkHt-_GJe2TAF_i_G+eTaJrGipMEz=
+ppc3rQ@mail.gmail.com
 
-If it's a bug, then fixes tag.
-
-
-> @@ -277,10 +273,7 @@ static int sbi_cpuidle_dt_init_states(struct device *dev,
->  	/* Store states in the per-cpu struct. */
->  	data->states = states;
->  
-> -fail:
-> -	of_node_put(cpu_node);
-> -
-> -	return ret;
-> +	return 0;
->  }
->  
->  static void sbi_cpuidle_deinit_cpu(int cpu)
-
+-Doug
 
