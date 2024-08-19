@@ -1,212 +1,241 @@
-Return-Path: <linux-kernel+bounces-292177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20069956C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5241B956C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464A81C22DE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D255D1F2357E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852BB16D305;
-	Mon, 19 Aug 2024 13:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzYMALxf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E31516C6A3;
-	Mon, 19 Aug 2024 13:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C15E17C233;
+	Mon, 19 Aug 2024 13:26:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BA916C6A3;
+	Mon, 19 Aug 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724073990; cv=none; b=hdF8MmAnd5sSrTHKbEhIaiUTl1xfBYXYB6/BJWEm/u3a/dctxJcCTHw5/T+hnT0GxH32pqjsVNfNfKhY57WuBymGpYRnnU+8RPp1+6fZhf7OVa906yEEBwatyxiMaJ3QlTHTKxlBPGHqp0eilK6AWw+l/+q7lU7suKsIhw1jlr0=
+	t=1724074012; cv=none; b=eLkaVDiqRaP8egV5slpozehUDxAtJWvyG2dieqhjrhEfKa/GyuuuqJZUgJABvg2+wRXy0SbynjVOlUq1EFSIj3hDOmzqdnV8Dje0Oo7b1cey87RqYLVk+D4DutdFJLlKQYvZPGYsuzp594V4k0WIckBXRzwDKfIE8Lmryzbl9XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724073990; c=relaxed/simple;
-	bh=dJ+rDWoWFHmpFfQFRfVYcN7e6q0DdAmVKhsuf50HXEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VQ8M8FZitzGj9YipvNtNWV87/HzZS+Ka1HawxpaUz2ayIg5E8SzPdCcjHrK6ypwvtBhq5MmcSXBwCip8IrnualNxPkK+yaoIrgXpm+h9ntcI1+FWnX7+m80nPfOUNzAJncMZh1fbbxdhi+PZldvgLZny4oNeqyz/0Xz3JEAK/ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzYMALxf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167AEC32782;
-	Mon, 19 Aug 2024 13:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724073990;
-	bh=dJ+rDWoWFHmpFfQFRfVYcN7e6q0DdAmVKhsuf50HXEg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=GzYMALxf1RZRpIyPO+VsvpTUANB1bpzXGPePuvlNfZmaNUt6uhdZdgreRGZS1fMAz
-	 RoyzF0gZmc7pG8QGoBLzR253jz5U3ox2IJJLNKP3jBgPvIKAx4+gk/bsrH7DCc2AM2
-	 bbLfYsHFW6517p0FL0QjGhSEj2x8NdWSilO/FPKVLJvMmWlxP86E/7e4OX42+147fy
-	 ljns+cF3wlaLoX990OjPXai4+eOP9BoscEp4vASu//vZEYROk6fdUFAxx2K149oTpT
-	 PmVMuLgx3qOpImgXm+fc39cEWDDNt0EwctDtJ5lf6JMYHc4W1rUIyyVK+U0esx8WLT
-	 WrmeN5has+4QA==
-Message-ID: <f0ac4b0489da5f6198cb7c70f312e2889e97ea4e.camel@kernel.org>
-Subject: Re: [PATCH 1/3] nfsd: bring in support for delstid draft XDR
- encoding
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever III <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>
-Cc: Dai Ngo <dai.ngo@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>,  Tom Haynes <loghyr@gmail.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux NFS Mailing List
- <linux-nfs@vger.kernel.org>
-Date: Mon, 19 Aug 2024 09:26:27 -0400
-In-Reply-To: <E7E5447E-AD50-437D-8069-C77FFF516DCE@oracle.com>
-References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
-	 <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
-	 <172402584064.6062.2891331764461009092@noble.neil.brown.name>
-	 <6c5af6011ea9adfd45abe4b5252af7319a3dbc94.camel@kernel.org>
-	 <E7E5447E-AD50-437D-8069-C77FFF516DCE@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1724074012; c=relaxed/simple;
+	bh=+0ol8U+5f4hpIwi2SBjnSUTDnRxgf4ARDPozjyJxXDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOfv3zLU6/QITHiWXv2E9Zh8x2TDOVmsg/hslWtuVO0LHGQkHnu23aFoBhZrdwHTIIC/5zwrju7GNZ/IEGErT3XfnumfHNnmybEUbjHPmCmyjuTyg0QTxR1yESb6uZbVtSeQ5FB9L2zgRswH+bdVPzztCz21aJIK6f9IT43V0zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39923339;
+	Mon, 19 Aug 2024 06:27:16 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 241DC3F73B;
+	Mon, 19 Aug 2024 06:26:49 -0700 (PDT)
+Date: Mon, 19 Aug 2024 14:26:43 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: syzbot <syzbot+e199425e3ce5a18d178c@syzkaller.appspotmail.com>
+Cc: bfoster@redhat.com, kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] WARNING in __virt_to_phys (5)
+Message-ID: <ZsNIEyMZFlpaQtPr@J2N7QTR9R3.cambridge.arm.com>
+References: <000000000000983fad061fe3df80@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000983fad061fe3df80@google.com>
 
-On Mon, 2024-08-19 at 13:21 +0000, Chuck Lever III wrote:
->=20
-> > On Aug 19, 2024, at 7:44=E2=80=AFAM, Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >=20
-> > On Mon, 2024-08-19 at 10:04 +1000, NeilBrown wrote:
-> > > On Fri, 16 Aug 2024, Jeff Layton wrote:
-> > >=20
-> > > > +// Generated by lkxdrgen, with hand-edits.
-> > >=20
-> > > I *really* don't like having code in the kernel that is partly
-> > > tool-generated and partly human-generated, and where the boundary isn=
-'t
-> > > obvious (like separate files).
-> > >=20
-> > > If we cannot use tool-generated code as-is, then let's fix the tool.
-> > > If we cannot fix the tool, then include the raw output and a
-> > > human-generated patch which the makefile combines.
-> > >=20
-> > > Ideally the tool should be in tools/, the .x file should be in fs/nfs=
-d/
-> > > and the makefile should apply the one to the other.  We are going to
-> > > want to do that eventually and I think it should be priority.  The to=
-ol
-> > > doesn't have to be bug-free before it lands (nothing is).
-> > >=20
-> > > A particular reason for this is that I cannot review tool-generated
-> > > hand-editted code.  It is too noisy and I don't know which parts are
-> > > worth closer inspection etc.
-> >=20
-> > Fair point. Chuck made some similar comments to me privately, and it
-> > looks like he has updated his xdrgen tool as well.
-> >=20
-> > I'll plan to just respin that part from scratch and regenerate from the
-> > .x files. I'll also keep my hand-edits in a separate commit for the
-> > next version.
-> >=20
-> > It'll probably take me a few days, but I'll try to have something to
-> > resend within the next week or so.
->=20
-> Meanwhile, I'll post the current xdrgen tool for review. It
-> already lives under tools/ as Neil suggested above.
->=20
-> I'm hoping that by providing the .x snippet used to generate the
-> source, and by adding one or two "pragma" annotations to the tool
-> to handle certain exceptions, no hand-edits or extra patching
-> will be needed.
->=20
->=20
+On Sat, Aug 17, 2024 at 09:50:29AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
 
-I'm playing with the new version now and it seems to be much improved.
-Only two real bugs I've hit at this point:
+It looks like that's somewhat stale; that commit no longer exists in the
+arm64/linux.git for-kernelci branch.
 
-1/ Some of the struct specifications need to be typedefs as well. For
-instance, the delstid draft refers to "nfstime4", but the autogenerated
-struct definition doesn't have the typedef for it. It may be best to
-just add typedefs for all of these sorts of structs.
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14240e91980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1bc88a9f65787e86
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e199425e3ce5a18d178c
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/5ef30d34e749/disk-8867bbd4.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a21c2389ebfb/vmlinux-8867bbd4.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9720b12c3f99/Image-8867bbd4.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e199425e3ce5a18d178c@syzkaller.appspotmail.com
+> 
+> bcachefs (loop4): done starting filesystem
+> ------------[ cut here ]------------
+> virt_to_phys used for non-linear address: fffffffffffffff2 (0xfffffffffffffff2)
 
-2/ xdrgen_encode_nfstime4 want a pointer to the nfstime4, but the
-autogenerated code for xdrgen_encode_fattr4_time_deleg_access and
-xdrgen_encode_fattr4_time_deleg_modify try to pass it by value instead.
+That address looks like an error pointer (it's -14 AKA -EFAULT), though
+it's also possible that this is just an offset of -14 from a NULL
+pointer.
 
-These are minor and easily fixed, obviously, but it would be nice to
-not need to do that.
+> WARNING: CPU: 0 PID: 6849 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+> Modules linked in:
+> CPU: 0 PID: 6849 Comm: syz.4.112 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+> lr : __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+> sp : ffff8000a03b6c00
+> x29: ffff8000a03b6c00 x28: 0000000000000002 x27: 1ffff00014076d98
+> x26: 1ffff00014076d94 x25: dfff800000000000 x24: fffffffffffffff2
+> x23: ffff0000c96a2220 x22: 000f600000000000 x21: 000000000000002d
+> x20: fffffffffffffff2 x19: 000ffffffffffff2 x18: 1fffe000367a01de
+> x17: ffff80008f3bd000 x16: ffff80008033878c x15: 0000000000000001
+> x14: 1fffe000367a2e00 x13: 0000000000000000 x12: 0000000000000003
+> x11: 0000000000000001 x10: 0000000000000003 x9 : c187ea6d31d9c500
+> x8 : c187ea6d31d9c500 x7 : ffff8000802aebf8 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+> x2 : ffff0000dc418000 x1 : ffff80008b3800a0 x0 : ffff8001249f9000
+> Call trace:
+>  __virt_to_phys+0xc4/0x138 arch/arm64/mm/physaddr.c:12
+>  virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+>  virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+>  virt_to_folio include/linux/mm.h:1313 [inline]
+>  kfree+0xa4/0x3f4 mm/slub.c:4549
+>  bch2_ioctl_fsck_online+0x358/0x580 fs/bcachefs/chardev.c:853
 
-Nice work!
---=20
-Jeff Layton <jlayton@kernel.org>
+AFAICT that's the kfree in the following block:
+
+	char *optstr = strndup_user((char __user *)(unsigned long) arg.opts, 1 << 16);
+
+	ret =   PTR_ERR_OR_ZERO(optstr) ?:
+		bch2_parse_mount_opts(c, &thr->opts, NULL, optstr);
+	if (!IS_ERR(optstr))
+		kfree(optstr);
+
+... where (in v6.11-rc4) that kfree(optstr) is on line 853, and the
+prior strndup_user() can return -EFAULT, but that *should* be caught by
+the '!IS_ERR(optstr)' check.
+
+Another possibility is that the kfree is a tail-call at the end of
+bch2_parse_mount_opts(), and somehow 'copied_opts_start' there is -EFAULT, but
+I cannot immeditately see how that could be the case either.
+
+Mark.
+
+>  bch2_fs_ioctl+0x23ec/0x3980 fs/bcachefs/chardev.c:927
+>  bch2_fs_file_ioctl+0x7b8/0x2460 fs/bcachefs/fs-ioctl.c:539
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+>  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> irq event stamp: 80570
+> hardirqs last  enabled at (80569): [<ffff8000802aec98>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1418 [inline]
+> hardirqs last  enabled at (80569): [<ffff8000802aec98>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5162
+> hardirqs last disabled at (80570): [<ffff80008b1fe010>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+> softirqs last  enabled at (80550): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
+> softirqs last  enabled at (80550): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
+> softirqs last disabled at (80541): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
+> ---[ end trace 0000000000000000 ]---
+> Unable to handle kernel paging request at virtual address ffffffffc375ffc8
+> KASAN: maybe wild-memory-access in range [0x0003fffe1baffe40-0x0003fffe1baffe47]
+> Mem abort info:
+>   ESR = 0x0000000096000006
+>   EC = 0x25: DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+>   FSC = 0x06: level 2 translation fault
+> Data abort info:
+>   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001ac6da000
+> [ffffffffc375ffc8] pgd=0000000000000000, p4d=00000001afff8003, pud=00000001afff9003, pmd=0000000000000000
+> Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 0 PID: 6849 Comm: syz.4.112 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : _compound_head include/linux/page-flags.h:245 [inline]
+> pc : virt_to_folio include/linux/mm.h:1315 [inline]
+> pc : kfree+0xbc/0x3f4 mm/slub.c:4549
+> lr : virt_to_phys arch/arm64/include/asm/memory.h:368 [inline]
+> lr : virt_to_pfn arch/arm64/include/asm/memory.h:382 [inline]
+> lr : virt_to_folio include/linux/mm.h:1313 [inline]
+> lr : kfree+0xa4/0x3f4 mm/slub.c:4549
+> sp : ffff8000a03b6c30
+> x29: ffff8000a03b6c40 x28: 0000000000000002 x27: 1ffff00014076d98
+> x26: 1ffff00014076d94 x25: dfff800000000000 x24: fffffffffffffff2
+> x23: ffff0000c96a2220 x22: ffff0000ef24a2d0 x21: fffffffffffffff2
+> x20: ffffffffc375ffc0 x19: ffff8000828128a8 x18: 1fffe000367a01de
+> x17: ffff80008f3bd000 x16: ffff80008033878c x15: 0000000000000001
+> x14: 1fffe000367a2e00 x13: 0000000000000000 x12: 0000000000000003
+> x11: 0000000000040000 x10: 0000000000015b3d x9 : 00003e000375ffc0
+> x8 : ffffc1ffc0000000 x7 : ffff8000802aebf8 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+> x2 : ffff0000dc418000 x1 : ffff80008b3800a0 x0 : 000080011d7ffff2
+> Call trace:
+>  virt_to_folio include/linux/mm.h:1313 [inline]
+>  kfree+0xbc/0x3f4 mm/slub.c:4549
+>  bch2_ioctl_fsck_online+0x358/0x580 fs/bcachefs/chardev.c:853
+>  bch2_fs_ioctl+0x23ec/0x3980 fs/bcachefs/chardev.c:927
+>  bch2_fs_file_ioctl+0x7b8/0x2460 fs/bcachefs/fs-ioctl.c:539
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+>  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> Code: 927acd29 f2d83fe8 cb141929 8b080134 (f9400688) 
+> ---[ end trace 0000000000000000 ]---
+> ----------------
+> Code disassembly (best guess):
+>    0:	927acd29 	and	x9, x9, #0x3ffffffffffffc0
+>    4:	f2d83fe8 	movk	x8, #0xc1ff, lsl #32
+>    8:	cb141929 	sub	x9, x9, x20, lsl #6
+>    c:	8b080134 	add	x20, x9, x8
+> * 10:	f9400688 	ldr	x8, [x20, #8] <-- trapping instruction
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
