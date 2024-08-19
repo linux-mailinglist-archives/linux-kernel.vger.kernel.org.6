@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-291438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D88956288
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D70895628B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C161C210C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D03280A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812BE13B5A6;
-	Mon, 19 Aug 2024 04:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D51713D2AF;
+	Mon, 19 Aug 2024 04:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OxaHkZKC"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqT9a7ah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F4813D283
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BED38394;
+	Mon, 19 Aug 2024 04:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724040976; cv=none; b=JNW3T9PE42+cTeLg4k8OtTUJjSZyAqwqktzGT4ixb5g3ZLmbvzQZIntB/qxldZd0W25fVscG5kXwgcksPJM21M3vhYS3mxehZzxsAQfB399k7Kzza/nN0Ra4ZCqntFNpAAni5T26k7vaO6g9SGASV4lOIcNSPKv6DlbFzBMn+rU=
+	t=1724041071; cv=none; b=YZ4zRiUC2Kku0Se9M8yq5qsVRrWPnM55ApvFmGkUP2u9Lz+cefkqXCtKxb2C99hMqSOqB8wNKGB+AP+iZnRxUSOCAoY8+BtmBoukaoU010mhPaiPeMp93jtEaR+bwOKetfwYgUe8cv8P6tFU0yzyPNPTjezfxtOZL+XT2hlczYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724040976; c=relaxed/simple;
-	bh=Hs76a2+BAqGkYgACURNBH0irOWcyhvutjEG2elcrxcM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=apXBAPavuGSK7b8eDpdwGVNIDRV0aWZMEI7/EnWdHnXS6J+I5WqG820IoWVKZV52GrhOCsHJP6SpaRoPVJ9p6XrOSRw/y7sCOssqZH5gBxrC2VXFFhv3g6ZlWI61oepFLZSBbF4L8L50d/kUm6zSB9QYTXdUkx0JqWyh35WmIWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OxaHkZKC; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J3X8T1023559;
-	Mon, 19 Aug 2024 04:16:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:from:to:cc:references
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=o
-	2sTkt1iXiirRrY/2diJQwQvSmFwGnGarq5JCuO5sjM=; b=OxaHkZKCoiBJB6Phj
-	FeTpU8GyzpzaFFgqj9RRmJuxbZjoP6q7caWDCHTTTB/szh35G8sIwRrP2GlcQtM0
-	q2hVn1GIIsFLGxp37KH75bsSwmH0fQHnntbhFdU+kAmIrRwerRIEsdKJis8jscjO
-	BAu0rxXaPz3qNM2Dh6Ud5vGmdCGG2NETbpEeBnYDvMz1dvmFvUtWr4OAJCEwesjQ
-	76TJpyZ+x33FYKjn+FuC+VswvY/A4TOgD82MmsX/QoBGAvw30cjUfSLD3gg1ZaLK
-	FbotKWKHTRU5K5TUc7Comvg6uf4k9obojC02woCzAXziibjaeS1tPXmjHZfJsEjv
-	r5jxg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc5xvda-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 04:16:03 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47J4G2wh022758;
-	Mon, 19 Aug 2024 04:16:02 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc5xvd8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 04:16:02 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47J2pneU013107;
-	Mon, 19 Aug 2024 04:16:01 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41366tvq0r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 04:16:01 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47J4FwAC27984422
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 04:16:00 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 030F120043;
-	Mon, 19 Aug 2024 04:15:58 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2906420040;
-	Mon, 19 Aug 2024 04:15:56 +0000 (GMT)
-Received: from [9.109.204.94] (unknown [9.109.204.94])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 19 Aug 2024 04:15:55 +0000 (GMT)
-Message-ID: <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
-Date: Mon, 19 Aug 2024 09:45:55 +0530
+	s=arc-20240116; t=1724041071; c=relaxed/simple;
+	bh=M3sfCsQ738NNzKcRDJ3YsMDynsmCYn+/KmSEAlKKgKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WY831PpgYNxFAlWdPvirtDbRDClP2W8Ze5prbQ9aCjpjq0OAL9nXcrB2rjatdN/WSx3iqUl3Y0TGg845OhW1gPwSSgcAa/Ha/kuT2R0bzL78NH4koJhz2SiTX1AIDYf9CRUtN2Luhj0cwh2Fd9KbHxvvWqueXZKy9yLlhl4oZtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqT9a7ah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E180FC32782;
+	Mon, 19 Aug 2024 04:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724041071;
+	bh=M3sfCsQ738NNzKcRDJ3YsMDynsmCYn+/KmSEAlKKgKU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pqT9a7ahbnjD9bJ7twx7zQZuTV1sg/2lUe+AbP+1wAHxwOBybH/0yMaNuSQZwoWcO
+	 7FvBeqMm9H8BDCXOPH4Bz4uUGzKTyR/vOBzhQ9GznCNF87NDpGVijlZmr6MGye02YE
+	 /6w4mfamIxDrUIIvQgv7oyxqdTAcydeINy0SeLcnLF93YtKkhALRWuGnK9PYKm6+CM
+	 fnNDyQcoPRWt/AudpT8iriWqSdznEADkam/eg7fUD/GtkqNwffF+WVmEuhuA9NAIkf
+	 ilGulrp1yuG3YIb1il/N392xPOvCghT3Dgy4AjCK0XpNzpRZeJEiGac/l//3EthyTR
+	 lc8XxnFUR6iyg==
+Message-ID: <a3fc662c-fa98-4a6e-807b-babb9a344904@kernel.org>
+Date: Mon, 19 Aug 2024 13:17:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,79 +49,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>, bhe@redhat.com
-Cc: Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
- <87v80lnf8d.fsf@mail.lhotse>
- <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
+Subject: Re: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in
+ progress
+To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bvanassche@acm.org, linuxarm@huawei.com, prime.zeng@huawei.com,
+ stable@vger.kernel.org
+References: <20240817015019.3467765-1-liyihang9@huawei.com>
+ <10c56cbc-a367-44c3-8b14-b846a3c4e4a0@kernel.org>
+ <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-In-Reply-To: <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dkC9HdUkU1ndMyUpgCEV6AyZ0aEUDBK7
-X-Proofpoint-ORIG-GUID: 9BpC5g6i3iCIjSgQoI-_tfZlERenEVta
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_01,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190029
+Organization: Western Digital Research
+In-Reply-To: <4618fc13-4499-53f1-efea-0487f436b353@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Michael and Boaquan
-
-On 01/08/24 12:21, Sourabh Jain wrote:
-> Hello Michael,
->
-> On 01/08/24 08:04, Michael Ellerman wrote:
->> Sourabh Jain <sourabhjain@linux.ibm.com> writes:
->>> The following errors are observed when kexec is done with SMT=off on
->>> powerpc.
+On 8/19/24 13:07, Yihang Li wrote:
+> 
+> 
+> On 2024/8/19 7:55, Damien Le Moal wrote:
+>> On 8/17/24 10:50, Yihang Li wrote:
+>>> If formatting a suspended disk (such as formatting with different DIF
+>>> type), the disk will be resuming first, and then the format command will
+>>> submit to the disk through SG_IO ioctl.
 >>>
->>> [  358.458385] Removing IBM Power 842 compression device
->>> [  374.795734] kexec_core: Starting new kernel
->>> [  374.795748] kexec: Waking offline cpu 1.
->>> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be 
->>> inaccurate
->>> [  374.935833] kexec: Waking offline cpu 2.
->>> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be 
->>> inaccurate
->>> snip..
->>> [  375.515823] kexec: Waking offline cpu 6.
->>> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be 
->>> inaccurate
->>> [  375.695836] kexec: Waking offline cpu 7.
->> Are they actually errors though? Do they block the actual kexec from
->> happening? Or are they just warnings in dmesg?
->
-> The kexec kernel boots fine.
->
-> This warning appears regardless of whether the kdump kernel is loaded.
->
-> However, when the kdump kernel is loaded, we will not be able to 
-> update the kdump image (FDT).
-> I think this should be fine given that kexec is in progress.
->
-> Please let me know your opinion.
->
->> Because the fix looks like it could be racy.
->
-> It seems like it is racy, but given that kexec takes the lock first 
-> and then
-> brings the CPU up, which triggers the kdump image, which always fails to
-> update the kdump image because it could not take the same lock.
->
-> Note: the kexec lock is not released unless kexec boot fails.
+>>> When the disk is processing the format command, the system does not submit
+>>> other commands to the disk. Therefore, the system attempts to suspend the
+>>> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+>>
+>> Why would the system try to suspend the disk with a request in flight ? Sounds
+>> like there is a bug with PM reference counting, no ?
+> 
+> According to my understand and test, the format command request is finished,
+> so it is not in flight for the kernel. And the command need a few time to processing
+> in the disk while no other commands are being sent.
 
-Any comments or suggestions on this fix?
+OK, fine. But I think that retrying SYNC CACHE if the drive is formatting makes
+absolutely no sense at all because there is nothing to flush in that case.
+So what about simply ignoring the error ? I.e. something like this:
 
-Thanks,
-Sourabh Jain
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 699f4f9674d9..1da267b8cd8a 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1824,12 +1824,14 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+                                /* this is no error here */
+                                return 0;
+                        /*
+-                        * This drive doesn't support sync and there's not much
+-                        * we can do because this is called during shutdown
+-                        * or suspend so just return success so those operations
+-                        * can proceed.
++                        * If a format is in progress (asc = LOGICAL UNIT NOT
++                        * READY, ascq = FORMAT IN PROGRESS) or if the drive
++                        * does not support sync, there is not much we can do
++                        * because this is called during shutdown or suspend. So
++                        * just return success so those operations can proceed.
+                         */
+-                       if (sshdr.sense_key == ILLEGAL_REQUEST)
++                       if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
++                           sshdr.sense_key == ILLEGAL_REQUEST)
+                                return 0;
+                }
+
+> 
+>>
+>>> command will fail because the disk is in the formatting process, which
+>>> will cause the runtime_status of the disk to error and it is difficult
+>>> for user to recover it. Error info like:
+>>>
+>>> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+>>> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+>>> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+>>> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+>>>
+>>> To solve the issue, retry the command until format command is finished.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Yihang Li <liyihang9@huawei.com>
+>>> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>>> ---
+>>> Changes since v3:
+>>> - Add Cc tag for kernel stable.
+>>>
+>>> Changes since v2:
+>>> - Add Reviewed-by for Bart.
+>>>
+>>> Changes since v1:
+>>> - Updated and added error information to the patch description.
+>>>
+>>> ---
+>>>  drivers/scsi/sd.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+>>> index adeaa8ab9951..5cd88a8eea73 100644
+>>> --- a/drivers/scsi/sd.c
+>>> +++ b/drivers/scsi/sd.c
+>>> @@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+>>>  			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
+>>>  				/* this is no error here */
+>>>  				return 0;
+>>> +
+>>> +			/* retry if format in progress */
+>>> +			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
+>>> +				return -EBUSY;
+>>> +
+>>>  			/*
+>>>  			 * This drive doesn't support sync and there's not much
+>>>  			 * we can do because this is called during shutdown
+>>
+
+-- 
+Damien Le Moal
+Western Digital Research
 
 
