@@ -1,232 +1,339 @@
-Return-Path: <linux-kernel+bounces-292513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1514957057
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7379B95706A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C50283974
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 821E0B2711C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F84178383;
-	Mon, 19 Aug 2024 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025118005B;
+	Mon, 19 Aug 2024 16:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBe76Htv"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="rgc4PxOX"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488E0175D20
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689361779B1;
+	Mon, 19 Aug 2024 16:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085087; cv=none; b=YNKvvG1wGKw1OZvIvW06PAeoQTkyoQ7gw0jlKpyMjWCd0WLSW69YS0jGz4fnD3SGfAY5k776JVzFRe9MtUf7qM7YS+3i6KO10mzUz7svb8+BiKWAzuP2F8jbO1cXVZzR02rOmsXeeeTvWfs98/fYXW9QZuCMnmmueDk+G7ZSlvM=
+	t=1724085224; cv=none; b=OPMM10elSZ1Q3a9Plv61xnWkmOdUMmgIpCmTjD4gDPL83YFCrlM0/02PjmmsoAaDkc79ncvw+yMCkAvdmuDv+8Xvt84GLSOFN3EQuPcvWCnBzmKGIVMlTdJOC2tetYzU4Htb9VQztIV/mINUyDCKaos21qEH16fkFGTETZL/o/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085087; c=relaxed/simple;
-	bh=GfAX+P6Y37VsUQ+ZmZZXbdPLECUQrpLacQI5cjvMcbA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=moOMmbptx7TvxiuiWcF7DBxi6wsaJsIHrNJqqtlS5lV1cuEM154X0hNPgdJbcLPaiaBw6iAeD3IRoK0eLU1jfZdDUt5AdZA5mCsW4L28+KSebDmA7W3byZY7AG/QVd3++XpUEJusHIoaMkpLmVA5FkCiWS9s8A+am2sYEB0tfNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBe76Htv; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367990aaef3so2815773f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724085083; x=1724689883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g1vzoPvkrxUYmA4vkG1jLM7RsiBC+ves8hqeyXsMQo4=;
-        b=rBe76HtvhQojGtVKlRf7sfgxqf0v3Jh9wEfI+HyG6Ho3tKGMdanLOvHBryBPBethCQ
-         KnYLW0FWKxnpxLoUOqnEr87cthk/Xel1Y8Jfa5aaJ/XE+T76GMK21PukUGa7Jyg6oK0O
-         mHxdlex3RcedgQ/BlHbme0jsmYv9mta4YbZ6Raos0ZZ3WgAJCu+vfrTESEMRDDapNLQA
-         KqtaCLSNkMRkps1tbXj7mDl0s/c9qme55C5+uOkhfW2n3L0GU1TgupXxz4ZOsjS5BleI
-         tNeyob4B0n1KY9kRmi1rp199u1ne+13947ZM5ryrQDcilzDvDXvLxl+b+kh8OR9hWjdb
-         gz2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724085083; x=1724689883;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=g1vzoPvkrxUYmA4vkG1jLM7RsiBC+ves8hqeyXsMQo4=;
-        b=sCKJyIur1KnEvhVMlfJprWginAwpfPFmDOnhRhTyd7RJHAySRIXVeB8KaYYBWPYsQh
-         5YSezJtPdEHbiHoHctH3jgR96wRuDqPZO++nQcDAZIcPneBXUOcIwWALxDV9SQzIXNlp
-         m1SnHZXVzkHSENo31KhViOKtRIq9w+mHAKvDUtdtezLbV1MxWm/wNmuexeza/TfS9t20
-         VlFsnWEq/gK+DlUFdTf1qXZwBYSxLBOuoSQ8jCMVNVL602GnxWxiVsv0i+heexQKj3Bt
-         OSFnH0bq9GMFkJudwvZudxmkjS+I7GTqo0HGsjDQx7Ttcj6odeqWsWKhJi1uNOAXW8hH
-         A/iQ==
-X-Gm-Message-State: AOJu0YzAW0SypIGosExJkZpP1nGoENYfELajiofom8i+RROKEw8GMDdY
-	9cn5SFCqOIB9C8C7LwpENcdBRK+cjOza7NurOZV7DGbJh6QiAfIb4VgPC7zMq4rwGpWfIc9Fu9n
-	T
-X-Google-Smtp-Source: AGHT+IEF3YD7UktYIbb2X2tK1RtPMDnoN1l5z4W+kscLDEtPDSFERgrFEcwC+UYnpXBLNPRmVEowLg==
-X-Received: by 2002:a05:6000:1112:b0:368:714e:5a5e with SMTP id ffacd0b85a97d-3719431764cmr7859133f8f.2.1724085083063;
-        Mon, 19 Aug 2024 09:31:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898ab469sm10965515f8f.100.2024.08.19.09.31.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:31:22 -0700 (PDT)
-Message-ID: <ef485c77-e68b-48b9-9560-159d933bbbc0@linaro.org>
-Date: Mon, 19 Aug 2024 18:31:22 +0200
+	s=arc-20240116; t=1724085224; c=relaxed/simple;
+	bh=1rmRkOp/G1zw1BTYJ88TooQhz7hpFirwprXdmYNqyaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ayjiNCecwrbsfHClUs2q1eWNFYWOv2odsm1TSAZBSACrso1jxlFGk3345O0NGbmNVwaTbJ+H5yRgWYEd0XbO0P4Okd96y/Ksd1CtILrZZRKGQknDR65xvWUCIhzbc8ogcyDFSJSboOc+3lEoS1H4pwDi6Y4W5tHK+IXzHvySQsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=rgc4PxOX reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id e201a420142ffabc; Mon, 19 Aug 2024 18:33:40 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id ED81573B5D4;
+	Mon, 19 Aug 2024 18:33:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724085220;
+	bh=1rmRkOp/G1zw1BTYJ88TooQhz7hpFirwprXdmYNqyaI=;
+	h=From:Subject:Date;
+	b=rgc4PxOXVPGouUEJ3yGeFumjpFB6LsTB7KTuFxJfE+EW9SuKVWa5zZNvogKnhSI0r
+	 tUiwVyVmT9twmwwEzJUiU6ot7v3o21qIC7QzOAfQOrtNtIQFFh15gixqAk23acu4UP
+	 9BUj7BjykllFhBCrnhEbd83qSngnhWwdWIU6pJbbOo7oqo7RTKsWk3ybK0deER4XXY
+	 xe7eyGqrrQe5rAK3GohvbSGaYoIlnWlaIYZcuyinsI933DnY21lrkY26ZWBKOE8tEs
+	 si3mBcHnVubxYNpANvJ8ZvEA0qC9a1IAxwZ0OObt2D70cLnBVmOMWO1Bas1N5cmCMs
+	 1gpiyK+5tJrxg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v3 13/14] thermal: core: Drop unused bind/unbind functions and
+ callbacks
+Date: Mon, 19 Aug 2024 18:31:33 +0200
+Message-ID: <4251116.1IzOArtZ34@rjwysocki.net>
+In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
+References: <2205737.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 7/9] reset: amlogic: move drivers to a dedicated
- directory
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-8-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240808102742.4095904-8-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
+ rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On 08/08/2024 12:27, Jerome Brunet wrote:
-> The meson reset driver will be split in two part, one implemeting the ops,
-> the other providing the platform driver support. This will be done to
-> facilitate the addition of the auxiliary bus support.
-> 
-> To avoid making a mess in drivers/reset/ while doing so, move the amlogic
-> reset drivers to a dedicated directory.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/reset/Kconfig                             | 15 +--------------
->   drivers/reset/Makefile                            |  3 +--
->   drivers/reset/amlogic/Kconfig                     | 13 +++++++++++++
->   drivers/reset/amlogic/Makefile                    |  2 ++
->   .../reset/{ => amlogic}/reset-meson-audio-arb.c   |  0
->   drivers/reset/{ => amlogic}/reset-meson.c         |  0
->   6 files changed, 17 insertions(+), 16 deletions(-)
->   create mode 100644 drivers/reset/amlogic/Kconfig
->   create mode 100644 drivers/reset/amlogic/Makefile
->   rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
->   rename drivers/reset/{ => amlogic}/reset-meson.c (100%)
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 67bce340a87e..0c092ae1b411 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -140,20 +140,6 @@ config RESET_MCHP_SPARX5
->   	help
->   	  This driver supports switch core reset for the Microchip Sparx5 SoC.
->   
-> -config RESET_MESON
-> -	tristate "Meson Reset Driver"
-> -	depends on ARCH_MESON || COMPILE_TEST
-> -	default ARCH_MESON
-> -	help
-> -	  This enables the reset driver for Amlogic Meson SoCs.
-> -
-> -config RESET_MESON_AUDIO_ARB
-> -	tristate "Meson Audio Memory Arbiter Reset Driver"
-> -	depends on ARCH_MESON || COMPILE_TEST
-> -	help
-> -	  This enables the reset driver for Audio Memory Arbiter of
-> -	  Amlogic's A113 based SoCs
-> -
->   config RESET_NPCM
->   	bool "NPCM BMC Reset Driver" if COMPILE_TEST
->   	default ARCH_NPCM
-> @@ -343,6 +329,7 @@ config RESET_ZYNQMP
->   	help
->   	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
->   
-> +source "drivers/reset/amlogic/Kconfig"
->   source "drivers/reset/starfive/Kconfig"
->   source "drivers/reset/sti/Kconfig"
->   source "drivers/reset/hisilicon/Kconfig"
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 27b0bbdfcc04..bf089176c9f4 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -1,5 +1,6 @@
->   # SPDX-License-Identifier: GPL-2.0
->   obj-y += core.o
-> +obj-y += amlogic/
->   obj-y += hisilicon/
->   obj-y += starfive/
->   obj-y += sti/
-> @@ -20,8 +21,6 @@ obj-$(CONFIG_RESET_K210) += reset-k210.o
->   obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
->   obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->   obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
-> -obj-$(CONFIG_RESET_MESON) += reset-meson.o
-> -obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->   obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
->   obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
->   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
-> new file mode 100644
-> index 000000000000..7ed9cf50f038
-> --- /dev/null
-> +++ b/drivers/reset/amlogic/Kconfig
-> @@ -0,0 +1,13 @@
-> +config RESET_MESON
-> +	tristate "Meson Reset Driver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	default ARCH_MESON
-> +	help
-> +	  This enables the reset driver for Amlogic Meson SoCs.
-> +
-> +config RESET_MESON_AUDIO_ARB
-> +	tristate "Meson Audio Memory Arbiter Reset Driver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	help
-> +	  This enables the reset driver for Audio Memory Arbiter of
-> +	  Amlogic's A113 based SoCs
-> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
-> new file mode 100644
-> index 000000000000..55509fc78513
-> --- /dev/null
-> +++ b/drivers/reset/amlogic/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-$(CONFIG_RESET_MESON) += reset-meson.o
-> +obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-> diff --git a/drivers/reset/reset-meson-audio-arb.c b/drivers/reset/amlogic/reset-meson-audio-arb.c
-> similarity index 100%
-> rename from drivers/reset/reset-meson-audio-arb.c
-> rename to drivers/reset/amlogic/reset-meson-audio-arb.c
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/amlogic/reset-meson.c
-> similarity index 100%
-> rename from drivers/reset/reset-meson.c
-> rename to drivers/reset/amlogic/reset-meson.c
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+There are no more callers of thermal_zone_bind_cooling_device() and
+thermal_zone_unbind_cooling_device(), so drop them along with all of
+the corresponding headers, code and documentation.
+
+Moreover, because the .bind() and .unbind() thermal zone callbacks would
+only be used when the above functions, respectively, were called, drop
+them as well along with all of the code related to them.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v2 -> v3: No changes
+
+v1 -> v2:
+   * Update the list of thermal zone ops in the documentation.
+
+---
+ Documentation/driver-api/thermal/sysfs-api.rst |   59 +------------------
+ drivers/thermal/thermal_core.c                 |   75 +------------------------
+ include/linux/thermal.h                        |   10 ---
+ 3 files changed, 6 insertions(+), 138 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -878,28 +878,6 @@ free_mem:
+ 	return result;
+ }
+ 
+-int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
+-				     int trip_index,
+-				     struct thermal_cooling_device *cdev,
+-				     unsigned long upper, unsigned long lower,
+-				     unsigned int weight)
+-{
+-	int ret;
+-
+-	if (trip_index < 0 || trip_index >= tz->num_trips)
+-		return -EINVAL;
+-
+-	mutex_lock(&tz->lock);
+-
+-	ret = thermal_bind_cdev_to_trip(tz, &tz->trips[trip_index].trip, cdev,
+-					upper, lower, weight);
+-
+-	mutex_unlock(&tz->lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(thermal_zone_bind_cooling_device);
+-
+ /**
+  * thermal_unbind_cdev_from_trip - unbind a cooling device from a thermal zone.
+  * @tz:		pointer to a struct thermal_zone_device.
+@@ -945,25 +923,6 @@ unbind:
+ 	return 0;
+ }
+ 
+-int thermal_zone_unbind_cooling_device(struct thermal_zone_device *tz,
+-				       int trip_index,
+-				       struct thermal_cooling_device *cdev)
+-{
+-	int ret;
+-
+-	if (trip_index < 0 || trip_index >= tz->num_trips)
+-		return -EINVAL;
+-
+-	mutex_lock(&tz->lock);
+-
+-	ret = thermal_unbind_cdev_from_trip(tz, &tz->trips[trip_index].trip, cdev);
+-
+-	mutex_unlock(&tz->lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(thermal_zone_unbind_cooling_device);
+-
+ static void thermal_release(struct device *dev)
+ {
+ 	struct thermal_zone_device *tz;
+@@ -992,14 +951,8 @@ void print_bind_err_msg(struct thermal_z
+ 			const struct thermal_trip *trip,
+ 			struct thermal_cooling_device *cdev, int ret)
+ {
+-	if (trip) {
+-		dev_err(&tz->device, "binding cdev %s to trip %d failed: %d\n",
+-			cdev->type, thermal_zone_trip_id(tz, trip), ret);
+-		return;
+-	}
+-
+-	dev_err(&tz->device, "binding zone %s with cdev %s failed:%d\n",
+-		tz->type, cdev->type, ret);
++	dev_err(&tz->device, "binding cdev %s to trip %d failed: %d\n",
++		cdev->type, thermal_zone_trip_id(tz, trip), ret);
+ }
+ 
+ static void thermal_zone_cdev_binding(struct thermal_zone_device *tz,
+@@ -1008,18 +961,6 @@ static void thermal_zone_cdev_binding(st
+ 	struct thermal_trip_desc *td;
+ 	int ret;
+ 
+-	/*
+-	 * Old-style binding. The .bind() callback is expected to call
+-	 * thermal_bind_cdev_to_trip() under the thermal zone lock.
+-	 */
+-	if (tz->ops.bind) {
+-		ret = tz->ops.bind(tz, cdev);
+-		if (ret)
+-			print_bind_err_msg(tz, NULL, cdev, ret);
+-
+-		return;
+-	}
+-
+ 	if (!tz->ops.should_bind)
+ 		return;
+ 
+@@ -1346,15 +1287,6 @@ static void thermal_zone_cdev_unbinding(
+ {
+ 	struct thermal_trip_desc *td;
+ 
+-	/*
+-	 * Old-style unbinding.  The .unbind callback is expected to call
+-	 * thermal_unbind_cdev_from_trip() under the thermal zone lock.
+-	 */
+-	if (tz->ops.unbind) {
+-		tz->ops.unbind(tz, cdev);
+-		return;
+-	}
+-
+ 	mutex_lock(&tz->lock);
+ 
+ 	for_each_trip_desc(tz, td)
+@@ -1488,8 +1420,7 @@ thermal_zone_device_register_with_trips(
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (!ops || !ops->get_temp || (ops->should_bind && ops->bind) ||
+-	    (ops->should_bind && ops->unbind)) {
++	if (!ops || !ops->get_temp) {
+ 		pr_err("Thermal zone device ops not defined or invalid\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+Index: linux-pm/include/linux/thermal.h
+===================================================================
+--- linux-pm.orig/include/linux/thermal.h
++++ linux-pm/include/linux/thermal.h
+@@ -92,10 +92,6 @@ struct cooling_spec {
+ };
+ 
+ struct thermal_zone_device_ops {
+-	int (*bind) (struct thermal_zone_device *,
+-		     struct thermal_cooling_device *);
+-	int (*unbind) (struct thermal_zone_device *,
+-		       struct thermal_cooling_device *);
+ 	bool (*should_bind) (struct thermal_zone_device *,
+ 			     const struct thermal_trip *,
+ 			     struct thermal_cooling_device *,
+@@ -247,12 +243,6 @@ const char *thermal_zone_device_type(str
+ int thermal_zone_device_id(struct thermal_zone_device *tzd);
+ struct device *thermal_zone_device(struct thermal_zone_device *tzd);
+ 
+-int thermal_zone_bind_cooling_device(struct thermal_zone_device *, int,
+-				     struct thermal_cooling_device *,
+-				     unsigned long, unsigned long,
+-				     unsigned int);
+-int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+-				       struct thermal_cooling_device *);
+ void thermal_zone_device_update(struct thermal_zone_device *,
+ 				enum thermal_notify_event);
+ 
+Index: linux-pm/Documentation/driver-api/thermal/sysfs-api.rst
+===================================================================
+--- linux-pm.orig/Documentation/driver-api/thermal/sysfs-api.rst
++++ linux-pm/Documentation/driver-api/thermal/sysfs-api.rst
+@@ -58,10 +58,9 @@ temperature) and throttle appropriate de
+     ops:
+ 	thermal zone device call-backs.
+ 
+-	.bind:
+-		bind the thermal zone device with a thermal cooling device.
+-	.unbind:
+-		unbind the thermal zone device with a thermal cooling device.
++	.should_bind:
++		check whether or not a given cooling device should be bound to
++		a given trip point in this thermal zone.
+ 	.get_temp:
+ 		get the current temperature of the thermal zone.
+ 	.set_trips:
+@@ -246,56 +245,6 @@ temperature) and throttle appropriate de
+     It deletes the corresponding entry from /sys/class/thermal folder and
+     unbinds itself from all the thermal zone devices using it.
+ 
+-1.3 interface for binding a thermal zone device with a thermal cooling device
+------------------------------------------------------------------------------
+-
+-    ::
+-
+-	int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
+-		int trip, struct thermal_cooling_device *cdev,
+-		unsigned long upper, unsigned long lower, unsigned int weight);
+-
+-    This interface function binds a thermal cooling device to a particular trip
+-    point of a thermal zone device.
+-
+-    This function is usually called in the thermal zone device .bind callback.
+-
+-    tz:
+-	  the thermal zone device
+-    cdev:
+-	  thermal cooling device
+-    trip:
+-	  indicates which trip point in this thermal zone the cooling device
+-	  is associated with.
+-    upper:
+-	  the Maximum cooling state for this trip point.
+-	  THERMAL_NO_LIMIT means no upper limit,
+-	  and the cooling device can be in max_state.
+-    lower:
+-	  the Minimum cooling state can be used for this trip point.
+-	  THERMAL_NO_LIMIT means no lower limit,
+-	  and the cooling device can be in cooling state 0.
+-    weight:
+-	  the influence of this cooling device in this thermal
+-	  zone.  See 1.4.1 below for more information.
+-
+-    ::
+-
+-	int thermal_zone_unbind_cooling_device(struct thermal_zone_device *tz,
+-				int trip, struct thermal_cooling_device *cdev);
+-
+-    This interface function unbinds a thermal cooling device from a particular
+-    trip point of a thermal zone device. This function is usually called in
+-    the thermal zone device .unbind callback.
+-
+-    tz:
+-	the thermal zone device
+-    cdev:
+-	thermal cooling device
+-    trip:
+-	indicates which trip point in this thermal zone the cooling device
+-	is associated with.
+-
+ 1.4 Thermal Zone Parameters
+ ---------------------------
+ 
+@@ -366,8 +315,6 @@ Thermal cooling device sys I/F, created
+ 
+ Then next two dynamic attributes are created/removed in pairs. They represent
+ the relationship between a thermal zone and its associated cooling device.
+-They are created/removed for each successful execution of
+-thermal_zone_bind_cooling_device/thermal_zone_unbind_cooling_device.
+ 
+ ::
+ 
+
+
+
 
