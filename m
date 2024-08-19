@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-292801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB24495748D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D041B957492
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D6A285FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8751C20F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41B51DC473;
-	Mon, 19 Aug 2024 19:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F101DC47B;
+	Mon, 19 Aug 2024 19:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iyT8C1zi"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6aQ1s4b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873D99460;
-	Mon, 19 Aug 2024 19:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F082D179206;
+	Mon, 19 Aug 2024 19:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096220; cv=none; b=h8sQFvLKsD2++8XUXWDMlfXnaWJjy1WMDW4Erie63+o8TaOayR7ESn7yFQdvquE31W3Dlnp/c4IExt2rv0M7bTzdBT2y/mp26hV2MxcrrWh3wl1il2VEwLkTSV6FaL1JmLn0KHCIW4VK95xZHmbPcB+3XXS2v7PttcSUvt74oNw=
+	t=1724096271; cv=none; b=YGyUaDu8gjMPgtK/V9040+0wPphTFWRIFu/J10n64FctBwCDn95BjLU+5zyPjOoW8oTNtdX2aezAyIfylBZdbEYMl8lREc1Bj2X0G/KyH5LXl2HXrDOgOo5ygpqpbAqg40Fzm9Nnn2Y0NHKr2OYepksfOlp+mBa63rKKHdHZFEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096220; c=relaxed/simple;
-	bh=uaT8W2cHmWPSMhnMFf+mMks8PU0cfLZOZSsqLBMc8Ps=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qAq0wYy/oNAIhk8jIbvr3eCnel+y6b3JL4xF2wL00NLwy0Y0cYY+IbvONgoyj1w1RONfc5UsRcZLxHs8WJb6W6rOZTOeJCqWdWp945dZjXekMdvaVXIQAyjApGF5kMr4uH+0vKqUjNZx8Z4kzzeG5gXyEBZTyfiIjSrp6+Qoe4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iyT8C1zi; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JIJvXc011235;
-	Mon, 19 Aug 2024 19:36:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=corp-2023-11-20; bh=WfSDpCVRbLP2gF
-	yi+ViQVJY/cDfBP//dv0SZ/0dh2Ew=; b=iyT8C1zioEdqJU1S0f2AT8UnAExgef
-	xOIQqk18ORGGSyFwycSO0E9GwVsNEi5gCSMDJnmum2oC/Am82/hivFobk6zV8w3H
-	x5yfthR5GiId40c5h4njPzV5Mtiovnnzh+YlMcX+CSOT3vVXAnxVAGWy+vYJzD1d
-	ENDkS16xMBBBzygvK14JmMxGcFDNGk4qS/WgWtfb47IiMa3oToCHJfuu4VGHmk3M
-	KuiDQeJlUeWMEuEO30Yheul4LZJG9ggTYzY4wl6XjInbDXIUqLsyxgrf/jgWk7kY
-	t4ln1zWI4zqmf59FyDIsJMtoQeCRR4T7R447DF7QMtexRcwib6reOLIQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m67bdry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 19:36:47 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47JI1BoD037641;
-	Mon, 19 Aug 2024 19:36:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 413h5shynh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 19:36:46 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47JJajjU028358;
-	Mon, 19 Aug 2024 19:36:45 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 413h5shym6-1;
-	Mon, 19 Aug 2024 19:36:45 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
-        Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
-        Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>,
-        Sonal Santan <sonal.santan@amd.com>, Max Zhen <max.zhen@amd.com>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] dmaengine: xilinx: xdma: Fix IS_ERR() vs NULL bug in xdma_probe()
-Date: Mon, 19 Aug 2024 12:36:40 -0700
-Message-ID: <20240819193641.600176-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1724096271; c=relaxed/simple;
+	bh=PBpJQ8cfDdo8zKxS2UDG3hX3O201hSXAedV6WAjp/lM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1mxhklKJic3xAtniBMcdY8NdQyMjC2XvF5cIwooMFcNDZHZ30Q+Pjx0kkQLuOOcXmQCfHhNGC3G7XMhoaTB4NE0xpz8VfAioMcTzT9Pb+YGVlctisV44+EwN1nemkuOGThg5TCGhneHUJUGsSBmmb34pX7ebOXg1E8kmln5oVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6aQ1s4b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AFEC32782;
+	Mon, 19 Aug 2024 19:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724096270;
+	bh=PBpJQ8cfDdo8zKxS2UDG3hX3O201hSXAedV6WAjp/lM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a6aQ1s4bUuunpkVUp958GYp0M2sjA6aZC0yJrkvCM1UM4PCnCJqCbPdp/w1bJ4zyx
+	 VTHmzuFjxkkMcTSXh9g0EWhr3lWYLaOemIFyb4k8tFMJiPtsTNX7AjfFcoZp0Iv6Uq
+	 d8jMM5bOcjh3Zr2BXCeO1z3FCmwU/N4aiXM0icJEPy//XcpvsxMiHIHLpePjxrCtx1
+	 Cv2cKG96OWMQhaogyaakBwPsbhSZrl2nzrEpoNHKoGKMh+26vgHJByXH911KTL2yw1
+	 5ssbFdCS7tEkvoBT5cxA1jGmU7JIm1PyZJV9+QVyx1a/wsyIIeQj0LJqkVKxzrzu3Y
+	 qE/YYgvcDs4iA==
+Date: Mon, 19 Aug 2024 21:37:44 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 05/11] i2c: riic: Add suspend/resume support
+Message-ID: <ajj4fwoob5wq5guktq2b54h55fn5qlcakiybq6pk3xagiops7d@abpwevzemidy>
+References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240819102348.1592171-6-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408190133
-X-Proofpoint-ORIG-GUID: nuWlg6L4e4M8i_2_jREaf2qEeNzMUwkQ
-X-Proofpoint-GUID: nuWlg6L4e4M8i_2_jREaf2qEeNzMUwkQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819102348.1592171-6-claudiu.beznea.uj@bp.renesas.com>
 
-devm_regmap_init_mmio() returns error pointers on error, it doesn't
-return NULL. Update the error check.
+Hi Claudiu,
 
-Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with smatch, only compile tested.
----
- drivers/dma/xilinx/xdma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Mon, Aug 19, 2024 at 01:23:42PM GMT, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Add suspend/resume support for the RIIC driver. This is necessary for the
+> Renesas RZ/G3S SoC which support suspend to deep sleep state where power
+> to most of the SoC components is turned off. As a result the I2C controller
+> needs to be reconfigured after suspend/resume. For this, the reset line
+> was stored in the driver private data structure as well as i2c timings.
+> The reset line and I2C timings are necessary to re-initialize the
+> controller after resume.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 718842fdaf98..44fae351f0a0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -1240,7 +1240,8 @@ static int xdma_probe(struct platform_device *pdev)
- 
- 	xdev->rmap = devm_regmap_init_mmio(&pdev->dev, reg_base,
- 					   &xdma_regmap_config);
--	if (!xdev->rmap) {
-+	if (IS_ERR(xdev->rmap)) {
-+		ret = PTR_ERR(xdev->rmap);
- 		xdma_err(xdev, "config regmap failed: %d", ret);
- 		goto failed;
- 	}
--- 
-2.39.3
+This patch doesn't have tags, so I'll add mine :-)
 
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
+
+Just one thing, though...
+
+...
+
+> +static int riic_i2c_resume(struct device *dev)
+> +{
+> +	struct riic_dev *riic = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = reset_control_deassert(riic->rstc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = riic_init_hw(riic);
+> +	if (ret) {
+> +		reset_control_assert(riic->rstc);
+> +		return ret;
+
+Can I add a comment here saying:
+
+	/*
+	 * Since the driver remains loaded after resume,
+	 * we want the reset line to be asserted.
+	 */
+	reset_control_assert(riic->rstc);
+
+Unless I missed the point :-)
+
+Thanks,
+Andi
 
