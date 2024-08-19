@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-292780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9233B95744A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B684957451
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22433B23507
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8E51C23575
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557171DC467;
-	Mon, 19 Aug 2024 19:19:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B413E1D54C4;
+	Mon, 19 Aug 2024 19:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tHd049/5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ByLpgSbW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5A51DB45B;
-	Mon, 19 Aug 2024 19:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586474438B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724095178; cv=none; b=ScnLbZJw6AfvfZ9VBDuh+cWMUyNcnnumC1J8XxMyePCfcsvzDjTOzF01PaHGEDwTmsIWAkKMhbOk8v/vdelqLAb+IMJrWaR3QYNFJwkj4RlSTG8UETC8SaT3TvM2m0dvhwaTi2e3MmPH6wiSRXMg2U4iL56Mi5gsqucnFHI0458=
+	t=1724095399; cv=none; b=mqyqEX1YHUJ06xNM/+Yey/GdOK8KYhvQu/rHYtbbgNNR54dzO/q70+Qq6uJ/m7WhyY/Aq3JmscZAjcXcz4VTZd+5P1a259hnr7DFL7VVV7aPpHa/I7rXhrUZQkyAky4A2NuN+th7XsGBOIC9hpp/hlQ0DwEsAbE38EGLD4QCHUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724095178; c=relaxed/simple;
-	bh=LUjIPGmfQnigBhl1EX55BrEbUeuvyOgK671P0ovp/UE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PVwO3ZSVXcBQElDmblAXhH3brWmpGM3m5L2jEN3dpZJrs4cuo8Q1Tg6aSVWpxOwjCtMPm15GE/ZxqoL7QVKGX9SltqypixjjGdZleGOvM89xOJqauLCHV2kKQfxxtltXbWB/QajnGbrHDQM4gdjdppxbCSyxhwlxYED5CEO1Des=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A32C32782;
-	Mon, 19 Aug 2024 19:19:37 +0000 (UTC)
-Date: Mon, 19 Aug 2024 15:20:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@kernel.org>, Shuah
- Khan <shuahkhan@gmail.com>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: Fix test to handle both old and new
- kernels
-Message-ID: <20240819152002.3ecc8100@gandalf.local.home>
-In-Reply-To: <20240614124322.36ad7652@rorschach.local.home>
-References: <20240515013620.098cb37a@rorschach.local.home>
-	<20240614124322.36ad7652@rorschach.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724095399; c=relaxed/simple;
+	bh=W6WoE9R/tdk2wsQggdsp1NX6C01qnbzE7y5N3Z5FJIU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZTj4/yZwzVBV47cY2C8sVWHln+wu4g1aQqvposfWkD7C8HEcd36TIot/JjzGwUNfxjRItjdWxuMPtyeL/wHijwqONAROaVYfCh3eqSkBgclW1A9UMslqlrz0GauSXAr8a7Q/nex3xmlIJotK9Kk73pi/K9wYfOfaQdUnOhrVNpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tHd049/5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ByLpgSbW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724095395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dQ7Awp8jlfo+IRT/QjM/los97UHko8NLNXkxPXn2rYY=;
+	b=tHd049/5cf8ggWsgnTWl9mNyLJc79tEfcmFjlNg8hjzHU1zMb85ZK1nAOyF0JktzUHz2IU
+	dRO4zUnvpwPFQK6jNSv4/K+Qo6ixQ8zgGN2hVkBML4UOW54aQujnsxLkbfCDHXL3lfR8oT
+	tANlPolwYwr3lEdauRQyo3iNkVRVH2L85oX5+yH9iu6XR1slO92Uzk3LqpvQ4Ve47T0klC
+	xT8tTl6SnxPc1mFkclpHnCKeKR95UVkJL59bKvNWTRcl1zCGocuh07vXEgAJmlVmeXLyQp
+	rDyZJda2QmhVUGUAMXyenYoBAXmstg99L3L9OhYxKfvSJ74rsAnLQ2/XlhSi7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724095395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dQ7Awp8jlfo+IRT/QjM/los97UHko8NLNXkxPXn2rYY=;
+	b=ByLpgSbWqK9kFdsbcWR3GIS9N8k1XBpf0L0RQatoPi1tDe4DHo8UpgL+GvfdEU5Ck99z/a
+	3nuAAmMgzVy5XbAQ==
+To: Petr Mladek <pmladek@suse.com>, takakura@valinux.co.jp
+Cc: rostedt@goodmis.org, senozhatsky@chromium.org,
+ akpm@linux-foundation.org, bhe@redhat.com, lukas@wunner.de,
+ wangkefeng.wang@huawei.com, ubizjak@gmail.com, feng.tang@intel.com,
+ j.granados@samsung.com, stephen.s.brennan@oracle.com,
+ linux-kernel@vger.kernel.org, nishimura@valinux.co.jp, taka@valinux.co.jp
+Subject: Re: [PATCH v3 2/2] Handle flushing of CPU backtraces during panic
+In-Reply-To: <ZrtjXChY_0wnFXsS@pathway.suse.cz>
+References: <20240812072137.339644-1-takakura@valinux.co.jp>
+ <20240812072931.339735-1-takakura@valinux.co.jp>
+ <ZrtjXChY_0wnFXsS@pathway.suse.cz>
+Date: Mon, 19 Aug 2024 21:29:14 +0206
+Message-ID: <87y14sjp0d.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Fri, 14 Jun 2024 12:43:22 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 2024-08-13, Petr Mladek <pmladek@suse.com> wrote:
+> I would do something like:
+>
+> /**
+>  * console_try_or_trigger_flush - try to flush consoles directly when
+>  *	safe or the trigger deferred flush.
+>  *
+>  * Context: Any
+>  */
+> void console_try_or_trigger_flush(void)
+> {
+> 	if (!is_printk_legacy_deferred() && console_trylock())
+> 		console_unlock();
+> 	else
+> 		defer_console_output();
+> }
+>
+> and use it instead of printk_trigger_flush() in
+> nmi_trigger_cpumask_backtrace().
 
-> Shuah,
-> 
-> Can you take this through your tree?
+Just to be clear, you are talking about removing printk_trigger_flush()
+entirely and instead provide the new console_try_or_trigger_flush()?
+Which then also involves updating the call sites:
 
-Ping.
+lib/nmi_backtrace.c:nmi_trigger_cpumask_backtrace()
+arch/powerpc/kernel/watchdog.c:watchdog_timer_interrupt()
 
--- Steve
+> Well, I would postpone this patch after we finalize the patchset
+> adding con->write_atomic() callback. This patch depends on it anyway
+> via is_printk_legacy_deferred(). The patchset might also add
+> other wrappers for flushing consoles and we have to choose some
+> reasonable names.
 
-> 
-> Thanks,
-> 
-> -- Steve
-> 
-> 
-> On Wed, 15 May 2024 01:36:20 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> > 
-> > The function "scheduler_tick" was renamed to "sched_tick" and a selftest
-> > that used that function for testing function trace filtering used that
-> > function as part of the test.
-> > 
-> > But the change causes it to fail when run on older kernels. As tests
-> > should not fail on older kernels, add a check to see which name is
-> > available before testing.
-> > 
-> > Fixes: 86dd6c04ef9f2 ("sched/balancing: Rename scheduler_tick() => sched_tick()")
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > ---
-> >  .../ftrace/test.d/ftrace/func_set_ftrace_file.tc         | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-> > index 073a748b9380..263f6b798c85 100644
-> > --- a/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-> > +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_set_ftrace_file.tc
-> > @@ -19,7 +19,14 @@ fail() { # mesg
-> >  
-> >  FILTER=set_ftrace_filter
-> >  FUNC1="schedule"
-> > -FUNC2="sched_tick"
-> > +if grep '^sched_tick\b' available_filter_functions; then
-> > +    FUNC2="sched_tick"
-> > +elif grep '^scheduler_tick\b' available_filter_functions; then
-> > +    FUNC2="scheduler_tick"
-> > +else
-> > +    exit_unresolved
-> > +fi
-> > +
-> >  
-> >  ALL_FUNCS="#### all functions enabled ####"
-> >    
-> 
+I agree. Let's finish up the atomic series and then we can worry about
+this.
 
+John
 
