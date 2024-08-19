@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-292897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D0E9575E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:42:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46559575E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17121F239B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E7D284114
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9603015A4B0;
-	Mon, 19 Aug 2024 20:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B233E159598;
+	Mon, 19 Aug 2024 20:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QjckSWmi"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lm0aV51/"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734B3158A36
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD7615921B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724100127; cv=none; b=LjbK7vjvipohCjQL3lFhIy7bM49kM6zoOxguOAs2g4fvQBPOt8abXgv6EHXzG/aAnhTNKnvTT9VxvzUa/9a0jHLuyvJfz63P9ngPYJrAXrLw+9XhvmqelYaaYjdyK05ggY2toGBztMAOcKRqAD3YJXjFNKVD6s+Pj1n2J6tzRIQ=
+	t=1724100250; cv=none; b=J6YRNEWM9NCgB5sXJdZ4okmL6vmG0y0Sq78moKqWumbhyg1hCPqYWRaUz/hM8y6KFZAKHUZKOBb8zjcXa2Ul8nydyZPG5YOl9DlBDcys9wg/vtl2E03yoTiaLZXQjVlgqx/nqtm4KJIMDoeCXFWyw6GxyeFCBNo24Xbqh6vf7as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724100127; c=relaxed/simple;
-	bh=Dt1Ff7fKLLYPfMaJ4kJTzH4evyvUMfCz59lijmotGOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuoHFNxbr+VgPb0DbzjP0nUEMB9a4suL9Rtl6aXXmCpU1X8Z0a5tPROpOulyEIo1Z8ar2FO8pGy5n552lQ39ONQ0hZZpMOqTNZyoAwmEY0Eu2XntailjaHqrEJ25xqx0TySvZM9EXWpSQMmecCj4uyT+Hkmv/qYwTckQo5sO1jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QjckSWmi; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 19 Aug 2024 20:41:52 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724100121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Y168q5crzOyuR0vBXeOnFBth7VvFqg3LAjS8RW/lCM=;
-	b=QjckSWmi/C6logVG6INyLTdl2yFG7ehaLWTfObZBDHmH29dWtGBfep0KYv6Z9gBDYeh9S+
-	B6R9XRrjvorKQxuRIfjSMJWax726Gq0p6dIEjHG9Ct8t5QfdejAKRHlb7mGX73T27kmL/f
-	3zLPC94bHuABE9SXOJjRNTeVEwEQcVA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	James Houghton <jthoughton@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v6 03/11] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-Message-ID: <ZsOuEP6P0v45ffC0@linux.dev>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-4-jthoughton@google.com>
- <CADrL8HV5M-n72KDseDKWpGrUVMjC147Jqz98PxyG2ZeRVbFu8g@mail.gmail.com>
- <Zr_y7Fn63hdowfYM@google.com>
- <CAOUHufYc3hr-+fp14jgEkDN++v6t-z-PRf1yQdKtnje6SgLiiA@mail.gmail.com>
+	s=arc-20240116; t=1724100250; c=relaxed/simple;
+	bh=AEquITEGXqCulA4wa1w144IgjY9QUK93eqFo8dwxKKg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jONC+PYs8HvRcgFXETvyGd6XBbxXqV+rXOMTwv+tpOGnmPoyDuSiDWpHPhw2HGCYT3ST/BcJSUsRG0BDDNwh+klaC8Wh1EK00wRwXW0RNQ4Dw2K2Xr/v/asi4m+RNPRIGCcPjv7D1vHEhMUIcprItXz/P/sRS1O6SmCTZ6T8kus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lm0aV51/; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47JKhqOc089762;
+	Mon, 19 Aug 2024 15:43:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724100232;
+	bh=/M4mzabDb17GXIAo28ICkg/ib/Ki3WmR2v5LnKU5Bis=;
+	h=From:To:CC:Subject:Date;
+	b=lm0aV51/4n+CZyfxkw01lfpJEEQfK2VO7O45ushoAsMCjbKVaH9FptYeaWX1vgWkK
+	 G+UkptBXTgvY9b+bYx2N6BNa7Uk9iCI8h5NA27iV34V+OjyKY8GAIBiFh9WLoRGy2Y
+	 e7EmjN3wgQUUP8B3gibEk7CpxPQ3LEoF3el5cIlY=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47JKhqJI006867
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 19 Aug 2024 15:43:52 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
+ Aug 2024 15:43:52 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 19 Aug 2024 15:43:51 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47JKhqSd037534;
+	Mon, 19 Aug 2024 15:43:52 -0500
+From: Judith Mendez <jm@ti.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Bryan Brattlof <bb@ti.com>
+Subject: [RFC PATCH] arm64: defconfig: Set MFD_TPS6594_I2C as built-in
+Date: Mon, 19 Aug 2024 15:43:52 -0500
+Message-ID: <20240819204352.1423727-1-jm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOUHufYc3hr-+fp14jgEkDN++v6t-z-PRf1yQdKtnje6SgLiiA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Aug 16, 2024 at 07:03:27PM -0600, Yu Zhao wrote:
-> On Fri, Aug 16, 2024 at 6:46 PM Sean Christopherson <seanjc@google.com> wrote:
+SK-AM62A-LP is a device targeting automotive front-camera applications
+among other use-cases. It utilizes the TPS6593x PMIC (interfaced over I2C)
+to power the SoC and various other peripherals on the board [1].
 
-[...]
+MMCSD requires the PMIC to be setup correctly before setting the bus
+pins to 1.8V using the TPS6594 driver interfaced over i2c.
 
-> > Were you expecting vCPU runtime to improve (more)?  If so, lack of movement could
-> > be due to KVM arm64 taking mmap_lock for read when handling faults:
-> >
-> > https://lore.kernel.org/all/Zr0ZbPQHVNzmvwa6@google.com
-> 
-> For the above test, I don't think it's mmap_lock
+Currently, the following could be seen when booting the am62ax platform:
 
-Yeah, I don't think this is related to the mmap_lock.
+"platform fa00000.mmc: deferred probe pending: platform: supplier regulator-5 not ready"
+"vdd_mmc1: disabling"
 
-James is likely using hardware that has FEAT_HAFDBS, so vCPUs won't
-fault for an Access flag update. Even if he's on a machine w/o it,
-Access flag faults are handled outside the mmap_lock.
+and a failure to boot the SK-AM62A-LP.
 
-Forcing SW management of the AF at stage-2 would be the best case for
-demonstrating the locking improvement:
+One solution is to use initramfs [2], but using initramfs increases the
+boot time for this automotive solution which requires faster boot time
+parameters.
 
-diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index a24a2a857456..a640e8a8c6ea 100644
---- a/arch/arm64/kvm/hyp/pgtable.c
-+++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -669,8 +669,6 @@ u64 kvm_get_vtcr(u64 mmfr0, u64 mmfr1, u32 phys_shift)
- 	 * happen to be running on a design that has unadvertised support for
- 	 * HAFDBS. Here be dragons.
- 	 */
--	if (!cpus_have_final_cap(ARM64_WORKAROUND_AMPERE_AC03_CPU_38))
--		vtcr |= VTCR_EL2_HA;
- #endif /* CONFIG_ARM64_HW_AFDBM */
- 
- 	if (kvm_lpa2_is_enabled())
+Another solution is to change MFD_TPS6594_I2C to built-in, that way the
+PMIC is setup and the regulators are ready before MMCSD switches to UHS
+mode, this is the preferred solution since it does not increase boot time
+like the initramfs solution does.
 
-Changing the config option would work too, but I wasn't sure if
-FEAT_HAFDBS on the primary MMU influenced MGLRU heuristics.
+[1] https://www.ti.com/lit/zip/sprr459
+[2] https://lore.kernel.org/linux-devicetree/5f03207b-c29b-4d16-92b0-d14eef77bf17@linaro.org/
+Fixes: f9010eb938be ("arm64: defconfig: Enable TPS6593 PMIC for SK-AM62A")
 
-> -- the reclaim path,
-> e.g., when zswapping guest memory, has two stages: aging (scanning
-> PTEs) and eviction (unmapping PTEs). Only testing the former isn't
-> realistic at all.
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-AIUI, the intention of this test data is to provide some justification
-for why Marc + I should consider the locking change *outside* of any
-MMU notifier changes. So from that POV, this is meant as a hacked
-up microbenchmark and not meant to be realistic.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7d32fca649965..61f767246d3a5 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -756,7 +756,7 @@ CONFIG_RZ_MTU3=y
+ CONFIG_MFD_TI_AM335X_TSCADC=m
+ CONFIG_MFD_TI_LP873X=m
+ CONFIG_MFD_TPS65219=y
+-CONFIG_MFD_TPS6594_I2C=m
++CONFIG_MFD_TPS6594_I2C=y
+ CONFIG_MFD_ROHM_BD718XX=y
+ CONFIG_MFD_WCD934X=m
+ CONFIG_MFD_KHADAS_MCU=m
 
-And really, the arm64 change has nothing to do with this series at
-this point, which is disappointing. In the interest of moving this
-feature along for both architectures, would you be able help James
-with:
-
- - Identifying a benchmark that you believe is realistic
-
- - Suggestions on how to run that benchmark on Google infrastructure
-
-Asking since you had a setup / data earlier on when you were carrying
-the series. Hopefully with supportive data we can get arm64 to opt-in
-to HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY as well.
-
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 -- 
-Thanks,
-Oliver
+2.46.0
+
 
