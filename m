@@ -1,144 +1,150 @@
-Return-Path: <linux-kernel+bounces-292020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21660956A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC93A956A41
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46ADE1C22E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7CF1C234DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6FB16938C;
-	Mon, 19 Aug 2024 12:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E0B1684A7;
+	Mon, 19 Aug 2024 12:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nsPPusUg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="goPRrnnB"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="MFlTAbKD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="VAK/aC6n"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC8013DBA0;
-	Mon, 19 Aug 2024 12:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32DA13DBA0;
+	Mon, 19 Aug 2024 12:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069005; cv=none; b=njj8vUL9HvXMdq9U4SbO8iJ2sRjC1pN4G8Tyl2wX1uHTIoNitTYCO8MCRXv+s5dzLithzolKqkjqMF3VAulMxfFbUFOEdlEJNdy5YpsIyYRnpncVDna0xNQfEjJsJ6M446heMhZb9QPjNx5KG/X+gkOnvHhqxgbtx3ykUOBnbqI=
+	t=1724069022; cv=none; b=kOAuVbtZftIELmy/DNOG1coGnFP8grUJsz9NwJ0QY4Z4/8tZ9bavQMcVLIz77kB7ls4wEPhef9g7u3w2A5jYSv4i9MZbYcXzwxm3phVpdmnUS1NQYsPF4aZBLY5SPwbIzeX/+QibErv9/6hJ/gHosijYoclyNAKuskREqactG4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069005; c=relaxed/simple;
-	bh=x+ohuPa6Bg3rGm2yXeitvgiO5in5d6zC0RFJGBbMnvU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=I7k8qWxUeBNkiYiuuE9f0MMmdx/uxZfASS2f+8ePN0TJbo4RoF3sLoYlGdFKVN9c+D/uCNtx9kFp2mUzXGvSrxwWMtKFPKulg65lkPdB1TBt2NN+uK0zM2ormxO92wd2jKHcY+Wc8YUzSZAJfKMEYWY2GgY9+xgitZ/10Azs4R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nsPPusUg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=goPRrnnB; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 47613138FF2E;
-	Mon, 19 Aug 2024 08:03:23 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 08:03:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724069003;
-	 x=1724155403; bh=MlUgy/leWMv3QVsxhXpycZ/yMPD753+synKTpuY/3tY=; b=
-	nsPPusUg43iCP/0H15qB4AeDsixQXqbTLpABfizVv3CDPO0a3yd3LGqDX2IQHDFo
-	1D+VSLYyubjiW+Q6bxd9t9pY+8A53lYyhQ8dLBxkD8/q/Aek8sIxxCHxaYWFVzkN
-	fbG/aVn7ciZJHnZACxWx4KaOQeXsuR+CUrXxMo7tC9QfS8LNxhpk0fWkEeaGMnFY
-	TkNcyJ2ppOaAe39P3ST21XnVDchfYSBeiK7yweODlePfC8RYC/WdnmswK8ZUWb2M
-	C0FBXXbxhSuuZwGk8a2DU+qRfxCi8i97cE4wKbSAvZRiNXd+pQK+DvUaMEKU5dT7
-	Kgx39eMHivsfz8HIY8ZpjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724069003; x=
-	1724155403; bh=MlUgy/leWMv3QVsxhXpycZ/yMPD753+synKTpuY/3tY=; b=g
-	oPRrnnBwO8hpJHTtvjlucDuPxa2EmnBgIoXcaknB4Pf/q65BF7fBIdn8IE0oNU+s
-	yNO1OZDVIrNuTvKDTNGqCfICV7dvQ4A/LY3cMJQQTAyzHbcVJbJ06arn4Q5hGW+V
-	Rl2vsE7jufj15S0WqaOOO6OYnZwyCsMfbhb0SO/Ku8vTHgiXVz7AHxi9XqcSgAio
-	ZhPFXU236PhdBGxErTHFgvfr0gld66TJSVEwnUzUPveanUmWFAplXz8CWwXFlY9X
-	fZBgWU4vZkCnHB5tbE1EB/uVVMDdm4C1fmV0Un3v/Bqj+vvkhE/BdxAaDx2lENSa
-	KORKfot4JBwFTNKvQtsFg==
-X-ME-Sender: <xms:ijTDZnEJgyM1mN1brDD6DYeCjDT-XOd6KhpBu6_Y5UypNWeDV57igA>
-    <xme:ijTDZkWnaNMuTCbjSFtuM_gq-YpVApLobb8qArbae_UkopuEbbdWG5IopjP34WOTM
-    nZSfiWgWh9oLfPsT48>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
-    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
-    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
-    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
-    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
-    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:ijTDZpKO0wriK_Wd9ghL-4q83XumtDz4seyQ49mCeffwzaMpGeYolQ>
-    <xmx:ijTDZlFMpv0F5OyJvpcVPeHaGGl4p0FihH7mEua3q9ckzHbdA1fPzQ>
-    <xmx:ijTDZtUITz08K66ua0eTYaHtC6Ww35KO2tBd2F4ZgP2A_3cfPoShtw>
-    <xmx:ijTDZgO92Hfyh3jsiLs0eRTg1ulkKIuJ5SUEvOyT0DVDGdpoyKC8kg>
-    <xmx:izTDZnggwu-HtVYM8B1yJeXrsp2CsRgSO2ttFQxKiFL53JQs_AfGqKxE>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A654216005E; Mon, 19 Aug 2024 08:03:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724069022; c=relaxed/simple;
+	bh=Amg6pxpvYJV2YWjLKJfNIaYtUJYY2QMCpB9VDZRbVyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jPyXt1BSd65HDaKLE+2X6ybgPTTIdKEARN3hizdZ1cWRjbhkm1BASGtuj6n/kBLNYlrG6zqN1/yfy5spiRw9oxZ658/kkYTmgj4SuZMdZR6g6mfV2/75jlKu+kh5EavIFu+PsDidpIFwglUU4K9WKt+JKFqxGneaX7l0N5mdabQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=MFlTAbKD; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=VAK/aC6n reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1724069019; x=1755605019;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8DN/3w1Vft6D1vjJdLnyjCTRab2bmOne6epqUwo+9k8=;
+  b=MFlTAbKD4Iqn7Wa5UrOHnRRfqsscV6+BCa0Z9hVcSiRdwp+MPpBpyEOo
+   j8e4+85RxN96BW8qy8AhbvB3ofF2x8hytKnodnAN9naKRl+CC6EuiKaGA
+   N1yeoPpTYYDNDEIG2QV732HETjIAEecHrmIpeRbXGlm5f2dVXGnf10kGE
+   9s+vUSKA1GpLVuaBBHWHX94xgqw2+ladOO6QPfsSo6nPPxQPaPTVMjPDd
+   cCPkrHX9uE3nGFzCODVryHT051sarFkc+Y/LTBN7sLN7yegn2nNGOi9HK
+   VbrPA5xxoTeIrd+rasbYOKDIF4vPIeuglmXMSdAyr/YWpBYWQ08XLtjmQ
+   w==;
+X-CSE-ConnectionGUID: aeFCxebrTbGb9SW5j2yc/A==
+X-CSE-MsgGUID: lc8KNtI2QOiz6OcRpuNqMQ==
+X-IronPort-AV: E=Sophos;i="6.10,159,1719871200"; 
+   d="scan'208";a="38467097"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Aug 2024 14:03:36 +0200
+X-CheckPoint: {66C33498-16-45EF2B36-F6E28480}
+X-MAIL-CPID: 9997A2AE3CF88BAD4F45DA2E8345DA57_0
+X-Control-Analysis: str=0001.0A782F24.66C33498.00B2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1E209163E34;
+	Mon, 19 Aug 2024 14:03:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1724069012; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=8DN/3w1Vft6D1vjJdLnyjCTRab2bmOne6epqUwo+9k8=;
+	b=VAK/aC6nJik2PLaTULLyb39jt/Jh5rI98EraOtS/ou1NjFsgI4tJOOr6QMRRVi/Z0jANcs
+	VftS14Dwg0kN6PkWEEBlAWLST141eD2ESsdZQTIe1vQJJcFgys88LsuvJCXUaFMns8lRpx
+	VYG28KMTi2mPilS86z17g+3aLrj8fd/+QfZ5wHnyS7Uz9pMVdwR6JXSXSxaRBh48AZ+FjD
+	Qb5yBpY9wN81rjFTd4iB5sD5cQVAxRfab1s1ndW9095g4Y2zMxg535BibX3D74kwixvMSr
+	+rrnfPBHiMN8M82N04uUlU1g/xAYtmZ0lUnwOlfT90oPRsssiJKvDe1l5UadtA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/14] TQMa93xx improvements
+Date: Mon, 19 Aug 2024 14:03:14 +0200
+Message-Id: <20240819120328.229622-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 19 Aug 2024 14:03:01 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yuntao Liu" <liuyuntao12@huawei.com>,
- openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: "Corey Minyard" <minyard@acm.org>,
- "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
- "Vinod Koul" <vkoul@kernel.org>, "Daniel Mack" <daniel@zonque.org>,
- "Haojian Zhuang" <haojian.zhuang@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>, morbidrsa@gmail.com,
- "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
- "James Morse" <james.morse@arm.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Robert Richter" <rric@kernel.org>, codrin.ciubotariu@microchip.com,
- "Andi Shyti" <andi.shyti@kernel.org>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Alan Stern" <stern@rowland.harvard.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
- "Mark Brown" <broonie@kernel.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Message-Id: <dc9bda22-53d5-4b22-80f7-f2d4d816bd77@app.fastmail.com>
-In-Reply-To: <20240819113855.787149-10-liuyuntao12@huawei.com>
-References: <20240819113855.787149-1-liuyuntao12@huawei.com>
- <20240819113855.787149-10-liuyuntao12@huawei.com>
-Subject: Re: [PATCH -next 9/9] ipmi: ipmi_ssif: fix module autoloading
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from platform_device_id table.
->
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> ---
+Hi all,
 
-The driver already has a MODULE_ALIAS() with the same string.
+this is the 2nd version of the series add improvements for the TQMa93xx
+series.
+Despite changes for pad configuration as requested form hardware team, this also
+adds the PMIC node which allows to specify correct supplies for e.g. eMMC.
+Also GPIO lin enames are added for userspace usage using e.g. libgpiod.
+This series also includes a workaround for USDHCI errata.
 
-I think the MODULE_DEVICE_TABLE() entry is slightly cleaner here,
-but it should only have one of the two, not both.
+Changes in v2:
+* Collected R-b
+* Fix whitespace typos
+* Split (old) patch 6/14 into patches
+  * Fixing pad config
+  * Adding LPSPI6 interface
+  * Adding IRQ for temperature sensor
+  * Adding missing pad configurations
+* Split (old) patch 12/14 into patches
+  * Adding IRQ for RTC and temperature sensor
+  * Fixing pad config
 
-     Arnd
+Best regards,
+Alexander
+
+Alexander Stein (7):
+  arm64: dts: freescale: imx93-tqma9352: Add PMIC node
+  arm64: dts: freescale: imx93-tqma9352: add eMMC regulators
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: enable LPSPI6
+    interface
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: add missing pad
+    configurations
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: Add ethernet aliases
+  arm64: dts: freescale: imx93-tqma9352-mba93xxca: add missing pad
+    configurations
+  arm64: dts: freescale: imx93-tqma9352-mba93xxca: Add ethernet aliases
+
+Markus Niebel (7):
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: improve pad
+    configuration
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: add irq for temp
+    sensor
+  arm64: dts: freescale: imx93-tqma9352-mba93xxla: add GPIO line names
+  arm64: dts: freescale: imx93-tqma9352-mba93xxca: add RTC / temp sensor
+    IRQ
+  arm64: dts: freescale: imx93-tqma9352-mba93xxca: improve pad
+    configuration
+  arm64: dts: freescale: imx93-tqma9352-mba93xxca: add GPIO line names
+  arm64: dts: freescale: imx93-tqma9352: set SION for cmd and data pad
+    of USDHC
+
+ .../freescale/imx93-tqma9352-mba93xxca.dts    | 299 +++++++++++-----
+ .../freescale/imx93-tqma9352-mba93xxla.dts    | 318 +++++++++++++-----
+ .../boot/dts/freescale/imx93-tqma9352.dtsi    | 134 ++++++--
+ 3 files changed, 568 insertions(+), 183 deletions(-)
+
+-- 
+2.34.1
+
 
