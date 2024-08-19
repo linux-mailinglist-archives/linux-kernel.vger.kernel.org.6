@@ -1,74 +1,39 @@
-Return-Path: <linux-kernel+bounces-292527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01480957077
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:36:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330B3957078
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267231C22D73
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3BB1F242A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A67188004;
-	Mon, 19 Aug 2024 16:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYzEy6Cn"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B84187873
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1643117838F;
+	Mon, 19 Aug 2024 16:35:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB171779A9
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085328; cv=none; b=sumyVpA7xhgyuFgiCZ57BETWy1HcEtpIyDiZDWN/+UI45WTkqPYyakV0T1tSW1u4mZ5nvUCHAE1Lhq4l5JijXHfgHPRP8TKTQyVJfSVbxQ4fLsAf3iZWe21Jn3Y3QMHfgKpKAMiZGFHL2i7CMwXuXjguQm+W2/qiZCtB6M2qk7k=
+	t=1724085351; cv=none; b=kQ7lV9eojt3lGFlmWv8V2V0eqNZKGtToCGF4ZrwpaOeIqzSD1vePmBjWXgYQkzK1w9oSFZwm/JFjyhAdHvKR2TP9Zqu7wN7Vij8mswCQ+nANcw0eK2Q7QcWpk0nYH4sfNFGuXBo9OH90aPWRYptcaoAJ+YHSSpStyI5wwYkBgg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085328; c=relaxed/simple;
-	bh=G3LhukvQJ70S/cwrf/VezAIzmWQ6wlYfds4mY7Exoic=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YN0JNBX4wXi1zomktnmaQ2WJQRe4P54zklTpE+Op/6laianTHWOAEMbjaOTXJHj238Yi1Fg/X4bX6iUN0E7J1UzCsgpaDXz5sdDryF+eQ+7JPa0zzD+Se+79IPJwLspQu808Aakcsel6DIBS6Qmhx7Y8qHgi0v+FCINtajJFj+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYzEy6Cn; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso49981555e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724085325; x=1724690125; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O6Nbbj1SYfTWqHpeI7O7/R2lL4Y9KrfFBJkmRlY5CfI=;
-        b=IYzEy6CnuvcP3Qej/Wc9/lcPcHOkhRxXcc1ly/4c63fURisoKHp7AYIZutf+4njp3H
-         r8APArAvjgz2/KYhyoiIIX8kdIkZ59DkW8kEKZ6Tr8ybImyEk+7+NFlOxulqREBAHQUM
-         rI/uWdsRQoazZOcIizYXSrZrdGmmcvE+BOdixi37mSuATqkI0ip0NWKtiqLwYzHVdFYP
-         ZnYUqd46uxSentwqGx07OkZmGkENVAItcgBJX/8Tu+IFbqmlRxHy773wOvGyJ6/OkXV3
-         BY3nmYrNAvVpWUQ0uGok+sRYrCUwaW6pAm5tj2qwLSp3Zi0XR+fdsChT9y8lFX68QXqv
-         lR8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724085325; x=1724690125;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O6Nbbj1SYfTWqHpeI7O7/R2lL4Y9KrfFBJkmRlY5CfI=;
-        b=C2jKHD9tbXVu2NnqijkwP8lfaHDNHKjStHfAGQvwFut1tz96vUaVeR+sIiN7nIWprC
-         oT2StmCO5QOlYjX8xP8gvKeZXivT13u1APNKRyqfoS/vtUF0MXWW1txiendT4IDcj0dZ
-         Mgv1dHSt+SOs04EVmus8lJVIHIK1i1qJh+4dvwmiEAnwKFmfRMS5DPUJ/pZUCxoSGlLx
-         4z8lVhLlSKmVOEdGq3v2A22m17S66VbxF1L4uFTFTt1Mf+5jhWTJuxwfNHwEPl98F+8s
-         2Fdnr5V3XHJvFyKVFcAadPxLyTeOF2Uia2dk7ZU3n+lOQD4z9GV9fMRtZXAvxY7IZHL+
-         LAPg==
-X-Gm-Message-State: AOJu0YxeR6AVHmH0kENjAVbBSpO8St073TdG3QgKoEHvNnMfB69DnHTx
-	GIqsC81DwSEWyE6MHjfGD+xGno34ECwSfHW9sKsLk+ANaOZZvYl6ui7WUmx6YUU=
-X-Google-Smtp-Source: AGHT+IHAMBV0nzkFPsRwb6z0/rrDf5MXyOVF+NZ8xcj/72OevSo9SgRorPDm9UEtaQMfuESAmpA//A==
-X-Received: by 2002:a05:600c:3b26:b0:426:6f87:65fc with SMTP id 5b1f17b1804b1-429ed7b6a3dmr92728535e9.17.1724085324681;
-        Mon, 19 Aug 2024 09:35:24 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898b8ad6sm10935461f8f.114.2024.08.19.09.35.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:35:24 -0700 (PDT)
-Message-ID: <161bd6fe-825a-434d-bbef-0a9e449fec5f@linaro.org>
-Date: Mon, 19 Aug 2024 18:35:23 +0200
+	s=arc-20240116; t=1724085351; c=relaxed/simple;
+	bh=0s0wtDKdE1qj/vDUAxqDBI8lMHTGn0YD7eZspiSvTgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AWfOwVZHfaCgEOhml+IphPr1LgPYwnTVkzWuSIkCzW7S6LwTPjBPy4fQKgE0Q2/JUgKF1p9F38HDitcOd8pQQegKGeRhc/b1MNK887NRNOQZ5zHOtI6SndQgDwX+9JLTOE4FnPixWuPP6GZ2rVluZrZ3qbRo0aAZLKaIJ0dQzxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D52D0339;
+	Mon, 19 Aug 2024 09:36:14 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF5413F66E;
+	Mon, 19 Aug 2024 09:35:47 -0700 (PDT)
+Message-ID: <5286c498-99a4-4068-8f0e-5d99e18519bf@arm.com>
+Date: Mon, 19 Aug 2024 17:35:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,363 +41,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 9/9] reset: amlogic: add auxiliary reset driver support
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-10-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240808102742.4095904-10-jbrunet@baylibre.com>
+Subject: Re: [PATCH 5/8] perf/arm-cmn: Make cycle counts less surprising
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <570c473134426b8e11bb043aa59e3cde3dab8af3.1723229941.git.robin.murphy@arm.com>
+ <Zr8pGEMmzmexNGL8@J2N7QTR9R3>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zr8pGEMmzmexNGL8@J2N7QTR9R3>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08/08/2024 12:27, Jerome Brunet wrote:
-> Add support for the reset controller present in the audio clock
-> controller of the g12 and sm1 SoC families, using the auxiliary bus.
+On 16/08/2024 11:25 am, Mark Rutland wrote:
+> On Fri, Aug 09, 2024 at 08:15:44PM +0100, Robin Murphy wrote:
+>> By default, CMN has automatic clock-gating with the implication that a
+>> DTC's cycle counter may not increment while the domain is sufficiently
+>> idle.
 > 
-> This is expected to replace the driver currently present directly
-> within the related clock driver.
+> Similar is true for the cycles event on the CPU side, so this has some
+> precedent.
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/reset/amlogic/Kconfig               |   8 ++
->   drivers/reset/amlogic/Makefile              |   1 +
->   drivers/reset/amlogic/reset-meson-aux.c     | 136 ++++++++++++++++++++
->   drivers/reset/amlogic/reset-meson-core.c    |  25 +++-
->   drivers/reset/amlogic/reset-meson-pltf.c    |   3 +
->   drivers/reset/amlogic/reset-meson.h         |   4 +
->   include/soc/amlogic/meson-auxiliary-reset.h |  23 ++++
->   7 files changed, 198 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
->   create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
+>> Given that we may have up to 4 DTCs to choose from when scheduling
+>> a cycles event, this may potentially lead to surprising results if
+>> trying to measure metrics based on activity in a different DTC domain
+>> from where cycles end up being counted. Make the reasonable assumption
+>> that if the user wants to count cycles, they almost certainly want to
+>> count all of the cycles, and disable clock gating while a DTC's cycle
+>> counter is in use.
+> 
+> As above, the default does match the CPU side behaviour,
 
+It may end up looking equivalent with only a single DTC domain, but the 
+effect with multiple DTCs is as if any cpu_cycles event always counted 
+on CPU0 (or more recently, any random CPU) - that's the real issue here.
 
-I thing the header name should be include/soc/amlogic/reset-meson-aux.h
+> and a user
+> might be trying to determine how much clock gating occurs over some
+> period, so it's not necessarily right to always disable clock gating.
+> That might need to be an explicit option on the cycles event.
+
+I have also been wondering whether there would be any use-case for a 
+"dtc_active_cycles" event, but it would would have to be targeted at a 
+specific DTC node ID or domain number to be meaningful, so would still 
+be a new thing either way, but even then it seems it would be incredibly 
+niche - you couldn't get an actual measure of idleness without a second 
+DTC to count ungated cycles over the same period, and it could only be 
+correlated with targeted single-node events, since we don't have support 
+or a syntax for aggregating only within a specific DTC domain.
+
+Yes, some of that could be achieved, but it would represent significant 
+further complication to the driver and interface, in aid of something 
+which to the best of my knowledge nobody's actually asking for. What 
+users *have* asked me, though, is why they were seeing inconsistent 
+dtc_cycles counts, hence this patch.
+
+> Do we always have the ability to disable clock gating, or can that be
+> locked down by system integration or FW?
+
+Yes, the entire PMU may be locked down by a secure override, but 
+otherwise if we do have use of the DTC then there is no limitation on 
+cg_disable itself.
+
+Thanks,
+Robin.
 
 > 
-> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
-> index 04c7be0f3165..ee1c7620a2b1 100644
-> --- a/drivers/reset/amlogic/Kconfig
-> +++ b/drivers/reset/amlogic/Kconfig
-> @@ -11,6 +11,14 @@ config RESET_MESON
->   	help
->   	  This enables the reset platform driver for Amlogic SoCs.
->   
-> +config RESET_MESON_AUX
-> +	tristate "Meson Reset Platform Driver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	select RESET_MESON_CORE
-> +	help
-> +	  This enables the reset auxiliary driver for Amlogic SoCs.
-> +
->   config RESET_MESON_AUDIO_ARB
->   	tristate "Meson Audio Memory Arbiter Reset Driver"
->   	depends on ARCH_MESON || COMPILE_TEST
-> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
-> index 0f8f9121b566..5d53a4b11ed9 100644
-> --- a/drivers/reset/amlogic/Makefile
-> +++ b/drivers/reset/amlogic/Makefile
-> @@ -1,3 +1,4 @@
->   obj-$(CONFIG_RESET_MESON) += reset-meson-pltf.o
-> +obj-$(CONFIG_RESET_MESON_AUX) += reset-meson-aux.o
->   obj-$(CONFIG_RESET_MESON_CORE) += reset-meson-core.o
->   obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-> diff --git a/drivers/reset/amlogic/reset-meson-aux.c b/drivers/reset/amlogic/reset-meson-aux.c
-> new file mode 100644
-> index 000000000000..caf26eb67c14
-> --- /dev/null
-> +++ b/drivers/reset/amlogic/reset-meson-aux.c
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Amlogic Meson Reset Auxiliary driver
-> + *
-> + * Copyright (c) 2024 BayLibre, SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +
-> +#include "reset-meson.h"
-> +#include <soc/amlogic/meson-auxiliary-reset.h>
-> +
-> +static DEFINE_IDA(meson_rst_aux_ida);
-> +
-> +struct meson_reset_adev {
-> +	struct auxiliary_device adev;
-> +	struct regmap *map;
-> +};
-> +
-> +#define to_meson_reset_adev(_adev) \
-> +	container_of((_adev), struct meson_reset_adev, adev)
-> +
-> +static const struct meson_reset_param meson_g12a_audio_param = {
-> +	.reset_ops	= &meson_reset_toggle_ops,
-> +	.reset_num	= 26,
-> +	.level_offset	= 0x24,
-> +};
-> +
-> +static const struct meson_reset_param meson_sm1_audio_param = {
-> +	.reset_ops	= &meson_reset_toggle_ops,
-> +	.reset_num	= 39,
-> +	.level_offset	= 0x28,
-> +};
-> +
-> +static const struct auxiliary_device_id meson_reset_aux_ids[] = {
-> +	{
-> +		.name = "axg-audio-clkc.rst-g12a",
-> +		.driver_data = (kernel_ulong_t)&meson_g12a_audio_param,
-> +	}, {
-> +		.name = "axg-audio-clkc.rst-sm1",
-> +		.driver_data = (kernel_ulong_t)&meson_sm1_audio_param,
-> +	}, {}
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, meson_reset_aux_ids);
-> +
-> +static int meson_reset_aux_probe(struct auxiliary_device *adev,
-> +				 const struct auxiliary_device_id *id)
-> +{
-> +	const struct meson_reset_param *param =
-> +		(const struct meson_reset_param *)(id->driver_data);
-> +	struct meson_reset_adev *raux =
-> +		to_meson_reset_adev(adev);
-> +
-> +	return meson_reset_probe(&adev->dev, raux->map, param);
-> +}
-> +
-> +static struct auxiliary_driver meson_reset_aux_driver = {
-> +	.probe		= meson_reset_aux_probe,
-> +	.id_table	= meson_reset_aux_ids,
-> +};
-> +module_auxiliary_driver(meson_reset_aux_driver);
-> +
-> +static void meson_rst_aux_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +	struct meson_reset_adev *raux =
-> +		to_meson_reset_adev(adev);
-> +
-> +	ida_free(&meson_rst_aux_ida, adev->id);
-> +	kfree(raux);
-> +}
-> +
-> +static void meson_rst_aux_unregister_adev(void *_adev)
-> +{
-> +	struct auxiliary_device *adev = _adev;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +int devm_meson_rst_aux_register(struct device *dev,
-> +				struct regmap *map,
-> +				const char *adev_name)
-> +{
-> +	struct meson_reset_adev *raux;
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	raux = kzalloc(sizeof(*raux), GFP_KERNEL);
-> +	if (!raux)
-> +		return -ENOMEM;
-> +
-> +	ret = ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
-> +	if (ret < 0)
-> +		goto raux_free;
-> +
-> +	raux->map = map;
-> +
-> +	adev = &raux->adev;
-> +	adev->id = ret;
-> +	adev->name = adev_name;
-> +	adev->dev.parent = dev;
-> +	adev->dev.release = meson_rst_aux_release;
-> +	device_set_of_node_from_dev(&adev->dev, dev);
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret)
-> +		goto ida_free;
-> +
-> +	ret = __auxiliary_device_add(adev, dev->driver->name);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, meson_rst_aux_unregister_adev,
-> +					adev);
-> +
-> +ida_free:
-> +	ida_free(&meson_rst_aux_ida, adev->id);
-> +raux_free:
-> +	kfree(raux);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_meson_rst_aux_register);
-> +
-> +MODULE_DESCRIPTION("Amlogic Meson Reset Auxiliary driver");
-> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_IMPORT_NS(MESON_RESET);
-> diff --git a/drivers/reset/amlogic/reset-meson-core.c b/drivers/reset/amlogic/reset-meson-core.c
-> index ea4fc562f7e6..774902527d17 100644
-> --- a/drivers/reset/amlogic/reset-meson-core.c
-> +++ b/drivers/reset/amlogic/reset-meson-core.c
-> @@ -85,12 +85,33 @@ static int meson_reset_deassert(struct reset_controller_dev *rcdev,
->   	return meson_reset_level(rcdev, id, false);
->   }
->   
-> -static const struct reset_control_ops meson_reset_ops = {
-> +static int meson_reset_level_toggle(struct reset_controller_dev *rcdev,
-> +				    unsigned long id)
-> +{
-> +	int ret;
-> +
-> +	ret = meson_reset_assert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return meson_reset_deassert(rcdev, id);
-> +}
-> +
-> +const struct reset_control_ops meson_reset_ops = {
->   	.reset		= meson_reset_reset,
->   	.assert		= meson_reset_assert,
->   	.deassert	= meson_reset_deassert,
->   	.status		= meson_reset_status,
->   };
-> +EXPORT_SYMBOL_NS_GPL(meson_reset_ops, MESON_RESET);
-> +
-> +const struct reset_control_ops meson_reset_toggle_ops = {
-> +	.reset		= meson_reset_level_toggle,
-> +	.assert		= meson_reset_assert,
-> +	.deassert	= meson_reset_deassert,
-> +	.status		= meson_reset_status,
-> +};
-> +EXPORT_SYMBOL_NS_GPL(meson_reset_toggle_ops, MESON_RESET);
->   
->   int meson_reset_probe(struct device *dev, struct regmap *map,
->   		      const struct meson_reset_param *param)
-> @@ -105,7 +126,7 @@ int meson_reset_probe(struct device *dev, struct regmap *map,
->   	data->map = map;
->   	data->rcdev.owner = dev->driver->owner;
->   	data->rcdev.nr_resets = param->reset_num;
-> -	data->rcdev.ops = &meson_reset_ops;
-> +	data->rcdev.ops = data->param->reset_ops;
->   	data->rcdev.of_node = dev->of_node;
->   
->   	return devm_reset_controller_register(dev, &data->rcdev);
-> diff --git a/drivers/reset/amlogic/reset-meson-pltf.c b/drivers/reset/amlogic/reset-meson-pltf.c
-> index 97e933b4aa34..2bc3ea42c6ec 100644
-> --- a/drivers/reset/amlogic/reset-meson-pltf.c
-> +++ b/drivers/reset/amlogic/reset-meson-pltf.c
-> @@ -16,6 +16,7 @@
->   #include "reset-meson.h"
->   
->   static const struct meson_reset_param meson8b_param = {
-> +	.reset_ops	= &meson_reset_ops,
->   	.reset_num	= 256,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x7c,
-> @@ -23,6 +24,7 @@ static const struct meson_reset_param meson8b_param = {
->   };
->   
->   static const struct meson_reset_param meson_a1_param = {
-> +	.reset_ops	= &meson_reset_ops,
->   	.reset_num	= 96,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
-> @@ -30,6 +32,7 @@ static const struct meson_reset_param meson_a1_param = {
->   };
->   
->   static const struct meson_reset_param meson_s4_param = {
-> +	.reset_ops	= &meson_reset_ops,
->   	.reset_num	= 192,
->   	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
-> diff --git a/drivers/reset/amlogic/reset-meson.h b/drivers/reset/amlogic/reset-meson.h
-> index c2e8a5cf2e46..5ab2ac9ab2e5 100644
-> --- a/drivers/reset/amlogic/reset-meson.h
-> +++ b/drivers/reset/amlogic/reset-meson.h
-> @@ -12,6 +12,7 @@
->   #include <linux/reset-controller.h>
->   
->   struct meson_reset_param {
-> +	const struct reset_control_ops *reset_ops;
->   	unsigned int reset_num;
->   	unsigned int reset_offset;
->   	unsigned int level_offset;
-> @@ -21,4 +22,7 @@ struct meson_reset_param {
->   int meson_reset_probe(struct device *dev, struct regmap *map,
->   		      const struct meson_reset_param *param);
->   
-> +extern const struct reset_control_ops meson_reset_ops;
-> +extern const struct reset_control_ops meson_reset_toggle_ops;
-> +
->   #endif /* __MESON_RESET_CORE_H */
-> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc/amlogic/meson-auxiliary-reset.h
-> new file mode 100644
-> index 000000000000..f70dd864ef6a
-> --- /dev/null
-> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
-> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
-> +
-> +#include <linux/err.h>
-> +
-> +struct device;
-> +struct regmap;
-> +
-> +#if IS_ENABLED(CONFIG_RESET_MESON_AUX)
-> +int devm_meson_rst_aux_register(struct device *dev,
-> +				struct regmap *map,
-> +				const char *adev_name);
-> +#else
-> +static inline int devm_meson_rst_aux_register(struct device *dev,
-> +					      struct regmap *map,
-> +					      const char *adev_name)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
-> +#endif /* __SOC_AMLOGIC_MESON_AUX_RESET_H */
-
+> Mark.
+> 
+>>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>   drivers/perf/arm-cmn.c | 16 +++++++++++-----
+>>   1 file changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
+>> index 8f7a1a6f8ab7..4d128db2040c 100644
+>> --- a/drivers/perf/arm-cmn.c
+>> +++ b/drivers/perf/arm-cmn.c
+>> @@ -115,6 +115,7 @@
+>>   /* The DTC node is where the magic happens */
+>>   #define CMN_DT_DTC_CTL			0x0a00
+>>   #define CMN_DT_DTC_CTL_DT_EN		BIT(0)
+>> +#define CMN_DT_DTC_CTL_CG_DISABLE	BIT(10)
+>>   
+>>   /* DTC counters are paired in 64-bit registers on a 16-byte stride. Yuck */
+>>   #define _CMN_DT_CNT_REG(n)		((((n) / 2) * 4 + (n) % 2) * 4)
+>> @@ -1544,9 +1545,12 @@ static void arm_cmn_event_start(struct perf_event *event, int flags)
+>>   	int i;
+>>   
+>>   	if (type == CMN_TYPE_DTC) {
+>> -		i = hw->dtc_idx[0];
+>> -		writeq_relaxed(CMN_CC_INIT, cmn->dtc[i].base + CMN_DT_PMCCNTR);
+>> -		cmn->dtc[i].cc_active = true;
+>> +		struct arm_cmn_dtc *dtc = cmn->dtc + hw->dtc_idx[0];
+>> +
+>> +		writel_relaxed(CMN_DT_DTC_CTL_DT_EN | CMN_DT_DTC_CTL_CG_DISABLE,
+>> +			       dtc->base + CMN_DT_DTC_CTL);
+>> +		writeq_relaxed(CMN_CC_INIT, dtc->base + CMN_DT_PMCCNTR);
+>> +		dtc->cc_active = true;
+>>   	} else if (type == CMN_TYPE_WP) {
+>>   		u64 val = CMN_EVENT_WP_VAL(event);
+>>   		u64 mask = CMN_EVENT_WP_MASK(event);
+>> @@ -1575,8 +1579,10 @@ static void arm_cmn_event_stop(struct perf_event *event, int flags)
+>>   	int i;
+>>   
+>>   	if (type == CMN_TYPE_DTC) {
+>> -		i = hw->dtc_idx[0];
+>> -		cmn->dtc[i].cc_active = false;
+>> +		struct arm_cmn_dtc *dtc = cmn->dtc + hw->dtc_idx[0];
+>> +
+>> +		dtc->cc_active = false;
+>> +		writel_relaxed(CMN_DT_DTC_CTL_DT_EN, dtc->base + CMN_DT_DTC_CTL);
+>>   	} else if (type == CMN_TYPE_WP) {
+>>   		for_each_hw_dn(hw, dn, i) {
+>>   			void __iomem *base = dn->pmu_base + CMN_DTM_OFFSET(hw->dtm_offset);
+>> -- 
+>> 2.39.2.101.g768bb238c484.dirty
+>>
 
