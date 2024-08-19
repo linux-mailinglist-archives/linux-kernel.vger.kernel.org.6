@@ -1,168 +1,150 @@
-Return-Path: <linux-kernel+bounces-291974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E04956990
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:43:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45ED3956994
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5961F2297C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:43:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F15B22317
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE48C166F3D;
-	Mon, 19 Aug 2024 11:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC386166F36;
+	Mon, 19 Aug 2024 11:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="AaMIVeoU"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CG6C/Qku"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5FE166F2A;
-	Mon, 19 Aug 2024 11:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D5B1662E8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724067821; cv=none; b=Wjzr0m/43rFY7lOtRHYs9w/sGZC+qC0KZK4F8TJkI6WZmZ8uEFP7RI3BL7ff69ZAgdWlPRFNM+IejRpveJt2u/2uv6SoFFi6ZFPYFdWuEQ2wNAgnLJaMLWYILoeXVGwh+WIBOKCZToSLtEI2NbidYzW5vaJw0VwtPv3DDk4MLLg=
+	t=1724067886; cv=none; b=jctAhJVvJOm0nbcr/9NLaBaDC6UUvCYbXZ/+Un8N5l00dGPkJbuddia7WeoCmWQLm2SWjiOhrJ+G8CfwdkeNJi0RGmSiLpxPLDgWL147ORI/NdqMiMh5x2b/GoBTwujbx7l77QU9i+NsIeEA3+LHB9x2Gbiaok8lc7jFt3FPbcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724067821; c=relaxed/simple;
-	bh=ZRnKHej5GGCo7GDzgFRFP9GZMsIsKF0Y8yAgNCG2Ef4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Iz4c8dhh7JVwkYnzzbwgtNMxUORnAjnz45iCInAQ4xehoq+qv+8CylqgYK7A6FRuEH0cT4pT/ivNiFXGmDw7qgBwWuoFLHGCtzw342bnOSfQfgB3G2qiIHclYgGlbY8BaKyhUqtXlNCAfE8HpnXoWsQoyBd+0n95CNGdmEDq9Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=AaMIVeoU; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 41B869C5BDF;
-	Mon, 19 Aug 2024 07:43:31 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id l0-j1zBEH9ZD; Mon, 19 Aug 2024 07:43:30 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 4D1A09C5F74;
-	Mon, 19 Aug 2024 07:43:30 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 4D1A09C5F74
+	s=arc-20240116; t=1724067886; c=relaxed/simple;
+	bh=3dm5jhhU1tb4Z93ZafF+6iMrIY69gXRErqdXw1h2T24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SSGwrgj0z2ORoquFmi0m5HKRn6r/+OHGi+/5IVp9iVwLjVzDZhtg3yyyJpAJ1wjW9CyxbyRLwOeAieneL+QP3QW3rUQ8W/CVCfShe4aKvgVYX4DxlrYf/fGdZ2F0V0N27FSXfTis7PWjocq5h3+ksuvNRvxMeHb7j+LWQguPNdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CG6C/Qku; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7b4so18168181fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:44:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1724067810; bh=g3AsLUqBfKMisCl4I03Q1DAj0/8iriOUEYeW7RNSf2s=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=AaMIVeoUp0XGvy58oS1QXH6phQNWz5ic5K/PnB2LvOWK38amBy7c5YOWrudkWD0Vp
-	 o4RmMP9VB8zhaet1baBcMCZUWWGHuBnA+M6SZDaP61Bp+yNSalbzTgvVPUV4LN1PQz
-	 92OLI92ya8VTtQA1BtmYKMyxy+AzdNKjXsxi8XldIYouc91GD+WFFtf5a6uxySlY50
-	 vv5ntTjj6Z8w3hFYFimazNvrJEd52F1UpVF2e2BPIx6iEvyvQrZaAwVyuEKVbVEMTm
-	 e9cmcUFdt5RoVKhg6s+8b2NJCjQLLQg3JTAUXTNse/Qgb0DWgXWQ/qd5p64rZ65VOR
-	 WSPSc2oOYP2Yg==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id G2C6bNsOuPV7; Mon, 19 Aug 2024 07:43:30 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id E8A2E9C5BDF;
-	Mon, 19 Aug 2024 07:43:29 -0400 (EDT)
-Date: Mon, 19 Aug 2024 07:43:29 -0400 (EDT)
-From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, 
-	shengjiu wang <shengjiu.wang@gmail.com>, 
-	Xiubo Lee <Xiubo.Lee@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	linux-sound <linux-sound@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, imx <imx@lists.linux.dev>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	alsa-devel <alsa-devel@alsa-project.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	Philip-Dylan Gleonec <philip-dylan.gleonec@savoirfairelinux.com>
-Message-ID: <905560330.155045.1724067809890.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <Zq+QrxKFb3U1IEv/@dragon>
-References: <20240627083104.123357-1-elinor.montmasson@savoirfairelinux.com> <20240627083104.123357-7-elinor.montmasson@savoirfairelinux.com> <Zq+QrxKFb3U1IEv/@dragon>
-Subject: Re: [PATCH v6 6/7] arm64: dts: imx8m: update spdif sound card node
- properties
+        d=gmail.com; s=20230601; t=1724067882; x=1724672682; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=odjopEvwH67dxv9w6eekXOxb49yPm4nXGo4n1/uD+2g=;
+        b=CG6C/Qku943KlG+DrSD/umW96IqsaMFQ/6VBMJHN44Yluc65UXOQ1ZrCJJerX7rqRp
+         k9gfye6DOyFTMg5/BSU9U+Ynvry1Wr/VcecHZoLtjuqUemtllJnt41qNTu4wvyjTEf68
+         Au44Eadah6IFD5akc2ZMdcxQpVoJlEptbPRtqVgFFXJr4FwqxUbnLTbZU5eBYKwDmy3T
+         0+ufDfChHNjyOKWveMiCBpN5iCsoYSiypHjeX2hDPxAotL6PvI4azIFU2NNKaBLB3sxi
+         UF3/F+e3b0wBmI8vmyn96n4vcdC/HEcGy6mxnns7AtWuwHxT8lc7oFMW08HPFeR0QhKF
+         4XWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724067882; x=1724672682;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=odjopEvwH67dxv9w6eekXOxb49yPm4nXGo4n1/uD+2g=;
+        b=dKJX2lXtzxIgp3EbcLPQwI14dfX+uj8piWef0PLHWr5jHfs83R6fDEACDWMONOIv3H
+         mEw6iGmoF2o8Jf2I9xms8UNy9rhvYWoh9t2DY68+MiLqmTIzygHJ5rDyFgLvH763ChFm
+         565jfVpfYLyl/nRnxDgcK082cffSS1A6aWVizACJi+4d1T0FXv3v4+Z7OpxqW2zWt1SI
+         LVLs7Z0ifB190f5GCFDFKK3iWhIfXQltaAu18jqTB8dLSPlwkVr8d8H4wmp5t6zIqiWh
+         pemIeJPsmSrDVjQhe+/9nK3ChNjMzcnqW04RDdDNX8myq5mMm3hYIQLfAEqU6IElrGYO
+         HF7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVjIQ4Q5xzHq86Rx4DigL6lYe1mR7+hf/IK2Jbi480k/ibFQX2xOLWjhBVsM08g+qYCkP53q0q7/ilto4tw1HgCEZu2c8cwqYFwu/kJ
+X-Gm-Message-State: AOJu0YyoGn+2m+NJ4b0RjqyKZ9GVKOVgNJPJ91CtK+vRWqo5v6g0Lhju
+	jcLMSMW9LsOAUEJNjMn49PJpaYk5Q4BOnbdHSKIgVRgyYBqQi2rrHxMqjBxBwIiQx2RBGeLcdZS
+	iQACFcGuePGvw143vM97yPk8eR7g=
+X-Google-Smtp-Source: AGHT+IE6iUag+9k8LcZQ7Ws/9/lpqTS4a+bFfYRN5dOywfrtT3S1T+b3EIasvMiglZRrty9MSEU87+4Uo5NVYT57yl4=
+X-Received: by 2002:a2e:1319:0:b0:2ef:2b53:c785 with SMTP id
+ 38308e7fff4ca-2f3be607459mr62202961fa.41.1724067881847; Mon, 19 Aug 2024
+ 04:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
-Thread-Topic: arm64: dts: imx8m: update spdif sound card node properties
-Thread-Index: LseD1k2NMHpDg9FbVlB5JHSqjmcCfQ==
+References: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
+ <CA+G9fYtd1Hw9YLpceUAwwC+UytVQVXOET4gmGT9jiCgHa+WexQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYtd1Hw9YLpceUAwwC+UytVQVXOET4gmGT9jiCgHa+WexQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Mon, 19 Aug 2024 19:44:25 +0800
+Message-ID: <CAMgjq7Bz0DY+rY0XgCoH7-Q=uHLdo3omi8kUr4ePDweNyofsbQ@mail.gmail.com>
+Subject: Re: gcc-8: mm/swapfile.c:863:40: error: array subscript 1 is above
+ array bounds of 'struct list_head[1]' [-Werror=array-bounds]
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Chris Li <chrisl@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Barry Song <21cnbao@gmail.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: multipart/mixed; boundary="000000000000aaac9d062007d5df"
 
-> From: "Shawn Guo" <shawnguo2@yeah.net>
-> Sent: Sunday, 4 August, 2024 16:31:11
-> On Thu, Jun 27, 2024 at 10:31:03AM +0200, Elinor Montmasson wrote:
->> The merge of imx-spdif driver into fsl-asoc-card brought
->> new DT properties that can be used with the "fsl,imx-audio-spdif"
->> compatible:
->> * The "spdif-controller" property from imx-spdif is named "audio-cpu"
->>   in fsl-asoc-card.
->> * fsl-asoc-card uses codecs explicitly declared in DT
->>   with "audio-codec".
->>   With an S/PDIF, codec drivers spdif_transmitter and
->>   spdif_receiver should be used.
->>   Driver imx-spdif used instead the dummy codec and a pair of
->>   boolean properties, "spdif-in" and "spdif-out".
->> 
->> While backward compatibility is kept to support properties
->> "spdif-controller", "spdif-in" and "spdif-out", using new properties has
->> several benefits:
->> * "audio-cpu" and "audio-codec" are more generic names reflecting
->>   that the fsl-asoc-card driver supports multiple hardware.
->>   They are properties already used by devices using the
->>   fsl-asoc-card driver.
->>   They are also similar to properties of simple-card: "cpu" and "codec".
->> * "spdif-in" and "spdif-out" imply the use of the dummy codec in the
->>   driver. However, there are already two codec drivers for the S/PDIF,
->>   spdif_transmitter and spdif_receiver.
->>   It is better to declare S/PDIF Tx and Rx devices in a DT, and then
->>   reference them with "audio-codec" than using the dummy codec.
->> 
->> For those reasons, this commit updates in-tree DTs to use the new
->> properties:
->> * Rename "spdif-controller" property to "audio-cpu".
->> * Declare S/PDIF transmitter and/or receiver devices, and use them with
->>   the "audio-codec" property instead of "spdif-out" and/or "spdif-in".
->> 
->> These modifications were tested only on an imx8mn-evk board.
->> 
->> Note that out-of-tree and old DTs are still supported.
->> 
->> Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi | 15 +++++++++---
->>  arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi | 15 +++++++++---
->>  arch/arm64/boot/dts/freescale/imx8mq-evk.dts  | 24 +++++++++++++++----
->>  3 files changed, 43 insertions(+), 11 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
->> b/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
->> index 90d1901df2b1..348855a41852 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
->> @@ -180,12 +180,21 @@ cpu {
->>  		};
->>  	};
->>  
->> +	spdif_out: spdif-out {
->> +		#sound-dai-cells = <0>;
->> +		compatible = "linux,spdif-dit";
-> 
-> It's recommended that the property list begins with 'compatible'.  Could
-> you flip them?
-> 
+--000000000000aaac9d062007d5df
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yes I'll will do this quickly, thank you.
+On Mon, Aug 19, 2024 at 6:16=E2=80=AFPM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> On Mon, 19 Aug 2024 at 13:58, Naresh Kamboju <naresh.kamboju@linaro.org> =
+wrote:
+> >
+> > The x86 builds failed with gcc-8 due to following build warnings / erro=
+rs on
+> > Linux next-20240802 to next-20240819.
+> >
+> > x86_64 defconfig gcc-8 build failed
+> > x86_64 defconfig gcc-13 build pass
+> >
+> > First seen on the next-20240802 tag.
+> >
+> >   GOOD: next-20240730
+> >   BAD:  next-20240802
+>
+> Anders bisected this and found the first bad commit id as,
+> aded4352f648 ("mm: swap: separate SSD allocation from
+> scan_swap_map_slots()") first faulty one
+>
+> - Naresh
+>
 
-Regards,
-Elinor Montmasson
+Hi Naresh,
+
+Thanks for the report, the problem will occur when CONFIG_THP_SWAP is
+disabled. Can you try the following patch? I can confirm it's fixed
+with my test.
+
+--000000000000aaac9d062007d5df
+Content-Type: application/octet-stream; 
+	name="0001-mm-swap-fix-array-bounds-error-with-CONFIG_THP_SWAP-.patch"
+Content-Disposition: attachment; 
+	filename="0001-mm-swap-fix-array-bounds-error-with-CONFIG_THP_SWAP-.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m00x6nue0>
+X-Attachment-Id: f_m00x6nue0
+
+RnJvbSA4OWYwYWFmYTAzYWQ1ODc4ZTg5MDJlMDdlMTJlYzBjMDIwZGJhMmRmIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBLYWlydWkgU29uZyA8a2Fzb25nQHRlbmNlbnQuY29tPgpEYXRl
+OiBNb24sIDE5IEF1ZyAyMDI0IDE5OjMxOjU1ICswODAwClN1YmplY3Q6IFtQQVRDSF0gbW06IHN3
+YXA6IGZpeCBhcnJheS1ib3VuZHMgZXJyb3Igd2l0aCBDT05GSUdfVEhQX1NXQVA9bgoKU2lnbmVk
+LW9mZi1ieTogS2FpcnVpIFNvbmcgPGthc29uZ0B0ZW5jZW50LmNvbT4KLS0tCiBtbS9zd2FwZmls
+ZS5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0p
+CgpkaWZmIC0tZ2l0IGEvbW0vc3dhcGZpbGUuYyBiL21tL3N3YXBmaWxlLmMKaW5kZXggZDljZjMx
+YjA0ZGIzLi4xNmVjNmI3ZGYxOTggMTAwNjQ0Ci0tLSBhL21tL3N3YXBmaWxlLmMKKysrIGIvbW0v
+c3dhcGZpbGUuYwpAQCAtODM2LDcgKzgzNiw3IEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIGNsdXN0
+ZXJfYWxsb2Nfc3dhcF9lbnRyeShzdHJ1Y3Qgc3dhcF9pbmZvX3N0cnVjdCAqc2ksIGludCBvCiAJ
+CWdvdG8gZG9uZTsKIAogCS8qIE9yZGVyIDAgc3RlYWxpbmcgZnJvbSBoaWdoZXIgb3JkZXIgKi8K
+LQlmb3IgKGludCBvID0gMTsgbyA8IFBNRF9PUkRFUjsgbysrKSB7CisJZm9yIChpbnQgbyA9IDE7
+IG8gPCBTV0FQX05SX09SREVSUzsgbysrKSB7CiAJCS8qCiAJCSAqIENsdXN0ZXJzIGhlcmUgaGF2
+ZSBhdCBsZWFzdCBvbmUgdXNhYmxlIHNsb3RzIGFuZCBjYW4ndCBmYWlsIG9yZGVyIDAKIAkJICog
+YWxsb2NhdGlvbiwgYnV0IHJlY2xhaW0gbWF5IGRyb3Agc2ktPmxvY2sgYW5kIHJhY2Ugd2l0aCBh
+bm90aGVyIHVzZXIuCi0tIAoyLjQ1LjIKCg==
+--000000000000aaac9d062007d5df--
 
