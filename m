@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-292046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1CE956A79
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1DE956A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00B51C220C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8821C21F87
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62216B735;
-	Mon, 19 Aug 2024 12:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7FF16A930;
+	Mon, 19 Aug 2024 12:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L7W7kxzw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XySd1RRj"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14DD1684A0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A0815666B;
+	Mon, 19 Aug 2024 12:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069307; cv=none; b=PSxeuJ4DHylP4hwc8I39hnEJGckIURg0uV+m78qEn2t1aOzxlVDz7sUdPHJR5uvpmi31bFJoKm9ionRZe3LaDWYyVnPw9HYHvdEDf2DZ4C5RerZhKg77Rgw7QhhQyqckmbt27QonhAJn5IqhUuPmfOp539J1RQ3/JWw8FiEH1io=
+	t=1724069342; cv=none; b=E7Xqr1vsyOHCbet20QhgJQEkXVp1iJzoXfBYx0S2TM/ecHvVIypcxtsJwci3Ehh4qoaGG7OPTLWKrDu31331drW+bifXro3OGN0/o1W3wf2zXW5tPZ7ei87mPS5xWzqinNcrzihI70bel0Y90VAMNel6OxRjfKBBCoS1UvqbMXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069307; c=relaxed/simple;
-	bh=RWyAIFk9G8mmDGLmrZO/cnlLMTqmW12k7ttu2XvJDu8=;
+	s=arc-20240116; t=1724069342; c=relaxed/simple;
+	bh=PKUgctShUuF5smxVxpXr/elfbiHpvj5MZhJ0BzZoYNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgyGYcWMMTSW8y8vH9HUEwNn7EweqlQxJqBw44vz4UY90wnQ+N4rSyFw0PXGZvepKB8vecPSWcR/S1JJlILSh+9BbF84dKQ88l6fUIFgL9awVHBPyABTrwPyRl753txUxa6wVBt28/a+9+5QfxKTTOV/lJMbAJwK09hKiFp1/xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L7W7kxzw; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724069306; x=1755605306;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RWyAIFk9G8mmDGLmrZO/cnlLMTqmW12k7ttu2XvJDu8=;
-  b=L7W7kxzw83ZePn6kzZ41EbNH9/Ha0jNoGqgBKCoopZR4FBBtpbqqBv8r
-   jb7oEojBlkhhpaBzSL4KecPSrQwr3hvTIM2pADPGbMepmE4F/0Kb331y1
-   KHp5PBsjTcWG6/uGJE+ySNAVkouJHbm0kg+5Tid47nVGY/IihLSy0qvN6
-   yM/1iwVifL0aXjjNyLUJtBmgextq+iCT3juWeVVWJyHtLVPmnPUpuEHfa
-   ey1f5J8z93HcfpQkOUhviuAqYAIjV9h/czQ+P6v5euQUlnmdnHMqTXzh9
-   VRIa5AN0APzeoL/zDVCfodJeoqHwwnxAtcdDmZfzXAssVVDL46m4HBFDK
-   g==;
-X-CSE-ConnectionGUID: NZ02Ku63RlqjHoh3X7qaHQ==
-X-CSE-MsgGUID: hYqKeO3aTGageSJvzS0b4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="32931389"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="32931389"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 05:08:25 -0700
-X-CSE-ConnectionGUID: kHmAH+33TNOjgVyrOu/O0A==
-X-CSE-MsgGUID: Xe7CVMajRsiXlJ2H/m3B0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="64514648"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 19 Aug 2024 05:08:21 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id B971F2D8; Mon, 19 Aug 2024 15:08:19 +0300 (EEST)
-Date: Mon, 19 Aug 2024 15:08:19 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Nikunj A Dadhania <nikunj@amd.com>, cho@microsoft.com, decui@microsoft.com, 
-	John.Starks@microsoft.com
-Subject: Re: [PATCH v3 04/10] x86/insn: Read and decode insn without crossing
- the page boundary
-Message-ID: <dekciupp32nqq6lpqecpwpoictme3b3qw5ha3rxaxhdbl6ba34@622ualchvsvt>
-References: <cover.1722862355.git.legion@kernel.org>
- <cover.1723807851.git.legion@kernel.org>
- <9704da6a35d62932d464d33b39953fc5b2fd74ea.1723807851.git.legion@kernel.org>
- <3xcmaxmpoemmotdqhtr5fu52wyssixyvnmirqbbnvhwpcuss5z@sayg725h5wcz>
- <ZsMy1YaHI4gaN703@example.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNHw8muKYLlix3NKWOtPPb4s8JNYztSRcFrOgwQIQAHowI1VIdJf05YOifHayCBdsawscaAZam9w+i0Y4HcYGTf+wB8yIBnQo3ju8OSFfEjMkPZFdj7U5MdaeXLXbNAwLiOPVyDzvHM5y/mdXqHlW4ycGIsck9NFkmcxboy8uF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XySd1RRj; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-710bdddb95cso2374273b3a.3;
+        Mon, 19 Aug 2024 05:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724069340; x=1724674140; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Pt6QHwBAmFKSEnRFwX3SHcnEffqlGCVeUH83wmSq7vw=;
+        b=XySd1RRjD+v01Etd9TasJ9tt4zcYVjRPpV91UN04wZjNgJY9bFIGdd+Lwl4kR+9x92
+         EPW4h+cQj3zTD0dCpzt/jVc/ApxnMXXIoCMAPz4VnDpRicPxyu0vuroMgZCnzr3QwznS
+         FmB6Z2MeckwAxntqVeOwPd04J2dsHC8L9vhdrojY1JF8OZHSvkXxdy2CpB7W9I9satSM
+         C+nueb3XNbvnWyL02QNFSkZAtk/7wOvwzyZFjvI7Svv2T/UZ4HgW5rnXZdHjAP3T8klq
+         3Ox8nH0vj2WeRxO945YrcDcPMAzel0WZ9wX8ArU6DUNN1vxk0VWPnvkNNZCfanVi+fjV
+         MQ9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724069340; x=1724674140;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pt6QHwBAmFKSEnRFwX3SHcnEffqlGCVeUH83wmSq7vw=;
+        b=ZFUQT0dGkRcAETgvcpSzIf7vJtEz8nmgc5MqMFbQ4gz48DVDEtnL6+Gz5i4kAZEWkR
+         xW6flU6WowRoXI3PyaIHsfB7M8RIXejxvPAIMzUWUFxV05X4WJGjs1A+w1WozCq62LgS
+         B+xOcgU4OCaFYB61Um0RLyVlwtRPLLQqBdMPe3s7gqpu+stGkFqm2TMThoc/EF/L+ISi
+         TC9ZFSO1PP0CJrc9X9MOi/EfrK8eECkulTc8iTn9309/ECjAoeoZNxgl3UjsmQDzUHG7
+         PcpD3/bv08K9cUdFlROcWFvg4Pc+camMzaV8x4C5SN47YC6qgyGr07SpSfrM7vuN0Kfv
+         DKmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkzDyRkAX/VIWWE9h6HvbeuAjN1YWrCyXTI02d+QydYdo5aNDaj869WF8t2kybfE86mLny8kM0LVbHfCd2LK+LDreC+MH5vuYahA==
+X-Gm-Message-State: AOJu0YynWF7wbQVftfLP77il4yS9I089dOi/+08bBkJZUWYpPwbvw6BR
+	yeF9+mZGiLEWr4RX9zPdy8F6uSVSN1vdVBUtKVZhXqpmBjzay0Tp
+X-Google-Smtp-Source: AGHT+IGuUzJlxNFYojz7oNc/kOovo0osmwFt37B0ghd4icWTleq7T+Rpk4VrXL/Ocep2C2cxCK5CfQ==
+X-Received: by 2002:a05:6a20:9c99:b0:1c2:8949:5ba1 with SMTP id adf61e73a8af0-1c905059d72mr10180241637.53.1724069339770;
+        Mon, 19 Aug 2024 05:08:59 -0700 (PDT)
+Received: from thinkpad ([120.60.128.138])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add43dcsm6490526b3a.28.2024.08.19.05.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 05:08:59 -0700 (PDT)
+Date: Mon, 19 Aug 2024 17:38:52 +0530
+From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+To: Mary Guillemard <mary@mary.zone>
+Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	Peter Wang <peter.wang@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/1] scsi: ufs-mediatek: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP
+Message-ID: <20240819120852.tdxlebj7pjcxjbou@thinkpad>
+References: <20240818222442.44990-2-mary@mary.zone>
+ <20240818222442.44990-3-mary@mary.zone>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZsMy1YaHI4gaN703@example.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240818222442.44990-3-mary@mary.zone>
 
-On Mon, Aug 19, 2024 at 01:56:05PM +0200, Alexey Gladkov wrote:
-> On Mon, Aug 19, 2024 at 01:48:11PM +0300, Kirill A. Shutemov wrote:
-> > On Fri, Aug 16, 2024 at 03:43:54PM +0200, Alexey Gladkov wrote:
-> > > From: "Alexey Gladkov (Intel)" <legion@kernel.org>
-> > > 
-> > > In case the instruction is close to the page boundary, reading
-> > > MAX_INSN_SIZE may cross the page boundary. The second page might be
-> > > from a different VMA and reading can have side effects.
-> > > 
-> > > The problem is that the actual size of the instruction is not known.
-> > > 
-> > > The solution might be to try read the data to the end of the page and
-> > > try parse it in the hope that the instruction is smaller than the
-> > > maximum buffer size.
-> > > 
-> > > Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
-> > 
-> > I think this and 3 next patches do not belong to this patchset. They
-> > address separate issue that is orthogonal to the patchset goal.
+On Mon, Aug 19, 2024 at 12:24:42AM +0200, Mary Guillemard wrote:
+> MT8183 supports UFSHCI 2.1 spec, but report a bogus value of 1 in the
+> reserved part for the Legacy Single Doorbell Support (LSDBS) capability.
 > 
-> Should I drop them from this patchset and send them after this patchset as
-> a separate change ?
 
-Yeah. I think so.
+Wow... I never thought that this quirk will be used outside of Qcom SoCs...
+
+> This set UFSHCD_QUIRK_BROKEN_LSDBS_CAP when MCQ support is explicitly
+> disabled, allowing the device to be properly registered.
+> 
+> Signed-off-by: Mary Guillemard <mary@mary.zone>
+> ---
+>  drivers/ufs/host/ufs-mediatek.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+> index 02c9064284e1..9a5919434c4e 100644
+> --- a/drivers/ufs/host/ufs-mediatek.c
+> +++ b/drivers/ufs/host/ufs-mediatek.c
+> @@ -1026,6 +1026,9 @@ static int ufs_mtk_init(struct ufs_hba *hba)
+>  	if (host->caps & UFS_MTK_CAP_DISABLE_AH8)
+>  		hba->caps |= UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
+>  
+> +	if (host->caps & UFS_MTK_CAP_DISABLE_MCQ)
+
+How can this be the deciding factor? You said above that the issue is with
+MT8183 SoC. So why not just use the quirk only for that platform?
+
+- Mani
+
+> +		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+> +
+>  	ufs_mtk_init_clocks(hba);
+>  
+>  	/*
+> -- 
+> 2.46.0
+> 
+> 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+மணிவண்ணன் சதாசிவம்
 
