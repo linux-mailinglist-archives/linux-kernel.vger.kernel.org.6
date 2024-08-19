@@ -1,143 +1,129 @@
-Return-Path: <linux-kernel+bounces-292039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D4A956A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:08:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215AB956A72
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02970B25DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF552835A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CEA16B3B5;
-	Mon, 19 Aug 2024 12:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C013C16A94A;
+	Mon, 19 Aug 2024 12:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQDv8JBl"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gvS3owJR"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B6E166F3B;
-	Mon, 19 Aug 2024 12:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C18E16A935
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069142; cv=none; b=sN4b3DyX5gt8KLxhKCLtuzKvL2AsMVB1ZfOlXct4dMRfyqkfVnakAAdok1nQ6GgJxHQ92aTc2ospSspBTOYWvWCltV4vPdbP3P8XHRUE3czdKsD6yT3z+TMIpRMbReOIZnaQvEsG9hWvEF1Kzk/dHkKYMhA6GRWCmGSyKyjxaHQ=
+	t=1724069270; cv=none; b=u/s15f2bOiJCgG2GwfhV9MGNetFh8PHKfzSSyssggBwn/M3ZvlcEw1Utri9o7vQn33GdcwRrQaGr4bURNeQbYq+S6zg4dQeidCA0RNGnQLHqjAmAuAPxD1wOqe2GGpPk5jFTDxo2fVSOOzcTlqrw24tPC70KGthijIlTYFWKdcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069142; c=relaxed/simple;
-	bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tne9pkac/3rYJu1B90R/GVpJi0/fQJ30XWjeLEe+ufB854KydSHIquRhCPA5WW9dSEz1ToL7oAXFU50L8fyWU+v9har9nXqPnEd3VG4KRedHcx0GvZ4cvVfK5eJ7uclLb4S/L5/hioBaLom2SCOSpHzzr7gmHCVoWwDYi84bGG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQDv8JBl; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5b1e33fa8so2655181eaf.3;
-        Mon, 19 Aug 2024 05:05:40 -0700 (PDT)
+	s=arc-20240116; t=1724069270; c=relaxed/simple;
+	bh=dAElQCkNFNtpOkZTljTKcvnln/5dv96/QE+2EZqHtQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eIlI07DXCUvyIkCDXy09daFxGKh3KqyJSsleZsoeIeHa0+e3jxoaz43CBgpdqyqQ+TjkVlvdsSQpv5LwkJHvSef7WTNBdp62uDL1TGKA6CIDPqvuEkeoftmne0zJp6TXu/TZq0nIPVg1LrLlSxSK7NSgl9VWgKOdRVkp7C2dhv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gvS3owJR; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20227ba378eso11400375ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724069139; x=1724673939; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
-        b=dQDv8JBlLER0sdSMSC6liKxX+AFl6Vzc8zGcej84xEqKj7PpR0/o6TR12wGbGajDw6
-         KV8hPyJZ8zI++U3owYKgZYKq4lpTKqELdLelAwHecY7Pble2gtuVvOhDoGQa7Jij/V5W
-         hVAoUGsdF6aVO9rMnSsoNc4M2+9CeDFeiwHC87B3eDyzr1TBtiuN5k9WR2VIYx4DztwE
-         w0sqBZyr6GjOnInfAdlcFgrIR2VoCBNDQtHoxoqNF9DlqreDTR+/4FXnHxPeWmbheumQ
-         U/AmW5W7WMNUgMZU1EVBdlpWM/5BbMuOrnQduBwKA6IuhHKVN1P/beOpwpWCMB4YHHn0
-         SQdg==
+        d=chromium.org; s=google; t=1724069268; x=1724674068; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kb1adcHc3E8U+gSdouMJyc+8B8S5nqfJYg6YgFfK1Po=;
+        b=gvS3owJRcrFvtjkBithjkcKVXgv+R1PNzZq6g1oSBxYkPoBitSjbihMhjwb7TwQmcH
+         YyJUmq6zZ7f+yUyBZfNjOpHHHAzxxUwMq+9Wx/Uny1U5bmsWpW8yX/3H+oAlGE1JP+ay
+         npD5ga+QEIOCQIG00hjEDu+jrhEJ59QFJl3x4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724069139; x=1724673939;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724069268; x=1724674068;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=myQ2izwA1c6xffD1CaeDvuz/WBIh15dZWQdpm/qXHj0=;
-        b=lLkX295ts0GJTI56udgGvIswbnhCxGb0JYveKBl3UKzoTLyNv4ETlk2DscPREfwEq2
-         Z69vWJUrgUvz9zCfz9zDxCXMdyHpfMUBlYtdb2C9UDcRpb03JEvZDV5TxCgy4q7Cg9nt
-         MKe9Y3YzD14c9UAyKJlNrZpwOzjaqAkmLqfSaK/ubg2cvu1w+1/R+8dhhyyqMDUIztZm
-         nMEt65T1O/r+H2PZuPMjPJ+yUbgckCGJZxlP95lqoH7eEk7u3uocqkY65EjUZpMa8ImI
-         DVo8OX5cXtkKrTRmqkKkyyAGR8o2SWNvZoCABOIczFbWf8QYZwh0mJiGyd6U4KBuDY32
-         dTuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+5MahiSdyNwGt7wEBdcvOf0Xa84KPeWq4mfCDd8mGGRzchdauTSeH8cnV/R7BnDSkQaQNC+RbMrONLXwaOq6YZPKP0qX+lZMk4ouHxmhf6HDt++HgtltLHQJrNjhrEyBcZZkE
-X-Gm-Message-State: AOJu0YxTXtdV6BFkcnziopkitk4cwE5yI2ErnZiOOads8mBYWgC8BmG5
-	K8Xd6+mN0ZlJayciDSLffUfVuarEzv8P+99ZZffAvE/OsaI49nUm/rfoyxme5IlZY0JAhTnKudR
-	AyGM6TvCxD0RfKwS3LkzwUeXR7Ws=
-X-Google-Smtp-Source: AGHT+IHkgmz5Vw9oKF8SbH3YtZC93/ypDzV6fLmUrNwA2ETAak31GBVb1OW27J2DvgVtX7OQOC0dypQkngxHERsECog=
-X-Received: by 2002:a05:6820:168a:b0:5c4:4787:1cd with SMTP id
- 006d021491bc7-5da98026986mr10184265eaf.7.1724069139649; Mon, 19 Aug 2024
- 05:05:39 -0700 (PDT)
+        bh=kb1adcHc3E8U+gSdouMJyc+8B8S5nqfJYg6YgFfK1Po=;
+        b=KN+T2uhoAzt3z2QLEQAm4k8DFAaJ1fz+7c7Nk9ekfnh6M5dGgKukgLOC7QMcrc8sc8
+         OL6RNExmzU6twJizbCYLW14xor+dtIeBdgpi5UUXfgWuRlCoJ5MCkSC91EXrN5mm6Y6u
+         Caqv2jvKPVt6WwJsZbhSSw522+V7McT/Dp88eVFRBvwTVThTlrcHKZoMcj+ULpnphkex
+         0/kDrrueljsVzRG06X3FM8OrURqe/bdM5FpCZRCC8VettzOZXkNykbx6+ULgC7jLic1c
+         3TJibP1heAz12iANxXw/Y75OPQrAj9yrl9yT09O+9d1tDZhLsxx82FOo4pqQ0ol0GDvS
+         fLLA==
+X-Gm-Message-State: AOJu0Yw3wUD9RrASeMH7ogR3xHWGPDzt8K90T4uHfwCIIvZT/SQxgyU2
+	bZZPAyg5/aU9WeXrmzG/WFH6N4Xtc/nPWhmtzo7o/jGQnHwEyfTtrgJGzhrKWA==
+X-Google-Smtp-Source: AGHT+IEruytxR9BL+HNBSd/NfoQ9M+d1X+XJ4kW9Kd3kJNr04j3cPKnLo1htQAN7DL5PhvB2Vt1A0Q==
+X-Received: by 2002:a17:902:f690:b0:202:47ca:fa1d with SMTP id d9443c01a7336-20247cafdd4mr34834745ad.50.1724069267993;
+        Mon, 19 Aug 2024 05:07:47 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:923a:77c1:913c:bcb8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fab02sm61802005ad.48.2024.08.19.05.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 05:07:47 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	Pi-Hsun Shih <pihsun@chromium.org>,
+	Jitao Shi <jitao.shi@mediatek.com>,
+	Fabien Parent <fparent@baylibre.com>,
+	Pin-yen Lin <treapking@chromium.org>
+Subject: [RESEND PATCH v2 1/2] arm64: dts: mt8183: add dpi node to mt8183
+Date: Mon, 19 Aug 2024 20:05:55 +0800
+Message-ID: <20240819120735.1508789-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819101238.1570176-1-vtpieter@gmail.com> <20240819101238.1570176-2-vtpieter@gmail.com>
- <20240819104112.gi2egnjbf3b67scu@skbuf>
-In-Reply-To: <20240819104112.gi2egnjbf3b67scu@skbuf>
-From: Pieter <vtpieter@gmail.com>
-Date: Mon, 19 Aug 2024 14:05:26 +0200
-Message-ID: <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
- change_tag_protocol support
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Russell King <linux@armlinux.org.uk>, Pieter Van Trappen <pieter.van.trappen@cern.ch>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Vladimir,
+From: Pi-Hsun Shih <pihsun@chromium.org>
 
-> Hi Pieter,
->
-> > - DSA_TAG_PROTO_NONE
-> >
-> > When disabled, this can be used as a workaround for the 'Common
-> > pitfalls using DSA setups' [1] to use the conduit network interface as
-> > a regular one, admittedly forgoing most DSA functionality and using
-> > the device as an unmanaged switch whilst allowing control
-> > operations (ethtool, PHY management, WoL).
->
-> Concretely, what is it that you wish to accomplish? I see you chose to
-> ignore my previous NACK due to the lack of a strong justification for
-> disabling the tagging protocol.
-> https://lore.kernel.org/netdev/20240801134401.h24ikzuoiakwg4i4@skbuf/
+Add dpi node to mt8183.
 
-Sorry I definitely did not try to ignore your previous NACK but here the
-motivation and solution are both different, which is why I did not consider
-it a patch iteration of the previous one.
+Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+---
 
-Previously I could not use DSA because of the macb driver limitation, now
-fixed (max_mtu increase, submitted here). Once I got that working, I notice
-that full DSA was not a compatible use case for my board because of
-requiring the conduit interface to behave as a regular ethernet interface.
-So it's really the unmanaged switch case, which I though I motivated well in
-the patch description here (PHY library, ethtool and switch WoL management).
+(no changes since v1)
 
-The solution is now the one you proposed earlier.
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> > Implementing the new software-defined DSA tagging protocol tag_8021q
-> > [2] for these devices seems overkill for this use case at the time
-> > being.
->
-> I think there's a misunderstanding about tag_8021q. It does not disable
-> the tagging protocol. But rather, it helps you implement a tagging
-> protocol when the hardware does not want to cooperate. So I don't see
-> how it would have helped you in your goal (whatever that is), and why
-> mention it.
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 267378fa46c0..266441e999f2 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -1836,6 +1836,17 @@ dsi0: dsi@14014000 {
+ 			phy-names = "dphy";
+ 		};
+ 
++		dpi0: dpi@14015000 {
++			compatible = "mediatek,mt8183-dpi";
++			reg = <0 0x14015000 0 0x1000>;
++			interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&spm MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DPI_IF>,
++				 <&mmsys CLK_MM_DPI_MM>,
++				 <&apmixedsys CLK_APMIXED_TVDPLL>;
++			clock-names = "pixel", "engine", "pll";
++		};
++
+ 		mutex: mutex@14016000 {
+ 			compatible = "mediatek,mt8183-disp-mutex";
+ 			reg = <0 0x14016000 0 0x1000>;
+-- 
+2.46.0.184.g6999bdac58-goog
 
-Right I understand, indeed a misunderstanding. Will remove this part.
-
-> tag_8021q exists because it is my goal for DSA_TAG_PROTO_NONE to
-> eventually disappear. The trend is for drivers to be converted from
-> DSA_TAG_PROTO_NONE to something else (like DSA_TAG_PROTO_VSC73XX_8021Q),
-> not the other way around. It's a strong usability concern to not be able
-> to ping through the port net devices.
->
-> At the very least we need consensus among the current DSA maintainers
-> that accepting 'none' as an alternative tagging protocol is acceptable.
-
-This of course I understand as well.
-
-Cheers, Pieter
 
