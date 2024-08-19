@@ -1,194 +1,93 @@
-Return-Path: <linux-kernel+bounces-292900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377F69575EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:52:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3E995764E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84A1284705
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE76A1C239CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85374159596;
-	Mon, 19 Aug 2024 20:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qnx1iWRD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ntzf2Tlx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qnx1iWRD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ntzf2Tlx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE2815921D;
+	Mon, 19 Aug 2024 21:01:11 +0000 (UTC)
+Received: from forward200d.mail.yandex.net (forward200d.mail.yandex.net [178.154.239.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97015E96;
-	Mon, 19 Aug 2024 20:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50F72C18C;
+	Mon, 19 Aug 2024 21:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724100760; cv=none; b=CtqK5gFOs36tG6h4/7qhPJYoRsE/UYelazo7cvqUS1l1gRLq5zkbzrH9MUpB4klzUW/RPoHUQ7ajwxqJ4P2HW2AOe14FqunoRf6iqlzDkrsVqNQaDYVssILu5/JGxrtYDxnJSKhGYlsw81YtwcFs6xd6xDvJrpIoZLKl35onwzg=
+	t=1724101270; cv=none; b=E42eYAAtnElTkeegl2rUEumSRa+ueFEZk3IeY9n7MkXUaYoT+gXW83oH01zlkfHi3pqp7qCrn1og0vRNEnhQJg4sEpd4NQZBXjU/CuWDkH6agWO5K0opxYk55d5ez0xnNxrelVY7ql+5UlZn1bzCXct23gC8EWgz/O2gzZKv1AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724100760; c=relaxed/simple;
-	bh=VHsbWr9rZjDMgU2XJZu3a86HtX+f/X636MoPUwVQe/w=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=r3U5Y4zFoR24hQKILAAo8RtgfVMPYfY9hn4d9NJ2bYwPAiS1lBYfX1P+QnO8DGt4o8OCCBQtY/tAWjsqMzUFvi0ERPw0F9Whwg3ahkV15DlfWYtki7nL6t578Nnz+c98ap5fY1sTawnTSGZideZ0etrPATQx8pqquen1qS+Bnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qnx1iWRD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ntzf2Tlx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qnx1iWRD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ntzf2Tlx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F2DBE22784;
-	Mon, 19 Aug 2024 20:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724100757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=qnx1iWRDu1F+1bGqzo5ONjaJclIKI5dfGZWrSqVZ1/cC3Pz48HGekIHqHWG/07lNCchgNQ
-	EjPpk3fgBt+T38HVExoVqSbXKVw/ZJ7Sn5ivQ2maFzLqct9RQKy5sqGreKB4MWQq44brEd
-	fLi5HfFRkhivokIyRlzVoAbrIoNvN/4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724100757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=Ntzf2Tlx/vg7h2mcCUzvOGLcMGSbu3kcM8XweiGh+QoZrbIFRkvDFTKSzhzppNLwy1RcyR
-	a1SqndmpuZ2fssBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724100757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=qnx1iWRDu1F+1bGqzo5ONjaJclIKI5dfGZWrSqVZ1/cC3Pz48HGekIHqHWG/07lNCchgNQ
-	EjPpk3fgBt+T38HVExoVqSbXKVw/ZJ7Sn5ivQ2maFzLqct9RQKy5sqGreKB4MWQq44brEd
-	fLi5HfFRkhivokIyRlzVoAbrIoNvN/4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724100757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=Ntzf2Tlx/vg7h2mcCUzvOGLcMGSbu3kcM8XweiGh+QoZrbIFRkvDFTKSzhzppNLwy1RcyR
-	a1SqndmpuZ2fssBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C92481397F;
-	Mon, 19 Aug 2024 20:52:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IffpHpKww2b/cwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 20:52:34 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1724101270; c=relaxed/simple;
+	bh=cUtmaoSmD+5Qk5UfBM3mcsvWY438nhLilFqO9oMxYOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IB4SMrmwUal60DvcIAwVgmDIKtzQqTWYAnaaYcp2Dm+LpF3Iu+3+f0ertXgSTF6C2NFqDq8hTpfDC1FO5sWB/OvOQTb8rFFSJk1Xb8sqWjkZw4O/c/4WV3muvRIhGJe1vV74hmJ1KDSfuDghP4y4EDpy/EjaQmaVzhCQwQrVr0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=travitia.xyz; spf=none smtp.mailfrom=travitia.xyz; arc=none smtp.client-ip=178.154.239.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=travitia.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=travitia.xyz
+Received: from forward200a.mail.yandex.net (forward200a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d200])
+	by forward200d.mail.yandex.net (Yandex) with ESMTPS id CF04863A20;
+	Mon, 19 Aug 2024 23:53:14 +0300 (MSK)
+Received: from forward103a.mail.yandex.net (forward103a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d103])
+	by forward200a.mail.yandex.net (Yandex) with ESMTP id B2A17647A2;
+	Mon, 19 Aug 2024 23:53:14 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2c8f:0:640:f9cc:0])
+	by forward103a.mail.yandex.net (Yandex) with ESMTPS id C4E89608CC;
+	Mon, 19 Aug 2024 23:53:06 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0rTjhaYf4Gk0-VS3IpDkM;
+	Mon, 19 Aug 2024 23:53:05 +0300
+X-Yandex-Fwd: 1
+Authentication-Results: mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net; dkim=pass
+From: Jens Reidel <adrian@travitia.xyz>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@mainlining.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Missing documentation for Audioreach topology files
+Date: Mon, 19 Aug 2024 22:53:00 +0200
+Message-ID: <7721158.EvYhyI6sBW@ceres>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
-In-reply-to: <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-References: <20240819053605.11706-1-neilb@suse.de>,
- <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-Date: Tue, 20 Aug 2024 06:52:30 +1000
-Message-id: <172410075061.6062.16885080304623041632@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 19 Aug 2024, Christian Brauner wrote:
-> On Mon, Aug 19, 2024 at 03:20:34PM GMT, NeilBrown wrote:
-> > I wasn't really sure who to send this too, and get_maintainer.pl
-> > suggested 132 addresses which seemed excessive.  So I've focussed on
-> > 'sched' maintainers.  I'll probably submit individual patches to
-> > relevant maintainers/lists if I get positive feedback at this level.
-> >=20
-> > This series was motivated by=20
-> >=20
-> >    Commit ed0172af5d6f ("SUNRPC: Fix a race to wake a sync task")
-> >=20
-> > which adds smp_mb__after_atomic().  I thought "any API that requires that
-> > sort of thing needs to be fixed".
-> >=20
-> > The main patches here are 7 and 8 which revise wake_up_bit and
-> > wake_up_var respectively.  They result in 3 interfaces:
-> >   wake_up_{bit,var}           includes smp_mb__after_atomic()
-> >   wake_up_{bit,var}_relaxed() doesn't have a barrier
-> >   wake_up_{bit,var}_mb()      includes smb_mb().
->=20
-> It's great that this api is brought up because it gives me a reason to
-> ask a stupid question I've had for a while.
->=20
-> I want to change the i_state member in struct inode from an unsigned
-> long to a u32 because really we're wasting 4 bytes on 64 bit that we're
-> never going to use given how little I_* flags we actually have and I
-> dislike that we use that vacuous type in a bunch of our structures for
-> that reason.
->=20
-> (Together with another 4 byte shrinkage we would get a whopping 8 bytes
-> back.)
->=20
-> The problem is that we currently use wait_on_bit() and wake_up_bit() in
-> various places on i_state and all of these functions require an unsigned
-> long (probably because some architectures only handle atomic ops on
-> unsigned long).
+Hi everyone,
 
-i_state contains two bits that are used for wake_up - I_NEW and I_SYNC,
-one virtual bit that is used for wake_up - I_DIO_WAKEUP - and 15 others.
-You could fit those in a short and two bools which gives you three
-different addresses to pass to wake_up_var().
-Doing that would make it a little difficult to test for=20
-   I_NEW | I_FREEING | I_WILL_FREE
-but you could probably make an inline that the compile with optimise
-effectively.
+I am currently bringing up Xiaomi SM8450/SM8475 mobile phones and have a few 
+working well enough to try and get the WCD and audio in general working. All 
+is fine, until this:
 
-Alternately you could union the "u32" with an array for 4 char to give
-you 4 addresses for wakeup.
+[   35.366229] qcom-apm gprsvc:service:2:1: Direct firmware load for qcom/
+sm8450/Xiaomi 12-tplg.bin failed with error -2
+[   35.366244] qcom-apm gprsvc:service:2:1: tplg firmware loading qcom/sm8450/
+Xiaomi 12-tplg.bin failed -2
+[   35.366250] qcom-apm gprsvc:service:2:1: ASoC: error at 
+snd_soc_component_probe on gprsvc:service:2:1: -2
 
-Both of these would be effective, but a bit hackish.  If you want
-something clean we would need a new interface.  Maybe
-wake_var_bit()/wait_var_bit_event().
-It could store the bit in wait_bit_key.bit_nr as "-2-n" or similar.  Or
-better still, add another field: enum { WAIT_BIT, WAIT_VAR, WAIT_VAR_BIT } wa=
-it_type
-to wait_bit_key.
+After searching around a bit, I stumbled across this Linaro repository: 
+https://git.codelinaro.org/linaro/qcomlt/audioreach-topology
+Apparently you're supposed to write the topology in a M4-preprocessed file that 
+gets turned into an ALSA UCM topology config and then compiled with alsatplg.
+However, there is zero documentation on the preprocessor macros and how you're 
+actually supposed to write the topology file. Am I missing something or is 
+there no public documentation and tooling for how to use this kernel 
+interface?
 
-I would probably go with the union approach and re-order the bits so that
-the ones you want to use for wake_up are less than sizeof(u32).
+Best regards,
+Jens
 
-NeilBrown
+
 
