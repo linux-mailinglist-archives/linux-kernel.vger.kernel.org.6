@@ -1,285 +1,190 @@
-Return-Path: <linux-kernel+bounces-292949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25539576D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:50:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446489576E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223BE1C23AB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00470281CBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195EB15DBC1;
-	Mon, 19 Aug 2024 21:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8726A1891D9;
+	Mon, 19 Aug 2024 21:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="EP5rSkh4"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBu9WkE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5AA158DC6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB9158A1F;
+	Mon, 19 Aug 2024 21:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724104204; cv=none; b=MOkw8dueYZdmWykpUCy7CvZNXiQieeqQ5/Mtr/n5/yUc/UDc5amAsMNfhoBEACI1HMgryZvp3vuFJbUgWOHJhWVeTv+jdKw90Bf8TG+kG3UfmtpJSkZpdTazJ/kmELQ+HoG5x6HTsEnDx4B5uyTbRILdczrwC0q3DEgVRHDZtVY=
+	t=1724104564; cv=none; b=e0cmZlDs0INaBv4MegmqICXMnWrbrQK2z29FoeTw1FXlL0dkJneUYoPBJzeXIhWY4OH+yG3FoNYBtiYcu2pSazBC75567H7AAJCxGOGcotiZnNpvbTN2emH2nWpY+Mzr9SKcG29mRGbIxzFsYhlZ3H8Ap95qsDHmugLorgqCDNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724104204; c=relaxed/simple;
-	bh=4vu7lU9QdhM85nic0n4OLTs3LW2fNK6aECHNU2IYrWs=;
+	s=arc-20240116; t=1724104564; c=relaxed/simple;
+	bh=1X0VUOplLuPN/8DfEdW1yJvcuyneDFiacXEDwO3poB0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9C6ofeCGdQGtYj5qy/Bl5HNaYgRS6PePv5jsa8OICd1XRwJie6hJ/WWY8GHST+iUsP0sZrz+4YIYaML7055bEjR4zpf311F5OCGkrpfM5zyBWltxHiwsK2FYAodPRaU8sgXGtLACIINZg+nBFef0dUyOpXAfHNdDJesQrQ+4ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=EP5rSkh4; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f00ad303aso6238325e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:50:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724104199; x=1724708999; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jd4fKqLr/PrSSEQuQcp2YBd0jKVRk44Y4gkbU8EXZVs=;
-        b=EP5rSkh4aJPoHeH99MxGpaIkoIEOlk4A6/+fLSEnb9uG1QT9xv1xJZw9xbLc8Ocspx
-         B5hVR4R5M+PQroWOSKfjHMwr35rb5ES9Kjhf7qjLlHwp8lmfFmdnvtnhaVnduSB+S4yI
-         4YQojDg3HvtWw5eO1Omddj/AlUW2xZCzKQM4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724104199; x=1724708999;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jd4fKqLr/PrSSEQuQcp2YBd0jKVRk44Y4gkbU8EXZVs=;
-        b=DKvBcMo3zRuG9uePSH3cTgMCmMR1vkV0TxQ/cER2vX4Ar98g/Kp8cDHqMt2Q7JQalZ
-         oibbzZlAsUIilqPeTxsUweC6q/C9iSW35qA5QcG1d62KaR+XruedefOxygOCtc75D/jc
-         07lvqjXiznIsL4s+52NAlDTd0dY41kbdlj5FuCmJqv1v81AmfhgYAL3/SCWBHTcLjT1Z
-         PVjOvsY2TLTAfmJwEEKypN5QI17ach61cCwsWydolN7LHVUnP7O1lt89OaJzOGs7i9Kv
-         9AQjQAOA0qa1c5KYqLA9PYTeK/IcnZrc87HvWDYYAi4cRuHRN7tBuXyBqTG2fIXQGV9N
-         RugA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPqIsIETSd1uT88sFSkVlT4G0tfwSBVkM1luHNdInNCzZpps66gTutwvdf/GMOgbHeWHFuyTjfX3ycz/VwTtXx0VfJlZgFbBsBNG3o
-X-Gm-Message-State: AOJu0YyhtWtrjr8uwZueCQURoY7uk4x7NdfWLNiOgL0xuEaaUeG99qjc
-	AqBRZby+rsFgjMmVS3G+83mtaZ4QJIghHsKfGnchJZGfMaMyVth/0eBM9ct1x0bs+LUvWhmXac9
-	rb3fx9k2T/wmmr8MPAxx9VgYkztvPXr8oVpoH
-X-Google-Smtp-Source: AGHT+IGdJ4ehNuUuHnSHWv+cVb95szforNZt+8SHlUToWrWkjAxtxr8iwZEsnsbodIADOLzpsxu1+cw772rk7am3zmg=
-X-Received: by 2002:a05:6512:2394:b0:52c:d7d9:9ba6 with SMTP id
- 2adb3069b0e04-5331c6e3977mr7169352e87.50.1724104198934; Mon, 19 Aug 2024
- 14:49:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZQqw+6wO0A4jZgi1j5ahIpmQYRW+ZHU4eX3oLC7xKBVzQGTrgktwmft2XeokMrtj1ry5vnIJyyIlvuvuB7Ae7TS01yj+yZ33egeHoV27jbY094QP7suwcv8ZaksIFlKolZ7zZCyRThWqI3J6i11LbyCsdIk/TlscOrC1Hzv5iV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBu9WkE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485FCC4AF0E;
+	Mon, 19 Aug 2024 21:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724104564;
+	bh=1X0VUOplLuPN/8DfEdW1yJvcuyneDFiacXEDwO3poB0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MBu9WkE25HFSrTKhkJGc+JdVwZwkZ/LCmhHM3nxBSykMyhiIuW51ucOtnoQ1QHK+P
+	 akwE+TlHs8dZGKE4y6aA7rC3ZuNohPwPaDx/Zd7yWVO5aOg5pwSvzi3Zj2VsijLNH7
+	 3DmmG6wfMUwvN/ystPOyjh3R9IzfI4k2y3go7r8y+3rRkhVK48XmlNuFBGrwL0qaGD
+	 ua6EEB6m0Vg8f1mHiiJOjG4Y/MQ8ceoEoTUQIRJpd6gYFPLhr95Fd/62Cbb01aQQUY
+	 H54iCclB9vRKnfhmeJ1wUEMCivU5yA2OBUbACMVXzxGD71bVLynDl3Dqh43ZMJXRlM
+	 J7YKJLjcSQi+w==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04c29588so6462753e87.3;
+        Mon, 19 Aug 2024 14:56:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXzTA+c86ztmO96OVViOFXUxEBFFu5sJdGctN06Tk38yZvpzBnpKJTtg5w4rTGKpgzbg5TntCWNhzTpzCIYs4VyNmaNDHoo/aV5T9coFlO1F4FWQ+rTlJAOfARhK25PRv1rNh2lxUdw8Q==
+X-Gm-Message-State: AOJu0Yx6zsUCR/Zf9EBXSQH99yDW8qEPiauHfSATr+c7RrPXmvmYCbQg
+	N29HPmUrd/Bdgk/j4IC6wHLa9Lvqml0WvhYapCZ/+/iyMcViFZ/QMu9hPXAXKsuHLlEkG8IFqYW
+	7ePbbPmIARFTIEalO9f46N+xgaQ==
+X-Google-Smtp-Source: AGHT+IGSVAiCrDCpQQ4BbeMOJ4jvC9P9IIbEvHnhtt+1sdAqf8OoulIvQ5RS9pGzlYKPQ9YpggOJmTJgQg1nux830T0=
+X-Received: by 2002:a05:6512:3984:b0:52e:9d2c:1c56 with SMTP id
+ 2adb3069b0e04-5331c6b3fa9mr8104115e87.35.1724104562553; Mon, 19 Aug 2024
+ 14:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
- <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com> <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de>
-In-Reply-To: <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 19 Aug 2024 17:49:46 -0400
-Message-ID: <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
-Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005e7a850620104a18"
-
---0000000000005e7a850620104a18
+References: <20240809184814.2703050-1-quic_obabatun@quicinc.com> <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
+In-Reply-To: <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 19 Aug 2024 16:55:49 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJHRoP40E2Wqk_Dsc8hmAdN-63ikR2BWqHeihM7F49ohQ@mail.gmail.com>
+Message-ID: <CAL_JsqJHRoP40E2Wqk_Dsc8hmAdN-63ikR2BWqHeihM7F49ohQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Dynamic Allocation of the reserved_mem array
+To: Andy Shevchenko <andy@black.fi.intel.com>
+Cc: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, saravanak@google.com, klarasmodin@gmail.com, 
+	aisheng.dong@nxp.com, hch@lst.de, m.szyprowski@samsung.com, 
+	robin.murphy@arm.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, will@kernel.org, 
+	catalin.marinas@arm.com, kernel@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 3:39=E2=80=AFPM Stanimir Varbanov <svarbanov@suse.d=
-e> wrote:
+On Mon, Aug 19, 2024 at 12:23=E2=80=AFPM Andy Shevchenko
+<andy@black.fi.intel.com> wrote:
 >
-> Hi Jim,
->
-> On 8/19/24 21:09, Jim Quinlan wrote:
-> > On Sat, Aug 17, 2024 at 1:41=E2=80=AFPM Stanimir Varbanov <svarbanov@su=
-se.de> wrote:
-> >>
-> >> Hi Jim,
-> >>
-> >> On 8/16/24 01:57, Jim Quinlan wrote:
-> >>> The 7712 SOC has a bridge reset which can be described in the device =
-tree.
-> >>> Use it if present.  Otherwise, continue to use the legacy method to r=
-eset
-> >>> the bridge.
-> >>>
-> >>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> >>> ---
-> >>>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
-> >>>  1 file changed, 19 insertions(+), 5 deletions(-)
-> >>
-> >> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> >>
-> >> One problem though on RPi5 (bcm2712).
-> >>
-> >> With this series applied + my WIP patches for enablement of PCIe on
-> >> bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see kerne=
-l
-> >> boot stuck on pcie2 enumeration and I have to add this [1] to make it
-> >> work again.
-> >>
-> >> Some more info about resets used:
-> >>
-> >> pcie0 @ 100000:
-> >>         resets =3D <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
-> >>         reset-names =3D "swinit", "bridge", "rescal";
-> >>
-> >> pcie1 @ 110000:
-> >>         resets =3D <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
-> >>         reset-names =3D "swinit", "bridge", "rescal";
-> >>
-> >> pcie2 @ 120000:
-> >>         resets =3D <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
-> >>         reset-names =3D "swinit", "bridge", "rescal";
-> >>
-> >>
-> >> I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
-> >> downstream rpi kernel) because otherwise I'm unable to enumerate RP1
-> >> south bridge at all.
-> >>
-> >> Any help will be appreciated.
+> On Fri, Aug 09, 2024 at 11:48:12AM -0700, Oreoluwa Babatunde wrote:
+> > The reserved_mem array is used to store data for the different
+> > reserved memory regions defined in the DT of a device.  The array
+> > stores information such as region name, node reference, start-address,
+> > and size of the different reserved memory regions.
 > >
-> > Hi Stan,
-> > Let me look into this.  Why is one of the controllers turning off --
-> > is it not populated with a device?
->
-> Yes, I enabled pcie1 but no PCI endpoint devices attached on the
-> expansion connector.
-
-Hi Stan,
-
-I looked at our similar STB chip that has a rescal controller and
-multiple PCIe controllers and it doesn't have this problem.  Our 7712
-doesn't  have this problem either, only because it only has one PCIe
-controller.
-
-However, using my 7712 and unbinding the device (invokes
-brcm_pcie_remove()) shows me behavior similar to yours (2712).  What I
-do is read the rescal registers after the unbind, and they will either
-be dead or alive.  If I comment out the
-"pcie->bridge_sw_init_set(pcie, 1);" call, the rescal is still dead
-after unbind.  However if I comment out that AND the
-"clk_disable_unprepare(pcie->clk);" call,  the rescal registers remain
-alive after unbind.
-
-Perhaps you don't see the dependence on the PCIe clocks if the 2712
-does not give the PCIe node a clock property and instead keeps its
-clocks on all of the time.  In that case I would think that your
-solution would be fine.
-
-Regards,
-Jim Quinlan
-Broadcom STB/CM
-
-
-
->
+> > The array is currently statically allocated with a size of
+> > MAX_RESERVED_REGIONS(64). This means that any system that specifies a
+> > number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
+> > will not have enough space to store the information for all the regions=
+.
 > >
-> > As you probably know the 7712 only has access to PCIe1.  But we do
-> > have another chip with two controllers and I will try to reproduce
-> > your failure and get to the bottom of it.
->
-> Thank you for the help.
->
-> ~Stan
->
+> > This can be fixed by making the reserved_mem array a dynamically sized
+> > array which is allocated using memblock_alloc() based on the exact
+> > number of reserved memory regions defined in the DT.
 > >
-> > Regards,
-> > Jim Quinlan
-> > Broadcom STB/CM
-> >>
-> >> ~Stan
-> >>
-> >> [1]
-> >> https://github.com/raspberrypi/linux/blob/rpi-6.11.y/drivers/pci/contr=
-oller/pcie-brcmstb.c#L1711
+> > On architectures such as arm64, memblock allocated memory is not
+> > writable until after the page tables have been setup.
+> > This is an issue because the current implementation initializes the
+> > reserved memory regions and stores their information in the array befor=
+e
+> > the page tables are setup. Hence, dynamically allocating the
+> > reserved_mem array and attempting to write information to it at this
+> > point will fail.
+> >
+> > Therefore, the allocation of the reserved_mem array will need to be don=
+e
+> > after the page tables have been setup, which means that the reserved
+> > memory regions will also need to wait until after the page tables have
+> > been setup to be stored in the array.
+> >
+> > When processing the reserved memory regions defined in the DT, these
+> > regions are marked as reserved by calling memblock_reserve(base, size).
+> > Where:  base =3D base address of the reserved region.
+> >       size =3D the size of the reserved memory region.
+> >
+> > Depending on if that region is defined using the "no-map" property,
+> > memblock_mark_nomap(base, size) is also called.
+> >
+> > The "no-map" property is used to indicate to the operating system that =
+a
+> > mapping of the specified region must NOT be created. This also means
+> > that no access (including speculative accesses) is allowed on this
+> > region of memory except when it is coming from the device driver that
+> > this region of memory is being reserved for.[1]
+> >
+> > Therefore, it is important to call memblock_reserve() and
+> > memblock_mark_nomap() on all the reserved memory regions before the
+> > system sets up the page tables so that the system does not unknowingly
+> > include any of the no-map reserved memory regions in the memory map.
+> >
+> > There are two ways to define how/where a reserved memory region is
+> > placed in memory:
+> > i) Statically-placed reserved memory regions
+> > i.e. regions defined with a set start address and size using the
+> >      "reg" property in the DT.
+> > ii) Dynamically-placed reserved memory regions.
+> > i.e. regions defined by specifying a range of addresses where they can
+> >      be placed in memory using the "alloc_ranges" and "size" properties
+> >      in the DT.
+> >
+> > The dynamically-placed reserved memory regions get assigned a start
+> > address only at runtime. And this needs to  be done before the page
+> > tables are setup so that memblock_reserve() and memblock_mark_nomap()
+> > can be called on the allocated region as explained above.
+> > Since the dynamically allocated reserved_mem array can only be
+> > available after the page tables have been setup, the information for
+> > the dynamically-placed reserved memory regions needs to be stored
+> > somewhere temporarily until the reserved_mem array is available.
+> >
+> > Therefore, this series makes use of a temporary static array to store
+> > the information of the dynamically-placed reserved memory regions until
+> > the reserved_mem array is allocated.
+> > Once the reserved_mem array is available, the information is copied ove=
+r
+> > from the temporary array into the reserved_mem array, and the memory fo=
+r
+> > the temporary array is freed back to the system.
+> >
+> > The information for the statically-placed reserved memory regions does
+> > not need to be stored in a temporary array because their starting
+> > address is already stored in the devicetree.
+> > Once the reserved_mem array is allocated, the information for the
+> > statically-placed reserved memory regions is added to the array.
+> >
+> > Note:
+> > Because of the use of a temporary array to store the information of the
+> > dynamically-placed reserved memory regions, there still exists a
+> > limitation of 64 for this particular kind of reserved memory regions.
+> > >From my observation, these regions are typically small in number and
+> > hence I expect this to not be an issue for now.
+>
+>
+> This series (in particular the first patch) broke boot on Intel Meteor
+> Lake-P. Taking Linux next of 20240819 with these being reverted makes
+> things work again.
 
---0000000000005e7a850620104a18
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Looks like this provides some detail:
+https://lore.kernel.org/all/202408192157.8d8fe8a9-oliver.sang@intel.com/
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCC9Jkuk/xyEkoEUEF4dzEtSjWOIvBrB
-Gmpn5yGBicLxTTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTkyMTQ5NTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAEFDJyJkd+fnohE8QMTCQfANwddEf9Pd9MzIysdeHXuhl8z0e
-GvsMJi1LPrmv0beop81Wa+D7Vlq8Jl6DKxJVEC/6zGBPKbK9F99SMJJMwa7jnUy+WR3Fz2uDAoLd
-MZYyD8z7S4UU2HF8cPcjOYGUzPYyqbXVH4/zSTBgCg3ZQrIWu3mfucX8BukQMZ0Zd/njJI2z/7Ic
-Y1KAXPH5IFrAArS8BqSssJQ5EW+1yUDIPEkyOOGdWG/W9LppeaTVBG9m7SthrtDNKmpfCM3cnGyr
-mTO+PrCn7JJ56EYo03AvcIZeM+djKj7+fWeid5yXMnY3GLbxE/WK8pK803hHW30r7Q==
---0000000000005e7a850620104a18--
+I've dropped the patches for now.
+
+> Taking into account bisectability issue (that's how I noticed the issue
+> in the first place) I think it would be nice to have no such patches at
+> all in the respective subsystem tree. On my side I may help with testing
+> whatever solution or next version provides.
+
+I don't follow what you are asking for? That the patches should be
+bisectable? Well, yes, of course, but I don't verify that typically.
+Patch 1 builds fine for m, so I'm not sure what issue you see.
+
+Rob
 
