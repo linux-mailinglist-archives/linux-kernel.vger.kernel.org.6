@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-292562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882B6957152
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBA4957153
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E922814F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989BC280FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0089E17B4ED;
-	Mon, 19 Aug 2024 16:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C011836D9;
+	Mon, 19 Aug 2024 16:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0GXnUBzE"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="InCkFM1M"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D643832C8B;
-	Mon, 19 Aug 2024 16:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B21B4965C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086757; cv=none; b=OQE0Bzd3ZYJ/EAV0uR669TKniXgsRU0MFxJN39OenZ/CRySYgcYkm4sP7jrZQuka58kiusDeE0eGE+q0bytbfnZTq7UpWVAPqFyobNMUsbAiN8gaQJDkPW5Z4BLIBUehHCJxiuFQQyQrPtpuagpjYWsjhYIzkYVdAhXq1uu8RJo=
+	t=1724086798; cv=none; b=dd13EaT2QiKeNBxQmRTec7Nti+2+dV8iqTZRGHiDmGpVlgEIbPHisgQZeU5GRMVBCBLgc2AHy1foY+XUb+F5MhAeHVmlt1Te9HKptZsryo94bQWWY1o42jNWaG/9Q4/i7ceybVvj7Nk9wRRQhQAmxrd6lzsHNaXX31CtsZhMU9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086757; c=relaxed/simple;
-	bh=f+KJuWJFMGUsJAeFJsSIsDWVUOqYKBUZpAu649sCn3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M7wwWLsS5DGHM9OoRiQVpuU0v0xamfFQqBHTF0/L1+uEaltX1dNWP8qcySsEEHHdQUnNtxF7FktN52pOVeA1p+CRTBOPIUW7C/Qav8JMM/Zx6GAK1UzUlZZyl5qRixJc668wl5nclTlyhbrb9Fk3EMZ5lwqsoGeETA1mldrbF8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0GXnUBzE; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wnf2W25XRzlgVnN;
-	Mon, 19 Aug 2024 16:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1724086753; x=1726678754; bh=M1VDugTmr7up1scz+8tkeHkh
-	uI36rlkvQKWXthiAyAo=; b=0GXnUBzEHCQYLsBSfaPbEQI0Oct2JWodh9Y/zTGG
-	FS4979zCijJib5hpwA5k8fFPDpYmQCh5CD1+MhGOKlatfd+GApYNijdJA9+66G3k
-	gMEr6WR0z+WWZPDRI0V5q0Je8pzcRRk0Es4jhpBz9P2eRZUtgGiFxeTkxqQZz+V3
-	iI1BCADnB7bYppm1MxSBFd+QLHOGNRm9cpBLJnfh3VhoD3zbvMfu5cHw7bKDqMS4
-	pBvlZblXESFj1F7zpnjEMWIYeAtYWrKgz/MQ5ND6cQvSkrU6unrCdR50wdB1tBcW
-	XwnjodgjwUHsKK1ANQmOB3XquUR/Gp59XU9VByEs27HipQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Zfu9rOgwgwpZ; Mon, 19 Aug 2024 16:59:13 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Wnf2Q5ZjmzlgVnK;
-	Mon, 19 Aug 2024 16:59:10 +0000 (UTC)
-Message-ID: <bfce098e-a070-40b1-95fc-951e2b3c1c22@acm.org>
-Date: Mon, 19 Aug 2024 09:59:08 -0700
+	s=arc-20240116; t=1724086798; c=relaxed/simple;
+	bh=qOuZdWRaYDtDFie7Yrv2Cpm1w9fywWO2Be43vt3s0Ow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jle6vSglg6XxeuhH93h8DqdLT8tDxovRogoQSuBJNi1owvpvuPvAPOzm+pVERlRklULuF3SFvJZOLWlIzEq5UoWkV0t8RP6gk2OKTZb6ZBb4NsY2mbHhcyj5cCTbFk4u6sugDp7zXwNZUyUf/NvqMkCAFuUDZlZW5n2vx5sNFyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=InCkFM1M; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724086791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kKuznSHVKOAD8W6MNwYSvOJK+gK2BxjqJ5/MxUgG64A=;
+	b=InCkFM1MbvNvcveMR+59By9WKxgpUCCys2KFJTnIurA48rd1UMASUYbD584yNzmXpxNt7Z
+	0trcOtedtpakc+kCFQwTPawRAvhh/Pj59COB4MOtbf44+c3YZAzy8D++wBe4JkblhkNI4C
+	iG5phKNb9ZiYRKLfB52f9IZTny/r42U=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: rcu@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	paulmck@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] rcu_pending
+Date: Mon, 19 Aug 2024 12:59:26 -0400
+Message-ID: <20240819165939.745801-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in
- progress
-To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- dlemoal@kernel.org, linuxarm@huawei.com, prime.zeng@huawei.com,
- stable@vger.kernel.org
-References: <20240819090934.2130592-1-liyihang9@huawei.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240819090934.2130592-1-liyihang9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 8/19/24 2:09 AM, Yihang Li wrote:
-> +			if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
+New data structure for tracking objects waiting on an RCU grace period.
+Supports regular RCU and SRCU, and possibly other RCU flavors in the
+future. Uses radix trees for tracking pending objects, falling back to
+linked lists on allocation failure.
 
-Shouldn't symbolic names be introduced for these numeric constants?
-Although there is more code in the SCSI core that compares ASC / ASCQ
-values with numeric constants, I think we need symbolic names for these
-constants to make code like the above easier to read. There is already
-a header file for definitions that come directly from the SCSI standard
-and that is used by both SCSI initiator and SCSI target code:
-<scsi/scsi_proto.h>.
+This gets us a more general replacement for SLAB_TYPESAFE_BY_RCU, and a
+cleaner and slightly faster backend for kvfree_call_rcu(), and
+in the future a faster backend for call_rcu() as well.
 
-Thanks,
+There's still some small todo items, mentioned in the relevant patches.
 
-Bart.
+Paul - I'm considering putting this into 6.11 for bcachefs (not the
+patch that switches kvfree_rcu, of course), as I need it rather
+pressingly. Thoughts? I can put it in fs/bcachefs/ if you hate it :)
+
+Kent Overstreet (9):
+  lib/generic-radix-tree.c: genradix_ptr_inlined()
+  lib/generic-radix-tree.c: add preallocation
+  darray: lift from bcachefs
+  vmalloc: is_vmalloc_addr_inlined()
+  rcu: delete lockdep_assert_irqs_enabled() assert in
+    start_poll_synchronize_rcu_common()
+  rcu: rcu_pending
+  bcachefs: Rip out freelists from btree key cache
+  bcachefs: key cache can now allocate from pending
+  rcu: Switch kvfree_rcu() to new rcu_pending
+
+ MAINTAINERS                             |   7 +
+ fs/bcachefs/Makefile                    |   1 -
+ fs/bcachefs/btree_key_cache.c           | 406 +++----------
+ fs/bcachefs/btree_key_cache_types.h     |  18 +-
+ fs/bcachefs/btree_node_scan_types.h     |   2 +-
+ fs/bcachefs/btree_types.h               |   5 +-
+ fs/bcachefs/btree_update.c              |   2 +
+ fs/bcachefs/btree_write_buffer_types.h  |   2 +-
+ fs/bcachefs/disk_accounting_types.h     |   2 +-
+ fs/bcachefs/fsck.c                      |   2 +-
+ fs/bcachefs/journal_io.h                |   2 +-
+ fs/bcachefs/journal_sb.c                |   2 +-
+ fs/bcachefs/sb-downgrade.c              |   3 +-
+ fs/bcachefs/sb-errors_types.h           |   2 +-
+ fs/bcachefs/sb-members.h                |   2 +-
+ fs/bcachefs/subvolume.h                 |   1 -
+ fs/bcachefs/subvolume_types.h           |   2 +-
+ fs/bcachefs/thread_with_file_types.h    |   2 +-
+ fs/bcachefs/util.h                      |  29 +-
+ {fs/bcachefs => include/linux}/darray.h |  59 +-
+ include/linux/darray_types.h            |  22 +
+ include/linux/generic-radix-tree.h      | 106 +++-
+ include/linux/mm.h                      |   7 +
+ include/linux/rcu_pending.h             |  27 +
+ init/main.c                             |   2 +
+ kernel/rcu/Makefile                     |   2 +-
+ kernel/rcu/pending.c                    | 623 ++++++++++++++++++++
+ kernel/rcu/tree.c                       | 747 ------------------------
+ kernel/rcu/update.c                     |   1 -
+ lib/Makefile                            |   2 +-
+ {fs/bcachefs => lib}/darray.c           |  12 +-
+ lib/generic-radix-tree.c                |  80 +--
+ mm/vmalloc.c                            |   4 +-
+ 33 files changed, 962 insertions(+), 1224 deletions(-)
+ rename {fs/bcachefs => include/linux}/darray.h (66%)
+ create mode 100644 include/linux/darray_types.h
+ create mode 100644 include/linux/rcu_pending.h
+ create mode 100644 kernel/rcu/pending.c
+ rename {fs/bcachefs => lib}/darray.c (57%)
+
+-- 
+2.45.2
+
 
