@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-292101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B67956B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DC7956AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A617B226D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4922E1C21755
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946B316B74B;
-	Mon, 19 Aug 2024 12:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD2616B39C;
+	Mon, 19 Aug 2024 12:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LnP5EklL"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="WN6TQy38"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50F16B732
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AB81487FE;
+	Mon, 19 Aug 2024 12:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724071403; cv=none; b=mBXJcxHSC8sX2ZwJE0yao5PUp3402w+rqsLp1Mus18RQEfFfkqt/WGStb0qBRNaupeLU7PIAJQE5MESSkLPXzj0tCG6bDnnLA5cF0zfzNLmy29A6i5JhMWMe8OyLHQkt89eGnCI9YsNuse0hhtrXkb786TepgkMwn37P7NOyI+E=
+	t=1724070773; cv=none; b=aku5Wr7UyK+V0snFL1cxJvQ8vx4zTYWUOfI8efY9NTKnNUrkqXvPXjsoktd8QhpI7W/FIpWWL/ka8C6wHeL8O7oYo7MZN93d3/ej1uM7ZpLhZcOWUbC7CmjH0WPJtiW+gj8QsX3qP7NEvbMDYldTOtHM8Lz4EsHEdYDvYD6SSnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724071403; c=relaxed/simple;
-	bh=Gai2/m6Pd77eSX2qtKKlVbhFDtZu7kZrTdVCazkTGDI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=FP6S/K7NwXqLAKskDGVdfunvSzQQwPkq8ncy0FqHVIT4x1IM4E8K4jh9gIRpHkUGX6IXdLKJLe0Ajd5z3mzqAbksaRMgScG+oHc9tcnOGuTeL1uhGZILrAGGw/DhL8Jwm4pKzmXBp5jr4Kd2VWTlijCWDQYA6F7aigBCsTlzk/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LnP5EklL; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724071091; bh=H4KEWwHR4c/iOa1WzDtme2MK/SG+05h3GqQxJ8BrG6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LnP5EklLP76dHvWozWmNpPjru3hiLZ2JdtMSUlCqVSyz/xbTDNpd/6z0vhJR8tfec
-	 d4UyRLSOfGXKbruicpnHSPOEMwrXFZ8IKPM48XtiyRPSr+4dH/Nfoau5NWDiy5kcrK
-	 71eDsWAHgtKLJmOodMoJ21hB1zIcJH521EwJdl3U=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 7FB3ACD1; Mon, 19 Aug 2024 20:31:59 +0800
-X-QQ-mid: xmsmtpt1724070719txavzdeku
-Message-ID: <tencent_E16C702F5D6FE89404EB76ED62CECC783A0A@qq.com>
-X-QQ-XMAILINFO: MncAM2hB0zyG+ZMfnOOHhFZkUrQpgkKB9RarSm9o2uygkn7k/IQq3JMMQwICCY
-	 00SCk2lWJEz2Owi81N7whfhNZV71a7Zn2j9THojnMmOf2YwYULv1AyYwhQoblccIerbOYkR0eQp+
-	 r2yYiy6xCrU5DEbi3jp+dQVqyU3zS05+BmBp2h9lku8iybowwL8v7OnRjMN8jD07vcNVKYKk5eKM
-	 COHCEy3sawps7ispIuHxtXJxmbIHo3ROpzI3bpFJMKrNv7QuanwO8UqSGeRVkanFteaTDY28ZBYc
-	 FyVmSzj4cnlWBX/BQTXgmPRCas4WP5Ey8bbekQvKsiUDqZkEGdMbatAt6G93oI+0ysydnygb+U9f
-	 9LNcm/GR0/vVudLEgKnMCv4BDTgbmv0tMNDJJWe4C4er/sVc8sHpjeiNNo6nHULL6kjXAnRImGt5
-	 CyVYdGbH8HRok/IL2Sxux6FrtqQP+LusY6WwKmmFiWQ6LLvtVm7dbZv+Eig2EV3f1qlI3kJXyCqX
-	 DlEiM8/JeLaB5rnW4EPiOeJ/9iM+Fj995LGFUllVxDQ2UvJ9NQTbvPWUv+A7396g40wI484lKwin
-	 9fiNCwGjPAa2umKg9SWG9In78VuKCcDfXhHEpgeRstTTU5oT59RQyGUljLLlBLcXsS8pAXW91xvD
-	 8Ne1VWd3oIL2pUiSJTjS91A0V3j3MBAUnQt9gmF2zsY6AyPetp5hPJZnem43RVokNDRMyh5fCbCn
-	 lWAlKvASrJXaAhe676cDdEtQMXOllRT0JTcVU2iBb8ebd2r0KS63MAyqTUHFYpGxI06mxP4y3EAZ
-	 ulnGYbWXLQqLRkTjQrBvAjWiqHscnuv9mFHYlZSDaAXKaoCM3tK928XFDvVAIX8qOacvdvrxWbFe
-	 1GtaagTIOo7gNMvowwsiJRfkvgODuBObUAAPxIcvpeflDl7jPN2myAjLWGLlm6WwZFUSGLiHN9
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [syzbot] [ext4?] [ocfs2?] KASAN: null-ptr-deref Write in jbd2_journal_update_sb_log_tail
-Date: Mon, 19 Aug 2024 20:31:59 +0800
-X-OQ-MSGID: <20240819123158.3198404-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000742b9d062005fc1c@google.com>
-References: <000000000000742b9d062005fc1c@google.com>
+	s=arc-20240116; t=1724070773; c=relaxed/simple;
+	bh=LcqKkkKEqAI8dc4MEoeZPEcumAXv9qSB3QRRSzq5HY0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y24g1PRyCQxNT7Mmw4Yr61SveiMubMueYlcOi5Hu52sPbygvhtFYzVa17dmRlhGlTlS7l1kyHIeaPONizCG0TEl1eoVwsueKZw4OcjakU7IviLIKhr8l1RT+u/MSsC1Ln8Xx1wd9WUL8WddGXebzYKisJey1sY6jYiNYeLIt0lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=WN6TQy38; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J9QxBU004262;
+	Mon, 19 Aug 2024 05:32:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=T3w4aeClcXuf8wxt6T8SJAr
+	7x+4HAI2H1+XZT3FcizE=; b=WN6TQy388eRcvak7eYKPi3q4j4zEhZGxhvV6hBE
+	K3mZ3ETGib2LRqn1PzRMygQ2Pz7Gm/+paiQXzFcrP8/41g9MLrcR6079UlLnton7
+	MXQRabhjAEq7xBQtR0d1JkNSk1QpWI6Fnui4NjIMMAftf39p1A/HNKFOW3QGXNxt
+	s54Vlr6DyBrbxu4ux8AHs4i336oek/LMXKxYjhDL8HGPItaD9O+G8joxHOm8UqES
+	LZlGfObQjlGfjntqxsw/kD5bY4GYPvNYXBpJLb/+vSSpI873vSbMQVupzlkVaYGH
+	LDq2q6X7QPMljUuRcQ7dWAhlPL6apb+qQr+QUt2j9TrWr6w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4143e80gsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 05:32:46 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 19 Aug 2024 05:32:45 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 19 Aug 2024 05:32:45 -0700
+Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
+	by maili.marvell.com (Postfix) with ESMTP id 922FE3F70A9;
+	Mon, 19 Aug 2024 05:32:40 -0700 (PDT)
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <jerinj@marvell.com>,
+        <lcherian@marvell.com>, <ndabilpuram@marvell.com>,
+        <bbhushan2@marvell.com>
+Subject: [net PATCH v2] octeontx2-af: Fix CPT AF register offset calculation
+Date: Mon, 19 Aug 2024 18:02:37 +0530
+Message-ID: <20240819123237.490603-1-bbhushan2@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,29 +73,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 0-aWPIYkJgWZtKHfXkNmu9UfOEhxCttM
+X-Proofpoint-GUID: 0-aWPIYkJgWZtKHfXkNmu9UfOEhxCttM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_11,2024-08-19_01,2024-05-17_01
 
-Journal too short will cause ocfs2_check_volume failed, and will set journal->j_sb_buffer to NULL
+Some CPT AF registers are per LF and others are global.
+Translation of PF/VF local LF slot number to actual LF slot
+number is required only for accessing perf LF registers.
+CPT AF global registers access do not require any LF
+slot number.
 
-#syz test: upstream c3f2d783a459
+Also there is no reason CPT PF/VF to know actual lf's register
+offset.
 
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index 530fba34f6d3..25821077b855 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -1077,9 +1077,11 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
- 	BUG_ON(atomic_read(&(osb->journal->j_num_trans)) != 0);
+Fixes: bc35e28af789 ("octeontx2-af: replace cpt slot with lf id on reg write")
+Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+---
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.c   | 23 +++++++++----------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
+index 3e09d2285814..daf4b951e905 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
+@@ -632,7 +632,9 @@ int rvu_mbox_handler_cpt_inline_ipsec_cfg(struct rvu *rvu,
+ 	return ret;
+ }
  
- 	if (ocfs2_mount_local(osb)) {
--		jbd2_journal_lock_updates(journal->j_journal);
--		status = jbd2_journal_flush(journal->j_journal, 0);
--		jbd2_journal_unlock_updates(journal->j_journal);
-+		if (journal->j_journal->j_sb_buffer) {
-+			jbd2_journal_lock_updates(journal->j_journal);
-+			status = jbd2_journal_flush(journal->j_journal, 0);
-+			jbd2_journal_unlock_updates(journal->j_journal);
-+		}
- 		if (status < 0)
- 			mlog_errno(status);
- 	}
+-static bool is_valid_offset(struct rvu *rvu, struct cpt_rd_wr_reg_msg *req)
++static bool validate_and_update_reg_offset(struct rvu *rvu,
++					   struct cpt_rd_wr_reg_msg *req,
++					   u64 *reg_offset)
+ {
+ 	u64 offset = req->reg_offset;
+ 	int blkaddr, num_lfs, lf;
+@@ -663,6 +665,11 @@ static bool is_valid_offset(struct rvu *rvu, struct cpt_rd_wr_reg_msg *req)
+ 		if (lf < 0)
+ 			return false;
+ 
++		/* Translate local LF's offset to global CPT LF's offset to
++		 * access LFX register.
++		 */
++		*reg_offset = (req->reg_offset & 0xFF000) + (lf << 3);
++
+ 		return true;
+ 	} else if (!(req->hdr.pcifunc & RVU_PFVF_FUNC_MASK)) {
+ 		/* Registers that can be accessed from PF */
+@@ -697,7 +704,7 @@ int rvu_mbox_handler_cpt_rd_wr_register(struct rvu *rvu,
+ 					struct cpt_rd_wr_reg_msg *rsp)
+ {
+ 	u64 offset = req->reg_offset;
+-	int blkaddr, lf;
++	int blkaddr;
+ 
+ 	blkaddr = validate_and_get_cpt_blkaddr(req->blkaddr);
+ 	if (blkaddr < 0)
+@@ -708,18 +715,10 @@ int rvu_mbox_handler_cpt_rd_wr_register(struct rvu *rvu,
+ 	    !is_cpt_vf(rvu, req->hdr.pcifunc))
+ 		return CPT_AF_ERR_ACCESS_DENIED;
+ 
+-	if (!is_valid_offset(rvu, req))
++	if (!validate_and_update_reg_offset(rvu, req, &offset))
+ 		return CPT_AF_ERR_ACCESS_DENIED;
+ 
+-	/* Translate local LF used by VFs to global CPT LF */
+-	lf = rvu_get_lf(rvu, &rvu->hw->block[blkaddr], req->hdr.pcifunc,
+-			(offset & 0xFFF) >> 3);
+-
+-	/* Translate local LF's offset to global CPT LF's offset */
+-	offset &= 0xFF000;
+-	offset += lf << 3;
+-
+-	rsp->reg_offset = offset;
++	rsp->reg_offset = req->reg_offset;
+ 	rsp->ret_val = req->ret_val;
+ 	rsp->is_write = req->is_write;
+ 
+-- 
+2.34.1
 
 
