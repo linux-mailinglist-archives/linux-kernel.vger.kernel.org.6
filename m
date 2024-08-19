@@ -1,163 +1,81 @@
-Return-Path: <linux-kernel+bounces-292964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C5A95771E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:05:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B04D957720
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894F31C22115
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:05:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B479B21687
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3174C1DB45C;
-	Mon, 19 Aug 2024 22:05:49 +0000 (UTC)
-Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931AA1DC473;
+	Mon, 19 Aug 2024 22:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jC8em0ss"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8CA14D70E;
-	Mon, 19 Aug 2024 22:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4F14D70E;
+	Mon, 19 Aug 2024 22:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105148; cv=none; b=DOLSVXsTLB4Rz3mnOjNk4CjIFRTX8vUr6ix/jWH3O/LMoHfH3ZR/WfMKvfCouZP6vPmMvh7GKyTl3MmXXQsH/z7KKWezgWh1faN5JGuOlpXLuDr++f+7t+yHB1LTE0ScHF5oJFf5EZuLQMb3j3AvoSoC6fi1BP/rOWUM7ShEVyo=
+	t=1724105228; cv=none; b=Drtlg99jUhc2r5jYQjmQkfq5MTwhmLAh1KYOVD3296cy4/0I3VkqCl9oZfcYgdlWoJqHfyR/h+nO5dojy0WGSBILMBeRl3AEVs0sroRdOiWEchkJCi3/03mnTiR5wQ0ImviFD64BP3jGl0BcnCkPINlN4IcmZYx/zKC+HS2irfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105148; c=relaxed/simple;
-	bh=D4mzeqALWxf8qhSRtufcseiFNTV6DElEz2L+bTGS6N0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mo/UHciQMi+Fren9+RSIsGGoi7JGU3BC+ISnCykGnCBBWEhfXnzULrFgDpdpx/NP7aLsEpWhbMjjg2QdGQGJMr8+AHXJA4vz/xCTEDtk7UwZzWkBIbdGB9Tl3U2mMVZePQkvssCN/MhA8+1GpvzNfvQkpWBye7qM/yyW+Tlrhec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mail.enpas.org (Postfix) with ESMTPSA id 13E6DFFA73;
-	Mon, 19 Aug 2024 22:05:43 +0000 (UTC)
-From: Max Staudt <max@enpas.org>
-To: Roderick Colenbrander <roderick.colenbrander@sony.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	max@enpas.org
-Subject: [PATCH v3] hid-playstation: DS4: Update rumble and lightbar together
-Date: Tue, 20 Aug 2024 00:05:18 +0200
-Message-Id: <20240819220518.13250-1-max@enpas.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724105228; c=relaxed/simple;
+	bh=XrkBY75V13GbM24tskzyLi2gFXCxHOpvM1sre5vZJBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLWcA3w+uk2A01XuwKrpAHmeJJ8NzlZYIXZ9SRIQgtfFK3aQ3TX4rH7QtfmbC0eRMY2JwrJ0fcwLi/1Y1Anb86HJbJ2sN+rvH+1H49aE6N4/sW+uCjKGDH/sMq2ip5n/mtEbWs1qgDf4GC1S/QS6nIVVlLhKs8l3j3z7Pl+5jOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jC8em0ss; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uZczDJCmCCm41DMXVQTJRndcBOAdnPJvp8hRXnZ3XcE=; b=jC8em0ssHCR+duLHyI03Yn3ERk
+	4O5DrdD2Y4//EokTq0ok2xQ98jCOIcho1cn7NQMbLjJNpPiUBat9YsiJAJluXs5UkCbRy2x6CwYNP
+	yd1KbMke2XcVgUnObKzRCG0jpmif817kXEgqqwdImIBLBs7/RvDMkKU0LDSB0tTy1rss=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sgAWe-0059pi-KV; Tue, 20 Aug 2024 00:06:56 +0200
+Date: Tue, 20 Aug 2024 00:06:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v1 1/3] ethtool: Extend cable testing interface
+ with result source information
+Message-ID: <a4d44aa6-e679-4ce0-8d9b-33a40f85e322@lunn.ch>
+References: <20240819141241.2711601-1-o.rempel@pengutronix.de>
+ <20240819141241.2711601-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819141241.2711601-2-o.rempel@pengutronix.de>
 
-Some 3rd party gamepads expect updates to rumble and lightbar together,
-and setting one may cancel the other.
+> +/* Information source for specific results. */
+> +enum {
+> +	/* Results provided by the Time Domain Reflectometry (TDR) */
+> +	ETHTOOL_A_CABLE_INF_SRC_TDR,
+> +	/* Results provided by the Active Link Cable Diagnostic (ALCD) */
+> +	ETHTOOL_A_CABLE_INF_SRC_ALCD,
+> +};
 
-Let's maximise compatibility by always sending rumble and lightbar
-updates together, even when only one has been scheduled.
+It is pretty typical for such enums to have a _UNSPEC for the first
+entry.
 
-Further background reading:
-
-- Apparently the PS4 always sends rumble and lightbar updates together:
-
-  https://eleccelerator.com/wiki/index.php?title=DualShock_4#0x11_2
-
-- 3rd party gamepads may not implement lightbar_blink, and may simply
-  ignore updates with 0x07 set, according to:
-
-  https://github.com/Ryochan7/DS4Windows/pull/1839
-
-Signed-off-by: Max Staudt <max@enpas.org>
----
-Changes in v2 -> v3:
- - Introduced a quirk bit, so this hack only applies to controllers known
-   to be quirky.
----
- drivers/hid/hid-playstation.c | 50 +++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index e7c309cfe3a0..79482c56fc40 100644
---- a/drivers/hid/hid-playstation.c
-+++ b/drivers/hid/hid-playstation.c
-@@ -356,6 +356,9 @@ struct dualsense_output_report {
- #define DS4_TOUCHPAD_WIDTH	1920
- #define DS4_TOUCHPAD_HEIGHT	942
- 
-+/* Quirks for third-party controllers */
-+#define DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER	BIT(0)
-+
- enum dualshock4_dongle_state {
- 	DONGLE_DISCONNECTED,
- 	DONGLE_CALIBRATING,
-@@ -405,6 +408,8 @@ struct dualshock4 {
- 	struct work_struct output_worker;
- 	bool output_worker_initialized;
- 	void *output_report_dmabuf;
-+
-+	unsigned long quirks;
- };
- 
- struct dualshock4_touch_point {
-@@ -2143,6 +2148,28 @@ static void dualshock4_output_worker(struct work_struct *work)
- 
- 	spin_lock_irqsave(&ds4->base.lock, flags);
- 
-+	/*
-+	 * Some 3rd party gamepads expect updates to rumble and lightbar
-+	 * together, and setting one may cancel the other.
-+	 *
-+	 * Let's maximise compatibility by always sending rumble and lightbar
-+	 * updates together, even when only one has been scheduled, resulting
-+	 * in:
-+	 *
-+	 *   ds4->valid_flag0 >= 0x03
-+	 *
-+	 * Hopefully this will maximise compatibility with third-party pads.
-+	 *
-+	 * Any further update bits, such as 0x04 for lightbar blinking, will
-+	 * be or'd on top of this like before.
-+	 */
-+	if (DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER) {
-+		if (ds4->update_rumble || ds4->update_lightbar) {
-+			ds4->update_rumble = true; /* 0x01 */
-+			ds4->update_lightbar = true; /* 0x02 */
-+		}
-+	}
-+
- 	if (ds4->update_rumble) {
- 		/* Select classic rumble style haptics and enable it. */
- 		common->valid_flag0 |= DS4_OUTPUT_VALID_FLAG0_MOTOR;
-@@ -2558,6 +2585,29 @@ static struct ps_device *dualshock4_create(struct hid_device *hdev)
- 	 */
- 	hdev->version |= HID_PLAYSTATION_VERSION_PATCH;
- 
-+	/*
-+	 * Some 3rd party gamepads expect updates to rumble and lightbar
-+	 * together, and setting one may cancel the other.
-+	 *
-+	 * Set a quirk bit if this is a controller known to behave this way.
-+	 */
-+	if (hdev->vendor == USB_VENDOR_ID_SONY &&
-+	    hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) {
-+		/*
-+		 * Match quirky controllers by their HID report descriptor.
-+		 * Check for >= instead of == because there may be a trailing
-+		 * 0x00 or the like.
-+		 */
-+		if (hdev->bus == BUS_USB && hdev->rsize >= 507 &&
-+		    crc32_le(0xffffffff, hdev->rdesc, 507) == 0xabc63a20)
-+			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
-+
-+		/* The descriptor via Bluetooth differs from the USB one. */
-+		if (hdev->bus == BUS_BLUETOOTH && hdev->rsize >= 430 &&
-+		    crc32_le(0xffffffff, hdev->rdesc, 430) == 0x4194b762)
-+			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
-+	}
-+
- 	ps_dev = &ds4->base;
- 	ps_dev->hdev = hdev;
- 	spin_lock_init(&ps_dev->lock);
--- 
-2.39.2
-
+	Andrew
 
