@@ -1,224 +1,146 @@
-Return-Path: <linux-kernel+bounces-291512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A88095637F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 093A4956382
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DCE1F21A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21F11F21AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA4515278E;
-	Mon, 19 Aug 2024 06:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F07F15622E;
+	Mon, 19 Aug 2024 06:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p3Z7lZRD"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gribi53T"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0972811CA0;
-	Mon, 19 Aug 2024 06:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048034; cv=fail; b=PhDMzO1f67e/NNqaYCW355ZDLiz/uj6d6NHzV4wDS6G29HQQkfeTISSBFFl711igN7o5LmQk+1WtbGwhs04+4UGY6X4K6cfOVjhTRtvgFQcM0qlqnkroxGg9dEV9jcuNuGsv4TqwM5m6iNeRJ0MffU60XM03smBXJaWl1+ZXiSk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048034; c=relaxed/simple;
-	bh=T4ECzQLjoNm/Ww6/vGdZQyd6zCYy9Z2BVlVE0QhVi8E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nE+SL81d5mHLUV7wFeEANH8fwfSZiqCSKSJmFWOYvcvNQDweEvYrlfj4qzTOX2wbEc3bKQoxasfJdTMeiRK+PxNs1mmvrMjW3EpiUWuAeLQIspzupFg+S1msTlFUSC/qjl6bBZLQzFBZmr3pu3SjIrA5J7rWjgrtWtlWFk/8ACM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p3Z7lZRD; arc=fail smtp.client-ip=40.107.92.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pP9MsYdfbJ3emNv8oB3X5Z3SLpSM65xzwpWfQOBOjmoG6SeagcrFg0f69Nh9CemoGYfheipmgTNVx4e6dcit0ZTwlYUEp+FdVsNCzRZlY2XGBLARtIlfZbGCOLzDL4rPXVYgQEYvSsonVb2J2k4S5pmMMAJKioqMWHUZ850295uGVAHK116F9KrcHaGJsWJcNoEHmh3C1YZ2CsrUqvTGz+iavUiLheeyAw4NpmDx1Aah6Knsb3CyUc59MkfBVm/YP15xRo7PtAsK7hiplFc2MHSGj9n80NFQ5e/BEE6X3sUJDFzAGUSejIGmr2d3CIMKauIQ1wVSe0Wlmj9hjTZXSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7chqinX2UUHex5v9pq4eYenkRZTwtCWHR4zd4VbToJA=;
- b=Nu9LOrBFYlcyJNfSnNtgH27A+FmESkEtL9HXKKAuD47Hrq7qpwmkTq8o3brnxKvRW4rYwG3ujAZwYZwoxm9X/zyXIo2qxwgQkYEliHwHJ8Zdh+fDKA5MJmybLycCKCSGUO9v4kLCgYGHPwFVCr01Xeh3CR+qIEubDH3JjcCdNRtPMlqiqKGfLYf1PFdrt8sdIYR+ZG1N9umy8blRlsMdK6deQudGyb+fubgAhHptphAaLvjfj8GzH97H2s3WylL1s2j5EfPR1qaeg4ilpe2Yt0jE6nsXPHmfpZ19HcICvol0NBcf7cDiUNox/zQBb9PwpfvsZ4qCLR2xpPx+PjyZrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7chqinX2UUHex5v9pq4eYenkRZTwtCWHR4zd4VbToJA=;
- b=p3Z7lZRDiJ/sOSZY4HHmIeW5rRWh2sHXRHHAEMKo+3nU+vrTvwgalF88nkHA+RoaujBp+U7zje9hnngliEHIe7g3EXBRuYuFxR8f0B9oaILp3thKXPY7K1Jc3G7xZszcAqYhgjmnlC8rCuQYYa6mUWx851c4CVtFRkgFVz39q8E=
-Received: from MW4PR04CA0131.namprd04.prod.outlook.com (2603:10b6:303:84::16)
- by CY8PR12MB7684.namprd12.prod.outlook.com (2603:10b6:930:87::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 06:13:48 +0000
-Received: from CO1PEPF000044F8.namprd21.prod.outlook.com
- (2603:10b6:303:84:cafe::b0) by MW4PR04CA0131.outlook.office365.com
- (2603:10b6:303:84::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Mon, 19 Aug 2024 06:13:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F8.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.4 via Frontend Transport; Mon, 19 Aug 2024 06:13:47 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 19 Aug 2024 01:13:42 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
-	<yung-chuan.liao@linux.intel.com>, <ranjani.sridharan@linux.intel.com>,
-	<lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<venkataprasad.potturu@amd.com>, <cristian.ciocaltea@collabora.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH] ASoC: amd: acp: replace desc->rev check with acp pci revision id
-Date: Mon, 19 Aug 2024 11:43:29 +0530
-Message-ID: <20240819061329.1025189-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADCA15534B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724048042; cv=none; b=QoKt5f7DSzfYD+L3cwFiOYXUOkY50S774/P6zxcB0nkkkAEFElML7n7Dx8+K1bIokBJJVO8AsBywL+rBg8rdGqbK5nB2k9nhJdIQ/2pYsMdAvHjAAZBizxPvt2UayTXVgL4wgh3MLhgTTfdB5029EHQnV2J+18FptSY4RF9EwSo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724048042; c=relaxed/simple;
+	bh=lJN/wi/y13j7OPNXQVR6jT982u709Go38p1K7gpYR6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WA0gpN5hRKxVz01ja3VQ7OgdJ3TYpVyWLFjamQ9lCj2YyvbJXtS6Vgc4LeklQ9L1gthWZ0BA5RWkYVnZPbNbWr8F7NmfjpDStrO9WGhvjmcfw0FxQA41QLUgItOfgolXVkVpSETTjL4CuuSI6SWdurz3TpV+FvLsVisj4IkXSKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gribi53T; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so5289888e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 23:14:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724048038; x=1724652838; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bUzBY94YxIEfhjxg5zqeXsZ0LIm0u1E4JMphgh/qV8E=;
+        b=Gribi53T02X+zDkIM2Dx1tdzh8XdkBqVEIKTm/tqgGe3PdDcdH/gV7IKdbYxi1/eZi
+         2QE84H/p2/InnSs1W0m0tdaIb1a+AYaX500qSvD29gYnv4KPCPvzNN/GKwCTsHZBtT+x
+         05Y8Y4V7jZGa1fGwMYp6mdx2I0oQGgoGMIkk0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724048038; x=1724652838;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bUzBY94YxIEfhjxg5zqeXsZ0LIm0u1E4JMphgh/qV8E=;
+        b=YmqXPEOHJ4yzilfH2A3SePIQSTfUKOKmB4GCRUHUabqCjHIeLWO2a2LgwRipt1K4Ot
+         K9xf9Eg19fCKIhy6FuD3FAyKFs6PhvtICxDYLUtFpzeqHJ5mOoQyOMsTJ61EWFwcINfU
+         rE9CJCPIzMDY2WgM4btl0FFnJUuwc9C8Wthu62KLTCgz6i9ECyFUW1emXjONY2KHjWCb
+         +dx6KgifqBr4dVTsK5xh9L8+lGBdhpXHwMEgkAIcHX6FkWuB12tZ4Ij8AYcI18cdOyuZ
+         5KrF2kcklttms4YA7Wj/Am/qUKuUEFUgcSBcf2tBTWFsyerFJB99OkGGaeuC9iRRknOa
+         Bgzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxyjZf4rBkznAHiny3LGdWhK6VPDPyOtfk/QyodrT2D1KhbZ/5LVLcIVwBlt8tqvHE5XO0jgrPegnn1O91/FdTno/OSR1x/00CbrCR
+X-Gm-Message-State: AOJu0YwpnltWZzoU7xlp1mClulg9Bnra4hWvWW+/DWM49qRL/sXcaBwR
+	27ruGTWXHkCuAPBBmKlyPVgOD5tq0eiMIXuQWRd5IAs5jfSL4weS0DLUZYcrWYLrs6QPVtO+Mkk
+	6S0JQRg==
+X-Google-Smtp-Source: AGHT+IHxV7jW6gRz7VajILxJCjZsOPqfvjvSYySQjRZmNXNrF+vEZ10VrxKTf8DxGXbqc5AgHyasng==
+X-Received: by 2002:a05:6512:1150:b0:52f:cd03:a850 with SMTP id 2adb3069b0e04-5331c6b0a4dmr6182003e87.32.1724048038037;
+        Sun, 18 Aug 2024 23:13:58 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d424a79sm1386062e87.268.2024.08.18.23.13.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 23:13:57 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f025b94e07so44253741fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 23:13:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXHM+HIhpcLDO/xvtlxRM6h4pE9KU/jYOJL4EKSfNc6wJMzwHLN2vOROClC6nkH2yfsVZsJ1i313l6k48ZU/9j8xxouZQIaPv1oGG2U
+X-Received: by 2002:a2e:2418:0:b0:2ef:2b06:b686 with SMTP id
+ 38308e7fff4ca-2f3be596304mr66389161fa.17.1724048036887; Sun, 18 Aug 2024
+ 23:13:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F8:EE_|CY8PR12MB7684:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28fb3737-263f-480e-52f2-08dcc0161691
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G417QAG8+X0ozyJjuquHve1HFzhtroWcD1f4Bk9xfkAbdLiyxlsz29641HPw?=
- =?us-ascii?Q?g8CffcPmH2GmVSBpTq/A9uqAUUebDHXe8H45WzGAAyk0snTEzXNW13leoHhu?=
- =?us-ascii?Q?1nhbSYhfNrFsLPWf/S1+K/ms3XAl2KIf026V99R54AQIuZSeWwgAsFKm1zhq?=
- =?us-ascii?Q?HMjTaclX/nIacyCRfuaqoZtKp9fxPB+s/mMgm/g60258tRhhX23aTqtsTGCo?=
- =?us-ascii?Q?PLImaDX02gof6hTZ+2U7q64plxIJWfe4sMcoUQcuWIs9D8D8x3d9EOLgkJ7Q?=
- =?us-ascii?Q?IVMj6I0yX4EUh+4659gMv88zQRiSdnb81L5ar+M+dNY9tN1wD3edUcl3XqGM?=
- =?us-ascii?Q?Wo+ZtTK3FCiUdRciHB3/VZyu9Hxh6b+YWIK8Vjf5kmia/L9r952S0R6ExMV/?=
- =?us-ascii?Q?70pwDWtaYWuQMn8ss19qfOD5GCyqsea3v1qmLmn6u5UfdOplGX2BjVR25Ksa?=
- =?us-ascii?Q?ta8EAW5uOPPc0Ney875T8RX4iikZX7yY5pd4OCIY+mow50t4f3pMueags7Fv?=
- =?us-ascii?Q?BNVPFAaEmEvySzJwUzTOb6p7KfEqy9MJ2P6PKEQMNlkiKesgcXGb02RegcFD?=
- =?us-ascii?Q?5gdvMFdIxoB9rITKoGIBmwuKkSIAIyon30KkDDRrIhmu1jrZvFolPooI4fu1?=
- =?us-ascii?Q?D6+TH9YdFjNYyPypEBBhGFDUjUJqfkz0UEHysvFoeEtXc8UgNWMLKZifBcmE?=
- =?us-ascii?Q?g/OEU03It+CQKuhcFl3QbgIdZDqirU0YdmybKjsaaBwmSM8u8YXCmHHXMS+v?=
- =?us-ascii?Q?R/v+OdVHs29rYIN7fzBsZieFI/vJMIzl9l038U/Ycpqt4CMRmPXr4pdcZ1G+?=
- =?us-ascii?Q?cMF/BLYKEk4Tk9k8cgjx7liL5VZSMA1M454DQ7YjTV4pAfrGR1jn6FQfuI1b?=
- =?us-ascii?Q?szjUaaLihpkN75XH0hJEImHx0zZo52kQUY2y9qqUPTb54TgeuvkDHP6SR8aD?=
- =?us-ascii?Q?4pmiEWJODvWb6EZeaXSVWlo4H0UdNdEXxPGsWKr5JRpCS1JCJW6NfYJmzW4S?=
- =?us-ascii?Q?Ib0kycXQx/b2wtaLospDSBbCHHU52OYmztWRrzgsNgMX24Pq148LWhthRtBS?=
- =?us-ascii?Q?SUKmVxAelSwXLD8Ev81KxmIJm5djIHCcxkROTVtZIMNFtlgVXorqmokDuRVu?=
- =?us-ascii?Q?f3j2wTxexPYWUKPFV5hkrogcq3P02zMatTmBo2KTeGDCu1h02avx5MBlfSpg?=
- =?us-ascii?Q?iExrEOVcta467qJ2vj3EX3OTAOd4yXrexaPrguYenP0m4QUCYR61BiVwSdR6?=
- =?us-ascii?Q?Nr8sMtmOG0bC5QxSkqTVIG36DMsXRatFztaftChGhYvzpggxeJpZ2Qz8zC2I?=
- =?us-ascii?Q?5VnqD/JY6OvxTb/Baa/hhwgVBziYffT2G1OFFyD1Xmg/Dk7fJMC5lft032ht?=
- =?us-ascii?Q?Xef5LI3vUboKuIjKjByTP5dkpOwNlDkyg5mDjN+jpw463ZaXmevuxu+AEbOt?=
- =?us-ascii?Q?CHz57Eb6rkP6y1naaIeqCX2n8NfkoWgd?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 06:13:47.8641
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28fb3737-263f-480e-52f2-08dcc0161691
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7684
+References: <20240819053605.11706-1-neilb@suse.de>
+In-Reply-To: <20240819053605.11706-1-neilb@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 18 Aug 2024 23:13:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=widip3Dj5UWs8MVGgxt=DJjMy1OEzZq9U8TMJAT3y48Uw@mail.gmail.com>
+Message-ID: <CAHk-=widip3Dj5UWs8MVGgxt=DJjMy1OEzZq9U8TMJAT3y48Uw@mail.gmail.com>
+Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
+To: NeilBrown <neilb@suse.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Replace acp descriptor structure member 'rev' check with acp pci revision
-id.
+On Sun, 18 Aug 2024 at 22:36, NeilBrown <neilb@suse.de> wrote:
+>
+> The main patches here are 7 and 8 which revise wake_up_bit and
+> wake_up_var respectively.  They result in 3 interfaces:
+>   wake_up_{bit,var}           includes smp_mb__after_atomic()
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/sof/amd/acp.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+I actually think this is even worse than the current model, in that
+now it subtle only works after atomic ops, and it's not obvious from
+the name.
 
-diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
-index 0f6115c8b005..e4d46fdda88b 100644
---- a/sound/soc/sof/amd/acp.c
-+++ b/sound/soc/sof/amd/acp.c
-@@ -236,7 +236,6 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
- 			      unsigned int image_length)
- {
- 	struct snd_sof_dev *sdev = adata->dev;
--	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
- 	unsigned int tx_count, fw_qualifier, val;
- 	int ret;
- 
-@@ -265,8 +264,9 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
- 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_DMA_DESTINATION_ADDR, dest_addr);
- 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_MSG_LENGTH, image_length);
- 
--	/* psp_send_cmd only required for vangogh platform (rev - 5) */
--	if (desc->rev == 5 && !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
-+	/* psp_send_cmd only required for vangogh platform */
-+	if (adata->pci_rev == ACP_VANGOGH_PCI_ID &&
-+	    !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
- 		/* Modify IRAM and DRAM size */
- 		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | IRAM_DRAM_FENCE_2);
- 		if (ret)
-@@ -285,8 +285,8 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
- 		return ret;
- 	}
- 
--	/* psp_send_cmd only required for renoir platform (rev - 3) */
--	if (desc->rev == 3) {
-+	/* psp_send_cmd only required for renoir platform*/
-+	if (adata->pci_rev == ACP_RN_PCI_ID) {
- 		ret = psp_send_cmd(adata, MBOX_ACP_SHA_DMA_COMMAND);
- 		if (ret)
- 			return ret;
-@@ -405,7 +405,7 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->ext_intr_stat, ACP_ERROR_IRQ_MASK);
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_sw0_i2s_err_reason, 0);
- 		/* ACP_SW1_I2S_ERROR_REASON is newly added register from rmb platform onwards */
--		if (desc->rev >= 6)
-+		if (adata->pci_rev >= ACP_RMB_PCI_ID)
- 			snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SW1_I2S_ERROR_REASON, 0);
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_error_stat, 0);
- 		irq_flag = 1;
-@@ -431,6 +431,7 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
- static int acp_power_on(struct snd_sof_dev *sdev)
- {
- 	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
-+	struct acp_dev_data *adata = sdev->pdata->hw_pdata;
- 	unsigned int base = desc->pgfsm_base;
- 	unsigned int val;
- 	unsigned int acp_pgfsm_status_mask, acp_pgfsm_cntl_mask;
-@@ -441,13 +442,14 @@ static int acp_power_on(struct snd_sof_dev *sdev)
- 	if (val == ACP_POWERED_ON)
- 		return 0;
- 
--	switch (desc->rev) {
--	case 3:
--	case 5:
-+	switch (adata->pci_rev) {
-+	case ACP_RN_PCI_ID:
-+	case ACP_VANGOGH_PCI_ID:
- 		acp_pgfsm_status_mask = ACP3X_PGFSM_STATUS_MASK;
- 		acp_pgfsm_cntl_mask = ACP3X_PGFSM_CNTL_POWER_ON_MASK;
- 		break;
--	case 6:
-+	case ACP_RMB_PCI_ID:
-+	case ACP63_PCI_ID:
- 		acp_pgfsm_status_mask = ACP6X_PGFSM_STATUS_MASK;
- 		acp_pgfsm_cntl_mask = ACP6X_PGFSM_CNTL_POWER_ON_MASK;
- 		break;
--- 
-2.34.1
+At least the current model, correct code looks like
 
+      do_some_atomic_op
+      smp_mb__after_atomic()
+      wake_up_{bit,var}
+
+and the smp_mb__after_atomic() makes sense and pairs with the atomic.
+So the current one may be complex, but at the same time it's also
+explicit. Your changed interface is still complex, but now it's even
+less obvious what is actually going on.
+
+With your suggested interface, a plain "wake_up_{bit,var}" only works
+after atomic ops, and other ops have to magically know that they
+should use the _mb() version or whatever. And somebody who doesn't
+understand that subtlety, and copies the code (but changes the op from
+an atomic one to something else) now introduces code that looks fine,
+but is really subtly wrong.
+
+The reason for the barrier is for the serialization with the
+waitqueue_active() check. Honestly, if you worry about correctness
+here, I think you should leave the existing wake_up_{bit,var}() alone,
+and concentrate on having helpers that do the whole "set and wake up".
+
+IOW, I do not think you should change existing semantics, but *this*
+kind of pattern:
+
+>  [PATCH 2/9] Introduce atomic_dec_and_wake_up_var().
+>  [PATCH 9/9] Use clear_and_wake_up_bit() where appropriate.
+
+sounds like a good idea.
+
+IOW, once you have a whole "atomic_dec_and_wake_up()" (skip the "_var"
+- it's implied by the fact that it's an atomic_dec), *then* that
+function makes for a simple-to-use model, and now the "atomic_dec(),
+the smp_mb__after_atomic(), and the wake_up_var()" are all together.
+
+For all the same reasons, it makes total sense to have
+"clear_bit_and_wake()" etc.
+
+But exposing those "three different memory barrier scenarios" as three
+different helpers is the *opposite* of helpful. It keeps the current
+complexity, and makes it worse by making the barrier rules even more
+opaque, imho.
+
+               Linus
 
