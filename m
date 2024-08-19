@@ -1,101 +1,107 @@
-Return-Path: <linux-kernel+bounces-292225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4AB956CB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0990956CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF85285138
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938ED1F22B42
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE3316D4C9;
-	Mon, 19 Aug 2024 14:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1708316CD10;
+	Mon, 19 Aug 2024 14:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eGaLxQRU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HPc5DXPq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF7E16CD02;
-	Mon, 19 Aug 2024 14:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EB616CD01
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076466; cv=none; b=NiG16Pp60Ab7ginboEco4p5DT+hfvk9WjqBTkLrgIJvFk/JNmuNXgL90SRE3ZTrRNNTGTcW7bQQTnkFphICR7GZxaTUkH3FZDlp/YpRDqP+7v68bhbx4Jos6QKKnoVeyhT5nhpQa+ZzSN/HqVrWnP8eVZ9uNVpvqTCoP3TUdT1A=
+	t=1724076506; cv=none; b=td1Y8NZPOzb7hYJkqCdSi6aXVMvst2IzdTkLZ3uuMeNA1AmlXyoGdhDMnkwPMjTv9J0BGklUuWeSq9oNRmvs7Gi8dKTojon5fdxeq97ziFr91txJEjFSrEC60RQAog95wuSO4ctHp4roYjHefFNy1jf5YqANek4M1gKEAYUeA+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076466; c=relaxed/simple;
-	bh=ISi78XNIMPVWDNGliDOOqlz+F6un0Fa04UJbTOxjiEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvhhMO7J34F0/O4WSSEo9yWKsiODzkV8NhdZK5p26eF6qK44ILbqDQVAup/GCW947dUNDvKKlzIAz81CzraDJMQ8ZrLBC7cMIoBafH8q4/JOl3eLUflkaxR6YqMIr6Kn6kXKBLNS2papyopx2jhcf6E9s4fi+9zj/QqrC16Qqno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eGaLxQRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021EC32782;
-	Mon, 19 Aug 2024 14:07:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724076465;
-	bh=ISi78XNIMPVWDNGliDOOqlz+F6un0Fa04UJbTOxjiEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGaLxQRU7fzLOB5R0JryMchI8iXukUXTmUpiDd7PtmJlycUdPNFWtFHaTWy6JnjcQ
-	 QHcl0X5oQG9wgkFONU/ubTN5FZp2kZaE9p6eeP6l1y5a62vsW5Y4CFAKqDM85IQ2rb
-	 rJSujDq1nH2b/5BI+wmkTjWGcQQ6e1YIGbvWsXfg=
-Date: Mon, 19 Aug 2024 16:07:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
-Message-ID: <2024081914-exploit-yonder-4d51@gregkh>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+	s=arc-20240116; t=1724076506; c=relaxed/simple;
+	bh=bfUU3TjT0pGgF5mvvVDRDiP7W/MFzy2EcVVV0czuQz8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=gau1lEi/q3Jpfhq8hN27kihLNV1ZopVJfyGE2sQXvci5nls8I+VuOpQNSEZTIpTk6McqXJ2FWbRqENC1H51WcvBPncBA1s8t+jvb4GkwRpB9LTss9TyE91sxES9z+jHdD0oyBSlkCl/a510zDdQA2ACYhBNOv4oe9CjZCLHmN+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HPc5DXPq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724076503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6XYur11TPtGEn1C9y/LldAZB5i+hKJ1iTdKnEq29u2s=;
+	b=HPc5DXPq+TrKzbONkKqmL6x4R3ET3XpfAXf17QlNk5aA7atqAyqe1b/n7Z6Aklvvr6nxfX
+	hY+y9qAE1eDJrz55uq2977HdBqqEFH1j6lnzYsmKvvlpF15RFkpvB7dyA/12Rm+a05Fc+w
+	wMnsRt1zrKT3iZwNQ/ReRyD+6arEmdI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-61-jHbrzhgdPny4TS4KDOGWhQ-1; Mon,
+ 19 Aug 2024 10:08:20 -0400
+X-MC-Unique: jHbrzhgdPny4TS4KDOGWhQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6B441954B14;
+	Mon, 19 Aug 2024 14:08:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EBABC1955BF8;
+	Mon, 19 Aug 2024 14:08:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <03ae65df-a369-436d-b31c-b3cec6ca3bc1@suse.de>
+References: <03ae65df-a369-436d-b31c-b3cec6ca3bc1@suse.de> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk> <3402933.1724068015@warthog.procyon.org.uk>
+To: Hannes Reinecke <hare@suse.de>
+Cc: dhowells@redhat.com,
+    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+    brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, gost.dev@samsung.com, linux-xfs@vger.kernel.org,
+    hch@lst.de, david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
+    yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+    linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3427741.1724076489.1@warthog.procyon.org.uk>
+Date: Mon, 19 Aug 2024 15:08:09 +0100
+Message-ID: <3427742.1724076489@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, Aug 18, 2024 at 04:17:36PM -0700, Bjorn Andersson wrote:
-> Amit and Johan both reported a NULL pointer dereference in the
-> pmic_glink client code during initialization, and Stephen Boyd pointed
-> out the problem (race condition).
-> 
-> While investigating, and writing the fix, I noticed that
-> ucsi_unregister() is called in atomic context but tries to sleep, and I
-> also noticed that the condition for when to inform the pmic_glink client
-> drivers when the remote has gone down is just wrong.
-> 
-> So, let's fix all three.
-> 
-> As mentioned in the commit message for the UCSI fix, I have a series in
-> the works that makes the GLINK callback happen in a sleepable context,
-> which would remove the need for the clients list to be protected by a
-> spinlock, and removing the work scheduling. This is however not -rc
-> material...
-> 
-> In addition to the NULL pointer dereference, there is the -ECANCELED
-> issue reported here:
-> https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/
-> I have not yet been able to either reproduce this or convince myself
-> that this is the same issue.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+Hannes Reinecke <hare@suse.de> wrote:
 
-What tree are these to go through?  I can take them through mine, but if
-someone else wants to, feel free to route them some other way.
+> Wouldn't the second truncate end up with a 4k file, and not an 8k?
+> IE the resulting file will be:
+> After step 1: 8k
+> After step 2: 4
+> After step 3: 4k
 
-thanks,
+Yes, but the folio should still be an 8K folio, and it is:
 
-greg k-h
+>   pankaj-5833: netfs_folio: pfn=116fec i=0009e ix=00000-00001 inval-part
+
+as indicated by the inclusive folio index range ix=00000-00001.
+
+The problem is that the bottom four bytes of the file are getting cleared
+somewhere.  They *should* be "XXXX", but they're all zeros.
+
+David
+
 
