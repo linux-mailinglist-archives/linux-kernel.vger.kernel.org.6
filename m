@@ -1,234 +1,161 @@
-Return-Path: <linux-kernel+bounces-293053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122FE9578C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89369578C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC34284901
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682EF1F23A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470781E2125;
-	Mon, 19 Aug 2024 23:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221DB16133C;
+	Mon, 19 Aug 2024 23:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INSJaFF4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="eEkAMu8s"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2043.outbound.protection.outlook.com [40.92.102.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603AE159565;
-	Mon, 19 Aug 2024 23:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724110920; cv=none; b=knKQ9LR/DgIPrNS0MUeEZn+qps/GXF+9keo9eaTWnYZUgZb18/naPj6T82kVYpaSpH6C5bNVbgDKeIaxsvcNwPOQyGXjbMHR2gXbcVtKuilXdcPPPVkOy8Xdw/oTA5plVf9/DZj+Ic8QPIWH1u0YHNA+Mn9I6Y+AhMMQgW20GqM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724110920; c=relaxed/simple;
-	bh=YfCiVYaRc7+OuAB2A1BJLJyxT0NwqKWRB2yB2ywALKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q79ON/D/etyhWZ8ZhArU8Xwggvn19zAy3HniFncFH75MwrXfWPIlbbf3xIcOKN3sSyW78ZmyzjNrR2AVJotgcjnlY5yQluaXA0bMwF1OMAydBZjwPPz4fk1fG3znGhJ9gYH1rpCJhdK3/0c+hhMxwlhdPy7dIRj1LgIMOCHiX8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INSJaFF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E181CC32782;
-	Mon, 19 Aug 2024 23:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724110919;
-	bh=YfCiVYaRc7+OuAB2A1BJLJyxT0NwqKWRB2yB2ywALKM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=INSJaFF4VS/9O+RAS9mX0P+xzUSoz8tcz3AWphtTVPYqU5JCrMH6v1IiMUe1zdeT0
-	 Q9W0czHwQOKHNE7BeryTzlreCvuhdzcJ/7AfHERGjKbVJOP2FskzchaCWXhy/DAYpj
-	 21HGB4bK83cDAVJ2+3SqK6fbeUUsQIV7cIKu/TkTFMVAuAA/jRFSQ5WjHs/am6zwW1
-	 1JNidwaWbFGnp6WBwVm1IW004iaoF6UtBO2nIPK622U10WHezVUAgcf3geFH98/342
-	 D+I1Q9cU3m91gs5f6D1RMr/SHEqvyH3ADotv8B4t5KLz75rvcwSxjPpRUckbbq01Tb
-	 RodgDo+r5/mvA==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f189a2a7f8so49439671fa.2;
-        Mon, 19 Aug 2024 16:41:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpKdlLmKog4l9YlxMbouhLOD06P3PdkjvXANXNU9+a7/vZAo+hvppw/K1rxG74FM8A1C4o+Bf42uuEcIOq@vger.kernel.org, AJvYcCVMtY1iVwevoaFVgFBKF9jBBpfBooFTIiUMEf2dzarY9SDalYdiQol6FuQmjCU+PhnZnMlXXNcFW9qo@vger.kernel.org, AJvYcCWbHML8RomO8JidM2g0aSOVowOGFGk8Qw/uYMmCrMxm+N7Tkm8MaI6itlkapqsOekJLcl60d454G2K3F+XE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk5UhV69NMrbawFbFyFX4boONzvK4OzK+C9ZTkGR+UUvlmjfUf
-	zDMGGftjzuKT/PtF0FR+6vwn808MngAWbCnkAwXI3DVG9q5IANEX9NDqLuTKTPRzN/1+LGgzd0v
-	S8ermAY/wuzEnZOIvzEPSqfEg8xY=
-X-Google-Smtp-Source: AGHT+IGvyi/qOE59Q6dbGXuWncHFkfcXlMN5t2rIZiiTBznZm06ezdGOHbgTCPn9UxQ+NwC3SphRcgJRcg1I8gPlWSQ=
-X-Received: by 2002:a05:6512:1086:b0:52e:9b2f:c313 with SMTP id
- 2adb3069b0e04-5331c6ac976mr8871763e87.22.1724110918161; Mon, 19 Aug 2024
- 16:41:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689AEB657
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724111413; cv=fail; b=F/nqjzPcSDbRqcMjeNmJvNQL/1+/47wtDXxJPqFiviD7LxQkcTAEysqM5J1ncvCQk81q9VXFE+DV6/IlYgzU3GBBg2Gl8V7W4ebYFfcX7wKAv1FyOU+jSO9dkLFN/g1/RrQ24YZ4rkrhwVajj2R1JkVmYasi5JHCYLe2I0JR1QE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724111413; c=relaxed/simple;
+	bh=c1yaK6mcyZEn9TixvOVFDhYDUjyh5mbE+pwKztCfrjY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FaHiqZdnF4cSi/r9IzibSvRQqmZN//z2S22KnWkrSJpPLChGGozVX1bmbfTVhJdxz3ww51sEKWMX6Tb7MkuST1Hk0wUxpI5NvKEkIg8rwuJWO3+9tUGYmGswApnR+yoioILIfl3pb8JMwnmQshAMtKhxRQ2uxAIlILtPts/SP8g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=eEkAMu8s; arc=fail smtp.client-ip=40.92.102.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S8mBXgkfMRSSzSjy1t/mKlLH3AIBlflWcLVFMvkiBDi+vVvgsTVgtzuLZqNJMyrIT1xFSbskHJxHopNz4FHEskfBYe5XxQXWIcuJho735kuLzhwjrmGyhVVEX5ZJMCF6ky++FaQFzuR9kKts2tVgR4OE4ny5yAkZADCdpBaGJBwFJDB1pJLiaxR6n/mm9gUIjAPaCOwjtN71JOm/RnqNh1VUGDljinv1ZKRvX9v8doH+CyXpvt0X38mSNOdar+TCPWWUiCEUuHl3VYfvULCD2N9jm/s3451tVH7WUU7DeeEQfrbBwcS461R693K9IcxEdime6Ce1fwzO72pc1lCoMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q5qrA+GnOaxGkabKOLo/cA5LkK2otrGP/iSIgXWm6GA=;
+ b=m4N6TlG2l6A7424kCHy7Mm9KG7QLnn+zbj4lmwRkcpGwltSfbVytHYnpG5oqZkA+v25QpzUdacR2WM76iRHlNBeBULTcRp9kQg1Cf6im9H+n0jo/rwAAIoLs+wBiUZTO4t/xzYkHC6Fl4Wv73uO6589ZXl7KEQwvuWk/C6iguf2FTrU0CieM13lBkhrFdyDo9OcfIMVgmOSaLEmIAjXvd1TsfpwMo63BvUCFCC4zwjZX+IP42IkRqIIvBHW4wBL+n/vWIV2AA0sVioMVKh0nA3aakyHPVQHlBcFL3/1NOMYpOGVhS/N36SVu0GLtXVyn9Y4nEaw48krBE4vFcjX/8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q5qrA+GnOaxGkabKOLo/cA5LkK2otrGP/iSIgXWm6GA=;
+ b=eEkAMu8syLidX5CYlT1oMgyeztDgCijiLI8PLF4vQ64gb6yfIUTi31n5TR22WaMEaI0Jddv6ASvobEcP7HdUyVfaFQOZjvwbMrq5jJepygZx32fTjTfAaoT8a+lvrCt7/pR8KbFlYBbfoqHnpfZxMu3hCzvD9xIE7xG3zNh1OpiNjts+k59ddi56xEU3IZVeNckfGO46jTQUFTigO9VfEaprFG9n1E1MuZyMdTzYZ+0+/R7RBu6x7iK9g0xRkq0i4+jVNvVSoWd76AQeG8+29+mNp+rq60oKgb9q2BWHEZtZY4BERuPLagqFXTUytYrZZbbwdTf+ytThZMuDWRucAg==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN2P287MB0577.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Mon, 19 Aug
+ 2024 23:50:00 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7875.016; Mon, 19 Aug 2024
+ 23:50:00 +0000
+Message-ID:
+ <MA0P287MB2822F987452856719294DCC4FE8C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 20 Aug 2024 07:49:52 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: defconfig: sophgo: enable clks for sg2042
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, inochiama@outlook.com,
+ guoren@kernel.org, emil.renner.berthing@canonical.com,
+ apatel@ventanamicro.com, hal.feng@starfivetech.com, dfustini@baylibre.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, haijiao.liu@sophgo.com,
+ xiaoguang.xing@sophgo.com, Chen Wang <unicornxw@gmail.com>
+References: <20240805023320.1287061-1-unicornxw@gmail.com>
+ <20240819-calibrate-playpen-964bfa720a3b@spud>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240819-calibrate-playpen-964bfa720a3b@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [DzXk1ByL5yxxynx9gVg4ffIWqhC7BBMs]
+X-ClientProxiedBy: TYCP301CA0065.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7d::10) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <c933427f-90ef-495e-9998-989cbc91b87a@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819121528.70149-1-andrii.polianytsia@globallogic.com>
- <ZsNJNJE/bIWqsXl1@tissot.1015granger.net> <CAKYAXd98C6t2+h7Q8UC-p3fCTYtKCwmWvd4jCn1br_crc48KLw@mail.gmail.com>
- <ZsNZQRajNoZmllBU@tissot.1015granger.net>
-In-Reply-To: <ZsNZQRajNoZmllBU@tissot.1015granger.net>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 20 Aug 2024 08:41:44 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_1SOT7PW1dwt3b8FG=8Bm5E1FREskb8NLS6W60ZqJRyw@mail.gmail.com>
-Message-ID: <CAKYAXd_1SOT7PW1dwt3b8FG=8Bm5E1FREskb8NLS6W60ZqJRyw@mail.gmail.com>
-Subject: Re: [PATCH] fs/exfat: add NFS export support
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: andrii.polianytsia@globallogic.com, sj1557.seo@samsung.com, 
-	zach.malinowski@garmin.com, artem.dombrovskyi@globallogic.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB0577:EE_
+X-MS-Office365-Filtering-Correlation-Id: 806ce5f5-7915-4369-9332-08dcc0a9a37e
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|5072599009|15080799003|8060799006|461199028|1602099012|4302099013|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	ar8ykYgxpJy8Of/gpBqB4znouFTmXu0s/D7EGOxYA41KkUxKpfA7ZnKHt/XBt+YPGCnUSBFcFMlQet7EsUFncOAjOAAN96DuZhDmia4cbxPJo9mCE5yTYmrPtbMdjGWheDxByacsnzDdstyCPxFarssfrTXfWGcXJN7nDD7G17jkkv0eDbbMt6QSfE3kWaCxiqtKFitfgnd+XrpfDJWa9JJtxrYxbvoc7pHNS3ABVt5DbKRmTTSPTIyQ9sIV7wDrEAnl1bEOL8AC10x5Ql4Ubi4lH8RuCgHOK0Msz/Me0/uP48EOxz8cqFL/PtZu70G88IELLbo0CJnBSusQVfC4S/RCTAm7hnaPHYjlObsIX+yxe8nka6LmH/66EU5UnoVwKcJfq3yq63ZgmbRHfivwzmSWZMWR7/7IQ2a9Ux6NNfoa3GFqtyNWijdLaLmfDETmJBak7PW0zUVv7bx/t5hXm+SmS28RCYcVC+gkLhvs4KCtVKHsToFs3z7zDfHS++fcVcAMgST4aWewGoPxLvQKoTfX2G3GKO8CBxRGY/QjaWAsgIQwR2Id9hxlhTC0Hkn4u/C5XuPcfomynURxLx81m2Nn1YIJOaGh2AEpRFyYtW//sw1FEg2w7/mzzCMBfipJk6Ya62NpoJ6fDME6jDIEzJX5Vl7t2x6YNEBm9OVCsil1cWntvr7jZ9z7Ey1O//eZA0tYJ/VMh2Ov0tJNETHJtvZIfhyWxCkZhZY+oNxzbbFFNY1SF0hYVufhhMOXe397D8XRDRonSSrHwePtbmiQSIqfcvR7MXrxtiiKUwP+Dyo5HdbKNAVkrrPj1lM6bzq7rBXf89XX91hedRUMm/VxMmCPPgay/3BHMA1ixouzrqnZP0E7zA3m4yyuwTl5ah/y
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WXJpLzVSdVFPemJvclFwMTNVd01Zblo4UGtxeDNRbXB6L2Z0SHJFK2VUS243?=
+ =?utf-8?B?TGllNzlmQWhIQjUxcGxpNkpGb0FteVRidjU2VWZNNUc0RWN0Z3d6WnZUVnM2?=
+ =?utf-8?B?bmdzMkJ6bU92c0VZWkI2ZEpZWTFrak5aV2hpR0xuNjNqalV0ZURhYzlRUElR?=
+ =?utf-8?B?bVRVcnZCcFdrUjExZ0Y0N2VRdkFoVmgwaFlteXp5MTAzVjI1Mmk3L1ZwTEhv?=
+ =?utf-8?B?RzBBa2xMek0xWGhQN1VwVFBKNU90YTgzMWNOZ1IwRzVGL3g0aHpLNCthUzcv?=
+ =?utf-8?B?cndOME5lcWFXVmZiWlM2eGtwRUZ4NkJDQ1UvM0dpY2tHblY4azRiU0NXWEI5?=
+ =?utf-8?B?YjIyVTBTeHJTakRYaXd3RXVSRm5xeXc2SVpCbk5CMzlleDlWNzJ1SkxjcmlN?=
+ =?utf-8?B?RXErS1ZCRXpJcWswMXYzNXdTS0kwQTk0SXFmTDhjcmVHMkd1SUlhbVo0UXli?=
+ =?utf-8?B?dVRFY216NVdBV0d3RFk4TzdsWHU3bGI3V3plR20yNFpSa25jMVlhazlXQmNj?=
+ =?utf-8?B?WWRGeVp6TElYVVJwdGl0bGt0RFoxS1UybTJxTkZNVmNEU1RsV0VBdjhjRVNr?=
+ =?utf-8?B?N0tvVXhZS1BVdjVySmUxTFpFZ3ZGVzhEcWRDQkpqSE44Tzg1dTRTRDV0bVU0?=
+ =?utf-8?B?eHEzTFdac0U4Q3BqR1hLbFdtRndIN3JXRFRyRDIrZWpweFZvSmxFTEIzTE00?=
+ =?utf-8?B?ZEYzMEltU2NXVHJOR29tQlNHbVEzWUlGUmRXWWJZdUJiL2pTeVBhcUxJYzkw?=
+ =?utf-8?B?UlErWFhRMWljNk5lMmxOZDFCaG53cFl3SHhnR1A0V1kzWWpoMytrMTdsL3Fl?=
+ =?utf-8?B?UFdJcDlNcE9aSUUzV2lxZGlCRW1aeUN3ekg5SDQ5b3V0YjREbndQcStQOW1t?=
+ =?utf-8?B?MGFkS0RhazVWc25TeXJocWd3U1ZQYzFSaktESDVOZ2xzRjAvQ1FFKy9qN0NS?=
+ =?utf-8?B?Ni9xV0EyeENsODRQNXJIaHlZQTdLV09xYkdaTkE5SklGcDRNMmlEYXNFdGlS?=
+ =?utf-8?B?cU9NSGx1TGdtR3VwbG81dHJWV0J6cnloSS81Zkt3b2xxbVhwRXdoTWFyMG9F?=
+ =?utf-8?B?bVpkaVdaZzhkQ0xMUXJyS2h1RVh2NHVvcWM2T3JKZ0Q3UU5tOWdTUW9kRk5M?=
+ =?utf-8?B?K3JrYXJ6RkRlU3hqSDBFTHEzemtKWThJRXdIRFVCbVlDUzdNKzFKTmJmU2Ir?=
+ =?utf-8?B?TkdqZS8rem1ROUNnYWs5UzgxTUtMR21oeFBzb2ZTQ2taL0xjeGZYWmZONlVZ?=
+ =?utf-8?B?WUlIb3ZQUng4NEZEVE5Gc01zeXc4YkwrczNqZ3JmbzFqaDV3WHRVeW1UMkRE?=
+ =?utf-8?B?cGpvSktOaGcxUXFrQ3BOZ0xTSzlQOXVVZGNtWUc4Y0xOOGIrNmFOcVczS042?=
+ =?utf-8?B?ZUgwZ0RsS0VGelhPaWJwZzRaVjVtYXJnbUlTOVd1Q0Q4MC9qdVhEdkJ5Wnlw?=
+ =?utf-8?B?bXVyUStQbDE0YTRCNkgzalp2Ui9wdHYrM1d0U2VjWmJaQnhhNENCbEpMQlFV?=
+ =?utf-8?B?TXR1aFBocTR6K2hHaTUybXRySVE1QXhzRkw5a0thVllIZkduSjU1cEh4MGho?=
+ =?utf-8?B?c2I2V1pVZFQ5My9FcEtTUDQyQXhUNHk3SVQ3dFdoVTRTWFg0T1l4VmY2c0Zq?=
+ =?utf-8?B?bVRvTDN0bTdZajlYdGU0aTdON1RxeHBEeHNQbkxzV3R0eENlY3BLV3BQa3dj?=
+ =?utf-8?Q?lNPFAZ2fxPqT/pnilDrp?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 806ce5f5-7915-4369-9332-08dcc0a9a37e
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 23:50:00.7175
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0577
 
-On Mon, Aug 19, 2024 at 11:40=E2=80=AFPM Chuck Lever <chuck.lever@oracle.co=
-m> wrote:
+
+On 2024/8/20 1:02, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 >
-> On Mon, Aug 19, 2024 at 11:21:05PM +0900, Namjae Jeon wrote:
-> > >
-> > > [ ... adding linux-nfs@vger.kernel.org ]
-> > >
-> > > On Mon, Aug 19, 2024 at 03:15:28PM +0300, andrii.polianytsia@globallo=
-gic.com wrote:
-> > > > Add NFS export support to the exFAT filesystem by implementing
-> > > > the necessary export operations in fs/exfat/super.c. Enable
-> > > > exFAT filesystems to be exported and accessed over NFS, enhancing
-> > > > their utility in networked environments.
-> > > >
-> > > > Introduce the exfat_export_ops structure, which includes
-> > > > functions to handle file handles and inode lookups necessary for NF=
-S
-> > > > operations.
-> > >
-> > > My memory is dim, but I think the reason that exporting exfat isn't
-> > > supported already is because it's file handles aren't persistent.
-> > Yes, and fat is the same but it supports nfs.
-> > They seem to want to support it even considering the -ESTALE result by =
-eviction.
-> > This patch seems to refer to /fs/fat/nfs.c code which has the same issu=
-e.
+> On Mon, 05 Aug 2024 10:33:20 +0800, Chen Wang wrote:
+>> Enable clk generators for sg2042 due to many peripherals rely on
+>> these clocks.
+>>
+>>
+> Applied to riscv-config-for-next, thanks!
 >
-> Fair enough. I don't see a reference to fs/fat/nfs.c, so may I
-> request that this added context be included in the patch description
-> before this patch is merged?
-Sure, I haven't decided yet whether to accept this patch.
-I'll look into it more and decide.
+> [1/1] riscv: defconfig: sophgo: enable clks for sg2042
+>        https://git.kernel.org/conor/c/3ccedd259cc3
 >
-> Out of curiosity, is any CI testing done on fat exported via NFS? At
-> the moment I don't happen to include it in NFSD's CI matrix.
-I don't maintain fat-fs, so I'm not sure if it's been verified with
-some CI test.
-However, if exfat support NFS export, I'll verify it with that test.
->
->
-> > > NFS requires that file handles remain the same across server
-> > > restarts or umount/mount cycles of the exported file system.
-> > >
-> > >
-> > > > Signed-off-by: Sergii Boryshchenko <sergii.boryshchenko@globallogic=
-.com>
-> > > > Signed-off-by: Andrii Polianytsia <andrii.polianytsia@globallogic.c=
-om>
-> > > > ---
-> > > >  fs/exfat/super.c | 65 ++++++++++++++++++++++++++++++++++++++++++++=
-++++
-> > > >  1 file changed, 65 insertions(+)
-> > > >
-> > > > diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> > > > index 323ecebe6f0e..cb6dcafc3007 100644
-> > > > --- a/fs/exfat/super.c
-> > > > +++ b/fs/exfat/super.c
-> > > > @@ -18,6 +18,7 @@
-> > > >  #include <linux/nls.h>
-> > > >  #include <linux/buffer_head.h>
-> > > >  #include <linux/magic.h>
-> > > > +#include <linux/exportfs.h>
-> > > >
-> > > >  #include "exfat_raw.h"
-> > > >  #include "exfat_fs.h"
-> > > > @@ -195,6 +196,69 @@ static const struct super_operations exfat_sop=
-s =3D {
-> > > >       .show_options   =3D exfat_show_options,
-> > > >  };
-> > > >
-> > > > +/**
-> > > > + * exfat_export_get_inode - Get inode for export operations
-> > > > + * @sb: Superblock pointer
-> > > > + * @ino: Inode number
-> > > > + * @generation: Generation number
-> > > > + *
-> > > > + * Returns pointer to inode or error pointer in case of an error.
-> > > > + */
-> > > > +static struct inode *exfat_export_get_inode(struct super_block *sb=
-, u64 ino,
-> > > > +     u32 generation)
-> > > > +{
-> > > > +     struct inode *inode =3D NULL;
-> > > > +
-> > > > +     if (ino =3D=3D 0)
-> > > > +             return ERR_PTR(-ESTALE);
-> > > > +
-> > > > +     inode =3D ilookup(sb, ino);
-> > > > +     if (inode && generation && inode->i_generation !=3D generatio=
-n) {
-> > > > +             iput(inode);
-> > > > +             return ERR_PTR(-ESTALE);
-> > > > +     }
-> > > > +
-> > > > +     return inode;
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * exfat_fh_to_dentry - Convert file handle to dentry
-> > > > + * @sb: Superblock pointer
-> > > > + * @fid: File identifier
-> > > > + * @fh_len: Length of the file handle
-> > > > + * @fh_type: Type of the file handle
-> > > > + *
-> > > > + * Returns dentry corresponding to the file handle.
-> > > > + */
-> > > > +static struct dentry *exfat_fh_to_dentry(struct super_block *sb,
-> > > > +     struct fid *fid, int fh_len, int fh_type)
-> > > > +{
-> > > > +     return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
-> > > > +             exfat_export_get_inode);
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * exfat_fh_to_parent - Convert file handle to parent dentry
-> > > > + * @sb: Superblock pointer
-> > > > + * @fid: File identifier
-> > > > + * @fh_len: Length of the file handle
-> > > > + * @fh_type: Type of the file handle
-> > > > + *
-> > > > + * Returns parent dentry corresponding to the file handle.
-> > > > + */
-> > > > +static struct dentry *exfat_fh_to_parent(struct super_block *sb,
-> > > > +     struct fid *fid, int fh_len, int fh_type)
-> > > > +{
-> > > > +     return generic_fh_to_parent(sb, fid, fh_len, fh_type,
-> > > > +             exfat_export_get_inode);
-> > > > +}
-> > > > +
-> > > > +static const struct export_operations exfat_export_ops =3D {
-> > > > +     .encode_fh =3D generic_encode_ino32_fh,
-> > > > +     .fh_to_dentry =3D exfat_fh_to_dentry,
-> > > > +     .fh_to_parent =3D exfat_fh_to_parent,
-> > > > +};
-> > > > +
-> > > >  enum {
-> > > >       Opt_uid,
-> > > >       Opt_gid,
-> > > > @@ -633,6 +697,7 @@ static int exfat_fill_super(struct super_block =
-*sb, struct fs_context *fc)
-> > > >       sb->s_flags |=3D SB_NODIRATIME;
-> > > >       sb->s_magic =3D EXFAT_SUPER_MAGIC;
-> > > >       sb->s_op =3D &exfat_sops;
-> > > > +     sb->s_export_op =3D &exfat_export_ops;
-> > > >
-> > > >       sb->s_time_gran =3D 10 * NSEC_PER_MSEC;
-> > > >       sb->s_time_min =3D EXFAT_MIN_TIMESTAMP_SECS;
-> > > > --
-> > > > 2.25.1
-> > > >
-> > > >
-> > >
-> > > --
-> > > Chuck Lever
->
-> --
-> Chuck Lever
+> Thanks,
+> Conor.
+
+Thanks a lot.
+
+Regards,
+
+Chen
+
 
