@@ -1,232 +1,122 @@
-Return-Path: <linux-kernel+bounces-292496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F316195702A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F4D957030
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A542823DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1221F2248A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8553A176227;
-	Mon, 19 Aug 2024 16:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E851175D46;
+	Mon, 19 Aug 2024 16:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="sgyjq+th"
-Received: from smtp-gcp.globallogic.com (smtp-gcp.globallogic.com [34.141.19.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YLMHzLay"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8B47F46;
-	Mon, 19 Aug 2024 16:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.141.19.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE316D4EA
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084740; cv=none; b=kxnFLMeKBwpJla4b8AXLpSbNPXKaz1MHiCMC8LF4nx/7bvHTmrVELJY7oQWMgmhoscxY5E2fPaW3IEqQ4xpLCg98CAoAf7p3yxHaVlqu6pOa3Lobs2TYqK4T30suM4sp2lZJB180LnVqVmKOB8cMYatgDKG0vXnHiUhj63yRvqE=
+	t=1724084767; cv=none; b=UwHpZOFJds7Vs3uzuzxA45HhU1eMQRG62qeZviQbwFvKdxPm3WFAT1d4rD0ze4h9NOQCxW/daIeJelV8SxIdVKWEKMnVQT4zdE8Uo7IW9AhBv49k/LjuPO96bAbieHR0BXfw/vfeSqGrjEv51fO6AbnOWc9E9yjHGOUe8W+Yyjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084740; c=relaxed/simple;
-	bh=4oXMonRPxccaHdiwvgUeceJcnzdEZ5/9triV5lyvzDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ur3zQWPE7RfPwICmEpPT/Y7smIkT/MCpgHEXWva9lJxGf11HNPvwNZHS631O6ZaTNvmxbBSlhnCXcsKlBEUFU/jUfmXUijT5LliD7XfFEpWO4kLCatAIxXUgwOT05wS3wjFTtlGxlu1klaf8dqpGhD3LFS3/+071wCbN1tYayTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com; spf=pass smtp.mailfrom=globallogic.com; dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b=sgyjq+th; arc=none smtp.client-ip=34.141.19.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=globallogic.com
-Received: from [172.22.130.14] (unknown [172.22.130.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-gcp.globallogic.com (Postfix) with ESMTPSA id 8070B10ACE1F;
-	Mon, 19 Aug 2024 16:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=globallogic.com;
-	s=smtp-kbp; t=1724084736;
-	bh=s7bm1H0BrCXSzIRXDUyyJAEje9yWAMefIXx3rGHE1EU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sgyjq+thps50dAYYWJbrmuYucGK9MOxbD1hMb6IwpOoSx1bePvWuGruCzX+WukH+H
-	 F8YnPoHeSGxSytdIG58OkifhoFKantNny3QK6ufhQJ1nXvd3qx7ZoDH2CGphnI5z5A
-	 aR2quZXin6JMnitJpxm5T4pgTeM9k41ulnEASG5ccFIlZPd+e1MOMeu0Qz5dKdWMcf
-	 JxLrpS0K14vXDGKxeupgU6dCj5+yZSbCip+sM+8XXA2ex110x2KwxlOufPTDXTPzMW
-	 Bf1HxsvXzCjP890SH+cy5fWvnsaFKI1DETqYAKNQZhQIMTDW2RVEpg8xGRJBu8ZOrl
-	 1Kf1MYR2qEp5w==
-Message-ID: <2b899572-6c62-46a1-9128-45172a58b79a@globallogic.com>
-Date: Mon, 19 Aug 2024 19:25:35 +0300
+	s=arc-20240116; t=1724084767; c=relaxed/simple;
+	bh=55JxwM0QiGmgymGNIEqaoA6B5iyOWQrfd8q4LPRGb7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HsLIKRMACtADlQZujOe2EIeGawQOXmErdh/5y2lYLbdWmdQz/z1zXyVz47mjdO/i24uOxTjfEUaxt3yx1C131J1Tvd49QwT0WLMi1WqNtClqNb0RbSaE8Xym6+ooN5ag2n5waipBVj38Jd1P8SVGgMhVuLHF2ZG3ubNFOGT4q0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YLMHzLay; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5befe420fc2so1397562a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724084763; x=1724689563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7P4eY0Md4aCcpS7AezFHQ7BubykxjGjE1JXmClsORw=;
+        b=YLMHzLayt8b0OyrEiJizlZgO2cTfcVpvNnmfxb9hDmEBFRcNxbSxc0LQ+3sf9gsohG
+         8Wx2QBVCpcZbap1aQ9AdVsLw5oSatA5wzsFV7SBcqUCmUJ7QelJc6mxoSptNr5hbHCwT
+         RzTJs7fnGbC9mwAiSmsneP1lJy3wj/QPmhNLs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724084763; x=1724689563;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M7P4eY0Md4aCcpS7AezFHQ7BubykxjGjE1JXmClsORw=;
+        b=BRa5vYqYgtfkb0NoJwi7dK7fIcYhztL9HdO9QB3T4MH/jBW9X4AuFSNUyFsMRfk+tC
+         DGGEd+OhzGmNzPn7MUCEMIytoYnceQToNffap/dWKWF73nU0BVAM7GT10ktFnlL7eE0u
+         UQfRrz+qoC/0IPe+dcCEV5tokka9jpj8Fg2pc24hl6MU6/J3tVP2lAAKzqDJRQBjut/g
+         QEvuFCf/oAoLiKh2BXFZb+Aau2YZ8eYITXQCiqMvXkWogdg8CaZiX7V7eGQ7rYMqIpIb
+         WD0JZ/l3UPWFbIgj48zCPYQDm4tHSiwkvF1oJIwm5VFKpOUydc3TGXWYuvDNKcUa1FMZ
+         l8Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXV8p/8EzPrfsVbGT9T+aOZEHnBsiDJ0Nuk7LpLi2+cqLJtgQjhqrvFQgtf8gwvOknpnGkJz12UsGjPkyeOp1FUmKlRq8Ffb/Se/1ac
+X-Gm-Message-State: AOJu0YxMnZWUCHrlQG9/Ll9dgQfL3DwcySPuaUqDwisS7JEoTOu2l7oT
+	veOoHTF1fC/2gKEf1jJum4eNt8WpSZfMIdNdPldp1lTFKPuvXzlEyy9xeetT+5+g0BxPahqW3Ht
+	DFSwVFg==
+X-Google-Smtp-Source: AGHT+IGct/b/VKwaAd33aF3bXYO8Ref9tG8HDiBXFsYGVUxN/d1C1z5ktrtMhSvks2H6lOMYCncDXQ==
+X-Received: by 2002:a05:6402:27c6:b0:5be:db15:b3b5 with SMTP id 4fb4d7f45d1cf-5bedb754d16mr6675513a12.31.1724084763263;
+        Mon, 19 Aug 2024 09:26:03 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebc081dc6sm5701475a12.91.2024.08.19.09.26.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 09:26:02 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so1816126a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:26:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHGavRxs8DtbwpExN0IfPbES7C2CS1IMclL4/AkYICbyO7Gx2P0Y3TdJN3nfg0oRMLrKg6iG5Z2fGHXK+3scpYrtyxFoO6AmsxpkZu
+X-Received: by 2002:a05:6402:254e:b0:5be:daa6:9139 with SMTP id
+ 4fb4d7f45d1cf-5bedb6f274cmr4310212a12.20.1724084762085; Mon, 19 Aug 2024
+ 09:26:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/exfat: add NFS export support
-To: Chuck Lever <chuck.lever@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>
-Cc: andrii.polianytsia@globallogic.com, sj1557.seo@samsung.com,
- zach.malinowski@garmin.com, artem.dombrovskyi@globallogic.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- brauner@kernel.org, linux-nfs@vger.kernel.org
-References: <20240819121528.70149-1-andrii.polianytsia@globallogic.com>
- <ZsNJNJE/bIWqsXl1@tissot.1015granger.net>
- <CAKYAXd98C6t2+h7Q8UC-p3fCTYtKCwmWvd4jCn1br_crc48KLw@mail.gmail.com>
- <ZsNZQRajNoZmllBU@tissot.1015granger.net>
-Content-Language: en-US, uk-UA
-From: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
-In-Reply-To: <ZsNZQRajNoZmllBU@tissot.1015granger.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org> <ZsMGRIec1y8hdKRG@J2N7QTR9R3.cambridge.arm.com>
+In-Reply-To: <ZsMGRIec1y8hdKRG@J2N7QTR9R3.cambridge.arm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 19 Aug 2024 09:25:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whTtu-7NxtsVMzxVWXaRM1rcCWYEVL8hwNxEVEqpfZETQ@mail.gmail.com>
+Message-ID: <CAHk-=whTtu-7NxtsVMzxVWXaRM1rcCWYEVL8hwNxEVEqpfZETQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load acquire
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: cl@gentwo.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chuck and Namjae,
-Thank you for your valuable feedback.
-
-We will update the patch description to reference fs/fat/nfs.c, as the
-implementation of exFAT NFS export is indeed based on similar logic
-used in FAT, which also manages non-persistent file handles.
-
-Before submitting this patch, we conducted extensive testing in four 
-categories:
-functionality, stress, stability, and performance. We did encounter some 
-issues
-related to limitations, such as Unix file permissions and timestamp 
-granularity,
-which are inherent due to exFAT's origins in Windows. However, our tests 
-didn't
-reveal issues related to file handle persistence. If you have any 
-insights or scenarios
-where this issue could be reproduced in real-world use, we would greatly 
-appreciate
-your guidance.
-
-We will make the necessary comment updates and resubmit the patch shortly.
-
---
-Sergii Boryshchenko
-
-On 19.08.24 17:40, Chuck Lever wrote:
-> On Mon, Aug 19, 2024 at 11:21:05PM +0900, Namjae Jeon wrote:
->>> [ ... adding linux-nfs@vger.kernel.org ]
->>>
->>> On Mon, Aug 19, 2024 at 03:15:28PM +0300, andrii.polianytsia@globallogic.com wrote:
->>>> Add NFS export support to the exFAT filesystem by implementing
->>>> the necessary export operations in fs/exfat/super.c. Enable
->>>> exFAT filesystems to be exported and accessed over NFS, enhancing
->>>> their utility in networked environments.
->>>>
->>>> Introduce the exfat_export_ops structure, which includes
->>>> functions to handle file handles and inode lookups necessary for NFS
->>>> operations.
->>> My memory is dim, but I think the reason that exporting exfat isn't
->>> supported already is because it's file handles aren't persistent.
->> Yes, and fat is the same but it supports nfs.
->> They seem to want to support it even considering the -ESTALE result by eviction.
->> This patch seems to refer to /fs/fat/nfs.c code which has the same issue.
-> Fair enough. I don't see a reference to fs/fat/nfs.c, so may I
-> request that this added context be included in the patch description
-> before this patch is merged?
+On Mon, 19 Aug 2024 at 01:46, Mark Rutland <mark.rutland@arm.com> wrote:
 >
-> Out of curiosity, is any CI testing done on fat exported via NFS? At
-> the moment I don't happen to include it in NFSD's CI matrix.
->
->
->>> NFS requires that file handles remain the same across server
->>> restarts or umount/mount cycles of the exported file system.
->>>
->>>
->>>> Signed-off-by: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
->>>> Signed-off-by: Andrii Polianytsia <andrii.polianytsia@globallogic.com>
->>>> ---
->>>>   fs/exfat/super.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>   1 file changed, 65 insertions(+)
->>>>
->>>> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
->>>> index 323ecebe6f0e..cb6dcafc3007 100644
->>>> --- a/fs/exfat/super.c
->>>> +++ b/fs/exfat/super.c
->>>> @@ -18,6 +18,7 @@
->>>>   #include <linux/nls.h>
->>>>   #include <linux/buffer_head.h>
->>>>   #include <linux/magic.h>
->>>> +#include <linux/exportfs.h>
->>>>
->>>>   #include "exfat_raw.h"
->>>>   #include "exfat_fs.h"
->>>> @@ -195,6 +196,69 @@ static const struct super_operations exfat_sops = {
->>>>        .show_options   = exfat_show_options,
->>>>   };
->>>>
->>>> +/**
->>>> + * exfat_export_get_inode - Get inode for export operations
->>>> + * @sb: Superblock pointer
->>>> + * @ino: Inode number
->>>> + * @generation: Generation number
->>>> + *
->>>> + * Returns pointer to inode or error pointer in case of an error.
->>>> + */
->>>> +static struct inode *exfat_export_get_inode(struct super_block *sb, u64 ino,
->>>> +     u32 generation)
->>>> +{
->>>> +     struct inode *inode = NULL;
->>>> +
->>>> +     if (ino == 0)
->>>> +             return ERR_PTR(-ESTALE);
->>>> +
->>>> +     inode = ilookup(sb, ino);
->>>> +     if (inode && generation && inode->i_generation != generation) {
->>>> +             iput(inode);
->>>> +             return ERR_PTR(-ESTALE);
->>>> +     }
->>>> +
->>>> +     return inode;
->>>> +}
->>>> +
->>>> +/**
->>>> + * exfat_fh_to_dentry - Convert file handle to dentry
->>>> + * @sb: Superblock pointer
->>>> + * @fid: File identifier
->>>> + * @fh_len: Length of the file handle
->>>> + * @fh_type: Type of the file handle
->>>> + *
->>>> + * Returns dentry corresponding to the file handle.
->>>> + */
->>>> +static struct dentry *exfat_fh_to_dentry(struct super_block *sb,
->>>> +     struct fid *fid, int fh_len, int fh_type)
->>>> +{
->>>> +     return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
->>>> +             exfat_export_get_inode);
->>>> +}
->>>> +
->>>> +/**
->>>> + * exfat_fh_to_parent - Convert file handle to parent dentry
->>>> + * @sb: Superblock pointer
->>>> + * @fid: File identifier
->>>> + * @fh_len: Length of the file handle
->>>> + * @fh_type: Type of the file handle
->>>> + *
->>>> + * Returns parent dentry corresponding to the file handle.
->>>> + */
->>>> +static struct dentry *exfat_fh_to_parent(struct super_block *sb,
->>>> +     struct fid *fid, int fh_len, int fh_type)
->>>> +{
->>>> +     return generic_fh_to_parent(sb, fid, fh_len, fh_type,
->>>> +             exfat_export_get_inode);
->>>> +}
->>>> +
->>>> +static const struct export_operations exfat_export_ops = {
->>>> +     .encode_fh = generic_encode_ino32_fh,
->>>> +     .fh_to_dentry = exfat_fh_to_dentry,
->>>> +     .fh_to_parent = exfat_fh_to_parent,
->>>> +};
->>>> +
->>>>   enum {
->>>>        Opt_uid,
->>>>        Opt_gid,
->>>> @@ -633,6 +697,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
->>>>        sb->s_flags |= SB_NODIRATIME;
->>>>        sb->s_magic = EXFAT_SUPER_MAGIC;
->>>>        sb->s_op = &exfat_sops;
->>>> +     sb->s_export_op = &exfat_export_ops;
->>>>
->>>>        sb->s_time_gran = 10 * NSEC_PER_MSEC;
->>>>        sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
->>>> --
->>>> 2.25.1
->>>>
->>>>
->>> --
->>> Chuck Lever
+> If you cannot disclose that for some reason, just say "on my ARM64 test
+> machine" or something like that, so that we're not implying that this is
+> true for all ARM64 implementations.
+
+It's the same machine I have - an Ampere Altra. It's a standard
+Neoverse N1 core, afaik.
+
+It might also be a good idea to just point to the ARM documentation,
+although I don't know how stable those web addresses are:
+
+   https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions
+
+and quoting the relevant part on that page:
+
+ "Weaker ordering requirements that are imposed by Load-Acquire and
+  Store-Release instructions allow for micro-architectural
+  optimizations, which could reduce some of the performance impacts that
+  are otherwise imposed by an explicit memory barrier.
+
+  If the ordering requirement is satisfied using either a Load-Acquire
+  or Store-Release, then it would be preferable to use these
+  instructions instead of a DMB"
+
+where that last sentence is basically ARM saying that load-acquire is
+better than load+DMB and should be preferred.
+
+             Linus
 
