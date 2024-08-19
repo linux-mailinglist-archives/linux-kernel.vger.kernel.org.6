@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-291828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704059567B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:58:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54D89567B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2440A282AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662531F226C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711FA15DBB6;
-	Mon, 19 Aug 2024 09:57:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D754915DBB9;
+	Mon, 19 Aug 2024 09:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="bvKKSNH2"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C6A13B592
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0FB15D5CE
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724061479; cv=none; b=CxJsfiTpJUkvzAt0Ttgd/9kK2jtbJhGUP7qsVlC/DCpKApylAYKLhtCGDmj/g3WvKdj4+0884LBNs05DsFuNc3IQBRB1CSbtbz1kx54sEXcszt2tAZKgwIB8iuK+FmUMHdwEkqwLk/12hftjiBfTzDRX6lE9CnhSyLJAVnxgpZM=
+	t=1724061502; cv=none; b=eQLQsJewZk4A+Az9btvFSGaLtchkTT48FPBHcL8kp8ukN4WzpmH9kcjRwgTEgH6UQcWlw3BAbYx/G1G9qPMn0OJIZtvM8PU7bBSQrAgBkI6TQFKuxVOt4BwHwxc77+fh21siGQgdYdcw0AJk3gRTrMgmpb6jBJdYHgzRQu8MnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724061479; c=relaxed/simple;
-	bh=90a/RVgk60kCpe/pWWIEGS6e9qC4DOGm+RrSYDM7tjM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DtuUcRlU1wzRLqB5t3RMLHt0Agfl3LZR4qPRgQh2SpGIQL/D141EEMxNgMwC7tLISvacDZ3108NZfRTTk6xs5HE16iLB34wi+ojaxyV1OqkGqe5d/kRu7htpHMjqwluhHZNXjDsP9fSkm7Kdqzjjtz46dfQzb3mf6JFdksogvKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WnScz4lGNz6K94c;
-	Mon, 19 Aug 2024 17:54:59 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6331E1400DB;
-	Mon, 19 Aug 2024 17:57:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 10:57:51 +0100
-Date: Mon, 19 Aug 2024 10:57:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, "Robin
- Murphy" <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
-	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-Subject: Re: [PATCH v12 1/6] uaccess: add generic fallback version of
- copy_mc_to_user()
-Message-ID: <20240819105750.00001269@Huawei.com>
-In-Reply-To: <20240528085915.1955987-2-tongtiangen@huawei.com>
-References: <20240528085915.1955987-1-tongtiangen@huawei.com>
-	<20240528085915.1955987-2-tongtiangen@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724061502; c=relaxed/simple;
+	bh=6ZZdZCRFsHhRWDlGAK+gYiJ5DQqr/lmuyPxD7mZ+llY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A41+vkjtzPprFmyklIk0gQLVVy0IngwuNTdxSEpLrkz+5rqkJZIcHbGeTEL92GX15Ojm1qyOHRpmUpPa6P0ujh+sqBchJDpDllaRksHxgnknS/ZwCgOeiIWPpfuTu2MlqQbQDe30D2OOEynz+scekXw3c4YNS9lw4oPOicfBBPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=bvKKSNH2; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso559144866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724061499; x=1724666299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/WM/vbPfsLB9+Ywm21579BeaRCehpr1hL+f09TjRp8=;
+        b=bvKKSNH2M3+IVMmfos84UbVLx2wb0Qa3NC9Tv2Kzf00LX+DIVp7oWlUFrzkK17heBT
+         B1CAAufinsU/yC1hU3CrwRs7RmVH7YSfwpbz8g1k5y2vC6jYw4FBZdR2lksvha2zJH/t
+         kPyNWq8o03d/a3rqwqlu0eX5uEjmUkch1lZJkfJyFT4LCMDROKp1zJy1LCTLwKK8OXEX
+         bY5zYrNnAlShflB3mXPAlb5zDN2idiz6XZsJmUTEG2Trb626j5gQRJa9lVQui5gAeg6t
+         fD9/V5F8XreK3JPcowVFqxrpDZOlNDWqzmdo47kv7BETnf0Lj81gu3DVzQla2XPNTv/D
+         ZIzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724061499; x=1724666299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z/WM/vbPfsLB9+Ywm21579BeaRCehpr1hL+f09TjRp8=;
+        b=EyzC/bsZkBGfDP17iSQ0oj4fH0E2TYBYI8lEId4KHgdAliVwEnssZYQmcJ6k9qKw19
+         vojgO7qs0Is2fCx9aig9XwvuYDwDNzyjsiXffA8M1Ve+9Yd6VckMMVTWZMqHWuwrGyw0
+         wUSSstijvRffT2GrZaRxV8nQ7x1QuUd3m+wkSBD7XzaoNIoCB/eRcpCZHl1sfKMlFXKu
+         HvY+qmIXFAfUTpYZf/QZ63pBnJr3dCk76e6svD+J0txZ+P90tyZQhZCrKqtW9/UzYkvy
+         lXnN6LKb6rv2FMoPINkfh5yiRo+D298VCWEMkGK8u7PwVUJYdJxtnUBKTbCcbqQLn5Wv
+         g+og==
+X-Forwarded-Encrypted: i=1; AJvYcCVsqejSwH3Aal40mrnh+rYpH4tliB24zUbk7ABNvsPPoBSctIGZgLeHylH9uiZ4beGdkOGcIVu4EBEzoxxKGzlcT9hpDaEm1eVwSubu
+X-Gm-Message-State: AOJu0Yygv51jlWPQUjdl6yf+ZWhqKnwYlKB1eHH6H18+9qtfpsg7ycm2
+	xFhu3w9VJn9wD7IM7f1XN48OXH1GytvlPv3galZw74fpopif2uDebyCBj+HeUXI=
+X-Google-Smtp-Source: AGHT+IE8dujqtNt2QB+POwilgZUwLTFuKQfMnKJC0wL4+RUjvO0qyeyj2M6q5xsQmP85IflYGSB+eQ==
+X-Received: by 2002:a17:907:e61d:b0:a7a:a892:8e05 with SMTP id a640c23a62f3a-a83929534d8mr738035366b.33.1724061498556;
+        Mon, 19 Aug 2024 02:58:18 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839472f4sm612225466b.184.2024.08.19.02.58.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 02:58:18 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Ashutosh Dixit <ashutosh.dixit@intel.com>
+Subject: [RESEND PATCH] drm/xe/oa: Use vma_pages() helper function in xe_oa_mmap()
+Date: Mon, 19 Aug 2024 11:57:52 +0200
+Message-ID: <20240819095751.539645-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 May 2024 16:59:10 +0800
-Tong Tiangen <tongtiangen@huawei.com> wrote:
+Use the vma_pages() helper function and remove the following
+Coccinelle/coccicheck warning reported by vma_pages.cocci:
 
-> x86/powerpc has it's implementation of copy_mc_to_user(), we add generic
-> fallback in include/linux/uaccess.h prepare for other architechures to
-> enable CONFIG_ARCH_HAS_COPY_MC.
-> 
-> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Seems like a sensible approach to me given existing fallbacks in x86
-if the relevant features are disabled.
+  WARNING: Consider using vma_pages helper on vma
 
-It may be worth exploring at some point if some of the special casing
-in the callers of this function can also be remove now there
-is a default version. There are some small differences but I've
-not analyzed if they matter or not.
+Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/gpu/drm/xe/xe_oa.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
->  arch/powerpc/include/asm/uaccess.h | 1 +
->  arch/x86/include/asm/uaccess.h     | 1 +
->  include/linux/uaccess.h            | 8 ++++++++
->  3 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-> index de10437fd206..df42e6ad647f 100644
-> --- a/arch/powerpc/include/asm/uaccess.h
-> +++ b/arch/powerpc/include/asm/uaccess.h
-> @@ -381,6 +381,7 @@ copy_mc_to_user(void __user *to, const void *from, unsigned long n)
->  
->  	return n;
->  }
-> +#define copy_mc_to_user copy_mc_to_user
->  #endif
->  
->  extern long __copy_from_user_flushcache(void *dst, const void __user *src,
-> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-> index 0f9bab92a43d..309f2439327e 100644
-> --- a/arch/x86/include/asm/uaccess.h
-> +++ b/arch/x86/include/asm/uaccess.h
-> @@ -497,6 +497,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned len);
->  
->  unsigned long __must_check
->  copy_mc_to_user(void __user *to, const void *from, unsigned len);
-> +#define copy_mc_to_user copy_mc_to_user
->  #endif
->  
->  /*
-> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-> index 3064314f4832..0dfa9241b6ee 100644
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -205,6 +205,14 @@ copy_mc_to_kernel(void *dst, const void *src, size_t cnt)
->  }
->  #endif
->  
-> +#ifndef copy_mc_to_user
-> +static inline unsigned long __must_check
-> +copy_mc_to_user(void *dst, const void *src, size_t cnt)
-> +{
-> +	return copy_to_user(dst, src, cnt);
-> +}
-> +#endif
-> +
->  static __always_inline void pagefault_disabled_inc(void)
->  {
->  	current->pagefault_disabled++;
+diff --git a/drivers/gpu/drm/xe/xe_oa.c b/drivers/gpu/drm/xe/xe_oa.c
+index 6d69f751bf78..133292a9d687 100644
+--- a/drivers/gpu/drm/xe/xe_oa.c
++++ b/drivers/gpu/drm/xe/xe_oa.c
+@@ -1244,8 +1244,7 @@ static int xe_oa_mmap(struct file *file, struct vm_area_struct *vma)
+ 	vm_flags_mod(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_DONTCOPY,
+ 		     VM_MAYWRITE | VM_MAYEXEC);
+ 
+-	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages ==
+-		  (vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
++	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages == vma_pages(vma));
+ 	for (i = 0; i < bo->ttm.ttm->num_pages; i++) {
+ 		ret = remap_pfn_range(vma, start, page_to_pfn(bo->ttm.ttm->pages[i]),
+ 				      PAGE_SIZE, vma->vm_page_prot);
+-- 
+2.46.0
 
 
