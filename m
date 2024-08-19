@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-291301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6850A95609D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A258895609E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5C3B21867
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C362819EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93BC1C695;
-	Mon, 19 Aug 2024 00:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0045E241E7;
+	Mon, 19 Aug 2024 00:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kml460pj"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h7Fblr/C"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2D8175AD;
-	Mon, 19 Aug 2024 00:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E317991;
+	Mon, 19 Aug 2024 00:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724028968; cv=none; b=iOlZ2m5BVpNUdE9VjayUiA88kMHvy4hy7nBCoE9XcK1LVr2xo123VvyWprJlbi0uTHl6DYRQrbrqIpI1ELn8Fc22ljxsL66QhBj2lahq24UNJL1c8/k/rqF9Dc0S/ar5l3O/jq0CNmEddGcEBbDgTd1N1dOAE4JWP5CEp7L8/RI=
+	t=1724028970; cv=none; b=MZVpSEa1wRKvK2UWF1K9/9aQC8TRamQ1AZ0/sf6QETg3Gpx/8dGQlAIxuxtRnpiE7Uek9r9tuFKqOOSLTJjk8c3mwcqwj70C9JQ4q2V3fNN3wNebBO9tXWEPwpTQ1Ch+4LHmNh3PLXxcimfNEtyn1gQ2hcRxBJCTuzr1cJLLVLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724028968; c=relaxed/simple;
-	bh=peDfKEMP1cNVimGbUqyKgWAuR6UvKOXHEzLRKOm7jtQ=;
+	s=arc-20240116; t=1724028970; c=relaxed/simple;
+	bh=bhrb8WRNVZ1RIQ/10zE8YtSGqhg1SiogDhyp6w3JVvQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YLmyeIiiXw3WTKM0Hir6ZMxAF3+nyAhDMxqjddFr0M5/bpXp2FUsm+PVA1tTPJWyzq0kPy/2pwigRofBY5/q46gPmbDCz9kpAk1osD68wiu7NpEdLIh/HeReY5sHYHQDCwFoQJLCRTntrRx8ahv251nB239ie7coj9XU8H2J/dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kml460pj; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version:Content-Type; b=rgaOInyZ+cF0fhlqyigI7ar2QHZ9/QoqrqfjPCL5O5PeBcIHkKcS5+6kIWMsdMU4s7qCJpAXcNYVJZ4ksMQ5WzzS0RHBIfB1xOnrokAdUV1snF8FG8k2IC5MXz5N1uoNe/7xJihkHzYN5AmcDL1UHmrFJ5Llfgs2PG4QWKh6wBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h7Fblr/C; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724028965; x=1755564965;
+  t=1724028968; x=1755564968;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=peDfKEMP1cNVimGbUqyKgWAuR6UvKOXHEzLRKOm7jtQ=;
-  b=kml460pj/dgiSuDHbfH35N8aY91Y/yhoMCsspFVIa1dlvpvqiHEgv7JB
-   Sjshszx4EkwY5a6HQqw/xHKgqsLZYsGKj/NE+s4rid79Z3XO00Qv2a7Jz
-   MiBSsR0lPOhX6kvMit+zdKcn8GuMfUdBORPhyMV1c8EPJGUR+SDjXwnxh
-   0pgGHUN3N65RYR4LUs0HUr06WrBrjhypWp72UcGL5ikMUsKkpgo4CfI1L
-   PIIOXFETPvdOej4xEdSVgUoDRuGMGmQUXo1m5NBO21YyCKqblvALH+mpQ
-   quvE4wpRWhl0NDWL1qJmbk7KcqlUGu8+r8Dp5A1vfiZixmAxV0spBL0tT
-   g==;
-X-CSE-ConnectionGUID: 7BjvtiITT2+kQ7QzQOTsvA==
-X-CSE-MsgGUID: DB1WSCFgQZyLIseP6IcFZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22400166"
+  bh=bhrb8WRNVZ1RIQ/10zE8YtSGqhg1SiogDhyp6w3JVvQ=;
+  b=h7Fblr/C0/GQcfQpLfkjARmaIruT7CBkXhNjrJjrWsfqTs3HXRip6im4
+   y5kG3tuX3Jt0RM3V3hFdlRZZa9lza0EewDK+du/vEcn0krz7z3E96AnOg
+   P4UTBzEo3qBtAZ6abluGkvo0qq3jhUpSSLk19FgHt7TKteh0BXjNZN98Q
+   Mo4nXQt2R20jPMM4mLt1KBrs8dZA7qG6P179lpP8gIZv0oOmiadDJa1Rs
+   h1/XnCKiE0HUD9SBk8rnzJMKC8+g0Orwo8hGLi5XFLwCYC7gj6Pq97CYB
+   /5edVo+SBcTkX+Eji3JLfPsMOacM931eDVx9iNqEXBCpLTD4V1Q7TILC1
+   A==;
+X-CSE-ConnectionGUID: H8dVPXeMSa+sY3TSOw4BfA==
+X-CSE-MsgGUID: z6Q9BCYTSOWDEbZQXbMqDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22400170"
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="22400166"
+   d="scan'208";a="22400170"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 17:56:04 -0700
-X-CSE-ConnectionGUID: NGk650VeSwiU310no5zlqg==
-X-CSE-MsgGUID: PF7Ffw89Suaz4H1S2x4PEw==
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 17:56:08 -0700
+X-CSE-ConnectionGUID: 44/vSjXkRCOJX1Wgg/AoFg==
+X-CSE-MsgGUID: faJ8Gv76TumIgqm7XX8HGg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60771407"
+   d="scan'208";a="60771415"
 Received: from unknown (HELO yungchua-desk.intel.com) ([10.247.119.197])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 17:56:01 -0700
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 17:56:04 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -66,9 +66,9 @@ Cc: vinod.koul@linaro.org,
 	broonie@kernel.org,
 	pierre-louis.bossart@linux.intel.com,
 	bard.liao@intel.com
-Subject: [PATCH v2 1/3] ALSA/ASoC/SoundWire: Intel: use single definition for SDW_INTEL_MAX_LINKS
-Date: Mon, 19 Aug 2024 08:55:46 +0800
-Message-ID: <20240819005548.5867-2-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH v2 2/3] soundwire: intel: add probe-time check on link id
+Date: Mon, 19 Aug 2024 08:55:47 +0800
+Message-ID: <20240819005548.5867-3-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240819005548.5867-1-yung-chuan.liao@linux.intel.com>
 References: <20240819005548.5867-1-yung-chuan.liao@linux.intel.com>
@@ -83,135 +83,122 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-The definitions are currently duplicated in intel-sdw-acpi.c and
-sof_sdw.c.  Move the definition to the sdw_intel.h header, and change
-the prefix to make it Intel-specific.
+In older platforms, the number of links was constant and hard-coded to
+4. Newer platforms can have varying number of links, so we need to add
+a probe-time check to make sure the ACPI-reported information with
+_DSD properties is aligned with hardware capabilities reported in the
+SoundWire LCAP register.
 
-No functionality change in this patch.
-
-Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
-Hi Mark,
+ drivers/soundwire/intel.h           |  7 +++++++
+ drivers/soundwire/intel_ace2x.c     | 20 ++++++++++++++++++++
+ drivers/soundwire/intel_auxdevice.c | 14 ++++++++++++++
+ include/linux/soundwire/sdw_intel.h |  3 +++
+ 4 files changed, 44 insertions(+)
 
-This can't go via SoundWire tree due to machine driver conflict. Can we
-go via ASoC tree?
-
----
- include/linux/soundwire/sdw_intel.h     | 5 +++++
- sound/hda/intel-sdw-acpi.c              | 5 ++---
- sound/soc/intel/boards/sof_sdw.c        | 4 +++-
- sound/soc/intel/boards/sof_sdw_common.h | 4 +---
- sound/soc/intel/boards/sof_sdw_hdmi.c   | 2 ++
- 5 files changed, 13 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/soundwire/intel.h b/drivers/soundwire/intel.h
+index 68838e843b54..1db4d9d3a3ba 100644
+--- a/drivers/soundwire/intel.h
++++ b/drivers/soundwire/intel.h
+@@ -222,6 +222,13 @@ static inline bool sdw_intel_sync_check_cmdsync_unlocked(struct sdw_intel *sdw)
+ 	return false;
+ }
+ 
++static inline int sdw_intel_get_link_count(struct sdw_intel *sdw)
++{
++	if (SDW_INTEL_CHECK_OPS(sdw, get_link_count))
++		return SDW_INTEL_OPS(sdw, get_link_count)(sdw);
++	return 4; /* default on older generations */
++}
++
+ /* common bus management */
+ int intel_start_bus(struct sdw_intel *sdw);
+ int intel_start_bus_after_reset(struct sdw_intel *sdw);
+diff --git a/drivers/soundwire/intel_ace2x.c b/drivers/soundwire/intel_ace2x.c
+index 781fe0aefa68..fff312c6968d 100644
+--- a/drivers/soundwire/intel_ace2x.c
++++ b/drivers/soundwire/intel_ace2x.c
+@@ -706,10 +706,30 @@ static void intel_program_sdi(struct sdw_intel *sdw, int dev_num)
+ 			__func__, sdw->instance, dev_num);
+ }
+ 
++static int intel_get_link_count(struct sdw_intel *sdw)
++{
++	int ret;
++
++	ret = hdac_bus_eml_get_count(sdw->link_res->hbus, true, AZX_REG_ML_LEPTR_ID_SDW);
++	if (!ret) {
++		dev_err(sdw->cdns.dev, "%s: could not retrieve link count\n", __func__);
++		return -ENODEV;
++	}
++
++	if (ret > SDW_INTEL_MAX_LINKS) {
++		dev_err(sdw->cdns.dev, "%s: link count %d exceed max %d\n", __func__, ret, SDW_INTEL_MAX_LINKS);
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
+ const struct sdw_intel_hw_ops sdw_intel_lnl_hw_ops = {
+ 	.debugfs_init = intel_ace2x_debugfs_init,
+ 	.debugfs_exit = intel_ace2x_debugfs_exit,
+ 
++	.get_link_count = intel_get_link_count,
++
+ 	.register_dai = intel_register_dai,
+ 
+ 	.check_clock_stop = intel_check_clock_stop,
+diff --git a/drivers/soundwire/intel_auxdevice.c b/drivers/soundwire/intel_auxdevice.c
+index 8807e01cbf7c..d110f2b587d5 100644
+--- a/drivers/soundwire/intel_auxdevice.c
++++ b/drivers/soundwire/intel_auxdevice.c
+@@ -317,6 +317,20 @@ static int intel_link_probe(struct auxiliary_device *auxdev,
+ 	bus->link_id = auxdev->id;
+ 	bus->clk_stop_timeout = 1;
+ 
++	/*
++	 * paranoia check: make sure ACPI-reported number of links is aligned with
++	 * hardware capabilities.
++	 */
++	ret = sdw_intel_get_link_count(sdw);
++	if (ret < 0) {
++		dev_err(dev, "%s: sdw_intel_get_link_count failed: %d\n", __func__, ret);
++		return ret;
++	}
++	if (ret <= sdw->instance) {
++		dev_err(dev, "%s: invalid link id %d, link count %d\n", __func__, auxdev->id, ret);
++		return -EINVAL;
++	}
++
+ 	sdw_cdns_probe(cdns);
+ 
+ 	/* Set ops */
 diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index d537587b4499..87d82ea9a13a 100644
+index 87d82ea9a13a..cb8e7396b4db 100644
 --- a/include/linux/soundwire/sdw_intel.h
 +++ b/include/linux/soundwire/sdw_intel.h
-@@ -447,4 +447,9 @@ extern const struct sdw_intel_hw_ops sdw_intel_lnl_hw_ops;
+@@ -388,6 +388,7 @@ struct sdw_intel;
+ /* struct intel_sdw_hw_ops - SoundWire ops for Intel platforms.
+  * @debugfs_init: initialize all debugfs capabilities
+  * @debugfs_exit: close and cleanup debugfs capabilities
++ * @get_link_count: fetch link count from hardware registers
+  * @register_dai: read all PDI information and register DAIs
+  * @check_clock_stop: throw error message if clock is not stopped.
+  * @start_bus: normal start
+@@ -412,6 +413,8 @@ struct sdw_intel_hw_ops {
+ 	void (*debugfs_init)(struct sdw_intel *sdw);
+ 	void (*debugfs_exit)(struct sdw_intel *sdw);
  
- #define SDW_INTEL_DEV_NUM_IDA_MIN           6
- 
-+/*
-+ * Max number of links supported in hardware
-+ */
-+#define SDW_INTEL_MAX_LINKS                4
++	int (*get_link_count)(struct sdw_intel *sdw);
 +
- #endif
-diff --git a/sound/hda/intel-sdw-acpi.c b/sound/hda/intel-sdw-acpi.c
-index f3b2a610df23..04d6b6beabca 100644
---- a/sound/hda/intel-sdw-acpi.c
-+++ b/sound/hda/intel-sdw-acpi.c
-@@ -17,7 +17,6 @@
- #include <linux/string.h>
+ 	int (*register_dai)(struct sdw_intel *sdw);
  
- #define SDW_LINK_TYPE		4 /* from Intel ACPI documentation */
--#define SDW_MAX_LINKS		4
- 
- static int ctrl_link_mask;
- module_param_named(sdw_link_mask, ctrl_link_mask, int, 0444);
-@@ -87,9 +86,9 @@ sdw_intel_scan_controller(struct sdw_intel_acpi_info *info)
- 	}
- 
- 	/* Check count is within bounds */
--	if (count > SDW_MAX_LINKS) {
-+	if (count > SDW_INTEL_MAX_LINKS) {
- 		dev_err(&adev->dev, "Link count %d exceeds max %d\n",
--			count, SDW_MAX_LINKS);
-+			count, SDW_INTEL_MAX_LINKS);
- 		return -EINVAL;
- 	}
- 
-diff --git a/sound/soc/intel/boards/sof_sdw.c b/sound/soc/intel/boards/sof_sdw.c
-index d258728d64cf..b1fb6fabd3b7 100644
---- a/sound/soc/intel/boards/sof_sdw.c
-+++ b/sound/soc/intel/boards/sof_sdw.c
-@@ -5,12 +5,14 @@
-  *  sof_sdw - ASOC Machine driver for Intel SoundWire platforms
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/bitmap.h>
- #include <linux/device.h>
- #include <linux/dmi.h>
- #include <linux/module.h>
- #include <linux/soundwire/sdw.h>
- #include <linux/soundwire/sdw_type.h>
-+#include <linux/soundwire/sdw_intel.h>
- #include <sound/soc-acpi.h>
- #include "sof_sdw_common.h"
- #include "../../codecs/rt711.h"
-@@ -883,7 +885,7 @@ static int create_sdw_dailinks(struct snd_soc_card *card,
- 	struct intel_mc_ctx *intel_ctx = (struct intel_mc_ctx *)ctx->private;
- 	int ret, i;
- 
--	for (i = 0; i < SDW_MAX_LINKS; i++)
-+	for (i = 0; i < SDW_INTEL_MAX_LINKS; i++)
- 		intel_ctx->sdw_pin_index[i] = SOC_SDW_INTEL_BIDIR_PDI_BASE;
- 
- 	/* generate DAI links by each sdw link */
-diff --git a/sound/soc/intel/boards/sof_sdw_common.h b/sound/soc/intel/boards/sof_sdw_common.h
-index 02f3eebd019d..c10d2711b730 100644
---- a/sound/soc/intel/boards/sof_sdw_common.h
-+++ b/sound/soc/intel/boards/sof_sdw_common.h
-@@ -19,8 +19,6 @@
- #define SOC_SDW_MAX_CPU_DAIS 16
- #define SOC_SDW_INTEL_BIDIR_PDI_BASE 2
- 
--#define SDW_MAX_LINKS		4
--
- /* 8 combinations with 4 links + unused group 0 */
- #define SDW_MAX_GROUPS 9
- 
-@@ -57,7 +55,7 @@ enum {
- struct intel_mc_ctx {
- 	struct sof_hdmi_private hdmi;
- 	/* To store SDW Pin index for each SoundWire link */
--	unsigned int sdw_pin_index[SDW_MAX_LINKS];
-+	unsigned int sdw_pin_index[SDW_INTEL_MAX_LINKS];
- };
- 
- extern unsigned long sof_sdw_quirk;
-diff --git a/sound/soc/intel/boards/sof_sdw_hdmi.c b/sound/soc/intel/boards/sof_sdw_hdmi.c
-index 4084119a9a5f..f92867deb029 100644
---- a/sound/soc/intel/boards/sof_sdw_hdmi.c
-+++ b/sound/soc/intel/boards/sof_sdw_hdmi.c
-@@ -5,10 +5,12 @@
-  *  sof_sdw_hdmi - Helpers to handle HDMI from generic machine driver
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
-+#include <linux/soundwire/sdw_intel.h>
- #include <sound/soc.h>
- #include <sound/soc-acpi.h>
- #include <sound/jack.h>
+ 	void (*check_clock_stop)(struct sdw_intel *sdw);
 -- 
 2.43.0
 
