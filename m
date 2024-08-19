@@ -1,147 +1,106 @@
-Return-Path: <linux-kernel+bounces-291853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2661995680D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:17:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2538B95680E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B051F21A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:17:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D9A1C21615
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D6C1607B5;
-	Mon, 19 Aug 2024 10:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908516193C;
+	Mon, 19 Aug 2024 10:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3VfzCsZ"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIONgEGl"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1E1154C14;
-	Mon, 19 Aug 2024 10:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3AC1607AB
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724062524; cv=none; b=lwM+80iJc9dNl/0X2iGmQtJKa0cdPvNQ9MFd9flJR6ImTUFXkcTzqpHje7K8SFXCBTKvAxbBozTNyGd3NqDHqgRefPGStoLoojJm7FUWmORcRuS80BlAmMBwDa8gJuW/ZE3HnD8WDXbgRnViQoHatk+TBB4GZMxUhlOUEz/dxnA=
+	t=1724062561; cv=none; b=I/AENcPCemmfWeZNZmWseMdiPSMscWuuvLkd5teXPluSohUZo9ysWK1m2rurpCeO2a1LcPLvxh4adS//8poBdxHNZaEri9yH5JrAyZyx7nZ2D0K0xTb945Sg0Q7oNtuEtd/5GmiRzDVCnsKpgxI2VBg9oxCZo4h+S2rFrFFcKYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724062524; c=relaxed/simple;
-	bh=W/4+G33wfJf0p9CZaMWO+T+vpkDN5h6TeXfT0inzY9w=;
+	s=arc-20240116; t=1724062561; c=relaxed/simple;
+	bh=nANsEqLIgPJNcu9quUSP7ATZv8Jx4VYpsDGTH5gD1oQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HWs6NFB9svzZjpcKD+KmH6sHQlwL0ev98Am7uquhVmPsaHYTYAiaUmpp4VhxQZWpxv4Iq1M18PtXyurZ3N8w8fjRl2HkqJDQbGPTeD8iNhJz5QeUXXKPth/RDZsvqeau+SlYSweRuHhl50CfQAp0E4wuRgbRoodEhKIUJg+rJm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3VfzCsZ; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-842efa905a5so634353241.0;
-        Mon, 19 Aug 2024 03:15:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=kmtEii13r3QU+HDnan3aBaG2ng/cwc23zSODy05/RbMVPbsWfQ6mYQxr48SZrF1DTgmaDqzqe4gYyRx8rQE3nS7rUb5YS1Ucj/R+b5e4X+ixVxKSdoP8/zoBrKGcXthk8H94AuslgihGUK7PmI4wWnrAwkWarc05huwZszPQqCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIONgEGl; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4f6b7250d6dso1663184e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:16:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724062522; x=1724667322; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724062559; x=1724667359; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/4+G33wfJf0p9CZaMWO+T+vpkDN5h6TeXfT0inzY9w=;
-        b=K3VfzCsZc7Xon76Y3ngsIXFU6Bh2bGhyjLMCo5o3uiEMBoz50uciOpiK3ehoFtLtXT
-         2UgzVViN2Nr4m3NAcxrT41jvvjmbAy9hxwycvwgX+1x2otm4VPnQxu9cAOqF+6jruYH7
-         jURQ3m29pCtfs+iSDLEODAaqdI953KpyPQOSvcv7FfX23TRHlP7Fkzg0At1YKPavsyOM
-         z6vwFpgpc1Gg97oBGfYr99nDR8i1kba7rctmfKyKGeXzYDX16gcLKmIc85k0tVkVoJRk
-         0w+fv9SQneFypbTVvWMi58j7LQi8DjhyHV8w5U7X3IF41nvP+zc5x5rDkk6qQJyPN++n
-         gnZQ==
+        bh=sa2lODxveZ7v5yXJROcCSh4jkb7CfMK4iLTqO/U2EWI=;
+        b=PIONgEGl0JE+Cwm1/orsjOnvCf7ph49+mfH98ERRa5rOR0kDIKOi4aU7gAg0Pi7geq
+         iN8Rk70THmGFwPAHahaDS3CxrhaPZIr2K72+hx/S7E6fYag+OLokzIavqNkbJ3DnVHPk
+         cN2XNntd1JYiKLTgXm8TFO5JgzU/VSnAl2MDSAgpVbTmWbYxyrZmxvwrnZPhHN/suW0T
+         klkAKDDKV0bHrwFvs7MC9LDXGUeF+jG7ii/GVC2UgslUAfSt/gCD7sSUwXVvTlEQ+bxU
+         vyIswzO2h64MC3iaFuYiyv7MrxP/BHgMQbgQyUDhJ88r/K4wdcMp8jiH3z7+8VsYYVWo
+         PQAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724062522; x=1724667322;
+        d=1e100.net; s=20230601; t=1724062559; x=1724667359;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W/4+G33wfJf0p9CZaMWO+T+vpkDN5h6TeXfT0inzY9w=;
-        b=lo2xSc6HnNpTHC1/KZWiacocuhYkmrZOQHu4rvWCwT9+IsREee9HIIs3Tx+hA/U1x1
-         opGUZIPUH5RdTPmIttow0tNIjEJR8uoa3dDFEh2XzhX6bczkrfGYCYi30RIm/e6omOB8
-         qEHBF31FDzJXsWe2sTqonqQvFT8AvORnFrV5crMAg1anGSeHvxMj1nh3Eqe959NKZMat
-         LZ1oaPi/r7CJUtaXpPDI354QLBxYFPmWYoojp4E7F6UT9L6LXLkNJP/sVxHmvA344OxN
-         dpgiVcKSZV1ymtmSclpk4104716/NERDeGL7nb4AfCn34nKy6NBbGxa8QZpwRvaLJKXA
-         vhMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYn/HgwEhGmTiJZSWDsDCy/lDpQ1JLmuXiym6Hwvc29m8YNnG+HwydytWoh6aK8ztdS6g7kFN4aY/zPKaWRTsrFM8k4uHGILVyBd/grJiCPqMDBX4jMnyhtWW460XXQxTcuHqqkXlQD+mlEWvAMx/1dPvI/OLytQX41Cfpp6OdnQ==
-X-Gm-Message-State: AOJu0YwFghvaF6PwPtvj4gcTHNh5uSKT8GNbfyvMA4z4h6ED0g9hhQuB
-	9NnZlDGDVzYTHJnoNQcSsAbx6pJtqQDgyxsqYEj+x9qeYl6cgD3VbvQW3J4T6BerT+W9kao1HJJ
-	M5+RwusFfqSfBZaoGT/JPm9GbPyQ=
-X-Google-Smtp-Source: AGHT+IHXHOPPMPnKTFNdZAQssubTi+UQ7lmwwpLHN3BOZzE/rZ7VSX2tKTOKODtEg68AABNXSWQ3/PEspkNtDhT5ALA=
-X-Received: by 2002:a05:6102:304b:b0:493:e678:b760 with SMTP id
- ada2fe7eead31-4977999cba4mr12758058137.28.1724062521858; Mon, 19 Aug 2024
- 03:15:21 -0700 (PDT)
+        bh=sa2lODxveZ7v5yXJROcCSh4jkb7CfMK4iLTqO/U2EWI=;
+        b=KEHcFzrFHswHaR3fwiQ0cD/XAG5+qehA0l0hfNtO9SHE5lCAhCA/DxxbQGv/MQqspe
+         fIHxHuqlIvFI117rRd2io6Ij34IjSzTTdUl1z/OxsnvKrk+IVEKXMiYn42l5Y2JjAooC
+         FtjqVioqJ2lC0xt+G62wAE1ub2kxuvJyxsk6pVol5fwsPMuf7z2nw61SCa4bBsc55o4z
+         I/KLGuBFZ83+dVgfdna/mySy5A3VBL99WFnaothv3UpXUg9z87biAPnEyKywC1TQWAN6
+         zLZnzBAbJpSNOLmpmlbHi0H2lRUJh/COa2ZPR5clJ5xX9psDjK6vQ8qpdMgE5v9V9eIg
+         4epw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3+O3UU7Sl8TryV+CD+PDqbYKeK3Qjn5WqcY2QhrS2GgKQBFwdjom3kH9x8p18Z/pcouiHYlsPiWbeYl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXDceHA8/2Yy+QxEsOwFbHrLNJfBz0a+7VR+z8dDsoX5XoDne+
+	FkchZVk9edozt47fzSWswGpkREIPox6MX4Q/FiztSFeJo92WTVuzrWGdRDYmBWUvUxyg5uYkkkG
+	aZ6murbvBzrD7wXBwt+lIhbo2HH+P6eUrhnNKpg==
+X-Google-Smtp-Source: AGHT+IFCsPmzV94E1oL22YZOQLjNqffxEp+5JZ7SruX5LPi1CMN5a9dPiP22C8nBnuWQWfjya0hWY6fDFAAH9KV7IAE=
+X-Received: by 2002:a05:6122:1797:b0:4f5:1787:18aa with SMTP id
+ 71dfb90a1353d-4fc6c221f99mr11922575e0c.0.1724062559333; Mon, 19 Aug 2024
+ 03:15:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812082244.22810-1-e.velu@criteo.com> <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
- <ZrzDAlMiEK4fnLmn@yury-ThinkPad>
-In-Reply-To: <ZrzDAlMiEK4fnLmn@yury-ThinkPad>
-From: Erwan Velu <erwanaliasr1@gmail.com>
-Date: Mon, 19 Aug 2024 12:15:10 +0200
-Message-ID: <CAL2JzuzEBAdkQfRPLXQHry2a2M7_EsScOV_kheo+oXUuKM9rWA@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom code
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tariq Toukan <ttoukan.linux@gmail.com>, Erwan Velu <e.velu@criteo.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	Yury Norov <ynorov@nvidia.com>, Rahul Anand <raanand@nvidia.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
+In-Reply-To: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 19 Aug 2024 15:45:47 +0530
+Message-ID: <CA+G9fYtd1Hw9YLpceUAwwC+UytVQVXOET4gmGT9jiCgHa+WexQ@mail.gmail.com>
+Subject: Re: gcc-8: mm/swapfile.c:863:40: error: array subscript 1 is above
+ array bounds of 'struct list_head[1]' [-Werror=array-bounds]
+To: Chris Li <chrisl@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Kairui Song <kasong@tencent.com>, Barry Song <21cnbao@gmail.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-[...]
-> You may be interested in siblings-aware CPU distribution I've made
-> for mana ethernet driver in 91bfe210e196. This is also an example
-> where using for_each_numa_hop_mask() over simple cpumask_local_spread()
-> is justified.
+On Mon, 19 Aug 2024 at 13:58, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> The x86 builds failed with gcc-8 due to following build warnings / errors on
+> Linux next-20240802 to next-20240819.
+>
+> x86_64 defconfig gcc-8 build failed
+> x86_64 defconfig gcc-13 build pass
+>
+> First seen on the next-20240802 tag.
+>
+>   GOOD: next-20240730
+>   BAD:  next-20240802
 
-That's clearly a topic I'd like to discuss because the allocation
-strategy may vary depending on the hardware and/or usage.
-I've been investigating a case where the default mlx5 allocation isn't
-what I need.
+Anders bisected this and found the first bad commit id as,
+aded4352f648 ("mm: swap: separate SSD allocation from
+scan_swap_map_slots()") first faulty one
 
-1/ I noticed that using the smp_affinity in an RFS context didn't
-change the IRQ allocation and I was wondering if that is an expected
-behavior.
-This prevents any later tuning that an application could require.
-It would be super helpful to be able to influence the placement from
-the host to avoid hardcoded allocators that may not match a particular
-hardware configuration.
-
-2/ I was also wondering if we shouldn't have a kernel module option to
-choose the allocation algorithm (I have a POC in that direction).
-The benefit could be allowing the platform owner to select the
-allocation algorithm that sys-admin needs.
-On single-package AMD EPYC servers, the numa topology is pretty handy
-for mapping the L3 affinity but it doesn't provide any particular hint
-about the actual "distance" to the network device.
-You can have up to 12 NUMA nodes on a single package but the actual
-distance to the nic is almost identical as each core needs to use the
-IOdie to reach the PCI devices.
-We can see in the NUMA allocation logic assumptions like "1 NUMA per
-package" logic that the actual distance between nodes should be
-considered in the allocation logic.
-
-In my case, the NIC is reported to Numa node 6 (of 8) (inherited from
-the PXM configuration).
-With the current "proximity" logic all cores are consumed within this
-numa domain before reaching the next ones and so on.
-This leads to a very unbalanced configuration where a few numa domains
-are fully allocated when others are free.
-When SMT is enabled, consuming all cores from a NUMA domain also means
-using hyperthreads which could be less optimal than using real cores
-from adjacent nodes.
-
-In a hypervisor-like use case, when multiple containers from various
-users run on the same system, having RFS enabled helps to have each
-user have its own toil of generating traffic.
-In such a configuration, it'd be better to let the allocator consume
-cores from each numa node of the same package one by one to get a
-balanced configuration, that would also have the advantage of avoiding
-consuming hyperthreads until at least 1 IRQ per physical core is
-reached.
-
-That allocation logic could be interesting to be shared between
-various drivers to allow sys admins to get a balanced IRQ mapping on
-modern, multi-nodes per socket, architecture.
-
-WDYT of having selectable logic and add this type of
-"package-balanced" allocator?
-Erwan,
+- Naresh
 
