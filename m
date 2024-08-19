@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-291892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D53095689F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4864B9568A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530E21F21206
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:35:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05E61F21B44
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B191607BD;
-	Mon, 19 Aug 2024 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tqpARSQh"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C9415CD58
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C15165EFB;
+	Mon, 19 Aug 2024 10:35:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298F7165EE3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724063705; cv=none; b=iUsgrj9hHdLblqv2+MimudBFaKsSCqmQ/qB4LQblB/ELQy45XIlaHPlnzVdHFFnbeioa24eE8iLw6Xzo/dcR/uiYtSR4KFw/yUsQDLEAy0c5F+zbR+r7Ro/SFKtEP7Psf9BzsdsVLKBpk0ejalqUBjw0ja6sNt8l0DSp81AI9bg=
+	t=1724063709; cv=none; b=RwpfdvCmvg7+/R/bAkD991Kmveol5dC0NF4sJCccOY1Syvk72e/mQWUkVFA2YT7L0Q6kBK/D+p0RvXegRpK0zcoSfleXCni6fZ9T3ZD0dgocfiLKEJRcVTiXyCvh5KWIhBXBsFsmAhNoGNK+w0/4OiGFNv7blHWAIu3WIgVzIMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724063705; c=relaxed/simple;
-	bh=C8cmAZ6DtMCK8UKjeMB4ciqE3g/tYE4h+B83nEaCixY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCppg9N2IOO0E+hGr2nVFxuUyh3fiWddprstesmPNshwajLYjJPy3sCH8bY20pGpMcq8gknVrpIc0XtSs1YEins4k8VsuJl96iQ9vvwwPyJ4KwyMlk80OjYzAwWrvAUyyt0P2HtezT4dXstAQdvof56FaHI2DOgOpVWzXw7VXck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tqpARSQh; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-709485aca4bso2018305a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:35:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724063702; x=1724668502; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n0G/FT2pek0BJGYjowpKrU8vTGOyidDEZSmaRCBfETA=;
-        b=tqpARSQh4FlORB4lf/levNhSIyjSdKqGJPSrsRVGhSE0jmGR6Y2WZQCjbp2pOfGr7p
-         EefKpIloCC9E8YHFOQsqFWNjPwRDff1v5BzlLNPmYfC1/DdE1hwMd3xZEtcd1+yuVexl
-         jIvf7Iug6J5FyIfGo9DG8wATqjZj7HW6xb80gEWuPgcxsa1EKa2rvGWuKbH13MD+PzXa
-         EL4lP/K6AAuScAlDTmkrBK1Ezk9+G2DDM6ZLfT7nwgWQ21SZ2yegkbICTguG1mLxJyzV
-         94wZ3uFadY8NRdkYqOvWyMw31/yNwNgGEkzUSmUjyPF9Tx3W3m6GS3RBYwfBb6ZnuDes
-         uJqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724063702; x=1724668502;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n0G/FT2pek0BJGYjowpKrU8vTGOyidDEZSmaRCBfETA=;
-        b=OsNzs+sNp3y5cJyDy9v/64OiN4rE80KLR5BQSDsGmPzX1mdcUt/s2AqdzQ0SYvZTlK
-         1BdB28A1axIsRaQ0Eq15+eesHAS7/Bli0ehkKVaFj6UhHelwLHwLCDTqCNovGESVN016
-         3YvD3OsVUMBJhdwicPHN0jeij43VAKdonbdGZnK1Y8PBhK88dsEm9ij1oPXN0jWyiT0N
-         T8jnl0gBSCkcqfJL11Y/G5Q/51srUHQTyBd+UqUykaTsGig1V6bLPdmlMRhjhbxjq88A
-         ok5x/ZkzdI0RQKFEYVSZ6DyZc6rNYLyULZdVYa3o7MuqCBvkLUaLMscGhe0+z6L3AFbO
-         MGZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDzES1JN8oErog2w0uaniBngk6RYv+kbVNoffZIvpVTIcHXZpQbjsTSNOyoKNDr0hSMaiV99Ihds+6LLj1GERnjGEvm2kszq29bO5f
-X-Gm-Message-State: AOJu0YymOy1Cp9//MbbvL33GzVA8RWDjw+O78mz2sWIwmo1ZWIzc9Tk7
-	82pDeVg5bdfmPpu034/wrYmbkrht2AGd3FFH5tZjgJA7jUn7B8fJASVgZGQc9tjro5Tg+M8+xh7
-	VcgKXvTXD/nmLXOkSZJ1XUUU1HMVSDbg1CLvroQ==
-X-Google-Smtp-Source: AGHT+IGvfBJcsaH/i9fkAq46MlKF83AnLmTz2dPtPSQk73u0lGeY9eW9+SpkGNyUeKF1EmhsEC3NDjgKQWw+rxKqR7M=
-X-Received: by 2002:a05:6870:3320:b0:260:fbc0:96ec with SMTP id
- 586e51a60fabf-2701c55a28bmr12549846fac.38.1724063702596; Mon, 19 Aug 2024
- 03:35:02 -0700 (PDT)
+	s=arc-20240116; t=1724063709; c=relaxed/simple;
+	bh=RdSa/tpffH245cPnT1qzSVw+G3HARDAfJswJU/t6wB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n5tcC4/6UOndxj1OE0LHXf6mChhZEGvKakSRR60Y8tiPdinzCnP7Rd12EGcQmnExZ+ofqW0xXuHWsOMqm948RpvZesfQ296lY0RLc9aXXMsaARvxlWDHYM0t1oj9O2jJ/btGQGSZq2PklEpHIVgaMPEF8ajgI5qo40iRtJbGtsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AFD6339;
+	Mon, 19 Aug 2024 03:35:32 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41EAB3F73B;
+	Mon, 19 Aug 2024 03:35:05 -0700 (PDT)
+Date: Mon, 19 Aug 2024 11:35:02 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH -next] firmware: arm_ffa: Fix beyond size of field warning
+Message-ID: <ZsMf1jIfbwwmqe1m@bogus>
+References: <20240816100258.2159447-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com> <20240808-device_child_node_access-v2-1-fc757cc76650@gmail.com>
-In-Reply-To: <20240808-device_child_node_access-v2-1-fc757cc76650@gmail.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Mon, 19 Aug 2024 11:34:51 +0100
-Message-ID: <CAJ9a7VgtK1AtjhM+i41nyDnza27gigg2JioC2xBmWkPeLBS0zQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] coresight: cti: use device_* to iterate over
- device child nodes
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Jonathan Cameron <jic23@kernel.org>, Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
-	Michal Simek <michal.simek@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240816100258.2159447-1-ruanjinjie@huawei.com>
 
-On Thu, 8 Aug 2024 at 16:12, Javier Carrasco
-<javier.carrasco.cruz@gmail.com> wrote:
->
-> Drop the manual access to the fwnode of the device to iterate over its
-> child nodes. `device_for_each_child_node` macro provides direct access
-> to the child nodes, and given that they are only required within the
-> loop, the scoped variant of the macro can be used.
->
-> Use the `device_for_each_child_node_scoped` macro to iterate over the
-> direct child nodes of the device.
->
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+On Fri, Aug 16, 2024 at 06:02:58PM +0800, Jinjie Ruan wrote:
+> An allmodconfig build of arm64 resulted in following warning:
+> 
+> 	In function ‘fortify_memcpy_chk’,
+> 	    inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
+> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:488:2:
+> 	./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+> 	  571 |                         __write_overflow_field(p_size_field, size);
+> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 	In function ‘fortify_memcpy_chk’,
+> 	    inlined from ‘ffa_msg_send_direct_req2’ at ./drivers/firmware/arm_ffa/driver.c:489:2:
+> 	./linux-next/include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+> 	  571 |                         __write_overflow_field(p_size_field, size);
+> 	      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Because ffa_msg_send_direct_req2() memcpy uuid_t and struct
+> ffa_send_direct_data2 data to unsigned long dst, the copy size is 2 or
+> or 14 unsigned long which beyond size of dst size, fix it by using a temp
+> array for memcpy.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  drivers/hwtracing/coresight/coresight-cti-platform.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> index ccef04f27f12..d0ae10bf6128 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> @@ -416,20 +416,16 @@ static int cti_plat_create_impdef_connections(struct device *dev,
->                                               struct cti_drvdata *drvdata)
+>  drivers/firmware/arm_ffa/driver.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+> index 1e3764852118..674fbe008ea6 100644
+> --- a/drivers/firmware/arm_ffa/driver.c
+> +++ b/drivers/firmware/arm_ffa/driver.c
+> @@ -480,13 +480,23 @@ static int ffa_msg_send2(u16 src_id, u16 dst_id, void *buf, size_t sz)
+>  static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
+>  				    struct ffa_send_direct_data2 *data)
 >  {
->         int rc = 0;
-> -       struct fwnode_handle *fwnode = dev_fwnode(dev);
-> -       struct fwnode_handle *child = NULL;
->
-> -       if (IS_ERR_OR_NULL(fwnode))
-> +       if (IS_ERR_OR_NULL(dev_fwnode(dev)))
->                 return -EINVAL;
->
-> -       fwnode_for_each_child_node(fwnode, child) {
-> +       device_for_each_child_node_scoped(dev, child) {
->                 if (cti_plat_node_name_eq(child, CTI_DT_CONNS))
-> -                       rc = cti_plat_create_connection(dev, drvdata,
-> -                                                       child);
-> +                       rc = cti_plat_create_connection(dev, drvdata, child);
->                 if (rc != 0)
->                         break;
->         }
-> -       fwnode_handle_put(child);
->
->         return rc;
->  }
->
-> --
-> 2.43.0
+> +	unsigned long args_data[14];
+> +	unsigned long args_uuid[2];
+> +	unsigned long *data_ptr;
+> +
+>  	u32 src_dst_ids = PACK_TARGET_INFO(src_id, dst_id);
+>  	ffa_value_t ret, args = {
+>  		.a0 = FFA_MSG_SEND_DIRECT_REQ2, .a1 = src_dst_ids,
+>  	};
+>  
+> -	export_uuid((u8 *)&args.a2, uuid);
+> -	memcpy(&args.a4, data, sizeof(*data));
+> +	memcpy(args_uuid, uuid, sizeof(uuid_t));
+> +	args.a2 = args_uuid[0];
+> +	args.a3 = args_uuid[1];
+> +
+> +	memcpy(args_data, data, sizeof(*data));
+> +	data_ptr = &args.a4;
+> +	for (int i = 0; i < 14; i++)
+> +		*data_ptr++ = args_data[i];
 >
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
+So we end up with double copy for both uuid and ffa_send_direct_data2 ?
+This is not correct and not needed.
 
+Which toolchain are you using ? I got error only for memcpy which I forgot
+to push to -next, now fixed. It must appear in -next soon.
 
 -- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Regards,
+Sudeep
 
