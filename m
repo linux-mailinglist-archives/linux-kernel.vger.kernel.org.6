@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-291630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C7F9564F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9666B9564F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF9A281FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69361C217EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E11158540;
-	Mon, 19 Aug 2024 07:48:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63812158216
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B015622E;
+	Mon, 19 Aug 2024 07:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rRGdC/61";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dqfopL3N"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FC7182B3;
+	Mon, 19 Aug 2024 07:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053716; cv=none; b=dHQB32G41fmvyc/+4ZDGuwCT3XPEHRM2tbwiTZ+9rsDAm83VR+i+WSvslsRnI6ZXC/LI44iZvs84aadPzLwp3zuVZR4//gcL8Ecbh+0nhNzQ1dy9379EEQHJxy6FG3P0jjMCaamOx9OtxxDjSRqSp1u58y/On2AvJ9LIQ6C3Gys=
+	t=1724053770; cv=none; b=AyzUaL66Ptq+p/nTSbtyOMWfGNiQhULUx/hJ0bjWNMX3PXDGtFIrVPLMCNUWkAVtBEslbIsZBoHZgBaj6OewAO7eYWdw3XAzNijWflzHGt9uAs7Kk5NzTwU3yBx683nlmqzeTgYO19mYsX5eesYpAUwPu5Yj7Nhq473y37gCQys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053716; c=relaxed/simple;
-	bh=chrAnjXK1MAEwPjPnR6NWD/IudaGmXI1IW0IFD/LbsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kUuDLxUiNsh05qtoaSw+DEC/HOhGh36spw/A4ChPV39zpeog8RA4jdGWY0+rvyb+yxRamz1QCWWSz6YNR0WOjg+1lvBpzQCzEBjD+U1vYv4ogj3hEy64o7TdPaVoM1Ld/h3fKiP7Sbg7mGH8uMssxi9jbA6QGQW8oIMX76bMdMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD8711063;
-	Mon, 19 Aug 2024 00:48:54 -0700 (PDT)
-Received: from [10.57.85.21] (unknown [10.57.85.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 941733F73B;
-	Mon, 19 Aug 2024 00:48:26 -0700 (PDT)
-Message-ID: <0f089616-2d63-4ac7-a3ba-b6909f9d9ade@arm.com>
-Date: Mon, 19 Aug 2024 08:48:24 +0100
+	s=arc-20240116; t=1724053770; c=relaxed/simple;
+	bh=Jc6StV0rBLL4w4KRqChFELfq5YYhIJeXdmN6Lv73xbI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=t2L8Eas13mgBk+qJwOihXApp1prlz0VgSyK+0ykaZJNQ3Q+QKgG6IVhOpaoQ6sfOHhjfxH6EF4IZHvBbuIOK1AeC8ePVlcGj4XegaJdtfol+y1czLmF8svaK5TMwOJUnEOnmhMo8xqn542e3rIUPEy7Y8x8U731s0NjH4OJZA5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rRGdC/61; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dqfopL3N; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8523A11518DD;
+	Mon, 19 Aug 2024 03:49:27 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 03:49:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724053767;
+	 x=1724140167; bh=lFQVYmYMNBA6Y8zAi5sckuXFeIU8lBmafp6xesMZWdg=; b=
+	rRGdC/61vkpx4/g9n5wjR9TLJwVPAqAxvP1IkMgQy31GMeN3IwQgQy2HZMFrOqk6
+	UK4LwSlLTEzL5rwbzJTtLtg0qMW4QRwm64N98vS0v7OeB9SF/Bwt9fuRd/askhz+
+	JCtUkneXLDeSFx9Vl39xkubFOa6/BTuL7NSD2Sb6phU16dHZETwssYaPDel8gki1
+	2jWLRA13NkelHfrMB8v1RbMJQxG2Piiqh22gde45hHkI30TDS1vj1p9IJ4gcvoRn
+	enBTmSXAtw3DZuxiQd1wwh4v2Kz6H20G9NxgSfA/ZuLc9OLpSypW7J9mtzbKYp37
+	/WjpQLODD2tggx4DGLKXjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724053767; x=
+	1724140167; bh=lFQVYmYMNBA6Y8zAi5sckuXFeIU8lBmafp6xesMZWdg=; b=d
+	qfopL3NfWSH+BiS3TMkZvBC5R0plQ+SQBiWdxR1Xn+t9sLim/j5Tj38Q2nkeb96o
+	ycUPKfHKD5A/pPZoqSuMVUF0wW5xSNCnNcEywdJWjFBx+ycVbfOTI6qt4QqOOwzR
+	zMuOThKzIaScaFNanjd2zRNMtGuCd/8T9/5imJ8ZgWCE7/8TLuS4XQH2UCJSMoNi
+	8jOBK/l8mxhSEgqUn18xPA7/Bj8oHKCg7V/YCpREluKYE+eaM4o0dZQhsyy9mWt3
+	dNMoubgyLR5IefASmxisidpY/6Zrl2szK7LJOWEgWt6Bhl4AZ5onI1PGAit9mdpg
+	NR9JozK0EFt8lobnLHeog==
+X-ME-Sender: <xms:B_nCZkTVxCfjoByi2nvkY_VS9Vq9kbzsugwBZDAwwqaUfgDZ1XM72w>
+    <xme:B_nCZhwCEKH8kzEUU_C49ze9__wTs6ZJsW618OZWtF-4i63UOhNnifDF4x8jKJdxK
+    gnfm3i5nDdyuggD-5w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddufedguddviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
+    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
+    thhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepthhorhhvrghlug
+    hssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegrghhorhgu
+    vggvvheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopegsohhrnhhtrhgrvghgvg
+    hrsehlihhnuhigrdhisghmrdgtohhm
+X-ME-Proxy: <xmx:B_nCZh1m5ia70GnnE61lXo9ytp-nSoW5vIJ1ShpVzDNLkoEN1wcSwA>
+    <xmx:B_nCZoD0dh3ycDk8kfmhSJW0qQcilVSdXlJ6by6CBYf53C_dESnG9w>
+    <xmx:B_nCZtjelA2N82brvMGL2aRsRj_lmBUAwjpZnChlvKyc6qzi1htPuw>
+    <xmx:B_nCZkqOn8j4Dhx1VKmcqFGSxFVLIgTIo1GOBww8-DCukwgkVbmgpg>
+    <xmx:B_nCZmZHz8nUttmzFehecasjVXkUbrL5_LdGhAUuRvIz6pnYU9WP2nOP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E3A8D16005E; Mon, 19 Aug 2024 03:49:26 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] drm/panthor: introduce job cycle and timestamp
- accounting
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240716201302.2939894-1-adrian.larumbe@collabora.com>
- <20240716201302.2939894-2-adrian.larumbe@collabora.com>
- <e46310c7-27b8-4548-93db-56b780873c12@arm.com>
- <5u7pv27ifao57iagnasycxg4oe5hqq42kajbf4xnllxefg7oet@c362omtcizaj>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <5u7pv27ifao57iagnasycxg4oe5hqq42kajbf4xnllxefg7oet@c362omtcizaj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Aug 2024 09:49:05 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Will Deacon" <will@kernel.org>, "Jann Horn" <jannh@google.com>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <befa0a09-369a-457c-900a-d350da6a40e9@app.fastmail.com>
+In-Reply-To: <20240816104132.GB23304@willie-the-truck>
+References: 
+ <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
+ <20240816104132.GB23304@willie-the-truck>
+Subject: Re: [PATCH] runtime constants: move list of constants to vmlinux.lds.h
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Adrián,
+On Fri, Aug 16, 2024, at 12:41, Will Deacon wrote:
+> On Tue, Jul 30, 2024 at 10:15:16PM +0200, Jann Horn wrote:
+>> Refactor the list of constant variables into a macro.
+>> This should make it easier to add more constants in the future.
+>> 
+>> Signed-off-by: Jann Horn <jannh@google.com>
+>> ---
+>> I'm not sure whose tree this has to go through - I guess Arnd's?
+>
+> Acked-by: Will Deacon <will@kernel.org>
+>
+> I'm assuming Arnd will pick this up.
 
-On 31/07/2024 13:41, Adrián Larumbe wrote:
-> Hi Steven, thanks for the remarks.
-> 
-> On 19.07.2024 15:14, Steven Price wrote:
->> On 16/07/2024 21:11, Adrián Larumbe wrote:
->>> Enable calculations of job submission times in clock cycles and wall
->>> time. This is done by expanding the boilerplate command stream when running
->>> a job to include instructions that compute said times right before an after
->>> a user CS.
->>>
->>> Those numbers are stored in the queue's group's sync objects BO, right
->>> after them. Because the queues in a group might have a different number of
->>> slots, one must keep track of the overall slot tally when reckoning the
->>> offset of a queue's time sample structs, one for each slot.
->>>
->>> This commit is done in preparation for enabling DRM fdinfo support in the
->>> Panthor driver, which depends on the numbers calculated herein.
->>>
->>> A profile mode device flag has been added that will in a future commit
->>> allow UM to toggle time sampling behaviour, which is disabled by default to
->>> save power. It also enables marking jobs as being profiled and picks one of
->>> two call instruction arrays to insert into the ring buffer. One of them
->>> includes FW logic to sample the timestamp and cycle counter registers and
->>> write them into the job's syncobj, and the other does not.
->>>
->>> A profiled job's call sequence takes up two ring buffer slots, and this is
->>> reflected when initialising the DRM scheduler for each queue, with a
->>> profiled job contributing twice as many credits.
->>>
->>> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
->>
->> Thanks for the updates, this looks better. A few minor comments below.
->>
->>> ---
->>>  drivers/gpu/drm/panthor/panthor_device.h |   2 +
->>>  drivers/gpu/drm/panthor/panthor_sched.c  | 244 ++++++++++++++++++++---
->>>  2 files changed, 216 insertions(+), 30 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
->>> index e388c0472ba7..3ede2f80df73 100644
->>> --- a/drivers/gpu/drm/panthor/panthor_device.h
->>> +++ b/drivers/gpu/drm/panthor/panthor_device.h
->>> @@ -162,6 +162,8 @@ struct panthor_device {
->>>  		 */
->>>  		struct page *dummy_latest_flush;
->>>  	} pm;
->>> +
->>> +	bool profile_mode;
->>>  };
->>>  
->>>  /**
->>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
->>> index 79ffcbc41d78..6438e5ea1f2b 100644
->>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
->>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
->>> @@ -93,6 +93,9 @@
->>>  #define MIN_CSGS				3
->>>  #define MAX_CSG_PRIO				0xf
->>>  
->>> +#define NUM_INSTRS_PER_SLOT			16
->>> +#define SLOTSIZE				(NUM_INSTRS_PER_SLOT * sizeof(u64))
->>> +
->>>  struct panthor_group;
->>>  
->>>  /**
->>> @@ -466,6 +469,9 @@ struct panthor_queue {
->>>  		 */
->>>  		struct list_head in_flight_jobs;
->>>  	} fence_ctx;
->>> +
->>> +	/** @time_offset: Offset of panthor_job_times structs in group's syncobj bo. */
->>> +	unsigned long time_offset;
->>
->> AFAICT this doesn't need to be stored. We could just pass this value
->> into group_create_queue() as an extra parameter where it's used.
-> 
-> I think we need to keep this offset value around, because queues within the same group
-> could have a variable number of slots, so when fetching the sampled values from the
-> syncobjs BO in update_fdinfo_stats, it would have to traverse the entire array of
-> preceding queues and figure out their size in slots so as to jump over as many
-> struct panthor_job_times after the preceding syncobj array.
+I'm back from vacation now and applied it to the asm-generic
+tree for 6.12.
 
-Yes I think I was getting myself confused - for some reason I'd thought
-the ring buffers in each queue were the same size. It makes sense to
-keep this.
-
-<snip>
-
->>> @@ -3384,9 +3565,12 @@ panthor_job_create(struct panthor_file *pfile,
->>>  		goto err_put_job;
->>>  	}
->>>  
->>> +	job->is_profiled = pfile->ptdev->profile_mode;
->>> +
->>>  	ret = drm_sched_job_init(&job->base,
->>>  				 &job->group->queues[job->queue_idx]->entity,
->>> -				 1, job->group);
->>> +				 job->is_profiled ? NUM_INSTRS_PER_SLOT * 2 :
->>> +				 NUM_INSTRS_PER_SLOT, job->group);
->>
->> Is there a good reason to make the credits the number of instructions,
->> rather than the number of slots? If we were going to count the actual
->> number of non-NOP instructions then there would be some logic (although
->> I'm not convinced that makes much sense), but considering we only allow
->> submission in "slot granules" we might as well use that as the unit of
->> "credit".
-> 
-> In my initial pre-ML version of the patch series I was passing the number of
-> queue slots as the total credit count, but Boris was keener on setting it to
-> the total number of instructions instead.
-> 
-> I agree with you that both are equivalent, one just being an integer multiple
-> of the other, so I'm fine with either choice. Maybe Boris can pitch in, in
-> case he has a strong opinion about this.
-
-I wouldn't say I have a strong opinion, it just seems a little odd to be
-multiplying the value by a constant everywhere. If you'd got some
-changes planned where the instructions could vary more dynamically that
-would be good to know about.
-
-If Boris is "keener" on this approach then that's fine, we'll leave it
-this way.
-
-Steve
+   Arnd
 
