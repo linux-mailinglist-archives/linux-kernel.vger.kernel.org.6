@@ -1,169 +1,150 @@
-Return-Path: <linux-kernel+bounces-292843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC9295751C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57A7957522
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189AA281D72
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B65928261E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DC31DD389;
-	Mon, 19 Aug 2024 19:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C591DD386;
+	Mon, 19 Aug 2024 19:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CocaTxkR"
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nofXM9aP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3134145341;
-	Mon, 19 Aug 2024 19:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6EC145341;
+	Mon, 19 Aug 2024 19:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724097517; cv=none; b=UMufE4IsbI4BFGeQ/0syhFIdI0pCZF2siauLjxHdYgP5U7D71PoVe+75j4tHuv0T0WBogBGkkAnMvAxpNg1horVGVhvg2t47UwMrsDTb91j00hmE0DplraV/Smlfec/DBE4UMB9AjanOjHdMxpMfqxVFfMq9umicdlxEN3qt4iI=
+	t=1724097597; cv=none; b=Om3FyV9LIuZGmvY16OVoOhVHi+Q7DVysosDDDYEhsjmdKqbP7MGaIAYDDJumVJDrr7R4Bq+ifIx+fDaUGs9fSAlp7BNSiYt3eRZvYzGLYWG+a9jF8mZXZ6Nw6wwYAj8LjBt9+AzZIfjrW4SvvbAQp7p8Jnqii8u5bW398Q2wJ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724097517; c=relaxed/simple;
-	bh=nTuBf7fW68cmHEkmDYrtejR0f0z5ZbbPfVsaBOa6QFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXXSamFU6DOyf0I3QRkVIczMGR15u2AlBRmU6Ap6jzKzAJlxRsV15GzLSHRSVW9Y2XQZumvRCWIknOLxSme9KuKmefcE/+prMhoBRll5kDXS2Y6I+pYhwIX3IeyBgdvlRo4wF0J1inns/j1D5p9C6SbWpXlLbtwzstumMeDnGSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CocaTxkR; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wnk1M3RCFzR4p;
-	Mon, 19 Aug 2024 21:58:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724097511;
-	bh=bilRigCR9rzEGvVaqFgvHt8gMB6RK0eoP2c0Cg2SkmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CocaTxkRxXpNaugZdgZ/kKEoaL3Ag3ROwicubIkVqj2iM4UjwjusyvR9YGECai07T
-	 njK46hK2BASZbUNuQ0EUOFKdu02uOVred1ui9GU2mBn28iX0bLu/4g5ACS6ze0SjVV
-	 V0bkXmssbnEjDkmXvJ3UOK7tfFO8lOYagLyIh9jE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wnk1L3cf8z4Dw;
-	Mon, 19 Aug 2024 21:58:30 +0200 (CEST)
-Date: Mon, 19 Aug 2024 21:58:27 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 0/5] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240819.Gie1thiegeek@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1724097597; c=relaxed/simple;
+	bh=TeuaTeayD/aSTQcxCM2au4d10amUCs1pY4tY1MxS65I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZvh6IQ3Qa1ifIsrTZxmqRtiQawvkil5Ytv95oAu0XdwyzRCt8/A7Rin3MHP+7b8BDun8sxP88F7MxYeSyJse8laapwfh54R4B1+b/mjUB9rV/BojD/wVZxQV41nIr37H2HvN5v9pXs6mQ6tNSXczVE+b2FWWO8nxqOAcqw5Hw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nofXM9aP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JB8uYA025662;
+	Mon, 19 Aug 2024 19:59:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=wZXGwo3NRahAKPBdC0x2drch
+	QdEI7BDLJxmJcB2J2wA=; b=nofXM9aPagJhjLp+yk1s9e2KEZHrgRMdOtgyQ+fD
+	s6rHksu+uaBCULIQ+6h0h6Py3wH1A3Gk5ExmG8U5lFBosAD/rptTeum1bY7KeOX0
+	N3ogatc75ETACvacBp9NpaIO+CBJ7D1yeYa4BAotNIXBzxUYwXbWTArh0BG5Ctfy
+	byHSRn6Reb6ju4wRLxUTvm1/fv8HpKN4adL/YLJ+sInytToyCWK2SKjsUA6bRmVe
+	R67Oa6PAhZXmKYTgDRztARNmG+P3Z4yVopQdyzAMsCX7XnEqLty6Dt8+ys01R9FQ
+	ZOwnonX/S9l8ul1Id4zju9Tmr77DERB8EUpyqOiOkacrXg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n585avu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 19:59:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JJxdTP024242
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 19:59:39 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 12:59:34 -0700
+Date: Tue, 20 Aug 2024 01:29:31 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Antonino Maniscalco <antomani103@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] drm/msm: Fix bv_fence being used as bv_rptr
+Message-ID: <20240819195931.5xl2c3fupgy6atif@hu-akhilpo-hyd.qualcomm.com>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-1-7bda26c34037@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <cover.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240815-preemption-a750-t-v1-1-7bda26c34037@gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W3z_s3mfWdk-mYIzd_dsBCs35O4smXaO
+X-Proofpoint-ORIG-GUID: W3z_s3mfWdk-mYIzd_dsBCs35O4smXaO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011 spamscore=0
+ mlxlogscore=913 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190136
 
-There are still some issues (mainly with tests) but overall the kernel
-part looks good!  I pushed this patch series to the -next branch.  I'll
-update with the next versions of this series.
+On Thu, Aug 15, 2024 at 08:26:11PM +0200, Antonino Maniscalco wrote:
+> The bv_fence field of rbmemptrs was being used incorrectly as the BV
+> rptr shadow pointer in some places.
+> 
+> Add a bv_rptr field and change the code to use that instead.
+> 
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
 
-I'll do the same with the next signal scoping patch series once the
-lifetime issue that Jann reported is fixed.
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-On Wed, Aug 14, 2024 at 12:22:18AM -0600, Tahera Fahimi wrote:
-> This patch series adds scoping mechanism for abstract unix sockets.
-> Closes: https://github.com/landlock-lsm/linux/issues/7
+-Akhil.
+
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 2 +-
+>  drivers/gpu/drm/msm/msm_ringbuffer.h  | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 > 
-> Problem
-> =======
-> 
-> Abstract unix sockets are used for local inter-process communications
-> independent of the filesystem. Currently, a sandboxed process can
-> connect to a socket outside of the sandboxed environment, since Landlock
-> has no restriction for connecting to an abstract socket address(see more
-> details in [1,2]). Access to such sockets for a sandboxed process should
-> be scoped the same way ptrace is limited.
-> 
-> [1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
-> [2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
-> 
-> Solution
-> ========
-> 
-> To solve this issue, we extend the user space interface by adding a new
-> "scoped" field to Landlock ruleset attribute structure. This field can
-> contains different rights to restrict different functionalities. For
-> abstract unix sockets, we introduce
-> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
-> will deny any connection from within the sandbox domain to its parent
-> (i.e. any parent sandbox or non-sandbox processes).
-> 
-> Example
-> =======
-> 
-> Starting a listening socket with socat(1):
-> 	socat abstract-listen:mysocket -
-> 
-> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
-> 	LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
-> 
-> If we try to connect to the listening socket, the connection would be
-> refused.
-> 	socat - abstract-connect:mysocket --> fails
-> 
-> 
-> Notes of Implementation
-> =======================
-> 
-> * Using the "scoped" field provides enough compatibility and flexibility
->   to extend the scoping mechanism for other IPCs(e.g. signals).
-> 
-> * To access the domain of a socket, we use its credentials of the file's FD
->   which point to the credentials of the process that created the socket.
->   (see more details in [3]). Cases where the process using the socket has
->   a different domain than the process created it are covered in the 
->   unix_sock_special_cases test.
-> 
-> [3]https://lore.kernel.org/all/20240611.Pi8Iph7ootae@digikod.net/
-> 
-> Previous Versions
-> =================
-> v8: https://lore.kernel.org/all/cover.1722570749.git.fahimitahera@gmail.com/
-> v7: https://lore.kernel.org/all/cover.1721269836.git.fahimitahera@gmail.com/
-> v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
-> and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
-> v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
-> v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
-> v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
-> v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
-> v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
-> 
-> Tahera Fahimi (5):
->   Landlock: Add abstract unix socket connect restriction
->   selftests/Landlock: Abstract unix socket restriction tests
->   selftests/Landlock: Adding pathname Unix socket tests
->   sample/Landlock: Support abstract unix socket restriction
->   Landlock: Document LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI
->     versioning
-> 
->  Documentation/userspace-api/landlock.rst      |   33 +-
->  include/uapi/linux/landlock.h                 |   27 +
->  samples/landlock/sandboxer.c                  |   58 +-
->  security/landlock/limits.h                    |    3 +
->  security/landlock/ruleset.c                   |    7 +-
->  security/landlock/ruleset.h                   |   23 +-
->  security/landlock/syscalls.c                  |   17 +-
->  security/landlock/task.c                      |  129 ++
->  tools/testing/selftests/landlock/base_test.c  |    2 +-
->  tools/testing/selftests/landlock/common.h     |   38 +
->  tools/testing/selftests/landlock/net_test.c   |   31 +-
->  .../landlock/scoped_abstract_unix_test.c      | 1146 +++++++++++++++++
->  12 files changed, 1469 insertions(+), 45 deletions(-)
->  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index bcaec86ac67a..32a4faa93d7f 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -1132,7 +1132,7 @@ static int hw_init(struct msm_gpu *gpu)
+>  	/* ..which means "always" on A7xx, also for BV shadow */
+>  	if (adreno_is_a7xx(adreno_gpu)) {
+>  		gpu_write64(gpu, REG_A7XX_CP_BV_RB_RPTR_ADDR,
+> -			    rbmemptr(gpu->rb[0], bv_fence));
+> +			    rbmemptr(gpu->rb[0], bv_rptr));
+>  	}
+>  
+>  	/* Always come up on rb 0 */
+> diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.h b/drivers/gpu/drm/msm/msm_ringbuffer.h
+> index 0d6beb8cd39a..40791b2ade46 100644
+> --- a/drivers/gpu/drm/msm/msm_ringbuffer.h
+> +++ b/drivers/gpu/drm/msm/msm_ringbuffer.h
+> @@ -31,6 +31,7 @@ struct msm_rbmemptrs {
+>  	volatile uint32_t rptr;
+>  	volatile uint32_t fence;
+>  	/* Introduced on A7xx */
+> +	volatile uint32_t bv_rptr;
+>  	volatile uint32_t bv_fence;
+>  
+>  	volatile struct msm_gpu_submit_stats stats[MSM_GPU_SUBMIT_STATS_COUNT];
 > 
 > -- 
-> 2.34.1
+> 2.46.0
 > 
 > 
 
