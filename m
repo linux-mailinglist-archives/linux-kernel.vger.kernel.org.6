@@ -1,87 +1,373 @@
-Return-Path: <linux-kernel+bounces-292648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE167957249
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:43:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4605D95724F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564E61F2250C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99034B22660
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDAA188CA4;
-	Mon, 19 Aug 2024 17:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCB8188CA8;
+	Mon, 19 Aug 2024 17:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o3Zbqp7H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IY8ghAR4"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9C049620;
-	Mon, 19 Aug 2024 17:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC9C188003
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089423; cv=none; b=fzPTdWqSHGnJgLFfmbGjz09NyZagw4MyDpHTQw7sCksc3uwHWQ4FeXXqgBMqScmMedujfnowTxwMhmH1/92dIB4AmJNqk1RD4LmVb4h9LI853hfIChuat15MZ/LcITv+s0QJzgfELTMtvKmOcBQKh3VcDq/nKa04ve7XquVfR9s=
+	t=1724089490; cv=none; b=sZ5JrC28VwzVnlHnwOBbL2TuFFQU/pXLXee5A5IkIVkfiAfEumYh4u4b6rZ5juSBzuuuJvsylMpNgnedL3S3qCGBe74gYWSTg0YJMHNreS+xiVT7sXqB3gZcX9sfp8sr4Ec9tZFJFaS7f5dpLIMJqN+MDrDpUVT3st6jSbXRbr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089423; c=relaxed/simple;
-	bh=8jlBsEeoFQY1BVBdnmMedzjxDJV4JpKNTH4RvvcF9JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uaqsJDxmJaSPm1wYArtrPULX6l7iVaP+Opr9+CtzW7ObKYiugdGPiAqSx/rPibYa5nMUUQs6kUiZzJgkhF/WYwhisHaCFTiQb9+czBbqagsuwYiEtf3jpBQuypCRp30Osqad8CRaVoRdAPJ2efAlf7IBog1ksYoRT5QkZ8bQjgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o3Zbqp7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43521C32782;
-	Mon, 19 Aug 2024 17:43:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724089422;
-	bh=8jlBsEeoFQY1BVBdnmMedzjxDJV4JpKNTH4RvvcF9JQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o3Zbqp7HXLkoy0iXmT8VFPiDC57xPOzwKuUwhyp+7+78dC8XV0hQGYG0cK+5xEpEI
-	 LZBbiLCUz5TOAbrppJq+hMfMNd8Q0mHeDZHifGPw6avJ8OJQFvDeqsbq+HsnNG+q/H
-	 JGU0TmKxhiuuKOYa4MyuhSTtacUdBnQVnf3Eigow=
-Date: Mon, 19 Aug 2024 19:43:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: color Ice <wirelessdonghack@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, kvalo@kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, mark.esler@canonical.com,
-	stf_xl@wp.pl, tytso@mit.edu
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
- Dereference&Use-After-Free Vulnerability
-Message-ID: <2024081904-encircle-crayon-8d16@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
- <20240814055816.2786467-1-wirelessdonghack@gmail.com>
- <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
- <CAOV16XEsgkLWz3rOQsAdve-qKsPEDw-QxJNoo4hJfXdLnowHfw@mail.gmail.com>
- <2024081946-designate-dioxide-c59d@gregkh>
- <CAOV16XFYeWdT4tSpLWoE+pCVsNERXKJQCJvJovrfsgMn1PMzbA@mail.gmail.com>
+	s=arc-20240116; t=1724089490; c=relaxed/simple;
+	bh=NtskTFaPbu8GL5say4jN1owSi0DyVah+rYTrnfsN72M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fihDr/h214/36WEcUhvFF+YpeGFH2A4hahTU/jaXIKzQkCjtSe5QHkvXW3gHf1yoOYtDlOFhv/v/+fB2gEs8K6zY7r6lH+3urPlTPkZ/4pG7a0bZ0E4Q7od2LJggofWw3ItClq5I+ETTNOkJOrF0pO7TnBqu4KVM991bjGXKsho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IY8ghAR4; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f01b8738dso3761945e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724089486; x=1724694286; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JnX6f3Y/6akSks2+MDoDUhCWZJr7OqA9M2NH5wz+fGA=;
+        b=IY8ghAR48PTS6BEgaZf4JCuNbXUTaTMwv08B3SDwSoWdBYIBl7zjLxcSLQeJYiuSAO
+         kMY/ofBL1idqkUEn7NHl13w6FhdOldpMzMBoiZz6YSNGgOVsDYnoiqq0ET2gjOO2vglM
+         8+r4ZNcr9+dhFs/PvHyZ6lpef4rluVa1Fntzw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724089486; x=1724694286;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JnX6f3Y/6akSks2+MDoDUhCWZJr7OqA9M2NH5wz+fGA=;
+        b=TsJEpEMSHCh5kXhanXfxpl/WISiWK7XhTSro73zgrfVhAcHgqnaIiJIv7JrjxdZJ8g
+         raQ6pb+naTbxtyMqipqRFyM437lqCchtLA2g8jNSK7khVpLkBdLQu9F0vc8YPF+jB78m
+         07mA08ndguLnHwskDXAIJEYrcOi7LWVMTZwnZcPHb9fldIRYFyiDs5i25KeD623yCuy3
+         kTEP/e6cp89v/DPqoyEglempxldcJVFwY4x98ORSUdx1OFkT6UzOVh0x2i/8QHkmPTMS
+         SWvdAJTRBk6R/kA7jQTU+CnjmEm4yZ046GyqGTDpQxh8uUf60C9vqxFx09YTtqD6IKpY
+         odVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXO8jBHvsbDQI8sPbf7/zRctBijzKopP+rBtLTCiJ6ojQDHhNxruhR+KgSAZ1LNhMWv6a0gkthOOOXhEZrHSBkXrlhVaC45nL9xj7xE
+X-Gm-Message-State: AOJu0YwYzars02A6UWnfB/L52OumeCXH8CywdL6DETkC2kh/pHAMOGg7
+	IKBj+NymibyDUiUvaLM7Lig4EuiTKeCnTJcbJfqFT68mEBTyf0RArrKAzDqxc3xiWifbD2293w9
+	chPfPZQG36E4WVR/82zSjXmymfQX7aEVh3MyT
+X-Google-Smtp-Source: AGHT+IHVcvgPi4a2baQz/6Y53wCgutnPaPrDAYJ3M+YvYag+g6DGuSeq3sITgEslCPok9x5LjtvLOWOXIZGTRfCjL68=
+X-Received: by 2002:a05:6512:3d27:b0:530:ea2b:1a92 with SMTP id
+ 2adb3069b0e04-5331c6dc3a3mr6939148e87.43.1724089485419; Mon, 19 Aug 2024
+ 10:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOV16XFYeWdT4tSpLWoE+pCVsNERXKJQCJvJovrfsgMn1PMzbA@mail.gmail.com>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com> <20240816071822.GO2331@thinkpad>
+In-Reply-To: <20240816071822.GO2331@thinkpad>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 19 Aug 2024 13:44:33 -0400
+Message-ID: <CA+-6iNz4+xP4abf6w6bcVwFxvjx8OhDZXNi5bwfaCNvyF2Mtng@mail.gmail.com>
+Subject: Re: [PATCH v6 00/13] PCI: brcnstb: Enable STB 7712 SOC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000060f52e06200cdd8f"
 
-On Mon, Aug 19, 2024 at 11:11:10PM +0800, color Ice wrote:
-> On some TP-Link routers or routers running OpenWrt, as well as Raspberry Pi
-> devices with a headless setup and BeagleBone boards, certain USB
-> configurations are required by default. These devices typically grant
-> higher permissions to USB by default. Therefore, on certain devices, I can
-> run a PoC without using sudo. This explains why there are some inherent
-> risk scenarios when declaring this vulnerability, as there are many Linux
-> distributions applied to different embedded devices.
+--00000000000060f52e06200cdd8f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I suggest filing bugs with those distros/system images so that they
-properly remove the ability for users to reset any random USB device
-this way.  If any user can disconnect any driver from any device, that's
-not a good system...
+On Fri, Aug 16, 2024 at 3:18=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Thu, Aug 15, 2024 at 06:57:13PM -0400, Jim Quinlan wrote:
+> > V6 Changes
+> >   o Commit "Refactor for chips with many regular inbound windows"
+> >     -- Use u8 for anything storing/counting # inbound windows (Stan)
+> >     -- s/set_bar/add_inbound_win/g (Manivannan)
+> >     -- Drop use of "inline" (Manivannan)
+> >     -- Change cpu_beg to cpu_start, same with pcie_beg. (Manivannan)
+> >     -- Used writel_relaxed() (Manivannan)
+> >   o Use swinit reset if available
+> >     -- Proper use of dev_err_probe() (Stan)
+> >   o Commit "Use common error handling code in brcm_pcie_probe()"
+> >     -- Rewrite commit msg in paragraph form (Manivannan)
+> >     -- Refactor error path at end of probe func (Manivannan)
+> >     -- Proper use of dev_err_probe() (Stan)
+> >   o New commit "dt-bindings: PCI: Change brcmstb maintainer and cleanup=
+"
+> >     -- Break out maintainer change and small cleanup into a
+> >        separate commit (Krzysztof)
+> >
+>
+> Looks like you've missed adding the review tags...
 
-Also, why not dig into the code and try to come up with a fix while
-waiting?  The code is all there for everyone to read and resolve, that
-way you get the proper credit for fixing the issue as well.
 
-thanks,
+I didn't mention this in the cover letter but I update the review tags
+at each version.  The problem is that if someone has reviewed a
+commit, and then that commit is subsequently changed due to another
+reviewer, I have to remove the existing tag of the first reviewer
+because the code has changed.
 
-greg k-h
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+>
+>
+> - Mani
+>
+> > V5 Changes:
+> >   o All commits: Use imperative voice in commit subjects/messages
+> >        (Manivannan)
+> >   o Commit "PCI: brcmstb: Enable 7712 SOCs"
+> >     -- Augment commit message to include PCIe details and revision.
+> >        (Manivannan)
+> >   o Commit "PCI: brcmstb: Change field name from 'type' to 'model'"
+> >     -- Instead of "model" use "soc_base" (Manivannan)
+> >   o Commit "PCI: brcmstb: Refactor for chips with many regular inbound =
+BARs"
+> >     -- Get rid of the confusing "BAR" variable names and types and use
+> >        something like "inbound_win". (Manivannan)
+> >   o Commit "PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE=
+..."
+> >     -- Mention in the commit message that this change is in preparation
+> >        for the 7712 SoC. (Manivannan)
+> >   o Commit: "PCI: brcmstb: Use swinit reset if available"
+> >     -- Change reset name "swinit" to "swinit_reset" (Manivannan)
+> >     -- Add 1us delay for reset (Manivannan)
+> >     -- Use dev_err_probe() (Multiple reviewers)
+> >   o Commit "PCI: brcmstb: Use bridge reset if available"
+> >     -- Change reset name "bridge" to "bridge_reset" (Manivannan)
+> >     -- The Reset API can take NULL so need need to test variable
+> >        before calling (Manivannan)
+> >     -- Added a call to bridge_sw_init_set() method in probe()
+> >        as some registers cannot be accessed w/o this. (JQ)
+> >   o Commit "PCI: brcmstb: Use common error handling code in ..."
+> >     -- Use more descriptive goto label (Manivannan)
+> >     -- Refactor error paths to be less encumbered (Manivannan)
+> >     -- Use dev_err_probe() (Multiple reviewers)
+> >   o Commits "dt-bindings: PCI: brcmstb: ..."
+> >     -- Specify the "resets" and "reset-names" in the same manner
+> >        as does qcom,ufs.yaml specifies "clocks" and
+> >        "clock-names" (Krzysztof)
+> >     -- Drop reset desccriptions as they were pretty content-free
+> >        anyhow. (Krzysztof)
+> >
+> > V4 Changes:
+> >   o Commit "Check return value of all reset_control_xxx calls"
+> >     -- Blank line before "return" (Stan)
+> >   o Commit "Use common error handling code in brcmstb_probe()"
+> >     -- Drop the "Fixes" tag (Stan)
+> >   o Commit "dt-bindings: PCI ..."
+> >     -- Separate the main commit into two: cleanup and adding the
+> >        7712 SoC (Krzysztof)
+> >     -- Fold maintainer change commit into cleanup change (Krzysztof)
+> >     -- Use minItems/maxItems where appropriate (Krzysztof)
+> >     -- Consistent order of resets/reset-names in decl and usage
+> >        (Krzysztof)
+> >
+> > V3 Changes:
+> >   o Commit "Enable 7712 SOCs"
+> >     -- Move "model" check from outside to inside func (Stan)
+> >   o Commit "Check return value of all reset_control_xxx calls"
+> >     -- Propagate errors up the chain instead of ignoring them (Stan)
+> >   o Commit "Refactor for chips with many regular inbound BARs"
+> >     -- Nine suggestions given, nine implemented (Stan)
+> >   o Commit "Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
+> >     -- Drop tab, add parens around macro params in expression (Stan)
+> >   o Commit "Use swinit reset if available"
+> >     -- Treat swinit the same as other reset controllers (Stan)
+> >        Stan suggested to use dev_err_probe() for getting resources
+> >        but I will defer that to future series (if that's okay).
+> >   o Commit "Get resource before we start asserting resets"
+> >     -- Squash this with previous commit (Stan)
+> >   o Commit "Use "clk_out" error path label"
+> >     -- Move clk_prepare_enable() after getting resouurces (Stan)
+> >     -- Change subject to "Use more common error handling code in
+> >        brcm_pcie_probe()" (Markus)
+> >     -- Use imperative commit description (Markus)
+> >     -- "Fixes:" tag added for missing error return. (Markus)
+> >   o Commit "dt-bindings: PCI ..."
+> >     -- Split off maintainer change in separate commit.
+> >     -- Tried to accomodate Krzysztof's requests, I'm not sure I
+> >        have succeeded.  Krzysztof, please see [1] below.
+> >
+> >   [1] Wrt the YAML of brcmstb PCIe resets, here is what I am trying
+> >       to describe:
+> >
+> >       CHIP       NUM_RESETS    NAMES
+> >       =3D=3D=3D=3D       =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=
+=3D
+> >       4908       1             perst
+> >       7216       1             rescal
+> >       7712       3             rescal, bridge, swinit
+> >       Others     0             -
+> >
+> >
+> > V2 Changes (note: four new commits):
+> >   o Commit "dt-bindings: PCI ..."
+> >     -- s/Adds/Add/, fix spelling error (Bjorn)
+> >     -- Order compatible strings alphabetically (Krzysztof)
+> >     -- Give definitions first then rules (Krzysztof)
+> >     -- Add reason for change in maintainer (Krzysztof)
+> >   o Commit "Use swinit reset if available"
+> >     -- no need for "else" clause (Philipp)
+> >     -- fix improper use of dev_err_probe() (Philipp)
+> >   o Commit "Use "clk_out" error path label"
+> >     -- Improve commit message (Bjorn)
+> >   o Commit "PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-s=
+pecific"
+> >     -- Improve commit subject line (Bjorn)
+> >   o Commit (NEW) -- Change field name from 'type' to 'model'
+> >     -- Added as requested (Stanimir)
+> >   o Commit (NEW) -- Check return value of all reset_control_xxx calls
+> >     -- Added as requested (Stanimir)
+> >   o Commit (NEW) "Get resource before we start asserting reset controll=
+ers"
+> >     -- Added as requested (Stanimir)
+> >   o Commit (NEW) -- "Remove two unused constants from driver"
+> >
+> >
+> > V1:
+> >   This submission is for the Broadcom STB 7712, sibling SOC of the RPi5=
+ chip.
+> >   Stanimir has already submitted a patch "Add PCIe support for bcm2712"=
+ for
+> >   the RPi version of the SOC.  It is hoped that Stanimir will allow us =
+to
+> >   submit this series first and subsequently rebase his patch(es).
+> >
+> >   The largest commit, "Refactor for chips with many regular inbound BAR=
+s"
+> >   affects both the STB and RPi SOCs.  It allows for multiple inbound ra=
+nges
+> >   where previously only one was effectively used.  This feature will al=
+so
+> >   be present in future STB chips, as well as Broadcom's Cable Modem gro=
+up.
+> >
+> > Jim Quinlan (13):
+> >   dt-bindings: PCI: Change brcmstb maintainer and cleanup
+> >   dt-bindings: PCI: Use maxItems for reset controllers
+> >   dt-bindings: PCI: brcmstb: Add 7712 SoC description
+> >   PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+> >   PCI: brcmstb: Use bridge reset if available
+> >   PCI: brcmstb: Use swinit reset if available
+> >   PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets
+> >     SoC-specific
+> >   PCI: brcmstb: Remove two unused constants from driver
+> >   PCI: brcmstb: Don't conflate the reset rescal with phy ctrl
+> >   PCI: brcmstb: Refactor for chips with many regular inbound windows
+> >   PCI: brcmstb: Check return value of all reset_control_xxx calls
+> >   PCI: brcmstb: Change field name from 'type' to 'soc_base'
+> >   PCI: brcmstb: Enable 7712 SOCs
+> >
+> >  .../bindings/pci/brcm,stb-pcie.yaml           |  40 +-
+> >  drivers/pci/controller/pcie-brcmstb.c         | 513 +++++++++++++-----
+> >  2 files changed, 412 insertions(+), 141 deletions(-)
+> >
+> >
+> > base-commit: e724918b3786252b985b0c2764c16a57d1937707
+> > --
+> > 2.17.1
+> >
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+--00000000000060f52e06200cdd8f
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCu9dnpqGpGKOhK9qRtHZ8Xu262s1iB
+ZhU/5Xpt0mJ7QzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MTkxNzQ0NDZaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAjYEmNfKzYn0XivBhllxQyDSLegtznekHKVj38c4BBjddGptv
+n1qkehO92fT5C+p9S4/HuEjk1BqAbDXoEAHLqBdpvzjY8tSKs4kJE9LtoiNxQLc2FaM36VlWWKQ+
+/Ir8HjeBOBUN9HO1tfyv+DcX3mg/i1bVucS13J4J5w9bsRhEoyOpStUq6OLP6P4/FZTFdpTCdDQF
+ZAACQPGutNJNeiZcJAsZYaHo1X1KBr8HrxnNsxPv6mcsDwDNZq4tBoANh/6JNdP8H74ZPwcvVvoP
+QHlbRCAXnBHsEv5Zr7Yv3CIXHki+BuoJsiqW182rcgu4kMi2VLJ+ECBFHK0MbbUDig==
+--00000000000060f52e06200cdd8f--
 
