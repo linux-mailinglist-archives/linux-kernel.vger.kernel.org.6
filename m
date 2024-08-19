@@ -1,108 +1,87 @@
-Return-Path: <linux-kernel+bounces-292207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F17956C73
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C64956C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237DD1C216AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401CD1C21674
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB9116C868;
-	Mon, 19 Aug 2024 13:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqaRB/he"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D6016CD06;
+	Mon, 19 Aug 2024 13:54:55 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF7D154C19;
-	Mon, 19 Aug 2024 13:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574AD1BDCF;
+	Mon, 19 Aug 2024 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724075408; cv=none; b=Y32XEDKSHp3tmjD2R3Jb8UjhSX3T2K7E+UCIxScKRnvc6CBrLR/KEtFNHtpxbyqNvKKMeKiQx0wynMZy6CubxG2EKMVAmyfv2ntnTg1M30ywfPyecWbaFgn3kFcEouP5bzGbz0CmBjwqIcCrZGH1C7/g3MWFr6eAt8w+a3UxdhU=
+	t=1724075695; cv=none; b=EMjmeFvzTCYoYjlq1iJKHX/6utOHpVu3sKqufyWm74QDpH5o6eB3sNczeNPcv8RegxE5iOOlc5uJbSxWuYC0ZaaUN1d2+2KkHlevKIdjJFoJhFCwDtYUw4rytQEvvvvZ4VRmdCetzvYQH8QwweARfc7rwBHarSVkaroY4fysBFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724075408; c=relaxed/simple;
-	bh=WjhiTawlAIfuToCLmbnvKr5mf+reukg5NfmPH0NilqY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u+RcM07SVg2s+WGmbzPXJQXR4nzJc5XP/zgoT6/ikhHE5GXKnBPOltvD4CabpysnjyzKbpUmWm7InXnhzh0VH+aN3VhgibBTUZ06dDWBHupnEbFLw880pbKJO8UJE+TD8EVW91kNtIX1porFW5rxoo+D3jW1JMvEkKUWtnuqvko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqaRB/he; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5BEC4AF10;
-	Mon, 19 Aug 2024 13:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724075407;
-	bh=WjhiTawlAIfuToCLmbnvKr5mf+reukg5NfmPH0NilqY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aqaRB/hew/WcK84AMNulZ6tw3hgHRAwa5MomJWFqpf+VLIr3ZC1NZTek4GTxFvDkO
-	 K+7lWVQCrMeM/nKK3lS9PRmEEcPRnIVd4yUPjWa8w4LBWSpFVpz4CXwfh2xjBQui+C
-	 df3w6iKW2JfHS0Lqu3bSnhRqS3qmvaajF4agH6qtOL7qmyGybgDtd9M36jwgAaQEY0
-	 lXLsY87pOt6mujSay7yfNezkJ9fR6iqJm5ucAhEru53gjKojnjc9H3L6u1mP6z0ixT
-	 1unljzxS2RL3wZb81caw67KTbpILZO/0j1resdvJ41W8xuCod3KwZFqyZMl/Ri736v
-	 j9YV2QFrxNimA==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2635abdc742so544119fac.2;
-        Mon, 19 Aug 2024 06:50:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXdD4a/ehijq38KKzBANcyHM5eYOv6nXWB0U7r2TsiWA0ROYB0Tp3nfXOezI7+fUe2j/WFP4vta8EhueF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk9HGY0N/fT3vnHvyeb1i/KKz0ECxsPiZ69j3ofPP7aJdwqabo
-	5S+Kt6S1h9GtTI938JoUzjdi6VCqn1hS7Wf5XGuwVtnHeLUFRaRPXx4UiJGoMeT64dSPPkk3ZEN
-	OY5Kh5bpbTj7d2x61txAfPC0IWkM=
-X-Google-Smtp-Source: AGHT+IGcxvquucdhiO2i1h1zL1skFlN8Lo10S6HsHc6valnsvoyWSdQxP3XnhACp2aBS+6HQxuJddm5ENowjFXYUEuA=
-X-Received: by 2002:a05:6871:548:b0:25e:b7e1:d20d with SMTP id
- 586e51a60fabf-2701c09ff65mr5731197fac.0.1724075407157; Mon, 19 Aug 2024
- 06:50:07 -0700 (PDT)
+	s=arc-20240116; t=1724075695; c=relaxed/simple;
+	bh=RHxnf6k9s/tFDKpedjE8L9WdY/mrk5eOGdGwgpjZBrs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C4sADfQG/eNmQfDq7pQZvaR7F/oHSRtNZ/DTwSllr004NQ/VGx3MX9eg8cnStnAPBsXtSFqs7F/jYIyMXXzibzm5c1dIY/zVbS4PFR4AgRLPBLmgZd3QZ4UabTA64uwt6Nroy8FLpJ+PHQYqpINXRFzsWsbBu958k2XDiABwZJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WnYt31krhz1HGmt;
+	Mon, 19 Aug 2024 21:51:39 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41FD614022E;
+	Mon, 19 Aug 2024 21:54:49 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
+ 2024 21:54:48 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <marcel@holtmann.org>, <johan.hedberg@gmail.com>, <luiz.dentz@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <linux-bluetooth@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: [PATCH net-next] Bluetooth: L2CAP: Remove unused declarations
+Date: Mon, 19 Aug 2024 21:52:11 +0800
+Message-ID: <20240819135211.119827-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6065927.lOV4Wx5bFT@rjwysocki.net>
-In-Reply-To: <6065927.lOV4Wx5bFT@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 19 Aug 2024 15:49:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i2C2jbYeg=pTOTOwMFh+G4vkYn3tG5TzN+=r-7AYXLAA@mail.gmail.com>
-Message-ID: <CAJZ5v0i2C2jbYeg=pTOTOwMFh+G4vkYn3tG5TzN+=r-7AYXLAA@mail.gmail.com>
-Subject: Re: [PATCH v1] thermal: Introduce a debugfs-based testing facility
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, Aug 2, 2024 at 8:05=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.net=
-> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Introduce a facility allowing the thermal core functionality to be
-> exercised in a controlled way in order to verify its behavior, without
-> affecting its regular users noticeably.
->
-> It is based on the idea of preparing thermal zone templates along with
-> their trip points by writing to files in debugfs.  When ready, those
-> templates can be used for registering test thermal zones with the
-> thermal core.
->
-> The temperature of a test thermal zone created this way can be adjusted
-> via debugfs, which also triggers a __thermal_zone_device_update() call
-> for it.  By manipulating the temperature of a test thermal zone, one can
-> check if the thermal core reacts to the changes of it as expected.
->
-> Concise "howto" documentation is included in one of the source files.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->
-> In its current form, this is quite limited, but still quite useful at
-> least for me.  In the future, it can be extended to allow "mock" test
-> cooling devices to be registered and bound to trip points in "mock"
-> test thermal zones, so that governor response can be tested at least
-> in some scenarios.  On top of that, a test scripts can be developed
-> for automated testing of the thermal core.  IOW, it's just a start.
+Commit e7b02296fb40 ("Bluetooth: Remove BT_HS") removed the implementations
+but leave declarations.
 
-Due to the lack of comments for the last 2 weeks I gather that this is
-not controversial.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ include/net/bluetooth/l2cap.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Since I want it in, I'll go ahead and put it into my linux-next
-branch, but if there are any comments still, please let me know.
+diff --git a/include/net/bluetooth/l2cap.h b/include/net/bluetooth/l2cap.h
+index 5cfdc813491a..313d0b972e06 100644
+--- a/include/net/bluetooth/l2cap.h
++++ b/include/net/bluetooth/l2cap.h
+@@ -968,10 +968,6 @@ void l2cap_chan_list(struct l2cap_conn *conn, l2cap_chan_func_t func,
+ 		     void *data);
+ void l2cap_chan_del(struct l2cap_chan *chan, int err);
+ void l2cap_send_conn_req(struct l2cap_chan *chan);
+-void l2cap_move_start(struct l2cap_chan *chan);
+-void l2cap_logical_cfm(struct l2cap_chan *chan, struct hci_chan *hchan,
+-		       u8 status);
+-void __l2cap_physical_cfm(struct l2cap_chan *chan, int result);
+ 
+ struct l2cap_conn *l2cap_conn_get(struct l2cap_conn *conn);
+ void l2cap_conn_put(struct l2cap_conn *conn);
+-- 
+2.34.1
+
 
