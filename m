@@ -1,151 +1,109 @@
-Return-Path: <linux-kernel+bounces-293029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A4395785D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE0C957867
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA6E1C22E82
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9009D1C2301E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110C1DF68D;
-	Mon, 19 Aug 2024 23:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2F81E2131;
+	Mon, 19 Aug 2024 23:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwbKsZOH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXYPoQAR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDB715AAB8;
-	Mon, 19 Aug 2024 23:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8B61DF696;
+	Mon, 19 Aug 2024 23:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724108837; cv=none; b=j8gBEwWC/v+hcPX9nAuvMzCDmT9gbMvTMeRbjPSos4WBBYDR7+U9Xb7EFKkxMBn6d94PV86uvpSxdgZY+CU5rsyBNs6kNrc48XJWuNQM4OUDQ1VZMe00kTpMoNGxUh1pb2x2iTwz7oOKXWO+IVZD47yeBvKx1zlskMySsWRaZh8=
+	t=1724108850; cv=none; b=j9Lp1TDy3FxgKuzhqdZVVG9mbfMHw1ir+mrttaTxKNhwqBck6FWUXdPtppvRrxLRPT2fTDN9vqteXsTsaos1eQ41PbnbO3Ughmo0si8NrNqrIwOfvXtSiu9lOotwhhYQRv1cpyAAkTwffMfWT/qezavwhYJZuBg3f0BYvxu1nmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724108837; c=relaxed/simple;
-	bh=1hJitoTM2DBB4K/Bj1rmhFg611FrW2RIraAudvg/Fxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vk66AtzRuN2oAe/JmJubhSsm4FwIZilKI9e5oPrzZzPXU5SSB0DdZix1lK4EV1/V1TJJZBm9leMmUFAX9kEcaHbF5ju+b+/BRjSfUrwHQmTt440biPQBZRzchj6Oa2aPtfZsUXG4Ema/e9/Zls5/fY1eB9GZa3a6BSIHJWl3Uu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwbKsZOH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9103C32782;
-	Mon, 19 Aug 2024 23:07:16 +0000 (UTC)
+	s=arc-20240116; t=1724108850; c=relaxed/simple;
+	bh=mJXaRxbMWM39dMzH9l5kYZ7g7ouNmwcruKXMK8gNkX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CkPcn6iqTIizIvy/OjjDykZ849cq43lQJta2dtDOVgX4bGTI1mT3vy+UmmqANWwipwKKvOsDn9/Q2nBo3vHRc9hNZ5nKQUN+1BW7cKxiIqbgD3/9MlzO4LS7NjevATYRjjikLB775eDSFoBYgBVmCp//qFWqebBS1+2OemXgEOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXYPoQAR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998EFC32782;
+	Mon, 19 Aug 2024 23:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724108836;
-	bh=1hJitoTM2DBB4K/Bj1rmhFg611FrW2RIraAudvg/Fxs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AwbKsZOHP/fMgusoqlJztbnMhwcgK7z/q21xiD5zSZYKbD7M+0AZha3zaCXNgKuhD
-	 Nat5kVVsXADO6fPgWNfu25jo2TGaeEagR5DIz1T9z3uBOiZsBGFUBphf5/+j7GfzKT
-	 ziflXx2xAvRr9AzYwzd9SZ9FFaMA+EFTn+XjH9ooJgDR34IXsbu7l7HRciqeNWObK4
-	 eIndisUDa6mjsNMqBxiYqAQbP0ZXHGp7ocNY1HKoAybAX8o4OHBUVu7HQvPTcZbn3d
-	 qlehWE3iAcfrf7w2rrtU3Yat9baAp06hQjpapC4brtfTtfdijuBJaHLLTwPA1MmPLa
-	 1VT6Pp12SDCSA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5185BCE0A01; Mon, 19 Aug 2024 16:07:16 -0700 (PDT)
-Date: Mon, 19 Aug 2024 16:07:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] rcu_pending
-Message-ID: <0e3c70d8-e2ac-4f71-b155-ef64e25fd415@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240819165939.745801-1-kent.overstreet@linux.dev>
+	s=k20201202; t=1724108849;
+	bh=mJXaRxbMWM39dMzH9l5kYZ7g7ouNmwcruKXMK8gNkX8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gXYPoQARvA+Pn4TQep5aX8uvhPU06HBEZC8s7nU3NeDTwzfpLC4/XPM6bcOXpcSMR
+	 j+IioWHWPS2jmBGAlBK1B9w6GJyxDfWblqCclt4caiicnCA4GBGM38I8o3Wblu0AP3
+	 dyxIzG3yJQASecBEF/gSzYD/687723usA4TQIOs+wgv5E29VuZVe0NMUe/oBuVzBWH
+	 xrzpEWN4Fm1cKpkkXgUIF9REemYttOrPNk7l+ICyrUhzfayvlwbNxHb00+Ex6nyLrn
+	 Ie4odNMEAbURIqwPUcl7Yv6kPnkV6S6rKmEzfrv1Zk+soK0dsfO56hb9jEPD/y50K/
+	 K5TiLUSIvFf4A==
+Message-ID: <0a51e728-8005-404f-b2f2-16fc31834d2f@kernel.org>
+Date: Tue, 20 Aug 2024 08:07:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819165939.745801-1-kent.overstreet@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] PCI: Make pcim_release_region() a public function
+To: Philipp Stanner <pstanner@redhat.com>, onathan Corbet <corbet@lwn.net>,
+ Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>,
+ Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+ Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko <andy@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Alvaro Karsz <alvaro.karsz@solid-run.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Mark Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Hannes Reinecke <hare@suse.de>, Chaitanya Kulkarni <kch@nvidia.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+References: <20240819165148.58201-2-pstanner@redhat.com>
+ <20240819165148.58201-3-pstanner@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240819165148.58201-3-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 12:59:26PM -0400, Kent Overstreet wrote:
-> New data structure for tracking objects waiting on an RCU grace period.
-> Supports regular RCU and SRCU, and possibly other RCU flavors in the
-> future. Uses radix trees for tracking pending objects, falling back to
-> linked lists on allocation failure.
+On 8/20/24 01:51, Philipp Stanner wrote:
+> pcim_release_region() is the managed counterpart of
+> pci_release_region(). It can be useful in some cases where drivers want
+> to manually release a requested region before the driver's remove()
+> callback is invoked.
 > 
-> This gets us a more general replacement for SLAB_TYPESAFE_BY_RCU, and a
-> cleaner and slightly faster backend for kvfree_call_rcu(), and
-> in the future a faster backend for call_rcu() as well.
+> Make pcim_release_region() a public function.
 > 
-> There's still some small todo items, mentioned in the relevant patches.
-> 
-> Paul - I'm considering putting this into 6.11 for bcachefs (not the
-> patch that switches kvfree_rcu, of course), as I need it rather
-> pressingly. Thoughts? I can put it in fs/bcachefs/ if you hate it :)
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-I am having a hard time imagining it being ready for inclusion in
-kernel/rcu by the upcoming (v6.12) merge window, so if you need it then,
-you will need to pull it into fs/bcachefs.
+Looks fine to me. But I think this should be squashed with patch 2 (I do not see
+the point of having 2 patches to export 2 functions that are complementary).
+Either way:
 
-Don't get me wrong, it has improved since the June version.  And we
-can always move it later, if/when appropriate.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-And yes, the kvfree_rcu() changes would need some serious performance
-evaluation by the people who benefitted from the changes that make
-kvfree_rcu() what it is today.  So let's please defer that one.
+-- 
+Damien Le Moal
+Western Digital Research
 
-Having the equivalent of SLAB_TYPESAFE_BY_SRCU could be attractive,
-but I suspect that there are smaller changes that get us that with the
-existing slab allocator.
-
-							Thanx, Paul
-
-> Kent Overstreet (9):
->   lib/generic-radix-tree.c: genradix_ptr_inlined()
->   lib/generic-radix-tree.c: add preallocation
->   darray: lift from bcachefs
->   vmalloc: is_vmalloc_addr_inlined()
->   rcu: delete lockdep_assert_irqs_enabled() assert in
->     start_poll_synchronize_rcu_common()
->   rcu: rcu_pending
->   bcachefs: Rip out freelists from btree key cache
->   bcachefs: key cache can now allocate from pending
->   rcu: Switch kvfree_rcu() to new rcu_pending
-> 
->  MAINTAINERS                             |   7 +
->  fs/bcachefs/Makefile                    |   1 -
->  fs/bcachefs/btree_key_cache.c           | 406 +++----------
->  fs/bcachefs/btree_key_cache_types.h     |  18 +-
->  fs/bcachefs/btree_node_scan_types.h     |   2 +-
->  fs/bcachefs/btree_types.h               |   5 +-
->  fs/bcachefs/btree_update.c              |   2 +
->  fs/bcachefs/btree_write_buffer_types.h  |   2 +-
->  fs/bcachefs/disk_accounting_types.h     |   2 +-
->  fs/bcachefs/fsck.c                      |   2 +-
->  fs/bcachefs/journal_io.h                |   2 +-
->  fs/bcachefs/journal_sb.c                |   2 +-
->  fs/bcachefs/sb-downgrade.c              |   3 +-
->  fs/bcachefs/sb-errors_types.h           |   2 +-
->  fs/bcachefs/sb-members.h                |   2 +-
->  fs/bcachefs/subvolume.h                 |   1 -
->  fs/bcachefs/subvolume_types.h           |   2 +-
->  fs/bcachefs/thread_with_file_types.h    |   2 +-
->  fs/bcachefs/util.h                      |  29 +-
->  {fs/bcachefs => include/linux}/darray.h |  59 +-
->  include/linux/darray_types.h            |  22 +
->  include/linux/generic-radix-tree.h      | 106 +++-
->  include/linux/mm.h                      |   7 +
->  include/linux/rcu_pending.h             |  27 +
->  init/main.c                             |   2 +
->  kernel/rcu/Makefile                     |   2 +-
->  kernel/rcu/pending.c                    | 623 ++++++++++++++++++++
->  kernel/rcu/tree.c                       | 747 ------------------------
->  kernel/rcu/update.c                     |   1 -
->  lib/Makefile                            |   2 +-
->  {fs/bcachefs => lib}/darray.c           |  12 +-
->  lib/generic-radix-tree.c                |  80 +--
->  mm/vmalloc.c                            |   4 +-
->  33 files changed, 962 insertions(+), 1224 deletions(-)
->  rename {fs/bcachefs => include/linux}/darray.h (66%)
->  create mode 100644 include/linux/darray_types.h
->  create mode 100644 include/linux/rcu_pending.h
->  create mode 100644 kernel/rcu/pending.c
->  rename {fs/bcachefs => lib}/darray.c (57%)
-> 
-> -- 
-> 2.45.2
-> 
 
