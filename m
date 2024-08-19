@@ -1,329 +1,240 @@
-Return-Path: <linux-kernel+bounces-292476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC098956FF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C51956FAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA7D1F2626D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD17C28540D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA08176ACB;
-	Mon, 19 Aug 2024 16:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FA516D4EA;
+	Mon, 19 Aug 2024 16:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="C1Lx4K9A"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XPhj33h7"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013044.outbound.protection.outlook.com [52.101.67.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F64554757;
-	Mon, 19 Aug 2024 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083982; cv=none; b=T99Yi1XV2kxNX3+ldijdVWNelsU8TeNUAS2Z4qBcVTAYVOXroT6a4kcLwt/fZTZ9z1hXn83xZDm4GBUGIjTPkikNejCpzKkqlUh1bd5/Z5pnaMwHnBe0atODh9tu+2/tKUDrQSqBYxRCkFHPhdmcZdDcCBBRjBoKjhtonpOONec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083982; c=relaxed/simple;
-	bh=Cdmqgl7/A7uPQcgi6E6kZPKDHCEtkZNZVvY4NLAqxRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H7MDWxoGZA0t591aJNgoIirE3TAsRoYcMkgoYXi7K00Oxcn/dBSOtd15yWIMNMyeLnrv3G4feYDy3by3hQ1lOEtP7sXaCgkEagTfuMmgvQ3sb9eiDcSU5GKhJNyfSukmOCZaWWFK8L6HwFh7dpytjokHirRAcaiFMMEp/1H5usk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=C1Lx4K9A reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 0625d3ebf9499d52; Mon, 19 Aug 2024 18:12:51 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B6A2673B5D4;
-	Mon, 19 Aug 2024 18:12:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724083971;
-	bh=Cdmqgl7/A7uPQcgi6E6kZPKDHCEtkZNZVvY4NLAqxRM=;
-	h=From:Subject:Date;
-	b=C1Lx4K9AWDT0lsuTaeGJ8IzHyrntqC9e38scVqxhfmk/tW/ogbwDMxEEokAkCIDVF
-	 x+lSiPlcXNQdy/IOdiRAZ+UV1lPouAsUUl+VIwavnS62XgKuID/dV1pSxcpI6gsvmK
-	 Uzp6toKNWY74zZYA2TYIr3u5sZ/8/L3iBxYUHN/t4o7o0+qZB9dXRkDL/GUswDdFxX
-	 cGXpvw12vmSgDV1KB0kAYXDRRr+fmEJtoWrApP6P2ejPkpm0RBRLvoj6k4eN0Y8QrI
-	 X6McTbQuGReo5cnri/PCsm7lH0HH7oXeUoUlUAJWi/gmcFbr+HiDPuzX63+W3B6hSK
-	 2+fX7RnzlmB4Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v3 06/14] thermal: core: Introduce .should_bind() thermal zone
- callback
-Date: Mon, 19 Aug 2024 18:00:19 +0200
-Message-ID: <9334403.CDJkKcVGEf@rjwysocki.net>
-In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
-References: <2205737.irdbgypaU6@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4164D186E4C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724083350; cv=fail; b=Mz9N+ihs8upD23V19mHfjTg0N9EEbmXUuDFz+rt2/LKVwZpHhnJZQoMndv1i5SHakzTbPgmHITm1bPsDk3kx05eYj7wPHi18lwQP9ygrECxlJLAyhThDwbwwztvwneNEoZlA+DZvus4Nz7aCgvY5+vG1sS1KPsz/f/wzG3Z+eao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724083350; c=relaxed/simple;
+	bh=wdMOaxvdED4nYxZmlnJu7BdBDpzKEEzpzk8ZMhb0ahU=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=dbOXNQFayz39poTb/UjSlh4G/XZv2t+kMf0QD7wfNTE3s9V3TNFQjfctBNWCOLxi4cyfjst4OJ9mHi1meHgkA9RDpD8C6WrKMSp7rIXmgizWKQh5ggkH4R1kai+416JrWyM4frqgFI3bHRrD24TnnYUfY1sxlyqweLUHuM+6WjY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XPhj33h7; arc=fail smtp.client-ip=52.101.67.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PoCDReAd2Uy3ICMrqJbZIgBqA3aDaSqjypTGXqZakchjHnu7XE7HUsQ1Prf9SyrFYnrJ9W1XCGVODaSOTjZeKpVE0qC+oYIoF7+muuNwXknmH7tYZth2n3JGPowuooA4cR5/SeZJiFYtjVe19BjCBwOMNN6gbpw3ltDeMeyeUgKgq/D6+3sB4dQNg9aap95UMjchpnXsow68UlB1EnjSBgaewGqotZjNFAWEiJbAV2M1MNq7lz7MVWAE6Fde+Ddde6dwG9m+2VgusGH+DIn7Rq17p4q5KjC5Dl2qtNpNqQIqcbm7suJIr4WzLJohVLlWfkI504ads97B1ZloUXkwUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7cmOmx2TRWp/2Uy3nWsX2Ky5UGNNorgOPghwcI1aG9c=;
+ b=Yqmy4WDgDHLRSKYGFneRE9dgO8lc9ERl/ymSafzYvv4UbNs47BUqJvRvEyYiFCUu9cJumqnP15p4jThtvRrViLZE+pCMmzhGbEEwFzJLLfjhMH+RbltPKTJGCJYI3xfdrls3g8MAX5HMEcYzxrGaLOW2HPi0n6CfSx2BXVt2ckb9TonvqDXMg1rm47dAARbYMXs1ohvPKwxGbnpcmg/bsVsdBrmG1XQlev5NIXB8ruYe90oqRCUlPRE8OyjqBSRdAmoXSyb3tkDoBb6bprOqOr7YL850Pi4ZHqX7/1tPTiLooeIcbGjXnCYqjbl2/z5ttLCxXr2tWyyFe+oFUmadMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7cmOmx2TRWp/2Uy3nWsX2Ky5UGNNorgOPghwcI1aG9c=;
+ b=XPhj33h7SXSOZ1aJTfq7O7nDlUaqVDfPcOP5sgySnTZbsNBMuGMVde4KoAWXucN/hrimW7RECAqDuQKkvV+wjP2ue3tfTGKqiTgT/2IZjI8bMlbBJo0ZCgfh+0FR6kcOzTeuiVdxx0qMdr42GEshml7RmjCIMZCitnsQjTairJyhadYg34AsRB3LYSv5ZcjIjvOAtnqKBM2GRML2bE1B8kMpn7q4ma2ozVZoE64WBHdQpFWplqrxB7HwryyzU7l9EYqH9sFzN4XZ4wjCan15diqqdzpr5q8yXEzfLc+xcqUSWaKE4Nxf4oBG8mMVNvpURlGbpfVnlcHNBefKgU29Wg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU0PR04MB9659.eurprd04.prod.outlook.com (2603:10a6:10:320::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 16:02:24 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 16:02:24 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Date: Mon, 19 Aug 2024 12:02:01 -0400
+Subject: [PATCH v3 07/11] i3c: master: svc: manually emit NACK/ACK for
+ hotjoin
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-i3c_fix-v3-7-7d69f7b0a05e@nxp.com>
+References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+In-Reply-To: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Parshuram Thombare <pthombar@cadence.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Boris Brezillon <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Conor Culhane <conor.culhane@silvaco.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724083326; l=1762;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=wdMOaxvdED4nYxZmlnJu7BdBDpzKEEzpzk8ZMhb0ahU=;
+ b=A56sFgcvX9sbc0McVV+FF39qyIvzaJ3q29C7EXlzuFph00h+KCPaKoJcZwn6zRH+9VG0+5nr5
+ RzmTz/NrbVcBljgxIY2ch94IWForttrCfjQq4dh+QrJZ28MBSHMtFWJ
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SA9PR03CA0005.namprd03.prod.outlook.com
+ (2603:10b6:806:20::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
- tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU0PR04MB9659:EE_
+X-MS-Office365-Filtering-Correlation-Id: b14d999a-0810-4ff4-5b24-08dcc06850bb
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?YTZsTURsOW1hR3kxTkN0VjJpQzJydHdBL3R0ZHRUZHZTTWpCbzVvK29ycVRl?=
+ =?utf-8?B?S3NWdWNKdDVUM2N3RmJjY054dWlPenh0SEM4Y3hrWHNxbjdMdHBJUVppQW15?=
+ =?utf-8?B?clFoa2grakNTUERCUm1YSFBsY0hVMjB1WnlxN1A3eHZ4aDJENC9nK1ptLy9J?=
+ =?utf-8?B?bXgyUHVWNXE4OStnSnpWMVdiUVcyb3hmeWU3amlMV1BZWldad2t6VkJVNjN0?=
+ =?utf-8?B?YlVmT3lBa3JtdTM5YUhSUzVOU3J2K2x5a1dGbFprR2QwdmFWbkE5TlM3a0x3?=
+ =?utf-8?B?d05NSkNWektPK0RyYlJ4b0NIWjE5by9qelpDaGJnMFVwNDFrU3RpQkdCbmY3?=
+ =?utf-8?B?dFJBTjNGTm9iaVlzeit0UTJMNllxMHpYWmlKTjFYMGxJRitQd3BNaEQydnBn?=
+ =?utf-8?B?VDFQTTBRS2sxVXBhUTVud2tWWWJROGFET0Q2OU8yaExJV0pQYlB5ZDB0Qk41?=
+ =?utf-8?B?RUhMOUVNUTQwWVZXanhOMzYyeXBldGdaZ3orQkRJcXVRZk82UE9LMWRXejNi?=
+ =?utf-8?B?ZURYcHFlUVdwdG1DenY2YmlXa21wb2s4dktUTFdQU1pIVlN4KzI1ejZJdTEz?=
+ =?utf-8?B?TDRFaTR2VWJzak9NUnpRZkdUODZ3K3c0WFBnTFlIakdZOGxtWXBJY0hXNER6?=
+ =?utf-8?B?Q1VZakRXeDdSdm9VSENJWW1YYmZpUE1IdjFHcy9iZVp5b2txNEx4Z2RCTXQw?=
+ =?utf-8?B?b3lLRUZOOWhLVlAzZmpOdjZxSGpYUzZ1cHdTQndLanFzalNaZEdUOW0yMDRy?=
+ =?utf-8?B?ZkJObkJQMzlJZkdMV3d4VVhZeVZhUWttbGJvVE5GdjZNSnl2dmVRR2pZbkp5?=
+ =?utf-8?B?eUsxcnpKem43bHRBQkZrUDVqY1pDVkJNNUlIbjh3SG8rUjg5Q2lGSDVMMVlr?=
+ =?utf-8?B?dTE4TmQ1RlAzMEQvWDdRWUNrNWpYZUVtNldvUUtoaC8zYjRHUmhDYVYyNG92?=
+ =?utf-8?B?UjBIRGd2dWRVMjdCeHNqZS9rZnVkTm9TTjFNRkNwYy90bzVrYytlb1BNaDAr?=
+ =?utf-8?B?TzBDNXRkNUJaNWJ1Q1h6ZHdWNGlud3dHb3pXQmZIamlyVXlTYTNveWlNeXIr?=
+ =?utf-8?B?cW5ZbkZQZDRsbmE1eVZJejcrV3NhYWJEZFE4WFB0bDY2UCtDMWZvRTJ3a0k4?=
+ =?utf-8?B?cS8xRmVoM2pGSitOVnB3SVBWMEloWDI0WFJYbkM2UXlyZURra2JuN3lQendY?=
+ =?utf-8?B?Uzk1NC9ScnB1Mmo3cWhXREN6RXF3Z3VyMGdtaTBKYUFsU2dEbDNkWHVRMGw0?=
+ =?utf-8?B?MTA3S2huekdNcDkrU0svWFdRblR3TWFxT3l6S0pYbWp4UEFWSE5IVnhhUGhp?=
+ =?utf-8?B?Ni9VMHlHS01JK2Z2TUVNRkxZcWY0b0duV24wVnQ4NmxCWmpHd3k3WFIrSjBE?=
+ =?utf-8?B?RGNMRGQ3UWZsYjNhdjI0VnMxRkx2dEM4eS9WUEM0ejJxdVRlbjhnYjU1WHFw?=
+ =?utf-8?B?Tlo0cFVRZjZaYU9kMU4wRmsyZDFEdXQzMnV1Y0hYVHNpcmNtWlk5OStMbzI2?=
+ =?utf-8?B?c0k1eWFPSnJXdzJ5dCtkUEVPOHV3cDFra1FVaUhYUTBtVXFxTDlXdUF1WG1Q?=
+ =?utf-8?B?RUVkSjY5L1Z3QndLR3pxdTJMS1BBTEFVNXVveW1zQ1dZTlVhK3BOM3lSWFpI?=
+ =?utf-8?B?Z0JtZjhNYS9VZ2hVWjRhRE96VXNNTU84TW9WTU5EWUUyN3ZkZDlybWF0dkVB?=
+ =?utf-8?B?UWkzR05qMXREQlAvMHRCRmsvYXJ6MkRSdEttbHdmUTZINndLWjR3Z2NxNkVk?=
+ =?utf-8?B?VGxzcGdsV0xwRVlacXJXZVR4QkFrMllML3N3UVhWTGkrd2s1UmFraFk4OUNS?=
+ =?utf-8?B?d3lBRGtEYTFaWXlvN1dRcHpveTFxdHNMKzNKb0J3anNXcUFYa1BzaW9VL1o3?=
+ =?utf-8?B?YSsxSjlTY2swelZqeWtiNDRaakVDV2dmRk8yYzh4d2oreXc9PQ==?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?elN0cFh3NHdtWkw1VGpicHdZKzY1UkpCb2xTSTcvV3FYa3J5eDJrTUtwVjJH?=
+ =?utf-8?B?emtoc296all5VU9kMHJmMjZaQ2dheVIza0c2dEdTNTZrS0oxTU9mTS9WNkti?=
+ =?utf-8?B?S0FuZGNQVklqU0thbForSUZ6bUVQV2dxTGZWWS9TRWNFUlkwUklXclFkTDlu?=
+ =?utf-8?B?WnZ5NTE1K3ROZTIzckpTVVRRNW5IbU1HdFNodjNENnp0MkRCY1NmdHp1T0Fl?=
+ =?utf-8?B?SmJmdnNCa0N4U1FPcjhrYmN4WkpmdUkyMjZnL1pYaS9VUzRiTDg0MVlGME94?=
+ =?utf-8?B?czE5MnBQQlpJK0h0Tlk0bC9TZHJFVWFyR3dlYVRsYjhQNXRaMWdqMklNNi80?=
+ =?utf-8?B?NEtLejhTK1MxSDhNWElxYThkOEF5K3hSZmJoVGpnTzk1anI0WnBNWkJJYUo2?=
+ =?utf-8?B?YmQra21wSU5FdE5FUWI5dDhMZFdLRHRwN3NOWWdZQjFlNW5sOVY3eWlYVFRl?=
+ =?utf-8?B?anAxV0N4NkxRWThJUks0ekpaNlBEYWtvU2NJR3BwajduemFTTXFVdGx0aG9M?=
+ =?utf-8?B?SEpsUUQvM3I0YlBBamNtdXk0NlhOVkJHMHROdEplWnZhL2w2aDQ3TFR4RTRS?=
+ =?utf-8?B?RkdIVmpFSlRhQTcwWEgvQ1dMWk5CVkZaUVhIbVZHSk9iM3FpcWR2bm5pV3Rj?=
+ =?utf-8?B?WDVyZHpnd0dRZUVlUmhORFVUWHJBeWQzSWtPWTZ3OVRacFA0VHRlc0lkQ0g5?=
+ =?utf-8?B?a0JtOHg4dXk4a1FObHExckRuZ3UrcDRrelZUM3dSYjVLbUhYVXdRQlpRZEtV?=
+ =?utf-8?B?WlVhOGprdS9zUHR3MHVZM2JOMnVBL1JZS1hvc0xYdk1xQ2p2TUFNZzIxZnVO?=
+ =?utf-8?B?QmtXQXdrbGh6QXJCM25LME4zQjgxNWRNYytMaEt2STBlUkNNYnVVV3AybHp4?=
+ =?utf-8?B?NFFhM3ptU2s0MStIUHZ5MVhOdFlUWjM1MDY1dlNLL2lQNzVGZ0lwQ0hsWTFn?=
+ =?utf-8?B?VFlHWkV0VXZlMU5NbEh5cnhRcXZ2QXd4aXFnM2NKeE1BeThTdG45V01KWkVq?=
+ =?utf-8?B?SmJtRzc0bUx6bWpSTHo0STlMOUdtZGhMYVgxdW85ZnlJMGZwMm9nWDZrNXFk?=
+ =?utf-8?B?eSt4T3BLMjFCa1h4dzRoN2l4S2NrMitwNldMYmFjSzd5TGtXMEFKVHJ4NVdv?=
+ =?utf-8?B?YUFheVZxWDltSFgyWWNnc21Eb3hURVV2SnV3alpkZDZxNnY5YTFZMVpYdGhr?=
+ =?utf-8?B?a3dkNTI5V29ha3BYalhYZk5OVWFFc2g4aDNvR3pBZXJDNFFITmVRQ0Q4aHFl?=
+ =?utf-8?B?Q3FjRlRhbEpGSFlaS0FqOXB5ZDFEYUQzRUpzMmpyZnBQQVphd2VIT3RnTXR0?=
+ =?utf-8?B?dUQ5d080QnZhd21MbHg2enBXYXNmeXFVUjluRkZYWk1NanBDSDQxc3l4ZVZ3?=
+ =?utf-8?B?NGk0dFZVSmdhNFRkTFdCM0xQMlorTUFoMHBYWHRsb1lEUFlQd05OcXJGS2Ji?=
+ =?utf-8?B?Z1cxQ3VObisyWFYrRTY2em9aRS9kS1BFK2h2dDN0RHZWN2t1b1FpQXRQa3Ar?=
+ =?utf-8?B?SjRmclowUXkzYnZCR3B2dTkvU3VpbjE5MUJMaUNFRkVxUjhqYVFkOXNRdEEr?=
+ =?utf-8?B?STlxK3ZJS1pySFVhcjVJZzk0VGx2QWRyS2Q2ZHRrZjlHRDFob2d6cHlJblNj?=
+ =?utf-8?B?N21mdlJXMm5yWkp6c09xTms0T0x2UXArUEdMNnRWOTNaUmhEQTRSK0dGTzlD?=
+ =?utf-8?B?d2kzdW83WWQ0NWR6Mk51YjhhTDBYU1ZIOEdtU1lORWJZdnlMWm03U3N6WlRK?=
+ =?utf-8?B?QjJFT1pacXlKd1g2RDdqaWp6WUpkMVJSYTcvTTQ1aHRrRmNUcWtjL0NFNC9I?=
+ =?utf-8?B?bHFPelIvcVFGdFVlWjN4Rk4rVGNrelh0WXcxenk2cmFpWFA1cDI1QzZMK1Vx?=
+ =?utf-8?B?aU5oMVhHOTE2cTVwYUI3UzJ4VUxMRExQaG5qa3VtZUVTRkdXcTVjRU1VcEVC?=
+ =?utf-8?B?azBjWHVldjgvT1hlVnJXTUhNOUJOVDVjemhlRy9tZnpiSVNVWHh2a3pzVSs4?=
+ =?utf-8?B?Q2MrVDhKUi9zby9WbitZN015TWFnbUpyN3VqcnkrZWdLeUxoQzdKbXFFVCt0?=
+ =?utf-8?B?VUpMdkFYUXY4ZVlDN3JzQVo0bmpadUN1M2FhUTJLTnV5aDd4cWFFdjZwQ2VQ?=
+ =?utf-8?Q?TK7FX0qrrzqPo5DNGmz7lv8ir?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b14d999a-0810-4ff4-5b24-08dcc06850bb
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 16:02:24.4231
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xYU9coy+HAgHcXCC+F4uEFkCtNxVidEk6kKlvkuQYtNtGg+iS2ACdMGCg1GC46hlTXvk3YtdxnQ8Dk2nc8pmvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9659
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+When the address is arbitrated at send address, the hardware can auto-send
+NACK if it is an IBI. However, manual emission of NACK/ACK is needed for
+hot join or controller request events.
 
-The current design of the code binding cooling devices to trip points in
-thermal zones is convoluted and hard to follow.
+Add help function svc_i3c_master_handle_ibi_won() to check event type and
+send out NACK if the event is not an IBI.
 
-Namely, a driver that registers a thermal zone can provide .bind()
-and .unbind() operations for it, which are required to call either
-thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip(),
-respectively, or thermal_zone_bind_cooling_device() and
-thermal_zone_unbind_cooling_device(), respectively, for every relevant
-trip point and the given cooling device.  Moreover, if .bind() is
-provided and .unbind() is not, the cleanup necessary during the removal
-of a thermal zone or a cooling device may not be carried out.
-
-In other words, the core relies on the thermal zone owners to do the
-right thing, which is error prone and far from obvious, even though all
-of that is not really necessary.  Specifically, if the core could ask
-the thermal zone owner, through a special thermal zone callback, whether
-or not a given cooling device should be bound to a given trip point in
-the given thermal zone, it might as well carry out all of the binding
-and unbinding by itself.  In particular, the unbinding can be done
-automatically without involving the thermal zone owner at all because
-all of the thermal instances associated with a thermal zone or cooling
-device going away must be deleted regardless.
-
-Accordingly, introduce a new thermal zone operation, .should_bind(),
-that can be invoked by the thermal core for a given thermal zone,
-trip point and cooling device combination in order to check whether
-or not the cooling device should be bound to the trip point at hand.
-It takes an additional cooling_spec argument allowing the thermal
-zone owner to specify the highest and lowest cooling states of the
-cooling device and its weight for the given trip point binding.
-
-Make the thermal core use this operation, if present, in the absence of
-.bind() and .unbind().  Note that .should_bind() will be called under
-the thermal zone lock.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
+ drivers/i3c/master/svc-i3c-master.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-v1 -> v3: No changes (previously [08/17])
-
----
- drivers/thermal/thermal_core.c |  106 +++++++++++++++++++++++++++++++----------
- include/linux/thermal.h        |   10 +++
- 2 files changed, 92 insertions(+), 24 deletions(-)
-
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -85,11 +85,21 @@ struct thermal_trip {
- 
- struct thermal_zone_device;
- 
-+struct cooling_spec {
-+	unsigned long upper;	/* Highest cooling state  */
-+	unsigned long lower;	/* Lowest cooling state  */
-+	unsigned int weight;	/* Cooling device weight */
-+};
-+
- struct thermal_zone_device_ops {
- 	int (*bind) (struct thermal_zone_device *,
- 		     struct thermal_cooling_device *);
- 	int (*unbind) (struct thermal_zone_device *,
- 		       struct thermal_cooling_device *);
-+	bool (*should_bind) (struct thermal_zone_device *,
-+			     const struct thermal_trip *,
-+			     struct thermal_cooling_device *,
-+			     struct cooling_spec *);
- 	int (*get_temp) (struct thermal_zone_device *, int *);
- 	int (*set_trips) (struct thermal_zone_device *, int, int);
- 	int (*change_mode) (struct thermal_zone_device *,
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -991,12 +991,61 @@ static struct class *thermal_class;
- 
- static inline
- void print_bind_err_msg(struct thermal_zone_device *tz,
-+			const struct thermal_trip *trip,
- 			struct thermal_cooling_device *cdev, int ret)
- {
-+	if (trip) {
-+		dev_err(&tz->device, "binding cdev %s to trip %d failed: %d\n",
-+			cdev->type, thermal_zone_trip_id(tz, trip), ret);
-+		return;
-+	}
-+
- 	dev_err(&tz->device, "binding zone %s with cdev %s failed:%d\n",
- 		tz->type, cdev->type, ret);
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 5d19251238ff8..d665639523e3c 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -405,6 +405,24 @@ static void svc_i3c_master_nack_ibi(struct svc_i3c_master *master)
+ 	       master->regs + SVC_I3C_MCTRL);
  }
  
-+static void thermal_zone_cdev_binding(struct thermal_zone_device *tz,
-+				      struct thermal_cooling_device *cdev)
++static int svc_i3c_master_handle_ibi_won(struct svc_i3c_master *master, u32 mstatus)
 +{
-+	struct thermal_trip_desc *td;
-+	int ret;
++	u32 ibitype;
 +
-+	/*
-+	 * Old-style binding. The .bind() callback is expected to call
-+	 * thermal_bind_cdev_to_trip() under the thermal zone lock.
-+	 */
-+	if (tz->ops.bind) {
-+		ret = tz->ops.bind(tz, cdev);
-+		if (ret)
-+			print_bind_err_msg(tz, NULL, cdev, ret);
++	ibitype = SVC_I3C_MSTATUS_IBITYPE(mstatus);
 +
-+		return;
++	writel(SVC_I3C_MINT_IBIWON, master->regs + SVC_I3C_MSTATUS);
++
++	/* Hardware can't auto emit NACK for hot join and master request */
++	switch (ibitype) {
++	case SVC_I3C_MSTATUS_IBITYPE_HOT_JOIN:
++	case SVC_I3C_MSTATUS_IBITYPE_MASTER_REQUEST:
++		svc_i3c_master_nack_ibi(master);
 +	}
 +
-+	if (!tz->ops.should_bind)
-+		return;
-+
-+	mutex_lock(&tz->lock);
-+
-+	for_each_trip_desc(tz, td) {
-+		struct thermal_trip *trip = &td->trip;
-+		struct cooling_spec c = {
-+			.upper = THERMAL_NO_LIMIT,
-+			.lower = THERMAL_NO_LIMIT,
-+			.weight = THERMAL_WEIGHT_DEFAULT
-+		};
-+
-+		if (tz->ops.should_bind(tz, trip, cdev, &c)) {
-+			ret = thermal_bind_cdev_to_trip(tz, trip, cdev, c.upper,
-+							c.lower, c.weight);
-+			if (ret)
-+				print_bind_err_msg(tz, trip, cdev, ret);
-+		}
-+	}
-+
-+	mutex_unlock(&tz->lock);
++	return 0;
 +}
 +
- /**
-  * __thermal_cooling_device_register() - register a new thermal cooling device
-  * @np:		a pointer to a device tree node.
-@@ -1092,13 +1141,8 @@ __thermal_cooling_device_register(struct
- 	list_add(&cdev->node, &thermal_cdev_list);
- 
- 	/* Update binding information for 'this' new cdev */
--	list_for_each_entry(pos, &thermal_tz_list, node) {
--		if (pos->ops.bind) {
--			ret = pos->ops.bind(pos, cdev);
--			if (ret)
--				print_bind_err_msg(pos, cdev, ret);
--		}
--	}
-+	list_for_each_entry(pos, &thermal_tz_list, node)
-+		thermal_zone_cdev_binding(pos, cdev);
- 
- 	list_for_each_entry(pos, &thermal_tz_list, node)
- 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
-@@ -1299,6 +1343,28 @@ unlock_list:
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_update);
- 
-+static void thermal_zone_cdev_unbinding(struct thermal_zone_device *tz,
-+					struct thermal_cooling_device *cdev)
-+{
-+	struct thermal_trip_desc *td;
-+
-+	/*
-+	 * Old-style unbinding.  The .unbind callback is expected to call
-+	 * thermal_unbind_cdev_from_trip() under the thermal zone lock.
-+	 */
-+	if (tz->ops.unbind) {
-+		tz->ops.unbind(tz, cdev);
-+		return;
-+	}
-+
-+	mutex_lock(&tz->lock);
-+
-+	for_each_trip_desc(tz, td)
-+		thermal_unbind_cdev_from_trip(tz, &td->trip, cdev);
-+
-+	mutex_unlock(&tz->lock);
-+}
-+
- /**
-  * thermal_cooling_device_unregister - removes a thermal cooling device
-  * @cdev:	the thermal cooling device to remove.
-@@ -1325,10 +1391,8 @@ void thermal_cooling_device_unregister(s
- 	list_del(&cdev->node);
- 
- 	/* Unbind all thermal zones associated with 'this' cdev */
--	list_for_each_entry(tz, &thermal_tz_list, node) {
--		if (tz->ops.unbind)
--			tz->ops.unbind(tz, cdev);
--	}
-+	list_for_each_entry(tz, &thermal_tz_list, node)
-+		thermal_zone_cdev_unbinding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-@@ -1403,6 +1467,7 @@ thermal_zone_device_register_with_trips(
- 					unsigned int polling_delay)
+ static void svc_i3c_master_ibi_work(struct work_struct *work)
  {
- 	const struct thermal_trip *trip = trips;
-+	struct thermal_cooling_device *cdev;
- 	struct thermal_zone_device *tz;
- 	struct thermal_trip_desc *td;
- 	int id;
-@@ -1425,8 +1490,9 @@ thermal_zone_device_register_with_trips(
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (!ops || !ops->get_temp) {
--		pr_err("Thermal zone device ops not defined\n");
-+	if (!ops || !ops->get_temp || (ops->should_bind && ops->bind) ||
-+	    (ops->should_bind && ops->unbind)) {
-+		pr_err("Thermal zone device ops not defined or invalid\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-@@ -1539,15 +1605,8 @@ thermal_zone_device_register_with_trips(
- 	mutex_unlock(&tz->lock);
- 
- 	/* Bind cooling devices for this zone */
--	if (tz->ops.bind) {
--		struct thermal_cooling_device *cdev;
--
--		list_for_each_entry(cdev, &thermal_cdev_list, node) {
--			result = tz->ops.bind(tz, cdev);
--			if (result)
--				print_bind_err_msg(tz, cdev, result);
--		}
--	}
-+	list_for_each_entry(cdev, &thermal_cdev_list, node)
-+		thermal_zone_cdev_binding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-@@ -1641,8 +1700,7 @@ void thermal_zone_device_unregister(stru
- 
- 	/* Unbind all cdevs associated with 'this' thermal zone */
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
--		if (tz->ops.unbind)
--			tz->ops.unbind(tz, cdev);
-+		thermal_zone_cdev_unbinding(tz, cdev);
- 
- 	mutex_unlock(&thermal_list_lock);
+ 	struct svc_i3c_master *master = container_of(work, struct svc_i3c_master, ibi_work);
+@@ -1113,7 +1131,7 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 		 * start.
+ 		 */
+ 		if (SVC_I3C_MSTATUS_IBIWON(reg)) {
+-			writel(SVC_I3C_MINT_IBIWON, master->regs + SVC_I3C_MSTATUS);
++			svc_i3c_master_handle_ibi_won(master, reg);
+ 			continue;
+ 		}
  
 
-
+-- 
+2.34.1
 
 
