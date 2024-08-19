@@ -1,230 +1,305 @@
-Return-Path: <linux-kernel+bounces-292930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553F0957698
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:29:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C77B95769B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B7B1F22ADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22F7284115
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76998188009;
-	Mon, 19 Aug 2024 21:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eZcshrKS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C7615A4B0;
+	Mon, 19 Aug 2024 21:35:13 +0000 (UTC)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B590EEA5;
-	Mon, 19 Aug 2024 21:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E57E3BBF6;
+	Mon, 19 Aug 2024 21:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724102947; cv=none; b=l7ywuqR1UaOwj0MZZ+LQAnOAl1bCMd740RuMJvGKdTodXVMMhD2f74IQt5AN5PVjgt1APEWO7hERabyLYUSORdsmxIg/MLlnTOceEUPgIpmaEUscIHJad9i07fdj1ogWnxaqKFPCmcY1cYEXOqyC+ksX5huR1qKDg8Ea/4/yPhw=
+	t=1724103312; cv=none; b=rRg+3VQ0YYZcA56CYxziw6nAS8K69M6P0AKOIi638/i83ReGDGXhGaWmIw2eVCcF7qChB63yT0cBRJDVWuKjFdHwflh3YNIBuFWrHkRqq0DDNYMO7VCeK+xv+HVmX7PeTGtCjiGTm3B6ujAfuIDDsVFS5wO1s82Fyc7zbeJlmZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724102947; c=relaxed/simple;
-	bh=emA2198+Po9hREBur1rawvdpu0famS95sPQEi4uEjIA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abl3iMep2oqO5ZS0Drbee1DFrA+oVNw/TWkIUKyi/XYDViK7IVz/d+125x4Sf9kRt76NQG2VWYvWLlDnlA63rQbvpLm0uQT+AWQv0aZsuwG2rzJjNzM8f7/kBRtt3EaSqYHscfV7COhgfUKv+nzuVEIfoMYKikghpOloEhA1lZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eZcshrKS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBfvNC014401;
-	Mon, 19 Aug 2024 21:28:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Nzm/S/afbNwh1e/MB7AURkZS
-	f6y9LurbockOcF2ulxc=; b=eZcshrKSaLvC0FDKv/L5938VbhdXj2lpcdKXlnnZ
-	VswPuxakRg38UdBypF9+nKlzgP3E1I8GRHPnzikbF+BkCjm6+/K/mYzFdF4LSTti
-	0KDdRRzaYnUzyKo5s3yemBuUUwFEF9RnWZBrmIXVDCEOQ30tBogzBu3Kykdl26Bk
-	26xyfsx8gmPiOGtiNrrPFKkzkOglUjnHztouJXIW5CV00lptbXJYPOaMos38KeNE
-	lQD/hbWXBWztcnDpJtD/M/7qprXXaJJUyhB8M9T4gA9QIzkbH7btyr0Ii+dblRDO
-	CrTkfDPOSDc7yu17ZuBnr0oSZPmLttfjWYOe0SDcS7b7YA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412mmene09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 21:28:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JLSqj4009405
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 21:28:52 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 14:28:51 -0700
-Date: Mon, 19 Aug 2024 14:28:50 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Frank Li <Frank.li@nxp.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, "Felipe
- Balbi" <balbi@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        "Saravana
- Kannan" <saravanak@google.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v2 6/7] usb: dwc3: qcom: Transition to flattened model
-Message-ID: <ZsO5EnMgKj1GxlQA@hu-bjorande-lv.qualcomm.com>
-References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
- <20240811-dwc3-refactor-v2-6-91f370d61ad2@quicinc.com>
- <ZrunFEOV5/aM4G4U@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1724103312; c=relaxed/simple;
+	bh=yMxTog0+cCYyEdwVDFc6VEDfNhZOgBN24vNoL96R9UQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SXRT7SJZQTw+OctneefO3j0cGWkeOUMnFGqkQtDBNeJ9ctz/1WAvGYGC83jVTldKIpm3/imY5N7PUVIWBl6kfW0BsKimz/Mekr7ORw4OP4q4iFTmkox+jC9X/RGcTOAXIMrgeSpdyhWmzkJM2XuzLxAb8SxPXyonkUqq93GuN/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0bf677e0feso4957654276.1;
+        Mon, 19 Aug 2024 14:35:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724103309; x=1724708109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v2Fa97VOpmKXu2KcqUq3KAv9vO209RmoS1OhIQtYunY=;
+        b=slqYe/DvDGo+BRvJRq1vmvUydgth412SPDg9+PjJLp31Fdh8/PXn1/J8mxv1L6if51
+         zsK9xjRPSh7lDPvKxoxB/RF+dO/F24ZG42HkKauWpS1qm/VKtsWzjiut5Oikw7tDZmIM
+         +p4NNJo/JT33sZXBl3nm4VpUSlrIBeF3SGDqbX7RfuwHsMFX10/MUWIjmRfySO9ZuQ4d
+         LhTWjYvzcFgDSdBFKUSkxdPf3v0K+zkMMnC9QuFbX+lX/KnG8IolfCSOCM6LDEiInqef
+         45SFCYiBYzKkFhJPNf9mag8qCh7u7jetjMO5jL+iZbkS+A+5L8DTmbqH53xBLC0z/uUW
+         ovnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaUPLmcELLUt9nERnCH1QSRai848VhIyHo7h8yfmVDyYB2aQ7mm9mroF1B+x8Sj3Gs9vnD1oaG42VNVDwtVndza+GY39WIkxkKBCkPjOw3kF10LennhYDSpmq2vAZ7rqLu2yTbed0a
+X-Gm-Message-State: AOJu0YzS1iMJ+tRJ4iSouILCjYUEht6u//li+ItKmge2LNAvyjOTxQJb
+	f00UPa9ORzp9fNHEQEnIf0DxWYa+tFHcCNcCL9QTnpB40H59IRR2wfG6a2n/p+FfCkw8582nQkz
+	Oixz/F0nJKmW2VrVzUDa88yP59u4=
+X-Google-Smtp-Source: AGHT+IFucDWUvZCR2f1GfJJq3VCGE/0nUAGOVSRdrDd7MzMnspllL+9vskjBcsXpDj9ABN1M3/nOBY9RTn8iHF+Wbz0=
+X-Received: by 2002:a05:6902:2612:b0:e11:7f99:f75b with SMTP id
+ 3f1490d57ef6-e16513bf2e8mr449851276.42.1724103309362; Mon, 19 Aug 2024
+ 14:35:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZrunFEOV5/aM4G4U@lizhi-Precision-Tower-5810>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dQ7H97UDkCEOCygWyw0dotxFPc9Xu-0z
-X-Proofpoint-ORIG-GUID: dQ7H97UDkCEOCygWyw0dotxFPc9Xu-0z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190143
+References: <20240819023145.2415299-1-usamaarif642@gmail.com>
+ <20240819023145.2415299-5-usamaarif642@gmail.com> <CAGsJ_4yKuvMSazWABXqaeRr84hLEubET0nCUhPFYHQnfR4Tm8w@mail.gmail.com>
+ <a09b6af0-4fdb-4ac1-9cbe-9b422ebc3308@gmail.com> <CAGsJ_4xeWt9n3zX3-DknE=NftkWS0fe2vKTJT9tLuJPM4EaEwg@mail.gmail.com>
+ <9a58e794-2156-4a9f-a383-1cdfc07eee5e@gmail.com>
+In-Reply-To: <9a58e794-2156-4a9f-a383-1cdfc07eee5e@gmail.com>
+From: Barry Song <baohua@kernel.org>
+Date: Tue, 20 Aug 2024 09:34:53 +1200
+Message-ID: <CAGsJ_4xiG+oGkjt3nf0Zh2rdztz8h_AaahZWs4N3UARhw7DcgQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] mm: Introduce a pageflag for partially mapped folios
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
+	yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org, 
+	willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com, 
+	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 02:33:56PM -0400, Frank Li wrote:
-> On Sun, Aug 11, 2024 at 08:12:03PM -0700, Bjorn Andersson wrote:
-> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> >  drivers/usb/dwc3/dwc3-qcom.c | 310 +++++++++++++++++++++++++++++++++++--------
-[..]
-> > @@ -302,25 +306,16 @@ static void dwc3_qcom_interconnect_exit(struct dwc3_qcom *qcom)
-> >  /* Only usable in contexts where the role can not change. */
-> >  static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
-> >  {
-> > -	struct dwc3 *dwc;
-> > -
-> > -	/*
-> > -	 * FIXME: Fix this layering violation.
-> > -	 */
-> > -	dwc = platform_get_drvdata(qcom->dwc3);
-> > -
-> > -	/* Core driver may not have probed yet. */
-> > -	if (!dwc)
-> > -		return false;
-> > +	struct dwc3 *dwc = qcom->dwc;
+On Tue, Aug 20, 2024 at 8:16=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 19/08/2024 20:00, Barry Song wrote:
+> > On Tue, Aug 20, 2024 at 2:17=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> >>
+> >>
+> >>
+> >> On 19/08/2024 09:29, Barry Song wrote:
+> >>> Hi Usama,
+> >>>
+> >>> I feel it is much better now! thanks!
+> >>>
+> >>> On Mon, Aug 19, 2024 at 2:31=E2=80=AFPM Usama Arif <usamaarif642@gmai=
+l.com> wrote:
+> >>>>
+> >>>> Currently folio->_deferred_list is used to keep track of
+> >>>> partially_mapped folios that are going to be split under memory
+> >>>> pressure. In the next patch, all THPs that are faulted in and collap=
+sed
+> >>>> by khugepaged are also going to be tracked using _deferred_list.
+> >>>>
+> >>>> This patch introduces a pageflag to be able to distinguish between
+> >>>> partially mapped folios and others in the deferred_list at split tim=
+e in
+> >>>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
+> >>>> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
+> >>>> possible to distinguish between partially mapped folios and others i=
+n
+> >>>> deferred_split_scan.
+> >>>>
+> >>>> Eventhough it introduces an extra flag to track if the folio is
+> >>>> partially mapped, there is no functional change intended with this
+> >>>> patch and the flag is not useful in this patch itself, it will
+> >>>> become useful in the next patch when _deferred_list has non partiall=
+y
+> >>>> mapped folios.
+> >>>>
+> >>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> >>>> ---
+> >>>>  include/linux/huge_mm.h    |  4 ++--
+> >>>>  include/linux/page-flags.h | 11 +++++++++++
+> >>>>  mm/huge_memory.c           | 23 ++++++++++++++++-------
+> >>>>  mm/internal.h              |  4 +++-
+> >>>>  mm/memcontrol.c            |  3 ++-
+> >>>>  mm/migrate.c               |  3 ++-
+> >>>>  mm/page_alloc.c            |  5 +++--
+> >>>>  mm/rmap.c                  |  5 +++--
+> >>>>  mm/vmscan.c                |  3 ++-
+> >>>>  9 files changed, 44 insertions(+), 17 deletions(-)
+> >>>>
+> >>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >>>> index 4c32058cacfe..969f11f360d2 100644
+> >>>> --- a/include/linux/huge_mm.h
+> >>>> +++ b/include/linux/huge_mm.h
+> >>>> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *p=
+age)
+> >>>>  {
+> >>>>         return split_huge_page_to_list_to_order(page, NULL, 0);
+> >>>>  }
+> >>>> -void deferred_split_folio(struct folio *folio);
+> >>>> +void deferred_split_folio(struct folio *folio, bool partially_mappe=
+d);
+> >>>>
+> >>>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> >>>>                 unsigned long address, bool freeze, struct folio *fo=
+lio);
+> >>>> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *p=
+age)
+> >>>>  {
+> >>>>         return 0;
+> >>>>  }
+> >>>> -static inline void deferred_split_folio(struct folio *folio) {}
+> >>>> +static inline void deferred_split_folio(struct folio *folio, bool p=
+artially_mapped) {}
+> >>>>  #define split_huge_pmd(__vma, __pmd, __address)        \
+> >>>>         do { } while (0)
+> >>>>
+> >>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> >>>> index a0a29bd092f8..c3bb0e0da581 100644
+> >>>> --- a/include/linux/page-flags.h
+> >>>> +++ b/include/linux/page-flags.h
+> >>>> @@ -182,6 +182,7 @@ enum pageflags {
+> >>>>         /* At least one page in this folio has the hwpoison flag set=
+ */
+> >>>>         PG_has_hwpoisoned =3D PG_active,
+> >>>>         PG_large_rmappable =3D PG_workingset, /* anon or file-backed=
+ */
+> >>>> +       PG_partially_mapped =3D PG_reclaim, /* was identified to be =
+partially mapped */
+> >>>>  };
+> >>>>
+> >>>>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+> >>>> @@ -861,8 +862,18 @@ static inline void ClearPageCompound(struct pag=
+e *page)
+> >>>>         ClearPageHead(page);
+> >>>>  }
+> >>>>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+> >>>> +FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+> >>>> +/*
+> >>>> + * PG_partially_mapped is protected by deferred_split split_queue_l=
+ock,
+> >>>> + * so its safe to use non-atomic set/clear.
+> >>>> + */
+> >>>> +__FOLIO_SET_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+> >>>> +__FOLIO_CLEAR_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+> >>>>  #else
+> >>>>  FOLIO_FLAG_FALSE(large_rmappable)
+> >>>> +FOLIO_TEST_FLAG_FALSE(partially_mapped)
+> >>>> +__FOLIO_SET_FLAG_NOOP(partially_mapped)
+> >>>> +__FOLIO_CLEAR_FLAG_NOOP(partially_mapped)
+> >>>>  #endif
+> >>>>
+> >>>>  #define PG_head_mask ((1UL << PG_head))
+> >>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >>>> index 2d77b5d2291e..70ee49dfeaad 100644
+> >>>> --- a/mm/huge_memory.c
+> >>>> +++ b/mm/huge_memory.c
+> >>>> @@ -3398,6 +3398,7 @@ int split_huge_page_to_list_to_order(struct pa=
+ge *page, struct list_head *list,
+> >>>>                          * page_deferred_list.
+> >>>>                          */
+> >>>>                         list_del_init(&folio->_deferred_list);
+> >>>> +                       __folio_clear_partially_mapped(folio);
+> >>>>                 }
+> >>>>                 spin_unlock(&ds_queue->split_queue_lock);
+> >>>>                 if (mapping) {
+> >>>> @@ -3454,11 +3455,13 @@ void __folio_undo_large_rmappable(struct fol=
+io *folio)
+> >>>>         if (!list_empty(&folio->_deferred_list)) {
+> >>>>                 ds_queue->split_queue_len--;
+> >>>>                 list_del_init(&folio->_deferred_list);
+> >>>> +               __folio_clear_partially_mapped(folio);
+> >>>
+> >>> is it possible to make things clearer by
+> >>>
+> >>>  if (folio_clear_partially_mapped)
+> >>>     __folio_clear_partially_mapped(folio);
+> >>>
+> >>> While writing without conditions isn't necessarily wrong, adding a co=
+ndition
+> >>> will improve the readability of the code and enhance the clarity of m=
+y mTHP
+> >>> counters series. also help decrease smp cache sync if we can avoid
+> >>> unnecessary writing?
+> >>>
+> >>
+> >> Do you mean if(folio_test_partially_mapped(folio))?
+> >>
+> >> I don't like this idea. I think it makes the readability worse? If I w=
+as looking at if (test) -> clear for the first time, I would become confuse=
+d why its being tested if its going to be clear at the end anyways?
 > >
-> >  	return dwc->xhci;
-> 
-> dwc only use once.
-> 
-> 	return qcom->dwc->xhci?
-> 
-
-I like it, thanks for the suggestion.
-
-> >  }
+> > In the pmd-order case, the majority of folios are not partially mapped.
+> > Unconditional writes will trigger cache synchronization across all
+> > CPUs (related to the MESI protocol), making them more costly. By
+> > using conditional writes, such as "if(test) write," we can avoid
+> > most unnecessary writes, which is much more efficient. Additionally,
+> > we only need to manage nr_split_deferred when the condition
+> > is met. We are carefully evaluating all scenarios to determine
+> > if modifications to the partially_mapped flag are necessary.
 > >
-[..]
-> > +/* Convert dev's DeviceTree representation from qcom,dwc3 to qcom,snps-dwc3 binding */
-> > +static int dwc3_qcom_convert_legacy_dt(struct device *dev)
-> > +{
-> > +	struct device_node *qcom = dev->of_node;
-> > +	struct device_node *dwc3;
-> > +	struct property *prop;
-> > +	int ret = 0;
-> > +
-> > +	dwc3 = of_get_compatible_child(qcom, "snps,dwc3");
-> > +	if (!dwc3)
-> > +		return 0;
-> > +
-> > +	/* We have a child node, but no support for dynamic OF */
-> > +	if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
-> > +		return -EINVAL;
-> > +
-> > +	for_each_property_of_node(dwc3, prop) {
-> > +		if (!strcmp(prop->name, "compatible"))
-> > +			;
-> > +		else if (!strcmp(prop->name, "reg"))
-> > +			ret = dwc3_qcom_legacy_update_reg(qcom, dwc3);
-> > +		else if (!strcmp(prop->name, "interrupts"))
-> > +			ret = dwc3_qcom_legacy_convert_interrupts(qcom, prop);
-> > +		else
-> > +			ret = dwc3_qcom_legacy_migrate_prop(qcom, prop);
-> >  	}
-> >
-> > -node_put:
-> > -	of_node_put(dwc3_np);
-> > +	if (ret < 0)
-> > +		goto err_node_put;
-> > +
-> > +	ret = dwc3_qcom_legacy_migrate_child(qcom, dwc3, "port");
-> > +	if (ret)
-> > +		goto err_node_put;
-> > +
-> > +	ret = dwc3_qcom_legacy_migrate_child(qcom, dwc3, "ports");
-> > +	if (ret)
-> > +		goto err_node_put;
-> > +
-> > +	of_detach_node(dwc3);
-> > +	of_node_put(dwc3);
-> >
-> > +	return 0;
-> > +
-> > +err_node_put:
-> > +	of_node_put(dwc3);
-> >  	return ret;
-> >  }
-> 
-> Look like you copy children dwc3's property into current glue node.
-> Can you passdown dwc3's node into dwc3_probe(), let dwc3_probe to handle
-> these, Or move it into dwc3-core. otherwise, if imx want to do the same
-> thing, the the same code will be dupicated.
-> 
+>
+>
+> Hmm okay, as you said its needed for nr_split_deferred anyways. Something=
+ like below is ok to fold in?
+>
+> commit 4ae9e2067346effd902b342296987b97dee29018 (HEAD)
+> Author: Usama Arif <usamaarif642@gmail.com>
+> Date:   Mon Aug 19 21:07:16 2024 +0100
+>
+>     mm: Introduce a pageflag for partially mapped folios fix
+>
+>     Test partially_mapped flag before clearing it. This should
+>     avoid unnecessary writes and will be needed in the nr_split_deferred
+>     series.
+>
+>     Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5d67d3b3c1b2..ccde60aaaa0f 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3479,7 +3479,8 @@ void __folio_undo_large_rmappable(struct folio *fol=
+io)
+>         if (!list_empty(&folio->_deferred_list)) {
+>                 ds_queue->split_queue_len--;
+>                 list_del_init(&folio->_deferred_list);
+> -               __folio_clear_partially_mapped(folio);
+> +               if (folio_test_partially_mapped(folio))
+> +                       __folio_clear_partially_mapped(folio);
+>         }
+>         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>  }
+> @@ -3610,7 +3611,8 @@ static unsigned long deferred_split_scan(struct shr=
+inker *shrink,
+>                 } else {
+>                         /* We lost race with folio_put() */
+>                         list_del_init(&folio->_deferred_list);
+> -                       __folio_clear_partially_mapped(folio);
+> +                       if (folio_test_partially_mapped(folio))
+> +                               __folio_clear_partially_mapped(folio);
+>                         ds_queue->split_queue_len--;
+>                 }
+>                 if (!--sc->nr_to_scan)
+>
 
-I tried that, as it would have saved me from having to do the dynamic
-rewrite.
+Do we also need if (folio_test_partially_mapped(folio)) in
+split_huge_page_to_list_to_order()?
 
-But the dwc3 core and host are full of device_property_read*(),
-phy_get(), platform_get_irq() etc which operates on the dwc->dev.
+I recall that in Yu Zhao's TAO, there=E2=80=99s a chance of splitting (shat=
+tering)
+non-partially-mapped folios. To be future-proof, we might want to handle
+both cases equally.
 
-I think it can be done, but this felt like a cleaner outcome, in
-particular once we transition the DeviceTree source.
+By the way, we might not need to clear the flag for a new folio. This diffe=
+rs
+from the init_list, which is necessary. If a new folio has the partially_ma=
+pped
+flag, it indicates that we failed to clear it when freeing the folio to
+the buddy system, which is a bug we need to fix in the free path.
 
-As you say, there should be a fair amount of room for duplication here,
-so perhaps we can move that to a "glue.c" and share it?
-
-[..]
-> > @@ -773,10 +937,14 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
-> >  		goto reset_assert;
-> >  	}
-> >
-> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	ret = of_address_to_resource(np, 0, &res);
-> > +	if (ret < 0)
-> > +		goto clk_disable;
-> > +	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
-> >
-> > -	qcom->qscratch_base = devm_ioremap_resource(dev, res);
-> > +	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
-> >  	if (IS_ERR(qcom->qscratch_base)) {
-> > +		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
-> 
-> dev_err_probe()?
-> 
-
-Sounds good.
-
-Thank you,
-Bjorn
+Thanks
+Barry
 
