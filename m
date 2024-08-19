@@ -1,137 +1,233 @@
-Return-Path: <linux-kernel+bounces-291566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842E495641E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83764956421
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2801F229B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B28F282B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C372156F41;
-	Mon, 19 Aug 2024 07:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66433157481;
+	Mon, 19 Aug 2024 07:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uud5EmbG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4YzpOlfx"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3835D159583
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B941914A0B9
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724051346; cv=none; b=TJuq64uEal2dalXSkgoJbfx+YiRlMHEcY6rzCEw8MSF8QpNNceHlc+nxT5x6CH7sKDyr49Lzi12EnVIvk5Jmb+42hoMEJLcT2XoHP2SLYf8oPi6wLAl3qYlyI47SmFCEmO9/MESIwUCvhH3Ss4tE34kIkaixaAjM/QHaoqB8+Eo=
+	t=1724051426; cv=none; b=gapkQr/1x1e7LwSYLu2C8IRgqG1EPNft+Uu6CmLfrA6oug/YNYFEg6DUGVEjUQlneLx731/Aqw+aC6YFn7InIQhsTJtbMCThelDMcux19vd0NxOSG6jzhTo1jIsy8/Wblm8tC3BUa714U3WV8kPIB6ThCedhTVPO9zy5NOdtycA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724051346; c=relaxed/simple;
-	bh=ZYNeLaQKbci3ezeTj561FqIQlpHKrGkDbaDepOOcoE4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ODE7UL0fk6h/6gtXSYx7poylrIodD2RCtdHbjnkVU0tzaR8ASb+Ha3VPmQe6vWUk2GiFMlui6yslUNgfgp5hCStgBGTcVaCVE+S06eP6nDOSiVzW5YIjFxxyE6nApovNes1vzj4qlqRPT9NiuXnsRv8qH0pBpnwO9REVawfCeKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uud5EmbG; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724051345; x=1755587345;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZYNeLaQKbci3ezeTj561FqIQlpHKrGkDbaDepOOcoE4=;
-  b=Uud5EmbGRf0s/kOhPi21fBNVLEcZgn+dwsXxPuMLkFZULEpmhS4kV4zs
-   gMujdEKJipjaM81Kfa/0MdYzMlLGrtF2B0xIAx7NcI8nUR4NfYGQb615/
-   RZMKxsVvnO6lxYVbJqTYzYnHYcystjByJBKbGdappzz2IEyxITLQix1O8
-   ql2RaxOHaulOhJxtytX3qi/nqAmsMZs23pQHi9AE+6S2dXLUHXc0J+A6l
-   OvqlSIWKAohHKgUf1eeaSNIdHyqcyd7bTsIsU26y0GWSakRvrbj+rNWS2
-   N32ev9QzR0JC7SjTm8B50qDILu/uugkWafulTMaCu+FSbqXjZqoR7ktJu
-   A==;
-X-CSE-ConnectionGUID: z7Lk/c7ZR9K1yn7DWnZIxw==
-X-CSE-MsgGUID: 25Lv//kvSC+MhQL/mgy6ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="21902243"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="21902243"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:09:05 -0700
-X-CSE-ConnectionGUID: 9lAcx4mRR9yU3AbkExpyYA==
-X-CSE-MsgGUID: 2XvNQ288Tfic6O8ThK9sTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="64939199"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:09:02 -0700
-Message-ID: <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
-Date: Mon, 19 Aug 2024 15:09:00 +0800
+	s=arc-20240116; t=1724051426; c=relaxed/simple;
+	bh=bCaS+omOPi9iw7kfAs9oBqaZ/E7viSLNfzjiVrYZzfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VVdS9svnC9LQtkpG4Lso54KsUe6QN86NslMIOLL6dkoIsO/0pBcS7UZftbksjta3j6uaQR0tDo40WzkjOFT34P4Epa5lSGlp8X13NjEBAeJ8xIs0LT4Jl42rc8cv2ORc2aWl77tN1HUKzXIVD6A+ofcPElr97QKL5uyCWMk4pWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4YzpOlfx; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bec7ee6f44so3344396a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724051422; x=1724656222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWImHFjLhh/h1x+WXnUcUovxTkXsX9ZBQjBPwsVhK+U=;
+        b=4YzpOlfxCXkHc0sQmv+TEQX7sPf/ci+NWQy1v5gFOI+Fa6kOvdsl6DC1MXU/aE91pe
+         plR5HemTKTsXWwCYbfl8KSSnXWWHc/oYE4RWplAwi73FR0w1WWbrY0W9xpnWHWRO9UOv
+         Zo/sIazmi8IG0EMy7eHZJ1uK5EsB9H85zQN0qiGqvgVBDlB1nQaBPMotLcwzIEYsXK6c
+         qZIemSXkKoubbitG8NYDvARCBtRW7aH3tMAqQvCU5nf/FRmcvXoEAeNFyOGwUNniAaZu
+         VNUHc1PlQZSeNbksF7zJt56fclKoeUIkBZxpP2Xh1LmcOEH3bSTE9a561fYdhY5WAge/
+         +UIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724051422; x=1724656222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWImHFjLhh/h1x+WXnUcUovxTkXsX9ZBQjBPwsVhK+U=;
+        b=SdXHvIeMQO312maBR6P4O2IWfdHT/Z60b5RKajRZpUQP3CnqhtFuqwoMKPLzPlIU19
+         fPH1OWsjbPUdT8tawT+amROMEgUDajTNEgNBoYdewTzgPyhNwOxBeZJpcINjS2LCLfXq
+         Rn3Bk04t7Xj0cLOvgkEoyccfklnN6YMGGb3xYyI4uj+ykZGY2C6DaeX24mEbeOmklHEo
+         wgcKTEq2qgZ/YHUXniyESj/A6vf84WbmHmjV79fzuuPeYVBoRGQ+4oTGKo5+jultj0/4
+         ZmgitjEC7IIYTdT5jjf/zGBy4dRNWFjUZJQa9WmeQVJjFaQL5fctNEqBFDHQh7xRTSNh
+         nwsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwwPXM0ZjKktBN+u3SZMMquSas5hj1Mrn6BcFIy/kYXRFQfEZnnAE5a9+H9y6Xhq0UHcWY64mLQw/BnC9+WV0Bu+GBgJcj8Wm+9I1d
+X-Gm-Message-State: AOJu0YyuifPPYK8CTCz5bsJ7kgb+U2u8lwxI6Rk6rPYAqjFjJVCEaPIg
+	pke77+xoVPXS3jLccMbvolCXDIyjT9R/fhOni91QPTPmMoY1Id7BIuw+QVeqh/qWuG9w/d5N13+
+	dnDAiSe7hh0LZsgLhAHqb4Ez/0N2BMNTtZlat
+X-Google-Smtp-Source: AGHT+IFHcKe1Utra4ajjjMRIFQkt37fdHsHw7eeFFOjBoi6oQASla5g5CNFWY6eftHbtboFZpDK8heSkSUibcTarCtY=
+X-Received: by 2002:a05:6402:254e:b0:5be:daba:8bc5 with SMTP id
+ 4fb4d7f45d1cf-5bedaba8e8emr4566913a12.16.1724051421386; Mon, 19 Aug 2024
+ 00:10:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-To: Vasant Hegde <vasant.hegde@amd.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- Yi Liu <yi.l.liu@intel.com>
-References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
- <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
- <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
- <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAKrymDQmBrbVbRa_GsyBPv59dPvB6TdjkuWsfzwyUk45-YbReQ@mail.gmail.com>
+In-Reply-To: <CAKrymDQmBrbVbRa_GsyBPv59dPvB6TdjkuWsfzwyUk45-YbReQ@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 19 Aug 2024 09:10:08 +0200
+Message-ID: <CANn89i+tGgQsPxtqFFK8Wdn1AcbWz_ygKfOqExwju7F02+RpHQ@mail.gmail.com>
+Subject: Re: general protection fault in qdisc_reset
+To: =?UTF-8?B?6rmA66+87ISx?= <ii4gsp@gmail.com>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/19 14:34, Vasant Hegde wrote:
-> On 8/16/2024 6:39 PM, Baolu Lu wrote:
->> On 2024/8/16 20:16, Vasant Hegde wrote:
->>> On 8/16/2024 4:19 PM, Lu Baolu wrote:
->>>> Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
->>>> attached to the device and disabled when the device transitions to block
->>>> translation mode. This approach is inappropriate as PCI PASID is a device
->>>> feature independent of the type of the attached domain.
->>> Reading through other thread, I thought we want to enable both PASID and PRI in
->>> device probe path. Did I miss something?
->> PRI is different. PRI should be enabled when the first iopf-capable
->> domain is attached to device or its PASID, and disabled when the last
->> such domain is detached.
-> Right. That's what AMD driver also does (We enable it when we attach IOPF
-> capable domain). But looking into pci_enable_pri() :
-> 
-> 
-> 202         /*
-> 203          * VFs must not implement the PRI Capability.  If their PF
-> 204          * implements PRI, it is shared by the VFs, so if the PF PRI is
-> 205          * enabled, it is also enabled for the VF.
-> 206          */
-> 207         if (pdev->is_virtfn) {
-> 208                 if (pci_physfn(pdev)->pri_enabled)
-> 209                         return 0;
-> 210                 return -EINVAL;
-> 211         }
-> 212
-> 
-> 
-> If we try to enable PRI for VF without first enabling it in PF it will fail right?
-> 
-> Now if PF is attached to non-IOPF capable domain (like in AMD case attaching to
-> domain with V1 page table) and we try to attach VF to IOPF capable domain  (say
-> AMD v2 page table -OR- nested domain) it will fail right?
+On Mon, Aug 19, 2024 at 9:04=E2=80=AFAM =EA=B9=80=EB=AF=BC=EC=84=B1 <ii4gsp=
+@gmail.com> wrote:
+>
+> Hi,
+>
+> I have been fuzzing Linux 6.10.0-rc3 with Syzkaller and found.
 
-Yeah! So, the iommu driver should basically control the PRI switch on
-the PF whenever someone wants to use it on a VF.
 
-We could simplify things by turning on PRI for the whole PF when the
-first iopf-capable domain is attached to a VF. Then, we'd only turn it
-off once all VFs have such domains detached.
+Please do not fuzz old rc kernels, this will avoid finding issues that
+were already fixed.
 
-Thanks,
-baolu
-Yeah, so the iommu driver should flip the PRI switch on the PF whenever
-someone wants to turn it on for its VF.
+For instance, this problem has been fixed two months ago
 
-We could change things up so that when the first iopf-capable domain is 
-attached to any VF or PF, we turn on PRI for the whole device. Then, we
-turn it off when every VF and PF have such domains detached.
+commit bab4923132feb3e439ae45962979c5d9d5c7c1f1
+Author: Yunseong Kim <yskelg@gmail.com>
+Date:   Tue Jun 25 02:33:23 2024 +0900
+
+    tracing/net_sched: NULL pointer dereference in perf_trace_qdisc_reset()
+
+
+
+>
+> kernel config: https://github.com/ii4gsp/etc/blob/main/200767fee68b8d90c9=
+cf284390e34fa9b17542c9/config_v6.10.0_rc3
+> C repro: https://github.com/ii4gsp/etc/blob/main/200767fee68b8d90c9cf2843=
+90e34fa9b17542c9/repro.cprog
+> repro syscall steps: https://github.com/ii4gsp/etc/blob/main/200767fee68b=
+8d90c9cf284390e34fa9b17542c9/repro.prog
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc0000000026: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> audit: type=3D1400 audit(1723346247.508:9): avc:  denied  { kernel } for =
+ pid=3D227 comm=3D"syz-executor166" scontext=3Dsystem_u:system_r:kernel_t:s=
+0 tcontext=3Dsystem_u:system_r:kernel_t:s0 tclass=3Dperf_event permissive=
+=3D1
+> KASAN: null-ptr-deref in range [0x0000000000000130-0x0000000000000137]
+> CPU: 0 PID: 227 Comm: syz-executor166 Not tainted 6.10.0-rc3-00021-g2ef59=
+71ff345 #1
+> Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-de=
+bian-1.16.3-2 04/01/2014
+> RIP: 0010:strlen+0x1e/0xa0 lib/string.c:402
+> Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 b8 00 00 00 00 0=
+0 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 ec 08 <0f> b6 04 02 48=
+ 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 80 7d 00 00
+> RSP: 0018:ffff888008b5f708 EFLAGS: 00010292
+> RAX: dffffc0000000000 RBX: ffffffffabcde7c0 RCX: ffffffffa9d3584d
+> RDX: 0000000000000026 RSI: ffffffffabcde7c0 RDI: 0000000000000130
+> RBP: 0000000000000130 R08: 0000000000000000 R09: fffffbfff57c50aa
+> R10: ffffffffabe28557 R11: 0000000000000000 R12: ffffffffabcde980
+> R13: dffffc0000000000 R14: ffff888001e32428 R15: 0000000000000130
+> FS:  00005555772cf380(0000) GS:ffff88806d200000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005555772cfca8 CR3: 000000000da8e006 CR4: 0000000000370ef0
+> Call Trace:
+>  <TASK>
+>  trace_event_get_offsets_qdisc_reset include/trace/events/qdisc.h:77 [inl=
+ine]
+>  perf_trace_qdisc_reset+0xf5/0x6a0 include/trace/events/qdisc.h:77
+>  trace_qdisc_reset include/trace/events/qdisc.h:77 [inline]
+>  qdisc_reset+0x3e1/0x550 net/sched/sch_generic.c:1029
+>  dev_reset_queue+0x80/0x120 net/sched/sch_generic.c:1306
+>  dev_deactivate_many+0x41f/0x830 net/sched/sch_generic.c:1375
+>  __dev_close_many+0x129/0x2e0 net/core/dev.c:1543
+>  __dev_close net/core/dev.c:1568 [inline]
+>  __dev_change_flags+0x3dc/0x5a0 net/core/dev.c:8779
+>  dev_change_flags+0x8e/0x160 net/core/dev.c:8853
+>  devinet_ioctl+0xcbf/0x1a30 net/ipv4/devinet.c:1177
+>  inet_ioctl+0x350/0x3b0 net/ipv4/af_inet.c:1003
+>  packet_ioctl+0xa8/0x230 net/packet/af_packet.c:4256
+>  sock_do_ioctl+0x119/0x2a0 net/socket.c:1222
+>  sock_ioctl+0x3eb/0x630 net/socket.c:1341
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __x64_sys_ioctl+0x162/0x1e0 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f8b72ae3c0d
+> Code: b3 66 2e 0f 1f 84 00 00 00 00 00 66 90 f3 0f 1e fa 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffe6b571178 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8b72ae3c0d
+> RDX: 0000000020000200 RSI: 0000000000008914 RDI: 0000000000000005
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f8b72b7bcc8 R15: 0000000000000001
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:strlen+0x1e/0xa0 lib/string.c:402
+> Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 b8 00 00 00 00 0=
+0 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 ec 08 <0f> b6 04 02 48=
+ 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 80 7d 00 00
+> RSP: 0018:ffff888008b5f708 EFLAGS: 00010292
+> RAX: dffffc0000000000 RBX: ffffffffabcde7c0 RCX: ffffffffa9d3584d
+> RDX: 0000000000000026 RSI: ffffffffabcde7c0 RDI: 0000000000000130
+> RBP: 0000000000000130 R08: 0000000000000000 R09: fffffbfff57c50aa
+> R10: ffffffffabe28557 R11: 0000000000000000 R12: ffffffffabcde980
+> R13: dffffc0000000000 R14: ffff888001e32428 R15: 0000000000000130
+> FS:  00005555772cf380(0000) GS:ffff88806d200000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005555772cfca8 CR3: 000000000da8e006 CR4: 0000000000370ef0
+> ----------------
+> Code disassembly (best guess):
+>    0: 90                   nop
+>    1: 90                   nop
+>    2: 90                   nop
+>    3: 90                   nop
+>    4: 90                   nop
+>    5: 90                   nop
+>    6: 90                   nop
+>    7: 90                   nop
+>    8: 90                   nop
+>    9: 90                   nop
+>    a: 90                   nop
+>    b: 90                   nop
+>    c: f3 0f 1e fa           endbr64
+>   10: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
+>   17: fc ff df
+>   1a: 55                   push   %rbp
+>   1b: 48 89 fa             mov    %rdi,%rdx
+>   1e: 48 89 fd             mov    %rdi,%rbp
+>   21: 53                   push   %rbx
+>   22: 48 c1 ea 03           shr    $0x3,%rdx
+>   26: 48 83 ec 08           sub    $0x8,%rsp
+> * 2a: 0f b6 04 02           movzbl (%rdx,%rax,1),%eax <-- trapping instru=
+ction
+>   2e: 48 89 fa             mov    %rdi,%rdx
+>   31: 83 e2 07             and    $0x7,%edx
+>   34: 38 d0                 cmp    %dl,%al
+>   36: 7f 04                 jg     0x3c
+>   38: 84 c0                 test   %al,%al
+>   3a: 75 50                 jne    0x8c
+>   3c: 80 7d 00 00           cmpb   $0x0,0x0(%rbp)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Thanks,
+>
+> ii4gsp
 
