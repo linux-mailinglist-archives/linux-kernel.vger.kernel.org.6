@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-292002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A39C9569F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:53:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D218956A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9962285C18
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010B61F23EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839291684BE;
-	Mon, 19 Aug 2024 11:53:38 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1216938C;
+	Mon, 19 Aug 2024 12:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="c4kBBfj6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JQnAJpJx"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9311166F39;
-	Mon, 19 Aug 2024 11:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80F013DBA0;
+	Mon, 19 Aug 2024 12:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068418; cv=none; b=KIq6jFpC8wiw3vyOxt9KkI87ZDFighAJsMwp0xYNSR5QEp8QsDOEEJ3Tnu3NbaPYd41yiHw65YuyuQkeDVmfiYc7+RR5IbdsoPdGYz2LN9+lV++tXWi02el1oLF8niybYGxpA4mCt/xlO/9UWwBuGHZbG5JDE8PFTzM+ALpMdN8=
+	t=1724068889; cv=none; b=OecK2XgY/u6PlfuG82POOKICjNGL3b42nM8BOcW7Ux0BwdcTx5S/YhUGAcQhE2LIZ6pO5i3sxGDMYZvFaqBu/RjqVZARmZBCKtxyrPxDVwoWfyvKhV/LwU7chOBSKUYhSEKJCl/YWm4RwzVGhmIBzEWEDEwm048EJWPPI6V7PRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068418; c=relaxed/simple;
-	bh=sSQjIDBbInLeow6RI6kJVAsEyMy5VNe2nInpgrdhoDU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I+B+n66tsRkhFQrYiS3+7xe29ELOcoYF6cR6oFwzZpqcJi+6MECkdU4xQIOgx2cSuYUSredTrHtW5nOD/i998jww9YbjclF3A59iKSkOhA6iFe3wyFk/X9lNmgr/QrvByZ7qDEU4PZbDlaabnuHGfSI52P12WHAJ8UOCgPte6FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnWD63mCvzpTPc;
-	Mon, 19 Aug 2024 19:52:06 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id E50C318009B;
-	Mon, 19 Aug 2024 19:53:34 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 19:53:34 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <ira.weiny@intel.com>,
-	<Jonathan.Cameron@huawei.com>, <dan.j.williams@intel.com>,
-	<dave.jiang@intel.com>, <u.kleine-koenig@pengutronix.de>,
-	<xueshuai@linux.alibaba.com>, <shiju.jose@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 7/8] acpi/ghes: Make cxl_cper_fifo and cxl_cper_work static
-Date: Mon, 19 Aug 2024 20:00:55 +0800
-Message-ID: <20240819120055.3884953-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724068889; c=relaxed/simple;
+	bh=lvQSZC3PWYlw64ySsxx1AH+WrirN5hdqItqdfd1eWbs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SSF12IkzwoRZT1Azy0Fva0/G9dvyUsV/Y344ZWw/C+N85wEAMRWgOg5gtxElFaaD66SNV2XMBSDaHbYoNTMkHS47I2NnOdOB6s4EjOLCb5EUXPoW5wguvLTJRR/4sckFX578OOn/EpX/ux1tZoA6Kcro4OJJf1ugDnsauBM60uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=c4kBBfj6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JQnAJpJx; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 07D291146D7A;
+	Mon, 19 Aug 2024 08:01:27 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 08:01:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724068887;
+	 x=1724155287; bh=XJd6YZK68x6p9zonmT3qVBwKkBNjs/NgkzszXw1opu0=; b=
+	c4kBBfj6HqZqni8RzkYdxNxFkQ1ENpLQjB/GetXg+6dWaEeI3E+gh/EmVZpfV/oM
+	QYpWRZajuHY1XpTSFdApwsH9l76hmhvLWeKCshpNbnLQXY4VpsQ7IeWILnWz73jD
+	qZp+knQTOYRSyuS8ctuI6OKIrfWXZJROjRA70NIJ1FIcVKJ8Tv1Xd1OlsO7P+qoU
+	QKbV9eW4yS09ZOQzjHpLC5lFtGx+H7gRsFwsK1UZYNGhzluETYMrQKsJKo2HZbA6
+	yTSIqocnvjhaRZzeNddKemLtU+YKc2QeYBy7tERLfzltUbJ8wjOg4oEoUhtyORGx
+	ERreqC+JJ9Byd/qWAZw41A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724068887; x=
+	1724155287; bh=XJd6YZK68x6p9zonmT3qVBwKkBNjs/NgkzszXw1opu0=; b=J
+	QnAJpJxekEO59pVorqlrXy4DTII55HRZ+p/QdPrR8UoNHmJeZaMfdNHbUQOJkyW8
+	EAZhfHy/LcDHmIFcvUyMiifmBTmtEgl3mBNJqpOFE2c+IwWX09uhwUjMCU6RKG1T
+	MjogK/vhZLnShQjajoFWKbrmI45TacV7tt8a/+1FAipTH3xhY1H4AiYUkGhJC3Nj
+	nttD3NakRClTCN86Troz2p1dHKm43435VoKoNSyWxDt+/SazrS1bZr1Hv49Btxx/
+	Uq69RvXXEokPg0k4ZUtBsG+UZuO13knZBKJ9jQkx73ELW0JIzjyrcqBgilys/zQC
+	RcNoRpnMBZduInLWyvUNQ==
+X-ME-Sender: <xms:FjTDZlk9dVIg-3-p4U0rsKFsRDS51mEzlMDz1ql-edW_IKeTdwrcng>
+    <xme:FjTDZg0xC3WjWM7BgtY_2KLzfBHwe3RdtbY0QS7RCaDJYjDG9hAyklnwpFaTd9lTq
+    NInoUKW_ErQm8jMROY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
+    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
+    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
+    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
+    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
+    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:FjTDZrroMVlQ66jpjLsCc4um4CVqdDtfsw5ZI55MRN9DOsXUi7xtMw>
+    <xmx:FjTDZlmfsu1P_mIAW0kNyHKiquyL1mMvTclMg3iKyx3pIXX8auokFw>
+    <xmx:FjTDZj2ThwCSwXNysDttqX0j1rLNi6ha3Mf-ZAJyXgdrTBGplaIe2w>
+    <xmx:FjTDZksbJSvw9ga6jQ5I4pClZQYE80hM5_azDsVfe7AC3AVPHBBzaQ>
+    <xmx:FzTDZmB9HuW7vO3D4uB_rDFetK9HTOqwIeEQu-uN0ClCJnculJYIjIYL>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 5694516005E; Mon, 19 Aug 2024 08:01:26 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Aug 2024 14:01:04 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuntao Liu" <liuyuntao12@huawei.com>,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: "Corey Minyard" <minyard@acm.org>,
+ "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
+ "Vinod Koul" <vkoul@kernel.org>, "Daniel Mack" <daniel@zonque.org>,
+ "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>, morbidrsa@gmail.com,
+ "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
+ "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, codrin.ciubotariu@microchip.com,
+ "Andi Shyti" <andi.shyti@kernel.org>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <e750b0cf-8191-414f-bd23-dc6b69b82796@app.fastmail.com>
+In-Reply-To: <20240819113855.787149-9-liuyuntao12@huawei.com>
+References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+ <20240819113855.787149-9-liuyuntao12@huawei.com>
+Subject: Re: [PATCH -next 8/9] dmaengine: at_hdmac: fix module autoloading
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: 7bit
 
-The sparse tool complains as follows:
+On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from platform_device_id table.
+>
+> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
 
-drivers/acpi/apei/ghes.c:681:1: warning:
-	symbol 'cxl_cper_fifo' was not declared. Should it be static?
+This table is again unused because at91 uses DT based
+probing. Please just remove the table and the #ifdef/of_match_ptr()
+around the of_device_id table.
 
-drivers/acpi/apei/ghes.c:685:20: warning:
-	symbol 'cxl_cper_work' was not declared. Should it be static?
-
-These symbols are not used outside ghes.c, so marks them static.
-
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/acpi/apei/ghes.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 623cc0cb4a65..df31b3acaf0c 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -678,11 +678,11 @@ static void ghes_defer_non_standard_event(struct acpi_hest_generic_data *gdata,
- 
- /* Room for 8 entries for each of the 4 event log queues */
- #define CXL_CPER_FIFO_DEPTH 32
--DEFINE_KFIFO(cxl_cper_fifo, struct cxl_cper_work_data, CXL_CPER_FIFO_DEPTH);
-+static DEFINE_KFIFO(cxl_cper_fifo, struct cxl_cper_work_data, CXL_CPER_FIFO_DEPTH);
- 
- /* Synchronize schedule_work() with cxl_cper_work changes */
- static DEFINE_SPINLOCK(cxl_cper_work_lock);
--struct work_struct *cxl_cper_work;
-+static struct work_struct *cxl_cper_work;
- 
- static void cxl_cper_post_event(enum cxl_event_type event_type,
- 				struct cxl_cper_event_rec *rec)
--- 
-2.34.1
-
+     Arnd
 
