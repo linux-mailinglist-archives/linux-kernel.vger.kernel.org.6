@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-291711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8116D9565CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E6E9565CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9591F23CC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58867285367
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D52115C145;
-	Mon, 19 Aug 2024 08:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2915B552;
+	Mon, 19 Aug 2024 08:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KhqXKRzo"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="PEIpUvst"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB3215C128
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A6915B13B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056905; cv=none; b=LVnfAaFub2ajs9Z8x4RDxZBJAtFfr1mIjF0GDW/6eETmie6BIFJHTggCoRvHSuu/2kwq7CCmBaR67/5HC9+uMNfPa9T9bPmcKYnC/PB1ot9DtDdOWrBNYpNE2hL/wTvVc6ReSoKD2g/t8D5k7WlMK24x7zea3H7/IYIXUJNN4kM=
+	t=1724056930; cv=none; b=HgERzdSz1f+bQOfiN5f89atCFyK5g7xtNP19Aft9atesWCcbrObS/Bq958YvAvfGXg3wDoGzl5arUegTZXZJoJOooIFSUKO5jCGHeq4XoNAG7hR8ZDY92YCQmh78Xb2cza+e1SbuQPP9Md/4wB+eJZLLd3SUzSl3YgKeCKq2H7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056905; c=relaxed/simple;
-	bh=UNjp+9lOGZEGtwFuIBJcKxlJee+gCs5bPutE3MKq1Mw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1wzoWkVH3ym/mf/3+RqNmCU1Md5icEkLrK7XRevjXwsNI600FMPM8EWvub+8PUmuSPd5EWgSTkpBNWg8r0KS6Wd2eEvShKiGtx+vMy+vSJmeQguQkA2x9ZAkg6E5SSdIaFDXIt35L41GYbLkvU4OSN5WXA0Bc/3IBsqOl1zuVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=KhqXKRzo; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efd8807aaso5462967e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1724056902; x=1724661702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEirQhICxGMvfojW7DrVQ28Q7V59+ixyBUh8UIAbPM0=;
-        b=KhqXKRzoG00xRoUNLjWmj19yhr2g+sXStR/qV8o+3yiOhDLIdMruKfveZ2OO0tdamq
-         6CXEAC9kztA4vp9Goo/5skd4tjXpVwgT9X+VI8Q9qeKhyQuSuBO7GqEvWc0TH2HV/udT
-         y26k2CZqM+CC9sIOveJTOopojHmBQr3IileS0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724056902; x=1724661702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CEirQhICxGMvfojW7DrVQ28Q7V59+ixyBUh8UIAbPM0=;
-        b=CcBeoPI6hn4YejwZj1fwTfoDsHOtSu0Zkwd70kEZGjYFbTIneE5lzFpw/+GnbJJzMs
-         aq/GyeaHPxGs1CbtyP0O7ddGaozB8ykUWxeBymZ9bpfQP5egOBlOHyFOLk7ftZeeVkpx
-         ucs2flDQp95HCxbaK5P0mxNH63CBAsLi/P/LByVf+6lJmynfxjk/g+gNVPeRHjkVjRgh
-         VWpKZyEw63aJWjMMXSywyoJ/NrG8fv86pp+myhhl4lu+WUClqiDfG2AuOFXsxMb4UGU/
-         xbcY8pBbAI1WoMtvQdEU3NNCsmfx16oi1eBtzghTsusU1DXE6Hf83VuZw9GHN2EUG6SG
-         UTDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcFBVKkxc3exEGhE7ixeKltb2+Y+9OtMA5RQjslF4hCGo30y5ACKwrl96tvpB2Tu/eFHHFNYERGfWPRcW387O2G6Em9kfdLvJ/g165
-X-Gm-Message-State: AOJu0Yy+kvIZMjV3CxDB/ySz26uhfQJSa2kcUxsWSl1GILRp6gDhkhei
-	NySgdU0k5iHCT+Yi6ZBQagfpEF193Y1e6u8K/vb6RB2fj53R2lLPWkFZ7S2C6PBU7XePrnqvp8N
-	h7uHJmHS1cISnTi46uv1YfHQZwQTVON5IK8q6gg==
-X-Google-Smtp-Source: AGHT+IEwfTOO/2MlTaAwNhTintjuHDB3MF5UseOJNgiAYqgi//7fVjLazwGoaEv6tn+tT+nJWKwD1yiJfMtuWo6bkOk=
-X-Received: by 2002:a05:6512:b20:b0:52f:c833:861a with SMTP id
- 2adb3069b0e04-5332e07fba3mr3853950e87.51.1724056901096; Mon, 19 Aug 2024
- 01:41:41 -0700 (PDT)
+	s=arc-20240116; t=1724056930; c=relaxed/simple;
+	bh=1yA/mZbGAOty4Qp+W85rMw9ZhH3Dt00iJEVQ5wC8PVs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uYg2Qz4O4aheg6A63zC96lMQcGSh4MKfy7knQh7LMRTpa7CzuYcX1xrd0FrQFCOhC7ACiWm225Hmv0hPv1Vd+hxIJiq4q9E04vY4U+KZ1/rEgLxetXAWtjExVuPE7E2L+eGQrmab4pmElBW+wSa+3BkOlWbFCI0mYBbnayfWsIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=PEIpUvst; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1724056926; x=1726648926;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1yA/mZbGAOty4Qp+W85rMw9ZhH3Dt00iJEVQ5wC8PVs=;
+	b=PEIpUvst8ZYo5w+05Sw1eVxTphDorS1DYs8VJg3sD4d6Ed3DHCwrModrcuX63Ydl
+	fyPF4cF8oXqUNcwEhBs7djzMbQMINJitcqYhErUpb8FEUfGpITqnmUYJCGotqVPT
+	AynYObuHYE5ooPXBr1RL0vzm3PWpzuYlBEiHPVJt2dY=;
+X-AuditID: ac14000a-03251700000021bc-83-66c3055ed8b8
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 22.37.08636.E5503C66; Mon, 19 Aug 2024 10:42:06 +0200 (CEST)
+Received: from Berlix.phytec.de (172.25.0.12) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
+ 2024 10:42:06 +0200
+Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
+ berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
+ Mon, 19 Aug 2024 10:42:06 +0200
+From: Yannic Moog <Y.Moog@phytec.de>
+To: "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, Teresa Remmet
+	<T.Remmet@phytec.de>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Benjamin Hahn <B.Hahn@phytec.de>, "Yashwanth
+ Varakala" <Y.Varakala@phytec.de>, PHYTEC Upstream <upstream@lists.phytec.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] arm64: dts: imx8mp-phycore: Add VDD_IO regulator
+Thread-Topic: [PATCH 1/6] arm64: dts: imx8mp-phycore: Add VDD_IO regulator
+Thread-Index: AQHa7iwROvHt+W4v40iHLuEIlmiogrIuKXeA
+Date: Mon, 19 Aug 2024 08:42:06 +0000
+Message-ID: <283d8090f358c6343c126fbac77462e19bdc7b74.camel@phytec.de>
+References: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
+	 <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-1-e2500950c632@phytec.de>
+In-Reply-To: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-1-e2500950c632@phytec.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <ED2F2E5DFA68DB459FA192BB807FEB24@phytec.de>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081608-punch-coherent-d29e@gregkh> <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
- <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
- <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081652-unify-unlucky-28d2@gregkh> <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-In-Reply-To: <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Mon, 19 Aug 2024 10:41:30 +0200
-Message-ID: <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH_v1=5D_usb=3A_gadget=3A_u=5Fserial=3A_check_?=
-	=?UTF-8?Q?Null_pointer_in_EP_callback?=
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>, 
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"opensource.kernel" <opensource.kernel@vivo.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsWyRpKBRzeO9XCawcFZyhZr9p5jsph/5Byr
+	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
+	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CVcaavjalg
+	Bm/F53N3WRsY3/B0MXJwSAiYSHx9q9fFyMUhJLCESWL7po2MEM59Rokrm7azQDgbGCVar78A
+	ynBysAmoSJyccQmsSkTgJZPE4qnfwRxmgb9MEk9/gTgcHMICnhKnXsmBNIgIeEnM/PiaGcI2
+	kvg9o58NxGYRUJXYe+In2FBeATeJyxu2s4PYQgL7GCUWX/EFsTkFUiQmL50EVsMoICuxYcN5
+	sDnMAuISm559ZwWxJQQEJJbsgYhLCIhKvHz8DyouL3Hi1jQmkHOYBTQl1u/ShzAtJD7Pi4GY
+	oigxpfshO8QFghInZz5hmcAoPgvJglkIzbMQmmchaZ6FpHkBI+sqRqHczOTs1KLMbL2CjMqS
+	1GS9lNRNjKB4F2Hg2sHYN8fjECMTB+MhRgkOZiUR3u6XB9OEeFMSK6tSi/Lji0pzUosPMUpz
+	sCiJ867uCE4VEkhPLEnNTk0tSC2CyTJxcEo1MGq+nMN4Xdz2S574ZT6xmR+lVAz/TRHQ+NuX
+	Ju9+SU9MOvuseeiepu89U6LtFq/4HZg3Y2LAX7++A40Xm+OKvj9JrPY7J10T8ED10UqTxRlX
+	Z1s5Z8xMMtF+MvPUU8ncdMEj21vfPGv/e5nnbiuvj4tQs5qd9baUO4eLC45phB2aYfgmaPHG
+	OCWW4oxEQy3mouJEAHJQoqHlAgAA
 
-Hi
-
-On Mon, Aug 19, 2024 at 10:26=E2=80=AFAM =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulia=
-nqin@vivo.com> wrote:
->
-> Hello linux community expert:
->
-> >>I think this has been reported previously, and different patches have b=
-een proposed, have you searched the archives?
-> > I haven't seen the patch given below before, I will read it carefully.
-> > I searched for Linux mainline commits before submitting, but I only com=
-pared them according to the crash stack information and did not notice the =
-following commit.
->  I checked the stack trace again. The problem we encountered seems differ=
-ent from the problem reported in the link below, and they are not caused by=
- the same reason.
->
-
-Did you apply the patch? as suggested, is the test moving from one
-gadget to the other?
-
-Michael
-
-
-> >>Specifically, take a look at:
-> >>https://apc01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flor=
-e.
-> >>kernel.org%2Fr%2F20240116141801.396398-1-khtsai%40google.com&data=3D05%=
-7C
-> >>02%7Chulianqin%40vivo.com%7Ca4b06e9db7bb43ab1bfc08dcbe01a836%7C923e42dc
-> >>48d54cbeb5821a797a6412ed%7C0%7C0%7C638594161566475032%7CUnknown%7CTWFpb
-> >>GZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%
-> >>3D%7C0%7C%7C%7C&sdata=3Dpdb%2B1b1qB1q2%2BZN096D9jxNytfN7%2Fo50DPt6pq5m1=
-RU
-> >>%3D&reserved=3D0
->
-> Thanks
-
-
-
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
+T24gV2VkLCAyMDI0LTA4LTE0IGF0IDExOjI2ICswMjAwLCBUZXJlc2EgUmVtbWV0IHdyb3RlOg0K
+PiBGcm9tOiBZYXNod2FudGggVmFyYWthbGEgPHkudmFyYWthbGFAcGh5dGVjLmRlPg0KPiANCj4g
+QWRkIGZpeGVkIHJlZ3VsYXRvciBWRERfSU8gKDMuM3YpIGJhc2VkIG9uIHRoZSBTb00gc2NoZW1h
+dGljcyB0byByZWZsZWN0DQo+IHRoZSBjb25uZWN0aXZpdHkgb24gdGhlIHBoeUNPUkUtaS5NWDhN
+UC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFlhc2h3YW50aCBWYXJha2FsYSA8eS52YXJha2FsYUBw
+aHl0ZWMuZGU+DQo+IFNpZ25lZC1vZmYtYnk6IFRlcmVzYSBSZW1tZXQgPHQucmVtbWV0QHBoeXRl
+Yy5kZT4NClJldmlld2VkLWJ5OiBZYW5uaWMgTW9vZyA8eS5tb29nQHBoeXRlYy5kZT4NCg0KPiAt
+LS0NCj4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Y29yZS1zb20u
+ZHRzaSB8IDkgKysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1w
+aHljb3JlLXNvbS5kdHNpDQo+IGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1w
+LXBoeWNvcmUtc29tLmR0c2kNCj4gaW5kZXggZTZmZmE2YTZiNjhiLi45YzUyNzJjNjkzMWEgMTAw
+NjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1waHljb3Jl
+LXNvbS5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1w
+aHljb3JlLXNvbS5kdHNpDQo+IEBAIC0yMCw2ICsyMCwxNSBAQCBtZW1vcnlANDAwMDAwMDAgew0K
+PiDCoAkJZGV2aWNlX3R5cGUgPSAibWVtb3J5IjsNCj4gwqAJCXJlZyA9IDwweDAgMHg0MDAwMDAw
+MCAwIDB4ODAwMDAwMDA+Ow0KPiDCoAl9Ow0KPiArDQo+ICsJcmVnX3ZkZF9pbzogcmVndWxhdG9y
+LXZkZC1pbyB7DQo+ICsJCWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsNCj4gKwkJcmVn
+dWxhdG9yLWFsd2F5cy1vbjsNCj4gKwkJcmVndWxhdG9yLWJvb3Qtb247DQo+ICsJCXJlZ3VsYXRv
+ci1tYXgtbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiArCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9s
+dCA9IDwzMzAwMDAwPjsNCj4gKwkJcmVndWxhdG9yLW5hbWUgPSAiVkREX0lPIjsNCj4gKwl9Ow0K
+PiDCoH07DQo+IMKgDQo+IMKgJkE1M18wIHsNCj4gDQoNCg==
 
