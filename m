@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-291836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B1B9567CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043669567F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF2128357F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B321F225DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52615E5C1;
-	Mon, 19 Aug 2024 10:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130815FD15;
+	Mon, 19 Aug 2024 10:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="QFQNtX6z"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6Gy4Nop"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCC7148FE0;
-	Mon, 19 Aug 2024 10:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724061937; cv=pass; b=sORd3vXR1cAmt4S7MiowD6cIKtOSAE7NzrXwyX334WTgNcZvkpMQwopSwnVasyX5zCDTjNbJWl56rxmvG6JHHRoKampnACY6U/z2AV9kK0MJsyUVvW5WanV+TDHUVbQOkasCx7+2KWhC6F8HsJL01ykb8bAsPVOLXupBikbLbkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724061937; c=relaxed/simple;
-	bh=Hh8QfZgSepyCVNdlw8p6+aGPEFGsy6XYRFHLeqgAijE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JEVE1Qh32Jt6bvOLcRYE2wd9h7sM/k8EU+iWwLyn+QIoP5yhmrjSymRJ95cgm2SkUJXjXv07SFGVYMcxBMM8Imxe84fZBq12o9pi70x/X2Fn2fp8kdVWGnt+hQHCu6z/JTz0M/U+Z1RGx/7nuSaBjkLhUk4dh97k6T9HBVBj38Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=QFQNtX6z; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: Usama.Anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724061921; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MXOhc7NLEDPDr/iPpz6LDk+OKmaWGNi608mPfY3+G8aMooSY4q1YtJlBkTErvALqkiJB36Evfe3+xm5KMlBjUUTuMEaHw+dfpepIghc9za9DvnI0Bz/4DR0dTATzX5UTsxCgz2VFiQLOJnehAK/RryheLGuF5psEDjud0LbaY3Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724061921; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=clWg1cFDvmBXHk5ECX33rfzkJ2REgKM2jV0tZFYmIeQ=; 
-	b=PUlR2JI/qzO2k81FjM2m5k5QxwrKZ9omUh/3J+0lC+Mwx+1OiPktwnoi1g3JtYdyFWX9oOnQD8nsBzUJAbXP1ISIWPuDsikRTqIadvYWwWh6t5DXjEmxY7eZsymgSCKZh3NSJWTK5fBD3zLLV0hqpKLAguhZThbpmBtLJjRu0Dk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724061921;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=clWg1cFDvmBXHk5ECX33rfzkJ2REgKM2jV0tZFYmIeQ=;
-	b=QFQNtX6zd8MeGg+ZTXgH2wzzY9xNeJKd5YubWcapTV7m5lk9rX13WKKixaCfjLPY
-	xVrvQjc0GOdi0gTl0msRIJwR5ePxQKYjV/6x1rlG+eya7C4oUl3s2ItFgMYLiZXHrkI
-	eLBRGE4NmrGShGj6+dhZv88676r6cOD0rW38Oasw=
-Received: by mx.zohomail.com with SMTPS id 1724061920204590.2573152825611;
-	Mon, 19 Aug 2024 03:05:20 -0700 (PDT)
-Message-ID: <1b36ba43-60a4-441c-981f-9b62f366aa95@collabora.com>
-Date: Mon, 19 Aug 2024 15:05:07 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66B015FA75;
+	Mon, 19 Aug 2024 10:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724062468; cv=none; b=jPnJ103UWu4DvSGGly54ZZmhpt8G0xB7k3aH+dD6aSrPmtK8CqA2CPDqax5P0Vtn+SdG+rF+LLiCuPZcL+5KIxLTPqsGotrdqN7ou9zsLcf/zjdgsWT1+9yOosCsKKCe+qFIP4mlp3OonjHho7FXMFl2I6bII3zps/ElSAk3VYo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724062468; c=relaxed/simple;
+	bh=s0zAxlyXNZ+O9S3b8lRDOQsTtc9BspZrt7J09VPJZ3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q37We68QmedgETpz6GZGHmuUUMorApvPkoiqZ/LGyHxy3jEjOcjr6VtGBPQgKXEMJkP/VtA1ujWaWg32HQapAY7815nE8/DQS8nWIO3mV0DvtvGB+dLDG7I0toLS2n6/iXicc1zBozTTvGJczeO1gym9GHXh5SJlr8/Jgqc7nK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6Gy4Nop; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724062467; x=1755598467;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s0zAxlyXNZ+O9S3b8lRDOQsTtc9BspZrt7J09VPJZ3k=;
+  b=A6Gy4Nop+yv25BYKqXgs9UaMZu9sGiNu+TfHy4gP2MdCYj6CF2kN/EDK
+   WCKM8L+C3nNsmtMWYDHSA1zKz9y2hLF/w8HzKEZ+Q4GcebcAJgToGDSQr
+   YNPy+hLkkkd9cEz9eNWwOLiwKnOsyiJJ8AR9CBMMPtY7XXg/FcHi6F4fg
+   smNJGgac3+nZ3AswT/BPEIL5IDL+3bgR/tmcOiXd1VRtQ/mX2m5RF9ODg
+   yw+mupcMFMrACaUZlYudPTEVXEyf940i/vnhm/pqF7T++YoAcf398w4Dq
+   VqMp11nb+NDgRaOcR5RITjhW3NKXTZua8PzZpJKfIJqmVt8AWbWlDQv+j
+   Q==;
+X-CSE-ConnectionGUID: 8GKVlGf6SAarZEjvKTJZSw==
+X-CSE-MsgGUID: +u2vHC0KQnaVVvSVtE2TWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22443450"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="22443450"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 03:14:27 -0700
+X-CSE-ConnectionGUID: HoSDcKyeSpi9Ww5gdWiYMg==
+X-CSE-MsgGUID: trlfEET5Sq2x8vkfSmN16A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="65000841"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa004.fm.intel.com with ESMTP; 19 Aug 2024 03:14:19 -0700
+Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 6EC1E135E8;
+	Mon, 19 Aug 2024 11:14:17 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	magnus.karlsson@intel.com,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Amritha Nambiar <amritha.nambiar@intel.com>
+Subject: [PATCH iwl-net v3 0/6] ice: fix synchronization between .ndo_bpf() and reset
+Date: Mon, 19 Aug 2024 12:05:37 +0200
+Message-ID: <20240819100606.15383-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
- Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, kernel@collabora.com,
- stable@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: mm: Fix build errors on armhf
-To: Jeff Xu <jeffxu@chromium.org>
-References: <20240809082511.497266-1-usama.anjum@collabora.com>
- <CABi2SkWgPoWJY_CMxDru7FPjtQBgv61PA2VoCumd3T8Xq3fjbg@mail.gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <CABi2SkWgPoWJY_CMxDru7FPjtQBgv61PA2VoCumd3T8Xq3fjbg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-On 8/14/24 3:29 AM, Jeff Xu wrote:
-> Hi Muhammad
-> 
-> On Fri, Aug 9, 2024 at 1:25 AM Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->>
->> The __NR_mmap isn't found on armhf. The mmap() is commonly available
->> system call and its wrapper is presnet on all architectures. So it
->> should be used directly. It solves problem for armhf and doesn't create
->> problem for architectures as well. Remove sys_mmap() functions as they
->> aren't doing anything else other than calling mmap(). There is no need
->> to set errno = 0 manually as glibc always resets it.
->>
-> The mseal_test should't have dependency on libc, and mmap() is
-> implemented by glibc, right ?
-> 
-> I just fixed a bug to switch mremap() to sys_mremap to address an
-> issue that different glibc version's behavior is slightly different
-> for mremap().
-> 
-> What is the reason that __NR_mmap not available in armhf ? (maybe it
-> is another name ?)  there must be a way to call syscall directly on
-> armhf, can we use that instead ?
+PF reset can be triggered asynchronously, by tx_timeout or by a user. With some
+unfortunate timings both ice_vsi_rebuild() and .ndo_bpf will try to access and
+modify XDP rings at the same time, causing system crash.
 
-It seems __NR_mmap syscall is deprecated for arm. Found this comment in
-arch/arm/include/asm/unistd.h:
-/*
- * The following syscalls are obsolete and no longer available for EABI:
- *  __NR_time
- *  __NR_umount
- *  __NR_stime
- *  __NR_alarm
- *  __NR_utime
- *  __NR_getrlimit
- *  __NR_select
- *  __NR_readdir
- *  __NR_mmap
- *  __NR_socketcall
- *  __NR_syscall
- *  __NR_ipc
- */
+The first patch factors out rtnl-locked code from VSI rebuild code to avoid
+deadlock. The following changes lock rebuild and .ndo_bpf() critical sections
+with an internal mutex as well and provide complementary fixes.
 
-The glibc mmap() calls mmap2() these days by adjusting the parameters
-internally. From man mmap:
-C library/kernel differences:
-This  page  describes the interface provided by the glibc mmap() wrapper
-function.  Originally, this function invoked a system call of the same
-name.  Since Linux 2.4, that system call has been superseded  by
-mmap2(2), and nowadays the glibc mmap() wrapper function invokes
-mmap2(2) with a suitably adjusted value for offset.
+v2: https://lore.kernel.org/netdev/20240724164840.2536605-1-larysa.zaremba@intel.com/
+v2->v3:
+* deconfig VSI when coalesce allocation fails in ice_vsi_rebuild (patch 2/6)
+* rebase and resolve conflicts in patch 3 and 4
+* add tags from v2
 
-I'm not sure if behaviour of glibc mmap() and syscall mmap2() would be
-same, but we should use glibc at most places which accounts for
-different architectures correctly. Maybe the differences were only
-present in case of mremap().
+v1: https://lore.kernel.org/netdev/20240610153716.31493-1-larysa.zaremba@intel.com/
+v1->v2:
+* use mutex for locking
+* redefine critical sections
+* account for short time between rebuild and VSI being open
+* add netif_queue_set_napi() patch, so ICE_RTNL_WAITS_FOR_RESET strategy can be
+  dropped, no more rtnl-locked code in ice_vsi_rebuild()
+* change the test case from waiting for tx_timeout to happen to actively firing
+  resets through sysfs, this adds more minor fixes on top
+
+Larysa Zaremba (6):
+  ice: move netif_queue_set_napi to rtnl-protected sections
+  ice: protect XDP configuration with a mutex
+  ice: check for XDP rings instead of bpf program when unconfiguring
+  ice: check ICE_VSI_DOWN under rtnl_lock when preparing for reset
+  ice: remove ICE_CFG_BUSY locking from AF_XDP code
+  ice: do not bring the VSI up, if it was down before the XDP setup
+
+ drivers/net/ethernet/intel/ice/ice.h      |   2 +
+ drivers/net/ethernet/intel/ice/ice_base.c |  11 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c  | 179 ++++++++--------------
+ drivers/net/ethernet/intel/ice/ice_lib.h  |  10 +-
+ drivers/net/ethernet/intel/ice/ice_main.c |  47 ++++--
+ drivers/net/ethernet/intel/ice/ice_xsk.c  |  18 +--
+ 6 files changed, 106 insertions(+), 161 deletions(-)
 
 -- 
-BR,
-Muhammad Usama Anjum
+2.43.0
 
 
