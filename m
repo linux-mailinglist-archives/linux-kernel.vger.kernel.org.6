@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-291796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E59956702
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:31:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76569566E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD121F229FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266CD1C20A46
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE1F15ECC2;
-	Mon, 19 Aug 2024 09:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA24715ECE2;
+	Mon, 19 Aug 2024 09:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g2cGXP21"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bdyDEa3r"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594DA1607BF
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09BA15ECC2;
+	Mon, 19 Aug 2024 09:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724059799; cv=none; b=TAkJbnrBzqbT1Z0I2mtLKXXPX5apj3oao/ufiNkWgram7Vi4KLOaTu8m+bi+LIHPZKIoCfbP/vWoNIoZSp+xSvHdHFlkSY7SUL3Pusxgvjf+yu+C7iGeIiYBXWEhn1tvU2oDH3QRtXai/xj1AISD0+0upe48P3csD4iB7vdKfoI=
+	t=1724059744; cv=none; b=Y5iE9EB6uvly7NuCbOcu9XpgYIHlJx+gLvz+gPFJaDydSS+Scre0ei3VG/kgJVLz6jcIiCgj62nGWCG0ZVeOBVq2U2AKluiZjBC8Kg2fvN2nkzROk4sYQIYZPKBhH0is0PhnV/U5mjuvajZ9pDImRr226gtARhqr5jwuO615kPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724059799; c=relaxed/simple;
-	bh=JqTw+gimEBK2T1Y5GytfqaF/hsyvkel0HokYkqbxXuI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qm/KOmyPyJpvjt5GaiAVPOyeuFfHDdatuCBuMDeuv0z8e55aDOmOH+1PoYBM6Yx2nQiBXvQtu4+/2slO26VTNWr+TUEROSlUk3SAXD7Wp/Re9CrtC9X2MHMT41D5gvdwXRnc5bdgJhYHomWPQhOl5Wm4s7Hylq4DI6AdVY4I9/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g2cGXP21; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724059797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETsgpKbPtWULjBo2gaCD6rFNqT/vhyWhAo8UmZ8FOuk=;
-	b=g2cGXP212QKb1wp53qHz5QLKBV96rZwfxpxpB5g4B2Avj+FPYM6HBBw/eUVHNOZh4jpn3x
-	RWXaeVtXJn29IY/BeQf+sTlJJUynd+8us33nUR1d76fVkdloaUCkkZyZQQQUkfp1BJ4xym
-	M/6cnqeqyDikVZJVE7dP5w+d89HcpIo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-WYpDt3yrM9eQ0kKKvQkc-w-1; Mon,
- 19 Aug 2024 05:29:52 -0400
-X-MC-Unique: WYpDt3yrM9eQ0kKKvQkc-w-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70FC71954128;
-	Mon, 19 Aug 2024 09:29:51 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.11])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 648601956054;
-	Mon, 19 Aug 2024 09:29:47 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	jasowang@redhat.com,
-	mst@redhat.com,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Subject: [RFC 7/7] vhost: Add new UAPI to support changing Kthread mode
-Date: Mon, 19 Aug 2024 17:27:33 +0800
-Message-ID: <20240819092851.441670-8-lulu@redhat.com>
-In-Reply-To: <20240819092851.441670-1-lulu@redhat.com>
-References: <20240819092851.441670-1-lulu@redhat.com>
+	s=arc-20240116; t=1724059744; c=relaxed/simple;
+	bh=O3anHyxZGKI47++zGmsoUsfSAf8M8dwURXdMCZnQxTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SHTQjtSI8yCunoGQ585vvodVhHoQCEptUeP1zdMeV/wvAT9XdA9pTGgz1FJUF9zHQh6QFwesOQvOUuZA0jZyE73XhXNsHTOgARKwg2Yy9pnCyeurN5+v0VPeJC3KwuzGj4n6sJyREq0H+BrPzyZcTLH2mbaV7I1EVIVGG0UpaiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bdyDEa3r; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47INk1Za002536;
+	Mon, 19 Aug 2024 09:28:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5oqXScjibZQjsUj+JfXXMkmZzpjNKCj5FEqv1WndicE=; b=bdyDEa3rWCYoBwEl
+	kdtWwVQpvFKkm4rNx+SF8eSnUw5ft/DEhg/Pqz1f9SRXIa3JuBJ1KLT40WJ2vKDq
+	HlJoIuDzFrLLSEaLv4t2ERoI9Bys3+Jau1l7bOiAL3IRwDlefgt5VC7340XU9PbB
+	+CvjJiJp+YCCc8RJa/KYkkYZv8azZZCjtttW8QRE4GB7wkeBP5eVxZtd7JbH/XOP
+	vCZF+Ay399uwx6beyVFgsvQBtnefzQTcFY16fkCuuaOFcs5BMSJqFn2KiAP8go6X
+	9Fz77EZzDxy5sCgHbUlmnFga11TPbpeHSVVappFMTmJYEcDyR2C2BGlJyVfKt7Cr
+	gUMcGQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412key3pdu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 09:28:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47J9Ssmb013173
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 09:28:54 GMT
+Received: from [10.216.31.248] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 02:28:49 -0700
+Message-ID: <9de9be29-2f75-41a1-931b-f8cf0a9904ac@quicinc.com>
+Date: Mon, 19 Aug 2024 14:58:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: core: Prevent USB core invalid event buffer
+ address access
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>, <Thinh.Nguyen@synopsys.com>,
+        <gregkh@linuxfoundation.org>
+CC: <jh0801.jung@samsung.com>, <dh10.jung@samsung.com>, <naushad@samsung.com>,
+        <akash.m5@samsung.com>, <rc93.raju@samsung.com>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <taehyun.cho@samsung.com>, <hongpooh.kim@samsung.com>,
+        <eomji.oh@samsung.com>, <shijie.cai@samsung.com>,
+        <stable@vger.kernel.org>
+References: <CGME20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd@epcas5p2.samsung.com>
+ <20240808120507.1464-1-selvarasu.g@samsung.com>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <20240808120507.1464-1-selvarasu.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xDRjhdP30BnRxcaFntPhAlO8_h_fcSGR
+X-Proofpoint-GUID: xDRjhdP30BnRxcaFntPhAlO8_h_fcSGR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_08,2024-08-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408190065
 
-Add a new UAPI to support setting the vhost device to
-use kthread mode. The user space application needs to use
-VHOST_SET_USE_KTHREAD to set the mode. This setting must
-be set before VHOST_SET_OWNER is set.
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vhost/vhost.c      | 11 ++++++++++-
- include/uapi/linux/vhost.h |  2 ++
- 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 0a7b2999100f..d6b71bddc272 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2340,14 +2340,23 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
- {
- 	struct eventfd_ctx *ctx;
- 	u64 p;
--	long r;
-+	long r = 0;
- 	int i, fd;
-+	bool kthread;
- 
- 	/* If you are not the owner, you can become one */
- 	if (ioctl == VHOST_SET_OWNER) {
- 		r = vhost_dev_set_owner(d);
- 		goto done;
- 	}
-+	if (ioctl == VHOST_SET_USE_KTHREAD) {
-+		if (copy_from_user(&kthread, argp, sizeof(kthread))) {
-+			r = -EFAULT;
-+			goto done;
-+		}
-+		use_kthread = kthread;
-+		goto done;
-+	}
- 
- 	/* You must be the owner to do anything else */
- 	r = vhost_dev_check_owner(d);
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index b95dd84eef2d..386fe735da63 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -235,4 +235,6 @@
-  */
- #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
- 					      struct vhost_vring_state)
-+
-+#define VHOST_SET_USE_KTHREAD _IOW(VHOST_VIRTIO, 0x83, bool)
- #endif
--- 
-2.45.0
+On 8/8/2024 5:35 PM, Selvarasu Ganesan wrote:
+> This commit addresses an issue where the USB core could access an
+> invalid event buffer address during runtime suspend, potentially causing
+> SMMU faults and other memory issues. The problem arises from the
+> following sequence.
+>          1. In dwc3_gadget_suspend, there is a chance of a timeout when
+>          moving the USB core to the halt state after clearing the
+>          run/stop bit by software.
+>          2. In dwc3_core_exit, the event buffer is cleared regardless of
+>          the USB core's status, which may lead to an SMMU faults and
+>          other memory issues. if the USB core tries to access the event
+>          buffer address.
+> 
+> To prevent this issue, this commit ensures that the event buffer address
+> is not cleared by software  when the USB core is active during runtime
+> suspend by checking its status before clearing the buffer address.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 89d7f9629946 ("usb: dwc3: core: Skip setting event buffers for host only controllers")
 
+I don't think the fixes tag is right.
+
+This fix is independent of whether controller is host only capable or 
+not. This is fixing the original commit that introduced the cleanup call.
+
+Regards,
+Krishna,
+
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> ---
+> 
+> Changes in v2:
+> - Added separate check for USB controller status before cleaning the
+>    event buffer.
+> - Link to v1: https://lore.kernel.org/lkml/20240722145617.537-1-selvarasu.g@samsung.com/
+> ---
+>   drivers/usb/dwc3/core.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 734de2a8bd21..5b67d9bca71b 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -564,10 +564,15 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
+>   void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
+>   {
+>   	struct dwc3_event_buffer	*evt;
+> +	u32				reg;
+>   
+>   	if (!dwc->ev_buf)
+>   		return;
+>   
+> +	reg = dwc3_readl(dwc->regs, DWC3_DSTS);
+> +	if (!(reg & DWC3_DSTS_DEVCTRLHLT))
+> +		return;
+> +
+>   	evt = dwc->ev_buf;
+>   
+>   	evt->lpos = 0;
 
