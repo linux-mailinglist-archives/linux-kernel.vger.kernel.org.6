@@ -1,193 +1,253 @@
-Return-Path: <linux-kernel+bounces-292706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D76957340
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8EA957347
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05D9284A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C101F20F5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15051898E8;
-	Mon, 19 Aug 2024 18:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4F51898EF;
+	Mon, 19 Aug 2024 18:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nu5zeQl3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CisaNtag"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37701189512;
-	Mon, 19 Aug 2024 18:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5229E136663;
+	Mon, 19 Aug 2024 18:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092180; cv=none; b=L613gReoJJiMw8ureQFU6WnBKDkM0ZKiTe11HCHs20HYcadteRHmruot0LPgBxJpleDJ+OrT+f+bgR/IetNLj/drIuS+jwufsAeZvKahxh/wuVUQnrP2h+E99ATyZQ5Hh70+BD/6yBqkIEbnxFpXxJSdmzI3StYbRFPTBsDh1ko=
+	t=1724092224; cv=none; b=JHNqjpNteN+2tXb69LxOnsdu+cJXqeZwGzBBvtN8lCWZmNAMK7Fag8dSB7/+xFYMqkuXVLNCdeLgjuwGiUwIam20GBGYCOoRvqAQC0FjVsvfmlArP/Gy43B5SPVUJHWBaCkroma1dpR02SF5JFfhZ5uVMgADpHiXHz5eoK8bcHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092180; c=relaxed/simple;
-	bh=RQ7i3UfkVy05ASqG8daq5DVVmW9E2kAR2KVRBwhbH/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CTMbjEIMb5TdszyNP/MtAig/CBaltX5pJ889OcSfCgi7WPJMsuRVvAr4jtIXjPpXczAtayS0MXaaifErwMHEWlQwIKg9KAQiBdgEX3gHSOwuDHzkMM/CCJp1R/G4nxpziongkVpHgmztvC4nFjklEqU2WNkGILU3AMjshTT3eq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nu5zeQl3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724092178; x=1755628178;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RQ7i3UfkVy05ASqG8daq5DVVmW9E2kAR2KVRBwhbH/o=;
-  b=Nu5zeQl3rWXYiM34z+Lkv82laO2yK0+rviPsMvZ2AAF+wunonZFOe1R/
-   I1OYFEX1UZOOapvoihS4LuB689vx6+DnJd51MM5TaknyF7+s5Qty558Wn
-   /be6nyq3+t+d8xkD7HHed2JEB/8zz7xwtGerKty/JQsANKopGS+f5WXnp
-   EyZOMOQNm3k+h8SXAGy1PTCyS/ykx7Hk3O1oxmAgvYYOJ82gzMNIrhA5s
-   iqa1D2PUiQlwSU1L6wFv95QA2YuJolFWT02pcqRfw066okT9HL8VWC+c1
-   cuJxNf8vLUmPyhfmtobQPd8t0Tf+ltOy/ArGn2WEe1kPTDwO4DBsXTZHG
-   w==;
-X-CSE-ConnectionGUID: YI7IqZfWQJKQdoMN8S82JQ==
-X-CSE-MsgGUID: 4eIOIfOrQ0SfqVlJrQzf7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="21979404"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="21979404"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:29:37 -0700
-X-CSE-ConnectionGUID: 9ni8XZAPTdqTgfhRObze4Q==
-X-CSE-MsgGUID: E2+hFNjZSOi13idnQnA3pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="64850618"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 19 Aug 2024 11:29:36 -0700
-From: kan.liang@linux.intel.com
-To: tglx@linutronix.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	ak@linux.intel.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	stable@vger.kernel.org
-Subject: [PATCH] perf/x86/intel: Limit the period on Haswell
-Date: Mon, 19 Aug 2024 11:30:04 -0700
-Message-Id: <20240819183004.3132920-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1724092224; c=relaxed/simple;
+	bh=tSCee26JGqJNW5fxQxtynl0HcRSR8D1JgiXpOYtmgQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XKP6lv81rlzx+YNEv96DWko9s4B9YnKeuqiZuwAjqBInJSeA4xuwTsvOkgD+TGGObhgYlIZnvFBRipPQVzIvDaR6YegvvYNhAqQ4nnohPbsdRDhNdRoqd7GQ4QqlSkrO8ElBVJ/G5bq5BhtpITUDR7A+OemwzdHTDFLHwVhqVhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CisaNtag; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D269CC4AF0C;
+	Mon, 19 Aug 2024 18:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724092223;
+	bh=tSCee26JGqJNW5fxQxtynl0HcRSR8D1JgiXpOYtmgQE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=CisaNtagHd7kzmJV3mDWmcmMsgFTgfs+tmHl8P4hdEaoMPYBULdPAkWsHEZYWMEda
+	 Iakc6ZACdJudRxVuGArYNN4cP1ELKOjvPYuQpa3AQTl2Z/jp1APCMx0qGvV4yr+QNV
+	 4hgKfLp8qglnaLCaoKW1PLTGGzKvQWg8Mlb9g49F6nQKNzrFfIXCgNATvK/0gVlatK
+	 dkrIfUS7tNHWCesy3AI2AzQy7a/Hyr2hfFnbNHe0hWOqkI7vBjg8cG6yHzQ5PkGfRY
+	 BM6i40sEcVBpG1JH+s4rC50exOg4TLN9m9RVHw0eIEqMtf20BBy5/3T6Tr8VlztScE
+	 0+85NVFrK3c1w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD985C52D7C;
+	Mon, 19 Aug 2024 18:30:23 +0000 (UTC)
+From: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>
+Date: Mon, 19 Aug 2024 11:30:15 -0700
+Subject: [PATCH v2] Avoid memory barrier in read_seqcount() through load
+ acquire
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
+X-B4-Tracking: v=1; b=H4sIADaPw2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0Nj3eLUwvj8gpLM3MyqVF0zi2QTCzNLs2RzSwsloJaCotS0zAqwcdG
+ xtbUA0UUVFF4AAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-arch@vger.kernel.org, "Christoph Lameter (Ampere)" <cl@gentwo.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724092223; l=5831;
+ i=cl@gentwo.org; s=20240811; h=from:subject:message-id;
+ bh=33u86Z1NtTj5I1hzjsT/8J5bCWwIeort9/FFXzrHRO8=;
+ b=xjoqKpuJtKmVY/p7XqcrNDj6VvwsP/litDEErvD8DiwRs7UAnTdP/zYFWneATI5cWwAHPBQAe
+ ONJwSIhLrBvD2MOb674/6mx5xNjsJr7TwjTFsCE/PjBfuy4IL4vKzRA
+X-Developer-Key: i=cl@gentwo.org; a=ed25519;
+ pk=I7gqGwDi9drzCReFIuf2k9de1FI1BGibsshXI0DIvq8=
+X-Endpoint-Received: by B4 Relay for cl@gentwo.org/20240811 with
+ auth_id=194
+X-Original-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Reply-To: cl@gentwo.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
 
-Running the ltp test cve-2015-3290 concurrently reports the following
-warnings.
+Some architectures support load acquire which can save us a memory
+barrier and save some cycles.
 
-perfevents: irq loop stuck!
-  WARNING: CPU: 31 PID: 32438 at arch/x86/events/intel/core.c:3174
-  intel_pmu_handle_irq+0x285/0x370
-  Call Trace:
-   <NMI>
-   ? __warn+0xa4/0x220
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? __report_bug+0x123/0x130
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? __report_bug+0x123/0x130
-   ? intel_pmu_handle_irq+0x285/0x370
-   ? report_bug+0x3e/0xa0
-   ? handle_bug+0x3c/0x70
-   ? exc_invalid_op+0x18/0x50
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? irq_work_claim+0x1e/0x40
-   ? intel_pmu_handle_irq+0x285/0x370
-   perf_event_nmi_handler+0x3d/0x60
-   nmi_handle+0x104/0x330
+A typical sequence
 
-Thanks to Thomas Gleixner's analysis, the issue is caused by the low
-initial period (1) of the frequency estimation algorithm, which triggers
-the defects of the HW, specifically erratum HSW11 and HSW143. (For the
-details, please refer https://lore.kernel.org/lkml/87plq9l5d2.ffs@tglx/)
+	do {
+		seq = read_seqcount_begin(&s);
+		<something>
+	} while (read_seqcount_retry(&s, seq);
 
-The HSW11 requires a period larger than 100 for the INST_RETIRED.ALL
-event, but the initial period in the freq mode is 1. The erratum is the
-same as the BDM11, which has been supported in the kernel. A minimum
-period of 128 is enforced as well on HSW.
+requires 13 cycles on ARM64 for an empty loop. Two read memory
+barriers are needed. One for each of the seqcount_* functions.
 
-HSW143 is regarding that the fixed counter 1 may overcount 32 with the
-Hyper-Threading is enabled. However, based on the test, the hardware
-has more issues than it tells. Besides the fixed counter 1, the message
-'interrupt took too long' can be observed on any counter which was armed
-with a period < 32 and two events expired in the same NMI. A minimum
-period of 32 is enforced for the rest of the events.
-The recommended workaround code of the HSW143 is not implemented.
-Because it only addresses the issue for the fixed counter. It brings
-extra overhead through extra MSR writing. No related overcounting issue
-has been reported so far.
+We can replace the first read barrier with a load acquire of
+the seqcount which saves us one barrier.
 
-Fixes: 3a632cb229bf ("perf/x86/intel: Add simple Haswell PMU support")
-Reported-by: Li Huafei <lihuafei1@huawei.com>
-Closes: https://lore.kernel.org/lkml/20240729223328.327835-1-lihuafei1@huawei.com/
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: stable@vger.kernel.org
+On ARM64 doing so reduces the cycle count from 13 to 8.
+
+This is a general improvement for the ARM64 architecture and not
+specific to a certain processor. The cycle count here was
+obtained on a Neoverse N1 (Ampere Altra).
+
+The ARM documentation states that load acquire is more effective
+than a load plus barrier. In general that tends to be true on all
+compute platforms that support both.
+
+See (as quoted by Linus Torvalds):
+   https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions
+
+ "Weaker ordering requirements that are imposed by Load-Acquire and
+  Store-Release instructions allow for micro-architectural
+  optimizations, which could reduce some of the performance impacts that
+  are otherwise imposed by an explicit memory barrier.
+
+  If the ordering requirement is satisfied using either a Load-Acquire
+  or Store-Release, then it would be preferable to use these
+  instructions instead of a DMB"
+
+Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
 ---
- arch/x86/events/intel/core.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+V1->V2
+- Describe the benefit of load acquire vs barriers
+- Explain the CONFIG_ARCH_HAS_ACQUIRE_RELEASE option better
+---
+ arch/Kconfig            |  8 ++++++++
+ arch/arm64/Kconfig      |  1 +
+ include/linux/seqlock.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 50 insertions(+)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index e8bd45556c30..605ed19043ed 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4634,6 +4634,25 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
- 	return HYBRID_INTEL_CORE;
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 975dd22a2dbd..3c270f496231 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1600,6 +1600,14 @@ config ARCH_HAS_KERNEL_FPU_SUPPORT
+ 	  Architectures that select this option can run floating-point code in
+ 	  the kernel, as described in Documentation/core-api/floating-point.rst.
+ 
++config ARCH_HAS_ACQUIRE_RELEASE
++	bool
++	help
++	  Setting ARCH_HAS_ACQUIRE_RELEASE indicates that the architecture
++	  supports load acquire and release. Typically these are more effective
++	  than memory barriers. Code will prefer the use of load acquire and
++	  store release over memory barriers if this option is enabled.
++
+ source "kernel/gcov/Kconfig"
+ 
+ source "scripts/gcc-plugins/Kconfig"
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a2f8ff354ca6..19e34fff145f 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -39,6 +39,7 @@ config ARM64
+ 	select ARCH_HAS_PTE_DEVMAP
+ 	select ARCH_HAS_PTE_SPECIAL
+ 	select ARCH_HAS_HW_PTE_YOUNG
++	select ARCH_HAS_ACQUIRE_RELEASE
+ 	select ARCH_HAS_SETUP_DMA_OPS
+ 	select ARCH_HAS_SET_DIRECT_MAP
+ 	select ARCH_HAS_SET_MEMORY
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index d90d8ee29d81..353fcf32b800 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -176,6 +176,28 @@ __seqprop_##lockname##_sequence(const seqcount_##lockname##_t *s)	\
+ 	return seq;							\
+ }									\
+ 									\
++static __always_inline unsigned						\
++__seqprop_##lockname##_sequence_acquire(const seqcount_##lockname##_t *s) \
++{									\
++	unsigned seq = smp_load_acquire(&s->seqcount.sequence);		\
++									\
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT))				\
++		return seq;						\
++									\
++	if (preemptible && unlikely(seq & 1)) {				\
++		__SEQ_LOCK(lockbase##_lock(s->lock));			\
++		__SEQ_LOCK(lockbase##_unlock(s->lock));			\
++									\
++		/*							\
++		 * Re-read the sequence counter since the (possibly	\
++		 * preempted) writer made progress.			\
++		 */							\
++		seq = smp_load_acquire(&s->seqcount.sequence);		\
++	}								\
++									\
++	return seq;							\
++}									\
++									\
+ static __always_inline bool						\
+ __seqprop_##lockname##_preemptible(const seqcount_##lockname##_t *s)	\
+ {									\
+@@ -211,6 +233,11 @@ static inline unsigned __seqprop_sequence(const seqcount_t *s)
+ 	return READ_ONCE(s->sequence);
  }
  
-+static inline bool erratum_hsw11(struct perf_event *event)
++static inline unsigned __seqprop_sequence_acquire(const seqcount_t *s)
 +{
-+	return (event->hw.config & INTEL_ARCH_EVENT_MASK) ==
-+		X86_CONFIG(.event=0xc0, .umask=0x01);
++	return smp_load_acquire(&s->sequence);
 +}
 +
-+/*
-+ * The HSW11 requires a period larger than 100 which is the same as the BDM11.
-+ * A minimum period of 128 is enforced as well for the INST_RETIRED.ALL.
-+ *
-+ * The message 'interrupt took too long' can be observed on any counter which
-+ * was armed with a period < 32 and two events expired in the same NMI.
-+ * A minimum period of 32 is enforced for the rest of the events.
-+ */
-+static void hsw_limit_period(struct perf_event *event, s64 *left)
-+{
-+	*left = max(*left, erratum_hsw11(event) ? 128 : 32);
-+}
-+
- /*
-  * Broadwell:
-  *
-@@ -4651,8 +4670,7 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
-  */
- static void bdw_limit_period(struct perf_event *event, s64 *left)
+ static inline bool __seqprop_preemptible(const seqcount_t *s)
  {
--	if ((event->hw.config & INTEL_ARCH_EVENT_MASK) ==
--			X86_CONFIG(.event=0xc0, .umask=0x01)) {
-+	if (erratum_hsw11(event)) {
- 		if (*left < 128)
- 			*left = 128;
- 		*left &= ~0x3fULL;
-@@ -6821,6 +6839,7 @@ __init int intel_pmu_init(void)
+ 	return false;
+@@ -259,6 +286,7 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+ #define seqprop_ptr(s)			__seqprop(s, ptr)(s)
+ #define seqprop_const_ptr(s)		__seqprop(s, const_ptr)(s)
+ #define seqprop_sequence(s)		__seqprop(s, sequence)(s)
++#define seqprop_sequence_acquire(s)	__seqprop(s, sequence_acquire)(s)
+ #define seqprop_preemptible(s)		__seqprop(s, preemptible)(s)
+ #define seqprop_assert(s)		__seqprop(s, assert)(s)
  
- 		x86_pmu.hw_config = hsw_hw_config;
- 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
-+		x86_pmu.limit_period = hsw_limit_period;
- 		x86_pmu.lbr_double_abort = true;
- 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
- 			hsw_format_attr : nhm_format_attr;
+@@ -293,6 +321,18 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+  *
+  * Return: count to be passed to read_seqcount_retry()
+  */
++#ifdef CONFIG_ARCH_HAS_ACQUIRE_RELEASE
++#define raw_read_seqcount_begin(s)					\
++({									\
++	unsigned _seq;							\
++									\
++	while ((_seq = seqprop_sequence_acquire(s)) & 1)		\
++		cpu_relax();						\
++									\
++	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
++	_seq;								\
++})
++#else
+ #define raw_read_seqcount_begin(s)					\
+ ({									\
+ 	unsigned _seq = __read_seqcount_begin(s);			\
+@@ -300,6 +340,7 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+ 	smp_rmb();							\
+ 	_seq;								\
+ })
++#endif
+ 
+ /**
+  * read_seqcount_begin() - begin a seqcount_t read critical section
+
+---
+base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
+change-id: 20240813-seq_optimize-68c48696c798
+
+Best regards,
 -- 
-2.38.1
+Christoph Lameter <cl@gentwo.org>
+
 
 
