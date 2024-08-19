@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-292264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C33A956D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963A2956D49
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CA51F2328A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F741C22A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB511741FE;
-	Mon, 19 Aug 2024 14:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA8F175D4C;
+	Mon, 19 Aug 2024 14:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kgtr1+9s"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BroEVKs1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BEB173335;
-	Mon, 19 Aug 2024 14:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2899172BCE;
+	Mon, 19 Aug 2024 14:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077749; cv=none; b=oNsatn95AOMRNiAp9pMjjiKhsBT8ZT7oiG8mZ2yQT6fICNv2PR4utbhRqoNakTzoLxqEgCwdIJHvjPBEIJOhN20oBaDL3KF5Z6UzTLm9odaQOOe9sqYcOrFbmvVojkXKFVyriNRhJHIX7ORctQwKrUE8f92oDsbpLm3jE0+pJR0=
+	t=1724077797; cv=none; b=OCmTghARkXtDe0BjJ9gFJicN7E6l2GlCErtu6eFfDqiIFl2YEWffgZh3Mk24NxR45ecE5JMhqOSIU0fXRhUPnTn2kG9dXi0a7Z62X2uDta9Mr8iokwxIzH29yLfDlxyUxYFwllgyYkDzDFsp82I1AH8M2PoB5SmQ1pryFtWDZAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077749; c=relaxed/simple;
-	bh=RnUGqsHXjmzPtaPPuX71ueTb0berosZ1ANglk0h5gY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OzqKt1u4IeiPkKQqaCX4RF7Rj9K3l+P5AZPFEWqefB2pUBLpvJSOTUaykM9MuxfoJMizs+XgI08WKgaAElEi1r//qm28+Ntd3Mvrr3atqpKtG/9zJE7kp0tiODn8zLGMsWF63xbHeM4N6C+xY53GMtbRBP9lffKefxm2H+QW6Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kgtr1+9s; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBVWxJ006603;
-	Mon, 19 Aug 2024 14:28:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RnUGqsHXjmzPtaPPuX71ueTb0berosZ1ANglk0h5gY0=; b=kgtr1+9sCei6+Sci
-	zbDjNfv7eGCvb/+lwVPX/ruaO0DMiVRmyDqxG77pXzqDJpjR01/qLUl3GEXn7RY4
-	aiSq9buS1cyzJQMQP6jaVQ7zFRdLi9x1/wO4cFjO+ogbJNE2hzuKTSO+Jhg6E8s7
-	3Rn35cDEOhefJkpe9RYu1mf7Hw/ecDWPwrj2RsLkysDQhgETiNEDJYqxpqx6wz9F
-	hUKrdh2PHiB0KH/U/QzEz78EFNvgKH3NsF8LIJfLZxoB2RwNN1Qmw8X1nz705hqf
-	Z7emNcqO/gZ9XC2KU9dnDOVgobXvnLlzOp1D7j8Ly4U8+pIwCB4vstbBeXagqyYx
-	aX3WtQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412mmemd4b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:28:55 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JESsfT014355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:28:54 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
- 2024 07:28:53 -0700
-Message-ID: <bbc26eb0-973f-4680-aff1-2be2f598a963@quicinc.com>
-Date: Mon, 19 Aug 2024 07:28:53 -0700
+	s=arc-20240116; t=1724077797; c=relaxed/simple;
+	bh=3vFAVBemVu5G1r3HkBWDFfS7TdtqyGi99iIkVJzw9PY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ai6+Isu61Oijw67OGf4prqtyqu2t+Z8Bq6cly7Ceb969z0JQQe73xnDOS+g5XzX3Bpd95RE7ivffCJ+1Gu4kjOG9uVkmitLW84M3tLAwUKJ9hybcU2BZtS6rMoTcBf6lFuKeLtIAo1DmyTDlhIH4zmew8ynHDQgMaRxlw/LCXK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BroEVKs1; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724077796; x=1755613796;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3vFAVBemVu5G1r3HkBWDFfS7TdtqyGi99iIkVJzw9PY=;
+  b=BroEVKs1m/VXgx0+H+x7rHBbEYyvyxKpIZmkbux4D+xhJCE48ifwXbKm
+   TkaSBWqZG6BB+S7HorKc0gatkPrLt10XWlk8m2dL22SoQnAuZnVwBQNQa
+   ozoJfZGh6EiMJi2Zq8exEXNmtS7hyO7WjedUQ50ifyKHrggIu3Ue9jWUb
+   QqWwUsMusa5vxZCVz40S3gPAYeyi5dX9Ht8PBnMDOB/8Haf5y7tqxg5Vt
+   20COoDNSQ7jWmV/VcX3nVxMb6nY98wV8w6+KYMe0QvGUwIiFPEadJxuEx
+   0ra/2+/+OdP8Aa+/UzKlpyG6ApOn79XKul8ssnopqaYG/xY4Dte91aDrt
+   A==;
+X-CSE-ConnectionGUID: e9g6iYBNSIepzx7RgnxdSQ==
+X-CSE-MsgGUID: +fa5viyuSJyIcAPUkYp3fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33744479"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="33744479"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:29:53 -0700
+X-CSE-ConnectionGUID: VoU4aJEGTwuzkfGhXKHkJQ==
+X-CSE-MsgGUID: pyBIB+YtTUW0xEw9aS1BdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="64783798"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Aug 2024 07:29:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 1B34A2D8; Mon, 19 Aug 2024 17:29:49 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/5] gpiolib: Add and utilise for_each_gpio_property_name()
+Date: Mon, 19 Aug 2024 17:28:55 +0300
+Message-ID: <20240819142945.327808-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] appletalk: tashtalk: Add LocalTalk line
- discipline driver for AppleTalk using a TashTalk adapter
-Content-Language: en-US
-To: Rodolfo Zitellini <rwz@xhero.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, Doug Brown <doug@schmorgal.com>
-References: <20240817093316.9239-1-rwz@xhero.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240817093316.9239-1-rwz@xhero.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IjnG0bMvwOyH1Sk-aXGKU9xGpOvcn6fT
-X-Proofpoint-ORIG-GUID: IjnG0bMvwOyH1Sk-aXGKU9xGpOvcn6fT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_12,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190096
+Content-Transfer-Encoding: 8bit
 
-On 8/17/24 02:33, Rodolfo Zitellini wrote:
-...
-> +module_init(tashtalk_init);
-> +module_exit(tashtalk_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS_LDISC(N_TASHTALK);
+There are a few of duplication of the same for-loop against GPIO
+suffixes. This series addresses that along with proposal to eliminate
+the exported gpio_suffix_count by converting the array to be
+NULL-terminated.
 
-missing MODULE_DESCRIPTION()
+v2:
+- fixed a rebase issue (LKP)
 
-Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-description is missing"), a module without a MODULE_DESCRIPTION() will
-result in a warning when built with make W=1. Recently, multiple
-developers have been eradicating these warnings treewide, and very few
-are left, so please don't introduce a new one :)
+Andy Shevchenko (5):
+  gpiolib: Introduce for_each_gpio_property_name() helper
+  gpiolib: swnode: Unify return code variable name
+  gpiolib: swnode: Introduce swnode_gpio_get_reference() helper
+  gpiolib: swnode: Make use of for_each_gpio_property_name()
+  gpiolib: Replace gpio_suffix_count with NULL-terminated array
 
-/jeff
+ drivers/gpio/gpiolib-acpi.c   | 21 ++----------
+ drivers/gpio/gpiolib-of.c     | 25 +++------------
+ drivers/gpio/gpiolib-swnode.c | 60 ++++++++++++++++-------------------
+ drivers/gpio/gpiolib.c        |  3 +-
+ drivers/gpio/gpiolib.h        | 16 ++++++++--
+ 5 files changed, 49 insertions(+), 76 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
