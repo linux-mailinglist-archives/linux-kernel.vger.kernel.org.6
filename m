@@ -1,103 +1,171 @@
-Return-Path: <linux-kernel+bounces-292882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDFE9575AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:31:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C799575AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C8B1F23630
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516DE2832C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56621158DC4;
-	Mon, 19 Aug 2024 20:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CB6158DC5;
+	Mon, 19 Aug 2024 20:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx7OahjE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GzZonBwd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC0C158216;
-	Mon, 19 Aug 2024 20:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4D315622E;
+	Mon, 19 Aug 2024 20:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724099479; cv=none; b=s3ZWv6DiYaU/mO1fyeuyt8CVj0pZyVLtQsHZzGpNSwz0JIsBDhs1CZA51xr+jzCTgsrnmhNwypziuI2Us2elZrj6M2vsyCqRnNidwsa1Y3DXMphXDNWp810fR9oClEs/uDDbpP7Xk+NBzK6JdWM2KXx9IVDa+pgXfi7mxk7FHrk=
+	t=1724099512; cv=none; b=A8p72jVG15cgrnibRUjR8UWeUmXYV3fT1FuMkrLtKh6cJIy8zuRTu4bVMN0/+UbD1oBCbj0GPGFXiiDWaIcLBCQgXChLuThtdWZcxq0JedNkzFExPiWKY/dcnJNDyxYK83F46pzXUmv4Y7IGnKbOWhVRFtcMni3IwOOARz/1r3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724099479; c=relaxed/simple;
-	bh=oCmoOhqRG/UpSE5QjX5/1IwargPDbVoT9EUID1D0lWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvsN3zhrwKBBG2trWW6FcOKF4g0NOG8rU/6AaBkkzp+bCQDgw6jJ0aG5xtBHRhoHlDmNHabLZ55YMH9HokpcgWhtQ5Cdjj33TFNCjFcrF3fFdOVVlOVLFHwLFo3bGfMS+7H4AhNMbjXcfUoJbHvp4V1V8CrSQQiH5kAjpvujgWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx7OahjE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75DBDC32782;
-	Mon, 19 Aug 2024 20:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724099479;
-	bh=oCmoOhqRG/UpSE5QjX5/1IwargPDbVoT9EUID1D0lWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sx7OahjEZRYeFtscL5dOL0uE3/HonQZNwiM44+7j+7dggpd33gkgF79JiOxExWJ16
-	 GBxYjjTJ4rPajfaFaWLqmYqVXOnnphLqtVAHChdlOYQWS8o2UxpToOOqHi+Dmtqtn/
-	 IFVABjfXFyjHC8WQHBIBENXJAn7n7mDH196o3hLxmbVMsF7L9m3ikTk7laEZNFmZB7
-	 DRSv8ZRIukDKzGCGUrHwwWIU64K5Hxp8xFr6UvhD48ua8/wcejln/hKX64pmaOWgUC
-	 /FYSduFUy38kgzaPLuzyxikBBGtdMTfiNe4Bivh1Hpan3zUc25tr2Dqd6CQHfU5Qdd
-	 77s8xMLxE3j3g==
-Date: Mon, 19 Aug 2024 22:31:13 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Yuntao Liu <liuyuntao12@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH -next 0/9] drivers: fix some module autoloading
-Message-ID: <cqvebznbtkryilyd3z6m3lgppwrollf2klyi67mrf4y3mzdq4l@cz2v6efhq2bd>
-References: <20240819113855.787149-1-liuyuntao12@huawei.com>
- <dabde7bf-dcff-47c6-a68d-f5018ab00282@app.fastmail.com>
+	s=arc-20240116; t=1724099512; c=relaxed/simple;
+	bh=AFBzqSWfd86VuJQSxsrupyeSIumVSYkTVDw0C33wV7I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9ng4DPBH0c/8J1LN/BMdy2j3dEJSMb2PUQkq8O/xT3jJu/ggBs6orXYIH9ohRO97lXu4+FSAIb868IGpH4Ey/TfY7q7M+ym35q8t0tQvwgv4Z72OB25+fNXdDN3J2wJdG/0FhuQe3bYF1YkrYh2m48lNwUtZpNA3j014/fQxwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GzZonBwd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JB3KSn014962;
+	Mon, 19 Aug 2024 20:31:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0/qn9fbreLj8/Fht6Qgc1geh
+	nYOKnwESuih/Qy7Hv5I=; b=GzZonBwdwlXYGNG75phFde+zfTMTTz9TNJkjnLxt
+	vGORUtBvlxSvpqMupfI+8R6FUGhiBzFzisGmEETPoJ++rOcC/+2YJxlr8mihybfF
+	omTIXlAt2mc13m2nBJdpTkcmIgSVQfoxA2ngrL/ghbuha17iHIDa4iQgiNIgpqFY
+	2+GiKhafIfvlKjy4Mcu2ILftce2jygGWoJm0HhLtWDbRc4NlhQZlD2HeYcmsrHPj
+	69aSf7VOIzJCo1jqwHLZgFWxCNShxV3WZ91l0VGp0pstKFK3yrSxau0C9K9YNrOs
+	xclpdPltPmln81/M6hx6uTxL3+7cxaSAlOB6WfMFbILeKQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412h7n5qmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:31:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JKVaQv017247
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:31:36 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 13:31:32 -0700
+Date: Tue, 20 Aug 2024 02:01:28 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Antonino Maniscalco <antomani103@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] drm/msm/A6XX: Add a flag to allow preemption to
+ submitqueue_create
+Message-ID: <20240819203128.hit2csdpbbsybkoq@hu-akhilpo-hyd.qualcomm.com>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-6-7bda26c34037@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <dabde7bf-dcff-47c6-a68d-f5018ab00282@app.fastmail.com>
+In-Reply-To: <20240815-preemption-a750-t-v1-6-7bda26c34037@gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sQywXLhbu8vBOwauaCgB6YKXhPCfxsdc
+X-Proofpoint-GUID: sQywXLhbu8vBOwauaCgB6YKXhPCfxsdc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190139
 
-Hi,
+On Thu, Aug 15, 2024 at 08:26:16PM +0200, Antonino Maniscalco wrote:
+> Some userspace changes are necessary so add a flag for userspace to
+> advertise support for preemption.
 
-On Mon, Aug 19, 2024 at 02:09:49PM GMT, Arnd Bergmann wrote:
-> On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
-> > Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> > based on the alias from platform_device_id table.
-> >
-> > Yuntao Liu (9):
-> >   usb: ehci-mv: fix module autoloading
-> >   soc: pxa: ssp: fix module autoloading
-> >   misc: atmel-ssc: fix module autoloading
-> >   i2c: at91: fix module autoloading
-> >   mpc85xx_edac: fix module autoloading
-> >   dmaengine: pxa: fix module autoloading
-> >   dmaengine: mmp_pdma: fix module autoloading
-> >   dmaengine: at_hdmac: fix module autoloading
-> >   ipmi: ipmi_ssif: fix module autoloading
-> 
-> I looked at all the patches and found that most of them do not
-> use the table any more, or will stop using it in the near future.
-> 
-> I think your work to validate the correctness of the entries
-> is useful, but it may be more helpful to focus on removing
-> all the unused tables, including those that have a
-> MODULE_DEVICE_TABLE() tag.
-> 
-> If you are planning to do more such cleanups, maybe you can
-> go through them one subsystem at a time and look for drivers
-> that have both of_device_id and i2c_device_id/platform_device_id/
-> spi_device_id tables. If nothing in the kernel creates a device
-> with the legacy string, you can then send a patch that removes
-> the old device ID list and at the same time makes the DT support
-> unconditional in case there is an #ifdef CONFIG_OF check.
-> 
-> If the probe() function accesses platform_data, this would also
-> be unused, allowing an even nicer cleanup of removing the
-> platofrm_data path in favor of OF properties.
+So the intention is to fallback to level 0 preemption until user moves
+to Mesa libs with level 1 support for each new GPU? Please elaborate a bit.
 
-Thanks for looking into these patches, Arnd!
+-Akhil.
 
-Andi
+> 
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 12 ++++++++----
+>  include/uapi/drm/msm_drm.h            |  5 ++++-
+>  2 files changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index 1a90db5759b8..86357016db8d 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -453,8 +453,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+>  	OUT_PKT7(ring, CP_SET_MARKER, 1);
+>  	OUT_RING(ring, 0x101); /* IFPC disable */
+>  
+> -	OUT_PKT7(ring, CP_SET_MARKER, 1);
+> -	OUT_RING(ring, 0x00d); /* IB1LIST start */
+> +	if (submit->queue->flags & MSM_SUBMITQUEUE_ALLOW_PREEMPT) {
+> +		OUT_PKT7(ring, CP_SET_MARKER, 1);
+> +		OUT_RING(ring, 0x00d); /* IB1LIST start */
+> +	}
+>  
+>  	/* Submit the commands */
+>  	for (i = 0; i < submit->nr_cmds; i++) {
+> @@ -485,8 +487,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+>  			update_shadow_rptr(gpu, ring);
+>  	}
+>  
+> -	OUT_PKT7(ring, CP_SET_MARKER, 1);
+> -	OUT_RING(ring, 0x00e); /* IB1LIST end */
+> +	if (submit->queue->flags & MSM_SUBMITQUEUE_ALLOW_PREEMPT) {
+> +		OUT_PKT7(ring, CP_SET_MARKER, 1);
+> +		OUT_RING(ring, 0x00e); /* IB1LIST end */
+> +	}
+>  
+>  	get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
+>  		rbmemptr_stats(ring, index, cpcycles_end));
+> diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+> index 3fca72f73861..f37858db34e6 100644
+> --- a/include/uapi/drm/msm_drm.h
+> +++ b/include/uapi/drm/msm_drm.h
+> @@ -345,7 +345,10 @@ struct drm_msm_gem_madvise {
+>   * backwards compatibility as a "default" submitqueue
+>   */
+>  
+> -#define MSM_SUBMITQUEUE_FLAGS (0)
+> +#define MSM_SUBMITQUEUE_ALLOW_PREEMPT	0x00000001
+> +#define MSM_SUBMITQUEUE_FLAGS		    ( \
+> +		MSM_SUBMITQUEUE_ALLOW_PREEMPT | \
+> +		0)
+>  
+>  /*
+>   * The submitqueue priority should be between 0 and MSM_PARAM_PRIORITIES-1,
+> 
+> -- 
+> 2.46.0
+> 
+> 
 
