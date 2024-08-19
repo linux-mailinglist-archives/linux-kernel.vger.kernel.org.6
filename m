@@ -1,335 +1,158 @@
-Return-Path: <linux-kernel+bounces-292855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0144B957556
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6407095754B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7129F1F23C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D191F220B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AA61DF680;
-	Mon, 19 Aug 2024 20:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0727B1DD3A9;
+	Mon, 19 Aug 2024 20:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FdNDopih"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DupjDfdW"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391DF1DD39B;
-	Mon, 19 Aug 2024 20:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CEE187FF1;
+	Mon, 19 Aug 2024 20:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098110; cv=none; b=TuNxCHlmDW+b3/SpJ7lVECE4lPq3A7l/Qn5Jqxk633K9o8sx8vtXMVnBoyjefrwLUKZeL4a/II2atTnrD9t+pAp4xvjhDWGJTF1dhX1oTPXB8PnoQBQMKlwV5NPgw+VOrKSlgwjR98OTDx9BeQ0ejgxK+neZrhQEo2nsqlEZBx4=
+	t=1724098071; cv=none; b=LfbUwGx3IWE27zd31UEP6yLlRNT1LKW+g5yX9ZVB/sg0Z7CiCEw+ubLKIh86J1nQ6sd3FypOkv4GMaW+KsmrIb0wucJGc14lTJaMts0Fg4hQrkhk/Es/jIw2AuSQf9v7NIOsS4r6SneAZskO//Hejnrie/68A/WE14dGpG/+94s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098110; c=relaxed/simple;
-	bh=mBC/h/l9RjtodWk1nsZhY+oGspAZvoc28EsOZgvBRhw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=N3rvk3qOQSe5K4LXiXuE4C5l40VZnDSNwEBQvNMM+yUZobrIfycRzcir1rOYo/TAGTIIgfB3tf57Qt++8rMFLASngH2XuOJPBVCyBuz6l2d9myDNwOp8rawD6jZI+CpVNKBb7dvHnMuj1MluaN3sT3DLSaX5GJqkVBT638lPSdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FdNDopih; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBgvXf031294;
-	Mon, 19 Aug 2024 20:08:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NMlujU8Sht5g1QAb62FU0NkEnGuE+hAIpL7SLQUfPSk=; b=FdNDopihQxs4n76U
-	V6uk6YFHPhzhX4yazx/vvigeuT79Oqh1PWcDj1rAdQji/zraGVzHG6KIakTGu0Wb
-	9ZQ7fcTcFnW+NlWJ5IcUXu3+bsjUKyFkYhvvDG7vAWktulFWX+YsDy+ajHv1vtH5
-	Au1CHYlD8csaNRQX4CYg2u6NNmp3Bhq4vBfFunlcNg9deNzBeQ/ByFJHpi4FaX9M
-	Ige48UKkHsB2d9vUwNqThOEJqHcmFjJnZATkbs8AN87yIbtnMiTOSryjDVzVLc2u
-	nVfOtGtnhrqh7zTn/GxIHtWm5PdvhnUsEBmq2j75JgFeWgr9wHniRq3gqcjzdw4x
-	BIDEfw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412mmen9bx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 20:08:23 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JK8MaG030447
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 20:08:22 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 13:08:22 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-Date: Mon, 19 Aug 2024 13:07:45 -0700
-Subject: [PATCH v2 1/3] soc: qcom: pmic_glink: Fix race during
- initialization
+	s=arc-20240116; t=1724098071; c=relaxed/simple;
+	bh=rAPCRlcod+pfbPu210SomC+sQBvMBit2CDwdTkZs9WA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+xXNaWBF9vTtXdJjnFBhoRvGqNtXHdWLd9FxG7KsaSHdAaXUjnxnUM+S/C2CBBLEXZj10bhY1UWTyk+OfJk+IqfQ8Xgl3aibTKQ1VZ0PoGN5SQsbvBRwnGVzoSxqaZZKdxBtX6HxOsAci4S9kJtkihLfKsURCPcYY2WuuQ63PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DupjDfdW; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so922571a12.0;
+        Mon, 19 Aug 2024 13:07:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724098068; x=1724702868; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AXG6IXtrOjPM85KujCO90THzzqzY1pavUqqhKYUalFU=;
+        b=DupjDfdWerMwK5w3VidWTMW/SnbAzPXMPMu5hmhYPukmYW4C0Xp4ouyoiZhdrFr0df
+         3dhYfrh3WJoTWDtLNDoQVo2w5RZJfmdKNwCgEB6jguQ7ItPpkYvZntRcfRnpsTPwhkrg
+         QSBHZ5I3PYDyRPD2AhYLQJMhkwXzbWfgUs5XmMe4JM+tXQ6Vy5nmLKeV/zhoD9TgDRzJ
+         hyT8VhUCWbDCsOMS8SnOmaP3K44TpvMEcHVPwSDDAhFQcRnwKYYkthqDC9G22zSd2khP
+         n8qPOebCEi1x9UdpMvwcILerJaODruxmBj7Mb7pN1EIqau51o6SAeWf6NzOuyT7+Fh7x
+         xkLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724098068; x=1724702868;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AXG6IXtrOjPM85KujCO90THzzqzY1pavUqqhKYUalFU=;
+        b=NxDX3LfcAtRtaQqUuEbtR7fT+ZkJJQsU9Z7lUUAXZxrtNVe7pDbm5UQYYe6khIIMp9
+         BHMzN0VYYyWoVQO9flE3yGvd1gD05M5tbMsCqEmuMr1RXiLJlv3FpFhfNiWw5Jzlb7Ym
+         FIN8Fw1YEE9/EKVgBesfONYBuOXop17mXtqot03/gy5Ll88pPF7498vid2QxeFU1kVvl
+         VwlZUI/H3SeAKKHsddRkJuOrYsz9A7/2JADt8oeC0vOn+znXE6c43kuibdAYs8hvin17
+         la3fzSFURSUhI/8RVPuAkRP7ECATugEsh6RB+Q7Ff4gmajDAdkU2ehYhDkkMAUX0CUXp
+         Yh4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGyvbbjxIFllUp2yG0gdkVBFsUk+7lQ3EZZ9vUk5fMKb2LOmq0cG6U3cOiPugCJ8LxiRZKdAFIREU3MIc3PLZP3tNTw+OJwtCYDD8irOqDQfzVjCdAoUsV6G4aorX+5jPfKGjtOIV54XBzUPXVr9BWuWbx02unt+srQGMdf2mafeQ9m6+NpKEOO0tq16Qz7cOs+z2wd2pPPdjL2O1V3RfdWbzXSgZ+oSy3z0bRC37nrETzbvmOHz2331+/fA34zRWH2sPmYqdx
+X-Gm-Message-State: AOJu0YxxQNwsMAx5LjX8okw57/NavCixE2jgTv4tSx9OnVzqmsErCZsW
+	MS/VEry/4yr/yf/BM7pr2bKOtyDUYI3+bznBwDfpyOSzAynM9MFD
+X-Google-Smtp-Source: AGHT+IGJ+Gfht/qOvEgwrpTVPJu3XY+E8gChTgsY9fwcJajAIgQx/hjZADakWsaqM4RF1z+rkUv/TQ==
+X-Received: by 2002:a05:6402:51c6:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-5bf0ac5b251mr753759a12.17.1724098067404;
+        Mon, 19 Aug 2024 13:07:47 -0700 (PDT)
+Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5becfc7cc93sm4516920a12.3.2024.08.19.13.07.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 13:07:46 -0700 (PDT)
+Message-ID: <6406891b-e116-4f10-99c7-1d434d7e8410@gmail.com>
+Date: Mon, 19 Aug 2024 22:07:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240819-pmic-glink-v6-11-races-v2-1-88fe3ab1f0e2@quicinc.com>
-References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
-In-Reply-To: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
-To: Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Heikki
- Krogerus" <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>,
-        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        Bjorn Andersson
-	<quic_bjorande@quicinc.com>,
-        Johan Hovold <johan@kernel.org>, <stable@vger.kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724098101; l=8590;
- i=quic_bjorande@quicinc.com; s=20230915; h=from:subject:message-id;
- bh=mBC/h/l9RjtodWk1nsZhY+oGspAZvoc28EsOZgvBRhw=;
- b=cuzi1r0yFLRbL5FON2ynWbUpy8FwUrpJ2s+ybKmyE2GciX+WXxCRnoLH370qIkP9rMLdyoatt
- Rh/k7RV57OdCDwo0LxK5C9AAobR93B6c0EmOxXdbJ+gh4p8zORBiaZh
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=ed25519;
- pk=VkhObtljigy9k0ZUIE1Mvr0Y+E1dgBEH9WoLQnUtbIM=
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zODlutEKdnAwCmuumbzjQq545e0C0dR3
-X-Proofpoint-ORIG-GUID: zODlutEKdnAwCmuumbzjQq545e0C0dR3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190137
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] OF support for Surface System Aggregator Module
+To: Hans de Goede <hdegoede@redhat.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
+Content-Language: en-US
+From: Maximilian Luz <luzmaximilian@gmail.com>
+In-Reply-To: <1edadffb-67d9-476e-b0f7-7f3fc34e9592@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-As pointed out by Stephen Boyd it is possible that during initialization
-of the pmic_glink child drivers, the protection-domain notifiers fires,
-and the associated work is scheduled, before the client registration
-returns and as a result the local "client" pointer has been initialized.
+On 8/19/24 1:57 PM, Hans de Goede wrote:
+> Hi,
+> 
+> On 8/14/24 12:27 PM, Konrad Dybcio wrote:
+>> Wire up OF support for SSAM drivers, to use with Surface Laptop 7 and
+>> other Qualcomm-based devices.
+>>
+>> Patch 3 references compatible strings introduced in [1]
+>>
+>> [1] https://lore.kernel.org/linux-arm-msm/20240809-topic-sl7-v1-1-2090433d8dfc@quicinc.com/T/#u
+>>
+>> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> 
+> Thank you for your patch-series, I've applied the series to my
+> review-hans branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+> 
+> I did notice the following compiler warning when test building:
+> 
+> drivers/platform/surface/surface_aggregator_registry.c:278:36: warning: ‘ssam_node_group_sl7’ defined but not used [-Wunused-variable]
+>    278 | static const struct software_node *ssam_node_group_sl7[] = {
+>        |                                    ^~~~~~~~~~~~~~~~~~~
+> 
+> One way to fix this would be add #ifdef CONFIG_OF around the definition
+> of ssam_node_group_sl7, but then future devicetree based surface devices
+> would need more #ifdef-s so instead I've solved it by squashing in this fix:
+> 
+> diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
+> index 495cb4300617..ac96e883cb57 100644
+> --- a/drivers/platform/surface/surface_aggregator_registry.c
+> +++ b/drivers/platform/surface/surface_aggregator_registry.c
+> @@ -415,14 +415,12 @@ static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
+>   };
+>   MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
+>   
+> -#ifdef CONFIG_OF
+> -static const struct of_device_id ssam_platform_hub_of_match[] = {
+> +static const struct of_device_id ssam_platform_hub_of_match[] __maybe_unused = {
+>   	/* Surface Laptop 7 */
+>   	{ .compatible = "microsoft,romulus13", (void *)ssam_node_group_sl7 },
+>   	{ .compatible = "microsoft,romulus15", (void *)ssam_node_group_sl7 },
+>   	{ },
+>   };
+> -#endif
+>   
+>   static int ssam_platform_hub_probe(struct platform_device *pdev)
+>   {
+> 
+> Once I've run some tests on this branch the patches there will be
+> added to the platform-drivers-x86/for-next branch and eventually
+> will be included in the pdx86 pull-request to Linus for the next
+> merge-window.
 
-The outcome of this is a NULL pointer dereference as the "client"
-pointer is blindly dereferenced.
+I agree with Konrad, this looks like the best way to address this.
+Thanks!
 
-Timeline provided by Stephen:
- CPU0                               CPU1
- ----                               ----
- ucsi->client = NULL;
- devm_pmic_glink_register_client()
-  client->pdr_notify(client->priv, pg->client_state)
-   pmic_glink_ucsi_pdr_notify()
-    schedule_work(&ucsi->register_work)
-    <schedule away>
-                                    pmic_glink_ucsi_register()
-                                     ucsi_register()
-                                      pmic_glink_ucsi_read_version()
-                                       pmic_glink_ucsi_read()
-                                        pmic_glink_ucsi_read()
-                                         pmic_glink_send(ucsi->client)
-                                         <client is NULL BAD>
- ucsi->client = client // Too late!
-
-This code is identical across the altmode, battery manager and usci
-child drivers.
-
-Resolve this by splitting the allocation of the "client" object and the
-registration thereof into two operations.
-
-This only happens if the protection domain registry is populated at the
-time of registration, which by the introduction of commit '1ebcde047c54
-("soc: qcom: add pd-mapper implementation")' became much more likely.
-
-Reported-by: Amit Pundir <amit.pundir@linaro.org>
-Closes: https://lore.kernel.org/all/CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com/
-Reported-by: Johan Hovold <johan@kernel.org>
-Closes: https://lore.kernel.org/all/ZqiyLvP0gkBnuekL@hovoldconsulting.com/
-Reported-by: Stephen Boyd <swboyd@chromium.org>
-Closes: https://lore.kernel.org/all/CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com/
-Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
-Cc: stable@vger.kernel.org
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- drivers/power/supply/qcom_battmgr.c   | 16 ++++++++++------
- drivers/soc/qcom/pmic_glink.c         | 28 ++++++++++++++++++----------
- drivers/soc/qcom/pmic_glink_altmode.c | 17 +++++++++++------
- drivers/usb/typec/ucsi/ucsi_glink.c   | 16 ++++++++++------
- include/linux/soc/qcom/pmic_glink.h   | 11 ++++++-----
- 5 files changed, 55 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
-index 49bef4a5ac3f..df90a470c51a 100644
---- a/drivers/power/supply/qcom_battmgr.c
-+++ b/drivers/power/supply/qcom_battmgr.c
-@@ -1387,12 +1387,16 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
- 					     "failed to register wireless charing power supply\n");
- 	}
- 
--	battmgr->client = devm_pmic_glink_register_client(dev,
--							  PMIC_GLINK_OWNER_BATTMGR,
--							  qcom_battmgr_callback,
--							  qcom_battmgr_pdr_notify,
--							  battmgr);
--	return PTR_ERR_OR_ZERO(battmgr->client);
-+	battmgr->client = devm_pmic_glink_new_client(dev, PMIC_GLINK_OWNER_BATTMGR,
-+						     qcom_battmgr_callback,
-+						     qcom_battmgr_pdr_notify,
-+						     battmgr);
-+	if (IS_ERR(battmgr->client))
-+		return PTR_ERR(battmgr->client);
-+
-+	pmic_glink_register_client(battmgr->client);
-+
-+	return 0;
- }
- 
- static const struct auxiliary_device_id qcom_battmgr_id_table[] = {
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index 9ebc0ba35947..58ec91767d79 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -66,15 +66,14 @@ static void _devm_pmic_glink_release_client(struct device *dev, void *res)
- 	spin_unlock_irqrestore(&pg->client_lock, flags);
- }
- 
--struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
--							  unsigned int id,
--							  void (*cb)(const void *, size_t, void *),
--							  void (*pdr)(void *, int),
--							  void *priv)
-+struct pmic_glink_client *devm_pmic_glink_new_client(struct device *dev,
-+						     unsigned int id,
-+						     void (*cb)(const void *, size_t, void *),
-+						     void (*pdr)(void *, int),
-+						     void *priv)
- {
- 	struct pmic_glink_client *client;
- 	struct pmic_glink *pg = dev_get_drvdata(dev->parent);
--	unsigned long flags;
- 
- 	client = devres_alloc(_devm_pmic_glink_release_client, sizeof(*client), GFP_KERNEL);
- 	if (!client)
-@@ -85,6 +84,18 @@ struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
- 	client->cb = cb;
- 	client->pdr_notify = pdr;
- 	client->priv = priv;
-+	INIT_LIST_HEAD(&client->node);
-+
-+	devres_add(dev, client);
-+
-+	return client;
-+}
-+EXPORT_SYMBOL_GPL(devm_pmic_glink_new_client);
-+
-+void pmic_glink_register_client(struct pmic_glink_client *client)
-+{
-+	struct pmic_glink *pg = client->pg;
-+	unsigned long flags;
- 
- 	mutex_lock(&pg->state_lock);
- 	spin_lock_irqsave(&pg->client_lock, flags);
-@@ -95,11 +106,8 @@ struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
- 	spin_unlock_irqrestore(&pg->client_lock, flags);
- 	mutex_unlock(&pg->state_lock);
- 
--	devres_add(dev, client);
--
--	return client;
- }
--EXPORT_SYMBOL_GPL(devm_pmic_glink_register_client);
-+EXPORT_SYMBOL_GPL(pmic_glink_register_client);
- 
- int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len)
- {
-diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
-index 1e0808b3cb93..e4f5059256e5 100644
---- a/drivers/soc/qcom/pmic_glink_altmode.c
-+++ b/drivers/soc/qcom/pmic_glink_altmode.c
-@@ -520,12 +520,17 @@ static int pmic_glink_altmode_probe(struct auxiliary_device *adev,
- 			return ret;
- 	}
- 
--	altmode->client = devm_pmic_glink_register_client(dev,
--							  altmode->owner_id,
--							  pmic_glink_altmode_callback,
--							  pmic_glink_altmode_pdr_notify,
--							  altmode);
--	return PTR_ERR_OR_ZERO(altmode->client);
-+	altmode->client = devm_pmic_glink_new_client(dev,
-+						     altmode->owner_id,
-+						     pmic_glink_altmode_callback,
-+						     pmic_glink_altmode_pdr_notify,
-+						     altmode);
-+	if (IS_ERR(altmode->client))
-+		return PTR_ERR(altmode->client);
-+
-+	pmic_glink_register_client(altmode->client);
-+
-+	return 0;
- }
- 
- static const struct auxiliary_device_id pmic_glink_altmode_id_table[] = {
-diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-index 16c328497e0b..ac53a81c2a81 100644
---- a/drivers/usb/typec/ucsi/ucsi_glink.c
-+++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-@@ -367,12 +367,16 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
- 		ucsi->port_orientation[port] = desc;
- 	}
- 
--	ucsi->client = devm_pmic_glink_register_client(dev,
--						       PMIC_GLINK_OWNER_USBC,
--						       pmic_glink_ucsi_callback,
--						       pmic_glink_ucsi_pdr_notify,
--						       ucsi);
--	return PTR_ERR_OR_ZERO(ucsi->client);
-+	ucsi->client = devm_pmic_glink_new_client(dev, PMIC_GLINK_OWNER_USBC,
-+						  pmic_glink_ucsi_callback,
-+						  pmic_glink_ucsi_pdr_notify,
-+						  ucsi);
-+	if (IS_ERR(ucsi->client))
-+		return PTR_ERR(ucsi->client);
-+
-+	pmic_glink_register_client(ucsi->client);
-+
-+	return 0;
- }
- 
- static void pmic_glink_ucsi_remove(struct auxiliary_device *adev)
-diff --git a/include/linux/soc/qcom/pmic_glink.h b/include/linux/soc/qcom/pmic_glink.h
-index fd124aa18c81..aedde76d7e13 100644
---- a/include/linux/soc/qcom/pmic_glink.h
-+++ b/include/linux/soc/qcom/pmic_glink.h
-@@ -23,10 +23,11 @@ struct pmic_glink_hdr {
- 
- int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len);
- 
--struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
--							  unsigned int id,
--							  void (*cb)(const void *, size_t, void *),
--							  void (*pdr)(void *, int),
--							  void *priv);
-+struct pmic_glink_client *devm_pmic_glink_new_client(struct device *dev,
-+						     unsigned int id,
-+						     void (*cb)(const void *, size_t, void *),
-+						     void (*pdr)(void *, int),
-+						     void *priv);
-+void pmic_glink_register_client(struct pmic_glink_client *client);
- 
- #endif
-
--- 
-2.34.1
-
+Best regards,
+Max
 
