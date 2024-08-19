@@ -1,201 +1,224 @@
-Return-Path: <linux-kernel+bounces-292783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABE3957454
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:25:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0781B957473
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288911F2389C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B100285A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FD1D6191;
-	Mon, 19 Aug 2024 19:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF731DD38D;
+	Mon, 19 Aug 2024 19:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8w7t36+"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab0ysEiI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286034438B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618271DD389;
+	Mon, 19 Aug 2024 19:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724095504; cv=none; b=Ls2izq+rgSCNnyfDRECAJqUDonORzTmhkQASyn12ABfoHbZnJ/KN8NJ47PADGN1Yj1A6NazpLVFpAscQnJDh8ve9rDdcrxfbRSSgJKDBN37ujy14eT9nnuZrP6eOHblrXNZ6TmJ+vWE7qIKpR20LjlUWrud0Fc/B7JMDGz+Js6Q=
+	t=1724095620; cv=none; b=l85a685zk7qCJXK9FEeuBYmehxGOnouuc637nNP4eN9rWAvxDMHaOUm6fWm55hQm+44nysuyFaHughqkVg2tDpOte7k1U5bhqi/6Gi6edZi1n+R6gDwL6g51J+q8Qvv+9SwmImyvba85biWK/u59LfEDiB/s1MWvnQCp8/XoANo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724095504; c=relaxed/simple;
-	bh=jNnGDCPncqOjy1dMJ7YUFxZUaUz80Rk9HwOfwD+ITb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUhK2avAjN8dPbux5FozwuUahGt8EgVKAlEQ7poywqNxNY0m6AZopL88nxpZBCG20/3J5lOOtFC4QzLRsINBGQOLFappxcTqZHwp2huoJiwEHvNAIokaxe/HDNj+SZIlBuQ9020kPmRtYt+5QuYAbbl2HQs+cfcAEVEAXbTPcPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8w7t36+; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201cd78c6a3so35995315ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724095502; x=1724700302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YegbN6hoOZXxYeEaxNij25J1+Q3zB99tPDDll9NCovw=;
-        b=B8w7t36+RcMQZWokzbNHwvqnFK4lXEn1Z3ooA2O02SwHzIDohLmGMP2uEPYmp0NovM
-         VZj5sCnQ5/90sMtN5w55l6u51aasXT8wDTWLxPL1r6rURr8QXKYNBnL70ANoE6tSj2L4
-         nwkHH+9Om09I8ejLslbZ3bWt0EHp1R7lBlkY229UzQs/b3eaKVzXW4tqjl+8u0bomngl
-         IUL8bBDaX2HxwmyyVReGfLujeWlWba546EcjhutPklZ+mifou6eXRNoCN8a/O3ZsCWj9
-         yJL+QFmqy7Qbf2+/vXW9feg6NMbBaZe+NTfRB1c7q1HbrLR/ykMKwPpegXfxId2c0OoX
-         d8UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724095502; x=1724700302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YegbN6hoOZXxYeEaxNij25J1+Q3zB99tPDDll9NCovw=;
-        b=VOs6wfjeJ4gmPRSNXDRbHokgYMw7XwijIVl2DZF9g4/xNyUbFeefT43bKC3/402yrE
-         Tv/d6F8WnZAMQ7IXOdlHzmjAxKkAU7yWTCk+PeGyKDwhgXiqMORkSHsX95W9hQDTcJ6A
-         NaLXzhZnkRdbquC47xM3x/CWneraPjfJ2d1QFCRvsJMtmBAT6/Op29C1YF1w29mEjQpI
-         dq1DnGUDPMF3aQo4uZ2lTQxuJuPgUhyPo35+ZGzaw7yml25SbhdTWImHbM8QryEfao3w
-         DgcUJAI5Jt1kHouLG+zXTJrXsMK055GQxWCmLXxZ97RGmN446nyX01rB4D0m2bC18eKj
-         UfTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAF8kA519EwXi/RGx2e8c2hEjk7MkG48n6m4l6K38JLS+g79PE+trwTno1mtfFYZwllR2HXeqoZ1stT88ThWkx5H4aTPpTLNGBTUgT
-X-Gm-Message-State: AOJu0YzUJXT73SRZBrRadX36zNF6xlRws2EVpmQoEaxkYihIQ1BH1d7y
-	FPp2n0aYyy+QRk07UTTsM8WBegZlwsTTU4Cqt73s6t9V4p2H16Of
-X-Google-Smtp-Source: AGHT+IFQNe/nTCD3xJsESyDkPngmYmqUq5cLIro/iXes7k2lh+x4vGaf0eefwz9SiTzjJOteyZ/JGg==
-X-Received: by 2002:a17:902:db03:b0:202:1529:3b17 with SMTP id d9443c01a7336-20215293f1fmr137676265ad.39.1724095502261;
-        Mon, 19 Aug 2024 12:25:02 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03a55a0sm65749695ad.294.2024.08.19.12.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 12:25:01 -0700 (PDT)
-Date: Mon, 19 Aug 2024 12:24:59 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH 2/5] cpumask: Implement
- cpumask_{first,next}_{not,}andnot
-Message-ID: <ZsOcC_6S3_GviaIJ@yury-ThinkPad>
-References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
- <20240819142406.339084-3-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1724095620; c=relaxed/simple;
+	bh=RhQG3+5QvIBcDMyvpZvXMVI3HKjSuVTO/dQjDa3Ckag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f3Z+A1zSZmhq+j7ZeFJbWhXtGTJyLZ29Zi6hOd+G8VVFhxuq5pitHdcRvXZedQLw0WITBWBnkoMXoMNtbJ7N+DfWUTytZH1h7MT9MK2Ylk8tPny55vnqSJJtV8K4Dmv8n6sY/kWkDF7EHpM3buZhH0skFQL6iK2Zg5TbvvMN2wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab0ysEiI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC18CC4AF1B;
+	Mon, 19 Aug 2024 19:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724095618;
+	bh=RhQG3+5QvIBcDMyvpZvXMVI3HKjSuVTO/dQjDa3Ckag=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ab0ysEiIJtw2hGcVK56Ge+bDCV3g/xHbvtVF2a9tuF6c5m2pjsPaIYjL4UwIAPwHx
+	 pmEqMPX0fW/sxInj/Eu/CL5hXki96I9GpV9WSxA1q22EB9cMiT0N5bOdQGdxgIlPge
+	 spq09rmavppo7BEfSWHeWoT83ReoDhRREBdZdcOYkTbqLf3Xxg8neupG/tT9cRtHrP
+	 0vxfHd2JrI18NPtMqmlb8uNj1dGxaHjiv7ckKyXy6G+T7aFceq2OduIexKdzbcEl+v
+	 oF0JZKYs42gcFrbkdasSfU+HZJ3C2wyWxW/Wj3CN5Zm9FU/AsFKCY7vqbNGFG3DDKG
+	 E370/pRaod/ng==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-268e0b13471so654575fac.2;
+        Mon, 19 Aug 2024 12:26:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXUmM8gSilsIbUwSHedkRDR2MJZqGUIQJeN2HjN6L0mfVEZpVRts7pwgnhRRQBRaGa42CjlY3e39Je2YSnFWTvpwONwkf416vg5fJtF1jzj3GAOovjRosjMyIVjWWVvsn2um0JbZu+z5g==
+X-Gm-Message-State: AOJu0YzpI/QM/9BSYX04tOMgMVEY0st1tAI4Qm1mJTzAabr9Bwa54vQ3
+	O7sOfQLUDL2KddW/Ttwhn48oBvyxVQ5NMwi7OpYG04bYvrMZUsyyKZeEyIML8zt+FBrSzURb4ce
+	5OfCABI98Ct7nR/aqQ9Ea3oQKzt8=
+X-Google-Smtp-Source: AGHT+IG9np/OdfXLQsEwBXl36PxM0+tZIfv8EhtHrVPeVC+a0R+i7GLo6DzF3FddPjFmq/RSeJyyID1GHABHnSL3l7E=
+X-Received: by 2002:a05:6870:7b4b:b0:25e:14d9:da27 with SMTP id
+ 586e51a60fabf-2701c0a0273mr6552882fac.0.1724095618076; Mon, 19 Aug 2024
+ 12:26:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819142406.339084-3-mathieu.desnoyers@efficios.com>
+References: <20240819070827.3620020-1-kirill.shutemov@linux.intel.com> <20240819070827.3620020-3-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20240819070827.3620020-3-kirill.shutemov@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 19 Aug 2024 21:26:47 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gE=iqsJVPrihox0JYpC4-q08p3ELnNst0g+ExYNYWT5g@mail.gmail.com>
+Message-ID: <CAJZ5v0gE=iqsJVPrihox0JYpC4-q08p3ELnNst0g+ExYNYWT5g@mail.gmail.com>
+Subject: Re: [PATCHv3 2/4] x86/acpi: Replace manual page table initialization
+ with kernel_ident_mapping_init()
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 04:24:03PM +0200, Mathieu Desnoyers wrote:
-> Allow finding the first or next bit within two input cpumasks which is
-> either:
-
-"first or next CPU..." here.
- 
-> - both zero and zero,
-> - respectively one and zero.
-> 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Yury Norov <yury.norov@gmail.com>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+On Mon, Aug 19, 2024 at 9:08=E2=80=AFAM Kirill A. Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
+>
+> The function init_transition_pgtable() maps the page with
+> asm_acpi_mp_play_dead() into an identity mapping.
+>
+> Replace manual page table initialization with kernel_ident_mapping_init()
+> to avoid code duplication. Use x86_mapping_info::offset to get the page
+> mapped at the correct location.
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 > ---
->  include/linux/cpumask.h | 60 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
-> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> index 23686bed441d..57b7d99d6da1 100644
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -204,6 +204,32 @@ unsigned int cpumask_first_and_and(const struct cpumask *srcp1,
->  				      cpumask_bits(srcp3), small_cpumask_bits);
+>  arch/x86/kernel/acpi/madt_wakeup.c | 73 ++++++------------------------
+>  1 file changed, 15 insertions(+), 58 deletions(-)
+>
+> diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/ma=
+dt_wakeup.c
+> index d5ef6215583b..78960b338be9 100644
+> --- a/arch/x86/kernel/acpi/madt_wakeup.c
+> +++ b/arch/x86/kernel/acpi/madt_wakeup.c
+> @@ -70,58 +70,6 @@ static void __init free_pgt_page(void *pgt, void *dumm=
+y)
+>         return memblock_free(pgt, PAGE_SIZE);
 >  }
->  
-> +/**
-> + * cpumask_first_andnot - return the first cpu from *srcp1 & ~*srcp2
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static inline
-> +unsigned int cpumask_first_andnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
+>
+> -/*
+> - * Make sure asm_acpi_mp_play_dead() is present in the identity mapping =
+at
+> - * the same place as in the kernel page tables. asm_acpi_mp_play_dead() =
+switches
+> - * to the identity mapping and the function has be present at the same s=
+pot in
+> - * the virtual address space before and after switching page tables.
+> - */
+> -static int __init init_transition_pgtable(pgd_t *pgd)
+> -{
+> -       pgprot_t prot =3D PAGE_KERNEL_EXEC_NOENC;
+> -       unsigned long vaddr, paddr;
+> -       p4d_t *p4d;
+> -       pud_t *pud;
+> -       pmd_t *pmd;
+> -       pte_t *pte;
+> -
+> -       vaddr =3D (unsigned long)asm_acpi_mp_play_dead;
+> -       pgd +=3D pgd_index(vaddr);
+> -       if (!pgd_present(*pgd)) {
+> -               p4d =3D (p4d_t *)alloc_pgt_page(NULL);
+> -               if (!p4d)
+> -                       return -ENOMEM;
+> -               set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
+> -       }
+> -       p4d =3D p4d_offset(pgd, vaddr);
+> -       if (!p4d_present(*p4d)) {
+> -               pud =3D (pud_t *)alloc_pgt_page(NULL);
+> -               if (!pud)
+> -                       return -ENOMEM;
+> -               set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
+> -       }
+> -       pud =3D pud_offset(p4d, vaddr);
+> -       if (!pud_present(*pud)) {
+> -               pmd =3D (pmd_t *)alloc_pgt_page(NULL);
+> -               if (!pmd)
+> -                       return -ENOMEM;
+> -               set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
+> -       }
+> -       pmd =3D pmd_offset(pud, vaddr);
+> -       if (!pmd_present(*pmd)) {
+> -               pte =3D (pte_t *)alloc_pgt_page(NULL);
+> -               if (!pte)
+> -                       return -ENOMEM;
+> -               set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
+> -       }
+> -       pte =3D pte_offset_kernel(pmd, vaddr);
+> -
+> -       paddr =3D __pa(vaddr);
+> -       set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
+> -
+> -       return 0;
+> -}
+> -
+>  static int __init acpi_mp_setup_reset(u64 reset_vector)
+>  {
+>         struct x86_mapping_info info =3D {
+> @@ -130,6 +78,7 @@ static int __init acpi_mp_setup_reset(u64 reset_vector=
+)
+>                 .page_flag      =3D __PAGE_KERNEL_LARGE_EXEC,
+>                 .kernpg_flag    =3D _KERNPG_TABLE_NOENC,
+>         };
+> +       unsigned long mstart, mend;
+>         pgd_t *pgd;
+>
+>         pgd =3D alloc_pgt_page(NULL);
+> @@ -137,8 +86,6 @@ static int __init acpi_mp_setup_reset(u64 reset_vector=
+)
+>                 return -ENOMEM;
+>
+>         for (int i =3D 0; i < nr_pfn_mapped; i++) {
+> -               unsigned long mstart, mend;
+> -
+>                 mstart =3D pfn_mapped[i].start << PAGE_SHIFT;
+>                 mend   =3D pfn_mapped[i].end << PAGE_SHIFT;
+>                 if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) =
+{
+> @@ -147,14 +94,24 @@ static int __init acpi_mp_setup_reset(u64 reset_vect=
+or)
+>                 }
+>         }
+>
+> -       if (kernel_ident_mapping_init(&info, pgd,
+> -                                     PAGE_ALIGN_DOWN(reset_vector),
+> -                                     PAGE_ALIGN(reset_vector + 1))) {
+> +       mstart =3D PAGE_ALIGN_DOWN(reset_vector);
+> +       mend =3D mstart + PAGE_SIZE;
+> +       if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
+>                 kernel_ident_mapping_free(&info, pgd);
+>                 return -ENOMEM;
+>         }
+>
+> -       if (init_transition_pgtable(pgd)) {
+> +       /*
+> +        * Make sure asm_acpi_mp_play_dead() is present in the identity m=
+apping
+> +        * at the same place as in the kernel page tables.
+> +        * asm_acpi_mp_play_dead() switches to the identity mapping and t=
+he
+> +        * function has be present at the same spot in the virtual addres=
+s space
 
-Please use __always_inline to enforce a compile-time optimizations.
-Check for this series:
-https://lore.kernel.org/lkml/20240719005127.2449328-4-briannorris@chromium.org/T/
+s/has be/must/
 
-It's already in -next.
+Otherwise LGTM
 
-Thanks,
-Yury
-
-> +{
-> +	return find_first_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
-> +}
-> +
-> +/**
-> + * cpumask_first_notandnot - return the first cpu from ~*srcp1 & ~*srcp2
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static inline
-> +unsigned int cpumask_first_notandnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
-> +{
-> +	return find_first_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
-> +}
-> +
->  /**
->   * cpumask_last - get the last CPU in a cpumask
->   * @srcp:	- the cpumask pointer
-> @@ -246,6 +272,40 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
->  	return find_next_zero_bit(cpumask_bits(srcp), small_cpumask_bits, n+1);
->  }
->  
-> +/**
-> + * cpumask_next_andnot - return the next cpu from *srcp1 & ~*srcp2
-> + * @n: the cpu prior to the place to search (ie. return will be > @n)
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static inline
-> +unsigned int cpumask_next_andnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
-> +{
-> +	/* -1 is a legal arg here. */
-> +	if (n != -1)
-> +		cpumask_check(n);
-> +	return find_next_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
-> +}
-> +
-> +/**
-> + * cpumask_next_notandnot - return the next cpu from ~*srcp1 & ~*srcp2
-> + * @n: the cpu prior to the place to search (ie. return will be > @n)
-> + * @src1p: the first input
-> + * @src2p: the second input
-> + *
-> + * Returns >= nr_cpu_ids if no cpus match in both.
-> + */
-> +static inline
-> +unsigned int cpumask_next_notandnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
-> +{
-> +	/* -1 is a legal arg here. */
-> +	if (n != -1)
-> +		cpumask_check(n);
-> +	return find_next_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
-> +}
-> +
->  #if NR_CPUS == 1
->  /* Uniprocessor: there is only one valid CPU */
->  static inline unsigned int cpumask_local_spread(unsigned int i, int node)
-> -- 
-> 2.39.2
+> +        * before and after switching page tables.
+> +        */
+> +       info.offset =3D __START_KERNEL_map - phys_base;
+> +       mstart =3D PAGE_ALIGN_DOWN(__pa(asm_acpi_mp_play_dead));
+> +       mend =3D mstart + PAGE_SIZE;
+> +       if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
+>                 kernel_ident_mapping_free(&info, pgd);
+>                 return -ENOMEM;
+>         }
+> --
+> 2.43.0
+>
 
