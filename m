@@ -1,212 +1,337 @@
-Return-Path: <linux-kernel+bounces-291899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0916C9568AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:41:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104439568AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA441F22A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E64EB22909
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2057161314;
-	Mon, 19 Aug 2024 10:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C05161319;
+	Mon, 19 Aug 2024 10:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="k+J/H9RY"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazolkn19010002.outbound.protection.outlook.com [52.103.33.2])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eynPzNdE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B151552FA;
-	Mon, 19 Aug 2024 10:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064052; cv=fail; b=P3IYUwYYuIBEx+9hW2fjtVcpA/1We9p41ZwvmiWmupY06IpfLAUf4SAv25/E+0RAC/f5j9rpmlVP++VLxeUBGlasmRJNVR8rj2tSDidV4X/Nkt6fypwR8yKW0y5ZF95ik2FZZKdKkfmUqRQy2MJtXF3+I0Uc2cEOtdAjHT89XI0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064052; c=relaxed/simple;
-	bh=NAVS3scS8eKCsTZUFV29IKnnZ/JWDI2m59C2GsuYQUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gFjyJQFfEvbUuv0UHIB3z+t4K1lENM8q9R+dEafwmdi2mkn3t89Hf2Xht33jBE2SPkDpjculP6wyjsn4qf/Jyo6MaH9uidlKqwslOcCNaM6v6p2W/w2ONK3DLZKv7kK8maad0EXbC/xUqfy62mXdwcUlCmTs0BBdkKTDXRPldl8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=k+J/H9RY; arc=fail smtp.client-ip=52.103.33.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iYqHlQ1sVVJEgXx1O4Za5Ss7VZN/2kkli/Ro6TuberT2Ahz+T9y4pjDPUge4TgEB0d+QTYD2wA+zgvJQJDCyFBtj6/597OYI8EZRtc4ePXW5UUAkZ7kJ2fwZW7Sh3ZbEPMYxcUOsxXZYPKU1TtbjWe9X5PCeBXXZjkt4tHiYZ96dL0TLFbUH6kHjXj6mPHx7zBVHzPKQ/iOBG4bAoYoPiDjT3zuFF+VXXYozTduPndslOKp5VbblPlAuIZt4NutRWpla7quE9gYVpEMiQWTrv1z511ZTx329Fk3cxgSr9fPaCEACSy/KinZrPSeY3bCU6ODGOWQYKoajnw26tmFUbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1XkuaZVQFoDNxPfcFlKmF4QYyD4QmLNnHtT73a0nLoo=;
- b=M3roTjHqcDV19hySAKps1pl5shQ5XRR8C/9sJr/lqgS/ZX6iNDwNL23WRDzSbNQJENeW1BHWs0B0Q/f2NTpQ5oJ6ixzNmiWhYz7Q2QUn7ycchNHqrsI5i3XQqUAbN3oO3DVUWX39Lmhbe0sogDp2YoryrP2eAN38MKHI2FA3YJTK5Eg+t7ZJeJZCsDf8XuJDTq3jTGp2RBCLwnsZ9LHVDSaCs/390/LV0k1JikD1WA2IJqjJ/1HbDiRumPCsXXrmprasGiDeGkN7tMhkJ9Dzvb5Nl2Z2egss9dz7yOob0Dw3tkS7wP+pLb6e/CcbegbOPdTnwA3rpbt2SoB9WbgR4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1XkuaZVQFoDNxPfcFlKmF4QYyD4QmLNnHtT73a0nLoo=;
- b=k+J/H9RYTmoK94yFuQvWoRHL/9YNC3bflpedkdC7566UdE0dtbisV+A/YG+sa8WjOOxTtLujSST+8NzXl1+zupkpRDYiaf62CdNcXZNeBFdSkytStkP9Tv5wZHCUPzber/6cxE3l/amOqLPzkxMbOKghTaLHqwXYxxRjweejfBFexVvYQapakRUlpBtXW+ePqEfD52e67S5p9eYme1KWhLtK58imr+G8M9pYuAIMjDjCNXmmCQOuQPq4pUELFkRjlTfRcDonAbdkYPoPC63YLrzxoaLIt4maw/PZgzCxnG51cgVblKWYRKH41wFo0tgCZiE2fMng5dnCOiGxItMjFQ==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by DU0PR03MB8195.eurprd03.prod.outlook.com (2603:10a6:10:321::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 10:40:47 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 10:40:47 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH bpf-next 1/2] bpf: Add KF_OBTAIN for obtaining objects without reference count
-Date: Mon, 19 Aug 2024 11:39:15 +0100
-Message-ID:
- <AM6PR03MB5848B74668D71BB307BE59BE998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [uozbihEIcUPRVREjyYpxifN9hy6PCEZ6]
-X-ClientProxiedBy: SG2PR02CA0114.apcprd02.prod.outlook.com
- (2603:1096:4:92::30) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240819103915.66703-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63181155316
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724063966; cv=none; b=XJwISaTqONHGLAcGbZfG87vtvuxe3ecuwfe1SJ7mHr7UWOZMsHbdJ14OOxM2HqpA6g+4A9x6j4Hjmh7YORMdqBnUymqklLMZE3zKIcCWFM9KqrFVQLC5cNQslUYo83p/jny49eGOH/MnTExm1nK+IQuRk1eof8wRogG+1DCQ/Vo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724063966; c=relaxed/simple;
+	bh=LfTs8mN+UJZ6czrqGLY3rirb9XCYnwsr8Du73oNkZgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6gNghvzQOXhiGDSrJT+bKAs3hhmdOA/BkQxfEgz3TXMjOgDGzT6JKfSihCHW4m7PWzY8ajKtgAx9hxccdYVD5OXCtW1FND4RhRsIU/0bQp36P+62664+Z/QVyRibhJkXPrtNE7bECR9kebo+F+2EJSkmGhaG/0Kl+ijtDWXN2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eynPzNdE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724063963; x=1755599963;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LfTs8mN+UJZ6czrqGLY3rirb9XCYnwsr8Du73oNkZgY=;
+  b=eynPzNdEhHrq1QDP5A+OdHypF3pGMrwUsmqyZ1sIK7V8/9Hs3a0lCFiP
+   etfxNZSgL9mVXtVrf12fRk8lvTj57humF/KAFZUnNiIax3Cr2FtkhW86M
+   2S75X7HyUfFto6xdxZ6uN+9OUjwJivMI+ue8+p2HqFIVcw0pw8tCkyvAx
+   8MOSKfLe0U1dku5EtQv++fm1p3BEkaEMyefmgq7gPlolW5PsYVJhnDH5s
+   O31DOm7N7CVmSGSpVasj5RYnydJKBjOxo/+kXehQYslbKU3PZCa+U67V3
+   9gNC5OOleu2Vj6AOmAL/M/6PR3iV4SnK1oxvLTitkDF9SG93CmZZxbQaB
+   A==;
+X-CSE-ConnectionGUID: AiyVXYN0Qq2a5cKRn2m3AQ==
+X-CSE-MsgGUID: VdxZKemhRAWKvxG2tZCr/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="32874991"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="32874991"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 03:39:22 -0700
+X-CSE-ConnectionGUID: 9EAS4sPoTMC3O2DDaLLxCA==
+X-CSE-MsgGUID: VJtkDlwaQneAsdk1CVXemw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="64722386"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Aug 2024 03:39:18 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id C463D2D8; Mon, 19 Aug 2024 13:39:17 +0300 (EEST)
+Date: Mon, 19 Aug 2024 13:39:17 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
+	decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v3 02/10] x86/tdx: Add validation of userspace MMIO
+ instructions
+Message-ID: <3jhsxclq2keesprq43jd7arhiteluppvscutzfdvkwcz3nr5pv@tix36bqw3b5j>
+References: <cover.1722862355.git.legion@kernel.org>
+ <cover.1723807851.git.legion@kernel.org>
+ <f34a16af07be2bf33730ffa9da0c4eaa777087a1.1723807851.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|DU0PR03MB8195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 935e8052-c784-4308-b1b7-08dcc03b6295
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|15080799003|19110799003|8060799006|461199028|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	USioZi4P6A8NSLMm9bw9knUpsVMW4vH6RmzSEoTzU7UNXStz+dI1HDkJfE6z2xPzo7v0Agg67M4jkcqCBWlYnrQ5CcsNf2Kb8wjIXLB7QGet2F2ElaoseHR+ynkWrBUzu1CX6wLz/suFN7fjtZIbG33RMVb7fY2hL3xsPCQq/RkLkMUlzohy/BsscU07rPtLWJNqxzzhpDOjiDARA2qpt8kKMC8P5fAKn4GxSXuedwGvrUqpAJl6NvBBJb9D5dEv+eCpYxg1U3dobnVExv5dfPrcJpSHuOgdZdcwmyd6H8y0+5t1P70q45PgiNnh4w22zHrCeYiid+MJ7+twMY4eD98iZuJ/tZTXx8qPuUzQeRjLzAFgEpIg6w/aHVl7iRe4Y5dPgugkUN5b2shvFZ3rHr5jkeshi5y36U6U6UxiQttkYjDisxVDeRAN4OKSAKujChk6EQ/oVQr2BdYrTDEK2B/UxUGDTPuG+4TFaTPwG3TFddxTyNhqmX1ElM0o5WiSFGQGy3Gqz0zSLxQSP2xxCNqzH5NHMw0Ba2JDH3pd53GRYkzU2oXAxJQbTgRi1WZUEgi+NOy2kxAmFDDSGoe3DDqfET/4Kmzvaoh4j2CnsT0+l2YbzkDR9Tv17bQwhjFWicu27ZdCdoK1WI0oVvqbF4YsfILH6HyLF6aEy/emSVotLXnQHD0RIu9BHD26VgoUP6b+7eHALWomg2dkCO3+EQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ihxQ0hQw8l14c5/PHHvbuDLCJUdCA+dEFgTpc4kCGMvP72toJ5lgC7jWXzJL?=
- =?us-ascii?Q?O3NTCchaw7iHEoi9O5/4x2fAqN9vGTqSbHFpAh9JLggDuNAhHNvHdNe/m7sx?=
- =?us-ascii?Q?X6yqnPhuqT097BR+3xk1ElVVipA3BfQJX59Ds2mN70FC6dbSJjE5VLZtEPHm?=
- =?us-ascii?Q?Cs5Ggauq9nBbfN1WsBW/NdkL+OR7hyhoELFRSIPzlpU2ldoyILl63nYTSLKe?=
- =?us-ascii?Q?pkpGKN4iicpNbP56fvxY7NiLLy710egFZ/aU8PZikLT9lVPqQyCzDJR53XXA?=
- =?us-ascii?Q?l4q+uUvF817imvNLtjduwgzOCSxuHVZIHvjq3aZVtdkaiQ0J8QGW4r3LVOun?=
- =?us-ascii?Q?6TspvFcBug3G+97JqwnsMwZ2JyFUixGCl3ZUA0i6awXlrQlJCXBKHctvnx0K?=
- =?us-ascii?Q?lxF6j68F7tvl1ZJIX1xoBoM4EyyFmguuB8vUu6+AmXNVRsoo292xQ14luTmc?=
- =?us-ascii?Q?kS2CvFZMCLZka+FbdHTJ4igwkYzTmrQC0oW8N8OmaQwzB4ixyGFZ3+MT7R0k?=
- =?us-ascii?Q?sOw/sqO6GU4MJ/yzP5+geM1v5RYFdQEwsjTAQ8WxxDKE3OtDcg99ASBZDQcD?=
- =?us-ascii?Q?0J3mtEQ1qyfLtdGV/154aKk2jNxnaMchYbJuNjIcR2+J34wIr43lYBhfOf5s?=
- =?us-ascii?Q?tsuBIP/Yp0KxN4FOWDAV5jxR/Fxk2pudQ5/J2/bE41ZIrkBbicMqLMIZ0kvO?=
- =?us-ascii?Q?JzeX2ds8Oj74R0NKWzhldPq7CzC5AzzPqmLFqm8QgKr9RsWg7DwDQk9Yd8Bq?=
- =?us-ascii?Q?MCOlt18Y/HCdQtpPOqwxI2uK60DWiQ2vBQ9FJ+F6HBZSouWTHSNKk8u/tYOP?=
- =?us-ascii?Q?Fal1gGxfJP2+NE1ees6puds+q64MMYyaSOEjZipbc+hr8u1LHidCVzveG3mI?=
- =?us-ascii?Q?N2Ay0lNXe8IbfaGxZR3YNTIaX14nsoVSSN90FB02V51ENv/lbe6rbFsK4X54?=
- =?us-ascii?Q?qXu8hUb4/x/4wHOMCILOoIOXe5R2Sv70C6IdyiHKKQ7Bs0lvzpKpYGBZFzlq?=
- =?us-ascii?Q?lWgYN5Lh6RPepYt5+PopBEYJFh/dw7Qyu7lsLWd8vous8qvnSudW9FRHPQ5b?=
- =?us-ascii?Q?PtnzUDJqByXI/esz8g2kdS+CeZ1v3fiHx7ua3QT09IGL8+wsBTSSs8pAXqaw?=
- =?us-ascii?Q?sBCRxldSDMwXcmpQwv/+aAA67uXe3hhP9lfvzsgjCoArGZlZC4nP6cl5YsXJ?=
- =?us-ascii?Q?k1vOzherHnocyzmw3vLd5JJt0K9dUvX/CuPu/hjZ3Lvgvfb9/nqITBY7JeTd?=
- =?us-ascii?Q?Hw3mx7aFybnXACSPyf8m?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 935e8052-c784-4308-b1b7-08dcc03b6295
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 10:40:47.3456
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB8195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f34a16af07be2bf33730ffa9da0c4eaa777087a1.1723807851.git.legion@kernel.org>
 
-Not all structures in the kernel contain reference count, such as
-struct socket (its reference count is actually in struct file),
-so it makes no sense to use a combination of KF_ACQUIRE and KF_RELEASE
-to trick the verifier to make the pointer to struct socket valid.
+On Fri, Aug 16, 2024 at 03:43:52PM +0200, Alexey Gladkov wrote:
+> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+> 
+> Instructions from kernel space are considered trusted. If the MMIO
+> instruction is from userspace it must be checked.
+> 
+> For userspace instructions, it is need to check that the INSN has not
+> changed at the time of #VE and before the execution of the instruction.
 
-This patch adds KF_OBTAIN flag for the cases where a valid pointer can
-be obtained but there is no need to manipulate the reference count
-(e.g. the structure itself has no reference count, the actual reference
-count is in another structure).
+Well, we cannot really check if the instruction changed under us. We can
+only check if the parsed instruction does an MMIO operation that is
+allowed for the process.
 
-For KF_OBTAIN kfuncs, the passed argument must be valid pointers.
-KF_OBTAIN kfuncs guarantees that if the pointer passed in is valid,
-then the pointer returned by KF_OBTAIN kfuncs is also valid.
+> 
+> Once the userspace instruction parsed is enforced that the address
+> points to mapped memory of current process and that address does not
+> point to private memory.
+> 
+> After parsing the userspace instruction, it is necessary to ensure that:
+> 
+> 1. the operation direction (read/write) corresponds to #VE info;
+> 2. the address still points to mapped memory of current process;
+> 3. the address does not point to private memory.
 
-For example, bpf_socket_from_file() is a KF_OBTAIN kfunc, and if the
-struct file pointer passed in is valid, then the struct socket pointer
-returned is also valid.
+I don't see where you check 3.
 
-KF_OBTAIN kfuncs use ref_obj_id to ensure that the returned pointer has
-the correct ownership and lifetime. For example, if we pass pointer A to
-KF_OBTAIN kfunc and get returned pointer B, then once pointer A is
-released, pointer B will become invalid.
+I guess you can add pte_decrypted(pte) check to get_phys_addr().
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- include/linux/btf.h   |  1 +
- kernel/bpf/verifier.c | 14 +++++++++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+But I'm not sure it is strictly needed.
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index cffb43133c68..85e7bf9f4410 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -75,6 +75,7 @@
- #define KF_ITER_NEXT    (1 << 9) /* kfunc implements BPF iter next method */
- #define KF_ITER_DESTROY (1 << 10) /* kfunc implements BPF iter destructor */
- #define KF_RCU_PROTECTED (1 << 11) /* kfunc should be protected by rcu cs when they are invoked */
-+#define KF_OBTAIN        (1 << 12) /* kfunc is an obtain function */
- 
- /*
-  * Tag marking a kernel function as a kfunc. This is meant to minimize the
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index ebec74c28ae3..fc812d954188 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -10972,9 +10972,15 @@ static bool is_kfunc_release(struct bpf_kfunc_call_arg_meta *meta)
- 	return meta->kfunc_flags & KF_RELEASE;
- }
- 
-+static bool is_kfunc_obtain(struct bpf_kfunc_call_arg_meta *meta)
-+{
-+	return meta->kfunc_flags & KF_OBTAIN;
-+}
-+
- static bool is_kfunc_trusted_args(struct bpf_kfunc_call_arg_meta *meta)
- {
--	return (meta->kfunc_flags & KF_TRUSTED_ARGS) || is_kfunc_release(meta);
-+	return (meta->kfunc_flags & KF_TRUSTED_ARGS) || is_kfunc_release(meta) ||
-+		is_kfunc_obtain(meta);
- }
- 
- static bool is_kfunc_sleepable(struct bpf_kfunc_call_arg_meta *meta)
-@@ -12832,6 +12838,12 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
- 			/* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
- 			regs[BPF_REG_0].id = ++env->id_gen;
- 		}
-+
-+		if (is_kfunc_obtain(&meta)) {
-+			regs[BPF_REG_0].type |= PTR_TRUSTED;
-+			regs[BPF_REG_0].ref_obj_id = meta.ref_obj_id;
-+		}
-+
- 		mark_btf_func_reg_size(env, BPF_REG_0, sizeof(void *));
- 		if (is_kfunc_acquire(&meta)) {
- 			int id = acquire_reference_state(env, insn_idx);
+> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+> ---
+>  arch/x86/coco/tdx/tdx.c | 128 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 115 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+> index af0b6c1cacf7..86c22fec97fb 100644
+> --- a/arch/x86/coco/tdx/tdx.c
+> +++ b/arch/x86/coco/tdx/tdx.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/export.h>
+>  #include <linux/io.h>
+>  #include <linux/kexec.h>
+> +#include <linux/mm.h>
+>  #include <asm/coco.h>
+>  #include <asm/tdx.h>
+>  #include <asm/vmx.h>
+> @@ -405,6 +406,84 @@ static bool mmio_write(int size, unsigned long addr, unsigned long val)
+>  			       EPT_WRITE, addr, val);
+>  }
+>  
+> +static inline bool is_private_gpa(u64 gpa)
+> +{
+> +	return gpa == cc_mkenc(gpa);
+> +}
+> +
+> +static int get_phys_addr(unsigned long addr, phys_addr_t *phys_addr, bool *writable)
+> +{
+> +	unsigned int level;
+> +	pgd_t *pgdp;
+> +	pte_t *ptep;
+> +
+> +	/*
+> +	 * Address validation only makes sense for a user process. The lock must
+> +	 * be obtained before validation can begin.
+> +	 */
+> +	mmap_assert_locked(current->mm);
+> +
+> +	pgdp = pgd_offset(current->mm, addr);
+> +
+> +	if (!pgd_none(*pgdp)) {
+> +		ptep = lookup_address_in_pgd(pgdp, addr, &level);
+> +		if (ptep) {
+> +			unsigned long offset;
+> +
+> +			offset = addr & ~page_level_mask(level);
+> +			*phys_addr = PFN_PHYS(pte_pfn(*ptep));
+> +			*phys_addr |= offset;
+> +
+> +			*writable = pte_write(*ptep);
+> +
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EFAULT;
+> +}
+> +
+> +static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
+> +		       unsigned long vaddr)
+> +{
+> +	phys_addr_t phys_addr;
+> +	bool writable = false;
+> +
+> +	/* It's not fatal. This can happen due to swap out or page migration. */
+> +	if (get_phys_addr(vaddr, &phys_addr, &writable) || (ve->gpa != cc_mkdec(phys_addr)))
+
+Too long line?
+
+> +		return -EAGAIN;
+> +
+> +	/*
+> +	 * Re-check whether #VE info matches the instruction that was decoded.
+> +	 *
+> +	 * The ve->gpa was valid at the time ve_info was received. But this code
+> +	 * executed with interrupts enabled, allowing tlb shootdown and therefore
+> +	 * munmap() to be executed in the parallel thread.
+> +	 *
+> +	 * By the time MMIO emulation is performed, ve->gpa may be already
+> +	 * unmapped from the process, the device it belongs to removed from
+> +	 * system and something else could be plugged in its place.
+> +	 */
+> +	switch (mmio) {
+> +	case INSN_MMIO_WRITE:
+> +	case INSN_MMIO_WRITE_IMM:
+> +		if (!writable || !(ve->exit_qual & EPT_VIOLATION_ACC_WRITE))
+> +			return -EFAULT;
+> +		break;
+> +	case INSN_MMIO_READ:
+> +	case INSN_MMIO_READ_ZERO_EXTEND:
+> +	case INSN_MMIO_READ_SIGN_EXTEND:
+> +		if (!(ve->exit_qual & EPT_VIOLATION_ACC_READ))
+> +			return -EFAULT;
+> +		break;
+> +	default:
+> +		WARN_ONCE(1, "Unsupported mmio instruction: %d", mmio);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
+>  			     struct pt_regs *regs, struct ve_info *ve)
+>  {
+> @@ -489,7 +568,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+>  	enum insn_mmio_type mmio;
+>  	struct insn insn = {};
+>  	unsigned long vaddr;
+> -	int size;
+> +	int size, ret;
+>  
+>  	/* Only in-kernel MMIO is supported */
+>  	if (WARN_ON_ONCE(user_mode(regs)))
+> @@ -505,6 +584,17 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+>  	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
+>  		return -EINVAL;
+>  
+> +	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> +
+> +	if (current->mm) {
+
+Hm. This path will be taken for any MMIO if it is done in context of a
+process, even in-kernel only. I don't think we want it. It is useless
+overhead.
+
+Use user_mode(regs) instead.
+
+> +		if (mmap_read_lock_killable(current->mm))
+> +			return -EINTR;
+> +
+> +		ret = valid_vaddr(ve, mmio, size, vaddr);
+> +		if (ret)
+> +			goto unlock;
+> +	}
+> +
+>  	/*
+>  	 * Reject EPT violation #VEs that split pages.
+>  	 *
+> @@ -514,30 +604,39 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+>  	 *
+>  	 * load_unaligned_zeropad() will recover using exception fixups.
+>  	 */
+> -	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> -	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE)
+> -		return -EFAULT;
+> +	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE) {
+> +		ret = -EFAULT;
+> +		goto unlock;
+> +	}
+>  
+>  	switch (mmio) {
+>  	case INSN_MMIO_WRITE:
+>  	case INSN_MMIO_WRITE_IMM:
+>  	case INSN_MMIO_MOVS:
+> -		return handle_mmio_write(&insn, mmio, size, regs, ve);
+> +		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
+> +		break;
+>  	case INSN_MMIO_READ:
+>  	case INSN_MMIO_READ_ZERO_EXTEND:
+>  	case INSN_MMIO_READ_SIGN_EXTEND:
+> -		return handle_mmio_read(&insn, mmio, size, regs, ve);
+> +		ret = handle_mmio_read(&insn, mmio, size, regs, ve);
+> +		break;
+>  	case INSN_MMIO_DECODE_FAILED:
+>  		/*
+>  		 * MMIO was accessed with an instruction that could not be
+>  		 * decoded or handled properly. It was likely not using io.h
+>  		 * helpers or accessed MMIO accidentally.
+>  		 */
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		break;
+>  	default:
+>  		WARN_ONCE(1, "Unknown insn_decode_mmio() decode value?");
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+>  	}
+> +unlock:
+> +	if (current->mm)
+> +		mmap_read_unlock(current->mm);
+> +
+> +	return ret;
+>  }
+>  
+>  static bool handle_in(struct pt_regs *regs, int size, int port)
+> @@ -681,11 +780,6 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
+>  	}
+>  }
+>  
+> -static inline bool is_private_gpa(u64 gpa)
+> -{
+> -	return gpa == cc_mkenc(gpa);
+> -}
+> -
+>  /*
+>   * Handle the kernel #VE.
+>   *
+> @@ -723,6 +817,14 @@ bool tdx_handle_virt_exception(struct pt_regs *regs, struct ve_info *ve)
+>  		insn_len = virt_exception_user(regs, ve);
+>  	else
+>  		insn_len = virt_exception_kernel(regs, ve);
+> +
+> +	/*
+> +	 * A special case to return to userspace without increasing regs->ip
+> +	 * to repeat the instruction once again.
+> +	 */
+> +	if (insn_len == -EAGAIN)
+> +		return true;
+> +
+>  	if (insn_len < 0)
+>  		return false;
+>  
+> -- 
+> 2.45.2
+> 
+
 -- 
-2.39.2
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
