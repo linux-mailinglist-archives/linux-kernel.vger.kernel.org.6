@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-291643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6750B95651D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:02:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DFE95652B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2343B2819AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080C81C217EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6023715AD95;
-	Mon, 19 Aug 2024 08:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F3515B0E5;
+	Mon, 19 Aug 2024 08:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RL1Gq41J"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="W244npaE"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5C1A41
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A025A41
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724054557; cv=none; b=VFxYvpc+qesldNH1HrpHYTDwShsnCkP1J5EIkukfXoOvGf584vKOBzVrJ61I+iTkAQOW9e2iU/7hxYmF3bhTHehOGbjKNaWAOwTabX3TwFDrahS9LjAqc0TlzMtJSza49BtzGPwUI0QpY1pwjEAM+RphJh7WoQyYj4HXVf0vgp0=
+	t=1724054668; cv=none; b=uWAig2X/MiSk5Jp4IgxxtLRNi9m0xfsQBwu7GoK08U+ov1lJGEl4JWCfw5Wft4SHBaohzG6/rzgapcfLZTvoyB+frEC9PdfyNNvj6Of7xgdDjuQG8AydfGx7DA+80bohxtTIeZ/9ys5rEf5N7DAoyHtiZUQyXxpVjNIdL1aEe/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724054557; c=relaxed/simple;
-	bh=i8oXK0fvpmZXknbnibQ+WCebbasipGB5r7Us8D8gpEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mNhiWAwbUCmoSZjlW+IW0srQzoHcZKG8pEA1D0fDCOSO/UDx3wGhyL0d6KewdC49n+uqErgfl/km7xbm/bJlXubXs2Lcd3T8kZYDE0Vv+EkhAGYWafJ4zS8ATIVYyO6BBbJ8Zku3veXA48cap28ERljDAp7wjKt0VVei0Df2AJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RL1Gq41J; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428178fc07eso29908375e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:02:35 -0700 (PDT)
+	s=arc-20240116; t=1724054668; c=relaxed/simple;
+	bh=hlQXhSmOrxAM2VM/5ki5m+tINxDUwNIT8Yb4lImdW7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ViNwmNrr+yRXwE3ktl1Q7+z0Mz3Po4fNmFRBWJmabKy62Xu/yNRMAv9tJnGsozLGKG4UJMlMcinLukVHFC0fImBQYjqSP/uvny9C822rX31hb+rJp2bkLoWQbNktdbTB6PecdMWiLm8AC9a2/9A+udjdc+A1WXswlsQbXjz8KaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=W244npaE; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-710ffaf921fso2569074b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724054554; x=1724659354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gn+c4xl/H+XtHBqzPPIFIOhNM7W/L3SniDM6+u9XTjk=;
-        b=RL1Gq41JuyWEhtVwegeDsJLcLHuRiMtzhuH+I0f7G592g7R7XXOupo++BqT+iu+hVZ
-         OQbsDCqoL4GtjAko/95gyvgqPiyWxogsJTG1c8EIKpl7mVQh3gxazxLZJVYk/8xrbFR9
-         HyQWvBCd5bVKvo4GSyDhmOQBwuFuEJD16QeoEZVpzar7zEMkiTVxwvBoD80HdUc7OtaO
-         eiCDoIk9fVnYAajqYvFDVxpmTGzlFUtz1M57nSt53ZUmkiB8RcmIAY97fhsErUyEStwg
-         PqSJ1FJlGJDji5zphT2tA8VYoyzrwwfcYLESrngVi5VD5QB25QETtvezgrG+51m8hImS
-         tMCQ==
+        d=bytedance.com; s=google; t=1724054665; x=1724659465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5pMgQRu6k6leW3rh4d4vvY0vdZxZHpL/sFft5GJjjc=;
+        b=W244npaEMP6BXtvwO3YZJCsCaFOOUU82NI/oSf21LJPdFYQdqFyRfbBMq6M0GgexJO
+         Yhr0EjM3UGr7T+sh+ZCmmw6S0iPKG6xuArAoc2qKAZX1XgoSAFga0XdEYyNcFGu7DhL/
+         wmCXsdJEITzRkfrt68vN6J0Z4RiZ4l97JuYeJhgNoh0OXT+AQ/+BoWuQHHVbIoxsq6Us
+         y41jWi9W57mgnDQAasZP/UqZFWlFYef1rzC3vPQ6QMY0b22rHz6rzEa2JxFMOdIULAYL
+         qpHUJyO18v8zcfEQAxcEVHpEp8N9Nz8gMSYBfJAlbcsJV4QHiydZsbdgbifjhvyFu9Q8
+         ldWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724054554; x=1724659354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gn+c4xl/H+XtHBqzPPIFIOhNM7W/L3SniDM6+u9XTjk=;
-        b=qR8QPdtRckzJHY/McNjnXvP6uM2KoPiffb+cH54+sYCRyNi5vK1jJEmhvBhmuna9/U
-         H5ZcwSNpcL1DQqPF/GrSaadDcpXh/OvRtCAzhSM7txhTfRO93kcXe9azNa8T3/3kNty+
-         GLmn6UZGv4U7PYhp9RK40AtWx0iBdMwpr+t9qa+64fvnYP73wkS8ZcqKkxMDBTiwtCR2
-         mJvDi3Qxi7qFxDtsJM0v00T3TNyqtKtxPi5LoOhTyL4tZWKw8uaG7wQxdNOf2WuTSsHx
-         x04GmR1bTNxS70PxL5/rgLFrHZmmkIaqFb6gk8zckZgr8+YKWg0qoqa0KRvvLreG9VYw
-         whWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTW4UHBnvQ6CutdzgE0ndVpdth2scrSLdvTa7OmvkpR4OqmjJRGAX3GnIUQ5hK7mxb98QD9jVx5wIaGOIMLo9I0JuT6sKdX2OCCleY
-X-Gm-Message-State: AOJu0YxAsh68W7om6NtNBZFXY3urlMena2WNDdqkUqh4+6/5RQantawE
-	TZaq8gPPCDz5uXwdM2+9XPMRGb3aho9VJ6J0MiTNwyk2vRewi5qAqULgUAMNcAMnnyPVAnNsAWk
-	Mwc4=
-X-Google-Smtp-Source: AGHT+IEvipa+RywM3tU9SDyH80HLQd2DTGCibO+/FhKCCygpXcdXwctwQWTkb+wkyD2R4lWa9fEP7w==
-X-Received: by 2002:a05:600c:3ca6:b0:428:abd:1df1 with SMTP id 5b1f17b1804b1-429ed7baa1emr76166085e9.9.1724054553864;
-        Mon, 19 Aug 2024 01:02:33 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7b55:8f70:3ecb:b4ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed650759sm98728865e9.14.2024.08.19.01.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 01:02:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-pm@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1724054665; x=1724659465;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a5pMgQRu6k6leW3rh4d4vvY0vdZxZHpL/sFft5GJjjc=;
+        b=AswAXWrd/wbEbGNEBe3qcgX1kdfyRq1d2AkSaGecPv2pZDFHV7+tANshXzoEdzAYEn
+         7Ge6wVcZc0rGX2smohbLqWoq1K4sv2j1845KaN56MHY9WGC/orVOd4hE6jIIuAWhx+Il
+         PT6exePzui0zVocLOBSX5twUMLHK29Mhqrp3EVjB85upd2kHkSjPJpTXlGKfUCmbCABh
+         pXxlSJY5epdp7ySLSMP7ydNFQmwdE58hv5fiW6Dwxgt9u928+tTNXjrgS9cIcrjcS/JB
+         bEmwf+VjWwQmE3lSTsOM2rKc6WQ2FDpDHm+QfjlG47mzMgk5CHm1PzuubWZ0mFg5wcW9
+         ko0A==
+X-Forwarded-Encrypted: i=1; AJvYcCV5arlxOAmAhORXn0eWIStx/Y6xeoHTXA9mfPua1vcDUJLfd35y2rWgMKLpZGyh6qqf596gT/iMcXYt4t8xevGc5xT0shqUY5JGFIBP
+X-Gm-Message-State: AOJu0YzI29uk5XKmBB6ZiwVNGK6L17r+R8MYINEBhKiZqqm0q5L2126u
+	M+wd1i/aWdkZYfuFwN2Q+2+c5ECXg3kL1D/GcSYsWeQM56po6nTirbphQ2+Zp50=
+X-Google-Smtp-Source: AGHT+IHLfanBTcn2DvSOg+cw6SKdo5DRsRm2SonlABa3P0MXIOz858+YTpfkVL9sUDXKpvUfjPtHTg==
+X-Received: by 2002:a05:6a20:158b:b0:1c3:3d23:c325 with SMTP id adf61e73a8af0-1c8f870c61dmr19956646637.24.1724054664643;
+        Mon, 19 Aug 2024 01:04:24 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.11])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61a7672sm7183121a12.4.2024.08.19.01.04.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 19 Aug 2024 01:04:24 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: muchun.song@linux.dev,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	akpm@linux-foundation.org
+Cc: cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH] power: sequencing: request the WLAN enable GPIO as-is
-Date: Mon, 19 Aug 2024 10:02:32 +0200
-Message-ID: <172405416113.8149.10468299124149125846.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240813190751.155035-1-brgl@bgdev.pl>
-References: <20240813190751.155035-1-brgl@bgdev.pl>
+	Muchun Song <songmuchun@bytedance.com>,
+	syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com
+Subject: [PATCH] mm: kmem: fix split_page_memcg()
+Date: Mon, 19 Aug 2024 16:04:15 +0800
+Message-Id: <20240819080415.44964-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+split_page_memcg() does not care about the returned memcg for kmem
+pages, so folio_memcg_charged() should be used, otherwise obj_cgroup_memcg
+will complain about this.
 
+Reported-by: syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+---
+ mm/memcontrol.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On Tue, 13 Aug 2024 21:07:50 +0200, Bartosz Golaszewski wrote:
-> If the WCN module is powered up before linux boots and the ath11k driver
-> probes at the same time as the power sequencing driver, we may end up
-> driving the wlan-enable GPIO low in the latter, breaking the start-up of
-> the WLAN module. Request the wlan-enable GPIO as-is so that if the WLAN
-> module is already starting/started, we leave it alone.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] power: sequencing: request the WLAN enable GPIO as-is
-      https://git.kernel.org/brgl/linux/c/a9aaf1ff88a8cb99a1335c9eb76de637f0cf8c10
-
-Best regards,
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e0b3b7ee6de6e..6c84af0a9ede6 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3018,12 +3018,11 @@ void __memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+ void split_page_memcg(struct page *head, int old_order, int new_order)
+ {
+ 	struct folio *folio = page_folio(head);
+-	struct mem_cgroup *memcg = folio_memcg(folio);
+ 	int i;
+ 	unsigned int old_nr = 1 << old_order;
+ 	unsigned int new_nr = 1 << new_order;
+ 
+-	if (mem_cgroup_disabled() || !memcg)
++	if (mem_cgroup_disabled() || !folio_memcg_charged(folio))
+ 		return;
+ 
+ 	for (i = new_nr; i < old_nr; i += new_nr)
+@@ -3032,7 +3031,7 @@ void split_page_memcg(struct page *head, int old_order, int new_order)
+ 	if (folio_memcg_kmem(folio))
+ 		obj_cgroup_get_many(__folio_objcg(folio), old_nr / new_nr - 1);
+ 	else
+-		css_get_many(&memcg->css, old_nr / new_nr - 1);
++		css_get_many(&folio_memcg(folio)->css, old_nr / new_nr - 1);
+ }
+ 
+ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.20.1
+
 
