@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-292544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1CF9570B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6363C9570B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5EA283A19
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20243281124
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F857175D47;
-	Mon, 19 Aug 2024 16:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B0B17838F;
+	Mon, 19 Aug 2024 16:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFx7RQGD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzTrBhW1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2A81422D2;
-	Mon, 19 Aug 2024 16:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FF04965B;
+	Mon, 19 Aug 2024 16:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086062; cv=none; b=Cxm3fpg34nZBvYQU+fsaF8ecC5iVcW5TQikc3iMqqTzk9jKNiwlQ9m248BG/HBC3dnVLOv0o3idUDKcJ02x9GBIhLD4P7kUDLVMPa1uDnETnWcHqF0EAXKe26RgmtkiodWYq6axc25Us/1AOUWlxdQk9Z7RQ8Lw5aJp9r0rmVTI=
+	t=1724086091; cv=none; b=rcbPKi827/w/8+aPx6O9G24od305fWogHqTVvCFaB6bxulEsFcRbBWi2BOTveTGzmgWA39yuVE46jF3rHazieu/epxn8SEHoZ1xxYMtXrF3MSMOmfuPoE/hiUYBWOSHDU5WlEh37bajmuh9KDEsKj1DFe8qWjcyjnVvKj/Bez5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086062; c=relaxed/simple;
-	bh=AKwTNHLgA+6APIxNBMqNwEfniEaV2liiz8suz5WwnOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sxGff6YyVDUqchnOsrIUhan/hjfFmnne7FOkCimzBLn0XL70tagKc/Trgg8Wj1/3y8Ca/TWeIUuqt954oJSOaG0OayKrkMV0umMN0RhX0mLstvzy/5QyJ/4qHTvpgh8TYqj7iW9VwRzbZYCvCNMQEcQVI/dNAyzV1L1j4HKess0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFx7RQGD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2481AC32782;
-	Mon, 19 Aug 2024 16:47:40 +0000 (UTC)
+	s=arc-20240116; t=1724086091; c=relaxed/simple;
+	bh=ZxHbad6RitBAjGXVtdlyclNzqb3Q+8yJ+JbTUUPlqxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbdcH1GJuJZZdaplJxs+7JAc308KZEo+oI7nD38oFFCzwVrKdrfMYKL1VYr5G3lnSsmsTpqYzX8vOxF7MgDqWd8FJupcNBO/VdjESAzccUe0/M2Ibmucynp5pY8QNm+zGCEBNAM+LAdWJjYed2NZAhtrDrgLX6kX11WRxtMv/7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzTrBhW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9173C32782;
+	Mon, 19 Aug 2024 16:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724086062;
-	bh=AKwTNHLgA+6APIxNBMqNwEfniEaV2liiz8suz5WwnOA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tFx7RQGDu+Zz+KfB/IrBweL3kUJ2q2YhPRjG7fSZHNJ3623goj1a3Cfc2776b54lz
-	 MGZwj1ZPBI13XK5Kwi81RG8lPEdnJMfos100gGtfSp8t0ktd9kxSnYa9/tzkF28yxY
-	 hXzjwFWvual5Cu4kWDKv8JgzMNenIX3SaqtnxqpUqRrx5lFez06ZqCMNLZk8djrsr2
-	 kA5uKCEaLfjXw+qzqD618LYzZ0MxiHLitm3MpmACVNjFmbn+a4I5WEsOUvmLwlPrEj
-	 aNSIDClhbwtpQghtCT3SZoBwwZGwHHzMXCTNMWzDq0ViK4HfjmQ+uBnlSIzt3w7Jjo
-	 Rd6JPMsYC2y9A==
-Date: Mon, 19 Aug 2024 11:47:39 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	przemyslaw.kitszel@intel.com, intel-wired-lan@lists.osuosl.org,
-	jesse.brandeburg@intel.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Petr Valenta <petr@jevklidu.cz>
-Subject: Re: ACPI IRQ storm with 6.10
-Message-ID: <20240819164739.GA160626@bhelgaas>
+	s=k20201202; t=1724086091;
+	bh=ZxHbad6RitBAjGXVtdlyclNzqb3Q+8yJ+JbTUUPlqxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WzTrBhW1Tw3lH7/JwU6UYsvxcLhIq2pRiwjKbLb2xWwdyLyrtlrkJFSXO3XWMeBlm
+	 huM2ILpKsUF+v8Sp7hX/RConnhUo3uylrgworTA4x1hmCFct1pY6dcZmX+smfZd7WB
+	 okB4SvfGmvV94TY7OSlIpja1WhNH13halZPieYDrj3EuFBEsK3s5JIzCnua9d9/x3N
+	 NMkrXnblZVhbOn1yN9Ma7jKCk5fppm0lIyVJocfi1W1zO6aslQhUZFLb87hrzbA9/c
+	 +99ZyJnnrNjXn6UadOEwfV77fXE2jGKGd21LI1gHrr4c8Pv8Z98sphBnx0zIu7IFWc
+	 UlkoOtA3GDccw==
+Date: Mon, 19 Aug 2024 17:48:06 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 09/14] dt-bindings: input: samsung,s3c6410-keypad:
+ introduce compact binding
+Message-ID: <20240819-backstab-fanatic-54788c691f9c@spud>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-10-dmitry.torokhov@gmail.com>
+ <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
+ <ZsNpdhKlLYegkosN@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/IykXYf3e9Pofwc3"
+Content-Disposition: inline
+In-Reply-To: <ZsNpdhKlLYegkosN@google.com>
+
+
+--/IykXYf3e9Pofwc3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <782b7159-076a-4064-8333-69c454972b29@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
-> On 19. 08. 24, 6:50, Jiri Slaby wrote:
-> > CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to b2c289415b2b)
-> 
-> Bjorn,
-> 
-> I am confused by these changes:
-> ==========================================
-> @@ -291,16 +288,13 @@ static int e1000_set_link_ksettings(struct net_device
-> *net
-> dev,
->          * duplex is forced.
->          */
->         if (cmd->base.eth_tp_mdix_ctrl) {
-> -               if (hw->phy.media_type != e1000_media_type_copper) {
-> -                       ret_val = -EOPNOTSUPP;
-> -                       goto out;
-> -               }
-> +               if (hw->phy.media_type != e1000_media_type_copper)
-> +                       return -EOPNOTSUPP;
-> 
->                 if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
->                     (cmd->base.autoneg != AUTONEG_ENABLE)) {
->                         e_err("forcing MDI/MDI-X state is not supported when
-> lin
-> k speed and/or duplex are forced\n");
-> -                       ret_val = -EINVAL;
-> -                       goto out;
-> +                       return -EINVAL;
->                 }
->         }
-> 
-> @@ -347,7 +341,6 @@ static int e1000_set_link_ksettings(struct net_device
-> *netde
-> v,
->         }
-> 
->  out:
-> -       pm_runtime_put_sync(netdev->dev.parent);
->         clear_bit(__E1000_RESETTING, &adapter->state);
->         return ret_val;
->  }
-> ==========================================
-> 
-> So no more clear_bit(__E1000_RESETTING in the above fail paths. Is that
-> intentional?
+On Mon, Aug 19, 2024 at 08:49:10AM -0700, Dmitry Torokhov wrote:
+> On Mon, Aug 19, 2024 at 03:02:07PM +0200, Krzysztof Kozlowski wrote:
+> > On Sun, Aug 18, 2024 at 09:58:06PM -0700, Dmitry Torokhov wrote:
 
-No, not intentional, looks like I just blew it, sorry.  Will post a
-fix soon.  Thanks a lot for debugging this.
+> >=20
+> > > +      - keypad,num-columns
+> > > +      - keypad,num-rows
+> > > +
+> > >  required:
+> > >    - compatible
+> > >    - reg
+> > >    - interrupts
+> > > -  - samsung,keypad-num-columns
+> > > -  - samsung,keypad-num-rows
+> > > +
+> > > +if:
+> >=20
+> > put allOf: here and this within allOf, so you the "if" could grow in the
+> > future.
+>=20
+> Hmm, there is already "allOf" at the beginning of the file, so adding
+> another one results in complaints about duplicate "allOf". I can move it
+> all to the top, like this:
+>=20
+> allOf:
+>   - $ref: input.yaml#
+>   - $ref: matrix-keymap.yaml#
+>   - if:
+>       required:
+>         - linux,keymap
+>     then:
+>       properties:
+>         samsung,keypad-num-columns: false
+>         samsung,keypad-num-rows: false
+>       patternProperties:
+>         '^key-[0-9a-z]+$': false
+>     else:
+>       properties:
+>         keypad,num-columns: false
+>         keypad,num-rows: false
+>       required:
+>         - samsung,keypad-num-columns
+>         - samsung,keypad-num-rows
+>=20
+> Is this OK? I don't quite like that "tweaks" are listed before main
+> body of properties.
 
-Bjorn
+The normal thing to do is to put the allOf at the end, not the start, in
+cases like this, for the reason you mention.
+
+--/IykXYf3e9Pofwc3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsN3RgAKCRB4tDGHoIJi
+0kZYAP4raAnB9vYkB1nibRW+mvk8v9yS0OpBDt7tSNpTgrznKAD/WDUUMuO/AhZe
+vKzxIMJHkd3e3CZCvVaqQsd7xlAibQM=
+=dVMh
+-----END PGP SIGNATURE-----
+
+--/IykXYf3e9Pofwc3--
 
