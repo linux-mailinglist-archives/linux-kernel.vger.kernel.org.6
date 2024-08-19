@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-292670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1435F957294
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910D6957298
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E67282A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435BC1F22A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20B21891A4;
-	Mon, 19 Aug 2024 17:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86BD188CD6;
+	Mon, 19 Aug 2024 18:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="MM8rOpdc"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuqOU689"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8E7D531;
-	Mon, 19 Aug 2024 17:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724090376; cv=pass; b=XaHsoJYriE1sjcmSYUnjrN6f2q0dpuMlOFdXsLnVcYqaPDCRnrdHasDgo5S402w+f9uPx2584ZPqgHGBQybSXL2VGoiv6Qm06haks/8Adix/GRyseNJjSSadkUI4XLlDtqkBaq5Cw79XXJ5zX7eQW1rIFTvNhRwAXboO1bH8+ko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724090376; c=relaxed/simple;
-	bh=o6P0nZ14SojOcYFxiCK7txSvI4RmGN+OJHmCKCGY1S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pw79p/KElsgZ/zJcb7AyDvakGU7Vqx3dVl9sQMJfep2/3YbJkXb8xDNI6Z6QhTB7xxJYAJ4mwLrfq1hqr3cX3PohjNOTcTcV2miwg58LqL3jYZAsryPGLzV4EcGpvXJ0Ghjx0LD4amuOSVzDTTMn7nSuSu8QLzdBqvQGp6An1Yw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=MM8rOpdc; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: sebastian.reichel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724090294; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=J6r5s7/Z8JeFN/26tvSLxRD9tuH13mCXG//biHkwArz4lxH9bEabeMCfhvwX1Jz6HI+dw6snHomGANxT1hNZ4gmBIBpe1s52pgQDfjLJDsrus4+aGyRLSHZwiI1OK2/btb4jej9p9puqNR4b+OuBMRSzaUI9Cizfk+2ugLtMiTM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724090294; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pNG01ooGieLYITjXohGoGYVq/b4PMFucDskno7kh9Yo=; 
-	b=Booe36Q8WD2x0h5CZNUq1hzMG6xAMF+j7zKV9UZBzEgUZVpK2heJBENHFKJBiZ5VchEQOO9xOMfac2H4zjNZ29O+Ta1PtcMbgpD9GzE0e8GO3yc06cHXQorKxx8AcbAjkuNOop7F20t0Y3nLwoNJomZM+it9Ecc2Y4ZP1JOhqJ0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724090294;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=pNG01ooGieLYITjXohGoGYVq/b4PMFucDskno7kh9Yo=;
-	b=MM8rOpdcrt7xe+eScEzW5zHxUcQjxiueHE/FDnRu8/Pe0U3Af0w1LI2u+gCz+/G/
-	975sA/Tg6i+P+y1npppA4SDz/yTTZtVhb8uieAVLaVB2m/QZkDJVs3FboGR/vh1tRmR
-	2i9Gfc92wHxxstL1Gg65syWLiCQzCrdWZmGFAAi8=
-Received: by mx.zohomail.com with SMTPS id 17240902923861007.2839847459757;
-	Mon, 19 Aug 2024 10:58:12 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-Date: Mon, 19 Aug 2024 13:59:45 -0400
-Message-ID: <23696360.6Emhk5qWAg@trenzalore>
-In-Reply-To: <21547916.mFnZMskM5D@diego>
-References:
- <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
- <21547916.mFnZMskM5D@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABE512EBE1;
+	Mon, 19 Aug 2024 18:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724090413; cv=none; b=oVqZodERt5UBgUNY94+5xHHLOr3yViCE5wnYJKU4+SRnyF1C4bS79T8rCbCAb8Bk38v12KpVuSwQrr4DQXEhvHdoJKo2/LnQPGrwXKAyHqDoEfjNV2aM7gse4cApat905PzBcKVfoniygMjmkPQWRm5CjhGh0+D4YFCRDW8+gwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724090413; c=relaxed/simple;
+	bh=H63fgBnwUhY8U7vA2KcfCcuURAdHX2PDPRe0AZv8kzo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Gya/F0ssE9L+OD/ydwKPWnrB4X1A99rYpPAekClcufRl3x/xTPMTY+BW3sQnWj+5Ui09igv+vp6T1Q0olHUZ63QWOJKehQNwaz+iC4gEFAFLIXryMZfl3MUoFqwa/SQ4VAGEnCwjlZsqLcYPuLO6OWWlp3qbvZfIon2oc3qtxGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuqOU689; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08217C32782;
+	Mon, 19 Aug 2024 18:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724090412;
+	bh=H63fgBnwUhY8U7vA2KcfCcuURAdHX2PDPRe0AZv8kzo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=GuqOU689tiiBYPTumtsM+ZV1/ns0/lSWP+MrZFbn6NzJGHuBivjIMKP6f4nzWeyPf
+	 TwHVr8yGhlBx+3WT0k2OKZa4ujdkBoHWRmvCsGdnxjjMAkzYQBRDI7CGLTI9YnljOx
+	 mVow0Pe2Psavkt9XO7MOoXsBZFTPjFK9uUk/VcE1Rsx+LBm0l/IbY6fGd9vRgiignz
+	 PKnkPsSmzTQzxc1Q20HdEk//qtF/LnJdu647BWeIqP5nR1RY73LJUonJUR+wAaEeVq
+	 SUq0rTkrPGD8RYZy8hhl4J6yaiu3msntnStXLz2SylfCefh0gdnaBJEn8pGfYP8Aja
+	 UT99ES95zNpQA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 19 Aug 2024 21:00:08 +0300
+Message-Id: <D3K31JJ5PZQG.2XW6Y6OR1CTLG@kernel.org>
+Cc: "Ard Biesheuvel" <ardb@kernel.org>, "Jan Hendrik Farr"
+ <kernel@jfarr.cc>, "Philipp Rudo" <prudo@redhat.com>, "Lennart Poettering"
+ <mzxreary@0pointer.de>, "Eric Biederman" <ebiederm@xmission.com>, "Baoquan
+ He" <bhe@redhat.com>, "Dave Young" <dyoung@redhat.com>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Will Deacon" <will@kernel.org>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, <kexec@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFCv2 1/9] efi/libstub: Ask efi_random_alloc() to skip
+ unusable memory
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Pingfan Liu" <piliu@redhat.com>, <linux-efi@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240819145417.23367-1-piliu@redhat.com>
+ <20240819145417.23367-2-piliu@redhat.com>
+In-Reply-To: <20240819145417.23367-2-piliu@redhat.com>
 
-On Wednesday, 14 August 2024 11:31:04 EDT Heiko St=C3=BCbner wrote:
-> Hi Detlev,
->=20
-> Am Freitag, 2. August 2024, 23:45:36 CEST schrieb Detlev Casanova:
-> > This device tree contains all devices necessary for booting from network
-> > or SD Card.
-> >=20
-> > It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> > SDHCI (everything necessary to boot Linux on this system on chip) as
-> > well as Ethernet, I2C, SPI and OTP.
-> >=20
-> > Also add the necessary DT bindings for the SoC.
-> >=20
-> > Signed-off-by: Liang Chen <cl@rock-chips.com>
-> > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > [rebase, squash and reword commit message]
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->=20
-> looks like (since 2019) there is a strong suggestion for having a soc nod=
-e.
->=20
-> See Krzysztof's mail in
->   =20
-> https://lore.kernel.org/all/6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.o=
-rg
-> / that references
->     Documentation/devicetree/bindings/writing-bindings.rst [0]
->=20
-> So I guess we should probably follow that - at least for new socs for now.
+On Mon Aug 19, 2024 at 5:53 PM EEST, Pingfan Liu wrote:
+> efi_random_alloc() demands EFI_ALLOCATE_ADDRESS when allocate_pages(),
+> but the current implement can not ensure the selected target locates
+> inside free area, that is to exclude EFI_BOOT_SERVICES_*,
+> EFI_RUNTIME_SERVICES_* etc.
+>
+> Fix the issue by checking md->type.
 
-That make sense, but what is exactly covered by MMIO devices ? everything=20
-except cpus, firmware, psci and timer ?
+If it is a fix shouldn't this have a fixes tag?
 
-> Heiko
->=20
-> [0]
-> https://elixir.bootlin.com/linux/v6.11-rc1/source/Documentation/devicetre=
-e/
-> bindings/writing-bindings.rst#L90
+>
+> Signed-off-by: Pingfan Liu <piliu@redhat.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> To: linux-efi@vger.kernel.org
+> ---
+>  drivers/firmware/efi/libstub/randomalloc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/firmware/efi/libstub/randomalloc.c b/drivers/firmwar=
+e/efi/libstub/randomalloc.c
+> index c41e7b2091cdd..7304e767688f2 100644
+> --- a/drivers/firmware/efi/libstub/randomalloc.c
+> +++ b/drivers/firmware/efi/libstub/randomalloc.c
+> @@ -79,6 +79,8 @@ efi_status_t efi_random_alloc(unsigned long size,
+>  		efi_memory_desc_t *md =3D (void *)map->map + map_offset;
+>  		unsigned long slots;
+> =20
 
+I'd add this inline comment:
 
+/* Skip "unconventional" memory: */
 
+> +		if (!(md->type & (EFI_CONVENTIONAL_MEMORY || EFI_PERSISTENT_MEMORY)))
+> +			continue;
+>  		slots =3D get_entry_num_slots(md, size, ilog2(align), alloc_min,
+>  					    alloc_max);
+>  		MD_NUM_SLOTS(md) =3D slots;
+> @@ -111,6 +113,9 @@ efi_status_t efi_random_alloc(unsigned long size,
+>  		efi_physical_addr_t target;
+>  		unsigned long pages;
+> =20
+> +		if (!(md->type & (EFI_CONVENTIONAL_MEMORY || EFI_PERSISTENT_MEMORY)))
+> +			continue;
+> +
+>  		if (total_mirrored_slots > 0 &&
+>  		    !(md->attribute & EFI_MEMORY_MORE_RELIABLE))
+>  			continue;
 
+BR, Jarkko
 
