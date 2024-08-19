@@ -1,112 +1,206 @@
-Return-Path: <linux-kernel+bounces-291333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D1E956101
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:13:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F7B956103
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF571F220B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:13:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F97DB21918
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E34B1F954;
-	Mon, 19 Aug 2024 02:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5A0224FD;
+	Mon, 19 Aug 2024 02:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMABgn6B"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bYnJV+NB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C6512B8B;
-	Mon, 19 Aug 2024 02:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD1E1CF83
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724033592; cv=none; b=WG2ArCZSOGSCe7y+aCEFky/z1tVyPxXFf8s4Sr9XO6mv63OCTns88YVb1rym30WRAhAHZyiDxB5+XGNdp1Qh2M8LrwaQAZhKOP54Gd4ZIxmCC6Pu8tpp2U+cnwGCo5Xv08RRE5f8WRI/PbhEY1ehBdiO8nEZzbagcxA2MqxlnUc=
+	t=1724033678; cv=none; b=bmjslxYLHjGxt+wMbSFcxAXL6Uft55UA66cOvgX/dCe+ab5T3sKT1eJBJhX/YGopCGohIuHO9LKtWj2T6oozZKu9AKz72uWUlLI53t+fR/ehXLD/138W3UeUJP8u6UM0SiKAiqSg1myUOaXh9rmIghJQ/arj1QyZjQZnAW47mPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724033592; c=relaxed/simple;
-	bh=KYkIAORlvtSr3a3QBZAHWCNrfGBZfFZZxHsbX4YiEcY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jj+r5m/h4d+FGSdo+UscgwLVlvs9U6/V9gDFDHbOiDd+gu2HhqB3HR+LboojSjzAgArTQoMqjIbzoe/lY52Urwtx0IfXRplcuiB6CnytWDiI7FbrftS5MxsCMpRRnccc9RLdd29VdDU8y5/fkbVW1XnvVi6QxkC/KqwGA0Q7lo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMABgn6B; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4f51551695cso1378109e0c.3;
-        Sun, 18 Aug 2024 19:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724033590; x=1724638390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tr4OmP8xGGsL/1Gww/d2oUqKmeZvZ5Qj0+OKcgxTVv0=;
-        b=kMABgn6ByPnKZq+LAYKARZML2pIBL/4KuuoqzjF2/F0MJ3wDPAtQFVvPkyq75/IcFj
-         IP1q3pgL5Mb3U+Fu3uf9C/EPoQdFLQbgV/zhPZUsG9UVHFTURrFDGBvB/naOjxM4dp7A
-         8dcdKQB4O66E1p6sn1zlR510ZNSNGBRPa5rr/AZJqT9Rb1ig1TNNI31fqdVF/Cft9NQS
-         l8MkBVjgOjEne//dqcdiHh9ssHHvp/zq++D3v266tDNYbuWgYaiIBE2z6MECl4fuaM3e
-         12XT7Jt599YFwdqwBaIOzEGcx/my2O/rSxhGX11UEupXUKOiwsPjjAlVtdHV9fkSLRVh
-         ps7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724033590; x=1724638390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tr4OmP8xGGsL/1Gww/d2oUqKmeZvZ5Qj0+OKcgxTVv0=;
-        b=gQmvxXQ8DSzc6n8HeirSTljH2XJg377DLxS84wiGB4dAc5MQU7zkH2RyE/jkhWMjM8
-         htNceMeGsUPdpZRLkGokIVMUxfDX7GxuakCjzNw6amRwjqWVKQc1I8bTSibwIu2DzLrR
-         ch0GvyL+MOqt37L8E+BrEsM7bntPVlcR0Cicb4qLlavDYHIOocPzfU+bUBc8xtfQuuPB
-         TRLvfz2mD/HAQ8Di9U9Tchm4K8YLgqXrFvUKLEoFIYhDm9P6tjfFtsUvQsmKDfdkEoqt
-         puIbHn2k2SKO92TatZD2rPkiK/E2YWO1zfHoxrN5DcFHKWybf1vsCaPqAe9n/h+oNwet
-         KooA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsnCmUXpNZzlRyT3er+k+D7B3Qd8kvaxUqdPh1ofTbJQnbMycW8NRBuk4DiDNrw+U4pOl86Un0ZrRU@vger.kernel.org, AJvYcCXtW34FhqSkOzpb0Gep4RYbfOKpMnHgC02L8hMNnOzfMEOZB+OPtcIfW9ZXyYK29W1fDXa7tf79cSo7CqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV+36l4jmlGJr4GI4tuvGfPg9hRm55/FBg2aoo0EUtomKA1cal
-	bjQ+0rKe1xRlinH2rANpGtXfKm0wSwrSofOaoozEwMCacdo9oMZ6AOr4JvDblidFo583AuqN44r
-	WgsbBILGSzHvYaX0O9RZeSuVmHamMuKCd
-X-Google-Smtp-Source: AGHT+IGXzFITY/wGSHK7MzDwixkGnmeiR+eN9HqKUVlrIOI1KSiPZpowvJviUYAZ60XEPwq8T9vGUFKP4SA+cu9ddnw=
-X-Received: by 2002:a05:6122:a0e:b0:4f3:207a:c664 with SMTP id
- 71dfb90a1353d-4fc84bd0a9bmr6940618e0c.14.1724033590145; Sun, 18 Aug 2024
- 19:13:10 -0700 (PDT)
+	s=arc-20240116; t=1724033678; c=relaxed/simple;
+	bh=RQqi5+5HdGXpnzT7g0L3jo7GUz+QodVWGFbrAbuGTwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rPkv9Tk0gOP8mowqoXXYO/4/3kobAIRVmzTlXJir/e2jngyvAuShCplIeY4OtbbOGGP54he/UAmxoCDTlK5tBLcLkcy50vYG0pO/0kJXxS6YRuB07L3W5uqTvOYQ5IXt/dAv16ys3BlZHF4y6+gSRDHwD/DjvGjJ+GhkkpWVl0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bYnJV+NB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724033675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TdO7TIP1EJ756Dgvzf3iDAQzqdwGqtd9g2IrKj0K2/M=;
+	b=bYnJV+NBtpoMJcgo+j9iBnJpwOvl1M7lau1HyPkUm9aVAwsRBjDPXPN6nJ7LEOrv2p8dUg
+	j6mSRPYgL8Jj8SNoDJfBRyAzXFntBwQegtlq13hW0gXPDXGPD8I2Ji/JTsM0rOpDKQmg5Y
+	ymlkfxKn8zrTG/ZiHaAd+pbYWkpGB0E=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-ZlWy0JuBMJeMksbmUIQz5A-1; Sun,
+ 18 Aug 2024 22:14:32 -0400
+X-MC-Unique: ZlWy0JuBMJeMksbmUIQz5A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 177811955D4A;
+	Mon, 19 Aug 2024 02:14:30 +0000 (UTC)
+Received: from [10.2.16.4] (unknown [10.2.16.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BD41B19773DF;
+	Mon, 19 Aug 2024 02:14:27 +0000 (UTC)
+Message-ID: <dc4672a0-bff4-493f-81da-9dfdda9018f2@redhat.com>
+Date: Sun, 18 Aug 2024 22:14:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
-In-Reply-To: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
-From: Vicente Bergas <vicencb@gmail.com>
-Date: Mon, 19 Aug 2024 04:12:58 +0200
-Message-ID: <CAAMcf8DZu4B2AN+=8xP3wuknqUtD-e-v+Ej31=08ibPfyL+dGw@mail.gmail.com>
-Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
-To: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-spi@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 1/3] cgroup/cpuset: Correct invalid remote parition
+ prs
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
+ sergeh@kernel.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816082727.2779-1-chenridong@huawei.com>
+ <20240816082727.2779-2-chenridong@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240816082727.2779-2-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Sun, Aug 18, 2024 at 8:13=E2=80=AFPM Vicente Bergas <vicencb@gmail.com> =
-wrote:
->
-> Hi,
-> i am a user of the CONFIG_SPI_SPIDEV device.
-> It stopped working between 6.8 and 6.10.5.
-> The SPI bus itself reports no errors to userspace, but no devices
-> appear connected to the bus.
-> The platform used is RK3328.
-> The only spi-related message in dmesg is:
-> rockchip-spi ff190000.spi: Runtime PM usage count underflow!
->
-> Please, can somebody review this issue?
->
-> Regards,
->   Vicente.
 
-I've tried to bisect, but there is some strange behaviour:
-The message "Runtime PM usage count underflow!" can also appear on a
-good kernel.
-In order to have a reasoble iteration speed, i am updating the kernel via k=
-exec.
-If a good kernel (6.6.30) is cold-booted, then, all the kernels
-kexec'd from it work too.
-If a bad kernel (6.10.5) is cold-booted, then a 6.6.30 is kexec'd and
-then the same 6.10.5 is kexec'd it becomes a good one.
+On 8/16/24 04:27, Chen Ridong wrote:
+> When enable a remote partition, I found that:
+>
+> cd /sys/fs/cgroup/
+> mkdir test
+> mkdir test/test1
+> echo +cpuset > cgroup.subtree_control
+> echo +cpuset >  test/cgroup.subtree_control
+> echo 3 > test/test1/cpuset.cpus
+> echo root > test/test1/cpuset.cpus.partition
+> cat test/test1/cpuset.cpus.partition
+> root invalid (Parent is not a partition root)
+>
+> The parent of a remote partition could not be a root. This is due to the
+> emtpy effective_xcpus. It would be better to prompt the message "invalid
+> cpu list in cpuset.cpus.exclusive".
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 42 +++++++++++++++++++++++-------------------
+>   1 file changed, 23 insertions(+), 19 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index e34fd6108b06..fdd5346616d3 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -80,6 +80,7 @@ enum prs_errcode {
+>   	PERR_HOTPLUG,
+>   	PERR_CPUSEMPTY,
+>   	PERR_HKEEPING,
+> +	PERR_PMT,
+>   };
+>   
+>   static const char * const perr_strings[] = {
+> @@ -91,6 +92,7 @@ static const char * const perr_strings[] = {
+>   	[PERR_HOTPLUG]   = "No cpu available due to hotplug",
+>   	[PERR_CPUSEMPTY] = "cpuset.cpus and cpuset.cpus.exclusive are empty",
+>   	[PERR_HKEEPING]  = "partition config conflicts with housekeeping setup",
+> +	[PERR_PMT]       = "Enable partition not permitted",
+>   };
+>   
+>   struct cpuset {
+> @@ -1669,7 +1671,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   	 * The user must have sysadmin privilege.
+>   	 */
+>   	if (!capable(CAP_SYS_ADMIN))
+> -		return 0;
+> +		return PERR_PMT;
+>   
+>   	/*
+>   	 * The requested exclusive_cpus must not be allocated to other
+> @@ -1683,7 +1685,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   	if (cpumask_empty(tmp->new_cpus) ||
+>   	    cpumask_intersects(tmp->new_cpus, subpartitions_cpus) ||
+>   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+> -		return 0;
+> +		return PERR_INVCPUS;
+>   
+>   	spin_lock_irq(&callback_lock);
+>   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+> @@ -1698,7 +1700,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   	 */
+>   	update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
+>   	update_sibling_cpumasks(&top_cpuset, NULL, tmp);
+> -	return 1;
+> +	return 0;
+>   }
+
+Since you are changing the meaning of the function returned value, you 
+should also update the return value comment as well.
+
+>   
+>   /*
+> @@ -3151,24 +3153,26 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>   		goto out;
+>   
+>   	if (!old_prs) {
+> -		enum partition_cmd cmd = (new_prs == PRS_ROOT)
+> -				       ? partcmd_enable : partcmd_enablei;
+> -
+>   		/*
+> -		 * cpus_allowed and exclusive_cpus cannot be both empty.
+> -		 */
+> -		if (xcpus_empty(cs)) {
+> -			err = PERR_CPUSEMPTY;
+> -			goto out;
+> -		}
+> +		* If parent is valid partition, enable local partiion.
+> +		* Otherwise, enable a remote partition.
+> +		*/
+> +		if (is_partition_valid(parent)) {
+> +			enum partition_cmd cmd = (new_prs == PRS_ROOT)
+> +					       ? partcmd_enable : partcmd_enablei;
+>   
+> -		err = update_parent_effective_cpumask(cs, cmd, NULL, &tmpmask);
+> -		/*
+> -		 * If an attempt to become local partition root fails,
+> -		 * try to become a remote partition root instead.
+> -		 */
+> -		if (err && remote_partition_enable(cs, new_prs, &tmpmask))
+> -			err = 0;
+> +			/*
+> +			 * cpus_allowed and exclusive_cpus cannot be both empty.
+> +			 */
+> +			if (xcpus_empty(cs)) {
+> +				err = PERR_CPUSEMPTY;
+> +				goto out;
+> +			}
+
+The xcpus_empty() check should be done for both local and remote partition.
+
+Cheers,
+Longman
+
+> +
+> +			err = update_parent_effective_cpumask(cs, cmd, NULL, &tmpmask);
+> +		} else {
+> +			err = remote_partition_enable(cs, new_prs, &tmpmask);
+> +		}
+>   	} else if (old_prs && new_prs) {
+>   		/*
+>   		 * A change in load balance state only, no change in cpumasks.
+
 
