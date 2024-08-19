@@ -1,128 +1,168 @@
-Return-Path: <linux-kernel+bounces-292636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7DB957233
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:32:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871A2957227
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17865B22877
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122721F253C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D25B186E2E;
-	Mon, 19 Aug 2024 17:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13A71836D9;
+	Mon, 19 Aug 2024 17:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XpN4KG0k"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ymY+KyDE"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC0E18E0E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43745184549
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724088545; cv=none; b=geS9sBpvHmcJpF+xuOX2FGgLc4S9zUCTW3rUhGQifG17ZKV0gwQ/JJQNV3Y6JIPds7xYNdnIpWhfBIJnO32q3+8gVzqkOn2BgtaIDxjSM398tub0AduolQg8MMg9cBducnNoZl2MoSufgLeDRkzjwjvTMLyfdi6JVAdkyzQ71zI=
+	t=1724088570; cv=none; b=TJlO++6bnUvxq5IivNUpc2u8ltV141rfDTvlvxfycqGWQyynBf9SiJ0o/mfHhBJYem3t6TlCa2w8ME4VWG5lx8kU/sfMtum0NNtnNqVundfzZCZROcSe9nCG4twtqJBOoKV0xIt9QZCCz48fX2MBqMeObkk+u68Y5wL1urByuN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724088545; c=relaxed/simple;
-	bh=454QMfBtiOfDLI3BVvVSyUbm3Tw1viG1/YcSujs389Q=;
+	s=arc-20240116; t=1724088570; c=relaxed/simple;
+	bh=HhRHdDxBKzzr4TrpXNx9i6/40WV9ocQIbiBt77x5ops=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2PNNQ5/hF5SEiN9u1dz86LRRGG5ZAawV4Cyl/SS92jRlU3QLvxY+ZRuzct6OSxfntDyZnJE9z2QxGmz+JrrC0baUDGV3a43hosq/leBwHATkWE0O4aFzzZabF8FxSBfXl3yIagajFgShrmKVGajvKrEwMNI71FAqWnU2fQQfnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XpN4KG0k; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37182eee02dso2404456f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:29:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=LyolB9BH+vJGwSJSgKzN1K2s2TGOyh6NddVFMFPplDkSUDJdhWzHWU5xXQcfl4jj3qpR4FtgKxie7U8AIlXyc8ss+8ybs2Cci7r9AygSkpEzGiLT6M4yw3tIqXjHDlcA33U0qeKMAtL31ixW9MuE6zRBfHmRfl7T4rlmBWPGysI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ymY+KyDE; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f52bd5b555so2653231e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724088542; x=1724693342; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724088567; x=1724693367; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gI0RYGpSNPTo6JqkQ6a41zlNkjmfuHjvoCMeMlyi8rY=;
-        b=XpN4KG0klckoGMDM4s6tzaq82bfXx25wqfciSaigJjoWGKpaDuQHnIvhuVEJA2a75d
-         0mJ2ZYiaxdCTNxuLWneVYmzawiYLJs8J5Vz7aoWQUv2JFIw+af/dak52xi4/xW0qbjLa
-         rBNP7y3Ce/dKOYOi7fmRl8UOfKIXYAGiKd+sqYJ61aP3BRsplpF8F+IQdjbwO8aDjy6P
-         Wh3NL+vBLQNyqCSVKNV3s0RJENRfchYn8R+NgXTChgTIHG7kxtCr/afjTxK9ZxNiECKF
-         AjwGfVUw/FEGX7g0b34Fh5h9uZfz/0VmP8AOsr29zy/U86gmbh7jQ/BAsrVwe2v7jURA
-         pxEw==
+        bh=hTBF8xRO+6dr+B02W+DX5fAQu1yZkaocLrasHJ3WzbU=;
+        b=ymY+KyDEfqFGMOK6peb7RoPlCwPcpldO7XZ4nYGxGUpz5qjppaV/Elk5DdXpGmX7JV
+         A2FQMgGXZAf40OlSdh9JfRKxqRSddxHQNG53PNXL4TBGMt8PfWK0LKtSF/LOcdmnpCT9
+         8OEIcup3P4jVyrop5knml9TTNWMDVCQ+wvYpXy2+B2vJri8Q4Us//KwgcxW5lP0tcrFP
+         SPJvjxJgm48kxYm/Soifwmic9SpcVRE8Un2zoR8P/fc+M9HwxtNkLj5wmuHJePcdKUYT
+         0sLeMqZvHPrLXW6epLkOfAl8R2Q9n6vSoKpLuNfWkD3Zpx0HADUXcrTdeJkpZMESou1k
+         jYLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724088542; x=1724693342;
+        d=1e100.net; s=20230601; t=1724088567; x=1724693367;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gI0RYGpSNPTo6JqkQ6a41zlNkjmfuHjvoCMeMlyi8rY=;
-        b=kfxV1tC7h4aP4pjiuRetH8u7PRZYjHoRr9y5efI4bXfcjVH1LBRM+USd1zmViDAmM7
-         QjYk7ExACTL2tt/2AeGTQASvdwXwT7QD/y8HAMCzStGzsBejh05Z+LtkbMLvHVXC9mqK
-         va9tcX+pjfchSuxRB482Xn725UmU8uWZAlEFJsRL4bKQAftdd0ryl/3SVDy72m5U5a/G
-         dEziaHFNvM08VbXRB77VZYpCXICs13eOBWeGp/G/v+cDtZHMfoBh0TO/fRdMO5G+YdSL
-         gOFO6RTp3WBk6Dc7Ztrt//X4RsRtvS53NVyTGsgdcl1rh1UD+W3wKJSrgRI7ij0DPReM
-         7FqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZBxYgwdkqIioKeY9CEvP+MErQTBYQ3pMLr2qu1fW4aOjP0zWY0quzVmwdp2gHhXMdRGyGbeMiPss+69o7wnR1pqdxtEngWkUKuZ/j
-X-Gm-Message-State: AOJu0YycEVUr4FRYtKPTvPL+qSPIdHxnwS8qhHWwfxh7T4SiLipEeDKf
-	J7/xsgT5XHVxRJGw53tDoFvT4EVpbo/uxg4/ws8EGpkFcfcrFxoXHTAqBDHzI3Wbfa/u1WeuMKh
-	Y6N234geKpuQqpfCypM4/RKIrVyj3FiyQRuh1
-X-Google-Smtp-Source: AGHT+IEM6P57fFQIalJzjEctjLU/SQmHFav4sr0Y6YJXhwaJQfxcJcR0xLhMUTpcBGUK6XdGK20cJldrnAfreXca/n4=
-X-Received: by 2002:adf:e0c1:0:b0:366:ea4a:17ec with SMTP id
- ffacd0b85a97d-371c4a9be3dmr243128f8f.2.1724088541976; Mon, 19 Aug 2024
- 10:29:01 -0700 (PDT)
+        bh=hTBF8xRO+6dr+B02W+DX5fAQu1yZkaocLrasHJ3WzbU=;
+        b=T8mnulRp+K0O+T8c0VVBDaeQlIKsNId1mQir94OFDWQ9b3E9/QOYrkBFf05wfUOc7a
+         7uHzyK0wmqK49CJ6kJNvysnE8Xp0hKibkpo87ZOmUUjBV1Cj5pIk0VRZzsgAl4YMBOrJ
+         f95NkrWpry5e/xOnrmNnmA2j6lrivjTuiaYYhO3WrH2mAjSzQfWwmijxBuJgPoYC/JyY
+         gb/EVzhHK/5pcMvU2YIfLrmB6jxu1sXVc7ih/nfa8F0cnoeWqK5Y4IYxPpj6M3bxb/WE
+         4esRQXjWxKPWZKiap2mhTUvRJleoLhha989DB7urN3mVH7B4/qAQ8onSBP7dCTEEDXvt
+         T+9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXygD5tCsoPFRU++Y7aAAqwWWhOCLOClCtqupJyubjwpwz6yBJlEY76A3VHjQtxLdvdFmskyPZO8DgtfsWEMYl4oYwEdMC5Q+a6vB8U
+X-Gm-Message-State: AOJu0YyRtsHkrO7w6ZIRaJJlt1fL2ZnQsfml+3pOv16uTYbW5JEBkAEg
+	7KG5CSeSmeCVpvp3A1rov08SUV64PTf8YjVWa5axH3bRlBF229AkbcGvxNnIdamg+csacYLaAVJ
+	eqMRmlK8LZkZ1LgrM4LJPz6zYWYUts+wSqkGrKA==
+X-Google-Smtp-Source: AGHT+IE5C25rMYlYJ9rNhDYQ9jQen34MSS+PvWtWf/qOkX3gU+Sjvd7JiPq70UYyNTDu5toD9RYEGxZa8dQkUNbwjUw=
+X-Received: by 2002:ac5:c393:0:b0:4f5:2849:598d with SMTP id
+ 71dfb90a1353d-4fcd672d202mr327117e0c.4.1724088567062; Mon, 19 Aug 2024
+ 10:29:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-2-vipinsh@google.com>
- <Zr_gx1Xi1TAyYkqb@google.com> <20240819172023.GA2210585.vipinsh@google.com>
-In-Reply-To: <20240819172023.GA2210585.vipinsh@google.com>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 19 Aug 2024 10:28:34 -0700
-Message-ID: <CALzav=cFPduBR4pmgnVrgY6q+wufTn_nS-4QDF4yw8uGQkV41Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: x86/mmu: Split NX hugepage recovery flow into
- TDP and non-TDP flow
-To: Vipin Sharma <vipinsh@google.com>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240817075629.262318-1-mikisabate@gmail.com>
+In-Reply-To: <20240817075629.262318-1-mikisabate@gmail.com>
+From: Jesse Taube <jesse@rivosinc.com>
+Date: Mon, 19 Aug 2024 13:29:16 -0400
+Message-ID: <CALSpo=ZsZWNm_cXG_4GXyZ9invSS_eKH=9Q-mdoM2XV=HwzOXA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: hwprobe: export Zicntr and Zihpm extensions
+To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mikisabate@gmail.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 10:20=E2=80=AFAM Vipin Sharma <vipinsh@google.com> =
-wrote:
+On Sat, Aug 17, 2024 at 3:58=E2=80=AFAM Miquel Sabat=C3=A9 Sol=C3=A0 <mikis=
+abate@gmail.com> wrote:
 >
-> On 2024-08-16 16:29:11, Sean Christopherson wrote:
-> > On Mon, Aug 12, 2024, Vipin Sharma wrote:
-> > > +   list_for_each_entry(sp, &kvm->arch.possible_nx_huge_pages, possib=
-le_nx_huge_page_link) {
-> > > +           if (i++ >=3D max)
-> > > +                   break;
-> > > +           if (is_tdp_mmu_page(sp) =3D=3D tdp_mmu)
-> > > +                   return sp;
-> > > +   }
-> >
-> > This is silly and wasteful.  E.g. in the (unlikely) case there's one TD=
-P MMU
-> > page amongst hundreds/thousands of shadow MMU pages, this will walk the=
- list
-> > until @max, and then move on to the shadow MMU.
-> >
-> > Why not just use separate lists?
+> Export Zicntr and Zihpm ISA extensions through the hwprobe syscall.
 >
-> Before this patch, NX huge page recovery calculates "to_zap" and then it
-> zaps first "to_zap" pages from the common list. This series is trying to
-> maintain that invarient.
+> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mikisabate@gmail.com>
+> ---
+>  Documentation/arch/riscv/hwprobe.rst  | 6 ++++++
+>  arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
+>  arch/riscv/kernel/sys_hwprobe.c       | 2 ++
+>  3 files changed, 10 insertions(+)
 >
-> If we use two separate lists then we have to decide how many pages
-> should be zapped from TDP MMU and shadow MMU list. Few options I can
-> think of:
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/ri=
+scv/hwprobe.rst
+> index 3db60a0911df..5bb69c985cce 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -188,10 +188,16 @@ The following keys are defined:
+>         manual starting from commit 95cf1f9 ("Add changes requested by Ve=
+d
+>         during signoff")
 >
-> 1. Zap "to_zap" pages from both TDP MMU and shadow MMU list separately.
->    Effectively, this might double the work for recovery thread.
-> 2. Try zapping "to_zap" page from one list and if there are not enough
->    pages to zap then zap from the other list. This can cause starvation.
-> 3. Do half of "to_zap" from one list and another half from the other
->    list. This can lead to situations where only half work is being done
->    by the recovery worker thread.
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZICNTR`: The Zicntr extension version 2.=
+0
+> +       is supported as defined in the RISC-V ISA manual.
+> +
+>    * :c:macro:`RISCV_HWPROBE_EXT_ZIHINTPAUSE`: The Zihintpause extension =
+is
+>         supported as defined in the RISC-V ISA manual starting from commi=
+t
+>         d8ab5c78c207 ("Zihintpause is ratified").
 >
-> Option (1) above seems more reasonable to me.
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZIHPM`: The Zihpm extension version 2.0
+> +       is supported as defined in the RISC-V ISA manual.
+> +
+>    * :c:macro:`RISCV_HWPROBE_EXT_ZVE32X`: The Vector sub-extension Zve32x=
+ is
+>      supported, as defined by version 1.0 of the RISC-V Vector extension =
+manual.
+>
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/u=
+api/asm/hwprobe.h
+> index b706c8e47b02..098a815b3fd4 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -72,6 +72,8 @@ struct riscv_hwprobe {
+>  #define                RISCV_HWPROBE_EXT_ZCF           (1ULL << 46)
+>  #define                RISCV_HWPROBE_EXT_ZCMOP         (1ULL << 47)
+>  #define                RISCV_HWPROBE_EXT_ZAWRS         (1ULL << 48)
+> +#define                RISCV_HWPROBE_EXT_ZICNTR        (1ULL << 49)
+> +#define                RISCV_HWPROBE_EXT_ZIHPM         (1ULL << 50)
+>  #define RISCV_HWPROBE_KEY_CPUPERF_0    5
+>  #define                RISCV_HWPROBE_MISALIGNED_UNKNOWN        (0 << 0)
+>  #define                RISCV_HWPROBE_MISALIGNED_EMULATED       (1 << 0)
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwpr=
+obe.c
+> index 8d1b5c35d2a7..30aede1c90ff 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -118,6 +118,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pa=
+ir,
+>                 EXT_KEY(ZKSH);
+>                 EXT_KEY(ZKT);
+>                 EXT_KEY(ZTSO);
+> +               EXT_KEY(ZICNTR);
+> +               EXT_KEY(ZIHPM);
 
-I vote each should zap 1/nx_huge_pages_recovery_ratio of their
-respective list. i.e. Calculate to_zap separately for each list.
+Conor, do we care about ordering?
+
+Acked-by: Jesse Taube <jesse@rivosinc.com>
+
+>
+>                 /*
+>                  * All the following extensions must depend on the kernel
+> --
+> 2.46.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
