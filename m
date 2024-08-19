@@ -1,478 +1,119 @@
-Return-Path: <linux-kernel+bounces-292309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66E5956DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F34956DDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA5A1C23BDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C861C23F1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4922D175D2F;
-	Mon, 19 Aug 2024 14:51:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E6F1741C3;
-	Mon, 19 Aug 2024 14:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C323416C6A0;
+	Mon, 19 Aug 2024 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="kE/tizXz"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9747E16C6A9
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724079068; cv=none; b=IZ7Wz/UttsF/y/gYngWlt7PZFxh9y2iREwESO27AqV2/DiUstOxmlNY518cIITW71yzyxxvnouQFq2vjCLG6cluwOfPjPQih7OBB2Kgfwypw+SV1aO4gnmImN+V+xOoHFf0SsOU//QB+IHbtD7+TQlp9DpOYkKVdupWn7HFxYdI=
+	t=1724079097; cv=none; b=fsDTIsDkBEDTTHnNmEK9OeXKofgd6VPgF7HbNpyRCn6Zc421d8qAAPvbRWGBGEmBXm3U4IpWFxpVhSQl0xAPLogx6n6e/kmPuKSu4BHroGeBsF7+3OPwPnlWpTo+NBKWtXMoS/383XpJX7vMVwhmh9bFWrTyv9A5MrBFXkDObGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724079068; c=relaxed/simple;
-	bh=HFDtVUbqcgxGPIhTo0mOjNnRgr8Jm5CamJxnE7bYkbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQNRh3aQvyD4E8otls0iMXb+5LG4hHJyAOA3A8bIo4zhIuVhNZcIsMxjWCaXC7euvRpQ0bnzvimoLMoDeQlze8HF4p1CaFIW49S0xHUQx/BjWgtDUwzed+1jclmp1ZQqiOUoUx1s2TbD7Hqpj+HxaWgs7276mtEX4/M8JEzsTRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96F2A339;
-	Mon, 19 Aug 2024 07:51:30 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 120E03F66E;
-	Mon, 19 Aug 2024 07:51:01 -0700 (PDT)
-Message-ID: <beff9162-e1ba-4f72-91ea-329eaed48dbc@arm.com>
-Date: Mon, 19 Aug 2024 15:51:00 +0100
+	s=arc-20240116; t=1724079097; c=relaxed/simple;
+	bh=anC9TSfJ9atzD1KEU7o2hISDrSWZyCtUZv3frTZMXYA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=lc6bFbIQoNRrDKZDw18W45Xkkpc4sOixdqCml4KQftYsPzfBWMkNVWgGJFdczD/VhUs2eetZ4F5foYNz3B+6KJbl9jA4sT7E0kasDhwLcD/L+wTwaFdGWZHqT90wC9moXcCOekxASA7cG54LuQ3KU7gQZq8P344Xx+3hVk3m1xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=kE/tizXz; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/19] irqchip/gic-v3-its: Share ITS tables with a
- non-trusted hypervisor
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-18-steven.price@arm.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240819131924.372366-18-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1724079092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=anC9TSfJ9atzD1KEU7o2hISDrSWZyCtUZv3frTZMXYA=;
+	b=kE/tizXzU0003+6EVOibXXnk/fULdkZnyJkdCAsb0BEllVv27hciztIMtxAm8rCn+68e31
+	nAfAJo7rRN5E2o/HS0s4WUWhV6FN5mRxRrXOPC/lIbkTqIgMaHjsB2s0ch+z0r/eOEbe1d
+	jRuP2L2tVqHAMphAvt1uMVOv6RRnBpoTiVk8TyZrdI9efwa9GWUEt7sPcyWQmZ/fCri1Iy
+	4fRTDTiPUHxUbDlI4KRX38Ca2RuMqvEuQYP3nH0P78Ea/01OEG2irjw11Ybq27XgMpZ8MT
+	Tr3o/48WZeV14Bz+4QpokbDhBT7NMa9u6SBj1UP1IivRbmBF2RfETbCjzTRqdw==
+Content-Type: multipart/signed;
+ boundary=96437a84d4599b1620474bb25d7caa8cc60be0169b1ebc5c8503e60b90be;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Mon, 19 Aug 2024 16:51:21 +0200
+Message-Id: <D3JZ0ZQ0BF6A.1J4UHWMDS3JWJ@cknow.org>
+Cc: "Huang-Huang Bao" <i@eh5.me>, "Rockchip SoC..."
+ <linux-rockchip@lists.infradead.org>, <linux-spi@vger.kernel.org>, "Heiko
+ Stuebner" <heiko@sntech.de>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Sasha Levin" <sashal@kernel.org>, "linux-arm-kernel"
+ <linux-arm-kernel@lists.infradead.org>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, "Mark Brown" <broonie@kernel.org>
+Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Vicente Bergas" <vicencb@gmail.com>
+References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com> <CAAMcf8DZu4B2AN+=8xP3wuknqUtD-e-v+Ej31=08ibPfyL+dGw@mail.gmail.com> <CAAMcf8A59MqhZEswC5VmKZyThG7oG=ztEYd_yfuOwvGTvKzMow@mail.gmail.com> <CAAMcf8Ctr9rOZ2oOzk48haakJOO2bzyNURb2oZTRxJ3tnafXUA@mail.gmail.com> <D3JXD607339U.2F1IAKUSM59UP@cknow.org> <CAAMcf8BAiva1GB_1AoVH-Nq8sp81KdtVe=rUMVjV2ZxCiM4NAg@mail.gmail.com>
+In-Reply-To: <CAAMcf8BAiva1GB_1AoVH-Nq8sp81KdtVe=rUMVjV2ZxCiM4NAg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Steven,
+--96437a84d4599b1620474bb25d7caa8cc60be0169b1ebc5c8503e60b90be
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On 19/08/2024 14:19, Steven Price wrote:
-> Within a realm guest the ITS is emulated by the host. This means the
-> allocations must have been made available to the host by a call to
-> set_memory_decrypted(). Introduce an allocation function which performs
-> this extra call.
-> 
-> For the ITT use a custom genpool-based allocator that calls
-> set_memory_decrypted() for each page allocated, but then suballocates
-> the size needed for each ITT. Note that there is no mechanism
-> implemented to return pages from the genpool, but it is unlikely the
-> peak number of devices will so much larger than the normal level - so
-> this isn't expected to be an issue.
-> 
+On Mon Aug 19, 2024 at 4:37 PM CEST, Vicente Bergas wrote:
+> On Mon, Aug 19, 2024 at 3:33 PM Diederik de Haas <didi.debian@cknow.org> wrote:
+> > On Mon Aug 19, 2024 at 3:14 PM CEST, Vicente Bergas wrote:
+> > > On Mon, Aug 19, 2024 at 2:49 PM Vicente Bergas <vicencb@gmail.com> wrote:
+> > > > Added:
+> > > > Huang-Huang Bao <i@eh5.me>
+> > > > Linus Walleij <linus.walleij@linaro.org>
+> > > > Sasha Levin <sashal@kernel.org>
+> > > >
+> > > > The first offending commit is:
+> > > > 29d8101fb9442544077e68e27839a1979f85633d pinctrl: rockchip: fix pinmux
+> > > > bits for RK3328 GPIO2-B pins
+> > > >
+> > > > I've also tested 6.10.6 with it reverted (and
+> > > > 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+> > > > 7127c68c76f120367b9a5053f524df0b603d4a48 as dependencies) and SPI
+> > > > works fine.
+> > >
+> > > Sorry for the noise:
+> > > reverting only 29d8101fb9442544077e68e27839a1979f85633d makes it work on 6.10.6.
+> > > Ignore what i said about 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+> > > 7127c68c76f120367b9a5053f524df0b603d4a48.
+> >
+> > Please try if unreverting that commit and adding the following:
+> > https://lore.kernel.org/linux-rockchip/20240709105428.1176375-1-i@eh5.me/
+> >
+> > fixes the issue as well.
+>
+> I confirm that 6.10.6 without any reverts plus
+> 20240709105428.1176375-1-i@eh5.me also fixes the issue.
 
-This may not be sufficient to make it future proof. We need to detect if
-the GIC is private vs shared, before we make the allocation choice. 
-Please see below :
+It would be great if that patch got accepted to fix the breakage,
+including on a number of stable kernel versions.
 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v3:
->   * Use BIT() macro.
->   * Use a genpool based allocator in its_create_device() to avoid
->     allocating a full page.
->   * Fix subject to drop "realm" and use gic-v3-its.
->   * Add error handling to ITS alloc/free.
-> Changes since v2:
->   * Drop 'shared' from the new its_xxx function names as they are used
->     for non-realm guests too.
->   * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
->     should do the right thing.
->   * Drop a pointless (void *) cast.
-> ---
->   drivers/irqchip/irq-gic-v3-its.c | 139 ++++++++++++++++++++++++++-----
->   1 file changed, 116 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 9b34596b3542..557214c774c3 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -12,12 +12,14 @@
->   #include <linux/crash_dump.h>
->   #include <linux/delay.h>
->   #include <linux/efi.h>
-> +#include <linux/genalloc.h>
->   #include <linux/interrupt.h>
->   #include <linux/iommu.h>
->   #include <linux/iopoll.h>
->   #include <linux/irqdomain.h>
->   #include <linux/list.h>
->   #include <linux/log2.h>
-> +#include <linux/mem_encrypt.h>
->   #include <linux/memblock.h>
->   #include <linux/mm.h>
->   #include <linux/msi.h>
-> @@ -27,6 +29,7 @@
->   #include <linux/of_pci.h>
->   #include <linux/of_platform.h>
->   #include <linux/percpu.h>
-> +#include <linux/set_memory.h>
->   #include <linux/slab.h>
->   #include <linux/syscore_ops.h>
->   
-> @@ -164,6 +167,7 @@ struct its_device {
->   	struct its_node		*its;
->   	struct event_lpi_map	event_map;
->   	void			*itt;
-> +	u32			itt_sz;
->   	u32			nr_ites;
->   	u32			device_id;
->   	bool			shared;
-> @@ -199,6 +203,81 @@ static DEFINE_IDA(its_vpeid_ida);
->   #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
->   #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
->   
-> +static struct page *its_alloc_pages_node(int node, gfp_t gfp,
-> +					 unsigned int order)
-> +{
-> +	struct page *page;
-> +	int ret = 0;
-> +
-> +	page = alloc_pages_node(node, gfp, order);
-> +
-> +	if (!page)
-> +		return NULL;
-> +
-> +	ret = set_memory_decrypted((unsigned long)page_address(page),
-> +				   1 << order);
-> +	if (WARN_ON(ret))
-> +		return NULL;
-> +
-> +	return page;
-> +}
-> +
-> +static struct page *its_alloc_pages(gfp_t gfp, unsigned int order)
-> +{
-> +	return its_alloc_pages_node(NUMA_NO_NODE, gfp, order);
-> +}
-> +
-> +static void its_free_pages(void *addr, unsigned int order)
-> +{
-> +	if (WARN_ON(set_memory_encrypted((unsigned long)addr, 1 << order)))
-> +		return;
-> +	free_pages((unsigned long)addr, order);
-> +}
-> +
-> +static struct gen_pool *itt_pool;
-> +
-> +static void *itt_alloc_pool(int node, int size)
-> +{
-> +	unsigned long addr;
-> +	struct page *page;
-> +
-> +	if (size >= PAGE_SIZE) {
-> +		page = its_alloc_pages_node(node,
-> +					    GFP_KERNEL | __GFP_ZERO,
-> +					    get_order(size));
-> +
-> +		return page_address(page);
-> +	}
-> +
-> +	do {
-> +		addr = gen_pool_alloc(itt_pool, size);
-> +		if (addr)
-> +			break;
-> +
-> +		page = its_alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, 1);
-> +		if (!page)
-> +			break;
-> +
-> +		gen_pool_add(itt_pool, (unsigned long)page_address(page),
-> +			     PAGE_SIZE, node);
-> +	} while (!addr);
-> +
-> +	return (void *)addr;
-> +}
-> +
-> +static void itt_free_pool(void *addr, int size)
-> +{
-> +	if (!addr)
-> +		return;
-> +
-> +	if (size >= PAGE_SIZE) {
-> +		its_free_pages(addr, get_order(size));
-> +		return;
-> +	}
-> +
-> +	gen_pool_free(itt_pool, (unsigned long)addr, size);
-> +}
-> +
->   /*
->    * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
->    * always have vSGIs mapped.
-> @@ -2187,7 +2266,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
->   {
->   	struct page *prop_page;
->   
-> -	prop_page = alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
-> +	prop_page = its_alloc_pages(gfp_flags,
-> +				    get_order(LPI_PROPBASE_SZ));
->   	if (!prop_page)
->   		return NULL;
->   
-> @@ -2198,8 +2278,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
->   
->   static void its_free_prop_table(struct page *prop_page)
->   {
-> -	free_pages((unsigned long)page_address(prop_page),
-> -		   get_order(LPI_PROPBASE_SZ));
-> +	its_free_pages(page_address(prop_page),
-> +		       get_order(LPI_PROPBASE_SZ));
->   }
->   
->   static bool gic_check_reserved_range(phys_addr_t addr, unsigned long size)
-> @@ -2321,7 +2401,8 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
->   		order = get_order(GITS_BASER_PAGES_MAX * psz);
->   	}
->   
-> -	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, order);
-> +	page = its_alloc_pages_node(its->numa_node,
-> +				    GFP_KERNEL | __GFP_ZERO, order);
->   	if (!page)
->   		return -ENOMEM;
->   
-> @@ -2334,7 +2415,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
->   		/* 52bit PA is supported only when PageSize=64K */
->   		if (psz != SZ_64K) {
->   			pr_err("ITS: no 52bit PA support when psz=%d\n", psz);
-> -			free_pages((unsigned long)base, order);
-> +			its_free_pages(base, order);
->   			return -ENXIO;
->   		}
->   
-> @@ -2390,7 +2471,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
->   		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
->   		       &its->phys_base, its_base_type_string[type],
->   		       val, tmp);
-> -		free_pages((unsigned long)base, order);
-> +		its_free_pages(base, order);
->   		return -ENXIO;
->   	}
->   
-> @@ -2529,8 +2610,8 @@ static void its_free_tables(struct its_node *its)
->   
->   	for (i = 0; i < GITS_BASER_NR_REGS; i++) {
->   		if (its->tables[i].base) {
-> -			free_pages((unsigned long)its->tables[i].base,
-> -				   its->tables[i].order);
-> +			its_free_pages(its->tables[i].base,
-> +				       its->tables[i].order);
->   			its->tables[i].base = NULL;
->   		}
->   	}
-> @@ -2796,7 +2877,8 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
->   
->   	/* Allocate memory for 2nd level table */
->   	if (!table[idx]) {
-> -		page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
-> +		page = its_alloc_pages(GFP_KERNEL | __GFP_ZERO,
-> +				       get_order(psz));
->   		if (!page)
->   			return false;
->   
-> @@ -2915,7 +2997,8 @@ static int allocate_vpe_l1_table(void)
->   
->   	pr_debug("np = %d, npg = %lld, psz = %d, epp = %d, esz = %d\n",
->   		 np, npg, psz, epp, esz);
-> -	page = alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE));
-> +	page = its_alloc_pages(GFP_ATOMIC | __GFP_ZERO,
-> +			       get_order(np * PAGE_SIZE));
->   	if (!page)
->   		return -ENOMEM;
->   
-> @@ -2961,8 +3044,8 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->   {
->   	struct page *pend_page;
->   
-> -	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
-> -				get_order(LPI_PENDBASE_SZ));
-> +	pend_page = its_alloc_pages(gfp_flags | __GFP_ZERO,
-> +				    get_order(LPI_PENDBASE_SZ));
->   	if (!pend_page)
->   		return NULL;
->   
-> @@ -2974,7 +3057,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->   
->   static void its_free_pending_table(struct page *pt)
->   {
-> -	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
-> +	its_free_pages(page_address(pt), get_order(LPI_PENDBASE_SZ));
->   }
->   
->   /*
-> @@ -3309,8 +3392,9 @@ static bool its_alloc_table_entry(struct its_node *its,
->   
->   	/* Allocate memory for 2nd level table */
->   	if (!table[idx]) {
-> -		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-> -					get_order(baser->psz));
-> +		page = its_alloc_pages_node(its->numa_node,
-> +					    GFP_KERNEL | __GFP_ZERO,
-> +					    get_order(baser->psz));
->   		if (!page)
->   			return false;
->   
-> @@ -3405,7 +3489,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->   	if (WARN_ON(!is_power_of_2(nvecs)))
->   		nvecs = roundup_pow_of_two(nvecs);
->   
-> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->   	/*
->   	 * Even if the device wants a single LPI, the ITT must be
->   	 * sized as a power of two (and you need at least one bit...).
-> @@ -3413,7 +3496,11 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->   	nr_ites = max(2, nvecs);
->   	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
->   	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
-> +
-> +	itt = itt_alloc_pool(its->numa_node, sz);
-> +
-> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> +
->   	if (alloc_lpis) {
->   		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
->   		if (lpi_map)
-> @@ -3425,9 +3512,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->   		lpi_base = 0;
->   	}
->   
-> -	if (!dev || !itt ||  !col_map || (!lpi_map && alloc_lpis)) {
-> +	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
->   		kfree(dev);
-> -		kfree(itt);
-> +		itt_free_pool(itt, sz);
->   		bitmap_free(lpi_map);
->   		kfree(col_map);
->   		return NULL;
-> @@ -3437,6 +3524,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->   
->   	dev->its = its;
->   	dev->itt = itt;
-> +	dev->itt_sz = sz;
->   	dev->nr_ites = nr_ites;
->   	dev->event_map.lpi_map = lpi_map;
->   	dev->event_map.col_map = col_map;
-> @@ -3464,7 +3552,7 @@ static void its_free_device(struct its_device *its_dev)
->   	list_del(&its_dev->entry);
->   	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
->   	kfree(its_dev->event_map.col_map);
-> -	kfree(its_dev->itt);
-> +	itt_free_pool(its_dev->itt, its_dev->itt_sz);
->   	kfree(its_dev);
->   }
->   
-> @@ -5112,8 +5200,9 @@ static int __init its_probe_one(struct its_node *its)
->   		}
->   	}
->   
-> -	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-> -				get_order(ITS_CMD_QUEUE_SZ));
-> +	page = its_alloc_pages_node(its->numa_node,
-> +				    GFP_KERNEL | __GFP_ZERO,
-> +				    get_order(ITS_CMD_QUEUE_SZ));
->   	if (!page) {
->   		err = -ENOMEM;
->   		goto out_unmap_sgir;
-> @@ -5177,7 +5266,7 @@ static int __init its_probe_one(struct its_node *its)
->   out_free_tables:
->   	its_free_tables(its);
->   out_free_cmd:
-> -	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
-> +	its_free_pages(its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
->   out_unmap_sgir:
->   	if (its->sgir_base)
->   		iounmap(its->sgir_base);
-> @@ -5663,6 +5752,10 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->   	bool has_v4_1 = false;
->   	int err;
->   
-> +	itt_pool = gen_pool_create(get_order(ITS_ITT_ALIGN), -1);
-> +	if (!itt_pool)
-> +		return -ENOMEM;
-> +
->   	gic_rdists = rdists;
->   
->   	lpi_prop_prio = irq_prio;
+--96437a84d4599b1620474bb25d7caa8cc60be0169b1ebc5c8503e60b90be
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-How about something like this folded into this patch ? Or if this patch 
-goes in independently, we could carry the following as part of the CCA
-series.
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZsNb7QAKCRDXblvOeH7b
+bpLRAP43HO7c7+6ex8WcGcQs/3phh9JuAbc0tAVVI5tGO48g0QEAmeA/twUmoTUL
+4Ieigmn/2Uv+eIsvOtIabv01dKjoyAA=
+=P5nK
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c 
-b/drivers/irqchip/irq-gic-v3-its.c
-index 6f4ddf7faed1..f1a779b52210 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -209,7 +209,7 @@ static struct page *its_alloc_pages_node(int node, 
-gfp_t gfp,
-
-  	page = alloc_pages_node(node, gfp, order);
-
--	if (page)
-+	if (gic_rdists->is_shared && page)
-  		set_memory_decrypted((unsigned long)page_address(page),
-  				     BIT(order));
-  	return page;
-@@ -222,7 +222,8 @@ static struct page *its_alloc_pages(gfp_t gfp, 
-unsigned int order)
-
-  static void its_free_pages(void *addr, unsigned int order)
-  {
--	set_memory_encrypted((unsigned long)addr, BIT(order));
-+	if (gic_rdists->is_shared)
-+		set_memory_encrypted((unsigned long)addr, BIT(order));
-  	free_pages((unsigned long)addr, order);
-  }
-
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 6fb276504bcc..48c6b2c8dd8c 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -2015,6 +2015,8 @@ static int __init gic_init_bases(phys_addr_t 
-dist_phys_base,
-  	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
-  	gic_data.rdists.gicd_typer = typer;
-
-+	gic_data.rdists.is_shared = 
-!arm64_is_iomem_private(gic_data.dist_phys_base,
-+							    PAGE_SIZE);
-  	gic_enable_quirks(readl_relaxed(gic_data.dist_base + GICD_IIDR),
-  			  gic_quirks, &gic_data);
-
-diff --git a/include/linux/irqchip/arm-gic-v3.h 
-b/include/linux/irqchip/arm-gic-v3.h
-index 728691365464..1edc33608d52 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -631,6 +631,7 @@ struct rdists {
-  	bool			has_rvpeid;
-  	bool			has_direct_lpi;
-  	bool			has_vpend_valid_dirty;
-+	bool			is_shared;
-  };
-
-  struct irq_domain;
+--96437a84d4599b1620474bb25d7caa8cc60be0169b1ebc5c8503e60b90be--
 
