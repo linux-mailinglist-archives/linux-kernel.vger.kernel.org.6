@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-292658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A629095726C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DC895726E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A1A1C2324F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:52:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6EA1C23241
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2D7188CAF;
-	Mon, 19 Aug 2024 17:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C212188CB6;
+	Mon, 19 Aug 2024 17:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bf1gkKNT"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z9tLN+ju"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B11D531
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC716132E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089958; cv=none; b=MEXeCYmy+uw+6R7xXunurm2q5zWTL8JWfSZz2vDDEl+YqukwprD8xTzLCE9kr+g1FMHl6pg2r6Z71dURHaVmYc4d6OufuxWeaGiMpH1lMiiNftGu9C51sAxkQFS4F9/V4GGrwUttv+gYHMkzEICSK1yhAWJa47TKqv2bfEuZoSI=
+	t=1724089976; cv=none; b=Sf7ShOMk2EgcAqaLmmtiseVase0sQ+Unmt+A4IRMyxqBB44m8Ycd4qmglpPwh5CW3tgeViHLFhf1lgAJaaCg8cAMQhVdwQFAM9GE1s06Jrz+LWhmKUs/NflgHDH1nv9NB/aDp/jbu7r2Vc0aI83XGdmn9zZPZalDSHnDa9FRTtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089958; c=relaxed/simple;
-	bh=y1QwZTuvE2ZkvmNKtJwqxK9L/MdUdDFAHSOWf/9ogNQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOqEYGGUcskl8Q0lXPuz2tqSQTU/CfLfHdp5jwUfLkooOkPKa7dAK1wjMgL9weByk6+R7z9q+2EQwSTLT3dp1/GTt7Cx1PYMP1J3/rHSh9rOcWq4Ee6jvp9BZ4jnlwpPboL+CQfVZ1Fain+sHjAZNHL7LtGqcuggS/zm3iISBic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bf1gkKNT; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d439583573so870879a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:52:37 -0700 (PDT)
+	s=arc-20240116; t=1724089976; c=relaxed/simple;
+	bh=cVTzqwZxap3iVomL1QKHBohhVggQhfoi3NhyFSh4m+c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ljqTdrXAV2SggrJFDp+CM/5f1a6Yo0ktTnIVg5QXDV4HWIvZqRcYu/lAVwYj6UVVvxSdPDw35LN9Tm5C1j1xD/zKuw8k1j227DBAbz23qKZ8IPWm3NfWhSQ7eQsmVmJnctqkAhtmxuKlAYf066PwGq5NIQOZQoy7z1LAzNbeRO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z9tLN+ju; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-427fc9834deso2845e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724089957; x=1724694757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrl19mqws/+cluViI8m9rcTcYnyGlPjI1zYV7NRxDIE=;
-        b=Bf1gkKNT5++KYPSUf0N81eylv6uAfbPEEjJb4QyvxEJ7QFzmzewVelidZBwHtefzlg
-         8pfdpy+d9bTIzeBML9oub4jOefjmGmz8UQQR9TZzjXrh1wmPvdZiaykrR1xg5vknJjzo
-         jmUNtNRKNzXaFOo8ZCa/x+Mz2RzdVJ8eflSLAt9iwrkbt97ZVQlzNA0DmMjoVZQZKq0r
-         GnTAoCdBDrCEWpClKYigP75OEIz5mwey8ngcZ66dEeDHqKv90lU+21CZqYSoxQkmx1sk
-         kZnTkV6vi9uePKWDJvdhXXR2y1IFG6/YofWcataU/xSl/IhJ06fV4Pz9j/rXu8UItDK1
-         apJA==
+        d=google.com; s=20230601; t=1724089973; x=1724694773; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gMtRG0oO8Nirv/pH9tl2QYzZXra6QzE+ysSHUsbX5Q=;
+        b=z9tLN+juahjwDC8+QcDPPxrD8DA3F2I0uL4dNK3yogCpjEtSjW8vYbijTND6mNo1ZA
+         P07sCtLvonv5nRXnuu+QtlXoC3oh8aJDM5rUfdY8DuenRvYRUgGcYDcC9ZhfxjLQ6wyz
+         7pYq2XvwPTa4gDWz73Aw0ljOXNJdaaDWl02Mfl1YCjF5ei93yYnpvG/bGoHL2VmDjeIN
+         EVrG/FkT1DsDHuorEVhjYzzLmQ0TrECtChoJacencfXbqn5MiJCJJb3x7yAQT2X/uHvF
+         QsuuqTCVYF/TrEN0M+0sdjT9UyrMduo6Q7IHvFdh2nmvEZD3gKQN/fnk6Zup+G8kWYlk
+         +Ifw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724089957; x=1724694757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724089973; x=1724694773;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Vrl19mqws/+cluViI8m9rcTcYnyGlPjI1zYV7NRxDIE=;
-        b=rV3m+UrrtQd4eW0TvzMCcN9sgdxn6S/QfsFLHvV6Z8i92r8BALUU+pNcqZoSIEvHDS
-         GT0pO3nphK5tUDuCrqfsccgn2jEBoEkIozDbPQou3S/KoUM/NMw3OwVpimKJ0NlWrIg0
-         Hm6AMNFCsGiclUy2giWkOs+9eqHH5ZZeOCiA+mLOjPMHWRxzX8FY+ZmsJZ+DSiwWSgWw
-         TQDxh5ZQNS7mAb+MVF5QhcI9YKWesYWbJVKaVpr/8SlmucUYj1qaXEImRK6gCRBgr49M
-         pDvCGG5XDZgW/MWp1C19Z5SM2HaPwGDxjMbPdPQLUQ3oJo1YQ2l+dC6W5PjW50dCgNcY
-         Dh4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUwvO6MCLNH0IUg3DY2FC+Omd43+am8SwIEnzBdtTdsJz0t0IumJ8c3S24lIX/WRz5e25E4epjn/jTFYRtzUZ1GBTblQZyZMPxYrk/P
-X-Gm-Message-State: AOJu0Yw4n3PHYh8LtsVd82CzWIW+Z11zILOkopqQtjNgCPHJKy2AZlmt
-	0W0qcoaqPd7IHB7eqCoJCSXk/ARoP57/+NVajmCsA11/J2Lcke9B
-X-Google-Smtp-Source: AGHT+IHvY5FsJmcFyBLd68H463HEg+9AYFBSgdZgFa0Uo2yp0Vuaagu34O0T61d8e5QdpKKdaRHXNQ==
-X-Received: by 2002:a17:90b:234f:b0:2cf:28c1:4cc9 with SMTP id 98e67ed59e1d1-2d3dfc2ae5bmr10731210a91.3.1724089956692;
-        Mon, 19 Aug 2024 10:52:36 -0700 (PDT)
-Received: from embed-PC.. ([106.222.231.54])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e317527csm7538297a91.26.2024.08.19.10.52.32
+        bh=8gMtRG0oO8Nirv/pH9tl2QYzZXra6QzE+ysSHUsbX5Q=;
+        b=lF2MtB2k54Es4P/Xaohup1gzbiXO8UXvBf4YDQPhMLWxmcpiaB13i+fbbIVl4V2FCe
+         2SkddFf79P5tTcvgMuByvh4LmFM0F0KEpAwqyiR3vtJrYD1IbuV6tWxHB4yE2PXe8jyI
+         flJZVp3eldlX9t3IAkrDaT2ljxUtrn4C7OXOLBYlTF2zgz9u24eC1OQCov5WV/lCoMRc
+         EdWV9sOFwEQGYLCvBx70s5oVNK2Rr59OLCTRih8Sw+0oAe6UBQAHKohWxCXnC9hHoMWr
+         kcXcBEC/lnz09yGIGP9iTJj2wj8w432Gt4ojYkswTZyRs3wANZpPmOvKwRPSwbr5SelX
+         sKLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnSdfkrqBAgFds1L/2xohWrnuwLYRw5YVs9ZziaMRRcOltIg2Mviy6e2UDGT6Ozi4kP6pU/JRpVE+HuxTsMlknUe8nGeVSDqHy4tk8
+X-Gm-Message-State: AOJu0YxJhEw+Gbm9AUa9zumc4fDn2F4+KzGMHKx8ZILb2kkRmYdPtCnf
+	0wXMQtIUlfaGnv2BuZauL/KA++N2QcaVCNxxTVxkbSkGiboV1wW98T+XXQ4kBg==
+X-Google-Smtp-Source: AGHT+IEfrtYkRbMyHE+evxSmNhWANR4xJdsvBU1gG/nyq5RBdF2604zrBs8r7RvRtK65WLsJyMDnjA==
+X-Received: by 2002:a05:600c:1f09:b0:426:66fd:5fac with SMTP id 5b1f17b1804b1-42ab6028c33mr25945e9.2.1724089972573;
+        Mon, 19 Aug 2024 10:52:52 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:90ba:acf6:9644:9e81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898b8e8asm11120073f8f.116.2024.08.19.10.52.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 10:52:35 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: neil.armstrong@linaro.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com,
-	dri-devel@lists.freedesktop.org,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panel: ili9341: Add comments for registers in ili9341_config()
-Date: Mon, 19 Aug 2024 23:21:22 +0530
-Message-Id: <20240819175122.33176-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 19 Aug 2024 10:52:51 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 19 Aug 2024 19:52:30 +0200
+Subject: [PATCH] fuse: use unsigned type for getxattr/listxattr size
+ truncation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-fuse-oob-error-fix-v1-1-9af04eeb4833@google.com>
+X-B4-Tracking: v=1; b=H4sIAF2Gw2YC/x2MQQqAIBAAvxJ7bkHFzPpKdKjcai8aK0UQ/T3pO
+ AMzD2QSpgx99YDQxZlTLKDrCpZ9ihshh8JglLHK6w7XMxOmNCOJJMGVb3TOBuWNbl1ooISHUNH
+ /dBjf9wNZy9uVZAAAAA==
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724089967; l=2556;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=cVTzqwZxap3iVomL1QKHBohhVggQhfoi3NhyFSh4m+c=;
+ b=k7g0mM4redxq0rCjuhFOUqDAemNc6dhKrUvEJAP8MN/HN7KDyKQIkFk803VCqqn5scePWum8q
+ BKDV7gy4DECDxFhAP8KXxfgrb1YsT8BpZzgNMpu0+pI2gzhvJhCdYHB
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Add detail comments for registers definitions in struct ili9341_config().
-Replace TODO with comment for each registers.
+The existing code uses min_t(ssize_t, outarg.size, XATTR_LIST_MAX) when
+parsing the FUSE daemon's response to a zero-length getxattr/listxattr
+request.
+On 32-bit kernels, where ssize_t and outarg.size are the same size, this is
+wrong: The min_t() will pass through any size values that are negative when
+interpreted as signed.
+fuse_listxattr() will then return this userspace-supplied negative value,
+which callers will treat as an error value.
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+
+This kind of bug pattern can lead to fairly bad security bugs because of
+how error codes are used in the Linux kernel. If a caller were to convert
+the numeric error into an error pointer, like so:
+
+    struct foo *func(...) {
+      int len = fuse_getxattr(..., NULL, 0);
+      if (len < 0)
+        return ERR_PTR(len);
+      ...
+    }
+
+then it would end up returning this userspace-supplied negative value cast
+to a pointer - but the caller of this function wouldn't recognize it as an
+error pointer (IS_ERR_VALUE() only detects values in the narrow range in
+which legitimate errno values are), and so it would just be treated as a
+kernel pointer.
+
+I think there is at least one theoretical codepath where this could happen,
+but that path would involve virtio-fs with submounts plus some weird
+SELinux configuration, so I think it's probably not a concern in practice.
+
+Cc: stable@vger.kernel.org
+Fixes: 63401ccdb2ca ("fuse: limit xattr returned size")
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
-Changes in v2:
-- Rephrased the commit message.
+ fs/fuse/xattr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+index 5b423fdbb13f..9f568d345c51 100644
+--- a/fs/fuse/xattr.c
++++ b/fs/fuse/xattr.c
+@@ -81,7 +81,7 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
+ 	}
+ 	ret = fuse_simple_request(fm, &args);
+ 	if (!ret && !size)
+-		ret = min_t(ssize_t, outarg.size, XATTR_SIZE_MAX);
++		ret = min_t(size_t, outarg.size, XATTR_SIZE_MAX);
+ 	if (ret == -ENOSYS) {
+ 		fm->fc->no_getxattr = 1;
+ 		ret = -EOPNOTSUPP;
+@@ -143,7 +143,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
+ 	}
+ 	ret = fuse_simple_request(fm, &args);
+ 	if (!ret && !size)
+-		ret = min_t(ssize_t, outarg.size, XATTR_LIST_MAX);
++		ret = min_t(size_t, outarg.size, XATTR_LIST_MAX);
+ 	if (ret > 0 && size)
+ 		ret = fuse_verify_xattr_list(list, ret);
+ 	if (ret == -ENOSYS) {
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-index 775d5d5e828c..1fbc5d433d75 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-@@ -121,19 +121,19 @@ struct ili9341_config {
- 	const struct drm_display_mode mode;
- 	/* ca: TODO: need comments for this register */
- 	u8 ca[ILI9341_CA_LEN];
--	/* power_b: TODO: need comments for this register */
-+	/* power_b: Power control B (CFh) */
- 	u8 power_b[ILI9341_POWER_B_LEN];
--	/* power_seq: TODO: need comments for this register */
-+	/* power_seq: Power on sequence control (EDh) */
- 	u8 power_seq[ILI9341_POWER_SEQ_LEN];
--	/* dtca: TODO: need comments for this register */
-+	/* dtca: Driver timing control A (E8h) */
- 	u8 dtca[ILI9341_DTCA_LEN];
--	/* dtcb: TODO: need comments for this register */
-+	/* dtcb: Driver timing control B (EAh) */
- 	u8 dtcb[ILI9341_DTCB_LEN];
--	/* power_a: TODO: need comments for this register */
-+	/* power_a: Power control A (CBh) */
- 	u8 power_a[ILI9341_POWER_A_LEN];
- 	/* frc: Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
- 	u8 frc[ILI9341_FRC_LEN];
--	/* prc: TODO: need comments for this register */
-+	/* prc: Pump ratio control (F7h) */
- 	u8 prc;
- 	/* dfc_1: B6h DISCTRL (Display Function Control) */
- 	u8 dfc_1[ILI9341_DFC_1_LEN];
-@@ -147,7 +147,7 @@ struct ili9341_config {
- 	u8 vcom_2;
- 	/* address_mode: Memory Access Control (36h) */
- 	u8 address_mode;
--	/* g3amma_en: TODO: need comments for this register */
-+	/* g3amma_en: Enable 3G (F2h) */
- 	u8 g3amma_en;
- 	/* rgb_interface: RGB Interface Signal Control (B0h) */
- 	u8 rgb_interface;
---
-2.34.1
+---
+base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
+change-id: 20240819-fuse-oob-error-fix-664d082176d5
+-- 
+Jann Horn <jannh@google.com>
 
 
