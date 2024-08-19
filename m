@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-291712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E6E9565CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8BC9565D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58867285367
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:42:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516CD1F23E1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2915B552;
-	Mon, 19 Aug 2024 08:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C57F15C128;
+	Mon, 19 Aug 2024 08:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="PEIpUvst"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rmpWrNZZ"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A6915B13B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728515B551
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056930; cv=none; b=HgERzdSz1f+bQOfiN5f89atCFyK5g7xtNP19Aft9atesWCcbrObS/Bq958YvAvfGXg3wDoGzl5arUegTZXZJoJOooIFSUKO5jCGHeq4XoNAG7hR8ZDY92YCQmh78Xb2cza+e1SbuQPP9Md/4wB+eJZLLd3SUzSl3YgKeCKq2H7w=
+	t=1724056934; cv=none; b=pw6GjWKvOFPaHHtD/MY3iz+BGwKY3XbMQqv7Kd93kJX3aPqK7QUjb0DSRSWeGZLLY3kIhL9sR5Gy7HYcTyydj2bzDlRClBx9zVF204/5l25Fz+JwjtYyOIFy3RV2gDd9z6hr7HYa4TxfnSdvx5NB9wZDoM7/uKvA4Uf51bZ8SjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056930; c=relaxed/simple;
-	bh=1yA/mZbGAOty4Qp+W85rMw9ZhH3Dt00iJEVQ5wC8PVs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uYg2Qz4O4aheg6A63zC96lMQcGSh4MKfy7knQh7LMRTpa7CzuYcX1xrd0FrQFCOhC7ACiWm225Hmv0hPv1Vd+hxIJiq4q9E04vY4U+KZ1/rEgLxetXAWtjExVuPE7E2L+eGQrmab4pmElBW+wSa+3BkOlWbFCI0mYBbnayfWsIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=PEIpUvst; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724056926; x=1726648926;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1yA/mZbGAOty4Qp+W85rMw9ZhH3Dt00iJEVQ5wC8PVs=;
-	b=PEIpUvst8ZYo5w+05Sw1eVxTphDorS1DYs8VJg3sD4d6Ed3DHCwrModrcuX63Ydl
-	fyPF4cF8oXqUNcwEhBs7djzMbQMINJitcqYhErUpb8FEUfGpITqnmUYJCGotqVPT
-	AynYObuHYE5ooPXBr1RL0vzm3PWpzuYlBEiHPVJt2dY=;
-X-AuditID: ac14000a-03251700000021bc-83-66c3055ed8b8
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 22.37.08636.E5503C66; Mon, 19 Aug 2024 10:42:06 +0200 (CEST)
-Received: from Berlix.phytec.de (172.25.0.12) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
- 2024 10:42:06 +0200
-Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
- berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
- Mon, 19 Aug 2024 10:42:06 +0200
-From: Yannic Moog <Y.Moog@phytec.de>
-To: "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, Teresa Remmet
-	<T.Remmet@phytec.de>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Benjamin Hahn <B.Hahn@phytec.de>, "Yashwanth
- Varakala" <Y.Varakala@phytec.de>, PHYTEC Upstream <upstream@lists.phytec.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] arm64: dts: imx8mp-phycore: Add VDD_IO regulator
-Thread-Topic: [PATCH 1/6] arm64: dts: imx8mp-phycore: Add VDD_IO regulator
-Thread-Index: AQHa7iwROvHt+W4v40iHLuEIlmiogrIuKXeA
-Date: Mon, 19 Aug 2024 08:42:06 +0000
-Message-ID: <283d8090f358c6343c126fbac77462e19bdc7b74.camel@phytec.de>
-References: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
-	 <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-1-e2500950c632@phytec.de>
-In-Reply-To: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-1-e2500950c632@phytec.de>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <ED2F2E5DFA68DB459FA192BB807FEB24@phytec.de>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1724056934; c=relaxed/simple;
+	bh=nsNrokjPtlMyX9xC/z629EiU6DQLwAN+FixNCRobCbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWFbJzOR5AmGh9nHolSgV7JAhP8b+XI3yRFbRk78EMic0VnVmE0WrTKy8VHdTClUe+Mcb+4mEqYxwyrPDBndGm16CYa3UuAjrCHFAKUgsOY0EKwop4O3EMVM4K4CyRv2pCB0P75YXONPUlZL3fxJFPjAoqLAXGKMKQz41U3bdLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rmpWrNZZ; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724056928; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=KLMHvwzxuIVKCo2bV13G0bukH2Tmr6a3PUkasa/nnJk=;
+	b=rmpWrNZZIdFDHFvJVvWy8P8Vi4wuVYhEI1aM+IYnYx79WlAcV0VhsKz4AgI3wBdiZVUUH0nAV7O5orW9el9QRGT9tjHGTckeazUPJO7c/TgnHvZKWyuZijRIFiugn55gjEolAk3JYYqoA0mSwmIlb8rlnzZKLZclT5CGomZ14bc=
+Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WD9cnkN_1724056927)
+          by smtp.aliyun-inc.com;
+          Mon, 19 Aug 2024 16:42:07 +0800
+Message-ID: <3db665f2-4525-4942-abfb-0c1fdea2f729@linux.alibaba.com>
+Date: Mon, 19 Aug 2024 16:42:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsWyRpKBRzeO9XCawcFZyhZr9p5jsph/5Byr
-	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
-	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CVcaavjalg
-	Bm/F53N3WRsY3/B0MXJwSAiYSHx9q9fFyMUhJLCESWL7po2MEM59Rokrm7azQDgbGCVar78A
-	ynBysAmoSJyccQmsSkTgJZPE4qnfwRxmgb9MEk9/gTgcHMICnhKnXsmBNIgIeEnM/PiaGcI2
-	kvg9o58NxGYRUJXYe+In2FBeATeJyxu2s4PYQgL7GCUWX/EFsTkFUiQmL50EVsMoICuxYcN5
-	sDnMAuISm559ZwWxJQQEJJbsgYhLCIhKvHz8DyouL3Hi1jQmkHOYBTQl1u/ShzAtJD7Pi4GY
-	oigxpfshO8QFghInZz5hmcAoPgvJglkIzbMQmmchaZ6FpHkBI+sqRqHczOTs1KLMbL2CjMqS
-	1GS9lNRNjKB4F2Hg2sHYN8fjECMTB+MhRgkOZiUR3u6XB9OEeFMSK6tSi/Lji0pzUosPMUpz
-	sCiJ867uCE4VEkhPLEnNTk0tSC2CyTJxcEo1MGq+nMN4Xdz2S574ZT6xmR+lVAz/TRHQ+NuX
-	Ju9+SU9MOvuseeiepu89U6LtFq/4HZg3Y2LAX7++A40Xm+OKvj9JrPY7J10T8ED10UqTxRlX
-	Z1s5Z8xMMtF+MvPUU8ncdMEj21vfPGv/e5nnbiuvj4tQs5qd9baUO4eLC45phB2aYfgmaPHG
-	OCWW4oxEQy3mouJEAHJQoqHlAgAA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] mm: khugepaged: expand the is_refcount_suitable() to
+ support file folios
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: hughd@google.com, willy@infradead.org, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
+ <d6f8e4451910da1de0420eb82724dd85c368741c.1724054125.git.baolin.wang@linux.alibaba.com>
+ <c53887da-ebbe-432e-bf81-308085215420@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <c53887da-ebbe-432e-bf81-308085215420@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI0LTA4LTE0IGF0IDExOjI2ICswMjAwLCBUZXJlc2EgUmVtbWV0IHdyb3RlOg0K
-PiBGcm9tOiBZYXNod2FudGggVmFyYWthbGEgPHkudmFyYWthbGFAcGh5dGVjLmRlPg0KPiANCj4g
-QWRkIGZpeGVkIHJlZ3VsYXRvciBWRERfSU8gKDMuM3YpIGJhc2VkIG9uIHRoZSBTb00gc2NoZW1h
-dGljcyB0byByZWZsZWN0DQo+IHRoZSBjb25uZWN0aXZpdHkgb24gdGhlIHBoeUNPUkUtaS5NWDhN
-UC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFlhc2h3YW50aCBWYXJha2FsYSA8eS52YXJha2FsYUBw
-aHl0ZWMuZGU+DQo+IFNpZ25lZC1vZmYtYnk6IFRlcmVzYSBSZW1tZXQgPHQucmVtbWV0QHBoeXRl
-Yy5kZT4NClJldmlld2VkLWJ5OiBZYW5uaWMgTW9vZyA8eS5tb29nQHBoeXRlYy5kZT4NCg0KPiAt
-LS0NCj4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Y29yZS1zb20u
-ZHRzaSB8IDkgKysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0K
-PiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1w
-aHljb3JlLXNvbS5kdHNpDQo+IGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1w
-LXBoeWNvcmUtc29tLmR0c2kNCj4gaW5kZXggZTZmZmE2YTZiNjhiLi45YzUyNzJjNjkzMWEgMTAw
-NjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1waHljb3Jl
-LXNvbS5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1w
-aHljb3JlLXNvbS5kdHNpDQo+IEBAIC0yMCw2ICsyMCwxNSBAQCBtZW1vcnlANDAwMDAwMDAgew0K
-PiDCoAkJZGV2aWNlX3R5cGUgPSAibWVtb3J5IjsNCj4gwqAJCXJlZyA9IDwweDAgMHg0MDAwMDAw
-MCAwIDB4ODAwMDAwMDA+Ow0KPiDCoAl9Ow0KPiArDQo+ICsJcmVnX3ZkZF9pbzogcmVndWxhdG9y
-LXZkZC1pbyB7DQo+ICsJCWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsNCj4gKwkJcmVn
-dWxhdG9yLWFsd2F5cy1vbjsNCj4gKwkJcmVndWxhdG9yLWJvb3Qtb247DQo+ICsJCXJlZ3VsYXRv
-ci1tYXgtbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiArCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9s
-dCA9IDwzMzAwMDAwPjsNCj4gKwkJcmVndWxhdG9yLW5hbWUgPSAiVkREX0lPIjsNCj4gKwl9Ow0K
-PiDCoH07DQo+IMKgDQo+IMKgJkE1M18wIHsNCj4gDQoNCg==
+
+
+On 2024/8/19 16:36, David Hildenbrand wrote:
+> On 19.08.24 10:14, Baolin Wang wrote:
+>> Expand the is_refcount_suitable() to support reference checks for file 
+>> folios,
+>> as preparation for supporting shmem mTHP collapse.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   mm/khugepaged.c | 11 ++++++++---
+>>   1 file changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index cdd1d8655a76..f11b4f172e61 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -549,8 +549,14 @@ static bool is_refcount_suitable(struct folio 
+>> *folio)
+>>       int expected_refcount;
+>>       expected_refcount = folio_mapcount(folio);
+>> -    if (folio_test_swapcache(folio))
+>> +    if (folio_test_anon(folio)) {
+>> +        expected_refcount += folio_test_swapcache(folio) ?
+>> +                    folio_nr_pages(folio) : 0;
+>> +    } else {
+>>           expected_refcount += folio_nr_pages(folio);
+>> +        if (folio_test_private(folio))
+>> +            expected_refcount++;
+>> +    }
+> 
+> Alternatively, a bit neater
+> 
+> if (!folio_test_anon(folio) || folio_test_swapcache(folio))
+>      expected_refcount += folio_nr_pages(folio);
+> if (folio_test_private(folio))
+>      expected_refcount++;
+> 
+> The latter check should be fine even for anon folios (although always 
+> false)
+
+Looks better. Will do in v2.
+
+>>       return folio_ref_count(folio) == expected_refcount;
+>>   }
+>> @@ -2285,8 +2291,7 @@ static int hpage_collapse_scan_file(struct 
+>> mm_struct *mm, unsigned long addr,
+>>               break;
+>>           }
+>> -        if (folio_ref_count(folio) !=
+>> -            1 + folio_mapcount(folio) + folio_test_private(folio)) {
+> 
+> The "1" is due to the pagecache, right? IIUC, we don't hold a raised 
+> folio refcount as we do the xas_for_each().
+
+Right.
 
