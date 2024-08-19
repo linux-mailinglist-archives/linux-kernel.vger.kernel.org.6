@@ -1,193 +1,82 @@
-Return-Path: <linux-kernel+bounces-292963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95F195771A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622E6957717
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431411F21BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2977B285A2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506941DC484;
-	Mon, 19 Aug 2024 22:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AD51DC48F;
+	Mon, 19 Aug 2024 22:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="omWIeMpK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p7+h4U+g"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD6518991C;
-	Mon, 19 Aug 2024 22:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E2B14D70E;
+	Mon, 19 Aug 2024 22:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105104; cv=none; b=ou1ZBxMDvKz7Dqn/xwWOUEQ/fN+l3w2+4X1BXBDlBeqx8yKAb9M0CqdURIMuYVx8xdvdFcblk0xPeh8gmflgF+HZPxLfyo+hJvP+D0/2xihYkFbd/3xvct7M6mG0dfEJcsqOwft7EOSw6tLMznEsk9J2wX6OZgUObUxMiDIWIoM=
+	t=1724105087; cv=none; b=BZAKoUe0iqtGgz3brTVZ2e9nPojK/MNWwu7GE/3B0i5rqXzFqf83DYjlSWhM4QE8nZJ+3LoaSgRb0CjfQADHpXCxDvIriKPe62qAfGz0/bqlGxbIhunsXCY+U0y7xnr23m3xy/nxhWWY+Y5GmqmCDS12EtphruFAqxV/ZuCPzD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105104; c=relaxed/simple;
-	bh=sAO3TUHgVk99Kw9RCvCoijE9MKOG4GkkxLNUBJJOGr4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9YkLUlDmGZUloRfyXZWtJzqpLjs5jNmvoUO283PWPwgvxHY9RnuGRqiW2qMZIc72uuNY16N4f60SQYxrByE+9gr9lDla5l7p7J2FS69EW/cUbXxcDSwdKQgNvTGg+ci3ORCLk5S5bo/xhdjMcRRlXmLODr/ou7AEmPPMPya8cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=omWIeMpK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBB38O025706;
-	Mon, 19 Aug 2024 22:04:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1Pdl09RIpjSpgpUzeTyvHQSd
-	kABHf3jk9ZT3rNx96zc=; b=omWIeMpKE0meovzZGitbpTCmprNlPA9orsKDCkam
-	9VpuHHTx0zmVBr5bg+QxKFowsjWSq/IZ1ctz+s3XG3GcsHTNcZlnqR0QVzdPt/q/
-	6CSPnCfoBk1gHk9RFioVojHZ2JV1n3OxHHSedr3uPRZJQcKtIMfTFrrcj9khSJnZ
-	SmTTD1fSJzz3mNL0IGponQY0p0n3C9s2UZsvPeWTdhs+yjywoO07sehgnI9ngnsP
-	aF40+Vfz+25TbhqJHFGemJID9FyguKIbt1CFA2VARCO9oC6jkCrgWH15jAwu5JIS
-	U6f1HuEkhNnH93z/HYkxhrfI5A13yi3CEEYsfEXr/faJLQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n585hux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 22:04:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JM4hsp019820
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 22:04:43 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 15:04:42 -0700
-Date: Mon, 19 Aug 2024 15:04:41 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Marc Gonzalez <mgonzalez@freebox.fr>
-CC: Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-        Rob
- Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
-        Joerg Roedel
-	<joro@8bytes.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Arnaud Vrac
-	<avrac@freebox.fr>,
-        Pierre-Hugues Husson <phhusson@freebox.fr>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        Caleb Connolly
-	<caleb.connolly@linaro.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm-smmu: Add
- qcom,last-ctx-bank-reserved
-Message-ID: <ZsPBeRTqE9o253Gw@hu-bjorande-lv.qualcomm.com>
-References: <20240814-smmu-v1-0-3d6c27027d5b@freebox.fr>
- <20240814-smmu-v1-1-3d6c27027d5b@freebox.fr>
- <20240818152515.GA104481-robh@kernel.org>
- <30489eee-075b-461b-ab43-c8807d667630@freebox.fr>
- <17893776-9666-4bbe-b5fc-c3fe977d0337@arm.com>
- <67f9a762-6d14-4557-b1f6-22aabb33f927@freebox.fr>
+	s=arc-20240116; t=1724105087; c=relaxed/simple;
+	bh=a1vaXvA5VjW0QvYWQxXnLcOIeNgzB/7qhyVGmEcL3fI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgjQFMhzPmy4ssR10LEDjnLvT4oS4Yqa0Ck29DIhVQPETVW1HrZd+Dt4INo510kpTfXfH+3t5ZV3UPNT0+pXLICLIDeNzHFCpLGJEwRlkAD+Bcu1E7Yai6s0QEndSupxn/hKT1nPthm1ruci1fTwKI+KnpIIiHKdB0RGg4AKczs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p7+h4U+g; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eV8JZxLwfOg+cI/ztjeOEoIspIfloBKPplrwQTVTsS4=; b=p7+h4U+gA9SA3MQnNgTCqGdufV
+	5erU9s3eqE/Agxz5m9o21OrVGTu7IMwydVJkgtDC4OspQut3WgovE9L9ErbN7CGf5/67aBMixWyMN
+	HENYJOBE5UkN8InkMnFgpunfL/YizQ/E60dRNYf07HegqSaPdULz2ceMhDJJPuP6kpfIpN/YIkqYK
+	LydlTU4Rnxz8xVr3LjTiaHr+Ucekb7cFBgKOs2Y53DuocNQ+Ts+NPCwHUBYyIf8fxX0alHWCvj2kC
+	v4+nOB9W+GM6ySp5ggibhbTDl2gpB2yLdC07IVUFiDnvBAzNXpy6P0Db+Zk3F+sIvP9fLnjIlj36u
+	gSFQNOlQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sgAUW-000000033k1-2Jky;
+	Mon, 19 Aug 2024 22:04:44 +0000
+Date: Mon, 19 Aug 2024 15:04:44 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: masahiroy@kernel.org, deltaone@debian.org, jan.sollmann@rub.de,
+	jude.gyimah@rub.de, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thorsten.berger@rub.de
+Subject: Re: [PATCH v4 02/12] kconfig: Add picosat.c (1/3)
+Message-ID: <ZsPBfBQXNZmbNfpE@bombadil.infradead.org>
+References: <CAK7LNAQ9fddijdAJFNYKqA3nQibwiv5jvZs3O9-nDbcRToWS4g@mail.gmail.com>
+ <20240816102001.21668-1-ole0811sch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67f9a762-6d14-4557-b1f6-22aabb33f927@freebox.fr>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zKRsNtyBD-iSNi9VaciL5bMiQXyEBl-I
-X-Proofpoint-ORIG-GUID: zKRsNtyBD-iSNi9VaciL5bMiQXyEBl-I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011 spamscore=0
- mlxlogscore=793 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190146
+In-Reply-To: <20240816102001.21668-1-ole0811sch@gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Mon, Aug 19, 2024 at 05:02:16PM +0200, Marc Gonzalez wrote:
-> On 19/08/2024 14:57, Robin Murphy wrote:
-> 
-> > Luckily, in this case it seems straightforward enough to be able to see 
-> > that if we have a "qcom,msm8996-smmu-v2" with 13 context banks then we 
-> > should just treat it as if it has 12 - it's also notable that it only 
-> > reports NUMSMRG=12, so we couldn't use more than that many S1 context 
-> > banks at once anyway.
-> 
-> This is what the hypervisor reports:
-> 
-> [    2.550974] arm-smmu 5100000.iommu: probing hardware configuration...
-> [    2.557309] arm-smmu 5100000.iommu: SMMUv2 with:
-> [    2.563815] arm-smmu 5100000.iommu:  stage 1 translation
-> [    2.568494] arm-smmu 5100000.iommu:  address translation ops
-> [    2.573791] arm-smmu 5100000.iommu:  non-coherent table walk
-> [    2.579434] arm-smmu 5100000.iommu:  (IDR0.CTTW overridden by FW configuration)
-> [    2.585088] arm-smmu 5100000.iommu:  stream matching with 12 register groups
-> [    2.592132] arm-smmu 5100000.iommu:  13 context banks (0 stage-2 only)
-> [    2.619316] arm-smmu 5100000.iommu:  Supported page sizes: 0x63315000
-> [    2.626225] arm-smmu 5100000.iommu:  Stage-1: 36-bit VA -> 36-bit IPA
-> [    2.632645] arm-smmu 5100000.iommu:  preserved 0 boot mappings
-> 
-> 
-> smmu->num_mapping_groups = 12
+On Fri, Aug 16, 2024 at 12:20:01PM +0200, Ole Schuerks wrote:
+> What's the best way of letting the user know that they need to 
+> install PicoSAT if they want to use the conflict resolver?
+> My idea would 
+> be to notify the user via the GUI when they try to use the interface of 
+> the conflict resolver without having PicoSAT installed. Do you see any 
+> issues with that/do you prefer some alternative approach?
 
-Ignore num_mapping_groups, they are used to define which streams should
-be mapped to which context bank. But there's no relationship between
-these numbers.
+Conflicts don't happen often and we already have a printf which happens when
+one does, my recommendation would be that we simply opt-in for the
+resolver if the user has the requirements installed. Otherwise we only
+inform the user to install it if a conflict comes up. Documentation can
+also be enhanced to describe this functionality / support.
 
-> smmu->num_context_banks  = 13
-> 
-> 
-> Are you saying that
-> 
-> 	smmu->num_context_banks > smmu->num_mapping_groups
-> 
-> does not make sense?
-> 
-> 
-> Would a well-placed
-> 
-> 	if (smmu->num_context_banks > smmu->num_mapping_groups)
-> 		smmu->num_context_banks = smmu->num_mapping_groups;
-> 
-> be a proper work-around?
-
-No, something like this would apply your quirk to other targets (and
-specifically it would be wrong, per above).
-
-> 
-> (Probably in qcom_smmu_cfg_probe() so as to not interfere with other platforms.)
-> 
-> 
-> Maybe to limit the side effects even more:
-> 
-> 	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") &&
-> 		smmu->num_context_banks > smmu->num_mapping_groups))
-> 		smmu->num_context_banks = smmu->num_mapping_groups;
-
-If we don't want to introduce a more specific compatible for this SMMU
-instance, then let's add this to qcom_smmu_cfg_probe():
-
-	/* MSM8998 LPASS SMMU reports 13 context banks, but only 12 are accessible */
- 	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") && smmu->num_context_banks == 13)
-		smmu->num_context_banks = 12;
-
-
-Regards,
-Bjorn
-
-> 
-> 
-> Neither work-around would require changing the binding.
-> 
-> Is either work-around acceptable, Robin?
-> 
-> Regards
-> 
-> 
+  Luis
 
