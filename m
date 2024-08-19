@@ -1,139 +1,302 @@
-Return-Path: <linux-kernel+bounces-291900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ABC9568AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:41:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6619568B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57376B22F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12241C218F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF70E163AA7;
-	Mon, 19 Aug 2024 10:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA61649BF;
+	Mon, 19 Aug 2024 10:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWEIStYJ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="miVRjeOK"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011039.outbound.protection.outlook.com [52.103.33.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B23156F5F;
-	Mon, 19 Aug 2024 10:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064079; cv=none; b=ADUApiwv6pqKpaRURbT6kNCFUmZRmYgrwcu+MgW5i8LDKyRnFYqj6BOSPUt7vegZtxReB39OlI4WUX9yr1AEphPGf6c+yEBuXFB+fRFsrM5os5CpDrwO7XHnIKlSJfBhLZVXeAn10T9twCojH5BVDg5KzHoNbLILbOA3JA5ijTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064079; c=relaxed/simple;
-	bh=v5z6AULAsqrvamkmm47fcgWfrj/5hDRAYigHZr9uF3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXzLKywZa+6SOmMTD30uurZJgbcGmX+Jb4BjgdSD+d7aYnsdF62/YF5o6WQNcNeXdjMCnerxsa3rS60TtMBf4dU0CH7WU7emmgtmjmOy7EDT6hLq+65qhSt6t88A4TEAV7ZxxG8bEcSx4b7Nk/SWZxMB3LR68laHMy0+HTFB1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWEIStYJ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bec7d380caso3291996a12.3;
-        Mon, 19 Aug 2024 03:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724064076; x=1724668876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVKFniiYUmClbJ672Ev2Mb0P7iZLXweyclnrIo2HQ9U=;
-        b=YWEIStYJje1tquPl9uVngOLa1hfALYxGHi+j3iD62l8jhu+OOyOOUans6ap7+Am2Z3
-         uO1utKWXlB128GSFZ5YuXc21z7iW98Y5ZL2y/KZjyQYOevse2ZCxupgQjYlY84dx58uW
-         7zxGixxiY6zSfC2ybO3cEMcuUCjb7UxnXYQOBLwioolunEcO+qTU8tYXEQ/gayf3D5oP
-         XeIGdEOAbP6h00fa17fRrL0Vs+V/3yhEwb1paMEsIeksn6ckFEJN/x5sXUbd3kv+SnSD
-         rR4a9mft+qriT4Xb4s7/JDFk9tQKYDmuPzS7WFq89W3OyNUSe2o8pEYoIdgZniHus1/C
-         SgdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724064076; x=1724668876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVKFniiYUmClbJ672Ev2Mb0P7iZLXweyclnrIo2HQ9U=;
-        b=TKrGB+zbTDb3vW0WxCr0DE0sMUvc2P2MWG6z4urH6shk4K/mFGkelCAkAQpnMqYuwf
-         BOw1AU6VY6uxoGg7cKlec4bmFiwbBTf5vKJ4etOpLH8Nlof2MepZESD1D/0XMOxM8CsV
-         kf+K5EEASsaqSvPIF9oXoMcfnyLwu4fWdxkJzl6AdFOhmcjnUp9vPh0b4RD8KFtix97S
-         +ljjiW0AFhev7rezlDssIuXrux14XSxU5vM9yNTsuF9tkE5N1nH26ZM9cvc57byNXSYt
-         QSaPkkTAClx2we5uAPGOrGGDZxTkPtMsBMxjfw7L8zWwh2qQEq+U6VBZLBiKgxZnm4/c
-         KkFA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0OTEe/GnLgPXlsSjzUNRT/c6g0UICw8NJ6UEekubPd62bCNKVAjKSWaZRFZLPVx6KN2Tb1gxhvM8zjt5KhguGg2U+iDdRYow2309SuweQW4Q9VwO+bu19oOjKzxBO+sT46ZEu
-X-Gm-Message-State: AOJu0YzuJAU8kwkJ/DhALwM4Bx0CWUZTUDsAK7wrH+E5fQ/ugGGiiDel
-	BJXObv/cB1WysEXANSc6aRisdBcs0V/6R86F/UblYnPOag/2R+O4
-X-Google-Smtp-Source: AGHT+IHs5GXee+OasG9e7/BpW3mRMBtLWO4BYF/yYqXrjn+ojBJZWBcii8jWJRvXvthItd2shWSoHw==
-X-Received: by 2002:a05:6402:5114:b0:5be:e1bc:2320 with SMTP id 4fb4d7f45d1cf-5bee1bc262emr4837315a12.4.1724064075382;
-        Mon, 19 Aug 2024 03:41:15 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbdffa57sm5444545a12.55.2024.08.19.03.41.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 03:41:14 -0700 (PDT)
-Date: Mon, 19 Aug 2024 13:41:12 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: vtpieter@gmail.com
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
- change_tag_protocol support
-Message-ID: <20240819104112.gi2egnjbf3b67scu@skbuf>
-References: <20240819101238.1570176-1-vtpieter@gmail.com>
- <20240819101238.1570176-1-vtpieter@gmail.com>
- <20240819101238.1570176-2-vtpieter@gmail.com>
- <20240819101238.1570176-2-vtpieter@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4F161900;
+	Mon, 19 Aug 2024 10:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724064201; cv=fail; b=MIkAvmAfTTEUYqAcEMqqm3cx+At085PbmXj6njaaN7U+Au1WgnxYMjg+g2eEAWgDS4c32c90BOSzHViibHARUH89mxeu6Dws90NAE8FTwrQWrKlLiklxdVTCamz4LgqMDStp/xRI4kweWjVYFNI24GUBwyc01mzLZgQyYMyZiX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724064201; c=relaxed/simple;
+	bh=rdaIFE0NiWpP51C0uxD01pnWASTMvM1e6sRI3rnWPsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bW2o91iL3cthPw16Q6/XlHuj7AwhFEKnewirAa+hz+7q8SESjqghIbveLNATuu8h161E4+zTF5tsjYTK+plDrO4uzAXz6OefPgSId2Hj8Gv1xSlUOVn6BYIA5Wzc+EaU26skkszB5VBamD3xaD/0x63UObtaQNVN7C9RyKyJfOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=miVRjeOK; arc=fail smtp.client-ip=52.103.33.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a2rRQUJTMJC/26+lEnH+s5cKguoUDJYO9pStgFxudgsVoReG147uOfl14C8NPyASsSwhexGEtqETsDw2ZUaUlKnMaQtpjusqHig13ggPVGSZdk5h1ySi2p1I9X/jSuDB/tTQTyV0ECqxGvvA5oQ2zfKNhTpYVoV3qRTGoLzUEZhknieKK8gH1F9k+dBVjgEYCd9izkUfVGMx+JS02si7LysXAE2MyafFmF7esvmJipBiaw+VkT8HPNNgM2KYd7cReKG6a0BZcrtT8YwSrwTyFhJMs1vakx7KCWXvfLaD+5xyKGw4t/B9Cm1PHSR9IeFC3Jf4Vc5U5pVg6fJUxYOupw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lr8RHn1jNbnFR1V9rxx6tiA2Jy6z3HKTSJC8moorins=;
+ b=E+sVERavS39Xptw67HlB4XcN0dNqNYpRP9zOhrYWh+29bsG95fWwWtGMT5nFxZvRLhYAk/4qBpTcRlg72zI2qz08wegp0Gam2jkuccwHjwL6VhXhXftFjUWMDkoFb6tSubT/Lh4tbxTonq1DOPZHnIQJksz12TO/ZXtxyfFNf+tSB6wUfFUdLFDKLRWq+gX4+ZCnKjLgk+QfKs+CaBD9GNUUKFax7vPi2K9wPw+iDLEyQ8zsUsrYaXxMOa6UqJk591XTIYTu4t+9HGaV0a4C1vKzHTwqsOOX89RPOynpP0E0vqWNf5Gf4pmsuHye/T2ocSXdpCluTCoaR2y4kQ5n4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lr8RHn1jNbnFR1V9rxx6tiA2Jy6z3HKTSJC8moorins=;
+ b=miVRjeOKXwHTJmf0Q9Le4KrPEr7zQKHNuFzx9aj+CpGls3N+S5bqC3CZBAsjUuDcYaNInQWpOfN+WsK1cKJkUVuRKjc9Z8K0s7NYBjf1/XoY9+mdnM5kH3Z+xvhcGPVaQmLlmVCo+F6K9O7V8zqRbY79GAwck2slbFBZkM+9wxC5kL/iOKvhgSJ371G14bCW6IU1RvOtX8GOAIjjfd2fnceGCp5TodSg2NZcLoFCrvLk9+FDi9tGDkJo85XEXh/P5oC38vmYHYazV3E02RrwrlyGPJMzTkgCD8IX/SwwULC2zxmwHwf3mjptOmpq4PkVr5VaoZyMkYsna6rtjROs0g==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by AM7PR03MB6401.eurprd03.prod.outlook.com (2603:10a6:20b:1c3::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 10:43:17 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 10:43:17 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH bpf-next 2/2] selftests/bpf: Add tests for KF_OBTAIN kfunc
+Date: Mon, 19 Aug 2024 11:41:58 +0100
+Message-ID:
+ <AM6PR03MB58486DBFF75942D1174DCBF2998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <AM6PR03MB5848B74668D71BB307BE59BE998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5848B74668D71BB307BE59BE998C2@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [tLXumzPO+D8h377sEV9yjnBIka084yQd]
+X-ClientProxiedBy: SG2PR02CA0045.apcprd02.prod.outlook.com
+ (2603:1096:3:18::33) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240819104158.67204-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819101238.1570176-2-vtpieter@gmail.com>
- <20240819101238.1570176-2-vtpieter@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AM7PR03MB6401:EE_
+X-MS-Office365-Filtering-Correlation-Id: bda3fec5-0b6b-4639-0263-08dcc03bbbe5
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|5072599009|15080799003|8060799006|461199028|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	0bj0pT6qB3elGbXpSqwpGEwtDRZgdg6sfMwoc2QKshQdcyBuXqgJRC7GN+eU/mtvqzzf4aEAfImNa3NPOGBqUqqiKS7gQanRBVDvnFVktv2+0rHkH/XhLvXbaS2h1PZ7crhVefpEfNxjeE74O+fLVIgt0VDK36mWdRX651hRq9hZerplEHwGpk9p856JA5dEGf5ekQHnfU7COjWL/dESZOyOYBR+zzShEK+Vve1Hyn5WsGuY5rCmYv3M04Nc5I6AUNeM/yoquAUo498W9Z19CHAVcgZ1/G8nGuGBlExsiRCbhIUGmHSlfxSACYHwtITQKfQngkMN1JdybTi1f9j+CUuLvKlY3eqqPsNq9TB1dy6CC/fruq9mNwylfFsv10IVYJia50565TBZR+bkprqhV9ZXlM9wehoQWdShp2ZS/8CoBcBmGSEBogX6J0z/tdgESfBIUsbk5eFam96mtI3bPY4cKUi7HXh/XpD9SbbcOMou1hIXdSF1fSP9LEZlVvKLssbqtbmlocHZ6Kbe5v7ZVLJx/RSSJvvU4LMmqror3+sPyFtkYUlnUrWG93paq/jW1QUIYrPi5J7MZIgfV8Fg4nq5T9ZJNSFkl4N6N2aIbHgFSyQCKTjtfJ7GjeComtKWvVxTWlAt5eTipowStX1HZAKmwx508nLvfpOV/dvlmkjFRmrMNsSRVolAOSw/prfmAjQbL0mNPD+1hRD9neqdwQ==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yeCy0W4f4xw6+mr00wOcmpBUPHaHOOgyhVhXY6P0u8l56UOm4NyTSzetpF+0?=
+ =?us-ascii?Q?wSV9cdK+sdDjgDwJH3ANX86lodbv/y9ZKv/SGpLNmrW3qpBY2zyirY1CvzLT?=
+ =?us-ascii?Q?u/1ha3qm86HIDn1OLnRNkt/dub8y6Ow69whawtFQ4j5mxGi30EmjfeFjNaOS?=
+ =?us-ascii?Q?7cr6XdueJIHn+f64hWqGIpe0HiJ8LGqR4h4x14Y6C8H+RbdnTOeIa9HBHHEU?=
+ =?us-ascii?Q?8Kdybk1GRNgKbyPM2hmDWo3Eh/jEIlFyAXgXjTEBBF5+kgziRkTye+DuHEZ+?=
+ =?us-ascii?Q?bpEWiWe166g893Q42mCebF9WkvDIvFlJafqcLUGm1YXLRLUeAaAvtiXug4dS?=
+ =?us-ascii?Q?BlCT4Iq1Xcy6x1FEFW+gWGRtYow1pEvpkMUsE/hjp2K8OTIuNrjcBH7Pkr8m?=
+ =?us-ascii?Q?i0x53KlQrIRc8yb9AbIykHBWiUm41MY3PQzsyqxbvRk9Z5jMmiZ/0g01BwyD?=
+ =?us-ascii?Q?jGTkj+GPKgM24I9UOUcTQp9Li+XhSECfl8a3BdwDo5IHeezo9GB07nCWehGy?=
+ =?us-ascii?Q?a5bXdXPvt09t0HCQf44CMRSyW+L16Z2nOz1leEXrlf1Sc+HxEjpKaFszESMy?=
+ =?us-ascii?Q?McZeokbKwvLwf1KuaxGUTy8eaW8rGgi8i9zZIXGUMNuvSD8b5lEGsQprqN+W?=
+ =?us-ascii?Q?ZoSAqP+ZxFTG+82EtLzmOqEXdQhL0X/KcRNh2XeiLnx30Y3snHkB3aEvYs6j?=
+ =?us-ascii?Q?3Jwx1ZvvTjwEqlNtHbtBteqsoI/BYB3ktuOiUNdxIB7Y6aoztmxIxN15x6Dc?=
+ =?us-ascii?Q?YOldaMClvvmHse4vcVEMtq+eGNLhmCMcb56iKoYQHNBbc71gFQIVTARryks+?=
+ =?us-ascii?Q?EDuoczGQTn3vTnUjWCFUGeYtuzlJJJH4KNzCJJ78XoCQQQ1r68xg+SVrSsG/?=
+ =?us-ascii?Q?WgtHMhyk6OQIyDBENzERZkBVLeaYES7O1M2PL0UYTIuP8DHUAq0PRr+khZQ8?=
+ =?us-ascii?Q?108KFoBVciJ9CaecT8+urD0i3RNM49voBV58z7dxTicomw+TGk24+tbW/hpf?=
+ =?us-ascii?Q?SYWwelXr81aMmk2QHA6zQngo+aSusZGo4cg1k5JLRccDtZr2IBE6kCMPSy3r?=
+ =?us-ascii?Q?vMdkcYIRDDUdnKl8b+obpQAnaPG0g7BV9cYSRGZHr0nH1kUgi0crUAWK5j1d?=
+ =?us-ascii?Q?ndcRGvNqaOPp+rAyykr2Dp1XUhKlq8CK2YN5HzWm40rxuw/poXnCBfz4ub1k?=
+ =?us-ascii?Q?pLYZr/ccuEZtIccAHeV9sVeHrAwfPnTXF1dTflwsMTC1dNLZ0P66gLQyctSz?=
+ =?us-ascii?Q?tC+/S1itB+Js5y98wj+U?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bda3fec5-0b6b-4639-0263-08dcc03bbbe5
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 10:43:17.0228
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR03MB6401
 
-Hi Pieter,
+This patch adds test cases for KF_OBTAIN kfunc. Note that these test
+cases are only used to test KF_OBTAIN and are not related to actual
+usage scenarios.
 
-On Mon, Aug 19, 2024 at 12:12:35PM +0200, vtpieter@gmail.com wrote:
-> From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
-> 
-> Add support for changing the KSZ8 switches tag protocol. In fact
-> these devices can only enable or disable the tail tag, so there's
-> really only three supported protocols:
-> - DSA_TAG_PROTO_KSZ8795 for KSZ87xx
-> - DSA_TAG_PROTO_KSZ9893 for KSZ88x3
-> - DSA_TAG_PROTO_NONE
-> 
-> When disabled, this can be used as a workaround for the 'Common
-> pitfalls using DSA setups' [1] to use the conduit network interface as
-> a regular one, admittedly forgoing most DSA functionality and using
-> the device as an unmanaged switch whilst allowing control
-> operations (ethtool, PHY management, WoL).
+kfunc_obtain_not_trusted is used to test that KF_OBTAIN kfunc only
+accepts valid pointers.
 
-Concretely, what is it that you wish to accomplish? I see you chose to
-ignore my previous NACK due to the lack of a strong justification for
-disabling the tagging protocol.
-https://lore.kernel.org/netdev/20240801134401.h24ikzuoiakwg4i4@skbuf/
+kfunc_obtain_use_after_release is used to test that the returned pointer
+becomes invalid after the pointer passed to KF_OBTAIN kfunc is released.
 
-> Implementing the new software-defined DSA tagging protocol tag_8021q
-> [2] for these devices seems overkill for this use case at the time
-> being.
+kfunc_obtain_trusted is the correct usage, valid pointers must be passed
+to KF_OBTAIN kfunc and the returned pointer is only used if the passed
+pointer has not been released.
 
-I think there's a misunderstanding about tag_8021q. It does not disable
-the tagging protocol. But rather, it helps you implement a tagging
-protocol when the hardware does not want to cooperate. So I don't see
-how it would have helped you in your goal (whatever that is), and why
-mention it.
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c   | 12 +++
+ .../bpf/bpf_testmod/bpf_testmod_kfunc.h       |  3 +
+ .../bpf/prog_tests/kfunc_obtain_test.c        | 10 +++
+ .../selftests/bpf/progs/kfunc_obtain.c        | 74 +++++++++++++++++++
+ 4 files changed, 99 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
+ create mode 100644 tools/testing/selftests/bpf/progs/kfunc_obtain.c
 
-tag_8021q exists because it is my goal for DSA_TAG_PROTO_NONE to
-eventually disappear. The trend is for drivers to be converted from
-DSA_TAG_PROTO_NONE to something else (like DSA_TAG_PROTO_VSC73XX_8021Q),
-not the other way around. It's a strong usability concern to not be able
-to ping through the port net devices.
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+index a80b0d2c6f38..2e8a72d94c28 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -176,6 +176,16 @@ __bpf_kfunc void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr,
+ {
+ }
+ 
++struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task)
++{
++	return task->mm;
++}
++
++struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task)
++{
++	return task;
++}
++
+ __bpf_kfunc struct bpf_testmod_ctx *
+ bpf_testmod_ctx_create(int *err)
+ {
+@@ -533,6 +543,8 @@ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_next, KF_ITER_NEXT | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_kfunc_common_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_dynptr_test)
++BTF_ID_FLAGS(func, bpf_kfunc_obtain_test, KF_OBTAIN)
++BTF_ID_FLAGS(func, bpf_get_untrusted_task_test)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_create, KF_ACQUIRE | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_release, KF_RELEASE)
+ BTF_KFUNCS_END(bpf_testmod_common_kfunc_ids)
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+index e587a79f2239..cb38a211a9f3 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+@@ -144,4 +144,7 @@ void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr, struct bpf_dynptr *ptr__nulla
+ struct bpf_testmod_ctx *bpf_testmod_ctx_create(int *err) __ksym;
+ void bpf_testmod_ctx_release(struct bpf_testmod_ctx *ctx) __ksym;
+ 
++struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task) __ksym;
++struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task) __ksym;
++
+ #endif /* _BPF_TESTMOD_KFUNC_H */
+diff --git a/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
+new file mode 100644
+index 000000000000..debc92fc1acc
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <test_progs.h>
++#include "kfunc_obtain.skel.h"
++
++void test_kfunc_obtain(void)
++{
++	if (env.has_testmod)
++		RUN_TESTS(kfunc_obtain);
++}
+diff --git a/tools/testing/selftests/bpf/progs/kfunc_obtain.c b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
+new file mode 100644
+index 000000000000..8f0e074928ce
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
+@@ -0,0 +1,74 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "vmlinux.h"
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_helpers.h>
++#include "bpf_misc.h"
++#include "../bpf_testmod/bpf_testmod_kfunc.h"
++
++char _license[] SEC("license") = "GPL";
++
++struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
++void bpf_task_release(struct task_struct *p) __ksym;
++
++/* The following test cases are only used to test KF_OBTAIN
++ * and are not related to actual usage scenarios.
++ */
++
++SEC("syscall")
++__failure __msg("must be referenced or trusted")
++int BPF_PROG(kfunc_obtain_not_trusted)
++{
++	struct task_struct *cur_task, *untrusted_task;
++
++	cur_task = bpf_get_current_task_btf();
++	untrusted_task = bpf_get_untrusted_task_test(cur_task);
++
++	bpf_kfunc_obtain_test(untrusted_task);
++
++	return 0;
++}
++
++SEC("syscall")
++__success
++int BPF_PROG(kfunc_obtain_trusted)
++{
++	struct task_struct *cur_task, *trusted_task;
++	struct mm_struct *mm;
++	int map_count = 0;
++
++	cur_task = bpf_get_current_task_btf();
++	trusted_task = bpf_task_from_pid(cur_task->pid);
++	if (trusted_task == NULL)
++		return 0;
++
++	mm = bpf_kfunc_obtain_test(trusted_task);
++
++	map_count = mm->map_count;
++
++	bpf_task_release(trusted_task);
++
++	return map_count;
++}
++
++SEC("syscall")
++__failure __msg("invalid mem access 'scalar'")
++int BPF_PROG(kfunc_obtain_use_after_release)
++{
++	struct task_struct *cur_task, *trusted_task;
++	struct mm_struct *mm;
++	int map_count = 0;
++
++	cur_task = bpf_get_current_task_btf();
++	trusted_task = bpf_task_from_pid(cur_task->pid);
++	if (trusted_task == NULL)
++		return 0;
++
++	mm = bpf_kfunc_obtain_test(trusted_task);
++
++	bpf_task_release(trusted_task);
++
++	map_count = mm->map_count;
++
++	return map_count;
++}
+-- 
+2.39.2
 
-At the very least we need consensus among the current DSA maintainers
-that accepting 'none' as an alternative tagging protocol is acceptable.
 
