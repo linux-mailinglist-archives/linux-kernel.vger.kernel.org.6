@@ -1,376 +1,314 @@
-Return-Path: <linux-kernel+bounces-292484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AC595700E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EC5957013
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DBE1F2408B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D2F28321E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94DB15D5DE;
-	Mon, 19 Aug 2024 16:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7C3173357;
+	Mon, 19 Aug 2024 16:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AwXX7JFA"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CcnRfXdz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA96139578
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084356; cv=fail; b=BBGLYiZ3y0rvApprT3R37APTUr8xhD2oTNX8afJDD/HJp/m1EucyvkHuT56e59CqPU5KL/tuQFOJVzGIlINXKhKSPQM6l8CYUYhAqm8+HttaTnW9m2VcmloiK4zzsJUvJ/oZ/Sd9RqjYfyhvK6ATd1zj5nt17ekjoIIaJpz57l0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084356; c=relaxed/simple;
-	bh=1Otj7xl27xsQttpdXzono2azKXYU81XLFEtIBlSU8vM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJOWu6FdwkA3yn2zswZOv7NWkNz+9tyECND84vgQJvqf/XV0C9UP7mfNO0tPA97xgSSdj+7gdpjDyJhAfG9c4kI3KT6bE1Bej223PIQCfUi4MA7luA+ZS2zlLy2mOe4uZbJrgS7vsL3I8GXCXbsFQ0vLtOtaqwLbCXkqHm2AbUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AwXX7JFA; arc=fail smtp.client-ip=40.107.93.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xaBHuvDoeyOlNUVtDu2KYs+P5zMPGOfLFyXKec4de+oWlE6E7tLi37if+D6GOZ/5p/tCPVsHTDqlpVgO2c4sijDkQSnIzlEuHKqEdLnXDK3LV3YAuDAuhZmIuQGX6y2ZQ/lBxXQN/z6AmI4HlvcdbzV1cWgzKejMW40u2VtD7OYqcGNsueP7ZIZ2NljNfnrL+BhsaAPxk5TRcqCGlu7/Boea+CZm0nuYQG5Oeu+PcZNayST4H4n/ZDv4Ls51KdQal70w6XYllY7rMME5oSI/pQlE0t3rtCAfEEbKKeAl84yCB7g6nyeO+fXLY08jbKfL5pR7EIV5HOjGq4fiiRu8bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Np5wsfh0M1LG2Y7nPISFJIR6gUMnQG0/KS5q3YL7rr0=;
- b=UFQzKQRSeHw3Hnp4ePp/Mkms3b4H7WJurVVrJi1sGyyNo2cKfnb1qVurXFpWB5fkK1lH8prNEQ5FUuEpmspVMWK2BZwduhUQE5E1FVf/H2bVM/ahPvG9IHDNzypsCUkw3kLG91tTgUuOKYMZlYlcsKSYib4Rm4sbhgm6OStxBA6/883qmWXNdaL79YXh3cF65a/ZIT8Jif+P8m/o5Xxc8B3Ldrsv+WW56+HiDsyEMjYsUdBoqE79DS1C+u/VR3x7M8KOuChBhwFHGABG5Cb7SkJyGDl/ZAql3lyFBRXn8TDmkGlavv+tGGsNGjImL99+DBG2X2HRX64jtoz3C2/J4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Np5wsfh0M1LG2Y7nPISFJIR6gUMnQG0/KS5q3YL7rr0=;
- b=AwXX7JFAbFMeUoaCwFY6St39g35spPc5PnnRpO1MT/QFbs/AWZ7Zjaefpzw4wQBgmiX5sb0q6bqfCA2b15Lc2+1Rt20NtSV+5R97UlJjN+E0ugFR87/MnNJ1TCrAO8q1/9DpFjpGaGXK84gYn33UN5KdFLP2l17n2Y7m4zMX/MU=
-Received: from SA1P222CA0092.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::12)
- by PH7PR12MB7938.namprd12.prod.outlook.com (2603:10b6:510:276::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 16:19:09 +0000
-Received: from SA2PEPF00003F67.namprd04.prod.outlook.com
- (2603:10b6:806:35e:cafe::c) by SA1P222CA0092.outlook.office365.com
- (2603:10b6:806:35e::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Mon, 19 Aug 2024 16:19:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F67.mail.protection.outlook.com (10.167.248.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Mon, 19 Aug 2024 16:19:09 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 19 Aug
- 2024 11:19:05 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<jgg@nvidia.com>, <kevin.tian@intel.com>, <jon.grimm@amd.com>,
-	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH] iommu/amd: Modify set_dte_entry() to use 128-bit cmpxchg operation
-Date: Mon, 19 Aug 2024 16:18:39 +0000
-Message-ID: <20240819161839.4657-1-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C015D5DE;
+	Mon, 19 Aug 2024 16:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724084399; cv=none; b=Y+uE05Liqj4T6EA6YtnKLU5hQNW1Tyvb461Xyy5TOp3uXYz+cnkVeHACnBRZ5b8VGcgpFG+NIImcN+Njk5aKyvOe6gttr/0jqpYxI96DwlyOa1F75L0vwUs0EfDICz3kd8IryXd3VEf3unOUUvQJLOfG4+3fcCgooBxjPdn+7j0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724084399; c=relaxed/simple;
+	bh=WRBEAIL/mSk2vjw7LvazfEFu+s59E7ODhMDhYqdTKj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJlrzq8trsprqIMvkv75oQOdrAuBXY99z+AN5XoBRSq/fk/c2mtIvV1DNFpxi0sjHRUQ51SY49XrJb8niSw6eOFj94aeavQRKg1J2FjAtusBRzV7usVc2yexeqYW4eZUiOSd3pc5W/NuHRg/PtQClOI16DQf6LnaMvVDvJqeyTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CcnRfXdz; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724084396; x=1755620396;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WRBEAIL/mSk2vjw7LvazfEFu+s59E7ODhMDhYqdTKj8=;
+  b=CcnRfXdzIqSXlBbBjIC/3xFNkT8N7yIa+KqkIfZdzeWOGLxz4Z+l3opr
+   q/zHpVjZpkxkpHN+73xkmAo6PPYRLEXtX76l+LCkBoqmdSM5R9zD1+w6J
+   C+UC9DlaJpTecb93SjMEB2Ok2DmDKUZ80xcEJEc3/a7eqZmAKW+pX+Fn4
+   Qe63WznAO1KoeqoEmssvYaiRYCDeYnQ2CNwEo3wLAfp4cocEd2VoGyVxl
+   Fb3TrnkzhnbJ8Dv/6TJYO8DAUnz3UVoXc8Mki9SpTua2dHWEbI2oxutjb
+   sb/FNQw2+IOKOXJncwHFjCt/voq89PyVWjLox1dW/kjjP8DrHr7g4ZTnn
+   A==;
+X-CSE-ConnectionGUID: fVGPF2bDRqSEXkL85GnkgQ==
+X-CSE-MsgGUID: GHltb1emR126KZWHr6T5lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33759115"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="33759115"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 09:19:56 -0700
+X-CSE-ConnectionGUID: 1UZ5JfHgT5yUp/Cc0BLuFg==
+X-CSE-MsgGUID: zSQt0BDLSaWM5b9rxfJjgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="64585048"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 19 Aug 2024 09:19:50 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg56i-0009BA-2E;
+	Mon, 19 Aug 2024 16:19:48 +0000
+Date: Tue, 20 Aug 2024 00:19:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jijie Shao <shaojijie@huawei.com>, yisen.zhuang@huawei.com,
+	salil.mehta@huawei.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	shaojijie@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, andrew@lunn.ch,
+	jdamato@fastly.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 09/11] net: hibmcge: Add a Makefile and update
+ Kconfig for hibmcge
+Message-ID: <202408200026.q20EuSHC-lkp@intel.com>
+References: <20240819071229.2489506-10-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F67:EE_|PH7PR12MB7938:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0651e1f-0f94-4903-10ea-08dcc06aa7a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bpMQpaaHZjfGe6oIUdcojNgV3urvBW6WQX3ibUg5LGR+q7KIqHZA+sT00v05?=
- =?us-ascii?Q?iYzuMRb5HXiNDdPsLE/lcjPrjy/3NmXEOo1uOVsplFtyZRfVporPjY2Or0mi?=
- =?us-ascii?Q?NRn6s1/EhoNS+PBPgs+MnOD3OgGnq06x7adiIYmmPuBP6dMFxqKZLqfW4BRU?=
- =?us-ascii?Q?vFz3+d8WWft6kA5/fg6M3FjloYj1ApVGbArfEN4yxajBcEExIgWe5zRWxJuc?=
- =?us-ascii?Q?1HPIRxl9N86JXk5aapBS1oqXo22zjWgBZ4srr+6veqjmi4rWPhXQGim1uwb0?=
- =?us-ascii?Q?aNJK26+iZ/9P/cGySu/HVTxT13jNXEZXinLfvOcpgLN7Z7EEZo6LfTr4YK0W?=
- =?us-ascii?Q?eeiJRZ0uRpyJp8PN9kVlIPUxcGGNpOFwrTC6yaFmqrnyP5WR42+tivxaIf10?=
- =?us-ascii?Q?3MGt9Js2Nwo175crAXe5Ahcu3TOxyjVsFZkdaYBsCa2IDtOAlTy4FbVu1l9O?=
- =?us-ascii?Q?a180xxwfGUgq25uuQmZtoBibyqlLSn/QEQy3nqLe2aB0ukd6epHHtzz6YCKe?=
- =?us-ascii?Q?uw52pVYteYxAeOBFep2I2EWX2rV2jpUnAJnnLNv/tHIRuAk1bhc3bh1N6qkV?=
- =?us-ascii?Q?D7u5rJKuFyZvLOgS1sEveYH8MuJMk4DYZXkeSeQkyRVCkxsRwt8/YUUpvQwl?=
- =?us-ascii?Q?TVxPHYkv/ryv+vqnPlloLdasN9ZM7uUNvJ4QV1O5DQAJ7uO9P36kSGDCeHfv?=
- =?us-ascii?Q?rHG9Jvgpqyat2PsGgBq1uiLcHpyD8bVEfyGJOba1lNZFxtpi5oz/G0nBPvQW?=
- =?us-ascii?Q?rNAwTz29wq5wce/zUmdgAe7yXN2sQLqF/G/6sOPoopzkYkGs99mHSWqYw+IY?=
- =?us-ascii?Q?0xnd3a7gGkhPvhKnXO/aE0Tx1vyH8HzAB5/zj44aprw2GOGtHO4xD8on9kt7?=
- =?us-ascii?Q?6vnVRSYVhnlLQ48c8F7lgMLHyea/ELCARr1rxX8fB6iM4fHeyO5Z13DT+2y1?=
- =?us-ascii?Q?fwUtNrtSfl1q7nMDEHQbOojhMsAe5xXIqX8KLLwBJXhxQVSi1TrFZgB2w/DV?=
- =?us-ascii?Q?0Y6Jwn4C04bA1ww+Y/7frvdCcUM9M+/jn0FRBbd+T+HD6yu96honaVQB+bt9?=
- =?us-ascii?Q?gcJE9UnxGb3xsl2eRFof/nJxvTKLF8+qfQ5EMkf6nFxRWwIJP/J/ibgORGA6?=
- =?us-ascii?Q?XMseQsDnyWEQyz0S1DQYMcMDSXkVrEhLor8rO+pclpOtit/H0P/QMZbVLFvE?=
- =?us-ascii?Q?V+CTbKMz1NCCKW/GxmJxzX0N2si/PNvrMVWOO2J/k2g6SNrmlB9FbJ1e9dNZ?=
- =?us-ascii?Q?iz/lmQdqSnhmrFRxd97LblTv2UcmFPZUDYmMcsjJcLqhVF+A4EzegLwZloaS?=
- =?us-ascii?Q?0jvPie9CX+I4zjLFqnfo39a3iEX1/plgRWc8JPNc89Tds4ai+zo1hbDRouP7?=
- =?us-ascii?Q?Gb6CVaK/rc67fxKxbu7uAi4VbGP8NXiIODDeXG2S4AmC6wYVbEb6Ofugs2HO?=
- =?us-ascii?Q?c+0OG7P3ORzdC/Qol+xqRFTYWvxbS5J0?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 16:19:09.0600
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0651e1f-0f94-4903-10ea-08dcc06aa7a4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F67.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7938
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819071229.2489506-10-shaojijie@huawei.com>
 
-The current implementation does not follow the 128-bit write
-requirement to update DTE as specified in the AMD I/O Virtualization
-Techonology (IOMMU) Specification.
+Hi Jijie,
 
-In addition, the function is used to program several DTE fields
-(e.g. stage1 table, stage2 table, domain id, and etc.), which is
-difficult to keep track with current implementation.
+kernel test robot noticed the following build errors:
 
-Therefore, introduce new a new dte256_t data type and a helper function
-update_dte_256(), which uses two try_cmpxchg128 operations to update
-256-bit DTE.
+[auto build test ERROR on net-next/main]
 
-Also, separate logic for setting up the GCR3 Table Root Pointer, GIOV, GV,
-GLX, and GuestPagingMode into another helper function set_dte_gcr3_table().
+url:    https://github.com/intel-lab-lkp/linux/commits/Jijie-Shao/net-hibmcge-Add-pci-table-supported-in-this-module/20240819-152333
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240819071229.2489506-10-shaojijie%40huawei.com
+patch subject: [PATCH net-next 09/11] net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+config: sparc64-defconfig (https://download.01.org/0day-ci/archive/20240820/202408200026.q20EuSHC-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408200026.q20EuSHC-lkp@intel.com/reproduce)
 
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/amd_iommu_types.h |  17 ++++
- drivers/iommu/amd/iommu.c           | 143 +++++++++++++++++-----------
- 2 files changed, 107 insertions(+), 53 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
 
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index c9f9a598eb82..295138447476 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -886,6 +886,23 @@ struct dev_table_entry {
- 	u64 data[4];
- };
- 
-+struct dte256 {
-+	union {
-+		struct {
-+			u64 lo;
-+			u64 hi;
-+		};
-+		u128 data;
-+	} qw_lo;
-+	union {
-+		struct {
-+			u64 lo;
-+			u64 hi;
-+		};
-+		u128 data;
-+	} qw_hi;
-+};
-+
- /*
-  * One entry for unity mappings parsed out of the ACPI table.
-  */
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 87c5385ce3f2..189f65af45fe 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1851,90 +1851,127 @@ int amd_iommu_clear_gcr3(struct iommu_dev_data *dev_data, ioasid_t pasid)
- 	return ret;
- }
- 
-+static void set_dte_gcr3_table(struct amd_iommu *iommu,
-+			       struct iommu_dev_data *dev_data,
-+			       struct dte256 *target)
-+{
-+	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-+	u64 tmp, gcr3;
-+
-+	if (!gcr3_info->gcr3_tbl)
-+		return;
-+
-+	pr_debug("%s: devid=%#x, glx=%#x, gcr3_tbl=%#llx\n",
-+		 __func__, dev_data->devid, gcr3_info->glx,
-+		 (unsigned long long)gcr3_info->gcr3_tbl);
-+
-+	tmp = gcr3_info->glx;
-+	target->qw_lo.lo |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
-+	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
-+		target->qw_lo.lo |= DTE_FLAG_GIOV;
-+	target->qw_lo.lo |= DTE_FLAG_GV;
-+
-+	/* First mask out possible old values for GCR3 table */
-+	tmp = DTE_GCR3_VAL_A(~0ULL) << DTE_GCR3_SHIFT_A;
-+	target->qw_lo.lo &= ~tmp;
-+	tmp = DTE_GCR3_VAL_B(~0ULL) << DTE_GCR3_SHIFT_B;
-+	tmp |= DTE_GCR3_VAL_C(~0ULL) << DTE_GCR3_SHIFT_C;
-+	target->qw_lo.hi &= ~tmp;
-+
-+	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
-+
-+	/* Encode GCR3 table into DTE */
-+	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
-+	target->qw_lo.lo |= tmp;
-+	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
-+	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
-+	target->qw_lo.hi |= tmp;
-+
-+	/* Mask out old values for GuestPagingMode */
-+	target->qw_hi.lo &= ~(0x3ULL << DTE_GPT_LEVEL_SHIFT);
-+	/* Guest page table can only support 4 and 5 levels  */
-+	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
-+		target->qw_hi.lo |= ((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
-+}
-+
-+static void update_dte256(struct amd_iommu *iommu, u16 devid, struct dte256 *new)
-+{
-+	struct dev_table_entry *dev_table = get_dev_table(iommu);
-+	struct dte256 *ptr = (struct dte256 *)&dev_table[devid];
-+	struct dte256 old = {
-+		.qw_lo.data = ptr->qw_lo.data,
-+		.qw_hi.data = ptr->qw_hi.data,
-+	};
-+
-+	/* Update qw_lo */
-+	if (!try_cmpxchg128(&ptr->qw_lo.data, &old.qw_lo.data, new->qw_lo.data))
-+		goto err_out;
-+
-+	/* Update qw_hi */
-+	if (!try_cmpxchg128(&ptr->qw_hi.data, &old.qw_hi.data, new->qw_hi.data)) {
-+		/* Restore qw_lo */
-+		try_cmpxchg128(&ptr->qw_lo.data, &new->qw_lo.data, old.qw_lo.data);
-+		goto err_out;
-+	}
-+	return;
-+err_out:
-+	pr_err("%s: Failed to update DTE for devid %#x\n", __func__, devid);
-+}
-+
- static void set_dte_entry(struct amd_iommu *iommu,
- 			  struct iommu_dev_data *dev_data)
- {
--	u64 pte_root = 0;
--	u64 flags = 0;
--	u32 old_domid;
--	u16 devid = dev_data->devid;
- 	u16 domid;
-+	struct dte256 new = { .qw_lo.data = 0, .qw_hi.data = 0 };
-+	u16 devid = dev_data->devid;
- 	struct protection_domain *domain = dev_data->domain;
- 	struct dev_table_entry *dev_table = get_dev_table(iommu);
- 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-+	u32 old_domid = dev_table[devid].data[1] & DEV_DOMID_MASK;
- 
--	if (gcr3_info && gcr3_info->gcr3_tbl)
-+	if (gcr3_info->gcr3_tbl)
- 		domid = dev_data->gcr3_info.domid;
- 	else
- 		domid = domain->id;
- 
-+	/*
-+	 * Need to get the current value in dte[1,2] because they contain
-+	 * interrupt-remapping settings, which has been programmed earlier.
-+	 */
-+	new.qw_lo.hi = dev_table[devid].data[1];
-+	new.qw_hi.lo = dev_table[devid].data[2];
-+	new.qw_hi.hi = dev_table[devid].data[3];
-+
- 	if (domain->iop.mode != PAGE_MODE_NONE)
--		pte_root = iommu_virt_to_phys(domain->iop.root);
-+		new.qw_lo.lo = iommu_virt_to_phys(domain->iop.root);
- 
--	pte_root |= (domain->iop.mode & DEV_ENTRY_MODE_MASK)
-+	new.qw_lo.lo |= (domain->iop.mode & DEV_ENTRY_MODE_MASK)
- 		    << DEV_ENTRY_MODE_SHIFT;
- 
--	pte_root |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_V;
-+	new.qw_lo.lo |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_V;
- 
- 	/*
- 	 * When SNP is enabled, Only set TV bit when IOMMU
- 	 * page translation is in use.
- 	 */
- 	if (!amd_iommu_snp_en || (domid != 0))
--		pte_root |= DTE_FLAG_TV;
--
--	flags = dev_table[devid].data[1];
-+		new.qw_lo.lo |= DTE_FLAG_TV;
- 
- 	if (dev_data->ats_enabled)
--		flags |= DTE_FLAG_IOTLB;
-+		new.qw_lo.hi |= DTE_FLAG_IOTLB;
- 
- 	if (dev_data->ppr)
--		pte_root |= 1ULL << DEV_ENTRY_PPR;
-+		new.qw_lo.lo |= 1ULL << DEV_ENTRY_PPR;
- 
- 	if (domain->dirty_tracking)
--		pte_root |= DTE_FLAG_HAD;
--
--	if (gcr3_info && gcr3_info->gcr3_tbl) {
--		u64 gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
--		u64 glx  = gcr3_info->glx;
--		u64 tmp;
-+		new.qw_lo.lo |= DTE_FLAG_HAD;
- 
--		pte_root |= DTE_FLAG_GV;
--		pte_root |= (glx & DTE_GLX_MASK) << DTE_GLX_SHIFT;
--
--		/* First mask out possible old values for GCR3 table */
--		tmp = DTE_GCR3_VAL_B(~0ULL) << DTE_GCR3_SHIFT_B;
--		flags    &= ~tmp;
--
--		tmp = DTE_GCR3_VAL_C(~0ULL) << DTE_GCR3_SHIFT_C;
--		flags    &= ~tmp;
--
--		/* Encode GCR3 table into DTE */
--		tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
--		pte_root |= tmp;
--
--		tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
--		flags    |= tmp;
--
--		tmp = DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
--		flags    |= tmp;
--
--		if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL) {
--			dev_table[devid].data[2] |=
--				((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
--		}
--
--		/* GIOV is supported with V2 page table mode only */
--		if (pdom_is_v2_pgtbl_mode(domain))
--			pte_root |= DTE_FLAG_GIOV;
--	}
-+	new.qw_lo.hi &= ~DEV_DOMID_MASK;
-+	new.qw_lo.hi |= domid;
- 
--	flags &= ~DEV_DOMID_MASK;
--	flags |= domid;
-+	set_dte_gcr3_table(iommu, dev_data, &new);
- 
--	old_domid = dev_table[devid].data[1] & DEV_DOMID_MASK;
--	dev_table[devid].data[1]  = flags;
--	dev_table[devid].data[0]  = pte_root;
-+	update_dte256(iommu, devid, &new);
- 
- 	/*
- 	 * A kdump kernel might be replacing a domain ID that was copied from
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:15:21: error: variable 'hbg_regmap_config' has initializer but incomplete type
+      15 | static const struct regmap_config hbg_regmap_config = {
+         |                     ^~~~~~~~~~~~~
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:16:10: error: 'const struct regmap_config' has no member named 'reg_bits'
+      16 |         .reg_bits       = 32,
+         |          ^~~~~~~~
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:16:27: warning: excess elements in struct initializer
+      16 |         .reg_bits       = 32,
+         |                           ^~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:16:27: note: (near initialization for 'hbg_regmap_config')
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:17:10: error: 'const struct regmap_config' has no member named 'reg_stride'
+      17 |         .reg_stride     = 4,
+         |          ^~~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:17:27: warning: excess elements in struct initializer
+      17 |         .reg_stride     = 4,
+         |                           ^
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:17:27: note: (near initialization for 'hbg_regmap_config')
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:18:10: error: 'const struct regmap_config' has no member named 'val_bits'
+      18 |         .val_bits       = 32,
+         |          ^~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:18:27: warning: excess elements in struct initializer
+      18 |         .val_bits       = 32,
+         |                           ^~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:18:27: note: (near initialization for 'hbg_regmap_config')
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:19:10: error: 'const struct regmap_config' has no member named 'max_register'
+      19 |         .max_register   = 0x20000,
+         |          ^~~~~~~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:19:27: warning: excess elements in struct initializer
+      19 |         .max_register   = 0x20000,
+         |                           ^~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:19:27: note: (near initialization for 'hbg_regmap_config')
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:20:10: error: 'const struct regmap_config' has no member named 'fast_io'
+      20 |         .fast_io        = true,
+         |          ^~~~~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:20:27: warning: excess elements in struct initializer
+      20 |         .fast_io        = true,
+         |                           ^~~~
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:20:27: note: (near initialization for 'hbg_regmap_config')
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c: In function 'hbg_init':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:136:18: error: implicit declaration of function 'devm_regmap_init_mmio' [-Wimplicit-function-declaration]
+     136 |         regmap = devm_regmap_init_mmio(dev, priv->io_base, &hbg_regmap_config);
+         |                  ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:136:16: error: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     136 |         regmap = devm_regmap_init_mmio(dev, priv->io_base, &hbg_regmap_config);
+         |                ^
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c: At top level:
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:15:35: error: storage size of 'hbg_regmap_config' isn't known
+      15 | static const struct regmap_config hbg_regmap_config = {
+         |                                   ^~~~~~~~~~~~~~~~~
+
+
+vim +/hbg_regmap_config +15 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+
+97e170277067a0 Jijie Shao 2024-08-19   14  
+97e170277067a0 Jijie Shao 2024-08-19  @15  static const struct regmap_config hbg_regmap_config = {
+97e170277067a0 Jijie Shao 2024-08-19  @16  	.reg_bits	= 32,
+97e170277067a0 Jijie Shao 2024-08-19  @17  	.reg_stride	= 4,
+97e170277067a0 Jijie Shao 2024-08-19  @18  	.val_bits	= 32,
+97e170277067a0 Jijie Shao 2024-08-19  @19  	.max_register	= 0x20000,
+97e170277067a0 Jijie Shao 2024-08-19  @20  	.fast_io	= true,
+97e170277067a0 Jijie Shao 2024-08-19   21  };
+97e170277067a0 Jijie Shao 2024-08-19   22  
+687339112834f6 Jijie Shao 2024-08-19   23  static void hbg_all_irq_enable(struct hbg_priv *priv, bool enabled)
+687339112834f6 Jijie Shao 2024-08-19   24  {
+687339112834f6 Jijie Shao 2024-08-19   25  	u32 i;
+687339112834f6 Jijie Shao 2024-08-19   26  
+687339112834f6 Jijie Shao 2024-08-19   27  	for (i = 0; i < priv->vectors.info_array_len; i++)
+687339112834f6 Jijie Shao 2024-08-19   28  		hbg_irq_enable(priv, priv->vectors.info_array[i].mask,
+687339112834f6 Jijie Shao 2024-08-19   29  			       enabled);
+687339112834f6 Jijie Shao 2024-08-19   30  }
+687339112834f6 Jijie Shao 2024-08-19   31  
+687339112834f6 Jijie Shao 2024-08-19   32  static int hbg_net_open(struct net_device *dev)
+687339112834f6 Jijie Shao 2024-08-19   33  {
+687339112834f6 Jijie Shao 2024-08-19   34  	struct hbg_priv *priv = netdev_priv(dev);
+687339112834f6 Jijie Shao 2024-08-19   35  
+687339112834f6 Jijie Shao 2024-08-19   36  	if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
+687339112834f6 Jijie Shao 2024-08-19   37  		return 0;
+687339112834f6 Jijie Shao 2024-08-19   38  
+687339112834f6 Jijie Shao 2024-08-19   39  	netif_carrier_off(dev);
+ae4a07330253ca Jijie Shao 2024-08-19   40  	napi_enable(&priv->rx_ring.napi);
+ddb659b09e0fd3 Jijie Shao 2024-08-19   41  	napi_enable(&priv->tx_ring.napi);
+687339112834f6 Jijie Shao 2024-08-19   42  	hbg_all_irq_enable(priv, true);
+687339112834f6 Jijie Shao 2024-08-19   43  	hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
+687339112834f6 Jijie Shao 2024-08-19   44  	netif_start_queue(dev);
+687339112834f6 Jijie Shao 2024-08-19   45  	hbg_phy_start(priv);
+687339112834f6 Jijie Shao 2024-08-19   46  
+687339112834f6 Jijie Shao 2024-08-19   47  	return 0;
+687339112834f6 Jijie Shao 2024-08-19   48  }
+687339112834f6 Jijie Shao 2024-08-19   49  
+687339112834f6 Jijie Shao 2024-08-19   50  static int hbg_net_stop(struct net_device *dev)
+687339112834f6 Jijie Shao 2024-08-19   51  {
+687339112834f6 Jijie Shao 2024-08-19   52  	struct hbg_priv *priv = netdev_priv(dev);
+687339112834f6 Jijie Shao 2024-08-19   53  
+687339112834f6 Jijie Shao 2024-08-19   54  	if (!hbg_nic_is_open(priv))
+687339112834f6 Jijie Shao 2024-08-19   55  		return 0;
+687339112834f6 Jijie Shao 2024-08-19   56  
+687339112834f6 Jijie Shao 2024-08-19   57  	clear_bit(HBG_NIC_STATE_OPEN, &priv->state);
+687339112834f6 Jijie Shao 2024-08-19   58  	netif_carrier_off(dev);
+687339112834f6 Jijie Shao 2024-08-19   59  	hbg_phy_stop(priv);
+687339112834f6 Jijie Shao 2024-08-19   60  	netif_stop_queue(dev);
+687339112834f6 Jijie Shao 2024-08-19   61  	hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
+687339112834f6 Jijie Shao 2024-08-19   62  	hbg_all_irq_enable(priv, false);
+ddb659b09e0fd3 Jijie Shao 2024-08-19   63  	napi_disable(&priv->tx_ring.napi);
+ae4a07330253ca Jijie Shao 2024-08-19   64  	napi_disable(&priv->rx_ring.napi);
+687339112834f6 Jijie Shao 2024-08-19   65  
+687339112834f6 Jijie Shao 2024-08-19   66  	return 0;
+687339112834f6 Jijie Shao 2024-08-19   67  }
+687339112834f6 Jijie Shao 2024-08-19   68  
+687339112834f6 Jijie Shao 2024-08-19   69  static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
+687339112834f6 Jijie Shao 2024-08-19   70  {
+687339112834f6 Jijie Shao 2024-08-19   71  	struct hbg_priv *priv = netdev_priv(dev);
+687339112834f6 Jijie Shao 2024-08-19   72  	u8 *mac_addr;
+687339112834f6 Jijie Shao 2024-08-19   73  
+687339112834f6 Jijie Shao 2024-08-19   74  	mac_addr = ((struct sockaddr *)addr)->sa_data;
+687339112834f6 Jijie Shao 2024-08-19   75  	hbg_hw_set_uc_addr(priv, ether_addr_to_u64(mac_addr));
+687339112834f6 Jijie Shao 2024-08-19   76  	dev_addr_set(dev, mac_addr);
+687339112834f6 Jijie Shao 2024-08-19   77  
+687339112834f6 Jijie Shao 2024-08-19   78  	return 0;
+687339112834f6 Jijie Shao 2024-08-19   79  }
+687339112834f6 Jijie Shao 2024-08-19   80  
+687339112834f6 Jijie Shao 2024-08-19   81  static int hbg_net_change_mtu(struct net_device *dev, int new_mtu)
+687339112834f6 Jijie Shao 2024-08-19   82  {
+687339112834f6 Jijie Shao 2024-08-19   83  	struct hbg_priv *priv = netdev_priv(dev);
+687339112834f6 Jijie Shao 2024-08-19   84  	bool is_opened = hbg_nic_is_open(priv);
+687339112834f6 Jijie Shao 2024-08-19   85  	u32 frame_len;
+687339112834f6 Jijie Shao 2024-08-19   86  
+687339112834f6 Jijie Shao 2024-08-19   87  	hbg_net_stop(dev);
+687339112834f6 Jijie Shao 2024-08-19   88  
+687339112834f6 Jijie Shao 2024-08-19   89  	frame_len = new_mtu + VLAN_HLEN * priv->dev_specs.vlan_layers +
+687339112834f6 Jijie Shao 2024-08-19   90  		    ETH_HLEN + ETH_FCS_LEN;
+687339112834f6 Jijie Shao 2024-08-19   91  	hbg_hw_set_mtu(priv, frame_len);
+687339112834f6 Jijie Shao 2024-08-19   92  	WRITE_ONCE(dev->mtu, new_mtu);
+687339112834f6 Jijie Shao 2024-08-19   93  
+687339112834f6 Jijie Shao 2024-08-19   94  	dev_dbg(&priv->pdev->dev,
+687339112834f6 Jijie Shao 2024-08-19   95  		"change mtu from %u to %u\n", dev->mtu, new_mtu);
+687339112834f6 Jijie Shao 2024-08-19   96  	if (is_opened)
+687339112834f6 Jijie Shao 2024-08-19   97  		hbg_net_open(dev);
+687339112834f6 Jijie Shao 2024-08-19   98  	return 0;
+687339112834f6 Jijie Shao 2024-08-19   99  }
+687339112834f6 Jijie Shao 2024-08-19  100  
+ddb659b09e0fd3 Jijie Shao 2024-08-19  101  static void hbg_net_tx_timeout(struct net_device *dev, unsigned int txqueue)
+ddb659b09e0fd3 Jijie Shao 2024-08-19  102  {
+ddb659b09e0fd3 Jijie Shao 2024-08-19  103  	struct hbg_priv *priv = netdev_priv(dev);
+ddb659b09e0fd3 Jijie Shao 2024-08-19  104  	struct hbg_ring *ring = &priv->tx_ring;
+ddb659b09e0fd3 Jijie Shao 2024-08-19  105  	char *buf = ring->tout_log_buf;
+ddb659b09e0fd3 Jijie Shao 2024-08-19  106  	u32 pos = 0;
+ddb659b09e0fd3 Jijie Shao 2024-08-19  107  
+ddb659b09e0fd3 Jijie Shao 2024-08-19  108  	pos += scnprintf(buf + pos, HBG_TX_TIMEOUT_BUF_LEN - pos,
+ddb659b09e0fd3 Jijie Shao 2024-08-19  109  			 "ring used num: %u, fifo used num: %u\n",
+ddb659b09e0fd3 Jijie Shao 2024-08-19  110  			 hbg_get_queue_used_num(ring),
+ddb659b09e0fd3 Jijie Shao 2024-08-19  111  			 hbg_hw_get_fifo_used_num(priv, HBG_DIR_TX));
+ddb659b09e0fd3 Jijie Shao 2024-08-19  112  	pos += scnprintf(buf + pos, HBG_TX_TIMEOUT_BUF_LEN - pos,
+ddb659b09e0fd3 Jijie Shao 2024-08-19  113  			 "ntc: %u, ntu: %u, irq enabled: %u\n",
+ddb659b09e0fd3 Jijie Shao 2024-08-19  114  			 ring->ntc, ring->ntu,
+ddb659b09e0fd3 Jijie Shao 2024-08-19  115  			 hbg_irq_is_enabled(priv, HBG_INT_MSK_TX_B));
+ddb659b09e0fd3 Jijie Shao 2024-08-19  116  
+ddb659b09e0fd3 Jijie Shao 2024-08-19  117  	netdev_info(dev, "%s", buf);
+ddb659b09e0fd3 Jijie Shao 2024-08-19  118  }
+ddb659b09e0fd3 Jijie Shao 2024-08-19  119  
+687339112834f6 Jijie Shao 2024-08-19  120  static const struct net_device_ops hbg_netdev_ops = {
+687339112834f6 Jijie Shao 2024-08-19  121  	.ndo_open		= hbg_net_open,
+687339112834f6 Jijie Shao 2024-08-19  122  	.ndo_stop		= hbg_net_stop,
+ddb659b09e0fd3 Jijie Shao 2024-08-19  123  	.ndo_start_xmit		= hbg_net_start_xmit,
+687339112834f6 Jijie Shao 2024-08-19  124  	.ndo_validate_addr	= eth_validate_addr,
+687339112834f6 Jijie Shao 2024-08-19  125  	.ndo_set_mac_address	= hbg_net_set_mac_address,
+687339112834f6 Jijie Shao 2024-08-19  126  	.ndo_change_mtu		= hbg_net_change_mtu,
+ddb659b09e0fd3 Jijie Shao 2024-08-19  127  	.ndo_tx_timeout		= hbg_net_tx_timeout,
+687339112834f6 Jijie Shao 2024-08-19  128  };
+687339112834f6 Jijie Shao 2024-08-19  129  
+97e170277067a0 Jijie Shao 2024-08-19  130  static int hbg_init(struct hbg_priv *priv)
+97e170277067a0 Jijie Shao 2024-08-19  131  {
+97e170277067a0 Jijie Shao 2024-08-19  132  	struct device *dev = &priv->pdev->dev;
+97e170277067a0 Jijie Shao 2024-08-19  133  	struct regmap *regmap;
+44d1e0ec4b312d Jijie Shao 2024-08-19  134  	int ret;
+97e170277067a0 Jijie Shao 2024-08-19  135  
+97e170277067a0 Jijie Shao 2024-08-19 @136  	regmap = devm_regmap_init_mmio(dev, priv->io_base, &hbg_regmap_config);
+97e170277067a0 Jijie Shao 2024-08-19  137  	if (IS_ERR(regmap))
+97e170277067a0 Jijie Shao 2024-08-19  138  		return dev_err_probe(dev, PTR_ERR(regmap), "failed to init regmap\n");
+97e170277067a0 Jijie Shao 2024-08-19  139  
+97e170277067a0 Jijie Shao 2024-08-19  140  	priv->regmap = regmap;
+44d1e0ec4b312d Jijie Shao 2024-08-19  141  	ret = hbg_hw_init(priv);
+44d1e0ec4b312d Jijie Shao 2024-08-19  142  	if (ret)
+44d1e0ec4b312d Jijie Shao 2024-08-19  143  		return ret;
+44d1e0ec4b312d Jijie Shao 2024-08-19  144  
+ddb659b09e0fd3 Jijie Shao 2024-08-19  145  	ret = hbg_txrx_init(priv);
+ddb659b09e0fd3 Jijie Shao 2024-08-19  146  	if (ret)
+ddb659b09e0fd3 Jijie Shao 2024-08-19  147  		return ret;
+ddb659b09e0fd3 Jijie Shao 2024-08-19  148  
+ddb659b09e0fd3 Jijie Shao 2024-08-19  149  	ret = devm_add_action_or_reset(&priv->pdev->dev, hbg_txrx_uninit, priv);
+ddb659b09e0fd3 Jijie Shao 2024-08-19  150  	if (ret)
+ddb659b09e0fd3 Jijie Shao 2024-08-19  151  		return ret;
+ddb659b09e0fd3 Jijie Shao 2024-08-19  152  
+20db2e78ac2dab Jijie Shao 2024-08-19  153  	ret = hbg_irq_init(priv);
+20db2e78ac2dab Jijie Shao 2024-08-19  154  	if (ret)
+20db2e78ac2dab Jijie Shao 2024-08-19  155  		return ret;
+20db2e78ac2dab Jijie Shao 2024-08-19  156  
+44d1e0ec4b312d Jijie Shao 2024-08-19  157  	return hbg_mdio_init(priv);
+97e170277067a0 Jijie Shao 2024-08-19  158  }
+7212bbc0ea2ed3 Jijie Shao 2024-08-19  159  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
