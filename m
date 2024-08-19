@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-291477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6A795631A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AF295632E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19311C21505
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E763E1C21503
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0AB14A09C;
-	Mon, 19 Aug 2024 05:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C6D14B95A;
+	Mon, 19 Aug 2024 05:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VX2gnxSx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FEkcMJNF"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67E24594D;
-	Mon, 19 Aug 2024 05:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71AA3EA69;
+	Mon, 19 Aug 2024 05:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724044902; cv=none; b=U1Cs07ySWBmuO20GkAC4K4hn/bul2kYg5i7qBsCYefq7yC03NFdpt4WDcazQMKPKe5oManufHIRFUey21WUz19AEo4MHZTy6bdLxwS0n+GV3bB+vvXdxpP8jRul1iM0VLIpKFP8hGy00UXCksmmPpPzz96ChMmNQY4tEbaex6dM=
+	t=1724045256; cv=none; b=og/O10W0hwrukDp8oGwOUZsr9dCSaWzbhXJIYKbyY/6g4V1LT2ZBdCkOaHLv1EonOfn7Z8C2JET8pQcyPYRed0n4jjbjr3lDvYFMtxmtzLsfIQ4xhaiLk17XHNiaYbCP5ZOL/YBlMBw4l7wUeuwAr8PrXRf6yg8YtY2IhF1zQ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724044902; c=relaxed/simple;
-	bh=Nk53ja8l6ZSorPqgLK4v3HcIbCyr8MB3FKgTwqIV7rI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0GrEA5WA++lkJFTWiYOa0ows7hZZ6LaHwGsYRaXKpuNCRZE9iXH2xWmMR5mJHwoRKC7zBOyRm7n+DirBCvr1FVpqMhbabv3ThV/qzKcuSSHgqrCKG7y4wJzTD2BPC/Um8bJjpL+S6ti8u00fiqoYK+IKzX8T51/4DsEjQ8+pb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VX2gnxSx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76C7EC32782;
-	Mon, 19 Aug 2024 05:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724044901;
-	bh=Nk53ja8l6ZSorPqgLK4v3HcIbCyr8MB3FKgTwqIV7rI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VX2gnxSxAjbYVxzNfeXYqN52YYUIamgyGsVizk6usgKUgF3+A046OWvZRg8IoqRLR
-	 ltCJheea30fjbt4IlfEOXjbyzP+X6FLmhYpUpBvgFdPkbL5ULbUtpQOi5Y+ExViMUB
-	 ECw8ULpoUD3nnhNccHrIjK0uTblBQ3Xsn2Gp8MGrjBMFvmjA178AtMziyYC9zjUZqn
-	 8LrcxNE/ssOqjlWucGKmnjqIrivR5/0Gd3SOms6r3OeV6W8zWSBBJ6b7LxiSaRSYvu
-	 KDvpGum7LBAcLgDDb+eFK6zFR/rcEl2JooOwrr5IJQ+ki8MX6O4Wae10sKIrH+rWZV
-	 39BWaBDkANliQ==
-Date: Sun, 18 Aug 2024 22:21:40 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
-	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH V4 1/2] xfs: Fix the owner setting issue for rmap query
- in xfs fsmap
-Message-ID: <20240819052140.GN865349@frogsfrogsfrogs>
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <20240819005320.304211-2-wozizhi@huawei.com>
+	s=arc-20240116; t=1724045256; c=relaxed/simple;
+	bh=/mCGKhdr/KY90pJ810zennttoGmXMQIBX2QHzL7oMqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pwfd8ZVCdZgA+NBMAnrVj3tz3wh+hFWBlS5u3jrpy0RWO2l6GS0IsKttL7zSCtkJujT/8G8m0aW3b5F9pp92w6gHv33TzYxoIBNLa4LIb8D3uy8uJxXMbDLEXM1Ixpr6szUmEx92yetlp4sUsQwU4cy5Y3hE5E3S/s+Dz1/uVLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FEkcMJNF; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724045253; x=1755581253;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/mCGKhdr/KY90pJ810zennttoGmXMQIBX2QHzL7oMqQ=;
+  b=FEkcMJNFoT8Q18PoRVQTVKCyHroAdsqyx36stUsw4JZp/m5aRMHXZAkM
+   soP/GH33D823b/5xgCbKQ3AqGsVMj46CrAK9ZvNe+CmaHM3jeiNt+Wm71
+   bxbG9Ytsbyar6iLAOXen6yH8mVSDC0zBQmREh+P3F3kWTAlEsECd3k/83
+   HNCDyj3c0hhV4N2+vhYdZG2aXkPQLK8jBvfv3Ai0TWdaCnun0AAZHeecA
+   JE5RgHNKZCSFaET9gaWlnOOT2AcI5lJ1KaESVkcdY156Qf3ckNPVYFWTn
+   sKArtox7h6zPwqLuCYfdX6oib0GqaW+8XGMFTuenoMBaNG+U/z38/zwz7
+   w==;
+X-CSE-ConnectionGUID: VTKYPs/ZQJiauiHw43XcjQ==
+X-CSE-MsgGUID: t3Gf+COPQT+k2mUdqY1j7Q==
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="198068541"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Aug 2024 22:27:32 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 18 Aug 2024 22:27:11 -0700
+Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Sun, 18 Aug 2024 22:27:07 -0700
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <linux@armlinux.org.uk>, <kuba@kernel.org>,
+	<andrew@lunn.ch>, <horms@kernel.org>, <hkallweit1@gmail.com>,
+	<richardcochran@gmail.com>, <rdunlap@infradead.org>,
+	<Bryan.Whitehead@microchip.com>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
+Subject: [PATCH net-next] net: phylink: Add phylinksetfixed_link() to configure fixed link state in phylink
+Date: Mon, 19 Aug 2024 10:53:35 +0530
+Message-ID: <20240819052335.346184-1-Raju.Lakkaraju@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819005320.304211-2-wozizhi@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Aug 19, 2024 at 08:53:19AM +0800, Zizhi Wo wrote:
-> I notice a rmap query bug in xfs_io fsmap:
-> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
->  EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
->    0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
->    1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
->    2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
->    3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
->    4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
->    5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
->    6: 253:16 [104..127]:           free space                          0  (104..127)               24
->    ......
-> 
-> Bug:
-> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 0 3' /mnt
-> [root@fedora ~]#
-> Normally, we should be able to get one record, but we got nothing.
-> 
-> The root cause of this problem lies in the incorrect setting of rm_owner in
-> the rmap query. In the case of the initial query where the owner is not
-> set, __xfs_getfsmap_datadev() first sets info->high.rm_owner to ULLONG_MAX.
-> This is done to prevent any omissions when comparing rmap items. However,
-> if the current ag is detected to be the last one, the function sets info's
-> high_irec based on the provided key. If high->rm_owner is not specified, it
-> should continue to be set to ULLONG_MAX; otherwise, there will be issues
-> with interval omissions. For example, consider "start" and "end" within the
-> same block. If high->rm_owner == 0, it will be smaller than the founded
-> record in rmapbt, resulting in a query with no records. The main call stack
-> is as follows:
-> 
-> xfs_ioc_getfsmap
->   xfs_getfsmap
->     xfs_getfsmap_datadev_rmapbt
->       __xfs_getfsmap_datadev
->         info->high.rm_owner = ULLONG_MAX
->         if (pag->pag_agno == end_ag)
-> 	  xfs_fsmap_owner_to_rmap
-> 	    // set info->high.rm_owner = 0 because fmr_owner == -1ULL
-> 	    dest->rm_owner = 0
-> 	// get nothing
-> 	xfs_getfsmap_datadev_rmapbt_query
-> 
-> The problem can be resolved by simply modify the xfs_fsmap_owner_to_rmap
-> function internal logic to achieve.
-> 
-> After applying this patch, the above problem have been solved:
-> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 0 3' /mnt
->  EXT: DEV    BLOCK-RANGE      OWNER              FILE-OFFSET      AG AG-OFFSET        TOTAL
->    0: 253:16 [0..7]:          static fs metadata                  0  (0..7)               8
-> 
-> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+From: Russell King <linux@armlinux.org.uk>
 
-Looks good,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+The function allows for the configuration of a fixed link state for a given
+phylink instance. This addition is particularly useful for network devices that
+operate with a fixed link configuration, where the link parameters do not change
+dynamically. By using `phylink_set_fixed_link()`, drivers can easily set up
+the fixed link state during initialization or configuration changes.
 
---D
+Signed-off-by: Russell King <linux@armlinux.org.uk> 
+Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+---
+Note: This code was developed by Mr.Russell King.
 
-> ---
->  fs/xfs/xfs_fsmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-> index 85dbb46452ca..3a30b36779db 100644
-> --- a/fs/xfs/xfs_fsmap.c
-> +++ b/fs/xfs/xfs_fsmap.c
-> @@ -71,7 +71,7 @@ xfs_fsmap_owner_to_rmap(
->  	switch (src->fmr_owner) {
->  	case 0:			/* "lowest owner id possible" */
->  	case -1ULL:		/* "highest owner id possible" */
-> -		dest->rm_owner = 0;
-> +		dest->rm_owner = src->fmr_owner;
->  		break;
->  	case XFS_FMR_OWN_FREE:
->  		dest->rm_owner = XFS_RMAP_OWN_NULL;
-> -- 
-> 2.39.2
-> 
-> 
+ drivers/net/phy/phylink.c | 42 +++++++++++++++++++++++++++++++++++++++
+ include/linux/phylink.h   |  2 ++
+ 2 files changed, 44 insertions(+)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 51c526d227fa..56dc810b8e00 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -1635,6 +1635,48 @@ static int phylink_register_sfp(struct phylink *pl,
+ 	return ret;
+ }
+ 
++/**
++ * phylink_set_fixed_link() - set the fixed link
++ * @pl: a pointer to a &struct phylink returned from phylink_create()
++ * @state: a pointer to a struct phylink_link_state.
++ *
++ * This function is used when the link parameters are known and do not change,
++ * making it suitable for certain types of network connections.
++ *
++ * Returns zero on success, or negative error code.
++ */
++int phylink_set_fixed_link(struct phylink *pl,
++			   const struct phylink_link_state *state)
++{
++	const struct phy_setting *s;
++	unsigned long *adv;
++
++	if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
++	    !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
++		return -EINVAL;
++
++	s = phy_lookup_setting(state->speed, state->duplex,
++			       pl->supported, true);
++	if (!s)
++		return -EINVAL;
++
++	adv = pl->link_config.advertising;
++	linkmode_zero(adv);
++	linkmode_set_bit(s->bit, adv);
++	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, adv);
++
++	pl->link_config.speed = state->speed;
++	pl->link_config.duplex = state->duplex;
++	pl->link_config.link = 1;
++	pl->link_config.an_complete = 1;
++
++	pl->cfg_link_an_mode = MLO_AN_FIXED;
++	pl->cur_link_an_mode = pl->cfg_link_an_mode;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(phylink_set_fixed_link);
++
+ /**
+  * phylink_create() - create a phylink instance
+  * @config: a pointer to the target &struct phylink_config
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index 2381e07429a2..5c01048860c4 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -598,6 +598,8 @@ int phylink_fwnode_phy_connect(struct phylink *pl,
+ 			       const struct fwnode_handle *fwnode,
+ 			       u32 flags);
+ void phylink_disconnect_phy(struct phylink *);
++int phylink_set_fixed_link(struct phylink *,
++			   const struct phylink_link_state *);
+ 
+ void phylink_mac_change(struct phylink *, bool up);
+ void phylink_pcs_change(struct phylink_pcs *, bool up);
+-- 
+2.34.1
+
 
