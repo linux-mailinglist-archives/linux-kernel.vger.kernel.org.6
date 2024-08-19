@@ -1,86 +1,181 @@
-Return-Path: <linux-kernel+bounces-291506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEA095636A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8E3956370
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B24ECB2178E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0DD1B219D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BA114BF8F;
-	Mon, 19 Aug 2024 05:59:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C34D14C58C;
+	Mon, 19 Aug 2024 06:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAEwYnBE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD25171CD
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4051870;
+	Mon, 19 Aug 2024 06:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724047144; cv=none; b=ksk2xbxoQbp9O/tmks2eaALWBgIXF//ugtCDHYn3twEASLtUZ6cAhiYV1DNgQSqDEPhCQuayOimEn88XxtQubG5J/vuY7JzsGXEmwL/ndbuq+50Xb5hgEzNYyVfTRk9ECDbnXZWxxSDIHcJWAxriHtAgXlcKkUscr4iEWwrD0yI=
+	t=1724047282; cv=none; b=PZKJVfCbcvUgC1urfymRej04Uu3RR8ZXCMm2qezmrKOH07PjRYHadbLldpn/H4E8iuEIKinABDkvWfTF9P5dBZ5rJxxgs2kilOpD+p7TXODpJdznjaiArAXJC7QxOpk7agEAP3m4VVd7fAL0GaW8sUia/PROzo09xXDdXaHvcno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724047144; c=relaxed/simple;
-	bh=CZUeEEOT33maLDJlnJDGGVAN1gTvvr0kIxtO/VI/OpM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qPYqFRfgWO2/Yhnm1wMjh+J7xyalDYQNNnYrAm/+zHoiBfv7+aCFpE/fEZaqxsvVPWOOcSRwqRA2q5J1COMyiSOMC4/eZ87ZBJV6SYjyEl+zsSxip5pTw+DFkjvkTEhVDqwYUDmLX9OFfnkdTgkGIL3LKfXQCbjJ9AAVJ5oPLtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d5101012eso2966145ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:59:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724047142; x=1724651942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jfrjSS3tqL9BUzjb5MzW8xQNQsebzmaRdWr/ibRthdw=;
-        b=MmohTzcmH2PpNXxpvvD+9jcHhWFRW7maR4Kbfs3VfKAIaSs4exTc5TRtp16EZy3qHi
-         z2o0q0M4bQ32uRSQ/H5FxlA9cjLT03oJ1/G7EGWLY7oXSaW/5gXz2K2GsJt0pyugWggu
-         6YqYawwyZKEJMQ3MAs/MX4VV8q/5LU/0FQRgb0kRYfKvmfHg+rFssz/xFeEbj7kQ6RWp
-         DlbpeTj5fJoXQRsKMIOow6P+MT2HQsThp+V7efb8OeebTlnJDuZlZCHCHRl657CjqXwU
-         D8wzdKgA8eCHgCzN9lepI5AmvkvWoaLXlnCIysm0sYHh2ZkZpvxwQLHfPcNdZ3/yg8AW
-         Sibg==
-X-Gm-Message-State: AOJu0YzAEKIGQWAEF47kCqWGS60nl8Hy+NfassezNwrrG/BB3YX9qmU9
-	3KtBeCyzTdBm6mjJy/7dCSE7/gKQA5/LfFSpM95mg1sTRA/8fYBWffT9MiaMO9S6AfaCytieGoZ
-	7+lAnbypd8jNNZ8os2bhg8FLY5GxrfJOSbTW0QCY+zSS1Wt0Iv5pgEtA=
-X-Google-Smtp-Source: AGHT+IGWPwJSsqnS2XJbGF+Y7mUZQmCONQxO+/FF+8IDHTaJT6YD0IqUaTDHxNXmjhckfktsNy5LW/WABs5+XPs314vXao94eKup
+	s=arc-20240116; t=1724047282; c=relaxed/simple;
+	bh=8wx80CrF41DprHEfeRt9Dem0vMpxzwzj6k7sgLRRDao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DYmJISDuuqwMgRIRX5MVVGEL71GKtOq9XCsf4hupFtP8JLUk+oPKcgpJ73Fd7+dLUh3d3ZcV60EXNGjAhTwrHuRYLShRBZq5wTAEKis0PEEPfiVg02ms0dKuyZSqC9vnVZ6XkGBim/dOClEC4aXPrdLIkFX2hFG0RF3g4AgqZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAEwYnBE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD74C32782;
+	Mon, 19 Aug 2024 06:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724047282;
+	bh=8wx80CrF41DprHEfeRt9Dem0vMpxzwzj6k7sgLRRDao=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=SAEwYnBE+Qz+PiRJYSJjRTFiYXb0wu8guin1ofBX7grZ7QMabbQe0itbFXEJ6JMyk
+	 vRUHWXJeskmoH+P30qTvDjiieB1MO/RieCCAg72DeMOgNN9LjfBb/aeexGD5SDnYBj
+	 E4OvS06HO+SvOV4x+ay4sjVY2HwLka9xNfND9IAI3ZWt4iI7q/aQ4HzHna+WYV7b98
+	 JrftCYJo3K5vl7k4LTn5AgQ0b9LxDS++HQSmhBRvQ4Vf2u1wijwmS8fuywrJXAcIon
+	 +OLCZydk0airNKFPWxDFR0aREOf2Afnd7edvLbCOK+6h5y96iY7S9x9wJJXWAKyeYA
+	 UEHIn7lEQACgA==
+Message-ID: <929c322e-7385-48da-b925-7f363cf5b6f7@kernel.org>
+Date: Mon, 19 Aug 2024 08:01:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c7:b0:398:8d01:9c4c with SMTP id
- e9e14a558f8ab-39d26d95803mr4705725ab.6.1724047142093; Sun, 18 Aug 2024
- 22:59:02 -0700 (PDT)
-Date: Sun, 18 Aug 2024 22:59:02 -0700
-In-Reply-To: <20240819053738.3694059-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007b1530062003017f@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write in bch2_dev_journal_init
-From: syzbot <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <OS8PR06MB75413728F0FCEE022B4B4F5BF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <eec21668-3674-40c6-b443-90c7c02262e3@kernel.org>
+ <OS8PR06MB7541CA018C86E262F826B9E5F2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB7541B0D9A43B989DC1738F68F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <5081c41b-dfbd-49ad-a993-b983d4c339f0@kernel.org>
+ <OS8PR06MB7541196D3058904998820CFFF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <9465f8c0-5270-46df-af4b-e9ee78db63d1@kernel.org>
+ <OS8PR06MB7541CC40B6B8877B2656182CF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <e3733148-142c-40a1-b250-4502e8726f0c@kernel.org>
+ <OS8PR06MB7541D5AB85D8E44E89389BC3F2862@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <26988bcd-4d58-4100-b89c-00e8ef879329@kernel.org>
+ <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 19/08/2024 07:55, Ryan Chen wrote:
+>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+>>
+>> On 13/08/2024 03:53, Ryan Chen wrote:
+>>>> Drop the define for number of clocks from the header, because it is
+>>>> not a
+>>
+>> *NUMBER OF CLOCKS*
+>>
+>>>> binding. You can put it in the driver or not, I don't care and do not
+>>>> provide guidance on this because I don't know if it makes sense at all.
+>>>> What I know is that number of clocks is not related to binding. It is
+>>>> not needed
+>>
+>> *NUMBER OF CLOCKS*
+>>
+>>>> in the binding, either.
+>>>
+>>> Sorry, I am confused.
+>>> if you think that number of clocks is not related to binding.
+>>
+>> *NUMBER OF CLOCKS*
+>>
+>>> How dtsi claim for clk?
+>>> For example in dtsi.
+>>> include <dt-bindings/clock/aspeed,ast2700-clk.h>
+>>> usb3bhp: usb3bhp {
+>>> ....
+>>> clocks = <&syscon0 SCU0_CLK_GATE_PORTAUSB>;
+>>
+>> And where is *NUMBER OF CLOCKS* here? I don't see any problem. No
+>> useless SCU0_CLK_GATE_NUM define here.
+>>
+> Understood now, I will remove those *NUMBER OF CLOCKS*.
+> And will replace to 
+> #define SCU0_CLK_END  34
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+NAK, it's like you keep ignoring my comments entirely. Even if you call
+it "SCU0_CLK_NOT_END" it does not change. Do you understand that it is
+not about name? Read my first comment.
 
-Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-Tested-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
+> 
+> Refer:
+> https://github.com/torvalds/linux/blob/master/include/dt-bindings/clock/imx8-clock.h#L87
 
-Tested on:
+So you found a bug and this allows you to create the same bug?
 
-commit:         c3f2d783 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=139eeafd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=47ecc948aadfb2ab3efc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1786ffd9980000
 
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+Krzysztof
+
 
