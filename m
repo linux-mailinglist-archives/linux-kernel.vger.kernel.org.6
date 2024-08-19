@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-292756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363BB9573EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F3A9573F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7684B247D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E7B2864F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E287188CBC;
-	Mon, 19 Aug 2024 18:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C39618A6AE;
+	Mon, 19 Aug 2024 18:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H87TzjH9"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDuQ5EiJ"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFF426AD3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52C118990A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724093210; cv=none; b=kEBZ2uWd1V0nTiPNV7XBgYOqyTzwAlcRtkcE37DQs3LD5f6QMmY7glM3t7XjPY/kPV4YnjyCKBIhpiEwq/JBF7rN8M4zrvrVOnf9h7IPQBCSoR742hiQLcjtoqMpPyOHMk8vVbFMoJYyYkkwouhre68IP1mTa1/Q47pdrk02uYk=
+	t=1724093277; cv=none; b=bQ1/Hej3McEJNxpqapZR02y8XY3kwkuMwDZXlZeJt8jFjj9CY09H033q4Hu9qxQe0hCeiT4NfnDTtycQS2CzuiGDzXFkc9Qo/9SYw7vCucq7YOP4ivFujEr80yuLW2HrgiQovOjblFaaXqBeYUrIW1flI+roeDYti6WPbe3171E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724093210; c=relaxed/simple;
-	bh=kyiNnJaXJx4E/rdeVeG4cgmmOpe6ZpAgGgGSNwpC5Vg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5gNDEFrJAnwnqLfLwBWgCPzeEkfMzplEJt/aD9Hrh3PX9UvU4AIcLHp85QfcLNym821Ol5sgktZjBS1vBGvqapygG8GlkDjXUAzk6hPUAtS8tPPyzHnC2VJnSEk0s2tQ5qPdDUqdx+mPAvSdg0YSz+jffKvME3/rTK4l8Rmym8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H87TzjH9; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so1476a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:46:48 -0700 (PDT)
+	s=arc-20240116; t=1724093277; c=relaxed/simple;
+	bh=6XCasH5G+VntlIrJtloIneQFCJs4S554zGSi3xivyVY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FOLsaX950ankIeGHdcTgI3EQE4bQ2fEFBqFTlwyp/5q+1ks04kb3GgYdx4RdHtbwZXaTD+7r/6tFVgJ05aVjDmvmBF1zY5ExpEfshYHzSFO2JPYG4F5sJWDOHDMei/LdiYa3OicSICYG4DP9cqIpL6oopDTLoyt13z3AHPh/E5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDuQ5EiJ; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a35eff1d06so330272185a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724093207; x=1724698007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y51dIf6Nc9jS2PsiVafQefSFQO48+Q7aOrp7xHNd1WU=;
-        b=H87TzjH9WZqFkotvGqQUUjKB5NIP12cj8Z0MZ7pGN/NlA4j6bUPPqx3CQEKOmEYPmV
-         Byxl4+OiAKQ00jSVS+7eFfNSvv626xIdzMna757nyoZaRA4zDgrHVwuJ10ThkvxFDx5E
-         CIF5TH5CDG0z6/Ms6zJjL0VSmeIKhOpS9Ner/4THcqE9T0JEf0Iym8KKp9KujI7/sVh5
-         Tut5hEmkuOHwOO4dT9WdLgc5f2fMfyj/W54K8jNtnIJrp0peFIi0udb8sfUHSgBVApkq
-         xVN5WD/sF3crlVAwBmJMP2THY7blBuuDpx0n76OFYCotqxUPZKzE8ge8zlMQ/l21BKZN
-         k/Ag==
+        d=gmail.com; s=20230601; t=1724093275; x=1724698075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yAV0+QqMjuZK2KfiSs1YeZVl+6iM1fDnA41Q0No5T+4=;
+        b=LDuQ5EiJNaRLEumDWgdet3d4niYEJXNuE9f5Syzz28Y21qbvPwOAxq+BgLGhfk1JzR
+         IigEwynUmWWo9d95C+cEsNtOZRp06bt2VdyGzEbw9Rk8Jr13hr6YKvNnZSYvJ+K+8y22
+         Qikyx3BDvMyv9L7kW7/5j3X1eVAVJipiQGLUOdzLY7+lqKMCcUxBa8ESi4Onv8jn5J+6
+         LDD/AB+woY8eD4GhA6sM9SxKV/ejMm9qzd2mF+3/CcvU4JnimSCH8MOO9nGZpIQ3NvAB
+         tcNGTY4ifotjnaZXnVMDABQ54f36/JZo+CXTztBinnPSXwOSQdl2pGDVDW9EDZO3iPx+
+         nYDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724093207; x=1724698007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y51dIf6Nc9jS2PsiVafQefSFQO48+Q7aOrp7xHNd1WU=;
-        b=CoMWbtr5Ry24KZB8hXzP8kaWt3KweJIVoZ36hRkkA3zbiW1Av777PW8h2leO8L836a
-         YVKAuZjKWzoZz45y6FRviFTOJ721/izyxIPWJnKGuDdZw2wCAL6Qx7YbhPTW6YFB3IU0
-         oO+QXQVfeUo7RU9VnDaBE0SUA24dzbxrCKNz6ZutZ1+pvSS6DWalEB8HE0uS80+T5Dpm
-         8yHx+sEEtbP+fKsvNDrUUeWcpZCD1bNmx5Apd6ojCjTPBKYCt/dhx9KLJxFfR8hizHA4
-         RZ2ZSwRygDN62DWdbegSloruGocdQFqzrrDoE/S12ugNeoQ5cokV6PaLDX1TvZ2Nfb6E
-         7eAw==
-X-Gm-Message-State: AOJu0Yxf92Ozx9OosXFRDJItDhQOslAClLFLzMMS+JrhO3FrzilLDR3P
-	i6ukw2mdZ6kKXdyiyyNwn+eDmkcoj70tZ5LWorl024IzeLLn7v2dD7ePdI4vNUMNW7MtcVG4hAt
-	oWmXhHXg98baG0hlu3VqEU/wbcmorh+3o9zQO
-X-Google-Smtp-Source: AGHT+IHGyrw4ppuXQs+Ix4XJjG6GmLafWxNKCsWLnSoyTNB7TwMvjAoIf2VSsRB+F0laxTLGBLorjke5egWsMJdRpF4=
-X-Received: by 2002:a05:6402:26c4:b0:5be:c28a:97cf with SMTP id
- 4fb4d7f45d1cf-5bf0c5cf9bfmr6774a12.5.1724093206617; Mon, 19 Aug 2024 11:46:46
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724093275; x=1724698075;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yAV0+QqMjuZK2KfiSs1YeZVl+6iM1fDnA41Q0No5T+4=;
+        b=Aa6PQExA4jPnCvPoxepAL7aD/DwlYUcLBcAqaVJDLcXmbc045Op1bbm3sj/OU2cZQ8
+         uJ7saZ617ZUJQ99bmE1zAJ6PuXA3MBJ8WRyG0vBSNUywmW9LJMr5jg4ECvfqLTaFk+0M
+         cAPU2BnUv9kEqcxtl/mTjBug0PiCvZsLTxsoUqqAtoGixRqfE1w5UqFDIOTLl+5OaQt8
+         cn7XoUwLaJ97uIg/UfMzjNpAF16LmMJ0UhnbrhtNAOxTt78I/Hp/IqTc0x9ogcvEO2Zg
+         kTJHeZSfaCBTxPPxoQft5IQzIi7uRX8Sqkf4VM5W5sxqryegnCvXBmBKF7jVPMA5UW4b
+         TEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaYBgSwsOZ5mdJPL2Uhg1G7vuJjzv5K+BIIQRaPQGMwy/nkDTIV1PLuBmmkLtcFj8uqPF7tcP7VavTzOfXGc8kgg38h1ArCUarEL8R
+X-Gm-Message-State: AOJu0Yz/7Ngicfa84XpSa/WhL71nxFaurvRzBOJ9agHXYrKglLJkiM7C
+	2z3IrNxNZo75xJTvYy6S6d0y1lBLpmLR9z7WhedyMQQlegOcu+fT
+X-Google-Smtp-Source: AGHT+IGoeLr8MA7dtRbTUDZVzc+bUaOrVhUiwpP+/jWbDr8Pmqr1JRUhyTmNon2Ka+KkxdxJqVB5tQ==
+X-Received: by 2002:a05:620a:28d3:b0:7a3:78bd:bb78 with SMTP id af79cd13be357-7a50693b2a8mr1448376685a.19.1724093274563;
+        Mon, 19 Aug 2024 11:47:54 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-013.fbsv.net. [2a03:2880:20ff:d::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff02b0acsm459052185a.12.2024.08.19.11.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 11:47:54 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: yuzhao@google.com,
+	david@redhat.com,
+	leitao@debian.org,
+	huangzhaoyang@gmail.com,
+	bharata@amd.com,
+	willy@infradead.org,
+	vbabka@suse.cz,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH RESEND] mm: drop lruvec->lru_lock if contended when skipping folio
+Date: Mon, 19 Aug 2024 19:46:48 +0100
+Message-ID: <20240819184648.2175883-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813234755.3615697-1-maze@google.com> <efbb6394805f11de27cace9817418744d8e69506.camel@sipsolutions.net>
-In-Reply-To: <efbb6394805f11de27cace9817418744d8e69506.camel@sipsolutions.net>
-From: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
-Date: Mon, 19 Aug 2024 11:46:31 -0700
-Message-ID: <CANP3RGdxrKHsERYG+yW5fpRUrahkBJbHCKD24v182ZNKuJgfwg@mail.gmail.com>
-Subject: Re: [PATCH] um: make personality(PER_LINUX32) work on x86_64
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 5:23=E2=80=AFAM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
->
-> On Tue, 2024-08-13 at 16:47 -0700, Maciej =C5=BBenczykowski wrote:
-> > Without this patch:
-> >   #!/usr/bin/python3
-> >   import ctypes
-> >   import os
-> >   personality =3D ctypes.CDLL(None).personality
-> >   personality.restype =3D ctypes.c_int
-> >   personality.argtypes =3D [ctypes.c_ulong]
-> >   PER_LINUX32=3D8
-> >   personality(PER_LINUX32)
-> >   print(os.uname().machine)
-> > returns:
-> >   x86_64
-> > instead of the desired:
-> >   i686
-> >
->
-> But ... why should it work? UML has no 32-bit compat support anyway.
+lruvec->lru_lock is highly contended and is held when calling
+isolate_lru_folios. If the lru has a large number of CMA folios
+consecutively, while the allocation type requested is not MIGRATE_MOVABLE,
+isolate_lru_folios can hold the lock for a very long time while it
+skips those. vmscan_lru_isolate tracepoint showed that skipped can go
+above 70k in production and lockstat shows that waittime-max is x1000
+higher without this patch.
+This can cause lockups [1] and high memory pressure for extended periods of
+time [2]. Hence release the lock if its contended when skipping a folio to
+give other tasks a chance to acquire it and not stall.
 
-Well, that's certainly a fair point.
-On 'native' x86_64 this works even for 64-bit processes though.
-I wonder if that, in itself, is a feature or a bug...
+[1] https://lore.kernel.org/all/CAOUHufbkhMZYz20aM_3rHZ3OcK4m2puji2FGpUpn_-DevGk3Kg@mail.gmail.com/
+[2] https://lore.kernel.org/all/ZrssOrcJIDy8hacI@gmail.com/
 
-In my case I was writing some debug code (to print the environment
-some test code is running in, since I think it was failing due to
-running 32-bit code in PER_LINUX32 on 64-bit arm) and testing (the
-test code) on x86_64 UML.  I was surprised to discover the difference
-in UML vs my host desktop.
+Suggested-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Reported-by: Bharata B Rao <bharata@amd.com>
+Tested-by: Bharata B Rao <bharata@amd.com>
+---
+ mm/vmscan.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-> johannes
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 25e43bb3b574..bf8d39a1ad3e 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1695,8 +1695,14 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 		if (folio_zonenum(folio) > sc->reclaim_idx ||
+ 				skip_cma(folio, sc)) {
+ 			nr_skipped[folio_zonenum(folio)] += nr_pages;
+-			move_to = &folios_skipped;
+-			goto move;
++			list_move(&folio->lru, &folios_skipped);
++			if (!spin_is_contended(&lruvec->lru_lock))
++				continue;
++			if (!list_empty(dst))
++				break;
++			spin_unlock_irq(&lruvec->lru_lock);
++			cond_resched();
++			spin_lock_irq(&lruvec->lru_lock);
+ 		}
+ 
+ 		/*
+-- 
+2.43.5
 
---
-Maciej =C5=BBenczykowski, Kernel Networking Developer @ Google
 
