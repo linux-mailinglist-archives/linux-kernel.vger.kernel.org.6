@@ -1,181 +1,212 @@
-Return-Path: <linux-kernel+bounces-291596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91880956485
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67149956488
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65181C21B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201E0282E53
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0058415B104;
-	Mon, 19 Aug 2024 07:22:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34BC1581EA;
+	Mon, 19 Aug 2024 07:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S3SEZNvh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9x9pfpj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S3SEZNvh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9x9pfpj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A4015748F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1F13D251;
+	Mon, 19 Aug 2024 07:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724052143; cv=none; b=XISC8utofYEP8W3eal+7tRVrqWpLTYobLyPRP0ZBgIuLZ7pgUSKwG0AVVz/VBnTohJ+NyGOpCNoY4vUWIXExRSrvLvDvSCSBY6WwU4jLVpgtOkHaDpHHGaSMC61ZhfwKTzv5setjfAfcy+d0R97SUJhsrfdmHvv8mtMpkY32srQ=
+	t=1724052263; cv=none; b=kqLMcVbRkJimHpdpcgSCQgQDh8MMhGSY4EJlay7MPRSXqlYSyjFNPhW2o9/1gQnn4gfGgRi1YBiFDnMOulJRBOlOtmkYVDFX2mZ/VGyC3XMtXe5s3mUs9QoygPMPr01IBTGoMTtyddEFUzHdTccKRyjTqGlBubhZ2wBTe+zT9sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724052143; c=relaxed/simple;
-	bh=2me7zVx2GmjOHQDHLKUDPIzYi47ZhOoRG4hfFeTYoEE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UFlNz9R+MYrazM/fLYQjactgRcPx6KVlxyaP9ZcJrb9SB+zLgWZdNZeQVIq79WmL475e9IGMYz4pwkQ8OVYDGqa97LQ1xtImPKCiRWnnAXNtZWfGC6j8MIk4Y9yLW3S8/6gHK0gF5kSdJiGK+yKSMt0IhkSLWuf5Cw52pWldTrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d17abca55so42826405ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:22:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724052141; x=1724656941;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ykEXTbVIQDRm2luDU1GXtcD9k37uNv5MQnJdGrHB3lA=;
-        b=mh97HozVck/eQbnOsziHG1QZmNCSLyv0n4rf0u1QFG1EfZa6EakEjzdaoK7Am1/OWm
-         7tzGz03Dir1gQBFwmQHgvv3RnCwRYp1Wlg8TKYb3aTv0LPKkEQfDYoWnOmpubJOQT1ne
-         Ek06fTNFPOWHJ+TMGVMWHbTIKb5meBJyJc7ofq2AaJmPfvk3N4oBMAEANJoXw0sw13CH
-         DWsuYmSMCfDD2O17MX/d2GeyyH3AhrhnPodHjTVxNV0jEG77g6qKX4p2lSC0shQeIYeK
-         BOoxW9kDYeWC9NjZPWoSwWUxgCpctlouhjJkqjbazjXszn6NipwcYxuvH/6qfc7sVcJg
-         Hxpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS054cs7wPEN8Q6FKxLkZQr4VKNWe5TXiy0Kdmgp5FnjJ4jq4aPZFgO2LBPU08EzcHup4Igicc+idTwtr0WsRXV5VHPuAprrg2rZlJ
-X-Gm-Message-State: AOJu0YxXZpOhcEpB/VDPVARNCykJ43ZB9jdHRFs83c7TtlHLN/zvbwDT
-	PbO1PFoX3MRrl7l8gr1Le+ilOuzmIDP2F36Oyho5zM/qakW2maz3mqoqbZ+CqbhGl8O4yHPRAoK
-	mIzH/QQFBtR7tZR2vvAx/2mxaBy/7RL7i9eINXai8ZbK7OKu7HIP+qZM=
-X-Google-Smtp-Source: AGHT+IF/TN1/v3MlEnKcn910JEIaodiACsPB2ly1CpnYzbGxi4rD66QCpwKtxEpqVfbtab/KGM1BEn9Y2n0vvXL9A2Wh4v+GMNMB
+	s=arc-20240116; t=1724052263; c=relaxed/simple;
+	bh=5YIMhDZUZeYPafGp0Lm3WkEFLktzBos1gDlOZOQ0T3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pc4oROGwxwwAwUEiPCbK3g7kJVm8ZjBWS3izSEB5lQe1GDmDaiSFVn29zfKwysX23RU7P/9dB1vwVdUze3OZluV7MV3D6TNQhVPCIBcU6Cxo4J3Dx1aBMFxZHftLV+nRZToOc1GXpo6+g9wLZwtrYVVIIsJaN5tmt+oUW62Poko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S3SEZNvh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9x9pfpj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S3SEZNvh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9x9pfpj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4D4D71FE59;
+	Mon, 19 Aug 2024 07:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724052260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjblsRBqQt9XjsCMWCyWHK13e3lgdICqrKWEtbCBKW0=;
+	b=S3SEZNvhm9WB02+Yj0iwxpTwMArolRzc6wnybGvn2J+8qGiR0rfoTcvpg5Max5nb5FJfJd
+	iO6jIN7L+PKGiqNssWaSwHmAVL1uWTjvxbCH3UQoZn1UaLE+89H0uyp5OeJxseArFFpk9c
+	ZwZMxdcYpcFG6Sv0k53zd4KjDIOn2J0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724052260;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjblsRBqQt9XjsCMWCyWHK13e3lgdICqrKWEtbCBKW0=;
+	b=o9x9pfpjBRSjUbmYsJp+Oxan5rNjzeol4LQ03/xrnaphM7kOi9rB2OdaoTYn6QbL3GlebK
+	PEluzKmCRGkqW/Aw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=S3SEZNvh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=o9x9pfpj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724052260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjblsRBqQt9XjsCMWCyWHK13e3lgdICqrKWEtbCBKW0=;
+	b=S3SEZNvhm9WB02+Yj0iwxpTwMArolRzc6wnybGvn2J+8qGiR0rfoTcvpg5Max5nb5FJfJd
+	iO6jIN7L+PKGiqNssWaSwHmAVL1uWTjvxbCH3UQoZn1UaLE+89H0uyp5OeJxseArFFpk9c
+	ZwZMxdcYpcFG6Sv0k53zd4KjDIOn2J0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724052260;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjblsRBqQt9XjsCMWCyWHK13e3lgdICqrKWEtbCBKW0=;
+	b=o9x9pfpjBRSjUbmYsJp+Oxan5rNjzeol4LQ03/xrnaphM7kOi9rB2OdaoTYn6QbL3GlebK
+	PEluzKmCRGkqW/Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 85C051397F;
+	Mon, 19 Aug 2024 07:24:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vW8EHyPzwmZWfwAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 19 Aug 2024 07:24:19 +0000
+Message-ID: <df26beed-97c7-44e4-b380-2260b8331ea9@suse.de>
+Date: Mon, 19 Aug 2024 09:24:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c7:b0:39a:e91e:38e0 with SMTP id
- e9e14a558f8ab-39d26d9c1bamr4857465ab.6.1724052140943; Mon, 19 Aug 2024
- 00:22:20 -0700 (PDT)
-Date: Mon, 19 Aug 2024 00:22:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006f7e4d0620042b96@google.com>
-Subject: [syzbot] [cgroups?] [mm?] WARNING in folio_memcg
-From: syzbot <syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	songmuchun@bytedance.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+Content-Language: en-US
+To: David Howells <dhowells@redhat.com>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
+ linux-fsdevel@vger.kernel.org, djwong@kernel.org, gost.dev@samsung.com,
+ linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+ Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ john.g.garry@oracle.com, cl@os.amperecomputing.com, p.raghav@samsung.com,
+ mcgrof@kernel.org, ryan.roberts@arm.com
+References: <20240818165124.7jrop5sgtv5pjd3g@quentin>
+ <20240815090849.972355-1-kernel@pankajraghav.com>
+ <2924797.1723836663@warthog.procyon.org.uk>
+ <3141777.1724012176@warthog.procyon.org.uk>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <3141777.1724012176@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 4D4D71FE59
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-Hello,
+On 8/18/24 22:16, David Howells wrote:
+> Pankaj Raghav (Samsung) <kernel@pankajraghav.com> wrote:
+> 
+>> I am no expert in network filesystems but are you sure there are no
+>> PAGE_SIZE assumption when manipulating folios from the page cache in
+>> AFS?
+> 
+> Note that I've removed the knowledge of the pagecache from 9p, afs and cifs to
+> netfslib and intend to do the same to ceph.  The client filesystems just
+> provide read and write ops to netfslib and netfslib uses those to do ordinary
+> buffered I/O, unbuffered I/O (selectable by mount option on some filesystems)
+> and DIO.
+> 
+> That said, I'm not sure that I haven't made some PAGE_SIZE assumptions.  I
+> don't *think* I have since netfslib is fully multipage folio capable, but I
+> can't guarantee it.
+> 
+I guess you did:
 
-syzbot found the following issue on:
+static int afs_fill_super(struct super_block *sb, struct afs_fs_context 
+*ctx)
+{
+         struct afs_super_info *as = AFS_FS_S(sb);
+         struct inode *inode = NULL;
+         int ret;
 
-HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20240816
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11be396b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef4ecf7b6bdc4157bfa4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147469f5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153c5ad5980000
+         _enter("");
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3cad3c/disk-367b5c3d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813c/vmlinux-367b5c3d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6674cb0709b1/bzImage-367b5c3d.xz
+         /* fill in the superblock */
+         sb->s_blocksize         = PAGE_SIZE;
+         sb->s_blocksize_bits    = PAGE_SHIFT;
+         sb->s_maxbytes          = MAX_LFS_FILESIZE;
+         sb->s_magic             = AFS_FS_MAGIC;
+         sb->s_op                = &afs_super_ops;
 
-The issue was bisected to:
+IE you essentially nail AFS to use PAGE_SIZE.
+Not sure how you would tell AFS to use a different block size;
+maybe a mount option?
 
-commit ebadc95608dc3ee87ad4e5dc4f2c665c709bb899
-Author: Muchun Song <songmuchun@bytedance.com>
-Date:   Wed Aug 14 09:34:15 2024 +0000
+And there are several other places which will need to be modified;
+eg afs_mntpt_set_params() is trying to read from a page which
+won't fly with large blocks (converted to read_full_folio()?),
+and, of course, the infamous AFS_DIR_BLOCKS_PER_PAGE which will
+overflow for large blocks.
 
-    mm: kmem: add lockdep assertion to obj_cgroup_memcg
+So some work is required, but everything looks doable.
+Maybe I can find some time until LPC.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170875f5980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=148875f5980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=108875f5980000
+> Mostly this was just a note to you that there might be an issue with your code
+> - but I haven't investigated it yet and it could well be in my code.
+> 
+Hmm. I'd rather fix the obvious places in afs first; just do a quick
+grep for 'PAGE_', that'll give you a good impression of places to look at.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com
-Fixes: ebadc95608dc ("mm: kmem: add lockdep assertion to obj_cgroup_memcg")
+Cheers,
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5235 at include/linux/memcontrol.h:373 obj_cgroup_memcg include/linux/memcontrol.h:373 [inline]
-WARNING: CPU: 1 PID: 5235 at include/linux/memcontrol.h:373 folio_memcg+0x111/0x220 include/linux/memcontrol.h:443
-Modules linked in:
-CPU: 1 UID: 0 PID: 5235 Comm: syz-executor874 Not tainted 6.11.0-rc3-next-20240816-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:obj_cgroup_memcg include/linux/memcontrol.h:373 [inline]
-RIP: 0010:folio_memcg+0x111/0x220 include/linux/memcontrol.h:443
-Code: 10 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 e2 2f f8 ff 48 8b 1b 48 89 d8 5b 41 5c 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 eb ce 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 55 ff ff ff
-RSP: 0018:ffffc9000361ef40 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880276c5000 RCX: 0000000080000000
-RDX: 0000000000000000 RSI: ffffffff8c0adfc0 RDI: ffffffff8c60a8c0
-RBP: ffffea0001dc8008 R08: ffffffff9018c5af R09: 1ffffffff20318b5
-R10: dffffc0000000000 R11: fffffbfff20318b6 R12: dffffc0000000000
-R13: 0000000001000108 R14: ffffea0001dc8000 R15: ffffea0001dc8030
-FS:  000055556cc4f380(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045ad50 CR3: 000000005247a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- split_page_memcg+0x58/0x3f0 mm/memcontrol.c:3083
- vm_area_alloc_pages mm/vmalloc.c:3614 [inline]
- __vmalloc_area_node mm/vmalloc.c:3669 [inline]
- __vmalloc_node_range_noprof+0xa63/0x1400 mm/vmalloc.c:3850
- __kvmalloc_node_noprof+0x142/0x1b0 mm/util.c:681
- nf_tables_newset+0x1743/0x2ea0 net/netfilter/nf_tables_api.c:5282
- nfnetlink_rcv_batch net/netfilter/nfnetlink.c:524 [inline]
- nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
- nfnetlink_rcv+0x14dc/0x2ad0 net/netfilter/nfnetlink.c:665
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x298/0x390 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff9c3845d49
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe78486ba8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007ff9c3845d49
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff9c388f036
-R13: 00007ffe78486be0 R14: 00007ffe78486c20 R15: 0000000000000000
- </TASK>
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
