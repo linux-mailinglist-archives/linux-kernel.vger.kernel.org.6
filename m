@@ -1,201 +1,162 @@
-Return-Path: <linux-kernel+bounces-291721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D909565E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C355B9565E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CFC1F24A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA99283896
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36D415B55D;
-	Mon, 19 Aug 2024 08:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C107515B55D;
+	Mon, 19 Aug 2024 08:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoIFJLoW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ADrQA+xJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBC14BF8A;
-	Mon, 19 Aug 2024 08:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB1B15B149
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057123; cv=none; b=goglK1NXnfhNVVmIBqwvE4DSNwoSNG69PhdO6Yo654sVNI6yFhyNDqsfg+4dL1SY2NdZbeUHjq7vJ0Ia2C5ef0iWvnsrAO04jA+cXKdfPsQ5Nbk9FshaDaJNkZ7GDCrlaWS0hkuu7ZNnogutPnMVPg6a5y3W7RCW3uVNDzRIXE4=
+	t=1724057146; cv=none; b=CFWujjPCNC0zO58tLNe0Z1h04mY1WDmICdyb8G/2XFUHOjYAXsuNrOXUg4bCZljFGPlEIEDMMNwrcXAZ1eYgFPsONG+cwhkcNvCOY0skPdjslKy9mzFYye3GxadxjlVAqR2NPIVKHe5S0krGkUMFP7pyyj1TZ2LZMXiI/aOnasI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057123; c=relaxed/simple;
-	bh=GjUorvjmTU5WRG5EMQuDoN+1MA/+xhI5cJsn+Juh4BU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cMrkwwjARrv9ALEDpz7i5TGTSfPK10EJReVhymKXlNb7ZBgUyENfWssMeKXSQjJs2Hsqpx86Mtr9Q71iSAEgFwfpGWoPckahDp/xvhPuXzb2SBDXyog8tueNip+FR/BSVwNfCuVKF/Tok0zxDjFIzENbf5jKwhUz3NQYjHEKVJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoIFJLoW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A200C32782;
-	Mon, 19 Aug 2024 08:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724057122;
-	bh=GjUorvjmTU5WRG5EMQuDoN+1MA/+xhI5cJsn+Juh4BU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=YoIFJLoWMkULYjYzbILG84V+k9yIe+gLlzbc9AYTl8/K6D2vHtyGxfWUOoyL6XGtP
-	 Ft9ZxlruyALRH6yeT7KJX0vmm4kOETsc4R4HDid7b03HnYTm3vNCcatSr0PLivK/aJ
-	 5BkKag/qlMlAIqlcUxabBGiA2GLWbdp0aLhE4GwMK6k8SoZpDElYgpOAn5o8R9ZPf/
-	 MakZ0cWCzqQjLwtgkgoSbgsAM+/e2kGfcA5zxaXONpZOuJx5MhPTlNp3RYZUc6eRd/
-	 POSyXJZXr7veYc9/rcVYMRtJncKhEwc399K3t2Vd99BO9QQQfxxyeXkc0GeCIsWnF4
-	 8FJnQS4t/Nuxg==
-Message-ID: <a0398ebc-c85c-44b4-afda-5e99a4299b34@kernel.org>
-Date: Mon, 19 Aug 2024 10:45:14 +0200
+	s=arc-20240116; t=1724057146; c=relaxed/simple;
+	bh=BwO9G9DSxzsNbJAx83jRWAZlxWASmFoV86cMBGMNnX8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GplFfx8mg1JHhN8Rt8aXVhT7RYJC5wDZzJVq8odU4d3/yNTnBi3l3I0hWFwsIu0abQSBRoUdHsVySW13DgE2NP/38+vMyNiQhW1jq6mjhHUw3OdHeewPkqjMAMWrWFiy4SgrL8y2vgF6pLOW2TxkLlH9ZnJgZWwuze8H1RjudaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ADrQA+xJ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724057145; x=1755593145;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=BwO9G9DSxzsNbJAx83jRWAZlxWASmFoV86cMBGMNnX8=;
+  b=ADrQA+xJcDdptM/WgSWkFM60z4YCNnXPZCndAi1pILND+l4TXAdfQIJ9
+   Yrob4YlDOmNxeySq1c9ldX+ADx8IejECWxVqEtLzdrFjVGJ+t3VQWMopD
+   u3d+Yc1+3MU0yzd+E2a+5pwkECs1Vpnx7hr0bLVDjVR2/8RTs4fQl95HA
+   x96wWD6heXdb2FsgnGkVuRF0z34nA2JdLmcDmuOSxfSCqSCdeh4LQRZtr
+   o7uIUss9qmSLrfSTZbRAKYTCYXQKz0C1QDKHT5E0pnSOuAuz3iWkHG3TY
+   PzPFyBmzAYA4glPSn7b8NBLSTDFtXEcl9pkkmqdY23dTSEvNUe/GvPzPF
+   Q==;
+X-CSE-ConnectionGUID: oB7QIaQ0SMOgoC7tkeaLEA==
+X-CSE-MsgGUID: Ozz40xm0QO+9JWeYIWQwJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22451304"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="22451304"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:45:44 -0700
+X-CSE-ConnectionGUID: K2j25Us7SbStyTFdemgwLg==
+X-CSE-MsgGUID: iw+RIGyQTc+pBwxsD/u7rA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="60358532"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.70])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:45:37 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Harry Wentland
+ <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira
+ <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
+ Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
+ <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, Aric Cyr
+ <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng
+ <Tony.Cheng@amd.com>, Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>,
+ Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH 10/12] drm/edid: add a helper to compare two EDIDs
+In-Reply-To: <20240818-amdgpu-drm_edid-v1-10-aea66c1f7cf4@weissschuh.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
+ <20240818-amdgpu-drm_edid-v1-10-aea66c1f7cf4@weissschuh.net>
+Date: Mon, 19 Aug 2024 11:45:34 +0300
+Message-ID: <871q2k7vf5.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <OS8PR06MB7541CA018C86E262F826B9E5F2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <OS8PR06MB7541B0D9A43B989DC1738F68F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <5081c41b-dfbd-49ad-a993-b983d4c339f0@kernel.org>
- <OS8PR06MB7541196D3058904998820CFFF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <9465f8c0-5270-46df-af4b-e9ee78db63d1@kernel.org>
- <OS8PR06MB7541CC40B6B8877B2656182CF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <e3733148-142c-40a1-b250-4502e8726f0c@kernel.org>
- <OS8PR06MB7541D5AB85D8E44E89389BC3F2862@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <26988bcd-4d58-4100-b89c-00e8ef879329@kernel.org>
- <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <929c322e-7385-48da-b925-7f363cf5b6f7@kernel.org>
- <OS8PR06MB7541672B4F9BCAA37E0D4005F28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OS8PR06MB7541672B4F9BCAA37E0D4005F28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 19/08/2024 08:42, Ryan Chen wrote:
->> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
->>
->> On 19/08/2024 07:55, Ryan Chen wrote:
->>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
->>>> bindings
->>>>
->>>> On 13/08/2024 03:53, Ryan Chen wrote:
->>>>>> Drop the define for number of clocks from the header, because it is
->>>>>> not a
->>>>
->>>> *NUMBER OF CLOCKS*
->>>>
->>>>>> binding. You can put it in the driver or not, I don't care and do
->>>>>> not provide guidance on this because I don't know if it makes sense at all.
->>>>>> What I know is that number of clocks is not related to binding. It
->>>>>> is not needed
->>>>
->>>> *NUMBER OF CLOCKS*
->>>>
->>>>>> in the binding, either.
->>>>>
->>>>> Sorry, I am confused.
->>>>> if you think that number of clocks is not related to binding.
->>>>
->>>> *NUMBER OF CLOCKS*
->>>>
->>>>> How dtsi claim for clk?
->>>>> For example in dtsi.
->>>>> include <dt-bindings/clock/aspeed,ast2700-clk.h>
->>>>> usb3bhp: usb3bhp {
->>>>> ....
->>>>> clocks = <&syscon0 SCU0_CLK_GATE_PORTAUSB>;
->>>>
->>>> And where is *NUMBER OF CLOCKS* here? I don't see any problem. No
->>>> useless SCU0_CLK_GATE_NUM define here.
->>>>
->>> Understood now, I will remove those *NUMBER OF CLOCKS*.
->>> And will replace to
->>> #define SCU0_CLK_END  34
->>
->> NAK, it's like you keep ignoring my comments entirely. Even if you call it
->> "SCU0_CLK_NOT_END" it does not change. Do you understand that it is not
->> about name? Read my first comment.
->>
->>>
->>> Refer:
->>> https://github.com/torvalds/linux/blob/master/include/dt-bindings/cloc
->>> k/imx8-clock.h#L87
->>
->> So you found a bug and this allows you to create the same bug?
->>
-> Sorry, I don't see this is a bug.
+On Sun, 18 Aug 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
+> As struct drm_edid is opaque, drivers can't directly memcmp() the
+> contained data. Add a helper to provide this functionality.
 
-No, it's not a bug, but I do not agree for using arguments like "someone
-did it, so I can do the same". Why did you pick up exactly this example
-instead of others who removed the clock number?
+I'm not sure why drivers would need to compare EDIDs.
 
-> But I try to understand your point, you prefer following for clock nums, am I correct?
-> https://github.com/torvalds/linux/blob/master/drivers/clk/meson/g12a.c#L5558-L5559
+The only user was added in commit eb815442e840 ("drm/amd/display: don't
+create new dc_sink if nothing changed at detection") with absolutely no
+explanation why.
 
-I said that this is not a binding. Don't add to the binding things which
-are not a binding.
-
-I don't care how do you implement in drivers - there are several ways
-how to achieve it.
+Other drivers use connector->epoch_counter to see if the EDID or status
+changed.
 
 
-Best regards,
-Krzysztof
+BR,
+Jani.
 
+
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  drivers/gpu/drm/drm_edid.c | 18 ++++++++++++++++++
+>  include/drm/drm_edid.h     |  1 +
+>  2 files changed, 19 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> index 69fb11741abd..c2493c983a64 100644
+> --- a/drivers/gpu/drm/drm_edid.c
+> +++ b/drivers/gpu/drm/drm_edid.c
+> @@ -1840,6 +1840,24 @@ static bool drm_edid_eq(const struct drm_edid *drm=
+_edid,
+>  	return true;
+>  }
+>=20=20
+> +/**
+> + * drm_edid_equal - compare two EDID
+> + * @drm_edid_a: First EDID data
+> + * @drm_edid_b: Second EDID data
+> + *
+> + * Compare two EDIDs for equality (including extensions)
+> + *
+> + * Return: True if the EDIDs are equal, false otherwise.
+> + */
+> +bool drm_edid_equal(const struct drm_edid *drm_edid_a, const struct drm_=
+edid *drm_edid_b)
+> +{
+> +	if (!drm_edid_b)
+> +		return !drm_edid_a;
+> +
+> +	return drm_edid_eq(drm_edid_a, drm_edid_b->edid, drm_edid_b->size);
+> +}
+> +EXPORT_SYMBOL(drm_edid_equal);
+> +
+>  enum edid_block_status {
+>  	EDID_BLOCK_OK =3D 0,
+>  	EDID_BLOCK_READ_FAIL,
+> diff --git a/include/drm/drm_edid.h b/include/drm/drm_edid.h
+> index a5b377c4a342..35b40a9d3350 100644
+> --- a/include/drm/drm_edid.h
+> +++ b/include/drm/drm_edid.h
+> @@ -456,6 +456,7 @@ drm_display_mode_from_cea_vic(struct drm_device *dev,
+>  const struct drm_edid *drm_edid_alloc(const void *edid, size_t size);
+>  const struct drm_edid *drm_edid_dup(const struct drm_edid *drm_edid);
+>  void drm_edid_free(const struct drm_edid *drm_edid);
+> +bool drm_edid_equal(const struct drm_edid *drm_edid_a, const struct drm_=
+edid *drm_edid_b);
+>  bool drm_edid_valid(const struct drm_edid *drm_edid);
+>  const struct edid *drm_edid_raw(const struct drm_edid *drm_edid);
+>  const struct drm_edid *drm_edid_read(struct drm_connector *connector);
+
+--=20
+Jani Nikula, Intel
 
