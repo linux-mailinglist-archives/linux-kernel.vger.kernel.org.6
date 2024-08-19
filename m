@@ -1,156 +1,217 @@
-Return-Path: <linux-kernel+bounces-291515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790EE956384
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFBC956390
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6A81C213B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50B301C21404
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A508E14A4F9;
-	Mon, 19 Aug 2024 06:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB8A14F124;
+	Mon, 19 Aug 2024 06:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0dFYkBe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="rQg0tTJ2"
+Received: from esa11.hc1455-7.c3s2.iphmx.com (esa11.hc1455-7.c3s2.iphmx.com [207.54.90.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF3710E0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B6414A4F9
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048172; cv=none; b=XhDfADtzdXJoQk8CFrUuWpVwVz2vdKlS2s+pgMVDsrYCT7ZyGQy+Rp5yv69qBGnPQKkhSyNSmRa3YeC3tR/PjG2SnSDg7GZfKDiCG4XxyrtRzE9rnjU7GW6KBBzBewmwZBB/ZqU0+4J0MdAElbwQE4VRsGPrksMZSBZi6BEJVsU=
+	t=1724048486; cv=none; b=FQNKw6rrh+vcEgFm3maWrUVFQBRVDbrdo1Gj5GVQr4ndAk2Yt1LlmhfUi3q1HZ1P8GB1+cJ+VkVA/HDwH2n7vbfQitsO8rVEJ+NheREyMigTidiZcIVDBZ/KICE5z7bwUyShKFci7IwMqDjzar9Pq4r+JTehCHGKrjiCnRPVx/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048172; c=relaxed/simple;
-	bh=zMpl/AKC48nfInm2wePJYQN2vkIXa6gulnZnPDwprDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1fo/xKErUO+TPOUJOSwl8R3jueddGM+2sQDnqMpbj75bX9tUZs+d0M/NblAKvCNWRqi6Kzkob1qas0Gc202XJ57iu+ki2OqbjWEqzMIM/3lyfVSTCtR+Nuh8ggIagqqkb6osGLSwbVRnZnkQsyLoHi7HblAYcTYMWRHvWqJZok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0dFYkBe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724048165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcJLl/Fp3h6jQcz16e/hG76KVnOut/BqwVl6XHyRN6I=;
-	b=S0dFYkBehoCsRyJEV/tlcOsoDp4j+1ql1+kd7LriDg6gyZG/2f8D7UPS2SSBfRfDNJAz9l
-	ff+8gK0B3AurHHdGBMh4gvXsTev63Ju/Lxjg8McelBIgde2objotDWuwRkt6EBdPbfb9aF
-	URTM65fZISK8XUioyi3zVRqFRrzPxeY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-373-UEOZI0jQNFyoDul8YmFjXw-1; Mon,
- 19 Aug 2024 02:16:01 -0400
-X-MC-Unique: UEOZI0jQNFyoDul8YmFjXw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13E011955EA6;
-	Mon, 19 Aug 2024 06:15:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.51])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB58419773E0;
-	Mon, 19 Aug 2024 06:15:56 +0000 (UTC)
-Date: Mon, 19 Aug 2024 14:15:52 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
-Message-ID: <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
-References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
- <87v80lnf8d.fsf@mail.lhotse>
- <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
- <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
+	s=arc-20240116; t=1724048486; c=relaxed/simple;
+	bh=X7FvRYmMdy2hvQtnz39Ci2y1Pgv9FnRQ4AcLrxfbW9c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SDuzzzvyTJgb0HYJoQLSw7sqIJxoPhJWkiDS/kdc7skKPPRE4uI6l5bFrJXQ80AVLsB+P1Sb0EEt2nnPeY5Yc7ad4Lg6bRBT9C0DJz5H2PcHlS7I5u4tx2XBKm7DA0fIj9Q3cxNfPdNVwMZpKI5agPcAKadULPt5UwEm3LiJ1bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=rQg0tTJ2; arc=none smtp.client-ip=207.54.90.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1724048483; x=1755584483;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=X7FvRYmMdy2hvQtnz39Ci2y1Pgv9FnRQ4AcLrxfbW9c=;
+  b=rQg0tTJ2WcBYuJvpNxGtqwK+OOFRxZesnVOVuw/jd/W13sHca/XKg/L4
+   Wmf1pY5BsjelzltpZP5+C/A+CGQJsxLt1Q8R/Yh8Nuvprui0h2fqwvEGe
+   WdegYSobBK5uVEQEl+sqkCzM6kO85rhNWZ7xyQo8fiTGoPsFFkUSzgtFK
+   CyLUdeEOjH7CxaNhnRMK+DnRYfk3lHpstboHEolcSVBaN4agfaYEtxUMW
+   JrMXQdVfq31iamFK4LYdhKtMWxsN6xq/gKI8+nZaDVjcxBBOMm8AG8OID
+   rqj3RdzD8O71aylRRxiknLomptPGqfGi7Sr+ib3wGPKiZ0Iq3AmN3b3ya
+   g==;
+X-CSE-ConnectionGUID: HafNJ31XSU+Dqs+43spYrQ==
+X-CSE-MsgGUID: 4RZNMz0zSG6SjPSts70NqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="150382302"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719846000"; 
+   d="scan'208";a="150382302"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa11.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 15:21:14 +0900
+Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id CED84E8D2B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:11 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 1DE95BF3D7
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:11 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 9775F2007C3F7
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:10 +0900 (JST)
+Received: from localhost.localdomain (unknown [10.167.226.45])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id D3EC61A000A;
+	Mon, 19 Aug 2024 14:21:09 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: nvdimm@lists.linux.dev
+Cc: dan.j.williams@intel.com,
+	vishal.l.verma@intel.com,
+	dave.jiang@intel.com,
+	ira.weiny@intel.com,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH v3 1/2] nvdimm: Fix devs leaks in scan_labels()
+Date: Mon, 19 Aug 2024 14:20:44 +0800
+Message-Id: <20240819062045.1481298-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28604.005
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28604.005
+X-TMASE-Result: 10--10.179400-10.000000
+X-TMASE-MatchedRID: iX86n7+2xrs8g1fEYZ38283WPbtc5QfmmZiw53dqSN/447xhO06ewm+Q
+	IyvBw2JavJSHCxH3pnR8EcmqNfqha2JZXQNDzktSdXu122+iJtoqR3z0aoe9SdMvYZEcBz1xf6O
+	+FEJQpgBPvZfZHGeBcqojMMzk9xqo+BMgIVTipNspDEdiwJzEacoioCrSMgeKMoh6scCF9jHIvl
+	CZY6Ax8LcTsm3NvDOfa1v7YIwuPgEv+0FNnM7lDUrOO5m0+0gENUSduuqYHDtZBaLS1HS7KtHPG
+	jQ0RxWp4vM1YF6AJbbGXyXDzkRpVAtuKBGekqUpI/NGWt0UYPABFXNgM8vZz2VzKWDgeYtNhaIJ
+	ZNleXUNs1HfRODIi8GmlO+ipwTmd
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-On 08/19/24 at 09:45am, Sourabh Jain wrote:
-> Hello Michael and Boaquan
-> 
-> On 01/08/24 12:21, Sourabh Jain wrote:
-> > Hello Michael,
-> > 
-> > On 01/08/24 08:04, Michael Ellerman wrote:
-> > > Sourabh Jain <sourabhjain@linux.ibm.com> writes:
-> > > > The following errors are observed when kexec is done with SMT=off on
-> > > > powerpc.
-> > > > 
-> > > > [  358.458385] Removing IBM Power 842 compression device
-> > > > [  374.795734] kexec_core: Starting new kernel
-> > > > [  374.795748] kexec: Waking offline cpu 1.
-> > > > [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may
-> > > > be inaccurate
-> > > > [  374.935833] kexec: Waking offline cpu 2.
-> > > > [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may
-> > > > be inaccurate
-> > > > snip..
-> > > > [  375.515823] kexec: Waking offline cpu 6.
-> > > > [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may
-> > > > be inaccurate
-> > > > [  375.695836] kexec: Waking offline cpu 7.
-> > > Are they actually errors though? Do they block the actual kexec from
-> > > happening? Or are they just warnings in dmesg?
-> > 
-> > The kexec kernel boots fine.
-> > 
-> > This warning appears regardless of whether the kdump kernel is loaded.
-> > 
-> > However, when the kdump kernel is loaded, we will not be able to update
-> > the kdump image (FDT).
-> > I think this should be fine given that kexec is in progress.
-> > 
-> > Please let me know your opinion.
-> > 
-> > > Because the fix looks like it could be racy.
-> > 
-> > It seems like it is racy, but given that kexec takes the lock first and
-> > then
-> > brings the CPU up, which triggers the kdump image, which always fails to
-> > update the kdump image because it could not take the same lock.
-> > 
-> > Note: the kexec lock is not released unless kexec boot fails.
-> 
-> Any comments or suggestions on this fix?
+scan_labels() leaks memory when label scanning fails and it falls back
+to just creating a default "seed" namespace for userspace to configure.
+Root can force the kernel to leak memory.
 
-Is this a little better?
+Allocate the minimum resources unconditionally and release them when
+unneeded to avoid the memory leak.
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 63cf89393c6e..0355ffb712f4 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -504,7 +504,7 @@ int crash_check_hotplug_support(void)
+A kmemleak reports:
+unreferenced object 0xffff88800dda1980 (size 16):
+  comm "kworker/u10:5", pid 69, jiffies 4294671781
+  hex dump (first 16 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    [<00000000c5dea560>] __kmalloc+0x32c/0x470
+    [<000000009ed43c83>] nd_region_register_namespaces+0x6fb/0x1120 [libnvdimm]
+    [<000000000e07a65c>] nd_region_probe+0xfe/0x210 [libnvdimm]
+    [<000000007b79ce5f>] nvdimm_bus_probe+0x7a/0x1e0 [libnvdimm]
+    [<00000000a5f3da2e>] really_probe+0xc6/0x390
+    [<00000000129e2a69>] __driver_probe_device+0x78/0x150
+    [<000000002dfed28b>] driver_probe_device+0x1e/0x90
+    [<00000000e7048de2>] __device_attach_driver+0x85/0x110
+    [<0000000032dca295>] bus_for_each_drv+0x85/0xe0
+    [<00000000391c5a7d>] __device_attach+0xbe/0x1e0
+    [<0000000026dabec0>] bus_probe_device+0x94/0xb0
+    [<00000000c590d936>] device_add+0x656/0x870
+    [<000000003d69bfaa>] nd_async_device_register+0xe/0x50 [libnvdimm]
+    [<000000003f4c52a4>] async_run_entry_fn+0x2e/0x110
+    [<00000000e201f4b0>] process_one_work+0x1ee/0x600
+    [<000000006d90d5a9>] worker_thread+0x183/0x350
+
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Fixes: 1b40e09a1232 ("libnvdimm: blk labels and namespace instantiation")
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+---
+V3:
+  update commit log and allocate the minimum(2 *dev) unconditionally. # Dan
+
+V2:
+  update description and comment
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+ drivers/nvdimm/namespace_devs.c | 34 ++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index d6d558f94d6b..35d9f3cc2efa 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -1937,12 +1937,16 @@ static int cmp_dpa(const void *a, const void *b)
+ static struct device **scan_labels(struct nd_region *nd_region)
+ {
+ 	int i, count = 0;
+-	struct device *dev, **devs = NULL;
++	struct device *dev, **devs;
+ 	struct nd_label_ent *label_ent, *e;
+ 	struct nd_mapping *nd_mapping = &nd_region->mapping[0];
+ 	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+ 	resource_size_t map_end = nd_mapping->start + nd_mapping->size - 1;
  
- 	crash_hotplug_lock();
- 	/* Obtain lock while reading crash information */
--	if (!kexec_trylock()) {
-+	if (!kexec_trylock() && kexec_in_progress) {
- 		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
- 		crash_hotplug_unlock();
- 		return 0;
-@@ -539,7 +539,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
++	devs = kcalloc(2, sizeof(dev), GFP_KERNEL);
++	if (!devs)
++		return NULL;
++
+ 	/* "safe" because create_namespace_pmem() might list_move() label_ent */
+ 	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
+ 		struct nd_namespace_label *nd_label = label_ent->label;
+@@ -1961,12 +1965,14 @@ static struct device **scan_labels(struct nd_region *nd_region)
+ 			goto err;
+ 		if (i < count)
+ 			continue;
+-		__devs = kcalloc(count + 2, sizeof(dev), GFP_KERNEL);
+-		if (!__devs)
+-			goto err;
+-		memcpy(__devs, devs, sizeof(dev) * count);
+-		kfree(devs);
+-		devs = __devs;
++		if (count) {
++			__devs = kcalloc(count + 2, sizeof(dev), GFP_KERNEL);
++			if (!__devs)
++				goto err;
++			memcpy(__devs, devs, sizeof(dev) * count);
++			kfree(devs);
++			devs = __devs;
++		}
  
- 	crash_hotplug_lock();
- 	/* Obtain lock while changing crash information */
--	if (!kexec_trylock()) {
-+	if (!kexec_trylock() && kexec_in_progress) {
- 		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
- 		crash_hotplug_unlock();
- 		return;
+ 		dev = create_namespace_pmem(nd_region, nd_mapping, nd_label);
+ 		if (IS_ERR(dev)) {
+@@ -1993,11 +1999,6 @@ static struct device **scan_labels(struct nd_region *nd_region)
+ 
+ 		/* Publish a zero-sized namespace for userspace to configure. */
+ 		nd_mapping_free_labels(nd_mapping);
+-
+-		devs = kcalloc(2, sizeof(dev), GFP_KERNEL);
+-		if (!devs)
+-			goto err;
+-
+ 		nspm = kzalloc(sizeof(*nspm), GFP_KERNEL);
+ 		if (!nspm)
+ 			goto err;
+@@ -2036,11 +2037,10 @@ static struct device **scan_labels(struct nd_region *nd_region)
+ 	return devs;
+ 
+  err:
+-	if (devs) {
+-		for (i = 0; devs[i]; i++)
+-			namespace_pmem_release(devs[i]);
+-		kfree(devs);
+-	}
++	for (i = 0; devs[i]; i++)
++		namespace_pmem_release(devs[i]);
++	kfree(devs);
++
+ 	return NULL;
+ }
+ 
+-- 
+2.29.2
 
 
