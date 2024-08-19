@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-291670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE45D95655D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CE795655E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBB62831BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F151B28318E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE515B130;
-	Mon, 19 Aug 2024 08:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3894215AADA;
+	Mon, 19 Aug 2024 08:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr/xWu/4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HPPjCLrx"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5D158538;
-	Mon, 19 Aug 2024 08:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB18542A8F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055317; cv=none; b=fVG4y65zwJlhVEhwMiXKwVw2izEubCRF4dUwoTJejUGUXk3Na8TyuuGCXPbsk5RCjhWfVo8uJVDiyFJyQBFirnXpTk9cwnaMoUSFTthIWCvN7X5hloelsOv0cV+EI9jHT1YT4zRDD9F/nYH3ZEKNeZOErOzZVxcjpLUKsBkLwNE=
+	t=1724055398; cv=none; b=kHsbTF/3WeF8cNwrgQp9blv5/0v+C88upDpXSfbVtlkIpC3VBHvtsXesi9otWGXT+pqd9csf7KbPJVd3U3OieP62cqRuY4ydC5wNcFJgZixnzHKah7W98XsYb+ms8LBdUAryPantv6rQekGQX4Yxv/zhncBaDzpre5vLcQA8OD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055317; c=relaxed/simple;
-	bh=uUjOUhqNuYQkT3tijVkTub3u4TjTMOVy0LCez1Ku3fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3otyARxehfbvaJ/z2g3sw9iv5b2A1/V133/HXf0CeQKD1e7tIDaQEmKjec1NnvW7+/Y7Hq+n0lN4J6rW0wBT9c/cSOlDc67Vku6rwOX1WfMTfVnn4Z+aeIDjojNglaiO7wH9UcOx5EPhMqpC7sqw6sl2CpcPdlP4x27DjDJjgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr/xWu/4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9D5C32782;
-	Mon, 19 Aug 2024 08:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724055316;
-	bh=uUjOUhqNuYQkT3tijVkTub3u4TjTMOVy0LCez1Ku3fY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jr/xWu/4BSgH7i41+5/IDArM500AJbEw5UKqKN7F4WwZRBAlUrN4pVNqYW4reJSF2
-	 rAl/TWDnpULY4JvtTPRipAY6OUv+IThFFX0FfLFRJACJqje/Kqqrw4oJnmdX/7ly+4
-	 +P8lnwS8s7sJ1SG7sovGX5KM/fWZOOVIWaNpY+4T3D2+W54/Lm4asxhS2Nh6DLKVMq
-	 9qj351TTO5xb05bG7RFRec0GfZLfSPdHfaszFPHUQoIKiH+mgjE7utq1JLwWRd2HpZ
-	 C73r+tjtMBAvla3bjh1LAvvthGIZS4aLrNy/UBJpuJ2TV3gCN/OAhYaDqt/YivXbUE
-	 Pv+Qd1vaSTpbg==
-Date: Mon, 19 Aug 2024 10:15:11 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, syzbot
- <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
-Message-ID: <20240819101358.77aea582@foz.lan>
-In-Reply-To: <2024081909-afar-trolling-2a67@gregkh>
-References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
-	<0000000000009f6f85061e684e92@google.com>
-	<51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
-	<1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
-	<2024081909-afar-trolling-2a67@gregkh>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724055398; c=relaxed/simple;
+	bh=+iO4CEC8JR3fCEadD3MXWfnr7OB0rBq7y39UpXwNx0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8oUBkOa8Z2Y3VdB9sae2zdTHOEPkv3AiLRJvp1ps31AUEuX6hgZ63UbzaQ317jAgps8zOZZcDuRS4iHceTdzLXxlNy2J1WMxAL755HB7Adsj1rySiDvGIzes1x9AQEtvkTspx+ShE90/8kAXdT6ZW90SD8b/UDtWDJFzNYYk8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HPPjCLrx; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428e3129851so32576225e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724055395; x=1724660195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHfO228DZNryni5G2SSxgcBG4xZ187dTZqHvUBwI148=;
+        b=HPPjCLrxR6++gC9qEkZfQtZZo8AKyrxlzZNK7F8nNk+xUf/U8hWFE+EscGC6Kvlr47
+         CnCF2D/apP+abvlsKx1puhY1EzCaFKx3llYCBiz8BMlnxxZu5AGBKaV92FG9rfdzYWkU
+         cGehEwFhwiHKxfoMwh6IXmkMH4xohTpyUHom4gSlydxjK3EB7i2eEkAvXe5rCDFd+3ZW
+         RU9X9MUyfNFtSZlxyLERBYfhOwJ/c3aGWpNcH72+1QWBrZMReK5FryKiLDIQ5HAPCZdk
+         vgEqiD8KDkfZ/T7P4Huki/2Uu5X8XfPpCKTmoxURLt5ZiuWDFCtkrzPm3EZOvxjlDc2I
+         bhXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724055395; x=1724660195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aHfO228DZNryni5G2SSxgcBG4xZ187dTZqHvUBwI148=;
+        b=GlGMTmydb9N51jz+EbfDNAWaO0mSOsMbUj65mUCAjH71XdXbf2A7lDu/QDv/IEheX4
+         rRtA1oz0SHtRxVHm3zhDG+Xl+K8nigy273LPRE9E37fKlgj9tOjO1tUu8KqaIA2fq/XW
+         EhvynsUN55gM8dUdgVx2kdz7HinSZe0w7fMgoa/JvpcgYY4T0VVHF65aTAr3EDFZYo5M
+         oS83MtmKJtXw0Cy5OhuRpd9/c1/AkSYPaopuvFtJUOwWFW44UXopYCJhY/WqKVQDY3Gj
+         pMaIYAY0OL4UysOO/SeplDKmfDRFFfrGMA1wITu5krn9E0pBqmZSDtxP/Teex3sZ3kRU
+         KTZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXO54TkPMymnn6IBJqsuzi4jbCOtFRv5ESPOiofAWhUtDEZB+RGCjkahCxktc7OonN3KE2FeVwTaooaXUt83q08RECms5bK0KLj38k7
+X-Gm-Message-State: AOJu0YwID+PjhrwlVv60GvIgPuM8jwgw/G6Q06UZRrUr3FhyUqSI47/C
+	EEjjFJ+8SKpLCfSmvcea8qpNTgoPaf5qOdzaTCM4kkO8LWs7iXDVgRIqAprjcA==
+X-Google-Smtp-Source: AGHT+IFBd7V14kDw4QUauT5EDSPMLG3k1dEdle6s90msb/Z3KXxJ4G39D9HkdEp1kMIzWJw0caczAw==
+X-Received: by 2002:a05:600c:3143:b0:428:29d:4b59 with SMTP id 5b1f17b1804b1-429ed7c1e5dmr81417025e9.20.1724055394419;
+        Mon, 19 Aug 2024 01:16:34 -0700 (PDT)
+Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a57asm9833805f8f.2.2024.08.19.01.16.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 01:16:34 -0700 (PDT)
+Date: Mon, 19 Aug 2024 09:16:30 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Bresticker <abrestic@rivosinc.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, maz@kernel.org, seanjc@google.com
+Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
+Message-ID: <ZsL_XvRL-OgEqmvv@google.com>
+References: <20240611153216.2794513-1-abrestic@rivosinc.com>
+ <8040793f-e9e9-4a2e-807c-afcb310a48f5@redhat.com>
+ <20240611110622.8e9892e92618ddc36bca11b7@linux-foundation.org>
+ <ZmiVy8iE93HGkBWv@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmiVy8iE93HGkBWv@casper.infradead.org>
 
-Em Mon, 19 Aug 2024 05:11:47 +0200
-Greg KH <gregkh@linuxfoundation.org> escreveu:
-
-> On Sun, Aug 18, 2024 at 02:20:44PM -0400, Alan Stern wrote:
-> > Greg and Mauro:
+On Tue, Jun 11, 2024 at 07:22:03PM +0100, Matthew Wilcox wrote:
+> On Tue, Jun 11, 2024 at 11:06:22AM -0700, Andrew Morton wrote:
+> > On Tue, 11 Jun 2024 17:33:17 +0200 David Hildenbrand <david@redhat.com> wrote:
 > > 
-> > Was this patch ever applied?  It doesn't appear in the current -rc 
-> > kernel.  Was there some confusion about which tree it should be merged 
-> > through?
+> > > On 11.06.24 17:32, Andrew Bresticker wrote:
+> > > > The requirement that the head page be passed to do_set_pmd() was added
+> > > > in commit ef37b2ea08ac ("mm/memory: page_add_file_rmap() ->
+> > > > folio_add_file_rmap_[pte|pmd]()") and prevents pmd-mapping in the
+> > > > finish_fault() and filemap_map_pages() paths if the page to be inserted
+> > > > is anything but the head page for an otherwise suitable vma and pmd-sized
+> > > > page.
+> > > > 
+> > > > Fixes: ef37b2ea08ac ("mm/memory: page_add_file_rmap() -> folio_add_file_rmap_[pte|pmd]()")
+> > > > Signed-off-by: Andrew Bresticker <abrestic@rivosinc.com>
+> > > > ---
+> > > >   mm/memory.c | 3 ++-
+> > > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/mm/memory.c b/mm/memory.c
+> > > > index 0f47a533014e..a1fce5ddacb3 100644
+> > > > --- a/mm/memory.c
+> > > > +++ b/mm/memory.c
+> > > > @@ -4614,8 +4614,9 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+> > > >   	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
+> > > >   		return ret;
+> > > >   
+> > > > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
+> > > > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
+> > > >   		return ret;
+> > > > +	page = &folio->page;
+> > > >   
+> > > >   	/*
+> > > >   	 * Just backoff if any subpage of a THP is corrupted otherwise
+> > > 
+> > > Acked-by: David Hildenbrand <david@redhat.com>
 > > 
-> > Here's a link to the original submission:
-> > 
-> > https://lore.kernel.org/all/51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu/  
+> > You know what I'm going to ask ;) I'm assuming that the runtime effects
+> > are "small performance optimization" and that "should we backport the
+> > fix" is "no".
 > 
-> I never took it as it was touching a file that I'm not the maintainer
-> of.  But I will be glad to do so if Mauro doesn't want to take it
-> through his tree, just let me know.
+> We're going to stop using PMDs to map large folios unless the fault is
+> within the first 4KiB of the PMD.  No idea how many workloads that
+> affects, but it only needs to be backported as far as v6.8, so we
+> may as well backport it.
 
-This patch is duplicated of this one:
+Hi, I am reviving this thread after noticing this comment attached
+to the fix.
 
-https://patchwork.linuxtv.org/project/linux-media/patch/20240409143634.33230-1-n.zhandarovich@fintech.ru/
-
-The part I didn't like with such approach is that it checks only for
-bulk endpoints. Most media devices have also isoc. Now, I'm not sure
-about Siano devices. There are 3 different major chipsets supported
-by this driver (sm1000, sm11xx, sm2xxx). Among them, sm1000 has one
-USB ID for cold boot, and, once firmware is loaded, it gains another
-USB ID for a a warm boot.
-
-Your patch and the previously submitted one are not only checking
-for the direction, but it is also discarding isoc endpoints.
-Applying a change like that without testing with real hardware of
-those three types just to make fuzz testing happy, sounded a little 
-bit risky to my taste.
-
-I would be more willing to pick it if the check would either be
-tested on real hardware or if the logic would be changed to
-accept either bulk or isoc endpoints, just like the current code.
-
-Thanks,
-Mauro
+If you intend to install PTE level mappings for faults that happen outside of
+the first 4KiB, I believe this will make THP support for KVM ineffective.
 
