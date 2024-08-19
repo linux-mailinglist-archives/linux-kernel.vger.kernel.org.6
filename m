@@ -1,174 +1,154 @@
-Return-Path: <linux-kernel+bounces-292696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B0C957324
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9020B957327
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BBDA282B6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC58282A44
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E51F189527;
-	Mon, 19 Aug 2024 18:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="khTGhjIE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C580A1891CF;
+	Mon, 19 Aug 2024 18:26:34 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A00184535;
-	Mon, 19 Aug 2024 18:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8283B1A4
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724091927; cv=none; b=K6tG/+3rBJzbL86Lhjuj18tXJZJWBGdK49NkbiSAWbBHfdEBp5eqrcHFbaE1sv1OANdbDWoyQ7h+HuZvLNGMmQbmQBns48SYSfPT4BgA4G4jaY+JX32NFfULmcKTaI5ngPjqoeqkONWVGbbyJGklkUiey+eS61MfqtUWQyIaraw=
+	t=1724091994; cv=none; b=rGju2ZudJLzHcRVjgrxofKFWuLMvjokx2NiPwLywr8zqho/gC5tGWIJzfbNmrok2S67KiRuJ86gm+pVJM1+9NXakS/soDEUkynKlgcImkuXkxL/WW+HK3eO0265+AShl85hKrtGI4fzOVSBqAyQdjEvCE3ealsF6wqL6IB9dINI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724091927; c=relaxed/simple;
-	bh=yALXwTSmv4+UWSMtBlDSLjJMgKa3P7yXVK4NJJPbVuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+RG4JGpoHLp50FiGqtSsfRecRAoVcNsr2M5p0aM/Xamp4O/n88YnMY0VQdsqUmgXQlX7VxI6SZIa0kqaa3iGCAkbQXQM+EiTk7MzaqC+FgfkAavZVesjUOH7utPtD56tq3fs0WKxti1ogUWGaCS50g7ppqL+XCDgu1PtymxHRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=khTGhjIE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F1ADC32782;
-	Mon, 19 Aug 2024 18:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724091926;
-	bh=yALXwTSmv4+UWSMtBlDSLjJMgKa3P7yXVK4NJJPbVuk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khTGhjIEDs49GsU7Lni6hfu2hOgb9DN8IIC1iHGCgjowaDD/BBgdZqJLfwKDBcf4X
-	 3+JGjsjbI8oChg72BHP6NxsvypU8TEGyxYKSAN/6WxncMvIj5hiYcANg6AXqGHX3Kn
-	 mTbXr6frDV162Gs5cp4VUw7+XzQZUxmkZqkTRXtA=
-Date: Mon, 19 Aug 2024 20:25:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Sami Tolvanen <samitolvanen@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-Message-ID: <2024081938-lyricist-estimator-c4eb@gregkh>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-37-samitolvanen@google.com>
- <2024081600-grub-deskwork-4bae@gregkh>
- <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
- <2024081705-overarch-deceptive-6689@gregkh>
- <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+	s=arc-20240116; t=1724091994; c=relaxed/simple;
+	bh=k05gVbLV48+n4MZ3FwDOLoVZMuARVczPh8inxca9e2Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BJWcLnZ2NRhqDvq17+AYZdT2pDWkP3QfAFno7DWa0Z48UlkNdWjreDYPA8Pe41GCiyXyp2tz8SjqRl66ncT3hO9qKMdY8YD0G45qzOQkF6NOWeHvicoZ38LqtDeRIXhoDAWYVK0Vg3bolyNSrT4tbFTzQJgZk5uD4ztL0Og6P+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37642e69d7eso41351315ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:26:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724091991; x=1724696791;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wzuWOoK7U5eCLaCqJOf+yOYWMA4sjC86uW21bxVlKcI=;
+        b=fw8YB8VlBK9vqt2tj6Iwnox9AhQqsFC18XoJPxtqzZI/YSKNt7e8/22hteV7YD3PF7
+         qhiusTtpiVg8ShgdMhPLRFlXEdZ6jJzZRJUdare3pkVrg1x+1ZWJz1nZaE8xw+CORcnC
+         YRdJOxB8qTE+poGI0bGYQnRolq9UpfRjlMXgpNBOuZfcdj28l5IFpTJa8PWiU+ZGvRf0
+         U0tILR32rMGVUfSpZj2PZ+YJFndW30kuENQizzyHAVSfTTVhfPI9BYE7Is/TL9tsMPuw
+         7XHq4eKlWl5ACA2tXabeD7SAGhBjaaiLXbogMlsYyW1QisABQtnovo6PFrMYLICNfvrM
+         0/yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZBCvwMN2SyAjZy6qB/CGAqVmrwajb1j4rxAI4iFB7DT6q8XYYJzqDVnIv4S+ol91InpddJi0OsKTM7h/DqLn0S2av3GHzSbWKKr7T
+X-Gm-Message-State: AOJu0YxI8GXrOJf7LF1Ixb3hBItHyF/BCnWZ0MUt7MhhqBegXBUIED6z
+	hcArXwvHX5r9rHp/jcvQDRO86x3PJOpqoASbT7vfLx+4wqudYCwWg1WgBEEVrSCdNb4fxaIUzxz
+	k8NZLShfxPKX5IBUzmpxyOXvZnRbie+TPKoj/zPQoWeMS61MCHsKAQPY=
+X-Google-Smtp-Source: AGHT+IE0W3bMrdlF7HCKmudx+ktIOg5AR0S/NJiRJpbqSoEYv411xh46VAH1DzcSY84YGH6iYJpsmYzPWjR2k+xLL2AG4N3nmjNo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+X-Received: by 2002:a92:c54b:0:b0:39a:ea89:22e8 with SMTP id
+ e9e14a558f8ab-39d26ce6d8emr6386415ab.2.1724091990956; Mon, 19 Aug 2024
+ 11:26:30 -0700 (PDT)
+Date: Mon, 19 Aug 2024 11:26:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae6c0606200d72b2@google.com>
+Subject: [syzbot] [kernfs?] WARNING in kernfs_new_node (3)
+From: syzbot <syzbot+306212936b13e520679d@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 17, 2024 at 01:19:55PM +0000, Benno Lossin wrote:
-> On 17.08.24 09:41, Greg Kroah-Hartman wrote:
-> > On Fri, Aug 16, 2024 at 08:50:53AM -0700, Sami Tolvanen wrote:
-> >> On Fri, Aug 16, 2024 at 12:20 AM Greg Kroah-Hartman
-> >> <gregkh@linuxfoundation.org> wrote:
-> >>> On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
-> >>> Especially as I have no idea how you are going to do
-> >>> this with the rust side of things, this all will work for any structures
-> >>> defined in .rs code, right?
-> >>
-> >> Yes, Rust structures can use the same scheme. Accessing union members
-> >> might be less convenient than in C, but can presumably be wrapped in
-> >> helper macros if needed.
-> > 
-> > That feels ripe for problems for any rust code as forcing a helper macro
-> > for a "normal" access to a structure field is going to be a lot of churn
-> > over time.  Is the need for a macro due to the fact that accessing a
-> > union is always considered "unsafe" in rust?  If that's the case, ick,
-> > this is going to get even messier even faster as the need for sprinkling
-> > unsafe accesses everywhere for what used to be a normal/safe one will
-> > cause people to get nervous...
-> 
-> The reason for union field access being unsafe in Rust is that you can
-> easily shoot yourself in the foot. For example:
-> 
->     union Foo {
->         a: bool,
->         b: i32,
->     }
-> 
->     let foo = Foo { b: 3 };
->     println!("{}", unsafe { foo.a });
-> 
-> This is UB, since `3` is of course not a valid value for `bool`. With
-> unions the compiler doesn't know which variant is active.
+Hello,
 
-Understood, then why attempt to use a union for this type of "abi safe
-padding"?
+syzbot found the following issue on:
 
-> Since unions are unsafe in Rust, we don't really use them directly (in
-> the `kernel` crate, we have 0 union definitions). Instead we use certain
-> unions from the stdlib such as `MaybeUninit`. But the fields of that
-> union are private and never accessed.
-> 
-> In general, unions in Rust are very important primitive types, but they
-> are seldomly used directly. Instead enums are used a lot more, since you
-> don't need to roll your own tagged unions.
-> 
-> For this use-case (the one in the patch), I don't really know if we want
-> to copy the approach from C. Do we even support exporting kABI from
-> Rust?
+HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ccfde5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=306212936b13e520679d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-That's the goal here, you want to create an abi that can change over
-time without "breaking" the abi.  Usually this is just adding additional
-padding in structures to have room for new additions.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> If yes, then we I would recommend we tag it in the source code
-> instead of using a union. Here the example from the patch adapted:
-> 
->     #[repr(C)] // needed for layout stability
->     pub struct Struct1 {
->         a: u64,
->         #[kabi_reserved(u64)] // this marker is new
->         _reserved: u64,
->     }
-> 
-> And then to use the reserved field, you would do this:
->     
->     #[repr(C)]
->     pub struct Struct1 {
->         a: u64,
->         #[kabi_reserved(u64)]
->         b: Struct2,
->     }
-> 
->     #[repr(C)]
->     pub struct Struct2 {
->         b: i32,
->         v: i32,
->     }
-> 
-> The attribute would check that the size of the two types match and
-> gendwarfksyms would use the type given in "()" instead of the actual
-> type.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08587d4fbe1d/disk-1fb91896.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6dd5154c5ac3/vmlinux-1fb91896.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed7b9753cd9c/bzImage-1fb91896.xz
 
-Remember the "goal" here is to NOT have to modify the places in the
-kernel that use the new field in the structure, but for that to "just
-work".  Your change here wouldn't allow that as any use of the new "b"
-field would have to be through something in "Struct2", not directly in
-Struct1, right?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+306212936b13e520679d@syzkaller.appspotmail.com
 
-We can mess with the structure definitions but we should not have to
-touch the places where the structure fields are used at all.  If that's
-going to be a requirement (as it sounds like it would with the use of
-unsafe in the union), then this is not going to be a solution at all.
+usb 5-1: Direct firmware load for ueagle-atm/eagleII.fw failed with error -2
+usb 5-1: Falling back to sysfs fallback for: ueagle-atm/eagleII.fw
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9066 at fs/kernfs/dir.c:526 kernfs_get fs/kernfs/dir.c:526 [inline]
+WARNING: CPU: 0 PID: 9066 at fs/kernfs/dir.c:526 kernfs_new_node+0x1d8/0x240 fs/kernfs/dir.c:703
+Modules linked in:
+CPU: 0 UID: 0 PID: 9066 Comm: kworker/0:7 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events request_firmware_work_func
+RIP: 0010:kernfs_get fs/kernfs/dir.c:526 [inline]
+RIP: 0010:kernfs_new_node+0x1d8/0x240 fs/kernfs/dir.c:703
+Code: 74 08 48 89 ef e8 68 34 c4 ff 48 89 5d 00 4c 89 f0 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d e9 a9 a5 b9 09 e8 09 ee 5c ff 90 <0f> 0b 90 eb a0 89 e9 80 e1 07 fe c1 38 c1 0f 8c 62 fe ff ff 48 89
+RSP: 0018:ffffc90004447578 EFLAGS: 00010293
+RAX: ffffffff82369b67 RBX: ffff88806b7c1870 RCX: ffff888029df5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82369b04 R09: 1ffff1100d6f830e
+R10: dffffc0000000000 R11: ffffed100d6f830f R12: 00000000000041ed
+R13: 0000000000000000 R14: ffff888067d74780 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffedb7a2d4c CR3: 000000005a9c8000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ kernfs_create_dir_ns+0x43/0x120 fs/kernfs/dir.c:1061
+ sysfs_create_dir_ns+0x189/0x3a0 fs/sysfs/dir.c:59
+ create_dir lib/kobject.c:73 [inline]
+ kobject_add_internal+0x435/0x8d0 lib/kobject.c:240
+ kobject_add_varg lib/kobject.c:374 [inline]
+ kobject_add+0x152/0x220 lib/kobject.c:426
+ class_dir_create_and_add drivers/base/core.c:3225 [inline]
+ get_device_parent+0x391/0x410 drivers/base/core.c:3276
+ device_add+0x325/0xbf0 drivers/base/core.c:3606
+ fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
+ fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
+ firmware_fallback_sysfs+0x307/0x9e0 drivers/base/firmware_loader/fallback.c:238
+ _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
+ request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1165
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-thanks,
 
-greg k-h
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
