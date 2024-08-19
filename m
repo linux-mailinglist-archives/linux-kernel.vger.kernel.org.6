@@ -1,158 +1,169 @@
-Return-Path: <linux-kernel+bounces-292466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F7E956FCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:08:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987A4956FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A97C285CC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9EB1F242ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8CE16728B;
-	Mon, 19 Aug 2024 16:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4AE17332A;
+	Mon, 19 Aug 2024 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhzHkQzr"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7ICdLvd"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8213C47F46
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F848287D;
+	Mon, 19 Aug 2024 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083629; cv=none; b=b1ZhnhGPEXW/HOiQ+eB5ATPECnCcznuc4L1vp8pq6zm0bArG+6Y9fjIkRpGWBmFGhAFYoPZZDv+MHhhcgxkmUktCQzQbJCmPVcMZB6PYtgAKOYvsapFdYBLxG7RED92pIQGTmFDYLlBpmhaYorsfA0T5gzxcPs4nEdDM8R61Hhc=
+	t=1724083690; cv=none; b=VewLxqahePS54z9v7JVTYTPvHCK9QsZZ2fn0VhVI3LEDy7eT5j6pXhMe7oc7FXeoZprtN4eoxnte93soa4Hy60FtWT9pQtilcKMC+XWnJn1a352Tt0L11lpc8TqLq7/gM55Aoo9CNWdTMvg/6NcwbwMI7mYOvTHgxGLGk1b3lpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083629; c=relaxed/simple;
-	bh=3dkHNFTl9N6jY3+tkEJVnyFXsNkZb3OvKllpliZ3t0Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GXQp7z0XVMS3sX1etMxIuNzqZ7xQhOVUjto61SkbV4C7sI1xxBgstggjxRFI0oIeqbjSMgTpPRAPM43w59EDH5/VmqelSuVNyQM0zxEPq48aSSJ+AwA4bls3iyt3SFfsmDGmjFCKaFOpsXpFT7G7dxAC6oInbq8JZcIw37aGvJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhzHkQzr; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42809d6e719so37770575e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:07:07 -0700 (PDT)
+	s=arc-20240116; t=1724083690; c=relaxed/simple;
+	bh=yoBkZXERKr7bqbNe+5gAs9ggqERpCzVHPCNNXnlqfUg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mRrZZEysrEG5gADWj8IvldW75TW5+up78n0X9JncsM2jpfPERzOT85umZXUnSPGyISy/WK/lgc9KVx5n+e6Z8/BZOKIRRzJ3gBF+zHU2pHvyMigeFWnRxCzdkO41sY0O67wmOk8R66PSW61ZgFtJWd8LTDxE4UffRv9lUEUXQfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7ICdLvd; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a23fbb372dso2619622a12.0;
+        Mon, 19 Aug 2024 09:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724083626; x=1724688426; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5LNqeb3ZgALy4xdwAEcRE9nVauPSurOEFzQxg2hY7+Y=;
-        b=bhzHkQzrLry7HQbEKtaINYQ8ZowseTyne6yoVMESXu2bKiGWja/M7yza0ZOKbjnpQz
-         WnNQYl9XTdfZ9Ti6vPUc4wJa9K278+7Z9NTssRq13m68R546+YwvOEyvcP+mIPe/b+NN
-         pdL+zSC0I1uIPBvVlv8WfKGBiYYWtkUMXr54gzo2AowJUTSCLzlTgQAKtQA0lDkFVN7g
-         t1DUNKmeoW2iFU7X4Mh0eeIOEuqlon9kOatNR+9jyl4jjrv6hi2vx8a+LpPDqN2AhdDl
-         b2k0JVeDdIXD7gD3ikfzsOF5nP/+Fh2EGxN4unHp6vLj8RlysdzTXkx3kRTkTsdDaIaj
-         IzgA==
+        d=gmail.com; s=20230601; t=1724083688; x=1724688488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWG9imhLWmDvDlk9mM25jvvBh/M6NY5p5kOC4fBkFzE=;
+        b=h7ICdLvdGlg+F2Y6jjeyrZGTMG7Q5p+JXW8G5HWF/Hu1svLfoDWUrx6rBBNESbLyDp
+         w6UD3XgFVVjblpuq86P8SUkGXqU8zzEuT0sSMjsLpLk4yRdXoxs3qpG2tg+BN48JdMzj
+         7HhMgaKOT0FBvc7kdBBtVK3miGf0EETnUkdfcSy+sp5g7fiKmGVWP7JBUFSNNrkKq8Yd
+         zihyMat1jJJQd9J/2oEC8zQvu1KSwA5A2vuYNup0jFnpnlPrn4V4D2kKI5PiISee3Bab
+         0fsjSrr/58J/BJF56m4JFbERLPP7PDgwYtlnJ09oft7b7DQMQsc7v4kGqvTvRbcMmX5a
+         ER9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724083626; x=1724688426;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5LNqeb3ZgALy4xdwAEcRE9nVauPSurOEFzQxg2hY7+Y=;
-        b=KjTL+vqy7rcrnr5k9qdqvKLc8mFUYJhNhzHWhWBE+NbopNfaaBDmjUER3iHYoZ2Cu3
-         jHO/IAYmr+OFCIIkX2sMlCJ6d9ffXeYQ73BULGUQjCEjXmeT0CHUcPKjQccmOEH3jfbG
-         pbhO4awo2Xymt2gwIZOfp4bUjak6sxxgfziLVnjEMY8Gfyz1x6ByELRpNUemmy9Y9tbs
-         alYbLUi5oeIMQNx3IE6DD3WK2CHZ6nWLWiDpItH4Hinis7tvnY81+8l8AmOrm+Ub7UuG
-         Y2tj00IQLY9FvhVSyUVXKunlNiJiCHi4GjzWx250PiR9+AdGDdknHJhdbrhWA75qME6G
-         4Xvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBzbC5p9OJTbrPnX5u5N/DeHjI4sc5ntpGJFkE3Ji3xS5Mn5muBWIqBQMNk5ysgi5eK/kIdJsz6WisCyeYEO6aosMjeikd4W0g+MD0
-X-Gm-Message-State: AOJu0YwNYgpMi77mTrRAEgA4YSOv1WccclCMjVp2pdaBVZZtxp9VErFh
-	nUsVVYK5W8erdvdyy/uwf3Azw+k6Np3obbDdbFVUd6D1haEksFAIlC1pgDTdTgw=
-X-Google-Smtp-Source: AGHT+IEQR4t87/P6PagiJISQ0jKse0XEojnisMOIM3YVNy+F7eNVyZm87ufA5Y7uQKmtDCtIpWVusQ==
-X-Received: by 2002:a05:600c:548c:b0:426:55a3:71af with SMTP id 5b1f17b1804b1-42aa8275ea7mr49659035e9.33.1724083625240;
-        Mon, 19 Aug 2024 09:07:05 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d780ba5dsm222433555e9.0.2024.08.19.09.07.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:07:04 -0700 (PDT)
-Message-ID: <004156e5-8dde-45a7-a291-425486e20696@linaro.org>
-Date: Mon, 19 Aug 2024 18:07:03 +0200
+        d=1e100.net; s=20230601; t=1724083688; x=1724688488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lWG9imhLWmDvDlk9mM25jvvBh/M6NY5p5kOC4fBkFzE=;
+        b=RZgPn7CNnc5cD+Mz25+iETTEy61bWrzvy1lqIkCF288FpjBjU8To6X0JrwnY0LcH6y
+         1JAuUtPt6rRitAWYTRdFNihh1RgpzBdZhItmX28gY3dDmPyJAGB/rZrh2SyTDgxCecq0
+         8x0XQc8fCmjeGFQW3PdirDw5YDMJsE+WG+GZl2URXaG7vBEQUoSButM6WGbTgVDwaO1v
+         G9UsMxI00WgoDZhlwbEEO1ySU8G6f1XN4dDzvcbotFISXVI8OupMUhdqpnyGh67bH9w6
+         OspuhGJiZFF9KmObeynv0U/D8aZ03a6iRMVtXs55WnCmtTFCNPsaySHhdIGdu3uZZFCc
+         lrzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhV2SBdNNfEwAOtJbOXfHcY/Bev7xj8naT/KqHC+N14S5R4yZ1+71IzyNlprz15a3pLT7rJMIBVzPlXi6h7HyHRNSaPMbc/xyZDMJx8QSmCXZ2HgbEljwbQZhp991oO7jD
+X-Gm-Message-State: AOJu0Yz2jST/CVfQDufEBRvJbmTJMtO1fj8jugN7Od3I5Z5p4aGR2Cqe
+	DU8SraFUrDbd+7p4yjcqM2IvSKLdVg4jk6x0j5NCLaBqHV4GXd6LOGojKxyoROc=
+X-Google-Smtp-Source: AGHT+IEm5K9AGKyTbpO1cOvx6o6INI1yTHRJPO7R31ZUmQX3rnMpnVm5D7Mugw+hTvEOc6AoZzIaAg==
+X-Received: by 2002:a17:90b:190a:b0:2c9:6ad9:b75b with SMTP id 98e67ed59e1d1-2d3e0e4210emr8406848a91.40.1724083687820;
+        Mon, 19 Aug 2024 09:08:07 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3274642sm7332961a91.33.2024.08.19.09.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 09:08:07 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Cc: eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH bpf] bpf: Refactoring btf_name_valid_identifier() and btf_name_valid_section()
+Date: Tue, 20 Aug 2024 01:07:58 +0900
+Message-Id: <20240819160758.296567-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 4/9] drm/meson: dw-hdmi: fix incorrect comment in suspend
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240730125023.710237-1-jbrunet@baylibre.com>
- <20240730125023.710237-5-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240730125023.710237-5-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/07/2024 14:50, Jerome Brunet wrote:
-> Comment in suspend says TOP is put in suspend, but the register
-> poke following is actually de-asserting the reset, like in init.
-> 
-> It is doing the opposite of what the comment says.
-> 
-> Align the comment with what the code is doing for now and add
-> a FIXME note to sort this out later
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/gpu/drm/meson/meson_dw_hdmi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> index 2890796f9d49..5cd3264ab874 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> @@ -751,7 +751,7 @@ static int __maybe_unused meson_dw_hdmi_pm_suspend(struct device *dev)
->   	if (!meson_dw_hdmi)
->   		return 0;
->   
-> -	/* Reset TOP */
-> +	/* FIXME: This actually bring top out reset on suspend, why ? */
->   	meson_dw_hdmi->data->top_write(meson_dw_hdmi,
->   				       HDMITX_TOP_SW_RESET, 0);
->   
+Currently, btf_name_valid_identifier() and btf_name_valid_section() are
+written in a while loop and use pointer operations, so it takes a long
+time to understand the operation of the code. Therefore, I suggest
+refactoring the code to make it easier to maintain.
 
-Yes, this is probably useless and should:
-meson_dw_hdmi->data->top_write(meson_dw_hdmi,
-			       HDMITX_TOP_SW_RESET, 0xffff);
+In addition, btf_name_valid_section() does not check for the case where
+src[0] is a NULL value, resulting in an out-of-bounds vuln. Therefore, a
+check for this should be added.
 
-but I think it can be safely removed.
+Reported-by: Jeongjun Park <aha310510@gmail.com>
+Fixes: bd70a8fb7ca4 ("bpf: Allow all printable characters in BTF DATASEC names")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ kernel/bpf/btf.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-Neil
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 674b38c33c74..c1e2aead9141 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -794,21 +794,18 @@ static bool btf_name_valid_identifier(const struct btf *btf, u32 offset)
+ {
+ 	/* offset must be valid */
+ 	const char *src = btf_str_by_offset(btf, offset);
+-	const char *src_limit;
++	int i;
+ 
+-	if (!__btf_name_char_ok(*src, true))
++	if (!__btf_name_char_ok(src[0], true))
+ 		return false;
+ 
+ 	/* set a limit on identifier length */
+-	src_limit = src + KSYM_NAME_LEN;
+-	src++;
+-	while (*src && src < src_limit) {
+-		if (!__btf_name_char_ok(*src, false))
++	for (i = 1; i < KSYM_NAME_LEN && src[i]; i++) {
++		if (!__btf_name_char_ok(src[i], false))
+ 			return false;
+-		src++;
+ 	}
+ 
+-	return !*src;
++	return !src[i];
+ }
+ 
+ /* Allow any printable character in DATASEC names */
+@@ -816,18 +813,18 @@ static bool btf_name_valid_section(const struct btf *btf, u32 offset)
+ {
+ 	/* offset must be valid */
+ 	const char *src = btf_str_by_offset(btf, offset);
+-	const char *src_limit;
++	int i;
++
++	if (!src[0])
++		return false;
+ 
+ 	/* set a limit on identifier length */
+-	src_limit = src + KSYM_NAME_LEN;
+-	src++;
+-	while (*src && src < src_limit) {
+-		if (!isprint(*src))
++	for (i = 1; i < KSYM_NAME_LEN && src[i]; i++) {
++		if (!isprint(src[i]))
+ 			return false;
+-		src++;
+ 	}
+ 
+-	return !*src;
++	return !src[i];
+ }
+ 
+ static const char *__btf_name_by_offset(const struct btf *btf, u32 offset)
+--
 
