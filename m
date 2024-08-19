@@ -1,136 +1,170 @@
-Return-Path: <linux-kernel+bounces-291697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680C09565A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 404D89565FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7476B20CDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:33:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74913B23153
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C23114EC47;
-	Mon, 19 Aug 2024 08:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C37515B140;
+	Mon, 19 Aug 2024 08:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtBnHmgl"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="ZUPsHP7x"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B45C125
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AFB14BF8A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056430; cv=none; b=AHZ7g+iUkXKyCfql4qR9qOiLcvR9f2FTdmI8UydxVCh0PuKh/v645bTvkd/FU6mj3EMXVxANTgP4wo7OUU/EFTtTO6KdP5y9GzdIm8GzSHa7izY25F5k7VchjcXvKwe0HdNwP0Eq6xB35LrofchOQnK8lzINrtlLzhHva25aw0I=
+	t=1724057349; cv=none; b=J8bBGSeajxN6/m72aQJDT9flBaf34cW38Z4pez8DEnn/LbdSbAFMwaHRKDXFIAg3xRnCMarekZKwpLR0egT72sI5d0qHoJ9+MVpz7uIblLs28xzCtB46QlrBPy7G4GiHdDO0sitry39zQvv5quh/2HPSUR/KpDaizxxykN0wL6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056430; c=relaxed/simple;
-	bh=r/2mE26LhYOUrCN214dZpQf1JZLHP0/lng5fopOYvzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fNwAMxvuXFJ+aJHCMReHsL+vKGShV7tc0Wzqw3BUWb+FA2IsTxsneqb5m2e68pwlfs2IRmLItgY35SYXzseMhB9RJ868rzf617Jf1jJ9K+HotfMivvsKN+cTeH4mb328NzOlBR6BeUSw3GHKAOgZmBa2zUywDxqHJMxprKAdQYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtBnHmgl; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8384008482so414249066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724056427; x=1724661227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P3b7+fBvPEBrGNKQcOtXVzvIBh569+UuVGvzSAzppHM=;
-        b=WtBnHmglFcQZ4rIPlX6ZdMIfHptteDWGd+SAmZfLWqVQKZ4tDnN7nC3jGChq4qqnlu
-         cA7ETzNDuaf8675iD85SVNVy7lRG59bj48lpvkWdCcou08AIS8IovyNQAKN+19ZqmgUg
-         6chrk2vqNc5OopqbS+j2MfYKQw9hAdEHLk8CZ7/bBjn8Z5Phs7ccMwnBoqbbDzQsS8Mw
-         3SAUZflQAd3h496bpRRexj+pJ2XWfWDfbFhkQgJO/0xqeQiGgIltnslP5+RL7IuCLz9/
-         6yDVZGPRUVuN6L7wEu3hj1DYUxjwaYKxKXx9+j+a2rTdaKWCDx3JK1DMSZ+grA9U1gBv
-         YJwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724056427; x=1724661227;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P3b7+fBvPEBrGNKQcOtXVzvIBh569+UuVGvzSAzppHM=;
-        b=raTGrgxg0Bte90QCrNSvwoxLyL5IwU3Uq29/Mv+hYbkDlrFiUk+r7IyB1BR5N89Elt
-         xxUu3B/wAnDXRe6zMfyxXh6gQ+tDDfbUjsOawSNCQBPvnlpQ4rTk3xhKAn9TBIv7JF8y
-         j+IDxoHEkmTPqKsaSm4ZJy8sX3P3JqsKClhu+T2qtzmbQOY9q6hoHHk/KKSVr1G8pwxO
-         AuO3tom423LYCFqU7v9JSGmAZxUGqqkoRlmqmAcsUU2HCCXGh+FYhe6UB8wA/ewXnT9N
-         deppKxntzu9osROtTE681/YaJtaB94lRVIDXbRhFRa8HfZecUEjndkpBY2CSz1jWX+gT
-         8Hqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRfP9Q+i7Ay9ave1Nb2rdFEUoiizS6kuuuwXUa1kBXL2baf2ENJYVzWshemt5q1hM8FToRBZr96/61B/gagYT0Z3ZU50N/81GgPuYt
-X-Gm-Message-State: AOJu0Yx1Sfjfgm3+DdEJ7GOV2e4/AXtlWbI1VJvywaS4yBL1rPv79Pf5
-	5kv4inWlbveQfqGudYH9LwqH7AUiEo4urtQ7NMPHEdHJxDOOEhuV
-X-Google-Smtp-Source: AGHT+IHOYfgi2IoBawBKKtV6RazPErmEGbc9wdhSXGegBYXfWADFYW/keo/GyPEHvhyPEnC5ocegjA==
-X-Received: by 2002:a17:907:9407:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a83aa09fe65mr454713066b.54.1724056427023;
-        Mon, 19 Aug 2024 01:33:47 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934564sm602592666b.126.2024.08.19.01.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 01:33:46 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH -tip] x86/boot/64: Strip percpu address space from gdt kernel load
-Date: Mon, 19 Aug 2024 10:33:13 +0200
-Message-ID: <20240819083334.148536-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724057349; c=relaxed/simple;
+	bh=bhYkbt/NfI1H8kYRGifKW3wSQpR5N/5WLn+jI521hXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kISgzcJ3B57KM8eMwDDUza61SFEr3nFzL3PkG6gGGJn5T9f7KP5TeWx0nNG3AR2EzlVH/xkGXbfZe3DgRxfWyYGY6IW2bOjzvpq3+Ay2UH4avmzhpYe4pAKU//4XrH+SWG5pMSq4wF+XwE+hew2ytp9xj8jwy44Zehb2xtXuoQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=ZUPsHP7x; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1724056421; x=1726648421;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bhYkbt/NfI1H8kYRGifKW3wSQpR5N/5WLn+jI521hXs=;
+	b=ZUPsHP7xoa5bFiztIh5KPvKXnb7MExVMqMIxz4IgVimxMDYPBGPPRJyLHVwDRHAf
+	fRbME7VBYPoeQAa5eGTuszO1hzqxPBbfC/cKVf8LAqYASpPGiRFMm7Ao82DQAlNv
+	0dN8ayldlAaZM+oNg0RW6PnwBCoNs7WwiCmEyDQ1D2Q=;
+X-AuditID: ac14000a-03251700000021bc-fd-66c30364c81f
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id A4.27.08636.46303C66; Mon, 19 Aug 2024 10:33:40 +0200 (CEST)
+Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
+ 2024 10:33:39 +0200
+Message-ID: <04bba41d-7e7f-4c3f-9f92-1b4165968c12@phytec.de>
+Date: Mon, 19 Aug 2024 10:33:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 0/9] TI K3 M4F support on AM62 and AM64 SoCs
+To: Andrew Davis <afd@ti.com>, Bjorn Andersson <andersson@kernel.org>, Mathieu
+ Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
+ Kristo <kristo@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Hari
+ Nagalla <hnagalla@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240802152109.137243-1-afd@ti.com>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <20240802152109.137243-1-afd@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWyRpKBRzeF+XCawZI/FhbvT01kt9jWYWOx
+	Zu85Jov5R86xWmw/0MlusfzzbHaLl7PusVlsenyN1eLyrjlsFs3nlSy27jnAZPHmx1kmi7v3
+	TrBY/N+zg93i/9kP7A78HptWdbJ53Lm2h81j85J6j/6/Bh7Hb2xn8vi8SS6ALYrLJiU1J7Ms
+	tUjfLoEr43fDN+aCRZIVD9/fYmxg3C3cxcjBISFgIjHlfVEXIxeHkMASJonmvVfYIZy7jBKz
+	Dm1g6WLk5OAVsJHo/vKBCcRmEVCVOPv/EVRcUOLkzCdgtqiAvMT9WzPYQWxhAReJz5O7mUAG
+	iQhMY5Y4O3MKG4jDLNDHKNE98QMrSJWQgIHEtq2bmUFsZgFxiVtP5oNtYBNQl7iz4RtYDaeA
+	oUTL5o8sEDUWEovfHGSHsOUlmrfOZoaYIy/x4tJysBoJIHvaudfMEHaoxNYv25kmMArPQnLs
+	LCTrZiEZOwvJ2AWMLKsYhXIzk7NTizKz9QoyKktSk/VSUjcxgqJShIFrB2PfHI9DjEwcjIcY
+	JTiYlUR4u18eTBPiTUmsrEotyo8vKs1JLT7EKM3BoiTOu7ojOFVIID2xJDU7NbUgtQgmy8TB
+	KdXAKDPFaDlDaLv9tdNdTX75pR+8dG6Wfn/q16b3ZK7FZKHbvsdZuYuPKHwt3NmyYfcy3ZVO
+	JjIrnEK7/8/2zy31rnA9lBvIXhuhEK4ZL+d0zcP1+F23prtlLqufHjFrtVj5ipf3kLyhgnXK
+	/1uzgi/0KrxlVzuwrfH1eacCrTUsp5/6P/t15+wtJZbijERDLeai4kQAk74BbLgCAAA=
 
-init_per_cpu_var() returns pointer in the percpu address space while
-rip_rel_ptr() expects pointer in the generic address space, resulting
-in:
 
-asm.h:124:63: error: passing argument 1 of ‘rip_rel_ptr’ from pointer to non-enclosed address space
 
-when strict address space checks are enabled.
+Am 02.08.24 um 17:21 schrieb Andrew Davis:
+> Hello all,
+> 
+> This is the continuation of the M4F RProc support series from here[0].
+> I'm helping out with the upstream task for Hari and so versions (v8+)
+> is a little different than the previous(v7-) postings[0]. Most notable
+> change I've introduced being the patches factoring out common support
+> from the current K3 R5 and DSP drivers have been dropped. I'd like
+> to do that re-factor *after* getting this driver in shape, that way
+> we have 3 similar drivers to factor out from vs trying to make those
+> changes in parallel with the series adding M4 support.
+> 
+> Anyway, details on our M4F subsystem can be found the
+> the AM62 TRM in the section on the same:
+> 
+> AM62x Technical Reference Manual (SPRUIV7A – MAY 2022)
+> https://www.ti.com/lit/pdf/SPRUIV7A
+> 
+> Thanks,
+> Andrew
+> 
+> [0] https://lore.kernel.org/linux-arm-kernel/20240202175538.1705-5-hnagalla@ti.com/T/
+> 
+> Changes for v11:
+>   - Added patch [2/9] factoring out a common function
+>   - Addressed comments by Mathieu from v10
+>   - Rebased on v6.11-rc1
+>   - Small reworks in driver for readability
 
-Add explicit casts to remove address space of the returned pointer.
+Tested on a AM62x & AM64x using phycore-am62x & phycore-am64x, so
 
-Found by GCC's named address space checks.
+Tested-by: Wadim Egorov <w.egorov@phytec.de>
 
-There were no changes in the resulting object file.
-
-Fixes: 11e36b0f7c21 ("x86/boot/64: Load the final kernel GDT during early boot directly, remove startup_gdt[]")
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/kernel/head64.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index a817ed0724d1..2b7a4e28e72f 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -560,9 +560,11 @@ void early_setup_idt(void)
- void __head startup_64_setup_gdt_idt(void)
- {
- 	void *handler = NULL;
-+	struct desc_struct *gdt =
-+		(void *)(__force unsigned long)init_per_cpu_var(gdt_page.gdt);
- 
- 	struct desc_ptr startup_gdt_descr = {
--		.address = (unsigned long)&RIP_REL_REF(init_per_cpu_var(gdt_page.gdt)),
-+		.address = (unsigned long)&RIP_REL_REF(*gdt),
- 		.size    = GDT_SIZE - 1,
- 	};
- 
--- 
-2.46.0
+> 
+> Changes for v10:
+>   - Rebased on v6.10-rc3
+>   - Added AM64 M4 support in DT
+>   - Addressed comments by Mathieu from v9
+> 
+> Changes for v9:
+>   - Fixed reserved-memory.yaml text in [1/5]
+>   - Split dts patch into one for SoC and one for board enable
+>   - Corrected DT property order and formatting [4/5][5/5]
+> 
+> Andrew Davis (1):
+>    remoteproc: k3: Factor out TI-SCI processor control OF get function
+> 
+> Hari Nagalla (7):
+>    dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+>    arm64: dts: ti: k3-am62: Add M4F remoteproc node
+>    arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
+>    arm64: dts: ti: k3-am64: Add M4F remoteproc node
+>    arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
+>    arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
+>    arm64: defconfig: Enable TI K3 M4 remoteproc driver
+> 
+> Martyn Welch (1):
+>    remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+> 
+>   .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 ++++
+>   arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  13 +
+>   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
+>   arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  13 +
+>   arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  19 +
+>   arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  19 +
+>   arch/arm64/configs/defconfig                  |   1 +
+>   drivers/remoteproc/Kconfig                    |  13 +
+>   drivers/remoteproc/Makefile                   |   1 +
+>   drivers/remoteproc/ti_k3_dsp_remoteproc.c     |  28 +-
+>   drivers/remoteproc/ti_k3_m4_remoteproc.c      | 667 ++++++++++++++++++
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c      |  28 +-
+>   drivers/remoteproc/ti_sci_proc.h              |  26 +
+>   13 files changed, 918 insertions(+), 54 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+>   create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+> 
 
 
