@@ -1,121 +1,459 @@
-Return-Path: <linux-kernel+bounces-291680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8013495657C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE58956580
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BDAE283325
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD851F23057
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB13C15B111;
-	Mon, 19 Aug 2024 08:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3565C15B10A;
+	Mon, 19 Aug 2024 08:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ChrBTBVZ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Xl9Xvzc5"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2080.outbound.protection.outlook.com [40.107.102.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707D1158538
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055821; cv=none; b=HPdOTZ5fF15VQAzJ0JADE8CyLrhFptQEDSw10QgWBxTtlIXHnRZ71RXjTp7XDeVjToYxGxdKD5zdgym3mW/RO2i7Fiy7WnRsxurfA/hXUWgfIZ8WZoMHF5zZS4Vb5RtXJTiHw4fKMvE8ZijoEcxzXa0/kX672L5QTz14NtdFvno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055821; c=relaxed/simple;
-	bh=kbDNaYfeN638CZB1xcia9reCdJjFXpCYzXtt0dZYcsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d7oxua7A1q2u7BDIfHMhC+xJnUVTmYmA34MjjvyB+GS2bNmqur69FSIwjTCAtKVzarywas3ftPazBUM3UMNi1oRCsuAKwvJ7PSOA2RSZPIaD+1fJF++RJOn7CaxnYBIE1aQ1BheE6do06YrECohdvErDaojo78FvtEvLpE2x4bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ChrBTBVZ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37193ef72a4so1872746f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724055817; x=1724660617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rFFRqaLMAKXLToOtJy9WdY/znvYXwwMfNOAODqDhSMo=;
-        b=ChrBTBVZTdTZXyv1XmRRePFmIGEQYUFDPSsCJVQGLtpSMWndh2ROnqumtaMqt1MwDF
-         oohzdEE9+DTxa/tT/L4pt3eNm3iHIjcdkPdO2G+5p1xaSF/VGij1gdPTCRW5lfFodteH
-         0/4ZDTRPGF7rmITf1lun3t/NFUwhnb06z53iDDKj2GgHEuS3pQ8Vp9vFIuA4NIfc8E42
-         cpaxmSVwSj0eqmyZRhLHkcJr8AiYPOybDh8ipdutEsu8Hi/DSaxo1Ba5mkmXWVovCSM+
-         exG6zcybPD4Jnfo4Ji3dR6ngDfkMFYkFQdEIUqy457a866Nj07u5qFqnqmCGcvUNRgcU
-         EzYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724055817; x=1724660617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFFRqaLMAKXLToOtJy9WdY/znvYXwwMfNOAODqDhSMo=;
-        b=cycxNDzW/dbAgRuSzs5njJ31zEMUFKydfLfFlcqSd4T4x7Il/PbBJ98GeDX/M6eZ9r
-         fRDPMhQxja9m3uDsd6e6tMNfaNOxLLHp3kCdqKbD38Bx8JAWsYyivFPamftUhhI8yveG
-         3Yyh5D+0/BmQDOf3s/DtyGVUBMWEEP/qOg7pQsjw89uruTzjj0SiS7vyudwdD81VrJcP
-         m1qdNAy9R2DhTK9Hm8TbCEPC8udL6sNYojPNKjfY/0WKBS5HJj5DmlwJZFBKSqG6CmFW
-         uHrxpnNLkuwDiRKhHafKO3Yy9tuBA7tIhR8+h6HCauGdZrm2fR9Zp1aHv85+3fwD7XSI
-         0EOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdtPkqE8Df8GcMA9j4ymlgF7ETcwMPsQObHOrCvF5YnQDLNN0YtI7L7rHfvlxoXBzjWC9R29fzAUACEdcoX+1QFOUYQ5hEKnhLv5YA
-X-Gm-Message-State: AOJu0YxyXucK72d/BlaWzRTcYZZ1wVtLkCrxDRbNRQyDWOrEYg6jLOiF
-	qQUg1myaqsLNjjSJmUxr5lIhtUGQS+XVZSBBTfqGjDNS3KaONyAtSU3w5KOEqrI=
-X-Google-Smtp-Source: AGHT+IGoPJX5KFTVTFHk/jojp0D2SHIUTsj+jz5BCHm6YGSsPInqjdE4c5SgCunL7XSQeKL6rhKr8w==
-X-Received: by 2002:a5d:5442:0:b0:371:8c79:73c1 with SMTP id ffacd0b85a97d-37194317aa2mr6963984f8f.2.1724055816248;
-        Mon, 19 Aug 2024 01:23:36 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3719485e2b2sm7908066f8f.33.2024.08.19.01.23.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 01:23:35 -0700 (PDT)
-Message-ID: <918bb9e4-02d9-4dca-bed2-28bb123bdc10@linaro.org>
-Date: Mon, 19 Aug 2024 10:23:33 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98519158538;
+	Mon, 19 Aug 2024 08:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724055846; cv=fail; b=mGMED4Y6n5yStqfiYMNL1DI3XmUMzB49GlvWpyunQjSrP1EMSpxtjfUwF4jU6eDqFp+RPCMkPSRS2JTqnx12GEwURia2fJzVD3QaI0bfJUTVlXmVjcXyLbR5lqaqCAAyRTL9OQXpCcrcok2+ITeiFIU0v/I1kVbjyQM147+uxiA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724055846; c=relaxed/simple;
+	bh=IREmgtroFoUHFDWVDY0ZXpj8TFRaae3nphsEgdx+ZBg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fcyyEtEPLvq80GUngX8jN5xFMsd686mMBeBsZRPgyt8eC+PxoJa29NmhcYkm2aEiE9MIxoTV9H4h4vU0/vEOxLraoRBpIDscAQqeLu6UcgCsjeODg/m8VUnx/JOC9NazN1E3CeoxWktzQ9yltQsos4HtIMFk/bMaR4WJ0v+1jRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Xl9Xvzc5; arc=fail smtp.client-ip=40.107.102.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NjQ8j1JQFvSyqfFZ9lDcSEe+xc9cWRTTWxi7CHDJT6CGBK0Yb5fcdClPJN4xoZaeK7lDyQ1YWyCRVjfb73hE/qZX2vFz+VV99vBHVQwwu8s7MMtloczcIizE9WWZIL0yTipMaFhRQPccd0MuhRlFNtY2XvUwHwn3Or3WiYz+DbAhb4DYtaJh1uJQr1oy8PZuI3qTteWtL4sBFdIaGlQuOfpDG1dyWJmWeuVLXwZpgNrMKitEoe46kT6ARp6GWbjB72rEQBEO01BFrLJ4SXGxq+DWfrcTFyUUkFFHHWHyPzx2NJCevt7O8IDB3x0WR+B08Hm2y84zHEpyf+iuVx9CGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ELVC0rh6nVNheMrn4kmhIIe7EmmoyZygm/0xHM3e18=;
+ b=wW11H4n/jyVvUvvwtImga4f9X65cZV5eA9qCoi4lJ+h68Z476RUaXeq08vOKCLQmNhea0/9zG6eO8CLz5Y5+Fb6wF63yj1u0qP/UkNNuKVkbZPaUHYBapPabtzEO/bvP0EzIlNZIwVM7HK+cCAj+LaJIpatdFmyEjaawTDK5btfIW6b91L/JIKNyF4lpNWjqOmqAB7tHlw2LNqIbD9Ww75Ju4eQvRF//Kj6eWoOu+RCz7CtGashdBhXCzrF3txuk/MD7b0PZ/A0DX3SaXbwOoqgOu9UEGdUbP4D/vMopD04DCMWPamHIvWaj8PRFrFmAXIoQBTuaRX4BI2WafEatjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ELVC0rh6nVNheMrn4kmhIIe7EmmoyZygm/0xHM3e18=;
+ b=Xl9Xvzc50B+4y7MJ/qxrnzXSjgoD4xliFdGp3c9EAVn+mzIKD6qyxqJuzv8FgR7UYuj8ERRWZxcKAyXgKtCm/Xxi9/TexbiOXSP0mFiNCn0TojO9Qa1fGpBs5oj3NPuZe9ge3xEAE/LDj3sf7rCN8oKagsaVfhjZY67jBCTSpoY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM4PR12MB6349.namprd12.prod.outlook.com (2603:10b6:8:a4::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.21; Mon, 19 Aug 2024 08:24:02 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 08:24:02 +0000
+Message-ID: <aec97449-b33f-4be7-bcd1-ef1cc8e47e75@amd.com>
+Date: Mon, 19 Aug 2024 10:23:55 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
+ track offsets
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
+ <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
+ Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, stable@vger.kernel.org
+References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+ <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
+ <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
+ <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+ <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+ <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
+ <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
+ <158d9e56-d8af-4d0f-980c-4355639f6ff8@fintech.ru>
+ <a80ec052-72a3-4630-8381-bc24ad3a6ab6@amd.com>
+ <66f8503f-4c36-4ac7-b66c-f9526409a0eb@fintech.ru>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <66f8503f-4c36-4ac7-b66c-f9526409a0eb@fintech.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0109.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] dt-bindings: timer: rockchip: Add rk3576 compatible
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Tim Lunn <tim@feathertop.org>, Muhammed Efe Cetin <efectn@protonmail.com>,
- Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>,
- Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-References: <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-9-detlev.casanova@collabora.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240802214612.434179-9-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB6349:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac9ef8c6-d654-411e-74e6-08dcc02847ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Tm16M1FzVUozRm9VTXk2U1VITFk0czZTbEFsODUwa2RxNi8xTVZKQXNucHYv?=
+ =?utf-8?B?em56TGU4RkJjbFNESWUrTDBGWWR1czZnYUhNRzZIeWtiUG5ndmZPcFBBL1Ur?=
+ =?utf-8?B?c29pYmt6N0sra3VmTG82QWVKWDA5YW94ZDVmYUVBY0NSdU9RMytHYzdWa0k5?=
+ =?utf-8?B?NXFZamNGUyswdUVEbXpqVkFVZUZBUG9ScVVQN0VTSHNZYktpYm9pQ0hZUEF5?=
+ =?utf-8?B?ZHpwL25xcUVBMFlDMXhSQjV3cG9VMVJ6Qk9xU0tCSVFqT2lJTDJNdkRiV2Zo?=
+ =?utf-8?B?U3l3SzE0eXFUR2xmTmpFanpUS2tQbFZGMGJ6b1BIN3ZFWmNvVTM2anNRSzUv?=
+ =?utf-8?B?aFBCVkFnSjhJZzRWeXNibUFsSTRlbEtEM2pxYWIzekY3V04vd29HY3Mza1hB?=
+ =?utf-8?B?cWIvRkw5d1hEaE1OZElJRmtZR2JCRGwwcGdHTEtqdVlwVk9IR2V3bjZCc3pR?=
+ =?utf-8?B?eWxnamJueTJMeDl1cHdjckd0TGplNmsvQmRXRm9tUVc3YTJvdnNXZ0ozMXd3?=
+ =?utf-8?B?K2pJeWg2ZVorY0IxclJodDQ4S3ViWjFSSUIyS0plLytlWDVmMElKUCtoYUNp?=
+ =?utf-8?B?T0dmWGEwbU5EY2FTNkFScS8zbElsOFhPNEo3b1BGRGlQRXR4NjRyWEZpQWto?=
+ =?utf-8?B?b0ZLVEJmNEY3WHFhbWNFUDh4YUFsdHVXOXNkcklMY3ZyUFIwNksvb1FpK3Fn?=
+ =?utf-8?B?amFQY2JHUktRSVR6a1dSdjZRc3k5ZCt1T0QrT2F5bHN3VEU5WVliek9pRm1y?=
+ =?utf-8?B?SHJxSEpXNkhwR3RibXdKUGJPZEJHdVBGbU5LRytpdVhEU3pNTjcyOGFOR2du?=
+ =?utf-8?B?UGpNQ1pDSFN1QlhDSlU4MU1jMjlQWWlmMXBwTVh4VCt0U0RKZlJnMlVPV2gv?=
+ =?utf-8?B?Q2FqbEJub3R3UEdCWDFCREdENUZmQndOZ1czZkZKVFZJOWdXSUxobStLVC9X?=
+ =?utf-8?B?L0htZk9wMXhzdStmNkJLMDZSWTl6Z2hzLzllQkFYeUFQWnFjbFdMQzFUb3ZY?=
+ =?utf-8?B?RCtkdDAwS3lvdmxGcFN5QlBucjQvZlZJaUQxVm5ncUNrVk5uTC9vanR6NytH?=
+ =?utf-8?B?VWFLOXpyQlVqYzdaK01hVng5R21JSnRUZGZ5cmRVcjh3NzcwWVUzbCt4bURu?=
+ =?utf-8?B?cXpmNW0ySUJ1ei9JcmwveDlMK2hoUVJDaWJlODZDRk0xRFc3aDNTcWl6RXBl?=
+ =?utf-8?B?UjI5SjBQWWNNOGFUSHpna2dCYnNpakN5UkJ2UngvTGFoeXNaR0RYR1JqcDFZ?=
+ =?utf-8?B?YXFqdTZXZVBZRjJCYmZkc2ZKd2M1QzVpS1RNOWdwRlVHZGdmYmZ6QkVmRzBp?=
+ =?utf-8?B?UU41UzhuNS9hMm44NEFMWjFpRVlmK2ZZTCtEcCsyRjFmR3oweHhQbWdvYTRn?=
+ =?utf-8?B?eGpxQnVudERSWXhYdWlqQzZrbThwMmhUNHp4YTRGSW9pYnNzMGtNUXY0Vllz?=
+ =?utf-8?B?R1RNakdDTlByTDhyaDdNWUo0VTR0WXltdTRJTzA5b2ZIR2NVOEpWVWpYVzFB?=
+ =?utf-8?B?eVEwRkNNdm9IdXEwU3E3ck9jWjZlaVd6RG1neGNSK0lDVkNmRHRaNVNvTjZ3?=
+ =?utf-8?B?WGVJd0s1QlNTc1hiR0lUb0NYY2Fpc2gvZGdPZnlONTFKK21zQVhNZG5sUTRP?=
+ =?utf-8?B?OTE4eC9nUzlxVDRVcW1NQVVJYldvcUpjVFR4VjNSWC9ObERKMVk0UnRmTzdI?=
+ =?utf-8?B?aFFua2lRbnJicmZRWUYvVm1wOGdiUFZzZjRVMXlMa2d1SkpWcDUyQnA2dFVB?=
+ =?utf-8?B?b01ySGRMQ1FOSVJHZWpQb25TSXpuRjYwS1l5RjJZWkRsZjY0MW1TTjh3M2hy?=
+ =?utf-8?B?ZVhwZjdFTUxSZUdlSmI1dz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?akFaQ1hEUHVHM3Fnbjh6dUxLWkZBUHZrNUpRdVozdzM2WWtMalN0TWI0RFhk?=
+ =?utf-8?B?UnRCTG5mMVN6T3ZDV2xRWjR2dFZ5WTgzbWdtV0dZd0tUQnNWYU14VmNnTjlD?=
+ =?utf-8?B?STdFMlF6bnYwY3A3MWh1dUZqQzQ0STJxV0ZDSCtkT0RMa0hGUnFCdWM0VXpB?=
+ =?utf-8?B?ZUZ6U3BaQUZyUFlZRm9ycDZESzdNZnZVTnB2NjY1WnZNWEwzc3B5SXN6c0hk?=
+ =?utf-8?B?MjhkUEFCQXpQUFZJT0p6N1BKWE1WM0FpMSs4cjlXbi9BZHV4U1pnYjg3RkF0?=
+ =?utf-8?B?Q3YzZDVNSzhwUDNUalR6VTBDMzlHK2dYWFNOQ29lOUZpdXV2a2xTenNWcGxn?=
+ =?utf-8?B?bkowMnA4amtsVXJmVC91d0toTW5uSjJ5RUFjRUV4QTYwMHI0em5oVHVzNmVU?=
+ =?utf-8?B?TEZQZjNBRjlTUjhDK3pERFpZM3JRSEZmUzIyczNoS3Q0K1Y4UkpmYzBKcWpm?=
+ =?utf-8?B?aEVWaGRlZDZMNmFScUpmclZoM1pkRDBnWE9KdFAvYkRHZldxSWk1eFFLeEk5?=
+ =?utf-8?B?dGtBYlhWU1FuT3p1bG8wUnZPVlhBVk1ubFpFTnhvNG9oa1dsNGVXc2VCRjBh?=
+ =?utf-8?B?aVJjM3A2WlpTd0RQOW10Y2h5YWtPeTFUbUl2K21TSVBDbk9KS0RvSVA5M2dw?=
+ =?utf-8?B?cGlkRERWaGtsTDhUOXlSMzhyMm85S2FUL3BSM1JKcEhyVHJpMjRlQXd6Z1F4?=
+ =?utf-8?B?NzFzdTN4Nk1tNUxCVmNFcU5KVWRFSlFGYUR6Y0JlaFBUT210WG1ENUdzNmtD?=
+ =?utf-8?B?eVphZTRTZ2s1U2FBUFhId0xoTENwRTZETkNseENiRitZWDM3MHA5YTlyQmlT?=
+ =?utf-8?B?Zk4vQ2Vva0t6cnltaGdTcDNsV29qWXVjbWVoL3Ywb1dnTlhJMStBcjhuOENn?=
+ =?utf-8?B?eWZpOWdjbnNuK2twbHc0SWNFV3BrRkR2Z295Zy93UHR4SktIbHFEOTc3eEpS?=
+ =?utf-8?B?aWlIeEU4UklmU1NDQlZocUVDbXZLczYvRHFFTkNCQUhVSmVKTWNnekZzb2Js?=
+ =?utf-8?B?WkIxOS9PZzF4VkF4QWEwVWgvT0tFbE1OZ0Q4OVZrWDFjcEx1dnBqWDhDZ1dF?=
+ =?utf-8?B?RWpnK05XMUp4NU1aNHUzK1JQQklKZHE0andzZmdpSEp3OXBGcWxPeEFiNFp6?=
+ =?utf-8?B?SnlwTnF2dkR2TFJMQ2pjQkMyMlJ5UTJwblVDdG1SOFdCaUZwYkJITmtnbnUr?=
+ =?utf-8?B?MXZYSEkxM3BFYW5Bd204OWtGeUo0RndkdUNXVlFJK0FWZkl4WWF1bFVBOXIx?=
+ =?utf-8?B?Ylcra0hDS3puKzNpNVdIRFpXd2ZYRmtxNmlzNVUvOUJPZkl6TTZIb1Y1dnpn?=
+ =?utf-8?B?TVpVU1l4ZFVsOHdkemlkMHlCT3RsS21ENCtnRXVTRmwwbDU1UWxxajU0N0RU?=
+ =?utf-8?B?T3cwekFNT2JYR2VBSUR6eUdMU1I5Q1VWVERVazNHdGdkM0RYUk5pYmhFY0ly?=
+ =?utf-8?B?OGFiVHhtR2MvdllDV002RWNoWStjdzBQeUo5UGIwWkxLbG43Z2E2bE9zR1Va?=
+ =?utf-8?B?eXpxUFR0MFlYTzkzMnRHK0JwT3JZZmgvRG1JNjNnMnB0b0cyaVZPN3lielpk?=
+ =?utf-8?B?ai9tUHd0U0FMeC9PU2dyTXkrbk9FcmZxYUFIdDZDSEhTQ0Y1WjNUNE54SnZy?=
+ =?utf-8?B?VElvbG4vZUpZSnpLTStQa0FYMit3b28wZXloa0F3bUVWWnlWb05Qby8xcFhM?=
+ =?utf-8?B?eHlTUGx2YlZaUTZoaTl0VDgvS1lvbVJ1ZDBYTkVIMjhpeFR6TmxhQUQrS1h5?=
+ =?utf-8?B?QkxUeDlJRS9qc3FYYjFqeWRadHh1Q1ZtQnFCeTBlUmZvSkVvV09JZDNqVndp?=
+ =?utf-8?B?T3cxTk9lamUveFZ6bitFamdacU9sM3UvMlFBanFrNjhQdUtDSU9Ic2ZEY3gr?=
+ =?utf-8?B?QWs5ekYwcjJ6Vk1uOHNJbU5GYjVzYXhHMjJvc04rWDdWaktZR0pkMGdPd2Nm?=
+ =?utf-8?B?ckI5RjZDemU4LzQrMGdNaVZlMHJramdXN1E2eENiQm14aGdxLzRrRXZjVElm?=
+ =?utf-8?B?UDk5YTV3ZG5pTlJjOStBeHpXYitTZjVKTnhlVDFHVEo4Z3VJT3VtQURQMUZM?=
+ =?utf-8?B?eXRKZER4NEhpaG9rMFF4emNmZEhqV2tqV0ViVWdSUVM2dlZZbGpKVXJyaXYw?=
+ =?utf-8?Q?Q138=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac9ef8c6-d654-411e-74e6-08dcc02847ec
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 08:24:01.9096
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZX2jobFuSkxfIsiwmf5WvPGgAd22DW5rq65kDCeLWiWBtXxpdjtxRu0IYpZH01Cw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6349
 
-On 02/08/2024 23:45, Detlev Casanova wrote:
-> Add compatible string for Rockchip RK3576 timer.
-> 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+Am 05.08.24 um 09:34 schrieb Nikita Zhandarovich:
+>
+> On 7/30/24 23:56, Christian König wrote:
+>> Am 30.07.24 um 19:36 schrieb Nikita Zhandarovich:
+>>> On 7/29/24 11:12, Christian König wrote:
+>>>> Am 29.07.24 um 20:04 schrieb Christian König:
+>>>>> Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 7/29/24 02:23, Christian König wrote:
+>>>>>>> Am 26.07.24 um 14:52 schrieb Alex Deucher:
+>>>>>>>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
+>>>>>>>> <christian.koenig@amd.com> wrote:
+>>>>>>>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
+>>>>>>>>>> Several cs track offsets (such as 'track->db_s_read_offset')
+>>>>>>>>>> either are initialized with or plainly take big enough values
+>>>>>>>>>> that,
+>>>>>>>>>> once shifted 8 bits left, may be hit with integer overflow if the
+>>>>>>>>>> resulting values end up going over u32 limit.
+>>>>>>>>>>
+>>>>>>>>>> Some debug prints take this into account (see according
+>>>>>>>>>> dev_warn() in
+>>>>>>>>>> evergreen_cs_track_validate_stencil()), even if the actual
+>>>>>>>>>> calculated value assigned to local 'offset' variable is missing
+>>>>>>>>>> similar proper expansion.
+>>>>>>>>>>
+>>>>>>>>>> Mitigate the problem by casting the type of right operands to the
+>>>>>>>>>> wider type of corresponding left ones in all such cases.
+>>>>>>>>>>
+>>>>>>>>>> Found by Linux Verification Center (linuxtesting.org) with static
+>>>>>>>>>> analysis tool SVACE.
+>>>>>>>>>>
+>>>>>>>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
+>>>>>>>>>> tiling informations v11")
+>>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>>> Well first of all the long cast doesn't makes the value 64bit, it
+>>>>>>>>> depends on the architecture.
+>>>>>>>>>
+>>>>>>>>> Then IIRC the underlying hw can only handle a 32bit address
+>>>>>>>>> space so
+>>>>>>>>> having the offset as long is incorrect to begin with.
+>>>>>>>> Evergreen chips support a 36 bit internal address space and NI and
+>>>>>>>> newer support a 40 bit one, so this is applicable.
+>>>>>>> In that case I strongly suggest that we replace the unsigned long
+>>>>>>> with
+>>>>>>> u64 or otherwise we get different behavior on 32 and 64bit machines.
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>> Christian.
+>>>>>>>
+>>>>>> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as
+>>>>>> well
+>>>>>> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
+>>>>>>
+>>>>>> On the other note, should I also include casting to wider type of the
+>>>>>> expression surf.layer_size * mslice (example down below) in
+>>>>>> evergreen_cs_track_validate_cb() and other similar functions? I can't
+>>>>>> properly gauge if the result will definitively fit into u32, maybe it
+>>>>>> makes sense to expand it as well?
+>>>>> The integer overflows caused by shifts are irrelevant and doesn't need
+>>>>> any fixing in the first place.
+>>>> Wait a second.
+>>>>
+>>>> Thinking more about it the integer overflows are actually necessary
+>>>> because that is exactly what happens in the hardware as well.
+>>>>
+>>>> If you don't overflow those shifts you actually create a security
+>>>> problem because the HW the might access at a different offset then you
+>>>> calculated here.
+>>>>
+>>>> We need to use something like a mask or use lower_32_bits() here.
+>>> Christian,
+>>>
+>>> My apologies, I may be getting a bit confused here.
+>>>
+>>> If integer overflows caused by shifts are predictable and constitute
+>>> normal behavior in this case, and there is no need to "fix" them, does
+>>> it still make sense to use any mitigations at all, i.e. masks or macros?
+>> Well you stumbled over that somehow, so some automated checker things
+>> that this is a bad idea.
+>>
+>>> Leaving these shifts to u32 variables as they are now will achieve the
+>>> same result as, for example, doing something along the lines of:
+>>>
+>>> offset = lower_32_bits((u64)track->cb_color_bo_offset[id] << 8);
+>>>
+>>> which seems clunky and unnecessary, even if it suppresses some static
+>>> analyzer triggers (and that seems overboard).
+>>> Or am I missing something obvious here?
+>> No, it's just about suppressing the static checker warnings.
+>>
+>> I'm also not 100% sure how that old hw works. Alex mentioned that it is
+>> using 36bits internally.
+>>
+>> So it could be that we need to switch to using u64 here. I need to
+>> double check that with Alex.
+>>
+>> But using unsigned long is certainly incorrect cause we then get
+>> different behavior based on the CPU architecture.
+>>
+>> Thanks for pointing this out,
+>> Christian.
+>>
+> Hi,
+>
+> Christian, did you get a chance to go over hw specifics with Alex?
 
-Applied, thanks
+Sorry I'm just back from vacation. Give me a week to dig through my 
+mails and talk with Alex.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Thanks,
+Christian.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> I'd really like to get on with v2 patch but I can't really start
+> properly if I don't know what (and how) exactly to fix.
+>
+> I am also hesitant to split the fix into parts and I'd rather do the
+> whole int overflow mitigation in one set.
+>
+> Thanks,
+> Nikita
+>
+>>>> Regards,
+>>>> Christian.
+>>>>
+>>>>> The point is rather that we need to avoid multiplication overflows and
+>>>>> the security problems which come with those.
+>>>>>
+>>>>>> 441         }
+>>>>>> 442
+>>>>>> 443         offset += surf.layer_size * mslice;
+>>>>> In other words that here needs to be validated correctly.
+>>>>>
+>>> Agreed, I think either casting right operand to u64 (once 'offset' is
+>>> also changed from unsigned long to u64) or using mul_u32_u32() here and
+>>> in other places should suffice.
+>>>
+>>>>> Regards,
+>>>>> Christian.
+>>>>>
+>>>>>> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
+>>>>>> 445                 /* old ddx are broken they allocate bo with
+>>>>>> w*h*bpp
+>>>>>>
+>>>>>> Regards,
+>>>>>> Nikita
+>>>>>>>> Alex
+>>>>>>>>
+>>>>>>>>> And finally that is absolutely not material for stable.
+>>>>>>>>>
+>>>>>>>>> Regards,
+>>>>>>>>> Christian.
+>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>>>>>>>>>> ---
+>>>>>>>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
+>>>>>>>>>> actually ends up taking values high enough to cause an overflow,
+>>>>>>>>>> nonetheless I thought it prudent to cast it to ulong as well.
+>>>>>>>>>>
+>>>>>>>>>>       drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
+>>>>>>>>>>       1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>>> index 1fe6e0d883c7..d734d221e2da 100644
+>>>>>>>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>>> @@ -433,7 +433,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_cb(struct
+>>>>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>>>>                   return r;
+>>>>>>>>>>           }
+>>>>>>>>>>
+>>>>>>>>>> -     offset = track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>>           if (offset & (surf.base_align - 1)) {
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
+>>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>>                            __func__, __LINE__, id, offset,
+>>>>>>>>>> surf.base_align);
+>>>>>>>>>> @@ -455,7 +455,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_cb(struct
+>>>>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>>>>                                   min = surf.nby - 8;
+>>>>>>>>>>                           }
+>>>>>>>>>>                           bsize =
+>>>>>>>>>> radeon_bo_size(track->cb_color_bo[id]);
+>>>>>>>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>> +                     tmp = (unsigned
+>>>>>>>>>> long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>>                           for (nby = surf.nby; nby > min; nby--) {
+>>>>>>>>>>                                   size = nby * surf.nbx *
+>>>>>>>>>> surf.bpe *
+>>>>>>>>>> surf.nsamples;
+>>>>>>>>>>                                   if ((tmp + size * mslice) <=
+>>>>>>>>>> bsize) {
+>>>>>>>>>> @@ -476,10 +476,10 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p,
+>>>>>>>>>> unsigned i
+>>>>>>>>>>                           }
+>>>>>>>>>>                   }
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d cb[%d] bo too small
+>>>>>>>>>> (layer
+>>>>>>>>>> size %d, "
+>>>>>>>>>> -                      "offset %d, max layer %d, bo size %ld,
+>>>>>>>>>> slice
+>>>>>>>>>> %d)\n",
+>>>>>>>>>> +                      "offset %ld, max layer %d, bo size %ld,
+>>>>>>>>>> slice
+>>>>>>>>>> %d)\n",
+>>>>>>>>>>                            __func__, __LINE__, id, surf.layer_size,
+>>>>>>>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
+>>>>>>>>>> - radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
+>>>>>>>>>> << 8,
+>>>>>>>>>> +                     mslice,
+>>>>>>>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d problematic surf: (%d %d)
+>>>>>>>>>> (%d
+>>>>>>>>>> %d %d %d %d %d %d)\n",
+>>>>>>>>>>                            __func__, __LINE__, surf.nbx, surf.nby,
+>>>>>>>>>>                           surf.mode, surf.bpe, surf.nsamples,
+>>>>>>>>>> @@ -608,7 +608,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>>>>                   return r;
+>>>>>>>>>>           }
+>>>>>>>>>>
+>>>>>>>>>> -     offset = track->db_s_read_offset << 8;
+>>>>>>>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
+>>>>>>>>>>           if (offset & (surf.base_align - 1)) {
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d stencil read bo base
+>>>>>>>>>> %ld not
+>>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>>                            __func__, __LINE__, offset,
+>>>>>>>>>> surf.base_align);
+>>>>>>>>>> @@ -627,7 +627,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>>>>                   return -EINVAL;
+>>>>>>>>>>           }
+>>>>>>>>>>
+>>>>>>>>>> -     offset = track->db_s_write_offset << 8;
+>>>>>>>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
+>>>>>>>>>>           if (offset & (surf.base_align - 1)) {
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>>>>> not
+>>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>>                            __func__, __LINE__, offset,
+>>>>>>>>>> surf.base_align);
+>>>>>>>>>> @@ -706,7 +706,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>>>>                   return r;
+>>>>>>>>>>           }
+>>>>>>>>>>
+>>>>>>>>>> -     offset = track->db_z_read_offset << 8;
+>>>>>>>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
+>>>>>>>>>>           if (offset & (surf.base_align - 1)) {
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d stencil read bo base
+>>>>>>>>>> %ld not
+>>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>>                            __func__, __LINE__, offset,
+>>>>>>>>>> surf.base_align);
+>>>>>>>>>> @@ -722,7 +722,7 @@ static int
+>>>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>>>>                   return -EINVAL;
+>>>>>>>>>>           }
+>>>>>>>>>>
+>>>>>>>>>> -     offset = track->db_z_write_offset << 8;
+>>>>>>>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
+>>>>>>>>>>           if (offset & (surf.base_align - 1)) {
+>>>>>>>>>>                   dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>>>>> not
+>>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>>                            __func__, __LINE__, offset,
+>>>>>>>>>> surf.base_align);
+
 
