@@ -1,116 +1,109 @@
-Return-Path: <linux-kernel+bounces-292305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D554E956DC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:46:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688AE956D37
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871C21F21C54
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7B91C21B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B39173332;
-	Mon, 19 Aug 2024 14:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB32172BA9;
+	Mon, 19 Aug 2024 14:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a4YSnrJE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ST0oRLSH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226C8173326
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5717109B;
+	Mon, 19 Aug 2024 14:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078802; cv=none; b=FU+KvQVfENfn1U88nflv2k7DIncup5m3+q/ii8/xK4hi7P0uR3QtRFtOkdc0zpOYu1Q8w4ZQJazRApTjYIylWgLHHjmxgCErXykXymCeNpeSGIRWk7W6+s7bbfXJxgO4rcqBY0mqDlpW775ZZBcrDQgqKXsIZOZq6gSPcspv6qI=
+	t=1724077745; cv=none; b=ZfZPRyhpkf+CXlpatodGZhhaETI6gGKFLk7NO2JqI66kALxhVGSfbkQzks5Eu88scKX7IPENkL7XBTEfghVEp6Hr+mFrixLdI7yhESs/kiSZUqwU2sRN4Sv3/r911SjZFm7yrf8BHYuffaABGd3rC7XuD/9Gm/zgzW+4TiOarhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078802; c=relaxed/simple;
-	bh=dXCbV8piiQWmpeCw7SmqLNnEnUsqlk0VIhuEgQxA6PM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jI+LAf5wCb6pbUutaF/PBOnCdybwx7XDP1OV0oRlg7YZ4SoQ0FzOEf7K0Yfw7Kzck/TaHslYqodRDeYcqch5EYHAZLwB3UoiMu+uh/DT+43nuChfbWwp4BYHnJb5hwpqVStGv1NJbYly9LR7mCNvV8HxwMutbOruhwpaQ2kmpyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a4YSnrJE; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724078801; x=1755614801;
-  h=date:message-id:from:to:cc:subject:in-reply-to:
-   references:mime-version;
-  bh=dXCbV8piiQWmpeCw7SmqLNnEnUsqlk0VIhuEgQxA6PM=;
-  b=a4YSnrJEx6FWkQMET7JfryaAP2pJajXivVbRbMLtNCBPBg/qm2O6zjZZ
-   s6an1dOOP23D3UAKnESv1pZc+uQwDeSdw8HvZxZcSUV+C/7+2L038i+L8
-   MLoPXJp3w9p/tAvXqZpoffcKKNntkVgQRDAu94ABeOET1QuarsSCHCAw3
-   wMnVJRbco2nlWDNKABkcWybqmvb2Zi6mAcbZpHKccR3W7AahNtLTbeOlc
-   9yaTN4a/sNyb3DrNGUXTlxmcyppelKLuGi/2uPhIYNTaslFQpKFsS+tYo
-   VHAOn7ph3KbnGqTqlOw+r/kAzxifxmY03uSdlJbwFEzmZaGBo8YI79HmH
-   A==;
-X-CSE-ConnectionGUID: v6yroeNiRXmYWDU/kZajQA==
-X-CSE-MsgGUID: gLt2iLzeRZuCKrxwotHXPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33486458"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="33486458"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:46:40 -0700
-X-CSE-ConnectionGUID: YjRvIG5vQqm1nA1Q9yWRug==
-X-CSE-MsgGUID: KVivW2jVSsWN+Vtoldbyvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60975171"
-Received: from peterval-mobl1.amr.corp.intel.com (HELO adixit-arch.intel.com) ([10.124.114.37])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:46:39 -0700
-Date: Mon, 19 Aug 2024 07:28:45 -0700
-Message-ID: <87le0s8u3m.wl-ashutosh.dixit@intel.com>
-From: "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] drm/xe/oa: Use vma_pages() helper function in xe_oa_mmap()
-In-Reply-To: <20240819095751.539645-2-thorsten.blum@toblux.com>
-References: <20240819095751.539645-2-thorsten.blum@toblux.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
- Emacs/29.4 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724077745; c=relaxed/simple;
+	bh=MdlQwQfefZ1L3XXxLQMT4cSITw5lmaaVPHUx7XMCkvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlYzcBGOzgWcA/yWyS4s6cIZuXja33kyVF/t8hGphNKS8MJrdP7qiNgZumoKdy5oh9Hxwj5GQmFaAGWoBamc+PyJNRXJ891FrwfPJVGYWurUVHx6tCx5GhHoU/QayqxzCenDWo5b7bpSFTPUUq0QepOQlrk39+ZzmiQvqxxwlq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ST0oRLSH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Dzw80pACf9PyVIUJFbVzVkCMS0xplokp1d1HIwEGeIg=; b=ST0oRLSHEfDPMth9UZeInVBB1l
+	fuUb2vGYqGChci6u302h5RAq3buvcQ/mAYDf5FhycVHPtPpOkTBEgyaSCFebjLiGOJhwJQY2u2LzY
+	VaNkuwDgqY71H0o1l9qwTdDMs2XRp98lNwHRcc5U0r2EyY41sL9tNVFlQ4mrifXwx/Is=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sg3NM-0057W1-Si; Mon, 19 Aug 2024 16:28:52 +0200
+Date: Mon, 19 Aug 2024 16:28:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Pieter <vtpieter@gmail.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
+ change_tag_protocol support
+Message-ID: <a45ef0cf-068e-4535-8857-fbea25603f32@lunn.ch>
+References: <20240819101238.1570176-1-vtpieter@gmail.com>
+ <20240819101238.1570176-2-vtpieter@gmail.com>
+ <20240819104112.gi2egnjbf3b67scu@skbuf>
+ <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
+ <90009327-df9d-4ed7-ac6c-be87065421ba@lunn.ch>
+ <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+ <9e5cc632-3058-46b2-8920-30c521eb1bbd@lunn.ch>
+ <CAHvy4Aq=as=K48NZHt3Ek8Yg_AzyFdsmTe92b8SFobzUBM9JNA@mail.gmail.com>
+ <20240819140536.f33prrex2n3ifi7i@skbuf>
+ <CAHvy4AqRbsjvU4mtRXHuu6dvPCgGfvZUUiDc3OPbk_PtdNBpPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHvy4AqRbsjvU4mtRXHuu6dvPCgGfvZUUiDc3OPbk_PtdNBpPg@mail.gmail.com>
 
-On Mon, 19 Aug 2024 02:57:52 -0700, Thorsten Blum wrote:
->
-> Use the vma_pages() helper function and remove the following
-> Coccinelle/coccicheck warning reported by vma_pages.cocci:
->
->   WARNING: Consider using vma_pages helper on vma
->
-> Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On Mon, Aug 19, 2024 at 04:20:31PM +0200, Pieter wrote:
+> Hi Vladimir,
+> 
+> > On Mon, Aug 19, 2024 at 03:43:42PM +0200, Pieter wrote:
+> > > Right so I'm managing it but I don't care from which port the packets
+> > > originate, so I could disable the tagging in my case.
+> > >
+> > > My problem is that with tagging enabled, I cannot use the DSA conduit
+> > > interface as a regular one to open sockets etc.
+> >
+> > Open the socket on the bridge interface then?
+> 
+> Assuming this works, how to tell all user space programs to use br0 instead
+> of eth0?
 
-Sorry Thorsten, looks like we forgot to merge it last time. I have merged
-this just now. Thanks for the patch.
+How did you tell userspace to use eth0?
 
-> ---
->  drivers/gpu/drm/xe/xe_oa.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/xe/xe_oa.c b/drivers/gpu/drm/xe/xe_oa.c
-> index 6d69f751bf78..133292a9d687 100644
-> --- a/drivers/gpu/drm/xe/xe_oa.c
-> +++ b/drivers/gpu/drm/xe/xe_oa.c
-> @@ -1244,8 +1244,7 @@ static int xe_oa_mmap(struct file *file, struct vm_area_struct *vma)
->	vm_flags_mod(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_DONTCOPY,
->		     VM_MAYWRITE | VM_MAYEXEC);
->
-> -	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages ==
-> -		  (vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
-> +	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages == vma_pages(vma));
->	for (i = 0; i < bo->ttm.ttm->num_pages; i++) {
->		ret = remap_pfn_range(vma, start, page_to_pfn(bo->ttm.ttm->pages[i]),
->				      PAGE_SIZE, vma->vm_page_prot);
-> --
-> 2.46.0
->
+In general, you don't tell userspace anything about interfaces. You
+open a client socket to a destination IP address, and the kernel
+routing tables are used to determine the egress interface. In general,
+it will use a public scope IP address from that interface as the
+source address.
+
+The conduit interface should not have an IP address, its just
+plumbing, but not otherwise used. Your IP address is on br0, so by
+default the kernel will use the IP address from it.
+
+	Andrew
+
 
