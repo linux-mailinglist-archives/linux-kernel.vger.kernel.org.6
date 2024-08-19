@@ -1,165 +1,135 @@
-Return-Path: <linux-kernel+bounces-292196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA6B956C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:39:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A64956C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70271B22F13
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AF7281803
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A25B16C6A2;
-	Mon, 19 Aug 2024 13:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5216C6BF;
+	Mon, 19 Aug 2024 13:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhTwpXUO"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2LEim/Y0"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27C116B74D;
-	Mon, 19 Aug 2024 13:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09CF16C438;
+	Mon, 19 Aug 2024 13:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074738; cv=none; b=OiZC3FUH8OZjH5+57B1gMStK4s9zUkwhfBoDzJIlv0znB63T5oZCOuCyuYiPQEgUnLb9+tZ/sFWJjeIO525O82iU+x6ykOZG2VIYA63RFoF6+1HU7PvQXprOz7xeHgsK7XHlkneUFobm+lLxbHyIiCrCnYoTrrnDQ4x/Xe/JQ04=
+	t=1724074950; cv=none; b=PxkMeM1KuILHSJ+k1QBv5DMhJF/RXXgXMIOFHYHMd60qjMAnH7ligbcXrrjsHRgmvqL7V3sExPFqKIVSoY1YB/IOZuReXnaHNaeg4nIEYQFxy0Bai4QzBneg+YCJcn6HTme8SHMtu+FzeOlfTVlzSiQXQthYytx2x+QHu/1AiJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074738; c=relaxed/simple;
-	bh=wRu1xZDJ5B/cDB8gd6UM9yeFLY4fIjFWgshGKH81a3I=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9ToVweYcvPkDlNtAHBgZoN1ydTSpdHmjFnOkCspqnrhckF4noqKPDuvzG9YMv/p2iYDXJga1CcBGPJcZXrNe8Vwwdm5s26XpWMVQ9gWCyILrkBvbH/s4nk4lhjtHVz++IYhou6RQtAxpOJ6kCQmH9GX/YLhjgM82bIlfizxLHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IhTwpXUO; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53310adb4c3so4581807e87.3;
-        Mon, 19 Aug 2024 06:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724074735; x=1724679535; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dchi+d1FigESowVeyACaqiWkyTYVXfwbBg371ZQ0xUM=;
-        b=IhTwpXUOYQRnUK4mahsQspDdJHGz4qyMCwywzYlQh7IbEeNR9Yc0H/+wXnEArYNoyl
-         G+A5OJh++j31s32Gk2sjRm/scKZaG/oZ1M0BCGXjjZxr3VxmGpCIfeQQJ/19gzEXCib1
-         LOGWeH3BhxOaD57Gk+8fnBedPFYITeRG5+LshxqTgfxkBX0f3SEYETQgRgW1ySPRk0Y6
-         SX1f7u8hYUX2hBsmUZzfbO0NeK9L70yBY8G+T0b75vRnEKeookdrVh90FXKCrDEjO5vt
-         aaPNi2m+zn0u6ENVOFqoYLVBg4qOjitVmRaFTiDM6jdrhvIDr+RqbjG8HKZjt5ltWOMs
-         UuxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724074735; x=1724679535;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dchi+d1FigESowVeyACaqiWkyTYVXfwbBg371ZQ0xUM=;
-        b=S9kvNkRhMpkdFjb5+NRLGdzdJz6g7907e0HPslkLYuoNbEYuv8IxkppoU3EcgViQCH
-         Xzvv9UAO5xiTuUzufXlXvGBYWEnX/wEIi8EvDK5lSH9ggZSXgfVyo3nP/PA3Vi5wWU5J
-         IRcDYDLOg0JBupu9uMEnm9qnbrbP2tCA6+9rAOdiO7PihWPp/6NYgKhX/7IrytSk1/aa
-         w+37BWL4Q++4/ZLCQRJa8OpP1JZa0JSQry1kL+GApZbOwdH/jsyy8/6wIKp0QkzlhSs6
-         hMMOkbPicmJ5sGPaHIucPP9w100Z/ay0M864+2MxTzrG2hg1PB6sgYlctqqU/EfCzGiP
-         r1Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWnD07sziqh/r4P0XNCae8nMeZQ47n2uqmjIt14/QAX8h3VTBNV4IrtJOEZV/w18USmLqeo5aZ4BFpwPn6j3BJdhqlVGZrMUR4t694aAdCk48PtCC7SrYZXVYdZxmuAryZ9UTV
-X-Gm-Message-State: AOJu0Yw7pSShXBgumH5QxXSI/z92/ZEngYTr2zxxlETaOXvcge9YMicd
-	+9fQgtaqwRUmlgMqDpB6POQ6RqFjNc54ReK790eiZURXpD15Awzf
-X-Google-Smtp-Source: AGHT+IGgCQ8QlkxeXJHiSTrcYm/QwMl+Mxc8eXrDm08JIav0nCmzCnuSlbcUT4umnCnAre8gxyGPTw==
-X-Received: by 2002:a05:6512:b20:b0:52c:86d7:fa62 with SMTP id 2adb3069b0e04-5331c6aedd0mr9099225e87.23.1724074734287;
-        Mon, 19 Aug 2024 06:38:54 -0700 (PDT)
-Received: from pc636 (host-90-233-222-199.mobileonline.telia.com. [90.233.222.199])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d424b31sm1529318e87.274.2024.08.19.06.38.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 06:38:53 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 19 Aug 2024 15:38:51 +0200
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Michal Hocko <mhocko@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <ZsNK61ilMr9wMzJl@pc636>
-References: <20240808122019.3361-1-hailong.liu@oppo.com>
- <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
- <ZrXiUvj_ZPTc0yRk@tiehlicka>
- <ZrXkVhEg1B0yF5_Q@pc636>
- <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
- <20240816091232.fsliktqgza5o5x6t@oppo.com>
- <Zr8mQbc3ETdeOMIK@pc636>
- <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <ZsMzq4bAIUCTJspN@pc636>
- <20240819125738.vbjlw3qbv2v2rj57@oppo.com>
+	s=arc-20240116; t=1724074950; c=relaxed/simple;
+	bh=xdq0mAE8Ba0fmk6rNvkOjgWo+w0dnu+VNJwVS6SS2l8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LiXwHx1UUoe1C2ehh+hhK/YnKqiZK114YyiaAL4Co/WIaVy+9gMFfNPNaKob3Jy1IRezGOUNzwd4vO14kSohOoFmVjzELJxq7rnG4EMG04sZqEoQwsiEaiQq4SuHZiWTcUyF7QweceVs+fj7Hvh64aUX5KYQJERDvI4FO5Azcmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2LEim/Y0; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J8N2dQ014235;
+	Mon, 19 Aug 2024 15:41:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	bQulpxG1VnLqgrCD3WCcMJwDbL8UJbzPwnhyTZrwwt8=; b=2LEim/Y0kyl6Pi9c
+	IqYr2SLsPKLLWnPxWH6m6RvE+DrYzvl+EjT3Pnlwg8/3zpMmSb0k3lmAKyHx49N2
+	KlWr3TofL5NDt+lm1d72dyIgoh1DGpPcltVRFstrPmX/hCDsh9eXTQhH8pyzLa2Q
+	qePnzdn74bWMpB1aUZpPRkP8DY88ExqINm+rXJYDitlto03z/fIojx/mydKysonQ
+	Ug37CYDrDYALBP4gvRch4PCI97Q8Izd0cRx15XPKFxN9a1lsCV6lB/hNUY+b1tJ2
+	ix2nWTTLCGgeyLpybXwrojMhV8J1fL65DlYQ7qT9tLyIryw5TPG1Een9ll6539WH
+	JXtf5w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 412h9fppv2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 15:41:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3C9D94002D;
+	Mon, 19 Aug 2024 15:41:40 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6B1ED26FD11;
+	Mon, 19 Aug 2024 15:40:50 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 19 Aug
+ 2024 15:40:50 +0200
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 19 Aug
+ 2024 15:40:49 +0200
+Message-ID: <9dc935e0-a980-41a0-b4bb-ae54453bd3a3@foss.st.com>
+Date: Mon, 19 Aug 2024 15:40:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819125738.vbjlw3qbv2v2rj57@oppo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iio: st,stm32-adc: add top-level constraints
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240818172951.121983-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20240818172951.121983-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_12,2024-08-19_01,2024-05-17_01
 
-On Mon, Aug 19, 2024 at 08:57:38PM +0800, Hailong Liu wrote:
-> On Mon, 19. Aug 13:59, Uladzislau Rezki wrote:
-> > On Fri, Aug 16, 2024 at 07:46:26PM +0800, Hailong Liu wrote:
-> > > On Fri, 16. Aug 12:13, Uladzislau Rezki wrote:
-> > > > On Fri, Aug 16, 2024 at 05:12:32PM +0800, Hailong Liu wrote:
-> > > > > On Thu, 15. Aug 22:07, Andrew Morton wrote:
-> > > > > > On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
-> > > > > >
-> > > > > > > > > Acked-by: Barry Song <baohua@kernel.org>
-> > > > > > > > >
-> > > > > > > > > because we already have a fallback here:
-> > > > > > > > >
-> > > > > > > > > void *__vmalloc_node_range_noprof :
-> > > > > > > > >
-> > > > > > > > > fail:
-> > > > > > > > >         if (shift > PAGE_SHIFT) {
-> > > > > > > > >                 shift = PAGE_SHIFT;
-> > > > > > > > >                 align = real_align;
-> > > > > > > > >                 size = real_size;
-> > > > > > > > >                 goto again;
-> > > > > > > > >         }
-> > > > > > > >
-> > > > > > > > This really deserves a comment because this is not really clear at all.
-> > > > > > > > The code is also fragile and it would benefit from some re-org.
-> > > > > > > >
-> > > > > > > > Thanks for the fix.
-> > > > > > > >
-> > > > > > > > Acked-by: Michal Hocko <mhocko@suse.com>
-> > > > > > > >
-> > > > > > > I agree. This is only clear for people who know the code. A "fallback"
-> > > > > > > to order-0 should be commented.
-> > > > > >
-> > > > > > It's been a week.  Could someone please propose a fixup patch to add
-> > > > > > this comment?
-> > > > >
-> > > > > Hi Andrew:
-> > > > >
-> > > > > Do you mean that I need to send a v2 patch with the the comments included?
-> > > > >
-> > > > It is better to post v2.
-> > > Got it.
-> > >
-> > > >
-> > > > But before, could you please comment on:
-> > > >
-> > > > in case of order-0, bulk path may easily fail and fallback to the single
-> > > > page allocator. If an request is marked as NO_FAIL, i am talking about
-> > > > order-0 request, your change breaks GFP_NOFAIL for !order.
-> > > >
-> > > > Am i missing something obvious?
-> > > For order-0, alloc_pages(GFP_X | __GFP_NOFAIL, 0), buddy allocator will handle
-> > > the flag correctly. IMO we don't need to handle the flag here.
-> > >
-> > Agree. As for comment, i meant to comment the below fallback:
-> Michal send a craft that make nofail logic more clearer and I check the branch
-> found Andrew already merged in -stable branch. So we can include these with a
-> new patch.
->
-Just to confirm. Will you send an extra patch with the comment?
 
---
-Uladzislau Rezki
+On 8/18/24 19:29, Krzysztof Kozlowski wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clock-names.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> index ec34c48d4878..ef9dcc365eab 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> @@ -54,7 +54,9 @@ properties:
+>            It's not present on stm32f4.
+>            It's required on stm32h7 and stm32mp1.
+>  
+> -  clock-names: true
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 2
+>  
+>    st,max-clk-rate-hz:
+>      description:
+
+Hi Krzysztof,
+
+You can add my:
+Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+
+Best Regards,
+Thanks,
+Fabrice
 
