@@ -1,140 +1,198 @@
-Return-Path: <linux-kernel+bounces-292377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C218956EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 932F3956EAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8030F1C2216E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1CCEB21C01
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6627A3C463;
-	Mon, 19 Aug 2024 15:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491763FB9F;
+	Mon, 19 Aug 2024 15:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mT1Rsg+D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1r/cj+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC5F347C7;
-	Mon, 19 Aug 2024 15:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E1E26AD3;
+	Mon, 19 Aug 2024 15:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080959; cv=none; b=sFG7Ew8xnjo9p+ADjU0aovW5yghWGvflhhTw7n09SxaTpqj1sRCMDEtzPnoBCXIRlJHVMpEpPzigZmI6MQukJDkC5F3K2u/+lnIQkGSTB/HRiPDbUp4O7mJyNXUBtIjHZkgbmx1Eud9yTe/y8mejtSpVjSly/h35rdgXNnfwYAk=
+	t=1724081075; cv=none; b=Tw45/+Iq+kzxFdUWtMhKSVimM2uOIWEbNIOvPyFKkgIAwPxdD5Sp8FcvCgAQIUSwaGEBywvskpCOJMNtLtOcseLBXiyjAUYNHTchEv9S0Vz3ef1rARiJOHx5IM+nEPk9u4NQKDz2V6xK/23p4IoeZJf20z3S/lIeZoe3Il/4kTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080959; c=relaxed/simple;
-	bh=9JWfjIa1vdn38FsVkvDYMYCfzjwxvlY4s9IpqPG8eFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjUGT8VYZ2LTi9JyHJtCGPG05IXD7tAkRqwTzdA+59vvPzZ1HBanlXM9dumA8zq0KBOVtLBPG06SV1nqDv4bCmMKGXmcss11AH4zkORSIfuJnVA0Zh9idibN/nZyTS+tMVfVIh00yzZ6DD43y0YGNiQwb4W5x0LDlW99ZDwk7O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mT1Rsg+D; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724080958; x=1755616958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9JWfjIa1vdn38FsVkvDYMYCfzjwxvlY4s9IpqPG8eFw=;
-  b=mT1Rsg+D2pL1acEAH6ht/Asb+9tHyPdcpMiKrHNKd1ARNUFt7HVwytuJ
-   Mq51kl4UfiAD//GKh/ah0AiECv3O0pU6n2nRGrV9q4hxe5t/cdibrQwOU
-   CP+2AyqFGVazIIpJzdBIlSmZkCc8txKpWhJn6cIxYdY8suJvPEHiu0eRy
-   kueWrk4JBbI60wmLq90jyRlB3+am5RdEKm92MWFca4lDBmgzIZI+66fGB
-   51ATZRC+JfloXVfX3iDs24x330KWnueQY8dNFXvJtGutRO+H/h6c1mkmF
-   Fz7Ei0YFi1l0OR8QDR71fUC22XcVOJGo2Yu7E80LAzd0g+d1kdjnlDvCT
-   Q==;
-X-CSE-ConnectionGUID: bvBpU9KvQUWfsWSIqkQvXA==
-X-CSE-MsgGUID: k2rNx8dHRDyIApqS9e3+qQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22509903"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="22509903"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:22:37 -0700
-X-CSE-ConnectionGUID: h/Lf2QjnTJWLwtRYtsKpRw==
-X-CSE-MsgGUID: FkCpXxoHSjSKEccMTCJLlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60068171"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.246.73])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:22:32 -0700
-Date: Mon, 19 Aug 2024 17:22:29 +0200
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: "Nilawar, Badal" <badal.nilawar@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, riana.tauro@intel.com,
-	ashutosh.dixit@intel.com, karthik.poosa@intel.com,
-	andriy.shevchenko@linux.intel.com
-Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
-Message-ID: <ZsNjNSu5tCsRUxJ9@ashyti-mobl2.lan>
-References: <20240809061525.1368153-1-raag.jadav@intel.com>
- <23dc7824-50cd-4ba3-be5a-df141e8fe69a@intel.com>
- <ZrXslA1c-BhO6zYr@ashyti-mobl2.lan>
- <88320f60-d55b-4aa5-881f-530375659c27@intel.com>
- <ZsLrJVdBmfZhZaaR@black.fi.intel.com>
+	s=arc-20240116; t=1724081075; c=relaxed/simple;
+	bh=9SrzYFYWu8XTyOkpWU8KfwdY1kOQ4PufChUBufGqjQE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EnzM9Z06Yhsab2Lkcq/F6q/rVQIvA51j9V6bEyXhHrilFtwMV64s8Zmz7wmK70c7BZauEB1gz2PQWREN61Ru1yzhr+Y5GVRXlf33jrMHJRepPMdTlDZFIuKR2MaDKeCMGC8NM/cRS1uQT6Keh1YQ+IB80FHzThzDtjJ/vpdx3uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1r/cj+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452CDC32782;
+	Mon, 19 Aug 2024 15:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724081075;
+	bh=9SrzYFYWu8XTyOkpWU8KfwdY1kOQ4PufChUBufGqjQE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S1r/cj+i/j/Y2h9GHVksnTVsgr0Hom/4Ghqr8HlW9/MjECmiL9CrjkDqewI30ufe4
+	 zqOEXKMR3jOOliR7XDYljdxoAvJaP4GAEzSr8vwSUyTKI8xwLag5JS6DS37NEUZ49h
+	 60Q5L8hpFVCnRUenuNnyBHgV3bRvbWdh2qmN9XAuC3mE5WI8DvvGXiDlkNwHeQENUb
+	 YYYaTKgl5jF0zwwJYSyhqDubEcElzPSYGJt9FS0BoaBxWzeLabsXM3DpOllyyFYRVN
+	 lvHlppSzmYo+tsiaYVRRvpMvJVKZdSwibA8GGoprSXEOC6Kn4f67pKfiSAGKKPoBhJ
+	 jdkJpuBp1a6Sg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sg4FE-004y1j-OU;
+	Mon, 19 Aug 2024 16:24:32 +0100
+Date: Mon, 19 Aug 2024 16:24:31 +0100
+Message-ID: <86y14sy1qo.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Steven Price <steven.price@arm.com>,
+	kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei
+ <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>
+Subject: Re: [PATCH v5 17/19] irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor
+In-Reply-To: <beff9162-e1ba-4f72-91ea-329eaed48dbc@arm.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+	<20240819131924.372366-18-steven.price@arm.com>
+	<beff9162-e1ba-4f72-91ea-329eaed48dbc@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsLrJVdBmfZhZaaR@black.fi.intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: suzuki.poulose@arm.com, steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Raag,
-
-I'm sorry, I missed this mail.
-
-On Mon, Aug 19, 2024 at 09:50:13AM +0300, Raag Jadav wrote:
-> On Wed, Aug 14, 2024 at 02:07:44PM +0530, Nilawar, Badal wrote:
-> > On 09-08-2024 15:46, Andi Shyti wrote:
-> > > > > +static int
-> > > > > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> > > > > +{
-> > > > > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > > > > +	struct hwm_fan_info *fi = &ddat->fi;
-> > > > > +	u32 reg_val, pulses, time, time_now;
-> > > > > +	intel_wakeref_t wakeref;
-> > > > > +	long rotations;
-> > > > > +	int ret = 0;
-> > > > > +
-> > > > > +	if (attr != hwmon_fan_input)
-> > > > > +		return -EOPNOTSUPP;
-> > > > Using a switch case in rev3 is more logical here. It will also simplify
-> > > > adding more fan attributes in the future. This is why switch cases are used
-> > > > in other parts of the file.
-> > > 
-> > > it was my suggestion and to be honest I would rather prefer it
-> > > this way. I can understand it if we were expecting more cases in
-> > > the immediate, like it was in your case.
-> > > 
-> > > But I wouldn't have an ugly and unreadable one-case-switch in the
-> > > eventuality that something comes in the future. In that case, we
-> > > can always convert it.
+On Mon, 19 Aug 2024 15:51:00 +0100,
+Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> 
+> Hi Steven,
+> 
+> On 19/08/2024 14:19, Steven Price wrote:
+> > Within a realm guest the ITS is emulated by the host. This means the
+> > allocations must have been made available to the host by a call to
+> > set_memory_decrypted(). Introduce an allocation function which performs
+> > this extra call.
 > > 
-> > My rationale for suggesting a switch case is that in the current alignment
-> > hwm_XX_read() function is designed to handle all possible/supported
-> > attributes of the XX sensor type.
-> > With the proposed change, hwm_fan_read() would only manage the
-> > hwmon_fan_input attribute.
-> > If a single switch case isn’t preferred, I would recommend creating a helper
-> > function dedicated to hwmon_fan_input.
+> > For the ITT use a custom genpool-based allocator that calls
+> > set_memory_decrypted() for each page allocated, but then suballocates
+> > the size needed for each ITT. Note that there is no mechanism
+> > implemented to return pages from the genpool, but it is unlikely the
+> > peak number of devices will so much larger than the normal level - so
+> > this isn't expected to be an issue.
 > > 
-> > hwm_fan_read()
-> > {
-> > 	if (attr == hwmon_fan_input)
-> > 		return helper(); //hwmon_fan_input_read()
+> 
+> This may not be sufficient to make it future proof. We need to detect if
+> the GIC is private vs shared, before we make the allocation
+> choice. Please see below :
 
-I'm not really understanding what is the point of the helper, but
-if it looks cleaner, I have no objection.
+What do you mean by that? Do you foresee a *GICv3* implementation on
+the realm side?
+
+[...]
+
+> How about something like this folded into this patch ? Or if this
+> patch goes in independently, we could carry the following as part of
+> the CCA
+> series.
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c
+> b/drivers/irqchip/irq-gic-v3-its.c
+> index 6f4ddf7faed1..f1a779b52210 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -209,7 +209,7 @@ static struct page *its_alloc_pages_node(int node,
+> gfp_t gfp,
+> 
+>  	page = alloc_pages_node(node, gfp, order);
+> 
+> -	if (page)
+> +	if (gic_rdists->is_shared && page)
+>  		set_memory_decrypted((unsigned long)page_address(page),
+>  				     BIT(order));
+>  	return page;
+> @@ -222,7 +222,8 @@ static struct page *its_alloc_pages(gfp_t gfp,
+> unsigned int order)
+> 
+>  static void its_free_pages(void *addr, unsigned int order)
+>  {
+> -	set_memory_encrypted((unsigned long)addr, BIT(order));
+> +	if (gic_rdists->is_shared)
+> +		set_memory_encrypted((unsigned long)addr, BIT(order));
+>  	free_pages((unsigned long)addr, order);
+>  }
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 6fb276504bcc..48c6b2c8dd8c 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -2015,6 +2015,8 @@ static int __init gic_init_bases(phys_addr_t
+> dist_phys_base,
+>  	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
+>  	gic_data.rdists.gicd_typer = typer;
+> 
+> +	gic_data.rdists.is_shared =
+> !arm64_is_iomem_private(gic_data.dist_phys_base,
+> +							    PAGE_SIZE);
+
+Why would you base the status of the RDs on that of the distributor?
+
+>  	gic_enable_quirks(readl_relaxed(gic_data.dist_base + GICD_IIDR),
+>  			  gic_quirks, &gic_data);
+> 
+> diff --git a/include/linux/irqchip/arm-gic-v3.h
+> b/include/linux/irqchip/arm-gic-v3.h
+> index 728691365464..1edc33608d52 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -631,6 +631,7 @@ struct rdists {
+>  	bool			has_rvpeid;
+>  	bool			has_direct_lpi;
+>  	bool			has_vpend_valid_dirty;
+> +	bool			is_shared;
+>  };
+> 
+>  struct irq_domain;
+> 
+
+I really don't like this.
+
+If we have to go down the route of identifying whether the GIC needs
+encryption or not based on the platform, then maybe we should bite the
+bullet and treat it as a first class device, given that we expect
+devices to be either realm or non-secure.
 
 Thanks,
-Andi
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
