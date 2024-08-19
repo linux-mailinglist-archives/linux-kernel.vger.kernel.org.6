@@ -1,98 +1,126 @@
-Return-Path: <linux-kernel+bounces-291995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54C99569E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568CE956A25
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5844A1F23C3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139932889B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DEA166F36;
-	Mon, 19 Aug 2024 11:52:16 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EAF166F34;
+	Mon, 19 Aug 2024 11:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcIdoSFc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5191552FA
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0569E167D83
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068336; cv=none; b=uIOui9x1aMgsiFR7SYuNiJRNibCQNlthXzzDGaQoSacWdYChpKAuY+66esgg7N5QKIJ7gOV93ZJvCR7iR8mbXaWFgqSa/Q084PvU9d8IglDLJV5QGh9yuH5A/hbzNrw7CPp6Rr5e7clUsKvE6mcDFUZCUglp6CUYDgqjuDz2fHc=
+	t=1724068793; cv=none; b=oTbnAsOzcpkllKxzZq/cMZfvlEKfnaIiQcE/5nhqB3boi3zSJGC4/T0rYalywhSfZwVI5TdB83xfpe1b/6iBwZo4YuMLIOB5wCPVQ0ehL9+fvWdNahFPCUIPshqmlC6BqWNQ81KqM8cSDCX1LMtsRdyXXYZcC4mitymoDWLNDok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068336; c=relaxed/simple;
-	bh=ii7YRbGq50XyZW5BirGD5uoYuj8n6Q/8UfSeVxLedbQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZKyUV0Lw/PWAftM+5Lqpbcyacz15Kf3Puf9WiTE/kbHzTnsh8zlNfcUKlNv3jwEG0yyHNwt2is1QOMI/bud4juGuoPRhRfqoDRMKOCHnUrTKk0q5WdJDMbGe3t2RABi9d0ZXyJelBzhY3BtQoI83q9Z22PlOJWTkwgUb/A79hFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WnW6p75VQz20m3Z;
-	Mon, 19 Aug 2024 19:47:30 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 763A418001B;
-	Mon, 19 Aug 2024 19:52:10 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 19:52:08 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <dan.j.williams@intel.com>,
-	<vishal.l.verma@intel.com>, <dave.jiang@intel.com>,
-	<neil.armstrong@linaro.org>, <quic_jesszhan@quicinc.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<jgg@ziepe.ca>, <kevin.tian@intel.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <hch@lst.de>, <sagi@grimberg.me>, <kch@nvidia.com>,
-	<marcan@marcan.st>, <sven@svenpeter.dev>, <alyssa@rosenzweig.io>,
-	<ulf.hansson@linaro.org>, <broonie@kernel.org>, <gregkh@linuxfoundation.org>,
-	<jirislaby@kernel.org>, <michal.simek@amd.com>, <p.zabel@pengutronix.de>,
-	<ira.weiny@intel.com>, <Jonathan.Cameron@huawei.com>,
-	<ruanjinjie@huawei.com>, <shiju.jose@huawei.com>,
-	<xueshuai@linux.alibaba.com>, <manikanta.guntupalli@amd.com>,
-	<u.kleine-koenig@pengutronix.de>, <tglx@linutronix.de>,
-	<julien.malik@unseenlabs.fr>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next 0/8] drivers: Fix some compile warnings
-Date: Mon, 19 Aug 2024 19:59:13 +0800
-Message-ID: <20240819115913.3884804-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724068793; c=relaxed/simple;
+	bh=QoDrXZXFlLjJRrcfSVsie6OGUkt4QrKIKGi1LCthZaA=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=gJAXxKy9hMBziq00UAKCgTHnMvWsZAvwMdlP6YgeVbh4MV9gUtctk16DQqbcL2R3n5wfmoCb5zd2TOymlpJBy5i42ssDbVk0Wn8Sv5tr1i5FenIlsxQQTmiOH1/bgaLuYyQCIeSWNJXv+m46GfW3zSjejDUzrPMle+zSe2G9Euk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcIdoSFc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724068790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nSDk9RrUaqqTiS3gE8YAv0OqBuyGmh41yRuUpfpoLP4=;
+	b=fcIdoSFcs5Je/WCbx4Cd0nSI4raS0XCY8LIrHF31HvNoRE7APrAq9Wd/LHbzB9A+l/AbSs
+	0vmVXYmyK077RxdFPg9GP/HXJihasEquVAnESo2K1gfrAkaT4nwMR1TFb+r54z2UPRwH0h
+	ig0zBdZGA6sT6Mi03OrCcRZdkZCtJdc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-y-oQF2GQOyaLK-9XZ_4nzw-1; Mon,
+ 19 Aug 2024 07:59:43 -0400
+X-MC-Unique: y-oQF2GQOyaLK-9XZ_4nzw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8403F1954B1D;
+	Mon, 19 Aug 2024 11:59:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AEB1619773E0;
+	Mon, 19 Aug 2024 11:59:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <3402933.1724068015@warthog.procyon.org.uk>
+References: <3402933.1724068015@warthog.procyon.org.uk> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com,
+    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+    brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3405742.1724068772.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Aug 2024 12:59:32 +0100
+Message-ID: <3405743.1724068772@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Fix some sparse warnings.
+David Howells <dhowells@redhat.com> wrote:
 
-Jinjie Ruan (8):
-  dax/bus.c: Make dax_region_rwsem and dax_dev_rwsem static
-  pmdomain: Make apple_pmgr_reset_ops static
-  iommufd/selftest: Make dirty_ops static
-  nvmet: Make nvmet_debugfs static
-  spi: cadence: Make cdns_mrvl_xspi_clk_div_list static
-  drm/panel: khadas-ts050: Make ts050_panel_data and ts050v2_panel_data
-    static
-  acpi/ghes: Make cxl_cper_fifo and cxl_cper_work static
-  serial: xilinx_uartps: Make cdns_rs485_supported static
+> You can see the invalidate_folio call, with the offset at 0x4 an the len=
+gth as
+> 0x1ffc.  The data at the beginning of the page is 0x78787878.  This look=
+s
+> correct.
+> =
 
- drivers/acpi/apei/ghes.c                   | 4 ++--
- drivers/dax/bus.c                          | 4 ++--
- drivers/gpu/drm/panel/panel-khadas-ts050.c | 4 ++--
- drivers/iommu/iommufd/selftest.c           | 2 +-
- drivers/nvme/target/debugfs.c              | 2 +-
- drivers/pmdomain/apple/pmgr-pwrstate.c     | 2 +-
- drivers/spi/spi-cadence-xspi.c             | 2 +-
- drivers/tty/serial/xilinx_uartps.c         | 2 +-
- 8 files changed, 11 insertions(+), 11 deletions(-)
+> Then second ftruncate() is called to increase the file size to 4096
+> (ie. 0x1000):
+> =
 
--- 
-2.34.1
+>  pankaj-5833: netfs_truncate: ni=3D9e isz=3D4 rsz=3D4 zp=3D4 to=3D1000
+>  pankaj-5833: netfs_inval_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001=
+ o=3D1000 l=3D1000 d=3D78787878
+>  pankaj-5833: netfs_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 inval=
+-part
+>  pankaj-5833: netfs_set_size: ni=3D9e resize-file isz=3D1000 rsz=3D1000 =
+zp=3D4
+> =
+
+> And here's the problem: in the invalidate_folio() call, the offset is 0x=
+1000
+> and the length is 0x1000 (o=3D and l=3D).  But that's the wrong half of =
+the folio!
+> I'm guessing that the caller thereafter clears the other half of the fol=
+io -
+> the bit that should be kept.
+
+Actually, I think I'm wrong in my evaluation - I think that's the region t=
+o be
+invalidated, not the region to be kept.
+
+David
 
 
