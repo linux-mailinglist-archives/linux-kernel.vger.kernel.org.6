@@ -1,373 +1,311 @@
-Return-Path: <linux-kernel+bounces-292161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1E8956BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:27:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A30D956BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5251F2442C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BF12B2585C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41404189908;
-	Mon, 19 Aug 2024 13:21:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE931891DA;
-	Mon, 19 Aug 2024 13:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2172817838A;
+	Mon, 19 Aug 2024 13:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JCp9+co0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7B41741FE;
+	Mon, 19 Aug 2024 13:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724073664; cv=none; b=IHuIg2DCOH3I9UWwVpS/4AvJrZXJafpLynMOqrqqw6jE8ifDP6HL/VjDlIfVICVOIW0rNDze41Rh3mxJvGdpRZTuD2l8nGy3NGDD5QFZQzkPvvUtgWhzIm9ZofDZKItvvaqaXkpNsb1TZQGEq1YoWNz6BxLb+fNClAzvM8Y48gg=
+	t=1724073627; cv=none; b=frHKBFo39IjFI0O2otGcfMLHaIdPan4xdL+46b1+eXbkmQQ2Ctp81EztnKMIHr1/G5Kq0JcNYk0iAj5/JvMw4ZbLtkXRK+vs5zORM3cWqU5TXt2PAw80w+XgSXIpdCI+TLY/OX0vOQFgR5LRekgv8IglGDhGNT+FyOfL9xfYzA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724073664; c=relaxed/simple;
-	bh=jUprL2sAqbh0LVwWLO8Z36rWofENEdpbrluOVkH/5/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bWW2q1DToRRCOJRHMJf3/wJUIhpk7kbPj96qXRdC7eq5YoHeYp9WnVpsipNtfwcN/huG0sQFWq4Z4f2joDgD5K87OVyaNCk+vwlPwy5VnHVfVVdsw/lRNWF8iKEiWiejdP28wMJ5nH7PmMQfr8PI9M1Ylsva/iulnljSAi7PFp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FB6312FC;
-	Mon, 19 Aug 2024 06:21:28 -0700 (PDT)
-Received: from e122027.arm.com (unknown [10.57.85.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93ADB3F73B;
-	Mon, 19 Aug 2024 06:20:58 -0700 (PDT)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	Sami Mujawar <sami.mujawar@arm.com>
-Subject: [PATCH v5 19/19] virt: arm-cca-guest: TSM_REPORT support for realms
-Date: Mon, 19 Aug 2024 14:19:24 +0100
-Message-Id: <20240819131924.372366-20-steven.price@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240819131924.372366-1-steven.price@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
+	s=arc-20240116; t=1724073627; c=relaxed/simple;
+	bh=50I8COzcE/JeGElXTnODDmOHDeO1Gj1w/aX2OmR9j2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIVzbFQ6H2Dp8mi1S1iFUZT41a1dTapaJE4d2JZoML0VHEs0vzm3NjbBmeFT1mQ2Hodqmj03updloMvKeGoNCInU+O+x9An0pPrzgN3QjUcPJWX62D2nMvmlids8O8tORqk30UQkKqYq0SCKFcSl7OUy7r8D7elqhpj5d+FO0ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JCp9+co0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724073626; x=1755609626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=50I8COzcE/JeGElXTnODDmOHDeO1Gj1w/aX2OmR9j2c=;
+  b=JCp9+co0mds8Co3DaWiU/Ey1NEMR9xLEmT/qZZPxRE6N6Gpx5oWWPCqy
+   rzlEdvHwVQJs7tSuzM/4CgL3xeTqjioIRy7gOiI498iddplsjEOf76Fb2
+   7N99ZXJXS5uyunb6A9qsVcWYUHGQz2DUdXv8JmRg+s8nM5dfWdEX0Sweq
+   B+zvGy5Z+/h79Y49uNkjCz0Yjl9K9mThnOh26agJuMuv1cdGKnWtDG4jK
+   SYxlNTn53ONmExH9QUBnnlFW6y5+XnUC46vCg+F6lF2KoX0Zr8gMCBzLz
+   sByKrAIyQ9hYAxTT1j3dODFvpfPzMUzgegL+MMqJ828i+Et/RUzC+9T7+
+   Q==;
+X-CSE-ConnectionGUID: JpYCyj9XT36pqxPW5B3JEQ==
+X-CSE-MsgGUID: dvq3sOA3Qf2UdSKUFCiIew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="44841603"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="44841603"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 06:20:09 -0700
+X-CSE-ConnectionGUID: cSOzekq9SCqObRfLMNEFpw==
+X-CSE-MsgGUID: H5Sc6wXtTbSVGkbW6dCZ6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="60679966"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa006.jf.intel.com with SMTP; 19 Aug 2024 06:20:03 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 19 Aug 2024 16:20:02 +0300
+Date: Mon, 19 Aug 2024 16:20:02 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] soc: qcom: pmic_glink: Fix race during initialization
+Message-ID: <ZsNGgmnZfZs+Z50R@kuha.fi.intel.com>
+References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+ <20240818-pmic-glink-v6-11-races-v1-1-f87c577e0bc9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-1-f87c577e0bc9@quicinc.com>
 
-From: Sami Mujawar <sami.mujawar@arm.com>
+On Sun, Aug 18, 2024 at 04:17:37PM -0700, Bjorn Andersson wrote:
+> As pointed out by Stephen Boyd it is possible that during initialization
+> of the pmic_glink child drivers, the protection-domain notifiers fires,
+> and the associated work is scheduled, before the client registration
+> returns and as a result the local "client" pointer has been initialized.
+> 
+> The outcome of this is a NULL pointer dereference as the "client"
+> pointer is blindly dereferenced.
+> 
+> Timeline provided by Stephen:
+>  CPU0                               CPU1
+>  ----                               ----
+>  ucsi->client = NULL;
+>  devm_pmic_glink_register_client()
+>   client->pdr_notify(client->priv, pg->client_state)
+>    pmic_glink_ucsi_pdr_notify()
+>     schedule_work(&ucsi->register_work)
+>     <schedule away>
+>                                     pmic_glink_ucsi_register()
+>                                      ucsi_register()
+>                                       pmic_glink_ucsi_read_version()
+>                                        pmic_glink_ucsi_read()
+>                                         pmic_glink_ucsi_read()
+>                                          pmic_glink_send(ucsi->client)
+>                                          <client is NULL BAD>
+>  ucsi->client = client // Too late!
+> 
+> This code is identical across the altmode, battery manager and usci
+> child drivers.
+> 
+> Resolve this by splitting the allocation of the "client" object and the
+> registration thereof into two operations.
+> 
+> This only happens if the protection domain registry is populated at the
+> time of registration, which by the introduction of commit '1ebcde047c54
+> ("soc: qcom: add pd-mapper implementation")' became much more likely.
+> 
+> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+> Closes: https://lore.kernel.org/all/CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com/
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Closes: https://lore.kernel.org/all/ZqiyLvP0gkBnuekL@hovoldconsulting.com/
+> Reported-by: Stephen Boyd <swboyd@chromium.org>
+> Closes: https://lore.kernel.org/all/CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com/
+> Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-Introduce an arm-cca-guest driver that registers with
-the configfs-tsm module to provide user interfaces for
-retrieving an attestation token.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-When a new report is requested the arm-cca-guest driver
-invokes the appropriate RSI interfaces to query an
-attestation token.
+> ---
+>  drivers/power/supply/qcom_battmgr.c   | 16 ++++++++++------
+>  drivers/soc/qcom/pmic_glink.c         | 28 ++++++++++++++++++----------
+>  drivers/soc/qcom/pmic_glink_altmode.c | 17 +++++++++++------
+>  drivers/usb/typec/ucsi/ucsi_glink.c   | 16 ++++++++++------
+>  include/linux/soc/qcom/pmic_glink.h   | 11 ++++++-----
+>  5 files changed, 55 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
+> index 49bef4a5ac3f..df90a470c51a 100644
+> --- a/drivers/power/supply/qcom_battmgr.c
+> +++ b/drivers/power/supply/qcom_battmgr.c
+> @@ -1387,12 +1387,16 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>  					     "failed to register wireless charing power supply\n");
+>  	}
+>  
+> -	battmgr->client = devm_pmic_glink_register_client(dev,
+> -							  PMIC_GLINK_OWNER_BATTMGR,
+> -							  qcom_battmgr_callback,
+> -							  qcom_battmgr_pdr_notify,
+> -							  battmgr);
+> -	return PTR_ERR_OR_ZERO(battmgr->client);
+> +	battmgr->client = devm_pmic_glink_new_client(dev, PMIC_GLINK_OWNER_BATTMGR,
+> +						     qcom_battmgr_callback,
+> +						     qcom_battmgr_pdr_notify,
+> +						     battmgr);
+> +	if (IS_ERR(battmgr->client))
+> +		return PTR_ERR(battmgr->client);
+> +
+> +	pmic_glink_register_client(battmgr->client);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct auxiliary_device_id qcom_battmgr_id_table[] = {
+> diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+> index 9ebc0ba35947..58ec91767d79 100644
+> --- a/drivers/soc/qcom/pmic_glink.c
+> +++ b/drivers/soc/qcom/pmic_glink.c
+> @@ -66,15 +66,14 @@ static void _devm_pmic_glink_release_client(struct device *dev, void *res)
+>  	spin_unlock_irqrestore(&pg->client_lock, flags);
+>  }
+>  
+> -struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
+> -							  unsigned int id,
+> -							  void (*cb)(const void *, size_t, void *),
+> -							  void (*pdr)(void *, int),
+> -							  void *priv)
+> +struct pmic_glink_client *devm_pmic_glink_new_client(struct device *dev,
+> +						     unsigned int id,
+> +						     void (*cb)(const void *, size_t, void *),
+> +						     void (*pdr)(void *, int),
+> +						     void *priv)
+>  {
+>  	struct pmic_glink_client *client;
+>  	struct pmic_glink *pg = dev_get_drvdata(dev->parent);
+> -	unsigned long flags;
+>  
+>  	client = devres_alloc(_devm_pmic_glink_release_client, sizeof(*client), GFP_KERNEL);
+>  	if (!client)
+> @@ -85,6 +84,18 @@ struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
+>  	client->cb = cb;
+>  	client->pdr_notify = pdr;
+>  	client->priv = priv;
+> +	INIT_LIST_HEAD(&client->node);
+> +
+> +	devres_add(dev, client);
+> +
+> +	return client;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pmic_glink_new_client);
+> +
+> +void pmic_glink_register_client(struct pmic_glink_client *client)
+> +{
+> +	struct pmic_glink *pg = client->pg;
+> +	unsigned long flags;
+>  
+>  	mutex_lock(&pg->state_lock);
+>  	spin_lock_irqsave(&pg->client_lock, flags);
+> @@ -95,11 +106,8 @@ struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
+>  	spin_unlock_irqrestore(&pg->client_lock, flags);
+>  	mutex_unlock(&pg->state_lock);
+>  
+> -	devres_add(dev, client);
+> -
+> -	return client;
+>  }
+> -EXPORT_SYMBOL_GPL(devm_pmic_glink_register_client);
+> +EXPORT_SYMBOL_GPL(pmic_glink_register_client);
+>  
+>  int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len)
+>  {
+> diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
+> index 1e0808b3cb93..e4f5059256e5 100644
+> --- a/drivers/soc/qcom/pmic_glink_altmode.c
+> +++ b/drivers/soc/qcom/pmic_glink_altmode.c
+> @@ -520,12 +520,17 @@ static int pmic_glink_altmode_probe(struct auxiliary_device *adev,
+>  			return ret;
+>  	}
+>  
+> -	altmode->client = devm_pmic_glink_register_client(dev,
+> -							  altmode->owner_id,
+> -							  pmic_glink_altmode_callback,
+> -							  pmic_glink_altmode_pdr_notify,
+> -							  altmode);
+> -	return PTR_ERR_OR_ZERO(altmode->client);
+> +	altmode->client = devm_pmic_glink_new_client(dev,
+> +						     altmode->owner_id,
+> +						     pmic_glink_altmode_callback,
+> +						     pmic_glink_altmode_pdr_notify,
+> +						     altmode);
+> +	if (IS_ERR(altmode->client))
+> +		return PTR_ERR(altmode->client);
+> +
+> +	pmic_glink_register_client(altmode->client);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct auxiliary_device_id pmic_glink_altmode_id_table[] = {
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index 16c328497e0b..ac53a81c2a81 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -367,12 +367,16 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+>  		ucsi->port_orientation[port] = desc;
+>  	}
+>  
+> -	ucsi->client = devm_pmic_glink_register_client(dev,
+> -						       PMIC_GLINK_OWNER_USBC,
+> -						       pmic_glink_ucsi_callback,
+> -						       pmic_glink_ucsi_pdr_notify,
+> -						       ucsi);
+> -	return PTR_ERR_OR_ZERO(ucsi->client);
+> +	ucsi->client = devm_pmic_glink_new_client(dev, PMIC_GLINK_OWNER_USBC,
+> +						  pmic_glink_ucsi_callback,
+> +						  pmic_glink_ucsi_pdr_notify,
+> +						  ucsi);
+> +	if (IS_ERR(ucsi->client))
+> +		return PTR_ERR(ucsi->client);
+> +
+> +	pmic_glink_register_client(ucsi->client);
+> +
+> +	return 0;
+>  }
+>  
+>  static void pmic_glink_ucsi_remove(struct auxiliary_device *adev)
+> diff --git a/include/linux/soc/qcom/pmic_glink.h b/include/linux/soc/qcom/pmic_glink.h
+> index fd124aa18c81..aedde76d7e13 100644
+> --- a/include/linux/soc/qcom/pmic_glink.h
+> +++ b/include/linux/soc/qcom/pmic_glink.h
+> @@ -23,10 +23,11 @@ struct pmic_glink_hdr {
+>  
+>  int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len);
+>  
+> -struct pmic_glink_client *devm_pmic_glink_register_client(struct device *dev,
+> -							  unsigned int id,
+> -							  void (*cb)(const void *, size_t, void *),
+> -							  void (*pdr)(void *, int),
+> -							  void *priv);
+> +struct pmic_glink_client *devm_pmic_glink_new_client(struct device *dev,
+> +						     unsigned int id,
+> +						     void (*cb)(const void *, size_t, void *),
+> +						     void (*pdr)(void *, int),
+> +						     void *priv);
+> +void pmic_glink_register_client(struct pmic_glink_client *client);
+>  
+>  #endif
 
-The steps to retrieve an attestation token are as follows:
-  1. Mount the configfs filesystem if not already mounted
-     mount -t configfs none /sys/kernel/config
-  2. Generate an attestation token
-     report=/sys/kernel/config/tsm/report/report0
-     mkdir $report
-     dd if=/dev/urandom bs=64 count=1 > $report/inblob
-     hexdump -C $report/outblob
-     rmdir $report
-
-Signed-off-by: Sami Mujawar <sami.mujawar@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Steven Price <steven.price@arm.com>
----
-v3: Minor improvements to comments and adapt to the renaming of
-GRANULE_SIZE to RSI_GRANULE_SIZE.
----
- drivers/virt/coco/Kconfig                     |   2 +
- drivers/virt/coco/Makefile                    |   1 +
- drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
- drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
- .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++++++++
- 5 files changed, 227 insertions(+)
- create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
- create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
- create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-
-diff --git a/drivers/virt/coco/Kconfig b/drivers/virt/coco/Kconfig
-index 87d142c1f932..4fb69804b622 100644
---- a/drivers/virt/coco/Kconfig
-+++ b/drivers/virt/coco/Kconfig
-@@ -12,3 +12,5 @@ source "drivers/virt/coco/efi_secret/Kconfig"
- source "drivers/virt/coco/sev-guest/Kconfig"
- 
- source "drivers/virt/coco/tdx-guest/Kconfig"
-+
-+source "drivers/virt/coco/arm-cca-guest/Kconfig"
-diff --git a/drivers/virt/coco/Makefile b/drivers/virt/coco/Makefile
-index 18c1aba5edb7..a6228a1bf992 100644
---- a/drivers/virt/coco/Makefile
-+++ b/drivers/virt/coco/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_TSM_REPORTS)	+= tsm.o
- obj-$(CONFIG_EFI_SECRET)	+= efi_secret/
- obj-$(CONFIG_SEV_GUEST)		+= sev-guest/
- obj-$(CONFIG_INTEL_TDX_GUEST)	+= tdx-guest/
-+obj-$(CONFIG_ARM_CCA_GUEST)	+= arm-cca-guest/
-diff --git a/drivers/virt/coco/arm-cca-guest/Kconfig b/drivers/virt/coco/arm-cca-guest/Kconfig
-new file mode 100644
-index 000000000000..9dd27c3ee215
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-guest/Kconfig
-@@ -0,0 +1,11 @@
-+config ARM_CCA_GUEST
-+	tristate "Arm CCA Guest driver"
-+	depends on ARM64
-+	default m
-+	select TSM_REPORTS
-+	help
-+	  The driver provides userspace interface to request and
-+	  attestation report from the Realm Management Monitor(RMM).
-+
-+	  If you choose 'M' here, this module will be called
-+	  arm-cca-guest.
-diff --git a/drivers/virt/coco/arm-cca-guest/Makefile b/drivers/virt/coco/arm-cca-guest/Makefile
-new file mode 100644
-index 000000000000..69eeba08e98a
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-guest/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_ARM_CCA_GUEST) += arm-cca-guest.o
-diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-new file mode 100644
-index 000000000000..7f724a03676f
---- /dev/null
-+++ b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-@@ -0,0 +1,211 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2023 ARM Ltd.
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/cc_platform.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/smp.h>
-+#include <linux/tsm.h>
-+#include <linux/types.h>
-+
-+#include <asm/rsi.h>
-+
-+/**
-+ * struct arm_cca_token_info - a descriptor for the token buffer.
-+ * @granule:	PA of the page to which the token will be written
-+ * @offset:	Offset within granule to start of buffer in bytes
-+ * @len:	Number of bytes of token data that was retrieved
-+ * @result:	result of rsi_attestation_token_continue operation
-+ */
-+struct arm_cca_token_info {
-+	phys_addr_t     granule;
-+	unsigned long   offset;
-+	int             result;
-+};
-+
-+/**
-+ * arm_cca_attestation_continue - Retrieve the attestation token data.
-+ *
-+ * @param: pointer to the arm_cca_token_info
-+ *
-+ * Attestation token generation is a long running operation and therefore
-+ * the token data may not be retrieved in a single call. Moreover, the
-+ * token retrieval operation must be requested on the same CPU on which the
-+ * attestation token generation was initialised.
-+ * This helper function is therefore scheduled on the same CPU multiple
-+ * times until the entire token data is retrieved.
-+ */
-+static void arm_cca_attestation_continue(void *param)
-+{
-+	unsigned long len;
-+	unsigned long size;
-+	struct arm_cca_token_info *info;
-+
-+	if (!param)
-+		return;
-+
-+	info = (struct arm_cca_token_info *)param;
-+
-+	size = RSI_GRANULE_SIZE - info->offset;
-+	info->result = rsi_attestation_token_continue(info->granule,
-+						      info->offset, size, &len);
-+	info->offset += len;
-+}
-+
-+/**
-+ * arm_cca_report_new - Generate a new attestation token.
-+ *
-+ * @report: pointer to the TSM report context information.
-+ * @data:  pointer to the context specific data for this module.
-+ *
-+ * Initialise the attestation token generation using the challenge data
-+ * passed in the TSM decriptor. Allocate memory for the attestation token
-+ * and schedule calls to retrieve the attestation token on the same CPU
-+ * on which the attestation token generation was initialised.
-+ *
-+ * The challenge data must be at least 32 bytes and no more than 64 bytes. If
-+ * less than 64 bytes are provided it will be zero padded to 64 bytes.
-+ *
-+ * Return:
-+ * * %0        - Attestation token generated successfully.
-+ * * %-EINVAL  - A parameter was not valid.
-+ * * %-ENOMEM  - Out of memory.
-+ * * %-EFAULT  - Failed to get IPA for memory page(s).
-+ * * A negative status code as returned by smp_call_function_single().
-+ */
-+static int arm_cca_report_new(struct tsm_report *report, void *data)
-+{
-+	int ret;
-+	int cpu;
-+	long max_size;
-+	unsigned long token_size;
-+	struct arm_cca_token_info info;
-+	void *buf;
-+	u8 *token __free(kvfree) = NULL;
-+	struct tsm_desc *desc = &report->desc;
-+
-+	if (!report)
-+		return -EINVAL;
-+
-+	if (desc->inblob_len < 32 || desc->inblob_len > 64)
-+		return -EINVAL;
-+
-+	/*
-+	 * Get a CPU on which the attestation token generation will be
-+	 * scheduled and initialise the attestation token generation.
-+	 */
-+	cpu = get_cpu();
-+	max_size = rsi_attestation_token_init(desc->inblob, desc->inblob_len);
-+	put_cpu();
-+
-+	if (max_size <= 0)
-+		return -EINVAL;
-+
-+	/* Allocate outblob */
-+	token = kvzalloc(max_size, GFP_KERNEL);
-+	if (!token)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Since the outblob may not be physically contiguous, use a page
-+	 * to bounce the buffer from RMM.
-+	 */
-+	buf = alloc_pages_exact(RSI_GRANULE_SIZE, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	/* Get the PA of the memory page(s) that were allocated. */
-+	info.granule = (unsigned long)virt_to_phys(buf);
-+
-+	token_size = 0;
-+	/* Loop until the token is ready or there is an error. */
-+	do {
-+		/* Retrieve one RSI_GRANULE_SIZE data per loop iteration. */
-+		info.offset = 0;
-+		do {
-+			/*
-+			 * Schedule a call to retrieve a sub-granule chunk
-+			 * of data per loop iteration.
-+			 */
-+			ret = smp_call_function_single(cpu,
-+						       arm_cca_attestation_continue,
-+						       (void *)&info, true);
-+			if (ret != 0) {
-+				token_size = 0;
-+				goto exit_free_granule_page;
-+			}
-+
-+			ret = info.result;
-+		} while ((ret == RSI_INCOMPLETE) &&
-+			 (info.offset < RSI_GRANULE_SIZE));
-+
-+		/*
-+		 * Copy the retrieved token data from the granule
-+		 * to the token buffer, ensuring that the RMM doesn't
-+		 * overflow the buffer.
-+		 */
-+		if (WARN_ON(token_size + info.offset > max_size))
-+			break;
-+		memcpy(&token[token_size], buf, info.offset);
-+		token_size += info.offset;
-+	} while (ret == RSI_INCOMPLETE);
-+
-+	if (ret != RSI_SUCCESS) {
-+		ret = -ENXIO;
-+		token_size = 0;
-+		goto exit_free_granule_page;
-+	}
-+
-+	report->outblob = no_free_ptr(token);
-+exit_free_granule_page:
-+	report->outblob_len = token_size;
-+	free_pages_exact(buf, RSI_GRANULE_SIZE);
-+	return ret;
-+}
-+
-+static const struct tsm_ops arm_cca_tsm_ops = {
-+	.name = KBUILD_MODNAME,
-+	.report_new = arm_cca_report_new,
-+};
-+
-+/**
-+ * arm_cca_guest_init - Register with the Trusted Security Module (TSM)
-+ * interface.
-+ *
-+ * Return:
-+ * * %0        - Registered successfully with the TSM interface.
-+ * * %-ENODEV  - The execution context is not an Arm Realm.
-+ * * %-EINVAL  - A parameter was not valid.
-+ * * %-EBUSY   - Already registered.
-+ */
-+static int __init arm_cca_guest_init(void)
-+{
-+	int ret;
-+
-+	if (!is_realm_world())
-+		return -ENODEV;
-+
-+	ret = tsm_register(&arm_cca_tsm_ops, NULL);
-+	if (ret < 0)
-+		pr_err("Failed to register with TSM.\n");
-+
-+	return ret;
-+}
-+module_init(arm_cca_guest_init);
-+
-+/**
-+ * arm_cca_guest_exit - unregister with the Trusted Security Module (TSM)
-+ * interface.
-+ */
-+static void __exit arm_cca_guest_exit(void)
-+{
-+	tsm_unregister(&arm_cca_tsm_ops);
-+}
-+module_exit(arm_cca_guest_exit);
-+
-+MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
-+MODULE_DESCRIPTION("Arm CCA Guest TSM Driver.");
-+MODULE_LICENSE("GPL");
 -- 
-2.34.1
-
+heikki
 
