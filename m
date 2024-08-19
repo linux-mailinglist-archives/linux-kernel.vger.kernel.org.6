@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-291323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9399560E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAAA9560E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79650280FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866CC2818F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81264962E;
-	Mon, 19 Aug 2024 01:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990E269D2B;
+	Mon, 19 Aug 2024 01:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b511oI+k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+m+gaxL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0A4644E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C884854FB5
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724030466; cv=none; b=LK2/wo6YRKYqCExzvJuj4tLGf6Ndl3pz//acwpAEeug1YtryT4JEHrpip8mmNsmn/eh82WetEveee2r7sotgeN+4pPlhzBEjgNFAXE6iAa+KdzN+7ZHbHpm5CysU02+7lM+XE4A39zjjqpjF718bAtMa3K/tmntdU9jRewmyiqQ=
+	t=1724030467; cv=none; b=Ze++MYPVjpxHylC1tFQt8BKMbgV4zoRqcxlRvnXtXPrx+gzn1w7z5c+sgI7OWEImTaFm+ys75UHZQG5q3VQsytlRcsWwqyS8FARo/4s99L1lUyVCmYLfaSOKuouFuIB6d7aYveHfzy7h34nZ6LJULeNH3cVofkiiwgxeVoaZkRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724030466; c=relaxed/simple;
-	bh=B1fWIi1dMz6E5T95/Mb2Eyi2qqkYJmzRfHyiW0GG3tk=;
+	s=arc-20240116; t=1724030467; c=relaxed/simple;
+	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hIDOl/y0Zw959a2ibUy4RJiXx3nJYRCnua6GU3Xl8oOeEGI+f/HEw47+5bQ8xgloXbTW+4Go91xcYtZWZ1UcIdt8jxA1dG4RVFQkEjJl0fyqBgBZVDQ1iWmSLBiac5vJnZxZ6yc+hvT52JXNaJbhZf+HFLpaZDmFFzUVgVerVcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b511oI+k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62942C4AF0C;
-	Mon, 19 Aug 2024 01:21:04 +0000 (UTC)
+	 MIME-Version; b=d3V/fBmkCoq3Fb7CUimDw9sTUAuvHU8HE8HBYbC2OsOgNNfsXIsfsFax0kztfTpxI+dZ33y9l+7rWEV5CbNAnZfz2+LIz+1GOjXJoy6ic6KNnrCKTu6fqgusKy6KEmWUxd16D9H7TbIQ/a8OXPcEV7rHeZGyP5mBHlfFN73fP0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+m+gaxL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499A2C32786;
+	Mon, 19 Aug 2024 01:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724030465;
-	bh=B1fWIi1dMz6E5T95/Mb2Eyi2qqkYJmzRfHyiW0GG3tk=;
+	s=k20201202; t=1724030467;
+	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b511oI+kIswKifXLZ+6ajwgxA3lvaDqg4EnKjs/JbU/c5vNJoMy6KIKnmIq1VMv/F
-	 6ayCPJhDtvBuTTkrHTaBK/S71D5P2LyOJmVakdXzw5jXOqMy4oYjezUzVZVwgols3Y
-	 CL8ptmRBMPEryQq8QB7SzYLGv1R4VRXIHNCNaGtibK8lcl4xQBNBXyVYNntqThrtgM
-	 3/zBaNWo7grpHDqDhxrtXuXaPxUtRueixLFgg2JD+lfKtXdXQZuq7bFLUP/4qVIL7Q
-	 XFc1z3ZA3oWJMgfAhcJbnWo59Xp1xW1GqSOauLYRpY2ITaH4jFSXmfYxgQUJkYqb0f
-	 i7W8derpw60OQ==
+	b=T+m+gaxL0ONvBo5PpwKmPwBazX413BosT1YIQnpfbYi595iBphhR27qezpLQjqMeV
+	 FE8NE5PIt4amuOhNQrtyDOxS0KTLwcOw0e86qY+8D0p0MCGTOK0HEpqIUGeYyB0rl8
+	 5yCJqwI+OTVnS1VnkvT4K1bJRSOow3dPfZxlHDj5BhTSKmz2nAE2bN4t6MO2oa14XM
+	 qG1cL6Eppd4gFWvGcwVM0rc/CUmS16BMShUlDRFviutZ5ynrmjTB1+uXPRgJbzwl1S
+	 MZ7tOZ3nc0iLkxMisHFsYat6vLxyqg0WZxn4GQt2SkwrCsug2e8AdlJQUFfiRrucye
+	 2IjbFMyrf9MnA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	Chao Yu <chao@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 7/8] f2fs: convert read_node_page() to use folio
-Date: Mon, 19 Aug 2024 09:20:22 +0800
-Message-Id: <20240819012023.3871272-7-chao@kernel.org>
+Subject: [PATCH 8/8] f2fs: get rid of page->index
+Date: Mon, 19 Aug 2024 09:20:23 +0800
+Message-Id: <20240819012023.3871272-8-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240819012023.3871272-1-chao@kernel.org>
 References: <20240819012023.3871272-1-chao@kernel.org>
@@ -68,46 +68,153 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/node.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/f2fs/compress.c |  2 +-
+ fs/f2fs/data.c     | 12 ++++++------
+ fs/f2fs/dir.c      |  3 ++-
+ fs/f2fs/inode.c    |  3 ++-
+ fs/f2fs/node.c     |  4 ++--
+ fs/f2fs/segment.c  |  3 ++-
+ 6 files changed, 15 insertions(+), 12 deletions(-)
 
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 67bb1e2e07a4..163ad0d7d495 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -881,7 +881,7 @@ static bool cluster_has_invalid_data(struct compress_ctx *cc)
+ 		f2fs_bug_on(F2FS_I_SB(cc->inode), !page);
+ 
+ 		/* beyond EOF */
+-		if (page->index >= nr_pages)
++		if (page_folio(page)->index >= nr_pages)
+ 			return true;
+ 	}
+ 	return false;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e69097267b99..c6d688208f8b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -354,7 +354,7 @@ static void f2fs_write_end_io(struct bio *bio)
+ 		}
+ 
+ 		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
+-					page->index != nid_of_node(page));
++				page_folio(page)->index != nid_of_node(page));
+ 
+ 		dec_page_count(sbi, type);
+ 		if (f2fs_in_warm_node_list(sbi, page))
+@@ -703,7 +703,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	bio = __bio_alloc(fio, 1);
+ 
+ 	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+-			       fio->page->index, fio, GFP_NOIO);
++			page_folio(fio->page)->index, fio, GFP_NOIO);
+ 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		bio_put(bio);
+@@ -802,7 +802,7 @@ static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
+ 							    fio->new_blkaddr));
+ 			if (f2fs_crypt_mergeable_bio(*bio,
+ 					fio->page->mapping->host,
+-					fio->page->index, fio) &&
++					page_folio(fio->page)->index, fio) &&
+ 			    bio_add_page(*bio, page, PAGE_SIZE, 0) ==
+ 					PAGE_SIZE) {
+ 				ret = 0;
+@@ -902,7 +902,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	if (!bio) {
+ 		bio = __bio_alloc(fio, BIO_MAX_VECS);
+ 		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+-				       fio->page->index, fio, GFP_NOIO);
++				page_folio(fio->page)->index, fio, GFP_NOIO);
+ 
+ 		add_bio_entry(fio->sbi, bio, page, fio->temp);
+ 	} else {
+@@ -995,13 +995,13 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+ 			      fio->new_blkaddr) ||
+ 	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
+-				       bio_page->index, fio)))
++				page_folio(bio_page)->index, fio)))
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+ 		io->bio = __bio_alloc(fio, BIO_MAX_VECS);
+ 		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
+-				       bio_page->index, fio, GFP_NOIO);
++				page_folio(bio_page)->index, fio, GFP_NOIO);
+ 		io->fio = *fio;
+ 	}
+ 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 5fcc952107e9..1136539a57a8 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -842,6 +842,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	struct	f2fs_dentry_block *dentry_blk;
+ 	unsigned int bit_pos;
+ 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
++	pgoff_t index = page_folio(page)->index;
+ 	int i;
+ 
+ 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
+@@ -867,7 +868,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	set_page_dirty(page);
+ 
+ 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
+-		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
++		!f2fs_truncate_hole(dir, index, index + 1)) {
+ 		f2fs_clear_page_cache_dirty_tag(page_folio(page));
+ 		clear_page_dirty_for_io(page);
+ 		ClearPageUptodate(page);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 5d7e4c7f5969..b2d5c3ef8e24 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -174,7 +174,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
+ 
+ 	if (provided != calculated)
+ 		f2fs_warn(sbi, "checksum invalid, nid = %lu, ino_of_node = %x, %x vs. %x",
+-			  page->index, ino_of_node(page), provided, calculated);
++			  page_folio(page)->index, ino_of_node(page),
++			  provided, calculated);
+ 
+ 	return provided == calculated;
+ }
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index aeda3eecc9e2..f5e5abce695b 100644
+index f5e5abce695b..59b13ff243fa 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1369,6 +1369,7 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
-  */
- static int read_node_page(struct page *page, blk_opf_t op_flags)
- {
-+	struct folio *folio = page_folio(page);
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 	struct node_info ni;
- 	struct f2fs_io_info fio = {
-@@ -1381,21 +1382,21 @@ static int read_node_page(struct page *page, blk_opf_t op_flags)
- 	};
- 	int err;
+@@ -919,7 +919,7 @@ static int truncate_node(struct dnode_of_data *dn)
+ 	clear_node_page_dirty(dn->node_page);
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
  
--	if (PageUptodate(page)) {
-+	if (folio_test_uptodate(folio)) {
- 		if (!f2fs_inode_chksum_verify(sbi, page)) {
--			ClearPageUptodate(page);
-+			folio_clear_uptodate(folio);
- 			return -EFSBADCRC;
- 		}
- 		return LOCKED_PAGE;
+-	index = dn->node_page->index;
++	index = page_folio(dn->node_page)->index;
+ 	f2fs_put_page(dn->node_page, 1);
+ 
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi),
+@@ -1869,7 +1869,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
  	}
+ 	if (!ret && atomic && !marked) {
+ 		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
+-			   ino, last_page->index);
++			   ino, page_folio(last_page)->index);
+ 		lock_page(last_page);
+ 		f2fs_wait_on_page_writeback(last_page, NODE, true, true);
+ 		set_page_dirty(last_page);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3bda3f707007..fafbb1cbcb57 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3564,7 +3564,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 		if (file_is_cold(inode) || f2fs_need_compress_data(inode))
+ 			return CURSEG_COLD_DATA;
  
--	err = f2fs_get_node_info(sbi, page->index, &ni, false);
-+	err = f2fs_get_node_info(sbi, folio->index, &ni, false);
- 	if (err)
- 		return err;
- 
- 	/* NEW_ADDR can be seen, after cp_error drops some dirty node pages */
- 	if (unlikely(ni.blk_addr == NULL_ADDR || ni.blk_addr == NEW_ADDR)) {
--		ClearPageUptodate(page);
-+		folio_clear_uptodate(folio);
- 		return -ENOENT;
- 	}
+-		type = __get_age_segment_type(inode, fio->page->index);
++		type = __get_age_segment_type(inode,
++				page_folio(fio->page)->index);
+ 		if (type != NO_CHECK_TYPE)
+ 			return type;
  
 -- 
 2.40.1
