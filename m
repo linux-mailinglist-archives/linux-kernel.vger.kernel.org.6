@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-292187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D37956C31
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8527956C33
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E91AB25237
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:34:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35F18B27DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4747616D4E0;
-	Mon, 19 Aug 2024 13:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C58916B749;
+	Mon, 19 Aug 2024 13:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UiwzHSHz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="ljkVb+lT"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221816D4D8;
-	Mon, 19 Aug 2024 13:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93FA15D5DE;
+	Mon, 19 Aug 2024 13:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074390; cv=none; b=IdKj8c7wDfHG7l6GjLRyBAiNTVAH6NjQ7HaI4TX9D726BhWJJPbU5bDKsmDRe9jMO7AJKg05qXoSl4/+qLACD1ofjrlVYgfKgPklW8PqbtdD5WKQUBKDVWftQwuxZklR8BJ/x84ezeqt4u1uADbzNVcDNMGUl8fJ7idgoR6z2/M=
+	t=1724074407; cv=none; b=XYuNpPGqj2eY9ffLcvEi033RCvohzpR4YL1pUNE+QBicex2vnGbr08+UrPNiS3QfZMxU2Sn0gcPIk6MkwhhAAst4aOAMelG8NDCqyYWbF9ujqS7TtNlHxTYjvhTUsB9xNDknU8RQTsIEXE3+50KQjTeLUhoQLKtAmb7xYGT1PHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074390; c=relaxed/simple;
-	bh=qvGX+ulqTOixz3MeyrqvHy7bTy1mID4m/xJTeYKQM4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMSX7ZnpYmRqtZoEBu8cH0NETa+XAHnIXrwH/i29XuoDHPZWf8IHPjK28kLs2hcyzn6lUmCBZN+1UVcLwBOz/42DwJvhzJU7Jh/wnbVelYDhzOKw+OADMdGpIfQ60wxb/PYmq2pTckbLdo2HZgU6dyfDNh6q8m+zC23fiA6/eus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UiwzHSHz; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724074389; x=1755610389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qvGX+ulqTOixz3MeyrqvHy7bTy1mID4m/xJTeYKQM4Y=;
-  b=UiwzHSHz4CW77ANDe1tgw1H0fCGPcYhxE5ZtV4MWSlAy1IDO5xxKxvGA
-   ke2++A/mLJYVm3OHL01ymz0K3Kz7cvrWtXVqs9KQduOnQWky7PJDUM5S7
-   LmDw4fgkRsvy8OGOsdPq7H88ktkuk6WTE4z+0nRs8r76wCPXapJwqvLcL
-   C5UVZPW4U3ro8DNxOWk2by4nwsnkkltFst8iTdCObfTZ+SSNYzU0ce2RX
-   kH7aQFTpMkW4BOnGHI7xaa69Cap9Tok5SxEQaedJbcvkLd8+t0SR17MgR
-   5JSsC3LnQRvckRSqu6tPDaVdnc/yDewez5QDQn2/3W5v9QMdYR5IBicYy
-   w==;
-X-CSE-ConnectionGUID: PJCn1mcTRmyzZBCDqdbvnQ==
-X-CSE-MsgGUID: Weoy/X+YRMOTuhxuc+U+Ug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26189316"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="26189316"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 06:33:08 -0700
-X-CSE-ConnectionGUID: jJnY3/6ZSo+akgu+1nAh/g==
-X-CSE-MsgGUID: e5Hkpd3QTFCvB4f9CprT9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60950908"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa007.jf.intel.com with SMTP; 19 Aug 2024 06:33:03 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 19 Aug 2024 16:33:02 +0300
-Date: Mon, 19 Aug 2024 16:33:02 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] soc: qcom: pmic_glink: Actually communicate with
- remote goes down
-Message-ID: <ZsNJju43JyChNoMd@kuha.fi.intel.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
- <20240818-pmic-glink-v6-11-races-v1-3-f87c577e0bc9@quicinc.com>
+	s=arc-20240116; t=1724074407; c=relaxed/simple;
+	bh=mUcz58dl6COkNRjXiS+XwoZIpjirix2gMX2fsFCVwqc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QbFEvaAeGfv38VEUvlyXiC5oLL1W1T+a3U+yOOD/ZIin4rxB9IexQG7FXHbsYkjlve3S38kk+isZc2Fk2NUkZx+7F1JwRlGsqZcFnJubXBHXTNnzmx9MjD70nicfdF4qAyozLHGev5Me0Jmtm7nWbt6T0ZOy57owNWpaJNmM9BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=ljkVb+lT; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-3-f87c577e0bc9@quicinc.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1724074402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mUcz58dl6COkNRjXiS+XwoZIpjirix2gMX2fsFCVwqc=;
+	b=ljkVb+lTjdnqwLJrKao3uSZiJ5UsRjbEoSgjD8lP0CE2ae3ASMI3BPgcebBDyt7VyscRJS
+	ycmtkDoUGtdj8BblhOwd3lny3sKz1P/wK9MZ8c9S7nDEuBGCG63Zh8F30JMULw4QNSEIx/
+	6bU2giLnAuNEy5Z1orKiH1iquaECTqX5kLv3KB2BjfT92JBHXofm3w4U57/oeq95UAslL3
+	I5NkSlxcg9/xouNExxDHcqzerrtAVEzjhnC9h0jfgHQi3c2DWB9GRu8agOgphE3y7lhtly
+	oBeE3ybeLJqZwhFlowQHbKVKOkeAP7BeNrgPuSsxOjfnrkpJtOmHNjR5s/SirA==
+Content-Type: multipart/signed;
+ boundary=7d622726182a96d2bf0672ce2e9576632d95c43943cc86cf0e8f4ee1b5f3;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Mon, 19 Aug 2024 15:33:12 +0200
+Message-Id: <D3JXD607339U.2F1IAKUSM59UP@cknow.org>
+Cc: "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, "Linux Kernel
+ Mailing List" <linux-kernel@vger.kernel.org>, "Mark Brown"
+ <broonie@kernel.org>
+Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Vicente Bergas" <vicencb@gmail.com>, "Huang-Huang Bao" <i@eh5.me>,
+ "Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ <linux-spi@vger.kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Sasha Levin" <sashal@kernel.org>
+References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com> <CAAMcf8DZu4B2AN+=8xP3wuknqUtD-e-v+Ej31=08ibPfyL+dGw@mail.gmail.com> <CAAMcf8A59MqhZEswC5VmKZyThG7oG=ztEYd_yfuOwvGTvKzMow@mail.gmail.com> <CAAMcf8Ctr9rOZ2oOzk48haakJOO2bzyNURb2oZTRxJ3tnafXUA@mail.gmail.com>
+In-Reply-To: <CAAMcf8Ctr9rOZ2oOzk48haakJOO2bzyNURb2oZTRxJ3tnafXUA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Aug 18, 2024 at 04:17:39PM -0700, Bjorn Andersson wrote:
-> When the pmic_glink state is UP and we either receive a protection-
-> domain (PD) notifcation indicating that the PD is going down, or that
-> the whole remoteproc is going down, it's expected that the pmic_glink
-> client instances are notified that their function has gone DOWN.
-> 
-> This is not what the code does, which results in the client state either
-> not updating, or being wrong in many cases. So let's fix the conditions.
-> 
-> Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+--7d622726182a96d2bf0672ce2e9576632d95c43943cc86cf0e8f4ee1b5f3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Mon Aug 19, 2024 at 3:14 PM CEST, Vicente Bergas wrote:
+> On Mon, Aug 19, 2024 at 2:49 PM Vicente Bergas <vicencb@gmail.com> wrote:
+> > On Mon, Aug 19, 2024 at 4:12 AM Vicente Bergas <vicencb@gmail.com> wrote:
+> > > > i am a user of the CONFIG_SPI_SPIDEV device.
+> > > > It stopped working between 6.8 and 6.10.5.
+> > > > The SPI bus itself reports no errors to userspace, but no devices
+> > > > appear connected to the bus.
+> > > > The platform used is RK3328.
+> > > > The only spi-related message in dmesg is:
+> > > > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
 
-> ---
->  drivers/soc/qcom/pmic_glink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-> index e4747f1d3da5..cb202a37e8ab 100644
-> --- a/drivers/soc/qcom/pmic_glink.c
-> +++ b/drivers/soc/qcom/pmic_glink.c
-> @@ -191,7 +191,7 @@ static void pmic_glink_state_notify_clients(struct pmic_glink *pg)
->  		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
->  			new_state = SERVREG_SERVICE_STATE_UP;
->  	} else {
-> -		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
-> +		if (pg->pdr_state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
->  			new_state = SERVREG_SERVICE_STATE_DOWN;
->  	}
->  
-> 
+FWIW: I've seen this issue as well.
 
--- 
-heikki
+> > Added:
+> > Huang-Huang Bao <i@eh5.me>
+> > Linus Walleij <linus.walleij@linaro.org>
+> > Sasha Levin <sashal@kernel.org>
+> >
+> > The first offending commit is:
+> > 29d8101fb9442544077e68e27839a1979f85633d pinctrl: rockchip: fix pinmux
+> > bits for RK3328 GPIO2-B pins
+> >
+> > I've also tested 6.10.6 with it reverted (and
+> > 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+> > 7127c68c76f120367b9a5053f524df0b603d4a48 as dependencies) and SPI
+> > works fine.
+>
+> Sorry for the noise:
+> reverting only 29d8101fb9442544077e68e27839a1979f85633d makes it work on 6.10.6.
+> Ignore what i said about 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
+> 7127c68c76f120367b9a5053f524df0b603d4a48.
+
+Please try if unreverting that commit and adding the following:
+https://lore.kernel.org/linux-rockchip/20240709105428.1176375-1-i@eh5.me/
+
+fixes the issue as well.
+
+--7d622726182a96d2bf0672ce2e9576632d95c43943cc86cf0e8f4ee1b5f3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZsNJmwAKCRDXblvOeH7b
+bhyQAP92MFS0tEffPQaPvXYIqpxKxcuOQKgtci09ZuJAZ8cHcAD8CHTgUDgpnM8L
+KrOfRzWCigYY3k5CT8KNO6/JOHeTUQ0=
+=ku1k
+-----END PGP SIGNATURE-----
+
+--7d622726182a96d2bf0672ce2e9576632d95c43943cc86cf0e8f4ee1b5f3--
 
