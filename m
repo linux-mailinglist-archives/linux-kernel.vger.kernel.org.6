@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-292019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D934D956A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:01:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21660956A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8BD289225
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:01:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46ADE1C22E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520D216B389;
-	Mon, 19 Aug 2024 12:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6FB16938C;
+	Mon, 19 Aug 2024 12:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQTgy4zO"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nsPPusUg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="goPRrnnB"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6EE13DBA0;
-	Mon, 19 Aug 2024 12:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC8013DBA0;
+	Mon, 19 Aug 2024 12:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068896; cv=none; b=qyvQ+nQwZ81489UlrdVg+jY4uXCLRO63gaf+7rkFs03zuW2PCgTgJJerKW79/fwm97uL+ChUOrCGjXlDXOmtDFOgqgDXftD1cV7Iqw6I+ji6+CCFQjzYRF246lqYVe9DgeyulNBIxObMr2lg0K3F1Q9u8Ba7LTdYCLI1t93MR2k=
+	t=1724069005; cv=none; b=njj8vUL9HvXMdq9U4SbO8iJ2sRjC1pN4G8Tyl2wX1uHTIoNitTYCO8MCRXv+s5dzLithzolKqkjqMF3VAulMxfFbUFOEdlEJNdy5YpsIyYRnpncVDna0xNQfEjJsJ6M446heMhZb9QPjNx5KG/X+gkOnvHhqxgbtx3ykUOBnbqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068896; c=relaxed/simple;
-	bh=9FMe2E36njetavmaIaeBUbP3/ypPX2kaswZqmd1RdWc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FRjXAnaJ+PeYMp0DxjOUHLwWlsIJbFP+w14wVLtEb+Ttao6OMuiq7WWcFiGHBGa0rubNegByIWovuirMMcCjITVBXteh71A0tDHSyg6PLpWKKH2lokncSY/YzlcEc0k7qf4ZFi2kfPvzkUeEDDC45aNKtdxiP7c8oKD3YgCw8qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQTgy4zO; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso6425621a12.1;
-        Mon, 19 Aug 2024 05:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724068893; x=1724673693; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqIJnZhOkzwlhHlFmquqUgF5P4b6JO1W6PZDA+8kgtI=;
-        b=HQTgy4zOeyhr/6u+dQTvrFp61x4bKZRi1KUsJoJYav3xTWf41Ce3ZaddwtcxYijl5W
-         zywmIymlOutxLcWk9mYVc9/afntpHBnNHL4H0O81H1uPJCekrlVhRJM+lCUO7GK/lfzo
-         KYuh4VtmUTd56DQMsxSyVcsXs77yr2fGd0GFWCm8aagdSi2gRLCoWKRd8StNlnUAYV0G
-         Nt6H1HxW537eLFPSrCk8UwWdZu+j4ck954m8m1xbLeHqYLaZ30YK56epbwfM2pag07T6
-         I6THhQxbldY9K7UFQQaCtAYuP0xuEGwQekR0Y713X5EdnlTd4TPCd0smKLvqyniR5KRt
-         62/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724068893; x=1724673693;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqIJnZhOkzwlhHlFmquqUgF5P4b6JO1W6PZDA+8kgtI=;
-        b=UKoqzEJCNVBFyY25TF+XR+ydzwNS8PDUFVe1PAT5nOUp2vc9XGGgRTm9iGANvpDmtC
-         dEzp6QcgQJyk54lIJ5T6WpAJx+tHTip0u9hX4deBPFm/PVbsMwqc+twckEfDJCqVpVOC
-         K7RDarmAmK/29zxD7jPVjF9s/K0dxs1nr9YY0Ye+5wt6IePWr8/dVL8JYLv2baLYf0eJ
-         jNcre4FZP5HEoprvT1bz8Xz5wtfyzfs9djp7K5aaDzNN8P/wGmEs/c9MyVpd4620ze3D
-         vsiW89+PdCnWM2kWRrKUlJYAlF3Ep4bsSA9rLe8VINXj+Jpm0gUoUqlg6G5d32HnPo+m
-         mSvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhBLaUdnpKADl8Liu6v/2ec2gccWsmGuOi+v2uXN2NGbbs4RL9YdUFLwJ+TK31jJMGNdH/U5Ct+rb5QGMIXr2fY/qo5gewX0GDCUwO7aYQOOFMu+ddp3NZ8Ne1xFPHz9PL3VkVONyk
-X-Gm-Message-State: AOJu0Yyt6kqHBki8+IFajMPrn4fA7hH06pLu6wXpPUa8X8n0NcEvANI9
-	cAaYVDZ0oQesJ7QYL/irK8OGccdYnr4JZnQHBlV0nYsDZZHh2DP8
-X-Google-Smtp-Source: AGHT+IHctpArOY8ZZmCUzbJXS5jZn+B9sz/9xRjEY8w0f1US2wIXF4pzMZ9gF8s2dGf/17SJpsbTKg==
-X-Received: by 2002:a17:907:96a4:b0:a83:7ecb:1d1f with SMTP id a640c23a62f3a-a8392a03bc1mr738483066b.46.1724068892325;
-        Mon, 19 Aug 2024 05:01:32 -0700 (PDT)
-Received: from A13PC04R.einet.ad.eivd.ch ([193.134.219.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6777sm634559366b.10.2024.08.19.05.01.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 05:01:31 -0700 (PDT)
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-To: rick.wertenbroek@heig-vd.ch
-Cc: dlemoal@kernel.org,
-	alberto.dassatti@heig-vd.ch,
-	Rick Wertenbroek <rick.wertenbroek@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: endpoint: pci-epf-test: Move DMA check into read/write/copy functions
-Date: Mon, 19 Aug 2024 14:01:10 +0200
-Message-Id: <20240819120112.23563-1-rick.wertenbroek@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724069005; c=relaxed/simple;
+	bh=x+ohuPa6Bg3rGm2yXeitvgiO5in5d6zC0RFJGBbMnvU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=I7k8qWxUeBNkiYiuuE9f0MMmdx/uxZfASS2f+8ePN0TJbo4RoF3sLoYlGdFKVN9c+D/uCNtx9kFp2mUzXGvSrxwWMtKFPKulg65lkPdB1TBt2NN+uK0zM2ormxO92wd2jKHcY+Wc8YUzSZAJfKMEYWY2GgY9+xgitZ/10Azs4R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nsPPusUg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=goPRrnnB; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 47613138FF2E;
+	Mon, 19 Aug 2024 08:03:23 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 08:03:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724069003;
+	 x=1724155403; bh=MlUgy/leWMv3QVsxhXpycZ/yMPD753+synKTpuY/3tY=; b=
+	nsPPusUg43iCP/0H15qB4AeDsixQXqbTLpABfizVv3CDPO0a3yd3LGqDX2IQHDFo
+	1D+VSLYyubjiW+Q6bxd9t9pY+8A53lYyhQ8dLBxkD8/q/Aek8sIxxCHxaYWFVzkN
+	fbG/aVn7ciZJHnZACxWx4KaOQeXsuR+CUrXxMo7tC9QfS8LNxhpk0fWkEeaGMnFY
+	TkNcyJ2ppOaAe39P3ST21XnVDchfYSBeiK7yweODlePfC8RYC/WdnmswK8ZUWb2M
+	C0FBXXbxhSuuZwGk8a2DU+qRfxCi8i97cE4wKbSAvZRiNXd+pQK+DvUaMEKU5dT7
+	Kgx39eMHivsfz8HIY8ZpjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724069003; x=
+	1724155403; bh=MlUgy/leWMv3QVsxhXpycZ/yMPD753+synKTpuY/3tY=; b=g
+	oPRrnnBwO8hpJHTtvjlucDuPxa2EmnBgIoXcaknB4Pf/q65BF7fBIdn8IE0oNU+s
+	yNO1OZDVIrNuTvKDTNGqCfICV7dvQ4A/LY3cMJQQTAyzHbcVJbJ06arn4Q5hGW+V
+	Rl2vsE7jufj15S0WqaOOO6OYnZwyCsMfbhb0SO/Ku8vTHgiXVz7AHxi9XqcSgAio
+	ZhPFXU236PhdBGxErTHFgvfr0gld66TJSVEwnUzUPveanUmWFAplXz8CWwXFlY9X
+	fZBgWU4vZkCnHB5tbE1EB/uVVMDdm4C1fmV0Un3v/Bqj+vvkhE/BdxAaDx2lENSa
+	KORKfot4JBwFTNKvQtsFg==
+X-ME-Sender: <xms:ijTDZnEJgyM1mN1brDD6DYeCjDT-XOd6KhpBu6_Y5UypNWeDV57igA>
+    <xme:ijTDZkWnaNMuTCbjSFtuM_gq-YpVApLobb8qArbae_UkopuEbbdWG5IopjP34WOTM
+    nZSfiWgWh9oLfPsT48>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
+    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
+    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
+    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
+    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
+    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:ijTDZpKO0wriK_Wd9ghL-4q83XumtDz4seyQ49mCeffwzaMpGeYolQ>
+    <xmx:ijTDZlFMpv0F5OyJvpcVPeHaGGl4p0FihH7mEua3q9ckzHbdA1fPzQ>
+    <xmx:ijTDZtUITz08K66ua0eTYaHtC6Ww35KO2tBd2F4ZgP2A_3cfPoShtw>
+    <xmx:ijTDZgO92Hfyh3jsiLs0eRTg1ulkKIuJ5SUEvOyT0DVDGdpoyKC8kg>
+    <xmx:izTDZnggwu-HtVYM8B1yJeXrsp2CsRgSO2ttFQxKiFL53JQs_AfGqKxE>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A654216005E; Mon, 19 Aug 2024 08:03:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Aug 2024 14:03:01 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuntao Liu" <liuyuntao12@huawei.com>,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: "Corey Minyard" <minyard@acm.org>,
+ "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
+ "Vinod Koul" <vkoul@kernel.org>, "Daniel Mack" <daniel@zonque.org>,
+ "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>, morbidrsa@gmail.com,
+ "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
+ "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, codrin.ciubotariu@microchip.com,
+ "Andi Shyti" <andi.shyti@kernel.org>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <dc9bda22-53d5-4b22-80f7-f2d4d816bd77@app.fastmail.com>
+In-Reply-To: <20240819113855.787149-10-liuyuntao12@huawei.com>
+References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+ <20240819113855.787149-10-liuyuntao12@huawei.com>
+Subject: Re: [PATCH -next 9/9] ipmi: ipmi_ssif: fix module autoloading
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The pci-epf-test PCI endpoint function /drivers/pci/endpoint/function/pci-epf_test.c
-is meant to be used in a PCI endpoint device inside a host computer with
-the host side driver: /drivers/misc/pci_endpoint_test.c.
+On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from platform_device_id table.
+>
+> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> ---
 
-The host side driver can request read/write/copy transactions from the
-endpoint function and expects an IRQ from the endpoint function once
-the read/write/copy transaction is finished. These can be issued with or
-without DMA enabled. If the host side driver requests a read/write/copy
-transaction with DMA enabled and the endpoint function does not support
-DMA, the endpoint would only print an error message and wait for further
-commands without sending an IRQ because pci_epf_test_raise_irq() is
-skipped in pci_epf_test_cmd_handler(). This results in the host side
-driver hanging indefinitely waiting for the IRQ.
+The driver already has a MODULE_ALIAS() with the same string.
 
-Move the DMA check into the pci_epf_test_read()/write()/copy() functions
-so that they report a transfer (IO) error and that pci_epf_test_raise_irq()
-is called when a transfer with DMA is requested, even if unsupported.
+I think the MODULE_DEVICE_TABLE() entry is slightly cleaner here,
+but it should only have one of the two, not both.
 
-The host side driver will no longer hang but report an error on transfer
-(printing "NOT OKAY") thanks to the checksum because no data was moved.
-
-Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 29 +++++++++++++++----
- 1 file changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7c2ed6eae53a..ec0f79383521 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -314,6 +314,17 @@ static void pci_epf_test_print_rate(struct pci_epf_test *epf_test,
- 		 (u64)ts.tv_sec, (u32)ts.tv_nsec, rate);
- }
- 
-+static int pci_epf_test_check_dma(struct pci_epf_test *epf_test,
-+				   struct pci_epf_test_reg *reg)
-+{
-+	if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
-+	    !epf_test->dma_supported) {
-+		dev_err(&epf_test->epf->dev, "DMA transfer not supported\n");
-+		return -EIO;
-+	}
-+	return 0;
-+}
-+
- static void pci_epf_test_copy(struct pci_epf_test *epf_test,
- 			      struct pci_epf_test_reg *reg)
- {
-@@ -327,6 +338,10 @@ static void pci_epf_test_copy(struct pci_epf_test *epf_test,
- 	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 
-+	ret = pci_epf_test_check_dma(epf_test, reg);
-+	if (ret)
-+		goto err;
-+
- 	src_addr = pci_epc_mem_alloc_addr(epc, &src_phys_addr, reg->size);
- 	if (!src_addr) {
- 		dev_err(dev, "Failed to allocate source address\n");
-@@ -423,6 +438,10 @@ static void pci_epf_test_read(struct pci_epf_test *epf_test,
- 	struct pci_epc *epc = epf->epc;
- 	struct device *dma_dev = epf->epc->dev.parent;
- 
-+	ret = pci_epf_test_check_dma(epf_test, reg);
-+	if (ret)
-+		goto err;
-+
- 	src_addr = pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
- 	if (!src_addr) {
- 		dev_err(dev, "Failed to allocate address\n");
-@@ -507,6 +526,10 @@ static void pci_epf_test_write(struct pci_epf_test *epf_test,
- 	struct pci_epc *epc = epf->epc;
- 	struct device *dma_dev = epf->epc->dev.parent;
- 
-+	ret = pci_epf_test_check_dma(epf_test, reg);
-+	if (ret)
-+		goto err;
-+
- 	dst_addr = pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
- 	if (!dst_addr) {
- 		dev_err(dev, "Failed to allocate address\n");
-@@ -647,12 +670,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 	WRITE_ONCE(reg->command, 0);
- 	WRITE_ONCE(reg->status, 0);
- 
--	if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
--	    !epf_test->dma_supported) {
--		dev_err(dev, "Cannot transfer data using DMA\n");
--		goto reset_handler;
--	}
--
- 	if (reg->irq_type > IRQ_TYPE_MSIX) {
- 		dev_err(dev, "Failed to detect IRQ type\n");
- 		goto reset_handler;
--- 
-2.25.1
-
+     Arnd
 
