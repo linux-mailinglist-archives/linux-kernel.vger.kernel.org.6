@@ -1,193 +1,157 @@
-Return-Path: <linux-kernel+bounces-292271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E18C956D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BB3956D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78DA285B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51AA71F23F7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1DF172777;
-	Mon, 19 Aug 2024 14:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2791607A7;
+	Mon, 19 Aug 2024 14:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e1SWBOGr"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013055.outbound.protection.outlook.com [52.101.67.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SlQ+EDJ6"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3189A16C685;
-	Mon, 19 Aug 2024 14:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077852; cv=fail; b=pMAy8jmZQBI6l8icp8XrDnZ+JMIY/gCQP9Ke+HhWazxvTz9ztvsPqoXLC00ns4Dq4qFCLCmveydo0WL7M9nkxWN8jtAYJ3dkDYv9PBlqIROtb7dJhz8ftw/3ieHWjanipbvEE5ZJ9+hPYtT43FGO+4GUbbKwSDiG2aD3zxbmF7g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077852; c=relaxed/simple;
-	bh=Lk7Ib4KCszrraq7Geo4DyERBvCd8uLGMdXZkntb6plQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pJXV7IUfe73o1E1ZKOtcYuvp0pKsq/fXoecl485Yb6RocYRgt0iFLgVzOINM+wEomyblDhpoXhb8bqhv2HXZYtz7BRQQcd9A1nGOqpgkmGQRP++YWIrl6XqgS6hCu8apv8wXbvx/UmEIy05y8Or1eB323dJlKTLJpRnviZBy6SE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e1SWBOGr; arc=fail smtp.client-ip=52.101.67.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mrhK+G6q8zxvD8wLd8Xf9HQb877L9zNrXGMJppeA2/dYInWyMM8B5DVGIEijQKWD6BYoBhM76ivd6G81xqzWZKG3YIem/PEHkAbOierr6EezNwaAfz/pNEHMjq4xCNSoTasxcILpnpCaGznVOhgyP6eCQmMZ9w8cCXbAZWZtuht6wtPq7bsLUNA5ONrR0pZWbR2akwjAVUCyInTln9V74GOJ067VEhVj7QJ67dBtcpUPTgpf7usgaqaUE5KFgVTsfoAOjGUgc9Dod+7AxPZ5mQEMQ0azi6zAgj6DBHhO2LqquxuUI87D0byg8MlvyK4xETRPQLUxdhk2B38fz274pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tqc20FACZpfX7CH1PiGT9qIyh33ZOJgoRdfafC4/Ry4=;
- b=A+Uls+BvKgYoAaAWFH4AGdt9CXKuqsznkU6bo1j9VekBoFR8lqbWatFVW7LmmR5jvv2c9t4gNUuPUQ9DoNoVRGWq22VlIUrzWzsMI5GcN1R3ivMOx0YAjPyY8NR33DYpE/eAKcx+AOjjHKK0uQGg+zzjXvz1vgKgbsfUDCtuxuxqVJkLPDzsTAtqxcSU1YgycrHT5PnH77FZmDRft1zXR65fj4wa+VQ37VjZ+ztlpc0QXzdkFJ2wyFL8Fmlp5vCAWXwZKCYX27aTCvx7WVYZ/mLZnN2Ll9LZHDAT/MhyMwxnYK/KEe2bjdba/7wqPxlOMOKR6MZwINYlpSBPuMmzow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tqc20FACZpfX7CH1PiGT9qIyh33ZOJgoRdfafC4/Ry4=;
- b=e1SWBOGr7VDpqSh078ZNVq7mJI5ZhVZHmpHVCfqMkOchaY3ETExbvBLx5+y5Tlefc9ZRnJvFIjuxYoaaniP5x3O5LK4OcCe5gUkTR8h5zmL4yTUd766zs7j9RO1qoHr54PNtKOKa5KZKXxPhZO1hqhat23ON5G5dmSLsPb9Qq3TECWzHmJV0daurw2L/MIDHQgSne4cZN89BL7RkwAYrwOytAdPsPoFF26/l4dnbJqwTZG4t6jrnwUgiWT27z4kDN93G0oa0XfTcazjERPmMlNotldaFyhF+ScSFgix+bqwCNkKkE8CIkKRrSywq8WsYdBTnA/aEX15Rb6xZVzPfdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8278.eurprd04.prod.outlook.com (2603:10a6:20b:3ff::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 14:30:47 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 14:30:47 +0000
-Date: Mon, 19 Aug 2024 10:30:38 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, francesco.dolcini@toradex.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] PCI: imx6: reset link after suspend/resume
-Message-ID: <ZsNXDq/kidZdyhvD@lizhi-Precision-Tower-5810>
-References: <20240819090428.17349-1-eichest@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819090428.17349-1-eichest@gmail.com>
-X-ClientProxiedBy: SJ0PR05CA0171.namprd05.prod.outlook.com
- (2603:10b6:a03:339::26) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F281D554
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724077987; cv=none; b=aDZQqKLh48UFBAjdrLaM21l5CHWZ6H9PFe9q1bBtoSiN4wIwKle4NJ8gmAZDr0aCjYfSu+81uI8BzUXkz03Wn+wGjeFamPR3t6e78cBObB4EkKbShiph3Z9fMtQjGyc+lBWugkF37X2G/f4aW68mXkGUd1Cxk0iRaxkvvGVzwyY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724077987; c=relaxed/simple;
+	bh=oY46spFSB+TR2L32LqUWYq42f01hyWum+P6CJ0QBLPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5qK3i1T/zOHW3yumBihzi7reYDSwRRypXEZ0nQvu//h9ao8pu/JpUc28cQyEC8m1I4ps8ot7bBVMfHUnwNmpmlEYMHBfSkZ6CchsFTtkl+mmhmDo/pFKnoSHLiCWe5vCr8se8fg/GfKrhrYZBgAuMTp8VNdurmILKxDDvKULQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SlQ+EDJ6; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PvbvwyhAJwiLi+2I6K3w9kJ9GX9Qp4KvlfpWMNEkxYo=; b=SlQ+EDJ6/CVgOMb39Ei8hdiJV9
+	Fv6k5NalTYvQXtaxYm85pL/hMKMJsNSKV90z3JCfuzDlliT+8u1In/s0yt3G6NzrtGUFZ6MdZTayq
+	wDutj4OEBO+IkJPzVS3Ql1al/IbwNYkCOR+JJuJVZHRjrSkqXZqx5f/KZHEC5+I50+U1KVUE/TEYZ
+	o3Wbp0rvHgQMIvmVOLGdVSBfcORjpN1ml3PiAfKn8T9+n0ouW3UnDk9oJbWBoKEPkjw5U+sAGwC8E
+	W1wzkTHAugvYRBfbX8a9SkimK1BnQdxquZ06WWDhxLB2JaYqUHnjRQk8UdjhOmq3T0ENG1gAUeqUC
+	GOZElKtg==;
+Received: from [189.6.17.125] (helo=mail.igalia.com)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sg3R0-002EEW-R0; Mon, 19 Aug 2024 16:32:38 +0200
+Date: Mon, 19 Aug 2024 11:31:44 -0300
+From: Melissa Wen <mwen@igalia.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, 
+	Aric Cyr <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, 
+	Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/12] drm/amd: Switch over to struct drm_edid
+Message-ID: <3v3yvr6adlnqgbwbnvhfwj3ylpptunqyvosazyebvov3osdprb@znkx32uxku5q>
+References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8278:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6836684-8097-40cb-6206-08dcc05b841d
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?aEtX/2ioCdsR7q0ITDOmljZhcRO7XkteCQ4xnXf8yB9ZqjmkqAcEPAdxWvgj?=
- =?us-ascii?Q?6aVKWYc3zfOScJT6+ZnbI/AKjekai8wPaByY3pfCtYV3NJ6phqAh63PtYwog?=
- =?us-ascii?Q?FjS0E60OtC9dvsEMwEzpVjYTyruEIZZnY61Of9dpJ7Ua97ApqiK2IvaldfpN?=
- =?us-ascii?Q?bTfEFa84NxIml0l3xAJWTeMeGOx053KVN4rWxmvZfF0WGf1jsL8CCsAJrsVc?=
- =?us-ascii?Q?tR0ub5uL5xNMP3iDtlUGkzpBgIleeVd7RR1BvaS4FfHt86S9pCE/WC9wwpBH?=
- =?us-ascii?Q?6Au9NmrF6YBk8LfkvCuR+Ek0iR/7K5v/hnsOmhLKfkZqF9nh2S1KT9y9YEL3?=
- =?us-ascii?Q?NVTg2H1SoFphafrGH3X/+YcT6N/xgAecnVtGn+EkVPkmrB5O4jI9abUWWuc0?=
- =?us-ascii?Q?m/sF4V1iUFBqWS8eBRcpodRBimffh27R1iEL1RYAz6UyNJjfmZ9UK4zu+KtN?=
- =?us-ascii?Q?z8REYaEjHkJRYo3ECJquNo/CA+6rh1UpK4uI/tL0AeUZXEANaiA0ZpWTRB6C?=
- =?us-ascii?Q?JtAxqvmw/Ao1sUl82U4NaAq3c8hlrXKCGy/T/V3yBv1Yte+P3Dit7bhxiO/E?=
- =?us-ascii?Q?xsScBvA33UwABqO/e17cHuYmkXNX1oa3wioDufjXPsRUlDSGbo9IUjFkgv/R?=
- =?us-ascii?Q?Q8wc7HZNBUMGoVmsDQjfwTQ+5uDFmVOQPbnvWFYjJ+LoM9FjqgZFo2wcZzh6?=
- =?us-ascii?Q?T2CqsmPxHyMizs8Xz+uNIM4If7du0u7MQKxPJkMqVtl8fXYK1bjYaGiUbx+O?=
- =?us-ascii?Q?6z+yLa1WohBHvaLwpJFPc7d/TzBksqyFjUrkcXmNTK9j34HOvDetpMrg84Nl?=
- =?us-ascii?Q?R8v623C8YlfwQZIwREgXLQAd5LReort0WX1wUgDpKHoNMvUsShuJwCNUTdUl?=
- =?us-ascii?Q?EILJXYpOPfCRtbhrwzSRqdaj5jf7ZevfpptSewhOSvu/hO0w0PcFIkV8Fc9S?=
- =?us-ascii?Q?Ffe2nxkwROWte/W0ch4js7WIQWuvIenW29rzE8HXuPC+hjQhWMJ+h98diF5k?=
- =?us-ascii?Q?TA/Dw9gFgQwsTOgCjjqDHeE1xDr+/aYtG5os6KTYvxW4/3d3KyZmyPSvE3GP?=
- =?us-ascii?Q?EeMPyiKuRHbk/aNDnY+LeaEzm8TsbGJOzeh/0w94lSZDOBeEke/Z6RYQTxHn?=
- =?us-ascii?Q?JG1PNMml3ZTWQZOLrdTWTqihWvFtfNxzD04R0oOy3uyGpcH3WvHEmVcfcitY?=
- =?us-ascii?Q?zvE+7ymg3eQ3GC/8x/2zgGulUGKC3qgdmR31hCRcTkfZquKdh2/XG1oqaUg4?=
- =?us-ascii?Q?naQx/P+FXevbZFJ1Q4TXT9YAgcKZBJOJ1H1OxfbXo2JzpndtZIwt0h/TinkD?=
- =?us-ascii?Q?I1R8gEfRx3t5jHCgoCEq0eeXEiBdaTZMmj1btqgWOR9jqFrJaI0aTugKa8t1?=
- =?us-ascii?Q?eCHiM5Y=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?Cu8bWrgH3Iyg2uTC7qdo+YNn3IOgZ5jtZEs6svxi/uVG/ntqbSw/l87ZtuS5?=
- =?us-ascii?Q?dMTrTzaNzUmYu1xaiDi86zmqma1Y3YNMdG4oPKgi0usFZusxjWGSJOLZPYMB?=
- =?us-ascii?Q?e9CjJqH9v0q0GNgTP2GstdpVH/DfwQH+/dy/afHGQjbSXWdLHjMpwDLKP00I?=
- =?us-ascii?Q?l75NY7U/AtaYGS3Xkl7l5wWKq6yf0iLnnnfiYyu44nrvNgSWt38PRAMf9dxR?=
- =?us-ascii?Q?3opooz1C2PWWhDIwtSIRxpIJKyP1CGZpc8ovo4ZpqR5/4zAItzsR41/0Haxy?=
- =?us-ascii?Q?9/R4aDD7kHB+4ayu/qP0EXvEPnih8Ke7Bnr9AxjjQwlT3W5RCR7YQjnQyBNK?=
- =?us-ascii?Q?RPdZ0rmqoQsPqUkes/9L5u257va7q7eQLl/XdvHm2jV3YA9TrT72TdhW3Rb7?=
- =?us-ascii?Q?uIh5pLQZt2RAdBgVov/AT9G82VYio/uvSxxabMoG4FJNPVE1527ayZ5OoZTD?=
- =?us-ascii?Q?DB3faVyuMt9+24MJbpkA88J2viFDXHGq1k146XR5aiH5ncUmQWxMVsRjVuVA?=
- =?us-ascii?Q?7ZEQI5QSDfNT/lYkM8tPB5w4zXxolPiPqPBQiAF15hBByph6HGbomZtOqtHI?=
- =?us-ascii?Q?fwXuZk3pnOd+WpTnAak9AGlpZhQhjqGvjZVhCs2+iW25li8j5UXVFOWnYF8i?=
- =?us-ascii?Q?Qht4B4F5X9+IK0eIIu5nloZo3KdGV4Diklmps+dbbxwosQMl5eFi9hdQ0kcu?=
- =?us-ascii?Q?s1OwwQCMbt7y9/eC9LyCnnG4JhQDQqyHp1myevnC7T1wzKx1EyH4qVA20rPU?=
- =?us-ascii?Q?yuzR28os2bXZg+FKIBlNfjrgw4S4xovDghPhc/unCAz3h8VIu1EJdzXBIzK4?=
- =?us-ascii?Q?ydCj/7+igD4RiLa07B5sXWXOIIti3c7RWjWJt9EG2RG2JkjeKY4eNSjXGFr3?=
- =?us-ascii?Q?Nz6/lAeV/pNi4YFGQNU2BGSI+fM0fQmiKQQLekz7Uh2XXVbIG7Pt/pSmxewu?=
- =?us-ascii?Q?T8780K2JjZWRVBQ7l2/2+7o6dMF+bm6FgTcmIdsCBwdNVrjuLYgIAng91xZ5?=
- =?us-ascii?Q?PNJcLbG8AzwySZR01uqvOs15HGTAciSuTA5WgCIIOWyeqEU0Y+rrfPVYniPB?=
- =?us-ascii?Q?MraRE66rfolJkI8fpSXi95SfWLa5p/+X3oRMqZf8HKzs9ob7tZNIR8jKsH2D?=
- =?us-ascii?Q?VFHyh5i+wShv3Zb2G6Eo3MrR80Dc6EetjCYST4//iU0kbpuRmkG+rLDQhdUh?=
- =?us-ascii?Q?xMKCJkpujDcEfBP20nKRJ3xxLH1numt6fkPqZbH0eX+Wg/Sxf01vlNua7hC6?=
- =?us-ascii?Q?0tlW8QRFgm4SwhErXslxpx55qhYyjZq+K/B2Z8jjgPpZxaAaQx1nYQ8jnSAc?=
- =?us-ascii?Q?OlLZhKRs79cY1FIAOg/u65EaVnDywEOVUDxWExN9fvH4AKGgeMzZEjSwk4oR?=
- =?us-ascii?Q?rnz2v7xnW272RYiJb/bZMmnTDRWY9R8nX5gjW4KuZKPmp40Shy0x/xKmNpDk?=
- =?us-ascii?Q?PqhBIwY9ND49UdKBR3Bw76pNaQ0eiKq/kvoZm6fb7O6uhr5UNwlNjZykM9si?=
- =?us-ascii?Q?emlxSuC2A9xHj3eht8j7pNgEZswcs5eE2UqNK/aMaUBinZYSukJPUQnqNb75?=
- =?us-ascii?Q?TAMzbCUDsAkP6VKSc9Mmk2oXUeQJr3kBJCAOcU+O?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6836684-8097-40cb-6206-08dcc05b841d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 14:30:47.1789
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Js1sfrZrJJtOoFS+r8wEApJRXnNg8EUEFPgSkbHT8KjI/OqbA/yeM3Y3Py2/ZrQSU4NtluZkvnuq1Px3oAOiQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8278
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
 
-On Mon, Aug 19, 2024 at 11:03:16AM +0200, Stefan Eichenberger wrote:
-> On the i.MX6Quad (not QuadPlus), the PCIe link does not work after a
-> suspend/resume cycle. Worse, the PCIe memory mapped I/O isn't accessible
-> at all, so the system freezes when a PCIe driver tries to access its I/O
-> space. The only way to get resume working again is to reset the PCIe
-> link, similar to what is done on devices that support suspend/resume.
-> Through trial and error, we found that something about the PCIe
-> reference clock does not work as expected after a resume. We could not
-> figure out if it is disabled (even though the registers still say it is
-> enabled), or if it is somehow unstable or has some hiccups. With the
-> workaround introduced in this patch series, we were able to fully resume
-> a Compex WLE900VX (ath10k) miniPCIe Wifi module and an Intel AX200 M.2
-> Wifi module. If there is a better way or other ideas on how to fix this
-> problem, please let us know. We are aware that resetting the link should
-> not be necessary, but we could not find a better solution. More
-> interestingly, even the SoCs that support suspend/resume according to
-> the i.MX erratas seem to reset the link on resume in
-> imx6_pcie_host_init, so we hope this might be a valid workaround.
->
-> Stefan Eichenberger (3):
->   PCI: imx6: Add a function to deassert the reset gpio
->   PCI: imx6: move the wait for clock stabilization to enable ref clk
->   PCI: imx6: reset link on resume
+On 08/18, Thomas Weiﬂschuh wrote:
+> The AMD DRM drivers use 'struct edid', raw pointers and even custom
+> structs to represent EDID data.
+> Uniformly switch to the safe and recommended "struct drm_edid".
+> 
+> Some uses of "struct edid" are left because some ad-hoc parsing is still
+> being done inside the drivers.
 
-Thanks you for your patch, but it may have conflict with
-https://lore.kernel.org/linux-pci/Zr4XG6r+HnbIlu8S@lizhi-Precision-Tower-5810/T/#t
+Hi Thomas,
 
+It's great to see more people working on removing raw edid from amd
+display driver in favor of drm_edid.
 
->
->  drivers/pci/controller/dwc/pci-imx6.c | 69 +++++++++++++++++++++++----
->  1 file changed, 59 insertions(+), 10 deletions(-)
->
-> --
-> 2.43.0
->
+I glanced over your series and I found it similar to my recent proposal
+to migrate amdgpu_dm_connector from edid to drm_edid. You can find the
+v5 of this work here:
+https://lore.kernel.org/amd-gfx/20240807203207.2830-1-mwen@igalia.com/
+
+I believe it's more productive if we can join efforts and improve that
+proposal instead of duplicating work. I'll look at your patches more
+carefully this week. If you can review my work, I'd be happy to hear
+your feedback too.
+
+Thanks,
+
+Melissa
+
+> 
+> The patch "drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid"
+> will conflict with my backlight quirk series [0].
+> The conflict will result in an obvious and easy to fix build failure.
+> 
+> Patches 1 and 2 delete some dead code.
+> Patches 3 to 6 constify some arguments and shuffle around some code.
+> The remaining patches perform the actual conversion in steps.
+> 
+> [0] https://lore.kernel.org/lkml/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net/
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+> Thomas Weiﬂschuh (12):
+>       drm/amd/display: remove spurious definition for dm_helpers_get_sbios_edid()
+>       drm/amd/display: Remove EDID members of ddc_service
+>       drm/edid: constify argument of drm_edid_is_valid()
+>       drm/amd/display: Simplify raw_edid handling in dm_helpers_parse_edid_caps()
+>       drm/amd/display: Constify raw_edid handling in dm_helpers_parse_edid_caps()
+>       drm/amd/display: Constify 'struct edid' in parsing functions
+>       drm/amd/display: Use struct edid in dc_link_add_remote_sink()
+>       drm/amdgpu: Switch amdgpu_connector to struct drm_edid
+>       drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid
+>       drm/edid: add a helper to compare two EDIDs
+>       drm/amd/display: Switch dc_sink to struct drm_edid
+>       drm/amd/display: Switch dc_link_add_remote_sink() to struct drm_edid
+> 
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c     | 56 ++++++++-------
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h           |  3 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |  4 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |  4 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |  4 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |  4 +-
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 84 +++++++++++-----------
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  5 +-
+>  .../drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c  | 34 +++++----
+>  .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 28 ++++----
+>  .../gpu/drm/amd/display/dc/core/dc_link_exports.c  |  5 +-
+>  drivers/gpu/drm/amd/display/dc/dc.h                |  8 +--
+>  drivers/gpu/drm/amd/display/dc/dc_ddc_types.h      |  7 --
+>  drivers/gpu/drm/amd/display/dc/dc_types.h          |  5 --
+>  drivers/gpu/drm/amd/display/dc/dm_helpers.h        |  4 +-
+>  drivers/gpu/drm/amd/display/dc/inc/link.h          |  3 +-
+>  .../gpu/drm/amd/display/dc/link/link_detection.c   | 42 ++++-------
+>  .../gpu/drm/amd/display/dc/link/link_detection.h   |  3 +-
+>  drivers/gpu/drm/drm_edid.c                         | 20 +++++-
+>  include/drm/drm_edid.h                             |  3 +-
+>  20 files changed, 155 insertions(+), 171 deletions(-)
+> ---
+> base-commit: 207565ee2594ac47261cdfc8a5048f4dc322c878
+> change-id: 20240615-amdgpu-drm_edid-32d969dfb899
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <linux@weissschuh.net>
+> 
 
