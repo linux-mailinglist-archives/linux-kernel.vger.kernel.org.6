@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-291905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E30F9568BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:48:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F709568C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01E071F22C5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:48:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96BA2B22520
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E43161916;
-	Mon, 19 Aug 2024 10:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4782165EF3;
+	Mon, 19 Aug 2024 10:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1UopoB+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0Pf+vdd"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926FB13E898
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E92161911;
+	Mon, 19 Aug 2024 10:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724064500; cv=none; b=GKTBjcyroZ1vV4gkGrk6BpVf/0G26OyVa3Q2oBG7nPjt08ojkfwkaULqSg8wP6kXU1+xsTDidGhlYiY5vMed4rzT0yNqRmB3hZ3J2THo/2a7aUR7U58mvyFLdgZ5/4LFLlzIJeUX94c2rlK7RBIbGJGDygl7E9YYmtuygiKPkcQ=
+	t=1724064596; cv=none; b=LrN+vUCTk3krCoaT6ydS7btT6LsqlBa2UDyHR2ns1CIY9ndNe088Fnyx7+PDMGZ++b2Tb1W6JJ7akbJUmLd7H4RjJ9lyyqi2x+KbYnoHO5CjDaE9OZzeWh4aeiXLMuSIGTaAcxdcJ7ONEd5V4M2c4xixr0mKDU0Gbb8vuzmVUco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724064500; c=relaxed/simple;
-	bh=2eb3wu7JFge0oZQJsuIwYIapeV2qPhMIIp7PdAHuX/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxPv7GhXv7Lhl8gxQX3tQ1yVmmYiW/70P8mXR3hogs86sOkJfkV8bB6hrzIJqo1mvx4U8YqyVwZckXQtUzsLRzIHQPC53oumr72GlKtNzZPgxGKGn1yU6DYJzsie2EFFiWvbmJQ05Ql4AHkGL7rFpEc9/Kzv4uJB9MYHFHHHSb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1UopoB+; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724064498; x=1755600498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2eb3wu7JFge0oZQJsuIwYIapeV2qPhMIIp7PdAHuX/k=;
-  b=G1UopoB+Lcq/9NZNFM/Gkxc2oHOlR709Sd5SyPUHEZzf1ILNt5SaOLtk
-   k7OtqGYbBado+R/DSpbZ8D4xi+Ka+HYzkouYUvHqHNqIRtkFbWQyxccI6
-   Q+U5g/JvbQcNhMFCwWund5807h2sTMnlNE8lt9CsgoZd2Ota9lRxpy30p
-   X+ro9yxch8O7hg6wzSdv1ezQ45LtpuD8UzJ49aYYDf9DZGWr1Ge3n0mlF
-   TJxINRDdaLI4RErpvddbIawxAWXtf5uiJ+3cN0zgrGzfXv5mkDJ9mGDIp
-   +rsmSfM0n4qgQvXMSjkTkwdnPCAAqNt0cvbCnatp/ij0OSuAFBHcBG00b
-   w==;
-X-CSE-ConnectionGUID: GPfZrqMMRpar9hUwP9mxdA==
-X-CSE-MsgGUID: Nscqux6cRciYznuY9q8jNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="33717125"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="33717125"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 03:48:17 -0700
-X-CSE-ConnectionGUID: cbFVa9OrSfGAB7Cf5TH3aA==
-X-CSE-MsgGUID: /KV1V9rmQ0C47l48HXdwjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60633451"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 19 Aug 2024 03:48:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id A3F5B2D8; Mon, 19 Aug 2024 13:48:11 +0300 (EEST)
-Date: Mon, 19 Aug 2024 13:48:11 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Nikunj A Dadhania <nikunj@amd.com>, cho@microsoft.com, decui@microsoft.com, 
-	John.Starks@microsoft.com
-Subject: Re: [PATCH v3 04/10] x86/insn: Read and decode insn without crossing
- the page boundary
-Message-ID: <3xcmaxmpoemmotdqhtr5fu52wyssixyvnmirqbbnvhwpcuss5z@sayg725h5wcz>
-References: <cover.1722862355.git.legion@kernel.org>
- <cover.1723807851.git.legion@kernel.org>
- <9704da6a35d62932d464d33b39953fc5b2fd74ea.1723807851.git.legion@kernel.org>
+	s=arc-20240116; t=1724064596; c=relaxed/simple;
+	bh=ejSnJSpZeJIHl/Wxrcnk77OEbJf52ZUES1NcfmT3oCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MXg4aWaTOAmgvaErJbesdoiVMpb4OgfVlEfc+mePCUBsOO8jgPDOrOlus/z9elF2b/ZAX96Vimq3WVmtL7uoh+7p15S/XVWWwqClY6Rpri2qhmXJS0Q3qLws9lD9JLYesd6TmnGuIWvNaxsWBt3Uxw6ymR9BIynWEAy0n8Ig/ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0Pf+vdd; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8251e23eaebso6802139f.3;
+        Mon, 19 Aug 2024 03:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724064594; x=1724669394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L6r5TjXljmBlpCGH6gaZQoVB7sULh0ZU8/sd0GXa27M=;
+        b=J0Pf+vdd1cylNYIDOWKu2E8f3B3TTamfSk6iDLTvmT27b/Ia25MY1u1iXyE5z9UKR4
+         iTmKgVEdwV6IRCMXwLoDYya7vF0vEg2ANLVJnI+ePzHElZSvilBELk577cU+pl55neAF
+         VDinHmnjpPAues2QJfTK32bbp2QWgZtlI/Hq3Ul+gGMq2OFQPSdA8c4KMka46bE00XMc
+         ZmuaaZDR9kt1j4QC1t4d5viSIzUqEhijPIk3Qxvd81NFU26srU8+1FAT5nRPDT3N7Gr1
+         We1JkCDWLlIGGFdsjfpxwZmtlKota/P6ThSdbxRSJ4QcwPpnOlRa/0eGB7wAxJeP+Z8K
+         bO7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724064594; x=1724669394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L6r5TjXljmBlpCGH6gaZQoVB7sULh0ZU8/sd0GXa27M=;
+        b=LmYR29Uevc4uQ66AmwKxikbEIMixhCXoQ8LVAJBwUOskqx/HRW3xKt024J9XByVIOC
+         y4TXsJqi2SmmrRmf/R3yBii5rqqbtaKCxBYV8Ai1VUIRrVrew2tOWUmXm/Nl6x0q7zE5
+         1wDP/VtrmqZkkB33mr58ZUX+WkXRw26xhfq+aqM/ebZN8cJPtLfp2pBfhQbkrZ+IKGvt
+         Jm+FQNrkzqdkTsnDOWJQ/XlN4r7w8kKL64CBWYIDqGt0e7qM9BXBFdmQft3EalcXrFYZ
+         AkwJcyT8OzUZT0e/Wi0S27F/HZ0+dqzTwPsiC7k/Vt0t+9pxXHbUxKsX+RtoFSfhABsL
+         qoDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmTfdCYyw/y4Hp8D4lc166297yVS4AsTNWoiXxr/sqoYM8TAuAPa0vLA45ICWqFeJbzmJyF0aVC3W3STLZRNPL6XzrPskzE5EdqYquGv1MzZ/bkmCEK6W81H5nMcCoXE9W7RX5xdacGxfsKvYQnVzmPFask3Cz1W+Sp6v/rglO+zbci/nhpFw=
+X-Gm-Message-State: AOJu0Yz0he3ptuxnXFIUSLoUfied5fMkH2423aMn8E7kWzFFjVIb+uok
+	DR1lGDuRTtJ5nVScfbCi124DdxBbM3eAJjS4VF0tjR+2itePX4pq4RIUXTgP5cd4b+Pxw4Rg4jr
+	qyqsEQIrqi4GnadyKFXPzjt5a+w==
+X-Google-Smtp-Source: AGHT+IFTNzLwiLc8D+K9WXfFP3/4W5slIKwubxgBS37z967zTlcM5145Xmkb3hQMUyxDqeZl5gsiW/pD6c5S0TfSWgg=
+X-Received: by 2002:a05:6602:2d94:b0:824:d6ed:e479 with SMTP id
+ ca18e2360f4ac-824f266b92emr1021026539f.7.1724064593843; Mon, 19 Aug 2024
+ 03:49:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9704da6a35d62932d464d33b39953fc5b2fd74ea.1723807851.git.legion@kernel.org>
+References: <2024080359-getaway-concave-623e@gregkh> <20240814055816.2786467-1-wirelessdonghack@gmail.com>
+ <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
+In-Reply-To: <91e19cf3-216b-48ac-a93d-f920dd2a7668@rowland.harvard.edu>
+From: color Ice <wirelessdonghack@gmail.com>
+Date: Mon, 19 Aug 2024 18:49:42 +0800
+Message-ID: <CAOV16XEsgkLWz3rOQsAdve-qKsPEDw-QxJNoo4hJfXdLnowHfw@mail.gmail.com>
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
+ Dereference&Use-After-Free Vulnerability
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	mark.esler@canonical.com, stf_xl@wp.pl, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 03:43:54PM +0200, Alexey Gladkov wrote:
-> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
-> 
-> In case the instruction is close to the page boundary, reading
-> MAX_INSN_SIZE may cross the page boundary. The second page might be
-> from a different VMA and reading can have side effects.
-> 
-> The problem is that the actual size of the instruction is not known.
-> 
-> The solution might be to try read the data to the end of the page and
-> try parse it in the hope that the instruction is smaller than the
-> maximum buffer size.
-> 
-> Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+How is the patch development progressing? We would like to conduct a
+full verification test. It=E2=80=99s possible that many drivers have this
+issue, so you could try a simple fix, and we=E2=80=99ll see how it works.
+Recently, we tested some embedded devices where the operating systems,
+due to automated operations involving WiFi drivers, had UDEV rules
+built-in or granted significant permissions to USB. This allows the
+PoC to cause a kernel crash without needing root or sudo.
 
-I think this and 3 next patches do not belong to this patchset. They
-address separate issue that is orthogonal to the patchset goal.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Alan Stern <stern@rowland.harvard.edu> =E4=BA=8E2024=E5=B9=B48=E6=9C=8814=
+=E6=97=A5=E5=91=A8=E4=B8=89 22:55=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, Aug 14, 2024 at 01:58:16PM +0800, LidongLI wrote:
+> >
+> > Dear
+> >
+> >
+> >
+> > When will the patch be released? We are waiting to test it.
+>
+> Sorry it's taking so long.  I have been extremely busy with other things
+> during the last few weeks and have not had any time to work on this.
+>
+> Alan Stern
 
