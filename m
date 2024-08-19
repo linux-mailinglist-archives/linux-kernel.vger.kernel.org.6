@@ -1,52 +1,86 @@
-Return-Path: <linux-kernel+bounces-292208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C64956C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:55:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D40956C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401CD1C21674
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208D41C21A3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D6016CD06;
-	Mon, 19 Aug 2024 13:54:55 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF9816CD11;
+	Mon, 19 Aug 2024 14:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JV/xwsSe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574AD1BDCF;
-	Mon, 19 Aug 2024 13:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA4115746F;
+	Mon, 19 Aug 2024 14:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724075695; cv=none; b=EMjmeFvzTCYoYjlq1iJKHX/6utOHpVu3sKqufyWm74QDpH5o6eB3sNczeNPcv8RegxE5iOOlc5uJbSxWuYC0ZaaUN1d2+2KkHlevKIdjJFoJhFCwDtYUw4rytQEvvvvZ4VRmdCetzvYQH8QwweARfc7rwBHarSVkaroY4fysBFA=
+	t=1724076057; cv=none; b=gQf0Mxu3LxRVzDlhKbvnPdT2M9o6dGJcJAaNGzQPe9AVxQ9BXIhlDEanDh1PlGIyk7M+mcns+F29gAfBEDmTK1iM3N286SZOpQfcemWOiYhkUakZtMoZTZiqhrmO0/GDgEdZAqqzWdn9YtCbmlKuf18UhshetqTKxFLPTNyBkd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724075695; c=relaxed/simple;
-	bh=RHxnf6k9s/tFDKpedjE8L9WdY/mrk5eOGdGwgpjZBrs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C4sADfQG/eNmQfDq7pQZvaR7F/oHSRtNZ/DTwSllr004NQ/VGx3MX9eg8cnStnAPBsXtSFqs7F/jYIyMXXzibzm5c1dIY/zVbS4PFR4AgRLPBLmgZd3QZ4UabTA64uwt6Nroy8FLpJ+PHQYqpINXRFzsWsbBu958k2XDiABwZJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WnYt31krhz1HGmt;
-	Mon, 19 Aug 2024 21:51:39 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41FD614022E;
-	Mon, 19 Aug 2024 21:54:49 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 21:54:48 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <marcel@holtmann.org>, <johan.hedberg@gmail.com>, <luiz.dentz@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <linux-bluetooth@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH net-next] Bluetooth: L2CAP: Remove unused declarations
-Date: Mon, 19 Aug 2024 21:52:11 +0800
-Message-ID: <20240819135211.119827-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724076057; c=relaxed/simple;
+	bh=QfzO9iO4+/4+sH16VK7B3e9zC7MZVFg9ysMXDB75Gs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/L2hykUZ8wtIhedJ/WzsLVfuHda+VpJiBBuBAnhGQDqeJT3VHfHA42oUQZob1lgwMVp+XDFn/vNZ9b0KtEVc2y+d40iHrfMdoS6c6soFuSG+ngj5THVT7fQrz7ztUQzs0PgpQ8IFQmeECdodT6ZY3GUJP4hE2WDY7Ezx2o98Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JV/xwsSe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JAlX7X021086;
+	Mon, 19 Aug 2024 14:00:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=NCtjfLHJsWFGuR3LMTQXRn3dMF
+	c0BAZmTM/KV0UT+sg=; b=JV/xwsSegJvcvBENlE9fZOx70DM4CSKTAMOMNr9U8m
+	m9vooPXLavNQNS9yhBp0fWIDulEyxuKPazL5G009NFuZ21l9a+4LpWaHze1V0z+p
+	bFWrdv78zMVBj1pwT1cOVgzH5yZIyLk0F3X7p/UteRp5xku5fBBFMlKwLCBjebQj
+	OIbtex7k55Hgn0TxmlBupiHEx4YFnZulhTDjrTv5amBpjQobTriyx1MVqv1VZk41
+	WbWODU8ThJAnGT9y4zz0368GX3MLXcfR5jqbANyBY90LKdHtE9ds3VqU2OTGn9rx
+	Rz1XRi5MosbudI8vnqvvfCFVwmAT6MPUhpR2rEouG0Uw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma013ay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:00:50 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47JE0oux018909;
+	Mon, 19 Aug 2024 14:00:50 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma013ap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:00:50 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCrLj9019105;
+	Mon, 19 Aug 2024 14:00:49 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376ppcr9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:00:48 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47JE0hZ443254200
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Aug 2024 14:00:45 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 410CE2004B;
+	Mon, 19 Aug 2024 14:00:43 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1D43420040;
+	Mon, 19 Aug 2024 14:00:43 +0000 (GMT)
+Received: from a46lp38.lnxne.boe (unknown [9.152.108.100])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 19 Aug 2024 14:00:43 +0000 (GMT)
+From: Hariharan Mari <hari55@linux.ibm.com>
+To: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
+        frankja@linux.ibm.com, borntraeger@linux.ibm.com,
+        imbrenda@linux.ibm.com, david@redhat.com, pbonzini@redhat.com
+Subject: [PATCH v1 0/5] KVM: s390: selftests: Add regression tests for CPU subfunctions
+Date: Mon, 19 Aug 2024 15:54:21 +0200
+Message-ID: <20240819140040.1087552-1-hari55@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,34 +88,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3eXGGMohyrtYua53NFmjzwLGAZXa4eBc
+X-Proofpoint-ORIG-GUID: lrHam5Wjz0--C66TLvkuvwy0vEYzVQZH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_11,2024-08-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=664 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408190090
 
-Commit e7b02296fb40 ("Bluetooth: Remove BT_HS") removed the implementations
-but leave declarations.
+This patch series introduces a set of regression tests for various s390x 
+CPU subfunctions in KVM. The tests ensure that the KVM implementation accurately
+reflects the behavior of actual CPU instructions for these subfunctions.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- include/net/bluetooth/l2cap.h | 4 ----
- 1 file changed, 4 deletions(-)
+The series adds tests for a total of 15 instructions across five patches,
+covering a range of operations including sorting, compression, and various
+cryptographic functions. Each patch follows a consistent testing pattern:
 
-diff --git a/include/net/bluetooth/l2cap.h b/include/net/bluetooth/l2cap.h
-index 5cfdc813491a..313d0b972e06 100644
---- a/include/net/bluetooth/l2cap.h
-+++ b/include/net/bluetooth/l2cap.h
-@@ -968,10 +968,6 @@ void l2cap_chan_list(struct l2cap_conn *conn, l2cap_chan_func_t func,
- 		     void *data);
- void l2cap_chan_del(struct l2cap_chan *chan, int err);
- void l2cap_send_conn_req(struct l2cap_chan *chan);
--void l2cap_move_start(struct l2cap_chan *chan);
--void l2cap_logical_cfm(struct l2cap_chan *chan, struct hci_chan *hchan,
--		       u8 status);
--void __l2cap_physical_cfm(struct l2cap_chan *chan, int result);
- 
- struct l2cap_conn *l2cap_conn_get(struct l2cap_conn *conn);
- void l2cap_conn_put(struct l2cap_conn *conn);
+1. Obtain the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute for the VM.
+2. Execute the relevant asm instructions. 
+3. Compare KVM-reported results with direct instruction execution results.
+
+Testing has been performed on s390x hardware with KVM support. All tests
+pass successfully, verifying the correct implementation of these
+subfunctions in KVM.
+
+Hariharan Mari (5):
+  KVM: s390: selftests: Add regression tests for SORTL and DFLTCC CPU
+    subfunctions
+  KVM: s390: selftests: Add regression tests for PRNO, KDSA and KMA
+    crypto subfunctions
+  KVM: s390: selftests: Add regression tests for KMCTR, KMF, KMO and PCC
+    crypto subfunctions
+  KVM: s390: selftests: Add regression tests for KMAC, KMC, KM, KIMD and
+    KLMD crypto subfunctions
+  KVM: s390: selftests: Add regression tests for PLO subfunctions
+
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/include/s390x/facility.h    |  50 +++
+ .../kvm/s390x/cpumodel_subfuncs_test.c        | 343 ++++++++++++++++++
+ 3 files changed, 394 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/include/s390x/facility.h
+ create mode 100644 tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+
 -- 
-2.34.1
+2.45.2
 
 
