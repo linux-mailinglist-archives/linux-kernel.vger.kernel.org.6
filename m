@@ -1,148 +1,201 @@
-Return-Path: <linux-kernel+bounces-292816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAEA9574CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:47:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2750F9574EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF6EF1C2398A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B521F2203A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78411E4EE1;
-	Mon, 19 Aug 2024 19:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA7320013F;
+	Mon, 19 Aug 2024 19:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZ8Uq4EY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n1SHyjIw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AD31DD393;
-	Mon, 19 Aug 2024 19:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283481DF661;
+	Mon, 19 Aug 2024 19:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096745; cv=none; b=JCL5yQ4pFyjCEH8cBWwlMM9vgZV+1DKYiXJy+eRpJ0at2VGMtpHdlRqD0OwbzdNUGs501KekoyrY12+LwnOPeApr8CjFo4xgKAYPAgmhJPmJYZGHiPJ2SS3pY1IWTGRDB1+R4fboExecMAb7RGvzGUddTgpr1I5IbVzovYP1ROQ=
+	t=1724096768; cv=none; b=fRnfd0KmYyX0TI/WPHfHmxwY35mAWgFpC2AvwB0aV43qj8QReUQ3KAjW3nvT46Kbf7nC2Tcgp/i1heZgFz5E61AFJpyvkdGuzBL7lJ1lRTFjHvSZL2fIAIW2buwKWIfl/u7UzdPLCSElUPbwe7lgHCBrZlj54Lbz6KnJe/HtPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096745; c=relaxed/simple;
-	bh=el3krj0gIbWdRFoKFHJr5isBMDFRQzCj/EyzGroLrZY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=duJDlYd7257WT9tAuQYxxDvH4AeFFIpFwwt6Iy6Bd1epZ2jPKEB2edLlhoFmAfMX6gcz3qwrw9gDHXOj85X8/+k2XqsUDkOATnbkf1TXWSjduRzMEH/f2r17nYWgn7+a/wliezs0FQ7sPYvtyFRfICrPmx7K3suk/37lJ9ivtTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZ8Uq4EY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43226C4AF13;
-	Mon, 19 Aug 2024 19:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724096744;
-	bh=el3krj0gIbWdRFoKFHJr5isBMDFRQzCj/EyzGroLrZY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mZ8Uq4EYocvXI63p+tYZxjxx5hRGWc8NMB4Tr0F7d2siW+V+OJ4DFP1GbD1bMLgTq
-	 XbWesBol+9AAKRl7FJ08/dXi3ezZHksrNerJyMep1qZSSB5b1kPT89Wv9bsMsro1Jr
-	 Z/4m2hoUBVZnWtiL4M8nx+zGriYqxf9J3ihWZkqNs1tGznn9SB2YSd998cf9bz+Puh
-	 umpNItZwjyyFLMraektUlDLHfZGc3AwCcNzBTB4HM0ajqwJyl2iKpBGqShcDjqGIGZ
-	 hGESVYQdkTPQDbkKiRMJOBCiA+XoCCD7AjZCFZo9VBPkZmD3U+cnegJS+ks3Pp54sS
-	 lrBMdD78HJXHA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 19 Aug 2024 21:45:24 +0200
-Subject: [PATCH net 06/14] selftests: mptcp: join: test for flush/re-add
- endpoints
+	s=arc-20240116; t=1724096768; c=relaxed/simple;
+	bh=LjKpfCzXWEes3zYCkfp0RZCdk5A0eJtOy5P3yyx+VPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxcT6e/lViTnKQSkZZavWHx8RyeEf89kaOAYGjmDKXRSpl0GMW3zSJeib0mj0k+5Ec4Ekjk020t8Je3XCekyT4Bzcp8fkeqox6mGQYEQ3lvPD8UNCVQ5Ay/Sxc/FdVQtYMapRBa/xIOKSFmZ/ITcCydjRBLiC3CjT2u01yJjtZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n1SHyjIw; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724096763; x=1755632763;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LjKpfCzXWEes3zYCkfp0RZCdk5A0eJtOy5P3yyx+VPY=;
+  b=n1SHyjIwNkhoSe7YDgivzsuup3phyhh9csNF1dmcUkiFXk+cVgB7Rpr5
+   n80J5+X1Cm7mrKAp1HEp540y/QsHT52KFlaNuSCXbTSt7keo+3wpierhs
+   fFiYp38ZfaVGlBpmRsUbqXIRaXJS/XbGjNIe+vA4jd35AzfTHsHBpREJh
+   zJib17qRqc0JCKKqZSsQuVsgwW1qZ7ArswkulfnY9S+1QUWwGoxEVQqFa
+   4NfO5P+qKCD9r2MALg/kADqnemt67WKifEPPHZ/3R8Q9oATaY9ZAaLJBH
+   MBMYOCOB5ruaTcXBkiZaTBHRwabAfPZSgC4E0EGAExxFpQnjP+WiTBJ2t
+   A==;
+X-CSE-ConnectionGUID: 2a3C55IpSPuZZKXaBLS/wQ==
+X-CSE-MsgGUID: IzZHR/7pQn2DGxJyTZFJzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22509573"
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="22509573"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 12:46:03 -0700
+X-CSE-ConnectionGUID: mutvEJSYT92P1npg0id1Dw==
+X-CSE-MsgGUID: EO5i08SORoOfmuHKY2qDvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="97949481"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 19 Aug 2024 12:46:00 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg8KE-0009N4-24;
+	Mon, 19 Aug 2024 19:45:58 +0000
+Date: Tue, 20 Aug 2024 03:45:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+	syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
+Cc: oe-kbuild-all@lists.linux.dev, kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
+Message-ID: <202408200353.I1MmR4S5-lkp@intel.com>
+References: <20240819064754.35606-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240819-net-mptcp-pm-reusing-id-v1-6-38035d40de5b@kernel.org>
-References: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
-In-Reply-To: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2253; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=el3krj0gIbWdRFoKFHJr5isBMDFRQzCj/EyzGroLrZY=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmw6DScjkZfQJaQTRVHr1aF5SLxUPZ9KRCi6Qc4
- lsrfGRVXyWJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZsOg0gAKCRD2t4JPQmmg
- c2M5D/9ZWZV2bJ/sc8iXcSDFG9UgrJMtMOqHrt3HPuSYkcRelDRlBMwgAhx5OAO2LOEQPdvWLwv
- ak+GdNBvdhpmS0blXW8xflRXP2yyjSQNh7FoceVtlh+RwDqbqBlmq7Krp7hTrNOrTGOPqpSX6CU
- uQyKeM4nbb+YpaOFPMow6Hmup0NkUsyop3usTGWW6i+rpNznxVlL49ReJRZIwGIeZQiHwl4a15x
- +W23roLFxcy8h29U2f5ZmHLx+c6LVgpu3DMlYumqcTbwYwXcpYupJ8hJ8oxrMRWQBz32LY2rZOD
- dCcb5Gf0srj5kTe56I3J8nhklNsQiVDIUkE+yDBAfEij4Fh7/ZhfbcRMhRdJuHHkvwbh3tiyNl1
- 0z5onPftIJkhhRfKHKySne9B83notBVhysnTS1nUd+1aHTy2fXvSHhfIwokX4sUiMAdAreiaHQw
- e3r+z/oI8dQqKeiImKsle+ll8YeDWq0scuyMQtykdTTobHpn01gJ8q87CgGr35+oev0R+GLqAyc
- lEM/R8q9YY2hLuAIOvuIO0p41P3M/mENlP5xzVAF67+Hg77HzK1rP9ZBf9EuI99HL9MWaCF8ahw
- ubG61dUchdd7WAuwd+Gvb06MKmA4W/f/ZfgAwAC5LHBgoj5D3DqDIs5UCgs1ehlD4bYjE0Rlb5m
- 1SSkwqr+Zx634Fw==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819064754.35606-1-lizhi.xu@windriver.com>
 
-After having flushed endpoints that didn't cause the creation of new
-subflows, it is important to check endpoints can be re-created, re-using
-previously used IDs.
+Hi Lizhi,
 
-Before the previous commit, the client would not have been able to
-re-create the subflow that was previously rejected.
+kernel test robot noticed the following build warnings:
 
-The 'Fixes' tag here below is the same as the one from the previous
-commit: this patch here is not fixing anything wrong in the selftests,
-but it validates the previous fix for an issue introduced by this commit
-ID.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.11-rc4 next-20240819]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fixes: 06faa2271034 ("mptcp: remove multi addresses and subflows in PM")
-Cc: stable@vger.kernel.org
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_join.sh | 30 +++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Xu/bcachefs-Fix-oob-in-bch2_dev_journal_init/20240819-145031
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240819064754.35606-1-lizhi.xu%40windriver.com
+patch subject: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
+config: arc-randconfig-001-20240819 (https://download.01.org/0day-ci/archive/20240820/202408200353.I1MmR4S5-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408200353.I1MmR4S5-lkp@intel.com/reproduce)
 
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_join.sh b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-index fbb0174145ad..f609c02c6123 100755
---- a/tools/testing/selftests/net/mptcp/mptcp_join.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-@@ -3651,6 +3651,36 @@ endpoint_tests()
- 		chk_rm_nr 2 1 invert
- 	fi
- 
-+	# flush and re-add
-+	if reset_with_tcp_filter "flush re-add" ns2 10.0.3.2 REJECT OUTPUT &&
-+	   mptcp_lib_kallsyms_has "subflow_rebuild_header$"; then
-+		pm_nl_set_limits $ns1 0 2
-+		pm_nl_set_limits $ns2 1 2
-+		# broadcast IP: no packet for this address will be received on ns1
-+		pm_nl_add_endpoint $ns1 224.0.0.1 id 2 flags signal
-+		pm_nl_add_endpoint $ns2 10.0.3.2 id 3 flags subflow
-+		test_linkfail=4 speed=20 \
-+			run_tests $ns1 $ns2 10.0.1.1 &
-+		local tests_pid=$!
-+
-+		wait_attempt_fail $ns2
-+		chk_subflow_nr "before flush" 1
-+		chk_mptcp_info subflows 0 subflows 0
-+
-+		pm_nl_flush_endpoint $ns2
-+		pm_nl_flush_endpoint $ns1
-+		wait_rm_addr $ns2 0
-+		ip netns exec "${ns2}" ${iptables} -D OUTPUT -s "10.0.3.2" -p tcp -j REJECT
-+		pm_nl_add_endpoint $ns2 10.0.3.2 id 3 flags subflow
-+		wait_mpj $ns2
-+		pm_nl_add_endpoint $ns1 10.0.3.1 id 2 flags signal
-+		wait_mpj $ns2
-+		mptcp_lib_kill_wait $tests_pid
-+
-+		chk_join_nr 2 2 2
-+		chk_add_nr 2 2
-+		chk_rm_nr 1 0 invert
-+	fi
- }
- 
- # [$1: error message]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408200353.I1MmR4S5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/bcachefs/vstructs.h:5,
+                    from fs/bcachefs/bcachefs_format.h:80,
+                    from fs/bcachefs/bcachefs.h:207,
+                    from fs/bcachefs/journal.c:8:
+   fs/bcachefs/journal.c: In function 'bch2_dev_journal_init':
+>> fs/bcachefs/journal.c:1316:50: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long unsigned int' [-Wformat=]
+    1316 |                                 prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
+         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/bcachefs/util.h:78:63: note: in definition of macro 'prt_printf'
+      78 | #define prt_printf(_out, ...)           bch2_prt_printf(_out, __VA_ARGS__)
+         |                                                               ^~~~~~~~~~~
+   fs/bcachefs/journal.c:1316:79: note: format string is defined here
+    1316 |                                 prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
+         |                                                                             ~~^
+         |                                                                               |
+         |                                                                               long unsigned int
+         |                                                                             %llu
+
+
+vim +1316 fs/bcachefs/journal.c
+
+  1297	
+  1298	int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
+  1299	{
+  1300		struct journal_device *ja = &ca->journal;
+  1301		struct bch_sb_field_journal *journal_buckets =
+  1302			bch2_sb_field_get(sb, journal);
+  1303		struct bch_sb_field_journal_v2 *journal_buckets_v2 =
+  1304			bch2_sb_field_get(sb, journal_v2);
+  1305	
+  1306		ja->nr = 0;
+  1307	
+  1308		if (journal_buckets_v2) {
+  1309			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+  1310	
+  1311			for (unsigned i = 0; i < nr; i++) {
+  1312				ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
+  1313				if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
+  1314					struct bch_fs *c = ca->fs;
+  1315					struct printbuf buf = PRINTBUF;
+> 1316					prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
+  1317						le64_to_cpu(journal_buckets_v2->d[i].nr));
+  1318					bch_info(c, "%s", buf.buf);
+  1319					printbuf_exit(&buf);
+  1320					return -BCH_ERR_ENOMEM_dev_journal_init;
+  1321				}
+  1322			}
+  1323		} else if (journal_buckets) {
+  1324			ja->nr = bch2_nr_journal_buckets(journal_buckets);
+  1325		}
+  1326	
+  1327		ja->bucket_seq = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
+  1328		if (!ja->bucket_seq)
+  1329			return -BCH_ERR_ENOMEM_dev_journal_init;
+  1330	
+  1331		unsigned nr_bvecs = DIV_ROUND_UP(JOURNAL_ENTRY_SIZE_MAX, PAGE_SIZE);
+  1332	
+  1333		for (unsigned i = 0; i < ARRAY_SIZE(ja->bio); i++) {
+  1334			ja->bio[i] = kmalloc(struct_size(ja->bio[i], bio.bi_inline_vecs,
+  1335					     nr_bvecs), GFP_KERNEL);
+  1336			if (!ja->bio[i])
+  1337				return -BCH_ERR_ENOMEM_dev_journal_init;
+  1338	
+  1339			ja->bio[i]->ca = ca;
+  1340			ja->bio[i]->buf_idx = i;
+  1341			bio_init(&ja->bio[i]->bio, NULL, ja->bio[i]->bio.bi_inline_vecs, nr_bvecs, 0);
+  1342		}
+  1343	
+  1344		ja->buckets = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
+  1345		if (!ja->buckets)
+  1346			return -BCH_ERR_ENOMEM_dev_journal_init;
+  1347	
+  1348		if (journal_buckets_v2) {
+  1349			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+  1350			unsigned dst = 0;
+  1351	
+  1352			for (unsigned i = 0; i < nr; i++)
+  1353				for (unsigned j = 0; j < le64_to_cpu(journal_buckets_v2->d[i].nr); j++)
+  1354					ja->buckets[dst++] =
+  1355						le64_to_cpu(journal_buckets_v2->d[i].start) + j;
+  1356		} else if (journal_buckets) {
+  1357			for (unsigned i = 0; i < ja->nr; i++)
+  1358				ja->buckets[i] = le64_to_cpu(journal_buckets->buckets[i]);
+  1359		}
+  1360	
+  1361		return 0;
+  1362	}
+  1363	
 
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
