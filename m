@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-292283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FDB956D74
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2857E956D79
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F821C22547
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABAA1C230AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48E6171E4F;
-	Mon, 19 Aug 2024 14:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7438C172BCC;
+	Mon, 19 Aug 2024 14:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMfgqcrM"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m4WeACVh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E5E15F336;
-	Mon, 19 Aug 2024 14:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B704171E43;
+	Mon, 19 Aug 2024 14:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078262; cv=none; b=s1qac5v4h3p1HhFP5y+C2CTPC/+IdTEPmAkVZ5/3aC3vK24PK0cXG9wyrrSpddOkSvsDoi9BFNN/sa45x0qKMEyMhgJ1jf4xfwSEJaDxZynnw0Alz/yN4abX+kjAWaPCaHDnpzCIzh18NKZ43J9QMLhorWthZSaEpaU3S7ch4G8=
+	t=1724078293; cv=none; b=J8ZGip+GpWQ2/yT9MbXxwO1N0yR7r6gx4WhYxDYcsfNtBo1hCrkJ3P3cEoprTAibxv46qNDJ3QgbuDQjhm/thuCs64WeUujlRDoP/I5qu4ajYnJQ16fQsLaWounFxynoUw8CdhnOBzJjc1HYmqUJ2LcvG5kEKxn+NayK5KaBHT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078262; c=relaxed/simple;
-	bh=JTnWVMvWno7wb24qY7+dCZeMGgbDqXTbc7a5NZ88QvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bFLZTe7zBT3LLj/V2ggdgao7V58DBFGRwF+1R/tKjUUBhKrAUNQ2vHunCYxjX8t9WUk86NVi0TMDwttWhEmRUI/eSSvwahRG3XJJtyYGW1uVeMDQYlHnkSIOrL8M/UUq7lb4Sbz519vI7LOS7Z98f6IZSVe1pqLSCf9XQ/Et37A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMfgqcrM; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db12a2f530so2967430b6e.1;
-        Mon, 19 Aug 2024 07:37:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724078260; x=1724683060; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JTnWVMvWno7wb24qY7+dCZeMGgbDqXTbc7a5NZ88QvI=;
-        b=DMfgqcrMHQdxapsxgnLGXt3p4zdOsTAAWpuDEQBq9TcZseVk7j44uASFuVlaXlKqE0
-         JKX9jTUIOdSRppSWxI9B+LmZP9/rDe27nTJjmo7NrnvK99Xr7zXPO0DMedBSTbnZ1gif
-         39oIYbtCTsReSOuqgpxtwLtSkozvPxNTF81/rp4B42fC4Fk3eW+tdVsq356Z/MhUFwi/
-         IYQ1VqW+bVvj6RVFZHnv9qyx0SgsICCTolXEoh23d/wdEfj9XXMiPoY1PHug+TvT8g3v
-         cYyyKt3/fAOyFN9rklIgsqHR4Ce59n46/0Prdyyd++11MLcjgF5XPIBMKI6uu/Wq68Wn
-         Qa8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724078260; x=1724683060;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JTnWVMvWno7wb24qY7+dCZeMGgbDqXTbc7a5NZ88QvI=;
-        b=CyxlGF4M+lsRhDltt5FDQMs8f79nPURULBYWiDkZQJ/l+Hr59biQeyYptWCT2DAguK
-         tJE3FXuXvOJjtfCWZsYI9oeJLruUK31JXXiNccE67nhZ010TowGf0oWZBjuEiKf8yuER
-         EzwJeDEIT2ze6fclDU9TE6RUb84WHxAVgdezaEoSq4cDUuZE23KHB1h2ME4DA0e8K42p
-         4UrGYGi08NxyG306uOiuA0RqNtiLV7sxqGbKoZnPQMXRDS8tqhBMSjXQCERsx1y2bqAe
-         YGzT8yRUg+dYGJAq9Ale19oHkhbA7rIpFVKTTUbW3G12n2jwUXrbmLUucgnKTywta/1t
-         6ZoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7fuOwMS6wm5ULz9XHP5VOLjLvNz3WxFvXT3pYY8qjqVFFzRqtVQxJrwegzenm1bcJGBoVXugHdTpnlg76ab6/HNkxNQUuVfI6qv/GRDOu/jN9mYbciFggtI3aPy6hu57ca93gVVDl
-X-Gm-Message-State: AOJu0YywTDLLGswefmPWaL1qv5KyoSbiS6++wYofhW+dudP9+2DMYgHP
-	TSrqDnZfMspknmWtBiEh8b3SIgx5dNL5w0b7rsB8y/zSL48blA0aob5wYLfZWpaoLp9s90NMgeB
-	TIOD2BQ9O9s2V/9tQDeJAqjlZ1EM=
-X-Google-Smtp-Source: AGHT+IEIMKuCROk4UKJ0V128vJxPpf58Ob3VgbLfepoK0u7fYdeYSni6/KOEUJbQPo80EFHtKiLq1ktsuj1uRRlvKBY=
-X-Received: by 2002:a05:6808:2219:b0:3d9:222e:40ac with SMTP id
- 5614622812f47-3dd3ae3531bmr11209758b6e.44.1724078260399; Mon, 19 Aug 2024
- 07:37:40 -0700 (PDT)
+	s=arc-20240116; t=1724078293; c=relaxed/simple;
+	bh=DfepRMOLQFR3pquuCkwdVFj+pFZjc2mjw814VgMJy6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I8CmeoqhTcYpyAjHPJEqA7rVxedgiIlt8kcYSd04b5jadjtIvtMoWy3eLCXKqiheARPa9fC0cAVsG6/UAWCus8AnwdO0gbRKPJSWWN+eOAHfOck/gXe+h/M32+8+9DbpZYrQ/LeklrrX+mg7eO3Ko/nO6Sp2Voi3YBepuxEryYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m4WeACVh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JB1ckE009997;
+	Mon, 19 Aug 2024 14:37:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DfepRMOLQFR3pquuCkwdVFj+pFZjc2mjw814VgMJy6Y=; b=m4WeACVhm7oGZmHL
+	9YtRhDD4AerkjSdd6p9WFegNnE8LyjqUcdx0S9Cu26W/htT1h53MUXZmb+hdJDGG
+	u89wExkum+1x8SvkXSZRCX4o8Ac8TLBHUQhM/75CiKjR3j7T0XGce1X9TFBybBMt
+	0pgdbA0tsTslpCvIZgGUF86QhtQNdOADD7lBDwn3KvjmUG7U/CChfjc+PDs3MxWW
+	FMhd82QxEFLjfJ+1il/OPyDAfsptHS11RHFNQ66NCR2q/7DcO3zSf0ylk9JUmtdP
+	vSvf60BBogKh3MFOONk/E8h0dOyzTIb7p/cS0hWyN711IyfvWyCr3innZTd/B2Lw
+	7WpjGg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n584f5s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:37:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JEbsfO004333
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:37:54 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 07:37:53 -0700
+Message-ID: <350d17de-a669-4342-bc94-c86da4ef17db@quicinc.com>
+Date: Mon, 19 Aug 2024 07:37:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
- <CAAMcf8DZu4B2AN+=8xP3wuknqUtD-e-v+Ej31=08ibPfyL+dGw@mail.gmail.com>
- <CAAMcf8A59MqhZEswC5VmKZyThG7oG=ztEYd_yfuOwvGTvKzMow@mail.gmail.com>
- <CAAMcf8Ctr9rOZ2oOzk48haakJOO2bzyNURb2oZTRxJ3tnafXUA@mail.gmail.com> <D3JXD607339U.2F1IAKUSM59UP@cknow.org>
-In-Reply-To: <D3JXD607339U.2F1IAKUSM59UP@cknow.org>
-From: Vicente Bergas <vicencb@gmail.com>
-Date: Mon, 19 Aug 2024 16:37:29 +0200
-Message-ID: <CAAMcf8BAiva1GB_1AoVH-Nq8sp81KdtVe=rUMVjV2ZxCiM4NAg@mail.gmail.com>
-Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Huang-Huang Bao <i@eh5.me>, "Rockchip SoC..." <linux-rockchip@lists.infradead.org>, 
-	linux-spi@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/14] PGP: Provide a key type for testing PGP
+ signatures
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
+        <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
+        <linux-integrity@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+ <20240818165756.629203-13-roberto.sassu@huaweicloud.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240818165756.629203-13-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9pdj4De64koIkSl7Cqp5DR4V3OI8Qt9r
+X-Proofpoint-ORIG-GUID: 9pdj4De64koIkSl7Cqp5DR4V3OI8Qt9r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_13,2024-08-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
+ mlxlogscore=999 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190097
 
-On Mon, Aug 19, 2024 at 3:33=E2=80=AFPM Diederik de Haas <didi.debian@cknow=
-.org> wrote:
->
-> On Mon Aug 19, 2024 at 3:14 PM CEST, Vicente Bergas wrote:
-> > On Mon, Aug 19, 2024 at 2:49=E2=80=AFPM Vicente Bergas <vicencb@gmail.c=
-om> wrote:
-> > > On Mon, Aug 19, 2024 at 4:12=E2=80=AFAM Vicente Bergas <vicencb@gmail=
-.com> wrote:
-> > > > > i am a user of the CONFIG_SPI_SPIDEV device.
-> > > > > It stopped working between 6.8 and 6.10.5.
-> > > > > The SPI bus itself reports no errors to userspace, but no devices
-> > > > > appear connected to the bus.
-> > > > > The platform used is RK3328.
-> > > > > The only spi-related message in dmesg is:
-> > > > > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
->
-> FWIW: I've seen this issue as well.
->
-> > > Added:
-> > > Huang-Huang Bao <i@eh5.me>
-> > > Linus Walleij <linus.walleij@linaro.org>
-> > > Sasha Levin <sashal@kernel.org>
-> > >
-> > > The first offending commit is:
-> > > 29d8101fb9442544077e68e27839a1979f85633d pinctrl: rockchip: fix pinmu=
-x
-> > > bits for RK3328 GPIO2-B pins
-> > >
-> > > I've also tested 6.10.6 with it reverted (and
-> > > 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
-> > > 7127c68c76f120367b9a5053f524df0b603d4a48 as dependencies) and SPI
-> > > works fine.
-> >
-> > Sorry for the noise:
-> > reverting only 29d8101fb9442544077e68e27839a1979f85633d makes it work o=
-n 6.10.6.
-> > Ignore what i said about 456447ff1fe3c28e2fd7b57a79650f62245c6428 and
-> > 7127c68c76f120367b9a5053f524df0b603d4a48.
->
-> Please try if unreverting that commit and adding the following:
-> https://lore.kernel.org/linux-rockchip/20240709105428.1176375-1-i@eh5.me/
->
-> fixes the issue as well.
+On 8/18/24 09:57, Roberto Sassu wrote:
+...
+> diff --git a/crypto/asymmetric_keys/pgp_test_key.c b/crypto/asymmetric_keys/pgp_test_key.c
+> new file mode 100644
+> index 000000000000..e067dedf6ca0
+> --- /dev/null
+> +++ b/crypto/asymmetric_keys/pgp_test_key.c
+> @@ -0,0 +1,129 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Testing module to load key from trusted PGP message
+> + *
+> + * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#define pr_fmt(fmt) "PGPtest: "fmt
+> +#include <linux/key.h>
+> +#include <linux/key-type.h>
+> +#include <linux/cred.h>
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/verification.h>
+> +#include <keys/user-type.h>
+> +#include <keys/system_keyring.h>
+> +#include <crypto/pgp.h>
+> +
+> +#include "pgp_parser.h"
+> +
+> +MODULE_LICENSE("GPL");
 
-I confirm that 6.10.6 without any reverts plus
-20240709105428.1176375-1-i@eh5.me also fixes the issue.
-Thank you all.
+Missing MODULE_DESCRIPTION()
+
 
