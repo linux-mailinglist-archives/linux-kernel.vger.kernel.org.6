@@ -1,117 +1,373 @@
-Return-Path: <linux-kernel+bounces-292354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E52956E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:10:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32F8956E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C20C6B259EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:10:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0773B23900
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C083F175D21;
-	Mon, 19 Aug 2024 15:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6D17921D;
+	Mon, 19 Aug 2024 15:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="IljbFUz0"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QoLpuYSu"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF6173355;
-	Mon, 19 Aug 2024 15:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF89815853A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080115; cv=none; b=rz2lWkrbqX0TuPUIFBT8MCFQvOBFQIZlZSd2Nw9v3W39uHtp7uyH6YyhKuxAOkiqAiFeFw2bNVINBkG0oQTkxaRLZT/0PazSHjYFt6cOJeRCSjspFcCJWEpH4UQ1gd/H6QIZWPIs/HIzI1fwWAhUruna91f8UoKFjjmZXT4hL8g=
+	t=1724080152; cv=none; b=QrRbMjHO7wIhtUgQdLgB9qNi6LIwoTW+KXDN7onPdmsFP0lLyb6qcHinF5/FX3bgVmEMkgFEiqUKgDsxPPjU9wYUBjmucdqM1Ia0d8zMA0K0H3x+rBmhpinmmgtyoUnas/8JBhF2BAKQECQwvsZBqCuxzs7UwizNp8VTyqB5rl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080115; c=relaxed/simple;
-	bh=Qs/PzgbBLKl9GKa7HqJ3zp5F0p6hsq+CPvYp1Ln9pQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmoXuBU0+J0Vv2Bj/Iec77ZzrWC5rlG0CjKmFAtC8DdgHCb2CMdVtzl34OTzwey/ncJE5ylY3HWtt9Ao4vIX7H+dAljAOuMwc1OuBQH3PLzabB6w9nYN7HfEOteEHnZ4ySekkxAnEWey26d03nmIIomrhBqFMi8v72CSVrUywN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=IljbFUz0; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZQC4WINccEO2UXpIPJEtJ+/+AN4HEc5+AcWFTyZ8nIc=; b=IljbFUz0sEd/7RJK5hFlLdpQZj
-	o1WZNRbIZV+gMIT/hLLuW9sl1P+/q0yIoZ42perXsWjS1Beq1/b30iZTMNvrh0zBSNZa8vl+5Ivd7
-	m3rSfhJB8Z59cSDtz5p3V6gNhH0uP2ed+0mh8Sp+m0N0+yKZjecT0BWXRSUqYECFieOyK2pEkhz2X
-	JJntJa7iZakI+pyL36mfigQ/FNx5mHKPpF/4P3D7C1RcoDD6GMLqJv03hD2qVfEnwEwxIRKOExBS3
-	JDeGuAwOCeotfNXuq2/r3Hvpb+s9Fo/KAPsVljHs2Uvyo9JhUawEA1sYQQo5zsxJlCl0g8OKl6xq4
-	vqw9rVnQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1sg3zJ-000NIB-1a;
-	Mon, 19 Aug 2024 16:08:05 +0100
-Date: Mon, 19 Aug 2024 16:08:05 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <ZsNf1VdfkHqD8R4Q@earth.li>
-References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1724080152; c=relaxed/simple;
+	bh=y0XSF0NisbbkaFQeED4S8cRsocv1dZdob/BaUW1EJF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aBApJkZsa/3DSv175uMwiYCJ1GZJD7bt+rVjZWuCBO3GXtfPvyoEEEx4DPj4BSBNVGhKFCo0kTbr7BpcxY931BA5lNb9dEHUeaQ2Z4dWO3n09WFtSfgvENTjIQKybcTCi7PAhKBW6EKkVR+6+wiv3wPAJ8nfJvE+dBIW0TiCm5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QoLpuYSu; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8385f38fcdso417063866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724080148; x=1724684948; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rCuddyNf+0ZBHgPNUo3DWqvGchoe0lCOn0I22CKBsbE=;
+        b=QoLpuYSuX42+nbHD8vS17Qk05O7r7zGSfrB6xWcq4AZzaMGTcfix3h3vyXfLoCNXdn
+         Fn/XCa430WewZLrfJKyU60UHBN3JIPOGAkc6MPMfE/WCfrjWxjK5u6ccqG6Kl/T3obGC
+         rmo88CESff3B+XyDzEbID/cPNeXWcXLMwKtxJ47mK607tTQrASQn/FCtV2BN72yTlbt1
+         Udqr1n+GKBMYtKfkIJdCnBD3OyiHIOrByhfAI1OmaJ5idnaIYlIsVPISXJkWaHh3psDf
+         H8qaApxJ31pWy0p7+VngAGffcEFpvW7h+eb92ExD8N7nXJOPtp3nDD7H2OLyuxS+FY0o
+         4M1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724080148; x=1724684948;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rCuddyNf+0ZBHgPNUo3DWqvGchoe0lCOn0I22CKBsbE=;
+        b=Am8jwsT2XE5OjGFvPtYtjW7SpKkanJAp1I/qYZK2Sc0izsCNt8XebuFGzRFm9Cfw+m
+         w+cOx3h7VsGRuCVoWgNlmMWMIX0jJONTEJ89qGG3oA1BjtCX657kiwJuR3bBE3PHCQr/
+         XUSyWK4xkvxxdBwNfWkAqffcQFTYYiqOz97aKFA9DSdaOrYIMvJHeFh+LYY77RDpzFod
+         6RPCG9V2ZGiUz2yCQaTF0bcVZzIqMvZigFV1FXXyFH+gXJkdy+UwGVdPpHYahx9ZL6H+
+         OyfjSeQsP7GD+CYH8WzcXPuQmnMKWt1QabVpLIEbGA7ICBCRq4cC/cwcz8CiDyunuubA
+         yB7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXNDTx72VDhf0I0yUE3njlrAkeJ7Qtq4Q3SOeqXEDNwS5fajtmgbRfKcGlZNOak9rY8S4jO43hQfxhAKxplLqa/EZ/nRFNXFyHv1hl
+X-Gm-Message-State: AOJu0YzCXWrqZe8GU3l6v6tSxwX5QF0z+SUYMtRuaxa7cOBic9k0s/Bj
+	6yY/MCvKgtHXjpZmrO/rAeGOY2P1ka2JBJnavCZUPHE6pYSGVvFcbVc/wq2DBIw=
+X-Google-Smtp-Source: AGHT+IGDU5mZ5AzwP0fXDOYNPfdvWhEp0ajZn5PNntcXvLi6kCPsCwyGkuVzzxEvykY8Qqa+GSXArQ==
+X-Received: by 2002:a17:907:2d0f:b0:a7d:23e8:94e9 with SMTP id a640c23a62f3a-a839293ef04mr821074766b.34.1724080147872;
+        Mon, 19 Aug 2024 08:09:07 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946a7dsm647544266b.181.2024.08.19.08.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 08:09:07 -0700 (PDT)
+Message-ID: <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
+Date: Mon, 19 Aug 2024 18:09:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Sean Christopherson <sean.j.christopherson@intel.com>,
+ Yan Zhao <yan.y.zhao@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-14-rick.p.edgecombe@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240812224820.34826-14-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+
+
+On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
 > 
-> Support for PGP keys and signatures was proposed by David long time ago,
-> before the decision of using PKCS#7 for kernel modules signatures
-> verification was made. After that, there has been not enough interest to
-> support PGP too.
-
-You might want to update the RFC/bis references to RFC9580, which was
-published last month and updates things.
-
-Also, I see support for v2 + v3 keys, and this doesn't seem like a good
-idea. There are cryptographic issues with fingerprints etc there and I
-can't think of a good reason you'd want the kernel to support them. The
-same could probably be said of DSA key support too.
-
-> Lately, when discussing a proposal of introducing fsverity signatures in
-> Fedora [1], developers expressed their preference on not having a separate
-> key for signing, which would complicate the management of the distribution.
-> They would be more in favor of using the same PGP key, currently used for
-> signing RPM headers, also for file-based signatures (not only fsverity, but
-> also IMA ones).
+> Implement managing the TDX private KeyID to implement, create, destroy
+> and free for a TDX guest.
 > 
-> Another envisioned use case would be to add the ability to appraise RPM
-> headers with their existing PGP signature, so that they can be used as an
-> authenticated source of reference values for appraising remaining
-> files [2].
+> When creating at TDX guest, assign a TDX private KeyID for the TDX guest
+> for memory encryption, and allocate pages for the guest. These are used
+> for the Trust Domain Root (TDR) and Trust Domain Control Structure (TDCS).
 > 
-> To make these use cases possible, introduce support for PGP keys and
-> signatures in the kernel, and load provided PGP keys in the built-in
-> keyring, so that PGP signatures of RPM headers, fsverity digests, and IMA
-> digests can be verified from this trust anchor.
+> On destruction, free the allocated pages, and the KeyID.
 > 
-> In addition to the original version of the patch set, also introduce
-> support for signature verification of PGP keys, so that those keys can be
-> added to keyrings with a signature-based restriction (e.g. .ima). PGP keys
-> are searched with partial IDs, provided with signature subtype 16 (Issuer).
-> Search with full IDs could be supported with
-> draft-ietf-openpgp-rfc4880bis-10, by retrieving the information from
-> signature subtype 33 (Issuer Fingerprint). Due to the possibility of ID
-> collisions, the key_or_keyring restriction is not supported.
+> Before tearing down the private page tables, TDX requires the guest TD to
+> be destroyed by reclaiming the KeyID. Do it at vm_destroy() kvm_x86_ops
+> hook.
+> 
+> Add a call for vm_free() at the end of kvm_arch_destroy_vm() because the
+> per-VM TDR needs to be freed after the KeyID.
+> 
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+
+<snip>
 
 
-J.
+> @@ -19,14 +20,14 @@ static const struct tdx_sysinfo *tdx_sysinfo;
+>   /* TDX KeyID pool */
+>   static DEFINE_IDA(tdx_guest_keyid_pool);
+>   
+> -static int __used tdx_guest_keyid_alloc(void)
+> +static int tdx_guest_keyid_alloc(void)
+>   {
+>   	return ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
+>   			       tdx_guest_keyid_start + tdx_nr_guest_keyids - 1,
+>   			       GFP_KERNEL);
+>   }
+>   
+> -static void __used tdx_guest_keyid_free(int keyid)
+> +static void tdx_guest_keyid_free(int keyid)
+>   {
+>   	ida_free(&tdx_guest_keyid_pool, keyid);
+>   }
+> @@ -73,6 +74,305 @@ int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
+>   	return r;
+>   }
+>   
+> +/*
+> + * Some SEAMCALLs acquire the TDX module globally, and can fail with
+> + * TDX_OPERAND_BUSY.  Use a global mutex to serialize these SEAMCALLs.
+> + */
+> +static DEFINE_MUTEX(tdx_lock);
 
--- 
-If I throw a stick, will you leave?
+The way this lock is used is very ugly. So it essentially mimics a lock 
+which already lives in the tdx module. So why not simply gracefully 
+handle the TDX_OPERAND_BUSY return value or change the interface of the 
+module (yeah, it's probably late for this now) so expose the lock. This 
+lock breaks one of the main rules of locking - "Lock data and not code"
+
+> +
+> +/* Maximum number of retries to attempt for SEAMCALLs. */
+> +#define TDX_SEAMCALL_RETRIES	10000
+> +
+> +static __always_inline hpa_t set_hkid_to_hpa(hpa_t pa, u16 hkid)
+> +{
+> +	return pa | ((hpa_t)hkid << boot_cpu_data.x86_phys_bits);
+> +}
+> +
+> +static inline bool is_td_created(struct kvm_tdx *kvm_tdx)
+> +{
+> +	return kvm_tdx->tdr_pa;
+> +}
+> +
+> +static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
+> +{
+> +	tdx_guest_keyid_free(kvm_tdx->hkid);
+> +	kvm_tdx->hkid = -1;
+> +}
+> +
+> +static inline bool is_hkid_assigned(struct kvm_tdx *kvm_tdx)
+> +{
+> +	return kvm_tdx->hkid > 0;
+> +}
+> +
+> +static void tdx_clear_page(unsigned long page_pa)
+> +{
+> +	const void *zero_page = (const void *) __va(page_to_phys(ZERO_PAGE(0)));
+> +	void *page = __va(page_pa);
+> +	unsigned long i;
+> +
+> +	/*
+> +	 * The page could have been poisoned.  MOVDIR64B also clears
+> +	 * the poison bit so the kernel can safely use the page again.
+> +	 */
+> +	for (i = 0; i < PAGE_SIZE; i += 64)
+> +		movdir64b(page + i, zero_page);
+> +	/*
+> +	 * MOVDIR64B store uses WC buffer.  Prevent following memory reads
+> +	 * from seeing potentially poisoned cache.
+> +	 */
+> +	__mb();
+> +}
+> +
+> +static u64 ____tdx_reclaim_page(hpa_t pa, u64 *rcx, u64 *rdx, u64 *r8)
+
+Just inline this into its sole caller. Yes each specific function is 
+rather small but if you have to go through several levels of indirection 
+then there's no point in splitting it...
+
+
+> +{
+> +	u64 err;
+> +	int i;
+> +
+> +	for (i = TDX_SEAMCALL_RETRIES; i > 0; i--) {
+> +		err = tdh_phymem_page_reclaim(pa, rcx, rdx, r8);
+> +		switch (err) {
+> +		case TDX_OPERAND_BUSY | TDX_OPERAND_ID_RCX:
+> +		case TDX_OPERAND_BUSY | TDX_OPERAND_ID_TDR:
+> +			cond_resched();
+> +			continue;
+> +		default:
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	return err;
+> +}
+> +
+
+<snip>
+
+> +
+> +void tdx_mmu_release_hkid(struct kvm *kvm)
+> +{
+> +	bool packages_allocated, targets_allocated;
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> +	cpumask_var_t packages, targets;
+> +	u64 err;
+> +	int i;
+> +
+> +	if (!is_hkid_assigned(kvm_tdx))
+> +		return;
+> +
+> +	/* KeyID has been allocated but guest is not yet configured */
+> +	if (!is_td_created(kvm_tdx)) {
+> +		tdx_hkid_free(kvm_tdx);
+> +		return;
+> +	}
+> +
+> +	packages_allocated = zalloc_cpumask_var(&packages, GFP_KERNEL);
+> +	targets_allocated = zalloc_cpumask_var(&targets, GFP_KERNEL);
+> +	cpus_read_lock();
+> +
+> +	/*
+> +	 * TDH.PHYMEM.CACHE.WB tries to acquire the TDX module global lock
+> +	 * and can fail with TDX_OPERAND_BUSY when it fails to get the lock.
+> +	 * Multiple TDX guests can be destroyed simultaneously. Take the
+> +	 * mutex to prevent it from getting error.
+> +	 */
+> +	mutex_lock(&tdx_lock);
+> +
+> +	/*
+> +	 * We need three SEAMCALLs, TDH.MNG.VPFLUSHDONE(), TDH.PHYMEM.CACHE.WB(),
+> +	 * and TDH.MNG.KEY.FREEID() to free the HKID. When the HKID is assigned,
+> +	 * we need to use TDH.MEM.SEPT.REMOVE() or TDH.MEM.PAGE.REMOVE(). When
+> +	 * the HKID is free, we need to use TDH.PHYMEM.PAGE.RECLAIM().  Get lock
+> +	 * to not present transient state of HKID.
+> +	 */
+> +	write_lock(&kvm->mmu_lock);
+> +
+> +	for_each_online_cpu(i) {
+> +		if (packages_allocated &&
+> +		    cpumask_test_and_set_cpu(topology_physical_package_id(i),
+> +					     packages))
+> +			continue;
+> +		if (targets_allocated)
+> +			cpumask_set_cpu(i, targets);
+> +	}
+> +	if (targets_allocated)
+> +		on_each_cpu_mask(targets, smp_func_do_phymem_cache_wb, NULL, true);
+> +	else
+> +		on_each_cpu(smp_func_do_phymem_cache_wb, NULL, true);
+> +	/*
+> +	 * In the case of error in smp_func_do_phymem_cache_wb(), the following
+> +	 * tdh_mng_key_freeid() will fail.
+> +	 */
+> +	err = tdh_mng_key_freeid(kvm_tdx);
+> +	if (KVM_BUG_ON(err, kvm)) {
+> +		pr_tdx_error(TDH_MNG_KEY_FREEID, err);
+> +		pr_err("tdh_mng_key_freeid() failed. HKID %d is leaked.\n",
+> +		       kvm_tdx->hkid);
+> +	} else {
+> +		tdx_hkid_free(kvm_tdx);
+> +	}
+> +
+> +	write_unlock(&kvm->mmu_lock);
+> +	mutex_unlock(&tdx_lock);
+> +	cpus_read_unlock();
+> +	free_cpumask_var(targets);
+> +	free_cpumask_var(packages);
+> +}
+> +
+> +static inline u8 tdx_sysinfo_nr_tdcs_pages(void)
+> +{
+> +	return tdx_sysinfo->td_ctrl.tdcs_base_size / PAGE_SIZE;
+> +}
+
+Just add a nr_tdcs_pages to struct tdx_sysinfo_td_ctrl and claculate 
+this value in get_tdx_td_ctrl() rather than having this long-named 
+non-sense. This value can't be calculated at compiletime anyway.
+
+> +
+> +void tdx_vm_free(struct kvm *kvm)
+> +{
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> +	u64 err;
+> +	int i;
+> +
+> +	/*
+> +	 * tdx_mmu_release_hkid() failed to reclaim HKID.  Something went wrong
+> +	 * heavily with TDX module.  Give up freeing TD pages.  As the function
+> +	 * already warned, don't warn it again.
+> +	 */
+> +	if (is_hkid_assigned(kvm_tdx))
+> +		return;
+> +
+> +	if (kvm_tdx->tdcs_pa) {
+> +		for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
+> +			if (!kvm_tdx->tdcs_pa[i])
+> +				continue;
+> +
+> +			tdx_reclaim_control_page(kvm_tdx->tdcs_pa[i]);
+> +		}
+> +		kfree(kvm_tdx->tdcs_pa);
+> +		kvm_tdx->tdcs_pa = NULL;
+> +	}
+> +
+> +	if (!kvm_tdx->tdr_pa)
+> +		return;
+
+Use is_td_created() helper. Also isn't this check redundant since you've 
+already executed is_hkid_assigned() and if the VM is not properly 
+created i.e __tdx_td_init() has failed for whatever reason then the 
+is_hkid_assigned check will also fail?
+
+> +
+> +	if (__tdx_reclaim_page(kvm_tdx->tdr_pa))
+> +		return;
+> +
+> +	/*
+> +	 * Use a SEAMCALL to ask the TDX module to flush the cache based on the
+> +	 * KeyID. TDX module may access TDR while operating on TD (Especially
+> +	 * when it is reclaiming TDCS).
+> +	 */
+> +	err = tdh_phymem_page_wbinvd(set_hkid_to_hpa(kvm_tdx->tdr_pa,
+> +						     tdx_global_keyid));
+> +	if (KVM_BUG_ON(err, kvm)) {
+> +		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
+> +		return;
+> +	}
+> +	tdx_clear_page(kvm_tdx->tdr_pa);
+> +
+> +	free_page((unsigned long)__va(kvm_tdx->tdr_pa));
+> +	kvm_tdx->tdr_pa = 0;
+> +}
+> +
+
+<snip>
 
