@@ -1,954 +1,299 @@
-Return-Path: <linux-kernel+bounces-292400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F89A956F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:40:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9AB956EEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C991C22B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADD4286064
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4520513AD2A;
-	Mon, 19 Aug 2024 15:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2685130E4A;
+	Mon, 19 Aug 2024 15:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mn6yUnj3"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V4rTiDMo"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2067.outbound.protection.outlook.com [40.107.92.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2303412EBDB;
-	Mon, 19 Aug 2024 15:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724081993; cv=none; b=FW+8iEUnaaqn4/4VEuJFH80/slZYNRqYRtU4g3qPuwUWvg0+5IgJHnXhkGNtsnEl3u7xLdBzhXsrWW7BKv3mODh/y0EurZuH1IDw9v7/nVEJK2dGgHcJu+WXqYxAi3aZrnRnbR/+KjryzPl82Pebn4fw7NWplSDh+qZGcpx78pI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724081993; c=relaxed/simple;
-	bh=EQrzrpEWS0Msjzd7Lg1pS6gIdsyAJw24yaQ6qXtEOME=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Aghx+NZphP0MTAP/4ybDHjHkXs/KZlne1EKQuPUMmCOeIgi5fV3gzW6s0RcG2Px4DyEj4zjjN6KXltDhUJkPbItnTSPxa6XS4IFvTkW520ii/LP7KstsQGI6a13xhfOnBCqQWTPlDkpZG39anKalQoFYIJJGr/+F0DaTxMjRbKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mn6yUnj3; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5bec7ee6f44so3915394a12.0;
-        Mon, 19 Aug 2024 08:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724081987; x=1724686787; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5UENWL/7CHDqF5f98/TWU/Ijyp7+vq9Ti1n3vzOBH38=;
-        b=mn6yUnj3xaJwASvDSsweErEAbvTJWUjyyLwGkj9vkKYRG4s9ZXLUaP4qfBG6U9IkCZ
-         lF1g4EW0A6WurpvCTszLSaBuEXfT81ecyN6GxkqKJl8x4sgOnBtwUkM2n6ujt8uMRrE6
-         pYcPX7hqbpI9Ykt8FpI2IyeLKaVEWWnDX+BkXeLJ/B6ZsGIzqSRNpe5ugHJDIq0NqDOj
-         rAkdR+nIAse7z8X8yXRiF8EPHVxnkxhVZSL3mVN8O8fN6z9n2Q0mtFbcHuXAYDbtahPU
-         6aqpYm1X9IW4TDm9q0VNwWJeDt4HAVLpnDLGIGTmd2CTIbuws2lSJZAnuv5kj/fxgG9e
-         EjNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724081987; x=1724686787;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5UENWL/7CHDqF5f98/TWU/Ijyp7+vq9Ti1n3vzOBH38=;
-        b=TzdIshSOS1a4lLh5t4xZYbNJK9A/BI13ZwNacHax4Wf6Fv5AHy/MAIw7/GEc4rA91c
-         zyQ+Vr7wz1WCLUKwBV6c9qBeoxTYFgHNOAlfUVO43MNA0QGenGEX76VFVvF/TeUYyq3m
-         mI4KMQxykD4ivpTNB2GoC0nWkbVNOGmETtczSvTwb14EXKPYy8xzAls+8+4OsBwi8m03
-         zs1N5p/VA9a3Aqw5qPd26hcbm9YQSZLGgmSPc+C3hehjbf3C+oeEL7b8Bpai9cjDPfZ0
-         qA9EaH30B/Lpvd6phjZPukWn7H18khtQBBh83MwSjmEtdMnyruQppGRmy1ppZMBDjyyI
-         /2EA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU2JU7dDuqIJggI8Ufg+68etsB58WgW87VhGZKBmBs8MBmy2g/CdWP0J4SrsCJjiCvCDhyKHPqZNVxKRlo5ydgats87ZT5X+gvFygnrWYmN5B+ydx6WncnUS7fMhdYrNPiygRUeoVbZbPc5vQ2aRp64BAck0N6VvYLDIW3F7IdEXcY3HTzC/zxHefOYBZLSBP/u8bEOpZgtYGk5TOX9UBlSfKI164=
-X-Gm-Message-State: AOJu0Yw3wOeoFHuOpsrw0Naih8zy5wRfCTbhZiVdnNtuvlqwXLNkDOKY
-	efvuR1QmmxuP9ekpHlpVtAuhyk4m0kgZJC0dqNwG7qxuiJDYTFCh
-X-Google-Smtp-Source: AGHT+IFlntUuZMVFKiqJGIFNQs+PmnLPvyBpd4e7M8ngMvbMLO/mP8M9AFJEMCuShjOYqOcWwebPGA==
-X-Received: by 2002:a17:907:f719:b0:a72:8762:1f5d with SMTP id a640c23a62f3a-a8392a11c1bmr783811366b.55.1724081986486;
-        Mon, 19 Aug 2024 08:39:46 -0700 (PDT)
-Received: from navi.fritz.box ([2a02:2454:299:1800:db9c:cb9b:300b:5a61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383935698sm643232266b.102.2024.08.19.08.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 08:39:45 -0700 (PDT)
-From: Michal Rostecki <vadorovsky@gmail.com>
-X-Google-Original-From: Michal Rostecki <vadorovsky@protonmail.com>
-To: 
-Cc: Michal Rostecki <vadorovsky@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Finn Behrens <me@kloenk.dev>,
-	Manmohan Shukla <manmshuk@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	Yutaro Ohno <yutaro.ono.418@gmail.com>,
-	Asahi Lina <lina@asahilina.net>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Tiago Lam <tiagolam@gmail.com>,
-	Charalampos Mitrodimas <charmitro@posteo.net>,
-	Tejun Heo <tj@kernel.org>,
-	Roland Xu <mu001999@outlook.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	netdev@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH RESEND v5] rust: str: Use `core::CStr`, remove the custom `CStr` implementation
-Date: Mon, 19 Aug 2024 17:36:35 +0200
-Message-ID: <20240819153656.28807-2-vadorovsky@protonmail.com>
-X-Mailer: git-send-email 2.44.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029BE77F01;
+	Mon, 19 Aug 2024 15:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724081846; cv=fail; b=dukbMZHs9fulc1IgQbQApjgdCHs5CUeuJEDdbbgbM7yASgrixxeYWuCUO0u849huvHzOlMaJbdaBjrOsPcNuTpco04k4RWipVILYT52iB9c/1PNVtLInOq4KGDn+Y+B5AyMnvr6yC7G3qW9tkQY5OBDnMEtCzXhZCQvEfxjvhaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724081846; c=relaxed/simple;
+	bh=J/ozw7ETitZIYw5/7P8PkGo4j3LE2YqfApX44z479ZI=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=B9Iva2uZ5DB7OZTPZeqhEO2fhWJQvQUdv7ewbjo5V6FTzJSXcPv5vZxsXyYja6PhGz78HSIpBcMMRGSqzr3OTy9+zTeZMp+Y0BgACuoeo50fcX0mUe6nLkX4A2PlJJZZnkfcKv4nO8WNq3Y7IM2XL6qQcIjKrbUGIfNDYdIrx88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V4rTiDMo; arc=fail smtp.client-ip=40.107.92.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IhqYURYmeBH7rzU504kHXwO8B35W3pVnNwvRDR+7FPgKlIe7WLnjwK2Cp/ykr9NQq+KvZbppUt9CO58yycPNuaBWvzSQPUZU9Zl9rV64eZyfyHU1knzh+aK2brCta9DpaHCtK7UlU+MpQazq3hQ+GoFrJfZE6+tVYETo2aBoezDA9wNS2wd+Z1sgVUtbZjYMZx2NNmfQMlLjz1E+tyftj9I2iSSh0DYdYfC2Mc7lDS8RAZBv4iaticVVSvY4UQlGb+09ahGnen+C+AZz9fGlx+WSOR2AoP5n3Q7Q0VjSG3NfnmByxl8xA0Y/xe7ibPgUy1i6b9FoK3a4L7Rmqc3AFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=idgcN83iNeACDmLN2D2j/EUAOxAJmUYRZOSpf26FpOE=;
+ b=cJ/iv26WEyP4QQVHLCdPHsiKClwtgfJdBkqLzJQplSYCv87IvvMCO3Dlj92ySZ1QbslDqmk+V0jbY2BpYTZOvKeot6UEXQAzlN2KdX4h+gVCLImSp24zMJnIdC8OWPsRHHRK/m5yWZNNP/VqFZWIqab++NUryrO378pvLYNRUT8HcbwJXrMRlmzUaLWRx4SKrOXa4S5aujApIb/3aCQk6lPv5AuRaY4yrDF8JlTKxwLhqwSUuarHpsl3qibcOo9ZFBe2D1zV63ej8XSxQ/h1cd6sTN6klOnCnbtL96jmiaKInNw4VGgWmnL46fhWujdj7LwnEjRC8rE6iotDPRzVBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=idgcN83iNeACDmLN2D2j/EUAOxAJmUYRZOSpf26FpOE=;
+ b=V4rTiDMoWVS4gK8eVtDyZAbKWVIzJU69x4UHg6TWsJynU9eyogJdmIioyb7pOSL9E0DjGcATCcPTSH71wL8WEMM/M4VRtUfQRPzlw41yKn+iN/Yzc5SMhCkRjiLT9M5LMyK1UoGGXpsXkBaQqzDk5S9OBULB1LUGaQGjPd58JnU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by SJ2PR12MB8111.namprd12.prod.outlook.com (2603:10b6:a03:4fe::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 15:37:17 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 15:37:16 +0000
+Message-ID: <8a3755a3-0c4b-41ba-a2bb-e269d5d53fbe@amd.com>
+Date: Mon, 19 Aug 2024 10:37:11 -0500
+User-Agent: Mozilla Thunderbird
+From: "Moger, Babu" <babu.moger@amd.com>
+Subject: Re: [PATCH v6 04/22] x86/resctrl: Detect Assignable Bandwidth
+ Monitoring feature details
+Reply-To: babu.moger@amd.com
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1722981659.git.babu.moger@amd.com>
+ <851bfbee0fd53631acae8d209796d52ce8051e68.1722981659.git.babu.moger@amd.com>
+ <daa0fdd5-bc86-45a5-a684-a88816f3cfe1@intel.com>
+Content-Language: en-US
+In-Reply-To: <daa0fdd5-bc86-45a5-a684-a88816f3cfe1@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA1PR05CA0022.namprd05.prod.outlook.com
+ (2603:10b6:806:2d2::28) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|SJ2PR12MB8111:EE_
+X-MS-Office365-Filtering-Correlation-Id: e17c2359-0b86-4a5a-a3a5-08dcc064ce09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?czdNbVZuZmUzeEVQaUlpbWVHT2F4NFJ6MkIwQUdJQUk2bXlhN1czdU5QL2g5?=
+ =?utf-8?B?TGJqbDlSUjlLdVE1UndEdWszV1B2R0lsTXZEbWVPT1VZVTBIcmF1ME1ZREpz?=
+ =?utf-8?B?MHZZRnloYlByNk5hNjU4b2hrMER5YWplSEd5ajBXdUVRR3BWY0hueENKUHo0?=
+ =?utf-8?B?bEJPampqT2xtenRtUUVjcyt3enJZdjVLQW1lMzdSTFY3OE93QnQwcmpPYUpG?=
+ =?utf-8?B?UzFaYmRFWDNlSlg3THU1TitXQTNYTUVvUG9zNVFGUUtlOVJna0FUUEtQVFl6?=
+ =?utf-8?B?K2ROdyt1eCtBc09OSHlUNTYwcms2RGpxaFpaRHRIOUN5UlNncys2a0dTeU41?=
+ =?utf-8?B?N29URURjMmhYYlgrSEtOclplb3dDdHFFTGJueFNGeWZ4bzFUNUxuVnVwMjhE?=
+ =?utf-8?B?R3JPeWJMZWlpRHNtcWFzcldwcWFBcjFpSC9BcEhqcXJyYWlIUDRlYm5EL1Ir?=
+ =?utf-8?B?Um5ydUxaeEdaYUVraUV0VE5nRWhNeTk0c01DSFFiYllrWU1udGtWakUrVU5x?=
+ =?utf-8?B?S2lyZzhkeVBhb3Z6YWN2SmdXcmp2RnBNNjNLMDBGalNvZjdodWN0NU1kZXh5?=
+ =?utf-8?B?R2VCSVNkeUJEb0gvNUdnWkJ4VEJ4RWJUc3lrY3c2VFNUZTdKRFpKOFUwcHd6?=
+ =?utf-8?B?dWNramZTT3cyd1RoaHpkOTBRVjBwZ3I5T0d6bXpDR2RQVlZsTXZFNWVrSFZ2?=
+ =?utf-8?B?QUZOZ2pXWmk3K3ljR1JIR01ZeWtSVWY3MnRVeWN3VXp2eGN2SWV6UDEyNk1X?=
+ =?utf-8?B?c0dhSFYwZTRiRUxIbVZnaHhLcERNTUloRWwyaERxWVh5QUlQN3IvemJLMFJR?=
+ =?utf-8?B?bmtoc1p2RXhTcTNTMGRna0E3NEVPRGhKUkorckJjMlY2Ynd2Mk94allmaXRN?=
+ =?utf-8?B?QktGUkJwVGQyRm52V3ZSUkQ0R05RaGVpeE5WYThDclBiMEZQcUFPdWo1Rnl5?=
+ =?utf-8?B?bW5kWFA1bHhwVzZnRDhReWJ4d0dHcENqbUdxazd1aDBWM3JiM1diTlk0dlEv?=
+ =?utf-8?B?L3VqTzQxWDk1UGZGTTNZaXpNbFJjaVFVckh4RnBMUFk0T3VBYUd5VnV6WnAr?=
+ =?utf-8?B?WExoVitRTjEwWTAxTDdTQXFwd0IwS1JFVGl0bTlSWjlmOEMyQ05IeDIzdzVP?=
+ =?utf-8?B?SE4xY284ck95a0VGN1J4N1ljeHJ1WXVGZDZvamV2UFdLb3lwQ1JsT1JBbHh1?=
+ =?utf-8?B?dVBmL2VkdlB2OHdFakpGVGREZHV6RzRvQk9ucEhHa1hVNjFKZlZkeFRkRFJE?=
+ =?utf-8?B?aDQxOHd1Um12TjMvdDRBZjRRbGNLVStCLzFiY1ZhK0huZlNOOGlIcmdNd0Uw?=
+ =?utf-8?B?TUxDK3grczhmWHdkMVdheTVqcXpvalNkSUM4a3BJYW5yL01CVHloaXRMdkkz?=
+ =?utf-8?B?dHRHVENGeGF6bTl1ZkVOdXFBRHJkVk80WmJMemNSYmUvSXhRbUcvSTRtbHFo?=
+ =?utf-8?B?Z05lV1dBQ1RrNzRSTnpKOFJSZ2cydHhKYzlDdk1XNmhLcjFsdEkwWDIrb1BS?=
+ =?utf-8?B?cGs2U3F0YVFrMmNVMHhJMHJjK1ZUT2ltdzliTHBYd0thd3FqeTFCK3FKU1NW?=
+ =?utf-8?B?Y2g4RldqZGFyMkZEQndiYzdFWGpkZi9jVkRFYXFBdjliTlRzSUJvbkdUVyti?=
+ =?utf-8?B?dHRZWmZxd2N6cTZHaG5ZZ3NDWWk4MU53MGFXZER0aXcrVXZrTGtKMzR5L1BF?=
+ =?utf-8?B?anBxdGVlQlVINEZnNGJsT0lKWGFIS1BTdXA4dm9qbGJvYmYydmQ3S3dxamhH?=
+ =?utf-8?B?RFFEa3BBbXA1UkgwMUxiS3hXQjFqM3R4Z0M2Zk5aQjlWNmpiNnhna2t3L2tz?=
+ =?utf-8?Q?1V0m/RMNEnw8w5rX3AxDVdYxSuUWs6y8kfsUQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R09aZmYwbjUzSlI3RFBuRVdnR1lMQmdRNkJIVmJiZjI1YWpqN0w3cFRHZ2RF?=
+ =?utf-8?B?aXp1aDNadGQvZ3FicjRFRUVyKzNFNjlJaFhSNEJIMk15OGNwcGxWakdtYThZ?=
+ =?utf-8?B?V1hac1UyTEs3VE9TaTZ2NGp1V3ZpR1c2MFRTcXNQNW9XUTVMOTkrK2N5MFFJ?=
+ =?utf-8?B?Tk1PVVh1MnhMTmh5UEk4ZThwYzJSeDNMb2l4REI4OFpBY1FmOW41TGVZaG1z?=
+ =?utf-8?B?cURld01MaVQrWDR6dm9nZUtmWGExQU11dGYvMW8wT3BiZVRJTk90dlBITTZp?=
+ =?utf-8?B?RmRibVJjZ3dJcHZJaFZaM1lXdytZSTFoRHBCQXBnL1RDVy80R2pweWRjT0F5?=
+ =?utf-8?B?cnY2UHV3S0F3TldtcHF1OTdQN0hhRUg3U0RiSUJaNWxwbCtNWTFiM25ndnFM?=
+ =?utf-8?B?Rkljc0I2d0I3d1B6dU5PUzlVTjIvamNUZHpDZkd6ZEF6dzNGanltMDNwR2pu?=
+ =?utf-8?B?Q3B6czNzbGk5SWZHWkNFUG5sQWY3c3M4blJpVXlYVTJUMmRaTm9yVmdJbmVB?=
+ =?utf-8?B?V1V5czBIUlZIUGtJeWZkTlBWUnhWdkFEaE1jOXBXMjc4T2U0S2gwQ0Y2ajQv?=
+ =?utf-8?B?RzBxRDZFaGtpOGtFdFZpS3NVOW1jekh3OXRIN24xUTRMZ3R4SXgwd3dnZ3pz?=
+ =?utf-8?B?U2R6bm03Q0YzNXV5VjZIYmd0TFdwWjlrQVdmQk1NK1pTVS9WSlBYQlZGNTVk?=
+ =?utf-8?B?azFaYk1QTUdhWXpCN0VtTEtYdjZ1V2prKzc4R2hyMFRNalgvUUwrdisrUlpq?=
+ =?utf-8?B?T05XRlFHRk5uRkVJK29PbVBVMXdSNWtxQnNGUnFueElnWnYxVkdKS01BYUFU?=
+ =?utf-8?B?LzBnQk5LbTduUWthNVcvSGNzQUFCWWtuWkZ2NkRQbFc3YVVYVC9ONEo4ODZv?=
+ =?utf-8?B?QUZSSTRCOThHT1dlajkwdDYzVjBQQUhlenRSVTZ3NGhwaExnVERWY0lQTjJ4?=
+ =?utf-8?B?QnZmUFQrTy9mR0lQM055SlE5Nmc5WmFaQkJpYzg5Q1h1dWNLa1NXNmpGeHVw?=
+ =?utf-8?B?YXY0ai85MCttR0lqVGdDRFZRWCtId3lxOHBUbytnL1IvUE11TFB6dVFjbjRW?=
+ =?utf-8?B?R2xVLzM3RmdvT0wvUzZIRml5M2hrWW9iWm1sT1RWNEFXbmZMSHlZOURGZDNv?=
+ =?utf-8?B?TTlMc3hQRzRYc2trVTdLeGp1b2c1WlhQSGtnTEY1cUl2eXIvcldZcXl5Z0VB?=
+ =?utf-8?B?QzFqQ1JkZytsM09jQldoTE4yWGoxNVBRWFpWZkkzM3MzQXRqR0FrV20zaHYy?=
+ =?utf-8?B?M1lVRktDNXhNMFJNODNBbHlKSWN3ejlWclJvMmJpMmhxOVk0TWFDNjlvQWpV?=
+ =?utf-8?B?R1U2WlQ2dU0zd1lvaHNoR1dHblA5V3FUNXZyMnpqSXFNZUduUlh4K3AzRTBZ?=
+ =?utf-8?B?WEI2OGxNeUpRb2hmOUlLNmt6enYzTVBSeU5QQmJLUGx2S21iTWxPakppczNN?=
+ =?utf-8?B?Z094dGNHdzVXcmVNL2NCSm1OYUNzOTRvZ1luWmNTd0lGY280VDNSVmdxWEJn?=
+ =?utf-8?B?dkRyYWo3MTNWYm5YaTFodCtDZFMrVFhXWG43a054MlZ1QWU5bTNUZlMyc0pp?=
+ =?utf-8?B?OGJUT2QzeklwK21OWElaaFZZU2xVTWdTT2VYRUhtclphWVc1WmJ6dmZDczVW?=
+ =?utf-8?B?Z1dmL3k1QUdtUjB3UGtYRzlaWFNoWXc5RlJyVFRNcmlvNVNFMGtjYTdTdld5?=
+ =?utf-8?B?cjJsN015UjFvQUkvU2F1REFvays1ckJVNDRDdnNEZXQzZTN2SGRtTzVNMENV?=
+ =?utf-8?B?R3RWcEp4T2puSmxiK3JWWnNHMUttcy9RWG82VUVISmVNcWt4dTE0cDVxbEtQ?=
+ =?utf-8?B?SFF5T3dsVmpNMWVvZjlQNGoxeU5ESGdqVVBJNHRsL05WOFJyNnpxNmExUFlj?=
+ =?utf-8?B?YTl4ajJRcnFZazVaYWlEYWFJT0JOVHI2b3V3RG1WRnFjTkdObitRQnZWWXEw?=
+ =?utf-8?B?Ymhjc3BqWmtHd2RUekpSWStKdVFoejV6UHF3dXBHTkEwSG5sYkVSbVFxVUJB?=
+ =?utf-8?B?NWYvOVF0ZUlWOUdxSXJ0TGF2UTVvbmhibXZ0WU53SmlERW5OeTdjOHF4VDQr?=
+ =?utf-8?B?eHRSa21oZllpeGtlRlQvSUNLY2M1SHFvSXI2akZpOHRqZVYvQlgxR0JXVHIr?=
+ =?utf-8?Q?ViGY=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e17c2359-0b86-4a5a-a3a5-08dcc064ce09
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 15:37:16.7379
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BcmxCxftbLWgGHlQY4xTX4xKiCqw1Rnu1uE/DvKQ4zzl3jAr/zFArF/w2cO6jaFH
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8111
 
-From: Michal Rostecki <vadorovsky@gmail.com>
+Hi Reinette,
 
-`CStr` became a part of `core` library in Rust 1.75. This change replaces
-the custom `CStr` implementation with the one from `core`.
+On 8/16/24 16:30, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 8/6/24 3:00 PM, Babu Moger wrote:
+>> ABMC feature details are reported via CPUID Fn8000_0020_EBX_x5.
+>> Bits Description
+>> 15:0 MAX_ABMC Maximum Supported Assignable Bandwidth
+>>       Monitoring Counter ID + 1
+>>
+>> The feature details are documented in APM listed below [1].
+>> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+>> Monitoring (ABMC).
+>>
+>> Detect the feature and number of assignable counters supported.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+>> v6: Commit message update.
+>>      Renamed abmc_capable to mbm_cntr_assignable.
+>>
+>> v5: Name change num_cntrs to num_mbm_cntrs.
+>>      Moved abmc_capable to resctrl_mon.
+>>
+>> v4: Removed resctrl_arch_has_abmc(). Added all the code inline. We dont
+>>      need to separate this as arch code.
+>>
+>> v3: Removed changes related to mon_features.
+>>      Moved rdt_cpu_has to core.c and added new function
+>> resctrl_arch_has_abmc.
+>>      Also moved the fields mbm_assign_capable and mbm_assign_cntrs to
+>>      rdt_resource. (James)
+>>
+>> v2: Changed the field name to mbm_assign_capable from abmc_capable.
+>> ---
+>>   arch/x86/kernel/cpu/resctrl/monitor.c | 12 ++++++++++++
+>>   include/linux/resctrl.h               |  4 ++++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c
+>> b/arch/x86/kernel/cpu/resctrl/monitor.c
+>> index 795fe91a8feb..88312b5f0069 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+>> @@ -1229,6 +1229,18 @@ int __init rdt_get_mon_l3_config(struct
+>> rdt_resource *r)
+>>               mbm_local_event.configurable = true;
+>>               mbm_config_rftype_init("mbm_local_bytes_config");
+>>           }
+>> +
+>> +        if (rdt_cpu_has(X86_FEATURE_ABMC)) {
+>> +            r->mon.mbm_cntr_assignable = true;
+>> +            /*
+>> +             * Query CPUID_Fn80000020_EBX_x05 for number of
+>> +             * ABMC counters.
+>> +             */
+> 
+> At this point this comment seems unnecessary. Not an issue, it can stay of
+> you
+> prefer.
+> 
+>> +            cpuid_count(0x80000020, 5, &eax, &ebx, &ecx, &edx);
+>> +            r->mon.num_mbm_cntrs = (ebx & 0xFFFF) + 1;
+>> +            if (WARN_ON(r->mon.num_mbm_cntrs > 64))
+> 
+> Please document where this "64" limit comes from. This is potentially a
+> problem
+> since the resctrl fs managed bitmap is hardcoded to be of size 64 but the
+> arch code
+> sets how many counters are supported. Will comment more later on bitmap
+> portions, but
+> to handle this I expect resctrl fs should at least sanity check the number
+> of counters
+> before attempting to initialize its bitmap ... or better, as James
+> suggests, make the
+> bitmap creation dynamic.
 
-`core::CStr` behaves generally the same as the removed implementation,
-with the following differences:
+Yes. Agree. It is better we allocate it dynamically. Then we don't need
+WARN_ON here.
 
-- It does not implement `Display`.
-- It does not provide `from_bytes_with_nul_unchecked_mut` method.
-- It has `as_ptr()` method instead of `as_char_ptr()`, which also returns
-  `*const c_char`.
+> 
+>> +                r->mon.num_mbm_cntrs = 64;
+>> +        }
+>>       }
+>>         l3_mon_evt_init(r);
+>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+>> index 1097559f4987..72c498deeb5e 100644
+>> --- a/include/linux/resctrl.h
+>> +++ b/include/linux/resctrl.h
+>> @@ -185,10 +185,14 @@ enum resctrl_scope {
+>>   /**
+>>    * struct resctrl_mon - Monitoring related data
+>>    * @num_rmid:        Number of RMIDs available
+>> + * @num_mbm_cntrs:    Number of monitoring counters
+>> + * @mbm_cntr_assignable:Is system capable of supporting monitor
+>> assignment?
+>>    * @evt_list:        List of monitoring events
+>>    */
+>>   struct resctrl_mon {
+>>       int            num_rmid;
+>> +    int            num_mbm_cntrs;
+>> +    bool            mbm_cntr_assignable;
+>>       struct list_head    evt_list;
+>>   };
+>>   
+> 
+> Reinette
+> 
 
-The first two differences are handled by providing the `CStrExt` trait,
-with `display()` and `from_bytes_with_nul_unchecked_mut()` methods.
-`display()` returns a `CStrDisplay` wrapper, with a custom `Display`
-implementation.
-
-`DerefMut` implementation for `CString` is removed here, as it's not
-being used anywhere.
-
-Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
----
- rust/kernel/error.rs        |   7 +-
- rust/kernel/kunit.rs        |  18 +-
- rust/kernel/net/phy.rs      |   2 +-
- rust/kernel/prelude.rs      |   4 +-
- rust/kernel/str.rs          | 465 ++++++------------------------------
- rust/kernel/sync/condvar.rs |   5 +-
- rust/kernel/sync/lock.rs    |   6 +-
- rust/kernel/workqueue.rs    |   2 +-
- scripts/rustdoc_test_gen.rs |   4 +-
- 9 files changed, 93 insertions(+), 420 deletions(-)
-
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 6f1587a2524e..6a2bb11ac09c 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -4,10 +4,11 @@
- //!
- //! C header: [`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic/errno-base.h)
- 
--use crate::{alloc::AllocError, str::CStr};
-+use crate::alloc::AllocError;
- 
- use alloc::alloc::LayoutError;
- 
-+use core::ffi::CStr;
- use core::fmt;
- use core::num::TryFromIntError;
- use core::str::Utf8Error;
-@@ -151,7 +152,7 @@ pub fn name(&self) -> Option<&'static CStr> {
-             None
-         } else {
-             // SAFETY: The string returned by `errname` is static and `NUL`-terminated.
--            Some(unsafe { CStr::from_char_ptr(ptr) })
-+            Some(unsafe { CStr::from_ptr(ptr) })
-         }
-     }
- 
-@@ -173,7 +174,7 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-             None => f.debug_tuple("Error").field(&-self.0).finish(),
-             // SAFETY: These strings are ASCII-only.
-             Some(name) => f
--                .debug_tuple(unsafe { core::str::from_utf8_unchecked(name) })
-+                .debug_tuple(unsafe { core::str::from_utf8_unchecked(name.to_bytes()) })
-                 .finish(),
-         }
-     }
-diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-index 0ba77276ae7e..79a50ab59af0 100644
---- a/rust/kernel/kunit.rs
-+++ b/rust/kernel/kunit.rs
-@@ -56,13 +56,15 @@ macro_rules! kunit_assert {
-                 break 'out;
-             }
- 
--            static FILE: &'static $crate::str::CStr = $crate::c_str!($file);
-+            static FILE: &'static core::ffi::CStr = $file;
-             static LINE: i32 = core::line!() as i32 - $diff;
--            static CONDITION: &'static $crate::str::CStr = $crate::c_str!(stringify!($condition));
-+            static CONDITION: &'static core::ffi::CStr = $crate::c_str!(stringify!($condition));
- 
-             // SAFETY: FFI call without safety requirements.
-             let kunit_test = unsafe { $crate::bindings::kunit_get_current_test() };
-             if kunit_test.is_null() {
-+                use kernel::str::CStrExt;
-+
-                 // The assertion failed but this task is not running a KUnit test, so we cannot call
-                 // KUnit, but at least print an error to the kernel log. This may happen if this
-                 // macro is called from an spawned thread in a test (see
-@@ -71,11 +73,13 @@ macro_rules! kunit_assert {
-                 //
-                 // This mimics KUnit's failed assertion format.
-                 $crate::kunit::err(format_args!(
--                    "    # {}: ASSERTION FAILED at {FILE}:{LINE}\n",
--                    $name
-+                    "    # {}: ASSERTION FAILED at {}:{LINE}\n",
-+                    $name.display(),
-+                    FILE.display(),
-                 ));
-                 $crate::kunit::err(format_args!(
--                    "    Expected {CONDITION} to be true, but is false\n"
-+                    "    Expected {} to be true, but is false\n",
-+                    CONDITION.display(),
-                 ));
-                 $crate::kunit::err(format_args!(
-                     "    Failure not reported to KUnit since this is a non-KUnit task\n"
-@@ -98,12 +102,12 @@ unsafe impl Sync for Location {}
-             unsafe impl Sync for UnaryAssert {}
- 
-             static LOCATION: Location = Location($crate::bindings::kunit_loc {
--                file: FILE.as_char_ptr(),
-+                file: FILE.as_ptr(),
-                 line: LINE,
-             });
-             static ASSERTION: UnaryAssert = UnaryAssert($crate::bindings::kunit_unary_assert {
-                 assert: $crate::bindings::kunit_assert {},
--                condition: CONDITION.as_char_ptr(),
-+                condition: CONDITION.as_ptr(),
-                 expected_true: true,
-             });
- 
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index fd40b703d224..19f45922ec42 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -502,7 +502,7 @@ unsafe impl Sync for DriverVTable {}
- pub const fn create_phy_driver<T: Driver>() -> DriverVTable {
-     // INVARIANT: All the fields of `struct phy_driver` are initialized properly.
-     DriverVTable(Opaque::new(bindings::phy_driver {
--        name: T::NAME.as_char_ptr().cast_mut(),
-+        name: T::NAME.as_ptr().cast_mut(),
-         flags: T::FLAGS,
-         phy_id: T::PHY_DEVICE_ID.id,
-         phy_id_mask: T::PHY_DEVICE_ID.mask_as_int(),
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index b37a0b3180fb..b0969ca78f10 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -12,7 +12,7 @@
- //! ```
- 
- #[doc(no_inline)]
--pub use core::pin::Pin;
-+pub use core::{ffi::CStr, pin::Pin};
- 
- pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt};
- 
-@@ -35,7 +35,7 @@
- 
- pub use super::error::{code::*, Error, Result};
- 
--pub use super::{str::CStr, ThisModule};
-+pub use super::ThisModule;
- 
- pub use super::init::{InPlaceInit, Init, PinInit};
- 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index bb8d4f41475b..97a298a44b96 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -4,8 +4,9 @@
- 
- use crate::alloc::{flags::*, vec_ext::VecExt, AllocError};
- use alloc::vec::Vec;
-+use core::ffi::CStr;
- use core::fmt::{self, Write};
--use core::ops::{self, Deref, DerefMut, Index};
-+use core::ops::Deref;
- 
- use crate::error::{code::*, Error};
- 
-@@ -41,11 +42,11 @@ impl fmt::Display for BStr {
-     /// # use kernel::{fmt, b_str, str::{BStr, CString}};
-     /// let ascii = b_str!("Hello, BStr!");
-     /// let s = CString::try_from_fmt(fmt!("{}", ascii)).unwrap();
--    /// assert_eq!(s.as_bytes(), "Hello, BStr!".as_bytes());
-+    /// assert_eq!(s.to_bytes(), "Hello, BStr!".as_bytes());
-     ///
-     /// let non_ascii = b_str!("🦀");
-     /// let s = CString::try_from_fmt(fmt!("{}", non_ascii)).unwrap();
--    /// assert_eq!(s.as_bytes(), "\\xf0\\x9f\\xa6\\x80".as_bytes());
-+    /// assert_eq!(s.to_bytes(), "\\xf0\\x9f\\xa6\\x80".as_bytes());
-     /// ```
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         for &b in &self.0 {
-@@ -72,11 +73,11 @@ impl fmt::Debug for BStr {
-     /// // Embedded double quotes are escaped.
-     /// let ascii = b_str!("Hello, \"BStr\"!");
-     /// let s = CString::try_from_fmt(fmt!("{:?}", ascii)).unwrap();
--    /// assert_eq!(s.as_bytes(), "\"Hello, \\\"BStr\\\"!\"".as_bytes());
-+    /// assert_eq!(s.to_bytes(), "\"Hello, \\\"BStr\\\"!\"".as_bytes());
-     ///
-     /// let non_ascii = b_str!("😺");
-     /// let s = CString::try_from_fmt(fmt!("{:?}", non_ascii)).unwrap();
--    /// assert_eq!(s.as_bytes(), "\"\\xf0\\x9f\\x98\\xba\"".as_bytes());
-+    /// assert_eq!(s.to_bytes(), "\"\\xf0\\x9f\\x98\\xba\"".as_bytes());
-     /// ```
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         f.write_char('"')?;
-@@ -128,271 +129,29 @@ macro_rules! b_str {
-     }};
- }
- 
--/// Possible errors when using conversion functions in [`CStr`].
--#[derive(Debug, Clone, Copy)]
--pub enum CStrConvertError {
--    /// Supplied bytes contain an interior `NUL`.
--    InteriorNul,
-+/// Wrapper around [`CStr`] which implements [`Display`](core::fmt::Display).
-+pub struct CStrDisplay<'a>(&'a CStr);
- 
--    /// Supplied bytes are not terminated by `NUL`.
--    NotNulTerminated,
--}
--
--impl From<CStrConvertError> for Error {
--    #[inline]
--    fn from(_: CStrConvertError) -> Error {
--        EINVAL
--    }
--}
--
--/// A string that is guaranteed to have exactly one `NUL` byte, which is at the
--/// end.
--///
--/// Used for interoperability with kernel APIs that take C strings.
--#[repr(transparent)]
--pub struct CStr([u8]);
--
--impl CStr {
--    /// Returns the length of this string excluding `NUL`.
--    #[inline]
--    pub const fn len(&self) -> usize {
--        self.len_with_nul() - 1
--    }
--
--    /// Returns the length of this string with `NUL`.
--    #[inline]
--    pub const fn len_with_nul(&self) -> usize {
--        // SAFETY: This is one of the invariant of `CStr`.
--        // We add a `unreachable_unchecked` here to hint the optimizer that
--        // the value returned from this function is non-zero.
--        if self.0.is_empty() {
--            unsafe { core::hint::unreachable_unchecked() };
--        }
--        self.0.len()
--    }
--
--    /// Returns `true` if the string only includes `NUL`.
--    #[inline]
--    pub const fn is_empty(&self) -> bool {
--        self.len() == 0
--    }
--
--    /// Wraps a raw C string pointer.
--    ///
--    /// # Safety
--    ///
--    /// `ptr` must be a valid pointer to a `NUL`-terminated C string, and it must
--    /// last at least `'a`. When `CStr` is alive, the memory pointed by `ptr`
--    /// must not be mutated.
--    #[inline]
--    pub unsafe fn from_char_ptr<'a>(ptr: *const core::ffi::c_char) -> &'a Self {
--        // SAFETY: The safety precondition guarantees `ptr` is a valid pointer
--        // to a `NUL`-terminated C string.
--        let len = unsafe { bindings::strlen(ptr) } + 1;
--        // SAFETY: Lifetime guaranteed by the safety precondition.
--        let bytes = unsafe { core::slice::from_raw_parts(ptr as _, len as _) };
--        // SAFETY: As `len` is returned by `strlen`, `bytes` does not contain interior `NUL`.
--        // As we have added 1 to `len`, the last byte is known to be `NUL`.
--        unsafe { Self::from_bytes_with_nul_unchecked(bytes) }
--    }
--
--    /// Creates a [`CStr`] from a `[u8]`.
--    ///
--    /// The provided slice must be `NUL`-terminated, does not contain any
--    /// interior `NUL` bytes.
--    pub const fn from_bytes_with_nul(bytes: &[u8]) -> Result<&Self, CStrConvertError> {
--        if bytes.is_empty() {
--            return Err(CStrConvertError::NotNulTerminated);
--        }
--        if bytes[bytes.len() - 1] != 0 {
--            return Err(CStrConvertError::NotNulTerminated);
--        }
--        let mut i = 0;
--        // `i + 1 < bytes.len()` allows LLVM to optimize away bounds checking,
--        // while it couldn't optimize away bounds checks for `i < bytes.len() - 1`.
--        while i + 1 < bytes.len() {
--            if bytes[i] == 0 {
--                return Err(CStrConvertError::InteriorNul);
--            }
--            i += 1;
--        }
--        // SAFETY: We just checked that all properties hold.
--        Ok(unsafe { Self::from_bytes_with_nul_unchecked(bytes) })
--    }
--
--    /// Creates a [`CStr`] from a `[u8]` without performing any additional
--    /// checks.
--    ///
--    /// # Safety
--    ///
--    /// `bytes` *must* end with a `NUL` byte, and should only have a single
--    /// `NUL` byte (or the string will be truncated).
--    #[inline]
--    pub const unsafe fn from_bytes_with_nul_unchecked(bytes: &[u8]) -> &CStr {
--        // SAFETY: Properties of `bytes` guaranteed by the safety precondition.
--        unsafe { core::mem::transmute(bytes) }
--    }
--
--    /// Creates a mutable [`CStr`] from a `[u8]` without performing any
--    /// additional checks.
--    ///
--    /// # Safety
--    ///
--    /// `bytes` *must* end with a `NUL` byte, and should only have a single
--    /// `NUL` byte (or the string will be truncated).
--    #[inline]
--    pub unsafe fn from_bytes_with_nul_unchecked_mut(bytes: &mut [u8]) -> &mut CStr {
--        // SAFETY: Properties of `bytes` guaranteed by the safety precondition.
--        unsafe { &mut *(bytes as *mut [u8] as *mut CStr) }
--    }
--
--    /// Returns a C pointer to the string.
--    #[inline]
--    pub const fn as_char_ptr(&self) -> *const core::ffi::c_char {
--        self.0.as_ptr() as _
--    }
--
--    /// Convert the string to a byte slice without the trailing `NUL` byte.
--    #[inline]
--    pub fn as_bytes(&self) -> &[u8] {
--        &self.0[..self.len()]
--    }
--
--    /// Convert the string to a byte slice containing the trailing `NUL` byte.
--    #[inline]
--    pub const fn as_bytes_with_nul(&self) -> &[u8] {
--        &self.0
--    }
--
--    /// Yields a [`&str`] slice if the [`CStr`] contains valid UTF-8.
--    ///
--    /// If the contents of the [`CStr`] are valid UTF-8 data, this
--    /// function will return the corresponding [`&str`] slice. Otherwise,
--    /// it will return an error with details of where UTF-8 validation failed.
--    ///
--    /// # Examples
--    ///
--    /// ```
--    /// # use kernel::str::CStr;
--    /// let cstr = CStr::from_bytes_with_nul(b"foo\0").unwrap();
--    /// assert_eq!(cstr.to_str(), Ok("foo"));
--    /// ```
--    #[inline]
--    pub fn to_str(&self) -> Result<&str, core::str::Utf8Error> {
--        core::str::from_utf8(self.as_bytes())
--    }
--
--    /// Unsafely convert this [`CStr`] into a [`&str`], without checking for
--    /// valid UTF-8.
--    ///
--    /// # Safety
--    ///
--    /// The contents must be valid UTF-8.
-+impl fmt::Display for CStrDisplay<'_> {
-+    /// Formats printable ASCII characters, escaping the rest.
-     ///
-     /// # Examples
-     ///
-     /// ```
--    /// # use kernel::c_str;
--    /// # use kernel::str::CStr;
--    /// let bar = c_str!("ツ");
--    /// // SAFETY: String literals are guaranteed to be valid UTF-8
--    /// // by the Rust compiler.
--    /// assert_eq!(unsafe { bar.as_str_unchecked() }, "ツ");
--    /// ```
--    #[inline]
--    pub unsafe fn as_str_unchecked(&self) -> &str {
--        unsafe { core::str::from_utf8_unchecked(self.as_bytes()) }
--    }
--
--    /// Convert this [`CStr`] into a [`CString`] by allocating memory and
--    /// copying over the string data.
--    pub fn to_cstring(&self) -> Result<CString, AllocError> {
--        CString::try_from(self)
--    }
--
--    /// Converts this [`CStr`] to its ASCII lower case equivalent in-place.
--    ///
--    /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z',
--    /// but non-ASCII letters are unchanged.
--    ///
--    /// To return a new lowercased value without modifying the existing one, use
--    /// [`to_ascii_lowercase()`].
--    ///
--    /// [`to_ascii_lowercase()`]: #method.to_ascii_lowercase
--    pub fn make_ascii_lowercase(&mut self) {
--        // INVARIANT: This doesn't introduce or remove NUL bytes in the C
--        // string.
--        self.0.make_ascii_lowercase();
--    }
--
--    /// Converts this [`CStr`] to its ASCII upper case equivalent in-place.
--    ///
--    /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z',
--    /// but non-ASCII letters are unchanged.
--    ///
--    /// To return a new uppercased value without modifying the existing one, use
--    /// [`to_ascii_uppercase()`].
--    ///
--    /// [`to_ascii_uppercase()`]: #method.to_ascii_uppercase
--    pub fn make_ascii_uppercase(&mut self) {
--        // INVARIANT: This doesn't introduce or remove NUL bytes in the C
--        // string.
--        self.0.make_ascii_uppercase();
--    }
--
--    /// Returns a copy of this [`CString`] where each character is mapped to its
--    /// ASCII lower case equivalent.
--    ///
--    /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z',
--    /// but non-ASCII letters are unchanged.
--    ///
--    /// To lowercase the value in-place, use [`make_ascii_lowercase`].
--    ///
--    /// [`make_ascii_lowercase`]: str::make_ascii_lowercase
--    pub fn to_ascii_lowercase(&self) -> Result<CString, AllocError> {
--        let mut s = self.to_cstring()?;
--
--        s.make_ascii_lowercase();
--
--        Ok(s)
--    }
--
--    /// Returns a copy of this [`CString`] where each character is mapped to its
--    /// ASCII upper case equivalent.
--    ///
--    /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z',
--    /// but non-ASCII letters are unchanged.
--    ///
--    /// To uppercase the value in-place, use [`make_ascii_uppercase`].
--    ///
--    /// [`make_ascii_uppercase`]: str::make_ascii_uppercase
--    pub fn to_ascii_uppercase(&self) -> Result<CString, AllocError> {
--        let mut s = self.to_cstring()?;
--
--        s.make_ascii_uppercase();
--
--        Ok(s)
--    }
--}
--
--impl fmt::Display for CStr {
--    /// Formats printable ASCII characters, escaping the rest.
--    ///
--    /// ```
-+    /// # use core::ffi::CStr;
-     /// # use kernel::c_str;
-     /// # use kernel::fmt;
--    /// # use kernel::str::CStr;
--    /// # use kernel::str::CString;
--    /// let penguin = c_str!("🐧");
--    /// let s = CString::try_from_fmt(fmt!("{}", penguin)).unwrap();
--    /// assert_eq!(s.as_bytes_with_nul(), "\\xf0\\x9f\\x90\\xa7\0".as_bytes());
--    ///
--    /// let ascii = c_str!("so \"cool\"");
--    /// let s = CString::try_from_fmt(fmt!("{}", ascii)).unwrap();
--    /// assert_eq!(s.as_bytes_with_nul(), "so \"cool\"\0".as_bytes());
-+    /// # use kernel::str::{CStrExt, CString};
-+    /// let penguin = c"🐧";
-+    /// let s = CString::try_from_fmt(fmt!("{}", penguin.display())).unwrap();
-+    /// assert_eq!(s.to_bytes_with_nul(), "\\xf0\\x9f\\x90\\xa7\0".as_bytes());
-+    ///
-+    /// let ascii = c"so \"cool\"";
-+    /// let s = CString::try_from_fmt(fmt!("{}", ascii.display())).unwrap();
-+    /// assert_eq!(s.to_bytes_with_nul(), "so \"cool\"\0".as_bytes());
-     /// ```
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        for &c in self.as_bytes() {
-+        for &c in self.0.to_bytes() {
-             if (0x20..0x7f).contains(&c) {
-                 // Printable character.
-                 f.write_char(c as char)?;
-@@ -404,116 +163,70 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-     }
- }
- 
--impl fmt::Debug for CStr {
--    /// Formats printable ASCII characters with a double quote on either end, escaping the rest.
-+/// Extensions to [`CStr`].
-+pub trait CStrExt {
-+    /// Returns an object that implements [`Display`](core::fmt::Display) for
-+    /// safely printing a [`CStr`] that may contain non-ASCII data, which are
-+    /// escaped.
-+    ///
-+    /// # Examples
-     ///
-     /// ```
-+    /// # use core::ffi::CStr;
-     /// # use kernel::c_str;
-     /// # use kernel::fmt;
--    /// # use kernel::str::CStr;
--    /// # use kernel::str::CString;
--    /// let penguin = c_str!("🐧");
--    /// let s = CString::try_from_fmt(fmt!("{:?}", penguin)).unwrap();
--    /// assert_eq!(s.as_bytes_with_nul(), "\"\\xf0\\x9f\\x90\\xa7\"\0".as_bytes());
--    ///
--    /// // Embedded double quotes are escaped.
--    /// let ascii = c_str!("so \"cool\"");
--    /// let s = CString::try_from_fmt(fmt!("{:?}", ascii)).unwrap();
--    /// assert_eq!(s.as_bytes_with_nul(), "\"so \\\"cool\\\"\"\0".as_bytes());
-+    /// # use kernel::str::{CStrExt, CString};
-+    /// let penguin = c"🐧";
-+    /// let s = CString::try_from_fmt(fmt!("{}", penguin.display())).unwrap();
-+    /// assert_eq!(s.to_bytes_with_nul(), "\\xf0\\x9f\\x90\\xa7\0".as_bytes());
-+    ///
-+    /// let ascii = c"so \"cool\"";
-+    /// let s = CString::try_from_fmt(fmt!("{}", ascii.display())).unwrap();
-+    /// assert_eq!(s.to_bytes_with_nul(), "so \"cool\"\0".as_bytes());
-     /// ```
--    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        f.write_str("\"")?;
--        for &c in self.as_bytes() {
--            match c {
--                // Printable characters.
--                b'\"' => f.write_str("\\\"")?,
--                0x20..=0x7e => f.write_char(c as char)?,
--                _ => write!(f, "\\x{:02x}", c)?,
--            }
--        }
--        f.write_str("\"")
--    }
--}
--
--impl AsRef<BStr> for CStr {
--    #[inline]
--    fn as_ref(&self) -> &BStr {
--        BStr::from_bytes(self.as_bytes())
--    }
--}
--
--impl Deref for CStr {
--    type Target = BStr;
--
--    #[inline]
--    fn deref(&self) -> &Self::Target {
--        self.as_ref()
--    }
--}
--
--impl Index<ops::RangeFrom<usize>> for CStr {
--    type Output = CStr;
-+    fn display(&self) -> CStrDisplay<'_>;
- 
--    #[inline]
--    fn index(&self, index: ops::RangeFrom<usize>) -> &Self::Output {
--        // Delegate bounds checking to slice.
--        // Assign to _ to mute clippy's unnecessary operation warning.
--        let _ = &self.as_bytes()[index.start..];
--        // SAFETY: We just checked the bounds.
--        unsafe { Self::from_bytes_with_nul_unchecked(&self.0[index.start..]) }
--    }
-+    /// Creates a mutable [`CStr`] from a `[u8]` without performing any
-+    /// additional checks.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `bytes` *must* end with a `NUL` byte, and should only have a single
-+    /// `NUL` byte (or the string will be truncated).
-+    unsafe fn from_bytes_with_nul_unchecked_mut(bytes: &mut [u8]) -> &mut Self;
- }
- 
--impl Index<ops::RangeFull> for CStr {
--    type Output = CStr;
--
--    #[inline]
--    fn index(&self, _index: ops::RangeFull) -> &Self::Output {
--        self
-+impl CStrExt for CStr {
-+    fn display(&self) -> CStrDisplay<'_> {
-+        CStrDisplay(self)
-     }
--}
- 
--mod private {
--    use core::ops;
--
--    // Marker trait for index types that can be forward to `BStr`.
--    pub trait CStrIndex {}
--
--    impl CStrIndex for usize {}
--    impl CStrIndex for ops::Range<usize> {}
--    impl CStrIndex for ops::RangeInclusive<usize> {}
--    impl CStrIndex for ops::RangeToInclusive<usize> {}
--}
--
--impl<Idx> Index<Idx> for CStr
--where
--    Idx: private::CStrIndex,
--    BStr: Index<Idx>,
--{
--    type Output = <BStr as Index<Idx>>::Output;
--
--    #[inline]
--    fn index(&self, index: Idx) -> &Self::Output {
--        &self.as_ref()[index]
-+    unsafe fn from_bytes_with_nul_unchecked_mut(bytes: &mut [u8]) -> &mut Self {
-+        // SAFETY: Properties of `bytes` guaranteed by the safety precondition.
-+        unsafe { &mut *(bytes as *mut [u8] as *mut CStr) }
-     }
- }
- 
- /// Creates a new [`CStr`] from a string literal.
- ///
--/// The string literal should not contain any `NUL` bytes.
-+/// This macro is not needed when C-string literals (`c"hello"` syntax) can be
-+/// used directly, but can be used when a C-string version of a standard string
-+/// literal is required (often when working with macros).
-+///
-+/// The string should not contain any `NUL` bytes.
- ///
- /// # Examples
- ///
- /// ```
-+/// # use core::ffi::CStr;
- /// # use kernel::c_str;
--/// # use kernel::str::CStr;
--/// const MY_CSTR: &CStr = c_str!("My awesome CStr!");
-+/// const MY_CSTR: &CStr = c_str!(stringify!(5));
- /// ```
- #[macro_export]
- macro_rules! c_str {
-     ($str:expr) => {{
-         const S: &str = concat!($str, "\0");
--        const C: &$crate::str::CStr = match $crate::str::CStr::from_bytes_with_nul(S.as_bytes()) {
-+        const C: &core::ffi::CStr = match core::ffi::CStr::from_bytes_with_nul(S.as_bytes()) {
-             Ok(v) => v,
-             Err(_) => panic!("string contains interior NUL"),
-         };
-@@ -540,40 +253,16 @@ mod tests {
-         \\xe0\\xe1\\xe2\\xe3\\xe4\\xe5\\xe6\\xe7\\xe8\\xe9\\xea\\xeb\\xec\\xed\\xee\\xef\
-         \\xf0\\xf1\\xf2\\xf3\\xf4\\xf5\\xf6\\xf7\\xf8\\xf9\\xfa\\xfb\\xfc\\xfd\\xfe\\xff";
- 
--    #[test]
--    fn test_cstr_to_str() {
--        let good_bytes = b"\xf0\x9f\xa6\x80\0";
--        let checked_cstr = CStr::from_bytes_with_nul(good_bytes).unwrap();
--        let checked_str = checked_cstr.to_str().unwrap();
--        assert_eq!(checked_str, "🦀");
--    }
--
--    #[test]
--    #[should_panic]
--    fn test_cstr_to_str_panic() {
--        let bad_bytes = b"\xc3\x28\0";
--        let checked_cstr = CStr::from_bytes_with_nul(bad_bytes).unwrap();
--        checked_cstr.to_str().unwrap();
--    }
--
--    #[test]
--    fn test_cstr_as_str_unchecked() {
--        let good_bytes = b"\xf0\x9f\x90\xA7\0";
--        let checked_cstr = CStr::from_bytes_with_nul(good_bytes).unwrap();
--        let unchecked_str = unsafe { checked_cstr.as_str_unchecked() };
--        assert_eq!(unchecked_str, "🐧");
--    }
--
-     #[test]
-     fn test_cstr_display() {
-         let hello_world = CStr::from_bytes_with_nul(b"hello, world!\0").unwrap();
--        assert_eq!(format!("{}", hello_world), "hello, world!");
-+        assert_eq!(format!("{}", hello_world.display()), "hello, world!");
-         let non_printables = CStr::from_bytes_with_nul(b"\x01\x09\x0a\0").unwrap();
--        assert_eq!(format!("{}", non_printables), "\\x01\\x09\\x0a");
-+        assert_eq!(format!("{}", non_printables.display()), "\\x01\\x09\\x0a");
-         let non_ascii = CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0").unwrap();
--        assert_eq!(format!("{}", non_ascii), "d\\xe9j\\xe0 vu");
-+        assert_eq!(format!("{}", non_ascii.display()), "d\\xe9j\\xe0 vu");
-         let good_bytes = CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\0").unwrap();
--        assert_eq!(format!("{}", good_bytes), "\\xf0\\x9f\\xa6\\x80");
-+        assert_eq!(format!("{}", good_bytes.display()), "\\xf0\\x9f\\xa6\\x80");
-     }
- 
-     #[test]
-@@ -584,19 +273,7 @@ fn test_cstr_display_all_bytes() {
-             bytes[i as usize] = i.wrapping_add(1);
-         }
-         let cstr = CStr::from_bytes_with_nul(&bytes).unwrap();
--        assert_eq!(format!("{}", cstr), ALL_ASCII_CHARS);
--    }
--
--    #[test]
--    fn test_cstr_debug() {
--        let hello_world = CStr::from_bytes_with_nul(b"hello, world!\0").unwrap();
--        assert_eq!(format!("{:?}", hello_world), "\"hello, world!\"");
--        let non_printables = CStr::from_bytes_with_nul(b"\x01\x09\x0a\0").unwrap();
--        assert_eq!(format!("{:?}", non_printables), "\"\\x01\\x09\\x0a\"");
--        let non_ascii = CStr::from_bytes_with_nul(b"d\xe9j\xe0 vu\0").unwrap();
--        assert_eq!(format!("{:?}", non_ascii), "\"d\\xe9j\\xe0 vu\"");
--        let good_bytes = CStr::from_bytes_with_nul(b"\xf0\x9f\xa6\x80\0").unwrap();
--        assert_eq!(format!("{:?}", good_bytes), "\"\\xf0\\x9f\\xa6\\x80\"");
-+        assert_eq!(format!("{}", cstr.display()), ALL_ASCII_CHARS);
-     }
- 
-     #[test]
-@@ -779,11 +456,11 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
- /// use kernel::{str::CString, fmt};
- ///
- /// let s = CString::try_from_fmt(fmt!("{}{}{}", "abc", 10, 20)).unwrap();
--/// assert_eq!(s.as_bytes_with_nul(), "abc1020\0".as_bytes());
-+/// assert_eq!(s.to_bytes_with_nul(), "abc1020\0".as_bytes());
- ///
- /// let tmp = "testing";
- /// let s = CString::try_from_fmt(fmt!("{tmp}{}", 123)).unwrap();
--/// assert_eq!(s.as_bytes_with_nul(), "testing123\0".as_bytes());
-+/// assert_eq!(s.to_bytes_with_nul(), "testing123\0".as_bytes());
- ///
- /// // This fails because it has an embedded `NUL` byte.
- /// let s = CString::try_from_fmt(fmt!("a\0b{}", 123));
-@@ -838,21 +515,13 @@ fn deref(&self) -> &Self::Target {
-     }
- }
- 
--impl DerefMut for CString {
--    fn deref_mut(&mut self) -> &mut Self::Target {
--        // SAFETY: A `CString` is always NUL-terminated and contains no other
--        // NUL bytes.
--        unsafe { CStr::from_bytes_with_nul_unchecked_mut(self.buf.as_mut_slice()) }
--    }
--}
--
- impl<'a> TryFrom<&'a CStr> for CString {
-     type Error = AllocError;
- 
-     fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
-         let mut buf = Vec::new();
- 
--        <Vec<_> as VecExt<_>>::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)
-+        <Vec<_> as VecExt<_>>::extend_from_slice(&mut buf, cstr.to_bytes_with_nul(), GFP_KERNEL)
-             .map_err(|_| AllocError)?;
- 
-         // INVARIANT: The `CStr` and `CString` types have the same invariants for
-diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
-index 2b306afbe56d..16d1a1cb8d00 100644
---- a/rust/kernel/sync/condvar.rs
-+++ b/rust/kernel/sync/condvar.rs
-@@ -9,12 +9,11 @@
- use crate::{
-     init::PinInit,
-     pin_init,
--    str::CStr,
-     task::{MAX_SCHEDULE_TIMEOUT, TASK_INTERRUPTIBLE, TASK_NORMAL, TASK_UNINTERRUPTIBLE},
-     time::Jiffies,
-     types::Opaque,
- };
--use core::ffi::{c_int, c_long};
-+use core::ffi::{c_int, c_long, CStr};
- use core::marker::PhantomPinned;
- use core::ptr;
- use macros::pin_data;
-@@ -108,7 +107,7 @@ pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl PinInit<Self
-             // SAFETY: `slot` is valid while the closure is called and both `name` and `key` have
-             // static lifetimes so they live indefinitely.
-             wait_queue_head <- Opaque::ffi_init(|slot| unsafe {
--                bindings::__init_waitqueue_head(slot, name.as_char_ptr(), key.as_ptr())
-+                bindings::__init_waitqueue_head(slot, name.as_ptr(), key.as_ptr())
-             }),
-         })
-     }
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index f6c34ca4d819..318ecb5a5916 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -6,8 +6,8 @@
- //! spinlocks, raw spinlocks) to be provided with minimal effort.
- 
- use super::LockClassKey;
--use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
--use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
-+use crate::{init::PinInit, pin_init, types::Opaque, types::ScopeGuard};
-+use core::{cell::UnsafeCell, ffi::CStr, marker::PhantomData, marker::PhantomPinned};
- use macros::pin_data;
- 
- pub mod mutex;
-@@ -113,7 +113,7 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
-             // SAFETY: `slot` is valid while the closure is called and both `name` and `key` have
-             // static lifetimes so they live indefinitely.
-             state <- Opaque::ffi_init(|slot| unsafe {
--                B::init(slot, name.as_char_ptr(), key.as_ptr())
-+                B::init(slot, name.as_ptr(), key.as_ptr())
-             }),
-         })
-     }
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index 553a5cba2adc..a6418873e82e 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -380,7 +380,7 @@ pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl PinInit<Self
-                         slot,
-                         Some(T::Pointer::run),
-                         false,
--                        name.as_char_ptr(),
-+                        name.as_ptr(),
-                         key.as_ptr(),
-                     )
-                 }
-diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
-index 5ebd42ae4a3f..339991ee6885 100644
---- a/scripts/rustdoc_test_gen.rs
-+++ b/scripts/rustdoc_test_gen.rs
-@@ -172,7 +172,7 @@ pub extern "C" fn {kunit_name}(__kunit_test: *mut kernel::bindings::kunit) {{
-     #[allow(unused)]
-     macro_rules! assert {{
-         ($cond:expr $(,)?) => {{{{
--            kernel::kunit_assert!("{kunit_name}", "{real_path}", __DOCTEST_ANCHOR - {line}, $cond);
-+            kernel::kunit_assert!(c"{kunit_name}", c"{real_path}", __DOCTEST_ANCHOR - {line}, $cond);
-         }}}}
-     }}
- 
-@@ -180,7 +180,7 @@ macro_rules! assert {{
-     #[allow(unused)]
-     macro_rules! assert_eq {{
-         ($left:expr, $right:expr $(,)?) => {{{{
--            kernel::kunit_assert_eq!("{kunit_name}", "{real_path}", __DOCTEST_ANCHOR - {line}, $left, $right);
-+            kernel::kunit_assert_eq!(c"{kunit_name}", c"{real_path}", __DOCTEST_ANCHOR - {line}, $left, $right);
-         }}}}
-     }}
- 
 -- 
-2.44.2
-
+Thanks
+Babu Moger
 
