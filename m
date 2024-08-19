@@ -1,138 +1,166 @@
-Return-Path: <linux-kernel+bounces-292712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D656957357
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:32:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC36295735B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69241F235B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944C6283361
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035618991C;
-	Mon, 19 Aug 2024 18:32:16 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DF2189B82;
+	Mon, 19 Aug 2024 18:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pEeOpN8T"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDFB172BD3;
-	Mon, 19 Aug 2024 18:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092335; cv=none; b=Gxfl/wk59ha7oSQHG335ingCr7oBiPX/2ukFPY9gqx+2ezOlZLk6+sm0eJ9XX7MN0avmqJq3ov7vOqrSj23UMvKIRZk8gmTQ0TA9yMVtHQjjSmqllbCdvNtdwa7MJZcrVTkifJtWt4ly1rjMngaMYqQkuMBcdzlV2hZ70lvXK4o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092335; c=relaxed/simple;
-	bh=rtd2oKSROMxwpdH8HLDaSnEdSnaSDrRN61pn9MW5gNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaTuR+c+FtFnjLFSJnPLEsdq9cY14m6PbU5OYK2CVJC+jqoAS5O+Fpp71fzvmGNR4R3rj4hOnQdwS2JMXKHdJDZHdoMSLeIrYmrdxk66LbC2zy3Q/vaLwjx8TNsH9uW30IRuo3BZ/T8rtldbIu30Hj2OVv0eLAgUq1QEUJC/YiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: QbJlRi1TRGyx36TkZ7R7mQ==
-X-CSE-MsgGUID: Y1eYKzgBSvuH2xOjo/I/Iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="25262298"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="25262298"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:32:13 -0700
-X-CSE-ConnectionGUID: unP6c30QShqG8DAeLj6ypQ==
-X-CSE-MsgGUID: SuOqqpoaRYS2gC4EwtVmfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="61238502"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:32:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sg7Ae-0000000H2PV-0kWc;
-	Mon, 19 Aug 2024 21:32:00 +0300
-Date: Mon, 19 Aug 2024 21:31:59 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 8/9] vdap: solidrun: Replace deprecated PCI functions
-Message-ID: <ZsOPnwQO8sppwI8u@smile.fi.intel.com>
-References: <20240819165148.58201-2-pstanner@redhat.com>
- <20240819165148.58201-10-pstanner@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4131891D1;
+	Mon, 19 Aug 2024 18:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724092413; cv=fail; b=VzNq/A4VFBrS/wVKwndfdCB6ihIKmEMJ6Sq/rX28heQI4x8cEq2cHZ8+0Zc5ElIe7D9al7f3sUATJ2lcO40z0VTEmCIJb/3uy+YHxXc7nR/GaPWJxPKKaOaV++BOBz3LoS3SNyyrRVxQq6hHgUEKqs9Q3xljUSfX71WevsLBqnM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724092413; c=relaxed/simple;
+	bh=ch5XBrgN4uEMdUhUUnhr0js46Iv+P7KEn6XzH1uTo/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jSLLVy454EiGgpMcas7H0TCwD7R/xk+rmLnXmxJXRlRhq5r1B6al66e5+K5kF1zzT9DbgwFhA7B8ZfzpmYFVCXyXvjkLxK4MCr2gCimUn+E+DB5bcw5fxPmwVzUC8hYrnfqxDhKERopS0OiavWZXaMb1OAD3BAmF4YSr2BFDsA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pEeOpN8T; arc=fail smtp.client-ip=40.107.92.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DrJvJZC5c1xhayRnqyKTfAcINjm+6qlJ+6O8VIJIJ188RhUVUVhUdD6QVgG2UmG1ltAAuqxfEHt4nznIZKmfV98pc97NZgt5fBngynsMReFdvwMmzewcBiP4fl3oYiOpf7dI1bW3bg1Vsj33QaN5YHpkbrSIGuOw+e24hgylAUxdpe7oVzDtSbhr8lKKL0jo3zWwhckIfYCJB4nnOUpd+CgTVfnpcJz/KnDybJOMGrdgAukKdfkmvqfinpBU9ShdAsRseMUonKi9Y7sU1jdBuq7tzL2FNmNgfQ9qeOCh7T8TfqPdeM7BBd2ZQDTRpxT9YlEZgYg3opaSL60B6qOwyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=666N7EAaGGQovKi+UTsZ48NdH9zpsf4eCeG07i9x9cM=;
+ b=gHHSMakUGHTwXMBM7PRQbjeDJH53LTnUZvzS10JVtKMZQQt0p42eWSxAxvG3DHQLnkOGs6lf6JUL+ZkQaVxBvPxOeZxWqJYnWbNJD31XxPTfh3uh8RNPag/0rgYJw2ysfxEjb9N+F63YgytWw9OIUEvdsSsqYg7P32HYu/c/ssIQrneoSX4tB41oq+ono7EscBjFEbVe5QqeNDqHMzikOlJ6quQ13wJT0EDGcf7sRnIvZzCW595aiQDQteEta4oRSYGHhkIGA+uyjgu4a3I3pToAR70vXUiCk3ZMsEll5Ec51ps0MdBS9X1+T+0ovqsPYNAVOyhBT5VvWGnwqck9kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=666N7EAaGGQovKi+UTsZ48NdH9zpsf4eCeG07i9x9cM=;
+ b=pEeOpN8TzLgfZtPklFdLFPkRMAf3bOTP3gbfy+JLCwBhHeqqQjLGo/yZFOzMepwezGYGcpj4DipLUulo36GtlPNQv/pxUo/dVnwKkngkeOjeLMDztWX2QULQtfm3jsjCsiEs3UeRaru8985NrymFv2rqWDfeTrBgPrS7KS7oYs76ZuNBrQ23Yu3ZsARWvg2hHTfCRxBjKmx+uUE6lprymgbb7hZBYWReVfTzM3EBQ0/EGMo9r5WN8cks5XxerwzsaejosBoQVSDI2BeZR4FLOuY36AQziHYbVEWAg00AhoKbPD69lv03f4c/VOwE4ypVdi8FNpz6TmtaUzsy8bW9XQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by MW3PR12MB4427.namprd12.prod.outlook.com (2603:10b6:303:52::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 18:33:28 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 18:33:28 +0000
+Date: Mon, 19 Aug 2024 15:33:27 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: leon@kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] RDMA/mlx5: Remove two unused declarations
+Message-ID: <20240819183327.GA3482615@nvidia.com>
+References: <20240816101358.881247-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816101358.881247-1-yuehaibing@huawei.com>
+X-ClientProxiedBy: MN2PR12CA0013.namprd12.prod.outlook.com
+ (2603:10b6:208:a8::26) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819165148.58201-10-pstanner@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|MW3PR12MB4427:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7575c934-0ecc-4de5-2281-08dcc07d6afd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Dhyez/DtsZXmMQFWKnpO0It1si1KFpfNMmXg+iPBxfZ0xOyujJzE7lD0tkA4?=
+ =?us-ascii?Q?JZxoElTt6kVRWkKTDwGjTuYJC1FlBMSdUdUGXVrt8lOHUIlo+kgXj73gqyVF?=
+ =?us-ascii?Q?Z5pPGzGpIGj2DcrG2OA9+1e4AHl5P89pXjYYQJuCX/gGJKQBUbMurvxex6/+?=
+ =?us-ascii?Q?LG8kh6DPA89CeokTvs+lwOdz6iTIMouYSMFGooR7WySVpcqQNJQxxITlbDTN?=
+ =?us-ascii?Q?Y8pAT4Qkr3L3i7ankO48JAroXmIF+KWSs8ACgb5SuCbDzHRqg5nonyC3Qxqj?=
+ =?us-ascii?Q?PG5xjQ8vHVWJ1FoPYM9e7Lpzh6QMKR6hTdu7TbueNDGQauVFAt312n4Og1ek?=
+ =?us-ascii?Q?AVX+9rJNe9yMZjeTpL5X1CKBIpRWEkryENhIVnCyeJeQbe6DWbhMWzOMYf1o?=
+ =?us-ascii?Q?zm16yTcHF1UjTYkgi4X8s3sG5I4qtKV/vLFSQx6zZYoqiWIlF+mfA+mj4/A2?=
+ =?us-ascii?Q?eGnUgA3EiRAmd/rcXWC0R1kcZbRiQuwX79CFaith/0wEOG9qQD8ZLlowYzgc?=
+ =?us-ascii?Q?35+su1mKW8A1kV4nMLUQ/2cZLoC1WqiF37R3XDPfTqO3QElC+qV2nulU9kMF?=
+ =?us-ascii?Q?j5zhOCcHrspc8C83fy0xQSPDf3n/I2/RHZv2B3DEbbiUonVBbnp/xsmQKV3X?=
+ =?us-ascii?Q?+l3cYdzUkGiu6+e9IkuoVwCYJFB9RJuXEJexKmcCBRv3YW2ope29KRAo2dsY?=
+ =?us-ascii?Q?jgmFwYp7GYDnOGueu5BFY2a3MPGdYTnVmfRF223mpAXCEx1qaUjxdeCtAkbj?=
+ =?us-ascii?Q?NWV/oGK2jLXlppZDgYfriYdLzqw6fGqZg4j8vr6S4aqsiHEEvP+fJyb0Prb5?=
+ =?us-ascii?Q?7O6c2UmmwIDK3G7cssrfOjVcE7Po91zmMyUrSb1oNlvMlWjmhY7Z5bGEvgyW?=
+ =?us-ascii?Q?QamNEbzh5q79JWwKPT8loMGCz+/EpNwCTlq4frJl6E0qaYhXAHFbjFzD8K4F?=
+ =?us-ascii?Q?lSGwJ2sDpvXMsFlS1c5q88geP4ALNzxxut8BLfzbYk4A2gb7x8pD2KX2xKT5?=
+ =?us-ascii?Q?q3zRInqZGPWbugMwnKw2tBBxl1dLYlzaaHMHzDtW3VwMpDt6XKS6UPbr0tOz?=
+ =?us-ascii?Q?0zZqLH06bYEE5DrPFMsrS298iaKlDgIdrhK6MNEGiFu/lRHJI/l8WchOFYWM?=
+ =?us-ascii?Q?eTNJ1T7e8cBmZzU6MhCPlI+GwZe4VxMRAFhJt/vHQ+gcbTEGX3LoPTAL8VgC?=
+ =?us-ascii?Q?gOdocKPH3t1GDdd2Mr4zsEBrzUsdqIFzU0bMRiFTw4jrfceTNkOK1bW+qgr+?=
+ =?us-ascii?Q?BhCmglrd2kI7MrrBJu+HsfcX7dkmxIKOSFQeBQAQO3ShYY3H3ElcZ6y/FT8O?=
+ =?us-ascii?Q?J/PiVWxDyPvPnJNhmq7JsI9Zq7krYbUZMDOZ8ZlH42l64g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YbI2QCMk4FnH84ICUtaYkeY5cO8sdToN7jyJhZuKpNXddIyJVudFnZxY+tTZ?=
+ =?us-ascii?Q?+lullSRgG5RQoDnsM8E76palFPkHihFyogyzo5cavHzGu4FChRXy8tv5EhyC?=
+ =?us-ascii?Q?hnx4zZa5qy9HCmpwxDKOPVvoEYYZUt+NHshyYOEY3Kj6KdzuV4y0ZDGEC9C8?=
+ =?us-ascii?Q?2620Dc/r+Eb5kEwusunQo0zCrgGu9dyvqce7000c2iSbBHDDoCU8/T5OkO2M?=
+ =?us-ascii?Q?aTRDzaPycgkniB1ZxMQtnaVNafX03eyo3+J4NovvyR8G4Kmdz20ISFoRkyA9?=
+ =?us-ascii?Q?OjLESW0HbJn4z77atRFKXUO/WhDPjuOQuj0Jcz5XatkXn1oObX2gUUo/jiq7?=
+ =?us-ascii?Q?Bv7O+22NH7jk96QTy3Mb+JbVEz2D+nUc6Z0+0bnhhzzqTpqcWtAEqDwH0N76?=
+ =?us-ascii?Q?ysTOfMAgaRLfcNp9OJA4ftL/S0wQIRnzgCXfsXWZLRna9Yw7g8yhgV9OKXdm?=
+ =?us-ascii?Q?VvVUxJu0bSnCzKfzhPetS6Z4IOCDw6O50y3OCTjRRGtEXXoPaOL0wRI6ymIN?=
+ =?us-ascii?Q?vd3iNLzSDJQg/DY93XNTb7cJxwK2KQ5MrOsVkVR8WBQdjfzMObPeHkrdFMPb?=
+ =?us-ascii?Q?GHBD7qyxUoV4qLMzkyKLCWkq+oXQ4ULEfJrExpxUwFo1slq4c6Taasm3sYl1?=
+ =?us-ascii?Q?RAi7bmnOTmqsKRqljH2fc4oDJUhGwT3BYcc/rtrK/cLCTJql9UE2gudoSXMT?=
+ =?us-ascii?Q?5y3xHPifnYalhEZscXq1yPTYnQyr3uatvQuU9IunmMjlzAH5JwkKz+wHkgxp?=
+ =?us-ascii?Q?lAniYgAPRD9woUlIwasUgYGPlGTa55ePyd5UlhxFubksLIb3vMD21KeSa+mV?=
+ =?us-ascii?Q?pcgA2dY+ByH1Sb/NL+KmaltEFblgU/w/qy+kAQR1qhY/tiPNP97gZVllIIWB?=
+ =?us-ascii?Q?DPaQq1aEGwIaKwE/gdkjl7H8LaHe4ZNVGUhWM+1p3llPVVbF2WRp5aXE1TGo?=
+ =?us-ascii?Q?P36yenvO4iFMFHHc3DEbeswHxUoSHBPzQTQkLb1c4N/u3J7580vibUpC02fe?=
+ =?us-ascii?Q?0gkcFHx7jbhNZ5UJ1mZ8d23YAyjyjnPDAxMY/8Zxp3bIKAF7j8fbUf8vrVPO?=
+ =?us-ascii?Q?7bumTERXAFk58uLCExazflrpN+xK5nZ1WujH7AOwQbOL8v2StE3lYGN2HsZM?=
+ =?us-ascii?Q?c1nXJudjjOFi6d5njWuP71W8SNUEJNZ+mPWzmpjMMUwDC5iV5SGIIbmoJPgu?=
+ =?us-ascii?Q?k7EkQy2PQ4tv4WfwzSJLECRX6rq2L3cuhBRYkwvtkjMna2mOBmnUqUtbbxpa?=
+ =?us-ascii?Q?6q9Apjg9a1GOTWGrnNj7pKvQH+m/CIUObBpId17lG2LZXMf49DnB7AWILFFj?=
+ =?us-ascii?Q?MJBFTbVqKgDvKmik0p54v/7n71VMaTq0mgSFcHiBmGUNw5w7ojTf8CwdwA8k?=
+ =?us-ascii?Q?npx129Tl9ihPB21XaXfex6y9kIGnEloCUujo4Ji8mu/PTx8MMU32wMuUlPCd?=
+ =?us-ascii?Q?/UlHRhsuzbFRXUGqBtqvrXPMxvWIc+FkpQPCQ6tbuqiUrL30D7cyOaTN72Ob?=
+ =?us-ascii?Q?lflhBZVWqAWLOwIJgVCprpXgGVOiPAmI/CUsVTym/0s016vrL1C2KRGJR1zw?=
+ =?us-ascii?Q?EELrNrf4nL/j3RDQfRFiCpKnPJ8M63SYKKA7FjWu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7575c934-0ecc-4de5-2281-08dcc07d6afd
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 18:33:27.9213
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wjr16xPUyOF2RMadtf6/KKHqJFpNIFiouhGimd2pNwBCwAnF5Nzb17CDESBg66mp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4427
 
-On Mon, Aug 19, 2024 at 06:51:48PM +0200, Philipp Stanner wrote:
-> solidrun utilizes pcim_iomap_regions(), which has been deprecated by the
-> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()"), among other
-> things because it forces usage of quite a complicated bitmask mechanism.
-> The bitmask handling code can entirely be removed by replacing
-> pcim_iomap_regions() and pcim_iomap_table().
+On Fri, Aug 16, 2024 at 06:13:58PM +0800, Yue Haibing wrote:
+> Commit e6fb246ccafb ("RDMA/mlx5: Consolidate MR destruction to
+> mlx5_ib_dereg_mr()") removed mlx5_ib_free_implicit_mr() but leave
+> the declaration. And commit d98995b4bf98 ("net/mlx5: Reimplement
+> write combining test") leave mlx5_ib_test_wc().
 > 
-> Replace pcim_iomap_regions() and pcim_iomap_table() with
-> pci_iomap_region().
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  drivers/infiniband/hw/mlx5/mlx5_ib.h | 3 ---
+>  1 file changed, 3 deletions(-)
 
-...
+Applied to for-next, thanks
 
-> -	int ret, i, mask = 0;
-> +	int i;
-
-Make it signed?
-
-...
-
->  	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> +		if (pci_resource_len(pdev, i)) {
-> +			psnet->bars[i] = pcim_iomap_region(pdev, i, name);
-> +			if (IS_ERR(psnet->bars[i])) {
-> +				SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-> +				return PTR_ERR(psnet->bars[i]);
-> +			}
-> +		}
-
->  
-
-Blank line leftover.
-
->  	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jason
 
