@@ -1,253 +1,190 @@
-Return-Path: <linux-kernel+bounces-292708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8EA957347
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:30:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B72E957348
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C101F20F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:30:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3298B23014
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4F51898EF;
-	Mon, 19 Aug 2024 18:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD431891D4;
+	Mon, 19 Aug 2024 18:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CisaNtag"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GVlnf8jq"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5229E136663;
-	Mon, 19 Aug 2024 18:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108DD135A53
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092224; cv=none; b=JHNqjpNteN+2tXb69LxOnsdu+cJXqeZwGzBBvtN8lCWZmNAMK7Fag8dSB7/+xFYMqkuXVLNCdeLgjuwGiUwIam20GBGYCOoRvqAQC0FjVsvfmlArP/Gy43B5SPVUJHWBaCkroma1dpR02SF5JFfhZ5uVMgADpHiXHz5eoK8bcHI=
+	t=1724092286; cv=none; b=c5ePpVwwM0FTgcyjoTC6NKa4X59c6O73+HwxnhQnf5/8lsF1nyoh9kUgCGyDNX4EfQcdCIWsJaIA2q9K1SpUdw+I0lFMFD4+olrrsL51hkYOhFgBgtOAv8O2Suoligj2RkBwpKH6Zd2C7PfUe53R2304x6PUk+DmdzoMriCHWro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092224; c=relaxed/simple;
-	bh=tSCee26JGqJNW5fxQxtynl0HcRSR8D1JgiXpOYtmgQE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XKP6lv81rlzx+YNEv96DWko9s4B9YnKeuqiZuwAjqBInJSeA4xuwTsvOkgD+TGGObhgYlIZnvFBRipPQVzIvDaR6YegvvYNhAqQ4nnohPbsdRDhNdRoqd7GQ4QqlSkrO8ElBVJ/G5bq5BhtpITUDR7A+OemwzdHTDFLHwVhqVhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CisaNtag; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D269CC4AF0C;
-	Mon, 19 Aug 2024 18:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724092223;
-	bh=tSCee26JGqJNW5fxQxtynl0HcRSR8D1JgiXpOYtmgQE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=CisaNtagHd7kzmJV3mDWmcmMsgFTgfs+tmHl8P4hdEaoMPYBULdPAkWsHEZYWMEda
-	 Iakc6ZACdJudRxVuGArYNN4cP1ELKOjvPYuQpa3AQTl2Z/jp1APCMx0qGvV4yr+QNV
-	 4hgKfLp8qglnaLCaoKW1PLTGGzKvQWg8Mlb9g49F6nQKNzrFfIXCgNATvK/0gVlatK
-	 dkrIfUS7tNHWCesy3AI2AzQy7a/Hyr2hfFnbNHe0hWOqkI7vBjg8cG6yHzQ5PkGfRY
-	 BM6i40sEcVBpG1JH+s4rC50exOg4TLN9m9RVHw0eIEqMtf20BBy5/3T6Tr8VlztScE
-	 0+85NVFrK3c1w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD985C52D7C;
-	Mon, 19 Aug 2024 18:30:23 +0000 (UTC)
-From: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>
-Date: Mon, 19 Aug 2024 11:30:15 -0700
-Subject: [PATCH v2] Avoid memory barrier in read_seqcount() through load
- acquire
+	s=arc-20240116; t=1724092286; c=relaxed/simple;
+	bh=ZrWC8ayVISMEQlXc1POjz6UYuqoV+ZvS6YR7eJJYJC0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=L0C11wKv6Nc9grlXenrY6cgqXVyBDlbZ8tG01grLAARX9vMulmR/X/Ek9oh4MAuNwC3wFAmTie9LnsRP/UNuRbt7aPVHbSZTwh1gKmpCmPuCA6KpzWisatgQJN/G8UQVLmYeKEu4ZspzWoHWmSdxLUx3cSly0UT7Cjkcn5TxnjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GVlnf8jq; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7125fb17a83so2690872b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724092284; x=1724697084; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sZh6vj+JVTE3khn4nIDCIHCY6ZVRQDK1Dqe9+u7egds=;
+        b=GVlnf8jq0VrrH0+8J7j+bLiEkyzgaLRE6UwGa3mfSTZhZ78oFwB0uSk2qfLEmEkDwD
+         HbwXyY9BRjCE4M15se7FCG0mCQA2GgUfE8AGoCsVfbchaNWHSf4fbPoolmgJ9awSTLHO
+         2DFE2nmNHm5jzsVEi+ubf33I9hsI8wl6TfwjI87MmYHMGXYqEfQo16Iv2Tb/eWdISQ2l
+         G2qk1D0MPeWeoj85V8o1Qd6lgZUF33TflHahBCUXWe0JHukfcR6c9zV/jUFRHi5Tulo1
+         c6Ycc12Fa6hbCwvej2wSZEFM40WfogKNW9br/v5rYCRYvCGzmS/00A2dgMXMb8RExWcB
+         /hOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724092284; x=1724697084;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sZh6vj+JVTE3khn4nIDCIHCY6ZVRQDK1Dqe9+u7egds=;
+        b=gtlymCe38Vbp6AwpkW929Efk6H9Knlj46aUJ+JI8KlTIEbhc2UdfnxH83/Cz/1S8Iz
+         RIna2wAaLEeDHJUaUkiFXyIHbAJdO0oqBsEYeiZbNdZid6KqBKf9M6i98UWPX1yPo9n2
+         G8RWTg8uNUaKjQzzWRm26WDzaroHEDbBcdjBD+hGb6c5iurYDwSY4SwmdaxV+VDo5RJY
+         pCNh7Vt9r+4j3ScET3PmWvY0RbmyBhTzAhxLcAaYHkWEeP3k+62LUc5FZGIzfZcfoTdq
+         oEasMpcYkC2sPgQG65WbGCpjVZYTRSQMQoCIFDQJ+Ubj9SwQTxKO4YVPdcrHOoH8LTqb
+         5Z1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOK0tS9QLnQTAZmUHYvHMD5hrxEFdb+wYTwWWisHj9EjNIjsT34CuycuNQ9Ez2B+FUJpET1GmrBR/67c4NJroZLM14FC+AkvDiaer
+X-Gm-Message-State: AOJu0Yx2avCiqz2NwkvJ/ziSPcnfvzqCqI+kX38kxNE+0C7ZqvZP5K9U
+	eA2fFdizqK9sg3EG7VbWgdWhXLZ+aQ6U6dTiquu57Kg+CJxY3y0979ieR90yI/lxUpvE42AvWjD
+	+qA==
+X-Google-Smtp-Source: AGHT+IGh8K54hv69rMrUmGxS9qgHX1Rbw16YYeuCjshOKbnSVF1r4Y1OnJ+4xCX8qHN+pt3Ztbq09K0kinA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:aa7:8145:0:b0:710:4d4d:5ef1 with SMTP id
+ d2e1a72fcca58-713c525b48bmr45627b3a.4.1724092284136; Mon, 19 Aug 2024
+ 11:31:24 -0700 (PDT)
+Date: Mon, 19 Aug 2024 11:31:22 -0700
+In-Reply-To: <CALzav=cFPduBR4pmgnVrgY6q+wufTn_nS-4QDF4yw8uGQkV41Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-2-vipinsh@google.com>
+ <Zr_gx1Xi1TAyYkqb@google.com> <20240819172023.GA2210585.vipinsh@google.com> <CALzav=cFPduBR4pmgnVrgY6q+wufTn_nS-4QDF4yw8uGQkV41Q@mail.gmail.com>
+Message-ID: <ZsOPepvYXoWVv-_D@google.com>
+Subject: Re: [PATCH 1/2] KVM: x86/mmu: Split NX hugepage recovery flow into
+ TDP and non-TDP flow
+From: Sean Christopherson <seanjc@google.com>
+To: David Matlack <dmatlack@google.com>
+Cc: Vipin Sharma <vipinsh@google.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
-X-B4-Tracking: v=1; b=H4sIADaPw2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
- vPSU3UzU4B8JSMDIxMDC0Nj3eLUwvj8gpLM3MyqVF0zi2QTCzNLs2RzSwsloJaCotS0zAqwcdG
- xtbUA0UUVFF4AAAA=
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
- Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-arch@vger.kernel.org, "Christoph Lameter (Ampere)" <cl@gentwo.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724092223; l=5831;
- i=cl@gentwo.org; s=20240811; h=from:subject:message-id;
- bh=33u86Z1NtTj5I1hzjsT/8J5bCWwIeort9/FFXzrHRO8=;
- b=xjoqKpuJtKmVY/p7XqcrNDj6VvwsP/litDEErvD8DiwRs7UAnTdP/zYFWneATI5cWwAHPBQAe
- ONJwSIhLrBvD2MOb674/6mx5xNjsJr7TwjTFsCE/PjBfuy4IL4vKzRA
-X-Developer-Key: i=cl@gentwo.org; a=ed25519;
- pk=I7gqGwDi9drzCReFIuf2k9de1FI1BGibsshXI0DIvq8=
-X-Endpoint-Received: by B4 Relay for cl@gentwo.org/20240811 with
- auth_id=194
-X-Original-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Reply-To: cl@gentwo.org
+Content-Transfer-Encoding: quoted-printable
 
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+On Mon, Aug 19, 2024, David Matlack wrote:
+> On Mon, Aug 19, 2024 at 10:20=E2=80=AFAM Vipin Sharma <vipinsh@google.com=
+> wrote:
+> >
+> > On 2024-08-16 16:29:11, Sean Christopherson wrote:
+> > > On Mon, Aug 12, 2024, Vipin Sharma wrote:
+> > > > +   list_for_each_entry(sp, &kvm->arch.possible_nx_huge_pages, poss=
+ible_nx_huge_page_link) {
+> > > > +           if (i++ >=3D max)
+> > > > +                   break;
+> > > > +           if (is_tdp_mmu_page(sp) =3D=3D tdp_mmu)
+> > > > +                   return sp;
+> > > > +   }
+> > >
+> > > This is silly and wasteful.  E.g. in the (unlikely) case there's one =
+TDP MMU
+> > > page amongst hundreds/thousands of shadow MMU pages, this will walk t=
+he list
+> > > until @max, and then move on to the shadow MMU.
+> > >
+> > > Why not just use separate lists?
+> >
+> > Before this patch, NX huge page recovery calculates "to_zap" and then i=
+t
+> > zaps first "to_zap" pages from the common list. This series is trying t=
+o
+> > maintain that invarient.
 
-Some architectures support load acquire which can save us a memory
-barrier and save some cycles.
+I wouldn't try to maintain any specific behavior in the existing code, AFAI=
+K it's
+100% arbitrary and wasn't written with any meaningful sophistication.  E.g.=
+ FIFO
+is little more than blindly zapping pages and hoping for the best.
 
-A typical sequence
+> > If we use two separate lists then we have to decide how many pages
+> > should be zapped from TDP MMU and shadow MMU list. Few options I can
+> > think of:
+> >
+> > 1. Zap "to_zap" pages from both TDP MMU and shadow MMU list separately.
+> >    Effectively, this might double the work for recovery thread.
+> > 2. Try zapping "to_zap" page from one list and if there are not enough
+> >    pages to zap then zap from the other list. This can cause starvation=
+.
+> > 3. Do half of "to_zap" from one list and another half from the other
+> >    list. This can lead to situations where only half work is being done
+> >    by the recovery worker thread.
+> >
+> > Option (1) above seems more reasonable to me.
+>=20
+> I vote each should zap 1/nx_huge_pages_recovery_ratio of their
+> respective list. i.e. Calculate to_zap separately for each list.
 
-	do {
-		seq = read_seqcount_begin(&s);
-		<something>
-	} while (read_seqcount_retry(&s, seq);
+Yeah, I don't have a better idea since this is effectively a quick and dirt=
+y
+solution to reduce guest jitter.  We can at least add a counter so that the=
+ zap
+is proportional to the number of pages on each list, e.g. this, and then do=
+ the
+necessary math in the recovery paths.
 
-requires 13 cycles on ARM64 for an empty loop. Two read memory
-barriers are needed. One for each of the seqcount_* functions.
-
-We can replace the first read barrier with a load acquire of
-the seqcount which saves us one barrier.
-
-On ARM64 doing so reduces the cycle count from 13 to 8.
-
-This is a general improvement for the ARM64 architecture and not
-specific to a certain processor. The cycle count here was
-obtained on a Neoverse N1 (Ampere Altra).
-
-The ARM documentation states that load acquire is more effective
-than a load plus barrier. In general that tends to be true on all
-compute platforms that support both.
-
-See (as quoted by Linus Torvalds):
-   https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions
-
- "Weaker ordering requirements that are imposed by Load-Acquire and
-  Store-Release instructions allow for micro-architectural
-  optimizations, which could reduce some of the performance impacts that
-  are otherwise imposed by an explicit memory barrier.
-
-  If the ordering requirement is satisfied using either a Load-Acquire
-  or Store-Release, then it would be preferable to use these
-  instructions instead of a DMB"
-
-Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
----
-V1->V2
-- Describe the benefit of load acquire vs barriers
-- Explain the CONFIG_ARCH_HAS_ACQUIRE_RELEASE option better
----
- arch/Kconfig            |  8 ++++++++
- arch/arm64/Kconfig      |  1 +
- include/linux/seqlock.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 50 insertions(+)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 975dd22a2dbd..3c270f496231 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1600,6 +1600,14 @@ config ARCH_HAS_KERNEL_FPU_SUPPORT
- 	  Architectures that select this option can run floating-point code in
- 	  the kernel, as described in Documentation/core-api/floating-point.rst.
- 
-+config ARCH_HAS_ACQUIRE_RELEASE
-+	bool
-+	help
-+	  Setting ARCH_HAS_ACQUIRE_RELEASE indicates that the architecture
-+	  supports load acquire and release. Typically these are more effective
-+	  than memory barriers. Code will prefer the use of load acquire and
-+	  store release over memory barriers if this option is enabled.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_hos=
+t.h
+index 94e7b5a4fafe..3ff17ff4f78b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1484,6 +1484,8 @@ struct kvm_arch {
+         * the code to do so.
+         */
+        spinlock_t tdp_mmu_pages_lock;
 +
- source "kernel/gcov/Kconfig"
- 
- source "scripts/gcc-plugins/Kconfig"
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca6..19e34fff145f 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -39,6 +39,7 @@ config ARM64
- 	select ARCH_HAS_PTE_DEVMAP
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_HW_PTE_YOUNG
-+	select ARCH_HAS_ACQUIRE_RELEASE
- 	select ARCH_HAS_SETUP_DMA_OPS
- 	select ARCH_HAS_SET_DIRECT_MAP
- 	select ARCH_HAS_SET_MEMORY
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index d90d8ee29d81..353fcf32b800 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -176,6 +176,28 @@ __seqprop_##lockname##_sequence(const seqcount_##lockname##_t *s)	\
- 	return seq;							\
- }									\
- 									\
-+static __always_inline unsigned						\
-+__seqprop_##lockname##_sequence_acquire(const seqcount_##lockname##_t *s) \
-+{									\
-+	unsigned seq = smp_load_acquire(&s->seqcount.sequence);		\
-+									\
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))				\
-+		return seq;						\
-+									\
-+	if (preemptible && unlikely(seq & 1)) {				\
-+		__SEQ_LOCK(lockbase##_lock(s->lock));			\
-+		__SEQ_LOCK(lockbase##_unlock(s->lock));			\
-+									\
-+		/*							\
-+		 * Re-read the sequence counter since the (possibly	\
-+		 * preempted) writer made progress.			\
-+		 */							\
-+		seq = smp_load_acquire(&s->seqcount.sequence);		\
-+	}								\
-+									\
-+	return seq;							\
-+}									\
-+									\
- static __always_inline bool						\
- __seqprop_##lockname##_preemptible(const seqcount_##lockname##_t *s)	\
- {									\
-@@ -211,6 +233,11 @@ static inline unsigned __seqprop_sequence(const seqcount_t *s)
- 	return READ_ONCE(s->sequence);
- }
- 
-+static inline unsigned __seqprop_sequence_acquire(const seqcount_t *s)
-+{
-+	return smp_load_acquire(&s->sequence);
-+}
-+
- static inline bool __seqprop_preemptible(const seqcount_t *s)
- {
- 	return false;
-@@ -259,6 +286,7 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
- #define seqprop_ptr(s)			__seqprop(s, ptr)(s)
- #define seqprop_const_ptr(s)		__seqprop(s, const_ptr)(s)
- #define seqprop_sequence(s)		__seqprop(s, sequence)(s)
-+#define seqprop_sequence_acquire(s)	__seqprop(s, sequence_acquire)(s)
- #define seqprop_preemptible(s)		__seqprop(s, preemptible)(s)
- #define seqprop_assert(s)		__seqprop(s, assert)(s)
- 
-@@ -293,6 +321,18 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
-  *
-  * Return: count to be passed to read_seqcount_retry()
-  */
-+#ifdef CONFIG_ARCH_HAS_ACQUIRE_RELEASE
-+#define raw_read_seqcount_begin(s)					\
-+({									\
-+	unsigned _seq;							\
-+									\
-+	while ((_seq = seqprop_sequence_acquire(s)) & 1)		\
-+		cpu_relax();						\
-+									\
-+	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
-+	_seq;								\
-+})
-+#else
- #define raw_read_seqcount_begin(s)					\
- ({									\
- 	unsigned _seq = __read_seqcount_begin(s);			\
-@@ -300,6 +340,7 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
- 	smp_rmb();							\
- 	_seq;								\
- })
++       u64 tdp_mmu_nx_page_splits;
+ #endif /* CONFIG_X86_64 */
+=20
+        /*
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 928cf84778b0..b80fe5d4e741 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -870,6 +870,11 @@ void track_possible_nx_huge_page(struct kvm *kvm, stru=
+ct kvm_mmu_page *sp)
+        if (!list_empty(&sp->possible_nx_huge_page_link))
+                return;
+=20
++#ifdef CONFIG_X86_64
++       if (is_tdp_mmu_page(sp))
++               ++kvm->arch.tdp_mmu_nx_page_splits;
 +#endif
- 
- /**
-  * read_seqcount_begin() - begin a seqcount_t read critical section
-
----
-base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-change-id: 20240813-seq_optimize-68c48696c798
-
-Best regards,
--- 
-Christoph Lameter <cl@gentwo.org>
-
-
++
+        ++kvm->stat.nx_lpage_splits;
+        list_add_tail(&sp->possible_nx_huge_page_link,
+                      &kvm->arch.possible_nx_huge_pages);
+@@ -905,6 +910,10 @@ void untrack_possible_nx_huge_page(struct kvm *kvm, st=
+ruct kvm_mmu_page *sp)
+        if (list_empty(&sp->possible_nx_huge_page_link))
+                return;
+=20
++#ifdef CONFIG_X86_64
++       if (is_tdp_mmu_page(sp))
++               --kvm->arch.tdp_mmu_nx_page_splits;
++#endif
+        --kvm->stat.nx_lpage_splits;
+        list_del_init(&sp->possible_nx_huge_page_link);
 
