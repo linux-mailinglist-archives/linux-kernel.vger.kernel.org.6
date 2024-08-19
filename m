@@ -1,152 +1,206 @@
-Return-Path: <linux-kernel+bounces-292253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03463956D17
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A84956D1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21041F25DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65E61C21EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3973516D4F1;
-	Mon, 19 Aug 2024 14:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE716D9B0;
+	Mon, 19 Aug 2024 14:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xi1CNL9z"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dSQS94ec"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F43C16C844
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D381F16C844
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077368; cv=none; b=SEdinIsazjfEE0THFLqd2JpRbKfRHjtI7944+et2f+2GMUr/P8I7xTYvhtCRESrDFUMpj24O6UAQaFqvXK9g0TxtDjudLdsVDjZCqv67KH71v0aJVHuTdejW97Wm6srTfAMslySFrS6qqhywmzxZpi7M8GfDB1Shft03huAr/jw=
+	t=1724077396; cv=none; b=UrxPwLvQLIl1oJR7XzTvf/O8AarqaiDueFCnxgsiRybtEPFUNLwOPVZBSvPChtkPQFbekMm8JHT0rmZ2JKzJC2tM5R2ZGyBbdxXBTGNHnQdrO1Rv5sLmhu6hHB4IqxqUPNA9+/Z9AGP39vL5pddinmU/I3qDVobRrBkPFgt48KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077368; c=relaxed/simple;
-	bh=v11Nb6/Y8y/UysALAeY42DDuFkS+2grtMmmrTiJ1E1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M/A4mHYrh/zhnuQnVtipnxI/0QgWs7SlBW2/YFbfhpTjOqo+kMvIpDCxtJ0gIfJvP6KgNnAFudc2jTA4ylFxdMKEcBT8hyk+Z0Hv+poaOHib7yooCa99HAWF965qADrNDR01Paih/0SJyIxQa6zgb762bYCATVpmtg+IdVd49K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xi1CNL9z; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a50313f785so247734785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:22:46 -0700 (PDT)
+	s=arc-20240116; t=1724077396; c=relaxed/simple;
+	bh=1EgPlnWtYOrjtjYWHqFuxy5URcg14N1+9iLqbPZhBeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAFf1newc+Z0Jxy+MoeO9tdB4ZLuennyQHmFVCt/Xi8AeZ8FH+tT2z5cDn9ekpyXTcTe6U6oeolUOmntCzbylqhz0Y8QazTPGBu1oXel17hTSp/BToFaKzDi6VLw2tJHZpfMqzF/dDxbQ4lPeywvdrs6d8oB2r5Mi478Hmx+1nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dSQS94ec; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ac10b7cso1493355e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724077366; x=1724682166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nhkr7iqFh3RzbexiAe8kbSaRnIYZ6ohJ8NbUkCceiNk=;
-        b=Xi1CNL9zpvDawaEo1NGNiS2F7v6diq8eeeVNh47ZHvQ81Q7MvOToesUQT2fOdpNg/n
-         x530wbTqd6U0ncwrt4Un9npkal4VC+bSuzIU1Y1DItU0BhE46xStHZw6xrQiBZpUZ9U6
-         DOvFHvsIA3+O9lqxUlZaFlzSp5wAWosQCztl2F4ZFAn+Q/Z2qNCE3/Qt5PzWQVmyXgQN
-         mv5sIcCkHk2G2n8oCaeOSlonyHQsXEdXRXGYhNV9IeXW5rXf++LNVzOhhDlQxzQvVfEH
-         d8SLoVK1UMoLOnWpu+wQHY6WFpo5lJ8bGoZPnyDg5HwzxCNNR8Dtq0JKXbgdS/Pu+iCd
-         K+eg==
+        d=ffwll.ch; s=google; t=1724077393; x=1724682193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mu1Dv77/v+aGNumYuKz9BtkcW9O4WIITisX7d70NEY8=;
+        b=dSQS94ecDlpUYKkVA+aU2tyEpvKFHWJ3b37L7sVBjImQy4HwxXSNdRij2zVefubuzv
+         GS5d7VJF1fMKX4DK/Sbplhcjz+1yof8OHP1hGxIH0bESMZoIUHm5CqFLCBb19fw9tRAs
+         y0xZPNb2QpcU93ZDljKpQcT/9d1Z8nHzeqVn4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724077366; x=1724682166;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724077393; x=1724682193;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nhkr7iqFh3RzbexiAe8kbSaRnIYZ6ohJ8NbUkCceiNk=;
-        b=pa6pOLH4NKkoEIB5t4NpOYJGtSMHBgQUiX3Ft5gUoNKb6XOtAuxkZroJs8K1qyBHpu
-         89VFWCYfiRPbOHT9qUc+3hE2Prcce+w1UsmJMpgv4HyMfSZ5GsCqBgJTse74WgQrJ0WP
-         oRR6zeOSgNsF858HYleQgQMWTnpqh5tgOFzzUWALzDB933tQv7I0qD0RmzStXDfE6nvK
-         C1LL5RUn3Aq8+l8sR897zE4sUPJ8kNRmariDj/uO/Z9/T+27mhpM3ZKqGyVVugWHHNcz
-         nH3ACt7puZsg03G+xeTTsBSns+NRbQRnsgh98egjel32ax31thGw+vkxWi5cZL3IfwVh
-         laKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjxDgliFz4nmZYIg/hbnleU1jWna6mxCj2UTZLcf2FELKQhdC53fG/VlV5YbQuR+Oz7K3dYbHgQA8/C8G1vgq/zK0K24vnuKatCDf6
-X-Gm-Message-State: AOJu0YxIh/F2bOmYegLCuF2b+4fUBsinXwxMOt5ZK6B10gPQJ4TwrYpl
-	cgOSXQb5D6cUdIuXzc84OBKweBPdlSiS0M7eNtHr27Sg+ePXmu0w
-X-Google-Smtp-Source: AGHT+IHkF23CUAgzsBPLP4cpgRYRq2jqu90osR1mDQck6JGw0rpnWCeZrHevD+ptagafaKP5T3G9Mg==
-X-Received: by 2002:a05:6214:5c41:b0:6b4:fea8:6bfc with SMTP id 6a1803df08f44-6bf8949f60fmr88519896d6.10.1724077365747;
-        Mon, 19 Aug 2024 07:22:45 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1145:4:1409:786c:cb1d:c3fb? ([2620:10d:c091:500::7:e1ca])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef0267sm42825436d6.113.2024.08.19.07.22.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 07:22:45 -0700 (PDT)
-Message-ID: <b5f8448a-daf2-44d7-bcad-b66ff2908e63@gmail.com>
-Date: Mon, 19 Aug 2024 10:22:44 -0400
+        bh=mu1Dv77/v+aGNumYuKz9BtkcW9O4WIITisX7d70NEY8=;
+        b=nAjP3KlQjAEIbij2Qvx55MheKhHQEMMJkwTEvqWsTn2zXzMY/9ltg0BO5fbt36mfzs
+         KQ+tTA5+59bFPKvToG4k2IsfsSFGCMiOPmZcLmRH3HrUsIZ5Rl5DcUa8YP771xiPpNGt
+         1wZ17oWqF5zJEKqT+VvMHazsy4Ex/RYjnLl1bQLHXuC7rdPnoj3+MsggEhnoJfu2Wuik
+         3pC8xvwQ1MW5IDsV0TE5lyFopVG3Xv4EmyuQoOCL9liSGzrndv0RHTLCRIVWdWJsUe3o
+         jz7ottCoKKEQ0tfR7EIZ+crVHcTJQTigv8oB1ZsadjiQ+sV20ddIbmyrt4F/yUJNZ2Z4
+         FN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWydx5ZnVskPGFz0yxRhFF9GV5qf4j9AK7cpJ16WY0ytS8ZkZDW6ttcvIkmClhg+7EW8nusySflQho/luU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMYQTNibeXnm1W0tvB3SxbEZNNdX30cRGvhYtbn847Rxxa57ft
+	OFMecCur2TzXBbI7Tx42OHku0c+Rw8rn+FwF4lF//p0mbqHDRGKR+85URWTzGrQ=
+X-Google-Smtp-Source: AGHT+IGOTBdNpg06e70Ewc3V/FepRlszCw1O4wXZJQ5pRmXl45gvZm7p5LblQvwGecCiIwcwO+f79Q==
+X-Received: by 2002:a05:600c:3b0f:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-429ed7f72ccmr47380995e9.4.1724077392871;
+        Mon, 19 Aug 2024 07:23:12 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6507c4sm114012625e9.15.2024.08.19.07.23.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 07:23:12 -0700 (PDT)
+Date: Mon, 19 Aug 2024 16:23:10 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+Subject: Re: [PATCH RFC 01/15] drm/vkms: Remove useles devres group
+Message-ID: <ZsNVTtigz4F4-npb@phenom.ffwll.local>
+Mail-Followup-To: Louis Chauvet <louis.chauvet@bootlin.com>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+ <20240814-google-remove-crtc-index-from-parameter-v1-1-6e179abf9fd4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] mm: collect the number of anon mTHP
-To: Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, baolin.wang@linux.alibaba.com, chrisl@kernel.org,
- hanchuanhua@oppo.com, ioworker0@gmail.com, kaleshsingh@google.com,
- kasong@tencent.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com,
- v-songbaohua@oppo.com, ziy@nvidia.com, yuanshuai@oppo.com
-References: <20240811224940.39876-1-21cnbao@gmail.com>
- <CAGsJ_4yMu=aaQZEXtcwCdMgrxUuqQ-9P1AiqyyVLfehD_-my9A@mail.gmail.com>
- <c817bf05-a9fa-4fb9-b8c6-a1de5a44e59a@redhat.com>
- <CAGsJ_4xaTSu2_F3VaR7Y3bOz2+W9XRU9kS3j7Hatojc6ocpOWQ@mail.gmail.com>
- <CAGsJ_4y30MVPDrE24okwxi5MYwM6o1ZnK0Vdub+DoEgWnM6+FQ@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAGsJ_4y30MVPDrE24okwxi5MYwM6o1ZnK0Vdub+DoEgWnM6+FQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814-google-remove-crtc-index-from-parameter-v1-1-6e179abf9fd4@bootlin.com>
+X-Operating-System: Linux phenom 6.9.12-amd64 
 
+On Wed, Aug 14, 2024 at 04:36:23PM +0200, Louis Chauvet wrote:
+> As the driver now uses drm managed allocation, the devres group is not
+> needed anymore, so remove it.
 
+drmm isn't devres, and you still have a devres managed resource here,
+namely devm_drm_dev_alloc. The reason I suggest in the review on google's
+series for configfs to nuke this is that they switched over to making vkms
+a proper platform driver, in which case you get a devres group
+automatically for your driver binding.
 
-On 19/08/2024 09:52, Barry Song wrote:
-> On Mon, Aug 19, 2024 at 8:33 PM Barry Song <21cnbao@gmail.com> wrote:
->>
->> On Mon, Aug 19, 2024 at 8:28 PM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 18.08.24 09:58, Barry Song wrote:
->>>> Hi Andrew, David, Usama,
->>>>
->>>> I'm attempting to rebase this series on top of Usama's
->>>> [PATCH v3 0/6] mm: split underutilized THPs[1]
->>>>
->>>> However, I feel it is impossible and we might be tackling things
->>>> in the wrong order.
->>>
->>> Is just the ordering suboptimal (which can/will get resolved one way or
->>> the other), or is there something fundamental that will make this series
->>> here "impossible"?
->>
->> i think it is just the ordering suboptimal. Ideally, mTHP counters can go
->> first, then the new partially_mapped feature will rebase on top of
->> mTHP counters.
+But neither the explicit one or the driver binding is one devres too few
+:-)
+
+Cheers, Sima
 > 
-> Sorry, please allow me to ramble a bit more.
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.c | 18 +++++-------------
+>  1 file changed, 5 insertions(+), 13 deletions(-)
 > 
-> The nr_split_deferred counter is straightforward and simple without the
-> partially_mapped feature. Each time we enter split_list, we increment by
-> 1, and when we leave, we decrement by 1.
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index e79832e10f3c..7ac3ab7e16e5 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -297,16 +297,11 @@ static int vkms_create(struct vkms_config *config)
+>  	if (IS_ERR(pdev))
+>  		return PTR_ERR(pdev);
+>  
+> -	if (!devres_open_group(&pdev->dev, NULL, GFP_KERNEL)) {
+> -		ret = -ENOMEM;
+> -		goto out_unregister;
+> -	}
+> -
+>  	vkms_device = devm_drm_dev_alloc(&pdev->dev, &vkms_driver,
+>  					 struct vkms_device, drm);
+>  	if (IS_ERR(vkms_device)) {
+>  		ret = PTR_ERR(vkms_device);
+> -		goto out_devres;
+> +		goto out_unregister;
+>  	}
+>  	vkms_device->platform = pdev;
+>  	vkms_device->config = config;
+> @@ -317,32 +312,30 @@ static int vkms_create(struct vkms_config *config)
+>  
+>  	if (ret) {
+>  		DRM_ERROR("Could not initialize DMA support\n");
+> -		goto out_devres;
+> +		goto out_unregister;
+>  	}
+>  
+>  	ret = drm_vblank_init(&vkms_device->drm, 1);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to vblank\n");
+> -		goto out_devres;
+> +		goto out_unregister;
+>  	}
+>  
+>  	ret = vkms_modeset_init(vkms_device);
+>  	if (ret)
+> -		goto out_devres;
+> +		goto out_unregister;
+>  
+>  	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
+>  			      ARRAY_SIZE(vkms_config_debugfs_list));
+>  
+>  	ret = drm_dev_register(&vkms_device->drm, 0);
+>  	if (ret)
+> -		goto out_devres;
+> +		goto out_unregister;
+>  
+>  	drm_fbdev_shmem_setup(&vkms_device->drm, 0);
+>  
+>  	return 0;
+>  
+> -out_devres:
+> -	devres_release_group(&pdev->dev, NULL);
+>  out_unregister:
+>  	platform_device_unregister(pdev);
+>  	return ret;
+> @@ -383,7 +376,6 @@ static void vkms_destroy(struct vkms_config *config)
+>  
+>  	drm_dev_unregister(&config->dev->drm);
+>  	drm_atomic_helper_shutdown(&config->dev->drm);
+> -	devres_release_group(&pdev->dev, NULL);
+>  	platform_device_unregister(pdev);
+>  
+>  	config->dev = NULL;
 > 
-> With the new partially_mapped feature, we can enter split_list without
-> actually being partially_mapped. If the MTHP counter series is processed
-> first, the partially_mapped series can handle all cases while properly
-> clearing and setting the partially_mapped flag. These flag operations
-> need to be handled carefully.
-> Currently, I notice that Usama's series is clearing the flag unconditionally
-> in all cases.
-> 
-> In simple terms, mTHP counters are just a counting mechanism that
-> doesn't introduce new features. However, partially_mapped is a new
-> feature. A better approach might be to handle the counters first, then
-> ensure that the new feature doesn't break the counter.
+> -- 
+> 2.44.2
 > 
 
-I am ok if the series needs to be reversed, I think the difficulty is for Andrew to tackle my series, yours and Yu Zhaos, which all seem to be touching the same code, so whatever makes it easier for Andrew I am happy with it.
-
-
->>
->>>
->>> --
->>> Cheers,
->>>
->>> David / dhildenb
-> 
-> Thanks
-> Barry
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
