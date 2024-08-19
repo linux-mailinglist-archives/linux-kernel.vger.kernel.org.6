@@ -1,438 +1,160 @@
-Return-Path: <linux-kernel+bounces-291358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7176A95612E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:40:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9481956131
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D881C212AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:40:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35975B216DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4987E347C7;
-	Mon, 19 Aug 2024 02:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE3036B17;
+	Mon, 19 Aug 2024 02:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="P1X6raDM"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011007.outbound.protection.outlook.com [52.101.65.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NKBNUsRG"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27123BBF2;
-	Mon, 19 Aug 2024 02:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724035223; cv=fail; b=YMdrpFoBs/ypbGy21lVkZeO6kuJm4UlP7GU5VDbzMPwVndvx+FWhHChKXg0JE+dm+W/wu4oDNk5Y8rZpP4i6Gpsesb4zP7r2H+2yv34aQ8Gj9vbySqqycTQs/0qoJZiykm5IFtVrGHc9g/jB8b6O39LyRq6CGu70kBfSJ0dsTDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724035223; c=relaxed/simple;
-	bh=X5XDjaCBsMpEkRbSD3Z1SJz0B7ZlwSxWJLaZ0mdLw9o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rlG78nv2FjkVPoYnVUXkK8lt0fp8J/Ju140NItoa9UmzXWK1dd18IVQJ2yt4eX614Q6P1HBd3MOchSmZrAPlYqTNdwP5A6hf/+JQRQhE7dv6Lpfb99tEU6EQ04IraNSofIkyysvgt1g4SCz8tu7GxBqEPE0W3njNHrw4xauXpIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=P1X6raDM; arc=fail smtp.client-ip=52.101.65.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rmNtkDzIPfZTppmPkvaknnmBjaFOuCjDxbYtWX/knbRD4/2DOj7EX+BotJV69yuviqUyB9vUz7hVq4//qrA3aiP76eadI8UcxOs7nF52opC0FIjtJMmvgfgy5YDZ7FREE7VXjazFrWeWj10hV5wr1KEigsWWkpMC13LkJSNY80CvFJsHaLjPk9azmTds9z9Nq8QNuP4PR8E7lg3dVKFkqmhCDIq3qP9WqNZEVuP42AMDp+v/02c6SemIYQ8jfNg2H0dbNzWamcHGVF91KpyYa8/1wOnBwu+u6mSxmnkdIUn5NOQyJU0JiJq3n7VWyUFcvXndG+oqlgYp+zFGrKcF9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cehUyaCyR1zI3cVhGpoICwdloV3y02HvuGtpiM1/OCo=;
- b=ueXWajDOds9wymM7XHigRrXtyDWkVNzybWQTzjdCAoUBNRKr495pQRJwjj5NeuysjIsPl5vK/5by2a8YPOTDTTEJeTufpNo/blK8aViWta2xGSLxwELkr1Pl33uC9U6pwaBaco8ddBQje8rM7x1FdFnCHJrI4TjkbDZAdfgu39XJQ0YyqPm3krdiMhaxxKBBR8oA9/7BEppbBuA3/LXrAAjyqBdy3n6+J1FGSaatmQInH5SWQ3lBd9Lm1SPotH6Mf7HPxnI+9Kb5CSL5WuCyUuwwelfnn2n11pAwL7Ja3NlDtVw0QJ/DniG/0b2d2/LHKsGDQWiFv5Y2T9HxmF2OsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cehUyaCyR1zI3cVhGpoICwdloV3y02HvuGtpiM1/OCo=;
- b=P1X6raDMwcZ5ro+swLtIJ+lxUyv2lBFwnTMpbN5rR4G9DJ++0pfKC0gDwW6pVqOF6OaRNJWHWJ4udzfSnq5nxonudStS5u85iCUPYrLZYYY1TWqsHD1W2XNXaRt9hc1YmSl2HBjRdU25o3pDLBdl72IwUt9PKxnBE3g6A+FVNQutQrr8RHVrEMJTHNyrob5rnUMevp1wfgnGgatVt1tNTthWNRoBrL1AB5kIfZssuuo1tX+bfPyOaj8bYLMXEfpmLsw02nUh/MhhY9FkJBuR09PYGmOWDryV1qSpH0eeHf2j/QQyhGRA96viOqOkhP+yX8l+1wIXqgixUXBtguywlA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DU2PR04MB8807.eurprd04.prod.outlook.com (2603:10a6:10:2e2::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 02:40:18 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 02:40:17 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	victor.liu@nxp.com,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	peng.fan@nxp.com,
-	krzk@kernel.org
-Subject: [PATCH v4 2/2] drm/bridge: imx: Add i.MX93 parallel display format configuration support
-Date: Mon, 19 Aug 2024 10:40:01 +0800
-Message-Id: <20240819024001.850065-3-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240819024001.850065-1-victor.liu@nxp.com>
-References: <20240819024001.850065-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0025.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::12)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ACB38384
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724035251; cv=none; b=O0mYuWbVdQ2uwDWg7bxa/CxCUGyIln2alKo26UQvEILIH8HCUtYTAs5priOgWGwCy9ZU2dBbCow9QcnDpRJkaQPDo1k5pIQYBuG3MCET2TYRsALBgEDNEBrobgKDCrQtjNezfTkzK6ED4rC4cRLs095AFFsEKZmLAif/g78P+2A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724035251; c=relaxed/simple;
+	bh=m8vhVFrXVR342rluGvz0IWZNr0LOtnv5NV+3/+iOcFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DuZraziVvxVW6/LIzEsoZawsMFaEg7jkZIjpWKzsdUCZPCs2BD/PCOnebqVydb4k4SAp5dearVhzV5kwRuyP6jRX8aXL/SGvsAJmcnDHjIAPoL5/aO1kkASWXYKqij2AqocSUyJDSbOshRNzslQIhvXeemWBzvDTtx06VQm+JVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NKBNUsRG; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso24687625e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 19:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724035246; x=1724640046; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rrz0NLJQUicJg05dix/G7IvIXq0lc24IX6wpTx/j2h8=;
+        b=NKBNUsRGO7lTQSGgXMZCp4x3NyYzzDf8fI3u3ciMK/ufh9axTyLavg5ZLLMtvYmIZC
+         2KymDMk3bjbDBI2OmrCDpGWISmylrgX3vQwdo0f7+iQgOwQIXQpJqPSqvbIotWAynVSQ
+         ZIJHQQjl8kIp69jbn5hhZBhvwYZvIizydpYGAAULH8rcwqwoBEP7sMfY3+EW2hoLUnum
+         1Y2PP1ty4aIC10Qrpbk7Ax6p3K1UyCCzyN1qO1xA8n19vz5qdMOEHA85ZdZAsBx9S+M5
+         1WmeZjOlD5DL5Bdyg9hOqdhq52P0pJYo8GFyXelFfX4G3AXLkTGlMOkIKdu4AVauPrwx
+         u4Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724035246; x=1724640046;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rrz0NLJQUicJg05dix/G7IvIXq0lc24IX6wpTx/j2h8=;
+        b=I7dHRLd8pVGoYFeibfJUokjDqB8rNB5H4FbRBg4vgoIRjjsDQocZc2gYcLRmIcp7Qy
+         5+2KZxXdzm1Z2ZOGKizq7M4B+sM58Vdf2jgu9JmxKma+yvhvolGY1xrk7GVReT8uoS5F
+         ck8UtGyLIuKCmk6kn+eqO3WhLX5Q08WqLAKoexdI34EfKo9q4j7UdVZIRWgNHkvifTij
+         0p2vP7UZUGBDquUeqLlGMdDdtyBC/ODtZtfgYgwCF7FaRyQWsmQfex3ps5RqFuaQcSpw
+         Mqgw6nCjBdKBhefhRKiG2sfqfrsHH37RW36KRVxU31IcekHg7+/TxTIMHf42m/c7Xa/X
+         N1rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZdCJKTDWyfL2bss54YNacjtvzjQbpEZo9cUTGLcC/sO7b+VvPKWMgQCaFZMxjsWaP8Lss37JS7QCVPOjlQWfd/2E9rbzkQrxQXmPy
+X-Gm-Message-State: AOJu0Yxeup0iPQCHbmoFiDiL6440pSAZzMNrn0J5INUqXOV4fSZJ/MAZ
+	zWADeQ5Jd7T5S4d62d9XqczOiVgbkJ6ZP0+NaWUmt+Iq+0aQ2BsZkwyXPF249t0=
+X-Google-Smtp-Source: AGHT+IHaOf4V6+FrjoW2AFVYnVzlxHKwV4FXAIAcNpqtq7OzHYCEUgI4btoqvPqnzDkmrS1JQRVq6A==
+X-Received: by 2002:adf:ce0a:0:b0:36b:c65c:661e with SMTP id ffacd0b85a97d-37186c09a03mr7527730f8f.13.1724035246141;
+        Sun, 18 Aug 2024 19:40:46 -0700 (PDT)
+Received: from [10.202.32.28] ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3dc9bcdd4sm3066033a91.1.2024.08.18.19.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 19:40:45 -0700 (PDT)
+Message-ID: <ed71901d-bf43-4b81-88ea-0dac7207c5c5@suse.com>
+Date: Mon, 19 Aug 2024 10:40:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU2PR04MB8807:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5e02fa4-cb5f-4bdb-bf24-08dcbff8430a
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|1800799024|52116014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?b4+0LxD1FokeO71F+E5ULgWUnpXkptz4s7bb6uA1GLc1WqcIwt02uoR4e19D?=
- =?us-ascii?Q?zeVGooDzmc0bn31O45I1Q31MKLULxhUGbZUFh4UhUXuR2Dty2yoQUTxAyH/u?=
- =?us-ascii?Q?n8yodQWDdd5oD/pbYhNRpMB92OKywd5T3jxZ50TWeewOrRKpA60jjPw4V/2b?=
- =?us-ascii?Q?KwRXwIb34UcKY4rcXBZl8Ui7xQiFTR6cWObVLvRegWQ9McPWY7ydZVsDwQsW?=
- =?us-ascii?Q?uNOFlGYRF4T/aP1RwNF7U4nJRcIu/zbBvVl5/msvGgjq7AbaVmYhp2mFj3/I?=
- =?us-ascii?Q?8y+8+PnO8vi7BrcR5rfkA41j0xJ4zZirR8rIMqkONCWvf4CRbzOa3UJEJJkj?=
- =?us-ascii?Q?uRFJ3gargrhiMxloWnEMDlEK5mxW/yWahP67BLZ2sXZcQuvB48D4ntzrXG83?=
- =?us-ascii?Q?JnZHlJgotAEJy8fdD/LR8cSCRgHQUekFfYPA5nnffPoSTOmqET0/0snMjlEB?=
- =?us-ascii?Q?k3K+Y8WRjFNU+1OIqVLOQz8mRYpq4B35j6S+e7+thcV+V6nxYsflOotDa6+u?=
- =?us-ascii?Q?2wtfbxnIw1ctr/E8FdDt12h1sZenrd07z40ZByUSAeevHAigbKP2AbgxaWzF?=
- =?us-ascii?Q?zL9rQiuZ+FYiwdJVXa1s9Ge2rU63nCl9VFSk8inKJBQcKiiz7d1tlB6CnVfJ?=
- =?us-ascii?Q?LhfcWFl7M7nt/vtkIY0kjufp9evwR79NhyEWzxEE0LtDpBIU5dcKQ9kJGUJV?=
- =?us-ascii?Q?84ZgsNBVs54em8H8S34adoaAHg0c8FBn7hIia5i7eIB0u4u4+ssuNSNGzXnp?=
- =?us-ascii?Q?lGUFQKRwpPMi6JnSmpTrUXSfQ+0pfnzTteuktrLkRdiqHEE8h76smCM530Al?=
- =?us-ascii?Q?MG14QMdGzpyMgQQD3N+DyMiHiP4stLDQymT/5SbVAJs7VP+NH+x3AeAZKC93?=
- =?us-ascii?Q?xDmv1RA809YdyxcyOGmXuQKruypt54QjtB0rPCwnZYALGFdvBiSyBdzyEbjf?=
- =?us-ascii?Q?GY60vm+0wfSlHK3go5jaWFJLmrChoGyuyvEKk14A66uPQbfUwiO1aIoeSDL5?=
- =?us-ascii?Q?odfgy3bdnqLCtghRv3AxtLeVJTGH824SElIc8JqfdwQqldkfqulG0lR0XfHn?=
- =?us-ascii?Q?sNMRPh12J64zQRuh67cIMfRAkwMThRM2KCYj1x56zYdVuSouWQR1b3T1Pnlu?=
- =?us-ascii?Q?61y7YAT+KREwbgphz4tvAuq4Ibq3AAaA7BYwRUmb/xrsfqBgIjGpaYx6oycl?=
- =?us-ascii?Q?uxdXJ032JQiAQ1ccRNaHO1Sn/qWviOhc1iftL9rsTj+R2w2Lt4NIxMD/MWaj?=
- =?us-ascii?Q?98yu9ullWK+mMdeWUQsqukAMrt9QdFwRDun+kullTMv4OZCxQnxr35caqYvI?=
- =?us-ascii?Q?c1WMCtBMmoa4q1Uq7NTqVWzLzMHuYQSRlH6fiudhzS5L6gP2Lm9ImxE+sksE?=
- =?us-ascii?Q?tlnSEkeO39euDmcUuvOqP+2ypWn0hAECJpsLQLyPcF/Ue8lomA=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?D5r8D8zLUdR3Vy0K+kRJSSZOKqsxgVZtWrR6IxwUEE1oXRZgfaNkXmnNLpvY?=
- =?us-ascii?Q?m+f9eCP3jMBIYNEQxfbAH3DbhrLgidakn0Wa8DpYsPsLc0xGz6YxIhF3ZGO6?=
- =?us-ascii?Q?0baCUxUxFXwHGLMCfPywOu+jCMKN664JAtiEXL9AZ7wNYPfJnolOLhIqbRO2?=
- =?us-ascii?Q?h46OqAA7cdvycJOvdJozazlAliC/OBhJKwZgLKMa36klsrcBq6HjalvFrvO2?=
- =?us-ascii?Q?Zqv+zXEdCFA+PGXXB8Se+ntirKWhS9ZEqok9Ec0FgCDnclfcHVbIpR7siVrg?=
- =?us-ascii?Q?HK6Rtoe4ALiWdPI1avvy3GqjLcDpNTgcFOrhdkAGe77uGZ6IonZVDb88zSlS?=
- =?us-ascii?Q?zZjDFOQ4GCam8emR1EO0SBcEXhECj+YVF2N+cYp/MlIQfYlrIW+ilBxHOdvS?=
- =?us-ascii?Q?pUhbLbE9Nxj+1rgeuGpxD10FHGa+1DIOX5HluMdJf4twHB86sh1pocodDi8b?=
- =?us-ascii?Q?AZ65BWgpzUxd47u9LnbIHR4oYccY9HVfHvboDkJXGqCbsiXR/Ys+HHQixloo?=
- =?us-ascii?Q?x0xsaDRBOUVJFoN4dNqAbYHLxs6GNTi+fYXmEcU4G/fT8+2HXdUzhjMNhR4U?=
- =?us-ascii?Q?V85/2eCPdIVoY4FlgT98HX2leuvO2SvfujeWkA2O/94znThV6DUY3eaiQCEt?=
- =?us-ascii?Q?ss5IM0NzzFjCcqOK5Gcv5ld9l02egL2Q/hbq6Drvya3goDCgS51P9TxRppCk?=
- =?us-ascii?Q?VJ0f6pjv8nw8sebPpK+c4vRTh5Mj/WBWP4EvFdGD0OmF15V3oxR/C3NRUhVM?=
- =?us-ascii?Q?rzO3aNbDaycDJfAljoIH6RdgK5MvxD4tGvFOSy3fBDIDZddux6rfnr2w2hh6?=
- =?us-ascii?Q?JICunEgx0ANzfRXiWCHOdOFwRo6Yo0HUU5Vz1pQhCDSs64JpXayuLLUjk42W?=
- =?us-ascii?Q?8Fy3DeRfMHo6NtQV2v9/m5j8nSVShl0JwvfKL3CTBbQF1hzup3WBYOV7G12U?=
- =?us-ascii?Q?ojh36OxQ14lH7suj1PIo0/p3X46ZBGI2xWMS2HOy/gY67wIvWH/PK2IlyeBe?=
- =?us-ascii?Q?2OX1trjoCaN6SThhgA6C8SG0q4tjmOUz3Bc196XEdBr69hYPdctrHQtyiwH3?=
- =?us-ascii?Q?2kozJ30rc7iPHOl33xomNg8CU0+oIiSBxv7x9Ykr4YyYDCplxbQo4x7Pkeyx?=
- =?us-ascii?Q?KNDcAaxRNm+I9CQgbDfzp8tMmF6JPqEh654rJQuVbMXo+tgQgkM3YpuBNKUj?=
- =?us-ascii?Q?4NtC65yxWnwm2rlbuRKD5tt2K2CCbzD1b64egQHd0d+L3HoZJxI2p2SBsTbI?=
- =?us-ascii?Q?NZQPgtRdP60MxCPaefrlmEauhR6Fd4X2arztNYRnFopiqE3uM4N3/G2Fl1N9?=
- =?us-ascii?Q?QQNBYCK/EvFDRJbClhdSpyKrV2qTbTta8xMYKJbXEMgoONbtoVaHOmj6c5QV?=
- =?us-ascii?Q?IOg6Wuo/76+sLju3qQPjzGbpIsxglcZOXfU6eQCEtXWcJSCO+wZauR+ELG6w?=
- =?us-ascii?Q?4tXPpN/X1kOhV5LeuB7ctlHdO0ub80OIkKym6HMOQsYcp/yDhcT2nWW8KCT1?=
- =?us-ascii?Q?ZzoE33+Sv6R2M7c4TDEG3iu5Iq3r23MonMFWdHE2/gOsR78bZ/nva5PUqPhD?=
- =?us-ascii?Q?oTirUiNgaleJE9PnyXvtMBesTXznmWYg+sjA+5oY?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5e02fa4-cb5f-4bdb-bf24-08dcbff8430a
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 02:40:17.9148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ro7J8eCt7Pjl7/2LXd6cRL6ybnp+sWdQjUKfpCvRMQ1ulOuqG7xVIvbL0O4QlwrhHxUZvCErDPHGkKcpLPgLEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8807
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: fix unexpected zeroing of virtual disk
+To: Joseph Qi <joseph.qi@linux.alibaba.com>, Chi Zhiling
+ <chizhiling@163.com>, akpm <akpm@linux-foundation.org>
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ starzhangzsd@gmail.com, Chi Zhiling <chizhiling@kylinos.cn>,
+ Shida Zhang <zhangshida@kylinos.cn>, Mark Fasheh <mark@fasheh.com>,
+ Joel Becker <jlbec@evilplan.org>
+References: <20240815092141.1223238-1-chizhiling@163.com>
+ <432954d5-3b8e-42f7-8c06-1a489281129e@suse.com>
+ <333c0334-112e-4ac2-9ec2-c81fe73458bc@linux.alibaba.com>
+Content-Language: en-US
+From: Heming Zhao <heming.zhao@suse.com>
+In-Reply-To: <333c0334-112e-4ac2-9ec2-c81fe73458bc@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-NXP i.MX93 mediamix blk-ctrl contains one DISPLAY_MUX register which
-configures parallel display format by using the "PARALLEL_DISP_FORMAT"
-field. Add a DRM bridge driver to support the display format configuration.
+Sorry, I just realized I posted the wrong tag "Signed-off-by: Heming Zhao ...".
+The correct should be Reviewed-by: Heming Zhao <heming.zhao@suse.com>.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
-v3->v4:
-* Use dev_err_probe() in imx93_pdfc_bridge_probe(). (Krzysztof)
-* Drop MODULE_ALIAS(). (Krzysztof)
-* Update year of Copyright.
-
-v2->v3:
-* No change.
-* Resend with the patch rebased upon v6.11-rc1.
-
-v1->v2:
-* Set *num_input_fmts to zero in case
-  imx93_pdfc_bridge_atomic_get_input_bus_fmts() returns NULL.
-* Replace .remove callback with .remove_new callback in
-  imx93_pdfc_bridge_driver.
-
- drivers/gpu/drm/bridge/imx/Kconfig      |   8 +
- drivers/gpu/drm/bridge/imx/Makefile     |   1 +
- drivers/gpu/drm/bridge/imx/imx93-pdfc.c | 199 ++++++++++++++++++++++++
- 3 files changed, 208 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-
-diff --git a/drivers/gpu/drm/bridge/imx/Kconfig b/drivers/gpu/drm/bridge/imx/Kconfig
-index 8dd89efa8ea7..088241575857 100644
---- a/drivers/gpu/drm/bridge/imx/Kconfig
-+++ b/drivers/gpu/drm/bridge/imx/Kconfig
-@@ -78,4 +78,12 @@ config DRM_IMX93_MIPI_DSI
- 	  Choose this to enable MIPI DSI controller found in Freescale i.MX93
- 	  processor.
- 
-+config DRM_IMX93_PARALLEL_DISP_FMT_CONFIG
-+	tristate "NXP i.MX93 parallel display format configuration"
-+	depends on OF
-+	select DRM_KMS_HELPER
-+	help
-+	  Choose this to enable parallel display format configuration
-+	  found in NXP i.MX93 processor.
-+
- endif # ARCH_MXC || COMPILE_TEST
-diff --git a/drivers/gpu/drm/bridge/imx/Makefile b/drivers/gpu/drm/bridge/imx/Makefile
-index edb0a7b71b30..8d3499fb7fba 100644
---- a/drivers/gpu/drm/bridge/imx/Makefile
-+++ b/drivers/gpu/drm/bridge/imx/Makefile
-@@ -7,3 +7,4 @@ obj-$(CONFIG_DRM_IMX8QXP_PIXEL_COMBINER) += imx8qxp-pixel-combiner.o
- obj-$(CONFIG_DRM_IMX8QXP_PIXEL_LINK) += imx8qxp-pixel-link.o
- obj-$(CONFIG_DRM_IMX8QXP_PIXEL_LINK_TO_DPI) += imx8qxp-pxl2dpi.o
- obj-$(CONFIG_DRM_IMX93_MIPI_DSI) += imx93-mipi-dsi.o
-+obj-$(CONFIG_DRM_IMX93_PARALLEL_DISP_FMT_CONFIG) += imx93-pdfc.o
-diff --git a/drivers/gpu/drm/bridge/imx/imx93-pdfc.c b/drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-new file mode 100644
-index 000000000000..3dd92f7a0fd6
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-@@ -0,0 +1,199 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * Copyright 2022-2024 NXP
-+ */
-+
-+#include <linux/media-bus-format.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <drm/drm_atomic_state_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_print.h>
-+
-+#define DISPLAY_MUX		0x60
-+#define  PARALLEL_DISP_FORMAT	0x700
-+
-+enum imx93_pdfc_format {
-+	RGB888_TO_RGB888 = 0x0,
-+	RGB888_TO_RGB666 = 0x1 << 8,
-+	RGB565_TO_RGB565 = 0x2 << 8,
-+};
-+
-+struct imx93_pdfc {
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next_bridge;
-+	struct device *dev;
-+	struct regmap *regmap;
-+	u32 format;
-+};
-+
-+static int imx93_pdfc_bridge_attach(struct drm_bridge *bridge,
-+				    enum drm_bridge_attach_flags flags)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	return drm_bridge_attach(bridge->encoder, pdfc->next_bridge, bridge, flags);
-+}
-+
-+static void
-+imx93_pdfc_bridge_atomic_enable(struct drm_bridge *bridge,
-+				struct drm_bridge_state *old_bridge_state)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	regmap_update_bits(pdfc->regmap, DISPLAY_MUX, PARALLEL_DISP_FORMAT,
-+			   pdfc->format);
-+}
-+
-+static const u32 imx93_pdfc_bus_output_fmts[] = {
-+	MEDIA_BUS_FMT_RGB888_1X24,
-+	MEDIA_BUS_FMT_RGB666_1X18,
-+	MEDIA_BUS_FMT_RGB565_1X16,
-+	MEDIA_BUS_FMT_FIXED
-+};
-+
-+static bool imx93_pdfc_bus_output_fmt_supported(u32 fmt)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(imx93_pdfc_bus_output_fmts); i++) {
-+		if (imx93_pdfc_bus_output_fmts[i] == fmt)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static u32 *
-+imx93_pdfc_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-+					    struct drm_bridge_state *bridge_state,
-+					    struct drm_crtc_state *crtc_state,
-+					    struct drm_connector_state *conn_state,
-+					    u32 output_fmt,
-+					    unsigned int *num_input_fmts)
-+{
-+	u32 *input_fmts;
-+
-+	*num_input_fmts = 0;
-+
-+	if (!imx93_pdfc_bus_output_fmt_supported(output_fmt))
-+		return NULL;
-+
-+	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
-+	if (!input_fmts)
-+		return NULL;
-+
-+	switch (output_fmt) {
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+		input_fmts[0] = output_fmt;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+	case MEDIA_BUS_FMT_FIXED:
-+		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-+		break;
-+	}
-+
-+	*num_input_fmts = 1;
-+
-+	return input_fmts;
-+}
-+
-+static int imx93_pdfc_bridge_atomic_check(struct drm_bridge *bridge,
-+					  struct drm_bridge_state *bridge_state,
-+					  struct drm_crtc_state *crtc_state,
-+					  struct drm_connector_state *conn_state)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	switch (bridge_state->output_bus_cfg.format) {
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		pdfc->format = RGB888_TO_RGB888;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+		pdfc->format = RGB888_TO_RGB666;
-+		break;
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+		pdfc->format = RGB565_TO_RGB565;
-+		break;
-+	default:
-+		DRM_DEV_DEBUG_DRIVER(pdfc->dev, "Unsupported output bus format: 0x%x\n",
-+				     bridge_state->output_bus_cfg.format);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct drm_bridge_funcs imx93_pdfc_bridge_funcs = {
-+	.attach			= imx93_pdfc_bridge_attach,
-+	.atomic_enable		= imx93_pdfc_bridge_atomic_enable,
-+	.atomic_duplicate_state	= drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_destroy_state	= drm_atomic_helper_bridge_destroy_state,
-+	.atomic_get_input_bus_fmts	= imx93_pdfc_bridge_atomic_get_input_bus_fmts,
-+	.atomic_check		= imx93_pdfc_bridge_atomic_check,
-+	.atomic_reset		= drm_atomic_helper_bridge_reset,
-+};
-+
-+static int imx93_pdfc_bridge_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct imx93_pdfc *pdfc;
-+
-+	pdfc = devm_kzalloc(dev, sizeof(*pdfc), GFP_KERNEL);
-+	if (!pdfc)
-+		return -ENOMEM;
-+
-+	pdfc->regmap = syscon_node_to_regmap(dev->of_node->parent);
-+	if (IS_ERR(pdfc->regmap))
-+		return dev_err_probe(dev, PTR_ERR(pdfc->regmap),
-+				     "failed to get regmap\n");
-+
-+	pdfc->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-+	if (IS_ERR(pdfc->next_bridge))
-+		return dev_err_probe(dev, PTR_ERR(pdfc->next_bridge),
-+				     "failed to get next bridge\n");
-+
-+	platform_set_drvdata(pdev, pdfc);
-+
-+	pdfc->dev = dev;
-+	pdfc->bridge.driver_private = pdfc;
-+	pdfc->bridge.funcs = &imx93_pdfc_bridge_funcs;
-+	pdfc->bridge.of_node = dev->of_node;
-+
-+	drm_bridge_add(&pdfc->bridge);
-+
-+	return 0;
-+}
-+
-+static void imx93_pdfc_bridge_remove(struct platform_device *pdev)
-+{
-+	struct imx93_pdfc *pdfc = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&pdfc->bridge);
-+}
-+
-+static const struct of_device_id imx93_pdfc_dt_ids[] = {
-+	{ .compatible = "nxp,imx93-pdfc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, imx93_pdfc_dt_ids);
-+
-+static struct platform_driver imx93_pdfc_bridge_driver = {
-+	.probe	= imx93_pdfc_bridge_probe,
-+	.remove_new = imx93_pdfc_bridge_remove,
-+	.driver	= {
-+		.of_match_table = imx93_pdfc_dt_ids,
-+		.name = "imx93_pdfc",
-+	},
-+};
-+module_platform_driver(imx93_pdfc_bridge_driver);
-+
-+MODULE_DESCRIPTION("NXP i.MX93 parallel display format configuration driver");
-+MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.34.1
+On 8/19/24 10:32, Joseph Qi wrote:
+> Looks good.
+> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> 
+> BTW, ocfs2 hasn't been tested thoroughly under 64k page, so I'm afraid
+> there are other bugs when running ocfs2 under 64k page.
+> 
+> On 8/18/24 6:31 PM, Heming Zhao wrote:
+>> On 8/15/24 17:21, Chi Zhiling wrote:
+>>> From: Chi Zhiling <chizhiling@kylinos.cn>
+>>>
+>>> In a guest virtual machine, we found that there is unexpected data
+>>> zeroing problem detected occassionly:
+>>>
+>>> XFS (vdb): Mounting V5 Filesystem
+>>> XFS (vdb): Ending clean mount
+>>> XFS (vdb): Metadata CRC error detected at xfs_refcountbt_read_verify+0x2c/0xf0, xfs_refcountbt block 0x200028
+>>> XFS (vdb): Unmount and run xfs_repair
+>>> XFS (vdb): First 128 bytes of corrupted metadata buffer:
+>>> 00000000e0cd2f5e: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000cafd57f5: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000d0298d7d: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000f0698484: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000adb789a7: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 000000005292b878: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000885b4700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> 00000000fd4b4df7: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>> XFS (vdb): metadata I/O error in "xfs_trans_read_buf_map" at daddr 0x200028 len 8 error 74
+>>> XFS (vdb): Error -117 recovering leftover CoW allocations.
+>>> XFS (vdb): xfs_do_force_shutdown(0x8) called from line 994 of file fs/xfs/xfs_mount.c.  Return address = 000000003a53523a
+>>> XFS (vdb): Corruption of in-memory data detected.  Shutting down filesystem
+>>> XFS (vdb): Please umount the filesystem and rectify the problem(s)
+>>>
+>>> It turns out that the root cause is from the physical host machine.
+>>> More specifically, it is caused by the ocfs2.
+>>>
+>>> when the page_size is 64k, the block should advance by 16 each time
+>>> instead of 1.
+>>> This will lead to a wrong mapping from the page to the disk, which
+>>> will zero some adjacent part of the disk.
+>>>
+>>> Suggested-by: Shida Zhang <zhangshida@kylinos.cn>
+>>> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+>>> ---
+>>>    fs/ocfs2/aops.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+>>> index d6c985cc6353..1fea43c33b6b 100644
+>>> --- a/fs/ocfs2/aops.c
+>>> +++ b/fs/ocfs2/aops.c
+>>> @@ -1187,7 +1187,7 @@ static int ocfs2_write_cluster(struct address_space *mapping,
+>>>              /* This is the direct io target page. */
+>>>            if (wc->w_pages[i] == NULL) {
+>>> -            p_blkno++;
+>>> +            p_blkno += (1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits));
+>>>                continue;
+>>>            }
+>>>    
+>>
+>> Looks good to me.
+>> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
 
 
