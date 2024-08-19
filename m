@@ -1,487 +1,167 @@
-Return-Path: <linux-kernel+bounces-291294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E8995608B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3CC95608D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294EB1C21147
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD16281ACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD516415;
-	Mon, 19 Aug 2024 00:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1145C179BC;
+	Mon, 19 Aug 2024 00:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="aAMTDVhz"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gp6ZKcYE"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C14DDC3;
-	Mon, 19 Aug 2024 00:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0D125BA;
+	Mon, 19 Aug 2024 00:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724027128; cv=none; b=XYlsVkavg75MIfo/1mG/yGH1l6kEsx42BwmvSMrhXHiTeia9PD17Ab8/x+TdESy5308AHk8rU0nFpSV1n12CMn+qLHsJt17OD84aVbt4xvh+i1/DYtw/g4hSuj3SUNG0l+8d2OZHCeXoTxSdz0A6adBuzPEZQcGQwApNB10C5UA=
+	t=1724027347; cv=none; b=R7i39zUWxVYTsYtOpii+OjxAxxg3k7oFMgAR2pStt3f8pHMiWYORUmvODPzQw9nj/j1S4VXMCzqpjRrIBHE/HUhn5KqBzsxCFyXZyGBtxCHM0pRHfTZb7+tcF8n+i7TUi/q6J4b6uH2Xmn7La0VzimnGJbpsAtoNiHciSe1Xeys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724027128; c=relaxed/simple;
-	bh=Eyq6wtaq6GXQhaVxZ+sC46NpntbeCVg5YOAsi2lmG1Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ecYEAFVfNprfPwUn/Zqh/bzRX7Awamsoz78TtdP3bzG18T/Hrz1SMt1uX6hM9Ib4g9BbRUtOu1y9nEOJ0zR1vXmxgKZRoEbGc6skz88FOZHeC5diP90OWyeTMijquWCLRwjp5xYX9NNbl4uQiIOgwoVBOQ07kYxLjkZQYDGaVpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=aAMTDVhz; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1724027347; c=relaxed/simple;
+	bh=Oi+NhraI2VmJmeKPZf8UBPFcjWlmlFYhCcnKuzVljZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwsQwdSQ1t49KNQ/uQyhyyktyFkEg5tB3IiNxe4iuIenWqpr0ft7QSe0YsA0AOLFKicCxuhlJCDSBUrKg5ONddElZv++eUWAgr2AVjjMCjgxRBudsQzcnzmqtHn1UxazBS//aT1JDVqJR06FFCZ4nrtBpeuJstFAyQ38UWpX0rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gp6ZKcYE; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1df0a9281so262304985a.1;
+        Sun, 18 Aug 2024 17:29:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1724027116;
-	bh=YHBMt5YHXuDbAcR41p94v9l4YRaVrhX1zks7CDq6P5Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=aAMTDVhzI85lw59mtUzROTQFzPNTIgpqDHJQu7y+nhQZwFslwQRXpAswy6XYhZ3WY
-	 kGrYtd5vrioIYWz4XdoWpXHLRtKGCxY+0bi+ajVDHkiKF8vHaidRP6ntEGB82ABMCo
-	 ekhOI9JUImztTDWt60/cCisWxvdptHF3Dy+DqLfoMfaDMEhgeKN3LFeEviYiyrADev
-	 zwWKxGFSf+i/eP0XHdPPZPY5kikaKbORHvaVkuWlGSvRz1JN0c6EmHO61pTbXTq0Kk
-	 2YOauRdYdXvhs5UCBKI/YWU0Bd2tXMEgRHc8McqYvCRBv27JkHUqvOS9du1xjg3qcu
-	 rSOvnql0UGfgw==
-Received: from [192.168.68.112] (ppp118-210-94-119.adl-adc-lon-bras32.tpg.internode.on.net [118.210.94.119])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 09EF864BE9;
-	Mon, 19 Aug 2024 08:25:13 +0800 (AWST)
-Message-ID: <bdeba6fae8db2dd73ae668f6e228f8378fa439bd.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v12 01/28] ARM: dts: aspeed: yosemite4: Revise i2c-mux
- devices
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date: Mon, 19 Aug 2024 09:55:11 +0930
-In-Reply-To: <20240816092417.3651434-2-Delphine_CC_Chiu@wiwynn.com>
-References: <20240816092417.3651434-1-Delphine_CC_Chiu@wiwynn.com>
-	 <20240816092417.3651434-2-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1724027345; x=1724632145; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5AzRw4Ng5DlmqxlU3RfYDaBWap+7V+NPvtomq7FwMQ=;
+        b=gp6ZKcYEKxRNM5nlI+mvbiJo6jEaT96xe1tcYzKzLj60dVTtn2RQI25rNmF8xnKV13
+         dFmfDcY92tlJjRdqBhthjOaVtpc0E0FJwExLVNg8pZA2Rq7QU4JZbhSiGgYVBlJet83i
+         2uYA14vMv0b7My8sdwwIfhXiRvR+r+Qx+MEe319Z7QbzisI+lDazYoeyzY7/7DWfjICm
+         PiwUnmJnf7HBlsD7CwHVOUrL4ppHxK9THJENjY2mpeX859DXB3z2ML4G8StdQhTNaiR/
+         juE/lqAa+qbVZRChL5NZlcU++Cl8AAcxP5HXNYqRe9Y8lHAGoIBOSSgtD/fMcWOqruIK
+         P0/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724027345; x=1724632145;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C5AzRw4Ng5DlmqxlU3RfYDaBWap+7V+NPvtomq7FwMQ=;
+        b=TSVaVPkKo4ukufMgMtTJ2xnEKqz1RsoNd82HL7AGyd5f4la0McLC4X1xBE66Otd0zQ
+         HYsg96Z//g3nch6yjM9dySR/1v5rysptK9kV76F/agi4tcoUK96PZ2H9iL9tR1st1Cme
+         vSmuI7jpGVenHgCt64PeN9MKiRMo+QCgGGbaWni0nHlpqxqv/2hL5MS6Xra1MG0mSdSx
+         74a6ho3jfFEh10MuBh3YM07HmyyaCPBcIac66/9xcl+zO4bcAH4LEhMA5fTcHFzB48xL
+         H+J8IZLaZauAYBi1XC632L/4bJ6U5KBKaXQsvRvgEhKsYwTjk/cylWA7PMlUucrr21gq
+         TMrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj16F7ZcCGDMPmNgFOba1nubdl5ypS62JKYrrEhzsBNKRaMOTAkjyblyN9X7diqNGsaXoj1vee95q5S0mSnfQzEXmYUiMlsS2Gocw3OSux5MFPgrOnq7U4XLtLSTS1RUEqbHQVpsdTVsfsQX8=
+X-Gm-Message-State: AOJu0YxyBOBaX7ZtiYsKeBa5OIp0XJNdHGiYHjrCdBmEyVIRm7sN5eMk
+	F69YQk38Z2D9enToqtscLZQz/mqWNQ/VAtKMjhLsLlUgW7Vyo2b4
+X-Google-Smtp-Source: AGHT+IHyg3d0sd7EOkoXZNh7PYyheSgaE/cf9pEAgw6nG1HNq1wcYHflrlmiHCm3ngWESSZjYZFp1Q==
+X-Received: by 2002:a05:620a:2903:b0:79f:104a:ba4e with SMTP id af79cd13be357-7a506901bafmr1353451885a.13.1724027344585;
+        Sun, 18 Aug 2024 17:29:04 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff051b84sm387503185a.35.2024.08.18.17.29.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 17:29:04 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id C0F141200068;
+	Sun, 18 Aug 2024 20:29:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Sun, 18 Aug 2024 20:29:03 -0400
+X-ME-Sender: <xms:z5HCZt4x7y6dp95AenBSAeGTrAOM0ay2kMnaVVH0du6GvCRgKffIlg>
+    <xme:z5HCZq7LQ6dwcpbcR-xV_-4mHD1geVH45urLu07jTfXscFOfMZ2_QLhXfWsZXQ87W
+    -riBEossfSpeI2Y2Q>
+X-ME-Received: <xmr:z5HCZkdlpMDaOKwxECwm4GUOnxRRUIMV1O6sMxijzaOWQChBEEQwveJeRkyVxA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddufedgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
+    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedufedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnug
+    honhhishesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdr
+    nhgvthdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfigvughsohhn
+    rghfsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtoh
+    hnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothho
+    nhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehsrghmshhunhhgrdgtohhmpd
+    hrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:z5HCZmJVVO2p3fxktUEVE8iAnVa74nMUEEe81hfFayt50GuZ1AEkZA>
+    <xmx:z5HCZhIrOsCTnsS6pJCnF13ur28IlUpKUd-Hn6OvAmQGB89SVjHO1Q>
+    <xmx:z5HCZvwe9ewDibH2lYKodf7wj_acCRcKc6ZoYgXGms1b2pVnD2L3sA>
+    <xmx:z5HCZtIqIqmMItP9i-_CECVWpu7c58Vm6EVg1Y6q7Xv4ilb9mP_OpA>
+    <xmx:z5HCZka0TVTs4bM1WoJpoqYlBY0ZOh9rMtFEd6iZ4oQvN3c7tBqV3k9t>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 18 Aug 2024 20:29:03 -0400 (EDT)
+Date: Sun, 18 Aug 2024 17:27:23 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: rust: auto generate rust helper exports
+Message-ID: <ZsKRax0h-Fes3mpU@boqun-archlinux>
+References: <20240817165302.3852499-1-gary@garyguo.net>
+ <ZsFEpjvE9osKDb3b@boqun-archlinux>
+ <CANiq72k81VrS+3Skh7gfYzkcxTsGscUJOhroV4MXH-LZgroZFg@mail.gmail.com>
+ <20240819005637.47e7045f.gary@garyguo.net>
+ <CANiq72kGyuhthMQA7bLaVduUS08AuVf-805_e0w9_vwBp0JcGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kGyuhthMQA7bLaVduUS08AuVf-805_e0w9_vwBp0JcGA@mail.gmail.com>
 
-On Fri, 2024-08-16 at 17:23 +0800, Delphine CC Chiu wrote:
-> Revise Yosemite 4 devicetree for devices behind i2c-mux
-> - Add gpio and eeprom behind i2c-mux
-> - Remove redundant idle-state setting for i2c-mux
->=20
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-> ---
->  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 381 ++++++++++++++++--
->  1 file changed, 347 insertions(+), 34 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b=
-/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> index 98477792aa00..ce206e2c461b 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> @@ -17,6 +17,25 @@ aliases {
->  		serial6 =3D &uart7;
->  		serial7 =3D &uart8;
->  		serial8 =3D &uart9;
-> +
-> +		i2c16 =3D &imux16;
-> +		i2c17 =3D &imux17;
-> +		i2c18 =3D &imux18;
-> +		i2c19 =3D &imux19;
-> +		i2c20 =3D &imux20;
-> +		i2c21 =3D &imux21;
-> +		i2c22 =3D &imux22;
-> +		i2c23 =3D &imux23;
-> +		i2c24 =3D &imux24;
-> +		i2c25 =3D &imux25;
-> +		i2c26 =3D &imux26;
-> +		i2c27 =3D &imux27;
-> +		i2c28 =3D &imux28;
-> +		i2c29 =3D &imux29;
-> +		i2c30 =3D &imux30;
-> +		i2c31 =3D &imux31;
-> +		i2c32 =3D &imux32;
-> +		i2c33 =3D &imux33;
->  	};
-> =20
->  	chosen {
-> @@ -259,9 +278,109 @@ &i2c8 {
->  	bus-frequency =3D <400000>;
->  	i2c-mux@70 {
->  		compatible =3D "nxp,pca9544";
-> -		idle-state =3D <0>;
->  		i2c-mux-idle-disconnect;
->  		reg =3D <0x70>;
-> +
-> +		imux16: i2c@0 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <0>;
-> +
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux17: i2c@1 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <1>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux18: i2c@2 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <2>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux19: i2c@3 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <3>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
->  	};
->  };
-> =20
-> @@ -270,15 +389,174 @@ &i2c9 {
->  	bus-frequency =3D <400000>;
->  	i2c-mux@71 {
->  		compatible =3D "nxp,pca9544";
-> -		idle-state =3D <0>;
->  		i2c-mux-idle-disconnect;
->  		reg =3D <0x71>;
-> +
-> +		imux20: i2c@0 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <0>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux21: i2c@1 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <1>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux22: i2c@2 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <2>;
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
-> +
-> +		imux23: i2c@3 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <3>;
-> +
-> +			gpio@49 {
-> +				compatible =3D "nxp,pca9537";
-> +				reg =3D <0x49>;
-> +			};
-> +
-> +			eeprom@50 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x50>;
-> +			};
-> +
-> +			eeprom@51 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x51>;
-> +			};
-> +
-> +			eeprom@54 {
-> +				compatible =3D "atmel,24c128";
-> +				reg =3D <0x54>;
-> +			};
-> +		};
->  	};
->  };
-> =20
->  &i2c10 {
->  	status =3D "okay";
->  	bus-frequency =3D <400000>;
-> +	i2c-mux@74 {
-> +		compatible =3D "nxp,pca9544";
-> +		i2c-mux-idle-disconnect;
-> +		reg =3D <0x74>;
-> +
-> +		imux28: i2c@0 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <0>;
-> +
-> +			gpio@20 {
-> +				compatible =3D "nxp,pca9506";
-> +				reg =3D <0x20>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +			};
-> +
-> +			gpio@21 {
-> +				compatible =3D "nxp,pca9506";
-> +				reg =3D <0x21>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +			};
-> +
-> +			gpio@22 {
-> +				compatible =3D "nxp,pca9506";
-> +				reg =3D <0x22>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +			};
-> +
-> +			gpio@23 {
-> +				compatible =3D "nxp,pca9506";
-> +				reg =3D <0x23>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +			};
-> +
-> +			gpio@24 {
-> +				compatible =3D "nxp,pca9506";
-> +				reg =3D <0x24>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
-> +				gpio-line-names =3D
-> +				"","","","",
-> +				"NIC0_MAIN_PWR_EN","NIC1_MAIN_PWR_EN",
-> +				"NIC2_MAIN_PWR_EN","NIC3_MAIN_PWR_EN",
-> +				"","","","","","","","",
-> +				"","","","","","","","",
-> +				"","","","","","","","";
-> +			};
-> +		};
-> +
-> +		imux29: i2c@1 {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +			reg =3D <1>;
-> +		};
-> +	};
->  };
-> =20
->  &i2c11 {
-> @@ -440,16 +718,14 @@ eeprom@51 {
->  		reg =3D <0x51>;
->  	};
-> =20
-> -	i2c-mux@71 {
-> -		compatible =3D "nxp,pca9846";
-> +	i2c-mux@74 {
-> +		compatible =3D "nxp,pca9546";
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> -
-> -		idle-state =3D <0>;
->  		i2c-mux-idle-disconnect;
-> -		reg =3D <0x71>;
-> +		reg =3D <0x74>;
-> =20
-> -		i2c@0 {
-> +		imux30: i2c@0 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
->  			reg =3D <0>;
-> @@ -457,26 +733,26 @@ i2c@0 {
->  			adc@1f {
->  				compatible =3D "ti,adc128d818";
->  				reg =3D <0x1f>;
-> -				ti,mode =3D /bits/ 8 <2>;
-> +				ti,mode =3D /bits/ 8 <1>;
->  			};
-> =20
->  			pwm@20{
-> -				compatible =3D "max31790";
-> +				compatible =3D "maxim,max31790";
-> +				pwm-as-tach =3D <4 5>;
->  				reg =3D <0x20>;
-> -				#address-cells =3D <1>;
-> -				#size-cells =3D <0>;
->  			};
-> =20
->  			gpio@22{
->  				compatible =3D "ti,tca6424";
->  				reg =3D <0x22>;
-> +				gpio-controller;
-> +				#gpio-cells =3D <2>;
->  			};
-> =20
-> -			pwm@23{
-> -				compatible =3D "max31790";
-> -				reg =3D <0x23>;
-> -				#address-cells =3D <1>;
-> -				#size-cells =3D <0>;
-> +			pwm@2f{
-> +				compatible =3D "maxim,max31790";
-> +				pwm-as-tach =3D <4 5>;
-> +				reg =3D <0x2f>;
->  			};
-> =20
->  			adc@33 {
-> @@ -499,34 +775,34 @@ gpio@61 {
->  			};
->  		};
-> =20
-> -		i2c@1 {
-> +		imux31: i2c@1 {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
-> -			reg =3D <0>;
-> +			reg =3D <1>;
-> =20
->  			adc@1f {
->  				compatible =3D "ti,adc128d818";
->  				reg =3D <0x1f>;
-> -				ti,mode =3D /bits/ 8 <2>;
-> +				ti,mode =3D /bits/ 8 <1>;
->  			};
-> =20
->  			pwm@20{
-> -				compatible =3D "max31790";
-> +				compatible =3D "maxim,max31790";
+On Mon, Aug 19, 2024 at 02:17:08AM +0200, Miguel Ojeda wrote:
+> On Mon, Aug 19, 2024 at 1:56 AM Gary Guo <gary@garyguo.net> wrote:
+> >
+> > It's the mistake on my patch. I noticed the exact issue while I was
+> > trying to rebase my helper-lto patch :)
+> >
+> > I believe that reason that it builds fine for me previously and for
+> > Boqun was that we didn't delete the helpers.o generated prior to
+> > applying the helper split patch, and we know that kbuild is not
+> > hermetic.
+> 
 
-The max31790 binding isn't yet upstream[1]. Please drop these nodes
-entirely until the binding has been accepted. You can send a follow-up
-patch adding them once it is merged.
+Oh yes, that's the case, I have a .kunit/rust/helpers.o created at Aug 7
+:-(
 
-Please make sure to run `./scripts/checkpatch.pl` and `make dtbs_check`
-on your changes.
+> Yeah, probably it was that -- as you say, it would require a stale
+> `rust/helpers.o` from a build before Andreas' patch (and not just
+> before this patch).
+> 
+> > Your rebase and the fix is identical to the one I got locally, and I
+> > can confirm that it compiles fine for a clean build.
+> 
+> Thanks a lot for taking a look!
+> 
 
-Andrew
+Let me rerun your fixed version.
 
-[1]: https://lore.kernel.org/all/20240813084152.25002-1-chanh@os.amperecomp=
-uting.com/
+Regards,
+Boqun
+
+> Cheers,
+> Miguel
 
