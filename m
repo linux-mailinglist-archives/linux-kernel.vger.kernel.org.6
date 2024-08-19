@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-291735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C4495660C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:52:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD92956617
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B62E1C21CB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C96A1C217C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C020D15B560;
-	Mon, 19 Aug 2024 08:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADBF15B966;
+	Mon, 19 Aug 2024 08:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy2nHaH9"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hhADqs6v"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9900C14BF8A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A514BF8A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057569; cv=none; b=Jxd4MpNj6ysgr67uxsUC6jB1myRZPINNItrbXckq5UwcQE0863c4nKBdMrSllZ4LRiGfaDBtxb+1tB05jMKwxfiJdEpOLuEUrQ6qDnDJGUjlx8uwXN52dsFHLUM53U2EwM83vbdq0TnJfFnvdmOjXu4kutowrlqkfihIF64IBmQ=
+	t=1724057638; cv=none; b=VYTB+1bb+5IELk0K1e8Fv+ULYVXy31tsNJ+fpYpXdjKPHf2/RjXkVy+qAF67sm/UUEkyjjtzL/i8jhy57WsMa5qi/XI9mOKj7XBPIQrYXhiynx1dlbauSAlpjEnU0TVMK7ia7+cosRrT4jH/cnUzW7sqFs6mg0sSsQ6MEkt3b2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057569; c=relaxed/simple;
-	bh=T5chdCGstKz2GQrS2kG/64adcjjI1jnaYsuqfnGBHws=;
+	s=arc-20240116; t=1724057638; c=relaxed/simple;
+	bh=duisPaF99h1QGDc7w5KfbNowwVwLiE+CnodhKJpG2KU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlseA3s744osnmuhyew8TVfztovXLZf/81T/ykvq2fcckEYIqzlVsBvt/nwS3oQTg1qooI5ILOU7YSQtp/atHWLuT2ueWOfrCZZpV01E/25fUL/Bi4Qc0L9dCABm9bDeEuI08KccJSc4nLdm3fRwOlKEYE4ot3i+Evy2zwqmX+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy2nHaH9; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f6c136a947so1929265e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:52:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=NGcc52lJkryj0BspQhqaDyLHBA/ptRvp4aikFsjtYwpmg8Tu234dVWxnFP6htZRZH2ygccDNlFDQ3k0g1SN6tDNV7SFMpGF8AFZzxCxw0w4ih8l212canD8wJri+9aht6DUcktp+bTXbzXkb2hBn0Ra48g6Kx1Jvg+vCpCxLjX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=hhADqs6v; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so461898666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724057566; x=1724662366; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1724057635; x=1724662435; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T5chdCGstKz2GQrS2kG/64adcjjI1jnaYsuqfnGBHws=;
-        b=Oy2nHaH9XooYX65Nh4m2efKaZUgsbXOheXJGV3o78yvOJnwHa2WRUCzZnB01e4aawV
-         UR0aVU3wbSUxXKK2VI6MgyuAWrV/XKwMk9LdiaWkLyqekb0ANfYmU8GCYTEHO5MYhWwj
-         Vd6w25iYMAF+hFGq5nbLbQG91AnQoGsjoBVjH3WIS0zu+C3qDLOoDvRoqj2EjCuS9Pin
-         IIgjqL1P1dUnnRiuYgvZTnJUt5uCDUbQq6KcrP1otecHmm1HgbijCbEuAiW31C24hSjr
-         rknXVmShXXAUFvv8IAWwD1AHYQT3lZbZRFyaXYnEeFccZ6AtZaJCOxngH9TuhcFj1Dn5
-         4X1Q==
+        bh=aKZ8pSOBWlZZSsrnuVDr/6cUoiTT3d+hpV6fHxCOG0I=;
+        b=hhADqs6vCVFlc71XflmSbgATodTZC0L+FpDrUvk9DWKKctxM7Glg+RpSIJux2FtWLR
+         qm55FhVtBm/u0oo8Gurz1xwXXlkcjPiz5OZfUmV5tpAlQfKIZlmMQgg18qgptFg3I09l
+         7JEHZUEAsVG1vkQwxLDoGyaIFNFw8kJWZYCB8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724057566; x=1724662366;
+        d=1e100.net; s=20230601; t=1724057635; x=1724662435;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T5chdCGstKz2GQrS2kG/64adcjjI1jnaYsuqfnGBHws=;
-        b=vpngYS2k+5lR4nUA0ZH/VCVgHwayerpKG2t3GrDPDXKFtbiWC5pKbVzOX7hHj4qqBD
-         lsCv9qSXenE95n1/rsMRrA48uF+COzPKndvgAfhJVPQRsBxjWQWvI9Uq13fyCjGKukJA
-         iDIquCgkz8ffN3pz6E+AtNKOnPa/i9hh7BJkDL3e5AHECqzJVV00CrWXuKCnkzKPoCeO
-         8gUmHB5i6HBeiGJ6xcukpWwyYHXTakF/YlYFaqMMpwtrR6guk3bjky/9eAMEi0wunMnR
-         lDpy9ZkLegtPZgBSEJ1bWDQHShsoGYzCSwei9SGx8qEKdK3wfNygjCXD2ZeA8JD/sFGU
-         /RAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUINOL0iqsGudmt5spOh/O92QW9TpjUM2XZTId3amuDgqMO74eCbgTxeaVfLSVGzYtGuZzNa6FOgdowWjnD40LcVX17g91sesJbRz7F
-X-Gm-Message-State: AOJu0YxVYyzLVb4OkYOUOU4yqosk0eaeckGdz0iDmDiTm2jr2dYk+oGJ
-	zTSgLvG3i0p+Jl0G/iwJX+vcXN1+P4vcAxd0La92c0agj3rp6dS+kApKAAzkZ4UvgVAHCSSU1Ki
-	8OxDfHfBd7IqJM13JSaoKfzetCdk=
-X-Google-Smtp-Source: AGHT+IEpHyWNl04LZuaLolZ85bfdEpT6t4WsvZXZV5km2djGlvxgDnpQ3AwcVCe+cguEt27JTvZVvjECqMan+18xDK8=
-X-Received: by 2002:a05:6122:291a:b0:4f5:2aa9:a447 with SMTP id
- 71dfb90a1353d-4fc6c9f26c5mr10666129e0c.11.1724057566337; Mon, 19 Aug 2024
- 01:52:46 -0700 (PDT)
+        bh=aKZ8pSOBWlZZSsrnuVDr/6cUoiTT3d+hpV6fHxCOG0I=;
+        b=kWOi/rhVxobPe162BwBvC8VSQpwN7ygs71Cky0p26i/Up2ePVLvAVj0RXRziO8JM5u
+         52Ve1LtGYtd4zgsYFluPv9U0TWRUQ6qS7aPTVIWneE+vlCxkojotl/ZGHm3KxHP4wKso
+         N1nS9seLcD9VSW+LyyV9maKYd2xvC8mY8+RJxaF3We+wd2Hm67X4WzRa9Tfcs+kIFRDy
+         NOYCmQpHVNdFu4leLSZerBvjq9OeG0pDhOjjtt1u4O4AHjY6bus4K0WPltdEbp7x/pJx
+         MhSkypwR3QUwAbdMqvG8/OSk8bMI/fO5HStfQvBtf5tqcGnV5jqSsD70lK1LPkERCu1/
+         QL0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeh/vYXjmN2zbjmg0jkRa+rm2VLVQ3dM+rZ8sDtALnCpspGI5qqscPtW25FDkuxxLpU1C7FdVWW/5T92/vQk2YzbGD9INdAr1fFj+u
+X-Gm-Message-State: AOJu0YyF/3p2/hkOFZFtJod7h/y15u3+XBFB6F0mLoFEGnc52DGKWzD2
+	YHNDHNirylq0rJGCznMeZZHV81mbBws2MTDUFjXceXBNAiVd6ikQMijCBrm71R1zhoZ3mcLUUZt
+	P8U7OIpzgSyS50zOERVi/Mv98Sa+hlHo1iRuw1azPb/UZsUCtfec=
+X-Google-Smtp-Source: AGHT+IH5f41WTN7U3XVgASY9kyBQoORIJWx+menryiexaeWj3zUhtNU3J0xXlluQIgdHTt9JvaRUCfPMaDN111J7loc=
+X-Received: by 2002:a17:907:f796:b0:a72:5470:1d6a with SMTP id
+ a640c23a62f3a-a839295601emr767963666b.35.1724057634101; Mon, 19 Aug 2024
+ 01:53:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811224940.39876-1-21cnbao@gmail.com> <CAGsJ_4yMu=aaQZEXtcwCdMgrxUuqQ-9P1AiqyyVLfehD_-my9A@mail.gmail.com>
- <c817bf05-a9fa-4fb9-b8c6-a1de5a44e59a@redhat.com> <CAGsJ_4xaTSu2_F3VaR7Y3bOz2+W9XRU9kS3j7Hatojc6ocpOWQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xaTSu2_F3VaR7Y3bOz2+W9XRU9kS3j7Hatojc6ocpOWQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 19 Aug 2024 20:52:35 +1200
-Message-ID: <CAGsJ_4y30MVPDrE24okwxi5MYwM6o1ZnK0Vdub+DoEgWnM6+FQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] mm: collect the number of anon mTHP
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	Usama Arif <usamaarif642@gmail.com>, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
-	hanchuanhua@oppo.com, ioworker0@gmail.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com, 
-	v-songbaohua@oppo.com, ziy@nvidia.com, yuanshuai@oppo.com
+References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081608-punch-coherent-d29e@gregkh> <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
+ <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
+ <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081652-unify-unlucky-28d2@gregkh> <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com> <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+In-Reply-To: <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Mon, 19 Aug 2024 10:53:42 +0200
+Message-ID: <CAOf5uwk-De+dCaL-xZMByFoMoxD7X1_KnOriq1MKAz5s+mOFiw@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH_v1=5D_usb=3A_gadget=3A_u=5Fserial=3A_check_?=
+	=?UTF-8?Q?Null_pointer_in_EP_callback?=
+To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>, 
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"opensource.kernel" <opensource.kernel@vivo.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 8:33=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
+Hi
+
+On Mon, Aug 19, 2024 at 10:48=E2=80=AFAM =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulia=
+nqin@vivo.com> wrote:
 >
-> On Mon, Aug 19, 2024 at 8:28=E2=80=AFPM David Hildenbrand <david@redhat.c=
-om> wrote:
-> >
-> > On 18.08.24 09:58, Barry Song wrote:
-> > > Hi Andrew, David, Usama,
-> > >
-> > > I'm attempting to rebase this series on top of Usama's
-> > > [PATCH v3 0/6] mm: split underutilized THPs[1]
-> > >
-> > > However, I feel it is impossible and we might be tackling things
-> > > in the wrong order.
-> >
-> > Is just the ordering suboptimal (which can/will get resolved one way or
-> > the other), or is there something fundamental that will make this serie=
-s
-> > here "impossible"?
+> Hello linux community expert:
 >
-> i think it is just the ordering suboptimal. Ideally, mTHP counters can go
-> first, then the new partially_mapped feature will rebase on top of
-> mTHP counters.
-
-Sorry, please allow me to ramble a bit more.
-
-The nr_split_deferred counter is straightforward and simple without the
-partially_mapped feature. Each time we enter split_list, we increment by
-1, and when we leave, we decrement by 1.
-
-With the new partially_mapped feature, we can enter split_list without
-actually being partially_mapped. If the MTHP counter series is processed
-first, the partially_mapped series can handle all cases while properly
-clearing and setting the partially_mapped flag. These flag operations
-need to be handled carefully.
-Currently, I notice that Usama's series is clearing the flag unconditionall=
-y
-in all cases.
-
-In simple terms, mTHP counters are just a counting mechanism that
-doesn't introduce new features. However, partially_mapped is a new
-feature. A better approach might be to handle the counters first, then
-ensure that the new feature doesn't break the counter.
-
+> >> >>I think this has been reported previously, and different patches hav=
+e been proposed, have you searched the archives?
+> >> > I haven't seen the patch given below before, I will read it carefull=
+y.
+> >> > I searched for Linux mainline commits before submitting, but I only =
+compared them according to the crash stack information and did not notice t=
+he following commit.
+> >>  I checked the stack trace again. The problem we encountered seems dif=
+ferent from the problem reported in the link below, and they are not caused=
+ by the same reason.
+> >>
 >
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
+> >Did you apply the patch? as suggested, is the test moving from one gadge=
+t to the other?
+>  We apply the patch into kernel 5.15 and ran a stress test, and the probl=
+em did not recur.
 
-Thanks
-Barry
+It means that does not happen again?
+
+>  Connect the phone to the PC via a USB cable and run the monkey test (run=
+ an apk and click on it at will on the phone interface).
+>
+
+Yes I know but this monkey test is running a stress test moving from
+usb storage, to other configfs right?
+
+Michael
+
+> Thanks
+
+
+
+--=20
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
