@@ -1,101 +1,164 @@
-Return-Path: <linux-kernel+bounces-292048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7865956A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08352956A84
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6D91F216A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D3B285840
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E32E16B39D;
-	Mon, 19 Aug 2024 12:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C260B16B38F;
+	Mon, 19 Aug 2024 12:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFIlOFoc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lDiDNa5F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n8zFVONy"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE38166312;
-	Mon, 19 Aug 2024 12:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3387C13DBA0;
+	Mon, 19 Aug 2024 12:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069392; cv=none; b=LAac5eAT42YqJ03Lz+RSDQgmoc2jAqQncXW0c9Ot+xw/7iFeGsNojzCPod3TyvSSBjoe9RkmRsSlpq0Ty8MO3VNWup1bW7bT9k4ubOqShFcDBIaD9HssDDGHniQBhehuJwz+OgbYjyNJnCwGUB8oCdm9Guh3pOM2bHcDKRfJa4Q=
+	t=1724069412; cv=none; b=GigDflWmZOaKsKXXJX1ZTVkXEWS8/VF1Syt71un+Be6DNFPywJon3gIN2YsW0UEd9SsfKxAiEmcjkL70uIqqIRl/TOVekijKGDKTLAMmByJA5nAbWOWpJjcQWGRCsBJtnZs7LPi53oZb8wa/q3edXVP/g/H8WvigCDazqAp5mLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069392; c=relaxed/simple;
-	bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O1WNcn9Iess4FikIa4BhPQ6XRQpEBbrk6BsZKXEvbuMtiHcfIo9HydcAQJtTb4gCWv8e7MCZE0wwNeJ3muFY3tGkQuNKNrf+A/Rv0B0+hibltsiLcKHQH0z2UfFEF7I1QqF4siXsVcP5oxmVDXlMqsM/CxBRAFnAQN5hmXVRN7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFIlOFoc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6DAC32782;
-	Mon, 19 Aug 2024 12:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724069391;
-	bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PFIlOFocyb8U5EG+OiDTL9h4psZTVfNqbW5ZuCyJZk6y5NwbSnM4EQAngrzBUcmKH
-	 w9JTIo47Qqk5t6H/iD6Yzqtgq/ALqU7rTfPLO8MBA0CJkKgnCWO8iPCVNOCFVlYm1e
-	 ttBzvFsuucpRbmj4mm38F5wTBlLCWgWsfigBsbUEnZMHgpIO49DxueqAkfmNCzvkeA
-	 cfNvcICoR61uLMs0LrxzS6X6YD+QFPFhfZ9HE1kO3P7SN/9MW7kuT87W5vF9CVC0LU
-	 I4Ks33B5OdMPZOr429DKwevEnpfbuD6kAuYun948OaIXBo9H0A4Q1VzHD6hlSk11m7
-	 d6G1em9iZhg5w==
-From: Christian Brauner <brauner@kernel.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	willy@infradead.org,
-	lizetao1@huawei.com,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Squashfs: Update code to not use page->index
-Date: Mon, 19 Aug 2024 14:09:35 +0200
-Message-ID: <20240819-serpentinen-thema-e13d7625bbfa@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240818235847.170468-1-phillip@squashfs.org.uk>
-References: <20240818235847.170468-1-phillip@squashfs.org.uk>
+	s=arc-20240116; t=1724069412; c=relaxed/simple;
+	bh=g4fRxWdtB8cYXd/knv7r4y7hJBEWUWWSYMT/zc+T5/4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SO3jWtMgkrTvb3FyFJlqTfvmqaJh4j3THSIZ1kt/CWvYGwyibNY9kYo6cRpRima6q5sSoMndI02riBTsv5r1esRXBn/aQuBaIOXL4avIW2srKlweODzpZszNlOwjlTq5knEyoMrXSBLkTbTmcq3o5ai1elell1XoVAKyOuY9GmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lDiDNa5F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n8zFVONy; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 34FDE138FFAD;
+	Mon, 19 Aug 2024 08:10:10 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 08:10:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724069410;
+	 x=1724155810; bh=w4XxV8t7d4FBrTlqfBcRiEblpXOgHlRWhYqqGC4/luU=; b=
+	lDiDNa5F/o9fcqf0G4hzpgGyH9KHBFgBzxWmc3LhYcEP9NkmvSR37b1D2Z0pYpwF
+	F0osr5zzhScCQCkIPNZBww3Tsk6sq1YwIm57bATTawnERylWjk33hIedQ2c21yBW
+	a1a9eB+EyUdgs34Q6NiIEu4ytg742QLXywYPWf+Xskfus7xIUsgOhez+Iscslh7v
+	h8vHxKWaP7nXLuIZ8CKbmTWQ2ujJULeyHKbZie3utA3+61wA35NyNzA7TnVuEPOo
+	pOjaQR6HF78lqBmrFiCdOugMKkPk7VBM/+43inH2D9Y5oQEDqmb1QOMpg3ekYjoa
+	T/iz4OWThMwUU1oRGl3sAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724069410; x=
+	1724155810; bh=w4XxV8t7d4FBrTlqfBcRiEblpXOgHlRWhYqqGC4/luU=; b=n
+	8zFVONynTFpiO6L7zJJqjx1ZGG6PLfOuRvZ8GbG7OxaEj81DrMicWtHJuvtv+G7T
+	Fk3yp4tx6H/sI1OZDsEltyp4A9QdwJRaCfDEQc0vkVZCKmsRzF4Ll4rLcvXQodAa
+	0IBLdhwoANZ1hJxb5UEIBWgD81A1SiVCam/zbK+ZgtrpEQsE7fjRg/S5XKXpQhuI
+	j/F64rTi3Eok6HjnCn/qVCHSJVTlP2rvov/ZyVXrN6o0YIfHbAbn+JbjbWjxCrEk
+	YZMRS9Ng9AQEyy4uFO8Xw1ii0iJCJq6lnP90SB7S6uctHLaTJo+pIjntbYGSqS/V
+	VPhgTcUNPQ9Mfio1+2khw==
+X-ME-Sender: <xms:ITbDZoyLPO9eJqFgc3Y8g_ilXhH2-2rSSNSxrU4yg9iEsoIOab8fLQ>
+    <xme:ITbDZsROLZemX0CwTOLEqXBXtq17VbRtZqrd7LRa-zRanSbIQHF9cXxMqkuygxrf4
+    b-snvuH-HLw9v9z5SU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedt
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
+    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
+    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
+    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
+    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
+    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:ITbDZqX5Hp9dIignNuuezrALmI7Z3798s0Sp-aEg0FJ8FndpyFtzJw>
+    <xmx:ITbDZmj1eRNKm8AKnOWhzhvXbxWiDMpOK8fpKOip8HW3XoLyHKbMEw>
+    <xmx:ITbDZqCxjIVWrZZBbEx2BuPhqg6sFTl8Y2CI7KNHj_2USD6olE70Fg>
+    <xmx:ITbDZnL940TwM96itHbUXhsH97zxAtJaJ8t3blm7ZpzJpwohX2DdSw>
+    <xmx:IjbDZs6tNV__PXm-XBUnUhSqXn4zSSBOI2f-ROyoA51sXjwvZSZwFOjW>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 969BC16005E; Mon, 19 Aug 2024 08:10:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1517; i=brauner@kernel.org; h=from:subject:message-id; bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQdNuOSv5/Yer3xA8+Rrd0mRqZzDxxafl/px4mGXsvOh OnqE5zudZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEdh0jQ/+jpaw1n88xr7Da GT/dYKFBxb67bs7lLzY938T0189iTSgjw8v3hi4Txf/wrv/CGHBln+9l85TJ08ovChzcwzijfsv NSRwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Aug 2024 14:09:49 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuntao Liu" <liuyuntao12@huawei.com>,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Corey Minyard" <minyard@acm.org>,
+ "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
+ "Alan Stern" <stern@rowland.harvard.edu>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ codrin.ciubotariu@microchip.com,
+ =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+ "Robert Richter" <rric@kernel.org>, "Andi Shyti" <andi.shyti@kernel.org>,
+ "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+ "Tony Luck" <tony.luck@intel.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>, morbidrsa@gmail.com,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Vinod Koul" <vkoul@kernel.org>, "Mark Brown" <broonie@kernel.org>,
+ "James Morse" <james.morse@arm.com>, "Daniel Mack" <daniel@zonque.org>
+Message-Id: <dabde7bf-dcff-47c6-a68d-f5018ab00282@app.fastmail.com>
+In-Reply-To: <20240819113855.787149-1-liuyuntao12@huawei.com>
+References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+Subject: Re: [PATCH -next 0/9] drivers: fix some module autoloading
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 19 Aug 2024 00:58:43 +0100, Phillip Lougher wrote:
-> In the near future page->index will be removed [1].  Any code which
-> still uses page->index needs to be updated.
-> 
-> This patch-set contains 4 patches which updates most of the code in
-> Squashfs.  The exceptions are functions which have been fixed in
-> recent patches [2] & [3].
-> 
-> [...]
+On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from platform_device_id table.
+>
+> Yuntao Liu (9):
+>   usb: ehci-mv: fix module autoloading
+>   soc: pxa: ssp: fix module autoloading
+>   misc: atmel-ssc: fix module autoloading
+>   i2c: at91: fix module autoloading
+>   mpc85xx_edac: fix module autoloading
+>   dmaengine: pxa: fix module autoloading
+>   dmaengine: mmp_pdma: fix module autoloading
+>   dmaengine: at_hdmac: fix module autoloading
+>   ipmi: ipmi_ssif: fix module autoloading
 
-Applied to the vfs.folio branch of the vfs/vfs.git tree.
-Patches in the vfs.folio branch should appear in linux-next soon.
+I looked at all the patches and found that most of them do not
+use the table any more, or will stop using it in the near future.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I think your work to validate the correctness of the entries
+is useful, but it may be more helpful to focus on removing
+all the unused tables, including those that have a
+MODULE_DEVICE_TABLE() tag.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+If you are planning to do more such cleanups, maybe you can
+go through them one subsystem at a time and look for drivers
+that have both of_device_id and i2c_device_id/platform_device_id/
+spi_device_id tables. If nothing in the kernel creates a device
+with the legacy string, you can then send a patch that removes
+the old device ID list and at the same time makes the DT support
+unconditional in case there is an #ifdef CONFIG_OF check.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+If the probe() function accesses platform_data, this would also
+be unused, allowing an even nicer cleanup of removing the
+platofrm_data path in favor of OF properties.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.folio
-
-[1/4] Squashfs: Update page_actor to not use page->index
-      https://git.kernel.org/vfs/vfs/c/2258e22f05af
-[2/4] Squashfs: Update squashfs_readahead() to not use page->index
-      https://git.kernel.org/vfs/vfs/c/6f09ffb1f4fa
-[3/4] Squashfs: Update squashfs_readpage_block() to not use page->index
-      https://git.kernel.org/vfs/vfs/c/7f73fcde4d93
-[4/4] Squashfs: Rewrite and update squashfs_readahead_fragment() to not use page->index
-      https://git.kernel.org/vfs/vfs/c/fd54fa6efe0d
+      Arnd
 
