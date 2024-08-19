@@ -1,167 +1,117 @@
-Return-Path: <linux-kernel+bounces-291283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FE995604C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:04:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2821956058
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4381C20BD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:04:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 504F8B20CC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2980EBE46;
-	Mon, 19 Aug 2024 00:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE0C4409;
+	Mon, 19 Aug 2024 00:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n3GZf9+4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eh7ett96";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n3GZf9+4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eh7ett96"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHe2iiE9"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C242F32;
-	Mon, 19 Aug 2024 00:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842961B969;
+	Mon, 19 Aug 2024 00:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724025871; cv=none; b=DlGK1vZWEyFuCMSr2X+5Y7qFqanwljHe83/mejhoXaoIvvQwp7uUbog9/MtsjrwJR1ydd21w/qhovGvzfNigo3PnvHxDPKAR/4FwX3yimo3zM1io5ybnTRMpt+B2maOCk2Kh0jAA4HQIcZNG1aCXQdYuWOCQvR44TTgKHXuLBEA=
+	t=1724025912; cv=none; b=vCUNrHLG3hF8gERT4+5iBe6WrnnSmqTumN+1USlkTO86wCqVFuyMDzOCJBHmk56b3YauWZXqucH2qsz2ApyVDZISLOqx3rkEd3DzYCjARmoBjQMlmOpjIM0b+owupbC3feJS52or8g3oO5eCTor2Vz4cl5+I6H5PcKsFan2lu4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724025871; c=relaxed/simple;
-	bh=9dIz3PEXhxqykFdhXh3S8uAB/PSD7Khb4HXhPZOh0vw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=IaBhpeQb1w+o+9b3fWBTuA8vzpRrYiJ9YOTLF1068xMoPLIV1LCk8aKANIrV2FSTfZGp5S/mzfczXZu/zz8O3TgXTNb2ZnzZW+V1/Cv2uLZ9BkDiCLT+QNu9JlclbbuguvQ9cZmqCx59C+SMrvTruZXIV60e4UqPI+aszM2bPDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n3GZf9+4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eh7ett96; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n3GZf9+4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eh7ett96; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4224C21FBD;
-	Mon, 19 Aug 2024 00:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724025862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
-	b=n3GZf9+4PJuyPNoesjoc13H2M2tVGUs94gt05nQCDSDCyVfy9prlY/ifoOCs2dHa2vRvmy
-	HqMxQg481i736ByGdj2gMjKbf27d/zwzgnC5uAasxZs4oTPEjshIMODVWeIA6rshdkR08B
-	Gz1Dzh3pAVI0ONIhqS5fB1hoX/1RH+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724025862;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
-	b=eh7ett96/mJjeF7ALmbbcmJyMhSC3rgoOYUlMoAsdjncxhAhdVvcwgEcFSdnRVJRsCBPTr
-	0SgKBiGPCV1QwkDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=n3GZf9+4;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eh7ett96
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724025862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
-	b=n3GZf9+4PJuyPNoesjoc13H2M2tVGUs94gt05nQCDSDCyVfy9prlY/ifoOCs2dHa2vRvmy
-	HqMxQg481i736ByGdj2gMjKbf27d/zwzgnC5uAasxZs4oTPEjshIMODVWeIA6rshdkR08B
-	Gz1Dzh3pAVI0ONIhqS5fB1hoX/1RH+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724025862;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
-	b=eh7ett96/mJjeF7ALmbbcmJyMhSC3rgoOYUlMoAsdjncxhAhdVvcwgEcFSdnRVJRsCBPTr
-	0SgKBiGPCV1QwkDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE21C139DE;
-	Mon, 19 Aug 2024 00:04:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nAorKAKMwmaoGQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 00:04:18 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1724025912; c=relaxed/simple;
+	bh=7Cs/GcWpyVhL5gYxVJ1vO9vBEGivY+MxkkfwkYOb7wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UiAQ1pPW/wr5A6PwWFuPDMTmrWPpCAq9lDXTcsxP1QN2W5vULVVPgNkNiyrdz5q6IeAqf+QXCOVtH2ZtTiwHrvD1oz3y/n5QYY6gcP+roLOM7OyQMFgyeonHs91J/1nHSulrmh+ezqdUovGSzevH6Q/Mt2sXitEBLPzNnE+3TOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHe2iiE9; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-492a3fe7e72so1383820137.1;
+        Sun, 18 Aug 2024 17:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724025908; x=1724630708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1a+pMjVUiB38viAahm/133wZD8Rs6DT0b99OGjjUQtk=;
+        b=UHe2iiE9b70vdPuiU7UsNf9f3krFHevB6zZq+pklV0kZdrQNbsWVeTMqchdmsfvqBd
+         PG1fFeYy6xcGjmny+jhv3/I5Nz7EexJAyOybZD0EcCrIKkBANKBkPOb8h6LLhuFYN825
+         JNoCkgAV0dPHXtUlt5z1WSpdbP9wF6r/+uBByukjGK6A+YE3GBR/V/IVwVlkzE2WA3EB
+         W6icG1UUj92Y/zNtuLraTc+Fy0LB06VmjBIaXw1WvaPYx9rd8ac7oNwnI6rU5Q70ReQO
+         qmdeGcJwougC4Vasarzrb+s90EOvIodlC1crk4rf2PIOcmwiPyyVxz8+CeexZo1msNup
+         5T7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724025908; x=1724630708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1a+pMjVUiB38viAahm/133wZD8Rs6DT0b99OGjjUQtk=;
+        b=gmaEf65p1/t0fVrFIcnkmORo9oqOlLCxaBvRRxfvki2VEo/+X/oYlOWq5y8gv7W9jk
+         B8AnLUQpaWJlky9O6UMlilvPVfRaYuI+DJcG/zSchr3YLq8DaL19iobN4EaDkw0Rr8se
+         wLOhBTy5r59l1JNp5jJ65ps5Stg1k5hAngaaMP/Ny5mUoEIixEWv6vS1SWHcM3eM3mIv
+         PAYOqivwGcHXVDztqj6wuzAxMujmL6afAUQD+QXXntSzcEtbvhHGP3sM+8xGol7/oOUx
+         AZuWWmWFQt850koGnGKs7yEoyG+XbhJg/NQ3ZMjjpgzM6HZ2BdV4w6JKZ8puniHTMtkA
+         CmNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaDaN1X1KhLMmMhlQeO0mRik2DHSTb1U/naXTA16VhcsZW/nahNBeQiqTctO0/Ogc7hZ1Dr2Jaliuogey3h62O1afECr4QK5X71ZzbDNPTuMldepXTAxg0ei4NaWOU9c4Fquki5esp5wA=
+X-Gm-Message-State: AOJu0YxrL1AIh6OwoeO/R90objHKzuKq6BEvGWO1wA53GjTW7WHptnby
+	IpEZMR+IZRUBPYvY3aYBoT9EVmaDwZP4TeFwcEb4u7UqhknWGRqaZT4zputY
+X-Google-Smtp-Source: AGHT+IEpXUILlUPddmYo7W2CRKE66lODnIsWxAcAlmui5Shq2CFrvjGYn+cbD6SkpaKct9q2XPJ3kg==
+X-Received: by 2002:a05:6102:c03:b0:492:96b5:aa0b with SMTP id ada2fe7eead31-4977990ec64mr11539081137.2.1724025907733;
+        Sun, 18 Aug 2024 17:05:07 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4976ff72f15sm1100398137.25.2024.08.18.17.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 17:05:07 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: stable@vger.kernel.org
+Cc: axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.15.y] block: use "unsigned long" for blk_validate_block_size().
+Date: Sun, 18 Aug 2024 20:05:02 -0400
+Message-ID: <20240819000502.2275929-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Tom Haynes" <loghyr@gmail.com>,
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH 1/3] nfsd: bring in support for delstid draft XDR encoding
-In-reply-to: <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
-References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>,
- <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
-Date: Mon, 19 Aug 2024 10:04:00 +1000
-Message-id: <172402584064.6062.2891331764461009092@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 4224C21FBD
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,netapp.com,talpey.com,kernel.org,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024, Jeff Layton wrote:
+Since lo_simple_ioctl(LOOP_SET_BLOCK_SIZE) and ioctl(NBD_SET_BLKSIZE) pass
+user-controlled "unsigned long arg" to blk_validate_block_size(),
+"unsigned long" should be used for validation.
 
-> +// Generated by lkxdrgen, with hand-edits.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Link: https://lore.kernel.org/r/9ecbf057-4375-c2db-ab53-e4cc0dff953d@i-love.sakura.ne.jp
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+(cherry picked from commit 37ae5a0f5287a52cf51242e76ccf198d02ffe495)
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+ include/linux/blkdev.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I *really* don't like having code in the kernel that is partly
-tool-generated and partly human-generated, and where the boundary isn't
-obvious (like separate files).
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 905844172cfd..c6d57814988d 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -235,7 +235,7 @@ struct request {
+ 	void *end_io_data;
+ };
+ 
+-static inline int blk_validate_block_size(unsigned int bsize)
++static inline int blk_validate_block_size(unsigned long bsize)
+ {
+ 	if (bsize < 512 || bsize > PAGE_SIZE || !is_power_of_2(bsize))
+ 		return -EINVAL;
+-- 
+2.43.0
 
-If we cannot use tool-generated code as-is, then let's fix the tool.
-If we cannot fix the tool, then include the raw output and a
-human-generated patch which the makefile combines.
-
-Ideally the tool should be in tools/, the .x file should be in fs/nfsd/
-and the makefile should apply the one to the other.  We are going to
-want to do that eventually and I think it should be priority.  The tool
-doesn't have to be bug-free before it lands (nothing is).
-
-A particular reason for this is that I cannot review tool-generated
-hand-editted code.  It is too noisy and I don't know which parts are
-worth closer inspection etc.
-
-Thanks,
-NeilBrown
 
