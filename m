@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-291355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC03C956125
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A414956129
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88837281815
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB258B20E1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6516324B34;
-	Mon, 19 Aug 2024 02:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540DA282FE;
+	Mon, 19 Aug 2024 02:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QS90XxLM"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NpYyzXPL"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011043.outbound.protection.outlook.com [52.101.70.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A821BC3F;
-	Mon, 19 Aug 2024 02:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724035091; cv=none; b=QXnGL2sPcFLOBwdX9UGid8Km66yqOszOUP1IzoJHecYVqK4iDNZvLqOdas044KEce4HedoiRt2LOkGhtG7bH5dwm63yrMopC7fZLmyXvq8jRWDfRb2ZF2si31xcJl8nrVEH59j6KjV8C4uchctHvX37SgyUUvCLNzS8Jr9kGfec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724035091; c=relaxed/simple;
-	bh=APWAWLqHGv+8k2O/zcUZPsdwye7ZKJK8e2KlRnavtiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QXFZGjaf6jHIy7qycINYe1OPe+X9wcOSmvelIjHHbyj9KEcxWTXbGGzdSHu90+Qg2h05+JZ1J4/EjCBXX8N4Pt1LaryuK1qgG3GVNopIq4JIXd5/cAU8nkdv2wAxVyiQ5LJ2p0psgo72OItIO7OXFQx+eIJUT+SRTE/ujEmDpAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QS90XxLM; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a4df9dc885so282271085a.0;
-        Sun, 18 Aug 2024 19:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724035089; x=1724639889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mI0z4qbYhXzeJGZNJKFvenZKA1XOL8A95IrbXV4PtLM=;
-        b=QS90XxLMzpw6sMUdcjsN9gjNtUaZt9GCNaEe5oBWvHOCF3Pzkt5gd9IBH8y7iU2hiO
-         nDK+zw4wQWa9mqhyopdGxtQxatql4vgLUON38vKMNepByncyA4/aF8tVghRKH9ugBa6Y
-         c4FNo/6x+2JrQ4eD7cpvy82O5JgnEoGIQE+4VZgOZpNU0hsJHFTbyUK4bU9cbhWZ478A
-         y9RtZfRltm+xikiaAwtOMU/yg2AVwpRNzIFHG//0/UXT9XQxGq2MtktQOxLuy7AgxjbU
-         GWlVH0qPT7W3X66pNb6xj4ZbFyU7mivdRJB+clo8jE93F6jfPmkDhkaYiLk8mWBaJ+nV
-         UV7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724035089; x=1724639889;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mI0z4qbYhXzeJGZNJKFvenZKA1XOL8A95IrbXV4PtLM=;
-        b=etkvJcrAgelf85IZIIpxB7+DxBsX9tT3IFfuYNXKITdUryfId0hjUmNwk0WqiY6ar2
-         soWvuLZqtqaBY1Ry5W6X6KRAt/qkq4wUPAC2vOzw64/Xefor5DklYzkl8KN8eIrYot4n
-         spKQSGw7c/TZYhZObuOGK1gTcBY2zcZmDCH+nn6BZBQvqlrnopL9DbE0MpWXflJ2ajxk
-         0IxCRdRBlnArzGS5uAbiDrtMgUGiJYecSQo8rFePVmyNesxprN7cBKRSy53moCpTwiy0
-         1u/SdOvRhpNtjzs/VFRiO3YRUzj8VeIKupRfBSzdhVRtfQUdPVJ5LoOqOmX/QX+yjoOL
-         oFog==
-X-Forwarded-Encrypted: i=1; AJvYcCWAa0VpozoulsGxu1k01gbFihx439ykH56HOD00ZXSirPxHLVSZukKz4o+uyAoGkeqBb4l+7K9HZhquNaR12JjA4Jgsz/ZGt+6DKpfM9/hMA7mUHvc4TjQNsumpVMQEJpgY1H9P20uy
-X-Gm-Message-State: AOJu0Yzh9yRBKG+B4A8H173QWNgc3FJ/LPbeDVGHScvyY54/jsiFTPOS
-	NJv3fkJ5P3IIC+aDeYdpap6+nsqL2mZAjw5bI9fFHDGadwBRkgh+
-X-Google-Smtp-Source: AGHT+IFZ49myeyGjxznVH4Zu0OvbTU5lWVEtVJuZ1O+hjGUExG8VO6LdaznL6XBwEaQJU6VLBIrF4g==
-X-Received: by 2002:a05:620a:4013:b0:79f:72f:2c60 with SMTP id af79cd13be357-7a50752170bmr1480619885a.26.1724035089090;
-        Sun, 18 Aug 2024 19:38:09 -0700 (PDT)
-Received: from [172.20.6.203] ([64.20.177.247])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff02b0c2sm396204985a.22.2024.08.18.19.38.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 19:38:08 -0700 (PDT)
-Message-ID: <3938ed07-9473-4210-be44-74e518fd31c6@gmail.com>
-Date: Sun, 18 Aug 2024 22:38:07 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B461C6A5;
+	Mon, 19 Aug 2024 02:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724035208; cv=fail; b=I7CBUETHYKjU4tW2uyjelAtCNMZ5+1LEDWxzKF1HlXcqPnV3JfUomlUGpWPSTKeT9Nm+Rp7ZIp2OzdkVunWBV7XZBWRvgLpYrUflZgQbDzK6RtK4Mk/FG9dCKrFIQ4nHsZgc13/XB9BBeGiUKFOYksxnIbaG2//r8g5mm0sPKfQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724035208; c=relaxed/simple;
+	bh=SrT0YydWTRannoJc9Kidt9g3zu0CFdSd0xgJDn/ei2c=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tX5L/5P6jSVCgUf1MqvtsbKWJyMSZ9Xw2e9W5qdhc3a21NuE6TaRc/Y1IrXLEgPCtJaRTeeUT2HlNNm1lfuVuAFEqipasnNpN2efzxCC5GJX92BmWVJ1YA2Z/SD9J4nlrZpTv6cn8/dnPaBnYphH69aaq7PvDnOiHsMVKVXnN/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NpYyzXPL; arc=fail smtp.client-ip=52.101.70.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YkD7V0XK8BNu82SxOhO7fAgsqDXSBovM0d0ftc6xH7Br6vylZnWJwZOfdqFfSeGWpz1AbPvAYFNpVDKhcwZumM7a6OieLiuEDRnYJ788SxDhLdrFREjlC4UZ1jX1yKlsjRvXifNVuoG5QjYLMDvHEb/ecLa7mH7yKvQEwn2q8HbaY6O1PtumvZlHVNOdPCgw0wKpML4vMNelMdNYWC4/ONUN0lPRbzjNGQL4iEk7Vw2cKbp3Zs71aKYWa4pKp6FvvdFt78XIyTFjeLwffsVeN9mjzVGQnNgP9UAwTMx4dFnxzpw1yfcoz2dZ+Ls4Ljdmod3EPqyjua5NW//b9EdZyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zEr2CU8a5fcXR5YEMr/axLT++IYP4/hEAnv0FxNp1PA=;
+ b=l/fXjNottEkN8AXqkRk7P9Ivi2uolJxblaHF/BljWTMVMbtlnm4P+NUrkJBBTFZvlaIhgv04aAbT8L4vEruNZ1g6kLyrO8INdMX2ps6XuuXnwNQxtlmsqpxnhrf0F9cSEf2Eczh33bt2SpG32HgQ6EZK6D4YJAFHf1/KQdmGsecXBH1500z8CwqPqzCpkr8VSqgkSYtQbXxTYR75SrqshZiCNqEt9YlVZc7fmy4bcXP2uiGPfFXN3wH7CO03vHI07g4dP5l/5NLw/QH0ocQLASym0ZQp/Wf5/VCW6XP/TGdq0vb6oG6Q8XToHrBEWX4cyfIgp6UTvUwB2rgdq4rhHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zEr2CU8a5fcXR5YEMr/axLT++IYP4/hEAnv0FxNp1PA=;
+ b=NpYyzXPLpKdXyBZRScrjxJKHdvgldYPKrCDFKHIWJypCo0PhbEL5tA1HNS9+gOjAo30eelCT0acah8k87j/a4EIlHx3iRqxStXm0s/dYuXhsRABwTRCe4Y05Tr6yKCMBoz3UcIJzFY76FzKIIpK0RvKhr6XgC5CjGuHOUgGpdGoAHgg1NlhoqmYVAWfUoVpuYxehYxFDbTXfIEHq0ofclS85T4dohojpRGoTwrzlZ3Tp/7rCt+ZcfCBY8eyeerZMJiG6Ns7W+3xhnDaPb7iV2TaegOqetHOxig8rPx9lgM2RvcSWZPHJ4fPq+YOjsy2NS2MH6AHCwkp/l33c0OGdgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU2PR04MB8807.eurprd04.prod.outlook.com (2603:10a6:10:2e2::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 02:40:03 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 02:40:03 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	victor.liu@nxp.com,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	peng.fan@nxp.com,
+	krzk@kernel.org
+Subject: [PATCH v4 0/2] drm/bridge: imx: Add i.MX93 parallel display format configuration support
+Date: Mon, 19 Aug 2024 10:39:59 +0800
+Message-Id: <20240819024001.850065-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0025.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::12)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] mm: split underutilized THPs
-To: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
- riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
- yuzhao@google.com, baohua@kernel.org, ryan.roberts@arm.com, rppt@kernel.org,
- willy@infradead.org, ryncsn@gmail.com, ak@linux.intel.com,
- cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20240813120328.1275952-1-usamaarif642@gmail.com>
- <1e6f3b38-d309-e63f-bca0-5093e152f7d7@google.com>
- <19b1c8e2-f60e-460d-8249-5db71a708dc9@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <19b1c8e2-f60e-460d-8249-5db71a708dc9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU2PR04MB8807:EE_
+X-MS-Office365-Filtering-Correlation-Id: c241be51-8dff-48b9-a1c5-08dcbff83a22
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|1800799024|52116014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?fc9IP2K9+pG4KN+FMvQjfiVZX9UuIOFz4J/fJsQBjS5uCPY4FrxQV+OTHWFb?=
+ =?us-ascii?Q?H9eXQaVsjHqkiSJCezz2QBt55Hp7TPa9tBVsDxn/pkDpdA4vxu7vxn/b0wHA?=
+ =?us-ascii?Q?bFUAl7AoC2F2/2cPyd88qAJh/06wLjXIv/yIF6hSIkUXq5BWv+rlG5ClsP+A?=
+ =?us-ascii?Q?J7a0C/zSMX1ZxI7hMheHIb6+ee52rZClHjKieuNVK+yEWarsJ6qAu15hvLsw?=
+ =?us-ascii?Q?24Lh/CJJ/6oWbImyOz4L05Lxk8zOg8v7vnf5jZTWWU0bCIhDRYp8FrGHDZEZ?=
+ =?us-ascii?Q?WjD2drHRCIsMHF4alVZ3ZXt7W0h1ijILnZYz/OekWG6lrec+JPnV6+66dd1k?=
+ =?us-ascii?Q?a2/TJF87vvktsn4jansUUfaNhnLFt4qgtgREtL9V7jGW6oSmiTD9kapGpqwo?=
+ =?us-ascii?Q?61Sy5fltt66QaxMxMIxmGjBbutNZwRPN1jSJJ1ElqwAV1mfxJXMbEvejuZhl?=
+ =?us-ascii?Q?tb0qfCcZJq+P0t32rIFwIkQvHR9SP4w2ddRMmqQJCCYnZrSoDyXNKW9ORNbt?=
+ =?us-ascii?Q?coH/1CqyoelWiN5heSA9xZ2PjtyeYq2XhWJ/8nlOQ+JmXlpLuuFwrEVcu6j0?=
+ =?us-ascii?Q?xGO3n1gZ6qKX5ZYRtYO13a5Af5IFpWWDHDIYgVlJF9FUkH85fhxE5YUdlORp?=
+ =?us-ascii?Q?lBaHzhxcAgSo5jpiT1CkNiYdW+nLpwyf8PJl/6otAeFcdbHyWDrWMsOnw7ht?=
+ =?us-ascii?Q?CxrGkx9bKXtQKYysJ5ZSHt7wUrDPwGyvC5v/HSd0tc0TNobC2RmRNkBmHlSy?=
+ =?us-ascii?Q?EZ07P+S8+FmnuG6Zys7WUfD3dXI18HiBea6eLonHSMbCfRDXJFJxVkVbajJp?=
+ =?us-ascii?Q?G2wFIfTT1jdySIhve78e1UwXOaZV5IZCjnEUYhM9Guu0mzc4NIih49iIjyUG?=
+ =?us-ascii?Q?QHoVuc4XvwZMIABTZIb3PFNscoq7TH+iQd0OcPYP99SUOuW14FUXgf3OvGV8?=
+ =?us-ascii?Q?A9ynk0HrXWcImJtOxKHV2QryNvqt7A5Rli/FE5SQngWKAc94dmF/RKp0tvS7?=
+ =?us-ascii?Q?1IPtAKWBWh8xL8BfEG0IFn3c+E95cRJOEgWjro6AWcIiwA591EHlAlhuz3bD?=
+ =?us-ascii?Q?hGVUrvEm6F8EO6dHHg+Yr3/uK2qXVnzJsoYynmKgNv0MFXjUNURnoho9MpVQ?=
+ =?us-ascii?Q?ucbHY4+7/AY05mKUhJBMo97oLEpnVOjZNNZw8pf1ZSOp1NaYQIVsuTtpyc+G?=
+ =?us-ascii?Q?d8GvW0n2wmtwpffuE7HxGPAS9OxvbldnttdmEdHo4FgxZrXQxlj6iO3DfFRl?=
+ =?us-ascii?Q?/otxUB8TzGWBO+B1h+ftEH5Wd02Nx3XmPl0QC9O+TJWHr/69XDCRsAiO1eL8?=
+ =?us-ascii?Q?HZ0ejdrjN73BoasK9lKU9hdTI8N+9DoDK87Mo5M4JqJCyWukUe4nrX97mSYb?=
+ =?us-ascii?Q?gSvx4d5/5zwrTs7gIwseZHT1XWct5PhHbGYz1uUtPfJBuOwDZw=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?ppO8LbZbpZXYeh1KmCtxdjDbQjnnEOTLg4EyBfa7t/4gDqZDgxebj3XSEZTF?=
+ =?us-ascii?Q?qBmES7zcWBVrK4HDvJ4NbFTidGaIyPaCUQ7nsaaH6++cvo7kFBDsYW2LeHPe?=
+ =?us-ascii?Q?ws3NlVI1w8IPxzisr7tD1knfgpujcGbWyspvDLHDXz7F6lTIUacFKafGCfHS?=
+ =?us-ascii?Q?hA4mizNwXyqemNZeZ1DxhgCKJEkw2JAJFCCiOaZkh3q2JV/ZbF+ce5sblojb?=
+ =?us-ascii?Q?++KqkLwyRZ5ChGXRm112B98N7cL1I/pE+tbMKU+UEO5G3+MB2VRdIL6OWrkS?=
+ =?us-ascii?Q?AKRKyKoYqVlHt5jhC0pWeNkQR8dVpdgo79sr5ALPzodTw1+CKz1edKmOdyrU?=
+ =?us-ascii?Q?tBGRIx3IOF6mHJB+SYNgbgGu4c3w43PMhCw07vXvAomriUuHObPUAmUYKGRb?=
+ =?us-ascii?Q?AE3hvlG+LNiI9Q4Wic4nWm8VExiviHFitUOmJpVkgeZo0Ot2Coy7n1lsslay?=
+ =?us-ascii?Q?oQ8RvOrWHAhYMeZAzhtr0pHjheqknOzrKJPJlsEE4NyvtBcK6Hl5uZK6iT3e?=
+ =?us-ascii?Q?rC6srxNrwVfHTIIijyfvhJtvz+xx8NiyUx67F+k+VcoCbhhJeQ/v943lIGMC?=
+ =?us-ascii?Q?DBg+13zQDtyz/y73UlCy9kVZtYTmLKgY1q1ahThVbHHnM3x9QUrNAQUxECFm?=
+ =?us-ascii?Q?WBtvDau8oCAJVOQ7KQPUWnEQBaU6C8yYRF8hqr+y1/Py6xMD+6ir2uZuexQh?=
+ =?us-ascii?Q?XLBB7Uo45HqHu11JqiSA1sYNG2GPa1QAoc0GvEuz9j0DJvDD5N6OvSQLEPm+?=
+ =?us-ascii?Q?VJqMt0HzX0iIvoh8nH5GdLb2dT5OVgXqxAr89+TCUN8nPhd7YQONcoIP+jOa?=
+ =?us-ascii?Q?08gl2u5q+FMTK3gMnkw+mvIgyT+pFdiuNhAi94MkUkwaTGbEDGwb2N1wnBGI?=
+ =?us-ascii?Q?Up0ExSjzFnW4rCx0N/d4Edwqvn7IkNNYJeF8IRC2idEuNVOv+11315aXWwxo?=
+ =?us-ascii?Q?Uk2vGKp56/IMsWbFs++1ZrKoSDufvHIKY26ojh6Ytz+XlC6S5+aQrnnwwCIL?=
+ =?us-ascii?Q?OJHzpEQ7Kaerg/ifypNMGlClandK3J1n1Qi5XKtXExxW1kGQGhFVcyWfeiCM?=
+ =?us-ascii?Q?4y9xzapLrAYGYdaVxaKNmh2RbGR4NUnHNZ+OiYgldR/1ar6weer+8VYb3eYs?=
+ =?us-ascii?Q?S1q3D26BxLy4+5cyQnMwLojUPU+/+PT/AlGtBvhEQU+X/yYKePpzRk1OL1J8?=
+ =?us-ascii?Q?fgKW/SEQQ9+utXrn89TJpgTkcJ8HijHoBuebEszuT1XIKqDkESv90Xb2TdRW?=
+ =?us-ascii?Q?cXx2gNQz2uDBCwc8rfajBe3jgS254Ea7jXvUnzz5uq/y5hCQO0U6Y7KblY3s?=
+ =?us-ascii?Q?clRfQzGOqjLSMQ5An3LersyUWLwr+JbQe1kYiofvypMMzfDYQkBWNxOMYh5i?=
+ =?us-ascii?Q?B3PrIqenOFbv+MRyEvF7TgKhR9V37eAUw5/E7jicFUn1H3d1IfqDsDGWx9yb?=
+ =?us-ascii?Q?Jhw1zBAhRzc/jd9LsxRyhrAq1/7qHJ6cBTYCV2Ba4126yX77W3zXEwu6B6Dq?=
+ =?us-ascii?Q?81rfFq+1t5tNhl8/PrfnspFgv03AuVVqLjgpk82KryIvMK3delKyx3gY0Ptf?=
+ =?us-ascii?Q?NjSHne7z2YkR0CMif3qo/ZddOzec4HbAjIq1DADk?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c241be51-8dff-48b9-a1c5-08dcbff83a22
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 02:40:03.0610
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p1CV+tOHsErDQfAf97lhDq0QZVvlC3nN0M7hUV0zeb5+uODTf8n90YbiGP1DOpzQ2qEybwrJJUjAEZU5Bp5rcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8807
 
+Hi,
 
+This patch set aims to add NXP i.MX93 parallel display format configuration
+DRM bridge driver support. i.MX93 mediamix blk-ctrl contains one
+DISPLAY_MUX register which configures parallel display format by using
+the "PARALLEL_DISP_FORMAT" field. i.MX93 LCDIF display controller's
+parallel output connects with this piece of small logic to configure
+parallel display format.
 
-On 18/08/2024 08:45, David Hildenbrand wrote:
-> Hi Hugh,
-> 
->> 2. I don't understand why there needs to be a new PG_partially_mapped
->> flag, with all its attendant sets and tests and clears all over.  Why
->> can't deferred_split_scan() detect that case for itself, using the
->> criteria from __folio_remove_rmap()? I see folio->_nr_pages_mapped
->> is commented "Do not use outside of rmap and debug code", and
->> folio_nr_pages_mapped() is currently only used from mm/debug.c; but
->> using the info already maintained is preferable to adding a PG_flag
->> (and perhaps more efficient - skips splitting when _nr_pages_mapped
->> already fell to 0 and folio will soon be freed).
-> 
-> No new users of _nr_pages_mapped if easily/cleanly avoidable, please.
-> 
-> I'm currently cleaning up the final patches that introduce a new kernel config where we will stop maintaining the page->_mapcount for large folios (and consequently have to stop maintaining folio->_nr_pages_mapped).
-> 
-> That's the main reasons for the comment -- at one point in my life I want to be done with that project ;) .
-> 
-> folio->_nr_pages_mapped will still exist and be maintained without the new kernel config enabled. But in the new one, once we'll detect a partial mapping we'll have to flag the folio -- for example as done in this series.
-> 
-> Having two ways of handling that, depending on the kernel config, will not make the code any better.
-> 
-> But I agree that we should look into minimizing the usage of any new such flag: I'd have thought we only have to set the flag once, once we detect a partial mapping ... still have to review that patch more thoroughly.
+Patch 1/2 adds NXP i.MX93 parallel display format configuration subnode
+in i.MX93 mediamix blk-ctrl dt-binding.
 
-Yes, the flag is set only once, in deferred_split_folio once we detect a partial mapping.
+Patch 2/2 adds NXP i.MX93 parallel display format configuration DRM bridge
+driver support.
+
+v3->v4:
+* Use dev_err_probe() in imx93_pdfc_bridge_probe() in patch 2/2. (Krzysztof)
+* Drop MODULE_ALIAS() in patch 2/2. (Krzysztof)
+* Update year of Copyright in patch 2/2.
+
+v2->v3:
+* Define i.MX93 parallel display format configuration subnode in
+  i.MX93 mediamix blk-ctrl dt-binding. (Rob)
+* Resend with Conor's R-b tag on patch 1/2 and with the patch set rebased
+  upon v6.11-rc1.
+
+v1->v2:
+* Set *num_input_fmts to zero in case
+  imx93_pdfc_bridge_atomic_get_input_bus_fmts() returns NULL in patch 2/2.
+* Replace .remove callback with .remove_new callback in
+  imx93_pdfc_bridge_driver in patch 2/2.
+
+Liu Ying (2):
+  dt-bindings: soc: imx93-media-blk-ctrl: Add PDFC subnode to schema and
+    example
+  drm/bridge: imx: Add i.MX93 parallel display format configuration
+    support
+
+ .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     |  68 ++++++
+ drivers/gpu/drm/bridge/imx/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/imx/Makefile           |   1 +
+ drivers/gpu/drm/bridge/imx/imx93-pdfc.c       | 199 ++++++++++++++++++
+ 4 files changed, 276 insertions(+)
+ create mode 100644 drivers/gpu/drm/bridge/imx/imx93-pdfc.c
+
+-- 
+2.34.1
+
 
