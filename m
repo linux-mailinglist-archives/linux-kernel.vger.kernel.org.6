@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-292199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60C7956C57
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:41:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642B2956C46
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC8B25A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523711C2214D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EFD16C6AD;
-	Mon, 19 Aug 2024 13:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FA516C69C;
+	Mon, 19 Aug 2024 13:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uP0wQjkj"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ji0ClNat"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF72D16C680;
-	Mon, 19 Aug 2024 13:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEC5154C19;
+	Mon, 19 Aug 2024 13:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074879; cv=none; b=Kt7Z2qKV6Esf0kXZ7c/tZnkriM2nI45MTjj/VC79BGS6L3TC8znJxAUj6LQZhQrGOZiUXlgl8NlV93QPNPfOy0eke+TGCAJk9t62EnD7MJuIXTHkyVg6zlB20EkYvMnpjhmZBhilxDAPfBAFI/5CKKljRjoe/p38aft8mOp5S/0=
+	t=1724074670; cv=none; b=XmffOQ4r/7MKPTHocc5m9HtGsn5jsXdFiMCiU904nGsWcmxIx83Ln23ABeb67vt9rOeOOWaoJxYeku6GHlXJ2Wao+QdHnURq4lLTPZqTuKQ6eQBwUGHeipXtSy8pAKQ95hyzRSFkctYIMnMnsoCt2Q950iiFIrQprQ9qKx3sTKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074879; c=relaxed/simple;
-	bh=zqQnjPLRzcXO7/t3xlo9e0xwX8HTbgYJiHZTVnSB7PQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=YbdRJxYw3lcw3AylTowmQVLiA2UoJ7uYcAhD3DOtSpTzpYYtQhkc4jCDa9j3c5EbSl1Azfa9N/yAqiHYt7wtFVkGQwST6rG4PvtEkW5TDte13fxZxGubj91H9etqaVh/ZIgJtnqZEwwPkYnUPOwD/UZDpPxUKhtyuZaIQAAEuqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uP0wQjkj; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724074569; bh=2wMqJMCOY7StTOp6eQQXkHi+RNUVnlidZ7g7RNmnJWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=uP0wQjkjxJAZFWWD86st4d3odncKKin0A0MAhe0LZCCPVq9UcSRFefb4LdYhaan7G
-	 +HhEzubSiLjKJrAG5tS3nXyBtv/AK5v9itC3i2+tJj24720cbytHLAU89EU+6hSq1L
-	 5kooURMBFBgugxh3oKLTnlbpmVJr1n0ESHy6ocWM=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 906174C2; Mon, 19 Aug 2024 21:36:06 +0800
-X-QQ-mid: xmsmtpt1724074566tidpeyyso
-Message-ID: <tencent_879750E9E2EF32CD287A2E6C9C2C856F1C0A@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur9PJ3oCcHFUsB6EnKTTSyPOh3P8Ccawdoe1YxxEcwTNkKGAdMYC5
-	 v9KZzQ/WJCM6J1YXHlFlHoFwYOuXepPxbZF7TC6T5Dhd+qgepvkmA+WO31Nnbh1szb+clVRlGjaY
-	 CZD/IjrVNJl32qKun7+jawezUNkS4a0ZoLl4W4Zu8XQyHoAf2j7h8vJfQR5kT+ygiVOxcwyHb2+u
-	 U532pQatigC9vGtx4QIBJNnu6hxqV2F+IRgpjdrDHSSy1rxS1k8nbHiX524jCYu+zzaykpwpVF1e
-	 kM1TxYorQH5zEhqVcRr6/h1+jxz2HUMQM7jWaSI7PnoPMwFVLW/WsEIs3XAxieQJm2Pi1GVuNo1G
-	 o1/WlGPa1A9PqcX4GIKBCJ1GXBvMZuz97ALTeP0FCL0owa6raxdRFUgGTtkXp6MJ5n3l1zgS0XI5
-	 F1bWILXkJpKO4TCaCOR/LOH+/0baDOpFtY9gs7AXzzocn76as1XdO8n3zlcFqrEI9bNz55ahAZ7r
-	 lBibt37HgTfhjsSWxH5rLMe267XcCmMGKRdXvCvewwZZzzT5Zmi3b0sgyDzeShMpGMAuUqeyTT5u
-	 T2vHUDlLCCGPsuQ+EkR40mBvgWBONJw5DwdLAH2l7DEdmaOJintUm0Ya98ghqH9hNWdJY0Fyuy0G
-	 7zZsbw9XDZnNseBhgIDmxXW5JAfuno+oSZ6rgKllohrCPd0O0eBnFR4GcnN2KPZeYy5rBtGQpY12
-	 m0Wzffqp2XEHJe3hLgg2iEWMKgf4WMfZdkw3oRxLvDiKFZj4lWYifxii8j3FmpwM92HF5tEAhSha
-	 ueuNQOgrm7FfGl9eT+PDctpvSGM9wa9sLYtpo87Fhl4FjU+liKU4gEZX/XzdA60QuxIvQ5LdBGXu
-	 agWVGcU6fkjIc/EaF8GuQcgc7mJNTx6HWu2+PhmBAMKA95IVIWI2LHFON2S4OG5vwiTW8371U2Ds
-	 4kBnmFvQY=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
-Cc: jack@suse.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mark@fasheh.com,
-	ocfs2-devel@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: [PATCH] ocfs2: Fix null-ptr-deref in jbd2_journal_update_sb_log_tail
-Date: Mon, 19 Aug 2024 21:36:06 +0800
-X-OQ-MSGID: <20240819133605.3256941-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000742b9d062005fc1c@google.com>
-References: <000000000000742b9d062005fc1c@google.com>
+	s=arc-20240116; t=1724074670; c=relaxed/simple;
+	bh=rVy1qRS0SJhSXR4vtZMoN+Tops67+Fjdn7Mv8qiD2p0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6UlC/Vbyzx9I0DpiQ01zNyBBWCIPQixVUCKltyJN9JhNnoFnqLC2yIgpVm+ZTzG8XDtNs08SHVmaZG4VCPzX6wmP/S4KA5UyCpn+fwKxJe0vKjGCPGjVfDMlZly8NnQqLv7bH2KEceVb2lFAQCeluf7rEXVKH1blY5lQ+PbXOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ji0ClNat; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F76C32782;
+	Mon, 19 Aug 2024 13:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724074670;
+	bh=rVy1qRS0SJhSXR4vtZMoN+Tops67+Fjdn7Mv8qiD2p0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ji0ClNatEuxXJ1OHUuewm83Zq8m8+J34VRSEX+9UDaD+VW67+k7ng7awNu5zx5p+J
+	 DqhqhRRMlDt6D+c2wUIqhNNmR172l974ROY1n5CmqZibNCm5iry4BKlVmPsbp7H674
+	 ik6zgxVFSiZ0rmih5FEqgfcggDWoSf0rrOIfMBtWj1iWuJ/vZePG2gOmgW5zqkPedE
+	 uhDQqgGLm7Z5AeiPnIEWF83VWCOUw+HWzT9ljbCWj5SQjjhILJQVR+0SrBVrV1lZos
+	 A5OpK/sZmpU/HcwUreDsv+TGfCwvE5FMAQoOnkcdBVxaGjidJ2TBBbMqLZCXoJcyU3
+	 7sfXp4xDtkqeQ==
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7093e583913so195019a34.2;
+        Mon, 19 Aug 2024 06:37:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUd51t6tpteWUEHCHcmyNhlxJQPY4MLTcSH7JJKD/7TRUDplIS3BahDg1YHkYIwaAOQxjFnvDSKZQYG4foFZI36ay9IRo4n1lX69BpT2cwYQOKQRUhK9/lJNXvr5SA+fIDdTjGsULY=
+X-Gm-Message-State: AOJu0YyUBIYxZWt7zAgUIObb4Fqmzk1H8SXt+l+fopxusVVhI+NYNomB
+	t0wsJF9oEsLwtwx0JWE1Ccdh8IGJUPAbbOjh9MYgSgrHDQgpLdPXdG4cMMB/m/qmReiZHFkl7yi
+	0+eOnDF6kSE314GspgkqsmluIy0s=
+X-Google-Smtp-Source: AGHT+IHAGH62qOFRLR1D8gK4aIMko6ZL3c2yvs3npwd1+junyryE7t5K1rzRMHyoDSIsuL2/hYd3WwynnV7lYIEHiP8=
+X-Received: by 2002:a05:6870:c6a1:b0:260:23bb:1087 with SMTP id
+ 586e51a60fabf-2701c0a67e7mr5742696fac.0.1724074669423; Mon, 19 Aug 2024
+ 06:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240816113332.7408-1-sumeet.r.pawnikar@intel.com> <1b28d2bd9cecb2151bcbc9e4d8f81f79d4ca9f92.camel@intel.com>
+In-Reply-To: <1b28d2bd9cecb2151bcbc9e4d8f81f79d4ca9f92.camel@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 19 Aug 2024 15:37:35 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ieaqVajc+X+XHcK8JMo0pYS3ofoW1_aaEdNZzc8dM+Gg@mail.gmail.com>
+Message-ID: <CAJZ5v0ieaqVajc+X+XHcK8JMo0pYS3ofoW1_aaEdNZzc8dM+Gg@mail.gmail.com>
+Subject: Re: [PATCH] powercap: intel_rapl: Add support for ArrowLake-U platform
+To: "Zhang, Rui" <rui.zhang@intel.com>, "Pawnikar, Sumeet R" <sumeet.r.pawnikar@intel.com>
+Cc: "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>, 
+	"rafael@kernel.org" <rafael@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Journal too short will cause ocfs2_check_volume failed, and will set
-journal->j_sb_buffer to NULL in journal_fail_superblock before running
-journal shutdown.
+On Mon, Aug 19, 2024 at 9:58=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
+ote:
+>
+> On Fri, 2024-08-16 at 17:03 +0530, Sumeet Pawnikar wrote:
+> > Add support for ArrowLake-U platform to the RAPL common driver.
+> >
+> > Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+>
+> Acked-by: Zhang Rui <rui.zhang@intel.com>
+>
+> > ---
+> >  drivers/powercap/intel_rapl_common.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/powercap/intel_rapl_common.c
+> > b/drivers/powercap/intel_rapl_common.c
+> > index 3cffa6c79538..3edf8decb811 100644
+> > --- a/drivers/powercap/intel_rapl_common.c
+> > +++ b/drivers/powercap/intel_rapl_common.c
+> > @@ -1267,6 +1267,7 @@ static const struct x86_cpu_id rapl_ids[]
+> > __initconst =3D {
+> >         X86_MATCH_VFM(INTEL_LUNARLAKE_M,        &rapl_defaults_core),
+> >         X86_MATCH_VFM(INTEL_ARROWLAKE_H,        &rapl_defaults_core),
+> >         X86_MATCH_VFM(INTEL_ARROWLAKE,          &rapl_defaults_core),
+> > +       X86_MATCH_VFM(INTEL_ARROWLAKE_U,        &rapl_defaults_core),
+> >         X86_MATCH_VFM(INTEL_LAKEFIELD,          &rapl_defaults_core),
+> >
+> >         X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,    &rapl_defaults_byt),
 
-Reported-and-tested-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/ocfs2/journal.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index 530fba34f6d3..25821077b855 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -1077,9 +1077,11 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
- 	BUG_ON(atomic_read(&(osb->journal->j_num_trans)) != 0);
- 
- 	if (ocfs2_mount_local(osb)) {
--		jbd2_journal_lock_updates(journal->j_journal);
--		status = jbd2_journal_flush(journal->j_journal, 0);
--		jbd2_journal_unlock_updates(journal->j_journal);
-+		if (journal->j_journal->j_sb_buffer) {
-+			jbd2_journal_lock_updates(journal->j_journal);
-+			status = jbd2_journal_flush(journal->j_journal, 0);
-+			jbd2_journal_unlock_updates(journal->j_journal);
-+		}
- 		if (status < 0)
- 			mlog_errno(status);
- 	}
--- 
-2.43.0
-
+Applied as 6.12 material, thanks!
 
