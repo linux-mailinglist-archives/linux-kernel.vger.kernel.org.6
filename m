@@ -1,243 +1,230 @@
-Return-Path: <linux-kernel+bounces-292929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A44B957694
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553F0957698
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F042A28789E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B7B1F22ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A641DD3A0;
-	Mon, 19 Aug 2024 21:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76998188009;
+	Mon, 19 Aug 2024 21:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRIvyYtC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eZcshrKS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1151DD392
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B590EEA5;
+	Mon, 19 Aug 2024 21:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724102843; cv=none; b=SEvjp6975U2HaJbUJqpSRliEBEGu/VwUmhXIExxTzLC+Ju1bzl755jbKie2QQD8v5qOMV27CXZmZ6cbE+R/CV9tQp6MJ3WXpGhGP5+w6lY/SjLHURbW4p+3Q5y8CIJLyf+vwt9wK7+Rba9f2I1n+mQTPie1L2UBT3GEo0Bikazo=
+	t=1724102947; cv=none; b=l7ywuqR1UaOwj0MZZ+LQAnOAl1bCMd740RuMJvGKdTodXVMMhD2f74IQt5AN5PVjgt1APEWO7hERabyLYUSORdsmxIg/MLlnTOceEUPgIpmaEUscIHJad9i07fdj1ogWnxaqKFPCmcY1cYEXOqyC+ksX5huR1qKDg8Ea/4/yPhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724102843; c=relaxed/simple;
-	bh=S4kh0/Eh3K6kZK8lvHik8ZeQrONg9hM17fHH8RMuyIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kzh3/gHslx0w+swDX7hVsQLWEFQiNWEXvGq6G+CAfrWnLRm+iSaI0TNb+cByHXBkOoskuQgdVZNare5ODDbGjTBjz2P9v9wgHKd6p8U+qdZwqpDix3UKn1yVKDY1ljojiA4vAc/+wZZCb/qOLvlunL2gQXUW5lOVKBgNbT184DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRIvyYtC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B028C4AF0E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724102842;
-	bh=S4kh0/Eh3K6kZK8lvHik8ZeQrONg9hM17fHH8RMuyIE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NRIvyYtC7JAYcGE1zDeYx4Asg2lKrE26OIhnR/6N5Pxg5vyy0v/Kqp1o8oHvIGoc+
-	 MvYz4QXfe9gh7Iea5vRAmUmffDte7Nhyys21Nd5VowmIQ5e6BV8WPNg6w48yDhRLy5
-	 AF0CLLRz7p+mRB8jri5cGNF67wkzLwfNI43dLFrKUSPwdPXBXs/Md7OBh0CTeInZ0n
-	 z+ZrjAxvMW93uR5kZ66eIxakDpT4hDqZNAcd4AfO2KIiE6vmeUw0W5tJlsWhiMN0mV
-	 5FZ2AfwQn0qFyhtyvbLAO/A8+BRqx7wz4AElQDAtKLf0fpdKHahPmuJO9GvoOxu2OM
-	 Bqt6vzp6b9VRA==
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-690e9001e01so46416977b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:27:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXcq1ZBmdH/sqYktVP6AVNI0PmQbNSK4a/6wgT70yNHtA83F+45oiWjj8AsuDoHL/50cWbNPByKmkcB4aeA3XM//3MrKMI5Ucmk5WIo
-X-Gm-Message-State: AOJu0Yxxc2T5G+jCIO9EUsIoKxNLJkXc+EMuZ7+XewPVSOC/oh3bd7iL
-	8UzgCGuPM1jvxtDcPnEsKu/MjRbTI28+C6lqlgeBKIlxdpRadParbApAecsOsLFxHWEUgdW4c4X
-	bgbGk9Tv7CR0KMNpDair8yI8yeoiAj5WFEQtprw==
-X-Google-Smtp-Source: AGHT+IHkY0Mt5ULs8jpDmsWONACCBqFATj6UWmYPvOOtw9yfwIeD2mNjPJbkHH9yAqZjMYom0C9vVWp+DT1R2ef8y1I=
-X-Received: by 2002:a05:690c:670f:b0:6b1:8d2:8819 with SMTP id
- 00721157ae682-6b1ba7e665fmr149331347b3.15.1724102841886; Mon, 19 Aug 2024
- 14:27:21 -0700 (PDT)
+	s=arc-20240116; t=1724102947; c=relaxed/simple;
+	bh=emA2198+Po9hREBur1rawvdpu0famS95sPQEi4uEjIA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abl3iMep2oqO5ZS0Drbee1DFrA+oVNw/TWkIUKyi/XYDViK7IVz/d+125x4Sf9kRt76NQG2VWYvWLlDnlA63rQbvpLm0uQT+AWQv0aZsuwG2rzJjNzM8f7/kBRtt3EaSqYHscfV7COhgfUKv+nzuVEIfoMYKikghpOloEhA1lZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eZcshrKS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBfvNC014401;
+	Mon, 19 Aug 2024 21:28:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Nzm/S/afbNwh1e/MB7AURkZS
+	f6y9LurbockOcF2ulxc=; b=eZcshrKSaLvC0FDKv/L5938VbhdXj2lpcdKXlnnZ
+	VswPuxakRg38UdBypF9+nKlzgP3E1I8GRHPnzikbF+BkCjm6+/K/mYzFdF4LSTti
+	0KDdRRzaYnUzyKo5s3yemBuUUwFEF9RnWZBrmIXVDCEOQ30tBogzBu3Kykdl26Bk
+	26xyfsx8gmPiOGtiNrrPFKkzkOglUjnHztouJXIW5CV00lptbXJYPOaMos38KeNE
+	lQD/hbWXBWztcnDpJtD/M/7qprXXaJJUyhB8M9T4gA9QIzkbH7btyr0Ii+dblRDO
+	CrTkfDPOSDc7yu17ZuBnr0oSZPmLttfjWYOe0SDcS7b7YA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412mmene09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 21:28:53 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JLSqj4009405
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 21:28:52 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 14:28:51 -0700
+Date: Mon, 19 Aug 2024 14:28:50 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Frank Li <Frank.li@nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, "Felipe
+ Balbi" <balbi@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        "Saravana
+ Kannan" <saravanak@google.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 6/7] usb: dwc3: qcom: Transition to flattened model
+Message-ID: <ZsO5EnMgKj1GxlQA@hu-bjorande-lv.qualcomm.com>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
+ <20240811-dwc3-refactor-v2-6-91f370d61ad2@quicinc.com>
+ <ZrunFEOV5/aM4G4U@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
- <87h6bw3gxl.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
- <87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbUenbKM+i5x6xR=2A=8tz4Eu2azDFAV_ksvn2TtrFsVOQ@mail.gmail.com>
- <CAMgjq7DJwF+kwxJkDKnH-cnp-36xdEObrNpKGrH_GvNKQtqjSw@mail.gmail.com>
- <87ttfghq7o.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAMgjq7AOBvE7cfhxh8VGTqVWvYJqL3wKH7K-Qi0ZCU_h2nGHAA@mail.gmail.com>
-In-Reply-To: <CAMgjq7AOBvE7cfhxh8VGTqVWvYJqL3wKH7K-Qi0ZCU_h2nGHAA@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Mon, 19 Aug 2024 14:27:11 -0700
-X-Gmail-Original-Message-ID: <CACePvbW9scoOJzA_O2fPBCvZBwa0yQumFnXuhdtO0pkutD2P+Q@mail.gmail.com>
-Message-ID: <CACePvbW9scoOJzA_O2fPBCvZBwa0yQumFnXuhdtO0pkutD2P+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster order
-To: Kairui Song <ryncsn@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZrunFEOV5/aM4G4U@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dQ7H97UDkCEOCygWyw0dotxFPc9Xu-0z
+X-Proofpoint-ORIG-GUID: dQ7H97UDkCEOCygWyw0dotxFPc9Xu-0z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
+ adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190143
 
-Hi Kairui,
+On Tue, Aug 13, 2024 at 02:33:56PM -0400, Frank Li wrote:
+> On Sun, Aug 11, 2024 at 08:12:03PM -0700, Bjorn Andersson wrote:
+> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
+> >  drivers/usb/dwc3/dwc3-qcom.c | 310 +++++++++++++++++++++++++++++++++++--------
+[..]
+> > @@ -302,25 +306,16 @@ static void dwc3_qcom_interconnect_exit(struct dwc3_qcom *qcom)
+> >  /* Only usable in contexts where the role can not change. */
+> >  static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
+> >  {
+> > -	struct dwc3 *dwc;
+> > -
+> > -	/*
+> > -	 * FIXME: Fix this layering violation.
+> > -	 */
+> > -	dwc = platform_get_drvdata(qcom->dwc3);
+> > -
+> > -	/* Core driver may not have probed yet. */
+> > -	if (!dwc)
+> > -		return false;
+> > +	struct dwc3 *dwc = qcom->dwc;
+> >
+> >  	return dwc->xhci;
+> 
+> dwc only use once.
+> 
+> 	return qcom->dwc->xhci?
+> 
 
-On Mon, Aug 19, 2024 at 1:48=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Mon, Aug 19, 2024 at 4:31=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
-> wrote:
-> >
-> > Kairui Song <ryncsn@gmail.com> writes:
-> >
-> > > On Fri, Aug 16, 2024 at 3:53=E2=80=AFPM Chris Li <chrisl@kernel.org> =
-wrote:
-> > >>
-> > >> On Thu, Aug 8, 2024 at 1:38=E2=80=AFAM Huang, Ying <ying.huang@intel=
-.com> wrote:
-> > >> >
-> > >> > Chris Li <chrisl@kernel.org> writes:
-> > >> >
-> > >> > > On Wed, Aug 7, 2024 at 12:59=E2=80=AFAM Huang, Ying <ying.huang@=
-intel.com> wrote:
-> > >> > >>
-> > >> > >> Hi, Chris,
-> > >> > >>
-> > >> > >> Chris Li <chrisl@kernel.org> writes:
-> > >> > >>
-> > >> > >> > This is the short term solutions "swap cluster order" listed
-> > >> > >> > in my "Swap Abstraction" discussion slice 8 in the recent
-> > >> > >> > LSF/MM conference.
-> > >> > >> >
-> > >> > >> > When commit 845982eb264bc "mm: swap: allow storage of all mTH=
-P
-> > >> > >> > orders" is introduced, it only allocates the mTHP swap entrie=
-s
-> > >> > >> > from the new empty cluster list.  It has a fragmentation issu=
-e
-> > >> > >> > reported by Barry.
-> > >> > >> >
-> > >> > >> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJ=
-JhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
-> > >> > >> >
-> > >> > >> > The reason is that all the empty clusters have been exhausted=
- while
-> > >> > >> > there are plenty of free swap entries in the cluster that are
-> > >> > >> > not 100% free.
-> > >> > >> >
-> > >> > >> > Remember the swap allocation order in the cluster.
-> > >> > >> > Keep track of the per order non full cluster list for later a=
-llocation.
-> > >> > >> >
-> > >> > >> > This series gives the swap SSD allocation a new separate code=
- path
-> > >> > >> > from the HDD allocation. The new allocator use cluster list o=
-nly
-> > >> > >> > and do not global scan swap_map[] without lock any more.
-> > >> > >>
-> > >> > >> This sounds good.  Can we use SSD allocation method for HDD too=
-?
-> > >> > >> We may not need a swap entry allocator optimized for HDD.
-> > >> > >
-> > >> > > Yes, that is the plan as well. That way we can completely get ri=
-d of
-> > >> > > the old scan_swap_map_slots() code.
-> > >> >
-> > >> > Good!
-> > >> >
-> > >> > > However, considering the size of the series, let's focus on the
-> > >> > > cluster allocation path first, get it tested and reviewed.
-> > >> >
-> > >> > OK.
-> > >> >
-> > >> > > For HDD optimization, mostly just the new block allocations port=
-ion
-> > >> > > need some separate code path from the new cluster allocator to n=
-ot do
-> > >> > > the per cpu allocation.  Allocating from the non free list doesn=
-'t
-> > >> > > need to change too
-> > >> >
-> > >> > I suggest not consider HDD optimization at all.  Just use SSD algo=
-rithm
-> > >> > to simplify.
-> > >>
-> > >> Adding a global next allocating CI rather than the per CPU next CI
-> > >> pointer is pretty trivial as well. It is just a different way to fet=
-ch
-> > >> the next cluster pointer.
-> > >
-> > > Yes, if we enable the new cluster based allocator for HDD, we can
-> > > enable THP and mTHP for HDD too, and use a global cluster_next instea=
-d
-> > > of Per-CPU for it.
-> > > It's easy to do with minimal changes, and should actually boost
-> > > performance for HDD SWAP. Currently testing this locally.
-> >
-> > I think that it's better to start with SSD algorithm.  Then, you can ad=
-d
-> > HDD specific optimization on top of it with supporting data.
->
-> Yes, we are having the same idea.
->
-> >
-> > BTW, I don't know why HDD shouldn't use per-CPU cluster.  Sequential
-> > writing is more important for HDD.
-> > >> > >>
-> > >> > >> Hi, Hugh,
-> > >> > >>
-> > >> > >> What do you think about this?
-> > >> > >>
-> > >> > >> > This streamline the swap allocation for SSD. The code matches=
- the
-> > >> > >> > execution flow much better.
-> > >> > >> >
-> > >> > >> > User impact: For users that allocate and free mix order mTHP =
-swapping,
-> > >> > >> > It greatly improves the success rate of the mTHP swap allocat=
-ion after the
-> > >> > >> > initial phase.
-> > >> > >> >
-> > >> > >> > It also performs faster when the swapfile is close to full, b=
-ecause the
-> > >> > >> > allocator can get the non full cluster from a list rather tha=
-n scanning
-> > >> > >> > a lot of swap_map entries.
-> > >> > >>
-> > >> > >> Do you have some test results to prove this?  Or which test bel=
-ow can
-> > >> > >> prove this?
-> > >> > >
-> > >> > > The two zram tests are already proving this. The system time
-> > >> > > improvement is about 2% on my low CPU count machine.
-> > >> > > Kairui has a higher core count machine and the difference is hig=
-her
-> > >> > > there. The theory is that higher CPU count has higher contention=
-s.
-> > >> >
-> > >> > I will interpret this as the performance is better in theory.  But
-> > >> > there's almost no measurable results so far.
-> > >>
-> > >> I am trying to understand why don't see the performance improvement =
-in
-> > >> the zram setup in my cover letter as a measurable result?
-> > >
-> > > Hi Ying, you can check the test with the 32 cores AMD machine in the
-> > > cover letter, as Chris pointed out the performance gain is higher as
-> > > core number grows. The performance gain is still not much (*yet, base=
-d
-> > > on this design thing can go much faster after HDD codes are
-> > > dropped which enables many other optimizations, this series
-> > > is mainly focusing on the fragmentation issue), but I think a
-> > > stable ~4 - 8% improvement with a build linux kernel test
-> > > could be considered measurable?
-> >
-> > Is this the test result for "when the swapfile is close to full"?
->
-> Yes, it's about 60% to 90% full during the whole test process. If ZRAM
-> is completely full the workload will go OOM, but testing with madvice
+I like it, thanks for the suggestion.
 
-BTW, one trick to avoid ZRAM completely full causing OOM is to have
-two zram devices and assign different priorities. Let the first zram
-get 100% full then the swap overflow to the second ZRAM device, which
-has more swap entries to avoid the OOM.
+> >  }
+> >
+[..]
+> > +/* Convert dev's DeviceTree representation from qcom,dwc3 to qcom,snps-dwc3 binding */
+> > +static int dwc3_qcom_convert_legacy_dt(struct device *dev)
+> > +{
+> > +	struct device_node *qcom = dev->of_node;
+> > +	struct device_node *dwc3;
+> > +	struct property *prop;
+> > +	int ret = 0;
+> > +
+> > +	dwc3 = of_get_compatible_child(qcom, "snps,dwc3");
+> > +	if (!dwc3)
+> > +		return 0;
+> > +
+> > +	/* We have a child node, but no support for dynamic OF */
+> > +	if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
+> > +		return -EINVAL;
+> > +
+> > +	for_each_property_of_node(dwc3, prop) {
+> > +		if (!strcmp(prop->name, "compatible"))
+> > +			;
+> > +		else if (!strcmp(prop->name, "reg"))
+> > +			ret = dwc3_qcom_legacy_update_reg(qcom, dwc3);
+> > +		else if (!strcmp(prop->name, "interrupts"))
+> > +			ret = dwc3_qcom_legacy_convert_interrupts(qcom, prop);
+> > +		else
+> > +			ret = dwc3_qcom_legacy_migrate_prop(qcom, prop);
+> >  	}
+> >
+> > -node_put:
+> > -	of_node_put(dwc3_np);
+> > +	if (ret < 0)
+> > +		goto err_node_put;
+> > +
+> > +	ret = dwc3_qcom_legacy_migrate_child(qcom, dwc3, "port");
+> > +	if (ret)
+> > +		goto err_node_put;
+> > +
+> > +	ret = dwc3_qcom_legacy_migrate_child(qcom, dwc3, "ports");
+> > +	if (ret)
+> > +		goto err_node_put;
+> > +
+> > +	of_detach_node(dwc3);
+> > +	of_node_put(dwc3);
+> >
+> > +	return 0;
+> > +
+> > +err_node_put:
+> > +	of_node_put(dwc3);
+> >  	return ret;
+> >  }
+> 
+> Look like you copy children dwc3's property into current glue node.
+> Can you passdown dwc3's node into dwc3_probe(), let dwc3_probe to handle
+> these, Or move it into dwc3-core. otherwise, if imx want to do the same
+> thing, the the same code will be dupicated.
+> 
 
-Chris
+I tried that, as it would have saved me from having to do the dynamic
+rewrite.
 
-> showed no performance drop.
+But the dwc3 core and host are full of device_property_read*(),
+phy_get(), platform_get_irq() etc which operates on the dwc->dev.
+
+I think it can be done, but this felt like a cleaner outcome, in
+particular once we transition the DeviceTree source.
+
+As you say, there should be a fair amount of room for duplication here,
+so perhaps we can move that to a "glue.c" and share it?
+
+[..]
+> > @@ -773,10 +937,14 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+> >  		goto reset_assert;
+> >  	}
+> >
+> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	ret = of_address_to_resource(np, 0, &res);
+> > +	if (ret < 0)
+> > +		goto clk_disable;
+> > +	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
+> >
+> > -	qcom->qscratch_base = devm_ioremap_resource(dev, res);
+> > +	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
+> >  	if (IS_ERR(qcom->qscratch_base)) {
+> > +		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
+> 
+> dev_err_probe()?
+> 
+
+Sounds good.
+
+Thank you,
+Bjorn
 
