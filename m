@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-292754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D706A9573EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5069573D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB501F24449
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303221F241FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7513818B48A;
-	Mon, 19 Aug 2024 18:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DB218991D;
+	Mon, 19 Aug 2024 18:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jwwWSRZv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXu2LxOw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28018A6BC;
-	Mon, 19 Aug 2024 18:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F61181B9A;
+	Mon, 19 Aug 2024 18:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724093170; cv=none; b=mEcnL5esJtvzdy/LcUiishRGZqQH0J+bsBuK+UVwaBDdKTy01hSbq1RxfEkUiW4ZMsG6ILCdcyC4RDNVtqZrw/nNw0JBOHvZjChKvtYg1/SZfK59wGVTJrfKhXSZDgbJax/1Zrnt6Nd1bPCt5Fm/uOKZWzJZM58fn3aw8HApzc8=
+	t=1724093125; cv=none; b=GocLKKdQBXU8TH8OvqVxTqwgEel0Zc9440b6zW5NjMtzdwqtNDGxVbjb2fVxXRitoKtYRRHCffeL5zV9r/t9I+3TJUZ8mmUGm96nCP2py+HycqrRI44lZWofPpciBKbT+bcaUFDy4uNE5VDqyM/Bb83T4hKzh/uyy74gtG8QiKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724093170; c=relaxed/simple;
-	bh=orz/0lF6uAuaBB453PuZmPXmD0diGdVSoe/F0+vR7qU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vu0f03S07ZHFgLWyRQzV6gUBYJQKw7TszEtQ5gdLNejr0s4VWr6aRRiWSlW3434+o/SOlknqQeECppPt20QJDtWhpX4DUW8u3/tZyirAe3GoonscnTvOs9wjjOGqu1P5bLnRN2cMuN/yc79XUDHLrZy419zQ/6VhLyJ+Wv0DW0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jwwWSRZv; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724093169; x=1755629169;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=orz/0lF6uAuaBB453PuZmPXmD0diGdVSoe/F0+vR7qU=;
-  b=jwwWSRZvLWMzWbq8YL53uF/w5T8zFXSYoWdTt7jbQzszCBh2jq6CPYJ/
-   pRps1v2mb+TkdF2oR3A85fAGKRIUC4czu8dlwN611FaAh7D3lYNtd/8P8
-   AeUY78ebGqQFx7jgeO6SDflR3BCX44AJrWzRbrIdHF4IcT7dqbUVqjTSR
-   EvSEC9j6rwt1K7OfdQqdn5vTp0erGFwr5GDktchv7Uw1KLsrkj+BCxHMC
-   FmezLggO36poSsJY9Sp/CpjR/sxroe8wC6YwDgoTuOE94xzFSHus+tEUM
-   WSEnOSxkfbyhDfB0gBIeQmXsx+nP+VgHBBDuVLjYz0pW0qS18prSMcwV/
-   g==;
-X-CSE-ConnectionGUID: lhLo1ZF+T9y+iXoxkxrIsw==
-X-CSE-MsgGUID: WhTtT+nLQKWCyawWNVo/xA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22537659"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="22537659"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:46:09 -0700
-X-CSE-ConnectionGUID: B1J5UmGuQIumBX9gHdlP0w==
-X-CSE-MsgGUID: G4DK/AxpToCPUkNoe0O4fQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60433958"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 19 Aug 2024 11:46:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6E7E77CA; Mon, 19 Aug 2024 21:46:01 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Narasimhan.V@amd.com,
-	Borislav Petkov <bp@alien8.de>,
-	Kim Phillips <kim.phillips@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v3 7/7] i2c: designware: Drop return value from dw_i2c_of_configure()
-Date: Mon, 19 Aug 2024 21:45:13 +0300
-Message-ID: <20240819184600.2256658-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240819184600.2256658-1-andriy.shevchenko@linux.intel.com>
-References: <20240819184600.2256658-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724093125; c=relaxed/simple;
+	bh=gU0/EKnZ0FkuHkxxhgkNiyKt5kHXaxnPAjw+Ang2LMs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qzrj9W+A7AsFa8DCbxOOR2ygIMBdlbDe2VAXJXNgDm8FYqQMBBdvKRPVBBO6H5Hi4XrFJcevw8A8pcEw/QQoGfsEK582+FlXIZNxzq35WPTPAYCT+Sfglazu5ucKRLNFrh2QRQ/NJS1n8Pz8oHypkAA3A4nuZyL4tVhynZjWi+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXu2LxOw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10BEC32782;
+	Mon, 19 Aug 2024 18:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724093124;
+	bh=gU0/EKnZ0FkuHkxxhgkNiyKt5kHXaxnPAjw+Ang2LMs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hXu2LxOwp7l//53NucZem7LHWkGWhAaN14DjXkA34y5aMxMkcWlV5TFjJLLp2tC4K
+	 nvPJ3ltQW+kSFScKc4A2VYviqQikEfXyGeiUhG2NaEGCoARB/pfTWr//XSmooCHfwk
+	 /GtkRg8PpfRSpCWErPT54J7fQkFU6S7C/BDP+6f7i9NkhS6Gmtp0lLOznEJLgF661V
+	 mtq8S0Hx18SntGHiCB9mjW4bTyfDcnOYDaMKECq6bmmujDpUOsiz49tQ1sCbZojyL4
+	 KYlpxyu0pU5wtmk/1u5vK90Wy1xLCEofKCHwFsF4S2lBzLdfLQIKbU83eMhpAKvybJ
+	 zWip5I9NT6wyQ==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20240814174422.4026100-1-Frank.Li@nxp.com>
+References: <20240814174422.4026100-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] ASoC: dt-bindings: convert tlv320aic31xx.txt to
+ yaml
+Message-Id: <172409312157.107250.1290467548898227873.b4-ty@kernel.org>
+Date: Mon, 19 Aug 2024 19:45:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-dw_i2c_of_configure() is called without checking of the returned
-value, hence just drop it by converting to void.
+On Wed, 14 Aug 2024 13:44:20 -0400, Frank Li wrote:
+> Convert binding doc tlv320aic31xx.txt to yaml format.
+> Additional change:
+> - add i2c node in example.
+> - replace MICBIAS_OFF with MICBIAS_2_0v in example because MICBIAS_OFF have
+> been defined in header file.
+> - add ref to dai-common.yaml.
+> - add #sound-dai-cells.
+> 
+> [...]
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/i2c/busses/i2c-designware-platdrv.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Applied to
 
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index c1e1344c3fc6..cd24d2b8becf 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -110,7 +110,7 @@ static int mscc_twi_set_sda_hold_time(struct dw_i2c_dev *dev)
- 	return 0;
- }
- 
--static int dw_i2c_of_configure(struct platform_device *pdev)
-+static void dw_i2c_of_configure(struct platform_device *pdev)
- {
- 	struct dw_i2c_dev *dev = platform_get_drvdata(pdev);
- 
-@@ -123,8 +123,6 @@ static int dw_i2c_of_configure(struct platform_device *pdev)
- 	default:
- 		break;
- 	}
--
--	return 0;
- }
- #else
- static int bt1_i2c_request_regs(struct dw_i2c_dev *dev)
-@@ -132,9 +130,8 @@ static int bt1_i2c_request_regs(struct dw_i2c_dev *dev)
- 	return -ENODEV;
- }
- 
--static inline int dw_i2c_of_configure(struct platform_device *pdev)
-+static inline void dw_i2c_of_configure(struct platform_device *pdev)
- {
--	return -ENODEV;
- }
- #endif
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: dt-bindings: convert tlv320aic31xx.txt to yaml
+      commit: e486feb7b8ec04ec7cd53476acc9e18afd4a6a7d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
