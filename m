@@ -1,189 +1,197 @@
-Return-Path: <linux-kernel+bounces-291985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27DF9569C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:48:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDA79569D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071CE1C21FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 830641C22508
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B95D16C868;
-	Mon, 19 Aug 2024 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780C016D9A3;
+	Mon, 19 Aug 2024 11:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZiaI+SdA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dx+KIxy8"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF28416BE0A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6B3169AE6;
+	Mon, 19 Aug 2024 11:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068034; cv=none; b=qB36fezq/JoFZfO0VU4otCTEdIa4W6Gg3ukumVvUH0wS0binc4Pz3jo59Ez3adevc9zl0ewtMPDyoBP4UcxV4G92TkkPDVmGIPrHHB+SukuS6neVWhKgD3TofK87/yGk+KIVuTm8UdG1Ci9oy3RGo2SN3pS0Cuh6QNn+q2UWZr4=
+	t=1724068046; cv=none; b=XQ3n2cqOVRWKsNCElv1x+y+E9+Eopyc1XFtBehog//6UF51kkTdelv9KRAXcQICkMX7SBv9Y4hQSYsj1wP6ABz68TMEDC/ZGpwx/zGvFVJjtOv/Gr8UbXyqlD0O+jWe5jeFHmAcCnCm+aJnFzkAGkY2Q7Q9X20wuns5yUWhZsdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068034; c=relaxed/simple;
-	bh=6THoPfDJ4DaIHDJGHkyac3o4Tj9/qF0aMMiW5s1/rNE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=sQzwcz+zKqYtPK7yGuHpolgefftUAMWZspwkuSES0sFwQjJ41xDmevMzMhXMBe23srkr4U4dsZRRJuQ9Gj5jFCh+9c+c1G+6iWT3T7jayhP2RCsUNHhOBXj4G84ky5eubDmesDcS00j5VtzgV9BLoFXV3xwzF+cIWl90/BSNPZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZiaI+SdA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724068031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/BXnkxNev4eqM9SF7QxyJDhAGvzkKQgET2zOAAZoUuI=;
-	b=ZiaI+SdADUFDp2Vv1Hrwu1xpUx5m1vEM5duLFGUqZezFN2ZipeWnj9JYe2hfIhx3neAdS3
-	V22ZaKCdtk+AQpC58OcTleBjWakGrmyZ/8eB1Z1KvnqwGuWSYABYlW+WQrnTUoG8/NuG90
-	aRC7/yyAhA35eO8ASL/MJCxN66Byo4k=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-85--2BxB3vTOoaoqk81-59JpA-1; Mon,
- 19 Aug 2024 07:47:06 -0400
-X-MC-Unique: -2BxB3vTOoaoqk81-59JpA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAA5F1955BEE;
-	Mon, 19 Aug 2024 11:47:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 75E1F19773E0;
-	Mon, 19 Aug 2024 11:46:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240818165124.7jrop5sgtv5pjd3g@quentin>
-References: <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
-    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
-    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
-    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    willy@infradead.org, john.g.garry@oracle.com,
-    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-    ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+	s=arc-20240116; t=1724068046; c=relaxed/simple;
+	bh=HEuqXXg8KOM1BSeu3oajipebGyT8C3Sey0AM2P+i730=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jq1OqRl6lzdQ+4KOCdT8K+xiX3jSf2ZAUD0I0/cRXdLdn6FPorwKkqF8/s7V3Bz7pMev7lJoV/jMmPrBWfQIGtFZIGw2Rqe36+wLffGU2faZXn7YEtYW/DoI79Nh47k1vqJNinSEFkiiNLK2hY+dMUUu6/XM3rh4y/sbeKDACXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dx+KIxy8; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so539166a12.3;
+        Mon, 19 Aug 2024 04:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724068043; x=1724672843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+7EmK/x9yGMggIGd6nPIlocVDx2WyNh0YQGki2bgCU=;
+        b=Dx+KIxy85H3kHi+0uovl6YHDaH1yhB73NRGOiB0EbbT811bW/m2LomWEqUKlxp1w66
+         /mikMWscoP7NSEw7AABRyJipDP3c95/3FX8Grbj5I928LW6V6kxy2vJcl1JTqnSa3VGI
+         JiY96lfsPvx7R1peobJO1Uu/awkuICJYGgQ5JdZtDSqzznSAgnqgiOomDlXR7xBBlwBI
+         ffqNCi0KkplpkAKIOix2ZCRl98uN2V/Vd5ThCztvOApZ/Q7lS4FKd4nYq2iQbWOFc9z1
+         CeH7XvbCpIUbXr0IXNdSRRq7f1l//r+OYpKAzbTzHNrkabO3/S0c+P3m+IPr20Ez2ojU
+         2NEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724068043; x=1724672843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C+7EmK/x9yGMggIGd6nPIlocVDx2WyNh0YQGki2bgCU=;
+        b=lDCm5ImoyxN3DhAH3Tk79LzWlXtswrm4jR9rz6xa7wnj0uXTCQ3qiKWr+UpaO7Hh2C
+         D5o8Nfh/N7p2XBd2ghMmqhaLOlwfaNvLSkd0kCLXX2B7kM0U8sgF5ujm2m1zKWZgwK5i
+         jOG9VFPhBgU67hfXhwXbWa1fiE92cMb2PXS3EW9nxqwJ6cv8AR9z3qGQoAZsdUNg1s1m
+         QbNxzfhQYB57UC14TPZO7JQnoVa7MBWj7DxKn2UOaiSWcv8I3PArmH3oFkYDym210eEQ
+         eDndKx2rWZ3ypSgyPjFnkua7SSHitxCE8uHEHu9BZ42aEk0SWUaeyFkgyHoxXzJTih93
+         DuDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsdrRsO/pD8gkKz0mtm9TZFwjr3+Um1hthRz9tAubVJNxVgyVJ60kQb67styROAR68FuAC0biwVnU8oT1fMpgd8ELdpkbY1ydVgU7xxlJUIwCZP1zIF255L8JArRqRH2H7
+X-Gm-Message-State: AOJu0YyMODh0CSsdHZwB/kp8GfmoIZib8bv6t0hga2m9tyUlAo6/qMZi
+	LAcXe/KunnIOF+jFA+GBrR6+5LahHbzF3e0ZZjzoMWnlz5P0hDDhiHuyhw==
+X-Google-Smtp-Source: AGHT+IH45mqlxcKm5QQEQ28ZPtqnfTtU8a5TtZIVrd9A3wueqbUcunKHj3cDhW3wunRXDzy6dZLVQQ==
+X-Received: by 2002:a17:907:e291:b0:a75:1069:5b94 with SMTP id a640c23a62f3a-a83928d7cadmr726072366b.21.1724068042810;
+        Mon, 19 Aug 2024 04:47:22 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344fdsm624106966b.100.2024.08.19.04.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 04:47:22 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 19 Aug 2024 13:47:20 +0200
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Artem Savkov <asavkov@redhat.com>,
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <ZsMwyO1Tv6BsOyc-@krava>
+References: <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+ <ZrIj9jkXqpKXRuS7@krava>
+ <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
+ <ZrSh8AuV21AKHfNg@krava>
+ <CAADnVQLYxdKn-J2-2iXKKKTg=o6xkKWzV2WyYrnmQ-j62b9STA@mail.gmail.com>
+ <Zr3q8ihbe8cUdpfp@krava>
+ <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+ <20240816101031.6dd1361b@rorschach.local.home>
+ <Zr-ho0ncAk__sZiX@krava>
+ <20240816153040.14d36c77@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3402932.1724068015.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Aug 2024 12:46:55 +0100
-Message-ID: <3402933.1724068015@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816153040.14d36c77@rorschach.local.home>
 
-Hi Pankaj,
+On Fri, Aug 16, 2024 at 03:30:40PM -0400, Steven Rostedt wrote:
+> On Fri, 16 Aug 2024 20:59:47 +0200
+> Jiri Olsa <olsajiri@gmail.com> wrote:
+> 
+> > so far the only working solution I have is adding '__nullable' suffix
+> > to argument name:
+> > 
+> > 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> > 	index 9ea4c404bd4e..fc46f0b42741 100644
+> > 	--- a/include/trace/events/sched.h
+> > 	+++ b/include/trace/events/sched.h
+> > 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
+> > 	  */
+> > 	 TRACE_EVENT(sched_pi_setprio,
+> > 	 
+> > 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
+> > 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task__nullable),
+> > 	 
+> > 	-	TP_ARGS(tsk, pi_task),
+> > 	+	TP_ARGS(tsk, pi_task__nullable),
+> > 	 
+> > 		TP_STRUCT__entry(
+> > 			__array( char,	comm,	TASK_COMM_LEN	)
+> > 	@@ -574,8 +574,8 @@ TRACE_EVENT(sched_pi_setprio,
+> > 			memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+> > 			__entry->pid		= tsk->pid;
+> > 			__entry->oldprio	= tsk->prio;
+> > 	-		__entry->newprio	= pi_task ?
+> > 	-				min(tsk->normal_prio, pi_task->prio) :
+> > 	+		__entry->newprio	= pi_task__nullable ?
+> > 	+				min(tsk->normal_prio, pi_task__nullable->prio) :
+> > 					tsk->normal_prio;
+> > 			/* XXX SCHED_DEADLINE bits missing */
+> > 		),
+> > 
+> > 
+> > now I'm trying to make work something like:
+> > 
+> > 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> > 	index 9ea4c404bd4e..4e4aae2d5700 100644
+> > 	--- a/include/trace/events/sched.h
+> > 	+++ b/include/trace/events/sched.h
+> > 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
+> > 	  */
+> > 	 TRACE_EVENT(sched_pi_setprio,
+> > 	 
+> > 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
+> > 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+> > 	 
+> > 	-	TP_ARGS(tsk, pi_task),
+> > 	+	TP_ARGS(tsk, __nullable(pi_task)),
+> > 	 
+> > 		TP_STRUCT__entry(
+> > 			__array( char,	comm,	TASK_COMM_LEN	)
+> 
+> Hmm, that's really ugly though. Both versions.
+> 
+> Now when Alexei said:
+> 
+> > > > > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
+> > > > > > by default, since it will break a bunch of progs.
+> > > > > > Instead we can annotate this tracepoint arg as __nullable and
+> > > > > > teach the verifier to recognize such special arguments of tracepoints. 
+> 
+> I'm not familiar with the verifier, so I don't know how the above is
+> implemented, and why it would break a bunch of progs.
 
-I can reproduce the problem with:
+verifier assumes that programs attached to the tracepoint can access
+pointer arguments without checking them for null and some of those
+programs most likely access such arguments directly
 
-xfs_io -t -f -c "pwrite -S 0x58 0 40" -c "fsync" -c "truncate 4" -c "trunc=
-ate 4096" /xfstest.test/wubble; od -x /xfstest.test/wubble
+changing that globally and require bpf program to do null check for all
+pointer arguments will make verifier fail to load existing programs
 
-borrowed from generic/393.  I've distilled it down to the attached C progr=
-am.
+> 
+> If you had a macro around the parameter:
+> 
+> 		TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+> 
+> Could having that go through another macro pass in trace_events.h work?
+> That is, could we associate the trace event with "nullable" parameters
+> that could be stored someplace else for you?
 
-Turning on tracing and adding a bit more, I can see the problem happening.
-Here's an excerpt of the tracing (I've added some non-upstream tracepoints=
-).
-Firstly, you can see the second pwrite at fpos 0, 40 bytes (ie. 0x28):
+IIUC you mean to store extra data for each tracepoint that would
+annotate the argument? as Alexei pointed out earlier it might be
+too much, because we'd be fine with just adding suffix to annotated
+arguments in __bpf_trace_##call:
 
- pankaj-5833: netfs_write_iter: WRITE-ITER i=3D9e s=3D0 l=3D28 f=3D0
- pankaj-5833: netfs_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 mod-str=
-eamw
+	__bpf_trace_##call(void *__data, proto)                                 \
+	{                                                                       \
+		CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));        \
+	}
 
-Then first ftruncate() is called to reduce the file size to 4:
+with that verifier could easily get suffix information from BTF and
+once gcc implements btf_type_tag we can easily switch to that
 
- pankaj-5833: netfs_truncate: ni=3D9e isz=3D2028 rsz=3D2028 zp=3D4000 to=3D=
-4
- pankaj-5833: netfs_inval_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 o=
-=3D4 l=3D1ffc d=3D78787878
- pankaj-5833: netfs_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 inval-p=
-art
- pankaj-5833: netfs_set_size: ni=3D9e resize-file isz=3D4 rsz=3D4 zp=3D4
-
-You can see the invalidate_folio call, with the offset at 0x4 an the lengt=
-h as
-0x1ffc.  The data at the beginning of the page is 0x78787878.  This looks
-correct.
-
-Then second ftruncate() is called to increase the file size to 4096
-(ie. 0x1000):
-
- pankaj-5833: netfs_truncate: ni=3D9e isz=3D4 rsz=3D4 zp=3D4 to=3D1000
- pankaj-5833: netfs_inval_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 o=
-=3D1000 l=3D1000 d=3D78787878
- pankaj-5833: netfs_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 inval-p=
-art
- pankaj-5833: netfs_set_size: ni=3D9e resize-file isz=3D1000 rsz=3D1000 zp=
-=3D4
-
-And here's the problem: in the invalidate_folio() call, the offset is 0x10=
-00
-and the length is 0x1000 (o=3D and l=3D).  But that's the wrong half of th=
-e folio!
-I'm guessing that the caller thereafter clears the other half of the folio=
- -
-the bit that should be kept.
-
-David
----
-/* Distillation of the generic/393 xfstest */
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#define ERR(x, y) do { if ((long)(x) =3D=3D -1) { perror(y); exit(1); } } =
-while(0)
-
-static const char xxx[40] =3D "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-static const char yyy[40] =3D "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
-static const char dropfile[] =3D "/proc/sys/vm/drop_caches";
-static const char droptype[] =3D "3";
-static const char file[] =3D "/xfstest.test/wubble";
-
-int main(int argc, char *argv[])
-{
-        int fd, drop;
-
-	/* Fill in the second 8K block of the file... */
-        fd =3D open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666);
-        ERR(fd, "open");
-        ERR(ftruncate(fd, 0), "pre-trunc $file");
-        ERR(pwrite(fd, yyy, sizeof(yyy), 0x2000), "write-2000");
-        ERR(close(fd), "close");
-
-	/* ... and drop the pagecache so that we get a streaming
-	 * write, attaching some private data to the folio.
-	 */
-        drop =3D open(dropfile, O_WRONLY);
-        ERR(drop, dropfile);
-        ERR(write(drop, droptype, sizeof(droptype) - 1), "write-drop");
-        ERR(close(drop), "close-drop");
-
-        fd =3D open(file, O_WRONLY, 0666);
-        ERR(fd, "reopen");
-	/* Make a streaming write on the first 8K block (needs O_WRONLY). */
-        ERR(pwrite(fd, xxx, sizeof(xxx), 0), "write-0");
-	/* Now use truncate to shrink and reexpand. */
-        ERR(ftruncate(fd, 4), "trunc-4");
-        ERR(ftruncate(fd, 4096), "trunc-4096");
-        ERR(close(fd), "close-2");
-        exit(0);
-}
-
+jirka
 
