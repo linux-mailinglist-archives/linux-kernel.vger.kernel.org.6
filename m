@@ -1,202 +1,136 @@
-Return-Path: <linux-kernel+bounces-292558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B17C957143
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E472795713A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3EC1C22DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132401C21B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6250618C913;
-	Mon, 19 Aug 2024 16:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B013D18C347;
+	Mon, 19 Aug 2024 16:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiN2CoZ+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lf95m1a0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69EE18C327
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1B18B490;
+	Mon, 19 Aug 2024 16:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086402; cv=none; b=mZIdjGJNjbYgkFAalzm1DLo2z+1H6AtjYr5ifhIh+imMU4pWETbfqX+4Uv0RA7nEfAqyBA8MkYsej3kGmTqyHA8iaOVcAFIi9C6OhrPuETwk+s5JAG1/VdO1XTg8NxKgfLiBx0/urhYJ11hfttSJt7nov18TahDl2oKoTrAI0eU=
+	t=1724086400; cv=none; b=IejKwuiMngm3Xd6M5loCoeCaQsE3baLbUo7wNRJRUSx4zJ027iuiH6ImCTTvEzodxhofcGVpT+lcc1eT2Fe8hkjWFIH/0DL+YmjgzADhdUp0E2MjwnmoVC1kqPmUo2nWZrEa26fmW1FikYVolivDE4p8yw8tUA43safnpd1ut/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086402; c=relaxed/simple;
-	bh=HyrnGEiWWKBKUn1JXMJcutJ0LWXBjSFgM/wwpIH/cmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X2SJeVDAS3CtV6IYLr+KKXB/dero9GnZlG2KPmfhGKrMMjrtpblNTYC4AhmSZo4LueDWfNzI/E/WItCldIA04N+O+FZ8cZLIoMzyDq33DpCD6FWrUH0KtdxXqLrudrPpgkQzQcoVMnqGi2jdKGpxxU81n7pzTVSmVtML4WgeGbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiN2CoZ+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724086399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RIGjmIxgd4ZYoEGhHZhEaO790wvl9zuuKnu8/dcY7mY=;
-	b=SiN2CoZ+/mlezkqMiokcpCmxDck+etGa5yltFWoOMq1PaaoJKJrmBteUUkjwmGjC7YYhy8
-	EbPWLbZtUfLuaIrNrkg0oOU8La05HCgMla6cr41KxCHEQ2+ikkG5SDTst26MuvznhL5DHz
-	ZUpyknN/CFfo3mdKpAjJAZjyouI33Sk=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-539-LnYnEl7rMgW3eMPGn6wz1g-1; Mon, 19 Aug 2024 12:53:18 -0400
-X-MC-Unique: LnYnEl7rMgW3eMPGn6wz1g-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5d5cef4a643so956621eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:53:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724086397; x=1724691197;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RIGjmIxgd4ZYoEGhHZhEaO790wvl9zuuKnu8/dcY7mY=;
-        b=WyBOq9eDT4PnwCROGpd79qA5iZBVshPhBvs1zcy4WP7f2aQ4aYu8EHKZXE8z7o/mRC
-         PmBx9yFMQu/ZFvbIcfvh1Av6hm1ER3F8a4TdBuiSmmPoGVRsPMBi9oIi/DuYBKkXkyMT
-         gQge7RW0Slbw2/Jkcww7j9gaDAQmEy3qi1sWGn9c3zolg+7cTo0fP27pRv3lRJJrmh14
-         +s0guEXXnktv6aDaFO6sbSXcfcoS4N53kl2php1bXQrgcbe0E7TgrWOyBgb96X4cZWga
-         xUz4rYAMnCMAlLpPpE1IlxdCD/xUHPRL0o6dWGYwqcGbO0sOI6/0NI+xsovMq3sveklw
-         mxeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYmfsoFlZsOUVfbj1gdZGXvqE+vJSNMvMrebvgdNTsA11mBTAFFVPLPLVHOUlVwumB9boRwlw30hD5q+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysSpga9KtcykoxNZWjOL3tIS6/GMKf/Zu/XJlRn7I/JadUyIo9
-	LKLGTUJv7+IcWocGLcfTPCWGOEZ7DrEf+JCEhMhCtiq2mPU5Pd5ZQ3525EfxHH7azzPxyl6aftS
-	RDg69wnMIQ+s0avDAQL+Tqz0jyUpizxMYfsgDv7qAR4eRFNvKhi05ka6IcdjnfQ==
-X-Received: by 2002:a05:6358:6f15:b0:1ac:a26c:a617 with SMTP id e5c5f4694b2df-1b3933a2ef4mr724903355d.5.1724086397480;
-        Mon, 19 Aug 2024 09:53:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGT/mWFQ9yoQUfbebPKob1DsZxH+iTK/HwcCt5JWpV0k06WRkWCd30wgdmfipghSMnyk6p9TQ==
-X-Received: by 2002:a05:6358:6f15:b0:1ac:a26c:a617 with SMTP id e5c5f4694b2df-1b3933a2ef4mr724898255d.5.1724086397091;
-        Mon, 19 Aug 2024 09:53:17 -0700 (PDT)
-Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff01e293sm446579885a.26.2024.08.19.09.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 09:53:16 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: onathan Corbet <corbet@lwn.net>,
-	Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH 9/9] PCI: Remove pcim_iounmap_regions()
-Date: Mon, 19 Aug 2024 18:51:49 +0200
-Message-ID: <20240819165148.58201-11-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240819165148.58201-2-pstanner@redhat.com>
-References: <20240819165148.58201-2-pstanner@redhat.com>
+	s=arc-20240116; t=1724086400; c=relaxed/simple;
+	bh=T31sr9ecJ09ZTCDAK5AA+RVsAYDONM0fjWQhCDR+28k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tq/Xo7ugnI9UMfW57uXjeTNs+A6Iv8HJ/6/flFaZuubl55RZv4bC69HRg5cc7ilf8ygceX/gNZvvuVSTWQ387a8BJaV6U4pSQr9tL2TrdcRQGeloLAr+9gpmphILvCYwEjh1qRs8//kv+JO91ItegQp9oLk24hHlVI/2jcOllN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lf95m1a0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JAOABV009008;
+	Mon, 19 Aug 2024 16:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gJki5caVv9znXTvJlIlxMBk7
+	Wh1r46Xd9zmvk0DrXO8=; b=Lf95m1a0bRB0vdWaHvPHMIrZ6kVe3fFHoaeuIZa+
+	TgX5xV31npYyU5+Mzp35W+Lizt95qZVESZ/eVZHZNFnGM7LxMtqLO0FI5OHHMM7F
+	cmxbOqKovcYk3/hG11lETgEzT5Sdva8Yd6DMW6Qegj5OaKprC2A7qEBJ4qzowenF
+	46nhWLTcvyn2q/wPc8LMQ1aq48p6jh/RCz9c8vM/LIDGyuJaR5BOG1UypPUQ1R20
+	g0ezsg2Y17cZtTg9mg9wAx6xfPMeKdqdyAvrmbLZDcUu+Tp2XHTnAKwc978Y14Er
+	XfBZGcXqt/QefTOh/VmdKFsjpeqEyj998pLBtCQqt/eYug==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m8751fw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 16:53:12 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JGrBCg024852
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 16:53:11 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 09:53:10 -0700
+Date: Mon, 19 Aug 2024 09:53:09 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Johan Hovold <johan@kernel.org>
+CC: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Heikki
+ Krogerus" <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Chris Lew <quic_clew@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
+Message-ID: <ZsN4dcErSt3nioWn@hu-bjorande-lv.qualcomm.com>
+References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+ <ZsNpSt3BtdFIT6ml@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZsNpSt3BtdFIT6ml@hovoldconsulting.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fpl3DnDx9f5RKON6XvSckXyZx93_LW79
+X-Proofpoint-ORIG-GUID: fpl3DnDx9f5RKON6XvSckXyZx93_LW79
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_13,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=909 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190112
 
-All users of pcim_iounmap_regions() have been removed by now.
+On Mon, Aug 19, 2024 at 05:48:26PM +0200, Johan Hovold wrote:
+> On Sun, Aug 18, 2024 at 04:17:36PM -0700, Bjorn Andersson wrote:
+> > Amit and Johan both reported a NULL pointer dereference in the
+> > pmic_glink client code during initialization, and Stephen Boyd pointed
+> > out the problem (race condition).
+> 
+> > In addition to the NULL pointer dereference, there is the -ECANCELED
+> > issue reported here:
+> > https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+> > I have not yet been able to either reproduce this or convince myself
+> > that this is the same issue.
+> 
+> I can confirm that I still see the -ECANCELED issue with this series
+> applied:
+> 
+> [    8.979329] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+> [    9.004735] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+> 
 
-Remove pcim_iounmap_regions().
+Could you confirm that you're seeing a call to
+qcom_glink_handle_intent_req_ack() with granted == 0, leading to the
+transfer failing.
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/pci/devres.c                          | 21 -------------------
- include/linux/pci.h                           |  1 -
- 3 files changed, 23 deletions(-)
+It would also be nice, just for completeness sake to rule out that you
+do not get a call to qcom_glink_intent_req_abort() here.
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index ac9ee7441887..525f08694984 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -397,7 +397,6 @@ PCI
-   pcim_iomap_regions_request_all() : do request_region() on all and iomap() on multiple BARs
-   pcim_iomap_table()		: array of mapped addresses indexed by BAR
-   pcim_iounmap()		: do iounmap() on a single BAR
--  pcim_iounmap_regions()	: do iounmap() and release_region() on multiple BARs
-   pcim_pin_device()		: keep PCI device enabled after release
-   pcim_set_mwi()		: enable Memory-Write-Invalidate PCI transaction
- 
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 30c813766e8b..a1689100a535 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -1014,27 +1014,6 @@ int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
- }
- EXPORT_SYMBOL(pcim_iomap_regions_request_all);
- 
--/**
-- * pcim_iounmap_regions - Unmap and release PCI BARs
-- * @pdev: PCI device to map IO resources for
-- * @mask: Mask of BARs to unmap and release
-- *
-- * Unmap and release regions specified by @mask.
-- */
--void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
--{
--	int i;
--
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (!mask_contains_bar(mask, i))
--			continue;
--
--		pcim_iounmap_region(pdev, i);
--		pcim_remove_bar_from_legacy_table(pdev, i);
--	}
--}
--EXPORT_SYMBOL(pcim_iounmap_regions);
--
- /**
-  * pcim_iomap_range - Create a ranged __iomap mapping within a PCI BAR
-  * @pdev: PCI device to map IO resources for
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 7de75900854a..4eee09624932 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2302,7 +2302,6 @@ void pcim_iounmap_region(struct pci_dev *pdev, int bar);
- int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name);
- int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
- 				   const char *name);
--void pcim_iounmap_regions(struct pci_dev *pdev, int mask);
- void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
- 				unsigned long offset, unsigned long len);
- 
--- 
-2.46.0
+Regards,
+Bjorn
 
+> Johan
+> 
 
