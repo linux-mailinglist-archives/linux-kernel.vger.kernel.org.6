@@ -1,140 +1,84 @@
-Return-Path: <linux-kernel+bounces-291795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59391956701
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:31:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17E0956707
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FECD1F22CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2CB28330A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2F815ECE3;
-	Mon, 19 Aug 2024 09:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F6B15EFC4;
+	Mon, 19 Aug 2024 09:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nYbxN5ui";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aVjlq0vV"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpWUk2oI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3870715CD61;
-	Mon, 19 Aug 2024 09:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718EC143C63;
+	Mon, 19 Aug 2024 09:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724059795; cv=none; b=ab3QX3ZOAPOhh3+/XBqxsal5AUdj/vRkF8AV0bVYFAJ87dEd9wI5rQBBbgWYnp2hdYLmtNG6hK69+EKglvb8/wIjOWxQ2eqlzkAaF30hKW8c4Dt4+hbda9441jh69Aowa6PqMmthWu2AXnCFj/KaIdi31ePylGxBPt2kE+br2io=
+	t=1724059821; cv=none; b=qpr7tIEXn7tTF0ARYWKuk1h0Ko106arJo5T7gdwIbngpFEBgbatLiaWm+G1HhM1P04P+r2syN9rWtFLBGs+DYWfApaEf640tsglGOWqms3ShDXCumOyEgQMFzoGusHmCovYMDpSiEzFLxx5GxTHsa3t9aNEVFP0duPpSBfpzjjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724059795; c=relaxed/simple;
-	bh=7AJQE2xKowxFNilsvWw1WWl8IqrvQTax9diJNtx8/zc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eeLRL/ycZe5cmVF4zd3pmpq8vDBBuc9elgTdLDw4NnLqjckgkXyfkpqZzdPTNg4rb2lj836X1PJvRH/nosObM7zn5qLRnvivUUk9V4WgIGtvGXY751u4UUqWEp7taOHv54aKAO5u+jmQqpPRgpZyhPHDKgGDLG/N/f1Zo85FjiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nYbxN5ui; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aVjlq0vV; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 3DB7F138FFC3;
-	Mon, 19 Aug 2024 05:29:53 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 05:29:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724059793;
-	 x=1724146193; bh=4JRcUWArpiuPf5j/1DIoae+oRQS+D0B9OSyAAns7OjE=; b=
-	nYbxN5ui3Pym+s1YLz+tVyRTI4wJ62ENlbOBoB9V/6al8r/n4hyiGJYRYcAcSZ27
-	mxBMAdbHbWXyvaq7aHEPn6XyRW5uPUMncFY2z9rnV0x25px1M9kRuxUYI91O17wB
-	18hpPfb+E3XCVO+lrkEOc6LOuYXWC/ZaIxj6IaxvC9BV+1r0Sss9RFBBm4Vxt82/
-	IkRM7xXMZDnWWg+VsYSIei9jPPo1Lu1t11IOl2lrENNlj+7N1cnWnNakXhdgwP8z
-	5/lPiogMx+nA0tRXW4gBFxiHlKkXug/NuLG0oPiXVVksXl9S6FoB3V52Hf61qRp7
-	bCjcOruSyHRWerDJhfDUrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724059793; x=
-	1724146193; bh=4JRcUWArpiuPf5j/1DIoae+oRQS+D0B9OSyAAns7OjE=; b=a
-	Vjlq0vVSV1ZWbiXMJFn0D8tPipSrx3xnC4BvwJAEsAZn6y6ZYhyvLPBDUeChY2ug
-	F77paIj6pn2Br9irB2Gq5hhBiyljl1nzxER9DorQddUcOgKbls+I/kSDKq6O/B8h
-	d6hTlEXCcPEGuzQmGURB5g3HotGMLftDsndZVoYzCjMj+sGyRYUF8E/4OCRuctye
-	PGeFxhdxo9Za289ybsmucldYpaiJP2snulfYxGnj5dGAlleIxAIt4N1l8FGYh4QI
-	ykyF+VImW6jYhjOfspSIuD5uT7DzhT5ZBAZe/dSsOQcz/fkU7nMQyO90ECkqzGTE
-	WJRTZ6Lb/WxXN3RfBvpZQ==
-X-ME-Sender: <xms:kRDDZkS_Uqo_6ahcq6zRop_CPtSXZtCYsZvuPVdMzS3uVNmaLPTiRw>
-    <xme:kRDDZhykuG9zB2LwbkTuNenSR00n3K-1QZhjYTV40inhN11IjlFphRAy2yyr543Z2
-    KUYGQqdYQjumxn8Nc0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovh
-    esghhmrghilhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:kRDDZh1gP_63DC7v1BWWl97SEHb9LJKN00FyjSt0EEfP9KVrXiv1uA>
-    <xmx:kRDDZoBm9TYTJM5sbSPs1Ey6UUdcAXENX_msL9JVhyq9XSpFlLErFw>
-    <xmx:kRDDZtho15q50DN5CkmFsEm0pRjJmSdYUVg6Hch0UiYZp3ZPuP3_Gg>
-    <xmx:kRDDZkpQ8O3cSxR5v4qPC7yd7xG0wg91ReWq9pxm6bzKhBh09OHICg>
-    <xmx:kRDDZrYP2E3RAGJ1ZH5HP7_pnyTIwOMrgfayimKjaNy4KHnWnwvfV5FL>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 0FBCA16005E; Mon, 19 Aug 2024 05:29:53 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724059821; c=relaxed/simple;
+	bh=UPsNRKG9Zu2jfztwxlXBjO6UIO3owH6Aie6P2dQqTUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQRtBCkdz2Cq/cNASSHRTsF2u0HXN+l+IPbWcNyH4ucJ7tXxKR7zuFvItxXgFhKeADDzDUjOMeSc+6NZQC4e3wad9CLrw09Q2p9vARct/0AGwko209kBFA0poOTzQAgmqXU/lnKGHjfk9rqAMh1Ek3VWMJjnzYT6pebnyJ26chA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpWUk2oI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12958C32782;
+	Mon, 19 Aug 2024 09:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724059821;
+	bh=UPsNRKG9Zu2jfztwxlXBjO6UIO3owH6Aie6P2dQqTUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RpWUk2oIsMLC+VEeRCCFjfKYRFNuJuROvNWAb+cJ6wESf0yxk8Cmcuqtwv+WdlHS/
+	 sANOy85MEOZsBG2qPTZlMHkftb28TUruwlu9zqjXB0epzcZpdyKhigGshJqHxRGb99
+	 Kj9ZkHv9AT6MiVG1DnzIA9u0b3zd9Lm880bewk983IIC4s0QbAG3yHAL6+Gy/6zAiq
+	 ADxI5inbh9wZbvNxKxVvjMOQlOFvKjKKCsuXpB0WfkCf0E+dpMKt+MKbign9+6Cp6g
+	 b3z1d5RDodCRW6d0XrGxy3ynj74InMki0POKQm4BIsfh+iujz7SDJspA2AroJfjRYN
+	 5/uTRNOVbU3lA==
+Date: Mon, 19 Aug 2024 10:30:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] dpaa2-switch: Fix error checking in
+ dpaa2_switch_seed_bp()
+Message-ID: <20240819093016.GB11472@kernel.org>
+References: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 19 Aug 2024 11:29:32 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Linus Walleij" <linus.walleij@linaro.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lee Jones" <lee@kernel.org>, linux-arm-kernel@lists.infradead.org
-Message-Id: <1bc01e00-7b70-4e90-8060-f3de3ec7afa3@app.fastmail.com>
-In-Reply-To: <Zr-gX0dfN4te_8VG@google.com>
-References: <Zr-gX0dfN4te_8VG@google.com>
-Subject: Re: [PATCH] Input: keypad-nomadik-ske - remove the driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
 
-On Fri, Aug 16, 2024, at 20:54, Dmitry Torokhov wrote:
-> The users of this driver were removed in 2013 in commit 28633c54bda6
-> ("ARM: ux500: Rip out keypad initialisation which is no longer used").
->
-> Remove the driver as well.
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Sat, Aug 17, 2024 at 09:52:46AM +0300, Dan Carpenter wrote:
+> The dpaa2_switch_add_bufs() function returns the number of bufs that it
+> was able to add.  It returns BUFS_PER_CMD (7) for complete success or a
+> smaller number if there are not enough pages available.  However, the
+> error checking is looking at the total number of bufs instead of the
+> number which were added on this iteration.  Thus the error checking
+> only works correctly for the first iteration through the loop and
+> subsequent iterations are always counted as a success.
+> 
+> Fix this by checking only the bufs added in the current iteration.
+> 
+> Fixes: 0b1b71370458 ("staging: dpaa2-switch: handle Rx path on control interface")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/input/keyboard/Kconfig                |  11 -
->  drivers/input/keyboard/Makefile               |   1 -
->  drivers/input/keyboard/nomadik-ske-keypad.c   | 378 ------------------
->  .../linux/platform_data/keypad-nomadik-ske.h  |  50 ---
->  4 files changed, 440 deletions(-)
->
+> >From reviewing the code.  Not tested.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-I have a list of drivers that I determined to be likely
-unused as well and found a few more input drivers
-that were unused in 2022:
-
-CONFIG_KEYBOARD_ADP5520/CONFIG_PMIC_ADP5520
-CONFIG_KEYBOARD_ADP5589
-CONFIG_INPUT_AD714X
-CONFIG_TOUCHSCREEN_AD7877
-
-As far as I can tell, these all lost their last device
-definition, or they never had one and are impossible to
-be used with device tree data.
-
-     Arnd
 
