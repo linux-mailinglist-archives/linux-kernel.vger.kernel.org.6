@@ -1,194 +1,99 @@
-Return-Path: <linux-kernel+bounces-292080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E27956AD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4307956AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF60B22ED3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:27:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C39B25911
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF7916B741;
-	Mon, 19 Aug 2024 12:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEDC16C6B6;
+	Mon, 19 Aug 2024 12:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zwrkw3Wo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NTB8Kn2k"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9126716BE29
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF116848F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724070322; cv=none; b=Mr7K3FOhFgeWVyE3k0Ezd/+D+2xidh+SkBz6RDN3t8UqQzfKhDycPbG3f0BKBKj9A/zJIJaxPlsYKZH70cBvTrFHbIURqgafC2oY+irByWIR+plC7o/pmWUzotoNJoK1Hnivto0vYmczLsI//jaPJZ6BGoIAISJ2iQemoRbxEe8=
+	t=1724070337; cv=none; b=eKYW7VP0/tznlOiNWDFWskFkZXAGr0t4/uD8nVNd+4bJ9q1YWJsmlMNpsAffRhpY7WD58c1LAFvG1IrmqZ4tFh8VboE74TEUN+yLzHez66AwA2JpjThhl/4thL8YFjVASIa6J+nAc53m/wvLvIt3/DFGTDbGQT3bv0C/3e7UVwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724070322; c=relaxed/simple;
-	bh=UQxmvj7TlR5VISdPEwl6/bZra05gJhRUm0F5BS7kOho=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=mzq/ejxxb34DhOBPS6aYq2QSix34VwmdXhE0UTo7AZypl6mzRRAYArCaxfIl6GdA+3bRVIE+yJa6VwLa4urnbiHg1dlMXwW7JyqJSkG29RPjEjeiEBjlWn+qWBmHhB0HmjK9aVSpvFOzyZCVtqh5DzOvVfPgFMLQxXzQn3lES30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zwrkw3Wo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724070319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jn1DvOrWmKBpilai8HNN4+kVlfjx6rb9s0iUzARN26I=;
-	b=Zwrkw3WoTCO/yuYAr9Jn9d6vww3GGpGc0WxY2ykvie/O3HFBdw1di/Kur+PjYaPbLuC0q6
-	WtrhVs7009GnVyRGVY77waCSuEIlICOlyZCiQzAul3rXyVJgQYMLUM6ZXG4LhpkfMqUUYh
-	dA9RheKTG8RjuNy12KjzUGParfc5gNM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-458-jpvrPuE3PBWM5CJ5MOxA6g-1; Mon,
- 19 Aug 2024 08:25:15 -0400
-X-MC-Unique: jpvrPuE3PBWM5CJ5MOxA6g-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2F7A1955BFE;
-	Mon, 19 Aug 2024 12:25:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 323B930001A1;
-	Mon, 19 Aug 2024 12:25:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <df26beed-97c7-44e4-b380-2260b8331ea9@suse.de>
-References: <df26beed-97c7-44e4-b380-2260b8331ea9@suse.de> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk> <3141777.1724012176@warthog.procyon.org.uk>
-To: Hannes Reinecke <hare@suse.de>
-Cc: dhowells@redhat.com,
-    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-    brauner@kernel.org, akpm@linux-foundation.org,
-    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-    djwong@kernel.org, gost.dev@samsung.com, linux-xfs@vger.kernel.org,
-    hch@lst.de, david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-    yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-    linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-    ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+	s=arc-20240116; t=1724070337; c=relaxed/simple;
+	bh=k5o4y5VSo0c8GejdI87IOdeqQN5MXNRusNn7egeiFSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QA7gROP/i2iUbmMXkaJn9HSNByAjvl3Ym13JEG7LMAHMyCaMLKb233mA7BLfUf5Tu10oVP0s5PSsnZPuvGsHmytwgnxmYFZCBZzp8PBlaztlhCWq3l0z/rQgmkveAsjaMe4c7UXCvZLQmMyPO7WllD0eYWeZTrxpjXfrAF6hS24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NTB8Kn2k; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724070332; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=k4kNH4THhZ5Nwg8AiZRRkhfef0lufAmi3R+L4j9cBb4=;
+	b=NTB8Kn2kR4roFj6SJmmUsoaxnEHJ/bLS27OgLwuBMvUi01DuBfcsUQi86ymLoB1bZsrS9V8kh7pjTJC8bZLSqllHhyA3JiZ5zNkTY1KI8u8jjcOgFMGJvtNUFIULAuFYj2cfe8ujSf8FeiFBKgFbke31M8n4JA4Z6LMH8ru4F0g=
+Received: from 30.246.160.136(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WDCu7VX_1724070330)
+          by smtp.aliyun-inc.com;
+          Mon, 19 Aug 2024 20:25:31 +0800
+Message-ID: <601bf843-94c7-49f7-8fa3-536a118b4ae0@linux.alibaba.com>
+Date: Mon, 19 Aug 2024 20:25:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3407980.1724070304.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Aug 2024 13:25:05 +0100
-Message-ID: <3407981.1724070305@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers/perf: Fix ali_drw_pmu driver interrupt status
+ clearing
+To: Jing Zhang <renyu.zj@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+ Will Deacon <will@kernel.org>
+References: <1724068110-45239-1-git-send-email-renyu.zj@linux.alibaba.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <1724068110-45239-1-git-send-email-renyu.zj@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hannes Reinecke <hare@suse.de> wrote:
 
-> IE you essentially nail AFS to use PAGE_SIZE.
-> Not sure how you would tell AFS to use a different block size;
-> maybe a mount option?
 
-As far as I know:
+在 2024/8/19 19:48, Jing Zhang 写道:
+> The alibaba_uncore_pmu driver forgot to clear all interrupt status
+> in the interrupt processing function. After the PMU counter overflow
+> interrupt occurred, an interrupt storm occurred, causing the system
+> to hang.
+> 
+> Therefore, clear the correct interrupt status in the interrupt handling
+> function to fix it.
+> 
+> Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
+> ---
+>   drivers/perf/alibaba_uncore_drw_pmu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
+> index 38a2947..c6ff1bc 100644
+> --- a/drivers/perf/alibaba_uncore_drw_pmu.c
+> +++ b/drivers/perf/alibaba_uncore_drw_pmu.c
+> @@ -400,7 +400,7 @@ static irqreturn_t ali_drw_pmu_isr(int irq_num, void *data)
+>   			}
+>   
+>   			/* clear common counter intr status */
+> -			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, 1);
+> +			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, status);
+>   			writel(clr_status,
+>   			       drw_pmu->cfg_base + ALI_DRW_PMU_OV_INTR_CLR);
+>   		}
 
-        sb->s_blocksize         =3D PAGE_SIZE;
-        sb->s_blocksize_bits    =3D PAGE_SHIFT;
+Yes, it is a bug due to typo.
 
-isn't used by the VM.
+Thank you.
 
-> Hmm. I'd rather fix the obvious places in afs first; just do a quick
-> grep for 'PAGE_', that'll give you a good impression of places to look a=
-t.
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
 
-Sure:
-
-   fs/afs/dir.c:   nr_pages =3D (i_size + PAGE_SIZE - 1) / PAGE_SIZE;
-   fs/afs/dir.c:   req->len =3D nr_pages * PAGE_SIZE; /* We can ask for mo=
-re than there is */
-   fs/afs/dir.c:           task_io_account_read(PAGE_SIZE * req->nr_pages)=
-;
-   fs/afs/dir.c:           folio =3D __filemap_get_folio(dir->i_mapping, c=
-tx->pos / PAGE_SIZE,
-   fs/afs/xdr_fs.h:#define AFS_DIR_BLOCKS_PER_PAGE (PAGE_SIZE / AFS_DIR_BL=
-OCK_SIZE)
-
-Those only affect directories.
-
-   fs/afs/mntpt.c:         if (size < 2 || size > PAGE_SIZE - 1)
-
-That only affects mountpoint symlinks.
-
-   fs/afs/super.c: sb->s_blocksize         =3D PAGE_SIZE;
-
-This is the only thing (and sb->s_blocksize_bits) that might affect files.=
-  I
-checked, and doubling this and adding 1 to bits does not alter the outcome=
-.
-
-Now, the VM wrangling is offloaded to netfslib, and most of that is to do =
-with
-converting between indices and file positions.  Going through the usages o=
-f
-PAGE_SIZE there:
-
-   fs/netfs/buffered_read.c:               size +=3D PAGE_SIZE << order;
-
-That was recording the size of a folio readahead allocated.
-
-   fs/netfs/buffered_read.c:       size_t nr_bvec =3D flen / PAGE_SIZE + 2=
-;
-   fs/netfs/buffered_read.c:               part =3D min_t(size_t, to - off=
-, PAGE_SIZE);
-
-Those two are used to fill in the gaps around a partial page - but that di=
-dn't
-appear in the logs.
-
-   fs/netfs/buffered_write.c:      pgoff_t index =3D pos / PAGE_SIZE;
-   fs/netfs/buffered_write.c:              fgp_flags |=3D fgf_set_order(po=
-s % PAGE_SIZE + part);
-
-Those two are used when asking __filemap_get_folio() to allocate a folio t=
-o
-write into.  I got a folio of the right size and index, so that's not the
-problem.
-
-   fs/netfs/fscache_io.c:  pgoff_t first =3D start / PAGE_SIZE;
-   fs/netfs/fscache_io.c:  pgoff_t last =3D (start + len - 1) / PAGE_SIZE;
-
-Caching is not enabled at the moment, so these don't happen.
-
-   fs/netfs/iterator.c:            cur_npages =3D DIV_ROUND_UP(ret, PAGE_S=
-IZE);
-   fs/netfs/iterator.c:                    len =3D ret > PAGE_SIZE ? PAGE_=
-SIZE : ret;
-
-I'm not doing DIO, so these aren't used.
-
-   fs/netfs/iterator.c:    pgoff_t index =3D pos / PAGE_SIZE;
-
-I'm not using an ITER_XARRAY iterator, so this doesn't happen.
-
-   fs/netfs/misc.c:        rreq->io_iter.count +=3D PAGE_SIZE << order;
-
-This is just multiplying up the folio size to add to the byte count.
-
-   fs/netfs/read_collect.c:        fsize =3D PAGE_SIZE << subreq->curr_fol=
-io_order;
-   fs/netfs/read_collect.c:            WARN_ON_ONCE(folioq_folio(folioq, s=
-lot)->index !=3D fpos / PAGE_SIZE)) {
-
-These two are converting between a file pos and an index - but only during
-read, and I can see from wireshark that we're writing the wrong data to th=
-e
-server before we get this far.
-
-And that's all the PAGE_SIZE usages in afs and netfslib.
-
-David
+Shuai
 
 
