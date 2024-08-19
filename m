@@ -1,136 +1,157 @@
-Return-Path: <linux-kernel+bounces-291804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B36956721
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:34:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9E195672C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695EE282451
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACB01C215EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB71915ECC6;
-	Mon, 19 Aug 2024 09:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFE415E5CB;
+	Mon, 19 Aug 2024 09:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdtEPasi"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eqrUq6v9"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D81515E5D0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6C15C14A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724060003; cv=none; b=GjqJqZ7onwUQ8Yiypu9BO+nmS8gfmkfPFjkda1HLSLvpgik/El+aJE2bek8bYyQbfitG+Fz9D+PZ7YSDfxMvQ7rHBHzuPEv+qZo1pwmx5Jrdc9JDFStCrv4EiTVoW+pS9aCg6LZCeBXjREkXG4Oy0Y8h4bs19Nr2VLRcblO2kX4=
+	t=1724060049; cv=none; b=uLaRBdOzPSoZhjIoBMXL1MNA+A4R8sjaC3djzJZh10RJyhU5fNRoQCtgPjYess9OcuggdZ/urNdrSgj7nLSuzNsRzZFDca67budzZz8a9sATeZd6pGneN0CRmwZhHybnpWyp1dtUDNd5Vzcyy4JRqYCpUg3Vgp8GWNP9yYHEEEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724060003; c=relaxed/simple;
-	bh=/mE3tHXoeEqsb2A5bih7aGZ8MlP73qQqq5xLMkjY6d8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XoVLnVeIMDYATqreo4ToeWwctAKcHEsGRrx8IAcVKfGac9MPfY6uAIICe3rcotYPqJ6v5DBGqRrwZ9KX5rdJjxpg7s7rs8VNgne7wt7QJGaxsKxW8v07uTQMWr2XpQo8/VV6wRAxg0DGyvmYPKDi17VK69KPZcbcc8hy7OL39CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdtEPasi; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efd855adbso5067809e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:33:21 -0700 (PDT)
+	s=arc-20240116; t=1724060049; c=relaxed/simple;
+	bh=SpUtl05BeCGOM/1Lkbq/9mp5CcEOrFAlx+xbPz3AkRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HBlJOi0XpdGwYWiq2BR6JZ1bio6hLpVuFxg50bNUxTe/rlFISxs3fXvN52VvMCmllrLKg4nosAD3uAKz1wHznisgzSmLneDYv+MKVQnD2ZRpU2cWJ3zgQWz9VmhfMlotVHGrchQRyrxFNez16c3k64k/TzzvNcS6WnDCPuOTsZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eqrUq6v9; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so421700a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724060000; x=1724664800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4J0qnFMOrentkiYGSo1a6B/wDJGaxKW/vSk+dkg0+20=;
-        b=fdtEPasiqxfRpNALjYOGjpC47QgkxM+XXChF5LZd6ipjMFKnVzYdSOTqdjW+Z6hosP
-         yy0z1ZCUAtqWq1UIH94uGqeclVHWCm0uVehqwWbtyGLQRI3b+a6a990KI75ilv608fh9
-         9VlY6fZdtKpjLK3w01La5VXFD3gg/Gd6SZenAxS4onUEyFGUZibko2rFwi7rWsRcXCHF
-         aWk/wngb9lcLlloSUQYPjqrYes+VbZDhgyGL0jPfIn4xtRrmF0JcFFQn2Q8Ay9eaEugK
-         wiTwECJCGUZ90EXFeIijD8ulEnz0y8hy0Cy6B3R40b3vZ25cQtzDiBN3WNBR+sU04o7b
-         1wwA==
+        d=linuxfoundation.org; s=google; t=1724060047; x=1724664847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lL9HyxhiOHw1ksx03a4JZenwbuQJWQ+/lpC+EZL1Mdo=;
+        b=eqrUq6v9yImy+6bOdnGikaEulfNDYq6iwh+p3MEZKEMvGDdTwsK/2NNOoHbhtOq8mG
+         0xBAi9KwMUxaFfohkqg+u2JOC/jOi7+5G0YoL4pUENiCWH66shgAQdFvO1pcRbGCT0Ok
+         +fjDYdUu6GD39byrD/gu4dJgDq+d4lVhxsnnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724060000; x=1724664800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4J0qnFMOrentkiYGSo1a6B/wDJGaxKW/vSk+dkg0+20=;
-        b=GCYgMFfu8AGwYiRKv2WGAwnwIJ2za5efZrcJrIIItQjMSKX9GpuJhfijA9LV/dA8Ay
-         10Aatq2ATeaHb75YBDeu04mjg56TIEpsv7bovF5DRtPoYIQPyWkJLDtG3H5A0KatPYCH
-         AF2WQspD4xNSjRT5fCgiwHf/PgoA+lewJCW4WYfX2Ore+pwA1Dv3S7d9xvvc/a8D78xq
-         x0Y1WeIvt2oM2nN1hfBFOvBUlNoTfLu9RumFn/wTwM7utxLakcSRqXqNrBf9+VSl5S5y
-         2RzRuityscnfaIIr1TcvTeEj9n9lDwy6yqJWzJG9g37M1SSoOrRn7VAKWnrr8VpcmJYV
-         4J1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5mmmPSYh1eyvru39wYXZlnpGFFJD+Gws/VIzOdPuyLGxDPmTrZ7HctAmwnRzANEfBCiRPHe8e7ZP8bHA61uTRk66/HHKOvXd2FFA
-X-Gm-Message-State: AOJu0Yxf71Um0kUysr0mWiu/MUTGglTP0ymcfWFbnmdN8n5L0YrkNcVF
-	nAm9/8ej5sKKrtVngP8/6iVX3/V861+G7dRns793xfRB6yIIVJSRUgvSIhysAvZhn3JlMqyGcy9
-	fvFXQaXxBeW4tDLx1t8Lhrd05/ZI=
-X-Google-Smtp-Source: AGHT+IHx7dzPA4pAKBAD59yH9aV6fV05WUH44yrhFBeWZHGXcwnavSQUNf6F0zWGxzXNv1T4Ba0QyG+JyvsZC3YkObo=
-X-Received: by 2002:a05:6512:39d6:b0:533:c9d:a00e with SMTP id
- 2adb3069b0e04-5331c6ba097mr6053221e87.34.1724059999456; Mon, 19 Aug 2024
- 02:33:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724060047; x=1724664847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lL9HyxhiOHw1ksx03a4JZenwbuQJWQ+/lpC+EZL1Mdo=;
+        b=JJnPelsyGVpH6yW8G/og0/dgCOgr60vwW3TQESdm6Aik2wb0iURuZEjqwjHs7w2pWS
+         cCDh4pFUkdYkWi4UQ5p6Gu8XxmvP0OYPXkxqG0UozzpimqXo0GDTq25MEZYZCgtMZ1a/
+         ODoaO3G3N5L0yHJBJWJrLAnKxiPzI2KlhXIlzqh8UC13uB0tBglRJ0dHnb4DjUVvKAId
+         uCSOZfbi/TS7IFrxUR7aw2v5eqRewVdSOp/Yw/A+fT8Kkt4pfPLTWA/TPFYvx8sr3YkQ
+         hTgW1bGvlXdY0d+Sv3iuneD6H6kZDRU6pI9gSPM4uw7J5nE7p4N8/EkHf/oId1p5oXzU
+         ozuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8vYAbxILog5facrWBupW8mjvPQiZwKKvf1IUTInpBVQFNZ+bdGp32EipWo0nTAisLHUacoANagSjp8BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWRh3qZdmqFhd/nGkTquUIL6uBs/HX9nEkeQYlKRs6e73rcEOM
+	jb7l195QO2kOEXafsy18y3XJnK67+c/wLtinbXWoOKWgQMHscA1+zp5duYubfJc=
+X-Google-Smtp-Source: AGHT+IEUw2ClrCHZwzq1ZRV562eGADDxdcjSOnOQEZkmnCKWFyddq0xvCP5HqungbQ1iEQ/0y/yZeQ==
+X-Received: by 2002:a05:6a21:6d90:b0:1c4:f30e:97ff with SMTP id adf61e73a8af0-1c90509322amr8886710637.9.1724060046565;
+        Mon, 19 Aug 2024 02:34:06 -0700 (PDT)
+Received: from [192.168.104.75] ([223.118.50.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0303285sm59630475ad.26.2024.08.19.02.33.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 02:34:06 -0700 (PDT)
+Message-ID: <84629569-c5e3-4900-aa54-82be24369f74@linuxfoundation.org>
+Date: Mon, 19 Aug 2024 03:33:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819070204.753179-1-liuyongqiang13@huawei.com>
-In-Reply-To: <20240819070204.753179-1-liuyongqiang13@huawei.com>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Mon, 19 Aug 2024 18:33:06 +0900
-Message-ID: <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com>
-Subject: Re: [PATCH] mm, slub: prefetch freelist in ___slab_alloc()
-To: Yongqiang Liu <liuyongqiang13@huawei.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, zhangxiaoxu5@huawei.com, 
-	cl@linux.com, wangkefeng.wang@huawei.com, penberg@kernel.org, 
-	rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, 
-	vbabka@suse.cz, roman.gushchin@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: fix relative rpath usage
+To: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: linux-kselftest@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Artem Savkov <asavkov@redhat.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240812165650.GA5102@asgard.redhat.com>
+ <3667e585-ecaa-4664-9e6e-75dc9de928e8@linuxfoundation.org>
+ <20240813163348.GA30739@asgard.redhat.com>
+ <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
+ <20240814122513.GA18728@asgard.redhat.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240814122513.GA18728@asgard.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 4:02=E2=80=AFPM Yongqiang Liu <liuyongqiang13@huawe=
-i.com> wrote:
->
-> commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
-> slab_alloc()") introduced prefetch_freepointer() for fastpath
-> allocation. Use it at the freelist firt load could have a bit
-> improvement in some workloads. Here is hackbench results at
-> arm64 machine(about 3.8%):
->
-> Before:
->   average time cost of 'hackbench -g 100 -l 1000': 17.068
->
-> Afther:
->   average time cost of 'hackbench -g 100 -l 1000': 16.416
->
-> There is also having about 5% improvement at x86_64 machine
-> for hackbench.
+On 8/14/24 06:25, Eugene Syromiatnikov wrote:
+> On Wed, Aug 14, 2024 at 05:14:08AM -0600, Shuah Khan wrote:
+>> On 8/13/24 10:33, Eugene Syromiatnikov wrote:
+>>> On Mon, Aug 12, 2024 at 05:03:45PM -0600, Shuah Khan wrote:
+>>>> On 8/12/24 10:56, Eugene Syromiatnikov wrote:
+>>>>> The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
+>>>>> relative to current working directory and not the executable directory,
+>>>>> which will lead in incorrect resolution when the test executables are run
+>>>> >from elsewhere.  Changing it to $ORIGIN makes it resolve relative
+>>>>> to the directory in which the executables reside, which is supposedly
+>>>>> the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
+>>>>> so the RPATH is provided for all selftest binaries, which is arguably
+>>>>> a useful default.
+>>>>
+>>>> Can you elaborate on the erros you would see if this isn't fixed? I understand
+>>>> that check-rpaths tool - howebver I would like to know how it manifests and
+>>>
+>>> One would be unable to execute the test binaries that require additional
+>>> locally built dynamic libraries outside the directories in which they reside:
+>>>
+>>>      [build@builder selftests]$ alsa/mixer-test
+>>>      alsa/mixer-test: error while loading shared libraries: libatest.so: cannot open shared object file: No such file or directory
+>>>
+>>>> how would you reproduce this problem while running selftests?
+>>>
+>>> This usually doesn't come up in a regular selftests usage so far, as they
+>>> are usually run via make, and make descends into specific test directories
+>>> to execute make the respective make targets there, triggering the execution
+>>> of the specific test bineries.
+>>>
+>>
+>> Right. selftests are run usually via make and when they are installed run through
+>> a script which descends into specific test directories where the tests are installed.
+>>
+>> Unless we see the problem using kselftest use-case, there is no reason the make changes.
+> 
+> The reason has been outlined in the commit message: relative paths in
+> RPATH/RUNPATH are incorrect and ought to be fixed.
+> 
+>> Sorry I am not going be taking these patches.
+> 
+> I see, by the same token, kernel maintainers reject any patches that fix
+> compilation/build warnings, I guess.
+> 
 
-I think adding more prefetch might not be a good idea unless we have
-more real-world data supporting it because prefetch might help when slab
-is frequently used, but it will end up unnecessarily using more cache
-lines when slab is not frequently used.
+No - compilation and build warnings are accepted. This doesn't fall into that
+case. As you mentioned you can't reproduce this using the kselftest use-cases.
 
-Also I don't understand how adding prefetch in slowpath affects the perform=
-ance
-because most allocs/frees should be done in the fastpath. Could you
-please explain?
+Hence the reason to reject.
 
-> Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
-> ---
->  mm/slub.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c9d8a2497fd6..f9daaff10c6a 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3630,6 +3630,7 @@ static void *___slab_alloc(struct kmem_cache *s, gf=
-p_t gfpflags, int node,
->         VM_BUG_ON(!c->slab->frozen);
->         c->freelist =3D get_freepointer(s, freelist);
->         c->tid =3D next_tid(c->tid);
-> +       prefetch_freepointer(s, c->freelist);
->         local_unlock_irqrestore(&s->cpu_slab->lock, flags);
->         return freelist;
->
-> --
-> 2.25.1
->
+thanks,
+-- Shuah
+
 
