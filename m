@@ -1,89 +1,57 @@
-Return-Path: <linux-kernel+bounces-292705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB38F95733E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665EA957335
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8266283C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C4A285578
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D31898E1;
-	Mon, 19 Aug 2024 18:28:59 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6F6189531;
+	Mon, 19 Aug 2024 18:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKzQTHGS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D0C18950C;
-	Mon, 19 Aug 2024 18:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A3188010;
+	Mon, 19 Aug 2024 18:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092138; cv=none; b=PNuPTKUcuaKYtBmL6mvrMyTGRa6QDlo2xMYSSKBlDORnky748QkgSK7qwsX/SPStZ9K9bATYJ4O7yLdy3MkvzPcJjSz/JZE8PLXEd6kvW+eHFlq7lCrFlPTOn2PfLXkED7rZp2g3A1xtHJ2RmBPGB0f6nji4UY5RXniH+x2YV/A=
+	t=1724092129; cv=none; b=GGPnqqLzXBoy4LxPxIpWL9PmioGyYAY/2qfO5iRPrpzXYa7pAIawYaBn2OJPgRgvHR2Zg4Fym6FVlz9NIPAPjq39AjmwpMiJWRe+lVgpvjTufb7tyJBKIcR34BCBLiGPZJLAIC4CKQrtwjr/xG26zXz0gDkK9/mzN1ZbjAfoP+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092138; c=relaxed/simple;
-	bh=3OpP+bqhJVDHcSAxWOKFA44A8FB0Ov6BwD42gecA730=;
+	s=arc-20240116; t=1724092129; c=relaxed/simple;
+	bh=P/L3NgyYytfwnB4TlqzeCccYfyAfsEKejKjDYh6MX/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPMAsXIPNn4XiVzByTs7Oylv/tcfhc3L9OQg/uDhaI92/NhB/2IXAEIDfXPdSdz6bZan4T8+sHejSOBMiLouxCYuvtnQIhGuC0lJ1gguvATAdaRpkSzf707cAK6PV107U4di/cXjrLW0lNAuAaiVACr7AU7+TMZmYBjo6KGJYHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 7YV4mK3NRiCET6IxkR2q6A==
-X-CSE-MsgGUID: 3oM5lze7RRC6ztkkgUoXZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22203761"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="22203761"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:28:56 -0700
-X-CSE-ConnectionGUID: UAbUuDuoSZiYgbMBfvamlQ==
-X-CSE-MsgGUID: 2DCcbPAkTEGqJBxULC2sWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="61024672"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:28:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sg77S-0000000H2MX-2AEd;
-	Mon, 19 Aug 2024 21:28:42 +0300
-Date: Mon, 19 Aug 2024 21:28:42 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrJv8c0+KxUNeQELtBHkj5Wge8g0i7Z1LbZ4Oeliw9eRYBwx0X5Ev5Xf3RY7McXENTazeIk/7mLErUnr/HQTv+acqcV426vFpAeRM7v70qEJ3hDkliZ5eGRUCgOY91Ugii+NFmWXYiTdkmdj8hWjElDnzdtBYnudhI6ht6kVpK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKzQTHGS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA196C32782;
+	Mon, 19 Aug 2024 18:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724092129;
+	bh=P/L3NgyYytfwnB4TlqzeCccYfyAfsEKejKjDYh6MX/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VKzQTHGS2YGCeP0P8MP0bRGqWkR+/F2JGntV29VBmI4XfPMTUZY5lZ6uj7ZNBvaPD
+	 rI032Y/PaqT15K7kKMDPXP5E5w8/S6ohD6U4xgvC/haIp0waXk/ZgGo+rzxUoUFSEW
+	 oaRmGe+66VLkbM4AcPI65pN70FOPfEyE9UOiIX6gFo5df3GqH4m5icj3dIAX0Tllyn
+	 hJ9ABt4cWjNSXnfs50e/dhyUN3AzCVAKgMt9I+52mGTghDfper+Nd8M69Ma40w70AN
+	 r8qXB4YnK+0AEE3DJC1UVbK1de5Oxa8aKcY55QAKYUe1skL0E9zmEAk5wXJmoe+9We
+	 Mts2jeg7PaMzw==
+Date: Mon, 19 Aug 2024 12:28:47 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 7/9] ethernet: stmicro: Simplify PCI devres usage
-Message-ID: <ZsOO2uuGmD97Mocj@smile.fi.intel.com>
-References: <20240819165148.58201-2-pstanner@redhat.com>
- <20240819165148.58201-9-pstanner@redhat.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	alsa-devel@alsa-project.org, Conor Dooley <conor+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: samsung,odroid: drop stale clocks
+Message-ID: <172409212644.2046966.8530485462629543956.robh@kernel.org>
+References: <20240818173037.122152-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,57 +60,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819165148.58201-9-pstanner@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240818173037.122152-1-krzysztof.kozlowski@linaro.org>
 
-On Mon, Aug 19, 2024 at 06:51:47PM +0200, Philipp Stanner wrote:
-> stmicro uses PCI devres in the wrong way. Resources requested
-> through pcim_* functions don't need to be cleaned up manually in the
-> remove() callback or in the error unwind path of a probe() function.
+
+On Sun, 18 Aug 2024 19:30:37 +0200, Krzysztof Kozlowski wrote:
+> Clocks property was present only to allow usage of assigned-clocks in
+> the sound card node, however in upstream DTS the assigned-clocks were
+> moved in commit 4afb06afd768 ("ARM: dts: exynos: move assigned-clock*
+> properties to i2s0 node in Odroid XU4") to respective I2S nodes.  Linux
+> drivers never parsed "clocks" so it can be safely dropped.
 > 
-> Moreover, there is an unnecessary loop which only requests and ioremaps
-> BAR 0, but iterates over all BARs nevertheless.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/sound/samsung,odroid.yaml | 5 -----
+>  1 file changed, 5 deletions(-)
 > 
-> Furthermore, pcim_iomap_regions() and pcim_iomap_table() have been
-> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> 
-> Replace these functions with pcim_iomap_region().
-> 
-> Remove the unnecessary manual pcim_* cleanup calls.
-> 
-> Remove the unnecessary loop over all BARs.
 
-...
-
-loongson_dwmac_probe()
-
-> +	memset(&res, 0, sizeof(res));
-> +	res.addr = pcim_iomap_region(pdev, 0, pci_name(pdev));
-> +	if (IS_ERR(res.addr)) {
-> +		ret = PTR_ERR(res.addr);
-> +		goto err_disable_device;
-
-It seems your series reveals issues in the error paths of .probe():s
-in many drivers...
-
-If we use pcim variant to enable device, why do we need to explicitly
-disable it?
-
->  	}
-
-...
-
-loongson_dwmac_remove()
-
->  	pci_disable_msi(pdev);
->  	pci_disable_device(pdev);
-
-Not sure why we need these either...
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
