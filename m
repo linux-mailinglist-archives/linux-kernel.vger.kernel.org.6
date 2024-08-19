@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-292081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4307956AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A0E956AE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C39B25911
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EF528614C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEDC16C6B6;
-	Mon, 19 Aug 2024 12:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9119916BE23;
+	Mon, 19 Aug 2024 12:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NTB8Kn2k"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GwAk+wSJ"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF116848F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF016B38F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724070337; cv=none; b=eKYW7VP0/tznlOiNWDFWskFkZXAGr0t4/uD8nVNd+4bJ9q1YWJsmlMNpsAffRhpY7WD58c1LAFvG1IrmqZ4tFh8VboE74TEUN+yLzHez66AwA2JpjThhl/4thL8YFjVASIa6J+nAc53m/wvLvIt3/DFGTDbGQT3bv0C/3e7UVwk=
+	t=1724070533; cv=none; b=iRx/NcUub66+VVgvLCvjLbS77uKySaNsX2OtlTlpVRc63ONglISsnRwaM883DTM5zk5lml07M+h4rHdJlQTz7sh6Xtwx87ZD2dE7p8yOktEzAG1P1rWoKOgZ8ukk1w2WLQv8ArRS5HLyGTucLR3e6VOFxcx0a+s8sqkLCakvrTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724070337; c=relaxed/simple;
-	bh=k5o4y5VSo0c8GejdI87IOdeqQN5MXNRusNn7egeiFSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QA7gROP/i2iUbmMXkaJn9HSNByAjvl3Ym13JEG7LMAHMyCaMLKb233mA7BLfUf5Tu10oVP0s5PSsnZPuvGsHmytwgnxmYFZCBZzp8PBlaztlhCWq3l0z/rQgmkveAsjaMe4c7UXCvZLQmMyPO7WllD0eYWeZTrxpjXfrAF6hS24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NTB8Kn2k; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724070332; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=k4kNH4THhZ5Nwg8AiZRRkhfef0lufAmi3R+L4j9cBb4=;
-	b=NTB8Kn2kR4roFj6SJmmUsoaxnEHJ/bLS27OgLwuBMvUi01DuBfcsUQi86ymLoB1bZsrS9V8kh7pjTJC8bZLSqllHhyA3JiZ5zNkTY1KI8u8jjcOgFMGJvtNUFIULAuFYj2cfe8ujSf8FeiFBKgFbke31M8n4JA4Z6LMH8ru4F0g=
-Received: from 30.246.160.136(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WDCu7VX_1724070330)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 20:25:31 +0800
-Message-ID: <601bf843-94c7-49f7-8fa3-536a118b4ae0@linux.alibaba.com>
-Date: Mon, 19 Aug 2024 20:25:29 +0800
+	s=arc-20240116; t=1724070533; c=relaxed/simple;
+	bh=RyUkRNXmhJ5lIQbz47jZgf3RzPgsgH/d3BFP+Wl/Pxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0zC609elQWL9GXqmaCooxhK3KplaEa4qkOwunhvgYmCDvYyGJaJ5a2TnUga3nhnWeT7KFApO8SWUK6HKEZz45ioT0mQVtKGH7mmglGjfnQHJLPJAb523p0UDk9+Cq2BTgPG9nzM9F3ZP7DLFfHmwGXXrk7r2dmaG1OcyqQULt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=GwAk+wSJ; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44fff73f223so22103961cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1724070530; x=1724675330; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lriq5+tRSRLkM8EzeVI/tjuBsyDcUwfembmPFZugMx4=;
+        b=GwAk+wSJtjXoDc1SpuZYu1yxTcar+2ryz5rFGXR3vIyWlRgBnxtsIEGkvs9aZxPqzD
+         NO+5b7lWD9xHRphAOvEGsMEcmNRjmXylXxaNhuOXzRM48Ey8/PDVczxJBmv9d/pLfWXY
+         IwQ5o8+bz1e3QnXMmsFb21TwPmSpTgxmCa90W0CWKIH4YJ/gX6WRRIz2iJBSlqm3Q1yX
+         bRr9JIB3rwB/u+enFTG+/5kc4fIvGIKAyP8MBM9Rpi5XQqlkNjti4QEATUg9/m/5o1nz
+         VBIP2c40ZwOujoTPLGPpq4RCQFSWO2hhyuMVmMnZxDnZtdTEKlZRZtJjVQeCV1pvdM7X
+         bMOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724070530; x=1724675330;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lriq5+tRSRLkM8EzeVI/tjuBsyDcUwfembmPFZugMx4=;
+        b=ZCIiBK/AHSnGdt1+BkfTunNaIB+HXdGSaIGF+wK7GJFpd2KG7LLoVmB9e4rYs+GG4u
+         az3cjNKS+fPajA6nGy5VZnb/CPEsCYDa1mP3z0gQxpJpQ4ABf2Nm3J11L194Rn/9V0mV
+         H8GfOhjy4Ijm4H7+wjiKvI+/k7NxmlcL4KWsSnjnDpV0u5r/NRGLRZizyptrDOE8xCrM
+         MMBIGe/FRi8GvJS8hzXD7WHM3seML5+dwx5jPyKFJhMwcWxca2pllsBJfvz3AXQA0zMb
+         yhpc2rXIX++xP6cYbXGsxcjw5Mo4WfzXdWCGUSg5lqG4j4MH/w7GdW5zEWxtmiX0NCfz
+         VD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPQAY8aRUIBhTqMwHaNQOO5QRbneJwuGy9LbsTodqAp/t9TqBuFORmGvcRna7swNIk8HY0dau95wyMGYXBHX48ntlD+6w5YTB6SM4R
+X-Gm-Message-State: AOJu0YyOAZB86uOTuCy+z2nZi4b3/2sAokbPD9loefwBmfK610E7r2JX
+	q8x8y8MMid0sVp7kUl0cBN3zXLWY5VczwM9dwIn3iyTtUtioPF3sIE64FJ0Qbj0=
+X-Google-Smtp-Source: AGHT+IHNw+vGr/7csQmWCkE0wiwg/E+XpDzDEzhlnrIiVMvjWiTJ+dakALBuGKPHH1MPfHM79/ZEFQ==
+X-Received: by 2002:a05:6214:4520:b0:6b7:ae86:e33e with SMTP id 6a1803df08f44-6bf7ce59f5cmr92736316d6.37.1724070529543;
+        Mon, 19 Aug 2024 05:28:49 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fec5e9csm42159046d6.80.2024.08.19.05.28.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 05:28:48 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sg1VA-00CHYK-Az;
+	Mon, 19 Aug 2024 09:28:48 -0300
+Date: Mon, 19 Aug 2024 09:28:48 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: kevin.tian@intel.com, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 3/8] iommufd/selftest: Make dirty_ops static
+Message-ID: <20240819122848.GS3468552@ziepe.ca>
+References: <20240819120007.3884868-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/perf: Fix ali_drw_pmu driver interrupt status
- clearing
-To: Jing Zhang <renyu.zj@linux.alibaba.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
- Will Deacon <will@kernel.org>
-References: <1724068110-45239-1-git-send-email-renyu.zj@linux.alibaba.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <1724068110-45239-1-git-send-email-renyu.zj@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819120007.3884868-1-ruanjinjie@huawei.com>
 
-
-
-在 2024/8/19 19:48, Jing Zhang 写道:
-> The alibaba_uncore_pmu driver forgot to clear all interrupt status
-> in the interrupt processing function. After the PMU counter overflow
-> interrupt occurred, an interrupt storm occurred, causing the system
-> to hang.
+On Mon, Aug 19, 2024 at 08:00:07PM +0800, Jinjie Ruan wrote:
+> The sparse tool complains as follows:
 > 
-> Therefore, clear the correct interrupt status in the interrupt handling
-> function to fix it.
+> drivers/iommu/iommufd/selftest.c:277:30: warning:
+> 	symbol 'dirty_ops' was not declared. Should it be static?
 > 
-> Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
+> This symbol is not used outside of selftest.c, so marks it static.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->   drivers/perf/alibaba_uncore_drw_pmu.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
-> index 38a2947..c6ff1bc 100644
-> --- a/drivers/perf/alibaba_uncore_drw_pmu.c
-> +++ b/drivers/perf/alibaba_uncore_drw_pmu.c
-> @@ -400,7 +400,7 @@ static irqreturn_t ali_drw_pmu_isr(int irq_num, void *data)
->   			}
->   
->   			/* clear common counter intr status */
-> -			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, 1);
-> +			clr_status = FIELD_PREP(ALI_DRW_PMCOM_CNT_OV_INTR_MASK, status);
->   			writel(clr_status,
->   			       drw_pmu->cfg_base + ALI_DRW_PMU_OV_INTR_CLR);
->   		}
+>  drivers/iommu/iommufd/selftest.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, it is a bug due to typo.
+I picked this up for iommufd
 
-Thank you.
-
-Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
-
-Shuai
-
+Thanks,
+Jason
 
