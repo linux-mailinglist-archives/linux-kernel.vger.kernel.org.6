@@ -1,203 +1,125 @@
-Return-Path: <linux-kernel+bounces-291749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD73956652
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:06:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B2795652F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317391C21D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444F71C2185F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513115C130;
-	Mon, 19 Aug 2024 09:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F97815ADA4;
+	Mon, 19 Aug 2024 08:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bUquSnXb"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhIPaXf2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E7A15B560;
-	Mon, 19 Aug 2024 09:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A2BA41;
+	Mon, 19 Aug 2024 08:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724058356; cv=none; b=uMd7OEZZSxjzP0TIPMLdyl2EzyffXN6WWyvm7V9yBllipBiMz980gtAf1Cq0LNPNseREDB/jftlfughOll+KYLZtmrP0YxQOl2VrqTkGnUyFuTzNPr9SSKq/cz8JlExd6leUj9MoXrDCLUhO2qJoK3rHAcPwtiL0dWi5B7KRYro=
+	t=1724054735; cv=none; b=WNkKBoZqeqAIPdFug2/ZxeYh5VX/Ejb5+B2zgTmoCugQRw4cEdhqYjRxjkaktAs2oepwLHIyF30FsZX/QUnSZ87ocK50/j7E4w4rhJRpZmwBKwWISt93XE1sW66Ptldk74EMZg4JxKHNWjUTLvZ011zf2YQB1nGDNVYMIEMw6FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724058356; c=relaxed/simple;
-	bh=lR2WZd/P0NWVFQpF5VOo611F5KnOE/Raog9Y5v8jRSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pwp0oCnxAI8jpIHgmdCyvJCp7Bu06ZeiFL+V8emg+U28VBrNr1CMunOBL8XJtbi5O6IehlzHuTrJXKksyN+Zch1D5suNd5lMcugA5p75VePuwv1oPkxFpZx56FOSwgMeZpTKa01vcCxAHRj4BWl0NQmFOVcESmAW3pbKqleOSS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bUquSnXb; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47J7FfIb014306;
-	Mon, 19 Aug 2024 02:15:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724051741;
-	bh=0vsrItiP+UOuGajC7NCZTlPPCFYcRA8XAnCYPGpz6CY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=bUquSnXby+EIUCpW7ZzEe4Ar3hHMOjtdKafPUf7hARC5ZjzvIJT73k+Rlyqz+4eIc
-	 mrjWcdP9ay9xONwaeGiMN0/96GxVUoMs+SkPhtY+O7gvOj73xKmUW2ZI274f8FA/tw
-	 h4OSozP0aJ8YN33a2OvxkoyPZHyFlEpEGBaRZlp4=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47J7Ff7S013071
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 19 Aug 2024 02:15:41 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
- Aug 2024 02:15:41 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 19 Aug 2024 02:15:41 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47J7FVGi056124;
-	Mon, 19 Aug 2024 02:15:32 -0500
-Message-ID: <2ee6f2eb-9a3f-4e04-a6d5-059c4381cbd8@ti.com>
-Date: Mon, 19 Aug 2024 12:45:30 +0530
+	s=arc-20240116; t=1724054735; c=relaxed/simple;
+	bh=qTLlMvCknfzYIXgomDhar1yRYupQHhiL/5bujdbobYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B9DbGuaGNmiFoN1bSL2O2jLxSZzUF0m3WbFvI/DLyWp/lLF3P+YVaVn+hFVGg70KdzkLQL+TeRlydWgV6HQGmoz5fFu5vO5Dq+vDUHoI6G2+Ha15QSL9jxyiJ4VoJkQhNn1MccaRQKnTc95z+9/FBOP8hEUqKwc4dtrfyyywS20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhIPaXf2; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724054734; x=1755590734;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qTLlMvCknfzYIXgomDhar1yRYupQHhiL/5bujdbobYU=;
+  b=WhIPaXf2vPaiyt4yLVu5tJ6rS37RXHX0HWHbKaMoH80dg3k8ki6Y8pC5
+   drRmEhMVBcikMsBe+o9tih2RVHpf2ag5k5EUZ460IFBppMAvT0hJBKoGT
+   TwEWFYhEea62UZeyOTewAooUs3lzr8jKJ1OsooVT421FiSn8mj0On1ZyO
+   +BCZ64/+fQ7e/8WXAkRi6iMrQyOC4NjgK4xztNi/vn2ZsvWFiEm7cZh6i
+   DN039F8PrPRxRTwiKVpP820QpqjHSCjxUwsgJPyX/pchFbPc2LJFwGj1u
+   x8uPuKM+6uMZZ6aDF5QE3A5t6ww4XfecpZjNnl+AftMq6rB1daNAN8wkW
+   Q==;
+X-CSE-ConnectionGUID: qKQ7fFjPSAuRHw7myF6GjA==
+X-CSE-MsgGUID: P35+yd8MS+ae9SlucZe7yg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="32860711"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="32860711"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:05:33 -0700
+X-CSE-ConnectionGUID: 4suJzyIyQW6Xwew2GYdv0g==
+X-CSE-MsgGUID: fRHHfVNJQYOl9BiBhQvdMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="91066892"
+Received: from inesxmail01.iind.intel.com ([10.223.57.40])
+  by fmviesa001.fm.intel.com with ESMTP; 19 Aug 2024 01:05:31 -0700
+Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
+	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 3F74B15B51;
+	Mon, 19 Aug 2024 13:35:30 +0530 (IST)
+Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
+	id 3A21C1600101; Mon, 19 Aug 2024 13:35:30 +0530 (IST)
+From: Raag Jadav <raag.jadav@intel.com>
+To: ukleinek@kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	jarkko.nikula@linux.intel.com
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1] pwm: lpss: wait_for_update() before configuring pwm
+Date: Mon, 19 Aug 2024 13:34:12 +0530
+Message-Id: <20240819080412.15115-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 2/2] net: ti: icssg-prueth: Add support for PA
- Stats
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        MD Danish Anwar
-	<danishanwar@ti.com>
-CC: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
-        Jan
- Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-        Diogo Ivo
-	<diogo.ivo@siemens.com>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Heiner
- Kallweit <hkallweit1@gmail.com>,
-        Simon Horman <horms@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Roger Quadros
-	<rogerq@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srk@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240814092033.2984734-1-danishanwar@ti.com>
- <20240814092033.2984734-3-danishanwar@ti.com>
- <cd15268f-f6d3-4fca-bd7f-c94011f55996@stanley.mountain>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <cd15268f-f6d3-4fca-bd7f-c94011f55996@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+Wait for SW_UPDATE bit to clear before configuring pwm channel instead of
+failing right away, which will reduce failure rates on early access.
 
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/pwm/pwm-lpss.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-On 8/15/2024 4:58 PM, Dan Carpenter wrote:
-> On Wed, Aug 14, 2024 at 02:50:33PM +0530, MD Danish Anwar wrote:
->> Add support for dumping PA stats registers via ethtool.
->> Firmware maintained stats are stored at PA Stats registers.
->> Also modify emac_get_strings() API to use ethtool_puts().
->>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
->>  drivers/net/ethernet/ti/icssg/icssg_ethtool.c | 17 +++++-----
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  6 ++++
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  5 ++-
->>  drivers/net/ethernet/ti/icssg/icssg_stats.c   | 19 +++++++++--
->>  drivers/net/ethernet/ti/icssg/icssg_stats.h   | 32 +++++++++++++++++++
->>  5 files changed, 67 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
->> index 5688f054cec5..51bb509d37c7 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
->> @@ -83,13 +83,11 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
->>  
->>  	switch (stringset) {
->>  	case ETH_SS_STATS:
->> -		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
->> -			if (!icssg_all_stats[i].standard_stats) {
->> -				memcpy(p, icssg_all_stats[i].name,
->> -				       ETH_GSTRING_LEN);
->> -				p += ETH_GSTRING_LEN;
->> -			}
->> -		}
->> +		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
->> +			if (!icssg_all_stats[i].standard_stats)
->> +				ethtool_puts(&p, icssg_all_stats[i].name);
->> +		for (i = 0; i < ICSSG_NUM_PA_STATS; i++)
-> 
-> It would probably be better to use ARRAY_SIZE(icssg_all_pa_stats) so that it's
-> consistent with the loop right before.
-
-Sure Dan.
-
-> 
->> +			ethtool_puts(&p, icssg_all_pa_stats[i].name);
->>  		break;
->>  	default:
->>  		break;
->> @@ -100,13 +98,16 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
->>  				   struct ethtool_stats *stats, u64 *data)
->>  {
->>  	struct prueth_emac *emac = netdev_priv(ndev);
->> -	int i;
->> +	int i, j;
->>  
->>  	emac_update_hardware_stats(emac);
->>  
->>  	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
->>  		if (!icssg_all_stats[i].standard_stats)
->>  			*(data++) = emac->stats[i];
->> +
->> +	for (j = 0; j < ICSSG_NUM_PA_STATS; j++)
->> +		*(data++) = emac->stats[i + j];
-> 
-> Here i is not an iterator.  It's a stand in for ARRAY_SIZE(icssg_all_stats).
-> It would be more readable to do that directly.
-> 
-> 	for (i = 0; i < ICSSG_NUM_PA_STATS; i++)
-> 		*(data++) = emac->stats[ARRAY_SIZE(icssg_all_stats) + i];
-> 
-> To be honest, putting the pa_stats at the end of ->stats would have made sense
-> if we could have looped over the whole array, but since they have to be treated
-> differently we should probably just put them into their own ->pa_stats array.
-> 
-
-Sure Dan. It will make more sense to have different array for pa_stats.
-I will do this change and update.
-
-> I haven't tested this so maybe I've missed something obvious.
-> 
-> The "all" in "icssg_all_stats" doesn't really make sense anymore btw...
-> 
-
-Correct, the "icssg_all_stats" should be renamed to "icssg_mii_g_rt_stats".
-
-> Sorry for being so nit picky on a v5 patch. :(
-> 
-
-It's okay. Thanks for the review. I will address all these comments and
-send out a v6.
-
-> regards,
-> dan carpenter
-> 
-
+diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
+index 867e2bc8c601..4a634a43b133 100644
+--- a/drivers/pwm/pwm-lpss.c
++++ b/drivers/pwm/pwm-lpss.c
+@@ -111,16 +111,6 @@ static int pwm_lpss_wait_for_update(struct pwm_device *pwm)
+ 	return err;
+ }
+ 
+-static inline int pwm_lpss_is_updating(struct pwm_device *pwm)
+-{
+-	if (pwm_lpss_read(pwm) & PWM_SW_UPDATE) {
+-		dev_err(pwmchip_parent(pwm->chip), "PWM_SW_UPDATE is still set, skipping update\n");
+-		return -EBUSY;
+-	}
+-
+-	return 0;
+-}
+-
+ static void pwm_lpss_prepare(struct pwm_lpss_chip *lpwm, struct pwm_device *pwm,
+ 			     int duty_ns, int period_ns)
+ {
+@@ -168,7 +158,7 @@ static int pwm_lpss_prepare_enable(struct pwm_lpss_chip *lpwm,
+ {
+ 	int ret;
+ 
+-	ret = pwm_lpss_is_updating(pwm);
++	ret = pwm_lpss_wait_for_update(pwm);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-Thanks and Regards,
-Md Danish Anwar
+2.35.3
+
 
