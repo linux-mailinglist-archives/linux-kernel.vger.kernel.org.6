@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-291736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD92956617
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B379795661C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C96A1C217C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E513B23280
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADBF15B966;
-	Mon, 19 Aug 2024 08:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hhADqs6v"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C30815B96E;
+	Mon, 19 Aug 2024 08:55:19 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A514BF8A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F119947A;
+	Mon, 19 Aug 2024 08:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057638; cv=none; b=VYTB+1bb+5IELk0K1e8Fv+ULYVXy31tsNJ+fpYpXdjKPHf2/RjXkVy+qAF67sm/UUEkyjjtzL/i8jhy57WsMa5qi/XI9mOKj7XBPIQrYXhiynx1dlbauSAlpjEnU0TVMK7ia7+cosRrT4jH/cnUzW7sqFs6mg0sSsQ6MEkt3b2o=
+	t=1724057719; cv=none; b=Ts/1ECPXWv/GVVE6InC2zlArQVfxPetv/6o7zmRtXnFqaDa2ijo3IItTdsxK9pceD7jk0zQCMLKe0GH6FkLSpxEry/LhTtzaMPJ1tTXlQrpfgpqLdHfM66xYjUcnv2KeUuMALIeI4rLyfdpDYTb2hNw/9XobM6+l1s2NPF5fV5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057638; c=relaxed/simple;
-	bh=duisPaF99h1QGDc7w5KfbNowwVwLiE+CnodhKJpG2KU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NGcc52lJkryj0BspQhqaDyLHBA/ptRvp4aikFsjtYwpmg8Tu234dVWxnFP6htZRZH2ygccDNlFDQ3k0g1SN6tDNV7SFMpGF8AFZzxCxw0w4ih8l212canD8wJri+9aht6DUcktp+bTXbzXkb2hBn0Ra48g6Kx1Jvg+vCpCxLjX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=hhADqs6v; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so461898666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1724057635; x=1724662435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aKZ8pSOBWlZZSsrnuVDr/6cUoiTT3d+hpV6fHxCOG0I=;
-        b=hhADqs6vCVFlc71XflmSbgATodTZC0L+FpDrUvk9DWKKctxM7Glg+RpSIJux2FtWLR
-         qm55FhVtBm/u0oo8Gurz1xwXXlkcjPiz5OZfUmV5tpAlQfKIZlmMQgg18qgptFg3I09l
-         7JEHZUEAsVG1vkQwxLDoGyaIFNFw8kJWZYCB8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724057635; x=1724662435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aKZ8pSOBWlZZSsrnuVDr/6cUoiTT3d+hpV6fHxCOG0I=;
-        b=kWOi/rhVxobPe162BwBvC8VSQpwN7ygs71Cky0p26i/Up2ePVLvAVj0RXRziO8JM5u
-         52Ve1LtGYtd4zgsYFluPv9U0TWRUQ6qS7aPTVIWneE+vlCxkojotl/ZGHm3KxHP4wKso
-         N1nS9seLcD9VSW+LyyV9maKYd2xvC8mY8+RJxaF3We+wd2Hm67X4WzRa9Tfcs+kIFRDy
-         NOYCmQpHVNdFu4leLSZerBvjq9OeG0pDhOjjtt1u4O4AHjY6bus4K0WPltdEbp7x/pJx
-         MhSkypwR3QUwAbdMqvG8/OSk8bMI/fO5HStfQvBtf5tqcGnV5jqSsD70lK1LPkERCu1/
-         QL0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXeh/vYXjmN2zbjmg0jkRa+rm2VLVQ3dM+rZ8sDtALnCpspGI5qqscPtW25FDkuxxLpU1C7FdVWW/5T92/vQk2YzbGD9INdAr1fFj+u
-X-Gm-Message-State: AOJu0YyF/3p2/hkOFZFtJod7h/y15u3+XBFB6F0mLoFEGnc52DGKWzD2
-	YHNDHNirylq0rJGCznMeZZHV81mbBws2MTDUFjXceXBNAiVd6ikQMijCBrm71R1zhoZ3mcLUUZt
-	P8U7OIpzgSyS50zOERVi/Mv98Sa+hlHo1iRuw1azPb/UZsUCtfec=
-X-Google-Smtp-Source: AGHT+IH5f41WTN7U3XVgASY9kyBQoORIJWx+menryiexaeWj3zUhtNU3J0xXlluQIgdHTt9JvaRUCfPMaDN111J7loc=
-X-Received: by 2002:a17:907:f796:b0:a72:5470:1d6a with SMTP id
- a640c23a62f3a-a839295601emr767963666b.35.1724057634101; Mon, 19 Aug 2024
- 01:53:54 -0700 (PDT)
+	s=arc-20240116; t=1724057719; c=relaxed/simple;
+	bh=BZ+tG3sPqkdp1r8WVl3AmA1qeUmicg7w7NSIoJ6H0IM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gR/Xe4Y8JnmfYbisuGQkVu8GQpwI3V534I0JtVsAHeW/k3rIEDVNzv8Zp9mVqStVSuEmG+0Mug+Fiq+hdrG6hsHzjQ69pwkq56st0vMzJj3TijqoS7saRFAZltFFg9TQcUoEFR0eZ+QDAca0nrpERI3ay4Bz8pz+oDKlkkYYKw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAA3XQBaCMNmOqISCA--.43879S2;
+	Mon, 19 Aug 2024 16:55:00 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com,
+	howard-yh.hsu@mediatek.com,
+	StanleyYP.Wang@mediatek.com,
+	benjamin-jw.lin@mediatek.com,
+	allen.ye@mediatek.com,
+	chank.chen@mediatek.com,
+	meichia.chiu@mediatek.com,
+	Bo.Jiao@mediatek.com,
+	evelyn.tsai@mediatek.com,
+	Money.Wang@mediatek.com,
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] wifi: mt76: mt7996: fix NULL pointer dereference in mt7996_mcu_sta_bfer_he
+Date: Mon, 19 Aug 2024 16:54:49 +0800
+Message-Id: <20240819085449.1013279-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081608-punch-coherent-d29e@gregkh> <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
- <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
- <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081652-unify-unlucky-28d2@gregkh> <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com> <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-In-Reply-To: <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Mon, 19 Aug 2024 10:53:42 +0200
-Message-ID: <CAOf5uwk-De+dCaL-xZMByFoMoxD7X1_KnOriq1MKAz5s+mOFiw@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH_v1=5D_usb=3A_gadget=3A_u=5Fserial=3A_check_?=
-	=?UTF-8?Q?Null_pointer_in_EP_callback?=
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>, 
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"opensource.kernel" <opensource.kernel@vivo.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAA3XQBaCMNmOqISCA--.43879S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZw1UtrWxKF1xJr13Jwb_yoWDXrXE9r
+	n29FnIqw48Kw48Kr429wnxuryay3ykZF97Gay5tayfta97J3yUZF1IvFn3Ar13uFn7ZF1U
+	J3ZrJFy0y395WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbS8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRNAwsUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi
+Fix the NULL pointer dereference in mt7996_mcu_sta_bfer_he
+routine adding an sta interface to the mt7996 driver.
 
-On Mon, Aug 19, 2024 at 10:48=E2=80=AFAM =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulia=
-nqin@vivo.com> wrote:
->
-> Hello linux community expert:
->
-> >> >>I think this has been reported previously, and different patches hav=
-e been proposed, have you searched the archives?
-> >> > I haven't seen the patch given below before, I will read it carefull=
-y.
-> >> > I searched for Linux mainline commits before submitting, but I only =
-compared them according to the crash stack information and did not notice t=
-he following commit.
-> >>  I checked the stack trace again. The problem we encountered seems dif=
-ferent from the problem reported in the link below, and they are not caused=
- by the same reason.
-> >>
->
-> >Did you apply the patch? as suggested, is the test moving from one gadge=
-t to the other?
->  We apply the patch into kernel 5.15 and ran a stress test, and the probl=
-em did not recur.
+Found by code review.
 
-It means that does not happen again?
+Cc: stable@vger.kernel.org
+Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->  Connect the phone to the PC via a USB cable and run the monkey test (run=
- an apk and click on it at will on the phone interface).
->
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index 2e4fa9f48dfb..cba28d8d5562 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -1544,6 +1544,9 @@ mt7996_mcu_sta_bfer_he(struct ieee80211_sta *sta, struct ieee80211_vif *vif,
+ 	u8 nss_mcs = mt7996_mcu_get_sta_nss(mcs_map);
+ 	u8 snd_dim, sts;
+ 
++	if (!vc)
++		return;
++
+ 	bf->tx_mode = MT_PHY_TYPE_HE_SU;
+ 
+ 	mt7996_mcu_sta_sounding_rate(bf);
+-- 
+2.25.1
 
-Yes I know but this monkey test is running a stress test moving from
-usb storage, to other configfs right?
-
-Michael
-
-> Thanks
-
-
-
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
 
