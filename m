@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-291694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E41D9565A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:31:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F759565A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B8F1C217C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:31:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58E12B21BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718D814D452;
-	Mon, 19 Aug 2024 08:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1715821D;
+	Mon, 19 Aug 2024 08:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieW34ZJj"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qheoh0jr"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3969012FB34
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADF4C125;
+	Mon, 19 Aug 2024 08:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056277; cv=none; b=EuHOyQE5nHA7bHHyz3ZdNGAvvSQXhgUHNCqSNJxn01d/qpywsOgX/mgC8WY4VvB7/WRixCIKC5kN/eZJUlGyypygHIEdgSQBz5kfqyevhHifFkZGqpBDUlwj29Bok9OGbidvA6g0TKz5zPkO1ejnCjJqywxxDTXgu3yPMna/YIQ=
+	t=1724056371; cv=none; b=ctR6ADsq7PRn7v6QmceGQzY33LiTAoBDW9tiUQkUNsnJlW5DlQotHIk83/eczGRnWb3YYsbfSgYuWsdmFkYpAPqN32Ox1pbGbra59kQiZPgnqj5xkMkrxzEtlQew3MO7xp7oDIFXrHulbLYJfKN6iKztURHbxUyTkp/MLYsKyPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056277; c=relaxed/simple;
-	bh=xVvwYxbeS7TloS4Mo6w8Vgly/BAzHvY3Vu1nDo1zgvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ghkuPXnim/BVSlfM+2gnHUzsjdHISY5Bv81Qw+/xzCzTE9zJ5oB/Re6flHGRon2bvtOs8J94t0K6uZFVyEiiMMizU7we9VDP4siJLaW4GS9/qRKXRKq1bVe+XpIKxJufU+EXlkC0cGZF0mUZa5xgL9YG4HaiGXJlcqNLkRmnrfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieW34ZJj; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d4so39560831fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724056274; x=1724661074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+k8Bbokwfu0beELgxVuyxqVGtlkXzRN6o0yU5TWO2U=;
-        b=ieW34ZJj61nS6f3FgPOzDG2+YFpreZA3wheKpOsSyC02CLYYzYob6Ym/nOJbWQpCbI
-         75NrKH8NrCh0zj5nx4DLFpRXpMaSOXsZIEI4IJM3VLorncq9SLuDLQ6V/2QiUmdT8tbM
-         hAg/76zP9TI0XE0AMoWKwjlFeV4JXk3oo6lsKJtkN9NF91y4LDM4LtGMfh6I9iE0B8X8
-         sLemjMYJKQluYiW/BwA63vtRJ9MDkpIem/7J6w7HL2HfVYQWx2JqoeZNzQ9veiE9/gVI
-         RKOMKUN/S1xlaX2JYo1kjOrvyJT2lmzrO54XoWhmH1/PWFBlqZmRycBrQePbPt3ttX6S
-         1MNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724056274; x=1724661074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y+k8Bbokwfu0beELgxVuyxqVGtlkXzRN6o0yU5TWO2U=;
-        b=dY9jDa0xAXPIkbriFJNR9DH+Q9G0tsvOTqYMcK5AeOq5UP4F6aJnKDNMUDPssrhdvK
-         lZ4ZNwN0h1Qzd/QrDdNaG8i9Ec1Yjg3vYcZfJqp+SMeWL37lA+z10Vqnqk46xUqx9Ogp
-         syUAVOe5Ewbnzn6DweSxiLEg1lX4LkIoo8MoUE8UbkTnyDCHiBS8ryWr1PjIr7aom8yO
-         dcc+6hEXvNJyV+MKAUbtBomaqxn8FJD2lh+8ia4tQS8mmyUoY6SMMmhp6K2K17vsYp26
-         A896KJnRwgYYOzG+LfEtUUU/BqCdeXo9W+N1koGCbhUAvCBvO5IuDC3MgqR7837Q/Vgs
-         Sk6g==
-X-Gm-Message-State: AOJu0YxG7QIAtmPwa131cgf2Cemi1rKnqzuyr0NEWrlklwpsafrU9fiZ
-	nsLELfNnLGJgHKaXm/N5SiyzAGrW7VtNrk9aezUHYfyHuHZjrWnG0n5+lW1tlCFD2yxnvSAffeJ
-	Rg16POI624pykYqX0m0l6wVJMCo0=
-X-Google-Smtp-Source: AGHT+IERajBJ68YUCkW2gkRyMh0J8YcDen/G4nEidnqysnUiJc+PHbApWIoxwRT2XvGFCcqtqL7VP1GgbykF0Rd/Jkk=
-X-Received: by 2002:a2e:a584:0:b0:2f3:aac3:c2a5 with SMTP id
- 38308e7fff4ca-2f3bf21838amr33613321fa.17.1724056273979; Mon, 19 Aug 2024
- 01:31:13 -0700 (PDT)
+	s=arc-20240116; t=1724056371; c=relaxed/simple;
+	bh=ZIYg7RLH1+uZnk0IZRJZ10c2hHQsYwb+IZKGRmNbBi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oBzCaWGaT7i1D27pmLN2uT2KuiXAdjgyboP24Lm5uwB73lCc4jDx8FcAbVI6q+AiejY/g3efacs1EvEvP9FtOpSMvS+nl/jefSytI0rBXxP15ucTLk6HgUlB3ks9EppRHyU3+nF87FEN2M4OukF+ew1gei0uZfWoD6+64oLmBks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qheoh0jr; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47J8WbTS085474;
+	Mon, 19 Aug 2024 03:32:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724056357;
+	bh=7iEMJxVgqEWFaX/As9NKzd3hIp1ICaM4bk9aNoBrD80=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Qheoh0jrH1RmQ5TvN9yRyarDXGOlMZrkvrDZyA09M/Pf9X1MbiIKWrSIwioRbHNfb
+	 gFT/rr5WPiLwiBtvsWiNjd1QagmjtQ8I0e8HHmns1L/ofKTgtRZnBI3I7Gu+BeVQCg
+	 KSW0Go6u3MjfAHK7yl10XpdJpGivPIVTja/d7qGs=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47J8WbVa039098
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 19 Aug 2024 03:32:37 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
+ Aug 2024 03:32:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 19 Aug 2024 03:32:36 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47J8WWjI119145;
+	Mon, 19 Aug 2024 03:32:32 -0500
+Message-ID: <e5140426-7e69-41b0-858f-16f83eed871a@ti.com>
+Date: Mon, 19 Aug 2024 14:02:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819061351.14782-1-ubizjak@gmail.com> <51e3c38c-42a3-49b6-ab19-50f4f37336aa@linaro.org>
-In-Reply-To: <51e3c38c-42a3-49b6-ab19-50f4f37336aa@linaro.org>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 19 Aug 2024 10:31:01 +0200
-Message-ID: <CAFULd4YMAG=9D5+YhHjGz91VzKte7qWKpYdoWLEtN6d+r7XwFw@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/timer-of: Add missing casts to percpu address space
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/9] remoteproc: k3-m4: Add a remoteproc driver for
+ M4F subsystem
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Hari Nagalla <hnagalla@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240802152109.137243-1-afd@ti.com>
+ <20240802152109.137243-4-afd@ti.com> <Zr4w8Vj0mVo5sBsJ@p14s>
+ <Zr9j5HBjRqqRIoaD@p14s>
+Content-Language: en-US
+From: Vignesh Raghavendra <vigneshr@ti.com>
+In-Reply-To: <Zr9j5HBjRqqRIoaD@p14s>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Aug 19, 2024 at 10:18=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 19/08/2024 08:13, Uros Bizjak wrote:
-> > Add missing casts to percpu address space to fix
-> >
-> > timer-of.c:29:46: warning: incorrect type in argument 2 (different addr=
-ess spaces)
-> > timer-of.c:29:46:    expected void [noderef] __percpu *
-> > timer-of.c:29:46:    got struct clock_event_device *clkevt
-> > timer-of.c:74:51: warning: incorrect type in argument 4 (different addr=
-ess spaces)
-> > timer-of.c:74:51:    expected void [noderef] __percpu *percpu_dev_id
-> > timer-of.c:74:51:    got struct clock_event_device *clkevt
-> >
-> > sparse warnings.
-> >
-> > Found by GCC's named address space checks.
-> >
-> > There were no changes in the resulting object file.
->
-> The warning may go away but the problem sparse is spotting is still there=
-.
->
-> IMO sparse is totally right and the code related to the percpu is
-> broken. It seems the .percpu flag is never used in the drivers and we
-> should be able to just remove the percpu related code in timer-of.c
+[...]
 
-This issue also breaks allyesconfig build on x86 when strict percpu
-address space checker is enabled. However, I have little idea what the
-code is doing, so I try to keep the proposed changes as non intrusive
-as possible. The referred code is questionable as it tries to reuse
-the clkevent pointer once as percpu pointer and once as generic
-pointer, which should be avoided.
+Hi Mathieu
 
-The only other issue flagged in clocksource drivers directory is
-reported in [1] where generic request_irq() function apparently tries
-to handle the percpu pointer.
+On 16/08/24 20:06, Mathieu Poirier wrote:
+>>> +/*
+>>> + * Attach to a running M4 remote processor (IPC-only mode)
+>>> + *
+>>> + * The remote processor is already booted, so there is no need to issue any
+>>> + * TI-SCI commands to boot the M4 core. This callback is used only in IPC-only
+>>> + * mode.
+>>> + */
+>>> +static int k3_m4_rproc_attach(struct rproc *rproc)
+>>> +{
+>>> +	struct k3_m4_rproc *kproc = rproc->priv;
+>>> +	int ret;
+>>> +
+>>> +	ret = k3_m4_rproc_ping_mbox(kproc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +/*
+>>> + * Detach from a running M4 remote processor (IPC-only mode)
+>>> + *
+>>> + * This rproc detach callback performs the opposite operation to attach
+>>> + * callback, the M4 core is not stopped and will be left to continue to
+>>> + * run its booted firmware. This callback is invoked only in IPC-only mode.
+>>> + */
+>>> +static int k3_m4_rproc_detach(struct rproc *rproc)
+>>> +{
+>>> +	return 0;
+>>> +}
+>> Please remove.
+> Forget this comment since it would cause an error in __rproc_detach().  
+> 
+>> Other than the above I'm good with this driver.  That said I can't move forward
+>> without a nod from the DT crew.  I also noticed a fair amount of code
+>> duplication with the k3_r5 and k3_dsp drivers.  Dealing with that should not be
+>> part of the current work but will need to be done before another k3 driver can
+>> be merged.
+>>
 
-[1] https://lore.kernel.org/lkml/20240730132015.8920-1-ubizjak@gmail.com/
+> The above still apply though.
 
-Thanks,
-Uros.
+Me or Nishanth will pick up the SoC DT patches via TI SoC tree, once the
+driver patches are merged. Feel free to ignore those but queue
+dt-bindings (already has DT maintainers ack) and driver patches via
+rproc tree.
+
+
+-- 
+Regards
+Vignesh
 
