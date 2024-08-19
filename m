@@ -1,161 +1,182 @@
-Return-Path: <linux-kernel+bounces-292008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC056956A09
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC490956A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795CD2870D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79749286BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC0216B391;
-	Mon, 19 Aug 2024 11:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="O7u1SbL6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QyKEv1rh"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B1C167D97;
+	Mon, 19 Aug 2024 11:56:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB392166F39;
-	Mon, 19 Aug 2024 11:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B6E166F3B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068574; cv=none; b=t0Kzixz2XV+z+BDainFJGqkAHrpXcUiNgOgdIu3yOalY1ne/Y+VqJV+5OzIj0KtqnMLtH0oVur9gANBawJmv4TKU+VSISg1KLQfc8x01lGB16mPTqlqhDDJ4rUgXmJL2801g2FU7+wIKFjEcuaZwAfYt9Krnry8IltWZogFnV3o=
+	t=1724068567; cv=none; b=hF1zE+m8x+XdBE4Adcs9nBmyPzkeB12tRiV4dpqzvHYCWN1+cWd5SjdsLtSvbAMaf3SXC5HSSaAlNYqDAvmwJ7SxjjRP0+NO66Emt9Vwkz4AB3X+ijwTLieSg1pfVw0Mf/MdJ1huJFf0W4yekX+1lI+nzBukwdV0aoonpJ12GKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068574; c=relaxed/simple;
-	bh=HonjLh1BAhaV+0+j9pX3IQj72hpq1/9MeyXqoeJi+rQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=PojqAb5ZoD6WEsWl0v95C7hWQ95hdr3WuK0r+6hm6CPP9csHED75Ka4nyA3xA6zLjabfjrbzpdvb9z9LwP1PbMDcSB0wV1x772T0sggMsG6r0McJoVpmN50pVHTTTcIphZMEz5hLoe3HbhWIAiut1ZY0jsg3IldcwcTys+UTFbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=O7u1SbL6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QyKEv1rh; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C27EE1151AA2;
-	Mon, 19 Aug 2024 07:56:11 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 07:56:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724068571;
-	 x=1724154971; bh=cXvC+PDGFCfNZv2tzpeZR9KJXjbUD1OJCs6l6aQe+rI=; b=
-	O7u1SbL6THHtxLaqYT/wS1NCcNXwIihacG56Qel1rgYi3zWo9r32/bDetcsPqXje
-	92cDNIvFwLSCW5yqPa5+E3MT1VJEjrdCnh5tzfoDSdxyDalvXrVQPQaTpS/U3Ea7
-	SD0PRkEqQX2y7QRhoNw1QlqYV/efN/81moiNAN0+OJNZz+GUM/YTpmkTxbU4wK9L
-	ZXgUn0jdtCxIgY/Rtadt13rZ7ypSkyLkbE/vEtfd9lA5xIeEVwSqab+ZD2QWRY12
-	RJVNUJKFwV18VGCUyeVPJq2vyYMrB3XFxIjghjl3MQdLIYEHx37lhVwUlaTW19o3
-	WrJkw3cxs4WY54yrq7ve9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724068571; x=
-	1724154971; bh=cXvC+PDGFCfNZv2tzpeZR9KJXjbUD1OJCs6l6aQe+rI=; b=Q
-	yKEv1rhHOdCFuCsNZTF01dKdCWqel7uUtG4PVE+2YcsCnMBvuJCDbN6Es8CvAoFU
-	tXADHwLKOrlJgaLRC/11ZeKsew3NBlrDxCJ7XuNn12tcBRuQ2aST8+SK5DOWAFEk
-	6v3OB9eQp7oo9EnbiGFCq7Q1bGvOu2fimNye65TR8A0aErvYbihZUqT2G5o5OJqj
-	BI0DlwbHa5c0Pt+7N5/a2qbkxnKUyVafm+DOeohZP6MZzsOZkC8Ay6G+PTB2cEpJ
-	9z5g9QnGiFAWGygslmPa40bUd5d/wZGRofoESMYSDxYXdm2iYedFKPJMLgi+yHmn
-	SDJ54kiQIWf0/QasfuGgw==
-X-ME-Sender: <xms:2zLDZqh1puP_R0VtfwNeB17mXVAaDndWItbRiERUf4dtGkKd1rUPGA>
-    <xme:2zLDZrAka-p5ceM-8IIyjknjNC34qZ7dNOai5L0SiaISN9mnCj19T8LF6eC-rd1Xx
-    5JlXv54h4aklBpi3pU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedggeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnhigrrhgusegrtghmrdhorh
-    hgpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrmhgvshdr
-    mhhorhhsvgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
-    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihm
-    ihhksehfrhgvvgdrfhhrpdhrtghpthhtohephhgrohhjihgrnhdriihhuhgrnhhgsehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepmhhorhgsihgurhhsrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehlihhuhihunhhtrghouddvsehhuhgrfigvihdrtghomhdprhgtphhtth
-    hopehtohhnhidrlhhutghksehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:2zLDZiEXNXwYilgasJbnpBU9SrAg57hCKnQ8vfIH7KWtaa0bGmy6xA>
-    <xmx:2zLDZjTrscr8VWYIX44CvMAJxHbDw2fU6YENea5_7alEhhIKHRg36A>
-    <xmx:2zLDZnyhRU-Xf7VKqgXZZ9nofYhaYp3WSsaM-A4S-OFV_ta0ImCP2g>
-    <xmx:2zLDZh7G8TZLWaOhE5ubpWUy9lSTFhzgoim9gKCQiXBNnGOKkZ6oFg>
-    <xmx:2zLDZg8UBxARNDsUwEarIt2op0GGkiNmtpU_v_VXlOxRuC9NjhItdjE0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3BF5216005E; Mon, 19 Aug 2024 07:56:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724068567; c=relaxed/simple;
+	bh=V+2JVs1WxHSCRsBcxpp1ZwKwkQtmeu4Z5GD4sMZeeY8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aWQoDeEmvqeitvaEZmClUjTfkOe1NiwRx1fiHkeuadVEUXx+rWjJYpAeOOvVAVR1C3qRJYx/nPh3Joq8DGAavNET3bEytzli7Va25ACl1Jx63heaLmLSpXHDvON/LqinWsimSw/NdXvTz8PeBJs3VldNbnqusLq1oCL/pNEPahc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WnWFL2mDwz6K9Hd;
+	Mon, 19 Aug 2024 19:53:10 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A8AA140B2F;
+	Mon, 19 Aug 2024 19:56:03 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
+ 2024 12:56:02 +0100
+Date: Mon, 19 Aug 2024 12:56:01 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, "Robin
+ Murphy" <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
+	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
+	<guohanjun@huawei.com>
+Subject: Re: [PATCH v12 4/6] arm64: support copy_mc_[user]_highpage()
+Message-ID: <20240819125601.0000687b@Huawei.com>
+In-Reply-To: <20240528085915.1955987-5-tongtiangen@huawei.com>
+References: <20240528085915.1955987-1-tongtiangen@huawei.com>
+	<20240528085915.1955987-5-tongtiangen@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 19 Aug 2024 13:55:50 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yuntao Liu" <liuyuntao12@huawei.com>,
- openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: "Corey Minyard" <minyard@acm.org>,
- "Ludovic.Desroches" <ludovic.desroches@microchip.com>,
- "Vinod Koul" <vkoul@kernel.org>, "Daniel Mack" <daniel@zonque.org>,
- "Haojian Zhuang" <haojian.zhuang@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>, morbidrsa@gmail.com,
- "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
- "James Morse" <james.morse@arm.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Robert Richter" <rric@kernel.org>, codrin.ciubotariu@microchip.com,
- "Andi Shyti" <andi.shyti@kernel.org>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Alan Stern" <stern@rowland.harvard.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
- "Mark Brown" <broonie@kernel.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Message-Id: <6a11b136-025c-4790-a7d6-4a76a5ede336@app.fastmail.com>
-In-Reply-To: <20240819113855.787149-5-liuyuntao12@huawei.com>
-References: <20240819113855.787149-1-liuyuntao12@huawei.com>
- <20240819113855.787149-5-liuyuntao12@huawei.com>
-Subject: Re: [PATCH -next 4/9] i2c: at91: fix module autoloading
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from platform_device_id table.
->
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> ---
->  drivers/i2c/busses/i2c-at91-core.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/i2c/busses/i2c-at91-core.c 
-> b/drivers/i2c/busses/i2c-at91-core.c
-> index dc52b3530725..bc3636f90712 100644
-> --- a/drivers/i2c/busses/i2c-at91-core.c
-> +++ b/drivers/i2c/busses/i2c-at91-core.c
-> @@ -107,6 +107,7 @@ static const struct platform_device_id 
-> at91_twi_devtypes[] = {
->  		/* sentinel */
->  	}
->  };
-> +MODULE_DEVICE_TABLE(platform, at91_twi_devtypes);
+On Tue, 28 May 2024 16:59:13 +0800
+Tong Tiangen <tongtiangen@huawei.com> wrote:
+
+> Currently, many scenarios that can tolerate memory errors when copying page
+> have been supported in the kernel[1~5], all of which are implemented by
+> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
 > 
->  #if defined(CONFIG_OF)
->  static struct at91_twi_pdata at91sam9x5_config = {
-> -- 
+> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
+> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
+> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
+> 
+> Add new helper copy_mc_page() which provide a page copy implementation with
+> hardware memory error safe. The code logic of copy_mc_page() is the same as
+> copy_page(), the main difference is that the ldp insn of copy_mc_page()
+> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE, therefore, the
+> main logic is extracted to copy_page_template.S.
+> 
+> [1] commit d302c2398ba2 ("mm, hwpoison: when copy-on-write hits poison, take page offline")
+> [2] commit 1cb9dc4b475c ("mm: hwpoison: support recovery from HugePage copy-on-write faults")
+> [3] commit 6b970599e807 ("mm: hwpoison: support recovery from ksm_might_need_to_copy()")
+> [4] commit 98c76c9f1ef7 ("mm/khugepaged: recover from poisoned anonymous memory")
+> [5] commit 12904d953364 ("mm/khugepaged: recover from poisoned file-backed memory")
+> 
+> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
+Trivial stuff inline.
 
-This device is always probed from DT, so a better fix would
-be to remove the table and the #ifdef/of_match_ptr() around
-the atmel_twi_dt_ids.
+Jonathan
 
-     Arnd
+
+> diff --git a/arch/arm64/lib/mte.S b/arch/arm64/lib/mte.S
+> index 5018ac03b6bf..50ef24318281 100644
+> --- a/arch/arm64/lib/mte.S
+> +++ b/arch/arm64/lib/mte.S
+> @@ -80,6 +80,35 @@ SYM_FUNC_START(mte_copy_page_tags)
+>  	ret
+>  SYM_FUNC_END(mte_copy_page_tags)
+>  
+> +#ifdef CONFIG_ARCH_HAS_COPY_MC
+> +/*
+> + * Copy the tags from the source page to the destination one wiht machine check safe
+Spell check.
+with
+
+Also, maybe reword given machine check doesn't make sense on arm64.
+
+
+> + *   x0 - address of the destination page
+> + *   x1 - address of the source page
+> + * Returns:
+> + *   x0 - Return 0 if copy success, or
+> + *        -EFAULT if anything goes wrong while copying.
+> + */
+> +SYM_FUNC_START(mte_copy_mc_page_tags)
+> +	mov	x2, x0
+> +	mov	x3, x1
+> +	multitag_transfer_size x5, x6
+> +1:
+> +KERNEL_ME_SAFE(2f, ldgm	x4, [x3])
+> +	stgm	x4, [x2]
+> +	add	x2, x2, x5
+> +	add	x3, x3, x5
+> +	tst	x2, #(PAGE_SIZE - 1)
+> +	b.ne	1b
+> +
+> +	mov x0, #0
+> +	ret
+> +
+> +2:	mov x0, #-EFAULT
+> +	ret
+> +SYM_FUNC_END(mte_copy_mc_page_tags)
+> +#endif
+> +
+>  /*
+>   * Read tags from a user buffer (one tag per byte) and set the corresponding
+>   * tags at the given kernel address. Used by PTRACE_POKEMTETAGS.
+> diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
+> index a7bb20055ce0..ff0d9ceea2a4 100644
+> --- a/arch/arm64/mm/copypage.c
+> +++ b/arch/arm64/mm/copypage.c
+> @@ -40,3 +40,48 @@ void copy_user_highpage(struct page *to, struct page *from,
+
+> +
+> +int copy_mc_user_highpage(struct page *to, struct page *from,
+> +			unsigned long vaddr, struct vm_area_struct *vma)
+> +{
+> +	int ret;
+> +
+> +	ret = copy_mc_highpage(to, from);
+> +	if (!ret)
+> +		flush_dcache_page(to);
+Personally I'd always keep the error out of line as it tends to be
+more readable when reviewing a lot of code.
+	if (ret)
+		return ret;
+
+	flush_dcache_page(to);
+
+	return 0;
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(copy_mc_user_highpage);
+> +#endif
+
 
