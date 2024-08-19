@@ -1,210 +1,339 @@
-Return-Path: <linux-kernel+bounces-291728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52AB9565F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:48:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD2C9565F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E361F227BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:48:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A5BB21E0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6E715C13D;
-	Mon, 19 Aug 2024 08:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NT9CvfTb"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2044.outbound.protection.outlook.com [40.107.117.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049B615B561;
+	Mon, 19 Aug 2024 08:48:28 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3591715B546;
-	Mon, 19 Aug 2024 08:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057308; cv=fail; b=QnNJukeiJSxP5cZ6TMoYZ2/IhbG/OVJMdZ7+NhpoVVEuvp0Hjk5xEcsNwNtWSBPJ2eg25kgorBkKBMipq379vz/KYKBPxrIrVESoMVOxBf40aCJR/RdF/wsZFA2S46DGZ3/QDKAyM9mTQHPb37TYZFAB9nQZvAjhxF08fk61oGE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057308; c=relaxed/simple;
-	bh=nOtgLZC6MA090UYvzzg4Cw+MqqPF/yZhsIGU/guAbKY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g5qamnxhaepfzVSalPFh33Os7rWEXvk4ySLtVs9L67ez5nscGO2ZWalgs72IP6RtVOJRd9G3y3Qcg7r91s0Ne/BMWFyFITg0DNopr5IZy+kG2Lbaa4yTkjH0ZANwHi1idedibWNbQRLf9zV/9SNmGImsX77q0N69lixycRY9zMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NT9CvfTb; arc=fail smtp.client-ip=40.107.117.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hk8gYYLbqmr+Wmjb7jSRExLVirtmYWd3HsKEheDEuKzkPq/dwpk6YC5E3bgpU7nwxXsAv5A2CebGKxKrgbuG4OG3jTtTgJlWpZ0mdmQvJMBa9LftxV4FFLQjoBSQ2oNKWuke6YSJhJ1FZI98rXeXwuDYfuLdnOcqskG0SEypkh45Vm2+SZVssno+kw9bQQBcpDkBpQgSJXkTj3NHNN04xw0ulvJAVz+W8rFkSHh1x7zxt+0azw3rEtO/w4PbdTtFW0Hw/4TavR53qkU8OZ64kztjz0nByMj42+0cx4MwQ1igTm3pLJ5vVlGsfq4YSoH9mpeutW0dHngZ/PuK0cl/qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nOtgLZC6MA090UYvzzg4Cw+MqqPF/yZhsIGU/guAbKY=;
- b=h+m/xEF4+4Lc/qavNEAnr7G75Su3uYutjSCYSAiTKT3B6xF7ldw3fM28XLXtqjo+DaThfOt1JTKaL7sthheymLzHkbaTCasmQp0NpxIIQWifj4pdTl1ChGFW12cl/cB3Dl1sdhsegkHQb53PFAHjL2fJWkH0Rv9N5jo18MaO2189ysxPvJ0zTxkzZR6RqOxaT5Hba7ISSJOZQCvsBOYpTQtgnrY09WF2LirQJt5i/b+MpFbXbOnrd8+CfjqIFaHmtVg3WKTzLXevE5NNOtl9WCmco8EqS6cZRzpldkoTKqXRDZU8vUoAA9hjAsX38Y0Isv4M45xCNDmcUtZrD5hKNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nOtgLZC6MA090UYvzzg4Cw+MqqPF/yZhsIGU/guAbKY=;
- b=NT9CvfTb6/e4GmxzxFnnIQmOTVTZDNkadPp0TzHT8gFFe25O+N2RY+nYAPNyx5xRF2vggBUNRCn2GAbbZyhDJO3iPjkE6DA1sNXJb6jc8SA3jgNuNykJBjdcfd7JL36Dsv3UzL4NZJvInAa4MrUWvM0cxK4p/6vY9mtK7wTvC4j0bHTqVwXJzHx3xFsyl1DkfiS1o9cXUeABcJcR/VfShcSS4V5i41s2gNxDCV/ccb085Nq2YZAAaH/sU21MaQcPag3nq0h89dtOOvokDY5TzQEWuJtgPcFgjS0n7ydAW/gPknEPv7wRbzThEoEMecXI9pUjqczvxBEI8MR2m8eSfg==
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
- by TYZPR06MB6565.apcprd06.prod.outlook.com (2603:1096:400:452::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 08:48:22 +0000
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 08:48:22 +0000
-From: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	opensource.kernel <opensource.kernel@vivo.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>
-Subject:
- =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSCB2MV0gdXNiOiBnYWRnZXQ6IHVfc2Vy?=
- =?utf-8?Q?ial:_check_Null_pointer_in_EP_callback?=
-Thread-Topic:
- =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjFdIHVzYjogZ2FkZ2V0OiB1X3NlcmlhbDogY2hl?=
- =?utf-8?Q?ck_Null_pointer_in_EP_callback?=
-Thread-Index:
- AdrvzihtFNSOcxRwTAOIHI6tveAOMAABV00AAACqLAAAAoTOwAAAUcYAAAD4WnAAAUYXgAAAwgzwAIjopbAAAJpGAAAAFMjQ
-Date: Mon, 19 Aug 2024 08:48:22 +0000
-Message-ID:
- <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-References:
- <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081608-punch-coherent-d29e@gregkh>
- <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
- <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
- <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081652-unify-unlucky-28d2@gregkh>
- <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com>
-In-Reply-To:
- <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|TYZPR06MB6565:EE_
-x-ms-office365-filtering-correlation-id: b915d03c-9206-4356-f256-08dcc02baea1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bXExQXdoRUplS24rOHV4OFV2RGZFc1lEZ0RuZVNHcEcyQm9QcGZZR3lsdU5L?=
- =?utf-8?B?UzhIdHVYc1lTY0d1ejE0SlNhaWhmU1RzQ1ZqUzVET1cvR1VDakZiLzdLdGN1?=
- =?utf-8?B?d1Z3R3NPcEp0WFR2WG1iOXpCdHIwbDRNdUwzQUNZVnZybjY0N1VmWVdEUUpo?=
- =?utf-8?B?c1FFdjkxbzgrVzRJQnh4d2VyZkhpSFVmQUZCb0lObGhwY3JkVFVOYnh1ek9N?=
- =?utf-8?B?aThSSEwxMm45eXUzTWphOXh6bW5iWUIxQVlnYys2QXBEUzVhUEhDRGZXMWR1?=
- =?utf-8?B?VXdjQ1hwSDAza1lGUlVyZGFxdGNJRE1nQS9NNEZMcys2SGl3WnhrbUFNejRz?=
- =?utf-8?B?RVRzZFRnTTdITldmZU9uV244TWFhYW5TU3ZJdmpqUUVIZnNuVThTSStLVjh3?=
- =?utf-8?B?NmtOdUZsNDdjaEJnMG0yNHBsTkxPVmtqbzg5U2VBdWg1NUg3S0h1azc0aGVO?=
- =?utf-8?B?SUtHRWNQclZRc3g5eUt3V2FuTWxlN3lrcER3SVg5QkI0TDRvcStPaVBPdGJH?=
- =?utf-8?B?bGRqb0lQOTM3ZFRvN1UvaUNDZ2tDZ2pHUjBMQzYzV0ZPOUQ3cTFQSmVJd1pP?=
- =?utf-8?B?YVl3UWU0alQwQ0xxQzlMdUNXcE4zVmE3RWxkR1pJRUo4cEhRbldKSVlpK2dt?=
- =?utf-8?B?WWRoTThkWkRjWXBLRnMya0ZFUXBTcktBUVNjSjE3azhCRU9kdHh3a3dFeEIx?=
- =?utf-8?B?Y24xMTZOSXFSNllBaENRSWF6VzdHSndUS3JNZW81M0ptdWlwM1hUWW1Dd21L?=
- =?utf-8?B?SDVNbURhaGlkM2F4N0t2YU15L1lUbkFyeitLdVAvcHBONmhKT0VYTkpDdTd5?=
- =?utf-8?B?c1E3R1dnL0hwRitmZE1EclUzRmxOK2ErQlFHMzJuMXpSK2JLb1Y1N1Z1cXdh?=
- =?utf-8?B?SlFRZndsSDBLWHIzK2t5aG5oYzBYd1YrRVFFR2djRTFKSDk5SHVnS0JhcDg1?=
- =?utf-8?B?b3ZHdE1LZU14SWp0TEwwTlB6YWozZVgrckZtTjUvdEJzRGxPYSs5QTFSVmhV?=
- =?utf-8?B?MHdwaWxZR2lFcTJvUkxreURvdVRmRnlkQjBwUkx5a1FFUG82Z2cyZzM2dmtI?=
- =?utf-8?B?b05sTVR5WG8vcHk5YzVVbUxRUFpZRlhSenoySDNmRWppVEM0VHVyMGlpQndW?=
- =?utf-8?B?cmZRclluTFlnaVdKMnJGNVhUN1d0L0RjRnF0aFM2cFdtUElSbkFERitnLzZJ?=
- =?utf-8?B?M051ck4ySlhiQi84b0M3dVYzTGc4VUhUNWROSEovTk50MElKMzcxK1VYWG1C?=
- =?utf-8?B?SGJKSG9VcG0wdGR4cVhHVnJlcGIxMis3MzJBam9xOFVMOW5VdXQ5a1lOVGtz?=
- =?utf-8?B?ZGJiblQxZnF5Q3Y5K2ZRalVlQjhvakJRSFQ4Q0ZTTUhGOVJqV0hwYU1XaXg3?=
- =?utf-8?B?UFF4U0tRTjRCZzVyem5pZTlLL3FRam5IdkdJWlA2OHB0SWZrM0xZZGlYT2FZ?=
- =?utf-8?B?cEd5K0JVcG0wdEZ5RmRzYXFBY1RlVk90Z3hJeU0xcEhodUJnUHRoS3lOSDc5?=
- =?utf-8?B?T2U2L1hFM00zbjBlekNBaFc4VWR4NE41M1laWnBWZDEvZmZvbHRmd2xRWE82?=
- =?utf-8?B?b3RtUHI0YWF3Q29oRlBkelBYM3N1QzFxRnl3Mnl2Kzd0TXVhUUJiNERXR3M1?=
- =?utf-8?B?REdybGp4S0doQTFoam52VWxncDI1VE9YV0lZMHMvUE9XWVJ3RWtUSGp3bUFC?=
- =?utf-8?B?VUNIMXA3eWVQK0ZBcHNTMUE0d1MxakZnMk5lVWk1eURqOUt5U1V6b1FMeXdl?=
- =?utf-8?B?ZUtqWWlQdWphQXVTeHpJVU11TngzOGNXMVRpVE4wenBHMjdwajhFQWpCNDZV?=
- =?utf-8?B?NEZPdHNCT1gra3ZNU0JWcFlmdk9YeE5ITW0zbGNXRm4vV1RabktEdVlhSFpa?=
- =?utf-8?B?UnprVitDV1NnZmRWdVQ0ZytPWXh5UE9MUEwvSi82Q2MzMnc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?K3dnTlEzUlRCY0NwVnZqcE1JYThWYTZIYWV5VzBFa1l5bnR6M1lWRjRQQUNN?=
- =?utf-8?B?VmxvNmExdDVoTEtxbnZ2T1F1UTV5UTNtYmp5dEw3Mk9sbHYrUitGMW5YaEtY?=
- =?utf-8?B?c1d2VGxja0VYVEU3TkpBRTUvNHpyT0NybDFlTDB1RjV0TWxDM0k1T3RBK1pM?=
- =?utf-8?B?QnNnT2VJUDZOdURQVzMxYy90RU9CUTVJa3FqUTZRV29wLzg2bFNLeXlhb3Iw?=
- =?utf-8?B?c3RCb0gzR3VYZnRFTEZzTkp1eGdNZk1FZmxoci90MXlOSnZraTdGNEUwVm5C?=
- =?utf-8?B?R1Y5cHVlM1VQTWZKSnM0dVBKM3lYc05UbFJYcmRaNnM0V3NFMTN5VStkUXFN?=
- =?utf-8?B?RWdaUzkxVkxBUXRpUCtKYXlyYUxMZkxhQlpXV0x6UExQNUVNVTl0YVpYc3hS?=
- =?utf-8?B?Y0gzd2Q4Z0FiZ0E3WDhYR2ZyR2xoeTc2dUhHMG5LSk14SnVLYVdEeGVxQ1Rh?=
- =?utf-8?B?VmJRWktGRmFjSXEyTGtIblI5WTRITWEwaGdQZGlZRGFTNHp4WW9LcWJtNmRl?=
- =?utf-8?B?YUxGTGs4cGlwQXdsTkVJN3FERlNFSXdNd2FsRDZlQi9tNGx5bFc2dmpvY1Nz?=
- =?utf-8?B?bmdVU0dBcHJhY1VCRHcxd2RQTWl1N1YrYVA4WnBVTGdma0llczVndjdXZ3ly?=
- =?utf-8?B?MFF4TE8rbHZEeCtpc0o0TTVLeHJucEpUZ2daNGd3eU5PVW9xVHNxWEVCOTJy?=
- =?utf-8?B?RHA4bU5oUjdYVC9JcCt6Zy9RbXBVNFZuenRsY3hKR3kzcDh6M3o0MWVjdG1x?=
- =?utf-8?B?L3FhS3NOOG9sMXhOMDJDYnN3TGlLZ3dXUlpzTWdzNXJCYWRIeHExdjRJNGNJ?=
- =?utf-8?B?ZmZBWE5RZkxLVUpZU25GRHhNaWRMU0VWK3IwTW9vNTFZVSs5d3hFdi82OUNU?=
- =?utf-8?B?TFl1ZjNpUDFzYUxYczF2RVg1TmVDVWNSVklEZmlJM1g1ckdrenE4ZHprbkw3?=
- =?utf-8?B?QkVLQS90NU5wc2tvRHJkdU9lNXVTN09qZWdIRWxDYWU4cGhEazVWQU9pRW45?=
- =?utf-8?B?WG5JQTBqNktYNXpwcWdaQlhpMGdybjI5YXRNRjJNbGdjMkVFYTVjMmxkRnZV?=
- =?utf-8?B?NkRHTnJzWUZVbWZLYWpEdFdkQXNrNEQ0SE1aTTlKVEhCVWV5VjJPZEV5dGRO?=
- =?utf-8?B?NTFhRWFieGdnVWYzTVZ4UkorMWFtT2RHYnZwa1lUTW45UWZaTUcxK2FQS1BU?=
- =?utf-8?B?S1hhc1lzR0VKdlZ6U3p5ditNL21QYmNXd3JyUjBOSUI4cFpkejVIUFZhbXha?=
- =?utf-8?B?d01rcEtTVjVIQkI4c1VDa0pDWGpTT2w2RlJyY29LWDlzTjFwcFhJT0s1RE5J?=
- =?utf-8?B?UUVCajlzNE1oeGIvUkZQbnc1a3FhOVl2bG9yUUFudVZiUVRjeGt3TS92NnBO?=
- =?utf-8?B?eExMUVcwVHcvRHoyU2ZsSnNRejJRYTRwUklHZkxTQ01VMk1jUm1PL3Y5TTNy?=
- =?utf-8?B?VmV1RG96OXYxUkVzVEw2LzIyUDUrSlg1NjRnNmc1TmdiUnFhMXR5MDdHNDFO?=
- =?utf-8?B?cnU4MTBQNEtYNVpWNjBhbUNseTlvVjlzd2d5VGt0REZhekYyTTJEUlpWVG9x?=
- =?utf-8?B?MlZiTHk1YVRWMklDcW1nZHhXRzRFVzE0MUJNSkFKZlNJSFRLZFlQS2VOeitl?=
- =?utf-8?B?dlNuVnd1UUMyelZEaHlsSkdibE5TVHdRSXhWNm5FaHovVGJDMWRSSEdrSjdu?=
- =?utf-8?B?STlkWUNLazlrdGkyUmI2SzNiNC9JSUlUeG80dXk0U1ZpWVFuYWhMbXR2MGxr?=
- =?utf-8?B?RE9hdENMb3lWblNZS1Z4RUVmcllucjBsd09IMldpRnBQbHhIem5RV1FZQVFU?=
- =?utf-8?B?WHJRR2VGMkt1R28zVzFCWkN2R0NNN3RIVnJQRit0cHprWFBmZE9pR0tuZnBV?=
- =?utf-8?B?NUpNUUszbG5UQWxRRk93V0l5WXBLOGJwN2s0dXF1RjBlK1RVZnJKVlcrQ1BI?=
- =?utf-8?B?R2JuR3NYYktoOG5zbURra1Rpb2lmd3pGbnBTM2p5SHdFbGI5M3B4MzVnVWQ1?=
- =?utf-8?B?SmdwY0RhNjNBUFhwbTNDdGJUVzNkandBTWgxQkNnMUw1WkFUNEZqOFlVR2xi?=
- =?utf-8?B?cmNFZWxUUmxLMjhaUTNkZjdvVEZSRklvRFM0SWpJQng5aXBaOW55bWQ1QWg1?=
- =?utf-8?Q?g4Qo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BD415B96E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724057307; cv=none; b=ROKZb0Yst2cR4KEZIGsM9xRpyHllWZyP5ZPSilEaNkQtUnbhjqpvuCsOQiBl946VvDsD+MvvL2uY06kpGabWF/mTT2/xWRJfI/J2BI9LmiNpUvts7xtgqK/7ERA6yUkDJW/iviTEe7AavEQ77Kxte+0ssBxB9PWrW/zxR92anVc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724057307; c=relaxed/simple;
+	bh=R6H7Es9RCBQpwcskZEs1dtk0RpC3DRtLdco/IhuDDSg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=c6pjSVT2SpcEJg3j+zQNdf4XMCkbKMvtYSLdGSEk3ocBstY/y2YgpBn7/8I3neqtm67hm9b98QI0k38b6HREeqZwqsy+IcHFkUrJrq8hHhtR+kO+pYShr+5xCHb1buwzqpLLg3WntpnJaazfZyOYBYQnParpWih64UuDv3DdwIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f99a9111fso418663139f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:48:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724057304; x=1724662104;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3p5g+TH+VzqpJpBP6TerND5UJrOhxEVsSjOHu5Sz3qY=;
+        b=aPteGcFb/IzgoLDbvM8ZsWc1+GHFb+GH8C8pRo1HPlJRg4kHnr212jrnblUXKG9AIH
+         LlQtGYCCF7ZdbKa60pcxYwi564xqn8wniSTq33c82ScZ/73E5T0j0R6sOXGjjk3l+Z9y
+         pof7TD40O9R9JOoEXvCGOEXMvJram3vek4D1bs/DfuFbWgy90DTi4h0e3AsNDe8Hruk1
+         YRkhDuynw3URVhWvdvrjA5vHq9sBZ7/joplvSMtP0FYvKZxq5IEjhs9TGftVYGpEf01n
+         KmSeAaC02oGL2Gev7HFem/IJczj+6Uz4owuHP7tdtqgOLhWU0mqXPn8/aB7egk3pv+UR
+         j/BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL4XULailHZaF4n2L4tc4vTHkaM+AVnEWffCV/88DgWv9k/LBl8IWP3C/sgghoTyvEQmLcnHqHF/bhMXO2tedhz88GOEywj30C75j3
+X-Gm-Message-State: AOJu0YxH08Y/0RCO4x/x3sFfzpdLglCw87iBbkkl5z0u0r00O9MmqOIX
+	6zz0701jejFBty598PG3esbIw9SlhUlnSAu52qUFttFTkHsxk8ejOOtn9RKEmh8ctts5IM4Oag6
+	t6IBhQCRdUbJ3xwhqg17Dk839h7FEm6+saZxAb8gG9owXBqA3eG1Wh5Q=
+X-Google-Smtp-Source: AGHT+IFudLdgBWMzo9HAvZTedaYxrVc4P9a9G4CjiTdxXdQZxj8sP4yydbQpJM8zE6l/77uoFjiMJ41unUUgnuN1CXmxuH5Fp8eS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b915d03c-9206-4356-f256-08dcc02baea1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 08:48:22.5364
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zjk9XB/QhInbrJmQ+Z7gNHbOV+G2U7r4ickO0sMGE7mondGVFkQiwi99Z7uAnUObNCYKoQ7vdu/DJ6F6Jhe7DA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6565
+X-Received: by 2002:a05:6638:3494:b0:4bf:2453:3a48 with SMTP id
+ 8926c6da1cb9f-4cce16fd377mr542034173.5.1724057304352; Mon, 19 Aug 2024
+ 01:48:24 -0700 (PDT)
+Date: Mon, 19 Aug 2024 01:48:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000032dd730620055fde@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_try_remove_refcount_tree
+From: syzbot <syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-SGVsbG8gbGludXggY29tbXVuaXR5IGV4cGVydDoNCg0KPj4gPj5JIHRoaW5rIHRoaXMgaGFzIGJl
-ZW4gcmVwb3J0ZWQgcHJldmlvdXNseSwgYW5kIGRpZmZlcmVudCBwYXRjaGVzIGhhdmUgYmVlbiBw
-cm9wb3NlZCwgaGF2ZSB5b3Ugc2VhcmNoZWQgdGhlIGFyY2hpdmVzPw0KPj4gPiBJIGhhdmVuJ3Qg
-c2VlbiB0aGUgcGF0Y2ggZ2l2ZW4gYmVsb3cgYmVmb3JlLCBJIHdpbGwgcmVhZCBpdCBjYXJlZnVs
-bHkuDQo+PiA+IEkgc2VhcmNoZWQgZm9yIExpbnV4IG1haW5saW5lIGNvbW1pdHMgYmVmb3JlIHN1
-Ym1pdHRpbmcsIGJ1dCBJIG9ubHkgY29tcGFyZWQgdGhlbSBhY2NvcmRpbmcgdG8gdGhlIGNyYXNo
-IHN0YWNrIGluZm9ybWF0aW9uIGFuZCBkaWQgbm90IG5vdGljZSB0aGUgZm9sbG93aW5nIGNvbW1p
-dC4NCj4+ICBJIGNoZWNrZWQgdGhlIHN0YWNrIHRyYWNlIGFnYWluLiBUaGUgcHJvYmxlbSB3ZSBl
-bmNvdW50ZXJlZCBzZWVtcyBkaWZmZXJlbnQgZnJvbSB0aGUgcHJvYmxlbSByZXBvcnRlZCBpbiB0
-aGUgbGluayBiZWxvdywgYW5kIHRoZXkgYXJlIG5vdCBjYXVzZWQgYnkgdGhlIHNhbWUgcmVhc29u
-Lg0KPj4NCg0KPkRpZCB5b3UgYXBwbHkgdGhlIHBhdGNoPyBhcyBzdWdnZXN0ZWQsIGlzIHRoZSB0
-ZXN0IG1vdmluZyBmcm9tIG9uZSBnYWRnZXQgdG8gdGhlIG90aGVyPw0KIFdlIGFwcGx5IHRoZSBw
-YXRjaCBpbnRvIGtlcm5lbCA1LjE1IGFuZCByYW4gYSBzdHJlc3MgdGVzdCwgYW5kIHRoZSBwcm9i
-bGVtIGRpZCBub3QgcmVjdXIuDQogQ29ubmVjdCB0aGUgcGhvbmUgdG8gdGhlIFBDIHZpYSBhIFVT
-QiBjYWJsZSBhbmQgcnVuIHRoZSBtb25rZXkgdGVzdCAocnVuIGFuIGFwayBhbmQgY2xpY2sgb24g
-aXQgYXQgd2lsbCBvbiB0aGUgcGhvbmUgaW50ZXJmYWNlKS4NCg0KVGhhbmtzDQo=
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b8bbd9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1142e5ed980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14aa396b980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1fb91896.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cd6e8883313a/vmlinux-1fb91896.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/87b718d2d1df/bzImage-1fb91896.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6b8f724adfab/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com
+
+Code: c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0 Not tainted
+------------------------------------------------------
+syz-executor622/5097 is trying to acquire lock:
+ffff88803ec0bf60 (&oi->ip_alloc_sem){+.+.}-{3:3}, at: ocfs2_try_remove_refcount_tree+0xb6/0x330 fs/ocfs2/refcounttree.c:931
+
+but task is already holding lock:
+ffff88803ec0bff8 (&oi->ip_xattr_sem){++++}-{3:3}, at: ocfs2_try_remove_refcount_tree+0xa5/0x330 fs/ocfs2/refcounttree.c:930
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (&oi->ip_xattr_sem){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       ocfs2_init_acl+0x397/0x930 fs/ocfs2/acl.c:366
+       ocfs2_mknod+0x1c05/0x2b40 fs/ocfs2/namei.c:408
+       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+       lookup_open fs/namei.c:3578 [inline]
+       open_last_lookups fs/namei.c:3647 [inline]
+       path_openat+0x1a9a/0x3470 fs/namei.c:3883
+       do_filp_open+0x235/0x490 fs/namei.c:3913
+       file_open_name fs/open.c:1361 [inline]
+       filp_open+0x261/0x2d0 fs/open.c:1381
+       do_coredump+0x2259/0x2a30 fs/coredump.c:708
+       get_signal+0x13fa/0x1740 kernel/signal.c:2902
+       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #3 (jbd2_handle){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       start_this_handle+0x1eb4/0x2110 fs/jbd2/transaction.c:448
+       jbd2__journal_start+0x2da/0x5d0 fs/jbd2/transaction.c:505
+       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
+       ocfs2_start_trans+0x3c9/0x700 fs/ocfs2/journal.c:352
+       ocfs2_mknod+0x150c/0x2b40 fs/ocfs2/namei.c:359
+       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+       lookup_open fs/namei.c:3578 [inline]
+       open_last_lookups fs/namei.c:3647 [inline]
+       path_openat+0x1a9a/0x3470 fs/namei.c:3883
+       do_filp_open+0x235/0x490 fs/namei.c:3913
+       file_open_name fs/open.c:1361 [inline]
+       filp_open+0x261/0x2d0 fs/open.c:1381
+       do_coredump+0x2259/0x2a30 fs/coredump.c:708
+       get_signal+0x13fa/0x1740 kernel/signal.c:2902
+       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #2 (&journal->j_trans_barrier){.+.+}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
+       ocfs2_mknod+0x150c/0x2b40 fs/ocfs2/namei.c:359
+       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+       lookup_open fs/namei.c:3578 [inline]
+       open_last_lookups fs/namei.c:3647 [inline]
+       path_openat+0x1a9a/0x3470 fs/namei.c:3883
+       do_filp_open+0x235/0x490 fs/namei.c:3913
+       file_open_name fs/open.c:1361 [inline]
+       filp_open+0x261/0x2d0 fs/open.c:1381
+       do_coredump+0x2259/0x2a30 fs/coredump.c:708
+       get_signal+0x13fa/0x1740 kernel/signal.c:2902
+       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #1 (sb_internal#2){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1675 [inline]
+       sb_start_intwrite include/linux/fs.h:1858 [inline]
+       ocfs2_start_trans+0x2b9/0x700 fs/ocfs2/journal.c:348
+       ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
+       ocfs2_truncate_file+0x68c/0x1560 fs/ocfs2/file.c:500
+       ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1208
+       notify_change+0xb9d/0xe70 fs/attr.c:495
+       do_truncate+0x220/0x310 fs/open.c:65
+       do_coredump+0x2702/0x2a30 fs/coredump.c:744
+       get_signal+0x13fa/0x1740 kernel/signal.c:2902
+       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #0 (&oi->ip_alloc_sem){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       ocfs2_try_remove_refcount_tree+0xb6/0x330 fs/ocfs2/refcounttree.c:931
+       ocfs2_truncate_file+0xe08/0x1560 fs/ocfs2/file.c:521
+       ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1208
+       notify_change+0xb9d/0xe70 fs/attr.c:495
+       do_truncate+0x220/0x310 fs/open.c:65
+       do_coredump+0x2702/0x2a30 fs/coredump.c:744
+       get_signal+0x13fa/0x1740 kernel/signal.c:2902
+       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+other info that might help us debug this:
+
+Chain exists of:
+  &oi->ip_alloc_sem --> jbd2_handle --> &oi->ip_xattr_sem
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&oi->ip_xattr_sem);
+                               lock(jbd2_handle);
+                               lock(&oi->ip_xattr_sem);
+  lock(&oi->ip_alloc_sem);
+
+ *** DEADLOCK ***
+
+2 locks held by syz-executor622/5097:
+ #0: ffff88803ec0c2c0 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
+ #0: ffff88803ec0c2c0 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}, at: do_truncate+0x20c/0x310 fs/open.c:63
+ #1: ffff88803ec0bff8 (&oi->ip_xattr_sem){++++}-{3:3}, at: ocfs2_try_remove_refcount_tree+0xa5/0x330 fs/ocfs2/refcounttree.c:930
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5097 Comm: syz-executor622 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+ ocfs2_try_remove_refcount_tree+0xb6/0x330 fs/ocfs2/refcounttree.c:931
+ ocfs2_truncate_file+0xe08/0x1560 fs/ocfs2/file.c:521
+ ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1208
+ notify_change+0xb9d/0xe70 fs/attr.c:495
+ do_truncate+0x220/0x310 fs/open.c:65
+ do_coredump+0x2702/0x2a30 fs/coredump.c:744
+ get_signal+0x13fa/0x1740 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+ exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f27cd76b711
+Code: c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
+RSP: 002b:ffffffffffffffe0 EFLAGS: 00010217
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007f27cd76b709
+RDX: 0000000000000000 RSI: ffffffffffffffe0 RDI: 0000000004008011
+RBP: 65756e69746e6f63 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 633d73726f727265
+R13: 00007ffd27cfc3fc R14: 00007ffd27cfc440 R15: 00007ffd27cfc430
+ </TASK>
+OCFS2: ERROR (device loop0): int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *, handle_t *, u32, u32, struct ocfs2_suballoc_result *): Chain allocator dinode 23 has 4294967295 used bits but only 16777215 total
+On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
+OCFS2: Returning error to the calling process.
+(syz-executor622,5097,0):ocfs2_claim_suballoc_bits:2038 ERROR: status = -5
+(syz-executor622,5097,0):__ocfs2_claim_clusters:2412 ERROR: status = -5
+(syz-executor622,5097,0):__ocfs2_claim_clusters:2420 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_local_alloc_new_window:1197 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_local_alloc_new_window:1222 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_local_alloc_slide_window:1296 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_local_alloc_slide_window:1315 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_reserve_local_alloc_bits:672 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_reserve_local_alloc_bits:710 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_reserve_clusters_with_limit:1170 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_reserve_clusters_with_limit:1219 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_convert_inline_data_to_extents:7080 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_try_to_write_inline_data:1564 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_write_begin_nolock:1676 ERROR: status = -5
+(syz-executor622,5097,0):ocfs2_write_begin:1906 ERROR: status = -5
+syz-executor622 (5097) used greatest stack depth: 17712 bytes left
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	28 c3                	sub    %al,%bl
+   2:	e8 01 1a 00 00       	call   0x1a08
+   7:	90                   	nop
+   8:	48 89 f8             	mov    %rdi,%rax
+   b:	48 89 f7             	mov    %rsi,%rdi
+   e:	48 89 d6             	mov    %rdx,%rsi
+  11:	48 89 ca             	mov    %rcx,%rdx
+  14:	4d 89 c2             	mov    %r8,%r10
+  17:	4d 89 c8             	mov    %r9,%r8
+  1a:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+  1f:	0f 05                	syscall
+  21:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
+  27:	73 01                	jae    0x2a
+* 29:	c3                   	ret <-- trapping instruction
+  2a:	48 c7 c1 b8 ff ff ff 	mov    $0xffffffffffffffb8,%rcx
+  31:	f7 d8                	neg    %eax
+  33:	64 89 01             	mov    %eax,%fs:(%rcx)
+  36:	48 83 c8 ff          	or     $0xffffffffffffffff,%rax
+  3a:	c3                   	ret
+  3b:	66                   	data16
+  3c:	2e                   	cs
+  3d:	0f                   	.byte 0xf
+  3e:	1f                   	(bad)
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
