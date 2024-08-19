@@ -1,57 +1,94 @@
-Return-Path: <linux-kernel+bounces-292802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D041B957492
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B84957495
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8751C20F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6821F21B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F101DC47B;
-	Mon, 19 Aug 2024 19:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357321DC481;
+	Mon, 19 Aug 2024 19:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6aQ1s4b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jqy44aHK"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F082D179206;
-	Mon, 19 Aug 2024 19:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271AE1D54E0
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096271; cv=none; b=YGyUaDu8gjMPgtK/V9040+0wPphTFWRIFu/J10n64FctBwCDn95BjLU+5zyPjOoW8oTNtdX2aezAyIfylBZdbEYMl8lREc1Bj2X0G/KyH5LXl2HXrDOgOo5ygpqpbAqg40Fzm9Nnn2Y0NHKr2OYepksfOlp+mBa63rKKHdHZFEM=
+	t=1724096337; cv=none; b=bM7LzPEQp+w+yBep8I38Bdl1x1B2qFAYIVasKTquQxWnjbYVxMxT5ibSh0sl4XTG4n+qqv68q2BLxUewgD1oCOjSnOyQky/EC+N3SQ2aHrPZAhGzwrtrx+c1uEhWDlbzhb2y8+tdtSIroePOZEHkcP8Atuf0DTLIb9RLNWOjcHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096271; c=relaxed/simple;
-	bh=PBpJQ8cfDdo8zKxS2UDG3hX3O201hSXAedV6WAjp/lM=;
+	s=arc-20240116; t=1724096337; c=relaxed/simple;
+	bh=F7wkcHJPXIPuDfH/klr4thKavbEnJmwxdbEiZYRhu1E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1mxhklKJic3xAtniBMcdY8NdQyMjC2XvF5cIwooMFcNDZHZ30Q+Pjx0kkQLuOOcXmQCfHhNGC3G7XMhoaTB4NE0xpz8VfAioMcTzT9Pb+YGVlctisV44+EwN1nemkuOGThg5TCGhneHUJUGsSBmmb34pX7ebOXg1E8kmln5oVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6aQ1s4b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AFEC32782;
-	Mon, 19 Aug 2024 19:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724096270;
-	bh=PBpJQ8cfDdo8zKxS2UDG3hX3O201hSXAedV6WAjp/lM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a6aQ1s4bUuunpkVUp958GYp0M2sjA6aZC0yJrkvCM1UM4PCnCJqCbPdp/w1bJ4zyx
-	 VTHmzuFjxkkMcTSXh9g0EWhr3lWYLaOemIFyb4k8tFMJiPtsTNX7AjfFcoZp0Iv6Uq
-	 d8jMM5bOcjh3Zr2BXCeO1z3FCmwU/N4aiXM0icJEPy//XcpvsxMiHIHLpePjxrCtx1
-	 Cv2cKG96OWMQhaogyaakBwPsbhSZrl2nzrEpoNHKoGKMh+26vgHJByXH911KTL2yw1
-	 5ssbFdCS7tEkvoBT5cxA1jGmU7JIm1PyZJV9+QVyx1a/wsyIIeQj0LJqkVKxzrzu3Y
-	 qE/YYgvcDs4iA==
-Date: Mon, 19 Aug 2024 21:37:44 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
-	p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v4 05/11] i2c: riic: Add suspend/resume support
-Message-ID: <ajj4fwoob5wq5guktq2b54h55fn5qlcakiybq6pk3xagiops7d@abpwevzemidy>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
- <20240819102348.1592171-6-claudiu.beznea.uj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKJqq1MmwYfwIn7L9Q7w28yXKfEtpjxWE3CLNCeEA8wRYJGZ+iDBYSpiWHwJpqIOy/n4LNv+LhztCh9wY6meyON3doZj+iLxNJEQy9s6XSms5ZDdqz3Q2mlwZFpZ/h7lfO0DoqUJzA9P12sb8BZvZoRcQNKTUUpB6IR2nE30Heo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jqy44aHK; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201fba05363so29186955ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724096335; x=1724701135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeS++fCKemkXhDJMjat3ElWefP5AW5Wy1oKzA28CFNw=;
+        b=Jqy44aHKfCucjW6dSdgDbzaqx2bnXrzPEbfetshLmrEaw/8xyi0TxC5h7b8LHg8N/t
+         kouRMUJCIINWGrPLvd4Sca5u2B86Qpu1OApbkfFi9jPE4QPO7YgUqf48/pp/avbE7M1F
+         lXJKrVlyu8na4SVtkpsonw//DihGztrsDcWO8orF6NQltKwhUgETN4S6mzahBatvl4yK
+         UMKc7DJodi8BjCyDHN1sSBeQM4hD1rgsoVbAMCZPZst7QDHwCBS9MNExih6UbG4Uzp3E
+         K7W7VpffRMkE0tER85oamhTkLH2AFLpW0FSWfqnMxWZ7uyCW3dVhQkwozOJ+vYV/wb0k
+         fn4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724096335; x=1724701135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeS++fCKemkXhDJMjat3ElWefP5AW5Wy1oKzA28CFNw=;
+        b=u9FL8nDMbLgMcN0AVlvfaa9S54Gv1j2si14fXOIWNiAiKtV56o+/t2Y5FHnjzgEjY6
+         AqDugGyU22xfsmkOtEp4l1ZBKUEbxSDrGldIdqcx1ukwGB2W11f28OFGJOIUdyEEcrdB
+         S0cC8BcGmRWAkFpPFYY/Gf79kOglfFi8GqDkFoLXrsZfSTHAaMUBgTqTTE6VMjqIv+aY
+         Zj3MCNpO3V5+cjpN0U0oRrh7/hOIewlxo4dFy79zZrMeMigT4cXrHYJHUka3Xh74pFg7
+         rjSmEdgNoVs35rOf6VgnGVQ7NvT686Z5wypjf+MHOPLuuld9J2KnCw8jHtzaCw0dCCGV
+         keAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzXb9zKMX60sKJ9Uf/r5rWGK7B7PV/ie7I4Ya5kQ5Zo1zjHu7LvNGJpo1T0qhe3k2fpa8X8p75XOJLAjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/K824o5ZVe/8RTsNQGvYuHF6td3TN3DobSrErUn3MtnMk/454
+	6pGnoS3oe5ea9TGXHcdDmG7KVAzny66ZHVePBML18wFC/NOlCul0q0x5bVYa8A==
+X-Google-Smtp-Source: AGHT+IG8oRBHqBpvRvU+j9ijDv76wPfUzxrx1g+I09GD1WWcWllKaTLicpQtA41S0/MWaq3kkTtGZA==
+X-Received: by 2002:a17:903:188:b0:202:4d05:a24a with SMTP id d9443c01a7336-2024d05a587mr34136775ad.16.1724096334977;
+        Mon, 19 Aug 2024 12:38:54 -0700 (PDT)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03197b6sm65427305ad.69.2024.08.19.12.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 12:38:54 -0700 (PDT)
+Date: Mon, 19 Aug 2024 19:38:51 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+Message-ID: <20240819193851.GA4809@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com>
+ <2024081600-grub-deskwork-4bae@gregkh>
+ <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+ <2024081705-overarch-deceptive-6689@gregkh>
+ <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,55 +97,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819102348.1592171-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
 
-Hi Claudiu,
+Hi Benno,
 
-On Mon, Aug 19, 2024 at 01:23:42PM GMT, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Sat, Aug 17, 2024 at 01:19:55PM +0000, Benno Lossin wrote:
 > 
-> Add suspend/resume support for the RIIC driver. This is necessary for the
-> Renesas RZ/G3S SoC which support suspend to deep sleep state where power
-> to most of the SoC components is turned off. As a result the I2C controller
-> needs to be reconfigured after suspend/resume. For this, the reset line
-> was stored in the driver private data structure as well as i2c timings.
-> The reset line and I2C timings are necessary to re-initialize the
-> controller after resume.
+> For this use-case (the one in the patch), I don't really know if we want
+> to copy the approach from C. Do we even support exporting kABI from
+> Rust? If yes, then we I would recommend we tag it in the source code
+> instead of using a union. Here the example from the patch adapted:
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>     #[repr(C)] // needed for layout stability
+>     pub struct Struct1 {
+>         a: u64,
+>         #[kabi_reserved(u64)] // this marker is new
+>         _reserved: u64,
+>     }
+> 
+> And then to use the reserved field, you would do this:
+>     
+>     #[repr(C)]
+>     pub struct Struct1 {
+>         a: u64,
+>         #[kabi_reserved(u64)]
+>         b: Struct2,
+>     }
+> 
+>     #[repr(C)]
+>     pub struct Struct2 {
+>         b: i32,
+>         v: i32,
+>     }
+> 
+> The attribute would check that the size of the two types match and
+> gendwarfksyms would use the type given in "()" instead of the actual
+> type.
 
-This patch doesn't have tags, so I'll add mine :-)
+This definitely looks cleaner than unions in Rust, but how would this
+scheme be visible in DWARF? You might also need to expand the annotation
+to allow replacing one reserved field with multiple smaller ones without
+using structs.
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
-
-Just one thing, though...
-
-...
-
-> +static int riic_i2c_resume(struct device *dev)
-> +{
-> +	struct riic_dev *riic = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = reset_control_deassert(riic->rstc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = riic_init_hw(riic);
-> +	if (ret) {
-> +		reset_control_assert(riic->rstc);
-> +		return ret;
-
-Can I add a comment here saying:
-
-	/*
-	 * Since the driver remains loaded after resume,
-	 * we want the reset line to be asserted.
-	 */
-	reset_control_assert(riic->rstc);
-
-Unless I missed the point :-)
-
-Thanks,
-Andi
+Sami
 
