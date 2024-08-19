@@ -1,651 +1,376 @@
-Return-Path: <linux-kernel+bounces-292245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A03956CFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB329956D01
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200311C22B78
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399D51F2572C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A6E16C86A;
-	Mon, 19 Aug 2024 14:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E7D15E5D6;
+	Mon, 19 Aug 2024 14:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXLSK4k1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6fpJEfW"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B602E15E5D6;
-	Mon, 19 Aug 2024 14:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB2215CD75;
+	Mon, 19 Aug 2024 14:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077048; cv=none; b=uHeamgy4LVxqk2fti1ZIyfWye8ILv/Gn0q2ChV/VE/owXF1FQ0B1UO4dPaYyClxUOVFX9GnDolqLFWw/rMVhYMzhJnd+KUZgc9KrwpOus7ijF542IAbzWxlPt3W4IMV3runFy1l1Lc+x/cNJRtQ/eO4SI8PYWFeUAGy+m3teB9g=
+	t=1724077070; cv=none; b=pJEuODlPstnQpMG8vki3xmTZMLVUZIWoI42fcqkVYa3+Ym++To5hnVscs6i9cgvva0DCmXvLFwah1nQKEWbFIWqYueBmMhgDISKQH115i8o1bY26h8FCYlQjuL7rYWqpyk6T8QSbWNm6mg2f/HC2Hm82daewhd/CmRylGRW17uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077048; c=relaxed/simple;
-	bh=fWU4XT+3ULTiivf49oGHazmISXNwMiSlbFNxBr2ahns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A55g5avudDWBhhq+mUALgtYbgbnNPAH/GAbC3hBu2xznU3DTVyNaDvPbC4efR+Q4iU/4NZLSGNU8aTudiQn3mtduo5iYXnfAALArovJl4STO3PoB4Q832VCdCx7fcK6clKvdCwAN57CbF0Jvrkr3b788gMXe3vdtR0SAFDEc1rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXLSK4k1; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724077046; x=1755613046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fWU4XT+3ULTiivf49oGHazmISXNwMiSlbFNxBr2ahns=;
-  b=SXLSK4k1SZDQD97qfH679VU+RUnHH5VsENdN+nhD2dUV7qgzpJLIXojI
-   T1yeK0LqOTRa6HahjZqBJ5AoirXa6LO3onRQuBfUOVhE7ITKbiQjyBa0L
-   YmuMFBeFNKZz0hkAOaA3kJVqAM8sktORXRpTJvi72ukMJKDjQsrRvR4Zp
-   Wa0z5iPvp+sYfea/Bf4CXuqzUut6xW0DmkO4001qScjombNLw59suICys
-   MUKJu3h3q0v5M4vLYLvB7GaYtZsuVZMtD0OvyLhmxTrHdDAedt7aUBtT4
-   vhvGzZ5lwGbvdpTwy7GOxb/LwiwnoCKELmSxVKfcSYwjbYQ5wKTQIXVdr
-   A==;
-X-CSE-ConnectionGUID: A7lJhGtiRqW57AvQj9DQhA==
-X-CSE-MsgGUID: swa1x8BgQnO/7KMSv7vT8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="21872535"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="21872535"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:17:24 -0700
-X-CSE-ConnectionGUID: dkkdQmZVR7yTOMNvwECjNw==
-X-CSE-MsgGUID: oxgLbXqERBuiHTDnyG+1OA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="65348825"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 07:17:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sg3C8-0000000Gx0b-3Ozh;
-	Mon, 19 Aug 2024 17:17:16 +0300
-Date: Mon, 19 Aug 2024 17:17:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: brendan.higgins@linux.dev, benh@kernel.crashing.org, joel@jms.id.au,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@codeconstruct.com.au,
-	p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-Message-ID: <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
-References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
- <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1724077070; c=relaxed/simple;
+	bh=eaA+r/7tBIMbLPP5NrhOsxIMgnx8xFY1jYTPNjB2haQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BAzqI45ImzCcAbzsdkCOUpQHi+yRh0c/2cv7Oh2qoxTuBOlsFGNR6R0aDWDTsX8lhW3x/ekHc9nz/qbc6MjaDnvf0H1/YGI2brqAgKFrJA1Evg7wDQbqBB14oFAw57fUnQBXI13N+/v9I5+CREvaq8RfftOAHxEaSERQdjv9aBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6fpJEfW; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1dd2004e1so285076685a.3;
+        Mon, 19 Aug 2024 07:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724077067; x=1724681867; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kd+OCc/I7wl1HmFL+34jOl78XXC4PYQH1gu0dcrr8Jo=;
+        b=O6fpJEfWNzxj4urX26cgvdoZWjOkUABxc6b/oHNRTYnLqbBtzoAlpoy2oJ3KeKq3ws
+         oMp+VNsP4geN+D5Rfk8I7sPq0tIsRCYRwseTD5Lq91kvxiksavTPnZB1ZBjBsa6ksH5g
+         P+mASFyxWbicPfhNBT/e1WpHkYG/Rsz1OpxiezyS9QEzz/HWJDNMVGM8r/hF3qSnV1/s
+         d4/gCsyVJOIVhbtuG3cbQVqvrARvNzDB7Dx+CxtWp/EQG3pdaMNCovPQh/Fzs7/b0Fhc
+         v+ydp9THZM1KKbf50OlGAFTfc6LYcV/ZtQC3OV0/nY/waIRzFX1614kg7Ej3IpRCqLRh
+         sWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724077067; x=1724681867;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kd+OCc/I7wl1HmFL+34jOl78XXC4PYQH1gu0dcrr8Jo=;
+        b=ahyExrbCAz3lBDxO0NocMpCWUBfHYYDDJRUjCBRd1VW1fe2jWvxk2W5l/n76H5WgW4
+         Qitu81oiS64buWku6Cg8TX8uuq0bRDcdtdYQ6quniZYRRifNe+dDuOHmQORB02WlGC75
+         zyj92tjHMZnrRqb+w/fGc1HTudAm20mb0KIDZSx6WfvS3/k3XPuzwv+RGJUZ0PASVHy0
+         2ag2kotzkxgKq4SHjPTHLH5UQoUKn2oHjoEr+tzu2k06c7m+xxZeYzr9L/iB7wbXM5WA
+         +Ti5ZiNe8Ii667+3Qh3BjTig029Q55qvkAMieI2FcH66yOHrXAs2EfZiUctPaxUrGOuZ
+         zjzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm7WGK0Gb/SiG52Frhfxh3meuDejSwlXb7smJBz4vVF4IWUZ720960g69+Njk67Xic8+9b1qCKnGFYS7n5NGhKYK4SbGAF209aBYKMfc+X1/TEoS9sj5AIfxMTpppsMklE/PYo5AFu
+X-Gm-Message-State: AOJu0YxJh2PXy9dGzyy4yQb5fTEI2Xo64GdXnEPj+r7NUd4FVDJWoiCF
+	8/hw2p5o0OVksha2bZSv3nbCzSsdtUcpURzYeB4bePcFimT6UND8
+X-Google-Smtp-Source: AGHT+IEt8YkNAPQ4jNaHTdOZyPZuQ9+drB4gPJbvF8jxmqUo42Y3ubJ1Y5C+DVxNg72pJgC42RC/xw==
+X-Received: by 2002:a05:620a:468a:b0:7a1:d9a1:b9b with SMTP id af79cd13be357-7a5069d8efcmr1380389685a.60.1724077066917;
+        Mon, 19 Aug 2024 07:17:46 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1145:4:1409:786c:cb1d:c3fb? ([2620:10d:c091:500::7:e1ca])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff0e5afesm435612785a.87.2024.08.19.07.17.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 07:17:46 -0700 (PDT)
+Message-ID: <a09b6af0-4fdb-4ac1-9cbe-9b422ebc3308@gmail.com>
+Date: Mon, 19 Aug 2024 10:17:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
-> Add i2c new register mode driver to support AST2600 i2c
-> new register mode. AST2600 i2c controller have legacy and
-> new register mode. The new register mode have global register
-> support 4 base clock for scl clock selection, and new clock
-> divider mode. The new register mode have separate register
-> set to control i2c master and slave. This patch is for i2c
-> master mode driver.
-
-...
-
-> +struct ast2600_i2c_bus {
-
-Have you run `pahole` to be sure the layout is optimal?
-
-> +	struct i2c_adapter		adap;
-> +	struct device			*dev;
-> +	void __iomem			*reg_base;
-> +	struct regmap			*global_regs;
-> +	struct reset_control		*rst;
-> +	int				irq;
-> +	enum xfer_mode			mode;
-> +	struct clk			*clk;
-> +	u32				apb_clk;
-> +	struct i2c_timings		timing_info;
-> +	u32				timeout;
-> +	/* smbus alert */
-> +	bool			alert_enable;
-> +	struct i2c_smbus_alert_setup	alert_data;
-> +	struct i2c_client		*ara;
-> +	/* Multi-master */
-> +	bool				multi_master;
-> +	/* master structure */
-> +	int				cmd_err;
-> +	struct completion		cmd_complete;
-> +	struct i2c_msg			*msgs;
-> +	size_t				buf_index;
-> +	/* cur xfer msgs index*/
-> +	int				msgs_index;
-> +	int				msgs_count;
-> +	u8				*master_safe_buf;
-> +	dma_addr_t			master_dma_addr;
-> +	/*total xfer count */
-> +	int				master_xfer_cnt;
-> +	/* Buffer mode */
-> +	void __iomem			*buf_base;
-> +	size_t				buf_size;
-> +};
-
-...
-
-> +static u32 ast2600_select_i2c_clock(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	unsigned long base_clk[16];
-> +	int baseclk_idx;
-> +	u32 clk_div_reg;
-> +	u32 scl_low;
-> +	u32 scl_high;
-> +	int divisor;
-> +	u32 data;
-> +
-> +	regmap_read(i2c_bus->global_regs, AST2600_I2CG_CLK_DIV_CTRL, &clk_div_reg);
-> +
-> +	for (int i = 0; i < 16; i++) {
-
-unsigned int
-ARRAY_SIZE(base_clk) // Will need array_size.h
-
-
-> +		if (i == 0)
-> +			base_clk[i] = i2c_bus->apb_clk;
-> +		else if ((i > 0) || (i < 5))
-> +			base_clk[i] = (i2c_bus->apb_clk * 2) /
-> +				(((clk_div_reg >> ((i - 1) * 8)) & GENMASK(7, 0)) + 2);
-> +		else
-> +			base_clk[i] = base_clk[4] / (1 << (i - 5));
-
-This is the same as
-
-		if (i == 0)
-			base_clk[i] = i2c_bus->apb_clk;
-		else if (i < 5)
-			base_clk[i] = (i2c_bus->apb_clk * 2) /
-				      (((clk_div_reg / BIT((i - 1) * 8)) & GENMASK(7, 0)) + 2);
-		else
-			base_clk[i] = base_clk[4] / BIT(i - 5);
-
-Alternatively
-
-		if (i == 0)
-			base_clk[i] = i2c_bus->apb_clk;
-		else if (i < 5)
-			base_clk[i] = (i2c_bus->apb_clk * 2) /
-				      (((clk_div_reg >> ((i - 1) * 8)) & GENMASK(7, 0)) + 2);
-		else
-			base_clk[i] = base_clk[4] >> (i - 5);
-
-> +
-> +		if ((base_clk[i] / i2c_bus->timing_info.bus_freq_hz) <= 32) {
-> +			baseclk_idx = i;
-> +			divisor = DIV_ROUND_UP(base_clk[i], i2c_bus->timing_info.bus_freq_hz);
-> +			break;
-> +		}
-> +	}
-
-> +	baseclk_idx = min(baseclk_idx, 15);
-
-If the last conditional inside the loop is never true, you are going to use\
-a garbage here.
-
-> +	divisor = min(divisor, 32);
-
-Ditto.
-
-> +	scl_low = min(divisor * 9 / 16 - 1, 15);
-
-Missing minmax.h in the inclusion block.
-
-> +	scl_high = (divisor - scl_low - 2) & GENMASK(3, 0);
-> +	data = (scl_high - 1) << 20 | scl_high << 16 | scl_low << 12 | baseclk_idx;
-> +	if (i2c_bus->timeout) {
-> +		data |= AST2600_I2CC_TOUTBASECLK(AST_I2C_TIMEOUT_CLK);
-> +		data |= AST2600_I2CC_TTIMEOUT(i2c_bus->timeout);
-> +	}
-> +
-> +	return data;
-> +}
-
-...
-
-> +static u8 ast2600_i2c_recover_bus(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	u32 state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
-> +	int ret = 0;
-> +	u32 ctrl;
-> +	int r;
-> +
-> +	dev_dbg(i2c_bus->dev, "%d-bus recovery bus [%x]\n", i2c_bus->adap.nr, state);
-> +
-> +	ctrl = readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
-> +
-> +	/* Disable master/slave mode */
-> +	writel(ctrl & ~(AST2600_I2CC_MASTER_EN | AST2600_I2CC_SLAVE_EN),
-> +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
-> +
-> +	/* Enable master mode only */
-> +	writel(readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL) | AST2600_I2CC_MASTER_EN,
-> +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
-> +
-> +	reinit_completion(&i2c_bus->cmd_complete);
-> +	i2c_bus->cmd_err = 0;
-> +
-> +	/* Check 0x14's SDA and SCL status */
-> +	state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
-> +	if (!(state & AST2600_I2CC_SDA_LINE_STS) && (state & AST2600_I2CC_SCL_LINE_STS)) {
-> +		writel(AST2600_I2CM_RECOVER_CMD_EN, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +		r = wait_for_completion_timeout(&i2c_bus->cmd_complete, i2c_bus->adap.timeout);
-> +		if (r == 0) {
-> +			dev_dbg(i2c_bus->dev, "recovery timed out\n");
-> +			ret = -ETIMEDOUT;
-> +		} else {
-> +			if (i2c_bus->cmd_err) {
-> +				dev_dbg(i2c_bus->dev, "recovery error\n");
-> +				ret = -EPROTO;
-> +			}
-> +		}
-> +	}
-
-ret is set but maybe overridden.
-
-> +	/* Recovery done */
-
-Even if it fails above?
-
-> +	state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
-> +	if (state & AST2600_I2CC_BUS_BUSY_STS) {
-> +		dev_dbg(i2c_bus->dev, "Can't recover bus [%x]\n", state);
-> +		ret = -EPROTO;
-> +	}
-> +
-> +	/* restore original master/slave setting */
-> +	writel(ctrl, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
-> +	return ret;
-> +}
-
-...
-
-> +static int ast2600_i2c_setup_dma_tx(u32 cmd, struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +	int xfer_len;
-> +
-> +	cmd |= AST2600_I2CM_PKT_EN;
-> +	xfer_len = msg->len - i2c_bus->master_xfer_cnt;
-> +	if (xfer_len > AST2600_I2C_DMA_SIZE) {
-> +		xfer_len = AST2600_I2C_DMA_SIZE;
-
-> +	} else {
-> +		if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
-
-	else if (...)
-
-> +			cmd |= AST2600_I2CM_STOP_CMD;
-> +	}
-> +
-> +	if (cmd & AST2600_I2CM_START_CMD) {
-> +		cmd |= AST2600_I2CM_PKT_ADDR(msg->addr);
-> +		i2c_bus->master_safe_buf = i2c_get_dma_safe_msg_buf(msg, 1);
-> +		if (!i2c_bus->master_safe_buf)
-> +			return -ENOMEM;
-> +		i2c_bus->master_dma_addr =
-> +			dma_map_single(i2c_bus->dev, i2c_bus->master_safe_buf,
-> +				       msg->len, DMA_TO_DEVICE);
-
-> +		if (dma_mapping_error(i2c_bus->dev, i2c_bus->master_dma_addr)) {
-> +			i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf, msg, false);
-> +			i2c_bus->master_safe_buf = NULL;
-
-> +			return -ENOMEM;
-
-Why is the dma_mapping_error() returned error code shadowed?
-
-> +		}
-> +	}
-> +
-> +	if (xfer_len) {
-> +		cmd |= AST2600_I2CM_TX_DMA_EN | AST2600_I2CM_TX_CMD;
-> +		writel(AST2600_I2CM_SET_TX_DMA_LEN(xfer_len - 1),
-> +		       i2c_bus->reg_base + AST2600_I2CM_DMA_LEN);
-> +		writel(i2c_bus->master_dma_addr + i2c_bus->master_xfer_cnt,
-> +		       i2c_bus->reg_base + AST2600_I2CM_TX_DMA);
-> +	}
-> +
-> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ast2600_i2c_setup_buff_tx(u32 cmd, struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +	u32 wbuf_dword;
-> +	int xfer_len;
-> +	u8 wbuf[4];
-
-> +	int i;
-
-Why signed?
-
-> +	cmd |= AST2600_I2CM_PKT_EN;
-> +	xfer_len = msg->len - i2c_bus->master_xfer_cnt;
-> +	if (xfer_len > i2c_bus->buf_size) {
-> +		xfer_len = i2c_bus->buf_size;
-
-> +	} else {
-> +		if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
-
-	else if (...)
-
-> +			cmd |= AST2600_I2CM_STOP_CMD;
-> +	}
-> +
-> +	if (cmd & AST2600_I2CM_START_CMD)
-> +		cmd |= AST2600_I2CM_PKT_ADDR(msg->addr);
-> +
-> +	if (xfer_len) {
-> +		cmd |= AST2600_I2CM_TX_BUFF_EN | AST2600_I2CM_TX_CMD;
-
-> +		/*
-> +		 * The controller's buffer register supports dword writes only.
-> +		 * Therefore, write dwords to the buffer register in a 4-byte aligned,
-> +		 * and write the remaining unaligned data at the end.
-> +		 */
-> +		for (i = 0; i < xfer_len; i++) {
-> +			wbuf[i % 4] = msg->buf[i2c_bus->master_xfer_cnt + i];
-> +			if ((i % 4) == 3 || i == xfer_len - 1) {
-> +				wbuf_dword = get_unaligned_le32(wbuf);
-> +				writel(wbuf_dword, i2c_bus->buf_base + i - (i % 4));
-> +			}
-> +		}
-
-This is overcomplicated and can be simplified.
-Why you can't perform
-
-	get_unaligned_leXX(msg->buf[i2c_bus->master_xfer_cnt + i]);
-
-?
-
-		for (i = 0; i < xfer_len; i += 4) {
-			switch (min(xfer_len - i, 4) % 4) {
-			case 1:
-				wbuf_dword = ...;
-				writel(wbuf_dword, i2c_bus->buf_base + i);
-				break;
-			case 2:
-				wbuf_dword = get_unaligned_le16(...);
-				writel(wbuf_dword, i2c_bus->buf_base + i);
-				break;
-			case 3:
-				wbuf_dword = get_unaligned_le24(...);
-				writel(wbuf_dword, i2c_bus->buf_base + i);
-				break;
-			default:
-				wbuf_dword = get_unaligned_le32(...);
-				writel(wbuf_dword, i2c_bus->buf_base + i);
-				break;
-			}
-		}
-
-
-Now, with this it's can be a helper, with which
-
-		for (i = 0; i < xfer_len; i += 4) {
-			switch (min(xfer_len - i, 4) % 4) {
-			case 1:
-				ast2600_write_data(i2c_bus, i, ...);
-				break;
-			case 2:
-				ast2600_write_data(i2c_bus, i, get_unaligned_le16(...));
-				break;
-			case 3:
-				ast2600_write_data(i2c_bus, i, get_unaligned_le24(...));
-				break;
-			default:
-				ast2600_write_data(i2c_bus, i, get_unaligned_le32(...));
-				break;
-			}
-		}
-
-> +		writel(AST2600_I2CC_SET_TX_BUF_LEN(xfer_len),
-> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
-> +	}
-> +
-> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int ast2600_i2c_setup_dma_rx(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +	int xfer_len;
-> +	u32 cmd;
-> +
-> +	cmd = AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr) |
-> +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_DMA_EN;
-> +
-> +	if (msg->flags & I2C_M_RECV_LEN) {
-> +		xfer_len = 1;
-
-> +	} else {
-> +		if (msg->len > AST2600_I2C_DMA_SIZE) {
-
-	} else if (...) {
-
-> +			xfer_len = AST2600_I2C_DMA_SIZE;
-> +		} else {
-> +			xfer_len = msg->len;
-> +			if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
-> +				cmd |= MASTER_TRIGGER_LAST_STOP;
-> +		}
-> +	}
-> +	writel(AST2600_I2CM_SET_RX_DMA_LEN(xfer_len - 1), i2c_bus->reg_base + AST2600_I2CM_DMA_LEN);
-> +	i2c_bus->master_safe_buf = i2c_get_dma_safe_msg_buf(msg, 1);
-> +	if (!i2c_bus->master_safe_buf)
-> +		return -ENOMEM;
-> +	i2c_bus->master_dma_addr =
-> +		dma_map_single(i2c_bus->dev, i2c_bus->master_safe_buf, msg->len, DMA_FROM_DEVICE);
-> +	if (dma_mapping_error(i2c_bus->dev, i2c_bus->master_dma_addr)) {
-> +		i2c_put_dma_safe_msg_buf(i2c_bus->master_safe_buf, msg, false);
-> +		i2c_bus->master_safe_buf = NULL;
-> +		return -ENOMEM;
-> +	}
-> +	writel(i2c_bus->master_dma_addr, i2c_bus->reg_base + AST2600_I2CM_RX_DMA);
-> +
-> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ast2600_i2c_setup_buff_rx(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +	int xfer_len;
-> +	u32 cmd;
-> +
-> +	cmd = AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr) |
-> +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_BUFF_EN;
-> +
-> +	if (msg->flags & I2C_M_RECV_LEN) {
-> +		dev_dbg(i2c_bus->dev, "smbus read\n");
-> +		xfer_len = 1;
-
-> +	} else {
-> +		if (msg->len > i2c_bus->buf_size) {
-
-	} else if (...) {
-
-> +			xfer_len = i2c_bus->buf_size;
-> +		} else {
-> +			xfer_len = msg->len;
-> +			if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count)
-> +				cmd |= MASTER_TRIGGER_LAST_STOP;
-> +		}
-> +	}
-> +	writel(AST2600_I2CC_SET_RX_BUF_LEN(xfer_len), i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
-> +
-> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ast2600_i2c_setup_byte_rx(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +	u32 cmd;
-> +
-> +	cmd = AST2600_I2CM_PKT_EN | AST2600_I2CM_PKT_ADDR(msg->addr) |
-> +	      AST2600_I2CM_START_CMD | AST2600_I2CM_RX_CMD;
-> +
-> +	if (msg->flags & I2C_M_RECV_LEN) {
-> +		dev_dbg(i2c_bus->dev, "smbus read\n");
-
-> +	} else {
-> +		if (i2c_bus->msgs_index + 1 == i2c_bus->msgs_count) {
-
-	} else if (...) {
-
-> +			if (msg->len == 1)
-> +				cmd |= MASTER_TRIGGER_LAST_STOP;
-> +		}
-> +	}
-> +
-> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int ast2600_i2c_do_start(struct ast2600_i2c_bus *i2c_bus)
-> +{
-> +	struct i2c_msg *msg = &i2c_bus->msgs[i2c_bus->msgs_index];
-> +
-> +	/* send start */
-> +	dev_dbg(i2c_bus->dev, "[%d] %sing %d byte%s %s 0x%02x\n",
-
-Drop 'ing', no need to have this in the debug message.
-
-> +		i2c_bus->msgs_index, str_read_write(msg->flags & I2C_M_RD),
-> +		msg->len, msg->len > 1 ? "s" : "",
-
-str_plural()
-
-> +		msg->flags & I2C_M_RD ? "from" : "to", msg->addr);
-
-> +	i2c_bus->master_xfer_cnt = 0;
-> +	i2c_bus->buf_index = 0;
-> +
-> +	if (msg->flags & I2C_M_RD) {
-> +		if (i2c_bus->mode == DMA_MODE)
-> +			return ast2600_i2c_setup_dma_rx(i2c_bus);
-> +		else if (i2c_bus->mode == BUFF_MODE)
-> +			return ast2600_i2c_setup_buff_rx(i2c_bus);
-> +		else
-> +			return ast2600_i2c_setup_byte_rx(i2c_bus);
-> +	} else {
-> +		if (i2c_bus->mode == DMA_MODE)
-> +			return ast2600_i2c_setup_dma_tx(AST2600_I2CM_START_CMD, i2c_bus);
-> +		else if (i2c_bus->mode == BUFF_MODE)
-> +			return ast2600_i2c_setup_buff_tx(AST2600_I2CM_START_CMD, i2c_bus);
-> +		else
-> +			return ast2600_i2c_setup_byte_tx(AST2600_I2CM_START_CMD, i2c_bus);
-> +	}
-> +}
-
-...
-
-> +master_out:
-> +	if (i2c_bus->mode == DMA_MODE) {
-> +		kfree(i2c_bus->master_safe_buf);
-> +	    i2c_bus->master_safe_buf = NULL;
-> +	}
-
-Indentation issues.
-
-> +	return ret;
-
-...
-
-
-> +MODULE_DEVICE_TABLE(of, ast2600_i2c_bus_of_table);
-
-Why do you need this table before _probe()? Isn't the only user is below?
-
-> +static int ast2600_i2c_probe(struct platform_device *pdev)
-
-...
-
-> +	i2c_bus->global_regs = syscon_regmap_lookup_by_phandle(dev->of_node, "aspeed,global-regs");
-
-dev_of_node(dev)
-
-> +	if (IS_ERR(i2c_bus->global_regs))
-> +		return PTR_ERR(i2c_bus->global_regs);
-
-...
-
-> +	if (device_property_read_bool(&pdev->dev, "aspeed,enable-dma"))
-
-You have 'dev' Why not use it?
-
-> +		i2c_bus->mode = DMA_MODE;
-
-...
-
-> +	if (i2c_bus->mode == BUFF_MODE) {
-> +		i2c_bus->buf_base = devm_platform_get_and_ioremap_resource(pdev, 1, &res);
-> +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
-> +			i2c_bus->buf_size = resource_size(res) / 2;
-> +		else
-> +			i2c_bus->mode = BYTE_MODE;
-
-What's wrong with positive conditional? And is it even possible to have NULL
-here?
-
-> +	}
-
-...
-
-> +	strscpy(i2c_bus->adap.name, pdev->name, sizeof(i2c_bus->adap.name));
-
-Use 2-argument strscpy().
-
-...
-
-> +	i2c_bus->alert_enable = device_property_read_bool(dev, "smbus-alert");
-> +	if (i2c_bus->alert_enable) {
-> +		i2c_bus->ara = i2c_new_smbus_alert_device(&i2c_bus->adap, &i2c_bus->alert_data);
-> +		if (!i2c_bus->ara)
-> +			dev_warn(dev, "Failed to register ARA client\n");
-> +
-> +		writel(AST2600_I2CM_PKT_DONE | AST2600_I2CM_BUS_RECOVER | AST2600_I2CM_SMBUS_ALT,
-> +		       i2c_bus->reg_base + AST2600_I2CM_IER);
-> +	} else {
-> +		i2c_bus->alert_enable = false;
-> +		/* Set interrupt generation of I2C master controller */
-> +		writel(AST2600_I2CM_PKT_DONE | AST2600_I2CM_BUS_RECOVER,
-> +		       i2c_bus->reg_base + AST2600_I2CM_IER);
-> +	}
-
-I2C core calls i2c_setup_smbus_alert() when registering the adapter. Why do you
-need to have something special here?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] mm: Introduce a pageflag for partially mapped
+ folios
+To: Barry Song <baohua@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org,
+ willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com,
+ corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20240819023145.2415299-1-usamaarif642@gmail.com>
+ <20240819023145.2415299-5-usamaarif642@gmail.com>
+ <CAGsJ_4yKuvMSazWABXqaeRr84hLEubET0nCUhPFYHQnfR4Tm8w@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4yKuvMSazWABXqaeRr84hLEubET0nCUhPFYHQnfR4Tm8w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+
+On 19/08/2024 09:29, Barry Song wrote:
+> Hi Usama,
+> 
+> I feel it is much better now! thanks!
+> 
+> On Mon, Aug 19, 2024 at 2:31 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>> Currently folio->_deferred_list is used to keep track of
+>> partially_mapped folios that are going to be split under memory
+>> pressure. In the next patch, all THPs that are faulted in and collapsed
+>> by khugepaged are also going to be tracked using _deferred_list.
+>>
+>> This patch introduces a pageflag to be able to distinguish between
+>> partially mapped folios and others in the deferred_list at split time in
+>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
+>> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
+>> possible to distinguish between partially mapped folios and others in
+>> deferred_split_scan.
+>>
+>> Eventhough it introduces an extra flag to track if the folio is
+>> partially mapped, there is no functional change intended with this
+>> patch and the flag is not useful in this patch itself, it will
+>> become useful in the next patch when _deferred_list has non partially
+>> mapped folios.
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> ---
+>>  include/linux/huge_mm.h    |  4 ++--
+>>  include/linux/page-flags.h | 11 +++++++++++
+>>  mm/huge_memory.c           | 23 ++++++++++++++++-------
+>>  mm/internal.h              |  4 +++-
+>>  mm/memcontrol.c            |  3 ++-
+>>  mm/migrate.c               |  3 ++-
+>>  mm/page_alloc.c            |  5 +++--
+>>  mm/rmap.c                  |  5 +++--
+>>  mm/vmscan.c                |  3 ++-
+>>  9 files changed, 44 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 4c32058cacfe..969f11f360d2 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
+>>  {
+>>         return split_huge_page_to_list_to_order(page, NULL, 0);
+>>  }
+>> -void deferred_split_folio(struct folio *folio);
+>> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
+>>
+>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>                 unsigned long address, bool freeze, struct folio *folio);
+>> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
+>>  {
+>>         return 0;
+>>  }
+>> -static inline void deferred_split_folio(struct folio *folio) {}
+>> +static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+>>  #define split_huge_pmd(__vma, __pmd, __address)        \
+>>         do { } while (0)
+>>
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index a0a29bd092f8..c3bb0e0da581 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -182,6 +182,7 @@ enum pageflags {
+>>         /* At least one page in this folio has the hwpoison flag set */
+>>         PG_has_hwpoisoned = PG_active,
+>>         PG_large_rmappable = PG_workingset, /* anon or file-backed */
+>> +       PG_partially_mapped = PG_reclaim, /* was identified to be partially mapped */
+>>  };
+>>
+>>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+>> @@ -861,8 +862,18 @@ static inline void ClearPageCompound(struct page *page)
+>>         ClearPageHead(page);
+>>  }
+>>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+>> +FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>> +/*
+>> + * PG_partially_mapped is protected by deferred_split split_queue_lock,
+>> + * so its safe to use non-atomic set/clear.
+>> + */
+>> +__FOLIO_SET_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>> +__FOLIO_CLEAR_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>>  #else
+>>  FOLIO_FLAG_FALSE(large_rmappable)
+>> +FOLIO_TEST_FLAG_FALSE(partially_mapped)
+>> +__FOLIO_SET_FLAG_NOOP(partially_mapped)
+>> +__FOLIO_CLEAR_FLAG_NOOP(partially_mapped)
+>>  #endif
+>>
+>>  #define PG_head_mask ((1UL << PG_head))
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 2d77b5d2291e..70ee49dfeaad 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -3398,6 +3398,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>>                          * page_deferred_list.
+>>                          */
+>>                         list_del_init(&folio->_deferred_list);
+>> +                       __folio_clear_partially_mapped(folio);
+>>                 }
+>>                 spin_unlock(&ds_queue->split_queue_lock);
+>>                 if (mapping) {
+>> @@ -3454,11 +3455,13 @@ void __folio_undo_large_rmappable(struct folio *folio)
+>>         if (!list_empty(&folio->_deferred_list)) {
+>>                 ds_queue->split_queue_len--;
+>>                 list_del_init(&folio->_deferred_list);
+>> +               __folio_clear_partially_mapped(folio);
+> 
+> is it possible to make things clearer by
+> 
+>  if (folio_clear_partially_mapped)
+>     __folio_clear_partially_mapped(folio);
+> 
+> While writing without conditions isn't necessarily wrong, adding a condition
+> will improve the readability of the code and enhance the clarity of my mTHP
+> counters series. also help decrease smp cache sync if we can avoid
+> unnecessary writing?
+> 
+
+Do you mean if(folio_test_partially_mapped(folio))?
+
+I don't like this idea. I think it makes the readability worse? If I was looking at if (test) -> clear for the first time, I would become confused why its being tested if its going to be clear at the end anyways?
+
+
+>>         }
+>>         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>>  }
+>>
+>> -void deferred_split_folio(struct folio *folio)
+>> +/* partially_mapped=false won't clear PG_partially_mapped folio flag */
+>> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
+>>  {
+>>         struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+>>  #ifdef CONFIG_MEMCG
+>> @@ -3486,14 +3489,19 @@ void deferred_split_folio(struct folio *folio)
+>>         if (folio_test_swapcache(folio))
+>>                 return;
+>>
+>> -       if (!list_empty(&folio->_deferred_list))
+>> -               return;
+>> -
+>>         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>> +       if (partially_mapped) {
+>> +               if (!folio_test_partially_mapped(folio)) {
+>> +                       __folio_set_partially_mapped(folio);
+>> +                       if (folio_test_pmd_mappable(folio))
+>> +                               count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
+>> +               }
+>> +       } else {
+>> +               /* partially mapped folios cannot become non-partially mapped */
+>> +               VM_WARN_ON_FOLIO(folio_test_partially_mapped(folio), folio);
+>> +       }
+>>         if (list_empty(&folio->_deferred_list)) {
+>> -               if (folio_test_pmd_mappable(folio))
+>> -                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+>> -               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
+>>                 list_add_tail(&folio->_deferred_list, &ds_queue->split_queue);
+>>                 ds_queue->split_queue_len++;
+>>  #ifdef CONFIG_MEMCG
+>> @@ -3542,6 +3550,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>                 } else {
+>>                         /* We lost race with folio_put() */
+>>                         list_del_init(&folio->_deferred_list);
+>> +                       __folio_clear_partially_mapped(folio);
+> 
+> as above? Do we also need if(test) for split_huge_page_to_list_to_order()?
+> 
+>>                         ds_queue->split_queue_len--;
+>>                 }
+>>                 if (!--sc->nr_to_scan)
+>> diff --git a/mm/internal.h b/mm/internal.h
+>> index 52f7fc4e8ac3..27cbb5365841 100644
+>> --- a/mm/internal.h
+>> +++ b/mm/internal.h
+>> @@ -662,8 +662,10 @@ static inline void prep_compound_head(struct page *page, unsigned int order)
+>>         atomic_set(&folio->_entire_mapcount, -1);
+>>         atomic_set(&folio->_nr_pages_mapped, 0);
+>>         atomic_set(&folio->_pincount, 0);
+>> -       if (order > 1)
+>> +       if (order > 1) {
+>>                 INIT_LIST_HEAD(&folio->_deferred_list);
+>> +               __folio_clear_partially_mapped(folio);
+> 
+> if partially_mapped is true for a new folio, does it mean we already have
+> a bug somewhere?
+> 
+> How is it possible for a new folio to be partially mapped?
+> 
+
+Its not, I did it because I wanted to make it explicit that the folio is being initialized, similar to how before this INIT_LIST_HEAD(&folio->_deferred_list) is done here.
+
+There is no functional issue in removing it here, because I believe the flag is initialized to false from start.
+>> +       }
+>>  }
+>>
+>>  static inline void prep_compound_tail(struct page *head, int tail_idx)
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index e1ffd2950393..0fd95daecf9a 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -4669,7 +4669,8 @@ static void uncharge_folio(struct folio *folio, struct uncharge_gather *ug)
+>>         VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
+>>         VM_BUG_ON_FOLIO(folio_order(folio) > 1 &&
+>>                         !folio_test_hugetlb(folio) &&
+>> -                       !list_empty(&folio->_deferred_list), folio);
+>> +                       !list_empty(&folio->_deferred_list) &&
+>> +                       folio_test_partially_mapped(folio), folio);
+>>
+>>         /*
+>>          * Nobody should be changing or seriously looking at
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 2d2e65d69427..ef4a732f22b1 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -1735,7 +1735,8 @@ static int migrate_pages_batch(struct list_head *from,
+>>                          * use _deferred_list.
+>>                          */
+>>                         if (nr_pages > 2 &&
+>> -                          !list_empty(&folio->_deferred_list)) {
+>> +                          !list_empty(&folio->_deferred_list) &&
+>> +                          folio_test_partially_mapped(folio)) {
+>>                                 if (!try_split_folio(folio, split_folios, mode)) {
+>>                                         nr_failed++;
+>>                                         stats->nr_thp_failed += is_thp;
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 408ef3d25cf5..a145c550dd2a 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -957,8 +957,9 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
+>>                 break;
+>>         case 2:
+>>                 /* the second tail page: deferred_list overlaps ->mapping */
+>> -               if (unlikely(!list_empty(&folio->_deferred_list))) {
+>> -                       bad_page(page, "on deferred list");
+>> +               if (unlikely(!list_empty(&folio->_deferred_list) &&
+>> +                   folio_test_partially_mapped(folio))) {
+>> +                       bad_page(page, "partially mapped folio on deferred list");
+>>                         goto out;
+>>                 }
+>>                 break;
+>> diff --git a/mm/rmap.c b/mm/rmap.c
+>> index a6b9cd0b2b18..4c330635aa4e 100644
+>> --- a/mm/rmap.c
+>> +++ b/mm/rmap.c
+>> @@ -1578,8 +1578,9 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>>          * Check partially_mapped first to ensure it is a large folio.
+>>          */
+>>         if (partially_mapped && folio_test_anon(folio) &&
+>> -           list_empty(&folio->_deferred_list))
+>> -               deferred_split_folio(folio);
+>> +           !folio_test_partially_mapped(folio))
+>> +               deferred_split_folio(folio, true);
+>> +
+>>         __folio_mod_stat(folio, -nr, -nr_pmdmapped);
+>>
+>>         /*
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index 25e43bb3b574..25f4e8403f41 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -1233,7 +1233,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>>                                          * Split partially mapped folios right away.
+>>                                          * We can free the unmapped pages without IO.
+>>                                          */
+>> -                                       if (data_race(!list_empty(&folio->_deferred_list)) &&
+>> +                                       if (data_race(!list_empty(&folio->_deferred_list) &&
+>> +                                           folio_test_partially_mapped(folio)) &&
+>>                                             split_folio_to_list(folio, folio_list))
+>>                                                 goto activate_locked;
+>>                                 }
+>> --
+>> 2.43.5
+>>
+> 
+> Thanks
+> Barry
 
