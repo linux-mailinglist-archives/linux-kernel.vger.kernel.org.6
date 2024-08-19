@@ -1,363 +1,199 @@
-Return-Path: <linux-kernel+bounces-291699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9B59565AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:34:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107D29565B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4011F2308C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC2AB284B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247BF15B130;
-	Mon, 19 Aug 2024 08:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC39A14EC47;
+	Mon, 19 Aug 2024 08:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SVDynl/R"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYYScp1+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1249215821D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43486C125
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056480; cv=none; b=LWJO1cQ6qupc1guxzaEZAjReIBPMUsGarw6CcIsZZO9B2vIqS/CxRIeyouwxYPdiTdi/Rt2HlHlNqVwOP85cL97pkb08fXRkWj/S/e0G4vRov7Dm7KUsyD6J6VSd2Tfg4TByLHqvPK694ZUF8AKaz1wNjX7dSFMJBgDmWYfcN3Y=
+	t=1724056598; cv=none; b=lFYniLhhWYgUTPavkkrOQNev2gSGyYCiz9jhoQFbDuLsD++Yq912BCQQK6ehc+H5GijEyD4Lbt47eup02yjLlDuTOnpTfi+CRyYUwtqpok7UcyQbxocLO9OLyYJtl65zW/GSE+KUFzrDx8/5sM6g0l3Omt8ouFI1KWLqNaSsXFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056480; c=relaxed/simple;
-	bh=Yqczq8iolFPlC//FXsx0MTjgpLi87FIFUQLUZ+x/sEg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=I3s6pVGCT7D7uXdr/Fnm2wl2/UEdgS1xBxNylScPZCxhY9aZyeW0RDuP1IgfraU5vOn3PsqLcUU4KLuhxd7hXfxhjX4ULW+GF9p7IRqHRz49ub/yAwdFlbQSbsrjR4XUoVruR9Nc6I7+DuAnSV8eNrSuUm1ACB/9lNHj6lokUAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SVDynl/R; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240819083435epoutp02f2e43c4b00e8950f37e8e0d145c6c1df~tFDr7Q0S90123101231epoutp02k
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:34:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240819083435epoutp02f2e43c4b00e8950f37e8e0d145c6c1df~tFDr7Q0S90123101231epoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724056475;
-	bh=IOXKdEMn1pqTvo4372OKnkgY5fJ2HVfDOAL5g6sVpBA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=SVDynl/RTuBzdwTk5UwR6DXpIidtuPU2mXOaJAMtm0qHin1rWG28Evv/XInIynr9W
-	 HAX125O52IIdtrufStC8n5q1Tp+FgVz7C7zpi3bbcfNORxjvy5JWXMQksfqOUnMdUM
-	 O7nbce9ls3zdyg1uxk4P9CEGFNT5xI0vCj7CJ0d8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240819083435epcas1p30d73781d6cf487039f480fa09fb7d6c5~tFDreaSyQ0437304373epcas1p3j;
-	Mon, 19 Aug 2024 08:34:35 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.243]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WnQrB4fY8z4x9Pp; Mon, 19 Aug
-	2024 08:34:34 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	12.3E.10258.A9303C66; Mon, 19 Aug 2024 17:34:34 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7~tFDpOI9KF0215602156epcas1p31;
-	Mon, 19 Aug 2024 08:34:33 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240819083432epsmtrp117563750cad156bd203d960893364771~tFDpNctB42831928319epsmtrp1I;
-	Mon, 19 Aug 2024 08:34:32 +0000 (GMT)
-X-AuditID: b6c32a38-995ff70000002812-b4-66c3039a44a2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FF.18.08456.89303C66; Mon, 19 Aug 2024 17:34:32 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.99.41]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240819083432epsmtip2f37a28ddf7ea71327b9184f53dfe76f1~tFDpAXiz31825918259epsmtip26;
-	Mon, 19 Aug 2024 08:34:32 +0000 (GMT)
-From: Yeongjin Gil <youngjin.gil@samsung.com>
-To: jaegeuk@kernel.org, chao@kernel.org, daehojeong@google.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Yeongjin Gil <youngjin.gil@samsung.com>, Sungjong Seo
-	<sj1557.seo@samsung.com>, Sunmin Jeong <s_min.jeong@samsung.com>, Jaewook
-	Kim <jw5454.kim@samsung.com>
-Subject: [PATCH v2] f2fs: compress: don't redirty sparse cluster during
- {,de}compress
-Date: Mon, 19 Aug 2024 17:34:30 +0900
-Message-Id: <20240819083430.31852-1-youngjin.gil@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1724056598; c=relaxed/simple;
+	bh=nNLE4eoqbuu9Ak+gKu7Z23nQWMAS5HDz3UUfx5oAZ44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jc22bLFTt/+c1mzIV+NGFMj62ELYEvu6s76mv3+iYH32sjKcL55Y9lQEm+4y95LIknQoHJz5AyGm0UHtj/L0uNPou1oJgOSQ1O6iSAqsd7+TcJ0AmCXPG967becVOfjyqka80sDcUpssKXMYRm1HbfjAv3NrDJ/ZBwByjd2zzgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYYScp1+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724056595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ISqrIQKsaqEr77ln38QuXukk21qsyi8yzuO8Lde5KzM=;
+	b=PYYScp1+g6aSeaq1JrHMM/Dvqz7xk3QFMTAbSBBzIY980Gli+sM4Nryoz1gJ8B3QnKL1Ug
+	I1oL7pM8ii1HGIAjOfBghYsAE3ZTmy6w/7pYGQhk9BL4Yog70E/E6WDzXFMhEPZZq0vcqO
+	vYXZf6s0cDmYPMBVyO+wisPHfUog4qQ=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-E_wQ55W9O86TycF8VFdcxA-1; Mon, 19 Aug 2024 04:36:34 -0400
+X-MC-Unique: E_wQ55W9O86TycF8VFdcxA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7ab644746eso274439066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:36:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724056593; x=1724661393;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ISqrIQKsaqEr77ln38QuXukk21qsyi8yzuO8Lde5KzM=;
+        b=i5WpcY5PlDzwb+TwIOip5Pjp1nmKLueY08SliVJ6bkrU39zUZQrZWntRGCYOIUUUR+
+         bjxThEeyjRO/amOlmu0AvOMD2Hn6yuGNgV5nq1c2i1hrkfXO8UhZ11iiAAu9EuZaeAb0
+         lgKIJZhVRjAGEORYxqA69+j1Sl0sFh+ZXcI6JkLPcjJZ2ddnozHs/3FPVwdLIB9nlKrh
+         j0aBNEgZ/ESxozbEjjCP96tqbMNNFQ2dYNcuYbQ/mGVYGiYFa46Zfb49dYLSRacLrkb6
+         pzXzQZcI7HG8cv2uXdE9zXCOzazjiY1lR2tDqQxsD/JZMLEvBuxyvtpGNM1J1frMFeKg
+         M4Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCULQfkYIhAbwgoO9AeGMO60b+u7vEotXzTmTSYEqPfjiaKSJyy7RHvq/VayAwWfssBAeynU0yvajwJIxtHTXmQsaciv+jzx/rK98nT3
+X-Gm-Message-State: AOJu0YyYukRgA8z58jQkQXsvE+oQcRKjGdQKLeZ6c0B/kHKHlOXaenYx
+	f9zAEgmMXFY2/DRkYjGXpVfJpEKucYnnuT/cu2UnyPpq810I2FxrBWoGOaVHq/fYTb6489sSS9/
+	WFt5wW93LGbRdGtd74zeCFQ+Sz5cKf6tkZv+i6ei7moOWp1M/0O0dTpvPfVs7pg==
+X-Received: by 2002:a17:907:c7e7:b0:a77:e48d:bc8 with SMTP id a640c23a62f3a-a839292f10fmr720130866b.21.1724056592881;
+        Mon, 19 Aug 2024 01:36:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWwcbxCxz3Zy38oz3eeNgITHsbVen71EQ/nghFVSqxobixhgS9j5bCtaQkIIaQFRosa15X0A==
+X-Received: by 2002:a17:907:c7e7:b0:a77:e48d:bc8 with SMTP id a640c23a62f3a-a839292f10fmr720129266b.21.1724056592343;
+        Mon, 19 Aug 2024 01:36:32 -0700 (PDT)
+Received: from [100.81.188.195] (ipb218f908.dynamic.kabel-deutschland.de. [178.24.249.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396d304sm602821266b.212.2024.08.19.01.36.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 01:36:31 -0700 (PDT)
+Message-ID: <c53887da-ebbe-432e-bf81-308085215420@redhat.com>
+Date: Mon, 19 Aug 2024 10:36:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPJsWRmVeSWpSXmKPExsWy7bCmvu4s5sNpBn8fslqcnnqWyWJq+15G
-	iyfrZzFbrLzym8Xi0iJ3i8u75rBZLGgF8rb8O8JqMWP/U3YHTo8Fm0o9Nq3qZPPYveAzk0ff
-	llWMHp83yQWwRjUw2iQWJWdklqUqpOYl56dk5qXbKoWGuOlaKClk5BeX2CpFGxoa6RkamOsZ
-	GRnpmRrFWhmZKinkJeam2ipV6EL1KikUJRcA1eZWFgMNyEnVg4rrFafmpThk5ZeC/KBXnJhb
-	XJqXrpecn6ukUJaYUwo0Qkk/4Rtjxqy1y1kLPjlWXJxygaWBcYlZFyMnh4SAiUTDxw7GLkYu
-	DiGBHYwS286fhXI+MUq8bzvHBOF8Y5T4uXIzE0zL7OXTWCESexklXk9ZzQbXsnTFErAqNgFd
-	iakvn7KC2CICdhK3bi4C62AWeMMo8fHHZXaQhLBAuMSFLc/BbBYBVYlVWx+CNfMK2Epc+XWY
-	HWKdvMTNrv3MEHFBiZMzn7CA2MxA8eats5lBhkoI3GKX+Nz6EKrBReLYldNQtrDEq+NboGwp
-	iZf9bewQDasYJd60fmKCcLYzSkx/3MMGUWUv0dzaDGRzAK3QlFi/Sx9iG5/Eu689rBAlghKn
-	r3Uzg5RICPBKdLQJQYTVJK5M+gVVIiPR92AW1F4PidftbSwg5UICsRL3utgnMMrPQvLOLCTv
-	zELYu4CReRWjWGpBcW56arFhgQly1G5iBKdVLYsdjHPfftA7xMjEwXiIUYKDWUmEt/vlwTQh
-	3pTEyqrUovz4otKc1OJDjMnAAJ7ILCWanA9M7Hkl8YZmZpYWlkYmhsZmhoaEhU0sDUzMjEws
-	jC2NzZTEec9cKUsVEkhPLEnNTk0tSC2C2cLEwSnVwKT4LfqsukbVtBu7JxvcNrDdGPrz8nFN
-	kcMv/zg1FK9zPzArPexrQvHv2gyHJ5uX913kTy6aFrvB6uXEi7ZVC+c1zL15gl365LJkg2W+
-	J5Pm3Sjb8+RLzTGtYp66C5aZ541Xxe92aj/atKb6dGv8mS3Xd5j2zPl2gOFg5XmLbz4XnCbK
-	/+/w6p9zel+qb3xj8OyLH2K9b+b8z2dX0mDnO7eM+RyP6sXyk3klgqyeM8pnRK9dve9Hk9Jh
-	Q/HyzrRKKYYZbS4PS5ur9L4xhT9fz77j+gaLf4bL47v03VpmvbnE/XvVk9bpSyYk6hnM09m2
-	/M2j+OdLCoymqJoHGHVmJ3ec5bjFqdlqn6+eXLlIplSJpTgj0VCLuag4EQCloRWSYgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSvO4M5sNpBtcXmVqcnnqWyWJq+15G
-	iyfrZzFbrLzym8Xi0iJ3i8u75rBZLGgF8rb8O8JqMWP/U3YHTo8Fm0o9Nq3qZPPYveAzk0ff
-	llWMHp83yQWwRnHZpKTmZJalFunbJXBlzFq7nLXgk2PFxSkXWBoYl5h1MXJySAiYSMxePo0V
-	xBYS2M0oceN6GERcRuLPxPdsXYwcQLawxOHDxV2MXEAlHxglFnYtZgOpYRPQlZj68ilYr4iA
-	k8T/G+3sIDYzSNHvCZ4gtrBAqMTam12MIDaLgKrEqq0PmUBsXgFbiSu/DrND7JKXuNm1nxki
-	LihxcuYTFog58hLNW2czT2Dkm4UkNQtJagEj0ypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k
-	/NxNjOCQ1dLawbhn1Qe9Q4xMHIyHGCU4mJVEeLtfHkwT4k1JrKxKLcqPLyrNSS0+xCjNwaIk
-	zvvtdW+KkEB6YklqdmpqQWoRTJaJg1Oqgcns3rEYTyOmbZPFIzzvHEpXDVsx/b4Pa1zDXifL
-	jXKBF33W7T0Tb71245RLDA6P835e1wxboNN/ycxuzp7a8w8v/T6vPcdciHtjSN/Jqm2f2Y44
-	XtI96CQc+MKHuSB0Y2v9t1P/GINUG+IMIsR28meaT3FL597oPvfwmtVvT8lbeNg41P+Y21Kl
-	+MOYb5r+5mdn1tyokP//mn1lodcRjcIv6ey9FzL/Jp5/HxKSE7vlcZjfVNnqswsm9S/69yfv
-	W8wtvVXt71eUZjVq7W2Yf3/5lLPNyRsvcbt6SKUkfyu9O/HEmd4neQZdD/9U5kjdNljH58Av
-	72KcPylhyRQ7i6mlvW38zEyas01fXWuJ3q/EUpyRaKjFXFScCACnmlXJyAIAAA==
-X-CMS-MailID: 20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7
-References: <CGME20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7@epcas1p3.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] mm: khugepaged: expand the is_refcount_suitable() to
+ support file folios
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: hughd@google.com, willy@infradead.org, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
+ <d6f8e4451910da1de0420eb82724dd85c368741c.1724054125.git.baolin.wang@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <d6f8e4451910da1de0420eb82724dd85c368741c.1724054125.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In f2fs_do_write_data_page, when the data block is NULL_ADDR, it skips
-writepage considering that it has been already truncated.
-This results in an infinite loop as the PAGECACHE_TAG_TOWRITE tag is not
-cleared during the writeback process for a compressed file including
-NULL_ADDR in compress_mode=user.
+On 19.08.24 10:14, Baolin Wang wrote:
+> Expand the is_refcount_suitable() to support reference checks for file folios,
+> as preparation for supporting shmem mTHP collapse.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   mm/khugepaged.c | 11 ++++++++---
+>   1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index cdd1d8655a76..f11b4f172e61 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -549,8 +549,14 @@ static bool is_refcount_suitable(struct folio *folio)
+>   	int expected_refcount;
+>   
+>   	expected_refcount = folio_mapcount(folio);
+> -	if (folio_test_swapcache(folio))
+> +	if (folio_test_anon(folio)) {
+> +		expected_refcount += folio_test_swapcache(folio) ?
+> +					folio_nr_pages(folio) : 0;
+> +	} else {
+>   		expected_refcount += folio_nr_pages(folio);
+> +		if (folio_test_private(folio))
+> +			expected_refcount++;
+> +	}
 
-This is the reproduction process:
+Alternatively, a bit neater
 
-1. dd if=/dev/zero bs=4096 count=1024 seek=1024 of=testfile
-2. f2fs_io compress testfile
-3. dd if=/dev/zero bs=4096 count=1 conv=notrunc of=testfile
-4. f2fs_io decompress testfile
+if (!folio_test_anon(folio) || folio_test_swapcache(folio))
+	expected_refcount += folio_nr_pages(folio);
+if (folio_test_private(folio))
+	expected_refcount++;
 
-To prevent the problem, let's check whether the cluster is fully
-allocated before redirty its pages.
+The latter check should be fine even for anon folios (although always false)
 
-Fixes: 5fdb322ff2c2 ("f2fs: add F2FS_IOC_DECOMPRESS_FILE and F2FS_IOC_COMPRESS_FILE")
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-Tested-by: Jaewook Kim <jw5454.kim@samsung.com>
-Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
----
-v2:
- - Rename function and enum value for readability
 
----
- fs/f2fs/compress.c | 36 ++++++++++++++++++++++++++++--------
- fs/f2fs/f2fs.h     | 12 ++++++++++++
- fs/f2fs/file.c     | 39 +++++++++++++++++++++------------------
- 3 files changed, 61 insertions(+), 26 deletions(-)
+>   
+>   	return folio_ref_count(folio) == expected_refcount;
+>   }
+> @@ -2285,8 +2291,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+>   			break;
+>   		}
+>   
+> -		if (folio_ref_count(folio) !=
+> -		    1 + folio_mapcount(folio) + folio_test_private(folio)) {
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 990b93689b46..f55d54bb12f4 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -945,7 +945,7 @@ static int __f2fs_get_cluster_blocks(struct inode *inode,
- 	unsigned int cluster_size = F2FS_I(inode)->i_cluster_size;
- 	int count, i;
- 
--	for (i = 1, count = 1; i < cluster_size; i++) {
-+	for (i = 0, count = 0; i < cluster_size; i++) {
- 		block_t blkaddr = data_blkaddr(dn->inode, dn->node_page,
- 							dn->ofs_in_node + i);
- 
-@@ -956,8 +956,8 @@ static int __f2fs_get_cluster_blocks(struct inode *inode,
- 	return count;
- }
- 
--static int __f2fs_cluster_blocks(struct inode *inode,
--				unsigned int cluster_idx, bool compr_blks)
-+static int __f2fs_cluster_blocks(struct inode *inode, unsigned int cluster_idx,
-+				enum cluster_check_type type)
- {
- 	struct dnode_of_data dn;
- 	unsigned int start_idx = cluster_idx <<
-@@ -978,10 +978,12 @@ static int __f2fs_cluster_blocks(struct inode *inode,
- 	}
- 
- 	if (dn.data_blkaddr == COMPRESS_ADDR) {
--		if (compr_blks)
--			ret = __f2fs_get_cluster_blocks(inode, &dn);
--		else
-+		if (type == CLUSTER_COMPR_BLKS)
-+			ret = 1 + __f2fs_get_cluster_blocks(inode, &dn);
-+		else if (type == CLUSTER_IS_COMPR)
- 			ret = 1;
-+	} else if (type == CLUSTER_RAW_BLKS) {
-+		ret = __f2fs_get_cluster_blocks(inode, &dn);
- 	}
- fail:
- 	f2fs_put_dnode(&dn);
-@@ -991,7 +993,16 @@ static int __f2fs_cluster_blocks(struct inode *inode,
- /* return # of compressed blocks in compressed cluster */
- static int f2fs_compressed_blocks(struct compress_ctx *cc)
- {
--	return __f2fs_cluster_blocks(cc->inode, cc->cluster_idx, true);
-+	return __f2fs_cluster_blocks(cc->inode, cc->cluster_idx,
-+		CLUSTER_COMPR_BLKS);
-+}
-+
-+/* return # of raw blocks in non-compressed cluster */
-+static int f2fs_decompressed_blocks(struct inode *inode,
-+				unsigned int cluster_idx)
-+{
-+	return __f2fs_cluster_blocks(inode, cluster_idx,
-+		CLUSTER_RAW_BLKS);
- }
- 
- /* return whether cluster is compressed one or not */
-@@ -999,7 +1010,16 @@ int f2fs_is_compressed_cluster(struct inode *inode, pgoff_t index)
- {
- 	return __f2fs_cluster_blocks(inode,
- 		index >> F2FS_I(inode)->i_log_cluster_size,
--		false);
-+		CLUSTER_IS_COMPR);
-+}
-+
-+/* return whether cluster contains non raw blocks or not */
-+bool f2fs_is_sparse_cluster(struct inode *inode, pgoff_t index)
-+{
-+	unsigned int cluster_idx = index >> F2FS_I(inode)->i_log_cluster_size;
-+
-+	return f2fs_decompressed_blocks(inode, cluster_idx) !=
-+		F2FS_I(inode)->i_cluster_size;
- }
- 
- static bool cluster_may_compress(struct compress_ctx *cc)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 51fd5063a69c..6b5a3b692c08 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4302,6 +4302,11 @@ static inline bool f2fs_meta_inode_gc_required(struct inode *inode)
-  * compress.c
-  */
- #ifdef CONFIG_F2FS_FS_COMPRESSION
-+enum cluster_check_type {
-+	CLUSTER_IS_COMPR,   /* check only if compressed cluster */
-+	CLUSTER_COMPR_BLKS, /* return # of compressed blocks in a cluster */
-+	CLUSTER_RAW_BLKS    /* return # of raw blocks in a cluster */
-+};
- bool f2fs_is_compressed_page(struct page *page);
- struct page *f2fs_compress_control_page(struct page *page);
- int f2fs_prepare_compress_overwrite(struct inode *inode,
-@@ -4328,6 +4333,7 @@ int f2fs_write_multi_pages(struct compress_ctx *cc,
- 						struct writeback_control *wbc,
- 						enum iostat_type io_type);
- int f2fs_is_compressed_cluster(struct inode *inode, pgoff_t index);
-+bool f2fs_is_sparse_cluster(struct inode *inode, pgoff_t index);
- void f2fs_update_read_extent_tree_range_compressed(struct inode *inode,
- 				pgoff_t fofs, block_t blkaddr,
- 				unsigned int llen, unsigned int c_len);
-@@ -4414,6 +4420,12 @@ static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
- static inline void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi,
- 							nid_t ino) { }
- #define inc_compr_inode_stat(inode)		do { } while (0)
-+static inline int f2fs_is_compressed_cluster(
-+				struct inode *inode,
-+				pgoff_t index) { return 0; }
-+static inline bool f2fs_is_sparse_cluster(
-+				struct inode *inode,
-+				pgoff_t index) { return true; }
- static inline void f2fs_update_read_extent_tree_range_compressed(
- 				struct inode *inode,
- 				pgoff_t fofs, block_t blkaddr,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 270c32e3385f..0362d7ad21cc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4220,9 +4220,8 @@ static int f2fs_ioc_decompress_file(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	pgoff_t page_idx = 0, last_idx;
--	int cluster_size = fi->i_cluster_size;
--	int count, ret;
-+	pgoff_t page_idx = 0, last_idx, cluster_idx;
-+	int ret;
- 
- 	if (!f2fs_sb_has_compression(sbi) ||
- 			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
-@@ -4257,10 +4256,15 @@ static int f2fs_ioc_decompress_file(struct file *filp)
- 		goto out;
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+	last_idx >>= fi->i_log_cluster_size;
-+
-+	for (cluster_idx = 0; cluster_idx < last_idx; cluster_idx++) {
-+		page_idx = cluster_idx << fi->i_log_cluster_size;
-+
-+		if (!f2fs_is_compressed_cluster(inode, page_idx))
-+			continue;
- 
--	count = last_idx - page_idx;
--	while (count && count >= cluster_size) {
--		ret = redirty_blocks(inode, page_idx, cluster_size);
-+		ret = redirty_blocks(inode, page_idx, fi->i_cluster_size);
- 		if (ret < 0)
- 			break;
- 
-@@ -4270,9 +4274,6 @@ static int f2fs_ioc_decompress_file(struct file *filp)
- 				break;
- 		}
- 
--		count -= cluster_size;
--		page_idx += cluster_size;
--
- 		cond_resched();
- 		if (fatal_signal_pending(current)) {
- 			ret = -EINTR;
-@@ -4299,9 +4300,9 @@ static int f2fs_ioc_compress_file(struct file *filp)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	pgoff_t page_idx = 0, last_idx;
--	int cluster_size = F2FS_I(inode)->i_cluster_size;
--	int count, ret;
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	pgoff_t page_idx = 0, last_idx, cluster_idx;
-+	int ret;
- 
- 	if (!f2fs_sb_has_compression(sbi) ||
- 			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
-@@ -4335,10 +4336,15 @@ static int f2fs_ioc_compress_file(struct file *filp)
- 	set_inode_flag(inode, FI_ENABLE_COMPRESS);
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+	last_idx >>= fi->i_log_cluster_size;
- 
--	count = last_idx - page_idx;
--	while (count && count >= cluster_size) {
--		ret = redirty_blocks(inode, page_idx, cluster_size);
-+	for (cluster_idx = 0; cluster_idx < last_idx; cluster_idx++) {
-+		page_idx = cluster_idx << fi->i_log_cluster_size;
-+
-+		if (f2fs_is_sparse_cluster(inode, page_idx))
-+			continue;
-+
-+		ret = redirty_blocks(inode, page_idx, fi->i_cluster_size);
- 		if (ret < 0)
- 			break;
- 
-@@ -4348,9 +4354,6 @@ static int f2fs_ioc_compress_file(struct file *filp)
- 				break;
- 		}
- 
--		count -= cluster_size;
--		page_idx += cluster_size;
--
- 		cond_resched();
- 		if (fatal_signal_pending(current)) {
- 			ret = -EINTR;
+The "1" is due to the pagecache, right? IIUC, we don't hold a raised 
+folio refcount as we do the xas_for_each().
+
 -- 
-2.40.1
+Cheers,
+
+David / dhildenb
 
 
