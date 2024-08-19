@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-292839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739E5957512
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5232957517
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E151C23938
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125FC1C23AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0E51DD3B9;
-	Mon, 19 Aug 2024 19:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5AA1DD38F;
+	Mon, 19 Aug 2024 19:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6fn8rhU"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd0Um/A1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F4E145341;
-	Mon, 19 Aug 2024 19:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2821DAC42;
+	Mon, 19 Aug 2024 19:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724097362; cv=none; b=DPvc98+9xFfDUtxdKF2MkQzWvpe9Z28fkcN8LqvEFyuzA/gHISAH8qTW9JT6gW9eCJgagpK0yJt5pDj+nQ/CjSBHXiUiHtRfgPCOPXM7tkQrUud0sV1xQJtl6n7vZK7p64qX8hdPhqDdSGmONDBKZR9f3HlMaa3XNYUp7XHC6CU=
+	t=1724097403; cv=none; b=KIpkQ6C5pyZnEfubceognfFdn62O6hJM2UdFl2qK1vjvRZtBQ0oC1+uMHMbNx17gkaKoixwzog0ja1y0IBqStP9XtSDEa4c5sY1IIywoEJbFygl9h/IUYS+W0thQ7sEBwo/o8sR2VZs3aifvKccndn9Lw+12eYMwrwcaH+bNlo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724097362; c=relaxed/simple;
-	bh=uS/M4QEvgCj88JTFWG7lropq/FH/WIZ1cBIY6CYKMGY=;
+	s=arc-20240116; t=1724097403; c=relaxed/simple;
+	bh=tPvpMLuFSAnOXuRFxzSXoYbAnnW8myMFN1l5mA7qOGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSEX6iapWaoA+DvntIGkmoZb6AzkTb1J1F36vLUjbvekT9tlFVff0jM6orqfzhMTkHd+JOS8jY/lBfjt3yh6/BmEo2UX0nHrScRpH511ZEsaE7ZO1Aa0rPjoxcWQuDYCh/4nY8ciPxQpf2/q/J9Bu1VG627ZRo+QYrog44CnFbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6fn8rhU; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-710dc3015bfso3162475b3a.0;
-        Mon, 19 Aug 2024 12:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724097360; x=1724702160; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3u14jaF6sMpm2P6xSbFPosvPrziDfmVI/333/HfvZmg=;
-        b=Q6fn8rhUcyH7E1qlQMaPlbwVZ7V7IJAIEhABp2gmZqRrBrCucpM816GRaJidxQYoEX
-         U5gP8uEzJf/O2VPt8aE86AC0sO2OGd1AFWnctbqFMyqNVdoOflZ/XXDMY5QuSt7DgbcH
-         hTtOMS6Ql8unWCs33XC6Xn+1T5MYHb2sEgx80dS3HsaWwXuCD8hUqENfVOyg57kHd8eX
-         uRURSmOUb/2M6wCouzHrqKr0d5aSb0HEPAPZtC4zKWSBnOXK8TEn7tQqPAdzURXrW6id
-         a4rfTJ5uaQgXUTyVAU14/hgQnzNAwbBUWXFum0P2VP/pvyLHL0gHd/7044QMlhrA/PMj
-         /mJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724097360; x=1724702160;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3u14jaF6sMpm2P6xSbFPosvPrziDfmVI/333/HfvZmg=;
-        b=ktUj5cVLDUAFyDMqz9RtXK3dyYGajXEmka1S6nPIKXYvBslDCrycSU5rVLinNWsFC+
-         0WmYoh5b4+U9ixZ9s9kVQn9XrEC+/syYktp+oGbslPG2qePAfyyhLd3D24Tz+I+BJ/tn
-         J6aQ9n2aBe9wCwqxWBEDjIX9auX4nzcE3DdpQdr3UuzvmrSaONSDMeyXcg+kQZQ4z6IM
-         3VzHQUj84LoptyerPrGcAGB6NKISSCapvmktLQKON8YEY/FtupOkWQiqsIM+vNdUVu68
-         AEKw8Gp1DZMBB9+nvJFmwsw2UJe8v6PYcUJ0d5khyufjuVbm4EztGnKklxyRUIOUguQh
-         cwEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnotAlpAbyLaFsikhXayRaanudOTHOXno0dBs4toXXTZL8+twbd0asw+NhYEsQv/u+oY20vaEQ@vger.kernel.org, AJvYcCUrX8zSH/CfPrPhmnmIRcj7LlwYPZbIbEXS8DwDgN4Q2PDOynF9Ot0bCQbJOEZOEK1WsJTxMu4hcZC9tsNbmh9Rpgxuu9Bw@vger.kernel.org, AJvYcCWXiKR/NZRBpKST3vdM9tWT3mBfypcODAr9PUpsbjFQEeAbpr6S2s1jAOeOGdDodnLWFa7c9AUmxESk5VE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd++pSMzKGTdD5fUiZii1kdA6Qmz+rEloG0PEwI0Mc//tKpH4k
-	rum2pdRqH8lftGkPk4ikdRO5NzLDBQplvQ9Udao97lmiSOAPT4x/
-X-Google-Smtp-Source: AGHT+IFTnJ+IdpJusYJcVfML72MiQsY6fxuJQh0HWezllw+QiSMVbC73bgI1yusV/JD4kKkA6LI9lw==
-X-Received: by 2002:a05:6a00:945b:b0:705:d6ad:2495 with SMTP id d2e1a72fcca58-71408337f6amr1201717b3a.12.1724097360260;
-        Mon, 19 Aug 2024 12:56:00 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-713e85a2191sm2900394b3a.74.2024.08.19.12.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 12:55:59 -0700 (PDT)
-Date: Mon, 19 Aug 2024 13:55:57 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v9 2/5] selftests/Landlock: Abstract unix socket
- restriction tests
-Message-ID: <ZsOjTacm9SO6Cu+y@tahera-OptiPlex-5000>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
- <20240819.ig5eekohQuoh@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAMiyQ+0H7nQXtmdyQypXJlwFmSyNW+iRcjo+qgF25Kd/CYFoAzYj+z1Pz0s7vcXhfX3YnEVmzgIXlbqLA7++1fhHh5vE/KbqnRNeKEpCgM8Zez5vXFU1UkxvA5PoAo3vBHa60pAWb8/cXySNTkHq5To2rsX8rEX03MY7BZt4Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd0Um/A1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF04AC32782;
+	Mon, 19 Aug 2024 19:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724097403;
+	bh=tPvpMLuFSAnOXuRFxzSXoYbAnnW8myMFN1l5mA7qOGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cd0Um/A1HsQExf5JaaOM+jT0Sc+ix861H5ANMh7BoAMVUP6BR+9afuxpmE2bJhN22
+	 M7wsDOESLVR3rHfB9SHUFj1nbIbuAPtGdqoVQVB78kC/6M90nZ+P5zdedbANMzE9uF
+	 LcNTmsHKkNAN6e3sL7sFq1Oo7Dw4KlttZxNN3nbu/GCmrCQBVi2g+18G33cdH8vJvs
+	 KI4QIqa3qZBVAhr/5FBgJ+s1HVKQiNucgvcsMR5ptZUAdVjrUGimt4HVw/8ifaR0eI
+	 79ZgBnfzhC6e09lGnyGXuWONc6CB0v5MESWmiV6LBIkEB3mXXpHa4FValPfcrpY2X6
+	 wgPVpnA+BOBZw==
+Date: Mon, 19 Aug 2024 21:56:37 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	Chris Brandt <Chris.Brandt@renesas.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
+Message-ID: <dl7vqbmypa6cxzlfutlpnn6tfuxr3elj7wdzway3eyhho5mdxy@ylw2azxpdbdw>
+References: <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <CAMuHMdXJ8eKLzMqCPR2ewS9gr_m5OQPneETPMC-rOOmW+--f5A@mail.gmail.com>
+ <7c542f46-c644-4f22-bbc4-408b7dad8273@tuxon.dev>
+ <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240819.ig5eekohQuoh@digikod.net>
+In-Reply-To: <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
 
-On Mon, Aug 19, 2024 at 05:42:59PM +0200, Mickaël Salaün wrote:
-> On Wed, Aug 14, 2024 at 12:22:20AM -0600, Tahera Fahimi wrote:
-> > The patch introduces Landlock ABI version 6 and has three types of tests
-> 
-> "and adds three types" ?
-> 
-> > that examines different scenarios for abstract unix socket connection:
-> 
-> Not only connection.
-> 
-> > 1) unix_socket: base tests of the abstract socket scoping mechanism for a
-> >    landlocked process, same as the ptrace test.
-> > 2) optional_scoping: generates three processes with different domains and
-> >    tests if a process with a non-scoped domain can connect to other
-> >    processes.
-> > 3) unix_sock_special_cases: since the socket's creator credentials are used
-> 
-> "unix_sock_special_cases" seems a bit too generic and is not
-> self-explanatory.  What about "outside_socket"?
-Sure, I'll change it to "outside_socket"
+Hi Geert,
 
-> >    for scoping sockets, this test examines the cases where the socket's
-> >    credentials are different from the process using it.
-> > 
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > ---
+I've been reading all the review history of this series and now
+I'm walking through all the review history again do see if
+everything has been 
+
+> > >>>> On the manual I've downloaded from Renesas web site the FMPE bit of RIICnFER is not available on
+> > >>>> RZ/A1H.
+> > >>>
+> > >>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+> > >>
+> > >> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
+> > >
+> > > Do you need to check for that?
+> > >
+> > > The ICFER_FMPE bit won't be set unless the user specifies the FM+
+> > > clock-frequency.  Setting clock-frequency beyond Fast Mode on RZ/A1H
+> > > would be very wrong.
+> >
+> > I need it to avoid this scenario ^. In patch 09/12 there is this code:
+> >
+> > +       if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
+> > +           (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
+> > +               dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
+> > +                       info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
+> > +                       I2C_MAX_FAST_MODE_FREQ);
+> >                 return -EINVAL;
+> >
+> > to avoid giving the user the possibility to set FM+ freq on platforms not
+> > supporting it.
+> >
+> > Please let me know if I'm missing something (or wrongly understood your
+> > statement).
 > 
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-> > @@ -0,0 +1,942 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Landlock tests - Abstract Unix Socket
-> > + *
-> > + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-> > + * Copyright © 2019-2020 ANSSI
-> 
-> You can replace these two lines with your copyright (same for the signal
-> test file):
-> Copyright © 2024 Tahera Fahimi <fahimitahera@gmail.com>
-Right. I copied this from ptrace_test.c and forgot to change it. Thanks
-:)
+> Wolfram/Andi: what is your view on this?
+
+I don't have anything against it... what exactly are you
+proposing here?
+
+If you want you can directly reply to the v4 6/11 patch.
+
+Thanks Geert for checking on this series.
+Andi
 
