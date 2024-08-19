@@ -1,118 +1,82 @@
-Return-Path: <linux-kernel+bounces-292462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB750956FB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C10B956FF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 097CB1C23C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:06:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F72B294B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C593189B84;
-	Mon, 19 Aug 2024 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjh9o9PP"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9733617837E;
+	Mon, 19 Aug 2024 16:03:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F42176252
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B253B8287D;
+	Mon, 19 Aug 2024 16:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083386; cv=none; b=JR5YMGWSJjp5mvBZbQFokb/bII23mDK2tlmaxRKdNeU/L0bkyAaZglIheNvaAmLo8OHy/+3zT/7iaV2HzhggueoLfXM8KtLmRQP1PoqshGV97UTgKgGZ9ylvlRHuSQitajnBrI5f4+XlzwVlEWV9RJrIkfKcuaxcvJ1XoluyVEg=
+	t=1724083432; cv=none; b=iXlwbB+aCEwRd3gegLBxaiOUf8J0FKl5y6PIiYQx8VOATFbR5V+5YjqTYvNAEhEZ1IptliaUMiW0nYlLy18gPo0v8lNSsSamfTmUcQKT3qvwL4LimHAw0iH0S3smG7hJ6XWp24nnUN7EniVzyoT0hX0hKQM4h38H/2FroxtaSN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083386; c=relaxed/simple;
-	bh=QkvRf2gJWrII8R9fwrAbCEH4Jv32FkCvpWWs1LsQX5U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gqbGQX6JAsA8Yy7iuiRg1iwa44bsMyw4TRA/BzAC2xGSnsJriKO33CX5mrMaEnPezQKW80qNmW7317oqzKXoxgZMuMDGaUIt6D2/hiLiHvwxBZnrBOHhq23FhpgKMD/JsH4N8Ujuu1gqOWAj+LkSgmKh2hHu4uSEC4OG+2XRTBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjh9o9PP; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371afae614aso1393527f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724083383; x=1724688183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MygLjWxd/cuymlBwTrUlqtMUCrnCHV/7Hdz0OscdB14=;
-        b=xjh9o9PPgKOb4BtXVO6lhlgJg+vRpctZaZfd2pk1VqyQ4xgRxVMSoSiGNt1LECLovr
-         PSyvRpR11A4DVPY+rCv42mDsa9KFADPN+2HRdZuvue/A9a6x/2nGPmSftKyg0oQ4KLqD
-         sQ/tu2uB+Ahuo46dPT0x0XRHDYLvHXgD8R4yRUtYARM33INwbxtiquakOyH4pPeY16s6
-         zF+GS6AAq+/+caE9XZJBq6br50RGjFuEN2RFqeYD9kjZLhiLeDTJ6HsFF0ZzMTHe8d2N
-         4pqnx6+wZVNzE7IN09MFh71bfoMDwZo/0Nqcg8q9SBKme8RQ3sUdHmzv4Gkvvh4yMXUQ
-         yHPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724083383; x=1724688183;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MygLjWxd/cuymlBwTrUlqtMUCrnCHV/7Hdz0OscdB14=;
-        b=RCJmgtOS/IfjLAkU2uR1l1LG+Vo9CvNa17r3dHHGeg6jP4d0xvYFS6YALGuzZu/Wl4
-         f2dB/4OHmvIYhj/FRvAh/JcGmY+zbYMH34NlbXIB4L1SmD7q+D1Y8B02EErYE7R1UOOc
-         ymXdMK1qyG0c5cSdJ9Zm7l05ZwORp/xoLLCmGRKshNNYI1cy8AkBgAjB4P8RgYFYWsoD
-         v2AU6dIU4T+LMaAcS52XvVlf9R4HVTd7pH0PeoBde8CWfyVmbPWdUdfSvyjZeVEs1c/m
-         Jj9imxxjA0KJWZz6Lao0b+JtCd/XFV66RuNy2x8t6susZuh3NsDi2FQwVH/dPL2b2TGK
-         wYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2ia4seDg3Yb9Ji5jep+kZz/zKNgZvTz+olBgYDvbL/WZyeQXLdyNVJ+35XzQVdsZrtYyZV/CZ6o/pxcvmJHfakptStd64ygo2r1B3
-X-Gm-Message-State: AOJu0YwjRBzR1soV0/hvMYqXFEnM3NVd2NTJ0FTuTF9Yd1EbGx0LdMFu
-	VrpuyGPB4/FJ8bQT92NowIMypWDeL2s9E6e/Mi1sE5ibtM+4tUkPF8xjz3+t2n8=
-X-Google-Smtp-Source: AGHT+IGDL1BghlbSzux3yJZeahaJWCA9neTeVGdK794uq57vTBevwaiQ6Y3pvsnu4kDp2NGOiX5ylQ==
-X-Received: by 2002:a05:6000:1006:b0:371:890c:3157 with SMTP id ffacd0b85a97d-371946a4611mr8314976f8f.38.1724083382820;
-        Mon, 19 Aug 2024 09:03:02 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabe9sm10907638f8f.92.2024.08.19.09.03.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 09:03:02 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
- mripard@kernel.org, tzimmermann@suse.de, dianders@chromium.org, 
- hsinyi@google.com, airlied@gmail.com, daniel@ffwll.ch, jagan@edgeble.ai, 
- dmitry.baryshkov@linaro.org, jani.nikula@linux.intel.com, 
- Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240807100429.13260-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-References: <20240807100429.13260-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: Re: [PATCH v3 0/2] Modify the method of sending "exit sleep
-Message-Id: <172408338165.1748689.14599426466774624687.b4-ty@linaro.org>
-Date: Mon, 19 Aug 2024 18:03:01 +0200
+	s=arc-20240116; t=1724083432; c=relaxed/simple;
+	bh=iyVj6t3gLWhrXmv58HXZ8/Xpojru0XhNKSDKvqArBGI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P+ocI9IFBMsmkJMAWsO5TITYikU1Qzg53TOyu1EaTNbHcRgDuZiAwjh8SNIksnfIJmkzrpnlPXECce9engLRcFSwAIdJdnaTe5IMzb7hMR/Ztka8ctY7lOF8RNf25oyqLTdtXdipM8/hvHGBWwcX2zYtIoyMuh8A884kEnJWE/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WnclB6RBXz6K5Vy;
+	Tue, 20 Aug 2024 00:00:54 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6CC99140A87;
+	Tue, 20 Aug 2024 00:03:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
+ 2024 17:03:47 +0100
+Date: Mon, 19 Aug 2024 17:03:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
+	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 03/13] memory: samsung: exynos5422-dmc: simplify
+ dmc->dev usage
+Message-ID: <20240819170346.00004d4b@Huawei.com>
+In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-3-9eed0ee16b78@linaro.org>
+References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
+	<20240816-cleanup-h-of-node-put-memory-v2-3-9eed0ee16b78@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi,
+On Fri, 16 Aug 2024 12:54:27 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-On Wed, 07 Aug 2024 18:04:27 +0800, Zhaoxiong Lv wrote:
-> This "exit sleep mode" and "set display on" command needs to
-> be sent in LP mode, so move "exit sleep mode" and "set display
-> on" command to the init() function.
+> Store 'dmc->dev' in local 'dev' variable, to make several pieces of code
+> using it shorter and easier to read.
 > 
-> Modify the Melfas panel init code to satisfy the gamma value of 2.2.
-> 
-> Changes between V3 and V2:
-> - PATCH 1/2: Modify the commit message and subject.
-> - PATCH 2/2: No changes.
-> - Link to v2: https://lore.kernel.org/all/20240806034015.11884-1-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> [...]
-
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/2] drm/panel: jd9365da: Move "exit sleep mode" and "set display on" cmds
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/97d1f449c359207b2fb5bc62eaefb7e21ad619ae
-[2/2] drm/panel: jd9365da: Modify the init code of Melfas
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/64ddf5123eff2edf47202e08744c3c14a9d28f59
-
--- 
-Neil
-
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
