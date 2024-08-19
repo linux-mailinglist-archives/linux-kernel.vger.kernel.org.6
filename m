@@ -1,126 +1,316 @@
-Return-Path: <linux-kernel+bounces-292366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF460956E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2094956E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6EB282947
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C5D1C219CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760CC482EB;
-	Mon, 19 Aug 2024 15:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3DF24B34;
+	Mon, 19 Aug 2024 15:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="WaGQqCyD"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PN70P6wV"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF1345C14
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B165F26AD3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080526; cv=none; b=f071rM8apiseZUxHBsLYjxzKVxFnCsXBnifAEncK1E788obfa6NW6Xu09mFWoj0VD9qvyuyfXsV4rgi2iMikrMpJXSAvJSSshtHSS4/CrcP4X7A8PGDoXysclEqNdMzY4VmfESSdOyKyUL/iUy2QZI/4BUYOfuVbsEcsm0hadJM=
+	t=1724080637; cv=none; b=sUkRQAPo6WED3/4On+osdRtEyu7mT3ddNdwvFkaiR3oTfaji2+6lXfz/mdeeiOfizq2tf4CcKjg8F2JWm2H7N5RbE+J3qKMXAlUtBtYlSuWZ3GJlDHLueBfrfpVhCE2+NRV4SurXvZbWjyFgUGp/hggn3beCBlJKsx1qdHpj+pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080526; c=relaxed/simple;
-	bh=yVBb0jTWBpA5fy81DEGjUeDImJ3sllOY1ueUdopcNQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFLtnKscsaF6VFYECfxqv72ma//KYzS/Z95Q7wR8zu1vl75oV4jTLpSMkJfg3nU5FMgG0INLP0S8qCUsW7AF7ip+ldnXqkwWqwjcp5uBi0Kjx3eb0tu1v2+lKLjb3OsU42jMKyXgBin/J4k4Kk73kSvpaS0YacDkubGRBEx4SuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=WaGQqCyD; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4503ccbc218so46736361cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:15:23 -0700 (PDT)
+	s=arc-20240116; t=1724080637; c=relaxed/simple;
+	bh=vYUrnHLUKnCirrXPVePqYwvf/tnDWXrqxM0mdSUEQ4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pMtiNRh0tMovcJF7c2W2UyMqWmDQl8ls8PYRFg/DADBWb+JHgtSOqHicjjeJBkn1NHbkQgyTZkeRQigOi3IUEc+H4E9vKepPz7TsbbwLh44i5/WfG9aJh6LWashu5omDsKVGzMWEk4rn0dG5P7dtSR6ZM23Rcdsrs2O81dc0YM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PN70P6wV; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso34985185e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:17:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1724080523; x=1724685323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GNTbc0F2dMBvNbFHEwMBdeuxTmUA8ws/rkRWGeGRoPk=;
-        b=WaGQqCyDea2wT86P0AcFasuinPehxHk42tl62NTPxNAzwlDcMmNJG0lchr8DL9TB5N
-         JFYyPSQlrz1FAchec0MaAvTC8ZwI/rAw7LGezsAhMLXn8Hgp26CfUzgyo3AaYahRgi7I
-         i/Ass1aZRB85sCbjBV836h5d7sN5q0F1osaBbMbUbZgjTJH9rMGNbg8+22FpT88pc2tO
-         WeB4XFxsLK54vTaZad6Z9iCo8DtBMNcaGg5H/S99gEJm2pgLy5MWARjOoVV5tUcdYdji
-         c3SIfXVW8AFeI9jiuR6kUMvdYzCVUzIPPTXupfBeEgqNnDVz+JMHAFjzYKYXZEDGQske
-         iOXA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724080633; x=1724685433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhNL+8XlGXOzfWw8j+/Ok6T9DPcqqekl3QMBg7FURmU=;
+        b=PN70P6wVV5E/J053P8MNss/YvD5PgxO2WvN4W5rAB48bDQmpxiELMeLolqHjexccO/
+         ICyP7H1xxbgNXTrUpzArBNgHWsl7+3I4VZHxZtbVBwI8PeK7LP0vNUB8T7L6RX6Hl+SG
+         zotab+ahV2++oHHj6bLRP9OTaiUqRkp1jb2p2SxhErB0Oj17YXzmXq+x1XM99zFGUQb2
+         7gczqu4VAdIbtsdYQGLJbh+4Ffn+OnpdPplIg1hltDC1eyH2lP3FLnEZMPLKvKHYR3Na
+         LCoNtawyGAoO0x0MwNaYYw9GdPZP2OmoW8SC4IW1lQK//UjlK95eQLPscuNxT4xg+1of
+         B89Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724080523; x=1724685323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNTbc0F2dMBvNbFHEwMBdeuxTmUA8ws/rkRWGeGRoPk=;
-        b=tx8MORztHZYIQpjFAnp778/UXGfVOuWTGx0tBmQBWMZRo5ElQxEGaIZ/uz52WR3ToE
-         1HIl3SWo/R9DeAYrYCnzEq0+llGca9gDE0rbjyaD2ogj6CbGuHxjbVXCWtKsAp6MDTWj
-         E76RGuUvacQIFEbFrf/82D037wT3/u2c5S64roS0InQAkBYIxUiNZfIUnBWS/Wc2iGD7
-         FwdcbPkTlK7KcETDxb7HwNkrJplEMB5A9MFDTKRlf2XjH0q0n5JXLkwWRNAWbOWshiNB
-         smnLwyctvU6KT9bdFV4N0uLHyhVeJ+M3+3MLWiQRmvLJaJkvV6ZAgaM2tGetO4jidDpC
-         QOnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkA8Q4V9yxtQWZ2Tu8oN4W9ix+y5Hr8XLES5nGETset6nk75zEpZnaDaSCJJBeYGK3GJuBQdIUZ6VRS7If1PwC7XZ0p5qOT+e++BFH
-X-Gm-Message-State: AOJu0YxSr11+sxZAc29IqgS2Cpl/Zp5XQuniamZ8HRMvMD1PFgiQ0rzd
-	1LQyM0LeUAYjZ70SfV3JPk7X0oU7ITU2lAUaN0NAtewnForgC3JeWkePLprasWA=
-X-Google-Smtp-Source: AGHT+IEIa+Un4OYZorcrrStpEMRUkTPJX8l/7RbD8QT6GjJwWrYqUQc3OlRirNW7Azsn1PCxBhv51Q==
-X-Received: by 2002:a05:622a:1787:b0:44f:fceb:fd4b with SMTP id d75a77b69052e-453678f2e5cmr261406711cf.29.1724080522915;
-        Mon, 19 Aug 2024 08:15:22 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45369fec96bsm41190591cf.25.2024.08.19.08.15.22
+        d=1e100.net; s=20230601; t=1724080633; x=1724685433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EhNL+8XlGXOzfWw8j+/Ok6T9DPcqqekl3QMBg7FURmU=;
+        b=cawbcpcK/dNnkDMtJtgKS7LHfe/NBhFmR6r/aFllevHtBIKfA69BhnFziSjlnnHnMJ
+         JXfyR9Brwy75VSKtEyc4o+Gu8NgMnLe11ulCTgm2ryqsC1xX6G4eRpJAb275NBLAC1za
+         AwmoTuFbFZwqyI/ejKKD4P75in4eUE7BNDaIC+AO08Pc6ivwV8TDLfN5t6EyLaxkw3Aj
+         p4p5DjMfWWyaanteDt+9yDhOudM5PGRG+U2jsTKH8PZQjXhu5+XOXeGJywtoUTkK59w0
+         CwHBRcLpJA/RkxwozwH/2cG1FVSrqJsVT42NKW2qwGwf12z5FVR+D5O7b9k3ea+p7Y0E
+         fRLg==
+X-Gm-Message-State: AOJu0YzI85jA35TC7gSpXOGRghZ9VVpbQQirwUW+Zp3NAMO4PkGWBet8
+	EfZUo1WGz2qMB/mfO48YuSXPLG+uqBZNcLF9x28cdyVtEUN6RK3XkHUZjVZstvg=
+X-Google-Smtp-Source: AGHT+IEWF7CyznAVBor2bq8snEeAd6GUELLADmv/AwQDJqDYlwnB46wfyyghTMjNwcmp6qkOa906rw==
+X-Received: by 2002:a05:600c:1549:b0:426:6f38:8974 with SMTP id 5b1f17b1804b1-429ed7772damr76029995e9.6.1724080632257;
+        Mon, 19 Aug 2024 08:17:12 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7b55:8f70:3ecb:b4ac])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aad70sm10788324f8f.104.2024.08.19.08.17.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 08:15:22 -0700 (PDT)
-Date: Mon, 19 Aug 2024 11:15:13 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, nphamcs@gmail.com,
-	nehagholkar@meta.com, abhishekd@meta.com,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
-Message-ID: <ZsNhgU-TiTz2WKg5@PC2K9PVX.TheFacebook.com>
-References: <20240803094715.23900-1-gourry@gourry.net>
- <875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+        Mon, 19 Aug 2024 08:17:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Keerthy <j-keerthy@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 1/2] gpio: davinci: drop platform data support
+Date: Mon, 19 Aug 2024 17:17:04 +0200
+Message-ID: <20240819151705.37258-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 03:46:00PM +0800, Huang, Ying wrote:
-> Gregory Price <gourry@gourry.net> writes:
-> 
-> > Unmapped pagecache pages can be demoted to low-tier memory, but 
-> > they can only be promoted if a process maps the pages into the
-> > memory space (so that NUMA hint faults can be caught).  This can
-> > cause significant performance degradation as the pagecache ages
-> > and unmapped, cached files are accessed.
-> >
-> > This patch series enables the pagecache to request a promotion of
-> > a folio when it is accessed via the pagecache.
-> >
-> > We add a new `numa_hint_page_cache` counter in vmstat to capture
-> > information on when these migrations occur.
-> 
-> It appears that you will promote page cache page on the second access.
-> Do you have some better way to identify hot pages from the not-so-hot
-> pages?  How to balance between unmapped and mapped pages?  We have hot
-> page selection for hot pages.
-> 
-> [snip]
-> 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I've since explored moving this down under a (referenced && active) check.
+There are no more any board files that use the platform data for
+gpio-davinci. We can remove the header defining it and port the code to
+no longer store any context in pdata.
 
-This would be more like promotion on third access within an LRU shrink
-round (the LRU should, in theory, hack off the active bits on some decent
-time interval when the system is pressured).
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-davinci.c                | 89 ++++++----------------
+ include/linux/platform_data/gpio-davinci.h | 21 -----
+ 2 files changed, 25 insertions(+), 85 deletions(-)
+ delete mode 100644 include/linux/platform_data/gpio-davinci.h
 
-Barring adding new counters to folios to track hits, I don't see a clear
-and obvious way way to track hotness.  The primary observation here is 
-that pagecache is un-mapped, and so cannot use numa-fault hints.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 1d0175d6350b..7763b99f814a 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -18,7 +18,6 @@
+ #include <linux/of.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+-#include <linux/platform_data/gpio-davinci.h>
+ #include <linux/property.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/spinlock.h>
+@@ -154,74 +153,37 @@ davinci_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 		       value ? &g->set_data : &g->clr_data);
+ }
+ 
+-static struct davinci_gpio_platform_data *
+-davinci_gpio_get_pdata(struct platform_device *pdev)
+-{
+-	struct device_node *dn = pdev->dev.of_node;
+-	struct davinci_gpio_platform_data *pdata;
+-	int ret;
+-	u32 val;
+-
+-	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node)
+-		return dev_get_platdata(&pdev->dev);
+-
+-	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return NULL;
+-
+-	ret = of_property_read_u32(dn, "ti,ngpio", &val);
+-	if (ret)
+-		goto of_err;
+-
+-	pdata->ngpio = val;
+-
+-	ret = of_property_read_u32(dn, "ti,davinci-gpio-unbanked", &val);
+-	if (ret)
+-		goto of_err;
+-
+-	pdata->gpio_unbanked = val;
+-
+-	return pdata;
+-
+-of_err:
+-	dev_err(&pdev->dev, "Populating pdata from DT failed: err %d\n", ret);
+-	return NULL;
+-}
+-
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	int bank, i, ret = 0;
+-	unsigned int ngpio, nbank, nirq;
++	unsigned int ngpio, nbank, nirq, gpio_unbanked;
+ 	struct davinci_gpio_controller *chips;
+-	struct davinci_gpio_platform_data *pdata;
+ 	struct device *dev = &pdev->dev;
+-
+-	pdata = davinci_gpio_get_pdata(pdev);
+-	if (!pdata) {
+-		dev_err(dev, "No platform data found\n");
+-		return -EINVAL;
+-	}
+-
+-	dev->platform_data = pdata;
++	struct device_node *dn = dev_of_node(dev);
+ 
+ 	/*
+ 	 * The gpio banks conceptually expose a segmented bitmap,
+ 	 * and "ngpio" is one more than the largest zero-based
+ 	 * bit index that's valid.
+ 	 */
+-	ngpio = pdata->ngpio;
+-	if (ngpio == 0) {
+-		dev_err(dev, "How many GPIOs?\n");
+-		return -EINVAL;
+-	}
++	ret = of_property_read_u32(dn, "ti,ngpio", &ngpio);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get the number of GPIOs\n");
++	if (ngpio == 0)
++		return dev_err_probe(dev, -EINVAL, "How many GPIOs?\n");
+ 
+ 	/*
+ 	 * If there are unbanked interrupts then the number of
+ 	 * interrupts is equal to number of gpios else all are banked so
+ 	 * number of interrupts is equal to number of banks(each with 16 gpios)
+ 	 */
+-	if (pdata->gpio_unbanked)
+-		nirq = pdata->gpio_unbanked;
++	ret = of_property_read_u32(dn, "ti,davinci-gpio-unbanked",
++				   &gpio_unbanked);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get the unbanked GPIOs property\n");
++
++	if (gpio_unbanked)
++		nirq = gpio_unbanked;
+ 	else
+ 		nirq = DIV_ROUND_UP(ngpio, 16);
+ 
+@@ -252,7 +214,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	chips->chip.set = davinci_gpio_set;
+ 
+ 	chips->chip.ngpio = ngpio;
+-	chips->chip.base = pdata->no_auto_base ? pdata->base : -1;
++	chips->chip.base = -1;
+ 
+ #ifdef CONFIG_OF_GPIO
+ 	chips->chip.parent = dev;
+@@ -261,6 +223,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ #endif
+ 	spin_lock_init(&chips->lock);
+ 
++	chips->gpio_unbanked = gpio_unbanked;
++
+ 	nbank = DIV_ROUND_UP(ngpio, 32);
+ 	for (bank = 0; bank < nbank; bank++)
+ 		chips->regs[bank] = gpio_base + offset_array[bank];
+@@ -488,7 +452,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	unsigned	ngpio;
+ 	struct device *dev = &pdev->dev;
+ 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+-	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+ 	struct irq_domain	*irq_domain = NULL;
+ 	struct irq_chip *irq_chip;
+@@ -502,7 +465,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	if (dev->of_node)
+ 		gpio_get_irq_chip = (gpio_get_irq_chip_cb_t)device_get_match_data(dev);
+ 
+-	ngpio = pdata->ngpio;
++	ngpio = chips->chip.ngpio;
+ 
+ 	clk = devm_clk_get(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+@@ -514,7 +477,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!pdata->gpio_unbanked) {
++	if (chips->gpio_unbanked) {
+ 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
+ 		if (irq < 0) {
+ 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+@@ -546,11 +509,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	 * controller only handling trigger modes.  We currently assume no
+ 	 * IRQ mux conflicts; gpio_irq_type_unbanked() is only for GPIOs.
+ 	 */
+-	if (pdata->gpio_unbanked) {
++	if (chips->gpio_unbanked) {
+ 		/* pass "bank 0" GPIO IRQs to AINTC */
+ 		chips->chip.to_irq = gpio_to_irq_unbanked;
+-		chips->gpio_unbanked = pdata->gpio_unbanked;
+-		binten = GENMASK(pdata->gpio_unbanked / 16, 0);
++
++		binten = GENMASK(chips->gpio_unbanked / 16, 0);
+ 
+ 		/* AINTC handles mask/unmask; GPIO handles triggering */
+ 		irq = chips->irqs[0];
+@@ -564,7 +527,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		writel_relaxed(~0, &g->set_rising);
+ 
+ 		/* set the direct IRQs up to use that irqchip */
+-		for (gpio = 0; gpio < pdata->gpio_unbanked; gpio++) {
++		for (gpio = 0; gpio < chips->gpio_unbanked; gpio++) {
+ 			irq_set_chip(chips->irqs[gpio], irq_chip);
+ 			irq_set_handler_data(chips->irqs[gpio], chips);
+ 			irq_set_status_flags(chips->irqs[gpio],
+@@ -675,8 +638,7 @@ static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
+ static int davinci_gpio_suspend(struct device *dev)
+ {
+ 	struct davinci_gpio_controller *chips = dev_get_drvdata(dev);
+-	struct davinci_gpio_platform_data *pdata = dev_get_platdata(dev);
+-	u32 nbank = DIV_ROUND_UP(pdata->ngpio, 32);
++	u32 nbank = DIV_ROUND_UP(chips->chip.ngpio, 32);
+ 
+ 	davinci_gpio_save_context(chips, nbank);
+ 
+@@ -686,8 +648,7 @@ static int davinci_gpio_suspend(struct device *dev)
+ static int davinci_gpio_resume(struct device *dev)
+ {
+ 	struct davinci_gpio_controller *chips = dev_get_drvdata(dev);
+-	struct davinci_gpio_platform_data *pdata = dev_get_platdata(dev);
+-	u32 nbank = DIV_ROUND_UP(pdata->ngpio, 32);
++	u32 nbank = DIV_ROUND_UP(chips->chip.ngpio, 32);
+ 
+ 	davinci_gpio_restore_context(chips, nbank);
+ 
+diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
+deleted file mode 100644
+index b82e44662efe..000000000000
+--- a/include/linux/platform_data/gpio-davinci.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * DaVinci GPIO Platform Related Defines
+- *
+- * Copyright (C) 2013 Texas Instruments Incorporated - https://www.ti.com/
+- */
+-
+-#ifndef __DAVINCI_GPIO_PLATFORM_H
+-#define __DAVINCI_GPIO_PLATFORM_H
+-
+-struct davinci_gpio_platform_data {
+-	bool	no_auto_base;
+-	u32	base;
+-	u32	ngpio;
+-	u32	gpio_unbanked;
+-};
+-
+-/* Convert GPIO signal to GPIO pin number */
+-#define GPIO_TO_PIN(bank, gpio)	(16 * (bank) + (gpio))
+-
+-#endif
+-- 
+2.43.0
 
-This is more complicated with MGLRU, but I'm saving that for after I
-figure out the plan for plain old LRU.
-
-~Gregory
 
