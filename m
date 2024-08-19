@@ -1,112 +1,202 @@
-Return-Path: <linux-kernel+bounces-291862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD05956828
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:20:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4097E956825
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922291F22E5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 616DDB224A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0EC15FD16;
-	Mon, 19 Aug 2024 10:20:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D61607AF;
+	Mon, 19 Aug 2024 10:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YU11qKYa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF215FD04
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348F0156F5F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724062813; cv=none; b=ePYxsuArhmrD8VgsegpBHN4BQtLlUY68LhD/j1nZA5r/ETDUkE6QhEkVsf39a4zi7f6TJwWGfaJBkdS+hmScfwZX6mHG/Z2snbn5xbw1+dibEowkpfCJj5QZwN2VP4vzK08w99z/oUXUFRuNky+rvoJ2ftA8WY7HxJjx3m7PUTg=
+	t=1724062809; cv=none; b=BAszkGUaHHSgh7ffEXPxdcaolngl8LhvYEtIub0jb5xuAFrJdzn0goyaXAlFwKqGbuqDeUoMynK+I7JqWlcadrinORJtxPw/IoirmjDjJyuOGv7r4z51jPjiBKLzTZDYzymmuRuB2G8+t0UiCSjEjhgOTaof2RwD6C0dhybHfyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724062813; c=relaxed/simple;
-	bh=0Umx+m4HI45RbSJPDjOFaFY1O8psasyvfUTFc4sNLPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9ODW6Uz87ubRPu5lvQA7ErkjkNW5RQPw4xwlJSjjHVlRMk4uBOVp+CpxxbvEsnvmc0wrxAshZEhUiZVhH5IhaFc08I8iy8d07/xzEVveULcz8hUChYyG/4dmXp45Z38168Kw++zWXHNFW07JXALezUz64LKo93Rkmt5LsNZ0ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sfzUJ-00043g-Dh; Mon, 19 Aug 2024 12:19:47 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sfzUI-001VdU-Sn; Mon, 19 Aug 2024 12:19:46 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sfzUI-00Bkev-2V;
-	Mon, 19 Aug 2024 12:19:46 +0200
-Date: Mon, 19 Aug 2024 12:19:46 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
-Message-ID: <20240819101946.cf7x7xecdn2pfa4t@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <20240807-v6-10-topic-usb-serial-serdev-v1-1-ed2cc5da591f@pengutronix.de>
- <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
+	s=arc-20240116; t=1724062809; c=relaxed/simple;
+	bh=qaJVMTKX2YN/haWPaprtb5i3CGOYZT09tNmQOMz2HBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sUoyQTfi4S6vFoRWr/yjRBDI0K7zJpLeZ1/UBMW386Uzjk64+kTdgs0yZlEqtM7Q7uswy8u2dGlT7Rr/wPNwINcYwtqphXgBM7hVq4nKKkMOsn+aZGaQsyo3oOmAJo0ixJLr4NfV+uZdpxjd24rzIL55F4G8R2mbDhub8oSnMv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YU11qKYa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724062807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tt2LYVYKmTVkAnDYFtLFnxYZzUlQbq44aMUMUQ1jAqA=;
+	b=YU11qKYaRQNH4l0QBKRLtx+B4zIsNItxcOUKRf9rlEDzVSCI7to7U6Xwz4S4Trew7f4g5A
+	NCGemdnGyuzU9uEVma9QWIgYWKc26ZoVUBZGbsHlXJF7pKjSsGrfja7YXh5Hyf5t3HDiSq
+	fpCaqcMthrNv0n47KkTCrbaprWpB3FA=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-RYTvbTxJNqGJgCnMpi7hYw-1; Mon, 19 Aug 2024 06:20:05 -0400
+X-MC-Unique: RYTvbTxJNqGJgCnMpi7hYw-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5becd2ca8bbso2083390a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:20:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724062804; x=1724667604;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tt2LYVYKmTVkAnDYFtLFnxYZzUlQbq44aMUMUQ1jAqA=;
+        b=gaQ39KdxU4VJ1/Qc7RgwNNsY9nVNlXOHlwrEeYSSJgca+2DdnQdLL348GFKyPSS9/I
+         UYECgSi9BDkCwhtfQs110ITmFKcvPLx0v+3boDtsEGaO9zFzc9lO8ydU6eAg/LI98cm5
+         CNYLjN4j+gF+m70qe0ibHuQmTXN/cYDogM9fP/M0IuvQdbN+epAgfI5CQboFBJM2wtjf
+         HVW7Ki1Z++FOTARVkJJLakkq5/eNiEhxduqcxmvyoTbVASb3kBuCLO80uNFz/YRK58gW
+         sLXa96OlNiAxuJjKjE0oHBVajanr9l9923m7SUnzGbRdxL4hAHKe4fllRcC5Ohq67TAI
+         C1xg==
+X-Gm-Message-State: AOJu0Yw7CGp8oaVTR+2/LkGQxloZvO/Z9FKU4FL5mG8Yi6/yF2QR1yKW
+	853QfveDOzPaeRBP6ElybelDwh4+HkBzPTME7GbnCyI6U2KHeXQGJOAj9mlln+9fqJ20+5fZxtU
+	dVOJ+rudY6CTCda37klcOc9cJESR41i1YJURoOBy0xPJ8i3Yo9m/zduylCF2gCQ==
+X-Received: by 2002:a05:6402:2707:b0:5be:fc44:d16c with SMTP id 4fb4d7f45d1cf-5befc44d688mr1453669a12.21.1724062804472;
+        Mon, 19 Aug 2024 03:20:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVEZBeVDOcw2UccmR/xKwRwclHVYBRUiCGFShuiYXBBn7mzTfH4dJAZxcg/AEp0vLqteaXzA==
+X-Received: by 2002:a05:6402:2707:b0:5be:fc44:d16c with SMTP id 4fb4d7f45d1cf-5befc44d688mr1453649a12.21.1724062803943;
+        Mon, 19 Aug 2024 03:20:03 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbbe26fcsm5426612a12.5.2024.08.19.03.20.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 03:20:03 -0700 (PDT)
+Message-ID: <32c550ec-d5f7-4422-a1e1-1fa22111d1c5@redhat.com>
+Date: Mon, 19 Aug 2024 12:20:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/17] platform/x86: acerhdf: Use the .should_bind()
+ thermal zone callback
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba
+ <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Peter Kaestle <peter@piie.net>, platform-driver-x86@vger.kernel.org
+References: <114901234.nniJfEyVGO@rjwysocki.net>
+ <6709311.4vTCxPXJkl@rjwysocki.net>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <6709311.4vTCxPXJkl@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Rafael,
 
-sorry for not replying earlier.
-
-On 24-08-08, Jiri Slaby wrote:
-> On 07. 08. 24, 16:08, Marco Felsch wrote:
-> > The purpose of serdev is to provide kernel drivers for particular serial
-> > device, serdev-ttyport is no exception here. Make use of the
-> > tty_kopen_exclusive() funciton to mark this tty device as kernel
-> > internal device.
-> > 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >   drivers/tty/serdev/serdev-ttyport.c | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-> > index 3d7ae7fa5018..94c43d25ddbe 100644
-> > --- a/drivers/tty/serdev/serdev-ttyport.c
-> > +++ b/drivers/tty/serdev/serdev-ttyport.c
-> > @@ -103,11 +103,14 @@ static int ttyport_write_room(struct serdev_controller *ctrl)
-> >   static int ttyport_open(struct serdev_controller *ctrl)
-> >   {
-> >   	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-> > +	struct tty_driver *tty_drv = serport->tty_drv;
-> >   	struct tty_struct *tty;
-> >   	struct ktermios ktermios;
-> > +	dev_t dev;
-> >   	int ret;
-> > -	tty = tty_init_dev(serport->tty_drv, serport->tty_idx);
-> > +	dev = MKDEV(tty_drv->major, tty_drv->minor_start + serport->tty_idx);
-> > +	tty = tty_kopen_exclusive(dev);
+On 8/12/24 4:19 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> I believe that the now added tty_lookup_driver() has negligible impact in
-> this anyway slow path, right?
+> Make the acerhdf driver use the .should_bind() thermal zone
+> callback to provide the thermal core with the information on whether or
+> not to bind the given cooling device to the given trip point in the
+> given thermal zone.  If it returns 'true', the thermal core will bind
+> the cooling device to the trip and the corresponding unbinding will be
+> taken care of automatically by the core on the removal of the involved
+> thermal zone or cooling device.
+> 
+> The previously existing acerhdf_bind() function bound cooling devices
+> to thermal trip point 0 only, so the new callback needs to return 'true'
+> for trip point 0.  However, it is straightforward to observe that trip
+> point 0 is an active trip point and the only other trip point in the
+> driver's thermal zone is a critical one, so it is sufficient to return
+> 'true' from that callback if the type of the given trip point is
+> THERMAL_TRIP_ACTIVE.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Can you please elaborate a bit more? I don't see how the
-tty_lookup_driver() is involved in the serdev-ctrl open path anyway.
+I believe it is best to merge this through the thermal(zone0 subsystem
+together with the rest of the series:
+
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
 Regards,
-  Marco
+
+Hans
+
+
+> ---
+> 
+> v1 -> v2: No changes
+> 
+> This patch only depends on patch [08/17] introducing .should_bind():
+> 
+> https://lore.kernel.org/linux-pm/2696117.X9hSmTKtgW@rjwysocki.net/
+> 
+> ---
+>  drivers/platform/x86/acerhdf.c |   33 ++++++---------------------------
+>  1 file changed, 6 insertions(+), 27 deletions(-)
+> 
+> Index: linux-pm/drivers/platform/x86/acerhdf.c
+> ===================================================================
+> --- linux-pm.orig/drivers/platform/x86/acerhdf.c
+> +++ linux-pm/drivers/platform/x86/acerhdf.c
+> @@ -378,33 +378,13 @@ static int acerhdf_get_ec_temp(struct th
+>  	return 0;
+>  }
+>  
+> -static int acerhdf_bind(struct thermal_zone_device *thermal,
+> -			struct thermal_cooling_device *cdev)
+> +static bool acerhdf_should_bind(struct thermal_zone_device *thermal,
+> +				const struct thermal_trip *trip,
+> +				struct thermal_cooling_device *cdev,
+> +				struct cooling_spec *c)
+>  {
+>  	/* if the cooling device is the one from acerhdf bind it */
+> -	if (cdev != cl_dev)
+> -		return 0;
+> -
+> -	if (thermal_zone_bind_cooling_device(thermal, 0, cdev,
+> -			THERMAL_NO_LIMIT, THERMAL_NO_LIMIT,
+> -			THERMAL_WEIGHT_DEFAULT)) {
+> -		pr_err("error binding cooling dev\n");
+> -		return -EINVAL;
+> -	}
+> -	return 0;
+> -}
+> -
+> -static int acerhdf_unbind(struct thermal_zone_device *thermal,
+> -			  struct thermal_cooling_device *cdev)
+> -{
+> -	if (cdev != cl_dev)
+> -		return 0;
+> -
+> -	if (thermal_zone_unbind_cooling_device(thermal, 0, cdev)) {
+> -		pr_err("error unbinding cooling dev\n");
+> -		return -EINVAL;
+> -	}
+> -	return 0;
+> +	return cdev == cl_dev && trip->type == THERMAL_TRIP_ACTIVE;
+>  }
+>  
+>  static inline void acerhdf_revert_to_bios_mode(void)
+> @@ -447,8 +427,7 @@ static int acerhdf_get_crit_temp(struct
+>  
+>  /* bind callback functions to thermalzone */
+>  static struct thermal_zone_device_ops acerhdf_dev_ops = {
+> -	.bind = acerhdf_bind,
+> -	.unbind = acerhdf_unbind,
+> +	.should_bind = acerhdf_should_bind,
+>  	.get_temp = acerhdf_get_ec_temp,
+>  	.change_mode = acerhdf_change_mode,
+>  	.get_crit_temp = acerhdf_get_crit_temp,
+> 
+> 
+> 
+> 
+
 
