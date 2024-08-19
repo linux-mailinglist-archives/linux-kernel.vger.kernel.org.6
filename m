@@ -1,247 +1,168 @@
-Return-Path: <linux-kernel+bounces-292851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82499957542
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:06:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4B8957561
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFC36B2469E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6561F24FC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83301DD39C;
-	Mon, 19 Aug 2024 20:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E7C1DD3B4;
+	Mon, 19 Aug 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="a0e9wlXC"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gzhPeAn/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFF18E0E;
-	Mon, 19 Aug 2024 20:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724097954; cv=pass; b=dxI+/YmzoZ/JEqmCqHZAyxKZq/O51H5e733OB6wBFDklXw+wUza6AXQdl7Ib7iYVeyZerxhPFvlUVnjuWb9D1A779JeYUDzKQ/9NRS/ijrwliSQvf1v8JfBXXhUgbnn7zuAUniGc/tDe3NzVlDZeOJJQnXXT2aV4eTMCv1S6D8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724097954; c=relaxed/simple;
-	bh=MOMyK03eJyKQOGb8+b6fAg9EwcsINxYUyot/w6sRaY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DvaryNk+7Mu9Z1Mk6fiuVZuC0og0OcdbLUhbr4wzRgUawfcl5hg7UkCyXcoVt52vnm2gDr6PVS2ZDBDmQYLgzJCkq4LxgDJYPDQ1+hblSSZ7EKwRc+K4QJqua0nPlTKKF6to+PML8++EutVQSDrShm1ch3jrpWuBeH3Z1vt8GgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=a0e9wlXC; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: sebastian.reichel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724097881; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mbUnXMxQcnVKk11zc5ntwAcnrBBrfHYc79EHMLCWKn5hDAToFvfc1vAp5I5LFLVjWZs2zmZPiSirc7dLrhBI4q5l3AtUKYh7X+HG6aExvhm7g9A9hvCGVaF7El7Jz3FsX13HGkUqFZtihZdJcmQkOAGMks1+LHxIihLvEp6swpw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724097881; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iAA8ouM6M/6kyeb+SrOHPtwZsGUYRPGPpNqj8UiAUpY=; 
-	b=hjLtvJj3FSGEcuvYGirBRak9OxSZhSZlPIHBMWr0SkonXTpJDgubKmg8jrLlvb8JRD8nrfa8DHQJI0Np3p9H7NeF0KEzPhrteVhuBBt08xFIMqqXukhBw91DCXeE0ZPfvIyZO8xMcaAbHjjubPtUCwpCpwNLmUeakzt8B2B1nRc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724097881;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=iAA8ouM6M/6kyeb+SrOHPtwZsGUYRPGPpNqj8UiAUpY=;
-	b=a0e9wlXCB7HKm0DAbBwhKl41bOz9h4d/rV3kzgUZKYrlZ8h7gQImGySlTwv571zT
-	8iNGG6SiTKkMvinFqdhrbHNxMVjc8OVup8C2rybL+BooMVy1wPV6zvLLl2H7GIzOoFA
-	oWALsvdVit+8vfOcXWLluYpzi0Pk50AFsez/ojE0=
-Received: by mx.zohomail.com with SMTPS id 1724097879493204.13829241998803;
-	Mon, 19 Aug 2024 13:04:39 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org, Johan Jonker <jbx6244@yandex.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-Date: Mon, 19 Aug 2024 16:06:12 -0400
-Message-ID: <1944590.atdPhlSkOF@trenzalore>
-In-Reply-To: <c5014fe3-130b-4ace-a66e-8773a9a4f1dc@yandex.com>
-References:
- <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
- <c5014fe3-130b-4ace-a66e-8773a9a4f1dc@yandex.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E06F18E0E;
+	Mon, 19 Aug 2024 20:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724098121; cv=none; b=toD1B+ZOIfQesnJAuGbRyXAZVf61VL+wI0/aChS61vMsfjDZtVEiZRyR3UxU2YKSC2SBrvcFw0oQmTnLhh8AxZA30lnVlxhtHwzEAoHaKe/bIVF1ok9KvINAICGWvDP4mHOTLutFXJtY9UoRzlAirOVi5h4MhAY0OrYh2P2p2iE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724098121; c=relaxed/simple;
+	bh=2HCYxWf0jM8B0Mt6KGgwSSzmUDx2DPGXcQPeYf6+6TA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=HCm/qoRH3zD72tsd+lQQTbdwplf8QK77wgaF19amFhqqMnpjF2KbykQ8sRJoLZUgUYR+B00FmHBuU0doAL3Ytl2HVckLGCwUnFs8gDk2nalQ24lcsdXs4YOQY0JvmZPsRtoUxCDUfao4zVgD7fZ1LxIyRdRef2z6gAF7LBEW0kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gzhPeAn/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JATc9L002694;
+	Mon, 19 Aug 2024 20:08:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=oOSnHOne6wGKWYRAglUsHf
+	VosEcu5Tx8J8KBurt7o8Q=; b=gzhPeAn/KfnIXbAgtYuAd3f8BQJ9/f3dTuTxxe
+	mgMPKfUnCDiOU8CnHrLXHjLxnmHOQyquY2e9uoN3oYmBqSdPyTYIS/zTAPpf6wUw
+	D2h0zkcfTpDD2qWgRkfbk2m9EWBXTtieQoY+kvSsFAZr7wRfEhDrBFFNFSsRxtQO
+	y6dQuoICw7wkwBEpAs+sip3wMDyH43nrB6Mt3TPKKcMl9hO6Q6tkP21GXA4DDTLo
+	LsJxgpeoCirlOuOkXgtE5Pl57Sea3Kg5J4lsE5UNf8RmbJYdxskPfQ1gXLWacACA
+	kMrgzmKeSA0ktajrbOcRZ9OnyBA2Jy4H/CKVMVhk3Wty7eAw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 413qxg34cw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:08:23 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JK8MaF030447
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 20:08:22 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 13:08:21 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: [PATCH v2 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
+Date: Mon, 19 Aug 2024 13:07:44 -0700
+Message-ID: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABCmw2YC/4WNTQ6CMBBGr0Jm7ZiW8r/yHoYFjgNMlIKtNhrC3
+ a1cwOV7yfe+FTw7YQ9NsoLjIF5mGyE9JEBjZwdGuUaGVKWZqnSFyySEw13sDUOBWqPriD2awvR
+ 5XWRkTA1xvDju5b2Hz23kUfxzdp/9J+if/ZsMGhX2VUl5WbK6UH16vITE0pHmCdpt275RkSHav
+ gAAAA==
+To: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Heikki
+ Krogerus" <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Johan Hovold <johan@kernel.org>, <stable@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724098101; l=2324;
+ i=quic_bjorande@quicinc.com; s=20230915; h=from:subject:message-id;
+ bh=2HCYxWf0jM8B0Mt6KGgwSSzmUDx2DPGXcQPeYf6+6TA=;
+ b=nSlPKXudz2PHd80dzcRxXlZkHQ+HGAxizHD8iJltKxs4u/suCYiw+9Sw0GnIuYS2erzPHeF9N
+ iRXSFLJykobCtK6TkUGSGWfeDXIYFUCY55c8JRBGlOHM8B/nWni7FiY
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=ed25519;
+ pk=VkhObtljigy9k0ZUIE1Mvr0Y+E1dgBEH9WoLQnUtbIM=
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 97sTMK23GBOeR069Yn9WxrlkH85WNnQo
+X-Proofpoint-GUID: 97sTMK23GBOeR069Yn9WxrlkH85WNnQo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=1 clxscore=1015 bulkscore=1
+ adultscore=0 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408190137
 
-Hi Johan,
+Amit and Johan both reported a NULL pointer dereference in the
+pmic_glink client code during initialization, and Stephen Boyd pointed
+out the problem (race condition).
 
-On Thursday, 15 August 2024 05:30:25 EDT Johan Jonker wrote:
-> Some comments below. Whenever useful.
-> 
-> On 8/2/24 23:45, Detlev Casanova wrote:
-> > This device tree contains all devices necessary for booting from network
-> > or SD Card.
-> > 
-> > It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> > SDHCI (everything necessary to boot Linux on this system on chip) as
-> > well as Ethernet, I2C, SPI and OTP.
-> > 
-> > Also add the necessary DT bindings for the SoC.
-> > 
-> > Signed-off-by: Liang Chen <cl@rock-chips.com>
-> > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > [rebase, squash and reword commit message]
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> 
-> [..]
-> 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> > b/arch/arm64/boot/dts/rockchip/rk3576.dtsi new file mode 100644
-> > index 0000000000000..00c4d2a153ced
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> [..]
-> 
-> For uart0..uart11:
-> > +
-> > +	uart1: serial@27310000 {
-> > +		compatible = "rockchip,rk3576-uart", "snps,dw-apb-
-uart";
-> > +		reg = <0x0 0x27310000 0x0 0x100>;
-> > 
-> > +		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> "interrupts" are sort just like other properties. A mix of sort styles
-> exists, so check all nodes.
+While investigating, and writing the fix, I noticed that
+ucsi_unregister() is called in atomic context but tries to sleep, and I
+also noticed that the condition for when to inform the pmic_glink client
+drivers when the remote has gone down is just wrong.
 
-Ok, so it should be sorted alphabetically with the following exceptions:
-- 'compatible' and 'reg.*' on top
-- "#.*" at the end, sorted
-- "status" last.
+So, let's fix all three.
 
-Is that right ?
+As mentioned in the commit message for the UCSI fix, I have a series in
+the works that makes the GLINK callback happen in a sleepable context,
+which would remove the need for the clients list to be protected by a
+spinlock, and removing the work scheduling. This is however not -rc
+material...
 
-> > +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
-> > +		clock-names = "baudclk", "apb_pclk";
-> > 
-> > +		reg-shift = <2>;
-> > +		reg-io-width = <4>;
-> 
-> Move below "reg".
-> 
-> > +		dmas = <&dmac0 8>, <&dmac0 9>;
-> > +		pinctrl-names = "default";
-> > +		pinctrl-0 = <&uart1m0_xfer>;
-> > +		status = "disabled";
-> > +	};
-> > +
-> > +	pmu: power-management@27380000 {
+In addition to the NULL pointer dereference, there is the -ECANCELED
+issue reported here:
+https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+Johan reports that these fixes do not address that issue.
 
-[...]
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+Changes in v2:
+- Refer to the correct commit in the ucsi_unregister() patch.
+- Updated wording in the same commit message about the new error message
+  in the log.
+- Changed the data type of the introduced state variables, opted to go
+  for a bool as we only represent two states (and I would like to
+  further clean this up going forward)
+- Initialized the spinlock
+- Link to v1: https://lore.kernel.org/r/20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com
 
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				clocks = <&cru ACLK_VOP>,
-> > +					 <&cru HCLK_VOP>,
-> > +					 <&cru HCLK_VOP_ROOT>;
-> > +				pm_qos = <&qos_vop_m0>,
-> > +					 <&qos_vop_m1ro>;
-> > +
-> > +				power-domain@RK3576_PD_USB {
-> 
-> Since when is USB part of VOP?
-> Recheck?
+---
+Bjorn Andersson (3):
+      soc: qcom: pmic_glink: Fix race during initialization
+      usb: typec: ucsi: Move unregister out of atomic section
+      soc: qcom: pmic_glink: Actually communicate with remote goes down
 
-The TRM doesn't tell me anything, but If I don't put it as a child of VOP, it 
-just hangs when the kernel tries to shut it down.
+ drivers/power/supply/qcom_battmgr.c   | 16 ++++++++-----
+ drivers/soc/qcom/pmic_glink.c         | 40 ++++++++++++++++++++++----------
+ drivers/soc/qcom/pmic_glink_altmode.c | 17 +++++++++-----
+ drivers/usb/typec/ucsi/ucsi_glink.c   | 43 ++++++++++++++++++++++++++---------
+ include/linux/soc/qcom/pmic_glink.h   | 11 +++++----
+ 5 files changed, 87 insertions(+), 40 deletions(-)
+---
+base-commit: 2fd613d27928293eaa87788b10e8befb6805cd42
+change-id: 20240818-pmic-glink-v6-11-races-363f5964c339
 
-[...]
-
-> > +
-> > +	pinctrl: pinctrl {
-> > +		compatible = "rockchip,rk3576-pinctrl";
-> > +		rockchip,grf = <&ioc_grf>;
-> > +		rockchip,sys-grf = <&sys_grf>;
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +		ranges;
-> > +
-> > 
-> > +		gpio0: gpio@27320000 {
-> 
-> The use of gpio nodes as subnode of pinctrl is deprecated.
-> 
-> patternProperties:
->   "gpio@[0-9a-f]+$":
->     type: object
-> 
->     $ref: /schemas/gpio/rockchip,gpio-bank.yaml#
->     deprecated: true
-> 
->     unevaluatedProperties: false
-
-I tried putting the gpio nodes out of the pinctrl node, they should work 
-because they already have a gpio-ranges field.
-But unfortunately, that seem to break the pinctrl driver which hangs at some 
-point. Maybe some adaptations are needed to support this, or am I missing 
-something ?
-
-> > +			compatible = "rockchip,gpio-bank";
-> 
-> When in use as separate node the compatible must be SoC related.
-> 
-> Question for the maintainers: Extra entry to rockchip,gpio-bank.yaml ??
-> 
-> > +			reg = <0x0 0x27320000 0x0 0x200>;
-> > +			interrupts = <GIC_SPI 153 
-IRQ_TYPE_LEVEL_HIGH>;
-> > +			clocks = <&cru PCLK_GPIO0>, <&cru 
-DBCLK_GPIO0>;
-> > +
-> > +			gpio-controller;
-> > +			#gpio-cells = <2>;
-> > +			gpio-ranges = <&pinctrl 0 0 32>;
-> > +			interrupt-controller;
-> > +			#interrupt-cells = <2>;
-> > +		};
-> > +
-> > +		gpio1: gpio@2ae10000 {
-> > +
-> > +		gpio2: gpio@2ae20000 {
-> > +
-> > +		gpio3: gpio@2ae30000 {
-> > +
-> > +		gpio4: gpio@2ae40000 {
-> > +	};
-> > +};
-> > +
-> > +#include "rk3576-pinctrl.dtsi"
-
-Regards,
-
-Detlev
-
-
+Best regards,
+-- 
+Bjorn Andersson <quic_bjorande@quicinc.com>
 
 
