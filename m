@@ -1,171 +1,197 @@
-Return-Path: <linux-kernel+bounces-292978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA6A957758
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:19:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA3D95775A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0401C23176
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE47A1C22E39
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52CE1DD396;
-	Mon, 19 Aug 2024 22:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eqypCEJe"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01891DB458
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A701DD392;
+	Mon, 19 Aug 2024 22:19:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95C71DB449;
+	Mon, 19 Aug 2024 22:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105963; cv=none; b=rQ88yd5iIMB8vWK0nnEiGcSaR8KFi5Fygipmt6zXr8Ge8A77xHyxX3vaklT8zyFVOw8A3Q+K4C59r0y5313ZVXUvfg8DUfMI9SxAZM7UOjEbkECbTP5NEO8oOF9gZ/TDyRJo/WvlkaUBlnts9VM0EJUwTldJZD6/iLlUV6NpfVU=
+	t=1724105999; cv=none; b=eQdN0DgH27vJaRULVHxVZB/wmSZCCYs71q3aZ+QOSAlI2OZ388XYbr7hzTZ5EZceeY2dO29cHkBnULf5XY3DoJhTHlWgh1qMloc1yBug995GGcfsY6oXl63NueSy6Nble5tKwN9R+hQYmg4meNuBIfupnFZcQfhVE3Htp2ImS8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105963; c=relaxed/simple;
-	bh=SYp3tksf77bo6qTn2UGfcC0zNiZVqhwqCOP3DWafP9E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=M2DvugFJsVvkR5DMuMxyomcrGxiFk2SqK2kno73kkeR8Xz1f6dUMWvg2nPVijT/l+atnMm6jWE2xkxxQTdGgBsmYcZGPU5HIhMtrMgn+oOkY72uYjry7YNNrWAYu93LDtmnOnVMV97o/l3ceP0v4UUNCyPUc8siE4/OW5cqfhOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eqypCEJe; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d2f925b01so4523156b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724105961; x=1724710761; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SYLh/JPAc2oF3XEhfhevi/a4vY//ccYnWwMPOLwIpg=;
-        b=eqypCEJeQwJo43ULBUahh2ta3RWnT5lzs1eyRIX95z9I00BkVUv4r3GQcBFcSuoOXA
-         M6gCDqi/J3HhAtpXjfCUvSfZp59LFeKGBq3iTo5oAp3X2sdMRGIPHvYn25+C1fbg8kc1
-         XQnmwZ6mYrKWOraE170gsCStpQs63dQgXG6hMbjg9alVMpyZr8vQaRVhVZDWhMzAUS8r
-         lHTPXFssL3bPaA3o9MstXzFFL31MwqKAh975KvBxJjJCJEjpz87FhEnrl7LWw0sbv/74
-         XGlwUobv5VYw/lWrtY7HgGUvhTG1UOJP26QaDEy59GyiJu8a2+1VGlI+OzMkRj7l2M4a
-         xaoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724105961; x=1724710761;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SYLh/JPAc2oF3XEhfhevi/a4vY//ccYnWwMPOLwIpg=;
-        b=mUhTyvK+CD5QLrDi4prD71H8Fl0c1XN1bCq9jopHGL3B3fIlwLYUY1SUq2vMAELarp
-         FZ1jFYFiHKGHhQk6Uwb+GF0ZORJyqz8R7nEF6nWRVDluOavuyw/V6SOgPr7WztopgPzG
-         5cZbyv+F0pPMggOoHd5SqV1Th/GIrKHeWbN2X9pNhUmqtLZDyZc7knLwTRA77dwOHpSZ
-         05JzUtrSfbqoanvzjaPbGV5nyJ0eXMFVfOAq957wncr9RI1ql7upFTcapb4swVuK2elF
-         W/20qvT+67sbwca26G3/8Io4vnHzlv2tK4hi8wlNIaAqyeq+jRivCsJ+690XKQyFqX7N
-         STtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjR6yLytS9MuhmUkU/GZgzSuMTjIcSujIfkdhneFJPPqvibTD0dc0i8cS+Y8Guy8isVmAMZsnxvEjcw/pg94ySNdtKwtq1N2lSZBiJ
-X-Gm-Message-State: AOJu0YxyzrUW+BXqq55a6+dNnzLEWxJksWVCkVklACvUUK/t7ZClIN6z
-	D//Z7oUA0kR2dFV+KG6ttpsFLy/JCl0viCXzIRhbRJEQD7UG572h/tnLFDdCFiz2ZZ/izl712kU
-	vCA==
-X-Google-Smtp-Source: AGHT+IHm278QwIY/OX92uRPN+eRVywdVAQcXvKqkS5cFMSC5mSDI9+smOYf7rkHoPuip6boFZYqviDtYqSc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f06:b0:706:71f1:51bd with SMTP id
- d2e1a72fcca58-713c53a2077mr42981b3a.6.1724105960751; Mon, 19 Aug 2024
- 15:19:20 -0700 (PDT)
-Date: Mon, 19 Aug 2024 15:19:19 -0700
-In-Reply-To: <20240812171341.1763297-3-vipinsh@google.com>
+	s=arc-20240116; t=1724105999; c=relaxed/simple;
+	bh=yG1zQUbI2Ajj4i85UdepG+N4h7adB4AVz6eU8zpAAkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ffqyVFsjBh9vQ4PhUD58No/P05M8lnbx939CN+SxzLxKjrtdl92pzfz2qf99JIyaNfSrDmB56elXmC7fypD24cndHWMlmQ0tGO0N9qZz0KSyA6ONxU663ysEdZbzajPw+0df10ggZyGQXGB3qwtwhGDXaGnCRXaPXE1MQduUmwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B1A6339;
+	Mon, 19 Aug 2024 15:20:22 -0700 (PDT)
+Received: from [10.57.70.210] (unknown [10.57.70.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02B683F58B;
+	Mon, 19 Aug 2024 15:19:52 -0700 (PDT)
+Message-ID: <dccfad5a-cda8-436b-87c9-b588cf790e86@arm.com>
+Date: Mon, 19 Aug 2024 23:19:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-3-vipinsh@google.com>
-Message-ID: <ZsPE56MnelsV490m@google.com>
-Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
- MMU under MMU read lock
-From: Sean Christopherson <seanjc@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 17/19] irqchip/gic-v3-its: Share ITS tables with a
+ non-trusted hypervisor
+Content-Language: en-GB
+To: Marc Zyngier <maz@kernel.org>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-18-steven.price@arm.com>
+ <beff9162-e1ba-4f72-91ea-329eaed48dbc@arm.com> <86y14sy1qo.wl-maz@kernel.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <86y14sy1qo.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024, Vipin Sharma wrote:
-> Use MMU read lock to recover NX huge pages belonging to TDP MMU. Iterate
-> through kvm->arch.possible_nx_huge_pages while holding
-> kvm->arch.tdp_mmu_pages_lock. Rename kvm_tdp_mmu_zap_sp() to
-> tdp_mmu_zap_sp() and make it static as there are no callers outside of
-> TDP MMU.
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 933bb8b11c9f..7c7d207ee590 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -817,9 +817,11 @@ static void tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
->  	rcu_read_unlock();
->  }
->  
-> -bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
-> +static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
+Hi Marc
 
-At this point, I think we should rename this to tdp_mmu_zap_possible_nx_huge_page(),
-as I can't imagine there's another use case where we'll zap a SP starting from the
-SP itself, i.e. without first walking from the root.
+On 19/08/2024 16:24, Marc Zyngier wrote:
+> On Mon, 19 Aug 2024 15:51:00 +0100,
+> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> Hi Steven,
+>>
+>> On 19/08/2024 14:19, Steven Price wrote:
+>>> Within a realm guest the ITS is emulated by the host. This means the
+>>> allocations must have been made available to the host by a call to
+>>> set_memory_decrypted(). Introduce an allocation function which performs
+>>> this extra call.
+>>>
+>>> For the ITT use a custom genpool-based allocator that calls
+>>> set_memory_decrypted() for each page allocated, but then suballocates
+>>> the size needed for each ITT. Note that there is no mechanism
+>>> implemented to return pages from the genpool, but it is unlikely the
+>>> peak number of devices will so much larger than the normal level - so
+>>> this isn't expected to be an issue.
+>>>
+>>
+>> This may not be sufficient to make it future proof. We need to detect if
+>> the GIC is private vs shared, before we make the allocation
+>> choice. Please see below :
+> 
+> What do you mean by that? Do you foresee a *GICv3* implementation on
+> the realm side?
 
->  {
-> -	u64 old_spte;
-> +	struct tdp_iter iter = {};
+No, but it may be emulated in the Realm World (by a higher privileged 
+component, with future RMM versions with Planes - Plane0) and this
+"Realm guest" may run in a lesser privileged plane and must use
+"protected" accesses to make sure the accesses are seen by the "Realm
+world" emulator.
 
-Rather than initializes the on-stack structure, I think it makes sense to directly
-initialize the whole thing and then WARN after, e.g. so that its easier to see
-that "iter" is simply being filled from @sp.
+> 
+> [...]
+> 
+>> How about something like this folded into this patch ? Or if this
+>> patch goes in independently, we could carry the following as part of
+>> the CCA
+>> series.
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index 6f4ddf7faed1..f1a779b52210 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -209,7 +209,7 @@ static struct page *its_alloc_pages_node(int node,
+>> gfp_t gfp,
+>>
+>>   	page = alloc_pages_node(node, gfp, order);
+>>
+>> -	if (page)
+>> +	if (gic_rdists->is_shared && page)
+>>   		set_memory_decrypted((unsigned long)page_address(page),
+>>   				     BIT(order));
+>>   	return page;
+>> @@ -222,7 +222,8 @@ static struct page *its_alloc_pages(gfp_t gfp,
+>> unsigned int order)
+>>
+>>   static void its_free_pages(void *addr, unsigned int order)
+>>   {
+>> -	set_memory_encrypted((unsigned long)addr, BIT(order));
+>> +	if (gic_rdists->is_shared)
+>> +		set_memory_encrypted((unsigned long)addr, BIT(order));
+>>   	free_pages((unsigned long)addr, order);
+>>   }
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>> index 6fb276504bcc..48c6b2c8dd8c 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -2015,6 +2015,8 @@ static int __init gic_init_bases(phys_addr_t
+>> dist_phys_base,
+>>   	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
+>>   	gic_data.rdists.gicd_typer = typer;
+>>
+>> +	gic_data.rdists.is_shared =
+>> !arm64_is_iomem_private(gic_data.dist_phys_base,
+>> +							    PAGE_SIZE);
+> 
+> Why would you base the status of the RDs on that of the distributor?
 
-	struct tdp_iter iter = {
-		.old_spte = sp->ptep ? kvm_tdp_mmu_read_spte(sp->ptep) : 0,
-		.sptep = sp->ptep,
-		.level = sp->role.level + 1,
-		.gfn = sp->gfn,
-		.as_id = kvm_mmu_page_as_id(sp),
-	};
+We expect that, the GIC as a whole is either Realm or non-secure, but
+not split (like most of the devices). The only reason for using rdists
+is because thats shared and available with the ITS driver code. (and
+was an easy hack). Happy to change this to something better.
 
-	lockdep_assert_held_read(&kvm->mmu_lock);
+> 
+>>   	gic_enable_quirks(readl_relaxed(gic_data.dist_base + GICD_IIDR),
+>>   			  gic_quirks, &gic_data);
+>>
+>> diff --git a/include/linux/irqchip/arm-gic-v3.h
+>> b/include/linux/irqchip/arm-gic-v3.h
+>> index 728691365464..1edc33608d52 100644
+>> --- a/include/linux/irqchip/arm-gic-v3.h
+>> +++ b/include/linux/irqchip/arm-gic-v3.h
+>> @@ -631,6 +631,7 @@ struct rdists {
+>>   	bool			has_rvpeid;
+>>   	bool			has_direct_lpi;
+>>   	bool			has_vpend_valid_dirty;
+>> +	bool			is_shared;
+>>   };
+>>
+>>   struct irq_domain;
+>>
+> 
+> I really don't like this.
+> 
+> If we have to go down the route of identifying whether the GIC needs
+> encryption or not based on the platform, then maybe we should bite the
+> bullet and treat it as a first class device, given that we expect
+> devices to be either realm or non-secure.
 
-	/*
-	 * Root shadow pages don't a parent page table and thus no associated
-	 * entry, but they can never be possible NX huge pages.
-	 */
-	if (WARN_ON_ONCE(!sp->ptep))
-		return false;
+Agreed and that is exactly we would like. i.e., treat the GIC as either
+Realm or NS (as a whole). Now, how do we make that decision is based on
+whether GIC Distributor area is private or not. Like I mentioned above, 
+we need a cleaner way of making this available in the ITS driver.
 
-> +
-> +	lockdep_assert_held_read(&kvm->mmu_lock);
->  
->  	/*
->  	 * This helper intentionally doesn't allow zapping a root shadow page,
-> @@ -828,12 +830,25 @@ bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
->  	if (WARN_ON_ONCE(!sp->ptep))
->  		return false;
->  
-> -	old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
-> -	if (WARN_ON_ONCE(!is_shadow_present_pte(old_spte)))
-> +	iter.old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
-> +	iter.sptep = sp->ptep;
-> +	iter.level = sp->role.level + 1;
-> +	iter.gfn = sp->gfn;
-> +	iter.as_id = kvm_mmu_page_as_id(sp);
-> +
-> +retry:
-> +	/*
-> +	 * Since mmu_lock is held in read mode, it's possible to race with
-> +	 * another CPU which can remove sp from the page table hierarchy.
-> +	 *
-> +	 * No need to re-read iter.old_spte as tdp_mmu_set_spte_atomic() will
-> +	 * update it in the case of failure.
-> +	 */
-> +	if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
->  		return false;
->  
-> -	tdp_mmu_set_spte(kvm, kvm_mmu_page_as_id(sp), sp->ptep, old_spte,
-> -			 SHADOW_NONPRESENT_VALUE, sp->gfn, sp->role.level + 1);
-> +	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE))
-> +		goto retry;
+Thoughts ? Is that what you were hinting at ?
 
-I'm pretty sure there's no need to retry.  Non-leaf SPTEs don't have Dirty bits,
-and KVM always sets the Accessed bit (and never clears it) for non-leaf SPTEs.
-Ditty for the Writable bit.
+Suzuki
 
-So unless I'm missing something, the only way for the CMPXCHG to fail is if the
-SPTE was zapped or replaced with something else, in which case the sp->spt will
-fail.  I would much prefer to WARN on that logic failing than have what appears
-to be a potential infinite loop.
+
+> Thanks,
+> 
+> 	M.
+> 
+
 
