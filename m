@@ -1,151 +1,91 @@
-Return-Path: <linux-kernel+bounces-291331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0FE9560FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:57:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4EB9560FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6A01F2242F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133DB1C2124C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D561CD37;
-	Mon, 19 Aug 2024 01:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eidlqQiD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568751CF83;
+	Mon, 19 Aug 2024 02:01:11 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F815182B3;
-	Mon, 19 Aug 2024 01:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BB12B8B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724032624; cv=none; b=WlNFKzlaemfxLj2Pua+gpITU3shLnw8l7aZ6nZmxO64uidTM9k0my+a2k4OBaav+H058EtlF5tPVatRsjQGios4EPzGTV5lRGBUPvn26bIJSIgXBbyI+Jn0GXwSEacw2B6Ka0JLDGhUJIu0K5p7TC4M1cEWTAEzaZ5F+laAihaY=
+	t=1724032870; cv=none; b=dEHBx3ZCujsytAI25wY+0ydzafrRRMwWfGWGNMASTZuZjZZ6TgD3EcIVbDWhjYmIu+KFNSyKnIwYUfqybXqNSkF0eFk0l+mnxyt1eXmtu+5/32s1OehsuUajfGYFeSvPrQJvvpp1OzAJUvMPgHhtn9ipjNjfMFUwE7U7f43XHWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724032624; c=relaxed/simple;
-	bh=Gy1/T7jrcxQ8pmjT5ZNpftxLkOgjONj4piSfHaFfBiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d82fHdQ6ulgrZTyLBZ6HradMllOx3J/7hw6IKshBsGPNZBvOAFrnJ+Y6wrHwHbwtLYQ++nJom14Jg5J9+/bV84y7y3O2oJYifmLKt1L/Ju+BIJ41OhZtoktFKVr0ulQcxWj/Ln7FFeVbkV8Tmt7fESQXF6CA12uDnFgQ0X3k9ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eidlqQiD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724032616;
-	bh=Z9ua4HYe3l27bRihDl//IsW8kp5DNKDWbNNkXdoETLM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eidlqQiDy0N8xz8ZMdsnu9naWVy88+E7JY2AoYtXST/m6SbHWo7/IPR/4PzxOBG7v
-	 ZjxMa0ZP5sX3XbPyDuPVxmexvbWdcVE9oXIsr0A0zbNP5qC2uZFDJoWbK4HVUyiVAi
-	 2UpDKslndhOemttxBUUAeANSBPzG7UzSJC9QUha8tc/TlIa4qXlx7y3AvxP/RPhp8R
-	 X0qrLQ5lRGVYLHVFpAVwYPXoTmL/a9QqbmpBTiRS0/IJaVpQQSM+9PpL9NOGzXTIOb
-	 sFZ565WxBD1CvmytXJESfBc6+gBmvnkl61PkTLPEPqZKRK+ti+7bSb4lHUbHIWndPS
-	 yhGN0Odrc+4+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnG1M2MMsz4wb0;
-	Mon, 19 Aug 2024 11:56:55 +1000 (AEST)
-Date: Mon, 19 Aug 2024 11:56:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alex Deucher <alexdeucher@gmail.com>, Dave Airlie <airlied@redhat.com>
-Cc: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the amdgpu tree
-Message-ID: <20240819115654.77aeabcc@canb.auug.org.au>
+	s=arc-20240116; t=1724032870; c=relaxed/simple;
+	bh=OgWOCT4Wjlm+HV9ebpkjY4u9pBTOUIOFipDgA4B67mM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UkTuawZkM97s6G4g1IiVBEhOKUk4vqQ4Od8zLJkt2fj4EPAb1ug5+h4XjRJJKfDY681eBwvfR21cCzySXD2gc+jr8lpFY88Oxsq+I61UAxydAvEb9piltPs/lE2e9K3k6SrCLiNl5QmBdfJq5mgWyOlw6bSpq6P7JHd5bapK7So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9504974dso389766339f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 19:01:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724032868; x=1724637668;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+QNJpId+oyT1kDC7KAhEmCmOfaeqxQcEtSQX5RD9F4=;
+        b=VVCVkojmMILcJxbDz3mC/ngDpAQm0BPz7nMDFrmdQ8tDt2geCsMOn/c0Dkr0PFyVqv
+         tFvRw4jNJuczX4AYlp2bD7r1M/FWhzomSFFOZ5nBJfON8AGKFLZxg8nNfe9PaeK/DI5F
+         uKlEGuIkzWCw+6t4l3nOKAuUjCNvH+CPqSlDyNKOY7cmkmU5k9nXmJCHqFquYsUY16oT
+         uHviW+NL2br5ety3Z7+UsKtSW2plWQGukfvxhBio0y5/2GLtQLg3GHnBBuH6cpIkWlDo
+         wvpawU2KX55tI0w51hYo2/DNtyV/iVD2gFMZ9VFKYFdDEtdPDLv0k8TotNtfB9PjHB7J
+         hzTQ==
+X-Gm-Message-State: AOJu0YwStVo/MRQO3VUljXE2ir0xPB2jM5vM1sjag9+uN443tIT+//0A
+	7bgwDDRiq3Xsm4l8W6KvIoCy2br2JXe8x82DqRU5vtKK7D30B5IOrj1NnVbgrxGl4RaSRJMxBrG
+	5Z4KstHTylUC0DL7YckSiBJA+Xatb8c5aiDb26PkFqBMN/+FDoZR+71Y=
+X-Google-Smtp-Source: AGHT+IFbsrvqWxtPr/Z4SBXtgLE6QDy61uc0rX9JF0PAMEObOP0dLEvbOcI89pjz4fAxsz2jXLvs6pGxl8y/bjUw0HsPpsjaXZ9s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/t_c0q45LlXL1EPMNS1P.A24";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6638:1316:b0:4c0:9a3e:c260 with SMTP id
+ 8926c6da1cb9f-4cce13ddc5cmr690545173.0.1724032868676; Sun, 18 Aug 2024
+ 19:01:08 -0700 (PDT)
+Date: Sun, 18 Aug 2024 19:01:08 -0700
+In-Reply-To: <0000000000007541d9061ff83615@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b81092061fffae2b@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] WARNING: bad unlock balance in ocfs2_read_blocks
+From: syzbot <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/t_c0q45LlXL1EPMNS1P.A24
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Hi all,
+***
 
-After merging the amdgpu tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Subject: Re: [syzbot] [ocfs2?] WARNING: bad unlock balance in ocfs2_read_blocks
+Author: lizhi.xu@windriver.com
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_job.c: In function 'amdgpu_job_timedout':
-drivers/gpu/drm/amd/amdgpu/amdgpu_job.c:90:33: error: too many arguments to=
- function 'drm_sched_start'
-   90 |                                 drm_sched_start(&ring->sched, true);
-      |                                 ^~~~~~~~~~~~~~~
-In file included from drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h:28,
-                 from drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h:29,
-                 from drivers/gpu/drm/amd/amdgpu/amdgpu.h:43,
-                 from drivers/gpu/drm/amd/amdgpu/amdgpu_job.c:30:
-include/drm/gpu_scheduler.h:582:6: note: declared here
-  582 | void drm_sched_start(struct drm_gpu_scheduler *sched);
-      |      ^~~~~~~~~~~~~~~
+remove metadata io lock when sb getblk fail
 
-Caused by commit
+#syz test: upstream c3f2d783a459
 
-  15789fa0f0e2 ("drm/amdgpu: add per ring reset support (v5)")
-
-interacting with commit
-
-  83b501c1799a ("drm/scheduler: remove full_recover from drm_sched_start")
-
-from the drm tree.
-
-I have applied the following merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 19 Aug 2024 11:46:24 +1000
-Subject: [PATCH] fixup for "drm/amdgpu: add per ring reset support (v5)"
-
-interacting with "drm/scheduler: remove full_recover from drm_sched_start"
-from the drm tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/=
-amdgpu/amdgpu_job.c
-index c6a1783fc9ef..597489dea114 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -87,7 +87,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct=
- drm_sched_job *s_job)
- 			atomic_inc(&ring->adev->gpu_reset_counter);
- 			amdgpu_fence_driver_force_completion(ring);
- 			if (amdgpu_ring_sched_ready(ring))
--				drm_sched_start(&ring->sched, true);
-+				drm_sched_start(&ring->sched);
- 			goto exit;
- 		}
- 	}
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/t_c0q45LlXL1EPMNS1P.A24
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbCpmYACgkQAVBC80lX
-0GxPqQf/cMKY1d8GDXBEnR3Uqre4pyfcrR1gNfkAA88HldPdvHn2fgvNQ4TfTL3/
-CLuQzPDFdcvAerPtJs54epGSbEZHGNFCw1evq5rMtxBgcth/rCMxXhrqo8nue1Gv
-SauDUJqFKt7fsw9sXHXOBekxhWds34BuaEO5D+9379Io2+6PT17deRY0fmOrRrmf
-O9Pkch3+MeZnCySTRrcJ6uL6TaXmSdX6fa0eR1ufwK4e73OVCmpclxr6JEGDQS70
-JA/TByNqYAqaWtOI0BjvjDb9foimXuaLB9h6wSDuMERJ+O6/y1N1qmQqQ4MVgGFU
-QpIsI+JPYRO9300PAQlSZg6+W9AHJA==
-=0kIr
------END PGP SIGNATURE-----
-
---Sig_/t_c0q45LlXL1EPMNS1P.A24--
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index cdb9b9bdea1f..e62c7e1de4eb 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -235,7 +235,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		if (bhs[i] == NULL) {
+ 			bhs[i] = sb_getblk(sb, block++);
+ 			if (bhs[i] == NULL) {
+-				ocfs2_metadata_cache_io_unlock(ci);
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+ 				/* Don't forget to put previous bh! */
 
