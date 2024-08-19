@@ -1,134 +1,277 @@
-Return-Path: <linux-kernel+bounces-291820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A13956763
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C98956768
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA02B226F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBF81C21ABB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6302A15B14D;
-	Mon, 19 Aug 2024 09:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48115B97A;
+	Mon, 19 Aug 2024 09:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5x+a2zC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h0bYYQJZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D7FBE65;
-	Mon, 19 Aug 2024 09:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F0213C81B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724060741; cv=none; b=rtAW/QtOzbIsKuwQp6HM6Ida54pczP+uNQS9cXUmpTKpQsGyzuIEs0ZYZQaKSSR3ZehFUGlju+u5+dPVRUR4eM7+v29dWnPbBY+JL267dlFSB1g65IETKtS6JWXuWs1uOlP+1rdA1ZjOKNL+rgq6xaqdm7HmrUC5CsQXvbMKTT4=
+	t=1724060791; cv=none; b=K5e28RBkXKqKlPCQIyH43AKymNc1NKc3EuZvyhUpbcavXDUKTXmqo80+KAMOchXUn2/0Re9H9dWsaUCOk7MpdvAs2qdK8a1XcFAOOU9pBjFq5IYFZDvEEn7W0XRGkxgabAODVR1E8GGNljjBwLJZKQ74rO5VVrMKPg2Yq4luRM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724060741; c=relaxed/simple;
-	bh=YS/8TiJFBdjMRL1xjOBFUMV2FIcDFujd6QrtyTla/zQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C6JF/6JXauruR+3z6bW/PW8G2UC8jqhmdGmjLGamup/5DObivN03sDX9cfOTk1P9CXoP4IbGKbTmQZZKibpPMxvqosjfkJSjZj3yreHfyp/HNpdmViFUjEpsKo8tItxW72k47PMvMHmwMtUpc8C/ywuoP3zq1Pf3FVXuVaSgU+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5x+a2zC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445D0C32782;
-	Mon, 19 Aug 2024 09:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724060741;
-	bh=YS/8TiJFBdjMRL1xjOBFUMV2FIcDFujd6QrtyTla/zQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s5x+a2zC5SDQWxuHaXQyn3FmtHEXKyHUYwPe3V4QjSWF8l+tCL4hbewNwaxazMKEJ
-	 ZtZBxQYM9FlP6Ln+WDnauOfQtCxko4aq5JxuszY67j7Dd24pMGv7vr9PSfIbCYea9N
-	 7qFO/mAmMkSZ8WMl3xG3HCUDQ9OY+MxAdNYsyhxWkpGVe+YNdJidIp+YGFs7SensMl
-	 XokHXzvBjtuWtjLS8tiheK8nUePhzKMnaRgaELN7iq/+eecKSPULIh0c9K7UzgPLY+
-	 byeGC5TxAGUGjxwJcLCK5GzGsnPfvatepq2I0mK2mFORqivYgWXPUbrautnz6+z6ws
-	 G6L3wE/ACvszA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sfyxG-004rgz-R8;
-	Mon, 19 Aug 2024 10:45:39 +0100
-Date: Mon, 19 Aug 2024 10:45:38 +0100
-Message-ID: <864j7gzvzx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: tglx@linutronix.de,
-	Suravee.Suthikulpanit@amd.com,
-	akpm@linux-foundation.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
-In-Reply-To: <20240819091011.1015745-1-make24@iscas.ac.cn>
-References: <20240819091011.1015745-1-make24@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724060791; c=relaxed/simple;
+	bh=7kq4bLV7tAak3fBqNl9JDyXQRKEGfZsGufzo7fyiFUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lDanpA86dtjz09saytOPWff5SVEjYJ3SGq6MvAhTekPKmPXF+JuCGFqCgS7GtWBvkwse1bwwUl5naVfcqEC7NCjM6UvwZIU56agvBJAeaUs0J79hiY8iSTbSfUN9KJBEaj92aiNaEU7QZDTj7V7oMuAD009LlueXtw1b6afCSXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h0bYYQJZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724060787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3yJlfW+826MEVX+XTsSkJ6Zur1F9YvRJB4i/zBOkwSY=;
+	b=h0bYYQJZNXJNi2MowMpEutiKy7WVvhehBZ5rcJ/Z/w2nB/sJtgqTDVDKx4aKRVTx5VveOC
+	E0/o+1H+rKu0p/voiZz4YUrIMyPLUVb6+3v/ijGvGOL4Oq5SeWId35sD5f/s6VsVW31Dqs
+	4q9qnLwyniANd/o6Dzvg9gr4IgQArjs=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-J-XQ0cdFPhagJ6uU_yO-1A-1; Mon, 19 Aug 2024 05:46:24 -0400
+X-MC-Unique: J-XQ0cdFPhagJ6uU_yO-1A-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d3efe18d05so2484899a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:46:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724060783; x=1724665583;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3yJlfW+826MEVX+XTsSkJ6Zur1F9YvRJB4i/zBOkwSY=;
+        b=iVn1XbHjd+867Je09R1NGIG3RslcW6soMlhP75x9PgHpRpjw6NWCHmQdT1trTatvIE
+         63jvpG6odycU6GBSI+2Yio5kaKQ3IGbGNSUBWq7iRm13MYKgvdRj/OYm8bLv0fGYRy0a
+         J2dukGjfSyKyskAEOyHrpMiTx15m043fWjJoZoI4A6fEhKAiwuPzW7Hp0wiOGlIt9Jmq
+         eel+Q6+vjsEdQn88SCa0L2pG3n2eWvp2HcD28RvioJeuE0pYn5AwO7EuWaAN5iglVjDd
+         +ovkawSTb71TWty54QhtbUUn13xcAf+JTb8FvuJTLX1I8IURiYJiE3BVi9YQ9eG58crR
+         dqQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZqzOqYTNz+tmazdPTgwR/XQvVipTtfyXlA1FZxqR5XXD18k4ne3G+UZQhjHFw3JJ7YWK942TS/YzcSf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVfoUlQeHGmoBVMOfRzM0gmQjSBpQTX0A/A6B1viSixjlloIOQ
+	gZK82l3kS45mDQ1HIdHCyzNFbb/Kpoh0T8MxUT+OR4s7AvXfxpjq4lSO2mKbMlAg830SctZP/PK
+	EEGo5Rgy7RQ03IflE0sJdak0uAJOI0n48Io/sc2tqsOu/2xBaWhAt2tAjSw9HPLScGd/BrKm0FA
+	7SvgPfYq6IOF37f0FOk7YkAqJf0FZvUudym6ml
+X-Received: by 2002:a17:90b:4d8f:b0:2c9:a3d4:f044 with SMTP id 98e67ed59e1d1-2d3dffc0f59mr8409786a91.11.1724060783411;
+        Mon, 19 Aug 2024 02:46:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdsonGjoEw88ntGBhKWheJOEzKZg+GmVxxiP7CXrtAjUC7woF725y+VXQ7JON4uIe9wxWrA/vqIwfmq/mM9Ow=
+X-Received: by 2002:a17:90b:4d8f:b0:2c9:a3d4:f044 with SMTP id
+ 98e67ed59e1d1-2d3dffc0f59mr8409767a91.11.1724060782998; Mon, 19 Aug 2024
+ 02:46:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: make24@iscas.ac.cn, tglx@linutronix.de, Suravee.Suthikulpanit@amd.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240815083229.42778-1-aha310510@gmail.com>
+In-Reply-To: <20240815083229.42778-1-aha310510@gmail.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Mon, 19 Aug 2024 11:46:11 +0200
+Message-ID: <CAFqZXNvXJY4Bh5k6DZ3yoLFuHo2bQRk3Q5Lv25ms6oOGyN5ZAA@mail.gmail.com>
+Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: paul@paul-moore.com, stephen.smalley.work@gmail.com, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="0000000000008aec5c0620062eb0"
 
-On Mon, 19 Aug 2024 10:10:11 +0100,
-Ma Ke <make24@iscas.ac.cn> wrote:
-> 
-> Add the missing of_node_put() to release the refcount incremented
-> by of_find_matching_node().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+--0000000000008aec5c0620062eb0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 15, 2024 at 10:32=E2=80=AFAM Jeongjun Park <aha310510@gmail.com=
+> wrote:
+>
+> IPPROTO_SMC feature has been added to net/smc. It is now possible to
+> create smc sockets in the following way:
+>
+>   /* create v4 smc sock */
+>   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
+>
+>   /* create v6 smc sock */
+>   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
+>
+> Therefore, we need to add code to support IPPROTO_SMC in
+> socket_type_to_security_class().
+>
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 > ---
->  drivers/irqchip/irq-gic-v2m.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-> index 51af63c046ed..65a55ee7bb30 100644
-> --- a/drivers/irqchip/irq-gic-v2m.c
-> +++ b/drivers/irqchip/irq-gic-v2m.c
-> @@ -396,6 +396,7 @@ static int __init gicv2m_of_init(struct fwnode_handle *parent_handle,
->  		ret = of_address_to_resource(child, 0, &res);
->  		if (ret) {
->  			pr_err("Failed to allocate v2m resource.\n");
-> +			of_node_put(child);
->  			break;
->  		}
->  
+>  security/selinux/hooks.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index bfa61e005aac..36f951f0c574 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1176,6 +1176,8 @@ static inline u16 socket_type_to_security_class(int=
+ family, int type, int protoc
+>                                 return SECCLASS_TCP_SOCKET;
+>                         else if (extsockclass && protocol =3D=3D IPPROTO_=
+SCTP)
+>                                 return SECCLASS_SCTP_SOCKET;
+> +                       else if (extsockclass && protocol =3D=3D IPPROTO_=
+SMC)
+> +                               return SECCLASS_SMC_SOCKET;
+>                         else
+>                                 return SECCLASS_RAWIP_SOCKET;
+>                 case SOCK_DGRAM:
+> --
+>
 
-Although this indeed fixes a minor issue, it is probably better to
-unify all the failure conditions. Something like this (untested):
+I'm not sure if this is the solution we want to go with... Consider
+the following from af_smc(7):
 
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index 51af63c046ed..d5988012eb40 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -407,12 +407,12 @@ static int __init gicv2m_of_init(struct fwnode_handle *parent_handle,
- 
- 		ret = gicv2m_init_one(&child->fwnode, spi_start, nr_spis,
- 				      &res, 0);
--		if (ret) {
--			of_node_put(child);
-+		if (ret)
- 			break;
--		}
- 	}
- 
-+	if (ret && child)
-+		of_put_node(child);
- 	if (!ret)
- 		ret = gicv2m_allocate_domains(parent);
- 	if (ret)
+>   Usage modes
+>      Two usage modes are possible:
+>
+>      AF_SMC native usage
+>             uses the socket domain AF_SMC instead of AF_INET and AF_INET6=
+.  Specify SMCPROTO_SMC for AF_INET compatible socket semantics, and SMC_PR=
+OTO_SMC6 for AF_INET6 respectively.
+>
+>      Usage of AF_INET socket applications with SMC preload library
+>             converts AF_INET and AF_INET6 sockets to AF_SMC sockets.  The=
+ SMC preload library is part of the SMC tools package.
+>
+>      SMC socket capabilities are negotiated at connection setup. If one p=
+eer is not SMC capable, further socket processing falls back to TCP usage a=
+utomatically.
 
+This means that the SMC sockets are intended to be used (also) as a
+drop-in compatible replacement for normal TCP sockets in applications
+and they even fall back to TCP when the endpoints fail to negotiate
+communication via SMC. That's a situation similar to MPTCP, where we
+just mapped MPTCP sockets to the tcp_socket SELinux class, so that
+MPTCP can be swapped in place of TCP transparently without having to
+do extensive policy changes. We may want to consider the same/similar
+approach here.
 
-Thanks,
+I briefly played with this idea a couple of months ago, when I was
+asked by someone at Red Hat about SMC sockets and their integration
+with SELinux. IIRC, when I tried to implement the MPTCP approach and
+adjusted the selinux-testsuite to test SMC similarly as TCP and MPTCP,
+I saw that the netlabel-related tests (may have been more, I don't
+remember) weren't passing out of the box like with MPTCP. However, the
+person then didn't follow up on my questions, so I didn't look into it
+further...
 
-	M.
+I'm attaching the WIP patches I worked with, in case someone would
+like to continue the experiments.
 
--- 
-Without deviation from the norm, progress is not possible.
+--
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
+--0000000000008aec5c0620062eb0
+Content-Type: text/x-patch; charset="US-ASCII"; name="kernel-smc-as-tcp.patch"
+Content-Disposition: attachment; filename="kernel-smc-as-tcp.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m00sselb0>
+X-Attachment-Id: f_m00sselb0
+
+Y29tbWl0IGU2ZGNhMWZkM2M3MTNlYWY2OWZmMTZmYjIzYzZkYzY4MzA4MmEyZjgKQXV0aG9yOiBP
+bmRyZWogTW9zbmFjZWsgPG9tb3NuYWNlQHJlZGhhdC5jb20+CkRhdGU6ICAgVHVlIEZlYiA2IDE1
+OjM5OjIxIDIwMjQgKzAxMDAKCiAgICBURVNUCgpkaWZmIC0tZ2l0IGEvc2VjdXJpdHkvc2VsaW51
+eC9ob29rcy5jIGIvc2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCmluZGV4IDU1Yzc4YzMxOGNjZC4u
+YTVkYjYyMTMwZDQxIDEwMDY0NAotLS0gYS9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMKKysrIGIv
+c2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCkBAIC0xMjkyLDcgKzEyOTIsNyBAQCBzdGF0aWMgaW5s
+aW5lIHUxNiBzb2NrZXRfdHlwZV90b19zZWN1cml0eV9jbGFzcyhpbnQgZmFtaWx5LCBpbnQgdHlw
+ZSwgaW50IHByb3RvYwogCQljYXNlIFBGX1FJUENSVFI6CiAJCQlyZXR1cm4gU0VDQ0xBU1NfUUlQ
+Q1JUUl9TT0NLRVQ7CiAJCWNhc2UgUEZfU01DOgotCQkJcmV0dXJuIFNFQ0NMQVNTX1NNQ19TT0NL
+RVQ7CisJCQlyZXR1cm4gU0VDQ0xBU1NfVENQX1NPQ0tFVDsKIAkJY2FzZSBQRl9YRFA6CiAJCQly
+ZXR1cm4gU0VDQ0xBU1NfWERQX1NPQ0tFVDsKIAkJY2FzZSBQRl9NQ1RQOgpAQCAtNDc3Miw2ICs0
+NzcyLDcgQEAgc3RhdGljIGludCBzZWxpbnV4X3NvY2tldF9iaW5kKHN0cnVjdCBzb2NrZXQgKnNv
+Y2ssIHN0cnVjdCBzb2NrYWRkciAqYWRkcmVzcywgaW4KIAkJCX0KIAkJfQogCisJCS8vIEZJWE1F
+OiBkbyB0aGUgc2FtZSBoZXJlCiAJCXN3aXRjaCAoc2tzZWMtPnNjbGFzcykgewogCQljYXNlIFNF
+Q0NMQVNTX1RDUF9TT0NLRVQ6CiAJCQlub2RlX3Blcm0gPSBUQ1BfU09DS0VUX19OT0RFX0JJTkQ7
+CkBAIC00ODUyLDYgKzQ4NTMsNyBAQCBzdGF0aWMgaW50IHNlbGludXhfc29ja2V0X2Nvbm5lY3Rf
+aGVscGVyKHN0cnVjdCBzb2NrZXQgKnNvY2ssCiAJCXN0cnVjdCBzb2NrYWRkcl9pbjYgKmFkZHI2
+ID0gTlVMTDsKIAkJdW5zaWduZWQgc2hvcnQgc251bTsKIAkJdTMyIHNpZCwgcGVybTsKKwkJdTgg
+cHJvdG9jb2w7CiAKIAkJLyogc2N0cF9jb25uZWN0eCgzKSBjYWxscyB2aWEgc2VsaW51eF9zY3Rw
+X2JpbmRfY29ubmVjdCgpCiAJCSAqIHRoYXQgdmFsaWRhdGVzIG11bHRpcGxlIGNvbm5lY3QgYWRk
+cmVzc2VzLiBCZWNhdXNlIG9mIHRoaXMKQEAgLTQ4ODEsMjIgKzQ4ODMsMjUgQEAgc3RhdGljIGlu
+dCBzZWxpbnV4X3NvY2tldF9jb25uZWN0X2hlbHBlcihzdHJ1Y3Qgc29ja2V0ICpzb2NrLAogCQkJ
+CXJldHVybiAtRUFGTk9TVVBQT1JUOwogCQl9CiAKLQkJZXJyID0gc2VsX25ldHBvcnRfc2lkKHNr
+LT5za19wcm90b2NvbCwgc251bSwgJnNpZCk7Ci0JCWlmIChlcnIpCi0JCQlyZXR1cm4gZXJyOwot
+CiAJCXN3aXRjaCAoc2tzZWMtPnNjbGFzcykgewogCQljYXNlIFNFQ0NMQVNTX1RDUF9TT0NLRVQ6
+CisJCQlwcm90b2NvbCA9IElQUFJPVE9fVENQOwogCQkJcGVybSA9IFRDUF9TT0NLRVRfX05BTUVf
+Q09OTkVDVDsKIAkJCWJyZWFrOwogCQljYXNlIFNFQ0NMQVNTX0RDQ1BfU09DS0VUOgorCQkJcHJv
+dG9jb2wgPSBJUFBST1RPX0RDQ1A7CiAJCQlwZXJtID0gRENDUF9TT0NLRVRfX05BTUVfQ09OTkVD
+VDsKIAkJCWJyZWFrOwogCQljYXNlIFNFQ0NMQVNTX1NDVFBfU09DS0VUOgorCQkJcHJvdG9jb2wg
+PSBJUFBST1RPX1NDVFA7CiAJCQlwZXJtID0gU0NUUF9TT0NLRVRfX05BTUVfQ09OTkVDVDsKIAkJ
+CWJyZWFrOwogCQl9CiAKKwkJZXJyID0gc2VsX25ldHBvcnRfc2lkKHByb3RvY29sLCBzbnVtLCAm
+c2lkKTsKKwkJaWYgKGVycikKKwkJCXJldHVybiBlcnI7CisKIAkJYWQudHlwZSA9IExTTV9BVURJ
+VF9EQVRBX05FVDsKIAkJYWQudS5uZXQgPSAmbmV0OwogCQlhZC51Lm5ldC0+ZHBvcnQgPSBodG9u
+cyhzbnVtKTsK
+--0000000000008aec5c0620062eb0
+Content-Type: text/x-patch; charset="US-ASCII"; name="testsuite-smc-as-tcp.patch"
+Content-Disposition: attachment; filename="testsuite-smc-as-tcp.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m00sskwd1>
+X-Attachment-Id: f_m00sskwd1
+
+Y29tbWl0IDIzZmQ5MWZmZjZiNDAwNGEzZTBlNWU3YTBiNmNhNWE5N2JlM2QyMGIKQXV0aG9yOiBP
+bmRyZWogTW9zbmFjZWsgPG9tb3NuYWNlQHJlZGhhdC5jb20+CkRhdGU6ICAgVHVlIEZlYiA2IDE1
+OjEyOjM5IDIwMjQgKzAxMDAKCiAgICBXSVAKCmRpZmYgLS1naXQgYS90ZXN0cy9pbmV0X3NvY2tl
+dC9jbGllbnQuYyBiL3Rlc3RzL2luZXRfc29ja2V0L2NsaWVudC5jCmluZGV4IGQzZmVkZjQuLjE4
+OGQ4Y2UgMTAwNjQ0Ci0tLSBhL3Rlc3RzL2luZXRfc29ja2V0L2NsaWVudC5jCisrKyBiL3Rlc3Rz
+L2luZXRfc29ja2V0L2NsaWVudC5jCkBAIC02NCw2ICs2NCw5IEBAIGludCBtYWluKGludCBhcmdj
+LCBjaGFyICoqYXJndikKIAkJaGludHMuYWlfc29ja3R5cGUgPSBTT0NLX1NUUkVBTTsKIAkJaGlu
+dHMuYWlfcHJvdG9jb2wgPSBJUFBST1RPX1RDUDsKIAkJc29ja3Byb3RvY29sICAgICAgPSBJUFBS
+T1RPX01QVENQOworCX0gZWxzZSBpZiAoIXN0cmNtcChhcmd2W29wdGluZF0sICJzbWMiKSkgewor
+CQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfU1RSRUFNOworCQloaW50cy5haV9wcm90b2NvbCA9
+IElQUFJPVE9fVENQOwogCX0gZWxzZSBpZiAoIXN0cmNtcChhcmd2W29wdGluZF0sICJ1ZHAiKSkg
+ewogCQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfREdSQU07CiAJCWhpbnRzLmFpX3Byb3RvY29s
+ID0gSVBQUk9UT19VRFA7CkBAIC03OSw2ICs4MiwyMCBAQCBpbnQgbWFpbihpbnQgYXJnYywgY2hh
+ciAqKmFyZ3YpCiAJCWV4aXQoMik7CiAJfQogCisJaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAi
+c21jIikpIHsKKwkJc3dpdGNoIChzZXJ2ZXJpbmZvLT5haV9mYW1pbHkpIHsKKwkJY2FzZSBBRl9J
+TkVUOgorCQkJc29ja3Byb3RvY29sID0gMDsgLyogU01DX1BST1RPX1NNQyAqLworCQkJYnJlYWs7
+CisJCWNhc2UgQUZfSU5FVDY6CisJCQlzb2NrcHJvdG9jb2wgPSAxOyAvKiBTTUNfUFJPVE9fU01D
+NiAqLworCQkJYnJlYWs7CisJCWRlZmF1bHQ6CisJCQl1c2FnZShhcmd2WzBdKTsKKwkJfQorCQlz
+ZXJ2ZXJpbmZvLT5haV9mYW1pbHkgPSBBRl9TTUM7CisJfQorCiAJc29jayA9IHNvY2tldChzZXJ2
+ZXJpbmZvLT5haV9mYW1pbHksIHNlcnZlcmluZm8tPmFpX3NvY2t0eXBlLAogCQkgICAgICBzb2Nr
+cHJvdG9jb2wpOwogCWlmIChzb2NrIDwgMCkgewpkaWZmIC0tZ2l0IGEvdGVzdHMvaW5ldF9zb2Nr
+ZXQvc2VydmVyLmMgYi90ZXN0cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYwppbmRleCA2M2I2ODQ5Li5i
+YWEzYzkzIDEwMDY0NAotLS0gYS90ZXN0cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYworKysgYi90ZXN0
+cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYwpAQCAtNzQsNiArNzQsMTAgQEAgaW50IG1haW4oaW50IGFy
+Z2MsIGNoYXIgKiphcmd2KQogCQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfU1RSRUFNOwogCQlo
+aW50cy5haV9wcm90b2NvbCA9IElQUFJPVE9fVENQOwogCQlzb2NrcHJvdG9jb2wgICAgICA9IElQ
+UFJPVE9fTVBUQ1A7CisJfSBlbHNlIGlmICghc3RyY21wKGFyZ3Zbb3B0aW5kXSwgInNtYyIpKSB7
+CisJCWhpbnRzLmFpX3NvY2t0eXBlID0gU09DS19TVFJFQU07CisJCWhpbnRzLmFpX3Byb3RvY29s
+ID0gSVBQUk9UT19UQ1A7CisJCXNvY2twcm90b2NvbCAgICAgID0gMTsgLyogU01DX1BST1RPX1NN
+QzYgKi8KIAl9IGVsc2UgaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAidWRwIikpIHsKIAkJaGlu
+dHMuYWlfc29ja3R5cGUgPSBTT0NLX0RHUkFNOwogCQloaW50cy5haV9wcm90b2NvbCA9IElQUFJP
+VE9fVURQOwpAQCAtODgsNiArOTIsOSBAQCBpbnQgbWFpbihpbnQgYXJnYywgY2hhciAqKmFyZ3Yp
+CiAJCWV4aXQoMSk7CiAJfQogCisJaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAic21jIikpCisJ
+CXJlcy0+YWlfZmFtaWx5ID0gQUZfU01DOworCiAJc29jayA9IHNvY2tldChyZXMtPmFpX2ZhbWls
+eSwgcmVzLT5haV9zb2NrdHlwZSwgc29ja3Byb3RvY29sKTsKIAlpZiAoc29jayA8IDApIHsKIAkJ
+cGVycm9yKCJzb2NrZXQiKTsKZGlmZiAtLWdpdCBhL3Rlc3RzL2luZXRfc29ja2V0L3NtYyBiL3Rl
+c3RzL2luZXRfc29ja2V0L3NtYwpuZXcgZmlsZSBtb2RlIDEyMDAwMAppbmRleCAwMDAwMDAwLi45
+NDVjOWI0Ci0tLSAvZGV2L251bGwKKysrIGIvdGVzdHMvaW5ldF9zb2NrZXQvc21jCkBAIC0wLDAg
+KzEgQEAKKy4KXCBObyBuZXdsaW5lIGF0IGVuZCBvZiBmaWxlCmRpZmYgLS1naXQgYS90ZXN0cy9p
+bmV0X3NvY2tldC90ZXN0IGIvdGVzdHMvaW5ldF9zb2NrZXQvdGVzdAppbmRleCAwOGM3YjFkLi41
+NDU5ODhhIDEwMDc1NQotLS0gYS90ZXN0cy9pbmV0X3NvY2tldC90ZXN0CisrKyBiL3Rlc3RzL2lu
+ZXRfc29ja2V0L3Rlc3QKQEAgLTgsNyArOCwxMiBAQCBCRUdJTiB7CiAgICAgY2hvbXAoJGJhc2Vk
+aXIpOwogICAgICRwcm90byA9IGJhc2VuYW1lKCRiYXNlZGlyKTsKIAotICAgIGlmICggJHByb3Rv
+IGVxICJ0Y3AiIG9yICRwcm90byBlcSAibXB0Y3AiICkgeworICAgICMgY2hlY2sgaWYgU01DIGlz
+IGVuYWJsZWQKKyAgICBpZiAoICRwcm90byBlcSAic21jIiBhbmQgc3lzdGVtKCJtb2Rwcm9iZSBz
+bWMgMj4vZGV2L251bGwiKSAhPSAwICkgeworICAgICAgICBwbGFuIHNraXBfYWxsID0+ICJTTUMg
+cHJvdG9jb2wgbm90IHN1cHBvcnRlZCI7CisgICAgfQorCisgICAgaWYgKCAkcHJvdG8gZXEgInRj
+cCIgb3IgJHByb3RvIGVxICJtcHRjcCIgb3IgJHByb3RvIGVxICJzbWMiICkgewogICAgICAgICAk
+aXNfc3RyZWFtICAgPSAxOwogICAgICAgICAkZmFpbF92YWx1ZTEgPSA1OwogICAgICAgICAkZmFp
+bF92YWx1ZTIgPSA1Owo=
+--0000000000008aec5c0620062eb0--
+
 
