@@ -1,222 +1,106 @@
-Return-Path: <linux-kernel+bounces-291324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAAA9560E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9809560E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866CC2818F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53E72820FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990E269D2B;
-	Mon, 19 Aug 2024 01:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+m+gaxL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727171B7E4;
+	Mon, 19 Aug 2024 01:30:53 +0000 (UTC)
+Received: from omta002.cacentral1.a.cloudfilter.net (omta002.cacentral1.a.cloudfilter.net [3.97.99.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C884854FB5
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB6C9460
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.97.99.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724030467; cv=none; b=Ze++MYPVjpxHylC1tFQt8BKMbgV4zoRqcxlRvnXtXPrx+gzn1w7z5c+sgI7OWEImTaFm+ys75UHZQG5q3VQsytlRcsWwqyS8FARo/4s99L1lUyVCmYLfaSOKuouFuIB6d7aYveHfzy7h34nZ6LJULeNH3cVofkiiwgxeVoaZkRc=
+	t=1724031053; cv=none; b=HwL1k5reG+NILRZ6BoxVjtv1Top7I7sEvIu46AckxiHQUai5AAyHD1tY+JocxFa9WcmoF3M9+P+mItYa0akiu8F4zNcDhc83FzII4jKn0Y4LN4WFTRrqyT896kl+T0NlHmLoFkzGjOmx8hynJYB0jLtrfEGWTecUqrONd+CgOGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724030467; c=relaxed/simple;
-	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d3V/fBmkCoq3Fb7CUimDw9sTUAuvHU8HE8HBYbC2OsOgNNfsXIsfsFax0kztfTpxI+dZ33y9l+7rWEV5CbNAnZfz2+LIz+1GOjXJoy6ic6KNnrCKTu6fqgusKy6KEmWUxd16D9H7TbIQ/a8OXPcEV7rHeZGyP5mBHlfFN73fP0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+m+gaxL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499A2C32786;
-	Mon, 19 Aug 2024 01:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724030467;
-	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T+m+gaxL0ONvBo5PpwKmPwBazX413BosT1YIQnpfbYi595iBphhR27qezpLQjqMeV
-	 FE8NE5PIt4amuOhNQrtyDOxS0KTLwcOw0e86qY+8D0p0MCGTOK0HEpqIUGeYyB0rl8
-	 5yCJqwI+OTVnS1VnkvT4K1bJRSOow3dPfZxlHDj5BhTSKmz2nAE2bN4t6MO2oa14XM
-	 qG1cL6Eppd4gFWvGcwVM0rc/CUmS16BMShUlDRFviutZ5ynrmjTB1+uXPRgJbzwl1S
-	 MZ7tOZ3nc0iLkxMisHFsYat6vLxyqg0WZxn4GQt2SkwrCsug2e8AdlJQUFfiRrucye
-	 2IjbFMyrf9MnA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 8/8] f2fs: get rid of page->index
-Date: Mon, 19 Aug 2024 09:20:23 +0800
-Message-Id: <20240819012023.3871272-8-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240819012023.3871272-1-chao@kernel.org>
-References: <20240819012023.3871272-1-chao@kernel.org>
+	s=arc-20240116; t=1724031053; c=relaxed/simple;
+	bh=Az1ikj8FMke32Q2EjygpX1gks2KxTTiz3ypYudTXThQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MjJLqJC8cOiyLH8ejllrIoBrToE1XfLJfD9vg9Bfe89twwbgMU9pGJF1xeq/oEwKXcxDG3EqxJoUqOWxd0HvhouUSe6umwoh8DMdYViZ5APT3QaDIiOXEMin1Go3qiRW+Oni/AoqSboVE9pbgy3LR2IcXmzAhVi0LKOrdTMy1go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net; spf=pass smtp.mailfrom=tuyoix.net; arc=none smtp.client-ip=3.97.99.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuyoix.net
+Received: from shw-obgw-4004a.ext.cloudfilter.net ([10.228.9.227])
+	by cmsmtp with ESMTPS
+	id fqblsLwC4MArNfrCrsUbff; Mon, 19 Aug 2024 01:29:13 +0000
+Received: from fanir.tuyoix.net ([68.150.218.192])
+	by cmsmtp with ESMTP
+	id frCqsRhtqKHV8frCqsKkHn; Mon, 19 Aug 2024 01:29:13 +0000
+X-Authority-Analysis: v=2.4 cv=XeEqz555 c=1 sm=1 tr=0 ts=66c29fe9
+ a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=M51BFTxLslgA:10 a=3I1X_3ewAAAA:8
+ a=VwQbUJbxAAAA:8 a=CjRulRUbs8e48-67pewA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=VG9N9RgkD3hcbI6YpJ1l:22 a=AjGcO6oz07-iQ99wixmX:22
+Received: from CLUIJ (cluij.tuyoix.net [192.168.144.15])
+	(authenticated bits=0)
+	by fanir.tuyoix.net (8.18.1/8.18.1) with ESMTPSA id 47J1TAWF003546
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
+	Sun, 18 Aug 2024 19:29:11 -0600
+Date: Sun, 18 Aug 2024 19:29:00 -0600 (Mountain Daylight Time)
+From: =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
+To: Eric Sandeen <sandeen@redhat.com>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs show actual source in /proc/mounts
+In-Reply-To: <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com>
+Message-ID: <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
+References: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net> <2024081303-bakery-rewash-4c1a@gregkh> <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com>
+User-Agent: Alpine 2.20 (WNT 67 2015-01-07)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-CMAE-Envelope: MS4xfMUhD4DzdNiqozECGVAsybWYZCNyISs5E3e07nZQfalyGDS91IfD9uyr3X9ck6TXyAD958vpjeGjpJrmngTcE161ik+x3eAsjfj3s6+1mfvjQpaBXsTW
+ axxsCAH8uIxFHDxo2EfxdAu+qTxQftBkeVheL756OSlLA5JeWX7zV3zCbGWnNJ0Y+Bm12HcGQiUl+bvbuvtv+l2lUjV2YI6gtU9dAl3wRZihFhDY02sX4V08
+ jBvAI5YNrc4814x8io5F0pXcdmT51M17zobaJzHGvJBZ2TcgmgXOPVUeF/YYpBeoTaD7DCj78TzKkV4fJ9zDPBV9e6VPYCim00bBsQ7bKrmg9kQ/iQQNrMhd
+ KqtafFBk
 
-Convert to use folio, so that we can get rid of 'page->index' to
-prepare for removal of 'index' field in structure page [1].
+On Tue, 2024-Aug-13, Eric Sandeen wrote:
+> On 8/13/24 4:54 AM, Greg Kroah-Hartman wrote:
+>> On Sat, Aug 10, 2024 at 01:25:27PM -0600, Marc Aurèle La France wrote:
+>>> After its conversion to the new mount API, debugfs displays "none" in
+>>> /proc/mounts instead of the actual source.  Fix this by recognising its
+>>> "source" mount option.
 
-[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
+>>> Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
+>>> Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
+>>> Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
+>>> Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/compress.c |  2 +-
- fs/f2fs/data.c     | 12 ++++++------
- fs/f2fs/dir.c      |  3 ++-
- fs/f2fs/inode.c    |  3 ++-
- fs/f2fs/node.c     |  4 ++--
- fs/f2fs/segment.c  |  3 ++-
- 6 files changed, 15 insertions(+), 12 deletions(-)
+>> As this came from a fs tree, I'll let the vfs maintainer take it if they
+>> think it is ok as I know nothing about the fs_parse stuff at the moment,
+>> sorry.
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 67bb1e2e07a4..163ad0d7d495 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -881,7 +881,7 @@ static bool cluster_has_invalid_data(struct compress_ctx *cc)
- 		f2fs_bug_on(F2FS_I_SB(cc->inode), !page);
- 
- 		/* beyond EOF */
--		if (page->index >= nr_pages)
-+		if (page_folio(page)->index >= nr_pages)
- 			return true;
- 	}
- 	return false;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e69097267b99..c6d688208f8b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -354,7 +354,7 @@ static void f2fs_write_end_io(struct bio *bio)
- 		}
- 
- 		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
--					page->index != nid_of_node(page));
-+				page_folio(page)->index != nid_of_node(page));
- 
- 		dec_page_count(sbi, type);
- 		if (f2fs_in_warm_node_list(sbi, page))
-@@ -703,7 +703,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	bio = __bio_alloc(fio, 1);
- 
- 	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
--			       fio->page->index, fio, GFP_NOIO);
-+			page_folio(fio->page)->index, fio, GFP_NOIO);
- 
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
- 		bio_put(bio);
-@@ -802,7 +802,7 @@ static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
- 							    fio->new_blkaddr));
- 			if (f2fs_crypt_mergeable_bio(*bio,
- 					fio->page->mapping->host,
--					fio->page->index, fio) &&
-+					page_folio(fio->page)->index, fio) &&
- 			    bio_add_page(*bio, page, PAGE_SIZE, 0) ==
- 					PAGE_SIZE) {
- 				ret = 0;
-@@ -902,7 +902,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (!bio) {
- 		bio = __bio_alloc(fio, BIO_MAX_VECS);
- 		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
--				       fio->page->index, fio, GFP_NOIO);
-+				page_folio(fio->page)->index, fio, GFP_NOIO);
- 
- 		add_bio_entry(fio->sbi, bio, page, fio->temp);
- 	} else {
-@@ -995,13 +995,13 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
- 			      fio->new_blkaddr) ||
- 	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
--				       bio_page->index, fio)))
-+				page_folio(bio_page)->index, fio)))
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
- 		io->bio = __bio_alloc(fio, BIO_MAX_VECS);
- 		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
--				       bio_page->index, fio, GFP_NOIO);
-+				page_folio(bio_page)->index, fio, GFP_NOIO);
- 		io->fio = *fio;
- 	}
- 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 5fcc952107e9..1136539a57a8 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -842,6 +842,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	struct	f2fs_dentry_block *dentry_blk;
- 	unsigned int bit_pos;
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
-+	pgoff_t index = page_folio(page)->index;
- 	int i;
- 
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
-@@ -867,7 +868,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	set_page_dirty(page);
- 
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
--		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
-+		!f2fs_truncate_hole(dir, index, index + 1)) {
- 		f2fs_clear_page_cache_dirty_tag(page_folio(page));
- 		clear_page_dirty_for_io(page);
- 		ClearPageUptodate(page);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 5d7e4c7f5969..b2d5c3ef8e24 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -174,7 +174,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
- 
- 	if (provided != calculated)
- 		f2fs_warn(sbi, "checksum invalid, nid = %lu, ino_of_node = %x, %x vs. %x",
--			  page->index, ino_of_node(page), provided, calculated);
-+			  page_folio(page)->index, ino_of_node(page),
-+			  provided, calculated);
- 
- 	return provided == calculated;
- }
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f5e5abce695b..59b13ff243fa 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -919,7 +919,7 @@ static int truncate_node(struct dnode_of_data *dn)
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
--	index = dn->node_page->index;
-+	index = page_folio(dn->node_page)->index;
- 	f2fs_put_page(dn->node_page, 1);
- 
- 	invalidate_mapping_pages(NODE_MAPPING(sbi),
-@@ -1869,7 +1869,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 	}
- 	if (!ret && atomic && !marked) {
- 		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
--			   ino, last_page->index);
-+			   ino, page_folio(last_page)->index);
- 		lock_page(last_page);
- 		f2fs_wait_on_page_writeback(last_page, NODE, true, true);
- 		set_page_dirty(last_page);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3bda3f707007..fafbb1cbcb57 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3564,7 +3564,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 		if (file_is_cold(inode) || f2fs_need_compress_data(inode))
- 			return CURSEG_COLD_DATA;
- 
--		type = __get_age_segment_type(inode, fio->page->index);
-+		type = __get_age_segment_type(inode,
-+				page_folio(fio->page)->index);
- 		if (type != NO_CHECK_TYPE)
- 			return type;
- 
--- 
-2.40.1
+> Hm, I guess this is OK, though it seems a little unexpected for debugfs
+> to have to parse the trivial internal "source" option.
 
+> This actually worked OK until
+
+> 0c07c273a5fe debugfs: continue to ignore unknown mount options
+
+> but after that commit, debugfs claims to parse "source" successfully even
+> though it has not. So really, it Fixes: that commit, not the original
+> conversion.
+
+> I'm not sure of a better approach offhand, but maybe a comment about why
+> Opt_source exists in debugfs would help future readers?
+
+Meaning what?  I'd say you're in a better position to explain why debugfs
+shouldn't follow other fs's in this regard.
+
+Marc.
 
