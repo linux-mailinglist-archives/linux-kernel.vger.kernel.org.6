@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-291891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A7295689B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D53095689F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5E1284470
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530E21F21206
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696D1161900;
-	Mon, 19 Aug 2024 10:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B191607BD;
+	Mon, 19 Aug 2024 10:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVka9NEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tqpARSQh"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27F114B087;
-	Mon, 19 Aug 2024 10:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C9415CD58
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724063677; cv=none; b=bTMgjYdcAgJ3/vH4LF/74136L/605tcVCW/wTDhnProZKrZyhegBm8Qg795FmbIPvBQp7PwV2p7jiuvujneO0+tpi42yLI78dBkYqYfh3AGB8+f5A1taRuXRBsPKsSMAgEgDFQ4L37ydNggbqUOINiKFhAc7CunQbNvwlVS935Y=
+	t=1724063705; cv=none; b=iUsgrj9hHdLblqv2+MimudBFaKsSCqmQ/qB4LQblB/ELQy45XIlaHPlnzVdHFFnbeioa24eE8iLw6Xzo/dcR/uiYtSR4KFw/yUsQDLEAy0c5F+zbR+r7Ro/SFKtEP7Psf9BzsdsVLKBpk0ejalqUBjw0ja6sNt8l0DSp81AI9bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724063677; c=relaxed/simple;
-	bh=B8neqfiznvbT3QpR6KsYs6uOapIkixbQvBjyhNbgyV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=f61U6S1rvdieJ8nrUpWRiXLC+PXFPDozYjmzR7oAinN5uKJoM3AY/o1oTumPvSetb6NwCLaE7AUEQaJCJnTMVMLxeQossWbaILvz/AUVSu8QtGxz1jSsyPw3lAnES5sOYfAi5yLDbdkKSHCaHbJ9AxdTeAQj9cZvlRz1Q3L39SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVka9NEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D5CC32782;
-	Mon, 19 Aug 2024 10:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724063677;
-	bh=B8neqfiznvbT3QpR6KsYs6uOapIkixbQvBjyhNbgyV4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dVka9NEMq9+cQFSw4ywIT2j54DqM7G28A0YczFIprPzXJBuOtxGg5jA+gJlIrFRDG
-	 4Ean1rw8Uemc/1qent+fLoCb/+/1DokLhN/W0G/CB2h3myQkdx20/aKEroRmbThHh6
-	 5C1wsOxZbwQo+Gn2qPqDFqGAndrjQcqctrMU1Q8YoZyZOXCRjrH7JfmIDBH9WHeyRj
-	 E7roCElA9fyiz3gn+UPNqJP/cGRV2NnQ1yCmGzdzDsI6eLzr1GpAg3ZInf3kgtGeHB
-	 OtVxeLI9iODEiAaWDC7EB/eIpmZOmjlR3ceM7IqJU1iWxXKQx4NRICZqhPHZmgpMgT
-	 nWztHeGj+da7A==
-Message-ID: <7237aa34-9821-4ba7-a45b-3b1d598bc282@kernel.org>
-Date: Mon, 19 Aug 2024 12:34:30 +0200
+	s=arc-20240116; t=1724063705; c=relaxed/simple;
+	bh=C8cmAZ6DtMCK8UKjeMB4ciqE3g/tYE4h+B83nEaCixY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCppg9N2IOO0E+hGr2nVFxuUyh3fiWddprstesmPNshwajLYjJPy3sCH8bY20pGpMcq8gknVrpIc0XtSs1YEins4k8VsuJl96iQ9vvwwPyJ4KwyMlk80OjYzAwWrvAUyyt0P2HtezT4dXstAQdvof56FaHI2DOgOpVWzXw7VXck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tqpARSQh; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-709485aca4bso2018305a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724063702; x=1724668502; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n0G/FT2pek0BJGYjowpKrU8vTGOyidDEZSmaRCBfETA=;
+        b=tqpARSQh4FlORB4lf/levNhSIyjSdKqGJPSrsRVGhSE0jmGR6Y2WZQCjbp2pOfGr7p
+         EefKpIloCC9E8YHFOQsqFWNjPwRDff1v5BzlLNPmYfC1/DdE1hwMd3xZEtcd1+yuVexl
+         jIvf7Iug6J5FyIfGo9DG8wATqjZj7HW6xb80gEWuPgcxsa1EKa2rvGWuKbH13MD+PzXa
+         EL4lP/K6AAuScAlDTmkrBK1Ezk9+G2DDM6ZLfT7nwgWQ21SZ2yegkbICTguG1mLxJyzV
+         94wZ3uFadY8NRdkYqOvWyMw31/yNwNgGEkzUSmUjyPF9Tx3W3m6GS3RBYwfBb6ZnuDes
+         uJqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724063702; x=1724668502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n0G/FT2pek0BJGYjowpKrU8vTGOyidDEZSmaRCBfETA=;
+        b=OsNzs+sNp3y5cJyDy9v/64OiN4rE80KLR5BQSDsGmPzX1mdcUt/s2AqdzQ0SYvZTlK
+         1BdB28A1axIsRaQ0Eq15+eesHAS7/Bli0ehkKVaFj6UhHelwLHwLCDTqCNovGESVN016
+         3YvD3OsVUMBJhdwicPHN0jeij43VAKdonbdGZnK1Y8PBhK88dsEm9ij1oPXN0jWyiT0N
+         T8jnl0gBSCkcqfJL11Y/G5Q/51srUHQTyBd+UqUykaTsGig1V6bLPdmlMRhjhbxjq88A
+         ok5x/ZkzdI0RQKFEYVSZ6DyZc6rNYLyULZdVYa3o7MuqCBvkLUaLMscGhe0+z6L3AFbO
+         MGZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDzES1JN8oErog2w0uaniBngk6RYv+kbVNoffZIvpVTIcHXZpQbjsTSNOyoKNDr0hSMaiV99Ihds+6LLj1GERnjGEvm2kszq29bO5f
+X-Gm-Message-State: AOJu0YymOy1Cp9//MbbvL33GzVA8RWDjw+O78mz2sWIwmo1ZWIzc9Tk7
+	82pDeVg5bdfmPpu034/wrYmbkrht2AGd3FFH5tZjgJA7jUn7B8fJASVgZGQc9tjro5Tg+M8+xh7
+	VcgKXvTXD/nmLXOkSZJ1XUUU1HMVSDbg1CLvroQ==
+X-Google-Smtp-Source: AGHT+IGvfBJcsaH/i9fkAq46MlKF83AnLmTz2dPtPSQk73u0lGeY9eW9+SpkGNyUeKF1EmhsEC3NDjgKQWw+rxKqR7M=
+X-Received: by 2002:a05:6870:3320:b0:260:fbc0:96ec with SMTP id
+ 586e51a60fabf-2701c55a28bmr12549846fac.38.1724063702596; Mon, 19 Aug 2024
+ 03:35:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-To: Ryan Chen <ryan_chen@aspeedtech.com>, brendan.higgins@linux.dev,
- benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org,
- openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
- <20240819092850.1590758-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240819092850.1590758-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com> <20240808-device_child_node_access-v2-1-fc757cc76650@gmail.com>
+In-Reply-To: <20240808-device_child_node_access-v2-1-fc757cc76650@gmail.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Mon, 19 Aug 2024 11:34:51 +0100
+Message-ID: <CAJ9a7VgtK1AtjhM+i41nyDnza27gigg2JioC2xBmWkPeLBS0zQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] coresight: cti: use device_* to iterate over
+ device child nodes
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Jonathan Cameron <jic23@kernel.org>, Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
+	Michal Simek <michal.simek@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/08/2024 11:28, Ryan Chen wrote:
-> Add ast2600-i2cv2 compatible and aspeed,global-regs, aspeed,enable-dma
-> and description for ast2600-i2cv2.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
+On Thu, 8 Aug 2024 at 16:12, Javier Carrasco
+<javier.carrasco.cruz@gmail.com> wrote:
+>
+> Drop the manual access to the fwnode of the device to iterate over its
+> child nodes. `device_for_each_child_node` macro provides direct access
+> to the child nodes, and given that they are only required within the
+> loop, the scoped variant of the macro can be used.
+>
+> Use the `device_for_each_child_node_scoped` macro to iterate over the
+> direct child nodes of the device.
+>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-cti-platform.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> index ccef04f27f12..d0ae10bf6128 100644
+> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> @@ -416,20 +416,16 @@ static int cti_plat_create_impdef_connections(struct device *dev,
+>                                               struct cti_drvdata *drvdata)
+>  {
+>         int rc = 0;
+> -       struct fwnode_handle *fwnode = dev_fwnode(dev);
+> -       struct fwnode_handle *child = NULL;
+>
+> -       if (IS_ERR_OR_NULL(fwnode))
+> +       if (IS_ERR_OR_NULL(dev_fwnode(dev)))
+>                 return -EINVAL;
+>
+> -       fwnode_for_each_child_node(fwnode, child) {
+> +       device_for_each_child_node_scoped(dev, child) {
+>                 if (cti_plat_node_name_eq(child, CTI_DT_CONNS))
+> -                       rc = cti_plat_create_connection(dev, drvdata,
+> -                                                       child);
+> +                       rc = cti_plat_create_connection(dev, drvdata, child);
+>                 if (rc != 0)
+>                         break;
+>         }
+> -       fwnode_handle_put(child);
+>
+>         return rc;
+>  }
+>
+> --
+> 2.43.0
+>
 
-?!?
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 
-What happened here? Why are you amending tags?!? That's not allowed. You
-cannot change received tags, change people names or their data! And how
-is it even possible, srsly, how do you even work with git? Git would
-never do it, so you had to do it on purpose via some weird workflow.
 
-Best regards,
-Krzysztof
-
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
