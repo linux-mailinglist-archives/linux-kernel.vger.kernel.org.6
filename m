@@ -1,242 +1,427 @@
-Return-Path: <linux-kernel+bounces-291554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1A7956406
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:54:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA00956411
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70854B21109
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:54:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D110DB20FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063CD156C5F;
-	Mon, 19 Aug 2024 06:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3ED156677;
+	Mon, 19 Aug 2024 07:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="npErCREf";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Dpwi5P68"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="u5z02DLQ"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FD417C77;
-	Mon, 19 Aug 2024 06:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724050468; cv=fail; b=GgLDGwQKr3USC0qAquhqmc1LpJ4BlxneGOg34yzRWcskrkNNIb3o9xg5OGAyZBQ0k6w8WN/jUP/9W/uQAMPWHX6MOyYr2wv63eL4hcIBbA6r4D31D87U4ho2Z0W1RFb1fuuXOVwsndtln7anxxqFPo0c0J5NL4fT/B8fIXzdnYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724050468; c=relaxed/simple;
-	bh=g4C/REX+0m8kCo0e83utDvYyTsrDiwj1DOFRkY0eRx8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FpULDw6y5WMGaOUO8V8PKtYcf3fR2OYNCczsFJqdevSl48E4cNuWF+gzz5m0a3nsf+qtLKoeqkbjltii6M/kGyA2WkvQSuqPgu9BZPu7NFfxQwgeWOXkmWXRv9q7OPc2phZtICWoMg68K+8EEbVukTeduUuTDf/83cj6uxOJ87Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=npErCREf; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Dpwi5P68; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724050465; x=1755586465;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=g4C/REX+0m8kCo0e83utDvYyTsrDiwj1DOFRkY0eRx8=;
-  b=npErCREf4FmgRL7hy8O8Z3H1TQGB4svjQxrTycZ+rBMNKNzd5SGxpeQw
-   89VENE2jy4sHWbjNSBCMZPxpgfR3eLHbol323uR467YNGurz20SkzPdtq
-   IlVJUgMsX4dFYpPCAb0PFc9iAEh3UkTIXs06gwmgwVJZ4uBzz/dBAPWW2
-   PvPzCsHTJsb7e17dcxvKFdpZ9DqHyL23AjcTd1/KF+9cKVnrXkVgLMWhS
-   0BViUb59q9PYD4hmxBtK4M2vBP52UkNtsaGwvpnSPy8LEiSp3hN1fOQa+
-   IfiRc/ASEWznMHexLk6I1WcdJK8/wlgD1pr1AD3PLFL7LefRm+mJ/Xa0n
-   Q==;
-X-CSE-ConnectionGUID: nCdi+Cq8SdaoPRsvZdT2gg==
-X-CSE-MsgGUID: k+jM8C5tRGmKtjCYtMMnnw==
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="30601924"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Aug 2024 23:54:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 18 Aug 2024 23:53:56 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Sun, 18 Aug 2024 23:53:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rHr0Hfi6nnqPjmn7pS/sJh1AYyLkN9awvCtyyHRqcHnSc1r2pSsDT+GnqKsiTvkFBTOGFdNWrbgnQl+hx9b4jwOdVk2JHPYz0jCBvK0ed5OhfOY4cstWl6XQtFbZEwI/A7cEDl5QdUIsv2cxKPgtRV0XN99ahIK/TuBj8ZQ8vFgxaY6N6xqz6zKEI/A4IEFMDTHMEDZ9fdOfg9cxqR53fptTR03qFsTSKQFFqm3vVxuRIY0a5kUpoMA1fIbr/1jkPEuQdyzXh4gHeNagGS5kDrVhyHo0+Qmn2jdrob77+B/JcxXJZiO1bVLNZXZpyO6UeCW2gyyIx+ZaNU6wEHHLZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g4C/REX+0m8kCo0e83utDvYyTsrDiwj1DOFRkY0eRx8=;
- b=sD15O0Tyg6EesW/qU2ILcG8yVSqxP5mEk3FfukmQVuxmUiGPkZbzGh89JZrUNN43/3VG2PkQEnv0u5PnQqTS9TWCYc/eaAxPck50bMAuGcieAqZQn+WcucKeoxxsoGqP9snCt5FF//ExZwuiyQAqT5DrNPXnu4fNHmCjhAT3AL+uyTG/j34w1ZhgJrcFYFcCYO1uwyaBYk6i6OUo9WUXKth++MVW07bjOUNURgRWlaG4HbxRhPtehmv+yBtQ42ICBhACVgFROs5d8rFe/bK6a50nDEBY3pD2CnO1GUxcvUKOcZeAZ2MkSpibf6oM01Q3kgXEihsNLgqegUKZpdC+vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g4C/REX+0m8kCo0e83utDvYyTsrDiwj1DOFRkY0eRx8=;
- b=Dpwi5P68jZgl/9pMeUYNcMoYQVvayPAeEHo/G1NzZYnJbzsTaYi8XLJzk0uRlvwsKsP8UzTQZnSs8ZVtBHZVYx9rL3b4JK7/bPapTefehgjd7G1MWrIeYmUFKbMYg1+LsuXJ+n8fqKh+hao7eH9CqtoDTJLZgzdlSa1ijyOpSaJ7gcj1onsEKtBwSBVfT00EC+dy8QPmLF1HKj5b0VEQNI2ZzFTmNCCoVemCovJChq+vJVYR8reI2xP7VvuaB8lSvFmYmKrXYUlQw6476j6qrxNjFJOTrrgXVukHDTfDpxNv8Rd8JxsAmSOYVWdoqhv3kZafUwoPkW+ADhAJVd2wzQ==
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
- by IA1PR11MB7176.namprd11.prod.outlook.com (2603:10b6:208:418::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 06:53:52 +0000
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9%5]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 06:53:52 +0000
-From: <Parthiban.Veerasooran@microchip.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<horms@kernel.org>, <saeedm@nvidia.com>, <anthony.l.nguyen@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <andrew@lunn.ch>,
-	<corbet@lwn.net>, <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <Horatiu.Vultur@microchip.com>,
-	<ruanjinjie@huawei.com>, <Steen.Hegelund@microchip.com>,
-	<vladimir.oltean@nxp.com>, <masahiroy@kernel.org>, <alexanderduyck@fb.com>,
-	<krzk+dt@kernel.org>, <robh@kernel.org>, <rdunlap@infradead.org>,
-	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
-	<Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
-	<Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
-	<linux@bigler.io>, <markku.vorne@kempower.com>
-Subject: Re: [PATCH net-next v6 10/14] net: ethernet: oa_tc6: implement
- receive path to receive rx ethernet frames
-Thread-Topic: [PATCH net-next v6 10/14] net: ethernet: oa_tc6: implement
- receive path to receive rx ethernet frames
-Thread-Index: AQHa7KKPrhiVuFptV0eS+tbagLmoKLIqIq+AgAQNJIA=
-Date: Mon, 19 Aug 2024 06:53:51 +0000
-Message-ID: <1cd98213-9111-4100-a8fa-15bb8292cbb5@microchip.com>
-References: <20240812102611.489550-1-Parthiban.Veerasooran@microchip.com>
- <20240812102611.489550-11-Parthiban.Veerasooran@microchip.com>
- <20240816100147.0ed4acb6@kernel.org>
-In-Reply-To: <20240816100147.0ed4acb6@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|IA1PR11MB7176:EE_
-x-ms-office365-filtering-correlation-id: 62460a73-9073-4ad6-aa8b-08dcc01baf76
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?ZUxzZmZMVkkyVERRdlE1SldlUzh4MEZnQlY5VUVGQlFPdmpkeHlMRW1rUTBw?=
- =?utf-8?B?WHFKMkt1V3dVRVFEWitPWDVuTkJzbVNPNDk5c0Y4dU9nclpNNndQNjFjS3Za?=
- =?utf-8?B?cVhRQm9zVGRlZXk5WncxekdIM05XQXBoVmRtNDQzUVExYm83Q2d5LzNPWVRG?=
- =?utf-8?B?ZmhkNGRoQXlMZ2VSbnhVcHBibzd6RG5oZGhMZjA3bE0vTm1DMXFINFZtQnZi?=
- =?utf-8?B?RVBzZXFWK1RwbjZtVHF4WkVDYUtYQkl5bXh2WkM3eU5jelBIT0tCb2VKKzF4?=
- =?utf-8?B?KzNXVmVVcUhlcHRQYUdSS2tGY1A2S3JCL05teVJQTVczTitWaE1ubUtDcndw?=
- =?utf-8?B?L0JnclJya0J2THlkMVY3UTJxVEhqREw0QUt5OUJNUG41NzEwQXl4eUNqSElZ?=
- =?utf-8?B?WVpieUFxMndjdllZME1Zc0FYQnJ5cmNSTGFNUHNMaEd0eHZwTkY2bUo0YUFu?=
- =?utf-8?B?M3RtbDRZL1pqVmNvWjhhQjNrd3gwOTA4TkFiWFlFMGxGdEJnSjZxek5yWEFt?=
- =?utf-8?B?cEZqTWl3dVZhN1NGSEt3TlJTQXdNMGZyUktFMDZLYTlTWGJCOC90WEwxZVRk?=
- =?utf-8?B?SjUxbkI4RmZxTzduajFveE5UWWUrb2N0RCtsdVRHZTNJMnE0UjNPcHV4d1B5?=
- =?utf-8?B?YnBqQ3Fjc3E5NnJHeUF1bEpiWklCcmZ5T0RVUXJ3VWZTaktvK2NkZUVxd1pU?=
- =?utf-8?B?UUlrYnhzLzluV05zRHZXai9tckZ6ZHBNTFJxc01wYlI3MkE0VGFFT2owa2ZB?=
- =?utf-8?B?VjAybDJKUVo4eE5xQ0lEdG9qSEhlbmVoa0VsVnJmQ1RDK3puYUlNd0xYQVcz?=
- =?utf-8?B?dEJYeXQ3RWFPaUE2L09iUmx6S3BJRDZwWG14WWdmd1Z6eFhCZEVDbFBqd014?=
- =?utf-8?B?SlNJN0tUelpYTVI5MnFoNEJhQWJTZ0MzM1RtdVRvMTdGV0xBZGVOdUhsbkgv?=
- =?utf-8?B?NVpJWW82VTdpZUtXYWVhS2lScCtUbzRFVFBnby95c3gwWFVaQktaYzlscjR3?=
- =?utf-8?B?Z3QrOFFXVFZ3S2ZCQzV3Zkd1Y2xoUmViUGVCamhqM0xhZ1Q4WXlUUEJhMU1l?=
- =?utf-8?B?YlZuZnFqbEs1cm9tblVUZDRhQWtESmVDMmw4cVRFMklpcVBzVENFa2dmanJG?=
- =?utf-8?B?YU1ZYngxWkdnNG5FN3QwNDJ6V0xlZmdBVnZLb04wYXEwc01EakNUekhYcWlY?=
- =?utf-8?B?ZDNqK0labFphUWRWZnZNN2FQTXo3d3R5a01Mb2lxT2NTZm5DWkFFVk1nVk41?=
- =?utf-8?B?MkZWaDRsY1ZwY1ZFb1RvSzhwaVZ3Mm5yR2c0OUhVTEFWSFNRKzIvdkNiNm9M?=
- =?utf-8?B?UkhiVzc1RGF2MEtpYUd6Slk3VTZIL3dLeTd5MXp3YjFnWTZvT0hOMXBnNHZU?=
- =?utf-8?B?dFZpU05hcWlVRWpJVFdid0RLcTE1dmxBYXg4WmNqZ3V4c1EyeUc4SXh6TFRp?=
- =?utf-8?B?ZW1tZDF5K2Q5di8wMFhYQ09mYjR6QlFxbHZMQ3EyMko3eXR6MUMza3F3OHRQ?=
- =?utf-8?B?Q2tWYXVBNVJrc1lqbjBpVkJlbVdSS0RrVjg2N1ljOUJDclR6VmJJS29SUUR6?=
- =?utf-8?B?YWtlVGFMUVNXUjdLUGFZeEsxK01pZGUvaTdGYkNJMW8zOW05NktHMzh5eUY2?=
- =?utf-8?B?azBTSllXZlRpaDJyQURBN0VDWlNFaWhPM2dlVFBUZ0NEMVNDcGxsZWZwOHNX?=
- =?utf-8?B?djBkdmpjM0YrMUt5ejhFKzkvNmpMcDNGRTFhWUdpbnhjeWRwc21FMUM5MXY5?=
- =?utf-8?B?bTdxZTVjZjMzV3V3WTJaOC8rMGFnQkVzVEZueXRiQ3VOZW85andIeklHS2Fr?=
- =?utf-8?Q?Aq5yNh/NtuqdQSYjN7PiBz1vycfUja+mNyhi4=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OTd5QzVSN2VMaEFGbG5kY0pZYXF1ajhVL1NaZm5vcis2ZXR4RkxpRWV2aDds?=
- =?utf-8?B?YXlIZ0VzTUZXY1NPVnB1dUFZR2c4dmlBSXowV2M1TmIvZmVWUks2RWdzblBl?=
- =?utf-8?B?cERQaFBmR3dadTJjMGh3aUpUR2ZQQ25IWHpaNGRQZ1E4ZmV5ckFaNEgvZ0M5?=
- =?utf-8?B?azZNUjZnNUZFK0Vnc3hqKzVnMHJLN0FWMWtaaEM1anUwUmxxU1Bta04wWkls?=
- =?utf-8?B?dnIvdmh4NTBjNldRK3pvYVJKZktjWXROZmZuSXdnVHB1dWRVTnphS0ZDYkxi?=
- =?utf-8?B?OHQ0TDRQWlVyOEZINERJb0JWa0dseDVkTFp0SHhuRmdvYzh2cjJmVHpaNzhX?=
- =?utf-8?B?eEhjaTcrbFZuWnBqemJyQWcxTUJmcHBuQk5Qa2Uxbjlib2NVSzBNZU1WRk9k?=
- =?utf-8?B?eWl6R1c2ekNSSSs3bXNlcW9vVWpBd1NHeFN5OUVOMEJzMDBzTWFuZ3F6VXhO?=
- =?utf-8?B?NUNGZDdGUElyKzVtS3IzZUtkenJjTWF5SFFxZGFyZk9XQ3BpVC9peVJEUkd1?=
- =?utf-8?B?VVpWeDEycTZPQUtHVjlZV1VuYjNZVUtIeTN3dXE3MVA1eWk4a1BOWTd0REZU?=
- =?utf-8?B?VW5JNy81Z3pkQkJIZ1RoVkVCUjJkY1VsVHNyTWMrOGcrMWVTWnRoQzJoVU8y?=
- =?utf-8?B?T2szbGk3Q2EyN2JOem9NUVpQSW5nT3k3ajFxb29sa1FVUTltSWF0WU85Wm1i?=
- =?utf-8?B?N1E2Z0FhaTFjQnI4SUE4YW1IVklqOWdRd1BQeHBFSXR2QUo2ZGo0allnb3d1?=
- =?utf-8?B?S3J1QU5mZGF3N2hDQ0N4WERDRXY0Y3JveW4xUmtOV21sck1hajJKUmcrUUx4?=
- =?utf-8?B?ZGlYcGRnbXlsRUtxL0tZZ1VsU0QyeWZwS0NTZjFTN0VZK1NEa1ZyVFBEUldR?=
- =?utf-8?B?VmhrRFF0aVZMbzNscnREUVkzdld4d2ZQQWFtWUltWXZtYTdCS2RnMVRrSEdm?=
- =?utf-8?B?Y0F1djhDY01sdWZjUTVqNkwvZGQ3RjQwOXJTQnQ1Y2ZMN2JuTUtoUVVvV29F?=
- =?utf-8?B?ZEg5VnlvVmpSOWdLTElZekVBbGQzdHZISy93aFFEbWZZOTRCTUNoUFkxemZI?=
- =?utf-8?B?WHExN0ZRdmpadzJuV3ZoT0YwL044M2ZJT0l0SDhtek1maHpkKzBaK1NKVU1B?=
- =?utf-8?B?MGh5dXJtMEhOOXhCejIzaVdJYTBvbXhwOXIxcDhoM2FoVStrWUN4K2cvVDlS?=
- =?utf-8?B?ZUJEdmMvc2hDd05VUlpMUG9XeFMrSzYzdmFocHJYMmVCWldiMHM5RWVqaUFX?=
- =?utf-8?B?cU1TRkMraUZOWTAvcDF0NVRFamxpakxxczdPUWhQdE91QWFOMDJ3WTZFQ201?=
- =?utf-8?B?Z25NVEFPYlVER0x3NGVxMkRLQnFGV1ZuSE9sTWd2a1dyQjNZczcxckFVYXZK?=
- =?utf-8?B?MmU5cFE3RTZzeEZBNUMxZXV1RHU3QmROVzIrZkE0Y2hXM0VrRDFmWGRvZldk?=
- =?utf-8?B?R0VzTzBFU0N2Z1VjYWo4Y3h6eXFqMlNhbmlkWEV6MVh2K1NmY2VlUERZNmE1?=
- =?utf-8?B?Q0loWEJYU3FIRmx2VU1EODhnSk1GZk01cnQ1cExvUUZJWktvYmZ5K1RYUnRt?=
- =?utf-8?B?U1VSbWZxRGFIMEJsT3liclVFZVRWeUV5UTduVVVkVng2S2xRNVlVSUx3MHNx?=
- =?utf-8?B?MG1xZ1lJdENjSmhsbC9yNGtOMm5VU0RyYWczSnlSNGZnT3IzWjVzUitZYXpJ?=
- =?utf-8?B?djRSaEVlaTkrc2lQMnZmUXd5MGhyR2FHOFZ0K2YzcVRBYW0rcHVPTUJINVRD?=
- =?utf-8?B?Vm5ueTZoVlFIUzNRNXZRby8zL1pTUnNOa3o0YmhZd2diRW40amM2dW5IejU4?=
- =?utf-8?B?aE52NDg5dFR4NDlicXhXYkJGMWJEcTlXL2ZaNVloUVBGUy9BUkIrLytnR2pF?=
- =?utf-8?B?NC9rVzhLd2lQWDNmSWRreUZLWW1YUktKeUpkN2x5Y0JVeDBTaHJPbkdseWpz?=
- =?utf-8?B?VlJ1VUxnK0Faako3UnFJWFNVanBKS2laaHJLbTVPelpHME9Ub1cyR2U4OGNI?=
- =?utf-8?B?Y1BTV1gwekpiNUdreUswaDlIdkVKbVdUaXl1VzRuOW5CcHQxVUtSN0tKVGZ2?=
- =?utf-8?B?eXZNT3hsd1JxV3ZtNlJ1dmlGZHVSUmtxVHFHc0V3bEE3ZVk2VlBNVjE2ait0?=
- =?utf-8?B?WXdpemVVNXplbU1aUDBVWHQrVzRiZE1XdjlMenZSQ0NpclNBL3FxNFRVNGxZ?=
- =?utf-8?B?U1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1963687F85CE5745AC864C479131709E@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB721B960
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724051117; cv=none; b=nWwFy13dBVrXT6w9gO5nk2ffo8BM+JcB81VnIpffbgTnsskvt7Ydm/2W+e1+tfnIIca9igFMrh70GDnO9d7EqiLhvyUb4Unq+/M39bEhyD/WroCnubJM7XSfhqW/zTVnBnwwQv3CgETnNDxJV8qzc9Q4bbHg0+9PJEWNTMcGQR0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724051117; c=relaxed/simple;
+	bh=X/GxZDdUwPUySnXZRZNn2nVDKu56nGlu6pNfAu49glw=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=apIfDCBZsgutmjJfHBMoUC6sC75SVzJt8wqYMtORsuxVt+N0HTvojT6DYRoWdbXXMLbJGkaQ3AKLEjlkPL9PNNWjUN17+L3A3BsoVsnu5TDgnNmRw8SRscaSE1VimnLpF8tV3qVOGwDfKcgGjb554wQhMdqqc3RMzzNEOzC2qjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=u5z02DLQ; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 775B83FD42
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724050641;
+	bh=w8L5CFHCyutNw4jBovw3yNQlJyyC7H3ApazpWmsE09Y=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=u5z02DLQXWf0Zit70yerupGaoikYE62HEGzV+h+3O8R/XeJrK9sPtcVOlg4Oua1Lf
+	 uyrAUGvFErm+4QPANQGnLJU00bIVikbfTEo/qnCbwR54mkNsIEmzTC5rxveuYBlbch
+	 yUL1PPpXU+i7J4wdum99bvq6elpGfpqy2L0E24zihdiR2+d0FYcd2q77uc6DiIg4W9
+	 5Fio8HMtDv7ev8Fw9cB/Av0rgqTR2nIFHeeaeNhzW/ifif7okl5LNzYjYgCQpZUI33
+	 qRhgbb860hiVV4aYnxGy0TL+/iphW3FIgIeMXYylR5yWsAHMAlw3vqDa7Ouk63YYuE
+	 sAXD/5ACsB88Q==
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6bd94069ceeso89987776d6.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 23:57:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724050640; x=1724655440;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8L5CFHCyutNw4jBovw3yNQlJyyC7H3ApazpWmsE09Y=;
+        b=HtZGxBVA+Yrw4K0nNM/GA60ZvZRvQz1go342+UPFb0JKGpPbp5boj5SIBJnMK/ARgh
+         jWFn44K3QIeBL11w0hPxEarLsmEFKIp2kmfMQ/SxnM4LgB5VMYiUXn66m5yOFxriu9n+
+         mdXvfTViFNVjefurLAH+5r2pOcqVPcbuTo9inQoclQ1qlxszqtmHiU5yM9yfZXQdHUK1
+         RZ4KtIQK/PLvwt51mGSUhzuZzVzOrpskU8hhIzqXsJWb50VDaqpbSpjKrmMmR1Xfq1JP
+         ojtH39rRAdzLc8m7Fyc2HRgzKU8Ai5gxUYT91Aa1aglLgAXOJNP8Zlbm6vf8+nlvt8PC
+         xrCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuB/joFe2cSWo1/jfg4G1Cv/PUnML+rBQHG108Z9Z/dGfuN+kTlDWl+BwquDxFBDJn4aPjehQZNiPeYueu5y9LDmCPB+ESV3Qa5FkK
+X-Gm-Message-State: AOJu0YyoPIYUO1mW3RGElM1x6qAN1VZBhMwShJRPI5eJ0Gsz3QFLsO5I
+	tFZ8xm2JCuOXrpjf1qkE7snhaxhPSJLZMQt46McQ/sQyeNX8gRapH0B7le9c4+lN3yVTRmVWobk
+	8Nfqg20RZ52yx/f9E5rqceE3gOhQi6mxvITcmgU0e9bf6LcUJMz8sCnE6/EU4Hl4UcnG0hVO9Bj
+	scVnQVwMZG+/D0NK+R72eYsLK74APdEu9VzJ9mt7KKgZs0RAA7XjrT0habf+h+
+X-Received: by 2002:ad4:596d:0:b0:6b7:9a53:70e9 with SMTP id 6a1803df08f44-6bf6de31f99mr160766736d6.17.1724050639698;
+        Sun, 18 Aug 2024 23:57:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaF/xIrPgZ8pAIE3XH+9zs5sEhJ/82RgdDvwuO1jCjg0IkvwTPoMxKwAi1AFGhN9X6ZpuuEH+zJUUsk/I1LJI=
+X-Received: by 2002:ad4:596d:0:b0:6b7:9a53:70e9 with SMTP id
+ 6a1803df08f44-6bf6de31f99mr160766536d6.17.1724050639169; Sun, 18 Aug 2024
+ 23:57:19 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 19 Aug 2024 02:57:18 -0400
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240817081218.2985171-1-apatel@ventanamicro.com>
+References: <20240817081218.2985171-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62460a73-9073-4ad6-aa8b-08dcc01baf76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 06:53:51.9576
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: K/k46TZn7/V7yJwVHemh1AaN83RTcqD6a4Ojlg2pGjGSNzVbbnX5JhTokMIoWX+FvpkKNzlr7OYf6rL8MV1NsSpyZw/nQGyRx0AELlrg0AmRf7a/WMJk+napdgVJ10uk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7176
+Mime-Version: 1.0
+Date: Mon, 19 Aug 2024 02:57:18 -0400
+Message-ID: <CAJM55Z9_7WsqXT5hNuwB9jt31Aayk3kqOV5FDZ9tdcLYhwHTFg@mail.gmail.com>
+Subject: Re: [PATCH v2] irqchip/sifive-plic: Probe plic driver early for
+ Allwinner D1 platform
+To: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	linux-kernel@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Atish Patra <atishp@atishpatra.org>, 
+	linux-riscv@lists.infradead.org, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgSmFrdWIsDQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRoZSBwYXRjaGVzLg0KDQpPbiAxNi8w
-OC8yNCAxMDozMSBwbSwgSmFrdWIgS2ljaW5za2kgd3JvdGU6DQo+IEVYVEVSTkFMIEVNQUlMOiBE
-byBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtub3cgdGhl
-IGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gT24gTW9uLCAxMiBBdWcgMjAyNCAxNTo1NjowNyArMDUz
-MCBQYXJ0aGliYW4gVmVlcmFzb29yYW4gd3JvdGU6DQo+PiArICAgICBpZiAobmV0aWZfcngodGM2
-LT5yeF9za2IpID09IE5FVF9SWF9EUk9QKQ0KPj4gKyAgICAgICAgICAgICB0YzYtPm5ldGRldi0+
-c3RhdHMucnhfZHJvcHBlZCsrOw0KPiANCj4gVGhpcyBpcyBhIGJpdCB1bnVzdWFsLiBJZiB0aGUg
-Y29yZSBkZWNpZGVzIHRvIGRyb3AgdGhlIHBhY2tldCBpdCB3aWxsDQo+IGNvdW50IHRoZSBkcm9w
-IHRvd2FyZHMgdGhlIGFwcHJvcHJpYXRlIHN0YXRpc3RpYy4gVGhlIGRyaXZlcnMgZ2VuZXJhbGx5
-DQo+IG9ubHkgY291bnQgdGhlaXIgb3duIGRyb3BzLCBhbmQgY2FsbCBuZXRpZl9yeCgpIHdpdGhv
-dXQgY2hlY2tpbmcgdGhlDQo+IHJldHVybiB2YWx1ZS4NClRoZSBmaXJzdCB2ZXJzaW9uIG9mIHRo
-aXMgcGF0Y2ggc2VyaWVzIGRpZG4ndCBoYXZlIHRoaXMgY2hlY2suIFRoZXJlIHdhcyANCmEgY29t
-bWVudCBpbiB0aGUgMXN0IHZlcnNpb24gdG8gY2hlY2sgdGhlIHJldHVybiB2YWx1ZSBhbmQgdXBk
-YXRlIHRoZSANCnN0YXRpc3RpY3MuDQoNCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMzc1
-ZmE5YjQtMGZiOC04ZDRiLThjYjUtZDhhOTI0MGQ4ZjE2QGh1YXdlaS5jb20vDQoNClRoYXQgd2Fz
-IHRoZSByZWFzb24gd2h5IGl0IHdhcyBpbnRyb2R1Y2VkIGluIHRoZSB2MiBvZiB0aGUgcGF0Y2gg
-c2VyaWVzIA0KaXRzZWxmLiBJdCBzZWVtcywgc29tZWhvdyBpdCBnb3QgZXNjYXBlZCBmcm9tIHlv
-dXIgUkFEQVIgZnJvbSB2MiB0byB2NSANCjpELiBTb3JyeSwgc29tZWhvdyBJIGFsc28gbWlzc2Vk
-IHRvIGNoZWNrIGl0IGluIHRoZSBuZXRkZXYgY29yZS4gTm93IEkgDQp1bmRlcnN0YW5kIHRoYXQg
-dGhlIHJ4IGRyb3AgaGFuZGxlZCBpbiB0aGUgY29yZSBpdHNlbGYgaW4gdGhlIGJlbG93IGxpbmsg
-DQp1c2luZyB0aGUgZnVuY3Rpb24gImRldl9jb3JlX3N0YXRzX3J4X2Ryb3BwZWRfaW5jKHNrYi0+
-ZGV2KSIuDQoNCmh0dHBzOi8vZ2l0aHViLmNvbS90b3J2YWxkcy9saW51eC9ibG9iL21hc3Rlci9u
-ZXQvY29yZS9kZXYuYyNMNDg5NA0KDQpJcyBteSB1bmRlcnN0YW5kaW5nIGNvcnJlY3Q/IGlmIHNv
-IHRoZW4gSSB3aWxsIHJlbW92ZSB0aGlzIGNoZWNrIGluIHRoZSANCm5leHQgdmVyc2lvbi4NCg0K
-QmVzdCByZWdhcmRzLA0KUGFydGhpYmFuIFYNCg0KDQo=
+Anup Patel wrote:
+> The latest Linux RISC-V no longer boots on the Allwinner D1 platform
+> because the sun4i_timer driver fails to get an interrupt from PLIC.
+>
+> The real fix requires enabling the SBI time extension in the platform
+> firmware (OpenSBI) and convert sun4i_timer into platform driver.
+> Unfortunately, the real fix involves changing multiple places and
+> can't be achieved in a short duration.
+>
+> As a work-around, retrofit plic probing such that plic is probed
+> early only for the Allwinner D1 platform and probed as a regular
+> platform driver for rest of the RISC-V platforms. In the process,
+> partially revert some of the previous patches because PLIC device
+> pointer is not available in all probing paths.
+>
+> More detailed discussion can found here:
+> https://lore.kernel.org/lkml/20240814145642.344485-1-emil.renner.berthing@canonical.com/
+>
+> Fixes: e306a894bd51 ("irqchip/sifive-plic: Chain to parent IRQ after handlers are ready")
+> Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a platform driver")
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Tested-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+> Changes since v1:
+>  - Set suppress_bind_attrs for PLIC platform driver
+> ---
+>  drivers/irqchip/irq-sifive-plic.c | 128 +++++++++++++++++++-----------
+>  1 file changed, 80 insertions(+), 48 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index 9e22f7e378f5..33395c5a9b5b 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2017 SiFive
+>   * Copyright (C) 2018 Christoph Hellwig
+>   */
+> +#define pr_fmt(fmt) "riscv-plic: " fmt
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> @@ -63,7 +64,7 @@
+>  #define PLIC_QUIRK_EDGE_INTERRUPT	0
+>
+>  struct plic_priv {
+> -	struct device *dev;
+> +	struct fwnode_handle *fwnode;
+>  	struct cpumask lmask;
+>  	struct irq_domain *irqdomain;
+>  	void __iomem *regs;
+> @@ -378,8 +379,8 @@ static void plic_handle_irq(struct irq_desc *desc)
+>  		int err = generic_handle_domain_irq(handler->priv->irqdomain,
+>  						    hwirq);
+>  		if (unlikely(err)) {
+> -			dev_warn_ratelimited(handler->priv->dev,
+> -					     "can't find mapping for hwirq %lu\n", hwirq);
+> +			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
+> +					    handler->priv->fwnode, hwirq);
+>  		}
+>  	}
+>
+> @@ -408,15 +409,14 @@ static int plic_starting_cpu(unsigned int cpu)
+>  		enable_percpu_irq(plic_parent_irq,
+>  				  irq_get_trigger_type(plic_parent_irq));
+>  	else
+> -		dev_warn(handler->priv->dev, "cpu%d: parent irq not available\n", cpu);
+> +		pr_warn("%pfwP: cpu%d: parent irq not available\n",
+> +			handler->priv->fwnode, cpu);
+>  	plic_set_threshold(handler, PLIC_ENABLE_THRESHOLD);
+>
+>  	return 0;
+>  }
+>
+> -static const struct of_device_id plic_match[] = {
+> -	{ .compatible = "sifive,plic-1.0.0" },
+> -	{ .compatible = "riscv,plic0" },
+> +static const struct of_device_id plic_quirks_match[] = {
+>  	{ .compatible = "andestech,nceplic100",
+>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>  	{ .compatible = "thead,c900-plic",
+> @@ -424,38 +424,36 @@ static const struct of_device_id plic_match[] = {
+>  	{}
+>  };
+>
+> -static int plic_parse_nr_irqs_and_contexts(struct platform_device *pdev,
+> +static int plic_parse_nr_irqs_and_contexts(struct fwnode_handle *fwnode,
+>  					   u32 *nr_irqs, u32 *nr_contexts)
+>  {
+> -	struct device *dev = &pdev->dev;
+>  	int rc;
+>
+>  	/*
+>  	 * Currently, only OF fwnode is supported so extend this
+>  	 * function for ACPI support.
+>  	 */
+> -	if (!is_of_node(dev->fwnode))
+> +	if (!is_of_node(fwnode))
+>  		return -EINVAL;
+>
+> -	rc = of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", nr_irqs);
+> +	rc = of_property_read_u32(to_of_node(fwnode), "riscv,ndev", nr_irqs);
+>  	if (rc) {
+> -		dev_err(dev, "riscv,ndev property not available\n");
+> +		pr_err("%pfwP: riscv,ndev property not available\n", fwnode);
+>  		return rc;
+>  	}
+>
+> -	*nr_contexts = of_irq_count(to_of_node(dev->fwnode));
+> +	*nr_contexts = of_irq_count(to_of_node(fwnode));
+>  	if (WARN_ON(!(*nr_contexts))) {
+> -		dev_err(dev, "no PLIC context available\n");
+> +		pr_err("%pfwP: no PLIC context available\n", fwnode);
+>  		return -EINVAL;
+>  	}
+>
+>  	return 0;
+>  }
+>
+> -static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
+> +static int plic_parse_context_parent(struct fwnode_handle *fwnode, u32 context,
+>  				     u32 *parent_hwirq, int *parent_cpu)
+>  {
+> -	struct device *dev = &pdev->dev;
+>  	struct of_phandle_args parent;
+>  	unsigned long hartid;
+>  	int rc;
+> @@ -464,10 +462,10 @@ static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
+>  	 * Currently, only OF fwnode is supported so extend this
+>  	 * function for ACPI support.
+>  	 */
+> -	if (!is_of_node(dev->fwnode))
+> +	if (!is_of_node(fwnode))
+>  		return -EINVAL;
+>
+> -	rc = of_irq_parse_one(to_of_node(dev->fwnode), context, &parent);
+> +	rc = of_irq_parse_one(to_of_node(fwnode), context, &parent);
+>  	if (rc)
+>  		return rc;
+>
+> @@ -480,48 +478,55 @@ static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
+>  	return 0;
+>  }
+>
+> -static int plic_probe(struct platform_device *pdev)
+> +static int plic_probe(struct fwnode_handle *fwnode)
+>  {
+>  	int error = 0, nr_contexts, nr_handlers = 0, cpu, i;
+> -	struct device *dev = &pdev->dev;
+>  	unsigned long plic_quirks = 0;
+>  	struct plic_handler *handler;
+>  	u32 nr_irqs, parent_hwirq;
+>  	struct plic_priv *priv;
+>  	irq_hw_number_t hwirq;
+> +	void __iomem *regs;
+>
+> -	if (is_of_node(dev->fwnode)) {
+> +	if (is_of_node(fwnode)) {
+>  		const struct of_device_id *id;
+>
+> -		id = of_match_node(plic_match, to_of_node(dev->fwnode));
+> +		id = of_match_node(plic_quirks_match, to_of_node(fwnode));
+>  		if (id)
+>  			plic_quirks = (unsigned long)id->data;
+> +
+> +		regs = of_iomap(to_of_node(fwnode), 0);
+> +		if (!regs)
+> +			return -ENOMEM;
+> +	} else {
+> +		return -ENODEV;
+
+This driver never worked with ACPI anyways?
+
+>  	}
+>
+> -	error = plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_contexts);
+> +	error = plic_parse_nr_irqs_and_contexts(fwnode, &nr_irqs, &nr_contexts);
+>  	if (error)
+> -		return error;
+> +		goto fail_free_regs;
+>
+> -	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> -	if (!priv)
+> -		return -ENOMEM;
+> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> +	if (!priv) {
+> +		error = -ENOMEM;
+> +		goto fail_free_regs;
+> +	}
+>
+> -	priv->dev = dev;
+> +	priv->fwnode = fwnode;
+>  	priv->plic_quirks = plic_quirks;
+>  	priv->nr_irqs = nr_irqs;
+> +	priv->regs = regs;
+>
+> -	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+> -	if (WARN_ON(!priv->regs))
+> -		return -EIO;
+> -
+> -	priv->prio_save = devm_bitmap_zalloc(dev, nr_irqs, GFP_KERNEL);
+> -	if (!priv->prio_save)
+> -		return -ENOMEM;
+> +	priv->prio_save = bitmap_zalloc(nr_irqs, GFP_KERNEL);
+> +	if (!priv->prio_save) {
+> +		error = -ENOMEM;
+> +		goto fail_free_priv;
+> +	}
+>
+>  	for (i = 0; i < nr_contexts; i++) {
+> -		error = plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu);
+> +		error = plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu);
+>  		if (error) {
+> -			dev_warn(dev, "hwirq for context%d not found\n", i);
+> +			pr_warn("%pfwP: hwirq for context%d not found\n", fwnode, i);
+>  			continue;
+>  		}
+>
+> @@ -543,7 +548,7 @@ static int plic_probe(struct platform_device *pdev)
+>  		}
+>
+>  		if (cpu < 0) {
+> -			dev_warn(dev, "Invalid cpuid for context %d\n", i);
+> +			pr_warn("%pfwP: Invalid cpuid for context %d\n", fwnode, i);
+>  			continue;
+>  		}
+>
+> @@ -554,7 +559,7 @@ static int plic_probe(struct platform_device *pdev)
+>  		 */
+>  		handler = per_cpu_ptr(&plic_handlers, cpu);
+>  		if (handler->present) {
+> -			dev_warn(dev, "handler already present for context %d.\n", i);
+> +			pr_warn("%pfwP: handler already present for context %d.\n", fwnode, i);
+>  			plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
+>  			goto done;
+>  		}
+> @@ -568,8 +573,8 @@ static int plic_probe(struct platform_device *pdev)
+>  			i * CONTEXT_ENABLE_SIZE;
+>  		handler->priv = priv;
+>
+> -		handler->enable_save = devm_kcalloc(dev, DIV_ROUND_UP(nr_irqs, 32),
+> -						    sizeof(*handler->enable_save), GFP_KERNEL);
+> +		handler->enable_save = kcalloc(DIV_ROUND_UP(nr_irqs, 32),
+> +					       sizeof(*handler->enable_save), GFP_KERNEL);
+>  		if (!handler->enable_save)
+>  			goto fail_cleanup_contexts;
+>  done:
+> @@ -581,7 +586,7 @@ static int plic_probe(struct platform_device *pdev)
+>  		nr_handlers++;
+>  	}
+>
+> -	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
+> +	priv->irqdomain = irq_domain_add_linear(to_of_node(fwnode), nr_irqs + 1,
+>  						&plic_irqdomain_ops, priv);
+>  	if (WARN_ON(!priv->irqdomain))
+>  		goto fail_cleanup_contexts;
+> @@ -619,13 +624,13 @@ static int plic_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>
+> -	dev_info(dev, "mapped %d interrupts with %d handlers for %d contexts.\n",
+> -		 nr_irqs, nr_handlers, nr_contexts);
+> +	pr_info("%pfwP: mapped %d interrupts with %d handlers for %d contexts.\n",
+> +		fwnode, nr_irqs, nr_handlers, nr_contexts);
+>  	return 0;
+>
+>  fail_cleanup_contexts:
+>  	for (i = 0; i < nr_contexts; i++) {
+> -		if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu))
+> +		if (plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu))
+>  			continue;
+>  		if (parent_hwirq != RV_IRQ_EXT || cpu < 0)
+>  			continue;
+> @@ -634,17 +639,44 @@ static int plic_probe(struct platform_device *pdev)
+>  		handler->present = false;
+>  		handler->hart_base = NULL;
+>  		handler->enable_base = NULL;
+> +		kfree(handler->enable_save);
+>  		handler->enable_save = NULL;
+>  		handler->priv = NULL;
+>  	}
+> -	return -ENOMEM;
+> +	bitmap_free(priv->prio_save);
+> +fail_free_priv:
+> +	kfree(priv);
+> +fail_free_regs:
+> +	iounmap(regs);
+> +	return error;
+> +}
+> +
+> +static int plic_platform_probe(struct platform_device *pdev)
+> +{
+> +	return plic_probe(pdev->dev.fwnode);
+>  }
+>
+> +static const struct of_device_id plic_platform_match[] = {
+> +	{ .compatible = "sifive,plic-1.0.0" },
+> +	{ .compatible = "riscv,plic0" },
+> +	{ .compatible = "andestech,nceplic100" },
+> +	{}
+> +};
+> +
+>  static struct platform_driver plic_driver = {
+>  	.driver = {
+>  		.name		= "riscv-plic",
+> -		.of_match_table	= plic_match,
+> +		.of_match_table	= plic_platform_match,
+> +		.suppress_bind_attrs = true,
+>  	},
+> -	.probe = plic_probe,
+> +	.probe = plic_platform_probe,
+>  };
+>  builtin_platform_driver(plic_driver);
+> +
+> +static int __init plic_early_probe(struct device_node *node,
+> +				   struct device_node *parent)
+> +{
+> +	return plic_probe(&node->fwnode);
+> +}
+> +
+> +IRQCHIP_DECLARE(riscv, "thead,c900-plic", plic_early_probe);
+
+If this is only needed on the Allwinner D1 maybe this should only match the
+more specific "allwinner,sun20i-d1-plic"?
+
+In any case this works by itself, but not with Samuel's patch[1] applied, so
+Tested-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+[1]: https://lore.kernel.org/r/20240312192519.1602493-1-samuel.holland@sifive.com
 
