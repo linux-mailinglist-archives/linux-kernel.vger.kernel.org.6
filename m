@@ -1,94 +1,177 @@
-Return-Path: <linux-kernel+bounces-292343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEF0956E33
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:07:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A77956E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8862821CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2B31F22994
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B905175D35;
-	Mon, 19 Aug 2024 15:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DE617556B;
+	Mon, 19 Aug 2024 15:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="rFkyHwUr"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+NvMM/j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919601741D9;
-	Mon, 19 Aug 2024 15:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA617622F;
+	Mon, 19 Aug 2024 15:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080017; cv=none; b=Tq2aSZlSEjNvhIgXbZURrqHy69JJdJUYP+ML1UyNdvEdYSTaX2ElVJDuZ8a7dkl5W6OCXMZrRWtcGOtAnqM+HXZQ+rguNWgAcOOsRO/qTb7BoPAPa5g044AY17CReJEKO2kp8BxjNAk9z0hdGcDrKI0B6LrQaJVlXb07sft22sY=
+	t=1724080022; cv=none; b=nalaRMSVDuxynqTawCojSJWQa+Wt9aSoZm/2Z0qC5GIFADQLmR4bCvgDXnm75XXcE4BEWnI/FW9g6ffnEVmR737lYOokip9tDNWG16MMMf0/xp5+6hvlfOTvHUn91hQm28u1fIr9D4EXeRlED+U27ga1ygbCSmZ1vsK+ib1P+Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080017; c=relaxed/simple;
-	bh=vns+adXAJLw8T/OM3pAthnwRhUMiPNaH/Eq3YdBkm+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xhi1v9+a8/wgNKNBMsDxDtPi11mDa2Wd5Z8avemcO9DitQnJPVWRaKxocoHkXyU5vpx4yvPq5dwjy2QWGbVRBgJNOOSnJN11tPIA0pldc8FxY/ToQQZFjynnbtTbyB8IYv4coPl2Su0cOY3IS6Jv+3KtAYe1CQIiLmFtaS6Wmt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=rFkyHwUr; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=+nhzfS7nwlcduWA3b9lUiJN3hfhtWWmUh6PUuFzlJqw=; b=rFkyHwUrcD6xAjGPxd8Nzg9GlX
-	pmrtQ43Q66j2SONDJOffD7xHxDvMEVZImyiTzD/yQv8hisyBj3+I+jq0M0tmNLoReIbtJ0eHHg8GI
-	SDjIJjGxVtS4CQu029pvq7HyH3gv7VX4cau5pHnAeMVadHTjMOrpJxS4folDnUN185NM=;
-Received: from p5b2060c8.dip0.t-ipconnect.de ([91.32.96.200] helo=localhost.localdomain)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1sg3xq-001WcL-33;
-	Mon, 19 Aug 2024 17:06:35 +0200
-From: Felix Fietkau <nbd@nbd.name>
-To: netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH net] udp: fix receiving fraglist GSO packets
-Date: Mon, 19 Aug 2024 17:06:21 +0200
-Message-ID: <20240819150621.59833-1-nbd@nbd.name>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724080022; c=relaxed/simple;
+	bh=GYtDHER4l36QRbGSz9n1fTQl4KIxcIyyj6NCZNhyrxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxOKAUnO0eAE4rWtlvlqNY3U1q+wvmBqTmPr7S++gKZcrT+71+6ZKKohHkyHL4hdzp0QkOilriI6e1PE/2QGDGzU+NrsRP0rkpoOuGNS88z7B/d0yYLd20GVahqS9pNj/3nEvxknco8TO//ba4RNMXKFfJPMczgzLtuzmCII+Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+NvMM/j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41078C32782;
+	Mon, 19 Aug 2024 15:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724080021;
+	bh=GYtDHER4l36QRbGSz9n1fTQl4KIxcIyyj6NCZNhyrxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A+NvMM/j9AVWIdfl4DKGnMElXWkpNPiFw43YwYnU0q3FYA70zKlbSe23ahceuKf2z
+	 Y6DzmQMxoUsh9ICWPAl0oHAbrOwicDumKDX1O/9h95qs5aWycObt57qRrpDUWz9zG8
+	 /vR6JDNIcCECfynJNfD0++4FF1FJ079FQX9UWD36qzhDnwI+VSZSUVwksxdfSUGrtG
+	 Ot6jgqF/6cDf5LvCigzB71UokFA9lPsWSpqIrxHdobmWU5h6ZnsVD4JB8gsqoFUlYQ
+	 wHn6uueqdNrKPA7Mnl338xLhDmmkWnUdirpuUnCeqQ4O8M6ZVutRAAXzl1vIIbP63k
+	 6I8VRQDxUx9QQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sg3yE-000000007do-14Mo;
+	Mon, 19 Aug 2024 17:06:58 +0200
+Date: Mon, 19 Aug 2024 17:06:58 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] usb: typec: ucsi: Move unregister out of atomic
+ section
+Message-ID: <ZsNfkuiRK9VqBSLT@hovoldconsulting.com>
+References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+ <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
 
-When assembling fraglist GSO packets, udp4_gro_complete does not set
-skb->csum_start, which makes the extra validation in __udp_gso_segment fail.
+On Sun, Aug 18, 2024 at 04:17:38PM -0700, Bjorn Andersson wrote:
+> Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
+> initialization")' 
 
-Fixes: 89add40066f9 ("net: drop bad gso csum_start and offset in virtio_net_hdr")
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- net/ipv4/udp_offload.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This commit does not exist, but I think you really meant to refer to
 
-diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index b254a5dadfcf..d842303587af 100644
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -279,7 +279,8 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 		return ERR_PTR(-EINVAL);
+	9329933699b3 ("soc: qcom: pmic_glink: Make client-lock non-sleeping")
+
+and possibly also
+
+	635ce0db8956 ("soc: qcom: pmic_glink: don't traverse clients list without a lock")
+
+here.
+
+> moved the pmic_glink client list under a spinlock, as
+> it is accessed by the rpmsg/glink callback, which in turn is invoked
+> from IRQ context.
+> 
+> This means that ucsi_unregister() is now called from IRQ context, which
+> isn't feasible as it's expecting a sleepable context.
+
+But this is not correct as you say above that the callback has always
+been made in IRQ context. Then this bug has been there since the
+introduction of the UCSI driver by commit
+
+	62b5412b1f4a ("usb: typec: ucsi: add PMIC Glink UCSI driver")
+
+> An effort is under
+> way to get GLINK to invoke its callbacks in a sleepable context, but
+> until then lets schedule the unregistration.
+> 
+> A side effect of this is that ucsi_unregister() can now happen
+> after the remote processor, and thereby the communication link with it, is
+> gone. pmic_glink_send() is amended with a check to avoid the resulting
+> NULL pointer dereference, but it becomes expecting to see a failing send
+
+Perhaps you can rephrase this bit ("becomes expecting to see").
+
+> upon shutting down the remote processor (e.g. during a restart following
+> a firmware crash):
+> 
+>   ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI write request: -5
+> 
+> Fixes: caa855189104 ("soc: qcom: pmic_glink: Fix race during initialization")
+
+So this should be
+
+Fixes: 62b5412b1f4a ("usb: typec: ucsi: add PMIC Glink UCSI driver")
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
  
- 	if (unlikely(skb_checksum_start(gso_skb) !=
--		     skb_transport_header(gso_skb)))
-+		     skb_transport_header(gso_skb) &&
-+		     !(skb_shinfo(gso_skb)->gso_type & SKB_GSO_FRAGLIST)))
- 		return ERR_PTR(-EINVAL);
- 
- 	/* We don't know if egress device can segment and checksum the packet
--- 
-2.46.0
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index ac53a81c2a81..a33056eec83d 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
+>  
+>  	struct work_struct notify_work;
+>  	struct work_struct register_work;
+> +	spinlock_t state_lock;
+> +	unsigned int pdr_state;
+> +	unsigned int new_pdr_state;
 
+Should these be int to match the notify callback (and enum
+servreg_service_state)?
+
+>  	u8 read_buf[UCSI_BUF_SIZE];
+>  };
+> @@ -244,8 +247,22 @@ static void pmic_glink_ucsi_notify(struct work_struct *work)
+>  static void pmic_glink_ucsi_register(struct work_struct *work)
+>  {
+>  	struct pmic_glink_ucsi *ucsi = container_of(work, struct pmic_glink_ucsi, register_work);
+> +	unsigned long flags;
+> +	unsigned int new_state;
+
+Then int here too.
+
+> +
+> +	spin_lock_irqsave(&ucsi->state_lock, flags);
+> +	new_state = ucsi->new_pdr_state;
+> +	spin_unlock_irqrestore(&ucsi->state_lock, flags);
+> +
+> +	if (ucsi->pdr_state != SERVREG_SERVICE_STATE_UP) {
+> +		if (new_state == SERVREG_SERVICE_STATE_UP)
+> +			ucsi_register(ucsi->ucsi);
+> +	} else {
+> +		if (new_state == SERVREG_SERVICE_STATE_DOWN)
+> +			ucsi_unregister(ucsi->ucsi);
+
+Do you risk a double deregistration (and UAF/double free) here?
+
+> +	}
+>  
+> -	ucsi_register(ucsi->ucsi);
+> +	ucsi->pdr_state = new_state;
+>  }
+
+Johan
 
