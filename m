@@ -1,225 +1,147 @@
-Return-Path: <linux-kernel+bounces-292120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273EB956B5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EA1956B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CB31F234C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587871C22468
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D3B16C688;
-	Mon, 19 Aug 2024 12:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="UaYZKnes"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2056.outbound.protection.outlook.com [40.107.215.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1098016C868;
+	Mon, 19 Aug 2024 12:59:50 +0000 (UTC)
+Received: from ns.iliad.fr (ns.iliad.fr [212.27.33.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF3D16C680;
-	Mon, 19 Aug 2024 12:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724072266; cv=fail; b=KN+wxqwaqmYVkliOaPwagygZTQY+oZcpOITQ9jWGxp2V/xtUTBJud42iVk2QlsbK8afzBsn3y7S3h9zwoFE7Fsf6yJqjs3k85gmXf81uicsiQSIfGnbXlDEGpRAAHJJ/l4shJqTRhGAe3A3Qi9FDnyyotgNc/FSHQ5qFzHvfEYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724072266; c=relaxed/simple;
-	bh=8wcQm2TRowUR70Vf/1ltgJDY3wlwNstuirCmkrZyJCs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBZ7QW7M0i/kkirc5lVg0XdrfCkFYTkjg/q9NM+fX/AM+pBM7fvLY2uABSZhZE/YKrTRCMYAnRiCu/FGrR5VFbicE3Ssox08c8mH2eaJZKHOcPUeF6doRY1Va62MJevCO+P5RMO5JPHKwBIiPF9LgXnLiZT+Ehvxdb3eGjNKwc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=UaYZKnes; arc=fail smtp.client-ip=40.107.215.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TasZoIHuyDX/YFQd8iAGHAwVrNvlnocV2jAqgZCDmI2Xp+eZ2fTgLhmgukq101y1ZPF44dXczf2AdrI7LutMJyckmTxkRMiGC4IyP4iv16zW7jIq39kWuqHdty6kxbCRGYm2y9b9Ao7aW+UAtNLCDbASJ366P3ipW2yUvb/tKyXsXHzCR4dPNFPIkNtRPsWAIfFoQed0YoaeNHtcc2DRmfAyG+Ohu2LX9kVAkJQ3GiY3Bz1O1rEvsmEGXugDF0MN+zXAkgxwlD8lBj4IOuq/z9bYQsmP6sOuMsWHh0IAf8bY10vM1xtmrPrSgooTiypNqNsw35BxJu0qW/a7/0vPTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IAUWZTI3cBPdoY4BNnwpgO3WU7BxoW4iCiNiLw72uSI=;
- b=YND5KnCMCMeSxdg+5nFeRljvluk88VOo1wUsQfmzKVV/kgL7tIHqxsdt6dr99YUaOXMb7VPTgdxSmtxuVJqTkx4lqB1UNJGMfN9h9N50K+Yr50376fCvD/Zq+n91LMM0mtwPO63Ebb7/EeYtijv08oqHEXGA+bHoyohg2esPsEgF6JHqQzWRae0Oy3A2OUm/BWnaLONN2E0zCr6GK7X5K0mX4zpv8VY/6CLTI2ewaPkYLhJ00/b2Mza+Ueo82Z0Qqpa6DCDXrZeI8Jwkp9HPx/Y1/g5plO3wnkatDxMsLYUxfQxU1zXHUr8oSqhkWxJlSIAAOFY2QZGy2R1mJIaKxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IAUWZTI3cBPdoY4BNnwpgO3WU7BxoW4iCiNiLw72uSI=;
- b=UaYZKnesl9lOs/r/R0q7zxvoq5s8UAw3tVfPvnDA72jTiciDTLldjD/i+QqICZsidO6CaLCABieNthYCOd3KbDIN/wt3G02Xgu0zXgl9w+++1yj9eRpijVt4QCOWo9FdAlDUGnLCUce+D9LFHeFHt/JB3IFflCpiZmT8jeHt4KA=
-Received: from SG2PR01CA0142.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::22) by KL1PR02MB7613.apcprd02.prod.outlook.com
- (2603:1096:820:11d::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 12:57:39 +0000
-Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
- (2603:1096:4:8f:cafe::25) by SG2PR01CA0142.outlook.office365.com
- (2603:1096:4:8f::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Mon, 19 Aug 2024 12:57:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Mon, 19 Aug 2024 12:57:39 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 19 Aug
- 2024 20:57:38 +0800
-Date: Mon, 19 Aug 2024 20:57:38 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-CC: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>, Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Tangquan Zheng <zhengtangquan@oppo.com>,
-	<stable@vger.kernel.org>, Baoquan He <bhe@redhat.com>, Matthew Wilcox
-	<willy@infradead.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <20240819125738.vbjlw3qbv2v2rj57@oppo.com>
-References: <20240808122019.3361-1-hailong.liu@oppo.com>
- <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
- <ZrXiUvj_ZPTc0yRk@tiehlicka>
- <ZrXkVhEg1B0yF5_Q@pc636>
- <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
- <20240816091232.fsliktqgza5o5x6t@oppo.com>
- <Zr8mQbc3ETdeOMIK@pc636>
- <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <ZsMzq4bAIUCTJspN@pc636>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA4916BE12;
+	Mon, 19 Aug 2024 12:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.33.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724072389; cv=none; b=JNhI5FD/A1dF+ZbQ7NSffgA1H8KprwHaN3uM8ntAv8TmcDJfK/EHKOl8DvSyKjaA8xst+3p2/d3NPauEq5AQrRcVxFM+4HrH3fzbyyyf4IYgedYcg6/on1tVJk0GYJ+QrWyUXwHhPkvVhbRMpDvbq12PT5uUljmd6gZUoDkcu7w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724072389; c=relaxed/simple;
+	bh=uK3MQe9P1cLB7v2We933qbfjP8STr4jPcaOGuWi5V/E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eA/YBG1xI+e0nytWH9dSP/1Qsiil/qR++puAdRgkt70M7FQA8LZKXQER64xMCQYEmarxHlUWRmrkGVae/WRGBdMiBGYURJ+GXT81VurXyKcmp/4jwTb1ydu4CR4Z1Xv3WcRkRFNm+3yUA1txyiCZyKgmIJQ692bNaGwdQRF2RUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=srs.iliad.fr; arc=none smtp.client-ip=212.27.33.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=srs.iliad.fr
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+	by ns.iliad.fr (Postfix) with ESMTP id 8E84020989;
+	Mon, 19 Aug 2024 14:59:37 +0200 (CEST)
+Received: from [127.0.1.1] (freebox.vlq16.iliad.fr [213.36.7.13])
+	by ns.iliad.fr (Postfix) with ESMTP id 7CD0E2097B;
+	Mon, 19 Aug 2024 14:59:37 +0200 (CEST)
+From: Marc Gonzalez <mgonzalez@freebox.fr>
+Subject: [PATCH 0/2] Work around reserved SMMU context bank on msm8998
+Date: Mon, 19 Aug 2024 14:59:34 +0200
+Message-Id: <20240819-smmu-v1-0-bce6e4738825@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZsMzq4bAIUCTJspN@pc636>
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E2:EE_|KL1PR02MB7613:EE_
-X-MS-Office365-Filtering-Correlation-Id: a439c2e0-1893-4791-f15d-08dcc04e818a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ssqj6826UMTGQEvlXGDCTUEJRJfz3kmYvIrdJ8TU+KRZkp9BYI0j+bXJUKK7?=
- =?us-ascii?Q?esGyZyrkTom3Zxn1RmEoZmTj8jpWqEdnqPLlEQep2QzCIaU8m60UFQFIZvzR?=
- =?us-ascii?Q?p5e+wJDrL8xkIRoQtxxOEQX92wSPlgucgunVgNTVbNoBWlGlaalKsmnYmgYW?=
- =?us-ascii?Q?c/APy70WVpjtCnD/BRSGgrCGFXfXYHVAa+eW8K0PR/9ro394cBtNXI9SEZlL?=
- =?us-ascii?Q?EUK7WZNvWBAgkWF8P1h1q/pIY5k1EB574EJSVAobtfBGnkQjktT46yJ60aUM?=
- =?us-ascii?Q?Yo6rEYG8WkHsZ6a9uTWXf0R+H91gSG/4yG6EUwuFuFw8Bv7ARgMcqT/TL0ZX?=
- =?us-ascii?Q?lFO7VxSlmfCvr0oKeV38xa1H4uZPsQjvl+dGRA3Pv/5Iv64PFKTywpL3F7Xo?=
- =?us-ascii?Q?zPNTetqyFqFaYwxHpMC51Rb+pdOVV1m81DF54A+oi8dvKBRcdIhGllKshegP?=
- =?us-ascii?Q?oGrNoz7CG7cVSBYXztBYVmDy9bzqaPk+Bytj8hB5LZ4DaWZ11gZlDHZAaMix?=
- =?us-ascii?Q?py8HYs7+1iQ3v/SbeRNADVbAjbV4H6KSlNIhxF6Jv/4592nIMr6H8T2wFgID?=
- =?us-ascii?Q?m31ILvmqPOSUOBnJbDN3IJ3vLLqq5l5gBsvsY9ZpGOg+t4RhrX5LeNvglNu6?=
- =?us-ascii?Q?lKjrAIfrChf8XOS2u6R/hKYVMn8lLQ5n+lWuxxbuYyu5M0RceMqar7uwjr2k?=
- =?us-ascii?Q?Gup05TmLUBOVWefKkn7Nc+zbzW/9T3md5UQWEP+skaDd6pmoIC1bZVxLzLb3?=
- =?us-ascii?Q?ItMyo4HuW6Xdmk8XWBueFX54YLS0MpNmxzKr3yd4ZgK0ShdUtrTl7PEHe+5c?=
- =?us-ascii?Q?Q/ncqg8LDhDHaGoWk+U0LwIfPIQkFVZLNk/5Cq6UIAM6nr/hQfMInMDDKpE+?=
- =?us-ascii?Q?pgANmK8+q5GmvqQ4HC8rEoVrSV8dd1ZoltD5+KoC6kNHJMscuwpHy/MFA2fk?=
- =?us-ascii?Q?ccwUgAWe2MJ/BhGp2Bk9fGpO76g2Gv7y9sx1FemQLRgykKfOcBl6HZeMYIkz?=
- =?us-ascii?Q?jqHT/nBbHEKjuExxu4Ie1wEf+YT/ZbckPZUkpS6FiJ125bP8KKLjZKzU3MFa?=
- =?us-ascii?Q?wkGunRa+KdjJ5Wqdr0UNASgMMjapfNAWMiJay3wVSlBgYq5Y23hAYPgyA0U3?=
- =?us-ascii?Q?SAVlhCg2g9w94CqfG0CDgcjucvpI41djPnX0kvT87w8jAXszqX2Z+9rSKsoo?=
- =?us-ascii?Q?L+04k4h0izPrHk9DQE/SVfzQKL/tc3Y+En7lBUa14kHwTQTSs8JFzc9UO2ew?=
- =?us-ascii?Q?iAN5xXm4/XUjHbkxCDb/bbbkg/b+Uhg5Eyp6+oyy1bLyFQezvpPCQEE+EHiM?=
- =?us-ascii?Q?Qu/vpdiVWsai4gmagIgf0i9+GbtQrwDiR4wpDmb0RLhUZ9G/Ndf6JgeaqjPu?=
- =?us-ascii?Q?hKtPN6PZWmM5ZPz+mRpTZdaTig8mg3Y0RDdeOcBzUdQKw4K+0bvdvthsD7CH?=
- =?us-ascii?Q?ESgeUpLbxBu8/3dhyUaJJbiCeNW0YZaa?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 12:57:39.2178
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a439c2e0-1893-4791-f15d-08dcc04e818a
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E2.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB7613
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALZBw2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0MT3eLc3FLdFFNzo2TDREOzxMRkJaDSgqLUtMwKsDHRsbW1ACh0KDJ
+ WAAAA
+To: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>, 
+ Pierre-Hugues Husson <phhusson@freebox.fr>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ Marc Gonzalez <mgonzalez@freebox.fr>
+X-Mailer: b4 0.13.0
 
-On Mon, 19. Aug 13:59, Uladzislau Rezki wrote:
-> On Fri, Aug 16, 2024 at 07:46:26PM +0800, Hailong Liu wrote:
-> > On Fri, 16. Aug 12:13, Uladzislau Rezki wrote:
-> > > On Fri, Aug 16, 2024 at 05:12:32PM +0800, Hailong Liu wrote:
-> > > > On Thu, 15. Aug 22:07, Andrew Morton wrote:
-> > > > > On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
-> > > > >
-> > > > > > > > Acked-by: Barry Song <baohua@kernel.org>
-> > > > > > > >
-> > > > > > > > because we already have a fallback here:
-> > > > > > > >
-> > > > > > > > void *__vmalloc_node_range_noprof :
-> > > > > > > >
-> > > > > > > > fail:
-> > > > > > > >         if (shift > PAGE_SHIFT) {
-> > > > > > > >                 shift = PAGE_SHIFT;
-> > > > > > > >                 align = real_align;
-> > > > > > > >                 size = real_size;
-> > > > > > > >                 goto again;
-> > > > > > > >         }
-> > > > > > >
-> > > > > > > This really deserves a comment because this is not really clear at all.
-> > > > > > > The code is also fragile and it would benefit from some re-org.
-> > > > > > >
-> > > > > > > Thanks for the fix.
-> > > > > > >
-> > > > > > > Acked-by: Michal Hocko <mhocko@suse.com>
-> > > > > > >
-> > > > > > I agree. This is only clear for people who know the code. A "fallback"
-> > > > > > to order-0 should be commented.
-> > > > >
-> > > > > It's been a week.  Could someone please propose a fixup patch to add
-> > > > > this comment?
-> > > >
-> > > > Hi Andrew:
-> > > >
-> > > > Do you mean that I need to send a v2 patch with the the comments included?
-> > > >
-> > > It is better to post v2.
-> > Got it.
-> >
-> > >
-> > > But before, could you please comment on:
-> > >
-> > > in case of order-0, bulk path may easily fail and fallback to the single
-> > > page allocator. If an request is marked as NO_FAIL, i am talking about
-> > > order-0 request, your change breaks GFP_NOFAIL for !order.
-> > >
-> > > Am i missing something obvious?
-> > For order-0, alloc_pages(GFP_X | __GFP_NOFAIL, 0), buddy allocator will handle
-> > the flag correctly. IMO we don't need to handle the flag here.
-> >
-> Agree. As for comment, i meant to comment the below fallback:
-Michal send a craft that make nofail logic more clearer and I check the branch
-found Andrew already merged in -stable branch. So we can include these with a
-new patch.
->
-> <snip>
-> fail:
-> 	if (shift > PAGE_SHIFT) {
-> 		shift = PAGE_SHIFT;
-> 		align = real_align;
-> 		size = real_size;
-> 		goto again;
-> 	}
-> <snip>
->
-> --
-> Uladzislau Rezki
+On qcom msm8998, writing to the last context bank of lpass_q6_smmu
+(base address 0x05100000) produces a system freeze & reboot.
 
---
+The hardware/hypervisor reports 13 context banks for the LPASS SMMU
+on msm8998, but only the first 12 are accessible...
+Override the number of context banks
 
-Help you, Help me,
-Hailong.
+[    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
+[    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
+[    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
+[    2.563627] arm-smmu 5100000.iommu: 	address translation ops
+[    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
+[    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
+[    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
+[    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
+[    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+[    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
+
+Specifically, here:
+
+	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
+	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
+
+and here:
+
+	arm_smmu_write_context_bank(smmu, i);
+	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
+
+It is likely that FW reserves the last context bank for its own use,
+thus a simple work-around would be: DON'T USE IT in Linux.
+
+For reference, the lpass_q6_smmu node looks like this:
+
+	lpass_q6_smmu: iommu@5100000 {
+		compatible = "qcom,msm8998-smmu-v2", "qcom,smmu-v2";
+		reg = <0x05100000 0x40000>;
+		clocks = <&gcc HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
+		clock-names = "iface";
+
+		#global-interrupts = <0>;
+		#iommu-cells = <1>;
+		interrupts =
+			<GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+
+		power-domains = <&gcc LPASS_ADSP_GDSC>;
+		status = "disabled";
+	};
+
+Changes in v2:
+- Use the compatible prop instead of a specific prop to trigger work-around (Bjorn & Caleb)
+- Add qcom,msm8998-lpass-smmu compatible string
+- Link to v1: https://lore.kernel.org/r/20240814-smmu-v1-0-3d6c27027d5b@freebox.fr
+
+---
+Marc Gonzalez (2):
+      iommu/arm-smmu-qcom: hide last LPASS SMMU context bank from linux
+      arm64: dts: qcom: msm8998: add qcom,msm8998-lpass-smmu compatible
+
+ arch/arm64/boot/dts/qcom/msm8998.dtsi      | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+---
+base-commit: edb6307a8d9be5052ba5ce121e0bd55900ce44c4
+change-id: 20240814-smmu-d572c1a16aac
+
+Best regards,
+-- 
+Marc Gonzalez <mgonzalez@freebox.fr>
+
 
