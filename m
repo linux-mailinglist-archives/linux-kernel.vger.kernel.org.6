@@ -1,138 +1,104 @@
-Return-Path: <linux-kernel+bounces-291487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18D095633D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE1295634C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531B6B225FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEEBC280D77
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA7014C58C;
-	Mon, 19 Aug 2024 05:32:55 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F351154C14;
+	Mon, 19 Aug 2024 05:37:45 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1B171CD;
-	Mon, 19 Aug 2024 05:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B907814BF92
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724045574; cv=none; b=h9Z/4Fn8HBV21V2qZaLkg3gizQrGeTZ0o+zaQQUQhryaELMJ31OGAI+ITO0HBYKdTYyNnVTJN9Fts7T0uje0g/Bb1WqGTn9/fgK2IintiUokH9rFLXWM7LAWTRUwNpl1k9rjdn6EFMB3iwFWJcqyt1qZvjvfPWPf5PXXRDs4NSI=
+	t=1724045865; cv=none; b=Zix2RZA7cU+p3gGobsUa1RCp7PQZ8CUwZtcyI+NOmSnzMR+NVfULjZh839oELIiOKVG/OPCouMZ2LaBnZdd5m1JgEiytGR62ONJCTCck+pdnwt1q3CAd7ADhToTQZgn8ABuHV1IOou5glqOEfr6dUeKO1UFSJrcsxYD1aYWdPI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724045574; c=relaxed/simple;
-	bh=gFB+mSRNZo2G+e/subS3Hm+9LhOICBxVnyzpnQpYACU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ON88FIZLaTE8Yd5DJu6irC0iOIzorn07uPNY8JFDqWgEF/8Lsm4+Ms9Tj7jHHZrg705dk969odnEAPhGJjjs9C9z3c5MVXC5kk5jcGHshiv+CCmwYlYl3j2Gu6if/2pZM49hMZBEgsVleeHVbptgy8OmYtGmJIXVOMa0nsbLSUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso19871355e9.1;
-        Sun, 18 Aug 2024 22:32:52 -0700 (PDT)
+	s=arc-20240116; t=1724045865; c=relaxed/simple;
+	bh=e+nPnS4XyxuzpYoHA/PrKm6uWs9jfGZZHcWs0Nd5WSM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MzQ/T56iZ1kPvCR+anEV7STIDiCSQdii2jvWFiw0TxfTH0X/mfzeS5/2al42h++UcprWiPK9xIjQfic/+Pf8zdvbNY1YOetLSJyt13JQg2TPt1AP4JbosjyQGaGKffl0D/QeAwj/4Dxkz+X8SekEwpQBXCEU9mORR19fO6EeUPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f901cd3b5so414837039f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:37:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724045571; x=1724650371;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oqR1a1HiKAAgYWlHks8ofVwGaWEISuz4ja6NXbdxVZg=;
-        b=TjM2W7gVJE7S/XEhIg25vW8vO39F8uL3jBnMjfVnPJu4sExqV2AGqwvuNRmKGM/iHJ
-         4g5aWpgPSErYxycJi6ssGcnTmDKRLKCic5TTjwhMfEyuGa2BYfcQR7zwwwzCT94Lj50v
-         jHfkn1LOKNWvzk8gu6Qjymx0rloBKO6Oyp1NckfISJy/RGdAhGAT749lwOiAEZa/GShR
-         rf/CIVpACgexq0vcsXnsEmI218dQpJh1mRmu/cUBoIoOX4n0gJIbbsOt1wcryPUM+uIM
-         ejSk1L2/W4QkFUj4PM/kVkL4sbMonsh0K7UTwJAAmPsHHjd0aN0tvbSS0ZjHODZg0TQ6
-         HqzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/DDHd5GzYz88ZxD43aPIUHHnJg/ZZdw5y0nBEPggZLA3rDSyXTjrAvsI2kZ8ZjmCqGeuu1XyrSQdaMTnb/w7qXgLdAHdfTIb2vv1TPCG5TeC3Do71ZG2z/HTy4RBfQ/G1eTx2bnVfAF72w9Lk38ZyoVNljOFdGVhRilyu5X05fvi6aeC
-X-Gm-Message-State: AOJu0YwlOpKoqE/NCpONbEukAXMeZ5Y8V2L22ePtu5ZM3b1N+UCHx0oU
-	ndXATk54vyoexlekgSUnGVI63DRAhpz4w26KUOuUYM9KoO0uRC1n
-X-Google-Smtp-Source: AGHT+IHc46Hd7xYUEjHbb/SA+4dkb95sfFevgU5KmMo/m5s+/Or0UoAebrH/zswgvhC5QTOyr1fkyQ==
-X-Received: by 2002:a05:600c:4f52:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-429ed8a3958mr67251665e9.0.1724045570798;
-        Sun, 18 Aug 2024 22:32:50 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded287d0sm150001565e9.12.2024.08.18.22.32.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 22:32:50 -0700 (PDT)
-Message-ID: <e85236f6-ae6a-414d-9a0d-2aceb3311751@kernel.org>
-Date: Mon, 19 Aug 2024 07:32:49 +0200
+        d=1e100.net; s=20230601; t=1724045863; x=1724650663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZXQ/nH9wJXxO6Ctvm33UDJfvbLkfNyruTtFa/XEzPM=;
+        b=H4prvQQhKEtjR1wOP+j2K90yUI+P0G/AvJGfAqsVRKglNcXcY9hRWuOely+kBUh1BT
+         1gZQuP7+ztAqFXc2G4g6hnr8VvRwIHoky5TgLlHzwj1eounq5xSqmh2PXBH6verppfFc
+         JSF+dyuAg4sl1fn8n0bWoz5Ya+l2JRagxLGKIOimexhy4a1f691DpSGCOfJ9CehWTqUT
+         JN1tqHmpH3mM7PRinmp7xJ6nb+qfLRaZj1mXzoF9lTQ+E0g2LZZurq4PytgJkpeU9o3I
+         YJZrvam5o9Ik49cfsQ81uJmLEpLDxf5SY0gwsr5vjB8lAILlI6IOvqPyZ5J+MPn1g1og
+         fpzw==
+X-Gm-Message-State: AOJu0YznFaca4BTW5+xIRK10fIGiJV5Ss1sVrZz//vQDcRwnzv7Kwewv
+	9pd1TsF8D8n26HIytcJZJR6pvxo/7lm+7PaI/RwHbstNrH9JtjInibuAiwHeUysuQ5bAPBaifdG
+	wDVV0eHXlQDiIxwdvRwc/8Weeff2EFbIF2xN0+iC2+5WOYxpVZfq+xik=
+X-Google-Smtp-Source: AGHT+IE+3P694oZIrubRwT7V/eGaHTwR3QOie+JN/yIPocr+fp7vV4UykqR+eo3h0j0AJahxIMYVhduuoudgxOA5d+fIfdME3F96
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] tty: Add N_TASHTALK line discipline for
- TashTalk Localtalk serial driver
-From: Jiri Slaby <jirislaby@kernel.org>
-To: Rodolfo Zitellini <rwz@xhero.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Doug Brown <doug@schmorgal.com>
-References: <20240817093258.9220-1-rwz@xhero.org>
- <9f0e05fd-1e6b-4474-95e9-64af6ffa030d@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <9f0e05fd-1e6b-4474-95e9-64af6ffa030d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:8301:b0:4c2:8a0c:380d with SMTP id
+ 8926c6da1cb9f-4cce1695f7amr629476173.3.1724045862843; Sun, 18 Aug 2024
+ 22:37:42 -0700 (PDT)
+Date: Sun, 18 Aug 2024 22:37:42 -0700
+In-Reply-To: <00000000000071b7c5061ff83639@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003b49e0062002b5d3@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write
+ in bch2_dev_journal_init
+From: syzbot <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19. 08. 24, 7:16, Jiri Slaby wrote:
-> Where is 2/2?
-> 
-> It cannot be seen:
-> https://lore.kernel.org/all/20240817093258.9220-1-rwz@xhero.org/#r
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-It's a separate <20240817093316.9239-1-rwz@xhero.org>. Please fix 
-threading when sending next time.
+***
 
--- 
-js
-suse labs
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write in bch2_dev_journal_init
+Author: lizhi.xu@windriver.com
 
+two obj are null ?
+
+#syz test: upstream c3f2d783a459
+
+diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+index 13669dd0e375..d6970d834991 100644
+--- a/fs/bcachefs/journal.c
++++ b/fs/bcachefs/journal.c
+@@ -1307,8 +1307,18 @@ int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
+ 	if (journal_buckets_v2) {
+ 		unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+ 
+-		for (unsigned i = 0; i < nr; i++)
++		for (unsigned i = 0; i < nr; i++) {
+ 			ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
++			if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
++				struct bch_fs *c = ca->fs;
++				struct printbuf buf = PRINTBUF;
++				prt_printf(&buf, "v2d[%u]: %lu overflow!\n", i,
++					le64_to_cpu(journal_buckets_v2->d[i].nr));
++				bch_info(c, "%s", buf.buf);
++				printbuf_exit(&buf);
++				return -BCH_ERR_ENOMEM_dev_journal_init;
++			}
++		}
+ 	} else if (journal_buckets) {
+ 		ja->nr = bch2_nr_journal_buckets(journal_buckets);
+ 	}
 
