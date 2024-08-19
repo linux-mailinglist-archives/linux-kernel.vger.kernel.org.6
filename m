@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-291967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BB6956975
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646B295697A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E23282F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C887281719
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD883166F33;
-	Mon, 19 Aug 2024 11:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB87166F0D;
+	Mon, 19 Aug 2024 11:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="YrpKA7bh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aL5nPNyw"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76EA1667C7
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEE815B140
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724067470; cv=none; b=C+nJzpC3+XpPUsRvBVUHj6DxTJEMp/ZjBFdOIV1XXqNUxPlFxF2xwjkZkw5XVEaAHKGsqKKyEzcRDtoeEhqbOWRiqyKBeB3x4rmGM/kLZYuOLqno6XHTyeojpqHYyRa4EcjYzL9Ta5UQi1/A/nCdNSCD/zNqjf+ZwMy5Yw7KNR0=
+	t=1724067536; cv=none; b=KnFkAzwgZhV+LnV1gZ6RrttHVz+5a7637Pk6u5QT0ROtJy5QoK+/hcF6JalQdWS2nFjmJB0P8eiUvuR6e6o1AEg1hMEdwM66K5IyupLSdixxNmGl3lYRJJsg1HIx2oy/ZBen3FTws5DBBROh8lqGNBXE9KHbJtJw5oE0CiGwc74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724067470; c=relaxed/simple;
-	bh=8/9B3QlhBwbDoJsFPD/l/32vonkGRYcKYIBM9WTI8Po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dqquNn+4E7vBcPVwR3+o7uNl74H+18C1tCSx+9Zh7A2oZmpXEGTussuJjMmTyc/31EkHPjRWLLgKFvnFQjl8XFlgzcWBA7MRMTTigHrwTz5sYaJH+AmLzGC2Loj9zKDMmg69tsP9A+eOqIfcsIE8Zc7O9lU7rXnKtMQaNalQeaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=YrpKA7bh; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso21765085e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1724067466; x=1724672266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RIDiWquIQ0tXErhdx+a7t4j4cfeeG9QXueTzJmbscTA=;
-        b=YrpKA7bhB1N5//wDbAhq0cRvZ5xtaJS9L7I3csjI0cHnahiQFKsYZDNG7OP1fPMfc3
-         1pzLxnlGDSBpLYACB4t7uVNICk+whJ7UYJOzIlT+cdxou801770KmoIelzJys8L7+xHr
-         mtIcbM1GgSos7Y4eeKLKcLYUiqWFfSbPH4fEjLNZgMH3gBGWeuGWeerkNfsGnuo7gsU7
-         CkFSF7Uilem2eqkorJ4XswKD3qfEEkmyFGvkgbzuPSC0U1ChZ9S+Ug4LStXQYEy6bjTz
-         QlY5H9q3k5nO7gv7vGpKAoIgrR2yukQKEcf/QCDq64y5gdOQkzv5qZwwL7024s8G7iDP
-         NtdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724067466; x=1724672266;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIDiWquIQ0tXErhdx+a7t4j4cfeeG9QXueTzJmbscTA=;
-        b=B4yJxeJ9FThbwf8kK4ZHT+mQ9ofxQI7crl3qamMBbpYwyzLgO7cnZp0tnLjkxySn7Q
-         lYUi0X3Bcu/qBPzOK5+e2DpZmOlnRagHDQg8YhrRRUtnu54H+mes14dcQExfAwt2wOPs
-         Bxer5tlenDuezhJ4oPiTIm7QKlmOhqrKe4cXDFKz78gUfTRwDwPQQQ3RG6hgxsRmpPqY
-         SHtcq1NHHrsM1N7dl2LxRJGNckahTeTJhwjlGclnTreDuFbf2kYDZ9JfsDB5SRMm4af2
-         BpTlxf/li/4XyzZxPaWhJcY8d+0+L/RBi/7x2ANxueYdTkwb9IgzU+ClTijM7JxeJs0H
-         TkRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+sPZTX8WfWDLs4UJ9eG5bmGqiF8D3Olrig6yWiRQi4FUPlIxw87ZTmY/oRo6XlP9H7hPnBTuv0lr7F1kZxSeC1zcEvFa2kBvbCRd
-X-Gm-Message-State: AOJu0YyCkTH35sesHon3cUnrAe044htzh7mMIHUyj9EKdHG6jKT1dZwO
-	3EmSettNQS+8z4M2PvQoo1hw7yzMgqSIc2wvrpzv0nezPzoj5H3fJtwi3u+Ng9k=
-X-Google-Smtp-Source: AGHT+IFOJqjoHU776vMvmeNPhV5ABeHBYFbyd6hV4KkeFyukt8jo0BTVCxoIlRPdXMWDFe8ccG01ag==
-X-Received: by 2002:a05:600c:468e:b0:426:5b19:d2b3 with SMTP id 5b1f17b1804b1-429e23b4b0cmr98450015e9.14.1724067465664;
-        Mon, 19 Aug 2024 04:37:45 -0700 (PDT)
-Received: from [192.168.108.81] (freebox.vlq16.iliad.fr. [213.36.7.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189896a9csm10335771f8f.79.2024.08.19.04.37.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 04:37:45 -0700 (PDT)
-Message-ID: <30489eee-075b-461b-ab43-c8807d667630@freebox.fr>
-Date: Mon, 19 Aug 2024 13:37:44 +0200
+	s=arc-20240116; t=1724067536; c=relaxed/simple;
+	bh=fDHgl/Q0vd//GJ7pRbdKoDHc7tmcY7zDo66XvTaXccs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T2rkyu6FlN2tJDYKoljybgdDsqxfG/m9nsAAW5sS7ekMJywQKxs6FZIuuL1fbH29ee5zWoq9HUJfouw0Mc7lNEXcvBj3bOmjE7Aug/4P4qDr6y2mNX6caJV8PJd+wjGUELf9IkGHmYUJ3iz+dClGAV9ffabHHXH276ljHumCmdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aL5nPNyw; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C9DF1C0003;
+	Mon, 19 Aug 2024 11:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724067525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vi25+xcJfrO7nLXZ6nqh00qEFioKK3pAMkYDoRraxek=;
+	b=aL5nPNyweFQC+1Fdl4ZDP+opbjLoTmuAsy8mnCool/vUtMrQT0y+vmzoC9r1P1IYhRiqAi
+	foCJyBdjyU5EqLcn8XyjMO658Ms4PTiQdWUBUYy6m137yHqFLlyMtSmIW4myg6SiyJr/Dn
+	Y/2gq2tQHF4qbR4PYhqEgzy6quBQP/Pw0ARmVnpAp8h5x92ue/bz+EBlEfnhx+ZHpjxceo
+	s6XXVyF+zabBgn54ztcM3O/MAuWA2Je4YnLsrUI22Dqw6LHKW3KOYtfX5DJ1uqPAVmNXL6
+	COKvHNJl/AvfMMqBTtGKwUFhUuGb8Zc75xZdE+gXM6rZFgqp2/0fw7Jf/coyCQ==
+Date: Mon, 19 Aug 2024 13:38:40 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi83: use dev_err_probe when
+ failing to get panel bridge
+Message-ID: <20240819133840.26045152@booty>
+In-Reply-To: <ZrtuksiarZNS8L79@ashyti-mobl2.lan>
+References: <20240808-ti-sn65dsi83-dev_err_probe-v1-1-72417aa275ab@bootlin.com>
+	<ZrSfayN4U6Lk3UCj@ashyti-mobl2.lan>
+	<20240813101643.5bf8d245@booty>
+	<ZrtuksiarZNS8L79@ashyti-mobl2.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm-smmu: Add
- qcom,last-ctx-bank-reserved
-To: Rob Herring <robh@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>,
- Pierre-Hugues Husson <phhusson@freebox.fr>,
- Marijn Suijten <marijn.suijten@somainline.org>
-References: <20240814-smmu-v1-0-3d6c27027d5b@freebox.fr>
- <20240814-smmu-v1-1-3d6c27027d5b@freebox.fr>
- <20240818152515.GA104481-robh@kernel.org>
-Content-Language: en-US
-From: Marc Gonzalez <mgonzalez@freebox.fr>
-In-Reply-To: <20240818152515.GA104481-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 18/08/2024 17:25, Rob Herring wrote:
+Hello Andi,
 
-> On Wed, Aug 14, 2024 at 03:59:55PM +0200, Marc Gonzalez wrote:
->
->> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
->> (base address 0x05100000) produces a system freeze & reboot.
->>
->> Specifically, here:
->>
->> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
->> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
->>
->> and here:
->>
->> 	arm_smmu_write_context_bank(smmu, i);
->> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
->>
->> It is likely that FW reserves the last context bank for its own use,
->> thus a simple work-around would be: DON'T USE IT in Linux.
->>
->> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
->> ---
->>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> index 280b4e49f2191..f9b23aef351b0 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> @@ -204,6 +204,12 @@ properties:
->>        access to SMMU configuration registers. In this case non-secure aliases of
->>        secure registers have to be used during SMMU configuration.
->>  
->> +  qcom,last-ctx-bank-reserved:
->> +    type: boolean
->> +    description:
->> +      FW reserves the last context bank of this SMMU for its own use.
->> +      If Linux tries to use it, Linux gets nuked.
+thanks for your additional comments.
+
+On Tue, 13 Aug 2024 16:32:50 +0200
+Andi Shyti <andi.shyti@linux.intel.com> wrote:
+
+> Hi Luca,
 > 
-> How is this Qualcomm specific? Presumably any implementation could do 
-> this if there's no way to properly partition things. Robin?
+> On Tue, Aug 13, 2024 at 10:16:43AM +0200, Luca Ceresoli wrote:
+> > On Thu, 8 Aug 2024 11:35:23 +0100
+> > Andi Shyti <andi.shyti@linux.intel.com> wrote:  
+> > > On Thu, Aug 08, 2024 at 12:26:14PM +0200, Luca Ceresoli wrote:  
+> > > > When devm_drm_of_get_bridge() fails, the probe fails silently. Use
+> > > > dev_err_probe() instead to log an error or report the deferral reason,
+> > > > whichever is applicable.
+> > > > 
+> > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > > ---
+> > > >  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > index 57a7ed13f996..60b9f14d769a 100644
+> > > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > @@ -606,7 +606,7 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+> > > >  
+> > > >  	panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
+> > > >  	if (IS_ERR(panel_bridge))
+> > > > -		return PTR_ERR(panel_bridge);
+> > > > +		return dev_err_probe(dev, PTR_ERR(panel_bridge), "Failed to get panel bridge\n");    
+> > > 
+> > > patch looks good, but the message is a bit misleading. You are
+> > > not failing to get the panel bridge, but you are failing to find
+> > > a panel bridge in a DT node. Right?  
+> > 
+> > As I can see from both the documentation and the code,
+> > devm_drm_of_get_bridge() is really returning a pointer to a panel
+> > bridge, potentially allocating and adding it in case it was not present
+> > before. Navigating the device tree is only a part of what it does.
+> > 
+> > Do you think I am missing something?  
+> 
+> No, maybe it's me being a bit pedantic. In the sense that we are
+> not really failing to get the panel, but most probably the panel
+> is not installed.
 
-Obviously, there is nothing Qualcomm specific about reserving   
-an SMMU context bank for the FW / hypervisor, other than it
-appears that qcom is the first to do it; or at least the
-LPASS SMMU on qcom msm8998 is the first known SMMU where such
-a work-around is required.
+The panels I'm used to, which I believe to be the most common in
+embedded systems just have no way of being detected, so the operating
+system cannot detect a "panel not installed" condition.
 
-What is the correct nomenclature?
+However I went back to the code and realized your initial remark ("you
+are failing to find a panel bridge in a DT node") is more correct than
+I initially thought. Indeed there are two failure reasons for
+devm_drm_of_get_bridge() to fail: DT lookup and panel bridge creation
+failures. The latter however can be due to -ENOMEM (unlikely) or
+(panel->connector_type == DRM_MODE_CONNECTOR_Unknown), which in turn
+can be due to either a panel driver error or again a DT error in case
+the driver gets the panel type from DT, as panel-simple.c does.
 
-Can we just drop the vendor prefix if a property is generic
-across vendors? But does it require a subsystem prefix like
-"iommu" in order to not clash with generic props in other subsystems?
+That said, the role of devm_drm_of_get_bridge() is to provide a panel
+bridge object. If it fails, that means it is unable to provide such an
+object for whatever reason. Reasons currently include DT issues (the
+most likely), driver bug and -ENOMEM. There could be more reasons in
+future versions of the implementation.
 
-> Also, this property isn't very flexible. What happens when it is not the 
-> last bank or more than 1 bank reserved? This should probably be a mask 
-> instead.
+I'm afraid I'm unable to express all the above logic in a single commit
+title line. However, should you have a better commit title or message
+to suggest, I'm still open to improvements. I value good commit
+messages.
 
-OK, I'm getting conflicting requests here.
+> I'm not strong on this comment, though, so that
+> feel free to add:
+> 
+> Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-Bjorn has recommended dropping the property altogether:
+Otherwise, I'm sending v2 with your review tag by the end of the week.
 
-> It also seems, as the different SMMUs in this platform behave
-> differently it might be worth giving them further specific compatibles,
-> in which case we could just check if it's the qcom,msm8998-lpass-smmu,
-> instead of inventing a property for this quirk.
+Luca
 
-
-I'll send a patch series in line with Bjorn's request.
-
-Regards
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
