@@ -1,132 +1,194 @@
-Return-Path: <linux-kernel+bounces-292068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8FC956AB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:24:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E27956AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4D31F22470
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:24:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF60B22ED3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6065213DBA0;
-	Mon, 19 Aug 2024 12:24:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF7916B741;
+	Mon, 19 Aug 2024 12:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zwrkw3Wo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5044E16A92D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9126716BE29
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724070247; cv=none; b=lFhSFXcT981hpI+q8jXgDu8KljBcKjFP7Bi/Zi31DjVfUePvsh80znxruS5UCMIE99rhMGQcDT1g/G/PjgSeh++GfY9WPDzg8yoynSR/xXVyeMPE/p6cf/N70iIlbxKAT/Gl3D4U5yUAbaMTxw0Vgn8nTn/9xUYUtHPAibWHkI8=
+	t=1724070322; cv=none; b=Mr7K3FOhFgeWVyE3k0Ezd/+D+2xidh+SkBz6RDN3t8UqQzfKhDycPbG3f0BKBKj9A/zJIJaxPlsYKZH70cBvTrFHbIURqgafC2oY+irByWIR+plC7o/pmWUzotoNJoK1Hnivto0vYmczLsI//jaPJZ6BGoIAISJ2iQemoRbxEe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724070247; c=relaxed/simple;
-	bh=+qDm8HDJdayoSzro18P+BYhjs7g35mRixzpMF3a79hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hq+bc5stG6EJ4FMhH8vQX6NwHXJDVwayBHdeUP8y+YrSuWZFZgV4/pkIN3oShiwU5t0HOAWSyvgQ4yirU6kTTStCI05kzldBikoTmuAHaZ9MhtpfiuILMDBLhMYbFwkGoYQCKtathK9BHp4Y+3wFpD8Ewnme1YbPnujXopLVSBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sg1QS-000087-Lo; Mon, 19 Aug 2024 14:23:56 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sg1QS-001Ww0-41; Mon, 19 Aug 2024 14:23:56 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sg1QS-00BmDv-02;
-	Mon, 19 Aug 2024 14:23:56 +0200
-Date: Mon, 19 Aug 2024 14:23:56 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
-Message-ID: <20240819122356.rh2f6ldpauvxhgui@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <20240807-v6-10-topic-usb-serial-serdev-v1-1-ed2cc5da591f@pengutronix.de>
- <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
- <20240819101946.cf7x7xecdn2pfa4t@pengutronix.de>
- <dc936358-a718-4f1c-a2a6-695bbae1d2ec@kernel.org>
+	s=arc-20240116; t=1724070322; c=relaxed/simple;
+	bh=UQxmvj7TlR5VISdPEwl6/bZra05gJhRUm0F5BS7kOho=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=mzq/ejxxb34DhOBPS6aYq2QSix34VwmdXhE0UTo7AZypl6mzRRAYArCaxfIl6GdA+3bRVIE+yJa6VwLa4urnbiHg1dlMXwW7JyqJSkG29RPjEjeiEBjlWn+qWBmHhB0HmjK9aVSpvFOzyZCVtqh5DzOvVfPgFMLQxXzQn3lES30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zwrkw3Wo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724070319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jn1DvOrWmKBpilai8HNN4+kVlfjx6rb9s0iUzARN26I=;
+	b=Zwrkw3WoTCO/yuYAr9Jn9d6vww3GGpGc0WxY2ykvie/O3HFBdw1di/Kur+PjYaPbLuC0q6
+	WtrhVs7009GnVyRGVY77waCSuEIlICOlyZCiQzAul3rXyVJgQYMLUM6ZXG4LhpkfMqUUYh
+	dA9RheKTG8RjuNy12KjzUGParfc5gNM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-458-jpvrPuE3PBWM5CJ5MOxA6g-1; Mon,
+ 19 Aug 2024 08:25:15 -0400
+X-MC-Unique: jpvrPuE3PBWM5CJ5MOxA6g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2F7A1955BFE;
+	Mon, 19 Aug 2024 12:25:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 323B930001A1;
+	Mon, 19 Aug 2024 12:25:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <df26beed-97c7-44e4-b380-2260b8331ea9@suse.de>
+References: <df26beed-97c7-44e4-b380-2260b8331ea9@suse.de> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk> <3141777.1724012176@warthog.procyon.org.uk>
+To: Hannes Reinecke <hare@suse.de>
+Cc: dhowells@redhat.com,
+    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+    brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, gost.dev@samsung.com, linux-xfs@vger.kernel.org,
+    hch@lst.de, david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
+    yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+    linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc936358-a718-4f1c-a2a6-695bbae1d2ec@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3407980.1724070304.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Aug 2024 13:25:05 +0100
+Message-ID: <3407981.1724070305@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 24-08-19, Jiri Slaby wrote:
-> On 19. 08. 24, 12:19, Marco Felsch wrote:
-> > Hi,
-> > 
-> > sorry for not replying earlier.
-> > 
-> > On 24-08-08, Jiri Slaby wrote:
-> > > On 07. 08. 24, 16:08, Marco Felsch wrote:
-> > > > The purpose of serdev is to provide kernel drivers for particular serial
-> > > > device, serdev-ttyport is no exception here. Make use of the
-> > > > tty_kopen_exclusive() funciton to mark this tty device as kernel
-> > > > internal device.
-> > > > 
-> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > > ---
-> > > >    drivers/tty/serdev/serdev-ttyport.c | 9 ++++++---
-> > > >    1 file changed, 6 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-> > > > index 3d7ae7fa5018..94c43d25ddbe 100644
-> > > > --- a/drivers/tty/serdev/serdev-ttyport.c
-> > > > +++ b/drivers/tty/serdev/serdev-ttyport.c
-> > > > @@ -103,11 +103,14 @@ static int ttyport_write_room(struct serdev_controller *ctrl)
-> > > >    static int ttyport_open(struct serdev_controller *ctrl)
-> > > >    {
-> > > >    	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-> > > > +	struct tty_driver *tty_drv = serport->tty_drv;
-> > > >    	struct tty_struct *tty;
-> > > >    	struct ktermios ktermios;
-> > > > +	dev_t dev;
-> > > >    	int ret;
-> > > > -	tty = tty_init_dev(serport->tty_drv, serport->tty_idx);
-> > > > +	dev = MKDEV(tty_drv->major, tty_drv->minor_start + serport->tty_idx);
-> > > > +	tty = tty_kopen_exclusive(dev);
-> > > 
-> > > I believe that the now added tty_lookup_driver() has negligible impact in
-> > > this anyway slow path, right?
-> > 
-> > Can you please elaborate a bit more? I don't see how the
-> > tty_lookup_driver() is involved in the serdev-ctrl open path anyway.
-> 
-> It's called now in of tty_kopen_exclusive()->tty_kopen().
-> (tty_lookup_driver() is the major difference between the raw tty_init_dev()
-> and tty_kopen_exclusive().)
+Hannes Reinecke <hare@suse.de> wrote:
 
-Okay now I get the "now added tty_lookup_driver()" statement, sorry.
-Yes, I believe that this is negligible. The main difference for me was
-that the tty_port_set_kopened() is set accordingly which which is
-important to not trigger warnings during the release path.
+> IE you essentially nail AFS to use PAGE_SIZE.
+> Not sure how you would tell AFS to use a different block size;
+> maybe a mount option?
 
-Regards,
-  Marco
+As far as I know:
 
-> 
-> -- 
-> js
-> suse labs
-> 
-> 
+        sb->s_blocksize         =3D PAGE_SIZE;
+        sb->s_blocksize_bits    =3D PAGE_SHIFT;
+
+isn't used by the VM.
+
+> Hmm. I'd rather fix the obvious places in afs first; just do a quick
+> grep for 'PAGE_', that'll give you a good impression of places to look a=
+t.
+
+Sure:
+
+   fs/afs/dir.c:   nr_pages =3D (i_size + PAGE_SIZE - 1) / PAGE_SIZE;
+   fs/afs/dir.c:   req->len =3D nr_pages * PAGE_SIZE; /* We can ask for mo=
+re than there is */
+   fs/afs/dir.c:           task_io_account_read(PAGE_SIZE * req->nr_pages)=
+;
+   fs/afs/dir.c:           folio =3D __filemap_get_folio(dir->i_mapping, c=
+tx->pos / PAGE_SIZE,
+   fs/afs/xdr_fs.h:#define AFS_DIR_BLOCKS_PER_PAGE (PAGE_SIZE / AFS_DIR_BL=
+OCK_SIZE)
+
+Those only affect directories.
+
+   fs/afs/mntpt.c:         if (size < 2 || size > PAGE_SIZE - 1)
+
+That only affects mountpoint symlinks.
+
+   fs/afs/super.c: sb->s_blocksize         =3D PAGE_SIZE;
+
+This is the only thing (and sb->s_blocksize_bits) that might affect files.=
+  I
+checked, and doubling this and adding 1 to bits does not alter the outcome=
+.
+
+Now, the VM wrangling is offloaded to netfslib, and most of that is to do =
+with
+converting between indices and file positions.  Going through the usages o=
+f
+PAGE_SIZE there:
+
+   fs/netfs/buffered_read.c:               size +=3D PAGE_SIZE << order;
+
+That was recording the size of a folio readahead allocated.
+
+   fs/netfs/buffered_read.c:       size_t nr_bvec =3D flen / PAGE_SIZE + 2=
+;
+   fs/netfs/buffered_read.c:               part =3D min_t(size_t, to - off=
+, PAGE_SIZE);
+
+Those two are used to fill in the gaps around a partial page - but that di=
+dn't
+appear in the logs.
+
+   fs/netfs/buffered_write.c:      pgoff_t index =3D pos / PAGE_SIZE;
+   fs/netfs/buffered_write.c:              fgp_flags |=3D fgf_set_order(po=
+s % PAGE_SIZE + part);
+
+Those two are used when asking __filemap_get_folio() to allocate a folio t=
+o
+write into.  I got a folio of the right size and index, so that's not the
+problem.
+
+   fs/netfs/fscache_io.c:  pgoff_t first =3D start / PAGE_SIZE;
+   fs/netfs/fscache_io.c:  pgoff_t last =3D (start + len - 1) / PAGE_SIZE;
+
+Caching is not enabled at the moment, so these don't happen.
+
+   fs/netfs/iterator.c:            cur_npages =3D DIV_ROUND_UP(ret, PAGE_S=
+IZE);
+   fs/netfs/iterator.c:                    len =3D ret > PAGE_SIZE ? PAGE_=
+SIZE : ret;
+
+I'm not doing DIO, so these aren't used.
+
+   fs/netfs/iterator.c:    pgoff_t index =3D pos / PAGE_SIZE;
+
+I'm not using an ITER_XARRAY iterator, so this doesn't happen.
+
+   fs/netfs/misc.c:        rreq->io_iter.count +=3D PAGE_SIZE << order;
+
+This is just multiplying up the folio size to add to the byte count.
+
+   fs/netfs/read_collect.c:        fsize =3D PAGE_SIZE << subreq->curr_fol=
+io_order;
+   fs/netfs/read_collect.c:            WARN_ON_ONCE(folioq_folio(folioq, s=
+lot)->index !=3D fpos / PAGE_SIZE)) {
+
+These two are converting between a file pos and an index - but only during
+read, and I can see from wireshark that we're writing the wrong data to th=
+e
+server before we get this far.
+
+And that's all the PAGE_SIZE usages in afs and netfslib.
+
+David
+
 
