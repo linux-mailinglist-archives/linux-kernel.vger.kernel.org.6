@@ -1,56 +1,85 @@
-Return-Path: <linux-kernel+bounces-293057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C45957A27
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D69957A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5ED284C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70F1284C9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED02B1E2107;
-	Mon, 19 Aug 2024 23:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E171E3CBD;
+	Mon, 19 Aug 2024 23:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e3MXV3lp"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BuZeGlNT"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A016E160873
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49BDB657
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724111982; cv=none; b=LcF9vqIORr/81IcQ/v70H/rboVfLCUacKo65BntuBNaFmVVedjRhZ/03xl4S5PlxLmIt3gcmRww/R2JvjRRwMKMeX/+ccoL6g6b6kSjaSBBxRi76YfANDJIU7iM4SSbI+vLGgfrcUnF/3r67lK4F51+SsnF4r+EBozzMbZ+CzXQ=
+	t=1724111989; cv=none; b=S065IYfrQkV++i8rN7tZSI/h7rFwY8F0S+lOx6KakcylEZIKW7xcUG9m8ldGuGtwf0H9HqFTBcIXLP7hppcV6g6h1HYwMM0MQ6er1EfYaNcSbJQSoe1D1pOMuMNwDErpnyyNqxfQ36B/p3XtJgiim48ICXnY7AycAwdJWAI7mUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724111982; c=relaxed/simple;
-	bh=39lrZO76fyoyULLnTRX8P9BelTx0anjvSnzPre3cURI=;
+	s=arc-20240116; t=1724111989; c=relaxed/simple;
+	bh=bYGkLaGQIKKpIurG7KT++3ABazri0PYOu/DJ7PB8sgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBMszQLVjUBGL7OXWD0T4cqCn715G/08c0ytEZkSiKaKExunMEY3MKsKuT6lcmBhPnXcNedXdRlqqcE/aH8NY52APk1wncWMzGTdnOe0dZHZwwl8by/qCYw17RTlWvfBPsUWNj796SuQbt5KGRUPof7EhRoJgLBDS2XM5uiHQWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e3MXV3lp; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 19 Aug 2024 19:59:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724111977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rGUz676PVcW/jPPuJusx7TiVPH5zchYLNmjYC7an/U4=;
-	b=e3MXV3lpmky8ygLRZ7HO2NL/3T7+1bp7kgfoYBl+e9ic5gbxH9MoI64Lh9O+4dfkSo2cEz
-	Y3hSxsqBusgEtk1ES5RE0SbV5N22qmh7WmjKQetxWADquFQ6VpfbLoQ9gcDjcgYzpoW3ai
-	FSLiTJtUQSuLFI/tvCIUVaBcHf4FHDY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, vbabka@suse.cz, 
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, akpm@linux-foundation.org, cl@linux.com, 
-	mhocko@kernel.org, urezki@gmail.com, neeraj.upadhyay@kernel.org
-Subject: Re: [PATCH 6/9] rcu: rcu_pending
-Message-ID: <yfhctftdn4itupt735u7dnu2zt2aarm3lzvmyf6bs7hkv4radc@ndw4nsinxhqx>
-References: <20240819165939.745801-1-kent.overstreet@linux.dev>
- <20240819165939.745801-7-kent.overstreet@linux.dev>
- <adc8b09e-5f66-44de-845b-e615069c2e20@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8ITY4SXtUasdG8z+smsmuvj8U9qESe9woi+t4hU/kFpU2xpVyIVuB4GJlYBuoN2JLXnlwtdSMukstwEXMa4zmBhTw5cCzAdJ5+AR1bVPaYUzLiIuyl128AwBTPgq0UpoQn8a2WhRXqMvEz6Bd9KsX4Jqnzo+aoCkl8ek9TNpZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BuZeGlNT; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3bae081efso3594746a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724111987; x=1724716787; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjABo7s3VKOBABg1ESnYjtcKOR4+Ado7alcRhqBh7E8=;
+        b=BuZeGlNTjQIsRAlZO+hJKgR77LbpB31ApwZ4nqT2AxZsbOfBcRD23nXCvm3kDTokYo
+         i5qF2A6F9zprAchoa6xF3ywQKxrxbjpGxVKwmCLf4RqpyECr83WMsOTMUn79cfooVyDO
+         EPgk7URSPnevuRxlI1eyMoCh0tyc/ZbApxKFU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724111987; x=1724716787;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjABo7s3VKOBABg1ESnYjtcKOR4+Ado7alcRhqBh7E8=;
+        b=Z0fbQ4gb783kdp0OGaV0IoUWa5c1UEHje/scmoh9kiHoL0xXF2n7v3v2psdGJRqQSw
+         WlhhRD+CiiEvk191kgTEUeJi4GqPdtLvUfK5zGf4E4D7wbZFfaNJR8lvpXmFkS/ycUIL
+         L8LipcAdzY816LgKE/EV7IxqEnwZ/xX4YY9e7MvFgGZ3J0wIFQxGzUyKBCB0mCB5g0Gs
+         Z69Pwg1oIKYMYjMH0BljWM+W2RrNiGp/3/R/WIJMIcQJQnZ2ej1kArqKJup3ylGjA0zf
+         D/XV0H1ithIeFTHoEKoewiVmqUUqRpxe9eoGXghgxfXA7DFhC7nxACgt2UUQB8gZ0KX1
+         ayhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVETI2cJUKnDm3vdaF3ISRoB9yo4nWDG8lj+J3ED9pjhJpc+j5R2YUujNnX+IXDmi67Jly6ruDNEFYeJew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6MhGkwZWt648lwT4+OCqOBnW+Wo3dmcAq4KdF9thUE0hWckoK
+	AvvmQrSdcYSKD41BjboReTG17Fe3lZN68p1w7Kmcak7LkxntCrz6wIZOju/YDGFMOJPNW7HFxb8
+	=
+X-Google-Smtp-Source: AGHT+IFSEcFmKUg3XiTqxX1M+k4JhQXhtjsl3FmnrLps51L58VtAENMFX3m5ZUuTFgjG76CV4pxDyA==
+X-Received: by 2002:a17:90a:4d82:b0:2d1:bf48:e767 with SMTP id 98e67ed59e1d1-2d5c0ea8a13mr723064a91.29.1724111987241;
+        Mon, 19 Aug 2024 16:59:47 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:917:3d68:a539:4ba4])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d3c8839392sm9451229a91.56.2024.08.19.16.59.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 16:59:46 -0700 (PDT)
+Date: Mon, 19 Aug 2024 16:59:44 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:NETWORKING DRIVERS (WIRELESS)" <linux-wireless@vger.kernel.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: net: wireless: convert
+ marvel-8xxx.txt to yaml format
+Message-ID: <ZsPccHaCMRgbNk4L@google.com>
+References: <20240816171203.143486-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,94 +88,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <adc8b09e-5f66-44de-845b-e615069c2e20@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240816171203.143486-1-Frank.Li@nxp.com>
 
-On Mon, Aug 19, 2024 at 03:58:26PM GMT, Paul E. McKenney wrote:
-> I still remain quite skeptical of this one, but it has improved since
-> June's version.
+Hi Frank,
+
+On Fri, Aug 16, 2024 at 01:12:01PM -0400, Frank Li wrote:
+> Convert binding doc marvel-8xxx.txt to yaml format.
+> Additional change:
+> - Remove marvell,caldata_00_txpwrlimit_2g_cfg_set in example.
+> - Remove mmc related property in example.
+> - Add wakeup-source property.
+> - Remove vmmc-supply and mmc-pwrseq.
 > 
-> Responses inline.
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: /soc@0/bus@30800000/mmc@30b40000/wifi@1:
+> failed to match any schema with compatible: ['marvell,sd8997']
 > 
-> 							Thanx, Paul
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - Add Brian Norris <briannorris@chromium.org as maintainer
+> - Remove vmmc-supply and mmc-pwrseq
+> - Add wakeup-source
+> - rename to marvell,sd8787.yaml by using one compatible string, suggestted
+> by conor dooley at other binding doc convert review
+> ---
+>  .../bindings/net/wireless/marvell,sd8787.yaml | 93 +++++++++++++++++++
+>  .../bindings/net/wireless/marvell-8xxx.txt    | 70 --------------
+>  2 files changed, 93 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/marvell,sd8787.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt
 > 
-> In the meantime, thank you for avoiding reaching into RCU's and SRCU's
-> innards.  This makes it reasonable to have you put this file into your
-> code, at least initially.  That way, you get what you want *now* and us
-> RCU guys are not committing to maintain it before it is ready for us to
-> do so.
+> diff --git a/Documentation/devicetree/bindings/net/wireless/marvell,sd8787.yaml b/Documentation/devicetree/bindings/net/wireless/marvell,sd8787.yaml
+> new file mode 100644
+> index 0000000000000..c6647672b7b1e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/wireless/marvell,sd8787.yaml
+> @@ -0,0 +1,93 @@
 
-The RCU interfaces do force a lot of function calls for things that
-should be inlined though, and the gratuitious interface fragmentation
-between RCU and SRCU is... annoying.
+> +  marvell,caldata-txpwrlimit-5g-sub0:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: Calibration data for sub-band 0 in the 5GHz band..
 
-> I still have strong misgivings about radix trees and cache locality.
-> Poor cache locality on the other side of the grace period can result
-> in OOMs during callback-flooding events, hence the move of kfree_rcu()
-> and friends to pages of pointers.  And, as you note below, radix trees
-> don't merge nicely.
+You have an extra period in this line.
 
-Cache locality where?
+> +  marvell,caldata-txpwrlimit-5g-sub1:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: Calibration data for sub-band 1 in the 5GHz band..
 
-On the enqueue side, which is the fastpath, this uses a cursor - we're
-not walking the radix tree every time.
+Same.
 
-On the processing side, where we're kfree_bulk()ing entire radix tree
-nodes, the radix tree is going to have better cache locality than a list
-of pages.
+> +    maxItems: 688
+> +
+> +  marvell,caldata-txpwrlimit-5g-sub2:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: Calibration data for sub-band 2 in the 5GHz band..
 
-> The advantage of synchronize_rcu() is that it can proceed without
-> memory allocation.  If you block on allocation, even of a 16-byte
-> rcu_head structure, you can go into OOM-induced deadlock.
-> 
-> It might well make sense to do an rcu_head allocation with GFP flags
-> that try reasonably hard, but still allow failure before falling all
-> the way back to synchronize_rcu().  (And for all I know, this might have
-> been tested and found wanting, but Uladzislau Rezki (CCed) would know.)
-> But a hard wait on that allocation is asking for trouble.
+Same.
 
-That's reasonable - as long as we're trying the 16 byte allocation
-before doing a synchronize_rcu().
+Otherwise, this looks good to me, so feel free to carry my:
 
-> There is work underway to make the current callback lists take advantage
-> of expedited grace periods, transparent to the caller.  This allows
-> the shrinker (or whatever) to speed up everything by simply invoking
-> synchronize_rcu_expedited().  This speedup includes callback processing
-> because it avoids "bubbles" in the callback processing that can occur
-> when the next grace period has not yet completed, but all callbacks from
-> earlier grace periods have been invoked.
+Acked-by: Brian Norris <briannorris@chromium.org>
 
-Glad to here, that was first on my list when adding a shrinker to this
-code.
+(Sometimes Kalle will make trivial fixes like this when applying. I'm
+not sure if that means you should send v3 anyway, or see if he'll apply
+this on his own soon enough.)
 
-> > - RCU_PENDING_CALL_RCU_FN
-> > 
-> >   Accelerated backend for call_rcu() - pending callbacks are tracked in
-> >   a radix tree to eliminate linked list overhead.
-> 
-> But to add radix-tree overhead.  And to eliminate the ability to do O(1)
-> list merges.  Is this really a win?
-
-As mentioned, there's a cursor so we're not adding radix-tree overhead
-to the fast path, and there's no need to merge lists for expired objects
-- that's all handled fine.
-
-But yes, using it for call_rcu() would need more performance
-justification. I haven't seen workloads where call_rcu() performance
-particularly matters, so it's not something I'm pushing for - I included
-that because it's minimal code and other people might know of workloads
-where we do want it.
-
-> > Ideally we would be getting a callback every time a grace period
-> > completes for which we have objects, but that would require multiple
-> > rcu_heads in flight, and since the number of gp sequence numbers with
-> > uncompleted callbacks is not bounded, we can't do that yet.
-> 
-> Doesn't the call from __rcu_pending_enqueue() to process_finished_items()
-> serve this purpose?  After all, the case that causes trouble is the one
-> where lots of things are being very frequently queued.
-
-No, because that's unpredictable, and we don't process pending items in
-enqueue() unless we know we can sleep (i.e., we don't do it if the
-caller is latency sensitive).
+Brian
 
