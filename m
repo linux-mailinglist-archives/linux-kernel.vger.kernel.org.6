@@ -1,122 +1,224 @@
-Return-Path: <linux-kernel+bounces-292989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B9D95778A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 265FB9577A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8211F23D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:36:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D8E1F24139
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623441DD3B5;
-	Mon, 19 Aug 2024 22:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5AA1DF687;
+	Mon, 19 Aug 2024 22:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tyyF8BaD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RkH99alf"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08CA15AAB8;
-	Mon, 19 Aug 2024 22:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583491DC46C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724106976; cv=none; b=FN6y40vb7l9LGkG8fH01c06GorZ+JDao6VPPFw/j0Mrt01iDNmntkFlvHyTuLovZMTaVc2JK4b2JEH/RUFDi3TUAKdjSaNuSPQKGYSpTt3+3kuRWXGed7tO3S3U+vRtgDdS53DqatxC8pNnHhgkCVSlxyCc8o2Ard/BPUAVTfFQ=
+	t=1724107121; cv=none; b=nh1CNXRIJMf4f0SEt4cCm1H07hmfnKSu8b2Fi20FpfhlvB8ywxf8uWw6bGyxbdIYDswExO7/rPnPcBkBJUoMLjm2S8o7hxmx/PgYDzRGygLFHydD7/pIhDxCyZEU3E0M4mFfA3So4UqCCxemY18aCa/jtyplbd3yBVKS5w+OBgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724106976; c=relaxed/simple;
-	bh=IVFZPlpEYzn1uOjWxw0TJ+GTSsJiTVwTsxTYDXOFvxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S1AuImXlYWaF1zGEYdhi46Z/vUptF5ss7O5u69EGjnj1eEyGkI0xF7V3elWbiQx7GRxNCpNbeWFV+s2ZNnli4YbUj1rjsaoBIl9iSbcslyEVPCPOCSQYeC+mE8MZlNwDI8KyuhSN65uJy7NPI//WTQVqnb239A1eue6Lgm1JKjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tyyF8BaD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724106965;
-	bh=tDe+RAn9vhDRbdSwjCvcijfvMEiIYrq/NQIqWpyVtQ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tyyF8BaDtHMiz19a0+RmdEW4YaXhxAn3RS1xpMKmPNcOzNNyQHJ4DTPG9LhjdNBMg
-	 uhAueAihZfN0wgXMoGZm/50chN4gD41O+KXpHadwbdz7r1fNpTiK+w+8k9EwoS3Z8G
-	 w/QXpOD9dWnOaNS2AvzOin9RSVykArCleG1eHSE7qyEW+BSw+J6az+l411bRRzXJD2
-	 8tP9rC6ztasQyYlBN35Kg9StliVIIHbjlcfiHxz7BbzzjsnvG2ViHYdN9Rx6okWH5C
-	 A56Ac/qFJgJCWaxZ2+4GExM0sNlqjbFbePaEiXdcq+szDZxb5Hc290n2mke2RS6fdK
-	 H9VGNlPEJpVig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnnW63kF2z4w2N;
-	Tue, 20 Aug 2024 08:36:02 +1000 (AEST)
-Date: Tue, 20 Aug 2024 08:36:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian
- Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, Leo Li
- <leoyang.li@nxp.com>, Peter Rosin <peda@axentia.se>, Richard Weinberger
- <richard@nod.at>, Thierry Reding <thierry.reding@gmail.com>, Vignesh
- Raghavendra <vigneshr@ti.com>
-Subject: Re: linux-next: trees being removed
-Message-ID: <20240820083601.4eb41e96@canb.auug.org.au>
-In-Reply-To: <20240813085147.786004fb@canb.auug.org.au>
-References: <20240813085147.786004fb@canb.auug.org.au>
+	s=arc-20240116; t=1724107121; c=relaxed/simple;
+	bh=QsFhJr+Mi50WviHZp89d1dhCotm3INj2CPs+HkvFqHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BzteCZkNSY3Hz/7nNhx14XvchbabphuvKT5ULkmcl4KdklLBtqGFZY8vlL5q8ATgZ+VSK7xvCTlm07ch7ECs4HCuvfnUGXzuO1HBQLqJI6pm2pGDM0yVHS5UzKFWq50tu0sEfLeuYn3gLiSS57lja8moTeX/26NJPVt0Ow4GTIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RkH99alf; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-267b7ef154aso3112157fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724107117; x=1724711917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=egAdoVbV7ERufO80VgquGHc5WhyUKfKkzhFmhTHzm2Y=;
+        b=RkH99alf0SHf+1yqzid/868Gh2P9NZGUbEzyfDkXBcL30oXNNZbdPR3rU8mFSxVQyT
+         nASf5Y2zO8xsaMQGvSiuKzCGoWaiQkSeu9EhyjYhUaWnhRBKk92wz2nXos+Jy/byKwh5
+         aNCyNp3GtUvH4a8aAc+qXJVdv51FCvIicUGW4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724107117; x=1724711917;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=egAdoVbV7ERufO80VgquGHc5WhyUKfKkzhFmhTHzm2Y=;
+        b=i0Qpe7UJ53YTVKDmFgYmKNoV5TAriVflWpbfLi615aqUKJTLWiBwxTfvsGl8vXX1+J
+         +5npc0VjopnrOnoRiOjGlUaAOvldMru0PfHf/PiQPoiDPQIBb/KN3VaDtacc2iKL8S5J
+         wNfE5kWSVlpRbf9cPIyIYB5ZFSDIqdfQkRyqAuZc1thszGByaK0YHkZ8eT0lW3r9EGMF
+         aHJhi4HsW7/ODYr0+Rk3eNuKsgvOX4TGEu/CCkV4t2YcWl5zhPSwpw62ikuNSXXf8PD1
+         fPFujKk9M1mP+BuWDVodMldjEe4RJ+b05hh5Llk3FTPofsvpq6njTObAYZup9L/98pql
+         Nvmw==
+X-Gm-Message-State: AOJu0YwKKgmRHPTZcPv1+X5RSfxDfigBC8qnSKStHs9drFYQXu6BkCzy
+	ZFYfY0TInkPhpdZfSD2AOupXlLJNBmlKRevSDgUKbGiZtZXFehvhant7n6Fk7g==
+X-Google-Smtp-Source: AGHT+IFAcbhHFe8aOSpI2piH+wrMiBNFMeaVyEVhtEX5wNgd3YUCRbcPot5Saf5/lMntwLHP0R5X3g==
+X-Received: by 2002:a05:6871:723:b0:25e:fb:af8c with SMTP id 586e51a60fabf-2708136ae73mr506166fac.18.1724107117189;
+        Mon, 19 Aug 2024 15:38:37 -0700 (PDT)
+Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7cc41530bc0sm2722444a12.63.2024.08.19.15.38.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 15:38:36 -0700 (PDT)
+From: Stephen Boyd <swboyd@chromium.org>
+To: chrome-platform@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v3 00/17] platform/chrome: Add DT USB/DP muxing/topology support
+Date: Mon, 19 Aug 2024 15:38:14 -0700
+Message-ID: <20240819223834.2049862-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BPJRJLGA+th83kAl3WhCgcB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/BPJRJLGA+th83kAl3WhCgcB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series adds support for fully describing the USB/DP topology on
+ChromeOS Trogdor devices in DT. Trogdor devices have a single DP phy in
+the AP that is muxed to one of two usb type-c connectors depending on
+which port asserts HPD first to the EC. We'd like to know which port is
+connected to an external monitor to provide a better experience to the
+user about things like which type-c port is displaying DP or which
+type-c hub is acting up, etc. Describing the connection all the way from
+the source to the connector will allow us to do this.
 
-Hi all,
+DRM core patches: These are used to implement lane assignment for DP
+altmode configurations through the drm_bridge code. The typec code will
+use this to tell the DP phy how many lanes of DP to drive and which
+lanes to drive out to the USB type-c connector. Adding support for lane
+assignment allows us to implement DP muxing as well, physically
+splitting the DP lanes on the DP phy so that hardware doesn't have to
+use an analog mux to steer two DP lanes to one or the other type-c port.
 
-On Tue, 13 Aug 2024 08:51:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> The following trees are going to be removed from linux-next because they
-> have not been updated in more than a year.  If you want a tree kept (or
-> later restored), just let me know (and update its branch).
->=20
-> Tree			Last commit date
->   URL
->   comits (if any)
-> ----			----------------
-> djw-vfs			2023-08-04 08:20:57 -0700
->   git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git#vfs-for-next
-> drm-tegra		2023-04-06 14:02:33 +0200
->   https://gitlab.freedesktop.org/drm/tegra.git#for-next
-> pidfd			2023-07-02 11:14:54 -0700
->   git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git#for-next
-> soc-fsl			2023-06-08 17:56:26 -0500
->   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git#next
-> soc-fsl-fixes		2023-07-09 13:53:13 -0700
->   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git#fix
-> uml-fixes		2023-05-10 00:21:30 +0200
->   git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git#fixes
+Type-c core patches: These add some devm helpers so that the next
+patches in the series can skip open-coding devres helpers for
+unregistering typec switches and muxes.
 
-The above trees have now been removed from linux-next.
---=20
-Cheers,
-Stephen Rothwell
+DRM aux hpd patches: These implement an auxiliary device for USB type-c
+DP alternate mode. I took Dmitry's suggestion and moved the code that
+does the remapping into this driver. The existing hpd bridge is wrapped
+so as to avoid changing the current users. It also registers a typec mux
+and switch (if applicable) so that the DP altmode pin assignment and
+port orientation can be passed to the switch callbacks. We'll still need
+to implement logic in the phy layer to handle configuration.
 
---Sig_/BPJRJLGA+th83kAl3WhCgcB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Cros EC typec patches: This ties together everything that comes before it in
+this series. The EC typec driver registers the drm_dp_typec_bridge that
+can signal HPD from the type-c connector through the bridge chain, mux
+the DP phy in software so that we don't have to use an analog mux, and
+implement orientation control for boards like Kukui that directly
+connect the DP phy to the type-c port, necessitating lane assignment to
+flip the lanes to match the cable orientation.
 
------BEGIN PGP SIGNATURE-----
+Changes from v2: https://lore.kernel.org/r/20240815003417.1175506-1-swboyd@chromium.org
+ * Move most of the binding bits to usb-switch.yaml
+ * Move google,cros-ec-typec binding to usb/
+ * Implement mode-switch and orientation-switch typec controls in
+   drm_dp_typec_bridge driver
+ * Get rid of public APIs that would be used to assign pins or
+   orientation of the port
+ * Add devm helpers for typec mux and switch registration
+ * Add a way to match fwnodes while walking the graph based on the
+   endpoint
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbDyNEACgkQAVBC80lX
-0Gw/0gf9G7/AHKS26BZwMIpOZE3e2xyZJp2WWKL3SjETkXP5KxLedZbs11I9JmrB
-HIRtyA6mDRShJcrTGoqHj3rZOvq/xlswntp2q1iN9ErxZxU5vgoAyQnT1M9S4RYs
-muG7B6iBfeNtbiGonJcKWgPRO+URCytUSyJhGZBG06ePpjoy3/lC21hJE/Q1rDLl
-6Qtxxfr3mYwzKOHI3JEeGrbzFMnxlN6p6C9Gs9Y6j0PqwmKQ4hywOqCNqATmWiRC
-kDwU3UXX2fFMGj/4sifJN7s34V97XFA82xMwkNcoluTbrmZGO+7iSnZ3pk3a8DcA
-mVA0Jd1JrLHXCVDwbPEEzNHzD8/2rg==
-=un2b
------END PGP SIGNATURE-----
+Changes from v1: https://lore.kernel.org/r/20240210070934.2549994-1-swboyd@chromium.org
+ * Too many to count!
+ * Split out the DRM bits into this series
+ * Moved the logic into dp-aux-hpd bridge driver
+ * Drive the bridge from cros_ec_typec driver instead of globbing onto
+   the ACPI centric cros-typec-switch driver
+ * During that process drop a lot of patches that aren't needed anymore
+ * Move the DT graph and other properties to the cros-ec-typec binding
+ * Skip mode-switch/orientation-switch properties because we're not
+   registering typec structs anymore
 
---Sig_/BPJRJLGA+th83kAl3WhCgcB--
+Stephen Boyd (17):
+  drm/atomic-helper: Introduce lane remapping support to bridges
+  drm/bridge: Verify lane assignment is going to work during
+    atomic_check
+  usb: typec: Stub out typec_switch APIs when CONFIG_TYPEC=n
+  usb: typec: Add device managed typec_mux_register()
+  usb: typec: Add device managed typec_switch_register()
+  drm/bridge: aux-hpd: Support USB Type-C DP altmodes via DRM lane
+    assignment
+  drm/bridge: dp_typec: Support USB Type-C orientation
+  drm/bridge: dp_typec: Add "no-hpd" support
+  drm/bridge: dp_typec: Allow users to hook hpd notify path
+  device property: Add remote endpoint to devcon matcher
+  dt-bindings: usb-switch: Extract endpoints to defs
+  dt-bindings: usb-switch: Extend for DisplayPort altmode
+  dt-bindings: Move google,cros-ec-typec binding to usb
+  dt-bindings: usb: Add ports to google,cros-ec-typec for DP altmode
+  platform/chrome: cros_ec_typec: Add support for signaling DP HPD via
+    drm_bridge
+  platform/chrome: cros_ec_typec: Support DP muxing
+  platform/chrome: cros_ec_typec: Handle lack of HPD information
+
+ .../bindings/chrome/google,cros-ec-typec.yaml |  66 --
+ .../bindings/mfd/google,cros-ec.yaml          |   7 +-
+ .../bindings/usb/google,cros-ec-typec.yaml    | 295 +++++++++
+ .../devicetree/bindings/usb/usb-switch.yaml   | 164 ++++-
+ drivers/base/property.c                       |   7 +-
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c       | 564 +++++++++++++++++-
+ drivers/gpu/drm/drm_atomic_state_helper.c     |   2 +
+ drivers/gpu/drm/drm_bridge.c                  |  50 ++
+ drivers/platform/chrome/Kconfig               |   1 +
+ drivers/platform/chrome/cros_ec_typec.c       | 149 ++++-
+ drivers/platform/chrome/cros_ec_typec.h       |   3 +
+ drivers/usb/roles/class.c                     |   4 +-
+ drivers/usb/typec/mux.c                       |  72 +++
+ drivers/usb/typec/retimer.c                   |   7 +-
+ include/drm/bridge/aux-bridge.h               |  26 +
+ include/drm/drm_atomic.h                      |  31 +
+ include/drm/drm_bridge.h                      |   4 +
+ include/linux/property.h                      |   5 +-
+ include/linux/usb/typec_mux.h                 |  58 +-
+ 19 files changed, 1408 insertions(+), 107 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/google,cros-ec-typec.yaml
+
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+https://chromeos.dev
+
 
