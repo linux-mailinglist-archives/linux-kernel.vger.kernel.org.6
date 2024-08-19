@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-291368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46569956141
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74A4956159
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB52D1F21E6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0EA1C214F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D403FB31;
-	Mon, 19 Aug 2024 02:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BFE13BACB;
+	Mon, 19 Aug 2024 03:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PGoA75MN"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZFZRMi/h"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3895238DE4
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B12B13B5A6
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724035960; cv=none; b=HX+jz6tu7RaDcYsEhHKhIbhI8tjbDPLBpb+3/BT59hKpFBbKHGdInSSsYsxbzWhfytCY5hyEUfuOkV9iM9Aa+iwGd41iwu+8RbrjUgWywjjuc2/5cC8JzMpVoQkcGcZC8RS1KK5XpE8D/JPsONr4vYY3DyRWfRPWRVF3+bg7NRU=
+	t=1724036782; cv=none; b=pRHz3MAIeX5ynpVp6sGYz4NmCzrGA2n3VMdLUl0BeKrO3or3mqkejBYklwk3kpIj7lk5ZiXAy0PtfnGseihP7g4Vi1I2BUDoqrd1xewvechfmMra2L1T5naaJIAICSbYX9Akt/KVa4oBxxsayCHkX9vRNSUMCJm0PSyjkqjFq8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724035960; c=relaxed/simple;
-	bh=eEkswAzufigPSZfVkrwT5ivSD7I6YVY7iquJw7A13b8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jUJp6tAqmQI8Qoefi+GRdPp16kChN4HaY38EvoYe9SVCJvPwv9VE2t9p82lHLBQxKib8YpRPqiNojwpVw98yQOWSEOGHm4tPIK/JVvrs8+6osk3qTlLr8b4JgM2R1elkUZSlExE+ZPsn+pJw5g7BrcNDhQP08iyLnoMNh/t9jIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PGoA75MN; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724035950; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ZEEFnbOI9qdPAaeqWnQy/0ifprCsB9eWCuD8eWBWn5A=;
-	b=PGoA75MNWDkThSdDDuC8dsD44748E1sT5NQ5Ye+Ns11Sc+E0EVZpuc4Nk5F+IfexRCiyIRiunziYLaKnmZdFqIv+r+7Sd498lpoj08o3Kgu/A3XPLwo51Uvfq0cpGO6ap6X8lBrjKx1M7BKE7WfMTmNmEfhY5gowRx/OBcqrK5E=
-Received: from 30.221.129.125(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WD5AEFf_1724035949)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 10:52:29 +0800
-Message-ID: <e5fb0013-ea4e-4da7-89e5-6b2b0879ecc9@linux.alibaba.com>
-Date: Mon, 19 Aug 2024 10:52:29 +0800
+	s=arc-20240116; t=1724036782; c=relaxed/simple;
+	bh=DTYsoVBv4qcuw+irvmC89n4g9DfsW1cJjYEWLSea77Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=fbEU6sNkvbHVIq9BYiSpZbmLa0NJC3kOqPwnkXAkuM2UT6quL6ZVQNhoq8aaew43A1aHLHdy9Bu0HRnw8M3q64KAE5KurYGRHJlaZ4MYLFL35gw8UJYGL+cIdccRKDCsj5yt4d8MMlsOm6802qB5kKCCZDcrfoN7W1kgLwe7lQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZFZRMi/h; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240819025935epoutp045457e0221db239ac70a055a33b6f17f9~tAfMFvfUl0481504815epoutp04X
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:59:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240819025935epoutp045457e0221db239ac70a055a33b6f17f9~tAfMFvfUl0481504815epoutp04X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724036375;
+	bh=DTYsoVBv4qcuw+irvmC89n4g9DfsW1cJjYEWLSea77Y=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZFZRMi/hk2GS70VWBNHcvZzc8LVmc9elL6WV491gXq6eym67/YJKfHzjX2fdvsnn8
+	 3zi4MLcjDasuGaYDv083Qpkg108m7AI/mfVh7z6raL6L9/yqjVti/Pzd+ybMkLpSDf
+	 eqjgIKNwMfJPusdmJCQ5hucg2pq3JoQA2EBkv4BI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240819025935epcas5p197d3be67b43c2a5637004d56afadafe1~tAfL3uApc1978019780epcas5p15;
+	Mon, 19 Aug 2024 02:59:35 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WnHPd3phNz4x9Pt; Mon, 19 Aug
+	2024 02:59:33 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BE.4A.09640.515B2C66; Mon, 19 Aug 2024 11:59:33 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240819025446epcas5p43dde8e55435917ecd0175400b0b7cc62~tAa-QHmiT1123311233epcas5p4L;
+	Mon, 19 Aug 2024 02:54:46 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240819025446epsmtrp1bbf561fc03d74d073db162a379403ff7~tAa-PgZa12777327773epsmtrp11;
+	Mon, 19 Aug 2024 02:54:46 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-75-66c2b515b09d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AA.A2.19367.6F3B2C66; Mon, 19 Aug 2024 11:54:46 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240819025446epsmtip24ac20cb2222310753db0ddf64ddefafd~tAa_a1tic0786307863epsmtip2h;
+	Mon, 19 Aug 2024 02:54:45 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8] io_uring: releasing CPU resources when polling
+Date: Mon, 19 Aug 2024 10:54:32 +0800
+Message-Id: <20240819025432.2939198-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
- ocfs2_verify_volume()
-To: Heming Zhao <heming.zhao@suse.com>, qasdev <qasdev00@gmail.com>,
- mark@fasheh.com, jlbec@evilplan.org
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <Zr9XJJlZ+RzkLK/M@hostname>
- <cbd30b80-d213-4997-b447-10e455f20196@suse.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <cbd30b80-d213-4997-b447-10e455f20196@suse.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmpq7o1kNpBk8nSlnMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YHdg8ds66y+5x+WypR9+WVYwenzfJBbBEZdtkpCampBYp
+	pOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAO1WUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnnGi+wlYwgani
+	7T+nBsbbjF2MnBwSAiYSy94cZupi5OIQEtjNKLH02Td2COcTo8TfL3sY4Zyf8w+wwbS0TnnA
+	BGILCexklNjbwwlR9INRYvP96+wgCTYBJYn9Wz6A7RAR0JZ4/XgqC4jNLGAlcXbOTzBbWMBN
+	4uuDQ0CDODhYBFQlrm73BwnzClhLLHj7FGqXvMTNrv3MEHFBiZMzn0CNkZdo3jqbGWSvhMAu
+	dombhw6yg8yREHCRmPMvEKJXWOLV8S3sELaUxMv+Nig7X2Ly9/VQ79dIrNv8jgXCtpb4d2UP
+	C8gYZgFNifW79CHCshJTT61jgljLJ9H7+wkTRJxXYsc8GFtJYsmRFVAjJSR+T1jECmF7SOx5
+	cYgVElSxEm3fzjBNYJSfheSbWUi+mYWweQEj8ypGydSC4tz01GLTAsO81HJ4rCbn525iBKc/
+	Lc8djHcffNA7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc1OJDjKbAEJ7ILCWanA9M
+	wHkl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTD5TfVj3OG2MT5/
+	mo7MDFN3yVWlNlot695+kLwteu1PIJtr49r1ibPStXXvLLX5YSVbeTfM+OR8IaMjhhx/PcI8
+	vDK1jG92Bd2rdy65UP3HT1B4FofelRP/vxVGPS78Wax2f0sfc9lTY+OQNRdFLCrW97gcZbi8
+	lUlc+MGJ7/o7r98pUJgm6quZX+/j9GjSyoKvt1/FblWuW/fuC7eiMGMtz7Rjx5ZvXFbyO/bq
+	hY7HKYpnjCR7E1rvJ6zLvdLFO+Hctvw9rwMc7OceVtZpcbxUbrqHJe3yIxZvI/E56lt9QhQO
+	MUVK7G9k/vDz8tEvV5b1bgpePHcG05LprLfe1+/gnBYjwrNZ+hv3vO01068rsRRnJBpqMRcV
+	JwIAv2153QgEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLLMWRmVeSWpSXmKPExsWy7bCSvO63zYfSDC6dNreYs2obo8Xqu/1s
+	Fu9az7FY/Oq+y2hxedccNouzEz6wOrB57Jx1l93j8tlSj74tqxg9Pm+SC2CJ4rJJSc3JLEst
+	0rdL4Mo40XyFrWACU8Xbf04NjLcZuxg5OSQETCRapzxg6mLk4hAS2M4ose7qYWaIhITEjkd/
+	WCFsYYmV/56zQxR9Y5ToaNgDVsQmoCSxf8sHoEkcHCICuhKNdxVAwswCNhI7W7awg9jCAm4S
+	Xx8cYgIpYRFQlbi63R8kzCtgLbHg7VM2iPHyEje79jNDxAUlTs58wgIxRl6ieets5gmMfLOQ
+	pGYhSS1gZFrFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERyCWkE7GJet/6t3iJGJg/EQowQH
+	s5IIb/fLg2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNITS1KzU1MLUotgskwcnFIN
+	TOqp534L1bvP6G2242FLcfp6v+ZjqHfAGXORyHxT9aq1jCePNj1p+6ZwUOLt5qgfayeJ7hDN
+	e/WOaeIyu6VPrRa+PL990q13NeemBaqdN5iroPd8N9PLFzsZv5vJbdo5U2dpQnqlp55w6c/N
+	nzLXxx19wlP5WePSlKx5q0OqXbSELft2zfp9JNz4mrkyb55CX5bllgqpkEt19UfSNBOj/rtp
+	TOJ3lNX817Xx8Bm1DMN76SvjDn67fO/rWaGdU/1Npr79zX9eYK3G6Y8ThU3zH9qI+jXNPyRr
+	XrLjt8ES/zPrDJdcEPluIF3kfVKs78HvfbVGFs7M59+JGwXkJFb/iuYrSZkf0zrD9fbhEwLX
+	LyqxFGckGmoxFxUnAgA2PCarsAIAAA==
+X-CMS-MailID: 20240819025446epcas5p43dde8e55435917ecd0175400b0b7cc62
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819025446epcas5p43dde8e55435917ecd0175400b0b7cc62
+References: <CGME20240819025446epcas5p43dde8e55435917ecd0175400b0b7cc62@epcas5p4.samsung.com>
 
+On 24/08/12 1:59AM, hexue wrote:
+>This patch add a new hybrid poll at io_uring level, it also set a signal
+>"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+>to enable use new hybrid polling flexibly.
 
-
-On 8/18/24 7:43 PM, Heming Zhao wrote:
-> On 8/16/24 21:41, qasdev wrote:
->>  From ad1ca2fd2ecf4eb7ec2c76fcbbf34639f0ad87ca Mon Sep 17 00:00:00 2001
->> From: Qasim Ijaz <qasdev00@gmail.com>
->> Date: Fri, 16 Aug 2024 02:30:25 +0100
->> Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
->>   ocfs2_verify_volume()
->>
-
-The above should be eliminated from patch body. 
-
->> This patch addresses a shift-out-of-bounds error in the
->> ocfs2_verify_volume() function, identified by UBSAN. The bug was triggered
->> by an invalid s_clustersize_bits value (e.g., 1548), which caused the
->> expression "1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits)"
->> to exceed the limits of a 32-bit integer,
->> leading to an out-of-bounds shift.
->>
->> Reported-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
->> Closes: https://syzkaller.appspot.com/bug?extid=f3fff775402751ebb471
->> Tested-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
->> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
->> ---
->>   fs/ocfs2/super.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
->> index afee70125ae3..1e43cdca7f40 100644
->> --- a/fs/ocfs2/super.c
->> +++ b/fs/ocfs2/super.c
->> @@ -2357,8 +2357,12 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
->>                    (unsigned long long)bh->b_blocknr);
->>           } else if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 12 ||
->>                   le32_to_cpu(di->id2.i_super.s_clustersize_bits) > 20) {
->> -            mlog(ML_ERROR, "bad cluster size found: %u\n",
->> -                 1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
->> +            if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 32)
->> +                mlog(ML_ERROR, "bad cluster size found: %u\n",
->> +                     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
->> +            else
->> +                mlog(ML_ERROR, "invalid cluster size bit value: %u\n",
->> +                     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-> 
-> I prefer to use concise code to fix the error.
-> Do you like below code?
-> -        mlog(ML_ERROR, "bad cluster size found: %u\n",
-> -                 1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-> +        mlog(ML_ERROR, "bad cluster size bit found: %u\n",
-> +                 le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-> 
-
-Agree. qasdev, Could you please update and send v2?
-
-Thanks,
-Joseph
+Hi, just a gentle ping...
+--
+hexue
 
