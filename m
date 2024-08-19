@@ -1,143 +1,231 @@
-Return-Path: <linux-kernel+bounces-292514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA2795705B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7361B957065
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B369F1F23FDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EBB1F22830
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F63175D20;
-	Mon, 19 Aug 2024 16:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4BB176230;
+	Mon, 19 Aug 2024 16:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dd+MqviX"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="mttiSLoa"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F373345C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3F6175D5D;
+	Mon, 19 Aug 2024 16:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085173; cv=none; b=t6Awpj5rrdtpE3IbXQ/cX4ZqNG9DaJyT+QE8xtpypunsVnPsYYXZR7UA8JJsQ6KS4GzGz8Q9ee5Tjls+g8DlOthSYhzqU6SbQ7hRTNain1kwyTBL0Hs0pfpuyBgfypsXYDd13kwxGnJm36ZVTVHONy3glkC5pqTrUDmbIEdtpL4=
+	t=1724085223; cv=none; b=L/I4/SdjnMRh63Th7jLNkvhvoTStmLhz+L7w3gYL/UEAiOUS/jMMiwYGkBDY1o3QJUhG4fUJqvXTdXP+OikpGYjAE+vbWY27H0KVmnRydK+xQo4PPlFCiorik29leogVw4YHiraF2TLaEeavXAhGwljsM01LPUubXx1NoF+2dnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085173; c=relaxed/simple;
-	bh=K0q193bN5JOax1rhlDmcjYqO+uYhbBCDOeJQcoTxJMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcF4pzohptrOyVI1kxjuyuRvkmhnQPkgj9BjGMUGA79Uizoc5085y8NmVsWwSoaNZ0eCVBCg73g+A4Vcmm6mCPCiW2x9xaxDNx+kv6fGV6iuqa8VncF6OE6J0nN+UNACyh1yVXCe/WM+xvFjeiN4dYD+GPWHw5LX2KQ61+GXs6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dd+MqviX; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710bdddb95cso2594499b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:32:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724085171; x=1724689971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iTLJkDxNCgz7MzPLIVAzrv8NyvHyRZtNC2lGZWfIhOw=;
-        b=Dd+MqviXRFih64nkgiaX3qkMWS3vXGDRmSPMzzylkQq2on6Q1zoaKs/sxby2kDGSJ7
-         P2whGPurbHvo8d7pxIRrCAdKHQh/cKIt3StUT1XwxkT308f9RuXOWwF2zEd6eNHccg+k
-         Kj54F7AdsmDsUGZCDTPsYFTPN2l/IQ3g8EVo7RkKgw2B0o9UARdvz7rSQb9yT1xVdcSk
-         IHGTyQvY3gcejB7RgWNQgyWLskz+WqUU/lAAUKt7CzQjwfjiahgOCYVRx8v9Ojwc3gzd
-         pSsd30oud5wqVNyKmeGH7ajpaZexlVB+9XHSmKNdrvhaQ2YOBr6TnObyEzKrhT2CwNRu
-         QPRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724085171; x=1724689971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iTLJkDxNCgz7MzPLIVAzrv8NyvHyRZtNC2lGZWfIhOw=;
-        b=iMq3T9IwhmWGbQUnO1ItJJxXyHB8s3TLrLnFVpzu7trM6cPe/se6/2y4eXegBQr1uP
-         M8wMJ/rHevkwIEUScwRFwhWs0zUHOUuMznbzdCZq7hJuVwZueKUm1TXBfSf/8lTxkoBJ
-         gnpU+TKyLqow/RFYhurJHnP/lzdIekxYBpgHQdrRw4l44cE0XeKLlAzoEYTZeInlxSic
-         8S/o4vObkQgNw+P7LXSs8MlOEOvIQcF2sPTM3u7wXiFq6T1crInPo/k+xM9C2ZPdC8gY
-         93yLSok66EQJN+Je0wMklYZyxyb9ppSnuoAJx4vR6lSsUak5IXYKVzmbv/ldItfAwYDf
-         3exA==
-X-Forwarded-Encrypted: i=1; AJvYcCWapCKM6famKLMkmAqTPl1eG2JEfxVFIwdPppimBCa24WgNwe2DccIGwH1JSvnLpAseSyIFushWlfeXhr4sc+G3FwpzJWPFS45p5NQu
-X-Gm-Message-State: AOJu0YzwNMkitsYeqbIR0jYiASHmEL4w4lfyxvZkHdn0H8LkcIWFw+YC
-	+Nw8IXfdD3CoTNSY0Rs5doakxte4x+ER1HCSCkYpaL1WcSEAGkoikKe1ACrCcwE=
-X-Google-Smtp-Source: AGHT+IGd9BomTOEkHSrU8yURSLWC4Z5e2W/4EhRS2sSRKbSLBn+YZp1LHRiMhzFNnRZa9sIzuHFmgQ==
-X-Received: by 2002:a05:6a00:91d9:b0:70d:3354:a194 with SMTP id d2e1a72fcca58-713c4df5f72mr10370415b3a.2.1724085171195;
-        Mon, 19 Aug 2024 09:32:51 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:903:55bf:2534:1807])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add6b3dsm6779761b3a.8.2024.08.19.09.32.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 09:32:50 -0700 (PDT)
-Date: Mon, 19 Aug 2024 10:32:48 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: k3-r5: Delay notification of wakeup event
-Message-ID: <ZsNzsDByD5okM6Xx@p14s>
-References: <20240809060132.308642-1-b-padhi@ti.com>
+	s=arc-20240116; t=1724085223; c=relaxed/simple;
+	bh=5VFCrHPQhdvu70cp9nbqtAPwZQZMYLt8PYeKbw+mtag=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kL7DRPgRfT9QmI7yGXjCk/JMyFWO+Nc8hDnsKwCd3D/s3Oktcr3BBPE7FW8UD874aRjQ49M29nv8L1OXxkTIzk1FOFN/9OyhIctFbS9IZ/aC6rcabWCN1ygbXwpMNmzM+jRDE6BEcwKwLmqM1nybauLgKH7CpwxaD0WQ8+nYirc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=mttiSLoa; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 1c01ccf5d5ceffdb; Mon, 19 Aug 2024 18:33:39 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 1FD8D73B5D4;
+	Mon, 19 Aug 2024 18:33:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724085219;
+	bh=5VFCrHPQhdvu70cp9nbqtAPwZQZMYLt8PYeKbw+mtag=;
+	h=From:Subject:Date;
+	b=mttiSLoa5mLQG89zv+NSsCvmxn5NXcPjQLQEGMqinX0345x9Tld04YdHj8szsaNEz
+	 sbORo2mp1SpGNgKGYGX8HDQFcq83HcV6c/rLxe9NyC9/DvxqfxSBGtoyEIvAdr9uLM
+	 jvbIF9uPA1dAuaAtFjGjMb+0JC8Ui9uxGiqK0/hlJab+/IYgyh+GuzH3OY51Z8aE9v
+	 gaR2rAAcmnXSegbvcRs7kUPfv1jky0Sb9cw2NS3Kpv8qIPxQi94t/XSn4w0giZbHRS
+	 b9N91HVnpW1z634/wiilCyOOaJVdsoMh6/Rzqhb8DIsy+YMgEJbAlgw4cDG5xA3L0y
+	 OptJbyWz4Mukw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH v3 14/14] thermal: core: Clean up trip bind/unbind functions
+Date: Mon, 19 Aug 2024 18:33:11 +0200
+Message-ID: <1831773.TLkxdtWsSY@rjwysocki.net>
+In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
+References: <2205737.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809060132.308642-1-b-padhi@ti.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
+ rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On Fri, Aug 09, 2024 at 11:31:32AM +0530, Beleswar Padhi wrote:
-> From: Udit Kumar <u-kumar1@ti.com>
-> 
-> Few times, core1 was scheduled to boot first before core0, which leads
-> to error:
-> 
-> 'k3_r5_rproc_start: can not start core 1 before core 0'.
-> 
-> This was happening due to some scheduling between prepare and start
-> callback. The probe function waits for event, which is getting
-> triggered by prepare callback. To avoid above condition move event
-> trigger to start instead of prepare callback.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I can see the race condition.
+Make thermal_bind_cdev_to_trip() take a struct cooling_spec pointer
+to reduce the number of its arguments, change the return type of
+thermal_unbind_cdev_from_trip() to void and rearrange the code in
+thermal_zone_cdev_binding() to reduce the indentation level.
 
-> 
-> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
-> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-> [ Applied wakeup event trigger only for Split-Mode booted rprocs ]
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 39a47540c590..f1710a61247f 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -464,8 +464,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->  			ret);
->  		return ret;
->  	}
-> -	core->released_from_reset = true;
-> -	wake_up_interruptible(&cluster->core_transition);
->  
->  	/*
->  	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
-> @@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  		ret = k3_r5_core_run(core);
->  		if (ret)
->  			goto put_mbox;
-> +
-> +		core->released_from_reset = true;
-> +		wake_up_interruptible(&cluster->core_transition);
+No intentional functional impact.
 
-This patch doesn't apply due to recent changes made to the k3-r5 driver.  Please
-rebase and resubmit.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Thanks,
-Mathieu
+v2 -> v3: Subject fix
 
->  	}
->  
->  	return 0;
-> -- 
-> 2.34.1
-> 
+v1-> v2: No changes
+
+---
+ drivers/thermal/thermal_core.c |   54 +++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 33 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -757,15 +757,7 @@ struct thermal_zone_device *thermal_zone
+  * @tz:		pointer to struct thermal_zone_device
+  * @trip:	trip point the cooling devices is associated with in this zone.
+  * @cdev:	pointer to struct thermal_cooling_device
+- * @upper:	the Maximum cooling state for this trip point.
+- *		THERMAL_NO_LIMIT means no upper limit,
+- *		and the cooling device can be in max_state.
+- * @lower:	the Minimum cooling state can be used for this trip point.
+- *		THERMAL_NO_LIMIT means no lower limit,
+- *		and the cooling device can be in cooling state 0.
+- * @weight:	The weight of the cooling device to be bound to the
+- *		thermal zone. Use THERMAL_WEIGHT_DEFAULT for the
+- *		default value
++ * @c:		cooling specification for @trip and @cdev
+  *
+  * This interface function bind a thermal cooling device to the certain trip
+  * point of a thermal zone device.
+@@ -776,8 +768,7 @@ struct thermal_zone_device *thermal_zone
+ static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+ 				     const struct thermal_trip *trip,
+ 				     struct thermal_cooling_device *cdev,
+-				     unsigned long upper, unsigned long lower,
+-				     unsigned int weight)
++				     struct cooling_spec *c)
+ {
+ 	struct thermal_instance *dev;
+ 	struct thermal_instance *pos;
+@@ -791,17 +782,17 @@ static int thermal_bind_cdev_to_trip(str
+ 		return -EINVAL;
+ 
+ 	/* lower default 0, upper default max_state */
+-	if (lower == THERMAL_NO_LIMIT)
+-		lower = 0;
++	if (c->lower == THERMAL_NO_LIMIT)
++		c->lower = 0;
+ 
+-	if (upper == THERMAL_NO_LIMIT) {
+-		upper = cdev->max_state;
++	if (c->upper == THERMAL_NO_LIMIT) {
++		c->upper = cdev->max_state;
+ 		upper_no_limit = true;
+ 	} else {
+ 		upper_no_limit = false;
+ 	}
+ 
+-	if (lower > upper || upper > cdev->max_state)
++	if (c->lower > c->upper || c->upper > cdev->max_state)
+ 		return -EINVAL;
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+@@ -810,11 +801,11 @@ static int thermal_bind_cdev_to_trip(str
+ 	dev->tz = tz;
+ 	dev->cdev = cdev;
+ 	dev->trip = trip;
+-	dev->upper = upper;
++	dev->upper = c->upper;
+ 	dev->upper_no_limit = upper_no_limit;
+-	dev->lower = lower;
++	dev->lower = c->lower;
+ 	dev->target = THERMAL_NO_TARGET;
+-	dev->weight = weight;
++	dev->weight = c->weight;
+ 
+ 	result = ida_alloc(&tz->ida, GFP_KERNEL);
+ 	if (result < 0)
+@@ -887,12 +878,10 @@ free_mem:
+  * This interface function unbind a thermal cooling device from the certain
+  * trip point of a thermal zone device.
+  * This function is usually called in the thermal zone device .unbind callback.
+- *
+- * Return: 0 on success, the proper error value otherwise.
+  */
+-static int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
+-					 const struct thermal_trip *trip,
+-					 struct thermal_cooling_device *cdev)
++static void thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
++					  const struct thermal_trip *trip,
++					  struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_instance *pos, *next;
+ 
+@@ -912,7 +901,7 @@ static int thermal_unbind_cdev_from_trip
+ 	}
+ 	mutex_unlock(&cdev->lock);
+ 
+-	return -ENODEV;
++	return;
+ 
+ unbind:
+ 	device_remove_file(&tz->device, &pos->weight_attr);
+@@ -920,7 +909,6 @@ unbind:
+ 	sysfs_remove_link(&tz->device.kobj, pos->name);
+ 	ida_free(&tz->ida, pos->id);
+ 	kfree(pos);
+-	return 0;
+ }
+ 
+ static void thermal_release(struct device *dev)
+@@ -959,7 +947,6 @@ static void thermal_zone_cdev_binding(st
+ 				      struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td;
+-	int ret;
+ 
+ 	if (!tz->ops.should_bind)
+ 		return;
+@@ -973,13 +960,14 @@ static void thermal_zone_cdev_binding(st
+ 			.lower = THERMAL_NO_LIMIT,
+ 			.weight = THERMAL_WEIGHT_DEFAULT
+ 		};
++		int ret;
+ 
+-		if (tz->ops.should_bind(tz, trip, cdev, &c)) {
+-			ret = thermal_bind_cdev_to_trip(tz, trip, cdev, c.upper,
+-							c.lower, c.weight);
+-			if (ret)
+-				print_bind_err_msg(tz, trip, cdev, ret);
+-		}
++		if (!tz->ops.should_bind(tz, trip, cdev, &c))
++			continue;
++
++		ret = thermal_bind_cdev_to_trip(tz, trip, cdev, &c);
++		if (ret)
++			print_bind_err_msg(tz, trip, cdev, ret);
+ 	}
+ 
+ 	mutex_unlock(&tz->lock);
+
+
+
 
