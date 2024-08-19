@@ -1,161 +1,205 @@
-Return-Path: <linux-kernel+bounces-293054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89369578C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:50:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815229578C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682EF1F23A4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A611E1C239BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221DB16133C;
-	Mon, 19 Aug 2024 23:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEB91DD39F;
+	Mon, 19 Aug 2024 23:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="eEkAMu8s"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2043.outbound.protection.outlook.com [40.92.102.43])
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="Ge6JjYpp";
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="EhUOzy79"
+Received: from mx0b-000eb902.pphosted.com (mx0b-000eb902.pphosted.com [205.220.177.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689AEB657
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FD6B657;
+	Mon, 19 Aug 2024 23:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.212
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724111413; cv=fail; b=F/nqjzPcSDbRqcMjeNmJvNQL/1+/47wtDXxJPqFiviD7LxQkcTAEysqM5J1ncvCQk81q9VXFE+DV6/IlYgzU3GBBg2Gl8V7W4ebYFfcX7wKAv1FyOU+jSO9dkLFN/g1/RrQ24YZ4rkrhwVajj2R1JkVmYasi5JHCYLe2I0JR1QE=
+	t=1724111613; cv=fail; b=TbimtNrfbVOjT35SCZ80/IU1p1EAhnL6fwVzbOBjV3R2PY1asAY3DaVyA7NlB6lxF4ExPo2YLHlfCbsVZsnThnXRAOvOVR/7pMQpkiWdudLWm8QNOxIZkIjJLVHcp84jNOanMzeakmq+W4y8sjW+2X+9Y1cAA7JKN3C1xr8IPE8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724111413; c=relaxed/simple;
-	bh=c1yaK6mcyZEn9TixvOVFDhYDUjyh5mbE+pwKztCfrjY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FaHiqZdnF4cSi/r9IzibSvRQqmZN//z2S22KnWkrSJpPLChGGozVX1bmbfTVhJdxz3ww51sEKWMX6Tb7MkuST1Hk0wUxpI5NvKEkIg8rwuJWO3+9tUGYmGswApnR+yoioILIfl3pb8JMwnmQshAMtKhxRQ2uxAIlILtPts/SP8g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=eEkAMu8s; arc=fail smtp.client-ip=40.92.102.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1724111613; c=relaxed/simple;
+	bh=8d8LvUkN1h+nDpyc8NAZEMZr9iZBzh9E+dvSqsULAmg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WTJnfPONdhL2DK9eLeake3oUsbHGfx+R8rcWKeatzdFkBIvYVG/ou+SclcCwga9giBYExf0GgXm3QCuuJFtHn5o6wyEmvpJIwK4kCaXfEujr7IRjFzm3Uam0t/MRtKURAzJlbFX8BUAO11+Cw3l38cLpQBMCSeUukRb7M2H1WFg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=Ge6JjYpp; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=EhUOzy79; arc=fail smtp.client-ip=205.220.177.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=garmin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
+Received: from pps.filterd (m0220299.ppops.net [127.0.0.1])
+	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JNp5BZ001925;
+	Mon, 19 Aug 2024 18:53:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pps1; bh=X3t9PCGGB6CJq+Lis8bVhiPkSuG
+	cXXLIckuRQjIaZ04=; b=Ge6JjYppiLTqO4eRQcL8bOUyQZhEROUNDUVstAyL9OE
+	SwGZPi2z+UlA324/onHnW0YxxLroaISb0i2qjAEooqTkpLzi1vu//LEkdktTsl+C
+	IT550E7QUfPLo7fq1TqvWQFMMZt1TjwYhKW8zzD8I33Q5bj5k8b1UyTqT0JF4BY8
+	XeLBBN1I8m4Yw8TaU0Vv99Jmbw0EPup+VkmaGd3SNNQetb6Go5J0UQWmhLMX7QoA
+	/icuSKnnp8chbw+9Ad9YOgGlYHMg5hwUaMt7vf0xnxLJMv2h3Nyvg6liOdci81g8
+	GruNV9yquiWjnuxNHJwfnBExPBxuIilZSUSxdgE/NXg==
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazlp17011027.outbound.protection.outlook.com [40.93.13.27])
+	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 4149940qmp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 18:53:13 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S8mBXgkfMRSSzSjy1t/mKlLH3AIBlflWcLVFMvkiBDi+vVvgsTVgtzuLZqNJMyrIT1xFSbskHJxHopNz4FHEskfBYe5XxQXWIcuJho735kuLzhwjrmGyhVVEX5ZJMCF6ky++FaQFzuR9kKts2tVgR4OE4ny5yAkZADCdpBaGJBwFJDB1pJLiaxR6n/mm9gUIjAPaCOwjtN71JOm/RnqNh1VUGDljinv1ZKRvX9v8doH+CyXpvt0X38mSNOdar+TCPWWUiCEUuHl3VYfvULCD2N9jm/s3451tVH7WUU7DeeEQfrbBwcS461R693K9IcxEdime6Ce1fwzO72pc1lCoMw==
+ b=WPtYlXYe2srDl+vz8rb/yj6g3hMs79iNeanacfN25gDL1rT/3YnKLNfoMLLmgeAON3EFDOGJDJiHt6zYJOV88sV7gOq5gq1rDMSpHZfsZr4LekJ2y1SYnVKfznVPnnBXJqnSI+w6qgVj9tZtYuFv8gOkIVwwHbuusLEalSVJub04rirpzxQMoBgop+EoOvFAOmHH1sjhIWODlnu4mCZV72qqgbV50v82sD8FUnSIuJgLrrxz6uw1a65zW9t2K2ENLP6TLu2pIYUaTyACBh/y1hqVKjUlXZAi7mklWhEvhqnjUs1Qj+TKrXgVMuA7E0Rg5UY1bjVWWtrx5P6Hv7iuzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q5qrA+GnOaxGkabKOLo/cA5LkK2otrGP/iSIgXWm6GA=;
- b=m4N6TlG2l6A7424kCHy7Mm9KG7QLnn+zbj4lmwRkcpGwltSfbVytHYnpG5oqZkA+v25QpzUdacR2WM76iRHlNBeBULTcRp9kQg1Cf6im9H+n0jo/rwAAIoLs+wBiUZTO4t/xzYkHC6Fl4Wv73uO6589ZXl7KEQwvuWk/C6iguf2FTrU0CieM13lBkhrFdyDo9OcfIMVgmOSaLEmIAjXvd1TsfpwMo63BvUCFCC4zwjZX+IP42IkRqIIvBHW4wBL+n/vWIV2AA0sVioMVKh0nA3aakyHPVQHlBcFL3/1NOMYpOGVhS/N36SVu0GLtXVyn9Y4nEaw48krBE4vFcjX/8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=X3t9PCGGB6CJq+Lis8bVhiPkSuGcXXLIckuRQjIaZ04=;
+ b=DBvl6kDk0sANWptNYkZD6mCrSdaP8Ih7DjUu+M7zjaatypWVmRRsK1aa5O4dBFvpmiVfv/S2GwPUJ6ykIHdhRweHxWUyIYdDo1fXoQOYA/Lj7trvG1EsowsFvDRNlKYizgypGDWfKMB7w/16UmyO+FC2G/EjYjBUthFMOfBsMBZ5Ygz+Da6mQ7RT1cQJ+6Ob6UWTI2k6G+s6SMIycXkipSbcfR/tpwZobEi9TVd5z/TxGzgy7RgAJRy7GkbMDKNbI1BFzJMED1hbo25c1d19yMWZodOwCNP0mLb/Gr0VENYhWmFnYrUvgTIt9PbUaTbqA3Z8fQ0+793/CyBXW9v7yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 204.77.163.244) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=garmin.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=garmin.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q5qrA+GnOaxGkabKOLo/cA5LkK2otrGP/iSIgXWm6GA=;
- b=eEkAMu8syLidX5CYlT1oMgyeztDgCijiLI8PLF4vQ64gb6yfIUTi31n5TR22WaMEaI0Jddv6ASvobEcP7HdUyVfaFQOZjvwbMrq5jJepygZx32fTjTfAaoT8a+lvrCt7/pR8KbFlYBbfoqHnpfZxMu3hCzvD9xIE7xG3zNh1OpiNjts+k59ddi56xEU3IZVeNckfGO46jTQUFTigO9VfEaprFG9n1E1MuZyMdTzYZ+0+/R7RBu6x7iK9g0xRkq0i4+jVNvVSoWd76AQeG8+29+mNp+rq60oKgb9q2BWHEZtZY4BERuPLagqFXTUytYrZZbbwdTf+ytThZMuDWRucAg==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2P287MB0577.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15a::6) with
+ bh=X3t9PCGGB6CJq+Lis8bVhiPkSuGcXXLIckuRQjIaZ04=;
+ b=EhUOzy79NN2L8Q2SxdSLffdXNz+nft7YQUfTJaEhQsUt8PBafKfG1fOvGivsC86V2LwLRsFYhSzygh9jQwxkO5XS1raLyHP7YSCnSG9aoIH+0SDrvoX4z8DNBjPwHvi+dXa/I1YPC800nMs/ILEItBEEiveGxmGsFC/1fuv55DmXSFJuJHkMHpBJJ+uVYV2jlhP6jrv1gea2h1p90IHoUwWqn97L17dOkO8Nvgs3ykD/lVrz/JWaYtZH0xHNh/6l79HF8wog+EepiuZHJCECKCK2QfV2MdXd/IYn7XxfLupZZG5ThSFjvzVlcc/9lMXe5A4cOJfnETaqe9A6macPqw==
+Received: from CH0P220CA0014.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::29)
+ by SA6PR04MB9472.namprd04.prod.outlook.com (2603:10b6:806:439::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Mon, 19 Aug
- 2024 23:50:00 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7875.016; Mon, 19 Aug 2024
- 23:50:00 +0000
-Message-ID:
- <MA0P287MB2822F987452856719294DCC4FE8C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 20 Aug 2024 07:49:52 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: defconfig: sophgo: enable clks for sg2042
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, inochiama@outlook.com,
- guoren@kernel.org, emil.renner.berthing@canonical.com,
- apatel@ventanamicro.com, hal.feng@starfivetech.com, dfustini@baylibre.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com, Chen Wang <unicornxw@gmail.com>
-References: <20240805023320.1287061-1-unicornxw@gmail.com>
- <20240819-calibrate-playpen-964bfa720a3b@spud>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20240819-calibrate-playpen-964bfa720a3b@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [DzXk1ByL5yxxynx9gVg4ffIWqhC7BBMs]
-X-ClientProxiedBy: TYCP301CA0065.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::10) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <c933427f-90ef-495e-9998-989cbc91b87a@outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 23:53:11 +0000
+Received: from CH1PEPF0000AD7E.namprd04.prod.outlook.com
+ (2603:10b6:610:ef:cafe::c5) by CH0P220CA0014.outlook.office365.com
+ (2603:10b6:610:ef::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.30 via Frontend
+ Transport; Mon, 19 Aug 2024 23:53:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
+ smtp.mailfrom=garmin.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=garmin.com;
+Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
+ 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
+Received: from edgetransport.garmin.com (204.77.163.244) by
+ CH1PEPF0000AD7E.mail.protection.outlook.com (10.167.244.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.11 via Frontend Transport; Mon, 19 Aug 2024 23:53:11 +0000
+Received: from cv1wpa-exmb5.ad.garmin.com (10.5.144.75) by cv1wpa-edge1
+ (10.60.4.254) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Mon, 19 Aug
+ 2024 18:53:04 -0500
+Received: from kc3wpa-exmb4.ad.garmin.com (10.65.32.84) by
+ cv1wpa-exmb5.ad.garmin.com (10.5.144.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 19 Aug 2024 18:53:06 -0500
+Received: from CAR-4RCMR33.ad.garmin.com (10.5.209.17) by mail.garmin.com
+ (10.65.32.84) with Microsoft SMTP Server id 15.2.1258.34 via Frontend
+ Transport; Mon, 19 Aug 2024 18:53:05 -0500
+From: Joseph Huang <Joseph.Huang@garmin.com>
+To: <netdev@vger.kernel.org>
+CC: Joseph Huang <Joseph.Huang@garmin.com>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 net 1/1] net: dsa: mv88e6xxx: Fix out-of-bound access
+Date: Mon, 19 Aug 2024 19:52:50 -0400
+Message-ID: <20240819235251.1331763-1-Joseph.Huang@garmin.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB0577:EE_
-X-MS-Office365-Filtering-Correlation-Id: 806ce5f5-7915-4369-9332-08dcc0a9a37e
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7E:EE_|SA6PR04MB9472:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d280996-e724-4f82-8a12-08dcc0aa1537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|5072599009|15080799003|8060799006|461199028|1602099012|4302099013|3412199025|440099028;
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	ar8ykYgxpJy8Of/gpBqB4znouFTmXu0s/D7EGOxYA41KkUxKpfA7ZnKHt/XBt+YPGCnUSBFcFMlQet7EsUFncOAjOAAN96DuZhDmia4cbxPJo9mCE5yTYmrPtbMdjGWheDxByacsnzDdstyCPxFarssfrTXfWGcXJN7nDD7G17jkkv0eDbbMt6QSfE3kWaCxiqtKFitfgnd+XrpfDJWa9JJtxrYxbvoc7pHNS3ABVt5DbKRmTTSPTIyQ9sIV7wDrEAnl1bEOL8AC10x5Ql4Ubi4lH8RuCgHOK0Msz/Me0/uP48EOxz8cqFL/PtZu70G88IELLbo0CJnBSusQVfC4S/RCTAm7hnaPHYjlObsIX+yxe8nka6LmH/66EU5UnoVwKcJfq3yq63ZgmbRHfivwzmSWZMWR7/7IQ2a9Ux6NNfoa3GFqtyNWijdLaLmfDETmJBak7PW0zUVv7bx/t5hXm+SmS28RCYcVC+gkLhvs4KCtVKHsToFs3z7zDfHS++fcVcAMgST4aWewGoPxLvQKoTfX2G3GKO8CBxRGY/QjaWAsgIQwR2Id9hxlhTC0Hkn4u/C5XuPcfomynURxLx81m2Nn1YIJOaGh2AEpRFyYtW//sw1FEg2w7/mzzCMBfipJk6Ya62NpoJ6fDME6jDIEzJX5Vl7t2x6YNEBm9OVCsil1cWntvr7jZ9z7Ey1O//eZA0tYJ/VMh2Ov0tJNETHJtvZIfhyWxCkZhZY+oNxzbbFFNY1SF0hYVufhhMOXe397D8XRDRonSSrHwePtbmiQSIqfcvR7MXrxtiiKUwP+Dyo5HdbKNAVkrrPj1lM6bzq7rBXf89XX91hedRUMm/VxMmCPPgay/3BHMA1ixouzrqnZP0E7zA3m4yyuwTl5ah/y
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WXJpLzVSdVFPemJvclFwMTNVd01Zblo4UGtxeDNRbXB6L2Z0SHJFK2VUS243?=
- =?utf-8?B?TGllNzlmQWhIQjUxcGxpNkpGb0FteVRidjU2VWZNNUc0RWN0Z3d6WnZUVnM2?=
- =?utf-8?B?bmdzMkJ6bU92c0VZWkI2ZEpZWTFrak5aV2hpR0xuNjNqalV0ZURhYzlRUElR?=
- =?utf-8?B?bVRVcnZCcFdrUjExZ0Y0N2VRdkFoVmgwaFlteXp5MTAzVjI1Mmk3L1ZwTEhv?=
- =?utf-8?B?RzBBa2xMek0xWGhQN1VwVFBKNU90YTgzMWNOZ1IwRzVGL3g0aHpLNCthUzcv?=
- =?utf-8?B?cndOME5lcWFXVmZiWlM2eGtwRUZ4NkJDQ1UvM0dpY2tHblY4azRiU0NXWEI5?=
- =?utf-8?B?YjIyVTBTeHJTakRYaXd3RXVSRm5xeXc2SVpCbk5CMzlleDlWNzJ1SkxjcmlN?=
- =?utf-8?B?RXErS1ZCRXpJcWswMXYzNXdTS0kwQTk0SXFmTDhjcmVHMkd1SUlhbVo0UXli?=
- =?utf-8?B?dVRFY216NVdBV0d3RFk4TzdsWHU3bGI3V3plR20yNFpSa25jMVlhazlXQmNj?=
- =?utf-8?B?WWRGeVp6TElYVVJwdGl0bGt0RFoxS1UybTJxTkZNVmNEU1RsV0VBdjhjRVNr?=
- =?utf-8?B?N0tvVXhZS1BVdjVySmUxTFpFZ3ZGVzhEcWRDQkpqSE44Tzg1dTRTRDV0bVU0?=
- =?utf-8?B?eHEzTFdac0U4Q3BqR1hLbFdtRndIN3JXRFRyRDIrZWpweFZvSmxFTEIzTE00?=
- =?utf-8?B?ZEYzMEltU2NXVHJOR29tQlNHbVEzWUlGUmRXWWJZdUJiL2pTeVBhcUxJYzkw?=
- =?utf-8?B?UlErWFhRMWljNk5lMmxOZDFCaG53cFl3SHhnR1A0V1kzWWpoMytrMTdsL3Fl?=
- =?utf-8?B?UFdJcDlNcE9aSUUzV2lxZGlCRW1aeUN3ekg5SDQ5b3V0YjREbndQcStQOW1t?=
- =?utf-8?B?MGFkS0RhazVWc25TeXJocWd3U1ZQYzFSaktESDVOZ2xzRjAvQ1FFKy9qN0NS?=
- =?utf-8?B?Ni9xV0EyeENsODRQNXJIaHlZQTdLV09xYkdaTkE5SklGcDRNMmlEYXNFdGlS?=
- =?utf-8?B?cU9NSGx1TGdtR3VwbG81dHJWV0J6cnloSS81Zkt3b2xxbVhwRXdoTWFyMG9F?=
- =?utf-8?B?bVpkaVdaZzhkQ0xMUXJyS2h1RVh2NHVvcWM2T3JKZ0Q3UU5tOWdTUW9kRk5M?=
- =?utf-8?B?K3JrYXJ6RkRlU3hqSDBFTHEzemtKWThJRXdIRFVCbVlDUzdNKzFKTmJmU2Ir?=
- =?utf-8?B?TkdqZS8rem1ROUNnYWs5UzgxTUtMR21oeFBzb2ZTQ2taL0xjeGZYWmZONlVZ?=
- =?utf-8?B?WUlIb3ZQUng4NEZEVE5Gc01zeXc4YkwrczNqZ3JmbzFqaDV3WHRVeW1UMkRE?=
- =?utf-8?B?cGpvSktOaGcxUXFrQ3BOZ0xTSzlQOXVVZGNtWUc4Y0xOOGIrNmFOcVczS042?=
- =?utf-8?B?ZUgwZ0RsS0VGelhPaWJwZzRaVjVtYXJnbUlTOVd1Q0Q4MC9qdVhEdkJ5Wnlw?=
- =?utf-8?B?bXVyUStQbDE0YTRCNkgzalp2Ui9wdHYrM1d0U2VjWmJaQnhhNENCbEpMQlFV?=
- =?utf-8?B?TXR1aFBocTR6K2hHaTUybXRySVE1QXhzRkw5a0thVllIZkduSjU1cEh4MGho?=
- =?utf-8?B?c2I2V1pVZFQ5My9FcEtTUDQyQXhUNHk3SVQ3dFdoVTRTWFg0T1l4VmY2c0Zq?=
- =?utf-8?B?bVRvTDN0bTdZajlYdGU0aTdON1RxeHBEeHNQbkxzV3R0eENlY3BLV3BQa3dj?=
- =?utf-8?Q?lNPFAZ2fxPqT/pnilDrp?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 806ce5f5-7915-4369-9332-08dcc0a9a37e
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 23:50:00.7175
+	=?us-ascii?Q?CY6TmJw9/6t7hXNDBTmqMOHWupu74j2f4UbQsS7/MAiz1ZYpbZwseFltAV8f?=
+ =?us-ascii?Q?JY00XAhtsHny0PkoW54cfJIy+W4PihWyhBFpMVQj3FpdC8Lu5K5q1uItHLmB?=
+ =?us-ascii?Q?0cZ+hhreK6hCVXdAEzzhc6bjEmH6L7DmB3WKBTQQyDuphHYYhbPYvZw3pNzW?=
+ =?us-ascii?Q?VCiQeNro68vTJGcUxypfS3WbXTMq4KchmKu7rEjmdL6+7+PirrVo25f4KJ1O?=
+ =?us-ascii?Q?OfkeHUxf3L8mYKSQmwKuAPCH9qmEO9KT49Tp0fKoh1Y2Wvr39V2gIUhzbAjF?=
+ =?us-ascii?Q?yy2BM3OtkRMc60hV+mH0+sy8obUhTdsRfsIc2EVr1nXGwmTdm9mMoYamEngD?=
+ =?us-ascii?Q?3YykTucZ3SflY4BbGZnR/NTn1hGdZpiOxDV/AJobsRvDOjq2A8QEeH6+19Tz?=
+ =?us-ascii?Q?sq4PIfJxd3OxeSYQmFpAhTiPBScgfFkmk2EiJFlY+zmYo6Ll6ZXR89Htjrzf?=
+ =?us-ascii?Q?Xb9EX/187JybzFX6WLf8U1dmzMrUuK4Gat7QuA5zoleRCXii1/sSf11PeH+t?=
+ =?us-ascii?Q?hfCS7yAvkQbB0O+pnU9gnZKWIdpZdK5gWY4Sg+aYsN6IfvfbkQ167jFc+wLr?=
+ =?us-ascii?Q?lm6QOHL3h6aeaa9IuysvMQFxSetnuO5vePPSP0PYp3HMqBWK3rNeYDGa0kJV?=
+ =?us-ascii?Q?m+VRWz5krk0Y9Exwy/wBHX0fpaxArH3sMb4CUtIQjYC6BaYwXMFqfaWMPnrV?=
+ =?us-ascii?Q?XzRjlt5r+g5CDV4Kd/kGLyXtASbf7ZOWzQeHV01AjA0O2mC0FRzNG8rWHPkD?=
+ =?us-ascii?Q?rtbsZ7HjD37Z5q2dHjaxjpgKR5dmkqg4Ky8wNct3yCIgXlstLvjDqBatTNZC?=
+ =?us-ascii?Q?XytsuibPU0DrNqrjMw0VUUxVcAcfE2hv9IAqPMTHRheH2dFy0fkxGORAzoJv?=
+ =?us-ascii?Q?V7fKWZcteuQwb2/MjDfpJIX4lZrxobB5ZeBrBCJjGR7ty15JIKHJx7C4uV/f?=
+ =?us-ascii?Q?Zvk4eIrSl84GBU/55HU4tPO23QfikuFUBt0zSR8VZe2s5CeHsvSmjf+hxEDb?=
+ =?us-ascii?Q?ROZVNhO7x+i9VC01HVnltY5TDEdytL/J0fqOawAqWR4mCmZ4bl4cMN4bbL/6?=
+ =?us-ascii?Q?/0VHm/ALrtXPtHXno6JLnbsW5JfKmOP9TbfusZ/hwK4T4a3TiaWrhZdKnvUg?=
+ =?us-ascii?Q?/oQKZvgw2WAS/EDJ4EetVuoFD+PWv6vt/094b5gLU+u1q2Pm39xCcBS1nv65?=
+ =?us-ascii?Q?ZQF1vll+Kuz7FZFUdVpMILOWESQuaEfROcluNU0pKmMewtWOz+m/kCrtxTqV?=
+ =?us-ascii?Q?g+zTk1DWJmwRmm2S6MCovXnqwaQdvjlBLK4yDvpACE2N5w1QRsxrX4Jf8lK6?=
+ =?us-ascii?Q?rVGM5/NhYJ350UQKIgU7tLDQoV6ppbcFeHaOleoLCemQLv85nT1Evp0v//D3?=
+ =?us-ascii?Q?dNJlFCSt+KWkiKqpKBo+nCU3HT7o9f4GwuJ5W87qkLA9FLYFgBUforfYwnsZ?=
+ =?us-ascii?Q?SYtbjowLHRbVHbcjXS6EuEeTM305urL2?=
+X-Forefront-Antispam-Report:
+	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: garmin.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 23:53:11.1764
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0577
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d280996-e724-4f82-8a12-08dcc0aa1537
+X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR04MB9472
+X-Proofpoint-GUID: LwpjtU0QSEdwwQcagUNPdfOTEbJny_0H
+X-Proofpoint-ORIG-GUID: LwpjtU0QSEdwwQcagUNPdfOTEbJny_0H
+X-Authority-Analysis: v=2.4 cv=UcoDS7SN c=1 sm=1 tr=0 ts=66c3dae9 cx=c_pps a=U0KzkmEawxegXmCr7eTojA==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=yoJbH4e0A30A:10 a=FS7-D2N0u7gA:10 a=ShUJUk9rLtwA:10 a=NbHB2C0EAAAA:8
+ a=VwQbUJbxAAAA:8 a=PTDLi0RsCyGZMGRiyFwA:9 a=AjGcO6oz07-iQ99wixmX:22 cc=ntf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ phishscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ malwarescore=0 clxscore=1015 bulkscore=0 impostorscore=0 mlxlogscore=814
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408190161
 
+If an ATU violation was caused by a CPU Load operation, the SPID could
+be larger than DSA_MAX_PORTS (the size of mv88e6xxx_chip.ports[] array).
 
-On 2024/8/20 1:02, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> On Mon, 05 Aug 2024 10:33:20 +0800, Chen Wang wrote:
->> Enable clk generators for sg2042 due to many peripherals rely on
->> these clocks.
->>
->>
-> Applied to riscv-config-for-next, thanks!
->
-> [1/1] riscv: defconfig: sophgo: enable clks for sg2042
->        https://git.kernel.org/conor/c/3ccedd259cc3
->
-> Thanks,
-> Conor.
+Fixes: 75c05a74e745 ("net: dsa: mv88e6xxx: Fix counting of ATU violations")
+Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
+---
+v1: https://lore.kernel.org/lkml/20240819222641.1292308-1-Joseph.Huang@garmin.com/
+v2: Use ARRAY_SIZE instead of hard-coded SPID value.
+---
+ drivers/net/dsa/mv88e6xxx/global1_atu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks a lot.
-
-Regards,
-
-Chen
+diff --git a/drivers/net/dsa/mv88e6xxx/global1_atu.c b/drivers/net/dsa/mv88e6xxx/global1_atu.c
+index ce3b3690c3c0..c47f068f56b3 100644
+--- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
++++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
+@@ -457,7 +457,8 @@ static irqreturn_t mv88e6xxx_g1_atu_prob_irq_thread_fn(int irq, void *dev_id)
+ 		trace_mv88e6xxx_atu_full_violation(chip->dev, spid,
+ 						   entry.portvec, entry.mac,
+ 						   fid);
+-		chip->ports[spid].atu_full_violation++;
++		if (spid < ARRAY_SIZE(chip->ports))
++			chip->ports[spid].atu_full_violation++;
+ 	}
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.17.1
 
 
