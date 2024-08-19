@@ -1,94 +1,322 @@
-Return-Path: <linux-kernel+bounces-292968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781A4957740
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53642957742
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4304B21EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:12:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90A3B22E59
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16D61DD380;
-	Mon, 19 Aug 2024 22:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459E01DD384;
+	Mon, 19 Aug 2024 22:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeXJCiNY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XHIIzNCG"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3B815DBC1;
-	Mon, 19 Aug 2024 22:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607A41D54D8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724105550; cv=none; b=oKEHAQ7VMrtAwNviEU8uuLqJs/cdIDTto3CShr5xNZQAonp/C0i9Jz/c/+ZSlFKdr//vINfhCJWoJ+yyX25rZ9vp801LMsN/zdmIQvHKKmavRJ59WtPW+FYKKAFHmsi/leWsy3YjKvUqeTW8F2eCDLp628xt3iGHfCk8kj7Nqfo=
+	t=1724105568; cv=none; b=dNa+VHRM7ZkgVRpoSbx4/DOowDUSYgCkGwx8n3+hHaqK+bI8eI9EkXySCUnYFx4j7Z1wfJ/XO89LG2dU/9lHBR1Sjd0ELsKZ6lecTA8911Bcy45F5T6R9TRzKavuZS/nILTnKaIAtYV2T9zI5iwnKOmx19BVBLIHezoXQHt9wUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724105550; c=relaxed/simple;
-	bh=mOCSROjK77ZUEQOVe4BWD0EOfDX+YvbVKxsURSW04xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=plAWQXaSvIOKmQwTLTbu02LDN3wTxaj/+zxBbSWbRysmWeJznL91I4asztu/Pzuc4nmNhFIvqKzgqe0Ut0N7IuHtuShIGJ/SdT5+mHpB9wNETYxyfo98s0CvpZXwUob5HaWrUKR1pwU5piIDli7RFu2CMxlxKaGH+iiacdpyMmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeXJCiNY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73DCC32782;
-	Mon, 19 Aug 2024 22:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724105549;
-	bh=mOCSROjK77ZUEQOVe4BWD0EOfDX+YvbVKxsURSW04xs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PeXJCiNY7p8gFVHA/JqXkV4txa1ieQg1VHwf0npNL5pTt1ematMVCGI9z2itHoarr
-	 OEPT9hZaQcPFA1KKKeQFg7xKkAiVrh5rIXW0CaIPzQ3A08bn0s2MHWtFTPojwsE7Am
-	 5yApOQUHQ7rGKzzduviJgpiA8HnAjW3h/+7VUC+4lut/cLQKxKEOTzZQUDaG3u3skm
-	 3Rd4azSz8fH4W2rUAW+Upc5PtXFz6fjOW9N7oh0TpH7n29LLDHsMapIcmkqKeMTFn2
-	 4pcnm+E6qz7sd7mptNlVbbmJ/z9r8TBZ2JUuHutcECUzbGBlIDiiXaE6cmBSdeJZId
-	 HKmFJMrqeMkOw==
-Date: Mon, 19 Aug 2024 15:12:27 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Alexander Aring <aahringo@redhat.com>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org,
- yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com,
- jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- gregkh@linuxfoundation.org, rafael@kernel.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, netdev@vger.kernel.org,
- vvidic@valentin-vidic.from.hr, heming.zhao@suse.com, lucien.xin@gmail.com
-Subject: Re: [PATCH dlm/next 11/12] dlm: add nldlm net-namespace aware UAPI
-Message-ID: <20240819151227.4d7f9e99@kernel.org>
-In-Reply-To: <20240819183742.2263895-12-aahringo@redhat.com>
-References: <20240819183742.2263895-1-aahringo@redhat.com>
-	<20240819183742.2263895-12-aahringo@redhat.com>
+	s=arc-20240116; t=1724105568; c=relaxed/simple;
+	bh=UiXs6zD28hssZRLCLo9EvBEDjgK4mstg9o5FXfDEMIA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CKyAFI83cJvIXB+jpkydhK4BvGuLzVw/dNuZGCvqaUbFb/4iPCD/eTGNkX61fjRW68WQvM/4adUXPFjEBCEl7W+JpewkNVPXYHF4D3dj7+i9w/BoX5NLz+jY7q84vztwNf7UG5IkWCHoFssRWp0Ww7k4+3QsBVMvHy+OQDQUC7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XHIIzNCG; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fd8a1a75e7so42865015ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724105565; x=1724710365; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXnF7CFflCVzg+5rIL0bGi4MMOBAsXmrKtPHvfvnNLU=;
+        b=XHIIzNCGnTsJTT3H4JO1Q7L4d4ArRy/drCtHO+NHz0sX8p74JjkgHeV/p4forjF8ep
+         W1VignPRKMZTeYo0OqZLZjF1MyJuqnud1xmt/vjRlYD5n8FKXcAEbDL5P8GTDcklEGNA
+         z29uc/re2zIE5o1Bz9LY7I/2XM+Wd+ZBoK+vu2Q+uFcCu/s41SRSJSaElGJYTygi6zbA
+         smNwZ1jrIgtx5xKFs10BB3rwH2W5yH3ZN2jU24YeaMN+o7smlhSNBm8OPj8TjpUubyD7
+         CyY3qGiaeLR2nXQiiKrz//GXLS0HMJADFMkg0zKa2ypCN7Re233w6sL2DcoxFQeEv84j
+         3Z7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724105565; x=1724710365;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXnF7CFflCVzg+5rIL0bGi4MMOBAsXmrKtPHvfvnNLU=;
+        b=ULhrEuprSz/yus3+UJ3DScJ7VJRxNvEf8mbI+lPVjXmYsNEcXGVPga9rYnZOsCmmfs
+         Awp7tOPisi+gA6hPgUNkwvEky1LpOy8Sw8RRBqlUOu8Mv9/8QQS7fdu70yfe/emBXtP8
+         wOaDWf5lYr0mjHowgTgjYm5SHXB6BdUC5zS0CwPsnGfl9OkCkHKwpSk7jWKDTCDmGcKU
+         TMq17M3kjKk7sNnXo11pFOJ8pLsbMVcv7OsypUP1ua+5wuWNDWN2F56d+0TTB8CwJNwM
+         xvFedpUqWikhwPwrt+wGu6YGcm76usFDpr6JIgUF19N4/iSDmf9PIy4tLVyMeJ5f4f7U
+         c4Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrtIUN92fBMKcD6umj+VaUOqJGjQRdptyYr9fRrgsoE7z9T2VNvEarYhF6F71LvjS3G9XgN4EMyOsYWaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym26beYImJ0Z/xE/cuz/9SetCvm9OW5LdSdCMouNHK8YJs2I1S
+	VAqX4KPdbwQsfNLy4SLkukzkB7+C+e1fMJvrfXLtHtiU930AFuL6D/uFiKzvuX9D/j3SX8vmHVH
+	tFA==
+X-Google-Smtp-Source: AGHT+IGEA574v2J9KAPMCMxHEShCkR/wuKzeCiNAavZMxYHu7+AsVX7MwmdhLN3WT6ZWko3ibb65f6BkS8Y=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:247:b0:1fa:2b89:f550 with SMTP id
+ d9443c01a7336-20203e5ea60mr10956245ad.1.1724105564411; Mon, 19 Aug 2024
+ 15:12:44 -0700 (PDT)
+Date: Mon, 19 Aug 2024 15:12:42 -0700
+In-Reply-To: <20240819173453.GB2210585.vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-3-vipinsh@google.com>
+ <Zr_i3caXmIZgQL0t@google.com> <20240819173453.GB2210585.vipinsh@google.com>
+Message-ID: <ZsPDWqOiv_g7Wh_H@google.com>
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
+ MMU under MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 19 Aug 2024 14:37:41 -0400 Alexander Aring wrote:
-> Recent patches introduced support to separate DLM lockspaces on a per
-> net-namespace basis. Currently the file based configfs mechanism is used
-> to configure parts of DLM. Due the lack of namespace awareness (and it's
-> probably complicated to add support for this) in configfs we introduce a
-> socket based UAPI using "netlink". As the DLM subsystem offers now a
-> config layer it can simultaneously being used with configfs, just that
-> nldlm is net-namespace aware.
+On Mon, Aug 19, 2024, Vipin Sharma wrote:
+> On 2024-08-16 16:38:05, Sean Christopherson wrote:
+> > On Mon, Aug 12, 2024, Vipin Sharma wrote:
+> > > @@ -1831,12 +1845,17 @@ ulong kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm, ulong to_zap)
+> > >  		 * recovered, along with all the other huge pages in the slot,
+> > >  		 * when dirty logging is disabled.
+> > >  		 */
+> > > -		if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
+> > > +		if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp)) {
+> > > +			spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> > >  			unaccount_nx_huge_page(kvm, sp);
+> > > -		else
+> > > -			flush |= kvm_tdp_mmu_zap_sp(kvm, sp);
+> > > -
+> > > -		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+> > > +			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> > > +			to_zap--;
+> > > +			WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+> > > +		} else if (tdp_mmu_zap_sp(kvm, sp)) {
+> > > +			flush = true;
+> > > +			to_zap--;
+> > 
+> > This is actively dangerous.  In the old code, tdp_mmu_zap_sp() could fail only
+> > in a WARN-able scenario, i.e. practice was guaranteed to succeed.  And, the
+> > for-loop *always* decremented to_zap, i.e. couldn't get stuck in an infinite
+> > loop.
+> > 
+> > Neither of those protections exist in this version.  Obviously it shouldn't happen,
+> > but it's possible this could flail on the same SP over and over, since nothing
+> > guarnatees forward progress.  The cond_resched() would save KVM from true pain,
+> > but it's still a wart in the implementation.
+> > 
+> > Rather than loop on to_zap, just do
+> > 
+> > 	list_for_each_entry(...) {
+> > 
+> > 		if (!to_zap)
+> > 			break;
+> > 	}
+> > 
+> > And if we don't use separate lists, that'll be an improvement too, as it KVM
+> > will only have to skip "wrong" shadow pages once, whereas this approach means
+> > every iteration of the loop has to walk past the "wrong" shadow pages.
 > 
-> Most of the current configfs functionality that is necessary to
-> configure DLM is being adapted for now. The nldlm netlink interface
-> offers also a multicast group for lockspace events NLDLM_MCGRP_EVENT.
-> This event group can be used as alternative to the already existing udev
-> event behaviour just it only contains DLM related subsystem events.
-> 
-> Attributes e.g. nodeid, port, IP addresses are expected from the user
-> space to fill those numbers as they appear on the wire. In case of DLM
-> fields it is using little endian byte order.
-> 
-> The dumps are being designed to scale in future with high numbers of
-> members in a lockspace. E.g. dump members require an unique lockspace
-> identifier (currently only the name) and nldlm is using a netlink dump
-> behaviour to be prepared if all entries may not fit into one netlink
-> message.
+> TDP MMU accesses possible_nx_huge_pages using tdp_mmu_pages_lock spin
+> lock. We cannot hold it for recovery duration.
 
-Did you consider using the YAML spec stuff to code gen the policies 
-and make user space easier?
+Ah, right.  Hmm, we actually can.  More thoughts below.
+
+> In this patch, tdp_mmu_zap_sp() has been modified to retry failures,
+> which is similar to other retry mechanism in TDP MMU. Won't it be the
+> same issue with other TDP MMU retry flows?
+
+Similar, but not exactly the same.  The other flows are guarnateed to make forward
+progress, as they'll never revisit a SPTE.  I.e. once a SPTE is observed to be
+!shadow-present, that SPTE will never again be processed.
+
+This is spinning on a pre-computed variable, and waiting until that many SPs have
+been zapped.  The early break if the list is empty mostly protects against an
+infinite loop, but it's theoretically possible other tasks could keep adding and
+deleting from the list, in perpetuity.
+
+Side topic, with the proposed changes, kvm_tdp_mmu_zap_sp() should return an int,
+not a bool, i.e. 0/-errno, not true/false.  The existing code is specifically
+returning whether or not a flush is needed, it does NOT indicate whether or not
+the shadow page was successfully zapped, i.e. the !PRESENT case is treated as
+being successful since something apparently already zapped the page.
+
+[never mind, I've since come up with a better idea, but I typed  all this out,
+ so I'm leaving it]
+
+What about something like this?  If the shadow page can't be zapped because
+something else was modifying it, just move on and deal with it next time.
+
+	for ( ; to_zap; --to_zap) {
+		...
+
+
+		if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp)) {
+			spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+			unaccount_nx_huge_page(kvm, sp);
+			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+		} else if (!tdp_mmu_zap_sp(...)) {
+			flush = true;
+		} else {
+			spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+			list_move_tail(&sp->possible_nx_huge_page_link, kvm->
+				       &kvm->arch.possible_nx_huge_pages);
+			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+		}
+	}
+
+But jumping back to the "we actually can [hold tdp_mmu_pages_lock]", if the zap
+is split into the actually CMPXCHG vs. handle_removed_pt() call, then the lock
+can be held while walking+zapping.  And it's quite straightforward, if we're
+willing to forego the sanity checks on the old_spte, which would require wrapping
+the sp in a struct to create a tuple.
+
+The only part that gives me pause is the fact that it's not super obvious that,
+ignoring the tracepoint, handle_changed_spte() is just a fat wrapper for
+handle_removed_pt() when zapping a SP.
+
+Huh.  Actually, after a lot of fiddling and staring, there's a simpler solution,
+and it would force us to comment/document an existing race that's subly ok.
+
+For the dirty logging case, the result of kvm_mmu_sp_dirty_logging_enabled() is
+visible to the NX recovery thread before the memslot update task is guaranteed
+to finish (or even start) kvm_mmu_zap_collapsible_sptes().  I.e. KVM could
+unaccount an NX shadow page before it is zapped, and that could lead to a vCPU
+replacing the shadow page with an NX huge page.
+
+Functionally, that's a-ok, because the accounting doesn't provide protection
+against iTLB multi-hit bug, it's there purely to prevent KVM from bouncing a gfn
+between an NX hugepage and an execute small page.  The only downside to the vCPU
+doing the replacement is that the vCPU will get saddle with tearing down all the
+child SPTEs.  But this should be a very rare race, so I can't imagine that would
+be problematic in practice.
+
+This contains some feedback I gathered along the, I'll respond to the original
+patch since the context is lost.
+
+static bool tdp_mmu_zap_possible_nx_huge_page(struct kvm *kvm,
+					      struct kvm_mmu_page *sp)
+{
+	struct tdp_iter iter = {
+		.old_spte = sp->ptep ? kvm_tdp_mmu_read_spte(sp->ptep) : 0,
+		.sptep = sp->ptep,
+		.level = sp->role.level + 1,
+		.gfn = sp->gfn,
+		.as_id = kvm_mmu_page_as_id(sp),
+	};
+
+	lockdep_assert_held_read(&kvm->mmu_lock);
+
+	/*
+	 * Root shadow pages don't a parent page table and thus no associated
+	 * entry, but they can never be possible NX huge pages.
+	 */
+	if (WARN_ON_ONCE(!sp->ptep))
+		return false;
+
+	/*
+	 * Since mmu_lock is held in read mode, it's possible another task has
+	 * already modified the SPTE.  Zap the SPTE if and only if the SPTE
+	 * points at the SP's page table, as checking  shadow-present isn't
+	 * sufficient, e.g. the SPTE could be replaced by a leaf SPTE, or even
+	 * another SP.  Note, spte_to_child_pt() also checks that the SPTE is
+	 * shadow-present, i.e. guards against zapping a frozen SPTE.
+	 */
+	if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
+		return false;
+
+	/*
+	 * If a different task modified the SPTE, then it should be impossible
+	 * for the SPTE to still be used for the to-be-zapped SP.  Non-leaf
+	 * SPTEs don't have Dirty bits, KVM always sets the Accessed bit when
+	 * creating non-leaf SPTEs, and all other bits are immutable for non-
+	 * leaf SPTEs, i.e. the only legal operations for non-leaf SPTEs are
+	 * zapping and replacement.
+	 */
+	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE)) {
+		WARN_ON_ONCE(sp->spt == spte_to_child_pt(iter.old_spte, iter.level));
+		return false;
+	}
+
+	return true;
+}
+
+void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm, unsigned long to_zap)
+{
+	struct kvm_mmu_page *sp;
+	bool flush = false;
+
+	lockdep_assert_held_read(&kvm->mmu_lock);
+	/*
+	 * Zapping TDP MMU shadow pages, including the remote TLB flush, must
+	 * be done under RCU protection, because the pages are freed via RCU
+	 * callback.
+	 */
+	rcu_read_lock();
+
+	for ( ; to_zap; --to_zap) {
+		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+		if (list_empty(&kvm->arch.possible_tdp_mmu_nx_huge_pages))
+			break;
+
+		sp = list_first_entry(&kvm->arch.possible_tdp_mmu_nx_huge_pages,
+				      struct kvm_mmu_page,
+				      possible_nx_huge_page_link);
+
+		WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
+		WARN_ON_ONCE(!sp->role.direct);
+
+		/*
+		 * Unaccount the shadow page before zapping its SPTE so as to
+		 * avoid bouncing tdp_mmu_pages_lock() more than is necessary.
+		 * Clearing nx_huge_page_disallowed before zapping is safe, as
+		 * the flag doesn't protect against iTLB multi-hit, it's there
+		 * purely to prevent bouncing the gfn between an NX huge page
+		 * and an X small spage.  A vCPU could get stuck tearing down
+		 * the shadow page, e.g. if it happens to fault on the region
+		 * before the SPTE is zapped and replaces the shadow page with
+		 * an NX huge page and get stuck tearing down the child SPTEs,
+		 * but that is a rare race, i.e. shouldn't impact performance.
+		 */
+		unaccount_nx_huge_page(kvm, sp);
+
+		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+
+		/*
+		 * Don't bother zapping shadow pages if the memslot is being
+		 * dirty logged, as the relevant pages would just be faulted
+		 * back in as 4KiB pages.  Potential NX Huge Pages in this slot
+		 * will be recovered, along with all the other huge pages in
+		 * the slot, when dirty logging is disabled.
+		 */
+		if (!kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
+			flush |= tdp_mmu_zap_possible_nx_huge_page(kvm, sp);
+
+		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+
+		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
+			if (flush) {
+				kvm_flush_remote_tlbs(kvm);
+				flush = false;
+			}
+			rcu_read_unlock();
+			cond_resched_rwlock_read(&kvm->mmu_lock);
+			rcu_read_lock();
+		}
+	}
+
+	if (flush)
+		kvm_flush_remote_tlbs(kvm);
+	rcu_read_unlock();
+}
+
 
