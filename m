@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-292014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568CE956A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF8B956A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139932889B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:00:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EC41F22D15
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EAF166F34;
-	Mon, 19 Aug 2024 11:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283C7166F3B;
+	Mon, 19 Aug 2024 11:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcIdoSFc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izwVd1lQ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0569E167D83
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAB415B972;
+	Mon, 19 Aug 2024 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068793; cv=none; b=oTbnAsOzcpkllKxzZq/cMZfvlEKfnaIiQcE/5nhqB3boi3zSJGC4/T0rYalywhSfZwVI5TdB83xfpe1b/6iBwZo4YuMLIOB5wCPVQ0ehL9+fvWdNahFPCUIPshqmlC6BqWNQ81KqM8cSDCX1LMtsRdyXXYZcC4mitymoDWLNDok=
+	t=1724068786; cv=none; b=XudComkI0hM3Hv1rlCy6c5URGWKtmridylqEbTpJPra/jrUiunJwSl5XmkLgP1i3HPeUPX8xpR1Oul/BJmRQ1mgg7tTNSHolUPdOEJHfRhS8LFY6/h/CLe9a0I3sH32ExQDvKPrvQNfl7EhbdxQyf2kZRS1zUUZvz+/3S/qDukc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068793; c=relaxed/simple;
-	bh=QoDrXZXFlLjJRrcfSVsie6OGUkt4QrKIKGi1LCthZaA=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=gJAXxKy9hMBziq00UAKCgTHnMvWsZAvwMdlP6YgeVbh4MV9gUtctk16DQqbcL2R3n5wfmoCb5zd2TOymlpJBy5i42ssDbVk0Wn8Sv5tr1i5FenIlsxQQTmiOH1/bgaLuYyQCIeSWNJXv+m46GfW3zSjejDUzrPMle+zSe2G9Euk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcIdoSFc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724068790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nSDk9RrUaqqTiS3gE8YAv0OqBuyGmh41yRuUpfpoLP4=;
-	b=fcIdoSFcs5Je/WCbx4Cd0nSI4raS0XCY8LIrHF31HvNoRE7APrAq9Wd/LHbzB9A+l/AbSs
-	0vmVXYmyK077RxdFPg9GP/HXJihasEquVAnESo2K1gfrAkaT4nwMR1TFb+r54z2UPRwH0h
-	ig0zBdZGA6sT6Mi03OrCcRZdkZCtJdc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-y-oQF2GQOyaLK-9XZ_4nzw-1; Mon,
- 19 Aug 2024 07:59:43 -0400
-X-MC-Unique: y-oQF2GQOyaLK-9XZ_4nzw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8403F1954B1D;
-	Mon, 19 Aug 2024 11:59:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AEB1619773E0;
-	Mon, 19 Aug 2024 11:59:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <3402933.1724068015@warthog.procyon.org.uk>
-References: <3402933.1724068015@warthog.procyon.org.uk> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com,
-    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-    brauner@kernel.org, akpm@linux-foundation.org,
-    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
-    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
-    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    willy@infradead.org, john.g.garry@oracle.com,
-    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-    ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+	s=arc-20240116; t=1724068786; c=relaxed/simple;
+	bh=QNxzEbbmVYsN7LYfH04kavc3TDZdr/+lk+puUfhhFLs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EyY7mvz7km4Ghcyugl90f3jYenfOrzvLWJYsL/A7Vx+Taf2xS4omLtVL2quCD4BKLMo1sqPWLIXe6mE3UYfkUgE9HJ0u9tW8gfkKyCs+2zoCnW0QS7NP7wJrusxo+e5sHhQi0Ky6wQdlZ/tGUPh/hX8SVS0N8UoT4XXWySkmAI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izwVd1lQ; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso12365751fa.2;
+        Mon, 19 Aug 2024 04:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724068783; x=1724673583; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=11BaiIrZqK6uC9f6mo5FUMGk8lscaJMZdcTKC0DE5Gw=;
+        b=izwVd1lQh/+7DPEFSQrtxDAWvRdJwLp5QHcZwY48aad+PYsv8evg3fXynVYdB/Tm0K
+         AWccw/uOtQ6jUtRAp9u/D6L9NfK8rbf9ih0LMEjErbwZEzgyM7/ZUaoXMLP6SiGBPh06
+         Q8zPgXHVVrcLzG11Tktbqt/tCxpCfqMlWMcT2oUfvXJEKSt+D0SEcrdd7vN0DmHlL8hL
+         4oFmKLgK5UjGUH/2OeXyJPJ3QGL3gJECitHYINEc/oFX1vk3gmG+OJuN0dGPxULd8c9A
+         muIVp22tejnoo9dC6h3UGdfe7JrIsnT4NCedr0v/GCKD+F3EmcNIfR7fpr6QiWwZuCMp
+         Sibg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724068783; x=1724673583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=11BaiIrZqK6uC9f6mo5FUMGk8lscaJMZdcTKC0DE5Gw=;
+        b=gMuWFLSNXb6gQ2iPEwojxDqPqYKIvHy5SQ8F00nIabnPOQ7c7XO/JhFiRUjPKets8S
+         0WYucZwhKp/pFyBXp9Y50RnVrAUQ478G1sghnG/1CGjmOxGzduehDSMygZvViXUwwc9u
+         fkPZVYW5jLVU5IVlSq0qu7VTDFkrhF94z5xj6AwLUAYuM05BXJs0r+4qFVipTiT0/5N4
+         X1nPM9A3zaU/3KsrrVsCR757xdeMcG5o8zK/BiOq6096DsUKBRsGWG3wYdaDaoLfzIha
+         HX8/mmNc5EdiMTmFkEbOwbEV48zwf6KT5CSsnWEJO8v4/na9BiywTui9fw83pJLJTqQ8
+         xBsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvptSjEGOsiPw4w8yKj9U4bcdl20PrQZ5IIa+v3IljIrFINyNdgfFWF86EHc+z1NDOaZckASwmonVFJkrWi8aLBtGK9IBj3VleYtD4CqUEwn9K0e3wCIQUZ66x9IIA1xlmt0NT
+X-Gm-Message-State: AOJu0YyiV7G52bF0HB4q8HHoKlnY4dy7C1GA5Yim9uPSxYQj/YTop9Iu
+	n4jS7uN341S4iX/I19D+DiK2BcjnFkKsRtpV/xtDQatWNiOGSS3e
+X-Google-Smtp-Source: AGHT+IHZcVhAZ8nSbzw84gbFmvs+SpnOwYZjzUxnOnvuu+EHF8HwpuzZOmAF90sj/Kck0Tf9+mSA1Q==
+X-Received: by 2002:a05:6512:3a82:b0:530:da96:a990 with SMTP id 2adb3069b0e04-5331c6bbefcmr9002028e87.32.1724068782130;
+        Mon, 19 Aug 2024 04:59:42 -0700 (PDT)
+Received: from pc636 (host-90-233-222-226.mobileonline.telia.com. [90.233.222.226])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3afb37sm1476875e87.20.2024.08.19.04.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 04:59:41 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 19 Aug 2024 13:59:39 +0200
+To: Hailong Liu <hailong.liu@oppo.com>, Michal Hocko <mhocko@suse.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Barry Song <21cnbao@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <ZsMzq4bAIUCTJspN@pc636>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
+ <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
+ <ZrXiUvj_ZPTc0yRk@tiehlicka>
+ <ZrXkVhEg1B0yF5_Q@pc636>
+ <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+ <20240816091232.fsliktqgza5o5x6t@oppo.com>
+ <Zr8mQbc3ETdeOMIK@pc636>
+ <20240816114626.jmhqh5ducbk7qeur@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3405742.1724068772.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Aug 2024 12:59:32 +0100
-Message-ID: <3405743.1724068772@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816114626.jmhqh5ducbk7qeur@oppo.com>
 
-David Howells <dhowells@redhat.com> wrote:
+On Fri, Aug 16, 2024 at 07:46:26PM +0800, Hailong Liu wrote:
+> On Fri, 16. Aug 12:13, Uladzislau Rezki wrote:
+> > On Fri, Aug 16, 2024 at 05:12:32PM +0800, Hailong Liu wrote:
+> > > On Thu, 15. Aug 22:07, Andrew Morton wrote:
+> > > > On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
+> > > >
+> > > > > > > Acked-by: Barry Song <baohua@kernel.org>
+> > > > > > >
+> > > > > > > because we already have a fallback here:
+> > > > > > >
+> > > > > > > void *__vmalloc_node_range_noprof :
+> > > > > > >
+> > > > > > > fail:
+> > > > > > >         if (shift > PAGE_SHIFT) {
+> > > > > > >                 shift = PAGE_SHIFT;
+> > > > > > >                 align = real_align;
+> > > > > > >                 size = real_size;
+> > > > > > >                 goto again;
+> > > > > > >         }
+> > > > > >
+> > > > > > This really deserves a comment because this is not really clear at all.
+> > > > > > The code is also fragile and it would benefit from some re-org.
+> > > > > >
+> > > > > > Thanks for the fix.
+> > > > > >
+> > > > > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > > > >
+> > > > > I agree. This is only clear for people who know the code. A "fallback"
+> > > > > to order-0 should be commented.
+> > > >
+> > > > It's been a week.  Could someone please propose a fixup patch to add
+> > > > this comment?
+> > >
+> > > Hi Andrew:
+> > >
+> > > Do you mean that I need to send a v2 patch with the the comments included?
+> > >
+> > It is better to post v2.
+> Got it.
+> 
+> >
+> > But before, could you please comment on:
+> >
+> > in case of order-0, bulk path may easily fail and fallback to the single
+> > page allocator. If an request is marked as NO_FAIL, i am talking about
+> > order-0 request, your change breaks GFP_NOFAIL for !order.
+> >
+> > Am i missing something obvious?
+> For order-0, alloc_pages(GFP_X | __GFP_NOFAIL, 0), buddy allocator will handle
+> the flag correctly. IMO we don't need to handle the flag here.
+> 
+Agree. As for comment, i meant to comment the below fallback:
 
-> You can see the invalidate_folio call, with the offset at 0x4 an the len=
-gth as
-> 0x1ffc.  The data at the beginning of the page is 0x78787878.  This look=
-s
-> correct.
-> =
+<snip>
+fail:
+	if (shift > PAGE_SHIFT) {
+		shift = PAGE_SHIFT;
+		align = real_align;
+		size = real_size;
+		goto again;
+	}
+<snip>
 
-> Then second ftruncate() is called to increase the file size to 4096
-> (ie. 0x1000):
-> =
-
->  pankaj-5833: netfs_truncate: ni=3D9e isz=3D4 rsz=3D4 zp=3D4 to=3D1000
->  pankaj-5833: netfs_inval_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001=
- o=3D1000 l=3D1000 d=3D78787878
->  pankaj-5833: netfs_folio: pfn=3D116fec i=3D0009e ix=3D00000-00001 inval=
--part
->  pankaj-5833: netfs_set_size: ni=3D9e resize-file isz=3D1000 rsz=3D1000 =
-zp=3D4
-> =
-
-> And here's the problem: in the invalidate_folio() call, the offset is 0x=
-1000
-> and the length is 0x1000 (o=3D and l=3D).  But that's the wrong half of =
-the folio!
-> I'm guessing that the caller thereafter clears the other half of the fol=
-io -
-> the bit that should be kept.
-
-Actually, I think I'm wrong in my evaluation - I think that's the region t=
-o be
-invalidated, not the region to be kept.
-
-David
-
+--
+Uladzislau Rezki
 
