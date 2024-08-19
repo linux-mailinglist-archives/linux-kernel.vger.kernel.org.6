@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-292358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16BE956E5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:14:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BEB956E65
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D891F22A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D501C203B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425AA175D21;
-	Mon, 19 Aug 2024 15:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FFD178364;
+	Mon, 19 Aug 2024 15:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFhzgHr5"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCYk6sau"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4092AD2C;
-	Mon, 19 Aug 2024 15:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226022AD2C;
+	Mon, 19 Aug 2024 15:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080486; cv=none; b=uqwh5eYPBam3I1P2jgklNBjRxmEMJb/lXz36ETrwC+QO7xjSo8Wc0RMKJcNWbWZH7aJKBVi5Up6QEZ2HQ9R+Osi/E9gYSW3b0RoSw+box0vXW1BGXo9l0cFQ4ce+SaK67iUeFFYxWtU1oj114c4/gj5x/E+xybd2DTpugLcR4kA=
+	t=1724080491; cv=none; b=XSJYua2hnxAhmf0d7klJ9mHbGkiw/z7g+/XO5nNVnRaHNq+FxDReAlBbU8GpKIQYZiilLR3A0zMg25/M4eU85Zdi34R7Wg3FhQHhnkiwvtGDw1MnRdsiBqi3Ib7f0+jB1ZIXSE6a6BIe/SjqM1pEMc+oIwZ6HiXSIaDpHSbGfOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080486; c=relaxed/simple;
-	bh=x6k3R4EU/ySREcupfJckvuQNMR+F/nbZQwUkTP02WIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LG2S2khqc4BuGFttj6U9JwDgsWp7sr5xCA7lpj/0KVs7MWy2Jny84emy/BOyza6qEQlpPVj7mCjjDqpb4kYz7e+oIFpKXYH1zEBaEV5U0ImU3Ky7DrvGIiyaiE88+k1JeFh4UBUt3a7QWI5h3raUzJ9DGlBE9MeWjQEsfxfqbvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFhzgHr5; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4503ccbc218so46729181cf.1;
-        Mon, 19 Aug 2024 08:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724080484; x=1724685284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ucZ04oFwZj6mOfUJrf+lvS3gMyRDR/VTX/HhN+IcKWs=;
-        b=iFhzgHr5z83zdKgekEyxKSr8iKb4j/jhq/NUWe73FJQhjM7Zj23lZHCnQ64TBwuGH5
-         QYFRc1seyQ8VJveVcysOBbIj+F3KCrKJfF4v6OX8p/5Qb5XikrBEpREo47VXT0rJUOrj
-         hw6leLMu2TfKQB5v+5Ydx36eJDH+EV9yx8YuHc/Q0HvNn8wftciQtajO9JIX6pOrQhbk
-         swdijV5kEowcmaMf0fcNCnJ4Ul3S+a3MPfdmobR+tw1QjV+1QR9AI3z777SdRtZIQhq6
-         2JaifY/ExVEDtTiEnUSCOE4xfay6+hjdGYRierivzjL3D0nRI59B8SH+YCyLY3gBv/rD
-         yqcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724080484; x=1724685284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ucZ04oFwZj6mOfUJrf+lvS3gMyRDR/VTX/HhN+IcKWs=;
-        b=LY8AljoH6pDXwoqaeU8oAncXoBLS6O9x+NrLNTl54LmwLMKjoS8YnfF4MwWgIT/zmX
-         aYIJyz25E441K70KlFfw3Y0s1IUOnzQhkO1KvRtS9UGCWsBOHC+XFaIXmKYyVVNVB8yg
-         L4ti9XOP25x4cPaJTxKUMoVeJGh47mlM9SYffpMq0fRFJzDntq5FGEqVqDY51oQHjJHx
-         EvpeHU8wTHX2VL4o/6eZFuPo7fdalWd5OtTVZY1jleiaVB6YjW0WrIjsfWaoDFGXlXTr
-         YkTuJaA1xGTBP3fOuPTwcuPpt4NgD1LsLLloq6BPkIIRsIbp/oosch+nH6sqpUlOtt5C
-         XjVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjEhqRW9i5aNOlAeB4DpThOv/X8ZPGUKvlreNybBMwFXPf1IY7ZVUpRc6xjymjpCCunR18xclU/II2vOntXzX/VpTaOssXJn49M8k/sQ/X0By3PcUJh9aOMc07aVY+BHv1rWhUH0satRIYxSDHeEDzOw7LudGBTzPzTpIU4BuXPLqyvua4sJRDiCp2
-X-Gm-Message-State: AOJu0YzQJEvOrKbCk3QyDnzHCXIaRNXexJZAGefQbwbvKU4QL8DnwWRz
-	OGRD8Q4BF2R7uzBD/Y9HpbW4EJphYyexq9JCUokNYRPtlcjHD3R706gvQM8Szab6gNyAPyXSWap
-	y+AgG4Twnvf5qTOLYRuABSZvA+94=
-X-Google-Smtp-Source: AGHT+IE02OqvEqWfe89oZTFUQLix9Z6pW46qNUFmlFTQHpZIZ0ip6ALaksFOxrKQf8DlMj9qJhwITSp4xGDlIpZnkpA=
-X-Received: by 2002:a05:622a:5b0a:b0:453:75f2:db3e with SMTP id
- d75a77b69052e-45375f2dc3cmr172863381cf.7.1724080483747; Mon, 19 Aug 2024
- 08:14:43 -0700 (PDT)
+	s=arc-20240116; t=1724080491; c=relaxed/simple;
+	bh=S8xLhlX6RpZyNHWb7anPniOddgqkLHLd/F+Q/aXteFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKHTWfhqPuW3e9FJLuiFsjLXeVfq7k0k5vPZZZd9Lpzzj3w/VOD76l2FzB636Ye4mxIOC+4hBDWA29Mmu9feTeXF3qu00Y3Impg9VsU2WnGlygzJaNHp/q1v3a8utfo+b/lKRXA1cWp4xBfJpNBrF2DcW9IOnokOORNpqq54/VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCYk6sau; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AF7C32782;
+	Mon, 19 Aug 2024 15:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724080490;
+	bh=S8xLhlX6RpZyNHWb7anPniOddgqkLHLd/F+Q/aXteFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lCYk6sauuzGZXdmOUXd2qTfJWvnED9bat34saswazgl+M63wcMrmkDGih3C8kQurA
+	 Y2P6GJV0apLQodqEjQKA4tdHpmZayAUehizPYmJryKzc9k2pe7FjLLsB+nMt+yQu9h
+	 6haqcAo1ROW4FSaTAo1ixtaogoPe/ZoVBT9tJrC3lFtzrBO+EUNak/Eatw3H2Lcpe/
+	 c/nYpouIZebXmyZmxMOP8ewWLGfSRVwk2VIvLTWpC+zyPpx85rnhXiCbZ9E8XxLZ9C
+	 WuivjB335AbSXgBL+2B1hZIrxM8FYBoq6IoTjhDAc4WPE3BbvP3auleWIgXw19OJYa
+	 wCRcfVWJ45ZMA==
+Date: Mon, 19 Aug 2024 16:14:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 18/40] arm64/mm: Handle GCS data aborts
+Message-ID: <24d33455-d958-4f27-8a2c-4f237fc2bd29@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-18-699e2bd2190b@kernel.org>
+ <ZsMNwAsAWr2IxFns@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240811204955.270231-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <69b7f374-9037-4373-90e0-676cce0cd0fa@tuxon.dev>
-In-Reply-To: <69b7f374-9037-4373-90e0-676cce0cd0fa@tuxon.dev>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 19 Aug 2024 16:14:17 +0100
-Message-ID: <CA+V-a8vjQPBH2TMKGEqCdsHbhGq0mNhy=miV03hfSUQS2ko42g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] arm64: dts: renesas: r9a09g057: Add RIIC0-RIIC8 nodes
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4ClE/UJ5laHl8PFo"
+Content-Disposition: inline
+In-Reply-To: <ZsMNwAsAWr2IxFns@arm.com>
+X-Cookie: Interchangeable parts won't.
 
-Hi Claudiu,
 
-On Mon, Aug 19, 2024 at 9:13=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
->
-> Hi, Prabhakar,
->
-> On 11.08.2024 23:49, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add RIIC0-RIIC8 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - New patch
-> > ---
-> >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 198 +++++++++++++++++++++
-> >  1 file changed, 198 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/bo=
-ot/dts/renesas/r9a09g057.dtsi
-> > index 3d6c3a604ec9..c9e1e21b820d 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > @@ -141,6 +141,28 @@ ostm1: timer@11801000 {
-> >                       status =3D "disabled";
-> >               };
-> >
-> > +             i2c8: i2c@11c01000 {
-> > +                     #address-cells =3D <1>;
-> > +                     #size-cells =3D <0>;
-> > +                     compatible =3D "renesas,riic-r9a09g057";
-> > +                     reg =3D <0 0x11c01000 0 0x400>;
->
-> According to [1] compatible and reg props are preferred to be at the
-> beginning of the node.
->
-Thanks I'll update the nodes according to [1].
+--4ClE/UJ5laHl8PFo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-Documentation/devicetree/bindings/dts-coding-style.rst#n112
->
+On Mon, Aug 19, 2024 at 10:17:52AM +0100, Catalin Marinas wrote:
+> On Thu, Aug 01, 2024 at 01:06:45PM +0100, Mark Brown wrote:
 
-Cheers,
-Prabhakar
+> > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
+> > +{
 
-> > +                     interrupts =3D <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 523 IRQ_TYPE_EDGE_RISING>,
-> > +                                  <GIC_SPI 522 IRQ_TYPE_EDGE_RISING>,
-> > +                                  <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-> > +                     interrupt-names =3D "tei", "ri", "ti", "spi", "st=
-i",
-> > +                                       "naki", "ali", "tmoi";
-> > +                     clocks =3D <&cpg CPG_MOD 147>;
-> > +                     clock-frequency =3D <100000>;
-> > +                     resets =3D <&cpg 160>;
-> > +                     power-domains =3D <&cpg>;
-> > +                     status =3D "disabled";
-> > +             };
-> > +
->
-> [ ... ]
+> > +	if (unlikely(is_gcs_fault(esr))) {
+> > +		/* GCS accesses must be performed on a GCS page */
+> > +		if (!(vma->vm_flags & VM_SHADOW_STACK))
+> > +			return true;
+> > +		if (!(vma->vm_flags & VM_WRITE))
+> > +			return true;
+
+> Do we need the VM_WRITE check here? Further down in do_page_fault(), we
+> already do the check as we set vm_flags = VM_WRITE.
+
+> >       if (!(vma->vm_flags & vm_flags)) {
+> >               vma_end_read(vma);
+> >               fault = 0;
+
+It looks bitrotted, yes.
+
+> I was wondering whether we should prevent mprotect(PROT_READ) on the GCS
+> page. But I guess that's fine, we'll SIGSEGV later if we get an invalid
+> GCS access.
+
+Yeah, that doesn't seem like a particular problem - the concern is
+adding rather than removing GCS.
+
+--4ClE/UJ5laHl8PFo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbDYWAACgkQJNaLcl1U
+h9CIagf8CVGRJRPIYEL8OXtLlRDHe/BAx31NyJ8PnnV2H/LyZ/HkpxFqkEdopZ2W
+SnomGLDZ/Sbry7VZUUVbO9QNmD/7UinwFR26WOigUY8aHtv/SDsMpx68OMvMPGtp
+aOgTkLDZdZiL3OZbxsdYj24aQ2gywicEb/JxgcqYwclQvQn3geXt9wvBJIZvUqOI
+f9ioaV7/pP5zWb35Kra+jjC2CUxouQ1ozkrxlJhyTT9VM3I4iefpf6eaGmgah7G9
+n5vrIJWkdxaC4B8K/p+Uk/2LJYWdvOho+S1PnJPJloXX/3+dCvveT+3yVcEzT1z0
+73smiFLb21oBkc5wjzRqiGDdQA7z3Q==
+=d5gu
+-----END PGP SIGNATURE-----
+
+--4ClE/UJ5laHl8PFo--
 
