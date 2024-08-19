@@ -1,277 +1,112 @@
-Return-Path: <linux-kernel+bounces-291887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E607D95688F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE19956892
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A83EB226A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F9F1F22919
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035EC15B995;
-	Mon, 19 Aug 2024 10:30:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA0B15B995;
+	Mon, 19 Aug 2024 10:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzEd9VHc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8062414B087
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539A4142E77;
+	Mon, 19 Aug 2024 10:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724063446; cv=none; b=QoxlyhBXgJqWUKocyMXV03UgC9IoKyXRE5fxZoB4Zizp1Gx2G2CqKj9eQ7pfgESSdBSzpTKjvKZGXuHc8SdzJ9Nvqd5PdNKVaQ7cSPPsDv2DEq0H9b4C3xpAHSx3zzADJJ1P73enZDxdg6ugcKUASsBHk8ysQqXxNQDoFq2gHOM=
+	t=1724063457; cv=none; b=g67LzgzLC1lisyQUgWs0d5IE2UkKdHVScItxJ379wqfZz3+Bam/A14MvAWbKMVxzh7kbMP2ctnVGWUizF2N/2NY8odS0+x/TAC7MCLtl00ch8Qxo4c4PQaD5KUyFZFHq5DA+l/8rU/2HTyK6yTHbKhbuRFAXowm8P8pUwA+U8aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724063446; c=relaxed/simple;
-	bh=LOQ3tT579UGVeFzT9fWRZgZyG2iXVK+iBaMtwsQdsu4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KaCOEWbQ9/Zomc9CTMhnR8u+F/CIbUwma++7ZWLScjrmqFPVLPpb4s28ZOeWU/BVQpYtOn1YGTE0KDjt4oVRjxNrsv8ySGKduRYTSXudAx9s1fTsS1/yHA75/2WMXspWhdhW2l1/KQjCtr9VjxPt7ux6ahjrIMnn05il9pMSzOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WnTKy1RgYz67MPb;
-	Mon, 19 Aug 2024 18:27:02 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 218311400D7;
-	Mon, 19 Aug 2024 18:30:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 11:30:33 +0100
-Date: Mon, 19 Aug 2024 11:30:32 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, "Robin
- Murphy" <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
-	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-Subject: Re: [PATCH v12 2/6] arm64: add support for ARCH_HAS_COPY_MC
-Message-ID: <20240819113032.000042af@Huawei.com>
-In-Reply-To: <20240528085915.1955987-3-tongtiangen@huawei.com>
-References: <20240528085915.1955987-1-tongtiangen@huawei.com>
-	<20240528085915.1955987-3-tongtiangen@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724063457; c=relaxed/simple;
+	bh=HBIKWG6jwrr6gqe7BImTmvWVfskIYRFLauZN/B8GRG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8YxjLlMjVyk+3+dpNrzwfXep8mnCbSNtMPUkhe63BRyCRKtEC6Eu9BsZ6Fxxfqim2k9X5H5gx9IPqNXrw3dzlmi6N45mnji+goSbGL9SrVAsaBW6MjacD05UTxBfIsXWG4b0p88U+gOKeS2tTbHzAKd7ePLiOg2o7EnmJpYP6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzEd9VHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C92C32782;
+	Mon, 19 Aug 2024 10:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724063456;
+	bh=HBIKWG6jwrr6gqe7BImTmvWVfskIYRFLauZN/B8GRG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hzEd9VHcHNtSkwfXSik9ABC3aPjkQ2QBXzcrkaHSUcxJo9eYKA/LLH9fnQNA7Ayqa
+	 mHCShD1AYWY2xCQHBKkJysUYWQRQ+q7EQbsfAZmwYk8ghsF/kpRdhgTnQc0jplq144
+	 axyfNuklrdtdcN0HyvJIZbV66Q3T9Q8gKqb9CF/ychlazid166Gc22mPTDE4QOUiNl
+	 g/IFxQfX0XA23TwZCxwG94Gf3HgAn34VTodJ5SoGk9qdrRm4xCNXFmuqFuET5KOU9/
+	 6ygG5URP4xMWXwEel5h+RQLb7XIcAQLyVuvVY/CukIiegO/+wEQC5MKrEaCMzA36w1
+	 96tCuvSRwXcSQ==
+Date: Mon, 19 Aug 2024 12:30:51 +0200
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Riku Voipio <riku.voipio@iki.fi>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 16/17] leds: turris-omnia: Simplify with scoped for each
+ OF child loop
+Message-ID: <4ht5cirpwz3pax5qm72hrjqy6oocsd2jctcwliwc65idijjcjt@fthzfoljm3ys>
+References: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
+ <20240816-cleanup-h-of-node-put-var-v1-16-1d0292802470@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240816-cleanup-h-of-node-put-var-v1-16-1d0292802470@linaro.org>
 
-On Tue, 28 May 2024 16:59:11 +0800
-Tong Tiangen <tongtiangen@huawei.com> wrote:
+Reviewed-by: Marek Behún <kabel@kernel.org>
 
-> For the arm64 kernel, when it processes hardware memory errors for
-> synchronize notifications(do_sea()), if the errors is consumed within the
-> kernel, the current processing is panic. However, it is not optimal.
+On Fri, Aug 16, 2024 at 05:31:48PM +0200, Krzysztof Kozlowski wrote:
+> Use scoped for_each_available_child_of_node_scoped() when iterating over
+> device nodes to make code a bit simpler.
 > 
-> Take copy_from/to_user for example, If ld* triggers a memory error, even in
-> kernel mode, only the associated process is affected. Killing the user
-> process and isolating the corrupt page is a better choice.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/leds/leds-turris-omnia.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> New fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE is added to identify insn
-> that can recover from memory errors triggered by access to kernel memory.
-> 
-> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
-
-Hi - this is going slow :(
-
-A few comments inline in the meantime but this really needs ARM maintainers
-to take a (hopefully final) look.
-
-Jonathan
-
-
-> diff --git a/arch/arm64/include/asm/asm-extable.h b/arch/arm64/include/asm/asm-extable.h
-> index 980d1dd8e1a3..9c0664fe1eb1 100644
-> --- a/arch/arm64/include/asm/asm-extable.h
-> +++ b/arch/arm64/include/asm/asm-extable.h
-> @@ -5,11 +5,13 @@
->  #include <linux/bits.h>
->  #include <asm/gpr-num.h>
->  
-> -#define EX_TYPE_NONE			0
-> -#define EX_TYPE_BPF			1
-> -#define EX_TYPE_UACCESS_ERR_ZERO	2
-> -#define EX_TYPE_KACCESS_ERR_ZERO	3
-> -#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD	4
-> +#define EX_TYPE_NONE				0
-> +#define EX_TYPE_BPF				1
-> +#define EX_TYPE_UACCESS_ERR_ZERO		2
-> +#define EX_TYPE_KACCESS_ERR_ZERO		3
-> +#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD		4
-> +/* kernel access memory error safe */
-> +#define EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE	5
-
-Does anyone care enough about the alignment to bother realigning for one
-long line? I'd be tempted not to bother, but up to maintainers.
-
-
-> diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
-> index 802231772608..2ac716c0d6d8 100644
-> --- a/arch/arm64/lib/copy_to_user.S
-> +++ b/arch/arm64/lib/copy_to_user.S
-> @@ -20,7 +20,7 @@
->   *	x0 - bytes not copied
->   */
->  	.macro ldrb1 reg, ptr, val
-> -	ldrb  \reg, [\ptr], \val
-> +	KERNEL_ME_SAFE(9998f, ldrb  \reg, [\ptr], \val)
->  	.endm
->  
->  	.macro strb1 reg, ptr, val
-> @@ -28,7 +28,7 @@
->  	.endm
->  
->  	.macro ldrh1 reg, ptr, val
-> -	ldrh  \reg, [\ptr], \val
-> +	KERNEL_ME_SAFE(9998f, ldrh  \reg, [\ptr], \val)
->  	.endm
->  
->  	.macro strh1 reg, ptr, val
-> @@ -36,7 +36,7 @@
->  	.endm
->  
->  	.macro ldr1 reg, ptr, val
-> -	ldr \reg, [\ptr], \val
-> +	KERNEL_ME_SAFE(9998f, ldr \reg, [\ptr], \val)
->  	.endm
->  
->  	.macro str1 reg, ptr, val
-> @@ -44,7 +44,7 @@
->  	.endm
->  
->  	.macro ldp1 reg1, reg2, ptr, val
-> -	ldp \reg1, \reg2, [\ptr], \val
-> +	KERNEL_ME_SAFE(9998f, ldp \reg1, \reg2, [\ptr], \val)
->  	.endm
->  
->  	.macro stp1 reg1, reg2, ptr, val
-> @@ -64,7 +64,7 @@ SYM_FUNC_START(__arch_copy_to_user)
->  9997:	cmp	dst, dstin
->  	b.ne	9998f
->  	// Before being absolutely sure we couldn't copy anything, try harder
-> -	ldrb	tmp1w, [srcin]
-> +KERNEL_ME_SAFE(9998f, ldrb	tmp1w, [srcin])
-
-Alignment looks off?
-
->  USER(9998f, sttrb tmp1w, [dst])
->  	add	dst, dst, #1
->  9998:	sub	x0, end, dst			// bytes not copied
-
-
-
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 451ba7cbd5ad..2dc65f99d389 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -708,21 +708,32 @@ static int do_bad(unsigned long far, unsigned long esr, struct pt_regs *regs)
->  	return 1; /* "fault" */
->  }
->  
-> +/*
-> + * APEI claimed this as a firmware-first notification.
-> + * Some processing deferred to task_work before ret_to_user().
-> + */
-> +static bool do_apei_claim_sea(struct pt_regs *regs)
-> +{
-> +	if (user_mode(regs)) {
-> +		if (!apei_claim_sea(regs))
-
-I'd keep to the the (apei_claim_sea(regs) == 0)
-used in the original code. That hints to the reader that we are
-interested here in an 'error' code rather than apei_claim_sea() returning
-a bool.   I initially wondered why we return true when the code
-fails to claim it.
-
-Also, perhaps if you return 0 for success and an error code if not
-you could just make this
-
-	if (user_mode(regs))
-		return apei_claim_sea(regs);
-
-	if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC)) {
-		if (fixup_exception_me(regs)) {
-			return apei_claim_sea(regs);
-		}
-	}
-
-	return false;
-
-or maybe even (I may have messed this up, but I think this logic
-works).
-
-	if (!user_mode(regs) && IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC)) {
-		if (!fixup_exception_me(regs))
-			return false;
-	}
-	return apei_claim_sea(regs);
-
-
-> +			return true;
-> +	} else if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC)) {
-> +		if (fixup_exception_me(regs) && !apei_claim_sea(regs))
-
-Same here with using apei_claim_sea(regs) == 0 so it's obvious we
-are checking for an error, not a boolean.
-
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int do_sea(unsigned long far, unsigned long esr, struct pt_regs *regs)
+> diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+> index 39f740be058f..1ef942b5cefa 100644
+> --- a/drivers/leds/leds-turris-omnia.c
+> +++ b/drivers/leds/leds-turris-omnia.c
+> @@ -452,7 +452,7 @@ static int omnia_mcu_get_features(const struct i2c_client *client)
+>  static int omnia_leds_probe(struct i2c_client *client)
 >  {
->  	const struct fault_info *inf;
->  	unsigned long siaddr;
+>  	struct device *dev = &client->dev;
+> -	struct device_node *np = dev_of_node(dev), *child;
+> +	struct device_node *np = dev_of_node(dev);
+>  	struct omnia_leds *leds;
+>  	struct omnia_led *led;
+>  	int ret, count;
+> @@ -497,12 +497,10 @@ static int omnia_leds_probe(struct i2c_client *client)
+>  	}
 >  
-> -	inf = esr_to_fault_info(esr);
-> -
-> -	if (user_mode(regs) && apei_claim_sea(regs) == 0) {
-> -		/*
-> -		 * APEI claimed this as a firmware-first notification.
-> -		 * Some processing deferred to task_work before ret_to_user().
-> -		 */
-> +	if (do_apei_claim_sea(regs))
-
-It might be made sense to factor this out first, then could be reviewed
-as a noop before the new stuff is added.  Still it's not much code, so doesn't
-really matter.
-Might be worth keeping to returning 0 for success, error code
-otherwise as per apei_claim_sea(regs)
-
-The bool returning functions in the nearby code tend to be is_xxxx
-not things that succeed or not.
-
-If you change it to return int make this
-	if (do_apei_claim_sea(regs) == 0)
-so it's obvious this is the no error case.
-
->  		return 0;
-> -	}
+>  	led = &leds->leds[0];
+> -	for_each_available_child_of_node(np, child) {
+> +	for_each_available_child_of_node_scoped(np, child) {
+>  		ret = omnia_led_register(client, led, child);
+> -		if (ret < 0) {
+> -			of_node_put(child);
+> +		if (ret < 0)
+>  			return ret;
+> -		}
 >  
-> +	inf = esr_to_fault_info(esr);
->  	if (esr & ESR_ELx_FnV) {
->  		siaddr = 0;
->  	} else {
-
+>  		led += ret;
+>  	}
+> 
+> -- 
+> 2.43.0
+> 
 
