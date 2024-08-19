@@ -1,139 +1,213 @@
-Return-Path: <linux-kernel+bounces-291629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FE99564EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9B09564F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B49280FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9EEA1F23710
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C875158D8F;
-	Mon, 19 Aug 2024 07:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD6D158D96;
+	Mon, 19 Aug 2024 07:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1a2+qy7b"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VYXPdh7m"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2893D158A18
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1308182B3;
+	Mon, 19 Aug 2024 07:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053689; cv=none; b=Z8MnIGGiifh0Q/gxMaITKZ+qpQZJInL9VVAxBaijxNX4YqSjhErcQPkn52GNhPEIc3o0Ucfh0c4Ff1OsR/5z3ns977Lhs1b/DL4ly5v9qRTQstwusxbHdYV19tGf80ayX6UvanhI9GH0vExGw4x+PvMZ0JgZrS+vk+/l4O5VM70=
+	t=1724053718; cv=none; b=M7+GEzrYnY13nUQlyFDPAp1gDxbcoVnatxRME6je+07Laae5U0cRJuEI0RJlgIDwJlFTc2iHwOCMjbsUTqERwtaAopIwl42xeaMJi/DTRgRfA2CgGe4Yif/SbT9agOTaKXNYTEUFO1uqwKgEKbc+uAijpFUIkqsAtUhS3DBl6no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053689; c=relaxed/simple;
-	bh=qROjoIoMrt4R1WOlmAxW0yXUSxg6KqlCiq2LI02w0ik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lbWuN63PyvFenBh8KUpH82wlK5MKsNPxU8cn9K1eUwmAQIFm5YwppHCwGuft6V3G3UaddQ8S7JxRkWeBaClUwBmzTisViLbH8xXgTacTjMpApPUJ59ypYd+DNnrHLs3aQ+vWCpBfru8HBph4pWF7Dzu1tzV32pf5TU9YKI0sgg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1a2+qy7b; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428119da952so31893785e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724053686; x=1724658486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6HWnOPtVtuFtQfkeUhsNP4qLdCJ3F+/lPmb7Sa/yyx8=;
-        b=1a2+qy7b94VW7gG1ggGdOyohvLzUp/tXL7VU7xQAy7iMRKyG4FNI0v8p1erY0zsmEy
-         BhNnJxoCrl9jqDrp1zPo2kM7L0yw8kxhXXtcLOWqcc5n9adNOXUWk5zx//DablFU1WAn
-         JtqCceIWjjzgGmt818Ye/xzaZjXxLuwbAVPvQelrPtCZTIu3igCUseWVoX3FzvispNCx
-         gPNY/OlJvzza4tB57Vy1ltGLevec7lVurExjp2R0meuMzcWKPD/oCxp9jLaX1qSGRHyv
-         I28/+uwIYbdULcQH19XT5uLDibC4N18jQaIhqSygGn2jv0h3zjXHMf4rbNS04tHsvn+P
-         Uq8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724053686; x=1724658486;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6HWnOPtVtuFtQfkeUhsNP4qLdCJ3F+/lPmb7Sa/yyx8=;
-        b=s94K7qpxL9sSntMQxlvKsPKAKEasYMUHSpvnT+dAL5hVjpKWg0wGy0s8Tk2KUMCUhP
-         ViD8SQNqETBA6TqG4SRyrxa79FuD3jS4DKTnZTGXMK7Ld06RH847sV3QfFMolSTqP3wk
-         OTwSDwuSlyoLhq5y33TOCtqFA+XBLQgr4A9r5V9HYZO4YNnFzoFR2ekdUGVvTauxBsSo
-         EkezJSJdEttQcezPWAu5vpbkw3sETTkXLMPGE5wls08sy1Lm3TsUFBjmd7nu9FAJ6LNN
-         qQppbWOz40fazDbmNlxRWth34DzXksxxjwJv0nCLYClH9RRMo0/GJj06QzTnTrKQXHy9
-         neXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXesYx0Ir2vBivpfyi+21hS1MmZoAVq2NG0Ok5Xn0BIsxeEFKrC7iF0tsfVWvyGiIkZMaDYATxOW70O9eoigK61mN0HqbMzjQblehGs
-X-Gm-Message-State: AOJu0YzmQQ73ErpS7Mofw2PF5JdLL01OlDGhPxn8dpDplwRT3v3lGzPk
-	G/OEn9qVWB7WfGL+ZXxfue85w0viFAg3BSj+hzriwb5Jw30Eco1olf7zcEkf/7k=
-X-Google-Smtp-Source: AGHT+IF5+NmG/osEaez8cWnAT2V4UFMonJgBv34yRRnSlNXOvRHs+XPDKZYPhylL9pZOmbRdHsC0Qg==
-X-Received: by 2002:a05:600c:4e8c:b0:428:31c:5a52 with SMTP id 5b1f17b1804b1-429ed7cc764mr88524045e9.29.1724053685880;
-        Mon, 19 Aug 2024 00:48:05 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7b55:8f70:3ecb:b4ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed650e21sm98881025e9.20.2024.08.19.00.48.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 00:48:05 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2] dt-bindings: bluetooth: bring the HW description closer to reality for wcn6855
-Date: Mon, 19 Aug 2024 09:48:01 +0200
-Message-ID: <20240819074802.7385-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724053718; c=relaxed/simple;
+	bh=vUiSOdyrdJww0IqXn5nkYGcRnV7XOVRUa3PBkZoSgfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TAARKxe2L84vYPhYagN1NQz1H4+9Umy4xAzqelXlNPVv1T+etH91Ju3JKaJkDwqq5a0z+fiGBFbstEFxwjWDZUUSFCL0pMkq63ZESvB8hhXw8ck1ddP6XVuFbqJd1dRGfxNYKOVpxe0n1UEXm4O8iloJ74LhhYGoIYCJtC7lGVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VYXPdh7m; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724053696; x=1724658496; i=markus.elfring@web.de;
+	bh=VWKo/9R3f+Grm1MGR5RJYm3N5mIRhS89dVQ2+6Q7PEQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VYXPdh7mbVpM0jVuwhZuiDzkEmQp9FzKyN/3J5uBk7bcBVEEw31WBWp9Wr3DRf4t
+	 N63cIHtQjWYs6/NOAOy1n1uivXzZJwvyL5ILw+WJ8CSxC13jKBlB8rTGlnDOYRvEd
+	 rq3aggFgck53jUPf5zOrSpAqjE0TV6Zs4IJxy3xQHDX5TF9+UOWGJ41YfXSutZ0i7
+	 PWxWviRy7nI6ojz4cmBqST0ythPDbLWyQF+YfAkv0txFA9YSzXTfrElbbrY1EgENb
+	 DJf+YuDurGENIAXQkZuNQRvbSmSD5p6GMm3qg0H0PMTXzTuyeRv2wXlZmLnxQpLMv
+	 eUD96jOSrw9yy/8fqA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MxpiO-1rw4zh3n94-0116MY; Mon, 19
+ Aug 2024 09:48:15 +0200
+Message-ID: <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de>
+Date: Mon, 19 Aug 2024 09:48:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] HID: corsair-void: Add Corsair Void headset family
+ driver
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iYioochLoLrCAWM+xWOqHwRnBqljl2e1l/mvT2Y9aRFjDyZ3JQG
+ mN9QAq9CpthkdoEicbo/YXa3+SijJp7n7LQjXvqmtck8a6KX8YHIkTg0mxx/A/wjQodoyTP
+ QB6AAFvUqw+IZBf5kTiNLS+eCXRFzgcTO5yu0sGpkndkk6alLFIjL0a/F7y/0l8+HKvlODC
+ vRfs4MWBxWFab1Qb/A9iQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2g5KdVHCcUA=;Zr7bu68qEGYKZJhsO9IBHbPBwwt
+ 6+NEU7Uy7U0DMK4PCrEALOygVWDytR/lJnfb1L3NZySFHmSprHtaocqfKL8q/7WPuJJen8l3m
+ zJ0wjx/zn9rzARfpScHLb2AfkKMJdrVOh1VQcr4eDtjpFmADQbdxXnxXPDT1DRkZwbVUTrkwM
+ 4f5UzmamCVk6l0fjqQdlxSM1kMpS8wVZOvtcuu+5MlQfH3AiS20IEJ3jFVRpLXCcpIdh0TgMQ
+ W7UczzyMhMnhe46sKENRRg3ispeiaxrDbptU9k97cR0Y5CIe0J6HJMcpDukeINdomQhnW6IFV
+ lGONT89n+7FUFzwNmYW4TXXx2x0DUQEkHh5ksOwFnADzd6lNuzr///h01v+ALqg+r0J7t24L5
+ 1kN+q18BBwm9AiJ4XLkmzh1/qwQkgVDOvMq0LZzG5nKH0tjh1tyLVxJ16LahwrRfB5VxOkEsV
+ ZWnqJjryDayIMjHLmYTe9kesy/w8Sk+h4Ci3c2sDuwufRcu16n67EbR9IqQFMVTH19DikUpQW
+ nRR2PqE0ZVo8zxpTln43txE0BUITJfMOfoUdzt94bxjyyZUd9L7IGJ95ruTkan9+YvMVxdVSu
+ ZeqaTTM4/Gdguvnt6CRYMGiaMIrG28N0Rqq2Jguq16az+LesTvMPgzZ/R1/k6XwerlKXeBiEB
+ kw+40jGTYm/t+C9OY9yXLsjSaUNiifbYZYi3PPvm5kgB8P52fUciyqexweZV7+tkT16Nd80j2
+ NBNJlKG+Nv+4eV57CIt2gKwwTr0VxVF0x5HJ8Zq93DT2DFuI4/Ggm8GvoFreHzBBeGI+8S2ps
+ cB+aOJbgQ9SwTJKTucF+WqqQ==
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+=E2=80=A6
+> +++ b/drivers/hid/hid-corsair-void.c
+> @@ -0,0 +1,857 @@
+=E2=80=A6
+> +static ssize_t send_alert_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf, size_t count)
+> +{
+=E2=80=A6
+> +	unsigned char *send_buf;
 
-Describe the inputs from the PMU that the Bluetooth module on wcn6855
-consumes and drop the ones from the host. This breaks the current
-contract but the only two users of wcn6855 upstream - sc8280xp based
-boards - will be updated in DTS patches sent separately while the
-hci_qca driver will remain backwards compatible with older DT sources.
+* How do you think about to use the attribute =E2=80=9C__free(kfree)=E2=80=
+=9D at more places accordingly?
+  https://elixir.bootlin.com/linux/v6.11-rc4/source/include/linux/slab.h#L=
+282
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v1 -> v2:
-- extend the commit message
-- pick up Rob's Ack
+* Would you like to reduce scopes for such local variables?
 
- .../bindings/net/bluetooth/qualcomm-bluetooth.yaml     | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+=E2=80=A6
+> +	if (!drvdata->connected)
+> +		return -ENODEV;
+> +
+> +	if (drvdata->is_wired)
+> +		return -ENODEV;
+> +
+> +	if (kstrtou8(buf, 10, &alert_id))
+> +		return -EINVAL;
+> +
+> +	/* Only accept 0 or 1 for alert ID */
+> +	if (alert_id >=3D 2)
+> +		return -EINVAL;
 
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-index 68c5ed111417..64a5c5004862 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-@@ -172,14 +172,14 @@ allOf:
-               - qcom,wcn6855-bt
-     then:
-       required:
--        - enable-gpios
--        - swctrl-gpios
--        - vddio-supply
--        - vddbtcxmx-supply
-         - vddrfacmn-supply
-+        - vddaon-supply
-+        - vddwlcx-supply
-+        - vddwlmx-supply
-+        - vddbtcmx-supply
-         - vddrfa0p8-supply
-         - vddrfa1p2-supply
--        - vddrfa1p7-supply
-+        - vddrfa1p8-supply
-   - if:
-       properties:
-         compatible:
--- 
-2.43.0
+Can condition checks be merged with the same return value (for less statem=
+ents)?
 
+
+> +	send_buf =3D kmalloc(3, GFP_KERNEL);
+
+Can such a size determination be explained better?
+
+
+=E2=80=A6
+> +	kfree(send_buf);
+> +	return ret;
+> +}
+=E2=80=A6
+> +static void corsair_void_battery_add_work_handler(struct work_struct *w=
+ork)
+> +{
+> +	struct corsair_void_drvdata *drvdata;
+=E2=80=A6
+> +	drvdata->battery =3D power_supply_register(drvdata->dev,
+> +						 &drvdata->battery_desc,
+> +						 &psy_cfg);
+> +
+> +	if (IS_ERR(drvdata->battery)) {
+=E2=80=A6
+> +		drvdata->battery =3D NULL;
+
+I suggest to use another local variable for the previous return value
+so that such a reset can be avoided.
+
+
+> +		return;
+> +	}
+
+
+=E2=80=A6
+> +static DEVICE_ATTR_RO(fw_version_receiver);
+> +static DEVICE_ATTR_RO(fw_version_headset);
+> +static DEVICE_ATTR_RO(microphone_up);
+> +static DEVICE_ATTR_RO(sidetone_max);
+> +
+> +static DEVICE_ATTR_WO(send_alert);
+> +static DEVICE_ATTR_WO(set_sidetone);
+> +
+> +static struct attribute *corsair_void_attrs[] =3D {
+=E2=80=A6
+> +};
+> +
+> +static const struct attribute_group corsair_void_attr_group =3D {
+> +	.attrs =3D corsair_void_attrs,
+> +};
+
+Is there a need to organise device attributes into separate subgroups?
+
+
+=E2=80=A6
+> +static int corsair_void_probe(struct hid_device *hid_dev,
+> +			      const struct hid_device_id *hid_id)
+> +{
+> +	int ret =3D 0;
+
+I propose to omit the explicit initialisation for this local variable.
+
+
+> +	struct corsair_void_drvdata *drvdata;
+=E2=80=A6
+> +	drvdata =3D devm_kzalloc(&hid_dev->dev, sizeof(struct corsair_void_drv=
+data),
+> +			       GFP_KERNEL);
+
+Please improve such a size determination.
+
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.11-rc4#n953
+
+
+=E2=80=A6
+> +	goto success;
+
+Please apply the statement =E2=80=9Creturn 0;=E2=80=9D instead.
+
+
+
+> +/*failed_after_hid_start:
+> +	hid_hw_stop(hid_dev);*/
+
+Please reconsider the need once more also for this information.
+
+Regards,
+Markus
 
