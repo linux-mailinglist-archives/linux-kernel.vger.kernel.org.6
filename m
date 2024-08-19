@@ -1,176 +1,128 @@
-Return-Path: <linux-kernel+bounces-292404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210C4956F0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB0C956F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412EC1C20EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A448AB26F94
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B17716B753;
-	Mon, 19 Aug 2024 15:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964D7175D47;
+	Mon, 19 Aug 2024 15:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngAEwYIK"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNHxM9lx"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83139768FC
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9E21741D9;
+	Mon, 19 Aug 2024 15:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082073; cv=none; b=QZwiN/zalgmvJ9ymQeux3rH/Uw+W03fI8g0ivSB46Mvja6+A8Mks0sQwttH6Z/CBTQ69tlW86Q3TK4a53wdck8ZCfBMJBfjWO3hOX/jd0kYi9E8DwZP079mZE1Y3g6o1cJNoszoRtycOwsSQp50K3X6SgqACJqh/tS1YP99BhG8=
+	t=1724082090; cv=none; b=fdxuR87Tf6byWRfwOGTUd0smOltLnjf4L1GJ32szEifvXoCwVfmnhdqNsMiH5PB8+DwUEvfjSmFNhhJ++KxH+0hOPx3z2hR5/64mntv6fdXeB/0fW9oHlbVMEKpo+Plsujq5Mb8tvLI3SBgjkONqjXungl/8H49ZtloS4qGcKFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082073; c=relaxed/simple;
-	bh=0D1MH02bz6Vy5wol/7/ekCDY5+vHDaQXLy5SNPCWagc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EH/eIvMWZe3QBWhwWXDeJYEDiTPjBoQXv1DlGa4E0b4TKf0073XpphpQTvJ5iZfvyP4AqEc093uriOdL7zwMKSANpQNI4JzvN37MgqZh4vyUmCZ5NwK2DMdq9NRaZoAUsmb3N3rSmBlJm7fTAq+ctsP9drt/XWE9x4TNeWNyGrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngAEwYIK; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371a9bea8d4so1135326f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:41:11 -0700 (PDT)
+	s=arc-20240116; t=1724082090; c=relaxed/simple;
+	bh=oprzWa5GL+TSCuCr+mr2wDNoTLYKfJod4ftEajoS/eE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkAXkzqLzd3ntJjwfUrh+zVga512UzlxxwGmHKv6FFpxNI38q70JLnGCT9vVUgBdMdvNKFbW339qzjRgjpahx6Ut5MupBLvssh1CZgFG/UGdZTZwljcsAzE5Z3BbX7hKW2ilApBFl+UDQvPD/erpNSZOdXV6cGACQ+qtXBfzN9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNHxM9lx; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4928989e272so1709322137.2;
+        Mon, 19 Aug 2024 08:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724082070; x=1724686870; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MrzATe8rYIud1EQmdYYD4F8xYF1fCvbf9TZacojasoA=;
-        b=ngAEwYIKo6Q0FRVMtp3ENoysSH7HgVh+rGsJ1utnrfrh5JVmwkJrDtuFkqLpbRKmkU
-         NUxWFuCuxmn2f6iM8oMySg/HYZfraaLUvA8TNEfOKjPQGKf7xGqkc5XzU6JBkKsSrNt5
-         S0HB2/ddhKeqkaUJxFZf3ijX+V/zeQnu9TfaBQ1x2dZuShqEC4X9B+rmXfPF+xGq1d9Q
-         vSrnTP6bqGrZ8m+WpVObe0gMMWR4gvsu1bsJ/emF53Ol+ndFKVcyFTyc/sP7bWdHOt9T
-         Sv4NRe+K19YfAteHMaWuLzl7W+/TPcQYNku7ihc3X4riHO+ywGJE+K44eQeLROB5p8XC
-         ob6Q==
+        d=gmail.com; s=20230601; t=1724082088; x=1724686888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oprzWa5GL+TSCuCr+mr2wDNoTLYKfJod4ftEajoS/eE=;
+        b=UNHxM9lxdxk/sR3KZY2Tj8BMEdHkLEWsmolmCt7mWqvlp5urh2uJbp0BnJhErbdn1f
+         QvZUQoDgqgQt3RiIJLY/VBRAQ4gDBFjAhJl2zzMhn2kPZJelUWYKtbfJHtQ4vdxYS9N6
+         INpCiG7OqMNiqUfIg1877R/LiGI+8kuSvniOnUBO9L0CsuEOrUthJgsprP9lraNLWmfp
+         3sMLEpYoOwj6xEw0tJHndgzxzUEvXCvfW2RPELfmvv93vPaSnosGHOXmqq07p6JBseFU
+         Nj/LwxMvz71UBvl2K/CgvB4IF0uO54cV8idqt+9LCruuRc4KAIxKpiKC0u+1PbfuBs0I
+         gEkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724082070; x=1724686870;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MrzATe8rYIud1EQmdYYD4F8xYF1fCvbf9TZacojasoA=;
-        b=O9xHj+039aRCbGCCfwxsXuevoNi443OvoOMKbJy8gjVV/anTxe4axcpWFSM702E8Pj
-         02Nzs+/g4AB4PblUxjdt8fcHprwpgSyTQooa8GlcHJ5XlA4ppbweQTPjSaM3EVEYjKy4
-         zi8jEXudrz8OVtfCUmvjh8OPftwsklRld9dsecq+UBp4OrJsmIHZARs1Zw9vsBb1V/4X
-         5MW4HLzuPZaCZAr1OBtmpgymxifN3xsEcjpQ+UTOV5v46WX3T0uC/xC7ASdDywsZAN9j
-         Y4begQa/vBQSk3p8gsyB+C9OKqh0D6UbL5lSPiU6siqZNXJAVvZNzFyjOFf0W7AqG8cp
-         QJZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6JWD2VCfHmLQqUbo4mUIKoQUPM0hxnW+z7rcoqol0AVO81M/S0HsRRciaHwiMcmYPQ0Sy+dC1O6A/510=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+ZSUyTflIrY/AO14rnkilopCIhAcCICERrONfJCFw2L73FVuU
-	dOAr4107W8MOfDMJ+pnHdwExwNvfsebpYWdfd05WbBqDAec029QMTkPjzG4q2Ek=
-X-Google-Smtp-Source: AGHT+IGbaGgDjlkcjOOxjw1s5hMx81Sydj4FWl7Oz+csh+yXsVHvtIbKTUYageb60ZuUGTwv5aH3nQ==
-X-Received: by 2002:a5d:408f:0:b0:368:5b80:b8d with SMTP id ffacd0b85a97d-37194456508mr6323850f8f.21.1724082069174;
-        Mon, 19 Aug 2024 08:41:09 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a286sm10817742f8f.54.2024.08.19.08.41.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:41:08 -0700 (PDT)
-Message-ID: <b783f932-851f-4ea5-a2cc-d39061c60652@linaro.org>
-Date: Mon, 19 Aug 2024 17:41:07 +0200
+        d=1e100.net; s=20230601; t=1724082088; x=1724686888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oprzWa5GL+TSCuCr+mr2wDNoTLYKfJod4ftEajoS/eE=;
+        b=kEuGQuG5MxHSbM8Q17h2JQr1DUdIEXH/FJXCDQBEBbpYMNjTK1gHU+Q2Q1hUVQMMPN
+         x627hdQCHKjqqxDJrdUEFDUbFptfGKiUqHXiY5bcoQl6boWEBGDudC3LsadJTF7mzLQ9
+         y9mmXkTKF1AKPCZJeY1rBt9yCZM/AJPy8JYqh9S3tqUB3w8SFLgIfd+t+3lACdbPS3nX
+         iaJzVOP/hTq4Denet2oPKHDvB885sj8aKoHosSPCJggEH/6n0WByqwDpOgyh1KxZKhfZ
+         meKEbSSe1v80YxCEXm7UrwlLKfLBtXbEul5G4a5I1WrYDjR10822J98ImDC/yYIlMegD
+         wT8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPcVtIw87vULtPBKCzWvDmlVOhmG+KGZqVD+MiD/t5a8g7Gx7DKUz35NQZCBtHMG5e1A2etJr/@vger.kernel.org, AJvYcCUSO+QxGspyepGSxfxdifAHMTibaTrmLkfQS4amphqqh7W7eF9Ko5zHYnymbBZqugwWy9PXaunc6iE6gw==@vger.kernel.org, AJvYcCUrjP8Z1WeFtF56CQkQlwHLaQ6dyKgh0RkOpb1e9Kb02eCEhG7ya93qEVnqjL77DZBQ/xrs1cU+x+8VJIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8OGFIYI5TYxKGeeJ4fCP/OsyoMvPhbLXWO67ykHmp/HRh1B/v
+	X6/w/ZQLp88s7F9uIM72S2ObQ9dcTcdLzhXMAq7NhJUf2NudV5Et4ac+LCXpClpanKPlYBtHI1b
+	3E+PjecMdzsYbPBYZPFM1T13NzSs=
+X-Google-Smtp-Source: AGHT+IEy4xd3HhUbPJ7ZgCIz6rOYwvi/cIePWW1SuBMdt1qqZRdmxIOGvY1KJaTDdoWsRzjD7MH7xfWYwSqrHrlybTQ=
+X-Received: by 2002:a05:6102:dce:b0:48f:95aa:ae2b with SMTP id
+ ada2fe7eead31-4978859e54cmr10497831137.28.1724082088045; Mon, 19 Aug 2024
+ 08:41:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel: ili9341: Add comments for ILI9341 register
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
- skhan@linuxfoundation.org, rbmarliere@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20240812171019.561321-1-abhishektamboli9@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240812171019.561321-1-abhishektamboli9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240812082244.22810-1-e.velu@criteo.com> <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
+ <ZrzDAlMiEK4fnLmn@yury-ThinkPad> <CAL2JzuzEBAdkQfRPLXQHry2a2M7_EsScOV_kheo+oXUuKM9rWA@mail.gmail.com>
+ <20240819083426.1aebc18f@kernel.org>
+In-Reply-To: <20240819083426.1aebc18f@kernel.org>
+From: Erwan Velu <erwanaliasr1@gmail.com>
+Date: Mon, 19 Aug 2024 17:41:16 +0200
+Message-ID: <CAL2Jzuy8UBnALFfFYpC4-whbWB9CkZC7vwXm4PRxWxzpeO2u2Q@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom code
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>, Tariq Toukan <ttoukan.linux@gmail.com>, 
+	Erwan Velu <e.velu@criteo.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	Tariq Toukan <tariqt@nvidia.com>, Yury Norov <ynorov@nvidia.com>, Rahul Anand <raanand@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/08/2024 19:10, Abhishek Tamboli wrote:
-> TODO : Add missing comments for ILI9341 register definition.
+Le lun. 19 ao=C3=BBt 2024 =C3=A0 17:34, Jakub Kicinski <kuba@kernel.org> a =
+=C3=A9crit :
+>
+> On Mon, 19 Aug 2024 12:15:10 +0200 Erwan Velu wrote:
+> > 2/ I was also wondering if we shouldn't have a kernel module option to
+> > choose the allocation algorithm (I have a POC in that direction).
+> > The benefit could be allowing the platform owner to select the
+> > allocation algorithm that sys-admin needs.
+> > On single-package AMD EPYC servers, the numa topology is pretty handy
+> > for mapping the L3 affinity but it doesn't provide any particular hint
+> > about the actual "distance" to the network device.
+> > You can have up to 12 NUMA nodes on a single package but the actual
+> > distance to the nic is almost identical as each core needs to use the
+> > IOdie to reach the PCI devices.
+> > We can see in the NUMA allocation logic assumptions like "1 NUMA per
+> > package" logic that the actual distance between nodes should be
+> > considered in the allocation logic.
+>
+> I think user space has more information on what the appropriate
+> placement is than the kernel. We can have a reasonable default,
+> and maybe try not to stupidly reset the settings when config
+> changes (I don't think mlx5 does that but other drivers do);
+> but having a way to select algorithm would only work if there
+> was a well understood and finite set of algorithms.
 
-Please rephrase the commit message, and explain why in a proper english sentence.
+I totally agree with this view, I'm wondering if people who used to
+work on the mlx driver can provide hints about this task.
+I have no idea if that requires any particular task at the fw level.
+Is this a complex task to perform?
+That feature would be super helpful to get precise tuning.
 
-Neil
-
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
->   drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-> index 775d5d5e828c..cba6a6952568 100644
-> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-> @@ -121,19 +121,19 @@ struct ili9341_config {
->   	const struct drm_display_mode mode;
->   	/* ca: TODO: need comments for this register */
->   	u8 ca[ILI9341_CA_LEN];
-> -	/* power_b: TODO: need comments for this register */
-> +	/* power_b: Power control B (CFh) */
->   	u8 power_b[ILI9341_POWER_B_LEN];
-> -	/* power_seq: TODO: need comments for this register */
-> +	/* pdtcaower_seq: Power on sequence control (EDh) */
->   	u8 power_seq[ILI9341_POWER_SEQ_LEN];
-> -	/* dtca: TODO: need comments for this register */
-> +	/* dtca: Driver timing control A (E8h) */
->   	u8 dtca[ILI9341_DTCA_LEN];
-> -	/* dtcb: TODO: need comments for this register */
-> +	/* dtcb: Driver timing control B (EAh) */
->   	u8 dtcb[ILI9341_DTCB_LEN];
-> -	/* power_a: TODO: need comments for this register */
-> +	/* power_a: Power control A (CBh) */
->   	u8 power_a[ILI9341_POWER_A_LEN];
->   	/* frc: Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
->   	u8 frc[ILI9341_FRC_LEN];
-> -	/* prc: TODO: need comments for this register */
-> +	/* prc: Pump ratio control (F7h) */
->   	u8 prc;
->   	/* dfc_1: B6h DISCTRL (Display Function Control) */
->   	u8 dfc_1[ILI9341_DFC_1_LEN];
-> @@ -147,7 +147,7 @@ struct ili9341_config {
->   	u8 vcom_2;
->   	/* address_mode: Memory Access Control (36h) */
->   	u8 address_mode;
-> -	/* g3amma_en: TODO: need comments for this register */
-> +	/* g3amma_en: Enable 3G (F2h) */
->   	u8 g3amma_en;
->   	/* rgb_interface: RGB Interface Signal Control (B0h) */
->   	u8 rgb_interface;
-> --
-> 2.34.1
-> 
-
+> IMHO we should try to sell this task to systemd-networkd or some other
+> user space daemon. We now have netlink access to NAPI information,
+> including IRQ<>NAPI<>queue mapping. It's possible to implement a
+> completely driver-agnostic IRQ mapping support from user space
+> (without the need to grep irq names like we used to)
+Clearly that would be a nice path to achieve this feature.
 
