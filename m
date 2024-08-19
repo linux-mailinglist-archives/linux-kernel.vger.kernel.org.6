@@ -1,70 +1,59 @@
-Return-Path: <linux-kernel+bounces-292798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AF5957483
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073B295747F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D802D2826E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC561C23AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA94C1DC48F;
-	Mon, 19 Aug 2024 19:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2561DC464;
+	Mon, 19 Aug 2024 19:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S+ehbQTT"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haJY+L9A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA68188CB5;
-	Mon, 19 Aug 2024 19:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB4B9460;
+	Mon, 19 Aug 2024 19:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096117; cv=none; b=XWOH8NvimagkOZioEqWmixHQz98i4XOzNpMy7G4SV2cgwd0tRY7taCIi/IzIomD9ezZd5u9tStr5WeXH4xEwDVk1eW01vyiKERs9i60sxxMfQ+WsxmP7wnmPidT3BTeHO37fTazXh4EOTlxt6Mdnl5WJ2fvLV0s7gRXwqNNnP7I=
+	t=1724096107; cv=none; b=Lqt0D4x24WGunu+i3rpDMgdAhvq78VSiKSlPhwXlyt8CH6lNN8cpEuJwRZ6Ntulq0A2dEuP7pTk2jK/6JxzISf0cfJA/77TLOFHCwX6jJb1IrT1y/eml7GIO6yBUkoe+I1iDfZLAJEQFc4XhOZ3+7+SsRRv8Dmo7J2jxVPFS8ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096117; c=relaxed/simple;
-	bh=Q+bTT1LIdx6rvUFMUtXwA6/VxsX+IhQMYF6gDPYwzqw=;
+	s=arc-20240116; t=1724096107; c=relaxed/simple;
+	bh=JahsyMtN0peOVfQtiQs2ZrtDmssy9ML06xUmp/FnA1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hq+lseo9UN1IYJUY/3xn22eXDztKltlojXRV4JhCbqrMzbnT9u9qUGmHQ1IFVdY25ulFfYC7ToCSDjUKdaFwVz66YcUnTWV9C67jsdvujpJG1hf+TFL9LDZMkiQfr9ZXKx3aI7fTvB99Dwfi5nmoqJEEBAlSX9srdDsoRmCtr8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S+ehbQTT; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GgkSbPAh5KOwEoij59vzgPrDRTBo+einBkTJg8LJEK4=; b=S+ehbQTTfQwUW7uPpk8GapUl5B
-	UO27g31htpfVF8q0tyK5h/zlnt2RYj7JCfRQUYM5OiyXwoEUmOge9o1JcD96tqAWweRBzatGnfKxH
-	VN/YgyIk0y2cYf29wKLGiXYWuCpUb17YjC7ggGWRTyeUu+EDzYPxRDWbzKwAhXqpv3nv5WqGX5ESc
-	DbrtlZEny2y0WZ/yHSwFo7U5w3IQYBc0fgxUWBJB7RNJp8CD5J43eaMuxjscMGXg5IP1nbIn0wiOk
-	W7XM61Oz0TFCyF49R96gNVaj0RkF/D9/rMcqbxN7Pn8Fhj8yJKD0g1tNyjpwkBvX+mln0qY+xZi8N
-	yc+2QiZQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sg89N-000000076SA-4BDT;
-	Mon, 19 Aug 2024 19:34:46 +0000
-Date: Mon, 19 Aug 2024 20:34:45 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net,
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org,
-	paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de,
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org,
-	david@redhat.com, vbabka@suse.cz, mhocko@suse.com,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
-	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 5/5] alloc_tag: config to store page allocation tag refs
- in page flags
-Message-ID: <ZsOeVSlToyhsyDGD@casper.infradead.org>
-References: <20240819151512.2363698-1-surenb@google.com>
- <20240819151512.2363698-6-surenb@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPswMMGb8TvlyeKIm9kp32wxTPn/K3iaI1MJdTrMPUvyIXsXZxwgVN3GLd8HpCHVqrqW5C4ytN7aLYWZXFf90vBTwJ3bR4r94so3FrzV+q2TlTsaItqQCHyXLpZU7nB/LbP5dYDidYA5KnLrS8okFASyJoQSuBxqt5VCDFZuTgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haJY+L9A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39B7C32782;
+	Mon, 19 Aug 2024 19:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724096107;
+	bh=JahsyMtN0peOVfQtiQs2ZrtDmssy9ML06xUmp/FnA1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=haJY+L9ANRaSrlydIatI3YR5XAOxkzxuaZKVv/eBR0sd9qTAZlww5evTdBPe4nELz
+	 zujPuohC7ZSZv4KuBBJSS5/5jp4KkjqvwawcvZTsC24mLib+WLwDtVMJI1PMTRMOFh
+	 fNJkoKa1fIo6BgxThGv6M/YOsgFi18inJ+UXfLahF7cOTch0ogUaKQ3HLuPrE1ifgC
+	 tetqwHa1oGFQ6/n3f9Ir+YmP7Cj/lGuOQ22KOWNt2YdO/spe6ZVAB+tZV/6Rn/kt8k
+	 iOk4+Jv/DYYyVt0rzyF0rDdREfTruVrbe6aP3ChXZiJ1xXfzJ7rAEL2kOIqs2Vg05o
+	 A5ABMCo0s18YQ==
+Date: Mon, 19 Aug 2024 16:35:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCHSET 0/9] perf annotate-data: Update data-type profiling
+ quality (v1)
+Message-ID: <ZsOeaPxZu1bAobUs@x1>
+References: <20240816235840.2754937-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,21 +62,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819151512.2363698-6-surenb@google.com>
+In-Reply-To: <20240816235840.2754937-1-namhyung@kernel.org>
 
-On Mon, Aug 19, 2024 at 08:15:11AM -0700, Suren Baghdasaryan wrote:
-> @@ -91,7 +97,7 @@
->  #endif
->  
->  #if ZONES_WIDTH + LRU_GEN_WIDTH + SECTIONS_WIDTH + NODES_WIDTH + \
-> -	KASAN_TAG_WIDTH + LAST_CPUPID_SHIFT <= BITS_PER_LONG - NR_PAGEFLAGS
-> +	KASAN_TAG_WIDTH + ALLOC_TAG_REF_WIDTH + LAST_CPUPID_SHIFT <= BITS_PER_LONG - NR_PAGEFLAGS
->  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
->  #else
->  #define LAST_CPUPID_WIDTH 0
+On Fri, Aug 16, 2024 at 04:58:30PM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> I've found a couple of bugs in the DWARF location handling and had
+> some updates to improve the quality of the type resolution.
+> 
+> The current code only checks the first variable it found in the
+> closest scope but sometimes it's not good because macro expansions
+> like container_of (which is used by many list/rb tree manipulation
+> routines) only gives a very limited information (like void *) with
+> type cast.  So it needs to lookup other variables in the upper scope.
+> See the patch 8 for more details.
+> 
+> Also sometimes it can have more information for the parent type if the
+> pointer is for an embedded type.  For example, a list_head is
+> typically a part of bigger struct.  Even if it found a variable for
+> the list_head, it'd be nice if it can tell which list it is.
+> 
+> To compare two type information in general, I've added a heuristic to
+> take a pointer to a bigger data type.
+> 
+> This is an example data, the portion of unknown type went down a bit
+> and the atomic_t turned out to be _mapcount in the struct page.
+> 
+> Before:
+>   #
+>   # Overhead  Data Type
+>   # ........  .........
+>   #
+>       37.24%  (unknown)
+>       14.40%  atomic_t 
+>        8.81%  (stack operation)
+>        5.54%  struct psi_group_cpu
+>        3.40%  struct task_struct
+>        2.99%  struct pcpu_hot
+>        2.99%  struct cfs_rq
+>        2.18%  struct audit_krule
+>        1.93%  struct psi_group
+>        1.62%  struct sched_entity
+> 
+> After:
+>   #
+>   # Overhead  Data Type
+>   # ........  .........
+>   #
+>       36.87%  (unknown)
+>       14.40%  struct page
+>        8.81%  (stack operation)
+>        6.00%  struct psi_group_cpu
+>        3.40%  struct task_struct
+>        3.36%  struct cfs_rq
+>        2.99%  struct pcpu_hot
+>        2.18%  struct audit_krule
+>        1.93%  struct psi_group
+>        1.62%  struct sched_entity
+> 
+> Also updated the debug message and the statistics to help debugging.
+> 
+> The code is available at 'perf/data-profile-update-v1' branch in
+> git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+> 
 
-So if ALLOC_TAG_REF_WIDTH is big enough, it's going to force last_cpupid
-into struct page.  That will misalign struct page and disable HVO --
-with no warning!
+Thanks, applied to perf-tools-next,
 
+- Arnaldo
 
