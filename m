@@ -1,130 +1,184 @@
-Return-Path: <linux-kernel+bounces-292533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D088295708A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B7295708E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616F7281670
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3869E1C23118
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A00C176FDB;
-	Mon, 19 Aug 2024 16:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F39176AB9;
+	Mon, 19 Aug 2024 16:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEaAHZcP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="he7M3R6G"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C98C32C8B;
-	Mon, 19 Aug 2024 16:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB0E13211A;
+	Mon, 19 Aug 2024 16:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085581; cv=none; b=kKH/miNnJWO6j0PkFA8m4UngNRv3vpvVQWdecOmgPl5s/SB+raEVvlGfxn5cHpL4/lBbI7obT87RuHFDcS+rRUYt3nKWLieOgOr4IZhOtoZv0/njg9bn80SYjV2BcdpCckbnvT1M1uahqmQ7Ko6WQGX+uzloAWRpRw1nCsYOVR0=
+	t=1724085592; cv=none; b=PnuNTD+VklC5TCOgH9xXaWr2Rs2qKiCuBED8ta/JDFTgdXTAhpmOGUvZONiKbUW4uP+uNJ2dOm/0DGG0kXabI33TtuMoggWGraRSm0vEBajZNfQqQR37Bce3pRB+PTnn7K+tDJFBGi5n1SEUHEcJguXTZl6qYjgtwYIpD8eAqTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085581; c=relaxed/simple;
-	bh=IqgSEG3y/Kwh9+Hi5mZhe/UmOhmq/rH8CACS2ah6luE=;
+	s=arc-20240116; t=1724085592; c=relaxed/simple;
+	bh=T59eX/EsBUKmee77GmmGHgFUj/XXmuXJCIw/1ikkTww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kA+JXsboZ8sjezR4EsJRtzYscsjWdpyUyuBx9snwnYhA2baNbgtVGJg4tFWI4KxEa8qtMYHVvADLQv5lJu+bU5u/d6aUPNwM0mssp55+QWw9dZmR86GUuQjoYOfmmZ43BsVoQGHfbOwz2nkviZWkbMt0j2RvXR2V+V5hW10/ekY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEaAHZcP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D39B7C32782;
-	Mon, 19 Aug 2024 16:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724085580;
-	bh=IqgSEG3y/Kwh9+Hi5mZhe/UmOhmq/rH8CACS2ah6luE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CEaAHZcPYeFIflj0At10WYgr4IVsMonnR5ksRr13R35+Ez5wFdHYPmyaM18vk7SIM
-	 E71E1rd5oykVcg/zGWkuN7jx7IcziCn+oBiy1kxf4GDByeSizz+9PhxKjh7n3lO/ey
-	 3M9fy+Ir7AgPLb/I1v/fTl76JHmxg4fk43yjYqxKzwX1Dtn9ankOlM+PMEvS5IQECQ
-	 owIbM9ufY7PBw8wj/BG8r9YPFQFzUJ3s/KI68JqMxQgmZyggvHP3vzwnhsibEwYY/w
-	 vWo9pEYT1ScXjBvafgZ9NN3lttJyk8EzsP9rEOO6Zx8srtolFBtlOS2qXTiIJC+58w
-	 QdtO9kzK2QXTg==
-Date: Mon, 19 Aug 2024 17:39:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: claudiu beznea <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v4 07/11] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Message-ID: <20240819-sizing-devouring-17b74473d1a1@spud>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
- <20240819102348.1592171-8-claudiu.beznea.uj@bp.renesas.com>
- <gxjlmdjicwzlexitsx673beyn7ijuf47637nao2luc5h6h6hvi@qstobttin7dw>
- <e6377448-9af3-4807-a8fd-197f5b2b4aa4@tuxon.dev>
- <56204f92-d1d4-4681-8a9d-f28925919ef4@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2ZMmznm13yyOshYC0OrrZGMTsUbGShdki7Ru/6pbNNibtr05o6q4BZJ6gZcAsqh5szzSaLruXIK0GfuVv6cPxU9amZwcWQIF2d/SHWjtKpZ2HuFOawx2pQr7/065fAaPYQuJoSQ9CGU4Acmvkf+Qqxu0SySib/i6zqA8XQGP80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=he7M3R6G; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wndc12bHsz9sjQ;
+	Mon, 19 Aug 2024 18:39:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1724085585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHZf6l7SvG4/hCJDbBwd8yZbMsE33hc0REoLdH7Jm04=;
+	b=he7M3R6GWXkRiOlZobuMtaxrzuauIaRakC1efjnTxmG7tLGplbnh/x+KKh1VeGhIHLQqpe
+	SyypPhTNXZ1QdIPnxrQTOWfLI3BKLYHdQGvmhcIIIMcKmLefNdrlDGFU22PfT5ZqEHDfJO
+	u58h65RHaIDkizoqDgi0RTKgB2de5uACJQUj4wo0ocWpe7WHZuuETB1d16AebMCpwLJgCO
+	B3bhlfrFe2d+BVImcm8m5eefM2dshMT2FZx61L3s8zxOxcEV7tD9cGoGgjE2sPnic4+jei
+	he4Us/5cFvayLVzHw1BSCoprOTIhamRvxac1cQMqqfhB7H6N2x2l11U6qvfQ9w==
+Date: Mon, 19 Aug 2024 16:39:38 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Howells <dhowells@redhat.com>
+Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
+	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
+	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
+	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+	ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+Message-ID: <20240819163938.qtsloyko67cqrmb6@quentin>
+References: <20240818165124.7jrop5sgtv5pjd3g@quentin>
+ <20240815090849.972355-1-kernel@pankajraghav.com>
+ <2924797.1723836663@warthog.procyon.org.uk>
+ <3402933.1724068015@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="VnKoVPdj0kQtiJ5h"
-Content-Disposition: inline
-In-Reply-To: <56204f92-d1d4-4681-8a9d-f28925919ef4@kernel.org>
-
-
---VnKoVPdj0kQtiJ5h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3402933.1724068015@warthog.procyon.org.uk>
 
-On Mon, Aug 19, 2024 at 01:22:39PM +0200, Krzysztof Kozlowski wrote:
-> On 19/08/2024 13:10, claudiu beznea wrote:
-> >=20
-> >=20
-> > On 19.08.2024 14:05, Krzysztof Kozlowski wrote:
-> >> On Mon, Aug 19, 2024 at 01:23:44PM +0300, Claudiu wrote:
-> >>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>
-> >>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible w=
-ith
-> >>> the version available on Renesas RZ/V2H (R9A09G075).
-> >>>
-> >>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>> ---
-> >>>
-> >>> Changes in v4:
-> >>> - added comment near the fallback for RZ/G3S; because of this
-> >>>   dropped Conor's tag
-> >>
-> >> That's not a reason to request a re-review.
+> ---
+> /* Distillation of the generic/393 xfstest */
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> 
+> #define ERR(x, y) do { if ((long)(x) == -1) { perror(y); exit(1); } } while(0)
+> 
+> static const char xxx[40] = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+> static const char yyy[40] = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
+> static const char dropfile[] = "/proc/sys/vm/drop_caches";
+> static const char droptype[] = "3";
+> static const char file[] = "/xfstest.test/wubble";
+> 
+> int main(int argc, char *argv[])
+> {
+>         int fd, drop;
+> 
+> 	/* Fill in the second 8K block of the file... */
+>         fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666);
+>         ERR(fd, "open");
+>         ERR(ftruncate(fd, 0), "pre-trunc $file");
+>         ERR(pwrite(fd, yyy, sizeof(yyy), 0x2000), "write-2000");
+>         ERR(close(fd), "close");
+> 
+> 	/* ... and drop the pagecache so that we get a streaming
+> 	 * write, attaching some private data to the folio.
+> 	 */
+>         drop = open(dropfile, O_WRONLY);
+>         ERR(drop, dropfile);
+>         ERR(write(drop, droptype, sizeof(droptype) - 1), "write-drop");
+>         ERR(close(drop), "close-drop");
+> 
+>         fd = open(file, O_WRONLY, 0666);
+>         ERR(fd, "reopen");
+> 	/* Make a streaming write on the first 8K block (needs O_WRONLY). */
+>         ERR(pwrite(fd, xxx, sizeof(xxx), 0), "write-0");
+> 	/* Now use truncate to shrink and reexpand. */
+>         ERR(ftruncate(fd, 4), "trunc-4");
+>         ERR(ftruncate(fd, 4096), "trunc-4096");
+>         ERR(close(fd), "close-2");
+>         exit(0);
+> }
 
-FWIW, I don't care about how many binding patches I do or do not get
-credit for reviewing. Feel free to give a tag yourself Krzysztof in the
-future if you come across these situations and I'll happily hit ctrl+d
-and remove the thread from my mailbox rather than reply :)
+I tried this code on XFS, and it is working as expected (I am getting
+xxxx).
 
-> >=20
-> > Sorry for that, I wasn't aware of the procedure for this on bindings.
->=20
-> There is no difference. Please read carefully submitting patches,
-> including the chapter about tags.
+[nix-shell:~/xfstests]# hexdump -C /media/test/wubble
+00000000  78 78 78 78 00 00 00 00  00 00 00 00 00 00 00 00  |xxxx............|
+00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+*
+00001000
 
-Yeah, I don't think this patch is materially different on those
-grounds...
+I did some tracing as well and here are the results.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+$ trace-cmd record -e xfs_file_fsync -e xfs_file_buffered_write -e xfs_setattr -e xfs_zero_eof -F -c ./a.out
 
-Cheers,
-Conor.
+[nix-shell:~/xfstests]# trace-cmd report
+cpus=4
+           a.out-3872  [003] 84120.161472: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x0
+           a.out-3872  [003] 84120.172109: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x20 
+           a.out-3872  [003] 84120.172151: xfs_zero_eof:         dev 259:0 ino 0x103 isize 0x0 disize 0x0 pos 0x0 bytecount 0x2000 // First truncate
+           a.out-3872  [003] 84120.172156: xfs_file_buffered_write: dev 259:0 ino 0x103 disize 0x0 pos 0x2000 bytecount 0x28
+           a.out-3872  [003] 84120.185423: xfs_file_buffered_write: dev 259:0 ino 0x103 disize 0x2028 pos 0x0 bytecount 0x28
+           a.out-3872  [003] 84120.185477: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x0
+           a.out-3872  [003] 84120.186493: xfs_setattr:          dev 259:0 ino 0x103 iflags 0x20
+           a.out-3872  [003] 84120.186495: xfs_zero_eof:         dev 259:0 ino 0x103 isize 0x4 disize 0x4 pos 0x4 bytecount 0xffc // Third truncate
 
---VnKoVPdj0kQtiJ5h
-Content-Type: application/pgp-signature; name="signature.asc"
+First and third truncate result in calling xfs_zero_eof as we are
+increasing the size of the file.
 
------BEGIN PGP SIGNATURE-----
+When we do the second ftruncate(fd, 4), we call into iomap_truncate_page() with
+offset 0:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsN1RwAKCRB4tDGHoIJi
-0j2FAQCYZwdZmkdYZ+TmKGJ16Div0eK93INBZozZ973iYJ2a9gD+P9GAiYE2F469
-4ZwvdHMO19vqrDyeNw6aL12viw6umw8=
-=n8Zf
------END PGP SIGNATURE-----
+int
+iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+		const struct iomap_ops *ops)
+{
+	unsigned int blocksize = i_blocksize(inode);
+	unsigned int off = pos & (blocksize - 1);
 
---VnKoVPdj0kQtiJ5h--
+	/* Block boundary? Nothing to do */
+	if (!off)
+		return 0;
+	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
+}
+
+As you can see, we take into account the blocksize (which is set as
+minorder during inode init) and make sure the sub-block zeroing is done
+correctly.
+
+Also if you see iomap_invalidate_folio(), we don't remove the folio
+private data until the whole folio is invalidated.
+
+I doubt we are doing anything wrong from the page cache layer with these
+patches.
+
+All we do with minorder support is to make sure we always allocate folios
+in the page cache that are at least min order in size and aligned to the
+min order (PATCH 2 and 3) and we maintain this even we do a split (PATCH
+4).
+
+I hope this helps!
+
+--
+Pankaj
 
