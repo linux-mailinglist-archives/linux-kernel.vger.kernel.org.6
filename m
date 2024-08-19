@@ -1,312 +1,248 @@
-Return-Path: <linux-kernel+bounces-292573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A0A95715F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C887A957166
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D011F22670
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E032284D04
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E24D186284;
-	Mon, 19 Aug 2024 17:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754FA17ADEE;
+	Mon, 19 Aug 2024 17:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hR/ilOzC"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TSz+OfgM"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2085.outbound.protection.outlook.com [40.107.249.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E50176AA3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086867; cv=none; b=Vgg+f3O/7X+Fi+0QTLwXg5wgiuy1va25R1yXQJJNjWvfwRx/1g7Bb2xGHbg2Bfm1C/OZI/6Ed7AHJ41ryioIv3YXfTTJPndEaCf2hvSfPHxhVvHIaQTXH6CK16QsiOp/oKxABwXxLCez22ZIlYDQT2w2mjFbz9RKXPg61IbM+qA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086867; c=relaxed/simple;
-	bh=ZtX2zam0FT/hFX74bfMDbN5fKKbjL8LUsshVOfW6MUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmyqsCEal+3Soj/md1VI6uHN5pMU2BsPmlNlP518ejryHW24A1hSlRjuoT27ZRCfTn24L7tvA1kua6dadAX44O0d393qsib2X8DprrYjQka+x8/PVWJUp3kcgsLsePMXBvW1NbPXOp3WdLtUnNd/wBajr9DpGZzu5cVSAyobBSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hR/ilOzC; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2021537a8e6so24784985ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724086865; x=1724691665; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8kCQe9G/ESsT5mGMR2/0Q1jS/fZ3F9lMSZDT/xQTaFw=;
-        b=hR/ilOzCBUfBR13kj4mjTSRfnb6k8SHsA/Sh18pGmU117LUbDakCyWgFKV6VVVizYP
-         oq5cpNct7fYMNgAIzpoJ0T3GaYpeqc8NnPr6TvSXI/sYdZ1UL1TxA+hXAshgtRe4HC6A
-         HwYTLJmD9s5xrttCLxKX/J8MAXMFjTX0zi/ouTxoOAsB9XTQyExUa27JlTQNUMlRsNCt
-         ezO8c0iSEYJbVsAiKPtF9kzHC/qXhchxUkVSSojAK5KeaOi4T2sMCYxUy9FFi1Nq9Y2U
-         xaN10UKBUBYbEZlVtz6TAElINektYMtDF6caB39BowQG9WPaWq9a700ESnjnR9wShO0Z
-         Cylg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724086865; x=1724691665;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kCQe9G/ESsT5mGMR2/0Q1jS/fZ3F9lMSZDT/xQTaFw=;
-        b=AKGHthHv6fNuF3bEtWwOekMUlzzGJ08lylVPNzWY5iK1SQfgA5oiPTX4X8GlgxThjl
-         et53VivTP8XQisx/aPQmqjNw+n0uq2XBfIos5HKWH9wKkrxK15GCWbrmICGVeVWFe5Me
-         OVM9aEbneBkC4fpmunEj7rGvGuebyF7dDV8C68wfpuWwg4rr2I08kj4Qo7P87craCHlC
-         o7qZb3lhuuXbi2sNyUdzaGkPIsWTRFjdVsAQfKaty5Uu1OiUvRM6CZMPyOjq/L02g8JO
-         aKFHVhquVhPrTyn0l12kNIY9yNTX/lIovCOjkRdey1PYiSqOu3wr+/aOHsyZPOCoYBY7
-         Sqeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9prLotFKZJu6a/5Lr7P0H4t15a4g18wO2o0TqQ+HN2KQS5AjXOZXr8+VtQlvdWPSQWCGFjfOxX4LFxnqXiHO9tZssCsC/mdtni8Mx
-X-Gm-Message-State: AOJu0Yw4Vh2eSMERdTc7Yc2NuebeQjt+KO4aq3CCY4SNBoaGdPN3DV3W
-	qVSlOKSyKi+MGuDLAAf0wh2Ot32KsuKUdutzCf3gFn405boy7f4g4roaag8Ok2w=
-X-Google-Smtp-Source: AGHT+IHut0PifcKMMGeqhfJ8yiuVWQ7wXVh2IejTYX1LXvOUkkJjf0fMHibwkq8TDuAnUw+VWMtRMQ==
-X-Received: by 2002:a17:902:e74d:b0:202:244e:a0b3 with SMTP id d9443c01a7336-202244ea2admr94263185ad.46.1724086864336;
-        Mon, 19 Aug 2024 10:01:04 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4d5sm65079055ad.41.2024.08.19.10.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 10:01:03 -0700 (PDT)
-Date: Mon, 19 Aug 2024 10:00:55 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Levi Zim <rsworktech@outlook.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, cyy@cyyself.name,
-	alexghiti@rivosinc.com, Paul Walmsley <paul.walmsley@sifive.com>,
-	aou@eecs.berkeley.edu, shuah@kernel.org, corbet@lwn.net,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] riscv: mm: Use hint address in mmap if available
-Message-ID: <ZsN6R8IliKzAKKMb@ghost>
-References: <mhng-5d9bb6c0-9f40-44b2-b9dc-3823cf6dbdef@palmer-ri-x1c9>
- <MEYP282MB2312106710775098261AB348C68C2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A912BD19;
+	Mon, 19 Aug 2024 17:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724086991; cv=fail; b=UVG0PpvlLRmh+iv2g1cnYoKGnCmz5tCrkl4fBfuYSHaNImI7KAax6E3upKzQPz2fvvXtXE+F0ND8jw1NHGiBJmVrbHOpcOrXvM+rwo8rmDxTncR6fmIL7qswaeNW3jsBfWaGZmW9GVNzklQU82oMJu6rfja7y7GYwsnTeowbnFA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724086991; c=relaxed/simple;
+	bh=aOS2j6UyXQ0h4/vJ2RKEatenu4Migymun9dwswWBNVk=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=vEcfF8cIbC7tMb240grfcvh52atQxKBkr01Aef2jwUi640il34A2cCjHpuqQJq02AWuR1QVboyoaE03YO8dnzd/pSlSc3NiWWxSgpg5vZJ3Do6rnI7mL/ZAWatMPWcqLUtGQBmGoW/YX7RR6ZWlfgl0w/qLh0zxuiWxABoPZOAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TSz+OfgM; arc=fail smtp.client-ip=40.107.249.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iCq1CFbgVxTUHSVo1SQvTvRTakNj0BYNy61042J0ZbBNURME89EjN5tjEu1TsjPqEDb4CVhIE3tZfhp01PDGz4Ia2J2QyAuUZUFusgRkKfRjrPSsHIGqJnNwasYgPDhgWl1f7AJsT+nuuwPl/zre0ewu2gPufX14RFdxMDDk0a5BVEImj/l52e9AGi1rh8MkjHJ55RC85zWRpbjOPPWbtkfti9WiXB25t/Ap/L9p3oAdojUqZ55EIbgn81rouhBpcbxk/BI6kyjHOKkOGA1bYGucvhqfU5mYEqO6Gh74Y67OMzs1Znt8HAh1aGCUsw+BBTPlXoCFvEbFg5MjmGDpiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ToTq4ibGc36aGT5kMZPOgv1xdbnl/RFsdAegbeapzFQ=;
+ b=hRWjtUCKD/QV6MXApwdG9+1bfr5F9ThQfX53Ij7hM+mNet7dVc1xUZPEzynKxe/2og9r3V+5mV/O3gvtcxDCJRhfJLT31IxFuOSG0l29z+RIVSXzjLaL8bxmLhnrZc1mMRz7Vl4E76QDWMWPbeVAyvcGkKCsTjkhyDkDGTpz1dzL1abFJDl1ETa2Pe2ybgSpANMMmbynobbVuYBNVS18t6R2mjnEzqomiXKvhbkJoMpLEhe5E8l/nYuuZpJaItSkNP5zG+OnQ/TFNiKB3+tzaT6o0II7Sgd/XiUU8/Qwu7x/yfAVWVy43GeIRWQSZAMR7/fYBm3ZTs5aac6v8ZNAcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ToTq4ibGc36aGT5kMZPOgv1xdbnl/RFsdAegbeapzFQ=;
+ b=TSz+OfgMnJzl9aVsNmFvUC/b7N7nOseJBvZGHYqaZLUD6YgBRa7lN+TOgVCkFaVj5ZafDzW+iMOz82Fl7c37Uh03e0rHqbGXzc34mwPwLcBwm/4yajOKv5ZJZ8ZTkjv0qOmal1CJCxu/nNvR3z1aQ+/f7d9zNhyTYXPyjh69Q4g46ejI18JTwm7Z4sUe+9aWsXMTIbRp7rdXAPnMfuc1AAkEaVmo7JnQaBUHE6LqZDgrgQg/fIt2g8C1GSFWHeefIuOxG11/hu8RWQEiVFy9apq8FUfPNthiQTfCs4ygmVT6klCeOumlwiQOIRiePYAFyLfOL5Hhhj2z4ExRMVXicg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI2PR04MB10857.eurprd04.prod.outlook.com (2603:10a6:800:271::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 17:03:06 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 17:03:05 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v2 00/12] arm64: dts: imx: 3rd dtb warning clearn up
+Date: Mon, 19 Aug 2024 13:01:09 -0400
+Message-Id: <20240819-imx_warning-v2-0-4c428bd11160@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFV6w2YC/1XMQQ7CIBCF4as0sxYDA1HqqvcwjcEW21kUGjCIa
+ bi72MSFy/8l79sg2kA2wqXZINhEkbyrgYcGhtm4yTIaawNyVFwLZLTk28sER25i57sZNaI0AjX
+ Uxxrsg/KuXfvaM8WnD+8dT+K7/hz55yTBOJOqVQpPxhredi6vx8Ev0JdSPvEhLoOkAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux@ew.tq-group.com, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724086981; l=3502;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=aOS2j6UyXQ0h4/vJ2RKEatenu4Migymun9dwswWBNVk=;
+ b=6oZeM9w2ey4pq+8PFoid/wdOeXIEKt8EJq5cLFYoyn7JTkStS6+jD95NG5HzTXlpnnQnKTwtO
+ qXBdBNvAI+EAuQvdzBLcgkbKWQ2KfkKOFG4s560QdummRAancqii0P6
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR13CA0205.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::30) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <MEYP282MB2312106710775098261AB348C68C2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10857:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba7b1f38-f8ea-4a25-75c2-08dcc070cb3a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SzhjalVLdjlmVWJPL3paSG5PeFdra1BjQ2FZTFptUzFtL1QrL2tSL1ZFZ1Jo?=
+ =?utf-8?B?ZzBqaVY5ek4veXFRNEFlNlhtc00weXhuWTR2dzNmald6ZGl6a2RSdS83ekxr?=
+ =?utf-8?B?T3c5ZUcyZDludCsxSDdqRHBvZ01MTTUyNGRTTTZSMVJaUUNESy9HSUZuaVo2?=
+ =?utf-8?B?NDBYU25VbEJsRDFtMzQ4VnNVOHFZYlJVd0R6aGZEZEl5cmpKQUtOQ0p4ZlVM?=
+ =?utf-8?B?UzJwZUJVaSs0QU1GcGZUNm1JbzAvc3lrRk9sUmpBcVorV0dqNWtQRHVsbTR1?=
+ =?utf-8?B?M3RPN0VUSjN5YWMvSkRlTDNoUUlyVjZKOUhRc1JsTlBjc1BQcE5BRVRONWZs?=
+ =?utf-8?B?K2Z3Ti9Wd2dlcThYRllPelEyR2pnTjVHMWFGc21MT005dVY3N25yOGJMOGtX?=
+ =?utf-8?B?R0llbEkvYzFmajFvUGk2dGZQSlN2SzB5eVJkQ1RUVjgwcmhvWHVNU0I3ZDJs?=
+ =?utf-8?B?d0xDLy9BQVp0cCs0TzdseFJ0eGV4Ny9wYTIwYm83VXhNN2ZvNmVSN01FYzBv?=
+ =?utf-8?B?OWxpaUVGa1JOU3ZtOEd1YXhHU21kVUs4Y2tqNFNnRFpoWHhabjFRNXZRS2lx?=
+ =?utf-8?B?amZBaGdPY2pVRnpVQVRZcElEc3pnMk9WNSs0NVo4eUJaZmY3VHpIa0QyME52?=
+ =?utf-8?B?MW1ZTTFHbDdZWmFLMHdxbWRZMFROeXRUNlV4NU4rZVgwQmRScXQ2QXBtTy8y?=
+ =?utf-8?B?YXhrUVdLTGtNMXlBQnFIaWZNOUpoeEtvRmpIUVl1STE4Nk9nMkp1b1pGbUNF?=
+ =?utf-8?B?QkdJemo4dzNVMkY1dnJlNTdUc1RDTnBkSG9aeEZVRmRTR0I0REpqeFhteGIy?=
+ =?utf-8?B?RDY2YkphNlVrQ1p3b2lDU2ZmWlphSkVMQzJLRzBFRjNWVk9qemdJY2ZMN2R5?=
+ =?utf-8?B?TzR4NUhodjlJaXQ2OSttbGxkanNnVkMzZWtaNVptb1cyWFQyZVZ4VFFTOVY4?=
+ =?utf-8?B?RGNaZ3JaYW1qcHJzWXJsMWlkMlpLeE9mRGtQdnFreUpjbmxEMGptd1hpYXRZ?=
+ =?utf-8?B?WGNabmdpYy8yTkZJMkJaa2N5SGdHRWpZNGsxcnZ3MkdvVUFzcVpNNVJTSkN0?=
+ =?utf-8?B?dG9rQVJ2NkhvK081QjJHZW9jL2plS2k0Rngwb0lESE9vTStubytrdkJaVUth?=
+ =?utf-8?B?Ym9yeXUvRGQ0UWoxUEhja0NWSWl0cHdUdnZxWXIxcjY3YkVieVVqMTFidGhw?=
+ =?utf-8?B?Wm15SWorQzRmSjkveFFHT0xsS3c5QzdqR0VDMWtsaWxlS0Q0SUplVklXeDZi?=
+ =?utf-8?B?QXRNaEFOL1QxeVc4YlNOWnAzMm41RmxnL0loNjFqV2lvZFY4TU5LMXg2VGQz?=
+ =?utf-8?B?TWJab0RBd1E2dWozSVN0Q2FWaFhUdDZBeTlGaVNBMm5lelBNcko5WHNvRWJZ?=
+ =?utf-8?B?U3pRS3JHa0pyRm9HOVI0N0ZDVUNGeEZoUjBTNUQwRHE3cTlka092eS90aGZW?=
+ =?utf-8?B?NzcxckpvMnB2dUF3VWtCazZ0ZVRMZzNhbGtWWkc1Y21OLzRMZW9wbmtwVHUv?=
+ =?utf-8?B?Rk93L2hDMHdSdDZha1FYRjlYUWRmZE1hdS9uanVxd29WYTRVYVJwdzJ6UVpp?=
+ =?utf-8?B?TDlOTEVKOTN5ZGYxQWdScjZ1SzVvZEhpVUZsazFZSnhUbmlMV1dpR1RtTHpx?=
+ =?utf-8?B?ZmFRVHlSaFBYRnJ6WkJpVkQxTC9IVC9iK2FPRVVmWTFVVW10dENGRS9Uc0cv?=
+ =?utf-8?B?OGNXRzhXV0UrdVR3ck5SMWdpck1UY3hvS0tVOFFYUEIrR3hCcU5SWGl6STdP?=
+ =?utf-8?B?Nmg1NGRuWGhwL3lTVlV2THBySUF0ZGtnRjdpKzMzU2dKRXVwNVQ2OGhzN1E2?=
+ =?utf-8?B?MVE2czdZbDliSkxvMTVubURjQUxFejFTbDlEUzhGRno0T0dHSWQ0R1Bra1Bx?=
+ =?utf-8?B?K09xVVlja3A1TXNRK1lHcmNuQmZLWGlrSXpCUkdTdXlkUWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cVNxaktVMkkwNFc0ZzhsV1NlcUwwU1dPVkxxRVo4Q0NJTm9Ud1BHU0UreEVa?=
+ =?utf-8?B?SW1rSE02cXR0Rlh1NDRTWFMwb0F0WlFzbFdyaGp1MjZlUzJseW5DMXM0WFl3?=
+ =?utf-8?B?NTZ0dHZqSGtaSmsvZHZqbUU5dTJNdVlOdUlaTndUbmwwSDNnTDNRU1oxNE9y?=
+ =?utf-8?B?NkF1eVgrcWFYajl5c1hIMGxWNEdzanlrRjZLRHZnOW9CTTYxY2JRMlQydGJX?=
+ =?utf-8?B?REhHeDYrMWN2MHk4TFhTTDFUTzFJbHVqU1VhWjl6OGljdDRybFBEdWRmVklv?=
+ =?utf-8?B?MnFQTUZPU3lDMEtTK0laOUc5eGQrKzFVUWlUb3B1cHRVMmNxYnpRL2tDSkZr?=
+ =?utf-8?B?RzZLQjJJQlBoMHQzaHdEVG1YcUNUT2ZITW1sQkxjdWNad0pSam4yaFNId3NZ?=
+ =?utf-8?B?MlpNcGdlT2tjOEdrRWs1ZTFWSU9sc2lQcFMyMCtjdlNJRFcvSjk5Ri9kOGNw?=
+ =?utf-8?B?VFd6K21kZmU1RWVpKzhKdjIvRmJlSVM3TzRBWXlyZWFsMjZQYUliVDUrbWNL?=
+ =?utf-8?B?ZlpUdDVITDQ3d01aTzBlT1BiQjdOeGN0Y2F1bEZqY1pqU2JDRlRIOFEyRFBH?=
+ =?utf-8?B?aXhrSjhBNzg1SVFidFFhRUZMNkxWeTFaYUM4dG1iSGlTNmx0eSs5MVhNSHhH?=
+ =?utf-8?B?VGwrQ1FlMVorbzQvejJEakpzTlVCbGVVRzZTbkorTkdSNVg0emcvN2tqeFFJ?=
+ =?utf-8?B?V3RkZnk1SEovZzYrVE9vZTg1K0pLc2p1b1Y5UFlYbGM2dEoxb1MwNzl5cFVF?=
+ =?utf-8?B?R3NNeXZyZGxJQ0VuMDlFZ010NnVFT1ljWFowWW1wN0tFVDlDVFBPWXF4YVBJ?=
+ =?utf-8?B?SlRNZFlXd1dtMW9oSlluU0FTQlNDb2hvSFRvRGxBUHkwVllqMzFmZmVjUFJJ?=
+ =?utf-8?B?cXhiMTcvdGlrNGhjcyt0VEx6Tk9sdjhOQys2TXRpbWxLWTVIWDdGRTlMVit5?=
+ =?utf-8?B?Y2FSaG5PUmJ5QVBFdEZGa2ZjVmZpemJXT0lXQXFrN0crc1hKVDB6VTMzc2xy?=
+ =?utf-8?B?RlQrSkhRZDJ2ZXFZL2syam42WGdybWZUaXNMVGZRUHV4WVR6TGlPZkJOemhE?=
+ =?utf-8?B?T2U2cjJEbVBydUx4dzl0VEpXMDFWNXBBMzlzcWF4QnNxSDBYMkhwc0xaYWxn?=
+ =?utf-8?B?b0VSbjc2dHg0R3hlU3Zkbm1HdklOcU5BSUp2Q3B0cmdSL0U0TU9sY3Y3bTJT?=
+ =?utf-8?B?WXVSaXpiVzVZc2ZqOFRXcEppdHc0UUJnNjhhajd2cXVzSFRFYm1iVDFMbURH?=
+ =?utf-8?B?Lzd6M01RSUdYVW1Gb29rbEpaUnNWMU16dWtITDFRNGUyRTFjTmlJcEZTakJy?=
+ =?utf-8?B?aTBKSThzZy91dVd3bHVBak9rNk9Nbk14SURkK3VOd3dNcStrS1Z4b1paNDBX?=
+ =?utf-8?B?bnJhYnVzUUF1OUwvQXNJYkFWaDVWY21XK0FzMzdaalVtcVlPQi9BdTlKUWxB?=
+ =?utf-8?B?cGU4dS9NbnJDMnFCdVMyM2ZleEtYRnZhMlljc2Y1Y0NVZzJDODlsS2hnVVJm?=
+ =?utf-8?B?VUJXVTR3YnVzZXVMK1p6TEcwMXA1N2pKT3BsT2pkRHQyQ3I0OFgvQ1B2K0Rx?=
+ =?utf-8?B?a2F6b1JhK3hQUkRaU2pERmt0cjBDdU9zdFFrdnJteTZMT0Z0Q21pQUtmZktB?=
+ =?utf-8?B?eUE4OUpxeFhJMm84NWFUY0NJdlk5YVlMS2tTd3FFUWdNeEJWK08zWHBIMlFT?=
+ =?utf-8?B?eFY1dGlPODlxZ0xLbGsrUWZlU1JVQnhXWFJFWVVWQmVKaXBwWUl6b2I1SnFy?=
+ =?utf-8?B?UVVrbnJEL2FNT1VyZ1JDck81aHQ4VzNGV1kwaVhtajhKUXR1b0VtYVdPUzNu?=
+ =?utf-8?B?cEVlM2FuVGswNmp5bWFVaEtONEJaTER6b1J1by9BbksrMFBpTEZrV2U4Q2d0?=
+ =?utf-8?B?dDVRekp0STJjckx3anpXQTluNFpDOFEwc0QxcWMyUGhjNnNRRDNxQUU1VnFa?=
+ =?utf-8?B?YnV3cFMxanNkT0pCS3hnYlloWExBNkxxQ2UxZTlvaUY3UCtIbWhOci9HSnFa?=
+ =?utf-8?B?ZzNlREdCRkJBKzdFcVZwd0ZXc0VEcVAxL2NtaXFqeHJyRDdzS2FNNEVsU3l3?=
+ =?utf-8?B?bGdzL1p2b2p5MDgzNnV2Ylg0T3QvSHViTjlFQ1p1eUNFckVFMmx1ajBkV1Fs?=
+ =?utf-8?Q?xj98c00ofOzuMMXNijKHJEjTG?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba7b1f38-f8ea-4a25-75c2-08dcc070cb3a
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 17:03:05.9307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: znLfPlbyMdZ+fJ7DNkl1KcEIANwqx0mAg8bDr4XqUq1Kprcub4wodTh7lMlcum3DwQ9yFByHdW7VkheriP4iTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10857
 
-On Mon, Aug 19, 2024 at 01:55:57PM +0800, Levi Zim wrote:
-> On 2024-03-22 22:06, Palmer Dabbelt wrote:
-> > On Thu, 01 Feb 2024 18:28:06 PST (-0800), Charlie Jenkins wrote:
-> > > On Wed, Jan 31, 2024 at 11:59:43PM +0800, Yangyu Chen wrote:
-> > > > On Wed, 2024-01-31 at 22:41 +0800, Yangyu Chen wrote:
-> > > > > On Tue, 2024-01-30 at 17:07 -0800, Charlie Jenkins wrote:
-> > > > > > On riscv it is guaranteed that the address returned by mmap is less
-> > > > > > than
-> > > > > > the hint address. Allow mmap to return an address all the way up to
-> > > > > > addr, if provided, rather than just up to the lower address space.
-> > > > > > > > This provides a performance benefit as well, allowing
-> > > > mmap to exit
-> > > > > > after
-> > > > > > checking that the address is in range rather than searching for a
-> > > > > > valid
-> > > > > > address.
-> > > > > > > > It is possible to provide an address that uses at most the same
-> > > > > > number
-> > > > > > of bits, however it is significantly more computationally expensive
-> > > > > > to
-> > > > > > provide that number rather than setting the max to be the hint
-> > > > > > address.
-> > > > > > There is the instruction clz/clzw in Zbb that returns the highest
-> > > > > > set
-> > > > > > bit
-> > > > > > which could be used to performantly implement this, but it would
-> > > > > > still
-> > > > > > be slower than the current implementation. At worst case, half of
-> > > > > > the
-> > > > > > address would not be able to be allocated when a hint address is
-> > > > > > provided.
-> > > > > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > > > > ---
-> > > > > >  arch/riscv/include/asm/processor.h | 27 +++++++++++---------------
-> > > > > > -
-> > > > > >  1 file changed, 11 insertions(+), 16 deletions(-)
-> > > > > > > > diff --git a/arch/riscv/include/asm/processor.h
-> > > > > > b/arch/riscv/include/asm/processor.h
-> > > > > > index f19f861cda54..8ece7a8f0e18 100644
-> > > > > > --- a/arch/riscv/include/asm/processor.h
-> > > > > > +++ b/arch/riscv/include/asm/processor.h
-> > > > > > @@ -14,22 +14,16 @@
-> > > > > >
-> > > > > >  #include <asm/ptrace.h>
-> > > > > >
-> > > > > > -#ifdef CONFIG_64BIT
-> > > > > > -#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
-> > > > > > -#define STACK_TOP_MAX        TASK_SIZE_64
-> > > > > > -
-> > > > > >  #define arch_get_mmap_end(addr, len, flags)            \
-> > > > > >  ({                                \
-> > > > > >      unsigned long
-> > > > > > mmap_end;                    \
-> > > > > >      typeof(addr) _addr = (addr);                \
-> > > > > > -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
-> > > > > > is_compat_task())) \
-> > > > > > +    if ((_addr) == 0 ||                    \
-> > > > > > +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
-> > > > > > +        ((_addr + len) > BIT(VA_BITS -
-> > > > > > 1)))            \
-> > > > > >          mmap_end = STACK_TOP_MAX;            \
-> > > > > > -    else if ((_addr) >= VA_USER_SV57) \
-> > > > > > -        mmap_end = STACK_TOP_MAX;            \
-> > > > > > -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
-> > > > > > VA_BITS_SV48)) \
-> > > > > > -        mmap_end = VA_USER_SV48;            \
-> > > > > >      else                            \
-> > > > > > -        mmap_end = VA_USER_SV39;            \
-> > > > > > +        mmap_end = (_addr + len);            \
-> > > > > >      mmap_end;                        \
-> > > > > >  })
-> > > > > >
-> > > > > > @@ -39,17 +33,18 @@
-> > > > > >      typeof(addr) _addr = (addr);                \
-> > > > > >      typeof(base) _base = (base);                \
-> > > > > >      unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);    \
-> > > > > > -    if ((_addr) == 0 || (IS_ENABLED(CONFIG_COMPAT) &&
-> > > > > > is_compat_task())) \
-> > > > > > +    if ((_addr) == 0 ||                    \
-> > > > > > +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||    \
-> > > > > > +        ((_addr + len) > BIT(VA_BITS -
-> > > > > > 1)))            \
-> > > > > >          mmap_base = (_base);                \
-> > > > > > -    else if (((_addr) >= VA_USER_SV57) && (VA_BITS >=
-> > > > > > VA_BITS_SV57)) \
-> > > > > > -        mmap_base = VA_USER_SV57 - rnd_gap; \
-> > > > > > -    else if ((((_addr) >= VA_USER_SV48)) && (VA_BITS >=
-> > > > > > VA_BITS_SV48)) \
-> > > > > > -        mmap_base = VA_USER_SV48 - rnd_gap; \
-> > > > > >      else                            \
-> > > > > > -        mmap_base = VA_USER_SV39 - rnd_gap; \
-> > > > > > +        mmap_base = (_addr + len) - rnd_gap; \
-> > > > > >      mmap_base;                        \
-> > > > > >  })
-> > > > > >
-> > > > > > +#ifdef CONFIG_64BIT
-> > > > > > +#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
-> > > > > > +#define STACK_TOP_MAX        TASK_SIZE_64
-> > > > > >  #else
-> > > > > >  #define DEFAULT_MAP_WINDOW    TASK_SIZE
-> > > > > >  #define STACK_TOP_MAX        TASK_SIZE
-> > > > > > > > I have carefully tested your patch on qemu with sv57. A
-> > > > bug that
-> > > > > needs
-> > > > > to be solved is that mmap with the same hint address without
-> > > > > MAP_FIXED
-> > > > > set will fail the second time.
-> > > > > > Userspace code to reproduce the bug:
-> > > > > > #include <sys/mman.h>
-> > > > > #include <stdio.h>
-> > > > > #include <stdint.h>
-> > > > > > void test(char *addr) {
-> > > > >     char *res = mmap(addr, 4096, PROT_READ | PROT_WRITE,
-> > > > > MAP_ANONYMOUS
-> > > > > > MAP_PRIVATE, -1, 0);
-> > > > >     printf("hint %p got %p.\n", addr, res);
-> > > > > }
-> > > > > > int main (void) {
-> > > > >     test(1<<30);
-> > > > >     test(1<<30);
-> > > > >     test(1<<30);
-> > > > >     return 0;
-> > > > > }
-> > > > > > output:
-> > > > > > hint 0x40000000 got 0x40000000.
-> > > > > hint 0x40000000 got 0xffffffffffffffff.
-> > > > > hint 0x40000000 got 0xffffffffffffffff.
-> > > > > > output on x86:
-> > > > > > hint 0x40000000 got 0x40000000.
-> > > > > hint 0x40000000 got 0x7f9171363000.
-> > > > > hint 0x40000000 got 0x7f9171362000.
-> > > > > > It may need to implement a special arch_get_unmapped_area and
-> > > > > arch_get_unmapped_area_topdown function.
-> > > > >
-> > > > This is because hint address < rnd_gap. I have tried to let mmap_base =
-> > > > min((_addr + len), (base) + TASK_SIZE - DEFAULT_MAP_WINDOW). However it
-> > > > does not work for bottom-up while ulimit -s is unlimited. You said this
-> > > > behavior is expected from patch v2 review. However it brings a new
-> > > > regression even on sv39 systems.
-> > > > 
-> > > > I still don't know the reason why use addr+len as the upper-bound. I
-> > > > think solution like x86/arm64/powerpc provide two address space switch
-> > > > based on whether hint address above the default map window is enough.
-> > > > 
-> > > 
-> > > Yep this is expected. It is up to the maintainers to decide.
-> > 
-> > Sorry I forgot to reply to this, I had a buffer sitting around somewhere
-> > but I must have lost it.
-> > 
-> > I think Charlie's approach is the right way to go.  Putting my userspace
-> > hat on, I'd much rather have my allocations fail rather than silently
-> > ignore the hint when there's memory pressure.
-> > 
-> > If there's some real use case that needs these low hints to be silently
-> > ignored under VA pressure then we can try and figure something out that
-> > makes those applications work.
-> 
-> I could confirm that this patch has broken chromium's partition allocator on
-> riscv64. The minimal reproduction I use is chromium-mmap.c:
-> 
-> #include <stdio.h>
-> #include <sys/mman.h>
-> 
-> int main() {
->     void* expected = (void*)0x400000000;
->     void* addr = mmap(expected, 17179869184, PROT_NONE,
-> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
->     if (addr != expected) {
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in v2:
+- Merge gpio hogs rename patches to one
+- Delete remove big-endian patch for watchdog
+- Remove patch imx93-tqma9352-mba93xxla: rename hub to usb
+- Remove patch arm64: dts: imx8mm-beacon-kit: reorder reg-names cec and edid of hdmi@3d
+- Add Alexander review tag
+- rename mux-mdio-emi to mux-mdio
+- binding doc change base on next-20240819
+- Remove patch - Link to v1: https://lore.kernel.org/r/20240813-imx_warning-v1-0-3494426aea09@nxp.com
 
-It is not valid to assume that the address returned by mmap will be the
-hint address. If the hint address is not available, mmap will return a
-different address.
+---
+Frank Li (12):
+      arm64: dts: imx8-ss-img: remove undocument slot for jpeg
+      arm64: dts: fsl-ls1043a: move "fsl,ls1043a-qdma" ahead "fsl,ls1021a-qdma"
+      arm64: dts: imx: rename gpio hog as <gpio name>-hog
+      arm64: dts: fsl-ls1012a-frdm: move clock-sc16is7xx under root node
+      arm64: dts: layerscape: rename mdio-mux-emi to mdio-mux@<addr>
+      arm64: dts: fsl-ls1028: add missed supply for wm8904
+      arm64: dts: imx8mm-venice-gw7902(3): add #address-cells for gsc@20
+      arm64: dts: fsl-lx2160a-tqmlx2160a: change "vcc" to "vdd" for hub*
+      arm64: dts: imx8mp-venice: add vddl and vana for sensor@10
+      arm64: dts: fsl-ls1088a-ten64: change to low case hex value
+      arm64: dts: s32v234: remove fallback compatible string arm,cortex-a9-gic
+      arm64: dts: imx8mm-beacon-kit: add DVDD-supply and DOVDD-supply
 
->         printf("Not expected address: %p != %p\n", addr, expected);
->     }
->     expected = (void*)0x3fffff000;
->     addr = mmap(expected, 17179873280, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS,
-> -1, 0);
->     if (addr != expected) {
->         printf("Not expected address: %p != %p\n", addr, expected);
->     }
->     return 0;
-> }
-> 
-> The second mmap fails with ENOMEM. Manually reverting this commit fixes the
-> issue for me. So I think it's clearly a regression and breaks userspace.
-> 
+ arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts       | 12 ++++++------
+ .../dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts | 12 ++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts        |  2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi           |  2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts        |  2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dts      |  6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi       |  2 +-
+ .../dts/freescale/fsl-lx2160a-tqmlx2160a-mblx2160a.dts   |  4 ++--
+ arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi           |  2 --
+ .../boot/dts/freescale/imx8mm-beacon-baseboard.dtsi      | 16 ++++++++++++++++
+ .../freescale/imx8mm-phygate-tauri-l-rs232-rs232.dtso    |  2 +-
+ .../freescale/imx8mm-phygate-tauri-l-rs232-rs485.dtso    |  2 +-
+ .../dts/freescale/imx8mm-venice-gw72xx-0x-imx219.dtso    | 16 ++++++++++++++++
+ .../dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso |  2 +-
+ .../dts/freescale/imx8mm-venice-gw72xx-0x-rs422.dtso     |  4 ++--
+ .../dts/freescale/imx8mm-venice-gw72xx-0x-rs485.dtso     |  4 ++--
+ .../dts/freescale/imx8mm-venice-gw73xx-0x-imx219.dtso    | 16 ++++++++++++++++
+ .../dts/freescale/imx8mm-venice-gw73xx-0x-rs232-rts.dtso |  2 +-
+ .../dts/freescale/imx8mm-venice-gw73xx-0x-rs422.dtso     |  4 ++--
+ .../dts/freescale/imx8mm-venice-gw73xx-0x-rs485.dtso     |  4 ++--
+ arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts   |  2 ++
+ arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts   |  2 ++
+ arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts   |  2 ++
+ .../boot/dts/freescale/imx8mn-beacon-baseboard.dtsi      | 16 ++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts   |  2 ++
+ .../boot/dts/freescale/imx8mp-venice-gw74xx-imx219.dtso  | 16 ++++++++++++++++
+ arch/arm64/boot/dts/freescale/s32v234.dtsi               |  2 +-
+ 27 files changed, 128 insertions(+), 30 deletions(-)
+---
+base-commit: a50aae2269990c41a5bb896cd9340395da000eef
+change-id: 20240812-imx_warning-7bad8223a128
 
-The issue here is that overlapping memory is being requested. This
-second mmap will never be able to provide an address at 0x3fffff000 with
-a size of 0x400001000 since mmap just provided an address at 0x400000000
-with a size of 0x400000000.
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
 
-Before this patch, this request causes mmap to return a completely
-arbitrary value. There is no reason to use a hint address in this manner
-because the hint can never be respected. Since an arbitrary address is
-desired, a hint of zero should be used.
-
-This patch causes the behavior to be more deterministic. Instead of
-providing an arbitrary address, it causes the address to be less than or
-equal to the hint address. This allows for applications to make
-assumptions about the returned address.
-
-This code is unfortunately relying on the previously mostly undefined
-behavior of the hint address in mmap. The goal of this patch is to help
-developers have more consistent mmap behavior, but maybe it is necessary
-to hide this behavior behind an mmap flag.
-
-- Charlie
-
-> See also https://github.com/riscv-forks/electron/issues/4
-> 
-> > > 
-> > > - Charlie
-> 
-> Sincerely,
-> Levi
-> 
 
