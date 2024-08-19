@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-291528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AE39563B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CEC9563B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F1C280FAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1C21C21525
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED4F14B95A;
-	Mon, 19 Aug 2024 06:25:06 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3595B1547DC;
+	Mon, 19 Aug 2024 06:25:44 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69B6154454;
-	Mon, 19 Aug 2024 06:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36CA14B95A;
+	Mon, 19 Aug 2024 06:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048706; cv=none; b=XlihfwaeiPGjg7qicxoFCdumMMD7SNHJWM9DA294+b0C2XipK0UMa8wyqO4838HYyUYawgXQS8sc2aXO0RY2HDUPerSzfjBEWtUyiFEEa4j1ayNaMgdAOhT4AuJlc2edpjRbutY0C9IUL+5nU1k78MYOoPAYN8lJ5NM420hKz90=
+	t=1724048743; cv=none; b=J0r8FVMIUpmfS4d5OU8ly5bwE9atCIVFfdaFzfs9r7TEsB3EiDgxdVfc2d0bZgIZaibn1dRTN3EdD+s58nGYbngw/sAbku+4X9lHvulPNEHdHIw5ztD4raVoXXmIbvW86CKtKIG2Na7jd6+TIgd2b4DdB0Axzo8G9CQcoNtlpm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048706; c=relaxed/simple;
-	bh=jqd3gwx8ZSeGwYjx7ijh94AixUl8yThR4veXidRSI2Q=;
+	s=arc-20240116; t=1724048743; c=relaxed/simple;
+	bh=uKftt/xyf0unfmJe7wdprT0uTWTQKoQ3fQp9bUqW2Ms=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pL1ns0OS6FyLOHx+f3I6qZUr8rKcFAJAdYbV8PD+yUQntvf3VRLF9u2SPfjWoWdeTg1HKTwbxIHe2lrJJY0fMqjyuIuTsD7UABOFtxAmYiGL6OrUJl8foLcw/5ph5odcskyrJ8d5ZPmF3uP+9TTnq052PPUTxikVorA5aO7UATg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	 In-Reply-To:Content-Type; b=i4b1wuMXSq+GCaB8gdqBHsAAETEbiOI7laSxtJkCBcs7dcluowC2lUQwPoSSCZqxUOjj+hRlvRRu3Y3o+hcdd963fB6/7WUjxL1VQE0oy2LRgOCBmwwNbb06vSNqADeRZ1mpCIfeUZ/HJFJ1RsagR6aAfPtKTH9euhHtFcdyiv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnMwz6KQbzpT0F;
-	Mon, 19 Aug 2024 14:23:31 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id E976D180064;
-	Mon, 19 Aug 2024 14:24:59 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 19 Aug 2024 14:24:59 +0800
-Message-ID: <f3f955cf-18b7-4a50-bacd-ea13e35bf72d@huawei.com>
-Date: Mon, 19 Aug 2024 14:24:58 +0800
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WnMyX6FJwz13Vjb;
+	Mon, 19 Aug 2024 14:24:52 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id ECA4F140138;
+	Mon, 19 Aug 2024 14:25:28 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 19 Aug
+ 2024 14:25:28 +0800
+Message-ID: <68fa943a-68e8-44d6-ad08-97519a151a79@huawei.com>
+Date: Mon, 19 Aug 2024 14:25:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,150 +47,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] xfs: Fix missing interval for missing_owner in xfs
- fsmap
-To: "Darrick J. Wong" <djwong@kernel.org>
-CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
-	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <20240819005320.304211-3-wozizhi@huawei.com>
- <20240819052123.GM865349@frogsfrogsfrogs>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <20240819052123.GM865349@frogsfrogsfrogs>
+Subject: Re: [PATCH -next 1/3] cgroup/cpuset: Correct invalid remote parition
+ prs
+To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
+	<sergeh@kernel.org>, <mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816082727.2779-1-chenridong@huawei.com>
+ <20240816082727.2779-2-chenridong@huawei.com>
+ <dc4672a0-bff4-493f-81da-9dfdda9018f2@redhat.com>
+ <ff059171-d38e-41a3-86e0-e092a34ba970@redhat.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <ff059171-d38e-41a3-86e0-e092a34ba970@redhat.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
 
 
-在 2024/8/19 13:21, Darrick J. Wong 写道:
-> On Mon, Aug 19, 2024 at 08:53:20AM +0800, Zizhi Wo wrote:
->> In the fsmap query of xfs, there is an interval missing problem:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
->>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
->>     0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
->>     1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
->>     2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
->>     3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
->>     4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
->>     5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
->>     6: 253:16 [104..127]:           free space                          0  (104..127)               24
->>     ......
+On 2024/8/19 10:18, Waiman Long wrote:
+> On 8/18/24 22:14, Waiman Long wrote:
 >>
->> BUG:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->> [root@fedora ~]#
->> Normally, we should be able to get [104, 107), but we got nothing.
->>
->> The problem is caused by shifting. The query for the problem-triggered
->> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
->> unknown space in bnobt), which is obtained by subtraction (gap). For this
->> scenario, the interval is obtained by info->last. However, rec_daddr is
->> calculated based on the start_block recorded in key[1], which is converted
->> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
->> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
->> <= info->next_daddr, no records will be displayed. In the above example,
->> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
->> are reduced to 0 and the gap is ignored:
->>
->>   before calculate ----------------> after shifting
->>   104(st)  107(ed)		      12(st/ed)
->>    |---------|				  |
->>    sector size			      block size
->>
->> Resolve this issue by introducing the "end_daddr" field in
->> xfs_getfsmap_info. This records key[1].fmr_physical at the granularity of
->> sector. If the current query is the last, the rec_daddr is end_daddr to
->> prevent missing interval problems caused by shifting. We only need to focus
->> on the last query, because xfs disks are internally aligned with disk
->> blocksize that are powers of two and minimum 512, so there is no problem
->> with shifting in previous queries.
->>
->> After applying this patch, the above problem have been solved:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:16 [104..106]:      free space                        0  (104..106)           3
->>
->> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
->> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
->> ---
->>   fs/xfs/xfs_fsmap.c | 19 ++++++++++++++++++-
->>   1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
->> index 3a30b36779db..4734f8d6303c 100644
->> --- a/fs/xfs/xfs_fsmap.c
->> +++ b/fs/xfs/xfs_fsmap.c
->> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
->>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
->>   	/* daddr of low fsmap key when we're using the rtbitmap */
->>   	xfs_daddr_t		low_daddr;
->> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
->>   	u64			missing_owner;	/* owner of holes */
->>   	u32			dev;		/* device id */
->>   	/*
->> @@ -294,6 +295,19 @@ xfs_getfsmap_helper(
->>   		return 0;
->>   	}
->>   
->> +	/*
->> +	 * For an info->last query, we're looking for a gap between the
->> +	 * last mapping emitted and the high key specified by userspace.
->> +	 * If the user's query spans less than 1 fsblock, then
->> +	 * info->high and info->low will have the same rm_startblock,
->> +	 * which causes rec_daddr and next_daddr to be the same.
->> +	 * Therefore, use the end_daddr that we calculated from
->> +	 * userspace's high key to synthesize the record.  Note that if
->> +	 * the btree query found a mapping, there won't be a gap.
->> +	 */
->> +	if (info->last && info->end_daddr != LLONG_MAX)
+>> On 8/16/24 04:27, Chen Ridong wrote:
+>>> When enable a remote partition, I found that:
+>>>
+>>> cd /sys/fs/cgroup/
+>>> mkdir test
+>>> mkdir test/test1
+>>> echo +cpuset > cgroup.subtree_control
+>>> echo +cpuset >  test/cgroup.subtree_control
+>>> echo 3 > test/test1/cpuset.cpus
+>>> echo root > test/test1/cpuset.cpus.partition
+>>> cat test/test1/cpuset.cpus.partition
+>>> root invalid (Parent is not a partition root)
+>>>
+>>> The parent of a remote partition could not be a root. This is due to the
+>>> emtpy effective_xcpus. It would be better to prompt the message "invalid
+>>> cpu list in cpuset.cpus.exclusive".
+>>>
+>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>> ---
+>>>   kernel/cgroup/cpuset.c | 42 +++++++++++++++++++++++-------------------
+>>>   1 file changed, 23 insertions(+), 19 deletions(-)
+>>>
+>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>> index e34fd6108b06..fdd5346616d3 100644
+>>> --- a/kernel/cgroup/cpuset.c
+>>> +++ b/kernel/cgroup/cpuset.c
+>>> @@ -80,6 +80,7 @@ enum prs_errcode {
+>>>       PERR_HOTPLUG,
+>>>       PERR_CPUSEMPTY,
+>>>       PERR_HKEEPING,
+>>> +    PERR_PMT,
 > 
-> XFS_BUF_DADDR_NULL (and yes, I know the rest of the file is wildly
-> inconsistent, I'll send a patch to fix that too...)
+> One more thing, the "PMT" acronym for the error code is hard to decode. 
+> I will suggest you either use the "PERMISSION" or "ACCESS" like the 
+> EACCESS errno.
 > 
-> --D
-
- From what I understand, you mean that info->end_daddr is initialized to
-XFS_BUF_DADDR_NULL, correct?
-
-Then, regarding this specific issue, are you going to propose a fix
-patch to address it, or is the fix patch you mentioned intended to fix
-other file contiguity problems in fsmap? I'm a bit unclear about that.
+> Cheers,
+> Longman
+> 
+Thanks, will do.
+>>>   };
+>>>     static const char * const perr_strings[] = {
+>>> @@ -91,6 +92,7 @@ static const char * const perr_strings[] = {
+>>>       [PERR_HOTPLUG]   = "No cpu available due to hotplug",
+>>>       [PERR_CPUSEMPTY] = "cpuset.cpus and cpuset.cpus.exclusive are 
+>>> empty",
+>>>       [PERR_HKEEPING]  = "partition config conflicts with 
+>>> housekeeping setup",
+>>> +    [PERR_PMT]       = "Enable partition not permitted",
+>>>   };
+>>>     struct cpuset {
+>>> @@ -1669,7 +1671,7 @@ static int remote_partition_enable(struct 
+>>> cpuset *cs, int new_prs,
+>>>        * The user must have sysadmin privilege.
+>>>        */
+>>>       if (!capable(CAP_SYS_ADMIN))
+>>> -        return 0;
+>>> +        return PERR_PMT;
+>>>         /*
+>>>        * The requested exclusive_cpus must not be allocated to other
+>>> @@ -1683,7 +1685,7 @@ static int remote_partition_enable(struct 
+>>> cpuset *cs, int new_prs,
+>>>       if (cpumask_empty(tmp->new_cpus) ||
+>>>           cpumask_intersects(tmp->new_cpus, subpartitions_cpus) ||
+>>>           cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+>>> -        return 0;
+>>> +        return PERR_INVCPUS;
+>>>         spin_lock_irq(&callback_lock);
+>>>       isolcpus_updated = partition_xcpus_add(new_prs, NULL, 
+>>> tmp->new_cpus);
+>>> @@ -1698,7 +1700,7 @@ static int remote_partition_enable(struct 
+>>> cpuset *cs, int new_prs,
+>>>        */
+>>>       update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
+>>>       update_sibling_cpumasks(&top_cpuset, NULL, tmp);
+>>> -    return 1;
+>>> +    return 0;
+>>>   }
+>>
+>> Since you are changing the meaning of the function returned value, you 
+>> should also update the return value comment as well.
+>>
+Will do.
+>>>     /*
+>>> @@ -3151,24 +3153,26 @@ static int update_prstate(struct cpuset *cs, 
+>>> int new_prs)
+>>>           goto out;
+>>>         if (!old_prs) {
+>>> -        enum partition_cmd cmd = (new_prs == PRS_ROOT)
+>>> -                       ? partcmd_enable : partcmd_enablei;
+>>> -
+>>>           /*
+>>> -         * cpus_allowed and exclusive_cpus cannot be both empty.
+>>> -         */
+>>> -        if (xcpus_empty(cs)) {
+>>> -            err = PERR_CPUSEMPTY;
+>>> -            goto out;
+>>> -        }
+>>> +        * If parent is valid partition, enable local partiion.
+>>> +        * Otherwise, enable a remote partition.
+>>> +        */
+>>> +        if (is_partition_valid(parent)) {
+>>> +            enum partition_cmd cmd = (new_prs == PRS_ROOT)
+>>> +                           ? partcmd_enable : partcmd_enablei;
+>>>   -        err = update_parent_effective_cpumask(cs, cmd, NULL, 
+>>> &tmpmask);
+>>> -        /*
+>>> -         * If an attempt to become local partition root fails,
+>>> -         * try to become a remote partition root instead.
+>>> -         */
+>>> -        if (err && remote_partition_enable(cs, new_prs, &tmpmask))
+>>> -            err = 0;
+>>> +            /*
+>>> +             * cpus_allowed and exclusive_cpus cannot be both empty.
+>>> +             */
+>>> +            if (xcpus_empty(cs)) {
+>>> +                err = PERR_CPUSEMPTY;
+>>> +                goto out;
+>>> +            }
+>>
+>> The xcpus_empty() check should be done for both local and remote 
+>> partition.
+>>
+>> Cheers,
+>> Longman
+>>
+Thanks, I will do it at V2.
 
 Thanks,
-Zizhi Wo
-
+Ridong
+>>> +
+>>> +            err = update_parent_effective_cpumask(cs, cmd, NULL, 
+>>> &tmpmask);
+>>> +        } else {
+>>> +            err = remote_partition_enable(cs, new_prs, &tmpmask);
+>>> +        }
+>>>       } else if (old_prs && new_prs) {
+>>>           /*
+>>>            * A change in load balance state only, no change in cpumasks.
 > 
->> +		rec_daddr = info->end_daddr;
->> +
->>   	/* Are we just counting mappings? */
->>   	if (info->head->fmh_count == 0) {
->>   		if (info->head->fmh_entries == UINT_MAX)
->> @@ -946,6 +960,7 @@ xfs_getfsmap(
->>   
->>   	info.next_daddr = head->fmh_keys[0].fmr_physical +
->>   			  head->fmh_keys[0].fmr_length;
->> +	info.end_daddr = LLONG_MAX;
->>   	info.fsmap_recs = fsmap_recs;
->>   	info.head = head;
->>   
->> @@ -966,8 +981,10 @@ xfs_getfsmap(
->>   		 * low key, zero out the low key so that we get
->>   		 * everything from the beginning.
->>   		 */
->> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
->> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
->>   			dkeys[1] = head->fmh_keys[1];
->> +			info.end_daddr = dkeys[1].fmr_physical;
->> +		}
->>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
->>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
->>   
->> -- 
->> 2.39.2
->>
->>
 > 
 
