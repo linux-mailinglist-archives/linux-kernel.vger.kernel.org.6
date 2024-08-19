@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-291940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0753A956924
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:15:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D520295692A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A19F1C21F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851A9283536
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511B91662FD;
-	Mon, 19 Aug 2024 11:15:24 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A586165F1A;
+	Mon, 19 Aug 2024 11:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7arKBgy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B72B3770D;
-	Mon, 19 Aug 2024 11:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D21163AA7;
+	Mon, 19 Aug 2024 11:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724066123; cv=none; b=aer3R1z9IOjUI6PfdcZ0pys007KHH8cr17oM2gROb/z790QBBE1X+8sF4UFegkW/GfXngN6rBHH1xBB+KPHHLw1EryqDBPH/4hqRkQA5N/oLnh024b+C8uySXsrJPcimgt2ua+RIHwkNH8cgXFLo8LnBLWVJbKz1hL91lodCHhM=
+	t=1724066171; cv=none; b=fKuKZ/FOBHB/O1Lwg1Jay8F0d6BpFLZhqOWRxIUt/b/s5MNv2411ku6DyJEJkCUCxP6hT9sxx73Ksb3sHx76ZgAMi8fqFyGlZK+rhFrqDnV2dcIQbwraReP3kbV226tEqBf8oaNx8RN78U/0649zZe00QBVm5nVXRTfWdjtPoOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724066123; c=relaxed/simple;
-	bh=L/UhslzauGnofkgP01XLH1SNBKrb/vShNOdCneQwFNo=;
+	s=arc-20240116; t=1724066171; c=relaxed/simple;
+	bh=UUA9wcGcOXhrVP0fsoTAK/cwqpkvy1cfySU4KgiNkKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDD/XXgjTjKNg/GMBTBZRDGk9TR0Y0IGxs4nzRWhfrfx6sLotexLkmFmZOeQeXd9cbPTB7m4XTvzSajyn5MddkAgx/TvXzRdE9VJZjk3rCmCUNHHBraZZuxT3cMc10oZb3nk0ouQ7d1jrbGpbfzq99W9ez18iqP1kEo5jrn73O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42816ca797fso34053575e9.2;
-        Mon, 19 Aug 2024 04:15:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724066120; x=1724670920;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3xEnhR+BnZyqhep0tu1+6gKqzWhCmgeh7ON3eSgIapg=;
-        b=ZmkLB3qLc1YJIL7hK1ofvYqxLCV+CY5dYHvkPw1Tf8b1YQSRpsxd3pjQcqztDDjtj8
-         /T3ujQDPsmM1SUvnl2nsEwFR0S5hWg+LJnjPYLKZ9F3W64W+RdVWNYx3/gGZB7h/EP2f
-         9huwFl4tbrkyEIdC9DBUamcE1iBnJensGBHH53dXjt1XkGgk/Ctr5HOqGf0vyFMk1OJN
-         SoQArTaBgsQgHEJgF135X44LQT8gaiB1efXVYegC0emEPHCxWK274ZiglBSOxXDQJH2V
-         Y7t19CeBSFrELoWWTEl5He6z4FgzWx0rdvJIheuIvHqzurdGtMNYUeDHSoQR8O0OfmnD
-         Fsnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNUJszP+bZ/vZD99IPqCEZZH95UCQAp1m03M7OQN3xwuJJ73PA2GtMg4b9A79eP6d6Gy3ANLGwKvhObog=@vger.kernel.org, AJvYcCWJeVh+FC0Q5ebxbqBeVlLRdE2q6Zw2k4yc/qitr50bYjRWxPVjHC9PJ5IpWnl2AKYULE6ZyAr0Vj5b0O5n@vger.kernel.org, AJvYcCXaVwD8ckeOFqDr9cPqIsBYeaOj4He6/s4WryR5xjrfszYzChsK5rHoJLGOXW6KDRGA2Q3826sYU2tL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDxt9YEivVqjiqvR83wT6d2aFRvvpwdl4uH3kUiVYpf9+uer21
-	rQ6+WvnzBrAj7/lz02gYQsT7WdEC4Xn9vmSM5cO8Rl7aEWcXbKBQ
-X-Google-Smtp-Source: AGHT+IH8/p+04BfrJXSaCxwKTnTJcsz63gHT8daKI2ZKAyHVF0aeARbyLjNtxUWoElROY9FmJQ+tBw==
-X-Received: by 2002:a05:600c:1c24:b0:427:9a8f:9717 with SMTP id 5b1f17b1804b1-429ed620183mr82675765e9.0.1724066120138;
-        Mon, 19 Aug 2024 04:15:20 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ed784171sm105623845e9.38.2024.08.19.04.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 04:15:19 -0700 (PDT)
-Date: Mon, 19 Aug 2024 13:15:16 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sumit.semwal@linaro.org, 
-	christian.koenig@amd.com, esben@geanix.com, linux-arm-kernel@lists.infradead.org, 
-	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: mtd: nuvoton,ma35d1-nand: add new
- bindings
-Message-ID: <l6t47glpxscvbr6rsq67alwpn6mcltjnxrnr3xs4qa3slqezrr@zp6a43hiwq7l>
-References: <20240819092037.110260-1-hpchen0nvt@gmail.com>
- <20240819092037.110260-2-hpchen0nvt@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=na5HHJU0DpOo5IU79kjLOaRXRdMhwVIu9IwOiKw4I++wqtvCbfXj3Muig2gvTcxR89k6D/Dx8ggH/UQSR8sVmquGCjJxsSD4ISHd0tYAnSZ0rG/CiZD5Qx3up8EanHVkF9FEyZtE+z62J6WCFhxfTIiXnmegd/+G0joY+isNp0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7arKBgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB409C32782;
+	Mon, 19 Aug 2024 11:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724066170;
+	bh=UUA9wcGcOXhrVP0fsoTAK/cwqpkvy1cfySU4KgiNkKE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t7arKBgyOgcQfWlBgImkrFR6HL4M70f/i88z8lg2PT3BdC3d9F5Yxp53JF+FFg8rZ
+	 mz+T+t2/zqldxOBr9UCbbTCvn/C6dr99DBeb9y3YAhsvrD5ZCbkrr9Hy31bZjLDNGa
+	 nF42sJX65ZkCn9F6Cbzm7tbxoplBfoSnUz7/88fWgXfNJqJbEAmPM/5OjcoEIrGBtZ
+	 Yu9MFEFw4CmfUUYoAxQ0QkJIUR3frvDrhpeIIQCiL5g67StzDVYTRSZMXd9Od+FJ5f
+	 Fblqj19TYu70vtSCIo9bh9N1bDad717a6iRcz615tsSzsf1CjyG9GNKWB1q6rVa1eH
+	 aeq+SHoIF09Qg==
+Date: Mon, 19 Aug 2024 13:16:04 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	Liam Wisehart <liamwisehart@meta.com>, Liang Tang <lltang@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>, LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240819-keilen-urlaub-2875ef909760@brauner>
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,21 +66,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240819092037.110260-2-hpchen0nvt@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
 
-On Mon, Aug 19, 2024 at 09:20:36AM +0000, Hui-Ping Chen wrote:
-> Add dt-bindings for the Nuvoton MA35 SoC NAND Controller.
+On Mon, Aug 19, 2024 at 07:18:40AM GMT, Song Liu wrote:
+> Hi Christian, 
 > 
-> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
-> ---
->  .../bindings/mtd/nuvoton,ma35d1-nand.yaml     | 93 +++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+> Thanks again for your suggestions here. I have got more questions on
+> this work. 
 > 
+> > On Jul 29, 2024, at 6:46 AM, Christian Brauner <brauner@kernel.org> wrote:
+> 
+> [...]
+> 
+> >> I am not sure I follow the suggestion to implement this with 
+> >> security_inode_permission()? Could you please share more details about
+> >> this idea?
+> > 
+> > Given a path like /bin/gcc-6.9/gcc what that code currently does is:
+> > 
+> > * walk down to /bin/gcc-6.9/gcc
+> > * walk up from /bin/gcc-6.9/gcc and then checking xattr labels for:
+> >  gcc
+> >  gcc-6.9/
+> >  bin/
+> >  /
+> > 
+> > That's broken because someone could've done
+> > mv /bin/gcc-6.9/gcc /attack/ and when this walks back and it checks xattrs on
+> > /attack even though the path lookup was for /bin/gcc-6.9. IOW, the
+> > security_file_open() checks have nothing to do with the permission checks that
+> > were done during path lookup.
+> > 
+> > Why isn't that logic:
+> > 
+> > * walk down to /bin/gcc-6.9/gcc and check for each component:
+> > 
+> >  security_inode_permission(/)
+> >  security_inode_permission(gcc-6.9/)
+> >  security_inode_permission(bin/)
+> >  security_inode_permission(gcc)
+> >  security_file_open(gcc)
+> 
+> I am trying to implement this approach. The idea, IIUC, is:
+> 
+> 1. For each open/openat, as we walk the path in do_filp_open=>path_openat, 
+>    check xattr for "/", "gcc-6.9/", "bin/" for all given flags.
+> 2. Save the value of the flag somewhere (for BPF, we can use inode local
+>    storage). This is needed, because openat(dfd, ..) will not start from
+>    root again. 
+> 3. Propagate these flag to children. All the above are done at 
+>    security_inode_permission. 
+> 4. Finally, at security_file_open, check the xattr with the file, which 
+>    is probably propagated from some parents.
+> 
+> Did I get this right? 
+> 
+> IIUC, there are a few issues with this approach. 
+> 
+> 1. security_inode_permission takes inode as parameter. However, we need 
+>    dentry to get the xattr. Shall we change security_inode_permission
+>    to take dentry instead? 
+>    PS: Maybe we should change most/all inode hooks to take dentry instead?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+security_inode_permission() is called in generic_permission() which in
+turn is called from inode_permission() which in turn is called from
+inode->i_op->permission() for various filesystems. So to make
+security_inode_permission() take a dentry argument one would need to
+change all inode->i_op->permission() to take a dentry argument for all
+filesystems. NAK on that.
 
-Best regards,
-Krzysztof
+That's ignoring that it's just plain wrong to pass a dentry to
+**inode**_permission() or security_**inode**_permission(). It's
+permissions on the inode, not the dentry.
 
+> 
+> 2. There is no easy way to propagate data from parent. Assuming we already
+>    changed security_inode_permission to take dentry, we still need some
+>    mechanism to look up xattr from the parent, which is probably still 
+>    something like bpf_dget_parent(). Or maybe we should add another hook 
+>    with both parent and child dentry as input?
+> 
+> 3. Given we save the flag from parents in children's inode local storage, 
+>    we may consume non-trivial extra memory. BPF inode local storage will 
+>    be freed as the inode gets freed, so we will not leak any memory or 
+>    overflow some hash map. However, this will probably increase the 
+>    memory consumption of inode by a few percents. I think a "walk-up" 
+>    based approach will not have this problem, as we don't need the extra
+>    storage. Of course, this means more xattr lookups in some cases. 
+> 
+> > 
+> > I think that dget_parent() logic also wouldn't make sense for relative path
+> > lookups:
+> > 
+> > dfd = open("/bin/gcc-6.9", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+> > 
+> > This walks down to /bin/gcc-6.9 and then walks back up (subject to the
+> > same problem mentioned earlier) and check xattrs for:
+> > 
+> >  gcc-6.9
+> >  bin/
+> >  /
+> > 
+> > then that dfd is passed to openat() to open "gcc":
+> > 
+> > fd = openat(dfd, "gcc", O_RDONLY);
+> > 
+> > which again walks up to /bin/gcc-6.9 and checks xattrs for:
+> >  gcc
+> >  gcc-6.9
+> >  bin/
+> >  /
+> > 
+> > Which means this code ends up charging relative lookups twice. Even if one
+> > irons that out in the program this encourages really bad patterns.
+> > Path lookup is iterative top down. One can't just randomly walk back up and
+> > assume that's equivalent.
+> 
+> I understand that walk-up is not equivalent to walk down. But it is probably
+> accurate enough for some security policies. For example, LSM LandLock uses
+> similar logic in the file_open hook (file security/landlock/fs.c, function 
+> is_access_to_paths_allowed). 
+
+I'm not well-versed in landlock so I'll let Mickaël comment on this with
+more details but there's very important restrictions and differences
+here.
+
+Landlock expresses security policies with file hierarchies and
+security_inode_permission() doesn't and cannot have access to that.
+
+Landlock is subject to the same problem that the BPF is here. Namely
+that the VFS permission checking could have been done on a path walk
+completely different from the path walk that is checked when walking
+back up from security_file_open().
+
+But because landlock works with a deny-by-default security policy this
+is ok and it takes overmounts into account etc.
+
+> 
+> To summary my thoughts here. I think we need:
+> 
+> 1. Change security_inode_permission to take dentry instead of inode. 
+
+Sorry, no.
+
+> 2. Still add bpf_dget_parent. We will use it with security_inode_permission
+>    so that we can propagate flags from parents to children. We will need
+>    a bpf_dput as well. 
+> 3. There are pros and cons with different approaches to implement this
+>    policy (tags on directory work for all files in it). We probably need 
+>    the policy writer to decide with one to use. From BPF's POV, dget_parent
+>    is "safe", because it won't crash the system. It may encourage some bad
+>    patterns, but it appears to be required in some use cases. 
+
+You cannot just walk a path upwards and check permissions and assume
+that this is safe unless you have a clear idea what makes it safe in
+this scenario. Landlock has afaict. But so far you only have a vague
+sketch of checking permissions walking upwards and retrieving xattrs
+without any notion of the problems involved.
+
+If you provide a bpf_get_parent() api for userspace to consume you'll
+end up providing them with an api that is extremly easy to misuse.
 
