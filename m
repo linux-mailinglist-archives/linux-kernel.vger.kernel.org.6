@@ -1,189 +1,109 @@
-Return-Path: <linux-kernel+bounces-292219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522B9956C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:04:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4700956CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAF8286BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:04:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 413EAB24FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D6B16CD0F;
-	Mon, 19 Aug 2024 14:04:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEFD166F14;
-	Mon, 19 Aug 2024 14:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C944F16D305;
+	Mon, 19 Aug 2024 14:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6GYpaSp"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983C916132F;
+	Mon, 19 Aug 2024 14:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076277; cv=none; b=ZbrJr6ws9qx+VXr5gKYdCIWd1EVdt95dlI4jEAZw3XL9QtBxtCmiWpfYy0bvUQZg4x8UZiJC7PPMXT3Q6iezfhN+lnvx7FpmG8FOw80GsAGRywSmZtrz6oRfhDlRGRV2GxCgoW1DbGFSKf8OD4EuG+GwWuFmpjvPO9d3HeGetfM=
+	t=1724076344; cv=none; b=fp2Ly0mjclLdr4aZuS8j0ogAumdCxkwQcY4nFIfnZQyFGOGgbgcnbhAkPID3pqqKwutEzGBoommaYnmYbbaJrEjilxmXmK37HCkZKFcXOl82g0ds6BWD8uurbIQ4dR757Iu55F1Za47rq5K8XZfTdx+tizygxOD/a0PDRuUfQFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076277; c=relaxed/simple;
-	bh=XLs5mWwOe//LOpNWPEWluBimnD/2iOrU99fgDSewvhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kemL/cvmtGvTQQYcR74Hk5tJ7ADbZ2oBrBGkHo4BwqwjGC/048WNsupgz1vjKMdyCl1vvU0xmCE56cRaZe153ewtEB4CBbIKKMDd20tdW60VgrKsb9FJ7+5eHxI78xDBMeAbyvP6I8V0UMKyBOSPc5giBZufldO03NagkmaHCvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED059339;
-	Mon, 19 Aug 2024 07:04:59 -0700 (PDT)
-Received: from [10.1.36.36] (FVFF763DQ05P.cambridge.arm.com [10.1.36.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A59D3F73B;
-	Mon, 19 Aug 2024 07:04:31 -0700 (PDT)
-Message-ID: <ff5a11d6-8208-4987-af03-f67b10cc5904@arm.com>
-Date: Mon, 19 Aug 2024 15:04:30 +0100
+	s=arc-20240116; t=1724076344; c=relaxed/simple;
+	bh=poqFAvEVQlOfxjKE69lMYBnYNRvjlf6xrPmtNyUdR6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEp6bDfWyxSFc9nC9dyCOKOgo1OCmyoQX+C8qa852U9HsjezfCob2ZycIhMff4jjK09kQlREplVzBJRur+WeOB4Kscalm2d6V0Dnif0ICi9RKF2cw4a2JEmzuoItA55RrTDupm7l0d+HIMpMJv98md7QokOch0oYIWWjg22awY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6GYpaSp; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-371b098e699so1602323f8f.2;
+        Mon, 19 Aug 2024 07:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724076341; x=1724681141; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5CFj9u1swLAXPzgS9iZSLjV+PqKpmKdc3h7rAvkj1s=;
+        b=Y6GYpaSpy7zSmzxQ56RJ7p2MKMXiKssMtCJq2IOQwpkTTka2Ci4UXvFqsR3/wxQga8
+         0PuNjincoKtDLpTcalqgYf5saQ+eBBwZ81UDE4PE7vhFxvIkWfHOxNjAh9XF//M2JXoJ
+         YwmioX2Vie3rhrWzp+P0EjJ/oGphbUx+W4z2TZ0uM2M69muPU89ppKApquDgmHhDGLE0
+         yUTdPqAbR66YqytGX2NiduR8M7dTH6eW3+xMLF0NxJ8uns+xtsQ1azq4G+Pf57nK5Sde
+         z1PlCTO5SWzThn9dlvzj8duGbYLGMpMHyergxLDC5KK6p9u6zZJdx+P/MCJY5yzvVCIM
+         cwHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724076341; x=1724681141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y5CFj9u1swLAXPzgS9iZSLjV+PqKpmKdc3h7rAvkj1s=;
+        b=CfQbgg1wl6eUDJ8I7rf5wDUxtA4r1Tl8FlpDKnYgw5BKoApw49fDPFP3ABqOIpORZw
+         o/TQJ5CfF+6sK9Sem+y0evAnoPY+OLecffOJfJ4YfUlGjOe9zOqZovZRT/XZTDfOOWZQ
+         69AHVOWIRy0XXRmPEHXmOoesbvblvxFUwT/SZHnb5MwaZamhNu0T7Qtv4lMrzN6SpXb8
+         3U+hi14RDd4fc+fESwn7ZHDuIHBoYR9QxaSJr+ZkT+MJygblTJ4GY/1XnFmDOl3SbIyM
+         XenbQPXuSXVAIWTG8UFEUav9m14TolIc0HIx5QCb03GjTo8fgtimhdnjPQ2HidFxBUwL
+         O2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvbnvS9ujDHxzTjzXA1bTNeh1OBxz+H4448j79B/uCXB8Lzgxo7rlZ6PMxGhXkJpO5QPApWF7RGv18JDaw5NIWwUETlaJFo+BbbxhntSWnpNQiBKrzjQnCj98cHO9XvPu+jw24
+X-Gm-Message-State: AOJu0YwmwetJQeIBh3Ak/hYHbjx1E9nE3V2U0atd3AZBtY/HS0wDhfxm
+	XRYpr7OleFVaR+bDIYFTnn1jh97X4ab2N7arFcSVib1PQO2Ra7lO
+X-Google-Smtp-Source: AGHT+IEcbNUMNuANUGAFzJxTVxhsLaTTLTkiGkaBSxdkd6xGargdqf/dmJRCsaSX7yrUke5PPEFUGA==
+X-Received: by 2002:a5d:4e4e:0:b0:368:7943:8b1f with SMTP id ffacd0b85a97d-3719468f08amr8350841f8f.43.1724076340309;
+        Mon, 19 Aug 2024 07:05:40 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c66d7sm643445166b.39.2024.08.19.07.05.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 07:05:39 -0700 (PDT)
+Date: Mon, 19 Aug 2024 17:05:36 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Pieter <vtpieter@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
+ change_tag_protocol support
+Message-ID: <20240819140536.f33prrex2n3ifi7i@skbuf>
+References: <20240819101238.1570176-1-vtpieter@gmail.com>
+ <20240819101238.1570176-2-vtpieter@gmail.com>
+ <20240819104112.gi2egnjbf3b67scu@skbuf>
+ <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
+ <90009327-df9d-4ed7-ac6c-be87065421ba@lunn.ch>
+ <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+ <9e5cc632-3058-46b2-8920-30c521eb1bbd@lunn.ch>
+ <CAHvy4Aq=as=K48NZHt3Ek8Yg_AzyFdsmTe92b8SFobzUBM9JNA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/19] arm64: Detect if in a realm and set RIPAS RAM
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-6-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240819131924.372366-6-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHvy4Aq=as=K48NZHt3Ek8Yg_AzyFdsmTe92b8SFobzUBM9JNA@mail.gmail.com>
 
-Hi Steven
-
-On 19/08/2024 14:19, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Mon, Aug 19, 2024 at 03:43:42PM +0200, Pieter wrote:
+> Right so I'm managing it but I don't care from which port the packets
+> originate, so I could disable the tagging in my case.
 > 
-> Detect that the VM is a realm guest by the presence of the RSI
-> interface.
-> 
-> If in a realm then all memory needs to be marked as RIPAS RAM initially,
-> the loader may or may not have done this for us. To be sure iterate over
-> all RAM and mark it as such. Any failure is fatal as that implies the
-> RAM regions passed to Linux are incorrect - which would mean failing
-> later when attempting to access non-existent RAM.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Co-developed-by: Steven Price <steven.price@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->   * Minor tidy ups.
-> Changes since v3:
->   * Provide safe/unsafe versions for converting memory to protected,
->     using the safer version only for the early boot.
->   * Use the new psci_early_test_conduit() function to avoid calling an
->     SMC if EL3 is not present (or not configured to handle an SMC).
-> Changes since v2:
->   * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
->     static_key_false".
->   * Rename set_memory_range() to rsi_set_memory_range().
->   * Downgrade some BUG()s to WARN()s and handle the condition by
->     propagating up the stack. Comment the remaining case that ends in a
->     BUG() to explain why.
->   * Rely on the return from rsi_request_version() rather than checking
->     the version the RMM claims to support.
->   * Rename the generic sounding arm64_setup_memory() to
->     arm64_rsi_setup_memory() and move the call site to setup_arch().
-> ---
->   arch/arm64/include/asm/rsi.h | 65 ++++++++++++++++++++++++++++++
->   arch/arm64/kernel/Makefile   |  3 +-
->   arch/arm64/kernel/rsi.c      | 78 ++++++++++++++++++++++++++++++++++++
->   arch/arm64/kernel/setup.c    |  8 ++++
->   4 files changed, 153 insertions(+), 1 deletion(-)
->   create mode 100644 arch/arm64/include/asm/rsi.h
->   create mode 100644 arch/arm64/kernel/rsi.c
-> 
-> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-> new file mode 100644
-> index 000000000000..2bc013badbc3
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rsi.h
-> @@ -0,0 +1,65 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2024 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_RSI_H_
-> +#define __ASM_RSI_H_
-> +
-> +#include <linux/jump_label.h>
-> +#include <asm/rsi_cmds.h>
-> +
-> +DECLARE_STATIC_KEY_FALSE(rsi_present);
-> +
-> +void __init arm64_rsi_init(void);
-> +void __init arm64_rsi_setup_memory(void);
-> +static inline bool is_realm_world(void)
-> +{
-> +	return static_branch_unlikely(&rsi_present);
-> +}
-> +
-> +static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t end,
-> +				       enum ripas state, unsigned long flags)
-> +{
-> +	unsigned long ret;
-> +	phys_addr_t top;
-> +
-> +	while (start != end) {
-> +		ret = rsi_set_addr_range_state(start, end, state, flags, &top);
-> +		if (WARN_ON(ret || top < start || top > end))
-> +			return -EINVAL;
-> +		start = top;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Convert the specified range to RAM. Do not use this if you rely on the
-> + * contents of a page that may already be in RAM state.
-> + */
-> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
-> +						 phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
-> +				    RSI_CHANGE_DESTROYED);
-> +}
-> +
-> +/*
-> + * Convert the specified range to RAM. Do not convert any pages that may have
-> + * been DESTROYED, without our permission.
-> + */
-> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t start,
-> +						      phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
-> +				    RSI_NO_CHANGE_DESTROYED);
-> +}
-> +
-> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
-> +					      phys_addr_t end)
-> +{
-> +	return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY,
-> +				    RSI_NO_CHANGE_DESTROYED);
+> My problem is that with tagging enabled, I cannot use the DSA conduit
+> interface as a regular one to open sockets etc.
 
-I think this should be RSI_CHANGE_DESTROYED, as we are transitioning a 
-page to "shared" (i.e, IPA state to EMPTY) and we do not expect the data
-to be retained over the transition. Thus we do not care if the IPA was
-in RIPAS_DESTROYED.
-
-Rest looks good to me.
-
-
-Suzuki
+Open the socket on the bridge interface then?
 
