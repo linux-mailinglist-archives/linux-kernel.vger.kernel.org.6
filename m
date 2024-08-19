@@ -1,174 +1,121 @@
-Return-Path: <linux-kernel+bounces-292628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBBE957202
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6247A956FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 734DD1C211E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:21:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946B11C22C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E816518785A;
-	Mon, 19 Aug 2024 17:20:52 +0000 (UTC)
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0EE174EDB;
+	Mon, 19 Aug 2024 16:11:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5426317A591
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A4316C874;
+	Mon, 19 Aug 2024 16:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724088052; cv=none; b=GCBnEKB1bzn75XJkptF2DW4+A9INeC0woe0PU7xt9yDVjSorOR+TY8+KVaeCD6+ts6Fqh6u7QBorRciWwLp4XRbz/XnFEeEO6AAlg0NYSuH0Aa/r8NbL0+i8cMswDHYck5yCP5uqGx4hjbrrNFo/Ui+ONR2vglGAK1k4oRsSw/w=
+	t=1724083872; cv=none; b=OW2HggFd56decl0Y8iMoSDRrd05nWJi7uapvCWG5ygUHiAHl2tsR5N/Y3u9wph1K3DTiqFr06aNC5Eivx0zttxSklaG/EnlN7WChdy5oGu1j1Z0IcWYd8+37cJ8wuOCfNwsFmGJ/l1kqeWZ9ESjBenvrH063mNsL/20nu2D/xWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724088052; c=relaxed/simple;
-	bh=aerv58O7xyK9Gg5FyiIn4m9e+D2bNQs2V3ZZd5yKvsw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uYpBxFQbVMDbfHUmPn20e2TlfWp4UGXtiYpoWBPCaZeyCc8KNZB/5f3Pm1tSEl2SWE5t80Pl8rbe8mTGOD7qTYgE6gmIlr1555G6O12ReMnZWTcLWOqtz+F9Lb7oTrnlPRQ3etVFgoRMPHSZSzid3AoExR9+ZtqkcrUE8VuzuUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
-	by h3cspam02-ex.h3c.com with ESMTP id 47JG95O9011302
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:09:05 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 47JG8WrY010962;
-	Tue, 20 Aug 2024 00:08:32 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
-	by mail.maildlp.com (Postfix) with ESMTP id 968EC2004731;
-	Tue, 20 Aug 2024 00:13:45 +0800 (CST)
-Received: from localhost.localdomain.com (10.99.206.13) by
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.27; Tue, 20 Aug 2024 00:08:36 +0800
-From: zhangchun <zhang.chuna@h3c.com>
-To: <akpm@linux-foundation.org>
-CC: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <shaohaojize@126.com>, <zhang.chuna@h3c.com>,
-        <zhang.zhansheng@h3c.com>, <zhang.zhengming@h3c.com>
-Subject: [PATCH v3] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
-Date: Tue, 20 Aug 2024 00:10:06 +0800
-Message-ID: <1724083806-21956-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20240723172609.7694b76e90bb18a0fd360ede@linux-foundation.org>
-References: <20240723172609.7694b76e90bb18a0fd360ede@linux-foundation.org>
+	s=arc-20240116; t=1724083872; c=relaxed/simple;
+	bh=lsD3l0zy9n7q31pbaGfU5guogshI72B6C37og0kv7yY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=th30HNB3KB6fPOfOyfCsLnGvoeBSDsWMOddpPciHSLXEMzghSN/rf46P5lg6w0Wl0GgnX1t5oLJWT/qP5UNmyhH5gRsRlmo0xF13iM3uqq6aMrUmpsJ3xuJL9h9SKR4Es3fy3qaptVAirMa9q5bAXjMvRLOFPR36pvclt6mKIVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WncvR3GBnz67MmR;
+	Tue, 20 Aug 2024 00:08:03 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9E4F51400DB;
+	Tue, 20 Aug 2024 00:11:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
+ 2024 17:11:06 +0100
+Date: Mon, 19 Aug 2024 17:11:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Anup Patel
+	<anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	<linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 1/4] cpuidle: psci: Simplify with scoped for each OF
+ child loop
+Message-ID: <20240819171104.0000625c@Huawei.com>
+In-Reply-To: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
+References: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 47JG95O9011302
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
- CPU 0:                                                 CPU 1:
- kmap_high(){                                           kmap_xxx() {
-               ...                                        irq_disable();
-        spin_lock(&kmap_lock)
-               ...
-        map_new_virtual                                     ...
-           flush_all_zero_pkmaps
-              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
-                      smp_call_function_many         spin_lock(&kmap_lock)
-                      ...                                   ....
-        spin_unlock(&kmap_lock)
-               ...
+On Fri, 16 Aug 2024 17:09:28 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1 has disabled irqs, waiting for kmap_lock,
-cannot answer the IPI. Fix this by releasing  kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
-deadlock. Like this:
+> Use scoped for_each_child_of_node_scoped() when iterating over device
+> nodes to make code a bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Looks fine,
+FWIW
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-        if (need_flush) {
-            unlock_kmap();
-            flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-            lock_kmap();
-        }
+If you are bored, the pr_err() at end of here seems like it should be
 
-Dropping the lock is safe. kmap_lock is used to protect pkmap_count, pkmap_page_table and last_pkmap_nr(static variable).
-When call flush_tlb_kernel_range(PKMAP_ADDR(0),
-PKMAP_ADDR(LAST_PKMAP)), flush_tlb_kernel_range will neither modify nor read these variables. Leave that data unprotected
-here is safe.
+return dev_err_probe(pdev->dev, ret, "failed to create CPU PM domains\n");
 
-map_new_virtual aims to find an usable entry pkmap_count[last_pkmap_nr]. When read and modify the pkmap_count[last_pkmap_nr],
-the kmap_lock is not dropped.
-"if (!pkmap_count[last_pkmap_nr])" determine pkmap_count[last_pkmap_nr] is usable or not. If unusable, try agin.
+But that's obviously completely unrelated!
 
-Furthermore, the value of static variable last_pkmap_nr is stored in a local variable last_pkmap_nr, when kmap_lock is acquired,
-this is thread-safe.
 
-In an extreme case, if Thread A and Thread B access the same last_pkmap_nr, Thread A calls function flush_tlb_kernel_range and
-release the kmap_lock, and Thread B then acquires the kmap_lock and modifies the variable pkmap_count[last_pkmap_nr]. After
-Thread A completes the execution of function flush_tlb_kernel_range, it will check the variable pkmap_count[last_pkmap_nr].
-
-static inline unsigned long map_new_virtual(struct page *page)
-{
-        unsigned long vaddr;
-        int count;
-        unsigned int last_pkmap_nr; // local variable to store static variable last_pkmap_nr
-        unsigned int color = get_pkmap_color(page);
-
-start:
-        ...
-                        flush_all_zero_pkmaps();// release kmap_lock, then acquire it
-                        count = get_pkmap_entries_count(color);
-                }
-                ...
-                if (!pkmap_count[last_pkmap_nr]) // pkmap_count[last_pkmap_nr] is used or not
-                        break;  /* Found a usable entry */
-                if (--count)
-                        continue;
-
-               ...
-        vaddr = PKMAP_ADDR(last_pkmap_nr);
-        set_pte_at(&init_mm, vaddr,
-                   &(pkmap_page_table[last_pkmap_nr]), mk_pte(page, kmap_prot));
-
-        pkmap_count[last_pkmap_nr] = 1;
-        ...
-        return vaddr;
-}
-
-Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
-Signed-off-by: zhangchun <zhang.chuna@h3c.com>
-Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
----
- mm/highmem.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/mm/highmem.c b/mm/highmem.c index ef3189b..07f2c67 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -231,8 +231,18 @@ static void flush_all_zero_pkmaps(void)
- 		set_page_address(page, NULL);
- 		need_flush = 1;
- 	}
--	if (need_flush)
-+	if (need_flush) {
-+		/*
-+		 * In multi-core system one CPU holds the kmap_lock, waiting
-+		 * for other CPUs respond to IPI. But other CPUS has disabled
-+		 * irqs, waiting for kmap_lock, cannot answer the IPI. Release
-+		 * kmap_lock before call flush_tlb_kernel_range, avoid kmap_lock
-+		 * deadlock.
-+		 */
-+		unlock_kmap();
- 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-+		lock_kmap();
-+	}
- }
- 
- void __kmap_flush_unused(void)
---
-1.8.3.1
+> ---
+>  drivers/cpuidle/cpuidle-psci-domain.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-psci-domain.c b/drivers/cpuidle/cpuidle-psci-domain.c
+> index ea28b73ef3fb..146f97068022 100644
+> --- a/drivers/cpuidle/cpuidle-psci-domain.c
+> +++ b/drivers/cpuidle/cpuidle-psci-domain.c
+> @@ -142,7 +142,6 @@ static const struct of_device_id psci_of_match[] = {
+>  static int psci_cpuidle_domain_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np = pdev->dev.of_node;
+> -	struct device_node *node;
+>  	bool use_osi = psci_has_osi_support();
+>  	int ret = 0, pd_count = 0;
+>  
+> @@ -153,15 +152,13 @@ static int psci_cpuidle_domain_probe(struct platform_device *pdev)
+>  	 * Parse child nodes for the "#power-domain-cells" property and
+>  	 * initialize a genpd/genpd-of-provider pair when it's found.
+>  	 */
+> -	for_each_child_of_node(np, node) {
+> +	for_each_child_of_node_scoped(np, node) {
+>  		if (!of_property_present(node, "#power-domain-cells"))
+>  			continue;
+>  
+>  		ret = psci_pd_init(node, use_osi);
+> -		if (ret) {
+> -			of_node_put(node);
+> +		if (ret)
+>  			goto exit;
+> -		}
+>  
+>  		pd_count++;
+>  	}
 
 
