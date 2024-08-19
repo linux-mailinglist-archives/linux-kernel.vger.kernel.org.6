@@ -1,158 +1,135 @@
-Return-Path: <linux-kernel+bounces-291832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E6E9567BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:03:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689F89567B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB671C217A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255802833E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F18015B986;
-	Mon, 19 Aug 2024 10:03:44 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE34C1553BB;
+	Mon, 19 Aug 2024 10:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gxw4a3vH"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BF033C0;
-	Mon, 19 Aug 2024 10:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC3D1514C8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724061824; cv=none; b=ggsq5Y3qAAJxIW+b3upLT3Xp1ggWK5AEPpNBE9C6cG9uTMpdAUwuw0Kd64mg26Rhl49+3LW/WjMPqPU+0hev2+I1e73TzJkgX54T8jiN9nSegGP5bOD2rSj3kvS5BR3IqyK7bQqlXVcq1KUvlGPP+9H3qlU2o58e37GIaFQxtSw=
+	t=1724061702; cv=none; b=XIAlbwmU0bFUGEROGreGW+RsjlfqCDl4Vc1et2Ig10LBDrnq2MGX0JBUaYE4Kcd6I/zCmp1nPNO5dGC0yIQUX03VDtbkSqgj9fE3zizicyPqzwxe5E6re0byFEbwZgwaHTy46MzpPbhVHVA099/XkaBsNBVuHDunGi011a7PrJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724061824; c=relaxed/simple;
-	bh=vKxt43l0OwvJY5pOsltXEYOqsDQ7ksufql72nzGBt5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drDT+Bsg3k6J6EUsXQ0JStXtNfoLKval9VFujmm8MYwQTYU1QvDPD+FL7oQ561s/PmPjXHjcXZOcgOzZcNMHWEkrm6OhUrPHYPKiwor2RCa7dSzViWaWro0fBGBd6uqXCeS9ir9EAlDBuItZrdkEwTWSfhJkJg0WIrXpFosJbYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8fdc65be5e1111efa216b1d71e6e1362-20240819
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:0d267023-8f1c-4590-a5e5-11990b87f65d,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:e841c5a9961d80c9f7a7a15340738a8e,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8fdc65be5e1111efa216b1d71e6e1362-20240819
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <xialonglong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 193915827; Mon, 19 Aug 2024 17:58:19 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 21C5616002085;
-	Mon, 19 Aug 2024 17:58:19 +0800 (CST)
-X-ns-mid: postfix-66C3173A-9875491417
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 49C2F16002084;
-	Mon, 19 Aug 2024 09:58:17 +0000 (UTC)
-From: Longlong Xia <xialonglong@kylinos.cn>
-To: quic_jhugo@quicinc.com
-Cc: quic_carlv@quicinc.com,
-	ogabbay@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Longlong Xia <xialonglong@kylinos.cn>
-Subject: [PATCH 1/1] accel/qaic: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Mon, 19 Aug 2024 17:58:16 +0800
-Message-ID: <20240819095816.447096-1-xialonglong@kylinos.cn>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1724061702; c=relaxed/simple;
+	bh=WKdG1NJmSVs4lziHmvLV1A1Z7PYhGzhh1oJ+XBfjdB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XdWknQmQYNzKmkVpbmfYbxqtVjBl9wbmjwlZoC6cvrlGvns1nGomXlFUgUbcZwpUYLv7SkF5y9YC6U0fC2SChW6sSyi3VdhLhTFSI/mg4z/1OvArcgwldvkncFVu2swC3YFOnOq6fP+E3jp9zbnrTbwkp5gv8B0eQePknB5h2yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gxw4a3vH; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201e2ebed48so1592015ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724061700; x=1724666500; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h+/dZwR9KXDCL6u85V5/TrKH5gOthmBMTCYnjHJnT94=;
+        b=gxw4a3vHC4+3DxdrMsflHcAotLDT0eajY5fNM/PnRjov0rn28a5qiJ3tbidtWvKFBW
+         hQawOYidQrnnoiLuatFAzBaUVKOLmQ5e56jyhVWqadg3/V68dekmKUHzOjxcxG8TK7eZ
+         sYW7SX1AOI0uHnC93i8eGRDttRHBs/fJQl07c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724061700; x=1724666500;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+/dZwR9KXDCL6u85V5/TrKH5gOthmBMTCYnjHJnT94=;
+        b=MaKA9Fv6Lm5zIPTzu0H8TZ3dL63Gq+Uhnf/CBVH1BUJekVZRqSl7ON6/KGK4ME3r7Q
+         s3z7azbJ6IKi1HNo1vex8YLrpXZ5PTtCEjOjH3pYpbhr7PzHABvn9CkQOZJBl8Gu5/29
+         bzoZPyNM1G/e3RKCbamFZiLvch+REwfHTlsCSOB2cLmv7YbzZDBO/BpdMxeDLff6e2FH
+         mWLx9tSWjAdYFd6P4Ez9109ZDxSAUTaa92eEBNufGfWbAkESwypHiDaT1pS2Ql2aAYKz
+         v4acLDT6xaVpqbkv2w0HsMLaHM7DXnmxzRGidMINPJ2t/T7RXadPKmE+urBEFokN4TKp
+         k1Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhU2xoVuK+dsan2YID+yFPOO4DMwS1Rf9kCZw62fih+kjMjDjoLu0kKcvc8Ozj+FTGrrZH6uG+xvQF/U9HKwIkARAbw3sODQPazyqD
+X-Gm-Message-State: AOJu0YzdGZy4Qp5EAY0TdC8NDUJU5kjogEELvfOVPtnjwrVWf0SaY4oN
+	vjfqeUeQpB2lsFPAOqiR04p4zcbLYWADq8UoJt7h10YmKELLFI36CwMVr4Bompc=
+X-Google-Smtp-Source: AGHT+IEnzq1GNpBfStxJF2FcLGudBLyYQ9ABvejE0cVWJmaQbEUmA05IvPq3Sx1v384dEKKa0T1ipw==
+X-Received: by 2002:a17:902:da8a:b0:1fb:1ff1:89d2 with SMTP id d9443c01a7336-20203f21a2amr74366705ad.6.1724061699544;
+        Mon, 19 Aug 2024 03:01:39 -0700 (PDT)
+Received: from [192.168.104.75] ([223.118.50.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03751ebsm60164145ad.162.2024.08.19.03.01.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 03:01:38 -0700 (PDT)
+Message-ID: <59d825c8-bdaf-4077-be0e-d738b42d2dab@linuxfoundation.org>
+Date: Mon, 19 Aug 2024 04:01:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for
+ unsupported arch
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, Sean Christopherson <seanjc@google.com>,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240819093030.2864163-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240819093030.2864163-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-No functional change.
+On 8/19/24 03:30, Muhammad Usama Anjum wrote:
+> The tests are built on per architecture basis. When unsupported
+> architecture is specified, it has no tests and TEST_GEN_PROGS is empty.
+> The lib.mk has support for not building anything for such case. But KVM
+> makefile doesn't handle such case correctly. It doesn't check if
+> TEST_GEN_PROGS is empty or not and try to create directory by mkdir.
+> Hence mkdir generates the error.
+> 
+> mkdir: missing operand
+> Try 'mkdir --help' for more information.
+> 
+> This can be easily fixed by checking if TEST_GEN_PROGS isn't empty
+> before calling mkdir.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes since v1:
+> - Instead of ignoring error, check TEST_GEN_PROGS's validity first
+> ---
+>   tools/testing/selftests/kvm/Makefile | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 48d32c5aa3eb7..9f8ed82ff1d65 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -317,7 +317,9 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
+>   $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+>   	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
+>   
+> +ifneq ($(strip $(TEST_GEN_PROGS)),)
+>   $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
+> +endif
+>   $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
+>   $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
+>   $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
 
-Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
----
- drivers/accel/qaic/qaic_debugfs.c | 43 ++++---------------------------
- 1 file changed, 5 insertions(+), 38 deletions(-)
+Looks good to me.
 
-diff --git a/drivers/accel/qaic/qaic_debugfs.c b/drivers/accel/qaic/qaic_=
-debugfs.c
-index 20b653d99e52..ba0cf2f94732 100644
---- a/drivers/accel/qaic/qaic_debugfs.c
-+++ b/drivers/accel/qaic/qaic_debugfs.c
-@@ -64,20 +64,9 @@ static int bootlog_show(struct seq_file *s, void *unus=
-ed)
- 	return 0;
- }
-=20
--static int bootlog_fops_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, bootlog_show, inode->i_private);
--}
--
--static const struct file_operations bootlog_fops =3D {
--	.owner =3D THIS_MODULE,
--	.open =3D bootlog_fops_open,
--	.read =3D seq_read,
--	.llseek =3D seq_lseek,
--	.release =3D single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(bootlog);
-=20
--static int read_dbc_fifo_size(struct seq_file *s, void *unused)
-+static int fifo_size_show(struct seq_file *s, void *unused)
- {
- 	struct dma_bridge_chan *dbc =3D s->private;
-=20
-@@ -85,20 +74,9 @@ static int read_dbc_fifo_size(struct seq_file *s, void=
- *unused)
- 	return 0;
- }
-=20
--static int fifo_size_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, read_dbc_fifo_size, inode->i_private);
--}
--
--static const struct file_operations fifo_size_fops =3D {
--	.owner =3D THIS_MODULE,
--	.open =3D fifo_size_open,
--	.read =3D seq_read,
--	.llseek =3D seq_lseek,
--	.release =3D single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(fifo_size);
-=20
--static int read_dbc_queued(struct seq_file *s, void *unused)
-+static int queued_show(struct seq_file *s, void *unused)
- {
- 	struct dma_bridge_chan *dbc =3D s->private;
- 	u32 tail =3D 0, head =3D 0;
-@@ -115,18 +93,7 @@ static int read_dbc_queued(struct seq_file *s, void *=
-unused)
- 	return 0;
- }
-=20
--static int queued_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, read_dbc_queued, inode->i_private);
--}
--
--static const struct file_operations queued_fops =3D {
--	.owner =3D THIS_MODULE,
--	.open =3D queued_open,
--	.read =3D seq_read,
--	.llseek =3D seq_lseek,
--	.release =3D single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(queued);
-=20
- void qaic_debugfs_init(struct qaic_drm_device *qddev)
- {
---=20
-2.45.1
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
 
