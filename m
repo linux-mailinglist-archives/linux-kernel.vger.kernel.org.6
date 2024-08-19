@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-291650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEF4956531
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:06:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF28956533
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EB11C21718
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1E4282688
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAB313E03E;
-	Mon, 19 Aug 2024 08:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WZMFY9Fs"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4968215B0E0;
+	Mon, 19 Aug 2024 08:07:17 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A1FA41
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98117A41;
+	Mon, 19 Aug 2024 08:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724054794; cv=none; b=rsugYoRpLVHsD8Z/Muj5lKfaL7mXoQg2mcYC/f/vQk9jHhQWkZNKh/QlogAB9lxIi1cD6qDpWuV4rnfqVGI5b470MoWvPSx0dJylEKhsIsnnC0XbvrsDPaAaJQTNtqKXtn6r1xQ+ZvyWKKl+7mIhbZu55wSebg4rmynpF0ci7j0=
+	t=1724054836; cv=none; b=fOLjqbE0pAi+Tt+db/0nZqc+ZjH8NfMqyS6F77NrE6PC+6LcrOO0k1iaYICynjkR+6Rb2XkS3Rt+1wa/0ix4/Yl7fEWCYFwJh6BlGE1l+9XBXLHs6+0hB7FARgrVKxPpFY/lq4kfEnivgKhCsjbCeCkCUSyknRhi7con+2vuQqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724054794; c=relaxed/simple;
-	bh=QrhkplzZ3C1wQsKojQLSkMO9AP8r2EkZYjP5r4HsDwg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ecvQlNgu3Vg1uD/KHkwsM4cNz7k6QoJZ9cyDfsTESTzcFisRi9hGX+/yAI0Y08cSgcSO2ALwwaAbIsWN5TCBvqDzwMzNsYHp/d4ZJFsbH52D8gWa9Bed9ytY4E9nA3QIyYPLP/TFsFjxhpR96q5OXg5KvD2XUEUzRjy5TQkfcPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WZMFY9Fs; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724054788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KGKlfmVH3LtzPnGo4UI3D1e5HnpdM5cATPN6KN5WYuo=;
-	b=WZMFY9FsjKIVqUC/CRbiorNOiNC+loMz1N+EbLC2aIU5q84BYb/2rfyLzwwBCa6Ycls+gv
-	6un6CeNucq7NwI9ArNkVjbj6vgEvRSaZ6PULDGvIEfYa0hI8jFhnKOs4l502Gin4DIgX+b
-	sCiK/CoqoVT9PaeML70C7QnZ0MUfhz4=
+	s=arc-20240116; t=1724054836; c=relaxed/simple;
+	bh=KNZax9cbBKckqa2gW95GJYWsMaHz3ZspcOY2W+SsHeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PoGABE+sAuUanXPA+yPWyJJyE4RXcL7i1aBohqUx/CA75BqUBiDBp/GotA2FUKznQpHcMe4ko65o5j/34e5YtxziC51qkHWp26owNdbosnHPcWoKx5xLD4FLzbNBqP8Xqtp+fDUVOOvCft4lZULVWnkeXeTfywYUqHLiSyYLBoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnQBs5KVBzpSsh;
+	Mon, 19 Aug 2024 16:05:41 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id E124E18007C;
+	Mon, 19 Aug 2024 16:07:09 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 16:07:09 +0800
+Message-ID: <635009b1-df79-2549-8f81-37a5a9913d49@huawei.com>
+Date: Mon, 19 Aug 2024 16:07:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [syzbot] [cgroups?] [mm?] WARNING in folio_memcg
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <0000000000006f7e4d0620042b96@google.com>
-Date: Mon, 19 Aug 2024 16:05:41 +0800
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- cgroups@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Muchun Song <songmuchun@bytedance.com>,
- syzkaller-bugs@googlegroups.com,
- Vlastimil Babka <vbabka@suse.cz>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B2518F6C-7652-4AE5-AE57-39380E79932D@linux.dev>
-References: <0000000000006f7e4d0620042b96@google.com>
-To: syzbot <syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next] spi: bcm63xx: Fix missing pm_runtime_disable()
+To: Jonas Gorski <jonas.gorski@gmail.com>
+CC: <broonie@kernel.org>, <noltari@gmail.com>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240819040310.2801422-1-ruanjinjie@huawei.com>
+ <CAOiHx=mqS+r9PZJEQETVU-2GdgsZoFQ0fFAJ1zTVXPmZCBP0PA@mail.gmail.com>
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <CAOiHx=mqS+r9PZJEQETVU-2GdgsZoFQ0fFAJ1zTVXPmZCBP0PA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
 
-> On Aug 19, 2024, at 15:22, syzbot =
-<syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com> wrote:
->=20
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:    367b5c3d53e5 Add linux-next specific files for =
-20240816
-> git tree:       linux-next
-> console+strace: =
-https://syzkaller.appspot.com/x/log.txt?x=3D11be396b980000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3D61ba6f3b22ee5467
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3Def4ecf7b6bdc4157bfa4
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D147469f5980000
-> C reproducer:   =
-https://syzkaller.appspot.com/x/repro.c?x=3D153c5ad5980000
->=20
-> Downloadable assets:
-> disk image: =
-https://storage.googleapis.com/syzbot-assets/0b1b4e3cad3c/disk-367b5c3d.ra=
-w.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/5bb090f7813c/vmlinux-367b5c3d=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/6674cb0709b1/bzImage-367b5c3d=
-.xz
->=20
-> The issue was bisected to:
->=20
-> commit ebadc95608dc3ee87ad4e5dc4f2c665c709bb899
-> Author: Muchun Song <songmuchun@bytedance.com>
-> Date:   Wed Aug 14 09:34:15 2024 +0000
->=20
->    mm: kmem: add lockdep assertion to obj_cgroup_memcg
->=20
-> bisection log:  =
-https://syzkaller.appspot.com/x/bisect.txt?x=3D170875f5980000
-> final oops:     =
-https://syzkaller.appspot.com/x/report.txt?x=3D148875f5980000
-> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D108875f5980000
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+ef4ecf7b6bdc4157bfa4@syzkaller.appspotmail.com
+On 2024/8/19 15:52, Jonas Gorski wrote:
+> Hi,
+> 
+> On Mon, 19 Aug 2024 at 05:55, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+>>
+>> The pm_runtime_disable() is missing in the remove function, add it to
+>> align with the probe error path.
+>>
+>> Fixes: 2d13f2ff6073 ("spi: bcm63xx-spi: fix pm_runtime")
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  drivers/spi/spi-bcm63xx.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
+>> index 289f8a94980b..0531b6f3eef3 100644
+>> --- a/drivers/spi/spi-bcm63xx.c
+>> +++ b/drivers/spi/spi-bcm63xx.c
+>> @@ -614,6 +614,8 @@ static void bcm63xx_spi_remove(struct platform_device *pdev)
+>>         /* reset spi block */
+>>         bcm_spi_writeb(bs, 0, SPI_INT_MASK);
+>>
+>> +       pm_runtime_disable(&pdev->dev);
+>> +
+> 
+> How about using devm_pm_runtime_enable() instead in the probe path?
+> Then we don't need to call _disable() manually.
 
-Thanks for your report. I've fixed this in patch [1].
+Hi, Jonas
 
-[1] =
-https://lore.kernel.org/linux-mm/20240819080415.44964-1-songmuchun@bytedan=
-ce.com/T/#u
+I think that is good. I grep the commit log and there is a example:
 
+https://lore.kernel.org/all/20240605131533.20037-2-raag.jadav@intel.com/
+
+I'll change it to use devm_pm_runtime_enable() to fix it, thank you!
+
+> 
+>>         /* HW shutdown */
+>>         clk_disable_unprepare(bs->clk);
+>>  }
+>> --
+>> 2.34.1
+>>
+> 
+> Best Regards,
+> Jonas Gorski
 
