@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-292747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8499573DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:46:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363BB9573EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0F62854B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7684B247D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0942F189527;
-	Mon, 19 Aug 2024 18:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E287188CBC;
+	Mon, 19 Aug 2024 18:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gam7KhGo"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H87TzjH9"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C4026AD3;
-	Mon, 19 Aug 2024 18:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFF426AD3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724093163; cv=none; b=gkrdc27kMokjiPSPGsUJ62d5Wu+Z4hv584aUonfBAA7/GBGwsum6iQeIFci5Bf/7hE2cW1IsCY05tOpHp0wGbv8AksCMtqW2Vvqk2OqTfTewAZOj9gOc5pf5vTQxCwX1LJ+UI51g2zyRn/suxMzNVzVXCyz3M5iIfr6kI0/gpHs=
+	t=1724093210; cv=none; b=kEBZ2uWd1V0nTiPNV7XBgYOqyTzwAlcRtkcE37DQs3LD5f6QMmY7glM3t7XjPY/kPV4YnjyCKBIhpiEwq/JBF7rN8M4zrvrVOnf9h7IPQBCSoR742hiQLcjtoqMpPyOHMk8vVbFMoJYyYkkwouhre68IP1mTa1/Q47pdrk02uYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724093163; c=relaxed/simple;
-	bh=HdIJY01lHoLxaZGedoCASwrrmQVvme3IbQCYk3XtDxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPy/naceQg+wB3AoE5j276zAEz22HRZgMiXZ70bsyigeEQswLmxRGO8Hb9IqroF82a97u1Ied1db6Fvnx9AeFLcPHsU8Ej+zB9LBNMJLB02wSUeUgUTmaMaY3gBpYHSTx+zvcvLTOW+tR1v7SwQpftB6xuuG7BLwxsB/m38N//I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gam7KhGo; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso36697855e9.0;
-        Mon, 19 Aug 2024 11:46:01 -0700 (PDT)
+	s=arc-20240116; t=1724093210; c=relaxed/simple;
+	bh=kyiNnJaXJx4E/rdeVeG4cgmmOpe6ZpAgGgGSNwpC5Vg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5gNDEFrJAnwnqLfLwBWgCPzeEkfMzplEJt/aD9Hrh3PX9UvU4AIcLHp85QfcLNym821Ol5sgktZjBS1vBGvqapygG8GlkDjXUAzk6hPUAtS8tPPyzHnC2VJnSEk0s2tQ5qPdDUqdx+mPAvSdg0YSz+jffKvME3/rTK4l8Rmym8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H87TzjH9; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so1476a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724093160; x=1724697960; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=83RS5Bq76bBQeFMijiRLgaOeMKTh/8Mb3G8iVoR5aBw=;
-        b=gam7KhGofNpYIjdvZsILa8FkqXRX9YwEHV+ltLdr7DGsFzmM/ELFyxA7T4v1GVBOC2
-         tiIWrV5275yfwe6RWTWia/9nHeBPGqjNo4wn3Utgx5ZoOh1yjELrq+mHczOGNVDRjvTS
-         gzULpOp2X82wQE6DpZKM1gPk9mu90m83/ZSo0zNAdnh+eDrsvbsp+bE/SltUO7K56dtw
-         sja+W5hbj/L3VKwHOwnIEXZCbaXvGL9P73w7TcHINVwtOFj8iw9DwUOIyO3ONlZ05WHH
-         aiN69aCuwS+XRP1gUv8GrIFmWPnmqCH2/2i8YvlxmVol7wwmgXmbUFJdvU14tLhI1cS1
-         7mTA==
+        d=google.com; s=20230601; t=1724093207; x=1724698007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y51dIf6Nc9jS2PsiVafQefSFQO48+Q7aOrp7xHNd1WU=;
+        b=H87TzjH9WZqFkotvGqQUUjKB5NIP12cj8Z0MZ7pGN/NlA4j6bUPPqx3CQEKOmEYPmV
+         Byxl4+OiAKQ00jSVS+7eFfNSvv626xIdzMna757nyoZaRA4zDgrHVwuJ10ThkvxFDx5E
+         CIF5TH5CDG0z6/Ms6zJjL0VSmeIKhOpS9Ner/4THcqE9T0JEf0Iym8KKp9KujI7/sVh5
+         Tut5hEmkuOHwOO4dT9WdLgc5f2fMfyj/W54K8jNtnIJrp0peFIi0udb8sfUHSgBVApkq
+         xVN5WD/sF3crlVAwBmJMP2THY7blBuuDpx0n76OFYCotqxUPZKzE8ge8zlMQ/l21BKZN
+         k/Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724093160; x=1724697960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724093207; x=1724698007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=83RS5Bq76bBQeFMijiRLgaOeMKTh/8Mb3G8iVoR5aBw=;
-        b=PRndKsuF58qFN48U7ZcwsT8qLYwDzNWPMXsS/Pi7RhqFxyxvy6KKjPb/EQEQ4562W0
-         dd02oMb+MGTsEXrGbsE+wl+QSgT1iZZUM5+REgQvTOCuQAQ/HK5mUjZRGF7V1BwE54c7
-         61fQECReCGJjyp+bK/IAYwKewsACyQxPK9xIHeGjEGXpLtGPDP7VKWfW4LgvxdQ5/nLp
-         L+9UnmTMBEGfPOpmgM3qwMnph/UMxXdGoqTEd2oJSg6CspQdzV9MolmXlbTZJw+OZcqj
-         D2zVw5+s7LPbNcA5HDTCECrTaej0ajh1UmcsQS7xIlSRTZvfSZqUyyDbcv5E5lLnzeB8
-         BpYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs/Xn4lDCP8Hiax3kreL1K1qFOQPqE8s3FZJw/s2NzP7IbpBVwnyygskF52BZ32CHEO3IXYTZiuTOraHEq@vger.kernel.org, AJvYcCViwoxg+fLtAFTQrhxka4qCRWmPJpOrJiPGX7HAIPJs4RF2XHE8E0x/JUDa7tjzRilPGiO5nR0i@vger.kernel.org, AJvYcCVwMvt8nGRdQJzC4nhMvGI4Tm2q30ymZdr/pLwsWhQbRjdqoTP86JKNxVP0eOqAMvDdxvJjjtSf0hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHqnYtqVrnWqV4qzsTcaXaul2ToIQorX8R0gj9Nqcz+q2tqEwW
-	UIraZs5IWJn/hNvcXm0BcgF51bjQXNWwmVEJpIXAG6ZIx3jn9fbHzmLD7nB/
-X-Google-Smtp-Source: AGHT+IHgkMerOvxIAQnbhWE5dSxXyVexmF7ZW1KYRom0PSEE9yi2Aci3kgKxAUs6+3AAUS3kSUNC/g==
-X-Received: by 2002:a05:600c:a45:b0:426:627e:37af with SMTP id 5b1f17b1804b1-429ed77d75amr72399195e9.3.1724093159268;
-        Mon, 19 Aug 2024 11:45:59 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-242-114.customer.ggaweb.ch. [82.192.242.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429eea70115sm113922805e9.36.2024.08.19.11.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 11:45:57 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 61A00BE2EE7; Mon, 19 Aug 2024 20:45:56 +0200 (CEST)
-Date: Mon, 19 Aug 2024 20:45:56 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Christian Heusel <christian@heusel.eu>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Igor Pylypiv <ipylypiv@google.com>, linux-ide@vger.kernel.org,
-	Hannes Reinecke <hare@suse.de>, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION][BISECTED][STABLE] hdparm errors since 28ab9769117c
-Message-ID: <ZsOS5DmRnS3ab_9W@eldamar.lan>
-References: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
- <45cdf1c2-9056-4ac2-8e4d-4f07996a9267@kernel.org>
- <ZrPw5m9LwMH5NQYy@x1-carbon.lan>
- <1376f541-bc8a-4162-a814-a9146ebaf4eb@kernel.org>
- <df43ed14-9762-4193-990a-daec1a320288@heusel.eu>
- <e206181e-d9d7-421b-af14-2a70a7f83006@heusel.eu>
- <d224b165-14dd-4131-b923-1ef5bdf3fb7f@leemhuis.info>
+        bh=Y51dIf6Nc9jS2PsiVafQefSFQO48+Q7aOrp7xHNd1WU=;
+        b=CoMWbtr5Ry24KZB8hXzP8kaWt3KweJIVoZ36hRkkA3zbiW1Av777PW8h2leO8L836a
+         YVKAuZjKWzoZz45y6FRviFTOJ721/izyxIPWJnKGuDdZw2wCAL6Qx7YbhPTW6YFB3IU0
+         oO+QXQVfeUo7RU9VnDaBE0SUA24dzbxrCKNz6ZutZ1+pvSS6DWalEB8HE0uS80+T5Dpm
+         8yHx+sEEtbP+fKsvNDrUUeWcpZCD1bNmx5Apd6ojCjTPBKYCt/dhx9KLJxFfR8hizHA4
+         RZ2ZSwRygDN62DWdbegSloruGocdQFqzrrDoE/S12ugNeoQ5cokV6PaLDX1TvZ2Nfb6E
+         7eAw==
+X-Gm-Message-State: AOJu0Yxf92Ozx9OosXFRDJItDhQOslAClLFLzMMS+JrhO3FrzilLDR3P
+	i6ukw2mdZ6kKXdyiyyNwn+eDmkcoj70tZ5LWorl024IzeLLn7v2dD7ePdI4vNUMNW7MtcVG4hAt
+	oWmXhHXg98baG0hlu3VqEU/wbcmorh+3o9zQO
+X-Google-Smtp-Source: AGHT+IHGyrw4ppuXQs+Ix4XJjG6GmLafWxNKCsWLnSoyTNB7TwMvjAoIf2VSsRB+F0laxTLGBLorjke5egWsMJdRpF4=
+X-Received: by 2002:a05:6402:26c4:b0:5be:c28a:97cf with SMTP id
+ 4fb4d7f45d1cf-5bf0c5cf9bfmr6774a12.5.1724093206617; Mon, 19 Aug 2024 11:46:46
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d224b165-14dd-4131-b923-1ef5bdf3fb7f@leemhuis.info>
+References: <20240813234755.3615697-1-maze@google.com> <efbb6394805f11de27cace9817418744d8e69506.camel@sipsolutions.net>
+In-Reply-To: <efbb6394805f11de27cace9817418744d8e69506.camel@sipsolutions.net>
+From: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
+Date: Mon, 19 Aug 2024 11:46:31 -0700
+Message-ID: <CANP3RGdxrKHsERYG+yW5fpRUrahkBJbHCKD24v182ZNKuJgfwg@mail.gmail.com>
+Subject: Re: [PATCH] um: make personality(PER_LINUX32) work on x86_64
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Aug 19, 2024 at 5:23=E2=80=AFAM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
+>
+> On Tue, 2024-08-13 at 16:47 -0700, Maciej =C5=BBenczykowski wrote:
+> > Without this patch:
+> >   #!/usr/bin/python3
+> >   import ctypes
+> >   import os
+> >   personality =3D ctypes.CDLL(None).personality
+> >   personality.restype =3D ctypes.c_int
+> >   personality.argtypes =3D [ctypes.c_ulong]
+> >   PER_LINUX32=3D8
+> >   personality(PER_LINUX32)
+> >   print(os.uname().machine)
+> > returns:
+> >   x86_64
+> > instead of the desired:
+> >   i686
+> >
+>
+> But ... why should it work? UML has no 32-bit compat support anyway.
 
-On Mon, Aug 12, 2024 at 11:26:53AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 09.08.24 22:13, Christian Heusel wrote:
-> > On 24/08/09 08:42PM, Christian Heusel wrote:
-> >> On 24/08/09 08:34AM, Damien Le Moal wrote:
-> >>> On 2024/08/07 15:10, Niklas Cassel wrote:
-> >>>> On Wed, Aug 07, 2024 at 11:26:46AM -0700, Damien Le Moal wrote:
-> >>>>> On 2024/08/07 10:23, Christian Heusel wrote:
-> >>>>>>
-> >>>>>> on my NAS I am encountering the following issue since v6.6.44 (LTS),
-> >>>>>> when executing the hdparm command for my WD-WCC7K4NLX884 drives to get
-> >>>>>> the active or standby state:
-> >>> [...]
-> >>> Yes, indeed. I do not want to revert any of these recent patches, because as you
-> >>> rightly summarize here, these fix something that has been broken for a long
-> >>> time. We were just lucky that we did not see more application failures until
-> >>> now, or rather unlucky that we did not as that would have revealed these
-> >>> problems earlier.
-> >>
-> >> It seems like this does not only break hdparm but also hddtemp, which
-> >> does not use hdparm as dep as far as I can tell:
-> > 
-> > As someone on the same thread has pointed out, this also seems to affect
-> > udiskd:
-> > 
-> > https://github.com/storaged-project/udisks/issues/732
-> 
-> For the record, three more people reported similar symptoms in the past
-> few days:
-> 
-> https://lore.kernel.org/all/e620f887-a674-f007-c17b-dc16f9a0a588@web.de/
-> https://bugzilla.kernel.org/show_bug.cgi?id=219144
-> 
-> Ciao, Thorsten
-> 
-> P.S.: I for the tracking for now assume those are indeed the same problem:
-> 
-> #regzbot dup:
-> https://lore.kernel.org/all/e620f887-a674-f007-c17b-dc16f9a0a588@web.de/
-> #regzbot dup: https://bugzilla.kernel.org/show_bug.cgi?id=219144
+Well, that's certainly a fair point.
+On 'native' x86_64 this works even for 64-bit processes though.
+I wonder if that, in itself, is a feature or a bug...
 
-AFAICS, this has now been reverted upstream with fa0db8e56878 ("Revert
-"ata: libata-scsi: Honor the D_SENSE bit for CK_COND=1 and no error"")
-in 6.11-rc4 and the revert was as well backported to stable releases
-(5.15.165, 6.1.106, 6.6.47 and 6.10.6)
+In my case I was writing some debug code (to print the environment
+some test code is running in, since I think it was failing due to
+running 32-bit code in PER_LINUX32 on 64-bit arm) and testing (the
+test code) on x86_64 UML.  I was surprised to discover the difference
+in UML vs my host desktop.
 
-Regards,
-Salvatore
+> johannes
+
+--
+Maciej =C5=BBenczykowski, Kernel Networking Developer @ Google
 
