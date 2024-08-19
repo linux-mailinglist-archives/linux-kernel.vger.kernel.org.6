@@ -1,244 +1,210 @@
-Return-Path: <linux-kernel+bounces-292540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EC19570A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77809570AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A411C22F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C3328345D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F2D17838F;
-	Mon, 19 Aug 2024 16:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40135176FDB;
+	Mon, 19 Aug 2024 16:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JivF0Qld"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bhfv68Wb"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF03E1A270;
-	Mon, 19 Aug 2024 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B3A4965B
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085942; cv=none; b=gYQBn7aalfPxoJklaFHTuOHz87pxnwlqjkdIMur+SFzu6dPFLuHxsOU3AWWe0a/6UZ+i2bjsGGqq57PKzw3QzEVoWS4Q/qnyomj6kPsfo7MqzwWlyhjJWSgHcq/PDs75+sQdmVHu5okAX80n0afGdCNYGQtbFsfKSykhj98TW10=
+	t=1724085979; cv=none; b=RJvN5AkCBQyzaEDPVwbwmLe9UmwjRy/5W9eY6mQoBBCHW9JGkkLZ+CsK1GZB4ctdoXKtf0PIH7t/OHcUk9CVUoyoDrukOZdOpXrXoiGjcvJ0p99F5l6wzr7C1ia0qLoDD3JevXcsnsoUOj0pDYCdmYUwvSR7FDRb/1HHHyU6FSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085942; c=relaxed/simple;
-	bh=mLXVcAlBQxesC5mYwH0mrm1yZ0PmpuWB9hCkSUTiLac=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HxpijhpKnDzjHPXNaAN/IHz15L0H9DBW1ao11neHdLwMPgKD3LH0cmqfVlo0rGw5Rb9RB6k+OxFepdwxDEpUG5azYW2JpGhyqr6/npAPisOt5D0B6Npy7BPuGIiN62te3MjnKEejyYs1ab+RY+AGVazt3X6CXnkMW6FC1PAyj4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JivF0Qld; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JARZs3032383;
-	Mon, 19 Aug 2024 16:45:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=h0CZ3FbHFgwTCAQ0tC+3gec0
-	WEhxchas++se84DTU1s=; b=JivF0QldgA7iH1mOT4Q1GCy0Lan8Qo2syqJ414FA
-	YAPMlK3G7fL57WVwmwhwt60Xa4uPc7qnWunUcFuZP9Ef3GWC4bmXkNGea1YwXSc7
-	F1CwABuYfhsflAs2bZtC40486lNbXY+t5yhLfQzwUk7PEU2eJIj3H5aLdPQ3JurK
-	SCBPSNTe0WsttMYyfxnQYtqdIATJ3IGOak9mHXTtB6X8DsuoGkZgV/wwpe9Z2ee4
-	FlbYz0+zXdZwoGy80fJDzitduhQNbItqPrPDQ9y7ZiEgEAHCuF+it+5HLOmPi639
-	Rakm0Auwwh/dkGg3At7jkLdLo/hqlo0T+JPAEdajNVTJ4w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m8750xa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 16:45:32 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JGjVeR002759
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 16:45:31 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 09:45:30 -0700
-Date: Mon, 19 Aug 2024 09:45:29 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Johan Hovold <johan@kernel.org>
-CC: Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Heikki
- Krogerus" <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Chris Lew <quic_clew@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>,
-        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/3] usb: typec: ucsi: Move unregister out of atomic
- section
-Message-ID: <ZsN2qR3tuXylb2qK@hu-bjorande-lv.qualcomm.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
- <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
- <ZsNfkuiRK9VqBSLT@hovoldconsulting.com>
+	s=arc-20240116; t=1724085979; c=relaxed/simple;
+	bh=4Zm2aY38wQUKInxgHuMrVp3FTi32iwRINTkf8PLyzIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X44PuhGkLF01N5O9FcDMf4zM5SHVQlhNml1cvzCbkDVfMKZ3i3pXaUo/vO1jJT/vMscIS+9KAE6pnV5fBSfH8wWs13jmO+zINHjkrLyeejAv4IM+YmGIQZ2VIMxSXRLI1p29rhzy9sQ9OsvZkuCLkbUds+tjJ6roa9GBHRwZU6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bhfv68Wb; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso53520041fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724085975; x=1724690775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Z7g9H1uuN368sbZwFL2P/UunOJpGy+71L7MEI5Gqco=;
+        b=Bhfv68Wbv9Smj0Llmr2FCqT2yK0fyMG8+cCqauvogxQyMcYGzt/corJd4Awfrt984J
+         EwHRlpT4DJ1ZIlmKuowlw11RyrfgDHp+xnVIIpcyxlb6pGb1pof/7e0lhGyxhew9fgol
+         B/xQo5kqR4x3AECNUDgzlNVO/TJ+NpL2Nqn8V5RoUCOuYvDzaBLiNHwtc4KQ4Nv5puBE
+         s7FdbG9iD8GVxIvB8gbvBhHHff6hRsONYisSoBK9DR4HeRdXVPvQAYP4eAIt8v/4CtUd
+         PnzDVtCeFUXlz557ySU1moYc9B5L1G4UKkJH7+GBM3qvVoBRxAp2p5YAUrJfh3yaS20M
+         WVrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724085975; x=1724690775;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Z7g9H1uuN368sbZwFL2P/UunOJpGy+71L7MEI5Gqco=;
+        b=Dh4vJQYSuYbzTRI1JboaNp2WKMkn4ntoP9/AZnxUhRXLMZ4tgi/431McrgFecsHLvY
+         8AMTbmqnK+dPAzoaSamxC7Q5e6kpKXuHM/nT59zAXaXKSM/kFm8Y+3lN1CIy7lalan/a
+         LasqDumgfwf5dHXY1oG59jr1dz4JikXq491k+Eo4SIoVs16wV+PbrYhtIA2M0izKZQ3j
+         B2DI47tB+s/tk6/9z2gQwtat6gDlWJOxV7r+ayHqTGNBHodq7MHGRWYJLM0dalAV3tqB
+         kd1R9wg3fnBlOs2GdNc/onyHBTBtRgzMQJpr5KmCYV5fRK4BP9d6kxbSe9BJHj7b9+ee
+         VagA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4pDR6LOr3K43GJB1/5BcVKpDWgr6TUNhnWMokptoWFUmOwMM3FcgVM0n/E6Jec/6tEEUu4kHOACS7ze7z3gF/WYHGHne0dyx6Hv6
+X-Gm-Message-State: AOJu0YyrmgjVje4SbEYj1iflp2+A70hJptmvi3iNw/6SFOyowg3AA7A0
+	Nztwzz9TX824l57E6Ci6tWzGSLHa3MeO4lEuNo9VRyeMeXcyFEYGS6lLYzEEh2s=
+X-Google-Smtp-Source: AGHT+IGuv7SyKEaIn/yQTA5OF0LPxA1KQdVqiDZ65XXA3A41gdwd0QgZ27gUJmx+DBdupjL/FSj4UA==
+X-Received: by 2002:a05:651c:544:b0:2f1:a7f8:810f with SMTP id 38308e7fff4ca-2f3be5de18cmr80508331fa.36.1724085975365;
+        Mon, 19 Aug 2024 09:46:15 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbbe29a6sm5772026a12.13.2024.08.19.09.46.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 09:46:15 -0700 (PDT)
+Message-ID: <4fcff880-30e2-44f8-aa45-6444a3eaa398@suse.com>
+Date: Mon, 19 Aug 2024 19:46:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZsNfkuiRK9VqBSLT@hovoldconsulting.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8YusWF3djvAyXmCoqzz8j6Q2-ZiAFgNF
-X-Proofpoint-ORIG-GUID: 8YusWF3djvAyXmCoqzz8j6Q2-ZiAFgNF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_13,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190112
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/25] KVM: TDX: create/free TDX vcpu structure
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-18-rick.p.edgecombe@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240812224820.34826-18-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 05:06:58PM +0200, Johan Hovold wrote:
-> On Sun, Aug 18, 2024 at 04:17:38PM -0700, Bjorn Andersson wrote:
-> > Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
-> > initialization")' 
-> 
-> This commit does not exist, but I think you really meant to refer to
-> 
-> 	9329933699b3 ("soc: qcom: pmic_glink: Make client-lock non-sleeping")
-> 
-> and possibly also
-> 
-> 	635ce0db8956 ("soc: qcom: pmic_glink: don't traverse clients list without a lock")
-> 
-> here.
-> 
 
-Yeah, I copy-pasted the wrong SHA1. Prior to commit 9329933699b3 ("soc:
-qcom: pmic_glink: Make client-lock non-sleeping") the PDR notification
-happened from a worker with only mutexes held.
 
-> > moved the pmic_glink client list under a spinlock, as
-> > it is accessed by the rpmsg/glink callback, which in turn is invoked
-> > from IRQ context.
-> > 
-> > This means that ucsi_unregister() is now called from IRQ context, which
-> > isn't feasible as it's expecting a sleepable context.
+On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
 > 
-> But this is not correct as you say above that the callback has always
-> been made in IRQ context. Then this bug has been there since the
-> introduction of the UCSI driver by commit
+> Implement vcpu related stubs for TDX for create, reset and free.
 > 
-
-No, I'm stating that commit 9329933699b3 ("soc: qcom: pmic_glink: Make
-client-lock non-sleeping") was needed because the client list is
-traversed under the separate glink callback, which has always been made
-in IRQ context.
-
-> 	62b5412b1f4a ("usb: typec: ucsi: add PMIC Glink UCSI driver")
+> For now, create only the features that do not require the TDX SEAMCALL.
+> The TDX specific vcpu initialization will be handled by KVM_TDX_INIT_VCPU.
 > 
-> > An effort is under
-> > way to get GLINK to invoke its callbacks in a sleepable context, but
-> > until then lets schedule the unregistration.
-> > 
-> > A side effect of this is that ucsi_unregister() can now happen
-> > after the remote processor, and thereby the communication link with it, is
-> > gone. pmic_glink_send() is amended with a check to avoid the resulting
-> > NULL pointer dereference, but it becomes expecting to see a failing send
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v1:
+>   - Dropped unnecessary WARN_ON_ONCE() in tdx_vcpu_create().
+>     WARN_ON_ONCE(vcpu->arch.cpuid_entries),
+>     WARN_ON_ONCE(vcpu->arch.cpuid_nent)
+>   - Use kvm_tdx instead of to_kvm_tdx() in tdx_vcpu_create() (Chao)
 > 
-> Perhaps you can rephrase this bit ("becomes expecting to see").
+> v19:
+>   - removed stale comment in tdx_vcpu_create().
 > 
-
-Sure.
-
-> > upon shutting down the remote processor (e.g. during a restart following
-> > a firmware crash):
-> > 
-> >   ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI write request: -5
-> > 
-> > Fixes: caa855189104 ("soc: qcom: pmic_glink: Fix race during initialization")
+> v18:
+>   - update commit log to use create instead of allocate because the patch
+>     doesn't newly allocate memory for TDX vcpu.
 > 
-> So this should be
+> v16:
+>   - Add AMX support as the KVM upstream supports it.
+> --
+> 2.46.0
+> ---
+>   arch/x86/kvm/vmx/main.c    | 44 ++++++++++++++++++++++++++++++++++----
+>   arch/x86/kvm/vmx/tdx.c     | 41 +++++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/x86_ops.h | 10 +++++++++
+>   arch/x86/kvm/x86.c         |  2 ++
+>   4 files changed, 93 insertions(+), 4 deletions(-)
 > 
-> Fixes: 62b5412b1f4a ("usb: typec: ucsi: add PMIC Glink UCSI driver")
-> 
+> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+> index c079a5b057d8..d40de73d2bd3 100644
+> --- a/arch/x86/kvm/vmx/main.c
+> +++ b/arch/x86/kvm/vmx/main.c
+> @@ -72,6 +72,42 @@ static void vt_vm_free(struct kvm *kvm)
+>   		tdx_vm_free(kvm);
+>   }
+>   
+> +static int vt_vcpu_precreate(struct kvm *kvm)
+> +{
+> +	if (is_td(kvm))
+> +		return 0;
+> +
+> +	return vmx_vcpu_precreate(kvm);
+> +}
+> +
+> +static int vt_vcpu_create(struct kvm_vcpu *vcpu)
+> +{
+> +	if (is_td_vcpu(vcpu))
+> +		return tdx_vcpu_create(vcpu);
+> +
+> +	return vmx_vcpu_create(vcpu);
+> +}
+> +
+> +static void vt_vcpu_free(struct kvm_vcpu *vcpu)
+> +{
+> +	if (is_td_vcpu(vcpu)) {
+> +		tdx_vcpu_free(vcpu);
+> +		return;
+> +	}
+> +
+> +	vmx_vcpu_free(vcpu);
+> +}
+> +
+> +static void vt_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> +{
+> +	if (is_td_vcpu(vcpu)) {
+> +		tdx_vcpu_reset(vcpu, init_event);
+> +		return;
+> +	}
+> +
+> +	vmx_vcpu_reset(vcpu, init_event);
+> +}
+> +
+>   static int vt_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
+>   {
+>   	if (!is_td(kvm))
+> @@ -108,10 +144,10 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+>   	.vm_destroy = vt_vm_destroy,
+>   	.vm_free = vt_vm_free,
+>   
+> -	.vcpu_precreate = vmx_vcpu_precreate,
+> -	.vcpu_create = vmx_vcpu_create,
+> -	.vcpu_free = vmx_vcpu_free,
+> -	.vcpu_reset = vmx_vcpu_reset,
+> +	.vcpu_precreate = vt_vcpu_precreate,
+> +	.vcpu_create = vt_vcpu_create,
+> +	.vcpu_free = vt_vcpu_free,
+> +	.vcpu_reset = vt_vcpu_reset,
+>   
+>   	.prepare_switch_to_guest = vmx_prepare_switch_to_guest,
+>   	.vcpu_load = vmx_vcpu_load,
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 531e87983b90..18738cacbc87 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -377,6 +377,47 @@ int tdx_vm_init(struct kvm *kvm)
+>   	return 0;
+>   }
+>   
+> +int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+> +
+> +	/* TDX only supports x2APIC, which requires an in-kernel local APIC. */
+> +	if (!vcpu->arch.apic)
+> +		return -EINVAL;
 
-I think it should be:
+nit: Use kvm_apic_present()
 
-9329933699b3 ("soc: qcom: pmic_glink: Make client-lock non-sleeping")
-
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
->  
-> > diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-> > index ac53a81c2a81..a33056eec83d 100644
-> > --- a/drivers/usb/typec/ucsi/ucsi_glink.c
-> > +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-> > @@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
-> >  
-> >  	struct work_struct notify_work;
-> >  	struct work_struct register_work;
-> > +	spinlock_t state_lock;
-> > +	unsigned int pdr_state;
-> > +	unsigned int new_pdr_state;
-> 
-> Should these be int to match the notify callback (and enum
-> servreg_service_state)?
-> 
-
-Ohh my. I made it unsigned because I made it unsigned in pmic_glink,
-when I wrote that. But as you point out, the type passed around is an
-enum servreg_service_state and it's mostly handled as a signed int.
-
-That said, pmic_glink actually filters the value space down to UP/DOWN,
-so making this "bool pdr_up" (pd_running?) and "bool ucsi_registered"
-would make this cleaner...
-
-> >  	u8 read_buf[UCSI_BUF_SIZE];
-> >  };
-> > @@ -244,8 +247,22 @@ static void pmic_glink_ucsi_notify(struct work_struct *work)
-> >  static void pmic_glink_ucsi_register(struct work_struct *work)
-> >  {
-> >  	struct pmic_glink_ucsi *ucsi = container_of(work, struct pmic_glink_ucsi, register_work);
-> > +	unsigned long flags;
-> > +	unsigned int new_state;
-> 
-> Then int here too.
-> 
-
-Yes.
-
-> > +
-> > +	spin_lock_irqsave(&ucsi->state_lock, flags);
-> > +	new_state = ucsi->new_pdr_state;
-> > +	spin_unlock_irqrestore(&ucsi->state_lock, flags);
-> > +
-> > +	if (ucsi->pdr_state != SERVREG_SERVICE_STATE_UP) {
-> > +		if (new_state == SERVREG_SERVICE_STATE_UP)
-> > +			ucsi_register(ucsi->ucsi);
-> > +	} else {
-> > +		if (new_state == SERVREG_SERVICE_STATE_DOWN)
-> > +			ucsi_unregister(ucsi->ucsi);
-> 
-> Do you risk a double deregistration (and UAF/double free) here?
-> 
-
-I believe we're good.
-
-Thank you,
-Bjorn
-
-> > +	}
-> >  
-> > -	ucsi_register(ucsi->ucsi);
-> > +	ucsi->pdr_state = new_state;
-> >  }
-> 
-> Johan
+<snip>
 
