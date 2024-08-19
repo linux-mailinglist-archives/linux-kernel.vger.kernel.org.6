@@ -1,201 +1,201 @@
-Return-Path: <linux-kernel+bounces-292825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2750F9574EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:50:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696779574CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B521F2203A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:50:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCC0CB2331C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA7320013F;
-	Mon, 19 Aug 2024 19:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB31E4F07;
+	Mon, 19 Aug 2024 19:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n1SHyjIw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ka5ojFE4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283481DF661;
-	Mon, 19 Aug 2024 19:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100F51E4EF4;
+	Mon, 19 Aug 2024 19:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096768; cv=none; b=fRnfd0KmYyX0TI/WPHfHmxwY35mAWgFpC2AvwB0aV43qj8QReUQ3KAjW3nvT46Kbf7nC2Tcgp/i1heZgFz5E61AFJpyvkdGuzBL7lJ1lRTFjHvSZL2fIAIW2buwKWIfl/u7UzdPLCSElUPbwe7lgHCBrZlj54Lbz6KnJe/HtPyI=
+	t=1724096748; cv=none; b=Z53xjJjvpCWVL37sW0IXX9bRSasfPKqvYZbjdvLES+eNa70Kk5tgfJnRDzq4tupbukPcgwa0ASN1x3SxjNtFw9pc4BbGs/QLySFqqZs4mne64fLb+FCco5tLT0sZTXwsLxmOw9wpM8mwTbeZzcNpQe9bZzOfPzAqXpqStTXaAcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096768; c=relaxed/simple;
-	bh=LjKpfCzXWEes3zYCkfp0RZCdk5A0eJtOy5P3yyx+VPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZxcT6e/lViTnKQSkZZavWHx8RyeEf89kaOAYGjmDKXRSpl0GMW3zSJeib0mj0k+5Ec4Ekjk020t8Je3XCekyT4Bzcp8fkeqox6mGQYEQ3lvPD8UNCVQ5Ay/Sxc/FdVQtYMapRBa/xIOKSFmZ/ITcCydjRBLiC3CjT2u01yJjtZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n1SHyjIw; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724096763; x=1755632763;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LjKpfCzXWEes3zYCkfp0RZCdk5A0eJtOy5P3yyx+VPY=;
-  b=n1SHyjIwNkhoSe7YDgivzsuup3phyhh9csNF1dmcUkiFXk+cVgB7Rpr5
-   n80J5+X1Cm7mrKAp1HEp540y/QsHT52KFlaNuSCXbTSt7keo+3wpierhs
-   fFiYp38ZfaVGlBpmRsUbqXIRaXJS/XbGjNIe+vA4jd35AzfTHsHBpREJh
-   zJib17qRqc0JCKKqZSsQuVsgwW1qZ7ArswkulfnY9S+1QUWwGoxEVQqFa
-   4NfO5P+qKCD9r2MALg/kADqnemt67WKifEPPHZ/3R8Q9oATaY9ZAaLJBH
-   MBMYOCOB5ruaTcXBkiZaTBHRwabAfPZSgC4E0EGAExxFpQnjP+WiTBJ2t
-   A==;
-X-CSE-ConnectionGUID: 2a3C55IpSPuZZKXaBLS/wQ==
-X-CSE-MsgGUID: IzZHR/7pQn2DGxJyTZFJzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22509573"
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="22509573"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 12:46:03 -0700
-X-CSE-ConnectionGUID: mutvEJSYT92P1npg0id1Dw==
-X-CSE-MsgGUID: EO5i08SORoOfmuHKY2qDvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="97949481"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 19 Aug 2024 12:46:00 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sg8KE-0009N4-24;
-	Mon, 19 Aug 2024 19:45:58 +0000
-Date: Tue, 20 Aug 2024 03:45:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>,
-	syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
-Message-ID: <202408200353.I1MmR4S5-lkp@intel.com>
-References: <20240819064754.35606-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1724096748; c=relaxed/simple;
+	bh=BTC1VqrgypC0zR0a/DPftpsfqKtSqKmahpvHDAKQMXg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KyQ9zV7KCIqWxTPRqPF5GI6nEmQQnrGF3n785ClXHpMW2vXi8fFyCC317V/1yymvEAsYNW0f2702Lb0bvIwcpHdh+FdDG6fmYtg0lAQvZf70pyBUeJ5xEwUSUmZg4jwKj57JkNt/kHDOKNhtiBX6iXSzeOWGrO5EOA80e4RgkfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ka5ojFE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCBCC4AF0E;
+	Mon, 19 Aug 2024 19:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724096747;
+	bh=BTC1VqrgypC0zR0a/DPftpsfqKtSqKmahpvHDAKQMXg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ka5ojFE474ErJ8kwIBbixpX8geY+tOEnYTHKQpE5vtuzWpabbs07VH98SJkLD1zcM
+	 +3Y2GHAmx1tTPJWH3F2jVN5gDwsr93S1Ph5ClEUrpBcQr04365hvXB8APyiDw5hcz1
+	 QvRnINMeBaTNq17/nRBhbNCx3s/7OGnaOeSu98MjLthNSv8doRXJwySx8OXLVOk/7E
+	 p1f84gOd3sT5eJo7fw4RpV+7ZOd+3a0IuS5ZYJcXO9Gj2OgOgq8t1E5VnI8bgan8Ln
+	 pJo40xQ0mRq+4AkLaq53mHrfFDlXUiUQhuMjffYP8KoksgtaCoqOW3XFpLt3lpxosX
+	 4876k1lwPhJ8Q==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Mon, 19 Aug 2024 21:45:25 +0200
+Subject: [PATCH net 07/14] mptcp: pm: remove mptcp_pm_remove_subflow()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819064754.35606-1-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-net-mptcp-pm-reusing-id-v1-7-38035d40de5b@kernel.org>
+References: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
+In-Reply-To: <20240819-net-mptcp-pm-reusing-id-v1-0-38035d40de5b@kernel.org>
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4749; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=BTC1VqrgypC0zR0a/DPftpsfqKtSqKmahpvHDAKQMXg=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmw6DTcaXMICC6/6mJo75ZmAFgQEYtPhgQL8oxd
+ sRt5BZq67OJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZsOg0wAKCRD2t4JPQmmg
+ c8OhD/wNmNTAqUfXbPxULsX9+aAdPC7QnqNsXRZBZc0mzpww/ik5tRr1fKvRJ/FD2iNeN81kRbA
+ GCYleKQcNjv9faivL9gnJtMdRRSlSc15I7wiapBakzUXwrgoNHi+G3ecBSyH13on0/CznrMJ2fl
+ Zgn45vY274IH5948XPxQ8pPrRXbYUgMkvpPivh9Mi161I17djdD64tagedzyDhMeDra3HLj+hfG
+ SHYsvfliMI3x6Ah2nsmPRSZ2gGHYoruWDSTlmVuj8erMFfQJXbRA4BjugZYz4KUS5l+nf7rGH8W
+ oYGlANkAOkIr8HOFkmUkJYW+wRrzQQ8n7wR0TDxhQO0zf8ri+s7OzFxddU4K2otgH53Fut3Rgx0
+ 8v3nl2TWo2mMUEhjmkMCvWpE+BJd5ftuqs1/GxNKdBYCnTnNnIx5DdP6ohAG+eubtcpX/qVKdI0
+ 9WRC8oIZFQUxSh3qHqVLS9+tC6KUQrm8AQ7KqHomq2Fb3U1nqWztIyY590fq5dBXkYkQDlGaz+V
+ q5TdNvFvX3+XfBAE426KIcehpoHh7JRJBA12nN7Ywf8Sewcay+KWYWVL2j3SMrA+xpoTZ4xeic8
+ G9eb0XKGvHai9+jVvvB762hB+yt/buUt97kSouHPlauWY8XepuemWSwNQ5dp6/UCajP3mQGouHk
+ /I6tw8UD64R4DXw==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hi Lizhi,
+This helper is confusing. It is in pm.c, but it is specific to the
+in-kernel PM and it cannot be used by the userspace one. Also, it simply
+calls one in-kernel specific function with the PM lock, while the
+similar mptcp_pm_remove_addr() helper requires the PM lock.
 
-kernel test robot noticed the following build warnings:
+What's left is the pr_debug(), which is not that useful, because a
+similar one is present in the only function called by this helper:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.11-rc4 next-20240819]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+  mptcp_pm_nl_rm_subflow_received()
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Xu/bcachefs-Fix-oob-in-bch2_dev_journal_init/20240819-145031
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240819064754.35606-1-lizhi.xu%40windriver.com
-patch subject: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
-config: arc-randconfig-001-20240819 (https://download.01.org/0day-ci/archive/20240820/202408200353.I1MmR4S5-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408200353.I1MmR4S5-lkp@intel.com/reproduce)
+After these modifications, this helper can be marked as 'static', and
+the lock can be taken only once in mptcp_pm_flush_addrs_and_subflows().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408200353.I1MmR4S5-lkp@intel.com/
+Note that it is not a bug fix, but it will help backporting the
+following commits.
 
-All warnings (new ones prefixed by >>):
+Fixes: 0ee4261a3681 ("mptcp: implement mptcp_pm_remove_subflow")
+Cc: stable@vger.kernel.org
+Reviewed-by: Mat Martineau <martineau@kernel.org>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ net/mptcp/pm.c         | 10 ----------
+ net/mptcp/pm_netlink.c | 16 +++++++---------
+ net/mptcp/protocol.h   |  3 ---
+ 3 files changed, 7 insertions(+), 22 deletions(-)
 
-   In file included from fs/bcachefs/vstructs.h:5,
-                    from fs/bcachefs/bcachefs_format.h:80,
-                    from fs/bcachefs/bcachefs.h:207,
-                    from fs/bcachefs/journal.c:8:
-   fs/bcachefs/journal.c: In function 'bch2_dev_journal_init':
->> fs/bcachefs/journal.c:1316:50: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long unsigned int' [-Wformat=]
-    1316 |                                 prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
-         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   fs/bcachefs/util.h:78:63: note: in definition of macro 'prt_printf'
-      78 | #define prt_printf(_out, ...)           bch2_prt_printf(_out, __VA_ARGS__)
-         |                                                               ^~~~~~~~~~~
-   fs/bcachefs/journal.c:1316:79: note: format string is defined here
-    1316 |                                 prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
-         |                                                                             ~~^
-         |                                                                               |
-         |                                                                               long unsigned int
-         |                                                                             %llu
-
-
-vim +1316 fs/bcachefs/journal.c
-
-  1297	
-  1298	int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
-  1299	{
-  1300		struct journal_device *ja = &ca->journal;
-  1301		struct bch_sb_field_journal *journal_buckets =
-  1302			bch2_sb_field_get(sb, journal);
-  1303		struct bch_sb_field_journal_v2 *journal_buckets_v2 =
-  1304			bch2_sb_field_get(sb, journal_v2);
-  1305	
-  1306		ja->nr = 0;
-  1307	
-  1308		if (journal_buckets_v2) {
-  1309			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
-  1310	
-  1311			for (unsigned i = 0; i < nr; i++) {
-  1312				ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
-  1313				if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
-  1314					struct bch_fs *c = ca->fs;
-  1315					struct printbuf buf = PRINTBUF;
-> 1316					prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
-  1317						le64_to_cpu(journal_buckets_v2->d[i].nr));
-  1318					bch_info(c, "%s", buf.buf);
-  1319					printbuf_exit(&buf);
-  1320					return -BCH_ERR_ENOMEM_dev_journal_init;
-  1321				}
-  1322			}
-  1323		} else if (journal_buckets) {
-  1324			ja->nr = bch2_nr_journal_buckets(journal_buckets);
-  1325		}
-  1326	
-  1327		ja->bucket_seq = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
-  1328		if (!ja->bucket_seq)
-  1329			return -BCH_ERR_ENOMEM_dev_journal_init;
-  1330	
-  1331		unsigned nr_bvecs = DIV_ROUND_UP(JOURNAL_ENTRY_SIZE_MAX, PAGE_SIZE);
-  1332	
-  1333		for (unsigned i = 0; i < ARRAY_SIZE(ja->bio); i++) {
-  1334			ja->bio[i] = kmalloc(struct_size(ja->bio[i], bio.bi_inline_vecs,
-  1335					     nr_bvecs), GFP_KERNEL);
-  1336			if (!ja->bio[i])
-  1337				return -BCH_ERR_ENOMEM_dev_journal_init;
-  1338	
-  1339			ja->bio[i]->ca = ca;
-  1340			ja->bio[i]->buf_idx = i;
-  1341			bio_init(&ja->bio[i]->bio, NULL, ja->bio[i]->bio.bi_inline_vecs, nr_bvecs, 0);
-  1342		}
-  1343	
-  1344		ja->buckets = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
-  1345		if (!ja->buckets)
-  1346			return -BCH_ERR_ENOMEM_dev_journal_init;
-  1347	
-  1348		if (journal_buckets_v2) {
-  1349			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
-  1350			unsigned dst = 0;
-  1351	
-  1352			for (unsigned i = 0; i < nr; i++)
-  1353				for (unsigned j = 0; j < le64_to_cpu(journal_buckets_v2->d[i].nr); j++)
-  1354					ja->buckets[dst++] =
-  1355						le64_to_cpu(journal_buckets_v2->d[i].start) + j;
-  1356		} else if (journal_buckets) {
-  1357			for (unsigned i = 0; i < ja->nr; i++)
-  1358				ja->buckets[i] = le64_to_cpu(journal_buckets->buckets[i]);
-  1359		}
-  1360	
-  1361		return 0;
-  1362	}
-  1363	
+diff --git a/net/mptcp/pm.c b/net/mptcp/pm.c
+index 23bb89c94e90..925123e99889 100644
+--- a/net/mptcp/pm.c
++++ b/net/mptcp/pm.c
+@@ -60,16 +60,6 @@ int mptcp_pm_remove_addr(struct mptcp_sock *msk, const struct mptcp_rm_list *rm_
+ 	return 0;
+ }
+ 
+-int mptcp_pm_remove_subflow(struct mptcp_sock *msk, const struct mptcp_rm_list *rm_list)
+-{
+-	pr_debug("msk=%p, rm_list_nr=%d", msk, rm_list->nr);
+-
+-	spin_lock_bh(&msk->pm.lock);
+-	mptcp_pm_nl_rm_subflow_received(msk, rm_list);
+-	spin_unlock_bh(&msk->pm.lock);
+-	return 0;
+-}
+-
+ /* path manager event handlers */
+ 
+ void mptcp_pm_new_connection(struct mptcp_sock *msk, const struct sock *ssk, int server_side)
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index 2c26696b820e..44fc1c5959ac 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -857,8 +857,8 @@ static void mptcp_pm_nl_rm_addr_received(struct mptcp_sock *msk)
+ 	mptcp_pm_nl_rm_addr_or_subflow(msk, &msk->pm.rm_list_rx, MPTCP_MIB_RMADDR);
+ }
+ 
+-void mptcp_pm_nl_rm_subflow_received(struct mptcp_sock *msk,
+-				     const struct mptcp_rm_list *rm_list)
++static void mptcp_pm_nl_rm_subflow_received(struct mptcp_sock *msk,
++					    const struct mptcp_rm_list *rm_list)
+ {
+ 	mptcp_pm_nl_rm_addr_or_subflow(msk, rm_list, MPTCP_MIB_RMSUBFLOW);
+ }
+@@ -1471,7 +1471,9 @@ static int mptcp_nl_remove_subflow_and_signal_addr(struct net *net,
+ 					  !(entry->flags & MPTCP_PM_ADDR_FLAG_IMPLICIT));
+ 
+ 		if (remove_subflow) {
+-			mptcp_pm_remove_subflow(msk, &list);
++			spin_lock_bh(&msk->pm.lock);
++			mptcp_pm_nl_rm_subflow_received(msk, &list);
++			spin_unlock_bh(&msk->pm.lock);
+ 		} else if (entry->flags & MPTCP_PM_ADDR_FLAG_SUBFLOW) {
+ 			/* If the subflow has been used, but now closed */
+ 			spin_lock_bh(&msk->pm.lock);
+@@ -1617,18 +1619,14 @@ static void mptcp_pm_remove_addrs_and_subflows(struct mptcp_sock *msk,
+ 			alist.ids[alist.nr++] = entry->addr.id;
+ 	}
+ 
++	spin_lock_bh(&msk->pm.lock);
+ 	if (alist.nr) {
+-		spin_lock_bh(&msk->pm.lock);
+ 		msk->pm.add_addr_signaled -= alist.nr;
+ 		mptcp_pm_remove_addr(msk, &alist);
+-		spin_unlock_bh(&msk->pm.lock);
+ 	}
+-
+ 	if (slist.nr)
+-		mptcp_pm_remove_subflow(msk, &slist);
+-
++		mptcp_pm_nl_rm_subflow_received(msk, &slist);
+ 	/* Reset counters: maybe some subflows have been removed before */
+-	spin_lock_bh(&msk->pm.lock);
+ 	bitmap_fill(msk->pm.id_avail_bitmap, MPTCP_PM_MAX_ADDR_ID + 1);
+ 	msk->pm.local_addr_used = 0;
+ 	spin_unlock_bh(&msk->pm.lock);
+diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
+index 60c6b073d65f..a1c1b0ff1ce1 100644
+--- a/net/mptcp/protocol.h
++++ b/net/mptcp/protocol.h
+@@ -1026,7 +1026,6 @@ int mptcp_pm_announce_addr(struct mptcp_sock *msk,
+ 			   const struct mptcp_addr_info *addr,
+ 			   bool echo);
+ int mptcp_pm_remove_addr(struct mptcp_sock *msk, const struct mptcp_rm_list *rm_list);
+-int mptcp_pm_remove_subflow(struct mptcp_sock *msk, const struct mptcp_rm_list *rm_list);
+ void mptcp_pm_remove_addrs(struct mptcp_sock *msk, struct list_head *rm_list);
+ 
+ void mptcp_free_local_addr_list(struct mptcp_sock *msk);
+@@ -1133,8 +1132,6 @@ static inline u8 subflow_get_local_id(const struct mptcp_subflow_context *subflo
+ 
+ void __init mptcp_pm_nl_init(void);
+ void mptcp_pm_nl_work(struct mptcp_sock *msk);
+-void mptcp_pm_nl_rm_subflow_received(struct mptcp_sock *msk,
+-				     const struct mptcp_rm_list *rm_list);
+ unsigned int mptcp_pm_get_add_addr_signal_max(const struct mptcp_sock *msk);
+ unsigned int mptcp_pm_get_add_addr_accept_max(const struct mptcp_sock *msk);
+ unsigned int mptcp_pm_get_subflows_max(const struct mptcp_sock *msk);
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
 
