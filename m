@@ -1,218 +1,127 @@
-Return-Path: <linux-kernel+bounces-294411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B78958D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E43958D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17785287773
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5871F24A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C861C37BB;
-	Tue, 20 Aug 2024 17:25:30 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDE51C7B76;
+	Tue, 20 Aug 2024 17:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k7UAdq/0"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1A11C9DCB
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59A11C6899
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174730; cv=none; b=QeevDB8FNRwh2XBPyQh/jwDewf3CK3JPfS27+jw07QwwJQau8vPrNoMyPhJutkz2yKOnTYR+0H+YJuqzNQjAssrjXkp0/zsE6/FoYTTWVDK4nLJITPS705WQ8cLNb+pxtlgvKJfl725AJkE/ZgHMrQgCFqIXA0hTncdHS91uQxo=
+	t=1724174691; cv=none; b=nH8C49m+BZtKjo2ZUdXjVzxVbrOu/xW9eI95E0EjQefTJZ+0bBP4lHS1Bx0IKlgP6UTNnZT3sqJh2mng6a8xHUnjbEC3M9fZf1HZxKZT7wTRhB6Sf80+ZizX3hcmAnTvLiboi8GYzEWjGSiQJdjK9S5hkAgQDFqbfGFzYqVc0iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174730; c=relaxed/simple;
-	bh=QY0mM6rxGSovMexefAKs3hWoj6TF1MIze1nIqjlXY9g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qu2jIqidkplNDS6iPOm9A/JP/gO1cG49XUVEClEasUGCO1KFtUXf4muo32aFWFNgA2AjangmVv6ZFonYS8YRPG2UIxEFAvwwJ4SfJnPaNN4wx4uq811xX0p9zrDhua2jDJ97wIv0MDcYKI0fPj9nn0rgAleftQKoSv7WczPVMnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WpGYP66jQz9sSL;
-	Tue, 20 Aug 2024 19:24:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id plRWXHyXwK1C; Tue, 20 Aug 2024 19:24:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WpGYC0bkPz9sSf;
-	Tue, 20 Aug 2024 19:24:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 01EDA8B763;
-	Tue, 20 Aug 2024 19:24:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id mYYR_-AlqojN; Tue, 20 Aug 2024 19:24:30 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.72])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8C7BB8B779;
-	Tue, 20 Aug 2024 19:24:30 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 14/14] powerpc/603: Inconditionally use task PGDIR in DTLB misses
-Date: Tue, 20 Aug 2024 19:23:58 +0200
-Message-ID: <a2ba8eeb1c845eeb9e46b6fe3a5e9f841df9a033.1724173828.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1724173828.git.christophe.leroy@csgroup.eu>
-References: <cover.1724173828.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724174691; c=relaxed/simple;
+	bh=5jI+2p5tO5nOwZs3G8vuy7obODZwjARI/RidWxG+P/0=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XNHEz5FVnO7ugPwmVQvEQjV1DwpOE9LnijWsLMQxQdv6K+R8Tp68hRoCdjtlxOW60TcaMmFRxnr4BCXNEJUbTpYEXPKhmILArt/8mt35tICsQ40o/xyQgm4XQS8+zpiQ0lsoMzcknj5Eckc3yhEVviZlXtJalENoceBJOA32xKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k7UAdq/0; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d5f6c56fso387989685a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724174688; x=1724779488; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kivk6OVMCb2Ic/WQYTSiSJ7knOT9aLnIRhStn7/b1EY=;
+        b=k7UAdq/0AOXuatYlkTYVPglCWbt1B8OSBoplCE6KJyj/wrrE68kTwxZFdIkgfVlZmM
+         kS19G2FZpoLKMGfKKGkgpGV6shDKpcYOThTTZrugD0BVIHdjeRD1zgKDsZ1oWpRvAWgD
+         RQYyvP7n89b5kWxcbU5iZh7a12vX9nZlMefDw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724174688; x=1724779488;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kivk6OVMCb2Ic/WQYTSiSJ7knOT9aLnIRhStn7/b1EY=;
+        b=mtEM7+QqsoMrhhVgW3lN8OAx/Ns2cpOnUc8317f+NWnjhF7MYKsTzqwIqVRgIcb0hu
+         +Fzy+SCS0JHzDOiJb+YuDAUzMzi7/7ozJlurhyY6AH+yns4WNa5RLNcW02xp/+WCu+ud
+         ir4x1k9X25vL3+gBwy3i2gRB8f1TSO3V0lyU/ziU2KeIRQut15rwcElOmyPnpPG7yRmQ
+         CUILfItwQOM+MoK75VPdA7ewd3OByk0vPiza9lSlnGgAqF5ufe1yuiOv4D3wjlCrhh4L
+         xPcKZCywhvjlVhscQnCtYcMYU2pBeGNGUUzNln1CB1z9SLX61wMxelt4guAwutHhq8vF
+         XmJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN/ipBsHD+l7YBXKdez2KAAK4NxOj3cBp/tPVL0v7wbqXUw0KyW+ISZF7S0pNFnsIms5lXFv+/3WwUwbn9Tya1omeL+ajuYDtwhrXS
+X-Gm-Message-State: AOJu0YzaGQdx+BRCGrr5YE9Z4HLqmkrKAb1eD2yqDnHdKKX2+U7gnnGA
+	8ju01o+NeondXbRRYmajlcCZ9v5UwYSWeOi6Trp3MyiaCsrscMP6SzLGkzwCiEDoWN4dz0N0rta
+	VtgPhrfqYWymwWGNvqFjCMTKhBKFgVaj/VVV1
+X-Google-Smtp-Source: AGHT+IFPnbaIpKnJbRF0KVl+CpiSvIEMrBAyBLBBnH5HxEKdAtvNgsfFmldfo1C+7jIx6Rn++JaBGcZOF4ZPpQUlOKY=
+X-Received: by 2002:a05:620a:319c:b0:7a3:6dd9:efbb with SMTP id
+ af79cd13be357-7a50695402emr1528659285a.33.1724174688344; Tue, 20 Aug 2024
+ 10:24:48 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 20 Aug 2024 10:24:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724174649; l=5785; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=QY0mM6rxGSovMexefAKs3hWoj6TF1MIze1nIqjlXY9g=; b=PSLuZDhtwZluoDKVhlUyhtmQ9FSvm0HFQUpAZHpO0iRhmmXMxlZRt8gs9TVmS9bstnKh9U+RW zCkpBAT9NsPCUf0AWIfC/TQpqMfuJpxbFUjWoSe4wknmDJDEmvMNv63
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZsTPuvoTIFVFHw6o@smile.fi.intel.com>
+References: <20240819223834.2049862-1-swboyd@chromium.org> <20240819223834.2049862-3-swboyd@chromium.org>
+ <ZsRrWfoPPVGC4Dqy@smile.fi.intel.com> <CAE-0n536OWtoOoRSM=6u=wA75A+0WtBktiY=6Y6VjKKTQWPcNw@mail.gmail.com>
+ <ZsTPuvoTIFVFHw6o@smile.fi.intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 20 Aug 2024 10:24:47 -0700
+Message-ID: <CAE-0n50xcj21WiPHW9ATE7BfxKpOWvdV7of97G_U5ZrMV0zUUw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/17] drm/bridge: Verify lane assignment is going to
+ work during atomic_check
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
+	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-At the time being, DATA TLB miss handlers use task PGDIR for user
-addresses and swapper_pg_dir for kernel addresses.
+Quoting Andy Shevchenko (2024-08-20 10:17:46)
+> On Tue, Aug 20, 2024 at 10:12:55AM -0700, Stephen Boyd wrote:
+> > Quoting Andy Shevchenko (2024-08-20 03:09:29)
+> > > On Mon, Aug 19, 2024 at 03:38:16PM -0700, Stephen Boyd wrote:
+> > > > +     /*
+> > > > +      * Ensure this bridge is aware that the next bridge wants to
+> > > > +      * reassign lanes.
+> > > > +      */
+> > > > +     for (i = 0; i < num_input_lanes; i++)
+> > > > +             if (i != input_lanes[i].logical && !num_output_lanes)
+> > > > +                     return -ENOTSUPP;
+> > >
+> > > Besides missing {} this code is internal to the Linux kernel. Is it okay?
+> >
+> > ENOTSUPP is used by select_bus_fmt_recursive() so I simply followed that
+> > style.
+>
+> Okay, just be aware of that side effect of that code, also checkpatch may
+> complain (however it might be false positive).
 
-Now that kernel part of swapper_pg_dir is copied into task PGDIR
-at PGD allocation, it is possible to avoid the above logic and
-always use task PGDIR.
-
-But new kernel PGD entries can still be created after init, in
-which case those PGD entries may miss in task PGDIR. This can be
-handled in DATA TLB error handler.
-
-However, it needs to be done in real mode because the missing
-entry might be related to the stack.
-
-So implement copy of missing PGD entry in DATA TLB miss handler
-just after detection of invalid PGD entry.
-
-Also replace comparison by same calculation as in previous patch
-to know if an address belongs to a kernel or user segment.
-
-Note that as mentioned in platforms/Kconfig.cputype, SMP is not
-supported on 603 processors so there is no risk of the PGD entry
-be populated during the fault.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/kernel/head_book3s_32.S | 65 ++++++++++++++++------------
- 1 file changed, 38 insertions(+), 27 deletions(-)
-
-diff --git a/arch/powerpc/kernel/head_book3s_32.S b/arch/powerpc/kernel/head_book3s_32.S
-index 156304c00ece..cb2bca76be53 100644
---- a/arch/powerpc/kernel/head_book3s_32.S
-+++ b/arch/powerpc/kernel/head_book3s_32.S
-@@ -469,27 +469,22 @@ InstructionAddressInvalid:
- DataLoadTLBMiss:
- 	/* Get PTE (linux-style) and check access */
- 	mfspr	r0,SPRN_DMISS
--	lis	r1, TASK_SIZE@h		/* check if kernel address */
--	cmplw	0,r1,r0
- 	mfspr	r2, SPRN_SDR1
--	li	r1, _PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_READ
--	rlwinm	r2, r2, 28, 0xfffff000
--	li	r3, 3
--	bgt-	112f
--	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
--	li	r3, 0
--	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
--112:	rlwimi	r2,r0,12,20,29		/* insert top 10 bits of address */
--	lwz	r2,0(r2)		/* get pmd entry */
-+	rlwinm	r1, r2, 28, 0xfffff000
-+	rlwimi	r1,r0,12,20,29		/* insert top 10 bits of address */
-+	lwz	r2,0(r1)		/* get pmd entry */
-+	rlwinm	r3, r0, 4, 0xf
- 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
--	beq-	DataAddressInvalid	/* return if no mapping */
--	rlwimi	r2,r0,22,20,29		/* insert next 10 bits of address */
-+	subi	r3, r3, (TASK_SIZE >> 28) & 0xf
-+	beq-	2f			/* bail if no mapping */
-+1:	rlwimi	r2,r0,22,20,29		/* insert next 10 bits of address */
- 	lwz	r2,0(r2)		/* get linux-style pte */
-+	li	r1, _PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_READ
- 	andc.	r1,r1,r2		/* check access & ~permission */
- 	bne-	DataAddressInvalid	/* return if access not permitted */
- 	/* Convert linux-style PTE to low word of PPC-style PTE */
- 	rlwinm	r1,r2,32-9,30,30	/* _PAGE_WRITE -> PP msb */
--	rlwimi	r2,r3,0,30,31		/* userspace ? -> PP */
-+	rlwimi	r2,r3,2,30,31		/* userspace ? -> PP */
- 	rlwimi	r1,r2,32-3,24,24	/* _PAGE_WRITE -> _PAGE_DIRTY */
- 	xori	r1,r1,_PAGE_DIRTY	/* clear dirty when not rw */
- 	ori	r1,r1,0xe04		/* clear out reserved bits */
-@@ -518,6 +513,16 @@ MMU_FTR_SECTION_ELSE
- 	tlbld	r0
- 	rfi
- ALT_MMU_FTR_SECTION_END_IFSET(MMU_FTR_NEED_DTLB_SW_LRU)
-+
-+2:	lis     r2, (swapper_pg_dir - PAGE_OFFSET)@ha
-+	addi    r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l        /* kernel page table */
-+	rlwimi	r2,r0,12,20,29		/* insert top 10 bits of address */
-+	lwz	r2,0(r2)		/* get pmd entry */
-+	cmpwi	cr0,r2,0
-+	beq-	DataAddressInvalid	/* return if no mapping */
-+	stw	r2,0(r1)
-+	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
-+	b	1b
- DataAddressInvalid:
- 	mfspr	r3,SPRN_SRR1
- 	rlwinm	r1,r3,9,6,6	/* Get load/store bit */
-@@ -543,26 +548,22 @@ DataAddressInvalid:
- DataStoreTLBMiss:
- 	/* Get PTE (linux-style) and check access */
- 	mfspr	r0,SPRN_DMISS
--	lis	r1, TASK_SIZE@h		/* check if kernel address */
--	cmplw	0,r1,r0
- 	mfspr	r2, SPRN_SDR1
--	li	r1, _PAGE_RW | _PAGE_DIRTY | _PAGE_PRESENT | _PAGE_ACCESSED
--	rlwinm	r2, r2, 28, 0xfffff000
--	li	r3, 3
--	bgt-	112f
--	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
--	li	r3, 0
--	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
--112:	rlwimi	r2,r0,12,20,29		/* insert top 10 bits of address */
--	lwz	r2,0(r2)		/* get pmd entry */
-+	rlwinm	r1, r2, 28, 0xfffff000
-+	rlwimi	r1,r0,12,20,29		/* insert top 10 bits of address */
-+	lwz	r2,0(r1)		/* get pmd entry */
-+	rlwinm	r3, r0, 4, 0xf
- 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
--	beq-	DataAddressInvalid	/* return if no mapping */
-+	subi	r3, r3, (TASK_SIZE >> 28) & 0xf
-+	beq-	2f			/* bail if no mapping */
-+1:
- 	rlwimi	r2,r0,22,20,29		/* insert next 10 bits of address */
- 	lwz	r2,0(r2)		/* get linux-style pte */
-+	li	r1, _PAGE_RW | _PAGE_DIRTY | _PAGE_PRESENT | _PAGE_ACCESSED
- 	andc.	r1,r1,r2		/* check access & ~permission */
- 	bne-	DataAddressInvalid	/* return if access not permitted */
- 	/* Convert linux-style PTE to low word of PPC-style PTE */
--	rlwimi	r2,r3,0,31,31		/* userspace ? -> PP lsb */
-+	rlwimi	r2,r3,1,31,31		/* userspace ? -> PP lsb */
- 	li	r1,0xe06		/* clear out reserved bits & PP msb */
- 	andc	r1,r2,r1		/* PP = user? 1: 0 */
- BEGIN_FTR_SECTION
-@@ -592,6 +593,16 @@ MMU_FTR_SECTION_ELSE
- 	rfi
- ALT_MMU_FTR_SECTION_END_IFSET(MMU_FTR_NEED_DTLB_SW_LRU)
- 
-+2:	lis     r2, (swapper_pg_dir - PAGE_OFFSET)@ha
-+	addi    r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l        /* kernel page table */
-+	rlwimi	r2,r0,12,20,29		/* insert top 10 bits of address */
-+	lwz	r2,0(r2)		/* get pmd entry */
-+	cmpwi	cr0,r2,0
-+	beq-	DataAddressInvalid	/* return if no mapping */
-+	stw	r2,0(r1)
-+	rlwinm	r2,r2,0,0,19		/* extract address of pte page */
-+	b	1b
-+
- #ifndef CONFIG_ALTIVEC
- #define altivec_assist_exception	unknown_exception
- #endif
--- 
-2.44.0
-
+Yes checkpatch complained but didn't enlighten me. Please tell me the
+side effect as I'm unaware!
 
