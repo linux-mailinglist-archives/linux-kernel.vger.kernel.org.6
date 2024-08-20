@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-294220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C3F958AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBEB958AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B331C20F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B87282C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E3A1922C9;
-	Tue, 20 Aug 2024 15:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ED61917D6;
+	Tue, 20 Aug 2024 15:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wRrcgFek";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i6MrGbcf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FvkDKqSZ"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC31B6088F;
-	Tue, 20 Aug 2024 15:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DFC18E77E;
+	Tue, 20 Aug 2024 15:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166738; cv=none; b=kwthyiK+rwhMdh22PM/Rjbqldk2yvGab3kbUxgjeph8QJTvCuRQX17kBkIHq44fY83A1T+CrJ4gLT6r7/lIwBjpaTyD/hvJ3swAV6CANoIjYZDfEGr4jAmTwrCVN0RgZ+Z1PP4rofLW/YU/VQ+VXEkrZJZQcWakV/iQaWVDKuo4=
+	t=1724166809; cv=none; b=UYTtyZxh1CniaaaPU6xO11+L9aTV9ZB0vKp9seKmBWASO/qmjM3/+Ui4Lyl1HyXVYTNnzmQJI75mMPdDrnZYh5z9TDEvNv7VDLOyU9I1Lm17BZJCy41SjXiwUDCZ058Dn/bbMF+tkyelavotqis7s5WtVVxSSvGvYEYuuZVt42I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166738; c=relaxed/simple;
-	bh=FhagCugxyffpHVTVwvsh1BtJGvW1RGFCc+TAY1sxRB0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YZuqfJw5eMmSqtUCDxjuysiGG4rTaVvaDXNp3ABcliGXFx7QsmJDvt+tnHc+T74na+YqnWDCiBQPoMjCWPAgrBkEtmP2vF29667him+OXZ6+sqmO5LsTktCiuLL3DmweADOQF6yjVFM01hlDqsqM2gEX1H8mC7ab87r3/mRfukk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wRrcgFek; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i6MrGbcf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 20 Aug 2024 15:12:14 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724166735;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ti0Smyy/OmXK0JngAPePRZVnbcldBdBviQ0czHDUyHQ=;
-	b=wRrcgFekRjfFQDFxvYps+MmqJpeDoPKSRNMESgFYYSfqLPaYZRf5skDaoU8b0gmWikXbFb
-	PkDG7KqGRYizO4Eh+eSqnjSY9XMGl9N3yg3PguHHN40LpQ31pQrgyQmew294DUSWQd2Wzx
-	ZGw0yK7dxfa2JxMf+5i37tmCwLZg3YjrNEtQs7PZKH2mNc+YgsyUEJ0qC/kEH3eI2/HWpP
-	pZC6QNL2Yr3XYKd/NIFWZ80+rsir6A0h4NkGNsBMXGOnOKx5wxiIVHPtjadEKBSweZgTvl
-	jTa3KxbrN0gLDaHcC9AwCwNBQZR69pwciSjSfL7GgEnMlnjQpMW76+HfNxW/qg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724166735;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ti0Smyy/OmXK0JngAPePRZVnbcldBdBviQ0czHDUyHQ=;
-	b=i6MrGbcfmJkersUuSKvL8n/vU6xXFHJTzcLHcMBCNSiyiWIEGfcq8aXOYj5oKsg3z8dF87
-	mHwx167RfdSQtICw==
-From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in probe()
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>,
- Anup Patel <anup@brainfault.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
-References: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
+	s=arc-20240116; t=1724166809; c=relaxed/simple;
+	bh=nx9vrFwlguPTFdqzU9bhEKj89KFYe5EAZmmSAToxOts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TburPOSpv30XdEVR6SyDLem/gDJ3zBV3476MuyDypYDz+KuX/d+aWoXDXcZlgrGPZ2pkAheHEMJuw6So9G3Djq+pjc44NoalV4UeUcJxc5RQ7cn3lcXqDcBPCIohZwTMBJGKlPNMaEW+LSaMVyF/qkOEf9yXLrDf54rM4BAW5os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FvkDKqSZ; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFDL2S012088;
+	Tue, 20 Aug 2024 10:13:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724166801;
+	bh=A3/76qLgq/8QK9n1BPUq/kYGt62Cg6kwN2Elf5HOzG4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FvkDKqSZ4s/jh7Qbm+cDsVx/GwNOrQdkvDnVDwLOMqv3AmKXa/kjUesv/gcMCjUoS
+	 0hXjrClVQrb2YXWi3aIAO5Ipbll9unGWh5b4tohZ5DY5l7WTiGTMjP2il4bVhpdTzT
+	 Wv9wlpCZnIXwd2eDU1DoCY1Q5PEhxWeXWNQa/6kc=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFDLJn014437
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 20 Aug 2024 10:13:21 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
+ Aug 2024 10:13:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 20 Aug 2024 10:13:20 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFDKx7047995;
+	Tue, 20 Aug 2024 10:13:20 -0500
+Message-ID: <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
+Date: Tue, 20 Aug 2024 10:13:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172416673470.2215.10498834230452989571.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] arm64: dts: k3-am62a-wakeup: Add R5F device node
+To: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <nm@ti.com>, <bb@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20240820104034.15607-1-hnagalla@ti.com>
+ <20240820104034.15607-4-hnagalla@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240820104034.15607-4-hnagalla@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The following commit has been merged into the irq/urgent branch of tip:
+On 8/20/24 5:40 AM, Hari Nagalla wrote:
+> From: Devarsh Thakkar <devarsht@ti.com>
+> 
+> AM62A SoCs have a single R5F core in waekup domain. This core is also
+> used as a device manager for the SoC.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 23 +++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> index f5ac101a04df..c4319986e660 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> @@ -76,6 +76,29 @@ wkup_rti0: watchdog@2b000000 {
+>   		status = "reserved";
+>   	};
+>   
+> +	wkup_r5fss0: r5fss@78000000 {
+> +		compatible = "ti,am62-r5fss";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x78000000 0x00 0x78000000 0x8000>,
+> +			 <0x78100000 0x00 0x78100000 0x8000>;
+> +		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
 
-Commit-ID:     efe81b7bdf7d882d0ce3d183f1571321046da8f1
-Gitweb:        https://git.kernel.org/tip/efe81b7bdf7d882d0ce3d183f1571321046da8f1
-Author:        Dan Carpenter <dan.carpenter@linaro.org>
-AuthorDate:    Tue, 20 Aug 2024 11:42:40 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 20 Aug 2024 17:05:32 +02:00
+Need newline here.
 
-irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in probe()
+> +		wkup_r5fss0_core0: r5f@78000000 {
+> +			compatible = "ti,am62-r5f";
+> +			reg = <0x78000000 0x00008000>,
+> +				<0x78100000 0x00008000>;
+> +			reg-names = "atcm", "btcm";
+> +			ti,sci = <&dmsc>;
+> +			ti,sci-dev-id = <121>;
+> +			ti,sci-proc-ids = <0x01 0xff>;
+> +			resets = <&k3_reset 121 1>;
+> +			firmware-name = "am62-wkup-r5f0_0-fw";
 
-The devm_platform_ioremap_resource() function doesn't return NULL, it
-returns error pointers.  Fix the error handling to match.
+resets and firmware-name should go before vendor specific properties.
 
-Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct-mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain
+Andrew
 
----
- drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
-index 28dd175..981fad6 100644
---- a/drivers/irqchip/irq-riscv-aplic-main.c
-+++ b/drivers/irqchip/irq-riscv-aplic-main.c
-@@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
- 
- 	/* Map the MMIO registers */
- 	regs = devm_platform_ioremap_resource(pdev, 0);
--	if (!regs) {
-+	if (IS_ERR(regs)) {
- 		dev_err(dev, "failed map MMIO registers\n");
--		return -ENOMEM;
-+		return PTR_ERR(regs);
- 	}
- 
- 	/*
+> +			ti,atcm-enable = <1>;
+> +			ti,btcm-enable = <1>;
+> +			ti,loczrama = <1>;
+> +		};
+> +	};
+> +
+>   	wkup_vtm0: temperature-sensor@b00000 {
+>   		compatible = "ti,j7200-vtm";
+>   		reg = <0x00 0xb00000 0x00 0x400>,
 
