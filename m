@@ -1,202 +1,267 @@
-Return-Path: <linux-kernel+bounces-293698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6A295833D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E96A1958341
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83ACE1F24956
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:53:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 792331F23E90
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB08F18C01C;
-	Tue, 20 Aug 2024 09:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B46318C91C;
+	Tue, 20 Aug 2024 09:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cp4lU8e3"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2078.outbound.protection.outlook.com [40.107.215.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FXiWg5gW"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D03A17740
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147598; cv=fail; b=uVIrRWvB2JEDZhGYoC/+W4pSrlvo/OPhOuyO/ESXZXut26YIEKQOFG7VuEd8rGQChpdINoS/7xnW3aGAvfcPnkVgEe/vjj01ZK7LP2U6rg+/vbodoNVJTXN1WxhOLDuRQy85v1wfEj+mTWB0FWmbYvYcImawfN1kKSR3u+j2mKQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147598; c=relaxed/simple;
-	bh=42dqiq60CJiNAtlhDVFpZ1Gr55pMMSEkcxmLBuUHwg8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TUTVdHbqCBqwKGO7NZ7BQsMI7U0CoRXak2LuERbRHImVwTP0S7D3o0m0wpj8A8A2dOIlFi/IBr8Q2DumNgLmpGuOqE1NnZ06mF75Gsds8/Xpc31fb4eUibeNmo8o6CantvNwgP1Rp679xhocqLVVGYL6SE8nh5xgEPGGBJqpDd0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cp4lU8e3; arc=fail smtp.client-ip=40.107.215.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JXn4PGQqkAR5JyYZOJDPgLRmsxdqeIlPnUOfyoVSmqQ6YNHYX7Q/G05EzGNPou3N8e5ZkbhGwj+s6FiZRNlPOXfQ0ujjk7e8LgSs+w2IPgACw8pSxI5uxNVYhjo8iGv+BumzPq9rx3vWen4koiN70boTWmBdJG4B3EP5TfFvt5m47SiO9W3z+f5wmPUjA/5sI8HcIYctH0VbIFEH4qjg5rDp8R8SEOIR6vKopgDwUFZrc+mS594+hZX3lt3m9RBd7yvJ6Wrj1SHIbDsU6UqCP1gAH3WnQ1blqnmAK/zEfUXIgobIodPJyGiXaAueohXxs4SVRPD61/1wcd8ASTxRew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J2LtEjlrjt3vnNZ92KXhjbDeqJ/eWDlPdGluGDFKb9I=;
- b=vaQhP8mek8L+8xTEaguMeJ3yX2+baaa5jQRmEPUDPzkSF6dIeITaZesrocjehdpSW8vY4zOkZkl+Ex+PuoPsLJewg65Alt2QxPAuSw701iBNmZtlUj4wKgV82iYt+w7M8UcSqtiE+WoZbIOwkYw47wYiLgEw0/IeMuWiYixnxBdLbekpawWSEeYXaw/+a9ap6dl0vcqBWGre5rbQztsP2w+ddpkBk+lEEcSxl0oTTlneA/vHPStRNv2tookBXL8R4DUh248xEi5gnwwGcRg9hq6mTxjH7ZKP01c4W5vydVpIqpsHKfUj3v3/gtsOk5RMzgoFWrYwhtjV99BWHfevKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J2LtEjlrjt3vnNZ92KXhjbDeqJ/eWDlPdGluGDFKb9I=;
- b=cp4lU8e3o8DxWBShaiEWE8rp39FikdR9c6WOIhClZsD6eW6KSaUuFFU6qh7tBnAtY1yZJaV+6obhKX+Q5Lv2Rg/r1ZticL5SgAecXDTtVwZzGDpS61vqpPA5mJwxtxLF6fJ1DROye4Ltu/yJYR2rbEWG54B4OTHFGVDY/0iufCDUgd+zwrhV36iyCB4WpHwB2ZKKO1eGzIEbV13Y3+sM6gfHFK0FHUGFgZ3RdjqmeS+7p397lyukuFBEBuRt/VThaUI76lT7y3c5Qox2zNy1PYis5q9MP18TniWiddshOmqZYu33F974Z4fr3cE7hGo7uDSEZHbiG7Fo9sVwFexjWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by TY0PR06MB5529.apcprd06.prod.outlook.com (2603:1096:400:27b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 09:53:13 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%6]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
- 09:53:13 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Michal Mrozek <michal.mrozek@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Tejas Upadhyay <tejas.upadhyay@intel.com>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	Shekhar Chauhan <shekhar.chauhan@intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yu Jiaoliang <yujiaoliang@vivo.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH v2] drm/i915/gt: Use kmemdup_array instead of kmemdup for multiple allocation
-Date: Tue, 20 Aug 2024 17:53:02 +0800
-Message-Id: <20240820095304.2746102-1-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0170.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c6::11) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15C218B496
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724147631; cv=none; b=K6GuSrS8uJyPhDtNwnZx0Mtm48Kx6VEPeah7t7G0r8gkn2YkzJY/R9OVAMFitEEAFUYp3mlDGl/p+eLWu0HKlrjnkD8gGD5tzITYDc5K3JORbZGkdrvilzXOtziPadDHNhpEZFINY52SX8A+F2/RgOOql5oCuIDXMe2BqQp5cz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724147631; c=relaxed/simple;
+	bh=GxrtDuKtTT6pJGqk4JbG235dT4xixJ7axY2q2KnwnpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NRL5Uvtxaw0b+ZbgZeOpSgtsDrK32WgrerMuxEMsq0dBNz56pCDWw1vMqk8ZTUiTEOP9XKIZa2HB/khXcE9Ok/j3D5BKGXdUYSxdXtXMS77giftP3t3FEBkhH3gp1cMC2tFza52V+ey2IvcEdrQ+xoYMvk7+bQ72/zoLqGAewow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FXiWg5gW; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2021c03c13aso20125145ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724147629; x=1724752429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JrZv66ypySBbkjGBJqR1EJvhupMwP+pmcQpQ47+M+9Y=;
+        b=FXiWg5gW/G6UonZeCMGwDuZTKo4uEtKYmrIdfJuZboNsBI7nifKt33VvQokcBfOpyG
+         fucMUC0GngsnT6J4YpU4Dft9P3waH9K4FWVliAZhRRkcbpeqNZJFM4z6IXWfY8Z3v9ck
+         IHh3ElETgEY6yaLpu9khTs23L+qsJ010gqZ7E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147629; x=1724752429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JrZv66ypySBbkjGBJqR1EJvhupMwP+pmcQpQ47+M+9Y=;
+        b=FjZu6ppvMoWvG5b3SqEQndtJF4gHFmtW4Am7PazjZrsBu/k5EUM/g1AI4aH+C+YRoY
+         S8DUf+uT9uHIxgwBT4iZEuYcdb845HKBfLytyzBzGEyKSYXRJ5Sw7vclExp7PsZrwTqX
+         Hsds7yIjMPXAPTpJ/LqtRrghhHytmARAE+wlogs26ZA6YCNCJ9kas3Dk6653OyncMTuX
+         yfbaxui24O0njk6vOTgbvMcI5VuWPHXhzfsvCNM/smDkn5BY6td4Tzwj7eEGwMrpns34
+         nJmRkTjvc6LIADD1tnbAmxtBMoXVwcQquefCjpuCS/LImecP3oZYq3wDyb9r0CgWMDL+
+         1klw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQv294iGX9Ef9xb/VvwC53NvYofHQn7iYJ9AHRYXKnQ/yTJUOg5EZmRQrj/PcBYxIePe7RXElnFR6XejY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEYaAwttIgjD2sqApihuyPeEDebd6E/6q/9+h7SPmenXTqaw0m
+	en7jUUUuMKxiA/3ombEHTR/kgWNqgJqCFaGm60/5EK+yPsL6JyWbjjJWbytAug==
+X-Google-Smtp-Source: AGHT+IF9dVDhLgmVd2fwVFFWmxIJ70NtaZMWP9SUcwSh2q1d0OqobzkgL6YHM4o8P1aQbGHfymYCJA==
+X-Received: by 2002:a17:902:f68a:b0:1f9:e2c0:d962 with SMTP id d9443c01a7336-2025f1d09d3mr40897905ad.31.1724147628827;
+        Tue, 20 Aug 2024 02:53:48 -0700 (PDT)
+Received: from [10.176.68.61] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b63694a1sm8802517a12.92.2024.08.20.02.53.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 02:53:48 -0700 (PDT)
+Message-ID: <7c2c6d22-399b-42e7-8ac7-098f036e9e81@broadcom.com>
+Date: Tue, 20 Aug 2024 11:53:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TY0PR06MB5529:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9c45e2c-a0f7-4d0d-70db-08dcc0fde818
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|52116014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fNx3Dd5XWpFHeJ7fszkaa84wt+B9PiaDPHqH9xSVV8M2rUPdF9FwZsmjTfbu?=
- =?us-ascii?Q?zgFx8jzNPnKKI5eJ+h1P9J7l3LlPM2HE9ASY1MJL18iPu/ajUiFNUhCyaRwY?=
- =?us-ascii?Q?PLoIp2aOZgcLWNQlTfzrfApsQDvGasHkT8HTdrLKd7DFSUSzb9xcFPccIJMZ?=
- =?us-ascii?Q?pcYfjCKg2dVLoQwq7MkH4syyZ8Jh90TGleX2QrvauOIVuYNTMIGgp9+v5RjN?=
- =?us-ascii?Q?XOajP15yyxyqkEkvilxa9cnSYg7xFuZyCDQLmyS3JCqldXcWlxIMpq32D+J1?=
- =?us-ascii?Q?wBKlfJBqy+ovDyTVpPboYbhORHUtpdDgGV41sRJW40ozqfaO7YkSOodl1sWb?=
- =?us-ascii?Q?uXB7hAz/nOpSH0hvDH+w7pejEYwgswRgPCMWr1bUw81ckfx/NMLbrKtQy+Fo?=
- =?us-ascii?Q?zYm0qgZeUDTKKCfGj0lJ18mBIuSjtqfXzmghBG/xSBgWjAQC9GAstfF0vvlL?=
- =?us-ascii?Q?xznD/7Tcli3UDHDJwq9iFaAv64FcHophp5GzNLO5depfPDrCxXDl7lZR6Rjp?=
- =?us-ascii?Q?PuDJQqfPvMg6lhLFk8yNzdzL3gNOSafmaphdAeGTcjYd0WUjnkFx0yZv99Qg?=
- =?us-ascii?Q?3dU8L/JQRP1COVaH8GTtcF65bcYQ8zpl0HPdjrPeCSgebDOYvyjxIyieI2jQ?=
- =?us-ascii?Q?kWSMMctd9TyQlZMJN9sAcgl4lCGbmH332FTnVRIKVTSap7PRoJOJb5RBZQKU?=
- =?us-ascii?Q?mmNG3z6P0KRXqm5mCBut4CK4df/so3q8Kw3+yXukdvhUajbqu/Ol0CwmpCHj?=
- =?us-ascii?Q?zYM4zS6YT8XJrAiAUrkzxJu4nKtDQldLEsKifdvaQ0db1A+s7tMpWChfg1+j?=
- =?us-ascii?Q?vr3ZNewde0LNwKry0JjwVeapwU/srFHbaClkMbGKzHPpjrRaLb1Jp0yPwl8M?=
- =?us-ascii?Q?nHk1Mx3eRwQ3UrBy8ZMjjaA9rG9w0q/mrl8NvAKliz1dNNauTCXUkRWblWNL?=
- =?us-ascii?Q?xsPawllVfe7octTKWJwyK0OWaFuFyxpVTZiNw1pg+X8OegFoO2Sq5w99lp9s?=
- =?us-ascii?Q?Rdd22fWlactaaQ3zkDeCOecxQpcw5ecj05Dko2bPGRXAqn6EBnXRMJAdqW4a?=
- =?us-ascii?Q?PeSeC/eiawV++OTO46osDWnrRU57eDItVgyVsTJuKS38sAhBcf8RRiOItWyv?=
- =?us-ascii?Q?xwpqmvwI0CYPgZQtVZmEn8rxTbiiqPk99FHWsqt+v4gBk8K8ajOhchWwyIcR?=
- =?us-ascii?Q?8W0MwY0J+3KlibVE6xBmFJ9KqWGlPhz9StKkmIoa5008BEYcgOPHBR3Vhw9v?=
- =?us-ascii?Q?HkYVu3e3dh7+GatPtBOyb3wI29kZ6KIXu8G+0qI0PM/xulJTesZqc2563+OS?=
- =?us-ascii?Q?wemI8Q9/OhVWEVPTsE5X+wiahHzG7BfDImcDmnoMzha1agAmzLBbpa4B2+S3?=
- =?us-ascii?Q?A0e8J9iHFB+2xLaK8gKUF+QMVU9XobCkXTDK35cDGBw4LURqtbnfW6ygDjAW?=
- =?us-ascii?Q?tuC6sJnzCjo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?510fLeETimIYYrECdUoOKa8pjibxdikum2chK6ow1mJa/eCi8Z/Ufj8s+guG?=
- =?us-ascii?Q?IwqcBRjkxBDQ8XP9vm6GWb1hxecFijTrmcswGBhekqaLd2jzmpmW4n1rgD1X?=
- =?us-ascii?Q?Eijyamqv9h1L1UlB2mFE4mybISTCtjtJx1QwvcMmGLB+snz1GlCSHlPKFlA5?=
- =?us-ascii?Q?4eWg73BftED3xppjYoWf91pACE/o+kcp91ldS4pJlCbrxYqcUQcncEwIl5Me?=
- =?us-ascii?Q?4zK7iGzsc17cxofNBbQwjpOt/JW6Fcge3EZzRvTh7BOhw0IbLjqszsdwtlWO?=
- =?us-ascii?Q?IxF+vIpFBEbLgjVjNibB6b96Q5soyK7VqRMWgc3bDm+Q+q8oLqAXOtoVb5sz?=
- =?us-ascii?Q?X4G2ldL1+z4dbTDZw/zrnw+Qy+n5Ci2tKZ4TOlRmhRBSofP7zZC2cO6N0WEX?=
- =?us-ascii?Q?6HlImSmU9vBpaQNGOpCAfaNfl2KH0/83hzlE8GAhj/A21rJX3dUEyGFelERL?=
- =?us-ascii?Q?IY41Iz4+L7MLwEFqnYdCyNZxV8Dd6th1dZBHzt6jm0A9YJ+skGhmhueD3uEx?=
- =?us-ascii?Q?Tfl7kDsId7xkUrQlB2aCnjbi5hSiOlioVGbEI+TtN3c0NOFHxfHM+K8MPUhB?=
- =?us-ascii?Q?snhQKOKFp4ugXMFVZbnf60vdTAG8SzSqXt8YRmBDd24f+fkry9GWDlO7+Eu2?=
- =?us-ascii?Q?V6icwmFeiA3jlWW2wB+kg2IHxqh8TQFgEYqucVfJmrcGwZkPYjq99vfdhn4M?=
- =?us-ascii?Q?Y2vxKI923fE8ZkVA4mC0l6LzgOlVic5cbmpW7qT6eiVovHM72nJBvBysBg8G?=
- =?us-ascii?Q?kKyaPOGhoxpiYyL83+v/MBIwW1ciFQRhUCMagBv9yK8H3WLX4OnXq2KboVj3?=
- =?us-ascii?Q?LhX9+CGHm/+XpAlXa9zPIGeEf2z1foeE8wAoPXMc1RDYxyaoGtGMy8TcXf7H?=
- =?us-ascii?Q?U7eVT9YqAhKgDvs3BtoJY2iLUZ2uyNEKiZQlRqxnyg/NxOO9MmmTCkNO2EGG?=
- =?us-ascii?Q?SAFJ4DC1hvjgUvLqhPBSg31GxynODZhdbGQyMXuWByimxm2JLKfc6uOdf0PX?=
- =?us-ascii?Q?egK5KdyIgldneecaWRKOrq8X2mrUPY8dSd+xtydMT6Y6YcuHgexq1V2ysSrp?=
- =?us-ascii?Q?59KGoXjEuHlAwx+7OJkoCq0kUkdj+GMAvcEdhnQt/nvwtnNZo0LjHOGn4Gmb?=
- =?us-ascii?Q?7Dj0DiCni/FVYf8/SSC1Lm+SB4M0e9aFJAMQYD+Z6x9bBqLE2LvojZvkW3aC?=
- =?us-ascii?Q?BbvNc7WLf3fQpmMSqP0CNklIQ/+uREgza5A4AYGQM07EJ34LxXAAXS3po8Hv?=
- =?us-ascii?Q?7/FaCUNdpoUzKOSlajcybwGrd2ynFpCm0AfiBj+NyIJvZ9bLLBdkuKNSbHV5?=
- =?us-ascii?Q?XjpKyQMyD0cUNgKOneLDyZ3scV3QZP+I3sMDjyxifSuIN/dz/KwPytJEnqIn?=
- =?us-ascii?Q?6o50MdPOyGjkwhz9TytdjoYXa0AmgUondl5arQdH2t/4SXxRnBqZLsCp9RaO?=
- =?us-ascii?Q?K36bXLeFmwiA83UfdEMSshEzeC1eTz7pgluaje1+biLB7i+efMqcU8l2YIXf?=
- =?us-ascii?Q?KjZysufWjTyZ0oISc7H+EgrVdTN5PDLskukiyfq8GtJc1qPcPtfo9isf3g+w?=
- =?us-ascii?Q?g3+ChKO5NeJxGJW9ag3sien3qkRVfWwen7ylpU13?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9c45e2c-a0f7-4d0d-70db-08dcc0fde818
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 09:53:13.4743
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JJ9cxu/o0/cKZASl8Dra7nSF91zhTEJGpKlPHjXU5KZPcZDmtnQkIwMPhbo6rOnn6Fd1e1lpC27S1NMySUD0gg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5529
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 0/4] Add AP6275P wireless support
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: jacobe.zang@wesion.com, bhelgaas@google.com,
+ brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+ christophe.jaillet@wanadoo.fr, conor+dt@kernel.org, davem@davemloft.net,
+ devicetree@vger.kernel.org, duoming@zju.edu.cn, edumazet@google.com,
+ gregkh@linuxfoundation.org, krzk+dt@kernel.org, kuba@kernel.org,
+ kvalo@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, megi@xff.cz, minipli@grsecurity.net,
+ netdev@vger.kernel.org, pabeni@redhat.com, robh@kernel.org,
+ saikrishnag@marvell.com, stern@rowland.harvard.edu, yajun.deng@linux.dev
+References: <uzmj5w6byisfguatjyy2ibo6zbn7w52bg2abgf7egych7usv6j@ec4xdmaofach>
+ <67d67f15-4631-44ba-bc05-c8da6a1af1bf@broadcom.com>
+ <xc5226th2sifhop3gnwnziok4lfl5s6yqbxq6wx4vygnuf4via@4475aaonnmaz>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ xsFNBGP96SABEACfErEjSRi7TA1ttHYaUM3GuirbgqrNvQ41UJs1ag1T0TeyINqG+s6aFuO8
+ evRHRnyAqTjMQoo4tkfy21XQX/OsBlgvMeNzfs6jnVwlCVrhqPkX5g5GaXJnO3c4AvXHyWik
+ SOd8nOIwt9MNfGn99tkRAmmsLaMiVLzYfg+n3kNDsqgylcSahbd+gVMq+32q8QA+L1B9tAkM
+ UccmSXuhilER70gFMJeM9ZQwD/WPOQ2jHpd0hDVoQsTbBxZZnr2GSjSNr7r5ilGV7a3uaRUU
+ HLWPOuGUngSktUTpjwgGYZ87Edp+BpxO62h0aKMyjzWNTkt6UVnMPOwvb70hNA2v58Pt4kHh
+ 8ApHky6IepI6SOCcMpUEHQuoKxTMw/pzmlb4A8PY//Xu/SJF8xpkpWPVcQxNTqkjbpazOUw3
+ 12u4EK1lzwH7wjnhM3Fs5aNBgyg+STS1VWIwoXJ7Q2Z51odh0XecsjL8EkHbp9qHdRvZQmMu
+ Ns8lBPBkzpS7y2Q6Sp7DcRvDfQQxPrE2sKxKLZVGcRYAD90r7NANryRA/i+785MSPUNSTWK3
+ MGZ3Xv3fY7phISvYAklVn/tYRh88Zthf6iDuq86m5mr+qOO8s1JnCz6uxd/SSWLVOWov9Gx3
+ uClOYpVsUSu3utTta3XVcKVMWG/M+dWkbdt2KES2cv4P5twxyQARAQABzS9BcmVuZCB2YW4g
+ U3ByaWVsIDxhcmVuZC52YW5zcHJpZWxAYnJvYWRjb20uY29tPsLBhwQTAQgAMRYhBLX1Z69w
+ T4l/vfdb0pZ6NOIYA/1RBQJj/ek9AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQlno04hgD/VGw
+ 8A//VEoGTamfCks+a12yFtT1d/GjDdf3i9agKMk3esn08JwjJ96x9OFFl2vFaQCSiefeXITR
+ K4T/yT+n/IXntVWT3pOBfb343cAPjpaZvBMh8p32z3CuV1H0Y+753HX7gdWTEojGWaWmKkZh
+ w3nGoRZQEeAcwcF3gMNwsM5Gemj7aInIhRLUeoKh/0yV85lNE1D7JkyNheQ+v91DWVj5/a9X
+ 7kiL18fH1iC9kvP3lq5VE54okpGqUj5KE5pmHNFBp7HZO3EXFAd3Zxm9ol5ic9tggY0oET28
+ ucARi1wXLD/oCf1R9sAoWfSTnvOcJjG+kUwK7T+ZHTF8YZ4GAT3k5EwZ2Mk3+Rt62R81gzRF
+ A6+zsewqdymbpwgyPDKcJ8YUHbqvspMQnPTmXNk+7p7fXReVPOYFtzzfBGSCByIkh1bB45jO
+ +TM5ZbMmhsUbqA0dFT5JMHjJIaGmcw21ocgBcLsJ730fbLP/L08udgWHywPoq7Ja7lj5W0io
+ ZDLz5uQ6CEER6wzD07vZwSl/NokljVexnOrwbR3wIhdr6B0Hc/0Bh7T8gpeM+QcK6EwJBG7A
+ xCHLEacOuKo4jinf94YQrOEMnOmvucuQRm9CIwZrQ69Mg6rLn32pA4cK4XWQN1N3wQXnRUnb
+ MTymLAoxE4MInhDVsZCtIDFxMVvBUgZiZZszN33OwU0EY/3pIgEQAN35Ii1Hn90ghm/qlvz/
+ L+wFi3PTQ90V6UKPv5Q5hq+1BtLA6aj2qmdFBO9lgO9AbzHo8Eizrgtxp41GkKTgHuYChijI
+ kdhTVPm+Pv44N/3uHUeFhN3wQ3sTs1ZT/0HhwXt8JvjqbhvtNmoGosZvpUCTwiyM1VBF/ICT
+ ltzFmXd5z7sEuDyZcz9Q1t1Bb2cmbhp3eIgLmVA4Lc9ZS3sK1UMgSDwaR4KYBhF0OKMC1OH8
+ M5jfcPHR8OLTLIM/Thw0YIUiYfj6lWwWkb82qa4IQvIEmz0LwvHkaLU1TCXbehO0pLWB9HnK
+ r3nofx5oMfhu+cMa5C6g3fBB8Z43mDi2m/xM6p5c3q/EybOxBzhujeKN7smBTlkvAdwQfvuD
+ jKr9lvrC2oKIjcsO+MxSGY4zRU0WKr4KD720PV2DCn54ZcOxOkOGR624d5bhDbjw1l2r+89V
+ WLRLirBZn7VmWHSdfq5Xl9CyHT1uY6X9FRr3sWde9kA/C7Z2tqy0MevXAz+MtavOJb9XDUlI
+ 7Bm0OPe5BTIuhtLvVZiW4ivT2LJOpkokLy2K852u32Z1QlOYjsbimf77avcrLBplvms0D7j6
+ OaKOq503UKfcSZo3lF70J5UtJfXy64noI4oyVNl1b+egkV2iSXifTGGzOjt50/efgm1bKNkX
+ iCVOYt9sGTrVhiX1ABEBAAHCwXYEGAEIACAWIQS19WevcE+Jf733W9KWejTiGAP9UQUCY/3p
+ PgIbDAAKCRCWejTiGAP9UaC/EACZvViKrMkFooyACGaukqIo/s94sGuqxj308NbZ4g5jgy/T
+ +lYBzlurnFmIbJESFOEq0MBZorozDGk+/p8pfAh4S868i1HFeLivVIujkcL6unG1UYEnnJI9
+ uSwUbEqgA8vwdUPEGewYkPH6AaQoh1DdYGOleQqDq1Mo62xu+bKstYHpArzT2islvLdrBtjD
+ MEzYThskDgDUk/aGPgtPlU9mB7IiBnQcqbS/V5f01ZicI1esy9ywnlWdZCHy36uTUfacshpz
+ LsTCSKICXRotA0p6ZiCQloW7uRH28JFDBEbIOgAcuXGojqYx5vSM6o+03W9UjKkBGYFCqjIy
+ Ku843p86Ky4JBs5dAXN7msLGLhAhtiVx8ymeoLGMoYoxqIoqVNaovvH9y1ZHGqS/IYXWf+jE
+ H4MX7ucv4N8RcsoMGzXyi4UbBjxgljAhTYs+c5YOkbXfkRqXQeECOuQ4prsc6/zxGJf7MlPy
+ NKowQLrlMBGXT4NnRNV0+yHmusXPOPIqQCKEtbWSx9s2slQxmXukPYvLnuRJqkPkvrTgjn5d
+ eSE0Dkhni4292/Nn/TnZf5mxCNWH1p3dz/vrT6EIYk2GSJgCLoTkCcqaM6+5E4IwgYOq3UYu
+ AAgeEbPV1QeTVAPrntrLb0t0U5vdwG7Xl40baV9OydTv7ghjYZU349w1d5mdxg==
+In-Reply-To: <xc5226th2sifhop3gnwnziok4lfl5s6yqbxq6wx4vygnuf4via@4475aaonnmaz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Let the kememdup_array() take care about multiplication and possible
-overflows.
+On 8/19/2024 10:33 PM, Sebastian Reichel wrote:
+> Hello,
+> 
+> On Mon, Aug 19, 2024 at 09:35:12PM GMT, Arend van Spriel wrote:
+>> On 8/19/2024 6:42 PM, Sebastian Reichel wrote:
+>>> I tested this on RK3588 EVB1 and the driver is working fine. The DT
+>>> bindings are not correct, though:
+>>>
+>>> linux/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: wifi@0,0:
+>>> compatible: 'oneOf' conditional failed, one must be fixed:
+>>>
+>>> ['pci14e4,449d', 'brcm,bcm4329-fmac'] is too long
+>>> 'pci14e4,449d' is not one of ['brcm,bcm43143-fmac', 'brcm,bcm4341b0-fmac',
+>>> 'brcm,bcm4341b4-fmac', 'brcm,bcm4341b5-fmac', 'brcm,bcm4329-fmac',
+>>> 'brcm,bcm4330-fmac', 'brcm,bcm4334-fmac', 'brcm,bcm43340-fmac',
+>>> 'brcm,bcm4335-fmac', 'brcm,bcm43362-fmac', 'brcm,bcm4339-fmac',
+>>> 'brcm,bcm43430a0-fmac', 'brcm,bcm43430a1-fmac', 'brcm,bcm43455-fmac',
+>>> 'brcm,bcm43456-fmac', 'brcm,bcm4354-fmac', 'brcm,bcm4356-fmac',
+>>> 'brcm,bcm4359-fmac', 'brcm,bcm4366-fmac', 'cypress,cyw4373-fmac',
+>>> 'cypress,cyw43012-fmac', 'infineon,cyw43439-fmac']
+>>> from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+>>>
+>>> It's easy to see the problem in the binding. It does not expect a
+>>> fallback string after the PCI ID based compatible. Either the
+>>> pci14e4,449d entry must be added to the first enum in the binding,
+>>> which has the fallback compatible, or the fallback compatible
+>>> should not be added to DTS.
+>>
+>> Never understood why we ended up with such a large list. When the binding
+>> was introduced there was one compatible, ie. brcm,bcm4329-fmac. People
+>> wanted all the other flavors because it described a specific wifi chip and
+>> no other reason whatsoever. The PCI ID based compatible do obfuscate that
+>> info so those are even less useful in my opinion.
+>>
+>>> If the fallback compatible is missing in DTS, the compatible check in
+>>> brcmf_of_probe() fails and the lpo clock is not requested resulting
+>>> in the firmware startup failing. So that would require further
+>>> driver changes.
+>>
+>> Right. The text based bindings file in 5.12 kernel clearly says:
+>>
+>> Required properties:
+>>
+>>   - compatible : Should be "brcm,bcm4329-fmac".
+>>
+>> In 5.13 kernel this was replaced by the json-schema yaml file. The PCI ID
+>> based enum which was added later does also list brcm,bcm4329-fmac so why
+>> does that not work for the compatible list ['pci14e4,449d',
+>> 'brcm,bcm4329-fmac']? Looking at the compatible property in yaml which I
+>> stripped a bit for brevity:
+>>
+>> properties:
+>>    compatible:
+>>      oneOf:
+>>        - items:
+>>            - enum:
+>>                - brcm,bcm43143-fmac
+>>                - brcm,bcm4329-fmac
+>>                - infineon,cyw43439-fmac
+>>            - const: brcm,bcm4329-fmac
+>>        - enum:
+>>            - brcm,bcm4329-fmac
+>>            - pci14e4,43dc  # BCM4355
+>>            - pci14e4,4464  # BCM4364
+>>            - pci14e4,4488  # BCM4377
+>>            - pci14e4,4425  # BCM4378
+>>            - pci14e4,4433  # BCM4387
+>>
+>> So how should I read this. Searching for some sort of syntax description I
+>> found [1] which has an example schema with description that has a similarly
+>> complicated compatible property. From that I think the above should be
+>> changed to:
+>>
+>>   properties:
+>>     compatible:
+>>       oneOf:
+>>         - items:
+>>             - enum:
+>>                 - brcm,bcm43143-fmac
+>> -              - brcm,bcm4329-fmac
+>>                 - infineon,cyw43439-fmac
+>>             - const: brcm,bcm4329-fmac
+>> +      - items:
+>>             - enum:
+>> -              - brcm,bcm4329-fmac
+>>                 - pci14e4,43dc  # BCM4355
+>>                 - pci14e4,4464  # BCM4364
+>>                 - pci14e4,4488  # BCM4377
+>>                 - pci14e4,4425  # BCM4378
+>>                 - pci14e4,4433  # BCM4387
+>> +          - const: brcm,bcm4329-fmac
+>> +      - const: brcm,bcm4329-fmac
+>>
+>> This poses a constraint in which the last string in the compatible list is
+>> always 'brcm,bcm4329-fmac' even if it is the only string. At least that is
+>> my understanding so if my understanding is wrong feel free to correct me on
+>> this.
+>>
+>> [1] https://docs.kernel.org/devicetree/bindings/writing-schema.html
+> 
+> Your proposed change should work as you describe. But it will result
+> in DT check errors for some Apple devices, which followed the
+> current binding and do not have the "brcm,bcm4329-fmac" fallback
+> compatible:
+> 
+> $ git grep -E "(pci14e4,43dc)|(pci14e4,4464)|(pci14e4,4488)|(pci14e4,4425)|(pci14e4,4433)" arch/
+> arch/arm64/boot/dts/apple/t8103-jxxx.dtsi:           compatible = "pci14e4,4425";
+> arch/arm64/boot/dts/apple/t8112-j413.dts:            compatible = "pci14e4,4433";
+> arch/arm64/boot/dts/apple/t8112-j493.dts:            compatible = "pci14e4,4425";
 
-v2:
-- Change subject
-- Leave one blank line between the commit log and the tag section
-- Fix code alignment issue
+> I guess patch 3/4 from this series will also introduce some
+> regressions for these devices by moving the check. What is the
+> purpose of the compatible check in brcmf_of_probe() in the first
+> place? Can it just be dropped?
+> 
+> I see it was introduced 10 years ago in 61f663dfc1a09, probably to
+> avoid a spurious error message for systems not having the IRQ
+> described in DT? The current code exits quietly when none of the
+> optional resources are defined.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
----
- drivers/gpu/drm/i915/gt/intel_workarounds.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+It was introduced simply because the compatible property has a meaning 
+that goes beyond informational. It is a claim that the properties of the 
+node comply to the bindings specification. I would really want to keep 
+the sanity check event though all properties are optional. The 
+constraint keeps the compatible matching in the driver relatively simple.
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_workarounds.c b/drivers/gpu/drm/i915/gt/intel_workarounds.c
-index d90348c56765..0fcfd55c62b4 100644
---- a/drivers/gpu/drm/i915/gt/intel_workarounds.c
-+++ b/drivers/gpu/drm/i915/gt/intel_workarounds.c
-@@ -111,9 +111,8 @@ static void wa_init_finish(struct i915_wa_list *wal)
- {
- 	/* Trim unused entries. */
- 	if (!IS_ALIGNED(wal->count, WA_LIST_CHUNK)) {
--		struct i915_wa *list = kmemdup_array(wal->list,
--					       wal->count, sizeof(*list),
--					       GFP_KERNEL);
-+		struct i915_wa *list = kmemdup_array(wal->list, wal->count,
-+											 sizeof(*list), GFP_KERNEL);
- 
- 		if (list) {
- 			kfree(wal->list);
--- 
-2.34.1
-
+Regards,
+Arend
 
