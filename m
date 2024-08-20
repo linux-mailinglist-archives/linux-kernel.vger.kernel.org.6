@@ -1,202 +1,108 @@
-Return-Path: <linux-kernel+bounces-294029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C529E9587F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324CB9587F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C122285861
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D1928375A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF06191F9A;
-	Tue, 20 Aug 2024 13:27:41 +0000 (UTC)
-Received: from ns.iliad.fr (ns.iliad.fr [212.27.33.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1701922E8;
+	Tue, 20 Aug 2024 13:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="PRIIenkp"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94706191F86;
-	Tue, 20 Aug 2024 13:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.33.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112951922D4;
+	Tue, 20 Aug 2024 13:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724160461; cv=none; b=h0O7iHQLSi0h9La55w9mE92WLC6RIYld2rSUT7fqp/jU1PHVZzAeFw7wAeb/cFdsHr56iaFbAX2YbNRQMCAqWjnz+eVlkJ1UUexCsRVDMiNMBx4xKPKD+SXQ+Ff9xMcEQOqkN0wt+N1+JzTkDKzMJ8ZOuqIxiibSoq4moi4y07Y=
+	t=1724160465; cv=none; b=ikCMHAoS3xH5S7hzTPSLRREzPjQZFyyKZwEOd40ol8a1K2nTG1zA4WiCkC4rv9Os/PEa1OOCUMrL09zn0+bofVhmwFXSQlOkPgbfknZDffhas7mUIPhZ5uVX1DQpLFX3fXbp5zHRpHkEVNkIvey+TXLyOLuEShEtpN2s6BBxOLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724160461; c=relaxed/simple;
-	bh=WgMvhD6cuag6dUYVIdapvUjvrcTNcu+CX/nWDTdVGwU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M4PbePgURUtdBygezFTuy89vpiS20l+VXO76AR93ETEpsAW3FumEe6j7pF2R2Xssfd80bYE/Q+2H5YJv7ZxVFHfYVut+VhWZoGOQzh9n7/VOeqda1GSqSw6lijEY1KQfunCWgkZihW4ibdJwAseGzga05eZBmpic3MEVdzDRQ4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=srs.iliad.fr; arc=none smtp.client-ip=212.27.33.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=srs.iliad.fr
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-	by ns.iliad.fr (Postfix) with ESMTP id BB3FB209EF;
-	Tue, 20 Aug 2024 15:27:28 +0200 (CEST)
-Received: from [127.0.1.1] (freebox.vlq16.iliad.fr [213.36.7.13])
-	by ns.iliad.fr (Postfix) with ESMTP id A487920582;
-	Tue, 20 Aug 2024 15:27:28 +0200 (CEST)
-From: Marc Gonzalez <mgonzalez@freebox.fr>
-Date: Tue, 20 Aug 2024 15:27:19 +0200
-Subject: [PATCH v3] iommu/arm-smmu-qcom: hide last LPASS SMMU context bank
- from linux
+	s=arc-20240116; t=1724160465; c=relaxed/simple;
+	bh=hz3RzcXSp8C+lSShIolLGyjnUumMNWDXWqmvHVrL+pU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YUOWQ6HOJEtlBt5rpWY+0brz2gdhOmAWK/2NJaLJg4DzT0IPXib7ETRSHbMqYQue+eC6rbagfAByxxJqoE9EXWyNAyG8ctmUffNNNrs8yyl7sSN36AIuEQEzkKWs3UFSeLfMokD+b1E9aOVXnqJe8FgA6/yo4noPPujgwy4mxAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=PRIIenkp; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFFCA1487C87;
+	Tue, 20 Aug 2024 15:27:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724160458; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=PCgOO1pDrOpwZlB5bNP2nFUn2U1YS3vBwTENcvdvGqc=;
+	b=PRIIenkpiA/BzaDGYlkixkxD6Y4j7zmqlahg0ShcVd7leunmMSzKK9j2tPBOWW4TKzWF4B
+	cnoDVlpL5FVGwVONrXTlrqJPzbZTxTatUobnUZRGLt4cNEEozvuRV9Nw3ds4jZm7y/R7pb
+	noE2GbWRZhH7a9eWQJyNaM4Y/+feO9KTP+DPPtMu8+2oSKD21hkNmX9E0zkGj1L3x8Tvm+
+	95HUTPbmUfA8bgOBInK+vq3ox+JPhBw1aRTdrbwuqWGEHiGejy4gMeOKtiSisnY4zzEp0E
+	WPgIMjKA4TsR/1Ihe04fxXOZpzY3Tlt5INun0RCHqrDQweGf7/b2f0ZvsS1Ofg==
+From: Alexander Dahl <ada@thorsis.com>
+To: linux-clk@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ARM: dts: microchip: sam9x60: Fix rtc/rtt clock parent
+Date: Tue, 20 Aug 2024 15:27:30 +0200
+Message-Id: <20240820132730.357347-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-smmu-v3-1-2f71483b00ec@freebox.fr>
-X-B4-Tracking: v=1; b=H4sIALaZxGYC/zXMQQ6DIBCF4auYWZcGEJV21Xs0LhCHykIxQ0tsD
- Hcvtenyf3n5dohIHiNcqx0Ik48+LCXqUwV2MssDmR9Lg+RScS0Ui/P8YmPTSSuMaI2xUK4rofP
- bwdz70pOPz0DvQ03iu/6Byw9IgnE2WGxRdbXWsrk5QhzCdnYEfc75A8Pkt+CZAAAA
-To: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>, 
- Pierre-Hugues Husson <phhusson@freebox.fr>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Caleb Connolly <caleb.connolly@linaro.org>, 
- Marc Gonzalez <mgonzalez@freebox.fr>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On qcom msm8998, writing to the last context bank of lpass_q6_smmu
-(base address 0x05100000) produces a system freeze & reboot.
+The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
+sourced from the 32.768 kHz crystal oscillator.
 
-The hardware/hypervisor reports 13 context banks for the LPASS SMMU
-on msm8998, but only the first 12 are accessible...
-Override the number of context banks
+(The Monitoring domain slow clock (MD_SLCK) is sourced from an internal
+RC oscillator which is most probably not precise enough for real time
+clock purposes.)
 
-[    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
-[    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
-[    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
-[    2.563627] arm-smmu 5100000.iommu: 	address translation ops
-[    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
-[    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
-[    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
-[    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
-[    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
-[    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
-[    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
-
-Specifically, the crashes occur here:
-
-	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
-	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
-
-and here:
-
-	arm_smmu_write_context_bank(smmu, i);
-	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
-
-It is likely that FW reserves the last context bank for its own use,
-thus a simple work-around is: DON'T USE IT in Linux.
-
-If we decrease the number of context banks, last one will be "hidden".
-
-Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
+Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
-Changes in v3:
-- Use very specific test (hack) to avoid changing the binding (Bjorn)
-- Link to v2: https://lore.kernel.org/r/20240819-smmu-v1-0-bce6e4738825@freebox.fr
+ arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v2:
-- Use the compatible prop instead of a specific prop to trigger work-around (Bjorn & Caleb)
-- Add qcom,msm8998-lpass-smmu compatible string
-- Link to v1: https://lore.kernel.org/r/20240814-smmu-v1-0-3d6c27027d5b@freebox.fr
-
-On qcom msm8998, writing to the last context bank of lpass_q6_smmu
-(base address 0x05100000) produces a system freeze & reboot.
-
-The hardware/hypervisor reports 13 context banks for the LPASS SMMU
-on msm8998, but only the first 12 are accessible...
-Override the number of context banks
-
-[    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
-[    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
-[    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
-[    2.563627] arm-smmu 5100000.iommu: 	address translation ops
-[    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
-[    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
-[    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
-[    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
-[    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
-[    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
-[    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
-
-Specifically, here:
-
-	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
-	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
-
-and here:
-
-	arm_smmu_write_context_bank(smmu, i);
-	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
-
-It is likely that FW reserves the last context bank for its own use,
-thus a simple work-around would be: DON'T USE IT in Linux.
-
-For reference, the lpass_q6_smmu node looks like this:
-
-	lpass_q6_smmu: iommu@5100000 {
-		compatible = "qcom,msm8998-smmu-v2", "qcom,smmu-v2";
-		reg = <0x05100000 0x40000>;
-		clocks = <&gcc HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
-		clock-names = "iface";
-
-		#global-interrupts = <0>;
-		#iommu-cells = <1>;
-		interrupts =
-			<GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-			<GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-
-power-domains = <&gcc LPASS_ADSP_GDSC>;
-		status = "disabled";
-	};
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 7e65189ca7b8c..625db1d00fe5e 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -282,6 +282,13 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
- 	u32 smr;
- 	int i;
+diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+index 291540e5d81e..d077afd5024d 100644
+--- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+@@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
+ 				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
+ 				reg = <0xfffffe20 0x20>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				clocks = <&clk32k 0>;
++				clocks = <&clk32k 1>;
+ 			};
  
-+	/*
-+	 * MSM8998 LPASS SMMU reports 13 context banks, but accessing
-+	 * the last context bank crashes the system.
-+	 */
-+	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") && smmu->num_context_banks == 13)
-+		smmu->num_context_banks = 12;
-+
- 	/*
- 	 * Some platforms support more than the Arm SMMU architected maximum of
- 	 * 128 stream matching groups. For unknown reasons, the additional
+ 			pit: timer@fffffe40 {
+@@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
+ 				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
+ 				reg = <0xfffffea8 0x100>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				clocks = <&clk32k 0>;
++				clocks = <&clk32k 1>;
+ 			};
+ 
+ 			watchdog: watchdog@ffffff80 {
 
----
-base-commit: 96a96aed6bb75b5c212f233b6c059a9354cdeebe
-change-id: 20240814-smmu-d572c1a16aac
-
-Best regards,
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
 -- 
-Marc Gonzalez <mgonzalez@freebox.fr>
+2.39.2
 
 
