@@ -1,164 +1,105 @@
-Return-Path: <linux-kernel+bounces-293788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86E79584BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:37:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E21D9584D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6622F283421
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:37:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE3EB24759
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BD018DF95;
-	Tue, 20 Aug 2024 10:37:45 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD2918DF94;
+	Tue, 20 Aug 2024 10:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="irjcFgNj"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEA718D63C;
-	Tue, 20 Aug 2024 10:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2AA158A18;
+	Tue, 20 Aug 2024 10:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724150264; cv=none; b=GkPBeJ3g/uOP3PF3EgPQWSaIZ9vKVszEcqDHH+7nJf0Xa7d3wqbmELedHABo5VzRd/WAavAmNS6h7zKIvsCSk3MNrPFDKBrR9jN/EAwk35e0v79juZeWr9TCHoEKuEgIK3r2CX6EJq3OEWqv1ccQOaDJxDGJaCxRr8q/bSkcDus=
+	t=1724150444; cv=none; b=UPQoDlDSYdGXzYh+4S95eX/ulOhm9i86nQar8WHpOj6NsCnScEDO+TceMRJvYVP4aL09RxO7iYIZTMdHGEsUOrNxwGtcXM9aN1jTDtqb4MYRyeVoaxxInS+RHzaBg+z3c5eQvnJ2w/vDRWSFbuuZXAO6jGKd055HFu1gDlsYh7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724150264; c=relaxed/simple;
-	bh=BiM4kMQSNEJETUXiJ+hSIuDZviDrLdvpvTm9Yc3dcAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFnqXOWIYI+ZLdRq4PmtdePSZ9ba3o75FekiJMnd9i/cSPR2ajwLAJ8//UkhS0c3Dq2f3iE2VpTksY65kk/3pXqrLdwaPr4ypxATvQKLGiJcbS+9Mos6G7QJk8SHtt4Nw5yRpbMUAfFPX6Z00or94h//lgxNuLuq9EdySZNge0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 9zdztoD5Tm6xpX5GchjYMA==
-X-CSE-MsgGUID: Wj2Dp5apRsCr0CGlIvz8MA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26307087"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="26307087"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:37:42 -0700
-X-CSE-ConnectionGUID: nWFywAqfTeSsKI2HcF+BTA==
-X-CSE-MsgGUID: LFqzb9g/TbCg/PzI2I/nxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="60665629"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:37:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sgMEy-0000000HGXR-3q0A;
-	Tue, 20 Aug 2024 13:37:28 +0300
-Date: Tue, 20 Aug 2024 13:37:28 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 7/9] ethernet: stmicro: Simplify PCI devres usage
-Message-ID: <ZsRx6OyqHPL0ws0e@smile.fi.intel.com>
-References: <20240819165148.58201-2-pstanner@redhat.com>
- <20240819165148.58201-9-pstanner@redhat.com>
- <ZsOO2uuGmD97Mocj@smile.fi.intel.com>
- <ef48369d230ef1912da157e7b437040bece6b5f4.camel@redhat.com>
+	s=arc-20240116; t=1724150444; c=relaxed/simple;
+	bh=I7gljczWOTnwTqA39gsqoOavTdMz5KXva1tRZCSbHB0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qs3+F+l7wuwLH/b8Sin9w8o4QrDxajACBTzvCBMeAUzTXLt1d6fL1Gdsmjtmlw3x6Q9hMSqoBkq6UB0RXEQI2byQtyeYCZ0CLS2D2512jtmswquNulaMH2AcY4hvXLX7YhxlIWtkYOZt5Uu4TFrIqGtKZjQcC0jpBeXlCo1c7Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=irjcFgNj; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KAeZm8023271;
+	Tue, 20 Aug 2024 05:40:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724150435;
+	bh=x1ieOOvg8Az0JhJ+IBph1TRufuTwM6QG2n7UviptWW0=;
+	h=From:To:CC:Subject:Date;
+	b=irjcFgNjOldWyd9gg2jlBMtO0bm3lGI19uVXJ/Qmn/YaKtkMQ5pkun73sHWWIyWgv
+	 jS07nlZBcLdXyzpL+dxwBK/3bQysjpIC5hygKbvcTgeKvJTZWocQ61wJbAZ36HNE2t
+	 MfodGuDcCdDPaaZum5jpVvLFUXF65wE0FzeoYwFw=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KAeZM1010808
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 20 Aug 2024 05:40:35 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
+ Aug 2024 05:40:34 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 20 Aug 2024 05:40:34 -0500
+Received: from localhost ([10.249.48.175])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KAeYHC107601;
+	Tue, 20 Aug 2024 05:40:34 -0500
+From: Hari Nagalla <hnagalla@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <nm@ti.com>, <bb@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/4] Add R5F and C7x DSP nodes for AM62a SoC
+Date: Tue, 20 Aug 2024 05:40:30 -0500
+Message-ID: <20240820104034.15607-1-hnagalla@ti.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef48369d230ef1912da157e7b437040bece6b5f4.camel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 20, 2024 at 09:52:40AM +0200, Philipp Stanner wrote:
-> On Mon, 2024-08-19 at 21:28 +0300, Andy Shevchenko wrote:
-> > On Mon, Aug 19, 2024 at 06:51:47PM +0200, Philipp Stanner wrote:
+This patch series adds R5F and C7x dsp processor nodes and shared
+memory based Virtio/IPC configuration for AM62A SoC.
 
-...
+changes in v4:
+*) Fixed typos in patch4 commit message.
+*) With the updated binding doc for AM62A C7xv in the kernel tree
+   earlier reported DTB warnings have vanished.
 
-> > loongson_dwmac_probe()
-> > 
-> > > +	memset(&res, 0, sizeof(res));
-> > > +	res.addr = pcim_iomap_region(pdev, 0, pci_name(pdev));
-> > > +	if (IS_ERR(res.addr)) {
-> > > +		ret = PTR_ERR(res.addr);
-> > > +		goto err_disable_device;
-> > 
-> > It seems your series reveals issues in the error paths of .probe():s
-> > in many drivers...
-> > 
-> > If we use pcim variant to enable device, why do we need to explicitly
-> > disable it?
-> 
-> No.
+v3: https://lore.kernel.org/all/20240605124859.3034-1-hnagalla@ti.com/
 
-Can you elaborate? No issues being revealed, or no need to disable it
-explicitly, or...?
+Devarsh Thakkar (2):
+  arm64: dts: k3-am62a-wakeup: Add R5F device node
+  arm64: dts: ti: k3-am62a7-sk: Enable ipc with remote proc nodes
 
-> > >  	}
+Hari Nagalla (1):
+  arm64: dts: k3-am62a-mcu: Add R5F remote proc node
 
-...
+Jai Luthra (1):
+  arm64: dts: k3-am62a-main: Add C7xv device node
 
-> > loongson_dwmac_remove()
-> > 
-> > >  	pci_disable_msi(pdev);
-> > >  	pci_disable_device(pdev);
-> > 
-> > Not sure why we need these either...
-> 
-> It's complicated.
-> 
-> The code uses pciM_enable_device(), but here in remove
-> pci_disable_device().
-> 
-> pcim_enable_device() sets up a disable callback which only calls
-> pci_disable_device() if pcim_pin_device() has not been called.
-> 
-> This code doesn't seem to call pcim_pin_device(), so I think
-> pci_disable_device() could be removed.
-> 
-> 
-> I definitely would not feel confident touching pci_disable_msi(),
-> though. The AFAIK biggest problem remaining in PCI devres is that the
-> MSI code base implicitly calls into devres, see here [1]
-
-But isn't it a busyness of PCI core to call pci_disable_msi() at the right
-moment? Okay, I admit that there might be devices that require a special
-workflow WRT MSI, is this the case here?
-
-> [1] https://lore.kernel.org/all/ee44ea7ac760e73edad3f20b30b4d2fff66c1a85.camel@redhat.com/
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi   | 11 ++++
+ arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi    | 35 +++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 23 +++++++
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts     | 68 +++++++++++++++++++++
+ 4 files changed, 137 insertions(+)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
