@@ -1,147 +1,117 @@
-Return-Path: <linux-kernel+bounces-294654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26529590E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5251A9590E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69E61C2147B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A04285267
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88391C8FA6;
-	Tue, 20 Aug 2024 23:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFE1C824E;
+	Tue, 20 Aug 2024 23:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEBdLcF7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="bAKyBv0N"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2AF107A0;
-	Tue, 20 Aug 2024 23:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910B7107A0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724195199; cv=none; b=c4cnfghuM+uylQ5lHw1DZgf9q2EKW1F69YoqdhO+bj/jb2NJ7d2zh/W3PW0OZt8zVZyYXgNg0z4yZZ1/kpvjZMYPmP6hQNe/2BcUN+Gd8YrzL3sLgR5xH+8z7FlwHByy34hNUUgqO8wkr+9m/hekyWG6vjvL/skoplkVDaL+yGc=
+	t=1724195446; cv=none; b=VM6fnvwl+DfyzbhH9hgS2SBteSNkfF0Jz5MmF2XoUEhrQPhZONROzWu/Y0Ek/5MFOKjHgFtUDmWrFBqkEqYem7fYY9JP7h4mF6eIa+cEg4A/ztbhAyBenJgK1vSlskJCOza9/Qt0mzb42W8QnAty1JYJt6NLEFAvHYlCGnexpis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724195199; c=relaxed/simple;
-	bh=ykJbsh+yXEzqA527szztRYLhUfRNUDRcnKxSvB+ndjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=as+HoO/e8+0uujCPBZPfe4Ol+c2/n0NPi7Z7v8/Hk4uhYgubWQES8n1cw+bRLmerDVEmykDQYkvVg2VPEo7jL0CuHmTMzU5B3tTXnREg+qoQNQ48XN4z0SSfoTJwUlxWmOQLp+y97ToRqQ/2jlClFKj4y2yE9Qb5Z4yy69bCPr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEBdLcF7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0FBFC4AF09;
-	Tue, 20 Aug 2024 23:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724195198;
-	bh=ykJbsh+yXEzqA527szztRYLhUfRNUDRcnKxSvB+ndjE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VEBdLcF74hlk9VN+GIosyLt7P2w34iAp8UYxBxVQQVZjR0m+8GB4U+nDuFsKFYael
-	 kBHpDLCr/KoFEWFIJBxkru+nYXprj88tu0GiosxouuGdN0TJ2l1+A68qF5cdTMHdfi
-	 m/RieKS7hmqI3BiaeMS+THMeAfnq1OR1hkCXOnD6hRWvSXn4TRb54gZOvMMXzKhO6W
-	 iSOgzkF6lQYf9c9gPoh0CW4+pZjo+8P6w+z8DcfLl3XUIGmMe1q7+Ihfo7yBb6iQq+
-	 FiFeEtZ+WCI+5KOxY3tE33nZVfwgOlsIFksF4AkTptKbn7tQFeV+qQxFcQKqtRy/Yq
-	 j+v2XzWKEMIXg==
-Date: Tue, 20 Aug 2024 16:06:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- liuhangbin@gmail.com, petrm@nvidia.com, matttbe@kernel.org, Shuah Khan
- <shuah@kernel.org>, netdev@vger.kernel.org, Willem de Bruijn
- <willemb@google.com>, David Wei <dw@davidwei.uk>,
- linux-kernel@vger.kernel.org (open list), linux-kselftest@vger.kernel.org
- (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: Re: [PATCH net-next v5] net: netconsole: selftests: Create a new
- netconsole selftest
-Message-ID: <20240820160636.7bfc4d5a@kernel.org>
-In-Reply-To: <20240819090406.1441297-1-leitao@debian.org>
-References: <20240819090406.1441297-1-leitao@debian.org>
+	s=arc-20240116; t=1724195446; c=relaxed/simple;
+	bh=ODDnHjkbTp+wYrdvszMzX59oMIz5z1+6NAsNCpIoDQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hiYeDBgB48FDGLiXyeOJWx70oQWT7B9JKurUSimzyzMWBkE6/Sn5FSKt6EJeRVR3CF/8/iv6XOGp9kjTcgQH7WjQ86H816IsmQn7rVTondSkLRL+fnzw+GbpvW7gkjxe2aKvCLVVzPdBx+8TYabU5WI8DP39lxd5Z6GBfw7uI2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=bAKyBv0N; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bec23c0ba8so839052a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724195443; x=1724800243; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SX1ezoSJDugDwPOdGtHosBZWeg1iz+1d1+OhQfBUV7o=;
+        b=bAKyBv0NYS5g3NOaTMjwc5svxX44GxWnXgcN7xj/ajFscSrBBqHC+7N7oJ+R5w74lx
+         izauDxVqVumofJmlkVOOuCiDRnopb7lrUEhaSsbBCepQv4DaCpjGrdqvjQrv9NcbmPTv
+         Vxn97MCAHhN7OjtVCUrdWcd4LoYYIo7qmw7YkN7y1QK7ro9o+QR7la0mzY2ou4L9jor3
+         GxTb28ym1+/wWpuyCAvBPWPcHDcJ6ZdKDoAQNWcw0HuuBUahWJsY6VAkA5kB70yrqaX1
+         W4iN9lbvJHLqzn1buo1JZY0RKkQTRuFkSJd7ufWMPleTNUr0H4KztLqC0nyuPqQCLWXg
+         8/pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724195443; x=1724800243;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SX1ezoSJDugDwPOdGtHosBZWeg1iz+1d1+OhQfBUV7o=;
+        b=PZX/DOlX/SEn7isvbvIMYbGuY/4Y91pkD4zLze2NAx3vp6+qEKlaejULDyszuNC2Qj
+         54HRYtE65qP9ZVVnbcG6j0on4gJihrGkWX/59qxrJPad9ckY1V+kUOKZNRjo3sz9rrkl
+         jYNT3anowO40cgvdqEGeJBMR2S+vPiSF6Drz+Dyt5aLM0oF0Qe/FAK8uII1QzmKHhGVF
+         FjyMY3BaEbnIjBs6xeu4JbjjfzW+9ug5h5zsBWdfI9cx/Z9XS8eIKEZTQHPJxwTEXDgP
+         SSsgr5YHPDAWRou+3Yu+iIDB7YCaXbLwDIQBxuo+v+vfqbf1JD8h4TU0XL0Gw3Z1nkcV
+         JclQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrGQTPUQNjaL3ruvp1OVzsIn5RekDuOPl/GEwp+T7JH4agUg6SpgX5pusU5Uv2WX7GZlK1X89RB6JXQ9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5ZQcSZnCAqabOAe+xHfJuXGX57CkD61bUsC2B2jkDrHHf7+P/
+	OL86/aEC2DfISynt2iD5D8YwJMeLzkYCQnO7OKkWdcKUNsqQb5tCcicWgcXxgD8=
+X-Google-Smtp-Source: AGHT+IHd9wFtG5D4Yy4a6ZJj8Q6kNR7yCZjSUshvttK1guXdXKAD1IWyRtKuhTvTSIFJnSPmC+d5Iw==
+X-Received: by 2002:a05:6402:51c6:b0:5af:6c44:6807 with SMTP id 4fb4d7f45d1cf-5bf1f2c1ef2mr86786a12.6.1724195442641;
+        Tue, 20 Aug 2024 16:10:42 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbbe2623sm7280801a12.9.2024.08.20.16.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 16:10:42 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: obitton@habana.ai,
+	ogabbay@kernel.org,
+	ttayar@habana.ai,
+	fkassabri@habana.ai,
+	osharabi@habana.ai,
+	dliberman@habana.ai,
+	quic_carlv@quicinc.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [RESEND PATCH] accel/habanalabs/gaudi2: Use kvfree() for memory allocated with kvcalloc()
+Date: Wed, 21 Aug 2024 01:10:28 +0200
+Message-ID: <20240820231028.136126-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 Aug 2024 02:03:53 -0700 Breno Leitao wrote:
-> +function check_for_dependencies() {
-> +	if [ "$(id -u)" -ne 0 ]; then
-> +		echo "This test must be run as root" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which socat > /dev/null ; then
-> +		echo "SKIP: socat(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which ip > /dev/null ; then
-> +		echo "SKIP: ip(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which udevadm > /dev/null ; then
-> +		echo "SKIP: udevadm(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
-> +		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ip link show "${DSTIF}" 2> /dev/null; then
-> +		echo "SKIP: interface ${DSTIF} exists in the system. Not overwriting it." >&2
-> +		exit "${ksft_skip}"
-> +	fi
+Use kvfree() to fix the following Coccinelle/coccicheck warning reported
+by kfree_mismatch.cocci:
 
-nit: maybe ip addr list to see if the 192.168.1.x network is already in
-use? 
+  WARNING kvmalloc is used to allocate this memory at line 10398
 
-> +}
-> +
-> +# ========== #
-> +# Start here #
-> +# ========== #
-> +modprobe netdevsim 2> /dev/null || true
-> +modprobe netconsole 2 > /dev/null || true
-> +
-> +# The content of kmsg will be save to the following file
-> +OUTPUT_FILE="/tmp/${TARGET}"
-> +
-> +# Check for basic system dependency and exit if not found
-> +check_for_dependencies
-> +# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-> +echo "6 5" > /proc/sys/kernel/printk
+Reviewed-by: Tomer Tayar <ttayar@habana.ai>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/accel/habanalabs/gaudi2/gaudi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-nit: should we not undo this in clenaup?
-
-> +# Remove the namespace, interfaces and netconsole target on exit
-> +trap cleanup EXIT
-> +# Create one namespace and two interfaces
-> +set_network
-> +# Create a dynamic target for netconsole
-> +create_dynamic_target
-> +# Listed for netconsole port inside the namespace and destination interface
-> +listen_port_and_save_to "${OUTPUT_FILE}" &
-> +# Wait for socat to start and listen to the port.
-> +wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
-> +# Send the message
-> +echo "${MSG}: ${TARGET}" > /dev/kmsg
-> +# Wait until socat saves the file to disk
-> +busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-> +
-> +# Make sure the message was received in the dst part
-> +# and exit
-> +validate_result "${OUTPUT_FILE}"
-
-Main reason Im complaining, I see:
-
-[    6.686720] netconsole: unknown parameter '2' ignored
-
-in the kernel logs when the test runs.
-
-Is it expected?
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index a38b88baadf2..5722e4128d3c 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -10437,7 +10437,7 @@ static int gaudi2_memset_device_memory(struct hl_device *hdev, u64 addr, u64 siz
+ 				(u64 *)(lin_dma_pkts_arr), DEBUGFS_WRITE64);
+ 	WREG32(sob_addr, 0);
+ 
+-	kfree(lin_dma_pkts_arr);
++	kvfree(lin_dma_pkts_arr);
+ 
+ 	return rc;
+ }
 -- 
-pw-bot: cr
+2.46.0
+
 
