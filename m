@@ -1,181 +1,157 @@
-Return-Path: <linux-kernel+bounces-294105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DD0958932
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C29958934
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1432B1C213D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7D91C20DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72D18CBEF;
-	Tue, 20 Aug 2024 14:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aC0RauNO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7359219005F;
+	Tue, 20 Aug 2024 14:25:42 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9373C2E405;
-	Tue, 20 Aug 2024 14:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E653D982;
+	Tue, 20 Aug 2024 14:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724163917; cv=none; b=MSwmTvqr4SJUqNeWLps3FxSM4b7kIx+2imNZ4B1Ez4SHeRJOP0j/mcijOI8Vx/qgLKSkO/31EKdlEv1dSzIknKdj4c3rNaIYTOUP6quKAK5UW3+6L3sjwFXPidW+bti4zFwKNa3zJpm+6d5HKt/wJqEiSmcq1Is7h7SZ8JRHsXE=
+	t=1724163942; cv=none; b=Q2Y1xdLmMvYEbFCo7Z+tvNCAhlG9mHDQf2Kb1TvjRjzq3tKNXIGqrUxzyrT6QF/ahH6rGV3/sBzdNWEIhYr9w7HS87qW3L42i6bN0100+sRWrBvWb983a/3Bnp5KlC3lWuxNzvZ+DeVjy/JsBLPVLRa8YCtLc7tw/4Q2280vVRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724163917; c=relaxed/simple;
-	bh=Hig9pLx8LC2NzqZeUNpYZDhOVyWGQAxue9qmVLY3Qwc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bCJrQj3cVjlLl3PAlPo3nIEFdHYEVnLrwwZx9g6kBoGY9uY6WVsY869T6wEmnIhm4VCKneTw6rPs5394DywwCOLfcK7oyJC1E5HxoAAmFhgSJGQQKR7HTE8Gr+VTnZGlHsW0wK67bKXGdDazLFtL4iJYn9B0rL40Kyy6IrHV5/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aC0RauNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAD7C4AF0E;
-	Tue, 20 Aug 2024 14:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724163917;
-	bh=Hig9pLx8LC2NzqZeUNpYZDhOVyWGQAxue9qmVLY3Qwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aC0RauNO55n/0eM3C/jfzqA576QPWii+uVqC1ySaA+DHwKBRW2PkvBSNe4Mzv2k8O
-	 tN2m9SWXg9EitZCjyPIyJI4zhwFgS++oVwo6mmnwcgVfpAIw1N0qzRpK7+0lL8BAVV
-	 QcKqGn2HeZ8WHU+LKJLill4oH77KABZus0iunhw650w1QLwjLNj8chN92jJDC7OAT2
-	 fERPLoTN/8LOzidjjb/g4Dks5eHesH0cxrF8s9HNg3d7b7zGc6MY3V/QF+3ccfS0+H
-	 MHHB6A/wE53D6AtbHpZqXhX2IXBNAc/bF/AY74JA95rosTpW+7E7kEckI9mNehKF2v
-	 NIrtlgJPcbkcA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sgPnO-005IXK-Ps;
-	Tue, 20 Aug 2024 15:25:14 +0100
-Date: Tue, 20 Aug 2024 15:25:13 +0100
-Message-ID: <86o75nxody.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	ankita@nvidia.com,
-	ardb@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	james.morse@arm.com,
-	vdonnefort@google.com,
-	mark.rutland@arm.com,
-	oliver.upton@linux.dev,
-	rananta@google.com,
-	ryan.roberts@arm.com,
-	shahuang@redhat.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1724163942; c=relaxed/simple;
+	bh=ffglQCRh40cNviNlchMu5io+mIU9YBfAb+D6ZnPp1HI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t52FtZrVcxnMbTTOtn/Ce3VIK5mM3GfA8ex4PF8fc/IFXPz2dQU6/Q9krEOTJlXBAH52yu5q1ROXQDkH2bbvrge16jCeNWtMse8TfM4OlmBzpHhAHjA6W4wKYZGLo8oYX5m5dFruvSgnZAYEw1abPv4yT6khcrJ9hF3gwvMEnV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 36EA1FFE4E;
+	Tue, 20 Aug 2024 14:25:36 +0000 (UTC)
+From: Max Staudt <max@enpas.org>
+To: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v8 3/6] arm64: ptdump: Use the mask from the state structure
-In-Reply-To: <ZsSkh2iw8s5Oa5xb@google.com>
-References: <20240816123906.3683425-1-sebastianene@google.com>
-	<20240816123906.3683425-4-sebastianene@google.com>
-	<86seuzxq27.wl-maz@kernel.org>
-	<ZsSkh2iw8s5Oa5xb@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	max@enpas.org
+Subject: [PATCH v4] hid-playstation: DS4: Update rumble and lightbar together
+Date: Tue, 20 Aug 2024 16:25:29 +0200
+Message-Id: <20240820142529.9380-1-max@enpas.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 20 Aug 2024 15:13:27 +0100,
-Sebastian Ene <sebastianene@google.com> wrote:
-> 
-> On Tue, Aug 20, 2024 at 02:49:04PM +0100, Marc Zyngier wrote:
-> > On Fri, 16 Aug 2024 13:39:03 +0100,
-> > Sebastian Ene <sebastianene@google.com> wrote:
-> > > 
-> > > Printing the descriptor attributes requires accessing a mask which has a
-> > > different set of attributes for stage-2. In preparation for adding support
-> > > for the stage-2 pagetables dumping, use the mask from the local context
-> > > and not from the globally defined pg_level array. Store a pointer to
-> > > the pg_level array in the ptdump state structure. This will allow us to
-> > > extract the mask which is wrapped in the pg_level array and use it for
-> > > descriptor parsing in the note_page.
-> > > 
-> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > > ---
-> > >  arch/arm64/include/asm/ptdump.h |  1 +
-> > >  arch/arm64/mm/ptdump.c          | 13 ++++++++-----
-> > >  2 files changed, 9 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> > > index bd5d3ee3e8dc..71a7ed01153a 100644
-> > > --- a/arch/arm64/include/asm/ptdump.h
-> > > +++ b/arch/arm64/include/asm/ptdump.h
-> > > @@ -44,6 +44,7 @@ struct ptdump_pg_level {
-> > >   */
-> > >  struct ptdump_pg_state {
-> > >  	struct ptdump_state ptdump;
-> > > +	struct ptdump_pg_level *pg_level;
-> > >  	struct seq_file *seq;
-> > >  	const struct addr_marker *marker;
-> > >  	const struct mm_struct *mm;
-> > > diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-> > > index 404751fd30fe..ca53ef274a8b 100644
-> > > --- a/arch/arm64/mm/ptdump.c
-> > > +++ b/arch/arm64/mm/ptdump.c
-> > > @@ -117,7 +117,7 @@ static const struct ptdump_prot_bits pte_bits[] = {
-> > >  	}
-> > >  };
-> > >  
-> > > -static struct ptdump_pg_level pg_level[] __ro_after_init = {
-> > > +static struct ptdump_pg_level kernel_pg_levels[] __ro_after_init = {
-> 
-> Hi Marc,
-> 
->  
-> > Do you actually need this sort of renaming? Given that it is static,
-> > this looks like some slightly abusive repainting which isn't warranted
-> > here.
-> 
-> I applied Will's suggestion from
-> https://lore.kernel.org/all/20240705111229.GB9231@willie-the-truck/
-> >
-> > 
-> > I also didn't understand the commit message: you're not tracking any
-> > mask here, but a page table level. You are also not using it for
-> > anything yet, see below.
-> 
-> and I missed updating the commit message.
-> 
-> > 
-> > 
-> > >  	{ /* pgd */
-> > >  		.name	= "PGD",
-> > >  		.bits	= pte_bits,
-> > > @@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
-> > >  	       u64 val)
-> > >  {
-> > >  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
-> > > +	struct ptdump_pg_level *pg_level = st->pg_level;
-> > 
-> > This is what I mean. What is this pg_level used for?
-> 
-> I make use of it to extract the name based on the level. The suggestion
-> that Will made allowed me to keep the code with less changes.
+Some 3rd party gamepads expect updates to rumble and lightbar together,
+and setting one may cancel the other.
 
-Err, I see that now. It'd be good if you described what actually
-happens, because it is almost impossible to understand it from reading
-the patch.
+Let's maximise compatibility for these controllers by sending rumble
+and lightbar updates together, even when only one has been scheduled.
 
-Thanks,
+The quirky controllers are matched by a known CRC32 over their HID
+report descriptor (hdev->rdesc), since they seem to share the same
+descriptor, while pretending to be a Sony DS4 v2.0.
 
-	M.
+Signed-off-by: Max Staudt <max@enpas.org>
+---
+Changes in v3 -> v4:
+ - Reduced quirk matching to exact values of hdev->rsize.
+ - Adjusted comments to describe quirk detection.
+   The patch no longer applies to all controllers.
 
+Changes in v2 -> v3:
+ - Introduced a quirk bit, so this hack only applies to controllers
+   known to be quirky.
+
+Changes in v1 -> v2:
+ - Simplified the code, comment, and commit message.
+---
+ drivers/hid/hid-playstation.c | 43 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index e7c309cfe3a0..0b48ca7bfe22 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -356,6 +356,9 @@ struct dualsense_output_report {
+ #define DS4_TOUCHPAD_WIDTH	1920
+ #define DS4_TOUCHPAD_HEIGHT	942
+ 
++/* Quirks for third-party controllers */
++#define DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER	BIT(0)
++
+ enum dualshock4_dongle_state {
+ 	DONGLE_DISCONNECTED,
+ 	DONGLE_CALIBRATING,
+@@ -405,6 +408,8 @@ struct dualshock4 {
+ 	struct work_struct output_worker;
+ 	bool output_worker_initialized;
+ 	void *output_report_dmabuf;
++
++	unsigned long quirks;
+ };
+ 
+ struct dualshock4_touch_point {
+@@ -2143,6 +2148,20 @@ static void dualshock4_output_worker(struct work_struct *work)
+ 
+ 	spin_lock_irqsave(&ds4->base.lock, flags);
+ 
++	/*
++	 * Some 3rd party gamepads expect updates to rumble and lightbar
++	 * together, and sending only one at a time may cancel the other.
++	 *
++	 * If this is such a quirky controller, force sending both
++	 * updates, even if only one has been scheduled.
++	 */
++	if (DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER) {
++		if (ds4->update_rumble || ds4->update_lightbar) {
++			ds4->update_rumble = true; /* 0x01 */
++			ds4->update_lightbar = true; /* 0x02 */
++		}
++	}
++
+ 	if (ds4->update_rumble) {
+ 		/* Select classic rumble style haptics and enable it. */
+ 		common->valid_flag0 |= DS4_OUTPUT_VALID_FLAG0_MOTOR;
+@@ -2558,6 +2577,30 @@ static struct ps_device *dualshock4_create(struct hid_device *hdev)
+ 	 */
+ 	hdev->version |= HID_PLAYSTATION_VERSION_PATCH;
+ 
++	/*
++	 * Some 3rd party gamepads expect updates to rumble and lightbar
++	 * together, and sending only one at a time may cancel the other.
++	 *
++	 * Set a quirk bit if this is a controller known to behave this way.
++	 */
++	if (hdev->vendor == USB_VENDOR_ID_SONY &&
++	    hdev->product == USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) {
++		/* Match quirky controllers by their HID report descriptor. */
++		if (hdev->bus == BUS_USB && hdev->rsize >= 507 &&
++		    crc32_le(0xffffffff, hdev->rdesc, 507) == 0xabc63a20)
++			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
++
++		/*
++		 * The descriptor via Bluetooth differs from the USB one.
++		 * Allow for 1 byte extra, because there may be a trailing
++		 * 0x00 byte.
++		 */
++		if (hdev->bus == BUS_BLUETOOTH &&
++		    (hdev->rsize == 430 || hdev->rsize == 431) &&
++		    crc32_le(0xffffffff, hdev->rdesc, 430) == 0x4194b762)
++			ds4->quirks |= DS4_QUIRK_OUTPUT_LIGHTBAR_RUMBLE_TOGETHER;
++	}
++
+ 	ps_dev = &ds4->base;
+ 	ps_dev->hdev = hdev;
+ 	spin_lock_init(&ps_dev->lock);
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.2
+
 
