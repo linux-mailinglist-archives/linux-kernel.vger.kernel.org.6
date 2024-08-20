@@ -1,213 +1,193 @@
-Return-Path: <linux-kernel+bounces-294048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F87195883F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0941958840
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56E3EB22159
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425C4283D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12020190674;
-	Tue, 20 Aug 2024 13:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75283190670;
+	Tue, 20 Aug 2024 13:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="xKuUCpPt"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evk4h2E1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D5318FC93
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C4189F3F;
+	Tue, 20 Aug 2024 13:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161699; cv=none; b=B+7cuQ+uPFcpXHk6Oec/ji2uXAY9lNMQkClga6Q9B46xErDR8QCTX3fLIgFWGh4kBjE41Q5gd60N60M1K0mLazyN3mut4Ti6z6T1mTal0t1L6jaR8ooiYiJdqr4pr7zxl+/+/6oMbKOUyu1IstLXEK8jJZ+E3NC/amKk/8oOl7M=
+	t=1724161747; cv=none; b=cVtiTzK4o1J9icWjYzNj90fuQdNhfaaXzy8USznFn3TOP+fZX+r6kH1IJJxqr19SCsciFFf5KbY4SlcU/GVxEQp6F8Ti82Yha2z9tFkiBiOCY+znAgrUuzoS8HsWgFKFR+4tDyOhFHiT0dcXs7i16Q3QeERJEome8iTlFJaQTuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161699; c=relaxed/simple;
-	bh=XKqfsrq7/wcoGof4n+JoaeI8Gs4XkC8iip3eEnMzc1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+kmO6LgA1L5vqdVOj2HBdi03uWK+u54JcZC87ku0aOvP01sseDYV1Vpo3t5JPWOx+6wRiuDYEJSxEHn1kbEV8gAj3/wIMlr7P8BPir9ZZS6QSxEhGM6B1mY2x6Kx4AGGIXydtG8ZOOvwjMGkYkys3vtRs7WCfqTCNkTd9gj3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=xKuUCpPt; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CCDE21487C87;
-	Tue, 20 Aug 2024 15:48:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724161694; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=e1+sGjy8VBENsMfMwQKYHqIK+7Ps82ZuhZuVrasf+w0=;
-	b=xKuUCpPtOi7GdI2VP4ldZQAZvcdApMpybA9opjTKQyThUSXOI5FegOu03axfGV0irWfWS9
-	PKdwwa5T74iw/NxfptN4h3UtjY+YJ8hxQV+aJKMYwEIiGb1T8ZkQ9+nuJ/7y+SFGgg17qJ
-	/hJnfpox+QbzQZuUUsTGDhlSBn8PjZl6AqVnL45/i0Gj8a81pr30Vn04uvRn0S1t36L/GH
-	yaSjHBVclhfiuOdKUvsJWomKxLAzm/m5e/bI09bZyPpE67nLWqws7r1H7c+zOPiv8Sp67H
-	N23Qo+eVIURLA5j+x44hUfI/kFRKvX0wAA4XnnZoVfd2iLqMI3Op6Q9DmO0Skw==
-Date: Tue, 20 Aug 2024 15:48:12 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [RFC PATCH 0/1] Timeout error with Microchip OTPC driver on
- SAM9X60
-Message-ID: <20240820-operating-surgical-9a7a877256ff@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20240412140802.1571935-1-ada@thorsis.com>
- <d4dc3f45-5bae-44a8-8169-58077f8b7966@tuxon.dev>
- <20240813-payable-ecology-8a9e739704bb@thorsis.com>
- <479c083b-9c1a-4200-aff5-77dc250e536c@tuxon.dev>
+	s=arc-20240116; t=1724161747; c=relaxed/simple;
+	bh=bhRwn+mVa1bt+TlSFVqIGGL3160ePN1rMaL5tku4pr0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YVa0IiqpX8E3K4kjFjaydhBGgoSZT6PChgARnMsBnAMB6makSDqboc0Z2F4e60FgrckJwK9jM6PyPYaKGN8FTKLnpBnpilSesX/7Z1jdv7+weHuu3fAlIwACj4jScAadHnNxr9JilRl82Og/etzExtytieMc7lfaFOkSG3NbyEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evk4h2E1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D767C4AF0E;
+	Tue, 20 Aug 2024 13:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724161747;
+	bh=bhRwn+mVa1bt+TlSFVqIGGL3160ePN1rMaL5tku4pr0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=evk4h2E1nkNef2/bTxkH/5JMSYGg6VWdjgJKeMbMaEdaivq7L6N9i6SzQvDzfsT4k
+	 S603bEwXO2pLPUWy3li5pE3fDcTyNarc6t9465yvDNDRGleiEs2HT7gjCb+wwNwFsX
+	 KpwMxYbIoqO2Y0j4doscuk6dpWE0K2BfUrJkWeXUEh20CTPt0PjnQSBb0X8Htr6dnJ
+	 aNkYd6OGL/QrUYns3ADV9Qci+vCzwOFCkWBLnCrYyUx2VQEYjMibSMARxg/Fr+KsAH
+	 lFBrwCMmhjUNy8RlvUawRl8J/DKJ5P11GO9NYV/23fBUC8AGPeGA6EpOd/0nH4T9wf
+	 eIxuanOzE8vxA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgPEP-005Hv4-2L;
+	Tue, 20 Aug 2024 14:49:05 +0100
+Date: Tue, 20 Aug 2024 14:49:04 +0100
+Message-ID: <86seuzxq27.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v8 3/6] arm64: ptdump: Use the mask from the state structure
+In-Reply-To: <20240816123906.3683425-4-sebastianene@google.com>
+References: <20240816123906.3683425-1-sebastianene@google.com>
+	<20240816123906.3683425-4-sebastianene@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <479c083b-9c1a-4200-aff5-77dc250e536c@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello Claudiu,
-
-Am Tue, Aug 20, 2024 at 02:59:03PM +0300 schrieb claudiu beznea:
-> Hi, Alexander,
+On Fri, 16 Aug 2024 13:39:03 +0100,
+Sebastian Ene <sebastianene@google.com> wrote:
 > 
-> On 13.08.2024 11:55, Alexander Dahl wrote:
-> > Hello Claudiu,
-> > 
-> > Am Wed, Apr 24, 2024 at 10:32:02AM +0300 schrieb claudiu beznea:
-> >> Hi, Alexander,
-> >>
-> >> On 12.04.2024 17:08, Alexander Dahl wrote:
-> >>> Hei hei,
-> >>>
-> >>> on a custom sam9x60 based board we want to access a unique ID of the
-> >>> SoC.  Microchip sam-ba has a command 'readuniqueid' which returns the
-> >>> content of the OTPC Product UID x Register in that case.
-> >>>
-> >>> (On a different board with a SAMA5D2 we use the Serial Number x Register
-> >>> exposed through the atmel soc driver, which is not present in the
-> >>> SAM9X60 series.)
-> >>>
-> >>> There is a driver for the OTPC of the SAMA7G5 and after comparing
-> >>> register layouts it seems that one is almost identical to the one used
-> >>> by SAM9X60.  So I thought just adapting the driver for SAM9X60 should be
-> >>> easy.  (At least as a start, the driver has no support for that UID
-> >>> register, but I suppose it would be the right place to implement it.)
-> >>>
-> >>> However it does not work.  I used the patch attached with
-> >>> additional debug messages on a SAM9X60-Curiosity board.  (That patch is
-> >>> not meant for inclusion, just for showing what I've tried.)
-> >>>
-> >>> On probe the function mchp_otpc_init_packets_list() returns with
-> >>> ETIMEDOUT, which it can only do if mchp_otpc_prepare_read() returns with
-> >>> timeout and that can only happen if read_poll_timeout() times out on
-> >>> reading the Status Register.  Poking that register with `devmem
-> >>> 0xeff0000c 32` gives 0x00000040 which means "A packet read is on-going".
-> >>
-> >>
-> >> Would it be possible that the OTP memory is not properly initialized and
-> >> the algorithm to initialized the packet list to confuse the hardware?
-> >>
-> >> I see in the datasheet the following: "The initial value of the OTP memory
-> >> is ‘0’ but the memory may contain some “defective” bits already set to the
-> >> value ‘1’."
-> > 
-> > I think this might be possible?  SAM-BA also stumbles here, but the
-> > SoC is like shipped by the vendor, no OTPC writes ever from my side.
+> Printing the descriptor attributes requires accessing a mask which has a
+> different set of attributes for stage-2. In preparation for adding support
+> for the stage-2 pagetables dumping, use the mask from the local context
+> and not from the globally defined pg_level array. Store a pointer to
+> the pg_level array in the ptdump state structure. This will allow us to
+> extract the mask which is wrapped in the pg_level array and use it for
+> descriptor parsing in the note_page.
 > 
-> I'm not sure how the SAM9X60 OTP memory is shipped by vendor. If I remember
-> correctly the user must flash the bootconfig packet depending on his needs.
-
-User can do that, but does not need to if the defaults are sufficient.
-On sam9x60-curiosity it just boots with defaults from SD card or raw
-NAND flash.  No bootconfig packets are set here.
-
-> > When calling this …
-> > 
-> >     $ sam-ba -p serial -d sam9x60:0:1 -t 5 -a bootconfig -c readcfg:bcp-otp
-> > 
-> > … I get this on serial debug output:
-> > 
-> >     Applet 'BootConfig' from SAM-BA Applets Framework 3.8 (v3.8).
-> >     -E- Cannot read Boot Config Packet.
-> >     -E- Invalid parameter for read config: index 0
-> > 
-> > Question is: how should the driver behave in this case?  Fail like it
-> > does now?  Or load in some kind of safe state with "empty" nvmem?
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/include/asm/ptdump.h |  1 +
+>  arch/arm64/mm/ptdump.c          | 13 ++++++++-----
+>  2 files changed, 9 insertions(+), 5 deletions(-)
 > 
-> The driver cannot know if the memory is defective or not. Not that I've
-> know. It expects the memory to be in a proper state.
+> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> index bd5d3ee3e8dc..71a7ed01153a 100644
+> --- a/arch/arm64/include/asm/ptdump.h
+> +++ b/arch/arm64/include/asm/ptdump.h
+> @@ -44,6 +44,7 @@ struct ptdump_pg_level {
+>   */
+>  struct ptdump_pg_state {
+>  	struct ptdump_state ptdump;
+> +	struct ptdump_pg_level *pg_level;
+>  	struct seq_file *seq;
+>  	const struct addr_marker *marker;
+>  	const struct mm_struct *mm;
+> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+> index 404751fd30fe..ca53ef274a8b 100644
+> --- a/arch/arm64/mm/ptdump.c
+> +++ b/arch/arm64/mm/ptdump.c
+> @@ -117,7 +117,7 @@ static const struct ptdump_prot_bits pte_bits[] = {
+>  	}
+>  };
+>  
+> -static struct ptdump_pg_level pg_level[] __ro_after_init = {
+> +static struct ptdump_pg_level kernel_pg_levels[] __ro_after_init = {
 
-Datasheet says:
+Do you actually need this sort of renaming? Given that it is static,
+this looks like some slightly abusive repainting which isn't warranted
+here.
 
-    After each reset, the OTPC parses the User area to check its
-    content. The header of each packet will be read, depending on the
-    header value some actions can be triggered:
-    • If the header is corrupted, the init sequence is interrupted and
-    the OTPC_ISR.COERR bit is set.
+I also didn't understand the commit message: you're not tracking any
+mask here, but a page table level. You are also not using it for
+anything yet, see below.
 
-The COERR bit in OTPC_ISR can be checked in the driver of course.  Not
-sure if that adds any real value however.  Maybe issue a warning in
-that case?
 
-> E.g. On SAMA7G5 the OTP memory has at lest the temperature sensor
-> calibration data packet. And if I remember correctly, it also has the
-> bootconfig packet on the first position.
+>  	{ /* pgd */
+>  		.name	= "PGD",
+>  		.bits	= pte_bits,
+> @@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+>  	       u64 val)
+>  {
+>  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+> +	struct ptdump_pg_level *pg_level = st->pg_level;
 
-Nice to know, however I don't have a board featuring the sama7g5 at hand.
+This is what I mean. What is this pg_level used for?
 
-Greets
-Alex
+>  	static const char units[] = "KMGTPE";
+>  	u64 prot = 0;
+>  
+> @@ -262,6 +263,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
+>  		.seq = s,
+>  		.marker = info->markers,
+>  		.mm = info->mm,
+> +		.pg_level = &kernel_pg_levels[0],
+>  		.level = -1,
+>  		.ptdump = {
+>  			.note_page = note_page,
+> @@ -279,10 +281,10 @@ static void __init ptdump_initialize(void)
+>  {
+>  	unsigned i, j;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(pg_level); i++)
+> -		if (pg_level[i].bits)
+> -			for (j = 0; j < pg_level[i].num; j++)
+> -				pg_level[i].mask |= pg_level[i].bits[j].mask;
+> +	for (i = 0; i < ARRAY_SIZE(kernel_pg_levels); i++)
+> +		if (kernel_pg_levels[i].bits)
+> +			for (j = 0; j < kernel_pg_levels[i].num; j++)
+> +				kernel_pg_levels[i].mask |= kernel_pg_levels[i].bits[j].mask;
+>  }
+>  
+>  static struct ptdump_info kernel_ptdump_info __ro_after_init = {
+> @@ -297,6 +299,7 @@ bool ptdump_check_wx(void)
+>  			{ 0, NULL},
+>  			{ -1, NULL},
+>  		},
+> +		.pg_level = &kernel_pg_levels[0],
+>  		.level = -1,
+>  		.check_wx = true,
+>  		.ptdump = {
 
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> > This is especially interesting with regard to a new question below.
-> > 
-> >> Otherwise, from the top of my mind I don't have any idea on what might happen.
-> > 
-> > I have some debug code here, and digging deeper into this currently to
-> > see what's really happening.  While at it, a new question came up:
-> > 
-> > There's this OTP memory which the driver tries to expose as NVMEM.
-> > However what I really want to do is getting access to the OTPC Product
-> > UID x Registers, which are not OTP memory but plain registers inside
-> > of the address space of the OTPC here.  Should this be exposed as a
-> > second nvmem device then, or handled by a different driver?  How would
-> > accessing the same register space from different drivers be handled
-> > then?
-> > 
-> > Greets
-> > Alex
-> > 
-> >>
-> >> Thank you,
-> >> Claudiu Beznea
-> >>
-> >>>
-> >>> Kinda stuck here.  Any ideas?
-> >>>
-> >>> Greets and have a nice weekend everyone
-> >>> Alex
-> >>>
-> >>> Alexander Dahl (1):
-> >>>   nvmem: microchip-otpc: Add support for SAM9X60
-> >>>
-> >>>  .../dts/microchip/at91-sam9x60_curiosity.dts     |  4 ++++
-> >>>  arch/arm/boot/dts/microchip/sam9x60.dtsi         |  7 +++++++
-> >>>  drivers/nvmem/microchip-otpc.c                   | 16 +++++++++++++---
-> >>>  3 files changed, 24 insertions(+), 3 deletions(-)
-> >>>
-> >>>
-> >>> base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
-> >>
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
