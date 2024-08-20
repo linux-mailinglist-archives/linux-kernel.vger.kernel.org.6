@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-293586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C19581A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B30F9581AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE621F23A56
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4009F1C23D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5FE18A958;
-	Tue, 20 Aug 2024 09:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4179918B463;
+	Tue, 20 Aug 2024 09:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwTWI3el"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHEvmiQJ"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F195716C68F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD5D1494DF
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724144962; cv=none; b=SoxBhUIsT3arF1YNra9GisEQvYV6JbRt3IDmP+KV9TaQ0zxEwWWaCPWfSAo/KFfgnuhXl/Go3FNf5S927pp+Q3DH1hMd+mP2KbvIrEo6eIuCQaDsKqLsz1zW7S6mWRUxYNXcKKBKgn+xB862T/p5XCJiJQG6AaToDOOP8amsPVQ=
+	t=1724144977; cv=none; b=HEAZdInGHurJ0COtv1JXj5Ml0mKPSxJxRgY98aVGixVwMOSBHyKxtlTMGTugay+6SKPFideN4VbbMXMczGkkBzsfzJa7hVfq1h1EidN0umU9wNZGEPuIkhZ++ZPWl5Mbgik/4FSw0gOGKjckGwaJkoUZOr/ZiInbSmTfkzKUFXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724144962; c=relaxed/simple;
-	bh=0SjUeS+Q8YiK0s6AO9nW2eTTgUfTdXx1XE+Gb4kGsiQ=;
+	s=arc-20240116; t=1724144977; c=relaxed/simple;
+	bh=RzkLK2hYLPH6njdsvoeQYXdvnDp31t+YCNi0d69E7Ss=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YcadcEqH8SN6iIOm6qh5625FuHxwB9XtIK4pCbMntWz/yL0XqVryxSkcHBckoOTNDlOuYQyVNO2nneNhkEN1OSey0QQOUz7FPe1JmnGVL9lXKtIKhycvKAf25oh5XUibZdRJ6wsaBXaeBMdR+iGewrcU0DAFyvZGmZ6LKayDAU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwTWI3el; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=kWGxG06hrtXsWTpT04KQAp1WjAyShj76+PtiQ5WVsY8Lvu1BiUqrh5uAGaXC4RyBcevxpUXLQ68yw0xtXPjaHdrnhcNg9Q6EveAgBoAHQiw7mZMQJ446tbulb/IYJwnF3VI0YAEiy8x2J97wZkNJMlxbEuxlK06n1j3yaqcp9PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHEvmiQJ; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42816ca797fso42978665e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:09:20 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371afae614aso1773708f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724144959; x=1724749759; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724144974; x=1724749774; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=39nNL2+o4oHw4rNBNcBPdzYRJpF6VA3Ac0WKvhXecWg=;
-        b=CwTWI3elyzYpnCwC64z1QacwIQihvhNcDKhDf1+FHnwFvYkkl1fVSVxA/an+xwxPaA
-         Q4+p8JL8cfzA5VVsdMVwNpP666bpQQrSvZn5tgFUz7cX+dfHEZHIWKTp+2rbduIo9Hw5
-         zwAAbX/UXFkjZscDWzEkJWbOAjqRo0xqQODRQ2Gl+qsJ6CIk/3kZK+wDvavklTbuWIhC
-         gPivpJfFvU+MWnBDJjRGpz777gga2r2I0kzDMu7QDjuspjnYfXDlddn0TlyLpGZFyogH
-         hD37IPcrfuRf8zxjbnwxUwou1GZ+nm03oozlq5GL+YgmBwKZA5F3py4eT+wIIibao0zu
-         5mOw==
+        bh=krCYSxdDpTQrVUrzWiIkCh5CYHoHUCK7xs+My+FCoPs=;
+        b=hHEvmiQJskuIgrtQNo5MyZlyW/51s5cIv7VTLNHW1XUfqw+O5XxFaU5u2mr2+3QFp2
+         +yf2TZ/Fibl8c8QWd1pAyao1/3hbhXuSWo4MjHIK0pDkSioj++i5zDBENJJrvoI1/Hmf
+         fGDSRzCL/bodWVyQ164gepohQRslPBstznVIVesDT0HBNIDfpJWvKbyI6ctlOA83yu3y
+         8vcW4b4jeBK+gdu2ORlDdH9qYjJBu3NAkWzes+PNsYvpA6CaarCQLmnNi23LSpy+q2tn
+         nUcyczMLg953/GAGoQSgeXhNqi2noWvBaszPCWvSKJFzZmHneGLpxYyBT42r1D2XYoO+
+         WYyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724144959; x=1724749759;
+        d=1e100.net; s=20230601; t=1724144974; x=1724749774;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=39nNL2+o4oHw4rNBNcBPdzYRJpF6VA3Ac0WKvhXecWg=;
-        b=tiuFiOJmWto576kj13SsW1BY6a2JyNhPgRHZkgytO0yikB5mfSnx7Tv/ZIjoFetKyq
-         GZSolL+sTAK7fD4jKbLrtSBnO0t4MJu48RvB2zr98tDBgezG+mv00TV+dVCr0gsg19fN
-         Szc+y2kIjDsKFXyjoVrKXFxD0ghVAuQ1ClGIoupo5c7ytr46hpUn+qOZHx1jG0Z4nSxb
-         MXgb+AAc0tKWKfYJc6PuUIX5rg8sgG5OwxQD+XEIfbpJTSHJw4bZMtT3TVRb6uHhlY4/
-         tgyL3ZMeMFN7+h2YU9dsVTyTnYSB5H3Z+ZF+XiBs1hqIrbmmySnQmck2AiKMgAsapRG1
-         tTuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDDsIftTe/Y/HLSQgsGXDDgemAmIXfzepC5o44D5teLCbVNslUZtAPOGs6wkKzWl+55VSHs+N3tL57rG5ev3XvdnG+3jjoT/Vpp14K
-X-Gm-Message-State: AOJu0Yy3JIHYLtkhvogSttFxWkwMyKy6eE1h8Q6Gzx0FEYH01eTd4jRj
-	vGqizxSQ1lp3W8JG/0RZPsCJxZjvEguQtR1d632CzzDQxc9x2Y32
-X-Google-Smtp-Source: AGHT+IESSlGS/R12Dy0bo/M5WH+m6NeXa45/mLfj0RMkSqzA9SSFkWXBhmym40DC1+pINyonhRv6Iw==
-X-Received: by 2002:adf:9bc3:0:b0:367:35d7:bf11 with SMTP id ffacd0b85a97d-37194455af1mr8074427f8f.25.1724144958748;
-        Tue, 20 Aug 2024 02:09:18 -0700 (PDT)
+        bh=krCYSxdDpTQrVUrzWiIkCh5CYHoHUCK7xs+My+FCoPs=;
+        b=WdAGgX0SP2r2Mh4UTp9zrrKqWgb3dJg6TQ76rsCr93s4UsWmvkDXHku2FY8oNexT0Z
+         hrdWNpnDuoUYWukeAW5pBXOUaB9mrBvLbR3HUIy/sdoFFyAAbZRctuoWU8pEGi5xCn54
+         yuwUxDXzhRWI5HB4FC1aFBY3ueGb7xzOzTrPI221sp9vw21fwb/BIlLHOrunnWo+GSO0
+         vzh77OyQI0mxMFcMlfCEgCy+66Vo0PKZU6NvZLznM81l5YeLF+aC4biLoFw3Cr8Jr01y
+         9xFo+IUWj/uY8vY/yyFl4xSA2iNwZrWISR2hy+L9oulwgNg3Mg3F0FQbFVL6t593pIIi
+         hQCg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6XMCha2+c1OrxsRQGX7WJJKF5NhmM4Gwfe5fIHZ2WpAcZyCbrps5XUPV6cHhniF4W5naYBnKIIO1E69A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZY7YiAzAFjbTmXhY7vxFiSAeA66n4/LpOyIGX0YqgB/p8q9km
+	xm72ZFWN6sLRzmSOcMWrM/DWBWLWLalYa946XYa4/SA3qolzs2X7
+X-Google-Smtp-Source: AGHT+IGSlYSQWy5PrGTd8Jc5PKw3jaHd5f4fetH8Kiozuh65q2Zh7ztB+yLnmScukC/b+W02t6l4kw==
+X-Received: by 2002:adf:e78d:0:b0:368:460d:d942 with SMTP id ffacd0b85a97d-37194646be4mr7681089f8f.24.1724144973344;
+        Tue, 20 Aug 2024 02:09:33 -0700 (PDT)
 Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a311sm12650575f8f.23.2024.08.20.02.09.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898ac074sm12557067f8f.106.2024.08.20.02.09.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 02:09:18 -0700 (PDT)
+        Tue, 20 Aug 2024 02:09:33 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: airlied@gmail.com,
@@ -86,12 +86,12 @@ Cc: airlied@gmail.com,
 	thomas.petazzoni@bootlin.com,
 	tzimmermann@suse.de,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH RFC 1/4] drm/vkms: Switch to managed for connector
-Date: Tue, 20 Aug 2024 11:09:11 +0200
-Message-ID: <20240820090912.2854-1-jose.exposito89@gmail.com>
+Subject: [PATCH RFC 2/4] drm/vkms: Switch to managed for encoder
+Date: Tue, 20 Aug 2024 11:09:27 +0200
+Message-ID: <20240820090930.2869-1-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240814-google-vkms-managed-v1-1-7ab8b8921103@bootlin.com>
-References: <20240814-google-vkms-managed-v1-1-7ab8b8921103@bootlin.com>
+In-Reply-To: <20240814-google-vkms-managed-v1-2-7ab8b8921103@bootlin.com>
+References: <20240814-google-vkms-managed-v1-2-7ab8b8921103@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,15 +101,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Louis,
+> The current VKMS driver uses non-managed function to create encoders. It
+> is not an issue yet, but in order to support multiple devices easly,
 
-Thanks for these patches. Easy review as my configfs series included similar
-patches :) I think that this series could be easily rebased on drm-misc-next,
-but I don't know if that'd add a lot of work rebasing other series. I'd be nice
-to get these 4 merged.
+s/easly/easily
 
-> The current VKMS driver uses non-managed function to create connectors. It
-> is not an issue yet, but in order to support multiple devices easily,
 > convert this code to use drm and device managed helpers.
 > 
 > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
@@ -118,104 +114,90 @@ Reviewed-by: José Expósito <jose.exposito89@gmail.com>
 
 > ---
 >  drivers/gpu/drm/vkms/vkms_drv.h    |  1 -
->  drivers/gpu/drm/vkms/vkms_output.c | 22 ++++++++++------------
->  2 files changed, 10 insertions(+), 13 deletions(-)
+>  drivers/gpu/drm/vkms/vkms_output.c | 21 +++++++++------------
+>  2 files changed, 9 insertions(+), 13 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index f74a5c2045f9..cea7b2640c5d 100644
+> index cea7b2640c5d..2c9d1f20ce84 100644
 > --- a/drivers/gpu/drm/vkms/vkms_drv.h
 > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -43,7 +43,6 @@
+> @@ -42,7 +42,6 @@
+>   */
 >  struct vkms_output {
 >  	struct drm_crtc crtc;
->  	struct drm_encoder encoder;
-> -	struct drm_connector connector;
+> -	struct drm_encoder encoder;
 >  	struct drm_writeback_connector wb_connector;
 >  	struct hrtimer vblank_hrtimer;
 >  	ktime_t period_ns;
 > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 20073a00b200..4767838c3a73 100644
+> index 4767838c3a73..cb8507917b5f 100644
 > --- a/drivers/gpu/drm/vkms/vkms_output.c
 > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -3,6 +3,7 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_edid.h>
->  #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_managed.h>
-
-Nit: Keep includes sorted alphabetically if possible
-
->  
->  #include "vkms_writeback.h"
->  #include "vkms_plane.h"
-> @@ -10,7 +11,6 @@
->  
->  static const struct drm_connector_funcs vkms_connector_funcs = {
->  	.fill_modes = drm_helper_probe_single_connector_modes,
-> -	.destroy = drm_connector_cleanup,
->  	.reset = drm_atomic_helper_connector_reset,
->  	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> @@ -16,9 +16,7 @@ static const struct drm_connector_funcs vkms_connector_funcs = {
 >  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> @@ -54,7 +54,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
+>  };
+>  
+> -static const struct drm_encoder_funcs vkms_encoder_funcs = {
+> -	.destroy = drm_encoder_cleanup,
+> -};
+> +static const struct drm_encoder_funcs vkms_encoder_funcs = {};
+
+This struct is not required, drmm_encoder_init() can take a NULL value.
+
+>  
+>  static int vkms_conn_get_modes(struct drm_connector *connector)
 >  {
+> @@ -55,7 +53,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
 >  	struct vkms_output *output = &vkmsdev->output;
 >  	struct drm_device *dev = &vkmsdev->drm;
-> -	struct drm_connector *connector = &output->connector;
-> +	struct drm_connector *connector;
->  	struct drm_encoder *encoder = &output->encoder;
+>  	struct drm_connector *connector;
+> -	struct drm_encoder *encoder = &output->encoder;
+> +	struct drm_encoder *encoder;
 >  	struct drm_crtc *crtc = &output->crtc;
 >  	struct vkms_plane *primary, *cursor = NULL;
-> @@ -90,11 +90,15 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->  	if (ret)
->  		return ret;
+>  	int ret;
+> @@ -103,8 +101,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
 >  
-> -	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
-> -				 DRM_MODE_CONNECTOR_VIRTUAL);
-> +	connector = drmm_kzalloc(&vkmsdev->drm, sizeof(*connector), GFP_KERNEL);
+>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+>  
+> -	ret = drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> +	encoder = drmm_kzalloc(&vkmsdev->drm, sizeof(*encoder), GFP_KERNEL);
 
-"&vkmsdev->drm" can be replaced with "dev".
+&vkmsdev->drm => dev
 
-> +	if (!connector)
+> +	if (!encoder)
 
-For consistency with the init function, it'd be nice to log this error as well:
-
-		DRM_ERROR("Failed to allocate connector\n");
+The same here, we could log this error:
+		DRM_ERROR("Failed to allocate encoder\n");
 
 > +		return -ENOMEM;
 > +
-> +	ret = drmm_connector_init(dev, connector, &vkms_connector_funcs,
-> +				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
->  	if (ret) {
->  		DRM_ERROR("Failed to init connector\n");
-> -		goto err_connector;
-> +		return ret;
->  	}
->  
->  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-> @@ -103,7 +107,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->  			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> +	ret = drmm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+
+vkms_encoder_funcs can be NULL.
+
+> +				DRM_MODE_ENCODER_VIRTUAL, NULL);
 >  	if (ret) {
 >  		DRM_ERROR("Failed to init encoder\n");
-> -		goto err_encoder;
+>  		return ret;
+> @@ -118,7 +120,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
+>  	ret = drm_connector_attach_encoder(connector, encoder);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to attach connector to encoder\n");
+> -		goto err_attach;
 > +		return ret;
 >  	}
->  	/*
->  	 * This is an hardcoded value to select crtc for the encoder.
-> @@ -130,11 +134,5 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->  err_attach:
->  	drm_encoder_cleanup(encoder);
 >  
-> -err_encoder:
-> -	drm_connector_cleanup(connector);
+>  	if (vkmsdev->config->writeback) {
+> @@ -130,9 +132,4 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
+>  	drm_mode_config_reset(dev);
+>  
+>  	return 0;
 > -
-> -err_connector:
-> -	drm_crtc_cleanup(crtc);
+> -err_attach:
+> -	drm_encoder_cleanup(encoder);
 > -
-
-I think that, technically, err_encoder should call drm_crtc_cleanup() in this
-patch. However, since a future patch will remove this code I don't find it that
-relevant.
-
->  	return ret;
+> -	return ret;
 >  }
 
