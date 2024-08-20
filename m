@@ -1,174 +1,523 @@
-Return-Path: <linux-kernel+bounces-293220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE598957C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:01:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C97957C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20FE1C23A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB2A1C23A71
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8678761FD7;
-	Tue, 20 Aug 2024 04:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RvyK86HW"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460E5C8EF
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB2B5338D;
+	Tue, 20 Aug 2024 04:02:19 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0711BF58;
+	Tue, 20 Aug 2024 04:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724126480; cv=none; b=T1bUzo9Uq/tW+CPjbcy9ybk248ElplhOTiF+25IDcC+k5crlo38xfnrXQful8u6w4HpqUR5Z4BfQU1s2AMEos/4NyI/8gtFNGz+TTfUdMWrhn9XS/1tCGREqCN0aA5rtkSo5I5KZEm+VmGOBZ/TDREu076z+naFUlrkyCtm+5b8=
+	t=1724126537; cv=none; b=keSJEfdyKNGrzOWYlyo87MBvzHSj83jnExNwDuDeeeGGPua66yqJ+FH/Zv8PgqDfw0tKi+8Wdbw2iCxdusROpLhbBXum8npYyX6jsxFCVU4/L2IzpYXanzmRNUTtb4sRfz65WZo7YVwfYAKrYV5I+Jh53sr2BNpV5c2yy/O2c9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724126480; c=relaxed/simple;
-	bh=1NEjRuBY5BA17scWt+Chi0mbM4dw/JTo2pkLIZspGCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EPKmYxyq3UkWP494plPU1RlkwOTH/p9qIn3rCzII6EGKajVkRAhp/SB27vD7V9P0g9qmTnEVo7mw/OxJR6p4Uzkgom4L6C1u01TrRURG504qgAL/xMbqkrLl52EGU8LMlfF1QaG/xVSbfmsPx7ajTUvH1oFgRgrYoYkmJ3v76tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RvyK86HW; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e116ec43a4aso5367092276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724126476; x=1724731276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=91poigCWUpxkIrphB8LTAAUF4NvT94tKi0OG/MNIdXA=;
-        b=RvyK86HWdzzlz1l0psp1w46bjiWWXvMg0YcTdoSNEgrs+TdZHmmzJ5xrfsolACmpZ8
-         S7EFWBozbtXKWqonUo2BWJL4kjNl9xVxInLr/2JvEGtilxnIKNHRxFtL7R34cPqu59Mc
-         /PoM+ey9SOz9NhMZAnfmgSG0CQUU2EtmMzPZWOfJz7/FRXPDkv5zIGeuXg9kcG+X4/54
-         BpR3oRQPcQAJIK07lLsX16d6QkLLTCiTLuWACT1QN4UOGX72RBoih1L2Tok6bGFdUISG
-         WvHNcjn7K3b/yq+brWoebGFnvSv/6gIIOxWQbExV2qgYyOdKKlvWVsgaTiYVLAc36MOO
-         b90Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724126476; x=1724731276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=91poigCWUpxkIrphB8LTAAUF4NvT94tKi0OG/MNIdXA=;
-        b=HGuzEoFasjONb2QR+y1zmYdjyuMm9NBcnZIE+gmf2DpMmCDGCH+FkkTj07aEpkXjJr
-         I8g5ubCgddo0Exs5DWuq7f7H+uEqfDcfvqJWZt+XPecrQlyKVcf9yZ8aZRn8GggAwaYv
-         2NR28U7p3E/uXiOvA/J2NJCEQ5MzHpQ/32Q6mdSr421VKh8TuguGmuAPLVYRO1oKLTtI
-         PqxUe7Ex77o1Fv9Yg5NmEk5aYMAgqq9ar1VclD9Ze1wnCAeR/uEXflLdfuSezr4Gb8O7
-         U3VKcqDhABVQIa3xYa183bUiLSOIrMfs1a0LF71PzndHGAouCweFqjvPWea0C7qdVKjZ
-         /aAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQsCF9ADHsPzFCHe72L0ZII9Cevccxj/YUKBMOccuk81030WZvgiDzi9zwic7z62Z8iSVLFSN0fc/xjKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj9d4NzI0cIhQqusS5nUlg4OzXOLyReic2SwwKE2pcVhEvTEwD
-	0xwxXB2cmK7wkToa57Ax4q7P1zRU1lwtn100tMJSxjz+k4AA8zi7npbpi6Dgs6O6wKc9V2Vx6PP
-	nEqxwC1zYZhhsqwjoHqZ7MfK9ktQkylFC+47I
-X-Google-Smtp-Source: AGHT+IHL4a8LRpwayEoQ60nOlF+jCofnGmOL57d389F39z0O/Ch4wlx8nI+0Mq8+7YKwjKglCY5bW1U/rwrYO3XPVyM=
-X-Received: by 2002:a05:6902:1b04:b0:e16:1ebf:2945 with SMTP id
- 3f1490d57ef6-e161ebf2f84mr5591540276.27.1724126476152; Mon, 19 Aug 2024
- 21:01:16 -0700 (PDT)
+	s=arc-20240116; t=1724126537; c=relaxed/simple;
+	bh=iwAxhO7x8ItltcbVKN0k4fy2Y72nBblCEP5/UHgEeJc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Cog/ncf1WkmZlrTTIOAhfdRHhPBcfMAC0tWiWgxQvzGLzFHY7NBkzwgcL9QbFhgBIApcIGPqzdH2VwzfQw4JHeXYWAhi1B1NhtsF7OjOXVGVhnRu3pRv0qMA24mkzErbMWLxk1xIZ45HfYUqf2rThRi+42nmrLYcB9ZhRjmEdO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxuOk6FcRmuNgZAA--.57007S3;
+	Tue, 20 Aug 2024 12:02:02 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAxVOA5FcRmXDEbAA--.55357S3;
+	Tue, 20 Aug 2024 12:02:01 +0800 (CST)
+Subject: Re: [PATCH v6 3/3] irqchip/loongson-eiointc: Add extioi virt
+ extension support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Thomas Gleixner <tglx@linutronix.de>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ x86@kernel.org, Song Gao <gaosong@loongson.cn>
+References: <20240812030210.500240-1-maobibo@loongson.cn>
+ <20240812030210.500240-4-maobibo@loongson.cn>
+ <CAAhV-H6DFNY=JnkAGj7vAR1UoXUtJZkbb-pwVSFodCwbyOmpGA@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <30777caf-a520-490e-4fd8-eee003a6b804@loongson.cn>
+Date: Tue, 20 Aug 2024 12:01:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-4-almasrymina@google.com>
- <CAMArcTWWxjsg_zwS6waWkLpyHhwdXDm_NJeVGm_dr+eT5QDZiA@mail.gmail.com> <20240819155257.1148e869@kernel.org>
-In-Reply-To: <20240819155257.1148e869@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 20 Aug 2024 00:01:02 -0400
-Message-ID: <CAHS8izPL4YdqFjkTpYavdxQn816=kkUv0xravQJF4Uno7Bn3ZQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 03/13] netdev: support binding dma-buf to netdevice
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Taehee Yoo <ap420073@gmail.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAhV-H6DFNY=JnkAGj7vAR1UoXUtJZkbb-pwVSFodCwbyOmpGA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxVOA5FcRmXDEbAA--.55357S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoW3urWDWrWfJw15Gr4fGr4xKrX_yoW8AFW7Ao
+	WfZF4a934rJw13ZayDG34xWry7Zw1j9ws7tw47Cw4fGry7ta1UKF47tw1UKr4rCF45GF4f
+	Aa4fWr1DJFWqqFn5l-sFpf9Il3svdjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1
+	WlkUUUUU=
 
-On Mon, Aug 19, 2024 at 6:53=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 19 Aug 2024 00:44:27 +0900 Taehee Yoo wrote:
-> > > @@ -9537,6 +9540,10 @@ static int dev_xdp_attach(struct net_device *d=
-ev, struct netlink_ext_ack *extack
-> > >                         NL_SET_ERR_MSG(extack, "Native and generic XD=
-P can't be active at the same time");
-> > >                         return -EEXIST;
-> > >                 }
-> > > +               if (dev_get_max_mp_channel(dev) !=3D -1) {
-> > > +                       NL_SET_ERR_MSG(extack, "XDP can't be installe=
-d on a netdev using memory providers");
-> > > +                       return -EINVAL;
-> > > +               }
-> >
-> > Should we consider virtual interfaces like bonding, bridge, etc?
-> > Virtual interfaces as an upper interface of physical interfaces can
-> > still install XDP prog.
-> >
-> > # ip link add bond0 type bond
-> > # ip link set eth0 master bond0
-> > # ip link set bond0 xdp pin /sys/fs/bpf/x/y
-> > and
-> > # ip link set bond0 xdpgeneric pin /sys/fs/bpf/x/y
-> >
-> > All virtual interfaces can install generic XDP prog.
-> > The bonding interface can install native XDP prog.
->
-> Good point. We may need some common helpers to place the checks for XDP.
-> They are spread all over the place now.
+Huacai,
 
-Took a bit of a look here. Forgive me, I'm not that familiar with XDP
-and virtual interfaces, so I'm a bit unsure what to do here.
+On 2024/8/19 下午9:34, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Mon, Aug 12, 2024 at 11:02 AM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Interrupts can be routed to maximal four virtual CPUs with one HW
+>> EIOINTC interrupt controller model, since interrupt routing is encoded with
+>> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
+>> extension support so that interrupts can be routed to 256 vCPUs on
+>> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
+>> node type is removed, so there are 8 bits for cpu selection, at most 256
+>> vCPUs are supported for interrupt routing.
+>>
+>> Co-developed-by: Song Gao <gaosong@loongson.cn>
+>> Signed-off-by: Song Gao <gaosong@loongson.cn>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   .../arch/loongarch/irq-chip-model.rst         |  64 ++++++++++
+>>   .../zh_CN/arch/loongarch/irq-chip-model.rst   |  55 +++++++++
+>>   arch/loongarch/include/asm/irq.h              |   1 +
+>>   drivers/irqchip/irq-loongson-eiointc.c        | 109 ++++++++++++++----
+>>   4 files changed, 209 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
+>> index 7988f4192363..d2350780ad1d 100644
+>> --- a/Documentation/arch/loongarch/irq-chip-model.rst
+>> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
+>> @@ -85,6 +85,70 @@ to CPUINTC directly::
+>>       | Devices |
+>>       +---------+
+>>
+>> +Virtual extended IRQ model
+>> +==========================
+>> +
+>> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt
+>> +go to CPUINTC directly, CPU UARTS interrupts go to PCH-PIC, while all other
+>> +devices interrupts go to PCH-PIC/PCH-MSI and gathered by V-EIOINTC (Virtual
+>> +Extended I/O Interrupt Controller), and then go to CPUINTC directly::
+>> +
+>> +       +-----+    +-------------------+     +-------+
+>> +       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
+>> +       +-----+    +-------------------+     +-------+
+>> +                            ^
+>> +                            |
+>> +                      +-----------+
+>> +                      | V-EIOINTC |
+>> +                      +-----------+
+>> +                       ^         ^
+>> +                       |         |
+>> +                +---------+ +---------+
+>> +                | PCH-PIC | | PCH-MSI |
+>> +                +---------+ +---------+
+>> +                  ^      ^          ^
+>> +                  |      |          |
+>> +           +--------+ +---------+ +---------+
+>> +           | UARTs  | | Devices | | Devices |
+>> +           +--------+ +---------+ +---------+
+>> +
+>> +
+>> +Description
+>> +-----------
+>> +V-EIOINTC (Virtual Extended I/O Interrupt Controller) is an extension of
+>> +EIOINTC, it only works in VM mode which runs in KVM hypervisor. Interrupts can
+>> +be routed to up to four vCPUs via standard EIOINTC, however with V-EIOINTC
+>> +interrupts can be routed to up to 256 virtual cpus.
+>> +
+>> +With standard EIOINTC, interrupt routing setting includes two parts: eight
+>> +bits for CPU selection and four bits for CPU IP (Interrupt Pin) selection.
+>> +For CPU selection there is four bits for EIOINTC node selection, four bits
+>> +for EIOINTC CPU selection. Bitmap method is used for CPU selection and
+>> +CPU IP selection, so interrupt can only route to CPU0 - CPU3 and IP0-IP3 in
+>> +one EIOINTC node.
+>> +
+>> +With V-EIOINTC it supports to route more CPUs and CPU IP (Interrupt Pin),
+>> +there are two newly added registers with V-EIOINTC.
+>> +
+>> +EXTIOI_VIRT_FEATURES
+>> +--------------------
+>> +This register is read-only register, which indicates supported features with
+>> +V-EIOINTC. Feature EXTIOI_HAS_INT_ENCODE and EXTIOI_HAS_CPU_ENCODE is added.
+>> +
+>> +Feature EXTIOI_HAS_INT_ENCODE is part of standard EIOINTC. If it is 1, it
+>> +indicates that CPU Interrupt Pin selection can be normal method rather than
+>> +bitmap method, so interrupt can be routed to IP0 - IP15.
+>> +
+>> +Feature EXTIOI_HAS_CPU_ENCODE is entension of V-EIOINTC. If it is 1, it
+>> +indicates that CPU selection can be normal method rather than bitmap method,
+>> +so interrupt can be routed to CPU0 - CPU255.
+>> +
+>> +EXTIOI_VIRT_CONFIG
+>> +------------------
+>> +This register is read-write register, for compatibility intterupt routed uses
+>> +the default method which is the same with standard EIOINTC. If the bit is set
+>> +with 1, it indicated HW to use normal method rather than bitmap method.
+>> +
+>>   ACPI-related definitions
+>>   ========================
+>>
+>> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+>> index f1e9ab18206c..d696bd394c02 100644
+>> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+>> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+>> @@ -87,6 +87,61 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
+>>       | Devices |
+>>       +---------+
+>>
+>> +虚拟扩展IRQ模型
+>> +===============
+>> +
+>> +在这种模型里面, IPI(Inter-Processor Interrupt) 和CPU本地时钟中断直接发送到CPUINTC,
+>> +CPU串口 (UARTs) 中断发送到PCH-PIC, 而其他所有设备的中断则分别发送到所连接的PCH_PIC/
+>> +PCH-MSI, 然后V-EIOINTC统一收集，再直接到达CPUINTC::
+>> +
+>> +        +-----+    +-------------------+     +-------+
+>> +        | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
+>> +        +-----+    +-------------------+     +-------+
+>> +                             ^
+>> +                             |
+>> +                       +-----------+
+>> +                       | V-EIOINTC |
+>> +                       +-----------+
+>> +                        ^         ^
+>> +                        |         |
+>> +                 +---------+ +---------+
+>> +                 | PCH-PIC | | PCH-MSI |
+>> +                 +---------+ +---------+
+>> +                   ^      ^          ^
+>> +                   |      |          |
+>> +            +--------+ +---------+ +---------+
+>> +            | UARTs  | | Devices | | Devices |
+>> +            +--------+ +---------+ +---------+
+>> +
+>> +V-EIOINTC 是EIOINTC的扩展, 仅工作在hyperisor模式下, 中断经EIOINTC最多可个路由到４个
+>> +虚拟cpu. 但中断经V-EIOINTC最多可个路由到256个虚拟cpu.
+>> +
+>> +传统的EIOINTC中断控制器，中断路由分为两个部分：8比特用于控制路由到哪个CPU，
+>> +4比特用于控制路由到特定CPU的哪个中断管脚.控制CPU路由的8比特前4比特用于控制
+>> +路由到哪个EIOINTC节点，后4比特用于控制此节点哪个CPU。中断路由在选择CPU路由
+>> +和CPU中断管脚路由时，使用bitmap编码方式而不是正常编码方式，所以对于一个
+>> +EIOINTC中断控制器节点，中断只能路由到CPU0 - CPU3，中断管教IP0-IP3。
+>> +
+>> +V-EIOINTC新增了两个寄存器，支持中断路由到更多CPU个和中断管脚。
+>> +
+>> +V-EIOINTC功能寄存器
+>> +-------------------
+>> +功能寄存器是只读寄存器，用于显示V-EIOINTC支持的特性，目前两个支持两个特性
+>> +EXTIOI_HAS_INT_ENCODE 和 EXTIOI_HAS_CPU_ENCODE。
+>> +
+>> +特性EXTIOI_HAS_INT_ENCODE是传统EIOINTC中断控制器的一个特性，如果此比特为1，
+>> +显示CPU中断管脚路由方式支持正常编码，而不是bitmap编码，所以中断可以路由到
+>> +管脚IP0 - IP15。
+>> +
+>> +特性EXTIOI_HAS_CPU_ENCODE是V-EIOINTC新增特性，如果此比特为1，表示CPU路由
+>> +方式支持正常编码，而不是bitmap编码，所以中断可以路由到CPU0 - CPU255。
+>> +
+>> +V-EIOINTC配置寄存器
+>> +-------------------
+>> +配置寄存器是可读写寄存器，为了兼容性考虑，如果不写此寄存器，中断路由采用
+>> +和传统EIOINTC相同的路由设置。如果对应比特设置为1，表示采用正常路由方式而
+>> +不是bitmap编码的路由方式。
+>> +
+>>   ACPI相关的定义
+>>   ==============
+>>
+>> diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
+>> index 480418bc5071..ce85d4c7d225 100644
+>> --- a/arch/loongarch/include/asm/irq.h
+>> +++ b/arch/loongarch/include/asm/irq.h
+>> @@ -54,6 +54,7 @@ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
+>>   extern struct acpi_vector_group msi_group[MAX_IO_PICS];
+>>
+>>   #define CORES_PER_EIO_NODE     4
+>> +#define CORES_PER_VEIO_NODE    256
+>>
+>>   #define LOONGSON_CPU_UART0_VEC         10 /* CPU UART0 */
+>>   #define LOONGSON_CPU_THSENS_VEC                14 /* CPU Thsens */
+>> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
+>> index b1f2080be2be..cc5b1ec13531 100644
+>> --- a/drivers/irqchip/irq-loongson-eiointc.c
+>> +++ b/drivers/irqchip/irq-loongson-eiointc.c
+>> @@ -14,6 +14,7 @@
+>>   #include <linux/irqdomain.h>
+>>   #include <linux/irqchip/chained_irq.h>
+>>   #include <linux/kernel.h>
+>> +#include <linux/kvm_para.h>
+>>   #include <linux/syscore_ops.h>
+>>   #include <asm/numa.h>
+>>
+>> @@ -24,15 +25,36 @@
+>>   #define EIOINTC_REG_ISR                0x1800
+>>   #define EIOINTC_REG_ROUTE      0x1c00
+>>
+>> +#define EXTIOI_VIRT_FEATURES           0x40000000
+>> +#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
+>> +#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
+>> +#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
+>> +#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
+>> +#define EXTIOI_VIRT_CONFIG             0x40000004
+>> +#define  EXTIOI_ENABLE                 BIT(1)
+>> +#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
+>> +#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
+> After careful reading, I found the only used bits are
+> EXTIOI_HAS_CPU_ENCODE/EXTIOI_ENABLE_CPU_ENCODE. So to minimize the
+EXTIOI_HAS_INT_ENCODE/EXTIOI_ENABLE_INT_ENCODE can be used also, 
+EXTIOI_HAS_INT_ENCODE is encoding method to route irq to CPU Interrupt 
+Pin. With bitmap method, it can only be routed to IP0-IP3; with normal 
+method it can be routed to IP0-IP15 at most.
 
-For veth, it seems, the device behind the veth is stored in
-veth_priv->peer, so it seems maybe a dev_get_max_mp_channel() check on
-veth_priv->peer is the way to go to disable this for veth? I think we
-need to do this check on creation of the veth and on the ndo_bpf of
-veth.
+And the real HW supports this method, only that EIOINTC driver does not 
+use it.
 
-For bonding, it seems we need to add mp channel check in bond_xdp_set,
-and bond_enslave?
+> complexity, I suggest to define virtual register as below:
+> #define EXTIOI_VIRT_FEATURES           0x40000000
+> #define  EXTIOI_HAS_VIRT_EXTENSION                   BIT(0)
+> #define  EXTIOI_ENABLE_CPU_ENCODE                 BIT(15)
+> Then only one register, the low 16 bits are indicators while the high
+> 16 bits are enable controls. Even if we will extend more (hardly
+> happen, I think), there is enough spaces.
+Two registers is better from my view, otherwise lower 16 bit is readonly 
+and higher 16 bit is writable. one is read-only indicating the supported 
+features and the other is writable. That is easy to use for device 
+drivers and emulation in qemu.
+> 
+>> +
+>>   #define VEC_REG_COUNT          4
+>>   #define VEC_COUNT_PER_REG      64
+>>   #define VEC_COUNT              (VEC_REG_COUNT * VEC_COUNT_PER_REG)
+>>   #define VEC_REG_IDX(irq_id)    ((irq_id) / VEC_COUNT_PER_REG)
+>>   #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
+>>   #define EIOINTC_ALL_ENABLE     0xffffffff
+>> +#define EIOINTC_ALL_ENABLE_VEC_MASK(vector)    (EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
+>> +#define EIOINTC_REG_ENABLE_VEC(vector)         (EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
+>>
+>>   #define MAX_EIO_NODES          (NR_CPUS / CORES_PER_EIO_NODE)
+>>
+>> +/*
+>> + * Routing registers are 32bit, and there is 8-bit route setting for every
+>> + * interrupt vector. So one Route register contains four vectors routing
+>> + * information.
+>> + */
+>> +#define EIOINTC_REG_ROUTE_VEC(vector)          (EIOINTC_REG_ROUTE + (vector & ~0x03))
+>> +#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector)    ((vector & 0x03) << 3)
+>> +#define EIOINTC_REG_ROUTE_VEC_MASK(vector)     (0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
+>> +
+>>   static int nr_pics;
+>>
+>>   struct eiointc_priv {
+>> @@ -42,6 +64,7 @@ struct eiointc_priv {
+>>          cpumask_t               cpuspan_map;
+>>          struct fwnode_handle    *domain_handle;
+>>          struct irq_domain       *eiointc_domain;
+>> +       bool                    cpu_encoded;
+>>   };
+>>
+>>   static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
+>> @@ -57,7 +80,13 @@ static void eiointc_enable(void)
+>>
+>>   static int cpu_to_eio_node(int cpu)
+>>   {
+>> -       return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+>> +       int cores;
+>> +
+>> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
+>> +               cores = CORES_PER_VEIO_NODE;
+>> +       else
+>> +               cores = CORES_PER_EIO_NODE;
+>> +       return cpu_logical_map(cpu) / cores;
+>>   }
+>>
+>>   #ifdef CONFIG_SMP
+>> @@ -89,6 +118,16 @@ static void eiointc_set_irq_route(int pos, unsigned int cpu, unsigned int mnode,
+>>
+>>   static DEFINE_RAW_SPINLOCK(affinity_lock);
+>>
+>> +static void virt_extioi_set_irq_route(unsigned int vector, unsigned int cpu)
+>> +{
+>> +       unsigned long reg = EIOINTC_REG_ROUTE_VEC(vector);
+>> +       u32 data = iocsr_read32(reg);
+>> +
+>> +       data &= ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
+>> +       data |= cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vector);
+>> +       iocsr_write32(data, reg);
+>> +}
+> This function can be embedded into eiointc_set_irq_affinity().
+With optimization compiler, it will inline instead. I prefer to put this 
+separated so that it can show difference.
 
-There are a few other drivers that define ndo_add_slave, seems a check
-in br_add_slave is needed as well.
+To be frankly, the origin driver about irq affinity setting is hard to 
+review and understand, I do not want to mix with it together. Here is 
+piece of code about irq affinity setting in origin driver.
 
-This seems like a potentially deep rabbit hole with a few checks to
-add all of the place. Is this blocking the series? AFAICT if XDP fails
-with mp-bound queues with a benign error, that seems fine to me; I
-don't have a use case for memory providers + xdp yet. This should only
-be blocking if someone can repro a very serious error (kernel crash)
-or something with this combination.
+ >    /* Mask target vector */
+ >    csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector),
+ >                             0x0, priv->node * CORES_PER_EIO_NODE);
+ >    /* Set route for target vector */
+ >    eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+ >    /* Unmask target vector */
+ >    csr_any_send(regaddr, EIOINTC_ALL_ENABLE, 0x0, priv->node * 
+CORES_PER_EIO_NODE);
 
-I can try to add these checks locally and propose as a follow up
-series. Let me know if I'm on the right track with figuring out how to
-implement this, and, if you feel like it's blocking.
+Can people understand why csr_any_send() is used here?
 
---=20
-Thanks,
-Mina
+ >    for_each_online_cpu(i) {
+ >        node = cpu_to_eio_node(i);
+ >        if (!node_isset(node, *node_map))
+ >           continue;
+ >        /* EIO node 0 is in charge of inter-node interrupt dispatch */
+ >        route_node = (node == mnode) ? cpu_node : node;
+ >        data = ((coremap | (route_node << 4)) << (data_byte * 8));
+ >        csr_any_send(EIOINTC_REG_ROUTE + pos_off, data, data_mask, 
+node * CORES_PER_EIO_NODE);
+Why is there csr_any_send() for every online cpu?  It will cause almost 
+every cpu calling csr_any_send() when setting irq affinity.
+
+> 
+>> +
+>>   static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *affinity, bool force)
+>>   {
+>>          unsigned int cpu;
+>> @@ -105,18 +144,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
+>>          }
+>>
+>>          vector = d->hwirq;
+>> -       regaddr = EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
+>> -
+>> -       /* Mask target vector */
+>> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
+>> -                       0x0, priv->node * CORES_PER_EIO_NODE);
+>> -
+>> -       /* Set route for target vector */
+>> -       eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+>> -
+>> -       /* Unmask target vector */
+>> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+>> -                       0x0, priv->node * CORES_PER_EIO_NODE);
+>> +       regaddr = EIOINTC_REG_ENABLE_VEC(vector);
+>> +
+>> +       if (priv->cpu_encoded) {
+>> +               iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regaddr);
+>> +               virt_extioi_set_irq_route(vector, cpu);
+>> +               iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
+>> +       } else {
+>> +               /* Mask target vector */
+>> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector),
+>> +                            0x0, priv->node * CORES_PER_EIO_NODE);
+>> +
+>> +               /* Set route for target vector */
+>> +               eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+>> +
+>> +               /* Unmask target vector */
+>> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+>> +                            0x0, priv->node * CORES_PER_EIO_NODE);
+>> +       }
+>>
+>>          irq_data_update_effective_affinity(d, cpumask_of(cpu));
+>>
+>> @@ -140,17 +185,23 @@ static int eiointc_index(int node)
+>>
+>>   static int eiointc_router_init(unsigned int cpu)
+>>   {
+>> -       int i, bit;
+>> -       uint32_t data;
+>> -       uint32_t node = cpu_to_eio_node(cpu);
+>> -       int index = eiointc_index(node);
+>> +       int i, bit, cores, index, node;
+>> +       unsigned int data;
+>> +
+>> +       node = cpu_to_eio_node(cpu);
+>> +       index = eiointc_index(node);
+>>
+>>          if (index < 0) {
+>>                  pr_err("Error: invalid nodemap!\n");
+>> -               return -1;
+>> +               return -EINVAL;
+>>          }
+>>
+>> -       if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) == 0) {
+>> +       if (eiointc_priv[index]->cpu_encoded)
+>> +               cores = CORES_PER_VEIO_NODE;
+>> +       else
+>> +               cores = CORES_PER_EIO_NODE;
+>> +
+>> +       if ((cpu_logical_map(cpu) % cores) == 0) {
+>>                  eiointc_enable();
+>>
+>>                  for (i = 0; i < eiointc_priv[0]->vec_count / 32; i++) {
+>> @@ -166,7 +217,9 @@ static int eiointc_router_init(unsigned int cpu)
+>>
+>>                  for (i = 0; i < eiointc_priv[0]->vec_count / 4; i++) {
+>>                          /* Route to Node-0 Core-0 */
+>> -                       if (index == 0)
+>> +                       if (eiointc_priv[index]->cpu_encoded)
+>> +                               bit = cpu_logical_map(0);
+>> +                       else if (index == 0)
+>>                                  bit = BIT(cpu_logical_map(0));
+>>                          else
+>>                                  bit = (eiointc_priv[index]->node << 4) | 1;
+>> @@ -367,6 +420,19 @@ static int __init acpi_cascade_irqdomain_init(void)
+>>          return 0;
+>>   }
+>>
+>> +static void __init kvm_eiointc_init(struct eiointc_priv *priv)
+>> +{
+>> +       int val;
+>> +
+>> +       val = iocsr_read32(EXTIOI_VIRT_FEATURES);
+>> +       if (val & EXTIOI_HAS_CPU_ENCODE) {
+>> +               val = iocsr_read32(EXTIOI_VIRT_CONFIG);
+>> +               val |= EXTIOI_ENABLE_CPU_ENCODE;
+>> +               iocsr_write32(val, EXTIOI_VIRT_CONFIG);
+>> +               priv->cpu_encoded = true;
+>> +       }
+>> +}
+> This function can be embedded into eiointc_init().
+Both method is ok for me, maybe embedded method is better.
+Will do in next patch.
+
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>> +
+>>   static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+>>                                 u64 node_map)
+>>   {
+>> @@ -390,6 +456,9 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+>>                  return -ENOMEM;
+>>          }
+>>
+>> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
+>> +               kvm_eiointc_init(priv);
+>> +
+>>          eiointc_priv[nr_pics++] = priv;
+>>          eiointc_router_init(0);
+>>          irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
+>> --
+>> 2.39.3
+>>
+
 
