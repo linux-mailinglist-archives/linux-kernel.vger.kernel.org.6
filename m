@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-293079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F33B957A7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:28:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B41A957A83
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CB11F22EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:28:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97237B22E4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC41B8F48;
-	Tue, 20 Aug 2024 00:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34692AD23;
+	Tue, 20 Aug 2024 00:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5pcYm8/"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bpC6fL3o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46AC4C66;
-	Tue, 20 Aug 2024 00:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F308F48;
+	Tue, 20 Aug 2024 00:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724113702; cv=none; b=qmM54T+JlhplnfD/7vGiuxFHgl+zTx4F6aXCbryCwgxcpPf6DXcW6Xv9bTeucwPmoqecu6upEjrgwlyuoFtdhuxhGn8xGK4L833IF1rD2sOnGNVb2GWpAi8yubvquzHUUm0HOU6vK3KrM65CirGYILWR3rWfzXljmefXG6c41Uo=
+	t=1724114038; cv=none; b=k0Jeh7e48xNLanRuuVSKshYhM1nC7tQdNy5ne4NLyow7V4X/iohsfetrlXvMHKdkdiU9jPSJbIO15ZRYREW9m+U0c7FjsxRdu9c7TwcUPwnlkB/jKRDtiHHYsG8UBAz/rzgFE58Z0L0Y7JIazQ9MOVUeZBqoZuhyAxUwrj5XmZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724113702; c=relaxed/simple;
-	bh=g3gpBwL+B5ZJ8NjCtxm282xSGoZ58QBB9Wx/FNRCdnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLc1WMwCkYQ0iJ+VkkGiROCAYYgOjS8tmRqY8d1YvWHdFSet1Ysan68IK+yNOG6MOzqycNlO0EKZJ5dE8osTEBzjmXfP/LQ5juIVmkKpvuALJFwsflYuF+8aN1L0T+Y8bS+FlteWO7/EBhAkdPtOVC+EnEm2xhvJnF/YsEc3xes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5pcYm8/; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2020ac89cabso26507385ad.1;
-        Mon, 19 Aug 2024 17:28:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724113700; x=1724718500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5P8WpQoTvhu+O7jRED+d3IXgvB1Af3gFVvat8qHTkBI=;
-        b=S5pcYm8/F7Ao/W106yyIEevEt0DrOxKg+HCdr868yEbuYclYW8aip64MDSYG/PdqwK
-         hiOSiEADH8i9LpegzbX3V0e0/Y0aGRaZPgjCtVeocBHFy0AyvcY1JnxiDS/8hSk0isrP
-         GgfJLjZVd4PAQ3rX5eLTJ1mrGBQyAPpoEmA4UbWFZjlRk/jXuw9UMn4qQFTCD30ytKLG
-         PI33iFRowzCy13p3E90k/+w+3HrmPC7vvDTdI1lMeVXzbt9NBr19EhTrsyHCVkvJBNdn
-         fhLPBY6iLNuvXIjXeNUK3VJDjoz3P7nU8SDlUdqhc4iXZ5xFBgbHzx4Xt+kp+6pmVyqZ
-         J1XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724113700; x=1724718500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5P8WpQoTvhu+O7jRED+d3IXgvB1Af3gFVvat8qHTkBI=;
-        b=VioKEfFYgo4hgvXdu8e3i7YzMHBcorjrudWI/QvcWe9ZvmfCtLEwtB3ICpH7gU6Peg
-         TLq0r5bCIR7vL5OC7WAixrLY0qlmHV3tmQZEWT6Z2MmqAMHGUPJlEVtxHTzE6FVO/d0C
-         Sn2nh2bHdnwpLk0aplbERrEyRAeyxiXev7x3CB2D1PNq/Dm3IKix10xmp/54LrEx9XPI
-         I1gjy1tfB/sWE2Kn0dxLnYrGoxQhlw+Sau3s9IL+2zlcIoa7A0rpcyogNycpsF1VABHv
-         y00uqCB0RdN4uOzSb0H9kzxtEfU8QE0lAytMpQ4Ly/6LXHGFbEmx+U+h/Fb5cE2meA58
-         OCvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0+IDFoyJUB2v5JXllP4ME/nzrOvEMwbkMphTLddSN6F+4EOg78ZXeTTXW/7c7FjARvMN9JrPVABF/jKhJ@vger.kernel.org, AJvYcCXlY+KbU+g7w3jkrhmk1+Hai+k1EnFQqL5l2JmkvchYoLkxpIiLJbPREP4/Gt7mLs5le+4ZTX83sa3WRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9M2mnk/GfyBf7OYzcJw4wubAg338M/E+OsIHY/HWLIXHs8H8t
-	TU+t/NdYJ+bqCSmCn8/mDoFWRVHI7snZa5rR3FR5mRQ6I5wXWJg/
-X-Google-Smtp-Source: AGHT+IE8snDFn7fLYkbjB+uaEeiW337OcPjVQGnq007KzIppx9LClrtq8ORqfk1EXqJTykJhODHPhg==
-X-Received: by 2002:a17:902:e5c8:b0:202:35e0:deaf with SMTP id d9443c01a7336-20235e0e226mr64498415ad.39.1724113699481;
-        Mon, 19 Aug 2024 17:28:19 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f80c:1483:bced:7f88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0320edasm67669745ad.115.2024.08.19.17.28.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 17:28:19 -0700 (PDT)
-Date: Mon, 19 Aug 2024 17:28:16 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Felix Kaechele <felix@kaechele.ca>
-Cc: Job Noorman <job@noorman.info>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: - fix incorrect size when reading product ID
-Message-ID: <ZsPjIPiKH7UXmF6Q@google.com>
-References: <ZsPdmtfC54R7JVxR@google.com>
- <f6308658-0ce6-4b40-aa6f-dd75668ff142@kaechele.ca>
+	s=arc-20240116; t=1724114038; c=relaxed/simple;
+	bh=g00JGiH0JG0j/R44VeHoKyBRwYRPXo+pdBTVlLnmgq8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fCCPYvr8tvZ3CHU0l4CZ/PFqZxxkspvFYI1udXWefxuth3gqbzWMlcwB+Ks3dVhk6/z+4FHVBnZEKXMwRV6FdSWTgb6aB8KMZ5PmfDYsmgLLJFwu03Eds7nohZ/eC8nW3TxTUAgEbxVyJLWNdgQzBYC8snTTFbMRMYfeJFjkYrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bpC6fL3o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99A8C32782;
+	Tue, 20 Aug 2024 00:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1724114037;
+	bh=g00JGiH0JG0j/R44VeHoKyBRwYRPXo+pdBTVlLnmgq8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bpC6fL3oSpWqteku+rrE9sdGkpxY8CdxvOCi52PeCCzxv+ovyZkTrkLHC2vabPtLJ
+	 lg3WViUFL7GNbnu4jD7b0AjPRmDVVtgCvkVsKD7sbvaJcASYvLTcR0ZCfNopMSoxC6
+	 0SWYDzguyWshm3pzdVryT8djmUreaWswLkeXac78=
+Date: Mon, 19 Aug 2024 17:33:57 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: gaoxu <gaoxu2@honor.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:?= linux-next: Signed-off-by
+ missing for commit in the mm tree
+Message-Id: <20240819173357.425eef9ab459dd02f8d051d4@linux-foundation.org>
+In-Reply-To: <8097d6e2573246f089906db6633e7958@honor.com>
+References: <20240819080327.171fabbe@canb.auug.org.au>
+	<8097d6e2573246f089906db6633e7958@honor.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6308658-0ce6-4b40-aa6f-dd75668ff142@kaechele.ca>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 08:24:33PM -0400, Felix Kaechele wrote:
-> Thanks for fixing my rookie mistakes ;-)
-> 
-> Just tested it on my Lenovo ThinkSmart View and it works fine.
-> 
-> Tested-by: Felix Kaechele <felix@kaechele.ca>
+On Mon, 19 Aug 2024 03:56:04 +0000 gaoxu <gaoxu2@honor.com> wrote:
 
-Thanks for the quick test.
+> > 
+> > Hi all,
+> > 
+> > Commit
+> > 
+> >   ccbb07b2a3a7 ("mm: add lazyfree folio to lru tail")
+> > 
+> > is missing a Signed-off-by from its author.
+> > 
+> > Actually the Author is "gaoxu <gaoxu2@honor.com>" while the Signed-off-by
+> > is "gao xu <gaoxu2@hihonor.com>".
+> I apologize for the mistake. Are there any remedial measures?
+> I will be more careful next time.
 
--- 
-Dmitry
+Well, which address should we use?
 
