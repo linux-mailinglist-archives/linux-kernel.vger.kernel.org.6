@@ -1,115 +1,104 @@
-Return-Path: <linux-kernel+bounces-293246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EE8957C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CE0957C7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CE228532B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6F71F24846
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD5214AD38;
-	Tue, 20 Aug 2024 04:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uCCXfjgB"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DB914C59C;
+	Tue, 20 Aug 2024 04:38:26 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21C614A0AA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB3D130E4A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724128702; cv=none; b=qIeOlMPoJdeCB6cLv5AOT/mXYEXDqQxinz+Hs1y6ohs6rcwcykDwZElOjwkNFmRBgXgH4/0v0MS10RAw2h8Q37kOrhGQnRAyiesppPdy4NTnABCw6rstFLjOfuJH9tckOZa3jFeURRzAX2WooZLUOTeLT/nR7ijP7AQwOJyVjZI=
+	t=1724128706; cv=none; b=K8+4Zj+STFri7rb///zSpXUAsHuvC4gVz9NU63eruSjW74aR5rVZbhkspveeGJgTLyjbMxfLfRAIYOM7hFdC6T4K1LXFeS2UyzG7DpEx6/+xnYafbL90K0PFh76rRxnbvMXk0BluTJj0Ophku1VoCylVyhWZbCoDjMIllEKDKaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724128702; c=relaxed/simple;
-	bh=KhyS8lX/LLl+hyGdd5SPZp0IVwMMSQOPguoeq4EtDCE=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=VGqe3ULf6/NTtmPigCc224/ImzP+IJT6ySFzH8YR3/TzePCZZt5vKw6lfBDp80wNQB1VocO8D//E4IpB5FwMw0jY9veecdeKRZEIIGNFU7KWrafGDxMfF1yb8vfCphUkn046fupYeIZZAPQ8+hOSot2MP1SAP9SpPE7L4RAnEvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uCCXfjgB; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e13c4519ed6so4116131276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724128700; x=1724733500; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNDCnS5K1Pk0TOt/H51ksBrj3Ct5dgsW0PJU7Ovd3Rk=;
-        b=uCCXfjgBzVuteMgqdMXJx92VAvJF6+8ibKqLjoU1HwfZwCmM7c9l0df1eTOVXfAvfv
-         OYJ5hTuvWQO/Z3+po1SJ3U/lNv4MU3P/xkpzc6ncfAIihGyTD6SHhPlJeOOjUpP0yMph
-         Tz6jsg9pOt6S64DfqAL2Nh39fcpBd8zAwphEpr4jcbYyMm+QgtmbhXNdgxstcWhjQX8E
-         gTPsuJol+FQFM6QkneM/FQqvquPDjs00qJSuSZAXNd12+C0K9q7IjOjECKjLsX/zkFkt
-         DAARrczHqEoxNzIjevqCMQzXK4KT+PzwJJjMNgOeIln2mcWE6ZU/M839sss/tpW3IVi8
-         ST8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724128700; x=1724733500;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNDCnS5K1Pk0TOt/H51ksBrj3Ct5dgsW0PJU7Ovd3Rk=;
-        b=izjbYYm84LNcfCXRBA6wtcpz52k5pvRyPFieWc/NP69DREMm7+baSlJxDkjgSK9+vs
-         8Xms3k8kNdte3XbklBsHh7H5ZxTWR5gWdQaLafuzsGrI+b67q6UJsS/qdUyKZk4p2PPP
-         MmjJM36lQYoIHRTUHcl4j4YOLlFb6oOl8EvsctZgpFzx+FwQwibrZT32y2Ck7yThNJLx
-         z2gzV3TzDEdMDRcIRd4iXXi4gPRYnYqvCcJEX5dEc/JE8Cq+gOBRFrnpf8ggkqxc/Cuc
-         OYpWHbD3Xms3auNwrmNsJnT30J/6uTJtiqbPQmyn9aVihQ2Ps+4thIsBQPzXTOU/y88Y
-         KNAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXYCbWH3ddu3MKLCUSO1ooqNDB2baFTDsSZdA7qT5qgMQKdJ2q90TU6zlnmr0vSkrVZDc3byJT3LXJDio=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1MYmJplOIr4HKDjdi2Mv2Fo4OqF0QBKsmTmK3isWnSPtZeAAK
-	Xcsu4O8SwXStePI2cgSxFc1hAGkleW8KkYwUkooSBS8c+a/v1Fd3jnldHpVXiYjot8oGygf0kFW
-	1jx0c6rBLnA==
-X-Google-Smtp-Source: AGHT+IHPhKfnyXpFhVq0R4vg3+eMT/2Vl0KfVD5sy7EldgzlYqzQx5123h4uD0zjvjOy+hF0Z61eezyg0WQfwg==
-X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:7c18:89e3:3db:64bf])
- (user=suleiman job=sendgmr) by 2002:a5b:207:0:b0:e0b:acc7:b1fd with SMTP id
- 3f1490d57ef6-e164a9cecccmr57101276.4.1724128700014; Mon, 19 Aug 2024 21:38:20
- -0700 (PDT)
-Date: Tue, 20 Aug 2024 13:35:43 +0900
-In-Reply-To: <20240820043543.837914-1-suleiman@google.com>
-Message-Id: <20240820043543.837914-4-suleiman@google.com>
+	s=arc-20240116; t=1724128706; c=relaxed/simple;
+	bh=sh9LGBRjcIzsBHmnEb17Y4QMpv16xq1odAtJBr8Dvgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lDSakc2UorMt5bw8WJW9rq6Ps5hpZbm4wAszdpL/duROI5sTL2c9RogDim4R1UHT9ssG1TalDW0Fk2bNCqrGWm1uFj82q9Dk8FXGYVLHNBcRcFy5KEnHXHHYblNLTEHBfZvfsLFk76XK5w/ne8OR/ym3+fDhHD+ixi7mKJrRMwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F336B1A20EF;
+	Tue, 20 Aug 2024 06:38:22 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BA0BA1A2113;
+	Tue, 20 Aug 2024 06:38:22 +0200 (CEST)
+Received: from lsv031045.swis.in-blr01.nxp.com (lsv031045.swis.in-blr01.nxp.com [10.12.176.65])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C2029183DC24;
+	Tue, 20 Aug 2024 12:38:21 +0800 (+08)
+From: nxf24178 <ravindra.yashvant.shinde@nxp.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-i3c@lists.infradead.org (moderated list:I3C SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev,
+	Frank.Li@nxp.com,
+	nxf24178 <ravindra.yashvant.shinde@nxp.com>
+Subject: [PATCH] i3c: master: Avoid sending DISEC command with old device address.
+Date: Tue, 20 Aug 2024 10:08:17 +0530
+Message-ID: <20240820043818.3352614-1-ravindra.yashvant.shinde@nxp.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240820043543.837914-1-suleiman@google.com>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-Subject: [PATCH v2 3/3] KVM: x86: Document host suspend being included in
- steal time.
-From: Suleiman Souhlal <suleiman@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org, 
-	Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Steal time now includes the time that the host was suspended.
+When a new device hotjoins, a new dynamic address is assigned.
+i3c_master_add_i3c_dev_locked() identifies that the device was previously
+attached to the bus and locates the olddev.
 
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+i3c_master_add_i3c_dev_locked()
+{
+    ...
+    olddev = i3c_master_search_i3c_dev_duplicate(newdev);
+    ...
+    if (olddev) {
+        enable_ibi = true;
+        ...
+    }
+    i3c_dev_free_ibi_locked(olddev);
+    ^^^^^^^^
+    This function internally calls i3c_dev_disable_ibi_locked(addr)
+    function causing to send DISEC command with old Address.
+
+    The olddev should not receive any commands on the i3c bus as it
+    does not exist and has been assigned a new address. This will
+    result in NACK or timeout. So, update the olddev->ibi->enabled
+    flag to false to avoid DISEC with OldAddr.
+    ...
+}
+
+Signed-off-by: Ravindra Yashvant Shinde <ravindra.yashvant.shinde@nxp.com>
 ---
- Documentation/virt/kvm/x86/msr.rst | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/i3c/master.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/virt/kvm/x86/msr.rst b/Documentation/virt/kvm/x86/msr.rst
-index 3aecf2a70e7b43..81c17c2200ca2f 100644
---- a/Documentation/virt/kvm/x86/msr.rst
-+++ b/Documentation/virt/kvm/x86/msr.rst
-@@ -294,8 +294,10 @@ data:
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 7028f03c2c42..07ccb2c00074 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -2042,6 +2042,7 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+ 			if (olddev->ibi->enabled) {
+ 				enable_ibi = true;
+ 				i3c_dev_disable_ibi_locked(olddev);
++				olddev->ibi->enabled = false;
+ 			}
  
- 	steal:
- 		the amount of time in which this vCPU did not run, in
--		nanoseconds. Time during which the vcpu is idle, will not be
--		reported as steal time.
-+		nanoseconds. This includes the time during which the host is
-+		suspended. However, the case where the host suspends during a
-+		VM migration might not be correctly accounted. Time during
-+		which the vcpu is idle, will not be reported as steal time.
- 
- 	preempted:
- 		indicate the vCPU who owns this struct is running or
+ 			i3c_dev_free_ibi_locked(olddev);
 -- 
-2.46.0.184.g6999bdac58-goog
+2.46.0
 
 
