@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel+bounces-294011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82609587BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:19:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F99D9587C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EE54B21747
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:19:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04E0283C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D9A190472;
-	Tue, 20 Aug 2024 13:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4542A19006B;
+	Tue, 20 Aug 2024 13:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="VaqX5BMc"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F8TW1QY7"
+Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50118E77B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F45618CC08
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724159947; cv=none; b=AiZT2a7qCyYv10hGXLX8bnhuxpJAZbq1zm8GoXe+Vsuj9PiRR4AIskaj/x+QFQ0AQPCL4ZBVMR5iYRi/YJpkIJNgmWfv3KEQLN4hnvUjZGRTt9ySldpAEpee7Nhg9or963AQ7COUkDV8N57gcbzOXJihnKQ2sMqZ3sKdY09GycA=
+	t=1724159997; cv=none; b=EBsfCaiA75e+R22jYmGbWUuktqdU4+ZtJU4OYQwxjV5fr180BrCe1dki5OEgWy0b7ZNGc8EheLRxlOOUsLKYc4TqleMNXcy8aELkhQnV7s62M0vLRpRpzD9YTd+tKYEbsA8QxKhBQFULz/rzRiA23xjVCYGGUj6ZHlvFBiw2Tp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724159947; c=relaxed/simple;
-	bh=jwzNwqi23bxpGTQU9W6ZKRunMeDE8ltL7X3DcNiGD08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1+ytMJHfFTx6iOuoWof8z/fYwaFqCvNrf2F7Wjopni3m87FrIIWTjmWsXer8Cl1XJnthu6R5D+0jwZtOeArwhmAAE3KN1gbrs0tr/ggwRFeeIn0dfzHPCxBZxMloy+moi4R5kaMVgi56WiL1fogu4/FHjUZkZQJV6RSVT0FVvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=VaqX5BMc; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371b97cfd6fso1666025f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724159944; x=1724764744; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4jr0wUUNxuwMBzuuDz03CQuikwyocGytAf7u+HScwAk=;
-        b=VaqX5BMce30MAFKZMSIUdZGRfh2aaU6qSWbGXoBTdglRMs4DPfGmZ7Ed93CxhvdS7y
-         ZDcVPxmR35R2CXYLHQYKNAADd3iMWZ6nEzTRpxlRDbT4o3cVq+t79WDtNSIXu+Q0hxhb
-         YtyQsSHJptYrtmfTP9ErEsSCtg9/cEaPUCXRm1es/FH4Zr5oQvxUHBWqbUkb477EkqUc
-         beThQCWA++oapmXOJnPYkyDA1deESMKuBhCD+9TOCaUfC3H6dBHSv/K0h2YsSNHcgvlx
-         pc0c2AwSvrjGWROZ9QKJyihmIdtKRFpBQFUYPTugmJTPLg73z4z+Q4yHvcQQ0Xj4TIov
-         qnpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724159944; x=1724764744;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4jr0wUUNxuwMBzuuDz03CQuikwyocGytAf7u+HScwAk=;
-        b=RwzQF/tRgyQUEJOEdQCZE8MRLyZNPJdQlPHnfZ8vikE1fxTe9E18hVI+w+N0vNWP3Z
-         uXlNOVL9alAA5YD0kuQICfMw+zO5wT3uTxKtskVm9iQ1DSkDi2Z0PwherK48iv2D3PkE
-         OUp25lhLKMcEHOrLn4YwhRIKjEIbvDbm6exO3zkdWdrf0TfU6z+0aoK3Fgancvjac/gu
-         O6xdZ7xW6q/CL/i29kWS3Oi9MLSTIT07Et9CAQBFa3DcqBY3SVp4lZPajcAzNyFlAnZa
-         g5W1rJM5FSf+Tkfo3kzX3IbbR71JEymTV1KuZQahlqT46jxwLb8ZLLGTqO/Jqh+ktxer
-         liPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5WHexnSglqFFw9etcj7cMqrK+y5QRCcH7fsqRxt1aIGTUXKwVkmL6Bq9LY5xrGApYsWSD+TBABeagkObjgtdm1MvZ8STSWuD3lqzn
-X-Gm-Message-State: AOJu0YxCoUVBq4KjLH7dB2Dy94Y1OPJx0mhnBRXw1P5WYQr3kQerKKnB
-	gl55yIWMUe9vVjdls2os1LgvdkgKGyaNg8pIr45LwtrB4ssY07+cZJsu9ljl7oI=
-X-Google-Smtp-Source: AGHT+IHjT9qAO+emW/POSF1qBJZ0ZFLKI59tqUdczr2XqRvddNqHnQb3poFA0SPeVno3u8Z7Ce50uA==
-X-Received: by 2002:adf:e552:0:b0:368:7f8c:1b38 with SMTP id ffacd0b85a97d-37194655c7emr7988293f8f.30.1724159943777;
-        Tue, 20 Aug 2024 06:19:03 -0700 (PDT)
-Received: from vermeer.tail79c99.ts.net ([2a01:cb1d:81a9:dd00:b570:b34c:ffd4:c805])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a0eesm13242280f8f.1.2024.08.20.06.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 06:19:03 -0700 (PDT)
-Date: Tue, 20 Aug 2024 15:19:00 +0200
-From: Samuel Ortiz <sameo@rivosinc.com>
-To: Qinkun Bao <qinkun@google.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	"Yao, Jiewen" <jiewen.yao@intel.com>,
-	"Xing, Cedric" <cedric.xing@intel.com>, biao.lu@intel.com,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vishal Annapurve <vannapurve@google.com>,
-	Chong Cai <chongc@google.com>,
-	Dan Middleton <dan.middleton@intel.com>,
-	Alex Crisan <alex.crisan@intel.com>
-Subject: Re: [RFC PATCH v2 0/4] tsm: Runtime measurement registers ABI
-Message-ID: <ZsSXxMn-E7OCvxST@vermeer.tail79c99.ts.net>
-References: <20240128212532.2754325-1-sameo@rivosinc.com>
- <c17a31e4fb30f5f9d4a337e5bd8d54cc6f99eef7.camel@HansenPartnership.com>
- <6DEAEC08-420C-46A9-8877-EBF60331A931@google.com>
+	s=arc-20240116; t=1724159997; c=relaxed/simple;
+	bh=an1ERuFzmoue5lNyVfBeZVHvvx5v13z8z2BJbEJE9+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V6QdTVC9wogNL5RSxrWochVITrs6Sdq0WjxQA3FyvaO8TZuljH43jaC926OHpzJrjMbCemXoCYD8GRi/5nIbjPqGHV9wzOC3YhP6vXMQ3lATRn1cNWooC/B95VDLVvRJoyIsIhEsZzGb8pt+ymCC5aZEf6LCWShoXrprM6/vbzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F8TW1QY7; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id gOm5sTZ6wG0zwgOm6s6Uq9; Tue, 20 Aug 2024 15:19:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724159991;
+	bh=fbXaCNGFVEs+vdDITROYBteYIhyfvO/bLrS2t7V1yYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=F8TW1QY76yWGcr+8ahVbRjQsz+rcpHiTIwdYR57wVZTvNA9dqFncXzCtaB376FolL
+	 g2a5sywzWw2SxKqCqgsq0bJnMy93hfF8w81Uuow4rGpDmawP/Jt6/4BlWtpP8ehAgi
+	 XAFUaSxTvIh/0ki0Mnx++GCrNlfee1ZI0Aayn2KCPzszsSLMuf6VEdWrl63KLfoH94
+	 QC7zAf70deIHVdHjNA1hHNe7E8+ZMA2tL/m11jN+ENQnAq9TVn6CeREb8y9AP7v9to
+	 KjCM60tkzofvUM6I0kCb8qcWBPuntBTwv7aDe2EJTT1RC8dHetMNtlEFXUTlZO37FY
+	 zWL8W2flXDsdg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 20 Aug 2024 15:19:51 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <ffe31e2b-1e21-4624-aa9d-558bbf4a880a@wanadoo.fr>
+Date: Tue, 20 Aug 2024 15:19:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: sprd: Use devm_clk_get_enabled() helpers
+To: Huan Yang <link@vivo.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240820102255.132605-1-link@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240820102255.132605-1-link@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6DEAEC08-420C-46A9-8877-EBF60331A931@google.com>
 
-Qinkun,
-
-I am working on a adding a patch that generates and exports a CEL, but
-this takes longer than I was hoping for, mostly due to a lack of
-bandwidth on my side. I will send a PoC for this as soon as I can, and
-folks can improve it from there.
-
-Cheers,
-Samuel.
-
-On Mon, Aug 19, 2024 at 02:25:15PM -0700, Qinkun Bao wrote:
-> A gentle ping on this email thread. We have tested the patch series [1] and will release a product based on the patch series. 
+Le 20/08/2024 à 12:22, Huan Yang a écrit :
+> The devm_clk_get_enabled() helpers:
+>      - call devm_clk_get()
+>      - call clk_prepare_enable() and register what is needed in order to
+>       call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> If the patch series can not get upstreamed, the whole confidential computing community can not have a way to measure the workload with RTMRs. Without the patch, RTMR3 is completely unused. The patch works perfectly for our usage case (Like the existing TPM ABI, the raw measurement is taken instead of recording the log entry.). Assuming RTMR serves as an alternative to TPM-based measurement, migrating existing software to the RTMR could be greatly simplified by developing an ABI that resembles the TPM.
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
 > 
-> I don’t object to having an ABI to take the log entry. For our usage case, we use the Canonical event log [2] to measure the workload. I do think that we should NOT block the patch series for several months to solve an issue that TPM can not solve. 
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+
+
+Hi,
+
+if you want to go 1 step further, I think that 'clk' can now also be 
+removed from struct sprd_mbox_priv.
+
+Just my 2c.
+
+CJ
+
+>   drivers/mailbox/sprd-mailbox.c | 19 +------------------
+>   1 file changed, 1 insertion(+), 18 deletions(-)
 > 
-> Link:
-> [1] https://lore.kernel.org/lkml/20240128212532.2754325-1-sameo@rivosinc.com/
-> [2] https://trustedcomputinggroup.org/resource/canonical-event-log-format/
+> diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbox.c
+> index 9ae57de77d4d..dca83026928f 100644
+> --- a/drivers/mailbox/sprd-mailbox.c
+> +++ b/drivers/mailbox/sprd-mailbox.c
+> @@ -291,13 +291,6 @@ static const struct mbox_chan_ops sprd_mbox_ops = {
+>   	.shutdown	= sprd_mbox_shutdown,
+>   };
+>   
+> -static void sprd_mbox_disable(void *data)
+> -{
+> -	struct sprd_mbox_priv *priv = data;
+> -
+> -	clk_disable_unprepare(priv->clk);
+> -}
+> -
+>   static int sprd_mbox_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -331,22 +324,12 @@ static int sprd_mbox_probe(struct platform_device *pdev)
+>   	if (IS_ERR(priv->outbox_base))
+>   		return PTR_ERR(priv->outbox_base);
+>   
+> -	priv->clk = devm_clk_get(dev, "enable");
+> +	priv->clk = devm_clk_get_enabled(dev, "enable");
+>   	if (IS_ERR(priv->clk)) {
+>   		dev_err(dev, "failed to get mailbox clock\n");
+>   		return PTR_ERR(priv->clk);
+>   	}
+>   
+> -	ret = clk_prepare_enable(priv->clk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = devm_add_action_or_reset(dev, sprd_mbox_disable, priv);
+> -	if (ret) {
+> -		dev_err(dev, "failed to add mailbox disable action\n");
+> -		return ret;
+> -	}
+> -
+>   	inbox_irq = platform_get_irq_byname(pdev, "inbox");
+>   	if (inbox_irq < 0)
+>   		return inbox_irq;
+
 
