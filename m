@@ -1,104 +1,151 @@
-Return-Path: <linux-kernel+bounces-294525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC5E958EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:45:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B147958EC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98512845DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:45:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91812B22263
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A9415C152;
-	Tue, 20 Aug 2024 19:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9E215FA75;
+	Tue, 20 Aug 2024 19:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKtMlnN3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WUnDI9z0"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A318E344;
-	Tue, 20 Aug 2024 19:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B615B999
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 19:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724183098; cv=none; b=fXvG10q632PngVcSA3dyksUBTgE2ZpV8AujGzCgpkol91HBEf8yceiFY/4CQ3X2hqYLUu366o8pT4TXIGQZF/GF2A2sydJQ7Q09RGd/n64nowgKxMycHggfBwN9cPAV7cwLlN5gcgvDvdNZ2Q8/UlmcGms21YdTN/Ve1E4R10G8=
+	t=1724183359; cv=none; b=etqdyGEidoDtznpnaXAtP3YytCNG6QfdK6IhkWJM9xzPtYevUgs3jQLKkaS9Z7vmu/obcGo7CL1xLswH1W8aaTmf0/1l5b1KTI7AQiQ+dvnZ/YSZraptEEws7lYnQoaBzH8CmcdnKXB/o1EX7yv/NqauLKoFcpI4L/BnG1cLbKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724183098; c=relaxed/simple;
-	bh=5zNMj6jOkWngChBd/1xsuHniRvKqUbXx1HRiMAzGvUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hnxsrW54OdPE+k2HIbCz2uvEIWysS/TrDasqRykXulKLGD4K5TF+Q6oB9hRGgVg7rQYkCLBGY5ozWaOuncNlnuby5NQIWlb7EjV8fiFa3+ytDAvjKRktaZ+Z2DGVAN3NP/q1SsF/NOpXJNKVZxyUWMtNZttpJ3uBLazvp6Pkn9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKtMlnN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E40C4AF0B;
-	Tue, 20 Aug 2024 19:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724183098;
-	bh=5zNMj6jOkWngChBd/1xsuHniRvKqUbXx1HRiMAzGvUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hKtMlnN3srgkr78qdhVU8x+LRFQioBuWD9xyS5SuiQX5KnBrquFH7C+dtigb6+OdG
-	 tbiYjSzBn2kVjf4NDhkvdgKodu2RPleOBVTsC68LHkthvEOjy38u7X4KQfTD9QJNET
-	 4aWxwvdV3uGuOwSi8WXgPVR8DNinvSffRAVA8V+IpctDWMtbNOfOimr8RM43DaoZQb
-	 4iX3JyU8mII1Tm3xhK5bGXurcJZ/Gb83pHdjfecb0rtB2os1CbBmzzD4kf+yCj7AIv
-	 M5QlhdUNzl7t+r2EiksXEuSzS8Bq71YpUfM1XzC8rpEo6wrh1nCnYfhxVokwrK0yty
-	 r5YwsYS16VDDQ==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7093d565310so4454037a34.2;
-        Tue, 20 Aug 2024 12:44:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAct0MqKow3HZqzw/wAsp05+UKf0K57skVj150zacXOXIO3PR6nBc8eHa6G5O32knz1wDllrCVQKj5wIzJ@vger.kernel.org, AJvYcCWgSyhHILkOA8ssFLWWUp1b26Ngr4kPMXC17EfTbVUT9X2VT4mP7kNVbjAIfS2k9Klv7tgfQC6h+dCTK+hruPs=@vger.kernel.org, AJvYcCXgUaNkdOsp+nV6t4NizUxYujsBlDTaOUnaArajQG7r66KTLyEuG7/mv9Z85yDZDmwLpBPV/WdoLhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymQPRkVR6NdoQXDTW5u1PpjLaCpvgETHettFbAMP9ou99DHFoY
-	R2Ywmrn1dGMyha9nQP1rrxvCeD5pS6ZZaiNT6CrHI/2h9Ppy6VSaVFA5OvzHm1nOpbYoSaOWsxn
-	f6Qb2YajSRKXaEQFmCUiDkLFpkRE=
-X-Google-Smtp-Source: AGHT+IEv5xnvO58H1asFV+sqhstPmFN30r9iiFj5GLMWIrz4UaJDHnD6zG2CIWOSdjqPqqD8aC30Ankwg/xC7z4VbMI=
-X-Received: by 2002:a05:6871:8a8:b0:260:e2ed:1abe with SMTP id
- 586e51a60fabf-270815de11bmr3621294fac.39.1724183097689; Tue, 20 Aug 2024
- 12:44:57 -0700 (PDT)
+	s=arc-20240116; t=1724183359; c=relaxed/simple;
+	bh=GgcZBZ3py3YLrVIfBlwdZnVS+QKge2hV/IBQXET6NX0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LNycFX/LTzGPQk4ixpGiq1x0uNy0tUPkEpInHGtEsg7REkboYAU6HvICMmyw4bldDmzCkDOzeBFxrsGk8cGRCMYRHL5/HKrxorsljVqYiQJTi9VB+dXZZF78wYM+E2ceFjsAPl1S1Wu8TxW8sKI7wWEY51t/V+6Yfqn0lmXOXww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WUnDI9z0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6643016423fso117183797b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724183356; x=1724788156; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iaH1ZLIse1MjjuwT90Rd2NUzJfAssHJQQ3PmJWNR6mE=;
+        b=WUnDI9z0DCX+J3E8ux89AKMCbEfDCK8YVwJyS7jHDIWOAmRqEkhtRaV52ibqvlS5Uy
+         cgHpEPQ/jDJvXH3iCmux3iRyxddJy9iICHLXwjUXjNF0oHJ3RC6Jmy6dl08ARRiGLV53
+         UJJ95sr7bFpGdI9aLdStYuZbpoMX9QWm3PB83/1lMwbUdA42gS4gG7lQ2Je9Vq6BTzez
+         1LRqY/SPzT+M+y1MnvWYBTF34Am5DexXkdV3sgo7cbudZjEzjKzZPBWg8um7FN64pwN7
+         VAi9B3bYeoqnLqGCIZYBgbx7fSYLr88pwhWiceEqBULLX3kOUVAOKDvzu02e5LGdEzhS
+         M+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724183356; x=1724788156;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iaH1ZLIse1MjjuwT90Rd2NUzJfAssHJQQ3PmJWNR6mE=;
+        b=eLFmkTtok/YLNyN4vb/hvm4VSmIGxcangZJQxed+wazcg68/M3I7oI9aYLFINrKr0u
+         3abA6tH/2V2oIvsuDHqFHGqlvlx4twpBMr4STYfjM7KbYyoHaGINWZdzI/W30YV9wrEl
+         zcerW/6zBKKKB84Ziu5YBEKuwyLi1hn9zXgYAdrxY2itFRoOeL74N/ybv/C8TDNedXqT
+         WeEfoTSi7QgB+Z/FxbdVFJHXRxFwQ1vATN57DoMpH5VHyOCIWXhd6uUhEHnXWKAqLLZ4
+         UMfv1oa3lcvQGxF7jKOqmJ6bY4E+gOp5V4Ek3VUp4WiqPuyU1VePCEdfUiPWgg/7VS60
+         uoaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnk0bhMg2t1719dFLvyWX19qep5MldiOWclwpHX47fjfJ+zQR5x8Zavpa4eanV2/HlUYrG6HHyX/jYyR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCjUe9vXthMz/Xs59WZBjM3VajVsRwq8/XJZEHAPoln6R0he1W
+	Nq7lK4GX+sG1k2dz+7fykKHU1m8+zGhF47luT6ymkZjRNZcAeID9otIRH5O/PAdlbJAiF9yO8F2
+	4P/PpEg==
+X-Google-Smtp-Source: AGHT+IF8OgALjQtKTTwFni7Lx7ggfIQZWs8ZGeUB4Cj9Y3JpdH2/tw6PpjEDsZeBYcnnz1TYn5eZQOxDFr9J
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a05:690c:4813:b0:6be:9d4a:f097 with SMTP
+ id 00721157ae682-6c0a0236c74mr8387b3.7.1724183356156; Tue, 20 Aug 2024
+ 12:49:16 -0700 (PDT)
+Date: Tue, 20 Aug 2024 19:48:56 +0000
+In-Reply-To: <20240820194910.187826-1-mmaurer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <86e3a059-504d-4795-a5ea-4a653f3b41f8@stanley.mountain>
-In-Reply-To: <86e3a059-504d-4795-a5ea-4a653f3b41f8@stanley.mountain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 21:44:46 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ixtyB4FFEBAUru-hRh5bfCKeCEJw2+_0gvWMiboRrs2Q@mail.gmail.com>
-Message-ID: <CAJZ5v0ixtyB4FFEBAUru-hRh5bfCKeCEJw2+_0gvWMiboRrs2Q@mail.gmail.com>
-Subject: Re: [PATCH] powercap: intel_rapl: Fix off by one in get_rpi()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Mime-Version: 1.0
+References: <20240820194910.187826-1-mmaurer@google.com>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+Message-ID: <20240820194910.187826-2-mmaurer@google.com>
+Subject: [PATCH v4 1/4] kbuild: rust: Define probing macros for rustc
+From: Matthew Maurer <mmaurer@google.com>
+To: andreyknvl@gmail.com, ojeda@kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>
+Cc: dvyukov@google.com, aliceryhl@google.com, samitolvanen@google.com, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org, glider@google.com, 
+	ryabinin.a.a@gmail.com, Matthew Maurer <mmaurer@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 10:41=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> The rp->priv->rpi array is either rpi_msr or rpi_tpmi which have
-> NR_RAPL_PRIMITIVES number of elements.  Thus the > needs to be >=3D
-> to prevent an off by one access.
->
-> Fixes: 98ff639a7289 ("powercap: intel_rapl: Support per Interface primiti=
-ve information")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/powercap/intel_rapl_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/inte=
-l_rapl_common.c
-> index 8b7a5a31e8c1..67aec73511a7 100644
-> --- a/drivers/powercap/intel_rapl_common.c
-> +++ b/drivers/powercap/intel_rapl_common.c
-> @@ -740,7 +740,7 @@ static struct rapl_primitive_info *get_rpi(struct rap=
-l_package *rp, int prim)
->  {
->         struct rapl_primitive_info *rpi =3D rp->priv->rpi;
->
-> -       if (prim < 0 || prim > NR_RAPL_PRIMITIVES || !rpi)
-> +       if (prim < 0 || prim >=3D NR_RAPL_PRIMITIVES || !rpi)
->                 return NULL;
->
->         return &rpi[prim];
-> --
+Creates flag probe macro variants for `rustc`. These are helpful
+because:
 
-Applied as 6.12 material, thanks!
+1. The kernel now supports a minimum `rustc` version rather than a
+   single version.
+2. `rustc` links against a range of LLVM revisions, occasionally even
+   ones without an official release number. Since the availability of
+   some Rust flags depends on which LLVM it has been linked against,
+   probing is necessary.
+
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+ scripts/Kconfig.include   |  8 ++++++++
+ scripts/Makefile.compiler | 15 +++++++++++++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 3ee8ecfb8c04..bdb187af45fd 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -63,3 +63,11 @@ ld-version := $(shell,set -- $(ld-info) && echo $2)
+ cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$(1))
+ m32-flag := $(cc-option-bit,-m32)
+ m64-flag := $(cc-option-bit,-m64)
++
++# $(rustc-option,<flag>)
++# Return y if the Rust compiler supports <flag>, n otherwise
++# Calls to this should be guarded so that they are not evaluated if
++# CONFIG_RUST_IS_AVAILABLE is not set.
++# If you are testing for unstable features, consider testing RUSTC_VERSION
++# instead, as features may have different completeness while available.
++rustc-option = $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(RUSTC) $(1) --crate-type=rlib /dev/null --out-dir=.tmp_$$ -o .tmp_$$/tmp.rlib)
+diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+index 92be0c9a13ee..057305eae85c 100644
+--- a/scripts/Makefile.compiler
++++ b/scripts/Makefile.compiler
+@@ -72,3 +72,18 @@ clang-min-version = $(call test-ge, $(CONFIG_CLANG_VERSION), $1)
+ # ld-option
+ # Usage: KBUILD_LDFLAGS += $(call ld-option, -X, -Y)
+ ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
++
++# __rustc-option
++# Usage: MY_RUSTFLAGS += $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-coverage)
++__rustc-option = $(call try-run,\
++	$(1) $(2) $(3) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",$(3),$(4))
++
++# rustc-option
++# Usage: rustflags-y += $(call rustc-option,-Cinstrument-coverage,-Zinstrument-coverage)
++rustc-option = $(call __rustc-option, $(RUSTC),\
++	$(KBUILD_RUSTFLAGS),$(1),$(2))
++
++# rustc-option-yn
++# Usage: flag := $(call rustc-option-yn,-Cinstrument-coverage)
++rustc-option-yn = $(call try-run,\
++	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",y,n)
+-- 
+2.46.0.184.g6999bdac58-goog
+
 
