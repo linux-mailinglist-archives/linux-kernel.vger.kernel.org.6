@@ -1,113 +1,91 @@
-Return-Path: <linux-kernel+bounces-293109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03ABE957ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:24:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED00E957AE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F152842E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:24:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32BAFB23497
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF8D17BB7;
-	Tue, 20 Aug 2024 01:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W1T7u/nQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946D31A702;
+	Tue, 20 Aug 2024 01:24:27 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD2A33FD;
-	Tue, 20 Aug 2024 01:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BE917C67;
+	Tue, 20 Aug 2024 01:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724117046; cv=none; b=exQ3JiItPeSrEh/7PQo26Gjg1w1JlzcYFtx7dCucyX/iqPatPpSY2+6ZPud4P8h4J3CA5vtNLGONqz2vqm/1TQ9FqKSPq2Njv5WmtN21qOyqzRuxVNJb9xYSVe4cF4z06wmu5uXtZRzISPac9k3YK/nkHoIFqIMnZOhDJ3goMWs=
+	t=1724117067; cv=none; b=nvyNKT4e8T60Ik2AjYZEb68ySjDfO5xHofYv80die9RUM1+Ju2SViK20Hp3UuiznPtPzEiBBcT6B7NeV5vj7z2f/RbJuc8xu5pMXDNnIqDte/QgRdsm71juARQXitb8fXDQ51eAU+wt8mDnvRWojmDChcMwotC6p9TzoZhPDk2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724117046; c=relaxed/simple;
-	bh=U/tN73Hyc3LPXsbdHs/8J5/6NLZ/oLTpCyNfawjYisU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kzt+/irWJ5NsmYA5lqdHqN5ltIj9EnIbW8IP3WlWKygxN1HmZEhqLV6rryYNJOIif1QKpu+33LCs+T4Lyf19Kv5350CJCKu4KBbWbdWU8dPJJU5sLmkZy30REZFNbmbnYamHFGuKzObSicCRfnFDtlo/flbt5XX6WY/N+82UmzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=W1T7u/nQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724117039;
-	bh=GYf1IMnpNxgP9nBQ0RAf+ZWqoGgAKqIJR9NVM7JX+Tg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=W1T7u/nQamyryY645CNAubflBuSezcY1nuM6XUhAYovW3V2ng3E5ZdXnGvBYrcT7Y
-	 Fgmrd9WVxgQnU2om3mURafWAzL4rKc6S1gPI0MhuDksMGgZC/SR1yP5+OTnYs49Jsn
-	 RJcnzDB1JFEjdzrR8Zo8lToC3AU8As0NfhSPGCoPSkmz9F2LfcwQDQ62ggiHcPeZwq
-	 IRMGJt1IWiBBtkCk5TsdngJtWtAf79EPNw6qbh1M5FG/Li1f3w2cuv897j1PWA7dau
-	 sE8KpcTFbJiEXD+GVqrYDmPorPUBf3zjQBIRT3q2EgvH3+tn60fhDFcE3TRniu0GZk
-	 tKb1U11WgkWFQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnsDv24mXz4w2R;
-	Tue, 20 Aug 2024 11:23:59 +1000 (AEST)
-Date: Tue, 20 Aug 2024 11:23:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the input tree with Linus' tree
-Message-ID: <20240820112358.665c5532@canb.auug.org.au>
+	s=arc-20240116; t=1724117067; c=relaxed/simple;
+	bh=PFhpBbGcqoFv9Ee+zZUeXGlY7AZl2F9JOryxrAQ354Q=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=s97bg0apVqDRcxYwGh9Yj2QY20/Y+TFHXl08i6vYULwAZY8cUssVtI+XtcWZg0r5kf7gBbegcAe0bMjfEi8NC8/eVQmiay7l5AmJQ1LruAwtVCFvVaNAw1tbtDBTYKX0hBystqP4zp7u+zK5xfnOT0jjt8ZM8eIpT0RlAo7hEJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnsC22hyvzfbd9;
+	Tue, 20 Aug 2024 09:22:22 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 48822140135;
+	Tue, 20 Aug 2024 09:24:22 +0800 (CST)
+Received: from [10.67.120.126] (10.67.120.126) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 20 Aug 2024 09:24:21 +0800
+Subject: Re: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in
+ progress
+To: Bart Van Assche <bvanassche@acm.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+References: <20240819090934.2130592-1-liyihang9@huawei.com>
+ <bfce098e-a070-40b1-95fc-951e2b3c1c22@acm.org>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dlemoal@kernel.org>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
+	<stable@vger.kernel.org>, <liyihang9@huawei.com>
+From: Yihang Li <liyihang9@huawei.com>
+Message-ID: <fd8c091f-a777-6641-835e-397fa8b5de94@huawei.com>
+Date: Tue, 20 Aug 2024 09:24:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kec=/xyDdR1vnJtoIqA+_FF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <bfce098e-a070-40b1-95fc-951e2b3c1c22@acm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
---Sig_/kec=/xyDdR1vnJtoIqA+_FF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the input tree got a conflict in:
+On 2024/8/20 0:59, Bart Van Assche wrote:
+> On 8/19/24 2:09 AM, Yihang Li wrote:
+>> +            if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
+> 
+> Shouldn't symbolic names be introduced for these numeric constants?
+> Although there is more code in the SCSI core that compares ASC / ASCQ
+> values with numeric constants, I think we need symbolic names for these
+> constants to make code like the above easier to read. There is already
+> a header file for definitions that come directly from the SCSI standard
+> and that is used by both SCSI initiator and SCSI target code:
+> <scsi/scsi_proto.h>.
+> 
 
-  drivers/input/touchscreen/cyttsp4_core.c
+My idea is to be consistent with the style of the code context.
+That's why I use numerical values.
 
-between commit:
+If we want to use symbolic names to replace all numeric constants,
+I think that would be another series of patches, and the changes would be more.
 
-  cb04e8b1d2f2 ("minmax: don't use max() in situations that want a C consta=
-nt expression")
+Thanks,
 
-from Linus' tree and commit:
-
-  25162a4f64f8 ("Input: cyttsp4 - remove driver")
-
-from the input tree.
-
-I fixed it up (the latter removed the file, so I did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kec=/xyDdR1vnJtoIqA+_FF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbD8C4ACgkQAVBC80lX
-0GxmFgf+J28DCm5SBaINfhGNH2VCkTPPJyCvBdU3iFwieiysqqtK40AHU+uSOdn6
-XKRiIF7ZSf+QrSULbCdeeAzFxHYwPaSNW4hf+ire25lVtq+UBSJfrvWvRyo+Eyli
-/jHfZVntVJFJ2pucCQclp9imQUoeSXdD4xOnUzbsf0SnxqZQysQmSFRGDdBytLlm
-7eY6gWYF02nWJUDqIZhbBKaz8I5ycykP0Z9OpRizHagmXbyfEKYa50xG1V2XHIky
-nxbo1lH46gn6w3VMJTCAGU5Z/ha6Q80La9DQxxTomD7AkHXBpzQFDPlHf0mfF8X3
-SSG8LusmOiaQPAP5MCe26suyDYYKag==
-=yGcw
------END PGP SIGNATURE-----
-
---Sig_/kec=/xyDdR1vnJtoIqA+_FF--
+Yihang.
 
