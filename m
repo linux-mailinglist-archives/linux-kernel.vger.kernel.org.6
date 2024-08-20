@@ -1,136 +1,191 @@
-Return-Path: <linux-kernel+bounces-293478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CAE958047
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF42295804D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680FC1F23D1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C03BB21364
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887AB189BA6;
-	Tue, 20 Aug 2024 07:51:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D41189BA3;
+	Tue, 20 Aug 2024 07:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBRPcSze"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A86172BB9;
-	Tue, 20 Aug 2024 07:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B84D8CF;
+	Tue, 20 Aug 2024 07:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724140291; cv=none; b=h1pAcwMNzh9bHDj2yhQs1eAfnpQGIiVDvXId4fM0kbldLejzD4tYDwLNotsHnaGv2BCmz/2DjtxC08QR4bvuSO9QFCsE843l2/NnNlgaKzSIOl3Pl8CKB94rjFieaMxK6c/OjkMsJtrtiZnL8kYQBaZqR5j7IChVsiio6qK7MXQ=
+	t=1724140354; cv=none; b=nbnSdi1LIkkxnz/5LghKcml7B1IezuYXqjN3xj1OCE9my+CcuUeE/n7k5kjycqn+W73FTvRSO1Nzs/LFy9mrLHWIlN4TYeST/0zwpHc3HRWXXfIW4GMFSep//fHknGNBJ8ho0vT37DLh5RbZ9K6StgSVJF/E9VAhS+7fIEEpvyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724140291; c=relaxed/simple;
-	bh=s4ECx9eCCtxtO8R680f3ZjpHoPDMSMlHP8buCCcZDAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L0/szFNe0VQ7o0zXrGKlkHgztSdjcCDJQ2lJ8kmnr1FZ7CL5d0OOOp/E7DRhBrLMGTRYpD2uSsnNwCNH9VjwcUskV++Cj/6KXFe/8crhsSUSOUJX5Ob59AhFkho1wmzBvFYaGK0kqztOrNqciKJRrsbQM2xXAtZxIH8ERxZOV28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wp1kB13WHz2Cmsh;
-	Tue, 20 Aug 2024 15:46:26 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF2211A0190;
-	Tue, 20 Aug 2024 15:51:25 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 15:51:24 +0800
-Message-ID: <04118984-4c10-4d25-9547-0e3cd5d9fb03@huawei.com>
-Date: Tue, 20 Aug 2024 15:51:23 +0800
+	s=arc-20240116; t=1724140354; c=relaxed/simple;
+	bh=t+SS2sYV3XPALotEG8GtBNrD6YUGb7AIiW/aIuUoKwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I3weumoJ8rHlqUXdz2Vm0jAw01Y6mHvKLT8YlZBXTM2NsSO2IoAzxfiEGbxNwZi4aRAwjnvu3HCdtL0Z2R2XnzuUipcC7RGZrgWkeYvjidSqfgruyI1oszU8GsiP3ul4WW+wnLG+2b1AmBP2CBsC3g9xOkChvFHHrG839BMLCdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBRPcSze; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39d3c8bc608so10070375ab.0;
+        Tue, 20 Aug 2024 00:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724140351; x=1724745151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z2IPnhCGoD3q9tMfApbwEBiQbgRS87uwpXJiohxsSxo=;
+        b=mBRPcSzeQDIicRCi+ZMfa1GuTHmW4aXgr5S1xW39xYUnJPTAhDjfU7P6Xr8FIf8blS
+         +kJnGyAvMN2KiwXcXNTvK8wbIuO8FpyF8rSRioC+qeYcZYALn8LBU5bpHHf7RZeBS17K
+         0y05Fdf1DHcbgJVBN/TsgV050Qs+/dxaGffD5d5gJpLx1RON9H9fiF4W7XfVgx4If+1I
+         ElxsYmeTZZ0hXr8ZOsQ3SVVrsvBYIEZjFUH2seSV/F+cUYgCA7oE3buxf/cyKFHznNY3
+         a6LwgZdIoiDW4hwjRXgtE2ajdZXxEvR/3rJh0EV3QAZ+vHuiWFq2vvtHF3SB6gTMM2t4
+         J2zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724140351; x=1724745151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z2IPnhCGoD3q9tMfApbwEBiQbgRS87uwpXJiohxsSxo=;
+        b=kKkxcA2CiXzKT3/uXItxT3uDgzWYQFhtJX+UatiF2e8fMV+7288IW5ZiVQVCOTZ1H6
+         zQXewo2qiudRYTcq/Ngbp8m/iV/y8PX458Ny1bFFNJ2iILOCIr7WBkmrSgCBxoABvL4r
+         y+LlbhuYa+99Wal+yano6bmeYLZ3aw1OEdpRT0/y8jRGWTk65qq3WL2oG8gi17RpkUcm
+         m1wuDCbY68c24F+/fE7EIT4IiRHCRa2WhGDCfmcRe1paZ+879fn9JtWSTr6tcrfJpHPj
+         HgCRwf0gaop/kZKYQh2w0bMqhGTE3t+FH+OzEQHKLVnUgl8K3SPBGBVNf/3t2dsHYjDS
+         thGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5GM0qeI0CvEsOYKc31YuWjp/xvEQJPCz3VD2J5YwDV7wfcjo4K2I3sthFgvykyYIitk1VGPfKl9xp/IE=@vger.kernel.org, AJvYcCWxCECTHdA956aG0OlZhz0ueDFzjtBRF2p31Fbe5xVeacCF0zOrLmCS6SCK/PHiwJDXAHH5DVj4/EN7TMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2mCpcNzvhoKjrQljvIacxa96sVYrral57TD4mwKYamhYL0g3B
+	6BizpEAgBTMtRX8Zz18IzLcxPvtqK/t/U3ArSc3rjHaLrITmvEaF5SXAdl95u/tq/yNf/uqar/M
+	oK2jajqZw814ulDqE+wY1A6BjCto=
+X-Google-Smtp-Source: AGHT+IEO2EWDuz6eY2EowaDwGtJ0jIVrmGJxLUqdqJsxC8SyVkLr3sdjBBMTIcU/r8joe3Kel+0mWeYYnFgqJYzgQmc=
+X-Received: by 2002:a05:6e02:1a25:b0:398:36c0:7968 with SMTP id
+ e9e14a558f8ab-39d26ce6426mr141331125ab.6.1724140350868; Tue, 20 Aug 2024
+ 00:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 0/2] Some bugfix for xfs fsmap
-To: Chandan Babu R <chandanbabu@kernel.org>
-CC: <djwong@kernel.org>, <dchinner@redhat.com>, <osandov@fb.com>,
-	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <875xrvenzf.fsf@debian-BULLSEYE-live-builder-AMD64>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <875xrvenzf.fsf@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
+ <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com> <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
+ <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
+ <ceb54a27-144b-40ed-8de5-482f2b0664a0@linux.intel.com> <CAA+D8ANqb89UavAXTiHvcHyv9uMt8_MYR9hfBaxEJDPNy5C=-g@mail.gmail.com>
+ <eceafeef-2dba-48aa-b8b3-198b9bb39fb6@perex.cz>
+In-Reply-To: <eceafeef-2dba-48aa-b8b3-198b9bb39fb6@perex.cz>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 20 Aug 2024 15:52:20 +0800
+Message-ID: <CAA+D8AMOr8=JS7A0DvOEatL79CwwT4De7vDs6H-VDi05AnkjHQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory function
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com, 
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 20, 2024 at 3:42=E2=80=AFPM Jaroslav Kysela <perex@perex.cz> wr=
+ote:
+>
+> On 20. 08. 24 9:37, Shengjiu Wang wrote:
+> > On Tue, Aug 20, 2024 at 2:59=E2=80=AFPM Pierre-Louis Bossart
+> > <pierre-louis.bossart@linux.intel.com> wrote:
+> >>
+> >>
+> >>
+> >> On 8/20/24 04:53, Shengjiu Wang wrote:
+> >>> On Mon, Aug 19, 2024 at 3:42=E2=80=AFPM Pierre-Louis Bossart
+> >>> <pierre-louis.bossart@linux.intel.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 8/16/24 12:42, Shengjiu Wang wrote:
+> >>>>> Implement the ASRC memory to memory function using
+> >>>>> the compress framework, user can use this function with
+> >>>>> compress ioctl interface.
+> >>>>>
+> >>>>> Define below private metadata key value for output
+> >>>>> format, output rate and ratio modifier configuration.
+> >>>>> ASRC_OUTPUT_FORMAT 0x80000001
+> >>>>> ASRC_OUTPUT_RATE   0x80000002
+> >>>>> ASRC_RATIO_MOD     0x80000003
+> >>>>
+> >>>> Can the output format/rate change at run-time?
+> >>>
+> >>> Seldom I think.
+> >>>
+> >>>>
+> >>>> If no, then these parameters should be moved somewhere else - e.g.
+> >>>> hw_params or something.
+> >>>
+> >>> This means I will do some changes in compress_params.h, add
+> >>> output format and output rate definition, follow Jaroslav's example
+> >>> right?
+> >>
+> >> yes, having parameters for the PCM case would make sense.
+> >>
+> >>>> I am still not very clear on the expanding the SET_METADATA ioctl to
+> >>>> deal with the ratio changes. This isn't linked to the control layer =
+as
+> >>>> suggested before, and there's no precedent of calling it multiple ti=
+mes
+> >>>> during streaming.
+> >>>
+> >>> Which control layer? if you means the snd_kcontrol_new?  it is bound
+> >>> with sound card,  but in my case,  I need to the control bind with
+> >>> the snd_compr_stream to support multi streams/instances.
+> >>
+> >> I can only quote Jaroslav's previous answer:
+> >>
+> >> "
+> >> This argument is not valid. The controls are bound to the card, but th=
+e
+> >> element identifiers have already iface (interface), device and subdevi=
+ce
+> >> numbers. We are using controls for PCM devices for example. The bindin=
+g
+> >> is straight.
+> >>
+> >> Just add SNDRV_CTL_ELEM_IFACE_COMPRESS define and specify the compress
+> >> device number in the 'struct snd_ctl_elem_id'.
+> >> "
+> >
+> > I don't think it is doable,  or at least I don't know how to do it.
+> >
+> > My case is just one card/one device/one subdevice.  can't use it to
+> > distinguish multi streams.
+>
+> I already wrote that the compress core code should be extended to support
+> subdevices like other ALSA APIs. I'll work on it. For now, just add suppo=
+rt
+> for one converter.
+
+Thanks.
+
+What does this subdevices mean?  Is it equal to the compress streams?
+
+When I call snd_compr_ops.open(),  it means to create an instance, the inst=
+ance
+is created at runtime (call open()), not created when the sound card is cre=
+ated.
+
+Best regards
+Shengjiu Wang
 
 
 
-在 2024/8/20 13:53, Chandan Babu R 写道:
-> On Mon, Aug 19, 2024 at 08:53:18 AM +0800, Zizhi Wo wrote:
->> Changes since V3[1]:
->>   - For the first patch, simply place the modification logic in the
->>     xfs_fsmap_owner_to_rmap() function.
->>   - For the second patch, more detailed comments were added and related
->>     changes were made to the initialization of the end_daddr field.
->>
->> This patch set contains two patches to repair fsmap. Although they are both
->> problems of missing query intervals, the root causes of the two are
->> inconsistent, so two patches are proposed.
->>
->> Patch 1: The fix addresses the interval omission issue caused by the
->> incorrect setting of "rm_owner" in the high_key during rmap queries. In
->> this scenario, fsmap finds the record on the rmapbt, but due to the
->> incorrect setting of the "rm_owner", the key of the record is larger than
->> the high_key, causing the query result to be incorrect. This issue is
->> resolved by fixing the "rm_owner" setup logic.
->>
->> Patch 2: The fix addresses the interval omission issue caused by bit
->> shifting during gap queries in fsmap. In this scenario, fsmap does not
->> find the record on the rmapbt, so it needs to locate it by the gap of the
->> info->next_daddr and high_key address. However, due to the shift, the two
->> are reduced to 0, so the query error is caused. The issue is resolved by
->> introducing the "end_daddr" field in the xfs_getfsmap_info structure to
->> store the high_key at the sector granularity.
->>
->> [1] https://lore.kernel.org/all/20240812011505.1414130-1-wozizhi@huawei.com/
->>
-> 
-> The two patches in this series cause xfs_scrub to execute indefinitely
-> immediately after xfs/556 is executed.
-> 
-> The fstest configuration used is provided below,
-> 
-> FSTYP=xfs
-> TEST_DIR=/media/test
-> SCRATCH_MNT=/media/scratch
-> TEST_DEV=/dev/loop16
-> TEST_LOGDEV=/dev/loop13
-> TEST_RTDEV=/dev/loop12
-> TEST_FS_MOUNT_OPTS="-o rtdev=/dev/loop12 -o logdev=/dev/loop13"
-> SCRATCH_DEV_POOL="/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8 /dev/loop9 /dev/loop10 /dev/loop11"
-> MKFS_OPTIONS="-f -m reflink=0,rmapbt=0, -d rtinherit=1 -lsize=1g"
-> SCRATCH_LOGDEV=/dev/loop15
-> SCRATCH_RTDEV=/dev/loop14
-> USE_EXTERNAL=yes
-> 
 
-Sorry, running xfs/556 with this configuration was successful in my
-environment, and my mkfs.xfs version is 6.8.0:
-
-xfs/556
-FSTYP         -- xfs (debug)
-PLATFORM      -- Linux/x86_64 fedora 6.11.0-rc3-00015-g1a9f212eb19f #42
-SMP PREEMPT_DYNAMIC Fri Aug 16 10:19:47 CST 2024
-VMIP          -- 192.168.240.11
-MKFS_OPTIONS  -- -f -f -m reflink=0,rmapbt=0 -d rtinherit=1 -l size=1g
-/dev/vde
-MOUNT_OPTIONS -- /dev/vde /tmp/scratch
-
-xfs/556 4s ...  5s
-Ran: xfs/556
-Passed all 1 tests
-
-I am not sure if it is because of the specific user mode tools or other
-environment configuration differences caused?
-
-Thanks,
-Zizhi Wo
+>
+>                                         Jaroslav
+>
+> --
+> Jaroslav Kysela <perex@perex.cz>
+> Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+>
 
