@@ -1,128 +1,170 @@
-Return-Path: <linux-kernel+bounces-293154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EC3957B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C12957B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADA8284A04
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CFC91F21BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2222421D;
-	Tue, 20 Aug 2024 02:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF632AF1E;
+	Tue, 20 Aug 2024 02:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hBic+XC2"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="gwj4wl/0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A2322EF2
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ED0446D1;
+	Tue, 20 Aug 2024 02:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724120532; cv=none; b=rTxN39IM2IPDr+x8rH6PVjpxJPcd+F/d2i79V/qy/uyyB/jS/NjeEChznSRUWxEEpcXKDduUgFdxSW4T2on0Y44FqmF7tshmvynDes4KKs3DjTtwZkGG0Rg0/ypnzjt0IjggbjpO+npW/85b8SBD9a27G9WcVFrSF8N97w61MKE=
+	t=1724120927; cv=none; b=UCXCrui5U/za0Vk7BPberQNh+9Vpi3j9nNL/cMnnfQb/dE+lSPDR6cTJNkqhlzO3i3sYgLyNBNn+2lDt9BhyZkV3ZRepR4PH0NC6v2umuM+GkL98GQy6iybKhRDxgKThlsKPWXjak2enjHlAIw0g2fLyG0bXBxgBsYPZe0D8nNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724120532; c=relaxed/simple;
-	bh=TSnk6AtWa28c59UrW4je/4+rOjKmL6E2erc9O4TAePU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfuBTB3UNDsTZ8Zph3V/WhdQlQjQIgA/6NigCJnISUsQ8M5x9+d9hg84m3aIkAQZfbWO9DkhHI/BDKSBHhDE3KMHHZkioi9lVMZ3eRES+J8sivm5ArBwvzkZUIY+/EED0xeurq3kywO1GXlbQPxUdJjKvN8oZ04rvcPgolRm+Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hBic+XC2; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b8d96aa4c3so17369157b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724120530; x=1724725330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n9Q7vC9LFMPCk3qVQ7Qc1QgEANirFuPSlZqqwwUbx7g=;
-        b=hBic+XC2Wu+Cb5FH8rh8OsKSeoWLOq7qjnFXvGU/5glX/Lz8UFhIvPFrlGvSDxO9eh
-         JBVdcaY6pfkRY8pqAmWCzO00lIQuVlawwXs7RtyLzXrwozyCcMv5IWReVMxRk0wdOs5Q
-         dD7xDUTBTOGNeymnKjzBlexmCOx1CBcfT78PfLQ8DqMjk9SYa/Gb5prWFFqduFrWHFYI
-         xk6YduqHUaWnPhFexLFTGus1ZBSc6OfQNEJzmxGSlC+iX19PdHzriM8fEiONm2tZQ3hZ
-         /ErRORNoSXSy8+RvneXWmnER5jq35LpiUSsouirkCrrBuYAdi5F91C9hnjDyMOrGYeGA
-         QDfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724120530; x=1724725330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n9Q7vC9LFMPCk3qVQ7Qc1QgEANirFuPSlZqqwwUbx7g=;
-        b=pWAIryNk58QAdvoCMDiJ1S2WyYxMA9YS/VdZ+9pgfKUz3ky72NqDS5HIVwR0kL5L78
-         Ys9Y3NDChEIvDMi6lWTBf8oVsxZul4ZgW5brsLZf7MWw4NGGscvn6lbGjIWlxxcVEmxa
-         MOwiJs1PofCSlx3+pZ2Do0aBqitG35jE7oTeWkiZ796ONaoZTT1of2zwXEz/YAsWjBHK
-         imwRAh4m1leTeItd9vZoNMk/UP5LUYu46Bso+QX7zV5FIh25vnt/Q4LwQAYtXnqrxDrt
-         ZADPP3mOQCkjmA8SyZfnEJ+oF8HfczbrnYCLNjPMntKBb/llcRujZ++Tg7wCNZRqyOI8
-         vSHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+t1hkxce0WBA52kYqO6GwcuDKSVde/lzvdBqjGsosnS/KtXfuZlzTm1sMaocKsmPdT8L9aM4TuUuhbz76Zo+2/D46/tKgjMboyaMd
-X-Gm-Message-State: AOJu0YzF0670hmqTj6+6ZE2ZBUuuvS+oWAhBgye/smLtaeR2iLgSYUN/
-	8hNlAEGgUL4pUDvsmHpK5Y28u8x0jS79ZcsrIEcGdvLz40VwVbDAwWKmeJTpgck+6QYvtx7Za+r
-	P3YtNPo/ibnHqPDEmmTD5YjaKr1aXcOotr7so
-X-Google-Smtp-Source: AGHT+IGqv2dvKxmgA37AXYwXcqcy+VUarFEug/q6Qajf1/shsAVDJ2FVpYt5LV0ZKu34PjuRvF0l1baRqWG8DdWGDA4=
-X-Received: by 2002:a05:690c:f94:b0:63b:d711:e722 with SMTP id
- 00721157ae682-6b1b9b5ac7cmr168081857b3.1.1724120529883; Mon, 19 Aug 2024
- 19:22:09 -0700 (PDT)
+	s=arc-20240116; t=1724120927; c=relaxed/simple;
+	bh=0RKsF157o3bKHtD19lzHYvs8hnVPCOMSKVn1abKcUyM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gTYSC5UMFcforAsA84m7cLCjyIqzKnKM2nhImWe7qdCKaIWuMZn2a8t+FpxpO/9qfY1Q70csFKJMRKajs7Bl8GA3laT2/Jjo6eg0XPMcLaXd9uEWfF+7Inlu3Qgz3dsfsRCm1u33uzhcYcG5YlQBJggUQUnjFBaiXKTWhXTHNW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=gwj4wl/0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1724120922;
+	bh=NPiOhm8IKIaayb+OQ2mU0VwOhYGdB0lFQCCi2+TtTDo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=gwj4wl/0Bl/hBHPv0AaRenGTc2wAJ0PB2CWQTbbuRiAG6ydYttXtHs6zpWfnP2yt5
+	 KxztHLxRMaADnlMjFNT9evJ6SzPHI/pxBuk30e9m56MDIP3ZcoWjMW1dLT3QhkoUZu
+	 yMHAhbj/lrAx0oN/dZNtG7RRN10vYZ/THx8ELK8rSuHtDqXtu5C/47tid3OiTdARyN
+	 ySoYRo+oyjlU2G6B1NoRt3R/bFWEYf+IcqJHEg8w7benhsA0xNoQxnDKI75h1hNUY6
+	 c7dXfcq1YofE33pC9IIfIDoC644BcGfmY3JPPERzZX5fMQtdUdVEejMuiYoviWlyxO
+	 ijcQBEjBm17Mg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WntgW4MYRz4wcl;
+	Tue, 20 Aug 2024 12:28:39 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Damien Le Moal <dlemoal@kernel.org>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, hch@lst.de, linux-ppc@kolla.no,
+ vidra@ufal.mff.cuni.cz
+Subject: Re: [PATCH] ata: pata_macio: Fix DMA table overflow
+In-Reply-To: <b651ae17-0d60-46b5-9571-cf82769ab07c@kernel.org>
+References: <20240819101755.489078-1-mpe@ellerman.id.au>
+ <b651ae17-0d60-46b5-9571-cf82769ab07c@kernel.org>
+Date: Tue, 20 Aug 2024 12:28:38 +1000
+Message-ID: <87ed6kszah.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819151512.2363698-1-surenb@google.com> <20240819151512.2363698-6-surenb@google.com>
- <ZsOeVSlToyhsyDGD@casper.infradead.org> <CAJuCfpH4yFw6RNKVDK0hqXQQhAhMsyGNp5A50E+c2PZd+_vOgw@mail.gmail.com>
- <ZsOtwhWC_JpgWe_J@casper.infradead.org> <20240819184649.8fc7da59f89290f716ae0553@linux-foundation.org>
-In-Reply-To: <20240819184649.8fc7da59f89290f716ae0553@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 19 Aug 2024 19:21:57 -0700
-Message-ID: <CAJuCfpHa_wfcbatEksuEZqWjTxvM0fc_SAdoBf74QYFipA+s7A@mail.gmail.com>
-Subject: Re: [PATCH 5/5] alloc_tag: config to store page allocation tag refs
- in page flags
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, kent.overstreet@linux.dev, corbet@lwn.net, 
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	dave@stgolabs.net, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 6:46=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
+Damien Le Moal <dlemoal@kernel.org> writes:
+> On 8/19/24 19:17, Michael Ellerman wrote:
+>> Kolbj=C3=B8rn and Jon=C3=A1=C5=A1 reported that their 32-bit PowerMacs w=
+ere crashing
+>> in pata-macio since commit 09fe2bfa6b83 ("ata: pata_macio: Fix
+>> max_segment_size with PAGE_SIZE =3D=3D 64K").
+>>=20
+>> For example:
+>>=20
+>>   kernel BUG at drivers/ata/pata_macio.c:544!
+>>   Oops: Exception in kernel mode, sig: 5 [#1]
+>>   BE PAGE_SIZE=3D4K MMU=3DHash SMP NR_CPUS=3D2 DEBUG_PAGEALLOC PowerMac
+>>   ...
+>>   NIP pata_macio_qc_prep+0xf4/0x190
+>>   LR  pata_macio_qc_prep+0xfc/0x190
+>>   Call Trace:
+>>     0xc1421660 (unreliable)
+>>     ata_qc_issue+0x14c/0x2d4
+>>     __ata_scsi_queuecmd+0x200/0x53c
+>>     ata_scsi_queuecmd+0x50/0xe0
+>>     scsi_queue_rq+0x788/0xb1c
+>>     __blk_mq_issue_directly+0x58/0xf4
+>>     blk_mq_plug_issue_direct+0x8c/0x1b4
+>>     blk_mq_flush_plug_list.part.0+0x584/0x5e0
+>>     __blk_flush_plug+0xf8/0x194
+>>     __submit_bio+0x1b8/0x2e0
+>>     submit_bio_noacct_nocheck+0x230/0x304
+>>     btrfs_work_helper+0x200/0x338
+>>     process_one_work+0x1a8/0x338
+>>     worker_thread+0x364/0x4c0
+>>     kthread+0x100/0x104
+>>     start_kernel_thread+0x10/0x14
+>>=20
+>> That commit increased max_segment_size to 64KB, with the justification
+>> that the SCSI core was already using that size when PAGE_SIZE =3D=3D 64K=
+B,
+>> and that there was existing logic to split over-sized requests.
+>>=20
+>> However with a sufficiently large request, the splitting logic causes
+>> each sg to be split into two commands in the DMA table, leading to
+>> overflow of the DMA table, triggering the BUG_ON().
+>>=20
+>> With default settings the bug doesn't trigger, because the request size
+>> is limited by max_sectors_kb =3D=3D 1280, however max_sectors_kb can be
+>> increased, and apparently some distros do that by default using udev
+>> rules.
+>>=20
+>> Fix the bug for 4KB kernels by reverting to the old max_segment_size.
+>>=20
+>> For 64KB kernels the sg_tablesize needs to be halved, to allow for the
+>> possibility that each sg will be split into two.
+>>=20
+>> Fixes: 09fe2bfa6b83 ("ata: pata_macio: Fix max_segment_size with PAGE_SI=
+ZE =3D=3D 64K")
+>> Cc: stable@vger.kernel.org # v6.10+
+>> Reported-by: Kolbj=C3=B8rn Barmen <linux-ppc@kolla.no>
+>> Closes: https://lore.kernel.org/all/62d248bb-e97a-25d2-bcf2-9160c518cae5=
+@kolla.no/
+>> Reported-by: Jon=C3=A1=C5=A1 Vidra <vidra@ufal.mff.cuni.cz>
+>> Closes: https://lore.kernel.org/all/3b6441b8-06e6-45da-9e55-f92f2c86933e=
+@ufal.mff.cuni.cz/
+>> Tested-by: Kolbj=C3=B8rn Barmen <linux-ppc@kolla.no>
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>  drivers/ata/pata_macio.c | 23 +++++++++++++++--------
+>>  1 file changed, 15 insertions(+), 8 deletions(-)
+>>=20
+>> diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+>> index 1b85e8bf4ef9..eaffa510de49 100644
+>> --- a/drivers/ata/pata_macio.c
+>> +++ b/drivers/ata/pata_macio.c
+>> @@ -208,6 +208,19 @@ static const char* macio_ata_names[] =3D {
+>>  /* Don't let a DMA segment go all the way to 64K */
+>>  #define MAX_DBDMA_SEG		0xff00
+>>=20=20
+>> +#ifdef CONFIG_PAGE_SIZE_64KB
+>> +/*
+>> + * The SCSI core requires the segment size to cover at least a page, so
+>> + * for 64K page size kernels it must be at least 64K. However the
+>> + * hardware can't handle 64K, so pata_macio_qc_prep() will split large
+>> + * requests. To handle the split requests the tablesize must be halved.
+>> + */
+>> +#define MAX_SEGMENT_SIZE SZ_64K
+>> +#define SG_TABLESIZE (MAX_DCMDS / 2)
+>> +#else
+>> +#define MAX_SEGMENT_SIZE MAX_DBDMA_SEG
+>> +#define SG_TABLESIZE MAX_DCMDS
+>> +#endif
 >
-> On Mon, 19 Aug 2024 21:40:34 +0100 Matthew Wilcox <willy@infradead.org> w=
-rote:
->
-> > On Mon, Aug 19, 2024 at 01:39:16PM -0700, Suren Baghdasaryan wrote:
-> > > On Mon, Aug 19, 2024 at 12:34=E2=80=AFPM Matthew Wilcox <willy@infrad=
-ead.org> wrote:
-> > > > So if ALLOC_TAG_REF_WIDTH is big enough, it's going to force last_c=
-pupid
-> > > > into struct page.
-> > >
-> > > Thanks for taking a look!
-> > > Yes, but how is this field different from say KASAN_TAG_WIDTH which
-> > > can also force last_cpupid out of page flags?
-> >
-> > Because KASAN isn't for production use?
-> >
-> > > >  That will misalign struct page and disable HVO -- with no warning!
-> > >
-> > > mminit_verify_pageflags_layout already has a mminit_dprintk() to
-> > > indicate this condition. Is that not enough?
-> >
-> > Fair.
->
-> Is a BUILD_BUG_ON() feasible here?
+> These names are rather generic and could clash with some core layer ditio=
+ns. So
+> maybe prefix the macro names with PATA_MACIO_ ?
+> Also please tab-align the values to make this a little easier to read.
+=20
+OK.
 
-We could, but I didn't think we should prevent people from having such
-a configuration if that's what they need...
+> Other than this, looks good to me.
+
+OK thanks, will send a v2.
+
+cheers
 
