@@ -1,210 +1,183 @@
-Return-Path: <linux-kernel+bounces-294465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A94958E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E271D958E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6A4284BE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E1728517B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FFB194149;
-	Tue, 20 Aug 2024 18:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E77D149C55;
+	Tue, 20 Aug 2024 18:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="J6QJ2G9x"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="WhzRiwtq"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5D71C3F37;
-	Tue, 20 Aug 2024 18:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178537; cv=fail; b=D7hJUP6l4cW42WKcToHqt9jWh5S00PpiIFD5Fl5NDIbwS8vKXdQCs244H3bp/E6miM1PLZsanJ/ZRg9HYMST/axBAF6N6sH3h9Ji7xU4o/Ho/9bvat+yl5iLamif/JEv/F+jQlO1yuMQt+88Xg+VoBvizcQYU5Wa868FO/QS4hk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178537; c=relaxed/simple;
-	bh=3OGWwnrHzbCToo4k05TbeX+Ku/6mkjEomSvxZ4XJiWE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=b1u7ItFU8X6o2x5hW+uQvflZK9JCRgK78l79MoqSaqxSzha+8o+hkq0Wv8Rl5BWHcVUSJ8u3DlsSzA/g0Q63hCa34wu+ejpHgnlAW0IANQy1ATIZEUIIi4HdtGUQtVtTYdrwLoIjeDkpxby14tUwe5kSawvL+Fa8kIX08ZmxCTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=J6QJ2G9x; arc=fail smtp.client-ip=40.107.244.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PNJKKYyQUYI+XKppPmHdMzqjfgja2a4YCjjw4svRp2/b1dgFxywhAJv1dX2JWrz8yPFXs/F2yv8QnE6DzDhUKode+q8J/1WMwENEmu/Ee8YKtGUPXCUY1DdDXD75IgJNYQHH3dBRcPKB3Bi4VvxfY3O0PH9E4mw+VX7voqd/eGsdWKnzQkr+if5pbwk7cedgfwpSaN1rOHFN+qyHym/qse2NsT9LMuwKA6qH15uJtT0YU7k/zc4VHZF1aAF69f8+SN2JJC/jJOQr1LdxTH3ohLghAHgtjYtPNhBSqThLMdZmO3URSKcxvdz1Po44JC2Dd9Heo3DiwxLuGo38ILMWMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sfKBurVgSt/RPBloUMUa2B7uWheg2L4vB2l7vgQseJ0=;
- b=LM5HbDB9nKZ/8uMapWN9JaSBXE9MO0HsZtmGhyVONWAAS9fXqwi/jRWOxOaCg7qIieRw1ci/VYPdQTIllZBa1gAjA4M+/SxYUyqId4asUjEpRtKXCsSGFUszOWiuXfswJpfRjIWIyFrT+8WOwn2HrSZGSwU7KkMv9yJNPiumsyRiDDxbbXiAu7z+XVfTe8tY2v8Q1c+xmXKoZbzl/DhjsxHJvrl558P8JOqDXfm58Bc5pgv9i9oHUpHtmuXLyV9n+7niY3ghETU0SeK0MuJXYwMIaDmLd+l0dN1cha/BgrenGQiuDGozE+n00CMeAy7iYh/kJT4D2svTsE1S0C69/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sfKBurVgSt/RPBloUMUa2B7uWheg2L4vB2l7vgQseJ0=;
- b=J6QJ2G9xcpNaiYUJKESSGHS5r8pmfT2f7Weur8Ptm4XsFHszlacPXs6sLwIGnILBvKpbSbGhXEFZFuF2H0NkNCSHfIcMZSkKHJnzba0rQs7fb1XYWHKggrWclajHOml0JOSdoI8eb3nUXwGSKpS254HAFYr/FYmpqvqkrekpG+8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DS0PR12MB7875.namprd12.prod.outlook.com (2603:10b6:8:14d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 18:28:51 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 20 Aug 2024
- 18:28:51 +0000
-Message-ID: <388a818e-487f-4ec0-8da3-1d51291d2089@amd.com>
-Date: Tue, 20 Aug 2024 13:28:59 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: commit 9d8c094ddab0 breaks Xorg/xfce4
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20240801165234.2806-1-spasswolf@web.de>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240801165234.2806-1-spasswolf@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0072.namprd11.prod.outlook.com
- (2603:10b6:806:d2::17) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849A28F0;
+	Tue, 20 Aug 2024 18:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724178640; cv=none; b=SX5AF+UT2WKqBXBgHRsFCnEN/lDaEAGkAdF2JkzWGoyWuDgURA9XyxUV0hOOdst87yN7ZeMdXnbzM/+sfmbkX2Nstrn2jbYXzuZG0okvwCBHJ8Kru43mUQha8snK7VqbKnpAkJHZLREc+dcEiqip6oryhEyl1OzKIr08iCiCX2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724178640; c=relaxed/simple;
+	bh=lyONSAiHnO9A/uyqc2x+1bYbhIG90BN4LG/4mceQZUM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q/wyBNdxNn/D0Wn9nCLV7O6zjxF0PhF3fKRFqXiaUmXar1/e5Bd4EZjKWhw+mHOCeiyo3JsG1b4Xd54Z+oE8C0agyBgzH+p8bCU1vRSKU70jXba0gnJgZ/UE+3kGA15sXjwgkRxlZe4R4uSoRC16slMonfIcg8mIXkpK5ocVYA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=WhzRiwtq; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1724178636; x=1724437836;
+	bh=0n/oSaJkqjOdH7gRxT0hT5ott8K5LJiZdcjWBrNUqNM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=WhzRiwtqoS4C6FaUcPPZ8IyWNnRtLxl5vmwaTnY7odY+cthgli2kZn19Q/MZ+GUDX
+	 q9RzuxhCIXzDfPRC3fSS4zgtC6S/jv4xW7uFXQ/EcRR0PuJ8J8GrE0CPZMFfdXeGpe
+	 +mlqKbfOeMNZyATSDD3ssTbL8nC+G8+qSXeyyS+v8LyccvVFTxx6z87FzTUVwtpBPg
+	 fOqQwODxsTtOGib9bLVtK4L8dvNavnuEtbafi6JXPPp36qGSgsM/TtVKjYmRkQ7+6w
+	 PDcfmu7CG5yeKr81qVwMDB2nZTOeOUvnyAKCtpS4ZLiCCx7WVIF5HHMrsrv/77HLxq
+	 gNc2LY3LSHIVA==
+Date: Tue, 20 Aug 2024 18:30:33 +0000
+To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 6/9] clk: clocking-wizard: add user clock monitor support
+Message-ID: <D3KYBAJXSWWV.3S8LKAX01TCAM@protonmail.com>
+In-Reply-To: <SA1PR12MB89477EFB7053170705AB6591818C2@SA1PR12MB8947.namprd12.prod.outlook.com>
+References: <20240803105702.9621-1-hpausten@protonmail.com> <20240803105702.9621-7-hpausten@protonmail.com> <SA1PR12MB89477EFB7053170705AB6591818C2@SA1PR12MB8947.namprd12.prod.outlook.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 863b9df8a71802357742bf0467ff6b097a9960fe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB7875:EE_
-X-MS-Office365-Filtering-Correlation-Id: 004106c4-2369-47ad-198d-08dcc145f059
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eEdoS0xYQ3hLSExFenZIM1ovY1FBWTh4VExWUDczaUxMaEpXQmJjZ01lc25N?=
- =?utf-8?B?Uk8vU24wMC83MHppMVNGdHNpNXlvSVhQYXBqQUVTRHljMUNNSUROZWc3cDVk?=
- =?utf-8?B?VVRTcmx2VHlGTzV6Z0JEU2o5a0pkTGNWL1pCd09Uc0VkQjhYVkgxQzd6Y0Nr?=
- =?utf-8?B?TWxXa1VqVnJ1VGN1ZzQyT3NKVGExczF4cFFyQitHUWtGendqcFJERFBDSi9r?=
- =?utf-8?B?V0JIRnhacHhlZUdRY0pIOGJ3UXZlQXdsRHNDV0RvKzdFbVEwVUtrTU5FTklO?=
- =?utf-8?B?OFo3TThxbGlLbEVxb0o2U2p5WUFLVWRxbmFsTWxmOWR4eEtTVWhEU3dGbDBi?=
- =?utf-8?B?b2JnRHFFTGRGUllkZ1BrWmRwNWVpV05oVVc3UGpxQXYrTllLMmRKaURJVVRG?=
- =?utf-8?B?bGFlM2dtT21aMk5oTEtRTWE1b1hxOGJoYk96dWxRWlJHMTE0Vk9WUGI2QlZE?=
- =?utf-8?B?VTM0UGxHTkxrc3k2dDUvaFI2K3RicEVlSU8zWXFPSGtuL3NwazRlc1Fub2E2?=
- =?utf-8?B?c0xwVlZWRDJLQTNZL0dOb3dpUUZTQ2ZId1grNXovbTQ3aTBOT2IwSk9tRWRl?=
- =?utf-8?B?Z0ZpYVB0bUpidTZXS1dHYnB6NUVFY1k4Y3hHZEFYSURzalh0a0xucnlUS1Jt?=
- =?utf-8?B?TUZwVC9mdjdtM21JU2FVcDAyTUFEWTV5a3NpRWtnRVY5UW9xandKSFR2Zk5N?=
- =?utf-8?B?MEpuM3NHQkhETWltWFRzbDZqZXJQd0VzMFpnYktKVitocDJxQU9Fdlo0SzI0?=
- =?utf-8?B?VEZPckVFUlFoZjVWZjRWUUEwUVNDM0dTaVhwM2Q5ZldYUmljdy9jY0hBeEtz?=
- =?utf-8?B?d2xmZXRLek1tc09XTFhkRU1RbTZlK1U5NjVaSkhFdU5ycERvSDVPVVZuWVN4?=
- =?utf-8?B?UnAzNWNreGZBelRySnZmempIcWNvVXp4VHdvWVQvM3hRZTAvUWxIOXVZVFhz?=
- =?utf-8?B?Wmpnbk40blFpeTU0YjMrQ2RtTW9MMGxlL3BYc0tucGl0YmFiS3c0VHIzd3BZ?=
- =?utf-8?B?UHRBbGwyL0NrQW94eGJBSXl6dUdCd05XK3NDZ24vVkdjR0EwSlJNY3VMU0Uz?=
- =?utf-8?B?UlRPdEYwZzdjK25hRVJ2RmJnOE9ZOEZldjJIMHFQTjBkZDRJeVYyaytGeEtl?=
- =?utf-8?B?RWdLL3QyNlRoTFpSUDRHTHdJcGtKbUpaOGlwaXM3eXRyTjRjLzRWWGRoRktD?=
- =?utf-8?B?eHgzU1h2d2ZqcjFXV3BLZy9XUGgwSjluUXpaUFhmNzNoN1JTRXpSclJ0SWVI?=
- =?utf-8?B?ZVkxb0pSUmJraXB6MHR2UldEMyt5S2VEWk9iT1EvV2I3akE3WStlVzZodjNZ?=
- =?utf-8?B?dnlwak8wMFk2QXFBY0FiK1U3SzZGTU4vVTZGSnR4dUhaOG9zWE1QVjNOcDl5?=
- =?utf-8?B?cDFjUGU2Y3dGcWc0NXNxdU5lNWJRQW15aGRIRnp6bUtobEorWmRlMUk2ajBF?=
- =?utf-8?B?TWV0Y2x2L3I1L1ZGeWVmVHFtUGZTblUzNjIrendScSs0YkNHZGc0MFhpYlpS?=
- =?utf-8?B?LytJUy8zbUJrNnB5enlXd2hBNzg1blQyMTg1S2FoTWNubDVOM0V2RVRMUUlo?=
- =?utf-8?B?ZCtEd092dXludHdSdjVGZERIWlhYYmR6UnlmdW9XYWEybjRwQ0oxbVZVYW0y?=
- =?utf-8?B?ZkdlanBDMVZmZDgwMVNLSWVDVVJrc0pjUjFrNUEyRXZPSzN5R3YzcG54N1NI?=
- =?utf-8?B?WEtrRFN3UDdXaGk5Rmk0SFM4Y1E1Y0w1ZzZaNFBFMTlEWkpHMlJjQzNhSlo2?=
- =?utf-8?Q?Lavbki8n7CUEy8CKoU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnVTUUNHTndPSEdDOWllWEdqQStjSHRmWWVSWGRhTHl2a1JWZ2IzbkdHZmw2?=
- =?utf-8?B?YjBWUDY2dDZleU1PU2paQ0Z5TUlydTFRc1pEVFJteE02cWFPY21xYTRBV2lZ?=
- =?utf-8?B?NnJTMjJkelJvdTRYVE51SWx1QVpWUmNCMWFQZ0JEeXdtR1VnYVl3bnYrK045?=
- =?utf-8?B?K3M1MDE1WExHQ2d5eWpsMzdSRW5EWlRXR0FsTEVPUkFpd3VvRlFibld6YTlP?=
- =?utf-8?B?MmhkbGRiVk5VS1grY1cwbkpEYnArQ242QWFYNkZhVzhObFVNcUlmWTBycXdt?=
- =?utf-8?B?WnNDOWFTR3pLbE9aaFU2bitISVNuNVVSZjZnR2ttZUlLRUZ3aFcrTjgrcjg0?=
- =?utf-8?B?SEhBdU5DQUR6UkgyZFptVFhWOC9kNVdvMC9zYXFBbTRWTGpqQXRJaG81dUxF?=
- =?utf-8?B?MkxSeGkyQ1BPRWJxVm5tLzNTdWRLK2pQM2JFai9xbWZJMCs1bjlFMXZyaVBI?=
- =?utf-8?B?b2NUOGdJTWFzYU52anRUZS9YZk5ZRitmTEU1eGkrSmpSRFFFZGdHcit5Wnkv?=
- =?utf-8?B?MmErbGVnRlM2YWRDVStJLzhRdG8yRlZaMEJGOFdDZm1VL00zZ1NaTW91R0Vz?=
- =?utf-8?B?UzRIZ2NlU0ZBc1NNS3JKNCtZNFZua1NqQ1Y3ZU5FbU5kelozdWhRbVNxZm9D?=
- =?utf-8?B?b3FwRGJwZ0ZuNHBFeEN4N2UybzAwaHRZNlU3ZS9IcVhhNG9SZkZPOWdldDBh?=
- =?utf-8?B?ajBqdm9uOHd0VmlWSlg2WUs5bzZtVEF1V2JLVHpYT3dyeHBhZlV5NTE3Vm04?=
- =?utf-8?B?blZKT2s3YXptdnNQaHd1Tm1kTXVvUFRSc01yQzJDWTlsV0l3dzQ3b05hOWxy?=
- =?utf-8?B?b0xiZjJ4OElXNTc0dXpYMC93cWFydXpyZVVmRFl4YS9qcDlTNmoxM3F5dFZr?=
- =?utf-8?B?MnNYbDE5UjJhRkFsZWtnWW1qdUNvUk4weE5JMHBLdUJOcE1INXBpMkx1VUl5?=
- =?utf-8?B?QjVyTXdqaHNmMDdzaFpVKzdLQ2ZhQW5ZZTYzREgrSnA4Sjk2V1pBZmdpUUdp?=
- =?utf-8?B?MFVEd2ZpTlJTS2FxbHlVNHd2R3BXOE05enN3cm5UK2Z6bVdzZXArTzNhb3l2?=
- =?utf-8?B?VlR0cllhLzBQUnFFaEQrUXhlcWVYQml6QVlyZUhGZWZFTXBvM1ZpTXl4VlAr?=
- =?utf-8?B?N2hic0Y0UG5qR1VGR1d6Rm1PMjkzckJJTThibk42THhNOWhTbWM1TWZ6bHYv?=
- =?utf-8?B?U2FzOGU1dkZkb0t3RmxRTW1pWnl4NGVvdm0xeDdEc3pxS0xmbHRXeDZTMHVr?=
- =?utf-8?B?ejgvQk9XN3k2TWFIeURNNmc2NzQ0TkwyUEJwczNZekZyRVdTaVBPa2RJdnBG?=
- =?utf-8?B?WHdmeGNGMHZHZTFHQkVDYlp0NVpscVkwczlXVGlLOUpzcnZiYW1lUThYcGU5?=
- =?utf-8?B?SXpFazJNR2RuaGVPRG5aZmFNS21NSTRyREdLTm04SzRmeTRGamNselhCdnB3?=
- =?utf-8?B?ZnFpWnVNQkQvVjRZbXFZUmd6NlVkdVRxMnpuMmp3UFMvUGF1NUZHbEJaYlZF?=
- =?utf-8?B?VDhwc1JoaG1JMW5FZHYxWEVmMDRIK0dwbHY3bTBITkZYZVFLbUJIUSs1c3Zo?=
- =?utf-8?B?clA1UmZHTEJ6RVc1MWlHOUpvRVc4RCtPUTg3ckY5MlNhSnd6WEgxbmNMUlRq?=
- =?utf-8?B?R0laZ0VzNms0VWpQZU1lbWZ0T090UnF4bDNLbVUydHhhckxkUHhxTEtKRnI5?=
- =?utf-8?B?ZjJsOXAwQ09taUtFL1l2YnFDd1VEU2FKWGt0NUozc0dpc3VSOWhpR205Vjgy?=
- =?utf-8?B?ZHkxaVQ0VElLNXUvTllKblFXV3RsQUhTdnFiL2QyMFFjWmk0WXlBOURSM2dO?=
- =?utf-8?B?QTh5VWFwN2FHN0Z1WmFiNFNSdG5FVFl0ZFVhM2VhY2M1OHpFeGdPZlVEeXNy?=
- =?utf-8?B?YlNBcm16MFZ3UlBnYVpDN2RCbzFxdXpTL3l1TUE5WW40NFdXRGorSytuZXBj?=
- =?utf-8?B?TnBKeEpFUGhJL2NiWm5aU25jb2YyWkZydFdVeHBkdGt6WUcwVUJYQzYxUU5E?=
- =?utf-8?B?YTVNZ0RPVUpnb1ZBT2o4WERKb0MrakJ6Ky9nbnRGdllPSVoxMThsSlZGOUFE?=
- =?utf-8?B?c3Z2MFNLKzBhZ3FCWkVnMXR4ZXVhbXFZdzJySVRsR2swVEk4TnJIdzBWK2xP?=
- =?utf-8?Q?AeoRH29pfpnKgiZDDQofG3Sk5?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 004106c4-2369-47ad-198d-08dcc145f059
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 18:28:51.0827
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tUqQwJcunxp9STjaK1W6DTZ6xmBNLnGZDjrSIKcdw6dsEAB7dVh8wwOFPC+2CV7I6Ck6Xn6dXk7EUpxJXbMPXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7875
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/1/2024 11:52, Bert Karwatzki wrote:
-> Since linux-next-20240801 starting Xorg/xfce4 fails on my MSI Alpha15 Laptop.
-> I bisected this to the following commit and reverting this in linux-next-20240801
-> fixes the issue for me. Gnome (with Xwayland) works as usual.
-> 
-> 9d8c094ddab05db88d183ba82e23be807848cad8 is the first bad commit
-> commit 9d8c094ddab05db88d183ba82e23be807848cad8
-> Author: Mario Limonciello <mario.limonciello@amd.com>
-> Date:   Wed Jul 3 00:17:22 2024 -0500
-> 
->      drm/amd: Add power_saving_policy drm property to eDP connectors
-> 
->      When the `power_saving_policy` property is set to bit mask
->      "Require color accuracy" ABM should be disabled immediately and
->      any requests by sysfs to update will return an -EBUSY error.
-> 
->      When the `power_saving_policy` property is set to bit mask
->      "Require low latency" PSR should be disabled.
-> 
->      When the property is restored to an empty bit mask ABM and PSR
->      can be enabled again.
-> 
->      Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->      Reviewed-by: Leo Li <sunpeng.li@amd.com>
->      Signed-off-by: Hamza Mahfooz <hamza.mahfooz@amd.com>
->      Link: https://patchwork.freedesktop.org/patch/msgid/20240703051722.328-3-mario.limonciello@amd.com
-> 
->   drivers/gpu/drm/amd/amdgpu/amdgpu_display.c       |  4 ++++
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++-----
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 ++
->   3 files changed, 53 insertions(+), 5 deletions(-)
-> 
-> Bert Karwatzki
+On Mon Aug 19, 2024 at 1:39 PM BST, Datta, Shubhrajyoti wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+>
+> > -----Original Message-----
+...
+> >
+> > -static const struct versal_clk_data versal_data =3D {
+> > -       .is_versal      =3D true,
+> > +static const struct clk_wzrd_data version_6_0_data =3D {
+> > +       .is_versal              =3D false,
+> > +       .supports_monitor       =3D true,
+> >  };
+>
+> The clocking wizard monitor support is a design choice.
+> This will enable it for all the designs.
 
-Thanks for reporting this.  It's an odd issue!
-I could reproduce it using SDDM (which uses X by "default").
+But the interrupt still has to be described in devicetree for the auxiliary=
+/UIO
+device to be registered. The interrupt is only used by the core for the clo=
+ck
+monitor functionality, so if that functionality is not built into the hardw=
+are,
+then the interrupt description should be omitted. Does that not sound sensi=
+ble
+to you?
 
-Just to close the loop on it, it's been reverted for other reasons:
-https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/717b432b6d55e1dcefcb5e2ec315bf66b6ab8c54
+>
+> >
+> > +static const struct clk_wzrd_data versal_data =3D {
+> > +       .is_versal              =3D true,
+> > +       .supports_monitor       =3D true,
+> > +};
+>
+>
+> Same here.
 
-When something comes back in a different form I'll double check X again too.
+Same reasoning as above.
+
+Thanks for the review!
+Harry
+
+>
+> > +
+> > +static void clk_wzrd_unregister_adev(void *_adev) {
+> > +       struct auxiliary_device *adev =3D _adev;
+> > +
+> > +       auxiliary_device_delete(adev);
+> > +       auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static int clk_wzrd_setup_monitor(struct platform_device *pdev) {
+> > +       struct device *dev =3D &pdev->dev;
+> > +       const struct clk_wzrd_data *data =3D device_get_match_data(dev)=
+;
+> > +       struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
+> > +       struct auxiliary_device *adev =3D &clk_wzrd->adev;
+> > +       int ret;
+> > +
+> > +       if (!data || !data->supports_monitor)
+> > +               return 0;
+> > +
+> > +       adev->name =3D "clk-mon";
+> > +       adev->dev.parent =3D dev;
+> > +       adev->dev.platform_data =3D (__force void *)clk_wzrd->base;
+> > +
+> > +       ret =3D auxiliary_device_init(adev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       ret =3D auxiliary_device_add(adev);
+> > +       if (ret) {
+> > +               auxiliary_device_uninit(adev);
+> > +               return ret;
+> > +       }
+> > +
+> > +       return devm_add_action_or_reset(dev, clk_wzrd_unregister_adev,
+> > +adev); }
+> > +
+> >  static int clk_wzrd_register_output_clocks(struct device *dev, int
+> > nr_outputs)  {
+> >         const char *clkout_name, *clk_name, *clk_mul_name;
+> >         struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
+> >         u32 regl, regh, edge, regld, reghd, edged, div;
+> > -       const struct versal_clk_data *data;
+> > +       const struct clk_wzrd_data *data;
+> >         unsigned long flags =3D 0;
+> >         bool is_versal =3D false;
+> >         void __iomem *ctrl_reg;
+> > @@ -1170,6 +1216,10 @@ static int clk_wzrd_probe(struct platform_device
+> > *pdev)
+> >                 return -EINVAL;
+> >         }
+> >
+> > +       ret =3D clk_wzrd_setup_monitor(pdev);
+> > +       if (ret)
+> > +               return dev_err_probe(&pdev->dev, ret, "failed to setup
+> > + monitor\n");
+> > +
+> >         ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs)=
+;
+> >         if (ret)
+> >                 return ret;
+> > @@ -1204,7 +1254,7 @@ static const struct of_device_id clk_wzrd_ids[] =
+=3D {
+> >         { .compatible =3D "xlnx,versal-clk-wizard", .data =3D &versal_d=
+ata },
+> >         { .compatible =3D "xlnx,clocking-wizard"   },
+> >         { .compatible =3D "xlnx,clocking-wizard-v5.2"   },
+> > -       { .compatible =3D "xlnx,clocking-wizard-v6.0"  },
+> > +       { .compatible =3D "xlnx,clocking-wizard-v6.0", .data =3D
+> > + &version_6_0_data },
+> >         { },
+> >  };
+> >  MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
+> > --
+> > 2.46.0
+> >
+
+
 
