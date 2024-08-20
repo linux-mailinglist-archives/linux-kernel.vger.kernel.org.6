@@ -1,81 +1,104 @@
-Return-Path: <linux-kernel+bounces-294502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D987958E78
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:12:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FE4958E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4E21C22019
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98D8284B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A828A15920E;
-	Tue, 20 Aug 2024 19:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BE215E5CA;
+	Tue, 20 Aug 2024 19:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ashPc+o5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84B014C5A3;
-	Tue, 20 Aug 2024 19:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jSmrmKBi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508C114C5A3;
+	Tue, 20 Aug 2024 19:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724181133; cv=none; b=uA8Ctmxw7Hs/0mklH0FgU7ZSESfKNYyYJrvsmbGCYFBM3Dyqv9P4SCzcrp+ziONXW9yC5YHinbizstXc6RgATsZkKHbj6IwK7XLebJ1qGVOjlyWsGAmWhBSbb6ctjRqT+v/TDOwKGqoTTsSftjASn+60aWTG81xDUc6D4cWFuEs=
+	t=1724181139; cv=none; b=nXb/+wa3kHO3jOcF3vYr5nGWrbLbAAzbLwbBBfSZhXSHBELEhyRGgkhcIca9Lwx/RoIWFZ+8tBwHq9IQ1F7s/yG9P5TUhjUUEgmmfaCsw5PnSNOSkUPY1MIvPch0E8/LS+hZNcrFAhOklJCpp4ESN5ZZlZpP3OfA6K8RwvOaf1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724181133; c=relaxed/simple;
-	bh=eGP/kMNCE889EGSPnsUMDPXlztvShLSli+HTFbfFgd8=;
+	s=arc-20240116; t=1724181139; c=relaxed/simple;
+	bh=CQgWYc56r5iE9h8k6AEkA3iGag7hNM9c1UA9/XpCiLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GphoY+i5OGKBDiuw6voZsyDlbWKHP2Xz7L+FPIb8WXA+BETe/1m2O7HpfADIi7xY2fWEi/y3rJg2oL7cX6FO66pdrzLDm11OEpobYJneCTUKm9zsv24bLrqxxuweoUGRwKeLMp9yFe6dO5FD2l+wAVSMqc2dVwZsMxD/xRM/pMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ashPc+o5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E0CC4AF09;
-	Tue, 20 Aug 2024 19:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724181132;
-	bh=eGP/kMNCE889EGSPnsUMDPXlztvShLSli+HTFbfFgd8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UD+/uR0qV8FWCvaiaP2U3hjtK0bbFSeBnNdajUToz466unoayBfNVyz/M5IVECkN0bH/H+GHQIj0BZDLXXkedy5SKqHOEk5IOxCp0ThH3TMGRupuutJHAymwPr8T2xnduFc1LLvdGOsg7O2DfNEsY6RdbIC0BPrnPW+tSJezunY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jSmrmKBi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 03BCC20B7165; Tue, 20 Aug 2024 12:12:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 03BCC20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724181132;
+	bh=OQg0JXOAKQX95k93uaZW7X/palY8JO7oGBXbVZmigB4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ashPc+o5y1+gWtdEmwMfIrAgyOWei+pRtS2kKoCyZeo3NwMohLSMkKxZ1v7kQYs3a
-	 DvC7z3k2hGg4mJr6L8KHybQPsN9A1XqT1Rx2iyTsH2N5leCjVSjZbQCVt3L0sOLzsD
-	 gaiYrxvZw/S5AWoKANjVHLPJ0xcTMaJOJGnLdlq6u8Yd5liyGmmAVcc7Ps2smGzgZI
-	 QPxxnnVZJgxO+u8ZiUkMD6wjAO3sC7ApT6u/I7Ac/ACQ+VysDobn55QmhcJwa8lwQl
-	 RqxzCgeWXrEB8vrK62jeT6owOZAGjjuRgkYY2S7J60FhsdioNjLEERWdeMlSFZKfcC
-	 aXWE8WJsU7dCQ==
-Date: Tue, 20 Aug 2024 21:12:08 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/9] Use wait_var_event() instead of I_DIO_WAKEUP
-Message-ID: <20240820-rache-gerochen-aad94052320e@brauner>
-References: <20240819053605.11706-1-neilb@suse.de>
- <20240819053605.11706-5-neilb@suse.de>
- <20240820-ausschalten-lider-e30db5ffbde3@brauner>
+	b=jSmrmKBipkrhLyX6+tlRxvz/eRUfuiM9wGNW8tp63kBO8g3R/262/eOSnIbV0aVr9
+	 RpJn2JHd0qCu9ZukAHw6SvRWfKXH5erwerr45Qmrkf03MtBNBYnUL2b9eEY99JflCD
+	 KSpIOhBBK0FTUKbM4AtrhMjgYJZ4wx/2SkDTjTbM=
+Date: Tue, 20 Aug 2024 12:12:11 -0700
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>,
+	Erni Sri Satya Vennela <ernis@microsoft.com>,
+	KY Srinivasan <kys@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] net: netvsc: Update default VMBus channels
+Message-ID: <20240820191211.GA15387@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1723654753-27893-1-git-send-email-ernis@linux.microsoft.com>
+ <20240815090856.7f8ec005@kernel.org>
+ <CH2PPF910B3338DB4798D086CB50600C2FBCA802@CH2PPF910B3338D.namprd21.prod.outlook.com>
+ <20240816085241.326978a6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820-ausschalten-lider-e30db5ffbde3@brauner>
+In-Reply-To: <20240816085241.326978a6@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Tue, Aug 20, 2024 at 09:22:33AM GMT, Christian Brauner wrote:
-> On Mon, Aug 19, 2024 at 03:20:38PM GMT, NeilBrown wrote:
-> > inode_dio_wait() is essentially an open-coded version of
-> > wait_var_event().  Similarly inode_dio_wait_interruptible() is an
-> > open-coded version of wait_var_event_interruptible().
-> > 
-> > If we switch to waiting on the var, instead of an imaginary bit, the
-> > code is more transparent, is shorter, and we can discard I_DIO_WAKEUP.
-> > 
-> > Signed-off-by: NeilBrown <neilb@suse.de>
-> > ---
+On Fri, Aug 16, 2024 at 08:52:41AM -0700, Jakub Kicinski wrote:
+> On Thu, 15 Aug 2024 19:23:50 +0000 Haiyang Zhang wrote:
+> > Your suggestion on netif_get_num_default_rss_queues() is not ignored.
+> > We discussed internally on the formula we used for the num_chn, and
+> > chose a similar formula for higher number of vCPUs as in 
+> > netif_get_num_default_rss_queues().
+> > For lower number of vCPUs, we use the same default as Windows guests,
+> > because we don't want any potential regression.
 > 
-> Neil, I've sent a patch for this last week already removing
-> __I_DIO_WAKEUP and it's in -next as
-> 0009dc756e81 ("inode: remove __I_DIO_WAKEUP"). So you can drop this
+> Ideally you'd just use netif_get_num_default_rss_queues()
+> but the code is close enough to that, and I don't have enough
+> experience with the question of online CPUs vs physical CPUs.
+> 
+> I would definitely advise you to try this on real workloads.
+> While "iperf" looks great with a lot of rings, real workloads
+> suffer measurably from having more channels eating up memory
+> and generating interrupts.
+> 
+> But if you're confident with the online_cpus() / 2, that's fine.
+> You may be better off coding it up using max:
+> 
+> 	dev_info->num_chn = max(DIV_ROUND_UP(num_online_cpus(), 2),
+> 				VRSS_CHANNEL_DEFAULT);
+Due to hyper-threading, #of physical cores = online CPUs/2.
+Therefore, netif_get_num_default_rss_queues() returns 
+#of physical cores/2 = online CPUs/4.
 
-Today's the day of getting things slightly wrong it seems...
-2726a7a8477d8c0 is what I meant.
+In my testing, the throughput performance was similar for both the
+configurations even for higher SKUs.To utilize lesser CPU resources, 
+will be using netif_get_num_default_rss_queues() for the next version 
+of the patch.
+ 
 
