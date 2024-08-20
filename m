@@ -1,222 +1,216 @@
-Return-Path: <linux-kernel+bounces-294179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F022958A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:56:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B4B958A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632BE1C21B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FC628B59E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F691917FA;
-	Tue, 20 Aug 2024 14:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F881922CB;
+	Tue, 20 Aug 2024 14:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YblJ49JX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgK1iQh4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3686B194C71
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351A2190477;
+	Tue, 20 Aug 2024 14:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165731; cv=none; b=gOKXxyuSvfxxT9QpgZabbvQxBTIZXuEr1Ed9w3vzuFuZF979EAJ79o1AmDbnb8NzUyvOKqh+XwKpxBoxWslt/q2bxO+SYemD/Wrlf5zI/1iyD94MRBTFqpGCuxVKmGVXgSq/dZgdVFAX0AybNNzxv6A6Rxv3q1OwYJnJDWkj8oo=
+	t=1724165753; cv=none; b=fnrzFbQDA7bmSWjZJc+FztsquCLtEVAT/958OwI4QpmmppGTWRrKFbhH6jMQxh5uXArM8LCXaF4Bsuc9YWGNyGD4dPsa1MupzO9U7dlqIEwLtd2BQPmb/ixSW/OXMSPreRIFHqKAFilHdYgVB7al5lkRf2RBiPaq/MnNyOh9DJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165731; c=relaxed/simple;
-	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EcJ1fjytytLELQZTQCOIPnwhOLSxElK31s6R/d6ZVDvnXxG/8hyNVq//qfVRAOasDc21wSrihZ/xvYMRaFmCEBqO7vvTjm9txw0brHIKWADauYXZJXLy0MuxdK90k/YfSONsr9XiqhKctyg70qwdsgYTvUQM2o2pA0eAZro3oiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YblJ49JX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAD9C4AF10;
-	Tue, 20 Aug 2024 14:55:29 +0000 (UTC)
+	s=arc-20240116; t=1724165753; c=relaxed/simple;
+	bh=0ZOu3inMv6TGg0c6P8Xpu2xNmZ613jQlAGBpZEN8z08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=srw/aj9W21t1OCqdPrHL0J7sTgYr12E7jzfGyNB2LOz9u1oqjlt+CwC78nQ7On7LyS/toLVQZxgGvbPLObqix0v5aEwfaMlLF5pyPmza2NgFeQk32Xy2ar7zHvvyjR7SBca0ia0hqpKAhgOsdOhdUsAvuO8xYGQZHwwbnNGc6h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgK1iQh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DD2C4AF13;
+	Tue, 20 Aug 2024 14:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724165731;
-	bh=8r7Ek2cBap+An9MVHAkEPVDijkmUphd6VWrszUU4RwQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YblJ49JXdWtBgNfQzuHRbk01AICOtNqo7vwGAIbemBa+ZNY4/To8eX+2gmWi9X1Ic
-	 9TPbig+UDeMQFg7r4BkwfGITb200seu+riycoGcZdoB2dyfVIJY79h29F07eKz3+i5
-	 KymuMWTHAWX592a6KTccgYtbmbUzrDaoCl60PRQfX8eEOVsWFSd8MsWPfzsgwxxhYe
-	 4lVBAUQQrTzORONaVz3x0X8K9glpIxykNK5wneYoikqYf/xTQZB8EJvHmjW6l1bfGi
-	 qnee833yN/LoNW0xMJCwFEY97+Q6mw59TeOFSAH33soob10W8/60z5zP6gtYCMn2C2
-	 W8M8LrbfpJ2+A==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 9/9] f2fs: get rid of page->index
-Date: Tue, 20 Aug 2024 22:55:07 +0800
-Message-Id: <20240820145507.1372905-9-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240820145507.1372905-1-chao@kernel.org>
-References: <20240820145507.1372905-1-chao@kernel.org>
+	s=k20201202; t=1724165753;
+	bh=0ZOu3inMv6TGg0c6P8Xpu2xNmZ613jQlAGBpZEN8z08=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FgK1iQh4RWOwOelEdQ9jeGUfZx+WnxkwYkczIBVkqVFn+rL0ri4YWp2O6ORwfc1ea
+	 CL5XwX3vt8+v1vt9XBn/xqqX5AhV/lYdYFYW/MhJV1YakNKndJoR7TAzRpelgDBMjk
+	 xIb4elNsp7Zs+v2W0bs4IaEoIPXsP1iDO3HYsulZIyRhKqmvTFxmgEutE0c3dc3Ulz
+	 /R2zGjFVEbGOYJlQ8VEU7kvDApqiGy0WgE7DdcXNvpK28+WdjUnFADogi1IQNJwp6T
+	 es6qiLQTaBjLi2C1nJiI7pWy8bn23WbY7CIF1qccAK0hWshPl4i2ncl0NH9sSBvsTs
+	 pUVuhK1V/UkXg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d5c324267aso3280473eaf.0;
+        Tue, 20 Aug 2024 07:55:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHg866YW+kMQRwYzxlduzvqYY2VnHjkJY5odGpyI6dasqtsDAABSXkJHwaaU+WGFgUkPYY5WDfuUfex3Hb@vger.kernel.org, AJvYcCVHBjMs9xkQ7xElXPsivEQqmbdKXpd0dN5ewkW31/HaZXyxfYG1w0fRjbGN6fI0EPyehkISCHEByKCe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxcd3O/mrVBxDRoZdsR2cfC4wXTq2MfHZ2IULlwo2PgzJ0wRtN
+	G0UTvrbnI5t28pLPzfEBell4dJvAL8eim/wLNNgc8pOkZw2qSLNYotIQaORkdin8sja58TZ/mD5
+	6Kf1OMZEAJm50VXxygTR0hjzzWnE=
+X-Google-Smtp-Source: AGHT+IERmvMStpESs9VrqArXN+cb5EeE1Fq/0gAmtGZ11naWDvaXrGCSH5qncYXRCTOyrCOPzq+Yoeo8p8V7jLtU6NI=
+X-Received: by 2002:a05:6820:1a0d:b0:5c4:e8d:58be with SMTP id
+ 006d021491bc7-5da98896595mr14771765eaf.3.1724165752262; Tue, 20 Aug 2024
+ 07:55:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240812054647.1194716-1-jiaqing.zhao@linux.intel.com> <20240812054647.1194716-2-jiaqing.zhao@linux.intel.com>
+In-Reply-To: <20240812054647.1194716-2-jiaqing.zhao@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 20 Aug 2024 16:55:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hPtvVRM=Te2oPzCvE3tOy_rXYGJwaoQOfNc71z+pmkvA@mail.gmail.com>
+Message-ID: <CAJZ5v0hPtvVRM=Te2oPzCvE3tOy_rXYGJwaoQOfNc71z+pmkvA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ACPICA: Detect FACS in reduced hardware build
+To: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+Cc: Robert Moore <robert.moore@intel.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert to use folio, so that we can get rid of 'page->index' to
-prepare for removal of 'index' field in structure page [1].
+On Mon, Aug 12, 2024 at 7:47=E2=80=AFAM Jiaqing Zhao
+<jiaqing.zhao@linux.intel.com> wrote:
+>
+> According to Section 5.2.10 of ACPI Specification, FACS is optional
+> in reduced hardware model. Enable the detection for "Hardware-reduced
+> ACPI support only" build (CONFIG_ACPI_REDUCED_HARDWARE_ONLY=3Dy) also.
+>
+> Link: https://github.com/acpica/acpica/commit/ee53ed6b5452612bb44af542b68=
+d605f8b2b1104
+> Signed-off-by: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+> ---
+>  drivers/acpi/acpica/acglobal.h |  6 +-----
+>  drivers/acpi/acpica/tbutils.c  |  5 +----
+>  drivers/acpi/acpica/utxfinit.c | 24 ++++++++++++------------
+>  include/acpi/acconfig.h        |  1 -
+>  4 files changed, 14 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/acpi/acpica/acglobal.h b/drivers/acpi/acpica/acgloba=
+l.h
+> index f4c90fc99be2..309ce8efb4f6 100644
+> --- a/drivers/acpi/acpica/acglobal.h
+> +++ b/drivers/acpi/acpica/acglobal.h
+> @@ -29,11 +29,7 @@ ACPI_INIT_GLOBAL(u32, acpi_gbl_dsdt_index, ACPI_INVALI=
+D_TABLE_INDEX);
+>  ACPI_INIT_GLOBAL(u32, acpi_gbl_facs_index, ACPI_INVALID_TABLE_INDEX);
+>  ACPI_INIT_GLOBAL(u32, acpi_gbl_xfacs_index, ACPI_INVALID_TABLE_INDEX);
+>  ACPI_INIT_GLOBAL(u32, acpi_gbl_fadt_index, ACPI_INVALID_TABLE_INDEX);
+> -
+> -#if (!ACPI_REDUCED_HARDWARE)
+> -ACPI_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS);
+> -
+> -#endif                         /* !ACPI_REDUCED_HARDWARE */
+> +ACPI_INIT_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS, NULL);
+>
+>  /* These addresses are calculated from the FADT Event Block addresses */
+>
+> diff --git a/drivers/acpi/acpica/tbutils.c b/drivers/acpi/acpica/tbutils.=
+c
+> index 15fa68a5ea6e..356700349b45 100644
+> --- a/drivers/acpi/acpica/tbutils.c
+> +++ b/drivers/acpi/acpica/tbutils.c
+> @@ -18,7 +18,6 @@ ACPI_MODULE_NAME("tbutils")
+>  static acpi_physical_address
+>  acpi_tb_get_root_table_entry(u8 *table_entry, u32 table_entry_size);
+>
+> -#if (!ACPI_REDUCED_HARDWARE)
+>  /***********************************************************************=
+********
+>   *
+>   * FUNCTION:    acpi_tb_initialize_facs
+> @@ -37,8 +36,7 @@ acpi_status acpi_tb_initialize_facs(void)
+>         struct acpi_table_facs *facs;
+>
+>         if (acpi_gbl_FADT.Xfacs &&
+> -                  (!acpi_gbl_FADT.facs
+> -                   || !acpi_gbl_use32_bit_facs_addresses)) {
+> +           (!acpi_gbl_FADT.facs || !acpi_gbl_use32_bit_facs_addresses)) =
+{
+>                 (void)acpi_get_table_by_index(acpi_gbl_xfacs_index,
+>                                               ACPI_CAST_INDIRECT_PTR(stru=
+ct
+>                                                                      acpi=
+_table_header,
 
-[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
+I'm not sure how this change is related to the rest of the patch.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/compress.c |  2 +-
- fs/f2fs/data.c     | 12 ++++++------
- fs/f2fs/dir.c      |  3 ++-
- fs/f2fs/inode.c    |  3 ++-
- fs/f2fs/node.c     |  4 ++--
- fs/f2fs/segment.c  |  3 ++-
- 6 files changed, 15 insertions(+), 12 deletions(-)
+It doesn't appear to be present in the original commit pointed to by
+the Link tag.
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 67bb1e2e07a4..163ad0d7d495 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -881,7 +881,7 @@ static bool cluster_has_invalid_data(struct compress_ctx *cc)
- 		f2fs_bug_on(F2FS_I_SB(cc->inode), !page);
- 
- 		/* beyond EOF */
--		if (page->index >= nr_pages)
-+		if (page_folio(page)->index >= nr_pages)
- 			return true;
- 	}
- 	return false;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e69097267b99..c6d688208f8b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -354,7 +354,7 @@ static void f2fs_write_end_io(struct bio *bio)
- 		}
- 
- 		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
--					page->index != nid_of_node(page));
-+				page_folio(page)->index != nid_of_node(page));
- 
- 		dec_page_count(sbi, type);
- 		if (f2fs_in_warm_node_list(sbi, page))
-@@ -703,7 +703,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	bio = __bio_alloc(fio, 1);
- 
- 	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
--			       fio->page->index, fio, GFP_NOIO);
-+			page_folio(fio->page)->index, fio, GFP_NOIO);
- 
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
- 		bio_put(bio);
-@@ -802,7 +802,7 @@ static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
- 							    fio->new_blkaddr));
- 			if (f2fs_crypt_mergeable_bio(*bio,
- 					fio->page->mapping->host,
--					fio->page->index, fio) &&
-+					page_folio(fio->page)->index, fio) &&
- 			    bio_add_page(*bio, page, PAGE_SIZE, 0) ==
- 					PAGE_SIZE) {
- 				ret = 0;
-@@ -902,7 +902,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (!bio) {
- 		bio = __bio_alloc(fio, BIO_MAX_VECS);
- 		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
--				       fio->page->index, fio, GFP_NOIO);
-+				page_folio(fio->page)->index, fio, GFP_NOIO);
- 
- 		add_bio_entry(fio->sbi, bio, page, fio->temp);
- 	} else {
-@@ -995,13 +995,13 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
- 			      fio->new_blkaddr) ||
- 	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
--				       bio_page->index, fio)))
-+				page_folio(bio_page)->index, fio)))
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
- 		io->bio = __bio_alloc(fio, BIO_MAX_VECS);
- 		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
--				       bio_page->index, fio, GFP_NOIO);
-+				page_folio(bio_page)->index, fio, GFP_NOIO);
- 		io->fio = *fio;
- 	}
- 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 5fcc952107e9..1136539a57a8 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -842,6 +842,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	struct	f2fs_dentry_block *dentry_blk;
- 	unsigned int bit_pos;
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
-+	pgoff_t index = page_folio(page)->index;
- 	int i;
- 
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
-@@ -867,7 +868,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	set_page_dirty(page);
- 
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
--		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
-+		!f2fs_truncate_hole(dir, index, index + 1)) {
- 		f2fs_clear_page_cache_dirty_tag(page_folio(page));
- 		clear_page_dirty_for_io(page);
- 		ClearPageUptodate(page);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 5d7e4c7f5969..b2d5c3ef8e24 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -174,7 +174,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
- 
- 	if (provided != calculated)
- 		f2fs_warn(sbi, "checksum invalid, nid = %lu, ino_of_node = %x, %x vs. %x",
--			  page->index, ino_of_node(page), provided, calculated);
-+			  page_folio(page)->index, ino_of_node(page),
-+			  provided, calculated);
- 
- 	return provided == calculated;
- }
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f5e5abce695b..59b13ff243fa 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -919,7 +919,7 @@ static int truncate_node(struct dnode_of_data *dn)
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
--	index = dn->node_page->index;
-+	index = page_folio(dn->node_page)->index;
- 	f2fs_put_page(dn->node_page, 1);
- 
- 	invalidate_mapping_pages(NODE_MAPPING(sbi),
-@@ -1869,7 +1869,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 	}
- 	if (!ret && atomic && !marked) {
- 		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
--			   ino, last_page->index);
-+			   ino, page_folio(last_page)->index);
- 		lock_page(last_page);
- 		f2fs_wait_on_page_writeback(last_page, NODE, true, true);
- 		set_page_dirty(last_page);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3bda3f707007..fafbb1cbcb57 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3564,7 +3564,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 		if (file_is_cold(inode) || f2fs_need_compress_data(inode))
- 			return CURSEG_COLD_DATA;
- 
--		type = __get_age_segment_type(inode, fio->page->index);
-+		type = __get_age_segment_type(inode,
-+				page_folio(fio->page)->index);
- 		if (type != NO_CHECK_TYPE)
- 			return type;
- 
--- 
-2.40.1
-
+> @@ -56,7 +54,6 @@ acpi_status acpi_tb_initialize_facs(void)
+>
+>         return (AE_OK);
+>  }
+> -#endif                         /* !ACPI_REDUCED_HARDWARE */
+>
+>  /***********************************************************************=
+********
+>   *
+> diff --git a/drivers/acpi/acpica/utxfinit.c b/drivers/acpi/acpica/utxfini=
+t.c
+> index 1915bec2b279..70ae0afa7939 100644
+> --- a/drivers/acpi/acpica/utxfinit.c
+> +++ b/drivers/acpi/acpica/utxfinit.c
+> @@ -120,6 +120,18 @@ acpi_status ACPI_INIT_FUNCTION acpi_enable_subsystem=
+(u32 flags)
+>          */
+>         acpi_gbl_early_initialization =3D FALSE;
+>
+> +       /*
+> +        * Obtain a permanent mapping for the FACS. This is required for =
+the
+> +        * Global Lock and the Firmware Waking Vector
+> +        */
+> +       if (!(flags & ACPI_NO_FACS_INIT)) {
+> +               status =3D acpi_tb_initialize_facs();
+> +               if (ACPI_FAILURE(status)) {
+> +                       ACPI_WARNING((AE_INFO, "Could not map the FACS ta=
+ble"));
+> +                       return_ACPI_STATUS(status);
+> +               }
+> +       }
+> +
+>  #if (!ACPI_REDUCED_HARDWARE)
+>
+>         /* Enable ACPI mode */
+> @@ -137,18 +149,6 @@ acpi_status ACPI_INIT_FUNCTION acpi_enable_subsystem=
+(u32 flags)
+>                 }
+>         }
+>
+> -       /*
+> -        * Obtain a permanent mapping for the FACS. This is required for =
+the
+> -        * Global Lock and the Firmware Waking Vector
+> -        */
+> -       if (!(flags & ACPI_NO_FACS_INIT)) {
+> -               status =3D acpi_tb_initialize_facs();
+> -               if (ACPI_FAILURE(status)) {
+> -                       ACPI_WARNING((AE_INFO, "Could not map the FACS ta=
+ble"));
+> -                       return_ACPI_STATUS(status);
+> -               }
+> -       }
+> -
+>         /*
+>          * Initialize ACPI Event handling (Fixed and General Purpose)
+>          *
+> diff --git a/include/acpi/acconfig.h b/include/acpi/acconfig.h
+> index d768d9c568cf..2da5f4a6e814 100644
+> --- a/include/acpi/acconfig.h
+> +++ b/include/acpi/acconfig.h
+> @@ -67,7 +67,6 @@
+>   *      General Purpose Events (GPEs)
+>   *      Global Lock
+>   *      ACPI PM timer
+> - *      FACS table (Waking vectors and Global Lock)
+>   */
+>  #ifndef ACPI_REDUCED_HARDWARE
+>  #define ACPI_REDUCED_HARDWARE           FALSE
+> --
+> 2.43.0
+>
+>
 
