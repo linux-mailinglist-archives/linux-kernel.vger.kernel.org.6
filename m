@@ -1,164 +1,133 @@
-Return-Path: <linux-kernel+bounces-294304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E84958BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5760958BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64C61C21B04
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:07:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1FE1F23373
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41711990B5;
-	Tue, 20 Aug 2024 16:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB66B19D07A;
+	Tue, 20 Aug 2024 16:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="epIHfuZo"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mBg+uRVy"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E918E345
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D433273176
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724170046; cv=none; b=ElounoQOEhczFEVk+g8mA715CaJYQkpMAJwlBv+daCT3tPVMOecbB9VH1l4MXRq8iMewde3n6TliWJYsgabNwoFAkUCqbz2lXe/WnXoEZhqzQvEitlyRFA2TLW66NTzCD5GONc8Wo74ER86/Kna6J3nn0zQDs5KzC7OL3R/txZk=
+	t=1724170327; cv=none; b=BvEGldI63Q9P8bICTeXPLZ4ZJ1tm9NQzGZfbkbsk6AL6TWn23mS4OBccOyYKlmZqcZw8MyPImm2gLVl9WiOGGR6VSS2Z7Nqynww565zTE87MC52iO3EmmpskXjeVf23Kr+mqqNtPjUVvO8uBie/z3WV2r1Sz2a4OrFqJfKX5kkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724170046; c=relaxed/simple;
-	bh=GuqNt/WKBwMOQjwuovf+qbKr3249vIBbAvbr+Cm3cLk=;
+	s=arc-20240116; t=1724170327; c=relaxed/simple;
+	bh=xDYkri/7jTuLqwePZwxb6rBZv38bm+WMZP8lwIWYY8s=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=O09O9D2+3U9L5HBbyhDkrrHUIQPvZk5+8Pr4mSWZgO9nfvmOh6bp8k0v6heJ1RAhxQuPW/esij6FF7uUYSI6UEpVm1KNiCmdTcEPnzMYCPiysfie+xS9GW6smhJ/4QMnSwqEYTejACql4HLApMPssjC5WZXlyjDOl4Gjyf1DWH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=epIHfuZo; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=dpWVCVYJmexnF9zwutVobmPQcu2NblaTqlZM3hvg6L3/FX4XNQX6cpy9qMHX5fe+77SL3Y4s26alUrKBF6Ww2p37u3xUTaCIOPzFO7yv0D1StRu/B5qrEKwP48LJuphp8WMI2DFPG2us/F0hrFBIW0dXeB+ydZcUIjd8c5zrRWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mBg+uRVy; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-201e24bd4d9so58047865ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:07:24 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cfe9270d4aso5857921a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:12:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724170044; x=1724774844; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724170325; x=1724775125; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xBLETOBLRe3FOaeolInTVXtiFI90U5zFa+5MnX88eIE=;
-        b=epIHfuZok1tA3USNu4FrQrOx8I8vpcwJfY4jbfhcXhF0SVe6OrhFniWz5L4LwtlzSI
-         werhUpJ0GzisfF8l1NFs/d4i2f9Y7PpnSNtdkOiZR23gISkRVpfZE+OOBuAyP5bHbEnF
-         /BG0c4613ja30ArJqT/GgRI425MNADRmpSpFqixFPh2Z3DqdAdI/1+FbKKwkqwBM+hrJ
-         HuhVKBdrCxwCtbkFcdykzubgtO1Yqjk5x2lN92utbO83/Z/thNYgsioVMKwpnSZ5y/No
-         CbD9NZ3Nl/nzY8ybHctYy/1Ln8AM6uD1hP4jIK5Tlb4yw6q5fXz12x/63gETk9Vdt9gw
-         vjLA==
+        bh=mEGfKffA8k25KTN9hjG+1Czg335p9pzfLGZ0r6ISLdQ=;
+        b=mBg+uRVyqPeElGh77Iqe9cz67W4mQjw0AFerd88COpMU1gyyoq4g12at6w60i+UqWs
+         cNi9v6iRfB6glHI+k6QiZ4CWWolH0hLnZRQfkGpJXl/ztpm6ej9M0mz/9y43zkXs+E7l
+         SwUccIFrnWCy79pn8IEPTwWtHsmclg64xxLWVosrajvbqwmERbCE134drFugeRHN8h4l
+         uGGg3Y5yt21hdKP0nhUprnZ9Gp52T3xJDs27eeLVP8clXPilfQ40WtbsHAKOXsyjsZ1U
+         jBXkWylTMzSksOamcPXwIGWvI/cv15B2HKekHJsul7xTjf6iVXVmpndYUbxJ0dhSvzwe
+         ri6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724170044; x=1724774844;
+        d=1e100.net; s=20230601; t=1724170325; x=1724775125;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xBLETOBLRe3FOaeolInTVXtiFI90U5zFa+5MnX88eIE=;
-        b=EZehzZYA0ZalU7Crna1r5GSKIMjTgu6S3N118YbO3PffBoL9J3bBEONdTn8QdjyaOK
-         cak08Uqe1jLsJYuYpFfZmGqw5rYF9W6LsL2H6uX+s9lzuXqPM5RQIaiqbbT+ho+egXhg
-         pDjlXrIytzRla9FZFqriumOvHmF7GalHEWrMfd6Gh0gcSt+eFDYTBQ+UZbP/CYWbfBZ9
-         OHs6v+nqZbc97cB88FlLfkHxVcejGhmAVFpwSfK5djeskcwiUpWH+cau8Suyv5F5Uq+B
-         PasMmqiuL0egMu/KZ5HVQ0471FtmKkYcK5KCnFeyObzvUmW2Ej8oGU5PRzd97B2Mhnl2
-         bt4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEkvD+0lYIRKYmyZbNJgi3effjHm3vDGeZ3HDvAGLaImv3lgo0xfDHMuOol/SSf84WFJ9DQqgFUtqs+7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxsiUDtbTD0tVMKZoFzuBTtAwRcp9eVzAs7LdYTb9NFUr1onPo
-	HvdWefWhRlvnk7oQAcs4SfqtfvPeLkJ/sYeh7Wa6OKRykVEYjNQ9Kxnvk1Ffkg6/eHudJBWcYgw
-	GQw==
-X-Google-Smtp-Source: AGHT+IHZu0MLZIkwzktJnFBnfwiJgxSvwp7590GQmqxYpMavl/flp6jy6p8nQmoOb7rKMH6bzVFbGX7RM/w=
+        bh=mEGfKffA8k25KTN9hjG+1Czg335p9pzfLGZ0r6ISLdQ=;
+        b=dFubL2axN4O8G67kmLqJ+E7FX//nwRWP2UYg9gauvwABNOGB86/I1xLvDs10U2wXcp
+         bJwT3xrRT0U/oMSGIDLMeJeaT0mFuHKDwQ04euGfbrArv21ih6iDlk2u4O29UsZ8ZruW
+         cpYuQ27ZOhn17nNUTWUqTZ2BAzq+1M+aOJYRROdZLbIQnxF7K5GeV3EExW7rP8WO5T7H
+         y+JyElJ/porfky5DySdFF+nLFU/QGQC/CoF73DXd5I1FhqYQ+K26t7pjwywitp3uYoxk
+         5wMvD1P8/pw2vBH3mJlDDsxKzScDaBcDF+C4ohg079xcXKITVcVByB5W2N0lVxgkWHHX
+         4BUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEtPHGk4ldE0SvwnvOsnTu8rPoXWMbOuQ7u+HNdwh8VkSL+LKbpvEBEjx/OXoXMfbLV8zbUNXgtaXNVzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCkNrNjmUu/gz0lQXbIMHQgo7V5ycOJhkFIGzPT5a+PudOyEz6
+	XyVbp+hO+hANx5CFKr6tKA50Cppicwn+ehEuIJKQS8EcWwCLJ5oLsjzv9rxEzjLnCQDn95uG4/z
+	UNA==
+X-Google-Smtp-Source: AGHT+IEAAN2Y0yVXFnGWS3O1jcL8IhFceJXuAl87lXtczud4Q3G1ILQCVLF2/rPx9IRrrraoAPdNb64AF1I=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:18e:b0:202:38d8:172 with SMTP id
- d9443c01a7336-20238d8021dmr7351955ad.5.1724170043696; Tue, 20 Aug 2024
- 09:07:23 -0700 (PDT)
-Date: Tue, 20 Aug 2024 09:07:22 -0700
-In-Reply-To: <20240820154150.GA28750@willie-the-truck>
+ (user=seanjc job=sendgmr) by 2002:a17:90a:1bcf:b0:2c8:b576:2822 with SMTP id
+ 98e67ed59e1d1-2d3e03e698dmr110268a91.8.1724170324996; Tue, 20 Aug 2024
+ 09:12:04 -0700 (PDT)
+Date: Tue, 20 Aug 2024 09:12:03 -0700
+In-Reply-To: <c603c0c3-36cb-4429-9799-ed50bba4a59e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240802191617.312752-1-seanjc@google.com> <20240820154150.GA28750@willie-the-truck>
-Message-ID: <ZsS_OmxwFzrqDcfY@google.com>
-Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
- when possible
+References: <20240802015732.3192877-1-kim.phillips@amd.com>
+ <20240802015732.3192877-3-kim.phillips@amd.com> <Zr_ZwLsqqOTlxGl2@google.com>
+ <7208a5ac-282c-4ff5-9df2-87af6bcbcc8a@amd.com> <ZsPF7FYl3xYwpJiZ@google.com> <c603c0c3-36cb-4429-9799-ed50bba4a59e@amd.com>
+Message-ID: <ZsTAU2hVyI-4WDK3@google.com>
+Subject: Re: [PATCH 2/2] KVM: SEV: Configure "ALLOWED_SEV_FEATURES" VMCB Field
 From: Sean Christopherson <seanjc@google.com>
-To: Will Deacon <will@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marc Zyngier <maz@kernel.org>
+To: Kim Phillips <kim.phillips@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Kishon Vijay Abraham I <kvijayab@amd.com>
 Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 20, 2024, Will Deacon wrote:
-> Hi Sean,
-> 
-> On Fri, Aug 02, 2024 at 12:16:17PM -0700, Sean Christopherson wrote:
-> > Do arch-specific range-based TLB flushes (if they're supported) when
-> > flushing in response to mmu_notifier events, as a single range-based flush
-> > is almost always more performant.  This is especially true in the case of
-> > mmu_notifier events, as the majority of events that hit a running VM
-> > operate on a relatively small range of memory.
+On Tue, Aug 20, 2024, Kim Phillips wrote:
+> On 8/19/24 5:23 PM, Sean Christopherson wrote:
+> > On Mon, Aug 19, 2024, Kim Phillips wrote:
+> > > but since commit ac5c48027bac ("KVM: SEV: publish supported VMSA features"),
+> > > userspace can retrieve sev_supported_vmsa_features via an ioctl.
+> > > 
+> > > > And based on this blurb:
+> > > > 
+> > > >     Some SEV features can only be used if the Allowed SEV Features Mask is enabled,
+> > > >     and the mask is configured to permit the corresponding feature. If the Allowed
+> > > >     SEV Features Mask is not enabled, these features are not available (see SEV_FEATURES
+> > > >     in Appendix B, Table B-4).
+> > > > 
+> > > > and the appendix, this only applies to PmcVirtualization and SecureAvic.  Adding
+> > > > that info in the changelog would be *very* helpful.
+> > > 
+> > > Ok, how about adding:
+> > > 
+> > > "The PmcVirtualization and SecureAvic features explicitly require
+> > > ALLOWED_SEV_FEATURES to enable them before they can be used."
+> > > 
+> > > > And I see that SVM_SEV_FEAT_DEBUG_SWAP, a.k.a. DebugVirtualization, is a guest
+> > > > controlled feature and doesn't honor ALLOWED_SEV_FEATURES.  Doesn't that mean
+> > > > sev_vcpu_has_debug_swap() is broken, i.e. that KVM must assume the guest can
+> > > > DebugVirtualization on and off at will?  Or am I missing something?
+> > > 
+> > > My understanding is that users control KVM's DEBUG_SWAP setting
+> > > with a module parameter since commit 4dd5ecacb9a4 ("KVM: SEV: allow
+> > > SEV-ES DebugSwap again").  If the module parameter is not set, with
+> > > this patch, VMRUN will fail since the host doesn't allow DEBUG_SWAP.
 > > 
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> > 
-> > This is *very* lightly tested, a thumbs up from the ARM world would be much
-> > appreciated.
-> > 
-> >  virt/kvm/kvm_main.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index d0788d0a72cc..46bb95d58d53 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
-> >  	struct kvm_gfn_range gfn_range;
-> >  	struct kvm_memory_slot *slot;
-> >  	struct kvm_memslots *slots;
-> > +	bool need_flush = false;
-> >  	int i, idx;
-> >  
-> >  	if (WARN_ON_ONCE(range->end <= range->start))
-> > @@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
-> >  					goto mmu_unlock;
-> >  			}
-> >  			r.ret |= range->handler(kvm, &gfn_range);
-> > +
-> > +			/*
-> > +			 * Use a precise gfn-based TLB flush when possible, as
-> > +			 * most mmu_notifier events affect a small-ish range.
-> > +			 * Fall back to a full TLB flush if the gfn-based flush
-> > +			 * fails, and don't bother trying the gfn-based flush
-> > +			 * if a full flush is already pending.
-> > +			 */
-> > +			if (range->flush_on_ret && !need_flush && r.ret &&
-> > +			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
-> > +							     gfn_range.end - gfn_range.start))
-> > +				need_flush = true;
+> > But that's just KVM's view of vmsa_features.  With SNP's wonderful
+> > SVM_VMGEXIT_AP_CREATE, can't the guest create a VMSA with whatever sev_features
+> > it wants, so long as they aren't host-controllable, i.e. aren't PmcVirtualization
+> > or SecureAvic?
 > 
-> Thanks for having a crack at this.
-> 
-> We could still do better in the ->clear_flush_young() case if the
+> No, as above, if the guest tries any silly business the host will
+> get a VMEXIT_INVALID, no matter if using the feature *requires*
+> ALLOWED_SEV_FEATURES to be enabled and explicitly allow it (currently
+> PmcVirtualization or SecureAvic).
 
-For clear_flush_young(), I 100% think we should let architectures opt out of the
-flush.  For architectures where it's safe, the primary MMU doesn't do a TLB flush,
-and hasn't for years.  Sending patches for this (for at least x86 and arm64) is
-on my todo list.
-
-Even better would be to kill off mmu_notifier_clear_flush_young() entirely, e.g.
-if all KVM architectures can elide the flush.
-
-And even better than that would be to kill pxxx_clear_flush_young_notify() in
-the kernel, but I suspect that's not feasible as there are architectures that
-require a TLB flush for correctness.
-
-> handler could do the invalidation as part of its page-table walk (for
-> example, it could use information about the page-table structure such
-> as the level of the leaves to optimise the invalidation further), but
-> this does at least avoid zapping the whole VMID on CPUs with range
-> support.
-> 
-> My only slight concern is that, should clear_flush_young() be extended
-> to operate on more than a single page-at-a-time in future, this will
-> silently end up invalidating the entire VMID for each memslot unless we
-> teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
-
-I'm not sure I follow the "entire VMID for each memslot" concern.  Are you
-worried about kvm_arch_flush_remote_tlbs_range() failing and triggering a VM-wide
-flush?
+Oooh, I finally get it.  PmcVirtualization and SecureAvic require an opt-in via
+ALLOWED_SEV_FEATURES, i.e. are off-by-default, whereas all other features are
+effectively on-by-default, but still honor ALLOWED_SEV_FEATURES.
 
