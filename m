@@ -1,160 +1,975 @@
-Return-Path: <linux-kernel+bounces-294322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E256E958C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:33:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265AC958C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0777283519
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB811C21750
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC0818CC1D;
-	Tue, 20 Aug 2024 16:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E4E1C3F00;
+	Tue, 20 Aug 2024 16:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="e/BZaEaf"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="M5/weLpT"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5EB4409
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480414409
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171623; cv=none; b=Tx6hBd3PIw1sO0hMvI38UywVC05e70IWxSkOzYCqquWvz/oGIyFJvlc6K7Vmg2hqsprmOGkxenBIcQ0/LZ/OKjh5UHA9Osl/xRyC2nmSmvvNoXYuGB06NVPkt6Crhle52QhKYci9Q6K3wvzYfaQXcYx4G4lS5SE1Yra831irlEc=
+	t=1724171722; cv=none; b=uxf0w++Wxi6eHHEaHO72s459NMQynpynLkD0fq3qoQauIjKkqy2oOx8Wx7G3pfd/WbUD0tyLCnPrQk5EAwl7anC0TLKgHb4PtMDOWehIcHnVKHdtS4xXn3JvWxv9y3GEoCLiAAPWLxbLP/wzUig/bbzuj4B0ZNHXZoMB0E8Mobc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171623; c=relaxed/simple;
-	bh=8IUmNoZ2LJs/D02xDzhAIKyPjOG9w7KqiGiDPMEZnb0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=XnZiGNBAvf4Yq/DQcpQFRn876BdhOB3TtcZrLWA+CNGbSRlf82Qdsif+3xaWxpnOkzzCygsDcUeEZDi0X7xZPuDT39M4kEvT4Hov/de9c6JZH2HjWxNcim+QTnKDZNUI6G/wYaa1M1mUpe5hNPvPTZKZSaXyecGQVahX29PRqNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=e/BZaEaf; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530ad984f2dso953043e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:33:41 -0700 (PDT)
+	s=arc-20240116; t=1724171722; c=relaxed/simple;
+	bh=QAJtjoQB+Ox8XgN940tMlQcJuNA80PnTeQtBlaBycAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nTw3I+TxbdpqXrZ3Vm9zPlGSwLCuu/FkJTzPOdMYIIxuxt9BQlUMDri9bb3PjFNG3wGgkWM7OQPqrC42cku8OHbbDXoeu2bTPEcX3j8amcTtAbvFff6GfWLIqdeFJajBapCYe45/u5JnOwQ88SrZO+WyqMYr8xW042zaxvGt9lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=M5/weLpT; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so2907760e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:35:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724171620; x=1724776420; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=biPyWwHKsPSI9hwI1NGCkM/td/JJyPTqnLUN9w0DGw0=;
-        b=e/BZaEafvmEuRz4bgLthW+pm5Bkkfnk2ekujPQCNsDr0RSHgygBQpMVf4WJlmraQco
-         nCIh9JkWIoEqCltzWne6tJxEmddGbTyelV8MTjQr6ZkgzAt9NqnEBi/BIgREoCE8srQ/
-         C4zBwcp4pFNLTHe0FbqkQJzWi0rcNgGhTh4kwqScgUd8Kbb5f17q3tPlSDuTgGp/qXBh
-         m0CWuxav/4nP6Gg2+nuha0i9eJ2Jt+fya6pYUjzM8vGxO8ZFmwUK7YnkRQQqprwdCqlU
-         VDAnrDReBwrn0s1Q5w2CZK4nTKgeSHy4zz8ihIx+jhYdZNvvtBINrbfLbjyyCpp6V/Hf
-         p1sg==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1724171717; x=1724776517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+MJn2fRuxiv0NL80F0iTtY2oclZQ7wnneix+wmp0jkI=;
+        b=M5/weLpT5O/zVezwWwZdurbLkE/16lOnxyxpZhbHoJat3zx6+JcNqXkoYED3NCW5Lz
+         luXnEbQboxUhmh29eirvoXp65B2quLgnvX3wfAYYsytqTWKhwBOSeh3NhlgwITCFsmQ9
+         CQiirHfQYBio6UD5/mwDKWZTZIq14S3hOyO5CHGeI5GEWHr5I86k40/dmjHw5AQ9c4kh
+         iLh/Oo1HLLhTEZUtl/dO1XJhBIG/1S2sbgbuikEXR3wACFSM4WYTK6x5Ab/N7wxM6daJ
+         btVeVVlbQoBUdV1OuqUp82C+pH7Az0hsBbCqVvgAgCebe0Upfuo49I3O+X8qR1BNntOV
+         XhpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724171620; x=1724776420;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=biPyWwHKsPSI9hwI1NGCkM/td/JJyPTqnLUN9w0DGw0=;
-        b=TYywIdOKFAVfvLh+BEi0iagw0zbgaVnEBL2hiHSayraxPBCHJVgkhqZreyJZnJ9TfJ
-         OjJXvfkVbJzCvf+/+/qX579Lrv5lbMlTj/mjetFP0wVQVVynuJ0rSPoJnhTZWDXGd69O
-         lv8w9TMF3WdqdVnthsgoE0CU7PlLxRL+44GljprhgmTgx4FOCf7HoA0NSmOJCUY9AtdN
-         wcgUyiIjBBjh5mA/wCKbBqdG4uXnt/IFc+OIyQG3/jO1RPEuBEnooA7dGAp/dxNyJJCf
-         8JEVTDcP4+YU+oqiTpgNDynXMyf0shes9w4JDNTEg7XOe/TMT32qOy0psWR+HiRgWVzm
-         agGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvAgZ3vYXVZFOsas9F1iHEBmRD+l8DjrLc4P2VsBtiEU90u4ovMAsbc6W8nZnJGa7P/1fK8RnD6Ym/QI8Ja2R2wlt+7vBYkQRQLrqB
-X-Gm-Message-State: AOJu0YwP6Y/PGZFrPBsAXe1chbiQXNW2q2uidyDxxYr5nPSa4erS4EJy
-	t6pG16gH0LG7YKu89Tztg34QWMU05nVN3xM4vMIjU+IxImEiG20AtNlIV83QXPE=
-X-Google-Smtp-Source: AGHT+IFJ0EkS4Si8mnRKbGimFnHHXb9uxbbTNcEVpKkFeoNxOaYbItrqrNcNmDbkUzRLo8NcVRHEUw==
-X-Received: by 2002:a05:6512:401c:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-5331c6d4bcfmr6106461e87.5.1724171619972;
-        Tue, 20 Aug 2024 09:33:39 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:1050:bb01:8164:778c:a10:dcfc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c65e7sm781546266b.20.2024.08.20.09.33.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2024 09:33:39 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1724171717; x=1724776517;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+MJn2fRuxiv0NL80F0iTtY2oclZQ7wnneix+wmp0jkI=;
+        b=xKPku4Lnif3yFLDQXBpk/gxsmkNLZwU+QCkrHfCTAHOVHcBGOrWdsF72O+A64Q1AG8
+         Vakj89cyQ1X26UFljTCoukNYR+P7Z8wbRP0p3tHPd5uMgFFDMs7CHvXgHusT7SJCzpRm
+         8OkgzXaSLdqNiP+zA1yIm+CZcel9b0JL0AuK7j4w7dUK1BEG5Lb6Hjp0j9243IM4Fqh0
+         8OGGjatU+4faAirHV8WFjkm5+I4GFB9x0wAheWlMaV6wNc2JgCURHZL9svnneqzut+I7
+         TJWco0Swy8B/jZknypATqceL0mpF0tcAjgXEUKH8Mhus4ZlJUW1bClb4UuPI1U4J2uGw
+         Eapw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUKWMjPlQO1W9zhjhtQxmGTlqgjOVSRo7NY2o60Y5taFpj6gzUv0fyhqwAFzVRmdQ45UU5pSZh1eyeS+aoK1bSTjd5OTD4HyjaqFmZ
+X-Gm-Message-State: AOJu0YxizwzAIpLOZ5U7Aih2fJfxGcZT3D7XzfI6kKmmoIJ4Hhij8yI3
+	P+kVGAxPuFTTzNHOq6CjSZVoemRFb/1/iHXAvY6T7e7W2NKx8Okgkz/TIOnM74s=
+X-Google-Smtp-Source: AGHT+IHwvBoU+0N9gRVJ6qJL1feY0YzzmXMlqHwOk2VXMxlkdJXTqwvIgCE+hAp5T587dWcL8KGTPA==
+X-Received: by 2002:a05:6512:4007:b0:530:ab68:25c5 with SMTP id 2adb3069b0e04-5331c691facmr13234608e87.2.1724171716765;
+        Tue, 20 Aug 2024 09:35:16 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfb5esm780728766b.59.2024.08.20.09.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 09:35:16 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	John Stultz <jstultz@google.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [RFC PATCH 00/16] sched/fair/schedutil: Better manage system response time
+Date: Tue, 20 Aug 2024 17:34:56 +0100
+Message-Id: <20240820163512.1096301-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] ksmbd: Replace one-element arrays with flexible-array
- members
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <d7a30cff-e08f-453e-84f2-4584031e3d29@talpey.com>
-Date: Tue, 20 Aug 2024 18:33:28 +0200
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
- sfrench@samba.org,
- senozhatsky@chromium.org,
- linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <05A23230-C800-4693-AB69-273A0B10C822@toblux.com>
-References: <20240818162136.268325-2-thorsten.blum@toblux.com>
- <CAKYAXd-pm01ietA1+Z4J8tDcLM6fUkAwQ69j9XZs9uhrBbdDQQ@mail.gmail.com>
- <d7a30cff-e08f-453e-84f2-4584031e3d29@talpey.com>
-To: Tom Talpey <tom@talpey.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 20. Aug 2024, at 16:52, Tom Talpey <tom@talpey.com> wrote:
-> On 8/20/2024 10:11 AM, Namjae Jeon wrote:
->> On Mon, Aug 19, 2024 at 1:22=E2=80=AFAM Thorsten Blum =
-<thorsten.blum@toblux.com> wrote:
->>>=20
->>> Replace the deprecated one-element arrays with flexible-array =
-members
->>> in the structs copychunk_ioctl_req and smb2_ea_info_req.
->>>=20
->>> There are no binary differences after this conversion.
->>>=20
->>> Link: https://github.com/KSPP/linux/issues/79
->>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->>> ---
->>>  fs/smb/server/smb2pdu.c | 4 ++--
->>>  fs/smb/server/smb2pdu.h | 4 ++--
->>>  2 files changed, 4 insertions(+), 4 deletions(-)
->>>=20
->>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
->>> index 2df1354288e6..83667cb78fa6 100644
->>> --- a/fs/smb/server/smb2pdu.c
->>> +++ b/fs/smb/server/smb2pdu.c
->>> @@ -4580,7 +4580,7 @@ static int smb2_get_ea(struct ksmbd_work =
-*work, struct ksmbd_file *fp,
->>>         /* single EA entry is requested with given user.* name */
->>>         if (req->InputBufferLength) {
->>>                 if (le32_to_cpu(req->InputBufferLength) <
->>> -                   sizeof(struct smb2_ea_info_req))
->>> +                   sizeof(struct smb2_ea_info_req) + 1)
->> We can use <=3D instead of +1.
->=20
-> This is better, but maybe this test was actually not right in
-> the first place.
->=20
-> I think a strict "<" is correct here, because the ea name
-> field is a counted array of length EaNameLength. So, it's
-> a layering issue to fail with EINVAL this early in the
-> processing. All that should be checked up front is
-> that a complete smb2_ea_info_req header is present.
+This series is a re-incarnation of Remove Hardcoded Margings posted a while ago
 
-Just to clarify before I submit a v2: Is a strict "<" and without "+1"=20=
+	https://lore.kernel.org/lkml/20231208002342.367117-1-qyousef@layalina.io/
 
-correct?
+The original series attempted to address response time related issues stemming
+from hardcoding migration margin in fits_capacity() on HMP system, and DVFS
+headroom which had a constant 25% boost that is bad for power and thermal on
+powerful systems. Saving power was the main goal by reducing these values to
+the smallest possible value automatically based on anticipated worst case
+scenario.
 
->>>                         return -EINVAL;
->>>=20
->>>                 ea_req =3D (struct smb2_ea_info_req *)((char *)req +
->>> @@ -8083,7 +8083,7 @@ int smb2_ioctl(struct ksmbd_work *work)
->>>                         goto out;
->>>                 }
->>>=20
->>> -               if (in_buf_len < sizeof(struct copychunk_ioctl_req)) =
-{
->>> +               if (in_buf_len < sizeof(struct copychunk_ioctl_req) =
-+ 1) {
->> Ditto.
->=20
-> And ditto.
+A tricky point was uncovered and demonstrated in the migration margin table in
+this posting
 
-Same here, strict "<" and without "+ 1"? Or just a refactor to "<=3D"=20
-without changing the condition?
+	https://lore.kernel.org/lkml/20240205223344.2280519-4-qyousef@layalina.io/
 
-Thanks,
-Thorsten=
+is that to make the system responsive to sudden changes, we actually need large
+migration margin the smaller the core capacity is
+
+	cap		threshold	%		threshold-tick	%
+	0		0		0		0		0
+	16		0		0		0		0
+	32		1		3.12		0		0
+	48		3		6.25		2		4.16
+	64		4		6.25		2		3.12
+	80		6		7.5		5		6.25
+	96		10		10.41		8		8.33
+	112		14		12.5		11		9.82
+	128		18		14.06		16		12.5
+	144		21		14.58		18		12.5
+	160		26		16.25		23		14.37
+	176		33		18.75		29		16.47
+	192		39		20.31		35		18.22
+	208		47		22.59		43		20.67
+	224		55		24.55		50		22.32
+	240		63		26.25		59		24.58
+	256		73		28.51		68		26.56
+	272		82		30.14		77		28.30
+	288		93		32.29		87		30.20
+	304		103		33.88		97		31.90
+	320		114		35.62		108		33.75
+	336		126		37.5		120		35.71
+	352		138		39.20		132		37.5
+	368		151		41.03		144		39.13
+	384		163		42.44		157		40.88
+
+The current 80% margin is valid for CPU with capacities in the 700-750 range,
+which might have been true in the original generations of HMP systems.
+
+	704		557		79.11		550		78.12
+	720		578		80.27		572		79.44
+	736		606		82.33		600		81.52
+	752		633		84.17		627		83.37
+
+This result contradicts the original goal of saving power as it indicates we
+must be more aggressive with the margin, while the original observation was
+that there are workloads with steady utilization that is hovering at a level
+that is higher than this margin but lower than the capacity of the CPU (mid
+CPUs particularly) and the aggressive upmigration is not desired, nor the
+higher push to run at max freq where we could have run at a lower freq with no
+impact on perf.
+
+Further analysis using a simple rampup [1] test that spawns a busy task that
+starts from util_avg/est = 0 and never goes to sleep. The purpose is to measure
+the actual system response time for workloads that are bursty and need to
+transition from lower to higher performance level quickly.
+
+This lead to more surprising discovery due to utilization invariance, I call it
+the black hole effect.
+
+There's a black hole in the scheduler:
+======================================
+
+It is no surprise to anyone that DVFS and HMP system have a time stretching
+effect where the same workload will take longer to do the same amount of work
+the lower the frequency/capacity.
+
+This is countered in the system via clock_pelt which is central for
+implementing utilization invariance. This helps ensure that the utilization
+signal still accurately represent the computation demand of sched_entities.
+
+But this introduces this black hole effect of time dilation. The concept of
+passage of time is now different from task's perspective compared to an
+external observer. The task will think 1ms has passed, but depending on the
+capacity or the freq, the time from external observer point of view has passed
+for 25 or even 30ms in reality.
+
+This has a terrible impact on utilization signal rise time. And since
+utilization signal is central in making many scheduler decision like estimating
+how loaded the CPU is, whether a task is misfit, and what freq to run at when
+schedutil is being used, this leads to suboptimal decision being made and give
+the external observer (userspace) that the system is not responsive or
+reactive. This manifests as problems like:
+
+	* My task is stuck on the little core for too long
+	* My task is running at lower frequency causing missing important
+	  deadlines although it has been running for the past 30ms
+
+As a demonstration, running the rampup test on Mac mini with M1 SoC, 6.8 kernel
+with 1ms TICK/HZ=1000.
+
+	$ grep . /sys/devices/system/cpu/cpu*/cpu_capacity
+	/sys/devices/system/cpu/cpu0/cpu_capacity:459
+	/sys/devices/system/cpu/cpu1/cpu_capacity:459
+	/sys/devices/system/cpu/cpu2/cpu_capacity:459
+	/sys/devices/system/cpu/cpu3/cpu_capacity:459
+	/sys/devices/system/cpu/cpu4/cpu_capacity:1024
+	/sys/devices/system/cpu/cpu5/cpu_capacity:1024
+	/sys/devices/system/cpu/cpu6/cpu_capacity:1024
+	/sys/devices/system/cpu/cpu7/cpu_capacity:1024
+
+Ideal response time running at max performance level
+----------------------------------------------------
+
+	$ uclampset -m 1024 rampup
+
+                             rampup-5088 util_avg running
+      ┌────────────────────────────────────────────────────────────────────────┐
+1015.0┤                                                  ▄▄▄▄▄▄▄▄▄▟▀▀▀▀▀▀▀▀▀▀▀▀│
+      │                                         ▗▄▄▄▛▀▀▀▀▘                     │
+      │                                    ▗▄▟▀▀▀                              │
+      │                                 ▄▟▀▀                                   │
+ 761.2┤                              ▄▟▀▘                                      │
+      │                            ▗▛▘                                         │
+      │                          ▗▟▀                                           │
+ 507.5┤                        ▗▟▀                                             │
+      │                       ▗▛                                               │
+      │                      ▄▛                                                │
+      │                     ▟▘                                                 │
+ 253.8┤                    ▐▘                                                  │
+      │                   ▟▀                                                   │
+      │                  ▗▘                                                    │
+      │                 ▗▛                                                     │
+   0.0┤         ▗       ▛                                                      │
+      └┬───────┬───────┬───────┬───────┬──────┬───────┬───────┬───────┬───────┬┘
+     1.700   1.733   1.767   1.800   1.833  1.867   1.900   1.933   1.967 2.000
+
+───────────────── rampup-5088 util_avg running residency (ms) ──────────────────
+0.0    ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 1.4000000000000001
+26.0   ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+47.0   ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+67.0   ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+86.0   ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+105.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+124.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+143.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+161.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+178.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+196.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+213.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+229.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+245.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+277.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+292.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+307.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+322.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+336.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+350.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+364.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+378.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+391.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+404.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+416.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+429.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+441.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+453.0  ▇▇▇▇▇▇▇▇▇▇▇ 1.0
+
+Observations:
+-------------
+
+	* It takes ~233ms to go from 0 to ~1015
+	* It takes ~167ms to go from 0 to ~1000
+	* Utilization increases every tick or 1ms
+	* It takes ~29.5ms to reach a util of ~450
+
+Worst case scenario running at lowest performance level
+-------------------------------------------------------
+
+	$ uclampset -M 0 rampup
+
+(Note the difference in the x-axis)
+
+                            rampup-3740 util_avg running
+     ┌─────────────────────────────────────────────────────────────────────────┐
+989.0┤                                                        ▄▄▄▄▄▄▄▄▄▛▀▀▀▀▀▀▀│
+     │                                            ▗▄▄▄▄▄▛▀▀▀▀▀▘                │
+     │                                       ▄▄▛▀▀▀                            │
+     │                                  ▄▄▟▀▀▘                                 │
+741.8┤                              ▄▄▛▀▘                                      │
+     │                          ▗▄▛▀▘                                          │
+     │                        ▄▟▀                                              │
+494.5┤                     ▗▟▀▘                                                │
+     │                   ▄▛▀                                                   │
+     │                 ▗▛▘                                                     │
+     │               ▄▛▀                                                       │
+247.2┤             ▗▟▘                                                         │
+     │            ▗▛                                                           │
+     │           ▟▀                                                            │
+     │         ▗▟▘                                                             │
+  0.0┤        ▗▟                                                               │
+     └┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬┘
+    0.60    0.76    0.91    1.07    1.22    1.38    1.53    1.69    1.84   2.00
+
+───────────────── rampup-3740 util_avg running residency (ms) ──────────────────
+0.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.6
+10.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+30.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 9.0
+54.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+75.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+95.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+115.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6.3
+133.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.7
+151.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.0
+172.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+190.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+207.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+225.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+242.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+258.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+274.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+290.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+306.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+321.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+336.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+351.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+365.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.9
+381.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+394.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+407.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+420.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+433.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+446.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+458.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+
+Observations:
+
+	* It takes 1.350 seconds (!) to go from 0 to ~1000
+	* Utilization updates every 8ms most of the time
+	* It takes ~223ms to reach a util of ~450
+
+Default response time with 10ms rate_limit_us
+---------------------------------------------
+
+	$ rampup
+
+                            rampup-6338 util_avg running
+     ┌─────────────────────────────────────────────────────────────────────────┐
+986.0┤                                                               ▄▄▄▄▄▟▀▀▀▀│
+     │                                                        ▗▄▄▟▀▀▀▘         │
+     │                                                    ▗▄▟▀▀                │
+     │                                                 ▄▟▀▀                    │
+739.5┤                                              ▄▟▀▘                       │
+     │                                           ▗▄▛▘                          │
+     │                                         ▗▟▀                             │
+493.0┤                                       ▗▛▀                               │
+     │                                    ▗▄▛▀                                 │
+     │                                  ▄▟▀                                    │
+     │                                ▄▛▘                                      │
+246.5┤                             ▗▟▀▘                                        │
+     │                          ▄▟▀▀                                           │
+     │                      ▗▄▄▛▘                                              │
+     │                 ▗▄▄▄▟▀                                                  │
+  0.0┤  ▗         ▗▄▄▟▀▀                                                       │
+     └┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬┘
+    1.700   1.733   1.767   1.800   1.833   1.867   1.900   1.933   1.967 2.000
+
+───────────────── rampup-6338 util_avg running residency (ms) ──────────────────
+0.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.5
+15.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+36.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+57.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+78.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7.9
+98.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.0
+117.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.0
+137.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.0
+156.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+176.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+191.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+211.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+230.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+248.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+266.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+277.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+294.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.6
+311.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.4
+327.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+340.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+358.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+371.0 ▇▇▇▇▇▇▇▇▇ 1.0
+377.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+389.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+401.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+413.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+431.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+442.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+456.0 ▇▇▇▇▇▇▇▇▇ 1.0
+
+───────────────────────── Sum Time Running on CPU (ms) ─────────────────────────
+CPU0.0 ▇▇▇▇▇ 90.39
+CPU4.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 1156.93
+
+                            6338 rampup CPU0.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+2.06┤                                ▛▀▀                                       │
+    │                                ▌                                         │
+    │                                ▌                                         │
+    │                                ▌                                         │
+1.70┤                             ▛▀▀▘                                         │
+    │                             ▌                                            │
+    │                             ▌                                            │
+1.33┤                         ▗▄▄▄▌                                            │
+    │                         ▐                                                │
+    │                         ▐                                                │
+    │                         ▐                                                │
+0.97┤                     ▗▄▄▄▟                                                │
+    │                     ▐                                                    │
+    │                     ▐                                                    │
+    │                     ▐                                                    │
+0.60┤  ▗         ▗▄▄▄▄▄▄▄▄▟                                                    │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+                            6338 rampup CPU4.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+3.20┤                                                    ▐▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀│
+    │                                                    ▐                     │
+    │                                                  ▛▀▀                     │
+    │                                                  ▌                       │
+2.78┤                                               ▐▀▀▘                       │
+    │                                             ▗▄▟                          │
+    │                                             ▌                            │
+2.35┤                                          ▗▄▄▌                            │
+    │                                          ▐                               │
+    │                                        ▄▄▟                               │
+    │                                        ▌                                 │
+1.93┤                                     ▗▄▄▌                                 │
+    │                                     ▐                                    │
+    │                                     ▐                                    │
+    │                                     ▐                                    │
+1.50┤                                  ▗▄▄▟                                    │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+───────────────── 6338 rampup CPU0.0 Frequency residency (ms) ──────────────────
+0.6   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 37.300000000000004
+0.972 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 15.0
+1.332 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 15.0
+1.704 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 11.0
+2.064 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 12.1
+
+───────────────── 6338 rampup CPU4.0 Frequency residency (ms) ──────────────────
+1.5   ▇▇▇▇▇▇▇▇▇▇ 11.9
+1.956 ▇▇▇▇▇▇▇▇ 10.0
+2.184 ▇▇▇▇▇▇▇▇ 10.0
+2.388 ▇▇▇▇▇▇▇▇▇ 11.0
+2.592 ▇▇▇▇▇▇▇▇ 10.0
+2.772 ▇▇▇▇▇▇▇▇ 10.0
+2.988 ▇▇▇▇▇▇▇▇ 10.0
+3.204 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 85.3
+
+Observations:
+
+	* It takes ~284ms to go from 0 to ~1000
+	* Utilization ramps up initially every 8ms, then starts to speed up not
+	  reaching 1ms until util ~450. It actually flips between 1ms and 2ms
+	  for a while after this value.
+	* It takes ~105ms to reach a util ~450
+	* The task runs on little core for a whopping 90ms before it migrates
+	  to the big core in spite of obviously an always running task. That is
+	  with the current 80% migration margin.
+	* when running on little CPU, it stays at lowest freq for a whopping
+	  37ms. It takes that long for util to reach a value high enough to
+	  move on to the next freq, that is with the 1.25 DVFS headroom.
+	* Moving across frequencies remain slow afterward on little. On big, it
+	  seems to be capped at 10ms due to the rate_limit_us which was
+	  addressed already in [2].
+
+Defeault response with 70us rate_limit_us
+-----------------------------------------
+
+                           rampup-6581 util_avg running
+   ┌───────────────────────────────────────────────────────────────────────────┐
+984┤                                                                 ▄▄▄▄▄▟▀▀▀▀│
+   │                                                          ▗▄▄▛▀▀▀▘         │
+   │                                                      ▗▄▞▀▀                │
+   │                                                   ▄▄▛▀                    │
+738┤                                                ▗▟▀▘                       │
+   │                                              ▄▛▀                          │
+   │                                           ▗▟▀▘                            │
+492┤                                         ▄▟▀                               │
+   │                                       ▄▛▘                                 │
+   │                                    ▗▄▛▘                                   │
+   │                                  ▄▟▀                                      │
+246┤                               ▄▟▀▘                                        │
+   │                            ▗▄▟▘                                           │
+   │                         ▗▟▀▀                                              │
+   │                   ▄▄▄▄▛▀▀                                                 │
+  0┤    ▗         ▗▄▄▛▀▘                                                       │
+   └┬───────┬───────┬────────┬───────┬───────┬───────┬────────┬───────┬───────┬┘
+  1.700   1.733   1.767    1.800   1.833   1.867   1.900    1.933   1.967 2.000
+
+───────────────── 6581 rampup CPU4.0 Frequency residency (ms) ──────────────────
+1.5   ▇▇ 2.9
+1.728 ▇▇▇▇▇▇▇ 8.0
+1.956 ▇▇▇▇▇▇▇▇ 9.0
+2.184 ▇▇▇▇▇▇▇▇ 9.0
+2.388 ▇▇▇▇▇▇ 7.0
+2.592 ▇▇▇▇▇▇▇ 8.0
+2.772 ▇▇▇▇▇▇ 7.0
+2.988 ▇▇▇▇▇▇▇▇ 10.0
+3.096 ▇▇▇▇▇ 6.0
+3.144 ▇▇▇ 3.0
+3.204 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 82.4
+
+Observations:
+-------------
+
+	* Results is more or less the same
+	* It takes ~264ms to go from 0 to ~1000
+	* With better rate limit we still see slow jumps in freqs on the big
+	  core. Which demonstrates the bottleneck is in the utilization signal
+	  rampup time
+
+It gets worse on systems with smaller cores
+-------------------------------------------
+
+Mobile systems which commonly contain littles that have a capcity of ~200 and
+sometimes less will suffer more from this bad impact. The smaller the core/freq,
+the greater the gravitational pull!
+
+It was measured to stay over 100ms stuck on the little core and being stuck for
+longer at lowest frequencies to pick up from 0 util.
+
+The solution:
+j============
+
+The proposal to remove the hardcoded DVFS headroom and migration margin in [3]
+is still valid. And we build on top of it.
+
+But to address the utilization invariance black hole problem, I add a number of
+patches on top to extend util_est.
+
+This black hole effect is only valid for tasks that are transitioning from one
+steady state, to another steady state. Completely periodic tasks which the
+system is traditionally built upon; the current utilization signal is a good
+approximation of its _compute_ demand. But observers (userspace), care about
+real time.
+
+Computational domain vs Time domain:
+------------------------------------
+
+The util_avg is a good representation of compute demand of periodic tasks. And
+should remain as such. But when they are no longer periodic, then looking at
+computational domain doesn't make sense as we have no idea what's the actual
+compute demand of the task, it's in transition. During this transition we need
+to fallback to time domain based signal. Which is simply done by ignoring
+invariance and let the util accumulate based on observer's time.
+
+Coherent response time:
+-----------------------
+
+Moving transient tasks to be based on observer's time will create a coherent
+and constant response time. Which is the time it takes util_avg to rampup from
+0 to max on the biggest core running at max freq (or performance level
+1024/max).
+
+IOW, the rampup time of util signal should appear to be the same on all
+capacities/frequencies as if we are running at the highest performance level
+all the time. This will give the observer (userspace) the expected behavior of
+things moving through the motions in a constant response time regardless of
+initial conditions.
+
+util_est extension:
+-------------------
+
+The extension is quite simple. util_est currently latches to util_avg at
+enqueue/dequeue to act as a hold function for when busy tasks sleep for long
+period and decay prematurely.
+
+The extension is to account for RUNNING time of the task in util_est too, which
+is currently ignored.
+
+when a task is RUNNING, we accumulate delta_exec across context switches and
+accumulate util_est as we're accumulating util_avg, but simply without any
+invariance taken into account. This means when tasks are RUNNABLE, and continue
+to run, util_est will act as our time based signal to help with the faster and
+'constant' rampup response.
+
+Periodic vs Transient tasks:
+----------------------------
+
+It is important to make a distinction now between tasks that are periodic and
+their util_avg is a good faithful presentation of its compute demand. And
+transient tasks that need help to move faster to their next steady state point.
+
+In the code this distinction is made based on util_avg. In theory (I think we
+have bugs, will send a separate report), util_avg should be near constant for
+a periodic task. So simply transient tasks are ones that lead to util_avg being
+higher across activations. And this is our trigger point to know whether we
+need to accumulate variant (real time based) util_est.
+
+Rampup multipliers and sched-qos:
+---------------------------------
+
+It turns out the slow rampup time is great for power. With the fix, many tasks
+will start causing higher freqs.
+
+Equally, the speed up will not be good enough for some workloads that need to
+move even faster than default response time.
+
+To cater for those, introduce per-task rampup multiplier. It can be set to
+0 to keep tasks that don't care about performance from burning power. And it
+can be set to higher than 1 to make tasks go even faster through the motions.
+
+The multiplier is introduced as a first implementation of a generic sched-qos
+framework. Based on various discussions in many threads there's a burning need
+to provide more hints to enable smarter resource management based on userspace
+choices/trade-offs. Hopefully this framework will make the job simpler from
+both adding deprecatable kernel hints, and for userspace as there won't be
+a need to continously extend sched_attr, but add a new enum and userspace
+should be able to reuse the sched-qos wrappers when new hints are added to make
+use of them more readily.
+
+The patches:
+==========i=
+
+Patch 1 is a repost of an existing patch on the list but is a required for the
+series.
+
+Patches 2 and 3 add helper functions to accumulate util_avg and calculate the
+rampup time from any point.
+
+Patches 4 and 5 remove the hardcoded margins in favour of a more automatic and
+'deterministic' behavior based on the worst case scenario for current
+configuration (TICK mostly, but base_slice too).
+
+Patch 6 adds a new tunable to schedutil to dictate the rampup response time. It
+allows it to be sped up and slowed down. Since utilization signal has
+a constant response time on *all* systems regardless of how powerful or weak
+they are, this should allow userspace to control this more sensibly based on
+their system and workload characteristics and their efficiency goals.
+
+Patch 7 adds a multiplier to change PELT time constant. I am not sure if this
+is necessary now after introducing per task rampup multipliers. The original
+rationale was to help cater different hadware against the constant util_avg
+response time. I might drop this in future postings. I haven't tested the
+latest version which follows a new implementation suggested by Vincent.
+
+Patches 8 and 9 implement util_est extensions to better handle periodic vs
+transient tasks.
+
+Patches 10 and 11 add sched-qos and implements SCHED_QOS_RAMPUP_MULTIPLIER.
+
+Patches 12 and 13 further improve dvfs headroom definition by taking into
+account waiting_avg. waiting_avg is a new signal that accumulates how long
+a task is RUNNABLE && !RUNNING. This is an important source of latency and
+perception of responsiveness. It decouples util_avg, which is a measure of
+computational demand, and the requirement to run at specific freq to meet this
+demand, and the fact that slower frequency could mean tasks end up waiting for
+longer behind other tasks. If waiting time is long, it means the DVFS headroom
+need to increase. So we add it to the list of items to take into account.
+I tested to ensure the waiting_avg looks sane, but haven't done proper
+verification on how it helps with contended situations for frequency selection.
+
+Patch 14 implements an optimization to ignore DVFS headroom when the
+utilization signal is falling. It indicates that we are already running faster
+than we should, so we should be able to save power safely. This patch still
+needs more verification to ensure it produces the desired impact.
+
+Patch 15 uses rampup_multipier = 0 to disable util_est completely assuming
+tasks that don't care about perf they are okay without util_est altogether.
+
+Patch 16 implements another optimization to keep util_avg at 0 on fork given we
+have enough means now for tasks to manage their perf requirements and we can
+never crystal ball what the util_avg should be after fork. Be consistent and
+start from the same lowest point preserving precious resources.
+
+The series needs more polishing. But posting now to help discuss further during
+LPC to ensure it is moving in the right direction.
+
+Results:
+========
+
+Response time with rampup multiplier = 1
+-----------------------------------------
+
+                           rampup-2234 util_avg running
+   ┌───────────────────────────────────────────────────────────────────────────┐
+984┤                                                                ▗▄▄▄▄▄▛▀▀▀▀│
+   │                                                          ▄▄▟▀▀▀▀          │
+   │                                                     ▄▄▟▀▀                 │
+   │                                                  ▄▟▀▘                     │
+738┤                                               ▄▟▀▘                        │
+   │                                            ▗▟▀▘                           │
+   │                                          ▗▟▀                              │
+492┤                                        ▗▟▀                                │
+   │                                      ▗▟▀                                  │
+   │                                     ▟▀                                    │
+   │                                   ▄▛▘                                     │
+246┤                                 ▗▟▘                                       │
+   │                               ▗▟▀                                         │
+   │                             ▗▟▀                                           │
+   │                           ▗▟▀                                             │
+  0┤                       ▄▄▄▛▀                                               │
+   └┬───────┬───────┬────────┬───────┬───────┬───────┬────────┬───────┬───────┬┘
+  1.700   1.733   1.767    1.800   1.833   1.867   1.900    1.933   1.967 2.000
+
+───────────────── rampup-2234 util_avg running residency (ms) ──────────────────
+0.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.6000000000000005
+15.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 8.0
+39.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.0
+61.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+85.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+99.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+120.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+144.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+160.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+176.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+192.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+210.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+228.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+246.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+263.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+282.0 ▇▇▇▇▇▇▇ 1.0
+291.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+309.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+327.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+344.0 ▇▇▇▇▇▇▇ 1.0
+354.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+373.0 ▇▇▇▇▇▇▇ 1.0
+382.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+400.0 ▇▇▇▇▇▇▇ 1.0
+408.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+425.0 ▇▇▇▇▇▇▇ 1.0
+434.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+452.0 ▇▇▇▇▇▇▇ 1.0
+
+                            2234 rampup CPU1.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+2.06┤                             ▐▀                                           │
+    │                             ▐                                            │
+    │                             ▐                                            │
+    │                             ▐                                            │
+1.70┤                            ▛▀                                            │
+    │                            ▌                                             │
+    │                            ▌                                             │
+1.33┤                           ▄▌                                             │
+    │                           ▌                                              │
+    │                           ▌                                              │
+    │                           ▌                                              │
+0.97┤                         ▗▄▌                                              │
+    │                         ▐                                                │
+    │                         ▐                                                │
+    │                         ▐                                                │
+0.60┤                      ▗▄▄▟                                                │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+                            2234 rampup CPU4.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+3.10┤                                                            ▐▀▀▀▀▀▀▀▀▀▀▀▀▀│
+    │                                                 ▛▀▀▀▀▀▀▀▀▀▀▀             │
+    │                                                 ▌                        │
+    │                                            ▐▀▀▀▀▘                        │
+2.70┤                                            ▐                             │
+    │                                        ▐▀▀▀▀                             │
+    │                                        ▐                                 │
+2.30┤                                      ▛▀▀                                 │
+    │                                      ▌                                   │
+    │                                   ▐▀▀▘                                   │
+    │                                   ▐                                      │
+1.90┤                                 ▐▀▀                                      │
+    │                                 ▐                                        │
+    │                               ▗▄▟                                        │
+    │                               ▐                                          │
+1.50┤                              ▗▟                                          │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+───────────────────────── Sum Time Running on CPU (ms) ─────────────────────────
+CPU1.0 ▇▇▇▇ 32.53
+CPU4.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 540.3
+
+───────────────── 2234 rampup CPU1.0 Frequency residency (ms) ──────────────────
+0.6   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 12.1
+0.972 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6.5
+1.332 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.7
+1.704 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.5
+2.064 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.8
+
+───────────────── 2234 rampup CPU4.0 Frequency residency (ms) ──────────────────
+1.5   ▇▇▇▇▇ 4.0
+1.728 ▇▇▇▇▇▇▇▇▇▇ 8.0
+1.956 ▇▇▇▇▇▇▇▇▇▇▇▇ 9.0
+2.184 ▇▇▇▇▇▇▇▇▇▇▇▇ 9.0
+2.388 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 11.0
+2.592 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 16.0
+2.772 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 18.0
+2.988 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 47.0
+3.096 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53.4
+
+Response time with rampup multiplier = 2
+-----------------------------------------
+
+                             rampup-2331 util_avg running
+      ┌────────────────────────────────────────────────────────────────────────┐
+1002.0┤                                                          ▄▄▄▄▄▄▄▛▀▀▀▀▀▀│
+      │                                                  ▄▄▄▟▀▀▀▀▘             │
+      │                                             ▗▄▟▀▀▘                     │
+      │                                          ▗▄▛▀                          │
+ 751.5┤                                       ▗▄▛▀                             │
+      │                                      ▟▀                                │
+      │                                   ▗▟▀▘                                 │
+ 501.0┤                                  ▟▀                                    │
+      │                                ▗▟▘                                     │
+      │                               ▄▛                                       │
+      │                              ▟▘                                        │
+ 250.5┤                            ▗▛▘                                         │
+      │                           ▄▛                                           │
+      │                          ▟▘                                            │
+      │                        ▄▛▘                                             │
+   0.0┤                     ▄▄▛                                                │
+      └┬───────┬───────┬───────┬───────┬──────┬───────┬───────┬───────┬───────┬┘
+     1.700   1.733   1.767   1.800   1.833  1.867   1.900   1.933   1.967 2.000
+
+───────────────── rampup-2331 util_avg running residency (ms) ──────────────────
+0.0    ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 1.7
+4.0    ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6.0
+26.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+52.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+67.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+93.0   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 1.9000000000000001
+106.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+126.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+149.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+170.0  ▇▇▇▇▇▇▇▇▇ 1.0
+182.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+206.0  ▇▇▇▇▇▇▇▇▇ 1.0
+217.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+239.0  ▇▇▇▇▇▇▇▇▇ 1.0
+251.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+275.0  ▇▇▇▇▇▇▇▇▇ 1.0
+286.0  ▇▇▇▇▇▇▇▇▇ 1.0
+299.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+322.0  ▇▇▇▇▇▇▇▇▇ 1.0
+334.0  ▇▇▇▇▇▇▇▇▇ 1.0
+345.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+368.0  ▇▇▇▇▇▇▇▇▇ 1.0
+379.0  ▇▇▇▇▇▇▇▇▇ 1.0
+391.0  ▇▇▇▇▇▇▇▇▇ 1.0
+402.0  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+424.0  ▇▇▇▇▇▇▇▇▇ 1.0
+434.0  ▇▇▇▇▇▇▇▇▇ 1.0
+445.0  ▇▇▇▇▇▇▇▇▇ 1.0
+455.0  ▇▇▇▇▇▇▇▇▇ 1.0
+
+───────────────────────── Sum Time Running on CPU (ms) ─────────────────────────
+CPU0.0 ▇ 16.740000000000002
+CPU4.0 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 726.91
+
+                            2331 rampup CPU0.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+2.06┤                         ▛                                                │
+    │                         ▌                                                │
+    │                         ▌                                                │
+    │                         ▌                                                │
+1.70┤                        ▛▘                                                │
+    │                        ▌                                                 │
+    │                        ▌                                                 │
+1.33┤                       ▗▌                                                 │
+    │                       ▐                                                  │
+    │                       ▐                                                  │
+    │                       ▐                                                  │
+0.97┤                       ▟                                                  │
+    │                       ▌                                                  │
+    │                       ▌                                                  │
+    │                       ▌                                                  │
+0.60┤                     ▗▄▌                                                  │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+                            2331 rampup CPU4.0 Frequency
+    ┌──────────────────────────────────────────────────────────────────────────┐
+3.14┤                                       ▄▄▄▄▄▟▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀│
+    │                                  ▛▀▀▀▀▘                                  │
+    │                                ▄▄▌                                       │
+    │                              ▄▄▌                                         │
+2.51┤                             ▄▌                                           │
+    │                             ▌                                            │
+    │                           ▐▀▘                                            │
+1.87┤                          ▐▀                                              │
+    │                         ▗▟                                               │
+    │                          ▌                                               │
+    │                          ▌                                               │
+1.24┤                          ▌                                               │
+    │                          ▌                                               │
+    │                          ▌                                               │
+    │                          ▌                                               │
+0.60┤                          ▌                                               │
+    └┬───────┬───────┬───────┬───────┬────────┬───────┬───────┬───────┬───────┬┘
+   1.700   1.733   1.767   1.800   1.833    1.867   1.900   1.933   1.967 2.000
+
+───────────────── 2331 rampup CPU0.0 Frequency residency (ms) ──────────────────
+0.6   ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5.7
+0.972 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+1.332 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 2.0
+1.704 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 4.0
+2.064 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 3.0
+
+───────────────── 2331 rampup CPU4.0 Frequency residency (ms) ──────────────────
+0.6   ▇ 1.0
+1.728 ▇▇ 2.9
+1.956 ▇▇ 4.0
+2.184 ▇▇▇ 6.0
+2.388 ▇▇ 4.0
+2.592 ▇▇▇▇ 7.0
+2.772 ▇▇▇▇▇ 9.0
+2.988 ▇▇▇▇▇▇▇▇▇▇▇ 20.0
+3.096 ▇▇▇▇▇▇▇▇▇▇▇▇▇ 23.0
+3.144 ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 118.3
+
+Speedometer score:
+------------------
+
+With the fix [2] applied to keep rate_limit_us as small as possible
+
+                      | score
+----------------------+--------
+default               |  352
+rampup multiplier = 1 |  388
+rampup multiplier = 2 |  427
+rampup multiplier = 3 |  444
+rampup multiplier = 4 |  456
+
+[1] https://github.com/qais-yousef/rampup
+[2] https://lore.kernel.org/lkml/20240728192659.58115-1-qyousef@layalina.io/
+[3] https://lore.kernel.org/lkml/20231208002342.367117-1-qyousef@layalina.io/
+
+Qais Yousef (16):
+  sched: cpufreq: Rename map_util_perf to sugov_apply_dvfs_headroom
+  sched/pelt: Add a new function to approximate the future util_avg
+    value
+  sched/pelt: Add a new function to approximate runtime to reach given
+    util
+  sched/fair: Remove magic hardcoded margin in fits_capacity()
+  sched: cpufreq: Remove magic 1.25 headroom from
+    sugov_apply_dvfs_headroom()
+  sched/schedutil: Add a new tunable to dictate response time
+  sched/pelt: Introduce PELT multiplier boot time parameter
+  sched/fair: Extend util_est to improve rampup time
+  sched/fair: util_est: Take into account periodic tasks
+  sched/qos: Add a new sched-qos interface
+  sched/qos: Add rampup multiplier QoS
+  sched/pelt: Add new waiting_avg to record when runnable && !running
+  sched/schedutil: Take into account waiting_avg in apply_dvfs_headroom
+  sched/schedutil: Ignore dvfs headroom when util is decaying
+  sched/fair: Enable disabling util_est via rampup_multiplier
+  sched/fair: Don't mess with util_avg post init
+
+ Documentation/admin-guide/pm/cpufreq.rst      |  17 +-
+ Documentation/scheduler/index.rst             |   1 +
+ Documentation/scheduler/sched-qos.rst         |  44 +++++
+ drivers/cpufreq/cpufreq.c                     |   4 +-
+ include/linux/cpufreq.h                       |   3 +
+ include/linux/sched.h                         |  12 ++
+ include/linux/sched/cpufreq.h                 |   5 -
+ include/uapi/linux/sched.h                    |   6 +
+ include/uapi/linux/sched/types.h              |  46 +++++
+ kernel/sched/core.c                           |  71 +++++++
+ kernel/sched/cpufreq_schedutil.c              | 174 +++++++++++++++++-
+ kernel/sched/debug.c                          |   5 +
+ kernel/sched/fair.c                           | 149 +++++++++++++--
+ kernel/sched/pelt.c                           | 140 ++++++++++++--
+ kernel/sched/sched.h                          |  12 ++
+ kernel/sched/syscalls.c                       |  37 ++++
+ .../trace/beauty/include/uapi/linux/sched.h   |   4 +
+ 17 files changed, 685 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/scheduler/sched-qos.rst
+
+-- 
+2.34.1
+
 
