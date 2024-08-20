@@ -1,211 +1,168 @@
-Return-Path: <linux-kernel+bounces-293485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241AB958065
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:57:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235CA958067
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834891F2206D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5658E1C23DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E038189BA6;
-	Tue, 20 Aug 2024 07:57:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8801A189BAF;
+	Tue, 20 Aug 2024 07:58:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACA818E34F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DDB18E34F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724140654; cv=none; b=LUXm8hjyBA2M9VmMEjo1WYBDj74mW4D5Dug4gQ48Qy7lHo1B98/DjP19Pg9VqzG4RH2Kf/PJhl/P3w0AKzo0wuVDvzaSp5I7w4wU8WwgrwvpSYy0vcmP1W8FuLAw0U9yH2juFx4BfHTXJIpr2h/ctZjDjs2DC4dppYLkQ2JcOnQ=
+	t=1724140709; cv=none; b=jXOyfppbBzuzD2nfiaWIplKR9qgsLehmzPmkpWRONQunMoU9Jbnq2l/JyOf5Xwi2jX0XlFN2eGpi0OWnMtFOCbOeZLd01YzDmaRdmLIsfQQ7nMYzxMFmHrlZ2L5SNSbwgAeduagKfClZ6mqjLsudvEGTfbknvWYXdnpEy9n9hKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724140654; c=relaxed/simple;
-	bh=TsNatHVV48YxJLiDsLZ8YlXeIye+Jg5/yuW/NRtoUUU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Cn7AGjNKKcBYl7aTh0gtjMb6XpjnrLK5TQ3wQiK5qKbJ6clRCCYtX4CDEABtoU8tzAgUoEi0wJOTpJ7Im5tLhBjiMdUG5yAGsPZtY15gn9PgLih0hmjJgc7Zf6s+rcOrfJmXcCau/vzo0ocfDOTjz+hOfoL5iuQTm4yRsTDqtr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	s=arc-20240116; t=1724140709; c=relaxed/simple;
+	bh=67qmrw0+WQj84veMh1dqkYoXrsITVb16oR9I5LOUV/s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bWk9xhQMUVspgNp0ZRjV5o+jtDr4DVN0mXdLqAdcqvNiKrZt/6MrlEEyoTa16ScG3B75gj79U7pPMenVLwtCNsxMN4pVOsp2ZK5cHgNFdwPG2+TVfmUFaeWXvshe66yEepWr9bBtb+iwlmDrnvNS2U9SWF/4aKxvzYZNYcSXCz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37642e69d7eso45735925ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:57:30 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso46587445ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:58:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724140650; x=1724745450;
+        d=1e100.net; s=20230601; t=1724140706; x=1724745506;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JbNOAtInOvyXakuPD/OSUZBNPPiMvbC5OxiHM9Khf6I=;
-        b=Z82X118p7clt6N3v3l5kOWikmCSLSEHmG4P+tgwsOFqfrwAEpGkesyHlqax7PLiyJD
-         CDU4xKB7J6ZaoxDaYwrN+knG3JM5Leuf/WkR0eH2/i8XsMpHGnv6ee/Sewu5l8/okodi
-         MN8pR14mXOM/Ff5WJ5NoQ6h2mVwVHJAkU9qDaNv27oh43bUJmaO/9x0vmy7F9tyZ+2KF
-         O5cO7VphVRiePZgbuW8tyfYANe76VtrMxI7Zmx0usp7D+KP20xNgmbYNytFnGNd3FLHW
-         Xz3N8oJWnhSLo++/YtkDoLsVbwVfFzNiIyzrYDSx+iDgBDe69ppVWo8PwVFEtA9ISoUw
-         y3ug==
-X-Forwarded-Encrypted: i=1; AJvYcCX9mib44RWfu3RPEjynqJDmWsEYAMspBUV7+P529niYFINt+2rkqBEERfaxCwE5nR4WkXVa1mlvmdVSo0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8omgmQxPiL6jYdmgT8U/lyJbkm3vGWrnvDLtrctbvIt+1gHN1
-	NUaqIo/6yl3DTB4khx9Fa7TafweuKfNeekZGqSs77J6ckr2wq/FolHx0AVEFNBU1mQuWqrCikCl
-	m/orBu1Rrd8BoBklP7K5Sx9gNNvMFi94cucorp0fsq6CRhRpuYcp12+I=
-X-Google-Smtp-Source: AGHT+IH3mbHktfkn4OuNuRTHM9iCVa6hlYjCanXRGzt+Swwv1lrmj024G5+pv6Hkb8MYHrbiFfP4T92F0e9gS5IgJvTf4DaTf1Ea
+        bh=hhNCGOb6XK7oobwH0gSQwHyu2zFQ7pAJNf8SQsyUj7M=;
+        b=YqbF7UkMvYfvmJXmgMqR0PEnCJMCwovdy8Ylj/i/jUqnAexnJqJ3hqqz0PNPmcHjkm
+         C+wMkCHIUMpHVLP4S7B4n+/EtIaU6r+VhWyslV817hyDMFwSi3yRKHXr8Cox2p+6qNJe
+         WEdegzoiRQ/6e0iurZbXuu6Ape/AoByiW64wgHnZUuW0f2PpI2I0bDy/JLDpDs+qlyPi
+         HbykzhILkkpPp362D9yFPZCIVLHbS93mFuwhpmditPjAT5dbMP7nTI67svm8wLpF8fUg
+         +fisTNszULuWnxHBXiFeV44Oz4ba96uSNtbbrvtWN0lMWQgxcHUCEHme98e5p4wO8PXe
+         n+yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcwdHgyLrqkGWG7oaGSQnGzt50NMKb7OnYUuDF/SGoPnJeo5c/xzD6oXlDTWpTqvwbTSBcftNfV3uCsTaPajvGxmMyhLPcdROIfMUI
+X-Gm-Message-State: AOJu0Yzjq6yq3QJKdCpTgCyQlxBSSJecqOezOaz+QJVf6yNp7hkiaJbX
+	bRiyTjO9N5ahldBECALI/RDkeVhON5pQbp1/LoWO9LJUBxYNEm8xR17ZHvAiK5R4w5lbLXqv8XK
+	/B8DJdE8Ef59nw0PRT8xAaMmIDBN+xVdfQplUKCWRfbc1+yPwWboFRmU=
+X-Google-Smtp-Source: AGHT+IGBIuavGhgArxoh4WRlwWK6QZx0hVSiwxAc21Pg24ZpJerRdwk6wk1OorjljvTLkmUNY50tBOWJJbLWSVEN+kqZenLrJmZo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c04:b0:398:3831:4337 with SMTP id
- e9e14a558f8ab-39d26d89609mr11938475ab.5.1724140649686; Tue, 20 Aug 2024
- 00:57:29 -0700 (PDT)
-Date: Tue, 20 Aug 2024 00:57:29 -0700
+X-Received: by 2002:a92:c54b:0:b0:397:b509:6441 with SMTP id
+ e9e14a558f8ab-39d26ceb6a7mr11949705ab.2.1724140706365; Tue, 20 Aug 2024
+ 00:58:26 -0700 (PDT)
+Date: Tue, 20 Aug 2024 00:58:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f7b96e062018c6e3@google.com>
-Subject: [syzbot] [erofs?] general protection fault in z_erofs_gbuf_growsize
-From: syzbot <syzbot+242ee56aaa9585553766@syzkaller.appspotmail.com>
-To: chao@kernel.org, dhavale@google.com, huyue2@coolpad.com, 
-	jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	xiang@kernel.org
+Message-ID: <0000000000005894f3062018caf1@google.com>
+Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
+From: syzbot <syzbot+5a64828fcc4c2ad9b04f@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
+HEAD commit:    b0da640826ba Merge tag 'printk-for-6.11-rc5' of git://git...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=110fcf5d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=242ee56aaa9585553766
+console output: https://syzkaller.appspot.com/x/log.txt?x=10d2076b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a64828fcc4c2ad9b04f
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680ffcb980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153aec05980000
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1fb91896.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cd6e8883313a/vmlinux-1fb91896.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/87b718d2d1df/bzImage-1fb91896.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b0da6408.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f630005f615b/vmlinux-b0da6408.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4e3e4edbec91/bzImage-b0da6408.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1a3cbd9c01e6/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+242ee56aaa9585553766@syzkaller.appspotmail.com
+Reported-by: syzbot+5a64828fcc4c2ad9b04f@syzkaller.appspotmail.com
 
-loop0: detected capacity change from 0 to 16
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5102 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+loop0: detected capacity change from 0 to 32768
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 UID: 0 PID: 5096 Comm: syz-executor792 Not tainted 6.11.0-rc4-syzkaller-00002-gb0da640826ba #0
 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- fail_dump lib/fault-inject.c:52 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
- should_failslab+0xac/0x100 mm/failslab.c:45
- slab_pre_alloc_hook mm/slub.c:3941 [inline]
- slab_alloc_node mm/slub.c:4017 [inline]
- kmem_cache_alloc_node_noprof+0x71/0x320 mm/slub.c:4080
- alloc_vmap_area+0x24f/0x2400 mm/vmalloc.c:1986
- __get_vm_area_node+0x1a9/0x270 mm/vmalloc.c:3119
- get_vm_area_caller mm/vmalloc.c:3170 [inline]
- vmap+0x119/0x2b0 mm/vmalloc.c:3439
- z_erofs_gbuf_growsize+0x262/0x520 fs/erofs/zutil.c:96
- z_erofs_load_lz4_config fs/erofs/decompressor.c:58 [inline]
- z_erofs_parse_cfgs+0x1e6/0x680 fs/erofs/decompressor.c:494
- erofs_read_superblock fs/erofs/super.c:357 [inline]
- erofs_fc_fill_super+0x1194/0x1730 fs/erofs/super.c:628
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe726b7b0ba
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe727918e68 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fe727918ef0 RCX: 00007fe726b7b0ba
-RDX: 0000000020000180 RSI: 00000000200001c0 RDI: 00007fe727918eb0
-RBP: 0000000020000180 R08: 00007fe727918ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00000000200001c0
-R13: 00007fe727918eb0 R14: 0000000000000174 R15: 0000000020000240
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5102 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:z_erofs_gbuf_growsize+0x45f/0x520 fs/erofs/zutil.c:114
-Code: 57 dc 9e fd 48 8b 1b 48 85 db 74 44 43 80 3c 26 00 74 08 4c 89 ef e8 40 dc 9e fd 48 c1 e5 03 49 03 6d 00 48 89 e8 48 c1 e8 03 <42> 80 3c 20 00 74 08 48 89 ef e8 22 dc 9e fd 48 3b 5d 00 74 18 e8
-RSP: 0018:ffffc90002e4f918 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffea000117ce40 RCX: ffff888020388000
-RDX: ffff888020388000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff845bf21b R09: 1ffffffff26e5f27
-R10: dffffc0000000000 R11: fffffbfff26e5f28 R12: dffffc0000000000
-R13: ffff88803267dcc8 R14: 1ffff110064cfb99 R15: 0000000000000000
-FS:  00007fe7279196c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+RIP: 0010:ocfs2_find_dir_space_id fs/ocfs2/dir.c:3406 [inline]
+RIP: 0010:ocfs2_prepare_dir_for_insert+0x3309/0x5c70 fs/ocfs2/dir.c:4280
+Code: 00 00 e8 2a 25 13 fe e9 ba 06 00 00 e8 20 25 13 fe e9 4f 01 00 00 e8 16 25 13 fe 49 8d 7f 08 49 8d 5f 09 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 bd 23 00 00 48 89 d8 48 c1 e8 03 42 0f
+RSP: 0018:ffffc9000af9f020 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000009 RCX: ffff88801e27a440
+RDX: 0000000000000000 RSI: 0000000000000400 RDI: 0000000000000008
+RBP: ffffc9000af9f830 R08: ffffffff8380395b R09: ffffffff838090a7
+R10: 0000000000000002 R11: ffff88801e27a440 R12: dffffc0000000000
+R13: ffff88803c660878 R14: f700000000000088 R15: 0000000000000000
+FS:  000055555a677380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc5da995ed8 CR3: 00000000369c6000 CR4: 0000000000350ef0
+CR2: 0000560bce569178 CR3: 000000001de5a000 CR4: 0000000000350ef0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- z_erofs_load_lz4_config fs/erofs/decompressor.c:58 [inline]
- z_erofs_parse_cfgs+0x1e6/0x680 fs/erofs/decompressor.c:494
- erofs_read_superblock fs/erofs/super.c:357 [inline]
- erofs_fc_fill_super+0x1194/0x1730 fs/erofs/super.c:628
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
+ vfs_mknod+0x36d/0x3b0 fs/namei.c:4088
+ do_mknodat+0x3ec/0x5b0
+ __do_sys_mknodat fs/namei.c:4166 [inline]
+ __se_sys_mknodat fs/namei.c:4163 [inline]
+ __x64_sys_mknodat+0xa7/0xc0 fs/namei.c:4163
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe726b7b0ba
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe727918e68 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fe727918ef0 RCX: 00007fe726b7b0ba
-RDX: 0000000020000180 RSI: 00000000200001c0 RDI: 00007fe727918eb0
-RBP: 0000000020000180 R08: 00007fe727918ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00000000200001c0
-R13: 00007fe727918eb0 R14: 0000000000000174 R15: 0000000020000240
+RIP: 0033:0x7f2dafda3a99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe336a6658 EFLAGS: 00000246 ORIG_RAX: 0000000000000103
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2dafda3a99
+RDX: 00000000000021c0 RSI: 0000000020000040 RDI: 00000000ffffff9c
+RBP: 00007f2dafe1b5f0 R08: 0000000000004480 R09: 000055555a6784c0
+R10: 0000000000000103 R11: 0000000000000246 R12: 00007ffe336a6680
+R13: 00007ffe336a68a8 R14: 431bde82d7b634db R15: 00007f2dafdec03b
  </TASK>
 Modules linked in:
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:z_erofs_gbuf_growsize+0x45f/0x520 fs/erofs/zutil.c:114
-Code: 57 dc 9e fd 48 8b 1b 48 85 db 74 44 43 80 3c 26 00 74 08 4c 89 ef e8 40 dc 9e fd 48 c1 e5 03 49 03 6d 00 48 89 e8 48 c1 e8 03 <42> 80 3c 20 00 74 08 48 89 ef e8 22 dc 9e fd 48 3b 5d 00 74 18 e8
-RSP: 0018:ffffc90002e4f918 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffea000117ce40 RCX: ffff888020388000
-RDX: ffff888020388000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff845bf21b R09: 1ffffffff26e5f27
-R10: dffffc0000000000 R11: fffffbfff26e5f28 R12: dffffc0000000000
-R13: ffff88803267dcc8 R14: 1ffff110064cfb99 R15: 0000000000000000
-FS:  00007fe7279196c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+RIP: 0010:ocfs2_find_dir_space_id fs/ocfs2/dir.c:3406 [inline]
+RIP: 0010:ocfs2_prepare_dir_for_insert+0x3309/0x5c70 fs/ocfs2/dir.c:4280
+Code: 00 00 e8 2a 25 13 fe e9 ba 06 00 00 e8 20 25 13 fe e9 4f 01 00 00 e8 16 25 13 fe 49 8d 7f 08 49 8d 5f 09 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 bd 23 00 00 48 89 d8 48 c1 e8 03 42 0f
+RSP: 0018:ffffc9000af9f020 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000009 RCX: ffff88801e27a440
+RDX: 0000000000000000 RSI: 0000000000000400 RDI: 0000000000000008
+RBP: ffffc9000af9f830 R08: ffffffff8380395b R09: ffffffff838090a7
+R10: 0000000000000002 R11: ffff88801e27a440 R12: dffffc0000000000
+R13: ffff88803c660878 R14: f700000000000088 R15: 0000000000000000
+FS:  000055555a677380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc5da995ed8 CR3: 00000000369c6000 CR4: 0000000000350ef0
+CR2: 0000560bce569178 CR3: 000000001de5a000 CR4: 0000000000350ef0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 ----------------
 Code disassembly (best guess):
-   0:	57                   	push   %rdi
-   1:	dc 9e fd 48 8b 1b    	fcompl 0x1b8b48fd(%rsi)
-   7:	48 85 db             	test   %rbx,%rbx
-   a:	74 44                	je     0x50
-   c:	43 80 3c 26 00       	cmpb   $0x0,(%r14,%r12,1)
-  11:	74 08                	je     0x1b
-  13:	4c 89 ef             	mov    %r13,%rdi
-  16:	e8 40 dc 9e fd       	call   0xfd9edc5b
-  1b:	48 c1 e5 03          	shl    $0x3,%rbp
-  1f:	49 03 6d 00          	add    0x0(%r13),%rbp
-  23:	48 89 e8             	mov    %rbp,%rax
+   0:	00 00                	add    %al,(%rax)
+   2:	e8 2a 25 13 fe       	call   0xfe132531
+   7:	e9 ba 06 00 00       	jmp    0x6c6
+   c:	e8 20 25 13 fe       	call   0xfe132531
+  11:	e9 4f 01 00 00       	jmp    0x165
+  16:	e8 16 25 13 fe       	call   0xfe132531
+  1b:	49 8d 7f 08          	lea    0x8(%r15),%rdi
+  1f:	49 8d 5f 09          	lea    0x9(%r15),%rbx
+  23:	48 89 f8             	mov    %rdi,%rax
   26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 ef             	mov    %rbp,%rdi
-  34:	e8 22 dc 9e fd       	call   0xfd9edc5b
-  39:	48 3b 5d 00          	cmp    0x0(%rbp),%rbx
-  3d:	74 18                	je     0x57
-  3f:	e8                   	.byte 0xe8
+* 2a:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 bd 23 00 00    	jne    0x23f4
+  37:	48 89 d8             	mov    %rbx,%rax
+  3a:	48 c1 e8 03          	shr    $0x3,%rax
+  3e:	42                   	rex.X
+  3f:	0f                   	.byte 0xf
 
 
 ---
@@ -218,6 +175,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
