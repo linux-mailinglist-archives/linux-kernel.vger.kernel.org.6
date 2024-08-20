@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-293629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237E195822C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C180958232
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542471C24272
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC38F1F2157E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3175718C000;
-	Tue, 20 Aug 2024 09:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="k0IXrelx"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D8418B493;
-	Tue, 20 Aug 2024 09:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469918C004;
+	Tue, 20 Aug 2024 09:27:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DE018B493
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724146042; cv=none; b=RmjN9QDN2U8NJBiDFn00B9D/YbE7fBQuphCLx4du8nFTSNrKt9RX4Ai/sghhBZ6mwuAPUKaJ0JU2K8eMp4+pvV0DK9O1Rdk4cqYecKbitumnfnRlTVY0Ru05Z1FHRkk4cqklk9kDYG3JxXfQRp88VguYdU4oHEC26iot30zfYK4=
+	t=1724146073; cv=none; b=BU5To+4Vi2dqrFrwUPC0sGsW7J8zcSEx5t4Ez+FYihUq6isMhuK5T2yAtBDooqBCfufdsgs6tbsLcd/RJSSKqtsM5zOoOng9+azCl+X5zZf9Q1dZjmZ5wEqUaQegNDAoXESAGzsFywybLNhoXoCD0tRXorHxURmCRzhF7f4lcLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724146042; c=relaxed/simple;
-	bh=VMIkaESEWnZtDu7m61lJYnpAx8RNEOmQg402P4Akm3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YeqzxFxq07VSAaMpyGnn0A+DjicsjtvQpZBp5dw8GEI2N4tUsZ5DvnkodHfBaniNHdT7alreBRh68qxn9NFchWX5nYbvhUClzazIUlafNOqvRMROVgKxdgRye6pW4tzxFsCZ71dCfe6w8NGxcfhE2eX3F/Cypn5S7jzTRDoSae0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=k0IXrelx; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724146035; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=K/MrWzNIyumOIgtjq7Sac1rrkPi5s2Cv9Be/ma9e4Xg=;
-	b=k0IXrelxmKRJmwnTssi86tnRrzrTC0XsMzQIQC45m8hpjPd9qF5456Md8lKV7+K80GriVGdl4oZdRijsMolIMBVn+PMWQvUevvOK1ORfXf3L58qMv8TYpe4qD+bwWcgFjzQpnLZ5x2WsMjpxa+yg/dJym+dVfiez1s2EywBWcGs=
-Received: from 30.221.130.129(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WDI3ajq_1724146033)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Aug 2024 17:27:14 +0800
-Message-ID: <c2a0cb7c-3858-4872-9d11-f620df03d476@linux.alibaba.com>
-Date: Tue, 20 Aug 2024 17:27:13 +0800
+	s=arc-20240116; t=1724146073; c=relaxed/simple;
+	bh=bwJU2U5b9R+mDM0VP1Xsu2MihbQDPE/Bf125+n+DSYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqBac7wxWO0R6LyVNEI5k6bOecye+DDQmz2IZW03mJLXcBuPDI+ulFTmiOEgdielhUsj63KY6G8DTD9Z19C3TMk7KgsByu99/u0AWUverLwVgm422k+hYW9HRbEc34J1PZCWIYlcfRq8siv+S4lvdVX5DripUBgIGq0300tgVro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08BBADA7;
+	Tue, 20 Aug 2024 02:28:18 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E745B3F66E;
+	Tue, 20 Aug 2024 02:27:50 -0700 (PDT)
+Date: Tue, 20 Aug 2024 10:27:48 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+Subject: Re: [PATCH 3/8] perf/arm-cmn: Ensure dtm_idx is big enough
+Message-ID: <ZsRhlInugQJiDb_R@J2N7QTR9R3>
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <aa9d45b10814dc6b2c59dfb2c1be49f333dae1dc.1723229941.git.robin.murphy@arm.com>
+ <Zr8ma7pt7te0qxNG@J2N7QTR9R3>
+ <22b69400-af16-4e78-8f72-c10564d7cc6c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: fix out-of-bound access when
- z_erofs_gbuf_growsize() partially fails
-To: Chunhai Guo <guochunhai@vivo.com>,
- "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <000000000000f7b96e062018c6e3@google.com>
- <20240820084224.1362129-1-hsiangkao@linux.alibaba.com>
- <8481ec6f-9f8a-4f76-8ab7-b45e38cc8d40@vivo.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <8481ec6f-9f8a-4f76-8ab7-b45e38cc8d40@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22b69400-af16-4e78-8f72-c10564d7cc6c@arm.com>
 
-Hi Chunhai,
-
-On 2024/8/20 17:25, Chunhai Guo wrote:
-> 在 2024/8/20 16:42, Gao Xiang 写道:
->> If z_erofs_gbuf_growsize() partially fails on a global buffer due to
->> memory allocation failure or fault injection (as reported by syzbot [1]),
->> new pages need to be freed by comparing to the existing pages to avoid
->> memory leaks.
->>
->> However, the old gbuf->pages[] array may not be large enough, which can
->> lead to null-ptr-deref or out-of-bound access.
->>
->> Fix this by checking against gbuf->nrpages in advance.
->>
->> Fixes: d6db47e571dc ("erofs: do not use pagepool in z_erofs_gbuf_growsize()")
->> Cc: <stable@vger.kernel.org> # 6.10+
->> Cc: Chunhai Guo <guochunhai@vivo.com>
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->>
-> Reviewed-by: Chunhai Guo <guochunhai@vivo.com>
-
-I've sent a patch to add links and reported-by.
-
-I assume I can add your reviewed-by to that version too?
-
-Thanks,
-Gao Xiang
-
+On Mon, Aug 19, 2024 at 04:00:06PM +0100, Robin Murphy wrote:
+> On 16/08/2024 11:14 am, Mark Rutland wrote:
+> > On Fri, Aug 09, 2024 at 08:15:42PM +0100, Robin Murphy wrote:
+> > > While CMN_MAX_DIMENSION was bumped to 12 for CMN-650, that only supports
+> > > up to a 10x10 mesh, so bumping dtm_idx to 256 bits at the time worked
+> > > out OK in practice. However CMN-700 did finally support up to 144 XPs,
+> > > and thus needs a worst-case 288 bits of dtm_idx for an aggregated XP
+> > > event on a maxed-out config. Oops.
+> > > 
+> > > Fixes: 23760a014417 ("perf/arm-cmn: Add CMN-700 support")
+> > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> > > ---
+> > >   drivers/perf/arm-cmn.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
+> > > index 0e2e12e2f4fb..c9a2b21a7aec 100644
+> > > --- a/drivers/perf/arm-cmn.c
+> > > +++ b/drivers/perf/arm-cmn.c
+> > > @@ -563,7 +563,7 @@ static void arm_cmn_debugfs_init(struct arm_cmn *cmn, int id) {}
+> > >   struct arm_cmn_hw_event {
+> > >   	struct arm_cmn_node *dn;
+> > > -	u64 dtm_idx[4];
+> > > +	u64 dtm_idx[5];
+> > 
+> > Can't we size this based on CMN_MAX_DIMENSION (or CMN_MAX_XPS or
+> > CMN_MAX_DTMS), to make that clear?
 > 
-> Thanks,
+> Fair enough, I did go back and forth a little on that idea, but reached the
+> opposite conclusion that documenting this with the assert to deliberately
+> make it *not* look straightforward was nicer than wrestling with an accurate
+> name for the logical quantity here, which strictly would be something like
+> CMN_MAX_NODES_PER_TYPE_WE_CARE_ABOUT (there can already be up to 256 RN-Fs,
+> but those aren't visible to the PMU).
 > 
-> Chunhai Guo
-> 
+> I'll have another think on that approach - I do concur that the assert isn't
+> *functionally* any better than automatically sizing the array.
+
+FWIW, I'm happy with the value being an over-estimate, and with needing
+a comment. What I'm really after is that the sizing of dtm_idx is clear
+at the definition of dtm_idx, without an arbitrary-looking number.
+
+Mark.
 
