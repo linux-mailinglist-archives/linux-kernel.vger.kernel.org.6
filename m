@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-294092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962D69588C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:15:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5099588D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0F7281989
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B44E1F21FD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB01E46B91;
-	Tue, 20 Aug 2024 14:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2991A4D8C6;
+	Tue, 20 Aug 2024 14:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DgTY/0l5"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kteWXbtl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5947638F9C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F04C17BB7;
+	Tue, 20 Aug 2024 14:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724163331; cv=none; b=IBnzjxL4VZg7uOeZ3ApsczZ4tBHud4zAzKngngj0PBwlFRPUQiRsMV5ZHeKB755esdC+OWvmubVFhGJfWDWhOukS9kp2BIYkt3EC+CAf/egaI7OjT8yBsBNV+hPttX4YP8J+vZn6/Vq4p3IydnjrLmjG+XFx3sWQIHYGpcwXhvI=
+	t=1724163566; cv=none; b=aUZCHPwmSh+BX7CaYSpnKG2ugMiRJ4bG2BHdqadnjz3k07WBpIbeZiwfV7r0I7dLxyM55rlauubjyVFXX9M1yahcB2e4F18EJXXWbXyHs2gP9vR+HsGp9qeea1c7AfuAzHJdDiZW+KlLWvRrf7JePl521G+tFAM+wNTfi6B5fbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724163331; c=relaxed/simple;
-	bh=tQvpAUnW/HjWvlzBrL3V7SMCGdNMVn8UaNmq5vKYfMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jea3gH2rS/tl6IEC19ctLLqSFD0qRFRqcz8Ch8ojvM/RQ9QkGiF6p8523tAQ+SwMDoCSk06rjROmwVCk9hLrTAXCm97NCNpTnccJhOkCQ/1NIpYQXQjZyRjSVyom3dSzgvnnuP/AUlaax294I/6rA7wVoK2Zluk/2l5jO++z7M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DgTY/0l5; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so61955961fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1724163327; x=1724768127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06G4FyezZgfDrsrpdflEgDGPZdrxliGs+D3AnzUYadA=;
-        b=DgTY/0l59eAllgSuZD1W6w8i82vU5+xlR7Og8i29CelMnc37EayWGXDwQFe1BjOXaZ
-         NJYUG7wst9zSWizjLFkoY6x0oy5L+dDyuv5V8Tzst0ufJCcNvn/r7JEBBlxWgBTdTFEW
-         P2pxhbs//UyHkLd4e9f7D8eB8ls5a3zl1CVcZyyEhCk6LrFjh14Oe4LQxeonjiOaXu1H
-         m0pINUU4gESlQHHy2AxqQjxi3L+zk+GYyfDbvzlwBbfFcVpjHoIrWAHE9vbp3i6pwsfT
-         KYs3nM3itQY1oCLPC9N53Or5Z24XYhm0M7OdO/0kjQ9+8O6tnmEmCvAiQWWMaKc3wKIe
-         JWgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724163327; x=1724768127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06G4FyezZgfDrsrpdflEgDGPZdrxliGs+D3AnzUYadA=;
-        b=HVffURzt09WkiBUFz4zvGDGlhU6XSlfiI+INnKfwBtBX0h16I20IQt3joHlbwbrntz
-         mjoS0xsCDp0G8xL1bKViZ5l3vq2sbVGDo1+gvGzc7/D9jye7teZ0RHs3a85spXlwjXCk
-         bbXj4p2Xj7pupZ0FnMQvvzAHnT6556xKA+VIgIcszLR9NyP+qhzcQPiBV8FT8W7yXDIm
-         nXD/+PW5DYTszkUYAxUTMf5tGVl4vIvJgI79K+Dya6VVh4gCCuVmRtzinTCDSNd0aZ3+
-         gEOTgnDcSs2iKtllClxl6UnXXTlRFewhTNzd5AtDfoQQocd5IyuvZviIOfHkq74G9fwe
-         xgZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHlVh7nbkizMyM0wkOz5RyZtjJ/8IbatL1VmGVxfH4dhQ0VGahIk/VYjdQQJWsiGPFgCfANpp4mRE5wnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8fc922ynwFsDDROPhNeBgY0cGj+Rm/pe8x8lDCdER2+kNyGVA
-	4xRjFYlTYMj9kVZKtMP1KyGLo2mL5ODHi18+MIbe48VAiFS1oaw9aa71r+YJ+HXgMal2Go9Lopj
-	QeI4GJyF/wwOOlGRVIU4vD6+WE0z2UiAwyZmY7Q==
-X-Google-Smtp-Source: AGHT+IGKiThAN0GuC44MFttdMjzCeTZn0kU8ugyaZbQcInGnnepS6RNuiFyj+ZZXcbedpVwVkDYHDnMsJPfbHLCUf2o=
-X-Received: by 2002:a05:651c:890:b0:2f3:f170:8ec2 with SMTP id
- 38308e7fff4ca-2f3f1708f2emr5847911fa.21.1724163326587; Tue, 20 Aug 2024
- 07:15:26 -0700 (PDT)
+	s=arc-20240116; t=1724163566; c=relaxed/simple;
+	bh=PbOxquV5o7WuWMJBCMJR6LWOsyiINGnqBTBjqgFyKq0=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=e1YKKDL45KoMwGUEostq0JUeceElkfPt503qQQQpCJHHz5QOH2EQP99j7397uJltBlEyJIyViIOLr4fIdMG5a3K65ANtThzFPzpYZteZukMcQQoP2kRwrsBrOybvY9q6oHKyC961rP5eLP5JRBeJQ1xGW9/sv/qXzO2dYzgkCPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kteWXbtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E398AC4AF0F;
+	Tue, 20 Aug 2024 14:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724163565;
+	bh=PbOxquV5o7WuWMJBCMJR6LWOsyiINGnqBTBjqgFyKq0=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=kteWXbtl1ef/jQEYZ17TOZN1lPRRWuqUDxz6PNHGeA9Qqaz7kanUc9groVf6l24CK
+	 suHYMXrdSowWba4mkX6BsYIcVVYQOEU81BCPM3p+sV/AwMCHvo1+meutTMLYVFh2Q6
+	 Bqhyeqe8G2A9xbchzDQ9e6gUo5LPB41XqFfr8tqPkFdiCL8b8Z7FKYbkD+Qjvt5w2l
+	 ruGh0O9buFp1BQfSr8snHhcp5KmQPGkOGOw4bJ2GuV2WsXgr4fytbS5PqpiCn8Wz8/
+	 k+zKjp4ME40doeNmANH+ZpPMdVAIToAM7FT2z+cisp1W3eVu0/jceqORtyw4xhbBN/
+	 LCyy8B+zLew5A==
+From: Mark Brown <broonie@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240818173037.122152-1-krzysztof.kozlowski@linaro.org>
+References: <20240818173037.122152-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: samsung,odroid: drop stale clocks
+Message-Id: <172416356364.261879.10105106383289811025.b4-ty@kernel.org>
+Date: Tue, 20 Aug 2024 15:19:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820132857.247679-1-yuehaibing@huawei.com>
-In-Reply-To: <20240820132857.247679-1-yuehaibing@huawei.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 20 Aug 2024 19:45:14 +0530
-Message-ID: <CAK9=C2UMsvb=mZHks+c-YBsWO23=WSrKj3=GgFiO9wzQwc_XLw@mail.gmail.com>
-Subject: Re: [PATCH -next] irqchip/riscv-aplic: Fix NULL vs IS_ERR() bug
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: anup@brainfault.org, tglx@linutronix.de, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, ruanjinjie@huawei.com, 
-	bjorn@rivosinc.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Tue, Aug 20, 2024 at 7:04=E2=80=AFPM Yue Haibing <yuehaibing@huawei.com>=
- wrote:
->
-> devm_platform_ioremap_resource() never returns NULL pointer, it will
-> return ERR_PTR() when it fails, so check it with IS_ERR().
->
-> Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct=
--mode")
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+On Sun, 18 Aug 2024 19:30:37 +0200, Krzysztof Kozlowski wrote:
+> Clocks property was present only to allow usage of assigned-clocks in
+> the sound card node, however in upstream DTS the assigned-clocks were
+> moved in commit 4afb06afd768 ("ARM: dts: exynos: move assigned-clock*
+> properties to i2s0 node in Odroid XU4") to respective I2S nodes.  Linux
+> drivers never parsed "clocks" so it can be safely dropped.
+> 
+> 
+> [...]
 
-Dan (CC'ed) already posted a very similar patch.
+Applied to
 
-Regards,
-Anup
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> ---
->  drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq=
--riscv-aplic-main.c
-> index 28dd175b5764..6d93a85f1fc6 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
-> @@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
->
->         /* Map the MMIO registers */
->         regs =3D devm_platform_ioremap_resource(pdev, 0);
-> -       if (!regs) {
-> +       if (IS_ERR(regs))
->                 dev_err(dev, "failed map MMIO registers\n");
-> -               return -ENOMEM;
-> +               return PTR_ERR(regs);
->         }
->
->         /*
-> --
-> 2.34.1
->
->
+Thanks!
+
+[1/1] ASoC: dt-bindings: samsung,odroid: drop stale clocks
+      commit: e6c1d9068295796e34d59ef08fa80f6ff8f3530a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
