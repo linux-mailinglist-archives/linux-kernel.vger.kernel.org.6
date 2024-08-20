@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-293386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A263957EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:50:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B85957ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7135F1C23506
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:50:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7712B247D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF9C16B391;
-	Tue, 20 Aug 2024 06:50:45 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFAE14A0A8;
+	Tue, 20 Aug 2024 06:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CB5tA0U8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F07F18E341;
-	Tue, 20 Aug 2024 06:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACE018E36D
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724136645; cv=none; b=f0eJh9erVssmzMUqO+gkmkAnlzDgqxq4AJJVpokFYo8+EfTieNrJACPd+nlNZN7K+rJn3ITp+jjkWZ/MNTs80EMRqCUXHopdGkK2I6U3xXxu8RAIsrTVCwACd7g2c7X4ztbVUnCSNTlQV2mA8hKUDWHufjO8CWURBdggcDLfl/c=
+	t=1724137092; cv=none; b=SBAz3G9MEJYn5N2SK6JfIkaRzmJD2s3tFBTnT/xIx5CpI6KPaJWmpu/lj2wFf/oCk3jV9loVrudQLMFWnAD5gnOevkdzcZQqYXYwe9LtssacAHqJPFHN7GtLjUdCznhwvdsnoIz+Ew02MBcN/huGMAPwhbI2BTGebI+9ZkYE/4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724136645; c=relaxed/simple;
-	bh=kpl6F432p2ten8zAndHZAU8GDiUZGBLHxck8SL6ZLQI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QXSuVhdiXGS9RIY7ogzOhZCTtI6fUDKUpDbz/TiiMBxIDMXoU6+EM1nHTe0qm8wKJFjPEAvmce3L8GPNJ1/y4PpzNxjaIwQOQHDfKsU6X2+dIoqueZdBPOR9RgjkQ6vV5I3n8gEWzc7cB4mzWbrhktq+PsDv2IeCaCA7rDhhDjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wp0TR2GpBzyQyK;
-	Tue, 20 Aug 2024 14:50:19 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id A6F6614037B;
-	Tue, 20 Aug 2024 14:50:40 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 14:50:40 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <andrew@lunn.ch>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] net: dsa:  Simplify with scoped for each OF child loop
-Date: Tue, 20 Aug 2024 14:58:04 +0800
-Message-ID: <20240820065804.560603-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724137092; c=relaxed/simple;
+	bh=5VzK0arXNZWe9Hr1ikvzK31iRl9Dw1JLNtUWg6K4hyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqzoiczhh+3WVSlV59jFBHv2limHJ76gbJS5ZwRrjWmd+5mRB606K2wMQoXSJAFYlzxRTYMUrH8SCyF0u7Vq+xzreuOL/sKrl788WWIeW5p3ay2P4tQxj6MkFPGqezOViXIhSrCWEHedxi1JFGMwW7qQhr5gE99l1zYOhfuiL8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CB5tA0U8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B452BC4AF09;
+	Tue, 20 Aug 2024 06:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724137092;
+	bh=5VzK0arXNZWe9Hr1ikvzK31iRl9Dw1JLNtUWg6K4hyI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CB5tA0U8kuG192fxvt+AW67nbj1stAk9GvEOkwglk2KqSm0mJVjGZkDKDgAEAfQA9
+	 bTSO2p8r6VYUL38g/BuWJkHZ2tHJbM2LqYOL1WPFgbsRQQpfuKNkMW3bW6XW6NggnS
+	 c1RcPNiQj3LUJbR2fC1AhQPrpWOUFEjq4vF6Eqob2XVitqzrim4BpqBtCW7/VPpvqk
+	 WYyeMr1TJI65l428DLfxvsz9dtK9WkDNE3Q+JzTN2pqi8D9IEUj86Cq8Df81farabU
+	 lY2AFmLyaw23+lVlxBHKjr1hC6UKx6gGY52CRgS8+N8xGF9QsjyuIa6+YIzE/Gd8qL
+	 8lSLxG9X0TMVA==
+Message-ID: <a16d5083-5e24-43e1-b245-12152cac5947@kernel.org>
+Date: Tue, 20 Aug 2024 14:58:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] f2fs: convert f2fs_write_begin() to use folio
+To: Li Zetao <lizetao1@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>
+References: <20240820034654.698236-1-chao@kernel.org>
+ <a36db618-e7df-4c15-ad6f-876d8cc2bde5@huawei.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <a36db618-e7df-4c15-ad6f-876d8cc2bde5@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+On 2024/8/20 12:38, Li Zetao wrote:
+>> I want to apply your patch set for testing, but there is a conflict on 
+> the master branch of linux-next. Maybe it depends on a certain pre-patch. Please let me know, thank you.
+> 
+>    Applying: f2fs: convert f2fs_write_begin() to use folio
+>    error: patch failed: fs/f2fs/data.c:3566
+>    error: fs/f2fs/data.c: patch does not apply
+>    Patch failed at 0001 f2fs: convert f2fs_write_begin() to use folio
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- net/dsa/dsa.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+We should apply this patchset on top of dev-test branch?
 
-diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
-index 668c729946ea..77d91cbb0686 100644
---- a/net/dsa/dsa.c
-+++ b/net/dsa/dsa.c
-@@ -1264,7 +1264,7 @@ static int dsa_port_parse_of(struct dsa_port *dp, struct device_node *dn)
- static int dsa_switch_parse_ports_of(struct dsa_switch *ds,
- 				     struct device_node *dn)
- {
--	struct device_node *ports, *port;
-+	struct device_node *ports;
- 	struct dsa_port *dp;
- 	int err = 0;
- 	u32 reg;
-@@ -1279,17 +1279,14 @@ static int dsa_switch_parse_ports_of(struct dsa_switch *ds,
- 		}
- 	}
- 
--	for_each_available_child_of_node(ports, port) {
-+	for_each_available_child_of_node_scoped(ports, port) {
- 		err = of_property_read_u32(port, "reg", &reg);
--		if (err) {
--			of_node_put(port);
-+		if (err)
- 			goto out_put_node;
--		}
- 
- 		if (reg >= ds->num_ports) {
- 			dev_err(ds->dev, "port %pOF index %u exceeds num_ports (%u)\n",
- 				port, reg, ds->num_ports);
--			of_node_put(port);
- 			err = -EINVAL;
- 			goto out_put_node;
- 		}
-@@ -1297,10 +1294,8 @@ static int dsa_switch_parse_ports_of(struct dsa_switch *ds,
- 		dp = dsa_to_port(ds, reg);
- 
- 		err = dsa_port_parse_of(dp, port);
--		if (err) {
--			of_node_put(port);
-+		if (err)
- 			goto out_put_node;
--		}
- 	}
- 
- out_put_node:
--- 
-2.34.1
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test
+
+Thanks,
+
+> 
+> Thanks,
+> Li Zetao.
 
 
