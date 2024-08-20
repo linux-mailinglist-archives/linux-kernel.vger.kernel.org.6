@@ -1,51 +1,39 @@
-Return-Path: <linux-kernel+bounces-294315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251FE958C1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:21:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE225958C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963411F2333D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACA82856D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9681AD9D9;
-	Tue, 20 Aug 2024 16:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Izyxd3Jl"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3D8194145;
-	Tue, 20 Aug 2024 16:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC231ABEBD;
+	Tue, 20 Aug 2024 16:23:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40988190671
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724170880; cv=none; b=d5kIId9HnCf2B0fKadUJdSQUEhhUvGCC0NtsVE+b7EyEhs95HdsFhtX0CKYFE1fg8wAlAzbRuUSsIQs0sxKGp+o+vxqdNnPxCBmzYd9/HXAd5QCCPce7HiB2mVujFzdRzkOglCzI6lvofwtCLeHZ1n+EO1SOerfKuKawSYB8B6M=
+	t=1724170991; cv=none; b=vA/EdaI8ZgHxU+VfHpF9ogJ1wvKBTje4918/+wiSW1h2rAYOTz7/RYJdG+IyOMUD906oGVlo8vg92OGjjRbhclk9mjdoTbbrJMGm2HMeIY1ST1gI98siAFm3BV++4HskPi8dd+0ejd0Y+odS0GDFpVqVeLX5jCVOHwVcx6VY9Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724170880; c=relaxed/simple;
-	bh=xNL5RGtLNIhabs4Hd3NAa0FXp9Ud+N33ySeuzPmNO/Q=;
+	s=arc-20240116; t=1724170991; c=relaxed/simple;
+	bh=LOGGOqz4c+rzqgfRib/PGPrQddfX/jFaBc3ab7Twwac=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LokMgbVrqiRtz2o7jPa+DCtDmRAHYUfyehUzqFRgF87MKeBAIK0fCaCDZqWN+12tdBgMfGa2eWdHY6CHzADx8MEBKZfiw4dSx/jWhrJ0jwtbCn9skFwrKG3/oQisTHsLejQR8LXXd7zcgdeqNfuSTjepmNLX1YIUs3xoc/aid+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Izyxd3Jl; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B0F0FC0009;
-	Tue, 20 Aug 2024 16:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724170869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uKCyGXB2y2Cdc43x8y99O9EX9a/Mff/KPXgIgmFwkX4=;
-	b=Izyxd3JlQY3bI7qjYRGGRzXKzEjqIXWUTA8SwOGLeXBsWJ9bflw1XafR+AC3k8ODhhiI1O
-	ZagoBAbsc0ixWaEUayWT4rJJrL0oHuggwExnbhpVXF5mVtampLNhrjhGX2SZTj59cz+GUa
-	I87ta0Cp5NVMQrmcKglNF2zoyzlwITAyYkrDMlO4V6CD/d0nMFbKGtLklNrgYwZqxud+gJ
-	zJTHLC2mVHl7iV4sKUHjsSSAGbrpSfcvDeKxK1FVkCJa6HcseWP5cRvbzM+Du+JqiGCjQg
-	aBm/VIg+Fu89whSIm4a3whCGPxh4nszuZamznzowxyQefb+pDGOEtvBDjkGZrw==
-Message-ID: <89aabfbe-79bf-4da7-be44-b6cbd92b72a9@bootlin.com>
-Date: Tue, 20 Aug 2024 18:21:07 +0200
+	 In-Reply-To:Content-Type; b=e2bmgq5TVmKPD5dWSUUF5xcItZNdgqp1bC/JNXTPdab9kS/6iMm/jtErfL2ciP1Jk0+jmZfe4mFV0wAtfgOtgaZwFputSRN4bEBUzcFA1t5Z1Ac3FLtanXbWTvFcsxw0sHLRoolPs1MYcGZC2tz5WOWaRnrTM0ryf6uL/MsrUOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40D98DA7;
+	Tue, 20 Aug 2024 09:23:33 -0700 (PDT)
+Received: from [10.57.47.46] (unknown [10.57.47.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AE313F73B;
+	Tue, 20 Aug 2024 09:23:05 -0700 (PDT)
+Message-ID: <7ed142f6-ec00-4cd2-ac26-eff198d6a4d4@arm.com>
+Date: Tue, 20 Aug 2024 17:23:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,149 +41,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo CV18XX SARADC binding
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
- <20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
- <20240812-unwary-mongrel-9f6758bf624c@spud>
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, linux-kernel@vger.kernel.org
+Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+ youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de,
+ Luis Machado <luis.machado@arm.com>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105029.315205425@infradead.org>
 Content-Language: en-US
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-In-Reply-To: <20240812-unwary-mongrel-9f6758bf624c@spud>
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <20240727105029.315205425@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-Hello Conor,
+On 27/07/2024 11:27, Peter Zijlstra wrote:
+> Delayed dequeue has tasks sit around on the runqueue that are not
+> actually runnable -- specifically, they will be dequeued the moment
+> they get picked.
+> 
+> One side-effect is that such a task can get migrated, which leads to a
+> 'nested' dequeue_task() scenario that messes up uclamp if we don't
+> take care.
+> 
+> Notably, dequeue_task(DEQUEUE_SLEEP) can 'fail' and keep the task on
+> the runqueue. This however will have removed the task from uclamp --
+> per uclamp_rq_dec() in dequeue_task(). So far so good.
+> 
+> However, if at that point the task gets migrated -- or nice adjusted
+> or any of a myriad of operations that does a dequeue-enqueue cycle --
+> we'll pass through dequeue_task()/enqueue_task() again. Without
+> modification this will lead to a double decrement for uclamp, which is
+> wrong.
+> 
+> Reported-by: Luis Machado <luis.machado@arm.com>
+> Reported-by: Hongyan Xia <hongyan.xia2@arm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>   kernel/sched/core.c |   16 +++++++++++++++-
+>   1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1676,6 +1676,9 @@ static inline void uclamp_rq_inc(struct
+>   	if (unlikely(!p->sched_class->uclamp_enabled))
+>   		return;
+>   
+> +	if (p->se.sched_delayed)
+> +		return;
+> +
+>   	for_each_clamp_id(clamp_id)
+>   		uclamp_rq_inc_id(rq, p, clamp_id);
+>   
+> @@ -1700,6 +1703,9 @@ static inline void uclamp_rq_dec(struct
+>   	if (unlikely(!p->sched_class->uclamp_enabled))
+>   		return;
+>   
+> +	if (p->se.sched_delayed)
+> +		return;
+> +
+>   	for_each_clamp_id(clamp_id)
+>   		uclamp_rq_dec_id(rq, p, clamp_id);
+>   }
+> @@ -1979,8 +1985,12 @@ void enqueue_task(struct rq *rq, struct
+>   		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+>   	}
+>   
+> -	uclamp_rq_inc(rq, p);
+>   	p->sched_class->enqueue_task(rq, p, flags);
+> +	/*
+> +	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
+> +	 * ->sched_delayed.
+> +	 */
+> +	uclamp_rq_inc(rq, p);
 
-On 8/12/24 5:53 PM, Conor Dooley wrote:
-> On Mon, Aug 12, 2024 at 05:00:55PM +0200, Thomas Bonnefille wrote:
->> The Sophgo SARADC is a Successive Approximation ADC that can be found in
->> the Sophgo SoC.
->>
->> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> ---
->>   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 85 ++++++++++++++++++++++
->>   1 file changed, 85 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> new file mode 100644
->> index 000000000000..846590808e5f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> @@ -0,0 +1,85 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
-> 
-> Filename matching the compatible please.
-> 
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title:
->> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
->> +  Digital Converters
->> +
->> +maintainers:
->> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> +
->> +description:
->> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
->> +
->> +properties:
->> +  compatible:
->> +    const: sophgo,cv1800b-saradc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 0
->> +
->> +patternProperties:
->> +  "^channel@[0-3]+$":
->> +    $ref: adc.yaml
->> +
->> +    description: |
-> 
-> This | is not required.
-> 
->> +      Represents the channels of the ADC.
->> +
->> +    properties:
->> +      reg:
->> +        description: |
->> +          The channel number. It can have up to 3 channels numbered from 0 to 2.
->> +        items:
->> +          - minimum: 0
->> +            maximum: 2
-> 
-> Is this sufficient to limit the number of channels to 3? Aren't you relying
-> on the unique unit addresses warning in dtc to limit it, rather than
-> actually limiting with min/maxItems?
-> 
-It seems like I can't use min/maxItems on this property. I think that it 
-is using size-cells + address-cells to deduce that the number of items 
-should be equal to 1.
-Looking at the dtschema repository it seems to be the case in reg.yaml 
-with address-cells/size-cells = 2/2, 1/1 and 2/1.
-If I try to use maxItems here :
+Apart from the typo in the title, this is a notable functional change.
 
-     properties:
-       reg:
-         maxItems: 1
-         items:
-           - minimum: 0
-             maximum: 2
+Both classes that support uclamp update the CPU frequency in 
+enqueue_task(). Before, a task that have uclamp_min will immediately 
+drive up the frequency the moment it is enqueued. Now, driving up the 
+frequency is delayed until the next util update.
 
-I get this strange error message from `make dt_binding_check`:
+I do not yet have evidence suggesting this is quantitatively bad, like 
+first frame drops, but we might want to keep an eye on this, and switch 
+back to the old way if possible.
 
-DTEX 
-Documentation/devicetree/bindings/iio/adc/sophgo,cv1800b-saradc.example.dts
-/home/thomas/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv1800b-saradc.yaml: 
-patternProperties:^channel@[0-2]+$:properties:reg: {'maxItems': 1, 
-'items': [{'minimum': 0, 'maximum': 2}]} should not be valid under 
-{'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/home/thomas/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv1800b-saradc.yaml: 
-patternProperties:^channel@[0-2]+$:properties:reg: 'anyOf' conditional 
-failed, one must be fixed:
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no 
-constraints defined for the values.
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 
-'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 
-'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of 
-minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the 
-entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-Isn't it okay to just use minimum and maximum and rely on 
-address-cells/size-cells for the number of items allowed ?
+>   
+>   	if (sched_core_enabled(rq))
+>   		sched_core_enqueue(rq, p);
+> @@ -2002,6 +2012,10 @@ inline bool dequeue_task(struct rq *rq,
+>   		psi_dequeue(p, flags & DEQUEUE_SLEEP);
+>   	}
+>   
+> +	/*
+> +	 * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
+> +	 * and mark the task ->sched_delayed.
+> +	 */
+>   	uclamp_rq_dec(rq, p);
+>   	return p->sched_class->dequeue_task(rq, p, flags);
+>   }
+> 
+> 
 
