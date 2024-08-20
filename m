@@ -1,83 +1,135 @@
-Return-Path: <linux-kernel+bounces-293195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6C2957BEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B646B957BED
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E9B1C2342E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D321284B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9059349637;
-	Tue, 20 Aug 2024 03:27:00 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37DC49626
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E569F50285;
+	Tue, 20 Aug 2024 03:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wb9gJB8E"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14733DF;
+	Tue, 20 Aug 2024 03:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724124420; cv=none; b=ZdiC4tV8npIoWWiF/Lt1iQO0GLQo5DhIS6k6Qa764j2i8HLo82oLMVsLyl2YkE45Gcsyrj0SGKQiQSQ6He7l2O3liwSMkHmvYF/SIF5ph3UygrFguMZeWB2JHJXE8KXtK2dAFHXfqeIb963cGlnqkwggbkFVFybj5YBObHAGU4s=
+	t=1724124673; cv=none; b=uylatWXuWz6z9gjKNrMeC4tGCckCsgL2JTmvoGtJ8DJFgHvciRMHAfICuPYXEruHoofoM4sfu/t9CyAHTN68nXtLd8XPm+LYrmnGRKl//9atZ9FFyxQP+PZvjTcbS7x/lhY26tmamK2Hrd8CK0cPkRCmRhSEznxaUBet63XKNe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724124420; c=relaxed/simple;
-	bh=lhSsYpNmbIkkmSCV1rETJVNHXvWLD+63NYOe4YSZCIs=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=h06lI9EVhyU/UwiDwMWr1Bk7MeRsg7hz1VJm9Y21YcCZucgtAYCSP+iJ74io8n9dUGG+aNQPuUFQpYbiRe72hziKayB1SEKcO3Rbm0D2+0Z6qLPgoB7n1eg7cIoe6HcoB8GCQYjjHSbizUwgQfuO9hZ0UxvNXaDFNPoz3DHtWhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166c40cf5948-38244;
-	Tue, 20 Aug 2024 11:26:46 +0800 (CST)
-X-RM-TRANSID:2ee166c40cf5948-38244
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[223.108.79.99])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766c40cf52c6-ef436;
-	Tue, 20 Aug 2024 11:26:46 +0800 (CST)
-X-RM-TRANSID:2ee766c40cf52c6-ef436
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: edumazet@google.com
-Cc: pabeni@redhat.com,
-	hawk@kernel.org,
-	davem@davemloft.net,
-	zhujun2@cmss.chinamobile.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] examples: Fix the wrong format specifier
-Date: Mon, 19 Aug 2024 20:26:44 -0700
-Message-Id: <20240820032644.3240-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1724124673; c=relaxed/simple;
+	bh=o2y4NtQw6PkMCLcvj2u3PAmkBMrJLxt98FGyYIjlE1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kfkmKSIdnfxxbmz5D50wOvyIDfZf4H1UeULS3PpOansKAunJN8yzqd3nQECpJUuGVr4HScuIQU88QTkXztsKzA8X6woaxm6j12t2HA5EIjfmeESnxs7sBDp7dwNaLuSGT42bSyR6pr2faOo70VWRSrizRiFo6kP2QuAT3n+hgFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wb9gJB8E; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 857AC88D3C;
+	Tue, 20 Aug 2024 05:31:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1724124662;
+	bh=RD4icbSIhX45rwxUUXSTQSGNIkWDW0xKEjDV/wBBn0w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wb9gJB8EVjoeuiBshusKsHO/UqSyI6NkyHahtgV7GUIs6IYl46dUPN6+VFs3Yrs3o
+	 WmAeTrSQbUSrJiq0QiYUoyh7hRv/3O9IZil2yQXh5TmSElUEsaJ/hFQgeuYZZvSTB4
+	 Q+/k/vD9Cc4eX2h/IcDdjabs5X9JCEaDMWDdn/YcseocgPdG2emZq11gH0STAU8y7a
+	 jRuDwEvMe3DRGV7TtjblRJhLohuzPljuGy22K+EBdcVcujTJr/u+SeSScZ25/dxOub
+	 47fS/lj/dGI6MNGSxuY2i0mg665xu4ZBEDier2H6xhcaUHUaReGK+ZdbIRYf20Yw6c
+	 pRnJImsc6wU1w==
+Message-ID: <cd8b6c1e-f7d7-4db2-b178-7391e3111237@denx.de>
+Date: Tue, 20 Aug 2024 05:30:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] dt-bindings: input: touchscreen: convert
+ ads7846.txt to yaml
+To: Frank Li <Frank.Li@nxp.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Hasemeyer <markhas@chromium.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240819180535.368902-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240819180535.368902-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-The format specifier of "unsigned int" in printf() should be "%u", not
-"%d".
+On 8/19/24 8:05 PM, Frank Li wrote:
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- tools/net/ynl/samples/page-pool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/tools/net/ynl/samples/page-pool.c b/tools/net/ynl/samples/page-pool.c
-index 332f281ee5cb..e5d521320fbf 100644
---- a/tools/net/ynl/samples/page-pool.c
-+++ b/tools/net/ynl/samples/page-pool.c
-@@ -118,7 +118,7 @@ int main(int argc, char **argv)
- 			name = if_indextoname(s->ifc, ifname);
- 			if (name)
- 				printf("%8s", name);
--			printf("[%d]\t", s->ifc);
-+			printf("[%u]\t", s->ifc);
- 		}
- 
- 		printf("page pools: %u (zombies: %u)\n",
--- 
-2.17.1
+> +  ti,keep-vref-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      set to keep Vref on for differential measurements as well.
 
+Please start sentence with uppercase letter.
 
+> +  ti,pendown-gpio-debounce:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Platform specific debounce time for the pendown-gpio.
+> +
+> +  ti,penirq-recheck-delay-usecs:
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      If set to non-zero, after samples are taken this delay is applied and
+> +      penirq is rechecked, to help avoid false events.  This value is
+> +      affected by the material used to build the touch layer.
+> +
+> +  ti,pressure-max:
+> +    deprecated: true
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      Maximum reported pressure value.
+> +
+> +  ti,pressure-min:
+> +    deprecated: true
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      Minimum reported pressure value (threshold).
+> +
+> +  ti,settle-delay-usec:
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      Settling time of the analog signals; a function of Vcc and the
+> +      capacitance on the X/Y drivers.  If set to non-zero, two samples are
+> +      taken with settle_delay us apart, and the second one is used. ~150
+> +      uSec with 0.01uF caps.
+> +
+> +  ti,swap-xy:
+> +    deprecated: true
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      swap x and y axis.
 
+DTTO
+
+With those two fixed:
+
+Reviewed-by: Marek Vasut <marex@denx.de>
+
+Thanks !
 
