@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-293846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99569585B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:22:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BBD9585BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8666AB23DFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4386A2830D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867D218E756;
-	Tue, 20 Aug 2024 11:21:47 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A1018E742;
+	Tue, 20 Aug 2024 11:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MfVB2p1f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D77618E744;
-	Tue, 20 Aug 2024 11:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B7D18E351;
+	Tue, 20 Aug 2024 11:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152907; cv=none; b=rMu1gU+1NeB2alswM5n3VvqzuR4jqgY2Fhe9UL6/mEqRd34+rFeCAJlYfXDCLD+YIrjIwi0uUghlo/4Q2UFdcRxlgcvvYJ91tjvXdMHuK7SiM2X0vb3m4tUQcuAyhQujiy7TKDcNqjt2+FnIxMEk9mROtTySLaFW0HL9dJnAZFQ=
+	t=1724153006; cv=none; b=ohdS6wsZf+P//HJJFxNnOZ5TkILRB36HgZImtaLRNatNOJEaNztVJDfat5udOSEgYe2cIsE9tBjSM4nufv8hqrqZizCxdloPtq9+umUtTOXv6ATGibrcrDNcySd3zhOEAuW7n568sKsp7L6SPl0/lQdEUi1zk9khbpchkQa8iqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152907; c=relaxed/simple;
-	bh=AMPKw3vEUGXBHvvYtB4Det59cxLVQFjWPWXu/V6zIf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nntTHkL651ulmvUa/YGnVbr/n67k23tj8y9e3Hep5xny9A0Ux5rninvCBko4u6Ps9sYnKluDnitpD++kaHpEIhuw4wCZtL8RiXdENu82M7h4wcnOicr/Xd5bmmWb34Xf4zwb5o+nHrE9uM14qSxruR1Lkuynsn8VQqtpsIJZNX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so37145465e9.2;
-        Tue, 20 Aug 2024 04:21:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724152903; x=1724757703;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sYw4GmPfrHigbQo/4U34PNKhToaAnBYaJK1BK61a010=;
-        b=Mp2gddG46YfGazM6+ID6vOCXtT/BcE3rDqR8RiMiylgVmMHPl3Vr1nSPz3ITf7MfZH
-         FSXrWSrgLbXRhbWl3oQ6O5Q3/GlRSHTl64HmkeS1QpFBq0PASogAK1J9FGj1nkT7PojP
-         Lb+4HHQLHtAhJUtwkXz3Mn2Bl5oMJuX42RNDdtjtjrfbxjHDxJKDVz60WPro18ptuti9
-         5Bq+qYKYXaO9YEaEb4CkResGk6DRf7DlEa9g4y071DOraOZQ3ksasOpBc/iR61FTlteb
-         QM2wuyUcWW2n/RKg0G1a/fvQ69SAAd4j/Zh71Lu6ieh2v3eS6b6XwtJ+3ivUQOLPrJe7
-         aTFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoR73piFINSkzxRFyaXbhmfKkTT4tqGRzInNGUpN/wqyp5KV/+p96S2lfbiGS6QU0WslaJEx8hOH6Vd6/cv4jnNK3DHJsTHQZeiEQuw/fQGbOGhJfWHwbQCuebX/7ycm6cThCEKJxu+CdJ2eyoxfFIt1wcS+y91PpyIAxAgMsykvtLxeeamPuNt8+FgWIOMpsLCi5DUSeJc7iNnZKhMs5wVV64dL/yruPE
-X-Gm-Message-State: AOJu0YxGV6BdMRtY/fVuco2iQorwoKQyqagDiD8lJMw7WiLLyHMlObuQ
-	oWpemD8e15PlN0gIJi4ZLpgzKAaS4bdRbzdD4K6plmwyVOmUpaVh
-X-Google-Smtp-Source: AGHT+IFpo/8DovLpoBX1Rhyl7aZLObf34Lfr7Sf3qJm4qAOO2QJ4P2aUDfwwCapsCMFWEmFp29CbbQ==
-X-Received: by 2002:a05:600c:3506:b0:426:641f:25e2 with SMTP id 5b1f17b1804b1-429ed7cce1cmr89060465e9.25.1724152903206;
-        Tue, 20 Aug 2024 04:21:43 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37189897066sm12959636f8f.76.2024.08.20.04.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 04:21:42 -0700 (PDT)
-Date: Tue, 20 Aug 2024 13:21:40 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Cc: andersson@kernel.org, krzk+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com, 
-	quic_varada@quicinc.com, quic_srichara@quicinc.com
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: ipq5332: add nodes to bringup q6
-Message-ID: <f6g2bvosd7y5zyufel73lm6xr2otf25q7ut6tz3vnphtlqotk6@uftsnu4z6xql>
-References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <20240820085517.435566-4-quic_gokulsri@quicinc.com>
+	s=arc-20240116; t=1724153006; c=relaxed/simple;
+	bh=vs4Ivr8mcleS9d+BMDNEetc09LxW39Zhw3a6BqOGr54=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=o/vwPYGQu4p7jCkusK/XHkSr1XVyk9HRQoSFoP+OdjxkRVZBrU3ciw38Aoxt9mBAyUGGgLvRJoJbEN+yshSwqWbdfxgIieIZYVhE/IGH0VETwkrLZ3UxfGod3SRVh5FxqwiL1yAfF+npUFKvzEhOJjgVgZBj19Sgx7k9A0tRXAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MfVB2p1f; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724153005; x=1755689005;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=vs4Ivr8mcleS9d+BMDNEetc09LxW39Zhw3a6BqOGr54=;
+  b=MfVB2p1f1TV1upLd3BcBFhWSMDmZdieXWeOuv6JEBHxlt7qKjDIK2LbW
+   NC/hWwXOGF0K3c/Zz7b14d/XNcvbHjUAPo9RVGMaq1VV3ipMzL+VQcDka
+   P1Hyw3uz8h4KkQ/cf/d6ROwz07+XWhfKPLsBKrrIvTYrQ2Ee8BHprsY2p
+   jNdOSOjjX7jflZWx0SZjzreS2xCRIit9iqZzEbzPT6EDHrqx6g1DB1coO
+   wkNluQ+ukoy+hNwLD8rEvr1LO6joFlqzRuWcLVjyExDFfcWuat8QShCGN
+   nXNcIc7KLbbwpT7PhEKUyfxu5k7hIjzaIZWi2EF5zChMY78l+x0qEnAe0
+   g==;
+X-CSE-ConnectionGUID: 42WmbfCVR6azzFLyFMk0Zw==
+X-CSE-MsgGUID: cHtoriJEQIC0OH+ccLXp8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22610067"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="22610067"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:23:24 -0700
+X-CSE-ConnectionGUID: 4IPbaCR1Sv2errOjvCyngw==
+X-CSE-MsgGUID: hKXnm7PmQoKN/hhm/ZsjQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="65059127"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.102])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:23:22 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 Aug 2024 14:23:18 +0300 (EEST)
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: ISST: Fix return value on last invalid
+ resource
+In-Reply-To: <20240816163626.415762-1-srinivas.pandruvada@linux.intel.com>
+Message-ID: <e525b1ee-da15-a265-4e12-33c68e01b78f@linux.intel.com>
+References: <20240816163626.415762-1-srinivas.pandruvada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820085517.435566-4-quic_gokulsri@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Aug 20, 2024 at 02:25:16PM +0530, Gokul Sriram Palanisamy wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+On Fri, 16 Aug 2024, Srinivas Pandruvada wrote:
+
+> When only the last resource is invalid, tpmi_sst_dev_add() is returing
+> error even if there are other valid resources before. This function
+> should return error when there are no valid resources.
 > 
-> Enable nodes required for q6 remoteproc bring up.
+> Here tpmi_sst_dev_add() is returning "ret" variable. But this "ret"
+> variable contains the failure status of last call to sst_main(), which
+> failed for the invalid resource. But there may be other valid resources
+> before the last entry.
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> To address this, do not update "ret" variable for sst_main() return
+> status.
+>
+> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: <stable@vger.kernel.org> # 6.10+
+
+Thanks for the patch. Applied to review-ilpo.
+
+While applying, I added the answer to the obvious question: why no new 
+checks are needed for the no valid resources case (essentially, noting the 
+existing !inst check).
+
+-- 
+ i.
+
 > ---
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 62 +++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
+>  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> index 0a74ed4f72cc..ec93e7b64b9e 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> @@ -145,6 +145,11 @@ smem@4a800000 {
+> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> index 7fa360073f6e..404582307109 100644
+> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> @@ -1549,8 +1549,7 @@ int tpmi_sst_dev_add(struct auxiliary_device *auxdev)
+>  			goto unlock_free;
+>  		}
 >  
->  			hwlocks = <&tcsr_mutex 3>;
->  		};
-> +
-> +		q6_region: wcnss@4a900000 {
-
-Why here it is wcnss...
-
-> +			reg = <0x0 0x4a900000 0x0 0x2b00000>;
-> +			no-map;
-> +		};
->  	};
->  
->  	soc@0 {
-> @@ -476,6 +481,39 @@ frame@b128000 {
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		q6v5_wcss: remoteproc@d100000 {
-
-but everywhere else is wcss?
-
-> +			compatible = "qcom,ipq5332-wcss-sec-pil";
-> +			reg = <0xd100000 0x4040>;
-> +			firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
-
-It's one firmware independent of board?
-
-Best regards,
-Krzysztof
+> -		ret = sst_main(auxdev, &pd_info[i]);
+> -		if (ret) {
+> +		if (sst_main(auxdev, &pd_info[i])) {
+>  			/*
+>  			 * This entry is not valid, hardware can partially
+>  			 * populate dies. In this case MMIO will have 0xFFs.
+> 
 
 
