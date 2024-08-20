@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-293240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D4957C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCA3957C52
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A571F215B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CFE28534A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CC150284;
-	Tue, 20 Aug 2024 04:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7A050284;
+	Tue, 20 Aug 2024 04:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pb5GP14V"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ib9BUAFd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149E52F5E;
-	Tue, 20 Aug 2024 04:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101DD2F5E;
+	Tue, 20 Aug 2024 04:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724127607; cv=none; b=q6yhQJ7NPyt2llVoP2m0/QoWpQLo3EalG7EXDGmp2QD/GqfTQNI+aHPUOX3CJ2mw/PFQHR/th1zUnEzHIE3JRn6m1Jcv5QxqQ51raDWpKBXh1YgeOtecLqRdUvBxe0fh9DguR4JwmqlivFRBHIrgmLPQG9pQqZXogr9MYyvlriM=
+	t=1724127365; cv=none; b=TVAl4QcWwRvVA7QpJ76jUUXN2kIR3lK2+sx18gRnE2IjgRPSsffdWuO7GVDy7zE7wJnVK4ht4LVPORBf7trlLgGFD5vUCmQbpHcuqLXjWzjG1VQvtdDN11byiB33+0euYbgrZaYLni113MrI2JPh5/ORF0cnNFcczuAdMhwvHlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724127607; c=relaxed/simple;
-	bh=ZudlhkBfQ0BwjRqg6u+viifztToroejZY1NZzXHOP20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VSVJwEctZADQ09kobp+1+FRxWWYgw+OEQkDyMVkKLwIN1Our+i8TaPgBzhxDp6DsDL13D/LIesY3+HCBUUpClqubyAoFU6nU5QZ0J4sWuavERchs4OXHzbtWvVLrldp2OA7kECP9eWSBl9yZHb0HdCEpz7hdCm/1ng4TjwS5mLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pb5GP14V; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (unknown [10.101.196.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A22153F215;
-	Tue, 20 Aug 2024 04:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724127110;
-	bh=NPnIDwRkzJjOEruOcZJb3i9Ia0ap8ihLS7L3WjqbHZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=pb5GP14VL3QJlo0x60EcQTjFzHzksA5Hp4AlqHquAOoVjywLlsscHlmpWBSoQsFK7
-	 1IBwkCprvBZtRZhFEBzwJL6ZMhlV8vpnCFPH5+g61cx+YV2nVVaZrSDGICJwwxPW8H
-	 EYbhm/fjhQz3B2ef9ox2+4OkkItvjjymRsosSZmHOKLhsf0UUv25jUK3HnIqS93zz0
-	 W7JNOAW3Vw2suTKTJM/2gwU0iP6plnrOgoYag/xLEJDmVxdExWykO5DdidwPAkTchI
-	 Zs1rY5un2vipuw6UZtSnQgNTz1lSGmwxcsv1dgV0jr6UMJKeiuTHN8svP+JpsruOc9
-	 TZgNLfNtAI9YA==
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: jacob.jun.pan@linux.intel.com,
-	lenb@kernel.org
-Cc: artem.bityutskiy@linux.intel.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] intel_idle: Disable C1E on Jasper Lake and Elkhart Lake
-Date: Tue, 20 Aug 2024 12:11:28 +0800
-Message-ID: <20240820041128.102452-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724127365; c=relaxed/simple;
+	bh=AGa3YhfBqQHIC8r3pvSt8hZ1jUBw1AJBBqGQCs2wo98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsY8IDDm05Ru/HObBEad6Phnhon6PpgniNf9/BOHa98YQiabKluZi4dNQeoIVmgrzxhnyINM+iGRPpGf+IelplcBuPw2jdkLUZC34FLrT4qYjgg0Ujz12bZK9SIVfkiGi8Mklz8Noa+qQJ+qi6S9UiyNgNDPRh5TpX/QA22wL1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ib9BUAFd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C98C4AF09;
+	Tue, 20 Aug 2024 04:16:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724127364;
+	bh=AGa3YhfBqQHIC8r3pvSt8hZ1jUBw1AJBBqGQCs2wo98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ib9BUAFdVkVdBgf92ngVXaz9/zKAZE+WtXLpxOj5r/PuW0XRmqPX8rTqYGWkv0MC7
+	 sgk8KQo/vj6VGCdUkMkZfY3D7OVXThlaPhtqY4AM3Vv+hY4Cn15RpD6mhz8shSGIDb
+	 gi/nHa3aFCQwyI2yentY9SjEj4nIuSkYpkrfX/OQ=
+Date: Tue, 20 Aug 2024 06:15:52 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mark Pearson <markpearson@lenovo.com>, Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	patches@lists.linux.dev, stable@vger.kernel.org,
+	John Rowley <lkml@johnrowley.me>
+Subject: Re: [PATCH] ACPI: platform-profile: Fix CFI violation when accessing
+ sysfs files
+Message-ID: <2024082034-bullfight-pureness-3ada@gregkh>
+References: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
 
-PCIe ethernet throughut is sub-optimal on Jasper Lake and Elkhart Lake.
+On Mon, Aug 19, 2024 at 12:09:22PM -0700, Nathan Chancellor wrote:
+> When an attribute group is created with sysfs_create_group(), the
+> ->sysfs_ops() callback is set to kobj_sysfs_ops, which sets the ->show()
+> and ->store() callbacks to kobj_attr_show() and kobj_attr_store()
+> respectively. These functions use container_of() to get the respective
+> callback from the passed attribute, meaning that these callbacks need to
+> be the same type as the callbacks in 'struct kobj_attribute'.
+> 
+> However, the platform_profile sysfs functions have the type of the
+> ->show() and ->store() callbacks in 'struct device_attribute', which
+> results a CFI violation when accessing platform_profile or
+> platform_profile_choices under /sys/firmware/acpi because the types do
+> not match:
+> 
+>   CFI failure at kobj_attr_show+0x19/0x30 (target: platform_profile_choices_show+0x0/0x140; expected type: 0x7a69590c)
+> 
+> This happens to work because the layout of 'struct kobj_attribute' and
+> 'struct device_attribute' are the same, so the container_of() cast
+> happens to allow the callbacks to still work.
 
-The CPU can take long time to exit to C0 to handle IRQ and perform DMA
-when C1E is enabled.
+Please note that this was an explicit design decision all those years
+ago, it's not just "happening" to work by some accident.  It was just
+done way before anyone thought of CFI-like things.
 
-So adjust intel_idle to use _CST when state_table is absent, and disable
-C1E on those two platforms.
+> 
+> Change the type of platform_profile_choices_show() and
+> platform_profile_{show,store}() to match the callbacks in
+> 'struct kobj_attribute' and update the attribute variables to match,
+> which resolves the CFI violation.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a2ff95e018f1 ("ACPI: platform: Add platform profile support")
+> Reported-by: John Rowley <lkml@johnrowley.me>
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/2047
+> Tested-by: John Rowley <lkml@johnrowley.me>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  drivers/acpi/platform_profile.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index d2f7fd7743a1..11278f785526 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -22,8 +22,8 @@ static const char * const profile_names[] = {
+>  };
+>  static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
+>  
+> -static ssize_t platform_profile_choices_show(struct device *dev,
+> -					struct device_attribute *attr,
+> +static ssize_t platform_profile_choices_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr,
+>  					char *buf)
+>  {
+>  	int len = 0;
+> @@ -49,8 +49,8 @@ static ssize_t platform_profile_choices_show(struct device *dev,
+>  	return len;
+>  }
+>  
+> -static ssize_t platform_profile_show(struct device *dev,
+> -					struct device_attribute *attr,
+> +static ssize_t platform_profile_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr,
+>  					char *buf)
+>  {
+>  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
+> @@ -77,8 +77,8 @@ static ssize_t platform_profile_show(struct device *dev,
+>  	return sysfs_emit(buf, "%s\n", profile_names[profile]);
+>  }
+>  
+> -static ssize_t platform_profile_store(struct device *dev,
+> -			    struct device_attribute *attr,
+> +static ssize_t platform_profile_store(struct kobject *kobj,
+> +			    struct kobj_attribute *attr,
+>  			    const char *buf, size_t count)
+>  {
+>  	int err, i;
+> @@ -115,12 +115,12 @@ static ssize_t platform_profile_store(struct device *dev,
+>  	return count;
+>  }
+>  
+> -static DEVICE_ATTR_RO(platform_profile_choices);
+> -static DEVICE_ATTR_RW(platform_profile);
+> +static struct kobj_attribute attr_platform_profile_choices = __ATTR_RO(platform_profile_choices);
+> +static struct kobj_attribute attr_platform_profile = __ATTR_RW(platform_profile);
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219023
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v2:
- - Allow the driver to use _CST when state_table is absent.
+I understand your need/want for this, but ick, is there any way to get
+back to using 'struct device' and not "raw" kobjects here?  That's what
+the code should be using really.
 
- drivers/idle/intel_idle.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+thanks,
 
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index 9aab7abc2ae9..ac1c6f4f9c7f 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -1475,6 +1475,10 @@ static const struct idle_cpu idle_cpu_dnv __initconst = {
- 	.use_acpi = true,
- };
- 
-+static const struct idle_cpu idle_cpu_tmt __initconst = {
-+	.disable_promotion_to_c1e = true,
-+};
-+
- static const struct idle_cpu idle_cpu_snr __initconst = {
- 	.state_table = snr_cstates,
- 	.disable_promotion_to_c1e = true,
-@@ -1538,6 +1542,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&idle_cpu_bxt),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&idle_cpu_bxt),
- 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&idle_cpu_dnv),
-+	X86_MATCH_VFM(INTEL_ATOM_TREMONT,       &idle_cpu_tmt),
-+	X86_MATCH_VFM(INTEL_ATOM_TREMONT_L,     &idle_cpu_tmt),
- 	X86_MATCH_VFM(INTEL_ATOM_TREMONT_D,	&idle_cpu_snr),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&idle_cpu_grr),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&idle_cpu_srf),
-@@ -2075,7 +2081,7 @@ static void __init intel_idle_cpuidle_driver_init(struct cpuidle_driver *drv)
- 
- 	drv->state_count = 1;
- 
--	if (icpu)
-+	if (icpu && icpu->state_table)
- 		intel_idle_init_cstates_icpu(drv);
- 	else
- 		intel_idle_init_cstates_acpi(drv);
-@@ -2209,7 +2215,11 @@ static int __init intel_idle_init(void)
- 
- 	icpu = (const struct idle_cpu *)id->driver_data;
- 	if (icpu) {
--		cpuidle_state_table = icpu->state_table;
-+		if (icpu->state_table)
-+			cpuidle_state_table = icpu->state_table;
-+		else if (!intel_idle_acpi_cst_extract())
-+			return -ENODEV;
-+
- 		auto_demotion_disable_flags = icpu->auto_demotion_disable_flags;
- 		if (icpu->disable_promotion_to_c1e)
- 			c1e_promotion = C1E_PROMOTION_DISABLE;
--- 
-2.43.0
-
+greg k-h
 
