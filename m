@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-293805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F47958519
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517D995851F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A684428BC24
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0827C1F21C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A168218E038;
-	Tue, 20 Aug 2024 10:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPpuTPVz"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2B118DF79;
-	Tue, 20 Aug 2024 10:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DBC18CC1F;
+	Tue, 20 Aug 2024 10:48:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBAD178376;
+	Tue, 20 Aug 2024 10:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724150727; cv=none; b=TvdzmTvgCbeyBm4vKjPx8tuQ1bcxs7oiyjd3AWEmifpmEx18wEVJTuZUs3eSi7o0ysGu5CZ+BLvCOkgvjGIJ+UAMUAG1IswzkMKH1+0VKvsuqLtguS/Fi7lMzD2iEoY0WQuTMrnbfJF//ucWO2cNgt+MNr/g7WiyrldwdYg9OV8=
+	t=1724150897; cv=none; b=WG5hafdLfnDxv7G4SR6AZvGLYdzwDq+zQYm9KsZzYaj4bE9M8Dn1xbcjMk8Y8zTcygHjYoxrK/jlDtajTC0ryxg/BjIAZvFfgJbbzvUkWVC8GSpkiuKG1ZIzw9JepLhjZb2yQnJW4sKRdmzCqjU0V2/7k7vB2Y16S+XvzsrguN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724150727; c=relaxed/simple;
-	bh=wuAtLr2pIZq3/TNZi8l0jrdkkMwySDA7fzdbIqWOHjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oHD8qS9Yvrpget/HjdfvbKbPh0PA095smCxjNmdORm1n7Gru2Bg2fSA+H0N4yVsY8CRGzgDfKw7z2KXH10gh5ByoyH+i/eaBuq8cAJeVxiPcq64kDbIYIycu3Kgb1g8Ag0gDXyogdVieCQJfpdbIr3FdkK6r5rTKvLnZInG1M0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gPpuTPVz; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-710e39961f4so3561504b3a.3;
-        Tue, 20 Aug 2024 03:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724150726; x=1724755526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bWFJvtWInxnxyNJboaGFr0YAa5APJgiKfOf6l3379ZM=;
-        b=gPpuTPVz7I8GcHXEbBHNUZW+dAUTl62JCu9DvOtgDEmUkDq48JKSujKftObnuuyP3J
-         Hx6S4c2XhtY86yr7rwkLa52i5sVjS7foc8kGdvUWoK2ocg+y88PTbfX33Q2XoRvZ6YZ7
-         +LYzIHOAglc1CXv5XNXZfw+MCcWDZxHmU8IqzU7jJQz6se1xYK9Q4z7JSwxV+6YktR7X
-         IXAeqa+HsnImufuP6DbQLuKAyvFoU3RCl6Ltow2L1PmMpa4YXj4j18hlDx80J4NODNgD
-         2KzR/wbulGz4HkSPTOvLbJj8QI4SbKW8Pu82DlaC3mcA2cvnw8JEePb7nnBM5W/hB96l
-         P52w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724150726; x=1724755526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bWFJvtWInxnxyNJboaGFr0YAa5APJgiKfOf6l3379ZM=;
-        b=Zx4Fn9hvvoha/90PQD44bUq0epotPIcQcnWg6BJkAtSirBb8El7w/7l1inOobVFFyg
-         8wyXm0LBcdi+AYzovRVmaWKIbb013k331aBnI19gvYb/lj3qNnsygaBVAhcnAH5Mzr+3
-         E+jajSxvZl7/d2oVaCzf+6Z41GulqrqoouJ9DZd6AZvaGToc7VthSP91steQjALbuZc3
-         l3Ir19qYU8AantPTRRdBhXl0ZIZ/4+KPOZRi/DlGVpinZzUfxht04245pXooWALSNOqZ
-         2Bt4K8Xar9FmYCkkGyYfggSxB9SijTh0QHsNg+65nfnxxooDjV6JOKY/iSuRulHDsJ+8
-         BQJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ1aQU6VGRzVRAdYZn96T7TC1CPCFvXIUVHB83BR1k/uNY5mEP4Z1lzqdm7bGuT30bhvqunxiVf6j1A+OP@vger.kernel.org, AJvYcCVJnXjLMh1sPjsfCvQQDIhiMZ+wnRU+NoXwEul4iAFJVTztLCNMEe2y303fTRpyEPSVG+VxZvFm3RMUu3cU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyryBSM7M+MfIjjvaMgR61RtYfJAPppOo0XIPQ4O5aWyE30D2Bn
-	fe/DdX/F3NWEa8s6S6sStttjO+y5UNb/0PLF/iMcFJNy3XdNYxBkYpBadXPaEqleQuwuo0QUnqs
-	xjz/c7ZGZ61JxQtlKziapus5HsungRUX0
-X-Google-Smtp-Source: AGHT+IHXJqBpUvGqz6cLbeSh5gliW9v4Gc9+lLcMoERdeOVY2p8XziUqREqZ/yR8nbpXuDBu+sJGK7UroUDTKYw4pFk=
-X-Received: by 2002:a05:6a20:c909:b0:1c8:b145:29c6 with SMTP id
- adf61e73a8af0-1c904f6b85dmr13953977637.8.1724150725740; Tue, 20 Aug 2024
- 03:45:25 -0700 (PDT)
+	s=arc-20240116; t=1724150897; c=relaxed/simple;
+	bh=gkS8J5vowsW0bbUGawWegE8tMjNCg3bYnyGP8vozkrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1kLYfMDJbvp7oMLSRNCljbbu2KXhkukA01WlJ5NlrcGeLTEyjlnve1SRWnB93eIe8u6yskb+HLnvGRcJOBnOdkfgKOudxU7cKF34qSEYtE5KWIjCS8eSXUd5aQNBvdm9PwxjgN9cWWS4ZVh5LOa7Af8ad8XRjqT+YdvcC+Yar4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80F27DA7;
+	Tue, 20 Aug 2024 03:48:37 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DB933F66E;
+	Tue, 20 Aug 2024 03:48:10 -0700 (PDT)
+Date: Tue, 20 Aug 2024 11:48:07 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-ID: <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+ <20240819112902.11451fe8@gandalf.local.home>
+ <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+ <20240819120244.5657eb2f@gandalf.local.home>
+ <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <20240815-preemption-a750-t-v1-1-7bda26c34037@gmail.com> <e8d1534b-d592-43c4-8a34-4c7c4a04181a@kernel.org>
-In-Reply-To: <e8d1534b-d592-43c4-8a34-4c7c4a04181a@kernel.org>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Tue, 20 Aug 2024 11:45:13 +0100
-Message-ID: <CACu1E7H6g=8thZfoRh8-svjqhdTOPg5diKoj+ENa4F5==d5RxA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] drm/msm: Fix bv_fence being used as bv_rptr
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Antonino Maniscalco <antomani103@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
 
-On Tue, Aug 20, 2024 at 11:15=E2=80=AFAM Konrad Dybcio <konradybcio@kernel.=
-org> wrote:
->
-> On 15.08.2024 8:26 PM, Antonino Maniscalco wrote:
-> > The bv_fence field of rbmemptrs was being used incorrectly as the BV
-> > rptr shadow pointer in some places.
-> >
-> > Add a bv_rptr field and change the code to use that instead.
-> >
-> > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 2 +-
-> >  drivers/gpu/drm/msm/msm_ringbuffer.h  | 1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/ms=
-m/adreno/a6xx_gpu.c
-> > index bcaec86ac67a..32a4faa93d7f 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > @@ -1132,7 +1132,7 @@ static int hw_init(struct msm_gpu *gpu)
-> >       /* ..which means "always" on A7xx, also for BV shadow */
-> >       if (adreno_is_a7xx(adreno_gpu)) {
-> >               gpu_write64(gpu, REG_A7XX_CP_BV_RB_RPTR_ADDR,
-> > -                         rbmemptr(gpu->rb[0], bv_fence));
-> > +                         rbmemptr(gpu->rb[0], bv_rptr));
-> >       }
-> >
-> >       /* Always come up on rb 0 */
-> > diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.h b/drivers/gpu/drm/msm=
-/msm_ringbuffer.h
-> > index 0d6beb8cd39a..40791b2ade46 100644
-> > --- a/drivers/gpu/drm/msm/msm_ringbuffer.h
-> > +++ b/drivers/gpu/drm/msm/msm_ringbuffer.h
-> > @@ -31,6 +31,7 @@ struct msm_rbmemptrs {
-> >       volatile uint32_t rptr;
-> >       volatile uint32_t fence;
-> >       /* Introduced on A7xx */
-> > +     volatile uint32_t bv_rptr;
->
-> This is never initialized or assigned any value, no?
->
-> Konrad
+On Tue, Aug 20, 2024 at 10:03:30AM +0900, Masami Hiramatsu wrote:
+> On Mon, 19 Aug 2024 12:02:44 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Tue, 20 Aug 2024 00:56:49 +0900
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > 
+> > > > 
+> > > > We may need to add "noinline" or something to make sure those functions
+> > > > don't get inlined for LTO.  
+> > > 
+> > > Yeah, we need such option at least for function call test.
+> > 
+> > Could you add the noinline, and if it fixes the issue send a patch?
+> 
+> I found the target function already has "noinline". I tried to add noinline
+> to the testing function (callsite), but it also did not work.
+> I think "noinline" is for the compiler, but LTO is done by the linker.
 
-Neither is the original (retroactively BR) shadow RPTR, except
-apparently on suspend (no idea why). It's written by the GPU as it
-reads the ringbuffer, because CP_BV_RPTR_ADDR is set to its address.
-For the BV shadow RPTR, we aren't really using it for anything (and
-neither is kgsl) so we just need to point the register to a valid
-"dummy" address that isn't used by anything else.
+If LTO is breaking noinline, then that has much larger implications for
+noinstr code and similar, and means that LTO is unsound...
 
-Connor
+> I found a discussion similar to this problem, but it seems very hacky.
+> 
+> https://groups.google.com/g/llvm-dev/c/6baI9LISmSU/m/uEeY_CRbBQAJ?pli=1
+
+Thanks for the link!
+
+Mark.
 
