@@ -1,163 +1,117 @@
-Return-Path: <linux-kernel+bounces-293150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D149B957B55
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51810957B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ED28B2228B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C0286573
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD7E2B9B9;
-	Tue, 20 Aug 2024 02:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3042B9B9;
+	Tue, 20 Aug 2024 02:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPqHVok1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myNqlT37"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2631C687
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27A02C181;
+	Tue, 20 Aug 2024 02:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724119786; cv=none; b=BZvVesHXMAAW7D35RQ8j6Gh06k+JJ8vvIdopWiQcoGOXNvjNF0DVZX4dhV07ehODns/hDW7taJyd0kj1QR1SgeWSybDZZscntTlMvjXNw2PUMmqmMvsxixWKUg4khedQnhVe9tNdtlKtPjHbQb+W6aEWX4QQwn/yRc1pAa56ljw=
+	t=1724119678; cv=none; b=K5XQ6i+8rAN4RuiwQFe+F5SUPhRsK3c3BQhK0oWx0xVVdJDOJJHQHGTNdpewGruUUrfNzRJrDnszhWdBYzQN0IGjyITJ6ScAwC/Vc6W2/A4myUkSobxpRYQQ5JD1eTysCP6o1z/v0ob64STcOLCOH+7QJ9jHa81UvrP+Fh0GHWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724119786; c=relaxed/simple;
-	bh=A0VDvdd/F4J3i4n62dLsMitufA5R1HMZW2f2x0OMSqs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=skimbHyl6HLYb7Zk5fLYmgE6MN4Bw9PToiXavW/mRl71yhQlswm4ZWTB1y0kvSSxn6UXTDEmMleX5BErUaHQLi5QOzRT4YSXMgFLFAwnytlfKqEIOyzMjIw5ghSxPeNo9olQYZxXCajb8xUkhDtsg9/LqhejyxsFfGs/WzL0cI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPqHVok1; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724119784; x=1755655784;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=A0VDvdd/F4J3i4n62dLsMitufA5R1HMZW2f2x0OMSqs=;
-  b=gPqHVok1RmcHidgNAZL6RfYNXhEJmvoCoDD1RGPuVM6YbAX4Oz8FpbPJ
-   EWC0RrbB7MXFgVF7B7ddDyReiC4xnwSjh2EG1CsC1gsw/4N9iOvImaBm9
-   xpB3tlSLYYRr/JPt+ke8WxrWvLF6748sIIhIDO52FaxDKNn7Sv+yNqPc0
-   Lrp5QGUzUDm1+AAAfnPMgHzhdgd0gBv3wH7pfH62PktA8ngWiWuFOqsbz
-   ZOvVdSzvGkXXRIpBfi+PcXSg1ZAyvKg7B0jnwizb3nTWT/p9Gwrtvrdwl
-   yGXT+7A6YiVTBIjcUmcYvU162ynLU35sNksnkm5yosYGOkJfpW01lQqEu
-   w==;
-X-CSE-ConnectionGUID: /5MZGuU0Q7qIVvJWBKTwbw==
-X-CSE-MsgGUID: JxSWR5drT/upR7OFeds3uQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22534699"
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="22534699"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 19:09:43 -0700
-X-CSE-ConnectionGUID: wz0b53h9RO+/HAwLaK5Wrg==
-X-CSE-MsgGUID: lYDHs4euTimJ5HRIApDkDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="98027961"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa001.jf.intel.com with ESMTP; 19 Aug 2024 19:09:42 -0700
-Message-ID: <8da6a9b6-01f4-4c4f-9619-148fdb3828d0@linux.intel.com>
-Date: Tue, 20 Aug 2024 10:06:05 +0800
+	s=arc-20240116; t=1724119678; c=relaxed/simple;
+	bh=ZddIw0tW5VAH05vy47Klfjadp2F4VUA1vxpIRu/A+Ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YAARtdAqE27E4fraw5oyqaASdQZ9XzTwg2dpvfmnLJ7Ra9BWEMFjVJXavLcrtHmq+7F9xsEcRX3FYZZLQ33cUe+dxXvLhvh3JrJmZ10fqUYFPz97KtKfGH7yplJYWWHFeKlEFxdGZOA2bvx0sCNazLHaUe+9DMsCPV7W+uReDdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myNqlT37; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7436EC32782;
+	Tue, 20 Aug 2024 02:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724119677;
+	bh=ZddIw0tW5VAH05vy47Klfjadp2F4VUA1vxpIRu/A+Ls=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=myNqlT37f5YJBFa59OcSKafME3odE0VUtB9AlIel9C9PgsOU1FIwhkkIpgLW9/H82
+	 /Ad0i7FaYYInZyZSFTRTfqP4M3N8aVKI+1RAkyVl/mkQz95EG1zHicpg2b/iBFq/vF
+	 bH1T3KTrUpE1KP5Qp/5kEDe1GduqhAPtG5wREEth4J55933AYVcHDTPe1dViVtpROX
+	 qcz0eQgfmeJrzzhk+ZoSYxkBA8MZDICEHfeDqQ0Yf8LKAhrk/udLe3xjF9fOtN7QDY
+	 QbGwVUN4QsIk8Sjti2igRtGMkDrifQd7Gogjs7mOl91fjOLncD0xTBwcVxF/qSRLIW
+	 3NWBexXhwJCKw==
+Date: Mon, 19 Aug 2024 19:07:55 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Martin Karsten <mkarsten@uwaterloo.ca>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, Joe Damato
+ <jdamato@fastly.com>, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Breno Leitao <leitao@debian.org>, Christian Brauner <brauner@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jan Kara
+ <jack@suse.cz>, Jiri Pirko <jiri@resnulli.us>, Johannes Berg
+ <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:FILESYSTEMS
+ (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+Message-ID: <20240819190755.0ed0a959@kernel.org>
+In-Reply-To: <15bec172-490f-4535-bd07-442c1be75ed9@uwaterloo.ca>
+References: <20240812125717.413108-1-jdamato@fastly.com>
+	<ZrpuWMoXHxzPvvhL@mini-arch>
+	<2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+	<20240813171015.425f239e@kernel.org>
+	<15bec172-490f-4535-bd07-442c1be75ed9@uwaterloo.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Tina Zhang <tina.zhang@intel.com>,
- Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] iommu/vt-d: Introduce batched cache invalidation
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-References: <20240815065221.50328-1-tina.zhang@intel.com>
- <20240815065221.50328-5-tina.zhang@intel.com>
- <20240816093846.40dbd623@DESKTOP-0403QTC.>
- <afec1d30-4bb3-4d39-9ff1-eb8ecb26bed3@linux.intel.com>
- <20240819084056.298a9924@DESKTOP-0403QTC.>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240819084056.298a9924@DESKTOP-0403QTC.>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/19/24 11:40 PM, Jacob Pan wrote:
-> On Sat, 17 Aug 2024 11:28:21 +0800
-> Baolu Lu<baolu.lu@linux.intel.com>  wrote:
+On Tue, 13 Aug 2024 21:14:40 -0400 Martin Karsten wrote:
+> > What about NIC interrupt coalescing. defer_hard_irqs_count was supposed
+> > to be used with NICs which either don't have IRQ coalescing or have a
+> > broken implementation. The timeout of 200usec should be perfectly within
+> > range of what NICs can support.
+> > 
+> > If the NIC IRQ coalescing works, instead of adding a new timeout value
+> > we could add a new deferral control (replacing defer_hard_irqs_count)
+> > which would always kick in after seeing prefer_busy_poll() but also
+> > not kick in if the busy poll harvested 0 packets.  
+> Maybe I am missing something, but I believe this would have the same 
+> problem that we describe for gro-timeout + defer-irq. When busy poll 
+> does not harvest packets and the application thread is idle and goes to 
+> sleep, it would then take up to 200 us to get the next interrupt. This 
+> considerably increases tail latencies under low load.
 > 
->> On 2024/8/17 0:38, Jacob Pan wrote:
->>> On Thu, 15 Aug 2024 14:52:21 +0800
->>> Tina Zhang<tina.zhang@intel.com>  wrote:
->>>    
->>>> @@ -270,7 +343,8 @@ static void cache_tag_flush_iotlb(struct
->>>> dmar_domain *domain, struct cache_tag * u64 type =
->>>> DMA_TLB_PSI_FLUSH;
->>>>    	if (domain->use_first_level) {
->>>> -		qi_flush_piotlb(iommu, tag->domain_id, tag->pasid,
->>>> addr, pages, ih);
->>>> +		qi_batch_add_piotlb(iommu, tag->domain_id,
->>>> tag->pasid, addr,
->>>> +				    pages, ih, domain->qi_batch);
->>>>    		return;
->>>>    	}
->>>>    
->>>> @@ -287,7 +361,8 @@ static void cache_tag_flush_iotlb(struct
->>>> dmar_domain *domain, struct cache_tag * }
->>>>    
->>>>    	if (ecap_qis(iommu->ecap))
->>>> -		qi_flush_iotlb(iommu, tag->domain_id, addr | ih,
->>>> mask, type);
->>>> +		qi_batch_add_iotlb(iommu, tag->domain_id, addr |
->>>> ih, mask, type,
->>>> +				   domain->qi_batch);
->>>>      
->>> If I understand this correctly, IOTLB flush maybe deferred until the
->>> batch array is full, right? If so, is there a security gap where
->>> callers think the mapping is gone after the call returns?
->> No. All related caches are flushed before function return. A domain
->> can have multiple cache tags. Previously, we sent individual cache
->> invalidation requests to hardware. This change combines all necessary
->> invalidation requests into a single batch and raise them to hardware
->> together to make it more efficient.
-> I was looking at the code below, if the index does not reach
-> QI_MAX_BATCHED_DESC_COUNT. There will be no flush after
-> cache_tag_flush_iotlb() returns, right?
+> In order get low latencies under low load, the NIC timeout would have to 
+> be something like 20 us, but under high load the application thread will 
+> be busy for longer than 20 us and the interrupt (and softirq) will come 
+> too early and cause interference.
 
-No. qi_batch_flush_descs() is called explicitly before return.
+An FSM-like diagram would go a long way in clarifying things :)
 
-@@ -341,6 +417,7 @@ static void cache_tag_flush_devtlb_all(struct 
-dmar_domain *domain, struct cache_
-  void cache_tag_flush_range(struct dmar_domain *domain, unsigned long 
-start,
-                            unsigned long end, int ih)
-  {
-+       struct intel_iommu *iommu = NULL;
-         unsigned long pages, mask, addr;
-         struct cache_tag *tag;
-         unsigned long flags;
-@@ -349,6 +426,10 @@ void cache_tag_flush_range(struct dmar_domain 
-*domain, unsigned long start,
+> It is tempting to think of the second timeout as 0 and in fact re-enable 
+> interrupts right away. We have tried it, but it leads to a lot of 
+> interrupts and corresponding inefficiencies, since a system below 
+> capacity frequently switches between busy and idle. Using a small 
+> timeout (20 us) for modest deferral and batching when idle is a lot more 
+> efficient.
 
-         spin_lock_irqsave(&domain->cache_lock, flags);
-         list_for_each_entry(tag, &domain->cache_tags, node) {
-+               if (iommu && iommu != tag->iommu)
-+                       qi_batch_flush_descs(iommu, domain->qi_batch);
-+               iommu = tag->iommu;
-+
-                 switch (tag->type) {
-                 case CACHE_TAG_IOTLB:
-                 case CACHE_TAG_NESTING_IOTLB:
-@@ -372,6 +453,7 @@ void cache_tag_flush_range(struct dmar_domain 
-*domain, unsigned long start,
+I see. I think we are on the same page. What I was suggesting is to use
+the HW timer instead of the short timer. But I suspect the NIC you're
+using isn't really good at clearing IRQs before unmasking. Meaning that
+when you try to reactivate HW control there's already an IRQ pending
+and it fires pointlessly. That matches my experience with mlx5. 
+If the NIC driver was to clear the IRQ state before running the NAPI
+loop, we would have no pending IRQ by the time we unmask and activate
+HW IRQs.
 
-                 trace_cache_tag_flush_range(tag, start, end, addr, 
-pages, mask);
-         }
-+       qi_batch_flush_descs(iommu, domain->qi_batch);
-         spin_unlock_irqrestore(&domain->cache_lock, flags);
-  }
-
-Thanks,
-baolu
+Sorry for the delay.
 
