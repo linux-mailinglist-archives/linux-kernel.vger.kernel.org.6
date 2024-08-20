@@ -1,131 +1,125 @@
-Return-Path: <linux-kernel+bounces-293867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97649585FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D7C9585FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676A82844B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD602837F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A97918E75F;
-	Tue, 20 Aug 2024 11:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmToania"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8247518E75E;
+	Tue, 20 Aug 2024 11:40:47 +0000 (UTC)
+Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2018C02C;
-	Tue, 20 Aug 2024 11:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C1C18C02C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724153900; cv=none; b=KWK/me/ZpSaIml0RkBi8MrYlvelcvVYhxhMGlsgeUhSMIw2H91FHCTl0fUDGr/yuzFWNdMObpzW6mFzKcu6axOCz7WT2k/2CcvBhduuwwjJybaKm1IOTwAHZWigox7sqWGgotUY3xlIBDE9+YBrEpEPIxfSEouWuaeK4IWGotK4=
+	t=1724154047; cv=none; b=pBRlbX99PEifEbXViM+Tjl6GIp3amqKdWwqcv8djNdAJYGq4Jkuj6Hp8S8ehMSNnJ1AW/+HtsdahiPZkipJEoSI85Pw5XzdSrsix5m1hyahAY1hFDyMAJGAP/+iGnP6J+3oAtHTnEaLKaFI8LmMtHdJ7ZSdKpD2R5/vsO6DYL1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724153900; c=relaxed/simple;
-	bh=auY618kVeN3lcHBM/vI3e64WtYz7qzd55L7vbK/m3HU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UXRPDNNJtVzlgHgliJYCXqz+6T0+PnQtGXs1YcQD5pObvyJqBAcpK5VTZzga8+BUlnpSrOWRaA3N6yPb0fj4izT0WycOWHVzbMl1E5QDNI9MGMoIVB02b3wXRM9E1qyqoLk82dR0yjPfy9Ag85wKUk96202Er1dHmTPnVlDVkSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmToania; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso8197370a12.1;
-        Tue, 20 Aug 2024 04:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724153897; x=1724758697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=heGOSoslQzCK2Xpt765McX5y60tfHu8OmZwKXsu+TP4=;
-        b=kmToania4lTbo8TWv/IuWVN8rFFalLkfd5yXJhwNtq15Ni/yedsCJ2z6Ko2fKGWQ0b
-         S1QyXb+OXr6ODDKQE1Mcp17nHMJo8Po/IrfFrqB05hxlHP6YW2LspJj1SwZtk5M7jREu
-         m13XhmFmaDV9/+ZeRCdub9MbdgF+baWUXvpUtN+2yK8XqlYU4c2P0E6nc9MumPvLu6yP
-         z+3sCQyY84IOt10ib6WiKuhjYRBsn3M1TQSyyKpJejQhWnamfZBfFdGl3z3w2qoLfKSF
-         +oJJwMPNT3ArAanvX4JOVyEvcIifE84FiWLFZI62uETnk2N78u+yqfN2aTgzfycyEsw1
-         5PTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724153897; x=1724758697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=heGOSoslQzCK2Xpt765McX5y60tfHu8OmZwKXsu+TP4=;
-        b=b+xt3Kliitzl3Aq/1q9mrkjtD+mUtHFqhT4ltc+e706rVeTn90lgin/kk/eb//umEr
-         kEP9SDOUUKrSCP9FYZVtZibnoLay/01tNnNqI/TJImMe4ughGPwMLqCE+XbJoiDy63bE
-         nf+1h30U3JirYOn4PlglKQDIhXIY8OrzMDZFg2tAwZfYsbnN6O4BNitULAwGHPI0la3I
-         YmfH+8H2zy9BszEuviXGIhv1VeYqjHqIrzO2fhBz9d6kxidZSf3M49pOOTiWtgIxSlG4
-         npf3fa7AJULIQZIA9t3w+sg/V1crFk9PbcMA1/UuN8Tt8pshUi2XCayyMDX0rzCYWvlA
-         g/OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOc7iat7BxdqK1h8XtgBHOXhcEhIMfftAlSKDshe/WK7OeJ7IvUAgXl1UWK+/tYMRS7328jvvMG0swfcQL@vger.kernel.org, AJvYcCVLe1i7XkxXRN3fNkEhnncmU3Z0V2cMafe8kEBCXL5FKGnhDs3TpqvR2R5ZjtkogwQjHA6Bq1ILU9x36mt7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuSZ8QJnngHq1qNOmnpqkDfSiITwfKeZxwDEf9Tlb4Uip9wGbO
-	Tp0u+4DEmT7ZTPKuiBjmWH57cGR54x4SJd0vj/p5k37ZJvVDs+AqO1QHb0ruX36veqAergX36fW
-	A6GEwr5dCqSrzTXX6Zt3JlFUGhRidLA==
-X-Google-Smtp-Source: AGHT+IGmZdRfYTIrXN6NdUXbPnyG0MknZGKzBRaMDrgwJlt23Ozu98f0nUId3+MtgEsZVQKp0DfdTT8QspvcONCpfY4=
-X-Received: by 2002:a17:907:96a4:b0:a83:7ecb:1d1f with SMTP id
- a640c23a62f3a-a8392a03bc1mr976259866b.46.1724153897227; Tue, 20 Aug 2024
- 04:38:17 -0700 (PDT)
+	s=arc-20240116; t=1724154047; c=relaxed/simple;
+	bh=sNZnO963yhICLYGHbjGEhCFD+XwsO9GHKveVXpyesMw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OXExz5mPqnP2wem/8AMRp4aDwCuKnNDt1BRqcEw6gv8FISHgtzoJEf7TTRh0wFRtA81RktwpSh1HTCP2C01Qdi/dNTKN613jFaJK7/p/nQZJM9Lh9zQ6+OMD9SgNq5fM/mNpoXEVr2zd80WB8HJ0h3DhSlK99F5S+IsUq1P04yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.67.165])
+	by sina.com (10.185.250.22) with ESMTP
+	id 66C480AA00005667; Tue, 20 Aug 2024 19:40:28 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8943967602894
+X-SMAIL-UIID: 49D8552ADB774E50A605928CFC916084-20240820-194028-1
+From: Hillf Danton <hdanton@sina.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] Block: switch bd_prepare_to_claim to use ___wait_var_event()
+Date: Tue, 20 Aug 2024 19:40:16 +0800
+Message-Id: <20240820114016.873-1-hdanton@sina.com>
+In-Reply-To: <20240819053605.11706-6-neilb@suse.de>
+References: <20240819053605.11706-1-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
- <20240807124348.GY5334@ZenIV> <20240807203814.GA5334@ZenIV>
-In-Reply-To: <20240807203814.GA5334@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 20 Aug 2024 13:38:05 +0200
-Message-ID: <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-do you plan to submit this to next?
+On Mon, 19 Aug 2024 15:20:39 +1000 NeilBrown <neilb@suse.de>
+> 
+> @@ -535,33 +535,23 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
+>  		const struct blk_holder_ops *hops)
+>  {
+>  	struct block_device *whole = bdev_whole(bdev);
+> +	int err = 0;
+>  
+>  	if (WARN_ON_ONCE(!holder))
+>  		return -EINVAL;
+> -retry:
+> -	mutex_lock(&bdev_lock);
+> -	/* if someone else claimed, fail */
+> -	if (!bd_may_claim(bdev, holder, hops)) {
+> -		mutex_unlock(&bdev_lock);
+> -		return -EBUSY;
+> -	}
+> -
+> -	/* if claiming is already in progress, wait for it to finish */
+> -	if (whole->bd_claiming) {
+> -		wait_queue_head_t *wq = bit_waitqueue(&whole->bd_claiming, 0);
+> -		DEFINE_WAIT(wait);
+>  
+> -		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
+> -		mutex_unlock(&bdev_lock);
+> -		schedule();
+> -		finish_wait(wq, &wait);
+> -		goto retry;
+> -	}
+> +	mutex_lock(&bdev_lock);
+> +	___wait_var_event(&whole->bd_claiming,
+> +			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
+> +			  TASK_UNINTERRUPTIBLE, 0, 0,
+> +			  mutex_unlock(&bdev_lock); schedule(); mutex_lock(&bdev_lock));
+>  
+At the first glance you add the coding pattern not recommended for the block
+directory. Second, you abuse ___wait_var_event() simply because it is available.
 
-anything this is waiting for?
+> -	/* yay, all mine */
+> -	whole->bd_claiming = holder;
+> +	/* if someone else claimed, fail */
+> +	if (!err)
+> +		/* yay, all mine */
+> +		whole->bd_claiming = holder;
+>  	mutex_unlock(&bdev_lock);
+> -	return 0;
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(bd_prepare_to_claim); /* only for the loop driver */
+>  
+> @@ -571,7 +561,8 @@ static void bd_clear_claiming(struct block_device *whole, void *holder)
+>  	/* tell others that we're done */
+>  	BUG_ON(whole->bd_claiming != holder);
+>  	whole->bd_claiming = NULL;
+> -	wake_up_bit(&whole->bd_claiming, 0);
+> +	smp_mb();
+> +	wake_up_var(&whole->bd_claiming);
 
-my quick skim suggests this only needs more testing (and maybe a review)
-
-On Wed, Aug 7, 2024 at 10:38=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Wed, Aug 07, 2024 at 01:43:48PM +0100, Al Viro wrote:
-> > On Wed, Aug 07, 2024 at 11:50:50AM +0200, Mateusz Guzik wrote:
-> >
-> > > tripping ip:
-> > > vfs_tmpfile+0x162/0x230:
-> > > fsnotify_parent at include/linux/fsnotify.h:81
-> > > (inlined by) fsnotify_file at include/linux/fsnotify.h:131
-> > > (inlined by) fsnotify_open at include/linux/fsnotify.h:401
-> > > (inlined by) vfs_tmpfile at fs/namei.c:3781
-> >
-> > Try this for incremental; missed the fact that finish_open() is
-> > used by ->tmpfile() instances, not just ->atomic_open().
-> >
-> > Al, crawling back to sleep...
->
-> I _really_ hate ->atomic_open() calling conventions; FWIW, I suspect
-> that in the current form this series is OK, but only because none
-> of the existing instances call finish_open() on a preexisting
-> aliases found by d_splice_alias().  And control flow in the
-> instances (especially the cleanup paths) is bloody awful...
->
-> We never got it quite right, and while the previous iterations of
-> the calling conventions for that methods had been worse, it's still
-> nasty in the current form ;-/
->
-> Oh, well - review of those has been long overdue.
-
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Third, worse, you have no real idea why mb is needed.
+>  }
+>  
+>  /**
+> -- 
+> 2.44.0
 
