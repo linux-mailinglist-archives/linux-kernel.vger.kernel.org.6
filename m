@@ -1,245 +1,96 @@
-Return-Path: <linux-kernel+bounces-293701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630B3958346
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9BE95834B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87CF81C24337
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF341C2430E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270D718B473;
-	Tue, 20 Aug 2024 09:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1718C34B;
+	Tue, 20 Aug 2024 09:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TH9hBdqM"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARVc1Xeg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD2714A0A8
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5072318C027;
+	Tue, 20 Aug 2024 09:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147675; cv=none; b=S9xSf06KqaXH53+mBf9+EAMMq1X5fMvpREO957pOetq3KRJlAC4Uc3j5YhEzw947hMj3wCoKAnFWEGJ08dQ2B7ZtiHisvpJyCeQaIUfDXaT7EO8ROBCpsKweErAeffpBakQhKo/PY3bRtCeTZ7dxuaU0NAR+e4hPpZcncEsujPs=
+	t=1724147700; cv=none; b=eQ3I5XgK76JWL1alwD1ZFqzSldCZcPCj8on6KgrnYWKlk3cGSKJIZGTouJ1kxSiz8o0gbmaO3BYATF2X6PiwV+/3n8kvy/oqssnnBFz28077kgx5d4YLUO3ao3eqWAxlwv2nSGSxeSg0WpMLCko/0KjWmb2DpEo91IXzD2qu5WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147675; c=relaxed/simple;
-	bh=rsAFr7H/IgzWK005p8Im9Bg0e7SRSmrhtoNnVFssAAs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gQSqAnGIsLvPkkCZ3cIwvlQ7i6PBXoSC1Igcd2k2fXKjUlN44luoMUecfShTPYEeTZWoBYHtCifiMWWd/2QSq5DBYASTiSVo/JUVqh7NyTsyKOrV7Uc+SLWE2t8sXXGFnb4M870SyizDL3uO7KhEQekET0NPROLR4iDuwf2WFpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TH9hBdqM; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240820095430epoutp01da17e0ca17f37f85c6d9b8d03a104e43~tZyvCrHQZ0756907569epoutp012
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240820095430epoutp01da17e0ca17f37f85c6d9b8d03a104e43~tZyvCrHQZ0756907569epoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724147670;
-	bh=AFLXNiVwSlYr3aTYFcpsOpXcL/LT46RkPbGiq8ZtSDc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=TH9hBdqM1nsH9XeApvz8B11n2nJq9PifiE09HgBULRDUb6OVDW1p3L8QB6edHwnnL
-	 ToZNH4eVtxUEB5vOjO8iEOL4If6oH+xmBbR33Tz4ysCWcRuEmaslkHenzJMYR3SXyo
-	 tCcl9TXt8l7XjXH4wWmsnJDB1y99xACKdfPQhndc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240820095429epcas1p3074a30dfec74590d4890ae1aefad0ff2~tZyumP3CH0244302443epcas1p3I;
-	Tue, 20 Aug 2024 09:54:29 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.236]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wp4Yw3pqQz4x9Pp; Tue, 20 Aug
-	2024 09:54:28 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.46.19509.4D764C66; Tue, 20 Aug 2024 18:54:28 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240820095428epcas1p316c9a28149258d0681423e5c60b0f4d1~tZytR_cHK2288622886epcas1p3m;
-	Tue, 20 Aug 2024 09:54:28 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240820095428epsmtrp292e56f1500bda6727c3feccb317c3d30~tZytQ-FKh1423114231epsmtrp2Y;
-	Tue, 20 Aug 2024 09:54:28 +0000 (GMT)
-X-AuditID: b6c32a4c-10bff70000004c35-2d-66c467d4fb98
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BD.80.08456.3D764C66; Tue, 20 Aug 2024 18:54:27 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240820095427epsmtip1be4bb3580c5be0cdad9e09c1388fa0b6~tZys7v3Au2079020790epsmtip1M;
-	Tue, 20 Aug 2024 09:54:27 +0000 (GMT)
-Message-ID: <9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
-Subject: Re: [PATCH v6 4/4] clk: samsung: add top clock support for
- ExynosAuto v920 SoC
-From: Kwanghoon Son <k.son@samsung.com>
-To: "sunyeal.hong" <sunyeal.hong@samsung.com>, 'Krzysztof Kozlowski'
-	<krzk@kernel.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Chanwoo
-	Choi' <cw00.choi@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>, 'Stephen Boyd'
-	<sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>, 'Conor Dooley'
-	<conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 20 Aug 2024 18:54:27 +0900
-In-Reply-To: <087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724147700; c=relaxed/simple;
+	bh=Skj0x3MfuIw+zzNHiN5rJLqdPBEqOODIJoUTO80lc48=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IzZOmbl1qKbkmOeqlOmLkG6LrxSm8hwhOYPnHj9/kMrXnVFdMMBsaHefY14I4DTRZ/1XXewTpA3QYu/8rNpuPrtQpL2VHOyGRTMeYXCKNZ+FbUVyJcKlBpuEzH/+AIOG58tGphJLoPvK2tGeOIAWvs6R6i0YxEulo60CanrrfiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARVc1Xeg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4ADC4AF09;
+	Tue, 20 Aug 2024 09:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724147699;
+	bh=Skj0x3MfuIw+zzNHiN5rJLqdPBEqOODIJoUTO80lc48=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ARVc1Xeg15K+Agq6v9d38vDMQ7O8JbcVXDS2KQ0dQ6D9NJAPcR7oAt/g4cO8ic7cj
+	 5NIT4Z5uRtmJlCal0u8FcRQoJcEkO0QcGlc/Q6s8NaVVZfrr54ZC98FO48s6Xeh75i
+	 +KVIl98GRb2hukyulOnqPBEwvL1c0SQMvJS0Y9W6K9dOFCrGDnqMWCX2QdLR7Uj+jb
+	 yGnjRKX1RBaT2Cj8XAV81713X81zSiSSShL1p3PKu7+SLZwW9fw2Q3tBEF8r2Ep1ah
+	 aSqsLKFB7Vzvf0yAvBjIQ3k0w/kM975YleP/yJP5fYxcFjRA4FgLnuhXmOeZVxcnvT
+	 Lv2X9tjyaqkgw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgLZp-005DZl-13;
+	Tue, 20 Aug 2024 10:54:57 +0100
+Date: Tue, 20 Aug 2024 10:54:56 +0100
+Message-ID: <86ttffy0wf.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: tglx@linutronix.de,
+	Suravee.Suthikulpanit@amd.com,
+	akpm@linux-foundation.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
+In-Reply-To: <20240820092843.1219933-1-make24@iscas.ac.cn>
+References: <20240820092843.1219933-1-make24@iscas.ac.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmru6V9CNpBuuPSVo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5YNXsia8E3uYpr+xtYGxgv
-	SnYxcnJICJhI7F3YzdrFyMUhJLCHUaL533so5xOjxKIrJ5ggnG+MEk33m9hhWma1XWKGSOxl
-	lDje9oMZJCEk8J5RYlVLKojNK+Ah0X3sCBOILSwQKfF0wQ2wGjYBdYklbWvZQZpFBH4ySTza
-	dxxsH7PAUkaJSVeusYFUsQioSiy/tIcVxOYUsJJY19cAFmcW0JZYtvA12CRRAXmJhocnmCG2
-	CUqcnPmEBWSQhMAWDol1LeugbnWRONixlgnCFpZ4dXwLVFxK4vO7vWwQdrbE0Y8wdonE9VmL
-	WCFsY4n9SycD9XIALdaUWL9LH+IGPol3X3tYQcISArwSHW1CEKa8xK3OcohGUYkzTz+yQYQ9
-	JG6shIboDiaJy69vMU1glJ+F5JlZSB6YhbBrASPzKkap1ILi3PTUZMMCQ9281HJ4zCbn525i
-	BKdXLZ8djN/X/9U7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc1OJDjKbAYJ3ILCWa
-	nA9M8Hkl8YYmlgYmZkbGJhaGZoZK4rxnrpSlCgmkJ5akZqemFqQWwfQxcXBKNTA1ZKX8+WRX
-	fmnf7JjyL+Ky3WsUjy3zDr4Z//akWxmz7Es+J3Hjss/sNRcZjhjWvClY2MlbfOH8TI9Lu097
-	7I+J/fvqScmaeNU4Rht9KT7d31Ydz0T5gxuWCbDoeu8NKXddy2dzv9C1rvNUvMzrL66Hb19Z
-	XZrM7se2vEGzewaz08+ofw6FLY4dXr0s2Yz/fW7c7fx+Q0YlJ3SlTILKOZYU5ZjuXecC6noW
-	RJT/UFFxX8fvtutSNWPxA/4ysfX81y9a3nka86w2OD6hgOHDN/HnGzwupe/L5Npu/+jns28x
-	0gUpy58w3at8yrZua2Q9t2jGAb4XftV2DTvtNUQnv/j45mKDwo9PKbcnFJyeqsRSnJFoqMVc
-	VJwIAOXV1t44BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJTvdy+pE0g+d/LCwezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mq6+
-	vsNY0C9XMXvyHdYGxg8SXYycHBICJhKz2i4xdzFycQgJ7GaUeLT0JRtEQlSi43IjYxcjB5At
-	LHH4cDFEzVtGiaZX68FqeAU8JLqPHWECsYUFIiWeLrjBDGKzCahLLGlbyw7SICLwk0li66E2
-	sCJmgWWMEovvs4DYLAKqEssv7WEFsTkFrCTW9TWwQWzYwySxafcGVogGTYnW7b/ZIWxtiWUL
-	X4NtEBWQl2h4eIIZ4gpBiZMzn7BMYBSchaRlFpKWWUjKFjAyr2KUTC0ozk3PLTYsMMpLLdcr
-	TswtLs1L10vOz93ECI4lLa0djHtWfdA7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc
-	1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamE6LvuZamfaxYt2KLMFUg1y/fqM4
-	Xa9NCVvmB0sxXm9hTs6Z1s30OPHFS6EbAlO7JQOKdq8pYnppNHX7YvflGs8i/MNyKxfpz/iX
-	mzF5Lv+RsJf/3t2qrVoy6/3JQ99MxbbVfv29mNH3RF58QNrnxYk3H/R49965cOnwLqdcXxP7
-	vY+amb8f7bvy5Zrn8yPrBKY4uwuVRDQkyhx5Gms/M1Cpe8VqrdCoD9+O7Jy/pUysluvbjov9
-	W6fsyX81/6bWp491pgJLvec6r3zj6Kt/wvTrE//pFi3dLKfrKorU49ONC4XWrLaySNn/snLK
-	YSXuZOVLLbdYHgZkODzzfr/da5Xhzid5LEaJV3MFt6zaGKDEUpyRaKjFXFScCAC+KVHWFAMA
-	AA==
-X-CMS-MailID: 20240820095428epcas1p316c9a28149258d0681423e5c60b0f4d1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
-References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
-	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
-	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
-	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
-	<087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: make24@iscas.ac.cn, tglx@linutronix.de, Suravee.Suthikulpanit@amd.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 2024-08-20 at 10:50 +0900, sunyeal.hong wrote:
-> Hello Kwanghoon,
->=20
-> > -----Original Message-----
-> > From: Kwanghoon Son <k.son=40samsung.com>
-> > Sent: Monday, August 19, 2024 6:32 PM
-> > To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Krzysztof Kozlowski
-> > <krzk=40kernel.org>; Sylwester Nawrocki <s.nawrocki=40samsung.com>; Cha=
-nwoo
-> > Choi <cw00.choi=40samsung.com>; Alim Akhtar <alim.akhtar=40samsung.com>=
-;
-> > Michael Turquette <mturquette=40baylibre.com>; Stephen Boyd
-> > <sboyd=40kernel.org>; Rob Herring <robh=40kernel.org>; Conor Dooley
-> > <conor+dt=40kernel.org>
-> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; l=
-inux-
-> > kernel=40vger.kernel.org
-> > Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
-> > ExynosAuto v920 SoC
-> >=20
-> > On Mon, 2024-08-19 at 14:24 +0900, Sunyeal Hong wrote:
-> > > This adds support for CMU_TOP which generates clocks for all the
-> > > function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
-> > > CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
-> > > and they will generate bus clocks.
-> > >=20
-> > > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > > ---
-> > >  drivers/clk/samsung/Makefile             =7C    1 +
-> > >  drivers/clk/samsung/clk-exynosautov920.c =7C 1173
-> > > ++++++++++++++++++++++
-> > >  2 files changed, 1174 insertions(+)
-> > >  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
-> > >=20
-> > > diff --git a/drivers/clk/samsung/Makefile
-> > > b/drivers/clk/samsung/Makefile index 3056944a5a54..f1ba48758c78 10064=
-4
-> > > --- a/drivers/clk/samsung/Makefile
-> > > +++ b/drivers/clk/samsung/Makefile
-> > > =40=40 -21,6 +21,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=
-=3D clk-
-> > exynos7.o
-> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
-> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
-> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
-> > > +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov920.o
-> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
-> > >  obj-=24(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
-> > >  obj-=24(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-
-> > audss.o
-> > > diff --git a/drivers/clk/samsung/clk-exynosautov920.c
-> > > b/drivers/clk/samsung/clk-exynosautov920.c
-> > > new file mode 100644
-> > > index 000000000000..c17d25e3c9a0
-> > > --- /dev/null
-> > > +++ b/drivers/clk/samsung/clk-exynosautov920.c
-> >=20
-> > =5Bsnip=5D
-> >=20
-> > > +=7D;
-> > > +
-> > > +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D=
- =7B
-> > > +	.mux_clks		=3D peric0_mux_clks,
-> > > +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
-> > > +	.div_clks		=3D peric0_div_clks,
-> > > +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
-> > > +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
-> > > +	.clk_regs		=3D peric0_clk_regs,
-> > > +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
-> > > +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
-> >=20
-> > same question.
-> > Isn't it =22noc=22?
-> > https://lore.kernel.org/linux-samsung-
-> > soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
-> >=20
-> > In my case(autov9), if put wrong clk_name dmesg will show that,
-> > exynos_arm64_register_cmu: could not enable bus clock ...; err =3D -2
-> >=20
-> > Kwang.
-> >=20
-> >=20
->=20
-> clk_name follows the guide document provided by hw. v9 is bus, but v920 u=
-ses noc.
+On Tue, 20 Aug 2024 10:28:43 +0100,
+Ma Ke <make24@iscas.ac.cn> wrote:
+> 
+> We fail to perform an of_node_put() when of_address_to_resource()
+> fails, leading to a refcount leak.
+> 
+> Address this by moving the error handling path outside of the loop and
+> making it common to all failure modes.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-What I mean,
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-.clk_name		=3D =22dout_clkcmu_peric0_noc=22, // wrong
-.clk_name		=3D =22noc=22, // correct
+	M.
 
-Because there is no clock-names =22dout_clkcmu_peric0_noc=22 in
-exynos/exynosautov920.dtsi.
-
-But if you tested your patch and working fine, ignore my comment.
-
-Kwang.
-
->=20
-> Best Regards,
-> sunyeal
->=20
-
+-- 
+Without deviation from the norm, progress is not possible.
 
