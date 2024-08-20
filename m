@@ -1,156 +1,203 @@
-Return-Path: <linux-kernel+bounces-294599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AD7958FE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:46:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C26958FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C495B216A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673FC1C21E95
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536DF18B478;
-	Tue, 20 Aug 2024 21:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E241C57B4;
+	Tue, 20 Aug 2024 21:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQAx9DoR"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k4V3Y1/P";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OEtEC/rD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k4V3Y1/P";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OEtEC/rD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB518E377
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 21:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF4718E377;
+	Tue, 20 Aug 2024 21:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724190390; cv=none; b=LdroBuuXb2WTKF5r4GQFtdZZbdmckqZYMw5xiAS/OpGUfy9bGBsbfsq2uylnZYoj+GzNAGiLFuGftko7mIml2ldbBCBalZQCsXZOFc/Utukkz2p1Q94PC3SK0TjndPqOZcoAQKjmvh34sVY1aDpCGlmh30uJvG0/OVw3ldYrxvA=
+	t=1724190467; cv=none; b=f2gc7c7kNMT5pkY/2YnVVh1UHb976XaKaTBfBE0N5crWf/PRMvj/x80R1F9iv8FwrrsHn8OvFB9sloxWG8h9+4ODBpfUaKWd/TNX3yBZ8fbJyDfLOAv3eguzY+0kQuAS8iX6DNwuBkDXIFQTOh72I9y9cJ7dw0cTe6KW/TnedxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724190390; c=relaxed/simple;
-	bh=oERP+612B9MESUpwFC2xgLQm8dXRH1ACHkct3PiM9K0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZxMt5NC4AXt03jruU1PsVf96V6Xy++nhvc4WCOCC1IoiXQLf7c9gU+ORJvtNkiXC4HrjQXqtc/zDKTiO/rObnSNbFlFKde0rX9GoaYlmsYAQuqjwwzo/H+G0sulsGOnbn43f57yme36QIhvA8yydB66GODzKEQ5AxcJU3jfbxnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQAx9DoR; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f8dbdbba98so90480e0c.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724190388; x=1724795188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XYiBf1vm/fzG+eRd8lpaessq+xOvrwp8tbUt3OoA+0A=;
-        b=kQAx9DoReEiGnLZxBmtBo4/X3X6qlkhWoCiHHLu7AMVpfcFIhx0G8tT4FcTtJR6Llu
-         yhkfCbYdPk5d2U+UDeQzRFJI+8ePcBnN8EUICEGmiJ4eGKnAMMKETroO7VJGPWowaLvy
-         oasCnDvU+nnDZkm21uIPrL8GLi0KbgH0p1i2cIa5l/fAobvRxpbgjTgBEvrYwdA6I7L2
-         XCOv66CMeG4V1CRPBVb2loQVDi42dbNR32VipCPzQ3WkFYgdfdTjgKpLnKlDQys3IUEC
-         6/3wgptUO7ScEjR5UI2YAbRgyJvdGasFgq6sIEDcC51lpJrbZnGHHyZ+zkQ+CmDBKk0Z
-         ff2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724190388; x=1724795188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XYiBf1vm/fzG+eRd8lpaessq+xOvrwp8tbUt3OoA+0A=;
-        b=QV1R0qtdEUSeqOeuxmSMhufwAYcVUZRV0OWrVwjqNlgF09fdc41quryWXkyjTnmoiG
-         fOgNliHeGIk6s7tPJhJ1Rt3DrFSm9tpa3FegEth16cTfptO4ObGADWF8kzqNV+Bj/Rpq
-         R2TU2nUX+C0OuQJjEHmmX5TJVWA407+aMh2akaZ2dfXEmgMv2v3BcrfvjCBz17q2L4tI
-         R4iHtnzPsWtDybyF504GLUb8+1hyvwxCcf30HvroJqaYaQ4vfYcStqctDCXqYuVmovcj
-         +Hu0U7FR0Toe7H3pXeXX8V3FDuY/6NuPKyfwekUEgyVb/Q9jbW9skHaWsjnDNpQBdZ7R
-         FPAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvMO2mne5lrLFSjGRYIeKFGRhHBPXSTLY9sPtaWVpPIm7pXsXm3uDadjXNSOQb4xQs5FzYZbJ1QvMW0Es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQgXY6T6DgZm3rqVM/Z+X2Yh2DxN0ud4naMLj/KvMX+IW8YDOp
-	G8n9w9rKb+WroYNd73AAj+roSSXQNCFN92kHwbUVMIxzGxp7HkIwMpqxClmzHVOUCyF7cinu6Jq
-	c/Q0dhFz9zxGl3t/hgVXmGbV9lmo=
-X-Google-Smtp-Source: AGHT+IFL869/hbuGBllNon9+ZE6lVsV0t9wZrGUg8Zksu1quTXl91B0mKh1C2FgjQTTiijQtut+HB9iLBUd1liHZzME=
-X-Received: by 2002:ac5:cb0f:0:b0:4fc:ba44:6ad6 with SMTP id
- 71dfb90a1353d-4fcf3a105b4mr210623e0c.0.1724190387921; Tue, 20 Aug 2024
- 14:46:27 -0700 (PDT)
+	s=arc-20240116; t=1724190467; c=relaxed/simple;
+	bh=ztAaK7g+xwD9hAZ0s7okIVhu2nfulKWN4DcmZ1X0J4k=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=k8s3vzqdAczb6GnXyo29vl9HiRTdu9zSFSY4Do/LGs8hfQ2byRTrT49HR8qeDyP+rHcPHQUME9zsBVwJG0XAHyhjx14icQfTJ42ku3IQh/1Jofp+agcrUdLfg5PJOmAXQy9qWqde+0mX0PS2UVi4RpL01FtENpjv+IwWplMmx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k4V3Y1/P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OEtEC/rD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k4V3Y1/P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OEtEC/rD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E81D1F88C;
+	Tue, 20 Aug 2024 21:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724190462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bSDoYFxts8Sxc334i27mY8a4zI2q1iqZP8WoE+QxBo=;
+	b=k4V3Y1/PxV8MtrBdc7NFi0W8jTP6vRiE/0IEG2KWGA1EdDb2XJ1XuTXacdMSWJptepKfZs
+	tDaGRQhmZY5Lm7tq2+UkaQZKYBCqcc6tRJjWvrRRRCjBg+tMOAstsY6fho2syNc1KfoUqE
+	MRh6IftIczAoCuSrgsuRxvx7RFtAu+s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724190462;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bSDoYFxts8Sxc334i27mY8a4zI2q1iqZP8WoE+QxBo=;
+	b=OEtEC/rDrfeFi0gKQAe9tcqJswkEG5HCcqenxdPLOjPNlKtABHKl5KKCtW72uPqR5YHuct
+	m7Rbk8HvBJCiY2BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724190462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bSDoYFxts8Sxc334i27mY8a4zI2q1iqZP8WoE+QxBo=;
+	b=k4V3Y1/PxV8MtrBdc7NFi0W8jTP6vRiE/0IEG2KWGA1EdDb2XJ1XuTXacdMSWJptepKfZs
+	tDaGRQhmZY5Lm7tq2+UkaQZKYBCqcc6tRJjWvrRRRCjBg+tMOAstsY6fho2syNc1KfoUqE
+	MRh6IftIczAoCuSrgsuRxvx7RFtAu+s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724190462;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bSDoYFxts8Sxc334i27mY8a4zI2q1iqZP8WoE+QxBo=;
+	b=OEtEC/rDrfeFi0gKQAe9tcqJswkEG5HCcqenxdPLOjPNlKtABHKl5KKCtW72uPqR5YHuct
+	m7Rbk8HvBJCiY2BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8EC013A17;
+	Tue, 20 Aug 2024 21:47:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Q5VIF/wOxWYrHQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 20 Aug 2024 21:47:40 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f29f64e29c08427b95e3df30a5770056@honor.com> <CAGsJ_4xTW5y4O6BoVuXKk=awhoiZV0zitPYYbfsX1pmqZgY9WQ@mail.gmail.com>
- <974d9d6c3b5e4848a32b930732366084@honor.com>
-In-Reply-To: <974d9d6c3b5e4848a32b930732366084@honor.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 21 Aug 2024 09:46:15 +1200
-Message-ID: <CAGsJ_4yJ8EB3ci=0c1JcshF1Gk16=NSfpMLVgPObMJUFtHcK7g@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
-To: gaoxu <gaoxu2@honor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
-	Kalesh Singh <kaleshsingh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
+In-reply-to:
+ <CAHk-=widip3Dj5UWs8MVGgxt=DJjMy1OEzZq9U8TMJAT3y48Uw@mail.gmail.com>
+References: <20240819053605.11706-1-neilb@suse.de>,
+ <CAHk-=widip3Dj5UWs8MVGgxt=DJjMy1OEzZq9U8TMJAT3y48Uw@mail.gmail.com>
+Date: Wed, 21 Aug 2024 07:47:36 +1000
+Message-id: <172419045605.6062.3170152948140066950@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Aug 20, 2024 at 11:54=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
->
+On Mon, 19 Aug 2024, Linus Torvalds wrote:
+> On Sun, 18 Aug 2024 at 22:36, NeilBrown <neilb@suse.de> wrote:
 > >
-> > On Fri, Aug 16, 2024 at 7:48=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
-> > >
-> > > Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazyfr=
-ee_fn:
-> > > 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If it'=
-s
-> > >    moved to the LRU tail, it allows for faster release lazy-free foli=
-o and
-> > >    reduces the impact on file refault.
-> > > 2. When mglru is enabled, the lazy-free folio is reclaimabled and sho=
-uld be
-> > >    added using lru_gen_add_folio(lruvec, folio, true) instead of
-> > >    lru_gen_add_folio(lruvec, folio, false) for adding to gen.
-> > >
-> > > With the change in place, workingset_refault_file is reduced by 33% i=
-n
-> > > the continuous startup testing of the applications in the Android sys=
-tem.
-> > >
-> >
-> > Hi Gao,
-> >
-> > Just curious, in which scenario are we frequently calling MADV_FREE but=
- not
-> > MADV_DONTNEED?
-> Hi Song,
->  Android ART use MADV_FREE, please refer to the following link.
->  https://android-review.googlesource.com/c/platform/art/+/2633132
+> > The main patches here are 7 and 8 which revise wake_up_bit and
+> > wake_up_var respectively.  They result in 3 interfaces:
+> >   wake_up_{bit,var}           includes smp_mb__after_atomic()
+> 
+> I actually think this is even worse than the current model, in that
+> now it subtle only works after atomic ops, and it's not obvious from
+> the name.
+> 
+> At least the current model, correct code looks like
+> 
+>       do_some_atomic_op
+>       smp_mb__after_atomic()
+>       wake_up_{bit,var}
+> 
+> and the smp_mb__after_atomic() makes sense and pairs with the atomic.
+> So the current one may be complex, but at the same time it's also
+> explicit. Your changed interface is still complex, but now it's even
+> less obvious what is actually going on.
+> 
+> With your suggested interface, a plain "wake_up_{bit,var}" only works
+> after atomic ops, and other ops have to magically know that they
+> should use the _mb() version or whatever. And somebody who doesn't
+> understand that subtlety, and copies the code (but changes the op from
+> an atomic one to something else) now introduces code that looks fine,
+> but is really subtly wrong.
+> 
+> The reason for the barrier is for the serialization with the
+> waitqueue_active() check. Honestly, if you worry about correctness
+> here, I think you should leave the existing wake_up_{bit,var}() alone,
+> and concentrate on having helpers that do the whole "set and wake up".
+> 
+> IOW, I do not think you should change existing semantics, but *this*
+> kind of pattern:
+> 
+> >  [PATCH 2/9] Introduce atomic_dec_and_wake_up_var().
+> >  [PATCH 9/9] Use clear_and_wake_up_bit() where appropriate.
+> 
+> sounds like a good idea.
+> 
+> IOW, once you have a whole "atomic_dec_and_wake_up()" (skip the "_var"
+> - it's implied by the fact that it's an atomic_dec), *then* that
+> function makes for a simple-to-use model, and now the "atomic_dec(),
+> the smp_mb__after_atomic(), and the wake_up_var()" are all together.
+> 
+> For all the same reasons, it makes total sense to have
+> "clear_bit_and_wake()" etc.
 
-thanks! It seems like the art guys owe us some changelogs, with
-no data and no reason =EF=BC=9A-=EF=BC=89
+I can definitely get behind the idea has having a few more helpers and
+using them more widely.  But unless we get rid of wake_up_bit(), people
+will still use and some will use it wrongly.
 
-Your change seems reasonable to me. Since users plan to free those
-anon folios, we should avoid placing them in hard-to-reclaim areas,
-which could lead to unnecessarily reclaiming file folios instead.
+What would you think of changing wake_up_bit/var to always have a full
+memory barrier, and adding wake_up_bit/var_relaxed() for use when a
+different barrier, or not barrier, is wanted?
 
-> >
-> > > Signed-off-by: gao xu <gaoxu2@hihonor.com>
-> > > ---
-> > > V1 -> V2: Based on the latest mm-unstable, recreate the patch.
-> > >
-> > >  mm/swap.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/mm/swap.c b/mm/swap.c
-> > > index 6b838986d..e0dbfc983 100644
-> > > --- a/mm/swap.c
-> > > +++ b/mm/swap.c
-> > > @@ -641,7 +641,7 @@ static void lru_lazyfree(struct lruvec *lruvec, s=
-truct
-> > folio *folio)
-> > >          * anonymous folios
-> > >          */
-> > >         folio_clear_swapbacked(folio);
-> > > -       lruvec_add_folio(lruvec, folio);
-> > > +       lruvec_add_folio_tail(lruvec, folio);
-> > >
-> > >         __count_vm_events(PGLAZYFREE, nr_pages);
-> > >         __count_memcg_events(lruvec_memcg(lruvec), PGLAZYFREE,
-> > > nr_pages);
-> > > --
-> > > 2.17.1
+Thanks,
+NeilBrown
 
-Thanks
-Barry
+
+> 
+> But exposing those "three different memory barrier scenarios" as three
+> different helpers is the *opposite* of helpful. It keeps the current
+> complexity, and makes it worse by making the barrier rules even more
+> opaque, imho.
+> 
+>                Linus
+> 
+
 
