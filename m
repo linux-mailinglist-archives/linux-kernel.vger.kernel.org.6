@@ -1,156 +1,189 @@
-Return-Path: <linux-kernel+bounces-294211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAD3958AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEE0958AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6971F24C28
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C5D287321
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CA11917E4;
-	Tue, 20 Aug 2024 15:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1C71922E7;
+	Tue, 20 Aug 2024 15:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Owz2vAyv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DykgZ1iU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eX3IUulk"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833261917D6;
-	Tue, 20 Aug 2024 15:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14BA1917FC
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166209; cv=none; b=PG87n/HrNQb0i3tKN0GeZ1fXwBtx11gVZ+CemMnW3z9VA3dGvdoj9ny0GdkUBKg0enDFwMEvjPcZ0QDOQ1m8WQV9IvocAXgp/tezU9rSFf0KlHBFBxC3h5+ZJ6x6Q8Vm05aTI9i6l8V3XUoFupf+gBaBWHHkXjHTJtOcFxnd+mo=
+	t=1724166273; cv=none; b=CmNU1g3/V9DqVziQNJAA1iPNnpgBrB4HC5e3OK7M35gmV6rx3Pn842chytdY5cinGDlxJR5itzgoojZR+gJdySyEgDdjQh8vH7PCr2rg7muAB47uhuu3TsLGD0Ut1yhSP+tZbWrbhfo+KlZJ6RtK0IXseAGLpqsA3PfkVVZ4YG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166209; c=relaxed/simple;
-	bh=SvKPJLsSh8SLNpciqP8cfM3T3jud1Wtkeh76PkKKV9k=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jaS+GtFhiFijzXPmSewmJKVbMy9tXCgbpWGcirx3+69O7e3bLPIw7MGP+vFYLdwb+RHJj67DXyyEiXRGuGYBSjO2w3hssQp0VpDKYfMBFSR9hxxV6RkKPid91f9vIWb/7OUyKhTPDbcwnIAetz7Fcb2RtlRUWu+1PIV2H69XlTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Owz2vAyv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DykgZ1iU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 20 Aug 2024 15:03:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724166203;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhAQ+33ISkReijvwpXRSiczamuSS/S9mmVUuFg13Ca0=;
-	b=Owz2vAyvnfV7TTmFPbSaKKOzYeHOAHls31uc78uxZ6e9Ri4hiXFfVSR+Q7d0IEClMaSbF0
-	5RQwMXrEEz6VapjfjvYMrSCiGEnscwAiZxEodbBKqAhhYuW6vCPkDAlra4+n/xOdJEtQ3Q
-	hdQ4xLecfz+S7Fyl0ZkHjwpUaMZbSYKMk9Y1AQB2MwTS3sdFd17h/3G7O8VZLOkVouKnZn
-	PjxUOt/dymGF5XxyX586z5oNPTLtKslDr21LivSA7qwfdu8W9nnB2xdUkvVdpPhorNn8jZ
-	DWhGRKFEf3k4kGK7tm33Q6Yl1usFhDdEPUAX5bsr/MswMahTLCr+BTKXKMX/MQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724166203;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhAQ+33ISkReijvwpXRSiczamuSS/S9mmVUuFg13Ca0=;
-	b=DykgZ1iUyHIipO5jVrHmG1TIkkJ0SPy2vuqk+04RNfPiSwTM6WmyIm/vrCwC3ZETbdff2e
-	QrKVI42rYb2e0gAQ==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] irqchip/gic-v4: Fix ordering between vmapp and vpe locks
-Cc: Zhou Wang <wangzhou1@hisilicon.com>, Marc Zyngier <maz@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240818171625.3030584-1-maz@kernel.org>
-References: <20240818171625.3030584-1-maz@kernel.org>
+	s=arc-20240116; t=1724166273; c=relaxed/simple;
+	bh=ah7+7BkSfB911Enb39ddRA57gc04wb8bQEKuZp49XdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MM9a1hxgRjXxoeN0QaDj+t/qdJ+BqlVW9fACs719GRcH8lQR3abb90nmCKSqk/01O8fxa++Adh/+NrFnJ3WJ5epB5JxsYYi6KLN1IzKUPih8IUB+LL/mJZVtsxCE0sJv8Uz8eT2cuVjWI1PxkNzabzzIKJpE++dJuwtdjluDwQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eX3IUulk; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e162df8bab4so2224560276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724166271; x=1724771071; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QymlgjTNRqIV3rZop0Kitq2l8ztNw7AyLvkCeJKN2Tw=;
+        b=eX3IUulkgCWJ0dltsWnS4LO3QIhgYnHAp/tLVRvbZNmIJtgIgyxWomBravJ+Ev2/w1
+         LUKpmuBNt0xR98aA5L2RmLV72U86YPjWot9RIIqS/48xSFVVqWWg2wB81ikXi9nBfWOX
+         24k7B8sLGyN1jKj55OQg8EUMnmPogk/wPVZFBsr2hFrZqXiYdBKVadt5oIgyT667pDFF
+         GOQ7BuNLVN5D/D8CUgRX0+vDsKolDt0pTo02FUm/to3Zk2fwGvKSAeUy4HLQn4Bew6Pi
+         OfqOrIz0iFR+Mj+P1AbpwB3tCQvGpa777gl/R+VJrAbUlrRfqSHlYuO560fl9/tQwM8q
+         5dBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724166271; x=1724771071;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QymlgjTNRqIV3rZop0Kitq2l8ztNw7AyLvkCeJKN2Tw=;
+        b=KbMJnmJkge9XrhhFkB/JPos91NTsEbTXaeKqTNddHlTH+czpAAnpbHzwpO4jN2f2tv
+         TqUnWTqVxFDXCws1t29gX8M3VE67Byr9F+98uv5xN99pZ5pOl3pXDJTSJy96cFdRnI+y
+         FM/zN9p+VC7eL7uq9t71iOleaPYwbG7X5DZxkKVyPtNk/loSAvmnd0KztRY1v7Cnae+v
+         RXhZXWVjwIZQ4hoBgCX3ERlD38Eah+sFAdDkxWngssH9VSxFIoNUHmyKaO3UBzMVQ788
+         a5n7/IQ9nOuKKmtPamuKjtmUI5PXnKxq087vr4C2WAl1Vlu62PR5CMGJTi4SCTR8Iz41
+         z+pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6oLonHeA7QnrHmXnY/ftGDoKwLCThEF7v7f6IZEjSsOvupipgwHttyWfbnnlK/AcCyi9Mmwo5JYHqSaaAEdERAdcWffS0552JeRa4
+X-Gm-Message-State: AOJu0YwAywWDIVWGfKheQx6sfM9Zg2aKnhcVe4X5xoGOzKThWG0jqIVW
+	Y4nUOa0LE1LED3/B+kfu4rCPooaWnteT3cJaKTySRrIx79BCN+PubhSIqYU2Cnn7IgRtJLUyncJ
+	8IX3SJUuf9fABGdP3osj6OzUrD5/2x+TIWGs4KQ==
+X-Google-Smtp-Source: AGHT+IHRPogyQeifNNpdcrG/2P/91T40oKsMgqm1u9P+z3SSUiAdkrzhHiYd4En0abFAGkoCse3nJ+T5VYE9Y+owePc=
+X-Received: by 2002:a05:6902:270a:b0:e13:da55:4e5d with SMTP id
+ 3f1490d57ef6-e13da5559c9mr11273007276.38.1724166270614; Tue, 20 Aug 2024
+ 08:04:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172416620321.2215.13811930689456787433.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240815201542.421653-1-jm@ti.com> <20240815201542.421653-3-jm@ti.com>
+ <CAPDyKFpb0o2w9=nRp98XnqoLKtFOCDssJzy+53mg1bW8y0UmUw@mail.gmail.com> <acbf7997-6989-4de6-bf25-3b5589ad2eb9@ti.com>
+In-Reply-To: <acbf7997-6989-4de6-bf25-3b5589ad2eb9@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 20 Aug 2024 17:03:54 +0200
+Message-ID: <CAPDyKFoekvs1XLGVewB8vA=rsGN4ikB9uw80AVw6NVRF-rgffA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci_am654: Add tuning debug prints
+To: Judith Mendez <jm@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Tue, 20 Aug 2024 at 16:41, Judith Mendez <jm@ti.com> wrote:
+>
+> Hi Ulf Hansson,
+>
+> On 8/20/24 6:33 AM, Ulf Hansson wrote:
+> > On Thu, 15 Aug 2024 at 22:15, Judith Mendez <jm@ti.com> wrote:
+> >>
+> >> Add debug prints to tuning algorithm for debugging.
+> >>
+> >> Signed-off-by: Judith Mendez <jm@ti.com>
+> >> ---
+> >>   drivers/mmc/host/sdhci_am654.c | 5 +++++
+> >>   1 file changed, 5 insertions(+)
+> >>
+> >> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> >> index c3d485bd4d553..a909f8de0eabe 100644
+> >> --- a/drivers/mmc/host/sdhci_am654.c
+> >> +++ b/drivers/mmc/host/sdhci_am654.c
+> >> @@ -457,11 +457,13 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+> >>
+> >>          if (!num_fails) {
+> >>                  /* Retry tuning */
+> >> +               dev_err(dev, "No failing region found, retry tuning\n");
+> >
+> > A dev_err seems to be too heavy, but I am not sure at what frequency
+> > this could occur?
+>
+> Having no failing region is what we call a corner case, it rarely
+> happens. The one case where it did happen, it took a good amount
+> of time to discover there were no failing regions found. The tuning
+> algorithm had to be looped 3 times before finding a failing itapdly.
+>
+> >
+> > Why isn't a dev_dbg sufficient?
+>
+> I thought about using dev_dbg, but based on some feedback after coming
+> upon this issue on a board bring up case, we think it would help
+> enormously if we make it as obvious as possible when no failing region
+> is found.
+>
+> The one case where this came up, the dev_err print would only print 3
+> times... Now this is only one case and we are not aware of any more
+> cases like this, also we cannot replicate on TI EVM's.
 
-Commit-ID:     f97fd458763a4801d04dbb4a79d9ca6282d293ec
-Gitweb:        https://git.kernel.org/tip/f97fd458763a4801d04dbb4a79d9ca6282d293ec
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Sun, 18 Aug 2024 18:16:25 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 20 Aug 2024 16:57:13 +02:00
+What happens if/when we fail here? Do we fail to detect the card or do
+we end up running it in some degraded mode?
 
-irqchip/gic-v4: Fix ordering between vmapp and vpe locks
+If the latter a dev_warn, the former a dev_err(). Does that make sense?
 
-The recently established lock ordering mandates that the per-VM
-vmapp_lock is acquired before taking the per-VPE lock.
+>
+> >
+> >>                  return -1;
+> >>          }
+> >>
+> >>          if (fail_window->length == ITAPDLY_LENGTH) {
+> >>                  /* Retry tuning */
+> >> +               dev_err(dev, "No passing ITAPDLY, retry tuning\n");
+> >
+> > Ditto.
+>
+> Same idea as above..
+>
+> But with this print, the maximum amount of prints that could be printed
+> is 20, is this too many prints in your opinion?
 
-As it turns out, its_vpe_set_affinity() takes the VPE lock, and
-then calls into its_send_vmovp(), which itself takes the vmapp
-lock. Obviously, this is a lock order violation.
+This sounds like dev_dbg to me. We are not really failing, as we are
+making a re-try and will most likely succeed then, right?
 
-As its_send_vmovp() is only called from its_vpe_set_affinity(),
-hoist the vmapp locking from the former into the latter, restoring
-the expected order.
+>
+>
+> >
+> >>                  return -1;
+> >>          }
+> >>
+> >> @@ -505,6 +507,7 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+> >>          struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> >>          unsigned char timing = host->mmc->ios.timing;
+> >>          struct window fail_window[ITAPDLY_LENGTH];
+> >> +       struct device *dev = mmc_dev(host->mmc);
+> >>          u8 curr_pass, itap;
+> >>          u8 fail_index = 0;
+> >>          u8 prev_pass = 1;
+> >> @@ -542,12 +545,14 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+> >>
+> >>          if (ret >= 0) {
+> >>                  itap = ret;
+> >> +               dev_dbg(dev, "Final ITAPDLY=%d\n", itap);
+> >>                  sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
+> >>          } else {
+> >>                  if (sdhci_am654->tuning_loop < RETRY_TUNING_MAX) {
+> >>                          sdhci_am654->tuning_loop++;
+> >>                          sdhci_am654_platform_execute_tuning(host, opcode);
+> >>                  } else {
+> >> +                       dev_err(dev, "Failed to find ITAPDLY, fail tuning\n");
+> >
+> > The commit message only talks about debug messages, but this is an
+> > error message. Perhaps update the commit message a bit?
+>
+> Sure will do, after we conclude the discussion above and in v2.
+>
+> Thanks so much for reviewing.
+>
 
-Fixes: f0eb154c39471 ("irqchip/gic-v4: Substitute vmovp_lock for a per-VM lock")
-Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240818171625.3030584-1-maz@kernel.org
----
- drivers/irqchip/irq-gic-v3-its.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 9b34596..fdec478 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1330,12 +1330,6 @@ static void its_send_vmovp(struct its_vpe *vpe)
- 	}
- 
- 	/*
--	 * Protect against concurrent updates of the mapping state on
--	 * individual VMs.
--	 */
--	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
--
--	/*
- 	 * Yet another marvel of the architecture. If using the
- 	 * its_list "feature", we need to make sure that all ITSs
- 	 * receive all VMOVP commands in the same order. The only way
-@@ -3824,7 +3818,14 @@ static int its_vpe_set_affinity(struct irq_data *d,
- 	 * protect us, and that we must ensure nobody samples vpe->col_idx
- 	 * during the update, hence the lock below which must also be
- 	 * taken on any vLPI handling path that evaluates vpe->col_idx.
-+	 *
-+	 * Finally, we must protect ourselves against concurrent updates of
-+	 * the mapping state on this VM should the ITS list be in use (see
-+	 * the shortcut in its_send_vmovp() otherewise).
- 	 */
-+	if (its_list_map)
-+		raw_spin_lock(&vpe->its_vm->vmapp_lock);
-+
- 	from = vpe_to_cpuid_lock(vpe, &flags);
- 	table_mask = gic_data_rdist_cpu(from)->vpe_table_mask;
- 
-@@ -3854,6 +3855,9 @@ out:
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 	vpe_to_cpuid_unlock(vpe, flags);
- 
-+	if (its_list_map)
-+		raw_spin_unlock(&vpe->its_vm->vmapp_lock);
-+
- 	return IRQ_SET_MASK_OK_DONE;
- }
- 
+Kind regards
+Uffe
 
