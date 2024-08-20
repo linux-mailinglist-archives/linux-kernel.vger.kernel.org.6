@@ -1,142 +1,87 @@
-Return-Path: <linux-kernel+bounces-294350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CCB958C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:41:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA79958C7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB481C22513
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1FD28475D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3061BE23D;
-	Tue, 20 Aug 2024 16:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8379D1B9B41;
+	Tue, 20 Aug 2024 16:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CozGDtWj"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y1tj7PLG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4060D198E75
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F3E1B8E8A;
+	Tue, 20 Aug 2024 16:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724172038; cv=none; b=N83Y6YawY110EOS1H2/FPwDjgiBixxvO8zwISK9v6i1MS9xlt0pN7n+zOr0bbwOQA8yi1Fi1iKtL7gjTo+XEy6wRtH86xuVEljp9agiM0gEA4kJSpHOpcp6uA/SOFDluO4GLOu06J6DR0RT8M9eHSqAbSSdzt5iRmMfkPWHP1P4=
+	t=1724172045; cv=none; b=gvGsRvWp+ryefYU5auEulXQX6qp16S2FgdExj5n4fJyj9YQA0uj5REI4y09CBVHv/OCvdNbmoptinE+6j4vWzXfHXkJk11TthSJVoYlP9ptYOMpzRAJThhYFmDFX01xF30x11F8mBoLXUR7q/XNDKuWb0/oYxAByVOR4MFiWSOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724172038; c=relaxed/simple;
-	bh=Px4o3ybZn+EhCvnxZ9ITUU05sxboY1gwiT/t/n47Eqk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CX+XUm1sT1i/YgdENSrCUFfzvub0sc187BsUxjlAHhRw8ybAkDBfSEHQisDK27eic7BxAdpR6cijmV8tKgAT7V0rD0jhbBwNFaROorzAlGjt5ZjYbMKkQGo2Cnar6rBJrubjsh2QaTnHPBQ/UgJlIj9UtgOmyVDk9NhP/ENI1LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CozGDtWj; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70df4b5cdd8so276801a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724172034; x=1724776834; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ENlu+2a9FTwR4Z9MjTmktYFRdqAIvmAoZoo/YtZ/k3k=;
-        b=CozGDtWjwIJ476MERE3u9kGiN8FrLX49tQkKhySZgKX9k+N1ra09wYRPDNNDXx4ov2
-         98ev9PwtjaBNW1eRbwdiEmpgvnWGfB7IuQyEGUJFaAVIdgflL0sHunzVccG9iNCVaoFG
-         fsLyyypfchCDN4DGL5AsoibDllurcSbW7R1WK4jP9uGg1ywEqcc0+QNHUtxSHHvzCQ6C
-         f3oBW21VM5l6H1L3acl2ocJMKQex3prg4N4f+DJcWzY0yAqTiKZfQHSvbvy1fg+5XpaA
-         KqFR7jLw2PxAPRPkIHFH13oOj6iHbc64t7RislmuIi8QsxPN1qntxvYdKEbzBT/M/BbC
-         /yTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724172034; x=1724776834;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ENlu+2a9FTwR4Z9MjTmktYFRdqAIvmAoZoo/YtZ/k3k=;
-        b=sXbJPmU4fLaP2HaWXFlh6P7ikuaOYrowjiZp0dv2pQzR9ylSMM1qesS6f+KwOzLcm3
-         XTPNxRHsae/TJ7utFKJEWHjnu8OpqKxrNBL+IJanFa7u+ytqT9DiA9Jnwu0R7kxjtNzK
-         GntArRf+8wqTRQG7d93zY3OICS01rLK6b9IKi2u3J0sR0OFwUnZ7y55qoCVBV1spLWu0
-         bTG1c/U6zKacSA2VxMBr3hxVssgYuBRhoUJm7Qdp4oForqN7ltBLxkNNfw4XViNFjMhR
-         X9ofalVvwG9TsHk37b9rmvUB5WeQUzUyqANjvYoOD3vv4sqXhubbr5M7FTnvBFdE7sO3
-         jtcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOV68l99MUDEvO5IDOXCsmdQQDCGrTMe69wLwAQGYvqbAOVb7HnfKfX+yklVMDjLjZA51Zw2ZzHBfyno0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoqgEIyZJv+7wgC+9pNRyvovEhS8SBKVQCX0nKTqAjMFjt9EpB
-	vnH7dpdS6sv2qDu7ksHjOSfWMlHaDPURtQJp1hJ9jShLIEsvfrxRM8gaIQLnqJ+e72Oe3S/OjcR
-	U
-X-Google-Smtp-Source: AGHT+IFVJZjcS3gy5aFpaFbN6ZaTMn6rqWk2HDYqa3JCl5e37bRbj4pfKSVj1FgMIXRY++ii3OPnbA==
-X-Received: by 2002:a05:6870:9a12:b0:261:23f6:78d with SMTP id 586e51a60fabf-2701c574ec9mr19099932fac.41.1724172034199;
-        Tue, 20 Aug 2024 09:40:34 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2706f8a3ca2sm1270456fac.49.2024.08.20.09.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 09:40:33 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 20 Aug 2024 11:40:18 -0500
-Subject: [PATCH] scripts/get_abi.pl: more strict matching of [XYZ]
+	s=arc-20240116; t=1724172045; c=relaxed/simple;
+	bh=Vm5Ge2JmOVZFdgB+Av1offVLZxFbvPNBA1bzvmB5kb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDC1vcUqnlcoU2PRf04jberKUMbuuNCcbyOhxMvI/yHjmbXxzN+mGsl/A6gEvhVI+bq/Kv+hH2tSmRrE+8eg3A7LR5IMrkZT5sOxgvOXV7ItJ5+a3Zbmtq65JShncNQJH6rfxSqpRz4M3WqvtWoiVZmiqYRl1wbU5rtwd0U/qEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y1tj7PLG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uCLZhCQLKjHVpAoqfjqeQmq4SB+Wb5+K0+Z6S7owAe0=; b=y1tj7PLG69NheAqc5qK9IKPmzd
+	wM0SzJzPQIiKxzLz5zifpaCKfiqcTlvwVoRAWDgZt7HR9FU68L8NcCsUi4BNUlJe/8HDJegIZ3mRj
+	0xpYfIrFs8uv4XFMnD7ziOoHKZZSAVyRqDKbXheO+ughv/sGDx4vAoKh8zPXt+ZowTo0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sgRuA-005FPJ-2L; Tue, 20 Aug 2024 18:40:22 +0200
+Date: Tue, 20 Aug 2024 18:40:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v2 1/3] ethtool: Extend cable testing interface
+ with result source information
+Message-ID: <726c54ef-0a1b-4307-be1c-dee8b578b50c@lunn.ch>
+References: <20240820101256.1506460-1-o.rempel@pengutronix.de>
+ <20240820101256.1506460-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-scripts-fix-get_abi-xyz-v1-1-6f6aea9b638b@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAPHGxGYC/x2M2wpAQBBAf0XzbGpscvsVSbsM5gXtSIv8u83jq
- XPOA8peWKFJHvB8isq2RsjSBIbFrjOjjJHBkMmpMoQ6eNkPxUkCznz01gmG60ayjlztClNmNcR
- 69xyV/9x27/sBPS7wlGkAAAA=
-To: linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820101256.1506460-2-o.rempel@pengutronix.de>
 
-When using `scripts/get_abi.pl undefined --search-string=iio` to try to
-find undocumented ABI's in the IIO subsystem, no matches were found.
+On Tue, Aug 20, 2024 at 12:12:54PM +0200, Oleksij Rempel wrote:
+> Extend the ethtool netlink cable testing interface by adding support for
+> specifying the source of cable testing results. This allows users to
+> differentiate between results obtained through different diagnostic
+> methods.
+> 
+> For example, some TI 10BaseT1L PHYs provide two variants of cable
+> diagnostics: Time Domain Reflectometry (TDR) and Active Link Cable
+> Diagnostic (ALCD). By introducing `ETHTOOL_A_CABLE_RESULT_SRC` and
+> `ETHTOOL_A_CABLE_FAULT_LENGTH_SRC` attributes, this update enables
+> drivers to indicate whether the result was derived from TDR or ALCD,
+> improving the clarity and utility of diagnostic information.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-This was due to the fact that we have documented a directory naming
-pattern:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-	What: /sys/bus/iio/devices/iio:deviceX
-
-which gets translated to the regex
-
-	/sys/.*/iio\:device.*
-
-which matches everything under every iio:device directory, causing any
-attributes below this directory to incorrectly be filtered out as
-already documented.
-
-This patch makes the matching more strict by changing the replacement
-for [XYZ] from .* to [^/]* so that we don't match the directory
-separator. This way documenting directories won't filter out everything
-contained in the directory as already being documented.
-
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-get_maintainers.pl didn't pick up any matches for this patch, so I guess
-this would go through the kbuild tree? (Since MAINTAINERS says:
-"KERNEL BUILD + files below scripts/ (unless maintained elsewhere)")
----
- scripts/get_abi.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index de1c0354b50c..f65158694852 100755
---- a/scripts/get_abi.pl
-+++ b/scripts/get_abi.pl
-@@ -867,7 +867,7 @@ sub undefined_symbols {
- 			$what =~ s/\{[^\}]+\}/.*/g;
- 			$what =~ s/\[[^\]]+\]/.*/g;
- 
--			$what =~ s/[XYZ]/.*/g;
-+			$what =~ s/[XYZ]/[^\/]*/g;
- 
- 			# Recover [0-9] type of patterns
- 			$what =~ s/\xf4/[/g;
-
----
-base-commit: 521b1e7f4cf0b05a47995b103596978224b380a8
-change-id: 20240820-scripts-fix-get_abi-xyz-0ab0b9b62719
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+    Andrew
 
