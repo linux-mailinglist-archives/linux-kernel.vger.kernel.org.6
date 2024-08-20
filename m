@@ -1,190 +1,100 @@
-Return-Path: <linux-kernel+bounces-294458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439AD958DE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:19:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E633958DE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACCF1F234DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF98428315F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017C51C4631;
-	Tue, 20 Aug 2024 18:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CC31C3F25;
+	Tue, 20 Aug 2024 18:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lqHXDsSj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="m8P35aCu"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3987D1990B5;
-	Tue, 20 Aug 2024 18:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBEB1990B5;
+	Tue, 20 Aug 2024 18:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724177957; cv=none; b=XDEWzi6eZFBETDkh1X5CiHHevJUkD73qqKrzdpBbHWZY8hlAW5lzL0o+6lHoT3hXdpOEYj4N3pRtm1cvcirpfPaSMTl2wpKajGq+4v1cDjdViSkN06XiHtM6v2tTmtplC+P0xEU2lbN0QaEw3vplLpg7pZm2LT1Si4+dykaINa0=
+	t=1724178033; cv=none; b=PkJe3YbcYYm4tsfKnCzQB6tu+yU+6JcaejygR879aPJIldUg2Hs1Uw391CtN9zbyVAgpp1OTBp6lBn226hakEtCdXVv99YKdsEBNApXoaXDLg++kAw4mO6yTXUWbQyiahlLlUQiwqxpPDaMXVOMhiDtsvmAF+ceY+pUFNVEcFZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724177957; c=relaxed/simple;
-	bh=j39p8v3Kemq1L00i10J4aauTEUR68m7EeDEctPrI3WU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ln8qCeCL5hfNChbEbMABnnqrRm+aIrkj5T2C7IXcQiZL8JdMrGRTRNgPfWmgjWsPNJ3/dFdWjILK3dNSsK6ZKW9ZFRqOgROpgyQK/6y+uSWolIPUNvMi2UrYe0iGTY+6WX9YLAlLARS15vVDmq5+pLnRDE4zYOOz0hG8mtoyKSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lqHXDsSj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KEhB2H022324;
-	Tue, 20 Aug 2024 18:18:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	j39p8v3Kemq1L00i10J4aauTEUR68m7EeDEctPrI3WU=; b=lqHXDsSjqyfYdNzw
-	NYjBORsCyc/5LiAxJkqJp28M9V+iLKY9ZRIMCpjVnrqI2HmFWZ0lzoeDcBQnH/6+
-	azU2SnDvGNZFNrxoC0mly4GJd2R4oGVrGHxOQuZ2SL5uMyQieT1Riab99VZnABbY
-	l/Rwj3kVj22kx7kZWwIbFCmkjodVfEKTDK1yt1ZX+f+WMISpa+1/kMoOKuQ7RKri
-	wGs6g2gLgEBZKx64ON+yYzZnPIuyaArNAJPQpFUAlbA7JG/eyXV18n/jHRC0FaSY
-	H/kN4UD7sSElwIc68vS//hKhcN4Fan5M/8ey12GyTWOsHbLPxFFE55XI16+OzWFJ
-	kzSPbA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdm9uqt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 18:18:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KIIJR3018538
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 18:18:19 GMT
-Received: from [10.110.70.123] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 11:18:18 -0700
-Message-ID: <638d5561-4fa0-4e14-a852-9905956445e4@quicinc.com>
-Date: Tue, 20 Aug 2024 11:18:18 -0700
+	s=arc-20240116; t=1724178033; c=relaxed/simple;
+	bh=RvWHMA+QlIXIfQFzXjSOSYW566+oe9HIOkqioJSiN4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=npApHffgYvUNketYIkKbP3dqbsXlr0Svk6sZQ9/VUe/5Hf3xDIyoico7+cx6g6l/3iTHzdiuSSRUb/0Fm+/HKL6IB5u9VBfiYZr05DzwwqhDc6pux0xl1Wvl6pJloANp9qmjBYHo8B9/kqhRqs7szywcG2oaGuu+HzGuZYhtIyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=m8P35aCu; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 54AAB41A31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1724178025; bh=nFaHd32s5trVTpDKXwsREEAD4awvMeRK4pcOGg/kmmo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=m8P35aCu3JXfXC0Mp+qdF8wo9rWEouGDC2rCpysBSPaaiJ3Xvx0xJNDzt0nVKU+2u
+	 LmQzKfuu25g1a6d5JcYu1KnGJ//1kA3jSmV9qXESi/55ZptPNxideBikVlD0zvxqP+
+	 dzc8GcdZ72jlJM+q0sydDNhvDuEgfUmKYZj/MkEMyWc/QhXvnc67HtHx9qsa+AXL2U
+	 UgfbNXO9EK1aABCs2JcwkQs7tliKLldBBVKeCfvuh1eW1RLY6P4sDJ0aIoQOIpALOY
+	 sczj3d79VXIRSrIsi6qmW8PtXA2jRzYfSGY4HI4bj79ZMvPhQSA0FQ7ELDKF5BgNpy
+	 GLZp8bS6s0ZoQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 54AAB41A31;
+	Tue, 20 Aug 2024 18:20:25 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] Documentation: add a driver API doc for the power
+ sequencing subsystem
+In-Reply-To: <20240820153855.75412-1-brgl@bgdev.pl>
+References: <20240820153855.75412-1-brgl@bgdev.pl>
+Date: Tue, 20 Aug 2024 12:20:24 -0600
+Message-ID: <87cym3f447.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 05/34] usb: host: xhci-mem: Cleanup pending secondary
- event ring events
-To: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-6-quic_wcheng@quicinc.com>
- <b8e67410-49a0-4ee8-a0a5-4b7ba03483c8@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <b8e67410-49a0-4ee8-a0a5-4b7ba03483c8@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UWkYDDgbhQPhqEUQs4fcxqcxFpTWYE2z
-X-Proofpoint-ORIG-GUID: UWkYDDgbhQPhqEUQs4fcxqcxFpTWYE2z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_14,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408200136
+Content-Type: text/plain
 
-Hi Amadeusz,
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
 
-On 8/6/2024 7:50 AM, Amadeusz Sławiński wrote:
-> On 8/1/2024 3:17 AM, Wesley Cheng wrote:
->> As part of xHCI bus suspend, the XHCI is halted.  However, if there are
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> XHCI -> xHCI
+> Describe what the subsystem does, how the consumers and providers work
+> and add API reference generated from kerneldocs.
 >
-Got it.
->> pending events in the secondary event ring, it is observed that the xHCI
->> controller stops responding to further commands upon host or device
->> initiated bus resume.  Iterate through all pending events and update the
->> dequeue pointer to the beginning of the event ring.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>   drivers/usb/host/xhci-mem.c  |  7 ++++++-
->>   drivers/usb/host/xhci-ring.c | 33 ++++++++++++++++++++++++++++++++-
->>   drivers/usb/host/xhci.c      |  2 +-
->>   drivers/usb/host/xhci.h      |  6 ++++++
->>   4 files changed, 45 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
->> index 2ca5937b73f4..60dfc59260d8 100644
->> --- a/drivers/usb/host/xhci-mem.c
->> +++ b/drivers/usb/host/xhci-mem.c
->> @@ -1816,7 +1816,7 @@ xhci_remove_interrupter(struct xhci_hcd *xhci, struct xhci_interrupter *ir)
->>           tmp &= ERST_SIZE_MASK;
->>           writel(tmp, &ir->ir_set->erst_size);
->>   -        xhci_write_64(xhci, ERST_EHB, &ir->ir_set->erst_dequeue);
->> +        xhci_update_erst_dequeue(xhci, ir, true);
->>       }
->>   }
->>   @@ -1859,6 +1859,11 @@ void xhci_remove_secondary_interrupter(struct usb_hcd *hcd, struct xhci_interrup
->>           return;
->>       }
->>   +    /*
->> +     * Cleanup secondary interrupter to ensure there are no pending events.
->> +     * This also updates event ring dequeue pointer back to the start.
->> +     */
->> +    xhci_skip_sec_intr_events(xhci, ir->event_ring, ir);
->>       intr_num = ir->intr_num;
->>         xhci_remove_interrupter(xhci, ir);
->> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
->> index 80dca780317a..a012ddf94fb5 100644
->> --- a/drivers/usb/host/xhci-ring.c
->> +++ b/drivers/usb/host/xhci-ring.c
->> @@ -3012,7 +3012,7 @@ static int xhci_handle_event_trb(struct xhci_hcd *xhci, struct xhci_interrupter
->>    * - When all events have finished
->>    * - To avoid "Event Ring Full Error" condition
->>    */
->> -static void xhci_update_erst_dequeue(struct xhci_hcd *xhci,
->> +void xhci_update_erst_dequeue(struct xhci_hcd *xhci,
->>                        struct xhci_interrupter *ir,
->>                        bool clear_ehb)
->>   {
->> @@ -3112,6 +3112,37 @@ static int xhci_handle_events(struct xhci_hcd *xhci, struct xhci_interrupter *ir
->>       return 0;
->>   }
->>   +/*
->> + * Move the event ring dequeue pointer to skip events kept in the secondary
->> + * event ring.  This is used to ensure that pending events in the ring are
->> + * acknowledged, so the XHCI HCD can properly enter suspend/resume.  The
->
-> XHCI -> xHCI
->
-Will fix.
->> + * secondary ring is typically maintained by an external component.
->> + */
->> +void xhci_skip_sec_intr_events(struct xhci_hcd *xhci,
->> +    struct xhci_ring *ring,    struct xhci_interrupter *ir)
->> +{
->> +    union xhci_trb *current_trb;
->> +    u64 erdp_reg;
->> +    dma_addr_t deq;
->> +
->> +    /* disable irq, ack pending interrupt and ack all pending events */
->> +    xhci_disable_interrupter(ir);
->
-> That seems like a bit weird place to disable interrupter? Perhaps suspend and resume functions should be updated to handle more interrupters instead?
->
-At least in the current implementation that we have, during cases where autosuspend is enabled, we obviously have to ensure that the audio offload path is fully stopped before we can have the HCD suspend the bus.  We don't want to run into a situation where the audio DSP is trying to execute audio transfers over the link while we're suspending.  So in short, the xhci_skip_sec_intr_events() is currently only used for cases where we are cleaning up the secondary interrupter. (due to the stopping of the audio offload session)  This will ensure that if the audio DSP didn't clean up the event ring properly, we'll just skip the pending events, since they will be stale once the audio stream is restarted at a later time.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  Documentation/driver-api/index.rst  |  1 +
+>  Documentation/driver-api/pwrseq.rst | 98 +++++++++++++++++++++++++++++
+>  MAINTAINERS                         |  1 +
+>  3 files changed, 100 insertions(+)
+>  create mode 100644 Documentation/driver-api/pwrseq.rst
 
-Thanks
+Thanks for this ... just one quick nit...
 
-Wesley Cheng
+> +The consumer API is aimed to be as simple as possible. The driver interested in
+> +getting a descriptor from the power sequencer should call :c:func:`pwrseq_get()`
+> +and specify the name of the target it wants to reach in the sequence after
+> +calling :c:func:`pwrseq_power_up()`. The descriptor can be released by calling
+> +:c:func:`pwrseq_put()` and the consumer can request the powering down of its
+> +target with :c:func:`pwrseq_power_off()`. Note that there is no guarantee that
+> +:c:func:`pwrseq_power_off()` will have any effect as there may be multiple users
+> +of the underlying resources who may keep them active.
 
+There is no need to use :c:func: here; just say function() and the Right
+Things will just magically happen.
+
+Thanks,
+
+jon
 
