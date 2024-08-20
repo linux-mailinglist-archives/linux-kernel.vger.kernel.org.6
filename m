@@ -1,247 +1,209 @@
-Return-Path: <linux-kernel+bounces-294250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CA9958B3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46162958B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69324B21332
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32EE282023
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEA8195FF1;
-	Tue, 20 Aug 2024 15:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E661940B1;
+	Tue, 20 Aug 2024 15:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="atkYxwVh"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evl0JXxW"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1A6192B8C;
-	Tue, 20 Aug 2024 15:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167623; cv=fail; b=urnWsILXS5qBF/AZmlwtI6IGwB6Ad/jkb3Oub3MR11bIQ9H0BgWOy1WNj7/y+qVUSaE+ug5HxrjCf08FD+dMrd049+OSR0r0Lq+1GPJDE5wM0oRqwTFoW6mbac1wRno2daFSR12zrGvY/Y6BbGuR/XEgxUknp7nVEwDKTaJmfcs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167623; c=relaxed/simple;
-	bh=OlaoomBzn21POEyKs2ljX72FC7KjtdzNQF6aatblbCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H9AxypQ29GbmZYVnj1WMjK/Ch2RIB4pJcNNmtaqrzQj+2sluJZ3dU7D/pivGPPO66xOKc6mnLBGy+UcKAEWelyFFbXFXjtpR1Uz81eUxlb7FiomVOPY2qs1o972DkIcdW+0LGYMhbCJ6jtcXKODQ0OunWPXlanb4boDFoJrV4kA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=atkYxwVh; arc=fail smtp.client-ip=40.107.92.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ilQMJJLpIMspl4i7rLJNsyuMayxi1xKMo6g7zQSV0kwUZye6LbCEHLguVJHUmm+iOqid5d5EEdH9kiN7xQ7wXgTlqz2dunVrrzHnVoqNVnfCEVgO9lDLqHlEmwmkB/tb6ds2vkvrnqbkCI6D8dFP0VcV+HOwrWnJGSqLUe15OCmdqMM2/qNz1IuWjI2S+BakxTVOOsPkbu7oLizilel41rMjx6OgSJabESqzy8s6S1zDMiu6B4qjYeSK/gqhicrQTRPMp2ImBfmqeEJAygY/bf2GbXhWeIJXRFcDt/turs63kUphGzkMzucj4GjczIeeg7ZviFyEf5tTO4dnBxWl9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QLC7dNYrt1CwmyJI2goZvU/Dze+nSnwf3eosJV92cEw=;
- b=eDPIrLFwQ0VYuA9tefXbNSFGfu07EFooV8lf9eXKl7Ktzt+Gg9ntvM+CIJaLyw8khtL6T6WHWDSKtA1rKfnOgrj7VZQ4QvdUBK3K6yTkkicW+ffz2PSnNEq/N29PU+o/7I0vkH6B4eaV9cHIuj4MKAAXB4ST0bJJwHp8fUMFMPGWPts0zrbRZgjPPumCjubCkKjQ52NdZcNONUkiF6MQfSJCDpVBSHcv7AhMyisG6zUEfUlZVYNBPXXvgzndkOcFEuf7jGuYA7Wfg34tGm00d9e70OglN5D2zMsRyAQdndpDOYdOyxKuA1WZXO08Y9WVrWCTsfl2erTihVHZz6jxTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QLC7dNYrt1CwmyJI2goZvU/Dze+nSnwf3eosJV92cEw=;
- b=atkYxwVh+to5haCsy2Fmnizfde0yCMYj6wlZqExAqzdYEvN+0iyKtRZSBLkDooeuMyZhN6RT0RzOKSFesjLrduL7SrWqqS1jxMgcKipvmtJec8QjmHfWHcrPb2vF+ST8cf1GCcL7Mz8hwh58m54hoSn9gC/nQ/jN1yZ9CsQcgrQ=
-Received: from SJ0PR03CA0051.namprd03.prod.outlook.com (2603:10b6:a03:33e::26)
- by SJ2PR12MB8942.namprd12.prod.outlook.com (2603:10b6:a03:53b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 15:26:53 +0000
-Received: from SJ1PEPF000023CB.namprd02.prod.outlook.com
- (2603:10b6:a03:33e:cafe::9b) by SJ0PR03CA0051.outlook.office365.com
- (2603:10b6:a03:33e::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Tue, 20 Aug 2024 15:26:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023CB.mail.protection.outlook.com (10.167.244.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Tue, 20 Aug 2024 15:26:53 +0000
-Received: from [10.236.30.70] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 Aug
- 2024 10:26:52 -0500
-Message-ID: <c603c0c3-36cb-4429-9799-ed50bba4a59e@amd.com>
-Date: Tue, 20 Aug 2024 10:26:51 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152AF19409C;
+	Tue, 20 Aug 2024 15:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724167630; cv=none; b=t9y4z9FDqdMAZAlCqIwH7V1ns1bZs7adJS5DXmHdLS0IW89G7rLEOO0UTdneTP7u3tE9Y5QrLaaW9pkZNaVlKBIEXVHZV7SM31TFXsj3c+aCAJDpQjkmREJ1dSV63lCdoh+DJrGsMSwE5EsZhgqxCm/NI49mtkYa4qCE/tshaYc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724167630; c=relaxed/simple;
+	bh=gZP+IJ2zgHHBibjUhw3Vpr0Nbnah+hAk4qlNy/gqYBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pOCv4ytIFQ3cqA7WjIRadh17cxSapjL4lad1/s6OCaGo/I000+ULKM0vogGQDd6Nz/yrghiLWPZNh1qI97X2jqeiUxsVtm/pvH+BtoOJ6UUv/IEaxC5rDHkcs8nDTCmjmyKPnVxzj1crjYQx2W7J5pwGqRhM0XkVHNVIOY05jmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evl0JXxW; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d5b850d969so3508871eaf.0;
+        Tue, 20 Aug 2024 08:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724167628; x=1724772428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+x1BJW8t+s9H7pLyi6ggUxbHvpTGKY4XdDmJLQ/HTPg=;
+        b=evl0JXxWLV9WZ+4X/IY8IW4xhODV2XtDFm1DOoeCgt44w/26Ti6WOcdGLv0NNyhT1p
+         pHdOS/pxeNpaIAZJpxJZRAiZZ2kePrsS6AAJQMUSqEQY4VXHoqpT7W/sMkZNK5ABtlCF
+         VuNMkGJC0GO56cAOlFVwXl9KJxIKf0O1uB+o7MISgCVyaoVbtD6VCWAQmkIzgYP84Ada
+         zl/BN3mKzZXw8pDhAL0T9C0hPW8sctkxgYztmxOPPgBXHFQOrU+RdO9Z2sJO2dCRQRfU
+         DnsSE6UNCgyw+lQQKR0JKWNa0DvY7xIeNaZOR//BDvP4LAFXsZ9+wEW3NEhs7mzPHT4K
+         JUeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724167628; x=1724772428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+x1BJW8t+s9H7pLyi6ggUxbHvpTGKY4XdDmJLQ/HTPg=;
+        b=Q5POPnGmvmx0PD3c63uAgC83eTmsMCjUSP81QlsBHrM5lgMg8qBgTHq8LLHrbGIMFV
+         MCambxHb8Kuf6uo+/Vh0zD4IcCS8sdgbsvFHAJViiPWc8cGgvd54R0uIHMfPqaTFnspB
+         CCQC2URd+mFYjXmx8175clXeiYWk5SibuaU0gALRa+GVESqS8dM3vl2IYRT+6/vHJquz
+         f3wwXu0KSExXQXEPzH12hRDLiWIhrYfNANZ5Jsr6K1kYiceiB0y2VQ3WIZ0/Jnb6jrpM
+         Dcuz1TYDHmyuZPMsU3SfgKy9K9aRIU9rdygSDUkLr15qmBKKoD1m8waGxLZGHG9M3rIE
+         domA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIvnF7IW5d6Su/cY4tqq1JxROhHMHbvfDzeFIeCArZdV+13xdBlE/6otUh2rZBE4oFsV6ajuRaCmyeLFKiO9dyYblgmDY4EYpRjOyNPW7IegFseXRem80PqUJbeQn0uPdAJ/V7hA==
+X-Gm-Message-State: AOJu0YzE/SxmY3B9HUx1ukz9D8Ds3/mVB3MVSG22qhcfdWPkxS52QdnR
+	X+2ix/rLL+oZzyVP5+YhUgFhN6e7D83PU+PHNKjLQ05o+4FfYZ6ZmlpLTQUvr+9aoPxF0YKpKRG
+	C4Vj+Q8FVWA+GzGh+XQXn/5c2BeAxmu3K
+X-Google-Smtp-Source: AGHT+IFksjA3k9jsKzRmzSa22c9HN/Mi5jzk0E6JpH+6wVtL0SHwf/SVqbuloWKkvFiLGvAZzft3WOUDryAw+ze2w0c=
+X-Received: by 2002:a05:6358:7f13:b0:1ac:f058:f714 with SMTP id
+ e5c5f4694b2df-1b393291125mr2086011455d.21.1724167627860; Tue, 20 Aug 2024
+ 08:27:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: SEV: Configure "ALLOWED_SEV_FEATURES" VMCB Field
-To: Sean Christopherson <seanjc@google.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, "Kishon
- Vijay Abraham I" <kvijayab@amd.com>
-References: <20240802015732.3192877-1-kim.phillips@amd.com>
- <20240802015732.3192877-3-kim.phillips@amd.com> <Zr_ZwLsqqOTlxGl2@google.com>
- <7208a5ac-282c-4ff5-9df2-87af6bcbcc8a@amd.com> <ZsPF7FYl3xYwpJiZ@google.com>
-Content-Language: en-US
-From: Kim Phillips <kim.phillips@amd.com>
-Autocrypt: addr=kim.phillips@amd.com; keydata=
- xsBNBFh3uA4BCACmMh2JZ9f6vavU7XWTg45pl64x61cugDKZ34jiRLohU280rECk+kyXrKGB
- GdtV5+8tZWhMCyn151/C/OEYIi3CP5DY6wyrjbFkhI8ohqR4VqyC9gWAqD25coTQpOHyt7pd
- 8EvSBDAuL031gqw5w6JNeqEbMplZeToy5Rgdr1i35MZOzyIaO01H+F2/sOL7qk6pY21y5Flj
- ojjFT/uWg7eodnOu/BJ1Uem6FaO6ovYSAMOaCs/GpguznsS76ORsH6Jnyp6+e3KlZe/F2M7H
- 5HWCVsS5np2rf1luDsfHKV7HCd2+4iFRhxjbbulSBRMn7zx16PEGh8ccNwJm9/nwof6jABEB
- AAHNI0tpbSBQaGlsbGlwcyA8a2ltLnBoaWxsaXBzQGFtZC5jb20+wsCOBBMBCgA4FiEEaBZs
- 4ROWXWKVJWj8Z9viHdU8iO8FAmHm/zMCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQ
- Z9viHdU8iO8aXQgAnByD4TUD+xGXXDAkIopwqip2Vfy3qzNhmfzdvLxKxsb6I6Tf1l2pMPGP
- EHxDPfuQhheyh+iRWrba6flwBGaNriJTFuVpQUGoRcjV11F2cpEbToqv2LGPaXIpc7IxEoRt
- lg9VKr70XcRePKq4iH5e7wrmzACP9UlvaKlRJl97FTckZIguQQMZe9kqLga1yRDqcQVN5Kj6
- IP6V8WzRz0qGpVE1GE/vjYH13o2qHrvp9d/zlPBTZFwhNpLBn4JHohyxQ63t7eZ1L4U66Caq
- jZ0lhdN/psHJWab0SeIIRAG5+WLMcRbx3+LPjzIyrXJSonsm4t5lU3RmGmWwJSunxGDu1s7A
- TQRYd7gOAQgAp2VJv7J5eaWVdHvazWijdobOXSa13GnV8DXENQLQSSQlxGkLkYa3nDHr6Xjk
- z2NPFn4cf8GgMd7Bd4p3MR6DbwA4qKE+8ZW2x4XdH///HGDDEI69sDZEzLPXgl/9dv49dxym
- Q/nuco2KtF4xaMS/mjRsv7Eu5oGH+2+vPKe7L8ykXUh7SJmr0tI2/y9A6MVOPckdenywmKQ+
- 6R0gw6aL2OeUyWZLS/e/3+0zFmQxeTyHpoJb8cNk/XqUGsBXsTO6y+7fdykpXNCfeJL/bSGE
- SXgwRROHCnQeKwVbbvEU/e5GZlNnKXoD7u2jyJxt4NTG2c0Jze+W3MPwh1wxzNg6BQARAQAB
- wsBfBBgBCAAJBQJYd7gOAhsMAAoJEGfb4h3VPIjv33EIAIRVHWqFbAYPZZtYKdwugwzL0FKa
- X0VbkUvKNG8SQAcdvkKmnSITWrIbecHPQaSqrtl/W8qKD6YFNOC9JNCHEfyLPTxo33WonQpo
- utm5nbRS1p45Mk65Uu76qhuHMjPnOgbMqmRHgWjIRiNfKm1QD5/3bml08HnJ1PuucuxI4HkK
- SWR00RE4Jyhxi1ISB3UEQ98iZtobAkTYa3aZ6xCZzd+v+o4CkLDKtS8vrBXpppi/HAeRlL7m
- waGKsjcegLX8cEHSblIct+9KKjUrE8uZyokt67sTYDlPapVCkhTtKn5O88jXkqA2PgAU6XqP
- KeUe7zYeAD22yc9K+Ovi7bZ9I5o=
-In-Reply-To: <ZsPF7FYl3xYwpJiZ@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CB:EE_|SJ2PR12MB8942:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc744972-01a8-4392-0838-08dcc12c8519
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NUpCZmhsaFQ3NzdOUHlqSmltL3Y2UWpkVGlZQXE2QlpPTDQzeTB0cDVTemw1?=
- =?utf-8?B?c01TUVAzNlZlc2hFamk5a3RHK3diSFo3T2VCR251d2lNakdYSWN4dGlRQ3Nt?=
- =?utf-8?B?Mlp0WTAvTUJESFJjTXNIZWRoRllRTVNrSjh1TkwydlVTMzVnUlFMOEpOV0dT?=
- =?utf-8?B?Rjh0UXpKaVlZNFZxWUkzZXlTZCtmREl5THVrWmFaVkFsai81MnF2WTBxRGJy?=
- =?utf-8?B?aWNZMWNuSkFZbTdFV1FrTmRRL2drODdzSXg3Vm91dGtLTUlSOXZ6eTNvTkg4?=
- =?utf-8?B?MUg3V1FZc1MrK3d3b0tIM20wUWs2bHdxK3ltbnhrVEFsQWJBTXJUd1BrRlA1?=
- =?utf-8?B?T1JnTVFGOTVKWFloa2FOVTFlaTVCZ0c2RnZwWk9xYkxwYUZHSUlZRTZLUlBa?=
- =?utf-8?B?TFhHTms2V3AxcklGd0I5ckdQVmRZZ1lsNHhjdER2NGFPbFNGTGNLNmZYT3M2?=
- =?utf-8?B?SFdNMHVrRW5md3o1NURCQnpjYm1uNjZybnJybEhLVXhDZXRHd3VuK25JbVFU?=
- =?utf-8?B?Y3RHS0s3SHhPeFh6c2xqRE53cnpYaGdqZVduZEIrUTNpUDM0THZWbkM3Tkpi?=
- =?utf-8?B?TWg2MFBzdEVFb0lheVBPK29CQmNPekFVUnY1bEpIRVpLQ1ByelBrWlV1NzRW?=
- =?utf-8?B?NVRBcGR3ckdQVDBiekVwSUxXcEJ4WjhWNDhYTGpJekVNcWJoYkYrVkJDdzZi?=
- =?utf-8?B?TXZQTmQ4OS81K0xwc1FYanVpamc2UHU0d2k3VVZpaEVLQUl4VmlEN0gvaEl1?=
- =?utf-8?B?a1Y0NGpoNWRVb1R0MXdZdzc3NWw4c0lUOFlGOThVTlJaQkpZa1AvVzg0bTlM?=
- =?utf-8?B?V00xTEIrYnd0M2FPMTFYUXMxNEFuc0FjS1RjWXFPRndicHdralNwS3lOamk0?=
- =?utf-8?B?NW9qeit1SDl1cWdQeGtOV2xHdHR0bXl2bWRxVlB6dE5zTzFlY05aVjkwSGxz?=
- =?utf-8?B?Y0gxSW9URWlIZWRqM1BzZFdGd1Z0SWFEckxYZ01oUFFrbHdzbC9LSXBCdk5s?=
- =?utf-8?B?VXRlSXQ5VVJBbWdpbjljbDVDWGpNb1hUbWJySFpFLzJsTXRIc081STVtODBF?=
- =?utf-8?B?NVNjNDQreGJLa3VmMHlaS1hwcm1SalhyQUhkY0czaXdQektUQWRFeFFJWURI?=
- =?utf-8?B?empjVzhsblI4VGRrUW1Lb01VRGMyaWlMVi94eTdUQ3RnSUdWdmk0VlJMODBi?=
- =?utf-8?B?bEI0bGdqcFozSXVieGxOZTY2dFhmMzlQbll1S0YzNHB1bkJjaERXQlZtYXRm?=
- =?utf-8?B?cXhGNlVZbS80VEhCT2phV09nZGd6TEdHTnZrSHRyL3ZmTzBVS0laVFJtTnNi?=
- =?utf-8?B?NWhVZzB4Q3E3MlBPdVNxRXZUVlNLdlJQcFFSaDliYjI5VlFtWWpXMHkrVHgz?=
- =?utf-8?B?aUdJMWZUR1dMY04vUFkxZ0JaS2F3a3R3Qm45Z0owSS83OWxza1ZwMlRMRlRH?=
- =?utf-8?B?VERHOHExcW9Id2RHWFV0UDVmemgxSGZlaVhDRFpNS2RRdDV5eWtjbVZ6NWVt?=
- =?utf-8?B?ZEZIRURWK0lnUWpUS1BTUWtHS2pTTnFjRVE0ZVRsMTA1OFFDYUQxUW1WT3Nz?=
- =?utf-8?B?K0pJSWdZREorSzFqYk1mb3I2cC9pSnpQUm1zK0JPOVE0YmEzN3pNdnNyM0xw?=
- =?utf-8?B?SGdpRTdKbkNUdHhxOHc1UjhpNk1CcksxYmpZMkR4TlVaYS81US9YU3BKUnF2?=
- =?utf-8?B?U2xOTno1b2FoeFdWWWNRWGYxN01wdXQyU0tqZkJLemtuUmpMRFJvTEtieFYy?=
- =?utf-8?B?RFZFMDVBQ1Jvbm9jTEs5Z3E1aldJL25LcjA2WEJRTHJDM3VQdjZRUGRrc1dD?=
- =?utf-8?B?R3VrUlNRRk5CWXVKeUpsMXlpc2ppTkN1VGhqMDFscVVJdkY0dWkzUCtLclps?=
- =?utf-8?B?RUtQTi8rYUc3bFMxK1orQlhuUXB2dFhHRDhiV09QSFQyOWs1dE9ySTFBdkhh?=
- =?utf-8?Q?NH+Nz8K4Ij37LSfUGCZKLcIVTmeo3/zW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:26:53.3937
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc744972-01a8-4392-0838-08dcc12c8519
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023CB.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8942
+References: <20240816144344.18135-1-me@yhndnzj.com> <CAJD7tkajuiBDV9Hk8Z+f_-f4ZZf81o4CP3LFLVbfZbrvn4RrUA@mail.gmail.com>
+ <45e2c372f59748262b6e4390dc5548f8ebf6c41a.camel@yhndnzj.com>
+In-Reply-To: <45e2c372f59748262b6e4390dc5548f8ebf6c41a.camel@yhndnzj.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 20 Aug 2024 11:26:56 -0400
+Message-ID: <CAKEwX=Mhbwhh-=xxCU-RjMXS_n=RpV3Gtznb2m_3JgL+jzz++g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm/memcontrol: respect zswap.writeback setting
+ from parent cg too
+To: Mike Yuan <me@yhndnzj.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/24 5:23 PM, Sean Christopherson wrote:
-> On Mon, Aug 19, 2024, Kim Phillips wrote:
->> On 8/16/24 5:59 PM, Sean Christopherson wrote:
->>> On Thu, Aug 01, 2024, Kim Phillips wrote:
->>>> From: Kishon Vijay Abraham I <kvijayab@amd.com>
->>>>
->>>> AMD EPYC 5th generation processors have introduced a feature that allows
->>>> the hypervisor to control the SEV_FEATURES that are set for or by a
->>>> guest [1]. The ALLOWED_SEV_FEATURES feature can be used by the hypervisor
->>>> to enforce that SEV-ES and SEV-SNP guests cannot enable features that the
->>>> hypervisor does not want to be enabled.
->>>
->>> How does the host communicate to the guest which features are allowed?
->>
->> I'm not familiar with any future plans to negotiate with the guest directly,
-> 
-> I feel like I'm missing something.  What happens if the guest wants to enable
-> PmcVirtualization and it's unexpectedly disallowed?  Does the guest simply panic?
+On Tue, Aug 20, 2024 at 5:38=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
+>
+> On 2024-08-19 at 12:09 -0700, Yosry Ahmed wrote:
+> > On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrot=
+e:
+> > >
+> > > Currently, the behavior of zswap.writeback wrt.
+> > > the cgroup hierarchy seems a bit odd. Unlike zswap.max,
+> > > it doesn't honor the value from parent cgroups. This
+> > > surfaced when people tried to globally disable zswap writeback,
+> > > i.e. reserve physical swap space only for hibernation [1] -
+> > > disabling zswap.writeback only for the root cgroup results
+> > > in subcgroups with zswap.writeback=3D1 still performing writeback.
+> > >
+> > > The inconsistency became more noticeable after I introduced
+> > > the MemoryZSwapWriteback=3D systemd unit setting [2] for
+> > > controlling the knob. The patch assumed that the kernel would
+> > > enforce the value of parent cgroups. It could probably be
+> > > workarounded from systemd's side, by going up the slice unit
+> > > tree and inheriting the value. Yet I think it's more sensible
+> > > to make it behave consistently with zswap.max and friends.
+> > >
+> > > [1]
+> > > https://wiki.archlinux.org/title/Power_management/Suspend_and_hiberna=
+te#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
+> > > [2] https://github.com/systemd/systemd/pull/31734
+> > >
+> > > Changes in v2:
+> > > - Actually base on latest tree (is_zswap_enabled() ->
+> > > zswap_is_enabled())
+> > > - Updated Documentation/admin-guide/cgroup-v2.rst to reflect the
+> > > change
+> > >
+> > > Link to v1:
+> > > https://lore.kernel.org/linux-kernel/20240814171800.23558-1-me@yhndnz=
+j.com/
+> > >
+> > > Cc: Nhat Pham <nphamcs@gmail.com>
+> > > Cc: Yosry Ahmed <yosryahmed@google.com>
+> > > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > >
+> > > Signed-off-by: Mike Yuan <me@yhndnzj.com>
+> > > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> >
+> > LGTM,
+> > Acked-by: Yosry Ahmed <yosryahmed@google.com>
+> >
+> > > ---
+> > >  Documentation/admin-guide/cgroup-v2.rst | 5 ++++-
+> > >  mm/memcontrol.c                         | 9 ++++++++-
+> > >  2 files changed, 12 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/Documentation/admin-guide/cgroup-v2.rst
+> > > b/Documentation/admin-guide/cgroup-v2.rst
+> > > index 86311c2907cd..80906cea4264 100644
+> > > --- a/Documentation/admin-guide/cgroup-v2.rst
+> > > +++ b/Documentation/admin-guide/cgroup-v2.rst
+> > > @@ -1719,7 +1719,10 @@ The following nested keys are defined.
+> > >    memory.zswap.writeback
+> > >         A read-write single value file. The default value is "1".
+> > > The
+> > >         initial value of the root cgroup is 1, and when a new
+> > > cgroup is
+> > > -       created, it inherits the current value of its parent.
+> > > +       created, it inherits the current value of its parent. Note
+> > > that
+> > > +       this setting is hierarchical, i.e. the writeback would be
+> > > +       implicitly disabled for child cgroups if the upper
+> > > hierarchy
+> > > +       does so.
+> > >
+> > >         When this is set to 0, all swapping attempts to swapping
+> > > devices
+> > >         are disabled. This included both zswap writebacks, and
+> > > swapping due
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index f29157288b7d..327b2b030639 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -5320,7 +5320,14 @@ void obj_cgroup_uncharge_zswap(struct
+> > > obj_cgroup *objcg, size_t size)
+> > >  bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+> > >  {
+> > >         /* if zswap is disabled, do not block pages going to the
+> > > swapping device */
+> > > -       return !zswap_is_enabled() || !memcg || READ_ONCE(memcg-
+> > > >zswap_writeback);
+> > > +       if (!zswap_is_enabled())
+> > > +               return true;
+> >
+> > This is orthogonal to this patch, but I just realized that we
+> > completely ignore memory.zswap_writeback if zswap is disabled. This
+> > means that if a cgroup has disabled writeback, then zswap is globally
+> > disabled for some reason, we stop respecting the cgroup knob. I guess
+> > the rationale could be that we want to help get pages out of zswap as
+> > much as possible to honor zswap's disablement? Nhat, did I get that
+> > right?
+>
+> Hmm, I think the current behavior makes more sense. If zswap is
+> completely
+> disabled, it seems intuitive that zswap-related knobs lose their
+> effect.
 
-In SNP, VMRUN will return with an exit code of VMEXIT_INVALID (0xffffffff)
-if the guest tries to set it.
+Mike is right here. It's less of a behavioral decision, but more of a
+this-can-confuse-users kind of thing :) At least that's my rationale
+when I wrote this.
 
-In SEV-ES, the hypervisor can set it, and the same thing will happen to VMRUN.
+If users want to disable swap still, they can still do that with
+memory.swap.max =3D 0, which is probably better because it would fail
+earlier at the swap slot allocation step.
 
-In both cases, SEV_FEATURES is saved to VMCB field GUEST_SEV_FEATURES at
-offset 140h on the VMEXIT, indicating to the host which feature was
-attempted but caught as not allowed.
+>
+> > I feel like it's a little bit odd to be honest, but I don't have a
+> > strong opinion on it. Maybe we should document this behavior better.
+>
+> But clarify this in the documentation certainly sounds good :)
 
->> but since commit ac5c48027bac ("KVM: SEV: publish supported VMSA features"),
->> userspace can retrieve sev_supported_vmsa_features via an ioctl.
->>
->>> And based on this blurb:
->>>
->>>     Some SEV features can only be used if the Allowed SEV Features Mask is enabled,
->>>     and the mask is configured to permit the corresponding feature. If the Allowed
->>>     SEV Features Mask is not enabled, these features are not available (see SEV_FEATURES
->>>     in Appendix B, Table B-4).
->>>
->>> and the appendix, this only applies to PmcVirtualization and SecureAvic.  Adding
->>> that info in the changelog would be *very* helpful.
->>
->> Ok, how about adding:
->>
->> "The PmcVirtualization and SecureAvic features explicitly require
->> ALLOWED_SEV_FEATURES to enable them before they can be used."
->>
->>> And I see that SVM_SEV_FEAT_DEBUG_SWAP, a.k.a. DebugVirtualization, is a guest
->>> controlled feature and doesn't honor ALLOWED_SEV_FEATURES.  Doesn't that mean
->>> sev_vcpu_has_debug_swap() is broken, i.e. that KVM must assume the guest can
->>> DebugVirtualization on and off at will?  Or am I missing something?
->>
->> My understanding is that users control KVM's DEBUG_SWAP setting
->> with a module parameter since commit 4dd5ecacb9a4 ("KVM: SEV: allow
->> SEV-ES DebugSwap again").  If the module parameter is not set, with
->> this patch, VMRUN will fail since the host doesn't allow DEBUG_SWAP.
-> 
-> But that's just KVM's view of vmsa_features.  With SNP's wonderful
-> SVM_VMGEXIT_AP_CREATE, can't the guest create a VMSA with whatever sev_features
-> it wants, so long as they aren't host-controllable, i.e. aren't PmcVirtualization
-> or SecureAvic?
-
-No, as above, if the guest tries any silly business the host will
-get a VMEXIT_INVALID, no matter if using the feature *requires*
-ALLOWED_SEV_FEATURES to be enabled and explicitly allow it (currently
-PmcVirtualization or SecureAvic).
-
-Kim
+But yes, better documentation =3D=3D happy Nhat :)
 
