@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-293297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F16957D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:01:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA79C957D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F9D1F24193
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478B1B21AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00351494A8;
-	Tue, 20 Aug 2024 06:01:00 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AF914A4EA;
+	Tue, 20 Aug 2024 06:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVubNwED"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036E3282FD
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39531136325
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724133660; cv=none; b=B5SnV4txXPsClvdsAYskOFZHuqrlKGASRCx7Z4HC22zceg/IzUzOyA5N9VmZgvsonDGyrK+1xE7uXF5AW2riFzektL5G2pOfYOF1BSK9H4L3WFcrH9DKQVdfoRICsEQqWzwYs/7lH0AYiTzMJVk793Ui3IGNm3ygQyLMMmQEFr8=
+	t=1724133626; cv=none; b=l1oq5Z582nKRPHRg7I6tcl+8PPYOc+fUGACStSyAAaqNEzrVZpXoYhyuLqs5KYePv2ce7Vxt95kXq21WIFNFwovQvZeXP63gXlcES834JREbsc1ltbCeJzKVY3DN1d6xu1T02Ligpk6ZBeMYFbDzUZ9tVj5IZbY3zzwPCfTXwro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724133660; c=relaxed/simple;
-	bh=o/tBuE7Q+e6uqNisyjOpuuITYMHcVkk6m6s43+NtjPc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M5vjq+7c8eXzhqBk9lspAo1U/1ooMMtatbJ2jxS3vNOt2NRJy3YTLSSUwU6OQ2ewDEOrtcbDdbhllALRTvXPj7XAIq/gKdI2NTRMJVP4tn7sR1XGeaujNzvyNGSWTNy9oYNHlc1bWYbQf12YFBxwidYW6/vOzFPMi7D7TNwTZ2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K4Uo1j024085;
-	Mon, 19 Aug 2024 22:59:34 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412uck29te-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 19 Aug 2024 22:59:33 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 19 Aug 2024 22:59:33 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Mon, 19 Aug 2024 22:59:29 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <heming.zhao@suse.com>
-CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <mark@fasheh.com>, <ocfs2-devel@lists.linux.dev>,
-        <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] ocfs2: remove unreasonable unlock
-Date: Tue, 20 Aug 2024 13:59:28 +0800
-Message-ID: <20240820055928.580684-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2e662cb6-47d9-4bbd-855d-1f6d5edb8633@suse.com>
-References: <2e662cb6-47d9-4bbd-855d-1f6d5edb8633@suse.com>
+	s=arc-20240116; t=1724133626; c=relaxed/simple;
+	bh=sF3PRRiLeL/D5znM6gXQZ3NeF2qGdjIeuDfpPWTothE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMr6CqTcc2kGEgs005Fs6qLw5ne3dIp+Txur23MnFhVqIMzhiJtHnRbAMlqTlNbgupDeZ/t59LgRU4IiVeAARr+8YXs1/vkBVAZM5QdEzpsxq1VkdvnopN15hFxsQUMlQ2yVkmSLpjoWyn3Xzth7OHyefRaJ1D1ci3+fB3/fzig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SVubNwED; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-713edc53429so1567321b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724133624; x=1724738424; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lgLMdruNV2huc5fRfMZfd6Ggx0Cp1DwK5971y3VUjeQ=;
+        b=SVubNwED69a/mXs1SjT0rjRq1WPUZ0detoMNm4mzDGId+IuW7LsyU2+8mJDHN+9UlA
+         +Nx/n7yOYkzbra1aXxdICCB7VeAhcGjs4eiffZ4DMFoY5PfvTxmrwZdxjZJ2ZAOjBDuy
+         1xH7H1ATRN1fS8wAPKD8+wPkj6bCyDkmaqGGsazK0s24NwHvvFMlSKBCq8FnYAW36SxP
+         7WBW996b0+s+utBRglB49u7IN5L2eTAwYreXxnKJKKlWS/d6byeBo0Gh4vWdQoTwlUcu
+         c0Bvmlkv/mSLa7IhS1JwoGUC55GNXa9dbnpoicKz2LFo2vBJ7npsHBTHpi4osoRh5njv
+         xO6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724133624; x=1724738424;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgLMdruNV2huc5fRfMZfd6Ggx0Cp1DwK5971y3VUjeQ=;
+        b=RnrvUb5mGN8MeJzShgEni+XHit3kto/K+c8j5DIV8nF+sVXsgJaF5uq5ctU2tFx9pk
+         xTnzOQkb0ikktBzNZPNViUqyArBCrCXBd8oH+75AvRK+K6CXZ5CHvcQAk7ClZ443of73
+         gkqTJfkm1e8TIX9Wd/FgL/GUolG6nnDVj2TdUOTDzUixVfPiD1d17mHhYVD4ueAef8Hx
+         VYge56tL9ZhMzoFusg0ZnoeZKXSLbltRMUQFBCmYeJkoouyZ5q8dOK+Lmp0fHrxTOtas
+         KjzSnoCpv7PY6iwXc2ESevHl+fu9Wz+PimrEUsU+NcBbjGte6mpOG7dZP721w+27I7ae
+         pnBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9v2F66zyC2QdXIkmnQVJmuTTKQP2PlOnUuVMIBpwYOxU2C4jAmAeD1NrOq1FJd42+1w/ZxzCoZ+yFhaO1mSuFRwQWPCG3Pem0/ukY
+X-Gm-Message-State: AOJu0YxPR2en/lzkr8LO8gEhUUAx3aBh/zUSbgc79u7oGmDPF68lTDoN
+	LWaJZKAx5+CtyKOmuASP4EQWv/fDeSo0/oyXKKuk3wM0RAs+Vr8yOaKpshioFdpWx+zkIf0Wzn8
+	=
+X-Google-Smtp-Source: AGHT+IGMZLlXvU8CAUAv9DT+q3r5OtQYUBhXTxRSLpbUg/fgZlURHFtLGiA10dUYE7hx79M25yG/rA==
+X-Received: by 2002:a05:6a00:928e:b0:706:74b7:9d7d with SMTP id d2e1a72fcca58-713c4f19e9amr15133166b3a.25.1724133624443;
+        Mon, 19 Aug 2024 23:00:24 -0700 (PDT)
+Received: from thinkpad ([120.60.128.138])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3c380sm7489929b3a.203.2024.08.19.23.00.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 23:00:24 -0700 (PDT)
+Date: Tue, 20 Aug 2024 11:30:08 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
+ bridges
+Message-ID: <20240820060008.jbghpqibbohbemfz@thinkpad>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-3-2426dd9e8e27@linaro.org>
+ <2c5dd04f-8ac0-41eb-a11d-cc48c898c8f3@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=SIcQV/vH c=1 sm=1 tr=0 ts=66c430c5 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=2y87MDzrW35xszVHdtEA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: DyZfKKupH0sGRjg3OoD3SvRfuiZus5Qh
-X-Proofpoint-GUID: DyZfKKupH0sGRjg3OoD3SvRfuiZus5Qh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=851 clxscore=1011 impostorscore=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408200044
+In-Reply-To: <2c5dd04f-8ac0-41eb-a11d-cc48c898c8f3@suse.com>
 
-On Tue, 20 Aug 2024 12:04:39 +0800, Heming wrote:
-> > There was a lock release before exiting, so remove the unreasonable unlock.
-> >
-> > Reported-and-tested-by: syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=ab134185af9ef88dfed5
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > ---
-> >   fs/ocfs2/buffer_head_io.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-> > index cdb9b9bdea1f..e62c7e1de4eb 100644
-> > --- a/fs/ocfs2/buffer_head_io.c
-> > +++ b/fs/ocfs2/buffer_head_io.c
-> > @@ -235,7 +235,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
-> >   		if (bhs[i] == NULL) {
-> >   			bhs[i] = sb_getblk(sb, block++);
-> >   			if (bhs[i] == NULL) {
-> > -				ocfs2_metadata_cache_io_unlock(ci);
-> >   				status = -ENOMEM;
-> >   				mlog_errno(status);
-> >   				/* Don't forget to put previous bh! */
+On Mon, Aug 19, 2024 at 02:44:43PM +0200, Oliver Neukum wrote:
+> On 02.08.24 07:55, Manivannan Sadhasivam via B4 Relay wrote:
 > 
-> The fix looks good to me. However, I found another issue in this function.
+> > --- a/drivers/pci/pci-acpi.c
+> > +++ b/drivers/pci/pci-acpi.c
+> > @@ -1434,7 +1434,7 @@ void pci_acpi_setup(struct device *dev, struct acpi_device *adev)
+> >   	 * reason is that the bridge may have additional methods such as
+> >   	 * _DSW that need to be called.
+> >   	 */
+> > -	if (pci_dev->bridge_d3_allowed)
+> > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
 > 
-> In the for-loop after the 'read_failure' label, the condition
-> '(bh == NULL) && flags includes OCFS2_BH_READAHEAD' is missing.
-> When this contidion is true, this for-loop will call ocfs2_set_buffer_uptodate(ci, bh),
-> which then triggers a NULL pointer access error.
+> Are you sure you want to require both capabilities here?
 > 
-> If you agree with my analysis, please add the new fix and send a v2 patch.
-I agree with your analysis conclusion, but this is not the same issue
-as the current one, so I will split it into two patches. 
-The first patch fixes the unbalanced lock issue, and the second patch will
-be used to fix the UAF problem of BH.
 
-BR,
-Lizhi
+Wakeup is common for both D3Hot and D3Cold, isn't it?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
