@@ -1,182 +1,141 @@
-Return-Path: <linux-kernel+bounces-294037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD61C958815
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6848B958818
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F50281A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3FAB1F231E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CF3190670;
-	Tue, 20 Aug 2024 13:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122B5190485;
+	Tue, 20 Aug 2024 13:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Cb+Hix1/"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXLCgIz9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD7819049A
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D52118C91C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161240; cv=none; b=Tf7lcM4Fvu6hDyjtebJLCYygEBtgNWEuJqFhcy60q6Wh3s4ZqWTi+8dcF/UCXlHuSVxSQ3xO92ay+0PesxGhGA+BG8RbrdAPOFskpAl93gqlmuwInKhKpn3dxpJnpXbVip0kGikUVXUfJ4M7z8KArP1ixYuStU+b85No602pK48=
+	t=1724161309; cv=none; b=KbVEWsD5WlO6taQTIQDpZMB06NGmNxO1vK3RT0zf9trqEneTLPwTdRu0riY3267n+KbgGEloQj8RK2Dv9WM2m+UQGJ1UKJXZxBb6sKeLQwid1lqqIWXHjerd0K2weFQFayXqLQOR9usiLn1pnTEuo4760ZtXZLfSyNU1FzkA6Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161240; c=relaxed/simple;
-	bh=upamO/zsB6rxCI8+LBk1aglbA8pmuHyWtSjpsXZ4qY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOSQ7aqFglP5BmgOj9Dxi02qqYLc9j5OeZ1+DDkcGhmoOFeI7BOZnABoihZgLPrmEDWk3DoNNFV4K3anXmyk1mKnzpzxTtHz4nYmO6Kvaqy2JITryZgHnSkMHmGuegjnIqOlGfx8ydTppXGRuvEHHd7bvk+Zx4HJ98sJB4kh+Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Cb+Hix1/; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724161239;
-	bh=TT/LBHFFfw+sqeDq9jX/+oamVLetFWgvhvk3Yjmswbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=Cb+Hix1/TL1c++twUnSuWXKWrAsrSpMhHY0xo3hTBVK0IQQL6HGC48SDeSPgpEynM
-	 LcyI3b7qGXi56Q4O3AegpN/gTuPtQ71p6tFxEY5L5HNb9nX/QuSUTiUpO2JirxNiel
-	 wvGipsD5ERi9fH4ahZ+0MA1jVPW2VVuqSucOEFtVbjzLrwa2wyutCi9idp7TqsBPhp
-	 8z6ERTajDMXBRN5vsMJGg8fOcqcDEjkxum0rgaj6ZEL/JuCDFCmQ0AFzSHJk9xrV59
-	 n3Hl2sj+9VLS59xH9V2oejrVb41UJah6/5FC+1XxSh/eT9L+uMMyfMSzaDQhIakkFV
-	 W3/fh+FzXqoDg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 33BC1180418;
-	Tue, 20 Aug 2024 13:40:28 +0000 (UTC)
-Message-ID: <2b9fc661-e061-4699-861b-39af8bf84359@icloud.com>
-Date: Tue, 20 Aug 2024 21:40:23 +0800
+	s=arc-20240116; t=1724161309; c=relaxed/simple;
+	bh=opLrROuD54WPY7U6CTrjM/ZqQ/yWDmuZgoY7rYtgdX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XB0Ygzt1aq8HTf/zeuQBb50oYzP1z1dCnl1K84T9QvD1bF9tagN3w2prV6owhBzv5tgZdRB/gA5N9tYm13gePrqxBgTCW1kDgMIm+hsJrh0fU6we0prU28EjzFUc5OJWACfUZ0A+bmy7HBza6RTsX1i0dvPll8ktlW25ARwkJ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXLCgIz9; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724161308; x=1755697308;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=opLrROuD54WPY7U6CTrjM/ZqQ/yWDmuZgoY7rYtgdX0=;
+  b=YXLCgIz9JGiGXdQwgSzp/yz8aL9CVxB1AgPu4+mxZovFu9iWHcbuC6aQ
+   ++t0BC+Asc9xu/yIiEvSdmeHM4f9Q6bi3F/xvnZoiAok/wlQlJEW/1jjq
+   mbVJu2P9jpdfr4aj6FVl5cOA0uorp026drtIDqETvP18od1+Nu2s0Q0P3
+   VCYKfWycIoLlijYxRbrPpxMqS7TP80g0UnR85TLN2DBmPurWwE50LeA+/
+   rMHP6q3NfaiF3Ty5eP4bqxAnoFhoFZkHFD9iImlFa+Nl59QqQAhVbvTNU
+   GliNXfqS0pPWy1MZUCrljEdwXnsfgZo0CqYpX+yJZhaCgpICx/QeA/0Nx
+   A==;
+X-CSE-ConnectionGUID: aNnH8/48TfGVzZvsm0qbyw==
+X-CSE-MsgGUID: 9NEhSnINRQOCwhachcVgcA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="26331032"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="26331032"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:41:47 -0700
+X-CSE-ConnectionGUID: aFf1F+rXTfGlvlVvX2STjg==
+X-CSE-MsgGUID: fwxoflidSHyyNvmP3E+2yQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="60698260"
+Received: from slindbla-desk.ger.corp.intel.com (HELO intel.com) ([10.245.246.197])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:41:39 -0700
+Date: Tue, 20 Aug 2024 15:41:36 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Michal Mrozek <michal.mrozek@intel.com>,
+	Tejas Upadhyay <tejas.upadhyay@intel.com>,
+	Gustavo Sousa <gustavo.sousa@intel.com>,
+	Shekhar Chauhan <shekhar.chauhan@intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v2] drm/i915/gt: Use kmemdup_array instead of kmemdup for
+ multiple allocation
+Message-ID: <ZsSdEHxsmkb2B2WS@ashyti-mobl2.lan>
+References: <20240820095304.2746102-1-yujiaoliang@vivo.com>
+ <ngzckr4tdknp73oki6ig7drg6vx5hapqz3226ejfuhah5khefh@6gwnuk4q2nlx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] driver core: Make parameter check consistent for
- API cluster device_(for_each|find)_child()
-To: Ira Weiny <ira.weiny@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
- <20240815-const_dfc_prepare-v2-1-8316b87b8ff9@quicinc.com>
- <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: YdqiHEQoPhOMJYBRg-96x8Cf4_TimD2Z
-X-Proofpoint-ORIG-GUID: YdqiHEQoPhOMJYBRg-96x8Cf4_TimD2Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 phishscore=0 adultscore=0 mlxscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408200101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ngzckr4tdknp73oki6ig7drg6vx5hapqz3226ejfuhah5khefh@6gwnuk4q2nlx>
 
-On 2024/8/20 20:53, Ira Weiny wrote:
-> Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> The following API cluster takes the same type parameter list, but do not
->> have consistent parameter check as shown below.
->>
->> device_for_each_child(struct device *parent, ...)  // check (!parent->p)
->> device_for_each_child_reverse(struct device *parent, ...) // same as above
->> device_find_child(struct device *parent, ...)      // check (!parent)
->>
-> 
-> Seems reasonable.
-> 
-> What about device_find_child_by_name()?
-> 
+Hi Lucas,
 
-Plan to simplify this API implementation by * atomic * API
-device_find_child() as following:
-
-https://lore.kernel.org/all/20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com
-struct device *device_find_child_by_name(struct device *parent,
- 					 const char *name)
-{
-	return device_find_child(parent, name, device_match_name);
-}
-
->> Fixed by using consistent check (!parent || !parent->p) for the cluster.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/base/core.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index 1688e76cb64b..b1dd8c5590dc 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -4004,7 +4004,7 @@ int device_for_each_child(struct device *parent, void *data,
->>  	struct device *child;
->>  	int error = 0;
->>  
->> -	if (!parent->p)
->> +	if (!parent || !parent->p)
->>  		return 0;
->>  
->>  	klist_iter_init(&parent->p->klist_children, &i);
->> @@ -4034,7 +4034,7 @@ int device_for_each_child_reverse(struct device *parent, void *data,
->>  	struct device *child;
->>  	int error = 0;
->>  
->> -	if (!parent->p)
->> +	if (!parent || !parent->p)
->>  		return 0;
->>  
->>  	klist_iter_init(&parent->p->klist_children, &i);
->> @@ -4068,7 +4068,7 @@ struct device *device_find_child(struct device *parent, void *data,
->>  	struct klist_iter i;
->>  	struct device *child;
->>  
->> -	if (!parent)
->> +	if (!parent || !parent->p)
+On Tue, Aug 20, 2024 at 07:53:10AM -0500, Lucas De Marchi wrote:
+> On Tue, Aug 20, 2024 at 05:53:02PM GMT, Yu Jiaoliang wrote:
+> > Let the kememdup_array() take care about multiplication and possible
+> > overflows.
+> > 
+> > v2:
+> > - Change subject
+> > - Leave one blank line between the commit log and the tag section
+> > - Fix code alignment issue
+> > 
+> > Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> > Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+> > Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+> > ---
+> > drivers/gpu/drm/i915/gt/intel_workarounds.c | 5 ++---
+> > 1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/gt/intel_workarounds.c b/drivers/gpu/drm/i915/gt/intel_workarounds.c
+> > index d90348c56765..0fcfd55c62b4 100644
+> > --- a/drivers/gpu/drm/i915/gt/intel_workarounds.c
+> > +++ b/drivers/gpu/drm/i915/gt/intel_workarounds.c
+> > @@ -111,9 +111,8 @@ static void wa_init_finish(struct i915_wa_list *wal)
+> > {
+> > 	/* Trim unused entries. */
+> > 	if (!IS_ALIGNED(wal->count, WA_LIST_CHUNK)) {
+> > -		struct i915_wa *list = kmemdup_array(wal->list,
 > 
-> Perhaps this was just a typo which should have been.
+> 					^
 > 
-> 	if (!parent->p)
-> ?
-> 
-maybe, but the following device_find_child_by_name() also use (!parent).
+> it was already kmemdup_array, not kmemdup. Am I missing anything?
 
-> I think there is an expectation that none of these are called with a NULL
-> parent.
->
+I see kmemdup() in drm-tip.
 
-this patch aim is to make these atomic APIs have consistent checks as
-far as possible, that will make other patches within this series more
-acceptable.
+What Yu has done here is to change kmemdup to kmemdup_array and
+send the patch. Received the reviews and made a new commit on top
+of the previous one; then he sent only this second commit.
 
-i combine two checks to (!parent || !parent->p) since i did not know
-which is better.
+Yu needs to make sure that:
 
-> Ira
-> 
->>  		return NULL;
->>  
->>  	klist_iter_init(&parent->p->klist_children, &i);
->>
->> -- 
->> 2.34.1
->>
-> 
-> 
+ 1. the patch applies correctly on a clean drm-tip
+ 2. drm-tip + patch compiles
+ 3. there are no checkpatch and sparse new errors
 
+We missed point 1 here :-)
+
+Andi
 
