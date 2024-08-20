@@ -1,90 +1,141 @@
-Return-Path: <linux-kernel+bounces-293267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA925957CBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:31:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A35957CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CC8B21B5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48BBC1C22D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE72131BAF;
-	Tue, 20 Aug 2024 05:31:40 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3B913C9A1;
+	Tue, 20 Aug 2024 05:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIxa1VWY"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F03D1862
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 05:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B63E1862;
+	Tue, 20 Aug 2024 05:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724131900; cv=none; b=E7SYx92K9AG0mXr1UgJxdOrX4kPEBkTH81PSVXk4vgJpMcPirPpSFgzcRCfG2d/zlsXK2SqehQNR3NVQtZTCt3RIt2RofW0hhwlUXN1nm3BeExSyDtYLHC5dtWkMbaCimLS+Fftd5+XzcMEqrGNIGIM3IcblodvT2OHAkwnJPHA=
+	t=1724131957; cv=none; b=IBis/cjSm5PdJHTPZEe0AOYHWh/pGsv1zko+GwH4lttXt6E7/AIRXzoSk6JUseuOtn9unD8HmHUV0juRFNS2N2y80SZKz0FVO3aMpGkJILLtFM4JCErkr7A4PKPP9YHDV8uk6Kw3R2FBJNUKAi7DoPd5khcH52dZ4dx9BDbLSjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724131900; c=relaxed/simple;
-	bh=lnn1cMwZ5xGuxZXmYgF8Mux94AyucGFh2qMYd0RHS4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O6GsAbhn4tv2njk6xz/BHIZIQp1skWr+OVtSAKQkSuRKSMpACYdF4zhtf4C8lmyUislDYf3L0G76nxfd5Dgs4Qsqe4GNuzdxARhLQo5Lb7ikWGTuGLK0Vg2twfsJyr5FIcXAcCKTZMYXhaYgZs2gsx+F2Wn00GSxbcwrdqn8nN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af271.dynamic.kabel-deutschland.de [95.90.242.113])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5486861E5FE07;
-	Tue, 20 Aug 2024 07:31:12 +0200 (CEST)
-Message-ID: <17001e93-7baf-428b-b979-e6fb8330cb84@molgen.mpg.de>
-Date: Tue, 20 Aug 2024 07:31:11 +0200
+	s=arc-20240116; t=1724131957; c=relaxed/simple;
+	bh=fzafTY+hMgu+Mmsh1SAc4j1kBbrC7lh0Ogb3zZdXivc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e9v9ZrGutDv+Weuwi6kaeQjWuA701EiV/pZTPNV0/MT6KxtTG04we7GlnZI7xfAtQ9+pGvfAd64Nnp5QJMi37A7StpSN/CDzzhdIIaK8mPVajfC4Hm6mWwvyMCGiQvZ6bXe6AZnRkhB53n1QIoxoQNOdrQMR+KU8cqBdadPSzUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIxa1VWY; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-49294bbd279so1847775137.0;
+        Mon, 19 Aug 2024 22:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724131955; x=1724736755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i6QfqVruNv0KeYjR1T2Xi8sKHkpHxg8Q0ePcqumb5I0=;
+        b=hIxa1VWYHH0mgxTWHzxLCVhDir30qLsZ/yQQ0NnpDCzbXTJ66sDpruAgp/zxqX/D4s
+         kCZsz2a/eqomc6cbXYkLV1tCLMhBW9LNDJY+ko3KOUfsVj1Mt1Jr66qhC/wsoZd/e9dk
+         1IJUhG+an3ijLCBmrfYRQw9FHN2H9YuMNigpNWvKMfrg46q/9hyjKk3/UMbACV3sEV+z
+         TExEEHyC9xOjjIPeDJ3GiZsz53WEhp20MO2B+s8qnni/ds8EyYK54wneBkOiXCK6qTpl
+         G9HEoa5c1RJ3Ua9bTQd7xRMTMtnxezXIAXzDNvwCXJm1GLIpa1aMZQnOY3daqtWpPvx+
+         s7Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724131955; x=1724736755;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i6QfqVruNv0KeYjR1T2Xi8sKHkpHxg8Q0ePcqumb5I0=;
+        b=C5KllHDkwBjsM1PrqjivsZnmZP2+R8NcyNjO3j4k2gQzlKvaDXZ+BoAwsZT4r1asrw
+         oE+/uxG4EUGeWeL5lMAyJSVPZkYXRyDf3Rh16QP37jIZvXjYAxpcH7AnoIOK5qkZzVs1
+         cvd2fvNV2Ut23jizs6Z2jLifdh8j6kTL06RjrbAg34t+40IBCjTGlJ9ugq0NGwpIFa+q
+         0xYWvp4vdvSkt5cIQHCO08qF16ZNMmLvEHiTb56mzEgy0sv3TW2rWHWLXORxBTWh/GtH
+         zS3PPV6SYqgu+5k1Ij271bdSm6FEA8xvV06iFsiMG9DFau+ezLL+FwWOz3Z7fPq3C9BT
+         Ewew==
+X-Forwarded-Encrypted: i=1; AJvYcCVt7cy6vzU5ZwhJ+nuVNlxaQjLOo9caREMxBRmOKeVYUl1Z2qRLLOIIm/HZj1j5oIfnYI3rITKjqCf6IwVoq6TINcEeaTvT1GnjaOCjBMnoNY6fIRajp8/x4upMLuaef8ff
+X-Gm-Message-State: AOJu0YxLsa1lBUJh47LGnNhRHheI52VrO7VyGEtdmSxG+CvZcbI90ezo
+	/+pL6irvWHdS6ag+NqCtUSuYYuN7NFNRjkPAM+Gh68zZd9OiMDeXp8YvPuHkqro=
+X-Google-Smtp-Source: AGHT+IFJDEiZQFdQnB6vuxIC34BX3BZcDCcfpLYE+XFHrNvR7Th7DV+B5/CHTpV28VWGDBTQx21Scw==
+X-Received: by 2002:a05:6102:3ece:b0:493:b9f8:82f2 with SMTP id ada2fe7eead31-497799e4d64mr15948858137.25.1724131954628;
+        Mon, 19 Aug 2024 22:32:34 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-842fb9c6015sm1431092241.26.2024.08.19.22.32.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 22:32:34 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: stable@vger.kernel.org
+Cc: seanjc@google.com,
+	pbonzini@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	shuah@kernel.org,
+	David Hunter <david.hunter.linux@gmail.com>,
+	Peter Shier <pshier@google.com>,
+	Jim Mattson <jmattson@google.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH 6.1.y] KVM: x86: fire timer when it is migrated and expired, and in oneshot mode
+Date: Tue, 20 Aug 2024 01:32:29 -0400
+Message-ID: <20240820053229.2858-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Commit *pidfd: prevent creation of pidfds for kthreads* causes
- `Failed to remount '/' read-only: Device or resource busy`
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev
-References: <3a1c9e27-6dcb-4eec-85cb-c03271c61a37@molgen.mpg.de>
- <b21aa149-fd70-4aa0-9b25-886c81ebfae2@leemhuis.info>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <b21aa149-fd70-4aa0-9b25-886c81ebfae2@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Dear Thorsten,
+From: Li RongQing <lirongqing@baidu.com>
 
+[ Upstream Commit 8e6ed96cdd5001c55fccc80a17f651741c1ca7d2]
 
-Am 20.08.24 um 07:03 schrieb Thorsten Leemhuis:
-> On 19.08.24 23:02, Paul Menzel wrote:
->> #regzbot introduced: 3b5bbe798b24
->>
->> Commit 3b5bbe798b24 (pidfd: prevent creation of pidfds for kthreads)
->> causes a regression. On the Dell XPS 13 9360 with Debian sid/unstable
->> and *systemd* 256.5-1, systemd is not able to unmount the root partition
->> (LUKS encrypted) anymore.
-> 
-> Hi Paul! Thx for the report. FWIW, a revert to fix this is already
-> queued as 780d60bac21ebe ("Revert "pidfd: prevent creation of pidfds for
-> kthreads"") [next-20240820 (pending-fixes)] after Eric reported similar
-> problems recently:
-> 
-> https://lore.kernel.org/all/20240819-staudamm-rederei-cb7092f54e76@brauner/
+when the vCPU was migrated, if its timer is expired, KVM _should_ fire
+the timer ASAP, zeroing the deadline here will cause the timer to
+immediately fire on the destination
 
-Thank you for digging this up. I thought I search for the commit hash in 
-lore.kernel.org, but maybe I hit the wrong button *locate inbox*.
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Peter Shier <pshier@google.com>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Link: https://lore.kernel.org/r/20230106040625.8404-1-lirongqing@baidu.com
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Anyway, reverting the patch on top of master also fixes the issue for 
-me. Maybe Linus can take it directly, as more people are going to run 
-into this.
+(cherry picked from commit 8e6ed96cdd5001c55fccc80a17f651741c1ca7d2)
+The code was able to compile without errors or warnings. 
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+ arch/x86/kvm/lapic.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index c90fef0258c5..3cd590ace95a 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1843,8 +1843,12 @@ static bool set_target_expiration(struct kvm_lapic *apic, u32 count_reg)
+ 		if (unlikely(count_reg != APIC_TMICT)) {
+ 			deadline = tmict_to_ns(apic,
+ 				     kvm_lapic_get_reg(apic, count_reg));
+-			if (unlikely(deadline <= 0))
+-				deadline = apic->lapic_timer.period;
++			if (unlikely(deadline <= 0)) {
++				if (apic_lvtt_period(apic))
++					deadline = apic->lapic_timer.period;
++				else
++					deadline = 0;
++			}
+ 			else if (unlikely(deadline > apic->lapic_timer.period)) {
+ 				pr_info_ratelimited(
+ 				    "kvm: vcpu %i: requested lapic timer restore with "
+-- 
+2.43.0
 
-Kind regards,
-
-Paul
 
