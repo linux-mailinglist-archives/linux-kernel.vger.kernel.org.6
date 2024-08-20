@@ -1,214 +1,127 @@
-Return-Path: <linux-kernel+bounces-294270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A0958B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83098958B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2371F23F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1491F23F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D03719409C;
-	Tue, 20 Aug 2024 15:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121B91940B3;
+	Tue, 20 Aug 2024 15:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Tu1bGIu0"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2059.outbound.protection.outlook.com [40.107.96.59])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4P2cLKA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10A518E34B;
-	Tue, 20 Aug 2024 15:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724168454; cv=fail; b=fTEmPQJyZW/4/4pQFfLrZGJkHIfKeqQbWIvK/AK5qpVTNgjU4RNG+LYbIp4lRmeri7zjRX8SRG0RX4AF533m6xVA017dF1jSxRH0oDFESoG5/iGWeOJH+OZhXPgD02dGH2Y6IWSVEHSyTfur4HNa6wwp0G2/YFEX2sL+8+hfWRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724168454; c=relaxed/simple;
-	bh=qBvdkgkeVgUW71hX85hn39afoPpQQQD08AurjvWmG08=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=r4Qe7At+JI9cYk5801EDKOMRVie5OBGWqqLHigcFfUbiSOTriwPYELXLyjoGNcr+BtTdiXqbaYUdHDpJUeOU2yXXKXK5vkDN89HLOKRin+tLJIJ32NspqWd8jTiOnYfFW2xDjrO3je2/UrmsRLEnBq0NYQkwfB6GNOzAgkJLkTY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Tu1bGIu0; arc=fail smtp.client-ip=40.107.96.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SoighwkEXQeK6yBNBts6KPUFkG+OhDhZg4L0CQ74BMQRsgOWI7BbgwhDIlx19pMI9yxlNgBC7tIaGHyRWMWprcsQliwHKB/74GIl2wc6zrHmb48HSG2SwgvV0ItqTjw4mwhRK8bz1v4/INhNa83348RSxiIQAgSXsDFs/CgQu9hHiJguuiWKg4ArVKpeo/2owYMxAbbKwZxeET3IVut0Quj3voPa9200HTKxnXCosBLbI80IXCtwIN/4h7qKUd79RE2+VYfqvLTWB5JZwz9PgqRkJeX3o//4pFVhPIbZbOZsVtV4E2QHjMqXFpYbsXdBImNBhxjxYgcbGj/8iCnPHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=skJB22R2eek5klGaBdxjx4IA9EJLMnbhcQpB++VA914=;
- b=Oe1rbSTzLKNZ6EVAll1KBs0nwjRDDf8jDmmPIzox96iCCXZpqAQZt1bXO5pFCEKKBY6Z4k1xrheNYSmtJnS2k5ZNDEmDBeEnyMH+sQXxwtHMsRTgwYfJb8Fo3L/cFnSUoUmA9dXTCgZQ4auxb5+lADLxy2c9PJuvfSyPRhHD57vrvlF1+2WEpv0xszHE87W9yihPZUK/zxR6trKeAXOMJM74QhZ0nZX+C3fjifS0FzoHrpEbqtRZQc38dNeP26M7a81dVqTZ3XV1FCkay/oker3e4UC5w5D97uDLdA/HyBdGpDXf6/1247cdhB3sCMzRi+CnVzFJ+AMzhrChriQ1FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=skJB22R2eek5klGaBdxjx4IA9EJLMnbhcQpB++VA914=;
- b=Tu1bGIu0Wsz0POtyBogaZrBzh372oYALFmK1M31EOnj5/g5YTi0o+2Ecma/bYt8xoEB6ktQYDxuNwkXvEROfNNOMbyRihGKABq0sU+34rxUoF3EPI9YOohCMbbygNWaEpCEKznXf3H2OKmm1vw5xlDizfde3YG1RvA44i8717Js=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by IA0PR12MB8280.namprd12.prod.outlook.com (2603:10b6:208:3df::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 15:40:49 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%4]) with mapi id 15.20.7897.014; Tue, 20 Aug 2024
- 15:40:49 +0000
-Message-ID: <0fa061f4-c82b-451b-a12d-e873d853e436@amd.com>
-Date: Tue, 20 Aug 2024 21:10:42 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ACPI: APD: Add AMDI0015 as platform device
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
-References: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com>
- <ZrpFU6wFyQDykSlO@smile.fi.intel.com>
- <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-In-Reply-To: <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0193.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:be::22) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B0118E34B;
+	Tue, 20 Aug 2024 15:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724168515; cv=none; b=lI/6ez04PicRB82VKWP17VvGy8j73J6guPaoD61vjcXLazFn0uCY1tn5UxVKiJ0tLrxDhblJ5Y44g27dcXkGc7Q4do1HtJaatMGzSIovKZ9yZdC3X9wV/x65HXTmdmy6EsDUFwUI/wC3s7ZFrRBPFIo5HIKkWdy0ibM4ewnONfM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724168515; c=relaxed/simple;
+	bh=WE7yieYzMSvd0478zSGwFrKvqNnaaK41R7XzRkUeMp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ongppFMX6cIlGCnnC+BG58tEKwXPauhqUQds4SRVqC/wdaS8Nvf6yrymTqAEYaF6xGQsh36ltIpLuYpph0Z6D/EK8rJoMHzDUs60gp3Fnh4paosm16OmZfZ/z3qDUUXWejFCMe9eWmjz0x4HwhRIQaRPIqsOXkYX3J370UdmWrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4P2cLKA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5734C4AF0B;
+	Tue, 20 Aug 2024 15:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724168514;
+	bh=WE7yieYzMSvd0478zSGwFrKvqNnaaK41R7XzRkUeMp4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M4P2cLKAU6WpevoXPoF5zaVxJL7YLSEdAfk1WAnPYGtTXKxCD95MMN1LMHjiCgiTa
+	 EF2sYNX/kFxFwHffGsdB887YhiX4DA6qukVoruewnH7j8T12t1ow3tvRd9Mk2Cf2WZ
+	 /tTIt7pxHLvK+v9E+HuE7XCCjePJwzKdJwsgJqmPic0lq+WFdkqCr1hdRMiwPOWFYt
+	 keDstJGGiuEDm6AUvDSV+Ftc/XSysFDF2ffttStCWwMG0vz6j86yzGSYKk9lQJYmpq
+	 QGR74mjsAyUlpN+k0NybxF94N0PZFtAjskjW+xdtljaDjaLn8dn7EoF3oyy8KbL38o
+	 vNTNa0p+d9uJw==
+Date: Tue, 20 Aug 2024 16:41:50 +0100
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
+ when possible
+Message-ID: <20240820154150.GA28750@willie-the-truck>
+References: <20240802191617.312752-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|IA0PR12MB8280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97546188-cb7f-41dc-3f04-08dcc12e770c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VU5YajNySm53dWtXMi8zY0VIRzdOZXNQVHVOYkViSlNRci9FS3JxV0RCdkFr?=
- =?utf-8?B?NzVrLzY1TjBBL0JuUVEwaUkwNUxBWEphMWRNOVhyRktmQkZjOHpjcDNwU3hY?=
- =?utf-8?B?OVFiREtnOXVNdWN4RjdZSXlneWNTVmRLVnF3N2IzS3VuU0dxaWU0TEgwUWR6?=
- =?utf-8?B?TWRFWGZvWWplZ1JJcE1CUmZ5UUZ1R0ZXaE5zWEFjWE5ZY0JLaHZvSDM3V3RE?=
- =?utf-8?B?K2Y2anFUdlhnbmFCVjFkNmpRSGIvK1FJU2RXS2NsZmdWQ2l5NVhtb2F3OXh4?=
- =?utf-8?B?N0ZVU3FDNGlKU3lFK3FZNGR4ODB2T3I0d3lGWUxZL0tZYU9wL1B2NGFCODJU?=
- =?utf-8?B?bDRReW56dkZ3QW5LVGMxTERQaDdDNHhwMkNKZjgvcEpMc24xS1hwMjA5d0hu?=
- =?utf-8?B?bmI2MExLNWg2TStQT0ZMN29wQmtqQXcvcE45Q0oyNmZYa1YyUnhPUUJCWkFW?=
- =?utf-8?B?elJDMklMUFZoVkFRblZTUmg4QytTMjBhQ2NOTmthdHBoY1VIV2YzSTQzZVpq?=
- =?utf-8?B?VUVNZlRTbnF2dW9pWlpzdzFwbVcxUWt0eE1VUnAwNERRcEcrd0xpL3NqcHBG?=
- =?utf-8?B?OTNHR3BjM1NzWjY5K1VSYkZPTGRLYWh6M1lhR2llWWxVT01WVXNCclcxVFph?=
- =?utf-8?B?bzJ6bUJEN1FOSHNZSkxUL1FqOFFaR0ViYTNpOVJKUkx4NExiRDVqd21uY0hl?=
- =?utf-8?B?L05YMGVuM3RNbSszMjBCRXhFT29STkZLUytPMmNsTE5abGVEbFdObCtMQ001?=
- =?utf-8?B?SUZaU2VFNDRlQ2lrTlRxTUI0SlBpY2lTb2pUeStNOWpqMExMazRnNFBJRi8z?=
- =?utf-8?B?ZGpsL29nZ1ZGY1U2TVRxaVRDMjE0aDhFSlRUMEN6cllzcUpCZ0wrRkFSS0E5?=
- =?utf-8?B?VlNGRFErcGFlRWo4QWVTQWhHUnBORHozL2FDR1hoWVZVZUltSDlTcmZBWjdp?=
- =?utf-8?B?c0lkTFViY0RLa2N3V1ljZm8yMi9wd0tSMzFDNTNPZEFwU2lCaHpMRm1GUDJE?=
- =?utf-8?B?dG9rMVBhdnN1bTNhVUtEWndibVJRSzBMVDZTRGFPdTJqaVpia3dqNFJNZ1kw?=
- =?utf-8?B?KzBSZHBtMnNPQS92VFdydTE1QVpURDdjZUtHR1B4bjJFYWcxOFMvNUV0WFlr?=
- =?utf-8?B?NFFtZnZuVzFmMVJweVErdVh0LzIrbitPYTdCTEExaTRVblVCbXNpOHlGYlJV?=
- =?utf-8?B?ZWtnRHhPdXlBdkhLUGo4RktFN2JYa0xzdUNYM2ExdEpCYTlYTzloWnNtdTk4?=
- =?utf-8?B?RHlVOGM2MmYydjd3S0hvU2pXamVzWENGTGFGZWFBcnpZblVFVnh3RENkS29N?=
- =?utf-8?B?TjBpOEcwS0tEVHRpRXkybDlIejdERGFjSkdURGpGVEhlbjdHZERaQklGR3pl?=
- =?utf-8?B?aUlVNzhQRG9rTkpsakJ5b1lpZE5TcmlwWnZNdmI5YjVxNjNLUzdNTFE5WlNi?=
- =?utf-8?B?WURDcGR4dU1EM1NBNUdzTkY2cnc0QnBmRllwZ1dDYTJrdW1od3kycm91UnpK?=
- =?utf-8?B?OHpnNVR6RWZuWVcxUWRQSURjVUpUYk1VZFRkSURPZWZLM2VvdE96Q3RKemU3?=
- =?utf-8?B?U2xIMVdRWXVyczRqQ2xPTWRoRnozL3kzZlV6R056b2FpTHhGZEVHdGNQSU1m?=
- =?utf-8?B?MUpHQlZXcVJDTkZWakFSbTJ1THdhd05OQzlCUk1mR2pKcmtHZHVyZlRteHVU?=
- =?utf-8?B?d2dVU1hHQllMSzUyTWRrMmYvN0ZvNklJRFFOWlNrNE1WbWpuQ2toYXgwR0dL?=
- =?utf-8?B?OTNCazJzQVR5OVdnMHFYOUVGZU9UVktqQ3FDcTVZZGU3UlJ0ZjBmZjAvSmsr?=
- =?utf-8?B?QmkrVTZpU2xoS1RDY2ZRdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bmFwVGxUTEtvQVZzVTlUMkJ1RzcxMmpKSEg3Z3Z3RGhNUFpKZmpFSU93M21j?=
- =?utf-8?B?WmZFdUlYNExPSE81SmZRSXNoc09rZlkwVFF5R0c0WnJYeWVkVXhZTDl2cTha?=
- =?utf-8?B?anRyRWZwdGxhZk96elBNT1ZmSEd5V2p4WExBZXpPZGsvSUdldFZFNzFiOEcz?=
- =?utf-8?B?OFZ4b1BaQWlEZUh2enNNVmJwMzFtZDVQRW5EODFvYWZKVXJlN1hJdEtrcnlq?=
- =?utf-8?B?MVRRUVhBODlERFVJMWhMbnN3NzFrNFZFeG13VkdKcnNCSWd1S0pzajB3N3pl?=
- =?utf-8?B?R3Q3SFk3VnFkYnREMEpmUjRIckpmQ0QrQkdiNXZjWEtMYVZXenFHVnpyNjdB?=
- =?utf-8?B?S0ExdExvU3FmK1JYRndXbUJ6RFdCeWlubkI1LzRtbi9CTVoxd1NsTFBidlNh?=
- =?utf-8?B?THd5d2JqK21rcnpVc05zL0dOYkY0eHN0SG1xNzU2Yy9LSElFRW5iZHZCTGxw?=
- =?utf-8?B?OWFZVHROSXhNeWtIYnd2N1dacTJWWGsxeXAweEdZbWZiQ1AxYzBlL3JjbUdk?=
- =?utf-8?B?TEdtS09GQ1NqSWI5RnRucSszbEhSem1lZmNFSFdqdVdpSTdQdWkxY0xLazJY?=
- =?utf-8?B?b01sUHlPNnVPN1ViKzQwMmJKK0lKbU1ieG1xTndYbkFGd1h6UDZCMzNsc2xn?=
- =?utf-8?B?Z09uL3psL1JMWkdNc0UxenAveFJtV254emlCWHYvRUswVEhVVWc5aHVwODMx?=
- =?utf-8?B?Q053WkJKL0NzcWhYamlKMWpYK052WlZFUmZoL24zQ3djSkNHRHI0ckpidWpj?=
- =?utf-8?B?MzhrRVVlalRZYmExZXI2WDJwbmRPZHJVWUpUK2ZmZkJ1WEdScjg4NXYwMHZs?=
- =?utf-8?B?UWNZRHd6WDR4MC83dkZJbC80WlRqZWd3RG1QWFliWStNbzFiLzhmV0lkVElE?=
- =?utf-8?B?QktjZnVPTlRralRhR0ttSEh6MHQ3TEQ3TUd6Q282VWkwTUFWRHRGVEhqUjlH?=
- =?utf-8?B?N0lqV3pQNm1NSDJ6dlhkTEFXdXdKa2UyZEpORVdLRXdSaUdVUWFiSzVlUWdG?=
- =?utf-8?B?TDhDM3lpZU1mQndMcTJ4TVFjSHZ4dzdkMkF0QVJIZkEySGtZVlVvQlNKZTNT?=
- =?utf-8?B?U3N0L2dXeDdkNE4xMDMzRENDVmZiZzBYRDV3M3hLUE5WNWtkVGIraUp3Vld1?=
- =?utf-8?B?aW1DYjhpRmRCZ1FQbXRFMmFDTFAwK0h5aU9lbHF4SHpXTy9LMnhkd3RRYkIx?=
- =?utf-8?B?NHNON1F4dElwa01pMXlhTTR1R3pBSDI1K25Mbk8vMzBaSks4VFovV0hVZWl3?=
- =?utf-8?B?WkhXOFhCZnNPN2hVSWNTam9JOFlGSDM5MWtuaDZ5c3B1Vy9PSTNoU1lsV3Y3?=
- =?utf-8?B?MHZVVUVudE9QYnZ5WU1Ja2xTdnJlQXlZbmVlNmczVXlQUnhpVEdrVzk5Tjdv?=
- =?utf-8?B?eGs3eGJuZXBQVU1GdVMzQkErRm1jMGNTcUQ3TlF1OWhtYk9IRE5TOGNGckNz?=
- =?utf-8?B?K2lLVEhaeVpUUmZ5VUNneDJFb2RUOTJwOWZLZ2ZreHk1bDNneGgzWlAxS3hu?=
- =?utf-8?B?NkxWZnBBLzFxbmZiNit3Z25IcGNuSnBSSlp5MjROWFBhUVBEMFl6N2pQckhW?=
- =?utf-8?B?VlJkMy9oNU81OGV0WDUxYzl5L0pDZyt6NElVMk5sUzRSVytGcG5nWkhrLy9q?=
- =?utf-8?B?Zkwva3lTTUZFbVQzakI1UUdyMGk2ZE1taktjY1pZdEw2N1Z3azRqQ29wTW8w?=
- =?utf-8?B?QjE3dVNST2oza3RPQVkzTFhkSDZreFVEbWZHRnRCMmtDbVhqcnM2Zms1YUk4?=
- =?utf-8?B?azNTaWFJdU5zWFk3MlIzMzNiRzJoYkdIak5idmNkRlZROHBYcWVidFRYKzQ0?=
- =?utf-8?B?TEhFNDlqcVV3ZEUwNkplcndDSU0zeUtpYytZcTJZWDRyMGhyZmlYQzZlNHVt?=
- =?utf-8?B?QmxISHNITjJ5UGRMYXFieGtSalFoZnJ0VE9QUzhCd2VvYktHc2IzclBjVE5S?=
- =?utf-8?B?QWlQSXNsYnFtOHBBdllSeXh3ZkwwUmtWWXdQRW92NUE1WGpUcW93eVVRRWZt?=
- =?utf-8?B?RWtSRzUrZnVQWlhpVXJ3RkJvZDlmcEFQN2c4RWpaUTI0ejZ6ams4VzRSb3dJ?=
- =?utf-8?B?NlFNSXF4aE5pWTFid1BYZ1RZbW12OVB6USs3dTZCWm5SamFGWGNtdXpvQzRa?=
- =?utf-8?Q?jdfUJ7MsE/13m4paKIUj43kUC?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97546188-cb7f-41dc-3f04-08dcc12e770c
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:40:49.3354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SX7SnpYOW7J5vbTuchjHv46988jwn4L8BLYYdeJPmuJ5ipelb+mXb9Lu1oEwDUopdyy5yPEsO4Tii67A34IeJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8280
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802191617.312752-1-seanjc@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
+Hi Sean,
 
-
-On 8/20/2024 20:19, Rafael J. Wysocki wrote:
-> On Mon, Aug 12, 2024 at 7:24 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
->>
->> On Mon, Aug 12, 2024 at 08:10:18PM +0530, Shyam Sundar S K wrote:
->>> Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
->>> for the I3C device on the latest AMD platforms.
->>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> from the ACPI ID perspective.
+On Fri, Aug 02, 2024 at 12:16:17PM -0700, Sean Christopherson wrote:
+> Do arch-specific range-based TLB flushes (if they're supported) when
+> flushing in response to mmu_notifier events, as a single range-based flush
+> is almost always more performant.  This is especially true in the case of
+> mmu_notifier events, as the majority of events that hit a running VM
+> operate on a relatively small range of memory.
 > 
-> I've replaced the v1 that has been applied for some time already with
-> this one, but please note that it still is not entirely clean.
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
 > 
-> Namely, if there are two S-o-b targs on a patch, 2 cases are possible:
+> This is *very* lightly tested, a thumbs up from the ARM world would be much
+> appreciated.
 > 
-> (1) The person sending it is not its author and merely sends someone
-> else's work adding an S-o-b to document a "supply chain link".  In
-> this case, the From: header should point to the original author (it
-> can be added right before the changelog) and its value should match
-> the other S-o-b tag exactly.
+>  virt/kvm/kvm_main.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 > 
-> (2) The person sending it is one of its authors.  In this case, a
-> Co-developed-by tag should be added to point to the other author and
-> its value should match the other S-o-b tag exactly.
-> 
-> I've assumed (2) and added "Co-developed-by: Sanket Goswami
-> <Sanket.Goswami@amd.com>" to the commit, but that's not something I
-> should be doing.
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d0788d0a72cc..46bb95d58d53 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+>  	struct kvm_gfn_range gfn_range;
+>  	struct kvm_memory_slot *slot;
+>  	struct kvm_memslots *slots;
+> +	bool need_flush = false;
+>  	int i, idx;
+>  
+>  	if (WARN_ON_ONCE(range->end <= range->start))
+> @@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+>  					goto mmu_unlock;
+>  			}
+>  			r.ret |= range->handler(kvm, &gfn_range);
+> +
+> +			/*
+> +			 * Use a precise gfn-based TLB flush when possible, as
+> +			 * most mmu_notifier events affect a small-ish range.
+> +			 * Fall back to a full TLB flush if the gfn-based flush
+> +			 * fails, and don't bother trying the gfn-based flush
+> +			 * if a full flush is already pending.
+> +			 */
+> +			if (range->flush_on_ret && !need_flush && r.ret &&
+> +			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
+> +							     gfn_range.end - gfn_range.start))
+> +				need_flush = true;
 
-Thanks! That was a miss.
+Thanks for having a crack at this.
 
-Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com> is the right tag.
+We could still do better in the ->clear_flush_young() case if the
+handler could do the invalidation as part of its page-table walk (for
+example, it could use information about the page-table structure such
+as the level of the leaves to optimise the invalidation further), but
+this does at least avoid zapping the whole VMID on CPUs with range
+support.
 
-Thanks,
-Shyam
+My only slight concern is that, should clear_flush_young() be extended
+to operate on more than a single page-at-a-time in future, this will
+silently end up invalidating the entire VMID for each memslot unless we
+teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
 
-> 
-> Thanks!
+Will
 
