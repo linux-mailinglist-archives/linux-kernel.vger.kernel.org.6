@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-293724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6959583A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D620195839D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EACDD28676E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950D1288768
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BB318CBF9;
-	Tue, 20 Aug 2024 10:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0EF18CBEA;
+	Tue, 20 Aug 2024 10:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJxfOzmF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fmfj+oZ6"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCA4158545;
-	Tue, 20 Aug 2024 10:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C1318E37C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148458; cv=none; b=kZNW3nGifvNSBZLTjTyfkWz7NxGzmrmC20qYaDrTr+EeRufApPxP+5NzANvb7LHj1ne8zaaNm+T6sZlzCzhRbCHnNyrVmoOCN6CxxyqysSvVx4Lh7qplfF/9O/776DnPJabTTbvownlXl9995rcx+Zs6JsTIIAvfhU4nrhn5GyI=
+	t=1724148405; cv=none; b=phYzrtojqykPmHTremKGT+AMXXGQrp1z/LIXdZaMxi/HiAVDKkDFkL6/InNzuA2qYZ0UtKtQ3/qjOU3IKUfHs0x4N9vimvD3uquI+ew4Y67m79Yj/8ovEMASLNn8tSpc5BRZ4HYpfyULJimKF9j6cSwJHfrAW23YVYGtsjB5JAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148458; c=relaxed/simple;
-	bh=bf8kz5/zs+nVRfuhgFLeuqKgKIYboF3ngFXVlrv2Df8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tn1QHqQJmFFFxqxjSkQ1NijgHwPY4frQir5+LnXeDd+gbPcOoF3j0OpxB/BFtsskUkvxmOIIEnm026RvR3Dam/We022E9uIqA9cQzuQZJRwIutaeLIfvWYsEk6ruNuzkUOiU/tILytaAq2MMRcH4JupccC5r32AIyA1GhRxLlAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJxfOzmF; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724148455; x=1755684455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bf8kz5/zs+nVRfuhgFLeuqKgKIYboF3ngFXVlrv2Df8=;
-  b=CJxfOzmFZQNNFoKCwI/T5IOQhNEX5nA6wn6+3aR//sdwtFBR2rReFBa6
-   X5GufE6KJnppSbgeS4s3M61XOCCpp8ee2X7A7gTcAnjwcwWIZSqqbz+ko
-   qnPklIwr+YXdtSjkCwo7svYS1KnJpKwJCljgfFGwPkTrcUg0Y7w7CFeu2
-   tQE9Sw/Is4rDjyjU3JPSPYuNudKQBJUiBIFRXcQtTXlnypf36bzmGxF/A
-   DUn3Wh5Xk07cqNVbYWqULXFSWVSWg71PxeISw7E8pXYCgIuakmxU5KSgv
-   dooAQrOqrmUzOCzXp7mx+qDONNAARk+k8csEfe0nqltgNSN0kNXEjZ442
-   A==;
-X-CSE-ConnectionGUID: 1GckCjsKS5Oq0v3zB9y8uQ==
-X-CSE-MsgGUID: Kf9J2zOqRCWRkopEwuaUqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22573981"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="22573981"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:07:34 -0700
-X-CSE-ConnectionGUID: 8GozAOEARt6+rmkkO6VlTg==
-X-CSE-MsgGUID: ZD0Ym3zqSZunJLBRXJd9aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="60659356"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 20 Aug 2024 03:07:28 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgLlu-000A1A-05;
-	Tue, 20 Aug 2024 10:07:26 +0000
-Date: Tue, 20 Aug 2024 18:06:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stephen Boyd <swboyd@chromium.org>, chrome-platform@lists.linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v3 09/17] drm/bridge: dp_typec: Allow users to hook hpd
- notify path
-Message-ID: <202408201747.NMpzuToG-lkp@intel.com>
-References: <20240819223834.2049862-10-swboyd@chromium.org>
+	s=arc-20240116; t=1724148405; c=relaxed/simple;
+	bh=JUr70QEmTFFx9tlSrDy7lTKbTZeGSA1cMd3/UZTZzK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V7h+nZYBgBdNuCOSGHniM/rWWr1D04fw9pBqANnqt667mE+D6xD+iX3nJY5n9y3RbiGNL2ydd+16pTm+o3072gV638p9aIlKhQqSFmNvb+Y6BV9b9luSb9+Wd+A/wuBSsMmv1Qh6J7PuvhaR8fOWhQMzodlp3bs3mXChQriU5Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fmfj+oZ6; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c3e1081804so3467287a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:06:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724148403; x=1724753203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dT3naxXzpX+hovDe3WRsxAFnWg41LZ8s9Rrc3hrzTd0=;
+        b=Fmfj+oZ6z2MAQYI9jnvfK9MHKz1LJSgKBUflt3gfWD/t4qQ2wXZTz0oSvS4rcFiX3M
+         dnbFPn3yfnER+dKg8KEtNnbZ84h3jvMtX8SMLceDOPNVRzNeTntRmbkY4Ev64jhkadjh
+         +BrnupQb7zXHPizWb9P096M+Q3eQywLCH1HBlwy2Lu1sI3XCm3NhYxhhQHx2r+G2UIXZ
+         mhi5aqoOWVNgbrD+JYFjMqfa4KHaoRn4kiRctfDkHYbNxXVUFyW6TwPVjNAIPogZoxjz
+         gHU0ctZp2i5Z4yKdedC6eb+rPwrfs4PAJrmsWXA0BDBX7jkQi0Oq8vsYsPWI39TFSTyf
+         Sbcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724148403; x=1724753203;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dT3naxXzpX+hovDe3WRsxAFnWg41LZ8s9Rrc3hrzTd0=;
+        b=VvV1/KzJ3hpTxAj9wIMUBQYgrbdhq7w9oh2Rpn7FF9SptG3w0c9YsYd1dhgselFlIC
+         /2D/a+0EXSxF0s2jWDkLfDfr7vqy3r/uHKoNWfqIHplMYxZaaxPufGhZk+wqIWqmFXWq
+         urvIDD6nIj8kb1yUgSInBEsEC1WM7Lh3Adp7tXg77ZpWkqXikBwImbbvkDiUnIZXGpg3
+         5maPFAX4dFNvJbMR/M8IGeXiFyA9u2F+fqRCHszCNykZFr+f6qRZPife30xrmNWkYMzz
+         GoqvmdlsKHvgEw9gD7x9s336HqNjLp7RWZYSBESprZ8wSojoWXrh2HYssjw5QRFXMdTJ
+         OAjw==
+X-Gm-Message-State: AOJu0YzT4D2lg8XZmuF/R7J35Axl8u3yQ91kYi7qyhU8lpqCyWjYoPPp
+	7iwK1UlBn3YAs9qERyEBT+fniAdXPDAcsQynLtgX+gyGdLKJckt7i7sIOQ==
+X-Google-Smtp-Source: AGHT+IGJ2TEhCeQ4T6stmHuMptTexASfuExA2FNFId6sOB+IUIEs5Twh28uzGFa3MpzDMsWieKEUpw==
+X-Received: by 2002:a05:6a20:e608:b0:1c6:fad1:c20f with SMTP id adf61e73a8af0-1c904f742d4mr14595485637.5.1724148403270;
+        Tue, 20 Aug 2024 03:06:43 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3c8839392sm10484679a91.56.2024.08.20.03.06.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 03:06:42 -0700 (PDT)
+Message-ID: <f67df96a-206b-40ca-8d28-42715c907f64@gmail.com>
+Date: Tue, 20 Aug 2024 18:06:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819223834.2049862-10-swboyd@chromium.org>
-
-Hi Stephen,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Stephen-Boyd/drm-atomic-helper-Introduce-lane-remapping-support-to-bridges/20240820-064107
-base:   8400291e289ee6b2bf9779ff1c83a291501f017b
-patch link:    https://lore.kernel.org/r/20240819223834.2049862-10-swboyd%40chromium.org
-patch subject: [PATCH v3 09/17] drm/bridge: dp_typec: Allow users to hook hpd notify path
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240820/202408201747.NMpzuToG-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408201747.NMpzuToG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408201747.NMpzuToG-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/bridge/aux-hpd-bridge.c:61: warning: Function parameter or struct member 'orientation_switch' not described in 'drm_dp_typec_bridge_typec_port'
->> drivers/gpu/drm/bridge/aux-hpd-bridge.c:336: warning: Function parameter or struct member 'typec_bridge_dev' not described in 'drm_dp_typec_bridge_add_hpd_notify'
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: skip less than check for MAX_NR_ZONES
+To: Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org
+Cc: open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+References: <20240819112628.372883-1-alexs@kernel.org>
+ <20240819214055.978b33eae88004d35b9ce634@linux-foundation.org>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20240819214055.978b33eae88004d35b9ce634@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +336 drivers/gpu/drm/bridge/aux-hpd-bridge.c
 
-   327	
-   328	/**
-   329	 * drm_dp_typec_bridge_add_hpd_notify: Register a callback called when the
-   330	 * bridge chain hpd state changes
-   331	 * @hpd_notify: callback for bridge hot plug detect events
-   332	 * @hpd_data: data passed to @hpd_notify callback
-   333	 */
-   334	void drm_dp_typec_bridge_add_hpd_notify(struct drm_dp_typec_bridge_dev *typec_bridge_dev,
-   335						hpd_notify_fn_t hpd_notify, void *hpd_data)
- > 336	{
-   337		typec_bridge_dev->hpd_notify = hpd_notify;
-   338		typec_bridge_dev->hpd_data = hpd_data;
-   339	}
-   340	EXPORT_SYMBOL_GPL(drm_dp_typec_bridge_add_hpd_notify);
-   341	
+On 8/20/24 12:40 PM, Andrew Morton wrote:
+> On Mon, 19 Aug 2024 19:26:28 +0800 alexs@kernel.org wrote:
+> 
+>> From: Alex Shi <alexs@kernel.org>
+>>
+>> Remove unnecessary '<' check for ZONES_SHIFT assignment.
+>>
+>> ...
+>>
+>> --- a/include/linux/page-flags-layout.h
+>> +++ b/include/linux/page-flags-layout.h
+>> @@ -14,7 +14,7 @@
+>>   */
+>>  #if MAX_NR_ZONES < 2
+>>  #define ZONES_SHIFT 0
+>> -#elif MAX_NR_ZONES <= 2
+>> +#elif MAX_NR_ZONES == 2
+>>  #define ZONES_SHIFT 1
+>>  #elif MAX_NR_ZONES <= 4
+>>  #define ZONES_SHIFT 2
+> 
+> mmm, why.  I think it looks more logical (and certainly more
+> consistent) the way things are now.
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Uh, then let's keep the current code if the logical looks better.
+
+In fact, the logical is in preprocess, has nothing change in the final object file.
+
+Thanks for comments!
+ 
 
