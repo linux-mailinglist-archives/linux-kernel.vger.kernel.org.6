@@ -1,89 +1,181 @@
-Return-Path: <linux-kernel+bounces-294104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD40E958930
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DD0958932
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53161C213D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1432B1C213D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF311917CB;
-	Tue, 20 Aug 2024 14:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72D18CBEF;
+	Tue, 20 Aug 2024 14:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JQyh+5//"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aC0RauNO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BB4D8C1
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9373C2E405;
+	Tue, 20 Aug 2024 14:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724163859; cv=none; b=FKWGUPfqOuNwdFc4VkR5T5Foa1X+x7uAshM7+PIJS4HgjWhZxYms6WjUy/cj8ECsnh1IDcxvNWR6eA7n7w0QaMGmruWkbpGnu7h7omzIVfb3Z4OCceR6BxitspYMWFmWhpQdjiMC/A0xMY3TzqAff8qHv2oGH9pTXHu8kRdNqBs=
+	t=1724163917; cv=none; b=MSwmTvqr4SJUqNeWLps3FxSM4b7kIx+2imNZ4B1Ez4SHeRJOP0j/mcijOI8Vx/qgLKSkO/31EKdlEv1dSzIknKdj4c3rNaIYTOUP6quKAK5UW3+6L3sjwFXPidW+bti4zFwKNa3zJpm+6d5HKt/wJqEiSmcq1Is7h7SZ8JRHsXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724163859; c=relaxed/simple;
-	bh=QCZ+RO1FUCsa+gJOU+RlcW8Xr/lVI2nNH4g8BamXv9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b76R5GqGfrxIoykWA+ixngylmvkBo/wgqYZYiEsjcnUbiRSUS+q6rxjEA77FXg9JYW8NFQUJ9CtCsPoYnAyoUEkeKi0/K2Zd6TXKIEmV6caBY76mT9syXlVZ4/zLQl6SHMU1/eWvevSRt8tl+4dn/jECaRkGHavB5fIlIVvxUDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JQyh+5//; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7e6caa8b-ae79-4eb0-8ccb-d57471e8a3d5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724163855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oIijWWzfx2wkvf+z8Rr+7gk9fjf1EjLJm1Yyu7y8HBk=;
-	b=JQyh+5//XtwDM6g1Mmzckx2y0JJ0joJEPy2uXUHOrLq0UISdfFTTlhBHjg/5kCPiAtbF6k
-	VTdO8EFbZ+HDZWLuO6zGQ1pcuM4qlm1VF0keJjjZyJ3Md5QQ3j1uO99BYRyG1oqRSdYrjX
-	FDFan5rO8bIgUqlPAk866IuFb3Bp+sU=
-Date: Tue, 20 Aug 2024 10:24:11 -0400
+	s=arc-20240116; t=1724163917; c=relaxed/simple;
+	bh=Hig9pLx8LC2NzqZeUNpYZDhOVyWGQAxue9qmVLY3Qwc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bCJrQj3cVjlLl3PAlPo3nIEFdHYEVnLrwwZx9g6kBoGY9uY6WVsY869T6wEmnIhm4VCKneTw6rPs5394DywwCOLfcK7oyJC1E5HxoAAmFhgSJGQQKR7HTE8Gr+VTnZGlHsW0wK67bKXGdDazLFtL4iJYn9B0rL40Kyy6IrHV5/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aC0RauNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAD7C4AF0E;
+	Tue, 20 Aug 2024 14:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724163917;
+	bh=Hig9pLx8LC2NzqZeUNpYZDhOVyWGQAxue9qmVLY3Qwc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aC0RauNO55n/0eM3C/jfzqA576QPWii+uVqC1ySaA+DHwKBRW2PkvBSNe4Mzv2k8O
+	 tN2m9SWXg9EitZCjyPIyJI4zhwFgS++oVwo6mmnwcgVfpAIw1N0qzRpK7+0lL8BAVV
+	 QcKqGn2HeZ8WHU+LKJLill4oH77KABZus0iunhw650w1QLwjLNj8chN92jJDC7OAT2
+	 fERPLoTN/8LOzidjjb/g4Dks5eHesH0cxrF8s9HNg3d7b7zGc6MY3V/QF+3ccfS0+H
+	 MHHB6A/wE53D6AtbHpZqXhX2IXBNAc/bF/AY74JA95rosTpW+7E7kEckI9mNehKF2v
+	 NIrtlgJPcbkcA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgPnO-005IXK-Ps;
+	Tue, 20 Aug 2024 15:25:14 +0100
+Date: Tue, 20 Aug 2024 15:25:13 +0100
+Message-ID: <86o75nxody.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v8 3/6] arm64: ptdump: Use the mask from the state structure
+In-Reply-To: <ZsSkh2iw8s5Oa5xb@google.com>
+References: <20240816123906.3683425-1-sebastianene@google.com>
+	<20240816123906.3683425-4-sebastianene@google.com>
+	<86seuzxq27.wl-maz@kernel.org>
+	<ZsSkh2iw8s5Oa5xb@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 1/5] net: xilinx: axienet: Always disable
- promiscuous mode
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
- Michal Simek <michal.simek@amd.com>, Daniel Borkmann <daniel@iogearbox.net>,
- linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>
-References: <20240815193614.4120810-1-sean.anderson@linux.dev>
- <20240815193614.4120810-2-sean.anderson@linux.dev>
- <20240819183041.2b985755@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20240819183041.2b985755@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 8/19/24 21:30, Jakub Kicinski wrote:
-> On Thu, 15 Aug 2024 15:36:10 -0400 Sean Anderson wrote:
->> If promiscuous mode is disabled when there are fewer than four multicast
->> addresses, then it will to be reflected in the hardware. Fix this by
+On Tue, 20 Aug 2024 15:13:27 +0100,
+Sebastian Ene <sebastianene@google.com> wrote:
 > 
-> it will *not* be reflected?
-> Something is off with this commit messages, or at least I can't parse
+> On Tue, Aug 20, 2024 at 02:49:04PM +0100, Marc Zyngier wrote:
+> > On Fri, 16 Aug 2024 13:39:03 +0100,
+> > Sebastian Ene <sebastianene@google.com> wrote:
+> > > 
+> > > Printing the descriptor attributes requires accessing a mask which has a
+> > > different set of attributes for stage-2. In preparation for adding support
+> > > for the stage-2 pagetables dumping, use the mask from the local context
+> > > and not from the globally defined pg_level array. Store a pointer to
+> > > the pg_level array in the ptdump state structure. This will allow us to
+> > > extract the mask which is wrapped in the pg_level array and use it for
+> > > descriptor parsing in the note_page.
+> > > 
+> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > ---
+> > >  arch/arm64/include/asm/ptdump.h |  1 +
+> > >  arch/arm64/mm/ptdump.c          | 13 ++++++++-----
+> > >  2 files changed, 9 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> > > index bd5d3ee3e8dc..71a7ed01153a 100644
+> > > --- a/arch/arm64/include/asm/ptdump.h
+> > > +++ b/arch/arm64/include/asm/ptdump.h
+> > > @@ -44,6 +44,7 @@ struct ptdump_pg_level {
+> > >   */
+> > >  struct ptdump_pg_state {
+> > >  	struct ptdump_state ptdump;
+> > > +	struct ptdump_pg_level *pg_level;
+> > >  	struct seq_file *seq;
+> > >  	const struct addr_marker *marker;
+> > >  	const struct mm_struct *mm;
+> > > diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+> > > index 404751fd30fe..ca53ef274a8b 100644
+> > > --- a/arch/arm64/mm/ptdump.c
+> > > +++ b/arch/arm64/mm/ptdump.c
+> > > @@ -117,7 +117,7 @@ static const struct ptdump_prot_bits pte_bits[] = {
+> > >  	}
+> > >  };
+> > >  
+> > > -static struct ptdump_pg_level pg_level[] __ro_after_init = {
+> > > +static struct ptdump_pg_level kernel_pg_levels[] __ro_after_init = {
 > 
->> always clearing the promiscuous mode flag even when we program multicast
->> addresses.
->> 
->> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+> Hi Marc,
 > 
-> I think we should ship it as a fix to net?
+>  
+> > Do you actually need this sort of renaming? Given that it is static,
+> > this looks like some slightly abusive repainting which isn't warranted
+> > here.
+> 
+> I applied Will's suggestion from
+> https://lore.kernel.org/all/20240705111229.GB9231@willie-the-truck/
+> >
+> > 
+> > I also didn't understand the commit message: you're not tracking any
+> > mask here, but a page table level. You are also not using it for
+> > anything yet, see below.
+> 
+> and I missed updating the commit message.
+> 
+> > 
+> > 
+> > >  	{ /* pgd */
+> > >  		.name	= "PGD",
+> > >  		.bits	= pte_bits,
+> > > @@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> > >  	       u64 val)
+> > >  {
+> > >  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+> > > +	struct ptdump_pg_level *pg_level = st->pg_level;
+> > 
+> > This is what I mean. What is this pg_level used for?
+> 
+> I make use of it to extract the name based on the level. The suggestion
+> that Will made allowed me to keep the code with less changes.
 
-Yes, probably. I put these patches first so they could be easily cherry-picked.
+Err, I see that now. It'd be good if you described what actually
+happens, because it is almost impossible to understand it from reading
+the patch.
 
---Sean
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
