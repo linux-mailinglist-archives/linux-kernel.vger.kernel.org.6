@@ -1,163 +1,284 @@
-Return-Path: <linux-kernel+bounces-293780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D96958490
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:31:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1286E95847C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCCB0B21503
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB22928186F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AD018E025;
-	Tue, 20 Aug 2024 10:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ABB18CC05;
+	Tue, 20 Aug 2024 10:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUJokTUp"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hxeJdr7Y"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2909118DF66;
-	Tue, 20 Aug 2024 10:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5DD18C939
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724149875; cv=none; b=edty2fgBzO1zYwWjNdPHCN0pbVaRGASlhhB2JXyKu9ZOIx21uYSKKQ6kbVty6vtMVuWKL6a54tRl+kWlaaZdkEneC3WspB2TLotvWy+sD+K4t7vaJSuf0Npmrr6X02/A7wWTSY0uQknv4I2thjntAGL6wsa4vSCme3vNaZ0oxuw=
+	t=1724149757; cv=none; b=geXAhqiPl6B2hltstBwQ//EnUNXxHo4BJU4NB/K4bgumCfa64Uz/pTmWanUok2NwtL0K6tCjCfBpiDqtKtIyOtAlh/upV5s+c1Okwy9Nyio1F8/g3YPAe3CUeLzl6mQDL/3WW2VDGh7ti3dG0nVrUNKBl/axncfZmQFmSw30qH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724149875; c=relaxed/simple;
-	bh=GOQzYW7cugZLSITzWLBLjM26U+sg+o81mjE67KnNXHY=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VFo22gVvEw0yam0wWkz+pFzIa2Qi0bGKBaYPiyQIx8OORsaS1rezt2T/1NTc2BQFo20qPyOvJLNYX7Lqcm825Ldusjj4PY8CPn017IhCozHHUUtlwrEq1JStLBgQy2GlxYZxdE8YtFy+Xrsblj9XyBoGhR5QaIFo8XfE7Ty7EYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUJokTUp; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20223b5c1c0so18682545ad.2;
-        Tue, 20 Aug 2024 03:31:13 -0700 (PDT)
+	s=arc-20240116; t=1724149757; c=relaxed/simple;
+	bh=zj7X9JTQPaFTHEi9KOJFvIGB/uX8969mDmW3XeD1FmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NS0ZJ5xCScW65uzdmyaMXmSVCgFqSftg8Tpe+KTxuQp4IviqRO9qZ2pDaiZLDw2Z3p1cB9qDt1JtdzEYYI+kG++CVZMlun4XsGXGhefnFhElPDKDJVEjcWSS4ausF7HwTg2hjTHZdA2ZDXXJLBGllkiPOjtrHfG3nRc2xiGsocg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hxeJdr7Y; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53343bf5eddso521252e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724149873; x=1724754673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rTyPLFrq0EUm/GtouTOsZKz2XgR6IlJiL/XQEMTvFnc=;
-        b=ZUJokTUpjZUs3QMPvNdEdIWzMLHMOavLyCLu2pOuvMPco2fBqbaUQ6cMFNu38+1Ucy
-         13HputPUzf0aqqXs5OmUMwwS7wY8DPHwUEcvzbRhy1o9zwfx/z541+Vgb9CEpzWtTqG7
-         fKUYwv+WRzA7JBIcT1Kvjc4sA+btwB2YzzdsfTTuh9QWm19J2eDuol+Gtl3XLtxyISyY
-         0ifFHsQlOcpmtdpNW9loJmLXsEqvIe+nqC9n1Oxexaa++U9Whj4rluBjEENz1MYlseJ/
-         2ugeisMDDVboMdMQ1Qtan/9LaFGhiT97MriY9fR4lYqGVVPSu3kyoTeXErnkBr/nkW3Q
-         XzYw==
+        d=linaro.org; s=google; t=1724149754; x=1724754554; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XLslNJbTezxw++YTtyZDg5OdRSNGulfETkjoliRRi40=;
+        b=hxeJdr7YxfsSmcq/L2W9JqLn7Nfn8FRVu+1Fc6soQ7wjnAOs++qq1PYHe1X6REgo37
+         ocMgA5AHF8TXC1U8vBLjZxwCCE2m+a/b8D6Rd4stgw/c0vYW8mYxap5kMsGAeoAZjQT3
+         vHwuSymdPiVbqh3rYqbwxZ0jtXULtBMtU7kCXiZeNb4rYVBKC2YsJ+qQe4h6HY7Q2GC9
+         3QkpW41q4/AZjeifCJd6Du3ZCRvdjwSWulDKeBsu5NUsKIqoHHhteASb/yT56CiWt7Gu
+         sgr+xaDi5NO9U3pdHPIjupGkwP0EXd1JXqCUvGKivSarlrwZzfgJpTI1BT+JRJhUZktC
+         TcCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724149873; x=1724754673;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rTyPLFrq0EUm/GtouTOsZKz2XgR6IlJiL/XQEMTvFnc=;
-        b=Q7X5oFrl94tBiXAn7V//QAweWUiiEtmnadKo1ACL+tYOmrSAH4Fqa9Sg/sZGJfqW+B
-         enP1QI/wswDUQ6AbuUI/dApc59mJEzqGHDfVX6FcEaCSlkkcoVsnVlISqmK6ru/qAn1Y
-         DegkziRI/fwy8h6jSQZ3tDlJbpftiNpzqjHnqCZxN5Zn+VgsJ1A7fSj7Au1zu5U9U92j
-         6brwuJZKIqz3uW4e9wy/oL3X0vW3K1RUIldJ1+C4Kbrc2l0xHnZSZf8tVGG0LT8hseZV
-         zG0RbfsinPexBnInxYQIUSxjyVKUrdeevXvrVF3PpU1Gr62c+c3U7KfLBeNVPV4G0+7g
-         YoXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEoMFmYVYrWCNBd8si09E61yJGJCVZ1EJTzKN8GEQLqQaWHENqb0vk6180SmbVW+JT1ASOmQaS+vu3IAK4rrtCkROjGZq7G86n6YmjIMvCvh7TQoFgK7WEIAXVfEJVp5zpOskRslV3gQ==
-X-Gm-Message-State: AOJu0YwKHmsMwN9XjDPDt0V7JC8HhIPyE3Xp4uLuyCgNaPrhm2zBfTVZ
-	SA/nr7ZV38v29YLEle3qkM2OkS85bLvjBjBrZi3uNXlsmoVQ2k2V
-X-Google-Smtp-Source: AGHT+IF28HPdbzKluxqfocEuK8zyLeXo+mM26BKkQHj+7PAhu+8wajGr/92NbNQoZbYgiqDyMz8AKg==
-X-Received: by 2002:a17:902:ea0a:b0:202:32cf:5dbe with SMTP id d9443c01a7336-20232cf5e3emr64763775ad.58.1724149873281;
-        Tue, 20 Aug 2024 03:31:13 -0700 (PDT)
-Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02faa5dsm75444115ad.2.2024.08.20.03.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 03:31:12 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] ARM: dts: aspeed: Harma: update sgpio line name
-Date: Tue, 20 Aug 2024 18:29:03 +0800
-Message-Id: <20240820102904.1756785-3-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240820102904.1756785-1-peteryin.openbmc@gmail.com>
-References: <20240820102904.1756785-1-peteryin.openbmc@gmail.com>
+        d=1e100.net; s=20230601; t=1724149754; x=1724754554;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLslNJbTezxw++YTtyZDg5OdRSNGulfETkjoliRRi40=;
+        b=VB4N8dSViVWCnaWj+Qjq5nXV2s/d6zStvq6FZIxPvE2yYLDGkbPPc+QsU+qrSNwjho
+         uAPlCyNdWudPZ8RHqeckihmH2kTpNxsOG44uUOhY13Mo/YDqDK1ES6zf9DlMRlqO2/lm
+         NsSfZrXPSOaxeDEO0Noww280Tse/k0V8eBpfzRUcAjrYeiyr8O4bjjdJR3AN48jl4wR2
+         AEnsziQ1jREwQMXe2BnGDx0noyozhmuoOEFzHXxPbD5RrG7AVQrCLI4BaFXWkM9a19QF
+         HVEkWpsww3j487luZytjpiwkKVB+50DzDwr+moDGMPsrHXJk/fF9tdyhiJN+aZ7kXViJ
+         t3IA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+SIDU7hAdQZn7d5BfzFkjbkCe+W8rPKbU71PHNoa+m278BOo8FkuuS7WJS9Nrk5XYDWoc6H7qbEyHc/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNCi5Yf4Xdu7RySF77+HHCpYSo4m2JaLgYaaVUeEV7qmKtRM/B
+	1o1lwbuCIuR0by7Ar8QBanXMrCwYwVOI7rOeZx46gzY36xpbwbCnptKTymthQfE=
+X-Google-Smtp-Source: AGHT+IFFpLtC3+GFPbrVrEsoB2+dX1KkgyRT1pLdP3iC6fK5TrNM0kWSAyVBlIi34jBQJwPI4gYVww==
+X-Received: by 2002:a05:6512:3e09:b0:530:e254:8cdc with SMTP id 2adb3069b0e04-5331c695ad9mr9263175e87.8.1724149753741;
+        Tue, 20 Aug 2024 03:29:13 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::676e? ([2a02:8109:aa0d:be00::676e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838393571bsm747673866b.98.2024.08.20.03.29.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 03:29:13 -0700 (PDT)
+Message-ID: <a6c23b5d-f65e-4094-9834-84840fdb0269@linaro.org>
+Date: Tue, 20 Aug 2024 12:29:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] misc: fastrpc: Add support for multiple PD from one
+ process
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>, srinivas.kandagatla@linaro.org,
+ linux-arm-msm@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+ linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+ dri-devel@lists.freedesktop.org, arnd@arndb.de
+References: <20240808104228.839629-1-quic_ekangupt@quicinc.com>
+ <ed270718-63ef-4484-9856-0ff488e01b98@linaro.org>
+ <a0b522f5-8d70-4659-be00-d37bfbc39994@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <a0b522f5-8d70-4659-be00-d37bfbc39994@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Peter Yin <peter.yin@quantatw.com>
 
-power-card-enable
-uart-switch-button
-power-fault-n
-asic0-card-type-detection0-n
-asic0-card-type-detection1-n
-asic0-card-type-detection2-n
-uart-switch-lsb
-uart-switch-msb
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
----
- .../dts/aspeed/aspeed-bmc-facebook-harma.dts   | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+On 20/08/2024 07:18, Ekansh Gupta wrote:
+> 
+> 
+> On 8/19/2024 4:35 PM, Caleb Connolly wrote:
+>> Hi Ekansh,
+>>
+>> On 08/08/2024 12:42, Ekansh Gupta wrote:
+>>> Memory intensive applications(which requires more tha 4GB) that wants
+>>> to offload tasks to DSP might have to split the tasks to multiple
+>>> user PD to make the resources available.
+>>>
+>>> For every call to DSP, fastrpc driver passes the process tgid which
+>>> works as an identifier for the DSP to enqueue the tasks to specific PD.
+>>> With current design, if any process opens device node more than once
+>>> and makes PD init request, same tgid will be passed to DSP which will
+>>> be considered a bad request and this will result in failure as the same
+>>> identifier cannot be used for multiple DSP PD.
+>>>
+>>> Assign and pass a client ID to DSP which would be assigned during device
+>>> open and will be dependent on the index of session allocated for the PD.
+>>> This will allow the same process to open the device more than once and
+>>> spawn multiple dynamic PD for ease of processing.
+>>
+>> A test tool to validate this fix and prevent it regressing in the future would be a good addition here.
+> Thanks for reviewing the change, Caleb.
+> 
+> This is more of a feature than a bug fix as it just adding support to spawn multiple user PDs from
+> single process. Test cases for this feature was added to the recent versions of Hexagon SDK.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index 92068c65eae4..9db95a791128 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -566,7 +566,7 @@ &gpio0 {
- 	/*B0-B7*/	"","","","",
- 			"bmc-spi-mux-select-0","led-identify","","",
- 	/*C0-C7*/	"reset-cause-platrst","","","","",
--			"cpu0-err-alert","","",
-+			"cpu0-err-alert","power-card-enable","",
- 	/*D0-D7*/	"","","sol-uart-select","","","","","",
- 	/*E0-E7*/	"","","","","","","","",
- 	/*F0-F7*/	"","","","","","","","",
-@@ -585,7 +585,9 @@ &gpio0 {
- 	/*O0-O7*/	"","","","","","","","",
- 	/*P0-P7*/	"power-button","power-host-control",
- 			"reset-button","","led-power","","","",
--	/*Q0-Q7*/	"","","","","","power-chassis-control","","",
-+	/*Q0-Q7*/
-+			"","","","",
-+			"","power-chassis-control","","uart-switch-button",
- 	/*R0-R7*/	"","","","","","","","",
- 	/*S0-S7*/	"","","","","","","","",
- 	/*T0-T7*/	"","","","","","","","",
-@@ -685,7 +687,7 @@ &sgpiom0 {
- 	"FM_BOARD_REV_ID2","",
- 	"FM_BOARD_REV_ID1","",
- 	/*H0-H3 line 112-119*/
--	"FM_BOARD_REV_ID0","",
-+	"FM_BOARD_REV_ID0","reset-control-cmos-clear",
- 	"","","","","","",
- 	/*H4-H7 line 120-127*/
- 	"","",
-@@ -716,9 +718,15 @@ &sgpiom0 {
- 	"cpu0-thermtrip-alert","",
- 	"reset-cause-pcie","",
- 	/*L4-L7 line 184-191*/
--	"pvdd11-ocp-alert","","","","","","","",
-+	"pvdd11-ocp-alert","",
-+	"power-fault-n","",
-+	"asic0-card-type-detection0-n","",
-+	"asic0-card-type-detection1-n","",
- 	/*M0-M3 line 192-199*/
--	"","","","","","","","",
-+	"asic0-card-type-detection2-n","",
-+	"uart-switch-lsb","",
-+	"uart-switch-msb","",
-+	"","",
- 	/*M4-M7 line 200-207*/
- 	"","","","","","","","",
- 	/*N0-N3 line 208-215*/
+The Hexagon SDK is not available without making an account on 
+Qualcomm.com and clicking through at least on EULA.
+
+This should be publicly available source code (e.g. on GitHub) with 
+documentation, something that someone with minimal experience using 
+fastrpc could quickly get up and running on their device to test fastrpc.
+
+> 
+> --Ekansh
+>>>
+>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>>> ---
+>>> Changes in v2:
+>>>     - Reformatted commit text.
+>>>     - Moved from ida to idr.
+>>>     - Changed dsp_pgid data type.
+>>>     - Resolved memory leak.
+>>> Changes in v3:
+>>>     - Modified commit text.
+>>>     - Removed idr implementation.
+>>>     - Using session index for client id.
+>>>
+>>>    drivers/misc/fastrpc.c | 30 ++++++++++++++++--------------
+>>>    1 file changed, 16 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>>> index a7a2bcedb37e..0ce1eedcb2c3 100644
+>>> --- a/drivers/misc/fastrpc.c
+>>> +++ b/drivers/misc/fastrpc.c
+>>> @@ -38,6 +38,7 @@
+>>>    #define FASTRPC_INIT_HANDLE    1
+>>>    #define FASTRPC_DSP_UTILITIES_HANDLE    2
+>>>    #define FASTRPC_CTXID_MASK (0xFF0)
+>>> +#define FASTRPC_CLIENTID_MASK (16)
+>>>    #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>>>    #define INIT_FILE_NAMELEN_MAX (128)
+>>>    #define FASTRPC_DEVICE_NAME    "fastrpc"
+>>> @@ -298,7 +299,7 @@ struct fastrpc_user {
+>>>        struct fastrpc_session_ctx *sctx;
+>>>        struct fastrpc_buf *init_mem;
+>>>    -    int tgid;
+>>> +    int client_id;
+>>>        int pd;
+>>>        bool is_secure_dev;
+>>>        /* Lock for lists */
+>>> @@ -613,7 +614,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
+>>>        ctx->sc = sc;
+>>>        ctx->retval = -1;
+>>>        ctx->pid = current->pid;
+>>> -    ctx->tgid = user->tgid;
+>>> +    ctx->tgid = user->client_id;
+>>>        ctx->cctx = cctx;
+>>>        init_completion(&ctx->work);
+>>>        INIT_WORK(&ctx->put_work, fastrpc_context_put_wq);
+>>> @@ -1111,7 +1112,7 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
+>>>        int ret;
+>>>          cctx = fl->cctx;
+>>> -    msg->pid = fl->tgid;
+>>> +    msg->pid = fl->client_id;
+>>>        msg->tid = current->pid;
+>>>          if (kernel)
+>>> @@ -1294,7 +1295,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>>>            }
+>>>        }
+>>>    -    inbuf.pgid = fl->tgid;
+>>> +    inbuf.pgid = fl->client_id;
+>>>        inbuf.namelen = init.namelen;
+>>>        inbuf.pageslen = 0;
+>>>        fl->pd = USER_PD;
+>>> @@ -1396,7 +1397,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>>            goto err;
+>>>        }
+>>>    -    inbuf.pgid = fl->tgid;
+>>> +    inbuf.pgid = fl->client_id;
+>>>        inbuf.namelen = strlen(current->comm) + 1;
+>>>        inbuf.filelen = init.filelen;
+>>>        inbuf.pageslen = 1;
+>>> @@ -1470,8 +1471,9 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>>    }
+>>>      static struct fastrpc_session_ctx *fastrpc_session_alloc(
+>>> -                    struct fastrpc_channel_ctx *cctx)
+>>> +                    struct fastrpc_user *fl)
+>>>    {
+>>> +    struct fastrpc_channel_ctx *cctx = fl->cctx;
+>>>        struct fastrpc_session_ctx *session = NULL;
+>>>        unsigned long flags;
+>>>        int i;
+>>> @@ -1481,6 +1483,7 @@ static struct fastrpc_session_ctx *fastrpc_session_alloc(
+>>>            if (!cctx->session[i].used && cctx->session[i].valid) {
+>>>                cctx->session[i].used = true;
+>>>                session = &cctx->session[i];
+>>> +            fl->client_id = FASTRPC_CLIENTID_MASK | i;
+>>>                break;
+>>>            }
+>>>        }
+>>> @@ -1505,7 +1508,7 @@ static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
+>>>        int tgid = 0;
+>>>        u32 sc;
+>>>    -    tgid = fl->tgid;
+>>> +    tgid = fl->client_id;
+>>>        args[0].ptr = (u64)(uintptr_t) &tgid;
+>>>        args[0].length = sizeof(tgid);
+>>>        args[0].fd = -1;
+>>> @@ -1580,11 +1583,10 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+>>>        INIT_LIST_HEAD(&fl->maps);
+>>>        INIT_LIST_HEAD(&fl->mmaps);
+>>>        INIT_LIST_HEAD(&fl->user);
+>>> -    fl->tgid = current->tgid;
+>>>        fl->cctx = cctx;
+>>>        fl->is_secure_dev = fdevice->secure;
+>>>    -    fl->sctx = fastrpc_session_alloc(cctx);
+>>> +    fl->sctx = fastrpc_session_alloc(fl);
+>>>        if (!fl->sctx) {
+>>>            dev_err(&cctx->rpdev->dev, "No session available\n");
+>>>            mutex_destroy(&fl->mutex);
+>>> @@ -1648,7 +1650,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
+>>>    static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+>>>    {
+>>>        struct fastrpc_invoke_args args[1];
+>>> -    int tgid = fl->tgid;
+>>> +    int tgid = fl->client_id;
+>>>        u32 sc;
+>>>          args[0].ptr = (u64)(uintptr_t) &tgid;
+>>> @@ -1804,7 +1806,7 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
+>>>        int err;
+>>>        u32 sc;
+>>>    -    req_msg.pgid = fl->tgid;
+>>> +    req_msg.pgid = fl->client_id;
+>>>        req_msg.size = buf->size;
+>>>        req_msg.vaddr = buf->raddr;
+>>>    @@ -1890,7 +1892,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
+>>>            return err;
+>>>        }
+>>>    -    req_msg.pgid = fl->tgid;
+>>> +    req_msg.pgid = fl->client_id;
+>>>        req_msg.flags = req.flags;
+>>>        req_msg.vaddr = req.vaddrin;
+>>>        req_msg.num = sizeof(pages);
+>>> @@ -1980,7 +1982,7 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
+>>>            return -EINVAL;
+>>>        }
+>>>    -    req_msg.pgid = fl->tgid;
+>>> +    req_msg.pgid = fl->client_id;
+>>>        req_msg.len = map->len;
+>>>        req_msg.vaddrin = map->raddr;
+>>>        req_msg.fd = map->fd;
+>>> @@ -2033,7 +2035,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+>>>            return err;
+>>>        }
+>>>    -    req_msg.pgid = fl->tgid;
+>>> +    req_msg.pgid = fl->client_id;
+>>>        req_msg.fd = req.fd;
+>>>        req_msg.offset = req.offset;
+>>>        req_msg.vaddrin = req.vaddrin;
+>>
+> 
+
 -- 
-2.25.1
-
+// Caleb (they/them)
 
