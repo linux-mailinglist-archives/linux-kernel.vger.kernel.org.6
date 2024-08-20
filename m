@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-293818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0553C95854D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893C9958551
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372C61C2439E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB6C1F21C64
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5509D18E02D;
-	Tue, 20 Aug 2024 11:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E543818DF79;
+	Tue, 20 Aug 2024 11:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="tYTRN81v"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="QLOODk1E"
+Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B7B188CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC45158D8F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724151601; cv=none; b=n2JLIlZd95WnWUugdwcljDKdPBfJx+NdyD1OewZ/72k9UHhBtbn2Tg5eJaXe6qfnhp1q+nQUNl/0nmUvw1fMHeaeY37WcDWr6OrLu2eVr1rrhAnjdHxIqkPd2aF8ClpzTlidJ/O8VNVK5AuCNH6pfkPaFpPEWc0lYZW9Q38huyQ=
+	t=1724151707; cv=none; b=iXExhPvofCpawJmjdUKy465KHIwK5gPgs2QQBE+GJhNwpqkhzqRdbOx4U+reoQkNWAxd1jbgZlbRD0R0njqejChIpmlidnN+lRorVLrwdpiu3P7HMsGzRMkm8sP/LyM79d9ipW4Fp2tqvHb4u+2bIjuVxzTAd3XNrkTLKTgVul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724151601; c=relaxed/simple;
-	bh=x+cc/NQ4+B/XG1Vu9ua+mQPNBaWEIBcAOi8YcjrS8nI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vu/l08Fsmr0BBSVsf2+pf3rYWyPPem6Y23ALc0GnObt+Jad2+JYVvv0zcVOPQWnlkY6CANVuWAPcgdPRpHM7NzpdSKfkqc588tTXt6xvHEXUamLehGQmZmmFDF6isCoooC8YaQuZnq7NSyjZTpyVwTsCIrjdfHwMXb98Gzn/kLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=tYTRN81v; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d3c8bc608so10468815ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724151599; x=1724756399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GN+EIjpNUUx5GfQqCYudQRJbl+lPpTDJG3imDxVORnA=;
-        b=tYTRN81vaEB3nbuA1VJ8bg4jU37PWWJMAdUoQfCSaHbYaiJFXUHb0tHPmy9QcbCVCu
-         M7lfmQjdukyX2ttggi58Xqv0WYirWW/LsFYFF01ioS2Fb72fPfpKRRFgW+RbygZqDnZJ
-         dTeGZCq04+9FQ3sd2PIskOMEDqfel7MG+cAg2K8U9PPS9YBEyVSvxmPsQW4tmBGq2L3y
-         rg8Vc84SNInlZxTKVD4oj838Ypa3asbd3SbpnAYzP2X6kifMic7P3r97aTILreoRwVcW
-         zkcZ8Aw1TFuEtd4UKU13GsiLixN7ON/Pj673KkDv/5sLI/yi/2+tmDlZ598I8qTRv96f
-         27+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724151599; x=1724756399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GN+EIjpNUUx5GfQqCYudQRJbl+lPpTDJG3imDxVORnA=;
-        b=fekunvlnPTChFMgCWmks9bYjjgaKj2cR9aWX5SUJoP+noEWqxBNe7FkrDMs6wBj1bB
-         JgyFj+tfzrzY6oHAwkuC01HO0qU6D3UkGoApg3X6bz1bC9EatV3ZiHFs9XD4u6vfmdTf
-         lVhltD6NYdy2tQi0zBLO03zkKE87kMJ1PD//LzOU8dXFYEazyRDc8qqix5hegf5cynzd
-         RteInTAcPjydfz2nLRznhZd62cd4TvkrAqLs+trnNUY181VdYlpM29LsnhHasjl6r72M
-         Ma5kXuiSnIfZRHXoAElG8dut/WVYZlm27Z0CfbS3gKhGqOPZyVjwaKwUzLrocDbPR8mY
-         bxoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8oKtcrR0DjDPUaYetI5QSqCvTnsyXeaT9nOzqoJpVK3I7yDDzayrzIOd6TQzahdPxYjKlPWxlrQz5rKQ9FQuNsce7hM5tlwkrSi+g
-X-Gm-Message-State: AOJu0YzhUf5X3Gv/onZPPRjM+8aIhslt1bDEmd4ygvp7Wb/W5db1hB4D
-	dnFQbkM1rpqtijgn/2gTNELkwwPlQk8Nj4AbjcrauAV8C8StSfMLKTlJgf7Hbknud18Tt/12sqs
-	2UvqlZ7YPiDECpEuutfQmR4AGhUXaqhvL6WV3Fo9jnDtyoLh6
-X-Google-Smtp-Source: AGHT+IHqjjn2UapHpnmuaFhmYQPyeSNmej7VILcZMgUpLXZilMbqo1VtVFSgCamg32GBi9wtyoqu+sC1TyQmb5Inz4w=
-X-Received: by 2002:a05:6e02:152b:b0:39b:2ceb:1a23 with SMTP id
- e9e14a558f8ab-39d26ce6283mr152753085ab.3.1724151599259; Tue, 20 Aug 2024
- 03:59:59 -0700 (PDT)
+	s=arc-20240116; t=1724151707; c=relaxed/simple;
+	bh=3BOMc/I6AUvlSUOZTCgwNCSKreLKSM1oEQRQEXAPTDM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XZtXMGtZvQKDQv58VWRa0cVdFM49+aqXUpSdK8K0ZvO1/Gv64ylBg56HnQOZlErAI26ZlUD4shhtHKCoPTiMzvCF5jiCQKnGAko+GaoC0Wcp5Kos8FPoHrhsDw5hS8RQQP/cpgdjvbpxFTmbaQp76lxw6cmi18lV1deINJEBbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=QLOODk1E; arc=none smtp.client-ip=17.58.6.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724151705;
+	bh=UqkixdU7N5QLZDvZfiyEeqXZZrKl/m9LryM3N8LoHa0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=QLOODk1EGMIkHi/M4LxeZ8kNvPDI0FMVgmQBOib1tx6zGiWVA8CdIwdwkYaKBY1bo
+	 TY/7uSLEqHR4MbJMo04wvCuDDCUsFYWgPLHgn6e3aYxDWQf8hN/d7BUKBP3ssj11kx
+	 E5NZkc75sIA1HU65k3464Qq1gK/GzuLQoVELCcEnRTeYi0jBfar0P1wwUlNUntxjjg
+	 m20FpS1ATKpF7+lgzx7FA8H6k6SumZN0wNUh3oy+3RgenHbNVlU4lcK22B2rTZZlQ9
+	 iFHOMEaLfUW0qIFMm642bzY0YIwzjo+5HT75ZiNlh1PtdaRip7fONwkrT+8Sd1DPI7
+	 sUYYzWdg1yY2Q==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 7E5E3DC02FD;
+	Tue, 20 Aug 2024 11:01:41 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Tue, 20 Aug 2024 19:01:27 +0800
+Subject: [PATCH v2] usb: core: sysfs: Unmerge @usb3_hardware_lpm_attr_group
+ in remove_power_attributes()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820094023.61155-1-krzysztof.kozlowski@linaro.org> <20240820094023.61155-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240820094023.61155-2-krzysztof.kozlowski@linaro.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 20 Aug 2024 16:29:48 +0530
-Message-ID: <CAAhSdy00N62pZfMrBTMASaZUqW6L-zEe_BqNZ4ZsOWdEvxHDZA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpuidle: riscv-sbi: Simplify with scoped for each
- OF child loop
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Atish Patra <atishp@rivosinc.com>, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240820-sysfs_fix-v2-1-a9441487077e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIZ3xGYC/23Myw7CIBCF4VdpZi0GJnjBle9hGkMptbOQKqPEp
+ uHdHbt2+Z+cfAtwzBQZTs0CORZimpIEbhoIo0+3qKiXBtRo9dFYxTMPfB3ooxD1vo+u0+bgQP6
+ PHGVerUsrPRK/pjyvdDG/9Z9SjDJCofXoPO5cd36+KVAK2zDdoa21fgFpzvKNpAAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kevin Strasser <kevin.strasser@linux.intel.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-usb@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: 6ZI_q_dh1mFYLwigoPRy9l_i9NesIjNz
+X-Proofpoint-GUID: 6ZI_q_dh1mFYLwigoPRy9l_i9NesIjNz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 mlxlogscore=991 phishscore=0 suspectscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408200082
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On Tue, Aug 20, 2024 at 3:10=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Use scoped for_each_child_of_node_scoped() when iterating over device
-> nodes to make code a bit simpler.
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-LGTM.
+Device attribute group @usb3_hardware_lpm_attr_group is merged by
+add_power_attributes(), but it is not unmerged explicitly, fixed by
+unmerging it in remove_power_attributes().
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+Fixes: 655fe4effe0f ("usbcore: add sysfs support to xHCI usb3 hardware LPM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Add stable tag
+- Link to v1: https://lore.kernel.org/r/20240814-sysfs_fix-v1-1-2224a29a259b@quicinc.com
+---
+ drivers/usb/core/sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Anup
+diff --git a/drivers/usb/core/sysfs.c b/drivers/usb/core/sysfs.c
+index d83231d6736a..61b6d978892c 100644
+--- a/drivers/usb/core/sysfs.c
++++ b/drivers/usb/core/sysfs.c
+@@ -670,6 +670,7 @@ static int add_power_attributes(struct device *dev)
+ 
+ static void remove_power_attributes(struct device *dev)
+ {
++	sysfs_unmerge_group(&dev->kobj, &usb3_hardware_lpm_attr_group);
+ 	sysfs_unmerge_group(&dev->kobj, &usb2_hardware_lpm_attr_group);
+ 	sysfs_unmerge_group(&dev->kobj, &power_attr_group);
+ }
 
->
-> ---
->
-> Changes in v2:
-> 1. None, only Rb tag.
->
-> Other patches from the set were applied.
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
-e-riscv-sbi.c
-> index 5bb3401220d2..d228b4d18d56 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -448,7 +448,6 @@ static void sbi_pd_remove(void)
->
->  static int sbi_genpd_probe(struct device_node *np)
->  {
-> -       struct device_node *node;
->         int ret =3D 0, pd_count =3D 0;
->
->         if (!np)
-> @@ -458,13 +457,13 @@ static int sbi_genpd_probe(struct device_node *np)
->          * Parse child nodes for the "#power-domain-cells" property and
->          * initialize a genpd/genpd-of-provider pair when it's found.
->          */
-> -       for_each_child_of_node(np, node) {
-> +       for_each_child_of_node_scoped(np, node) {
->                 if (!of_property_present(node, "#power-domain-cells"))
->                         continue;
->
->                 ret =3D sbi_pd_init(node);
->                 if (ret)
-> -                       goto put_node;
-> +                       goto remove_pd;
->
->                 pd_count++;
->         }
-> @@ -480,8 +479,6 @@ static int sbi_genpd_probe(struct device_node *np)
->
->         return 0;
->
-> -put_node:
-> -       of_node_put(node);
->  remove_pd:
->         sbi_pd_remove();
->         pr_err("failed to create CPU PM domains ret=3D%d\n", ret);
-> --
-> 2.43.0
->
+---
+base-commit: ca7df2c7bb5f83fe46aa9ce998b7352c6b28f3a1
+change-id: 20240814-sysfs_fix-2206de9b0179
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
