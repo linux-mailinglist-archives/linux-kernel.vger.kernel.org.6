@@ -1,189 +1,152 @@
-Return-Path: <linux-kernel+bounces-293578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F0195818E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30DE958193
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1874C1C2104D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1F71F239DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73D918A95C;
-	Tue, 20 Aug 2024 08:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5122518B489;
+	Tue, 20 Aug 2024 09:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZthiMqGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i41hJDdC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4118A6D1;
-	Tue, 20 Aug 2024 08:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DA018A94F;
+	Tue, 20 Aug 2024 09:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724144397; cv=none; b=K4EBRKR3zHbCkbCGmfU4xqM/Dk5t1S/OgVLwtp5gMWdMDj/WwW6ybPLw5GEDfd6QwIE/ZtYDIBKXIA/djYmznm5YOeuWQMZLkEr/N7TaErOB9zepvJELm0FnuCU2GVCJ23EwD5pd2Uf1/x+rPXG/KbomAibxhRZ25SMyWOBg6S0=
+	t=1724144437; cv=none; b=hOGYamKvmQROT+sUR2aN5fursZzfAWSXs5yNcJJh6DWLrEUp+IpA4yoVm/eKfK+OIkkOVoBwSiDbSoblFajs1u0KrznuRv7rUKlDlOkkAKtUS1USIiG73QJQ3lO52XwSTUO2vNcNm0kblnilhrXxfxgAahDO2AlFCcQjuQxY7kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724144397; c=relaxed/simple;
-	bh=wSNdF+SjzZ7RV153zgojfhRsAmxbLbtfAarPoswiZxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3ggugxrlvzJmHbmj0PnfrdHqm18FeHKBkIssHExmIVPD6651J76o7VJtYmhvKLgeNDtQQQs6Zw26rMEoNrGDq7quHAvOxEK5pEFp6PW34zw2b3KnqDrqG4iggPLJIwAUELjCsj62ZBrad2nbiieNDrR1wT+glSXqOTBLtCVe+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZthiMqGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803FBC4AF0B;
-	Tue, 20 Aug 2024 08:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724144396;
-	bh=wSNdF+SjzZ7RV153zgojfhRsAmxbLbtfAarPoswiZxY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZthiMqGWeomRokKjYa9g7I+/4p64moE3ehEnPKD6XyzdPYu8ZGlRKcnf4Ej0jgOO1
-	 pxBoAg9ONjHJ0btQGq4vkIJAcwtxqWGZukTXGk5TsSZoi7IUZm8+LxVJ65qHcjgi4G
-	 UkeKADXIrBqYHiSCprSQ8b35qiiacAPASW2A/Rd7dAQASTr3OANeZBtWGSIG3zjRji
-	 fq4qJLakgXGpjATuvRSZSucFQFrNPoMDPPs8HizfkBCp0226r4tKELvQkbTiO8QiyX
-	 JbEOlFP96pRZ3Mtc6QOVd57xw2ouXPfqCedLT/762g+rFGj6oCNI0i/C7x0Is+USw+
-	 zd++0VAYpOGJg==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: masahiroy@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Slaby <jslaby@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	linux-kbuild@vger.kernel.org,
-	bpf@vger.kernel.org,
-	shung-hsi.yu@suse.com,
-	msuchanek@suse.com
-Subject: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
-Date: Tue, 20 Aug 2024 10:59:50 +0200
-Message-ID: <20240820085950.200358-1-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724144437; c=relaxed/simple;
+	bh=N/2n6+TMCGjpJV1UloCrG/l1ip+b8yTgzRdVJBE9X4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOPG7zmgqcP8kcFwWMB/g1Jr8mfF3+QPTgiiNjnp9NSjoopL8TQgLv7lydYFdkvaBzticP3tHE2F38JmAxyajpFqxHwiiK4ot3An/jwwMmLVzawbg/zhWsAH6Pqoh7OFKc8TO8++GNFDo1ndRxLJTo3TgCJn6Aab7CUn3gGa1Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i41hJDdC; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724144435; x=1755680435;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N/2n6+TMCGjpJV1UloCrG/l1ip+b8yTgzRdVJBE9X4U=;
+  b=i41hJDdCtKZVo5OnbgpY8SuDwkyxRA2cgfgtsiZAQttX99AwVgpq6IBj
+   SK41mEYkAQcS8r32fMs29aQXw+ii6RQmXfO4dd4jPtu6Cg59JEhVDIFKy
+   m6AxQLKIqJfeUMWrn1SqS6fvt/+qdBP+yWfdm4fTq9Nl+5BHN5FxX/CCh
+   YcAtFiZfNPPJ09dwLEYv/qJ6uUnJCFVdO2Kz7k9y2yM7aAn8RtpySzscm
+   BAecrkexoEWDw16Jp/VTdfKYgmmnr1RfEIvAQBmIvbt+ePxG3ITgs2lyz
+   TmZ8hKDNZ2CrLtyGBQFXsT4rUStyh7YY4L87GryclcMkBiSoR/k6DZ7fA
+   Q==;
+X-CSE-ConnectionGUID: keZWyMHkSBWG0evRQ8aeMg==
+X-CSE-MsgGUID: RAFsvtGCQg2vZqMIjMDjTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22595734"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="22595734"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 02:00:34 -0700
+X-CSE-ConnectionGUID: C7avtJ4oRQG7WfUgBXBFQQ==
+X-CSE-MsgGUID: IOrPGsCnQNC6ISeon830uA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="98123500"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 02:00:30 -0700
+Date: Tue, 20 Aug 2024 12:00:27 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
+Message-ID: <ZsRbK8TEk5GZDl0C@black.fi.intel.com>
+References: <20240809061525.1368153-1-raag.jadav@intel.com>
+ <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
+ <ZrYEQqs0IwDHWkGx@ashyti-mobl2.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrYEQqs0IwDHWkGx@ashyti-mobl2.lan>
 
-From: Jiri Slaby <jslaby@suse.cz>
+On Fri, Aug 09, 2024 at 12:57:54PM +0100, Andi Shyti wrote:
+> On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
+> > On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
+> > > Add hwmon support for fan1_input attribute, which will expose fan speed
+> > > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
+> > > 
+> > > $ sensors
+> > > i915-pci-0300
+> > > Adapter: PCI adapter
+> > > in0:         653.00 mV
+> > > fan1:        3833 RPM
+> > > power1:           N/A  (max =  43.00 W)
+> > > energy1:      32.02 kJ
+> > 
+> > > v2:
+> > > - Add mutex protection
+> > > - Handle overflow
+> > > - Add ABI documentation
+> > > - Aesthetic adjustments (Riana)
+> > > 
+> > > v3:
+> > > - Declare rotations as "long" and drop redundant casting
+> > > - Change date and version in ABI documentation
+> > > - Add commenter name in changelog (Riana)
+> > > 
+> > > v4:
+> > > - Fix wakeref leak
+> > > - Drop switch case and simplify hwm_fan_xx() (Andi)
+> > 
+> > I do not understand why we pollute Git history with changelogs, but it's
+> > probably the ugly atavism in DRM workflow.
+> 
+> I never liked it! Besides it should even be against the
+> submitting patches recommendation.
+> 
+> I don't understand what interest might have someone in a couple
+> of years, reading this commit, knowing an unintellegible list of
+> differences between v2 and v3.
+> 
+> I consider it a random pollution of the commit log.
 
-== WARNING ==
-This is only a PoC. There are deficiencies like CROSS_COMPILE or LLVM
-are completely unhandled.
+Isn't it already documented?
+Documentation/process/submitting-patches.rst
 
-The simple version is just do there:
-  ifeq ($(CONFIG_64BIT,y)
-but it has its own deficiencies, of course.
+Please put this information **after** the ``---`` line which separates
+the changelog from the rest of the patch. The version information is
+not part of the changelog which gets committed to the git tree. It is
+additional information for the reviewers. If it's placed above the
+commit tags, it needs manual interaction to remove it. If it is below
+the separator line, it gets automatically stripped off when applying the
+patch::
 
-So any ideas, inputs?
-== WARNING ==
+  <commit message>
+  ...
+  Signed-off-by: Author <author@mail>
+  ---
+  V2 -> V3: Removed redundant helper function
+  V1 -> V2: Cleaned up coding style and addressed review comments
 
-When pahole is run with -j on 32bit userspace (32bit pahole in
-particular), it randomly fails with OOM:
-> btf_encoder__tag_kfuncs: Failed to get ELF section(62) data: out of memory.
-> btf_encoder__encode: failed to tag kfuncs!
+  path/to/file | 5+++--
+  ...
 
-or simply SIGSEGV (failed to allocate the btf encoder).
-
-It very depends on how many threads are created.
-
-So do not invoke pahole with -j on 32bit.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
-Closes: https://bugzilla.suse.com/show_bug.cgi?id=1229450
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas@fjasle.eu>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Song Liu <song@kernel.org>
-Cc: Yonghong Song <yonghong.song@linux.dev>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: KP Singh <kpsingh@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>
-Cc: Hao Luo <haoluo@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: bpf@vger.kernel.org
-Cc: shung-hsi.yu@suse.com
-Cc: msuchanek@suse.com
----
- init/Kconfig            |  4 ++++
- scripts/Makefile.btf    |  2 ++
- scripts/pahole-class.sh | 21 +++++++++++++++++++++
- 3 files changed, 27 insertions(+)
- create mode 100644 scripts/pahole-class.sh
-
-diff --git a/init/Kconfig b/init/Kconfig
-index f36ca8a0e209..f5e80497eef0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -113,6 +113,10 @@ config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
- 
-+config PAHOLE_CLASS
-+	string
-+	default $(shell,$(srctree)/scripts/pahole-class.sh $(PAHOLE))
-+
- config CONSTRUCTORS
- 	bool
- 
-diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
-index b75f09f3f424..f7de8e922bce 100644
---- a/scripts/Makefile.btf
-+++ b/scripts/Makefile.btf
-@@ -12,7 +12,9 @@ endif
- 
- pahole-flags-$(call test-ge, $(pahole-ver), 121)	+= --btf_gen_floats
- 
-+ifeq ($(CONFIG_PAHOLE_CLASS),ELF64)
- pahole-flags-$(call test-ge, $(pahole-ver), 122)	+= -j
-+endif
- 
- pahole-flags-$(call test-ge, $(pahole-ver), 125)	+= --skip_encoding_btf_inconsistent_proto --btf_gen_optimized
- 
-diff --git a/scripts/pahole-class.sh b/scripts/pahole-class.sh
-new file mode 100644
-index 000000000000..d15a92077f76
---- /dev/null
-+++ b/scripts/pahole-class.sh
-@@ -0,0 +1,21 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Usage: $ ./pahole-class.sh pahole
-+#
-+# Prints pahole's ELF class, such as ELF64
-+
-+if [ ! -x "$(command -v "$@")" ]; then
-+	echo 0
-+	exit 1
-+fi
-+
-+PAHOLE="$(which "$@")"
-+CLASS="$(readelf -h "$PAHOLE" 2>/dev/null | sed -n 's/.*Class: *// p')"
-+
-+# Scripts like scripts/dummy-tools/pahole
-+if [ -n "$CLASS" ]; then
-+	echo "$CLASS"
-+else
-+	echo ELF64
-+fi
--- 
-2.46.0
-
+Raag
+> 
+> Andi
 
