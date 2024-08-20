@@ -1,96 +1,85 @@
-Return-Path: <linux-kernel+bounces-293509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8A19580AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:18:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0829580AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7591F21874
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:18:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7A71C2286E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E24618A6D0;
-	Tue, 20 Aug 2024 08:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AaO9QP+O"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B9D18A6C2
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A77189916;
+	Tue, 20 Aug 2024 08:17:45 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDCA17758
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724141867; cv=none; b=IWhI7Xx0sBDJ0iSkXOsmPWQweECVI8l1vcb3ULbwH8hyYrJY0dLH4+uw29yA6kWVLSWhp/hG5sNtCBtW4ign4+v5FSrX0j0XJVhvHU7x+bbn/p8JNLxZ2/KJXWCRmpRqVnSnNDdF+iht23iwcOq7hVgjjWjLFFHiDn8tFGysjnc=
+	t=1724141864; cv=none; b=H/qcekkRNS0CsW1KPLAVJwCaoMVIVsZuBjPMkkUpIAU75a6haE+I82AfwV/ZgToYO4+hPrtT9KPoS1ty6cdUlHqI4pXKVpINP5aPqCaAanoS1trLycV9nVKSliPWLqPfHJDN8aXKUbBsg+xB+Z+5v6PIoEUVIDqOXUGzuvtKkqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724141867; c=relaxed/simple;
-	bh=IVTP/toLg2yh+Q9s92uZK4xzlEisMXLaxoaU3yPoRHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YOMaf3kQNXlh3UDn/GIQwUTKdtcum4g5d8TUjy6RnKoS9SH3Y1F1iuCKYsifkwsPh4MiA4C35bf8c2kzIKe4WHvw1iQ2ZIfrbMCJTVSob+j+OGLtpPJahhKwfCDK3BBeJIKeGEs6LQetdwuwaOjE5qjTS11Ix+oOiN30W8I6J4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AaO9QP+O; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so6198390e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724141864; x=1724746664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IVTP/toLg2yh+Q9s92uZK4xzlEisMXLaxoaU3yPoRHE=;
-        b=AaO9QP+OYxqoJjVhB/+v0LeienhEZbYzBDDlCJxMC9faeJJPFZb0Wdepc/ElKO2Ho6
-         vC91nSdbSj7sxFEuE38i4USQAcr69mc1mCG79Jw7JTXzGBbo/qNcDZTTN5nuUJk+uiP3
-         V4mUDRAxb+8hHY1pgUSaFCXSrqPX3SZT5taZg5k7vfTuTs9bO6mzvjA2VOkyteueUxn2
-         EFzi21Hqiq+luBgfce31QOVVCOfZiCAx0wdpSTMQ9HNTqJYdc/yUsG5cUAo0pM0ww8HD
-         rizr7OUQR88KKJUPW/o4+QRQlHFmxuuO7YjNkcVwhhd9nlo3S7L7Ni7kimJgEAZ+MPSB
-         SUKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724141864; x=1724746664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IVTP/toLg2yh+Q9s92uZK4xzlEisMXLaxoaU3yPoRHE=;
-        b=ZmMpOr2hLk9PLcxOG1FoNXD8TvXERXD5KPYjNrwlyjtMN8qkOQXUkzURsptm32EPM7
-         Jx6fB5mCCjOpa6//jmP2m5Eb+E6cBQnLLVEOWFHmNyY4mNIUqC4IyaT7KHYogvycQHCZ
-         bwmjBr1TUSF07heNw687MmCqpQhgP1qOrVv98wZ6H/D99bGaP6cctNBsNB+XuvsfG5uV
-         Om78+f3oJWaU7zshyn3KJ7TWJwIP1WE4qSr6p2vURGTeyJdDgxm/4fr7eJaAcPP6G8oT
-         7fW8jo/MUCbENRpxyWCtI1q98RY3OC+5JOkTDQXil+zm6p7Du/vFKjx5iNXD2vFLbPbi
-         o1gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaceu1DJ4QwfRsOMsPXK3jrm8IgX6I/xiuFCimoVydHQcBd/effwM1yIwxPrpLEjTmsowU+XUKKpJPVvFTq4+5f6HSeuOYd7cdpbTV
-X-Gm-Message-State: AOJu0YxmRxM2oOWY2RDv/Vh9Yatlu51vK3rvN9B2oW9dkOvRi82MnxGF
-	y3KSsZCmFPnYjJHBJ0KMSyecLeT723XY6TaWU/ltkpC47TKqkVZh1Jqb4ECSWwtZy9dywlO7HYj
-	ydL6Wjcn+eElsUjZ0ObD0XOSG0Awj3luk2q+xWQ==
-X-Google-Smtp-Source: AGHT+IFbDdTiw6Uk9S88S7dbr6cMRoYSFc48iuM3jxrmJUMbQvuz5tHkvlmpLI49vLNz6wM1Mmx8F8SVj9rCoaZGQ6c=
-X-Received: by 2002:a05:6512:ad2:b0:52c:de29:9ff with SMTP id
- 2adb3069b0e04-5331c692a14mr9702714e87.2.1724141863245; Tue, 20 Aug 2024
- 01:17:43 -0700 (PDT)
+	s=arc-20240116; t=1724141864; c=relaxed/simple;
+	bh=SFe1izGkwjVYtPxB/KDdjIhICL1QxgVmRHEntMFpEKE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=qK4Hsuku7EGSaV3KwTxQWuEjudyUckSFefPezsq+JIwGhOsYl6kFxlvZGFX9te3FDnXRRiElZPL4K4fmvW3klRiKzqwLzsdj6Hek0oc3COmDLVfOaQj+qbgfn38FXsZOf/yR4zKofORbZc3Ohz2WPLcfTaAyY0TA8mHSVwtFEa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee366c451225f1-39dfc;
+	Tue, 20 Aug 2024 16:17:39 +0800 (CST)
+X-RM-TRANSID:2ee366c451225f1-39dfc
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee666c45122fc1-006a4;
+	Tue, 20 Aug 2024 16:17:38 +0800 (CST)
+X-RM-TRANSID:2ee666c45122fc1-006a4
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: martin.lau@linux.dev
+Cc: eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] samples/bpf:Remove unused variables
+Date: Tue, 20 Aug 2024 01:17:37 -0700
+Message-Id: <20240820081737.5460-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240819045052.2405511-1-quic_lxu5@quicinc.com>
-In-Reply-To: <20240819045052.2405511-1-quic_lxu5@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 20 Aug 2024 10:17:32 +0200
-Message-ID: <CAMRc=MfuW1T_dA-JdybqpYzEVY1KXmNdPsuB6J6gJ_3Gp+2jMQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: qcom: sa8775p: Add ADSP and CDSP0 fastrpc nodes
-To: Ling Xu <quic_lxu5@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_kuiw@quicinc.com, 
-	quic_ekangupt@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 6:51=E2=80=AFAM Ling Xu <quic_lxu5@quicinc.com> wro=
-te:
->
-> Add ADSP and CDSP0 fastrpc nodes.
->
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> ---
+The variable is never referenced in the code, just remove them
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ samples/bpf/tcbpf1_kern.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/samples/bpf/tcbpf1_kern.c b/samples/bpf/tcbpf1_kern.c
+index e9356130f84e..dc4ba5fe9c73 100644
+--- a/samples/bpf/tcbpf1_kern.c
++++ b/samples/bpf/tcbpf1_kern.c
+@@ -56,7 +56,6 @@ SEC("classifier")
+ int bpf_prog1(struct __sk_buff *skb)
+ {
+ 	__u8 proto = load_byte(skb, ETH_HLEN + offsetof(struct iphdr, protocol));
+-	long *value;
+ 
+ 	if (proto == IPPROTO_TCP) {
+ 		set_ip_tos(skb, 8);
+-- 
+2.17.1
+
+
+
 
