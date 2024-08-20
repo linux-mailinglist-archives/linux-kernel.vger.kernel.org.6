@@ -1,144 +1,225 @@
-Return-Path: <linux-kernel+bounces-294115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D16958969
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:34:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB16958965
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABE2A1C21929
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DCF1C20FEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD70191F6C;
-	Tue, 20 Aug 2024 14:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B801917CB;
+	Tue, 20 Aug 2024 14:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="dDi3Y0r7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZuly/OC"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E9618E756;
-	Tue, 20 Aug 2024 14:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724164455; cv=pass; b=mfUCUE7ewQmtBBbsF52FSv0HHNxYBwQTxXmd/+LU3NKheCo+9A0HCimeoqM0VLxwvLcFZdxuvxCNeda7I/noJ382EcWN4zfSDJJwAGrgH5eKMLQFtFE+i29sm/sx+rCSFs8qfbRAOejcjfxe45lTd8Wuk6opwIS1ybWPiKlMDAk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724164455; c=relaxed/simple;
-	bh=tlVZiJq+FXMzsigETTBROYaKMXD3oFR183eogggWQkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1ezI7IGv81hkXKfGiqMQVr3ZPv/wJd9dQlV2GLPJXOG1yhHPqiSF5fG6JUyQN7wG2J53eJk73vP6/DjDLT0ZEiboKkIfxyqN93AvKwgXi+Qy3bYqfhlK+L248e8SWgrKHz0fIpse7uAceTXW9g0mH6v+RPsMpcubByvOjTStAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=dDi3Y0r7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724164445; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hzuFoSwF9CrtHZ4j5hZKfAaBi7lXcBK8fiJx2qw7fNE5GJovhGvVSWd1PeMwMOCDO1YxZxRBZlHRkUPBs64j1u4RvYtfdydDsBOp+zA1TggqwEEkubKafS84swUiai1JgopjIkxR2r+fAm25ev1jHmdEr+Fs6sdTzNrBniyJaTo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724164445; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vplBHQruDMbj68SuzMwoca2dFOJUKVYY913/jF0sAAM=; 
-	b=jBNs6tfxECeO/iytGtapAGEJqAHgfXxvzIXHVWt+n5WyV+KUcGxFPm1+46TzNJ/s0DbW4eyli5j4ntSXFldeXrMfXkHKz2IFovaMyn92u9MKjsqdpc6fn1qUeJjYNsqvYnAFI5ISazPnYDiFHmr3RFgcyojw+0kzL2q28zrguwk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724164445;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=vplBHQruDMbj68SuzMwoca2dFOJUKVYY913/jF0sAAM=;
-	b=dDi3Y0r7HjoIXx8ebhDf10o/8EttkkYWJ3kH06Xw/ze8gsP6LEzxdi4/5fahH2nO
-	GcYkcorVks17YCBZZo3iOQNS+IbEF5VHf/GRkaoEu9i09CWHT6OYkYSm17AureXqXjU
-	8ErIP9360PNUReYgWTlI4EtqcTIpayBlhABpXKH4=
-Received: by mx.zohomail.com with SMTPS id 1724164442979644.9362485336538;
-	Tue, 20 Aug 2024 07:34:02 -0700 (PDT)
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: kernel@collabora.com,
-	Martyn Welch <martyn.welch@collabora.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: mpc8xxx: Add wake on GPIO support
-Date: Tue, 20 Aug 2024 15:33:27 +0100
-Message-ID: <20240820143328.1987442-1-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B1012E5B;
+	Tue, 20 Aug 2024 14:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724164443; cv=none; b=DSHy9NiZxHDow/5Iwg/SOIJDH2JP1Y/MvGwtslX+n3XC+F8H947di+3x6xe0ks9mgLt+zxk6Zq0zDSAMYRzeF603baICppp66QQd2Zj2tSDv9AiEIyxCOHsDTxo288M5T5E2GMuMVQcOOT4eRpw/B8LNOVpqfFT5xMV2lukRth8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724164443; c=relaxed/simple;
+	bh=QKWYUjgkdySkXi1BPr281uIlpu0P55qZTipA7vFzcDs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e05lQM6lXHUqmlplxLZahN4Lwpp8l30n55DGX+FVIECd5Ca6PmNDrvPqdk5bWtMK46MhDR/rzlAdZijuXCdJt6yFrUJLoVUo0XCiOf18TCGs968LfMJgm0l2Quj5yFkQUBt3fztvx70BwlKLn8DCjjHL5zMNXXg3k3b4n4JmtCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZuly/OC; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so961294666b.0;
+        Tue, 20 Aug 2024 07:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724164438; x=1724769238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFEf+YZTsp2U0MqW9b++unhQczVRgDZLMKo2QlWpPZw=;
+        b=RZuly/OCH0f6sDX0KiG0Cis3aJYSJUqV/ZQcu4o1Xrjd5dBMztS+VE/Zk9FSxLLjiZ
+         B9Ee4V3FOx6TUXCh4lbqnzwEboJizlmBfvWPAros8NcgHgUmaNGwYDQlEmI/Z4Cumlrl
+         Wr0LR73VLwq+S3cugpEpAmfqedXUx88QwxKrpe2vC4GoLahRfGSN5O2HsxOzarLceYgU
+         8fbX5a18nhwoJ4UmTafyy49iNuEhu/Jq0ebzx2aa5He5P9jAHsg1TXxEjZK6+6S6g+Zj
+         V4Sa9AIzrXeDPVbmIzvwMnwt2ol2hmj/jAnU41+qE2Q6UFNbQUGfZKcVe7cJN+fqdhBm
+         USew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724164438; x=1724769238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JFEf+YZTsp2U0MqW9b++unhQczVRgDZLMKo2QlWpPZw=;
+        b=FQ/vEPNCzb34FCLxXyYzv/YZVjEQztslvFp05ZCYtifXi2+RH6346bPN4kWKzLqHIn
+         4qIxPmRw6WlJdn0zUqCVNQ4LfZ0QOT2ZpmgWNT8CKDcAkQzzoU7NpA+PQEvUl4dQFk/7
+         LlLKugGmHrbhpUsawb1rbfco4g+FkxSKduhfx2dV3N7Q1VlsuGBW64n+0/LkECISwvoA
+         al9HgpSaGPi5oSWodj01NWQukp0hn15WBvxAAjY0FS+OnWkmxVCeq5WGtRdo6DWTBhWV
+         smkxRi7i8Ys5dyRnlH3lmOGwuDWN/s21TKZo8I39yFnsnwDbpYYdRtJp8ELzL0PHlTCr
+         Z9mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsEn4g5cGOTlcvahxH3f499CnUczKk+70v480F2q5jGtC3gdKlcqBrqmLRW+vy3gr5hnjvIiUkIWQK3bNw6G3zEK0qMdOTdcZryvXvfM5mGnNy1K1VNfELlTp6Mvo2EVY+bwKKSKbKZTAUFwU+GqrzdLXewwW0Aa8/kGgxyNYb
+X-Gm-Message-State: AOJu0YzQdA8/AudnMG/4Wkp4SCZl3FgZiyymaQ+Axo+LV5sWY8WACJ14
+	X72htxPvxx/RNEskwsm8Oh5f/aIsZBG9Jq39wXqhy+KLeCgqLrjS
+X-Google-Smtp-Source: AGHT+IEi63bHrvyONMU7Ex8SzkeDjhpiTNyFyFSg0cNe1CO72132FRtReCABy9+Q7+5KVmdQCOL7Jw==
+X-Received: by 2002:a17:906:dc95:b0:a7a:81ba:8eb3 with SMTP id a640c23a62f3a-a8643ffb8d7mr283495066b.27.1724164438004;
+        Tue, 20 Aug 2024 07:33:58 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838eef05sm767986666b.96.2024.08.20.07.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 07:33:57 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 20 Aug 2024 16:33:55 +0200
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jslaby@suse.cz>, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, linux-kbuild@vger.kernel.org,
+	bpf@vger.kernel.org, shung-hsi.yu@suse.com, msuchanek@suse.com
+Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
+Message-ID: <ZsSpU5DqT3sRDzZy@krava>
+References: <20240820085950.200358-1-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820085950.200358-1-jirislaby@kernel.org>
 
-The mpc8xxx GPIO can generate an interrupt on state change. This
-interrupt can be used to wake up the device from its sleep state if
-enabled to do so. Add required support to the driver so that the GPIO
-can be used in this way.
+On Tue, Aug 20, 2024 at 10:59:50AM +0200, Jiri Slaby (SUSE) wrote:
+> From: Jiri Slaby <jslaby@suse.cz>
+> 
+> == WARNING ==
+> This is only a PoC. There are deficiencies like CROSS_COMPILE or LLVM
+> are completely unhandled.
+> 
+> The simple version is just do there:
+>   ifeq ($(CONFIG_64BIT,y)
+> but it has its own deficiencies, of course.
+> 
+> So any ideas, inputs?
+> == WARNING ==
+> 
+> When pahole is run with -j on 32bit userspace (32bit pahole in
+> particular), it randomly fails with OOM:
+> > btf_encoder__tag_kfuncs: Failed to get ELF section(62) data: out of memory.
+> > btf_encoder__encode: failed to tag kfuncs!
+> 
+> or simply SIGSEGV (failed to allocate the btf encoder).
+> 
+> It very depends on how many threads are created.
+> 
+> So do not invoke pahole with -j on 32bit.
 
-In order for the GPIO to actually function in this way, it is necessary
-to also set the GPIO bit in the RCPM. This can be done via the device
-tree fsl,rcpm-wakeup property.
+could you share more details about your setup?
 
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
----
- drivers/gpio/gpio-mpc8xxx.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+does it need to run on pure 32bit to reproduce? I can't reproduce when
+doing cross build and running 32 bit pahole on x86_64.. I do see some
+errors though
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index c0125ac73906..ab30c911c9d5 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -413,6 +413,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
-+	device_init_wakeup(&pdev->dev, true);
-+
- 	return 0;
- err:
- 	irq_domain_remove(mpc8xxx_gc->irq);
-@@ -429,6 +431,31 @@ static void mpc8xxx_remove(struct platform_device *pdev)
- 	}
- }
- 
-+#ifdef CONFIG_PM
-+static int mpc8xxx_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = platform_get_drvdata(pdev);
-+
-+	if (mpc8xxx_gc->irqn && device_may_wakeup(&pdev->dev))
-+		enable_irq_wake(mpc8xxx_gc->irqn);
-+
-+	return 0;
-+}
-+
-+static int mpc8xxx_resume(struct platform_device *pdev)
-+{
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = platform_get_drvdata(pdev);
-+
-+	if (mpc8xxx_gc->irqn && device_may_wakeup(&pdev->dev))
-+		disable_irq_wake(mpc8xxx_gc->irqn);
-+
-+	return 0;
-+}
-+#else
-+#define mpc8xxx_suspend NULL
-+#define mpc8xxx_resume NULL
-+#endif
-+
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id gpio_acpi_ids[] = {
- 	{"NXP0031",},
-@@ -440,6 +467,8 @@ MODULE_DEVICE_TABLE(acpi, gpio_acpi_ids);
- static struct platform_driver mpc8xxx_plat_driver = {
- 	.probe		= mpc8xxx_probe,
- 	.remove_new	= mpc8xxx_remove,
-+	.suspend	= mpc8xxx_suspend,
-+	.resume		= mpc8xxx_resume,
- 	.driver		= {
- 		.name = "gpio-mpc8xxx",
- 		.of_match_table	= mpc8xxx_gpio_ids,
--- 
-2.43.0
+  [667939] STRUCT bpf_prog_aux Error emitting BTF type
+  Encountered error while encoding BTF.
 
+thanks,
+jirka
+
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
+> Closes: https://bugzilla.suse.com/show_bug.cgi?id=1229450
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nicolas Schier <nicolas@fjasle.eu>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Andrii Nakryiko <andrii@kernel.org>
+> Cc: Martin KaFai Lau <martin.lau@linux.dev>
+> Cc: Eduard Zingerman <eddyz87@gmail.com>
+> Cc: Song Liu <song@kernel.org>
+> Cc: Yonghong Song <yonghong.song@linux.dev>
+> Cc: John Fastabend <john.fastabend@gmail.com>
+> Cc: KP Singh <kpsingh@kernel.org>
+> Cc: Stanislav Fomichev <sdf@fomichev.me>
+> Cc: Hao Luo <haoluo@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: bpf@vger.kernel.org
+> Cc: shung-hsi.yu@suse.com
+> Cc: msuchanek@suse.com
+> ---
+>  init/Kconfig            |  4 ++++
+>  scripts/Makefile.btf    |  2 ++
+>  scripts/pahole-class.sh | 21 +++++++++++++++++++++
+>  3 files changed, 27 insertions(+)
+>  create mode 100644 scripts/pahole-class.sh
+> 
+> diff --git a/init/Kconfig b/init/Kconfig
+> index f36ca8a0e209..f5e80497eef0 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -113,6 +113,10 @@ config PAHOLE_VERSION
+>  	int
+>  	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
+>  
+> +config PAHOLE_CLASS
+> +	string
+> +	default $(shell,$(srctree)/scripts/pahole-class.sh $(PAHOLE))
+> +
+>  config CONSTRUCTORS
+>  	bool
+>  
+> diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
+> index b75f09f3f424..f7de8e922bce 100644
+> --- a/scripts/Makefile.btf
+> +++ b/scripts/Makefile.btf
+> @@ -12,7 +12,9 @@ endif
+>  
+>  pahole-flags-$(call test-ge, $(pahole-ver), 121)	+= --btf_gen_floats
+>  
+> +ifeq ($(CONFIG_PAHOLE_CLASS),ELF64)
+>  pahole-flags-$(call test-ge, $(pahole-ver), 122)	+= -j
+> +endif
+>  
+>  pahole-flags-$(call test-ge, $(pahole-ver), 125)	+= --skip_encoding_btf_inconsistent_proto --btf_gen_optimized
+>  
+> diff --git a/scripts/pahole-class.sh b/scripts/pahole-class.sh
+> new file mode 100644
+> index 000000000000..d15a92077f76
+> --- /dev/null
+> +++ b/scripts/pahole-class.sh
+> @@ -0,0 +1,21 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Usage: $ ./pahole-class.sh pahole
+> +#
+> +# Prints pahole's ELF class, such as ELF64
+> +
+> +if [ ! -x "$(command -v "$@")" ]; then
+> +	echo 0
+> +	exit 1
+> +fi
+> +
+> +PAHOLE="$(which "$@")"
+> +CLASS="$(readelf -h "$PAHOLE" 2>/dev/null | sed -n 's/.*Class: *// p')"
+> +
+> +# Scripts like scripts/dummy-tools/pahole
+> +if [ -n "$CLASS" ]; then
+> +	echo "$CLASS"
+> +else
+> +	echo ELF64
+> +fi
+> -- 
+> 2.46.0
+> 
 
