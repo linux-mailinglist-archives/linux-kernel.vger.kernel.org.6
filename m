@@ -1,190 +1,247 @@
-Return-Path: <linux-kernel+bounces-294046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B4EF958838
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A4995883E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA9EB2161B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD88284183
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E61B1917D7;
-	Tue, 20 Aug 2024 13:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC00191476;
+	Tue, 20 Aug 2024 13:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="PAMGYst3"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEJF3/ct"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD92191476
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161618; cv=none; b=XuPGbWdNjCxX5iZ1b8wG4xFwXg7SHmPqshNqSMI4LROElovL4ElFCuqJSLYk7TQ0cmxCOxNOX4fHWabCrRZf7IbqwCSDiyujnDIBAugsRPR0/+yCAKVpdcXgT5Kkav0Z7V+cK3VNaiivo+cx8yijgzECRvKDuIchJRZzgPEc/ks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161618; c=relaxed/simple;
-	bh=DGs+YQ/MemHzCI0cJ+pHenoa+Ft3gJVm3OGIx/wVAbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwNxbQpF6AJmO9dhFfQwM38rvIRSNW6Qj9b5X3pDarUesXIazhur87SnhrdqUR9JQ5IUyMHBwUi/6BFao6PZVGRw6oDre6In/oWlZhE0y52vve8RBrHyEOdAI2Zbm9TeYuRuMlowS0jgdv1AYugrafU+l3+isKRzerar0Vgeyp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=PAMGYst3; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1df0a9281so14639085a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724161616; x=1724766416; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I830akbhhKKwI8d91ZRK8IKM+grDVk/w+Lt2TLToceE=;
-        b=PAMGYst3Nj/JhGJ71MXqkUV/SIynbVvumC+1lXIwIt2QPhKYPAol+A+gfYYfnuTK/I
-         FAFFw/UIONRPTxfPbw1oGNS2HV0gdVljp7R13dgbBUtQvMTmckNPdp17iXzp7gG3WgN0
-         ca45ayelOQKnKlf7l/+Kq+2qUjmv1oqwsxi0WLn+IpSOKl5X8yw+L+OS8ASnP47wIYIA
-         fdTYkbj0Q6Eg7pV2DPXo/F7iYE9FkBy/C2jY5niDtmOvLtH3EgGlnxtQPXYHtMoDig96
-         lKNR+ggoa0DerzY/ZV6jw4+IyGUj5q6HpJaRKtZYHHKhUqPoXstb+fSFMQQibYbxFylI
-         kLmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724161616; x=1724766416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I830akbhhKKwI8d91ZRK8IKM+grDVk/w+Lt2TLToceE=;
-        b=PRqBvHx9sJg69+5EiXnDd3KgiN8eHmQB85KglZTCcPok21JRttUmbke7/drkdOeilo
-         QhAz6KLlueasVEbLVX1LZE4pr/mOxyYY13VqyFlWy5SIt+Ey+30ODBqjjyY9S97boFAe
-         892tyxz6sw0PVjDyWE02O/tD8pqMmyO92Uw100kwI94TwX1iVmsr3Y1yU6gea/bDeUaP
-         5uJWL7fzM6mCv8pw3rgJFJguZUf7uDMiDb3eE4rwXP8j1uwHCu6TGfHB7e3q3G8R8w4n
-         Giyge76M2uQdma/h4EdMaAVA0EAzwUlT5NzSG3I+eh7+C8WQpVUX9ED0u2aYqWZh+x1a
-         8C7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTUYI5T8arGUGZDFjE08q2aCWwPGWoq8KOfpM4JKNEd1aiB9XQr0cj0B6KC7qYQJ3OrtbCQJKFwpXg/xPR9y0SIFctHPXzqphKb9y+
-X-Gm-Message-State: AOJu0YyfHlrJSGE+Lg7xZgEDh+19AUulc/IKHvMLG0u9gg/4qrLs/fNG
-	q/ZSWavw1f2vK1vyHBZAN/KB7c6B68ba6L47DCFDfaRuY2u5lRJXng9D8MYH1g==
-X-Google-Smtp-Source: AGHT+IEI4p59YOvtEm63+a/jQKuInzhxdbxB8AjFcSMqvIayjz8ztlKu6vsDqXATlGHaKRjS/mRyUQ==
-X-Received: by 2002:a05:620a:1a12:b0:7a6:6b98:8e36 with SMTP id af79cd13be357-7a66b988f33mr163494185a.16.1724161615865;
-        Tue, 20 Aug 2024 06:46:55 -0700 (PDT)
-Received: from rowland.harvard.edu (wrls-249-137-8.wrls-client.fas.harvard.edu. [140.247.12.8])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff112b45sm527883485a.125.2024.08.20.06.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 06:46:55 -0700 (PDT)
-Date: Tue, 20 Aug 2024 09:46:53 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: gregkh@linuxfoundation.org, krzk@kernel.org, alim.akhtar@samsung.com,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next RESEND] usb: xhci: Simplify with scoped for each OF
- child loop
-Message-ID: <435bde54-aa08-47d1-8fe0-980bcc577803@rowland.harvard.edu>
-References: <20240820065635.560427-1-ruanjinjie@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0582C190462;
+	Tue, 20 Aug 2024 13:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724161664; cv=fail; b=FcnfGu9It3SBdAn/VH1jF/TSkFESkTNRo4YDevbKlt0Tny4C7ycBM5N6xTkqZ0QP4LSSpPjySLCbf/64g8Dm3WlCmPYoq+xpvby1X2LBPR14HBoPTm2n6jmm695V8QsgG2lS/A6NE8+HwZM+1notb+ekh7RGP3L+BTBrjwUyGwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724161664; c=relaxed/simple;
+	bh=Y69EqoUZ7rFiUQSIni33TDl2qGU5829cMEQArkMwfAc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UFLrBlWF2iO5fnQidibNKG7rYmVr9uZpLD/g8e+YRDR29cMsqBhtuClSjcWRgUMxzaV/XiMCMmkodbZrLRoOCfrDoIUscEIwEGtO5N2JQmCaQ9fTZa957HoOmjm74sABY8c5uL14u7SNjMdApopgG7DXFXnZ6Q9wXh2Z0/QpWbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEJF3/ct; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724161663; x=1755697663;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Y69EqoUZ7rFiUQSIni33TDl2qGU5829cMEQArkMwfAc=;
+  b=GEJF3/ct6Wipz4ulgGUU7JCb83S1NRKRyzsqPwHrKwdM7HE4AeFPtE1t
+   IK2UcOKx7VWVButZiS76RRJVD1h2Z3twezykG0v7riI2bTnYxGaURudgj
+   UHUuq5YoJDQV2ON05j1PL9cPgQ8IiRa2SVgvsQvz/wOf4SmnTOOcBBn6L
+   ArgCH85kgoJGguFbC9p7q7Lih2VhYkyqWcWX4Rzob+I2Yuxlywqzvwx/E
+   UsOZ03yc88km/4VHQBRhozTHAoI8e86HxZykGdSb/sVnPGIfLxjpSWWmQ
+   5TmtePn/x0RKK6oHXS/eWc8vv6hgSja8gGKSsEAOJ1ez0+gvS8ESY32RP
+   Q==;
+X-CSE-ConnectionGUID: zD6tLDMATuC1UJ/lKpxY/w==
+X-CSE-MsgGUID: CAh8sljgR+yB5x7L7IkEMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="21997729"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="21997729"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:47:42 -0700
+X-CSE-ConnectionGUID: eiQUa0mRTCqU6Wv3h7nOrA==
+X-CSE-MsgGUID: mOzOEHEqRCeJ0NPUaBbczA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="91459956"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 06:47:42 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 06:47:41 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 06:47:41 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.42) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 06:47:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tm2mIdhAXZky2Nf1VJHMFRTO5ntROa+/qngyCQp8IRAhDLAiXxYqZlYD9dRG8/e/+TzqV0XwVjFZCWxIuRTTLL00Jmct4cj3fnWbgQOzQsvjpy2Pi3qLez8siBg9AC089Eib/kGJEmXTP/SZlCnts4Rzv/GRhE3b9zBlP4Byn/4OufqhBy7ehUwjULngVCN6aYAkomIQrLQjrOGNC+fav/ZI7HU1dKTLB2FMh1MECmLQ0veudIXwQCBRyWngQQqnM3y+LTh2YI+jbL7vQtVYyHlHzOovIj7Z+1lyCb8wXB3iT5FMm2MmJjV/sd3zzLWhIMlUs121OxstJ+jFEfN9cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PI6MKD138kJ1MFNaFuph7RsZ27SQrdrU9CxdCGyFRrA=;
+ b=cj4sYdi5NdaKzWAjdJOsbvPJQGSM4YRPkLB30zOqEjR9OaP0/6TTMJV34QbiBFI+Gp1wIDfPbF0j16ri1BWg2SF0Fjv7GVv5oxlXk36cHNl7Fn1VccAT08nFXyjA2lg/KpdWOym+H8eyU6q5Kkip+21Z4ZWOns3VdtidpHC/yWt5vcCHagfLLbTsfMilcDorj9siuHpppGarZc9guw3BMKDHZ/9ziWBXVsWe2sT7wzE5smpheXm6nfuaasbk0J4AsoJxwqvgh6JzDNT7XVCKfgJlLJPJaCYHBjZ3iWm24gkmw1eZ7s1Jr//0sCSMhDU4Hmo+l6AkEGPr0KwniOxqcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by SN7PR11MB7705.namprd11.prod.outlook.com (2603:10b6:806:32f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 13:47:31 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 13:47:29 +0000
+Message-ID: <6158bc09-842d-4e65-9983-d515ea76a000@intel.com>
+Date: Tue, 20 Aug 2024 15:47:22 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next] ice: Fix a 32bit bug
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Junfeng Guo <junfeng.guo@intel.com>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>, <kernel-janitors@vger.kernel.org>, Ahmed Zaki
+	<ahmed.zaki@intel.com>, <linux-kernel@vger.kernel.org>, Eric Dumazet
+	<edumazet@google.com>, Marcin Szycik <marcin.szycik@linux.intel.com>, "Tony
+ Nguyen" <anthony.l.nguyen@intel.com>, Qi Zhang <qi.z.zhang@intel.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, <netdev@vger.kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+	<intel-wired-lan@lists.osuosl.org>
+References: <ddc231a8-89c1-4ff4-8704-9198bcb41f8d@stanley.mountain>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <ddc231a8-89c1-4ff4-8704-9198bcb41f8d@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI0P293CA0001.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::16) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820065635.560427-1-ruanjinjie@huawei.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|SN7PR11MB7705:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf88ce1c-24c6-470b-e65e-08dcc11ea255
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Zi84UmYrMDhjTllsWE5IaURnM05qWllKVlBvMW83SkppSVV6T201RG5rVzZv?=
+ =?utf-8?B?eHBwU2Exck9iTUZJUWVEaFBJcWduV09uTDRhY2dtMkRhdmtrSVZWdnRHMHZB?=
+ =?utf-8?B?OEIwNUNsUTZJRWVhQ3ZFTnNvUWNCbGoxZThlSnExZWFaczc2U3BJM01iSTQr?=
+ =?utf-8?B?T3dhVkVUdHdra1NlcUxNQTFySnMrbnZENGd4MFhQOFRPQTcvQ2hlVlcwcmNQ?=
+ =?utf-8?B?bWttRnVTWXVzMGxvOE9XVDhLQWZ5N1RHZGs5NjNxSFlLaHZhelJxTTFNczNX?=
+ =?utf-8?B?WXhlemw5MEllRjZ4SkVmVDJ4UGJyOGJURTh2QUhUamozNGN3RCs3NE1QR2dG?=
+ =?utf-8?B?QSt4cGV2MWpRbEtMVDNNaTBYNUROVGtFTUpreUhKdThwQVJGRmpPYUhxNmpz?=
+ =?utf-8?B?OWlyWHBUaTVGcko2ci9ZZkJYS3ZaaUd3UWpwazFBMDBtQjN5QmJSZ0xiKzZR?=
+ =?utf-8?B?Q085bVNMd2JvNVNXbjRoTXFlZm1pd2pkWGYvejRPVk5ueU81enZzME40a2dW?=
+ =?utf-8?B?NFlqZUhkc3hDUGVrUzAvV0p3WnEvWDN3TWRRMmd1MmtZbW4vS0I5VXJ2UDRQ?=
+ =?utf-8?B?WVFRNGo4TGZVMjZEdFJMYzR3V1NqRWczek5aK2g5Q1ZxRjY2VmhGei8zSVcx?=
+ =?utf-8?B?Nkg0bnZ5UWRabi9ETFVTaUNUTmRXenRQQXZCN3J0RjE3TFZQY284R1Jyb1py?=
+ =?utf-8?B?cVNsVTBuMWJCZ3E1dllXcm9Xa2ZBZVdqMzlCZ0RnR3dVK1YxNXBlR1AxaFls?=
+ =?utf-8?B?UkhOVUVJeGkxZng1Si9ob1ZvUnRQd2hZTFZjOUd5aTZWT0hYVVk0Q2pVSS9w?=
+ =?utf-8?B?VzYxdGYrMXBhS0NITFVCR1JuL204V0R4bHVrSzl2c29LeUxJeHBFS05iYUJ6?=
+ =?utf-8?B?bGd1MTlYeWhRUEwxSXFybmthaUg1UUk1dTFnWVFHNnRFVktVK3NQTmdFNS8r?=
+ =?utf-8?B?YUR2NlhBanYzZ3JIY3c4T3hnb3JlcEJMa2lIUzRwMUlySk5CNXBBRTVaVUxS?=
+ =?utf-8?B?T1NocjVadnhIL3NjREJOc2JWMFpCVkRLcVRwZDI2b3VNK0lLaDRXYlE2NDk5?=
+ =?utf-8?B?dXZpTTgwMFBFK3BRT0pINlAzYW1MdmdDWHFROW9zSElGS1JTY0ltaHVYUWd2?=
+ =?utf-8?B?ZmVlWldKV0FHS05IT2NLV3E0c0VSNVlsd01iSkZldnlyOVNLUGg2K2FaQ3cw?=
+ =?utf-8?B?bFFXOWJBRlVsZEQ5cHNpSVdiSWZONW95bDIwM3M5L0NUeHpCdmowOUxoTmxT?=
+ =?utf-8?B?aFhsTjhyYnN6eStzVzhnUC9LUERtN0FsMTA4ajhKeEJ1MU16N3pCNlZjZE95?=
+ =?utf-8?B?ZTExRCtqYWQzVXlTaDUycTg0endBL2hYVy80QTRTdlI2WllYN1hoZ0NDM2FW?=
+ =?utf-8?B?bnpoT0U2K2tkVFovNDhWdHhUY005UlBkQlBtWVFnbkllQ1JuL0ZOOTFSaHVN?=
+ =?utf-8?B?VnNLTno5SjZqUzZaazgyWFc1Q09nNjZCQSttUFVKdHlKdDhxaGNYbWFmTiti?=
+ =?utf-8?B?S0pSQVdjQU8ySnZraFk5KzVVUE1jMHpycU9OSnBvbHdzWFB0a01IN3AyMDha?=
+ =?utf-8?B?LzY4a3d6em81aUw1L1Mzc1JYbTBqbTlIU29RdmlZaFJ1QS9ER0lkSlhZT3l4?=
+ =?utf-8?B?WGJoVXpWS3J2aEhmc0VpajI2bUQ4N0VKMTZIWDBxc0tOL1Y2cEEwNjV0YlBM?=
+ =?utf-8?B?Qy9xOE1vVkphZm1RQS8rNU1lT2xKVjljT1NmcGdSU3ROd2w2Zi9nQzhpOHRv?=
+ =?utf-8?B?Nlc0d3NrU2dhWnQwdCtUUEltQTRISS92TGNQSEV5ODJIT0gzVVdlNDlXdWhV?=
+ =?utf-8?B?WHo5VUhpTG5JcE5OS1RtZz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Wmtydm5NVCtCT2dMaG5KVWplS1BnTVpDcXNKVUIrcE90c09ROHZHVXdseTI0?=
+ =?utf-8?B?YWN3ZzdhTmFicTVPVGdMVlVtdWJUSjBrL2RhajJ5NVA5T3NtNWg4QW9ET3lO?=
+ =?utf-8?B?UmxqczNWSEtkRXRzaDkxKys2ODFTOG1RdWhRY0dzWXpmRkZYbDlzKzQrRWJY?=
+ =?utf-8?B?bVpydHRKVktyV0dMVmw0ZUJzNW43aFdWT0RtMmxBb2ZxZzlqZTlVZ3dINmNC?=
+ =?utf-8?B?WE9sTEpOSEt0bll5N0V4T3YwaHdjc3hZY0ZHdnphZUt0Q29MQkNJdzF6aFo3?=
+ =?utf-8?B?UFpKY1ZsNnNvK1E2RHRDb3F0b1g1VXVWVXMreWN3VXpSVSs3MzRDcnU5NlBq?=
+ =?utf-8?B?Z3p0bDM1TTJPenhLUEYrUi91TFRmVjV5bDN0OUxhM0doT3RNSUdhdExvZGRk?=
+ =?utf-8?B?bFY2ZVo2SzdreEszMjlkWHp3K3BqMUJ3WGdtMFA4WGREUW91b2FnV1ZhQkgy?=
+ =?utf-8?B?Ly9DeEpFZUFLTE5HZjlCUDVCMEl5Zis4UFBnYlVIM29KVm9zd2RJL25Eb3ZO?=
+ =?utf-8?B?NlFXeHJDU3VkSnZ2S0ZwTXdsaUptWkdwd3FpUHk0VkRoTFdNeXh6aUNONXVm?=
+ =?utf-8?B?c2l4eW41eUJiYWwvZzdJY2IyUWV1YS9vcTFnNWtxVHAxQUpYVkN1Uk5mME5i?=
+ =?utf-8?B?d1lHazlXMEFGNGMzVGxFeW9jWEdYY3NDa2FOOVk4akRjYi9ZTVZ3NUp2KzVp?=
+ =?utf-8?B?eExnbjZMYjV2R3hwSDZRZEtwcjEraDFEVUVBMTJhQkZ0Vk5Za0tVVFcwdEVm?=
+ =?utf-8?B?Q1JjdXJlcWcxSTVzOHQwdmR2YTJGQjZueDJtRkN4NFNJajcxZnllRVJVNUxi?=
+ =?utf-8?B?NHFLS3B3cXhFN0NGYlIxR1ZXRzArUFBXS3l5YmFNdkdsSlRNMGRHVG1pNjNU?=
+ =?utf-8?B?SSs2ZWpDcDhrNnJyeklSOXNudG1PdWlXYVdUU21pNlE3UzJpeGxzK0syM2sy?=
+ =?utf-8?B?Ky8vTEtOZkVKWmliZVlDU0pFR0JVL3RORHlrMll4dCtaQmxqbUxvNWplY20x?=
+ =?utf-8?B?RGo1bGNSbFNFaE9SeVpIRG1IUDBLaHlDYmlWcUwrb3JSN2xDd212allOUUQx?=
+ =?utf-8?B?cnVZbDk5TUYzZXRrc0gyQmYrbm9kR0pvZnF2LytBMXYrbktwZ01teXhpOUJy?=
+ =?utf-8?B?OEJrSzQwQU9LMXEwNm03eGx2Tk8xZUx2bHdzdkQ2aUIvV2hYcU9MSkRRUDhX?=
+ =?utf-8?B?S3ArSS94WlhhT2VUNDFpVjdVVndBTFVxaEdWUnBHRGwwamp2MjVMRDU3QnRQ?=
+ =?utf-8?B?Mldkc3IraExjT2wrNGJNZjlCRDdBdk1EV25pQ3paYS9SMDZWeEZPY0tQdXdv?=
+ =?utf-8?B?U09Ib0tFZzdrUjk4dTR1MkkyTXJSUTZ6YVNwalVkMXJ3Tkh6MVd6QmNQc0li?=
+ =?utf-8?B?dGlOYlNRVldaY2RvRHRHU09ncS9CSkN4dHJ4RmgzZUF6aHNHR3dWbG5CZXFC?=
+ =?utf-8?B?c3FBeEg0Y0NRMnRad2Qzck9pNXdCbGVleXQzTXlHY09vbG16WXNaZ1VncVdE?=
+ =?utf-8?B?T2x2V1pEanJrN2YzZzF4ZHRUNkhFbi83Z0EzbHUrcWpFTHRqZzQzY001SUxV?=
+ =?utf-8?B?YW95TUtyK2s2SUlHWTBZaDhHUDhSVnBtNkx5bDVEMFZtaEpBOXFaZUFSemVz?=
+ =?utf-8?B?eG5KbUlyTXE2WGlDQm1OVHdvVktFSzVuc04wS0ZBTVR0dXpRVm93bEs0bHZU?=
+ =?utf-8?B?UzNyTElBeWZvWHNrQ2NoeW9BVFJwNjgxRmZ0QlVYSy9TR3ozd3liNnlaNDNh?=
+ =?utf-8?B?UDFHQUVtNTlTUys2ZlU4NnZndVhrMFNTaVYyd29abkxjV0ZuUTFLOXF3N2xU?=
+ =?utf-8?B?WWZSRDJmK1NGU3k4cEhzQ01NZ0UzZ0IrZklkL0VTMkRHU1ZWaUJsN1BxU05K?=
+ =?utf-8?B?bk5XUk5yb2FTRjdjNUEzQUtsc3FDS1U1YXB1TDBKZDZmVmk3RWMxcHM1TFFr?=
+ =?utf-8?B?TGdkTzVZajRqem9pSmQyUEFvdWpOL05xUVVxZlJoWDF0amFuTWxLNHFCcnhi?=
+ =?utf-8?B?bWJCaUlDOHRRMmVkK29RYUhyY1hXUEJpNWprOUUrY2tYSGJqUFdXU0JZYkkz?=
+ =?utf-8?B?aVBja2ROV0RwTmVJT3NkNWZUeTNHY0hxSU12c045ckFQRThrQTE1SllQRjh0?=
+ =?utf-8?B?OGlHTHd5RHIwZm5EUlluOUZyKzNMa3R5WHhIbXVESmtUZnRaVXI1NmlZelgv?=
+ =?utf-8?B?ZWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf88ce1c-24c6-470b-e65e-08dcc11ea255
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 13:47:29.7550
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: whSPF+g3vSHgqzKn2juoizJWLW1vl/4gR4hjNe8sqWp0Y81iS56lN1OwgjeKd9iVAUEuQYP23madNQc7leymkAb7Dh5qclFDTChRF1cRkVU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7705
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 20, 2024 at 02:56:35PM +0800, Jinjie Ruan wrote:
-> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
+From: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Tue, 20 Aug 2024 16:43:46 +0300
+
+> BIT() is unsigned long but ->pu.flg_msk and ->pu.flg_val are u64 type.
+> On 32 bit systems, unsigned long is a u32 and the mismatch between u32
+> and u64 will break things for the high 32 bits.
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Fixes: 9a4c07aaa0f5 ("ice: add parser execution main loop")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+
 > ---
->  drivers/usb/host/ehci-exynos.c | 9 ++-------
->  drivers/usb/host/ohci-exynos.c | 9 ++-------
->  2 files changed, 4 insertions(+), 14 deletions(-)
-
-The patch changes ehci-exynos.c and ohci-exynos.c.  So then why does the 
-Subject: line say "xhci"?
-
-The contents of the patch look okay.
-
-Alan Stern
-
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index f40bc2a7a124..e3a961d3f5fc 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -48,7 +48,6 @@ struct exynos_ehci_hcd {
->  static int exynos_ehci_get_phy(struct device *dev,
->  				struct exynos_ehci_hcd *exynos_ehci)
->  {
-> -	struct device_node *child;
->  	struct phy *phy;
->  	int phy_number, num_phys;
->  	int ret;
-> @@ -66,26 +65,22 @@ static int exynos_ehci_get_phy(struct device *dev,
->  		return 0;
->  
->  	/* Get PHYs using legacy bindings */
-> -	for_each_available_child_of_node(dev->of_node, child) {
-> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->  		ret = of_property_read_u32(child, "reg", &phy_number);
->  		if (ret) {
->  			dev_err(dev, "Failed to parse device tree\n");
-> -			of_node_put(child);
->  			return ret;
->  		}
->  
->  		if (phy_number >= PHY_NUMBER) {
->  			dev_err(dev, "Invalid number of PHYs\n");
-> -			of_node_put(child);
->  			return -EINVAL;
->  		}
->  
->  		phy = devm_of_phy_optional_get(dev, child, NULL);
->  		exynos_ehci->phy[phy_number] = phy;
-> -		if (IS_ERR(phy)) {
-> -			of_node_put(child);
-> +		if (IS_ERR(phy))
->  			return PTR_ERR(phy);
-> -		}
->  	}
->  
->  	exynos_ehci->legacy_phy = true;
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index bfa2eba4e3a7..1379e03644b2 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -37,7 +37,6 @@ struct exynos_ohci_hcd {
->  static int exynos_ohci_get_phy(struct device *dev,
->  				struct exynos_ohci_hcd *exynos_ohci)
->  {
-> -	struct device_node *child;
->  	struct phy *phy;
->  	int phy_number, num_phys;
->  	int ret;
-> @@ -55,26 +54,22 @@ static int exynos_ohci_get_phy(struct device *dev,
->  		return 0;
->  
->  	/* Get PHYs using legacy bindings */
-> -	for_each_available_child_of_node(dev->of_node, child) {
-> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->  		ret = of_property_read_u32(child, "reg", &phy_number);
->  		if (ret) {
->  			dev_err(dev, "Failed to parse device tree\n");
-> -			of_node_put(child);
->  			return ret;
->  		}
->  
->  		if (phy_number >= PHY_NUMBER) {
->  			dev_err(dev, "Invalid number of PHYs\n");
-> -			of_node_put(child);
->  			return -EINVAL;
->  		}
->  
->  		phy = devm_of_phy_optional_get(dev, child, NULL);
->  		exynos_ohci->phy[phy_number] = phy;
-> -		if (IS_ERR(phy)) {
-> -			of_node_put(child);
-> +		if (IS_ERR(phy))
->  			return PTR_ERR(phy);
-> -		}
->  	}
->  
->  	exynos_ohci->legacy_phy = true;
-> -- 
-> 2.34.1
+>  drivers/net/ethernet/intel/ice/ice_parser_rt.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_parser_rt.c b/drivers/net/ethernet/intel/ice/ice_parser_rt.c
+> index d5bcc266b01e..dedf5e854e4b 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_parser_rt.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_parser_rt.c
+> @@ -377,11 +377,11 @@ static void ice_pg_exe(struct ice_parser_rt *rt)
+>  
+>  static void ice_flg_add(struct ice_parser_rt *rt, int idx, bool val)
+>  {
+> -	rt->pu.flg_msk |= BIT(idx);
+> +	rt->pu.flg_msk |= BIT_ULL(idx);
+>  	if (val)
+> -		rt->pu.flg_val |= BIT(idx);
+> +		rt->pu.flg_val |= BIT_ULL(idx);
+>  	else
+> -		rt->pu.flg_val &= ~BIT(idx);
+> +		rt->pu.flg_val &= ~BIT_ULL(idx);
+>  
+>  	ice_debug(rt->psr->hw, ICE_DBG_PARSER, "Pending update for flag %d value %d\n",
+>  		  idx, val);
+
+Thanks,
+Olek
 
