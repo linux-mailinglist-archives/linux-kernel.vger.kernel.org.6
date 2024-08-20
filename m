@@ -1,375 +1,327 @@
-Return-Path: <linux-kernel+bounces-294558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460BE958F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D083B958F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700351C2236D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:37:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31ADDB21886
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2752D1BB6B3;
-	Tue, 20 Aug 2024 20:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1248A1BF303;
+	Tue, 20 Aug 2024 20:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oGmdCKrJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oJJ5lRvk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KgYHndSo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980DE18E37E;
-	Tue, 20 Aug 2024 20:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186234; cv=fail; b=BtXGUjlsf+MMXgqZVDfAB5ceSq9WMlk0drUCA+3/s877IbSghnurcG/jMy9UPpbbQGH084sAe0V3wjqbOtu18wxfqhsL1qqiob+zfx+nfadJzG510lS0fm8imULx0PXdsG/7GANhl/ERsqwlL4+7LromcTzXgneQR/pOs3v14A0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186234; c=relaxed/simple;
-	bh=oPN6grJ+d9DpTZwscfW06GJFK3FyzT8gCVFo1+hjeKQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kqODmrw+9x//9g4odqiTCh/+Xzc+dYEzCISL9u8B87RDIvM1J13DXMp1gnhuBosy4Z8QLq9z9FeHUTVrUEETINJbDWZr57nKtjGu40HfI5YcdTgFz09UVVbHSoELnpn/Q/Gr0bA9ceREymGi1S0F+WHGR9WMzQGvFdBmd9mN8Y4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oGmdCKrJ; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724186231; x=1755722231;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=oPN6grJ+d9DpTZwscfW06GJFK3FyzT8gCVFo1+hjeKQ=;
-  b=oGmdCKrJlP7+S7AnbuQrIpL6rYrMWM3a0P8EoSH7mjZSNM0j0nNTd/UU
-   7LiLDVE67bCii/R6JOmGkVN118x/gsRowDF68ViGe6n6YuTTbshmnWU0+
-   P8rpf8MV/vrZAY+gJ0sFNxt6PC3JcBgZlBIrwVaGAhTBquViYXcmWG4ev
-   G4N0Iuecz+xuS8CizTt1OOSSgUBbYe73+acyPhZDVWbvw21x4J3AND2xH
-   IsbtwfxfuNYdTVMSl+drWNwWGwxVpQy7Mrdivu0T4n6yJLE/q0RObw5Ah
-   DdBZIxP4u+nphg0G0C+g/XftWSlRKGHCTAh20e00JIvulTfglyhYnPupK
-   w==;
-X-CSE-ConnectionGUID: 2ooZBJCDSqipE8r3mcQAQg==
-X-CSE-MsgGUID: T0Bdd/TrTWOCHViAkn87uQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="39971970"
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="39971970"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 13:37:10 -0700
-X-CSE-ConnectionGUID: MALekHihQUigWIvw9qCuIA==
-X-CSE-MsgGUID: EvVPC3aeS5+Byurr79HwMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="60821072"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 13:37:12 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 13:37:10 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 13:37:10 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 13:37:10 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.44) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 20 Aug 2024 13:37:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wTQJs79+xtnlRMtpwupKGJMwGg5JtrukS1wq7boqLOZ0d/qLxNor0LRjRlgLCdoxFez8k82qB3DgcJrqgzfILBUX4Zr9K10Iu7qVOKAgqnGdPRh9HI/z3NxZwyAfdi7f9hdmc3JJOU8myqYoc71nTKS41kbBGTBV7IK93gtdmKhFdUYaYbJ7cbLACcw7ujRv/aP4fztz3T1KfxLwSVBsmzT41X9TBhqdeAx4RBQDch9FQ9ihWgHi3vFwfs4vvA90gi6n0twiPuVI2iuhPF+NAiqoXC3dxoRGBSFzPBY7pVFbUbNGZqjFecfpBJ2JakdWRNLbywreCgWFNMkwWuYrDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tkjajvUb65bKbMZEAXntcVdFukW1dtFlZ0hoX+WMMUY=;
- b=c6zvPPD2ldCsgelL0WgZtN9ErmW6imgQH3OINMgnPIAIKBRWegipEOSzBEMAk8AW0GQV0iKhqHy3kAlP4eWoDOvzFC9255v4mUp3M/sviE/6foROa9VByBazgclgZf3RNpdQMP6KyBTck53YpdMRSrSWXRmJJDcywOKJIrgd0hJaNhq/PSA/0WqRaqDifxIpcWfRFbxECa5wikTzpn4QGDLcXwbrE21hF50fxI3SmALIb9IZP8hN5MyuC/cPSn5tjXvUK8d0hqTqOlAYsp+LWyCRTQBe6QR4BwIhzAO89d1fBo+QTr7g7Dz29q4XSBjwu0jaPjiSqxG/N336VHqqSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB7027.namprd11.prod.outlook.com (2603:10b6:510:20a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Tue, 20 Aug
- 2024 20:37:06 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 20:37:06 +0000
-Message-ID: <dd3fcfff-4e8b-4a71-b6c3-1e188d61a4a6@intel.com>
-Date: Tue, 20 Aug 2024 13:37:03 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 20/22] x86/resctrl: Enable AMD ABMC feature by default
- when supported
-To: <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
-	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
-	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
-	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
-	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
-	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
-	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<eranian@google.com>, <james.morse@arm.com>
-References: <cover.1722981659.git.babu.moger@amd.com>
- <1061a60166f2fdb508aaf2dd9163b2bab3705063.1722981659.git.babu.moger@amd.com>
- <ab979768-a98b-417b-b319-6f14da88b857@intel.com>
- <16263da0-603a-44a5-b6be-58c66b8dd863@amd.com>
- <6b1ad4b2-d99f-44fb-afcc-b9f48e51df6e@intel.com>
- <b80a9e76-764a-4303-ada8-aa4d08559664@amd.com>
- <f36f5459-cf5a-4401-8a00-cca83c293fdc@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <f36f5459-cf5a-4401-8a00-cca83c293fdc@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR03CA0017.namprd03.prod.outlook.com
- (2603:10b6:303:8f::22) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1589918E37E;
+	Tue, 20 Aug 2024 20:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724186302; cv=none; b=LJVe5khyV+OWcC5t1JFEU/rqAzLcyNXdOQ8P2ZAsvTmy6Be9ltI1TNsbXZglFIIeAnUhkEEVg8+X/ssg2gNpekxK/10xCdaENOgctolq91CIwPfq4HfieI062H87pQyCiPPt1WswcCOExNkC/MtrOLeCR8d8zaw0o3JHmBx89CM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724186302; c=relaxed/simple;
+	bh=z2NSTYohbl5yMpwnUSZ3/eUP+tZqxVOABVswy0Qs5Pc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=c8owYLq56az0nQ471vOQwZ8kw9Cp9aWZl+p+IU2K5rfQYq6NPK3xw2H4viDBJVrf/g+/8RILxtIrQn/HgjJIdtoLAcSIL06mQm2l1a/c+zHhQezs4GL/h+ygXNaZlcKATXa1Bllp28oxIDShXSkd1jqvjQuvOlMLW3vyOdrP8So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oJJ5lRvk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KgYHndSo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 20 Aug 2024 20:38:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724186298;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b5zNsM/2vqDYVr/xID+pmMS7r6uLjO/FlSyL3abxmYA=;
+	b=oJJ5lRvkPLgeS2bgSKXPCpMXxPzjGgHdMeXeg7jEmUXwpMsiGSdQXbKJwaxXaCh7Wum+on
+	4xh91Ole5s28HY7JxO2JjWqx+LiGWzV6xNjqnzhUCCSTPurATHXrrsbTPVb+FL0ui1zMyE
+	gGkhyUkhtnkZItwtGJ0ujBzi25YXgHMwj2B0Kb3KYRp0MWsvgmLSifs1ted8ZytUnAgw6K
+	ayPIFtCgmraPspNHnPQcyS0OIT4u15gIwfMaW8Oq1LSfzKpjCVuBpFh+yAWvOxVsbaP94t
+	BLK+rVuJcz9dQM63b+3a44Efi0zfxrGF6jQOEPA3uNk+904vWCYuueUgf0pwsg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724186298;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b5zNsM/2vqDYVr/xID+pmMS7r6uLjO/FlSyL3abxmYA=;
+	b=KgYHndSoCrZPbChTuvniloiXFB4I51sP9MZojQINlaJ7ZTXzmCcedSRMNEs7cHaQbXCcN7
+	jzHNAoJuqOYdkoCA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/kaslr: Expose and use the end of the physical
+ memory address space
+Cc: Max Ramanouski <max8rr8@gmail.com>, Alistair Popple <apopple@nvidia.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Dan Williams <dan.j.williams@intel.com>,
+ Kees Cook <kees@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <87ed6soy3z.ffs@tglx>
+References: <87ed6soy3z.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB7027:EE_
-X-MS-Office365-Filtering-Correlation-Id: d999a8c0-64ba-45c7-e46e-08dcc157db65
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bEFhWC91Y3htaUo1aUloenJXWmdvYitseEdobi9PcjMwQWNqcVlodk5Bc252?=
- =?utf-8?B?UUtDRmRvblBWNEFBQlIyb3ZYUml1RHVOVElNMFhhUnBqU2JUMFBQb3gwNEFo?=
- =?utf-8?B?NzNSN3d4MWJPQmpUUmRobmtJbDZUNjZFa0gvOUF2S1lucFVMSUJKVThIRU5E?=
- =?utf-8?B?TUlVb29QWHovcldvTFc5WEhjVjJqeTNNOU9jSUxjUjNBMkMvU3pRbVhaSTkr?=
- =?utf-8?B?L3dYSEZYMWUvNlZVSTZwRkVkVUhPRnBjZVVlNml0Y1dvNHFJL05xcW1yckdV?=
- =?utf-8?B?WWhGMUNTcVVlaDV2YnhrcHBqR3hZME1wT0tnVG52ZGxKRXl5ZTE2SUhqTjha?=
- =?utf-8?B?dFQzVGxQcTI4SENDajJ5RDg3b2ZBWkhyV3RNUUFYMXUyWTNjRGFCNHVCek1q?=
- =?utf-8?B?UXEzWFh0QTJqMXNVK0NNOTVQcm4zVUhMUklPTzFKdWdCWnFWWXBtbjhJTFpk?=
- =?utf-8?B?VWZ5TGEyUUp6UytGbm12UGtBUk5ubC85T1E4czlkNHNiR3gwOU83VGZ1QXMy?=
- =?utf-8?B?c0twVHU1NXdtU1Q0eDh5V091eFJPa0lwSGgrK3Q5YmpmNklqbGRsVFlpc2o3?=
- =?utf-8?B?VFpmWlQ5Z1YvVlBRcCtaSDMycjgwbFdsZ3JtTHE4Mi9meHBNZHRBMEQzemE4?=
- =?utf-8?B?WG8vNTBTelJlMUVrUWtNM3RkeUtaZmhMM1N2aGxkQUtaRlZQUFNVNE1QaWxN?=
- =?utf-8?B?MFE2M0g0ako2a1V0d2t1NFdma1kyM1ZFWnVOeFpoNUlpa2JhMkJydjV0eVNo?=
- =?utf-8?B?MnIxTjZER0N1UDVyZjBZdHM0QnBqUmZJRW51K0x1M0ZPazc4Q0l4Sm9BcWN6?=
- =?utf-8?B?VDJzSkY5OURudHN3Sml4TTlWVUxRUGlhYkhnR0lRVkR5TWRFeGFrakUycXla?=
- =?utf-8?B?V2NGM2NHR3p2bkNFd1QxWDVnWEJQQmdYTG9PZzJpa1Zlc25IUW9nRThZc3gz?=
- =?utf-8?B?OFVvZ01kcDlZMEJCSlA0VkRhcVoyWDBQaWtzck9YbHpwclBaZWZJUlVBc1ln?=
- =?utf-8?B?dFFhTHNOYm55RlNUc1lab1Y4VzZtd3F4cXd1WDg3bHR3TStXYU5GNnhseDhB?=
- =?utf-8?B?UnV5bXVUVC9Xc1pFeTkyV0RINnlOSmVYdjNWeWdKcnFXMFFUTEVCTDFSbnVw?=
- =?utf-8?B?cWpwVFBLeHpoL3NWVDFNR2dtNGlFVzQvdGZOREtEZnRwbktQMFpGMndDSklD?=
- =?utf-8?B?VS92NE45VEFqNk1aMlJvSDQyeXhva2xqeHZkMzJFdklnYlNhajFsa0JHNVRI?=
- =?utf-8?B?cnlXNFMyYVY5MVkybXZPakdrVHliZGYzbVNiU09rVG4zWko0bnVWcWQvYjRF?=
- =?utf-8?B?dUx6UzJmYyszYThTclBSb1IvcHAyTXQvSjBtZGVlTFlma29qcGRJWmlNcjBq?=
- =?utf-8?B?T0V1MkUzTTlDVzVwR0ZVSjh6SDF0QThpZW10aUJmaXhIcGNDMFVSSTc3NXpK?=
- =?utf-8?B?SllrZ091L0c1N1B0M0ViMG5nbmp3N3BuWWdub0RNV3hjT1FxY3hpZ2dRT1Vp?=
- =?utf-8?B?aTBrZXpSekpqTmtxbDIvWEhWT1BwM2RCREJlRTROajlsZTNuWFZCZ0FNZmpo?=
- =?utf-8?B?TEp6cWh4aWo2NHJlRDk2VXNlMGgrZU5GaHhacDMvNTlhcm1sUklOaXNFajI1?=
- =?utf-8?B?NkRHWmRxNFpmUjA2Q3hhL2JtVGhQOU5WQnYvaktBaW5aNXVwbVA2T1pCbE5i?=
- =?utf-8?B?eUo0b1lZc1hERDFHbDVZQXVyNFFhbTIyckxRcUU3OW5xSVhUUXRBTE04QjlQ?=
- =?utf-8?Q?NalGQL6L4n7MLLf7fA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnkwQTJGUitFNy9NMTByVno2a28vYkRmU0o4bWZFRGtRRlFGRUFTTC9yaEtj?=
- =?utf-8?B?VEc4UzJBYlVjQXZQNlpiL1NUa0F6YjhIUUhaQVk2ck1RaGZvV1owSkJuSHY0?=
- =?utf-8?B?ZVpMSWdOK01NWWpzMlFvUHYxRUQvS0xSQzFURVNuNitLbDZEVHdkK1lhdk5I?=
- =?utf-8?B?KzBLK2YrYThZbEdINWp0bGFGYTFpVHN3NWpnVXVpZEpGemdVRW1Xc2VjWjBk?=
- =?utf-8?B?R0lPT2VjM211SkJGTjZHTVI3TkdlOWhWdDJvTXZhVmZydGZ6dzhxYmlrQmRN?=
- =?utf-8?B?RG5CRFQxSThxYlptdGRMWVRwbTg1NHVobXc4UTl1Tk9ETm40OFRTaGJvMHNh?=
- =?utf-8?B?ZE5QcVF2RHB1VU1JVjdBeGVnVHYwOGlnc09SOVNaa0ZraWEySXVYa1haekQw?=
- =?utf-8?B?bzZ0NHRkcXI0TTUzZmxiMlU1bWVvNGNGRzNoTU1iWFJ0ajdxUWNEUm0wMjZu?=
- =?utf-8?B?V0RjdndIT3BFNnRheExOU21DZmRTTEhTTmd0Z1YwWWFhSjhEL0JJK01tWE4v?=
- =?utf-8?B?amxQSmJ5L0oyUmtxQzZEcG9MT3JRQzQ3b3RnR21XcCthZ1MvTElHOUE1cVZi?=
- =?utf-8?B?ZFFGOG9SaE50VHZOL0JOVS9hS01aRTVUMXJxbWhHeDdsNGN5MVZWWjQ1alVt?=
- =?utf-8?B?cCtJdTRLSXhGY3RBMUw1WEtscVo4cG9LSHR3bkJ3NmM2TFZnN0JEblowaTJT?=
- =?utf-8?B?ajdZWnZIMTZFTHdnay9zNWwyT2FvQThFUUltSVNrTVlOYkhSOHU2V3ZJNmpT?=
- =?utf-8?B?TEFPeXJzd1crNjdUeGttMkhvcFAzRTVTVXh6ZUt3UGRadVNqaE9vOWJ4eitF?=
- =?utf-8?B?cDk5Z1BhMjNnanc5WTFQc2pmNXJ1bnB1ZUJERUNURnhEQTJoSEo2eER1TFRr?=
- =?utf-8?B?ZEZOSWtmd3FMdkU1Uzc2SFF4Um5lRXJBOCtmV0IwUFc3d0NTdmdSUkpKa3VK?=
- =?utf-8?B?OHM5V0ZDdTlNbTViQTZjNlpjanJjbVVyN2J4czBBVkVGSXFwdS81V3BIdzMv?=
- =?utf-8?B?R0xwaWMza3VtamtlcGRFUzQwcUpVLzZESU5YRERodEswY3FROHllSGRDNjNo?=
- =?utf-8?B?KzZYUGx5Z2Ric0R4b05aV3ozSlNXS0l3VlV4YVZCUHBnU0hubG9oR2FSVlh0?=
- =?utf-8?B?dENIMTBhMlhSdndFVHFXVk16d3VaazZCRis1dEVJalVMcXlFYmNwczE0Qnc3?=
- =?utf-8?B?enJ0RkFNVlp3bjFjQm1WZXdMd2FHTVdzQWpxODFnNmNNcmtYSXkxUFRDSlhD?=
- =?utf-8?B?OUJpR2lrdWFRSGlPTmN3WG15eHZBTk1KQXZZQzlKa3ZpTncxYWFXLzNrTHJQ?=
- =?utf-8?B?OXJGd09NZ2w1SUNPT0dEcTlRa2NZRHFmZlNDdjgrOElEZmF5d0VBb1YxdFRj?=
- =?utf-8?B?Q0F6elFpM0hxN2tzaE02MnVncGtOemdVRFZCWnZJbGZlQ3RRL3BJMVdjWGh4?=
- =?utf-8?B?eFN0S0s0bDhuMkJuY0N2Z0Q0STkzejc0UHdtSHQ1aG9TaUFTRHVMMHNOSlRS?=
- =?utf-8?B?M0N4em5EaXVpOXlMbDVUV1N2N2pWSm82aDIzT3JlT2ZUZE03SGN6ZEY0c3Vh?=
- =?utf-8?B?eGVuU3Z1NW5mOHFDb09Ha095TGZpMWVFN2R0VmMrNndwRmxMUk8wNGtpOEJB?=
- =?utf-8?B?dEVzSkE2Y3dFREQyR1BkU3NOWkk0elR1YXNVYjU4QVpEY29sWDBxaEVoL1Bp?=
- =?utf-8?B?VXZJclhPcGtMV2ErVjlwZmgzSEhzamQ2ZDNrSkwwOW5rK0lseS84d0dLRHd6?=
- =?utf-8?B?UFROaWpERXArNlRPTnFBcVBob1djWDhMZk53QmNhZGJkZ1BXWWxrVnMvZUs2?=
- =?utf-8?B?cWw1UWp3YTltRklPWXdYNTlUaWdBTmt5NHJIRGl6TmVGWGVWM2o2Uzl2bjFu?=
- =?utf-8?B?V3NSc29vQ0NscGN5T0NRSTJLMHpxWWFid1Zlc3NhOFhXNmV0NHFIK2kwWWd0?=
- =?utf-8?B?Y3FEUEhnVDJpdEFPc3JMblU4c2R2T1lPbXFmZ0N6djJocDR6ZUVKSHUyRlpi?=
- =?utf-8?B?SU9tTkR4eEVkcGVmcXlPYnBaakNkZ3d1aDFHYUgyc2ZxSHk3d1hZQ3d4VWpD?=
- =?utf-8?B?SFhsY3dHOTB3RkJ2YW5IV2RkdFBnRTFkdzFBWG02Vi9sckZ3MWVLWHNJWTBS?=
- =?utf-8?B?Nm8xL1I1VXdTcFhWTE5iTjZFb1kwTlNGN2pDdDVHdzczUGwrTWxMSWkwazBm?=
- =?utf-8?B?MGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d999a8c0-64ba-45c7-e46e-08dcc157db65
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 20:37:06.8395
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sTZv+8iLNtU02YFk7Kw93kJMkRcuwlhzeHEXqs3dLMhGxMFe9O/LfX16Mog3wX99Yd6Y5L5tGuKpauK0MFS31beWtDiNRCUdkdW7OZtr0zo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7027
-X-OriginatorOrg: intel.com
+Message-ID: <172418629773.2215.4158024254077335422.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Babu,
+The following commit has been merged into the x86/urgent branch of tip:
 
-On 8/20/24 1:18 PM, Moger, Babu wrote:
-> On 8/20/24 15:04, Moger, Babu wrote:
->> On 8/20/24 13:12, Reinette Chatre wrote:
->>> On 8/19/24 11:18 AM, Moger, Babu wrote:
->>>> On 8/16/24 17:33, Reinette Chatre wrote:
->>>>> On 8/6/24 3:00 PM, Babu Moger wrote:
->>>
->>>>>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>>> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>>> index 66febff2a3d3..d15fd1bde5f4 100644
->>>>>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>>> @@ -2756,6 +2756,23 @@ void resctrl_arch_mbm_cntr_assign_disable(void)
->>>>>>         }
->>>>>>     }
->>>>>>     +void resctrl_arch_mbm_cntr_assign_configure(void)
->>>>>> +{
->>>>>> +    struct rdt_resource *r =
->>>>>> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
->>>>>> +    struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
->>>>>> +    bool enable = true;
->>>>>> +
->>>>>> +    mutex_lock(&rdtgroup_mutex);
->>>>>> +
->>>>>> +    if (r->mon.mbm_cntr_assignable) {
->>>>>> +        if (!hw_res->mbm_cntr_assign_enabled)
->>>>>> +            hw_res->mbm_cntr_assign_enabled = true;
->>>>>> +        resctrl_abmc_set_one_amd(&enable);
->>>>>
->>>>> Earlier changelogs mentioned that counters are reset when ABMC is enabled.
->>>>> How does that behave here when one CPU comes online? Consider the scenario
->>>>> where
->>>>> a system is booted without all CPUs online. ABMC is initially enabled on
->>>>> all online
->>>>> CPUs with this flow ... user space could start using resctrl fs and create
->>>>> monitor groups that start accumulating architectural state. If the
->>>>> remaining
->>>>> CPUs come online at this point and this snippet enables ABMC, would it
->>>>> reset
->>>>> all counters? Should the architectural state be cleared?
->>>>
->>>> When new cpu comes online, it should inherit the abmc state which is set
->>>> already. it should not force it either way. In that case, it is not
->>>> required to reset the architectural state.
->>>>
->>>> Responded to your earlier comment.
->>>> https://lore.kernel.org/lkml/0256b457-175d-4923-aa49-00e8e52b865b@amd.com/
->>>>
->>>>
->>>>>
->>>>> Also, it still does not look right that the architecture decides the
->>>>> policy.
->>>>> Could this enabling be moved to resctrl_online_cpu() for resctrl fs to
->>>>> request architecture to enable assignable counters if it is supported?
->>>>
->>>> Sure. Will move the resctrl_arch_mbm_cntr_assign_configure() here with
->>>> changes just to update the abmc state which is set during the init.
->>>>
->>>
->>> I do not think we are seeing it the same way. In your earlier comment you
->>> mention:
->>>
->>>> We need to set abmc state to "enabled" during the init when abmc is
->>>> detected.  resctrl_late_init -> .. -> rdt_get_mon_l3_config
->>>>
->>>> This only happens once during the init.
->>>
->>>
->>> I do not think that the ABMC state can be set during init since that runs
->>> before the fs code and thus the arch code cannot be aware of the fs policy
->>> that "mbm_assign_mode" is the default. This may become clear when you move
->>> resctrl_arch_mbm_cntr_assign_configure() to resctrl_online_cpu() though
->>> since I expect that the r->mon.mbm_cntr_assignable check will move
->>> into the fs resctrl_online_cpu() that will call the arch helper to
->>> set the state to enabled.
->>
->> There are couple of problems here.
->>
->> 1. Hotplug with ABMC enabled.
->>
->>    System is running with ABMC enabled. Now, new cpu cames online.
->>    The function resctrl_arch_mbm_cntr_assign_configure() will set the MSR
->> MSR_IA32_L3_QOS_EXT_CFG to enable ABMC on the new CPU. This scenario works
->> fine.
->>
->>
->> 2. Hotplug with ABMC disabled.
->>    Current code will force the system to enable ABMC on the new CPU.
->>    That is not correct.
->>
->>
->> We need to address both these cases.
->>
->>
->> I was thinking of separating the functionality in
->> resctrl_arch_mbm_cntr_assign_configure() into two.
->>
->> a. Just set the mbm_cntr_assign_enabled to true during the init.
->>     if (r->mon.mbm_cntr_assignable)
->>         hw_res->mbm_cntr_assign_enabled = true;
->>
->>     This is similar to rdtgroup_setup_default().  Isn't it?
+Commit-ID:     ea72ce5da22806d5713f3ffb39a6d5ae73841f93
+Gitweb:        https://git.kernel.org/tip/ea72ce5da22806d5713f3ffb39a6d5ae73841f93
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 14 Aug 2024 00:29:36 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 20 Aug 2024 13:44:57 +02:00
 
-Right. I (mis)understood from your earlier comment that this was planned to
-be done from "resctrl_late_init -> .. -> rdt_get_mon_l3_config", but
-handling that within rdtgroup_init() (after MPAM it will be resctrl_init())
-seem appropriate to me since it is where the fs code can set its policy.
+x86/kaslr: Expose and use the end of the physical memory address space
 
-> 
-> I just noticed that I cannot access rdt_hw_resource here. I may have to
-> write another function resctrl_arch_mbm_cntr_assign_set_default() to do
-> this. What do you think?
+iounmap() on x86 occasionally fails to unmap because the provided valid
+ioremap address is not below high_memory. It turned out that this
+happens due to KASLR.
 
-Sounds good.
+KASLR uses the full address space between PAGE_OFFSET and vaddr_end to
+randomize the starting points of the direct map, vmalloc and vmemmap
+regions.  It thereby limits the size of the direct map by using the
+installed memory size plus an extra configurable margin for hot-plug
+memory.  This limitation is done to gain more randomization space
+because otherwise only the holes between the direct map, vmalloc,
+vmemmap and vaddr_end would be usable for randomizing.
 
-> 
-> 
->>
->>
->> b. Change the functionality in resctrl_arch_mbm_cntr_assign_configure()
->>     to update the MSR MSR_IA32_L3_QOS_EXT_CFG based on
->> hw_res->mbm_cntr_assign_enabled.  Something like this.
->>
->>
->>     void resctrl_arch_mbm_cntr_assign_configure(void)
->> {
->>      ---
->>      if (r->mon.mbm_cntr_assignable &&  hw_res->mbm_cntr_assign_enabled)
->>              abmc_set_one_amd(&enable);
->>     ---
->> }
->>
->>
->> Yes.  The function resctrl_arch_mbm_cntr_assign_configure() will be called
->> from resctrl_online_cpu().
+The limited direct map size is not exposed to the rest of the kernel, so
+the memory hot-plug and resource management related code paths still
+operate under the assumption that the available address space can be
+determined with MAX_PHYSMEM_BITS.
 
-Checking r->mon.mbm_cntr_assignable may be redundant since I expect that
-resctrl_online_cpu() will also do the check. Would do no harm though.
+request_free_mem_region() allocates from (1 << MAX_PHYSMEM_BITS) - 1
+downwards.  That means the first allocation happens past the end of the
+direct map and if unlucky this address is in the vmalloc space, which
+causes high_memory to become greater than VMALLOC_START and consequently
+causes iounmap() to fail for valid ioremap addresses.
 
->>
->> Does it make sense?  Any other idea?
-> 
+MAX_PHYSMEM_BITS cannot be changed for that because the randomization
+does not align with address bit boundaries and there are other places
+which actually require to know the maximum number of address bits.  All
+remaining usage sites of MAX_PHYSMEM_BITS have been analyzed and found
+to be correct.
 
-Yes, this makes sense to me. Thank you.
+Cure this by exposing the end of the direct map via PHYSMEM_END and use
+that for the memory hot-plug and resource management related places
+instead of relying on MAX_PHYSMEM_BITS. In the KASLR case PHYSMEM_END
+maps to a variable which is initialized by the KASLR initialization and
+otherwise it is based on MAX_PHYSMEM_BITS as before.
 
-Reinette
+To prevent future hickups add a check into add_pages() to catch callers
+trying to add memory above PHYSMEM_END.
 
+Fixes: 0483e1fa6e09 ("x86/mm: Implement ASLR for kernel memory regions")
+Reported-by: Max Ramanouski <max8rr8@gmail.com>
+Reported-by: Alistair Popple <apopple@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-By: Max Ramanouski <max8rr8@gmail.com>
+Tested-by: Alistair Popple <apopple@nvidia.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/87ed6soy3z.ffs@tglx
+---
+ arch/x86/include/asm/page_64.h          |  1 +-
+ arch/x86/include/asm/pgtable_64_types.h |  4 +++-
+ arch/x86/mm/init_64.c                   |  4 +++-
+ arch/x86/mm/kaslr.c                     | 32 +++++++++++++++++++-----
+ include/linux/mm.h                      |  4 +++-
+ kernel/resource.c                       |  6 +----
+ mm/memory_hotplug.c                     |  2 +-
+ mm/sparse.c                             |  2 +-
+ 8 files changed, 43 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+index af4302d..f3d257c 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -17,6 +17,7 @@ extern unsigned long phys_base;
+ extern unsigned long page_offset_base;
+ extern unsigned long vmalloc_base;
+ extern unsigned long vmemmap_base;
++extern unsigned long physmem_end;
+ 
+ static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
+ {
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 9053dfe..a98e534 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -140,6 +140,10 @@ extern unsigned int ptrs_per_p4d;
+ # define VMEMMAP_START		__VMEMMAP_BASE_L4
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
++#ifdef CONFIG_RANDOMIZE_MEMORY
++# define PHYSMEM_END		physmem_end
++#endif
++
+ /*
+  * End of the region for which vmalloc page tables are pre-allocated.
+  * For non-KMSAN builds, this is the same as VMALLOC_END.
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index d8dbeac..ff25364 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -958,8 +958,12 @@ static void update_end_of_memory_vars(u64 start, u64 size)
+ int add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
+ 	      struct mhp_params *params)
+ {
++	unsigned long end = ((start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+ 	int ret;
+ 
++	if (WARN_ON_ONCE(end > PHYSMEM_END))
++		return -ERANGE;
++
+ 	ret = __add_pages(nid, start_pfn, nr_pages, params);
+ 	WARN_ON_ONCE(ret);
+ 
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 37db264..230f1de 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -47,13 +47,24 @@ static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
+  */
+ static __initdata struct kaslr_memory_region {
+ 	unsigned long *base;
++	unsigned long *end;
+ 	unsigned long size_tb;
+ } kaslr_regions[] = {
+-	{ &page_offset_base, 0 },
+-	{ &vmalloc_base, 0 },
+-	{ &vmemmap_base, 0 },
++	{
++		.base	= &page_offset_base,
++		.end	= &physmem_end,
++	},
++	{
++		.base	= &vmalloc_base,
++	},
++	{
++		.base	= &vmemmap_base,
++	},
+ };
+ 
++/* The end of the possible address space for physical memory */
++unsigned long physmem_end __ro_after_init;
++
+ /* Get size in bytes used by the memory region */
+ static inline unsigned long get_padding(struct kaslr_memory_region *region)
+ {
+@@ -82,6 +93,8 @@ void __init kernel_randomize_memory(void)
+ 	BUILD_BUG_ON(vaddr_end != CPU_ENTRY_AREA_BASE);
+ 	BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
+ 
++	/* Preset the end of the possible address space for physical memory */
++	physmem_end = ((1ULL << MAX_PHYSMEM_BITS) - 1);
+ 	if (!kaslr_memory_enabled())
+ 		return;
+ 
+@@ -128,11 +141,18 @@ void __init kernel_randomize_memory(void)
+ 		vaddr += entropy;
+ 		*kaslr_regions[i].base = vaddr;
+ 
++		/* Calculate the end of the region */
++		vaddr += get_padding(&kaslr_regions[i]);
+ 		/*
+-		 * Jump the region and add a minimum padding based on
+-		 * randomization alignment.
++		 * KASLR trims the maximum possible size of the
++		 * direct-map. Update the physmem_end boundary.
++		 * No rounding required as the region starts
++		 * PUD aligned and size is in units of TB.
+ 		 */
+-		vaddr += get_padding(&kaslr_regions[i]);
++		if (kaslr_regions[i].end)
++			*kaslr_regions[i].end = __pa_nodebug(vaddr - 1);
++
++		/* Add a minimum padding based on randomization alignment. */
+ 		vaddr = round_up(vaddr + 1, PUD_SIZE);
+ 		remain_entropy -= entropy;
+ 	}
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c4b238a..b386415 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -97,6 +97,10 @@ extern const int mmap_rnd_compat_bits_max;
+ extern int mmap_rnd_compat_bits __read_mostly;
+ #endif
+ 
++#ifndef PHYSMEM_END
++# define PHYSMEM_END	((1ULL << MAX_PHYSMEM_BITS) - 1)
++#endif
++
+ #include <asm/page.h>
+ #include <asm/processor.h>
+ 
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 14777af..a83040f 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1826,8 +1826,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+ 	if (flags & GFR_DESCENDING) {
+ 		resource_size_t end;
+ 
+-		end = min_t(resource_size_t, base->end,
+-			    (1ULL << MAX_PHYSMEM_BITS) - 1);
++		end = min_t(resource_size_t, base->end, PHYSMEM_END);
+ 		return end - size + 1;
+ 	}
+ 
+@@ -1844,8 +1843,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
+ 	 * @size did not wrap 0.
+ 	 */
+ 	return addr > addr - size &&
+-	       addr <= min_t(resource_size_t, base->end,
+-			     (1ULL << MAX_PHYSMEM_BITS) - 1);
++	       addr <= min_t(resource_size_t, base->end, PHYSMEM_END);
+ }
+ 
+ static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 66267c2..951878a 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1681,7 +1681,7 @@ struct range __weak arch_get_mappable_range(void)
+ 
+ struct range mhp_get_pluggable_range(bool need_mapping)
+ {
+-	const u64 max_phys = (1ULL << MAX_PHYSMEM_BITS) - 1;
++	const u64 max_phys = PHYSMEM_END;
+ 	struct range mhp_range;
+ 
+ 	if (need_mapping) {
+diff --git a/mm/sparse.c b/mm/sparse.c
+index e4b8300..0c3bff8 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -129,7 +129,7 @@ static inline int sparse_early_nid(struct mem_section *section)
+ static void __meminit mminit_validate_memmodel_limits(unsigned long *start_pfn,
+ 						unsigned long *end_pfn)
+ {
+-	unsigned long max_sparsemem_pfn = 1UL << (MAX_PHYSMEM_BITS-PAGE_SHIFT);
++	unsigned long max_sparsemem_pfn = (PHYSMEM_END + 1) >> PAGE_SHIFT;
+ 
+ 	/*
+ 	 * Sanity checks - do not allow an architecture to pass
 
