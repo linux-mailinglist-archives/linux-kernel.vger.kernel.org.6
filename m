@@ -1,79 +1,100 @@
-Return-Path: <linux-kernel+bounces-293561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC89958156
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:49:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390AA95815D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA00F1F23EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342B81C23D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5605F18A92E;
-	Tue, 20 Aug 2024 08:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFE018A93A;
+	Tue, 20 Aug 2024 08:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RY/oDBbQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf0NewzO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9824018E35E;
-	Tue, 20 Aug 2024 08:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1CB18E352;
+	Tue, 20 Aug 2024 08:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724143750; cv=none; b=LXQbfLTSKaDRVELx5pmO0NYpKj0ywlRCWd583DdfEkdQg4/gJrvyDHQJU9v7E2mKWnsa9TlXyAGwsRH5IKzDQ/869NZ4nP1FnUBpYnvO6hytQryaDpEuvXq+sc213alSER0JbNeCiHlv7tBO1WQbctEnuzlF73MLHzeNKCtYCRc=
+	t=1724143831; cv=none; b=jUEFr8I4t8PE82wqEifBJ+Yl+NQrhbWww5BN3X+6ic8SVfYRDtbXywUvcGhIjlLC5EP4xV1r2xpbF1osPwp7WobH0jOtO3Wgz9WP+3xVHPfcXRAx1olTbzjgR4PeLHbhDMKYY9QlTj3skU0JBaNWsE4frBHJGY5Qz5leUmPoYgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724143750; c=relaxed/simple;
-	bh=7td8UTWUtBpxNrwYc/4TUxUZPXt3/6PTBBOx63f0MWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZq+/dvbZER/rQ8efGALyWTr+sxbTZ7iXeTkWM2ib8hp39VKsaxo4crFKDJR7F3Vpjw9BLV1qZyq95nwUqDMVNqhoJAI3tJO0P0jtpkJxkssjdtUvLSyemQEWbZMNVzDPWaH+lJ50vQEp+aw6v9mSaR5c1t/shCYjaIi71MvqVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RY/oDBbQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3708C4AF0B;
-	Tue, 20 Aug 2024 08:49:09 +0000 (UTC)
+	s=arc-20240116; t=1724143831; c=relaxed/simple;
+	bh=tcAL/DKKMYEH6sgIONYpEHFf928x+8OcIG6Of0r3HaU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pRBaBznv1lfoqmhFNyeGciwvHXMO4bwANJQhc4imqRT8XKJmuKgPZz0qgHRuPX5Eu3jPGii1y/MsAgHKWVZOtHhRkkwJdhJ5sLIzuelIh4p2T55xR3xLBQpKVg/NxntyMS9G6uM5Yu6emL6V1QRX+dezWeYjQtoHSK1svF9K5g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf0NewzO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD29C4AF0B;
+	Tue, 20 Aug 2024 08:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724143750;
-	bh=7td8UTWUtBpxNrwYc/4TUxUZPXt3/6PTBBOx63f0MWk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RY/oDBbQkI1nyS16xOF1/lch8QijVo45PI0UZf1XHjmLEuleZ/XXJhjSSdM7cL9g/
-	 7ZK5KtIALn3zvZbfQzwFeWOmOu+/IIQBnw4j3FS5hGHCLFWc5C8vQX30ja9P84Z5J+
-	 eMLAWjejYTjKUmFgwTRwKhCN7Be4RRaNaryUIvsVLwLd3QWXEvZ+bEnDCwnID3NUsf
-	 u1Ul0HhelvAALFwc7FtfV3TUHneMdkqOU4ozZnlwhChgxwFgstYUTzPqrtuKBTDdZe
-	 l7Rr0EU3ho+gwOilTpHB8LV1VTPG57jbsHRGHSae571icj/FsYHhBsVelo8SsYlGPs
-	 B5aAK27+Vkyhw==
-Message-ID: <122f238d-c375-43a4-b3ee-611c50b478ed@kernel.org>
-Date: Tue, 20 Aug 2024 17:49:08 +0900
+	s=k20201202; t=1724143830;
+	bh=tcAL/DKKMYEH6sgIONYpEHFf928x+8OcIG6Of0r3HaU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Wf0NewzOa4AqK793Zsy/0Cdg1bxtXHzLeD3U+bpWJ98xqPuMnJRxAcYf0B3cIqFfv
+	 cs3V1A3BfaUnpKP8CDHwJRb+RMSxYKgu1KKzilDX7Pid6ttZEsyWkgOMrD3f974qb8
+	 u+vd4qqYLoJaIAd+h/mgw6ojWtrRJQflirDoKMs+9Da9TK7F66mIwxrYBWP0+deAO9
+	 qW80+w9EWVq1yGQW9vkuUzBNeL2h++Z7p2WUFlsIeR0AL7XU/c6olXZ9IK4X+Deq7Z
+	 eemmro7dfyxFJsFjJsDqrLUL8ix7N/S0eYJDFo5ZwD33d3eAOGBK+yrL83b8uzCWph
+	 Tmf66obmasQEw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgKZP-005CPB-Sw;
+	Tue, 20 Aug 2024 09:50:27 +0100
+Date: Tue, 20 Aug 2024 09:50:27 +0100
+Message-ID: <86v7zvy3vw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: tglx@linutronix.de,
+	Suravee.Suthikulpanit@amd.com,
+	akpm@linux-foundation.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
+In-Reply-To: <20240820075401.1206522-1-make24@iscas.ac.cn>
+References: <20240820075401.1206522-1-make24@iscas.ac.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2] zonefs: add support for FS_IOC_GETFSSYSFSPATH
-To: Liao Chen <liaochen4@huawei.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, naohiro.aota@wdc.com, jth@kernel.org
-References: <20240820022029.8261-1-liaochen4@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240820022029.8261-1-liaochen4@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: make24@iscas.ac.cn, tglx@linutronix.de, Suravee.Suthikulpanit@amd.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 8/20/24 11:20, Liao Chen wrote:
-> FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
-> format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
-> standardizes exporting sysfs datas across filesystems.
+On Tue, 20 Aug 2024 08:54:01 +0100,
+Ma Ke <make24@iscas.ac.cn> wrote:
 > 
-> This patch wires up FS_IOC_GETFSSYSFSPATH for zonefs, it will output
-> "zonefs/<dev>".
-> 
-> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> Add the missing of_node_put() to release the refcount incremented
+> by of_find_matching_node().
 
-Applied to for-6.12. Thanks !
+This doesn't reflect the patch anymore. Something like this should be
+closer to reality:
+
+"We fail to perform an of_node_put() when of_address_to_resource()
+fails, leading to a refcount leak.
+
+Address this by moving the error handling path outside of the loop and
+making it common to all failure modes."
+
+With the commit message fixed:
+
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+
+	M.
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+Without deviation from the norm, progress is not possible.
 
