@@ -1,143 +1,257 @@
-Return-Path: <linux-kernel+bounces-293533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14F6958100
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DE9958101
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE29287124
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D68E1C24408
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5933E18A938;
-	Tue, 20 Aug 2024 08:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E6318A92D;
+	Tue, 20 Aug 2024 08:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="NNje7Jmi"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mV1vW047"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E2818A6B6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142618; cv=none; b=Ig9YnvGMupJpIQAQnurYQwgHuokS+CPSPaQ7JiftU4xjspgwQr6CBaS63qZ5LwMEyaVv2Cf8DoaSdrEaK3DrZbSWE1VuCa6O26Yc2wXUCr6Ag867rY5mX/J4WWxmf+MSWirqEbcFGEzBL1cXGUe3nkAcghiRE/TJmnpoDuDdg0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142618; c=relaxed/simple;
-	bh=TRU83+gdLy9W4YUZl8iWPzvI2LOP1Kh2BEShyjf0IqY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0NI5aeiqf4nV02Wta4HeRggHeeYP/We4sAX8093PElXThJbImvjuyxri9pF3supgY2deNuziYdRDmnKz1cQt1TxTbynNHx5LTUXnXw/NDwkCfem+/fPsSLJHZrEkCpAwKr2+NLfhVtJmAz2O4AtFeEzvceqKlC+YyPWrJbxnRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=NNje7Jmi; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e162df8bab4so1867381276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1724142616; x=1724747416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AZqeWsMIa4G+/Jffk4q0DpUs0TIfN5gPXqtsEPQIEU4=;
-        b=NNje7JmioAy08T7lf7tHdSLPMj0Pr3Hamzj2j7aQ4dezc4+MmxFKuUvhqrc3imEhpt
-         VzNhPkrTMqWrYWfS4/lf9CJwvQamwhFYel9pBcGsmxvmN4JgP7iQUA4fNKw3+u5HFkHV
-         72DzSd/KJn4nCw4hmT4siwUHsYUS2G/sbPAPDhrqoOlRfLtt35DyZLyhTQtSc3TRitUJ
-         cc68cYkV3ylzda87ECfsX3FubqYCj3UPOSHy3Sw9ExpIS15mXKdForlGkpN+UFHrzY/j
-         J2U10opIApOfrS1oKVxAvYhyEt44+U9E2oWiA/EsxL2QW25H6h1s5F+0Tv3CE+J2+amf
-         t0Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724142616; x=1724747416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AZqeWsMIa4G+/Jffk4q0DpUs0TIfN5gPXqtsEPQIEU4=;
-        b=F+B5lUaneppNpZyimae99LYcMBOLLvcLJ80v0RUxauGKifDelsRliyYI8rIplp9tmd
-         pYuY8K/Af69kPWrjBG6AR7BQ2fue+oXnfj5YB+itOUifqfgSzQuoU/tgg83tkXAMQRZP
-         6gx+qtlt2tHZwtvQgn8YOMETgykiRRn65MbDHFKdd7zLxxXGkBUzFlvV446GgKTWujaH
-         cEeTaMuYt612bOUQwS6UfgFJjH6DXJ0OC9OHwNTG7YzLfUtdnAkRVaZ/g1vTAl1vqdHF
-         RFIQzpQj0AK06/Zh3rp9aKP+SVSXARsJhP52SCpZmbu5nIJmdkbI38sD6sgtL9WrG5GE
-         9nwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1+apU8DqOmAgfwChHuVQqsiaIZS6AKvFTYSYEnOkS4D7CWiHqpz50GPwFTfoZwzY6LU5Yy8jEuDMal1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+C6pAvsqs/eTR1GJD94ENbD7nueDUHjy0wJtQH5mzMuiiR6jG
-	34K3MmvyAoV3l7j+t+BFHDo9AEIUBZid2zIcC41fYVWL2SOJq/nlaPSi820gz2nyf8RNYdwxBwB
-	HEHVgFCXiGQm9elp7bLbouaXgf13G9/W1EtrTGA==
-X-Google-Smtp-Source: AGHT+IG57A46tSVSlUwBGa65sWLT3dWQaLzZIDDHTtIjcr1bc6ll69vw3ONJvZa7AKDIafyzi3kD1Osy0aRv1CnPdGc=
-X-Received: by 2002:a05:6902:988:b0:e16:3d01:3fc6 with SMTP id
- 3f1490d57ef6-e163d0148b9mr5405653276.21.1724142615533; Tue, 20 Aug 2024
- 01:30:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDEB18A94A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724142623; cv=fail; b=iVhEKUuxi3pI6e3E0V1QVNYglfPRitdcEMxM9ZOls8KdXEz8azznnVFDbWSf6ZvQ7LEjbdp5xgHSc5zQUb2r0+MYYrPnBGguAPjcTDqEV1YHP99oqUpW5c5k1GDFNy2URbp4wz9yoK3AH+707IGp1IU8eupSITF8CiSWgQ2dS0c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724142623; c=relaxed/simple;
+	bh=NHPGS/YcifIXAVRgjcVqZk79uxC23LyYINZ9QCBQe9o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Y6kANGQ3XErDf2SwW8XUVqAj97HgjlLt9AOmDWqtUEdcPDJGbOU0Up42vL/qtZ8C5NhyZlN1qVjfcuv9yzvKwjst99268IHARJHD58zNjU/zj5k6JNoQ0M7i1SKg714MPEIzLtazNG47CagVfKBffACM77yFcq8rBMt6LNP6I+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mV1vW047; arc=fail smtp.client-ip=40.107.92.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Sehot+Cai+/EgcX1p+I4Yjx4tTE379WNnFo7dAWx1Z7AURbk5eHHPeT+yNLbtmzS95ng5WrxUIYGLbq/4cvEkb4ITq/P1mud9bANgHYGMIeppVwEmev6vvOcUfERKu4rr5f+0TIVEAYAy5ke987W2u9TI/+3J3OJtiuuyz3wd9TKJxsD3rJl1aycJTHxkhqYTcV4ELKfVAd/NzVYVFPVQBn7a4MJFF+HxVdwtFMk2p/blmJ0YHx2+C2S83i+8LW556MJlr/yMTiO5M8M8QevfrQAWzIgMm23JmYLpN3JdkQwWbVrqtPpIXzvFwGJ7cuM6iW+XKGxzA0PAwRYg3L1Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VMtgv/9XJb0vFCZE0ktkBynUl8swTrkn8wQV5wuSQWc=;
+ b=PlM4jCBYm4PaInIMGEvQRCBlAImf5TuA5YYxF5uB8LJykvCOi2kE6aIv2SCD4swckiX75PSl3TrWwZlb1HkT7gRv0NKpW8JVKSkXjlieUww0yJYArqQ13AmkuDVEBZ+y/BkR/pzpoRKNxhRCbDo1BHVpGXrr9l6wWHoUW1Q9kcSp+ClqenFdfr54bMrdFz+XYyjayTuG09prDP7YAIjbu+UJE5pWXaiGd86T+U4p5XKOMcJGslGkWTXz8U6CgX8ORsdyAKFfFApBzb/opp/Rk2W+o2xJ8S+db/gU3ydwVRWj+t0XnQ3XzonS8xnIkn1/TRtry6LcM3NFwB7ElFobgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VMtgv/9XJb0vFCZE0ktkBynUl8swTrkn8wQV5wuSQWc=;
+ b=mV1vW047riEprA6juOJy050JUif71tw0TwHTUJzqe50MZAGBA8zgCM38EqZjEBN3+1k7JWk3Cr16a08HeQXxkca5wILbpdj/s2r95pN9Aay5t6VZPqwYUQjhLH0DC1KShqiMPRzPrKdKBNpxKInfLr3Gi15lhcg+AVvmN1dKH04=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ SJ0PR12MB7460.namprd12.prod.outlook.com (2603:10b6:a03:48d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 08:30:18 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 08:30:17 +0000
+Message-ID: <72e59734-431e-4eb4-b27c-44eefab3dcb0@amd.com>
+Date: Tue, 20 Aug 2024 14:00:08 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
+To: Baolu Lu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Yi Liu <yi.l.liu@intel.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
+ <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
+ <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
+ <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
+ <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
+ <20240819123400.GU3468552@ziepe.ca>
+ <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN2PR01CA0084.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::29) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521152602.1097764-1-patrick.rudolph@9elements.com>
- <20240521152602.1097764-2-patrick.rudolph@9elements.com> <ZrYH8QlXH5Gfvnz_@black.fi.intel.com>
-In-Reply-To: <ZrYH8QlXH5Gfvnz_@black.fi.intel.com>
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-Date: Tue, 20 Aug 2024 10:30:04 +0200
-Message-ID: <CALNFmy38aq915Oj7x4q27OWbiympDU=Vjo=7anTYx7w3E=F2UA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: cy8c95x0: Use regmap ranges
-To: Andy Shevchenko <andy@black.fi.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, naresh.solanki@9elements.com, 
-	andy.shevchenko@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB7460:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ce3553a-f726-43ef-1c39-08dcc0f2524c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eXlwUXFoK1U2UG5rSUtPcVl0WHl4VlRvL0ZlT2s4TFdpa05nZDQreVBmcFNY?=
+ =?utf-8?B?bEs2TFNvZjRrbWJ4MTB0WnBTSE11SEZldUNwQXBlbEhWdFpRdm92WDBIcGh1?=
+ =?utf-8?B?Z0dQc1lBb3BCY2lxOHNLeTYzVVRFamRSYzdKK0NCZ2cyS0pkTWRRNEUyNmk5?=
+ =?utf-8?B?dlljNWlkenBSNysrRGZhbXRWYzhsV2lPL2RTZ2JwWk4yblpURWdlK2FFeS9o?=
+ =?utf-8?B?dDJSQ2pPaTczWlIzb3pMdUtwc0VJQXFzR1Q2Uys0TEIvZWNoSEJvcDIrL2RT?=
+ =?utf-8?B?a3J6bnJpZDNTUWdPbkpzeGdTM1JFdHg2N2tpYUM4VFZ2MFYrbnVyNXJCMFRI?=
+ =?utf-8?B?RWdSREJwaFJrWWpNaGxyY0t4Y0toaGpKMjJKR0F5L0diR2NESGFMMXlibG9y?=
+ =?utf-8?B?Rllwd3pJYkJxckYxU3ozMXJMR3hraytpVU5wblg2ek9rY1g0MUtzcFVWWUxM?=
+ =?utf-8?B?LzlVY2VHMHIyS1kwTVk0T0E2c3RuanBjZTJDRm90VTJOVU81anpMNkhXbFhP?=
+ =?utf-8?B?VVl4ekx5Y3RnWnJsUW9xVXpXQkliald3VnNsbm12R2thbXB4NkZCeld4bm9W?=
+ =?utf-8?B?bVVlZURWaXhoUkE2SHQ0ZlUwYlJDY0R3bm9BZmVzcUdKTGlCN01qTWdQY0lZ?=
+ =?utf-8?B?UFY1UDIrdVN2NG9KdnFsRGRaN0l0UzZYQUlacFRaZnk1UVJPTEdjZEFyRGpx?=
+ =?utf-8?B?SEl1eXk4aVBWbjk3dTJEdGw4REZFb3BHUHlrWGhJZWdwbUh3ZDVsNmdUS0p4?=
+ =?utf-8?B?Uy9qaGtYS2dvOXM0b2FhcW92dlV4UWc5aXhYcmlMTmtvREYzUkxnVlBtbGtz?=
+ =?utf-8?B?S2hZZDZGUjNxd1lJVkVmU2lENnVCcGJVQ1lEUzlzZnkwYXlEZ01xcFR0TjNh?=
+ =?utf-8?B?b1llQitWc2F4Mm1aTkp2SFFYWjU3RW1xT2M0ckQ0dDNiNzRad2plWEROV1Ru?=
+ =?utf-8?B?N1pWVVFNRGFrVFNlY1lsaEJZbVQ4L2xiTVdQdWh6S1RLT29NdlpSNTBBRlB3?=
+ =?utf-8?B?SmI3eVNjSEQ2K3ZlclFjRUVjTTVCd0xreGpuY2hiNnVXOEErZkVNS0lJbFFS?=
+ =?utf-8?B?dVBGWFR2OEtQV3QvMzI4ZERSdW52Ti9CbWZXZXc3dWd5YjhYUXUwaytpYzUw?=
+ =?utf-8?B?em9oVXkybHprR1cxNHNOL3V5cVZGV3NTUWdTRGZwQVU4RERWLy8xQ3p2SXh6?=
+ =?utf-8?B?ZFo1Wjl0dTh6RlBCcEY0TFgxeVZFTmdJcXpWY04yeTBxNVFBQTZjSUhPN2Q4?=
+ =?utf-8?B?Tkl4UTlrTEJ4cGYvVC9vTndqK3JoZG9pWlRJVkJ0dVJyL0xsMWdHNE5rQzRT?=
+ =?utf-8?B?M0tUOXY2dlpMV2tWbVR4Njdkbkw3UlRDQytlY0w5aHA1SVdDYzk3dzRRMzNh?=
+ =?utf-8?B?MThkT2ZRcXB6ME1TY0lzb2t2OHIwa1RaOUVSZHIzMWlVcW9RaEVCOGJHakNr?=
+ =?utf-8?B?QWpPQnAwY2t0SEZLN09LOFc0UTdUMUNTcFYyNUhnOEJ1UWlwYVJsSmdCU2hv?=
+ =?utf-8?B?OXE5U1pFRUoycHp2NGszaVEwMHgxNDVIc3MwcG9zZFZIcTFteEd3MUVrWDVB?=
+ =?utf-8?B?TlVMQmhBYmgybEFwVmpYMHBFdlFhbkJvVkZpdEExVmpkUVllYjE0RzJ0TVZB?=
+ =?utf-8?B?WSsxZURBZEk3eDRyeUdYZ0RacTN4YmlsQVJ3SmtmWEZ0V3lQR2ZyTTc2WTRC?=
+ =?utf-8?B?ZUV2SjRNWkVKYXhKdmJhNUxNUE9OaFhCVCtIdkYwd2tRaVV4TEcrNUNtQVJC?=
+ =?utf-8?B?aXl2eUpUNEFQQ0hMSDlTbEZ3b2phYnFxUWZOcmpPSWVsWWN6b05QSWJpd044?=
+ =?utf-8?B?dldjZ2wxaGNUcURrWE9vUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SytLeFUxYTFtOVBEZGsvcno1dnQzejQrT1BoUllqMjJTbVZxam96N1BhdjYx?=
+ =?utf-8?B?VGlIcVprZjBYK2FkWHNhU0c1d2RiVEtlVm1yYmJDZWJ1blEwYTlWWUF0YVVo?=
+ =?utf-8?B?T1UwM0V0bzlsWklTQnpLNTQ2Q3dObEp0TVJFVllYVlZIQVlwekZWY2o0eWpY?=
+ =?utf-8?B?ZkhtUE0wTVZvcDdBdDcrTWVvVGJjM3NDbk9OekhlRU0vTUxQMEFtVFlJT0ps?=
+ =?utf-8?B?NTVDTDZmRXBnNml1STRSYldRTjNYSUMzR2dCNlBvOG5yaGxHeVRldVJ4RnA0?=
+ =?utf-8?B?ckd4WmNTeGVWVGpBSFZVcG5XdGgwYVFlTVo2NndyWVpJc3h3eWU5TjcvbnJC?=
+ =?utf-8?B?T3ozL0VEZndIK2ZCUnZCMHUyVGdmSFF5NHRCb1E4d1RRRDZFc1BoME42YzhW?=
+ =?utf-8?B?U2FPQlN4OXRpY2JCUFN1b3JJZ250WjBIaGphN3dTbzdBNkJucUR4enBhQkFN?=
+ =?utf-8?B?QWxJQ1cvdUJ5MTVBaDM0bm5pT2xya0h0aHp6akZ0K3NxUkkrenJmeFBScGZ0?=
+ =?utf-8?B?enNMMmYwajVicDU3dFAxZXRTOEY0TTBwM3AzYVJtZU53KzluWEdLZ05xR2Nh?=
+ =?utf-8?B?ZHBjczdwV1pQNVM4RE9ObDFBRUNWMTZLM0xqWTVVbndQeTk5RXZUdUZlWDEy?=
+ =?utf-8?B?VVphZURacC8rOFpVMHR2U0RvWDJmMW9DUmNJZmVvcml4U0pRTXByL1ljZ01q?=
+ =?utf-8?B?OTRFMnppMnRCQ01MZnV5K3dGRVhTSkk3cG1kamhudC9uUDlSUDBkR3NUYmNM?=
+ =?utf-8?B?a2xjcnZmQlhHSnc3R1FnNmhDMGFmMkEyZWZlNGxvaHpRV1Jicm5aeldCV3Yx?=
+ =?utf-8?B?NHo3dlBFZC9BY2xHTHNwdVhMaVZuS1RTQWZVS0M1aEJtR2FjZ2RCLzcvOFc4?=
+ =?utf-8?B?M0FqOFFMMXJwT0c5RDF3UEYvQUt4UUtWNkJ1ZHZzT1NEKzJMSnJURE4veXMy?=
+ =?utf-8?B?d3Uxd0JpMjhpblI3QThCM055RFVzRStYUThkNWNvS2QxQTJjWEdsazVnSTFM?=
+ =?utf-8?B?bzVFWFZWT1RKcWdRZlEzYjlEY3AzMHYwVFpYTUw0ci9vL2djS2FzK0k4OGhh?=
+ =?utf-8?B?VUFQNm1NMjd4alc5aGQ2aUE3WDdQNEZiQ09FbnJFd2pGZ1VWS0w5WlMvZThS?=
+ =?utf-8?B?cE93SGFUcEc0bGNBL0FVNFppZG5SMXhHeTI1Mm9WYUdrNGI3V2RZcy8zNEJn?=
+ =?utf-8?B?SjRWQTJkdnJ4UGI2RUM5cVZSd0U0S2NGYjM5VC9xMG1uVm84cEFnbzNPWXV5?=
+ =?utf-8?B?RXJPV3lBYVJZMDQxb1dnNmkvSXM2M28wNEhHYk9RVkJXZ1pJYk5Tcm95alBJ?=
+ =?utf-8?B?dU1mV3ZaZ1o4Qng3OFppUDZ5c1czK3Z2bU9LYW9aY28zYXhZeHhJWjhkdUM1?=
+ =?utf-8?B?QXR6Zk1RSmt0eWQvcHNrYzM5dWNEbUgzN3JvZjJSbDNWU2xIZDU1a2VpNXJm?=
+ =?utf-8?B?Q1dzYjlzc1ZHWXV3TXgxUlA4cklTd3hNZ1VMTHZkeEV5c0NvaVhyQjFaNWRr?=
+ =?utf-8?B?OXZEZDl3UmNCZ1AyeUFpbHEvVXprcm5sbjVnVCtEY1NqbzU3SjRhUU1nL0o5?=
+ =?utf-8?B?NWdZd1pOclpNQkRlWlJOTWtSVllkUHNGWWlBNjN3TnNuWWdPSkhXYktYbGc5?=
+ =?utf-8?B?RUIwWlk0ZGRFNm01aEV5U0Viazl6aW44M2VsQ0YwYXNBSVo4S25nb0hLU2h6?=
+ =?utf-8?B?QnU1K201THdwRzlLclFlVFJOUUtoRVBucHgwV0hlVGF3ZkxYSDgwMkhIYmI2?=
+ =?utf-8?B?ZGlZc2lRakRLZk9ON0NoU3BjdHBFUDA0bzRNZlliZ1QwVlNudFlSTVRsbnB0?=
+ =?utf-8?B?UE5rb1EwVFppcXh5UkJuM1ErVW5hbVN1ekdLdkdzUWhsNlF6My8ydTJCdXl2?=
+ =?utf-8?B?bFBFOUtGOTNxdjFwMGxnTndtWDRtU094UjJMK2dEU3A0bk1yU3NRWDZIN0x0?=
+ =?utf-8?B?b1RCdUNnak83QXpheEtzTzg3Umoya0EzOXcvYjh6TTdZeXFsQy9PZHhwcm9t?=
+ =?utf-8?B?TlJvMXZSZ3BUaWVkMVBPRDZFeWxQSGZralJ4dnNJRjl4SlVOVkxBVnNUU3lX?=
+ =?utf-8?B?clRGR2R1MEY1TjZVVmNEUnBaSmNXYmRJRFRybHhOcjQvc3p5T0taT0hoL2ND?=
+ =?utf-8?Q?/BTxEw78Rad02ESx4fMK2ZInx?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ce3553a-f726-43ef-1c39-08dcc0f2524c
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 08:30:17.8450
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TFpZSru4oj9uYlxCsPkcrJEeJRDjRUobt/s+wrF4K6VbY+zemvjhosWZtFzTrIbob2s7eJe5JeWBkWdk8lOXvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7460
 
-On Fri, Aug 9, 2024 at 2:13=E2=80=AFPM Andy Shevchenko <andy@black.fi.intel=
-.com> wrote:
->
-> On Tue, May 21, 2024 at 05:25:58PM +0200, Patrick Rudolph wrote:
-> > Instead of implementing a custom register paging mechanism in
-> > the driver use the existing regmap ranges feature.
->
-> ...
->
-> > +#define MUXED_STRIDE         (CY8C95X0_DRV_HIZ - CY8C95X0_INTMASK)
->
-> > +#define CY8C95X0_MUX_REGMAP_TO_OFFSET(x, p) \
-> > +     (CY8C95X0_VIRTUAL + (x) - CY8C95X0_INTMASK + (p) * MUXED_STRIDE)
->
-> > +static const struct regmap_range_cfg cy8c95x0_ranges[] =3D {
-> > +     {
-> > +             .range_min =3D CY8C95X0_VIRTUAL,
-> > +             .range_max =3D 0,         /* Updated at runtime */
-> > +             .selector_reg =3D CY8C95X0_PORTSEL,
-> > +             .selector_mask =3D 0x07,
-> > +             .selector_shift =3D 0x0,
-> > +             .window_start =3D CY8C95X0_INTMASK,
-> > +             .window_len =3D MUXED_STRIDE,
->
-> Looking at this again, are you sure you have no off-by-one error in
-> MUXED_STRIDE value?
-You are right. I tried to save some memory here. Will send out a fix.
+Hi All,
 
->
-> Also a comment in the regmap core suggests that we may include selector
-> in each of the window.
->
-> With this, we probably should simply use PORTSEL as window start with a
-> fixed window len of 16, having a few more (reserved) registers in the
-> dump seems not a big deal to me, but it will be much easier to decipher
-> a port number based on (virtual) offset.
->
-That's true.
 
-> Besides above, why virtual start is not well aligned? I would expect not
-> 0x31, but 0x40 or alike. It might explain some bugs with cache you have
-> seen.
->
-I didn't find any rules on this, so I used the next free index.
 
-> P.S. It might still be bugs in regmap core, if it is the case, they
-> need to be addressed.
->
-> > +     }
-> >  };
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+On 8/20/2024 9:40 AM, Baolu Lu wrote:
+> On 2024/8/19 20:34, Jason Gunthorpe wrote:
+>> On Mon, Aug 19, 2024 at 03:09:00PM +0800, Baolu Lu wrote:
+>>> On 2024/8/19 14:34, Vasant Hegde wrote:
+>>>> On 8/16/2024 6:39 PM, Baolu Lu wrote:
+>>>>> On 2024/8/16 20:16, Vasant Hegde wrote:
+>>>>>> On 8/16/2024 4:19 PM, Lu Baolu wrote:
+>>>>>>> Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
+>>>>>>> attached to the device and disabled when the device transitions to block
+>>>>>>> translation mode. This approach is inappropriate as PCI PASID is a device
+>>>>>>> feature independent of the type of the attached domain.
+>>>>>> Reading through other thread, I thought we want to enable both PASID and
+>>>>>> PRI in
+>>>>>> device probe path. Did I miss something?
+>>>>> PRI is different. PRI should be enabled when the first iopf-capable
+>>>>> domain is attached to device or its PASID, and disabled when the last
+>>>>> such domain is detached.
+>>>> Right. That's what AMD driver also does (We enable it when we attach IOPF
+>>>> capable domain). But looking into pci_enable_pri() :
+>>>>
+>>>>
+>>>> 202         /*
+>>>> 203          * VFs must not implement the PRI Capability.  If their PF
+>>>> 204          * implements PRI, it is shared by the VFs, so if the PF PRI is
+>>>> 205          * enabled, it is also enabled for the VF.
+>>>> 206          */
+>>>> 207         if (pdev->is_virtfn) {
+>>>> 208                 if (pci_physfn(pdev)->pri_enabled)
+>>>> 209                         return 0;
+>>>> 210                 return -EINVAL;
+>>>> 211         }
+>>>> 212
+>>>>
+>>>>
+>>>> If we try to enable PRI for VF without first enabling it in PF it will fail
+>>>> right?
+>>>>
+>>>> Now if PF is attached to non-IOPF capable domain (like in AMD case attaching to
+>>>> domain with V1 page table) and we try to attach VF to IOPF capable domain  (say
+>>>> AMD v2 page table -OR- nested domain) it will fail right?
+>>> Yeah! So, the iommu driver should basically control the PRI switch on
+>>> the PF whenever someone wants to use it on a VF.
+>> PRI enable sounds like PASID enable to me.
+>>
+>> The ATS control is per VF/PF, and PRI does nothing unless ATS returns
+>> a non-present indication.
+>>
+>> Like PASID, it seems the purpose of PRI caps is to negotiate if the
+>> CPU can process PRI TLPs globally.
+>>
+>> So, I'd guess that just like PASID we should turn it on at PF probe
+>> time if the IOMMU can globall handle PRI.
+>>
+>> Enabling ATS will cause PRI TLPs to be sent.
+>>
+>> Probably more of this code should be lifted out of the iommu drivers..
+> 
+> Some architectures, including VT-d non-scalable mode, doesn't support
+> ATS translation and translated requests when it is working in the
+> IDENTITY domain mode. In that case, probably PCI ATS still need to be
+> disabled when such domain is attached and re-enabled when the domain is
+> detached.
+
+Does it make sense to move both PASID/PRI enablement to probe() path? something
+like below :
+
+[I am assuming ops->dev_enable_feat() interface is going away]
+
+  - Enable device side PASID/PRI during ops->probe_device()
+  - In device attach path (ops->attach_dev()), depending on IOMMU, device and
+domain capability configure the features like PASID, IOPF and ATS. That means
+ATS enablement is still done at attach device path.
+
+
+-Vasant
 
