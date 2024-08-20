@@ -1,205 +1,201 @@
-Return-Path: <linux-kernel+bounces-294532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60834958ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875C9958EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170D4284C10
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C388284EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0566115B57B;
-	Tue, 20 Aug 2024 19:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF739165EE8;
+	Tue, 20 Aug 2024 19:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ExZJCPax"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OnrAaZIv"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35EA1547F5
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 19:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724183482; cv=none; b=LT2EnM+lu9J7HPtB0CwKbVYSLMb9o5CS9f5St2q0GwOf3xilACKDqWtuxUD1z15UxZa4vCE9Y2ml4tNR8GDzffv6MDscHnezOgjIQRFfavbXtuOxqt/CFHUSTvTTdMVJgl+45HKiKHStVTSg5a0/OmYFyOCPPnmkfelzPhfI3+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724183482; c=relaxed/simple;
-	bh=NwD8zMXrqxMyC3u1LQ4ICjT19PTW1mxy/5ZPqQQIanU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OxQJevG+YxKGnz80VceNpVJj6dCTeVGKzdKEdqkxzvFM8uUHNxxSH/khTY8wg/4m+8lH8hWIOf6WimwKxUBOO5vrw1hHxgAnTB4IINX+SpLpd5XRb9WRnlubJeJsgn6Cocc2f6Jwp8tP4D2hjbeSxSzGvCktvhbOR1r8gGEAUQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ExZJCPax; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso6549913276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724183479; x=1724788279; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7HY8JWRO1iNfwMHzxpz8V7gHbqwhiAwxtKGMMcVo5XE=;
-        b=ExZJCPaxPLT/Y03teKRi2FUHk91lRfpxGwR0arkoak83g2Qtn/JblPTFjoAAT5xujB
-         pzVWZ9FAocOT4bndTKTGeM0NaNDexB34+JpI/BV72z7der6+uziZqhiCR4WnaPl7FZvj
-         ATcdHuxbgt9eUDp3177GFGYFSF14EHsObNdN5DPwA5wQ2ZO4QHRZYNFtPjUSJ/izdLta
-         lt8M4GcWnZm9983cCKwD1jHbhuokNcyDT+rv+PaqB4k+xM8/1+trFgfWDMTHmT0GJyrs
-         RUB8h425G7U1NGI+j7QjxCnsTblL0T4GjSMyraMph/YhGPoHgi/m6eHc2IGoZwrIaFnz
-         jcjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724183479; x=1724788279;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7HY8JWRO1iNfwMHzxpz8V7gHbqwhiAwxtKGMMcVo5XE=;
-        b=KcAAGKmmMFXMK4WRThnaUeyvEF1e8JxaEr+ioRvETWbWwFD8O5+nNOlCMZMzH2/0nj
-         93IOhFky35whkVAEHFzVl5FJ/3qC7Qf8WbVJG95gHaONGAwAMOA7Vo6RcQFFmY5oSdj+
-         az1x6ge2z0uV4YyKs66VDyo2VZ+hf+chpO9NDo4Dhxe6tiPwFsh9F7S/x3y7KhoiOIcN
-         CMVgk2tyDp2dx1FJW19I1IymuwGKbbqAhRlXh/yFSN75pU8uM/WHKZqEV5XTNXaZMlVd
-         kGRgdNJjsJBga41It0pUk1cMiJ3RpoRTCxByUP/61HmRW00tNzAA5EMZsmDsW8gq9Di/
-         tPdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeItbsT06YAUwWmHX867M1OZ/uYRhb6KbE/Mk1pnXTHIscpaoxeyqyghykWexnRTdwA6SxAiofu3XP1/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+3IDahyLAkR/IGaPuORMJXRWSWZdPqEvgHk7IS6lMcIKPEEPX
-	o3QZuwj+lrluutnf9gV2GICbINlr8t134qSL9HBgxlp0SWzyL+Jrmk14Hn7b9vh2oUJ3uaO0rn9
-	DOmw5or2bfmJ/0G5xdnaq21LeKh0ozwBdLpIRc6lAjm4pMQQ=
-X-Google-Smtp-Source: AGHT+IGKdykl+uj/SFsceNtjz8/psF36nvVXhz3ixkdL5oKCjpZbfeISAjdZnx73BCFFoEiw8mUJSYh2dgSSfjfN2GY=
-X-Received: by 2002:a05:6902:11c8:b0:e11:6a21:2270 with SMTP id
- 3f1490d57ef6-e166540f906mr545445276.6.1724183478751; Tue, 20 Aug 2024
- 12:51:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100F1547F5;
+	Tue, 20 Aug 2024 19:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724183631; cv=fail; b=WxN+DZkw7qqxGwG50InyagG0sI9LSg5BYpE+M28GXAcVFzfmxFlhNGWNywu8fWrH3KE5BkOGNp5GgDrqWfmtdGmk/n7Q+q0fLfwYFXP2ZDwcULmlaWYuoseGXOU3Ki1IMQOP/txvVTe1Qw7LUb26h1g3FtDb9iUSdg842/KGxmQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724183631; c=relaxed/simple;
+	bh=9Q5MqE4RH9kvA5iSo0N2cDZln6BPCJzfiCl7kaIO/rE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SW9FoQt0uDDZ9YbbXra4cR9beDBeYNy8CZ+E4tm9oQAquE9ZRt8tuWs6ES1ahMZPStP29LSZ7+Adwy1Z1rzKd0u1eA6HrqWZ1bpIL+IhZSGENmza3Hn0YY2JoAsQA2hMUPm7+HDtA8FQg2FmCxD0WaaMI9MqN1c22Yuh4FpVfG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OnrAaZIv; arc=fail smtp.client-ip=40.107.100.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H0XL+m5xUhc80l3rfj5fUhsm5lXK9NJC82UQ9kF+ICy3WeqpyDP8GVK2M09InVPjCb+cmxjTKC4X1ogBMvbE8cwdiJeKqJle7xocEHRyx7zKTa4/+ead4gZmPM+1VD6EhjGkzmCnsR1zwEqtYBovtpOW9jnRP/WTODoDAnGwkzkLLeTcpjisI3aX3tef84ZsJ5xkrP8sts6HesstqAqbnxgnomQf7MokJZRYLAv0B+rVBZIsuurrDliUkR+U4NEsvaJFNgBJ04PLihie5csrwZd9CxByNbqfGLW/scg3BgxiSNFsxQXp8jA0rJG299Wmag4TIF6dsaIk9Ty7UXIuPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S9jWFwRc2ViYe6stnKsB7zs6VNnQq3xOJREURJaOqB4=;
+ b=CAGRtsZjb3ZRmgK3dXOp+qI7RaONwtosQXSDh3fLV9/1kUBdAhzuKoFrZfQxYeDuu9HaBJN+bnlEp+i72SFMM7Kq3il1YAI/LjK6lJ/cSIngAAx/uYBrLzPzU6ysXct4njXTxsL3ZetJMqIfXgLAleTwyBoqCbbhZQnN7aNzNT2RtC1Fjnrjq/0fGrZKnkwwGBegAe5xrrUNvLaccakWKFqkW92Ky/2xEM+6jX5v7qN9+2fqYEGejFur9+qv4ywLq90REoadfoQrbbB7WouBMfGS/LXaCuV0mZp5X/GJFCErZIXRsiP/uNAoxlw2VrA18siKPZDl8UWNOy1wRZUEpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S9jWFwRc2ViYe6stnKsB7zs6VNnQq3xOJREURJaOqB4=;
+ b=OnrAaZIvAGr3aTZCGrstzm+x4tDfj4lEOgAY54lBed3mabBNZSvc7C/Pu+RDpweD2cow1bTRhIAvVaPC8DCyB38YOL4BPsH6a4I3+Z5lfJ0fGSWiUDSWG/nXXjZijGsY7wI7OKxMXgEqoH6zDmXLfjEWBS/mc+BxqDUPwNuaLuA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CH3PR12MB9220.namprd12.prod.outlook.com (2603:10b6:610:198::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
+ 2024 19:53:43 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 20 Aug 2024
+ 19:53:43 +0000
+Message-ID: <57e4ba05-549c-49fd-a8a1-ec2437556ba3@amd.com>
+Date: Tue, 20 Aug 2024 14:53:52 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/crypto:Remove unused variable
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240820074242.4926-1-zhujun2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240820074242.4926-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN4PR0501CA0050.namprd05.prod.outlook.com
+ (2603:10b6:803:41::27) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815083229.42778-1-aha310510@gmail.com> <CAFqZXNvXJY4Bh5k6DZ3yoLFuHo2bQRk3Q5Lv25ms6oOGyN5ZAA@mail.gmail.com>
- <CAEjxPJ4TMk3AoAd++nHQUyTHd_7vbOHC1Veq1ZSSyjH3v0kJ7A@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4TMk3AoAd++nHQUyTHd_7vbOHC1Veq1ZSSyjH3v0kJ7A@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 20 Aug 2024 15:51:07 -0400
-Message-ID: <CAHC9VhRV4j9i7YuKFJkNe9RYnKvCMLHHOi0LrRvwaFWbGJTbHA@mail.gmail.com>
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>, Jeongjun Park <aha310510@gmail.com>, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB9220:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d5d6dd8-adbc-4f63-23b0-08dcc151cbaa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Szk1NUNqczFvaExvV2FQVnphUkprVDFvL29sa0d4RDN4M2ZkU05iTXhIcHVt?=
+ =?utf-8?B?M012M1c1TlBDTDZoRHFYS1FxWlJsYWo0Z1liYzdJQjJzMVorYzVwUkpFUDV3?=
+ =?utf-8?B?b1o2Z291TllwR2RHSnFPL1F2aDg4V1RLUlk3VzhxalhFejZ2MTdwbjl2TzlU?=
+ =?utf-8?B?b3JUSFJEYmdkekx1RFpDdkhVdjNoK1V5UU1aOTdBUUNJL211NkJvcU1scCs4?=
+ =?utf-8?B?bC8yaktYR3gxL2NaVkh1SGdUdWd2S3NiaW5EdldNNFFmcExDT0lLU25NdDlm?=
+ =?utf-8?B?bGlXcExvck5EMUp0MlNEcU85VFErSmZPWmtrTUk1LzdDalFYWWF0L3JMb2t4?=
+ =?utf-8?B?UHhHV2xiZnhkblBBTndRZ3dWMnBVdXVhQ2l2S1JvT09Db1V2aVo1WVdWSm1T?=
+ =?utf-8?B?REtlaTcyMmx4eHh4ZzkyMjgzbjQ1MUJiRXJqTjVPMWJXYzZBQXpIUGNaNUlj?=
+ =?utf-8?B?YXZrZlZVN05DU2NBTWU4cURkVXVYR25UOFBCRm53L3NTL3NNM3dBY1FiM2NZ?=
+ =?utf-8?B?MHdrYXdGdmNqVmh3R2xLOVhNQzhqZXJuOXJ3eXQ0L2F2NVJVRU5qOFluQk53?=
+ =?utf-8?B?WWRzOWZ0SVhicnh2WFVnNEhuRnpiQUxpMHFpWXdmdmN3ejFNRGlRTUg4UmN6?=
+ =?utf-8?B?VmNVU2tOZzMxRnhaQkp0aFN4MytlMUJkZDhVQ2JBcU5kd2R6d2U4UWd2Z0g5?=
+ =?utf-8?B?dEpUVmxseWlkVXZMQit1bDNoem1wRW4vVHNPNEdEQ0JVbmlISWpZaTY1dXFK?=
+ =?utf-8?B?bXQ2ODR5MStqNVVxT0ZqanQ1eVVoTjVsWkU1OFU0YUUwdlJtV1VWRmQ2SEZ0?=
+ =?utf-8?B?a0hEUENrOHZFS0NGK1N3WW1pOUhQMWQwbmJjV2kvM2h6TVRLM2RCendKWC9x?=
+ =?utf-8?B?SERCeGFvSUVGckZsMndjaWJjTjd4YmNUQkpWWWppNnRTK2pTakNNcVFHc3Nj?=
+ =?utf-8?B?TytXS3VBeUhZZ29qTUhRQVI1clFoYTQrWHMyUHJnVm04dVFHMlplay90ZXl5?=
+ =?utf-8?B?U3NtUFdSUkhkZzlEaGd1OTdQZEgrcW93c3hyNlgxZC83OE9qUWJnNFhILzVq?=
+ =?utf-8?B?aWcvdGwrZW14dzBuZnhaTDRGN09iMm9EU3NFNzZPSG9pQ2FMWE1vOUNpb3Nt?=
+ =?utf-8?B?ZStWOFBUWWE2bFk4OU1kUHZtc0RvOWdNazJZb2ZQWSs4UmdjcnN5NHBpcU80?=
+ =?utf-8?B?RXZPbVhFcy9EbjNTYnh4dEVzUUFJWGxVY0k0akxBOG1JVFFwb2xlY1kxOURw?=
+ =?utf-8?B?c01sOTFubzU3OHcwNkRuTDVlLzNTUCt0dUhYSi9qM3hFelArMHQ5eTROK1Rh?=
+ =?utf-8?B?eEVnV0dMdXJaQWpiUkRjMkQwTE9XdE5MWEFOQ05UOGVSaWNyZHBpcGFzVVlB?=
+ =?utf-8?B?aklhU0w2ODVVTmxXYXFXYUIzdHduSklTdmxMblFYaFJiVEtKWHdkTkVaQWlk?=
+ =?utf-8?B?UTJmSExIeGpVVWV4ZjBQUkxOUnVVd3E5c3lhNXRiRjk4MFdiWWpXaDRVMFFZ?=
+ =?utf-8?B?MmNEZjZXMXhEekhJU3RzM3FnTDZnZEVXMkxIaHhqaHVYaVV4VUF0dmRZOE9m?=
+ =?utf-8?B?TVJEM3F2cnMxYVQwMlNsZ2VyYUZ0M0F3cll2RFVobUlLbTZJcnZBOVBOcnpw?=
+ =?utf-8?B?OTh6aFhST3hwL29wNFJoVzFSTkNSdEU3V1JkWmJ0L1BjTGR6bzhXS3Z5YWlH?=
+ =?utf-8?B?Z3ArZ0lMc1M5N3JyNlM3eHpjYy9vRnRVTlJsVEV1R1pndkR1R05wcnpuZHlR?=
+ =?utf-8?B?Mkt4RENDSWlISEpQNDhCQURpNDlnMXFKS0d5bzZ6bjFpRVl1bTdqR2FRTk5l?=
+ =?utf-8?B?TzJFM3YrbTA0aEVpMTkxQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MmZvZFpUODhpeVVYckZrbjR2VEp3SHNTNGoyekRndSsxYXYxMFJnQmFPRVla?=
+ =?utf-8?B?b0VRazZsTUQ0SElQd09BSlVDOU1HNXUxTjNLcEVTeEVLMVhhd25sNDh0Y2lE?=
+ =?utf-8?B?MHlNZVZPVERaWGxxU1VFNEcxM3ExSlpHZmdBMkorMjNsRHdnWDZLakpiNnJM?=
+ =?utf-8?B?eXp2UjkrQjlvRHBKejdwdWt0T0hIRVpvRGo2a3pLaE5RTzc1SzBKTXU0ZnNy?=
+ =?utf-8?B?N2t3a2E4R2k4OU5GSTMzcWluazA0VTZyMHhRSXBlTDFGMnNUdUhpRnFWemhu?=
+ =?utf-8?B?anpDREI4RmNQQlpKeHRnRlBCb0Y2LyszNzBZVzhsSFJnZms5bUtqeWxNY2pP?=
+ =?utf-8?B?TlZaWkhqNnhZY0FINTNDT1JOYVY0RWZaajExTHhvOW05cm9wZUtjdklTazdi?=
+ =?utf-8?B?UUlWTEp2ZVhoa005Y3UrZVVmcWdsRVRoUFRUQ1JQK3VFVEY0NWxsZ0lNZjQr?=
+ =?utf-8?B?bTBsRitDbDUrRGlHaUZLM3pNQi94VndqVmp5WG1sSmZ0Z0czZ2FRdHFPMUdK?=
+ =?utf-8?B?UnE0NUZtQVdOWE43KzJKMWRoWU5FaFJ0QzRRdG10VUJldnpoWWk1NXlQYytU?=
+ =?utf-8?B?b2RkZEMwYWY5bnVWWDNpUlEwK3NON09sZ0F0ckQ4NFZZbUNEMTMyUitXQWlu?=
+ =?utf-8?B?TGkraFh2MnNvWERiNGRzT2RNQm1TVHFET2IrK1Y3QVQzU0d6RkZqQ3RRMlMw?=
+ =?utf-8?B?K3Rjc3NnaVlSSnZSWFZ5eUtBbFdRSk9SWHU5QUhLR3BsdTV3QmxaL2g5V202?=
+ =?utf-8?B?QnFkcXp0OVZuUWxDNXFzQ205Slcva2c0QmRUQlozdUVzZVpvbjFzeVhuTEpZ?=
+ =?utf-8?B?VmJkZ0VtRjk0Ulc2RjFYWEQ2K2tmQlFLRlBKcEdILy9zRzFaT3kzY1dkVlY4?=
+ =?utf-8?B?VEM5eENmalRyUlJRbkRIa3lIeTVia3ZNRE8yNlpERmg2M3RQTUpyMFdCYlpy?=
+ =?utf-8?B?aFQwb1Zad0RpYWl4ZCtPbGp6UTcyZ2ZSckN5Ujh0MUU3K2JDenBKbXVuNVE3?=
+ =?utf-8?B?OVowOE55d1UzRnl6dU9OcUU5Qkc0dGZidWpVSzVOazQzQ2ZwQTNPZXAzbmtS?=
+ =?utf-8?B?c2pjMW05a0xSemdYbk9sWExRQ3RkMWpzbk5GWmp4WXZUYzhRb0FqV3BMbzAz?=
+ =?utf-8?B?Z0NhYTBZSitXTUR5YXhLZXdndmFvckFOMUlqczNXa3hxYzNYYlNyamlQcXh0?=
+ =?utf-8?B?QVdYLzRRODl4ZTYwTS96VFJQVUIzZ0kxRWNCUFJCOG83ekM1dk5ocWJwWlJj?=
+ =?utf-8?B?UHFucGdRcWVZTXVPQW5KRWlGbWNiWmRDREFnbEF2dzExb2dmS2ZpZ0twaFJ4?=
+ =?utf-8?B?Y0ZlNmYyS0ZtWTdObGE1UGxWUVBSZHVuQlZSNWdzVEgrakNvL2dSMnZET2pn?=
+ =?utf-8?B?aGU2cVRiR1krbjdlclllVjFyaXdKRkIxNTdKeFRpcE9JOVRCN3p4cU5sdXJn?=
+ =?utf-8?B?R0VHMGZ6TmRLcnhTVkRtQnh1ZFZONzRtdVBhSm5DY2JBNndkOWhDOWRwUm5M?=
+ =?utf-8?B?d0lSbDAxQVZtSmF5OGpaUVJRajVFNVJQM1dSZ1hyRmdOaWNOWnBCc0N1aStD?=
+ =?utf-8?B?c2gvQXBxSW9qOVJ2MjNtaU0yNGt3V0FidXJINnlrUDlQR2pyUWtzMU1yWHBH?=
+ =?utf-8?B?d0c3WGlwTzk0SjJOejFmclFBcXluTjR4enVYZ1NDdVdBVUFzU2pLOStDdkZ5?=
+ =?utf-8?B?R1V3SngrQldUU3JFV25wZzVLaVcxMzNsc0hmL2hLSXFWczJFQ3FONzRwcE4y?=
+ =?utf-8?B?NlFWOE5pTTcvbWRad2RNT29vdlUxKy9FVWlMMzRER01EV2dZNTZ1SFhlWkc0?=
+ =?utf-8?B?ZWhiZHRIMitaREYxQnZvcDlUUkFHSlBGUGZNZEpTcUhkb21CeE1ia0Y3WGcw?=
+ =?utf-8?B?WElUUTZqcUFBUGhXQjVxa052cS8zY3lmc0laQUpOeGVxNmJuNDZTN2swekxq?=
+ =?utf-8?B?ejRwdDBNYi9CenNBQkpnNjliZVdQL0pWeUVTTE1ZNDVEano5RjFSSXZqenJK?=
+ =?utf-8?B?ZVk5RmVHYURRQ3JRSGszOGNvWDd5QlczdTBxTnVRMWpXZGJ2V3oyVnEwK0NS?=
+ =?utf-8?B?dkhQQU1WTFlUOGE3bFJwVVExb0lSSGt0TE85ak9JZWExcW5hNGlMTy9tZWw2?=
+ =?utf-8?Q?EUOEUaEGNjFoz+5p/7oNYOlv8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d5d6dd8-adbc-4f63-23b0-08dcc151cbaa
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 19:53:43.5305
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xaj6A/KMz5C6iM3vw2gxcHcUJl98188MGdhQSnvi1Ckks0UQHPRm8punpndsSbNQW5xQflm6/KULXrTuV340QA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9220
 
-On Tue, Aug 20, 2024 at 2:24=E2=80=AFPM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> On Mon, Aug 19, 2024 at 5:46=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
-com> wrote:
-> > On Thu, Aug 15, 2024 at 10:32=E2=80=AFAM Jeongjun Park <aha310510@gmail=
-.com> wrote:
-> > >
-> > > IPPROTO_SMC feature has been added to net/smc. It is now possible to
-> > > create smc sockets in the following way:
-> > >
-> > >   /* create v4 smc sock */
-> > >   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
-> > >
-> > >   /* create v6 smc sock */
-> > >   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
-> > >
-> > > Therefore, we need to add code to support IPPROTO_SMC in
-> > > socket_type_to_security_class().
-> > >
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  security/selinux/hooks.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > index bfa61e005aac..36f951f0c574 100644
-> > > --- a/security/selinux/hooks.c
-> > > +++ b/security/selinux/hooks.c
-> > > @@ -1176,6 +1176,8 @@ static inline u16 socket_type_to_security_class=
-(int family, int type, int protoc
-> > >                                 return SECCLASS_TCP_SOCKET;
-> > >                         else if (extsockclass && protocol =3D=3D IPPR=
-OTO_SCTP)
-> > >                                 return SECCLASS_SCTP_SOCKET;
-> > > +                       else if (extsockclass && protocol =3D=3D IPPR=
-OTO_SMC)
-> > > +                               return SECCLASS_SMC_SOCKET;
-> > >                         else
-> > >                                 return SECCLASS_RAWIP_SOCKET;
-> > >                 case SOCK_DGRAM:
-> > > --
-> > >
-> >
-> > I'm not sure if this is the solution we want to go with... Consider
-> > the following from af_smc(7):
-> >
-> > >   Usage modes
-> > >      Two usage modes are possible:
-> > >
-> > >      AF_SMC native usage
-> > >             uses the socket domain AF_SMC instead of AF_INET and AF_I=
-NET6.  Specify SMCPROTO_SMC for AF_INET compatible socket semantics, and SM=
-C_PROTO_SMC6 for AF_INET6 respectively.
-> > >
-> > >      Usage of AF_INET socket applications with SMC preload library
-> > >             converts AF_INET and AF_INET6 sockets to AF_SMC sockets. =
- The SMC preload library is part of the SMC tools package.
-> > >
-> > >      SMC socket capabilities are negotiated at connection setup. If o=
-ne peer is not SMC capable, further socket processing falls back to TCP usa=
-ge automatically.
-> >
-> > This means that the SMC sockets are intended to be used (also) as a
-> > drop-in compatible replacement for normal TCP sockets in applications
-> > and they even fall back to TCP when the endpoints fail to negotiate
-> > communication via SMC. That's a situation similar to MPTCP, where we
-> > just mapped MPTCP sockets to the tcp_socket SELinux class, so that
-> > MPTCP can be swapped in place of TCP transparently without having to
-> > do extensive policy changes. We may want to consider the same/similar
-> > approach here.
-> >
-> > I briefly played with this idea a couple of months ago, when I was
-> > asked by someone at Red Hat about SMC sockets and their integration
-> > with SELinux. IIRC, when I tried to implement the MPTCP approach and
-> > adjusted the selinux-testsuite to test SMC similarly as TCP and MPTCP,
-> > I saw that the netlabel-related tests (may have been more, I don't
-> > remember) weren't passing out of the box like with MPTCP. However, the
-> > person then didn't follow up on my questions, so I didn't look into it
-> > further...
-> >
-> > I'm attaching the WIP patches I worked with, in case someone would
-> > like to continue the experiments.
->
-> I am not in favor of your approach, for the following reasons:
-> 1. It would be backward-incompatible with any current code using
-> AF_SMC (although this could be addressed by making it conditional on a
-> new policy capability, so this is not too difficult to overcome),
-> 2. It would not allow any distinction to ever be made in policy
-> between SMC sockets and TCP sockets, so we could never allow one
-> without the other.
->
-> Hence, I am still in favor of Jeongjun's patch to consistently treat
-> AF_SMC and (AF_INET, SOCK_STREAM, IPPROTO_SMC) sockets, and then if
-> someone wants to extend that support to also provide more complete
-> access controls and/or networking labeling, defer that to a future
-> patch.
+On 8/20/2024 02:42, Zhu Jun wrote:
+> the variable is never referenced in the code, just remove them.
 
-Without passing any judgement on the patches Ondrej submitted (I tend
-to ignore patches as attachments for various reasons), I do share
-Ondrej's concerns that this may not be as simple as suggested in the
-original patch in this thread.  I saw the same thing as Ondrej
-regarding the TCP fallback and that immediately raised a number of
-questions that I don't believe have been properly addressed yet.
+nit on the sentence:
 
-Someone needs to dig into how the standard SMC protocol works first to
-ensure we have the necessary access controls for the current code; my
-guess is that we are probably okay since the socket-level controls are
-fairly generic, but I'm not sure we've actually seen proper
-confirmation that everything is good from a conceptual standpoint.
-Once that is done, we need to examine how the TCP fallback works,
-specifically how are connections managed and are the existing TCP
-hooks sufficient for SMC (the early connection state stuff can be
-tricky) and how to distinguish between normal-TCP and SMC-TCP.
+s,the variable,the ret variable,
+s,them,it,
 
-Basically I'm looking for some basic design concepts and not simply a
-passing test without any understanding of why/how it passed.
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
---=20
-paul-moore.com
+Thank you!
+
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+
+> ---
+>   tools/crypto/ccp/dbc.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/tools/crypto/ccp/dbc.c b/tools/crypto/ccp/dbc.c
+> index a807df0f0597..80248d3d3a5a 100644
+> --- a/tools/crypto/ccp/dbc.c
+> +++ b/tools/crypto/ccp/dbc.c
+> @@ -57,7 +57,6 @@ int process_param(int fd, int msg_index, __u8 *signature, int *data)
+>   		.msg_index = msg_index,
+>   		.param = *data,
+>   	};
+> -	int ret;
+>   
+>   	assert(signature);
+>   	assert(data);
+
 
