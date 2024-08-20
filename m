@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-293702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9BE95834B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F87B95834F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF341C2430E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07381C242F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1718C34B;
-	Tue, 20 Aug 2024 09:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5B618C32E;
+	Tue, 20 Aug 2024 09:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARVc1Xeg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrCaPcGv"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5072318C027;
-	Tue, 20 Aug 2024 09:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6279B18E373;
+	Tue, 20 Aug 2024 09:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147700; cv=none; b=eQ3I5XgK76JWL1alwD1ZFqzSldCZcPCj8on6KgrnYWKlk3cGSKJIZGTouJ1kxSiz8o0gbmaO3BYATF2X6PiwV+/3n8kvy/oqssnnBFz28077kgx5d4YLUO3ao3eqWAxlwv2nSGSxeSg0WpMLCko/0KjWmb2DpEo91IXzD2qu5WU=
+	t=1724147740; cv=none; b=Hl3pK2EuhqhoIfUG28BEdYHcibbb7qpLrarB/19CS9j6golOf//RyBkhNAn3E020QqXqzViZfPr1YYB9SDtR3j3jJMBMWKpNPsIvK48xBrAbDqJsW2/jIUoyq8q5rcAr4kPdYqlNQ+iQoo5Fn9OUIWP8NldiPnJsTTB8qscqImo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147700; c=relaxed/simple;
-	bh=Skj0x3MfuIw+zzNHiN5rJLqdPBEqOODIJoUTO80lc48=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IzZOmbl1qKbkmOeqlOmLkG6LrxSm8hwhOYPnHj9/kMrXnVFdMMBsaHefY14I4DTRZ/1XXewTpA3QYu/8rNpuPrtQpL2VHOyGRTMeYXCKNZ+FbUVyJcKlBpuEzH/+AIOG58tGphJLoPvK2tGeOIAWvs6R6i0YxEulo60CanrrfiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARVc1Xeg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4ADC4AF09;
-	Tue, 20 Aug 2024 09:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724147699;
-	bh=Skj0x3MfuIw+zzNHiN5rJLqdPBEqOODIJoUTO80lc48=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ARVc1Xeg15K+Agq6v9d38vDMQ7O8JbcVXDS2KQ0dQ6D9NJAPcR7oAt/g4cO8ic7cj
-	 5NIT4Z5uRtmJlCal0u8FcRQoJcEkO0QcGlc/Q6s8NaVVZfrr54ZC98FO48s6Xeh75i
-	 +KVIl98GRb2hukyulOnqPBEwvL1c0SQMvJS0Y9W6K9dOFCrGDnqMWCX2QdLR7Uj+jb
-	 yGnjRKX1RBaT2Cj8XAV81713X81zSiSSShL1p3PKu7+SLZwW9fw2Q3tBEF8r2Ep1ah
-	 aSqsLKFB7Vzvf0yAvBjIQ3k0w/kM975YleP/yJP5fYxcFjRA4FgLnuhXmOeZVxcnvT
-	 Lv2X9tjyaqkgw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sgLZp-005DZl-13;
-	Tue, 20 Aug 2024 10:54:57 +0100
-Date: Tue, 20 Aug 2024 10:54:56 +0100
-Message-ID: <86ttffy0wf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: tglx@linutronix.de,
-	Suravee.Suthikulpanit@amd.com,
-	akpm@linux-foundation.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
-In-Reply-To: <20240820092843.1219933-1-make24@iscas.ac.cn>
-References: <20240820092843.1219933-1-make24@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724147740; c=relaxed/simple;
+	bh=kFr2YJvhs+zTyd7WllTTne0tbaKD/f5AEoSc3dDD4h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6gB+eOLvILPk9jGAfg5hGucTXmKgzaGOTXnEJMB+L3CqOaoVv58x+1YxkN7Xv+RST2ie0zkv4yq/Zza1EyRQzhY2vOXBx7RPTD190FCeeKzJ7/MT+BGCiXvojLKFUoy6KwnnPJBAielH44gxEmoJItbLx0ys5Kyn/oUjfxgdog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrCaPcGv; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso1871615a12.1;
+        Tue, 20 Aug 2024 02:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724147737; x=1724752537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uUSpPNWLulDMOHLV3kIAUbCGHrOEWNyLTeWcImUN1ec=;
+        b=NrCaPcGvGP+NlQ7wCiX0HtVeiWY2angyjKlpnEvpNuOT0Q6qLtrqBdIm+RAB6njD5R
+         udrx7SPy2MBC6M5wUM2aLHQMsT1+NeZblTB2J707G7KTasVMIo+E2zRUVOxsPbBRo/Ok
+         7Bc2Bi9HL5isgq4khtKwugqoGd217W0W8UWM0I7L6fSJtrogXDhUm5LgqXDFxXbtlOT+
+         OWUSpMvL1sJFZQxZhOl80W0cu6LOcjwu6ImJWP3Fm7X/y54VhSK+Nr4gefGl2I7n9TJG
+         XIrzgYnaJK2aX5QDlus5IB2QkJQxbp57huru8ulvROZ+HVsKQIXXjhMHz4BEtpdh2N1S
+         dSTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147737; x=1724752537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uUSpPNWLulDMOHLV3kIAUbCGHrOEWNyLTeWcImUN1ec=;
+        b=UmXFJ2xNkhvJSnLmX+scokUwOJNsSd1aALEVz2BrNW61qiUv2lj6AtFLwyS4d5PEiq
+         ZwmamIFwuK60Jm2WjHBHcg1HUxYTHP9BP9mjdJxSDEgTXpXkD9zhAjsNvskgJmGz4Wuy
+         nqplqdKTyzVuaIqGmToLmHAhDAyaX5ts9gmuS/g8UAL/U6d3prCK9F4yZiSQiaTo8g9k
+         QDTA4r6Ju2q/57gnAuAf4EWkIL/NrWJ4j7MKXsshUSshmKdQGdYpwCP9XeEMAtFFeFTS
+         KVYI6MI3AhBMc5v2ZGBPYRggPKJrULt+sFVq2GRsRdU5J4qG5SWVw/EtPet1otsrHoyu
+         48Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCX14+CZJqAtVZAn4B0awE7HKKKW2OqlZ4R1Nj+ZewdEM75WP6Dm/obihdISMXi2llQ4eXdgPDSC@vger.kernel.org, AJvYcCXzR226tQq6WJsYWjY+v44iIOqZfzVOR2T/o3L3cqRpKCauIHJcbKMegiDKPhyobj2KylW8v8iUTXnUgkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9nxAByAjrIlzYw+Bduz0nX6TXOLb8CyEUe08DxUDS6XJDM25z
+	jYGV1EOglnTMSvz8LTxGaP5Clb81o+fW2ihFNWL7Qisak1YB/uhU
+X-Google-Smtp-Source: AGHT+IH5LTsYnL6x/hh2mXdZe+5zXyKYpPulCp9WMq2HFgFskdkQAa8jNKnhkWrXxaKseumfJVV8YQ==
+X-Received: by 2002:a05:6402:2802:b0:5be:fa76:55b4 with SMTP id 4fb4d7f45d1cf-5bf0ad6fbebmr2490826a12.16.1724147736212;
+        Tue, 20 Aug 2024 02:55:36 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7f3e0sm6561853a12.71.2024.08.20.02.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:55:35 -0700 (PDT)
+Date: Tue, 20 Aug 2024 12:55:32 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com
+Subject: Re: [PATCH net-next v4 1/7] net: stmmac: move stmmac_fpe_cfg to
+ stmmac_priv data
+Message-ID: <20240820095532.tlwbogzhvpmejnvw@skbuf>
+References: <cover.1724145786.git.0x1207@gmail.com>
+ <cover.1724145786.git.0x1207@gmail.com>
+ <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
+ <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: make24@iscas.ac.cn, tglx@linutronix.de, Suravee.Suthikulpanit@amd.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
+ <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
 
-On Tue, 20 Aug 2024 10:28:43 +0100,
-Ma Ke <make24@iscas.ac.cn> wrote:
+On Tue, Aug 20, 2024 at 05:38:29PM +0800, Furong Xu wrote:
+> By moving the fpe_cfg field to the stmmac_priv data, stmmac_fpe_cfg
+> becomes platform-data eventually, instead of a run-time config.
 > 
-> We fail to perform an of_node_put() when of_address_to_resource()
-> fails, leading to a refcount leak.
-> 
-> Address this by moving the error handling path outside of the loop and
-> making it common to all failure modes.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Suggested-by: Serge Semin <fancer.lancer@gmail.com>
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
