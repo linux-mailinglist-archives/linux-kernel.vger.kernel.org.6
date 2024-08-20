@@ -1,147 +1,157 @@
-Return-Path: <linux-kernel+bounces-293086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBE9957A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 955BB957A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30460284122
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4474F2844FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90D7E57D;
-	Tue, 20 Aug 2024 00:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFDBD520;
+	Tue, 20 Aug 2024 00:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmEVsdRH"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIMAEpoQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CA3A92D;
-	Tue, 20 Aug 2024 00:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88997483;
+	Tue, 20 Aug 2024 00:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724114930; cv=none; b=rocjG5TsGhH0/KHC4CS0br7hyTcEcOdyZLipb9c9O8nxag+cV6CL/u1x2GuaxkPaLYfvZZ5YSCvf6c/NAV2t07oxBPs5hW02jkQJO/hFeqWrE89kvnaSOhL/fYm8l5l5UYBnhvIjQLGBi7BlW/WFSQjd1vQhtgVVlyUKsLRB16o=
+	t=1724115403; cv=none; b=cEQZkGKUTJkj/Z3gpiM5fF57csCdl7WW3wz1mqTc9fs659L4UZ4rbn3+vE+K3ZN24YpDSpq5kXmg1m9oKzwAh1WiNBaPDg4ozQbJfuQ98oFJe4jpp4XJbDkTaFPoWh2vqkI6uuZKrjXF8lmRffM6h3wx5BXIjw8kwiQjtBaZRsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724114930; c=relaxed/simple;
-	bh=S1yD5jjtloQRCRz1+d0jr0pqgFXrBjkSHQAMv9YOMiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smPT4vgowuXDwaUfrzw2PF+X2g104MEo/fAbo1beKb8THsZsqwC1byCu/k3n+Fg+c8XWRRRLKboplI4BMxcQ0uwUXEHiiEDuAawbsGQVzl0uIR+Z0qMV7p4DSXWr3q18atwerKJg2Bs5xNpdmO/yIztavJJSCLvoMzB9zDJslsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmEVsdRH; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so524641966b.3;
-        Mon, 19 Aug 2024 17:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724114927; x=1724719727; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Aak847kfGgqL39Kc/QBpkJh3q9r3EfbJoDakBsppDnM=;
-        b=KmEVsdRHGlghGxICz21Zjrwi4eq1M80N2cOEcxNYV5G67bK8vifjZpJ4Ol23IhvMko
-         LoQQXnvl28CrnauUHyxv382nlW1m5FsTJCahU/+W1w87FxX319r6WaHrrlB0cP33it6N
-         hhFtfUD/Rcrkov/A9nuMUwTEPfp0VVd+nOzXeJERhIlM8bHwf0BX1kvbC5quM1yTbXfm
-         dSj7jS5yfWAiw9nKP9e5eQBDKmMl6xG5+48AKCUFvm3TXn8s3ajWXTAnMQSOkhPnvolE
-         eXFVyIRnaBpjJq3HTBNtQE4LRz6k+5XJWc7wBAnElDwTyDm+/QLLe2qcCC0CBHE3sIhH
-         bbUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724114927; x=1724719727;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aak847kfGgqL39Kc/QBpkJh3q9r3EfbJoDakBsppDnM=;
-        b=lOziogqXz05WQHnSKXkH/6qEeFRTUNPmVQduSJ12WKfrpR/BrUamwYzRsQDLoIFXHP
-         UzYKb3mciqXfifQuLr2zLH7wReExdrWWlBEdvllLSYgnHe9K7R0HbBt6RdDAV/lHGpDe
-         q+9ECFq7hhoFpjp9Y9ozSk0+YN9RzEKXsPFYCv4ijuyuQtmEESXVHm1Jh0UjM5fxfnhV
-         nhUh00tOKI15roCJjR9/X3hfCtdNYmcwMkgvu/Ahjh+YYxy9LbT5h9xiZEV0if7sRo6T
-         laC7jV0zsXLdZpEF1ihzuc2MkpOz7ZKNZn5NOdK516wAbMs0ZgC8QCimDktdkYT8dX5G
-         WKhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHBcmlXikwcbfTq4Bzhhh5+52FuISesBbni2T06uEg5KhegpxA0iSaiZ9MzYRIWo4HDR3znVJnhnucO5V9@vger.kernel.org, AJvYcCUnkpOM8LNxcbkYuQeleySdGv8swvW6BBO/QIkAWVne63Elp9DYEeOJrWO/cQwar90fb99ALQ3xbf73hlP0@vger.kernel.org, AJvYcCUsygNu3QTAXLzCXXnUgHsj8oMnCKDV+n6XQu3WnMtB/ft5RgwgMtuNQcR4fEFUaEAVrDjIyQRP@vger.kernel.org, AJvYcCW4qS5PU+OtM4zE94GG6N4jgZXsRBXP/89ViXuvePsyBx0AIeV464WQ+vwSkffurnZrHnmfzSCLmRMKTF1VEKab@vger.kernel.org, AJvYcCXYwnUyOeYRf4+KkCbAq2xJeIG8cKJ8kL8SjD2SBy8FFXwInT3t2dPdSqeJpmbm1VLEWzM+fDb6Ixg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYnC0db6pLpcZLJs6s9i6WvwOo9//gQ0PHLiwWbtkBRxGiTuQ0
-	4XwWRs8xYrIcWidy75dCC5Zm5Oo301UNVa8xc8SNjcJMaPvt5pGA
-X-Google-Smtp-Source: AGHT+IEUbNzyKkL8AD794LCfaPtnP6kDKp9OUrsiw25fkzayVlzgeUWcLK6D0mUSHIMPsExRLInG/g==
-X-Received: by 2002:a17:907:f169:b0:a7a:acae:3420 with SMTP id a640c23a62f3a-a8392a11c05mr869163566b.49.1724114926168;
-        Mon, 19 Aug 2024 17:48:46 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344b5sm696714266b.118.2024.08.19.17.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 17:48:45 -0700 (PDT)
-Message-ID: <90a95443-65c5-44e8-8737-26145cda1e35@gmail.com>
-Date: Tue, 20 Aug 2024 02:48:40 +0200
+	s=arc-20240116; t=1724115403; c=relaxed/simple;
+	bh=F+7+0r9dfywiWlAXd8gckAT02cgsXlbdVrQ/xNdaQOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B1maYBcj0UL6Exs4SZLMFdT2ZOlezq1UxKj+v38lIn5OY/5sxIpYWFmYnb48B1t3UXh9hcjsT/karLKY7DFfzqXGVIc27lqfCu36/NS9LOZ/v8ojqBO5Ut9Y0uWRq31mgfXNFnBdFyDYc8l8KMaKpW3BYVs3hDUAcB5R9CIDhaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIMAEpoQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37756C32782;
+	Tue, 20 Aug 2024 00:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724115402;
+	bh=F+7+0r9dfywiWlAXd8gckAT02cgsXlbdVrQ/xNdaQOo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aIMAEpoQOaLMmIqF27scOAkZqlsy2vFxnDJXV5DGWSu1eBnIVzyr5jx7JeaVal7Mb
+	 bNLARS2SYH045QhkVgVcHT5L5BT89T917KzL51WRR5Co0Bfgce8qH5clLftA/gtu6n
+	 R0+GqV3dPAX41wldHudD4QrXN5XSSbJEyH+Shw9AW8f5/YiMxX0J6KpzdlhdDp61P3
+	 3paQYI/vR3D4YiX9XHdgWhQWs92jvXbaJrcL+opF4wLSsVQsP7F/h6kxVQDhc1EX+L
+	 E5gLVabDcyWC2uKGSG97aAeulmD1B4cvKKiD/SdVi/s8vVffbe93l/uXxmUBhDo5NH
+	 d7B11S5qkJgiA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mhiramat@kernel.org
+Subject: [PATCH] tracing: Fix memory leak in fgraph storage selftest
+Date: Tue, 20 Aug 2024 09:56:38 +0900
+Message-Id: <172411539857.28895.13119957560263401102.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/11] arm64: dts: qcom: Add SM7325 device tree
-To: Danila Tikhonov <danila@jiaxyga.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, rafael@kernel.org,
- viresh.kumar@linaro.org, kees@kernel.org, tony.luck@intel.com,
- gpiccoli@igalia.com, ulf.hansson@linaro.org, andre.przywara@arm.com,
- quic_rjendra@quicinc.com, davidwronek@gmail.com, neil.armstrong@linaro.org,
- heiko.stuebner@cherry.de, rafal@milecki.pl, macromorgan@hotmail.com,
- linus.walleij@linaro.org, lpieralisi@kernel.org,
- dmitry.baryshkov@linaro.org, fekz115@gmail.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240808184048.63030-1-danila@jiaxyga.com>
- <20240808184048.63030-9-danila@jiaxyga.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <20240808184048.63030-9-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 8.08.2024 8:40 PM, Danila Tikhonov wrote:
-> From: Eugene Lepshy <fekz115@gmail.com>
-> 
-> The Snapdragon 778G (SM7325) / 778G+ (SM7325-AE) / 782G (SM7325-AF)
-> is software-wise very similar to the Snapdragon 7c+ Gen 3 (SC7280).
-> 
-> It uses the Kryo670.
-> 
-> Signed-off-by: Eugene Lepshy <fekz115@gmail.com>
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm7325.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sm7325.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm7325.dtsi b/arch/arm64/boot/dts/qcom/sm7325.dtsi
-> new file mode 100644
-> index 000000000000..5b4574484412
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm7325.dtsi
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2024, Eugene Lepshy <fekz115@gmail.com>
-> + * Copyright (c) 2024, Danila Tikhonov <danila@jiaxyga.com>
-> + */
-> +
-> +#include "sc7280.dtsi"
-> +
-> +/* SM7325 uses Kryo 670 */
-> +&CPU0 { compatible = "qcom,kryo670"; };
-> +&CPU1 { compatible = "qcom,kryo670"; };
-> +&CPU2 { compatible = "qcom,kryo670"; };
-> +&CPU3 { compatible = "qcom,kryo670"; };
-> +&CPU4 { compatible = "qcom,kryo670"; };
-> +&CPU5 { compatible = "qcom,kryo670"; };
-> +&CPU6 { compatible = "qcom,kryo670"; };
-> +&CPU7 { compatible = "qcom,kryo670"; };
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-This is a meaningless marketing name. As you mentioned in your
-reply, cpu0-3 and cpu4-7 are wholly different (maybe cpu7 even
-has a different MIDR part num?), we should do something about it :/
+With ftrace boot-time selftest, kmemleak reported some memory leaks in
+the new test case for function graph storage for multiple tracers.
 
-Please post the output of `dmesg | grep "Booted secondary processor"`
+unreferenced object 0xffff888005060080 (size 32):
+  comm "swapper/0", pid 1, jiffies 4294676440
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 20 10 06 05 80 88 ff ff  ........ .......
+    54 0c 1e 81 ff ff ff ff 00 00 00 00 00 00 00 00  T...............
+  backtrace (crc 7c93416c):
+    [<000000000238ee6f>] __kmalloc_cache_noprof+0x11f/0x2a0
+    [<0000000033d2b6c5>] enter_record+0xe8/0x150
+    [<0000000054c38424>] match_records+0x1cd/0x230
+    [<00000000c775b63d>] ftrace_set_hash+0xff/0x380
+    [<000000007bf7208c>] ftrace_set_filter+0x70/0x90
+    [<00000000a5c08dda>] test_graph_storage_multi+0x2e/0xf0
+    [<000000006ba028ca>] trace_selftest_startup_function_graph+0x1e8/0x260
+    [<00000000a715d3eb>] run_tracer_selftest+0x111/0x190
+    [<00000000395cbf90>] register_tracer+0xdf/0x1f0
+    [<0000000093e67f7b>] do_one_initcall+0x141/0x3b0
+    [<00000000c591b682>] do_initcall_level+0x82/0xa0
+    [<000000004e4c6600>] do_initcalls+0x43/0x70
+    [<0000000034f3c4e4>] kernel_init_freeable+0x170/0x1f0
+    [<00000000c7a5dab2>] kernel_init+0x1a/0x1a0
+    [<00000000ea105947>] ret_from_fork+0x3a/0x50
+    [<00000000a1932e84>] ret_from_fork_asm+0x1a/0x30
+...
 
-Konrad
+This means filter hash allocated for the fixtures are not correctly
+released after the test.
+
+Free those hash lists after tests are done and split the loop for
+initialize fixture and register fixture for rollback.
+
+Fixes: dd120af2d5f8 ("ftrace: Add multiple fgraph storage selftest")
+Cc: stable@vger.kernel.org
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ kernel/trace/trace_selftest.c |   23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+index 97f1e4bc47dc..c4ad7cd7e778 100644
+--- a/kernel/trace/trace_selftest.c
++++ b/kernel/trace/trace_selftest.c
+@@ -942,7 +942,7 @@ static __init int test_graph_storage_multi(void)
+ {
+ 	struct fgraph_fixture *fixture;
+ 	bool printed = false;
+-	int i, ret;
++	int i, j, ret;
+ 
+ 	pr_cont("PASSED\n");
+ 	pr_info("Testing multiple fgraph storage on a function: ");
+@@ -953,22 +953,35 @@ static __init int test_graph_storage_multi(void)
+ 		if (ret && ret != -ENODEV) {
+ 			pr_cont("*Could not set filter* ");
+ 			printed = true;
+-			goto out;
++			goto out2;
+ 		}
++	}
+ 
++	for (j = 0; j < ARRAY_SIZE(store_bytes); j++) {
++		fixture = &store_bytes[j];
+ 		ret = register_ftrace_graph(&fixture->gops);
+ 		if (ret) {
+ 			pr_warn("Failed to init store_bytes fgraph tracing\n");
+ 			printed = true;
+-			goto out;
++			goto out1;
+ 		}
+ 	}
+ 
+ 	DYN_FTRACE_TEST_NAME();
+-out:
++out1:
++	while (--j >= 0) {
++		fixture = &store_bytes[j];
++		unregister_ftrace_graph(&fixture->gops);
++
++		if (fixture->error_str && !printed) {
++			pr_cont("*** %s ***", fixture->error_str);
++			printed = true;
++		}
++	}
++out2:
+ 	while (--i >= 0) {
+ 		fixture = &store_bytes[i];
+-		unregister_ftrace_graph(&fixture->gops);
++		ftrace_free_filter(&fixture->gops.ops);
+ 
+ 		if (fixture->error_str && !printed) {
+ 			pr_cont("*** %s ***", fixture->error_str);
+
 
