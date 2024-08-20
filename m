@@ -1,219 +1,1091 @@
-Return-Path: <linux-kernel+bounces-294471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED80958E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0541C958E21
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0DD61C21566
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:34:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE4D1C21F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF814EC5D;
-	Tue, 20 Aug 2024 18:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2987714C5A9;
+	Tue, 20 Aug 2024 18:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TK3N6xRj"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aNPb+Gz5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E4214B96B;
-	Tue, 20 Aug 2024 18:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178825; cv=fail; b=tT4jZAyfbhU61uCdQAfpnJ0L/kTbAUI/TFRjTqFMdlwte0ExftiLyUb9OlyVSi3we2CrSX16Sm+Xi6IcIGWIbY9n4aD1SxOkH9wc0Kk2ZnVS17Ol9xZkopImjEEtfgD+9Ypw5qih5M68a1+CGtdcFOMyfXTxR3H75XD4YmCvuAY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178825; c=relaxed/simple;
-	bh=rmgYxFDdF/CNbeFHMqHv/JXPwaximEa0FAUVKxty+yc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SsSju+Tq9SvyMzRepVYF1czkcOMo7J8syNG+sccvmOwEawPKxqeKT9jDanupVxpR4ln/N/wrbUNZr4BzBJftSLWuatK14zxTLIG/0g+kI4jhrUi5ZCPmoLWTbPg9Er4sVtVFVG5EgW3sCFS4SUYA8To6CZGPjoDjrZzHvlhEcMA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TK3N6xRj; arc=fail smtp.client-ip=40.107.220.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HhQMKbC7484s+HbkyjKmhQ56Z3hLGOQNQCpbAo4UaZJcyHNh+ahT9pm9FEJtAgr7Mq1dCjhVLae0V+wrBG6qKnbgbU6eJJWyGzJl52fj/X7atxuy5Efhb8SSj69UKGk/wQPTuZnXU0NSl5hxx8E3SNVdmNEZXJVT8TR67RVn3Yd08L+KavvpUTiTv+SGr3Ett+Z9SKr/JsjOqe0CvG8RyPSWPCmnhetRhI/J08R/fXaA9hQg4hAwERA/9EnqMxtyKzqDuHxKalLrtjoHxSrS9BvFujvVvKc1z/d2sMZ06i30/Ltj4p8ZGF84rTnlaQuJx2SXEuMAYLrhsrRyXULN0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zy4yxIVyMZEUYvgJGq+FguE74jh/mEs7X3Ak7SDDjaQ=;
- b=cd3V5Xu68vfoPFK2VxxXt9fm1qMTzVofcFiMV6bNst+J3Yc17FW9VIv31egnTaCQl1tM9k6XklE/Gl7p/D+dJnM4M1RvKL1hu8L5PzIX7tcTk+WOM7IW1yozKHPt5npjSozmhi4utIA5quzRO5FFQwQxngyMmeSvnmvuei8VCQTlpmCXuQUdG8lSor9o9VYk78RZgBp6zVzsQYiawGceUBKV2uVDeu34ChPhyITN7TcKHlJM/KHXe3vr0PzQyDAHbR2PIZf9VGBXqga9yuNjQ6g+Rz1+QohRIqtrYF6AO9Rl/Fguy54Hu5rjuhNmx2g8vcyOR20trNOB4P6nkYrMew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zy4yxIVyMZEUYvgJGq+FguE74jh/mEs7X3Ak7SDDjaQ=;
- b=TK3N6xRjRXy309ZY15VfKlJ9tIZZi1t8MVkR0kOzPZFLZzMGjUfk9aZqFBhdKoWIiTBYr4fYaqq+JKNa9EomEK8OiNdxUt9xD3jPcrR9WiP2DhA6FYZ7oDxfKKZDiNeGLZq6dEAXej+xQ5lC4LuL0C1g15eC5pf309MABib61Zg=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by DM3PR12MB9351.namprd12.prod.outlook.com (2603:10b6:8:1ac::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Tue, 20 Aug
- 2024 18:33:40 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 18:33:40 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, Andrew Lunn <andrew@lunn.ch>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC: "Simek, Michal" <michal.simek@amd.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "David
- S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, Simon Horman
-	<horms@kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH net-next v4 1/2] net: xilinx: axienet: Report RxRject as
- rx_dropped
-Thread-Topic: [PATCH net-next v4 1/2] net: xilinx: axienet: Report RxRject as
- rx_dropped
-Thread-Index: AQHa8yn5NFfuCd3NBU6w2UtqDOc2CLIweFMQ
-Date: Tue, 20 Aug 2024 18:33:40 +0000
-Message-ID:
- <MN0PR12MB5953E143D4B9D889E428998FB78D2@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <20240820175343.760389-1-sean.anderson@linux.dev>
- <20240820175343.760389-2-sean.anderson@linux.dev>
-In-Reply-To: <20240820175343.760389-2-sean.anderson@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|DM3PR12MB9351:EE_
-x-ms-office365-filtering-correlation-id: 2c409fa7-d55c-4609-a3c8-08dcc1469d0a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QkD3Nlmt3e3dOtdSmbdKmE1i40H+E6Kmv3QzUZn3hY/UbREy875EzZSQQwTQ?=
- =?us-ascii?Q?tlSyLvrwuqDCu8BXRwI6MQi6YUbdyUkhcZlnuqL+6XrR+iQ7inSqQGyJWJ6R?=
- =?us-ascii?Q?5jQtrvWv6NCfsKm60vh/tvZCzdELG9yUEb/5e7A4xyaJ6t7WckujoxHt8kIk?=
- =?us-ascii?Q?w3QXmqXggG9a7rSUCJlpy48R4ij03fv04iKfTfiR9TN0cMQYcwvWkEiNvSli?=
- =?us-ascii?Q?Dd1cNgWasQDZAepPDOPgwn23ju7yBdfZ16JFEvaKLe+cgn+zojaYv1hK2UoY?=
- =?us-ascii?Q?FD2PT0vGbJ1A+rprI+h2rclfCUAjT3gg65r7H224Psic8ORmlFkDc0kwWQIo?=
- =?us-ascii?Q?EtWKbdJRftCGGaMsU9fRCVzCjsyKyu7/YsRr2a+i8ZBV236d91uQKwyPWMHd?=
- =?us-ascii?Q?OoXEYmulZ+BnPLbc7wfAzp83QL2JPFqRNFXckmo05KbmG+Gaw82YcTFs2Qyg?=
- =?us-ascii?Q?N7Q0J15OLwoS7PPULZr/ZF+eK7k5WnnziCLoIkNkm2aO3fZFk1oMJJmQQ8Dy?=
- =?us-ascii?Q?0kLrIEWG/MA7K6FRlzdy2G6eZHwHdfN27EZAK8dSGL+gukDi+UIOEO35PiOY?=
- =?us-ascii?Q?bbFnfMTncTpr5unAvv0b1ubPT2T/NZWpEcMMktKIL4ntUr9/YLNFJOu73jp4?=
- =?us-ascii?Q?BDdClGlEzvJRznK1XZV7lQt6MHY/PM7i7hK0ArQHn8R19eTyrRhtuC0X8cmc?=
- =?us-ascii?Q?RUhuFmxZGh0dql8FjqPDtJuV8/2a6bwsRh71S4Jb2WIxFkSaaEzqN2OgjhCI?=
- =?us-ascii?Q?V5nBNStO0It1rVFu6hDNxiYyW89OFRaL6XLq1plFiuZtWEpe8wjucX2v/NNF?=
- =?us-ascii?Q?UmLq53REWf1WMlWk4V3XW+dycD0eowVwCn9jVYBCSVkH1OaNgw5lq9iopAdc?=
- =?us-ascii?Q?mDZvDeOL6GufgG8oiLyxvwZvRPCnvr+WZGNRH1YGB5JNvCTaQoN5Rjmh/cFy?=
- =?us-ascii?Q?xMhBbMikp1JEJxgE+0mAk0ML6JpjYTHTaBrJ7q4tdu2WW9q/YCG0Jn9pTBea?=
- =?us-ascii?Q?+AS3A22z8dVmE7vGkrZfFYAbgMTRLYLCyDI5ZYWqN81e/GXzD9JJ+co9NyCE?=
- =?us-ascii?Q?MfeZ8jgnuHvf2yx8c3Z5KpmqkVBERWS4SYm3lO2WjJfAy1qpMgGtq+uuyZan?=
- =?us-ascii?Q?cBZtrXv4EIppjJUbsDSDfCiATPqkg62XqgPjoATJM5lI6BvHvHWJvlJ0cZxP?=
- =?us-ascii?Q?WSeMr+sM+EgW0G+MisxdrowULDCeVSPayAPszwJRr6WKtmwvaKpEbkd0xRyo?=
- =?us-ascii?Q?1xhAF7aXPpKcuaI3TaJvzDw310RM+dtCAqb1DQtPzQFnDqbPjejjE7A7/UYZ?=
- =?us-ascii?Q?/CJWUP2OOSvF0x/s6/j1Oe5+Tolry4UbySZmv+rjc4+3+BaUeUWUAkWKCccS?=
- =?us-ascii?Q?dEvYhtNaZ3xdzH0qEUqdOMb6dJxx8wS1r388utNh6e01qgHThA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?JFx8yapYSN+hMQqRYo+qvg3tEOUSu498aztrnCkXclcjVOvvBi4ab9MsMWYo?=
- =?us-ascii?Q?Vz+BEaKk7sNPfqyxLILx92AAzcWlrwPWUy7VOgLt9VU/4ZMnanpIFLNBshL6?=
- =?us-ascii?Q?tDpoVlYWrs+xO2w7cD73uVBDwDV8cEq0CnGadO+tiLrvTgbPyVGMr2gFVXB3?=
- =?us-ascii?Q?hr1LNlpAi1lcjoVHIlPWh0rrEkOt0MyurlWmld6ebE3k4jE7HZs4IzY5DunU?=
- =?us-ascii?Q?hNrfKphCnuzf0l+YuEJc6xLYxSZ844g5awU4sLO2LcR35EJPeWcxnI6VY71I?=
- =?us-ascii?Q?eKji8Yvww8qjwmVSuuoLodS4vH1RtTi6MuhMXrSVv1EU06qWSzYnpd34mDZn?=
- =?us-ascii?Q?AoJ9voc3FfRDRGwnEOe0cF6tE3JLUijeyuGT1dqw13WfOfQ3fjqodSxwo0eP?=
- =?us-ascii?Q?w0zW9mf8Aze/LkuxWVzsqmYB/xWQPNqn1IKVAT0YB3zbhZY6RFDZXT/W5Gm7?=
- =?us-ascii?Q?1C89VIkAuSeii8OoTockXlrx+EC26HGD6v0fyfi717smxV6Qz55cScLwgArV?=
- =?us-ascii?Q?47OpPXmkkH22d/UtRsYld/kYeOKJccT6TzEwKy9mcyVwOMZgOUnhFkb1kIH0?=
- =?us-ascii?Q?gT8NEf0CfWgIrwLJcJNItSYt24zxU5gblmc2VyKdA0jS9g2yVGYma6MbBhZT?=
- =?us-ascii?Q?vrhwpiraGQKm95+S0c1oShLb+qhFZQ7oyn3U8tOi5LgBAKavytuHihw/rp/f?=
- =?us-ascii?Q?GN5e+Lsv/3B+/+g+yI5C3tZ/wUeBtwiWai/IHpkJJNp3JoLfsnH1tU/g8sWi?=
- =?us-ascii?Q?OPIWoVAWuOkCewMlygdJX1HyXEgTuDK24c0j+SjSAZAEFPZEzSLExvsY4/vy?=
- =?us-ascii?Q?87t4fcZffBEXK3VKV7/yZ6oGepPUFhK5iVrpTtds+EgWGc1qfDPs3cpUSYle?=
- =?us-ascii?Q?l6Wjq4GIxWSQPuz94ybiqkpoIQvUZScYlYlDZZv7ufcgFfPTkWeIjw8/+j/b?=
- =?us-ascii?Q?VK4LfKPgtDqobLJwjQRm62ofVrGt3MWiFK5WVk0Om7cOjIfr1u2sLU+1bpvK?=
- =?us-ascii?Q?jrQanWlaPQXFt4Yf1l/FCifcAgPN4tLj8jS9Hc3KGKEnTawMCBQQsoYE16mq?=
- =?us-ascii?Q?HHvzEoXD+i+6vi7tPoN2bwjdLJJbuKRCfnoQ9PQUHCIrLw3PJp6e3ahV1XAv?=
- =?us-ascii?Q?EkInOOpm8YMTnOO+SwdbRhlEvg//LrWuPcb3IVlssDCRoL96ueUwxDTIQvzJ?=
- =?us-ascii?Q?LYk+11C91ZimjDvIIJIgtF8U8BAmcK2PQivzZt9GRyHhD3BzwuPzZh+Htx8k?=
- =?us-ascii?Q?70aZKWMtoru7lqAhSITUO1yqcOWvD33l9UChrIdWhRDJgB0HI0YPRHJviqw2?=
- =?us-ascii?Q?0ofxFeErWSVMWaKPOgfSokT4UpX+0jVI2vntsIelxWe3DwUPQRGcCNZIn/BT?=
- =?us-ascii?Q?T4kAleQ0ep7bwyaqGDlaxVUh+n6t1k8YkWoegdbDf0pUoODFI9sB3ThBFboz?=
- =?us-ascii?Q?uoJoICoQIWvEVsN6m+97+V0cS53AgwO9EoTHcCRhdE9kMnBDLnJrGGbOqcSe?=
- =?us-ascii?Q?MfYlORjq/8p21jaiSPCS0QO+3DSj91LUyfv43r27ASNFR+uggmsPKbUsDY8g?=
- =?us-ascii?Q?E2E4OAdHqVMMFeKgPa8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE961494A0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 18:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724178931; cv=none; b=hoeTFfwlKd+ASYlk6+R4u4sOI1mt4mi4xlCkic+8xrX3qsygU/n/N7wDPz0HjRzwgMYcXRGmHo0U78Fq40A6+0VC/qiaT6yYOUL1TnoL+Br6Q96gKrLMOYqLQy1i7uAxaU30jZE4hv5Xf2XtKsR15496vISu1PYmqZu4AdH7JPo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724178931; c=relaxed/simple;
+	bh=pUPiM6E5ayNu2eKmNm2KYHpQU1eBR12oj8X4LuPui9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=n6NEc3nYwuNuayygjDRwTSqy2IXtBZJUjpYenVZMJlYGtFBLqMBE4ilZTJ8RMlKlt2Q0h5608kVlUhpryDYxz3gjBNUWMtjlvRX/rIgigQvtZwZTZI8RZEdNo8zW9NUb0x7XSTQxDFRxjydW8J0USbDWwFPpmtARxcVp99j1mJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aNPb+Gz5; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20260346ca1so28485ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724178928; x=1724783728; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eDWLb4Mp3Nrwpcq0CepzFbIK/oUEvmoe84VoZsvLjGE=;
+        b=aNPb+Gz5wrCklMvB67sAW2uJjJPHrFqd1ZNJq9UH+encK8atvv0tB5Fai5ktT3MFsz
+         eb/VMbu7aUWsG1Cka3X8ESwPG1vchtX76NzXhFoToFE3O9dfvt03wod8YejiTmaRKwRy
+         tchxx0ODAYGMwEm7SjeZ1xs2gsPBJLr0boDFuiPd3mwpADevC0MAPiEz/3TFIq7Z3smh
+         OgPAqVZdKV0a/abeZ9BpFnDaf4srPrdfDvrpB56FxJb99PfUfwTfKSn1HPePV6LWf9TX
+         pos/TkUbPmRgYl59fYduBDZqFv/UyW5msXEaRv7FyK2/mY87kL4JrHbV3EH5XowneWLq
+         DS8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724178928; x=1724783728;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eDWLb4Mp3Nrwpcq0CepzFbIK/oUEvmoe84VoZsvLjGE=;
+        b=owQSQedrRYQjioKUK415SR2p4sm1lagt4+PX8fzRmy650uFcXA5+J7sCmK7N/Ps6Qz
+         hjUpBSXwzvig1BJcFAg87wBoRQfC0C+KJ0qgx5mqLE9OfWdqZbv61JQyOm1edSxlM1YE
+         U9Iezjj2FnI2vE+gHxjEl7xSM3HrkGA3rnCTqw58LhV0flOjWWdZkPo6xeadPTU9tSOC
+         QK5I8p6GZVCQlVsrMq1L5KL82GPc5QUdpi7yaSlIwGbwHPz6JyIJ8SRqvI7iSB64gOeG
+         QiiEMXs4CYhjJuGkfLEou/SGJmFJBcnvQJepRJqLbkF7UwuY6pLO3xCF3KBT6Zdr49Rq
+         hpAA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+rfEgXHChFUq6a05K7cRlTYrUH0ufcP/nDnUOPH1r1Jivr4R/7FVRAN6ccipzNF/fNilwWgHNMpw9asI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8xg8kJmFfgn5so0shN2M/kM9vUJqSqNx/YRjQvbO1nQBe5Ipp
+	7X3b5ffsKn+UBTPXtNuBMj5+1rOr2WJgIsY1TXgDH376fHxbeXis7x2jDc1twoeNegvMCJKM1l/
+	Zo18xU15yxINTd5jyZrRACMNW3IOrhrijjlpw
+X-Google-Smtp-Source: AGHT+IHl3+f/aJurxITdhrVUSpulcl9Dnz3PXDYhibZcY5q8wXMV1m/CVenSzT4eFMhR+bi8kB5z1oUt+hQIwvDZUjE=
+X-Received: by 2002:a17:902:d2d1:b0:1ff:44be:b9e6 with SMTP id
+ d9443c01a7336-202af9f3a6cmr2760535ad.0.1724178927064; Tue, 20 Aug 2024
+ 11:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c409fa7-d55c-4609-a3c8-08dcc1469d0a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2024 18:33:40.5746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VEXWJeHQyXR83OCFx5PDJ3T8IMHqpGJeNrneGfvpqxddL9lWVG7eZicIgR47Hn29
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9351
+References: <20240819151512.2363698-1-surenb@google.com> <20240819151512.2363698-2-surenb@google.com>
+ <vixjfxqv7mat22rlaco4eyple465hada32ymis73aqiozcszte@claj6dxkgv5k>
+In-Reply-To: <vixjfxqv7mat22rlaco4eyple465hada32ymis73aqiozcszte@claj6dxkgv5k>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 20 Aug 2024 11:35:15 -0700
+Message-ID: <CAJuCfpGmgTuKZTSuC85aLBF7Y1pS=D0j9rV7e+VmFWkVpV_HCA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] alloc_tag: load module tags into separate continuous memory
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	dave@stgolabs.net, willy@infradead.org, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Sean Anderson <sean.anderson@linux.dev>
-> Sent: Tuesday, August 20, 2024 11:24 PM
-> To: Andrew Lunn <andrew@lunn.ch>; Pandey, Radhey Shyam
-> <radhey.shyam.pandey@amd.com>; netdev@vger.kernel.org
-> Cc: Simek, Michal <michal.simek@amd.com>; linux-kernel@vger.kernel.org;
-> Russell King <linux@armlinux.org.uk>; David S . Miller
-> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
-> <pabeni@redhat.com>; Eric Dumazet <edumazet@google.com>; Simon
-> Horman <horms@kernel.org>; linux-arm-kernel@lists.infradead.org; Sean
-> Anderson <sean.anderson@linux.dev>
-> Subject: [PATCH net-next v4 1/2] net: xilinx: axienet: Report RxRject as
-> rx_dropped
->=20
-> The Receive Frame Rejected interrupt is asserted whenever there was a
-> receive error (bad FCS, bad length, etc.) or whenever the frame was
-> dropped due to a mismatched address. So this is really a combination of
-> rx_otherhost_dropped, rx_length_errors, rx_frame_errors, and
-> rx_crc_errors. Mismatched addresses are common and aren't really errors
-> at all (much like how fragments are normal on half-duplex links). To
-> avoid confusion, report these events as rx_dropped. This better
-> reflects what's going on: the packet was received by the MAC but dropped
-> before being processed.
->=20
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Tue, Aug 20, 2024 at 8:31=E2=80=AFAM 'Liam R. Howlett' via kernel-team
+<kernel-team@android.com> wrote:
+>
+> * Suren Baghdasaryan <surenb@google.com> [240819 11:15]:
+> > When a module gets unloaded there is a possibility that some of the
+> > allocations it made are still used and therefore the allocation tags
+> > corresponding to these allocations are still referenced. As such, the
+> > memory for these tags can't be freed. This is currently handled as an
+> > abnormal situation and module's data section is not being unloaded.
+> > To handle this situation without keeping module's data in memory,
+> > allow codetags with longer lifespan than the module to be loaded into
+> > their own separate memory. The in-use memory areas and gaps after
+> > module unloading in this separate memory are tracked using maple trees.
+> > Allocation tags arrange their separate memory so that it is virtually
+> > contiguous and that will allow simple allocation tag indexing later on
+> > in this patchset. The size of this virtually contiguous memory is set
+> > to store up to 100000 allocation tags and max_module_alloc_tags kernel
+> > parameter is introduced to change this size.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |   4 +
+> >  include/asm-generic/codetag.lds.h             |  19 ++
+> >  include/linux/alloc_tag.h                     |  13 +-
+> >  include/linux/codetag.h                       |  35 ++-
+> >  kernel/module/main.c                          |  67 +++--
+> >  lib/alloc_tag.c                               | 245 ++++++++++++++++--
+> >  lib/codetag.c                                 | 101 +++++++-
+> >  scripts/module.lds.S                          |   5 +-
+> >  8 files changed, 429 insertions(+), 60 deletions(-)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index d0d141d50638..17f9f811a9c0 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -3205,6 +3205,10 @@
+> >                       devices can be requested on-demand with the
+> >                       /dev/loop-control interface.
+> >
+> > +
+> > +     max_module_alloc_tags=3D  [KNL] Max supported number of allocatio=
+n tags
+> > +                     in modules.
+> > +
+> >       mce             [X86-32] Machine Check Exception
+> >
+> >       mce=3Doption      [X86-64] See Documentation/arch/x86/x86_64/boot=
+-options.rst
+> > diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/co=
+detag.lds.h
+> > index 64f536b80380..372c320c5043 100644
+> > --- a/include/asm-generic/codetag.lds.h
+> > +++ b/include/asm-generic/codetag.lds.h
+> > @@ -11,4 +11,23 @@
+> >  #define CODETAG_SECTIONS()           \
+> >       SECTION_WITH_BOUNDARIES(alloc_tags)
+> >
+> > +/*
+> > + * Module codetags which aren't used after module unload, therefore ha=
+ve the
+> > + * same lifespan as the module and can be safely unloaded with the mod=
+ule.
+> > + */
+> > +#define MOD_CODETAG_SECTIONS()
+> > +
+> > +#define MOD_SEPARATE_CODETAG_SECTION(_name)  \
+> > +     .codetag.##_name : {                    \
+> > +             SECTION_WITH_BOUNDARIES(_name)  \
+> > +     }
+> > +
+> > +/*
+> > + * For codetags which might be used after module unload, therefore mig=
+ht stay
+> > + * longer in memory. Each such codetag type has its own section so tha=
+t we can
+> > + * unload them individually once unused.
+> > + */
+> > +#define MOD_SEPARATE_CODETAG_SECTIONS()              \
+> > +     MOD_SEPARATE_CODETAG_SECTION(alloc_tags)
+> > +
+> >  #endif /* __ASM_GENERIC_CODETAG_LDS_H */
+> > diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> > index 8c61ccd161ba..99cbc7f086ad 100644
+> > --- a/include/linux/alloc_tag.h
+> > +++ b/include/linux/alloc_tag.h
+> > @@ -30,6 +30,13 @@ struct alloc_tag {
+> >       struct alloc_tag_counters __percpu      *counters;
+> >  } __aligned(8);
+> >
+> > +struct alloc_tag_module_section {
+> > +     unsigned long start_addr;
+> > +     unsigned long end_addr;
+> > +     /* used size */
+> > +     unsigned long size;
+> > +};
+> > +
+> >  #ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
+> >
+> >  #define CODETAG_EMPTY        ((void *)1)
+> > @@ -54,6 +61,8 @@ static inline void set_codetag_empty(union codetag_re=
+f *ref) {}
+> >
+> >  #ifdef CONFIG_MEM_ALLOC_PROFILING
+> >
+> > +#define ALLOC_TAG_SECTION_NAME       "alloc_tags"
+> > +
+> >  struct codetag_bytes {
+> >       struct codetag *ct;
+> >       s64 bytes;
+> > @@ -76,7 +85,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_al=
+loc_tag);
+> >
+> >  #define DEFINE_ALLOC_TAG(_alloc_tag)                                  =
+       \
+> >       static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+> > -     __section("alloc_tags") =3D {                                    =
+         \
+> > +     __section(ALLOC_TAG_SECTION_NAME) =3D {                          =
+         \
+> >               .ct =3D CODE_TAG_INIT,                                   =
+         \
+> >               .counters =3D &_shared_alloc_tag };
+> >
+> > @@ -85,7 +94,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_al=
+loc_tag);
+> >  #define DEFINE_ALLOC_TAG(_alloc_tag)                                  =
+       \
+> >       static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr)=
+;      \
+> >       static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+> > -     __section("alloc_tags") =3D {                                    =
+         \
+> > +     __section(ALLOC_TAG_SECTION_NAME) =3D {                          =
+         \
+> >               .ct =3D CODE_TAG_INIT,                                   =
+         \
+> >               .counters =3D &_alloc_tag_cntr };
+> >
+> > diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+> > index c2a579ccd455..c4a3dd60205e 100644
+> > --- a/include/linux/codetag.h
+> > +++ b/include/linux/codetag.h
+> > @@ -35,8 +35,13 @@ struct codetag_type_desc {
+> >       size_t tag_size;
+> >       void (*module_load)(struct codetag_type *cttype,
+> >                           struct codetag_module *cmod);
+> > -     bool (*module_unload)(struct codetag_type *cttype,
+> > +     void (*module_unload)(struct codetag_type *cttype,
+> >                             struct codetag_module *cmod);
+> > +     void (*module_replaced)(struct module *mod, struct module *new_mo=
+d);
+> > +     bool (*needs_section_mem)(struct module *mod, unsigned long size)=
+;
+> > +     void *(*alloc_section_mem)(struct module *mod, unsigned long size=
+,
+> > +                                unsigned int prepend, unsigned long al=
+ign);
+> > +     void (*free_section_mem)(struct module *mod, bool unused);
+> >  };
+> >
+> >  struct codetag_iterator {
+> > @@ -71,11 +76,31 @@ struct codetag_type *
+> >  codetag_register_type(const struct codetag_type_desc *desc);
+> >
+> >  #if defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES)
+> > +
+> > +bool codetag_needs_module_section(struct module *mod, const char *name=
+,
+> > +                               unsigned long size);
+> > +void *codetag_alloc_module_section(struct module *mod, const char *nam=
+e,
+> > +                                unsigned long size, unsigned int prepe=
+nd,
+> > +                                unsigned long align);
+> > +void codetag_free_module_sections(struct module *mod);
+> > +void codetag_module_replaced(struct module *mod, struct module *new_mo=
+d);
+> >  void codetag_load_module(struct module *mod);
+> > -bool codetag_unload_module(struct module *mod);
+> > -#else
+> > +void codetag_unload_module(struct module *mod);
+> > +
+> > +#else /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+> > +
+> > +static inline bool
+> > +codetag_needs_module_section(struct module *mod, const char *name,
+> > +                          unsigned long size) { return false; }
+> > +static inline void *
+> > +codetag_alloc_module_section(struct module *mod, const char *name,
+> > +                          unsigned long size, unsigned int prepend,
+> > +                          unsigned long align) { return NULL; }
+> > +static inline void codetag_free_module_sections(struct module *mod) {}
+> > +static inline void codetag_module_replaced(struct module *mod, struct =
+module *new_mod) {}
+> >  static inline void codetag_load_module(struct module *mod) {}
+> > -static inline bool codetag_unload_module(struct module *mod) { return =
+true; }
+> > -#endif
+> > +static inline void codetag_unload_module(struct module *mod) {}
+> > +
+> > +#endif /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+> >
+> >  #endif /* _LINUX_CODETAG_H */
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index 71396e297499..d195d788835c 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -1225,18 +1225,12 @@ static int module_memory_alloc(struct module *m=
+od, enum mod_mem_type type)
+> >       return 0;
+> >  }
+> >
+> > -static void module_memory_free(struct module *mod, enum mod_mem_type t=
+ype,
+> > -                            bool unload_codetags)
+> > +static void module_memory_free(struct module *mod, enum mod_mem_type t=
+ype)
+> >  {
+> > -     void *ptr =3D mod->mem[type].base;
+> > -
+> > -     if (!unload_codetags && mod_mem_type_is_core_data(type))
+> > -             return;
+> > -
+> > -     execmem_free(ptr);
+> > +     execmem_free(mod->mem[type].base);
+> >  }
+> >
+> > -static void free_mod_mem(struct module *mod, bool unload_codetags)
+> > +static void free_mod_mem(struct module *mod)
+> >  {
+> >       for_each_mod_mem_type(type) {
+> >               struct module_memory *mod_mem =3D &mod->mem[type];
+> > @@ -1247,25 +1241,20 @@ static void free_mod_mem(struct module *mod, bo=
+ol unload_codetags)
+> >               /* Free lock-classes; relies on the preceding sync_rcu().=
+ */
+> >               lockdep_free_key_range(mod_mem->base, mod_mem->size);
+> >               if (mod_mem->size)
+> > -                     module_memory_free(mod, type, unload_codetags);
+> > +                     module_memory_free(mod, type);
+> >       }
+> >
+> >       /* MOD_DATA hosts mod, so free it at last */
+> >       lockdep_free_key_range(mod->mem[MOD_DATA].base, mod->mem[MOD_DATA=
+].size);
+> > -     module_memory_free(mod, MOD_DATA, unload_codetags);
+> > +     module_memory_free(mod, MOD_DATA);
+> >  }
+> >
+> >  /* Free a module, remove from lists, etc. */
+> >  static void free_module(struct module *mod)
+> >  {
+> > -     bool unload_codetags;
+> > -
+> >       trace_module_free(mod);
+> >
+> > -     unload_codetags =3D codetag_unload_module(mod);
+> > -     if (!unload_codetags)
+> > -             pr_warn("%s: memory allocation(s) from the module still a=
+live, cannot unload cleanly\n",
+> > -                     mod->name);
+> > +     codetag_unload_module(mod);
+> >
+> >       mod_sysfs_teardown(mod);
+> >
+> > @@ -1308,7 +1297,7 @@ static void free_module(struct module *mod)
+> >       kfree(mod->args);
+> >       percpu_modfree(mod);
+> >
+> > -     free_mod_mem(mod, unload_codetags);
+> > +     free_mod_mem(mod);
+> >  }
+> >
+> >  void *__symbol_get(const char *symbol)
+> > @@ -1573,6 +1562,14 @@ static void __layout_sections(struct module *mod=
+, struct load_info *info, bool i
+> >                       if (WARN_ON_ONCE(type =3D=3D MOD_INVALID))
+> >                               continue;
+> >
+> > +                     /*
+> > +                      * Do not allocate codetag memory as we load it i=
+nto
+> > +                      * preallocated contiguous memory. s->sh_entsize =
+will
+> > +                      * not be used for this section, so leave it as i=
+s.
+> > +                      */
+> > +                     if (codetag_needs_module_section(mod, sname, s->s=
+h_size))
+> > +                             continue;
+> > +
+> >                       s->sh_entsize =3D module_get_offset_and_type(mod,=
+ type, s, i);
+> >                       pr_debug("\t%s\n", sname);
+> >               }
+> > @@ -2247,6 +2244,7 @@ static int move_module(struct module *mod, struct=
+ load_info *info)
+> >       int i;
+> >       enum mod_mem_type t =3D 0;
+> >       int ret =3D -ENOMEM;
+> > +     bool codetag_section_found =3D false;
+> >
+> >       for_each_mod_mem_type(type) {
+> >               if (!mod->mem[type].size) {
+> > @@ -2257,7 +2255,7 @@ static int move_module(struct module *mod, struct=
+ load_info *info)
+> >               ret =3D module_memory_alloc(mod, type);
+> >               if (ret) {
+> >                       t =3D type;
+> > -                     goto out_enomem;
+> > +                     goto out_err;
+> >               }
+> >       }
+> >
+> > @@ -2267,11 +2265,27 @@ static int move_module(struct module *mod, stru=
+ct load_info *info)
+> >               void *dest;
+> >               Elf_Shdr *shdr =3D &info->sechdrs[i];
+> >               enum mod_mem_type type =3D shdr->sh_entsize >> SH_ENTSIZE=
+_TYPE_SHIFT;
+> > +             const char *sname;
+> >
+> >               if (!(shdr->sh_flags & SHF_ALLOC))
+> >                       continue;
+> >
+> > -             dest =3D mod->mem[type].base + (shdr->sh_entsize & SH_ENT=
+SIZE_OFFSET_MASK);
+> > +             sname =3D info->secstrings + shdr->sh_name;
+> > +             /*
+> > +              * Load codetag sections separately as they might still b=
+e used
+> > +              * after module unload.
+> > +              */
+> > +             if (codetag_needs_module_section(mod, sname, shdr->sh_siz=
+e)) {
+> > +                     dest =3D codetag_alloc_module_section(mod, sname,=
+ shdr->sh_size,
+> > +                                     arch_mod_section_prepend(mod, i),=
+ shdr->sh_addralign);
+> > +                     if (IS_ERR(dest)) {
+> > +                             ret =3D PTR_ERR(dest);
+> > +                             goto out_err;
+> > +                     }
+> > +                     codetag_section_found =3D true;
+> > +             } else {
+> > +                     dest =3D mod->mem[type].base + (shdr->sh_entsize =
+& SH_ENTSIZE_OFFSET_MASK);
+> > +             }
+> >
+> >               if (shdr->sh_type !=3D SHT_NOBITS) {
+> >                       /*
+> > @@ -2283,7 +2297,7 @@ static int move_module(struct module *mod, struct=
+ load_info *info)
+> >                       if (i =3D=3D info->index.mod &&
+> >                          (WARN_ON_ONCE(shdr->sh_size !=3D sizeof(struct=
+ module)))) {
+> >                               ret =3D -ENOEXEC;
+> > -                             goto out_enomem;
+> > +                             goto out_err;
+> >                       }
+> >                       memcpy(dest, (void *)shdr->sh_addr, shdr->sh_size=
+);
+> >               }
+> > @@ -2299,9 +2313,12 @@ static int move_module(struct module *mod, struc=
+t load_info *info)
+> >       }
+> >
+> >       return 0;
+> > -out_enomem:
+> > +out_err:
+> >       for (t--; t >=3D 0; t--)
+> > -             module_memory_free(mod, t, true);
+> > +             module_memory_free(mod, t);
+> > +     if (codetag_section_found)
+> > +             codetag_free_module_sections(mod);
+> > +
+> >       return ret;
+> >  }
+> >
+> > @@ -2422,6 +2439,8 @@ static struct module *layout_and_allocate(struct =
+load_info *info, int flags)
+> >       /* Module has been copied to its final place now: return it. */
+> >       mod =3D (void *)info->sechdrs[info->index.mod].sh_addr;
+> >       kmemleak_load_module(mod, info);
+> > +     codetag_module_replaced(info->mod, mod);
+> > +
+> >       return mod;
+> >  }
+> >
+> > @@ -2431,7 +2450,7 @@ static void module_deallocate(struct module *mod,=
+ struct load_info *info)
+> >       percpu_modfree(mod);
+> >       module_arch_freeing_init(mod);
+> >
+> > -     free_mod_mem(mod, true);
+> > +     free_mod_mem(mod);
+> >  }
+> >
+> >  int __weak module_finalize(const Elf_Ehdr *hdr,
+> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> > index 81e5f9a70f22..f33784f48dd2 100644
+> > --- a/lib/alloc_tag.c
+> > +++ b/lib/alloc_tag.c
+> > @@ -1,5 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0-only
+> >  #include <linux/alloc_tag.h>
+> > +#include <linux/execmem.h>
+> >  #include <linux/fs.h>
+> >  #include <linux/gfp.h>
+> >  #include <linux/module.h>
+> > @@ -9,6 +10,12 @@
+> >  #include <linux/seq_file.h>
+> >
+> >  static struct codetag_type *alloc_tag_cttype;
+> > +static struct alloc_tag_module_section module_tags;
+> > +static struct maple_tree mod_area_mt =3D MTREE_INIT(mod_area_mt, MT_FL=
+AGS_ALLOC_RANGE);
+> > +/* A dummy object used to indicate an unloaded module */
+> > +static struct module unloaded_mod;
+> > +/* A dummy object used to indicate a module prepended area */
+> > +static struct module prepend_mod;
+> >
+> >  DEFINE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+> >  EXPORT_SYMBOL(_shared_alloc_tag);
+> > @@ -149,29 +156,198 @@ static void __init procfs_init(void)
+> >       proc_create_seq("allocinfo", 0400, NULL, &allocinfo_seq_op);
+> >  }
+> >
+> > -static bool alloc_tag_module_unload(struct codetag_type *cttype,
+> > -                                 struct codetag_module *cmod)
+> > +static bool needs_section_mem(struct module *mod, unsigned long size)
+> >  {
+> > -     struct codetag_iterator iter =3D codetag_get_ct_iter(cttype);
+> > -     struct alloc_tag_counters counter;
+> > -     bool module_unused =3D true;
+> > -     struct alloc_tag *tag;
+> > -     struct codetag *ct;
+> > +     return size >=3D sizeof(struct alloc_tag);
+> > +}
+> > +
+> > +/* Called under RCU read lock */
+> > +static void clean_unused_module_areas(void)
+> > +{
+> > +     MA_STATE(mas, &mod_area_mt, 0, module_tags.size);
+> > +     struct module *val;
+> > +
+> > +     mas_for_each(&mas, val, module_tags.size) {
+> > +             if (val =3D=3D &unloaded_mod) {
+> > +                     struct alloc_tag *tag;
+> > +                     struct alloc_tag *last;
+> > +                     bool unused =3D true;
+> > +
+> > +                     tag =3D (struct alloc_tag *)(module_tags.start_ad=
+dr + mas.index);
+> > +                     last =3D (struct alloc_tag *)(module_tags.start_a=
+ddr + mas.last);
+> > +                     while (tag <=3D last) {
+> > +                             struct alloc_tag_counters counter;
+> > +
+> > +                             counter =3D alloc_tag_read(tag);
+> > +                             if (counter.bytes) {
+> > +                                     unused =3D false;
+> > +                                     break;
+> > +                             }
+> > +                             tag++;
+> > +                     }
+> > +                     if (unused) {
+> > +                             mtree_store_range(&mod_area_mt, mas.index=
+,
+> > +                                               mas.last, NULL, GFP_KER=
+NEL);
+>
+> There is an mtree_erase() or mas_erase() function as well, no problem
+> doing it this way.
 
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Yeah, mtree_erase() seems more clear. I'll use that.
 
-> ---
->=20
-> (no changes since v1)
->=20
->  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index ca04c298daa2..b2d7c396e2e3 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -1296,7 +1296,7 @@ static irqreturn_t axienet_eth_irq(int irq, void
-> *_ndev)
->  		ndev->stats.rx_missed_errors++;
->=20
->  	if (pending & XAE_INT_RXRJECT_MASK)
-> -		ndev->stats.rx_frame_errors++;
-> +		ndev->stats.rx_dropped++;
->=20
->  	axienet_iow(lp, XAE_IS_OFFSET, pending);
->  	return IRQ_HANDLED;
-> --
-> 2.35.1.1320.gc452695387.dirty
+>
+> > +                     }
+> > +             }
+> > +     }
+> > +}
+> > +
+> > +static void *reserve_module_tags(struct module *mod, unsigned long siz=
+e,
+> > +                              unsigned int prepend, unsigned long alig=
+n)
+> > +{
+> > +     unsigned long section_size =3D module_tags.end_addr - module_tags=
+.start_addr;
+> > +     MA_STATE(mas, &mod_area_mt, 0, section_size - 1);
+> > +     bool cleanup_done =3D false;
+> > +     unsigned long offset;
+> > +     void *ret;
+> > +
+> > +     /* If no tags return NULL */
+> > +     if (size < sizeof(struct alloc_tag))
+> > +             return NULL;
+> > +
+> > +     /*
+> > +      * align is always power of 2, so we can use IS_ALIGNED and ALIGN=
+.
+> > +      * align 0 or 1 means no alignment, to simplify set to 1.
+> > +      */
+> > +     if (!align)
+> > +             align =3D 1;
+> > +
+> > +     rcu_read_lock();
+> > +repeat:
+> > +     /* Try finding exact size and hope the start is aligned */
+> > +     if (mas_empty_area(&mas, 0, section_size - 1, prepend + size))
+> > +             goto cleanup;
+> > +
+> > +     if (IS_ALIGNED(mas.index + prepend, align))
+> > +             goto found;
+> > +
+> > +     /* Try finding larger area to align later */
+> > +     mas_reset(&mas);
+> > +     if (!mas_empty_area(&mas, 0, section_size - 1,
+> > +                         size + prepend + align - 1))
+> > +             goto found;
+> > +
+> > +cleanup:
+> > +     /* No free area, try cleanup stale data and repeat the search onc=
+e */
+> > +     if (!cleanup_done) {
+> > +             clean_unused_module_areas();
+> > +             cleanup_done =3D true;
+> > +             mas_reset(&mas);
+> > +             goto repeat;
+> > +     } else {
+> > +             ret =3D ERR_PTR(-ENOMEM);
+> > +             goto out;
+> > +     }
+> > +
+> > +found:
+> > +     offset =3D mas.index;
+> > +     offset +=3D prepend;
+> > +     offset =3D ALIGN(offset, align);
+> > +
+> > +     if (mtree_insert_range(&mod_area_mt, offset, offset + size - 1, m=
+od,
+> > +                            GFP_KERNEL)) {
+> > +             ret =3D ERR_PTR(-ENOMEM);
+> > +             goto out;
+> > +     }
+> > +
+> > +     if (offset !=3D mas.index) {
+> > +             if (mtree_insert_range(&mod_area_mt, mas.index, offset - =
+1,
+> > +                                    &prepend_mod, GFP_KERNEL)) {
+> > +                     mtree_store_range(&mod_area_mt, offset, offset + =
+size - 1,
+> > +                                       NULL, GFP_KERNEL);
+>
+> Aren't you negating the security of knowing you haven't raced to store
+> in the same location as another reader if you use mtree_store_range()
+> on the failure of mtree_insert_range()?
 
+All functions using mod_area_mt are synchronized using
+cttype->mod_lock (see codetag_alloc_module_section() for an example),
+so we should not be racing.
+
+>
+> > +                     ret =3D ERR_PTR(-ENOMEM);
+> > +                     goto out;
+> > +             }
+> > +     }
+>
+> mtree_insert and mtree_store do the locking for you, but will re-walk
+> the tree to the location for the store.  If you use the advanced mas_
+> operations, you can store without a re-walk but need to take the
+> spinlock and check mas_is_err(&mas) yourself.
+>
+> mas.last =3D  offset - 1;
+> mas_lock(&mas)
+> mas_insert(&mas, prepend_mod)
+> mas_unlock(&mas);
+> if (mas_is_err(&mas))
+>         ret =3D xa_err(mas->node);
+>
+> What you have works though.
+
+Thanks for the tip. I'll try using this advanced API.
+
+>
+>
+> > +
+> > +     if (module_tags.size < offset + size)
+> > +             module_tags.size =3D offset + size;
+> > +
+> > +     ret =3D (struct alloc_tag *)(module_tags.start_addr + offset);
+> > +out:
+> > +     rcu_read_unlock();
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static void release_module_tags(struct module *mod, bool unused)
+> > +{
+> > +     MA_STATE(mas, &mod_area_mt, 0, module_tags.size);
+> > +     unsigned long padding_start;
+> > +     bool padding_found =3D false;
+> > +     struct module *val;
+> > +
+> > +     if (unused)
+> > +             return;
+> > +
+> > +     unused =3D true;
+> > +     rcu_read_lock();
+> > +     mas_for_each(&mas, val, module_tags.size) {
+> > +             struct alloc_tag *tag;
+> > +             struct alloc_tag *last;
+> > +
+> > +             if (val =3D=3D &prepend_mod) {
+> > +                     padding_start =3D mas.index;
+> > +                     padding_found =3D true;
+> > +                     continue;
+> > +             }
+> >
+> > -     for (ct =3D codetag_next_ct(&iter); ct; ct =3D codetag_next_ct(&i=
+ter)) {
+> > -             if (iter.cmod !=3D cmod)
+> > +             if (val !=3D mod) {
+> > +                     padding_found =3D false;
+> >                       continue;
+> > +             }
+> > +
+> > +             tag =3D (struct alloc_tag *)(module_tags.start_addr + mas=
+.index);
+> > +             last =3D (struct alloc_tag *)(module_tags.start_addr + ma=
+s.last);
+> > +             while (tag <=3D last) {
+> > +                     struct alloc_tag_counters counter;
+> > +
+> > +                     counter =3D alloc_tag_read(tag);
+> > +                     if (counter.bytes) {
+> > +                             struct codetag *ct =3D &tag->ct;
+> >
+> > -             tag =3D ct_to_alloc_tag(ct);
+> > -             counter =3D alloc_tag_read(tag);
+> > +                             pr_info("%s:%u module %s func:%s has %llu=
+ allocated at module unload\n",
+> > +                                     ct->filename, ct->lineno, ct->mod=
+name,
+> > +                                     ct->function, counter.bytes);
+> > +                             unused =3D false;
+> > +                             break;
+> > +                     }
+> > +                     tag++;
+> > +             }
+> > +             if (unused) {
+> > +                     mtree_store_range(&mod_area_mt,
+> > +                                       padding_found ? padding_start :=
+ mas.index,
+> > +                                       mas.last, NULL, GFP_KERNEL);
+> > +             } else {
+> > +                     /* Release the padding and mark the module unload=
+ed */
+> > +                     if (padding_found)
+> > +                             mtree_store_range(&mod_area_mt, padding_s=
+tart,
+> > +                                               mas.index - 1, NULL, GF=
+P_KERNEL);
+> > +                     mtree_store_range(&mod_area_mt, mas.index, mas.la=
+st,
+> > +                                       &unloaded_mod, GFP_KERNEL);
+> > +             }
+> >
+> > -             if (WARN(counter.bytes,
+> > -                      "%s:%u module %s func:%s has %llu allocated at m=
+odule unload",
+> > -                      ct->filename, ct->lineno, ct->modname, ct->funct=
+ion, counter.bytes))
+> > -                     module_unused =3D false;
+> > +             break;
+> >       }
+> > +     rcu_read_unlock();
+>
+> You may want to use a reverse iterator here, I don't think we have had a
+> use for one yet..
+>
+> #define mas_for_each_rev(__mas, __entry, __min) \
+>         while (((__entry) =3D mas_find_rev((__mas), (__min))) !=3D NULL)
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> MA_STATE(mas, &mod_area_mt, module_tags.size, module_tags.size);
+>
+> ...
+>
+> rcu_read_lock();
+> mas_for_each_rev(&mas, val, 0)
+>         if (val =3D=3D mod)
+>                 break;
+>
+> if (!val) /* no module found */
+>         goto out;
+>
+> ..unused check loop here..
+>
+> mas_lock(&mas) /* spinlock */
+> mas_store(&mas, unused ? NULL : &unloaded_mod);
+> val =3D mas_prev_range(&mas, 0);
+> if (val =3D=3D &prepend_mod)
+>         mas_store(&mas, NULL);
+> mas_unlock(&mas);
+>
+> out:
+> rcu_read_unlock();
+>
+
+I see. Ok, that should simplify this loop. I'll try that out.
+
+>
+> > +}
+> > +
+> > +static void replace_module(struct module *mod, struct module *new_mod)
+> > +{
+> > +     MA_STATE(mas, &mod_area_mt, 0, module_tags.size);
+> > +     struct module *val;
+> >
+> > -     return module_unused;
+> > +     rcu_read_lock();
+> > +     mas_for_each(&mas, val, module_tags.size) {
+> > +             if (val !=3D mod)
+> > +                     continue;
+> > +
+> > +             mtree_store_range(&mod_area_mt, mas.index, mas.last,
+> > +                               new_mod, GFP_KERNEL);
+> > +             break;
+> > +     }
+> > +     rcu_read_unlock();
+> >  }
+> >
+> >  #ifdef CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
+> > @@ -252,17 +428,46 @@ static void __init sysctl_init(void)
+> >  static inline void sysctl_init(void) {}
+> >  #endif /* CONFIG_SYSCTL */
+> >
+> > +static unsigned long max_module_alloc_tags __initdata =3D 100000;
+> > +
+> > +static int __init set_max_module_alloc_tags(char *arg)
+> > +{
+> > +     if (!arg)
+> > +             return -EINVAL;
+> > +
+> > +     return kstrtoul(arg, 0, &max_module_alloc_tags);
+> > +}
+> > +early_param("max_module_alloc_tags", set_max_module_alloc_tags);
+> > +
+> >  static int __init alloc_tag_init(void)
+> >  {
+> >       const struct codetag_type_desc desc =3D {
+> > -             .section        =3D "alloc_tags",
+> > -             .tag_size       =3D sizeof(struct alloc_tag),
+> > -             .module_unload  =3D alloc_tag_module_unload,
+> > +             .section                =3D ALLOC_TAG_SECTION_NAME,
+> > +             .tag_size               =3D sizeof(struct alloc_tag),
+> > +             .needs_section_mem      =3D needs_section_mem,
+> > +             .alloc_section_mem      =3D reserve_module_tags,
+> > +             .free_section_mem       =3D release_module_tags,
+> > +             .module_replaced        =3D replace_module,
+> >       };
+> > +     unsigned long module_tags_mem_sz;
+> >
+> > +     module_tags_mem_sz =3D max_module_alloc_tags * sizeof(struct allo=
+c_tag);
+> > +     pr_info("%lu bytes reserved for module allocation tags\n", module=
+_tags_mem_sz);
+> > +
+> > +     /* Allocate space to copy allocation tags */
+> > +     module_tags.start_addr =3D (unsigned long)execmem_alloc(EXECMEM_M=
+ODULE_DATA,
+> > +                                                           module_tags=
+_mem_sz);
+> > +     if (!module_tags.start_addr)
+> > +             return -ENOMEM;
+> > +
+> > +     module_tags.end_addr =3D module_tags.start_addr + module_tags_mem=
+_sz;
+> > +     mt_set_in_rcu(&mod_area_mt);
+>
+> If you are not toggling rcu-safe, then you can use the init of the tree
+> to set rcu on by setting MT_FLAGS_USE_RCU.
+
+Ack.
+
+Thanks for the feedback, Liam!
+
+>
+> >       alloc_tag_cttype =3D codetag_register_type(&desc);
+> > -     if (IS_ERR(alloc_tag_cttype))
+> > +     if (IS_ERR(alloc_tag_cttype)) {
+> > +             execmem_free((void *)module_tags.start_addr);
+> > +             module_tags.start_addr =3D 0;
+> >               return PTR_ERR(alloc_tag_cttype);
+> > +     }
+> >
+> >       sysctl_init();
+> >       procfs_init();
+> > diff --git a/lib/codetag.c b/lib/codetag.c
+> > index 5ace625f2328..d602a81bdc03 100644
+> > --- a/lib/codetag.c
+> > +++ b/lib/codetag.c
+> > @@ -126,6 +126,7 @@ static inline size_t range_size(const struct codeta=
+g_type *cttype,
+> >  }
+> >
+> >  #ifdef CONFIG_MODULES
+> > +
+> >  static void *get_symbol(struct module *mod, const char *prefix, const =
+char *name)
+> >  {
+> >       DECLARE_SEQ_BUF(sb, KSYM_NAME_LEN);
+> > @@ -155,6 +156,94 @@ static struct codetag_range get_section_range(stru=
+ct module *mod,
+> >       };
+> >  }
+> >
+> > +#define CODETAG_SECTION_PREFIX       ".codetag."
+> > +
+> > +/* Some codetag types need a separate module section */
+> > +bool codetag_needs_module_section(struct module *mod, const char *name=
+,
+> > +                               unsigned long size)
+> > +{
+> > +     const char *type_name;
+> > +     struct codetag_type *cttype;
+> > +     bool ret =3D false;
+> > +
+> > +     if (strncmp(name, CODETAG_SECTION_PREFIX, strlen(CODETAG_SECTION_=
+PREFIX)))
+> > +             return false;
+> > +
+> > +     type_name =3D name + strlen(CODETAG_SECTION_PREFIX);
+> > +     mutex_lock(&codetag_lock);
+> > +     list_for_each_entry(cttype, &codetag_types, link) {
+> > +             if (strcmp(type_name, cttype->desc.section) =3D=3D 0) {
+> > +                     if (!cttype->desc.needs_section_mem)
+> > +                             break;
+> > +
+> > +                     down_write(&cttype->mod_lock);
+> > +                     ret =3D cttype->desc.needs_section_mem(mod, size)=
+;
+> > +                     up_write(&cttype->mod_lock);
+> > +                     break;
+> > +             }
+> > +     }
+> > +     mutex_unlock(&codetag_lock);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +void *codetag_alloc_module_section(struct module *mod, const char *nam=
+e,
+> > +                                unsigned long size, unsigned int prepe=
+nd,
+> > +                                unsigned long align)
+> > +{
+> > +     const char *type_name =3D name + strlen(CODETAG_SECTION_PREFIX);
+> > +     struct codetag_type *cttype;
+> > +     void *ret =3D NULL;
+> > +
+> > +     mutex_lock(&codetag_lock);
+> > +     list_for_each_entry(cttype, &codetag_types, link) {
+> > +             if (strcmp(type_name, cttype->desc.section) =3D=3D 0) {
+> > +                     if (WARN_ON(!cttype->desc.alloc_section_mem))
+> > +                             break;
+> > +
+> > +                     down_write(&cttype->mod_lock);
+> > +                     ret =3D cttype->desc.alloc_section_mem(mod, size,=
+ prepend, align);
+> > +                     up_write(&cttype->mod_lock);
+> > +                     break;
+> > +             }
+> > +     }
+> > +     mutex_unlock(&codetag_lock);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +void codetag_free_module_sections(struct module *mod)
+> > +{
+> > +     struct codetag_type *cttype;
+> > +
+> > +     mutex_lock(&codetag_lock);
+> > +     list_for_each_entry(cttype, &codetag_types, link) {
+> > +             if (!cttype->desc.free_section_mem)
+> > +                     continue;
+> > +
+> > +             down_write(&cttype->mod_lock);
+> > +             cttype->desc.free_section_mem(mod, true);
+> > +             up_write(&cttype->mod_lock);
+> > +     }
+> > +     mutex_unlock(&codetag_lock);
+> > +}
+> > +
+> > +void codetag_module_replaced(struct module *mod, struct module *new_mo=
+d)
+> > +{
+> > +     struct codetag_type *cttype;
+> > +
+> > +     mutex_lock(&codetag_lock);
+> > +     list_for_each_entry(cttype, &codetag_types, link) {
+> > +             if (!cttype->desc.module_replaced)
+> > +                     continue;
+> > +
+> > +             down_write(&cttype->mod_lock);
+> > +             cttype->desc.module_replaced(mod, new_mod);
+> > +             up_write(&cttype->mod_lock);
+> > +     }
+> > +     mutex_unlock(&codetag_lock);
+> > +}
+> > +
+> >  static int codetag_module_init(struct codetag_type *cttype, struct mod=
+ule *mod)
+> >  {
+> >       struct codetag_range range;
+> > @@ -212,13 +301,12 @@ void codetag_load_module(struct module *mod)
+> >       mutex_unlock(&codetag_lock);
+> >  }
+> >
+> > -bool codetag_unload_module(struct module *mod)
+> > +void codetag_unload_module(struct module *mod)
+> >  {
+> >       struct codetag_type *cttype;
+> > -     bool unload_ok =3D true;
+> >
+> >       if (!mod)
+> > -             return true;
+> > +             return;
+> >
+> >       mutex_lock(&codetag_lock);
+> >       list_for_each_entry(cttype, &codetag_types, link) {
+> > @@ -235,18 +323,17 @@ bool codetag_unload_module(struct module *mod)
+> >               }
+> >               if (found) {
+> >                       if (cttype->desc.module_unload)
+> > -                             if (!cttype->desc.module_unload(cttype, c=
+mod))
+> > -                                     unload_ok =3D false;
+> > +                             cttype->desc.module_unload(cttype, cmod);
+> >
+> >                       cttype->count -=3D range_size(cttype, &cmod->rang=
+e);
+> >                       idr_remove(&cttype->mod_idr, mod_id);
+> >                       kfree(cmod);
+> >               }
+> >               up_write(&cttype->mod_lock);
+> > +             if (found && cttype->desc.free_section_mem)
+> > +                     cttype->desc.free_section_mem(mod, false);
+> >       }
+> >       mutex_unlock(&codetag_lock);
+> > -
+> > -     return unload_ok;
+> >  }
+> >
+> >  #else /* CONFIG_MODULES */
+> > diff --git a/scripts/module.lds.S b/scripts/module.lds.S
+> > index 3f43edef813c..711c6e029936 100644
+> > --- a/scripts/module.lds.S
+> > +++ b/scripts/module.lds.S
+> > @@ -50,7 +50,7 @@ SECTIONS {
+> >       .data : {
+> >               *(.data .data.[0-9a-zA-Z_]*)
+> >               *(.data..L*)
+> > -             CODETAG_SECTIONS()
+> > +             MOD_CODETAG_SECTIONS()
+> >       }
+> >
+> >       .rodata : {
+> > @@ -59,9 +59,10 @@ SECTIONS {
+> >       }
+> >  #else
+> >       .data : {
+> > -             CODETAG_SECTIONS()
+> > +             MOD_CODETAG_SECTIONS()
+> >       }
+> >  #endif
+> > +     MOD_SEPARATE_CODETAG_SECTIONS()
+> >  }
+> >
+> >  /* bring in arch-specific sections */
+> > --
+> > 2.46.0.184.g6999bdac58-goog
+> >
+>
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
 
