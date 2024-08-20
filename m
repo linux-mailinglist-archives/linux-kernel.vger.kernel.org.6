@@ -1,177 +1,172 @@
-Return-Path: <linux-kernel+bounces-294577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D08A958F8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552F8958F8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6360EB22210
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0D91C21B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930D1BD023;
-	Tue, 20 Aug 2024 21:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3C914A09E;
+	Tue, 20 Aug 2024 21:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b="gfjM65wv"
-Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com [136.143.188.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5XIbwUl"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300101C57A7;
-	Tue, 20 Aug 2024 21:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724188457; cv=pass; b=AHtkVMOLm202ow3KyWL/c5s6XOZK1MsGAAvUh7WqW5HvyLJMPx/8A591hQk+MXdLmAde55s0ZFOAefYecCRkBRtcHdUxhJZ3eE+6Y8Q0C3+KyUJtKITI+gmpUztcgNeCuiityeajPtXym3M6xZ6bJ8HHsdxAAKeXn8tAfY7o1k8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724188457; c=relaxed/simple;
-	bh=iQcZCIQuE7z+MWtObJKVOdi8N46uoOEHZoUaAeS2o5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N9UKhHiXxbHK3LdcImSq2w65AtRNWuwP0AI/vE/1W9SR8zA4LWNh9uRH/S6fiYwMLGbymPGMBDgaoms/TOmFpyERHyTYVx17nO5bjCyJbcEWPZKy7B7J8zKhKdw5/8LgpLPJM+HcwyihbL2RMv2Vvn9hBs/Sijfm43Ij2YzcWcE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz; spf=pass smtp.mailfrom=jevklidu.cz; dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b=gfjM65wv; arc=pass smtp.client-ip=136.143.188.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jevklidu.cz
-ARC-Seal: i=1; a=rsa-sha256; t=1724188442; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XgwUiGPDQfkbe7/DE86c/wlUPudOjaYrTgsQwmHvJP8W1kX0j+BfuXJB9uCSkH7dLgN9KUjbhgnhn1S0mcIIakKDG7n3lqNFYzMKpWNWoegoJKgsum4c4I4PaXJJ4OqP2qmSySDAu3/Bg48kWE5NJAKwpnJc3b0+F5YeQWDbaQo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724188442; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ELfzGSU85Ube/i21ISp5VK7kSe9amSr2lKEG2/Vg88Q=; 
-	b=AvaVi8ioUWKvYFBKSzbvBEiIRFIUzlMWTDRqdbB8RXtplHbcPMt0ZCBkyThQ3nBx0L98qra81TXMltVqKypAUXXewupbyZRpBPdIHEaI9jf1HtPxJB5Cf98YKcYgcGB7P1oxY27qdbrblyUnQF+/mpscHqRazKkc6KHnQvNnQAM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=jevklidu.cz;
-	spf=pass  smtp.mailfrom=petr@jevklidu.cz;
-	dmarc=pass header.from=<petr@jevklidu.cz>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724188442;
-	s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ELfzGSU85Ube/i21ISp5VK7kSe9amSr2lKEG2/Vg88Q=;
-	b=gfjM65wvvqAxR8k4L1ciKz1ZZUbT1MRfaVvxZcdd2EloJ8lm8nPTY+6K4HryPGw6
-	3FLGI/Bl/vxcVE8llS785UAggco7b+kQyWtdSW4vfH2u6jdVCtr+Lwgjh4Qrezy5tio
-	TDQ5UxZACk4zfL0IJ4jy8tBm3XXh/LF7Nw93+Aew=
-Received: by mx.zohomail.com with SMTPS id 1724188440687689.5836446683727;
-	Tue, 20 Aug 2024 14:14:00 -0700 (PDT)
-Message-ID: <7ec28d20-c729-496a-b8bf-2bf88bbb4d70@jevklidu.cz>
-Date: Tue, 20 Aug 2024 23:13:54 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B011D1E86E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 21:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724188531; cv=none; b=Avj1hi20/mcuqt0snCmsXHlbXKMHbZ7ReS/iK4NN7af/kNcu7klcmInevfxxY3Hr4ou0/ymZAJ6kmPvCyoLxPhkZHXxQEqn8XmV+yCsHrS7AHv8HJ5yAcQ64CY++F1CKPRn/F3hqDiEzj+W6wijkhLuSB3tEJTuIavEsX3BB32E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724188531; c=relaxed/simple;
+	bh=9RWnIjUiiW6pljnVDnVK5iNTeqbtvOjVsWT9XHKH8HI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhGXuiF0ywnDBLGSRID/sJtBCxIHI4wBHf0pSAVRMfdFF+oDUFvhTIIO4xPzy8WYZjwTrn5lOt7Foee1iNwX9s8ZYXqryNIwKYq8ogj+pyrFal+/Y1QgA/8P52yCkQWnM4AbV8zaarcAM9WNq4Fx/ts9JqksJyX5iOKme2qtcVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5XIbwUl; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6c0ad8dca82so1602487b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724188528; x=1724793328; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QTC4wc5LOx1PJXj9S88NW93jxtDEotdAsloOqA5baFY=;
+        b=a5XIbwUlvXqSeaFy+bd5HopKg7fc1SdkJhx/vv3lZZ7SjhEqQdimktmWvkPrPyU5XT
+         b4KJ2kQl4hYbkNM+Zr6JmtlvQcj5bdu3bEHwiZwDEx5maTJ2rQD5z3TrTDtgRC+9COlm
+         al1XBLshZVVAGb3zWecRavLGUyOIO92GLw0sEXNbz081SDS+1o6AtFTW2iT/9Vrags/8
+         DcpvsY1uLuvtkBw5ZanWMU76NOTthQB8R4reURHkhEdQ/At3FVPQF8cK9hwI2cwcGGsB
+         1RrFEu+lQB73RALITYgT1GpSJ67RyMuQ3KO6mQ4Oj2ro8z1LzhkwW+MEd3rEUChoiZ7J
+         KwXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724188528; x=1724793328;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QTC4wc5LOx1PJXj9S88NW93jxtDEotdAsloOqA5baFY=;
+        b=q3w6KqG4TARsSKN1vXKyZJjzzHPlLN/vuXnjzCONbZHvT4b1FsNrUQoAYhe5zeJzjF
+         gfApkSnfRZINss1gHqsSp7WakDnVGiaG+8RpL0LzPq87QTv05fNimf9V4ZjeOyYdn0ku
+         ch8cRt2o9mvoHY8IZKtUEIn/yBnoFEdq42RDSEgevJt69qiiSr5FEzpHCxubk3CWpbJr
+         sE6BsF/wDa1yCu+LyJtW5Jw0P575qO83cveMX83nJCPi7nWfF3P2YndIpXUAdV2QQMgw
+         v9570yWw0246LQ8VSnMLEJKm4fOb06FCCefho6553ZGIbVQh7fWHrsPk+xzhz95UeWwy
+         EbLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmRJa7nBqhj/QgGNGduFGnIwCqfiLKysGOu3GScwLfuUZY9yUMNLpcHFqpvwNlNS2CrMcF2i2mewax+ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3A0SVVNuBiPSfWVIL0u/eoc9g1KLjtW9mpneYpiXM+0B/xq8L
+	f9QRC45qjXEMBW/m9kfr9HmvXDQ+EwAccy0EKRklhcKHr/r+fa+C
+X-Google-Smtp-Source: AGHT+IEaEqTXdhAc6ZBp4rYdRYhxAJBpdkb1nfTLzPM9WBEfTSkKN6vMyqGoshugTERf69lX2UH0WA==
+X-Received: by 2002:a05:690c:c83:b0:65f:a486:5a61 with SMTP id 00721157ae682-6c09c7887ebmr8066827b3.10.1724188528501;
+        Tue, 20 Aug 2024 14:15:28 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6af99506caasm20111257b3.28.2024.08.20.14.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 14:15:27 -0700 (PDT)
+Date: Tue, 20 Aug 2024 14:15:14 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Valentin Schneider <vschneid@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [RFC PATCH 1/5] lib: Implement
+ find_{first,next,nth}_notandnot_bit, find_first_andnot_bit
+Message-ID: <ZsUHYqEJxdb2kYyP@yury-ThinkPad>
+References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
+ <20240819142406.339084-2-mathieu.desnoyers@efficios.com>
+ <ZsOatkpPqzMF6B_c@yury-ThinkPad>
+ <1207b505-0842-40cc-a581-44e595f67601@efficios.com>
+ <df068816-7269-4275-a673-d9ed5c050365@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ACPI IRQ storm with 6.10
-To: Bjorn Helgaas <helgaas@kernel.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Tony Nguyen <anthony.l.nguyen@intel.com>, przemyslaw.kitszel@intel.com,
- intel-wired-lan@lists.osuosl.org, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240820180952.GA217979@bhelgaas>
-Content-Language: cs-CZ
-From: Petr Valenta <petr@jevklidu.cz>
-In-Reply-To: <20240820180952.GA217979@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <df068816-7269-4275-a673-d9ed5c050365@efficios.com>
 
-
-
-Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
-> [+to Petr, -cc Jesse, bouncing]
+On Tue, Aug 20, 2024 at 10:45:17PM +0200, Mathieu Desnoyers wrote:
+> On 2024-08-20 19:19, Mathieu Desnoyers wrote:
+> > On 2024-08-19 21:19, Yury Norov wrote:
+> [...]
+> > > > +/**
+> > > > + * find_next_notandnot_bit - find the next bit cleared in both
+> > > > *addr1 and *addr2
+> > > > + * @addr1: The first address to base the search on
+> > > > + * @addr2: The second address to base the search on
+> > > > + * @size: The bitmap size in bits
+> > > > + * @offset: The bitnumber to start searching at
+> > > > + *
+> > > > + * Returns the bit number for the next bit cleared in both
+> > > > *addr1 and *addr2.
+> > > > + * If no such bits are found, returns @size.
+> > > > + */
+> > > > +static inline
+> > > > +unsigned long find_next_notandnot_bit(const unsigned long *addr1,
+> > > > +        const unsigned long *addr2, unsigned long size,
+> > > > +        unsigned long offset)
+> > > > +{
+> > > > +    if (small_const_nbits(size)) {
+> > > > +        unsigned long val;
+> > > > +
+> > > > +        if (unlikely(offset >= size))
+> > > > +            return size;
+> > > > +
+> > > > +        val = (~*addr1) & (~*addr2) & GENMASK(size - 1, offset);
+> > > > +        return val ? __ffs(val) : size;
+> > > > +    }
+> > > > +
+> > > > +    return _find_next_notandnot_bit(addr1, addr2, size, offset);
+> > > > +}
+> > > > +#endif
+> > > > +
+> > > 
+> > > It's not said explicitly, but some naming conventions exist around bitmap
+> > > searching.
+> > > 
+> > > If you're looking for a clear (unset) bit in a mask, you'd use a 'zero'
+> > > modifier. We have only 2 such functions now: find_{first,next}_zero_bit,
+> > > both taking one bitmap. I think it's time to extend this rule for
+> > > many bitmaps and write down the naming rules.
+> > > 
+> > > With the following, the find_next_notandnot_bit() should be named
+> > > like; find_next_zero_and_bit(). It's not perfect, but still sounds
+> > > better to me than 'notandnot' thing.
 > 
-> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
->> On 19. 08. 24, 6:50, Jiri Slaby wrote:
->>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to b2c289415b2b)
->>
->> Bjorn,
->>
->> I am confused by these changes:
->> ==========================================
->> @@ -291,16 +288,13 @@ static int e1000_set_link_ksettings(struct net_device
->> *net
->> dev,
->>           * duplex is forced.
->>           */
->>          if (cmd->base.eth_tp_mdix_ctrl) {
->> -               if (hw->phy.media_type != e1000_media_type_copper) {
->> -                       ret_val = -EOPNOTSUPP;
->> -                       goto out;
->> -               }
->> +               if (hw->phy.media_type != e1000_media_type_copper)
->> +                       return -EOPNOTSUPP;
->>
->>                  if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
->>                      (cmd->base.autoneg != AUTONEG_ENABLE)) {
->>                          e_err("forcing MDI/MDI-X state is not supported when
->> lin
->> k speed and/or duplex are forced\n");
->> -                       ret_val = -EINVAL;
->> -                       goto out;
->> +                       return -EINVAL;
->>                  }
->>          }
->>
->> @@ -347,7 +341,6 @@ static int e1000_set_link_ksettings(struct net_device
->> *netde
->> v,
->>          }
->>
->>   out:
->> -       pm_runtime_put_sync(netdev->dev.parent);
->>          clear_bit(__E1000_RESETTING, &adapter->state);
->>          return ret_val;
->>   }
->> ==========================================
->>
->> So no more clear_bit(__E1000_RESETTING in the above fail paths. Is that
->> intentional?
+> Actually, now that I come to think of it in terms of logic gates:
 > 
-> Not intentional.  Petr, do you have the ability to test the patch
-> below?  I'm not sure it's the correct fix, but it reverts the pieces
-> of b2c289415b2b that Jiri pointed out.
+> ~A & ~B == ~(A | B)
 > 
+> So this "notandnot" is simply a "NOR" gate.
+> 
+> I therefore intend to name it "find_next_nor_bit" if that's OK with
+> you.
 
-I tested the patch below but it didn't help. After the first boot with 
-new kernel it looked promising as the irq storm only appeared for a few 
-seconds, but with subsequent reboots it was the same as without the patch.
+Yes, I'm OK.
 
-To be sure, I also send the md5sum of ethtool.c after applying the patch:
+To me, if you can put definition of a logical operation inside
+FIND_NEXT_BIT() macro directly, you can name it correspondingly.
+So in this case, find_next_nor_bit would be a:
 
-a25c003257538f16994b4d7c4260e894 ethtool.c
+  FIND_NEXT_BIT(~(addr1[idx] | addr2[idx]), /* nop */, size)
 
-> diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/net/ethernet/intel/e1000e/ethtool.c
-> index 9364bc2b4eb1..9db36ee71684 100644
-> --- a/drivers/net/ethernet/intel/e1000e/ethtool.c
-> +++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
-> @@ -280,7 +280,8 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
->   	if (hw->phy.ops.check_reset_block &&
->   	    hw->phy.ops.check_reset_block(hw)) {
->   		e_err("Cannot change link characteristics when SoL/IDER is active.\n");
-> -		return -EINVAL;
-> +		ret_val = -EINVAL;
-> +		goto out;
->   	}
->   
->   	/* MDI setting is only allowed when autoneg enabled because
-> @@ -288,13 +289,16 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
->   	 * duplex is forced.
->   	 */
->   	if (cmd->base.eth_tp_mdix_ctrl) {
-> -		if (hw->phy.media_type != e1000_media_type_copper)
-> -			return -EOPNOTSUPP;
-> +		if (hw->phy.media_type != e1000_media_type_copper) {
-> +			ret_val = -EOPNOTSUPP;
-> +			goto out;
-> +		}
->   
->   		if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
->   		    (cmd->base.autoneg != AUTONEG_ENABLE)) {
->   			e_err("forcing MDI/MDI-X state is not supported when link speed and/or duplex are forced\n");
-> -			return -EINVAL;
-> +			ret_val = -EINVAL;
-> +			goto out;
->   		}
->   	}
->   
+Correspondingly, instead of 'zero_or' we should use a 'nand' notation,
+if it will be needed. I'll notice that in the naming manual.
+
+Good catch.
+
+Thanks,
+Yury
 
