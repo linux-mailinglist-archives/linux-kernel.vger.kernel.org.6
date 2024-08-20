@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-293574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58554958183
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B98958184
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE471F2511F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7321F2503C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D2418A952;
-	Tue, 20 Aug 2024 08:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866218A947;
+	Tue, 20 Aug 2024 08:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FH9HZIgh"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J0xEEnAt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C2F18A938;
-	Tue, 20 Aug 2024 08:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9295477F01
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724144195; cv=none; b=bfYIlakQzv4acL3RiwlkHKhGVZ8BTFayIZmUpwfT6o1X9LzOnrAEwN1gBdOQKO5RPbNhgo7boMaSJ9RDEvyZJB8dOcR7TVk5mQZqJ9ct7IT3aJ8EUpJeDd+kXLtR3x0DTC721lcYfxQhWt574ckq9bTsngcLPoLIWhv05TM1znI=
+	t=1724144275; cv=none; b=ZgeZmt5Tp6K4vd5P6Ayth/cG21dGVdxSH/xst0bysE6XbDwN8yBoPMbT6G4milDkCw/2EQ67x7sXc14WrB++GvK/SLv1U1AJoodAB+89dc1KlKlXjKMikX/jSbFXuEb+jvagwGFSlQrSxNliSVr+C4DQDYzv5YuiQ5g7s94esK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724144195; c=relaxed/simple;
-	bh=iWh8sKb0yUGhqZjx2Qm+qFE6HQ4fbWSlm28WBhoR0gU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LKiFN8eF6qox848PrHg1rUbwi3zLWdXIx3bQB80S7TfInRWZgFd+T+wSKW5OLszToY+P+jx6LqARRJW7Zd2c2kGv9O2IDgQ+GJ89ycqq2eq4JX0JxflJjDKyhevTSPtK7UARWWjY5N9Z5sAHeLrZxagqh0ylbkN6hDAxQfBWJxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FH9HZIgh; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724144183; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=8uaDmpfMNQCpCM0aUgKOkD6ZL9TOLlGfVf7ZQ6Vh07k=;
-	b=FH9HZIghQ9caiTNTW1wr/HM8Fb9p5lMsxm7tqUuDfUyg2DMQPjDuX9BphvQfYw26wwyFNQoblxLlYB4zOt6Wqy1+VcDf2Gi84vMkW0oUT8e+lzE+s/Rq+mAaodaqcVUMS2ISqGalpjl9OqE5vQvD3pzYxAoIaiFw5N/TpjhIBPo=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WDHzSAl_1724144181)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Aug 2024 16:56:22 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+242ee56aaa9585553766@syzkaller.appspotmail.com,
-	stable@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH RESEND] erofs: fix out-of-bound access when z_erofs_gbuf_growsize() partially fails
-Date: Tue, 20 Aug 2024 16:56:19 +0800
-Message-ID: <20240820085619.1375963-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <000000000000f7b96e062018c6e3@google.com>
-References: <000000000000f7b96e062018c6e3@google.com>
+	s=arc-20240116; t=1724144275; c=relaxed/simple;
+	bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+RG43VSK2W2eMya9h3zRTGgWm3mYgeJd10AbyJIYFJsb0dssRVtQnVnvENTTmKtrRbXu5icG7BGbGItOkEysI5Mgmf50FSLudfCDnzCFJXRVvCltNAfGtsQaIVBdQ1WKfGUFTt9cEIvXAVyA7wPNTyEnAeFee6nnfi3MX774+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J0xEEnAt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724144272;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
+	b=J0xEEnAtIG2TSxHzQSfAYtk8PqlFocqLbBdr+enn2dhmW0On2FgJZf6Bhy0mfq/D3hfRbi
+	yppd3uJJLEwZ0cqgGulC1Ez1RDZl2SLlhYvzOfufbIl2IX8hb7OlCb/b+D6CBDZb7TPTB9
+	iRyLQ8+/XX0Ph3uNukMJxniYNbR+yxs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-0-4E2RgHP76J5qMwsMjNvg-1; Tue, 20 Aug 2024 04:57:50 -0400
+X-MC-Unique: 0-4E2RgHP76J5qMwsMjNvg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280a434147so44475555e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:57:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724144269; x=1724749069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
+        b=mwPz4byaT2vc9p7R5atYcSnVlDwBX9+ZRjgGsXGuFnJt3uYUWXw2kK2eNo6MsJh7fU
+         W5EzxwR96BscHuz3nTIzneT9AWP3lfftiR8NppF7yqFMJEx0fTPmxwEdtAbS6aK8qofG
+         ej4OIEIiX9I3PI5qoFGh/9kNEOnCN6b4sdQZwOigGIQSnKB/gOqeknqwayMMmte6gJJw
+         gMkQeCOGA8zP8KE5FCRsuZJ+M+pR/lFWCel8yuVmBY6URAYNtNlMyORkQ4akkx68ucYI
+         u2Py1ZtyIp/CEcFBoby5nuxwcBieURQEP3nBv2hQ79ql+T0A7bd0G8ja3T+VjI5ES7SL
+         BfQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxcUgbf+iAWkDb5WjwXhbfJMddcomXKzwIBWVBdEOtl3Dder80SRhjJEdGKWx6gzu9LvKftSt0KMKvYd++j4aoCpVXekPLB7y7+ZH4
+X-Gm-Message-State: AOJu0YyAMprhpvCxmg6CY0lAIPN1kyeNeXMbOYBaKzn3XGxZPNzPhFRF
+	gsOzvwZYmxWsa2uD15jEWZnAq+lGS6Rtck3eaOWV0ftlqsjpHpq8GXpPOiMZcdRKbbvj1KZrooy
+	FgdDEZmNe17f6h8eUVoeoYLcxaKoekXiqLKHSKLBc10Q7WnPDb2Hb1t63KGvzME/1CoxJ5+Wn7u
+	u2+c/z0Hf/rhBSBjrK63B40YfduJ+QUhEdfb4L
+X-Received: by 2002:a5d:6784:0:b0:371:7c71:9ab2 with SMTP id ffacd0b85a97d-371946bf3f5mr7728104f8f.52.1724144269564;
+        Tue, 20 Aug 2024 01:57:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfN1DEa323emO5ciFDRq0ln5Ny7asNboij5b1hAStv+/CqQ8O7DlNLw/FVnkCMNUHeYkReZHjR71EMG+jD0E4=
+X-Received: by 2002:a5d:6784:0:b0:371:7c71:9ab2 with SMTP id
+ ffacd0b85a97d-371946bf3f5mr7728092f8f.52.1724144269036; Tue, 20 Aug 2024
+ 01:57:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240608000639.3295768-1-seanjc@google.com>
+In-Reply-To: <20240608000639.3295768-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 20 Aug 2024 10:57:35 +0200
+Message-ID: <CABgObfYNtyVnOYcpDVLNF-vuN0Caqump7dkgg9P6xQkMmzMc9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
+ enabling virt
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	"Chen, Farrah" <farrah.chen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If z_erofs_gbuf_growsize() partially fails on a global buffer due to
-memory allocation failure or fault injection (as reported by syzbot [1]),
-new pages need to be freed by comparing to the existing pages to avoid
-memory leaks.
+On Sat, Jun 8, 2024 at 2:06=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> The suspend/resume and cphup paths still need to be fully tested, as do
+> non-x86 architectures.
 
-However, the old gbuf->pages[] array may not be large enough, which can
-lead to null-ptr-deref or out-of-bound access.
+You can add
 
-Fix this by checking against gbuf->nrpages in advance.
+Tested-by: Farrah Chen <farrah.chen@intel.com>
 
-[1] https://lore.kernel.org/r/000000000000f7b96e062018c6e3@google.com
+> For CPU hotplug we tested this:
+>
+> 1) offline some CPUs;
+> 2) load kvm-intel.ko;
+> 3) run a VM;
+> 4) online those offlined CPUs;
+> 5) offline those CPUs again;
+> 6) online those CPUs again;
+>
+> All steps can be done successfully, and the VM run as expected during
+> step 4) to 6).
+>
+> For suspend/resume we tested:
+>
+> 1) load kvm-intel.ko and run a VM;
+> 2) suspend host
+> 3) resume the host back (using the IPMI KVM console)
+>
+> All steps worked successfully, and the VM still run fine after resume.
 
-Reported-by: syzbot+242ee56aaa9585553766@syzkaller.appspotmail.com
-Fixes: d6db47e571dc ("erofs: do not use pagepool in z_erofs_gbuf_growsize()")
-Cc: <stable@vger.kernel.org> # 6.10+
-Cc: Chunhai Guo <guochunhai@vivo.com>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-RESEND:
- Add missing link and reported-by.
+Thanks Kai and Farrah :)
 
- fs/erofs/zutil.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
-index 9b53883e5caf..37afe2024840 100644
---- a/fs/erofs/zutil.c
-+++ b/fs/erofs/zutil.c
-@@ -111,7 +111,8 @@ int z_erofs_gbuf_growsize(unsigned int nrpages)
- out:
- 	if (i < z_erofs_gbuf_count && tmp_pages) {
- 		for (j = 0; j < nrpages; ++j)
--			if (tmp_pages[j] && tmp_pages[j] != gbuf->pages[j])
-+			if (tmp_pages[j] && (j >= gbuf->nrpages ||
-+					     tmp_pages[j] != gbuf->pages[j]))
- 				__free_page(tmp_pages[j]);
- 		kfree(tmp_pages);
- 	}
--- 
-2.43.5
+Paolo
 
 
