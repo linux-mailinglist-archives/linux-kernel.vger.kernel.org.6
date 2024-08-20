@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-293938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E969E9586BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712209586C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83153B253C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9A9284F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A93118FC91;
-	Tue, 20 Aug 2024 12:17:06 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6889A190468;
+	Tue, 20 Aug 2024 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S76xv/D8"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81DE18B48D
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB83190063
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156225; cv=none; b=WlJvyt0HSvNC+Bkvn2pF2LE6u0cV9HKbT6KvvDkh2JgB7vI4DIpx616UY+O00t3ZCoJYCFbBjx7vQjLPGUHreRwAy2oNemryliaZZnGVvYlU1hFckE3HgOR4+8Qh3tqy1P7EYsR0WvNMW2H6EaDzfUML9Y4L7DnVfE+rqDkOjA4=
+	t=1724156263; cv=none; b=C6w23mxVQVWRyIY3YEfUXzuEokPdg13IF+YJtcgqBuB2JIYUhDJTWqkjJRDg1opjFYHh5MgQUu/e1jvQyMPmM51Djz9SJ9dq4TQ81fNT6MDMXcZzpeP5WxS6abIhqYDSvYxfE0oO6r+agH4px0NzpU4kroVrfXhLRY+QUwGvoBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156225; c=relaxed/simple;
-	bh=RS+EHn26H9QizywcTT08//7IEUQd34ChaZrvzRgEcr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RgHmKHs7T+J/U06hUHKc2GhDiliup2N2IPG6+7UHBevecZOepOwjd/rEUAbisLDJGDCuZBfIz/QYxCSzPdVa0xoQ7hClVPm0MdtzVZ7KKZmIa1QQnpd/Hf/X3G92KzgAwPVm4XBM/+RGOSkZmDoNFzU0Js4lhLKyOK8bJZlS8CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a2e4:464c:5828:2da3])
-	by baptiste.telenet-ops.be with bizsmtp
-	id 2CGv2D00P2WQTnu01CGvLN; Tue, 20 Aug 2024 14:16:55 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sgNnC-000NrD-Hf;
-	Tue, 20 Aug 2024 14:16:55 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sgNnC-001nqn-WF;
-	Tue, 20 Aug 2024 14:16:55 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] of/irq: Refer to actual buffer size in of_irq_parse_one()
-Date: Tue, 20 Aug 2024 14:16:53 +0200
-Message-Id: <817c0b9626fd30790fc488c472a3398324cfcc0c.1724156125.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724156263; c=relaxed/simple;
+	bh=Ux41PtMBoC0aNr/p4vCfh9vjE7ZyxyWu2VLnF4eO6UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ckb5KDhRvrDd2S7MKAtJ9OH40ZVP4+iY7baqjMkwWYFtUb291lo2fLn2yrgLC/lmxxRcIhFOCvLbz+GH78kZn/bYbCLJQU4VU8SmW0b0mZuQ34FNqKLjMCv61Jb0CdxYaL778Yr6x1Ac3HY2wWwd3u90mRuXTMwpFD9FEZdY6xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S76xv/D8; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724156254; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pS8Sl7F3TJKPCNXozvbz7QlmmLa389OoPFPAxVXCzI8=;
+	b=S76xv/D8tZiCRvBr8SitPhWkPNlpTCfMm3jmfVy2H9w94w82wYmpLSLrvZslJtTsdyC/YIi6urgQ69ChpxmlQ1YaeVKMoxqcdMZHyNMGjwwmr2p/jwQ66/bug2veJsTrf5ANZgmWKxeIjfq9zWxvNjNJJzlGnRyhOG1RvJP2tHA=
+Received: from 30.221.128.199(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDIaROr_1724156253)
+          by smtp.aliyun-inc.com;
+          Tue, 20 Aug 2024 20:17:34 +0800
+Message-ID: <e8b5af8b-6265-4f48-9c8f-d5a8d1302e5d@linux.alibaba.com>
+Date: Tue, 20 Aug 2024 20:17:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: Use max() to improve ocfs2_dlm_seq_show()
+To: Thorsten Blum <thorsten.blum@toblux.com>, mark@fasheh.com,
+ jlbec@evilplan.org, akpm <akpm@linux-foundation.org>
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240820021605.97887-3-thorsten.blum@toblux.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240820021605.97887-3-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace two open-coded calculations of the buffer size by invocations of
-sizeof() on the buffer itself, to make sure the code will always use the
-actual buffer size.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-If you think this warrants a Fixes-tag:
 
-    Fixes: b739dffa5d570b41 ("of/irq: Prevent device address out-of-bounds read in interrupt map walk")
----
- drivers/of/irq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 8/20/24 10:16 AM, Thorsten Blum wrote:
+> Use the max() macro to simplify the ocfs2_dlm_seq_show() function and
+> improve its readability.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index cc30b471e446045a..36351ad6115eb10e 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -357,8 +357,8 @@ int of_irq_parse_one(struct device_node *device, int index, struct of_phandle_ar
- 	addr = of_get_property(device, "reg", &addr_len);
- 
- 	/* Prevent out-of-bounds read in case of longer interrupt parent address size */
--	if (addr_len > (3 * sizeof(__be32)))
--		addr_len = 3 * sizeof(__be32);
-+	if (addr_len > sizeof(addr_buf))
-+		addr_len = sizeof(addr_buf);
- 	if (addr)
- 		memcpy(addr_buf, addr, addr_len);
- 
--- 
-2.34.1
-
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/dlmglue.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+> index da78a04d6f0b..60df52e4c1f8 100644
+> --- a/fs/ocfs2/dlmglue.c
+> +++ b/fs/ocfs2/dlmglue.c
+> @@ -3151,11 +3151,8 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void *v)
+>  #ifdef CONFIG_OCFS2_FS_STATS
+>  	if (!lockres->l_lock_wait && dlm_debug->d_filter_secs) {
+>  		now = ktime_to_us(ktime_get_real());
+> -		if (lockres->l_lock_prmode.ls_last >
+> -		    lockres->l_lock_exmode.ls_last)
+> -			last = lockres->l_lock_prmode.ls_last;
+> -		else
+> -			last = lockres->l_lock_exmode.ls_last;
+> +		last = max(lockres->l_lock_prmode.ls_last,
+> +			   lockres->l_lock_exmode.ls_last);
+>  		/*
+>  		 * Use d_filter_secs field to filter lock resources dump,
+>  		 * the default d_filter_secs(0) value filters nothing,
 
