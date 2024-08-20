@@ -1,371 +1,148 @@
-Return-Path: <linux-kernel+bounces-294492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F8B958E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B61958E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F02E4B2388F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8578287070
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD0D1607B0;
-	Tue, 20 Aug 2024 18:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31416157464;
+	Tue, 20 Aug 2024 18:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loUgWwac"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Wy0d+jO3"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A248130499;
-	Tue, 20 Aug 2024 18:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C649D1547C9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 18:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724179770; cv=none; b=eqQ5IkWu6w87PgJFMln/ZJ6w/c3h4Brs1N5OSVH6UiAfpRA+98IJnBFc6m3euXjfknaJFsSyVTR7vsx0RqpnZX8Xsnk213pNKGYTRQ29xNHb8ilZ60mwu/VdoGGdn9bbJlaxtAuZtqHHQrRO30AIQA61WseiTMghp1a2zdEa7MQ=
+	t=1724179830; cv=none; b=Zhc9xa2pGYxzgd/dQI0iTxKr8iV6YwB+TfmolgBuEw54m8jkfN447bJztDdj5UyqUQEolSpFW1A4Pl2P3k0IJVWvy2b6iB06aAU6cJxMFFuT13StLZ+M4AFXZxzW6WxLVZOvGW+kwLwhs3waVDKTSZ/MPhFLLldO8SKw3mksQ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724179770; c=relaxed/simple;
-	bh=gyhe0JlTNt+mfblLvFCfzEN71MyH2AiH4+ibll4gIac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XfLMnmALrmykxN7Xpd7s4b/Dd+SyIAmVaHwx58ALzC3yX5raHE3qLCqP8zaF7oGUIvcMKn37V0drHV5TlOFHYt3m+tFHw611J7IOXDzUxoqbR4ifvIhnU1Zf7Q2hUjc93r3Lz4itXO6xtpz4CZ65sQ1oo4jdCh1Pm0awGtRTV/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loUgWwac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04C2C4AF09;
-	Tue, 20 Aug 2024 18:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724179769;
-	bh=gyhe0JlTNt+mfblLvFCfzEN71MyH2AiH4+ibll4gIac=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=loUgWwacJGE7rLBK8gbmylwUy20YkkbfT7OMrRIfymkGGLlYfNjNQgoSaVsPL025d
-	 wDyRpteyIRDHSmEXUr2W+ad2faB5jfe2vRvHH2/vYx5CcPA7aaUnxABEavzJLQoHjL
-	 8KPadM44cXCRpExu57Dk2J74umeHl6fIt4Ts3fBy9MmuT5X6xlPtP+ujfjgD+1DHMK
-	 1T97c8ddWFBUvIJDbIt+b9bMotW2aXb3j+t76Q0IP24ZGS8k9bxz1BavrGIUJSgrWw
-	 pH81CKYRVqbCmY+0myT4dyJUpV2PAeNfRk1uBdl0LgWXU9R9CJqyRleZNUQ9xzZVyq
-	 ePt6HMR6hrPUw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0C210CE0DE1; Tue, 20 Aug 2024 11:49:29 -0700 (PDT)
-Date: Tue, 20 Aug 2024 11:49:29 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] softirq: remove parameter from action callback
-Message-ID: <6648a8f0-0af1-4351-95b9-8380df8f336d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <0f19dd9a-e2fd-4221-aaf5-bafc516f9c32@kernel.dk>
- <20240815171549.3260003-1-csander@purestorage.com>
+	s=arc-20240116; t=1724179830; c=relaxed/simple;
+	bh=q0yAyz/dE7xYX1L0IKKOscxbvlJqEK2bB9/VljIWpiw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XjSwFJowMfkNH0fjgPbFcENZ12FJGGHDrSDLW5UKrVLWM7byFzs8s8s//lSZDkHobmDzoHhGnagKqjg5YNJPiGrbb6BoWrsiC+MbnYCBTI10xqAWjG8wsiUeecMwmaQCRg7fouOa1C9G9IApl3rHCj0FwWO0SPnm54OMpzdtFo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Wy0d+jO3; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7093705c708so5332622a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724179828; x=1724784628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kxtL1RGd5tPB3w/nTkidFGzn2LVqG9lNHiEw1xPJXKE=;
+        b=Wy0d+jO3RvYhg5qcqg0qIuohuHF8VvvWdeQXRTGYgLXN6kKi7LL4MgFI+G/UXuIgtJ
+         lZo1OJTY/r5E+VVvp6ub+p1XrvyOXQ+CTO99XMG/RI5NC3KE+zXa/xIhdawWkx+FG4iA
+         yAQTVTsCyW6ZAZArwE/oN96hS/06v0M6Rdqwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724179828; x=1724784628;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kxtL1RGd5tPB3w/nTkidFGzn2LVqG9lNHiEw1xPJXKE=;
+        b=Nwqz7xXQC8/eepyKGTzxnfkB/trxJylVCFReKKvFG00x/lk8Y2SoVF0rFe4iB5TDHy
+         PK6mi1OBxK7dafYxSWVNtkwk5TqHsU1LrpoI/DvV6+kL4/vSddSuaIhRP6fxTDCH4Qk0
+         cZMsant8kWuY+t9sf/B4gKKWDGJw5F3bl897i3uHmDAcz/fNCQPXjFZpiGQgbFP1VqzN
+         6YDbxbPxsz9m4Q6mFaoeM0xO2fRUtVZe6WWG6Kk8kBikWfhjlpzhb+cuuJhon3ifuNOY
+         5Dzre3CbTDBuiGjSaItuP9DJuZm9+5pGdZBsKPRE2+RRf4MzzYUw90CJSNcA7FJ+KFOz
+         Qwww==
+X-Forwarded-Encrypted: i=1; AJvYcCUJorPX6VC47XYzj6Rt31orYpy7yo67q/VYbU7dcR6Fk5WxmOqi8lrMKaOVTYz2DbVq9AkZsnmEvmo16H0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs9m5VQz++X0GXHoPpUy/a9vLbNu+8WtGEAbkg+bLRdHY2UXtr
+	pj1Pe5ufLmiXiLvu41iZjTxuBziA4uy3kV5Iyh96Z6ks/ZkRmaYxfzl4pShhEQ==
+X-Google-Smtp-Source: AGHT+IEbs+8RQhe16ctNC4q1l3q7Gvo1V6QQTga4IZA8GUebkhBYdD4wt95Lrr4a2Kdm8NyPzwW5Ag==
+X-Received: by 2002:a05:6870:459e:b0:25c:b3c9:ecda with SMTP id 586e51a60fabf-270815de133mr3437457fac.38.1724179827758;
+        Tue, 20 Aug 2024 11:50:27 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b63659cdsm8412068a12.77.2024.08.20.11.50.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 11:50:27 -0700 (PDT)
+Message-ID: <96dd8762-7cfa-4b9b-84ee-592fe0a59af1@broadcom.com>
+Date: Tue, 20 Aug 2024 11:50:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815171549.3260003-1-csander@purestorage.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: broadcom: bcm2166x-common: Increase apps bus
+ size to fit BCM21664 GIC
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com, Artur Weber
+ <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240820-bcm2166x-apps-bus-fix-v1-1-0478a3227e86@gmail.com>
+ <20240820184901.266866-1-florian.fainelli@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240820184901.266866-1-florian.fainelli@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 11:15:40AM -0600, Caleb Sander Mateos wrote:
-> When softirq actions are called, they are passed a pointer to the entry
-> in the softirq_vec table containing the action's function pointer. This
-> pointer isn't very useful, as the action callback already knows what
-> function it is. And since each callback handles a specific softirq, the
-> callback also knows which softirq number is running.
+On 8/20/24 11:49, Florian Fainelli wrote:
+> From: Florian Fainelli <f.fainelli@gmail.com>
 > 
-> No softirq action callbacks actually use this parameter, so remove it
-> from the function pointer signature. This clarifies that softirq actions
-> are global routines and makes it slightly cheaper to call them.
+> On Tue, 20 Aug 2024 16:38:14 +0200, Artur Weber <aweber.kernel@gmail.com> wrote:
+>> The BCM21664 GIC sits at a higher address than the apps bus currently
+>> allows. This is because the apps bus was inherited from the BCM23550
+>> DTSI, where the GIC sits at an earlier address in memory, and the DTSI
+>> wasn't updated to match.
+>>
+>> Increase the size of the apps bus to allow the BCM21664 GIC to work.
+>>
+>> Fixes: a5d0d4a7bab5 ("ARM: dts: bcm-mobile: Split out nodes used by both BCM21664 and BCM23550")
+>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>> ---
 > 
-> v2: use full 72 characters in commit description lines, add Reviewed-by
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
 
-For the RCU pieces:
+Since this was only a problem in linux-next, I just squashed your fixup 
+within the original commit. Thanks!
+-- 
+Florian
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> ---
->  block/blk-mq.c            |  2 +-
->  include/linux/interrupt.h |  4 ++--
->  kernel/rcu/tiny.c         |  2 +-
->  kernel/rcu/tree.c         |  2 +-
->  kernel/sched/fair.c       |  2 +-
->  kernel/softirq.c          | 15 +++++++--------
->  kernel/time/hrtimer.c     |  2 +-
->  kernel/time/timer.c       |  2 +-
->  lib/irq_poll.c            |  2 +-
->  net/core/dev.c            |  4 ++--
->  10 files changed, 18 insertions(+), 19 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index e3c3c0c21b55..aa28157b1aaf 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1126,11 +1126,11 @@ static void blk_complete_reqs(struct llist_head *list)
->  
->  	llist_for_each_entry_safe(rq, next, entry, ipi_list)
->  		rq->q->mq_ops->complete(rq);
->  }
->  
-> -static __latent_entropy void blk_done_softirq(struct softirq_action *h)
-> +static __latent_entropy void blk_done_softirq(void)
->  {
->  	blk_complete_reqs(this_cpu_ptr(&blk_cpu_done));
->  }
->  
->  static int blk_softirq_cpu_dead(unsigned int cpu)
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 3f30c88e0b4c..694de61e0b38 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -592,11 +592,11 @@ extern const char * const softirq_to_name[NR_SOFTIRQS];
->   * asm/hardirq.h to get better cache usage.  KAO
->   */
->  
->  struct softirq_action
->  {
-> -	void	(*action)(struct softirq_action *);
-> +	void	(*action)(void);
->  };
->  
->  asmlinkage void do_softirq(void);
->  asmlinkage void __do_softirq(void);
->  
-> @@ -607,11 +607,11 @@ static inline void do_softirq_post_smp_call_flush(unsigned int unused)
->  {
->  	do_softirq();
->  }
->  #endif
->  
-> -extern void open_softirq(int nr, void (*action)(struct softirq_action *));
-> +extern void open_softirq(int nr, void (*action)(void));
->  extern void softirq_init(void);
->  extern void __raise_softirq_irqoff(unsigned int nr);
->  
->  extern void raise_softirq_irqoff(unsigned int nr);
->  extern void raise_softirq(unsigned int nr);
-> diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
-> index 4402d6f5f857..b3b3ce34df63 100644
-> --- a/kernel/rcu/tiny.c
-> +++ b/kernel/rcu/tiny.c
-> @@ -103,11 +103,11 @@ static inline bool rcu_reclaim_tiny(struct rcu_head *head)
->  	rcu_lock_release(&rcu_callback_map);
->  	return false;
->  }
->  
->  /* Invoke the RCU callbacks whose grace period has elapsed.  */
-> -static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused)
-> +static __latent_entropy void rcu_process_callbacks(void)
->  {
->  	struct rcu_head *next, *list;
->  	unsigned long flags;
->  
->  	/* Move the ready-to-invoke callbacks to a local list. */
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index e641cc681901..93bd665637c0 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -2853,11 +2853,11 @@ static __latent_entropy void rcu_core(void)
->  	// If strict GPs, schedule an RCU reader in a clean environment.
->  	if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD))
->  		queue_work_on(rdp->cpu, rcu_gp_wq, &rdp->strict_work);
->  }
->  
-> -static void rcu_core_si(struct softirq_action *h)
-> +static void rcu_core_si(void)
->  {
->  	rcu_core();
->  }
->  
->  static void rcu_wake_cond(struct task_struct *t, int status)
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9057584ec06d..8dc9385f6da4 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -12481,11 +12481,11 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
->   * - directly from the local scheduler_tick() for periodic load balancing
->   *
->   * - indirectly from a remote scheduler_tick() for NOHZ idle balancing
->   *   through the SMP cross-call nohz_csd_func()
->   */
-> -static __latent_entropy void sched_balance_softirq(struct softirq_action *h)
-> +static __latent_entropy void sched_balance_softirq(void)
->  {
->  	struct rq *this_rq = this_rq();
->  	enum cpu_idle_type idle = this_rq->idle_balance;
->  	/*
->  	 * If this CPU has a pending NOHZ_BALANCE_KICK, then do the
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index 02582017759a..d082e7840f88 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -549,11 +549,11 @@ static void handle_softirqs(bool ksirqd)
->  		prev_count = preempt_count();
->  
->  		kstat_incr_softirqs_this_cpu(vec_nr);
->  
->  		trace_softirq_entry(vec_nr);
-> -		h->action(h);
-> +		h->action();
->  		trace_softirq_exit(vec_nr);
->  		if (unlikely(prev_count != preempt_count())) {
->  			pr_err("huh, entered softirq %u %s %p with preempt_count %08x, exited with %08x?\n",
->  			       vec_nr, softirq_to_name[vec_nr], h->action,
->  			       prev_count, preempt_count());
-> @@ -698,11 +698,11 @@ void __raise_softirq_irqoff(unsigned int nr)
->  	lockdep_assert_irqs_disabled();
->  	trace_softirq_raise(nr);
->  	or_softirq_pending(1UL << nr);
->  }
->  
-> -void open_softirq(int nr, void (*action)(struct softirq_action *))
-> +void open_softirq(int nr, void (*action)(void))
->  {
->  	softirq_vec[nr].action = action;
->  }
->  
->  /*
-> @@ -758,12 +758,11 @@ static bool tasklet_clear_sched(struct tasklet_struct *t)
->  		  t->use_callback ? (void *)t->callback : (void *)t->func);
->  
->  	return false;
->  }
->  
-> -static void tasklet_action_common(struct softirq_action *a,
-> -				  struct tasklet_head *tl_head,
-> +static void tasklet_action_common(struct tasklet_head *tl_head,
->  				  unsigned int softirq_nr)
->  {
->  	struct tasklet_struct *list;
->  
->  	local_irq_disable();
-> @@ -803,20 +802,20 @@ static void tasklet_action_common(struct softirq_action *a,
->  		__raise_softirq_irqoff(softirq_nr);
->  		local_irq_enable();
->  	}
->  }
->  
-> -static __latent_entropy void tasklet_action(struct softirq_action *a)
-> +static __latent_entropy void tasklet_action(void)
->  {
->  	workqueue_softirq_action(false);
-> -	tasklet_action_common(a, this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
-> +	tasklet_action_common(this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
->  }
->  
-> -static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
-> +static __latent_entropy void tasklet_hi_action(void)
->  {
->  	workqueue_softirq_action(true);
-> -	tasklet_action_common(a, this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
-> +	tasklet_action_common(this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
->  }
->  
->  void tasklet_setup(struct tasklet_struct *t,
->  		   void (*callback)(struct tasklet_struct *))
->  {
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index b8ee320208d4..836157e09e25 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -1755,11 +1755,11 @@ static void __hrtimer_run_queues(struct hrtimer_cpu_base *cpu_base, ktime_t now,
->  				hrtimer_sync_wait_running(cpu_base, flags);
->  		}
->  	}
->  }
->  
-> -static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
-> +static __latent_entropy void hrtimer_run_softirq(void)
->  {
->  	struct hrtimer_cpu_base *cpu_base = this_cpu_ptr(&hrtimer_bases);
->  	unsigned long flags;
->  	ktime_t now;
->  
-> diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-> index 64b0d8a0aa0f..760bbeb1f331 100644
-> --- a/kernel/time/timer.c
-> +++ b/kernel/time/timer.c
-> @@ -2438,11 +2438,11 @@ static void run_timer_base(int index)
->  }
->  
->  /*
->   * This function runs timers and the timer-tq in bottom half context.
->   */
-> -static __latent_entropy void run_timer_softirq(struct softirq_action *h)
-> +static __latent_entropy void run_timer_softirq(void)
->  {
->  	run_timer_base(BASE_LOCAL);
->  	if (IS_ENABLED(CONFIG_NO_HZ_COMMON)) {
->  		run_timer_base(BASE_GLOBAL);
->  		run_timer_base(BASE_DEF);
-> diff --git a/lib/irq_poll.c b/lib/irq_poll.c
-> index 2d5329a42105..08b242bbdbdf 100644
-> --- a/lib/irq_poll.c
-> +++ b/lib/irq_poll.c
-> @@ -73,11 +73,11 @@ void irq_poll_complete(struct irq_poll *iop)
->  	__irq_poll_complete(iop);
->  	local_irq_restore(flags);
->  }
->  EXPORT_SYMBOL(irq_poll_complete);
->  
-> -static void __latent_entropy irq_poll_softirq(struct softirq_action *h)
-> +static void __latent_entropy irq_poll_softirq(void)
->  {
->  	struct list_head *list = this_cpu_ptr(&blk_cpu_iopoll);
->  	int rearm = 0, budget = irq_poll_budget;
->  	unsigned long start_time = jiffies;
->  
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 751d9b70e6ad..3ac02b0ca29e 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -5246,11 +5246,11 @@ int netif_rx(struct sk_buff *skb)
->  		local_bh_enable();
->  	return ret;
->  }
->  EXPORT_SYMBOL(netif_rx);
->  
-> -static __latent_entropy void net_tx_action(struct softirq_action *h)
-> +static __latent_entropy void net_tx_action(void)
->  {
->  	struct softnet_data *sd = this_cpu_ptr(&softnet_data);
->  
->  	if (sd->completion_queue) {
->  		struct sk_buff *clist;
-> @@ -6919,11 +6919,11 @@ static int napi_threaded_poll(void *data)
->  		napi_threaded_poll_loop(napi);
->  
->  	return 0;
->  }
->  
-> -static __latent_entropy void net_rx_action(struct softirq_action *h)
-> +static __latent_entropy void net_rx_action(void)
->  {
->  	struct softnet_data *sd = this_cpu_ptr(&softnet_data);
->  	unsigned long time_limit = jiffies +
->  		usecs_to_jiffies(READ_ONCE(net_hotdata.netdev_budget_usecs));
->  	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
-> -- 
-> 2.45.2
-> 
 
