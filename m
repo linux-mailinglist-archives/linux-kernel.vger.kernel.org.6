@@ -1,107 +1,168 @@
-Return-Path: <linux-kernel+bounces-293460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91ED957FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E41958005
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D7C281864
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642951C22DC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E1818990F;
-	Tue, 20 Aug 2024 07:38:10 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B013518990F;
+	Tue, 20 Aug 2024 07:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJta+Jvo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2B9188CCB
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F4187555
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139489; cv=none; b=I2Mvj5Dbg0bN/bATkfKHZpk2MWwPCbJS4dnFLRwEzFJAVmBTQK0hESQc0DVta/Xdt4skr+Z/r/jirCbXZt4AjX5YemSOSMB1Dd2tqjDJDx0TbYHRVLi9HC77J8QxeWYCG2h1NWo8X/LeAZ/IXdwAg9KCBRfYWCsgYoBi8drpX5k=
+	t=1724139619; cv=none; b=Zha78fqdMfWR4+BHBmtP42e4+Fw6pd+lJpxOJ/lRpteAgNtq5JLZeLYcF5WtLTW1Dl+CS78ylJipuVwPYuCl5bM/ZUzaCl02hMjk4Is8LFDB7gbwtAXXLFGdnSuXqOnKOU6noexHIXVZuM4m7jhJoT3802LQ0am3wjKGp8/75v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139489; c=relaxed/simple;
-	bh=7SL4D1YiAegxzV6YQeyoI2zwQg1UX5e6ZkgK91ISTm8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fyhwvVsGKHdswZWNaxrNq6eeaMLC3MVGdPYEVxvyqR2pD6UpTUN2dp5wHgl/ATBWWIZgpWNgWlEN/IhDvRPHqfal4JivFiaD50sqXXMdwRD2GHhWnB/T88gxcAJVpD6acYGI8e6+vvqhO4Qgpc18GfMCksyY66aJQ3nQenLz4PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K5sQlq007093;
-	Tue, 20 Aug 2024 07:37:50 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412j0xjp82-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 20 Aug 2024 07:37:49 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 00:37:42 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 00:37:39 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <heming.zhao@suse.com>
-CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <mark@fasheh.com>, <ocfs2-devel@lists.linux.dev>,
-        <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V3] ocfs2: Fix uaf in ocfs2_set_buffer_uptodate
-Date: Tue, 20 Aug 2024 15:37:39 +0800
-Message-ID: <20240820073739.1289567-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2d6499d6-fd03-43d8-9595-5babfd82481d@suse.com>
-References: <2d6499d6-fd03-43d8-9595-5babfd82481d@suse.com>
+	s=arc-20240116; t=1724139619; c=relaxed/simple;
+	bh=aYkN9CyGqEIYAw2LdxUgvvFJ/GqgBaxXltVMI7LxkmY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Uo/94Lnz0wwws1yhxb0J2Vcbv8LTwIUUtEJqPVBtuXyOMf28CFLdI0VSPmsXvtWCcYBgGbQHR1JY41NgFpnQHNnnZCf0XjyiDVIZcgvGy8qEqojoRKcTuLBqDQC3BcuS4kRMpNhx3REAbj/Y8m+WpgVF21pQQgEAhDW3KseFRhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJta+Jvo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724139617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LI6kfa5oLV045Jmdu7a0CojUb3GQJzHs7H4OiymNEbE=;
+	b=eJta+JvoAWDoq+TClca86nb1bs8xpBb+o5RHBqIDL2NFV2l3yaEvTzSxTrb7IuvYQv56o6
+	QzM3HYFuNwLshv5bg817PpSVjUKuJq3S3C/WUtSLa8o0NPrg98ZWcQ1T3mBx2E72TvWBKq
+	kD2JUPT7cJsgtQdSvVBw+Tu7sM+zyso=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-616-GRxrlpSpOnOcc7CyTbvtHw-1; Tue, 20 Aug 2024 03:40:14 -0400
+X-MC-Unique: GRxrlpSpOnOcc7CyTbvtHw-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef2b4482e5so5173751fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:40:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724139612; x=1724744412;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LI6kfa5oLV045Jmdu7a0CojUb3GQJzHs7H4OiymNEbE=;
+        b=MfE6z47WZ9ynOfJpkYxiI0oQPUfzFfEvE6EOlXW0CiNLUkvyqZ/px4z4KwDkdVuIMY
+         9OnLPStwecDTjWrM2cK9JNEdF6ixihMkDObhVZ4Tl1MKKw5958f6AHsb86YrDI+K+9Je
+         J5qQlDWozpsiMnfaFfiik+p26QyUglMDz75ADiKbHWXaruy+UNCfEx4ISoOkDCRUXqIx
+         xtn2DyXI4/4qVGTkZ/OQg7vbbjezLtWUYpmuTjgQ6T1EW5VMbDUW0FvNCKWCepH3Ug3r
+         lYYgAW7sAx06+3Can2d80i3kKf22kwfqn3ssaF2gLJtvnmlejsBq2s4CIhKizDTTkq7G
+         U37Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgHTx+o5WXM8w6HBL2OrRQ3KSlxjGxC6U7wjhmXOK27JYX0eIcbbrxLofOSCXldYpzswwi8qFJ71VjlPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAIgDi3Avgxsmrj9zA5h0YyBIHxAJ9/9qaemf4FrGEcSk/l7TM
+	33k1Tt6iDfY/5h3B/Q0ceTgg0FBKj7PqueDKlhbmaM3EOnG1zNcqqmUWoC71+/RF+XnO+y3zeB3
+	VVyWdIscWXL0vIx1Lw9gU28g0Jx98TztJ+b8hmbdsorZ+XmgQYb4JBI+ugcpSqA==
+X-Received: by 2002:a05:6512:3d04:b0:52f:c0dd:d168 with SMTP id 2adb3069b0e04-5331c6e53bfmr4778925e87.7.1724139612407;
+        Tue, 20 Aug 2024 00:40:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGuY9Bjt5iBWcm2YKpDyt42mNkBOnX16tyh4gc9tacJQihXtDb0AW33sxGPjl0kWgtMyZPzMQ==
+X-Received: by 2002:a05:6512:3d04:b0:52f:c0dd:d168 with SMTP id 2adb3069b0e04-5331c6e53bfmr4778883e87.7.1724139611750;
+        Tue, 20 Aug 2024 00:40:11 -0700 (PDT)
+Received: from eisenberg.fritz.box ([2001:16b8:3dcc:1f00:bec1:681e:45eb:77e2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344fdsm726051366b.100.2024.08.20.00.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 00:40:11 -0700 (PDT)
+Message-ID: <5d70794731198ec7bc59bd95e50a8aa81cf97c7b.camel@redhat.com>
+Subject: Re: [PATCH 6/9] ethernet: cavium: Replace deprecated PCI functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, Wu Hao
+ <hao.wu@intel.com>, Tom Rix <trix@redhat.com>, Moritz Fischer
+ <mdf@kernel.org>,  Xu Yilun <yilun.xu@intel.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alvaro Karsz <alvaro.karsz@solid-run.com>, "Michael
+ S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>,  Eugenio =?ISO-8859-1?Q?P=E9rez?=
+ <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Mark
+ Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>,  Hannes Reinecke <hare@suse.de>,
+ Damien Le Moal <dlemoal@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-block@vger.kernel.org, linux-fpga@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,  linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+Date: Tue, 20 Aug 2024 09:40:09 +0200
+In-Reply-To: <ZsONiNkdXGMKMbRL@smile.fi.intel.com>
+References: <20240819165148.58201-2-pstanner@redhat.com>
+	 <20240819165148.58201-8-pstanner@redhat.com>
+	 <ZsONiNkdXGMKMbRL@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=PszBbBM3 c=1 sm=1 tr=0 ts=66c447ce cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=iox4zFpeAAAA:8 a=t7CeM3EgAAAA:8 a=PhkAcTI6xfMDmhtK1YkA:9 a=zZCYzV9kfG8A:10 a=WzC6qhA0u3u7Ye7llzcV:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: aOGk_9rjrcZ9CmgHDQ7yM5qIVK2V9WMc
-X-Proofpoint-GUID: aOGk_9rjrcZ9CmgHDQ7yM5qIVK2V9WMc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 suspectscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- mlxlogscore=820 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2407110000 definitions=main-2408200055
 
-In the for-loop after the 'read_failure' label, the condition
-'(bh == NULL) && flags includes OCFS2_BH_READAHEAD' is missing.
-When this contidion is true, this for-loop will call ocfs2_set_buffer
-_uptodate(ci, bh), which then triggers a NULL pointer access error.
+On Mon, 2024-08-19 at 21:23 +0300, Andy Shevchenko wrote:
+> On Mon, Aug 19, 2024 at 06:51:46PM +0200, Philipp Stanner wrote:
+> > pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
+> > the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> >=20
+> > Replace these functions with the function pcim_iomap_region().
+>=20
+> ...
+>=20
+> cavium_ptp_probe()
+>=20
+> > -	pcim_iounmap_regions(pdev, 1 << PCI_PTP_BAR_NO);
+> > +	pcim_iounmap_region(pdev, PCI_PTP_BAR_NO);
+> > =C2=A0
+> > =C2=A0error_free:
+> > =C2=A0	devm_kfree(dev, clock);
+>=20
+> Both are questionable. Why do we need either of them?
 
-Reported-and-suggested-by: Heming Zhao <heming.zhao@suse.com>
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/ocfs2/buffer_head_io.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You seem to criticize my pcim_iounmap_region() etc. in other unwind
+paths, too. I think your criticism is often justified. This driver
+here, however, was the one which made me suspicious and hesitate and
+removing those calls; because of the code below:
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index e62c7e1de4eb..8f714406528d 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -388,7 +388,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 		/* Always set the buffer in the cache, even if it was
- 		 * a forced read, or read-ahead which hasn't yet
- 		 * completed. */
--		ocfs2_set_buffer_uptodate(ci, bh);
-+		if (bh)
-+			ocfs2_set_buffer_uptodate(ci, bh);
- 	}
- 	ocfs2_metadata_cache_io_unlock(ci);
- 
--- 
-2.43.0
+
+	pcim_iounmap_region(pdev, PCI_PTP_BAR_NO);
+
+error_free:
+	devm_kfree(dev, clock);
+
+error:
+	/* For `cavium_ptp_get()` we need to differentiate between the case
+	 * when the core has not tried to probe this device and the case when
+	 * the probe failed.  In the later case we pretend that the
+	 * initialization was successful and keep the error in
+	 * `dev->driver_data`.
+	 */
+	pci_set_drvdata(pdev, ERR_PTR(err));
+	return 0;
+}
+
+
+So in case of an error they return 0 and do... stuff.
+
+I don't want to touch that without someone who maintains (and, ideally,
+understands) the code details what's going on here.
+
+
+P.
 
 
