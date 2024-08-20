@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-294473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AAE958E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:35:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E0C958E25
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406FC283ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61D34B215AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6206F14D2A3;
-	Tue, 20 Aug 2024 18:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6216C14B949;
+	Tue, 20 Aug 2024 18:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mdpsys.onmicrosoft.com header.i=@mdpsys.onmicrosoft.com header.b="Bp2RrGgB"
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2108.outbound.protection.outlook.com [40.107.121.108])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fT9iczDi"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011071.outbound.protection.outlook.com [52.101.65.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5B1494BD;
-	Tue, 20 Aug 2024 18:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153921494CC;
+	Tue, 20 Aug 2024 18:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178932; cv=fail; b=PBuKrYL06oc3sAzXWxJJOM61JuD3C8hHrgew1h09hoZOmB041VmXGEFDtyQD9CVIoDpdf+leOQDKTHccnCspvnTegndz8U7kJJPcSYwlzn3elauDkjsMpnu/PfqjBG0YDazJEsGomivKahX6vJmCKmF1xDdsUY7tfKBwYCHZG7U=
+	t=1724178967; cv=fail; b=iYNL3MGGGllMuN9ilEW7NZyIjpavbtNzM6C2TF8uWM1wprt1UbydHmhyyg5q/4otRgjQrjGcraJmRgSNe6/hrxyFO0RhXYjwJxfdFPnYIROgtjE79GdAxgAp0FhH05J58ivdBBBTC6LjKgxraLIQ3zYD4aAw5S5Y0VlwZULnP6c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178932; c=relaxed/simple;
-	bh=agSf3Oe8aHxFkpsqqDhyuC3KRmgDgzTLj7oX0h1pQSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=VlLrtogJaZDpDYnWcy8thgXP7X19cnbQIcx9TE5RjNGzP+59Uwma+Rh49CyZ0WvV2QnyDb0KcLC2P/iuov93neSJAfyqxN8abXUhPyVdKxtzWT/AazWSsyPConhmDP7MnDNEOmFkI45qu+2Q6J+879Dk/qhmNR/pa8h+D3lcwCU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mdpsys.co.uk; spf=pass smtp.mailfrom=mdpsys.co.uk; dkim=pass (1024-bit key) header.d=mdpsys.onmicrosoft.com header.i=@mdpsys.onmicrosoft.com header.b=Bp2RrGgB; arc=fail smtp.client-ip=40.107.121.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mdpsys.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mdpsys.co.uk
+	s=arc-20240116; t=1724178967; c=relaxed/simple;
+	bh=VIoTaj0CIz6FTuXJerOboN7LhEAHycUF2+FALh6odsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kyDMl9Kd9Zxo5NwSqlqnBi/nYy7MgshAJmKKJRyLBGtkaCtQ8Mfcuuev+vbfs46ZmwWSJEPy1vI0gBPDxKZRhG5xpVMPytXPoUfvN5rfr1Elextgng1tdzETidnUwgERRPJMwrC+GlbfHaOzaUCUvR/a8e/rksShusz7wD8QcQY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fT9iczDi; arc=fail smtp.client-ip=52.101.65.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LNQWAhPzlCxMIGO8NxzhVovuMU5X9hFhXx3lr6ZVtObKD2ZoROSLxEQ+14fcQdU68gl5Km9ZtOAjY8Q9MhxSRClG+SXWreIOrSq+9epI+34wDiEk3YkvJJfzlFOnt6TBdW/z3aTXJrzPd3zgwEC3bdI79327Hml7C5EW3nAeXJcf7mO4VitNeu7Ji8/6SlYLr1dhbTknGO3HRS0GN81v5/MGmFuGwbF8cxJQkSqJ43bymqDevbXc9E2d7Bgo5zpZbDzbmyL16lL/XOtDwMRRu50PxRVpJE51nrlAob1o3n/FLqpQQyJWBGJPf43++oQiBQTqbCJ7dHsGD4fj3/oAAA==
+ b=HsdstoWSQHZ2jpgjOz+QEcbrHZdE5ufwlXjIEIoKD1BJdI2y8quO3CMKk070wHJghqOjCwSVtDjwSc9NnbxMQ5AhVKdePvazb7TT6CI0gFoJ1orTYQqb7v1XAKMeClHzQFYOOuT4wQsOfkrE/FUFX4fcgCC6djr4uXghVcYkrT/muMcgoua+M1jKcVoHxqO5sHu7ZrKO5SkMBzORI6ZsuGEU1sSyFzU8TZXF/YRTtq2bV/n8M1AeaAYgBq6BT/cFbLFMQzb1AryNj36g61A5rt5dvVmXiqDIOI+38g5RahkqKg1yJuoT0VyRmWv+so9nZ8UpWeO+6GQsG7aY+A/cJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WHsIsnpHLTZMjr4DFBCAChPWg03c27YcgWCNEghQi5g=;
- b=c2HUV+zfFYbNVI22mmiHoBoGHRhP5qz8PIf/QxW7mBNnGnN+uBigLwbH/ksflvVzdERGGunGi9M3FCzTKX7CJRqwBMDF0qWhpZjHDtnCgm2hpbSE5PfzpzKu89mI+RA1eEnjtogXgW8fKZAIw1kG7/s4+gjU7k9MFNMs4E6k1j3ADHi8saYWJm8idlMrjn9y72diakQFv7pohKaSR7oBWJWxgNPY9ZaTz+6AeTDAf62vpVNoacLB11EpH6xPk+ZkrdKtoyPjkTZQuDUaxTDfWcERTYryrZgCS6BZJTveA/YxHkmE+4/Q9tRhWbqrWlTf9FG/9Hlhk706kA+qu0TZDQ==
+ bh=9LK7rQNbPykyxBG24SQDavzwQWjZyaB+adJRWA2plW4=;
+ b=mvmzZ4602HwaVPigTrkrQuvAZoNPJBNBcz+EpKl7mJ4bYDbMmT0ezLDPcqTRHQv9suuA3FQuGZOAxDTcK0NXMHCmLenEIbSXI0olJ0u33RWv+CbI8R7Khcxz098sACUsuiO0sntOP/Aq+QKpmcXNZiUI67STL3Frchfc8FOe1/RcTUQeM+CF6SWNDQ+dFv2AS4hpBHKvaN9F3ErhYCiOFDgQXwqZ3Rj+3BaLLyHqYS7O4v98SIb8jn4F+sI89NP6bN3+chXvUgGMofLKhAr+arrr+O3kJIzexgVnitLe/sbOGmXDmE6ZLEBGp+jH+AAz7sk2JyLDKbPv6MiGQQFIDQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mdpsys.co.uk; dmarc=pass action=none header.from=mdpsys.co.uk;
- dkim=pass header.d=mdpsys.co.uk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mdpsys.onmicrosoft.com; s=selector1-mdpsys-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WHsIsnpHLTZMjr4DFBCAChPWg03c27YcgWCNEghQi5g=;
- b=Bp2RrGgBl9MbfAvH7x4hc4llcxDDSVHw4OEB9ln3lfsQUs/7uAMmIdqP4mAKItRZzZF3nLzbkm1rteCUWF0q2RgkZua21LhlonWsPTFggVSHwZPZz8UZGkpR+yywW9ObBJNVtd+DTmb3/WupGwnj07qA8+5+LMw7X4lYIkZHUPw=
+ bh=9LK7rQNbPykyxBG24SQDavzwQWjZyaB+adJRWA2plW4=;
+ b=fT9iczDi/+w++W7WL/sm6nWESV2cqOCjqqu9N5B5uHVkdJqb0YR3NhfIEkP9lA0M0QkYbcQDSvjq7u27+8vCDQw5c5E1RMTlzr7rD6alkW5A1f/cel6amOxNsmtBracJXHPY7dBkB4yNAnBoDbbYf+zBlTE4uyDIVtnEamudDDBFEZCymeqCzFIgAaitjhKmtr3z2vMhPIvcGF3Vkay4CpYbpZZ5MWvCFF8Kluc+KmiBCot09baqlnOHPZtLC2w2RKAgEZ+BLg87PG5v3O2Uuz568TU2LQGuZUZFxOh7GEJys4To1ou4VOy8HTBeHM1RzifB3oTplG0X+YezbnnTmQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mdpsys.co.uk;
-Received: from CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:41::11)
- by CWLP123MB2993.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:5c::16) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI2PR04MB10713.eurprd04.prod.outlook.com (2603:10a6:800:275::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
- 2024 18:35:26 +0000
-Received: from CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM
- ([fe80::1b52:590c:54ee:d122]) by CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM
- ([fe80::1b52:590c:54ee:d122%7]) with mapi id 15.20.7897.014; Tue, 20 Aug 2024
- 18:35:26 +0000
-Date: Tue, 20 Aug 2024 19:35:24 +0100
-From: Marc Payne <marc.payne@mdpsys.co.uk>
-To: Hao Qin <hao.qin@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Chris Lu <chris.lu@mediatek.com>
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, regressions@lists.linux.dev
-Subject: [REGRESSION] [BISECTED] btusb: driver fails to initialize MT7921AUN
- on v6.11-rc4
-Message-ID: <ZsTh7Jyug7MbZsLE@mdpsys.co.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: LO4P123CA0434.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a9::7) To CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:41::11)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 18:36:00 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 18:36:00 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dan Murphy <dmurphy@ti.com>,
+	linux-leds@vger.kernel.org (open list:LED SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: leds: convert leds-lm3692x to yaml format
+Date: Tue, 20 Aug 2024 14:35:43 -0400
+Message-Id: <20240820183544.496419-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0095.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,292 +81,279 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWXP123MB2965:EE_|CWLP123MB2993:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d1acf74-c0fc-4479-437d-08dcc146dc1b
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50f51671-a8b5-46aa-8359-08dcc146f025
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QlpIbXBqenQ1eFlvMjh5czdwREtuK2VrYnJWeDQxdVh5TGYwZDhZMVVPZGFC?=
- =?utf-8?B?Wm50MlJDYlNBZ3l5T0phZXFFVys1bUlCZSs1czcrRG1idkZabFJJR2svMTJ3?=
- =?utf-8?B?a0hEZEdEK2tuemhDUC9YVC9OOWpCcjdVRXRQQTlvUVB1bUJHZlVXNHNiSmlh?=
- =?utf-8?B?bk1LaWVaUENuYXM2L0pUcWxKMnJ2VHlKaDZ3b3RNZVRlVzJ6L0h2a2cxaytq?=
- =?utf-8?B?bkpSUEpZekJ0WHAvWVRBYjRGaDFhRGZIaEU5VksrQVRNb1U2b2VyTU1ZUUtv?=
- =?utf-8?B?VS9JNzhFaXlJV0FrdGd5SHVSVXpNKzdFYnVwdHpLOHF6K3lxMnF1Sjg5OXow?=
- =?utf-8?B?ZnZvT0ZrOEtmUEphMHdKaHhxNk16cXQvN25qUGIrWEtVUGliUU9zbFF4UWl1?=
- =?utf-8?B?bWFTRTBUbDU3NzVhVmo1bjFEWlkzb0wzWEhCNUplSGxqS3gzRUNiZ01Yd1Nt?=
- =?utf-8?B?eTIrUHFZQVg3aHQxQW1CdUFWc0hDeGhTNitzQyt0RzFjNXV4M1Y3RUZPL01i?=
- =?utf-8?B?M3RiYjBMS20xaFcybGpGLzJTRjljV0FKOTBFOGJOL0F1ZmhkQjlwN2lTOEl2?=
- =?utf-8?B?enVrdDh6ZjNpbEZTa1hPdVVsbm1rTHFhaDBxeHFsaFNpalZ0cFVTNHRCL2RM?=
- =?utf-8?B?QlZmMW9UeDZtV3hOOW83MGdIZGZibEdvV1YrbTNGV2RvMVRzcHVOUHpnc0JZ?=
- =?utf-8?B?Qlh1Q0QvQ2hVYU0rNmdVRFcyVExaTHlUS2pPRS9HMCtaRENkM3dETCtXMEtv?=
- =?utf-8?B?WTYxeEhtOUJBcDBUc3psYm80cG82NEs3VkVEdWpVYVRhSUQzT2VyVi9IaXVM?=
- =?utf-8?B?NzUvRkZQYmlRQzYvWG9tTWJoUE1rNk5vT0FGOU9kTi9YbDhuREt3b0tJeXRj?=
- =?utf-8?B?ZFZEc0dXeFJmYk45US9zVWtwdkJZVzFrSmMwSW1YSEtZNGtad1BNVklBVWpq?=
- =?utf-8?B?aSs0bmtSaWtrU1BUQzYwdDFhSHhXZ3FXejhpNmplTDBZMWhxVzBPd0paSnA1?=
- =?utf-8?B?dDRIMFJZNXFKc3JQQ0tDbWdGa2k5RXN4Q2FvSFlsSXNiWWwyVXk5dzE3cm13?=
- =?utf-8?B?NHIrRTY4MXV5T1dPVUhaT01PQm5Ea1Rvazloa2lRUnhKeFlYeTk3KytQbysv?=
- =?utf-8?B?VmxTRkR2V3VILzZPeUpDV2tBRXMwOFh5cFdnT2JQWWI1VXBNZmROTlV3RnUy?=
- =?utf-8?B?OGFZSGEyWUlRdDJkd3Y0VmdXY3hyeWFveElqV1JLREgyYnBxNmt2R2pwWEZi?=
- =?utf-8?B?Zy9acW8rRlRFTmF1b0lJV215eHFRckxkMTdOZjcwQitjd05JT3dvV0RIc2Na?=
- =?utf-8?B?V2w5eE1JeVphOGpybXVNWDF2UGszVEZBKzUyQ1JaM0dhUTNDNHBwd3ZiR0t5?=
- =?utf-8?B?Q1ZsRisxck1CNzM3RDMxazJad1FlRnhtd2RIWldMQVpRTFN5czQrdEVlR3VT?=
- =?utf-8?B?Sms2NlFxSTkxWlF4KzdqNExJa0xjRWRKalV4a3AwU1RITTU3akpwb2hyWDg1?=
- =?utf-8?B?UXY3OVJUOEY3SmNudklaL2hFb3gzSC9NN2liYjMwcGFER0tyelpyZzNhRlUw?=
- =?utf-8?B?MnAxNmlzZ3pOMTdUaFA0SytCczhOZTNGVGlLV0UwbjAwYTMwMTJXMEluOFBO?=
- =?utf-8?B?RVhGcHNIREtWNWovU3N6aUd5YnhTWFp6ZnJ2bzkxRlhKYmlHU3lxQkZKellB?=
- =?utf-8?B?WHFEZGtTVW9Wd0QxcHE5eHplZVJVL0VMdk5FczlVYmsvMzM0dnM5d2F1eDlY?=
- =?utf-8?B?ZG8wME5jZmxSL25rQmhtYjVURTU4ZDA3cDJXaitHZ0ZDS1lvaGU1eGRVVVNv?=
- =?utf-8?B?Mm1JZ3kzOTVOOFF2ZTRkUT09?=
+	=?us-ascii?Q?8ftSRZoKOSbTBZ6Cl+LMeH+oCaYdeqr7kBFmehZ/57CayKb3vrva9w98aD0s?=
+ =?us-ascii?Q?3GUQuDOlbJL9Hmd+zIyJGx3aDhBHpAUlWoved5XT7xZ0LUqJB/KFR0znqusQ?=
+ =?us-ascii?Q?GKGVHaD49emD4st5ECceYlNYGJahp7jSyb4ShmZWkaCrKq6uGA4BVMKd9Pz2?=
+ =?us-ascii?Q?YjV9NXCSEV2uN9xHYH8hZL5J1MgHaN7X+Mb3gvQ2ZXlORjfsjbuhmJji4LdU?=
+ =?us-ascii?Q?B9wKOtq+D3tqkphF9UWaFAF+/vBEi+NiMWUpYoTLXY6lA/Gcn8VmgzoQiGL7?=
+ =?us-ascii?Q?Ck86wge0YcxBsHcWOYj9DYBOTT9Df52VYFph5gx52TJInZfLMudbptK8eKqM?=
+ =?us-ascii?Q?yNf+jf/Bg1jD3eNB3AMGHMTKX84EeiGUsfk2Dj66JVJSJJx1cP62q+ggKgdz?=
+ =?us-ascii?Q?V6FnLWpdnq92RRQLfys96KxNz+TR8t71c1JwXiG2UHQ58gpYfyXVxsYHGgJJ?=
+ =?us-ascii?Q?zXwRCex4/xaTRpU8qQCy7eGIZA3KsAVftIY9dEFGMCT+giSFlbrf043bl0+Z?=
+ =?us-ascii?Q?Fq7OgBmbl0K1rDgLxI21VGwQOuDe++yJGum3F5iMJOs3wOo8z9K99sD+GrA5?=
+ =?us-ascii?Q?jezCbAz/VuocE5fPtI1wsLtjdPJ4CIDe4XoVNC7WwPfaCxQiKEAxJOb+XyWg?=
+ =?us-ascii?Q?Uqf0JtaCQo/yg+Eml4l05F9GAssIIMaocn/CUbh6SdYxTTs/RKUPw1YBAFp5?=
+ =?us-ascii?Q?gMeqpVKGWMBqytxEE/cECQ04X2hDqcw2csEbUCGHast7y+DMVfaV+FGNREKT?=
+ =?us-ascii?Q?5kdl6REN2a3nLRFqzEa3eU4hSSBUIkkTYkMOqFQ/1ogKbSfRgRns/qVpM5yz?=
+ =?us-ascii?Q?cD+mbN5YCuoKHNJppIFyMebWwNaPdnOamXZx+eax1iP8sd6jeJ7izvmj04NQ?=
+ =?us-ascii?Q?WZUgbJMjC4gh4LOYjXpUGU1RhxaxgJogZSbcG0q2bH9Wz9hsd+TA6v7E0zo4?=
+ =?us-ascii?Q?2hM3KeC4lkJ3sCDdF8w+2osJCI9u1Uvr1PZv1i1fcJD+6AVPdIhQTYdzvyF4?=
+ =?us-ascii?Q?WVKDGWoZha9GNLN3VRg/t+ce9fr7j2JvzGfU21VULmLahzfteQWLTQbQ+LmZ?=
+ =?us-ascii?Q?ohCRkkQwuI9So+5uKJBUGRjFRITf+WNXL5pYBpgIruBl1CbRFDSyZh8fZAOc?=
+ =?us-ascii?Q?SC9wlQxjQL0EwVyh0hCmgvjzGMJUI7UIuzMrtKJnuOITFgH10qEmCdrSBPha?=
+ =?us-ascii?Q?EK/1L1vZ+FVUSSbxKauUDQv3KdKZRwo0/fdlt0kN+btILcStacq3erMqmt0+?=
+ =?us-ascii?Q?LcTEIc8Bu3K4eF10G9O1tAtC5CIFrVr0rOYbYgkvJQ8mQVLPigQaqJz7457j?=
+ =?us-ascii?Q?AfG8MNbA+QQ/Pe4SeDaLm/yJa5RTsilsg9pP3JMriwRnJwgktDUzU8Y5ZG+C?=
+ =?us-ascii?Q?R0eOSOA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eU4wRnhyaS8ySVY5Ri9rQU1XRVBVa25zYnRuY29GWXg1SnFZUXUvWW9yb0Ji?=
- =?utf-8?B?dmE5cDBJMnl6blMwOGFDQkllTW54emVUT0tDMWQ3RU1JazIxM0RrTVNvdmF4?=
- =?utf-8?B?d3EzcmhBODN6WFpjUkpWbWo4NDZIS2dNeWpVaDVKekNGaGxTZy84VVd6YVRE?=
- =?utf-8?B?bkdJSmNyV2cwUkJMcWdveHNCdVZNR3Rxei9EKzBTS3lGRk1IVTV6blhFODlw?=
- =?utf-8?B?UGRpem1ETFpCMTUzWXhYNEU1SEt1TExlT1QwVXNFSW10USt5VGRjU25TTVE1?=
- =?utf-8?B?T0ZOb1lzV0lNRUptL1RwbkZhb2J2OU1NWm1hTHFETXZBdDcxcm4rRGxsRmpa?=
- =?utf-8?B?L1luMkw3VWF1ZlpzV3dTRVpweWZUN1hBOVdubkxMR21GWFowdlJvOVdWUGlQ?=
- =?utf-8?B?Z2lRalF2Y20vMk1vdlM0Qld6RytndnM4M2hmb2pDM3c0aEN3a0g0SnpHeEVk?=
- =?utf-8?B?V1g5d0FTVlJqLytscVpsamVlalZmSmpHT0pnWkJFOGlUZEFUaE14VmR2NWU3?=
- =?utf-8?B?cHFiellreERBNStQWWdmdXhHSDJJQTRCRHpkSTUwa0twL3h4Y1RqTTYrd0g3?=
- =?utf-8?B?aFdNQU83MktiV1V6UURPbE5idDRWWmRqTmZVMmZkWlVzMWJXdE9nUXlNZStC?=
- =?utf-8?B?a2dINWVGTEZTVG9rZUR0NlVOWUx6Um1QVUNvWEhRVUdBRFcwMVJscTN0RGk4?=
- =?utf-8?B?R2tEd0pKb3gvbVFkUkRPdStsNDBNYnJtNUZITFRVaUhMc1dQZGowQWRTbWov?=
- =?utf-8?B?WE9VTTMyVGlaRVNLV3Jxbjcwb2ZadlN3aVRwcEJKc0FTdnRSLy9kZUJDOUx0?=
- =?utf-8?B?T293bks4N24xdFR1a2lBck1TV0R6dUdJTHlFSzlLd1pZekJGSWF4WlhmdXJq?=
- =?utf-8?B?SEQ0KzNLSHZPOVdrTDU2eDNTUEJEVjI1djM5UTI1WW1GcmJtd3B1R1kvTXd2?=
- =?utf-8?B?Rktpdmpra1plendKTjZYc2pYbGl0Qjd4ZjR6YXIxUU1rSk5JaUptUUJoanRX?=
- =?utf-8?B?ZlR6UDNZSCthN0c1UThTdUp4UTB4ZFJoY3RxalcvUGN6YyswU0tRVXpwWmZm?=
- =?utf-8?B?WkszOUNKbEhUN1BWcmZRRHVSUXhYT0doMVBpK01RSGtUN0RkSkIxKys1WTR0?=
- =?utf-8?B?UTF4SmRHOXRLTXI4aldxc3BSUXVOc3RqSW5Fb1JTYWpoT0cxUTlQNGFtbHM3?=
- =?utf-8?B?R091MGdPYmgwR3RjME1vY1k1Y0RMY2FDem1jMFJpK09mWnFPUEEvazd6d3VT?=
- =?utf-8?B?bUM4UGpKZlFTMk5NT0ltbmptUjlRM0dMSlBraElGQlFTVUVIM1FiT2ZkVzZM?=
- =?utf-8?B?SStzL3ROaFdrODNCUkk3Y2x6QjVVeXhlWStYQXlPWkdlNnR6cnVCVGNTZWha?=
- =?utf-8?B?SWVkZytyVWh6RFNWK2twS0l4K2d4emxHR0VHOG9xMVlBV0QzZG4rWmlIUDBC?=
- =?utf-8?B?bjFnQzJhNk5wMFlUUGdkRDgzZWJGWjZqdVJoYjNOQTFDV1JDYU92RElmR3RU?=
- =?utf-8?B?Wks2KzFlQTdHbTl1NHV1MkJaWDdqcUZib1AxdXRtR1dWNDVTd2lkZUwwYTJ4?=
- =?utf-8?B?MFB6UDd5VllpNUhsVUViNmhlTHZid2RSb1dGUjRaaXBaRFpPZlNtVElYZHdu?=
- =?utf-8?B?bG5MUHpyZzF2R1lpNXhBNm92NWpVNVBWSjhTTWFLQ0I4ZFVuOWI4dmovL1Zk?=
- =?utf-8?B?ZGR2U1lnZlZiM1F1bFZlMHV4a2N6ZUZRd1RVUUFPWmN4dk5YWWMwOHVTQ1dF?=
- =?utf-8?B?MEdNSHVTRXBFZ28yZ2FsV0RKdm1HS0d1NlFidVp0cE12a0N5NUg1Y1NML1hG?=
- =?utf-8?B?c1B6b2JQOHVZbllzNU1VVEROUDhQWFkyaXh6RURsVFJleDY0TU8zajB3SXdN?=
- =?utf-8?B?OGhGYUtTZ0Z4TnRpdTVWUHNycFk0Zi9MUW9EZ2E2a1NaMFdWaUg0eXNmNUJI?=
- =?utf-8?B?NTd5N3JTKzFXQ0hRRkh0YkRzbzBycEtCUmlJK0JxWXBIenUyTll4QXJnUFNT?=
- =?utf-8?B?VHdFbnBEeU5ZZEhPTnJJY1dhaDRxM29YNXByeVhISllobjI5N293Nlg0OUdK?=
- =?utf-8?B?MzZLV1VCUkhXdC9jcURMWFVZMng1Y1IxRGRscmVtbFM2Y29CL1JQQUxTVjgv?=
- =?utf-8?Q?Z4VAGSXVVly2UxTugAigwEdyi?=
-X-OriginatorOrg: mdpsys.co.uk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d1acf74-c0fc-4479-437d-08dcc146dc1b
-X-MS-Exchange-CrossTenant-AuthSource: CWXP123MB2965.GBRP123.PROD.OUTLOOK.COM
+	=?us-ascii?Q?ZWvT/mzQvyG42B6G1Lk3sWGLYA1I8LpZjm3jvxn/se4OHnLfh5ogZtuZ9w17?=
+ =?us-ascii?Q?1KObIKj3eIbmmT94aYmcHXLKkgyJE4UsuppVOWQhDNOuaO1BE4S9iqz2jepJ?=
+ =?us-ascii?Q?vxkAifxc1M/UXcaf/tRyr2MYgL4kyAyXbLCbTKQS6g0RxJyPQUq5bMNnjPN3?=
+ =?us-ascii?Q?xYVevTSQrRdzdaUhOLuy4doVCrYUxSh3gUKtcc/c+nz9ELdng1MTOgeDJYv3?=
+ =?us-ascii?Q?+FtgYobkguxkyL19h+ghVW1bMkbg2IXZMoPV4LFh3Ivs8U9qEqkIL1QcQ8fF?=
+ =?us-ascii?Q?sh5YJWvaNoh8khBFGHvVnXEAOdc2BQTGib538N4IcvGhoWtsAEjcQcg12hMA?=
+ =?us-ascii?Q?OqKC0yPCz2dbD9y86PC/B8jiHb4u87VZ0vvOCqSQLIqN0/zCujIHCcQOlSJQ?=
+ =?us-ascii?Q?V+DdhkZRysKmgdcASJ1DAUpj1yLieISyDdSMUaYh+Jf2zphRqlsY9o8/BaOx?=
+ =?us-ascii?Q?RT3wC4D+S0zLZOphx2R9kluIq6jjmZfQmXMmcKyaX8HV02/vsZfRCRx2lPpZ?=
+ =?us-ascii?Q?3hLW55Y+kwyDl1BmolOsF9b/VWoD6BQbX4Uoj8/+x/m5DPCzw2DQWadhFhOx?=
+ =?us-ascii?Q?mbVnzkocGFiQUpUp+vWlcbuCjmphPtcn8JcXQGMDJp+IYUvST0+nzTETkofD?=
+ =?us-ascii?Q?kaWPDA6QMbVYObYgqtwVhSvKDGkVpDoQIm9Yi55KmjPBuH8TaxRDQ9l6gY+X?=
+ =?us-ascii?Q?iLl+riUG/8smtJiVgUuX6eoCvtd80khQc+q80YaBnE87/ebuwRZgXJl4uF5m?=
+ =?us-ascii?Q?badxP42QaW5fosvCsh3LVtfWV+9bXi1xlxuunvkCNVJTsT7YsZ6sTHbhh9v9?=
+ =?us-ascii?Q?8+XUsHstxp1FJ7BUoNLSwNJVMAZ8GQ4cIffLmPuTx/Trl/Hgftxf5k5kZMES?=
+ =?us-ascii?Q?0Samxkk3ECaiWuEdIiLn1QXWItUIGy6OnNW26+XjRtCAl4SUkBY+hO33PByP?=
+ =?us-ascii?Q?u8fckZX3geolBKxJ02KcYIC/nTXyAKHD3YuBdK2ycjdxeXYWW4f1pGC+/Gab?=
+ =?us-ascii?Q?9QzKAVREO3g73x0N/Wh5WysRkknSvNfOC2NSC0r2sqL4O0QEFSBLOrI2kguU?=
+ =?us-ascii?Q?R03oM3+UKlIjVf551QAkKWwWxl/lFWbBW6jT4X3OnFk8ygdWEwe5KXggNE6k?=
+ =?us-ascii?Q?dX2jZMZ6gvGqRe/HPwNKij/7ufd58l1HUu4ejN8F0ur1c7jE2mTv1gfkm5Qh?=
+ =?us-ascii?Q?twAxoG/Rm5XLvrBgOkByWsWU25G0tfyr2Bban/V5uTAx9yglRChYm3oq8V5o?=
+ =?us-ascii?Q?rBazOaXb0t4/+oMYMdgRrH/vFEuSgA+226ysGoAiMbFChSftMbGuSuwuFSKI?=
+ =?us-ascii?Q?td+9npRwT2cX1sqi/QGIEwFcWNLCdK8d/FnO7lDRkAGQZI+5sIBDSqbC2QI4?=
+ =?us-ascii?Q?6XppI1Yv8JuzSOVqQtCluVBbyb7itNvE4QWu0T+jCsg6jUIJcabpPOlnkqe6?=
+ =?us-ascii?Q?SeLHGb9UZ9dseJAGGo3pKZ8nzJ2qmU+/YPBachnRWjnw5EmdoBqur0S5vUkG?=
+ =?us-ascii?Q?Q7J1Gx5cMsS2x6KPEPVYIcAhZaMK1sEPcPxX5jDiJfEzC7i+OC9MIYGUkoau?=
+ =?us-ascii?Q?VPQ6OIWhEJ+9+STHmYvis+XY/nWuGyxVMuwgaWDa?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50f51671-a8b5-46aa-8359-08dcc146f025
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 18:35:26.6694
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 18:36:00.1751
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 07eb37f3-62d1-4b5c-a7c4-ed2a24dbebc2
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S5PUnH4Y4WAODb21ltNQKLXv3hHipUKbxk8OjdIhWKKTrquT5B/UIgYa+NhPF0WI45VQt7EKbbzk5UTWXI0m6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP123MB2993
+X-MS-Exchange-CrossTenant-UserPrincipalName: P6iC7MAmRSXQRs+z4U7K6vIjIWl2GrlkwK4+YiBmSJBgliQ5Mqy0ktVPFphsaifFUpqpthD/btkcFB/0B8MgCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10713
 
-Hello,
+Convert binding doc leds-lm3592x to yaml format.
+Additional change
+- Add ref to common.yaml for child node
+- Add i2c node at example
 
-I'm testing v6.11-rc4 and the btusb driver fails to properly initialize my
-MT7921AUN-based Alfa Networks AWUS036AXML:
+Fix below warning:
+arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb: /soc@0/bus@30800000/i2c@30a40000/backlight@36:
+	failed to match any schema with compatible: ['ti,lm36922']
 
-[   63.896319] usb 4-3.1.2: new SuperSpeed USB device number 4 using xhci_h=
-cd
-[   63.915436] usb 4-3.1.2: New USB device found, idVendor=3D0e8d, idProduc=
-t=3D7961, bcdDevice=3D 1.00
-[   63.915450] usb 4-3.1.2: New USB device strings: Mfr=3D6, Product=3D7, S=
-erialNumber=3D8
-[   63.915455] usb 4-3.1.2: Product: Wireless_Device
-[   63.915459] usb 4-3.1.2: Manufacturer: MediaTek Inc.
-[   63.915461] usb 4-3.1.2: SerialNumber: 000000000
-[   69.146856] Bluetooth: hci1: Failed to write uhw reg(-110)
-[   69.149213] Bluetooth: hci1: HW/SW Version: 0x008a008a, Build Time: 2024=
-0716151445
-[   78.530621] usb 4-3.1.2: Failed to suspend device, error -110
-[   88.553074] Bluetooth: hci1: Execution of wmt command timed out
-[   88.553097] Bluetooth: hci1: Failed to send wmt patch dwnld (-110)
-[   88.553186] Bluetooth: hci1: Failed to set up firmware (-110)
-[   88.553193] Bluetooth: hci1: HCI Enhanced Setup Synchronous Connection c=
-ommand is advertised, but not supported.
-[   90.899462] usb 4-3.1.2: Failed to suspend device, error -110
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v1 to v2
+- fix dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/leds/ti.lm36922.example.dtb: /example-0/i2c/led-controller@36: failed to match any schema with compatible: ['ti,lm3692x']
+---
+ .../devicetree/bindings/leds/leds-lm3692x.txt |  65 ------------
+ .../devicetree/bindings/leds/ti.lm36922.yaml  | 100 ++++++++++++++++++
+ 2 files changed, 100 insertions(+), 65 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/ti.lm36922.yaml
 
-I have bisected the issue down to the following commit:
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+deleted file mode 100644
+index b1103d961d6ca..0000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ /dev/null
+@@ -1,65 +0,0 @@
+-* Texas Instruments - LM3692x Highly Efficient White LED Driver
+-
+-The LM3692x is an ultra-compact, highly efficient,
+-white-LED driver designed for LCD display backlighting.
+-
+-The main difference between the LM36922 and LM36923 is the number of
+-LED strings it supports.  The LM36922 supports two strings while the LM36923
+-supports three strings.
+-
+-Required properties:
+-	- compatible:
+-		"ti,lm36922"
+-		"ti,lm36923"
+-	- reg :  I2C slave address
+-	- #address-cells : 1
+-	- #size-cells : 0
+-
+-Optional properties:
+-	- enable-gpios : gpio pin to enable/disable the device.
+-	- vled-supply : LED supply
+-	- ti,ovp-microvolt: Overvoltage protection in
+-	    micro-volt, can be 17000000, 21000000, 25000000 or
+-	    29000000. If ti,ovp-microvolt is not specified it
+-	    defaults to 29000000.
+-
+-Required child properties:
+-	- reg : 0 - Will enable all LED sync paths
+-		1 - Will enable the LED1 sync
+-		2 - Will enable the LED2 sync
+-		3 - Will enable the LED3 sync (LM36923 only)
+-
+-Optional child properties:
+-	- function : see Documentation/devicetree/bindings/leds/common.txt
+-	- color : see Documentation/devicetree/bindings/leds/common.txt
+-	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+-	- linux,default-trigger :
+-	   see Documentation/devicetree/bindings/leds/common.txt
+-	- led-max-microamp :
+-	   see Documentation/devicetree/bindings/leds/common.txt
+-
+-Example:
+-
+-#include <dt-bindings/leds/common.h>
+-
+-led-controller@36 {
+-	compatible = "ti,lm3692x";
+-	reg = <0x36>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-
+-	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+-	vled-supply = <&vbatt>;
+-	ti,ovp-microvolt = <29000000>;
+-
+-	led@0 {
+-		reg = <0>;
+-		function = LED_FUNCTION_BACKLIGHT;
+-		color = <LED_COLOR_ID_WHITE>;
+-		linux,default-trigger = "backlight";
+-		led-max-microamp = <20000>;
+-	};
+-}
+-
+-For more product information please see the link below:
+-https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+diff --git a/Documentation/devicetree/bindings/leds/ti.lm36922.yaml b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
+new file mode 100644
+index 0000000000000..ac98547b78bd2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/ti.lm36922.yaml
+@@ -0,0 +1,100 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/ti.lm36922.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments - LM3692x Highly Efficient White LED Driver
++
++maintainers:
++  - Dan Murphy <dmurphy@ti.com>
++
++description: |
++  The LM3692x is an ultra-compact, highly efficient,
++  white-LED driver designed for LCD display backlighting.
++
++  The main difference between the LM36922 and LM36923 is the number of
++  LED strings it supports. The LM36922 supports two strings while the LM36923
++  supports three strings.
++
++  For more product information please see the link below:
++  https://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
++
++properties:
++  compatible:
++    enum:
++      - ti,lm36922
++      - ti,lm36923
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  enable-gpios:
++    description: gpio pin to enable/disable the device.
++
++  vled-supply:
++    description: LED supply
++
++  ti,ovp-microvolt:
++    description: Overvoltage protection.
++    default: 29000000
++    enum: [17000000, 21000000, 25000000, 29000000]
++
++patternProperties:
++  '^led@[0-9a-f]+$':
++    type: object
++    $ref: common.yaml
++    properties:
++      reg:
++        enum: [0, 1, 2, 3]
++        description: |
++          0 - Will enable all LED sync paths
++          1 - Will enable the LED1 sync
++          2 - Will enable the LED2 sync
++          3 - Will enable the LED3 sync (LM36923 only)
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@36 {
++            compatible = "ti,lm36922";
++            reg = <0x36>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++            vled-supply = <&vbatt>;
++            ti,ovp-microvolt = <29000000>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_BACKLIGHT;
++                color = <LED_COLOR_ID_WHITE>;
++                linux,default-trigger = "backlight";
++                led-max-microamp = <20000>;
++            };
++        };
++    };
++
+-- 
+2.34.1
 
-    ccfc8948d7e4 ("Bluetooth: btusb: mediatek: reset the controller before =
-downloading the fw")
-
-The commit does not revert cleanly due to refactoring in subsequent commits=
- but
-removing the relevant ten lines of code allows the driver to initialize the
-device correctly, albeit with some failures and 'Mediatek coredump' errors
-followed by an additional reset. Interestingly, after the reset the device =
-is
-now showing as hci2 rather than hci1, suggesting an HCI device registration
-issue... Bluetooth devices are able to pair and connect as expected:
-
-[   77.765047] usb 4-3.1.2: new SuperSpeed USB device number 4 using xhci_h=
-cd
-[   77.785044] usb 4-3.1.2: New USB device found, idVendor=3D0e8d, idProduc=
-t=3D7961, bcdDevice=3D 1.00
-[   77.785063] usb 4-3.1.2: New USB device strings: Mfr=3D6, Product=3D7, S=
-erialNumber=3D8
-[   77.785069] usb 4-3.1.2: Product: Wireless_Device
-[   77.785073] usb 4-3.1.2: Manufacturer: MediaTek Inc.
-[   77.785077] usb 4-3.1.2: SerialNumber: 000000000
-[   77.807685] Bluetooth: hci1: HW/SW Version: 0x008a008a, Build Time: 2024=
-0716151445
-[   80.570163] Bluetooth: hci1: Device setup in 2710186 usecs
-[   80.570173] Bluetooth: hci1: HCI Enhanced Setup Synchronous Connection c=
-ommand is advertised, but not supported.
-[   81.871516] Bluetooth: hci1: Mediatek coredump end
-[   82.734805] Bluetooth: hci1: Opcode 0x0c03 failed: -110
-[   82.754807] Bluetooth: hci1: Mediatek coredump end
-[   84.868215] Bluetooth: hci1: Failed to read MSFT supported features (-11=
-0)
-[   87.001566] Bluetooth: hci1: AOSP get vendor capabilities (-110)
-[   92.292375] usb 4-3.1.2: reset SuperSpeed USB device number 4 using xhci=
-_hcd
-[   92.385619] usb 4-3.1.2: reset SuperSpeed USB device number 4 using xhci=
-_hcd
-[   92.406786] Bluetooth: hci2: HW/SW Version: 0x008a008a, Build Time: 2024=
-0716151445
-[   94.920337] Bluetooth: hci2: Device setup in 2455839 usecs
-[   94.920343] Bluetooth: hci2: HCI Enhanced Setup Synchronous Connection c=
-ommand is advertised, but not supported.
-[   94.994480] Bluetooth: hci2: AOSP extensions version v1.00
-[   94.994494] Bluetooth: hci2: AOSP quality report is supported
-[   94.995001] Bluetooth: MGMT ver 1.23
-
-However, when disconnecting the AWUS036AXML device I get an Oops in
-the hci_unregister_dev function, again indicating an issue with HCI registr=
-ation
-which was not present in the 6.10 kernel versions:
-
-[ 1210.222351] usb 4-3.1.2: USB disconnect, device number 4
-[ 1210.271146] Oops: general protection fault, probably for non-canonical a=
-ddress 0xdead000000000122: 0000 [#1] PREEMPT SMP NOPTI
-[ 1210.271166] CPU: 2 UID: 0 PID: 2275 Comm: kworker/2:1 Not tainted 6.11.0=
--rc4-dirty #67 a319890a1bc323fc297a70bfc980897913c059f7
-[ 1210.271178] Hardware name: Intel(R) Client Systems NUC12WSHi7/NUC12WSBi7=
-, BIOS WSADL357.0088.2023.0505.1623 05/05/2023
-[ 1210.271183] Workqueue: usb_hub_wq hub_event
-[ 1210.271200] RIP: 0010:hci_unregister_dev+0x45/0x1f0 [bluetooth]
-[ 1210.271292] Code: 89 ef e8 0e c4 ca dc f0 80 8b e9 0e 00 00 08 48 89 ef =
-e8 6e b1 ca dc 48 c7 c7 68 70 44 c1 e8 82 12 cb dc 48 8b 43 08 48 8b 13 <48=
-> 3b 18 0f 85 35 c8 06 00 48 3b 5a 08 0f 85 2b c8 06 00 48 89 42
-[ 1210.271297] RSP: 0018:ffffbb3b0661bb98 EFLAGS: 00010246
-[ 1210.271305] RAX: dead000000000122 RBX: ffff97bc8f92e000 RCX: 00000000000=
-00000
-[ 1210.271310] RDX: dead000000000100 RSI: ffff97bc8ba8b610 RDI: ffffffffc14=
-47068
-[ 1210.271314] RBP: ffff97bc8f92e4d0 R08: ffff97bc8424b5c0 R09: 00000000802=
-a0026
-[ 1210.271318] R10: 00000000802a0026 R11: 0000000000000001 R12: ffff97bc8f9=
-2e000
-[ 1210.271323] R13: ffffffffc12ff278 R14: ffffffffc12ff278 R15: ffff97bcf25=
-acc50
-[ 1210.271327] FS:  0000000000000000(0000) GS:ffff97cbd7300000(0000) knlGS:=
-0000000000000000
-[ 1210.271332] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1210.271337] CR2: 0000285c01b10000 CR3: 00000003d6e22000 CR4: 0000000000f=
-50ef0
-[ 1210.271342] PKRU: 55555554
-[ 1210.271346] Call Trace:
-[ 1210.271352]  <TASK>
-[ 1210.271359]  ? __die_body.cold+0x19/0x27
-[ 1210.271371]  ? die_addr+0x3c/0x60
-[ 1210.271378]  ? exc_general_protection+0x17d/0x400
-[ 1210.271391]  ? asm_exc_general_protection+0x26/0x30
-[ 1210.271403]  ? hci_unregister_dev+0x45/0x1f0 [bluetooth ffdb4fb65cead032=
-fbb8f4718e5d0aa7b94d492f]
-[ 1210.271479]  ? hci_unregister_dev+0x3e/0x1f0 [bluetooth ffdb4fb65cead032=
-fbb8f4718e5d0aa7b94d492f]
-[ 1210.271551]  btusb_disconnect+0x67/0x170 [btusb ce322bda915639979ec31f72=
-a2b85eb752188d36]
-[ 1210.271563]  usb_unbind_interface+0x90/0x290
-[ 1210.271576]  device_release_driver_internal+0x19c/0x200
-[ 1210.271589]  bus_remove_device+0xc6/0x130
-[ 1210.271599]  device_del+0x161/0x3e0
-[ 1210.271608]  ? kobject_put+0xa0/0x1d0
-[ 1210.271617]  usb_disable_device+0x104/0x220
-[ 1210.271627]  usb_disconnect+0xe6/0x2e0
-[ 1210.271637]  hub_event+0x7f9/0x19d0
-[ 1210.271648]  ? __schedule+0x3dd/0x1520
-[ 1210.271656]  process_one_work+0x17b/0x330
-[ 1210.271667]  worker_thread+0x2d2/0x400
-[ 1210.271676]  ? __pfx_worker_thread+0x10/0x10
-[ 1210.271684]  kthread+0xcf/0x100
-[ 1210.271695]  ? __pfx_kthread+0x10/0x10
-[ 1210.271705]  ret_from_fork+0x31/0x50
-[ 1210.271711]  ? __pfx_kthread+0x10/0x10
-[ 1210.271720]  ret_from_fork_asm+0x1a/0x30
-[ 1210.271732]  </TASK>
-[ 1210.271735] Modules linked in: mt792x_usb mt7921_common mt792x_lib mt76_=
-connac_lib mt76_usb mt76 ccm option usb_wwan rndis_host uhid cmac algif_has=
-h algif_skcipher af_alg bnep vfat fat cdc_ether usbnet intel_rapl_msr intel=
-_rapl_common intel_uncore_frequency intel_uncore_frequency_common snd_sof_p=
-ci_intel_tgl snd_sof_pci_intel_cnl iwlmvm snd_sof_intel_hda_generic soundwi=
-re_intel soundwire_cadence snd_sof_intel_hda_common x86_pkg_temp_thermal in=
-tel_powerclamp snd_sof_intel_hda_mlink snd_sof_intel_hda coretemp snd_sof_p=
-ci snd_sof_xtensa_dsp kvm_intel snd_sof r8152 mii snd_sof_utils mac80211 li=
-bphy snd_soc_hdac_hda kvm snd_soc_acpi_intel_match soundwire_generic_alloca=
-tion snd_soc_acpi soundwire_bus snd_soc_avs snd_hda_codec_hdmi snd_soc_hda_=
-codec snd_hda_ext_core snd_hda_codec_realtek snd_soc_core snd_hda_codec_gen=
-eric snd_hda_scodec_component crct10dif_pclmul crc32_pclmul polyval_clmulni=
- snd_compress polyval_generic ac97_bus libarc4 ghash_clmulni_intel snd_pcm_=
-dmaengine sha512_ssse3 sha256_ssse3 snd_hda_intel sha1_ssse3
-[ 1210.271851]  aesni_intel btusb snd_intel_dspcfg snd_intel_sdw_acpi gf128=
-mul iwlwifi snd_hda_codec btrtl crypto_simd cryptd btintel tps6598x btbcm t=
-ypec snd_hda_core btmtk rapl cfg80211 roles mei_pxp mei_hdcp snd_hwdep inte=
-l_cstate ee1004 bluetooth igc snd_pcm spi_nor intel_uncore ov13858 mei_me s=
-nd_timer thunderbolt v4l2_fwnode snd ptp mei i2c_i801 v4l2_async wdat_wdt m=
-td pcspkr intel_lpss_pci wmi_bmof pps_core i2c_smbus intel_lpss videodev so=
-undcore i2c_mux rfkill idma64 intel_pmc_core mousedev igen6_edac joydev ser=
-ial_multi_instantiate intel_vsec mc pmt_telemetry acpi_pad acpi_tad pinctrl=
-_tigerlake pmt_class mac_hid i2c_dev dm_mod sg crypto_user loop nfnetlink i=
-p_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 xe drm_ttm_helper =
-gpu_sched drm_suballoc_helper drm_gpuvm drm_exec i915 hid_generic usbhid i2=
-c_algo_bit drm_buddy ttm intel_gtt nvme drm_display_helper nvme_core video =
-spi_intel_pci cec xhci_pci crc32c_intel nvme_auth spi_intel xhci_pci_renesa=
-s wmi
-[ 1210.271992] ---[ end trace 0000000000000000 ]---
-[ 1210.271996] RIP: 0010:hci_unregister_dev+0x45/0x1f0 [bluetooth]
-[ 1210.272061] Code: 89 ef e8 0e c4 ca dc f0 80 8b e9 0e 00 00 08 48 89 ef =
-e8 6e b1 ca dc 48 c7 c7 68 70 44 c1 e8 82 12 cb dc 48 8b 43 08 48 8b 13 <48=
-> 3b 18 0f 85 35 c8 06 00 48 3b 5a 08 0f 85 2b c8 06 00 48 89 42
-[ 1210.272066] RSP: 0018:ffffbb3b0661bb98 EFLAGS: 00010246
-[ 1210.272071] RAX: dead000000000122 RBX: ffff97bc8f92e000 RCX: 00000000000=
-00000
-[ 1210.272075] RDX: dead000000000100 RSI: ffff97bc8ba8b610 RDI: ffffffffc14=
-47068
-[ 1210.272078] RBP: ffff97bc8f92e4d0 R08: ffff97bc8424b5c0 R09: 00000000802=
-a0026
-[ 1210.272082] R10: 00000000802a0026 R11: 0000000000000001 R12: ffff97bc8f9=
-2e000
-[ 1210.272085] R13: ffffffffc12ff278 R14: ffffffffc12ff278 R15: ffff97bcf25=
-acc50
-[ 1210.272088] FS:  0000000000000000(0000) GS:ffff97cbd7300000(0000) knlGS:=
-0000000000000000
-[ 1210.272092] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1210.272096] CR2: 0000285c01b10000 CR3: 00000003d6e22000 CR4: 0000000000f=
-50ef0
-[ 1210.272099] PKRU: 55555554
-[ 1210.272102] note: kworker/2:1[2275] exited with preempt_count 1
-
-
-The kworker exiting obviously means that the kernel no longer responds to e=
-vents
-on any of the USB ports...
-
-I hope you can track down the issue, let me know if you need any additional
-details.
-
-Regards,
-
-Marc
 
