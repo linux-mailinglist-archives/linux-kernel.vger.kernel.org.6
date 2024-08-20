@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-293976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D08958722
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D90958724
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48FA21C21B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B045E282224
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B98190471;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB36190665;
+	Tue, 20 Aug 2024 12:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3d4kR2v"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4162F19046D;
 	Tue, 20 Aug 2024 12:37:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F318FC90
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724157462; cv=none; b=jOXwVtLVss/at6XtBvNL8Ap2h0D1c3lTfMQcX1aggcrvXD2y7NO1uJC/bwNDMUBnln29HmkjNQ9qk3h+6LnV2wiYESWBsOsZ2/pe7wmU2OhTt1j/l5k22yY0jyhzXlbF3m5mrVM2pgJl6f1BBnlge1Dii3V4f7mTvM/tB6S4XCQ=
+	t=1724157463; cv=none; b=IkhdRpHhitzz/adw/OXsijRAF7Lu9gEIAV6HKE3bnEltQ0c8LcbuimpNM7VKGqOABPK71M4YxVTEWMwQb7zys9ikmVW3wodU6uXPwmzH9IO4/INQR8Rl3t6GuFr2HtEPfuixG0EhWQB1BuaAw0UQFtY99fEUOXCLUUpzPWQcavI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724157462; c=relaxed/simple;
-	bh=t9x4TYYD0UVihjjijunrAnfnxESPR+7kSgN2YaQSQ9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VUcqB+cdAiJGkmKUaRZAd8ksji3VwDWj6wDDwH8KWH9o7NcdXzRgQqT5lJ+p6BRIKM4Iu2EWUskTgfZLxR1VJRqdRvloP1INOQzDN5x3iSdvNg+Zykk3YcK4ILPdsWgTO4r+l13KtaLWEuT+qA6lxysQFj3y9QTKNDSQgzaupB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxrpsRjsRmySYaAA--.30979S3;
-	Tue, 20 Aug 2024 20:37:37 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMDxkeEMjsRmL5MbAA--.56855S4;
-	Tue, 20 Aug 2024 20:37:36 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] LoongArch: Add ifdefs to fix LSX and LASX related issues
-Date: Tue, 20 Aug 2024 20:37:31 +0800
-Message-ID: <20240820123731.31568-3-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240820123731.31568-1-yangtiezhu@loongson.cn>
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1724157463; c=relaxed/simple;
+	bh=8bshFx2eyWZ5uG1VE+ul+rV/TtW021V3dgf/hPg73/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5McG4ukaROaKV7iafd6+iTdxKcO9LWmHYhStgIM4i09jzjrjqQC8fPLiZ0RW92k7UDvtMMY7jv41uUCSAlwwc7onwTRhb4GbQIdXGlEjxPRilg1HKIcbJkIqwF+VzaoQ/1g2MJfjTaTsnwn/bETKMSARr63B0z31hCupIHAto0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3d4kR2v; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a8caef11fso640822966b.0;
+        Tue, 20 Aug 2024 05:37:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724157460; x=1724762260; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u2jK4yPx4+3xmhvpK4yijnOCWRTycZTzx5NwT7STrrQ=;
+        b=C3d4kR2v2UDBrKtcYDVzHLkjGpDB7O8gqmYGLSZBs2k0ab5ASKtJOafeRjG3SWrr9M
+         DdBi2oW6/qEPEWrPGd/UcXtN/UxrTwCYZQwaOWMVrRdCx3wgo/eqIGkNNar2qz33yERZ
+         kRC3cHLec7MKEAEE4/z/k+76045/tgy39ESnhxDNUT93jOGiW2F/00UgAyEvP9UJSyGJ
+         Bk7JJMYmdvk9hHe0am8PjSvj/F11p9jVTGBMa6cpwRd2dJ+WM2VMUxJ4W0S3wlKkJpET
+         NXlswD8I2C17T4q2hFrQOkXWA166bsvj01fUZAVZXyfAarmLEXeqMXpW6ExJXmIgLTmy
+         FsKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724157460; x=1724762260;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u2jK4yPx4+3xmhvpK4yijnOCWRTycZTzx5NwT7STrrQ=;
+        b=one4XUJgbT8NYGfsDx0Dnic4o5PPTr7yl2+my9KfQGeZ5bKGJdXOhn++twYHrofmTe
+         hVQNZ77zUQvCQXyNHiTKf7DUF038OLUaE9xl54hI+Slvhqk3Wm6hci0umMpFeerb6uwf
+         /PzV/OFVKZLmcToEYZRjUOK+6XsnRcBgLZxv+3YtZhlItDgOQIuLLXFUfJAPqn3g96Zx
+         ZZpB4MlcFA+MyysOfRSBm514x9HarjKlEN2AvXVNX0OlrHV0RKbiZeRPHelVJwllC6O5
+         2RBaA49yIRTc8hcTkbVV7IxA5bDSk/eu/j2qV8ZTJwn0tfB63fulDSGwsXpqenP5ivP3
+         XddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGEiJC8Jns1Rsvudu8LerJT8U6+pe1VTL+mPyY+wcW4jHAwfFKSsVOhGxn6JEWTLeVLoI0S5G16HbdR17IUQHhyvQNrlyaHm96t4/EoiQCBL9N6Krl5gSVpIehBzRcNFaab6jS
+X-Gm-Message-State: AOJu0Ywx7B62jYV/f9VGYn3SskkMiH2yBM6CFtLhMr+lIFyioYMxJkFb
+	i2haM9m2tiePF8+xsjlKlYgsusQqscBDWt5ykIKcfAy+5cQ4+bcL
+X-Google-Smtp-Source: AGHT+IEnFLaRCBdXyPNV3Gh/d/fIvJ4GLVS182SUvRH2sa8DDTUCqoFD2e3s6tHxCNrIcyWJR2snGQ==
+X-Received: by 2002:a17:907:948d:b0:a77:c0f5:69cc with SMTP id a640c23a62f3a-a8392a46c63mr817589366b.61.1724157459917;
+        Tue, 20 Aug 2024 05:37:39 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383947187sm752949366b.166.2024.08.20.05.37.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 05:37:39 -0700 (PDT)
+Date: Tue, 20 Aug 2024 15:37:36 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com
+Subject: Re: [PATCH net-next v5 0/7] net: stmmac: FPE via ethtool + tc
+Message-ID: <20240820123736.hkkzg4ijd6u2rtfi@skbuf>
+References: <cover.1724152528.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxkeEMjsRmL5MbAA--.56855S4
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxuF1kGr1fur43GrWxWr4fCrX_yoW5XFWrpr
-	9xCrs5Kr45WFn2y3yDZwn5WFZ0ka97Gr1agF4qy34fCF4qqFnrXr18tFn8XFyjgws7Ja1F
-	gFWrGw4YqayUAwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1724152528.git.0x1207@gmail.com>
 
-There exist some issues when building kernel if CONFIG_CPU_HAS_LBT is set
-but CONFIG_CPU_HAS_LSX and CONFIG_CPU_HAS_LASX are not set. In this case,
-there are no definitions of _restore_lsx and _restore_lasx and there are
-also no definitions of kvm_restore_lsx and kvm_restore_lasx in fpu.S and
-switch.S respectively, just add some ifdefs to fix the issues.
+On Tue, Aug 20, 2024 at 07:20:34PM +0800, Furong Xu wrote:
+> Move the Frame Preemption(FPE) over to the new standard API which uses
+> ethtool-mm/tc-mqprio/tc-taprio.
+> 
+> Changes in v5:
+>   1. fix typo in commit message
+>   2. drop FPE capability check in tc-mqprio/tc-taprio
 
-  AS      arch/loongarch/kernel/fpu.o
-arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-arch/loongarch/kernel/fpu.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+omg, I didn't even finish reviewing v4, and I haven't been doing anything
+else since you posted it :-/
 
-  AS [M]  arch/loongarch/kvm/switch.o
-arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-arch/loongarch/kvm/switch.o: warning: objtool: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
-
-  MODPOST Module.symvers
-ERROR: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
-ERROR: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
-
-Cc: stable@vger.kernel.org # 6.9+
-Fixes: cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202408120955.qls5oNQY-lkp@intel.com/
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/kernel/fpu.S | 4 ++++
- arch/loongarch/kvm/switch.S | 4 ++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/arch/loongarch/kernel/fpu.S b/arch/loongarch/kernel/fpu.S
-index 69a85f2479fb..6ab640101457 100644
---- a/arch/loongarch/kernel/fpu.S
-+++ b/arch/loongarch/kernel/fpu.S
-@@ -530,6 +530,10 @@ SYM_FUNC_END(_restore_lasx_context)
- 
- #ifdef CONFIG_CPU_HAS_LBT
- STACK_FRAME_NON_STANDARD _restore_fp
-+#ifdef CONFIG_CPU_HAS_LSX
- STACK_FRAME_NON_STANDARD _restore_lsx
-+#endif
-+#ifdef CONFIG_CPU_HAS_LASX
- STACK_FRAME_NON_STANDARD _restore_lasx
- #endif
-+#endif
-diff --git a/arch/loongarch/kvm/switch.S b/arch/loongarch/kvm/switch.S
-index 80e988985a6a..0c292f818492 100644
---- a/arch/loongarch/kvm/switch.S
-+++ b/arch/loongarch/kvm/switch.S
-@@ -277,6 +277,10 @@ SYM_DATA(kvm_enter_guest_size, .quad kvm_enter_guest_end - kvm_enter_guest)
- 
- #ifdef CONFIG_CPU_HAS_LBT
- STACK_FRAME_NON_STANDARD kvm_restore_fpu
-+#ifdef CONFIG_CPU_HAS_LSX
- STACK_FRAME_NON_STANDARD kvm_restore_lsx
-+#endif
-+#ifdef CONFIG_CPU_HAS_LASX
- STACK_FRAME_NON_STANDARD kvm_restore_lasx
- #endif
-+#endif
--- 
-2.42.0
-
+In Documentation/process/maintainer-netdev.rst there's a recommendation
+to allow for 24 hours between patch submissions. Please observe that, to
+avoid situations like these. Thank you.
 
