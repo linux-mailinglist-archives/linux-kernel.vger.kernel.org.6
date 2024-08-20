@@ -1,167 +1,211 @@
-Return-Path: <linux-kernel+bounces-294533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB75958ED9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 436BE958EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2FD1C21A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697691C20DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DE815CD7D;
-	Tue, 20 Aug 2024 19:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0902E1607B0;
+	Tue, 20 Aug 2024 19:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pYSmpacu"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qse4Bbdn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE1B1547D1;
-	Tue, 20 Aug 2024 19:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D5B1547D1;
+	Tue, 20 Aug 2024 19:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724183630; cv=none; b=CI5IDId+t2uPQGROv13zozOY4npYij9MxRAHLHsFiclSCplpV0ZV4jKvOd1WFz7r4AXUgTVNSyPgLK2r7i1BjexTjJrSbqhH8x+MCsMKkGuSiMOcPVSI1UVH7N1DAR+iYHFQMUqczkluHQel1je+QGUZ5Tywnrv7kr50/0b46mI=
+	t=1724183706; cv=none; b=iCwxeNhwCOitIS6SBuz6O1JUAsdL3btb3yuYvmxfIT/lxs7J4e7X/CSrIH7MQvrkJsPJb3TdHWQwBuJx9UV07xzRjZmj5qwyrUOp6cYLSsDxQ2MEXNoB9BBe+SwWJKS3yTVDUu02a5dimJLEMZGFiuDFUUwxG1yWQ5sxniJeXI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724183630; c=relaxed/simple;
-	bh=DR2GJN7s3OoXebWgjtePJ6xiOH9yRIZ/F7+6AiRug2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QKlIaYhFyg2dPnbHYmt55ddsyPKILF5eYkTe59Is4MJqFMI6cig5Syh2c8J8TaHk7TKxpqZBUvcraB9v5NwLNvT8wg5EBSw5wBlV6sq6ExyNAg/uVedyZf9a5FLh4e+Owl37VEz5xoJCfqyhbtYazoTQxycyAjXy14GTjvnGrIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pYSmpacu; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BVZoZvXjYkyYcVetsS+NsA6dchCrMli+gEckw36uz5k=; b=pYSmpacuNcBLDgxvE9kbjJw6H9
-	Hmn/kWIdsbrtWZRMyyM1EaKN+ITOzjK6AzYD96mTuohFp1pDdoxeSYAWezaDn9aiXjAJezehsVXWe
-	Drr99YgqxHRhe2WyWUGlH4LNoiWJlm07xXeP2xfEczb3u2mUsCoK8559IZkHRe0R6EulOT0RgWleA
-	loPsRGG59j/JcHbHus8QNA+AHrnjDpkhyhdYVCZoLxzabWwYmA9YPcjh005YG0ry6+bJoBfvvqkKA
-	imHBdkhLsh/+5tVfFBGHIW7Um5y6bxcLuIUO5SkIkDMU6hoVv4aMLBTcM2eQMVsMYo1gaLpNodGXi
-	jaPu8FHg==;
-Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sgUvD-0001So-3G; Tue, 20 Aug 2024 21:53:39 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>, Huang-Huang Bao <i@eh5.me>
-Cc: Richard Kojedzinszky <richard@kojedz.in>, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Huang-Huang Bao <i@eh5.me>,
- stable@vger.kernel.org
-Subject:
- Re: [PATCH] pinctrl: rockchip: correct RK3328 iomux width flag for GPIO2-B
- pins
-Date: Tue, 20 Aug 2024 21:54:05 +0200
-Message-ID: <2241778.ZfL8zNpBrT@diego>
-In-Reply-To: <20240709105428.1176375-1-i@eh5.me>
-References: <20240709105428.1176375-1-i@eh5.me>
+	s=arc-20240116; t=1724183706; c=relaxed/simple;
+	bh=N4Qq3iZWY8eQWm64J0ShcQ1nb3n6BnqGNeWNK07Ou6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzVXAHFMNNhr/t09uU5vw/5iX6D+w+8MeLPa+dgzSU0EPDLa2C6FJz4zoeMEtpCwPIOP9gnJofCcDO4vjkHzibbLRG4qEdBPE14YCsXMKmXh94VucVxx/toIuMNJ0ncL4JsXHwoQ4AXjXMWivffqqZsfB9jDuaKTKblgMcezC1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qse4Bbdn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D184C4AF09;
+	Tue, 20 Aug 2024 19:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724183705;
+	bh=N4Qq3iZWY8eQWm64J0ShcQ1nb3n6BnqGNeWNK07Ou6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qse4Bbdn4CILpo8kSdpDhIVH5hyMQmN2mI+8r3HO7bdyvBwgDYfwsUR4jVDme/YRv
+	 9yX5MfX0HQczTGhI5Vfmp7XYUcoClfamYpBVATdYq0U+4Jd2qQ1UpHHUtKxf70JNDG
+	 eIZMQd/MW9tbA/hwrQ2S600Ecw859wEcShC1bQhGH1t+EiQM6UcP8f6oIn1lbtqzT/
+	 v/Qd2gqWdDOhyHLtDYJ/l5Pi05ZcVh0n2HaDqAlwAPtqrKeHsBBXX7QMrlbCwYRMYP
+	 Qg3LsTRNZ1HVlcU0y+Alxfa5Mo4+xC8WZbLV7UELB0blzSMVRnq/09Xw7sBrDx5JpN
+	 5JFEr5uVR/lGA==
+Date: Tue, 20 Aug 2024 14:55:02 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Marc Gonzalez <mgonzalez@freebox.fr>
+Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>, 
+	Pierre-Hugues Husson <phhusson@freebox.fr>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v3] iommu/arm-smmu-qcom: hide last LPASS SMMU context
+ bank from linux
+Message-ID: <hilrqug7akx3d4g5mh76swu37ywlkxlbnurc5mzz5yva43uiek@kpurwhc6uu6w>
+References: <20240820-smmu-v3-1-2f71483b00ec@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820-smmu-v3-1-2f71483b00ec@freebox.fr>
 
-Hi Linus,
-
-Am Dienstag, 9. Juli 2024, 12:54:28 CEST schrieb Huang-Huang Bao:
-> The base iomux offsets for each GPIO pin line are accumulatively
-> calculated based off iomux width flag in rockchip_pinctrl_get_soc_data.
-> If the iomux width flag is one of IOMUX_WIDTH_4BIT, IOMUX_WIDTH_3BIT or
-> IOMUX_WIDTH_2BIT, the base offset for next pin line would increase by 8
-> bytes, otherwise it would increase by 4 bytes.
-
-could you pick this patch that fixes a pinctrl problem on rk3328?
-
-The change is good and I added my reviewed-by on july 29th.
-
-
-Thanks a lot
-Heiko
-
-
-> Despite most of GPIO2-B iomux have 2-bit data width, which can be fit
-> into 4 bytes space with write mask, it actually take 8 bytes width for
-> whole GPIO2-B line.
+On Tue, Aug 20, 2024 at 03:27:19PM GMT, Marc Gonzalez wrote:
+> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
+> (base address 0x05100000) produces a system freeze & reboot.
 > 
-> Commit e8448a6c817c ("pinctrl: rockchip: fix pinmux bits for RK3328
-> GPIO2-B pins") wrongly set iomux width flag to 0, causing all base
-> iomux offset for line after GPIO2-B to be calculated wrong. Fix the
-> iomux width flag to IOMUX_WIDTH_2BIT so the offset after GPIO2-B is
-> correctly increased by 8, matching the actual width of GPIO2-B iomux.
+> The hardware/hypervisor reports 13 context banks for the LPASS SMMU
+> on msm8998, but only the first 12 are accessible...
+> Override the number of context banks
 > 
-> Fixes: e8448a6c817c ("pinctrl: rockchip: fix pinmux bits for RK3328 GPIO2-B pins")
-> Cc: stable@vger.kernel.org
-> Reported-by: Richard Kojedzinszky <richard@kojedz.in>
-> Closes: https://lore.kernel.org/linux-rockchip/4f29b743202397d60edfb3c725537415@kojedz.in/
-> Tested-by: Richard Kojedzinszky <richard@kojedz.in>
-> Signed-off-by: Huang-Huang Bao <i@eh5.me>
+> [    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
+> [    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
+> [    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
+> [    2.563627] arm-smmu 5100000.iommu: 	address translation ops
+> [    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
+> [    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+> [    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
+> [    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
+> [    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
+> [    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+> [    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
+> 
+> Specifically, the crashes occur here:
+> 
+> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
+> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
+> 
+> and here:
+> 
+> 	arm_smmu_write_context_bank(smmu, i);
+> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
+> 
+> It is likely that FW reserves the last context bank for its own use,
+> thus a simple work-around is: DON'T USE IT in Linux.
+> 
+> If we decrease the number of context banks, last one will be "hidden".
+> 
+> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
 > ---
+> Changes in v3:
+> - Use very specific test (hack) to avoid changing the binding (Bjorn)
+> - Link to v2: https://lore.kernel.org/r/20240819-smmu-v1-0-bce6e4738825@freebox.fr
 > 
-> I have double checked the iomux offsets in debug message match iomux
-> register definitions in "GRF Register Description" section in RK3328
-> TRM[1].
+> Changes in v2:
+> - Use the compatible prop instead of a specific prop to trigger work-around (Bjorn & Caleb)
+> - Add qcom,msm8998-lpass-smmu compatible string
+> - Link to v1: https://lore.kernel.org/r/20240814-smmu-v1-0-3d6c27027d5b@freebox.fr
 > 
-> [1]: https://opensource.rock-chips.com/images/9/97/Rockchip_RK3328TRM_V1.1-Part1-20170321.pdf
+> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
+> (base address 0x05100000) produces a system freeze & reboot.
 > 
-> Kernel pinctrl debug message with dyndbg="file pinctrl-rockchip.c +p":
->   rockchip-pinctrl pinctrl: bank 0, iomux 0 has iom_offset 0x0 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 0, iomux 1 has iom_offset 0x4 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 0, iomux 2 has iom_offset 0x8 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 0, iomux 3 has iom_offset 0xc drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 1, iomux 0 has iom_offset 0x10 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 1, iomux 1 has iom_offset 0x14 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 1, iomux 2 has iom_offset 0x18 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 1, iomux 3 has iom_offset 0x1c drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 2, iomux 0 has iom_offset 0x20 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 2, iomux 1 has iom_offset 0x24 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 2, iomux 2 has iom_offset 0x2c drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 2, iomux 3 has iom_offset 0x34 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 3, iomux 0 has iom_offset 0x38 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 3, iomux 1 has iom_offset 0x40 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 3, iomux 2 has iom_offset 0x48 drv_offset 0x0
->   rockchip-pinctrl pinctrl: bank 3, iomux 3 has iom_offset 0x4c drv_offset 0x0
+> The hardware/hypervisor reports 13 context banks for the LPASS SMMU
+> on msm8998, but only the first 12 are accessible...
+> Override the number of context banks
 > 
-> The "Closes" links to test report from original reporter with original
-> issue contained, which was not delivered to any mailing list thus not
-> available on the web.
+> [    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
+> [    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
+> [    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
+> [    2.563627] arm-smmu 5100000.iommu: 	address translation ops
+> [    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
+> [    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+> [    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
+> [    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
+> [    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
+> [    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+> [    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
 > 
-> Added CC stable as the problematic e8448a6c817c fixed by this patch was
-> recently merged to stable kernels.
+> Specifically, here:
 > 
-> Sorry for the inconvenience caused,
-> Huang-Huang
+> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
+> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
 > 
->  drivers/pinctrl/pinctrl-rockchip.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> and here:
 > 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 3f56991f5b89..f6da91941fbd 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -3813,7 +3813,7 @@ static struct rockchip_pin_bank rk3328_pin_banks[] = {
->  	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
->  	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
->  	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0,
-> -			     0,
-> +			     IOMUX_WIDTH_2BIT,
->  			     IOMUX_WIDTH_3BIT,
->  			     0),
->  	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3",
+> 	arm_smmu_write_context_bank(smmu, i);
+> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
 > 
-> base-commit: 4376e966ecb78c520b0faf239d118ecfab42a119
-> --
-> 2.45.2
+> It is likely that FW reserves the last context bank for its own use,
+> thus a simple work-around would be: DON'T USE IT in Linux.
 > 
-
-
-
-
+> For reference, the lpass_q6_smmu node looks like this:
+> 
+> 	lpass_q6_smmu: iommu@5100000 {
+> 		compatible = "qcom,msm8998-smmu-v2", "qcom,smmu-v2";
+> 		reg = <0x05100000 0x40000>;
+> 		clocks = <&gcc HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
+> 		clock-names = "iface";
+> 
+> 		#global-interrupts = <0>;
+> 		#iommu-cells = <1>;
+> 		interrupts =
+> 			<GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+> 			<GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+> 
+> power-domains = <&gcc LPASS_ADSP_GDSC>;
+> 		status = "disabled";
+> 	};
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 7e65189ca7b8c..625db1d00fe5e 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -282,6 +282,13 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
+>  	u32 smr;
+>  	int i;
+>  
+> +	/*
+> +	 * MSM8998 LPASS SMMU reports 13 context banks, but accessing
+> +	 * the last context bank crashes the system.
+> +	 */
+> +	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") && smmu->num_context_banks == 13)
+> +		smmu->num_context_banks = 12;
+> +
+>  	/*
+>  	 * Some platforms support more than the Arm SMMU architected maximum of
+>  	 * 128 stream matching groups. For unknown reasons, the additional
+> 
+> ---
+> base-commit: 96a96aed6bb75b5c212f233b6c059a9354cdeebe
+> change-id: 20240814-smmu-d572c1a16aac
+> 
+> Best regards,
+> -- 
+> Marc Gonzalez <mgonzalez@freebox.fr>
+> 
 
