@@ -1,232 +1,272 @@
-Return-Path: <linux-kernel+bounces-293261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC596957CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:17:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1355957CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258641C2184B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4071A283423
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BB1136357;
-	Tue, 20 Aug 2024 05:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343061494B4;
+	Tue, 20 Aug 2024 05:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="tdqKL/ZS"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UIWOYDOa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1784117C8D;
-	Tue, 20 Aug 2024 05:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257CDEEAE;
+	Tue, 20 Aug 2024 05:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724131011; cv=none; b=DOd/Pp5aS+u8fvU+8SGUgttdUCqhhc2JCUruE6cchGM4icXWEDe2ImeL4HX2Y5Wp3N3TZZdIIWxEjbJr+/oX+jlZdewVvFTg8qcNUy1qwCRb0x+TpI3v2Gg+zIAkiZ04CuUVCq8KZ6pzsiT1BPbqnmdUJwkmO1JILekZONmVAYA=
+	t=1724131097; cv=none; b=c45TjmSeotlpTSSc1JOQjawMsxQneA0Wb3ZUM8yc3+mJ7WyiZas7Ea13cQbwQkAYIy+4+uLJQGwIURo2vT+haLS03h9F7oIalvqYauV2daFJkwXqKZ+jw5lAVhaBBlT5PEl5WPWV9wOwz8joxW9jNWLR7iSARRAnLl+cf9vrDwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724131011; c=relaxed/simple;
-	bh=7HCJNj1GcoBnd6+tf7NQ9IOVhyPv2+Th8/UrgnjlNJU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VWDI39OkceJmWFSsfm5jsV9rdzTUdgxK7S/sBmpeSxn6KHiTFI5JhKOQn3+sm/edJ4Pq5/gqeZ+e2Ib71QHYBrng1huyVSEuwxZ3wZD4cvI8sq/3kbS8N3OdVu3LIdAWLEWOF0LC2z+e8yIuAXY3q3cqAJvHhwoXIZ02IF8vXAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=tdqKL/ZS; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47K5GeVsA1051109, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1724131000; bh=7HCJNj1GcoBnd6+tf7NQ9IOVhyPv2+Th8/UrgnjlNJU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=tdqKL/ZSbfBweKEfslJG9Zr6wyw5jNV1kHeXcEsUI2kCbeWJ0yVkHuP7pzX+6Ax1F
-	 EAXbDr0c9PyM6CbThdHvmCiiknCNtHtBxmRNTq6jnhOgbZZC3k6ez3RD8wFA9QBw/B
-	 cj3e6ZRKNBaL7fLdW+N2xOMKFhFA2HuEiPORVON4IwbNIHyDikg3jEfsykMvGmMMYa
-	 OAWGTue/Bcw8g+bFw4PqZqdjMVqVI46SVwiEOVy0IZ9E0ZzO/5NIQdjfcTWMpRG3Yj
-	 2JX8EIgKs1bpJ14u+fdPE+jzn3iP7XOamLz/3yFoy5Q/odGK6JfwYXTm0nJwGy1W1r
-	 YXr2GnkW5HqUg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47K5GeVsA1051109
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Aug 2024 13:16:40 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 20 Aug 2024 13:16:40 +0800
-Received: from localhost.localhost (172.21.132.123) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 20 Aug 2024 13:16:39 +0800
-From: <max.chou@realtek.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
-        KidmanLee <kidman@realtek.com>, Karen Hsu <karenhsu@realtek.com>,
-        Max Chou
-	<max.chou@realtek.com>
-Subject: [PATCH V2 RESEND] Bluetooth: btrtl: Add the support for RTL8922A
-Date: Tue, 20 Aug 2024 13:16:35 +0800
-Message-ID: <20240820051635.25049-1-max.chou@realtek.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724131097; c=relaxed/simple;
+	bh=UXpVLZ4CufVhK3zP+2QQqiisBVB75MRuFmQHpYQPifs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z8K3YFM2xumtOcQlx1s1tJ6HfyyPRUdKibS1Ehck+AD2IARp0tVuDrTW0RDjKRRdkCXxhowgDW9HATqQXL3bB6hokxx1fmHDbbjqQnEYKTTlMoaKg3skDweeVgQDPmDu2vJypftuzWsR6SelMCCU4Fy+N0c9QnYik4/K3AcZ9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UIWOYDOa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K1pNYk005015;
+	Tue, 20 Aug 2024 05:18:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UXpVLZ4CufVhK3zP+2QQqiisBVB75MRuFmQHpYQPifs=; b=UIWOYDOaZ9yq7iAv
+	nVxDcFj9eM3qfeMFjMf6vF9C7AbLDcaGAY8aSh1vKzxWspAIwqR0oM3SbA9cwpWZ
+	Hm1EVF79HLriYDizw1OdRuDt3rcF+YUA/oI+4y3KRj25pTAfJSwrIqvGfAz1uHkf
+	I1STYNkul3IQacAcAFsQ8BvrkCzg80xXD1ZnZJ9rPEDb5Vfj19YakLmTU0z99yTf
+	iLR1LhVEfsRXJ1r72Zb9W2MwgZGXVT19YNyy9XuNYLL52Xn5mGjmzlBRio491P9C
+	xsdDO6ekBVXgww+KGDIqBiz13OPqCQbfC/H1xkpOM389ms1DjB2Es4V3cB4gXZuf
+	wrMchQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412k6gee86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 05:18:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K5I8aO023680
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 05:18:08 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 22:18:05 -0700
+Message-ID: <a0b522f5-8d70-4659-be00-d37bfbc39994@quicinc.com>
+Date: Tue, 20 Aug 2024 10:48:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] misc: fastrpc: Add support for multiple PD from one
+ process
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
+References: <20240808104228.839629-1-quic_ekangupt@quicinc.com>
+ <ed270718-63ef-4484-9856-0ff488e01b98@linaro.org>
+Content-Language: en-US
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <ed270718-63ef-4484-9856-0ff488e01b98@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS03.realtek.com.tw (172.21.6.96)
-X-KSE-ServerInfo: RTEXMBS03.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: g7ghUSx1stifz5pic6qG1LntI4Cl21bL
+X-Proofpoint-GUID: g7ghUSx1stifz5pic6qG1LntI4Cl21bL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 priorityscore=1501 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200038
 
-From: Max Chou <max.chou@realtek.com>
 
-Add the support for RTL8922A BT controller on USB interface.
-The necessary firmware will be submitted to linux-firmware project.
 
-The device info from /sys/kernel/debug/usb/devices as below.
+On 8/19/2024 4:35 PM, Caleb Connolly wrote:
+> Hi Ekansh,
+>
+> On 08/08/2024 12:42, Ekansh Gupta wrote:
+>> Memory intensive applications(which requires more tha 4GB) that wants
+>> to offload tasks to DSP might have to split the tasks to multiple
+>> user PD to make the resources available.
+>>
+>> For every call to DSP, fastrpc driver passes the process tgid which
+>> works as an identifier for the DSP to enqueue the tasks to specific PD.
+>> With current design, if any process opens device node more than once
+>> and makes PD init request, same tgid will be passed to DSP which will
+>> be considered a bad request and this will result in failure as the same
+>> identifier cannot be used for multiple DSP PD.
+>>
+>> Assign and pass a client ID to DSP which would be assigned during device
+>> open and will be dependent on the index of session allocated for the PD.
+>> This will allow the same process to open the device more than once and
+>> spawn multiple dynamic PD for ease of processing.
+>
+> A test tool to validate this fix and prevent it regressing in the future would be a good addition here.
+Thanks for reviewing the change, Caleb.
 
-T:  Bus=01 Lev=02 Prnt=02 Port=02 Cnt=01 Dev#=  3 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=8922 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00E04C885A01
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+This is more of a feature than a bug fix as it just adding support to spawn multiple user PDs from
+single process. Test cases for this feature was added to the recent versions of Hexagon SDK.
 
-Signed-off-by: Max Chou <max.chou@realtek.com>
----
-change:
-v2: edit commit log
----
- drivers/bluetooth/btrtl.c | 16 ++++++++++++++++
- drivers/bluetooth/btusb.c | 13 +++++++++++++
- 2 files changed, 29 insertions(+)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index f2f37143c454..555c2964ec1b 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -30,6 +30,7 @@
- #define RTL_ROM_LMP_8822B	0x8822
- #define RTL_ROM_LMP_8852A	0x8852
- #define RTL_ROM_LMP_8851B	0x8851
-+#define RTL_ROM_LMP_8922A	0x8922
- #define RTL_CONFIG_MAGIC	0x8723ab55
- 
- #define RTL_VSC_OP_COREDUMP	0xfcff
-@@ -69,6 +70,7 @@ enum btrtl_chip_id {
- 	CHIP_ID_8852B = 20,
- 	CHIP_ID_8852C = 25,
- 	CHIP_ID_8851B = 36,
-+	CHIP_ID_8922A = 44,
- 	CHIP_ID_8852BT = 47,
- };
- 
-@@ -309,6 +311,15 @@ static const struct id_table ic_id_table[] = {
- 	  .cfg_name = "rtl_bt/rtl8851bu_config",
- 	  .hw_info  = "rtl8851bu" },
- 
-+	/* 8922A */
-+	{ IC_INFO(RTL_ROM_LMP_8922A, 0xa, 0xc, HCI_USB),
-+	  .config_needed = false,
-+	  .has_rom_version = true,
-+	  .has_msft_ext = true,
-+	  .fw_name  = "rtl_bt/rtl8922au_fw",
-+	  .cfg_name = "rtl_bt/rtl8922au_config",
-+	  .hw_info  = "rtl8922au" },
-+
- 	/* 8852BT/8852BE-VT */
- 	{ IC_INFO(RTL_ROM_LMP_8852A, 0x87, 0xc, HCI_USB),
- 	  .config_needed = false,
-@@ -655,6 +666,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
- 		{ RTL_ROM_LMP_8852A, 20 },	/* 8852B */
- 		{ RTL_ROM_LMP_8852A, 25 },	/* 8852C */
- 		{ RTL_ROM_LMP_8851B, 36 },	/* 8851B */
-+		{ RTL_ROM_LMP_8922A, 44 },	/* 8922A */
- 		{ RTL_ROM_LMP_8852A, 47 },	/* 8852BT */
- 	};
- 
-@@ -1255,6 +1267,7 @@ int btrtl_download_firmware(struct hci_dev *hdev,
- 	case RTL_ROM_LMP_8852A:
- 	case RTL_ROM_LMP_8703B:
- 	case RTL_ROM_LMP_8851B:
-+	case RTL_ROM_LMP_8922A:
- 		err = btrtl_setup_rtl8723b(hdev, btrtl_dev);
- 		break;
- 	default:
-@@ -1286,6 +1299,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 	case CHIP_ID_8852B:
- 	case CHIP_ID_8852C:
- 	case CHIP_ID_8851B:
-+	case CHIP_ID_8922A:
- 	case CHIP_ID_8852BT:
- 		set_bit(HCI_QUIRK_VALID_LE_STATES, &hdev->quirks);
- 		set_bit(HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED, &hdev->quirks);
-@@ -1529,3 +1543,5 @@ MODULE_FIRMWARE("rtl_bt/rtl8852btu_config.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8852cu_fw.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8852cu_fw_v2.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8852cu_config.bin");
-+MODULE_FIRMWARE("rtl_bt/rtl8922au_fw.bin");
-+MODULE_FIRMWARE("rtl_bt/rtl8922au_config.bin");
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index acdba5d77694..8f931cfbac11 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -540,6 +540,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3592), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe122), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Realtek 8852BE Bluetooth devices */
- 	{ USB_DEVICE(0x0cb8, 0xc559), .driver_info = BTUSB_REALTEK |
-@@ -564,6 +566,17 @@ static const struct usb_device_id quirks_table[] = {
- 	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+
-+	/* Realtek 8922AE Bluetooth devices */
-+	{ USB_DEVICE(0x0bda, 0x8922), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3617), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3616), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe130), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+
- 	/* Realtek Bluetooth devices */
- 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
- 	  .driver_info = BTUSB_REALTEK },
--- 
-2.25.1
+--Ekansh
+>>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> ---
+>> Changes in v2:
+>>    - Reformatted commit text.
+>>    - Moved from ida to idr.
+>>    - Changed dsp_pgid data type.
+>>    - Resolved memory leak.
+>> Changes in v3:
+>>    - Modified commit text.
+>>    - Removed idr implementation.
+>>    - Using session index for client id.
+>>
+>>   drivers/misc/fastrpc.c | 30 ++++++++++++++++--------------
+>>   1 file changed, 16 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index a7a2bcedb37e..0ce1eedcb2c3 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -38,6 +38,7 @@
+>>   #define FASTRPC_INIT_HANDLE    1
+>>   #define FASTRPC_DSP_UTILITIES_HANDLE    2
+>>   #define FASTRPC_CTXID_MASK (0xFF0)
+>> +#define FASTRPC_CLIENTID_MASK (16)
+>>   #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>>   #define INIT_FILE_NAMELEN_MAX (128)
+>>   #define FASTRPC_DEVICE_NAME    "fastrpc"
+>> @@ -298,7 +299,7 @@ struct fastrpc_user {
+>>       struct fastrpc_session_ctx *sctx;
+>>       struct fastrpc_buf *init_mem;
+>>   -    int tgid;
+>> +    int client_id;
+>>       int pd;
+>>       bool is_secure_dev;
+>>       /* Lock for lists */
+>> @@ -613,7 +614,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
+>>       ctx->sc = sc;
+>>       ctx->retval = -1;
+>>       ctx->pid = current->pid;
+>> -    ctx->tgid = user->tgid;
+>> +    ctx->tgid = user->client_id;
+>>       ctx->cctx = cctx;
+>>       init_completion(&ctx->work);
+>>       INIT_WORK(&ctx->put_work, fastrpc_context_put_wq);
+>> @@ -1111,7 +1112,7 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
+>>       int ret;
+>>         cctx = fl->cctx;
+>> -    msg->pid = fl->tgid;
+>> +    msg->pid = fl->client_id;
+>>       msg->tid = current->pid;
+>>         if (kernel)
+>> @@ -1294,7 +1295,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>>           }
+>>       }
+>>   -    inbuf.pgid = fl->tgid;
+>> +    inbuf.pgid = fl->client_id;
+>>       inbuf.namelen = init.namelen;
+>>       inbuf.pageslen = 0;
+>>       fl->pd = USER_PD;
+>> @@ -1396,7 +1397,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>           goto err;
+>>       }
+>>   -    inbuf.pgid = fl->tgid;
+>> +    inbuf.pgid = fl->client_id;
+>>       inbuf.namelen = strlen(current->comm) + 1;
+>>       inbuf.filelen = init.filelen;
+>>       inbuf.pageslen = 1;
+>> @@ -1470,8 +1471,9 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>   }
+>>     static struct fastrpc_session_ctx *fastrpc_session_alloc(
+>> -                    struct fastrpc_channel_ctx *cctx)
+>> +                    struct fastrpc_user *fl)
+>>   {
+>> +    struct fastrpc_channel_ctx *cctx = fl->cctx;
+>>       struct fastrpc_session_ctx *session = NULL;
+>>       unsigned long flags;
+>>       int i;
+>> @@ -1481,6 +1483,7 @@ static struct fastrpc_session_ctx *fastrpc_session_alloc(
+>>           if (!cctx->session[i].used && cctx->session[i].valid) {
+>>               cctx->session[i].used = true;
+>>               session = &cctx->session[i];
+>> +            fl->client_id = FASTRPC_CLIENTID_MASK | i;
+>>               break;
+>>           }
+>>       }
+>> @@ -1505,7 +1508,7 @@ static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
+>>       int tgid = 0;
+>>       u32 sc;
+>>   -    tgid = fl->tgid;
+>> +    tgid = fl->client_id;
+>>       args[0].ptr = (u64)(uintptr_t) &tgid;
+>>       args[0].length = sizeof(tgid);
+>>       args[0].fd = -1;
+>> @@ -1580,11 +1583,10 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+>>       INIT_LIST_HEAD(&fl->maps);
+>>       INIT_LIST_HEAD(&fl->mmaps);
+>>       INIT_LIST_HEAD(&fl->user);
+>> -    fl->tgid = current->tgid;
+>>       fl->cctx = cctx;
+>>       fl->is_secure_dev = fdevice->secure;
+>>   -    fl->sctx = fastrpc_session_alloc(cctx);
+>> +    fl->sctx = fastrpc_session_alloc(fl);
+>>       if (!fl->sctx) {
+>>           dev_err(&cctx->rpdev->dev, "No session available\n");
+>>           mutex_destroy(&fl->mutex);
+>> @@ -1648,7 +1650,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
+>>   static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+>>   {
+>>       struct fastrpc_invoke_args args[1];
+>> -    int tgid = fl->tgid;
+>> +    int tgid = fl->client_id;
+>>       u32 sc;
+>>         args[0].ptr = (u64)(uintptr_t) &tgid;
+>> @@ -1804,7 +1806,7 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
+>>       int err;
+>>       u32 sc;
+>>   -    req_msg.pgid = fl->tgid;
+>> +    req_msg.pgid = fl->client_id;
+>>       req_msg.size = buf->size;
+>>       req_msg.vaddr = buf->raddr;
+>>   @@ -1890,7 +1892,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
+>>           return err;
+>>       }
+>>   -    req_msg.pgid = fl->tgid;
+>> +    req_msg.pgid = fl->client_id;
+>>       req_msg.flags = req.flags;
+>>       req_msg.vaddr = req.vaddrin;
+>>       req_msg.num = sizeof(pages);
+>> @@ -1980,7 +1982,7 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
+>>           return -EINVAL;
+>>       }
+>>   -    req_msg.pgid = fl->tgid;
+>> +    req_msg.pgid = fl->client_id;
+>>       req_msg.len = map->len;
+>>       req_msg.vaddrin = map->raddr;
+>>       req_msg.fd = map->fd;
+>> @@ -2033,7 +2035,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+>>           return err;
+>>       }
+>>   -    req_msg.pgid = fl->tgid;
+>> +    req_msg.pgid = fl->client_id;
+>>       req_msg.fd = req.fd;
+>>       req_msg.offset = req.offset;
+>>       req_msg.vaddrin = req.vaddrin;
+>
 
 
