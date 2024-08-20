@@ -1,178 +1,295 @@
-Return-Path: <linux-kernel+bounces-294225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA804958AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CE6958AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE2F1F25D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0A41C21C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7161922F3;
-	Tue, 20 Aug 2024 15:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0D31922EB;
+	Tue, 20 Aug 2024 15:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y0gU7KF0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6qLqCJo"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10482190473;
-	Tue, 20 Aug 2024 15:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A3A43AB2
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166970; cv=none; b=S5Qy5M6P+FTjDrDaTl01Cb09UAIN7LKGtLCUFHhKGt6LFqqV1NGQN2N4Qh7VXOUFYE/rFAhS7yevJsMjln0QE/ko9uQ12A7B11+wTAJBOJWu7fyI6dk3L9TfAHdYfl1kgcK2Aj/cdOJPE5aRAMIF14PAY8pnSO7ZUdZ9odFvdrQ=
+	t=1724167091; cv=none; b=QlM7K67NeuxYiIFpEZe2ExVxs9fZ9u00gMoTI+UInFemmQ1K8TkwPvZmvvaV5ZxakevutaKnz07pizDbYyJgVjCqHBYAfuSjM5Pmj/Ur5oZRv4RjyjYJFCHF+tdRa5BqUfWlsWsl20/EtKIsnHDLa16bfIpu19k+HwTdKbXGuiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166970; c=relaxed/simple;
-	bh=2htDYgQvswGaU/wI5VetYbAFBjE4OAfABWe3crGFcQk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=bzfKgD876yklxMn3eUk7dyB/v7eeZRO9T7UkHQkoe84dS3r5WwgtR9cHxxhmi4qrg8AtSQaZQUQwjvvChsO/VtaVRG30SW4JXBSYDf9OfyhaLKeCtdz7f7OWe12fBnRbKSoi2zR9gwCagsiKI0JERChq4ZnixFpOPKjjAziP7mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y0gU7KF0; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFG2Bv012791;
-	Tue, 20 Aug 2024 10:16:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724166962;
-	bh=o0ex5f/T4fe5xibAfgsBjL2cdHLLg0oekkZAeaRrtYw=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=y0gU7KF0O8ubQ8gGeAOeqEbUEMr6J17SCWOSuBXoKbeVV462pZ0yW+mI7szU2fLO3
-	 AX4eQe9yTxJyyad5qiUQ8txtk8XXIjGv1GcNQy4cxrWX9XDPEPS+Ax8NusJh0mLjBA
-	 vw4bQpqISIYjv683zgM4xJX2Kgnyd9qehm1nntBI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFG2NR047072
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 10:16:02 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 10:16:02 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 10:16:02 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFFwnx027038;
-	Tue, 20 Aug 2024 10:15:59 -0500
-Message-ID: <3274bdec-e9a3-4c2d-ba8e-58caa033d451@ti.com>
-Date: Tue, 20 Aug 2024 20:45:57 +0530
+	s=arc-20240116; t=1724167091; c=relaxed/simple;
+	bh=FnN5/suzVL2Cva0ZHkqQgBsCNk7qLoyougZpblbcotY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ArUe9RJD7Rp7NF6LO/xNU2kLB6gPNfseo/4B+rOONE1wJ40aSghdMX2CnYqzIJI5J/fnZhaTEY0JrNVM3xbP06/mmRBtQMQqFTfx6q6Yj2qoeIbccWj9cYLu5c63b/NyYXp5JVWrMQyOCYaEsFGqOq45iNsOzLzGDq8b1LSGqr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6qLqCJo; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20353e5de9cso78885ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724167089; x=1724771889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=urAcmCCjiI5rmedKtqZs0p7Ogn4+RDAWlFm24KhnpUk=;
+        b=D6qLqCJo4nPDCDTOJ78D2MMNdlssuy6xedoNIFQFIJ9tFfex6YMiNE5AWnj8M57+/U
+         WpFol0UuagLZaO/WTYsO8IX43FXhwcB8HMJUQWTFzdlhRvW27ZUMsHC1YXuCGOPvUdQO
+         w8ldST5UAMvWYMif9QbDh4IQQoGwlXf0/jpJOkhDkT4qBW301gJ9rhJ3oUq46bJXKqs4
+         ISg+1UedVtTe2qv9YU6fs1J3w1kRNyifCx2IFbBPwrECc0+GstUC0Yq+4bWxa8OSGrpD
+         jYcs82l1yr1iyn9WWAhi/yG8Y3EL5DHGfRxY77+NOZTch5e9m59+sYXupdyGV/OU8vti
+         u+2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724167089; x=1724771889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=urAcmCCjiI5rmedKtqZs0p7Ogn4+RDAWlFm24KhnpUk=;
+        b=WrUN1/fleILSC1Qb09GWZsmLf9K8yCmr442ruv6rnJmFmamik6X6/HQPKt9dvuZIzE
+         Lm5T5LeL4ks1xAAS18z3lixeFZTmsU60CRAPYYhKP4xFVycd90AKypa4wiCWKGdO/66m
+         66dptk0SJdis+qjOnN1/NRn2mQJBDogpeTgzpcOR3qYNSSYWV4IR34MVxjLeoqsS64q2
+         ecEIjG+WxDebT5klyK/wOFlY+FEUpD6jYnKjdhotFerGil/gsuIHQPDY5ZUXxjD007FF
+         saH98ASfcUTZ1BZjcZppQuVD6U5Sd+BaOz47k+e7NhN7PbDCuslFvmZEbNLltup2o4zE
+         r9jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsFjQkJM7fcEG2tzcufwOEdcKFdaMl5MmbtJpikQg53ck/nOGPKthf9Zl7LbbP4Y0aJ4PnZlJK3dV8+go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuG5vlyZ3Q5gMp5JzcqKcuKyZA+jtfLPMzLlZl4mA97FznD1fw
+	oAanOBq7ofpqLx7OZtAPISJkQKWcGhGwXBtOTGDIApkI8FlEerN97dUDj7mRXKYOIlwPrO5dSnJ
+	MeovGbO2pXIG/rf2M8qM39aXO2jOOMdE+3vOI
+X-Google-Smtp-Source: AGHT+IGBuKYlyGvyMtwjB7GmMn9F6PQG1M2n1FofJFMl4pYMFx93UcVcYXMjA6H1/Apqzp82uCY/T9QmhnvQ1rUT5C4=
+X-Received: by 2002:a17:902:ecca:b0:201:daee:6fac with SMTP id
+ d9443c01a7336-202d5beb511mr1914625ad.16.1724167088460; Tue, 20 Aug 2024
+ 08:18:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Fix driver shutdown
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Apurva Nandan
-	<a-nandan@ti.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>
-References: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
- <3e6075a6-20a9-42ee-8f10-377ba9b0291b@ti.com>
- <9ce9044c-085f-4eff-b142-ab36d39d90b4@siemens.com>
- <2bdd6000-82b4-4f57-a950-e9378c321154@ti.com>
- <7ffe0f80-d4a2-4d6f-8c45-5a407ac2e584@siemens.com>
- <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
-Content-Language: en-US
-In-Reply-To: <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <05E55194-C265-4BDA-911D-B9E57EED3CBB@nutanix.com>
+ <CAP-5=fUndbBhSLb35_bL-+Xu3erB6ssx-sAEYaf7mgxPawNEbA@mail.gmail.com> <65A24EAA-A348-4E77-AF5B-933B41C9CAB6@nutanix.com>
+In-Reply-To: <65A24EAA-A348-4E77-AF5B-933B41C9CAB6@nutanix.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 20 Aug 2024 08:17:56 -0700
+Message-ID: <CAP-5=fVTB5DUybd7KnX-qb8yau+onkscm1a13izuZLH_WdXiyw@mail.gmail.com>
+Subject: Re: Perf test failures for 10.2 PMU event map aliases
+To: Jon Kohler <jon@nutanix.com>
+Cc: "adrian.hunter@intel.com" <adrian.hunter@intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 20-08-2024 20:29, Beleswar Prasad Padhi wrote:
+On Tue, Aug 20, 2024 at 6:54=E2=80=AFAM Jon Kohler <jon@nutanix.com> wrote:
 >
-> On 20-08-2024 19:50, Jan Kiszka wrote:
->> On 20.08.24 11:48, Beleswar Prasad Padhi wrote:
->>> On 20-08-2024 15:09, Jan Kiszka wrote:
->>>> On 20.08.24 11:30, Beleswar Prasad Padhi wrote:
->>>>> Hi Jan,
->>>>>
->>>>> On 19-08-2024 22:17, Jan Kiszka wrote:
->>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>>>
->>>>>> When k3_r5_cluster_rproc_exit is run, core 1 is shutdown and removed
->>>>>> first. When core 0 should then be stopped before its removal, it 
->>>>>> will
->>>>>> find core1->rproc as NULL already and crashes. Happens on rmmod e.g.
->>>>> Did you check this on top of -next-20240820 tag? There was a 
->>>>> series[0]
->>>>> which was merged recently which fixed this condition. I don't see 
->>>>> this
->>>>> issue when trying on top of -next-20240820 tag.
->>>>> [0]:
->>>>> https://lore.kernel.org/all/20240808074127.2688131-1-b-padhi@ti.com/
->>>>>
->>>> I didn't try those yet, I was on 6.11-rcX. But from reading them
->>>> quickly, I'm not seeing the two issues I found directly addressed 
->>>> there.
->>> Check the comment by Andrew Davis[0], that addresses the above issue.
->>>
->>> [0]:
->>> https://lore.kernel.org/all/0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com/ 
->>>
->>>
->> OK, then someone still needs to update his patch accordingly.
-> That comment was addressed in the v4 series revision[1] and was merged 
-> to linux-next, available with tag -next-20240820. Request you to 
-> please check if the issue persists with -next-20240820 tag. I checked 
-> myself, and was not able to reproduce.
-> [1]: https://lore.kernel.org/all/Zr9nbWnADDB+ZOlg@p14s/
->>
->>>>>> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power
->>>>>> up before core0 via sysfs")
->>>>>> CC: stable@vger.kernel.org
->>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>>>>> ---
->>>>>>
->>>>>> There might be one more because I can still make this driver crash
->>>>>> after an operator error. Were error scenarios tested at all?
->>>>> Can you point out what is this issue more specifically, and I can 
->>>>> take
->>>>> this up then.
->>>> Try starting core1 before core0, and then again - system will hang or
->>> If you are trying to stop and then start the cores from sysfs, that is
->>> not yet supported. The hang is thus expected.
->> What? Then the driver is broken, even more. Why wasn't it fully 
->> implemented?
-
-
-Just wanted to point out that this "graceful shutdown" feature is 
-majorly dependent on the Device Manager Firmware(point 3) and minimal 
-changes to the remoteproc driver (point 2 and 4). Thus, as soon as 
-Firmware is capable, we will send out the patches for this feature.
-
-> The driver is capable of starting a core and stopping it all well. The 
-> problem is, when we stop a core from sysfs (without resetting the SoC 
-> itself), the remotecore is powered off, but its resources are not 
-> relinquished. So when we start it back, there could be some memory 
-> corruptions. This feature of "graceful shutdown" of remotecores is 
-> almost implemented and will be posted to this driver soon. Request you 
-> to try out after that.
 >
-> With graceful shutdown feature, this will be the flow:
-> 1. We issue a core stop operation from sysfs.
-> 2. The remoteproc driver sends a special "SHUTDOWN" mailbox message to 
-> the remotecore.
-> 3. The remotecore relinquishes all of its acquired resources through 
-> Device Manager Firmware and sends an ACK back.
-> 4. The remotecore enters WFI state and then is resetted through Host 
-> core.
-> 5. Then, if we try to do the core start operation from sysfs, core 
-> should be up as expected.
 >
-> Thanks,
-> Beleswar
->>
->> Jan
->>
+> > On Aug 20, 2024, at 1:41=E2=80=AFAM, Ian Rogers <irogers@google.com> wr=
+ote:
+> >
+> > !-------------------------------------------------------------------|
+> >  CAUTION: External Email
+> >
+> > |-------------------------------------------------------------------!
+> >
+> > On Mon, Aug 19, 2024 at 7:06=E2=80=AFPM Jon Kohler <jon@nutanix.com> wr=
+ote:
+> >>
+> >> Reaching out to the perf community for feedback on the following
+> >> observed test failure. On 6.6.y, I see persistent failures with test
+> >> 10.2 PMU event map aliases, complaining about testing aliases uncore
+> >> PMU mismatches. I've included two outputs below, one with a bit of
+> >> hacky print debugging.
+> >>
+> >> Using Intel(R) Xeon(R) Gold 6154 CPU:
+> >>        10.2: PMU event map aliases                                    =
+     :
+> >>        --- start ---
+> >>        test child forked, pid 962901
+> >>        Using CPUID GenuineIntel-6-55-4
+> >
+> > Hi Jon,
+> >
+> > Sorry for the brief reply but I thought some quick hints might unblock
+> > you on this. The CPUID lines up with a SkylakeX:
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_p=
+ub_scm_linux_kernel_git_perf_perf-2Dtools-2Dnext.git_tree_tools_perf_pmu-2D=
+events_arch_x86_mapfile.csv-3Fh-3Dperf-2Dtools-2Dnext-23n33&d=3DDwIFaQ&c=3D=
+s883GpUCOChKOHiocYtGcg&r=3DNGPRGGo37mQiSXgHKm5rCQ&m=3DRJx661xzakrB42hsUsFD1=
+HhJczkgpaYur9lHVtl7j36__CBOqYfKf4Dnq0xdpBZl&s=3DF-eXsmTASgRsptt5Gahro6fRyMw=
+EQdjZ6PtY7vhzIKM&e=3D
+> >
+> >>        testing core PMU cpu aliases: pass
+> >>        JKDBG: pmu nr total 3 pmu->sysfs_aliases 3 pmu->sys_json_aliase=
+s 0
+> >>        JKDBG: pmu cpu_aliases_added nr total 4 pmu->cpu_json_aliases 1
+> >>        testing aliases uncore PMU uncore_imc_0: mismatch expected alia=
+ses
+> >>          (1) vs found (4)
+> >>        test child finished with -1
+> >>        ---- end ----
+> >>        PMU events subtest 2: FAILED!
+> >>
+> >> Using Intel(R) Xeon(R) Platinum 8352Y:
+> >>        10.2: PMU event map aliases                                    =
+     :
+> >>        --- start ---
+> >>        test child forked, pid 1765070
+> >>        Using CPUID GenuineIntel-6-6A-6
+> >
+> > This is an IcelakeX:
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_p=
+ub_scm_linux_kernel_git_perf_perf-2Dtools-2Dnext.git_tree_tools_perf_pmu-2D=
+events_arch_x86_mapfile.csv-3Fh-3Dperf-2Dtools-2Dnext-23n18&d=3DDwIFaQ&c=3D=
+s883GpUCOChKOHiocYtGcg&r=3DNGPRGGo37mQiSXgHKm5rCQ&m=3DRJx661xzakrB42hsUsFD1=
+HhJczkgpaYur9lHVtl7j36__CBOqYfKf4Dnq0xdpBZl&s=3D6DwD4ZmywAtcwCnRjx7wRfmdW_G=
+65wHIuyZJIc__2yc&e=3D
+> >
+> >>        testing core PMU cpu aliases: pass
+> >>        testing aliases uncore PMU uncore_imc_free_running_0: mismatch
+> >>          expected aliases (1) vs found (6)
+> >>        test child finished with -1
+> >>        ---- end ----
+> >>        PMU events subtest 2: FAILED!
+> >>
+> >> Digging in more, looking at pmu_aliases_parse, I see that we'll discar=
+d
+> >> scale and unit files in pmu_alias_info_file, which leaves us with 3x
+> >> aliases in the uncore_imc_0 in the first case and 5x aliases in the
+> >> uncore_imc_free_running_0 second case.
+> >>
+> >> # From 6154-based system:
+> >> ls -lhat /sys/devices/uncore_imc_0/events
+> >
+> > The "uncore_" prefix and the "_0" suffix are optional, the naming
+> > matching is case insensitive. In the event json the events are listed
+> > here:
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_p=
+ub_scm_linux_kernel_git_perf_perf-2Dtools-2Dnext.git_tree_tools_perf_pmu-2D=
+events_arch_x86_skylakex_uncore-2Dmemory.json-3Fh-3Dperf-2Dtools-2Dnext&d=
+=3DDwIFaQ&c=3Ds883GpUCOChKOHiocYtGcg&r=3DNGPRGGo37mQiSXgHKm5rCQ&m=3DRJx661x=
+zakrB42hsUsFD1HhJczkgpaYur9lHVtl7j36__CBOqYfKf4Dnq0xdpBZl&s=3DFpAgVwLmTyXUF=
+QIMZ_gbPlH9aXvrmcJ8CZaW3tKIaj4&e=3D
+> >
+> >> total 0
+> >> -r--r--r--. 1 root root 4.0K Aug 19 18:50 cas_count_read.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 19 18:50 cas_count_read.unit
+> >> -r--r--r--. 1 root root 4.0K Aug 19 18:50 cas_count_write.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 19 18:50 cas_count_write.unit
+> >> -r--r--r--. 1 root root 4.0K Aug  9 15:30 cas_count_read
+> >> -r--r--r--. 1 root root 4.0K Aug  9 15:30 cas_count_write
+> >> -r--r--r--. 1 root root 4.0K Aug  9 15:30 clockticks
+> >
+> > This should be 3 sysfs events (I don't like the term alias), note that
+> > we load the sysfs and json events lazily to avoid overhead.
+> >
+> >> drwxr-xr-x. 2 root root    0 Jul 17 03:40 .
+> >> drwxr-xr-x. 5 root root    0 Jul 17 02:52 ..
+> >>
+> >> # From the 8352Y-based system:
+> >> ls -lhat /sys/bus/event_source/devices/uncore_imc_free_running_0/event=
+s
+> >> total 0
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 ddrt_read.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 ddrt_read.unit
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 ddrt_write.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 ddrt_write.unit
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 read.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 read.unit
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 write.scale
+> >> -r--r--r--. 1 root root 4.0K Aug 20 01:44 write.unit
+> >> -r--r--r--. 1 root root 4.0K Aug 19 21:33 dclk
+> >> -r--r--r--. 1 root root 4.0K Aug 19 21:33 ddrt_read
+> >> -r--r--r--. 1 root root 4.0K Aug 19 21:33 ddrt_write
+> >> -r--r--r--. 1 root root 4.0K Aug 19 21:33 read
+> >> -r--r--r--. 1 root root 4.0K Aug 19 21:33 write
+> >
+> > This is 5 sysfs events, the json events are here:
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_p=
+ub_scm_linux_kernel_git_perf_perf-2Dtools-2Dnext.git_tree_tools_perf_pmu-2D=
+events_arch_x86_icelakex_uncore-2Dmemory.json-3Fh-3Dperf-2Dtools-2Dnext-23n=
+134&d=3DDwIFaQ&c=3Ds883GpUCOChKOHiocYtGcg&r=3DNGPRGGo37mQiSXgHKm5rCQ&m=3DRJ=
+x661xzakrB42hsUsFD1HhJczkgpaYur9lHVtl7j36__CBOqYfKf4Dnq0xdpBZl&s=3DMrHuUCZF=
+qrNrd05IPyq4fuZDH4_owkEw0xHcc7bvGvU&e=3D
+> > Note, the "Unit", meaning the PMU should be imc_free_running to match
+> > this device.
+> >
+> >> drwxr-xr-x. 2 root root    0 Aug 15 03:15 .
+> >> drwxr-xr-x. 5 root root    0 Aug 15 02:42 ..
+> >>
+> >> Looking at the structure of __test_uncore_pmu_event_aliases, however,
+> >> I'm not quite sure how this is supposed to work. I've annotated a walk
+> >> through below to highlight where things are going off the rails.
+> >>
+> >> static int __test_uncore_pmu_event_aliases(struct perf_pmu_test_pmu *t=
+est_pmu)
+> >> {
+> >> ...
+> >>        /* Count how many aliases we generated */
+> >>        alias_count =3D perf_pmu__num_events(pmu);
+> >>                // alias_count =3D=3D 4 in the 6154-based system
+> >>                // alias_count =3D=3D 6 in the 8352Y-based system
+> >>
+> >>        /* Count how many aliases we expect from the known table */
+> >>        for (table =3D &test_pmu->aliases[0]; *table; table++)
+> >>                to_match_count++;
+> >>                        // this is looking at aliases in struct perf_pm=
+u_test_pmu
+> >>                        // table, which for uncore_imc_0 is a single en=
+try for
+> >>                        // &uncore_imc_cache_hits.
+> >>                        //
+> >>                        // for the 8352Y case, likewise, we only have a=
+ single alias
+> >>                        // in the table for &uncore_imc_free_running_ca=
+che_miss.
+> >>                        //
+> >>                        // in both cases, to_match_count =3D=3D 1
+> >>
+> >>        // Compare 4 vs 1 or 6 vs 1
+> >>        if (alias_count !=3D to_match_count) {
+> >>                pr_debug("testing aliases uncore PMU %s: mismatch expec=
+ted aliases (%d) vs found (%d)\n",
+> >>                         pmu_name, to_match_count /* 1 */, alias_count =
+/* 4 */);
+> >>                return -1;
+> >>                        // we seemed doomed to hit this conditional alw=
+ays, no?
+> >>        }
+> >> ...
+> >> }
+> >>
+> >> I did a walkthrough of the latest mainline code, and don't see a marke=
+d
+> >> difference that jump off the page to me that'd correct this behavior,
+> >> and would love a helping hand to point in the right direction on this.
+> >>
+> >> What am I missing here?
+> >
+> > I'll need some more time to dig into this. Hopefully the pointers above=
+ help.
+>
+> Thanks for the quick reply and pointers, I appreciate it. The tricky bit =
+still
+> remains, as the code I posted to above seems to solely depend on the
+> info filled into struct perf_pmu_test_pmu, right? If so, I don=E2=80=99t =
+see how the
+> dots connect from this test to the other events in sysfs/json=E2=80=99s.
+
+So looking at the test it is using the testcpu:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/pmu-events.c?h=3Dperf-tools-next#n602
+the json for that is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/pmu-events/arch/test/test_soc/cpu?h=3Dperf-tools-next
+The names in the test are based on ones seen on real CPUs, so this may
+be leading to the confusion.
+
+Thanks,
+Ian
 
