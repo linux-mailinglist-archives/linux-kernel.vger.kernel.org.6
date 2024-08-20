@@ -1,146 +1,287 @@
-Return-Path: <linux-kernel+bounces-293452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F40D957FB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A729957FC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510D41C23B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8D81C24035
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85DB16BE23;
-	Tue, 20 Aug 2024 07:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mxqQwMDK"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F6B18E376
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA3F14C5B0;
+	Tue, 20 Aug 2024 07:33:40 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8309B16D313;
+	Tue, 20 Aug 2024 07:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139157; cv=none; b=uMKE0p7D4JCEf16nAuQWvahIc3Q8udrDpYuFtFkuj9dH1gVxcpuQr3QhnqzvnVkcpxPHy+4ITc12X/+9gPXpJ6KMaquDRNyEVNxZMj6RpUZrXXo7TFoV4NF1qpp8lM1kTWXAWYAczxsQKzxmxGaGdwnaIhIuaiD+BuGRAMnP69s=
+	t=1724139220; cv=none; b=g+rB04zGi5c7s0LtOOsyeslEs9zCB+2WVKlhalbkJtPCjIc+0Tl3RxO+qo2yRlhcPlvMxzYEj42d6fovNW79022Re0KPr6hX1/SNEQTsQLyPWS8kjF+MEx7YvFEv5i2unEAh2Mdz89EP/G4RyFC2Ib84za8Xg3pr2A1ebX3IAtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139157; c=relaxed/simple;
-	bh=T37XdcPAhagA4eDYDownsf2XsJs98bfRZyVq01bf9Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4E0kkxBManYBzvl9JOxe1HXPsutYWVCkw7vaFex7OpxXoRLDo+h3j2xEpsLESAdYffN+VEx6W0EQoLS8jfWTGudqabTStF7IrkdtFW2Va06SMfsirL2BpMtQABEZ2Q+L0JFP5m7bZvB1caodYxohcdtTFvZv77Aodp7vu0q4Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mxqQwMDK; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a80eab3945eso521058266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724139153; x=1724743953; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KgM+QzWQcZ2DUZR7KveS9LeXc/9kicV430vfS4VSRd8=;
-        b=mxqQwMDKDGJtlLjiZ0RXn9FN4PTZxtv2pBIBAv63tyosqE3FmvqCNe2+tdzS7YjRxu
-         UJWwYs3HX6K9cj3TzyMndluDAxfEqi6cMg1sYzsXdUz2tv8P9EyDWkyH/p1c3ZXVhwST
-         1TSImBRFTu7/d4K1vwVIfqMaaTMASDbzK5zxq6bZ4OvBUFlPo1eObBTwPerp/LsUbrbW
-         TI6XjM7iBXgz8b7Iz4hXAVcpKAwFXcb/kkgpz1Q4xu9rNn+Lo3O5W2o7KG36U6hFxVpf
-         wR1ZFxpAlvOsKernWb1pBiaUGFqfCqH6JXS6awIMF41zr6nfuuulaKOL4iEh9V54tNen
-         vs3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724139153; x=1724743953;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KgM+QzWQcZ2DUZR7KveS9LeXc/9kicV430vfS4VSRd8=;
-        b=kW5xlVDfZA3pnTKAVkxmLmU7XX4CSME4FSpNTZdoB50UZoEa+t2l+TeQfwRj8HeYgK
-         J5FKu4n/FIGM/ipfR7KtZCA7WxaO4u5yTEg8BnTl3BEpRUvaiRmQJRm8fFSdohKOb9mK
-         Q4Hehr6qd7JF40bb8ebpfFG1/BxvPZyU+Kw5K/wIjHHHThfpDDnTGSMGIkdqS0tD/nR8
-         BPVk14NyKbHvq0wauu81/HuzchL3Fepx67v4OdevGk0BzRPXQfU3LhZNdKPuIx4tez5f
-         wxU53tVdDMKiiYTJUXsr0IR0D3gLWen8d3q7u+fj1Jq+7+R0tMsFagPFU4KsOeNmVDi2
-         dVaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKo/PemoU2EhDltmn++gCLPpnYTtJ6ZRbCBpv+O0bC9wTPHQ9YdJYAwAtIdMDJFveNu7buJT8Dge+NAfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO/PU9omkbJe3W4fO/HZJzJZpy3uDGpp+qlKPuS1h5lnlwsOrA
-	FpuLcMVmmWRN3R6Wo7LsBVezJ38U7jZDyfR478U795dhRT7VW4jOAcfRwlYfMJM=
-X-Google-Smtp-Source: AGHT+IHkyNt7DNdr1FwUFXM1w0JBcq+qGUSMD1P8jHKB+jsefPksVAXH7weJcswaTpOC3d6flO3v/w==
-X-Received: by 2002:a17:907:c7c5:b0:a7d:26ff:aeb0 with SMTP id a640c23a62f3a-a8392952665mr895469166b.30.1724139152450;
-        Tue, 20 Aug 2024 00:32:32 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839471c0sm726532466b.182.2024.08.20.00.32.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 00:32:32 -0700 (PDT)
-Message-ID: <96265c60-5b16-4a02-a991-ac0e06f7baf3@tuxon.dev>
-Date: Tue, 20 Aug 2024 10:32:29 +0300
+	s=arc-20240116; t=1724139220; c=relaxed/simple;
+	bh=JDACkyW1TTrmAWoS65/RBl27s5tJ/g77kCWCBAvBEHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EIHNlJOTQ21wi5SZjtXHwCeRHokr9azOmBXDPPGeQ4WlwChkNRjStahwHKQGRDfo8ZWcuL63s2/XWXUHr88Z22qm6pN5DnaNWlBavJAwHLL12rMvvri8Ejq2fqw44be0WtNWitaXNagmz64Mr0Dz2n+SOUcCperIAmK8/b4lL4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id F378010A89A; Tue, 20 Aug 2024 03:33:37 -0400 (EDT)
+Received: from 5400 (unknown [172.56.34.244])
+	by spindle.queued.net (Postfix) with ESMTPSA id CB259108E13;
+	Tue, 20 Aug 2024 03:33:36 -0400 (EDT)
+Date: Tue, 20 Aug 2024 03:33:35 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: linux-kernel@vger.kernel.org
+Cc: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
+ platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
+ Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ "Ilpo =?UTF-8?B?SsOkcnZpbmVu?=" <ilpo.jarvinen@linux.intel.com>,
+ linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+Subject: [PATCH v3 2/2] platform/x86:dell-laptop: remove duplicate code w/
+ battery function
+Message-ID: <20240820033335.4f68b162@5400>
+In-Reply-To: <20240820033005.09e03af1@5400>
+References: <20240820033005.09e03af1@5400>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/11] i2c: riic: Add support for fast mode plus
-Content-Language: en-US
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com,
- linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
- <20240819102348.1592171-9-claudiu.beznea.uj@bp.renesas.com>
- <hu4yt2a7ipxrqd7ciqqyg4izei2dr7yerpgf7j53quepxj4ed6@gzlv7l3etpqb>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <hu4yt2a7ipxrqd7ciqqyg4izei2dr7yerpgf7j53quepxj4ed6@gzlv7l3etpqb>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-Hi, Andi,
+The dell battery patch added dell_send_request_for_tokenid() and
+dell_set_std_token_value(), which encapsulates a very common pattern
+when SMBIOS queries are addressed to token->location. This calls them
+in various places outside of the dell laptop code, allowing us to delete
+a bunch of code.
 
-On 19.08.2024 23:12, Andi Shyti wrote:
-> Hi Claudiu,
-> 
-> ...
-> 
->>  struct riic_dev {
->> @@ -311,11 +315,14 @@ static int riic_init_hw(struct riic_dev *riic)
->>  	int total_ticks, cks, brl, brh;
->>  	struct i2c_timings *t = &riic->i2c_t;
->>  	struct device *dev = riic->adapter.dev.parent;
->> +	const struct riic_of_data *info = riic->info;
-> 
-> Because you are only using info->fast_mode_plus, perhaps you can
-> directly take:
-> 
-> 	fast_mode_plus = riic->info->fast_mode_plus;
-> 
-> and you make it even more compact.
-> 
->>  
->> -	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
->> +	if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
->> +	    (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
->>  		dev_err(&riic->adapter.dev,
->> -			"unsupported bus speed (%dHz). %d max\n",
->> -			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
->> +			"unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
-> 
-> super nitpick: can you please put t->bus_freq_hz on a new line,
-> it looks better to either have everything put in columns or not.
-> 
->> +			info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
->> +			I2C_MAX_FAST_MODE_FREQ);
-> 
-> another super-nitpick: can you please align
-> I2C_MAX_FAST_MODE_PLUS_FREQ with I2C_MAX_FAST_MODE_FREQ? It makes
-> more clear that there is a "? ... :" statement.
+Also some very minor cleanups:
+  - mark the kbd init functions as __init
+  - don't read buffer.output unless dell_send_request() was successful.
+  - actually return errors from micmute_led_set/mute_led_set instead of
+    always returning 0.
 
-I'll adjust everything as suggested.
+Only minor behavior changes; the delayed read of buffer.output and
+actually returning errors for the brightness_set_blocking hooks.
 
-Thank you,
-Claudiu Beznea
+Signed-off-by: Andres Salomon <dilinger@queued.net>
+---
+Changes in v3:
+    - rename some variables & also drop confusing 'state' variable
+Changes in v2:
+    - use renamed and helper functions dell_send_request_for_tokenid()
+      and dell_set_std_token_value().
+    - no longer need to move functions around
+    - document the brightness_set_blocking hook changes
+---
+ drivers/platform/x86/dell/dell-laptop.c | 109 ++++++------------------
+ 1 file changed, 27 insertions(+), 82 deletions(-)
 
-> 
-> Thanks,
-> Andi
-> 
->>  		return -EINVAL;
->>  	}
+diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
+index 4053af8f7676..a9de19799f01 100644
+--- a/drivers/platform/x86/dell/dell-laptop.c
++++ b/drivers/platform/x86/dell/dell-laptop.c
+@@ -937,43 +937,24 @@ static void dell_cleanup_rfkill(void)
+ static int dell_send_intensity(struct backlight_device *bd)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int ret;
+-
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer,
+-			   token->location, bd->props.brightness, 0, 0);
+-	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
+-	else
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
++	u16 select;
+ 
+-	return ret;
++	select = power_supply_is_system_supplied() > 0 ?
++			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
++	return dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_WRITE,
++			select, BRIGHTNESS_TOKEN, bd->props.brightness);
+ }
+ 
+ static int dell_get_intensity(struct backlight_device *bd)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+ 	int ret;
++	u16 select;
+ 
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer, token->location, 0, 0, 0);
+-	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+-	else
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
+-
++	select = power_supply_is_system_supplied() > 0 ?
++			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
++	ret = dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_READ,
++			select, BRIGHTNESS_TOKEN, 0);
+ 	if (ret == 0)
+ 		ret = buffer.output[1];
+ 
+@@ -1397,20 +1378,11 @@ static int kbd_set_state_safe(struct kbd_state *state, struct kbd_state *old)
+ static int kbd_set_token_bit(u8 bit)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int ret;
+ 
+ 	if (bit >= ARRAY_SIZE(kbd_tokens))
+ 		return -EINVAL;
+ 
+-	token = dell_smbios_find_token(kbd_tokens[bit]);
+-	if (!token)
+-		return -EINVAL;
+-
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	ret = dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return ret;
++	return dell_set_std_token_value(&buffer, kbd_tokens[bit], USE_TVAL);
+ }
+ 
+ static int kbd_get_token_bit(u8 bit)
+@@ -1429,11 +1401,10 @@ static int kbd_get_token_bit(u8 bit)
+ 
+ 	dell_fill_request(&buffer, token->location, 0, 0, 0);
+ 	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+-	val = buffer.output[1];
+-
+ 	if (ret)
+ 		return ret;
+ 
++	val = buffer.output[1];
+ 	return (val == token->value);
+ }
+ 
+@@ -1539,7 +1510,7 @@ static inline int kbd_init_info(void)
+ 
+ }
+ 
+-static inline void kbd_init_tokens(void)
++static inline void __init kbd_init_tokens(void)
+ {
+ 	int i;
+ 
+@@ -1548,7 +1519,7 @@ static inline void kbd_init_tokens(void)
+ 			kbd_token_bits |= BIT(i);
+ }
+ 
+-static void kbd_init(void)
++static void __init kbd_init(void)
+ {
+ 	int ret;
+ 
+@@ -2173,21 +2144,11 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness brightness)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int state = brightness != LED_OFF;
+-
+-	if (state == 0)
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+-	else
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+-
+-	if (!token)
+-		return -ENODEV;
++	u32 tokenid;
+ 
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return 0;
++	tokenid = brightness == LED_OFF ?
++			GLOBAL_MIC_MUTE_DISABLE : GLOBAL_MIC_MUTE_ENABLE;
++	return dell_set_std_token_value(&buffer, tokenid, USE_TVAL);
+ }
+ 
+ static struct led_classdev micmute_led_cdev = {
+@@ -2201,21 +2162,11 @@ static int mute_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness brightness)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int state = brightness != LED_OFF;
+-
+-	if (state == 0)
+-		token = dell_smbios_find_token(GLOBAL_MUTE_DISABLE);
+-	else
+-		token = dell_smbios_find_token(GLOBAL_MUTE_ENABLE);
++	u32 tokenid;
+ 
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return 0;
++	tokenid = brightness == LED_OFF ?
++			GLOBAL_MUTE_DISABLE : GLOBAL_MUTE_ENABLE;
++	return dell_set_std_token_value(&buffer, tokenid, USE_TVAL);
+ }
+ 
+ static struct led_classdev mute_led_cdev = {
+@@ -2492,7 +2443,7 @@ static void dell_battery_exit(void)
+ 
+ static int __init dell_init(void)
+ {
+-	struct calling_interface_token *token;
++	struct calling_interface_buffer buffer;
+ 	int max_intensity = 0;
+ 	int ret;
+ 
+@@ -2554,16 +2505,10 @@ static int __init dell_init(void)
+ 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
+ 		return 0;
+ 
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (token) {
+-		struct calling_interface_buffer buffer;
+-
+-		dell_fill_request(&buffer, token->location, 0, 0, 0);
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+-		if (ret == 0)
+-			max_intensity = buffer.output[3];
+-	}
++	ret = dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_READ,
++			SELECT_TOKEN_AC, BRIGHTNESS_TOKEN, 0);
++	if (ret == 0)
++		max_intensity = buffer.output[3];
+ 
+ 	if (max_intensity) {
+ 		struct backlight_properties props;
+-- 
+2.39.2
+
+
+
+-- 
+I'm available for contract & employment work, please contact me if
+interested.
 
