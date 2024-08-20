@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-294388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B30A958D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:19:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0711958D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97566B2413F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE52D1C2226F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136721C3798;
-	Tue, 20 Aug 2024 17:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577821BE225;
+	Tue, 20 Aug 2024 17:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="VsU/yoJg"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="ZZAs9/cP"
 Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6711BA87C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E571C2334
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174367; cv=none; b=pdnrRZf2CV+rjifpVJnhvZEOiL+6qIYDq0EjpMBWZdo51uplxpsG22mSSBEbNIwNPVMeEG3VLsSqKNLRme/Fd4NOOmpkV0Kw3Jf3HUrMUCoJJXI8Fu7F6tAP+Q49wuVuOjY9E0Q36EmIA1e9J8olshn+6FkGjdCl8LK+aq+xqdo=
+	t=1724174369; cv=none; b=rQI36oQ/f+IpR9cLMcDnwNYGXDXrc9DsZJmoMr54r3KHFSJ4xi9xnSQvz5GQmsjc4rvB4JoEscLg2LZt6sffu4qD1y9kauoKNucd+jFlAljqes3eWqhxlckYysNtbIShvppH+zBpI0RH5aVktNagIkM6V/kNdgAok3EXa3cQFgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174367; c=relaxed/simple;
-	bh=UTkjf8Qx7YX73GC664cH8pYzzWOVSxdsxS9rfj1KedU=;
+	s=arc-20240116; t=1724174369; c=relaxed/simple;
+	bh=GkHo9Tromo+pUehKvOxhHRY39SHY2zUI1k6gURUv1XQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PuTayGs61Esc9bbsyRByrkpWEM6m8Ju4JfcGkF1TWhESxQV7oWEzm/7fiNKkA+ESOxJ44IY3o2/HjtldrkHUs6nL9Rv29Ytm+GYL3iy6GSi7dR42ybXCZ0i7i93ChohPWDUBc17PE6qA7GPPBlhk6oXQ7uYLg6+HPSoD3OSQtsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=VsU/yoJg; arc=none smtp.client-ip=91.26.50.163
+	 MIME-Version:Content-Type; b=ir2ULqj6m8cvb6AW2XZVE141fOtweYlPvXxukHQKMvVFMxQEWkMRBqSGscCzo5soOGsOFqtsKdioVrAVaqFGP69pTZYPAZqexpCtzjBd3b1CEAIFJ3qUTCcehaeuc0gFoPwec+qBO3GJyIkM+JkV5soxi/A52KJU7/F/OrMi3GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=ZZAs9/cP; arc=none smtp.client-ip=91.26.50.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
 DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
@@ -36,15 +36,15 @@ DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UTkjf8Qx7YX73GC664cH8pYzzWOVSxdsxS9rfj1KedU=;
-	b=VsU/yoJgfW03gkDzVaBKRCCsgMeCvFZBA63PTiMYvJiT8SAQO0ItLXL9s6nogabn
-	chLt+3tOTBTaL+WW2F0zUG/+IbNOUTr7HhELbLaFd29+hwT5ZNS0911vjRlotfC4
-	qE86wNFNdp2O4opbl9UYAJ1vRjzPhwveOJcH22zpPVc=;
-X-AuditID: ac14000a-03251700000021bc-16-66c4d013a479
+	bh=GkHo9Tromo+pUehKvOxhHRY39SHY2zUI1k6gURUv1XQ=;
+	b=ZZAs9/cPF322ebHbeHf3LcDd52JWrADVSB6K6S4Mdje7vESq0nmUiUpPIMgmB4NV
+	5skxG/Xeg8D2xLWmlYxQTDvWOlnkd1NEucXnIk3fr6Il/JiamXhCwU1nNE4t6RGP
+	SY+t2o7ZfapPTqCMWLK9TqX+xi6tOFEFLyvOv6zwcjw=;
+X-AuditID: ac14000a-03e52700000021bc-17-66c4d014331a
 Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
 	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 30.70.08636.310D4C66; Tue, 20 Aug 2024 19:19:15 +0200 (CEST)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 01.70.08636.410D4C66; Tue, 20 Aug 2024 19:19:16 +0200 (CEST)
 Received: from llp-varakala.phytec.de (172.25.0.11) by Florix.phytec.de
  (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Tue, 20 Aug
@@ -56,9 +56,9 @@ To: <shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
 CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<upstream@lists.phytec.de>, <y.varakala@phytec.de>
-Subject: [PATCH v2 1/3] arm64: dts: freescale: imx8mp-phycore: Add no-rtc overlay
-Date: Tue, 20 Aug 2024 19:18:46 +0200
-Message-ID: <20240820171848.177926-2-y.varakala@phytec.de>
+Subject: [PATCH v2 2/3] arm64: boot: dts: freescale: Add no-spiflash overlay
+Date: Tue, 20 Aug 2024 19:18:47 +0200
+Message-ID: <20240820171848.177926-3-y.varakala@phytec.de>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240820171848.177926-1-y.varakala@phytec.de>
 References: <20240820171848.177926-1-y.varakala@phytec.de>
@@ -72,21 +72,21 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Florix.phytec.de
  (172.25.0.13)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42JZI8nAqyt84UiawYfnlhZr9p5jsph/5Byr
-	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
-	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CV8f7NLuaC
-	X3wVl05PYGpgnMzbxcjJISFgInF12j0mEFtIYAmTxPKNcV2MXED2U0aJX40/mEESbAL6EivW
-	LWIFSYgILGOU+Ha6mwXEYRbYzihxYuI7sHZhgUCJp73X2UFsFgFViRNvO8C6eQWsJN60PGWG
-	WCcvsf/gWSCbg4NTwFpi1c8MiM1WEvtX72CEKBeUODnzCQuIzQxU3rx1NjOELSFx8MULZoh6
-	RYn3DzvYYUZOO/caanyoxPw139knMArNQjJqFpJRs5CMWsDIvIpRKDczOTu1KDNbryCjsiQ1
-	WS8ldRMjKJpEGLh2MPbN8TjEyMTBeIhRgoNZSYS3++XBNCHelMTKqtSi/Pii0pzU4kOM0hws
-	SuK8qzuCU4UE0hNLUrNTUwtSi2CyTBycUg2MXKY3GLq3Rbr8FjJr2T9/ftRLs7KLkyrjbP+G
-	phbellzP9uQvH8+7N6kLY6ZI9s88UV2okCFZn9Z5Tiszp2r+c0v3N7ONNl9b6LTse/6iGUaf
-	zz/teJmgLLd/R1zP78NGB38tevAnwyFhclTV4YDf8xyWqD5Rzr7zrtvC6HS7iEoR/44ky0IJ
-	JZbijERDLeai4kQAgQU1hZQCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42JZI8nAqyty4UiawfJWVos1e88xWcw/co7V
+	4uFVf4uZ91rZLFZN3cli8XLWPTaLTY+vsVpc3jWHzeL/nh3sFn+3b2KxeLFF3KL7nboDj8fO
+	WXfZPTat6mTz2Lyk3uPF5pmMHv3dLawe/X8NPD5vkgtgj+KySUnNySxLLdK3S+DK6Dt5iqng
+	sUDFr/vtLA2Mz/i6GDk5JARMJO7e+87WxcjFISSwhEni0+JHUM5TRolfjT+YQarYBPQlVqxb
+	xAqSEBFYxijx7XQ3C4jDLLCdUeLExHdMXYwcHMICPhLnO01AGlgEVCV6HkxlBbF5Bawkzjdd
+	Y4VYJy+x/+BZZpByTgFriVU/M0DCQkAl+1fvYIQoF5Q4OfMJC4jNDFTevHU2M4QtIXHwxQtm
+	iHpFifcPO9hhRk4795oZwg6VmL/mO/sERqFZSEbNQjJqFpJRCxiZVzEK5WYmZ6cWZWbrFWRU
+	lqQm66WkbmIERZMIA9cOxr45HocYmTgYDzFKcDArifB2vzyYJsSbklhZlVqUH19UmpNafIhR
+	moNFSZx3dUdwqpBAemJJanZqakFqEUyWiYNTqoFxbd2aYKdd3YVHbG+udLy9ft/y/Y8TU+pv
+	JqnV8HKGaj9a2dW4TnHxVDOTnDP/LH+uXRbalvadrf+UhmDeK9XZmw+nKVWH/Z2o68MUeq/7
+	e2rJNfZz8r+iOiOZLrZI3Etf9riau+7EorL6Kam/Vs36krHAUaO2ov3AROH5Irc9+Nj2pb5a
+	8pNNiaU4I9FQi7moOBEAkfbLsJQCAAA=
 
-Add devicetree overlay to disable rtc for boards that are
-not supported.
+Add devicetree overlay to disable SPI NOR if the module does
+not supports or not equipped with SPI NOR flash.
 
 Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
 ---
@@ -94,31 +94,32 @@ Changes in v2:
 - Updated license
 - Updated with TAB space in devicetree property
 
- arch/arm64/boot/dts/freescale/Makefile               |  2 ++
- .../boot/dts/freescale/imx8mp-phycore-no-rtc.dtso    | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-no-rtc.dtso
+ arch/arm64/boot/dts/freescale/Makefile           |  2 ++
+ .../freescale/imx8mp-phycore-no-spiflash.dtso    | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
 
 diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index c1fca1fcedc5..8f41db93c3d9 100644
+index 8f41db93c3d9..dedea4b5c319 100644
 --- a/arch/arm64/boot/dts/freescale/Makefile
 +++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -175,7 +175,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
+@@ -176,8 +176,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
  imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
-+imx8mp-phyboard-pollux-rdk-no-rtc-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-rtc.dtbo
+ imx8mp-phyboard-pollux-rdk-no-rtc-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-rtc.dtbo
++imx8mp-phyboard-pollux-rdk-no-spiflash-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-spiflash.dtbo
  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-rtc.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-rtc.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-spiflash.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-rtc.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-rtc.dtso
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
 new file mode 100644
-index 000000000000..5715404b39d4
+index 000000000000..2ad1312113f0
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-rtc.dtso
-@@ -0,0 +1,12 @@
++++ b/arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
+@@ -0,0 +1,16 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 +/*
 + * Copyright (C) 2024 PHYTEC Messtechnik GmbH
@@ -128,7 +129,11 @@ index 000000000000..5715404b39d4
 +/dts-v1/;
 +/plugin/;
 +
-+&rv3028 {
++&flexspi {
++	status = "disabled";
++};
++
++&som_flash {
 +	status = "disabled";
 +};
 -- 
