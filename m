@@ -1,151 +1,121 @@
-Return-Path: <linux-kernel+bounces-294376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBF1958CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C618958CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA79B21069
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B8C28313A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D51BDA9A;
-	Tue, 20 Aug 2024 17:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y4ne9org"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D5C1BBBE0;
+	Tue, 20 Aug 2024 17:13:44 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C9F1B86FA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F97F18C92C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724173979; cv=none; b=m9xiTqeSYnmxo6NWnyPmOlaj/4I02QTtDjUAnAKg358ASu691BHcWW/MD/ZFFtg/xXxIRNcbuChkpNxoxkhDuFCnQMiqyA1gqne42IOCBFo7d9fTR8N2jfE44d5Lp6hfPstKZ80lIBNOzlP8r662jFSC4loU9F6Gscb3RlnyuU8=
+	t=1724174023; cv=none; b=aQTbOl0hJdpTSSWPrsHmuuHPOmgmfdbZFc4CZ8VIrExqY9z0xe/cDk17c34uncjDmFfnOxP4ut8TOomlO5O68ZuDAZvw+BACBL2gkTUOMEh8+mgNgDZbF9KMlB6G6uBcQbeYb1eERKVrQedowZAc/w4aufBHT/5uux44CUkTFUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724173979; c=relaxed/simple;
-	bh=XdOxPTcpa9GhR0x1RxpvIyQuwRfTAKkoPNe3BAG2ReM=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TpX47XSZ/wh7m5jH0RsC0zybwu7sD4UOjVolWHkuk6r4H6piMRmCOOwH9cTy8wuFZj6g1z1Rf7UVqyM3b7TyRBeuiF1dpNg5pG8F56bgywhgQCAU/RA5ZEOrpu+iy4wmBU150u0MOgVKThApzVCrFaZexsDQg9YcgPiYjuIcJhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Y4ne9org; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a1d42da3e9so377673485a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724173976; x=1724778776; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Az1A9NMBsWL3/7vKt/sApr3R4UF7scT2PZ3fQljPcaU=;
-        b=Y4ne9orgDHt6eOerqA15sPK1fQzMDjHMhKt8gk1JaOuJox/gr1snIuGV5KLjwquEnH
-         9uEXhX1/tILUfvU6LH/dJmR9Uin9izskdk0K6N2EFfC9Tt248T99izMfJhpe/yJE5GLx
-         j7ZqrbB5qY67CE/AEasNamuNNLoTpgEI8uDQI=
+	s=arc-20240116; t=1724174023; c=relaxed/simple;
+	bh=IVsI4NX1RYhDiNJ26GZ5B1ghvs58WCFrHs9lrbmlAJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEfYVQ3xJ8WTwQvlNYoxvJyE5sc/R+XQ/XIdbIUowdXGnSCMFicvctJEZiBC3jF+atlkUvm70AyZ3iqRfA1kQVZ9cDSnsMIYdFERomkD0GP6UF3KaJxpmiVBw1K3K86pTLPJylhfdxAR7EZhA3yykjzpUQM48WB25Ku8wclCSBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso66415511fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:13:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724173976; x=1724778776;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1724174020; x=1724778820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Az1A9NMBsWL3/7vKt/sApr3R4UF7scT2PZ3fQljPcaU=;
-        b=E9E/iMfMhXudF2t/MipSQI4/7e3wJmswyBInkJT/geJ72YeZlbthg5LvxYhfOhhUlH
-         FUc3UnwXgly+ijex4gnGAodAOb/gEmJ9lZAb3yHhxtujdXFaYYqaLA+jlRq5SqOQvlDR
-         GpRwGn44XQTw4gy83i2Oz2QRTwz7FjbPZUkCgIp8biVid4vjmg4ORLR0EMgzWlhAmp53
-         Bh2tfo/Wol3YfEfztGjI+D8b6jzdVUIp4WHUu9g+JBoKziVJIc36qu1ZcLshh/xVSY/7
-         JA4Pxwsa7GpEn2rrRdW5zq74+Kgty62jYvBjtfF/DkexriSBtFKtIPURzjUppbVwlNHL
-         MeKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL6FSwnTXKWEnDywbFdPx77mO/Zqa7nKIDKlvox7ohOI22aiNDps7WvJZ4k7T7VC3vMXHeYJcs2jtRvPyX6wyKhtqgKdumL5pF/KxK
-X-Gm-Message-State: AOJu0Yxcdw2a8qxr4MdzvgYbivofNrV9O0OUAovVCFIKRqXO7wxNEyUF
-	K3FMKftaNm0Qcku+aCh/q/L3KCNCyU5eC5/BCH5QJr21lrRVvuuU5YsXmIAX7QqLWhMfMVUjDuE
-	VKMFS+nvxUq3TwSMnB/6NG9yje//zdEJj06KrLqB/X4S7q9o=
-X-Google-Smtp-Source: AGHT+IFkHKjFejZjAs941sgh7G6biMuTuBjyP76WiW4rgqwMwtsqslDT56RN+7cjrZMCdxIwmDbG7BvU7jfkGLOLSTI=
-X-Received: by 2002:a05:620a:4245:b0:79f:5d5:1bc1 with SMTP id
- af79cd13be357-7a669685ff7mr335452285a.58.1724173976423; Tue, 20 Aug 2024
- 10:12:56 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Aug 2024 10:12:55 -0700
+        bh=jPfvRz364Yrg31+aCz9pQMAt48YtNxQfL5cE9h5IPF8=;
+        b=gTO0yI3xLdbG3ODSQPNbzrp+Tp1v7FcILJ8BaqeJQ8a8u7XADOIh43Tx92o60kZm3H
+         0IwzyLZpvuCuppi5qjgNnWmDhmp8vcyTOIA9vqdjpYqB3urW/qrGd9qx0EXa2V+iwagB
+         j3ubEhVI7l+9fKQBedLvwTPJUXJaG7fi4Y5CdPiPc1KNDNUayyKj9+mSSNFGQyq+yUl/
+         M37RqAdA6bGcNblGwxOAP13flLLEZGIaGzkR9+zLvCFT7PkG8tRdsFrjjcyXhD3pId+D
+         j/0DLGn4uNQ0/5jFrmnk0o/P1lJB2lEZAiR290IDv5xXA3NjH7HU/qWNfBUUi7O9JCGX
+         k9VA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ6ydWZHbMk9+70zyPc/MFZ4kdX8akEJTiI3/2k57FFbyTzOOvRVZVHyDyR0OM0H9Xsfno1HfUFrhoezc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxosHF4BW/x/8znWdESIubMGxNxoe4qBBeN6vXf2vgp9eAH685z
+	+K+OZlNoq7q6uCIF+ljYNt+q9+3mtwc3sG3pHWvZUrIg+jWw8Jmx
+X-Google-Smtp-Source: AGHT+IFEW9gb00cLbV3AnseNpxMNkEqRhtSBtJMPviVtuhQF/3fVTImYCBW09nPL/SoyTtinFUg+tQ==
+X-Received: by 2002:a05:651c:507:b0:2f3:ed61:d168 with SMTP id 38308e7fff4ca-2f3ed61d2c8mr18618911fa.39.1724174019322;
+        Tue, 20 Aug 2024 10:13:39 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebc081cf5sm6948059a12.90.2024.08.20.10.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 10:13:38 -0700 (PDT)
+Date: Tue, 20 Aug 2024 10:13:36 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, yuzhao@google.com,
+	david@redhat.com, huangzhaoyang@gmail.com, bharata@amd.com,
+	willy@infradead.org, vbabka@suse.cz, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, Johannes Weiner <hannes@cmpxchg.org>,
+	zhaoyang.huang@unisoc.com, Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH RESEND] mm: drop lruvec->lru_lock if contended when
+ skipping folio
+Message-ID: <ZsTOwBffg5xSCUbP@gmail.com>
+References: <20240819184648.2175883-1-usamaarif642@gmail.com>
+ <20240819181743.926f37da3b155215c088c809@linux-foundation.org>
+ <29e481af-b5e1-4320-a672-8251f5099595@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZsRrWfoPPVGC4Dqy@smile.fi.intel.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org> <20240819223834.2049862-3-swboyd@chromium.org>
- <ZsRrWfoPPVGC4Dqy@smile.fi.intel.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 20 Aug 2024 10:12:55 -0700
-Message-ID: <CAE-0n536OWtoOoRSM=6u=wA75A+0WtBktiY=6Y6VjKKTQWPcNw@mail.gmail.com>
-Subject: Re: [PATCH v3 02/17] drm/bridge: Verify lane assignment is going to
- work during atomic_check
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29e481af-b5e1-4320-a672-8251f5099595@gmail.com>
 
-Quoting Andy Shevchenko (2024-08-20 03:09:29)
-> On Mon, Aug 19, 2024 at 03:38:16PM -0700, Stephen Boyd wrote:
-> > Verify during drm_atomic_bridge_check() that the lane assignment set in
-> > a bridge's atomic_check() callback is going to be satisfied by the
-> > previous bridge. If the next bridge is requiring something besides the
-> > default 1:1 lane assignment on its input then there must be an output
-> > lane assignment on the previous bridge's output. Otherwise the next
-> > bridge won't get the lanes assigned that it needs.
->
-> > Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> > Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> > Cc: Robert Foss <rfoss@kernel.org>
-> > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> > Cc: Jonas Karlman <jonas@kwiboo.se>
-> > Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> > Cc: David Airlie <airlied@gmail.com>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: <dri-devel@lists.freedesktop.org>
-> > Cc: Pin-yen Lin <treapking@chromium.org>
-> > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
-> Yeah, I really think that the appearance of this thousandth time in the Git
-> history has almost no value and just pollutes the commit message makes it not
-> very well readable. The only outcome is exercising the compression algo used
-> by Git.
+On Tue, Aug 20, 2024 at 11:45:11AM -0400, Usama Arif wrote:
 
-I'll leave the decision up to the maintainers.
+> So Johannes pointed out to me that this is not going to properly fix
+> the problem of holding the lru_lock for a long time introduced in [1]
+> because of 2 reasons: - the task that is doing lock break is hoarding
+> folios on folios_skipped and making the lru shorter, I didn't see it
+> in the usecase I was trying, but it could be that yielding the lock to
+> the other task is not of much use as it is going to go through a much
+> shorter lru list or even an empty lru list and would OOM, while the
+> folio it is looking for is on folios_skipped. We would be substituting
+> one OOM problem for another with this patch.  - Compaction code goes
+> through pages by pfn and not using the list, as this patch does not
+> clear lru flag, compaction could claim this folio.
+> 
+> The patch in [1] is severely breaking production at Meta and its not a
+> proper fix to the problem that the commit was trying to be solved. It
+> results in holding the lru_lock for a very significant amount of time,
+> stalling all other processes trying to claim memory, creating very
+> high memory pressure for large periods of time and causing OOM.
+> 
+> The way forward would be to revert it and try to come up with a longer
+> term solution that the original commit tried to solve. If no one is
+> opposed to it, I will wait a couple of days for comments and send a
+> revert patch.
 
->
-> ...
->
-> > +     /*
-> > +      * Ensure this bridge is aware that the next bridge wants to
-> > +      * reassign lanes.
-> > +      */
-> > +     for (i = 0; i < num_input_lanes; i++)
-> > +             if (i != input_lanes[i].logical && !num_output_lanes)
-> > +                     return -ENOTSUPP;
->
-> Besides missing {} this code is internal to the Linux kernel. Is it okay?
->
+I agree with the concern, but for a different reason. Commit
+5da226dbfce3 ("mm: skip CMA pages when they are not available") was
+intended as an optimization, but it  changed the behavior of the
+isolate_lru_folios() function in a way that had significant, unintended
+consequences.
 
-ENOTSUPP is used by select_bus_fmt_recursive() so I simply followed that
-style.
+One such consequence was a notable increase in lock contention, as
+described in [1]. Addressing this lock contention issue with a quick fix
+seems like a suboptimal solution for such a core part of the system.
+
+Instead, a better approach would be to rethink the original
+optimization. Rather than applying a band-aid to the lock contention
+problem, it would be more prudent to revisit the changes introduced by
+commit 5da226dbfce3 and explore alternative optimization strategies that
+do not have such far-reaching and difficult-to-diagnose effects.
+
+[1] Link: https://lore.kernel.org/all/ZrssOrcJIDy8hacI@gmail.com/
 
