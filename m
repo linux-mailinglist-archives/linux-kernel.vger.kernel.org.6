@@ -1,196 +1,160 @@
-Return-Path: <linux-kernel+bounces-294415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737C9958D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:29:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C76E958D55
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A700C1C237DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CFC01C234B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19F01C7B6D;
-	Tue, 20 Aug 2024 17:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7394085D;
+	Tue, 20 Aug 2024 17:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BUWxYGX1"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJlTUlzW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228121BD02F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500981B8EAE;
+	Tue, 20 Aug 2024 17:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174933; cv=none; b=g4lt+7QbvAAPG6lIUQM5AgXZveDBc4KBpNQDxKrEIa52L9rrsZ4mMigMkaj4JZZJQEaPWveWqnXHOTuzcUzGs30dm9vphQzA80EPmL6xqJL9e/p/XCjfm36AKS3R70ihQuRvZlI5v+WnDuZjvgndYqC6qT1h42GmoG4KXwm/2TY=
+	t=1724174920; cv=none; b=tPEXPSvXTFjwZTSJhUNcpqvVo4Xf4GhCprxGHPz7ibC5GCyyWFp2HBv+hteuOLtLIVTW+JyEzNsKFU9xLrnI8dEKUk/1Z0JfCTMm/gOYbv6cc9DXujDSEP2kVCINLWmT5PmteS4hzpReKslHIN2dUS2n+oIZMYnPgWp1kpay360=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174933; c=relaxed/simple;
-	bh=Q5fYmKYULDka1ncQXVT9J1I9G53oKjobX1TMEDueu1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJTyG17picxp7sFwhldCYUaVOFgRUn+QqwAX/cQl5li0Kum2IPPU3Qd1G2/SDJGAGPCagRvgu+ku1IIkw3+OJ9YTlc3jbcAEzKx+D1vRamuOCGii2lmn5J1FxZFePsDCVKRQLZTQVoM3zYpgpJju6vf4SCs63osE2mlbh7RcR3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BUWxYGX1; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1724174929;
-	bh=Q5fYmKYULDka1ncQXVT9J1I9G53oKjobX1TMEDueu1s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BUWxYGX1TkD2MC1s7lyyPMpi+tLofjd5CaP0KPSLYVDYK0orviQh250R/oIDleyjE
-	 +XsH9c4cGxLQmul//d+EdIB9ZjlsySw5LU4UseSLnM/CQzEzyi69LeeV1t4u/nBPCE
-	 9s1LnRHMsL0jwJ0vocoJb5DuUhgiDmloRrox+XD5JoPCJq+WpQ3CBMF9HUC1Ysi60W
-	 WyxzzPshLQMEDlp4ZQ5MqXzQVOP8DV2lNCSAmp8xgrKSIF241RFnULJTCJNVP/obsr
-	 4lJxJi6AD1i+/1l7+a25rJVLiGjyyAtv5tcaQZrPC/DqEI4iZoeid+UCOWGvZY/aUV
-	 wzGZG09Cqqd1g==
-Received: from [192.168.1.5] (109.56.13.38.mobile.3.dk [109.56.13.38])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WpGf80Zmvz1Hk9;
-	Tue, 20 Aug 2024 13:28:47 -0400 (EDT)
-Message-ID: <95696d34-99ed-4911-a247-20ae42848451@efficios.com>
-Date: Tue, 20 Aug 2024 19:28:39 +0200
+	s=arc-20240116; t=1724174920; c=relaxed/simple;
+	bh=F+sx4QoPN53hJ2Psfkq3WkNMf0Xu9WTKhtrgYL8KAxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgxiFVZ+cPqHAU+w5SaBvtz9n1pnXX/UcGZdQqJeYOmp7B/8Eg+TDEBbavbky32jjKsn+O/HAJnvi2/OyBFuTHjNuW/DmHpuNhc3+/VFjxhBQwX6seNk8xXoW9n20MnbRUC7UaD0lwwsBaNAfedykldwSwc3gD99bStgrXC5/dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJlTUlzW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3F2C4AF10;
+	Tue, 20 Aug 2024 17:28:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724174919;
+	bh=F+sx4QoPN53hJ2Psfkq3WkNMf0Xu9WTKhtrgYL8KAxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJlTUlzW0vEnOQ6khAOr7j4Ezi8r4BlVc0vqH/Mc3ZQ5TJFMfG177Ikmh0aXMgxmW
+	 NyVhy7mBzmtY6vqvtfGbEouwz+1cZlD7LqT978rnML0HoNIES3m+9diaeEKSXsXAuF
+	 66uDl2pvtO73RWhYbqJJOrJr9rfRTxfVue0GCULak2H7/vIaemKuFHwD0oiacSFXKU
+	 CA3WHSYd6o/fId9pTdzlb3lRxwGHyIIfiVGXSmfXg1N+LghZk53n5hp8vPOuZeOmTa
+	 mTX7zxPRZVLkU3eX2xOGUuVgIuEl2PcBxpzpoFqAhk5ERKHU/R6pwrWB0cGwA7he1s
+	 Rv+sSqN1Zvxuw==
+Date: Tue, 20 Aug 2024 10:28:39 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 1/7] block/fs: Pass an iocb to
+ generic_atomic_write_valid()
+Message-ID: <20240820172839.GG6082@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/5] cpumask: Implement
- cpumask_{first,next}_{not,}andnot
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
- <20240819142406.339084-3-mathieu.desnoyers@efficios.com>
- <ZsOcC_6S3_GviaIJ@yury-ThinkPad>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ZsOcC_6S3_GviaIJ@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817094800.776408-2-john.g.garry@oracle.com>
 
-On 2024-08-19 21:24, Yury Norov wrote:
-> On Mon, Aug 19, 2024 at 04:24:03PM +0200, Mathieu Desnoyers wrote:
->> Allow finding the first or next bit within two input cpumasks which is
->> either:
+On Sat, Aug 17, 2024 at 09:47:54AM +0000, John Garry wrote:
+> Darrick and Hannes thought it better that generic_atomic_write_valid()
+> should be passed a struct iocb, and not just the member of that struct
+> which is referenced; see [0] and [1].
 > 
-> "first or next CPU..." here.
->   
->> - both zero and zero,
->> - respectively one and zero.
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Yury Norov <yury.norov@gmail.com>
->> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->>   include/linux/cpumask.h | 60 +++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 60 insertions(+)
->>
->> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
->> index 23686bed441d..57b7d99d6da1 100644
->> --- a/include/linux/cpumask.h
->> +++ b/include/linux/cpumask.h
->> @@ -204,6 +204,32 @@ unsigned int cpumask_first_and_and(const struct cpumask *srcp1,
->>   				      cpumask_bits(srcp3), small_cpumask_bits);
->>   }
->>   
->> +/**
->> + * cpumask_first_andnot - return the first cpu from *srcp1 & ~*srcp2
->> + * @src1p: the first input
->> + * @src2p: the second input
->> + *
->> + * Returns >= nr_cpu_ids if no cpus match in both.
->> + */
->> +static inline
->> +unsigned int cpumask_first_andnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
+> I think that makes a more generic and clean API, so make that change.
 > 
-> Please use __always_inline to enforce a compile-time optimizations.
-> Check for this series:
-> https://lore.kernel.org/lkml/20240719005127.2449328-4-briannorris@chromium.org/T/
-
-I'll use __always_inline in both bitmap and cpumask patches.
-
-I'll update this patch to rename notandnot to zero_and.
-
-Thanks,
-
-Mathieu
-
+> [0] https://lore.kernel.org/linux-block/680ce641-729b-4150-b875-531a98657682@suse.de/
+> [1] https://lore.kernel.org/linux-xfs/20240620212401.GA3058325@frogsfrogsfrogs/
 > 
-> It's already in -next.
-> 
-> Thanks,
-> Yury
-> 
->> +{
->> +	return find_first_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
->> +}
->> +
->> +/**
->> + * cpumask_first_notandnot - return the first cpu from ~*srcp1 & ~*srcp2
->> + * @src1p: the first input
->> + * @src2p: the second input
->> + *
->> + * Returns >= nr_cpu_ids if no cpus match in both.
->> + */
->> +static inline
->> +unsigned int cpumask_first_notandnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
->> +{
->> +	return find_first_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
->> +}
->> +
->>   /**
->>    * cpumask_last - get the last CPU in a cpumask
->>    * @srcp:	- the cpumask pointer
->> @@ -246,6 +272,40 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
->>   	return find_next_zero_bit(cpumask_bits(srcp), small_cpumask_bits, n+1);
->>   }
->>   
->> +/**
->> + * cpumask_next_andnot - return the next cpu from *srcp1 & ~*srcp2
->> + * @n: the cpu prior to the place to search (ie. return will be > @n)
->> + * @src1p: the first input
->> + * @src2p: the second input
->> + *
->> + * Returns >= nr_cpu_ids if no cpus match in both.
->> + */
->> +static inline
->> +unsigned int cpumask_next_andnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
->> +{
->> +	/* -1 is a legal arg here. */
->> +	if (n != -1)
->> +		cpumask_check(n);
->> +	return find_next_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
->> +}
->> +
->> +/**
->> + * cpumask_next_notandnot - return the next cpu from ~*srcp1 & ~*srcp2
->> + * @n: the cpu prior to the place to search (ie. return will be > @n)
->> + * @src1p: the first input
->> + * @src2p: the second input
->> + *
->> + * Returns >= nr_cpu_ids if no cpus match in both.
->> + */
->> +static inline
->> +unsigned int cpumask_next_notandnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
->> +{
->> +	/* -1 is a legal arg here. */
->> +	if (n != -1)
->> +		cpumask_check(n);
->> +	return find_next_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
->> +}
->> +
->>   #if NR_CPUS == 1
->>   /* Uniprocessor: there is only one valid CPU */
->>   static inline unsigned int cpumask_local_spread(unsigned int i, int node)
->> -- 
->> 2.39.2
+> Suggested-by: Darrick J. Wong <djwong@kernel.org>
+> Suggested-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Thanks for doing this,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
+--D
+
+> ---
+>  block/fops.c       | 8 ++++----
+>  fs/read_write.c    | 4 ++--
+>  include/linux/fs.h | 2 +-
+>  3 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index 9825c1713a49..1c0f9d313845 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -34,13 +34,13 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
+>  	return opf;
+>  }
+>  
+> -static bool blkdev_dio_invalid(struct block_device *bdev, loff_t pos,
+> +static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
+>  				struct iov_iter *iter, bool is_atomic)
+>  {
+> -	if (is_atomic && !generic_atomic_write_valid(iter, pos))
+> +	if (is_atomic && !generic_atomic_write_valid(iocb, iter))
+>  		return true;
+>  
+> -	return pos & (bdev_logical_block_size(bdev) - 1) ||
+> +	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
+>  		!bdev_iter_is_aligned(bdev, iter);
+>  }
+>  
+> @@ -373,7 +373,7 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	if (!iov_iter_count(iter))
+>  		return 0;
+>  
+> -	if (blkdev_dio_invalid(bdev, iocb->ki_pos, iter, is_atomic))
+> +	if (blkdev_dio_invalid(bdev, iocb, iter, is_atomic))
+>  		return -EINVAL;
+>  
+>  	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 90e283b31ca1..d8af6f2f1c9a 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1737,7 +1737,7 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
+>  	return 0;
+>  }
+>  
+> -bool generic_atomic_write_valid(struct iov_iter *iter, loff_t pos)
+> +bool generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
+>  {
+>  	size_t len = iov_iter_count(iter);
+>  
+> @@ -1747,7 +1747,7 @@ bool generic_atomic_write_valid(struct iov_iter *iter, loff_t pos)
+>  	if (!is_power_of_2(len))
+>  		return false;
+>  
+> -	if (!IS_ALIGNED(pos, len))
+> +	if (!IS_ALIGNED(iocb->ki_pos, len))
+>  		return false;
+>  
+>  	return true;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd34b5755c0b..55d8b6beac7a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3657,6 +3657,6 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
+>  	return !c;
+>  }
+>  
+> -bool generic_atomic_write_valid(struct iov_iter *iter, loff_t pos);
+> +bool generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
+>  
+>  #endif /* _LINUX_FS_H */
+> -- 
+> 2.31.1
+> 
 
