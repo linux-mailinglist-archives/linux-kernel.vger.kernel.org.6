@@ -1,706 +1,213 @@
-Return-Path: <linux-kernel+bounces-293768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB54B958451
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4F4958457
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744682845B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50B0D1C24874
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EB618DF7F;
-	Tue, 20 Aug 2024 10:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D9E18E74B;
+	Tue, 20 Aug 2024 10:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HDklbJ5v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CsGXH3r6"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2058.outbound.protection.outlook.com [40.107.117.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEBE18B46B;
-	Tue, 20 Aug 2024 10:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5642118E033
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724149390; cv=fail; b=Tw5qdN5uwjRuA1cFzsyRkcXyUilYU74XZ6EDpnUQ7aScMGD8Tuc57QjBmSR7TXyZV4DSW81GQqqVBayWWUlhLEJSIv8s7WV9sgMwG4A5n27XuTs/iu48Ckz6MwLLvqyRQo3FvJ2uX5fzuSt1p2e+AcV5TYZucTCZ7kFyxf0rq7o=
+	t=1724149428; cv=fail; b=f7JZpI1F4Vn4GccWmNcnA+SCjZ517WyTU2ocB4Y4N+R35H/q1MwFdkeguhTb6ZZ54xL0ISKx4iuR0HRpLH6D92iC1FO3CQ8zXLNahKS8b7Ow60k9NGl+9gip+8qL9Y4MahBo1gwomu+rSki2p4MWPKA0cQdnIwt4sSCvn2DtErg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724149390; c=relaxed/simple;
-	bh=FgXDNuoMM1O1QOE0Eir77hRZF5zPR5HUO9MdX8oDH60=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nMkgH13iSajOG5iDEpmUwQfvtNPaHe5mb66BoekBEwxI7Kv/+zfTfo8VgBlEdnDqA+mJr6zYaqekUy06HH5WQhuYtutKBpzWKnP6rk5Syur0BgkE6yO7RNpmcWRQC0ppi8TFICitTepyhCEVW2v/2KGbPxmAnMJCeF9v/ywEBOE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HDklbJ5v; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724149388; x=1755685388;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=FgXDNuoMM1O1QOE0Eir77hRZF5zPR5HUO9MdX8oDH60=;
-  b=HDklbJ5vnF45jPG/NUg0/xEx6oSTYhr99NGWfs8NmGtFqssnKFqd3Sjy
-   8VuqLNnxZrrcVkYcWchKVBrKyrI9q6RqOY21Z0lXNjDGPiQH9Ge9L+KBu
-   c/pVrDNnhEeJ4mUBZjcSyBJdI8MzEkEtfBrvvkIjlGvkRfZD1kHcLCfL/
-   vLuxLo8BmSoFl5ewo/UjJXp1Luaiqirt0u11p3OFFoae2cUaMHcKMhV1j
-   rab1+DYn36QLgutjSkf8KerLsJy47pWuk3H+od9KIWWmOxeViLf+9QhSy
-   1mpcdcd+tP62PyK1nbNybeYD9M9Noamukj4kfp1frqHvpeahAutsuJxOi
-   Q==;
-X-CSE-ConnectionGUID: Bpznce6gTH6EWU2/dnZ50A==
-X-CSE-MsgGUID: U+JsyZTcQ8WEnKhhTvDISQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="13111664"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="13111664"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:23:06 -0700
-X-CSE-ConnectionGUID: eeUS+SUZQdKWPPvgQlljDQ==
-X-CSE-MsgGUID: aHh8mQlTSxa/u/dVNOOlfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="60995538"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 03:23:06 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 03:23:05 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 03:23:05 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 03:23:05 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 20 Aug 2024 03:23:05 -0700
+	s=arc-20240116; t=1724149428; c=relaxed/simple;
+	bh=T05WoBjMa6WKWPSX8c18gfl9g2BZkhN0vVEofQ+LVrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=c4v8xeHNI3qfS9w0YxmmmVYUhSEnTsITLS4LzB+okg+NnpEfAKoKO6rJxnGmVYIAZAzVdrzBozbG2o53e1oBLmFv/Q1XwZzkw46kI2UA2g7Ssqeb7iucOtwE1BAKceksK7oKkSwACL8n5sBdCFjws1le89NMBFV0nTNPeZjh6t8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CsGXH3r6; arc=fail smtp.client-ip=40.107.117.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gJ3jchLTagkw/W1W6++fHrGwOhQiApiVPFnuhWeSmhMNOlnw2uqLGmvj+M0sU+7lTke5KfFqJRoLstg9E93jQs7by+VHB4bzoWw97ygdj5fRBQ2t4QpwUd1QMeF3IKv30Qy19gsRnKwl6o8gdDjEc2HKkTCEB1r06l+BymnRbqYBGyoezBgRsgB20IHQLOvexwtld7Y/URfSLuN/r293aqLWPCrub+e+eodtJ3+bYzLCSjhAiOnRkAsb1+qDydSVh67bzjtguI6yMYY3sR8qITfQ11xzoiIa+1kaXXv5SShz6Cp6jMtd7/JyI+7dnv/+M0C2IUe/7mwWyP5x0K1Cjw==
+ b=CbxoI5N/skfEQv/rQEQ9znpHUIiYOZIS572cKU+qotlZLEgGWxPCeO56+hEk+UPFcEmHO8wUJTcvYyoP09kYKyZhHvRVfIeqarFprrcYJ17DrYgK+OB4pBt5EK4Eh9feNWq6rzHFIupA+gmL8KVnCvUmu1lL3Gg4R8FbbngiAqWDgrbdhABt+wFT91oYqOEdzuaHuZkf+X4h0wX1mZulUOMXsgbB32EYcHXwheRAF95WwdcHLNpr4tsuT8TOd7q9299zIOkZFDg5dfdhLhfLmZVdDnqyIgYzIx+GA4vdbb/P/ABeUFLDQ+S8WFM8NgVumlb2eswUPnwVG6rbkO4eZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C3sySWZVJLs167tBheM4vH/J5u/mz5SC6Rr6E+v+DDw=;
- b=H00FvKl+SAFqhbLkar0oodOdsPkO3HZ6CHGP+giOf35o/ya9m8wIKVk/IWJGSgxSSnwn4uy/xrs/TEEJdTJtvtNlCDTEXpxW+9kRI39DOV1b2Gs9hElw137dBwjsCU6y1QTymA1KXeI0eH9g6mJwcJ4byq2L1zUl8loehl5HAv7AhYnYwyqcU/6QXHBxgsrlVRC2fxG8BWeByYwDOMAw4jPisFT5/Ll2oPKuc0ioZ+U2KR89eaUwmWlq+sFqT+bl21/s3ANkEIZKQrTSMFqRSZptUHNn+NpZkn+gkGJ+oM54rb4fu2WeVWQ1oH/SgDT+8yZ5rHxLlc3pXVgWFO/Srw==
+ bh=8B+rkHm/bxLzwU2PPVAz6xarqgeLJjFxb5jhAlCcrbM=;
+ b=eFAXGp+lWyRPSPyyeXSU5MPjD91k65+8smSYqPuUt7Dh7+ff0ZVuPZew9MJ3gFhVtxRLAWxCzLs38sQObAq57UcJJKhDCWYAYZd7OC8rUHLu5XZogav1EEQORM2i4Wkd74fm3CffYhJzj5n+QPVxrcPO0DcFuqA4i1Ulu58EnXDpbM4gIYY5XruBDbMYdT7LBqMhWri0aLSYWnjG6xL+evEYLaIXog554qoKpt4M4wFgRq5l/1lQK6Pr42nRXleIz0YZCXdEd0B762GIMKJZjZGg6GEYf+HQ8QjqHq7F6S9MLBYjP/YZmYGGjdBcAhA3/mcI+1IptDeboYc16bk1Dg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- BL1PR11MB6025.namprd11.prod.outlook.com (2603:10b6:208:390::16) with
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8B+rkHm/bxLzwU2PPVAz6xarqgeLJjFxb5jhAlCcrbM=;
+ b=CsGXH3r6iZHtFOfBeEqXVZAXyms+zTttAHP+YTJq6ZuOF4c4/i9rQo/uJeOMc4exS9g8AnkBkhKOSRXDpkEtJi3uj7/4VYrkk5esYp4jvdaKmvfTyizfCkrSS3I91C8wma7fxzXWVNM8cjwZ5b5Ao3/j62wCEdAVSrAu6jTqk0EjsNp93eayF6GeLDuaNFj7FRY8+vUtDvZ7pri3HJOaKr8p0Q9R5+v2nZNxTTqfRR8ka/kkZ/IU4Wl+q7FZ8O1B7cfKfQdgMswxlOp5vhbPeO8k3bIW6+ch5LtPZNAgCE4l3BZZvkFbcf7GuEtIHAQ1ZCHA8zdM+MmfhWzhijnQ9w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SEZPR06MB5247.apcprd06.prod.outlook.com (2603:1096:101:77::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 10:23:02 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::1d5f:5927:4b71:853a]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::1d5f:5927:4b71:853a%4]) with mapi id 15.20.7897.014; Tue, 20 Aug 2024
- 10:23:02 +0000
-From: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To: Jiri Pirko <jiri@resnulli.us>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, "corbet@lwn.net"
-	<corbet@lwn.net>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"donald.hunter@gmail.com" <donald.hunter@gmail.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Loktionov, Aleksandr"
-	<aleksandr.loktionov@intel.com>
-Subject: RE: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a pin
-Thread-Topic: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a
- pin
-Thread-Index: AQHa6YWetxpyQwER/kmdLN5gT7vM5rIdQDyAgBK+j6A=
-Date: Tue, 20 Aug 2024 10:23:02 +0000
-Message-ID: <DM6PR11MB46570EDB0B2DB8A9C4C945809B8D2@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20240808112013.166621-1-arkadiusz.kubalewski@intel.com>
- <20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
- <ZrSx0QRXUXB53UFr@nanopsycho.orion>
-In-Reply-To: <ZrSx0QRXUXB53UFr@nanopsycho.orion>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|BL1PR11MB6025:EE_
-x-ms-office365-filtering-correlation-id: e3836040-187d-4734-ff02-08dcc10212b4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?Li+vlbvGmO+iWQ6sB5v7tCVZOA+eb52Bl4gjnVBhGYQYOYGsmLROQYw9f7EO?=
- =?us-ascii?Q?lhf6ZQf0IFfWXtbLzKI9odC9xlJacXvU3VS4TkKXmSOIVuKYfnGyiMLhzgAz?=
- =?us-ascii?Q?MdNEjGGXaT0+CC07UV5xIfOBahIWnEYbalUR34pdWdWiXJPf30LT5Md2a/4Y?=
- =?us-ascii?Q?t/klTzuoQRPG5E+039lstepddPNBP0xkdjJO3Azg3Dsobu2mIxOf39JLwT24?=
- =?us-ascii?Q?1Lw2mKVVAFUfB8ac8KOVV+qpum2rLTEnydr4CoNjUzvdtY1ejngLCE98b1Iu?=
- =?us-ascii?Q?krDFufmwq0cMQc6q/HHsQJa5cV6mHTZDakRr55ecpT0n89z2ONuAputbDhWM?=
- =?us-ascii?Q?g8yOLKv17Q95UOrUc+ZRPd5vErzyFi9hblEYBmIlJAqzcLiyWNrajlo9/upM?=
- =?us-ascii?Q?G9syacnsJAunpCCLmIAfiYSgRVIifRqRPzWbdfQOVo2LipdZXkNoh+ilm01r?=
- =?us-ascii?Q?H+ZBpaWVsxnHgABMhSGr2v1pxzfV+VBpJ/LN7WtQFQECfgoxfCs6tNKORoNI?=
- =?us-ascii?Q?a69atGCLVV+F6DDPw+SZUpzUDFqr5/hsAG+1ejQvy5loEVAp7n7/edKU3ei2?=
- =?us-ascii?Q?qbYwMCjS5S/TLoxnZnRXF0NjtINAe32shTwEYUMcPBvN5wNG0WIJsKZi3yQE?=
- =?us-ascii?Q?gFP7U/aCMvAYWfnu8xiBIHZzTJU58OD1w+kWw84VtppJINWhSnf6C6xzzMqv?=
- =?us-ascii?Q?abYNPjbnLgbv3LjGWP7JelUSLMAOHYiPnFK/Fv/TxUe6JOVy1h+T2KxRGWvv?=
- =?us-ascii?Q?P/sHKP2KfLCcKBy/INPceHtM7RB3Scidy3wde3mkvsfCetu9dFZnlVCkcOpz?=
- =?us-ascii?Q?McuOz14nbklwsNZ3pxm5mWlApYRGPBQZdAGRX2xcM+nA3/Bg62GOJUd2HPH8?=
- =?us-ascii?Q?7os49lLY7mbd5krwZcokxe2ripJJaUiPZCYa+SKTu3YwFWjQePu3X5QxBPDV?=
- =?us-ascii?Q?D01ydGVH1FdPnn6CFCTp8PLpcm+6iFRrQO1WI1t16KIVWuDm43A4grBknNbx?=
- =?us-ascii?Q?VsQhPihjMMpjlnfc4lQrep4PgYKmq38z2englzMlfbRuthRywVPY8oCg868K?=
- =?us-ascii?Q?0Wv1qxPHriMEaxvuz5W+KaQO3UnjUajnTwtv7erU8nIK2Gvi7HseG73h5Ab2?=
- =?us-ascii?Q?0Jpbp56uGqGd98h1/vISP+PXUCEcMaw6eB+jHeFUguUtQVke6WjQ359J3Y05?=
- =?us-ascii?Q?cj2mroE65emkzZ+JSWGbtJ+rTwZvHGrMBcUpwDgoE7fbsVbepdbl7XSuAUB3?=
- =?us-ascii?Q?ilsCpqQTdG1bjNV8tk9B90dDD0wCLdpNGajkb9sBSi+zvwkFUH7JdfhybX0P?=
- =?us-ascii?Q?1DaFXcp2tlQ2hugeGoPB9/4xJXOyTcAUYbGfHqK2gU74hT7xhtZRqx32/Fcb?=
- =?us-ascii?Q?lqxNHVDdIAXTQBlShIqyNH//tTPFNBHgIeG6q7ct7PZ2wf7kVA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?pGGBoyyLk646+pcc2ekf6oIwekVmS3GggzfxpmVRpOSjbyrvmd5AXHJHhcGD?=
- =?us-ascii?Q?snuxKH5VHIat/nk/SB6a7k+lMFNCmHRuQ87NUStcVjyD8cCjlllsxYR/5Jfs?=
- =?us-ascii?Q?WTEfaqNJ8m4AnCldarakU9M6XTfQkL5bOLN2vctJfWkBmLYn7ESML44rFdmK?=
- =?us-ascii?Q?HVfZLTaZzctQZO30LJBt8INTszHKWV5SRFJGyZ9Wob01HIwfYmlWwvtNPlY7?=
- =?us-ascii?Q?H//IxcReGe9M5vGnXGKx6kdOSATu61y8J39Fa/pPzQJ7O5LdFkVZeVCFMJVg?=
- =?us-ascii?Q?hgx/buodrLfq9xUjLaVVcc7Pj0x3DMsr0S7rvaq8WItxDl3v23Dcinm8F/my?=
- =?us-ascii?Q?5+22g/pX8Dm6h2tzUEGMz0URiRx7YjT6WT4abfz5jmGbWZI68aqSyb7xp7sg?=
- =?us-ascii?Q?WPiKdrnDwyHGDCylo4wT8fMnq98YwQdam8AUXET/ttpv9vcH/JG27TDfvFxx?=
- =?us-ascii?Q?dRk+0FF6UA/g+spsss7bGdiFO9vPBirsc0KCimVGaa9AOJpzHpUb8wU1yWZZ?=
- =?us-ascii?Q?6cuBUcm+TJv8swsPEDlo8HFBh7lX5W7jqUM+sCtPNrmqadtf6nTPOvhqU44j?=
- =?us-ascii?Q?Jcdn9J5WCOhmVJvJog7HP/VbB/D7O+XK2HGyBT6PMyjfEERLcEZ/UJNNUa1P?=
- =?us-ascii?Q?2SFiSRzWbVwcYQ0B7ufEUA9kpZ+vnLdk8WU+5ue3g4t/1O8v2LBzLbzB78x+?=
- =?us-ascii?Q?pJ1izfMkHVbX55zTZLQMFvvyO7mt6RIx+aiHK/LgEgZ8lUSFxZgf4hfAz840?=
- =?us-ascii?Q?cscrjSSApElxxD8HTcJ2PRojPSsHmpqEo5PfKBn0bPrJkUv3El/b0MeSH79k?=
- =?us-ascii?Q?3QziCbG75JTIeY4+S1byIflvmrPH+Zi4sq2CgpSUGhiGZiKW5zv9qLoOuloC?=
- =?us-ascii?Q?zqaxsQS/BTgIW7QdGnOvdbP8CpwOTp6whyqTz03dAQtq07zeheONyRutbwEG?=
- =?us-ascii?Q?xzj/SDGXMLkZ9nxBROJfx+SYHrGdy9IctcdZad89s8tAR61PQMVoQSHGlPpZ?=
- =?us-ascii?Q?V/HVcWQE+iFd626ABAXtCIFsN3oOKfiAew8LjkKkdrvlquUvb79DvqtX30Aw?=
- =?us-ascii?Q?pVz26Y+vLYTkv1gAoBlAJlgTgzJ9jbhPDAQp8wIY0d5IzjTW2StmwJtCnJ5o?=
- =?us-ascii?Q?+xBhfN17/l8BMcHU6HeQg8827azWs2csc1ED9ELY+2S44EMMK/+tXyE8uKA2?=
- =?us-ascii?Q?RRAxwxJwua2BXF1Cqfu65iuKbMIgycWUFl9YFTHguymX2yPxnoAP95ymdmOv?=
- =?us-ascii?Q?Kug2KKnnEIS8NGxfrEjfi5pVRO4UHem6usNjuesfcSB3dIo6Hcku5m67NEZx?=
- =?us-ascii?Q?e5rQd3Jp4CnjEPyOOqgwoijicIfwxu1OeQRVj0RvqTOHsE05O8EGJzU1b60h?=
- =?us-ascii?Q?8a5yszvm/XArnbVJP25WdUeiPb+tZNgIT40pcF0reN/gckDXHEz5iRGGRJ+H?=
- =?us-ascii?Q?fKsVkMi/RlOdNUCCvXmh6kRrQQ2km9Bc5bE5FCoEC3xc19VIqW1Zrp2TKwOm?=
- =?us-ascii?Q?TSb1ca3gB68uYq4avLOxDxpRVWr4DN7nBGyPrTTl8Obn/9QFM7j0RwL5qPRH?=
- =?us-ascii?Q?L5nrhoTtdMcw0fC59AHIEQxjOtgaXFJ0H/EufWhEODsDnx/KPIsHP2WQ72DJ?=
- =?us-ascii?Q?tQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Tue, 20 Aug
+ 2024 10:23:43 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 10:23:43 +0000
+From: Huan Yang <link@vivo.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Huan Yang <link@vivo.com>
+Subject: [PATCH] nvmem: jz4780-efuse: Use devm_clk_get_enabled() helpers
+Date: Tue, 20 Aug 2024 18:23:33 +0800
+Message-ID: <20240820102333.133503-1-link@vivo.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0205.apcprd04.prod.outlook.com
+ (2603:1096:4:187::6) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB5247:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bed2395-d997-4462-d7c6-08dcc1022aea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KD5QWGjLzwdE6fZMT/qWEn1pfg6+gCIDZjRzIZt2X2b8WVVS44OMnTu1W/em?=
+ =?us-ascii?Q?OkxutYOAPjq9GPhRd6c+leqPBO8LU1gw5S4gFY5RQAcpr8PaJJ8lZ5WSlRE3?=
+ =?us-ascii?Q?W53HpBHbAfENxgYKCYN5SsCAUQL5Fqh6dq4aYtCueb8+2E1FtVq0lEtmWkmI?=
+ =?us-ascii?Q?jWbDrVfLWSBWCqSSVhOEH61y3Bj74pDdxKThTuJVuzA0fVDx9jrqx0KscmrH?=
+ =?us-ascii?Q?XLeR2YFp43Y0gYauBpce7jznxD8LxQ6NtmsvQpz98Aot1/DkF542miawJnzF?=
+ =?us-ascii?Q?JLtZaO+U/5hIHVsMoncQ44hbV16I0X2bk8E7DCX3Q7M2racCvw8JC9mczmHZ?=
+ =?us-ascii?Q?E+7nY5LQ24wxwWLNf5PnWyAWbY2OuY7FGk+OxBiNNGYKTO9Na1l9vUBBENUQ?=
+ =?us-ascii?Q?5SrmI/3Bs3pPZXRPrfsYxnSA1i+PRj+5sfEpt/b9bNaqBHmf5tScTVDYIweW?=
+ =?us-ascii?Q?uzOrKT5g10LXg6cX+yX1K5aL/rudQvUoewSbCLEPCgkuBmgr3ak7BAfT6xw4?=
+ =?us-ascii?Q?m0Frmt17kzV5GH/ZlazQkRc6dtKFbk8l0bnuiwcpPFZLL3cHAQ4dskGEHhYw?=
+ =?us-ascii?Q?scaFyQ0JrrI/jldmfbDAvAjcEAEjks4cnkUEdkyDEevdzEEPwO8pFXrTs90N?=
+ =?us-ascii?Q?nxJFN8ANOfti4PkLUYmtFkCSCaMIxOLjcNyEw+/VryAj1Kp5TFENvSeyBbaD?=
+ =?us-ascii?Q?6E1FaC7m3jCUfkBw+5EieZlvDeZcxZD0surKdQ7b0E9PRqLIBN1Avr6RSz0J?=
+ =?us-ascii?Q?kOMUTuambDtGPoJvl/sDSvCf33NHhBIixv5Q7ZloQIsGw/X1lP+WgnnR0B4h?=
+ =?us-ascii?Q?RcXHUlxkkrC52a0oII2hj8ntsEnR3x5j10TLMgGzHFATdT5qWAVRqi1EPSfP?=
+ =?us-ascii?Q?V9orUQGI9Rk0VYDRZEC8/Xa3MnirYV0hMw1+xUNZp54tx/nsq+yKAAJ0Hyao?=
+ =?us-ascii?Q?SPU1BxH1l2YwbnlV6Wv0/6EZDL1/S6VNhPIUmnnLQPM8PAmkWTh+512nTqoA?=
+ =?us-ascii?Q?jm3dI28jI2Puw+CKixxMXNXe6oB2U8jTDzg9oWMF29jIwtfsxEk8pxFrS25g?=
+ =?us-ascii?Q?2CkIlXMWqnvSvvbCl/dRpPEwVNLh4r0Woc/XSfeW+xXXJnAh7PSCnJnBErpv?=
+ =?us-ascii?Q?HGmo/DS1aABcXTOelNML6NXVjJJPEwWFCXGUgFSCLjEjzV5T18VI5a2dTZr3?=
+ =?us-ascii?Q?f9dLNcixSVfTcqWCy79ErwnJxIG64nztNPIkaiTuZyFB0YcGblHrCWcFXB43?=
+ =?us-ascii?Q?ZDH0O7CKb3Gct3e7yX0m9qLphk0x56jDIS4d+5TT5JDc94eNkfvwxnn5me55?=
+ =?us-ascii?Q?iFFS1CdsmR7Q7g86G4bYC124MFf0RerKbY+61nniSNffcb0Xt7fGdUK676fO?=
+ =?us-ascii?Q?wyGd5GMWfBpZ8UKUT9VXvMGhDQ3Rbkae9iWsmAaCgimjE2XD6w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CYyCafgY/x2DKAcQYiOXT3ULkSV4SToNDjD/y/XNXng7+/sKBpVo6vlpVnJb?=
+ =?us-ascii?Q?3O2PWEwDvDL6cwSQel93euNDCISnWbFF79RogpKJre1CAmT4nxOWtQpPyUMt?=
+ =?us-ascii?Q?eBltNZiotGxWRdLa8gR7UZW108mUhcCrxPxxPVvZg+6khdECXSfXbrZ8Xyjq?=
+ =?us-ascii?Q?6aLFxxUUBEoqDoOUedTiu8bLxxpRZ7Zt+TnYtmgvX6umdH97wYU0NrgtMktH?=
+ =?us-ascii?Q?fm8cu3ie0rOgHG/EkRIij8yoySNl4X8DJE6uGJLSBLB4jybgvltBvZ+PgCfj?=
+ =?us-ascii?Q?HUbnS90CIVeprhXC6hoGzXhP4CmkzE2mMqEIb6wNB5lqXZUkN//WAOOWV5jb?=
+ =?us-ascii?Q?SqSPTK4IwOrIIV+mi8b7yb22g01E/JQ5DAtd9CQGFCLpP92wmDB8amlWil4A?=
+ =?us-ascii?Q?IbS8NtRQ+/557l7nNAKCIWlv7dtLNCNFZsxcpN6tVrM9xOPBxqdVCcmWvMxC?=
+ =?us-ascii?Q?zKHqx7cR/beiwaeGs69Oj6YB24UafRtuSsGjQ1MW4sbcy0jXUhN4+qgYlRDQ?=
+ =?us-ascii?Q?kkgn31jR5QKiEpRyfMVftFzgphmiEJFFZRjXdCBAWqXQEa/hmAj8/grFE01q?=
+ =?us-ascii?Q?Rfh6D+utoGl5OXqDFyWw6Q6WrJUKZPtD+yMHb9TzD50iMt9LI1UnQk5+/Ldi?=
+ =?us-ascii?Q?ubloKbbQ38rA+rL/wzJHH9mCg7qd/5PEKYsfloRGCrJ6cEYQIhvuwEcHx/f3?=
+ =?us-ascii?Q?r1Uzja+qOTaeJaM6NTgpAvJpnCWF5gPSQOk7bQ1yVM9sS9zXOQU/JTzkLw5s?=
+ =?us-ascii?Q?X8jhXh9Sb/vyTJwx3X0fxEZpyAu0W12OqVtteA5OQtX7+aWJ1dtwpTAuK2kT?=
+ =?us-ascii?Q?/mNjLcyyaTgocqqjlvAFbED3UnTAfuc+oaynRBPFei7zmr61CFAHpefwHPe7?=
+ =?us-ascii?Q?p6ooZRCNqbZ5bVTNaCdLuSxPsRHNibpSAyCL/OWg4YNfFc8HXhQEGeqQlMgJ?=
+ =?us-ascii?Q?zSV0wj0ex55siFrA/C1zRO5xb2czUMHOMkN9cnjM4oDtwrwV2RBhxskEIohP?=
+ =?us-ascii?Q?6V7qEpgVCA/ve5qF0BXEKKBjoW4hGT4h9h6vqDH6ou4Rdiie4ZhAeM4yw4N5?=
+ =?us-ascii?Q?wMqbDSZm+Xc9m/pgvOy90O11LjFpAqIiGLsBNvghqGpbxvEJvsf5w1xn75mt?=
+ =?us-ascii?Q?VXpNb/PoO6UgCohffhaJyY+Pj6lxHeBPcePBFmbA7Jg1vkivc52GJ2f5nPXu?=
+ =?us-ascii?Q?x1ZNWa+Fqgl5kCtp5dibUEEDho/3nqQYO4Mj+efECFeArO2GNQS/hkzyAQEE?=
+ =?us-ascii?Q?vT3nTwG/VG17aSZ9VDDE+wLKN4OdUUq3+SSy0cd+XdAftMnBMmHt30+zbBmx?=
+ =?us-ascii?Q?S7CplSnMHRQo3iqdixkbJ0xF+qs/xZ5X3gGh/TiPldV0HZqdywywna3wUddu?=
+ =?us-ascii?Q?FiJX5gZ4zF9zcHjnjPrRwUxhHRkj4rUoPo0bdsp8GViXwwzGhd2ZHQinnNnV?=
+ =?us-ascii?Q?R6nHBgRKBFp8OwP60YOmT2PC0vQ3CUKCXI5wWlr3ii8KkOTUfBW0mAYn41s9?=
+ =?us-ascii?Q?288zmaYCAY+kNlxaiR+H5uPOSU5E0ooAXXIohcN+DsSiNF2QI3Sqm8hOsdsm?=
+ =?us-ascii?Q?v2xif6zMKvgljMfUc8tu21TBBmDcdMNoKK3Q7N6E?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bed2395-d997-4462-d7c6-08dcc1022aea
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3836040-187d-4734-ff02-08dcc10212b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2024 10:23:02.7603
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 10:23:43.5262
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BXQZHQcd9zrPeMhI8dMwmP4JVBHyHWsXpYd/9+8Q8NeX2+luoYm6mK6yaAIemC7mH5mVN9XK1dXvqyUm7seXD8ivIBQ1fBf7M5So4l2kOME=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6025
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZMidITWHsQjHYB7WD1AvCs5hir81sN40j1uHPXoGtyaCS8HHnHyHsvpzMbW1wPy9fmMqg+kVTPZXLGlzkm5unQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5247
 
->-----Original Message-----
->From: Jiri Pirko <jiri@resnulli.us>
->Sent: Thursday, August 8, 2024 1:54 PM
->
->Thu, Aug 08, 2024 at 01:20:12PM CEST, arkadiusz.kubalewski@intel.com wrote=
-:
->>Implement and document new pin attributes for providing Embedded SYNC
->>capabilities to the DPLL subsystem users through a netlink pin-get
->>do/dump messages. Allow the user to set Embedded SYNC frequency with
->>pin-set do netlink message.
->>
->>Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
->>Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>---
->> Documentation/driver-api/dpll.rst     |  21 +++++
->> Documentation/netlink/specs/dpll.yaml |  41 +++++++++
->> drivers/dpll/dpll_netlink.c           | 127 ++++++++++++++++++++++++++
->> drivers/dpll/dpll_nl.c                |   5 +-
->> include/linux/dpll.h                  |  10 ++
->> include/uapi/linux/dpll.h             |  23 +++++
->> 6 files changed, 225 insertions(+), 2 deletions(-)
->>
->>diff --git a/Documentation/driver-api/dpll.rst b/Documentation/driver-
->>api/dpll.rst
->>index ea8d16600e16..d7d091d268a1 100644
->>--- a/Documentation/driver-api/dpll.rst
->>+++ b/Documentation/driver-api/dpll.rst
->>@@ -214,6 +214,27 @@ offset values are fractional with 3-digit decimal pl=
-aces
->>and shell be
->> divided with ``DPLL_PIN_PHASE_OFFSET_DIVIDER`` to get integer part and
->> modulo divided to get fractional part.
->>
->>+Embedded SYNC
->>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>+
->>+Device may provide ability to use Embedded SYNC feature. It allows
->>+to embed additional SYNC signal into the base frequency of a pin - a one
->>+special pulse of base frequency signal every time SYNC signal pulse
->>+happens. The user can configure the frequency of Embedded SYNC.
->>+The Embedded SYNC capability is always related to a given base frequency
->>+and HW capabilities. The user is provided a range of embedded sync
->>+frequencies supported, depending on current base frequency configured fo=
-r
->>+the pin.
->>+
->>+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>+  ``DPLL_A_PIN_E_SYNC_FREQUENCY``           current embedded SYNC freque=
-ncy
->>+  ``DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED`` nest available embedded SYNC
->>+                                            frequency ranges
->>+    ``DPLL_A_PIN_FREQUENCY_MIN``            attr minimum value of freque=
-ncy
->>+    ``DPLL_A_PIN_FREQUENCY_MAX``            attr maximum value of freque=
-ncy
->>+  ``DPLL_A_PIN_E_SYNC_PULSE``               pulse type of embedded SYNC
->>+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>+
->> Configuration commands group
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->>
->>diff --git a/Documentation/netlink/specs/dpll.yaml
->>b/Documentation/netlink/specs/dpll.yaml
->>index 94132d30e0e0..0aabf6f1fc2f 100644
->>--- a/Documentation/netlink/specs/dpll.yaml
->>+++ b/Documentation/netlink/specs/dpll.yaml
->>@@ -210,6 +210,25 @@ definitions:
->>       integer part of a measured phase offset value.
->>       Value of (DPLL_A_PHASE_OFFSET % DPLL_PHASE_OFFSET_DIVIDER) is a
->>       fractional part of a measured phase offset value.
->>+  -
->>+    type: enum
->>+    name: pin-e-sync-pulse
->>+    doc: |
->>+      defines possible pulse length ratio between high and low state whe=
-n
->>+      embedded sync signal occurs on base clock signal frequency
->>+    entries:
->>+      -
->>+        name: none
->>+        doc: embedded sync not enabled
->>+      -
->>+        name: 25-75
->>+        doc: when embedded sync signal occurs 25% of signal's period is =
-in
->>+          high state, 75% of signal's period is in low state
->>+      -
->>+        name: 75-25
->
->It is very odd to name enums like this.
->Why can't this be:
->
->    name: e-sync-pulse-ratio
->    type: u32
->    doc: Embedded sync signal ratio. Value of 0 to 100. Defines the high
->    state percentage.
->
->?
->
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-I don't know if the other's are actually used by some vendors, but sure
-sounds good.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
->
->>+        doc: when embedded sync signal occurs 75% of signal's period is =
-in
->>+          high state, 25% of signal's period is in low state
->>+    render-max: true
->>
->> attribute-sets:
->>   -
->>@@ -345,6 +364,24 @@ attribute-sets:
->>           Value is in PPM (parts per million).
->>           This may be implemented for example for pin of type
->>           PIN_TYPE_SYNCE_ETH_PORT.
->>+      -
->>+        name: e-sync-frequency
->>+        type: u64
->>+        doc: |
->>+          Embedded Sync frequency. If provided a non-zero value, the pin=
- is
->
->Why non-zero? Why the attr cannot be omitted instead?
->
+Signed-off-by: Huan Yang <link@vivo.com>
+---
+ drivers/nvmem/jz4780-efuse.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-Zero is also a turn-off value for set, but sure for get it can be omitted f=
-or
-a netlink return message.
+diff --git a/drivers/nvmem/jz4780-efuse.c b/drivers/nvmem/jz4780-efuse.c
+index 0b01b840edd9..2b5badfbf22f 100644
+--- a/drivers/nvmem/jz4780-efuse.c
++++ b/drivers/nvmem/jz4780-efuse.c
+@@ -131,11 +131,6 @@ static const struct regmap_config jz4780_efuse_regmap_config = {
+ 	.max_register = JZ_EFUDATA(7),
+ };
+ 
+-static void clk_disable_unprepare_helper(void *clock)
+-{
+-	clk_disable_unprepare(clock);
+-}
+-
+ static int jz4780_efuse_probe(struct platform_device *pdev)
+ {
+ 	struct nvmem_device *nvmem;
+@@ -146,7 +141,6 @@ static int jz4780_efuse_probe(struct platform_device *pdev)
+ 	unsigned long rd_strobe;
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *regs;
+-	int ret;
+ 
+ 	efuse = devm_kzalloc(dev, sizeof(*efuse), GFP_KERNEL);
+ 	if (!efuse)
+@@ -161,20 +155,10 @@ static int jz4780_efuse_probe(struct platform_device *pdev)
+ 	if (IS_ERR(efuse->map))
+ 		return PTR_ERR(efuse->map);
+ 
+-	efuse->clk = devm_clk_get(&pdev->dev, NULL);
++	efuse->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(efuse->clk))
+ 		return PTR_ERR(efuse->clk);
+ 
+-	ret = clk_prepare_enable(efuse->clk);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&pdev->dev,
+-				       clk_disable_unprepare_helper,
+-				       efuse->clk);
+-	if (ret < 0)
+-		return ret;
+-
+ 	clk_rate = clk_get_rate(efuse->clk);
+ 
+ 	efuse->dev = dev;
+-- 
+2.45.2
 
->
->>+          configured with an embedded sync signal into its base frequenc=
-y.
->>+      -
->>+        name: e-sync-frequency-supported
->>+        type: nest
->>+        nested-attributes: frequency-range
->>+        doc: |
->>+          If provided a pin is capable of enabling embedded sync frequen=
-cy
->>+          into it's base frequency signal.
->>+      -
->>+        name: e-sync-pulse
->>+        type: u32
->>+        enum: pin-e-sync-pulse
->>+        doc: Embedded sync signal ratio.
->>   -
->>     name: pin-parent-device
->>     subset-of: pin
->>@@ -510,6 +547,9 @@ operations:
->>             - phase-adjust-max
->>             - phase-adjust
->>             - fractional-frequency-offset
->>+            - e-sync-frequency
->>+            - e-sync-frequency-supported
->>+            - e-sync-pulse
->>
->>       dump:
->>         request:
->>@@ -536,6 +576,7 @@ operations:
->>             - parent-device
->>             - parent-pin
->>             - phase-adjust
->>+            - e-sync-frequency
->>     -
->>       name: pin-create-ntf
->>       doc: Notification about pin appearing
->>diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->>index 98e6ad8528d3..5ae2c0adb98e 100644
->>--- a/drivers/dpll/dpll_netlink.c
->>+++ b/drivers/dpll/dpll_netlink.c
->>@@ -342,6 +342,50 @@ dpll_msg_add_pin_freq(struct sk_buff *msg, struct
->>dpll_pin *pin,
->> 	return 0;
->> }
->>
->>+static int
->>+dpll_msg_add_pin_esync(struct sk_buff *msg, struct dpll_pin *pin,
->
->This is "esync", attributes are "E_SYNC". Why can't they be named
->"ESYNC" too? Same comment to another "e_sync" names (vars, ops, etc).
->
-
-Sure, will change.
-
->
->>+		       struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
->>+{
->>+	const struct dpll_pin_ops *ops =3D dpll_pin_ops(ref);
->>+	struct dpll_device *dpll =3D ref->dpll;
->>+	enum dpll_pin_e_sync_pulse pulse;
->>+	struct dpll_pin_frequency range;
->>+	struct nlattr *nest;
->>+	u64 esync;
->>+	int ret;
->>+
->>+	if (!ops->e_sync_get)
->>+		return 0;
->>+	ret =3D ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
->>+			      dpll_priv(dpll), &esync, &range, &pulse, extack);
->>+	if (ret =3D=3D -EOPNOTSUPP)
->>+		return 0;
->>+	else if (ret)
->>+		return ret;
->>+	if (nla_put_64bit(msg, DPLL_A_PIN_E_SYNC_FREQUENCY, sizeof(esync),
->>+			  &esync, DPLL_A_PIN_PAD))
->>+		return -EMSGSIZE;
->>+	if (nla_put_u32(msg, DPLL_A_PIN_E_SYNC_PULSE, pulse))
->>+		return -EMSGSIZE;
->>+
->>+	nest =3D nla_nest_start(msg, DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED);
->>+	if (!nest)
->>+		return -EMSGSIZE;
->>+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MIN, sizeof(range.min),
->>+			  &range.min, DPLL_A_PIN_PAD)) {
->>+		nla_nest_cancel(msg, nest);
->>+		return -EMSGSIZE;
->>+	}
->>+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MAX, sizeof(range.max),
->>+			  &range.max, DPLL_A_PIN_PAD)) {
->
->Don't you want to have the MIN-MAX here multiple times. I mean, in
->theory, can the device support 2 fixed frequencies for example?
->Have it at least for UAPI so this is easily extendable.
->
-
-Sure, makes sense, will fix.
-
->
->
->>+		nla_nest_cancel(msg, nest);
->>+		return -EMSGSIZE;
->>+	}
->>+	nla_nest_end(msg, nest);
->>+
->>+	return 0;
->>+}
->>+
->> static bool dpll_pin_is_freq_supported(struct dpll_pin *pin, u32 freq)
->> {
->> 	int fs;
->>@@ -481,6 +525,9 @@ dpll_cmd_pin_get_one(struct sk_buff *msg, struct dpll=
-_pin
->>*pin,
->> 	if (ret)
->> 		return ret;
->> 	ret =3D dpll_msg_add_ffo(msg, pin, ref, extack);
->>+	if (ret)
->>+		return ret;
->>+	ret =3D dpll_msg_add_pin_esync(msg, pin, ref, extack);
->> 	if (ret)
->> 		return ret;
->> 	if (xa_empty(&pin->parent_refs))
->>@@ -738,6 +785,81 @@ dpll_pin_freq_set(struct dpll_pin *pin, struct nlatt=
-r
->>*a,
->> 	return ret;
->> }
->>
->>+static int
->>+dpll_pin_e_sync_set(struct dpll_pin *pin, struct nlattr *a,
->>+		    struct netlink_ext_ack *extack)
->>+{
->>+	u64 esync =3D nla_get_u64(a), old_esync;
->
->"freq"/"old_freq". That aligns with the existing code.
->
-
-Ok, will fix.
-
->
->>+	struct dpll_pin_ref *ref, *failed;
->>+	enum dpll_pin_e_sync_pulse pulse;
->>+	struct dpll_pin_frequency range;
->>+	const struct dpll_pin_ops *ops;
->>+	struct dpll_device *dpll;
->>+	unsigned long i;
->>+	int ret;
->>+
->>+	xa_for_each(&pin->dpll_refs, i, ref) {
->>+		ops =3D dpll_pin_ops(ref);
->>+		if (!ops->e_sync_set ||
->
->No need for line break.
->
-
-Sure, will fix.
-
->
->>+		    !ops->e_sync_get) {
->>+			NL_SET_ERR_MSG(extack,
->>+				       "embedded sync feature is not supported by
->>this device");
->>+			return -EOPNOTSUPP;
->>+		}
->>+	}
->>+	ref =3D dpll_xa_ref_dpll_first(&pin->dpll_refs);
->>+	ops =3D dpll_pin_ops(ref);
->>+	dpll =3D ref->dpll;
->>+	ret =3D ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
->>+			      dpll_priv(dpll), &old_esync, &range, &pulse, extack);
->
->Line over 80cols? Didn't checkpatch warn you?
->
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3Dbdc48fa11e46f867ea4d75fa59ee87a7f48be144
-But sure, I will use 80.
-
-Thank you!
-Arkadiusz
-
->
->>+	if (ret) {
->>+		NL_SET_ERR_MSG(extack, "unable to get current embedded sync
->>frequency value");
->>+		return ret;
->>+	}
->>+	if (esync =3D=3D old_esync)
->>+		return 0;
->>+	if (esync > range.max || esync < range.min) {
->>+		NL_SET_ERR_MSG_ATTR(extack, a,
->>+				    "requested embedded sync frequency value is not
->>supported by this device");
->>+		return -EINVAL;
->>+	}
->>+
->>+	xa_for_each(&pin->dpll_refs, i, ref) {
->>+		void *pin_dpll_priv;
->>+
->>+		ops =3D dpll_pin_ops(ref);
->>+		dpll =3D ref->dpll;
->>+		pin_dpll_priv =3D dpll_pin_on_dpll_priv(dpll, pin);
->>+		ret =3D ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
->>+				      esync, extack);
->>+		if (ret) {
->>+			failed =3D ref;
->>+			NL_SET_ERR_MSG_FMT(extack,
->>+					   "embedded sync frequency set failed for
->>dpll_id:%u",
->>+					   dpll->id);
->>+			goto rollback;
->>+		}
->>+	}
->>+	__dpll_pin_change_ntf(pin);
->>+
->>+	return 0;
->>+
->>+rollback:
->>+	xa_for_each(&pin->dpll_refs, i, ref) {
->>+		void *pin_dpll_priv;
->>+
->>+		if (ref =3D=3D failed)
->>+			break;
->>+		ops =3D dpll_pin_ops(ref);
->>+		dpll =3D ref->dpll;
->>+		pin_dpll_priv =3D dpll_pin_on_dpll_priv(dpll, pin);
->>+		if (ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
->>+				    old_esync, extack))
->>+			NL_SET_ERR_MSG(extack, "set embedded sync frequency
->>rollback failed");
->>+	}
->>+	return ret;
->>+}
->>+
->> static int
->> dpll_pin_on_pin_state_set(struct dpll_pin *pin, u32 parent_idx,
->> 			  enum dpll_pin_state state,
->>@@ -1039,6 +1161,11 @@ dpll_pin_set_from_nlattr(struct dpll_pin *pin, str=
-uct
->>genl_info *info)
->> 			if (ret)
->> 				return ret;
->> 			break;
->>+		case DPLL_A_PIN_E_SYNC_FREQUENCY:
->>+			ret =3D dpll_pin_e_sync_set(pin, a, info->extack);
->>+			if (ret)
->>+				return ret;
->>+			break;
->> 		}
->> 	}
->>
->>diff --git a/drivers/dpll/dpll_nl.c b/drivers/dpll/dpll_nl.c
->>index 1e95f5397cfc..ba79a47f3a17 100644
->>--- a/drivers/dpll/dpll_nl.c
->>+++ b/drivers/dpll/dpll_nl.c
->>@@ -62,7 +62,7 @@ static const struct nla_policy
->>dpll_pin_get_dump_nl_policy[DPLL_A_PIN_ID + 1] =3D
->> };
->>
->> /* DPLL_CMD_PIN_SET - do */
->>-static const struct nla_policy
->>dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST + 1] =3D {
->>+static const struct nla_policy
->>dpll_pin_set_nl_policy[DPLL_A_PIN_E_SYNC_FREQUENCY + 1] =3D {
->> 	[DPLL_A_PIN_ID] =3D { .type =3D NLA_U32, },
->> 	[DPLL_A_PIN_FREQUENCY] =3D { .type =3D NLA_U64, },
->> 	[DPLL_A_PIN_DIRECTION] =3D NLA_POLICY_RANGE(NLA_U32, 1, 2),
->>@@ -71,6 +71,7 @@ static const struct nla_policy
->>dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST +
->> 	[DPLL_A_PIN_PARENT_DEVICE] =3D
->>NLA_POLICY_NESTED(dpll_pin_parent_device_nl_policy),
->> 	[DPLL_A_PIN_PARENT_PIN] =3D
->>NLA_POLICY_NESTED(dpll_pin_parent_pin_nl_policy),
->> 	[DPLL_A_PIN_PHASE_ADJUST] =3D { .type =3D NLA_S32, },
->>+	[DPLL_A_PIN_E_SYNC_FREQUENCY] =3D { .type =3D NLA_U64, },
->> };
->>
->> /* Ops table for dpll */
->>@@ -138,7 +139,7 @@ static const struct genl_split_ops dpll_nl_ops[] =3D =
-{
->> 		.doit		=3D dpll_nl_pin_set_doit,
->> 		.post_doit	=3D dpll_pin_post_doit,
->> 		.policy		=3D dpll_pin_set_nl_policy,
->>-		.maxattr	=3D DPLL_A_PIN_PHASE_ADJUST,
->>+		.maxattr	=3D DPLL_A_PIN_E_SYNC_FREQUENCY,
->> 		.flags		=3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
->> 	},
->> };
->>diff --git a/include/linux/dpll.h b/include/linux/dpll.h
->>index d275736230b3..137ab4bcb60e 100644
->>--- a/include/linux/dpll.h
->>+++ b/include/linux/dpll.h
->>@@ -15,6 +15,7 @@
->>
->> struct dpll_device;
->> struct dpll_pin;
->>+struct dpll_pin_frequency;
->>
->> struct dpll_device_ops {
->> 	int (*mode_get)(const struct dpll_device *dpll, void *dpll_priv,
->>@@ -83,6 +84,15 @@ struct dpll_pin_ops {
->> 	int (*ffo_get)(const struct dpll_pin *pin, void *pin_priv,
->> 		       const struct dpll_device *dpll, void *dpll_priv,
->> 		       s64 *ffo, struct netlink_ext_ack *extack);
->>+	int (*e_sync_set)(const struct dpll_pin *pin, void *pin_priv,
->>+			  const struct dpll_device *dpll, void *dpll_priv,
->>+			  u64 e_sync_freq, struct netlink_ext_ack *extack);
->>+	int (*e_sync_get)(const struct dpll_pin *pin, void *pin_priv,
->>+			  const struct dpll_device *dpll, void *dpll_priv,
->>+			  u64 *e_sync_freq,
->>+			  struct dpll_pin_frequency *e_sync_range,
->>+			  enum dpll_pin_e_sync_pulse *pulse,
->>+			  struct netlink_ext_ack *extack);
->> };
->>
->> struct dpll_pin_frequency {
->>diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->>index 0c13d7f1a1bc..2a80a6fb0d1d 100644
->>--- a/include/uapi/linux/dpll.h
->>+++ b/include/uapi/linux/dpll.h
->>@@ -169,6 +169,26 @@ enum dpll_pin_capabilities {
->>
->> #define DPLL_PHASE_OFFSET_DIVIDER	1000
->>
->>+/**
->>+ * enum dpll_pin_e_sync_pulse - defines possible pulse length ratio betw=
-een
->>+ *   high and low state when embedded sync signal occurs on base clock
->>signal
->>+ *   frequency
->>+ * @DPLL_PIN_E_SYNC_PULSE_NONE: embedded sync not enabled
->>+ * @DPLL_PIN_E_SYNC_PULSE_25_75: when embedded sync signal occurs 25% of
->>+ *   signal's period is in high state, 75% of signal's period is in low
->>state
->>+ * @DPLL_PIN_E_SYNC_PULSE_75_25: when embedded sync signal occurs 75% of
->>+ *   signal's period is in high state, 25% of signal's period is in low
->>state
->>+ */
->>+enum dpll_pin_e_sync_pulse {
->>+	DPLL_PIN_E_SYNC_PULSE_NONE,
->>+	DPLL_PIN_E_SYNC_PULSE_25_75,
->>+	DPLL_PIN_E_SYNC_PULSE_75_25,
->>+
->>+	/* private: */
->>+	__DPLL_PIN_E_SYNC_PULSE_MAX,
->>+	DPLL_PIN_E_SYNC_PULSE_MAX =3D (__DPLL_PIN_E_SYNC_PULSE_MAX - 1)
->>+};
->>+
->> enum dpll_a {
->> 	DPLL_A_ID =3D 1,
->> 	DPLL_A_MODULE_NAME,
->>@@ -210,6 +230,9 @@ enum dpll_a_pin {
->> 	DPLL_A_PIN_PHASE_ADJUST,
->> 	DPLL_A_PIN_PHASE_OFFSET,
->> 	DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET,
->>+	DPLL_A_PIN_E_SYNC_FREQUENCY,
->>+	DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED,
->>+	DPLL_A_PIN_E_SYNC_PULSE,
->>
->> 	__DPLL_A_PIN_MAX,
->> 	DPLL_A_PIN_MAX =3D (__DPLL_A_PIN_MAX - 1)
->>--
->>2.38.1
->>
 
