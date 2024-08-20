@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-293437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6DB957F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B7D957F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C789EB21581
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E742836DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5D8184549;
-	Tue, 20 Aug 2024 07:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05E1173336;
+	Tue, 20 Aug 2024 07:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="co/4brcW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wDMxH9B9"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9739B16B391;
-	Tue, 20 Aug 2024 07:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC75618E36D;
+	Tue, 20 Aug 2024 07:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724138427; cv=none; b=JPULxgGtiPxCkxoSRg66v7BvhkJVrH1ia+vZe60R+ZbuH9rtZoqQctlDCsSFdyb0dmIls9HUxhFjc6kPH9n1npKG8YiGhMGAm5DMgLbv5+MYPXK+AT7TNgU5L/jq7kqGco/wFD8DEnkknSeNQjaJ4lN9nOgfd5Kl5gPPTVumPzQ=
+	t=1724138526; cv=none; b=k+GsD4XJmkrWsta4SAycs32WhcPE8wDEmJOtlBxNMVyJTmX+girEi1mFKzQXQyBZ09UXAVd/djw49BN4xxbKq6Rcre7wypwvEu0QP4VKXC7KdYk7BMaaMCLOwHO3ywx1vGZRTMUsTcae1M7E38MdPJpFzSXgha4Es7lA5vCGVe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724138427; c=relaxed/simple;
-	bh=glSoSr9Tbk75LSg/tAu/FUEqzBhmne/ozkkwbAinyf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYFar4XM1hp0KY/lKzluwUG7We/rDkEi3d3JBvrxPEX6O8MsCG9L0GfWESxdXGlkrbXxESNbcuYmdaRMcKFqJVy9uZkplNbxuHU2+6nugQ1/ZOhn9yVJ35qrfMVlWpiLNNPindp6XwD0zn+aKIwS28RURBc3+VnjBlXpY2XYWQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=co/4brcW; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724138426; x=1755674426;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=glSoSr9Tbk75LSg/tAu/FUEqzBhmne/ozkkwbAinyf8=;
-  b=co/4brcWXYsggOAu0GvotVTt/ldKgv2yZPb24y95oYTngrYanezawbJ4
-   i2SEOP2bE1EgbMUagp75u2WqNoitzmGhKzAeWX5UijxcJ/Ncgyh/CUE5m
-   t2MPWQ7gh8zws8zY3GkZgI2fHs7UVKMJmCDTJYdIKJoogl6g4UgL+GzSR
-   /ScKiR5Ovp3tPc5mKjOW8w5CIMGlyR0wamlXI76oCxd4S07TuAHfT28VM
-   LS4nD/LORRyXV1Oh4SdwYSuKCjimjQ6L7+g2RVsInZLfy4KWnlRiYQD+8
-   uiwRcykKwXjhFWjr+xF9+m8gge6Ah8A9iBpoCfIPap9Cj8E4JKDX/g3aF
-   Q==;
-X-CSE-ConnectionGUID: LS0/4hiGQpqKsY/l8U9EQA==
-X-CSE-MsgGUID: uM8dzDQcRQ+wRioEhuJ8xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="21959435"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="21959435"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 00:20:25 -0700
-X-CSE-ConnectionGUID: G3BqePshRN6O0pokLE5trg==
-X-CSE-MsgGUID: 4xIVrBGcRKGl8FyWoZMX6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="61400408"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 20 Aug 2024 00:20:20 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgJAA-0009q6-1M;
-	Tue, 20 Aug 2024 07:20:18 +0000
-Date: Tue, 20 Aug 2024 15:19:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Trevor Gamblin <tgamblin@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Trevor Gamblin <tgamblin@baylibre.com>
-Subject: Re: [PATCH v3 2/3] iio: adc: ad7625: add driver
-Message-ID: <202408201520.lFtco3eF-lkp@intel.com>
-References: <20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
+	s=arc-20240116; t=1724138526; c=relaxed/simple;
+	bh=1BUozcEWfgQZ+KdPlrQWUrtXZ3tJ34vzoXdYunpPaTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ouqOpvHftbHFX22YUjKG24XBD8sQFzGuHJw6boyP529rM73nU4J8UrNSEaquLa+sxXi6VfP8obGRLOKFDB8kld3otNQ3LzzC60z5SG+Ar5dmKn5COXUlDAaNREQfmvmh6dhuYvjjb/bSeYak9A3DTBkrraKaUNh2WzyeFBdo/Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wDMxH9B9; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724138511; x=1724743311; i=markus.elfring@web.de;
+	bh=4eRNJiZiepI2514EsLWCsocatXLAAh5RemIIL/ANUNo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=wDMxH9B9EPOV3MrVMCGfdR9L+OTELB2iE5x4lMvDtPQWrbQHH/hBFULJgi0/wuPD
+	 rdWOH12LyEfXNq/Ar3mTY63wR2MbLUI7QvkOyrKncqzwbk8spKLvlrmXi7YpYTirF
+	 SM22dJed2Cy/BjGRPWIk119plXbyXs+9pmCIaJdbMIlWI/X8KXM3CCqxVxHG2swwn
+	 QPidV157BWYWUXfcat7gQiXBknnKceW4wao+ybWXgcJnTsr7G3bbOD3/QAxmZibyK
+	 KSgKWhTryIrDuWgBW3t0ghV6mH+vyeeLnPOS9jZD57ZKbOvfOY/EunziSy4j3V/Ho
+	 l7WlsJUKC4EJlRMnxQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MoecF-1sMz4w0bCz-00ZmI4; Tue, 20
+ Aug 2024 09:21:51 +0200
+Message-ID: <577e96df-5535-4530-ac62-edc53881a443@web.de>
+Date: Tue, 20 Aug 2024 09:21:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family
+ driver
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RxBDSm2bAjWw9MUt7h27DhLB6rK2rmz9WjyH2mhS0AnebpGRls5
+ c+ac3YlzdIzs0mR4Q2zG6xJEivOV7aQvU6SzR3mKzuX7YlS06/ySiHx120m8bdSct5XbuX5
+ 41CmphS4MS8GA7chcIN+od9H9YAxhrKtAoewoZnXZvCLmSjFCiWXnynT/v98velJ1vTYmzS
+ e/ZD5dC8t6pklRqt3Fjiw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5uSCuaLLpp0=;9qVP4j1PRUMIJpDU0GvzUjw3F3W
+ 4Bav2WiZZnEbnEzZa5j6vAiKSQK88BxuuJMzyT0DnMW9ZMM7hl2yRHMUD90kWvYZekvPlUZzy
+ OG7sGpvn53b/sl0f3ftGczLj74Pz2cGWseZps18Vp3HptKuOygggILyG/mz3zYvSPNg0JzM72
+ CmI6a4h17RbJByJ/+6s/7jMl9N1kV+Kt+Hew4EhHQyFfkjlGnxL7xGuh1kWaw3vLrdAPaACA0
+ nS3jr2N/DSbV5SNcaSgJ5jdsKE0mvidR4/Z1EDOddukanpDQKpIB+wUsMAuCQQuQLTW7QYKAR
+ X5wNPgl+RIPr0eNbYWh44nPqhiveUKDKs5lORyuJboCbUn8HvowQKEWQZsSHa5YhYib9IpR7I
+ IIJhOpDRYSXfc4ZLPIly97qYbK/LE8tiwE5dIcInXiIgZsMnCF+vOJ/pAT3Xq1uwpQr2xkUp/
+ 8zbO634MzUT4x11JvFo7WVHXBgfFP5AfUhQW6j282Z1kdwpger2EyFvhs1ctru36PDYScftJc
+ ykKcvPcZY+4WikO09v1ejNXfwdSUWk1hriZHLeh0Pm/aYPPRoMFZOzzjW8jTPziMmGZoABwYu
+ cDgpAMKF3QppbiOJrtbaXMt42f4oRCrqTsdcKOtcNVi1nWPsiwY53+qeeIZSiGzRc0A3mEGtC
+ Gxy4HkTeIOJQQMnm8Oy6hpK255XZksuGiCFGQ0EzACiKANbdxhOP+Ek8rG5XKHar6fb3MOWgN
+ o5je/t4j3SaNl+6T/mEQm241bMHNEOkPWR5KSwFkT8S5bBehO+VO0lhn6+ni9jr8mhNWQozM1
+ nFAHK/WmtPJbYonP47Yo9zSw==
 
-Hi Trevor,
+=E2=80=A6
+> +++ b/drivers/hid/hid-corsair-void.c
+> @@ -0,0 +1,842 @@
+=E2=80=A6
+> +enum {
+> +	CORSAIR_VOID_BATTERY_NORMAL	=3D 1,
+=E2=80=A6
+> +	CORSAIR_VOID_BATTERY_CHARGING	=3D 5,
+> +};
 
-kernel test robot noticed the following build errors:
+Would you like to choose a corresponding name for such an enumeration?
 
-[auto build test ERROR on ac6a258892793f0a255fe7084ec2b612131c67fc]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Trevor-Gamblin/dt-bindings-iio-adc-add-AD762x-AD796x-ADCs/20240819-221425
-base:   ac6a258892793f0a255fe7084ec2b612131c67fc
-patch link:    https://lore.kernel.org/r/20240819-ad7625_r1-v3-2-75d5217c76b5%40baylibre.com
-patch subject: [PATCH v3 2/3] iio: adc: ad7625: add driver
-config: alpha-randconfig-r132-20240820 (https://download.01.org/0day-ci/archive/20240820/202408201520.lFtco3eF-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20240820/202408201520.lFtco3eF-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408201520.lFtco3eF-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iio/adc/ad7625.c: In function 'ad7625_set_sampling_freq':
->> drivers/iio/adc/ad7625.c:191:15: error: implicit declaration of function 'pwm_round_waveform_might_sleep' [-Werror=implicit-function-declaration]
-     191 |         ret = pwm_round_waveform_might_sleep(st->cnv_pwm, &cnv_wf);
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ad7625.c: In function 'ad7625_buffer_preenable':
->> drivers/iio/adc/ad7625.c:420:15: error: implicit declaration of function 'pwm_set_waveform_might_sleep' [-Werror=implicit-function-declaration]
-     420 |         ret = pwm_set_waveform_might_sleep(st->cnv_pwm, &st->cnv_wf, false);
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Can any other data type be reused for this purpose?
 
 
-vim +/pwm_round_waveform_might_sleep +191 drivers/iio/adc/ad7625.c
+=E2=80=A6
+> +static ssize_t send_alert_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf, size_t count)
+> +{
+=E2=80=A6
+> +	if (ret < 0) {
+> +		hid_warn(hid_dev, "failed to send alert request (reason: %d)",
+> +			 ret);
+> +	} else {
+> +		ret =3D count;
+> +	}
 
-   175	
-   176	static int ad7625_set_sampling_freq(struct ad7625_state *st, int freq)
-   177	{
-   178		u64 target;
-   179		struct pwm_waveform clk_gate_wf = { }, cnv_wf = { };
-   180		int ret;
-   181	
-   182		target = DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
-   183		cnv_wf.period_length_ns = clamp(target, 100, 10 * KILO);
-   184	
-   185		/*
-   186		 * Use the maximum conversion time t_CNVH from the datasheet as
-   187		 * the duty_cycle for ref_clk, cnv, and clk_gate
-   188		 */
-   189		cnv_wf.duty_length_ns = st->info->timing_spec->conv_high_ns;
-   190	
- > 191		ret = pwm_round_waveform_might_sleep(st->cnv_pwm, &cnv_wf);
-   192		if (ret)
-   193			return ret;
-   194	
-   195		/*
-   196		 * Set up the burst signal for transferring data. period and
-   197		 * offset should mirror the CNV signal
-   198		 */
-   199		clk_gate_wf.period_length_ns = cnv_wf.period_length_ns;
-   200	
-   201		clk_gate_wf.duty_length_ns = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC *
-   202			st->info->chan_spec.scan_type.realbits,
-   203			st->ref_clk_rate_hz);
-   204	
-   205		/* max t_MSB from datasheet */
-   206		clk_gate_wf.duty_offset_ns = st->info->timing_spec->conv_msb_ns;
-   207	
-   208		ret = pwm_round_waveform_might_sleep(st->clk_gate_pwm, &clk_gate_wf);
-   209		if (ret)
-   210			return ret;
-   211	
-   212		st->cnv_wf = cnv_wf;
-   213		st->clk_gate_wf = clk_gate_wf;
-   214	
-   215		/* TODO: Add a rounding API for PWMs that can simplify this */
-   216		target = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz, freq);
-   217		st->sampling_freq_hz = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz,
-   218							     target);
-   219	
-   220		return 0;
-   221	}
-   222	
+Would you like to omit curly brackets here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.11-rc4#n197
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
 
