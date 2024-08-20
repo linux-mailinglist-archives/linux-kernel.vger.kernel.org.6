@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-293889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B4C958634
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBAD95863E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B13C1C21DCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEAFB1C2278F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D8D18EFE2;
-	Tue, 20 Aug 2024 11:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D0518FDB3;
+	Tue, 20 Aug 2024 11:55:42 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2DF18E036
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2203918EFC4
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154939; cv=none; b=B5jqbhEPEH9BgMDzWieQNPPgOl217ajh8lSwSd4BoEjyIcqX99eceBuFiIyM/s6BV/rCGlam7ArJ8VOBwzmhYxRAW2cc3WKoG0rgI9KaG0MQbv27aMWX9rd620AWWyLx0yP6eq1k+/JoRuFtD+9hvCoKU6BU7ALwAoKVb4UUCnk=
+	t=1724154941; cv=none; b=Y6LwGwfdhCdngWgFFcbH//CvBDIDzbPbBVYaYgnnBMnChSssM9itVHNdN/AqgYl79oXOEjSEGkHTDsgmuXAa9md5KDo9zKEwLVNYYPwTRllO/0IEGNdWIbGS9r7Aex0y4bVtRV0tvLoSQcAX7lGXYdZ6kBgUaKUnFzseycnRrKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154939; c=relaxed/simple;
-	bh=Dy2rYpe7ga87zMwt7gfk8WBV36PYG+YAWWRPNjyhnG0=;
+	s=arc-20240116; t=1724154941; c=relaxed/simple;
+	bh=WnDOQXdOu6RYChj81AwXAYH8vdtm8Lq/gakdG2OPsgw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qo5E9+ThJDbvM4wnwQJ2UF25NzZ2XCnAfJ+ROkYKzTnJRdtsAVtsdoSpMXntp6mVpnnbNgR4RWzRyfPYzi/QuXCITIGCuFhwE0Bovxs6HfgdBSrjhZC8NzqkvzYPFennOHbS1LeA/16oOM1xeXT2MTBT4qFUgYMhHC8TrbZMA2A=
+	 In-Reply-To:To:Cc; b=bIhXO7fXhy/zrHypekeXMvaavvKcKJ0U1jkL1HBAoKVlUsF1pSMsp/GnZmcYwd37XsBkTX3qeCnvaurwh8/nqbaQ9H6IDGGjPG8KCphC2tt+Zr3P8+XYo7dHg7/btug5e+mJkEFgbsAq46NUZ8w9CgkqJCyuIi+POm4cc2ouY30=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,20 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSS-0000An-5X; Tue, 20 Aug 2024 13:55:28 +0200
+	id 1sgNSS-0000Ak-5W; Tue, 20 Aug 2024 13:55:28 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-001lLl-FB; Tue, 20 Aug 2024 13:55:27 +0200
+	id 1sgNSR-001lLm-F9; Tue, 20 Aug 2024 13:55:27 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-00GnIQ-1B;
+	id 1sgNSR-00GnIQ-1D;
 	Tue, 20 Aug 2024 13:55:27 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 20 Aug 2024 13:55:32 +0200
-Subject: [PATCH 07/31] wifi: mwifiex: pass adapter to
- mwifiex_dnld_cmd_to_fw()
+Date: Tue, 20 Aug 2024 13:55:33 +0200
+Subject: [PATCH 08/31] wifi: mwifiex: simplify mwifiex_setup_ht_caps()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-mwifiex-cleanup-v1-7-320d8de4a4b7@pengutronix.de>
+Message-Id: <20240820-mwifiex-cleanup-v1-8-320d8de4a4b7@pengutronix.de>
 References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
@@ -63,11 +62,11 @@ To: Brian Norris <briannorris@chromium.org>,
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=2048;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=2368;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=Dy2rYpe7ga87zMwt7gfk8WBV36PYG+YAWWRPNjyhnG0=;
- b=AHnT83hR8Of4IOFaciGACi2w940X2VOUZRD3Yl2ZwiPr8es4PYjzUpSa5MqsTAB0VVvXRKQ7g
- XN3h2sITF2kA9CNoRhutQl9BThpQkTgLebOEiB1oeNuTPZfSbTd+4m+
+ bh=WnDOQXdOu6RYChj81AwXAYH8vdtm8Lq/gakdG2OPsgw=;
+ b=bxfaC36CIbCvFiTZ3tpkNHbCczOANqKc9NMUIk6yJhvUTHjliQNyZAlYJnx1sYBwf/Ln6A+7I
+ kq9UvEagkmuC4hhTEZ5oZHzs//I+vWcICWNv1o+CmHRWDFiroauip4f
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -75,56 +74,63 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-priv is not needed in mwifiex_dnld_cmd_to_fw(), so pass the adapter to
-it as context pointer.
+In mwifiex_setup_ht_caps() first a local struct ieee80211_mcs_info
+is initialized and afterwards copied over &ht_info->mcs. Simplify
+this by initializing &ht_info->mcs directly.
+
+While at it call memset on the u8 rx_mask[] array instead of the struct
+which makes the intention clearer and we no longer have to assume the
+rx_mask array is the first member of struct ieee80211_mcs_info.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/net/wireless/marvell/mwifiex/cmdevt.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-index d50a2925d0739..4f814110f750e 100644
---- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-@@ -159,11 +159,9 @@ static int mwifiex_cmd_host_cmd(struct mwifiex_private *priv,
-  * sending. Afterwards, it logs the command ID and action for debugging
-  * and sets up the command timeout timer.
-  */
--static int mwifiex_dnld_cmd_to_fw(struct mwifiex_private *priv,
-+static int mwifiex_dnld_cmd_to_fw(struct mwifiex_adapter *adapter,
- 				  struct cmd_ctrl_node *cmd_node)
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index d1cdbeafcfbcb..784f342a9bf23 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -2906,16 +2906,12 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
+ 		      struct mwifiex_private *priv)
  {
+ 	int rx_mcs_supp;
+-	struct ieee80211_mcs_info mcs_set;
+-	u8 *mcs = (u8 *)&mcs_set;
+ 	struct mwifiex_adapter *adapter = priv->adapter;
+ 
+ 	ht_info->ht_supported = true;
+ 	ht_info->ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K;
+ 	ht_info->ampdu_density = IEEE80211_HT_MPDU_DENSITY_NONE;
+ 
+-	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
 -
--	struct mwifiex_adapter *adapter = priv->adapter;
- 	int ret;
- 	struct host_cmd_ds_command *host_cmd;
- 	uint16_t cmd_code;
-@@ -742,7 +740,6 @@ mwifiex_insert_cmd_to_pending_q(struct mwifiex_adapter *adapter,
-  */
- int mwifiex_exec_next_cmd(struct mwifiex_adapter *adapter)
- {
--	struct mwifiex_private *priv;
- 	struct cmd_ctrl_node *cmd_node;
- 	int ret = 0;
- 	struct host_cmd_ds_command *host_cmd;
-@@ -766,7 +763,6 @@ int mwifiex_exec_next_cmd(struct mwifiex_adapter *adapter)
- 				    struct cmd_ctrl_node, list);
+ 	/* Fill HT capability information */
+ 	if (ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
+ 		ht_info->cap |= IEEE80211_HT_CAP_SUP_WIDTH_20_40;
+@@ -2961,17 +2957,15 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
+ 	ht_info->cap |= IEEE80211_HT_CAP_SM_PS;
  
- 	host_cmd = (struct host_cmd_ds_command *) (cmd_node->cmd_skb->data);
--	priv = cmd_node->priv;
+ 	rx_mcs_supp = GET_RXMCSSUPP(adapter->user_dev_mcs_support);
++
++	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
+ 	/* Set MCS for 1x1/2x2 */
+-	memset(mcs, 0xff, rx_mcs_supp);
+-	/* Clear all the other values */
+-	memset(&mcs[rx_mcs_supp], 0,
+-	       sizeof(struct ieee80211_mcs_info) - rx_mcs_supp);
++	memset(ht_info->mcs.rx_mask, 0xff, rx_mcs_supp);
++
+ 	if (priv->bss_mode == NL80211_IFTYPE_STATION ||
+ 	    ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
+ 		/* Set MCS32 for infra mode or ad-hoc mode with 40MHz support */
+-		SETHT_MCS32(mcs_set.rx_mask);
+-
+-	memcpy((u8 *) &ht_info->mcs, mcs, sizeof(struct ieee80211_mcs_info));
++		SETHT_MCS32(ht_info->mcs.rx_mask);
  
- 	if (adapter->ps_state != PS_STATE_AWAKE) {
- 		mwifiex_dbg(adapter, ERROR,
-@@ -781,7 +777,7 @@ int mwifiex_exec_next_cmd(struct mwifiex_adapter *adapter)
- 	spin_unlock_bh(&adapter->cmd_pending_q_lock);
- 
- 	spin_unlock_bh(&adapter->mwifiex_cmd_lock);
--	ret = mwifiex_dnld_cmd_to_fw(priv, cmd_node);
-+	ret = mwifiex_dnld_cmd_to_fw(adapter, cmd_node);
- 
- 	/* Any command sent to the firmware when host is in sleep
- 	 * mode should de-configure host sleep. We should skip the
+ 	ht_info->mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
+ }
 
 -- 
 2.39.2
