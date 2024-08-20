@@ -1,340 +1,163 @@
-Return-Path: <linux-kernel+bounces-294319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E304F958C2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FFE958C36
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F509284C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:29:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6DF1F23FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E3F1B3F08;
-	Tue, 20 Aug 2024 16:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425DF1AE04F;
+	Tue, 20 Aug 2024 16:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JgesEHAQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1SserZbP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwMp4Urv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FDD190671;
-	Tue, 20 Aug 2024 16:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0B34409;
+	Tue, 20 Aug 2024 16:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171373; cv=none; b=P1NOUEfsjx5VmdPhhatQgIjU4QBViQCLyGGM406aeejRQql2Vm51VS3iQPCrFUwfzRy8WBIygRPrztoQFob6pe45/DR/Nhcqt+YB76Rm+5rdE+WGi8/vX8FTUgg1Dg9dEoKi9sOqUuZ4z/z3SCScWadX7HvlU+cQMd7S3IahyYM=
+	t=1724171540; cv=none; b=aoJnCcSSqKM2HAbHW/Ne6z433y6fh0tHL49NGSYr1ELjIgQEn8dXr1tlliwUq6sDx4zvtHlHtzUpzrXR0/LTrHyoUacUeSih5+BGxQXOtP+8CurVTReXHYbxWG/8ZqxyQJsaPODnZbD+kE9Z/Wjl55P2DzvmspZCIZJqBVbG8rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171373; c=relaxed/simple;
-	bh=Voq048pM2Kl4TdkOvYya7BvdxsDdu+6WpfYu5FJSLuE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hZmhV/OTXXa8h3gSVI14BFdANKk3iAl1rClBtmDPsxV+IlHA7oIEsREMZg38pnzemzF8wUJfkvSucKpgtgCYw1WH7hzXErqm6k+EjTTFVUrnh5qesRysK3x0gVgeP48Nr4l9zP1mWhteMOCMINufLAqHmKAjfsuei1sZYLwIwSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JgesEHAQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1SserZbP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724171370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rt+qJPRnUlTdCxy+HqQKlWVloB8PPTVjPXwBqnEDk+0=;
-	b=JgesEHAQZzySxLXlM36vPyH8lHIylwIOzBytwcMjS6F/VggEzQzyyuauwnSSAwKu4ew2H9
-	Aw3aSxvx6LUKU7m1uJ0Vn99VBH6APahmXOygHG1DsQY3+qx6tKe+HK8BhnotdL83+1g3oB
-	uoVCzgKN0FCpY4LEOQpYZcvptY0d2AN6RDAzYzUsFiIv5hvc079Do28bHDQ68ZZ7hPhhO2
-	DpdRgGRhlxZ+jWqPIqtl9ZrN+DjuDFQBupZZbp2G+v9HzSIljvmxcQUWCJCUmR+bLMzbZm
-	TAluBf+s4bW5PBnXUubmUYcbKMPbGC05MpxZPuBabxwMwc4sCDKLIhVMDv8GwQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724171370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rt+qJPRnUlTdCxy+HqQKlWVloB8PPTVjPXwBqnEDk+0=;
-	b=1SserZbPrG1HBE+Xmwsgt8bB7uIp0spb8ECHVnnPvzheXB/NaxtoJ+pu/igEiUwJBmEt9v
-	5zopFYzdN/5ZtWCQ==
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, corbet@lwn.net,
- alexs@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
- jiaxun.yang@flygoat.com, gaoliang@loongson.cn, wangliupu@loongson.cn,
- lvjianmin@loongson.cn, zhangtianyang@loongson.cn, yijun@loongson.cn,
- mhocko@suse.com, akpm@linux-foundation.org, dianders@chromium.org,
- maobibo@loongson.cn, xry111@xry111.site, zhaotianrui@loongson.cn,
- nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v10 2/2] irqchip/loongarch-avec: Add AVEC irqchip support
-In-Reply-To: <20240815112608.26925-3-zhangtianyang@loongson.cn>
-References: <20240815112608.26925-1-zhangtianyang@loongson.cn>
- <20240815112608.26925-3-zhangtianyang@loongson.cn>
-Date: Tue, 20 Aug 2024 18:29:29 +0200
-Message-ID: <87msl7jgye.ffs@tglx>
+	s=arc-20240116; t=1724171540; c=relaxed/simple;
+	bh=sKSLSYeyG3cz5N3VPlYdys9YYWm2DA22kSv3LrlYA/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJtFH1fqFqgmgktnEPz0KRb1WX6xvXYbTcnDGNCaYKlSNWbE77K6NleUBFsgRH7w/ryOZpT9xk24LtMi/AcVFdvzdwtzC8vkLO/kTjDqrkp/h6lRgjP6F+B6mYKQLll4ykX/boAQnZzcMx0ahzjCEGyX+JkcmYBMDn2h+5ReFwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwMp4Urv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9B2C4AF0B;
+	Tue, 20 Aug 2024 16:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724171540;
+	bh=sKSLSYeyG3cz5N3VPlYdys9YYWm2DA22kSv3LrlYA/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lwMp4UrvmbsPqfUtfAp1f4x7udLu7LkQwiI093JH7xciXpW1WiP9/zsQm+1otZJ0z
+	 3OTJqAMM9rQoUL+SgbA4X/53QK56hB4FdWyfkoy8G9Wew4zQzgIpc3NxjF72tCm7/h
+	 +uk4fHpXLSPgNlwtVWgO4WWLDDsxB11+2yAk1SBZJUsz2c+V6eq8jw1OKQ3rrQIoUv
+	 +5G1PGf/3nWPGfcFC/VSrJqn4MEG9wyOdJotXxqdzCtggQLvXVdyWT1Ca9VbjmCVCG
+	 E4LaTXiTFW33NSpazRhunMSNoiWYarPIc5pdfQ5RnBsbPj4dTDDPECJMbhXzQujgZb
+	 AxxFiBzgJRdcQ==
+Date: Tue, 20 Aug 2024 17:32:15 +0100
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
+ when possible
+Message-ID: <20240820163213.GD28750@willie-the-truck>
+References: <20240802191617.312752-1-seanjc@google.com>
+ <20240820154150.GA28750@willie-the-truck>
+ <ZsS_OmxwFzrqDcfY@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsS_OmxwFzrqDcfY@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Aug 15 2024 at 19:26, Tianyang Zhang wrote:
->  .../arch/loongarch/irq-chip-model.rst         |  32 ++
->  .../zh_CN/arch/loongarch/irq-chip-model.rst   |  32 ++
->  arch/loongarch/Kconfig                        |   1 +
->  arch/loongarch/include/asm/cpu-features.h     |   1 +
->  arch/loongarch/include/asm/cpu.h              |   2 +
->  arch/loongarch/include/asm/hardirq.h          |   3 +-
->  arch/loongarch/include/asm/hw_irq.h           |   2 +
->  arch/loongarch/include/asm/irq.h              |  25 +-
->  arch/loongarch/include/asm/loongarch.h        |  18 +-
->  arch/loongarch/include/asm/smp.h              |   2 +
->  arch/loongarch/kernel/cpu-probe.c             |   3 +-
->  arch/loongarch/kernel/irq.c                   |  15 +-
->  arch/loongarch/kernel/paravirt.c              |   5 +
->  arch/loongarch/kernel/smp.c                   |   6 +
->  drivers/irqchip/Makefile                      |   2 +-
->  drivers/irqchip/irq-loongarch-avec.c          | 426 ++++++++++++++++++
->  drivers/irqchip/irq-loongarch-cpu.c           |   5 +-
->  drivers/irqchip/irq-loongson-eiointc.c        |   7 +-
->  drivers/irqchip/irq-loongson-pch-msi.c        |  24 +-
->  include/linux/cpuhotplug.h                    |   3 +-
+On Tue, Aug 20, 2024 at 09:07:22AM -0700, Sean Christopherson wrote:
+> On Tue, Aug 20, 2024, Will Deacon wrote:
+> > On Fri, Aug 02, 2024 at 12:16:17PM -0700, Sean Christopherson wrote:
+> > > Do arch-specific range-based TLB flushes (if they're supported) when
+> > > flushing in response to mmu_notifier events, as a single range-based flush
+> > > is almost always more performant.  This is especially true in the case of
+> > > mmu_notifier events, as the majority of events that hit a running VM
+> > > operate on a relatively small range of memory.
+> > > 
+> > > Cc: Marc Zyngier <maz@kernel.org>
+> > > Cc: Will Deacon <will@kernel.org>
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > > 
+> > > This is *very* lightly tested, a thumbs up from the ARM world would be much
+> > > appreciated.
+> > > 
+> > >  virt/kvm/kvm_main.c | 15 ++++++++++++++-
+> > >  1 file changed, 14 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index d0788d0a72cc..46bb95d58d53 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+> > >  	struct kvm_gfn_range gfn_range;
+> > >  	struct kvm_memory_slot *slot;
+> > >  	struct kvm_memslots *slots;
+> > > +	bool need_flush = false;
+> > >  	int i, idx;
+> > >  
+> > >  	if (WARN_ON_ONCE(range->end <= range->start))
+> > > @@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+> > >  					goto mmu_unlock;
+> > >  			}
+> > >  			r.ret |= range->handler(kvm, &gfn_range);
+> > > +
+> > > +			/*
+> > > +			 * Use a precise gfn-based TLB flush when possible, as
+> > > +			 * most mmu_notifier events affect a small-ish range.
+> > > +			 * Fall back to a full TLB flush if the gfn-based flush
+> > > +			 * fails, and don't bother trying the gfn-based flush
+> > > +			 * if a full flush is already pending.
+> > > +			 */
+> > > +			if (range->flush_on_ret && !need_flush && r.ret &&
+> > > +			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
+> > > +							     gfn_range.end - gfn_range.start))
+> > > +				need_flush = true;
+> > 
+> > Thanks for having a crack at this.
+> > 
+> > We could still do better in the ->clear_flush_young() case if the
+> 
+> For clear_flush_young(), I 100% think we should let architectures opt out of the
+> flush.  For architectures where it's safe, the primary MMU doesn't do a TLB flush,
+> and hasn't for years.  Sending patches for this (for at least x86 and arm64) is
+> on my todo list.
 
-This patch is doing too many things at once and is absolutely not
-reviewable.
+I can see the appeal of dropping the invalidation altogether, although
+with the zoo of different micro-architectures we have on arm64 I do
+worry that it could potentially make the AF information a lot useful on
+some parts. Does x86 make any guarantees about when an old pte becomes
+visible to the CPU in the absence of explicit TLB invalidation? (e.g.
+I'm wondering if it's bounded by the next context switch or something
+like that).
 
-Please split it up into the obvious bits and pieces:
+> Even better would be to kill off mmu_notifier_clear_flush_young() entirely, e.g.
+> if all KVM architectures can elide the flush.
 
-   1) The IRQ_NOPROBE change
+I, for one, would love to see fewer MMU notifiers :)
 
-   2) See below
+> And even better than that would be to kill pxxx_clear_flush_young_notify() in
+> the kernel, but I suspect that's not feasible as there are architectures that
+> require a TLB flush for correctness.
 
-   3) Documentation
+I think you might want it for IOMMUs as well.
 
-   4) Add the arch/loongson parts, i.e. all the defines and
-      basic required function prototypes with a little twist.
-      Add a Kconfig symbol:
+> > handler could do the invalidation as part of its page-table walk (for
+> > example, it could use information about the page-table structure such
+> > as the level of the leaves to optimise the invalidation further), but
+> > this does at least avoid zapping the whole VMID on CPUs with range
+> > support.
+> > 
+> > My only slight concern is that, should clear_flush_young() be extended
+> > to operate on more than a single page-at-a-time in future, this will
+> > silently end up invalidating the entire VMID for each memslot unless we
+> > teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
+> 
+> I'm not sure I follow the "entire VMID for each memslot" concern.  Are you
+> worried about kvm_arch_flush_remote_tlbs_range() failing and triggering a VM-wide
+> flush?
 
-	Kconfig IRQ_LOONGARCH_AVEC
-        	bool  
+The arm64 implementation of kvm_arch_flush_remote_tlbs_range()
+unconditionally returns 0, so we could end up over-invalidating pretty
+badly if that doesn't change. It should be straightforward to fix, but
+I just wanted to point it out because it would be easy to miss too!
 
-      in drivers/irqchip/Kconfig. This allows you to add all
-      arch/loongarch/ changes with the simple tweak:
-
-      #ifdef CONFIG_IRQ_LOONGARCH_AVEC
-      # define cpu_has_avecint		cpu_opt(LOONGARCH_CPU_AVECINT)
-      #else
-      # define cpu_has_avecint		false
-      #endif
-      
-      and
-      
-      #ifdef CONFIG_IRQ_LOONGARCH_AVEC
-      # define SMP_CLEAR_VECTOR		BIT(ACTION_CLEAR_VECTOR)
-      #else
-      # define SMP_CLEAR_VECTOR		(0)
-      #endif
-
-      That way the compiler will optimize out stuff like the
-      SMP_CLEAR_VECTOR handling and you only need the prototype of
-      complete_irq_moving(), but no implementation.
-
-   5) Change the CPU hotplug callback for EOINTC and do
-      the acpi_cascade_irqdomain_init() change.
-
-   6) Prepare get_pch_msi_handle() in the pch MSI driver
-
-   7) Implement the driver and select IRQ_LOONGARCH_AVEC
-      from IRQ_LOONGARCH_CPU
-
-   8) Remove the IRQ_LOONGARCH_AVEC helpers
-
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 70f169210b52..0e3abf7b0bd3 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -85,6 +85,7 @@ config LOONGARCH
->  	select GENERIC_ENTRY
->  	select GENERIC_GETTIMEOFDAY
->  	select GENERIC_IOREMAP if !ARCH_IOREMAP
-> +	select GENERIC_IRQ_MATRIX_ALLOCATOR
-
-Please move this to IRQ_LOONGARCH_CPU in patch #7
-
-> @@ -92,15 +103,21 @@ int liointc_acpi_init(struct irq_domain *parent,
->  					struct acpi_madt_lio_pic *acpi_liointc);
->  int eiointc_acpi_init(struct irq_domain *parent,
->  					struct acpi_madt_eio_pic *acpi_eiointc);
-> +int avecintc_acpi_init(struct irq_domain *parent);
-> +
-> +void complete_irq_moving(void);
->  
->  int htvec_acpi_init(struct irq_domain *parent,
->  					struct acpi_madt_ht_pic *acpi_htvec);
->  int pch_lpc_acpi_init(struct irq_domain *parent,
->  					struct acpi_madt_lpc_pic *acpi_pchlpc);
-> -int pch_msi_acpi_init(struct irq_domain *parent,
-> -					struct acpi_madt_msi_pic *acpi_pchmsi);
->  int pch_pic_acpi_init(struct irq_domain *parent,
->  					struct acpi_madt_bio_pic *acpi_pchpic);
-> +int pch_msi_acpi_init(struct irq_domain *parent,
-> +					struct acpi_madt_msi_pic *acpi_pchmsi);
-> +int pch_msi_acpi_init_v2(struct irq_domain *parent,
-> +					struct acpi_madt_msi_pic *acpi_pchmsi);
-
-This is really the wrong place for all these prototypes. They are only
-used in drivers/irqchip/... except for complete_irq_moving().
-
-So the proper place for them is drivers/irqchip/irq-loongarch.h
-
-Move them there. This is patch #2 which I referred to above.
-
->
-> +static phys_addr_t msi_base_addr;
->
-
-So you have everything related to the avec chip in loongarch_avec, so
-why don't you move that into that data structure?
-
-> +struct avecintc_chip {
-> +	struct fwnode_handle	*fwnode;
-> +	struct irq_domain	*domain;
-> +	struct irq_matrix	*vector_matrix;
-> +	raw_spinlock_t		lock;
-> +};
-
-The lock should be the first member as spinlocks have alignment
-requirements....
-
-> +static int avecintc_domain_alloc(struct irq_domain *domain,
-> +				 unsigned int virq, unsigned int nr_irqs, void *arg)
-> +{
-> +	guard(raw_spinlock_irqsave)(&loongarch_avec.lock);
-> +
-> +	for (unsigned int i = 0; i < nr_irqs; i++) {
-> +		struct irq_data *irqd = irq_domain_get_irq_data(domain, virq + i);
-> +		struct avecintc_data *adata = kzalloc(sizeof(*adata), GFP_KERNEL);
-
-That was never tested with any debug. You _cannot_ do a GFP_KERNEL
-allocation with the raw spinlock held. And no, don't use
-GFP_ATOMIC. There is absolutely zero reason to hold the lock accross all
-of that. As you got your ideas from x86_vector_alloc_irqs(), you could
-have looked at how that's done correctly.
-
-> +		unsigned int cpu, ret;
-> +
-> +		if (!adata)
-> +			return -ENOMEM;
-> +
-> +		ret = irq_matrix_alloc(loongarch_avec.vector_matrix, cpu_online_mask, false, &cpu);
-> +		if (ret < 0) {
-> +			kfree(adata);
-> +			return ret;
-> +		}
-> +
-> +		adata->moving = 0;
-
-Redundant. The struct is allocated with kzalloc()...
-
-> +		adata->prev_cpu = adata->cpu = cpu;
-> +		adata->prev_vec = adata->vec = ret;
-> +		adata->managed = irqd_affinity_is_managed(irqd);
-
-If you want to support managed interrupts, then you cannot allocate
-from the CPU online mask. See x86...
-
-> +		irq_domain_set_info(domain, virq + i, virq + i, &avec_irq_controller,
-> +				    adata, handle_edge_irq, NULL, NULL);
-> +		irqd_set_single_target(irqd);
-> +		irqd_set_affinity_on_activate(irqd);
-> +
-> +		per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(irqd);
-
-static int avecintc_alloc_vector(struct avecintc_adata *adata)
-{
-        int ret, cpu;
-
-	guard(raw_spinlock_irqsave)(&loongarch_avec.lock);
-	ret = irq_matrix_alloc(loongarch_avec.vector_matrix, cpu_online_mask, false, &cpu);
-        if (ret < 0)
-              return ret;
-
-	adata->prev_cpu = adata->cpu = cpu;
-	adata->prev_vec = adata->vec = ret;
-        per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(irqd);
-        return 0;
-}
-
-static int avecintc_domain_alloc(struct irq_domain *domain, ...)
-{
-	for (unsigned int i = 0; i < nr_irqs; i++) {
-		struct irq_data *irqd = irq_domain_get_irq_data(domain, virq + i);
-		struct avecintc_data *adata = kzalloc(sizeof(*adata), GFP_KERNEL);
-                int ret;
-
-		if (!adata)
-			return -ENOMEM;
-
-		irq_domain_set_info(domain, virq + i, virq + i, &avec_irq_controller,
-				    adata, handle_edge_irq, NULL, NULL);
-		irqd_set_single_target(irqd);
-		irqd_set_affinity_on_activate(irqd);
-
-		ret = avecintc_alloc_vector(adata);
-                if (ret < 0) {
-			kfree(adata);
-                        return ret;
-                }
-         }
-No?
-
-> +static void clear_free_vector(struct irq_data *irqd)
-> +{
-> +	struct avecintc_data *adata = irq_data_get_irq_chip_data(irqd);
-> +	bool managed = irqd_affinity_is_managed(irqd);
-
-Don't even try. Your managed support is broken at the allocation side
-and at several other places.
-
-> +	per_cpu(irq_map, adata->cpu)[adata->vec] = NULL;
-> +	irq_matrix_free(loongarch_avec.vector_matrix, adata->cpu, adata->vec, managed);
-> +	adata->cpu = UINT_MAX;
-> +	adata->vec = UINT_MAX;
-> +
-> +#ifdef CONFIG_SMP
-> +	if (!adata->moving)
-> +		return;
-> +
-> +	per_cpu(irq_map, adata->prev_cpu)[adata->prev_vec] = NULL;
-> +	irq_matrix_free(loongarch_avec.vector_matrix,
-> +			adata->prev_cpu, adata->prev_vec, adata->managed);
-> +	adata->moving = 0;
-> +	adata->prev_vec = UINT_MAX;
-> +	adata->prev_cpu = UINT_MAX;
-
-What's all the clearing for when you kfree() it two lines further down?
-
-> +	list_del_init(&adata->entry);
-> +#endif
-> +	kfree(adata);
-
-And no, not under the lock .... Move the locking into this function and
-kfree() at the call site. There is zero reason to hold the lock over the
-full loop.
-
-> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
-> +				     const unsigned long end)
-> +{
-> +	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
-> +
-> +	msi_base_addr = pchmsi_entry->msg_address - AVEC_MSG_OFFSET;
-> +
-> +	return pch_msi_acpi_init_v2(loongarch_avec.domain, pchmsi_entry);
-> +}
-
-...
-
-> +int __init pch_msi_acpi_init_v2(struct irq_domain *parent, struct acpi_madt_msi_pic *acpi_pchmsi)
-
-The second argument is required because?
-
-Thanks,
-
-        tglx
+Will
 
