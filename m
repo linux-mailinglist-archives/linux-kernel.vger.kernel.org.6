@@ -1,108 +1,262 @@
-Return-Path: <linux-kernel+bounces-293483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051E5958062
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841CF958060
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301AE1C23CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:54:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1751C23B51
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690A618A6AE;
-	Tue, 20 Aug 2024 07:54:36 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB3189F31;
+	Tue, 20 Aug 2024 07:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b="jRG4psKT";
+	dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b="jRG4psKT"
+Received: from ZRAP278CU002.outbound.protection.outlook.com (mail-switzerlandnorthazon11020126.outbound.protection.outlook.com [52.101.186.126])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B842189BAF;
-	Tue, 20 Aug 2024 07:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724140476; cv=none; b=ApuPa/O2Y1zM7D9YkQ8WN+icwpke2xEADuP2GVGWOrxjHCOY6AYSkiu+vvPDYWOOM9PIl1WfBuQlGDSSLq2fcExuDYEMbqKV56NNlFDwPx+X9KBIkAQAtwrOpCsjbbisejrA+58q7ymjggGmlqbYoGHPVMwUpBYkxq41nu6F+xM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724140476; c=relaxed/simple;
-	bh=+KpdcvUTND5J5Va9g0E1ckgOjItSX9mNrRy01W0IVqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pNAjOYUi2dLZK2KFnnf8FwZbkZx6ngNt2/211rg113sFzUNXoR6yhPPusk+OFn4ZV9ZlCxmQ6dJV8AXOWfYnmB5gKyVMFzhv7Y+bNfS3B01r/9GUFs0Rjz9V0aUMmHb2FX3QB6yZGP846vE50I4pl1ao8pQ6Bhds6BELrPomTm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABXXByaS8RmkLiHCA--.57264S2;
-	Tue, 20 Aug 2024 15:54:10 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: maz@kernel.org,
-	tglx@linutronix.de,
-	Suravee.Suthikulpanit@amd.com,
-	akpm@linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
-Date: Tue, 20 Aug 2024 15:54:01 +0800
-Message-Id: <20240820075401.1206522-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AA2189B81;
+	Tue, 20 Aug 2024 07:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.186.126
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724140471; cv=fail; b=oLClVvEE+MRbanD36Uqv3hOyZ7zsNuqithg3wx2V4EQ7IIMkHEro7d62n5KRqBY8Q8k9iKlJlajtH2NqNuoaEhizMMpaFE9rk2i2R4nb2dweRP/dnEAWQIEYszefrywxquCSnOpnejAvDHQE2Fh5ad8xwISHY7vQ+5bJ6NXxjP0=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724140471; c=relaxed/simple;
+	bh=8ykFTZf4s+yHmEZTPjiOq4REcooRv78CKjiDBoBnDD0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=M+ytLPgZgTCuCgZO40OunYw53wiPsVdJNVmBOBj5N6y7mfVuO7Vp7ezf5SN0gs7uJXQO3QfyK79IMCqPsHRUW8XpGqSyT/C7yTxOF1LNAJoGYaUdyv9ctD6Tc5EyMJSkO+WshyfxPEVcI9AgvJf224iPoQ5N2m7ssxpfZ+mca1E=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=duagon.com; spf=pass smtp.mailfrom=duagon.com; dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b=jRG4psKT; dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b=jRG4psKT; arc=fail smtp.client-ip=52.101.186.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=duagon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=duagon.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=bLbE1aDD6M16m4mwTG5FvNpg1lXlGdH5UNAZGSNxAsK4OgYzaQoLNovBbIepPLY6qyBihGhkkc81fuQNycgW8WWeurAdtt1t2IS9kfTzlDUiNQWLI6LTFCGg5fUGhnRN/ayYDPNvSaIfmrBFaW/9CrjP5DrcwWvWT606dsDMhbJUJVVVCMDomqsWcWhQfH6pUUjoDT9CKT9TD5cbUTMAMkM1gOiRPg57HfGH2IU9kdQshqUxDAQ+t/wlTintxKqX8Ri7O2qTQfi4ZMWUqStlCKU2pva0Puf4+XIoS9VxgaTrWND0APnYeeMkrlokUWuBwTBXQIP6zDUNa5SF6Z7pfw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dZInMhcoqKfSNzK5+Vkxc8u3jyiBmsIC5OhGz/BG04Q=;
+ b=xY4lFQjeReBghwb1CuUpoXLPz+6ky/Y5jY8PLI2TtuDllF+VmLThFhkKxEYEmKwxrwn4hO7Te9gxNz67UiZDKIRMYyoB39KFUdJRO8x0Ci3uVXr2ZAiHPxNxkjRSBaJmQHVvUWfZVvvqu1DYqr/c1/lt15AkIwiL9O6BeqO2HqjWRqAzPgvhobY3xb2pZ/JHd23w2ahNN4yKoJD05hK6Z5J/y/8jsZfHDYyFcZVTz0iUNDZqTsT9EbKXDbEJu16U9UGRLLpKTMe786rjGU8nY6CEbVCjHyhqv79bvcH8yT9v3mzVPhdGsDT9GK4J2yH/UKLhGqI48KwutXneYMcwgw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.38.86.34) smtp.rcpttodomain=google.com smtp.mailfrom=duagon.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=duagon.com;
+ dkim=pass (signature was verified) header.d=duagon.com; arc=pass (0 oda=1
+ ltdi=1 spf=[1,1,smtp.mailfrom=duagon.com] dkim=[1,1,header.d=duagon.com]
+ dmarc=[1,1,header.from=duagon.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=duagon.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dZInMhcoqKfSNzK5+Vkxc8u3jyiBmsIC5OhGz/BG04Q=;
+ b=jRG4psKTolq2zgFfcytN0iknGbe0vugooSw+vFqO7HHH5tKYdlR8LZVkCWq9rddiy9r5vKH3nofmrFfhg5WfPa9EytaG8Amg801Urc4jypFlav2gq0XMPWyNJ8m6kpnaYSrEY61+ugaF6SSEa2Ff9s8E603pRGdJ9mcxNBKGl/k=
+Received: from DUZPR01CA0328.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4ba::13) by ZR0P278MB0187.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:37::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
+ 2024 07:54:25 +0000
+Received: from DB5PEPF00014B99.eurprd02.prod.outlook.com
+ (2603:10a6:10:4ba:cafe::fd) by DUZPR01CA0328.outlook.office365.com
+ (2603:10a6:10:4ba::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25 via Frontend
+ Transport; Tue, 20 Aug 2024 07:54:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.38.86.34)
+ smtp.mailfrom=duagon.com; dkim=pass (signature was verified)
+ header.d=duagon.com;dmarc=pass action=none header.from=duagon.com;
+Received-SPF: Pass (protection.outlook.com: domain of duagon.com designates
+ 194.38.86.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.38.86.34; helo=securemail.duagon.com; pr=C
+Received: from securemail.duagon.com (194.38.86.34) by
+ DB5PEPF00014B99.mail.protection.outlook.com (10.167.8.166) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7897.11
+ via Frontend Transport; Tue, 20 Aug 2024 07:54:24 +0000
+Received: from securemail (localhost [127.0.0.1])
+	by securemail.duagon.com (Postfix) with SMTP id 4Wp1vN1nkVzxpD;
+	Tue, 20 Aug 2024 09:54:24 +0200 (CEST)
+Received: from ZRAP278CU002.outbound.protection.outlook.com (mail-switzerlandnorthazlp17010001.outbound.protection.outlook.com [40.93.85.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by securemail.duagon.com (Postfix) with ESMTPS;
+	Tue, 20 Aug 2024 09:54:23 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vSSmgFClvLkKtxfeutw2e6cZ4QMgKlYzJKZ6m6hGR1Olb4+/Hvt0XEndN4GdvwRk0KtxDBiZMf5pMkq1qfS3D3aP93kSwzPIAcjs3fqOUH/mUmcCH84MwWpK0yLhCXCiJaw3wpQqNUQLdkq4xdrZaMigF1dBeXaYzDHcLbYzDIxNQx/bqYvaFXsRE+4LBK/HaQJvOBTVYY38EwvQvoXedA8MyH29o7mWWUG5A46eucWPfiwqmsGB+loREArdkjw2bosPtZb2BZPSkgY8hkEcuKP/YA43r/6WfXPSTDLBOqRgnHhtxPkPpAvk/m3r+TipySpP+U9PlbUb/0Z5zoEzyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dZInMhcoqKfSNzK5+Vkxc8u3jyiBmsIC5OhGz/BG04Q=;
+ b=ybLMi+sVK+WmTW8OCxXfK0AyRe8IvmID+tRpWZnj2r4NgT1lut9vo6TvtN2vVyMQzRbPRu2nng5W43gGOATw43lCIz56sGNFhySycmZDM3h+C7635V1wdcMqaj2JkrThECFFHCNV28lxALruITe8s5D2wtANtA1mxdzGh2Fx+tdguIVX5mR7/YXOk7Z0w9RX55SSh8pMHo8xH+ouNwnljBmP4OCLx1Y4JOklOEs6v9IPxJ5v6nGLlRwH0OPAaOn9Xf0NFUp7raPoUSjzubxGC93yjEQwXXvO5JX7t9Xd9cEhlIKuzq0E3Pp3hJBAwpnhzq5mUWx9HJ4eUz/tLBWEzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=duagon.com; dmarc=pass action=none header.from=duagon.com;
+ dkim=pass header.d=duagon.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=duagon.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dZInMhcoqKfSNzK5+Vkxc8u3jyiBmsIC5OhGz/BG04Q=;
+ b=jRG4psKTolq2zgFfcytN0iknGbe0vugooSw+vFqO7HHH5tKYdlR8LZVkCWq9rddiy9r5vKH3nofmrFfhg5WfPa9EytaG8Amg801Urc4jypFlav2gq0XMPWyNJ8m6kpnaYSrEY61+ugaF6SSEa2Ff9s8E603pRGdJ9mcxNBKGl/k=
+Received: from GVAP278MB0119.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:21::8) by
+ ZRAP278MB0740.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:4c::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.21; Tue, 20 Aug 2024 07:54:19 +0000
+Received: from GVAP278MB0119.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::2dfe:6978:5fe7:2148]) by GVAP278MB0119.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::2dfe:6978:5fe7:2148%4]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
+ 07:54:19 +0000
+From: "Amori, Alberto" <Alberto.Amori@duagon.com>
+To: "helgaas@kernel.org" <helgaas@kernel.org>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: Question about AER in latest kernels (text format)
+Thread-Topic: Question about AER in latest kernels (text format)
+Thread-Index: Adry1iiMmzIfH6wMR2SKLqe5Prk8SQ==
+Date: Tue, 20 Aug 2024 07:54:19 +0000
+Message-ID:
+ <GVAP278MB0119BBB30DC2065981D978B5968D2@GVAP278MB0119.CHEP278.PROD.OUTLOOK.COM>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-codetwoprocessed: true
+x-codetwo-clientsignature-inserted: true
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=duagon.com;
+x-ms-traffictypediagnostic:
+	GVAP278MB0119:EE_|ZRAP278MB0740:EE_|DB5PEPF00014B99:EE_|ZR0P278MB0187:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54b688db-7781-4867-dac1-08dcc0ed4f56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?Nqs2K8X4SFNQLokqeb3x4Pu5DQQG1+RYmUaKRwoOS4Z5hEZ9RfAMvXHNdaBf?=
+ =?us-ascii?Q?UfctLwNCIDrTcdlxjMJ4Ojv+IZNHzdYLEf2djsvJrCSc+5eToujFbFqrCsPi?=
+ =?us-ascii?Q?zG/t+JL9vAnE4KcGWLp+9R16IWvBJIbuuMeV5YWxdazrIn9FjD/PRnGFxSP1?=
+ =?us-ascii?Q?oUeeh8HTvTGXNpM0aTvMKoJ5t/ZptiKO6Sb4QoUmjFqKvDM2uuU2ckVKdtxO?=
+ =?us-ascii?Q?I0Ho1zh/7DxnkOdaziGj2G6enu6c+k+MjE7nErFYwFaJ5UW9WoWdKZCnqRf7?=
+ =?us-ascii?Q?qXHmV51yC1gGbg4dh3vwBwnWR+ixDwv0YykN5aS2wV2NMU7N52JZx7iIrsKU?=
+ =?us-ascii?Q?Jn4xCvIBIpaJABgd8sMhoorbmMK01HAgFmIiyaUyQqhEEUetQQWgI3juBkuB?=
+ =?us-ascii?Q?Bki3EVSz57wSqvGXOVaUAkNH1Q3MnyI7cuw8BChaN8JwAwpHr3CAJFeVJD2c?=
+ =?us-ascii?Q?CZzaSHX77RkIJgUid8gdU23i/Z79z2lIz2+Rx16nd9KjilDTPV0lPFMP+0Yy?=
+ =?us-ascii?Q?ziZGj3dzfjOmMD/hzxcU64odYQMZUmyHJOAwNwdL+2cF04aoHeHBLiolgORI?=
+ =?us-ascii?Q?2VUgTbhQI7OjWtQ1RQJSzk+9PajQDazUdCFohKOaN17zdluUiPhcyRM26e6o?=
+ =?us-ascii?Q?HfOhN1J2G2Kuecr3K2qhXnw1r6EJckm/lLzfa8ZzmDuaCeNWgAUd42fHJhFz?=
+ =?us-ascii?Q?0zRI39+ctM68txb6MvluMuIOC6ytJMRM0UWObBNLeuBmRTYOaNCaZQ6rfbmr?=
+ =?us-ascii?Q?mjiCyOcU/RcDHP62a/+e/bnttsUVXcWyRF6j3JPUiLC/H+oUFfvtKfriYHI2?=
+ =?us-ascii?Q?sGPEj0w64QAy6U+zZ0kuMwyGK7ilQm9Wpz35tiOhK7MbgckgKSUZ5DbMYkdj?=
+ =?us-ascii?Q?IYPuai93NS5CPqW7pt/k9UC+wLgPIlQYPLrEpZ9NWO0sWXKBp8fwgxdQVnjK?=
+ =?us-ascii?Q?z1auyoWnBGaxnuTkbDVeCNnxLq992KfXjKoumPRomdq82576cXZoo2wTbqK7?=
+ =?us-ascii?Q?h1zDFfexjC2J7uyLeL/+LLMKI6B7cRb3M/E7yhPuIXqgVB91nhz1w9OqX9eE?=
+ =?us-ascii?Q?mi2308rxsDwyglCmJFsmSycOmFWSJTLwiTzgTqd+9c+b/JLnUnb1lrIodXY5?=
+ =?us-ascii?Q?NCAw8WqAd5OuJWMvZp/W1+4QYb3OPybEBB9tvw+dCWGcwjck1axglez+C+kI?=
+ =?us-ascii?Q?8IksvTpM8LyVIOMepzSxDCMcEFbqj6vSRSZx+ES2fiUUMJ6LlBMfWnqMYnDp?=
+ =?us-ascii?Q?w6zWY/LrD8jeyybFBhBouBpeWz0sefFTV+ShJxzjT4hZHtHsPWw9L/MEPS8K?=
+ =?us-ascii?Q?DXkcRK9ycSN6CEJxCdGKvy1R8f64KaVvrZzbPwareA8AB7I0yXyVH9lOdtLA?=
+ =?us-ascii?Q?UOXJNzU=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVAP278MB0119.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1102;
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXXByaS8RmkLiHCA--.57264S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XrWUWF18tF4UWF43uF4kJFb_yoWDGrb_Gr
-	y8XF9xGFy0kr48Aws7Cw13uryUZr4kWF1I9r40yF93A348Z34xArnrZa4rJ34UuFs0vr1x
-	CFs0yr1Skr129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUvg4fUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZRAP278MB0740
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B99.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	2c51cf6d-71e1-4dc2-7c63-08dcc0ed4be9
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|35042699022|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tKe0tPoAvcK2HBcn/zyB7eFDfXpPgJUkeMnyBHTiW7sRT2ypwe4OWE8ThQPX?=
+ =?us-ascii?Q?ehFULWoJ2ADtqixW3q1x6Rv3cFyp1SIalf/7uvN071dM5PLFGMmVtuPLghJk?=
+ =?us-ascii?Q?YqNE/RsVGpinjR+gyudLNQTn/8lkeqHOo14Oqk3wvmybmByfeHMr4FfYtE6e?=
+ =?us-ascii?Q?AHaE83A8dBQPCBpR6H6KoK2dZAurRmLSotPfrjKj58xk4GTIAG9kEn8fkzP2?=
+ =?us-ascii?Q?KbBb1iLM6q3a0NqY3+nLF7YXRhhMzFwxL5YnSLRvd4SxDtNz8y9EATQybGtx?=
+ =?us-ascii?Q?8BQDFBLR5ZBoaZgc0xVvlvv+T9pH3tYdxmEasLIUDL/zEGMJmpGq5lyl0Oni?=
+ =?us-ascii?Q?tadPeDV1/Haf9Fw4perYPmcDY8tRExoaxY7GMu+Mk43EQXnN/GPono/S+vzD?=
+ =?us-ascii?Q?DfmY1VQfTSEz8A4+pLy1TtvLdhtm32yNqar/Aqbp7BcedZUNOOA1DaUWrBiS?=
+ =?us-ascii?Q?EDEvu904r3mp8uyEixD5XJqosMorqfgLp1wvl3J8N0MEKgiqOHnKB74a8TYJ?=
+ =?us-ascii?Q?FqNajA6Xt46amXw4WkRngqS3x2QTomiqiR39a0mcrC1tdI6cDUmDb1HdOY7K?=
+ =?us-ascii?Q?Sgce+Ffyn0ko2PAOPkOrxB26inQepJu39tRRd9pcLJBBZn09xeS82EL34dnL?=
+ =?us-ascii?Q?nIXViFCHmfX1ooka4p88NH5LQ0gJumhKN4qDX1gzRXzKC27qtb6Cd9Y79UZ+?=
+ =?us-ascii?Q?a2AXKTH9DwH/0TfDH7igQf0SDzdcn5TYec+R8B75kKYlilW/jutvo/by/Cl6?=
+ =?us-ascii?Q?u3sCkp7FyhD5UcXpLMe9OSoDqUX25+pz+rBs0fqlqFwfA+JLs41LIgILyvQr?=
+ =?us-ascii?Q?aA/Ei+2mlrF8DTTb4QPX8QX3TGMDDEhAoFPoZy6QHV5AaDkI2u2/pqOOJE/g?=
+ =?us-ascii?Q?lkv9GA/jXLTmeLWggUg7Yps/7s8HFvXCK7e1CmCuzHWthRTKVN19tVJzeubi?=
+ =?us-ascii?Q?Gty4tkzJ4qNes9Q9JO+8+4Aam/LtM2omMoythcQPLXR/sZrmgFflfvdSgqg+?=
+ =?us-ascii?Q?1kdAzRTC6YWwhwBn1T0I3YMHACprJwD/q9+XZtu2AdPP3bgf02kAjmUf+AS4?=
+ =?us-ascii?Q?2YAM/iVIIhmnR3O8eakNa8/nILwvhHW6ZYq6N4RIWd7jkCvAvIBYQmJvzx/a?=
+ =?us-ascii?Q?712gdx2HxazTrD8NlgygFoRpKu1PTGm/nDlmYwZcKbB7WlLkjHu0s+WHh1Pk?=
+ =?us-ascii?Q?NBkc9x3ysLnYjmcZNJPmtZrWOxvOcM5BZ64hqgzl2mLVm4QOB+xVY3F/hVSl?=
+ =?us-ascii?Q?3masJvXqC6cbH6UQYNoaV2eHYYL5J93gSFkvnOqI6qWD1204HNDhRBct3q56?=
+ =?us-ascii?Q?jGSi+3Bmbh/EX8LUhyQIEoJKkFaNnh/DoZKm6esJtGRTMG547TAcyWxqo+nu?=
+ =?us-ascii?Q?4Qn1uzx4YjVQW3Fi3ZBAibB0enVa?=
+X-Forefront-Antispam-Report:
+	CIP:194.38.86.34;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:securemail.duagon.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: duagon.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 07:54:24.7673
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54b688db-7781-4867-dac1-08dcc0ed4f56
+X-MS-Exchange-CrossTenant-Id: e5e7e96e-8a28-45d6-9093-a40dd5b51a57
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5e7e96e-8a28-45d6-9093-a40dd5b51a57;Ip=[194.38.86.34];Helo=[securemail.duagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B99.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR0P278MB0187
 
-Add the missing of_node_put() to release the refcount incremented
-by of_find_matching_node().
+Good morning Mr. Helgas,
+Sorry if I am not posting my question through the proper channel, but I am =
+not so familiar with that.
 
-Cc: stable@vger.kernel.org
-Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch according to suggestions.
----
- drivers/irqchip/irq-gic-v2m.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I have noticed that the Kernel API pci_enable_pcie_error_reporting() has be=
+en removed from kernel 6.6
 
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index 51af63c046ed..d5988012eb40 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -407,12 +407,12 @@ static int __init gicv2m_of_init(struct fwnode_handle *parent_handle,
- 
- 		ret = gicv2m_init_one(&child->fwnode, spi_start, nr_spis,
- 				      &res, 0);
--		if (ret) {
--			of_node_put(child);
-+		if (ret)
- 			break;
--		}
- 	}
- 
-+	if (ret && child)
-+		of_put_node(child);
- 	if (!ret)
- 		ret = gicv2m_allocate_domains(parent);
- 	if (ret)
--- 
-2.25.1
+https://lore.kernel.org/all/20230710232136.233034-3-helgaas@kernel.org/
+"pci_enable_pcie_error_reporting() is used only inside aer.c.  Stop exposin=
+g it outside the file."
+
+This caused a build error in our PCIe driver after upgrading the kernel and=
+ I fixed it adding a pre-processor check:
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 6, 0)
+    result =3D pci_enable_pcie_error_reporting(dev);
+    if(result) {
+        err(" Unable to enable PCIe error reporting");
+        printk(KERN_WARNING "dg pci_enable_pcie_error_reporting returned %d=
+ (ignoring)\n", result);
+    }
+#else
+    printk(KERN_WARNING "pci_enable_pcie_error_reporting is not available i=
+n this kernel version\n");
+#endif
+
+In the newer kernel docs (see https://www.kernel.org/doc/html/v6.5/PCI/pcie=
+aer-howto.html) this paragraph has been removed:
+
+"8.3.3. helper functions
+int pci_enable_pcie_error_reporting(struct pci_dev *dev);
+pci_enable_pcie_error_reporting enables the device to send error messages t=
+o root port when an error is detected. Note that devices don't enable the e=
+rror reporting by default, so device drivers need call this function to ena=
+ble it."
+
+I guess that with the new kernels the AER is implicitly enabled when instal=
+ling the device (e.g. when pci_device_add is called), but can you confirm t=
+his?
+Or maybe the call of pci_enable_pcie_error_reporting() was superfluous also=
+ in the kernels < 6.6?
+
+Thank you in advance
+Best regards
+
+Alberto Amori
+Senior Embedded Software Engineer
+Phone +41 44 743 73 94
+duagon AG I Riedstrasse 12 I 8953 Dietikon I Switzerland I www.duagon.com
 
 
