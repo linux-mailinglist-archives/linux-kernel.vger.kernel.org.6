@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-293966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296CF958707
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:32:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C54C958734
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BBE1F22D9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:32:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3925DB24154
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E3318EFF4;
-	Tue, 20 Aug 2024 12:32:51 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A532218FC80;
+	Tue, 20 Aug 2024 12:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8YR08yl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89E28FC;
-	Tue, 20 Aug 2024 12:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB341370
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724157171; cv=none; b=bc+6x5EwkzvCmoJlV0x4dAm4QSuR45cmwg5A/cMBef2NmH58t+/eIw7ClylpehsnN2ZYvwKwptg0Vm7s7Ax606nIwBg1vaQa5AlFLyUeiyDw11QwZMLWOThnJ4IKpf0vgu3v4g8ea2JZZYR9ftdNKIjG4O6pCCshQuZxtJvI+jY=
+	t=1724157628; cv=none; b=FpIeh4YdSpMSNqe0IaHbVQNCdhen418uUnW7c0E9HR5E6OyNu2A1GWIZPAu743SR7jGTPgzoZc4H/l+gjoHeYjaLOJzXph8oarzUl3SNDKgaG4OSkt4Bh6D7BlB+H3ZHqFCPen93Ic7OIxgfWS/R4jwV3E6tlC9/hy5+W9538gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724157171; c=relaxed/simple;
-	bh=G21nnuZEOvE5ATHCIdyrfO1DI30El2DybGVF5gL0Lfo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNafEae6CcBwqY6wnZgsOllMRiFRWumwkxY6zMEdpuiq+w9RnTF43f1LC3skCb9AQzU9crQpb/Q8I+1jyhfAf/1su0C4dlYQRFMQEi5mqCvRBCTI7dMxf0MSm7HNkmHW2GoJL851207fgogvrJ7hMupvmw1+RtbcDd3TIfD945w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wp83s0lZbz13X4R;
-	Tue, 20 Aug 2024 20:32:09 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id CBECB180105;
-	Tue, 20 Aug 2024 20:32:46 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 20:32:46 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <william.zhang@broadcom.com>, <kursad.oney@broadcom.com>,
-	<jonas.gorski@gmail.com>, <bcm-kernel-feedback-list@broadcom.com>,
-	<broonie@kernel.org>, <anand.gore@broadcom.com>,
-	<florian.fainelli@broadcom.com>, <rafal@milecki.pl>,
-	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] spi: bcmbca-hsspi: Simpify resource lookup
-Date: Tue, 20 Aug 2024 20:40:11 +0800
-Message-ID: <20240820124011.1788479-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724157628; c=relaxed/simple;
+	bh=P16LczguY7fSUQubDRhmxrffuz90bCCespjlFyzAckQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IWdExFOAnSZmcMPA4WABHpBguDWgQlfTDU5OZaK1vLGjbhn031yU0pCN/bam6OFZWnJu07gHs3QVP6SNAR306lLnUhk91+8udqPxSHW08tOdJowBrIXVbQembT4dPzla6qdaj2vcEThD0T37AN1pM0uwJZTYrmzrVbcF25mtRd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8YR08yl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B941DC4AF10;
+	Tue, 20 Aug 2024 12:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724157627;
+	bh=P16LczguY7fSUQubDRhmxrffuz90bCCespjlFyzAckQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M8YR08yls7HTzqfISvHa09GqocL6t1nQEYPdEa75Jaiwwv16YkpdbBhrcTpLJAvaY
+	 8CJEjeF9OhQqghlcQYgI994NqSnAS25fF1Izju04aZR43ycEgYQo8pQatX9npuo0RZ
+	 VgPxGjNJPZDI/Whqb0B+bxS3R+PU98kRer3AfKH+8Ag7p0jM4RP+hiIS0YFoA29QbB
+	 01uJaQ9wi3jdb+11KmaqvS5ELV3rLDDEj4l/RwjArF13/hbSFi3RTy6cCx/s53UFoJ
+	 q9Piz4sUtlKp2zHBvfibaWT5MOyKvupI2IXyOT9Hom0vYWCJNAt0I2xHz8EMqoQUsc
+	 lgcaUEUP6qt0Q==
+Message-ID: <101f33d8-9bb9-4722-9a6a-718394246b70@kernel.org>
+Date: Tue, 20 Aug 2024 14:40:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: mtk-smi: Simplify using devm_clk_get_enabled()
+To: Rong Qianfeng <rongqianfeng@vivo.com>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: opensource.kernel@vivo.com
+References: <20240820123426.48694-1-rongqianfeng@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240820123426.48694-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instead of calling platform_get_resource_byname() and
-devm_ioremap_resource(), simplify the code by simply calling
-devm_platform_ioremap_resource_byname().
+On 20/08/2024 14:34, Rong Qianfeng wrote:
+> devm_clk_get_enabled() will call devm_clk_get() + clk_prepare_enable()
+> and the clock will automatically be disabled, unprepared and freed when
+> the device is unbound from the bus. 
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/spi/spi-bcmbca-hsspi.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+That's obvious, drop. You do not have to explain basic APIs. Instead say
+what is being simplified here.
 
-diff --git a/drivers/spi/spi-bcmbca-hsspi.c b/drivers/spi/spi-bcmbca-hsspi.c
-index 9f64afd8164e..e48a56c68ce7 100644
---- a/drivers/spi/spi-bcmbca-hsspi.c
-+++ b/drivers/spi/spi-bcmbca-hsspi.c
-@@ -433,7 +433,6 @@ static int bcmbca_hsspi_probe(struct platform_device *pdev)
- {
- 	struct spi_controller *host;
- 	struct bcmbca_hsspi *bs;
--	struct resource *res_mem;
- 	void __iomem *spim_ctrl;
- 	void __iomem *regs;
- 	struct device *dev = &pdev->dev;
-@@ -445,17 +444,11 @@ static int bcmbca_hsspi_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
--	res_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hsspi");
--	if (!res_mem)
--		return -EINVAL;
--	regs = devm_ioremap_resource(dev, res_mem);
-+	regs = devm_platform_ioremap_resource_byname(pdev, "hsspi");
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 
--	res_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "spim-ctrl");
--	if (!res_mem)
--		return -EINVAL;
--	spim_ctrl = devm_ioremap_resource(dev, res_mem);
-+	spim_ctrl = devm_platform_ioremap_resource_byname(pdev, "spim-ctrl");
- 	if (IS_ERR(spim_ctrl))
- 		return PTR_ERR(spim_ctrl);
- 
--- 
-2.34.1
+> So simplify mtk_smi_common_probe()
+> accordingly.
+
+Also explain that you fix bug of missing unprepare in unbind and add
+Fixes+CC stable tags.
+
+Best regards,
+Krzysztof
 
 
