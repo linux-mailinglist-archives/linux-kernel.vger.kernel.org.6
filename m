@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-293520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041DC9580D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 142A09580D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB56B236D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:21:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766EFB2312F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C0918A6C9;
-	Tue, 20 Aug 2024 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6649A18A6AD;
+	Tue, 20 Aug 2024 08:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QcZPiNln";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QcZPiNln"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wfr1kIRb";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lxdmpQlF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D6018A6BD;
-	Tue, 20 Aug 2024 08:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DED18C018
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142053; cv=none; b=aK1eM/C9d8OG2WQbtY5JLn7RYjrzzGuHeuQezBJwZLFC5CjeV/vJH9EUMN9b84TN9yHKSbafOzG9mYXu2BtJgCioq3nLuG93nn70GqI4TzMyZA0Z5Cz6bUYnPPqP6fad32WpCa7S+p/dAym/XxUjMReAJuPTn6i7owdV73aFVU0=
+	t=1724142059; cv=none; b=UuMkZNPZ9eIGghl1ulfia/JftcsAiJFbztGXicTB61Uy9pZGETaf/X8Mt9N5yYwsYUYpx91Hnv79QIdK9D6M8RDJDm8wLDI65OApVDSB+z0bQA4WGAAHt7ru8pepHgP8YQfWFobui4h6uP8So0x9SlGQ0kGYS8eGPTxDWDCMHaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142053; c=relaxed/simple;
-	bh=LdJ0j14PPeRaQqhkCz1cF7YZd8b1oQeLdgXvDCV/ZKw=;
+	s=arc-20240116; t=1724142059; c=relaxed/simple;
+	bh=Y514wmYHtnRZjRk6vUzh2xb3kp7DDC9fVzDLx2BIAU4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FTd0y1hAPv8wM/HCdr2ARwk/fUJvKZkgwaGsg4dte7WjRrKyCjABzHPIhJBVu47YtQ9D7mRIxDGVZK3KISqBW/mf7H3SgmB/PpkA4gF7QhMFHO1OlCR/Te2pH0IHCwjIBOc/0+juaGpoBBb+p/kYwlLCV9dXecwRwxi82ki1UKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QcZPiNln; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QcZPiNln; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=eLTRwpjXjeyxuSRydldaza+BE0+w1LFscyD19KXKmVoq/WA8LTzrmUKs4RXDrlqHKxmIfaOiwi72PntWrkKOkxh6y2swLLnUqfeVVCzNEaE8r9ZZBuladZqyijGrxM53MvtALG2okJ8Mgh+8AV1qxssfO0/UIbS4PYgadHOR4tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wfr1kIRb; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lxdmpQlF; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 17AC32253C;
-	Tue, 20 Aug 2024 08:20:50 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E5FEF1FFB4;
+	Tue, 20 Aug 2024 08:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1724142050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	t=1724142056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1k9ZAtPeUmpOdU1rHd9Jn9Q4sZ5l1eGaWrOuL1YLFsk=;
-	b=QcZPiNlniKs3SAqJPfQCQX2AUHxnNnLom/mfporth+idthV/6j0mIKq8feTDkjFhM1HacA
-	7Eb4p1nl2f+1qHFO1tdL9HFBUiderZDZH0vQEtKRpYN7769wRjV6JUiwAifXcM7KRqnZnL
-	CR9WJ+UVehcS1Wm5eLoTbHgPjlqPRJ0=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=QcZPiNln
+	bh=Uhe1/Za2Rsc+OxMtgPmnbZH7qh+wHOykK24Zu10M3lw=;
+	b=Wfr1kIRbJaQ5CYghKSt4ap58FNWgVJdFxoK7j+XScPu3UcYpu+gku6jgbrS3lYhkEgKWCS
+	F0Dppshvt2v/wxC1DU3c46+adTiGoCKb/osYRJQKGKoIx8J8py7s2G/jFFk8/1Vt7nJvQt
+	DMZ9TnL3jErdWh0Ifj91Hcn0l3uKrMw=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=lxdmpQlF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1724142050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	t=1724142055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1k9ZAtPeUmpOdU1rHd9Jn9Q4sZ5l1eGaWrOuL1YLFsk=;
-	b=QcZPiNlniKs3SAqJPfQCQX2AUHxnNnLom/mfporth+idthV/6j0mIKq8feTDkjFhM1HacA
-	7Eb4p1nl2f+1qHFO1tdL9HFBUiderZDZH0vQEtKRpYN7769wRjV6JUiwAifXcM7KRqnZnL
-	CR9WJ+UVehcS1Wm5eLoTbHgPjlqPRJ0=
+	bh=Uhe1/Za2Rsc+OxMtgPmnbZH7qh+wHOykK24Zu10M3lw=;
+	b=lxdmpQlFs8jFGwiAHLsjDDuMc8HgOKwUptyIR9owTp/+pyEHSVWjSKmT8VgKaRpox8oq6d
+	GsetpjmO5vB1xvdy5p7QrMNTm53rOln/XW7ZCN7r24PjpkUjynrr7+pECMFYd1hRA+0Lbn
+	SPzt4Y7i2ZuizfoemRrtFeMJnN/Fp+Y=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ABCFB13A17;
-	Tue, 20 Aug 2024 08:20:49 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 836BA13A17;
+	Tue, 20 Aug 2024 08:20:55 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EhB9KOFRxGbIKwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 20 Aug 2024 08:20:49 +0000
+	id 3yl5HudRxGbTKwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 20 Aug 2024 08:20:55 +0000
 From: Juergen Gross <jgross@suse.com>
 To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	linux-acpi@vger.kernel.org
+	x86@kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v2 6/7] xen: allow mapping ACPI data using a different physical address
-Date: Tue, 20 Aug 2024 10:20:11 +0200
-Message-ID: <20240820082012.31316-7-jgross@suse.com>
+	xen-devel@lists.xenproject.org,
+	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+Subject: [PATCH v2 7/7] xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
+Date: Tue, 20 Aug 2024 10:20:12 +0200
+Message-ID: <20240820082012.31316-8-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240820082012.31316-1-jgross@suse.com>
 References: <20240820082012.31316-1-jgross@suse.com>
@@ -93,214 +91,184 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 17AC32253C
+X-Rspamd-Queue-Id: E5FEF1FFB4
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
+X-Spamd-Result: default: False [-3.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+X-Spam-Score: -3.51
 X-Spam-Flag: NO
 
-When running as a Xen PV dom0 the system needs to map ACPI data of the
-host using host physical addresses, while those addresses can conflict
-with the guest physical addresses of the loaded linux kernel.
+In order to minimize required special handling for running as Xen PV
+dom0, the memory layout is modified to match that of the host. This
+requires to have only RAM at the locations where Xen allocated memory
+is living. Unfortunately there seem to be some machines, where ACPI
+NVS is located at 64 MB, resulting in a conflict with the loaded
+kernel or the initial page tables built by Xen.
 
-This conflict can be solved by mapping the ACPI data to a different
-guest physical address, but mapping the data via acpi_os_ioremap()
-must still be possible using the host physical address, as this
-address might be generated by AML when referencing some of the ACPI
-data.
+As ACPI NVS needs to be accessed by the kernel only for saving and
+restoring it across suspend operations, it can be relocated in the
+dom0's memory map by swapping it with unused RAM (this is possible
+via modification of the dom0 P2M map).
 
-When configured to support running as a Xen PV dom0, have an
-implementation of acpi_os_ioremap() being aware of the possibility to
-need above mentioned translation of a host physical address to the
-guest physical address.
+While the E820 map can (and should) be modified right away, the P2M
+map can be updated only after memory allocation is working, as the P2M
+map might need to be extended.
 
-This modification requires to fix some #include of asm/acpi.h in x86
-code to use linux/acpi.h instead.
-
+Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
 Signed-off-by: Juergen Gross <jgross@suse.com>
+Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 ---
 V2:
-- new patch (Jan Beulich)
+- remap helpers split off into other patch
 ---
- arch/x86/include/asm/acpi.h        |  8 ++++++++
- arch/x86/kernel/acpi/boot.c        | 10 ++++++++++
- arch/x86/kernel/mmconf-fam10h_64.c |  2 +-
- arch/x86/kernel/x86_init.c         |  2 +-
- arch/x86/xen/p2m.c                 | 30 ++++++++++++++++++++++++++++++
- arch/x86/xen/setup.c               |  2 +-
- 6 files changed, 51 insertions(+), 3 deletions(-)
+ arch/x86/xen/setup.c | 92 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 91 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index 21bc53f5ed0c..42067643e615 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -174,6 +174,14 @@ void acpi_generic_reduced_hw_init(void);
- void x86_default_set_root_pointer(u64 addr);
- u64 x86_default_get_root_pointer(void);
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index 88b2ebd23da3..5697f1cdd6a0 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -495,6 +495,8 @@ void __init xen_remap_memory(void)
+ 	set_pte_mfn(buf, mfn_save, PAGE_KERNEL);
  
-+#ifdef CONFIG_XEN_PV_DOM0
-+/* A Xen PV dom0 needs a special acpi_os_ioremap() handling. */
-+extern void __iomem * (*acpi_os_ioremap)(acpi_physical_address phys,
-+					 acpi_size size);
-+void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_size size);
-+#define acpi_os_ioremap acpi_os_ioremap
-+#endif
+ 	pr_info("Remapped %ld page(s)\n", remapped);
 +
- #else /* !CONFIG_ACPI */
- 
- #define acpi_lapic 0
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 9f4618dcd704..6dd01d15f277 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1778,3 +1778,13 @@ u64 x86_default_get_root_pointer(void)
- {
- 	return boot_params.acpi_rsdp_addr;
++	xen_do_remap_nonram();
  }
-+
-+#ifdef CONFIG_XEN_PV_DOM0
-+void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
-+{
-+	return ioremap_cache(phys, size);
-+}
-+
-+void __iomem * (*acpi_os_ioremap)(acpi_physical_address phys, acpi_size size) =
-+	x86_acpi_os_ioremap;
-+#endif
-diff --git a/arch/x86/kernel/mmconf-fam10h_64.c b/arch/x86/kernel/mmconf-fam10h_64.c
-index c94dec6a1834..8347a29f9db4 100644
---- a/arch/x86/kernel/mmconf-fam10h_64.c
-+++ b/arch/x86/kernel/mmconf-fam10h_64.c
-@@ -9,12 +9,12 @@
- #include <linux/pci.h>
- #include <linux/dmi.h>
- #include <linux/range.h>
-+#include <linux/acpi.h>
  
- #include <asm/pci-direct.h>
- #include <linux/sort.h>
- #include <asm/io.h>
- #include <asm/msr.h>
--#include <asm/acpi.h>
- #include <asm/mmconfig.h>
- #include <asm/pci_x86.h>
- 
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 82b128d3f309..47ef8af23101 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -8,8 +8,8 @@
- #include <linux/ioport.h>
- #include <linux/export.h>
- #include <linux/pci.h>
-+#include <linux/acpi.h>
- 
--#include <asm/acpi.h>
- #include <asm/bios_ebda.h>
- #include <asm/paravirt.h>
- #include <asm/pci_x86.h>
-diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
-index bb55e0fe1a04..61aaf066bf3e 100644
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -70,6 +70,7 @@
- #include <linux/memblock.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/acpi.h>
- 
- #include <asm/cache.h>
- #include <asm/setup.h>
-@@ -838,6 +839,31 @@ void __init xen_do_remap_nonram(void)
- 	pr_info("Remapped %u non-RAM page(s)\n", remapped);
+ static unsigned long __init xen_get_pages_limit(void)
+@@ -625,14 +627,102 @@ phys_addr_t __init xen_find_free_area(phys_addr_t size)
+ 	return 0;
  }
  
 +/*
-+ * Xen variant of acpi_os_ioremap() taking potentially remapped non-RAM
-+ * regions into acount.
-+ * Any attempt to map an area crossing a remap boundary will produce a
-+ * WARN() splat.
++ * Swap a non-RAM E820 map entry with RAM above ini_nr_pages.
++ * Note that the E820 map is modified accordingly, but the P2M map isn't yet.
++ * The adaption of the P2M must be deferred until page allocation is possible.
 + */
-+static void __iomem *xen_acpi_os_ioremap(acpi_physical_address phys,
-+					 acpi_size size)
++static void __init xen_e820_swap_entry_with_ram(struct e820_entry *swap_entry)
 +{
-+	unsigned int i;
-+	struct nonram_remap *remap = xen_nonram_remap;
++	struct e820_entry *entry;
++	unsigned int mapcnt;
++	phys_addr_t mem_end = PFN_PHYS(ini_nr_pages);
++	phys_addr_t swap_addr, swap_size, entry_end;
 +
-+	for (i = 0; i < nr_nonram_remap; i++) {
-+		if (phys + size > remap->maddr &&
-+		    phys < remap->maddr + remap->size) {
-+			WARN_ON(phys < remap->maddr ||
-+				phys + size > remap->maddr + remap->size);
-+			phys = remap->paddr + phys - remap->maddr;
-+			break;
++	swap_addr = PAGE_ALIGN_DOWN(swap_entry->addr);
++	swap_size = PAGE_ALIGN(swap_entry->addr - swap_addr + swap_entry->size);
++	entry = xen_e820_table.entries;
++
++	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
++		entry_end = entry->addr + entry->size;
++		if (entry->type == E820_TYPE_RAM && entry->size >= swap_size &&
++		    entry_end - swap_size >= mem_end) {
++			/* Reduce RAM entry by needed space (whole pages). */
++			entry->size -= swap_size;
++
++			/* Add new entry at the end of E820 map. */
++			entry = xen_e820_table.entries +
++				xen_e820_table.nr_entries;
++			xen_e820_table.nr_entries++;
++
++			/* Fill new entry (keep size and page offset). */
++			entry->type = swap_entry->type;
++			entry->addr = entry_end - swap_size +
++				      swap_addr - swap_entry->addr;
++			entry->size = swap_entry->size;
++
++			/* Convert old entry to RAM, align to pages. */
++			swap_entry->type = E820_TYPE_RAM;
++			swap_entry->addr = swap_addr;
++			swap_entry->size = swap_size;
++
++			/* Remember PFN<->MFN relation for P2M update. */
++			xen_add_remap_nonram(swap_addr, entry_end - swap_size,
++					     swap_size);
++
++			/* Order E820 table and merge entries. */
++			e820__update_table(&xen_e820_table);
++
++			return;
 +		}
++
++		entry++;
 +	}
 +
-+	return x86_acpi_os_ioremap(phys, size);
++	xen_raw_console_write("No suitable area found for required E820 entry remapping action\n");
++	BUG();
++}
++
++/*
++ * Look for non-RAM memory types in a specific guest physical area and move
++ * those away if possible (ACPI NVS only for now).
++ */
++static void __init xen_e820_resolve_conflicts(phys_addr_t start,
++					      phys_addr_t size)
++{
++	struct e820_entry *entry;
++	unsigned int mapcnt;
++	phys_addr_t end;
++
++	if (!size)
++		return;
++
++	end = start + size;
++	entry = xen_e820_table.entries;
++
++	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
++		if (entry->addr >= end)
++			return;
++
++		if (entry->addr + entry->size > start &&
++		    entry->type == E820_TYPE_NVS)
++			xen_e820_swap_entry_with_ram(entry);
++
++		entry++;
++	}
 +}
 +
  /*
-  * Add a new non-RAM remap entry.
-  * In case of no free entry found, just crash the system.
-@@ -850,6 +876,10 @@ void __init xen_add_remap_nonram(phys_addr_t maddr, phys_addr_t paddr,
- 		BUG();
- 	}
- 
-+	/* Switch to the Xen acpi_os_ioremap() variant. */
-+	if (nr_nonram_remap == 0)
-+		acpi_os_ioremap = xen_acpi_os_ioremap;
+  * Check for an area in physical memory to be usable for non-movable purposes.
+- * An area is considered to usable if the used E820 map lists it to be RAM.
++ * An area is considered to usable if the used E820 map lists it to be RAM or
++ * some other type which can be moved to higher PFNs while keeping the MFNs.
+  * In case the area is not usable, crash the system with an error message.
+  */
+ void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
+ 				   const char *component)
+ {
++	xen_e820_resolve_conflicts(start, size);
 +
- 	xen_nonram_remap[nr_nonram_remap].maddr = maddr;
- 	xen_nonram_remap[nr_nonram_remap].paddr = paddr;
- 	xen_nonram_remap[nr_nonram_remap].size = size;
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index d678c0330971..88b2ebd23da3 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -15,12 +15,12 @@
- #include <linux/cpuidle.h>
- #include <linux/cpufreq.h>
- #include <linux/memory_hotplug.h>
-+#include <linux/acpi.h>
+ 	if (!xen_is_e820_reserved(start, size))
+ 		return;
  
- #include <asm/elf.h>
- #include <asm/vdso.h>
- #include <asm/e820/api.h>
- #include <asm/setup.h>
--#include <asm/acpi.h>
- #include <asm/numa.h>
- #include <asm/idtentry.h>
- #include <asm/xen/hypervisor.h>
 -- 
 2.43.0
 
