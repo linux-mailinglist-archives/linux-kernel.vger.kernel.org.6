@@ -1,178 +1,190 @@
-Return-Path: <linux-kernel+bounces-293969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F59958712
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:34:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5904C958715
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4EBB1F22E4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:34:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7526B2542D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0094F18F2D2;
-	Tue, 20 Aug 2024 12:33:57 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3505A18FC90;
+	Tue, 20 Aug 2024 12:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mk15cGLn"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2052.outbound.protection.outlook.com [40.107.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCE818C921;
-	Tue, 20 Aug 2024 12:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724157236; cv=none; b=TxdH1JLR169nB0LOzZlw7oeaZLlkbtVJih+67Bol3oqSmUqco1Mi82LziWuC7//K70JGPuoJumgyafO5J3hWcn8CUabM57Ewf+iEp4hzoxtYphL9wJadBpa6OaRMrSUoHyC7tFWoUV+ndzFmBUYScrcCVih8qEvVHBCcUEc0RiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724157236; c=relaxed/simple;
-	bh=gof5U+smSv99mAUfIV33b/sToNhuaisFU5st2WkDzgk=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jbDOGj/EMGb2Mx4Wq28kDbeK1Em0YhPnx51FdsYIuwGhaLQo+VJwRIXkHu3ppN4m5yQloYO23aFSj2gxaTDZYWEryLy3eDM9jgEHDb9y59xt8urpS4HsygjFzxSkrb8VjQ9NSkur2IOufE5Bq8syD4HVoWHJDTX1d779KqxmIYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wp8036GsCz1j6Hr;
-	Tue, 20 Aug 2024 20:28:51 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7BC521401F4;
-	Tue, 20 Aug 2024 20:33:51 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 20 Aug 2024 20:33:50 +0800
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
-	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
-	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
-Subject: Re: [PATCH v2 1/4] perf/dwc_pcie: Fix registration issue in multi
- PCIe controller instances
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>, Shuai Xue
-	<xueshuai@linux.alibaba.com>, Jing Zhang <renyu.zj@linux.alibaba.com>, Will
- Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Jonathan Corbet
-	<corbet@lwn.net>
-References: <20240816-dwc_pmu_fix-v2-0-198b8ab1077c@quicinc.com>
- <20240816-dwc_pmu_fix-v2-1-198b8ab1077c@quicinc.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <3a7264d8-5f23-92b6-d364-066cdc83ef8e@huawei.com>
-Date: Tue, 20 Aug 2024 20:33:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61A01CAAC
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724157283; cv=fail; b=hddqoFuxdkiIlQwdlnXSG+bc77aQ+GU9PsOIU46YhgzHACHCqT5ch57knSBQnoB6+DR2jCUAyuLtqHQEvdX4sPS5lv/zTDerhsVTbDMjwp+OcUxbAc1+lGvinCY8eLnU7HlD3SCqThjTtAbSpuOTdvW18EtznGKmRCNyAYar32M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724157283; c=relaxed/simple;
+	bh=BMjjA544M1eNgyNWnwdWH9SD4W2uipj6KC6ODUFqBQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=iub3VV/Gn1iO43PQduCO3xszYs6ayAmreR/yYjt1zDXteBYz/Lmrm6SMFf4JkODqFBagL1qlsq/P1SJ8tY5R7KIobVthoHmMSwl05MyzhyOISog8dheKHBo96/SIEUub7JksOVn6cqwoICyc2YjVE5wxGskTxYliUo/9zQ+Wq4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mk15cGLn; arc=fail smtp.client-ip=40.107.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g+s0JSjk89eOlV2gUAwiOqcjEsUXWCDcSCvgfQOngDV0gOexBxMiuKj0yaLvurtNIZRRFoWwjMGG3o6i2S0gQF6DbysFAGSsTwC5DIcKXOxnH0xHZn/OWNlUHI2dkq4FUPeJB+kEtuNEUKSgO6fFhwbhRvdAiNuMXJbJPOS1jnqJO89o/JhHjKFfqHpgDyHhxrKCnhNzKkrihckSvim2TJdJyfJtG8gGmXWPh5dcBAMt9xYGCOH5cNnCdvGdi4tzQ9a8a1ywoupOlq12R4TQc+FQVnF+w7ve/ayMLcH15rQT5wJ+MgiM8q1i2xiiTXkcjCjcwa+B8cSBHHSU9qyDmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p1QoCnJp5CI97oSdNLoMGPxC/GIgRAcgi/5ggtL1yvc=;
+ b=EHrdk6u3w6FRYAlK8K9bNozPxohY6WO6bvZOL+UNZqNPJego13en893+yNxwj72Hbic83NyfOB+aqkSFGqBXhyOOalyF94lAoWUNv3LuD8o5OpvvMibOb/WCLLXSLbJN+bKUqu3RF4EVAIVEjHyWkP84jUgg5VXaJn/LgtjHoUXDwecuMYscA1Zx2W4gnx1bIRX4QSEGSVp1aXWCCrfrliE6vRI0KZBbwH4D08B8f9OIYB6jBo9poQfTAkw9qa7rhWEv3YOmrhqYdDWld8vYI3JDvTYR/gkxsQw1jP1ZdykeX5d8Rg6RyrXw8jbEcFA8s8APSPuPHxZD5oOh3r/XYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p1QoCnJp5CI97oSdNLoMGPxC/GIgRAcgi/5ggtL1yvc=;
+ b=mk15cGLnbSg9WayGcWpSDslVy9lRUu3ukmTKFIyOiEaNJmPwYkHCQi2rnEoq8I20LU72GuQeAY/onR9zI9TfS8NFXbbf3MQPY+dkad69MbBcb0kIPzJKqhcYvlsxIS7pkcnOEp/sSVps4pKn/RH5VRH0uAUHx0EsRnR9fB5fzMfY2Sb0rla5SBjTURdV1wygsfQQ4u5iBCyhS5rdlP3AQfD161InU6v5cWLuJHhm4ljnDhSUrNAfHSkqwIX6bi5HcseRkH6DasS4cPBBUb9z7v9FKE4QoqyFq6oOtVQUu0gRD+hGUctrNlQkARI0K6mGxHgrfDhXIdu5CX1sCP1eag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TY0PR06MB5730.apcprd06.prod.outlook.com (2603:1096:400:272::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 12:34:38 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 12:34:38 +0000
+From: Rong Qianfeng <rongqianfeng@vivo.com>
+To: Yong Wu <yong.wu@mediatek.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: opensource.kernel@vivo.com,
+	Rong Qianfeng <rongqianfeng@vivo.com>
+Subject: [PATCH] memory: mtk-smi: Simplify using devm_clk_get_enabled()
+Date: Tue, 20 Aug 2024 20:34:26 +0800
+Message-Id: <20240820123426.48694-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP301CA0088.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7b::16) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240816-dwc_pmu_fix-v2-1-198b8ab1077c@quicinc.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY0PR06MB5730:EE_
+X-MS-Office365-Filtering-Correlation-Id: 659e90cf-65e2-4ad7-df28-08dcc11474c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dxtU2950kklcuY+5j0TZvNJKM/ujxpH4ePpxWTnr/p3dIqtSwHbs3/lkG+uY?=
+ =?us-ascii?Q?3WnTgaoGsXQizijoeZBlGYV356uLeGDC/8Lu/LCmbPCdyhu1LxLg1wN7ZCYH?=
+ =?us-ascii?Q?jQDD5XkHJvf3ddzAvoO+hiydNWvbTKTOk9fPeIPXE6MOGCKss7eDzlvqwnTS?=
+ =?us-ascii?Q?CtS+zHEv2k1mryUgmrixV+DkSBltVj79q6YUJoSvVwAttJV5pIQ6DSd1rIf4?=
+ =?us-ascii?Q?5ZYogtLqsU4WEAVIgbGr5/1VY2P6c9W951FsjQmrKmdjKFO6MNrlmaMiKLK9?=
+ =?us-ascii?Q?lOuHAI+81whrUa28SWA+7LiQHP+HFFcLelWJQY6mPFTCKBLNDlTyrplMHmAa?=
+ =?us-ascii?Q?nrUGyuNqjDO0kEfFHRisnp2k0rp4iaAYegSG1VlBiKxJDo30ns8AigddY1Bc?=
+ =?us-ascii?Q?hKwCpxiHJy/avHT1cKfiXxun61xC6aclhUkpsctfJ1mF7Fdn1b58wybaTCWs?=
+ =?us-ascii?Q?dTVNYJpPBJeSn3ANQVvyC+ZY8s4fqv8dTRrKYX9110uk9+ZnwKL93ZeH6rNb?=
+ =?us-ascii?Q?RLtfJX0y7ZqR2fdYOuUy+KTnU4F8rbhh5NCKETnyM3/UCAf9WZDYZKKpXPJ/?=
+ =?us-ascii?Q?Tzi+Pav+V76Ze/WgBRez34Ygbai5nbWP4ehh5MA3kzVp8wfn4BVBHbxmC1X3?=
+ =?us-ascii?Q?FgUTazjbS2CKz1ll7Eh1UzzupoVso1yCeHZo1s8P03EWzdmvKtSjESZ9E/4r?=
+ =?us-ascii?Q?ejO84E374dA3MdoyMF/gfBrNiPxRPeRrt82o92oBwcgLEENNhflA+40E60fX?=
+ =?us-ascii?Q?nZ4zC2rn5C0UX/JA7BLZoVWF0LGAmOkcFR+S0cJU3fCb3B7FqNhly2mtPMHK?=
+ =?us-ascii?Q?dj8K/uTeoY9qiTPrYswtbPafZWmFFGTeWMZt+sav0gKMtXOTq0Wnd/QbdSYj?=
+ =?us-ascii?Q?UEHFEJbF/ibhiR4QhHnuTYOr9//zK1R+JsS9kYqSjvlKVqb9DDGjJS4bVcY3?=
+ =?us-ascii?Q?xp8x6ELg0f3kQ38cTfjnl/umTHMhFgnAQ+0hZu8hAFOxD/2/E6MgkG+UhWwx?=
+ =?us-ascii?Q?6afIGcNrI2SCA2u7PZErby1uRmpyONoFVygD3vJBiEOKNoz9zTngNvn+4Qs5?=
+ =?us-ascii?Q?3wgTLcxYmCAZJaUktVWmeJkgW7zVd9qEWGSg/F4TNd1Hj+g+aawu59RHSBkZ?=
+ =?us-ascii?Q?g9207/Kzh6gvv6MdUopEYjU4qu6f4QabI5fagkeA1kMu/I560qt2JXmVqBQ+?=
+ =?us-ascii?Q?SzYZtvRNqPjtYyocW7LfW1Bk+XVbjXKagdsF7706rvEdl8nS5T4beJHQFy6O?=
+ =?us-ascii?Q?FtqB3az/iTt6uZBcIWR3mBC39+e7JZfXsfvm4nuNaKX3DNDeoWY3mU9CjAqS?=
+ =?us-ascii?Q?DiAuFag15rAnnluyGzM/Fmcb7ZDrokgYYLu/6sO0goWCY4jNwcUbypTy6CAZ?=
+ =?us-ascii?Q?NUH7d5hRB/EbBQoZY2BDBgcJcSs2BUiBr89tDzgplxJ2Enfr8A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5AZ5QPhkAMojrxbOb/o5/IO4mEzEOL8j7LgihNr93tanRZqUyNEl9UR8fmW/?=
+ =?us-ascii?Q?1Y8MhAMIu8VJ85ijI/E4dh7oWm12g5KSBWB3C9fpOb30CBLGA9Z96SjcDE19?=
+ =?us-ascii?Q?m4S2PvJGF/BV4pYNYPBbZW4AFtIbPtPVbPZ94wPI3oH9fKqJ1/bQ7ISkBNa8?=
+ =?us-ascii?Q?R1w7ydXElm+dJYdbyDNxtU81NnlhSt3Zt+31vo0CbS6mvMkutD/CQHf9YKl0?=
+ =?us-ascii?Q?yNjtkrJHRv3gl0hDTCUIPApO8PzNdNLb7Ddb+fMbfEkGFok+i7sNMW62Xueq?=
+ =?us-ascii?Q?C7DUZEusSVOy9RrijSZ+8FsWIYAIQZkbydI8Ft+l92972QKxghf4eRqv0LvR?=
+ =?us-ascii?Q?n0bsPuqlgAlfVnZLtXXTZcMwNEl0NUfZ9GVQHp46laEpHERgw+W/xEC2IID7?=
+ =?us-ascii?Q?Iu+VDBqpF2AHp7g97vcYsTCCaVDE/ipk6BPi0Pz7aQvaIcPl0mV1Z6ixesX1?=
+ =?us-ascii?Q?Gj2xFC4FzjSbtCC2EDvzQ7MoY0wbXhkJmcMu++Ua8aCLAknr1jiyecXbEkn9?=
+ =?us-ascii?Q?BVf5gWIVmojKKR/0XesaPbx2qYOJ2WBelkog5v9KrUy0RV9UCCGVXUhLUHw2?=
+ =?us-ascii?Q?qKkbyM4igRvIPVmHsv4zqqP5RS0TFHdemFb2WmRTTffaV6DS/cak/+GKqUGW?=
+ =?us-ascii?Q?t+Y+oBkKftcZ5DbN7fPi+82Evu2khZD3/bhhDF964+U3fEVCGEia4QfsgInC?=
+ =?us-ascii?Q?6/LbG2g4sTvC1xgyypbuEooRxB3OK+9px19MIXGelVh0v51jXvUPGFX7tqlv?=
+ =?us-ascii?Q?tQGxt3WFbatuQnYSXzZSJOxcXxJrT1lENNdLH7VcO14I3ox2aLr6mPG6nEPA?=
+ =?us-ascii?Q?pjCaWO6TGk1h6BDTgjsT+AyOuqUDFu6mPW0F2iz3qcFMfMj9hQxrNz9p6Jr6?=
+ =?us-ascii?Q?FhI1Nx/mn8ULTrGPdd8Es7PjgaqSe5etRfuzFEYIE+e7+qPbuRWhQUJzdUVP?=
+ =?us-ascii?Q?cQfYH5Z9OZ0SapzJBocmCaVrlZ2RnNsKIONY2jCO+1ktCfkJNgUUXUbiLEoW?=
+ =?us-ascii?Q?wUVMgC1aCZzBnAxgaJVd4/xeI/WXLD0yb5ZvEVXKNXMoUjnjg2AKJxtgt7cZ?=
+ =?us-ascii?Q?ExJukAaIvNAWGCoiNEtWbLTEOL5HXV6CX/zbB6/8NF67w6JLwspRwS6eWz0M?=
+ =?us-ascii?Q?pFyz2wFBg5FHd7Rsrr2VkReCFb59Yq9SCR3TuoXRrw7TmT5YOfzpy7TsSE+V?=
+ =?us-ascii?Q?VdEA3BACPcn3enRe2aU7PBlL6zt+yJF9g1D3EprjyAUBfOJDd/S6jYAHJsoV?=
+ =?us-ascii?Q?0iM7lbEyJQgIwwtfmQ8+weRj+BL1R4qOLtkih/RwB7o5zl3wqWmNwYbeftsH?=
+ =?us-ascii?Q?I12DnSyr6EAPCYPZpnclPJ50U/e5NPjHmz5Yoj//qZ5iTG245MWzJd+5koEp?=
+ =?us-ascii?Q?hNXTycgf5pdLKZWpmyMp5Kh6xCrFUoxG4wsvvu5TVSFgnEEqonNOB2CfgzhH?=
+ =?us-ascii?Q?XT7nKF0k274Rk1dbilx0zxwFZOJ/1Bue6DNHU0KP1afNmtmp09eGx32dIsYs?=
+ =?us-ascii?Q?ox0kAfVLnmISIl6AHD6WrzwqzcwPrSEwfPlVU3/4ifL9xA7A859NgWJ/4gPO?=
+ =?us-ascii?Q?vZ/f1mP3eD/c1GaD3nUsE6gV1ZAwqT0UQgpyeO/K?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 659e90cf-65e2-4ad7-df28-08dcc11474c9
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 12:34:38.4633
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PJdyhNUx+bG5Voz6EGblt/YAGKTTAqrZ0QMVLJjk1Ere4Njcffb4kr4B+Nyx92kQ/MnT9Y+SL0FYaUSZ89nrvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5730
 
-On 2024/8/16 23:17, Krishna chaitanya chundru wrote:
-> When there are multiple of instances of PCIe controllers, registration
-> to perf driver fails with this error.
-> sysfs: cannot create duplicate filename '/devices/platform/dwc_pcie_pmu.0'
-> CPU: 0 PID: 166 Comm: modprobe Not tainted 6.10.0-rc2-next-20240607-dirty
-> Hardware name: Qualcomm SA8775P Ride (DT)
-> Call trace:
->  dump_backtrace.part.8+0x98/0xf0
->  show_stack+0x14/0x1c
->  dump_stack_lvl+0x74/0x88
->  dump_stack+0x14/0x1c
->  sysfs_warn_dup+0x60/0x78
->  sysfs_create_dir_ns+0xe8/0x100
->  kobject_add_internal+0x94/0x224
->  kobject_add+0xa8/0x118
->  device_add+0x298/0x7b4
->  platform_device_add+0x1a0/0x228
->  platform_device_register_full+0x11c/0x148
->  dwc_pcie_register_dev+0x74/0xf0 [dwc_pcie_pmu]
->  dwc_pcie_pmu_init+0x7c/0x1000 [dwc_pcie_pmu]
->  do_one_initcall+0x58/0x1c0
->  do_init_module+0x58/0x208
->  load_module+0x1804/0x188c
->  __do_sys_init_module+0x18c/0x1f0
->  __arm64_sys_init_module+0x14/0x1c
->  invoke_syscall+0x40/0xf8
->  el0_svc_common.constprop.1+0x70/0xf4
->  do_el0_svc+0x18/0x20
->  el0_svc+0x28/0xb0
->  el0t_64_sync_handler+0x9c/0xc0
->  el0t_64_sync+0x160/0x164
-> kobject: kobject_add_internal failed for dwc_pcie_pmu.0 with -EEXIST,
-> don't try to register things with the same name in the same directory.
-> 
-> This is because of having same bdf value for devices under two different
-> controllers.
-> 
-> Update the logic to use sbdf which is a unique number in case of
-> multi instance also.
-> 
-> Fixes: af9597adc2f1 ("drivers/perf: add DesignWare PCIe PMU driver")
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+devm_clk_get_enabled() will call devm_clk_get() + clk_prepare_enable()=0D
+and the clock will automatically be disabled, unprepared and freed when=0D
+the device is unbound from the bus. So simplify mtk_smi_common_probe()=0D
+accordingly.=0D
 
-Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
+Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+---
+ drivers/memory/mtk-smi.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-> ---
->  drivers/perf/dwc_pcie_pmu.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> index c5e328f23841..85a5155d6018 100644
-> --- a/drivers/perf/dwc_pcie_pmu.c
-> +++ b/drivers/perf/dwc_pcie_pmu.c
-> @@ -556,10 +556,10 @@ static int dwc_pcie_register_dev(struct pci_dev *pdev)
->  {
->  	struct platform_device *plat_dev;
->  	struct dwc_pcie_dev_info *dev_info;
-> -	u32 bdf;
-> +	u32 sbdf;
->  
-> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
-> -	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", bdf,
-> +	sbdf = (pci_domain_nr(pdev->bus) << 16) | PCI_DEVID(pdev->bus->number, pdev->devfn);
-> +	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", sbdf,
->  						 pdev, sizeof(*pdev));
->  
->  	if (IS_ERR(plat_dev))
-> @@ -611,15 +611,15 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
->  	struct pci_dev *pdev = plat_dev->dev.platform_data;
->  	struct dwc_pcie_pmu *pcie_pmu;
->  	char *name;
-> -	u32 bdf, val;
-> +	u32 sbdf, val;
->  	u16 vsec;
->  	int ret;
->  
->  	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
->  					DWC_PCIE_VSEC_RAS_DES_ID);
->  	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
-> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
-> -	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", bdf);
-> +	sbdf = plat_dev->id;
-> +	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", sbdf);
->  	if (!name)
->  		return -ENOMEM;
->  
-> @@ -650,7 +650,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
->  	ret = cpuhp_state_add_instance(dwc_pcie_pmu_hp_state,
->  				       &pcie_pmu->cpuhp_node);
->  	if (ret) {
-> -		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, bdf);
-> +		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, sbdf);
->  		return ret;
->  	}
->  
-> @@ -663,7 +663,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
->  
->  	ret = perf_pmu_register(&pcie_pmu->pmu, name, -1);
->  	if (ret) {
-> -		pci_err(pdev, "Error %d registering PMU @%x\n", ret, bdf);
-> +		pci_err(pdev, "Error %d registering PMU @%x\n", ret, sbdf);
->  		return ret;
->  	}
->  	ret = devm_add_action_or_reset(&plat_dev->dev, dwc_pcie_unregister_pmu,
-> 
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index fbe52ecc0eca..2bc034dff691 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -771,13 +771,9 @@ static int mtk_smi_common_probe(struct platform_device=
+ *pdev)
+ 		if (IS_ERR(common->smi_ao_base))
+ 			return PTR_ERR(common->smi_ao_base);
+=20
+-		common->clk_async =3D devm_clk_get(dev, "async");
++		common->clk_async =3D devm_clk_get_enabled(dev, "async");
+ 		if (IS_ERR(common->clk_async))
+ 			return PTR_ERR(common->clk_async);
+-
+-		ret =3D clk_prepare_enable(common->clk_async);
+-		if (ret)
+-			return ret;
+ 	} else {
+ 		common->base =3D devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(common->base))
+--=20
+2.39.0
+
 
