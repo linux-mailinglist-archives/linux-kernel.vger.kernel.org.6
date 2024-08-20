@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-293887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A8A958630
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5327F958632
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EAD1F21C69
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795431C21E59
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481C818EFD3;
-	Tue, 20 Aug 2024 11:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBA218E75E;
+	Tue, 20 Aug 2024 11:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aImrQsU0"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QOfFrLuZ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A68918E054;
-	Tue, 20 Aug 2024 11:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0A918E74F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154892; cv=none; b=Tqu3N4+zaWPYjQjD+WleYv+zoRVliid+3kz/y+PcwC+QOGxfQU5nWs1IkDV4erAeZMUi1dc/5gSYLTlhMZaiOi7iFW3DigQkRU9ts4MXqqs5i5MK6XDVrCEltv7yJbN+4CU0S1v+0xAhZDCVmZQJo7mP3X6rVXHgsl6iVDeBGjs=
+	t=1724154906; cv=none; b=Y4oj9iExGEuKLYIj8mghFtkydM7b1w2ua9hR/iRtO/k7UgkjNZqaywXzNs2N7Hy3+68aGOG+3OGBGPUlrTCTMvLv+I6i3alYycChKDwvHLufB3WOksR6m2DOP0ySdvV9fox1znN5iefpHRXjezXFxXhC4lUdeQaOq508Y/ga7oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154892; c=relaxed/simple;
-	bh=yQ8ynkivFpeUnJnm+bjAjKQKaQiN6hgYUruRwDdfZGg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Sb1Doge1KCyN4efzf7qUy+xgRCMDKQLLqz7N5omhuv0wkMl5ejAm+n23uSm5mdv1LYXgH5oKQcgEQ4pTwqcmGkkZgul61P0XvNpCpZjfJLZ76e44ffLMjbIk7L8kOK6RXcWmT8oVVE7ZcDJ8IhLGXRjL4cYfGn5hUB1RaOYk8hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aImrQsU0; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7106cf5771bso4381953b3a.2;
-        Tue, 20 Aug 2024 04:54:50 -0700 (PDT)
+	s=arc-20240116; t=1724154906; c=relaxed/simple;
+	bh=aLF1QS2bweCC1rgUwCudbiwq9Dncg3ueoYZJMejgBWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NyQKuizQ5+2IE9GDS/+OA9Cd2aDQNnzkc7gMMClfz2YPLs8MkhY8dQX9oVaJ/fB1wp8OspnRZg2/NzTdLnWMGF2UZ1jN2lzmCtrn7uVK7XLdA+CVnwNTUZ0HmVomEOUgXrflcjPoDs4QT6YQwGZARyJfC88yyZcW4tKLoBFlxS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QOfFrLuZ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efa16aad9so6697088e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724154890; x=1724759690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4l+S2gup120Wyh/3bctSkp8RCid291o4Is+yzzc0jos=;
-        b=aImrQsU0NcB7jC7uBbmro6Re5/C69Uwo+BIcUimNbLliAOQ9KdtRDuyBrI06Njqfrk
-         EBFxY8d9s5Ki0atlrplTC38l08Hth7DQW5/vlLU8Bjz9stMWOTiVEzA7z2Oa/5x2j2kq
-         U6rbEeicT6jkcAOGBjDwutDy7+8s09vi0LpwsXsUe2sRFzuVHE3tdqoeD5jSxpvtjBHA
-         yPkpPOm2R333LaGyzKsgE9MU6MdqaWYIavx2dhijlGRHdbvlGKjHs3F3uYhmSPitqM3Y
-         vP7HHi0HSvqcYQPjcN9pUwHQBvy5zYmYitfgKen2yYtBQhpAgXsCGCbdsD6L4HNt9SGQ
-         zaMg==
+        d=tuxon.dev; s=google; t=1724154902; x=1724759702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dCf/kUCM4tXS0nTsH53L6T8+OzmPfbxe5arQDk7ZTKU=;
+        b=QOfFrLuZLBRm7eWc09xEqsvGU2+q2bWwKr/KjGh/YUa9WwhfoFHmwXBeNPz5Ra3aCn
+         AOcX8OnYaGB7ERiNLUXrcDggQVfyjVGAkBhVTSuhRv5NSYPnpo1r36EphZrHwFFbDgcB
+         Y9HVUUWd8+q8rZ+9PywcabLWjkVh7g1xOS7y8gU/B5PDPWylTKkGa/ExUIYTqEhXSjpt
+         frhPuiC35ayDBqUr7TEIaH1b/s7KI8CbuXYfTl2XpWVL7m6GCRGAJfQ9ZB0AJY0vbm1K
+         MIOJS1PhCgRc4tM4RCely3HnCum58iXQnO6rwPTFhbAQOqaRBLaAtM1roSqQ5iZpfvOG
+         xHsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724154890; x=1724759690;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4l+S2gup120Wyh/3bctSkp8RCid291o4Is+yzzc0jos=;
-        b=NDMqpvGvbhy7LrPzGIp157nDtd5nZUIaH9kSVLTiEEfo/0cpzewDLIOQz3yhEywAMG
-         LgUSuNAmiy+kHIYqt/6FqNQxIMrtytG1utx9NDRsbWTvzOzcFjJd748SEqGDN+KLmcdH
-         sxhqZsSIJvxxV64k20XF8mMmaa7NY79+D731V9vKlYxWdcqTadCHn3z9HmPFX+km18fX
-         ByVp/rosflza7cGNs8dv8vQ9QMrVu65qIfbfrh4iAi2/prTxE9tbPm64dQVDUNSwE61t
-         cqwXBPt8EWPfAqq5FQXsdU4ZuSba8EtDxWHVdNwiiIhHIlltC+l1Pel44vv65/8G9G6P
-         cvdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+M6rYQjd6f+Vcd9TJlTUT1sNBZnupH5q6OY+J5q7Y29CpP4BlwR/dwM6EMoSoC19Cy6vih+je@vger.kernel.org, AJvYcCX2wiVKNMP3bAzHw6+EevbyMu+opsWsozDY34r0yYiwfPaEVrX+deXoaK02W9XfddKzP9lXAbL5n2+Od6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxopnaBr6AIvbfV6KuZZZlqJt4bqmEXXSsLaBjWlonq5Ia5Tui7
-	7u+wTUOM+IoriVXmIxVTB4W0ZNBS1ry3TTb3ddvq/XyKZOCezi19
-X-Google-Smtp-Source: AGHT+IG4LDUkFPIOil8kfhohO8vqVNIdjdbvQMacNFcHW+QG5f2cw3Q0vVZsjWhCxt+5q7E2l/Sqaw==
-X-Received: by 2002:a05:6a21:9206:b0:1c8:ebd2:85ab with SMTP id adf61e73a8af0-1c9050639a0mr14536623637.51.1724154890250;
-        Tue, 20 Aug 2024 04:54:50 -0700 (PDT)
-Received: from localhost.localdomain ([58.18.89.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3d99479sm9122953a91.48.2024.08.20.04.54.46
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Aug 2024 04:54:49 -0700 (PDT)
-From: Xi Huang <xuiagnh@gmail.com>
-To: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xuiagnh@gmail.com
-Subject: [PATCH] ipv6: remove redundant check
-Date: Tue, 20 Aug 2024 19:54:42 +0800
-Message-Id: <20240820115442.49366-1-xuiagnh@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1724154902; x=1724759702;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCf/kUCM4tXS0nTsH53L6T8+OzmPfbxe5arQDk7ZTKU=;
+        b=lE8okHjnWgi1EnDN5p3CTBxx8i4zkyzZLxJOiDsfFZGrV5A8eow2Wo8Jres7aDcoq4
+         Rzboyx9Y70z+4sTOY9JpDB6WcETzXV2rmbosrUtxhWX9euWAf5WWScuz/eQfTMmQqzBr
+         lraApVu4hgYQQElXeX3rIwfbLlJJwQunOgsSCIuscSW5tcwGtKdVHWsMSy0M28Ih9E8D
+         lHkaozhUh/AJcRmOjNvM4Obkzg8nqjJR7qnyufvCai5vzG+vQsLGHj+UTZRkjXKJRlpb
+         u+n16yYSypoefxzDAN88kw6qOSCp/V4Ee0t7QsG10C2xoaucZW8td5oNYsmf5lOKYPBm
+         owtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJB2/Oh6ik49LccCQUzyPs2S8CR2k/+9RnmAC/yJjCjFVfmkwyOEAstviK2S2Qt/2MWkIihh03E6WpAVJCJGDH34uVb8uIOWkHXAIK
+X-Gm-Message-State: AOJu0Yw37zyX2fXu3ZMzaKJE1OpTW5t/b/P0/TKMnEt6ew6S8XVHEpky
+	z2Z6098lsUzzkmvJOcC1fiSTCBZEuxcAGmigAnY6zciHaYt7nP0ytlp3UPHhxQs=
+X-Google-Smtp-Source: AGHT+IFmkyyi7oEfSVRFQNguF9vZTRyURXZWy3bWUM0PTamahtdy6X2DNoHO5mK2sJMAFvWiBqn67A==
+X-Received: by 2002:a05:6512:2243:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-5331c6ae178mr10118665e87.29.1724154901477;
+        Tue, 20 Aug 2024 04:55:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839471f7sm749478066b.162.2024.08.20.04.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 04:55:01 -0700 (PDT)
+Message-ID: <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
+Date: Tue, 20 Aug 2024 14:54:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: get, prepare, enable a clock not in DT?
+Content-Language: en-US
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-err varibale will be set everytime,like -ENOBUFS and in if (err < 0),
- when code gets into this path. This check will just slowdown
-the execution and that's all.
+Hi, Alexander,
 
-Signed-off-by: Xi Huang <xuiagnh@gmail.com>
----
- net/ipv6/addrconf.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+On 16.08.2024 17:34, Alexander Dahl wrote:
+> Hello everyone,
+> 
+> while further investigating timeout issues with the at91 otpc
+> controller on sam9x60 [1] I came to the conclusion the main RC
+> oscillator on that SoC must be enabled for that driver to work.
 
-diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
-index f70d8757a..7372ae469 100644
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -5617,8 +5617,7 @@ static void inet6_ifa_notify(int event, struct inet6_ifaddr *ifa)
- 	rtnl_notify(skb, net, 0, RTNLGRP_IPV6_IFADDR, NULL, GFP_ATOMIC);
- 	return;
- errout:
--	if (err < 0)
--		rtnl_set_sk_err(net, RTNLGRP_IPV6_IFADDR, err);
-+	rtnl_set_sk_err(net, RTNLGRP_IPV6_IFADDR, err);
- }
- 
- static void ipv6_store_devconf(const struct ipv6_devconf *cnf,
-@@ -6173,8 +6172,7 @@ void inet6_ifinfo_notify(int event, struct inet6_dev *idev)
- 	rtnl_notify(skb, net, 0, RTNLGRP_IPV6_IFINFO, NULL, GFP_ATOMIC);
- 	return;
- errout:
--	if (err < 0)
--		rtnl_set_sk_err(net, RTNLGRP_IPV6_IFINFO, err);
-+	rtnl_set_sk_err(net, RTNLGRP_IPV6_IFINFO, err);
- }
- 
- static inline size_t inet6_prefix_nlmsg_size(void)
-@@ -6241,8 +6239,7 @@ static void inet6_prefix_notify(int event, struct inet6_dev *idev,
- 	rtnl_notify(skb, net, 0, RTNLGRP_IPV6_PREFIX, NULL, GFP_ATOMIC);
- 	return;
- errout:
--	if (err < 0)
--		rtnl_set_sk_err(net, RTNLGRP_IPV6_PREFIX, err);
-+	rtnl_set_sk_err(net, RTNLGRP_IPV6_PREFIX, err);
- }
- 
- static void __ipv6_ifa_notify(int event, struct inet6_ifaddr *ifp)
--- 
-2.34.1
+Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
+Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
 
+Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
+control for OTCP on the PMC side.
+
+[1]
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
+
+> (Verified that by poking single bits in registers through devmem
+> already.)
+> 
+> Fortunately the necessary clk is already registered from the SoC code
+> in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
+> summary:
+> 
+>     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
+>                                      enable  prepare  protect                                duty  hardware                            connection
+>        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+>     ---------------------------------------------------------------------------------------------------------------------------------------------
+>      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
+> 
+> That clock has no parent and is not found anywhere in devicetree, nor
+> is it handled by the two clock-producers on that platform, so
+> from within mchp_otpc_probe() I just tried this:
+> 
+>     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
+
+> 
+> However that returns with -ENOENT, so I assume I can not reference the
+> clock just by name?  Same result with this:
+> 
+>     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
+> 
+> How do I get a pointer to that clk then to enable it?  Docs [3] where
+
+To expose it though DT you may want to save its hw object to one array
+entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
+
+Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
+simple trials.
+
+Thank you,
+Claudiu Beznea
+
+> not as useful as I hoped for, neither was clk.h header docs. :-/
+> 
+> From what I understood from header docs reading 'device for clock
+> "consumer"' I must pass the device from which I call that clk_get() as
+> first parameter, so this would be the otpc device then, right?  What's
+> that second parameter clock consumer id then?  Are these terms
+> explained somewhere?
+> 
+> Greets
+> Alex
+> 
+> [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
+> [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
+> [3] https://kernel.org/doc/html/latest/driver-api/clk.html
+> 
 
