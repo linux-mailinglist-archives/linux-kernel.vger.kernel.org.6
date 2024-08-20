@@ -1,680 +1,236 @@
-Return-Path: <linux-kernel+bounces-293595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0239581BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024EB9581BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D716928224F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816F41F240A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA48218B461;
-	Tue, 20 Aug 2024 09:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d39Qe7Bd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504B4595B;
-	Tue, 20 Aug 2024 09:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E418B493;
+	Tue, 20 Aug 2024 09:13:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831E18B46E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145177; cv=none; b=b5KNel9hUrM8gp7WnGQHYXEO+cL1go3r/7XFjyeuMlgqXwDpyXALEpw9B3+8PhiZEmBNKC3VR4NswSIGSvvnmoyD3YfYAMVHj3PQjYpuV2V0ldT35QJpl4kzAssQWbsxeKmgJ8kq9rk1gT5hg6lqzVSG92ahNszQCbzSxq/Ypjk=
+	t=1724145183; cv=none; b=amRGb52dPEzI+rR80AFYY3dIAAvQHbRxlJhUihW68PCMnfjVi+rNLk7LMMDdmUgIqnx3ggE/ffwJFQmejH7Nh5/eErhRAQydhpWv+6IT8bVAguHuznzeNjUsPoMu3OZCa0YGQXyJrk8+ONANKtEegraFANYl+MDeqzEsENPpjfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145177; c=relaxed/simple;
-	bh=wUpjMbBh8CdJRFEgB5pw5mJZ0hcZfnKMvYipWganCKo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D6PsagmwMm88bA4u+9jbK+onri+QGIu92yrd4+dAqS5Lh38ofBCk95e1pKA9hhMpl6JT/o5tGvqs9ABpZxFB99vuvbzk/PbjKA/K8PNLSDUfIHJhryDSaQJEckeFJAiY5TbVl0DyPnfZ6/piVu+E+Uex94HL6Dr2RaVPyb0CtoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d39Qe7Bd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K3cQv1003163;
-	Tue, 20 Aug 2024 09:12:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Po3nzEL1wWi7hTzynC0PaR
-	zPSgbZyTb8+5oPJvd9FAA=; b=d39Qe7BdnUQoL/B+ExNDyg6ddbNBJ/1EECnpE2
-	nL3kR+CNqzENfsho7UtnuRqJLKADQyZ8JO58NJDY5W7qecpLzPDb3YR9/cG5tI+V
-	wq8puj/1+YH4YCunEyCXOJMLYdHGzvbRl5ao90hEkBgmLTWX2u6M+yrTDRBo1MOF
-	0qONbrNxxgCJ6E5MN+uvnbWAdF2Jk6iHUrUm47oD1JA5u3LjGdW8RV2fb0mKWOdD
-	1S1y1CELwqbPVMlGX7cHOMABLdnmpQ3hUr8V1hO3hI2uWFOcVOqUPlQl1JCB8nov
-	fku7DJjIxX501da5MurmtcA9EOt5x0Z9ss2ETWlhHQqJ/cuQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4145ywax4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 09:12:51 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K9CowZ010600
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 09:12:50 GMT
-Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 20 Aug 2024 02:12:48 -0700
-From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-To: <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_viswanat@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_srichara@quicinc.com>
-Subject: [PATCH V5 1/1] remoteproc: qcom: q6v5: Get crash reason from specific SMEM partition
-Date: Tue, 20 Aug 2024 14:42:31 +0530
-Message-ID: <20240820091231.445580-1-quic_gokulsri@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724145183; c=relaxed/simple;
+	bh=eMQ7xAnJ5JEFjPyimxBz7Ll/eyTDi2uPgp4ViH8BATI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPkjmPjEQR/v3t8oAQXwMGarm/jLhu9Er7NlVh8WID3f1Hl8sibi1v1vBs4dg8J1JER9Z8H39CH5xLfJRmtZ1D1qbPr0d1K95zKAC4iPCn4vL/dN+C0lO8d9UvD856v3gNkxHek3sNMLTrSFpJN3QPBYDxnsaIdDCYOkAqMUYKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB16ADA7;
+	Tue, 20 Aug 2024 02:13:25 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BA6B3F66E;
+	Tue, 20 Aug 2024 02:12:55 -0700 (PDT)
+Date: Tue, 20 Aug 2024 10:12:47 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Morse <james.morse@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	wangkefeng.wang@huawei.com, Guohanjun <guohanjun@huawei.com>
+Subject: Re: [PATCH v12 2/6] arm64: add support for ARCH_HAS_COPY_MC
+Message-ID: <ZsReD722byCipuNm@J2N7QTR9R3>
+References: <20240528085915.1955987-1-tongtiangen@huawei.com>
+ <20240528085915.1955987-3-tongtiangen@huawei.com>
+ <ZsOA8WD_5Sp0DJhS@J2N7QTR9R3.cambridge.arm.com>
+ <4436d172-c474-8ecd-b5e4-4c21088baf49@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8Cp-UG3NWriXazmmNfHt6h3U78qNEgSi
-X-Proofpoint-GUID: 8Cp-UG3NWriXazmmNfHt6h3U78qNEgSi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408200067
+In-Reply-To: <4436d172-c474-8ecd-b5e4-4c21088baf49@huawei.com>
 
-From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+On Tue, Aug 20, 2024 at 10:11:45AM +0800, Tong Tiangen wrote:
+> 在 2024/8/20 1:29, Mark Rutland 写道:
+> > Hi Tong,
+> > 
+> > On Tue, May 28, 2024 at 04:59:11PM +0800, Tong Tiangen wrote:
+> > > For the arm64 kernel, when it processes hardware memory errors for
+> > > synchronize notifications(do_sea()), if the errors is consumed within the
+> > > kernel, the current processing is panic. However, it is not optimal.
+> > > 
+> > > Take copy_from/to_user for example, If ld* triggers a memory error, even in
+> > > kernel mode, only the associated process is affected. Killing the user
+> > > process and isolating the corrupt page is a better choice.
+> > > 
+> > > New fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE is added to identify insn
+> > > that can recover from memory errors triggered by access to kernel memory.
+> > > 
+> > > Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
 
-q6v5 fatal and watchdog IRQ handlers always retrieves the crash reason
-information from SMEM global partition (QCOM_SMEM_HOST_ANY).
+[...]
 
-For some targets like IPQ9574 and IPQ5332, crash reason information is
-present in target specific partition due to which the crash reason is
-not printed in the current implementation.
+> > > diff --git a/arch/arm64/include/asm/asm-extable.h b/arch/arm64/include/asm/asm-extable.h
+> > > index 980d1dd8e1a3..9c0664fe1eb1 100644
+> > > --- a/arch/arm64/include/asm/asm-extable.h
+> > > +++ b/arch/arm64/include/asm/asm-extable.h
+> > > @@ -5,11 +5,13 @@
+> > >   #include <linux/bits.h>
+> > >   #include <asm/gpr-num.h>
+> > > -#define EX_TYPE_NONE			0
+> > > -#define EX_TYPE_BPF			1
+> > > -#define EX_TYPE_UACCESS_ERR_ZERO	2
+> > > -#define EX_TYPE_KACCESS_ERR_ZERO	3
+> > > -#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD	4
+> > > +#define EX_TYPE_NONE				0
+> > > +#define EX_TYPE_BPF				1
+> > > +#define EX_TYPE_UACCESS_ERR_ZERO		2
+> > > +#define EX_TYPE_KACCESS_ERR_ZERO		3
+> > > +#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD		4
+> > > +/* kernel access memory error safe */
+> > > +#define EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE	5
+> > 
+> > Could we please use 'MEM_ERR', and likewise for the macros below? That's
+> > more obvious than 'ME_SAFE', and we wouldn't need the comment here.
+> > Likewise elsewhere in this patch and the series.
+> > 
+> > To Jonathan's comment, I do prefer these numbers are aligned, so aside
+> > from the naming, the diff above looks good.
+> 
+> OK, I also modified other locations to use 'MEM_ERR'.
 
-Add support to pass crash_reason_partition along with crash_reason_item
-number in qcom_q6v5_init call and use the same to get the crash information
-from SMEM in fatal and watchdog IRQ handlers.
+Thanks!
 
-While at it, rename all instances of "crash_reason_smem" with
-"crash_reason_item" as this reflects the proper meaning.
+[...]
 
-Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
----
+> > > diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
+> > > index 802231772608..2ac716c0d6d8 100644
+> > > --- a/arch/arm64/lib/copy_to_user.S
+> > > +++ b/arch/arm64/lib/copy_to_user.S
+> > > @@ -20,7 +20,7 @@
+> > >    *	x0 - bytes not copied
+> > >    */
+> > >   	.macro ldrb1 reg, ptr, val
+> > > -	ldrb  \reg, [\ptr], \val
+> > > +	KERNEL_ME_SAFE(9998f, ldrb  \reg, [\ptr], \val)
+> > >   	.endm
+> > >   	.macro strb1 reg, ptr, val
+> > > @@ -28,7 +28,7 @@
+> > >   	.endm
+> > >   	.macro ldrh1 reg, ptr, val
+> > > -	ldrh  \reg, [\ptr], \val
+> > > +	KERNEL_ME_SAFE(9998f, ldrh  \reg, [\ptr], \val)
+> > >   	.endm
+> > >   	.macro strh1 reg, ptr, val
+> > > @@ -36,7 +36,7 @@
+> > >   	.endm
+> > >   	.macro ldr1 reg, ptr, val
+> > > -	ldr \reg, [\ptr], \val
+> > > +	KERNEL_ME_SAFE(9998f, ldr \reg, [\ptr], \val)
+> > >   	.endm
+> > >   	.macro str1 reg, ptr, val
+> > > @@ -44,7 +44,7 @@
+> > >   	.endm
+> > >   	.macro ldp1 reg1, reg2, ptr, val
+> > > -	ldp \reg1, \reg2, [\ptr], \val
+> > > +	KERNEL_ME_SAFE(9998f, ldp \reg1, \reg2, [\ptr], \val)
+> > >   	.endm
+> > >   	.macro stp1 reg1, reg2, ptr, val
+> > 
+> > These changes mean that regular copy_to_user() will handle kernel memory
+> > errors, rather than only doing that in copy_mc_to_user(). If that's
+> > intentional, please call that out explicitly in the commit message.
+> 
+> Yes. This is the purpose of the modification. If the copy_to_user()
+> function encounters a memory error, this uaccess affects only the
+> current process. and only need to kill the current process instead of
+> the entire kernel panic. Do not add copy_mc_to_user() so that
+> copy_to_user() can process memory errors.
+> 
+> I'll add a description in the commit msg next version.
 
-This change depends on WCSS secure PIL driver [1].
+Ok; why do powerpc and x86 have separate copy_mc_to_user()
+implementations, then?
 
-Changes in V5: Added changes to WCSS secure PIL driver.
+[...]
 
-Changes in V4: Rename all instances of crash_reason_smem to
-crash_reason_item
+> > > +/*
+> > > + * APEI claimed this as a firmware-first notification.
+> > > + * Some processing deferred to task_work before ret_to_user().
+> > > + */
+> > > +static bool do_apei_claim_sea(struct pt_regs *regs)
+> > > +{
+> > > +	if (user_mode(regs)) {
+> > > +		if (!apei_claim_sea(regs))
+> > > +			return true;
+> > > +	} else if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC)) {
+> > > +		if (fixup_exception_me(regs) && !apei_claim_sea(regs))
+> > > +			return true;
+> > > +	}
+> > > +
+> > > +	return false;
+> > > +}
+> > 
+> > Hmm... that'll fixup the exception even if we don't manage to claim a
+> > the SEA. I suspect this should probably be:
+> > 
+> > static bool do_apei_claim_sea(struct pt_regs *regs)
+> > {
+> > 	if (apei_claim_sea(regs))
+> > 		return false;
+> > 	if (user_mode(regs))
+> > 		return true;
+> > 	if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC))
+> > 		return !fixup_excepton_mem_err(regs);
+> > 	
+> > 	return false;
+> > }
+> > 
+> > ... unless we *don't* want to claim the SEA in the case we don't have a
+> > fixup?
+> > 
+> > Mark.
+> > 
+> 
+> Yes. My original meaning here is that if not have fixup, panic is
+> performed in do_sea() according to the original logic, and claim sea is
+> not required.
 
-Changes in V3: Updated commit message.
+AFAICT my suggestion doesn't change that; if we don't have a fixup the
+proprosed do_apei_claim_sea() would return false, and so do_sea() would
+caryy on to arm64_notify_die(...).
 
-Changes in V2: Addressed comments in V1.
+I'm specifically asking if we need to avoid calling apei_claim_sea()
+when we don't have a fixup handler, or if calling that would be fine.
 
-[1] https://patchwork.kernel.org/project/linux-arm-msm/cover/20240820085517.435566-1-quic_gokulsri@quicinc.com/
+One important thing is that if apei_claim_sea() fails to claim the SEA,
+we'd like to panic(), and in that case it'd be good to have not applied
+the fixup handler, so that the pt_regs::pc shows where the fault was
+taken from.
 
- drivers/remoteproc/qcom_q6v5.c          | 10 ++--
- drivers/remoteproc/qcom_q6v5.h          |  6 ++-
- drivers/remoteproc/qcom_q6v5_adsp.c     | 17 +++---
- drivers/remoteproc/qcom_q6v5_mss.c      |  5 +-
- drivers/remoteproc/qcom_q6v5_pas.c      | 69 +++++++++++++------------
- drivers/remoteproc/qcom_q6v5_wcss.c     | 12 +++--
- drivers/remoteproc/qcom_q6v5_wcss_sec.c |  3 +-
- 7 files changed, 66 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 4ee5e67a9f03..4d801ba3c791 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -100,7 +100,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
- 		return IRQ_HANDLED;
- 	}
- 
--	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	msg = qcom_smem_get(q6v5->crash_reason_partition, q6v5->crash_reason_item, &len);
- 	if (!IS_ERR(msg) && len > 0 && msg[0])
- 		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
- 	else
-@@ -121,7 +121,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	if (!q6v5->running)
- 		return IRQ_HANDLED;
- 
--	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	msg = qcom_smem_get(q6v5->crash_reason_partition, q6v5->crash_reason_item, &len);
- 	if (!IS_ERR(msg) && len > 0 && msg[0])
- 		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
- 	else
-@@ -244,14 +244,16 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
-  * Return: 0 on success, negative errno on failure
-  */
- int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
--		   struct rproc *rproc, int crash_reason, const char *load_state,
-+		   struct rproc *rproc, int crash_reason_partition,
-+		   int crash_reason_item, const char *load_state,
- 		   void (*handover)(struct qcom_q6v5 *q6v5))
- {
- 	int ret;
- 
- 	q6v5->rproc = rproc;
- 	q6v5->dev = &pdev->dev;
--	q6v5->crash_reason = crash_reason;
-+	q6v5->crash_reason_partition = crash_reason_partition;
-+	q6v5->crash_reason_item = crash_reason_item;
- 	q6v5->handover = handover;
- 
- 	init_completion(&q6v5->start_done);
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-index 5a859c41896e..7cdfa21fd9e4 100644
---- a/drivers/remoteproc/qcom_q6v5.h
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -34,7 +34,8 @@ struct qcom_q6v5 {
- 	struct completion start_done;
- 	struct completion stop_done;
- 
--	int crash_reason;
-+	int crash_reason_partition;
-+	int crash_reason_item;
- 
- 	bool running;
- 
-@@ -43,7 +44,8 @@ struct qcom_q6v5 {
- };
- 
- int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
--		   struct rproc *rproc, int crash_reason, const char *load_state,
-+		   struct rproc *rproc, int crash_reason_partition,
-+		   int crash_reason_item, const char *load_state,
- 		   void (*handover)(struct qcom_q6v5 *q6v5));
- void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 572dcb0f055b..174b0e213b12 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -60,7 +60,7 @@
- #define LPASS_EFUSE_Q6SS_EVB_SEL 0x0
- 
- struct adsp_pil_data {
--	int crash_reason_smem;
-+	int crash_reason_item;
- 	const char *firmware_name;
- 
- 	const char *ssr_name;
-@@ -97,7 +97,7 @@ struct qcom_adsp {
- 	struct regmap *halt_map;
- 	unsigned int halt_lpass;
- 
--	int crash_reason_smem;
-+	int crash_reason_item;
- 	const char *info_name;
- 
- 	struct completion start_done;
-@@ -721,8 +721,9 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto disable_pm;
- 
--	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
--			     desc->load_state, qcom_adsp_pil_handover);
-+	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-+			     desc->crash_reason_item, desc->load_state,
-+			     qcom_adsp_pil_handover);
- 	if (ret)
- 		goto disable_pm;
- 
-@@ -764,7 +765,7 @@ static void adsp_remove(struct platform_device *pdev)
- }
- 
- static const struct adsp_pil_data adsp_resource_init = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
-@@ -781,7 +782,7 @@ static const struct adsp_pil_data adsp_resource_init = {
- };
- 
- static const struct adsp_pil_data adsp_sc7280_resource_init = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.pbn",
- 	.load_state = "adsp",
- 	.ssr_name = "lpass",
-@@ -796,7 +797,7 @@ static const struct adsp_pil_data adsp_sc7280_resource_init = {
- };
- 
- static const struct adsp_pil_data cdsp_resource_init = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
-@@ -813,7 +814,7 @@ static const struct adsp_pil_data cdsp_resource_init = {
- };
- 
- static const struct adsp_pil_data wpss_resource_init = {
--	.crash_reason_smem = 626,
-+	.crash_reason_item = 626,
- 	.firmware_name = "wpss.mdt",
- 	.ssr_name = "wpss",
- 	.sysmon_name = "wpss",
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 2a42215ce8e0..bfa2a1966e83 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -26,6 +26,7 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/smem.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
- 
-@@ -2094,8 +2095,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->need_mem_protection = desc->need_mem_protection;
- 	qproc->has_mba_logs = desc->has_mba_logs;
- 
--	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
--			     qcom_msa_handover);
-+	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-+			     MPSS_CRASH_REASON_SMEM, "modem", qcom_msa_handover);
- 	if (ret)
- 		goto detach_proxy_pds;
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 88e7b84f223c..ab34bcde7331 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -36,7 +36,7 @@
- #define MAX_ASSIGN_COUNT 3
- 
- struct adsp_data {
--	int crash_reason_smem;
-+	int crash_reason_item;
- 	const char *firmware_name;
- 	const char *dtb_firmware_name;
- 	int pas_id;
-@@ -81,7 +81,7 @@ struct qcom_adsp {
- 	int dtb_pas_id;
- 	int lite_pas_id;
- 	unsigned int minidump_id;
--	int crash_reason_smem;
-+	int crash_reason_item;
- 	unsigned int smem_host_id;
- 	bool decrypt_shutdown;
- 	const char *info_name;
-@@ -771,7 +771,8 @@ static int adsp_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	adsp->proxy_pd_count = ret;
- 
--	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
-+	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-+			     desc->crash_reason_item, desc->load_state,
- 			     qcom_pas_handover);
- 	if (ret)
- 		goto detach_proxy_pds;
-@@ -820,7 +821,7 @@ static void adsp_remove(struct platform_device *pdev)
- }
- 
- static const struct adsp_data adsp_resource_init = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -830,7 +831,7 @@ static const struct adsp_data adsp_resource_init = {
- };
- 
- static const struct adsp_data sdm845_adsp_resource_init = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -841,7 +842,7 @@ static const struct adsp_data sdm845_adsp_resource_init = {
- };
- 
- static const struct adsp_data sm6350_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -857,7 +858,7 @@ static const struct adsp_data sm6350_adsp_resource = {
- };
- 
- static const struct adsp_data sm6375_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.minidump_id = 3,
-@@ -872,7 +873,7 @@ static const struct adsp_data sm6375_mpss_resource = {
- };
- 
- static const struct adsp_data sm8150_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -887,7 +888,7 @@ static const struct adsp_data sm8150_adsp_resource = {
- };
- 
- static const struct adsp_data sm8250_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -903,7 +904,7 @@ static const struct adsp_data sm8250_adsp_resource = {
- };
- 
- static const struct adsp_data sm8350_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -919,7 +920,7 @@ static const struct adsp_data sm8350_adsp_resource = {
- };
- 
- static const struct adsp_data msm8996_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
- 	.auto_boot = true,
-@@ -933,7 +934,7 @@ static const struct adsp_data msm8996_adsp_resource = {
- };
- 
- static const struct adsp_data cdsp_resource_init = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -943,7 +944,7 @@ static const struct adsp_data cdsp_resource_init = {
- };
- 
- static const struct adsp_data sdm845_cdsp_resource_init = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -954,7 +955,7 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
- };
- 
- static const struct adsp_data sm6350_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -970,7 +971,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
- };
- 
- static const struct adsp_data sm8150_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -985,7 +986,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
- };
- 
- static const struct adsp_data sm8250_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -1000,7 +1001,7 @@ static const struct adsp_data sm8250_cdsp_resource = {
- };
- 
- static const struct adsp_data sc8280xp_nsp0_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -1014,7 +1015,7 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
- };
- 
- static const struct adsp_data sc8280xp_nsp1_resource = {
--	.crash_reason_smem = 633,
-+	.crash_reason_item = 633,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 30,
- 	.auto_boot = true,
-@@ -1028,7 +1029,7 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
- };
- 
- static const struct adsp_data x1e80100_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.dtb_firmware_name = "adsp_dtb.mdt",
- 	.pas_id = 1,
-@@ -1048,7 +1049,7 @@ static const struct adsp_data x1e80100_adsp_resource = {
- };
- 
- static const struct adsp_data x1e80100_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.dtb_firmware_name = "cdsp_dtb.mdt",
- 	.pas_id = 18,
-@@ -1068,7 +1069,7 @@ static const struct adsp_data x1e80100_cdsp_resource = {
- };
- 
- static const struct adsp_data sm8350_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.auto_boot = true,
-@@ -1084,7 +1085,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
- };
- 
- static const struct adsp_data mpss_resource_init = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.minidump_id = 3,
-@@ -1101,7 +1102,7 @@ static const struct adsp_data mpss_resource_init = {
- };
- 
- static const struct adsp_data sc8180x_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.auto_boot = false,
-@@ -1116,7 +1117,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
- };
- 
- static const struct adsp_data msm8996_slpi_resource_init = {
--	.crash_reason_smem = 424,
-+	.crash_reason_item = 424,
- 	.firmware_name = "slpi.mdt",
- 	.pas_id = 12,
- 	.auto_boot = true,
-@@ -1130,7 +1131,7 @@ static const struct adsp_data msm8996_slpi_resource_init = {
- };
- 
- static const struct adsp_data sdm845_slpi_resource_init = {
--	.crash_reason_smem = 424,
-+	.crash_reason_item = 424,
- 	.firmware_name = "slpi.mdt",
- 	.pas_id = 12,
- 	.auto_boot = true,
-@@ -1146,7 +1147,7 @@ static const struct adsp_data sdm845_slpi_resource_init = {
- };
- 
- static const struct adsp_data wcss_resource_init = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "wcnss.mdt",
- 	.pas_id = 6,
- 	.auto_boot = true,
-@@ -1156,7 +1157,7 @@ static const struct adsp_data wcss_resource_init = {
- };
- 
- static const struct adsp_data sdx55_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.auto_boot = true,
-@@ -1171,7 +1172,7 @@ static const struct adsp_data sdx55_mpss_resource = {
- };
- 
- static const struct adsp_data sm8450_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.minidump_id = 3,
-@@ -1189,7 +1190,7 @@ static const struct adsp_data sm8450_mpss_resource = {
- };
- 
- static const struct adsp_data sm8550_adsp_resource = {
--	.crash_reason_smem = 423,
-+	.crash_reason_item = 423,
- 	.firmware_name = "adsp.mdt",
- 	.dtb_firmware_name = "adsp_dtb.mdt",
- 	.pas_id = 1,
-@@ -1209,7 +1210,7 @@ static const struct adsp_data sm8550_adsp_resource = {
- };
- 
- static const struct adsp_data sm8550_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.dtb_firmware_name = "cdsp_dtb.mdt",
- 	.pas_id = 18,
-@@ -1230,7 +1231,7 @@ static const struct adsp_data sm8550_cdsp_resource = {
- };
- 
- static const struct adsp_data sm8550_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.dtb_firmware_name = "modem_dtb.mdt",
- 	.pas_id = 4,
-@@ -1254,7 +1255,7 @@ static const struct adsp_data sm8550_mpss_resource = {
- };
- 
- static const struct adsp_data sc7280_wpss_resource = {
--	.crash_reason_smem = 626,
-+	.crash_reason_item = 626,
- 	.firmware_name = "wpss.mdt",
- 	.pas_id = 6,
- 	.auto_boot = true,
-@@ -1270,7 +1271,7 @@ static const struct adsp_data sc7280_wpss_resource = {
- };
- 
- static const struct adsp_data sm8650_cdsp_resource = {
--	.crash_reason_smem = 601,
-+	.crash_reason_item = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.dtb_firmware_name = "cdsp_dtb.mdt",
- 	.pas_id = 18,
-@@ -1295,7 +1296,7 @@ static const struct adsp_data sm8650_cdsp_resource = {
- };
- 
- static const struct adsp_data sm8650_mpss_resource = {
--	.crash_reason_smem = 421,
-+	.crash_reason_item = 421,
- 	.firmware_name = "modem.mdt",
- 	.dtb_firmware_name = "modem_dtb.mdt",
- 	.pas_id = 4,
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index e913dabae992..fbde92714f06 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -18,6 +18,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/smem.h>
- #include "qcom_common.h"
- #include "qcom_pil_info.h"
- #include "qcom_q6v5.h"
-@@ -93,7 +94,7 @@ enum {
- 
- struct wcss_data {
- 	const char *firmware_name;
--	unsigned int crash_reason_smem;
-+	unsigned int crash_reason_item;
- 	u32 version;
- 	bool aon_reset_required;
- 	bool wcss_q6_reset_required;
-@@ -143,7 +144,7 @@ struct q6v5_wcss {
- 	void *mem_region;
- 	size_t mem_size;
- 
--	unsigned int crash_reason_smem;
-+	unsigned int crash_reason_item;
- 	u32 version;
- 	bool requires_force_stop;
- 
-@@ -1048,7 +1049,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem, NULL, NULL);
-+	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-+			     desc->crash_reason_item, NULL, NULL);
- 	if (ret)
- 		return ret;
- 
-@@ -1082,7 +1084,7 @@ static void q6v5_wcss_remove(struct platform_device *pdev)
- 
- static const struct wcss_data wcss_ipq8074_res_init = {
- 	.firmware_name = "IPQ8074/q6_fw.mdt",
--	.crash_reason_smem = WCSS_CRASH_REASON,
-+	.crash_reason_item = WCSS_CRASH_REASON,
- 	.aon_reset_required = true,
- 	.wcss_q6_reset_required = true,
- 	.ops = &q6v5_wcss_ipq8074_ops,
-@@ -1090,7 +1092,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
- };
- 
- static const struct wcss_data wcss_qcs404_res_init = {
--	.crash_reason_smem = WCSS_CRASH_REASON,
-+	.crash_reason_item = WCSS_CRASH_REASON,
- 	.firmware_name = "wcnss.mdt",
- 	.version = WCSS_QCS404,
- 	.aon_reset_required = false,
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss_sec.c b/drivers/remoteproc/qcom_q6v5_wcss_sec.c
-index 8516e17521ea..b5ac3f52075f 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss_sec.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss_sec.c
-@@ -26,6 +26,7 @@
- #include "remoteproc_internal.h"
- 
- #define WCSS_CRASH_REASON		421
-+#define WCSS_SMEM_HOST			1
- 
- #define WCSS_PAS_ID			0x6
- #define MPD_WCSS_PAS_ID			0xD
-@@ -268,7 +269,7 @@ static int wcss_sec_probe(struct platform_device *pdev)
- 			goto free_rproc;
- 	}
- 
--	ret = qcom_q6v5_init(&wcss->q6, pdev, rproc,
-+	ret = qcom_q6v5_init(&wcss->q6, pdev, rproc, WCSS_SMEM_HOST,
- 			     WCSS_CRASH_REASON, NULL, NULL);
- 	if (ret)
- 		goto free_rproc;
--- 
-2.34.1
-
+Mark.
 
