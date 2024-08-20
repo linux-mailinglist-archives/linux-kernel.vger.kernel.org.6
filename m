@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-293894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBAD95863E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF4995864A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEAFB1C2278F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFDB1C24CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D0518FDB3;
-	Tue, 20 Aug 2024 11:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DB8190671;
+	Tue, 20 Aug 2024 11:55:56 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2203918EFC4
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6266718F2C0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154941; cv=none; b=Y6LwGwfdhCdngWgFFcbH//CvBDIDzbPbBVYaYgnnBMnChSssM9itVHNdN/AqgYl79oXOEjSEGkHTDsgmuXAa9md5KDo9zKEwLVNYYPwTRllO/0IEGNdWIbGS9r7Aex0y4bVtRV0tvLoSQcAX7lGXYdZ6kBgUaKUnFzseycnRrKY=
+	t=1724154955; cv=none; b=QzdszjGxwsnROEFAvKLtCME0AkKeO8hOXY6HRBdp4qY6a0p0tg7g/xnoloDqh2yJUKYmF4kJN4mLmPQozit+T++2NNk2I7y5lQAXRJY2d7UVWVBfkxauhW1exCVxMJuUsboCU+dGqxlGuuELXYFfpL7sfN7Q5HtlTxFDlm4910A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154941; c=relaxed/simple;
-	bh=WnDOQXdOu6RYChj81AwXAYH8vdtm8Lq/gakdG2OPsgw=;
+	s=arc-20240116; t=1724154955; c=relaxed/simple;
+	bh=ub6bLaPuTHcCZMiXbWB6JhIgGt2owL18udvenP083fo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bIhXO7fXhy/zrHypekeXMvaavvKcKJ0U1jkL1HBAoKVlUsF1pSMsp/GnZmcYwd37XsBkTX3qeCnvaurwh8/nqbaQ9H6IDGGjPG8KCphC2tt+Zr3P8+XYo7dHg7/btug5e+mJkEFgbsAq46NUZ8w9CgkqJCyuIi+POm4cc2ouY30=
+	 In-Reply-To:To:Cc; b=X/aK7yEUuHaDQJoxwc6bILO96MGhfdxhcqPJUF09iUYH6mB8JgOe0P6LcAJs93Fp4SnmhQFHS+93u2sEtm1ClQE3rdTLLbPh80TUhxa3hXOeXqAVGSqVly1bC3PvGrf6zNKF5sapCkq3IpmfhRIH0IDNZ/4F9CXaUHcXT7CijY4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,20 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSS-0000Ak-5W; Tue, 20 Aug 2024 13:55:28 +0200
+	id 1sgNSS-0000Am-5W; Tue, 20 Aug 2024 13:55:28 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-001lLm-F9; Tue, 20 Aug 2024 13:55:27 +0200
+	id 1sgNSR-001lLn-FN; Tue, 20 Aug 2024 13:55:27 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-00GnIQ-1D;
+	id 1sgNSR-00GnIQ-1E;
 	Tue, 20 Aug 2024 13:55:27 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 20 Aug 2024 13:55:33 +0200
-Subject: [PATCH 08/31] wifi: mwifiex: simplify mwifiex_setup_ht_caps()
+Date: Tue, 20 Aug 2024 13:55:34 +0200
+Subject: [PATCH 09/31] wifi: mwifiex: deduplicate code in
+ mwifiex_cmd_tx_rate_cfg()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-mwifiex-cleanup-v1-8-320d8de4a4b7@pengutronix.de>
+Message-Id: <20240820-mwifiex-cleanup-v1-9-320d8de4a4b7@pengutronix.de>
 References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
@@ -62,11 +63,11 @@ To: Brian Norris <briannorris@chromium.org>,
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=2368;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=3107;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=WnDOQXdOu6RYChj81AwXAYH8vdtm8Lq/gakdG2OPsgw=;
- b=bxfaC36CIbCvFiTZ3tpkNHbCczOANqKc9NMUIk6yJhvUTHjliQNyZAlYJnx1sYBwf/Ln6A+7I
- kq9UvEagkmuC4hhTEZ5oZHzs//I+vWcICWNv1o+CmHRWDFiroauip4f
+ bh=ub6bLaPuTHcCZMiXbWB6JhIgGt2owL18udvenP083fo=;
+ b=+PIhpDmqELJBEkl3fyKxfeXdRDT+iSAeqXvKKlf9BHbbmYFR5IJONNEl+Cs/aJb0ZgeQnXQCv
+ kzcW4BFT6ffDrauypw3y/RGNBwHdJh/0iOMSHf4hUudkzsEFJ09JSkp
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -74,63 +75,77 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In mwifiex_setup_ht_caps() first a local struct ieee80211_mcs_info
-is initialized and afterwards copied over &ht_info->mcs. Simplify
-this by initializing &ht_info->mcs directly.
-
-While at it call memset on the u8 rx_mask[] array instead of the struct
-which makes the intention clearer and we no longer have to assume the
-rx_mask array is the first member of struct ieee80211_mcs_info.
+The code block inside the if/else is the same with just using
+pbitmap_rates if non NULL or priv->bitmap_rates otherwise. Deduplicate
+the code by picking the correct pointer first and then using it
+unconditionally.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_cmd.c | 43 +++++++++-----------------
+ 1 file changed, 14 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index d1cdbeafcfbcb..784f342a9bf23 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -2906,16 +2906,12 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
- 		      struct mwifiex_private *priv)
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+index e2800a831c8ed..30dd4e58e2b1d 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+@@ -157,7 +157,7 @@ mwifiex_cmd_802_11_get_log(struct host_cmd_ds_command *cmd)
+  */
+ static int mwifiex_cmd_tx_rate_cfg(struct mwifiex_private *priv,
+ 				   struct host_cmd_ds_command *cmd,
+-				   u16 cmd_action, u16 *pbitmap_rates)
++				   u16 cmd_action, const u16 *pbitmap_rates)
  {
- 	int rx_mcs_supp;
--	struct ieee80211_mcs_info mcs_set;
--	u8 *mcs = (u8 *)&mcs_set;
- 	struct mwifiex_adapter *adapter = priv->adapter;
- 
- 	ht_info->ht_supported = true;
- 	ht_info->ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K;
- 	ht_info->ampdu_density = IEEE80211_HT_MPDU_DENSITY_NONE;
- 
--	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
--
- 	/* Fill HT capability information */
- 	if (ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
- 		ht_info->cap |= IEEE80211_HT_CAP_SUP_WIDTH_20_40;
-@@ -2961,17 +2957,15 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
- 	ht_info->cap |= IEEE80211_HT_CAP_SM_PS;
- 
- 	rx_mcs_supp = GET_RXMCSSUPP(adapter->user_dev_mcs_support);
+ 	struct host_cmd_ds_tx_rate_cfg *rate_cfg = &cmd->params.tx_rate_cfg;
+ 	struct mwifiex_rate_scope *rate_scope;
+@@ -174,34 +174,19 @@ static int mwifiex_cmd_tx_rate_cfg(struct mwifiex_private *priv,
+ 	rate_scope->type = cpu_to_le16(TLV_TYPE_RATE_SCOPE);
+ 	rate_scope->length = cpu_to_le16
+ 		(sizeof(*rate_scope) - sizeof(struct mwifiex_ie_types_header));
+-	if (pbitmap_rates != NULL) {
+-		rate_scope->hr_dsss_rate_bitmap = cpu_to_le16(pbitmap_rates[0]);
+-		rate_scope->ofdm_rate_bitmap = cpu_to_le16(pbitmap_rates[1]);
+-		for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
+-			rate_scope->ht_mcs_rate_bitmap[i] =
+-				cpu_to_le16(pbitmap_rates[2 + i]);
+-		if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
+-			for (i = 0;
+-			     i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap);
+-			     i++)
+-				rate_scope->vht_mcs_rate_bitmap[i] =
+-					cpu_to_le16(pbitmap_rates[10 + i]);
+-		}
+-	} else {
+-		rate_scope->hr_dsss_rate_bitmap =
+-			cpu_to_le16(priv->bitmap_rates[0]);
+-		rate_scope->ofdm_rate_bitmap =
+-			cpu_to_le16(priv->bitmap_rates[1]);
+-		for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
+-			rate_scope->ht_mcs_rate_bitmap[i] =
+-				cpu_to_le16(priv->bitmap_rates[2 + i]);
+-		if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
+-			for (i = 0;
+-			     i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap);
+-			     i++)
+-				rate_scope->vht_mcs_rate_bitmap[i] =
+-					cpu_to_le16(priv->bitmap_rates[10 + i]);
+-		}
++	if (!pbitmap_rates)
++		pbitmap_rates = priv->bitmap_rates;
 +
-+	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
- 	/* Set MCS for 1x1/2x2 */
--	memset(mcs, 0xff, rx_mcs_supp);
--	/* Clear all the other values */
--	memset(&mcs[rx_mcs_supp], 0,
--	       sizeof(struct ieee80211_mcs_info) - rx_mcs_supp);
-+	memset(ht_info->mcs.rx_mask, 0xff, rx_mcs_supp);
++	rate_scope->hr_dsss_rate_bitmap = cpu_to_le16(pbitmap_rates[0]);
++	rate_scope->ofdm_rate_bitmap = cpu_to_le16(pbitmap_rates[1]);
 +
- 	if (priv->bss_mode == NL80211_IFTYPE_STATION ||
- 	    ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
- 		/* Set MCS32 for infra mode or ad-hoc mode with 40MHz support */
--		SETHT_MCS32(mcs_set.rx_mask);
--
--	memcpy((u8 *) &ht_info->mcs, mcs, sizeof(struct ieee80211_mcs_info));
-+		SETHT_MCS32(ht_info->mcs.rx_mask);
++	for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
++		rate_scope->ht_mcs_rate_bitmap[i] = cpu_to_le16(pbitmap_rates[2 + i]);
++
++	if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
++		for (i = 0; i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap); i++)
++			rate_scope->vht_mcs_rate_bitmap[i] =
++				cpu_to_le16(pbitmap_rates[10 + i]);
+ 	}
  
- 	ht_info->mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
- }
+ 	rate_drop = (struct mwifiex_rate_drop_pattern *) ((u8 *) rate_scope +
 
 -- 
 2.39.2
