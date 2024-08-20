@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-293879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2557995861C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:51:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D62958620
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9501F23124
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB41B24986
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5916018F2CA;
-	Tue, 20 Aug 2024 11:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7D218EFCF;
+	Tue, 20 Aug 2024 11:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="naH22V54"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sQgveeTh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284E618FC71
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A669418EFD0;
+	Tue, 20 Aug 2024 11:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154645; cv=none; b=nr3rVNADWWDVlcW2FoJiPxueRrlaD+RSw+hMlIw0HHTabgShsajYUzNdwj9nnfdt3Kjje0x0uZOs9b6jP0HbiNdFy3tbfZpUlZaLdeeN+Wd8qD2rKk3wMdZfv6YZ6zwEbVdm7K3W73tYbFC+atQsE7zXRMjuNr1Z/1/wfWaSfJc=
+	t=1724154668; cv=none; b=IY8a4WzRHGjXzC1+IiNfNXAnuIVlfkYT1lpOaB2GiV9tywYPvRrKyr6BNbs0pvgVJv3uOlU4H0UxaYFXtL2tY3g49Bwf+4thDTgF0wWZgjOZFo+WayQzdHMdMboZUP0ST0yPJWLdtvGVY18xZRobf3sDwPWJXossOrYr5tH3iMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154645; c=relaxed/simple;
-	bh=+N0fCfo75321OdOJcVcEyAnRKFBXqAIaZvFl/KyVYCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vx4qo2liSlNzUtqWQeKR+gf3iBLUg6gDmZK9KRJZNA0qTM8LXRV7FQnsoYdafA4Vto2vez2CdrVjtNoAEoKSN6QMwTWvRVD+VzEnTgr1x7o4de3O53PtmxsJhAyEeqNdbIxC/Nzgtq3m7B6hQy2GXSvRn0j1hfpeEow70zAEvKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=naH22V54; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso5564894276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:50:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724154643; x=1724759443; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9DVd0Gefl7PHpJ5IcyG9GzUh0GMs/G2HRBX2T94h5zQ=;
-        b=naH22V54vnmnpUC0mBpyC/NRdrlRbT6takB5P5dnQm3rOJKXC+Nd70ThDge7XAccan
-         AeB1X+7eFglWcQjxhwmrpaRgRXvYWKr3nyllQlzsJ244GspXZfGy7BaareRy0GalWyQd
-         yfKpEox6sIs1qfKPp/Gr9KEK1T1JMbNwva1Hkris63try70xC3L9HETl/7kcM9U31kis
-         ILSPsWJP9wTxRgSGV14jKCFmDwGpp3IEwxHZMnCkmtsvO8bSFcTg8vEiZWPvHVJEBJMt
-         qHnQmGL2D3SJm7SZBUqvxSoQlat9uvDsSOtjRX8E7M2WpB8CRyrd6zBlZbn0oYNTnxx8
-         yVUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724154643; x=1724759443;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9DVd0Gefl7PHpJ5IcyG9GzUh0GMs/G2HRBX2T94h5zQ=;
-        b=CMaVwJ8tBywXiDM7RkUi2VnEKbBjiPpx5JGsTcQGo/TgUURn/VQ0LeF2yMB2OJUrar
-         2GvOkubDu0ceVr/HMa0iwZsdsjxXWJvySL5nG0phQ65BoQTubA37XnlD3k9DpvqVezZl
-         jjKLaTSMamareRQ713lnGt6vA4/sD2riZM69HXHCzGj+pGGz8DPfHKAQ+eLSyb2YtOyD
-         /t7WcX0kxOwpg5ArE5gTArG9f/uVGBeMhFXcmBubmy7TJDJ9YK9nqYODQ9f1k5hBEO/b
-         Cgtfr8FFuasFb1RoFfvu2wdP6hk4Kq/4mA50XvClDcEnHW7XSqqfuz2oVbDjWBm/PEYg
-         eNCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXY2E/BTUeoqgb8Sn2igC/AKmIQCMlWEBeZELoh0ooHVBGdoCPMrm8tsXeXXykuOL64+QIFgt92TqewjWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzElYIaKD3zoOjizljTpdMij4Fs/fXg7HCzSBtS9B5UB8ZIAG1Q
-	cm0R1DPR9BU8gu7eguzTSkGF+IOQqUOT2HE/JXNe1uAH9d2iDLDw5panS9aQcwJDXNp741/ySI9
-	QQWi2Ar9UdQ1LqapyarMSWOAb1mcrDAvmUYG/FQ==
-X-Google-Smtp-Source: AGHT+IEMB3TMQoKoMENuYx3+vgX9Vhmt9+GFb4+PSf+bt1316IqMO95UvkjliFqkRrK+xxXvuI3QTNie11Iwttdbqgk=
-X-Received: by 2002:a05:6902:e10:b0:e0b:eb96:fd95 with SMTP id
- 3f1490d57ef6-e1650d3fd97mr1995243276.19.1724154643077; Tue, 20 Aug 2024
- 04:50:43 -0700 (PDT)
+	s=arc-20240116; t=1724154668; c=relaxed/simple;
+	bh=waxZ9OJeE5s5LYNiM4ohBHt3MmtoTcA2lejAzyyV3Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbNH3IFC0tHO+jvT6iATfoZ06ANRUAaumXMR+BmObMxKUFXf0sxzs5P2HaKRAK8MrTqNS+sAxVL3wloPHf4EceOA2rjr5S1cti/iXFl09cAbyVB/yK8ffpYRRkBCHwWiCbyTWaNdZtsQvEyR8L+77ZOEJAC+/VlHFnwMT8nbTxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sQgveeTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06620C4AF10;
+	Tue, 20 Aug 2024 11:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724154668;
+	bh=waxZ9OJeE5s5LYNiM4ohBHt3MmtoTcA2lejAzyyV3Ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQgveeThpT6aa8tqjhhwUCrG6SO8XtUDh/YaCiHgdUgKHbb9JWpxYY91PgA8SU6cj
+	 rDWhRedX7Ql4Reo7hpA4OGWU9ts0qQ2Y9pPQ1UbfzA+EsYKnJyWlu+dq5tbjW88QRd
+	 T9HQL302dgAv3hsJbStLmGCDPnRbTigWMO36CbLI=
+Date: Tue, 20 Aug 2024 13:51:05 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH v2] usb: gadget: u_serial: check Null pointer in EP
+ callback
+Message-ID: <2024082043-erratic-imitation-e21e@gregkh>
+References: <PUZPR06MB62242AA2715789D100FA2E60D28D2@PUZPR06MB6224.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8c90be28-67b4-4b0d-a105-034dc72a0b31@stanley.mountain>
-In-Reply-To: <8c90be28-67b4-4b0d-a105-034dc72a0b31@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 20 Aug 2024 13:50:07 +0200
-Message-ID: <CAPDyKFrdNWTsP_cKM4+RmmL-j=nu+r2HktFRxGxhcOhPcSt8vA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mmc_test: Fix NULL dereference on allocation failure
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Pierre Ossman <drzeus@drzeus.cx>, Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PUZPR06MB62242AA2715789D100FA2E60D28D2@PUZPR06MB6224.apcprd06.prod.outlook.com>
 
-On Tue, 20 Aug 2024 at 10:44, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> If the "test->highmem = alloc_pages()" allocation fails then calling
-> __free_pages(test->highmem) will result in a NULL dereference.  Also
-> change the error code to -ENOMEM instead of returning success.
->
-> Fixes: 2661081f5ab9 ("mmc_test: highmem tests")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Applied for fixes, thanks!
-
-Kind regards
-Uffe
-
-
+On Tue, Aug 20, 2024 at 09:29:05AM +0000, 胡连勤 wrote:
+> From: Lianqin Hu <hulianqin@vivo.com>
+> 
+> Added null pointer check to avoid system crash.
+> 
+> Unable to handle kernel NULL pointer dereference at
+> virtual address 00000000000001a8
+> pc : gs_read_complete+0x58/0x240
+> lr : usb_gadget_giveback_request+0x40/0x160
+> sp : ffffffc00f1539c0
+> x29: ffffffc00f1539c0 x28: ffffff8002a30000 x27: 0000000000000000
+> x26: ffffff8002a30000 x25: 0000000000000000 x24: ffffff8002a30000
+> x23: ffffff8002ff9a70 x22: ffffff898e7a7b00 x21: ffffff803c9af9d8
+> x20: ffffff898e7a7b00 x19: 00000000000001a8 x18: ffffffc0099fd098
+> x17: 0000000000001000 x16: 0000000080000000 x15: 0000000ac1200000
+> x14: 0000000000000003 x13: 000000000000d5e8 x12: 0000000355c314ac
+> x11: 0000000000000015 x10: 0000000000000012 x9 : 0000000000000008
+> x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffffff887cd12000
+> x5 : 0000000000000002 x4 : ffffffc00f9b07f0 x3 : ffffffc00f1538d0
+> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 00000000000001a8
+> Call trace:
+> gs_read_complete+0x58/0x240
+> usb_gadget_giveback_request+0x40/0x160
+> dwc3_remove_requests+0x170/0x484
+> dwc3_ep0_out_start+0xb0/0x1d4
+> __dwc3_gadget_start+0x25c/0x720
+> kretprobe_trampoline.cfi_jt+0x0/0x8
+> kretprobe_trampoline.cfi_jt+0x0/0x8
+> udc_bind_to_driver+0x1d8/0x300
+> usb_gadget_probe_driver+0xa8/0x1dc
+> gadget_dev_desc_UDC_store+0x13c/0x188
+> configfs_write_iter+0x160/0x1f4
+> vfs_write+0x2d0/0x40c
+> ksys_write+0x7c/0xf0
+> __arm64_sys_write+0x20/0x30
+> invoke_syscall+0x60/0x150
+> el0_svc_common+0x8c/0xf8
+> do_el0_svc+0x28/0xa0
+> el0_svc+0x24/0x84
+> el0t_64_sync_handler+0x88/0xec
+> el0t_64_sync+0x1b4/0x1b8
+> Code: aa1f03e1 aa1303e0 52800022 2a0103e8 (88e87e62)
+> ---[ end trace 938847327a739172 ]---
+> Kernel panic - not syncing: Oops: Fatal exception
+> 
+> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
 > ---
-> This code is from 2008 so it must not be that much of an issue in real
-> life.
->
->  drivers/mmc/core/mmc_test.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index 8f7f587a0025..b7f627a9fdea 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -3125,13 +3125,13 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
->         test->buffer = kzalloc(BUFFER_SIZE, GFP_KERNEL);
->  #ifdef CONFIG_HIGHMEM
->         test->highmem = alloc_pages(GFP_KERNEL | __GFP_HIGHMEM, BUFFER_ORDER);
-> +       if (!test->highmem) {
-> +               count = -ENOMEM;
-> +               goto free_test_buffer;
-> +       }
->  #endif
->
-> -#ifdef CONFIG_HIGHMEM
-> -       if (test->buffer && test->highmem) {
-> -#else
->         if (test->buffer) {
-> -#endif
->                 mutex_lock(&mmc_test_lock);
->                 mmc_test_run(test, testcase);
->                 mutex_unlock(&mmc_test_lock);
-> @@ -3139,6 +3139,7 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
->
->  #ifdef CONFIG_HIGHMEM
->         __free_pages(test->highmem, BUFFER_ORDER);
-> +free_test_buffer:
->  #endif
->         kfree(test->buffer);
->         kfree(test);
-> --
-> 2.43.0
->
+> v2:
+>   - Optimize code comments
+>   - Delete log printing
+> ---
+>  drivers/usb/gadget/function/u_serial.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+
+Any specific reason you ignored my previous review comments?
 
