@@ -1,106 +1,263 @@
-Return-Path: <linux-kernel+bounces-293122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF61E957B00
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931D7957B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619B91F23082
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCD1282ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735FA1B949;
-	Tue, 20 Aug 2024 01:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6369D1BC41;
+	Tue, 20 Aug 2024 01:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy4jsgGJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RuBqWoho"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2071.outbound.protection.outlook.com [40.107.255.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4FD51E;
-	Tue, 20 Aug 2024 01:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724117583; cv=none; b=FfK2awrfggYbvRAXxv3SqlCbMhC2HT/xwO7wGQ1VvXQIoeU5GiQ06IwLO3ywtyE3EydhRG3SKfIs+k/N6iyvcYiKrBikhTWeRN74JszPzF6evoBs7dmSWTrsV4Iu6I8imDGkC8sGS/6GTIGKUVUup6IQFlP6Qwpzcojy3PRQQes=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724117583; c=relaxed/simple;
-	bh=Tdqug5IeAAWe7rMOk6UxGjNRhUc56LQEVOagI1zSIR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P153rUjWVDKAzhHqpAy1uTO6yjG1QmYkU8lzjFZUNY1aK/VP+BqiFrUlnlpXiVa6a+5XSdT3qPxYZhsC4DHq4tVXEJ8mPb3DjcjFhUiENeimriwBntk7kY0QtgGNJ7pyztQZZJQyZApi12FzIRtkTa4f2K3qfr933OPMTZbc3X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hy4jsgGJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97C6C32782;
-	Tue, 20 Aug 2024 01:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724117583;
-	bh=Tdqug5IeAAWe7rMOk6UxGjNRhUc56LQEVOagI1zSIR4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hy4jsgGJsQEZNS17PMtGRSoNhD35Eeg2haJmwbzRdcIR49CPQrw34zkyxcRwIn0l/
-	 po/6/AjYjHC/59IAbOTrHgOto7vWAaCV9DQrmJ3IeajmCB4PHMOrTy6jlT0w6iE6Nw
-	 Ilr34miXrfPit3rnoohbKeVjgptKmhlzj+i/xeqAMwgyRwAqAv2TvPlCzBYAMqhLJT
-	 6wBfpq+4Ic1yXbV44vv2QEO9ZNb7I0+jpWt9sM5FE4KB6wmmjBzBkinrObxSdmeTFw
-	 5LvJYwosrRQTdtHTejzBNprKcIgGXLQ2GoYCyMJl5hykrtGGvnXzfZedyCwoEKoRBI
-	 R8455drrYeNJw==
-Date: Mon, 19 Aug 2024 18:33:02 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Andrew
- Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org, Michal Simek
- <michal.simek@amd.com>, Daniel Borkmann <daniel@iogearbox.net>,
- linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v2 2/5] net: xilinx: axienet: Fix dangling
- multicast addresses
-Message-ID: <20240819183302.26b7a352@kernel.org>
-In-Reply-To: <20240815193614.4120810-3-sean.anderson@linux.dev>
-References: <20240815193614.4120810-1-sean.anderson@linux.dev>
-	<20240815193614.4120810-3-sean.anderson@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762971C6B2;
+	Tue, 20 Aug 2024 01:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724117636; cv=fail; b=VEuRAiA/lAOjHPEZih220TkhMUZOyPe9FiROGc/k/9GrmjHh48fkjKdoXCt3AMztHx4hN4q3OYH9IV4kl8pZ3N4aTG8f4MMEon09p1wPxhtgEmFz0FGddYr5ablNVnA6WmuzDlh19NGZFk0XuIY8Erm/TItJcGAW47Vxp4RuGPQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724117636; c=relaxed/simple;
+	bh=zFkcT1BHXGHS12BqATnpUnS/Xh0nGCbdw0+qZgamgek=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=le0AIpGuax/58RsExIhSK/b7yhqomUMMeqeB4cL3cxPyPDg1rf4bdKfnztlyAqZhs3ufzZvC0eW/1VaIeu4ECz50TYM8lDqd7rZZ8Pe7EqQY2ES6hWsSrmbXXdf5YJYrqOOaUpGqdNbpjAlaQWp3A6fUXOCHaDf9LJI1QESM/EI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RuBqWoho; arc=fail smtp.client-ip=40.107.255.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RsiYPRJnXN0pmJ1GYYdxul2eh9a1B6vG6GeN6DSztrABGxK6H/P/A4l+RDUo9ytJF9AwBYDzowqCGnYXH+mc6S2BCkpS5GGkrG9cDXKqsTRvx3fNPp4pJU3+V8OPWv3XLvZ6IwGasqtUEeh9GKPNAj1jeJp5CEcyQ/2yrrSrQ4pUAI2dV+q4JPRNg/2YQ5wMfqO0U/rzAbXCn53qu/f58xTRuABxZLaNNXwVPkBH2quEFZKk6o1fp888/UIO/pQOqD9gJlb4OOI8Nz21c248Kbm06ojido5tNuyxZdKRYOPssa93F61+McyMobzGZxVTTYC8LKLReiF+Lc2H8nmzOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mm8VpeQx+ms/S3NOXz+earTIxkO6wyahrLeWeNRaWCA=;
+ b=iJXkqh5Plc/Bin0vttVc7Uaazbgd1D28x/QLKh3bSbL3xgrXIx8JzsK9TPcjOTdIYSiq6ehIjq8DhlLgXEj6ktU2DK4dzWHELzxnJDmeT4jFcmNAeVeRkpWKPFMezL8Y/4PpHva+ZaZNk59g9ZV3ENQ/oZtLX/63uD7LH0gM7bMlzJvvTknO0etSfHfPXb1uo6xPVT3/k8WDcCdJ1S7uVHGWhNl1eYJR0O90tEc0gF24+mUlurwhLcKw+TjaMIF1vS0G+/BnYAYz8y11JSkKfjakcyyKBaeDV2Hx+5cAyiWeaGJ3bE5q9UCANEhw3HAaSlC+uT26zJHQoyx5gzJ7vA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mm8VpeQx+ms/S3NOXz+earTIxkO6wyahrLeWeNRaWCA=;
+ b=RuBqWohoE7/tQNCbGpiZTyuYuLE4vC0ui/3TUN7Rkx+LfPT8bd4J+m1NxuHLMS/SCXlVI+Hm4P0jKS/VIiMtRu9FdTCN0QrwgyssY0uLCWYhoD+lnZCe599K7/Nu0V9Mg9yWqylYHZ1+yY2iuCgl0bqUgaMRw5xA//NMrq1y85d9gbYVoqO17IXPO+gTYv7SXLYgXfWkwht4lZtPCF0GrZFuK7AFnJlAraf9f/xOvk8B8wrYbhIcprypGLXkM/dYrIbhx//O1dchuzDty7idpwN1RBxOmJrieuH8ovOeuL59dSu2wXEXaRDN270SRzEuZ8J+tubEoIiLXEcBxQS1LQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by PUZPR06MB6267.apcprd06.prod.outlook.com (2603:1096:301:115::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Tue, 20 Aug
+ 2024 01:33:48 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 01:33:48 +0000
+Message-ID: <e5569c9c-c38e-4011-b77e-31a4df065cb7@vivo.com>
+Date: Tue, 20 Aug 2024 09:33:44 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] fix vmap_udmabuf error page set
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240813090518.3252469-1-link@vivo.com>
+ <20240813090518.3252469-4-link@vivo.com>
+ <IA0PR11MB7185465DDE79BC8DD84B8BE1F8822@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB7185465DDE79BC8DD84B8BE1F8822@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0017.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::10) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PUZPR06MB6267:EE_
+X-MS-Office365-Filtering-Correlation-Id: eaa9ddd2-86d0-4603-5698-08dcc0b82373
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3hwdUNuenR2Ti9jSnBsb0RuZnlQQzZJY1ZocHpGeHV2TkwwRCtDbkRlMFVq?=
+ =?utf-8?B?NmRJQVNMTlFxRFJCMUVBcjUxTWhmZVRxSjVUdUQ5WGxMVllNWjBVclhNRVQr?=
+ =?utf-8?B?S29iQkhwamNObk1zaytLQm1qeE03N2ZCcFkrNm1kOWJMVXV4SGhncFQvUEVp?=
+ =?utf-8?B?K0daWTUxa1dUMlp1V1FPb3YwS0lMbFRaZ2M4WVZIaXl6ZTZRMGhWU05NZG9x?=
+ =?utf-8?B?QTViZHJyaEVES0E0YjIvQnVYeUlHTnJiQmU0dHlwRm43NU1kaGlsY2RwZkRF?=
+ =?utf-8?B?MVhSZ0RrS2twSkUwbjVHRUxnTGNRUFFFNjFoMmxXUW1IOVpHUnd2L0srcnho?=
+ =?utf-8?B?a2FoMnU4MVVGSmtOUURLazRGV3hqUE5Zbk42TFdBVUNKYjJmZk5neGxNaStu?=
+ =?utf-8?B?RlI0eUVKM01wemxxdmRCUUpucDdzOVRXTmhudnZ1RXBSN1plZ2VYOGxnUlJr?=
+ =?utf-8?B?enYva2lHZjljRUtlWlBTVzZMSUFHMlh6aHpxa2FzbGVSNytkWmRmbVBHWlFJ?=
+ =?utf-8?B?TWlCWFpDR3FVRDQ1ZytuMmRaN2lVMEdVcXNPcEpPdkVha0Uzbm5WeVdxZy84?=
+ =?utf-8?B?TjFGcnhVaFZ4NUJES0JWaWJGU3Yzc1FkdlhRZFBhU3JIb1htYW1pMlduTVNJ?=
+ =?utf-8?B?NTdmUjlSZjFBUkNMQnd2amZudXpYWFNSeVJKTnpkYVhRZlk0N0VIcXc2NkpP?=
+ =?utf-8?B?cGFXQ3Uxb1dHamFjT1VRK1BBUEE0blRBeXY3N053ZEdTeHRQUWZubElGUWor?=
+ =?utf-8?B?cE5RK2JGdUdhYXlERVlIK2lKcDBYcC9EME1QQVJ0UzVNK2FSSUtHMGkremNh?=
+ =?utf-8?B?dzQ2NGhiMWR4aExEWUJ5bTlQVXZML2krU3k2U2tRaXF3aVNpV0xLWW14RGJQ?=
+ =?utf-8?B?NTJyNmgxSXl1TXAvZDFPc0U2V3V6RGdyY1JpT0pYYjlENHI5dFhvZFRLeTR3?=
+ =?utf-8?B?bHpaZXlIZjk5eXRRVkE3VHRQbHpVOTVrdVAxSExJZnE2L3cxZjE1TklNL0dD?=
+ =?utf-8?B?V1YwVlVBTDA3V0xhbW9wZkwvUFBTcUkyM2hvMWhXUzl1WXMrWjZ4cHdzWDRl?=
+ =?utf-8?B?dVJjLzJtS3VKd1M3LzRJaWEzSFM0c3JwWkl5WjZIM1A5YVhvWk9La1dpWXQz?=
+ =?utf-8?B?R3VwaEFFelVzazFlU3lFZzh4Si9jUVVyeGs0ZE1weWhxRDB5WnZCanNrcStM?=
+ =?utf-8?B?T1FxQlR5SituU3FWNGtLOFpoeXhVSlQzTE9SRUxFaXZwS2pGK1dGd3MvZm5m?=
+ =?utf-8?B?YVVKMmY3byszZWlCL3RtMkhjN3A0SDNIM0h6clJIcWNCalJKWXp5U0c3Q0kr?=
+ =?utf-8?B?bDI4dW1YZGg4eDQ1cDBVb3NZcWdaZWw2THp4MDBNUUN6YUt5bWZJV1BOb1Z6?=
+ =?utf-8?B?dGJ6ZlNjWll1ZitTTjJoUlBqc1c4SGszdEQ5N1hNQTVtaW5ENkFycndOSWFJ?=
+ =?utf-8?B?Y0svMHQ4QzAyR3VFZHdIdzVON2Eyay9uN2FSMFVZNThFd2poRjRIQUhyM21E?=
+ =?utf-8?B?bUtYb0UyT0p2cDc1bTRTM1ZMOFVaZ2dlM09jcGJFZmxxZTAvaU9uNEhxbnlh?=
+ =?utf-8?B?MnVHbEYzRnMrMm5zb3dvby9admNSY05Hbmc2elVxajJsbVRnU3plNmJiSGZq?=
+ =?utf-8?B?SDlzUWJRY1piU1lFaU5rYlBDYmFNUTVyV0c4T3ZFMVo3b1JpQWp5S3M0eWsy?=
+ =?utf-8?B?TkJYUVFBNExyTXJUVmdpY1Zud2l3M1dnTUV4SmFCREYrSFZvSGZqbmhvTy9U?=
+ =?utf-8?B?TXB3Q29BdGxBdk5VWkU5SmFmY3dnblphTFRWK1pHVGFLNm1JanFneU9ZTDc2?=
+ =?utf-8?B?V2Ftc3NOc095MGVKZThIV0RvT2Jaa3hXYzFEeTdjSVZjRzV6MkNCZUs1MEdF?=
+ =?utf-8?B?TkVacmtlNUg3UFBkVTYxWkNGT1ROVUFuc01GTXA4N0pPNnc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUU5ZFI0blBBZzFFYzNsOURXUE5FRGFiaDhYWVNDUklEanlFM0NoL0RDaHU5?=
+ =?utf-8?B?TkIwVW9RbXRadTZZNWp3TlV3TndiU0lNbFFWWjQwQzZyN1p6R3V4QVdLOC9M?=
+ =?utf-8?B?Y0ZNOFIyOHJ6UTBlNFgySC9aR0g0WkpRVTdodjBWTFFDYWorVzJndzVOK1Q4?=
+ =?utf-8?B?VzRFUjJMSkU3TjFDQWYraWFQbkFuVHhnamZ3T2J5T2pnRnRLYXFjakpEVWJk?=
+ =?utf-8?B?MVE2cmZrSEFhckVkaG1LbklMdXh3M1UxK3ovRmFnNjRadzk1QlZCSFR6ZnBB?=
+ =?utf-8?B?KzBpdUw2d3lxY3g5YzF0b2tkclFEYm1QWS9MOVIwUmpHblRQRDJseGNKTGNp?=
+ =?utf-8?B?ajExWDc1ejE2STZMeHdTdjVTS09vQmhldlBOV3JIbUhWYWVvSFFveDlZbERC?=
+ =?utf-8?B?SnloRDhkdTY3SXJjdERnMUc0eithQlUva2RmVWhyK1VDekwrQkpBYkowOU5B?=
+ =?utf-8?B?cGIvVFVTVzdtbEYxRGkrRFcvRjJhczlHL0dBbXdGMlZaeHVBdVhIMVBNUXlX?=
+ =?utf-8?B?SGRqME1maVEvaTNWdzRINk5lRDNBT2xhNU1ndlVSd204NGJiZllOUU41RkJ0?=
+ =?utf-8?B?QXI3U0x0akMwTGNJcS9tajR0TU9sS2JnRDV0cUFobDJLZXRFaXRTQjFsNHJ3?=
+ =?utf-8?B?bXh6dEdoNXpkM092a1dXQ2tXeUJXS0F6TjlBVXJ6d0g5czI5bEZXK01mRUdh?=
+ =?utf-8?B?MGhDSUhnMmt6YTc2cFNwV3IvNnBqU2N1eG1RZ29BVWIzb2FsQVhmb2N6VFI5?=
+ =?utf-8?B?S2dXd0RlUVBaSVJhcDR5NWVyaUI2eDNGNGx4aVhlUVFuNGFoaU5CUFF5d1JI?=
+ =?utf-8?B?amk4YjUvemNmdTI3TS9kNVNNNE1RNlMvUDJBUlJvMWNPLzN6aDlhRjdTdE83?=
+ =?utf-8?B?YzVOanNuSXA3M0N3cGU2SmpIanZGWnVtVDB3VVFOelhLTXZTelpJZHVNM09a?=
+ =?utf-8?B?WFZFcS9pU2tYTDl1TG4yWVhGSEh5T3paRXlTZmE5TlZVYUZKc0dIbWVGcExP?=
+ =?utf-8?B?bncrVmZNSTRUTnFROWc1T21zeTRXOE0wTFd6SmovMGU1WU9MVHdHVm5kc3Yy?=
+ =?utf-8?B?WDhXZDBjbWhLSTFsNitpZzJmZHFBSEg4RmdJN1Rxa080RmtxUVNVYzU0RGQv?=
+ =?utf-8?B?b0owTTdOOE1UYVhZdnU0bFVMSzNiMzdlcDdPR2xBeExuRHpQTHRSbkc1bEx2?=
+ =?utf-8?B?dmQ1SXB4a1Vld2xDM2pPSDJ1MnJKTHFOM1pQZTUvOEVaM1IvNEJRUjd3VGxR?=
+ =?utf-8?B?N1hvRjJCWUpKOXJkSFNpN0NsaDcrK3hMbW43UFRVVG84UVpsYlNrQ0lBU2FK?=
+ =?utf-8?B?MGNIRWR1aFFtanNpUVdkMHNaWGFacFFXeC9jZlFmY2tDTE5pRlgwVTlHSm9O?=
+ =?utf-8?B?bStZWjUzWmNvQzEzdW80ZlZyTGwzTDFOUUo1MlB5VWdLaWJWTFltNk9TMzNo?=
+ =?utf-8?B?d28xekJiRHNTdmJMWmxPZm9Pc1ZkQzJEMEFuL2x5RS9RbmNudnJLc1k5bDNZ?=
+ =?utf-8?B?cDdXSGZKYkRhaFBEc1JjZWFTYWt4eThTZndkTUE3Uk0rTG1GditQSmlqakRp?=
+ =?utf-8?B?cFlMM1V6YlhkT3U5bGYxUko3eWsvd1ZPNzQwMmRPM2NMdW1HTDRxazVxU2F4?=
+ =?utf-8?B?VWRGb2RTOTRFVC9FM3BybFZtR1cxcXJudUN1NllRZnIxNDhBalFCZ0R3OGVN?=
+ =?utf-8?B?SVNjU1lxdkJFUy84aTE5dHUyWHJubW5HeEpMZ2VYMlhNamFyeC9SdERUeCtS?=
+ =?utf-8?B?cG1SRGNMSkU3RGY3Z09jZFYwejJ0RjVHbHNReHVjUG1DQUgyTkZrVis2MlpP?=
+ =?utf-8?B?Y0k0V05ITEdGeWJqdm1LMHRKTFB4WXVoZUVBL2lOTmd0RG9UbWFYU3dFajRr?=
+ =?utf-8?B?cEIyR2k1bDJhV2xzZm80K0oxU1lDeFFiUllvbDdSOXpYWlNkaW1qSEFweUNO?=
+ =?utf-8?B?RGozZnBkWHhnMUZaYlhPd1dEQWZGUTRMRm5iWCtMREU0VXdZNmpielcxa0Nz?=
+ =?utf-8?B?eUtnQjY3cld0MjRrK25yaC8zVG1FbEhXVVN2RXBYYlh1dFZIcDdHZExjdXA3?=
+ =?utf-8?B?Y1FPZ09WOFFaRmxZWnU5NkhrTmwrbUV1dDlyR3hUNngrY0J0TTI0cnllaUhh?=
+ =?utf-8?Q?7llqPFlOXUKK9NJZ42df0AvlC?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eaa9ddd2-86d0-4603-5698-08dcc0b82373
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 01:33:48.2739
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O3NBmsHaXAthaGrzK/nPJCDtl2EYtAuEHDzyGmSPUmQjOSiMgNo3FerPrZO+R2zpmRk25SKnPwPM+z/kkA4JBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6267
 
-On Thu, 15 Aug 2024 15:36:11 -0400 Sean Anderson wrote:
-> If a multicast address is removed but there are still some multicast
-> addresses, that address would remain programmed into the frame filter.
-> Fix this by explicitly setting the enable bit for each filter.
-> 
-> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Reviewed-by: Simon Horman <horms@kernel.org>
 
-Again, I'd go for net.
+在 2024/8/17 8:54, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v3 3/5] fix vmap_udmabuf error page set
+> Please prepend a "udmabuf:" to the subject line and improve the wording.
+OK, sorry for this mistake.
+>
+>> Currently vmap_udmabuf set page's array by each folio.
+>> But, ubuf->folios is only contain's the folio's head page.
+>>
+>> That mean we repeatedly mapped the folio head page to the vmalloc area.
+>>
+>> Due to udmabuf can use hugetlb, if HVO enabled, tail page may not exist,
+>> so, we can't use page array to map, instead, use pfn array.
+>>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 22 +++++++++++++++-------
+>>   1 file changed, 15 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 3ec72d47bb1c..4ec54c60d76c 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -67,21 +67,29 @@ static int mmap_udmabuf(struct dma_buf *buf,
+>> struct vm_area_struct *vma)
+>>   static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
+>>   {
+>>   	struct udmabuf *ubuf = buf->priv;
+>> -	struct page **pages;
+>> +	unsigned long *pfns;
+> I wish there was a way to easily test the vmap scenario but its great that
 
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> index 0d5b300107e0..03fef656478e 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> @@ -170,6 +170,7 @@
->  #define XAE_UAW0_OFFSET		0x00000700 /* Unicast address word 0 */
->  #define XAE_UAW1_OFFSET		0x00000704 /* Unicast address word 1 */
->  #define XAE_FMI_OFFSET		0x00000708 /* Filter Mask Index */
-> +#define XAE_FFE_OFFSET		0x0000070C /* Frame Filter Enable */
->  #define XAE_AF0_OFFSET		0x00000710 /* Address Filter 0 */
->  #define XAE_AF1_OFFSET		0x00000714 /* Address Filter 1 */
+It need a driver set in kernel. maybe write a debug code in udmabuf?(not 
+sure)
 
-There is a conflict with current net / net-next here, because of
-9ff2f816e2aa65ca9, you'll need to rebase / repost (which is why 
-I'm allowing myself the nit picks ;))
+> you are able to eliminate the usage of "struct page" completely from
+> udmabuf driver, with this patch.
+>
+>>   	void *vaddr;
+>>   	pgoff_t pg;
+>>
+>>   	dma_resv_assert_held(buf->resv);
+>>
+>> -	pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages),
+>> GFP_KERNEL);
+>> -	if (!pages)
+>> +	/**
+>> +	 * HVO may free tail pages, so just use pfn to map each folio
+>> +	 * into vmalloc area.
+>> +	 */
+>> +	pfns = kvmalloc_array(ubuf->pagecount, sizeof(*pfns), GFP_KERNEL);
+>> +	if (!pfns)
+>>   		return -ENOMEM;
+>>
+>> -	for (pg = 0; pg < ubuf->pagecount; pg++)
+>> -		pages[pg] = &ubuf->folios[pg]->page;
+>> +	for (pg = 0; pg < ubuf->pagecount; pg++) {
+>> +		unsigned long pfn = folio_pfn(ubuf->folios[pg]);
+>>
+>> -	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
+>> -	kvfree(pages);
+>> +		pfn += ubuf->offsets[pg] >> PAGE_SHIFT;
+>> +		pfns[pg] = pfn;
+>> +	}
+>> +
+>> +	vaddr = vmap_pfn(pfns, ubuf->pagecount, PAGE_KERNEL);
+> Looks like this would require a "select VMAP_PFN" in Kconfig.
 
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index e664611c29cf..1bcabb016ca9 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -433,7 +433,7 @@ static int netdev_set_mac_address(struct net_device *ndev, void *p)
->   */
->  static void axienet_set_multicast_list(struct net_device *ndev)
->  {
-> -	int i;
-> +	int i = 0;
+Yes, I miss this.
 
-Consider renaming i to addr_cnt ? or addr_num ?
+Thank you too much.
+
+>
+> Thanks,
+> Vivek
+>
+>> +	kvfree(pfns);
+>>   	if (!vaddr)
+>>   		return -EINVAL;
+>>
+>> --
+>> 2.45.2
 
