@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-293093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887F3957AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AF0957AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46145284694
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB35A1F239AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E57134D1;
-	Tue, 20 Aug 2024 01:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B01EAE7;
+	Tue, 20 Aug 2024 01:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DAh8Q1mq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5DPEbaY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B2C8E9;
-	Tue, 20 Aug 2024 01:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5360C8E9;
+	Tue, 20 Aug 2024 01:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724115693; cv=none; b=fPGWZYm5Evu1jeW56UZOMLZ2QDC/qF4BI0PLhLGI7JpQU3JwbobuTZ3lhZqClksf1i7akRD8GUbbJB3kANvM8CeQQ6nNpkBOW70iOmMkqPm2nv2ci0fDU6aRljfQFGB2H6YXbjq1u5IHFBAvoB+tLcZ0UZsy3/0vG8WhopLDQpc=
+	t=1724115814; cv=none; b=DSZM/Gp9Gkmy+/5SWkVBZLQvz1l93Wt9/H5fDQ4QCV+XCYjNXjITtm9RjPe5T59H8lL7IuCFqdfAhSqBzviNPuSsWi26z52Jv8eJ26UEWBKPXjUu86wzR9O+wbnJtZU5DcbBEyfZ602I7fuJ/RjEp9NS1e822JqJrnYSjpMIOIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724115693; c=relaxed/simple;
-	bh=vCG/7EpNWV9MCkM7KPhgmJCNxcxQVYJ412oNcR79CpQ=;
+	s=arc-20240116; t=1724115814; c=relaxed/simple;
+	bh=bHwB8woq171ocGEAt7CR2Rff4p/eO/+blo/nvtKNxCw=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Y7VLMm//rMUooFWU4bS1lt8mYu9Dfa9XjdTh6yygSFwgar/7tec6eNAFxwrJHlAAn05wgLVOLBeFoVUg8HfWaZd9pRPTY+A9zM53lXYzUfDeIhwwCbWB/tltwAwAC+n5PrxkvSa5MaWAtGZsYeOfUa9BcSWw3q4VO4iEDj6ixM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DAh8Q1mq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51B09C32782;
-	Tue, 20 Aug 2024 01:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1724115692;
-	bh=vCG/7EpNWV9MCkM7KPhgmJCNxcxQVYJ412oNcR79CpQ=;
+	 Mime-Version:Content-Type; b=BfI5lM/1KmMUCSm/+9ahGoeTz+8ORWeJPt5tlY/sWWoKWzjrU1VUX7Vqb2O485M3uMQcXAqS7/uiTTIbdahL1BqDp9//oS9sZ0Z977J2ZZclDeQiPFritUJccH1DNoybZCdd+qWadogRgotQXm0X0FX5RvT8I16SbLCEz1STXNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5DPEbaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4D9C32782;
+	Tue, 20 Aug 2024 01:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724115813;
+	bh=bHwB8woq171ocGEAt7CR2Rff4p/eO/+blo/nvtKNxCw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DAh8Q1mqXkhQInNT/qhhFFmsnlZecwU+De2iRX4YCms7YUv2I8VBB+MSNpiA9iykY
-	 xyYncceolzB0iOOXCfPB/XtGUgqydXUG2ucXhNX3nLslQgwy7OHH0BNFNE0TnqdEey
-	 s0PzuTPf4EyYItzzEY31Xa6XdjWR7HcWWdhxhSBI=
-Date: Mon, 19 Aug 2024 18:01:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, Mike Yuan <me@yhndnzj.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
- Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
- Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko
- <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
- parent cg too
-Message-Id: <20240819180131.27b0ea66dd50b83c85102540@linux-foundation.org>
-In-Reply-To: <CAJD7tkaY3FsL-9YeDuVG=QtCK-dgm71EJ2L_T3KfGUa9VW_JkA@mail.gmail.com>
-References: <20240814171800.23558-1-me@yhndnzj.com>
-	<CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
-	<CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
-	<a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
-	<CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
-	<20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org>
-	<CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
-	<CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
-	<CAJD7tkaY3FsL-9YeDuVG=QtCK-dgm71EJ2L_T3KfGUa9VW_JkA@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=Q5DPEbaY/sMzOAqdG3f7qWNadVId+pEelt6j0Tdrt5gCV1o5hAsvXSAJhjuS4Z7Da
+	 M65n7IspELZLom5MIFYsLfVcZpLKyGhPIt4tFFj4oONoa9SHrmhvmQg/Oe8GuaNRbk
+	 EfAMLf1ipbXgOcUQVQoz0Tyx2Ka4+GyhNFAwBnooEYhCR76atLcpEbq7WKJZzhzBH1
+	 qzh6MVvI4+cekyWW0yTrnKWUxd47u9bheiiBUp349/Pbwhncc/E5iAwGpfS3EDNKdr
+	 78ne0uOzUcp/auIy7UlkHaYmnFLSL2b5iD42ymu893lEV6MsZfmx9qT5hEEdOuK7sk
+	 bzZ2iQnWqBN+A==
+Date: Tue, 20 Aug 2024 10:03:30 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-Id: <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
+In-Reply-To: <20240819120244.5657eb2f@gandalf.local.home>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+	<20240819112902.11451fe8@gandalf.local.home>
+	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+	<20240819120244.5657eb2f@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,31 +62,37 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 19 Aug 2024 12:05:44 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
+On Mon, 19 Aug 2024 12:02:44 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> > Ah yeah, I was thinking this could be done in a follow-up patch.
-> >
-> > But yes, please - documentation. Preferably everything together as v2.
-> >
-> > >
-> > > Also, do we want a Fixes tag and to backport this so that current
-> > > users get the new behavior ASAP?
-> >
-> > Hmm, I wonder if it's more confusing for users to change the behavior
-> > in older kernels.
-> >
-> > (OTOH, if this already is what people expect, then yeah it's a good
-> > idea to backport).
+> On Tue, 20 Aug 2024 00:56:49 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > 
+> > > 
+> > > We may need to add "noinline" or something to make sure those functions
+> > > don't get inlined for LTO.  
+> > 
+> > Yeah, we need such option at least for function call test.
 > 
-> My rationale is that if people will inevitably get the behavior change
-> when they upgrade their kernel, I'd rather they get it sooner rather
-> than later, before more users start depending on the old behavior.
+> Could you add the noinline, and if it fixes the issue send a patch?
+
+I found the target function already has "noinline". I tried to add noinline
+to the testing function (callsite), but it also did not work.
+I think "noinline" is for the compiler, but LTO is done by the linker.
+
+I found a discussion similar to this problem, but it seems very hacky.
+
+https://groups.google.com/g/llvm-dev/c/6baI9LISmSU/m/uEeY_CRbBQAJ?pli=1
+
+Thank you,
+
 > 
-> I am guessing there is a chance this is not what backports are meant
-> for. Andrew, any thoughts on this?
+> Thanks,
+> 
+> -- Steve
+> 
 
-I agree.  It does depend on how long the old behavior has been out in
-the field, and on our assessment of how many people are likely to
-inconvenienced.  So... yes please, what is that Fixes:?
 
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
