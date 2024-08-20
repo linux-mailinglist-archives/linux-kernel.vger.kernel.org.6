@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-294560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C398958F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:42:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF95958F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310371F22DB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FC02857EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEBF1B8E9E;
-	Tue, 20 Aug 2024 20:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976718A6B5;
+	Tue, 20 Aug 2024 20:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fzD0JyTn"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLa3fGY8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C1018E37E
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0186165EE1;
+	Tue, 20 Aug 2024 20:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186545; cv=none; b=QbBVp9HVncDxq6ldxIv1L6jTOHD67yNy9F1wYxfa5Ww/Efn7YUbYmxwglYZd2eNxyCKrDTuAle2CGs4EqHHQ/pVv1xv/4VMnJL5hcHyLUfkW394b6upFaoC3wDa0xXHiiL3WS3zlPdmG0zPyu69t6ZjSHhLqj45ZR1/eqPMGsJY=
+	t=1724186552; cv=none; b=oAfuxl+cTULZFLS0bLYhFIPnZn7+LgVMWwx3fHzhoSV/opRgvV5FzBCTJtkMBxFk7qI5vkuy+I/5o/RTaiHBMXpoMmuJnP2lZqBFgpJqC5l4//M13A7/nlchP3KRPUZ/4BJ/L/BBPE07xErTyBuk/NTw6aFHb0wxqI30FAC3FjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186545; c=relaxed/simple;
-	bh=8XGUYMGE1OFUymXrkgfLYCdVIVigLdfqa86an2wYvDU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Li4Rvwaw8PXEWCwGVB4hFqT3tQZWQ3MWvnomOWiEt+sLzPtIqFW4TsKpkZ/NOcGTjouqTOpS0p8WTuR4l0J0/drZTisB99lwM99PRr9MLGf1rhVHy7kGNRfm3jUBtoSGQw1uwNueCAZiZK8PNOltY6W6F6+uwA8RqXz+bS56ovw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fzD0JyTn; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724186540; x=1724445740;
-	bh=8XGUYMGE1OFUymXrkgfLYCdVIVigLdfqa86an2wYvDU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=fzD0JyTnDwHZgwT1ljsi7cob08ou3MNybOYEorWDsGhFvtSQYHc4SydOvBPab2UWo
-	 v+bUSDUGuumR4DyaAmVuXDbRZKCyOVc++jvwdyU5xlbrixWIpFbJMHZQSqEsCm3f2Y
-	 EU1S9pWsmHAwFExUirWMs4Kzr+7WcAwMn/b1Q6ZFilB7v9SLk303KC5z4imjz3etUS
-	 J12fK9Y6Fe0eyBKedI69Wy35IXQNrFG1CJ2g0GsgAFDPOWI+acSLzsKu8cRdH90a4G
-	 /2w8vzM/bLqdiNuXoqX+KX2qNKyIChsLg6p8MNS7JD4W2XAO+mZ41xd7OxXpUntIRz
-	 XuocDGIoEbzeQ==
-Date: Tue, 20 Aug 2024 20:42:15 +0000
-To: Andy Yan <andyshrk@163.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: Re:[PATCH v4] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <acvk_AR9o8iB8dRnYZrKp6ylhzAjl5oZyE6oBIKWQttckNesM1-5k9b71jDIRhoYRwx75xe-6_mM8a0p4e15NMapX1GjdDLqPPoKZDN8U1A=@proton.me>
-In-Reply-To: <22e2b803.cd8.1916d581b67.Coremail.andyshrk@163.com>
-References: <20240815124306.189282-2-pZ010001011111@proton.me> <22e2b803.cd8.1916d581b67.Coremail.andyshrk@163.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 7fe11dad4a52c85e539c6e124e57470cd51a72e2
+	s=arc-20240116; t=1724186552; c=relaxed/simple;
+	bh=BVOerJkEHEr7Ozcu9FLEzXmnShEbjbpstZNKshq1GLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/L3JFOrOVO8x4kVCW6V7YRtsStVvRA9CHKs9YVw5T53J++vBKoUycrM+L5RpMOrbkJbEYvKCu9/LaeKipZGpgZaW2+cJDIX8NUQisX0GWOXe8sLj385n5B7ptzGW1e0lPPrw00ZXeyT49aPEy1rgatWtjU7P2nJtVl0y9LMhQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLa3fGY8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05919C4AF0B;
+	Tue, 20 Aug 2024 20:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724186551;
+	bh=BVOerJkEHEr7Ozcu9FLEzXmnShEbjbpstZNKshq1GLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GLa3fGY8hJ+aYG1aJjPl+JK9oAIVV9+fol053fCbnwxsDpkh/bEXOXNFly5dPo75c
+	 a6qkWhT1F+zUpwP8xeV1qaalQ5AOh+m+6Fk/4TwAJ7zNzi5qzSu3Ioqz5NOE4c4e/9
+	 Lq0I3yxBdvs7dXv8ZH3EwboIKX+91Jouf8QK7EOufgTHebdIV/VUDQuahbMVLnuuw9
+	 49Nlx06WP1z5EJWv1Xm+Bb7FWm4WlBIA9YKrdkiLjth6zlqJp1hjOrjHPH1ekbBjNN
+	 6L8iAY9LxBNB974kDrPkN3n0NPzX9Nw9/mgAyeDlUQmK6vlOuv/rnOcCwczXIarT/Y
+	 kRP4t2ctKKmNA==
+Date: Tue, 20 Aug 2024 17:42:28 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCH] perf annotate-data: Set bitfield member offset and size
+ properly
+Message-ID: <ZsT_tHyuwb8L3KVB@x1>
+References: <20240815223823.2402285-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815223823.2402285-1-namhyung@kernel.org>
 
+On Thu, Aug 15, 2024 at 03:38:23PM -0700, Namhyung Kim wrote:
+> The bitfield members might not have DW_AT_data_member_location.  Let's
+> use DW_AT_data_bit_offset to set the member offset correct.  Also use
+> DW_AT_bit_size for the name like in a C program.
 
+Thanks, applied and added the series of steps to reproduce your results:
 
-On Tuesday, August 20th, 2024 at 3:12 AM, Andy Yan <andyshrk@163.com> wrote=
-:
-
->=20
-> Hi Piotr=EF=BC=8C
-
-Hi Andy!
-
-> > +static int vop2_crtc_atomic_check_gamma(struct vop2_video_port *vp,
-> > + struct drm_crtc *crtc,
-> > + struct drm_atomic_state *state,
-> > + struct drm_crtc_state *crtc_state)
-> > +{
-> > + struct vop2 *vop2 =3D vp->vop2;
-> > + unsigned int len;
-> > +
-> > + if (!vp->vop2->lut_regs || !crtc_state->color_mgmt_changed ||
-> > + !crtc_state->gamma_lut)
-> > + return 0;
-> > +
-> > + len =3D drm_color_lut_size(crtc_state->gamma_lut);
-> > + if (len !=3D crtc->gamma_size) {
-> > + DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
-> > + len, crtc->gamma_size);
-> > + return -EINVAL;
-> > + }
-> > +
-> > + // trigger full modeset only when SoC is 356x
-> > + if (!crtc_state->mode_changed && (vop2->data->soc_id =3D=3D 3566 ||
-> > + vop2->data->soc_id =3D=3D 3568)) {
-> > + int ret;
-> > +
-> > + crtc_state->mode_changed =3D true;
-> > + state->allow_modeset =3D true;
->=20
->=20
->=20
->=20
-> We don't need to trigger a modeset here. We just need to disable dsp_lut =
-befor we write gamma lut data for rk3566/8.
-
-Formerly my patch didn't trigger a modeset. Though Daniel Stone in his=20
-reply to v3[1] suggested it as the clean way to handle RK356x case[2],=20
-quote, "it would probably be better to set mode_changed when the colour=20
-management configuration changes". Let's wait for his reply to this=20
-version of the patch, perhaps he meant something different or not exactly=
-=20
-what I did.
-
-[1] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xzPbJr=
-k=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com/
-[2] https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3iZo_8KF-daKdq=
-du-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=
-=3D@proton.me/
-
-Best Regards, Piotr Zalewski
+    Commiter notes:
+    
+    Collect some data:
+    
+      root@number:~# perf mem record -a --ldlat 5 -- ping -s 8193 -f 192.168.86.1
+      Memory events are enabled on a subset of CPUs: 16-27
+      PING 192.168.86.1 (192.168.86.1) 8193(8221) bytes of data.
+      .^C
+      --- 192.168.86.1 ping statistics ---
+      13881 packets transmitted, 13880 received, 0.00720409% packet loss, time 8664ms
+      rtt min/avg/max/mdev = 0.510/0.599/7.768/0.115 ms, ipg/ewma 0.624/0.593 ms
+      [ perf record: Woken up 8 times to write data ]
+      [ perf record: Captured and wrote 14.877 MB perf.data (46785 samples) ]
+    
+      root@number:~#
+      root@number:~# perf evlist
+      cpu_atom/mem-loads,ldlat=5/P
+      cpu_atom/mem-stores/P
+      dummy:u
+      root@number:~# perf evlist -v
+      cpu_atom/mem-loads,ldlat=5/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x7
+      cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+      dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+      root@number:~#
+    
+    Ok, now lets see what changes from before this patch to after it:
+    
+      root@number:~# perf annotate --data-type > /tmp/before
+    
+    Apply the patch, build:
+    
+      root@number:~# perf annotate --data-type > /tmp/after
+    
+    The first hunk of the diff, for a glib data structure, in userspace,
+    look at those bitfields:
+    
+      root@number:~# diff -u10 /tmp/before /tmp/after | head -20
+      --- /tmp/before       2024-08-20 17:29:58.306765780 -0300
+      +++ /tmp/after        2024-08-20 17:33:13.210582596 -0300
+      @@ -163,22 +163,22 @@
+    
+       Annotate type: 'GHashTable' in /usr/lib64/libglib-2.0.so.0.8000.3 (1 samples):
+       ============================================================================
+        Percent     offset       size  field
+         100.00          0         96  GHashTable    {
+           0.00          0          8      gsize    size;
+           0.00          8          4      gint     mod;
+         100.00         12          4      guint    mask;
+           0.00         16          4      guint    nnodes;
+           0.00         20          4      guint    noccupied;
+      -    0.00          0          4      guint    have_big_keys;
+      -    0.00          0          4      guint    have_big_values;
+      +    0.00         24          1      guint    have_big_keys:1;
+      +    0.00         24          1      guint    have_big_values:1;
+           0.00         32          8      gpointer keys;
+           0.00         40          8      guint*   hashes;
+           0.00         48          8      gpointer values;
+      root@number:~#
+    
+    As advertised :-)
+    
+    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 
