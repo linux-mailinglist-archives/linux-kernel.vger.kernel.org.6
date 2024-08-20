@@ -1,123 +1,321 @@
-Return-Path: <linux-kernel+bounces-294609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE47C959011
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AB8959030
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF27283D8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B734D283F74
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968831C68A9;
-	Tue, 20 Aug 2024 21:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEBB1C6891;
+	Tue, 20 Aug 2024 22:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N1JCi1B/"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N886QN9V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF76814B097
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 21:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A6115C152
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724191107; cv=none; b=fX9OMPWPEBPUMChYBbdgc+nmcfEbfls8AigGre4yWsuzNMWQH6ZxeSEJ9xTCXArdjKc2QrC0XqJLcHkaKPtvyiKG5GIkPfQ/nJ4DFO6B04cpx0XXor6HT0R5VLCmT0DrLJneQFtBuUn5/HqLkJK03P/5crtWaefH4rBYdHz9Ez8=
+	t=1724191302; cv=none; b=To2VkCdN7/tm6d842sPKq1jm4rCb8fZUMZqEoHXWaU0BZgq/r07i//qY+AVWJ97dNNn82zt3jeij6byBqP6sxZMz0ZNUQ2PAgsPz4RJ2Qz5mJ2puLrJQNQAjSYuFNdJAQncYOWG4GKwQA6oAifh6rvkrUEnwhmMFhtwOBybXla4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724191107; c=relaxed/simple;
-	bh=6aJg8eWkIu6E+nuBgwiwCdUGFgcdw16iAxyUgSWdpYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tkLWQmvK0RklFN6PhV+wAp1eZ+pbuC3aN6/wXuI3X2Uyhyfy8Usa5Dq/D6ZmZvV30gZ8gcxGnm98XkvgM+NaG5Z3WqUelOa2OvJStLjB2mtTKGUC9MnX3RyLd4JzPP/sZaO9KRaGpPjT/2W9O/N8sZbQexIXydm2xcXx8EhYEVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N1JCi1B/; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3f68dd44bso3927921fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724191104; x=1724795904; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+YfgjBbjapgsBjbRcnfMrP6oWrjX+7ArLGJFDDZNek=;
-        b=N1JCi1B/YP+rI+s5jiGOJbi3HEYN+wu/u+D1rRH3BNoSCkXxyyco0XF6AoRGgYsmhM
-         LbvwAbP2s2d1QxobPXuVvdk+b/sKz0Ax7CHJk6duxKWNpoV04/ulCEoRpSKUKpf+17fd
-         /HBemzi1+xGdU5DfDtuVg0T8r0k2jQ6IQBDsU=
+	s=arc-20240116; t=1724191302; c=relaxed/simple;
+	bh=v54+MCLFPem7S/SIS0aKmyonU55zo2LfX1Vr1uR0tGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWGzb7zE54Onp168qlzU78Gan+JEyRzsjgLbCmdQqsTmCWqHi9pSnsx/w2m4knpwXAOQSqp9Ont2hzbuxOWRhtW3yCm1NNUNApceIwIKUnsslKvh7u9JzdzJ5jAnkHcRBed4AWQoHSzmKLuPoaWOxPpClsoYB3sBiqAppiXZRYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N886QN9V; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724191300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jF5tdi+xuPc6qltd6uB69vrp7uSr6ss7SEGUS1mB1ls=;
+	b=N886QN9Vwk5DEa4+xAhiP/OWlhDofLszgtiMTPSe9tZZb+dGEQGrw1LgqXLxkw8r8axXer
+	mSidbxcyO2KudaOFnG5LHkKB0scG+DsbQneVY+S7pcDjSLdL6OitDjse5dYH1tPpvdSNZU
+	MaiJKPjHBcCYShyK0nba9E1fAbFgNak=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-244-mpBTn7uoPfekBMmzWEFYhg-1; Tue, 20 Aug 2024 18:01:39 -0400
+X-MC-Unique: mpBTn7uoPfekBMmzWEFYhg-1
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-68fd6ccd4c8so108872767b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:01:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724191104; x=1724795904;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U+YfgjBbjapgsBjbRcnfMrP6oWrjX+7ArLGJFDDZNek=;
-        b=e354LPKGRz9GlFdSMXcFg07+xVHmK2kDsaoQ8jxALUndPYQiuePS/AlLKo8lfbAu0+
-         5owPABwaLuRCQBFKvS+BTrVVP8XC5u+2Iwoz8pOGHyQhoOgsaD0Y6UVZcaSTn6vR3LZU
-         ZiJ9aobKA01oCM8SwH+uqR+1o1YMVhHON3RNoCLxSqLvgRe/VT+HfjBoRtAg5GWu4rxJ
-         dbduX6ZrNqULqV6FQzHIE9S8dzdl2XtMTmcoLF4nL4pZOMJBLb9qD+X0kRr01QB5LYeq
-         8F2UElRvxnxGD1+8h+OZwidpoKHjORcuK0CAhr1vIr0RgpHRMqZYc5WfTuZtmgOT0V5P
-         FtoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO0nx8ISCzcyOWzhQYCc0XToX7/NjMGs3qTdtyLJKSQRM9BwE9uDaOP6+wzgZdV/uu95Tn9Ph3LiYW1iI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZb9pYhLeSQQn63Wi4+oeduiJSWWL+AvUdvgM75JOcfcld9Beq
-	UBAmHML6AhybX9Tw3cIBU3OU//6EZjXT6jouPyb60v++ApGig4+iz80m3y6Zxl1qxlPZdIHBnL7
-	kCYnVuw==
-X-Google-Smtp-Source: AGHT+IHJGotp1vIt62CkilUL0/fB3fJRxoZ0OKCQIrEn+D3UYpRrADDs6AKF3rdmVCFCUbqLLj5Jmw==
-X-Received: by 2002:a2e:8708:0:b0:2f3:f358:8657 with SMTP id 38308e7fff4ca-2f3f8953075mr1598871fa.44.1724191103046;
-        Tue, 20 Aug 2024 14:58:23 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3ce4d1df3sm10895001fa.35.2024.08.20.14.58.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 14:58:22 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3416538e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:58:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlCDn/q/KwKsv9HapP0z2ZFhwK2LwCwujkpvVeV6h9jun/8m4t7+fA/gLnFW+Bvs2OEIp0pjS/LwBU970=@vger.kernel.org
-X-Received: by 2002:a05:6512:114d:b0:52c:818c:13b8 with SMTP id
- 2adb3069b0e04-5334857f579mr82520e87.4.1724191101986; Tue, 20 Aug 2024
- 14:58:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724191298; x=1724796098;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jF5tdi+xuPc6qltd6uB69vrp7uSr6ss7SEGUS1mB1ls=;
+        b=FjNevnsCkt2/uM1q1h/agphjiUM4Y7TbFyY14X0eraeTMyPUBsAXdeF5xhshDOZYK0
+         c4khAj95wQbloF5Z1Ks8J+NlgYIkstfisSC6EeCynstbOj75dNqDPTtw3H+sxGKk96mU
+         A+RwL6HOFCznsb8cr2zUqQAQpwpkAu1XJ+2/HbJ6iNRvQeCd4BWuw42RWNWYM/ansK2S
+         7k9lW/Q2/hfOKMYGooqFtB8elududyfrLJEoahYz1iEQFiE0KU1SlQxKb883vh0D5JcG
+         QroKVb5nPG1DxRByrU62NeinTq231gaCHLdrabfVfSGvpoN48fNg6bkA3c5alUXMllAI
+         TOiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6EjAEqZKxoK8YljZyf2Vi1EQFU4Xl5RNgMuoad1Hi/GFqCurxeu1E7HS2Vqk3IESkZ2x17qZ7XGYM8YQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt9basuAsnw8dal5kekYiRD3PMUcwjwIhRn5aAsSq2FMd3crtC
+	P2AvvkOVybR6kKb6wmoet/dtFczlyZyPveILaxPtFPf3OdRWqBYvG2NTn29kEx/075CJLbbFyqi
+	HzmbKpWVl6I3SLkb7Ww4RyCuwjF9OZYnWwKNGQSITifyKATXJa19N7eWWh7e2Sw==
+X-Received: by 2002:a05:690c:2706:b0:6af:125a:1c6a with SMTP id 00721157ae682-6c0a1493f4cmr6885287b3.41.1724191298030;
+        Tue, 20 Aug 2024 15:01:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6E4T/OqVLJvgtVOTHFZ21tVTTZuOj73rhi1sEN5hdqt+kit0eSJsmXt45NHfrPXRN3Wt/Pg==
+X-Received: by 2002:a05:690c:2706:b0:6af:125a:1c6a with SMTP id 00721157ae682-6c0a1493f4cmr6884937b3.41.1724191297582;
+        Tue, 20 Aug 2024 15:01:37 -0700 (PDT)
+Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6af9e1d938csm20136907b3.141.2024.08.20.15.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 15:01:36 -0700 (PDT)
+Date: Tue, 20 Aug 2024 18:01:34 -0400
+From: Eric Chanudet <echanude@redhat.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: align watchdog clocks
+Message-ID: <wiyw7h7hkc7u2brehi6zgxykesajtqmwwajo7tpwwvayjtcykw@w7rcmojs62vi>
+References: <20240805174330.2132717-2-echanude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819053605.11706-1-neilb@suse.de> <CAHk-=widip3Dj5UWs8MVGgxt=DJjMy1OEzZq9U8TMJAT3y48Uw@mail.gmail.com>
- <172419045605.6062.3170152948140066950@noble.neil.brown.name>
-In-Reply-To: <172419045605.6062.3170152948140066950@noble.neil.brown.name>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 20 Aug 2024 14:58:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
-Message-ID: <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
-Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
-To: NeilBrown <neilb@suse.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805174330.2132717-2-echanude@redhat.com>
 
-On Tue, 20 Aug 2024 at 14:47, NeilBrown <neilb@suse.de> wrote:
->
-> I can definitely get behind the idea has having a few more helpers and
-> using them more widely.  But unless we get rid of wake_up_bit(), people
-> will still use and some will use it wrongly.
+On Mon, Aug 05, 2024 at 01:42:51PM GMT, Eric Chanudet wrote:
+> assigned-clock sets DEV_RTIx_RTI_CLK(id:0) whereas clocks sets
+> DEV_RTIx_RTI_CLK_PARENT_GLUELOGIC_HFOSC0_CLKOUT(id:1)[1]. This does not
+> look right, the timers in the driver assume a max frequency of 32kHz for
+> the heartbeat (HFOSC0 is 19.2MHz on j784s4-evm).
+> 
+> With this change, WDIOC_GETTIMELEFT return coherent time left
+> (DEFAULT_HEARTBEAT=60, reports 60s upon opening the cdev).
+> 
+> [1] http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/clocks.html#clocks-for-rti0-device
+> 
+> Fixes: caae599de8c6 ("arm64: dts: ti: k3-j784s4-main: Add the main domain watchdog instances")
+> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Eric Chanudet <echanude@redhat.com>
 
-I do not believe this is a valid argument.
+Gentle ping and update to the test comment.
 
-"We have interfaces that somebody can use wrongly" is a fact of life,
-not an argument.
+> ---
+> I could not get the watchdog to do more than reporting 0x32 in
+> RTIWDSTATUS. Setting RTIWWDRXCTRL[0:3] to generate a reset instead of an
+> interrupt (0x5) didn't trigger a reset either when the window expired.
 
-The whole "wake_up_bit()" is a very special thing, and dammit, if
-people don't know the rules, then they shouldn't be using it.
+Re-testing using u-boot from the BSP (2023.04) has the board reset as
+expected when the watchdog expires and WDIOC_GETTIMELEFT report the time
+left coherently with this patch until that happens.
 
-Anybody using that interface *ALREADY* has to have some model of
-atomicity for the actual bit they are changing. And yes, they can get
-that wrong too.
+I initially had a u-boot with a DT lacking:
+	"mcu_esm: esm@40800000"
+and I could reproduce the board not resetting by commenting in its
+description:
+	"ti,esm-pins = <95>;"
 
-The only way to actually make it a simple interface is to do the bit
-operation and the wakeup together. Which is why I think that
-interfaces like clear_bit_and_wake() or set_bit_and_wake() are fine,
-because at that point you actually have a valid rule for the whole
-operation.
+I don't understand why that is on the other hand. The TRM says ESM0
+ERR_O drives the SOC_SAFETY_ERRORn pin, which goes to the PMIC GPIO3 on
+the schematic _and_ to MCU_ESM0 as an error input event. The tps6594-esm
+module is probing successfully and it sets both ESM_SOC_EN|ESM_SOC_ENDRV
+and ESM_SOC_START, so I would expect the PMIC to reset the board without
+MCU_ESM0 being described or configured by u-boot.
 
-But wake_up_bit() on its own ALREADY depends on the user doing the
-right thing for the bit itself. Putting a memory barrier in it will
-only *HIDE* incompetence, it won't be fixing it.
+Best,
 
-So no. Don't add interfaces that hide the problem.
+> 
+>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 38 +++++++++++-----------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> index f170f80f00c1..6c014d335f2c 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> @@ -2429,7 +2429,7 @@ main_esm: esm@700000 {
+>  	watchdog0: watchdog@2200000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2200000 0x00 0x100>;
+> -		clocks = <&k3_clks 348 1>;
+> +		clocks = <&k3_clks 348 0>;
+>  		power-domains = <&k3_pds 348 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 348 0>;
+>  		assigned-clock-parents = <&k3_clks 348 4>;
+> @@ -2438,7 +2438,7 @@ watchdog0: watchdog@2200000 {
+>  	watchdog1: watchdog@2210000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2210000 0x00 0x100>;
+> -		clocks = <&k3_clks 349 1>;
+> +		clocks = <&k3_clks 349 0>;
+>  		power-domains = <&k3_pds 349 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 349 0>;
+>  		assigned-clock-parents = <&k3_clks 349 4>;
+> @@ -2447,7 +2447,7 @@ watchdog1: watchdog@2210000 {
+>  	watchdog2: watchdog@2220000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2220000 0x00 0x100>;
+> -		clocks = <&k3_clks 350 1>;
+> +		clocks = <&k3_clks 350 0>;
+>  		power-domains = <&k3_pds 350 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 350 0>;
+>  		assigned-clock-parents = <&k3_clks 350 4>;
+> @@ -2456,7 +2456,7 @@ watchdog2: watchdog@2220000 {
+>  	watchdog3: watchdog@2230000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2230000 0x00 0x100>;
+> -		clocks = <&k3_clks 351 1>;
+> +		clocks = <&k3_clks 351 0>;
+>  		power-domains = <&k3_pds 351 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 351 0>;
+>  		assigned-clock-parents = <&k3_clks 351 4>;
+> @@ -2465,7 +2465,7 @@ watchdog3: watchdog@2230000 {
+>  	watchdog4: watchdog@2240000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2240000 0x00 0x100>;
+> -		clocks = <&k3_clks 352 1>;
+> +		clocks = <&k3_clks 352 0>;
+>  		power-domains = <&k3_pds 352 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 352 0>;
+>  		assigned-clock-parents = <&k3_clks 352 4>;
+> @@ -2474,7 +2474,7 @@ watchdog4: watchdog@2240000 {
+>  	watchdog5: watchdog@2250000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2250000 0x00 0x100>;
+> -		clocks = <&k3_clks 353 1>;
+> +		clocks = <&k3_clks 353 0>;
+>  		power-domains = <&k3_pds 353 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 353 0>;
+>  		assigned-clock-parents = <&k3_clks 353 4>;
+> @@ -2483,7 +2483,7 @@ watchdog5: watchdog@2250000 {
+>  	watchdog6: watchdog@2260000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2260000 0x00 0x100>;
+> -		clocks = <&k3_clks 354 1>;
+> +		clocks = <&k3_clks 354 0>;
+>  		power-domains = <&k3_pds 354 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 354 0>;
+>  		assigned-clock-parents = <&k3_clks 354 4>;
+> @@ -2492,7 +2492,7 @@ watchdog6: watchdog@2260000 {
+>  	watchdog7: watchdog@2270000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2270000 0x00 0x100>;
+> -		clocks = <&k3_clks 355 1>;
+> +		clocks = <&k3_clks 355 0>;
+>  		power-domains = <&k3_pds 355 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 355 0>;
+>  		assigned-clock-parents = <&k3_clks 355 4>;
+> @@ -2506,7 +2506,7 @@ watchdog7: watchdog@2270000 {
+>  	watchdog8: watchdog@22f0000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x22f0000 0x00 0x100>;
+> -		clocks = <&k3_clks 360 1>;
+> +		clocks = <&k3_clks 360 0>;
+>  		power-domains = <&k3_pds 360 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 360 0>;
+>  		assigned-clock-parents = <&k3_clks 360 4>;
+> @@ -2517,7 +2517,7 @@ watchdog8: watchdog@22f0000 {
+>  	watchdog9: watchdog@2300000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2300000 0x00 0x100>;
+> -		clocks = <&k3_clks 356 1>;
+> +		clocks = <&k3_clks 356 0>;
+>  		power-domains = <&k3_pds 356 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 356 0>;
+>  		assigned-clock-parents = <&k3_clks 356 4>;
+> @@ -2528,7 +2528,7 @@ watchdog9: watchdog@2300000 {
+>  	watchdog10: watchdog@2310000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2310000 0x00 0x100>;
+> -		clocks = <&k3_clks 357 1>;
+> +		clocks = <&k3_clks 357 0>;
+>  		power-domains = <&k3_pds 357 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 357 0>;
+>  		assigned-clock-parents = <&k3_clks 357 4>;
+> @@ -2539,7 +2539,7 @@ watchdog10: watchdog@2310000 {
+>  	watchdog11: watchdog@2320000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2320000 0x00 0x100>;
+> -		clocks = <&k3_clks 358 1>;
+> +		clocks = <&k3_clks 358 0>;
+>  		power-domains = <&k3_pds 358 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 358 0>;
+>  		assigned-clock-parents = <&k3_clks 358 4>;
+> @@ -2550,7 +2550,7 @@ watchdog11: watchdog@2320000 {
+>  	watchdog12: watchdog@2330000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2330000 0x00 0x100>;
+> -		clocks = <&k3_clks 359 1>;
+> +		clocks = <&k3_clks 359 0>;
+>  		power-domains = <&k3_pds 359 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 359 0>;
+>  		assigned-clock-parents = <&k3_clks 359 4>;
+> @@ -2561,7 +2561,7 @@ watchdog12: watchdog@2330000 {
+>  	watchdog13: watchdog@23c0000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x23c0000 0x00 0x100>;
+> -		clocks = <&k3_clks 361 1>;
+> +		clocks = <&k3_clks 361 0>;
+>  		power-domains = <&k3_pds 361 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 361 0>;
+>  		assigned-clock-parents = <&k3_clks 361 4>;
+> @@ -2572,7 +2572,7 @@ watchdog13: watchdog@23c0000 {
+>  	watchdog14: watchdog@23d0000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x23d0000 0x00 0x100>;
+> -		clocks = <&k3_clks 362 1>;
+> +		clocks = <&k3_clks 362 0>;
+>  		power-domains = <&k3_pds 362 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 362 0>;
+>  		assigned-clock-parents = <&k3_clks 362 4>;
+> @@ -2583,7 +2583,7 @@ watchdog14: watchdog@23d0000 {
+>  	watchdog15: watchdog@23e0000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x23e0000 0x00 0x100>;
+> -		clocks = <&k3_clks 363 1>;
+> +		clocks = <&k3_clks 363 0>;
+>  		power-domains = <&k3_pds 363 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 363 0>;
+>  		assigned-clock-parents = <&k3_clks 363 4>;
+> @@ -2594,7 +2594,7 @@ watchdog15: watchdog@23e0000 {
+>  	watchdog16: watchdog@23f0000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x23f0000 0x00 0x100>;
+> -		clocks = <&k3_clks 364 1>;
+> +		clocks = <&k3_clks 364 0>;
+>  		power-domains = <&k3_pds 364 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 364 0>;
+>  		assigned-clock-parents = <&k3_clks 364 4>;
+> @@ -2605,7 +2605,7 @@ watchdog16: watchdog@23f0000 {
+>  	watchdog17: watchdog@2540000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2540000 0x00 0x100>;
+> -		clocks = <&k3_clks 365 1>;
+> +		clocks = <&k3_clks 365 0>;
+>  		power-domains = <&k3_pds 365 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 365 0>;
+>  		assigned-clock-parents = <&k3_clks 366 4>;
+> @@ -2616,7 +2616,7 @@ watchdog17: watchdog@2540000 {
+>  	watchdog18: watchdog@2550000 {
+>  		compatible = "ti,j7-rti-wdt";
+>  		reg = <0x00 0x2550000 0x00 0x100>;
+> -		clocks = <&k3_clks 366 1>;
+> +		clocks = <&k3_clks 366 0>;
+>  		power-domains = <&k3_pds 366 TI_SCI_PD_EXCLUSIVE>;
+>  		assigned-clocks = <&k3_clks 366 0>;
+>  		assigned-clock-parents = <&k3_clks 366 4>;
+> -- 
+> 2.45.2
+> 
 
-                  Linus
+-- 
+Eric Chanudet
+
 
