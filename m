@@ -1,75 +1,82 @@
-Return-Path: <linux-kernel+bounces-294611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B917F959032
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799E7959034
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E4E1C21FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3094D28407E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D841C7B7D;
-	Tue, 20 Aug 2024 22:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473771C68B0;
+	Tue, 20 Aug 2024 22:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEyZALOK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZCYWS03"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0561815C152;
-	Tue, 20 Aug 2024 22:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD418E377;
+	Tue, 20 Aug 2024 22:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724191310; cv=none; b=Y1gffhxq7WPE49snK3HM9QfvihU1rdmFMyl329+bO6fI5Kt9IHMAQqlGo/7pMCCDd9WqzoVMzt6jupYahSBzCl75zDJHJ6YUYSKmEQKvHYOqZg1B7805xO6c8tB4PcEpGg25bDBcKMyXyZcH1C4sGM6sJ+W2ksyI9sP6Qn5E2NU=
+	t=1724191407; cv=none; b=m0UDjWh6TR9PKQeJWQVKawBqWfiQ/EyAEdz0l60usbShNQZGeF4S3RrK8c5Nsi2af0tzH3WigniWmEPbKC9g1K+bU9a7YdpCmD0MERFza+RsGRcAKDRgNx8U+fk1VK3jQfKzArOdIuatbRO2HY2TcVF6EPVaLFYa6OEwGfjwn5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724191310; c=relaxed/simple;
-	bh=XP5abZo4cddZxbccoQFIh8U8/zvqdwnW9rxfFg/8M0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IriYIJlW27snsfE9lbbVIk0vfb5KmKHxm58u8UAx4IJtjVdIcQzPJpTNW2IzmkERxU3Ynr0HtSV4fXtii8Fi/9OAezSNZwL9JbF3MfLkcWjcEzWPaqkykEO1VQCP5E6TN/Si+KHgYcAnKmozJnqotxaX2MWaBvXK2oUSfKnlQbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEyZALOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057FDC4AF60;
-	Tue, 20 Aug 2024 22:01:48 +0000 (UTC)
+	s=arc-20240116; t=1724191407; c=relaxed/simple;
+	bh=SCc9AW6PdECIJzs72kTpSb/cE3Crc/zDrxIic/y3TU0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=iK8lGITsN3hE7TrXhZN5ejkDpszpL7yw+xudKRUV6AJp4dFPJHaFBgfdb/M4f7NFj+e6o/Z2wYzb1HZw6s92zCbDAL2NmU7Dzth6BhC/R5iHBbXOWoyhike/S/HU00fvKOOGuy/lIODTHhbx5CzGxbBBhEKkTVix8sz3hEVR+Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZCYWS03; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E719AC4AF0B;
+	Tue, 20 Aug 2024 22:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724191309;
-	bh=XP5abZo4cddZxbccoQFIh8U8/zvqdwnW9rxfFg/8M0I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WEyZALOKwA65r3UitX9SbpMT9HzJl1u33ao5EC/dy38mc0nmwkGgBh+4ystko6ZsY
-	 QY3lDvv33P8IyqlgH/Do+H8IpozKLB60wxS0nU+TXwAFb2/tfsWbs0PTTLo+IXK1RT
-	 2xYRvS+mo1ewRW4ciNY5gsasCSKYfVnCKdMqVTYcZtuVeG4JgtDZN31yiqSyRPS+Hb
-	 LpsAN6wBQlwFL2vsTRS1S6f8pMKcuvgquLt6HUKpONhkcpdwSFVob1BxiKIq42q64r
-	 SAUeAVJA2yG1vIQrAA/l+6Me6VZtFj3jtukOBgs5wqWQmBuWEjdMjXbd1vKw5dp9x1
-	 WcOBMf9aq1uEQ==
-Date: Tue, 20 Aug 2024 15:01:47 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v2 1/3] ethtool: Extend cable testing interface
- with result source information
-Message-ID: <20240820150147.1fdae1ac@kernel.org>
-In-Reply-To: <20240820101256.1506460-2-o.rempel@pengutronix.de>
-References: <20240820101256.1506460-1-o.rempel@pengutronix.de>
-	<20240820101256.1506460-2-o.rempel@pengutronix.de>
+	s=k20201202; t=1724191407;
+	bh=SCc9AW6PdECIJzs72kTpSb/cE3Crc/zDrxIic/y3TU0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CZCYWS03ve2QKnkOx5niM9W4gj5fly1uKIZxXJ4CoHs1h6dAe9sRUkTqXeO4DkZMo
+	 V+hPlW7IsY3yLnRH7uETmJkVPfQoctFj+0eYqxCWgzSuRC3J3XY5h3anHq7IiHGAnL
+	 De6drCZWJbkYoyiGYnwMqRqf251m4OD3ms7RuC4pU1Cf+Po+18S+BQzLSWahBxv21j
+	 KFCXsOJ/RaFBwMvfwJNV9Y5+pRI8wVhrrANnBBEF2cTFJYBNksdEinP7EYlHKlL9Yh
+	 3ex1OHA1OhPTsOaECjXpX8Buosd2QFM5ORKoe+HBCi1JtQZiurI5xaSrgZGaA7/CfF
+	 tI9DD1IcmNmdg==
+Message-ID: <9b1107439ffd3fe3cf4945a500a881c8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240820013550.4906-1-david.hunter.linux@gmail.com>
+References: <20240820013550.4906-1-david.hunter.linux@gmail.com>
+Subject: Re: [PATCH 1/1] Driver: clk-qoriq.c: replace of_node_put with _free improves cleanup
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com, shuah@kernel.org, david.hunter.linux@gmail.com
+To: David Hunter <david.hunter.linux@gmail.com>, mturquette@baylibre.com
+Date: Tue, 20 Aug 2024 15:03:24 -0700
+User-Agent: alot/0.10
 
-On Tue, 20 Aug 2024 12:12:54 +0200 Oleksij Rempel wrote:
-> +      -
-> +        name: src
-> +        type: u8
+Quoting David Hunter (2024-08-19 18:35:49)
+> Use the _free function to have automatic clean up instead of calling
 
-If you have to respin please s/u8/u32/
+How about:
 
-Netlink rounds up all fields sizes to u32, u8 ends up being the same
-size as u32 "on the wire" but 3 out of the 4 bytes are unusable.
+	Use __free() to have automatic cleanup instead of calling
+	of_node_put() manually.
+
+> another function, of_node_put. This prevents leaking reference counts.
+
+Are there any leaking reference counts? I'd just omit that sentence
+unless there is one.
+
+>=20
+> The following commit has information on _free(device_node):
+>=20
+> 9448e55d032d99af8e23487f51a542d51b2f1a48
+>=20
+> The code was able to compile without errors or warnings.=20
+
+The rest of this can go below the triple dash ---
 
