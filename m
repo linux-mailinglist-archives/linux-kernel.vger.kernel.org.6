@@ -1,123 +1,196 @@
-Return-Path: <linux-kernel+bounces-294604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC86958FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:51:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409F7958FFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E7A286C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:51:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D48FB21DDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69021C68AB;
-	Tue, 20 Aug 2024 21:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064CE1C68A0;
+	Tue, 20 Aug 2024 21:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Bhuv1MK4"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="07dtezhV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T5AQMaWH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="07dtezhV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T5AQMaWH"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12BC154C10;
-	Tue, 20 Aug 2024 21:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689E814B097;
+	Tue, 20 Aug 2024 21:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724190672; cv=none; b=FOXXQoeSg41zir0RPjUdLzNQIC/A+P762ThXE6rfKcqjOAEQAZzMzpOoaVnVUPg21dPIPzRc5Oxyl4CsIpNa15pRyiqKNqmgjkwbYz8hi/qHLH+VmuQhfahw8MGbWKKEPa8ZGs36dF6OS+c7xbo/nE7MY1iJEgntwEH/R+95m5c=
+	t=1724190769; cv=none; b=IwuD5qsMg4MXmqH4pEUaz82q0GPJX0dH2xdX0k2o+ufguWuo16WaZ7iLypOCxk/guFOTl+aknWvYUDPOnc57d2XIydTiP2NEtFrVbhno1rR4CT60FBUQYQzj38SNnuwgtFljs1PxgaQrK3iC+AAoDsv2nr0rWDbhnPYsCRf559g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724190672; c=relaxed/simple;
-	bh=0L1O6nBUPkZMSJQzJolFrr8G13WOrW0A8rifEKPyduo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhC8SEcXGTybMgWhYPmNMcKMv0A/wVOr33Sf6m/SwEwryuajJLiDThstCl8Xw8m57L8SzVOnn3D+MahTn5HGS1h/bFj1mOkZJRYfMYLQ31mPiqypnkzTkrxLMqAqOyoRs/fDgh6WQB0UOvtDw/rM3tNFDooURtgEJS4jHW88wU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Bhuv1MK4; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WpNSr6DKXz6ClY99;
-	Tue, 20 Aug 2024 21:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1724190664; x=1726782665; bh=4M6UtsDH6zbj+49hMxxCaCbS
-	KNGOOv9L0xXRKC/ySD4=; b=Bhuv1MK4CAVH2Y2LzWSMJTqH6vk6d/n7jD9Rbcch
-	vBXEDaioWZhEeTxAkdYmbfY07/TB0hnMSXOgXs0MdJHfhJ0aPZfdZ+14msVONmrP
-	yBbCheZQG0ttbkq7N7fXRNCeE0KD48w+oPpVVuzeOJV70H3f+GwD/u+JGgfQdzL3
-	UieuaXaaXTo5pAc623SDuvk9ew2hSCPdFDWI7G27LTDJTDgWZgxNUUIqzVpZzRtA
-	T5cX/EIPgDbRK/m3laWw+Qrh/mNVQWDZkuFkyFOTKA52/k4AUunWlx+xmq0uB5A/
-	gF92Yl5+jPQSRsvexVHkPb7cnVxnc9O1kVEdkSqDaShTsg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id PX60NJXrcjlA; Tue, 20 Aug 2024 21:51:04 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	s=arc-20240116; t=1724190769; c=relaxed/simple;
+	bh=l92UnS4HuKM5bmRvfmk9xH5H1aGPk1kqzSQMcMpXG4I=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=R0pC2mp+j6xvBWgjEyoelPt5pW3Tv5ubtlRVtbMgxmhgm7NCNWn7+EdQxsKXN8w6BwKyX7n+6L80RnZnnHrZg5Pss1dc1+XDorNemBQ3VTTUKbRcEpJO+xE/rOOS9ExVWkiFjw9STZ1lsyujl7cjRqvZxfHciMFPYtEFIUo7An4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=07dtezhV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T5AQMaWH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=07dtezhV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T5AQMaWH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WpNSj1KYHz6ClY98;
-	Tue, 20 Aug 2024 21:51:00 +0000 (UTC)
-Message-ID: <223cc3ca-9214-4ba1-a3c8-2d672aef52f9@acm.org>
-Date: Tue, 20 Aug 2024 14:50:58 -0700
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A26311FD41;
+	Tue, 20 Aug 2024 21:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724190764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBSTNe05h2eWgVHdInp2HfR2w+s19RsKtJxo341VcCI=;
+	b=07dtezhVavT+ZyURGqEk7Ev616wXToIqhSGwHbUYc13AKsUr8ACP259aa1n1c9gw+wk1NT
+	OfuW5Ilg0u5D5GuVzQghc9hjTnjEWrO1MizRl5yDB2tvksld8aghi9IHYvMhZp1gspzNTv
+	3GRViqUfjnho8rrjFIzH48PMk5IHbyQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724190764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBSTNe05h2eWgVHdInp2HfR2w+s19RsKtJxo341VcCI=;
+	b=T5AQMaWHBRbagzBkn8xRdCETPU7BOHMtaX6sB3x+h+Qk7nsGIjfJKXDnrOy0Tnw4KoLNUT
+	ErssOuHS9xvlyHAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724190764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBSTNe05h2eWgVHdInp2HfR2w+s19RsKtJxo341VcCI=;
+	b=07dtezhVavT+ZyURGqEk7Ev616wXToIqhSGwHbUYc13AKsUr8ACP259aa1n1c9gw+wk1NT
+	OfuW5Ilg0u5D5GuVzQghc9hjTnjEWrO1MizRl5yDB2tvksld8aghi9IHYvMhZp1gspzNTv
+	3GRViqUfjnho8rrjFIzH48PMk5IHbyQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724190764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBSTNe05h2eWgVHdInp2HfR2w+s19RsKtJxo341VcCI=;
+	b=T5AQMaWHBRbagzBkn8xRdCETPU7BOHMtaX6sB3x+h+Qk7nsGIjfJKXDnrOy0Tnw4KoLNUT
+	ErssOuHS9xvlyHAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86EED13A17;
+	Tue, 20 Aug 2024 21:52:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BA37DioQxWZRHgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 20 Aug 2024 21:52:42 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] scsi: ufs-mediatek: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP
-To: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
- Mary Guillemard <mary@mary.zone>
-Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20240818222442.44990-2-mary@mary.zone>
- <20240818222442.44990-3-mary@mary.zone>
- <20240819120852.tdxlebj7pjcxjbou@thinkpad>
- <ZsOJKMg8xlpdgoi5@kuroko.kudu-justice.ts.net>
- <20240820060946.ktiysu7sn7qgbwx4@thinkpad>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240820060946.ktiysu7sn7qgbwx4@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Dave Chinner" <david@fromorbit.com>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH 5/9] Block: switch bd_prepare_to_claim to use ___wait_var_event()
+In-reply-to: <ZsQZHZ0y6qMJGaLQ@dread.disaster.area>
+References: <>, <ZsQZHZ0y6qMJGaLQ@dread.disaster.area>
+Date: Wed, 21 Aug 2024 07:52:39 +1000
+Message-id: <172419075958.6062.14405334545688254538@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 8/19/24 11:09 PM, Manivannan Sadhasivam wrote:
-> On Mon, Aug 19, 2024 at 08:17:10PM +0200, Mary Guillemard wrote:
->> On Mon, Aug 19, 2024 at 05:38:52PM +0530, Manivannan Sadhasivam wrote:
->>> On Mon, Aug 19, 2024 at 12:24:42AM +0200, Mary Guillemard wrote:
->>>> +	if (host->caps & UFS_MTK_CAP_DISABLE_MCQ)
->>>
->>> How can this be the deciding factor? You said above that the issue is with
->>> MT8183 SoC. So why not just use the quirk only for that platform?
->>
->> So my current assumption is that it also affect other Mediatek SoCs
->> that are also based on UFS 2.1 spec but I cannot check this.
->>
->> Instead, we know that if MCQ isn't supported, we must fallback to LSDB
->> as there is no other ways to drive the device.
->>
->> UFS_MTK_CAP_DISABLE_MCQ (mediatek,ufs-disable-mcq) being unused upstream,
->> I think that's an acceptable fix.
->>
-> 
-> If you use this quirk, then you need to use the corresponding DT property. But
-> using the 'mediatek,ufs-disable-mcq' property for 2.1 controller doesn't make
-> sense as MCQ is for controllers >= 4.0.
-> 
->> Another way to handle this would be to add a new dt property and add it
->> to ufs_mtk_host_caps but I feel that my approach should be enough.
->>
-> 
-> No need to add a DT property. Just use the SoC specific compatible as I did for
-> SM8550 SoC.
+On Tue, 20 Aug 2024, Dave Chinner wrote:
+> On Mon, Aug 19, 2024 at 03:20:39PM +1000, NeilBrown wrote:
+> > bd_prepare_to_claim() current uses a bit waitqueue with a matching
+> > wake_up_bit() in bd_clear_claiming().  However it is really waiting on a
+> > "var", not a "bit".
+> >=20
+> > So change to wake_up_var(), and use ___wait_var_event() for the waiting.
+> > Using the triple-underscore version allows us to drop the mutex across
+> > the schedule() call.
+> ....
+> > @@ -535,33 +535,23 @@ int bd_prepare_to_claim(struct block_device *bdev, =
+void *holder,
+> >  		const struct blk_holder_ops *hops)
+> >  {
+> >  	struct block_device *whole =3D bdev_whole(bdev);
+> > +	int err =3D 0;
+> > =20
+> >  	if (WARN_ON_ONCE(!holder))
+> >  		return -EINVAL;
+> > -retry:
+> > -	mutex_lock(&bdev_lock);
+> > -	/* if someone else claimed, fail */
+> > -	if (!bd_may_claim(bdev, holder, hops)) {
+> > -		mutex_unlock(&bdev_lock);
+> > -		return -EBUSY;
+> > -	}
+> > -
+> > -	/* if claiming is already in progress, wait for it to finish */
+> > -	if (whole->bd_claiming) {
+> > -		wait_queue_head_t *wq =3D bit_waitqueue(&whole->bd_claiming, 0);
+> > -		DEFINE_WAIT(wait);
+> > =20
+> > -		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
+> > -		mutex_unlock(&bdev_lock);
+> > -		schedule();
+> > -		finish_wait(wq, &wait);
+> > -		goto retry;
+> > -	}
+> > +	mutex_lock(&bdev_lock);
+> > +	___wait_var_event(&whole->bd_claiming,
+> > +			  (err =3D bd_may_claim(bdev, holder, hops)) !=3D 0 || !whole->bd_cla=
+iming,
+> > +			  TASK_UNINTERRUPTIBLE, 0, 0,
+> > +			  mutex_unlock(&bdev_lock); schedule(); mutex_lock(&bdev_lock));
+>=20
+> That's not an improvement. Instead of nice, obvious, readable code,
+> I now have to go look at a macro and manually substitute the
+> parameters to work out what this abomination actually does.
 
-Mary, do you plan to implement Manivannan's feedback?
+Interesting - I thought the function as a whole was more readable this
+way.
+I agree that the ___wait_var_event macro isn't the best part.
+Is your dislike simply that it isn't a macro that you are familar with,
+or is there something specific that you don't like?
+
+Suppose we could add a new macro so that it read:
+
+     wait_var_event_mutex(&whole->bd_claiming,
+			  (err =3D bd_may_claim(bdev, holder, hops)) !=3D 0 || !whole->bd_claiming,
+			  &bdev_lock);
+
+would that be less abominable?
 
 Thanks,
-
-Bart.
-
+NeilBrown
 
