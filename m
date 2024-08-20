@@ -1,186 +1,207 @@
-Return-Path: <linux-kernel+bounces-294061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC0C958867
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF7E958869
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4381F23079
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B5C281BC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E259F1917DE;
-	Tue, 20 Aug 2024 14:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD9C191476;
+	Tue, 20 Aug 2024 14:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o5h3gAfS"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ZsTVHTcg"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA03190486
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A891917E4;
+	Tue, 20 Aug 2024 14:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724162520; cv=none; b=n8JA0OBy+XR2yezfx3HOx6Yyb9ii1NWfclN77Q3DSMYIpM6/h5QH4mybrNB4vpj2vfElpoK46WUogWftLroRc1HCY+xv93IZ24UjFh+oSrLKklv0DaWOarTy4OdwZueVoVRz3AfGA0VJBxaqYXFF2oIpdSpbCvPZBHI796HQIeE=
+	t=1724162544; cv=none; b=f0mcaWA9gsFNlq+VFqh3LSM0K/wDf8jFYkRMLUCs+Ze0SCOkUDQdoHPmh/RRhO+c3WlswsSZteFv0tm+hhVdIhPcGIOPjS3GzWHJsTm1QwnuU4PhGI7xEv9zERSjpj1Ovj4elPWmtEws0zXzXdoPD1HD5OmPu1qa7sP2RBtFQys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724162520; c=relaxed/simple;
-	bh=W1aCTznwTEgUcFmasnrHknG0hlrRETKrRLGcr1yMS7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FeF/jKbzArK4nrC8kVNF+kP9lkXYgy+bLR0SAzUSbwAg4Rga2OgnEhVin1k4GNK6zvg93XcA8yEKC59Izt4NuXjgetozjdLqDMCAFWjqtROIOzKb+aaCR85v1Dcoq87bcSqSiNlZL37XBHa5qpiuQkOdmJE+LYaHGuajIZlhPbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o5h3gAfS; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef2e37a171so11671801fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724162516; x=1724767316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=179ilzg0jHjhdVPMFW9T7CSDrvc9WJH5y//WgUvp4Aw=;
-        b=o5h3gAfSvotp2cerbsp3ZAdI8jaYZj9SINbyTlDJGLJbziSWp9NbYNXZVUieu+KbEi
-         3iuPTptMZWB6xFtvfo5szFm5iP2D/oWBVFZkwxYOt6Lqi5CESLaQKpOWmIYKXzc+CyId
-         Ckva8josMYg9pcqhIyRGUXNOSe+GTDLQuMhNkt1hBBFdUzn0ZsjZL8ulPW0luCV0DX/L
-         f340TLf/yYP3CLi1IJMQhUN4egSle/XRsnbT+GWSJnG4OcVYIbFVAc5TiqkJXGWF1LH9
-         jEz40spU9XiM2eWf2ZMUBjB6x21WkLQePSdVTNgxov8uXB/1QffYwD23IMn94AW6FTSA
-         Rozw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724162516; x=1724767316;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=179ilzg0jHjhdVPMFW9T7CSDrvc9WJH5y//WgUvp4Aw=;
-        b=NQNqldsN8Yx7aDb2h/RAWgkjLx1GLkUbbI8nmYcH6qpb1U2XU+SmhvRb53l7F73wUE
-         P9U3R/67ZDQubJubsHfRG9qAjUvOtS+E95KJeTUOdmeohPb3a7hzUzX63EQjupqCSuBE
-         uOIYbJE7aXhKL/WotnaDMzNFIEimc1ipLiYU/hf2nG3QzqtvoJvrjac1ehhcYtvAOtjF
-         3+mNDZzDpTlP+lZRunNuKWsW4/vHwM1yMut+db0mPRAsA/zSpZA4NoruB8y07mweDe3e
-         SatLI/H5md7FppRXiwlTdgsreFTaDlHwTCbHJC6IsVRwGYbGuVhuEZCccfRDNMRtN+l+
-         r80A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5rW76vwNOC8xsTMpo7g7jWWESMPpf/bNzjPxlOtwAX+5FRMkSG13Ywer0NXo0ybq4mhw7cni8/WUu5CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkeadanevXReT5rr8x0doGaxlirFVNE5pb1me4+wYOr5j3euyi
-	Cwc27J0cQuBwt1BbFMaLHv9VRse62Jkhg0YgDsmnc99cPMSgyhN/m/tKC5Iz5YA=
-X-Google-Smtp-Source: AGHT+IH4zyYxaDIvbndYXLzT2iVNgnVpMaf8qpZV0fZAfNc4Ach0eZkimu4I39qB7YDt1h3vCCyUig==
-X-Received: by 2002:a05:6512:3052:b0:52e:93d9:8f39 with SMTP id 2adb3069b0e04-5331c69ef07mr5292733e87.3.1724162515979;
-        Tue, 20 Aug 2024 07:01:55 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5333fb2f738sm233045e87.46.2024.08.20.07.01.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 07:01:55 -0700 (PDT)
-Message-ID: <5e3b0d2d-1af1-4507-a890-6c1be0e09292@linaro.org>
-Date: Tue, 20 Aug 2024 17:01:54 +0300
+	s=arc-20240116; t=1724162544; c=relaxed/simple;
+	bh=/RP+vchqEyeezYylnz8b10s5iJ9FMw2qzdebpR/Z78U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8nmQQ+Qm0IOfbeLLxk6QfRXeIel0cTAKo++wE5yNsA/aEs/Eb/KTSyqZbA8S5IRkDZo6pvSC/+dFYyu2LZHacI5+rPohZ68/Soi+ijpOcSPOGZ3AfdFLbULGaJOloq/vQY9l86bOXaM+qWS5W8+tHTFaeesRezsY1jzX8GMdOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ZsTVHTcg; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=sXowgNI7Ym7p4ze9gJRZD2DGLWRu4RKLL5qm9E1s/ns=; b=ZsTVHTcgNKZ2oRSChowadTFdMb
+	xGtRVwUHj4ySi0UkAO+GkGS5CVs4dvM8IwesectYlk/DvqtAxVVG0kbTwGZ11wRU/zrwZpyF9DeYG
+	e0XD53wQRhKa0cW+qXTxVJLfi+n0JdcPZWfQk3M2d9bsI/jElVx+YhuNBeOJXPn2YTU+MMPEznp2x
+	PJESkvzek2wHQ89abJ0qQOP7Zpsb7mLRkYUTu4eNrecW+kywS6gYL6GwU66LyhuKrRZ+txhjT2Gxx
+	4phuuIQ/Sy93a3tBu6YNVpkKM/BByvzzm22QaU6E2xqIiJiDzm2Su12xzr1uKxYr6T2PKs3BFd3Cc
+	n8It4SkQ==;
+Received: from 179-125-75-209-dinamico.pombonet.net.br ([179.125.75.209] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sgPRA-002duS-Pe; Tue, 20 Aug 2024 16:02:16 +0200
+Date: Tue, 20 Aug 2024 11:02:08 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: syzbot <syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_search_dir
+ (2)
+Message-ID: <ZsSh4NUWT7MlvlSL@quatroqueijos.cascardo.eti.br>
+References: <00000000000062812a062004738b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
- <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
- <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
- <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
- <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
- <5ecbcd10-d9b7-4134-9666-6df790527b1f@quicinc.com>
- <56211603-de02-4b8f-a7c6-a4d80ace4e2f@linaro.org>
- <de2c8fa3-afc1-4163-aae5-3868ca59e95e@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <de2c8fa3-afc1-4163-aae5-3868ca59e95e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000062812a062004738b@google.com>
 
-Hi Depeng.
-
-On 8/16/24 15:42, Depeng Shao wrote:
-> Hi Vladimir,
-> 
-> On 8/16/2024 5:31 AM, Vladimir Zapolskiy wrote:
->> Hi Depeng.
->>
->> On 8/15/24 18:43, Depeng Shao wrote:
->>> Hi Vladimir,
->>>
->>>>>
->>>>> Thanks for the confirmation, even though I add the rup_update and
->>>>> buf_done function in later commits, it is still called in platform
->>>>> specific code(camss-vfe-780.c), so I will keep as it is done today.
->>>>
->>>> let it be so.
->>>>
->>>> I have another ask about it, please move new camss_reg_update() out from
->>>> camss.c into camss-csid.c, and camss_buf_done() from camss.c into camss-
->>>> vfe.c
->>>>
->>>
->>> The cross direct call has been removed by below commit, so it looks
->>> strange if I add the cross direct call.
->>>
->>> media: qcom: camss: Decouple VFE from CSID
->>> https://lore.kernel.org/lkml/20240522154659.510-9-
->>> quic_grosikop@quicinc.com/
->>
->> This I don't understand, please elaborate. I don't ask for a "cross direct
->> call", but you do introduce a CSID specific function in the generic camss.c
->> and another VFE specific function in the same camss.c
->>
-> 
-> CSID calls vfe_get/vfe_put to power up/reset vfe hw in old code, but
-> above decouple commit removes this cross direct call, this commit has
-> been merged recently.
-
-Apparently I was imprecise, this is not the thing, which I don't understand,
-for me it was the wording of "cross direct call".
-
->> What I ask is just move the current versions of camss_buf_done() and
->> camss_reg_update() out from camss.c to the files, which are related to the
->> sub-IP blocks, and of course move the function declarations from camss.h
->> into camss-vfe.h and camss-csid.h respectively.
->>
->> If possible there shall be no CSID or VFE specific specific code in
->> camss.c,
->> and that fact is that it's possible.
->>
-> 
-> Yes, I understand what you mean. Let's take camss_buf_done as example,
-> if we move camss_buf_done to camss-vfe.c, but this function is called in
-> csid csid driver, so here will have a cross direct call again,
+#syz test: upstream 47ac09b91befbb6a235ab620c32af719f8208399
 
 
-> camss_reg_update is same. Since the cross call is removed in above
-> commit, then it will be strange if I do this again.
-
-It might be strange, but what I ask is to make the code way less convoluted.
-
-> So, I moved them to camss.c
-
-I'm still missing the essence of having two layers of indirection instead
-of just one. Previous code was a function call from csid to vfe, now it's
-csid to camss to vfe, I don't understand why there is a need to introduce
-just an additional layer, it greatly complicates the code, also it slightly
-drops the performance.
-
-Previously there was no 'struct vfe_device *' or 'struct csid_device *'
-types in the generic camss.c, now these "new" types leaked from camss-csid.h
-and camss-vfe.h into camss.c, and the reason why remains unknown.
-
-Okay, please ignore this one review request, let it be kept as is for a while.
-
-As a side note, generally there might be various reasons to revert the code
-changes or to return to the previous logic.
-
-Thank you.
-
---
-Best wishes,
-Vladimir
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index e7a09a99837b..44a5f6df59ec 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1664,24 +1664,36 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
+ 					struct ext4_dir_entry_2 **res_dir,
+ 					int *has_inline_data)
+ {
++	struct ext4_xattr_ibody_find is = {
++		.s = { .not_found = -ENODATA, },
++	};
++	struct ext4_xattr_info i = {
++		.name_index = EXT4_XATTR_INDEX_SYSTEM,
++		.name = EXT4_XATTR_SYSTEM_DATA,
++	};
+ 	int ret;
+-	struct ext4_iloc iloc;
+ 	void *inline_start;
+ 	int inline_size;
+ 
+-	if (ext4_get_inode_loc(dir, &iloc))
+-		return NULL;
++	ret = ext4_get_inode_loc(dir, &is.iloc);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+ 	down_read(&EXT4_I(dir)->xattr_sem);
++
++	ret = ext4_xattr_ibody_find(dir, &i, &is);
++	if (ret)
++		goto out;
++
+ 	if (!ext4_has_inline_data(dir)) {
+ 		*has_inline_data = 0;
+ 		goto out;
+ 	}
+ 
+-	inline_start = (void *)ext4_raw_inode(&iloc)->i_block +
++	inline_start = (void *)ext4_raw_inode(&is.iloc)->i_block +
+ 						EXT4_INLINE_DOTDOT_SIZE;
+ 	inline_size = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DOTDOT_SIZE;
+-	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
++	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
+ 			      dir, fname, 0, res_dir);
+ 	if (ret == 1)
+ 		goto out_find;
+@@ -1691,20 +1703,23 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
+ 	if (ext4_get_inline_size(dir) == EXT4_MIN_INLINE_DATA_SIZE)
+ 		goto out;
+ 
+-	inline_start = ext4_get_inline_xattr_pos(dir, &iloc);
++	inline_start = ext4_get_inline_xattr_pos(dir, &is.iloc);
+ 	inline_size = ext4_get_inline_size(dir) - EXT4_MIN_INLINE_DATA_SIZE;
+ 
+-	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
++	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
+ 			      dir, fname, 0, res_dir);
+ 	if (ret == 1)
+ 		goto out_find;
+ 
+ out:
+-	brelse(iloc.bh);
+-	iloc.bh = NULL;
++	brelse(is.iloc.bh);
++	if (ret < 0)
++		is.iloc.bh = ERR_PTR(ret);
++	else
++		is.iloc.bh = NULL;
+ out_find:
+ 	up_read(&EXT4_I(dir)->xattr_sem);
+-	return iloc.bh;
++	return is.iloc.bh;
+ }
+ 
+ int ext4_delete_inline_entry(handle_t *handle,
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 6a95713f9193..14163b32eddb 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1482,7 +1482,7 @@ static bool ext4_match(struct inode *parent,
+ }
+ 
+ /*
+- * Returns 0 if not found, -1 on failure, and 1 on success
++ * Returns 0 if not found, -EFSCORRUPTED on failure, and 1 on success
+  */
+ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
+ 		    struct inode *dir, struct ext4_filename *fname,
+@@ -1503,7 +1503,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
+ 			 * a full check */
+ 			if (ext4_check_dir_entry(dir, NULL, de, bh, search_buf,
+ 						 buf_size, offset))
+-				return -1;
++				return -EFSCORRUPTED;
+ 			*res_dir = de;
+ 			return 1;
+ 		}
+@@ -1511,7 +1511,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
+ 		de_len = ext4_rec_len_from_disk(de->rec_len,
+ 						dir->i_sb->s_blocksize);
+ 		if (de_len <= 0)
+-			return -1;
++			return -EFSCORRUPTED;
+ 		offset += de_len;
+ 		de = (struct ext4_dir_entry_2 *) ((char *) de + de_len);
+ 	}
+@@ -1574,7 +1574,7 @@ static struct buffer_head *__ext4_find_entry(struct inode *dir,
+ 					     &has_inline_data);
+ 		if (inlined)
+ 			*inlined = has_inline_data;
+-		if (has_inline_data)
++		if (has_inline_data || IS_ERR(ret))
+ 			goto cleanup_and_exit;
+ 	}
+ 
+@@ -1663,8 +1663,10 @@ static struct buffer_head *__ext4_find_entry(struct inode *dir,
+ 			goto cleanup_and_exit;
+ 		} else {
+ 			brelse(bh);
+-			if (i < 0)
++			if (i < 0) {
++				ret = ERR_PTR(i);
+ 				goto cleanup_and_exit;
++			}
+ 		}
+ 	next:
+ 		if (++block >= nblocks)
+@@ -1758,7 +1760,7 @@ static struct buffer_head * ext4_dx_find_entry(struct inode *dir,
+ 		if (retval == 1)
+ 			goto success;
+ 		brelse(bh);
+-		if (retval == -1) {
++		if (retval < 0) {
+ 			bh = ERR_PTR(ERR_BAD_DX_DIR);
+ 			goto errout;
+ 		}
 
