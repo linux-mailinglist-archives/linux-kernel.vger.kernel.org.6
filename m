@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-294150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B7C9589FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FA6958A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59041C21A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71241F23C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545E5194AEE;
-	Tue, 20 Aug 2024 14:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A997199E85;
+	Tue, 20 Aug 2024 14:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O32OhsOS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwhfqlfs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF78191F94;
-	Tue, 20 Aug 2024 14:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89E719882C;
+	Tue, 20 Aug 2024 14:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724164864; cv=none; b=UbTsGWpARBciDuBvmnrRsZYSpiDj8SuRNWcKgN2/QvC9CE36ZOZvRuips5pFfmaU46TxsJr2rcUOjGLXjGDTyanEFlJGz5hHL4WQop/bvv7JCqy9lUaWxOEXVGqClu/xqtj798h+4wv3hrqo6ipooFf1fhGU1T/pmn+DwdR1Ujg=
+	t=1724165027; cv=none; b=hP87ZboUpHiAjRbMRfo/nW+CTMDfkh87OXsccjPsuNF5Wp7u+3jYoPLCL9N7U0LKHoaxWu7HTcc5BRh+8bBlOPPtl97i8mvB9Ka4fVcDO36RSbUQ7Jn15I9Add/XoN+fnfsGyK03h4zInw5GnCsFz2CnmgpLfA7Jv9knjECG9Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724164864; c=relaxed/simple;
-	bh=MZ+n+nKmV2N6aH3srELSOnz9POMtf3OdquRNxHry29w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eWrNr9/5To4OGRX5g9cSyW7Wg99TBqBo6RIJdtRYOSDsecNpNV1cLC1ZNdobGimG8a1q9SDRPPXqzSqlPqls6/r4/2MTZBPskbxC8O/wkMJPBpxNbWHBTha09WA5Rp6kwG79DxEAQReAvWbfiOyOEEU1eXwnHstyQnY6Hni+im4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O32OhsOS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF81C4AF0B;
-	Tue, 20 Aug 2024 14:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724164864;
-	bh=MZ+n+nKmV2N6aH3srELSOnz9POMtf3OdquRNxHry29w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O32OhsOSY2qbVyuWpCYx4r8brPLbVpbN15TRMNK99JdOObKBZt30mkkijGytohSeW
-	 H/sXgoqUD4lxEhncYy67EXHaMoOZHZqcbkpRQLWThtXzEG8DMdu53AfFEnXzzWcUq+
-	 hwnmOrxOYzgRl3smFi2CZrQzLNN7rzGUwdkGLRdiDMJ51FrBssDshY6FdCC36vWU5A
-	 05sxSZnEHiiz250yy9+ptmdlDIyxoGw/WJ7jTgTiS7iMLVi+xGdOB9wYe1RjY6X1L9
-	 37K7PXNwC9BAlsqbatMpVZWnMxsZqXI50vzhB98rF1qd4YdQWNaH9d24jrHMmiXZEp
-	 DIAE1HrWLNntA==
-Date: Tue, 20 Aug 2024 07:41:02 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Larry Chiu <larry.chiu@realtek.com>
-Cc: Justin Lai <justinlai0215@realtek.com>, "davem@davemloft.net"
- <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "andrew@lunn.ch" <andrew@lunn.ch>,
- "jiri@resnulli.us" <jiri@resnulli.us>, "horms@kernel.org"
- <horms@kernel.org>, "rkannoth@marvell.com" <rkannoth@marvell.com>,
- "jdamato@fastly.com" <jdamato@fastly.com>, Ping-Ke Shih
- <pkshih@realtek.com>
-Subject: Re: [PATCH net-next v27 07/13] rtase: Implement a function to
- receive packets
-Message-ID: <20240820074102.52c7c43a@kernel.org>
-In-Reply-To: <5317e88a6e334e4db222529287f643ec@realtek.com>
-References: <20240812063539.575865-1-justinlai0215@realtek.com>
-	<20240812063539.575865-8-justinlai0215@realtek.com>
-	<20240815185452.3df3eea9@kernel.org>
-	<5317e88a6e334e4db222529287f643ec@realtek.com>
+	s=arc-20240116; t=1724165027; c=relaxed/simple;
+	bh=khzBjM6tTTIrfEx7SUEq8d1H8tHgDTjNBHiBaWajyRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJ7WlWIkCjspn7+tS7YP1X1KSVjH9Am7Jvg1gCW6YQyIqEek1emYOfUOWsH3mRkUxt/q1Dt4Xs/jbbdUwm/C52hhUlmHEoh1zX4X53YLZ0Oz9J+8DnUT+KfI5mS6GwUyC/qokiwAqRWlWideTM4EnGYkM7VM3LaWGboKmSdR4Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwhfqlfs; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724165026; x=1755701026;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=khzBjM6tTTIrfEx7SUEq8d1H8tHgDTjNBHiBaWajyRc=;
+  b=dwhfqlfsTwgv66J/uD0UjcgBcKZlA7pE8zeaJSy0Uoq3y+gMEvhXqUJT
+   ZR9sDi52M75R1skAErNi8H/A0fZwdh6/JAfm5BNYnO3+P8nMZGdeJfqkb
+   wuva8yZlS+LlxdbD/0Nu47CgGks9MTtmMU6L6cQ2Dwt3qzMtuIkuSY9IE
+   KoFc3CIr0mes2KjlpgXbPHzfPV45ZYYxS1eu2eSNt81N21cOREg4sFKUv
+   +01zmmXfH8Q2MYFlpZTUyM+1Ca71AtZKh62udahSApm+gObRLHdbCz/fy
+   VhOKI2bE4iI/OKixf/4CNb4x7Z7gfs82eIPuVDa9oSbVtE0jNj9cHvWIx
+   Q==;
+X-CSE-ConnectionGUID: 4sK2fY4JSnevedJZCx2zbQ==
+X-CSE-MsgGUID: roYnszxQQU+N4i9Nd0ruoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="26221530"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="26221530"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 07:43:45 -0700
+X-CSE-ConnectionGUID: y+2QOYKjTgKIjxm9GBuLOA==
+X-CSE-MsgGUID: m0LGFuy+T1WnGhIUGLeoQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="60812367"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 20 Aug 2024 07:43:41 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgQ5C-000AIY-1h;
+	Tue, 20 Aug 2024 14:43:38 +0000
+Date: Tue, 20 Aug 2024 22:42:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexander Aring <aahringo@redhat.com>, teigland@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, gfs2@lists.linux.dev, song@kernel.org,
+	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com,
+	jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+	gregkh@linuxfoundation.org, rafael@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	netdev@vger.kernel.org, vvidic@valentin-vidic.from.hr,
+	heming.zhao@suse.com, lucien.xin@gmail.com, aahringo@redhat.com
+Subject: Re: [PATCH dlm/next 12/12] gfs2: separate mount context by
+ net-namespaces
+Message-ID: <202408202240.cavJRcbt-lkp@intel.com>
+References: <20240819183742.2263895-13-aahringo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819183742.2263895-13-aahringo@redhat.com>
 
-On Tue, 20 Aug 2024 05:13:32 +0000 Larry Chiu wrote:
-> > Memory allocation failures happen, we shouldn't risk spamming the logs.
-> > I mean these two messages and the one in rtase_alloc_rx_data_buf(),
-> > the should be removed.
-> > 
-> > There is a alloc_fail statistic defined in include/net/netdev_queues.h
-> > that's the correct way to report buffer allocation failures.  
-> 
-> Hi, Jakub,
-> Can we just count the rx_alloc_fail here?
-> If we implement the "netdev_stat_ops", we can report this counter.
+Hi Alexander,
 
-I think so.
+kernel test robot noticed the following build errors:
 
-> > And you should have a periodic service task / work which checks for
-> > buffers being exhausted, and if they are schedule NAPI so that it tries
-> > to allocate.  
-> 
-> We will redefine the rtase_rx_ring_fill() to check the buffers and
-> try to get page from the pool.
-> Should we return the budget to schedule this NAPI if there are some
-> empty buffers?
+[auto build test ERROR on teigland-dlm/next]
+[also build test ERROR on next-20240820]
+[cannot apply to gfs2/for-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.11-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I wouldn't recommend that. If system is under memory stress 
-we shouldn't be adding extra load by rescheduling NAPI.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Aring/dlm-introduce-dlm_find_lockspace_name/20240820-024440
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git next
+patch link:    https://lore.kernel.org/r/20240819183742.2263895-13-aahringo%40redhat.com
+patch subject: [PATCH dlm/next 12/12] gfs2: separate mount context by net-namespaces
+config: sh-randconfig-001-20240820 (https://download.01.org/0day-ci/archive/20240820/202408202240.cavJRcbt-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408202240.cavJRcbt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408202240.cavJRcbt-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   sh4-linux-ld: fs/gfs2/sys.o: in function `gfs2_sysfs_object_child_ns_type':
+>> fs/gfs2/sys.c:66:(.text+0x64): undefined reference to `net_ns_type_operations'
+   sh4-linux-ld: fs/gfs2/sys.o: in function `gfs2_kobj_namespace':
+>> fs/gfs2/sys.c:407:(.text+0x74): undefined reference to `init_net'
+
+
+vim +66 fs/gfs2/sys.c
+
+    60	
+    61	/* gfs2 sysfs is separated by net-namespaces */
+    62	static const struct kobj_ns_type_operations *
+    63	gfs2_sysfs_object_child_ns_type(const struct kobject *kobj)
+    64	{
+    65		return &net_ns_type_operations;
+  > 66	}
+    67	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
