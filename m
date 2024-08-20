@@ -1,153 +1,238 @@
-Return-Path: <linux-kernel+bounces-293316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E596957DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D77957DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B58028411C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF88283F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382016C685;
-	Tue, 20 Aug 2024 06:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD1416B753;
+	Tue, 20 Aug 2024 06:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l3z+AbXr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQPas/b7"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874562A1B2;
-	Tue, 20 Aug 2024 06:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665D2A1B2;
+	Tue, 20 Aug 2024 06:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724134774; cv=none; b=sW5grpOeOYD7O386YxV5D8u28DkijXlii6iYy8LsuWk14EohHb+b5K7Vez5DLpQz3DOqYoGXOh/G40ukghqQhMIEzkr948kEwdlAhgYzyqpOw+rN50REPOlreLczcXn61nGJM1v+brZse2ly6hyEoz6TwQ8WnMXbTi2sPojw/2c=
+	t=1724134830; cv=none; b=RUsX/w7WTUeLBAiK6JZoPQv323dQ4CiEZfaX1Pz3xD1whOlVle/GIWK1r+Wjj5KCoxjQwpkOeMgl6bazVu7Emg/LRd5gJfnBz38HVwu3eCWoNJP38WkhE1h+PO8BmrPMZOvutorLtF1ttQePHPfnpJwR9/++ci/a3Edjdig5N/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724134774; c=relaxed/simple;
-	bh=qbLTJSAjd2i5MbXaaXESgl/A7y4ae0phkjCMfbjlFKI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsuDRkZXb2yTt1wVQv8shhRxX2KsG+42tIIML9TeSEXQzGtYmtPYkMLjWtVqMjDOKO0x6RrYCaWyrzrPVcmtMKq6+1w9Yjd29SfUjHsOmwFH1v4xX2JYbQNYeZ4lNnD5PT/Ie2X+eP3NPuUxqWZ5rs6WGcyA7envlzpdiHuXLRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l3z+AbXr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K026Cv015828;
-	Tue, 20 Aug 2024 06:19:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=qbLTJSAjd2i5MbXaaXESgl/A
-	7y4ae0phkjCMfbjlFKI=; b=l3z+AbXrHLD9815V2NftGAMqv/B+veGAuF/ex7SD
-	PPD+S37RO8tULO8kNH0EwbNsBgd3gP55Aub7I8u3DxniiKXAAyIh6q7vzrfvDsKH
-	Hfpe1SegTfzCNUwcWFf9KEFX5KaeoUYtFoEE6yJZ2C0INYfPm1NZ2O1m+QiHXhmz
-	IYjnOldISuGMJGfPwSR+mOzEJIdFahC5tj61Y3hoYmbXuCDtrvmuwCoh+Hz2Y1JV
-	0Vvsr+rn/tD2nHQiO2jDk1AKCkjSgJ+e4JujRbbt1Rd5YVkYeRbIkntQFS3obBCB
-	4KvFfYaLT5mLlSdTMiaC+uB1xWB9aNnbE4xWfWD1nARKqQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m876nvk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 06:19:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K6JE73027670
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 06:19:14 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 23:19:07 -0700
-Date: Tue, 20 Aug 2024 11:49:03 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <ilia.lin@kernel.org>,
-        <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <quic_sibis@quicinc.com>, <quic_rjendra@quicinc.com>,
-        <danila@jiaxyga.com>, <neil.armstrong@linaro.org>,
-        <otto.pflueger@abscue.de>, <abel.vesa@linaro.org>, <luca@z3ntu.xyz>,
-        <geert+renesas@glider.be>, <stephan.gerhold@kernkonzept.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Praveenkumar I
-	<quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
-Message-ID: <ZsQ1V/qusOz6uctA@hu-varada-blr.qualcomm.com>
-References: <20240710061102.1323550-1-quic_varada@quicinc.com>
- <20240710061102.1323550-6-quic_varada@quicinc.com>
- <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
- <ZpeLYG6vegJYZ5Rs@hu-varada-blr.qualcomm.com>
- <ZqCD3xtkLHbw9BHN@hu-varada-blr.qualcomm.com>
- <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
- <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
+	s=arc-20240116; t=1724134830; c=relaxed/simple;
+	bh=gDL/XzLpfSCl65/S6UQmsoIBx12iV+8+2JyhWc5HjPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cCOtdX7U3bPhDdq+x0b8tRA1/D9JTg/hmQ8Q73LcBFsZlIxr7Orrh3h+1pGr5JnV5dJ20X8cxJnn7ISrzIHU+86ko33lHCLa+IgkUcjmUFhTsdi241ew1MLJ4ajWwdPW3LeGwFmp7tqsjOWZG7BK4dNO1Y4c5mNvtqr+QbwZACk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQPas/b7; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e115ef5740dso5427619276.3;
+        Mon, 19 Aug 2024 23:20:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724134828; x=1724739628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bK1pglKCKtTqAT4LHsBsp+M9eWHSExxYXES04lOb7A8=;
+        b=EQPas/b7GQ3m4p25YsLXQABAZvW34kg3HaBM2WlpAnN3McxjiVaYEcbwUbGNKnChbM
+         5fekhqAuV2regyihtGq3S6erHQHtCf1L5QVzVndHFofJNk1ZInkab+6KdD2Q4Z3qc1/s
+         XUhaSY7jgN/AcfrnR+FEdjCbFSZLDdQme0nSNgB5sxig6t+UBxYAo6/Ks6PX/aXj7WFS
+         3ewvkjDHYKBKJb70bPGVfihvVoUOjsxywGr0Wntc+KwwCMJK5fIhuU/0DzklbY+x12FL
+         KWtUUW7y+5VvilNkZg7WIpSKNBbx+7Lu3LSifjV8JdUpNxHm0IKftal/VEkUQ/meNmCF
+         DWLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724134828; x=1724739628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bK1pglKCKtTqAT4LHsBsp+M9eWHSExxYXES04lOb7A8=;
+        b=eDVBHI6qlBhMwaS+P51DazhsW7yUTnOIjkgY+Kv83tIR1zCRkO9J8KvEmjWkfjKMPh
+         NRXvkr8cPNTMsSVoJcU+GV3VqDBTrZa1X6r9MfoukDS9zexWH19Ef62YHar946A/y8SO
+         M4HDKddXqvUd1hCMpgsAF5Ul4gXsgnT/j7THD644E9vlicQwcYSH1ISeYUyTtp6mHhz7
+         l4hFJfI9si122OYFMZCGVAZcosNbWL5u9XZ7G8eh7CQg6cZRtYm9hRkOCOy0kmkzBpBf
+         lLzPuJwmFUTmVDAMWsXN4qvVPHrRs6JSpY4101F681MH6VaW3erzrNWeyPdXlNIWGALa
+         Y31w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGDHVldC/rfM8RP1uviTmg7ai8ML1uP5uD+/ka3BIL/z1lEP2bm71v+4piI0iNw3z5EQxLykwhr6oE@vger.kernel.org, AJvYcCXEENa2q8kaAeSHMzEvt/3d9cpqks0bk1wKfLT5VMgkPxA/EHdNT0ot/M0etZgDVkCWimf4VyTEhF+kWxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO1ZFTF6GRDhxEx/CGlE2t/WVnlUHMWuBYpmLU/Vk1ADY3ElWL
+	MUmjVd6U5eHmSF4kLIMA9BOY5bO9U7zwoeH2Ve6P/cSljqQanm9exq1fjeBdoS1D09q6uChiERA
+	Qb+Xqvkh4gBzrPNF6hsiUkv9pj/4pJ3Qc
+X-Google-Smtp-Source: AGHT+IGQ5TvN1eH7RbR+l0F+sFZqphnn3ouY8ajt7N3LRSkSXJoLgWgETas8H0QX1yo3eeqfKcIl4hX7OpN1PmYi78E=
+X-Received: by 2002:a05:6902:1b86:b0:e13:cca0:6672 with SMTP id
+ 3f1490d57ef6-e13cca06792mr12829303276.51.1724134827580; Mon, 19 Aug 2024
+ 23:20:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MweU2tGZChrAwiTpkRejd55buTB5loI-
-X-Proofpoint-ORIG-GUID: MweU2tGZChrAwiTpkRejd55buTB5loI-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- mlxlogscore=581 priorityscore=1501 adultscore=0 lowpriorityscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408200045
+References: <20240819120112.23563-1-rick.wertenbroek@gmail.com> <20240820055208.g6iorjl4uhl2jq45@thinkpad>
+In-Reply-To: <20240820055208.g6iorjl4uhl2jq45@thinkpad>
+From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Date: Tue, 20 Aug 2024 08:19:51 +0200
+Message-ID: <CAAEEuhoLM1zO3vZds58AM6X-roDkZcHzcq_GzrZ2jj_QcisKUw@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: endpoint: pci-epf-test: Move DMA check into
+ read/write/copy functions
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, 
+	alberto.dassatti@heig-vd.ch, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 12:32:34PM +0200, Ulf Hansson wrote:
-> On Wed, 24 Jul 2024 at 19:26, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
+On Tue, Aug 20, 2024 at 7:52=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Aug 19, 2024 at 02:01:10PM +0200, Rick Wertenbroek wrote:
+> > The pci-epf-test PCI endpoint function /drivers/pci/endpoint/function/p=
+ci-epf_test.c
+> > is meant to be used in a PCI endpoint device inside a host computer wit=
+h
+> > the host side driver: /drivers/misc/pci_endpoint_test.c.
 > >
-> > On Wed, Jul 24, 2024 at 10:02:31AM GMT, Varadarajan Narayanan wrote:
-> > > On Wed, Jul 17, 2024 at 02:44:08PM +0530, Varadarajan Narayanan wrote:
-> > > > On Tue, Jul 16, 2024 at 02:15:12PM +0200, Konrad Dybcio wrote:
-> > > > > On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
-> > > > > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > > > > >
-> > > > > > Add the APC power domain definitions used in IPQ9574.
-> > > > > >
-> > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > ---
-> > > > >
-> > > > > Could you please confirm [1]?
-> > > > >
-> > > > > Konrad
-> > > > >
-> > > > > [1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
-> > > >
-> > > > The author is off for a few days. Will get back to you once he is in.
-> > >
-> > > Have responded to that query. Please see https://lore.kernel.org/linux-arm-msm/ZqCCpf1FwLWulSgr@hu-varada-blr.qualcomm.com/
+>
+> s/inside/connected to
+
+Thanks, I will substitute this.
+
+>
+> > The host side driver can request read/write/copy transactions from the
+> > endpoint function and expects an IRQ from the endpoint function once
+> > the read/write/copy transaction is finished. These can be issued with o=
+r
+> > without DMA enabled. If the host side driver requests a read/write/copy
+> > transaction with DMA enabled and the endpoint function does not support
+> > DMA, the endpoint would only print an error message and wait for furthe=
+r
+> > commands without sending an IRQ because pci_epf_test_raise_irq() is
+> > skipped in pci_epf_test_cmd_handler(). This results in the host side
+> > driver hanging indefinitely waiting for the IRQ.
 > >
-> > If it responds to voltage values, please model it as a regulator rather
-> > than a power domain.
 >
-> Just wanted to give my brief opinion around this too.
->
-> I agree that it seems to make sense to model it as a regulator, but
-> that doesn't necessarily mean that we shouldn't model it as a
-> power-domain too.
->
-> If it is a power-domain it should be modelled like that - and then the
-> power-domain provider should be assigned as the consumer of that
-> regulator.
+> TBH, it doesn't make sense to control the endpoint DMA from host. Host sh=
+ould
+> just issue the transfer command, and let the endpoint use DMA or memcpy b=
+ased on
+> its capability.
 
-Have posted V7 (without modelling as power-domain).
-Please review.
+No, because the test driver is meant to test the endpoint functions
+(including the endpoint controller and its capabilities, so they test
+if BARs can be read, if IRQs of each type can be sent, if transfers
+work, etc.) so it is by design that it allows to ask for transfer with
+or without DMA, this allows to test they both work. Also in real case
+scenarios on DMA capable devices DMA will not always be used (e.g.,
+small transfers where the overhead of DMA setup is bigger than just
+doing memcpy_from/toio().
 
-Thanks
-Varada
+>
+> > Move the DMA check into the pci_epf_test_read()/write()/copy() function=
+s
+> > so that they report a transfer (IO) error and that pci_epf_test_raise_i=
+rq()
+> > is called when a transfer with DMA is requested, even if unsupported.
+> >
+> > The host side driver will no longer hang but report an error on transfe=
+r
+> > (printing "NOT OKAY") thanks to the checksum because no data was moved.
+> >
+> > Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> > ---
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 29 +++++++++++++++----
+> >  1 file changed, 23 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pc=
+i/endpoint/functions/pci-epf-test.c
+> > index 7c2ed6eae53a..ec0f79383521 100644
+> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > @@ -314,6 +314,17 @@ static void pci_epf_test_print_rate(struct pci_epf=
+_test *epf_test,
+> >                (u64)ts.tv_sec, (u32)ts.tv_nsec, rate);
+> >  }
+> >
+> > +static int pci_epf_test_check_dma(struct pci_epf_test *epf_test,
+> > +                                struct pci_epf_test_reg *reg)
+> > +{
+> > +     if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
+> > +         !epf_test->dma_supported) {
+> > +             dev_err(&epf_test->epf->dev, "DMA transfer not supported\=
+n");
+> > +             return -EIO;
+> > +     }
+> > +     return 0;
+> > +}
+> > +
+> >  static void pci_epf_test_copy(struct pci_epf_test *epf_test,
+> >                             struct pci_epf_test_reg *reg)
+> >  {
+> > @@ -327,6 +338,10 @@ static void pci_epf_test_copy(struct pci_epf_test =
+*epf_test,
+> >       struct device *dev =3D &epf->dev;
+> >       struct pci_epc *epc =3D epf->epc;
+> >
+> > +     ret =3D pci_epf_test_check_dma(epf_test, reg);
+> > +     if (ret)
+> > +             goto err;
+> > +
+> >       src_addr =3D pci_epc_mem_alloc_addr(epc, &src_phys_addr, reg->siz=
+e);
+> >       if (!src_addr) {
+> >               dev_err(dev, "Failed to allocate source address\n");
+> > @@ -423,6 +438,10 @@ static void pci_epf_test_read(struct pci_epf_test =
+*epf_test,
+> >       struct pci_epc *epc =3D epf->epc;
+> >       struct device *dma_dev =3D epf->epc->dev.parent;
+> >
+> > +     ret =3D pci_epf_test_check_dma(epf_test, reg);
+> > +     if (ret)
+> > +             goto err;
+> > +
+> >       src_addr =3D pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
+> >       if (!src_addr) {
+> >               dev_err(dev, "Failed to allocate address\n");
+> > @@ -507,6 +526,10 @@ static void pci_epf_test_write(struct pci_epf_test=
+ *epf_test,
+> >       struct pci_epc *epc =3D epf->epc;
+> >       struct device *dma_dev =3D epf->epc->dev.parent;
+> >
+> > +     ret =3D pci_epf_test_check_dma(epf_test, reg);
+> > +     if (ret)
+> > +             goto err;
+> > +
+> >       dst_addr =3D pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
+> >       if (!dst_addr) {
+> >               dev_err(dev, "Failed to allocate address\n");
+> > @@ -647,12 +670,6 @@ static void pci_epf_test_cmd_handler(struct work_s=
+truct *work)
+> >       WRITE_ONCE(reg->command, 0);
+> >       WRITE_ONCE(reg->status, 0);
+> >
+> > -     if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
+> > -         !epf_test->dma_supported) {
+> > -             dev_err(dev, "Cannot transfer data using DMA\n");
+> > -             goto reset_handler;
+>
+> Why can't you just set the status and trigger the IRQ here itself? This a=
+voids
+> duplicating the check inside each command handler.
+>
+
+You are right, that would avoid the duplicated code, I will do so for v3.
+
+> - Mani
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+Thank you for your comments,
+Best regards.
+Rick
 
