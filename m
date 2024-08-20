@@ -1,300 +1,512 @@
-Return-Path: <linux-kernel+bounces-293120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8325957AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB543957AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18526B23C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:31:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F551B23D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C851BC58;
-	Tue, 20 Aug 2024 01:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B5D1B7F4;
+	Tue, 20 Aug 2024 01:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BCKVcETp"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2088.outbound.protection.outlook.com [40.107.215.88])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="iAUNKNa6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1C817BB4;
-	Tue, 20 Aug 2024 01:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724117460; cv=fail; b=u/rIyLdhxByMM6Mj8a/nhnA2umC2FP6ejWjAUaa1orGrQ93fknsLZA5y07aeGbqh1O1e7mbF9kGl5HLFOQm70nUnlJ53et42RsJNEB8ov8TiRKqtTIRsscHfj3pIp10GIUrEhcQR36CQFlnEUk/3AUn7aBYnNK2iA4o4/nwnAFg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724117460; c=relaxed/simple;
-	bh=1UZMYFqgodksq0W6a5yb9fdSiUlacGGta2Q+XpkEpYs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=K6QDifpguO+bd1ziAYvbVJYMgRkDrLkN6TtAKcne+eQJo5cRFmOOLHQejDcTGvYlOC/FseRwe5ZB6/om1DFUriUfHN68cKDu1ALjJSyfTTPYCVANMXhe/C1ptNojnq5QHDiY/cRob07tACm0FCZ8UNqUhmb1d9Jo7FhjbQQzQok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BCKVcETp; arc=fail smtp.client-ip=40.107.215.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jCrFoiP6nwF6oFkLlP2SuDhq6ZiPHQp/GTzIJV5Tmtvr5kDDGsF6utZvDTW5WoFQnA4XjOYPb06RcmwSJJfeA9prNGIOfO7g9vUVa012nfqficz2w29Et3xA8QpRMk3SGFdpgLY+tASTcazxvG2FMLk2vkqb+5ufecV9w16ou7EfKemJgIc3NTAThi2hI7Uc4KeYwqyAsfXuc3npQ7dLvcwmVF61nPe8roF46mQVbt1IExk0j4rbaaG8N9DOCP7wCd48YC4iyBS55y3JshBeegj/LvzvkuT5Gs/sB+e2hvyZxObna1HOPk0NQy/3fkMepinkJoVnWq3asjbmO7NZbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HtGXOyn3qehWYUU1adPQE59oyTZfgmWRqNdUOy9Hy2k=;
- b=XlWE8m1eXmrEVUiYKvSTXFQNcMu/eHB0/GWUUKnCnIRtFeBMycnWPlacXGJYiw84WDpCmX524HDBKGOM5wiyacaDWjafVSfrCTndGVOxCn/vR6aY2cbrnOrUv0uSWRq5MCe+xAaRAxsrt43IKa5rLLl8sq89rqaOWgbU9H1GrxgKEzD2HhJCtBoU5fUmNyK1KcYd1rx93C2VKHx+e5YNu7FL9WjsXOxw2lpqed0eX+wHSZ/BnUe7GSTrq9ANHPcrfsrJQF1u13Oc74q62BqirpriKgv1H2pkRvnishDOKsJsn8RrG2COQqu6QBFuTu3miInbH692vY4g+az2E+mplA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HtGXOyn3qehWYUU1adPQE59oyTZfgmWRqNdUOy9Hy2k=;
- b=BCKVcETpk9eK2TxC5HnN0i3x3/6Tn/6txvOAto4S3Ozjha/E7H3pZ3WWoAEb6rkXOVjJ4F1EX+n07/o6Sd/ibx9K1tzysodd9ZUlnab0ZXmpO9xmstT47PHM/CBYTito2pf0iKFligKqCwyPVWyU1K2NTU5u9F0rveokmNhtHVJZ/FghvPOsWAYDWIw2cn9lhV9YyVN2btu4AcOIO5RBuKGYVPlXlUF26J+Jf6uI14GYS44eeNzuoR1G/8c4uTuCioXO+7oadQWt/WH1eIKnz8ieIfSfPJl1AShW0b+ikbTz8hhyjiiUjODH1IvFPg87o0T9y5x6m7gMVV0+6Oxkdw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by TYSPR06MB7019.apcprd06.prod.outlook.com (2603:1096:400:46a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Tue, 20 Aug
- 2024 01:30:52 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 01:30:52 +0000
-Message-ID: <a6b8865d-1fe6-47f3-a125-ef3079a4d22e@vivo.com>
-Date: Tue, 20 Aug 2024 09:30:46 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] udmabuf: cancel mmap page fault, direct map it
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240813090518.3252469-1-link@vivo.com>
- <20240813090518.3252469-2-link@vivo.com>
- <IA0PR11MB718566320E42490E32C66C0CF8822@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <IA0PR11MB718566320E42490E32C66C0CF8822@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::22) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264202E83F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724117474; cv=none; b=W1AQt5m2oEx3e3Ew4uuvJV3ZUh39ZS0RQFKIs72vQsuud/2Y1T0nredxj92hK1hc3Kyu3POh0b2huT5x3WrQ8sLrvDgSZOAD2pWaGTpYmtplNQsi/n4QX3gr+FNimI5lvUsxwnzz72iTeP64nR7BdnHydfBjIZ85TFwtwPAPErg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724117474; c=relaxed/simple;
+	bh=ENK84xtbXBVn9kp5pd3O3iNs5Fc/94dx3O4lR6PNclI=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=X/8Fq771OD4FSW/iqQoue/3FyYImHlZyVCafC8Xv44xDoEfPvE9zsWLbclbV2mBqRDdXQUblsYK2i0UEnPuf7h+MbGBc7rrdRSeTJklitc71Tb272bPVCK0HJBoO3VTe7X0Y7s87szypkQrUdmXE4cDJkPwGTPSVEwmFaRWCJdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=iAUNKNa6; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1724117467; x=1724722267; i=efault@gmx.de;
+	bh=rGc3NFjdQPmDht8i1OYQqEApRTTBS1nXM6XOint3zx4=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:
+	 Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iAUNKNa6Lt3Id4xdr8dsNJ1FRdTGKumAZ8rfJbWbiLjWjelSwZhY+QimbrvklCi+
+	 bbIcKIRRFTDurVHke01oM/Y9DqkXc9cvxdZUaSsopODN6CfKyvbeS+ebVUb4K+GgA
+	 nmF2ENbU4BaZpGPGmA7StTZynE2Csij0kjJIVjU51L+hFXeU72HYkAfGuqBNsH2fZ
+	 OdZ8WQ605h8cslqmiOh/T+ZsTOu9io4XmvuqVPo8PyD0pxLZXnR+WNBuJNR81FFVw
+	 wR5wDH+2mSWKJkjFN41jAjdo93TTm3tx75+8EuXAaTGauzNi/JX4WcQBqG9GvGsHE
+	 q+zwwVl3aqCRX+ZjFg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.139]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mnaof-1sGTgU0wa5-00nqZx; Tue, 20
+ Aug 2024 03:31:07 +0200
+Message-ID: <af56820e03d9a52a472ec914a17310d11f8d0227.camel@gmx.de>
+Subject: regression: 9eac534db001 ("firmware/sysfb: Set firmware-framebuffer
+ parent device") broke nomodeset boot?
+From: Mike Galbraith <efault@gmx.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Date: Tue, 20 Aug 2024 03:31:06 +0200
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYSPR06MB7019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1261b184-8557-45c5-140a-08dcc0b7ba56
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YXJQa3E4ZnlIc1pZdjBvTXdkY3h1ZXdFdFRacHNDOUJmQnFwWm8weVN3N3JS?=
- =?utf-8?B?YXNDeFU0ZVNONGxOZmhiVi9nb2Z5ai9yenpyTUluMUxCUWJsT0ZPRHdQaWF6?=
- =?utf-8?B?VWZUOUpsejc5RWdHR1ppN1FXTlQvNkVJVk5vY1YyelF0NmVObXZPM3VSam55?=
- =?utf-8?B?cyt6aXZ5L0F3TEJtZ3czeDIwTDJ1ZkpoRUR6YVZKQllFVW5KbzlhS3B3SHlP?=
- =?utf-8?B?aUNUVzdnTmlqbEdhQUZwMlNVM1BrU3FuRVNoZVhVWXlJN3ZuWXl5TGlpR2xV?=
- =?utf-8?B?WUpkcmhzeHZTMkx0VVpqRWtuTUNLWTNRNURXdWpsRzR6cmZHOG84bW9GQWdO?=
- =?utf-8?B?dFZXRkVvcjh2bzJxbU1ZN24vT3dndFBSZGtXM2tsTVRiUUNrUmNENTdKUU9U?=
- =?utf-8?B?L2FVVGk5ZExoTElmRWFoN051UVdIeWU3OG1mTnFPVkg0V2xycjVRQjh2ME1q?=
- =?utf-8?B?OG5GOHhvRVlRanpLYjZrUENqRmxrcjVDODlxQXZNa0UyNVJmMjNLWldqQUU4?=
- =?utf-8?B?Q09jRWI1ZEFJS3hwa1pHVmhJa1FFU0dIRENRSDBVeFhOZzZJbTlxdThuOHlj?=
- =?utf-8?B?Z0FZcUltNEo5VzlYMEF6Tk9PV29CaHFlL2VIdDYvZHhsUkdlcjJodjN0ZG1q?=
- =?utf-8?B?U25USVAvdzg1ZzVUVThqRXJaeldYWnhXazM0d1dQUnplSDdxMUdJU2NXNnlY?=
- =?utf-8?B?UlJMRVFhM1h0WmJmVnlrT1cwQTVIcUxzTDFjdEdReHo0ZmEvUUdpUlE3enJT?=
- =?utf-8?B?WWNZZWlVVldOUWZ4SnZVbVlZT1pYSDBFZmExenNQUlFydk5yUTZSUFFLYW5q?=
- =?utf-8?B?ZVcybWVGNEdHa3lqWmdybHJNc0Mwb09XNUdDQ3Y1K045YXlvMWcrRW95OVRE?=
- =?utf-8?B?SWlDTDA4Q3d3ekZFOUVEZVRJVGpTMDZkQ1hIUEtWVk1CeFkzM25GaG05NnFZ?=
- =?utf-8?B?Syt3Qm9SWEJ4ZG1ickNqRHdmeURGcVltQ09YWG11bjdaY3pSYi9GV3FYeHow?=
- =?utf-8?B?bHpBMlRtcEtRK3FxcE5teTBENk83NElSTWJ0MUp5SGV1dWg4U2E1NVc2c2xl?=
- =?utf-8?B?OFEvaDFtMmprVVMveFVQZFd6WWdGMmdTc0oxU29DaWNSRjFSSXpUOHIxTGVv?=
- =?utf-8?B?SzNmUUVhUGo2UFd0VHgyZ3ZiQUVhci91MEZSY1phT3ZBOXpobGo3Y1hsWnRG?=
- =?utf-8?B?M0VYS0dJcktsUzR3Q0RET3gza0JaNDJDLzI0eGJxR3o3TW52QmVBY2J2emgy?=
- =?utf-8?B?QzE2dktHcVhoek5sL20vY0k0M1g4T3BaQWd5dmUxWHFiQU4xOEplNzNhVFNs?=
- =?utf-8?B?MWtMZUJzYVpCNWtGR3Yxb3E3MmxpMDgvaFE5Y1MyNnByMXRHbDlqdmdoYjVu?=
- =?utf-8?B?S1diOWpqTDBVc2JBdkZ5aGxZbWU0cmdyU2kyWG41eEZyL3ZTZ2FqM0lnRysx?=
- =?utf-8?B?NjFvN2pOdEJ3RWFYOXB2bzhwTjZSVE1XNFBjV0lZZ1dFekcrbVZZMjNxUWZD?=
- =?utf-8?B?UEFCM05YK2VGbUNFZThIbWVPcHJzWkdiVjlZZlFNU1I4WXlZSlBwbUVYNk9Q?=
- =?utf-8?B?aklkZ052UEpRZXRZUmd4S1N6ZzJsSlg3TGNQc0Z6QjNsSkdBRXR4MU1WY1VO?=
- =?utf-8?B?cG5jR29FZjRFRUEvVGVzc0ZqbkYwYzBDT1cyMjJKZkwvaldpUEdlV1dlTXhH?=
- =?utf-8?B?aFI4Z0hSUjJSTGUzaDNVRldoOWFMRm9rYU1wTGZLNjhNd1Q3VXV1c2xEYTQ5?=
- =?utf-8?B?V09iSjFwYXFPSHZhSktZTEJ6MXpnZmFBRkEzb0tFRWxzUnZ0MkJOUnVRMlRo?=
- =?utf-8?B?Y1BLVitoSHR3a0w3NUhwOCtoS3BFVXNlcllMWHlvbUphV0pQUndhZUcwZjlR?=
- =?utf-8?B?akJvYTNXL2t5eUE2dGs3ZytwKzBsS2VsdE1NNWpvajB0bVE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R2hIM2JvN3JaWDBMRmVLRWx6emx3TDE2MjgvQThPVDhWWEU3VWRjUHdKSlFB?=
- =?utf-8?B?Tkg1azVvNGNVSElOUDF4bWwyNlhzZXZzK1lDNzBkU1AwZW9JQmVWQWhoMWJP?=
- =?utf-8?B?ZDBTMS82MkY5UWZOR0JnRFZVMFo0N2ZLQ21wR3greHN6bkNpOTMwMmkrdGNX?=
- =?utf-8?B?UTFTUk5tRHE2ZUNtYzYxcjZGWkdaanJtREhNbklNaVd0d09PQ2QxQXZaQkpK?=
- =?utf-8?B?VlFtL2ZQV2ZRMTVQTDV3NVA4NHBWUVdkUVI3Rkx3OUR0U2lIV1Zza3E2czNH?=
- =?utf-8?B?RmJwdm5xRXhBaEFhUlQzbXRMN2UwR1k0Nkh3cytsWTlWMU03L3FOaWtTSzZ4?=
- =?utf-8?B?THdCRW80VnJCMGwrNlVUdk9kYXU1MU83SmN1Q1N3MituMDAyeVY0VHJ6TVpT?=
- =?utf-8?B?Z1A5S0hERUhzWTFiZTFycHdsaG9MZ3Rzbk1La0doSTdwR3FmekRWbVg5eEFW?=
- =?utf-8?B?cW9QZEJJYkkyVDg3Sk1XTGFweGltaTM1aTIzZG90cnhzTDJwRTJETXBlMDBX?=
- =?utf-8?B?NGZmZW9TV3NXcFlNMStLS0U0ZnJEZlpodFdwMU0rZWNnQ3FlUnc1Q2JPK3li?=
- =?utf-8?B?dEFva1ovaEdaSTl0R09MbElrRld5bnVYWS96ZjQ2V29OcEhPVVBjM3p0eGpZ?=
- =?utf-8?B?bzBMeDYwNGpUVlVoMDhDOVNzczExQUFjWVVLUmNmSHpFd1V5eUM1N1loMkI4?=
- =?utf-8?B?ampoYXBtQ1NsWmY4Q0EyWXBzV0lVa2t5OUU5SThPREVlZHA5NEpFanFjYU5Y?=
- =?utf-8?B?ZVR0M1FrQUZxT2xtbDJFczZWZmluM2gvV2txcjRoNE9qbDVRekpRK1FHcit2?=
- =?utf-8?B?ZmlMMjNrMGRhSjV0M1Z2cHRFVzdPcjNDUXNmT21EYWpabW9yYzVUbnpwZUtq?=
- =?utf-8?B?QlhRYmNvZkNxVDJ5aTZhakFaSWM1K29YaTNIakFWU3BWZGlmWTFhSzVTcnNz?=
- =?utf-8?B?dUJBczdjSkJPbHhvemQ0TFZubGJXN1JCVU8rUjdXNG9zMTN3dXo4a1cveXFR?=
- =?utf-8?B?NWdCYXdkem9IclRmWVY1R3Rsa0tSdStwaTN1UWtqd1hBY21lWHRZS2ZXdVFS?=
- =?utf-8?B?UThhd1lTUjN6TmlWNER2M3BxQitOSHdlbDF3S3BDY0srVVJOMDJSUkJVdVVh?=
- =?utf-8?B?R0JpcXZHWmFtaDExZGNtVGh0ZU54TUd6OVhuYkxROENYWEt3TjlsWVhmUkpG?=
- =?utf-8?B?VjAzNGFPak1WbkNacEk1MDNrZW5nUFFMQ1M0TTM5UGE2N0xRZnNGcjkvWStv?=
- =?utf-8?B?RCt3cFFtcUg4dmhLZW14ZG8rMDFvMHcreWVoU1h5WmZLd0liS2NPQnd2TnN4?=
- =?utf-8?B?T0NNa3pJTG9IVzJzWUZVZ0NnOHkwWVpVSE1QbU52WWc1VkhTdlVxdEJ6Smov?=
- =?utf-8?B?SHpneGJWZ3pxZ2g1akQ5b1BDRG4ySnNTWmZtTXFwckVCOEZSc0MvSkFIc3Jw?=
- =?utf-8?B?YkpQRzdEZjJab093N3FQUHFuMm1TWDdrb2pHd3YzM0k5ZzZGK1NvdDBuUlFw?=
- =?utf-8?B?RkpCOTdUMEVPKzVXOWIzajJqVzRlTnBtY0VCSy96b2N6eHo5QVJLdjRuYU11?=
- =?utf-8?B?Mys4TjF5T0J1N2lFT3Vid2x5cHBrNXJUUlY3WTNPL0dYR2llazQvM1RKZHVo?=
- =?utf-8?B?b0VMR0RqdC9xaEY5a0dWbUhOek1SblVONDFaeXkyRHVSQUlqa0s5TXZkeDBL?=
- =?utf-8?B?cWxwT0MvR3JoL0lXbCtoUVgyZEhkV0dycXgyMTBicnc1K3N4S1kxUlk1WEdZ?=
- =?utf-8?B?WmhmNGNBVFk4a2c5aUhJTVBacmJmT2JZb0RvdXhLNWxhTWhrd2xNdWViOTdw?=
- =?utf-8?B?RjNQNGtHeEhTbXRWRm1kWURFc2M4MW1nVHA4UFNPcm9LQ1dxbUNwUmdzYjJ2?=
- =?utf-8?B?K0IwZnJ5RFNuUFJoU0ZqT0JobHE3ZU1vOXBFNCtlekpsZDBIdzlCWDBtbHlx?=
- =?utf-8?B?RCtFTlU1THNqQk1VZ2YvMkdwa1Vjelc0MmtxTDdmRi9GVzA4Ylp5dWxRVHFZ?=
- =?utf-8?B?TDUvZk4rZjJSSnBNdjY0bzN1NlZjU2VocElQaVkxcFpYOUNHVTBOT2hWQU5v?=
- =?utf-8?B?ajZkQnRoUGxmK2lIdTR2OVlab2tTcmxjMUJNZlYrS2lMTm9acEt6blJQWVI3?=
- =?utf-8?Q?dN/+T13ZQKCgsBwTzknPUU3uv?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1261b184-8557-45c5-140a-08dcc0b7ba56
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 01:30:51.9911
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oUogq42UJHr6nTTG/LlS9LAg5JzSSnxSr5DYsn21Y46IE5RfzYiIa9UMI7l3hWEyWDGNSIacM1u++j6M98Q8kw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7019
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0yXI+7vevk0jWPhSkCWaVmunAVuLX4dkEG0FJJlJwf0MUEFmiZQ
+ s+eLo5j/fThJCi2RKsgu2VbKNyfDkLkDsIvgmxiyQ3U9ZUMfVWmry4RZeGJQQ0X5uLj55j2
+ gZ+ZNZt4OdZKwcf8iKZpeDGS/24+rXmcDfWAdZECRCypwVuUgDX3TU1XcHtBnHe2wviJMtp
+ wmTomFmkgX27MHf/4bYqA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ukSe/b5CZ9A=;ULRbPz2bsWGiq+xcBw6FzeeOlFm
+ SB+IfnrUSnxBm5r3IAoOH2BTw91qkzhBr1rjbS2899cvcZoeMNy1azw/4m+k++QfUB7LBFWbE
+ tFxCAOPFxVfUKMnvoLnY7zHDntI2JCbtJelP0spvQxF4IEgVt5awdZoNuM+vf85X8QIyc3nU/
+ gbMOsfUkl2KK0QGoQS4EzB6OJpFSaXpBBu82Nw/1ET02k6GIOPC73JyWlF5tCEoAAtd9Gmu/U
+ xwfZ9JE7FrZFD70Ew7zvt6WCjOJDLabX2V9b4CiWrRsk1B8Mg8mbvJzp6XJYU0XjkzdsoEYZy
+ RVWCEjDnL43XhkFopaofhjQTuHCWgSky8gY4BpeTQt+KSWxK0dno36p2nMjRmc0RiM1U8wKPl
+ sged7i+4oW5LMwU8Af9Mzz/zauGWT7NPXLd4BJgSGncNlPkEvtkctz2fGLDCxuWvotAHhSDRp
+ pfjA2HtJpjmsYNB6Sy3N66og93QJ8VpA021NK1NlOKo4IIucYEpR9s0I1XY8DAsv1LomXHgIF
+ qAd7TUHeavp8GXyCxG0e2b/39wLcOgm2+zN5fVA9cG8TKajn+JK40bhj+YeNk9/tSX1lS670T
+ 82S4ifPybZbwnB/l455NPthNdYQ6J1+qRBTtK+xgX97hSX553t/4gzCq1y0fhGbJzDptv+Qhx
+ sIj4FJeaJoycMN5H+bzgY+8BligTN/cE5gSeJxBMuqUnhVVs0WY6EjWRF7DZEzPdn6XDAJ+34
+ 4INpLcgKUSuDYNq2lgdRv+ohQIuPHmlU4ylF56Cxy7nLn7lJF0TM4ltnjFAm/nwIz9VB7EoKy
+ WwFiYNYYpdU+0aHGUE4sm4jA==
 
+Greetings,
 
-在 2024/8/17 8:53, Kasireddy, Vivek 写道:
-> Hi Huan,
->
->> The current udmabuf mmap uses a page fault to populate the vma.
->>
->> However, the current udmabuf has already obtained and pinned the folio
->> upon completion of the creation.This means that the physical memory has
->> already been acquired, rather than being accessed dynamically. The
->> current page fault method only saves some page table memory.
->>
->> As a result, the page fault has lost its purpose as a demanding
->> page. Due to the fact that page fault requires trapping into kernel mode
->> and filling in when accessing the corresponding virtual address in mmap,
->> when creating a large size udmabuf, this represents a considerable
->> overhead.
->>
->> The current patch removes the page fault method of mmap and
->> instead fills pfn directly when mmap is triggered.
->>
->> Signed-off-by: Huan Yang <link@vivo.com>
->> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
->> ---
->>   drivers/dma-buf/udmabuf.c | 37 +++++++++++++++----------------------
->>   1 file changed, 15 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
->> index 047c3cd2ceff..d39f9e1cd532 100644
->> --- a/drivers/dma-buf/udmabuf.c
->> +++ b/drivers/dma-buf/udmabuf.c
->> @@ -38,36 +38,29 @@ struct udmabuf_folio {
->>   	struct list_head list;
->>   };
->>
->> -static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
->> -{
->> -	struct vm_area_struct *vma = vmf->vma;
->> -	struct udmabuf *ubuf = vma->vm_private_data;
->> -	pgoff_t pgoff = vmf->pgoff;
->> -	unsigned long pfn;
->> -
->> -	if (pgoff >= ubuf->pagecount)
->> -		return VM_FAULT_SIGBUS;
->> -
->> -	pfn = folio_pfn(ubuf->folios[pgoff]);
->> -	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->> -
->> -	return vmf_insert_pfn(vma, vmf->address, pfn);
->> -}
->> -
->> -static const struct vm_operations_struct udmabuf_vm_ops = {
->> -	.fault = udmabuf_vm_fault,
->> -};
-> So, what I was suggesting earlier is that it would be OK to populate the whole
-> vma after first fault because userspace can simply call mmap() but choose not
-> to use the returned pointer for various reasons. This is what Qemu's virtio-gpu
-> module does and in this case we'd be unnecessarily populating the vma.
+I normally use nouveau so I can suspend, but it's horrid for RT, so
+when doing RT latency tracing, I boot with nomodeset.  Yesterday I
+decided to check out master-rt cyclictest numbers, but found that X
+will no longer start, tracked it back to a v6.9 issue, then bisected
+v6.8..v6.9, which fingered $subject.
 
-I may get your point. Fill pgtable when access is better than fill when 
-invoke mmap?
+I haven't yet tried reverting the series the fingered commit is part
+of, but did try turning on CONFIG_SYSFB_SIMPLEFB/CONFIG_FB_SIMPLE, and
+even the once upon a time used CONFIG_FB_NVIDIA for grins, but alas,
+config twiddling did not revive fbdev X.
 
-This is reasonable. And I'll try to test it too.
+nomodeset/fbdev X nogo=3D=3D>go startup log diff:
+=2D-- yy	2024-08-20 02:40:05.003271212 +0200
++++ xx	2024-08-20 02:39:06.532061201 +0200
+@@ -1,9 +1,9 @@
+- (--) Log file renamed from "/var/log/Xorg.pid-2439.log" to "/var/log/Xor=
+g.0.log"
++ (--) Log file renamed from "/var/log/Xorg.pid-2298.log" to "/var/log/Xor=
+g.0.log"
 
-IMO, there won't be much of a difference in performance.
+ X.Org X Server 1.21.1.4
+ X Protocol Version 11, Revision 0
+- Current Operating System: Linux homer 6.9.12-stable #6 SMP Mon Aug 19 09=
+:53:59 CEST 2024 x86_64
+- Kernel command line: BOOT_IMAGE=3D/boot/vmlinuz-6.9.12-stable root=3DUUI=
+D=3D891c2a1f-cc1a-464b-a529-ab6add65aa21 scsi_mod.use_blk_mq=3D1 ftrace_du=
+mp_on_oops skew_tick=3D1 nortsched nodelayacct nowatchdog audit=3D0 mitiga=
+tions=3Doff noresume panic=3D60 ignore_loglevel showopts crashkernel=3D204=
+M nomodeset
++ Current Operating System: Linux homer 6.8.12-stable #7 SMP Mon Aug 19 11=
+:12:36 CEST 2024 x86_64
++ Kernel command line: BOOT_IMAGE=3D/boot/vmlinuz-6.8.12-stable root=3DUUI=
+D=3D891c2a1f-cc1a-464b-a529-ab6add65aa21 scsi_mod.use_blk_mq=3D1 ftrace_du=
+mp_on_oops skew_tick=3D1 nortsched nodelayacct nowatchdog audit=3D0 mitiga=
+tions=3Doff noresume panic=3D60 ignore_loglevel showopts crashkernel=3D204=
+M nomodeset
 
->
-> Therefore, my request to you is to try to benchmark your userspace to see if
-> there is a significant difference in performance when you populate the vma
-> during mmap() vs doing it after first fault (which means moving the for loop
-> to udmabuf_vm_fault()).
->
->> -
->>   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
->> *vma)
->>   {
->>   	struct udmabuf *ubuf = buf->priv;
->> +	unsigned long addr;
->> +	unsigned long end;
->> +	unsigned long pgoff;
->> +	int ret;
-> Looks like ret's type needs to be vm_fault_t.
->
->>   	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->>   		return -EINVAL;
->>
->> -	vma->vm_ops = &udmabuf_vm_ops;
->> -	vma->vm_private_data = ubuf;
->>   	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND |
->> VM_DONTDUMP);
->> +
->> +	for (pgoff = vma->vm_pgoff, end = vma->vm_end, addr = vma-
-> I think initializing these variables above at the declaration time looks better
-> than initializing them in the for loop, IMO.
+  Current version of pixman: 0.40.0
+  	Before reporting problems, check http://wiki.x.org
+@@ -11,7 +11,7 @@ X Protocol Version 11, Revision 0
+  Markers: (--) probed, (**) from config file, (=3D=3D) default setting,
+ 	(++) from command line, (!!) notice, (II) informational,
+ 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
+- (=3D=3D) Log file: "/var/log/Xorg.0.log", Time: Tue Aug 20 02:33:32 2024
++ (=3D=3D) Log file: "/var/log/Xorg.0.log", Time: Tue Aug 20 02:30:29 2024
+  (=3D=3D) Using config directory: "/etc/X11/xorg.conf.d"
+  (=3D=3D) Using system config directory "/usr/share/X11/xorg.conf.d"
+  (=3D=3D) No Layout section.  Using the first Screen section.
+@@ -40,7 +40,7 @@ X Protocol Version 11, Revision 0
+  (WW) Ignoring unrecognized extension "XFree86-DGA"
+  (II) The server relies on udev to provide the list of input devices.
+ 	If no devices become available, reconfigure udev or disable AutoAddDevic=
+es.
+- (II) Loader magic: 0x556d72b5ede0
++ (II) Loader magic: 0x56547fcffde0
+  (II) Module ABI versions:
+  	X.Org ANSI C Emulation: 0.4
+  	X.Org Video Driver: 25.2
+@@ -111,20 +111,282 @@ X Protocol Version 11, Revision 0
+  (II) Module fbdevhw: vendor=3D"X.Org Foundation"
+  	compiled for 1.21.1.4, module version =3D 0.0.2
+  	ABI class: X.Org Video Driver, version 25.2
+- vesa: Refusing to run, Framebuffer or dri device present
++ (II) FBDEV(2): using default device
+  (EE) Screen 0 deleted because of no matching config section.
+  (II) UnloadModule: "modesetting"
+  (EE) Screen 0 deleted because of no matching config section.
+  (II) UnloadModule: "fbdev"
+  (II) UnloadSubModule: "fbdevhw"
+- (EE) Device(s) detected, but none match those in the config file.
+- (EE)
+-Fatal server error:
+- (EE) no screens found(EE)
+- (EE)
+-Please consult the The X.Org Foundation support
+-	 at http://wiki.x.org
+- for help.
+- (EE) Please also check the log file at "/var/log/Xorg.0.log" for additio=
+nal information.
+- (EE)
+- (EE) Server terminated with error (1). Closing log file.
++ (II) FBDEV(0): Creating default Display subsection in Screen section
++	"Default Screen Section" for depth/fbbpp 24/32
++ (=3D=3D) FBDEV(0): Depth 24, (=3D=3D) framebuffer bpp 32
++ (=3D=3D) FBDEV(0): RGB weight 888
++ (=3D=3D) FBDEV(0): Default visual is TrueColor
++ (=3D=3D) FBDEV(0): Using gamma correction (1.0, 1.0, 1.0)
++ (II) FBDEV(0): hardware: EFI VGA (video memory: 8640kB)
++ (DB) xf86MergeOutputClassOptions unsupported bus type 0
++ (II) FBDEV(0): checking modes against framebuffer device...
++ (II) FBDEV(0): checking modes against monitor...
++ (II) FBDEV(0): Virtual size is 1920x1080 (pitch 1920)
++ (**) FBDEV(0):  Built-in mode "current": 207.4 MHz, 85.3 kHz, 77.2 Hz
++ (II) FBDEV(0): Modeline "current"x0.0  207.38  1920 1952 2192 2432  1080=
+ 1084 1088 1104 -hsync -vsync -csync (85.3 kHz b)
++ (=3D=3D) FBDEV(0): DPI set to (96, 96)
++ (II) Loading sub module "fb"
++ (II) LoadModule: "fb"
++ (II) Module "fb" already built-in
++ (**) FBDEV(0): using shadow framebuffer
++ (II) Loading sub module "shadow"
++ (II) LoadModule: "shadow"
++ (II) Loading /usr/lib64/xorg/modules/libshadow.so
++ (II) Module shadow: vendor=3D"X.Org Foundation"
++ 	compiled for 1.21.1.4, module version =3D 1.1.0
++ 	ABI class: X.Org ANSI C Emulation, version 0.4
++ (II) UnloadModule: "vesa"
++ (II) Unloading vesa
++ (II) FBDEV(0): FBIOBLANK: Invalid argument (Screen blanking not supporte=
+d by kernel - disabling)
++ (=3D=3D) FBDEV(0): Backing store enabled
++ (=3D=3D) FBDEV(0): DPMS enabled
++ (II) Initializing extension Generic Event Extension
++ (II) Initializing extension SHAPE
++ (II) Initializing extension MIT-SHM
++ (II) Initializing extension XInputExtension
++ (II) Initializing extension XTEST
++ (II) Initializing extension BIG-REQUESTS
++ (II) Initializing extension SYNC
++ (II) Initializing extension XKEYBOARD
++ (II) Initializing extension XC-MISC
++ (II) Initializing extension SECURITY
++ (II) Initializing extension XFIXES
++ (II) Initializing extension RENDER
++ (II) Initializing extension RANDR
++ (II) Initializing extension COMPOSITE
++ (II) Initializing extension DAMAGE
++ (II) Initializing extension MIT-SCREEN-SAVER
++ (II) Initializing extension DOUBLE-BUFFER
++ (II) Initializing extension RECORD
++ (II) Initializing extension DPMS
++ (II) Initializing extension Present
++ (II) Initializing extension DRI3
++ (II) Initializing extension X-Resource
++ (II) Initializing extension XVideo
++ (II) Initializing extension XVideo-MotionCompensation
++ (II) Initializing extension GLX
++ (II) AIGLX: Screen 0 is not DRI2 capable
++ (II) IGLX: Loaded and initialized swrast
++ (II) GLX: Initialized DRISWRAST GL provider for screen 0
++ (II) Initializing extension XFree86-VidModeExtension
++ (II) Initializing extension XFree86-DGA
++ (II) Initializing extension XFree86-DRI
++ (II) Initializing extension DRI2
++ (II) config/udev: Adding input device Power Button (/dev/input/event1)
++ (**) Power Button: Applying InputClass "evdev keyboard catchall"
++ (**) Power Button: Applying InputClass "libinput keyboard catchall"
++ (**) Power Button: Applying InputClass "system-keyboard"
++ (II) LoadModule: "libinput"
++ (II) Loading /usr/lib64/xorg/modules/input/libinput_drv.so
++ (II) Module libinput: vendor=3D"X.Org Foundation"
++ 	compiled for 1.21.1.4, module version =3D 1.2.1
++ 	Module class: X.Org XInput Driver
++ 	ABI class: X.Org XInput driver, version 24.4
++ (II) Using input driver 'libinput' for 'Power Button'
++ (**) Power Button: always reports core events
++ (**) Option "Device" "/dev/input/event1"
++ (II) event1  - Power Button: is tagged by udev as: Keyboard
++ (II) event1  - Power Button: device is a keyboard
++ (II) event1  - Power Button: device removed
++ (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/inp=
+ut/input1/event1"
++ (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD=
+, id 6)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
++ (II) event1  - Power Button: is tagged by udev as: Keyboard
++ (II) event1  - Power Button: device is a keyboard
++ (II) config/udev: Adding input device Power Button (/dev/input/event0)
++ (**) Power Button: Applying InputClass "evdev keyboard catchall"
++ (**) Power Button: Applying InputClass "libinput keyboard catchall"
++ (**) Power Button: Applying InputClass "system-keyboard"
++ (II) Using input driver 'libinput' for 'Power Button'
++ (**) Power Button: always reports core events
++ (**) Option "Device" "/dev/input/event0"
++ (II) event0  - Power Button: is tagged by udev as: Keyboard
++ (II) event0  - Power Button: device is a keyboard
++ (II) event0  - Power Button: device removed
++ (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP=
+0C0C:00/input/input0/event0"
++ (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD=
+, id 7)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
++ (II) event0  - Power Button: is tagged by udev as: Keyboard
++ (II) event0  - Power Button: device is a keyboard
++ (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3D3 (/dev/i=
+nput/event9)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3D7 (/dev/i=
+nput/event10)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3D8 (/dev/i=
+nput/event11)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3D9 (/dev/i=
+nput/event12)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device GASIA PS2toUSB Adapter (/dev/input=
+/event2)
++ (**) GASIA PS2toUSB Adapter: Applying InputClass "evdev keyboard catchal=
+l"
++ (**) GASIA PS2toUSB Adapter: Applying InputClass "libinput keyboard catc=
+hall"
++ (**) GASIA PS2toUSB Adapter: Applying InputClass "system-keyboard"
++ (II) Using input driver 'libinput' for 'GASIA PS2toUSB Adapter'
++ (**) GASIA PS2toUSB Adapter: always reports core events
++ (**) Option "Device" "/dev/input/event2"
++ (II) event2  - GASIA PS2toUSB Adapter: is tagged by udev as: Keyboard
++ (II) event2  - GASIA PS2toUSB Adapter: device is a keyboard
++ (II) event2  - GASIA PS2toUSB Adapter: device removed
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-1/3-1:1.0/0003:0E8F:0020.0001/input/input2/event2"
++ (II) XINPUT: Adding extended input device "GASIA PS2toUSB Adapter" (type=
+: KEYBOARD, id 8)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
++ (II) event2  - GASIA PS2toUSB Adapter: is tagged by udev as: Keyboard
++ (II) event2  - GASIA PS2toUSB Adapter: device is a keyboard
++ (II) config/udev: Adding input device GASIA PS2toUSB Adapter Mouse (/dev=
+/input/event3)
++ (**) GASIA PS2toUSB Adapter Mouse: Applying InputClass "evdev pointer ca=
+tchall"
++ (**) GASIA PS2toUSB Adapter Mouse: Applying InputClass "libinput pointer=
+ catchall"
++ (II) Using input driver 'libinput' for 'GASIA PS2toUSB Adapter Mouse'
++ (**) GASIA PS2toUSB Adapter Mouse: always reports core events
++ (**) Option "Device" "/dev/input/event3"
++ (II) event3  - GASIA PS2toUSB Adapter Mouse: is tagged by udev as: Mouse
++ (II) event3  - GASIA PS2toUSB Adapter Mouse: device is a pointer
++ (II) event3  - GASIA PS2toUSB Adapter Mouse: device removed
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-1/3-1:1.1/0003:0E8F:0020.0002/input/input3/event3"
++ (II) XINPUT: Adding extended input device "GASIA PS2toUSB Adapter Mouse"=
+ (type: MOUSE, id 9)
++ (**) Option "AccelerationScheme" "none"
++ (**) GASIA PS2toUSB Adapter Mouse: (accel) selected scheme none/0
++ (**) GASIA PS2toUSB Adapter Mouse: (accel) acceleration factor: 2.000
++ (**) GASIA PS2toUSB Adapter Mouse: (accel) acceleration threshold: 4
++ (II) event3  - GASIA PS2toUSB Adapter Mouse: is tagged by udev as: Mouse
++ (II) event3  - GASIA PS2toUSB Adapter Mouse: device is a pointer
++ (II) config/udev: Adding input device GASIA PS2toUSB Adapter Mouse (/dev=
+/input/mouse0)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device GASIA PS2toUSB Adapter System Cont=
+rol (/dev/input/event4)
++ (**) GASIA PS2toUSB Adapter System Control: Applying InputClass "evdev k=
+eyboard catchall"
++ (**) GASIA PS2toUSB Adapter System Control: Applying InputClass "libinpu=
+t keyboard catchall"
++ (**) GASIA PS2toUSB Adapter System Control: Applying InputClass "system-=
+keyboard"
++ (II) Using input driver 'libinput' for 'GASIA PS2toUSB Adapter System Co=
+ntrol'
++ (**) GASIA PS2toUSB Adapter System Control: always reports core events
++ (**) Option "Device" "/dev/input/event4"
++ (II) event4  - GASIA PS2toUSB Adapter System Control: is tagged by udev =
+as: Keyboard
++ (II) event4  - GASIA PS2toUSB Adapter System Control: device is a keyboa=
+rd
++ (II) event4  - GASIA PS2toUSB Adapter System Control: device removed
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-1/3-1:1.1/0003:0E8F:0020.0002/input/input4/event4"
++ (II) XINPUT: Adding extended input device "GASIA PS2toUSB Adapter System=
+ Control" (type: KEYBOARD, id 10)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
++ (II) event4  - GASIA PS2toUSB Adapter System Control: is tagged by udev =
+as: Keyboard
++ (II) event4  - GASIA PS2toUSB Adapter System Control: device is a keyboa=
+rd
++ (II) config/udev: Adding input device GASIA PS2toUSB Adapter Consumer Co=
+ntrol (/dev/input/event5)
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "evdev=
+ keyboard catchall"
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "libin=
+put keyboard catchall"
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "syste=
+m-keyboard"
++ (II) Using input driver 'libinput' for 'GASIA PS2toUSB Adapter Consumer =
+Control'
++ (**) GASIA PS2toUSB Adapter Consumer Control: always reports core events
++ (**) Option "Device" "/dev/input/event5"
++ (II) event5  - GASIA PS2toUSB Adapter Consumer Control: is tagged by ude=
+v as: Keyboard
++ (II) event5  - GASIA PS2toUSB Adapter Consumer Control: device is a keyb=
+oard
++ (II) event5  - GASIA PS2toUSB Adapter Consumer Control: device removed
++ (II) libinput: GASIA PS2toUSB Adapter Consumer Control: needs a virtual =
+subdevice
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-1/3-1:1.1/0003:0E8F:0020.0002/input/input5/event5"
++ (II) XINPUT: Adding extended input device "GASIA PS2toUSB Adapter Consum=
+er Control" (type: MOUSE, id 11)
++ (**) Option "AccelerationScheme" "none"
++ (**) GASIA PS2toUSB Adapter Consumer Control: (accel) selected scheme no=
+ne/0
++ (**) GASIA PS2toUSB Adapter Consumer Control: (accel) acceleration facto=
+r: 2.000
++ (**) GASIA PS2toUSB Adapter Consumer Control: (accel) acceleration thres=
+hold: 4
++ (II) event5  - GASIA PS2toUSB Adapter Consumer Control: is tagged by ude=
+v as: Keyboard
++ (II) event5  - GASIA PS2toUSB Adapter Consumer Control: device is a keyb=
+oard
++ (II) config/udev: Adding input device Logitech K330 (/dev/input/event7)
++ (**) Logitech K330: Applying InputClass "evdev keyboard catchall"
++ (**) Logitech K330: Applying InputClass "libinput keyboard catchall"
++ (**) Logitech K330: Applying InputClass "system-keyboard"
++ (II) Using input driver 'libinput' for 'Logitech K330'
++ (**) Logitech K330: always reports core events
++ (**) Option "Device" "/dev/input/event7"
++ (II) event7  - Logitech K330: is tagged by udev as: Keyboard
++ (II) event7  - Logitech K330: device is a keyboard
++ (II) event7  - Logitech K330: device removed
++ (II) libinput: Logitech K330: needs a virtual subdevice
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-2/3-2:1.2/0003:046D:C52B.0005/0003:046D:4016.0007/input/input20/event7=
+"
++ (II) XINPUT: Adding extended input device "Logitech K330" (type: MOUSE, =
+id 12)
++ (**) Option "AccelerationScheme" "none"
++ (**) Logitech K330: (accel) selected scheme none/0
++ (**) Logitech K330: (accel) acceleration factor: 2.000
++ (**) Logitech K330: (accel) acceleration threshold: 4
++ (II) event7  - Logitech K330: is tagged by udev as: Keyboard
++ (II) event7  - Logitech K330: device is a keyboard
++ (II) config/udev: Adding input device Logitech M215 2nd Gen (/dev/input/=
+event6)
++ (**) Logitech M215 2nd Gen: Applying InputClass "evdev pointer catchall"
++ (**) Logitech M215 2nd Gen: Applying InputClass "libinput pointer catcha=
+ll"
++ (II) Using input driver 'libinput' for 'Logitech M215 2nd Gen'
++ (**) Logitech M215 2nd Gen: always reports core events
++ (**) Option "Device" "/dev/input/event6"
++ (II) event6  - Logitech M215 2nd Gen: is tagged by udev as: Mouse
++ (II) event6  - Logitech M215 2nd Gen: device is a pointer
++ (II) event6  - Logitech M215 2nd Gen: device removed
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-2/3-2:1.2/0003:046D:C52B.0005/0003:046D:401B.0006/input/input19/event6=
+"
++ (II) XINPUT: Adding extended input device "Logitech M215 2nd Gen" (type:=
+ MOUSE, id 13)
++ (**) Option "AccelerationScheme" "none"
++ (**) Logitech M215 2nd Gen: (accel) selected scheme none/0
++ (**) Logitech M215 2nd Gen: (accel) acceleration factor: 2.000
++ (**) Logitech M215 2nd Gen: (accel) acceleration threshold: 4
++ (II) event6  - Logitech M215 2nd Gen: is tagged by udev as: Mouse
++ (II) event6  - Logitech M215 2nd Gen: device is a pointer
++ (II) config/udev: Adding input device Logitech M215 2nd Gen (/dev/input/=
+mouse1)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA Intel PCH Front Mic (/dev/inpu=
+t/event13)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA Intel PCH Rear Mic (/dev/input=
+/event14)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA Intel PCH Line (/dev/input/eve=
+nt15)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA Intel PCH Line Out (/dev/input=
+/event16)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device HDA Intel PCH Front Headphone (/de=
+v/input/event17)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (II) config/udev: Adding input device PC Speaker (/dev/input/event8)
++ (II) No input driver specified, ignoring this device.
++ (II) This device may have been added with another device file.
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "evdev=
+ keyboard catchall"
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "libin=
+put keyboard catchall"
++ (**) GASIA PS2toUSB Adapter Consumer Control: Applying InputClass "syste=
+m-keyboard"
++ (II) Using input driver 'libinput' for 'GASIA PS2toUSB Adapter Consumer =
+Control'
++ (**) GASIA PS2toUSB Adapter Consumer Control: always reports core events
++ (**) Option "Device" "/dev/input/event5"
++ (II) libinput: GASIA PS2toUSB Adapter Consumer Control: is a virtual sub=
+device
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-1/3-1:1.1/0003:0E8F:0020.0002/input/input5/event5"
++ (II) XINPUT: Adding extended input device "GASIA PS2toUSB Adapter Consum=
+er Control" (type: KEYBOARD, id 14)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
++ (**) Logitech K330: Applying InputClass "evdev keyboard catchall"
++ (**) Logitech K330: Applying InputClass "libinput keyboard catchall"
++ (**) Logitech K330: Applying InputClass "system-keyboard"
++ (II) Using input driver 'libinput' for 'Logitech K330'
++ (**) Logitech K330: always reports core events
++ (**) Option "Device" "/dev/input/event7"
++ (II) libinput: Logitech K330: is a virtual subdevice
++ (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:14.0/usb=
+3/3-2/3-2:1.2/0003:046D:C52B.0005/0003:046D:4016.0007/input/input20/event7=
+"
++ (II) XINPUT: Adding extended input device "Logitech K330" (type: KEYBOAR=
+D, id 15)
++ (**) Option "xkb_model" "pc105"
++ (**) Option "xkb_layout" "de"
++ (**) Option "xkb_variant" "nodeadkeys"
++ (**) Option "xkb_options" "terminate:ctrl_alt_bksp"
 
-Yes, even though initializing in the loop declaration can better 
-indicate which variables the loop needs,
-
-here it makes the loop declaration too long.
-
-I'll change it in next version.
-
-Thanks.
-
->
-> Thanks,
-> Vivek
->
->>> vm_start;
->> +	     addr < end; pgoff++, addr += PAGE_SIZE) {
->> +		unsigned long pfn = folio_pfn(ubuf->folios[pgoff]);
->> +
->> +		pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->> +		ret = vmf_insert_pfn(vma, addr, pfn);
->> +		if (ret & VM_FAULT_ERROR)
->> +			return vm_fault_to_errno(ret, 0);
->> +	}
->> +
->>   	return 0;
->>   }
->>
->> --
->> 2.45.2
 
