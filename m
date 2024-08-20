@@ -1,397 +1,340 @@
-Return-Path: <linux-kernel+bounces-294317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D1958C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E304F958C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3F0285457
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F509284C75
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD1D1B86C7;
-	Tue, 20 Aug 2024 16:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E3F1B3F08;
+	Tue, 20 Aug 2024 16:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2UlyOhll"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JgesEHAQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1SserZbP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EB7194145
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FDD190671;
+	Tue, 20 Aug 2024 16:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171046; cv=none; b=OJ0x5IyJAr3HgST3FZGUOoiFC3wV5R7tVeV0JGVNIKj2K6Q3kNIbjs8lHHRbUwkaIeGti1dS661GVjoJn8CAQ9cVoCu+0ePWej+COwyUJP3L9eYXKiubogRHidoD+apiN/fxsOXMsl7jvfyQaL1CV1VnG+jsB1OxeWuXeRXBVSI=
+	t=1724171373; cv=none; b=P1NOUEfsjx5VmdPhhatQgIjU4QBViQCLyGGM406aeejRQql2Vm51VS3iQPCrFUwfzRy8WBIygRPrztoQFob6pe45/DR/Nhcqt+YB76Rm+5rdE+WGi8/vX8FTUgg1Dg9dEoKi9sOqUuZ4z/z3SCScWadX7HvlU+cQMd7S3IahyYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171046; c=relaxed/simple;
-	bh=4k+s4YO3Hy+CWFesWYwNFzAF5MNfDwpDXFAaMaImg0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=LuVOEWbtxKYXRhtK89uKDI/zg4PminFYvQtUzO18VzRbEWzVua4CrpRGKoIBdswMFo4XmdDaPUyndt6fxHAHzYZUOaPbNOzEsc6WSyvzqo8VQzahxQrwBgto4l7dGQvzhLhOfrTqsqsb8irNnf3blIpwvirqhGlOaSB9kjPT87c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2UlyOhll; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-202018541afso118365ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:24:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724171044; x=1724775844; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TN4jMg0OxJ5q97VBngUzGeWPosFAHW2jqYW6n7n/G0=;
-        b=2UlyOhll7oQiqESF9DygKHV4+B731dw/aB/zHfl7shJtMHtxiarxtBi8+z86okJZ5o
-         5QdJevm0PfUMBInv6dPnQmTknFIRsZaqzGclAjSLfUqSP9WombJ4fGOe9t76gDCJp69v
-         d6/VaMA4iTH0CSs/0GeU2/ax32WNbm78Le3IM/4wBUAWoJDLQ3doQOYhl47ovXFetMlT
-         1YSB53dW8gq59MsvxTDiz+gOyX2ptr9AWbj2mpQ7h+N5we8+IRwVamJ8IcEm2yR+2I3B
-         Le9mpPZecZGIQlzIQcGXnCSHxikYJ5kZ3OqC7m2xrQyGZE9R1az6wEJcTjdlEq4OOKtd
-         j+dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724171044; x=1724775844;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4TN4jMg0OxJ5q97VBngUzGeWPosFAHW2jqYW6n7n/G0=;
-        b=B//oWWXvQgYyZaZtmd2vzyzQcIPIakBvUDTc+/UYPGN1CSvZ5qAWvksqzviD5CFf7m
-         oNyVEEfK6LoYzXbFb1uEZ8D8CAOoBmb7LRGJ+Hk4ZyT7EyRtrT9cayJggX4Mv9ZUpYA1
-         hsj82j4YgY5GSFX1SA+w+UvlXDKiaTgB+Df7ZRBxjJ/O9jCkF9xpUWXJVO5+OTnKVS3U
-         BN+GdbWEBgoz8Yz5QDAdp9quEpQRJ9hHpba2qDgSFJRIjdgNGuznExfzpazY2HOiAzcz
-         t/vVBqKzbxZxKg3PACjMahwqp2GbvRD7+bR9piPSt+qFuJ8GGtxf1sGCQTiNH9xRFCa6
-         LMSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaNU7Jc6l/0k26J9UEaTqDku7Yx3CTBV8xiq3trc1MmlJ04IktvqYzqzvf0j8oXEkPlqyEy0OzgibbDVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5K0eKU9QlLgcPiVVnxfUqlv+47UAumQDYuvdGihcsCq4YueCk
-	hl7RXPTfZg1DMPqSUj1jlv/w1UPdZJcTQ0LtjdOtSSxezERVO2Q0E+q3ba/j4KfqM2PRiIWLJCo
-	yHOWEUO5SJAlAQfKmwu7/fAA66d+MEZS4tIPI
-X-Google-Smtp-Source: AGHT+IH9+HswIKSue9tbinWSCbFaxM44Z4MveZEgdvZVAJq6LajSaXPVLVYHfMuDSk7YdHiO4zsrdR7LzVmYOCjzTDo=
-X-Received: by 2002:a17:902:ea02:b0:201:dc7b:a882 with SMTP id
- d9443c01a7336-202e629dfbcmr2012145ad.26.1724171043500; Tue, 20 Aug 2024
- 09:24:03 -0700 (PDT)
+	s=arc-20240116; t=1724171373; c=relaxed/simple;
+	bh=Voq048pM2Kl4TdkOvYya7BvdxsDdu+6WpfYu5FJSLuE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hZmhV/OTXXa8h3gSVI14BFdANKk3iAl1rClBtmDPsxV+IlHA7oIEsREMZg38pnzemzF8wUJfkvSucKpgtgCYw1WH7hzXErqm6k+EjTTFVUrnh5qesRysK3x0gVgeP48Nr4l9zP1mWhteMOCMINufLAqHmKAjfsuei1sZYLwIwSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JgesEHAQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1SserZbP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724171370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rt+qJPRnUlTdCxy+HqQKlWVloB8PPTVjPXwBqnEDk+0=;
+	b=JgesEHAQZzySxLXlM36vPyH8lHIylwIOzBytwcMjS6F/VggEzQzyyuauwnSSAwKu4ew2H9
+	Aw3aSxvx6LUKU7m1uJ0Vn99VBH6APahmXOygHG1DsQY3+qx6tKe+HK8BhnotdL83+1g3oB
+	uoVCzgKN0FCpY4LEOQpYZcvptY0d2AN6RDAzYzUsFiIv5hvc079Do28bHDQ68ZZ7hPhhO2
+	DpdRgGRhlxZ+jWqPIqtl9ZrN+DjuDFQBupZZbp2G+v9HzSIljvmxcQUWCJCUmR+bLMzbZm
+	TAluBf+s4bW5PBnXUubmUYcbKMPbGC05MpxZPuBabxwMwc4sCDKLIhVMDv8GwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724171370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rt+qJPRnUlTdCxy+HqQKlWVloB8PPTVjPXwBqnEDk+0=;
+	b=1SserZbPrG1HBE+Xmwsgt8bB7uIp0spb8ECHVnnPvzheXB/NaxtoJ+pu/igEiUwJBmEt9v
+	5zopFYzdN/5ZtWCQ==
+To: Tianyang Zhang <zhangtianyang@loongson.cn>, corbet@lwn.net,
+ alexs@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ jiaxun.yang@flygoat.com, gaoliang@loongson.cn, wangliupu@loongson.cn,
+ lvjianmin@loongson.cn, zhangtianyang@loongson.cn, yijun@loongson.cn,
+ mhocko@suse.com, akpm@linux-foundation.org, dianders@chromium.org,
+ maobibo@loongson.cn, xry111@xry111.site, zhaotianrui@loongson.cn,
+ nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v10 2/2] irqchip/loongarch-avec: Add AVEC irqchip support
+In-Reply-To: <20240815112608.26925-3-zhangtianyang@loongson.cn>
+References: <20240815112608.26925-1-zhangtianyang@loongson.cn>
+ <20240815112608.26925-3-zhangtianyang@loongson.cn>
+Date: Tue, 20 Aug 2024 18:29:29 +0200
+Message-ID: <87msl7jgye.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806220614.831914-1-irogers@google.com>
-In-Reply-To: <20240806220614.831914-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 20 Aug 2024 09:23:51 -0700
-Message-ID: <CAP-5=fUWdyp++BKgwZoKWv_mYNGhKj2LKG8p2Ghfg74T+6PLXg@mail.gmail.com>
-Subject: Re: [PATCH v3] perf cap: Tidy up and improve capability testing
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Leo Yan <leo.yan@linux.dev>, 
-	Changbin Du <changbin.du@huawei.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Aug 6, 2024 at 3:06=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> Remove dependence on libcap. libcap is only used to query whether a
-> capability is supported, which is just 1 capget system call.
->
-> If the capget system call fails, fall back on root permission
-> checking. Previously if libcap fails then the permission is assumed
-> not present which may be pessimistic/wrong.
->
-> Add a used_root out argument to perf_cap__capable to say whether the
-> fall back root check was used. This allows the correct error message,
-> "root" vs "users with the CAP_PERFMON or CAP_SYS_ADMIN capability", to
-> be selected.
->
-> Tidy uses of perf_cap__capable so that tests aren't repeated if capget
-> isn't supported.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Thu, Aug 15 2024 at 19:26, Tianyang Zhang wrote:
+>  .../arch/loongarch/irq-chip-model.rst         |  32 ++
+>  .../zh_CN/arch/loongarch/irq-chip-model.rst   |  32 ++
+>  arch/loongarch/Kconfig                        |   1 +
+>  arch/loongarch/include/asm/cpu-features.h     |   1 +
+>  arch/loongarch/include/asm/cpu.h              |   2 +
+>  arch/loongarch/include/asm/hardirq.h          |   3 +-
+>  arch/loongarch/include/asm/hw_irq.h           |   2 +
+>  arch/loongarch/include/asm/irq.h              |  25 +-
+>  arch/loongarch/include/asm/loongarch.h        |  18 +-
+>  arch/loongarch/include/asm/smp.h              |   2 +
+>  arch/loongarch/kernel/cpu-probe.c             |   3 +-
+>  arch/loongarch/kernel/irq.c                   |  15 +-
+>  arch/loongarch/kernel/paravirt.c              |   5 +
+>  arch/loongarch/kernel/smp.c                   |   6 +
+>  drivers/irqchip/Makefile                      |   2 +-
+>  drivers/irqchip/irq-loongarch-avec.c          | 426 ++++++++++++++++++
+>  drivers/irqchip/irq-loongarch-cpu.c           |   5 +-
+>  drivers/irqchip/irq-loongson-eiointc.c        |   7 +-
+>  drivers/irqchip/irq-loongson-pch-msi.c        |  24 +-
+>  include/linux/cpuhotplug.h                    |   3 +-
 
-Ping.
+This patch is doing too many things at once and is absolutely not
+reviewable.
+
+Please split it up into the obvious bits and pieces:
+
+   1) The IRQ_NOPROBE change
+
+   2) See below
+
+   3) Documentation
+
+   4) Add the arch/loongson parts, i.e. all the defines and
+      basic required function prototypes with a little twist.
+      Add a Kconfig symbol:
+
+	Kconfig IRQ_LOONGARCH_AVEC
+        	bool  
+
+      in drivers/irqchip/Kconfig. This allows you to add all
+      arch/loongarch/ changes with the simple tweak:
+
+      #ifdef CONFIG_IRQ_LOONGARCH_AVEC
+      # define cpu_has_avecint		cpu_opt(LOONGARCH_CPU_AVECINT)
+      #else
+      # define cpu_has_avecint		false
+      #endif
+      
+      and
+      
+      #ifdef CONFIG_IRQ_LOONGARCH_AVEC
+      # define SMP_CLEAR_VECTOR		BIT(ACTION_CLEAR_VECTOR)
+      #else
+      # define SMP_CLEAR_VECTOR		(0)
+      #endif
+
+      That way the compiler will optimize out stuff like the
+      SMP_CLEAR_VECTOR handling and you only need the prototype of
+      complete_irq_moving(), but no implementation.
+
+   5) Change the CPU hotplug callback for EOINTC and do
+      the acpi_cascade_irqdomain_init() change.
+
+   6) Prepare get_pch_msi_handle() in the pch MSI driver
+
+   7) Implement the driver and select IRQ_LOONGARCH_AVEC
+      from IRQ_LOONGARCH_CPU
+
+   8) Remove the IRQ_LOONGARCH_AVEC helpers
+
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 70f169210b52..0e3abf7b0bd3 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -85,6 +85,7 @@ config LOONGARCH
+>  	select GENERIC_ENTRY
+>  	select GENERIC_GETTIMEOFDAY
+>  	select GENERIC_IOREMAP if !ARCH_IOREMAP
+> +	select GENERIC_IRQ_MATRIX_ALLOCATOR
+
+Please move this to IRQ_LOONGARCH_CPU in patch #7
+
+> @@ -92,15 +103,21 @@ int liointc_acpi_init(struct irq_domain *parent,
+>  					struct acpi_madt_lio_pic *acpi_liointc);
+>  int eiointc_acpi_init(struct irq_domain *parent,
+>  					struct acpi_madt_eio_pic *acpi_eiointc);
+> +int avecintc_acpi_init(struct irq_domain *parent);
+> +
+> +void complete_irq_moving(void);
+>  
+>  int htvec_acpi_init(struct irq_domain *parent,
+>  					struct acpi_madt_ht_pic *acpi_htvec);
+>  int pch_lpc_acpi_init(struct irq_domain *parent,
+>  					struct acpi_madt_lpc_pic *acpi_pchlpc);
+> -int pch_msi_acpi_init(struct irq_domain *parent,
+> -					struct acpi_madt_msi_pic *acpi_pchmsi);
+>  int pch_pic_acpi_init(struct irq_domain *parent,
+>  					struct acpi_madt_bio_pic *acpi_pchpic);
+> +int pch_msi_acpi_init(struct irq_domain *parent,
+> +					struct acpi_madt_msi_pic *acpi_pchmsi);
+> +int pch_msi_acpi_init_v2(struct irq_domain *parent,
+> +					struct acpi_madt_msi_pic *acpi_pchmsi);
+
+This is really the wrong place for all these prototypes. They are only
+used in drivers/irqchip/... except for complete_irq_moving().
+
+So the proper place for them is drivers/irqchip/irq-loongarch.h
+
+Move them there. This is patch #2 which I referred to above.
+
+>
+> +static phys_addr_t msi_base_addr;
+>
+
+So you have everything related to the avec chip in loongarch_avec, so
+why don't you move that into that data structure?
+
+> +struct avecintc_chip {
+> +	struct fwnode_handle	*fwnode;
+> +	struct irq_domain	*domain;
+> +	struct irq_matrix	*vector_matrix;
+> +	raw_spinlock_t		lock;
+> +};
+
+The lock should be the first member as spinlocks have alignment
+requirements....
+
+> +static int avecintc_domain_alloc(struct irq_domain *domain,
+> +				 unsigned int virq, unsigned int nr_irqs, void *arg)
+> +{
+> +	guard(raw_spinlock_irqsave)(&loongarch_avec.lock);
+> +
+> +	for (unsigned int i = 0; i < nr_irqs; i++) {
+> +		struct irq_data *irqd = irq_domain_get_irq_data(domain, virq + i);
+> +		struct avecintc_data *adata = kzalloc(sizeof(*adata), GFP_KERNEL);
+
+That was never tested with any debug. You _cannot_ do a GFP_KERNEL
+allocation with the raw spinlock held. And no, don't use
+GFP_ATOMIC. There is absolutely zero reason to hold the lock accross all
+of that. As you got your ideas from x86_vector_alloc_irqs(), you could
+have looked at how that's done correctly.
+
+> +		unsigned int cpu, ret;
+> +
+> +		if (!adata)
+> +			return -ENOMEM;
+> +
+> +		ret = irq_matrix_alloc(loongarch_avec.vector_matrix, cpu_online_mask, false, &cpu);
+> +		if (ret < 0) {
+> +			kfree(adata);
+> +			return ret;
+> +		}
+> +
+> +		adata->moving = 0;
+
+Redundant. The struct is allocated with kzalloc()...
+
+> +		adata->prev_cpu = adata->cpu = cpu;
+> +		adata->prev_vec = adata->vec = ret;
+> +		adata->managed = irqd_affinity_is_managed(irqd);
+
+If you want to support managed interrupts, then you cannot allocate
+from the CPU online mask. See x86...
+
+> +		irq_domain_set_info(domain, virq + i, virq + i, &avec_irq_controller,
+> +				    adata, handle_edge_irq, NULL, NULL);
+> +		irqd_set_single_target(irqd);
+> +		irqd_set_affinity_on_activate(irqd);
+> +
+> +		per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(irqd);
+
+static int avecintc_alloc_vector(struct avecintc_adata *adata)
+{
+        int ret, cpu;
+
+	guard(raw_spinlock_irqsave)(&loongarch_avec.lock);
+	ret = irq_matrix_alloc(loongarch_avec.vector_matrix, cpu_online_mask, false, &cpu);
+        if (ret < 0)
+              return ret;
+
+	adata->prev_cpu = adata->cpu = cpu;
+	adata->prev_vec = adata->vec = ret;
+        per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(irqd);
+        return 0;
+}
+
+static int avecintc_domain_alloc(struct irq_domain *domain, ...)
+{
+	for (unsigned int i = 0; i < nr_irqs; i++) {
+		struct irq_data *irqd = irq_domain_get_irq_data(domain, virq + i);
+		struct avecintc_data *adata = kzalloc(sizeof(*adata), GFP_KERNEL);
+                int ret;
+
+		if (!adata)
+			return -ENOMEM;
+
+		irq_domain_set_info(domain, virq + i, virq + i, &avec_irq_controller,
+				    adata, handle_edge_irq, NULL, NULL);
+		irqd_set_single_target(irqd);
+		irqd_set_affinity_on_activate(irqd);
+
+		ret = avecintc_alloc_vector(adata);
+                if (ret < 0) {
+			kfree(adata);
+                        return ret;
+                }
+         }
+No?
+
+> +static void clear_free_vector(struct irq_data *irqd)
+> +{
+> +	struct avecintc_data *adata = irq_data_get_irq_chip_data(irqd);
+> +	bool managed = irqd_affinity_is_managed(irqd);
+
+Don't even try. Your managed support is broken at the allocation side
+and at several other places.
+
+> +	per_cpu(irq_map, adata->cpu)[adata->vec] = NULL;
+> +	irq_matrix_free(loongarch_avec.vector_matrix, adata->cpu, adata->vec, managed);
+> +	adata->cpu = UINT_MAX;
+> +	adata->vec = UINT_MAX;
+> +
+> +#ifdef CONFIG_SMP
+> +	if (!adata->moving)
+> +		return;
+> +
+> +	per_cpu(irq_map, adata->prev_cpu)[adata->prev_vec] = NULL;
+> +	irq_matrix_free(loongarch_avec.vector_matrix,
+> +			adata->prev_cpu, adata->prev_vec, adata->managed);
+> +	adata->moving = 0;
+> +	adata->prev_vec = UINT_MAX;
+> +	adata->prev_cpu = UINT_MAX;
+
+What's all the clearing for when you kfree() it two lines further down?
+
+> +	list_del_init(&adata->entry);
+> +#endif
+> +	kfree(adata);
+
+And no, not under the lock .... Move the locking into this function and
+kfree() at the call site. There is zero reason to hold the lock over the
+full loop.
+
+> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
+> +				     const unsigned long end)
+> +{
+> +	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
+> +
+> +	msi_base_addr = pchmsi_entry->msg_address - AVEC_MSG_OFFSET;
+> +
+> +	return pch_msi_acpi_init_v2(loongarch_avec.domain, pchmsi_entry);
+> +}
+
+...
+
+> +int __init pch_msi_acpi_init_v2(struct irq_domain *parent, struct acpi_madt_msi_pic *acpi_pchmsi)
+
+The second argument is required because?
 
 Thanks,
-Ian
 
-> ---
-> v3: rebase resolving builtin-ftrace.c conflicts and incorporating
->     change in:
-> https://lore.kernel.org/lkml/20240729004127.238611-3-namhyung@kernel.org/
-> v2: fix syscall number and '>' should have been '>=3D'.
-> ---
->  tools/perf/Makefile.config  | 11 -------
->  tools/perf/builtin-ftrace.c | 28 ++++++++---------
->  tools/perf/util/Build       |  2 +-
->  tools/perf/util/cap.c       | 63 ++++++++++++++++++++++++++-----------
->  tools/perf/util/cap.h       | 23 ++------------
->  tools/perf/util/symbol.c    |  8 ++---
->  tools/perf/util/util.c      | 12 +++++--
->  7 files changed, 75 insertions(+), 72 deletions(-)
->
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index fa679db61f62..4eb1fc897baf 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -1031,17 +1031,6 @@ ifndef NO_LIBZSTD
->    endif
->  endif
->
-> -ifndef NO_LIBCAP
-> -  ifeq ($(feature-libcap), 1)
-> -    CFLAGS +=3D -DHAVE_LIBCAP_SUPPORT
-> -    EXTLIBS +=3D -lcap
-> -    $(call detected,CONFIG_LIBCAP)
-> -  else
-> -    $(warning No libcap found, disables capability support, please insta=
-ll libcap-devel/libcap-dev)
-> -    NO_LIBCAP :=3D 1
-> -  endif
-> -endif
-> -
->  ifndef NO_BACKTRACE
->    ifeq ($(feature-backtrace), 1)
->      CFLAGS +=3D -DHAVE_BACKTRACE_SUPPORT
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index a615c405d98f..88a87bf387d2 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -63,20 +63,21 @@ static void ftrace__workload_exec_failed_signal(int s=
-igno __maybe_unused,
->         done =3D true;
->  }
->
-> -static int check_ftrace_capable(void)
-> +static bool check_ftrace_capable(void)
->  {
-> -       if (!(perf_cap__capable(CAP_PERFMON) ||
-> -             perf_cap__capable(CAP_SYS_ADMIN))) {
-> -               pr_err("ftrace only works for %s!\n",
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -               "users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
-> -#else
-> -               "root"
-> -#endif
-> +       bool used_root;
-> +
-> +       if (perf_cap__capable(CAP_PERFMON, &used_root))
-> +               return true;
-> +
-> +       if (!used_root && perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +               return true;
-> +
-> +       pr_err("ftrace only works for %s!\n",
-> +               used_root ? "root"
-> +                         : "users with the CAP_PERFMON or CAP_SYS_ADMIN =
-capability"
->                 );
-> -               return -1;
-> -       }
-> -       return 0;
-> +       return false;
->  }
->
->  static int __write_tracing_file(const char *name, const char *val, bool =
-append)
-> @@ -1579,8 +1580,7 @@ int cmd_ftrace(int argc, const char **argv)
->         signal(SIGCHLD, sig_handler);
->         signal(SIGPIPE, sig_handler);
->
-> -       ret =3D check_ftrace_capable();
-> -       if (ret < 0)
-> +       if (!check_ftrace_capable())
->                 return -1;
->
->         ret =3D perf_config(perf_ftrace_config, &ftrace);
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index b24360c04aae..adbaf7748019 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -221,7 +221,7 @@ perf-util-$(CONFIG_ZLIB) +=3D zlib.o
->  perf-util-$(CONFIG_LZMA) +=3D lzma.o
->  perf-util-$(CONFIG_ZSTD) +=3D zstd.o
->
-> -perf-util-$(CONFIG_LIBCAP) +=3D cap.o
-> +perf-util-y +=3D cap.o
->
->  perf-util-$(CONFIG_CXX_DEMANGLE) +=3D demangle-cxx.o
->  perf-util-y +=3D demangle-ocaml.o
-> diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
-> index c3ba841bbf37..7574a67651bc 100644
-> --- a/tools/perf/util/cap.c
-> +++ b/tools/perf/util/cap.c
-> @@ -3,27 +3,52 @@
->   * Capability utilities
->   */
->
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
->  #include "cap.h"
-> -#include <stdbool.h>
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap)
-> -{
-> -       cap_flag_value_t val;
-> -       cap_t caps =3D cap_get_proc();
-> +#include "debug.h"
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <linux/capability.h>
-> +#include <sys/syscall.h>
->
-> -       if (!caps)
-> -               return false;
-> +#ifndef SYS_capget
-> +#define SYS_capget 90
-> +#endif
->
-> -       if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) !=3D 0)
-> -               val =3D CAP_CLEAR;
-> +#define MAX_LINUX_CAPABILITY_U32S _LINUX_CAPABILITY_U32S_3
->
-> -       if (cap_free(caps) !=3D 0)
-> -               return false;
-> -
-> -       return val =3D=3D CAP_SET;
-> +bool perf_cap__capable(int cap, bool *used_root)
-> +{
-> +       struct __user_cap_header_struct header =3D {
-> +               .version =3D _LINUX_CAPABILITY_VERSION_3,
-> +               .pid =3D getpid(),
-> +       };
-> +       struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
-> +       __u32 cap_val;
-> +
-> +       *used_root =3D false;
-> +       while (syscall(SYS_capget, &header, &data[0]) =3D=3D -1) {
-> +               /* Retry, first attempt has set the header.version correc=
-tly. */
-> +               if (errno =3D=3D EINVAL && header.version !=3D _LINUX_CAP=
-ABILITY_VERSION_3 &&
-> +                   header.version =3D=3D _LINUX_CAPABILITY_VERSION_1)
-> +                       continue;
-> +
-> +               pr_debug2("capget syscall failed (%s - %d) fall back on r=
-oot check\n",
-> +                         strerror(errno), errno);
-> +               *used_root =3D true;
-> +               return geteuid() =3D=3D 0;
-> +       }
-> +
-> +       /* Extract the relevant capability bit. */
-> +       if (cap >=3D 32) {
-> +               if (header.version =3D=3D _LINUX_CAPABILITY_VERSION_3) {
-> +                       cap_val =3D data[1].effective;
-> +               } else {
-> +                       /* Capability beyond 32 is requested but only 32 =
-are supported. */
-> +                       return false;
-> +               }
-> +       } else {
-> +               cap_val =3D data[0].effective;
-> +       }
-> +       return (cap_val & (1 << (cap & 0x1f))) !=3D 0;
->  }
-> -
-> -#endif  /* HAVE_LIBCAP_SUPPORT */
-> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
-> index ae52878c0b2e..0c6a1ff55f07 100644
-> --- a/tools/perf/util/cap.h
-> +++ b/tools/perf/util/cap.h
-> @@ -3,26 +3,6 @@
->  #define __PERF_CAP_H
->
->  #include <stdbool.h>
-> -#include <linux/capability.h>
-> -#include <linux/compiler.h>
-> -
-> -#ifdef HAVE_LIBCAP_SUPPORT
-> -
-> -#include <sys/capability.h>
-> -
-> -bool perf_cap__capable(cap_value_t cap);
-> -
-> -#else
-> -
-> -#include <unistd.h>
-> -#include <sys/types.h>
-> -
-> -static inline bool perf_cap__capable(int cap __maybe_unused)
-> -{
-> -       return geteuid() =3D=3D 0;
-> -}
-> -
-> -#endif /* HAVE_LIBCAP_SUPPORT */
->
->  /* For older systems */
->  #ifndef CAP_SYSLOG
-> @@ -33,4 +13,7 @@ static inline bool perf_cap__capable(int cap __maybe_un=
-used)
->  #define CAP_PERFMON    38
->  #endif
->
-> +/* Query if a capability is supported, used_root is set if the fallback =
-root check was used. */
-> +bool perf_cap__capable(int cap, bool *used_root);
-> +
->  #endif /* __PERF_CAP_H */
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 19eb623e0826..a18927d792af 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -2425,14 +2425,14 @@ static bool symbol__read_kptr_restrict(void)
->  {
->         bool value =3D false;
->         FILE *fp =3D fopen("/proc/sys/kernel/kptr_restrict", "r");
-> +       bool used_root;
-> +       bool cap_syslog =3D perf_cap__capable(CAP_SYSLOG, &used_root);
->
->         if (fp !=3D NULL) {
->                 char line[8];
->
->                 if (fgets(line, sizeof(line), fp) !=3D NULL)
-> -                       value =3D perf_cap__capable(CAP_SYSLOG) ?
-> -                                       (atoi(line) >=3D 2) :
-> -                                       (atoi(line) !=3D 0);
-> +                       value =3D cap_syslog ? (atoi(line) >=3D 2) : (ato=
-i(line) !=3D 0);
->
->                 fclose(fp);
->         }
-> @@ -2440,7 +2440,7 @@ static bool symbol__read_kptr_restrict(void)
->         /* Per kernel/kallsyms.c:
->          * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
->          */
-> -       if (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))
-> +       if (perf_event_paranoid() > 1 && !cap_syslog)
->                 value =3D true;
->
->         return value;
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index 4f561e5e4162..9d55a13787ce 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -325,9 +325,15 @@ int perf_event_paranoid(void)
->
->  bool perf_event_paranoid_check(int max_level)
->  {
-> -       return perf_cap__capable(CAP_SYS_ADMIN) ||
-> -                       perf_cap__capable(CAP_PERFMON) ||
-> -                       perf_event_paranoid() <=3D max_level;
-> +       bool used_root;
-> +
-> +       if (perf_cap__capable(CAP_SYS_ADMIN, &used_root))
-> +               return true;
-> +
-> +       if (!used_root && perf_cap__capable(CAP_PERFMON, &used_root))
-> +               return true;
-> +
-> +       return perf_event_paranoid() <=3D max_level;
->  }
->
->  static int
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
->
+        tglx
 
