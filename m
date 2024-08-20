@@ -1,196 +1,79 @@
-Return-Path: <linux-kernel+bounces-293464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF83958014
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D90958040
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603E11C23CFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E400284435
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2598C18952F;
-	Tue, 20 Aug 2024 07:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="vnUqSiOp"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE61E86E;
-	Tue, 20 Aug 2024 07:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CB118A923;
+	Tue, 20 Aug 2024 07:45:59 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4B918C032;
+	Tue, 20 Aug 2024 07:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139788; cv=none; b=s9GeNVWJcseUMRrv5QW3p8HSkeLOPXHiBhYv69xHq/sF5Rj8MH4uGiacK3gReJI8u1qNPMmMp7m19vOJMeXeHGoDRn5TbUnTyp21QdoCjcytMf1GMwrqhtbWCBAIcLOywXEVZmrwDX1b3VxWtbrIS9B0Wbrxc7wwm9wXuAPxQXM=
+	t=1724139959; cv=none; b=DvfW5RU8u0F4ySzZZy5Wg2Qn2l6KLmOv+esKD73mttdB4VTsby42vRCzFPlQyX0MdLJ1dyEhwHtg63BTCWuajaxeO/nuo2kZKWNa3SHJzVdl6UgZ5pE7ZPLyLYA6mrjogQA4wLv1kJMS8mgq2XxBpd8zZ4/UKMCbdxU9LyRD2wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139788; c=relaxed/simple;
-	bh=XH9LvcunWRYcHXxGZAnxEA5uFBtgW4DOX7tZ//VLSHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nR5LCTyqVJ0ezD1gkmiZHx7W58gu5/vURR6CoJtC8kiml3z1U/TorXL+q0yK27FXEMvb+xl3QFxeTADgOqV+ILHJbrqPYRsZxtiD+WWUYs+70J+uBzOoZRXG3KaPhOlEBqj0ilvl+XFTPrW+wZX2UFbk2YV7iPCjTjaG5x5m2Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=vnUqSiOp; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 76A5B2E9A;
-	Tue, 20 Aug 2024 09:42:54 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 76A5B2E9A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1724139774; bh=51ONq13TN8pRD7uff4GRkUMpKhlnkaubIa5w9z/leck=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vnUqSiOppbEY8BitfnNFv7MWnFPxjSKp/n157Lor5cwl4SMOTwA2kRsVyVH6EZtNB
-	 NlvQWW+3tyhhtbsFiUF9TttRbu0hhMu3PK7SbSfcni8Z+8DHpJrRyNYWmgyqguYTdz
-	 4Mmo2SriXfkzw68+GrjMrZI93i/hiJcQgBLASqg8=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Tue, 20 Aug 2024 09:42:40 +0200 (CEST)
-Message-ID: <eceafeef-2dba-48aa-b8b3-198b9bb39fb6@perex.cz>
-Date: Tue, 20 Aug 2024 09:42:39 +0200
+	s=arc-20240116; t=1724139959; c=relaxed/simple;
+	bh=GiNQDAoi4zuzHePeXuBOmU33vVoEeDsxOHAMolrzHrY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=AHKvWS5N1nYF30oyv4DBa5TYK7FmcermZvW6ENuYdjrJAuebvdw8IPIV+hXiTDSsQxvM2NbCffvKDT8PBUYkIEPG+V4K3RZPhZ+fGnSSVDNyPgWyoYS3cnlVbWlwZ4Usa9nK207wsH0jfIoHjsW/8rxFIbXJfBS1ynKPh8X1RNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee366c448f1f39-39744;
+	Tue, 20 Aug 2024 15:42:43 +0800 (CST)
+X-RM-TRANSID:2ee366c448f1f39-39744
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766c448f2318-fe51a;
+	Tue, 20 Aug 2024 15:42:43 +0800 (CST)
+X-RM-TRANSID:2ee766c448f2318-fe51a
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: mario.limonciello@amd.com
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhu Jun <zhujun2@cmss.chinamobile.com>
+Subject: [PATCH] tools/crypto:Remove unused variable
+Date: Tue, 20 Aug 2024 00:42:42 -0700
+Message-Id: <20240820074242.4926-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory
- function
-To: Shengjiu Wang <shengjiu.wang@gmail.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
- linuxppc-dev@lists.ozlabs.org
-References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
- <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com>
- <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
- <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
- <ceb54a27-144b-40ed-8de5-482f2b0664a0@linux.intel.com>
- <CAA+D8ANqb89UavAXTiHvcHyv9uMt8_MYR9hfBaxEJDPNy5C=-g@mail.gmail.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <CAA+D8ANqb89UavAXTiHvcHyv9uMt8_MYR9hfBaxEJDPNy5C=-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 20. 08. 24 9:37, Shengjiu Wang wrote:
-> On Tue, Aug 20, 2024 at 2:59 PM Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
->>
->>
->>
->> On 8/20/24 04:53, Shengjiu Wang wrote:
->>> On Mon, Aug 19, 2024 at 3:42 PM Pierre-Louis Bossart
->>> <pierre-louis.bossart@linux.intel.com> wrote:
->>>>
->>>>
->>>>
->>>> On 8/16/24 12:42, Shengjiu Wang wrote:
->>>>> Implement the ASRC memory to memory function using
->>>>> the compress framework, user can use this function with
->>>>> compress ioctl interface.
->>>>>
->>>>> Define below private metadata key value for output
->>>>> format, output rate and ratio modifier configuration.
->>>>> ASRC_OUTPUT_FORMAT 0x80000001
->>>>> ASRC_OUTPUT_RATE   0x80000002
->>>>> ASRC_RATIO_MOD     0x80000003
->>>>
->>>> Can the output format/rate change at run-time?
->>>
->>> Seldom I think.
->>>
->>>>
->>>> If no, then these parameters should be moved somewhere else - e.g.
->>>> hw_params or something.
->>>
->>> This means I will do some changes in compress_params.h, add
->>> output format and output rate definition, follow Jaroslav's example
->>> right?
->>
->> yes, having parameters for the PCM case would make sense.
->>
->>>> I am still not very clear on the expanding the SET_METADATA ioctl to
->>>> deal with the ratio changes. This isn't linked to the control layer as
->>>> suggested before, and there's no precedent of calling it multiple times
->>>> during streaming.
->>>
->>> Which control layer? if you means the snd_kcontrol_new?  it is bound
->>> with sound card,  but in my case,  I need to the control bind with
->>> the snd_compr_stream to support multi streams/instances.
->>
->> I can only quote Jaroslav's previous answer:
->>
->> "
->> This argument is not valid. The controls are bound to the card, but the
->> element identifiers have already iface (interface), device and subdevice
->> numbers. We are using controls for PCM devices for example. The binding
->> is straight.
->>
->> Just add SNDRV_CTL_ELEM_IFACE_COMPRESS define and specify the compress
->> device number in the 'struct snd_ctl_elem_id'.
->> "
-> 
-> I don't think it is doable,  or at least I don't know how to do it.
-> 
-> My case is just one card/one device/one subdevice.  can't use it to
-> distinguish multi streams.
+the variable is never referenced in the code, just remove them.
 
-I already wrote that the compress core code should be extended to support 
-subdevices like other ALSA APIs. I'll work on it. For now, just add support 
-for one converter.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/crypto/ccp/dbc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-					Jaroslav
-
+diff --git a/tools/crypto/ccp/dbc.c b/tools/crypto/ccp/dbc.c
+index a807df0f0597..80248d3d3a5a 100644
+--- a/tools/crypto/ccp/dbc.c
++++ b/tools/crypto/ccp/dbc.c
+@@ -57,7 +57,6 @@ int process_param(int fd, int msg_index, __u8 *signature, int *data)
+ 		.msg_index = msg_index,
+ 		.param = *data,
+ 	};
+-	int ret;
+ 
+ 	assert(signature);
+ 	assert(data);
 -- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+2.17.1
+
+
 
 
