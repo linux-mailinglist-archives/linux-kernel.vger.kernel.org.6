@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-293160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21117957B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3F5957B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23FF283F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:35:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC012840A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8B03C482;
-	Tue, 20 Aug 2024 02:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946A4502F;
+	Tue, 20 Aug 2024 02:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="radG637o"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr0dkDEK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6790913FF6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E0D376F1;
+	Tue, 20 Aug 2024 02:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724121339; cv=none; b=Bmnk4MqEfmfqMF61K1nI06tGkvxeVMgBlQTAkrJTOW9+5GaKgLLC3q+kcahNdsyHKPKdJtnWTlg7PqbkH/SUGhbtMB67so5b7aGWXvDVqUXxQTTK7Fv+iMk5P0Noon+tcky+uYxh63fdvVypIPX9HYTgUbjfBltnEWAArbsYawE=
+	t=1724121373; cv=none; b=cKJZdkI8i+a3MbXXpOVaP1+yUuD7BTgJHsATegruUMxx2y+O812MNR6w9noBLF7zwFGHpV3VN0WNlMWCzrOQA5euvVaqfwXjT5iRyqgG+X23DrFQbkULOMzyTpJSrAdCWI4FcZXAXPfhxieVSiU4bRrsBAsYP0iarMhbjuak4vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724121339; c=relaxed/simple;
-	bh=3FA+zhY3J2aurdG8ymeG/8o1uucMCSTevRTGmf/g0j8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CrEhjfeqOc5S+xbFGAbLw7Y33gOgxh6d1TOrqzEDsAeassxLsRHyAu3N7YkWH6TiVRxlShImTSuPBE5TXdAjMNzBj9kATYL0vA8UDterMkQkN4TdD3yZ9mDbQRQ3H52waWOwtHHj7Fkhra5w4cdS9C4r/k8d3BlIcLlw3/VUaaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=radG637o; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724121335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=d3N4eAp1zNkGpAB397euBnf4ls1mgFuOdl80fVhDMCk=;
-	b=radG637oDVCDIvt3PWEEmr6brYVRi2wD7sDKaadZcZdaos9DGm29UQRQOhBaxZkyFei8yt
-	XpYgTZHIhFpJ7UACs2v2Y20E/WIP2Ig/C1lOjtoPH18y/PXjdgbjXXxrsNGD68CKUUvdKe
-	d5hlpai8hxSjpwwhWaF7ehmziJI1QYc=
-From: Hao Ge <hao.ge@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer checking
-Date: Tue, 20 Aug 2024 10:34:47 +0800
-Message-Id: <20240820023447.29002-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1724121373; c=relaxed/simple;
+	bh=12cr/hbwQKqkr5tTboxeAWJWK4VicP7eoqPbiF2HlG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mkXEg7DKmWHNKkfR0KomyrVDLOdnsSFqPe7WKOo7SH9IlIV2ZkOt86diBa4Hp5zvqy13cUHF8nWVh2LvBNY31uKnrNNuKRFwWaAcumsEsWu6R9dssGySFRrpuFKUxKxtY2DyXYbDeeWwzLmQTER8vcydhQ/yCMnjOqsrdFcNdZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr0dkDEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FA7C32782;
+	Tue, 20 Aug 2024 02:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724121372;
+	bh=12cr/hbwQKqkr5tTboxeAWJWK4VicP7eoqPbiF2HlG4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mr0dkDEKInTMdt3g+6wda/6vUnMDji+lh+78jE+MQX7XaTQO63jyJUAGURy1E1wkl
+	 2EVhDu9zanyD8YmHJUOovMdKp2DXIKeSoshmbjd0EqtMSyun2iUZ+P/Jt2qtx6cUrQ
+	 OAnYEQo1gcuG68XEkF90g7ZUCWtxLDQ2XdUPBPkteGr492v+p7gib4JFrYeYQU6VYr
+	 Li/35+evsg50rhIstrMn7b87pLJBJJpZVS3W4ZGZhF1ugcPtSUvWCSJ7WfVuSDhuTo
+	 Esc/97nIJdWIinhqA4iG7mHx7KjIiedSgl+Ql+YQoyeMDZ9mVMGkr1cIMC/mh3EuEU
+	 K2U2pkqLqnSRw==
+Date: Mon, 19 Aug 2024 19:36:10 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Martin Karsten <mkarsten@uwaterloo.ca>, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, Joe Damato <jdamato@fastly.com>
+Cc: Samiullah Khawaja <skhawaja@google.com>, Stanislav Fomichev
+ <sdf@fomichev.me>, netdev@vger.kernel.org, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Breno Leitao <leitao@debian.org>, Christian Brauner <brauner@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jan Kara
+ <jack@suse.cz>, Jiri Pirko <jiri@resnulli.us>, Johannes Berg
+ <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:FILESYSTEMS
+ (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+Message-ID: <20240819193610.5f416199@kernel.org>
+In-Reply-To: <4dc65899-e599-43e3-8f95-585d3489b424@uwaterloo.ca>
+References: <ZrqU3kYgL4-OI-qj@mini-arch>
+	<d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
+	<Zrq8zCy1-mfArXka@mini-arch>
+	<5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
+	<Zrrb8xkdIbhS7F58@mini-arch>
+	<6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
+	<CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
+	<d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
+	<66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
+	<66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
+	<Zr9vavqD-QHD-JcG@LQ3V64L9R2>
+	<66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
+	<02091b4b-de85-457d-993e-0548f788f4a1@uwaterloo.ca>
+	<66bfbd88dc0c6_18d7b829435@willemb.c.googlers.com.notmuch>
+	<e4f6639e-53eb-412d-b998-699099570107@uwaterloo.ca>
+	<66c1ef2a2e94c_362202942d@willemb.c.googlers.com.notmuch>
+	<4dc65899-e599-43e3-8f95-585d3489b424@uwaterloo.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Hao Ge <gehao@kylinos.cn>
+On Sun, 18 Aug 2024 10:51:04 -0400 Martin Karsten wrote:
+> >> I believe this would take away flexibility without gaining much. You'd
+> >> still want some sort of admin-controlled 'enable' flag, so you'd still
+> >> need some kind of parameter.
+> >>
+> >> When using our scheme, the factor between gro_flush_timeout and
+> >> irq_suspend_timeout should *roughly* correspond to the maximum batch
+> >> size that an application would process in one go (orders of magnitude,
+> >> see above). This determines both the target application's worst-case
+> >> latency as well as the worst-case latency of concurrent applications, if
+> >> any, as mentioned previously.  
+> > 
+> > Oh is concurrent applications the argument against a very high
+> > timeout?  
+> 
+> Only in the error case. If suspend_irq_timeout is large enough as you 
+> point out above, then as long as the target application behaves well, 
+> its batching settings are the determining factor.
 
-Smatch reported the following warning:
-    ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_program()
-    warn: variable dereferenced before check 'buf' (see line 454)
-
-It seems correct,so let's modify it based on it's suggestion.
-
-Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
-check in get_xlated_program()") fixed an issue in the test_verifier.c
-once,but it was reverted this time.
-
-Let's solve this issue with the minimal changes possible.
-
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cbf91@stanley.mountain/
-Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() helper")
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- tools/testing/selftests/bpf/testing_helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/bpf/testing_helpers.c b/tools/testing/selftests/bpf/testing_helpers.c
-index d5379a0e6da8..34dfea295c8e 100644
---- a/tools/testing/selftests/bpf/testing_helpers.c
-+++ b/tools/testing/selftests/bpf/testing_helpers.c
-@@ -451,7 +451,7 @@ int get_xlated_program(int fd_prog, struct bpf_insn **buf, __u32 *cnt)
- 
- 	*cnt = xlated_prog_len / buf_element_size;
- 	*buf = calloc(*cnt, buf_element_size);
--	if (!buf) {
-+	if (!*buf) {
- 		perror("can't allocate xlated program buffer");
- 		return -ENOMEM;
- 	}
--- 
-2.25.1
-
+Since the discussion is still sort of going on let me ask something
+potentially stupid (I haven't read the paper, yet). Are the cores
+assumed to be fully isolated (ergo the application can only yield 
+to the idle thread)? Do we not have to worry about the scheduler
+deciding to schedule the process out involuntarily?
 
