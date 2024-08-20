@@ -1,50 +1,53 @@
-Return-Path: <linux-kernel+bounces-293106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0237957AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8603A957AD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2F9E1C2110F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91571C22899
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C01B813;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6326018EA8;
 	Tue, 20 Aug 2024 01:20:02 +0000 (UTC)
 Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C39D20B20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3C620B28;
 	Tue, 20 Aug 2024 01:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724116802; cv=none; b=rEoL9g8BGjcHOcLP2mhQWOf4hchPOWWkPrmXL3DPy+27++I9yWUy/Dv0fKqoq5aPrnN5VzM2CqzWvbHijyqjECP3nbv4EkF8VrpBSlN3XbflErcPBl9T9/BT7zSvD23ilSvYjBxn4HGSbFNjFOKOBBdToP5f+6Zf8utcmamDVlQ=
+	t=1724116802; cv=none; b=IsIUw7c5yg0MoFjkFOL3v5g8EO3R6LNMEpI1bmOI9tS2Mf+2su7NDWuqRnYK0qo+kHV4ihU+QXLWtpsR0ZQIR918VUcAvqKsBP8hX099UU/w1hBU6iXwb2u4ciDqYCm8YJcDkK4N+6mwmvxsrkvXbeVcCskgS0htnaWU6WP8Nl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724116802; c=relaxed/simple;
-	bh=QwJnsgSf7HZgYjqYfLwpfwG/BggAMvKaf9a7K6aqHTM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WK9ZI232lkUVOwQuShlIvy+LztNw5ZqDK9a2U6W70OesRPqjiyYKz8e6emyzZRoAbUhjjGe4kHyBKmhre+g5RfPakVrVCwyrXXQ8pIhnRzUmxHsPkaAnHTY8rgCEt4y290SgjFgKaVYWW4hAuWvcamy5gEhkE6036IwCWok002g=
+	bh=6X9CzpXb9qOaMMS9TlDooD7JnjCYCgjuuiRwyFhWWPU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EPh4YJ2KvfAn2uPlsomptCBAe8lpFGyMX1RkFSpalN1qd3+LT/d1vRmuKQl0f9Pg2VdKOWEFOUBux5YkGvAO8HREMgvuapIUkwRKeCNoQg9+ETNhb7Zyw36jq4W2opi4G9EcrD4Rl7MMN5tQiCmt+EqBf7o2zU/P3bwF8sMJtMU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wns4S66Rdz1HGnx;
-	Tue, 20 Aug 2024 09:16:40 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wns2N4sF7z1j6m6;
+	Tue, 20 Aug 2024 09:14:52 +0800 (CST)
 Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 600E11A016C;
+	by mail.maildlp.com (Postfix) with ESMTPS id ADCC51400D6;
 	Tue, 20 Aug 2024 09:19:51 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
  (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 20 Aug
- 2024 09:19:50 +0800
+ 2024 09:19:51 +0800
 From: Li Zetao <lizetao1@huawei.com>
 To: <kent.overstreet@linux.dev>
 CC: <lizetao1@huawei.com>, <linux-bcachefs@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next 1/2] bcachefs: Remove redundant checks
-Date: Tue, 20 Aug 2024 09:27:17 +0800
-Message-ID: <20240820012718.4121485-1-lizetao1@huawei.com>
+Subject: [PATCH -next 2/2] bcachefs: Remove redundant check before free in bch2_ioctl_disk_add()
+Date: Tue, 20 Aug 2024 09:27:18 +0800
+Message-ID: <20240820012718.4121485-2-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240820012718.4121485-1-lizetao1@huawei.com>
+References: <20240820012718.4121485-1-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,63 +59,31 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemd500012.china.huawei.com (7.221.188.25)
 
-Since the kthread_create() and strndup_user() do not return a
-null pointer, so it is enough to use IS_ERR instead of PTR_ERR_OR_ZERO
-to check the return value. Moreover using PTR_ERR_OR_ZERO will do two
-checks, while IS_ERR only does one.
+Since the variable path has been checked after strndup_user() and
+will not be reassigned during use, so it does not need to be checked
+again before free.
 
 No functional change intended.
 
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- fs/bcachefs/chardev.c          | 10 ++++------
- fs/bcachefs/thread_with_file.c |  5 ++---
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ fs/bcachefs/chardev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
-index ef1f74866e23..c315421bee85 100644
+index c315421bee85..ea84aaa7a143 100644
 --- a/fs/bcachefs/chardev.c
 +++ b/fs/bcachefs/chardev.c
-@@ -316,9 +316,8 @@ static long bch2_ioctl_disk_add(struct bch_fs *c, struct bch_ioctl_disk arg)
- 		return -EINVAL;
- 
- 	path = strndup_user((const char __user *)(unsigned long) arg.dev, PATH_MAX);
--	ret = PTR_ERR_OR_ZERO(path);
--	if (ret)
--		return ret;
-+	if (IS_ERR(path))
-+		return PTR_ERR(path);
+@@ -320,8 +320,7 @@ static long bch2_ioctl_disk_add(struct bch_fs *c, struct bch_ioctl_disk arg)
+ 		return PTR_ERR(path);
  
  	ret = bch2_dev_add(c, path);
- 	if (!IS_ERR(path))
-@@ -360,9 +359,8 @@ static long bch2_ioctl_disk_online(struct bch_fs *c, struct bch_ioctl_disk arg)
- 		return -EINVAL;
+-	if (!IS_ERR(path))
+-		kfree(path);
++	kfree(path);
  
- 	path = strndup_user((const char __user *)(unsigned long) arg.dev, PATH_MAX);
--	ret = PTR_ERR_OR_ZERO(path);
--	if (ret)
--		return ret;
-+	if (IS_ERR(path))
-+		return PTR_ERR(path);
- 
- 	ret = bch2_dev_online(c, path);
- 	kfree(path);
-diff --git a/fs/bcachefs/thread_with_file.c b/fs/bcachefs/thread_with_file.c
-index 0807ce9b171a..e8ba0d0cc0df 100644
---- a/fs/bcachefs/thread_with_file.c
-+++ b/fs/bcachefs/thread_with_file.c
-@@ -39,9 +39,8 @@ int bch2_run_thread_with_file(struct thread_with_file *thr,
- 
- 	thr->ret = 0;
- 	thr->task = kthread_create(fn, thr, "%s", name);
--	ret = PTR_ERR_OR_ZERO(thr->task);
--	if (ret)
--		return ret;
-+	if (IS_ERR(thr->task))
-+		return PTR_ERR(thr->task);
- 
- 	ret = get_unused_fd_flags(fd_flags);
- 	if (ret < 0)
+ 	return ret;
+ }
 -- 
 2.34.1
 
