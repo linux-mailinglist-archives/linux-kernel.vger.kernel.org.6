@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-294668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D150F95912B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:24:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0DA95912D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F9F283C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:24:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87266B24224
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3221A1C8FAF;
-	Tue, 20 Aug 2024 23:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56651C8FB5;
+	Tue, 20 Aug 2024 23:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxepoFmx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gyJ36ngD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D21370;
-	Tue, 20 Aug 2024 23:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D212A14AD2B
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724196251; cv=none; b=hkH8HmlaYUqooDGGoLQa3cGdii3H3nnR1Xj2TXSYFhEnqeiqOMvGJjBBJBa/cKHpSZuXMZ/0TtSUUmAMCMh0pk1YsMbAC3orCzG5yJ8v83zDqTaP/c1QOrf25YD25DAqvpuwQIaAffFCkuq0jyQ9+1L7Lp5rOj63Sj18qHqjw1M=
+	t=1724196281; cv=none; b=i4XLNdyQtcwkow06LlI2whxiqtDY8IkgswlYwz/PesjF+AFwxQQGkBXzKDS88VnR5SrBGATtQOlrfWUKk6pG1GakCPtmWpi05WW9KwQ+mFwfucXFy72wQdVtgdYUL+UsHcS0Cnd7hC28XZ6N/FOY140PlSGKLMyNeeUpRmRtVAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724196251; c=relaxed/simple;
-	bh=Bgw5hU99derk7U1NmjbqkCmMgXck6gaGKiWqwznP96s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M/Q5xDo8d03CWlsto2WuUn93vfbWRTx8/5zuctKy/jOTcO5H/WDIuvxxMdrOUHKg+n4yZ/U7VG0DkoaTsX3MaBEn6ciMWiR/LAHMitoEvDfXDkgPWyw8n78wcUoQrNsz5JFwXOHvuWUCpJA5HPC1tsRyfrmxSRmgR67bl0Eenmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxepoFmx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09ACC4AF09;
-	Tue, 20 Aug 2024 23:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724196250;
-	bh=Bgw5hU99derk7U1NmjbqkCmMgXck6gaGKiWqwznP96s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BxepoFmxfQO0UydG0v3ZV5buhg0oSeHlHX+McfdpdT2wIONHMoOuk5UekC70aOqLu
-	 PRIdPa3JYBzVLWEeMQHuD+OYn2KtiCGJnZMYfNHD0zIQ+QPjId1vpPJSUP7vK2Cf5r
-	 g+k4BOa9v778e4sSRjGBFsq32605TUK3G/sP8F4W4ugKBe+ZKyD0F6zwV7x1j0fFaB
-	 WP91l6wdTihxqmMUGKdT4RsaAvNttX9Nay08ueScQbFFXj5XyRHy7Nx6Y9lOZ/oBf5
-	 A9qv7int+Rw6i+q3Dd1eCpNp4pRPA6hapanVoVOi9IMiQjx7hFCklMX3UF6tGg3aRn
-	 fATnsf0enV2og==
-Date: Tue, 20 Aug 2024 16:24:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/3] netconsole: pr_err() when netpoll_setup
- fails
-Message-ID: <20240820162409.62a222a8@kernel.org>
-In-Reply-To: <20240819103616.2260006-3-leitao@debian.org>
-References: <20240819103616.2260006-1-leitao@debian.org>
-	<20240819103616.2260006-3-leitao@debian.org>
+	s=arc-20240116; t=1724196281; c=relaxed/simple;
+	bh=ktj3J694UJT11cdVq07iovQ6VNYIzh45Q7Ed964y7SU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=u8l6dVljqfd0THdwvCvFXV++Jbxqfww1kptYvGnrfFIzkufbBP0WcVD83dK4tc4A3C4BtE8xg9I7v8OE+C8FQqr2ywZP+s4aBSJpZSe4fXeJU3NzN69/DdEmgVnb+UBsvWX1QUEC7bMRpfgzoN87H+VAZ/WH+WHr2wsgSPqqhog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gyJ36ngD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724196279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wTO3rn8cai9pfp8/7PSJNm83ubFTKdJd8PEervFV6A=;
+	b=gyJ36ngD9QiLbvdyDKvQWjYH3AUBeFiS2/bd2PMHLvJEG8I/kUNl8Pj3RJTnvhuFfYBXmO
+	JFFhUBHtcrkL9s6YKJTKPPtBf/lGMFUcyPrtLPzKOhLSpa+JxqQ0IBCK3bOYddqfJeGtIM
+	euMNaOLpbGH67uR8b/isC00mUG6bGsM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-V0HWiyhqP0C_oN7kg_4XJA-1; Tue,
+ 20 Aug 2024 19:24:34 -0400
+X-MC-Unique: V0HWiyhqP0C_oN7kg_4XJA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76A721955D47;
+	Tue, 20 Aug 2024 23:24:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA4AC19560AA;
+	Tue, 20 Aug 2024 23:24:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240818165124.7jrop5sgtv5pjd3g@quentin>
+References: <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3792764.1724196264.1@warthog.procyon.org.uk>
+Date: Wed, 21 Aug 2024 00:24:24 +0100
+Message-ID: <3792765.1724196264@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, 19 Aug 2024 03:36:12 -0700 Breno Leitao wrote:
-> netpoll_setup() can fail in several ways, some of which print an error
-> message, while others simply return without any message. For example,
-> __netpoll_setup() returns in a few places without printing anything.
-> 
-> To address this issue, modify the code to print an error message on
-> netconsole if the target is not enabled. This will help us identify and
-> troubleshoot netcnsole issues related to netpoll setup failures
-> more easily.
+Okay, I think I've found the bugs in my code and in truncate.  It appears
+they're affected by your code, but exist upstream.  You can add:
 
-Only if memory allocation fails, it seems, and memory allocation
-failures with GFP_KERNEL will be quite noisy.
+	Tested-by: David Howells <dhowells@redhat.com>
 
-BTW I looked thru 4 random implementations of ndo_netpoll_setup
-and they look almost identical :S Perhaps they can be refactored?
+to patches 1-5 if you wish.
+
+David
+
 
