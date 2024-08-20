@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-294014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0A29587C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300F29587DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA420B21EE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:23:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C786AB217FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE809190462;
-	Tue, 20 Aug 2024 13:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sMOw9i9v"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54820191F72;
+	Tue, 20 Aug 2024 13:25:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D130D18E35F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A0E190696;
+	Tue, 20 Aug 2024 13:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724160175; cv=none; b=hFyAAhxGVmb21jCreR46y44K0GRBmaBnk12ey6tsL3KyEx2Jo5aXQQKSfeZokkLi/kKdwq+g+CzqWn45ctutFv1K078y6WMUFoJBw6a8PImH+nYz5rcUfKUzxKo6yiqUw0tYIDjkz7j0k4y+QWP4bH6vKLYBkdL+ubfLz1cL0Qo=
+	t=1724160351; cv=none; b=eXur+JVXk8Ow2VKTPi73mC37GzscS6ye4RIhwqNUvcCRBXjqRVDXyoWSLR6aQSp7IOnAeqo3RftsvMinW3GrLj/62n/21fCZN7jtD3FclMqVDv5rL7kcVufQaxn7HJonPqJEidWAzAXHwMnJqbqPltSEGrzYaAJXL4exkhtCD50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724160175; c=relaxed/simple;
-	bh=6SsWzGhQg6mX4Dz+eNdrAP21roHMdCf36hZ17CmA96U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ruce/7RO1f1lpUP3eYtmT2Cv2M/4wtqNfiDpGHoZuMlfyCkCMAH/PuQpWnfMCcPz17dNeSPZ0NPRRcLjxnNYRlyh30eldQUu+lg5h7BiTXoqfG2BxQV+Sromjg7G4Skc4TkQhbB9rqj8Ohho8ofNpr96eT0s+JvouIiaYAxUyMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sMOw9i9v; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gOnssXi27kjrSgOntsuabK; Tue, 20 Aug 2024 15:21:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724160102;
-	bh=SeWGNhxdzGRrfnsYXDgtDRYV+3+oxeaoACzrlFrl3Hk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sMOw9i9v0tU9ZWbnudGNgjqMsAcxZWb/JiuQ7jIDdxCyRyqdTcc4kUZNMHnnlFR4J
-	 B2XYP1/dH4x9Je74CK1jrLORQWBA4ZJtFPE78Z8yELBG1pa4iVgtCoafnxO1l7XIy7
-	 0P9bUkvqLnqAdKEgbzHtRGuyi40fidNTg0jgWc9Sv6ejvtGG85dDLPdOW/WgyDYZg2
-	 4NYPCEWGST7fL7bU2fWpuOGWWWUwACc3SFzeJbw7nrP5cbUzI7mtIduqtEQorcfNgX
-	 +Hjf6I7TWlLxDAdDCqgURteRWxEUf5c1JiEV5puraNqOTC7J98yvW9agFS0WZor2j9
-	 D2JoYnOZXdwog==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 20 Aug 2024 15:21:42 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <7b31732e-00ca-4792-a16b-156689862c5b@wanadoo.fr>
-Date: Tue, 20 Aug 2024 15:21:40 +0200
+	s=arc-20240116; t=1724160351; c=relaxed/simple;
+	bh=sIu7oYoaJQjyuB6gLjixvVv8WdBnCljuXi+R9E219sY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p7P5wPaYRZWnXEHnFzQzvVHxzhMyjbd3BLao2+CQTzOzk32eAyP11tR967LFo5FeVqVn1BtJ20KFqyhq93AlytezAKigbfPRheoKxTddjqWNt8DctLOz/7ZdpAbItHnxS1HSy+xNrfwG1ClIXrdxJQF8QuOTQTqh1LeT1FO0zbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wp9FV65ksz4f3jv6;
+	Tue, 20 Aug 2024 21:25:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 751081A0359;
+	Tue, 20 Aug 2024 21:25:44 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP2 (Coremail) with SMTP id Syh0CgDH_bxWmcRmD7_dCA--.4366S2;
+	Tue, 20 Aug 2024 21:25:44 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: harshadshirwadkar@gmail.com,
+	darrick.wong@oracle.com,
+	akpm@osdl.org,
+	shaggy@austin.ibm.com,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] Fixes and cleanups to ext4 ialloc
+Date: Tue, 20 Aug 2024 21:22:27 +0800
+Message-Id: <20240820132234.2759926-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmem: jz4780-efuse: Use devm_clk_get_enabled() helpers
-To: Huan Yang <link@vivo.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240820102333.133503-1-link@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240820102333.133503-1-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDH_bxWmcRmD7_dCA--.4366S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrykGrW3WF4ftw4UuFW5Awb_yoWDZwc_Ja
+	4kZFyDJr4UZas7CayDKry5JFyDCrW8Cr1UtF4vqw4UZr1fJws8ua1kCr42vr1xWry3Z3Zx
+	Cry7Jr1xAFn29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Le 20/08/2024 à 12:23, Huan Yang a écrit :
-> The devm_clk_get_enabled() helpers:
->      - call devm_clk_get()
->      - call clk_prepare_enable() and register what is needed in order to
->       call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
+v1->v2:
+-Append parentheses to function names in changelog.
+-Add "Fixes" tag to bugfix patch
+-Minor improve in patch "ext4: avoid potential buffer_head leak in
+__ext4_new_inode"
 
-Hi,
+This series contains some random fixes and cleanups to ext4 ialloc. More
+details can be found in respective patches. Thanks!
 
-if you want to go 1 step further, I think that 'clk' can now also be 
-removed from struct jz4780_efuse.
+Kemeng Shi (7):
+  ext4: avoid buffer_head leak in ext4_mark_inode_used()
+  ext4: avoid potential buffer_head leak in __ext4_new_inode()
+  ext4: avoid negative min_clusters in find_group_orlov()
+  ext4: remove dead check in __ext4_new_inode()
+  ext4: move checksum length calculation of inode bitmap into
+    ext4_inode_bitmap_csum_[verify/set]() functions
+  ext4: remove unneeded NULL check of buffer_head in
+    ext4_mark_inode_used()
+  ext4: check buffer_verified in advance to avoid unneeded
+    ext4_get_group_info()
 
-Just my 2c.
+ fs/ext4/bitmap.c |  8 ++++++--
+ fs/ext4/ext4.h   |  4 ++--
+ fs/ext4/ialloc.c | 35 ++++++++++++++++-------------------
+ fs/ext4/resize.c |  3 +--
+ 4 files changed, 25 insertions(+), 25 deletions(-)
 
-CJ
-
->   drivers/nvmem/jz4780-efuse.c | 18 +-----------------
->   1 file changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/drivers/nvmem/jz4780-efuse.c b/drivers/nvmem/jz4780-efuse.c
-> index 0b01b840edd9..2b5badfbf22f 100644
-> --- a/drivers/nvmem/jz4780-efuse.c
-> +++ b/drivers/nvmem/jz4780-efuse.c
-> @@ -131,11 +131,6 @@ static const struct regmap_config jz4780_efuse_regmap_config = {
->   	.max_register = JZ_EFUDATA(7),
->   };
->   
-> -static void clk_disable_unprepare_helper(void *clock)
-> -{
-> -	clk_disable_unprepare(clock);
-> -}
-> -
->   static int jz4780_efuse_probe(struct platform_device *pdev)
->   {
->   	struct nvmem_device *nvmem;
-> @@ -146,7 +141,6 @@ static int jz4780_efuse_probe(struct platform_device *pdev)
->   	unsigned long rd_strobe;
->   	struct device *dev = &pdev->dev;
->   	void __iomem *regs;
-> -	int ret;
->   
->   	efuse = devm_kzalloc(dev, sizeof(*efuse), GFP_KERNEL);
->   	if (!efuse)
-> @@ -161,20 +155,10 @@ static int jz4780_efuse_probe(struct platform_device *pdev)
->   	if (IS_ERR(efuse->map))
->   		return PTR_ERR(efuse->map);
->   
-> -	efuse->clk = devm_clk_get(&pdev->dev, NULL);
-> +	efuse->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->   	if (IS_ERR(efuse->clk))
->   		return PTR_ERR(efuse->clk);
->   
-> -	ret = clk_prepare_enable(efuse->clk);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev,
-> -				       clk_disable_unprepare_helper,
-> -				       efuse->clk);
-> -	if (ret < 0)
-> -		return ret;
-> -
->   	clk_rate = clk_get_rate(efuse->clk);
->   
->   	efuse->dev = dev;
+-- 
+2.30.0
 
 
