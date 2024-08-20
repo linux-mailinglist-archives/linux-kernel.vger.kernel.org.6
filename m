@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-293866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678939585F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99569585B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6FA281D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8666AB23DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E538918E75E;
-	Tue, 20 Aug 2024 11:36:40 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2120.outbound.protection.partner.outlook.cn [139.219.146.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867D218E756;
+	Tue, 20 Aug 2024 11:21:47 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726218CBF3;
-	Tue, 20 Aug 2024 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724153800; cv=fail; b=IlcUeCAKzDqk/yO/XyY8QPk3jQxRCTELhD5UAJTYWIn7xXWglHvs2lpnEbSaYmyOJm8fq/pFWlnImGLtQ5xzURWLVLE4n6szZ+jyB6j9AlYa2H12BMQQW6gzU21QY5Fv+8Cznu8ZnJeAIXTiyYNIRRe5dqPzCRHAVz+vpwF4QjU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724153800; c=relaxed/simple;
-	bh=0pbdUTNVnvaM1L+x2mMj0U+TziwrSD0X1VEGO+8r2YA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Xm+DDLMfbouqi14GfQxFpVvWQs1sUB+J4vLhXxikuu0/icQK5mhbyjT/zcHltyizzS7ScPHevna5+j2obl1Jm0jqlp41pfH7TWrziQALd7JyOoO7TOdgU5zevochxEuppcujLqbyqkKESKGPcDAOyzf8kSERFn0lDQRNgR6jWyU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SZU1q/GLiGMvePIt2PGp9N9Ob0fmDmDbeU5K9xagSSBLr1S+GiNv3eFBnWQ0VzirnVrCi+a8AkaV35cWkiWL7Ev+gKEWpK8Y9aw2p3jc0Ydk21UsN750aSXyRcrLYXqS2lMDOywWB00UXslMCQTJ32UtyDWN3c1wSsSe0EJrpMT7SMJGz4Kh2omNSxuj+oejIJTwlc/ZPbjqFkMIA4cJo7UVJhxBIw0C9XJnNKdgl+95UKXIHAB7wh1Z1PfnFgxBg+SBeFoZdvIlZ7e+VKT44Kj0mwF+UnffDZsBxIdjQKuSzWe0mYDOSt2cO6tp/DB3MGGx9O0WJrMWjjgWBJhx2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uhVnfC8oWWrotk82x5SU9xTqcKcNS8KLDrtGwm9ow0E=;
- b=CGVhqIEYNhdCDAalZZ/ZDTgvkv4EqU4IguK9iRbo/Hxol2TtT1OksMr7pK4KQOSkr1pyXJlxJ8lp7kidEdBqqDJV0lLGc9y1w8tm4x1UoUPKWmzt3sQCaGaY4XMnAaCzxsGq0EXv58T7itChMOIKsQYcLuK9vbBr+UkF8dvRJoJg6kKKMvVsBdVLEJxQvunMlaCar5owqd56h4DSQgCNaa0+bsy47bAv95y5EDIwhrYkWmhOsMfRHjRIjwsM4l4+rbDhu5EYqyi2lhTt6b6/14WxAVHchfhRQPSq6nbEAh+EILOFdMWQVnMlODajNAqO5GvG694D7AwwUBxCGP2ENw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB0998.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Tue, 20 Aug
- 2024 11:21:01 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%3])
- with mapi id 15.20.7875.023; Tue, 20 Aug 2024 11:21:01 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [v1] MAINTAINERS: Add "qcom," substring for Qualcomm Camera Subsystem
-Date: Tue, 20 Aug 2024 04:20:53 -0700
-Message-Id: <20240820112053.560605-1-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0032.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::6) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D77618E744;
+	Tue, 20 Aug 2024 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724152907; cv=none; b=rMu1gU+1NeB2alswM5n3VvqzuR4jqgY2Fhe9UL6/mEqRd34+rFeCAJlYfXDCLD+YIrjIwi0uUghlo/4Q2UFdcRxlgcvvYJ91tjvXdMHuK7SiM2X0vb3m4tUQcuAyhQujiy7TKDcNqjt2+FnIxMEk9mROtTySLaFW0HL9dJnAZFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724152907; c=relaxed/simple;
+	bh=AMPKw3vEUGXBHvvYtB4Det59cxLVQFjWPWXu/V6zIf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nntTHkL651ulmvUa/YGnVbr/n67k23tj8y9e3Hep5xny9A0Ux5rninvCBko4u6Ps9sYnKluDnitpD++kaHpEIhuw4wCZtL8RiXdENu82M7h4wcnOicr/Xd5bmmWb34Xf4zwb5o+nHrE9uM14qSxruR1Lkuynsn8VQqtpsIJZNX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so37145465e9.2;
+        Tue, 20 Aug 2024 04:21:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724152903; x=1724757703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYw4GmPfrHigbQo/4U34PNKhToaAnBYaJK1BK61a010=;
+        b=Mp2gddG46YfGazM6+ID6vOCXtT/BcE3rDqR8RiMiylgVmMHPl3Vr1nSPz3ITf7MfZH
+         FSXrWSrgLbXRhbWl3oQ6O5Q3/GlRSHTl64HmkeS1QpFBq0PASogAK1J9FGj1nkT7PojP
+         Lb+4HHQLHtAhJUtwkXz3Mn2Bl5oMJuX42RNDdtjtjrfbxjHDxJKDVz60WPro18ptuti9
+         5Bq+qYKYXaO9YEaEb4CkResGk6DRf7DlEa9g4y071DOraOZQ3ksasOpBc/iR61FTlteb
+         QM2wuyUcWW2n/RKg0G1a/fvQ69SAAd4j/Zh71Lu6ieh2v3eS6b6XwtJ+3ivUQOLPrJe7
+         aTFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoR73piFINSkzxRFyaXbhmfKkTT4tqGRzInNGUpN/wqyp5KV/+p96S2lfbiGS6QU0WslaJEx8hOH6Vd6/cv4jnNK3DHJsTHQZeiEQuw/fQGbOGhJfWHwbQCuebX/7ycm6cThCEKJxu+CdJ2eyoxfFIt1wcS+y91PpyIAxAgMsykvtLxeeamPuNt8+FgWIOMpsLCi5DUSeJc7iNnZKhMs5wVV64dL/yruPE
+X-Gm-Message-State: AOJu0YxGV6BdMRtY/fVuco2iQorwoKQyqagDiD8lJMw7WiLLyHMlObuQ
+	oWpemD8e15PlN0gIJi4ZLpgzKAaS4bdRbzdD4K6plmwyVOmUpaVh
+X-Google-Smtp-Source: AGHT+IFpo/8DovLpoBX1Rhyl7aZLObf34Lfr7Sf3qJm4qAOO2QJ4P2aUDfwwCapsCMFWEmFp29CbbQ==
+X-Received: by 2002:a05:600c:3506:b0:426:641f:25e2 with SMTP id 5b1f17b1804b1-429ed7cce1cmr89060465e9.25.1724152903206;
+        Tue, 20 Aug 2024 04:21:43 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37189897066sm12959636f8f.76.2024.08.20.04.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 04:21:42 -0700 (PDT)
+Date: Tue, 20 Aug 2024 13:21:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: andersson@kernel.org, krzk+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com, 
+	quic_varada@quicinc.com, quic_srichara@quicinc.com
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: ipq5332: add nodes to bringup q6
+Message-ID: <f6g2bvosd7y5zyufel73lm6xr2otf25q7ut6tz3vnphtlqotk6@uftsnu4z6xql>
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-4-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB0998:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3672323-a509-4777-59eb-08dcc10a2bc7
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|41320700013|1800799024|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	Hlobs6r86PVvUZvoB2ajSYirvH1Xfrs5dPsciUN0+Lz0tCU6SfabqOAAxgGYwX6lEBFy/awFoqeYoXERpVChSC3O9khf6lV6ucLeutSlVJDnSRo5/dntEnZwe1NtC9Wn7V2FpQAxWQ3wNk0L5GRR0UQFTEZTUEd5iY9oKAlHbxLmeB9gyqbkUm7H/izPQxV3oBuBJUgys0f35llfxuggxlsxsZpYf6PVBZHv5nLVHx9BtRIU3xHUuEtaoS4cQL2iZBp6ZlOKmvK61OBZ+YI7JRNNiAqQT3qnx/kj9WFvx/WmZmdxLgXGmJI1yLWf6uziTNjUdufps4ehTRn2vachpAF71P+XftLgSZU4ERp7nGaerTbD3Lthw6gJGZS1R5MC2mh1woluPDYxs8HKpgss+qJ/GVxLq74XvMBTVtDiMkIQ5flpSLWTDMUydvgx6UehtJBDc5D2dQypx+XRKTUQgJH+0mN/I+1rBTfLEIVVUaAbiX5YKhqZXG6NQw+eyZnHxDmJIxu1LbRRFzQJ9y29erC0TtN2qeuLCUWNxZxq7amvaHYKHoPJEsHSOUSWRL8kUucMA027j3SpGftCYeSij96QMKyfP0Qsi1Li0x1XvEbdDoz2r8HMdE98ksiNz3Hq
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(41320700013)(1800799024)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?d7dJoP2QFKRH8y85yk5Ik4wxu9kRTCooO5P8YPVtjG+PT7IWN6Unb43YvN+r?=
- =?us-ascii?Q?SdrewpV23Tz8Iio5Gnf2Dl+/MW5K8OK/ILh+zKIzWnWHve2vEwRDUkRsj111?=
- =?us-ascii?Q?M6DnSlS4XV4qxAoBWhNYzCZdEQk/gYRFNy0VlSmpgglQBjEqelmKL4jTBJRU?=
- =?us-ascii?Q?6kJ9QmlT9q5SBbkYQHME/+qGQwN+cTG464QkBZshAo0xXCTfemgUFgBveCdT?=
- =?us-ascii?Q?fYAW3/DNZVfYRrv328fH3m2hNUlCz+RL3SGrlitmfoIY3QxThYmZg7gR1hvy?=
- =?us-ascii?Q?fhp1HEJg7inU9SIoClHzswDEluHu7K3VPLTSGLBhbBGG/xLosTrlwxV6B1MP?=
- =?us-ascii?Q?BzvnM4cxqlexyp+SsCUtLxM0Ve8ecXt/9oQLb4zLVev7CD4dw2SZgJVdraQt?=
- =?us-ascii?Q?EAHrf7HzVKz9e8j9iH7mf+ymgj2TW6t3AVLnTlTfiNjSKzH9xL2oucYOi/6z?=
- =?us-ascii?Q?ri4K4Ov70pXLsqjwh+k4JLCm7ZM8ZYccvVczVZEm+yitUCYq+ONrAc6NLWJC?=
- =?us-ascii?Q?4godOQuTBJp8cl5A15zSihpwW3y8Di2j9uTU5C+iGO4WEfLJeB2AAR6eYMJf?=
- =?us-ascii?Q?9SIE94hrIaKQedtgQL3OVZZPnmalJgWOI7FykwcXScGHc9jamTmoe1In899j?=
- =?us-ascii?Q?ttQihXOF+66DuOhA+9AnAQsolEqedxc5/OEvWhTwhT0+cfI1NqLXQ5yG2jA+?=
- =?us-ascii?Q?ISGoRXqvMWEK2elIr8nUTS/LjUiZDaUrkLpnV4YWWw0waWUjJsUYTjW6g2Hw?=
- =?us-ascii?Q?Wk8iDt7gMhrdr2bU81nYa7snZtokUv9zdIeKRlHFmR1vwxTVjFy4CzMF5TX6?=
- =?us-ascii?Q?ILjbBbYDNiXNJAYRtolsW2xzcPskuTXTci3zN5kHoKJDpDQClJJTKZl1D3uO?=
- =?us-ascii?Q?BobYjt4kwdEIXG4xN4ZdXN0zlmVzqMfqbp/o+5HZ7PmgoRqcknn9KSf2lrc9?=
- =?us-ascii?Q?pMFbpRDE3Q23KTQWEqKvy9rwhxI+YB0ASy+NES7QEwIFf5vBOKTkj5qnXRXm?=
- =?us-ascii?Q?8IyvFq3CtqcG8Rg9j2B3yWKh/yoo89tgmhmdX9p3iEWNmxNTMUttp0kEQRgz?=
- =?us-ascii?Q?13+m8v6yhCUEqOBSi4l7ubhBs9ZAQgkB67wWWa3dMWZlcHpZylBtnEtyJVOd?=
- =?us-ascii?Q?qWaJc42g8mu29bCjY+UE8R2SGevTh2p1KHM2uP2803tA6uSmu5Ank4TFtkA3?=
- =?us-ascii?Q?XRWrR5WfJYLwLcE78rBbTW24XaH1RTOr7LdyngWciFoZsYCHHATzSUhdKKYQ?=
- =?us-ascii?Q?fxK2BbqQ/x+ASpXjNBR7Db+xSFOqTgPwmupNP7t3AK9GJ0S44XOhYQr8SY2l?=
- =?us-ascii?Q?YD4Prk/f3PKV+FJ23+QgvXBjZoMcHGtrFepAZeE/WGJJTM/a8DlPwX/yolM4?=
- =?us-ascii?Q?NfD8hjjVJLhK5hCaRQoq+MY5pHxXq2kJmIPic2awiFj2zADb+xTzBYR2gMfp?=
- =?us-ascii?Q?SJYe1s3JTM2MxRhzZFXPoFd8O2m08sMEGaCc/xhiCKaVTt9njOL3GTFOOPyR?=
- =?us-ascii?Q?mOU2GLhnQ0T/AQrvXMD4Z70dzVzRQse48U914RD2szBBpWXUjtmerA2Ku0kW?=
- =?us-ascii?Q?X9b9IyL0JsncVWGUOCYVhlqd4Afq2/VwaNCcq9BGrn/VfF7g251H4QIyOR+e?=
- =?us-ascii?Q?2Zy9ixsjBBZOJYWtkrs/bTA=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3672323-a509-4777-59eb-08dcc10a2bc7
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 11:21:00.9431
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NU/flp79hOdx0lszhx3nN1RG9Vm+pXFtCAtGXpI3tsRweM+HFbbgFaYTO3wHunJf343sve5FKHR3mL4JlrDVgoh9uw8mklDFbKAY5QdwK9YB/XfDmXVE8s1YXJetmLPK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0998
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240820085517.435566-4-quic_gokulsri@quicinc.com>
 
-Commit f5502cd25ac0 ("media: dt-bindings: Add JH7110 Camera Subsystem")
-adds the StarFive Camera Subsystem parts, also complies with Qualcomm's
-rules. Add "qcom," substring restrcting this condition.
+On Tue, Aug 20, 2024 at 02:25:16PM +0530, Gokul Sriram Palanisamy wrote:
+> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> 
+> Enable nodes required for q6 remoteproc bring up.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 62 +++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> index 0a74ed4f72cc..ec93e7b64b9e 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> @@ -145,6 +145,11 @@ smem@4a800000 {
+>  
+>  			hwlocks = <&tcsr_mutex 3>;
+>  		};
+> +
+> +		q6_region: wcnss@4a900000 {
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why here it is wcnss...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..7dc2dfcc1f66 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18748,7 +18748,7 @@ M:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/admin-guide/media/qcom_camss.rst
--F:	Documentation/devicetree/bindings/media/*camss*
-+F:	Documentation/devicetree/bindings/media/qcom,*camss*
- F:	drivers/media/platform/qcom/camss/
- 
- QUALCOMM CLOCK DRIVERS
--- 
-2.25.1
+> +			reg = <0x0 0x4a900000 0x0 0x2b00000>;
+> +			no-map;
+> +		};
+>  	};
+>  
+>  	soc@0 {
+> @@ -476,6 +481,39 @@ frame@b128000 {
+>  				status = "disabled";
+>  			};
+>  		};
+> +
+> +		q6v5_wcss: remoteproc@d100000 {
+
+but everywhere else is wcss?
+
+> +			compatible = "qcom,ipq5332-wcss-sec-pil";
+> +			reg = <0xd100000 0x4040>;
+> +			firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
+
+It's one firmware independent of board?
+
+Best regards,
+Krzysztof
 
 
