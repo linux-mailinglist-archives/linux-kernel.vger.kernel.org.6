@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-293920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EC1958681
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:04:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D19958684
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394491C25502
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E611F256B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08CF192B9F;
-	Tue, 20 Aug 2024 12:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554D194AEA;
+	Tue, 20 Aug 2024 12:00:40 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6076118F2FA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E604B18F2E6
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724155235; cv=none; b=bB0LLm2gUmfdtzgTuSogzOCkQSGztD59eg/fGroo6xbuBSWqAg69Ew1MwMNYqifrHWRg73lOajBO8osL2OFOwq3Z1e5WvExYMU04fsZphnQiLFmGtbEVpifvM+npQAHz9GKhxqyU4+4ALQE8xgZXq7fSvXgDUF9PmQxYkJiV7Hc=
+	t=1724155235; cv=none; b=LKU6Tm439SnSsx3WkDYIGTYlGkT2xIuQoLymt/Zkl/zlIW5Q8fTg5g2sZqbMs2S1VTu0G5vri6KOHTjLsNKpZ+DpXtZS4ScbWi5zfRSX34rSvMCqsygkqUF6t46v1Tb83TEQKAOjRms4UUfqLUx/H79fuowhnW1nVc6NpFkAPDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724155235; c=relaxed/simple;
-	bh=gWnCb3QuySdShmzGxQ9sy7njEC7F0EcaCl9k2MjgDF0=;
+	bh=KkjdiOp7h9kGCcGqG0lJJWcoVvNY6hz2UpwrIQN8aJI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LQWxi+dpa73+uAGk9gpnAGWxDhrbRJOs/jshEMdbLsD3A1u30AF+At9pPdaJvAyzwSb83+yCnNYdN4iuw7N1qA7q3asvdi2QX05WxNJ1MsjfCSrAImtkYiNmPwEc0q4YkmaU5iQtKMblXpT4qYK/f1O9jjZ80g3CXgQCEXWXNvQ=
+	 In-Reply-To:To:Cc; b=XTESMaLGPGUnR44eizePUsRlIzmYDnHGalsWeMgBGkLYS139X6bUzSjAt0HDa076U4snyYLm3t5LGVJJb0Fo2SIOXQP1TtNvI4GGZ1rqv5tHHQBwfkLwYvmEMBJYy5pML99ZQ6umewuUtI6AoiJ6Ozmp3KgoHOnLjLB7SBmOdDg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,20 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNXH-0000xc-FX; Tue, 20 Aug 2024 14:00:27 +0200
+	id 1sgNXG-0000w8-WE; Tue, 20 Aug 2024 14:00:27 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNXG-001lNr-UW; Tue, 20 Aug 2024 14:00:26 +0200
+	id 1sgNXG-001lNY-Gg; Tue, 20 Aug 2024 14:00:26 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-00GnIQ-1T;
+	id 1sgNSR-00GnIQ-1Y;
 	Tue, 20 Aug 2024 13:55:27 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 20 Aug 2024 13:55:48 +0200
-Subject: [PATCH 23/31] wifi: mwifiex: pass adapter to
- mwifiex_disable_auto_ds()
+Date: Tue, 20 Aug 2024 13:55:53 +0200
+Subject: [PATCH 28/31] wifi: mwifiex: move rx_ant/tx_ant to adapter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-mwifiex-cleanup-v1-23-320d8de4a4b7@pengutronix.de>
+Message-Id: <20240820-mwifiex-cleanup-v1-28-320d8de4a4b7@pengutronix.de>
 References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
@@ -63,11 +62,11 @@ To: Brian Norris <briannorris@chromium.org>,
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=3973;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=4813;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=gWnCb3QuySdShmzGxQ9sy7njEC7F0EcaCl9k2MjgDF0=;
- b=vM30aopucHqN7m5GD2tznSI71PjvYPy56UY0BZPiN41kTNm6ehRyBQlKL4sfLsU0C1o22vLK8
- 9ltY6kUiQVQCcu9tDvIvIPX3aWkFDjnTLm5TYc8dNhiiVx89S0o6xJD
+ bh=KkjdiOp7h9kGCcGqG0lJJWcoVvNY6hz2UpwrIQN8aJI=;
+ b=OqrPKiaweYcUdwJBkSVfsB2YPHraoNPXkHrA/UjePyV5FzG6CVRJTTlrTfrfgAvfSAfO0/HD4
+ PFl/zxeyLlkAI5berNTFqkWR8Vfx2AwCniZboT//+5KoDHHuFWO7eYU
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -75,98 +74,120 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-mwifiex_disable_auto_ds() has effect on the whole adapter and not
-to a priv, so pass the adapter to this function and use
-mwifiex_adapter_send_cmd() instead of mwifiex_send_cmd().
+The antenna settings are specific to the adapter, not to the priv, so
+use adapter as context pointer and use mwifiex_adapter_send_cmd()
+instead of mwifiex_send_cmd().
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/net/wireless/marvell/mwifiex/main.h      | 2 +-
- drivers/net/wireless/marvell/mwifiex/pcie.c      | 5 +----
- drivers/net/wireless/marvell/mwifiex/sdio.c      | 4 +---
- drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 6 +++---
- 4 files changed, 6 insertions(+), 11 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c    | 11 +++++------
+ drivers/net/wireless/marvell/mwifiex/init.c        |  2 --
+ drivers/net/wireless/marvell/mwifiex/main.h        |  4 ++--
+ drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c | 13 ++++++-------
+ 4 files changed, 13 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index b341b36bc7395..a704886049c64 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -1867,13 +1867,12 @@ static int
+ mwifiex_cfg80211_get_antenna(struct wiphy *wiphy, u32 *tx_ant, u32 *rx_ant)
+ {
+ 	struct mwifiex_adapter *adapter = mwifiex_cfg80211_get_adapter(wiphy);
+-	struct mwifiex_private *priv = mwifiex_get_priv(adapter,
+-							MWIFIEX_BSS_ROLE_ANY);
+-	mwifiex_send_cmd(priv, HostCmd_CMD_RF_ANTENNA,
+-			 HostCmd_ACT_GEN_GET, 0, NULL, true);
+ 
+-	*tx_ant = priv->tx_ant;
+-	*rx_ant = priv->rx_ant;
++	mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_RF_ANTENNA,
++				 HostCmd_ACT_GEN_GET, 0, NULL, true);
++
++	*tx_ant = adapter->tx_ant;
++	*rx_ant = adapter->rx_ant;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
+index a2296c0d91534..ae79eb500ae13 100644
+--- a/drivers/net/wireless/marvell/mwifiex/init.c
++++ b/drivers/net/wireless/marvell/mwifiex/init.c
+@@ -105,8 +105,6 @@ int mwifiex_init_priv(struct mwifiex_private *priv)
+ 	priv->adhoc_channel = DEFAULT_AD_HOC_CHANNEL;
+ 	priv->atim_window = 0;
+ 	priv->adhoc_state = ADHOC_IDLE;
+-	priv->tx_ant = 0;
+-	priv->rx_ant = 0;
+ 	priv->tx_rate = 0;
+ 	priv->rxpd_htinfo = 0;
+ 	priv->rxpd_rate = 0;
 diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 114e0141dc01a..298726c663724 100644
+index c51b9a5766150..0098bae832885 100644
 --- a/drivers/net/wireless/marvell/mwifiex/main.h
 +++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1456,7 +1456,7 @@ int mwifiex_bss_start(struct mwifiex_private *priv, struct cfg80211_bss *bss,
- 		      struct cfg80211_ssid *req_ssid);
- int mwifiex_cancel_hs(struct mwifiex_adapter *adapter, int cmd_type);
- int mwifiex_enable_hs(struct mwifiex_adapter *adapter);
--int mwifiex_disable_auto_ds(struct mwifiex_private *priv);
-+int mwifiex_disable_auto_ds(struct mwifiex_adapter *adapter);
- int mwifiex_drv_get_data_rate(struct mwifiex_private *priv, u32 *rate);
- int mwifiex_request_scan(struct mwifiex_private *priv,
- 			 struct cfg80211_ssid *req_ssid);
-diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
-index 2a7ed2aad1a34..caa3a383dd56d 100644
---- a/drivers/net/wireless/marvell/mwifiex/pcie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
-@@ -427,7 +427,6 @@ static void mwifiex_pcie_remove(struct pci_dev *pdev)
- {
- 	struct pcie_service_card *card;
- 	struct mwifiex_adapter *adapter;
--	struct mwifiex_private *priv;
- 	const struct mwifiex_pcie_card_reg *reg;
- 	u32 fw_status;
- 
-@@ -448,9 +447,7 @@ static void mwifiex_pcie_remove(struct pci_dev *pdev)
- 	if (fw_status == FIRMWARE_READY_PCIE && !adapter->mfg_mode) {
- 		mwifiex_deauthenticate_all(adapter);
- 
--		priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
--
--		mwifiex_disable_auto_ds(priv);
-+		mwifiex_disable_auto_ds(adapter);
- 
- 		mwifiex_init_shutdown_fw(adapter, MWIFIEX_FUNC_SHUTDOWN);
- 	}
-diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
-index e3a995514efc7..6a33afc8a9d97 100644
---- a/drivers/net/wireless/marvell/mwifiex/sdio.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
-@@ -844,7 +844,6 @@ mwifiex_sdio_remove(struct sdio_func *func)
- {
- 	struct sdio_mmc_card *card;
- 	struct mwifiex_adapter *adapter;
--	struct mwifiex_private *priv;
- 	int ret = 0;
- 	u16 firmware_stat;
- 
-@@ -865,8 +864,7 @@ mwifiex_sdio_remove(struct sdio_func *func)
- 	    !adapter->mfg_mode) {
- 		mwifiex_deauthenticate_all(adapter);
- 
--		priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
--		mwifiex_disable_auto_ds(priv);
-+		mwifiex_disable_auto_ds(adapter);
- 		mwifiex_init_shutdown_fw(adapter, MWIFIEX_FUNC_SHUTDOWN);
- 	}
- 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-index ed9f75adcdea3..3586def45adae 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-@@ -610,14 +610,14 @@ int mwifiex_get_bss_info(struct mwifiex_private *priv,
+@@ -542,8 +542,6 @@ struct mwifiex_private {
+ 	u32 curr_pkt_filter;
+ 	u32 bss_mode;
+ 	u32 pkt_tx_ctrl;
+-	u32 tx_ant;
+-	u32 rx_ant;
+ 	u8 tx_rate;
+ 	u8 tx_htinfo;
+ 	u8 rxpd_htinfo;
+@@ -950,6 +948,8 @@ struct mwifiex_adapter {
+ 	u8 max_tx_power_level;
+ 	u8 min_tx_power_level;
+ 	u16 tx_power_level;
++	u32 tx_ant;
++	u32 rx_ant;
+ 	u16 ps_mode;
+ 	u32 ps_state;
+ 	u8 need_to_wakeup;
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+index 87b4c552c4056..de6a623174701 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+@@ -444,16 +444,15 @@ static int mwifiex_ret_rf_tx_power(struct mwifiex_adapter *adapter,
  /*
-  * The function disables auto deep sleep mode.
+  * This function handles the command response of set rf antenna
   */
--int mwifiex_disable_auto_ds(struct mwifiex_private *priv)
-+int mwifiex_disable_auto_ds(struct mwifiex_adapter *adapter)
+-static int mwifiex_ret_rf_antenna(struct mwifiex_private *priv,
++static int mwifiex_ret_rf_antenna(struct mwifiex_adapter *adapter,
+ 				  struct host_cmd_ds_command *resp)
  {
- 	struct mwifiex_ds_auto_ds auto_ds = {
- 		.auto_ds = DEEP_SLEEP_OFF,
- 	};
+ 	struct host_cmd_ds_rf_ant_mimo *ant_mimo = &resp->params.ant_mimo;
+ 	struct host_cmd_ds_rf_ant_siso *ant_siso = &resp->params.ant_siso;
+-	struct mwifiex_adapter *adapter = priv->adapter;
  
--	return mwifiex_send_cmd(priv, HostCmd_CMD_802_11_PS_MODE_ENH,
--				DIS_AUTO_PS, BITMAP_AUTO_DS, &auto_ds, true);
-+	return mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_802_11_PS_MODE_ENH,
-+					DIS_AUTO_PS, BITMAP_AUTO_DS, &auto_ds, true);
- }
- EXPORT_SYMBOL_GPL(mwifiex_disable_auto_ds);
- 
+ 	if (adapter->hw_dev_mcs_support == HT_STREAM_2X2) {
+-		priv->tx_ant = le16_to_cpu(ant_mimo->tx_ant_mode);
+-		priv->rx_ant = le16_to_cpu(ant_mimo->rx_ant_mode);
++		adapter->tx_ant = le16_to_cpu(ant_mimo->tx_ant_mode);
++		adapter->rx_ant = le16_to_cpu(ant_mimo->rx_ant_mode);
+ 		mwifiex_dbg(adapter, INFO,
+ 			    "RF_ANT_RESP: Tx action = 0x%x, Tx Mode = 0x%04x\t"
+ 			    "Rx action = 0x%x, Rx Mode = 0x%04x\n",
+@@ -462,8 +461,8 @@ static int mwifiex_ret_rf_antenna(struct mwifiex_private *priv,
+ 			    le16_to_cpu(ant_mimo->action_rx),
+ 			    le16_to_cpu(ant_mimo->rx_ant_mode));
+ 	} else {
+-		priv->tx_ant = le16_to_cpu(ant_siso->ant_mode);
+-		priv->rx_ant = le16_to_cpu(ant_siso->ant_mode);
++		adapter->tx_ant = le16_to_cpu(ant_siso->ant_mode);
++		adapter->rx_ant = le16_to_cpu(ant_siso->ant_mode);
+ 		mwifiex_dbg(adapter, INFO,
+ 			    "RF_ANT_RESP: action = 0x%x, Mode = 0x%04x\n",
+ 			    le16_to_cpu(ant_siso->action),
+@@ -1242,7 +1241,7 @@ int mwifiex_process_sta_cmdresp(struct mwifiex_private *priv, u16 cmdresp_no,
+ 		ret = mwifiex_ret_rf_tx_power(adapter, resp);
+ 		break;
+ 	case HostCmd_CMD_RF_ANTENNA:
+-		ret = mwifiex_ret_rf_antenna(priv, resp);
++		ret = mwifiex_ret_rf_antenna(adapter, resp);
+ 		break;
+ 	case HostCmd_CMD_802_11_PS_MODE_ENH:
+ 		ret = mwifiex_ret_enh_power_mode(priv, resp, data_buf);
 
 -- 
 2.39.2
