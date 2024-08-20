@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-294041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B68B958828
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD61C958815
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EE91F22F16
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F50281A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3619F19049E;
-	Tue, 20 Aug 2024 13:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CF3190670;
+	Tue, 20 Aug 2024 13:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b="bhu5URS2"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Cb+Hix1/"
+Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B88E19067A;
-	Tue, 20 Aug 2024 13:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD7819049A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161440; cv=none; b=ANYTGfpkMLBti1L83xeoxXPJyHZgy20H/fX4ztEZdJtjO/keUYlD7ezs+djCoChWaa9yEY/nL8SvJH4PMsHG+2UWc+8e1kN9UxrHYFaD4hUKCDTWt3/snx6+1BxA+wPgg2KLgXU7AS7HiIpHzh9uf62nr5nB9rJtKyNJZoEdyTs=
+	t=1724161240; cv=none; b=Tf7lcM4Fvu6hDyjtebJLCYygEBtgNWEuJqFhcy60q6Wh3s4ZqWTi+8dcF/UCXlHuSVxSQ3xO92ay+0PesxGhGA+BG8RbrdAPOFskpAl93gqlmuwInKhKpn3dxpJnpXbVip0kGikUVXUfJ4M7z8KArP1ixYuStU+b85No602pK48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161440; c=relaxed/simple;
-	bh=qTsnJN49+aS05L1oPB0ek5eAdQnTO8MqCs+X6kYnMq0=;
+	s=arc-20240116; t=1724161240; c=relaxed/simple;
+	bh=upamO/zsB6rxCI8+LBk1aglbA8pmuHyWtSjpsXZ4qY0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LUa/GSXq36hb/z6eb03xhGSytxAk6OQ3JJmnkn3IsIeXvdP9o8BHqUd++Ra1/Lp+7vtozlOejXwO0mG6mzFcwM63Wp17jR7xPCcD4sdvrHXsd2IGD4UAR52KwUl9T+qaS5i3TeCtIFiRm9wXFGQAZVT3zt1VKyQFR4X6UxNzebw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com; spf=pass smtp.mailfrom=yandex.com; dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b=bhu5URS2; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.com
-Received: from mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net [IPv6:2a02:6b8:c2b:1d5:0:640:773e:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id C0386613DD;
-	Tue, 20 Aug 2024 16:35:05 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id wYNd7uDTquQ0-i9SdytvD;
-	Tue, 20 Aug 2024 16:35:04 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.com; s=mail;
-	t=1724160904; bh=Yc+SkPJPd/j9LC0nYHlrZb5VAOmJ1MFJRkiKmb/ch6A=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=bhu5URS2bSD/fVC8Dzn+eKEyID2HpY0mlyRqNtDTSUdfHvfOHvpoG8f/DIwhJOPxu
-	 eOMB7ZhqdzATeB1LPxOZQSQkmYA8bGSktt/+FWQxImxAPvg/JVNww43A4AKyEx+azv
-	 l024ikWXXXUw7S/kMhF9tVYCOBmo0Gs0gSpiSQ8A=
-Authentication-Results: mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.com
-Message-ID: <1d7ffd09-99b9-43d8-a2f5-6e5455b4e5a1@yandex.com>
-Date: Tue, 20 Aug 2024 15:34:58 +0200
+	 In-Reply-To:Content-Type; b=kOSQ7aqFglP5BmgOj9Dxi02qqYLc9j5OeZ1+DDkcGhmoOFeI7BOZnABoihZgLPrmEDWk3DoNNFV4K3anXmyk1mKnzpzxTtHz4nYmO6Kvaqy2JITryZgHnSkMHmGuegjnIqOlGfx8ydTppXGRuvEHHd7bvk+Zx4HJ98sJB4kh+Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Cb+Hix1/; arc=none smtp.client-ip=17.58.6.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724161239;
+	bh=TT/LBHFFfw+sqeDq9jX/+oamVLetFWgvhvk3Yjmswbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=Cb+Hix1/TL1c++twUnSuWXKWrAsrSpMhHY0xo3hTBVK0IQQL6HGC48SDeSPgpEynM
+	 LcyI3b7qGXi56Q4O3AegpN/gTuPtQ71p6tFxEY5L5HNb9nX/QuSUTiUpO2JirxNiel
+	 wvGipsD5ERi9fH4ahZ+0MA1jVPW2VVuqSucOEFtVbjzLrwa2wyutCi9idp7TqsBPhp
+	 8z6ERTajDMXBRN5vsMJGg8fOcqcDEjkxum0rgaj6ZEL/JuCDFCmQ0AFzSHJk9xrV59
+	 n3Hl2sj+9VLS59xH9V2oejrVb41UJah6/5FC+1XxSh/eT9L+uMMyfMSzaDQhIakkFV
+	 W3/fh+FzXqoDg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 33BC1180418;
+	Tue, 20 Aug 2024 13:40:28 +0000 (UTC)
+Message-ID: <2b9fc661-e061-4699-861b-39af8bf84359@icloud.com>
+Date: Tue, 20 Aug 2024 21:40:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,225 +52,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+Subject: Re: [PATCH v2 1/4] driver core: Make parameter check consistent for
+ API cluster device_(for_each|find)_child()
+To: Ira Weiny <ira.weiny@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Tim Lunn <tim@feathertop.org>, Muhammed Efe Cetin <efectn@protonmail.com>,
- Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>,
- Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-References: <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
- <c5014fe3-130b-4ace-a66e-8773a9a4f1dc@yandex.com>
- <1944590.atdPhlSkOF@trenzalore>
+ "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
+ <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
+ <20240815-const_dfc_prepare-v2-1-8316b87b8ff9@quicinc.com>
+ <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
 Content-Language: en-US
-From: Johan Jonker <jbx6244@yandex.com>
-In-Reply-To: <1944590.atdPhlSkOF@trenzalore>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: YdqiHEQoPhOMJYBRg-96x8Cf4_TimD2Z
+X-Proofpoint-ORIG-GUID: YdqiHEQoPhOMJYBRg-96x8Cf4_TimD2Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ clxscore=1015 bulkscore=0 phishscore=0 adultscore=0 mlxscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408200101
 
-
-
-On 8/19/24 22:06, Detlev Casanova wrote:
-> Hi Johan,
+On 2024/8/20 20:53, Ira Weiny wrote:
+> Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> The following API cluster takes the same type parameter list, but do not
+>> have consistent parameter check as shown below.
+>>
+>> device_for_each_child(struct device *parent, ...)  // check (!parent->p)
+>> device_for_each_child_reverse(struct device *parent, ...) // same as above
+>> device_find_child(struct device *parent, ...)      // check (!parent)
+>>
 > 
-> On Thursday, 15 August 2024 05:30:25 EDT Johan Jonker wrote:
->> Some comments below. Whenever useful.
->>
->> On 8/2/24 23:45, Detlev Casanova wrote:
->>> This device tree contains all devices necessary for booting from network
->>> or SD Card.
->>>
->>> It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
->>> SDHCI (everything necessary to boot Linux on this system on chip) as
->>> well as Ethernet, I2C, SPI and OTP.
->>>
->>> Also add the necessary DT bindings for the SoC.
->>>
->>> Signed-off-by: Liang Chen <cl@rock-chips.com>
->>> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
->>> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
->>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->>> [rebase, squash and reword commit message]
->>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->>> ---
->>
->> [..]
->>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
->>> b/arch/arm64/boot/dts/rockchip/rk3576.dtsi new file mode 100644
->>> index 0000000000000..00c4d2a153ced
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
->> [..]
->>
->> For uart0..uart11:
->>> +
->>> +	uart1: serial@27310000 {
->>> +		compatible = "rockchip,rk3576-uart", "snps,dw-apb-
-> uart";
->>> +		reg = <0x0 0x27310000 0x0 0x100>;
->>>
->>> +		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
->>
->> "interrupts" are sort just like other properties. A mix of sort styles
->> exists, so check all nodes.
+> Seems reasonable.
 > 
-> Ok, so it should be sorted alphabetically with the following exceptions:
-> - 'compatible' and 'reg.*' on top
-> - "#.*" at the end, sorted
-> - "status" last.
-> 
-> Is that right ?
-
-The dts-coding-style.rst does not say much about things with "#",
-so below a property they refer to or at the end looks nicer.
-No strict rule, but do it in a consistent style in file. 
-
-Original comment by robh for things with "reg":
-"It makes more sense to keep reg-io-width together with reg."
-https://lore.kernel.org/all/20240131135955.GA966672-robh@kernel.org/
-
-> 
->>> +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
->>> +		clock-names = "baudclk", "apb_pclk";
->>>
->>> +		reg-shift = <2>;
->>> +		reg-io-width = <4>;
->>
->> Move below "reg".
->>
->>> +		dmas = <&dmac0 8>, <&dmac0 9>;
->>> +		pinctrl-names = "default";
->>> +		pinctrl-0 = <&uart1m0_xfer>;
->>> +		status = "disabled";
->>> +	};
->>> +
->>> +	pmu: power-management@27380000 {
-> 
-> [...]
-> 
->>> +				#address-cells = <1>;
->>> +				#size-cells = <0>;
->>> +				clocks = <&cru ACLK_VOP>,
->>> +					 <&cru HCLK_VOP>,
->>> +					 <&cru HCLK_VOP_ROOT>;
->>> +				pm_qos = <&qos_vop_m0>,
->>> +					 <&qos_vop_m1ro>;
->>> +
->>> +				power-domain@RK3576_PD_USB {
->>
->> Since when is USB part of VOP?
->> Recheck?
-> 
-> The TRM doesn't tell me anything, but If I don't put it as a child of VOP, it 
-> just hangs when the kernel tries to shut it down.
-
-Could the people from Rockchip disclose the USB PD location?
-
-> 
-> [...]
-> 
->>> +
->>> +	pinctrl: pinctrl {
->>> +		compatible = "rockchip,rk3576-pinctrl";
->>> +		rockchip,grf = <&ioc_grf>;
->>> +		rockchip,sys-grf = <&sys_grf>;
->>> +		#address-cells = <2>;
->>> +		#size-cells = <2>;
->>> +		ranges;
->>> +
->>>
->>> +		gpio0: gpio@27320000 {
->>
->> The use of gpio nodes as subnode of pinctrl is deprecated.
->>
->> patternProperties:
->>   "gpio@[0-9a-f]+$":
->>     type: object
->>
->>     $ref: /schemas/gpio/rockchip,gpio-bank.yaml#
->>     deprecated: true
->>
->>     unevaluatedProperties: false
+> What about device_find_child_by_name()?
 > 
 
-> I tried putting the gpio nodes out of the pinctrl node, they should work 
-> because they already have a gpio-ranges field.
-> But unfortunately, that seem to break the pinctrl driver which hangs at some 
-> point. Maybe some adaptations are needed to support this, or am I missing 
-> something ?
+Plan to simplify this API implementation by * atomic * API
+device_find_child() as following:
 
-The aliases that we added to the DT files are a work around to prevent damage when we moved to generic gpio node names.
-There just happened to be some code for it in the driver...
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpio/gpio-rockchip.c#n719
+https://lore.kernel.org/all/20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com
+struct device *device_find_child_by_name(struct device *parent,
+ 					 const char *name)
+{
+	return device_find_child(parent, name, device_match_name);
+}
 
-Comment by robh:
-"GPIO shouldn't really have an alias either IMO."
-https://lore.kernel.org/linux-arm-kernel/20230118153236.GA33699-robh@kernel.org/
-
-Mainline Rockchip gpio driver is not so to the standard.
-The file gpio-rockchip.c currently does nothing with "gpio-ranges" vs. bank and node relation.
-My simple patch was acked, but never applied. There's no public maintainer response of what to improve.
-Guess, probably something more complicated idiot prove "gpio-ranges" parsing/bank linking is needed?
-https://lore.kernel.org/linux-arm-kernel/890be9a0-8e82-a8f4-bc15-d5d1597343c2@gmail.com/
-
-I leave this subject up to the experts to find out what is needed to improve.
-Don't ask me.
-
-Johan
-> 
->>> +			compatible = "rockchip,gpio-bank";
+>> Fixed by using consistent check (!parent || !parent->p) for the cluster.
 >>
->> When in use as separate node the compatible must be SoC related.
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/base/core.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
 >>
->> Question for the maintainers: Extra entry to rockchip,gpio-bank.yaml ??
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 1688e76cb64b..b1dd8c5590dc 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -4004,7 +4004,7 @@ int device_for_each_child(struct device *parent, void *data,
+>>  	struct device *child;
+>>  	int error = 0;
+>>  
+>> -	if (!parent->p)
+>> +	if (!parent || !parent->p)
+>>  		return 0;
+>>  
+>>  	klist_iter_init(&parent->p->klist_children, &i);
+>> @@ -4034,7 +4034,7 @@ int device_for_each_child_reverse(struct device *parent, void *data,
+>>  	struct device *child;
+>>  	int error = 0;
+>>  
+>> -	if (!parent->p)
+>> +	if (!parent || !parent->p)
+>>  		return 0;
+>>  
+>>  	klist_iter_init(&parent->p->klist_children, &i);
+>> @@ -4068,7 +4068,7 @@ struct device *device_find_child(struct device *parent, void *data,
+>>  	struct klist_iter i;
+>>  	struct device *child;
+>>  
+>> -	if (!parent)
+>> +	if (!parent || !parent->p)
+> 
+> Perhaps this was just a typo which should have been.
+> 
+> 	if (!parent->p)
+> ?
+> 
+maybe, but the following device_find_child_by_name() also use (!parent).
+
+> I think there is an expectation that none of these are called with a NULL
+> parent.
+>
+
+this patch aim is to make these atomic APIs have consistent checks as
+far as possible, that will make other patches within this series more
+acceptable.
+
+i combine two checks to (!parent || !parent->p) since i did not know
+which is better.
+
+> Ira
+> 
+>>  		return NULL;
+>>  
+>>  	klist_iter_init(&parent->p->klist_children, &i);
 >>
->>> +			reg = <0x0 0x27320000 0x0 0x200>;
->>> +			interrupts = <GIC_SPI 153 
-> IRQ_TYPE_LEVEL_HIGH>;
->>> +			clocks = <&cru PCLK_GPIO0>, <&cru 
-> DBCLK_GPIO0>;
->>> +
->>> +			gpio-controller;
->>> +			#gpio-cells = <2>;
->>> +			gpio-ranges = <&pinctrl 0 0 32>;
->>> +			interrupt-controller;
->>> +			#interrupt-cells = <2>;
->>> +		};
->>> +
->>> +		gpio1: gpio@2ae10000 {
->>> +
->>> +		gpio2: gpio@2ae20000 {
->>> +
->>> +		gpio3: gpio@2ae30000 {
->>> +
->>> +		gpio4: gpio@2ae40000 {
->>> +	};
->>> +};
->>> +
->>> +#include "rk3576-pinctrl.dtsi"
-> 
-> Regards,
-> 
-> Detlev
+>> -- 
+>> 2.34.1
+>>
 > 
 > 
-> 
+
 
