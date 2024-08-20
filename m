@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-293370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D827957E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E596957DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05FF2837D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B58028411C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2081EB4A4;
-	Tue, 20 Aug 2024 06:34:59 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382016C685;
+	Tue, 20 Aug 2024 06:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l3z+AbXr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAB81EB48F;
-	Tue, 20 Aug 2024 06:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874562A1B2;
+	Tue, 20 Aug 2024 06:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135698; cv=none; b=Rsi3o2LtR+U+uYgkVIoSp9euENJcdw7nrSmp+ZurE9OjmoMdRY8VMQQ0G7SuLvC7d5orSrP0XEhbtiAA1CY3zupyiM2PgpZvp70NVTai2DthG5MtU+AnKqzikCg9DtsVXjjYfnrh+UgGGGF6XwQ+T9ueGxwSuRAtGsMFU2uSajE=
+	t=1724134774; cv=none; b=sW5grpOeOYD7O386YxV5D8u28DkijXlii6iYy8LsuWk14EohHb+b5K7Vez5DLpQz3DOqYoGXOh/G40ukghqQhMIEzkr948kEwdlAhgYzyqpOw+rN50REPOlreLczcXn61nGJM1v+brZse2ly6hyEoz6TwQ8WnMXbTi2sPojw/2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135698; c=relaxed/simple;
-	bh=eEissjANIlAjE6Dg4Lc8cpl/0QBn146mQDgtCJtqqCM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NisY1U8SpsyAT9s8uw8YrDZ/3ToDa6sDnM2c41cqyKwpDC43gWT6ReXu53t9b6RXeu2EjNj/HgNBsee+LMDkS8Cc16cEhSUMZjQQ8KzFMnHPIF4qI402npirArfPePBm0WAB59/Rbvw8HdnYL9/QK5rkAj4jgLNbPyFckdo3J9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: David Hunter <david.hunter.linux@gmail.com>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-CC: "seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, Peter Shier <pshier@google.com>, "Jim
- Mattson" <jmattson@google.com>, Wanpeng Li <wanpengli@tencent.com>
-Subject: =?gb2312?B?tPC4tDogW83isr/Tyrz+XSBbUEFUQ0ggNi4xLnldIEtWTTogeDg2OiBmaXJl?=
- =?gb2312?B?IHRpbWVyIHdoZW4gaXQgaXMgbWlncmF0ZWQgYW5kIGV4cGlyZWQsIGFuZCBp?=
- =?gb2312?Q?n_oneshot_mode?=
-Thread-Topic: =?gb2312?B?W83isr/Tyrz+XSBbUEFUQ0ggNi4xLnldIEtWTTogeDg2OiBmaXJlIHRpbWVy?=
- =?gb2312?B?IHdoZW4gaXQgaXMgbWlncmF0ZWQgYW5kIGV4cGlyZWQsIGFuZCBpbiBvbmVz?=
- =?gb2312?Q?hot_mode?=
-Thread-Index: AQHa8sJeC0W224tlhE2Nz9bQU8HZe7IvqO8Q
-Date: Tue, 20 Aug 2024 06:18:41 +0000
-Message-ID: <57141688d6c94c789aa416906cacf08f@baidu.com>
-References: <20240820053229.2858-1-david.hunter.linux@gmail.com>
-In-Reply-To: <20240820053229.2858-1-david.hunter.linux@gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-baidu-bdmsfe-datecheck: 1_BJHW-Mail-Ex14_2024-08-20 14:18:41:876
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1724134774; c=relaxed/simple;
+	bh=qbLTJSAjd2i5MbXaaXESgl/A7y4ae0phkjCMfbjlFKI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CsuDRkZXb2yTt1wVQv8shhRxX2KsG+42tIIML9TeSEXQzGtYmtPYkMLjWtVqMjDOKO0x6RrYCaWyrzrPVcmtMKq6+1w9Yjd29SfUjHsOmwFH1v4xX2JYbQNYeZ4lNnD5PT/Ie2X+eP3NPuUxqWZ5rs6WGcyA7envlzpdiHuXLRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l3z+AbXr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K026Cv015828;
+	Tue, 20 Aug 2024 06:19:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=qbLTJSAjd2i5MbXaaXESgl/A
+	7y4ae0phkjCMfbjlFKI=; b=l3z+AbXrHLD9815V2NftGAMqv/B+veGAuF/ex7SD
+	PPD+S37RO8tULO8kNH0EwbNsBgd3gP55Aub7I8u3DxniiKXAAyIh6q7vzrfvDsKH
+	Hfpe1SegTfzCNUwcWFf9KEFX5KaeoUYtFoEE6yJZ2C0INYfPm1NZ2O1m+QiHXhmz
+	IYjnOldISuGMJGfPwSR+mOzEJIdFahC5tj61Y3hoYmbXuCDtrvmuwCoh+Hz2Y1JV
+	0Vvsr+rn/tD2nHQiO2jDk1AKCkjSgJ+e4JujRbbt1Rd5YVkYeRbIkntQFS3obBCB
+	4KvFfYaLT5mLlSdTMiaC+uB1xWB9aNnbE4xWfWD1nARKqQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m876nvk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:19:16 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K6JE73027670
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:19:14 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 23:19:07 -0700
+Date: Tue, 20 Aug 2024 11:49:03 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <ilia.lin@kernel.org>,
+        <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <quic_sibis@quicinc.com>, <quic_rjendra@quicinc.com>,
+        <danila@jiaxyga.com>, <neil.armstrong@linaro.org>,
+        <otto.pflueger@abscue.de>, <abel.vesa@linaro.org>, <luca@z3ntu.xyz>,
+        <geert+renesas@glider.be>, <stephan.gerhold@kernkonzept.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Praveenkumar I
+	<quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <ZsQ1V/qusOz6uctA@hu-varada-blr.qualcomm.com>
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com>
+ <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+ <ZpeLYG6vegJYZ5Rs@hu-varada-blr.qualcomm.com>
+ <ZqCD3xtkLHbw9BHN@hu-varada-blr.qualcomm.com>
+ <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
+ <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 10.127.64.37
-X-FE-Last-Public-Client-IP: 100.100.100.38
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MweU2tGZChrAwiTpkRejd55buTB5loI-
+X-Proofpoint-ORIG-GUID: MweU2tGZChrAwiTpkRejd55buTB5loI-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=581 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200045
 
-PiANCj4gRnJvbTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiANCj4gWyBV
-cHN0cmVhbSBDb21taXQgOGU2ZWQ5NmNkZDUwMDFjNTVmY2NjODBhMTdmNjUxNzQxYzFjYTdkMl0N
-Cj4gDQo+IHdoZW4gdGhlIHZDUFUgd2FzIG1pZ3JhdGVkLCBpZiBpdHMgdGltZXIgaXMgZXhwaXJl
-ZCwgS1ZNIF9zaG91bGRfIGZpcmUgdGhlDQo+IHRpbWVyIEFTQVAsIHplcm9pbmcgdGhlIGRlYWRs
-aW5lIGhlcmUgd2lsbCBjYXVzZSB0aGUgdGltZXIgdG8gaW1tZWRpYXRlbHkgZmlyZQ0KPiBvbiB0
-aGUgZGVzdGluYXRpb24NCj4gDQoNClRoaXMgcGF0Y2ggaW5jcmVhc2VkIHRoZSByZXByb2R1Y2Ug
-cmF0aW8gb2YgbGFwaWMgdGltZXIgaW50ZXJydXB0IGxvc2luZywgd2hpY2ggaGFzIGJlZW4gZml4
-ZWQgYnkgdGhlIGZvbGxvd2luZyBwYXRjaDsNCnNvIEkgdGhpbmsgcGF0Y2ggc2hvdWxkIG5vdCBt
-ZXJnZSBpdCBpbnRvIDYuMQ0KDQoNCmNvbW1pdCA5Y2ZlYzZkMDk3YzYwN2UzNjE5OWNmMGNmYmI4
-Y2Y1YWNiZDhlOWIyDQpBdXRob3I6IEhhaXRhbyBTaGFuIDxoc2hhbkBnb29nbGUuY29tPg0KRGF0
-ZTogICBUdWUgU2VwIDEyIDE2OjU1OjQ1IDIwMjMgLTA3MDANCg0KICAgIEtWTTogeDg2OiBGaXgg
-bGFwaWMgdGltZXIgaW50ZXJydXB0IGxvc3QgYWZ0ZXIgbG9hZGluZyBhIHNuYXBzaG90Lg0KDQog
-ICAgV2hlbiBydW5uaW5nIGFuZHJvaWQgZW11bGF0b3IgKHdoaWNoIGlzIGJhc2VkIG9uIFFFTVUg
-Mi4xMikgb24NCiAgICBjZXJ0YWluIEludGVsIGhvc3RzIHdpdGgga2VybmVsIHZlcnNpb24gNi4z
-LXJjMSBvciBhYm92ZSwgZ3Vlc3QNCiAgICB3aWxsIGZyZWV6ZSBhZnRlciBsb2FkaW5nIGEgc25h
-cHNob3QuIFRoaXMgaXMgYWxtb3N0IDEwMCUNCiAgICByZXByb2R1Y2libGUuIEJ5IGRlZmF1bHQs
-IHRoZSBhbmRyb2lkIGVtdWxhdG9yIHdpbGwgdXNlIHNuYXBzaG90DQogICAgdG8gc3BlZWQgdXAg
-dGhlIG5leHQgbGF1bmNoaW5nIG9mIHRoZSBzYW1lIGFuZHJvaWQgZ3Vlc3QuIFNvDQogICAgdGhp
-cyBicmVha3MgdGhlIGFuZHJvaWQgZW11bGF0b3IgYmFkbHkuDQoNCiAgICBJIHRlc3RlZCBRRU1V
-IDguMC40IGZyb20gRGViaWFuIDEyIHdpdGggYW4gVWJ1bnR1IDIyLjA0IGd1ZXN0IGJ5DQogICAg
-cnVubmluZyBjb21tYW5kICJsb2Fkdm0iIGFmdGVyICJzYXZldm0iLiBUaGUgc2FtZSBpc3N1ZSBp
-cw0KICAgIG9ic2VydmVkLiBBdCB0aGUgc2FtZSB0aW1lLCBub25lIG9mIG91ciBBTUQgcGxhdGZv
-cm1zIGlzIGltcGFjdGVkLg0KICAgIE1vcmUgZXhwZXJpbWVudHMgc2hvdyB0aGF0IGxvYWRpbmcg
-dGhlIEtWTSBtb2R1bGUgd2l0aA0KICAgICJlbmFibGVfYXBpY3Y9ZmFsc2UiIGNhbiB3b3JrYXJv
-dW5kIGl0Lg0KDQogICAgVGhlIGlzc3VlIHN0YXJ0ZWQgdG8gc2hvdyB1cCBhZnRlciBjb21taXQg
-OGU2ZWQ5NmNkZDUwICgiS1ZNOiB4ODY6DQogICAgZmlyZSB0aW1lciB3aGVuIGl0IGlzIG1pZ3Jh
-dGVkIGFuZCBleHBpcmVkLCBhbmQgaW4gb25lc2hvdCBtb2RlIikuDQogICAgSG93ZXZlciwgYXMg
-aXMgcG9pbnRlZCBvdXQgYnkgU2VhbiBDaHJpc3RvcGhlcnNvbiwgaXQgaXMgaW50cm9kdWNlZA0K
-ICAgIGJ5IGNvbW1pdCA5NjcyMzVkMzIwMzIgKCJLVk06IHZteDogY2xlYXIgcGVuZGluZyBpbnRl
-cnJ1cHRzIG9uDQogICAgS1ZNX1NFVF9MQVBJQyIpLiBjb21taXQgOGU2ZWQ5NmNkZDUwICgiS1ZN
-OiB4ODY6IGZpcmUgdGltZXIgd2hlbg0KICAgIGl0IGlzIG1pZ3JhdGVkIGFuZCBleHBpcmVkLCBh
-bmQgaW4gb25lc2hvdCBtb2RlIikganVzdCBtYWtlcyBpdA0KICAgIGVhc2llciB0byBoaXQgdGhl
-IGlzc3VlLg0KDQogICAgSGF2aW5nIGJvdGggY29tbWl0cywgdGhlIG9uZXNob3QgbGFwaWMgdGlt
-ZXIgZ2V0cyBmaXJlZCBpbW1lZGlhdGVseQ0KICAgIGluc2lkZSB0aGUgS1ZNX1NFVF9MQVBJQyBj
-YWxsIHdoZW4gbG9hZGluZyB0aGUgc25hcHNob3QuIE9uIEludGVsDQogICAgcGxhdGZvcm1zIHdp
-dGggQVBJQyB2aXJ0dWFsaXphdGlvbiBhbmQgcG9zdGVkIGludGVycnVwdCBwcm9jZXNzaW5nLA0K
-ICAgIHRoaXMgZXZlbnR1YWxseSBsZWFkcyB0byBzZXR0aW5nIHRoZSBjb3JyZXNwb25kaW5nIFBJ
-UiBiaXQuIEhvd2V2ZXIsDQogICAgdGhlIHdob2xlIFBJUiBiaXRzIGdldCBjbGVhcmVkIGxhdGVy
-IGluIHRoZSBzYW1lIEtWTV9TRVRfTEFQSUMgY2FsbA0KICAgIGJ5IGFwaWN2X3Bvc3Rfc3RhdGVf
-cmVzdG9yZS4gVGhpcyBsZWFkcyB0byB0aW1lciBpbnRlcnJ1cHQgbG9zdC4NCg0KICAgIFRoZSBm
-aXggaXMgdG8gbW92ZSB2bXhfYXBpY3ZfcG9zdF9zdGF0ZV9yZXN0b3JlIHRvIHRoZSBiZWdpbm5p
-bmcgb2YNCiAgICB0aGUgS1ZNX1NFVF9MQVBJQyBjYWxsIGFuZCByZW5hbWUgdG8gdm14X2FwaWN2
-X3ByZV9zdGF0ZV9yZXN0b3JlLg0KICAgIFdoYXQgdm14X2FwaWN2X3Bvc3Rfc3RhdGVfcmVzdG9y
-ZSBkb2VzIGlzIGFjdHVhbGx5IGNsZWFyaW5nIGFueQ0KICAgIGZvcm1lciBhcGljdiBzdGF0ZSBh
-bmQgdGhpcyBiZWhhdmlvciBpcyBtb3JlIHN1aXRhYmxlIHRvIGNhcnJ5IG91dA0KICAgIGluIHRo
-ZSBiZWdpbm5pbmcuDQoNCiAgICBGaXhlczogOTY3MjM1ZDMyMDMyICgiS1ZNOiB2bXg6IGNsZWFy
-IHBlbmRpbmcgaW50ZXJydXB0cyBvbiBLVk1fU0VUX0xBUElDIikNCiAgICBDYzogc3RhYmxlQHZn
-ZXIua2VybmVsLm9yZw0KICAgIFN1Z2dlc3RlZC1ieTogU2VhbiBDaHJpc3RvcGhlcnNvbiA8c2Vh
-bmpjQGdvb2dsZS5jb20+DQogICAgU2lnbmVkLW9mZi1ieTogSGFpdGFvIFNoYW4gPGhzaGFuQGdv
-b2dsZS5jb20+DQogICAgTGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDIzMDkxMzAw
-MDIxNS40NzgzODctMS1oc2hhbkBnb29nbGUuY29tDQogICAgU2lnbmVkLW9mZi1ieTogU2VhbiBD
-aHJpc3RvcGhlcnNvbiA8c2VhbmpjQGdvb2dsZS5jb20+DQoNCg0KDQo+IENjOiBTZWFuIENocmlz
-dG9waGVyc29uIDxzZWFuamNAZ29vZ2xlLmNvbT4NCj4gQ2M6IFBldGVyIFNoaWVyIDxwc2hpZXJA
-Z29vZ2xlLmNvbT4NCj4gQ2M6IEppbSBNYXR0c29uIDxqbWF0dHNvbkBnb29nbGUuY29tPg0KPiBD
-YzogV2FucGVuZyBMaSA8d2FucGVuZ2xpQHRlbmNlbnQuY29tPg0KPiBDYzogUGFvbG8gQm9uemlu
-aSA8cGJvbnppbmlAcmVkaGF0LmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxp
-cm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBMaW5rOg0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9y
-LzIwMjMwMTA2MDQwNjI1Ljg0MDQtMS1saXJvbmdxaW5nQGJhaWR1LmNvbQ0KPiBTaWduZWQtb2Zm
-LWJ5OiBTZWFuIENocmlzdG9waGVyc29uIDxzZWFuamNAZ29vZ2xlLmNvbT4NCj4gDQo+IChjaGVy
-cnkgcGlja2VkIGZyb20gY29tbWl0IDhlNmVkOTZjZGQ1MDAxYzU1ZmNjYzgwYTE3ZjY1MTc0MWMx
-Y2E3ZDIpDQo+IFRoZSBjb2RlIHdhcyBhYmxlIHRvIGNvbXBpbGUgd2l0aG91dCBlcnJvcnMgb3Ig
-d2FybmluZ3MuDQo+IFNpZ25lZC1vZmYtYnk6IERhdmlkIEh1bnRlciA8ZGF2aWQuaHVudGVyLmxp
-bnV4QGdtYWlsLmNvbT4NCj4gLS0tDQo+ICBhcmNoL3g4Ni9rdm0vbGFwaWMuYyB8IDggKysrKysr
-LS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+
-IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL2xhcGljLmMgYi9hcmNoL3g4Ni9rdm0vbGFw
-aWMuYyBpbmRleA0KPiBjOTBmZWYwMjU4YzUuLjNjZDU5MGFjZTk1YSAxMDA2NDQNCj4gLS0tIGEv
-YXJjaC94ODYva3ZtL2xhcGljLmMNCj4gKysrIGIvYXJjaC94ODYva3ZtL2xhcGljLmMNCj4gQEAg
-LTE4NDMsOCArMTg0MywxMiBAQCBzdGF0aWMgYm9vbCBzZXRfdGFyZ2V0X2V4cGlyYXRpb24oc3Ry
-dWN0IGt2bV9sYXBpYw0KPiAqYXBpYywgdTMyIGNvdW50X3JlZykNCj4gIAkJaWYgKHVubGlrZWx5
-KGNvdW50X3JlZyAhPSBBUElDX1RNSUNUKSkgew0KPiAgCQkJZGVhZGxpbmUgPSB0bWljdF90b19u
-cyhhcGljLA0KPiAgCQkJCSAgICAga3ZtX2xhcGljX2dldF9yZWcoYXBpYywgY291bnRfcmVnKSk7
-DQo+IC0JCQlpZiAodW5saWtlbHkoZGVhZGxpbmUgPD0gMCkpDQo+IC0JCQkJZGVhZGxpbmUgPSBh
-cGljLT5sYXBpY190aW1lci5wZXJpb2Q7DQo+ICsJCQlpZiAodW5saWtlbHkoZGVhZGxpbmUgPD0g
-MCkpIHsNCj4gKwkJCQlpZiAoYXBpY19sdnR0X3BlcmlvZChhcGljKSkNCj4gKwkJCQkJZGVhZGxp
-bmUgPSBhcGljLT5sYXBpY190aW1lci5wZXJpb2Q7DQo+ICsJCQkJZWxzZQ0KPiArCQkJCQlkZWFk
-bGluZSA9IDA7DQo+ICsJCQl9DQo+ICAJCQllbHNlIGlmICh1bmxpa2VseShkZWFkbGluZSA+IGFw
-aWMtPmxhcGljX3RpbWVyLnBlcmlvZCkpIHsNCj4gIAkJCQlwcl9pbmZvX3JhdGVsaW1pdGVkKA0K
-PiAgCQkJCSAgICAia3ZtOiB2Y3B1ICVpOiByZXF1ZXN0ZWQgbGFwaWMgdGltZXIgcmVzdG9yZSB3
-aXRoICINCj4gLS0NCj4gMi40My4wDQoNCg==
+On Mon, Aug 05, 2024 at 12:32:34PM +0200, Ulf Hansson wrote:
+> On Wed, 24 Jul 2024 at 19:26, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Wed, Jul 24, 2024 at 10:02:31AM GMT, Varadarajan Narayanan wrote:
+> > > On Wed, Jul 17, 2024 at 02:44:08PM +0530, Varadarajan Narayanan wrote:
+> > > > On Tue, Jul 16, 2024 at 02:15:12PM +0200, Konrad Dybcio wrote:
+> > > > > On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> > > > > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > > >
+> > > > > > Add the APC power domain definitions used in IPQ9574.
+> > > > > >
+> > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > > ---
+> > > > >
+> > > > > Could you please confirm [1]?
+> > > > >
+> > > > > Konrad
+> > > > >
+> > > > > [1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
+> > > >
+> > > > The author is off for a few days. Will get back to you once he is in.
+> > >
+> > > Have responded to that query. Please see https://lore.kernel.org/linux-arm-msm/ZqCCpf1FwLWulSgr@hu-varada-blr.qualcomm.com/
+> >
+> > If it responds to voltage values, please model it as a regulator rather
+> > than a power domain.
+>
+> Just wanted to give my brief opinion around this too.
+>
+> I agree that it seems to make sense to model it as a regulator, but
+> that doesn't necessarily mean that we shouldn't model it as a
+> power-domain too.
+>
+> If it is a power-domain it should be modelled like that - and then the
+> power-domain provider should be assigned as the consumer of that
+> regulator.
+
+Have posted V7 (without modelling as power-domain).
+Please review.
+
+Thanks
+Varada
 
