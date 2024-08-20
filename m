@@ -1,149 +1,342 @@
-Return-Path: <linux-kernel+bounces-293679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47737958313
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06224958315
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F087A1F216A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15AD284992
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDED18C349;
-	Tue, 20 Aug 2024 09:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE2418C92A;
+	Tue, 20 Aug 2024 09:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZXmPzHU"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="LNUcxZh7"
+Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B33918B496;
-	Tue, 20 Aug 2024 09:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C373618A93A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724146988; cv=none; b=TDCDOR896HrvcC3k//fKQPC6RRDz+/xjz7iVDH3U+9aHufp7Dyz2GU5hm4d83xYqRnpfXjnBa+SIkjydbKF4CIZQVmq22No2im6z7mkH5EXJhKbYFkcS2qgNmj2Z54Hsgvqeaa7YhUdeizILTvzowMeWP2IEZEkBG8hIkRWj9/I=
+	t=1724147045; cv=none; b=KjAHpXkmWwDUMlOIL6KXEicnzkTHxh7c22bhK3hW9TDx3/E5wK+K+qg9s6KeGREXqToUTmgHKuYUEAGso49x8fBRGd1m1CExLas3rlxLtYvZpEpQLUSsWK1blSB/4jNvQv6RUkTN49DwMtEx2F1DCl0P/cc+vgov+OfjcqVvynQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724146988; c=relaxed/simple;
-	bh=h8yl/bm1b7kGTRT5b2grebCJdkKQrrmEhi2H+FF1qog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HibnrkyOzSto0Tb9C6sCe1CDubvA44QTIipPisG0BBnjLdXgdf/JbkM1AukivNrZR769PcE48dbClsSAdyW/oCR/uTKVoZy603zcLZNDxiizNpDoT6sxFov7HYNYSfaTus2CzQ4nOoC9ce2qj1YDiJqmj61F/3zxAM7W1D35CWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZXmPzHU; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso640210566b.2;
-        Tue, 20 Aug 2024 02:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724146985; x=1724751785; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HB9GJpO2A9Zu27iG4GJBn2lNd3c+yJqVBgrLVTv/JVI=;
-        b=hZXmPzHUwrMYtnNdGVWMzYuTXC2+ldjFWhxwOWqkGZr+ripL2W41O7z7AuX3RMy3qq
-         BGKHRz3YUBTCJyEQArHyHecto1LKyKD631JKrrTuhEpR8jrEvZi+9hxc8vTSxtgKnI6w
-         M4v+t0q0UFqnc2CavEbNcOIrjjUANAC7DpN75I/LIGnoebKuMuGBta9nlwiK/ZxXSCzc
-         nW1W3ezd2YAsOa6XWdnRzDUyy93rpGxORRYiiKjEonaSaPJt3SkruDOu7vuBYiAmuuxg
-         B63w6pKoJQlGT9tJW0pAuWjklqIystn9H2cJgpYxoIWxkKfGgZHiBg4D4ALWwNnnP0LP
-         1kdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724146985; x=1724751785;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HB9GJpO2A9Zu27iG4GJBn2lNd3c+yJqVBgrLVTv/JVI=;
-        b=X38EAWAxvo08vsIqwy04T24lSo5bMo7IuzC8gfELBsCAwgM75wJL46v2lMq62YngkN
-         U2RjSyC9YK98SR5kNOfPrUq5l9NxTwWl4UUu7qLWXhDEBrV3ivhDxzU6OoRvYZZyaohF
-         YoHLpxf4i8E/woYPQ/aXrf1I+ySp1rD2Gka2nSUUmJRRvC9pZapIEiBIcAr4QMGldBl5
-         kPH6y4ZweoEFjTa8t+QVUbGCwMl0mXC3uqzoDvX110ZrY4yJD6SBfSdKKR+0ArM3THtW
-         BT1Ahf+OZFVuNm5/yrq1sw2vD+wiuBWGcM7PzUvjaEJrOMzm1ReZT9ERzXP0chwgcptV
-         SiDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEViCUgNwjaDSbECzJUdxULLpb0xln1sLWTR/LCC3mYZ6fklqjZd7FifdS5hFLcPMgbpTl5ow8aIlqTwEGPIVJbWeZucMMqmeZOB0mIlCO1eoS5hIyVqNNBGgk5T67EcOeE9utVKc9XK09DgMbZlKQH1j9hC8yVVP2IJbt9H8byxA44dyxfWRq0yLYmaqQ6gP+5ljFXBL9mO+8/pQPiciHlH5PvQ==
-X-Gm-Message-State: AOJu0YwMhb4dkkOYeHy/KQPXc++kPoVY7G0uci2UZSNiFt5wwYfQmL0i
-	KlqwG+QCvZPPUdHT0iJ6Mt6UbSHE/qPgtAGMvq2N3VYzOJAT10tx
-X-Google-Smtp-Source: AGHT+IFPycyN8twdBzjqzi9yYN6HmGfXTYQrId5E5aQm0wwJzJHD7A8ue3GOzlLt4gOz73IDq0PTfw==
-X-Received: by 2002:a17:907:d862:b0:a7a:b781:60ed with SMTP id a640c23a62f3a-a839292f71fmr939833766b.17.1724146984784;
-        Tue, 20 Aug 2024 02:43:04 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396ce0asm737786466b.206.2024.08.20.02.43.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 02:43:04 -0700 (PDT)
-Message-ID: <05d2e44c-fa39-4622-ac4f-da9da2f02535@gmail.com>
-Date: Tue, 20 Aug 2024 11:43:00 +0200
+	s=arc-20240116; t=1724147045; c=relaxed/simple;
+	bh=UXN6Hz41fsT5CwoupTSUwp6fKqMOLT7VeoPg8p0GPK8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IgNvnllOv3QuLKFPhVHwJw+6BJ/D9yTecoilOZw1kxwxZgOcuCWMy/71Yl7hZDYwdAQgpBgzy9j/ZX58X4E/kyaCUksTe20MaVIvj+tXznUZdgHxK2l+nT3BiisRwVvWpk3O90vYWEsPKtqC2CT3yFAvHNbWb4R+bqNkbB703tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=LNUcxZh7; arc=none smtp.client-ip=185.70.40.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail; t=1724147041; x=1724406241;
+	bh=UXN6Hz41fsT5CwoupTSUwp6fKqMOLT7VeoPg8p0GPK8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=LNUcxZh7VjzfmogmZP9wTdIpKPwWaKpGxoRtGTXeDbaDr3xejBfXdaAEnpQKkOIud
+	 BCxF01p5/sdcq8hmwjv/86qRDR7BAPVosEqVdfTXxpiuE/bEFcWdVee380cY2O9tuI
+	 R0jzEnIsy1Jm63PR3QnUPOXvMP4P+T3RASDiATkirSc1U7JQqsSCvQCOOP9/FFwQD2
+	 GcjGhprIhO1Vu02MpB5P6hRzjYATsD6OwQryiWQwTBWy4D/RsjFuOpe2xpANfzGr4B
+	 SsbYwQd0h07lLODDhwSdhwRqiWwwte7zkePgIk0nSsjQptKszgjKBUIGTcJqeQftql
+	 zRzfK+XFuhkMQ==
+Date: Tue, 20 Aug 2024 09:43:54 +0000
+To: Yosry Ahmed <yosryahmed@google.com>
+From: Mike Yuan <me@yhndnzj.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v2 2/2] selftests: test_zswap: add test for hierarchical zswap.writeback
+Message-ID: <9e39ed273b5e25e3d2f33c5a2b8e3131efbfcedc.camel@yhndnzj.com>
+In-Reply-To: <CAJD7tkYRiA7113ehpXoiafJtk8Z+j6nV_bQWK0xoX3KaK6=wcQ@mail.gmail.com>
+References: <20240816144344.18135-1-me@yhndnzj.com> <20240816144344.18135-2-me@yhndnzj.com> <CAJD7tkYRiA7113ehpXoiafJtk8Z+j6nV_bQWK0xoX3KaK6=wcQ@mail.gmail.com>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 822ab96bf117f3804cbe182c28e1d2c5b8ec1278
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] ASoC: msm8916-wcd-analog: add lineout output
-To: Adam Skladowski <a39.skl@gmail.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
-References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
- <20240731-msm8953-msm8976-asoc-v3-8-163f23c3a28d@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-8-163f23c3a28d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 31.07.2024 5:25 PM, Adam Skladowski wrote:
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
-> 
-> Add descriptions and controls to toggle lineout output
-> 
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
->  sound/soc/codecs/msm8916-wcd-analog.c | 64 +++++++++++++++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-> index b9325290c28d..38949556f7d9 100644
-> --- a/sound/soc/codecs/msm8916-wcd-analog.c
-> +++ b/sound/soc/codecs/msm8916-wcd-analog.c
-> @@ -233,6 +233,8 @@
->  #define RX_EAR_CTL_PA_SEL			BIT(7)
->  
->  #define CDC_A_RX_EAR_STATUS		(0xf1A1)
-> +#define CDC_A_RX_LO_DAC_CTL		(0xf1AC)
-> +#define CDC_A_RX_LO_EN_CTL		(0xf1AD)
->  
->  #define CDC_A_SPKR_DAC_CTL		(0xf1B0)
->  #define SPKR_DAC_CTL_DAC_RESET_MASK	BIT(4)
-> @@ -327,6 +329,8 @@ static const struct soc_enum hph_enum = SOC_ENUM_SINGLE_VIRT(
->  static const struct snd_kcontrol_new ear_mux = SOC_DAPM_ENUM("EAR_S", hph_enum);
->  static const struct snd_kcontrol_new hphl_mux = SOC_DAPM_ENUM("HPHL", hph_enum);
->  static const struct snd_kcontrol_new hphr_mux = SOC_DAPM_ENUM("HPHR", hph_enum);
-> +static const struct snd_kcontrol_new lineout_mux = SOC_DAPM_ENUM("LINEOUT",
-> +								 hph_enum);
->  
->  /* ADC2 MUX */
->  static const struct soc_enum adc2_enum = SOC_ENUM_SINGLE_VIRT(
-> @@ -630,6 +634,46 @@ static int pm8916_wcd_analog_enable_adc(struct snd_soc_dapm_widget *w,
->  	return 0;
->  }
->  
-> +static int pm8916_wcd_analog_enable_lineout_dac(struct snd_soc_dapm_widget *w,
-> +					 struct snd_kcontrol *kcontrol,
-> +					 int event)
-> +{
-> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-> +
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		snd_soc_component_update_bits(component, CDC_A_RX_LO_EN_CTL,
-> +				0x20, 0x20);
+On 2024-08-19 at 12:19 -0700, Yosry Ahmed wrote:
+> On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
+> >=20
+> > Ensure that zswap.writeback check goes up the cgroup tree.
+>=20
+> Too concise :) Perhaps a little bit of description of what you are
+> doing would be helpful.
 
-Using BIT(n) here would be nicer, but this looks reasonable otherwise
+The patch has been merged into mm-unstable tree. Do I need to
+send a v3 to resolve the comments?
 
-Konrad
+> >=20
+> > Signed-off-by: Mike Yuan <me@yhndnzj.com>
+> > ---
+> > =C2=A0tools/testing/selftests/cgroup/test_zswap.c | 69 ++++++++++++++--=
+-
+> > ----
+> > =C2=A01 file changed, 48 insertions(+), 21 deletions(-)
+> >=20
+> > diff --git a/tools/testing/selftests/cgroup/test_zswap.c
+> > b/tools/testing/selftests/cgroup/test_zswap.c
+> > index 190096017f80..7da6f9dc1066 100644
+> > --- a/tools/testing/selftests/cgroup/test_zswap.c
+> > +++ b/tools/testing/selftests/cgroup/test_zswap.c
+> > @@ -263,15 +263,13 @@ static int test_zswapin(const char *root)
+> > =C2=A0static int attempt_writeback(const char *cgroup, void *arg)
+> > =C2=A0{
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 long pagesize =3D sysconf(_S=
+C_PAGESIZE);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *test_group =3D arg;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t memsize =3D MB(4);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char buf[pagesize];
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 long zswap_usage;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool wb_enabled;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool wb_enabled =3D *(bool *) arg=
+;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret =3D -1;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *mem;
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wb_enabled =3D cg_read_long(test_=
+group,
+> > "memory.zswap.writeback");
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mem =3D (char *)malloc(memsi=
+ze);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!mem)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+> > @@ -288,12 +286,12 @@ static int attempt_writeback(const char
+> > *cgroup, void *arg)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 memcpy(&mem[i], buf, pagesize);
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Try and reclaim allocated=
+ memory */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write_numeric(test_group, =
+"memory.reclaim",
+> > memsize)) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write_numeric(cgroup, "mem=
+ory.reclaim", memsize)) {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 ksft_print_msg("Failed to reclaim all of the
+> > requested memory\n");
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswap_usage =3D cg_read_long(test=
+_group,
+> > "memory.zswap.current");
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswap_usage =3D cg_read_long(cgro=
+up, "memory.zswap.current");
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* zswpin */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (int i =3D 0; i < memsiz=
+e; i +=3D pagesize) {
+> > @@ -303,7 +301,7 @@ static int attempt_writeback(const char
+> > *cgroup, void *arg)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write_numeric(test_group, =
+"memory.zswap.max",
+> > zswap_usage/2))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write_numeric(cgroup, "mem=
+ory.zswap.max",
+> > zswap_usage/2))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > @@ -312,7 +310,7 @@ static int attempt_writeback(const char
+> > *cgroup, void *arg)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * If writeback is disa=
+bled, memory reclaim will fail as
+> > zswap is limited and
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * it can't writeback t=
+o swap.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D cg_write_numeric(test_gro=
+up, "memory.reclaim",
+> > memsize);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D cg_write_numeric(cgroup, =
+"memory.reclaim", memsize);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!wb_enabled)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D (ret =3D=3D -EAGAIN) ? 0 : -1;
+> >=20
+> > @@ -321,12 +319,38 @@ static int attempt_writeback(const char
+> > *cgroup, void *arg)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+> > =C2=A0}
+> >=20
+> > +static int test_zswap_writeback_one(const char *cgroup, bool wb)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 long zswpwb_before, zswpwb_after;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_before =3D get_cg_wb_count=
+(cgroup);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (zswpwb_before !=3D 0) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ksft_print_msg("zswpwb_before =3D %ld instead of
+> > 0\n", zswpwb_before);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return -1;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_run(cgroup, attempt_writeb=
+ack, (void *) &wb))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return -1;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Verify that zswap writeback oc=
+curred only if writeback
+> > was enabled */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_after =3D get_cg_wb_count(=
+cgroup);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (zswpwb_after < 0)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return -1;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (wb !=3D !!zswpwb_after) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ksft_print_msg("zswpwb_after is %ld while wb is
+> > %s",
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_after, wb ? "enabled" :
+> > "disabled");
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return -1;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > +}
+> > +
+> > =C2=A0/* Test to verify the zswap writeback path */
+> > =C2=A0static int test_zswap_writeback(const char *root, bool wb)
+> > =C2=A0{
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 long zswpwb_before, zswpwb_after;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret =3D KSFT_FAIL;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *test_group;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *test_group, *test_group_chi=
+ld =3D NULL;
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test_group =3D cg_name(root,=
+ "zswap_writeback_test");
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!test_group)
+> > @@ -336,29 +360,32 @@ static int test_zswap_writeback(const char
+> > *root, bool wb)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write(test_group, "me=
+mory.zswap.writeback", wb ? "1"
+> > : "0"))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_before =3D get_cg_wb_count=
+(test_group);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (zswpwb_before !=3D 0) {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ksft_print_msg("zswpwb_before =3D %ld instead of
+> > 0\n", zswpwb_before);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_zswap_writeback_one(test=
+_group, wb))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_run(test_group, attempt_wr=
+iteback, (void *)
+> > test_group))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write(test_group, "memory.=
+zswap.max", "max"))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 goto out;
+>=20
+> Why is this needed? Isn't this the default value?
+
+attempt_writeback() would modify it.
+
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write(test_group, "cgroup.=
+subtree_control",
+> > "+memory"))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Verify that zswap writeback oc=
+curred only if writeback
+> > was enabled */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_after =3D get_cg_wb_count(=
+test_group);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (zswpwb_after < 0)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test_group_child =3D cg_name(test=
+_group,
+> > "zswap_writeback_test_child");
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!test_group_child)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 goto out;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_create(test_group_child))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 goto out;
+>=20
+> I'd rather have all the hierarchy setup at the beginning of the test,
+> before the actual test logic. I don't feel strongly about it though.
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cg_write(test_group_child, "m=
+emory.zswap.writeback",
+> > "1"))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+>=20
+> Is the idea here that we always hardcode the child's zswap.writeback
+> to 1, and the parent's zswap.writeback changes from 0 to 1, and we
+> check that the parent's value is what matters?
+> I think we need a comment here.
+
+Yes, indeed.
+
+> TBH, I expected a separate test that checks different combinations of
+> parent and child values (e.g. also verifies that if the parent is
+> enabled but child is disabled, writeback is disabled).
+
+That's (implicitly) covered by the test itself IIUC? The parent cgroup
+here is in turn the child of root cgroup.
+
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (wb !=3D !!zswpwb_after) {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ksft_print_msg("zswpwb_after is %ld while wb is
+> > %s",
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zswpwb_after, wb ? "enabled" :
+> > "disabled");
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_zswap_writeback_one(test=
+_group_child, wb))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D KSFT_PASS;
+> >=20
+> > =C2=A0out:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_group_child) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 cg_destroy(test_group_child);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 free(test_group_child);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cg_destroy(test_group);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 free(test_group);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+> > --
+> > 2.46.0
+> >=20
+> >=20
+
+
 
