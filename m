@@ -1,84 +1,135 @@
-Return-Path: <linux-kernel+bounces-294153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5796F958A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B3A958A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149E6288B26
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1034284ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91A3198E81;
-	Tue, 20 Aug 2024 14:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E121AB507;
+	Tue, 20 Aug 2024 14:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvP0yVC9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3JD8ob4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07D3192B6F;
-	Tue, 20 Aug 2024 14:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A3C192B83;
+	Tue, 20 Aug 2024 14:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165023; cv=none; b=rWfnX5EPL55sDzWD8x80fgif2V2MJyzQbEGHqZ255ZHyvW4XfS7v+RDwiVhGCdh6YyRevYWk1D+KD4erkSl61OkqpJEKPgdRpmnXuvscFM8n/zmSWhEiKOwWu8xJGbrtWBj35156tIay5+eRO0YzR4Z44JgFn29QetkrUh2RY1s=
+	t=1724165035; cv=none; b=rnH/ioEp6gptKjnXBYyQpEwCLvailIplXZfCi4kFaudcVAXXSRGLAfCxV/vzxpcnrrRoyPk+oN7XvecJjxXhNxvf/qprwy6YZn35u13+AoW2uaP6JLa12AKOQKUnDkytAm19AfXCqT53+NpuVHIUe6SSqV7Er0I+sMg0PXLFuZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165023; c=relaxed/simple;
-	bh=qKVWR2bAYFjX4EnvEKN/nM7t6D7ZiPXtCFfUKjHWsmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=idIG4S4xYDSdApY97AIWg4KBeYXrukSXpjaETGRMlBSyPiIV09q7ElreDwGoxHwbyWpt+1bgCbwUA5gw3EP+IqwIjC8U5vBg+1d/nXykx4RzzIkErJVZ6KpS6tlqjjwiSjnLscAictFYMdanRmYgD6UgJwig7NS1imDxIl0ii0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvP0yVC9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 876FEC4AF0B;
-	Tue, 20 Aug 2024 14:43:41 +0000 (UTC)
+	s=arc-20240116; t=1724165035; c=relaxed/simple;
+	bh=W7ZCCtqep2N7YC84maFuRBR9W86xcb4AH8v0dpyHReY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H42yMD3B1e1ZT8IWW9Qm6XlxeXO+3IDv6hAGeflWhZjh0dhmo93AflxXuvhdPtEtJepa4Tsu50MKUicRT/+Z1EKfWrJbgvzciKmVBA4eONui+9x7kszf2FFFgAl8F0+OXvIfvfj+A7cNbnwiiEAPWEN0BnJA0Bqa1od2tz4D4m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3JD8ob4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83AE0C4AF0B;
+	Tue, 20 Aug 2024 14:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724165022;
-	bh=qKVWR2bAYFjX4EnvEKN/nM7t6D7ZiPXtCFfUKjHWsmY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jvP0yVC9+ktb07008ryrlvI+J8gqmlyEQfRbAnctHjVCiZp7Qz+hK/Vq4bKBkiC5Y
-	 yOz9KxTEO93iX9v+f/FPi/EuLJh9I3KGu1ZAEtGW+xu4mijbw+f+L3I2XE3anS+72p
-	 P9x7TNI6/8lDRg0higKB2QCeNuMSNDTdshkSwlxuNVwfGkObNSct2tbh4Wb6NbKO4B
-	 h3t0q+0sXn4OAPbJEuGAiteC4cd5oNJCExgVYWCGonHOqOZa5583BD/hNWo4+0nIjh
-	 MxSjnFx/mAD5Czxm2+Y9QdYU2YOpiI7e7yjZQ9H/AwHzi1cLPrAXeOaZ0/F03qJbqk
-	 bGeHTpt7bgmbQ==
-Date: Tue, 20 Aug 2024 07:43:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
- Yunsheng Lin <linyunsheng@huawei.com>, Somnath Kotur
- <somnath.kotur@broadcom.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Yonglong Liu <liuyonglong@huawei.com>, "David S. Miller"
- <davem@davemloft.net>, pabeni@redhat.com, ilias.apalodimas@linaro.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Duyck
- <alexander.duyck@gmail.com>, Alexei Starovoitov <ast@kernel.org>, "shenjian
- (K)" <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
- joro@8bytes.org, will@kernel.org, iommu@lists.linux.dev
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-Message-ID: <20240820074340.6de9282d@kernel.org>
-In-Reply-To: <CAHS8izP-MWSFJi8zMW2P144-5p+KyWwNT2+UXBwSf=ocseQycQ@mail.gmail.com>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
-	<8743264a-9700-4227-a556-5f931c720211@huawei.com>
-	<e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
-	<CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
-	<ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
-	<190d5a15-d6bf-47d6-be86-991853b7b51d@arm.com>
-	<5b0415ff-9bbe-4553-89d6-17d12fd44b47@huawei.com>
-	<ae995d55-daa9-4060-85fa-31b4f725a17d@arm.com>
-	<20240806135017.GG676757@ziepe.ca>
-	<CAHS8izP-MWSFJi8zMW2P144-5p+KyWwNT2+UXBwSf=ocseQycQ@mail.gmail.com>
+	s=k20201202; t=1724165034;
+	bh=W7ZCCtqep2N7YC84maFuRBR9W86xcb4AH8v0dpyHReY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d3JD8ob4MFmPvROFWu7vomdTt+bpkgPEBjVHYFCugq+o29YVB5yuKcb7kVUXO/sFU
+	 WPbweC5GTT0Vo/r3ac/F3TiRl79x+U7fn8nGMW+jRb9uItHUq79ox1zMuCws7IcfVK
+	 Y1KuN1eQGEY8Qky4IdSiivliWdiJ17tiHpFetmqB+V9rnpQg598RQOuQE7YG2GLSK3
+	 wVxqhtaCD9CluazTHG1KD3hiDHGYaG7kXSYDEjPlD60Pk0XiS3lzMH+fsdB0tfRXsa
+	 BZIaDl8xsn0UwxMNM+b4EHe8lh1zVXDtTlbUwj/7hvi9EF2cqwWi5RVtgwib0kf1l8
+	 lmBmUQZBW1uUg==
+Date: Tue, 20 Aug 2024 15:43:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/479] 5.15.165-rc3 review
+Message-ID: <1c83d94d-1b56-4bd9-8a96-c5062c238c06@sirena.org.uk>
+References: <20240817075228.220424500@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PfIcW7SysGFheIkL"
+Content-Disposition: inline
+In-Reply-To: <20240817075228.220424500@linuxfoundation.org>
+X-Cookie: You are false data.
 
-On Tue, 20 Aug 2024 09:22:39 -0400 Mina Almasry wrote:
-> Is it for some reason not feasible for the page_pool to release the
-> pages on driver unload and destroy itself, rather than have to stick
-> around until all pending pages have been returned from the net stack?
 
-Normal page pool does not track all the pages it allocates.
+--PfIcW7SysGFheIkL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Aug 17, 2024 at 10:00:38AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.165 release.
+> There are 479 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+This breaks the build of at least the KVM selftests on arm64 for me:
+
+In file included from dirty_log_test.c:15:
+=2E./../../../tools/include/linux/bitmap.h: In function =E2=80=98bitmap_zer=
+o=E2=80=99:
+=2E./../../../tools/include/linux/bitmap.h:33:34: warning: implicit declara=
+tion of
+ function =E2=80=98ALIGN=E2=80=99 [-Wimplicit-function-declaration]
+   33 | #define bitmap_size(nbits)      (ALIGN(nbits, BITS_PER_LONG) / BITS=
+_PER_
+BYTE)
+      |                                  ^~~~~
+=2E./../../../tools/include/linux/bitmap.h:40:32: note: in expansion of mac=
+ro =E2=80=98bit
+map_size=E2=80=99
+   40 |                 memset(dst, 0, bitmap_size(nbits));
+      |                                ^~~~~~~~~~~
+/usr/bin/ld: /tmp/cc4JPVlx.o: in function `bitmap_alloc':
+/build/stage/linux/tools/testing/selftests/kvm/../../../../tools/include/li=
+nux/b
+itmap.h:126: undefined reference to `ALIGN'
+/usr/bin/ld: /build/stage/linux/tools/testing/selftests/kvm/../../../../too=
+ls/in
+clude/linux/bitmap.h:126: undefined reference to `ALIGN'
+collect2: error: ld returned 1 exit status
+
+This bisects down to:
+
+9853a5bed65d507048dbe772bb84e6f905b772a3 is the first bad commit
+commit 9853a5bed65d507048dbe772bb84e6f905b772a3
+Author: Alexander Lobakin <aleksander.lobakin@intel.com>
+Date:   Wed Mar 27 16:23:49 2024 +0100
+
+    bitmap: introduce generic optimized bitmap_size()
+   =20
+    commit a37fbe666c016fd89e4460d0ebfcea05baba46dc upstream.
+
+A similar issue appears to affect at least the 5.10 -rc.
+
+--PfIcW7SysGFheIkL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbEq6AACgkQJNaLcl1U
+h9BewQf/UoUrlE9AVYbakAIiMPXctHgee/yuja880P8DisjuiAd0s5VWr3sLfQc/
+QYm7Y/xQwso2hl1e8+8MvTUL0/EPVwSRYGTvhHvPFP/qIN/mUe/ED8Kyzh7xNay+
+PfOqs/PyPzIoLGmkzAHfhB4nl3LrBqkl4cRqrJlXA3K4mY72esYHgU9Vpmc4k5I0
+lAKCW2eSNaGeqCrOC0oq3PTQjj2rsdHmie4CCe7tH+UT2+5LLXHPMjlFuXtrvK3I
+twUZG0hD9Ylnl8TI87QtO6A7JnyMiVrvfdEpGthlLiAmhCH4fGUhK++XzZ20HQMR
+iFykVdY8WTr7bv2pfQC5cLAmzEJ2hA==
+=9GlQ
+-----END PGP SIGNATURE-----
+
+--PfIcW7SysGFheIkL--
 
