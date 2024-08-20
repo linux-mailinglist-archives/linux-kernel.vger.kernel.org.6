@@ -1,192 +1,89 @@
-Return-Path: <linux-kernel+bounces-293486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235CA958067
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DC3958069
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5658E1C23DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4BCA1C23ACB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8801A189BAF;
-	Tue, 20 Aug 2024 07:58:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DEF189F32;
+	Tue, 20 Aug 2024 07:59:30 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DDB18E34F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0E18E34F;
+	Tue, 20 Aug 2024 07:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724140709; cv=none; b=jXOyfppbBzuzD2nfiaWIplKR9qgsLehmzPmkpWRONQunMoU9Jbnq2l/JyOf5Xwi2jX0XlFN2eGpi0OWnMtFOCbOeZLd01YzDmaRdmLIsfQQ7nMYzxMFmHrlZ2L5SNSbwgAeduagKfClZ6mqjLsudvEGTfbknvWYXdnpEy9n9hKU=
+	t=1724140770; cv=none; b=nuH4r7Ne4nw5h+3N9vdnY30Xcd2316oTp7CjQWqOzfR+BWsqtb4nWzvdKG7/yEHaq9soUsE6cGJXQj2FLuTIVWAouDpichTHNyGGp7hPQROY3FNG6nSZoABLJVvN6jZF3BG50b9CwcwboD0HVjMEl9gR5VSLnuBULc70j5TGbOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724140709; c=relaxed/simple;
-	bh=67qmrw0+WQj84veMh1dqkYoXrsITVb16oR9I5LOUV/s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bWk9xhQMUVspgNp0ZRjV5o+jtDr4DVN0mXdLqAdcqvNiKrZt/6MrlEEyoTa16ScG3B75gj79U7pPMenVLwtCNsxMN4pVOsp2ZK5cHgNFdwPG2+TVfmUFaeWXvshe66yEepWr9bBtb+iwlmDrnvNS2U9SWF/4aKxvzYZNYcSXCz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso46587445ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:58:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724140706; x=1724745506;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hhNCGOb6XK7oobwH0gSQwHyu2zFQ7pAJNf8SQsyUj7M=;
-        b=YqbF7UkMvYfvmJXmgMqR0PEnCJMCwovdy8Ylj/i/jUqnAexnJqJ3hqqz0PNPmcHjkm
-         C+wMkCHIUMpHVLP4S7B4n+/EtIaU6r+VhWyslV817hyDMFwSi3yRKHXr8Cox2p+6qNJe
-         WEdegzoiRQ/6e0iurZbXuu6Ape/AoByiW64wgHnZUuW0f2PpI2I0bDy/JLDpDs+qlyPi
-         HbykzhILkkpPp362D9yFPZCIVLHbS93mFuwhpmditPjAT5dbMP7nTI67svm8wLpF8fUg
-         +fisTNszULuWnxHBXiFeV44Oz4ba96uSNtbbrvtWN0lMWQgxcHUCEHme98e5p4wO8PXe
-         n+yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcwdHgyLrqkGWG7oaGSQnGzt50NMKb7OnYUuDF/SGoPnJeo5c/xzD6oXlDTWpTqvwbTSBcftNfV3uCsTaPajvGxmMyhLPcdROIfMUI
-X-Gm-Message-State: AOJu0Yzjq6yq3QJKdCpTgCyQlxBSSJecqOezOaz+QJVf6yNp7hkiaJbX
-	bRiyTjO9N5ahldBECALI/RDkeVhON5pQbp1/LoWO9LJUBxYNEm8xR17ZHvAiK5R4w5lbLXqv8XK
-	/B8DJdE8Ef59nw0PRT8xAaMmIDBN+xVdfQplUKCWRfbc1+yPwWboFRmU=
-X-Google-Smtp-Source: AGHT+IGBIuavGhgArxoh4WRlwWK6QZx0hVSiwxAc21Pg24ZpJerRdwk6wk1OorjljvTLkmUNY50tBOWJJbLWSVEN+kqZenLrJmZo
+	s=arc-20240116; t=1724140770; c=relaxed/simple;
+	bh=U488BWMaAzODhiyts3CzQHGRTP9j4MQwA1+jXqle1gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WGepQ2ETzhI5qBmq7azagN6kP2JQrOiy4ujAN794P6FYYLl24r6DpIhY0GTf2NXWIwhMNhNzEcVrPMm6LKFxCxsknwnPnEeXepT2DhHxVCGH++O3/DiHGjTRuvSZXYV59bczoc0AgYewpwlt7A4hVq/5QXkMXk46Fwm3wBlQja8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp1yq6g0szfbfQ;
+	Tue, 20 Aug 2024 15:57:23 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id EC695180101;
+	Tue, 20 Aug 2024 15:59:23 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 20 Aug
+ 2024 15:59:23 +0800
+Message-ID: <ad98fdf8-bc03-a5ed-c868-8073c9aa4df5@huawei.com>
+Date: Tue, 20 Aug 2024 15:59:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54b:0:b0:397:b509:6441 with SMTP id
- e9e14a558f8ab-39d26ceb6a7mr11949705ab.2.1724140706365; Tue, 20 Aug 2024
- 00:58:26 -0700 (PDT)
-Date: Tue, 20 Aug 2024 00:58:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005894f3062018caf1@google.com>
-Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
-From: syzbot <syzbot+5a64828fcc4c2ad9b04f@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    b0da640826ba Merge tag 'printk-for-6.11-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d2076b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a64828fcc4c2ad9b04f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680ffcb980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153aec05980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b0da6408.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f630005f615b/vmlinux-b0da6408.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4e3e4edbec91/bzImage-b0da6408.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1a3cbd9c01e6/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5a64828fcc4c2ad9b04f@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-JBD2: Ignoring recovery information on journal
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 UID: 0 PID: 5096 Comm: syz-executor792 Not tainted 6.11.0-rc4-syzkaller-00002-gb0da640826ba #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_find_dir_space_id fs/ocfs2/dir.c:3406 [inline]
-RIP: 0010:ocfs2_prepare_dir_for_insert+0x3309/0x5c70 fs/ocfs2/dir.c:4280
-Code: 00 00 e8 2a 25 13 fe e9 ba 06 00 00 e8 20 25 13 fe e9 4f 01 00 00 e8 16 25 13 fe 49 8d 7f 08 49 8d 5f 09 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 bd 23 00 00 48 89 d8 48 c1 e8 03 42 0f
-RSP: 0018:ffffc9000af9f020 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000009 RCX: ffff88801e27a440
-RDX: 0000000000000000 RSI: 0000000000000400 RDI: 0000000000000008
-RBP: ffffc9000af9f830 R08: ffffffff8380395b R09: ffffffff838090a7
-R10: 0000000000000002 R11: ffff88801e27a440 R12: dffffc0000000000
-R13: ffff88803c660878 R14: f700000000000088 R15: 0000000000000000
-FS:  000055555a677380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000560bce569178 CR3: 000000001de5a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
- vfs_mknod+0x36d/0x3b0 fs/namei.c:4088
- do_mknodat+0x3ec/0x5b0
- __do_sys_mknodat fs/namei.c:4166 [inline]
- __se_sys_mknodat fs/namei.c:4163 [inline]
- __x64_sys_mknodat+0xa7/0xc0 fs/namei.c:4163
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2dafda3a99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe336a6658 EFLAGS: 00000246 ORIG_RAX: 0000000000000103
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2dafda3a99
-RDX: 00000000000021c0 RSI: 0000000020000040 RDI: 00000000ffffff9c
-RBP: 00007f2dafe1b5f0 R08: 0000000000004480 R09: 000055555a6784c0
-R10: 0000000000000103 R11: 0000000000000246 R12: 00007ffe336a6680
-R13: 00007ffe336a68a8 R14: 431bde82d7b634db R15: 00007f2dafdec03b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_find_dir_space_id fs/ocfs2/dir.c:3406 [inline]
-RIP: 0010:ocfs2_prepare_dir_for_insert+0x3309/0x5c70 fs/ocfs2/dir.c:4280
-Code: 00 00 e8 2a 25 13 fe e9 ba 06 00 00 e8 20 25 13 fe e9 4f 01 00 00 e8 16 25 13 fe 49 8d 7f 08 49 8d 5f 09 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 bd 23 00 00 48 89 d8 48 c1 e8 03 42 0f
-RSP: 0018:ffffc9000af9f020 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000009 RCX: ffff88801e27a440
-RDX: 0000000000000000 RSI: 0000000000000400 RDI: 0000000000000008
-RBP: ffffc9000af9f830 R08: ffffffff8380395b R09: ffffffff838090a7
-R10: 0000000000000002 R11: ffff88801e27a440 R12: dffffc0000000000
-R13: ffff88803c660878 R14: f700000000000088 R15: 0000000000000000
-FS:  000055555a677380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000560bce569178 CR3: 000000001de5a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	e8 2a 25 13 fe       	call   0xfe132531
-   7:	e9 ba 06 00 00       	jmp    0x6c6
-   c:	e8 20 25 13 fe       	call   0xfe132531
-  11:	e9 4f 01 00 00       	jmp    0x165
-  16:	e8 16 25 13 fe       	call   0xfe132531
-  1b:	49 8d 7f 08          	lea    0x8(%r15),%rdi
-  1f:	49 8d 5f 09          	lea    0x9(%r15),%rbx
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 bd 23 00 00    	jne    0x23f4
-  37:	48 89 d8             	mov    %rbx,%rax
-  3a:	48 c1 e8 03          	shr    $0x3,%rax
-  3e:	42                   	rex.X
-  3f:	0f                   	.byte 0xf
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 04/14] thermal: sysfs: Use the dev argument in
+ instance-related show/store
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
+	<rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <1987669.PYKUYFuaPT@rjwysocki.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <1987669.PYKUYFuaPT@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+在 2024/8/19 23:56, Rafael J. Wysocki 写道:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Two sysfs show/store functions for attributes representing thermal
+> instances, trip_point_show() and weight_store(), retrieve the thermal
+> zone pointer from the instance object at hand, but they may also get
+> it from their dev argument, which is more consistent with what the
+> other thermal sysfs functions do, so make them do so.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> v1 -> v3: No changes (previously [06/17])
+>
+> ---
+>   drivers/thermal/thermal_sysfs.c |   15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+Using to_thermal_zone() and to_cooling_device() in sysfs looks good to me.
+Acked-by: Huisong Li <lihuisong@huawei.com>
 
