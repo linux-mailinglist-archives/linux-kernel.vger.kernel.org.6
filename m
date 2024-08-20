@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-293575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B98958184
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F211958189
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7321F2503C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169652841CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866218A947;
-	Tue, 20 Aug 2024 08:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3BD18B48A;
+	Tue, 20 Aug 2024 08:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J0xEEnAt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkmFRCPH"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9295477F01
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE5818A958
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724144275; cv=none; b=ZgeZmt5Tp6K4vd5P6Ayth/cG21dGVdxSH/xst0bysE6XbDwN8yBoPMbT6G4milDkCw/2EQ67x7sXc14WrB++GvK/SLv1U1AJoodAB+89dc1KlKlXjKMikX/jSbFXuEb+jvagwGFSlQrSxNliSVr+C4DQDYzv5YuiQ5g7s94esK8=
+	t=1724144303; cv=none; b=O8F+gZDM2Q/RlSgIQAoWNbQKNUj+I+QMdogIp1TMUi+i+H6srK/qpKndlGA/4lsRREulVUX5+xJuAvq+jz7dFJVuHQH8wVxZeK56QvuK9J2GO5dqlwLQ3AIp4MjqA/B/5JkM++1G5R+UcvfjXDAYU5fPq3l8SPesg4+Q7Bm51C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724144275; c=relaxed/simple;
-	bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
+	s=arc-20240116; t=1724144303; c=relaxed/simple;
+	bh=6Tkdd3Meo0GfjfzZFGqvsGzY6sKlazdEJzewsarTR48=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p+RG43VSK2W2eMya9h3zRTGgWm3mYgeJd10AbyJIYFJsb0dssRVtQnVnvENTTmKtrRbXu5icG7BGbGItOkEysI5Mgmf50FSLudfCDnzCFJXRVvCltNAfGtsQaIVBdQ1WKfGUFTt9cEIvXAVyA7wPNTyEnAeFee6nnfi3MX774+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J0xEEnAt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724144272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
-	b=J0xEEnAtIG2TSxHzQSfAYtk8PqlFocqLbBdr+enn2dhmW0On2FgJZf6Bhy0mfq/D3hfRbi
-	yppd3uJJLEwZ0cqgGulC1Ez1RDZl2SLlhYvzOfufbIl2IX8hb7OlCb/b+D6CBDZb7TPTB9
-	iRyLQ8+/XX0Ph3uNukMJxniYNbR+yxs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-0-4E2RgHP76J5qMwsMjNvg-1; Tue, 20 Aug 2024 04:57:50 -0400
-X-MC-Unique: 0-4E2RgHP76J5qMwsMjNvg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280a434147so44475555e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:57:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=UXPTcM4NUUlWIzUM4h1TsqYdqo9omcuquDhWEHvKG68FKw9cY6qeWfaaRtRUBtfULOCm7f4iTvSLy57bWqLRfQgI35Uxzf6XQWxHos4d4wc9/cZh+Tg9wegSdto3ZgVvBgy6206YckUifsq+h8cT04gOdM7SmlQzkoQmHCb97kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DkmFRCPH; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e116a5c3922so5124639276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724144300; x=1724749100; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+sQqK35BG9rk0fC+Ql+lqOsPE+09qa68+cU1cYBJ8yM=;
+        b=DkmFRCPHLsmVdkoH7tq0TC9lO/8M8j/j5d3r3ONUssbsJv/w6h5+LjhQaoHWcMV0cQ
+         Qv2X5DiyQdlLEott4YID5C3gCLo3J5m4HwTgjcEWP2TLajnfBRUFr8u4kCJrFc9rVm3U
+         9LtyAnZkGr4iwvYQzwgMx1XeepI9QZKe3XsRDqInNHjgew8Mt2dxinkyAWqaE53myXnj
+         mXksu/Ivxz0otyubOsGz41cT3el3cu5OdMPZKcH+1TCPWhXuG+1ka6pJ40ONLQKgF9fZ
+         vLLdsEk3GLYmMgF2OS+gQgGzVW1OtCrYvIv52kC8x+aFiiny6dFTI9IBfB9yVoSqKVcO
+         201g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724144269; x=1724749069;
+        d=1e100.net; s=20230601; t=1724144300; x=1724749100;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xjkK7iK5CvjdhuUb97GVoGF/BjUcoUNxCzEB6tB3sNQ=;
-        b=mwPz4byaT2vc9p7R5atYcSnVlDwBX9+ZRjgGsXGuFnJt3uYUWXw2kK2eNo6MsJh7fU
-         W5EzxwR96BscHuz3nTIzneT9AWP3lfftiR8NppF7yqFMJEx0fTPmxwEdtAbS6aK8qofG
-         ej4OIEIiX9I3PI5qoFGh/9kNEOnCN6b4sdQZwOigGIQSnKB/gOqeknqwayMMmte6gJJw
-         gMkQeCOGA8zP8KE5FCRsuZJ+M+pR/lFWCel8yuVmBY6URAYNtNlMyORkQ4akkx68ucYI
-         u2Py1ZtyIp/CEcFBoby5nuxwcBieURQEP3nBv2hQ79ql+T0A7bd0G8ja3T+VjI5ES7SL
-         BfQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxcUgbf+iAWkDb5WjwXhbfJMddcomXKzwIBWVBdEOtl3Dder80SRhjJEdGKWx6gzu9LvKftSt0KMKvYd++j4aoCpVXekPLB7y7+ZH4
-X-Gm-Message-State: AOJu0YyAMprhpvCxmg6CY0lAIPN1kyeNeXMbOYBaKzn3XGxZPNzPhFRF
-	gsOzvwZYmxWsa2uD15jEWZnAq+lGS6Rtck3eaOWV0ftlqsjpHpq8GXpPOiMZcdRKbbvj1KZrooy
-	FgdDEZmNe17f6h8eUVoeoYLcxaKoekXiqLKHSKLBc10Q7WnPDb2Hb1t63KGvzME/1CoxJ5+Wn7u
-	u2+c/z0Hf/rhBSBjrK63B40YfduJ+QUhEdfb4L
-X-Received: by 2002:a5d:6784:0:b0:371:7c71:9ab2 with SMTP id ffacd0b85a97d-371946bf3f5mr7728104f8f.52.1724144269564;
-        Tue, 20 Aug 2024 01:57:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfN1DEa323emO5ciFDRq0ln5Ny7asNboij5b1hAStv+/CqQ8O7DlNLw/FVnkCMNUHeYkReZHjR71EMG+jD0E4=
-X-Received: by 2002:a5d:6784:0:b0:371:7c71:9ab2 with SMTP id
- ffacd0b85a97d-371946bf3f5mr7728092f8f.52.1724144269036; Tue, 20 Aug 2024
- 01:57:49 -0700 (PDT)
+        bh=+sQqK35BG9rk0fC+Ql+lqOsPE+09qa68+cU1cYBJ8yM=;
+        b=PHZXBSrFz6jmmwCsXYcocJeevWMCY3rb6nGX4dhl+Nttcy2X2z1MMXA7GJmB0Cjkmj
+         Lfx+pXfWIKfm+O+QgYHp86RnHwDvqC+f0JsSaBckIlqneDz/hSHvpfbE6n1kjaM3SF8F
+         RJZ8uz2WDH2w4e/UI66IDgFzDohwqJ7AEPqfMn4v3XJlbtb+uk6DJISzIzs/esNNjaiq
+         HnbX0cR48dcxhqhhMiFigFplO1JFhkt5Nz/10Qvaj4XsH3cYFw2CqAA9nWbTeZPxf+z0
+         6qeSZHm+jHtVdITKrPjayLyCoRC4fC9oqHqXYrSR5YB/IqQgH0aBdixoo4wnl69ShsZ7
+         xFng==
+X-Forwarded-Encrypted: i=1; AJvYcCW+AY2bMhjI1/G+v0xrodJYyxo4NAEAfRU5uwbsBEaYRPBtH/fy64wjkbyTf9hFXxdgG4cZD+cXA0k8sFarPVxNDGWyep1K2lLHiR92
+X-Gm-Message-State: AOJu0YxKVzhQX56A75ZA7oI0KbaFq8mPuaThmXRwyG7fRD/lIoin+gbe
+	/xGWv9daKMr3L0gb2xzMsQr6aofLW8N7g6MqseqIIl4uyPagq8MRtojOWsh98a2pDls4x3f/BR/
+	b1p48z8+M5w7ZHBzBlh7zpo/S3UjZ4VwxyuovzA==
+X-Google-Smtp-Source: AGHT+IG5+/Ak9xzdfmnxlBpDT2OA99O+vdwecgCE7zdsQMevjk6KXLK9MPRyqnfgtvL2CxSxwLtXI6vlsm1cEDCFaNM=
+X-Received: by 2002:a05:6902:240a:b0:e0e:cef6:5265 with SMTP id
+ 3f1490d57ef6-e1181046903mr14227508276.41.1724144300450; Tue, 20 Aug 2024
+ 01:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608000639.3295768-1-seanjc@google.com>
-In-Reply-To: <20240608000639.3295768-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 20 Aug 2024 10:57:35 +0200
-Message-ID: <CABgObfYNtyVnOYcpDVLNF-vuN0Caqump7dkgg9P6xQkMmzMc9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
- enabling virt
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	"Chen, Farrah" <farrah.chen@intel.com>
+References: <20240527142557.321610-1-ulf.hansson@linaro.org>
+ <20240527142557.321610-4-ulf.hansson@linaro.org> <CAMuHMdUoZBJewA6nQZLhnbebZuoZo85UCCfwuOv8or_N_e-0qg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUoZBJewA6nQZLhnbebZuoZo85UCCfwuOv8or_N_e-0qg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 20 Aug 2024 10:57:43 +0200
+Message-ID: <CAPDyKFqcpxUJWL7FoRSXLXVhS5B9PjcTY5ryG8HAY_E1Btgwag@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] pmdomain: core: Use dev_name() instead of
+ kobject_get_path() in debugfs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org, 
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Nikunj Kela <nkela@quicinc.com>, 
+	Prasad Sodagudi <psodagud@quicinc.com>, Maulik Shah <quic_mkshah@quicinc.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-rt-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 8, 2024 at 2:06=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> The suspend/resume and cphup paths still need to be fully tested, as do
-> non-x86 architectures.
-
-You can add
-
-Tested-by: Farrah Chen <farrah.chen@intel.com>
-
-> For CPU hotplug we tested this:
+On Tue, 20 Aug 2024 at 10:55, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
 >
-> 1) offline some CPUs;
-> 2) load kvm-intel.ko;
-> 3) run a VM;
-> 4) online those offlined CPUs;
-> 5) offline those CPUs again;
-> 6) online those CPUs again;
+> Hi Ulf,
 >
-> All steps can be done successfully, and the VM run as expected during
-> step 4) to 6).
+> On Mon, May 27, 2024 at 4:27=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> > Using kobject_get_path() means a dynamic memory allocation gets done, w=
+hich
+> > doesn't work on a PREEMPT_RT based configuration while holding genpd's =
+raw
+> > spinlock.
+> >
+> > To fix the problem, let's convert into using the simpler dev_name(). Th=
+is
+> > means the information about the path doesn't get presented in debugfs, =
+but
+> > hopefully this shouldn't be an issue.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> > Changes in v2:
+> >         - New patch.
 >
-> For suspend/resume we tested:
+> Thanks for your patch, which is now commit 9094e53ff5c86ebe ("pmdomain:
+> core: Use dev_name() instead of kobject_get_path() in debugfs")
+> in pmdomain/next.
 >
-> 1) load kvm-intel.ko and run a VM;
-> 2) suspend host
-> 3) resume the host back (using the IPMI KVM console)
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -3215,16 +3214,9 @@ static int genpd_summary_one(struct seq_file *s,
+> >         }
+> >
+> >         list_for_each_entry(pm_data, &genpd->dev_list, list_node) {
+> > -               kobj_path =3D kobject_get_path(&pm_data->dev->kobj,
+> > -                               genpd_is_irq_safe(genpd) ?
+> > -                               GFP_ATOMIC : GFP_KERNEL);
+> > -               if (kobj_path =3D=3D NULL)
+> > -                       continue;
+> > -
+> > -               seq_printf(s, "\n    %-50s  ", kobj_path);
+> > +               seq_printf(s, "\n    %-50s  ", dev_name(pm_data->dev));
 >
-> All steps worked successfully, and the VM still run fine after resume.
+> While some of the old names didn't even fit in 50 characters, the new
+> names need much less space, so perhaps this is a good opportunity to
+> decrease the table width?
 
-Thanks Kai and Farrah :)
+Sure, it seems reasonable! Do you want to send a patch?
 
-Paolo
+>
+> >                 rtpm_status_str(s, pm_data->dev);
+> >                 perf_status_str(s, pm_data->dev);
+> > -               kfree(kobj_path);
+> >         }
+> >
+> >         seq_puts(s, "\n");
 
+Kind regards
+Uffe
 
