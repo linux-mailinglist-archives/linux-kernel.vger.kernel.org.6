@@ -1,88 +1,119 @@
-Return-Path: <linux-kernel+bounces-294682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5594959153
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:45:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD20959156
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908E22840B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:45:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4704CB22C0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6318E751;
-	Tue, 20 Aug 2024 23:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5908B1C8FD1;
+	Tue, 20 Aug 2024 23:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrZjgQ9R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X94LOzhv"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D24918C023;
-	Tue, 20 Aug 2024 23:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65A18C023
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724197507; cv=none; b=NMdi6dWAm/9fobj08l4Y7VHPkqircTUHVN1cpknJj07TcQvBJP8kXunyxvc9mDGxTx+cCBB4LxtBOkKSy4lLaXqeiMst9sN7qqqhIRKizd8fGds9fb76+rAELXxqY1WzP1iN4ZInOZ54qRtdUZeonZ7e/Z18moUC05g0wuY4jLo=
+	t=1724197525; cv=none; b=g9kstkaKqwsbHZTNoZ1wbjtybr+AEPsMcpeJnHUGfU+E/WxYMzGQyHLK4kUAPWIA1MJUTOrknGZm5q+L5fBA+TPgEmPKjJbZ0AIXvypGL2BlZc/2nznINvE6BAJpi1WbMEwYl9g98wa+Qew85gxYTMoqJiKB+4NGySdDd8Z3mf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724197507; c=relaxed/simple;
-	bh=SpJoirkkmSDcZsSbOfsxFos23kDULLjat3l6C9qejSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=reBdf5RoKKBxvDNYalzLpJ0ZfXxQKWx7ZoJ6sQSIQdTTQhmWZQ2HdJu+JZAXHjSalyS4feHMj60aUdGnjIIIki+5shHCq0KL/J3O1L71uXrFMwtqxHRXUXpaOoETMYoC/eJetvrNd5UbR+lTZ7vLEM0/N3wZaF3sX+mg3NJtZy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrZjgQ9R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78263C4AF1B;
-	Tue, 20 Aug 2024 23:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724197506;
-	bh=SpJoirkkmSDcZsSbOfsxFos23kDULLjat3l6C9qejSo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jrZjgQ9RK+LxQK2xDIPZEMamp3KWKa0EF4kLONoUo7pg15OWZxSyRHR+KDGf1E5Mf
-	 7FmITa6sUh1lz5vYSCxcRuZoJ3d6KY1XP6dNl+kwX4PCCVhQySqXOX/NclVTeY0Fa0
-	 af3UalFYU3iYg6Bd4nYVEtaG0889wevvcxsxook3lBF/84NWWTEkKobDonPkppzJHq
-	 PjgZygJqvv7CWLW/H91SGBL5qg5DjmuYtB+DsvwsNWSvP6eavlA8a8KIV0RXxn4kxx
-	 yEAXm1MCwQG64rSuT5PsW+GRSk1cdrrizSc5kdyR99Kr74bRmwwyNJxcfU2Eq75vYq
-	 4L+PT4YbOT5sQ==
-Date: Tue, 20 Aug 2024 18:45:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Oliver Neukum <oneukum@suse.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	lukas@wunner.de, mika.westerberg@linux.intel.com,
-	Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
- bridges
-Message-ID: <20240820234504.GA231828@bhelgaas>
+	s=arc-20240116; t=1724197525; c=relaxed/simple;
+	bh=7ygrf7pk+qqh/taYw3aR0+XAuH6nI4qlY7LlbL2goN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fsQz/bSMH8johjYnaMzJvPGYW4xpZ7p53Fc2vpVv13IO6RMjWckyov/t1oJ83rDmvZUySt0kFAEUuPh2PzegeDSlTWsPmcB4hcbFp7P+butr/oiN6uXoW4weGqv8gwxnUBqSgidy3Gli9cToSAdbgd+dha4terN+odLQ8Ft4uyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X94LOzhv; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <026dc2a7-7f43-43a3-b138-3a4fedf41a5f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724197521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOMk6nKdU/OadJM5Jw+DEbKFriLlwrQLkyoJvB74aPU=;
+	b=X94LOzhvuUUoTZgkLED1+PiitTkGsST+HZTDpWuzpeOQsXTT6ZRaisAB7H3hrXL4qQoXWU
+	DD8twRI/XnTQbiw2ooE5Fn/mO4A9pZwCxzsxqe+h4YHFHMsrI4SudfCt6PL+/1t6H6BEK1
+	ltR4LozCn02uw5ZUxyOD+9Ug/Xdpe+Q=
+Date: Tue, 20 Aug 2024 16:45:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820060008.jbghpqibbohbemfz@thinkpad>
+Subject: Re: [PATCH v3] net/socket: Check cgroup_bpf_enabled() only once in
+ do_sock_getsockopt()
+To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ bobule.chang@mediatek.com, wsd_upstream@mediatek.com,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Yanghui Li <yanghui.li@mediatek.com>,
+ Cheng-Jui Wang <cheng-jui.wang@mediatek.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240820092942.16654-1-Tze-nan.Wu@mediatek.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240820092942.16654-1-Tze-nan.Wu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 20, 2024 at 11:30:08AM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Aug 19, 2024 at 02:44:43PM +0200, Oliver Neukum wrote:
-> > On 02.08.24 07:55, Manivannan Sadhasivam via B4 Relay wrote:
-> > 
-> > > --- a/drivers/pci/pci-acpi.c
-> > > +++ b/drivers/pci/pci-acpi.c
-> > > @@ -1434,7 +1434,7 @@ void pci_acpi_setup(struct device *dev, struct acpi_device *adev)
-> > >   	 * reason is that the bridge may have additional methods such as
-> > >   	 * _DSW that need to be called.
-> > >   	 */
-> > > -	if (pci_dev->bridge_d3_allowed)
-> > > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
-> > 
-> > Are you sure you want to require both capabilities here?
+On 8/20/24 2:29 AM, Tze-nan Wu wrote:
+> The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
+> between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
 > 
-> Wakeup is common for both D3Hot and D3Cold, isn't it?
+> If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
+> "true" between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
+> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`, `BPF_CGROUP_RUN_PROG_GETSOCKOPT` will
+> receive an -EFAULT from `__cgroup_bpf_run_filter_getsockopt(max_optlen=0)`
+> due to `get_user()` was not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
+> 
+> Scenario shown as below:
+> 
+>             `process A`                      `process B`
+>             -----------                      ------------
+>    BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
+>                                              enable CGROUP_GETSOCKOPT
+>    BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
+> 
+> To prevent this, invoke `cgroup_bpf_enabled()` only once and cache the
+> result in a newly added local variable `enabled`.
+> Both `BPF_CGROUP_*` macros in `do_sock_getsockopt` will then check their
+> condition using the same `enabled` variable as the condition variable,
+> instead of using the return values from `cgroup_bpf_enabled` called by
+> themselves as the condition variable(which could yield different results).
+> This ensures that either both `BPF_CGROUP_*` macros pass the condition
+> or neither does.
+> 
+> Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
+> Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
+> Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+> Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+> Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
 
-From a spec point of view, moving device from D3hot to D0 is a config
-space write that the OS knows how to do, but moving a device from
-D3cold to D0 requires some platform-specific magic.  If that's what
-you mean by wakeup, they don't look common to me.
+Please tag bpf in the subject and add a Fixes tag.
 
-Bjorn
+[cc: Stanislav]
+
+pw-bot: cr
+
 
