@@ -1,246 +1,475 @@
-Return-Path: <linux-kernel+bounces-294164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0453F958A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:52:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC961958A37
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE031F23C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73675288FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AAE1917E3;
-	Tue, 20 Aug 2024 14:52:42 +0000 (UTC)
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021077.outbound.protection.outlook.com [52.101.62.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37287192B9F;
+	Tue, 20 Aug 2024 14:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3mVYPcn"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AF38F48;
-	Tue, 20 Aug 2024 14:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165561; cv=fail; b=tDXrd3YJvQg80vtqpuWLeF2k1RJDE29SQ+7fdubuvhYFaSOvf6zlq4PInYoTJjJgyE7eGAEOeNIxNRT0g9ktuVYKgvZLVgbIeYR02ec2mhOhO7N8XkWxiRNxSTDeLsWGDBeS/8oWqwaKEl/1/A3yTqs9ieJnMIVLiN/wZpIHI3s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165561; c=relaxed/simple;
-	bh=kgAgYSBVl1d8bhvw2fYV2W6bOfefPQ2GHwllM4p+20A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IWk4xWMiUPdefdbMhN6O4smEOxI8WLkkLB5wI3Syby+L3UC9gFaLcaCEPyOnJwyUY6l/58D2pu+JQygmZcb9edj82CbTjeLQFl4BZGQ6CsG8ADeqk/QGpQ3KMBQ3QjwEq6OxitN73iV+7Bef7JbNMjbE3I2CWPZEWwgvhL66+sI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=52.101.62.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GJPGFz2xP2D7uF6u6boYXKAL7CQ/XTyCdsi8AvDcl/dEw0ZiqLEBtAUlkBSHcdrIQRi3l52odcqZIaFn1CNovBw7vEZItDe/pTXKIXjAZM3Ne5EOLnGP9GtW8oi0wi+ogpeyZ5Qj9rbkHnDk5jhVeev42C4AvB4jh9PBSugvgFC2blzVN8aUCcr++YnUPAzgA/oQGxB78r+jC1LFEMKVADeg3zBJ0PBAquazIPovtW2f6IakA4z4aUhYrERVGnDgRXl3h93lbU8T+KoWZOagkIzvp97PXpWGRPTezppJ+r0AIPZafN2fVZMxqTFFarZL6v/s+JpSCzMD81fWnxYGtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uo8xj9Up4LFWr+86eNPW/18EvnXwA5eR9xNntt8Ym1s=;
- b=SyudslEbpCeJRgIKPB18yDWrxJx/oNDOoc3v//QRY5hCJPC+3MLeQV17oEwO9Ic0hsM6GBRsKqrBPPqH60pT4S105e4Ua+TLH2KFjJVe64JIaxEHiiCheB6+wJ4grJa8rfmAk8PuYYSJDCYRWkilxtTt7EqbgMDFj5gsDHHz0ZJZ3vNKkeUoZ8th0PHmKkFeZbJxSI+G+vw1WJ3lN1NsSTRdGign/TY6rg83k7cQRMFrKmYSvYTELm32lAwzgme0yOLit05aykPWJJCvtvSPrT8fZsZZEJKUoAlj3L7AKVTM58p69Oz9croX/PnwiqfDbHuM+Pqno6DMJi5NY3MDPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from BL1PR01MB7721.prod.exchangelabs.com (2603:10b6:208:395::9) by
- SA1PR01MB6640.prod.exchangelabs.com (2603:10b6:806:1a4::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.21; Tue, 20 Aug 2024 14:52:36 +0000
-Received: from BL1PR01MB7721.prod.exchangelabs.com
- ([fe80::d33d:8437:f7d:568e]) by BL1PR01MB7721.prod.exchangelabs.com
- ([fe80::d33d:8437:f7d:568e%4]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
- 14:52:35 +0000
-Message-ID: <d7a30cff-e08f-453e-84f2-4584031e3d29@talpey.com>
-Date: Tue, 20 Aug 2024 10:52:33 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ksmbd: Replace one-element arrays with flexible-array
- members
-To: Namjae Jeon <linkinjeon@kernel.org>,
- Thorsten Blum <thorsten.blum@toblux.com>
-Cc: sfrench@samba.org, senozhatsky@chromium.org, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240818162136.268325-2-thorsten.blum@toblux.com>
- <CAKYAXd-pm01ietA1+Z4J8tDcLM6fUkAwQ69j9XZs9uhrBbdDQQ@mail.gmail.com>
-Content-Language: en-US
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <CAKYAXd-pm01ietA1+Z4J8tDcLM6fUkAwQ69j9XZs9uhrBbdDQQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BLAPR03CA0040.namprd03.prod.outlook.com
- (2603:10b6:208:32d::15) To BL1PR01MB7721.prod.exchangelabs.com
- (2603:10b6:208:395::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF61922E9;
+	Tue, 20 Aug 2024 14:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724165640; cv=none; b=NMMg/PKG890pcvi9Mqm/zGI28dNSuXPjAGYW/OgVXOb9wO8xu+IKgd114KRi571pxzC8zbUyGhHuEIagvs+gemo+FSk6h/S/bjgJZkK6s5p/d0OqrMmmPIASltCS1K0aINnoG4QVBVxqIcDJC6yjMMizHIsjVlzrNj+ZBvL31mI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724165640; c=relaxed/simple;
+	bh=PDqL5T42bwr0/utcT1Ml7l0u88ldWUK4M8dTnabKW5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcLIorNbfWUbuwOFpn9V2jtb0PJ0eeXIep6vxQBTWJURxuTeJtVFlw/sPCXpJzHtO6uHXuQWB2Fs8eaiNS1iGLaQMR6qRrRFPgcF6O0rwhh9Pelizd/9UW5FS5eM9Kr8+fkA0WHszx9BqvFaGZqTfyy60EvfnLc4rbrSNC4/aVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3mVYPcn; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2c0f35f2so4919391fa.1;
+        Tue, 20 Aug 2024 07:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724165637; x=1724770437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5lPcHvpv1sRtwbunJR9ClPnsil30TdbQ3ASxEknkIMw=;
+        b=A3mVYPcn4IBnh7xXu0vbUitG1qQPlk8KUS2ndLPWwOORxLWU01f/E6zFkff6p+8cuI
+         InMa5P+nR2/CI7foAyuqNxsK/GbWM5Bn2W2CkiB4/FLu0VLAesJ9E1oXx9BULItuUB3I
+         0fCOu3J0ITpscpGPGnT37R48TP48bW8vMesohFEljSyhioONfMCkTEhpFKPMHPz+NLwB
+         lB70scckd8erVTr30oBzjQEvxCxbf/nMlviGOIxDIJ/iQKavX4lqYj1Rz4AkzC/cV/+x
+         VW7uyH//crYDdlX3svfFTZLI181od2ZRn5NH47usYyU8CEPuHw6QuX0JXZ/kaoutDvrT
+         U2eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724165637; x=1724770437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5lPcHvpv1sRtwbunJR9ClPnsil30TdbQ3ASxEknkIMw=;
+        b=Db62flApackkXNwwV3J4lsADfF0zHxs3lUBgDHjL9xVMpoFqYtDz4kO7rFxWTJ0g8K
+         GWGRFO0utdqOSUKkm9lKpPxUoSEJwgAs0xrj2nqjj7Ye43Hzo+TB1AdACUlMXqLYHxGp
+         qNzy6RtjYv6OBCj1/K2tAJ/bNbQFlvXimYOSacerG9mZbE3ohNhslfzqyHp4hxvIUZR+
+         xWFOIUWSNPJ8ZvGwEqeqdtOTK8qjPyMdRLwnIueiX8bz4lD8gBnl2i2rkqV3vfgUMJoz
+         5UvufFM7sQPgWh7z0/w2APHEh+JLQSqslXbLk+eBy0taL0IlpB+QufusSvxTRJnQrXvd
+         WTUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU645AGujkESdIfTaZXEkQBOpBNN0gT5vr7Kz4zpzQCT8tKnbRbAJnU0GSnJuszWjypyMclGUe0WV2MZHpILzXUWW/0Ft82sLjXnGpp2wSNkuGpDKE+N3jlfQJWrd1yDY9IWepq
+X-Gm-Message-State: AOJu0YyHypHik83TIUTF5WSRgt5nX3QNkPa2MTiTQ03a0y0PsiWEvTbC
+	OrV3fm5+/mmygNH2ZVHDmwx+U/g77My/zELR005xMytYEiWO+S6U
+X-Google-Smtp-Source: AGHT+IFoUVSwvX/j2zn5P5gwCmqWAcX48W3j1vfyGyPqmumyT/lLiUAIbbKhnxvW5iYBBS69JiNtjQ==
+X-Received: by 2002:a05:651c:19a9:b0:2ef:23af:f1f2 with SMTP id 38308e7fff4ca-2f3be78709cmr58117921fa.9.1724165636185;
+        Tue, 20 Aug 2024 07:53:56 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7f3e0sm6853312a12.71.2024.08.20.07.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 07:53:55 -0700 (PDT)
+Date: Tue, 20 Aug 2024 17:53:52 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com
+Subject: Re: [PATCH net-next v5 5/7] net: stmmac: support fp parameter of
+ tc-mqprio
+Message-ID: <20240820145352.kfhvdipr37iivt4l@skbuf>
+References: <cover.1724152528.git.0x1207@gmail.com>
+ <cover.1724152528.git.0x1207@gmail.com>
+ <d816e312349d0ee4740f5c3068cbcbed17e8d6e3.1724152528.git.0x1207@gmail.com>
+ <d816e312349d0ee4740f5c3068cbcbed17e8d6e3.1724152528.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR01MB7721:EE_|SA1PR01MB6640:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40d24545-dbde-4015-2b61-08dcc127ba76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NSt5WUZ1SEJjVUdHVC94cFpqcFRZZGlFa2VqR2MyRVVVYkRXalpMelVoZzFy?=
- =?utf-8?B?cjhCMVpRY2p0RVBORFVBakh1SGpjRTZ1NTlnMHpmSmJReDhOMFQySDlkYUh4?=
- =?utf-8?B?N1VkTWl5QVRFTFRZdW5FM1NDU0RMN3VBVnd3MXZ2RmVnL0NMM1pDMk5KK3Bp?=
- =?utf-8?B?cFFMWkhZYVNXVnBrMXV4TXlnM2pLc1M4OXlDdDhBNm50QXY5bnhSUFRjZnFp?=
- =?utf-8?B?SFJqd25GdE5HTXIyOFBwOGhwdWVsUEw1VFNveGpOWWJNclAzNHdvUWt6cjY0?=
- =?utf-8?B?Rmhnd0E5MGtRVWJBZHRoNzQ2dDZDMllaRENXWnFkRnZmV1d1Q1R3UVVqT291?=
- =?utf-8?B?Qk41dzQwcHpxNjkwR2l2WXV6MVJSenV1U1FxZ0dhdE1RdnVMVTRKb2hITStC?=
- =?utf-8?B?TFQrY0VxWnUzWmdaWW1iMnJWVVk0cHJiU2hlbzZDdzZPdCtmWEs0Q1dIcXli?=
- =?utf-8?B?cUVhR2FMeDVncVhmR3VVY0tqSFJZQ3l0KzUybTQ2TWNWOFpHRzNoQ1JlOFIw?=
- =?utf-8?B?b00wdVVOS2YraERVd2RkKzlwN3Q0MFl4eFBpUWVqVTU4R1Y3dFl5WXNteUlP?=
- =?utf-8?B?U2piakxOZ2RlQUNwTStUWGlKN2ozaTB4cHJCeWVOQmNjWkxEd2N3YjFvdWZV?=
- =?utf-8?B?UmtpT3A0QjFWZjlocmNCM0dTbHcxUmlPRGtTZXpRQWp4cmovR0Q5KzllWm9L?=
- =?utf-8?B?NGhuRjBjSkExeXp1UTFpOWkyL0QyQll3MFhKVjQxRVlYS0c4Q1d1QU5wN3RH?=
- =?utf-8?B?YVNTdmI4OEt0c2lINnpZS2huTTRlQWV4RzYyZkVmb1FaVzkzRWJOeVBXVktB?=
- =?utf-8?B?dlBsb0VwQ3M0MnNtR04zODJBWGpsVW5KVU9mSUVwOUVxdEFHYmE5L0phWGoy?=
- =?utf-8?B?OUMzYkNaWEtKKzNMY2hadTFTU3A2N2M1ellURVZlRFB6N2F4NVI5SHBSVVla?=
- =?utf-8?B?VHZkMUxSTlA4T2R4KzhwSzRZSXRJVk9tSy9CM09yUHpGam1ibCtISXNrQ2gy?=
- =?utf-8?B?STBoMTZ2bHlrTS96MFdudEE1SGJqUkVMK0lVejRhWno3N3loWUJJMGNHSlk5?=
- =?utf-8?B?c3BuUFF3ck9BUWlXeHI0L2tkWlZPeVViL1Q1cTZ5N0tqQ2JpYzdhR3dIS25u?=
- =?utf-8?B?azBLSWY0QnNnS2VGQUF3MURJdStGMjZieG9ydG5QeGVvaWNTeWJ6SlVDeDU4?=
- =?utf-8?B?K0Z1dGxyTEt4azA1T0VteUhHZXFCMGtVd1pQLzBqeTBmN0xEbUZtRDdLbnN3?=
- =?utf-8?B?Y0trdWEwUWVJSUdZa2IvalVISGhHeVJYOFRGT0pwQ2Q1dThiSUlpalBDRXAy?=
- =?utf-8?B?blFVYzZsS1lYZG9qSEd4VXg1WHVJZW5LdTdNSnBGM0J4eUt4bmVFSU5SVW5H?=
- =?utf-8?B?YkpSVW9LeTFrdkkvKzIrbFJXQVFoL0NyM0xyVmhpbEtROEZ5SnBwTENzSUdl?=
- =?utf-8?B?MnMvb3NWd1kyQkJhamxlN1JlMHhFK0FZT0ExOVREODI2bWRDQ1hUOEJxY2xJ?=
- =?utf-8?B?SXpBY0FFYWNRNFJ3aXpPYW5FdDMxNHdmQmt2bGdKKzU4c08xenJIWEhWU2xS?=
- =?utf-8?B?OFNaZGRxUnFoYXQvYmxYL0lCZ1g2MlZLdVVOeTlJbE8ybWNZVVdNZjhoSEtU?=
- =?utf-8?B?OHNOa09PSWVwY1NCZmFzNU00MXJKVm1JdUFoeTd4ZVU1K3J6K1dIOEJhN0l4?=
- =?utf-8?B?NmpOL2FyL2xOcHV4K1FMSTBkU0xhaXlHdndnc3NhK016THh1UlRrd0d1WTBp?=
- =?utf-8?Q?XuGWtHUwEnMMOsbvnI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR01MB7721.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YVMvdzI4cTl5cW5zUG8yOVBDejR6QzRIdmJkNXp6dlhrQ1B6M0lJSDN3dE1p?=
- =?utf-8?B?L2xHTXo4R1d4Yi9jdmxROEdMR1JlTXg4MWtVY05uQ0tKdXpQUTFxNUpoUWdE?=
- =?utf-8?B?TnZGVTduNmltM29LNWliUWNteGdBOFJTTHNkTXpmTGcvUVBuYk9nd2dGcWg1?=
- =?utf-8?B?VG5jSDJkTVdJNDV2SEgwa3VPZE5iVXN5WWV6TlMxc0ZOQnQ1aUE4OVJIa0gx?=
- =?utf-8?B?bnV4WDVPSUxXR1REbk9DNlR5RUtjRCtSem1ialZ6dGlqMVNTREVnZElLUldW?=
- =?utf-8?B?VHZWTktMSXRleTVMcE81WHphZnhUYUhpQ2FPWkxjeHpIcHVQcHkvSW9UOHFs?=
- =?utf-8?B?YUgwdjVYblU4cjE2ZWNjdjR2TFBkRGgzZUhkS2xXNzZlbTdhYTRtTHg2QTAx?=
- =?utf-8?B?bXdwWkFvWUVjMWtnSGg3eVFZOFJnWVQzWTBvR1UzcDRTdG5sL1cvWGNvOEFa?=
- =?utf-8?B?cjNGNUZhVUgyMGljSW1IODdMNjdibENOM2VNdE81SDhTSFBsR3c3dEtNOHMx?=
- =?utf-8?B?WXJyM2lwa0I2L0xOYWtaa2pHdFhKazNmWFFseHRPUU1TNis2b0tWdnByMFRj?=
- =?utf-8?B?eUxJMjBvS1FUZlBMOHVzSUVJSEEwbmNhbENpSk55em9YelR3WHBhbmNZRkFH?=
- =?utf-8?B?Y0FTdW1GN0p1QTR4TFdFTkl2T2RXWmk1TXFhTTJlcXBldEVIc2tuWFYvZXM4?=
- =?utf-8?B?M3VwNnJacUVmMStXNjVoZHZaKzVZc2lQaCs4YUJCY01Bd3lybFgvYS9aUWVC?=
- =?utf-8?B?aEl0N1RFc0Flb1Rab3JIZTZla2JVdGZ2M1Zza00xLzRWT0R6OGZiWHpjUjJU?=
- =?utf-8?B?TUhNTGJITktKais2WGVBWWNhSy9vdlpNZkxidXZOYXJrTEFNUDM3OEY5eGM5?=
- =?utf-8?B?WkJhdllmUGZDdDV0OHdwWGhIdG5Ob0ZsK3EzS00yQ1Y5aDAxNUJiUlJEbDhk?=
- =?utf-8?B?S3JMc3JCb2x4Q1pNdEUrdXQ1T3dKYXk0aVE2TWhHMnBLRHRuRjhJeGYvNFRh?=
- =?utf-8?B?eVlNZGZ5WlN2ZlprOWpTMEJ0RGViRjNOSnpvSTB5RzIrQlQyR3hxUG8wR3Vw?=
- =?utf-8?B?Z2FTYnk5cUovQ2hNL1RPaEZZTUlYcVdzRXNlNW9pcDEvTmlWK1RkN0R1N1NG?=
- =?utf-8?B?Zm5oTFdqZmIrb2MxNzBqRmlYN0RMZWV0cmIxd3lERStDejdiMFMzUVFPMGNU?=
- =?utf-8?B?V0JINjY1U084bTZLQjJIa0taZ3ZXN0dGRzk0QXVid3hTVE9yNEI0Nlg4Rm9O?=
- =?utf-8?B?OW4rQ2t1WktTcnZQV2c3dXhIVVhBbFlUMzZFc2JsUzlCK1NZblpHcHZJZFAy?=
- =?utf-8?B?SU04bjIvbWdNOE90RzYvb1pqNEJPT1g5VUM1Y1pMSExMOU82Z1FPZlRhWk56?=
- =?utf-8?B?MmQ2TG9ScWpncCt5WjdKclRtNGF5VktiNkNCMHN0dFhHeGRtaUxJcFpBWUpJ?=
- =?utf-8?B?M2o2N1pCMkVkVzRmZjNsNDBDKzNuK3ZYZmJ1UXhiOVlQVzBTSzJXVHdIcEdK?=
- =?utf-8?B?MHVvZUZLNUhVSlpqRGFYVm1sTjI2aFVBUVIrbVNQT1V1MkUvSi8zbU51QTNs?=
- =?utf-8?B?QTdGODhZRDZxQjk1eEFrMWlncTE1Zkk0czc1eE80Z1YvOHExWVUyNVFjaDdo?=
- =?utf-8?B?bVFJdlZrQ1RYYUVzVlhvNG5Oc3RHKzR0bnh3eW9oc0IwYnlOK1FJNGtBR0xy?=
- =?utf-8?B?aWN5UTZIOVpqcEkwclJvaEpDNlpkcTk1eXlkRGEvK1Z1SW9LSDAxYWlNc3RZ?=
- =?utf-8?B?bUNyYzI3eU52MWdsUUhmOHRnWmJpSnRZR2xET0NLMEMvTWhrWHlGMWJEVmcw?=
- =?utf-8?B?NlVvdE5DalZlMlR4VEFWYmFwNTNJZDRLWXU3MTJJYzgzZXNHQzVkT05nTGNH?=
- =?utf-8?B?TFUzMGVQZmN6MzBQQjU4RWZsSDhPTVBEMEd0ZDYxbUZDVXNGN0dkcytnK0Np?=
- =?utf-8?B?aGhVTlh3SmNkODhGMjNmNDBZVGpaN2RxOUs4MGhnUXdMeWtUQjFDZ1RzcHB2?=
- =?utf-8?B?MjE0ODNhL0x5WVMwQ2VEb1Z3UlZNTnhKNXVMRnZjQTFDdlZDL0o3TFhaK1dT?=
- =?utf-8?B?YWRVVG1zNjRMekxVMFRqS0ROV0xuQ0o1NFFzejlxc3FNSGQ5L2p2bGtKbVlv?=
- =?utf-8?Q?/FZY=3D?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40d24545-dbde-4015-2b61-08dcc127ba76
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR01MB7721.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 14:52:35.7289
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hiFokl+A5a8XPhEnYQStuOarqfT8JgsALJxif+iztntty/YiAaQCbrZORFqNjMdD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB6640
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d816e312349d0ee4740f5c3068cbcbed17e8d6e3.1724152528.git.0x1207@gmail.com>
+ <d816e312349d0ee4740f5c3068cbcbed17e8d6e3.1724152528.git.0x1207@gmail.com>
 
-On 8/20/2024 10:11 AM, Namjae Jeon wrote:
-> On Mon, Aug 19, 2024 at 1:22 AM Thorsten Blum <thorsten.blum@toblux.com> wrote:
->>
->> Replace the deprecated one-element arrays with flexible-array members
->> in the structs copychunk_ioctl_req and smb2_ea_info_req.
->>
->> There are no binary differences after this conversion.
->>
->> Link: https://github.com/KSPP/linux/issues/79
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->> ---
->>   fs/smb/server/smb2pdu.c | 4 ++--
->>   fs/smb/server/smb2pdu.h | 4 ++--
->>   2 files changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
->> index 2df1354288e6..83667cb78fa6 100644
->> --- a/fs/smb/server/smb2pdu.c
->> +++ b/fs/smb/server/smb2pdu.c
->> @@ -4580,7 +4580,7 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
->>          /* single EA entry is requested with given user.* name */
->>          if (req->InputBufferLength) {
->>                  if (le32_to_cpu(req->InputBufferLength) <
->> -                   sizeof(struct smb2_ea_info_req))
->> +                   sizeof(struct smb2_ea_info_req) + 1)
-> We can use <= instead of +1.
+On Tue, Aug 20, 2024 at 07:20:39PM +0800, Furong Xu wrote:
+> tc-mqprio can select whether traffic classes are express or preemptible.
+> 
+> After some traffic tests, MAC merge layer statistics are all good.
+> 
+> Local device:
+> ethtool --include-statistics --json --show-mm eth1
+> [ {
+>         "ifname": "eth1",
+>         "pmac-enabled": true,
+>         "tx-enabled": true,
+>         "tx-active": true,
+>         "tx-min-frag-size": 60,
+>         "rx-min-frag-size": 60,
+>         "verify-enabled": true,
+>         "verify-time": 100,
+>         "max-verify-time": 128,
+>         "verify-status": "SUCCEEDED",
+>         "statistics": {
+>             "MACMergeFrameAssErrorCount": 0,
+>             "MACMergeFrameSmdErrorCount": 0,
+>             "MACMergeFrameAssOkCount": 0,
+>             "MACMergeFragCountRx": 0,
+>             "MACMergeFragCountTx": 35105,
+>             "MACMergeHoldCount": 0
+>         }
+>     } ]
+> 
+> Remote device:
+> ethtool --include-statistics --json --show-mm end1
+> [ {
+>         "ifname": "end1",
+>         "pmac-enabled": true,
+>         "tx-enabled": true,
+>         "tx-active": true,
+>         "tx-min-frag-size": 60,
+>         "rx-min-frag-size": 60,
+>         "verify-enabled": true,
+>         "verify-time": 100,
+>         "max-verify-time": 128,
+>         "verify-status": "SUCCEEDED",
+>         "statistics": {
+>             "MACMergeFrameAssErrorCount": 0,
+>             "MACMergeFrameSmdErrorCount": 0,
+>             "MACMergeFrameAssOkCount": 35105,
+>             "MACMergeFragCountRx": 35105,
+>             "MACMergeFragCountTx": 0,
+>             "MACMergeHoldCount": 0
+>         }
+>     } ]
+> 
+> Tested on DWMAC CORE 5.10a
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  2 +
+>  drivers/net/ethernet/stmicro/stmmac/dwmac5.c  | 52 +++++++++++++
+>  drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  4 +
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h    | 10 +++
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  2 +
+>  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 75 +++++++++++++++++++
+>  6 files changed, 145 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+> index 679efcc631f1..4722bac7e3d4 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+> @@ -1266,6 +1266,7 @@ const struct stmmac_ops dwmac410_ops = {
+>  	.fpe_irq_status = dwmac5_fpe_irq_status,
+>  	.fpe_get_add_frag_size = dwmac5_fpe_get_add_frag_size,
+>  	.fpe_set_add_frag_size = dwmac5_fpe_set_add_frag_size,
+> +	.fpe_set_preemptible_tcs = dwmac5_fpe_set_preemptible_tcs,
+>  	.add_hw_vlan_rx_fltr = dwmac4_add_hw_vlan_rx_fltr,
+>  	.del_hw_vlan_rx_fltr = dwmac4_del_hw_vlan_rx_fltr,
+>  	.restore_hw_vlan_rx_fltr = dwmac4_restore_hw_vlan_rx_fltr,
+> @@ -1320,6 +1321,7 @@ const struct stmmac_ops dwmac510_ops = {
+>  	.fpe_irq_status = dwmac5_fpe_irq_status,
+>  	.fpe_get_add_frag_size = dwmac5_fpe_get_add_frag_size,
+>  	.fpe_set_add_frag_size = dwmac5_fpe_set_add_frag_size,
+> +	.fpe_set_preemptible_tcs = dwmac5_fpe_set_preemptible_tcs,
+>  	.add_hw_vlan_rx_fltr = dwmac4_add_hw_vlan_rx_fltr,
+>  	.del_hw_vlan_rx_fltr = dwmac4_del_hw_vlan_rx_fltr,
+>  	.restore_hw_vlan_rx_fltr = dwmac4_restore_hw_vlan_rx_fltr,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> index 4c91fa766b13..1e87dbc9a406 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> @@ -670,3 +670,55 @@ void dwmac5_fpe_set_add_frag_size(void __iomem *ioaddr, u32 add_frag_size)
+>  
+>  	writel(value, ioaddr + MTL_FPE_CTRL_STS);
+>  }
+> +
+> +int dwmac5_fpe_set_preemptible_tcs(struct net_device *ndev,
+> +				   struct netlink_ext_ack *extack,
+> +				   unsigned long tcs)
+> +{
+> +	struct stmmac_priv *priv = netdev_priv(ndev);
+> +	void __iomem *ioaddr = priv->ioaddr;
+> +	unsigned long queue_tcs = 0;
+> +	int num_tc = ndev->num_tc;
+> +	u32 value, queue_weight;
+> +	u16 offset, count;
+> +	int tc, i;
+> +
+> +	if (!tcs)
+> +		goto __update_queue_tcs;
+> +
+> +	for (tc = 0; tc < num_tc; tc++) {
+> +		count = ndev->tc_to_txq[tc].count;
+> +		offset = ndev->tc_to_txq[tc].offset;
+> +
+> +		if (tcs & BIT(tc))
+> +			queue_tcs |= GENMASK(offset + count - 1, offset);
 
-This is better, but maybe this test was actually not right in
-the first place.
+What does the name "queue_tcs" mean?
+Would this be more descriptively named "preemptible_txqs"?
 
-I think a strict "<" is correct here, because the ea name
-field is a counted array of length EaNameLength. So, it's
-a layering issue to fail with EINVAL this early in the
-processing. All that should be checked up front is
-that a complete smb2_ea_info_req header is present.
+Also, what is the maximum acceptable plat->tx_queues_to_use value for
+the driver? I assume that the preemptible_txqs bit mask will always fit
+into an unsigned long value (32 or 64 bits)?
 
->>                          return -EINVAL;
->>
->>                  ea_req = (struct smb2_ea_info_req *)((char *)req +
->> @@ -8083,7 +8083,7 @@ int smb2_ioctl(struct ksmbd_work *work)
->>                          goto out;
->>                  }
->>
->> -               if (in_buf_len < sizeof(struct copychunk_ioctl_req)) {
->> +               if (in_buf_len < sizeof(struct copychunk_ioctl_req) + 1) {
-> Ditto.
+> +
+> +		/* This is 1:1 mapping, go to next TC */
+> +		if (count == 1)
+> +			continue;
+> +
+> +		if (priv->plat->tx_sched_algorithm == MTL_TX_ALGORITHM_SP) {
+> +			NL_SET_ERR_MSG_MOD(extack, "TX algorithm SP is not suitable for one TC to multiple TXQs mapping");
+> +			return -EINVAL;
+> +		}
+> +
+> +		queue_weight = priv->plat->tx_queues_cfg[offset].weight;
+> +		for (i = 1; i < count; i++) {
+> +			if (queue_weight != priv->plat->tx_queues_cfg[offset + i].weight) {
+> +				NL_SET_ERR_MSG_FMT_MOD(extack, "TXQ weight [%u] differs across other TXQs in TC: [%u]",
+> +						       queue_weight, tc);
+> +				return -EINVAL;
+> +			}
+> +		}
+> +	}
+> +
+> +__update_queue_tcs:
+> +	value = readl(ioaddr + MTL_FPE_CTRL_STS);
+> +
+> +	value &= ~PEC;
+> +	value |= FIELD_PREP(PEC, queue_tcs);
+> +
+> +	writel(value, ioaddr + MTL_FPE_CTRL_STS);
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.h b/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
+> index e369e65920fc..d3191c48354d 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
+> @@ -40,6 +40,7 @@
+>  #define MAC_PPSx_WIDTH(x)		(0x00000b8c + ((x) * 0x10))
+>  
+>  #define MTL_FPE_CTRL_STS		0x00000c90
+> +#define PEC				GENMASK(15, 8)
+>  #define AFSZ				GENMASK(1, 0)
+>  
+>  #define MTL_RXP_CONTROL_STATUS		0x00000ca0
+> @@ -114,5 +115,8 @@ void dwmac5_fpe_send_mpacket(void __iomem *ioaddr,
+>  int dwmac5_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev);
+>  int dwmac5_fpe_get_add_frag_size(void __iomem *ioaddr);
+>  void dwmac5_fpe_set_add_frag_size(void __iomem *ioaddr, u32 add_frag_size);
+> +int dwmac5_fpe_set_preemptible_tcs(struct net_device *ndev,
+> +				   struct netlink_ext_ack *extack,
+> +				   unsigned long tcs);
+>  
+>  #endif /* __DWMAC5_H__ */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> index ba4418eaa8ba..37e8fecaf042 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> @@ -7,6 +7,7 @@
+>  
+>  #include <linux/netdevice.h>
+>  #include <linux/stmmac.h>
+> +#include <net/pkt_cls.h>
+>  
+>  #define stmmac_do_void_callback(__priv, __module, __cname,  __arg0, __args...) \
+>  ({ \
+> @@ -428,6 +429,9 @@ struct stmmac_ops {
+>  	int (*fpe_irq_status)(void __iomem *ioaddr, struct net_device *dev);
+>  	int (*fpe_get_add_frag_size)(void __iomem *ioaddr);
+>  	void (*fpe_set_add_frag_size)(void __iomem *ioaddr, u32 add_frag_size);
+> +	int (*fpe_set_preemptible_tcs)(struct net_device *ndev,
+> +				       struct netlink_ext_ack *extack,
+> +				       unsigned long tcs);
+>  };
+>  
+>  #define stmmac_core_init(__priv, __args...) \
+> @@ -536,6 +540,8 @@ struct stmmac_ops {
+>  	stmmac_do_callback(__priv, mac, fpe_get_add_frag_size, __args)
+>  #define stmmac_fpe_set_add_frag_size(__priv, __args...) \
+>  	stmmac_do_void_callback(__priv, mac, fpe_set_add_frag_size, __args)
+> +#define stmmac_fpe_set_preemptible_tcs(__priv, __args...) \
+> +	stmmac_do_callback(__priv, mac, fpe_set_preemptible_tcs, __args)
+>  
+>  /* PTP and HW Timer helpers */
+>  struct stmmac_hwtimestamp {
+> @@ -623,6 +629,8 @@ struct stmmac_tc_ops {
+>  			 struct tc_etf_qopt_offload *qopt);
+>  	int (*query_caps)(struct stmmac_priv *priv,
+>  			  struct tc_query_caps_base *base);
+> +	int (*setup_mqprio)(struct stmmac_priv *priv,
+> +			    struct tc_mqprio_qopt_offload *qopt);
 
-And ditto.
+I don't really understand this (the driver authors really love function pointers).
 
-Tom.
+We have stmmac_tc_ops, but all hwifs either set it to dwmac510_tc_ops, or NULL?
+And within dwmac510_tc_ops, we have the second round of function pointers,
+for fpe_set_preemptible_tcs(), depending on the _actual_ hwif?!
 
->>                          ret = -EINVAL;
->>                          goto out;
->>                  }
->> diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
->> index 3be7d5ae65a8..73aff20e22d0 100644
->> --- a/fs/smb/server/smb2pdu.h
->> +++ b/fs/smb/server/smb2pdu.h
->> @@ -194,7 +194,7 @@ struct copychunk_ioctl_req {
->>          __le64 ResumeKey[3];
->>          __le32 ChunkCount;
->>          __le32 Reserved;
->> -       __u8 Chunks[1]; /* array of srv_copychunk */
->> +       __u8 Chunks[]; /* array of srv_copychunk */
->>   } __packed;
->>
->>   struct srv_copychunk {
->> @@ -370,7 +370,7 @@ struct smb2_file_attr_tag_info {
->>   struct smb2_ea_info_req {
->>          __le32 NextEntryOffset;
->>          __u8   EaNameLength;
->> -       char name[1];
->> +       char name[];
->>   } __packed; /* level 15 Query */
->>
->>   struct smb2_ea_info {
->> --
->> 2.46.0
->>
+Shouldn't any differentiation among mqprio implementations be done primarily
+at this stage here?
+
+>  };
+>  
+>  #define stmmac_tc_init(__priv, __args...) \
+> @@ -639,6 +647,8 @@ struct stmmac_tc_ops {
+>  	stmmac_do_callback(__priv, tc, setup_etf, __args)
+>  #define stmmac_tc_query_caps(__priv, __args...) \
+>  	stmmac_do_callback(__priv, tc, query_caps, __args)
+> +#define stmmac_tc_setup_mqprio(__priv, __args...) \
+> +	stmmac_do_callback(__priv, tc, setup_mqprio, __args)
+>  
+>  struct stmmac_counters;
+>  
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 3df9cad0848b..dcf2b5ea7b4f 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -6274,6 +6274,8 @@ static int stmmac_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+>  	switch (type) {
+>  	case TC_QUERY_CAPS:
+>  		return stmmac_tc_query_caps(priv, priv, type_data);
+> +	case TC_SETUP_QDISC_MQPRIO:
+> +		return stmmac_tc_setup_mqprio(priv, priv, type_data);
+>  	case TC_SETUP_BLOCK:
+>  		return flow_block_cb_setup_simple(type_data,
+>  						  &stmmac_block_cb_list,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index a58282d6458c..08fda0ed5ff3 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -1174,6 +1174,13 @@ static int tc_query_caps(struct stmmac_priv *priv,
+>  			 struct tc_query_caps_base *base)
+>  {
+>  	switch (base->type) {
+> +	case TC_SETUP_QDISC_MQPRIO: {
+> +		struct tc_mqprio_caps *caps = base->caps;
+> +
+> +		caps->validate_queue_counts = true;
+> +
+> +		return 0;
+> +	}
+>  	case TC_SETUP_QDISC_TAPRIO: {
+>  		struct tc_taprio_caps *caps = base->caps;
+>  
+> @@ -1190,6 +1197,73 @@ static int tc_query_caps(struct stmmac_priv *priv,
+>  	}
+>  }
+>  
+> +static void stmmac_reset_tc_mqprio(struct net_device *ndev,
+> +				   struct netlink_ext_ack *extack)
+> +{
+> +	struct stmmac_priv *priv = netdev_priv(ndev);
+> +
+> +	netdev_reset_tc(ndev);
+> +	netif_set_real_num_tx_queues(ndev, priv->plat->tx_queues_to_use);
+> +
+> +	stmmac_fpe_set_preemptible_tcs(priv, ndev, extack, 0);
+> +}
+> +
+> +static int tc_setup_mqprio(struct stmmac_priv *priv,
+> +			   struct tc_mqprio_qopt_offload *mqprio)
+> +{
+> +	struct netlink_ext_ack *extack = mqprio->extack;
+> +	struct tc_mqprio_qopt *qopt = &mqprio->qopt;
+> +	struct net_device *ndev = priv->dev;
+> +	int num_stack_tx_queues = 0;
+> +	int num_tc = qopt->num_tc;
+> +	u16 offset, count;
+> +	int tc, err;
+> +
+> +	if (!num_tc) {
+> +		stmmac_reset_tc_mqprio(ndev, extack);
+> +		return 0;
+> +	}
+> +
+> +	err = netdev_set_num_tc(ndev, num_tc);
+> +	if (err)
+> +		return err;
+> +
+> +	/* DWMAC CORE4+ can not programming TC:TXQ mapping to hardware.
+
+s/can not programming TC:TXQ/cannot program the TC:TXQ/
+
+> +	 * Synopsys Databook:
+> +	 * "The number of Tx DMA channels is equal to the number of Tx queues,
+> +	 * and is direct one-to-one mapping."
+> +	 *
+> +	 * Luckily, DWXGMAC CORE can.
+> +	 *
+> +	 * Thus preemptible_tcs should be handled in a per core manner.
+> +	 */
+
+What is the justification for programming the TC:TXQ mapping, for the
+hwifs where that is configurable, in a method named fpe_set_preemptible_tcs()
+though? Your intention is for that method to do so much more than its
+name would suggest, at least for DWXGMAC. Either restrict its purpose to
+just deal with the preemptible TCs as described, or rename it to make it
+clear that it applies an entire mqprio queue configuration.
+
+> +	for (tc = 0; tc < num_tc; tc++) {
+> +		offset = qopt->offset[tc];
+> +		count = qopt->count[tc];
+> +		num_stack_tx_queues += count;
+> +
+> +		err = netdev_set_tc_queue(ndev, tc, count, offset);
+> +		if (err)
+> +			goto err_reset_tc;
+> +	}
+> +
+> +	err = netif_set_real_num_tx_queues(ndev, num_stack_tx_queues);
+> +	if (err)
+> +		goto err_reset_tc;
+> +
+> +	err = stmmac_fpe_set_preemptible_tcs(priv, ndev, extack,
+> +					     mqprio->preemptible_tcs);
+> +	if (err)
+> +		goto err_reset_tc;
+
+Oh, the pains of stmmac_do_callback().... If the hwif does not
+implement stmmac_ops :: fpe_set_preemptible_tcs(), this will
+return -EINVAL and not set any extack message, leading the user
+to ask himself "which parameter is invalid?!". The tc subsystem is
+notorious for being cryptic in its errors, and we should try to not
+make that any worse.
+
+Also, since the check for the presence of the function pointer is
+bundled up with the call itself, you are forced to do a lot of useless
+work when you could have tested at the very beginning for the presence
+of the function, and returned -EOPNOTSUPP prior to having changed
+anything. It is an antipattern which actively results in worse code by
+using it.
+
+Would you be against "open-coding" it, and testing the function pointer
+early, to return -EOPNOTSUPP and set the extack message?
+
+> +
+> +	return 0;
+> +
+> +err_reset_tc:
+> +	stmmac_reset_tc_mqprio(ndev, extack);
+> +
+> +	return err;
+> +}
+> +
+>  const struct stmmac_tc_ops dwmac510_tc_ops = {
+>  	.init = tc_init,
+>  	.setup_cls_u32 = tc_setup_cls_u32,
+> @@ -1198,4 +1272,5 @@ const struct stmmac_tc_ops dwmac510_tc_ops = {
+>  	.setup_taprio = tc_setup_taprio,
+>  	.setup_etf = tc_setup_etf,
+>  	.query_caps = tc_query_caps,
+> +	.setup_mqprio = tc_setup_mqprio,
+>  };
+> -- 
+> 2.34.1
 > 
 
 
