@@ -1,88 +1,67 @@
-Return-Path: <linux-kernel+bounces-293930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294799586A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22729586AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5098A1C213A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEE3282030
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83718FDC1;
-	Tue, 20 Aug 2024 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C933F18FDBA;
+	Tue, 20 Aug 2024 12:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZ1Q9DGo"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="duOGKV0i"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934B918F2C8;
-	Tue, 20 Aug 2024 12:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A1418C014;
+	Tue, 20 Aug 2024 12:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156001; cv=none; b=PMgpf2yDvTzLJT0UAdWdpRoPzQxa+BS6dFODzpsnqLhixN1rmzo30ydlr58MXBgSK4fddKvoi9uP3/RK3dXd6riueaTnU8MSRSotIfzulc4k78o6/SzEy9oJS1Q0AYYsmzbuZppCErAxE+VHOvQgdq2tnJk/DHGlztZ63Ebvk+Y=
+	t=1724156134; cv=none; b=ov9gQtGltlD8FV7xKKq0WjoTFxUxkXWE2v5ms+F3XaCMLVE1cFppl2rXHoXnMbSj9VuFC/loTlg6PbvSsgm8YPYAuJaZR5tpgcBjL19pYfy583i4PkpEFaYvreW2d1K9cf/sipWtQLt52nsvxU3L3RAUTklJ4+vjCUecmqQb10c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156001; c=relaxed/simple;
-	bh=sjoksWZ8Am0KeIIGjVG0E4j+q+NHl4a2vZP83KMzPa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=br9CZmM17XRwh2VAfAeMVOQC9UKaJFNouAy7hMt0wkQTYUZrntNVJX1z0dMEWRkgx/70RJnCDPrR4qU+TjCn8tSTlG3tcRQe/kGberDTyg4oG0qujQTFiFPtpM9WKaNOMxW7fO1cRHjZk35c2Pno/Ucfy4XxybYbLbICW4tnAPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZ1Q9DGo; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201fbd0d7c2so33942825ad.0;
-        Tue, 20 Aug 2024 05:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724155999; x=1724760799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hoL2v+PkNQmrjvvc83i9ktW//U4xDXc8wzaEFkS8wz8=;
-        b=lZ1Q9DGo/+kXXf/rczq7zB7HbbK3DjxFpvkFLgg3x6WvS59vkyJ41ezPu2qQbQKWCw
-         cjy3G93+uZoRuAFDC6LG97nhDcMR0mk7wKA11CEMAyTFK8ZknSNjcmPdgxm+kQ7A/SyD
-         7MoDH0MOmLHDsWoz6Lh3CX5Rd9aI4G8jFmjyso6qdcVsLhDqwt9yksZ5LRwMd7GS30h4
-         M0peuU7cbwGdDBaTcJCR3DYGTVpe+hoQrjODH7hfjzdhoPYb0Tmh5z3NxZBrsNqyB0JT
-         HcqZTa5cfm/z0GT6hgJd/dPH8XKIkh1pPtlrlABoi7nhYu70hyMGfGoiC4HbqPXlRjLJ
-         4H5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724155999; x=1724760799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hoL2v+PkNQmrjvvc83i9ktW//U4xDXc8wzaEFkS8wz8=;
-        b=VsmvWd+jyEnlSuP4fvCJ7d+fAJVcgehlhMQdwLXJ6qr+RArSIaqbu9V+JVF/qEItG9
-         wNRrrGqM59RMlCq6fymOA5LZstgRN1ckr7i1hIkXPgCtoZg/+MzDCI87p+xMSIpbIXfG
-         a9iSa3pRDFuMrFpCnjesghd57A63VdmtNr8SckkYvLyncIty2lgbgPJbSdbmkQRjvZSl
-         sypsz+SKUXSLvWvcjLBI/PFYL24IVMzH262bktuMUfRwKJyhNajeD2IZRwgmlbCxmfKH
-         MncNOuLN4oblEPrVLNx7xm8W+0Khl6lRmtNLQd3SxSHlUF0UKBOqDpH9TmoTKkVDeEKl
-         cyZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9cs1kVI4dFloZWpAuYQBAlB1xRmNJR7rC5ljhlEUePM8W0F7PaLiL2mI1klwd+9vUkvxNrEPT@vger.kernel.org, AJvYcCVTsJHBIU1TcU8zxl82IJxIBkrYNwPOolZcqFAM8AlqIOIPUaXSNFr+lCRnLbCYVLG+FA9caaFYiYZhBw==@vger.kernel.org, AJvYcCWD1Xom4qJ9Ytx8frTc+jxqT95Lbe2D+g+LPHLzDcryzTrOJdC0E7WRHhw2x8of2bbjxjbebtoNmSQ9Q5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIBS+1+uQ6aYBhdmdq9F2R2Mysk/EmaTpLrEwtcMs6/RxU4BFI
-	BrV8pdZzi3tQ64JHuXC5XRXbz+OwQu5QED2mJzKPLGbnbmOKQ/WsUUNt7UyPz7U=
-X-Google-Smtp-Source: AGHT+IE5m+P2JgvEeVsaTU0x5+8ycE2UTgoPNVpJRCgV6O/FXWgCaEmhjgXc4RredOg+4KFqmfqBhw==
-X-Received: by 2002:a17:902:ea0a:b0:202:32cf:5dbe with SMTP id d9443c01a7336-20232cf5e3emr67545435ad.58.1724155998752;
-        Tue, 20 Aug 2024 05:13:18 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038df95sm76339535ad.227.2024.08.20.05.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 05:13:18 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	utz.bacher@de.ibm.com,
-	dust.li@linux.alibaba.com,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net,v6,0/2] net/smc: prevent NULL pointer dereference in txopt_get
-Date: Tue, 20 Aug 2024 21:13:12 +0900
-Message-Id: <20240820121312.380126-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724156134; c=relaxed/simple;
+	bh=QH5c3NuhwizcJBe68p55a13P6p0ggigL3dsCF2BspwU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ShGOlmYThhCJANmS+c6Egwsxd9RL1DfuxIuLq3aa9KfVKnyyPLKWXTby5KrEnS5GH/h/8Se9AOhnF18zAQcoglsWdOrhwKpsFqvqwfOD9tIP8XeCLS92BgsFMExsSk3h2sXG4rOI6bjbXYOwD/FsYry+uaOOgjb5SFIGbuYDyok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=duOGKV0i; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K72r6Q022736;
+	Tue, 20 Aug 2024 12:15:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EudIPUzh6TaSFlWzs9Fh9d
+	xgTheI7QSqwJSMWY/Ngxc=; b=duOGKV0ircaT5b299A9+i1eyBxqDYmj918TwnA
+	HmqFdRMCjDhSRSlGqp3p6lHfYdTVc9L7HYUbl/yU9S0TI/I0+y7PhVSldds6ymQ2
+	h2F5ckb2ZkB3WA+zz2pVrafFxnCnfLZIldEgsvhLmQz+UgT9qh/gb7NZz/wJ2zEj
+	Q97oq+zWS5JiBczNnm2VDd1i3Anc0PUNQVV2eH0Bq2No6R2eYYl7ByoGT0YsNqB3
+	Y7OkPoPI1v8Y+GJUrpn+sKasljGAkwdFrQ+rGtBX9dKd74hr0OaX/z5SyZTOjglD
+	HEtKflchkEOfu294/X7PNGkm4A4Pggc0qdGNr2qhP2QDu39A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdm8xed-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 12:15:28 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KCFKWU009324
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 12:15:20 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 20 Aug 2024 05:15:18 -0700
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <Thinh.Nguyen@synopsys.com>, <gregkh@linuxfoundation.org>,
+        <mathias.nyman@intel.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_zhonhan@quicinc.com>
+Subject: [PATCH 0/2] usb: Call cpu_relax() when polling registers
+Date: Tue, 20 Aug 2024 20:14:59 +0800
+Message-ID: <20240820121501.3593245-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,15 +69,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JUhxY_dHm463WsXoiUlcodfpkFpjR1xP
+X-Proofpoint-ORIG-GUID: JUhxY_dHm463WsXoiUlcodfpkFpjR1xP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=273 spamscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408200091
 
-This patch is to resolve vulnerabilities that occur in the process of
-creating an IPv6 socket with IPPROTO_SMC.
+This series adds cpu_relax() in registers polling busy loops and
+it is a well-known idiom in the kernel.
 
-Jeongjun Park (2):
-  net/smc: modify smc_sock structure
-  net/smc: initialize ipv6_pinfo_offset in smc_inet6_prot and add smc6_sock structure
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+---
+Zhongqiu Han (2):
+  usb: dwc3: core: Call cpu_relax() in registers polling busy loops
+  usb: xhci: ext-caps: Use cpu_relax() when polling registers
 
- net/smc/smc.h 		| 5 ++++-
- net/smc/smc_inet.c	| 8 +++++++-
- 2 file changed, 11 insertions(+), 2 deletion(-)
+ drivers/usb/dwc3/core.c          | 2 ++
+ drivers/usb/host/xhci-ext-caps.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+
+base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
+-- 
+2.25.1
+
 
