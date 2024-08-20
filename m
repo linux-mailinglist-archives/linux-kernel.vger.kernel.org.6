@@ -1,52 +1,45 @@
-Return-Path: <linux-kernel+bounces-293961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225379586F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403C195871E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F38E1C223E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0F6285707
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5984618FDBE;
-	Tue, 20 Aug 2024 12:29:48 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D492418FC92;
-	Tue, 20 Aug 2024 12:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3443018FDA3;
+	Tue, 20 Aug 2024 12:37:39 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A7F18DF9B
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156987; cv=none; b=n6NhS6s6uHpKg4q3cGBKULaOCZNXf1xeYKy6ZdCy16QZ6pswXlmZGf2mUi6foKLQoPB/FdmYUTZ/rzEk+Fdr1grpjX1xgCrd9FGkbCrsEfM4DHqHJauhigXk+6yBCyZipTwbDwGULtMFU8M7xTFG+A8+KLDaPDrzB88cqQ6izlQ=
+	t=1724157458; cv=none; b=E+DKNJJXXCbrjpPZfGJYSrTxIsf31jXA4KkpK0Ntn482JmsJckAX+v9Albx+HNY1IAad0K2mPBEGg85za8/EdFqqnL2eA3Z1siUiBG9gjv8Mw3YeOaP2gaGzqBpoasa/F2gLLekdwSJL9k9JwL8CyVMyCYqLmT6KxWmXUGpEXT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156987; c=relaxed/simple;
-	bh=Xg8mPZg905BuEpJkT/BRCHtb6i3uOCc+ZH6dVq+mkXs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n7GeGZBAobNQzvMj5QL+RRS1x8FQkEjozlWJLq0vREQbF80mOFBGCNj16YgWTjH+yTmGUfCQMtcpX61AXgWqohro+NWH3dsxueQqjUCDyk97DcXOYDxV0y1BU8TkM8glxkdBtbK/muhvDO1LUXBMU8+/bkkIPO6HChTGnSGKCP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp7yk3sLNzhY0f;
-	Tue, 20 Aug 2024 20:27:42 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0691140138;
-	Tue, 20 Aug 2024 20:29:42 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 20:29:42 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <broonie@kernel.org>, <mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>, <linux-spi@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] spi: stm32-qspi: Simpify resource lookup
-Date: Tue, 20 Aug 2024 20:37:07 +0800
-Message-ID: <20240820123707.1788370-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724157458; c=relaxed/simple;
+	bh=4g3gH5PdZjLL5gIs6dfPQvrbrmr+YzgEKhA23ppD6yM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NrVd7BADaHCCJSDFgpfTmOu1o9GNHukV/k3mrA/zp+S3G02xD8uExqfIHKgOLbq7M3n6VWhKcXnLxT7wA56w5ON154lAgC+gtscaP08P87Rv+qOhn08A29e+GIiu5TScX1zJ0D+to2gG2TMVGGlRyLNDuC/G1Pu8idvUENSoFvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxXZsNjsRmviYaAA--.31193S3;
+	Tue, 20 Aug 2024 20:37:33 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMDxkeEMjsRmL5MbAA--.56855S2;
+	Tue, 20 Aug 2024 20:37:32 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] LoongArch: Fix some build issues with randconfig
+Date: Tue, 20 Aug 2024 20:37:29 +0800
+Message-ID: <20240820123731.31568-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,42 +47,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-CM-TRANSID:qMiowMDxkeEMjsRmL5MbAA--.56855S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
+	67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6x
+	ACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E
+	87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 
-Use the devm_platform_ioremap_resource_byname() helper instead of
-calling platform_get_resource_byname() and devm_ioremap_resource()
-separately.
+Tiezhu Yang (2):
+  LoongArch: Define barrier_before_unreachable() as empty
+  LoongArch: Add ifdefs to fix LSX and LASX related issues
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/spi/spi-stm32-qspi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/loongarch/Kconfig                |  1 +
+ arch/loongarch/include/asm/compiler.h | 13 +++++++++++++
+ arch/loongarch/kernel/fpu.S           |  4 ++++
+ arch/loongarch/kvm/switch.S           |  4 ++++
+ 4 files changed, 22 insertions(+)
+ create mode 100644 arch/loongarch/include/asm/compiler.h
 
-diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
-index 955c920c4b63..46081df73cb0 100644
---- a/drivers/spi/spi-stm32-qspi.c
-+++ b/drivers/spi/spi-stm32-qspi.c
-@@ -780,15 +780,13 @@ static int stm32_qspi_probe(struct platform_device *pdev)
- 	qspi = spi_controller_get_devdata(ctrl);
- 	qspi->ctrl = ctrl;
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi");
--	qspi->io_base = devm_ioremap_resource(dev, res);
-+	qspi->io_base = devm_platform_ioremap_resource_byname(pdev, "qspi");
- 	if (IS_ERR(qspi->io_base))
- 		return PTR_ERR(qspi->io_base);
- 
- 	qspi->phys_base = res->start;
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi_mm");
--	qspi->mm_base = devm_ioremap_resource(dev, res);
-+	qspi->mm_base = devm_platform_ioremap_resource_byname(pdev, "qspi_mm");
- 	if (IS_ERR(qspi->mm_base))
- 		return PTR_ERR(qspi->mm_base);
- 
 -- 
-2.34.1
+2.42.0
 
 
