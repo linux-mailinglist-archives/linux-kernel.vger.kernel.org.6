@@ -1,314 +1,329 @@
-Return-Path: <linux-kernel+bounces-293312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9D7957DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:11:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725F1957DEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A23D28408C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:11:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BA81C213FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BADE205E12;
-	Tue, 20 Aug 2024 06:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAA515FA7A;
+	Tue, 20 Aug 2024 06:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hoWB11aP"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RWMGTpCo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921EA1E4F17
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C2E158A23;
+	Tue, 20 Aug 2024 06:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724133932; cv=none; b=pz8IHy/oRHgvDmFWrTifRO5U0kRb+S6EoaKBZBZgM+sbQi5iE/9zdVhBkUqWiDR9fSQjDLIntgHOz1KosDeWGD2MhEBmLxrDkIhN2tbQaVGkgbJb5wXW8z2Qq353wI8XF6UAMXlAEpGwhqnrQEJnHdXT/CVC2lXZRxHH8XePsSU=
+	t=1724134207; cv=none; b=j3hTTusJqS3O1gIeR9bNVUIn02YmJxT0BKahADndET+9XDlFMLzJ3BopeH3aSckBuKT3oOPB120/AL1lOBMX29ZD9nQhrAlERgUXIsIt5dbOUdZmXgmHFu42GVM2ggts/THfUBYHpS+pK0ZvfjHUXM6isCeSZ69VMgQ8DrEbORU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724133932; c=relaxed/simple;
-	bh=G7DEbNSfdulJZL7B+4tp/pE0LZ4T6ArGyQS38ScvR+s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bMKAOPNw7k/f1Eco0NN2tiQpucwNBsyEBJ+aZl0xreFxXTFwVZWBjJNjNxV5BqPEI6b67u6ERlyblgfbmNuECwCioXeSqqSnD0dDTm2JqZXEN77BAkMXTghCjvCI8C98PWFs5u8oRJ3g7Z4/o+Sq8E6h5+7edbzLiJn/CIPHTtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hoWB11aP; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e163641feb9so2900490276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724133923; x=1724738723; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=boXjESgdTWQLiG6t6XpDdGr7L3LSCk/sMDntOjdOAS4=;
-        b=hoWB11aPAWPzMsj6YkI54A2UvMZFcofbq8fbH1HsX0Wg9RrJ9YsQ+5GHxtoN8F/gge
-         0W8kNPNP7d2+yWDMYld+vGVQRAy6iC4kgpGx8T4q9mHwB+jD3xcKSR3C/V5Iqbe8Purr
-         R0yfMJ/rneqJ+EuZlY3Da0BNTBkn7n7lGWniakN2uayYK5uCb/63itR+aEMF9Nsz74vK
-         jRNXxD6M2PFS51KOGPjZIQwIOzyYH9mC+BCn4AkEe2KYEWQsWW5g5M7+nP/353S6jIK5
-         ZrS8Tls+dtqLB8qjU2KlACaXtYDHOCvhJsNqnFo7RapZLeZdiAcaRFHm9Ra+tvDtuz0s
-         hUFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724133923; x=1724738723;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=boXjESgdTWQLiG6t6XpDdGr7L3LSCk/sMDntOjdOAS4=;
-        b=TmuBnK1sxaTvJYzjiJHNWf3F28jp9k1NUAT7DqrqTKZTPMxTzBtOwo498tm+y1aOTj
-         y8MnC8us1mqprFwoWRoY7Ot4zFeWlbPiIlgc1CnKk0ZE1q/KGOiqVdaFE5f+ZVZsf2ul
-         ZSGtndMW6MJIyoOkFZQA/UzRImqVwDyBIH35VovF66EZCZKcAX3lQXC1snKPd63QxbdZ
-         Euvci0fUD96LJ1tgrVwf6HBYz4pYcHKQnblaRUriYtrXI740NnEvD9mZI1krdisWYBr3
-         hWa2sUG1dNASwzHcgPkXuP8qkb6LhkzRzUxkF5OlUD7BER184TCY6Sh51w8jgMAsbzVS
-         ko2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWQAqNTvZygYAb28C3JDiImVAv8wZrwJe9YJ1aeBGRKGEdSep11w25z1lStYE+IImcFxN5KSHfY+1k2JQllzGD/qjeowIf3lXCuoQ/L
-X-Gm-Message-State: AOJu0YyAQy5CDjT3eAOjFEdQbJIgBJMOyduY97P5AMWHmNE0s2yuO6GH
-	U5T3Yy8BiyEyZOp5G4HPnNpO9LRk2EtlkFnBbYwBTFFVUpO92kXzIgjTBqYwSPxp7HD7142Qy/v
-	ewXnUFZ5oRq/Ycsxw6XTHtg==
-X-Google-Smtp-Source: AGHT+IF1IcORSZBpF0a8U9UqqOrvZwBvlCqM5J5ZbExC11762cMrANS4lMhprPx2fvEkEV3s2z8Cw4BvxAxblD6vOQ==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a25:9cc3:0:b0:e11:691e:999c with SMTP
- id 3f1490d57ef6-e164aafc9b1mr49638276.5.1724133923346; Mon, 19 Aug 2024
- 23:05:23 -0700 (PDT)
-Date: Tue, 20 Aug 2024 06:04:56 +0000
-In-Reply-To: <20240820060456.1485518-1-almasrymina@google.com>
+	s=arc-20240116; t=1724134207; c=relaxed/simple;
+	bh=AnSKb2FCDum2nucOMzNd/4tuPqX/Wv8S3X5d1tcBY4E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IbF3X6F1YWHGuV4Ml2f4VqwiAuTPxRBrBFHLDIu7lVhW2tgmkvjDA9gZqM56j/Zb/+VfGNzh/aBRnuHiqAkWN4nTs2rQObld5ln2tSIzcSBhlSn04duikeUB5Dg1ylou6UIBdGB7/Fm/n+dJU2J75DOd/Htn+vcUDBbO+uTPEfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RWMGTpCo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JN3ciC008364;
+	Tue, 20 Aug 2024 06:10:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=QAf4Dga8qf0QToI6BWXKWd
+	8notDOy/ZYo/+VVu61V/Q=; b=RWMGTpCodf7sw1n7d9WOA6J8KISoHpsB0oQv8n
+	//0fn3pu9Bnbn65CInXEMf+X7IVkUzJJtbwIQlVT6EbW0EIdyU494C2L/UGIm5XV
+	9ZhCTzTTJBSpAVa7umkwFrst4ifdogafuEBhp03bO68Zohl49nuOEUgWAla9L7DB
+	z8PsjHKH1lXKZJSX75uobJsz71Dz1mk7YgJiQ7VO7S5sJ0B0woufh1F0pFUbWo2h
+	AWqGEFP/LsEOUG1hjH1YsTdKXDhwCxKn7aWbJZm5AcArG458ZpNWcvPhhcqFYLLL
+	b2dWMPD1J7j8fx/7fxzdiy6FIHxAyZOLK6mxwYalnXl2Dfww==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412k6gejhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:10:01 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K6A0lK030963
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:10:00 GMT
+Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 19 Aug 2024 23:09:57 -0700
+From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+To: <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        <quic_viswanat@quicinc.com>, <quic_mojha@quicinc.com>
+Subject: [PATCH V2 1/1] remoteproc: qcom: Add NOTIFY_FATAL event type to SSR subdevice
+Date: Tue, 20 Aug 2024 11:39:43 +0530
+Message-ID: <20240820060943.277260-1-quic_gokulsri@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240820060456.1485518-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-Message-ID: <20240820060456.1485518-14-almasrymina@google.com>
-Subject: [PATCH net-next v21 13/13] netdev: add dmabuf introspection
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YhVH3Q1ZVbaJOCMyb5wUkjY3tmWakyjI
+X-Proofpoint-GUID: YhVH3Q1ZVbaJOCMyb5wUkjY3tmWakyjI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 priorityscore=1501 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200045
 
-Add dmabuf information to page_pool stats:
+From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump page-pool-get
-...
- {'dmabuf': 10,
-  'id': 456,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 455,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 454,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 453,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 452,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 451,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 450,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 449,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
+Currently the SSR subdevice notifies the client driver on crash of the
+rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
+However, the client driver might be interested to know that the device
+has crashed immediately to pause any further transactions with the
+rproc. This calls for an event to be sent to the driver in the IRQ
+context as soon as the rproc crashes.
 
-And queue stats:
+Add NOTIFY_FATAL event to SSR subdevice to atomically notify rproc has
+crashed to the client driver. The client driver in this scenario is a
+ath Wi-Fi driver which is continuously queuing data to the remoteproc and
+needs to know if remoteproc crashes as soon as possible to stop queuing
+further data and also dump some debug statistics on the driver side that
+could potentially help in debug of why the remoteproc crashed.
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump queue-get
-...
-{'dmabuf': 10, 'id': 8, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 9, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 10, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 11, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 12, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 13, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 14, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 15, 'ifindex': 3, 'type': 'rx'},
+Validated the event in IPQ9574 and IPQ5332 by forcing the rproc to crash
+and ensuring the registered notifier function receives the notification
+in IRQ context.
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+The client driver in this scenario is a Wi-Fi driver which is continuously
+queuing data to the remoteproc and needs to know if remoteproc crashes
+as soon as possible to stop queuing further data and also dump some 
+debug statistics on the driver side that could potentially help in
+debug of why the remoteproc crashed.
 
+Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 ---
- Documentation/netlink/specs/netdev.yaml | 10 ++++++++++
- include/uapi/linux/netdev.h             |  2 ++
- net/core/netdev-genl.c                  | 10 ++++++++++
- net/core/page_pool_user.c               |  4 ++++
- tools/include/uapi/linux/netdev.h       |  2 ++
- 5 files changed, 28 insertions(+)
+changes since v1:
+	- No changes. Rebased on top of linux-next.
+	- We will now have a user for this notifier, ath12k.
 
-diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
-index 0c747530c275..08412c279297 100644
---- a/Documentation/netlink/specs/netdev.yaml
-+++ b/Documentation/netlink/specs/netdev.yaml
-@@ -167,6 +167,10 @@ attribute-sets:
-           "re-attached", they are just waiting to disappear.
-           Attribute is absent if Page Pool has not been detached, and
-           can still be used to allocate new memory.
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf this page-pool is attached to.
-+        type: u32
-   -
-     name: page-pool-info
-     subset-of: page-pool
-@@ -268,6 +272,10 @@ attribute-sets:
-         name: napi-id
-         doc: ID of the NAPI instance which services this queue.
-         type: u32
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf attached to this queue, if any.
-+        type: u32
+ drivers/remoteproc/qcom_common.c      | 60 +++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_core.c  | 12 ++++++
+ include/linux/remoteproc.h            |  3 ++
+ include/linux/remoteproc/qcom_rproc.h | 17 ++++++++
+ 4 files changed, 92 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 8c8688f99f0a..6efee422cc23 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -86,6 +86,7 @@ struct minidump_global_toc {
+ struct qcom_ssr_subsystem {
+ 	const char *name;
+ 	struct srcu_notifier_head notifier_list;
++	struct atomic_notifier_head atomic_notifier_list;
+ 	struct list_head list;
+ };
  
-   -
-     name: qstats
-@@ -543,6 +551,7 @@ operations:
-             - inflight
-             - inflight-mem
-             - detach-time
-+            - dmabuf
-       dump:
-         reply: *pp-reply
-       config-cond: page-pool
-@@ -607,6 +616,7 @@ operations:
-             - type
-             - napi-id
-             - ifindex
-+            - dmabuf
-       dump:
-         request:
-           attributes:
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d..7c308f04e7a0 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
+@@ -377,6 +378,7 @@ static struct qcom_ssr_subsystem *qcom_ssr_get_subsys(const char *name)
+ 	}
+ 	info->name = kstrdup_const(name, GFP_KERNEL);
+ 	srcu_init_notifier_head(&info->notifier_list);
++	ATOMIC_INIT_NOTIFIER_HEAD(&info->atomic_notifier_list);
  
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
+ 	/* Add to global notification list */
+ 	list_add_tail(&info->list, &qcom_ssr_subsystem_list);
+@@ -428,6 +430,51 @@ int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
  
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 4201f9555772..c2ae57e7f291 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -293,6 +293,7 @@ static int
- netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 			 u32 q_idx, u32 q_type, const struct genl_info *info)
++/**
++ * qcom_register_ssr_atomic_notifier() - register SSR Atomic notification
++ *					 handler
++ * @name:	Subsystem's SSR name
++ * @nb:	notifier_block to be invoked upon subsystem's state change
++ *
++ * This registers the @nb notifier block as part the atomic notifier
++ * chain for a remoteproc associated with @name. The notifier block's callback
++ * will be invoked when the remote processor crashes in atomic context before
++ * the recovery process is queued.
++ *
++ * Return: a subsystem cookie on success, ERR_PTR on failure.
++ */
++void *qcom_register_ssr_atomic_notifier(const char *name,
++					struct notifier_block *nb)
++{
++	struct qcom_ssr_subsystem *info;
++
++	info = qcom_ssr_get_subsys(name);
++	if (IS_ERR(info))
++		return info;
++
++	atomic_notifier_chain_register(&info->atomic_notifier_list, nb);
++
++	return &info->atomic_notifier_list;
++}
++EXPORT_SYMBOL_GPL(qcom_register_ssr_atomic_notifier);
++
++/**
++ * qcom_unregister_ssr_atomic_notifier() - unregister SSR Atomic notification
++ *					   handler
++ * @notify:	subsystem cookie returned from qcom_register_ssr_notifier
++ * @nb:		notifier_block to unregister
++ *
++ * This function will unregister the notifier from the atomic notifier
++ * chain.
++ *
++ * Return: 0 on success, %ENOENT otherwise.
++ */
++int qcom_unregister_ssr_atomic_notifier(void *notify, struct notifier_block *nb)
++{
++	return atomic_notifier_chain_unregister(notify, nb);
++}
++EXPORT_SYMBOL_GPL(qcom_unregister_ssr_atomic_notifier);
++
+ static int ssr_notify_prepare(struct rproc_subdev *subdev)
  {
-+	struct net_devmem_dmabuf_binding *binding;
- 	struct netdev_rx_queue *rxq;
- 	struct netdev_queue *txq;
- 	void *hdr;
-@@ -312,6 +313,15 @@ netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 		if (rxq->napi && nla_put_u32(rsp, NETDEV_A_QUEUE_NAPI_ID,
- 					     rxq->napi->napi_id))
- 			goto nla_put_failure;
-+
-+		binding = (struct net_devmem_dmabuf_binding *)
-+				  rxq->mp_params.mp_priv;
-+		if (binding) {
-+			if (nla_put_u32(rsp, NETDEV_A_QUEUE_DMABUF,
-+					binding->id))
-+				goto nla_put_failure;
-+		}
-+
- 		break;
- 	case NETDEV_QUEUE_TYPE_TX:
- 		txq = netdev_get_tx_queue(netdev, q_idx);
-diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
-index 9b69066cc07e..7995c1e3477d 100644
---- a/net/core/page_pool_user.c
-+++ b/net/core/page_pool_user.c
-@@ -213,6 +213,7 @@ static int
- page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 		  const struct genl_info *info)
- {
-+	struct net_devmem_dmabuf_binding *binding = pool->mp_priv;
- 	size_t inflight, refsz;
- 	void *hdr;
+ 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+@@ -478,6 +525,18 @@ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+ 				 QCOM_SSR_AFTER_SHUTDOWN, &data);
+ }
  
-@@ -242,6 +243,9 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 			 pool->user.detach_time))
- 		goto err_cancel;
- 
-+	if (binding && nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
-+		goto err_cancel;
++static void ssr_notify_crash(struct rproc_subdev *subdev)
++{
++	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
++	struct qcom_ssr_notify_data data = {
++		.name = ssr->info->name,
++		.crashed = true,
++	};
 +
- 	genlmsg_end(rsp, hdr);
++	atomic_notifier_call_chain(&ssr->info->atomic_notifier_list,
++				   QCOM_SSR_NOTIFY_CRASH, &data);
++}
++
+ /**
+  * qcom_add_ssr_subdev() - register subdevice as restart notification source
+  * @rproc:	rproc handle
+@@ -504,6 +563,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+ 	ssr->subdev.start = ssr_notify_start;
+ 	ssr->subdev.stop = ssr_notify_stop;
+ 	ssr->subdev.unprepare = ssr_notify_unprepare;
++	ssr->subdev.notify_crash = ssr_notify_crash;
  
+ 	rproc_add_subdev(rproc, &ssr->subdev);
+ }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..1828831e0e77 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1140,6 +1140,16 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
+ 	}
+ }
+ 
++static void rproc_notify_crash_subdevices(struct rproc *rproc)
++{
++	struct rproc_subdev *subdev;
++
++	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
++		if (subdev->notify_crash)
++			subdev->notify_crash(subdev);
++	}
++}
++
+ /**
+  * rproc_alloc_registered_carveouts() - allocate all carveouts registered
+  * in the list
+@@ -2712,6 +2722,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+ 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+ 		rproc->name, rproc_crash_to_string(type));
+ 
++	rproc_notify_crash_subdevices(rproc);
++
+ 	queue_work(rproc_recovery_wq, &rproc->crash_handler);
+ }
+ EXPORT_SYMBOL(rproc_report_crash);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..5101a7ec01bb 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -596,6 +596,8 @@ struct rproc {
+  * @stop: stop function, called before the rproc is stopped; the @crashed
+  *	    parameter indicates if this originates from a recovery
+  * @unprepare: unprepare function, called after the rproc has been stopped
++ * @notify_crash: notify_crash function, called in atomic context to notify
++ *		  rproc has crashed and recovery is about to start
+  */
+ struct rproc_subdev {
+ 	struct list_head node;
+@@ -604,6 +606,7 @@ struct rproc_subdev {
+ 	int (*start)(struct rproc_subdev *subdev);
+ 	void (*stop)(struct rproc_subdev *subdev, bool crashed);
+ 	void (*unprepare)(struct rproc_subdev *subdev);
++	void (*notify_crash)(struct rproc_subdev *subdev);
+ };
+ 
+ /* we currently support only two vrings per rvdev */
+diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
+index 82b211518136..f3d06900f297 100644
+--- a/include/linux/remoteproc/qcom_rproc.h
++++ b/include/linux/remoteproc/qcom_rproc.h
+@@ -11,12 +11,14 @@ struct notifier_block;
+  * @QCOM_SSR_AFTER_POWERUP:	Remoteproc is running (start stage)
+  * @QCOM_SSR_BEFORE_SHUTDOWN:	Remoteproc crashed or shutting down (stop stage)
+  * @QCOM_SSR_AFTER_SHUTDOWN:	Remoteproc is down (unprepare stage)
++ * @QCOM_SSR_NOTIFY_CRASH:	Remoteproc crashed
+  */
+ enum qcom_ssr_notify_type {
+ 	QCOM_SSR_BEFORE_POWERUP,
+ 	QCOM_SSR_AFTER_POWERUP,
+ 	QCOM_SSR_BEFORE_SHUTDOWN,
+ 	QCOM_SSR_AFTER_SHUTDOWN,
++	QCOM_SSR_NOTIFY_CRASH,
+ };
+ 
+ struct qcom_ssr_notify_data {
+@@ -29,6 +31,10 @@ struct qcom_ssr_notify_data {
+ void *qcom_register_ssr_notifier(const char *name, struct notifier_block *nb);
+ int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb);
+ 
++void *qcom_register_ssr_atomic_notifier(const char *name,
++					struct notifier_block *nb);
++int qcom_unregister_ssr_atomic_notifier(void *notify,
++					struct notifier_block *nb);
+ #else
+ 
+ static inline void *qcom_register_ssr_notifier(const char *name,
+@@ -43,6 +49,17 @@ static inline int qcom_unregister_ssr_notifier(void *notify,
  	return 0;
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d..7c308f04e7a0 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
+ }
  
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
++static inline void *qcom_register_ssr_atomic_notifier(const char *name,
++						      struct notifier_block *nb)
++{
++	return 0;
++}
++
++static inline int qcom_unregister_ssr_atomic_notifier(void *notify,
++						      struct notifier_block *nb)
++{
++	return 0;
++}
+ #endif
  
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
+ #endif
 -- 
-2.46.0.184.g6999bdac58-goog
+2.34.1
 
 
