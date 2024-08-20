@@ -1,109 +1,139 @@
-Return-Path: <linux-kernel+bounces-293544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8AD958118
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:36:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C15958121
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAC51C242BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:36:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F485286222
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8918A6CA;
-	Tue, 20 Aug 2024 08:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AA018A6DF;
+	Tue, 20 Aug 2024 08:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g17+gZ1U"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c5HQjpd+"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE32118A6BD
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D7818E342;
+	Tue, 20 Aug 2024 08:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142975; cv=none; b=tAU/dZ1dnciKte422VdMBwm2uDMbwqw8UxAnvwEL12hLBxVMgc6LCyyicp5Pspg/zW8zeAkdmY/DkRY8fcL7hitkUbAnNFmg9sPLE9l8DkPH0wpiHDee7CbjthkVDtzo8kSs1vYvcE5R7dJMZZr/vOrAhY8f7Gm6PamLJGGZtb4=
+	t=1724143194; cv=none; b=SpJQbVFfhCzWZZPG4p7qakCxdI5+YowRUJE1cXqtF6hjdlog22+iY4q4kOzlg8fuxxDq1k/HP+ex/jPCxF/lEjEBk/T8fZk7ne96EeteKrHc1jUFdnDRBKzHxgZCbiHrAyY1GPP16lPrnG/ihqMBzXzgY1Ks/U+nmui8yW2Nx/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142975; c=relaxed/simple;
-	bh=L1l31PppL5t6QO2Nxrc+NZRgGjWPXKwkVIsKbjjHhPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=khWRu1je2a11pJPstoKV4U7pepwx97TTbL9AmguCwMA8x1Fp5aCIbJrFtoi0YSXsTOdSIp0dl4Ienz46RtzozXuO4LWyGQOwTCFQuZQDHHK4ipTPUVA1O4vSXlnJHf/Diq5XEbWrem4aH6I5IMv6xYAaH3Bm9Wt4AQjaPrj7RmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g17+gZ1U; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01993090so6193843e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724142972; x=1724747772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=93zvk0knlzhngCWuZE9aqqrY+p0LiG23HSxKJAQQFAw=;
-        b=g17+gZ1UNNn3KwKS//KueiCvLqLZolUbEXCzfQ9yEro8Gc5H9pBxKt0+Dsaa5welk6
-         71+e7oyChsdPCczX693TQDNdew8p6G0dxYjbO4l+9lbnGCH/am8F2EaErCWpWqpC1H5T
-         uX9zR9ss1vdQpseJt9YREYeceuoUi/VDs4LyqWxRgrb75uXd2GkdD5/JvPk2Xu4GtwcL
-         d8aYll9ifWt5rijoEZyhCJcumvDMD3kOvQp4BXMXf25DHl+cXy58bYuN4IaBROJ6DbPw
-         0GK7+LYY5bpVOf6j7hb5jZkVGnbT9bKttO4CQCYrfbFjvAjZT6FHaOX3IzByGMHG7NZu
-         MWJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724142972; x=1724747772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=93zvk0knlzhngCWuZE9aqqrY+p0LiG23HSxKJAQQFAw=;
-        b=qnjDjcqBz+yx/Twsu29+uaPYXdgkDAtwx7EWhj6dhBjG/SXDDXaGSLc9hFIybZHMGS
-         9CHkRbc15jNq8YLyHZwc4uaD4RefsdgybWWMK3Y+4OS4gknv+lkvdcRADkqctChK+NZP
-         aqJlEsCCgh4jV612ZhE6cuhtZ0SBlTW6ZJBIwH3AHlyRffqqyUi7gHppukfellMlvEGA
-         eDCpJyx54u4oXkr3d1ZpGELu/5Knh42pD0D0JHmm7fj5P1DKtzOrebcrsVAK/Yu40t0i
-         RxFcuRc8K2TMxZ3rWrqoaTDR38CaIs7BvTagTjsaRFq/BClahktfdJxRo0aH1wqdtVUD
-         txoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURPZGm1mGrSFE0L6yFhLrYiZg3vtvq8TX5PggEkFkwB/xIdEvgt0/HByZ9o8k3yVmHuowXeugiJ9JJ/Jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFZyLEI4bk3n6GRUXfpxfVVTKjKXjt2PbL2ClnO/TXbdu94lsB
-	1QTb5lcRuFKe/SdI2gq18IxlXgYfiay5M0oF/VAJaU4XtRpQf6fRFsvIiqZsUCxx489eIulSVnP
-	x3G9VqKpYCg0bhD/HrsPHnilw7WxmQY2q+qsrKqEMJe0psfvh5Hw=
-X-Google-Smtp-Source: AGHT+IF6JHDW0yv2jM2k867VgDYtwHiPlKvEAScFqQhWr+xqZINagdpnc1LL5D7qrBJZzgrPZQXzCCt6UWSCL3EwNGQ=
-X-Received: by 2002:a05:6512:3b20:b0:52c:caa6:13b4 with SMTP id
- 2adb3069b0e04-5331c690049mr8725264e87.3.1724142971198; Tue, 20 Aug 2024
- 01:36:11 -0700 (PDT)
+	s=arc-20240116; t=1724143194; c=relaxed/simple;
+	bh=Y67lKScO+XHSKkPWwEJi0w1LvhlMtu8n19Sm6FXBPfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gCVhC9FrTDUFuWa5mKM2ff0LHg6uGkTr62c40zx8tfSwTUB3x2wEP2zN00MOdi8WTjC4lFKz5YhTmO9RMAjPlLhM4z+zkVEcVi6KT4hRqTLtsgYpYMwu4y0ssQne0YqYQ+osde69LNQ3t6bcsB6xstI4K97tgS7zGNF4t3XD32I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c5HQjpd+; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 30B65240002;
+	Tue, 20 Aug 2024 08:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724143183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjbZOxwR9PVGgaPf4uUaZd0JrjKtSGINO0OZPhHVGyE=;
+	b=c5HQjpd+Or9Pj+ejVrX1nGX4PvgGzQJftCNT2NtxvISrNrqvjgYe2dOBghNRWvDSJqIxZf
+	wCVNrnJZ2LeXP5uE9pswbO2yYpZMffoMrmuFoJ5V24+8DitD4lVy5/WE3TqQ3LVQl5npu4
+	mjn02iEzlkBSMj4TZy/Vk5RbEwFewbSlZ0LAVW2iKrqDDgEGsw1U++4G+Xf/fdwOtHRMHu
+	/1ck3f1fMrbVe1L33TqrUXttiGDqCnTX6JuC7eI2As+OtWdqpAtx7WEPMsfawOcybtjaeJ
+	WrpzC2hU3IOztDocVmDxBmPys0xLN710+YRTbYIpPWLbDrgOZ5xk1N9vbslUXA==
+Message-ID: <8d8b1967-1d41-44d9-9791-d7809bed269c@bootlin.com>
+Date: Tue, 20 Aug 2024 10:39:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820083323.62485-1-rongqianfeng@vivo.com>
-In-Reply-To: <20240820083323.62485-1-rongqianfeng@vivo.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 20 Aug 2024 10:36:00 +0200
-Message-ID: <CAMRc=MdN045+6LzxeWa9VwuzDDbVy7o0pESXc3hrCxrnatSSLw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Simplify using devm_clk_get_enabled()
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
-	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add support for Congatec CGEB BIOS interface
+To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+ linux-mm@kvack.org, lee@kernel.org, andi.shyti@kernel.org,
+ linux-i2c@vger.kernel.org, s.hauer@pengutronix.de,
+ christian.gmeiner@gmail.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240814184731.1310988-1-mstrodl@csh.rit.edu>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20240814184731.1310988-1-mstrodl@csh.rit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Tue, Aug 20, 2024 at 10:33=E2=80=AFAM Rong Qianfeng <rongqianfeng@vivo.c=
-om> wrote:
->
-> devm_clk_get_enabled() will call devm_clk_get() + clk_prepare_enable()
-> and the clock will automatically be disabled, unprepared and freed when
-> the device is unbound from the bus. So simplify .probe() and .remove()
-> accordingly.
->
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
-> ---
->  drivers/gpio/gpio-davinci.c  | 13 ++-----------
->  drivers/gpio/gpio-stp-xway.c | 10 ++--------
->  drivers/gpio/gpio-zynq.c     | 10 +---------
->  3 files changed, 5 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+On 8/14/24 20:47, Mary Strodl wrote:
+> The following series adds support for the Congatec CGEB interface
+> found on some Congatec x86 boards. The CGEB interface is a BIOS
+> interface which provides access to onboard peripherals like I2C
+> busses and watchdogs. It works by mapping BIOS code and searching
+> for magic values which specify the entry points to the CGEB call.
+> The CGEB call is an API provided by the BIOS which provides access
+> to the functions in an ioctl like fashion.
+> 
+> At the request of some folks the first time I sent this series out,
+> CGEB has a userspace component which runs the x86 blob (rather than
+> running it directly in the kernel), which sends requests back and
+> forth using the cn_netlink API.
+> 
+> You can find a reference implementation of the userspace helper here:
+> https://github.com/Mstrodl/cgeb-helper
+> 
+> I didn't get an answer when I asked where the userspace component
+> should live, so I didn't put a ton of work into getting the helper
+> up to snuff since similar userspace helpers (like v86d) are not
+> in-tree. If folks would like the helper in-tree, that's fine too.
 
-I already sent a patch like that for davinci, please drop that part.
-Please split the other two into their separate per-driver patches.
+Hello Mary !!
 
-Bart
+It was by pure luck that I found your series.
+
+It seems we are working on the same thing, the Congatec Board Controller.
+
+I sent a first version of my series few weeks ago [1].
+My implementation is very different.
+There is an MFD which maps the needed IO regions and declares cells
+(gpio, watchdog, i2c). It also contains all the code to communicate with
+the Board Controller (using ioread and iowrite).
+The DMI table is used to detect if the board is supported, so the driver
+can be probed (or not).
+Other drivers (gpio, i2c and watchdog for now) use the API provided by
+the MFD to communicate with the Board Controller.
+With this approach, I don't need a userspace component.
+
+For this work I used the Congatec driver (that Thomas Gleixner pointed
+you) as reference. But as mentioned by Thomas the driver is not well
+written at all.
+By the way their latest version is available in their yocto metalayer
+(please find the link in my series).
+
+For now I did the job for the conga-SA7 board (which has a 5th
+generation Board Controller).
+So if you have hardware which has the same generation of the Board
+Controller, you can easily test the series. You only need to add the DMI
+entry of your board in the MFD driver.
+
+For other generations, I had a quick look. The sequences seem very
+similar, with minor differences. It could be easily implemented in the
+future, and only the MFD will be modified.
+
+Please feel free to test/comment my series [1].
+
+[1]
+https://lore.kernel.org/all/20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com/
+
+Best Regards,
+
+Thomas
+
+-- 
+Thomas Richard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
