@@ -1,72 +1,94 @@
-Return-Path: <linux-kernel+bounces-293076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26492957A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:25:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0229B957A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3BFA1F22D36
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3473A1C23AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F54D6125;
-	Tue, 20 Aug 2024 00:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069FC79F0;
+	Tue, 20 Aug 2024 00:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="EDo07Wzi"
-Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffzGbqZB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4858D4C70;
-	Tue, 20 Aug 2024 00:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4736AA50;
+	Tue, 20 Aug 2024 00:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724113493; cv=none; b=mD2eNQteoJXMjy2lcP2wpDodlz+pg2RjvYjkil0RXQ3S2bbmJHPoWQ6k1pMms04vH/0oIov8tHZyHtczVD7YL/0DB7bQ9Q8aqoxR0IUncGaYbUn1LHRPG0fVzeYxmbtUCNgxmwjGzN6iOT8Hic2BLeWuN3ugYmgPZXMYwIOABHc=
+	t=1724113570; cv=none; b=Mn7j01YaHphIRGyqZhnPJgzRRcIlEgouu24AYYPbwDu4Tk4c1QwHjJJ0KqpavJfmiXwNs20zbGbAnUZrLvf4TJIDi431VbpbKKZD88fo9nltBlIiiv4wqVFM3i38WVwscPnWtcSVUgacvTMckXy7m0zGbro4itPGWrMIu6EvYL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724113493; c=relaxed/simple;
-	bh=JKLCZnyzGDJcDFNYmbmy7lafHBvdp4yYr8MPXamKl5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kb7JJditnOEphxoAuiJT5mbR06uOoFdKGALKwZPAXv7rmVyB3/qJaCMM9oeJKCXy/N0aSsmHc7ZV4lS+2YkooVJHGDuRJe8jm4KeLzdY1mgeJ5Tn5gRgqN+NoinazwI1dPdV9wyXjJbwrliQTaTJ1ZUjoT9fOLWlsPT3UJXMbj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=EDo07Wzi; arc=none smtp.client-ip=54.39.219.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9DCDFC006A;
-	Mon, 19 Aug 2024 20:25:27 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
-	t=1724113531; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=JKLCZnyzGDJcDFNYmbmy7lafHBvdp4yYr8MPXamKl5A=;
-	b=EDo07WziGv6M9M+dnUTRnz4GfCGZvPPLGJiUP/Vfz/KATeUcJcFzZCztRAh2lcsSn40Kqf
-	fpE3Eu3/aFvuO4wNQHPb/xpVus7JmyEm1fCsCZIlmtTVDdHa3A27nvCAzYSXiFj72HhaeN
-	X6DNu0pdm4CrZAQW9c3Fwx2NOr3BCJ0=
-Message-ID: <f6308658-0ce6-4b40-aa6f-dd75668ff142@kaechele.ca>
-Date: Mon, 19 Aug 2024 20:24:33 -0400
+	s=arc-20240116; t=1724113570; c=relaxed/simple;
+	bh=sRXxrYGsvqAwlJZMOO4J9ngwjq8KmLev6usREKg7EQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pXClaxFiC5dowZIDvceyfvaRGz/KRSuso8kGxRlR/GGvc7c6VmedOV4Md6IbDCkep4725ACO9RCx0dmUZiO/rdBZvB0gd25LDJYAP6dsYmiwGRbNaUIbKGIhZeNvgJFqPTiJo4PpCXMyctak/0jayaXpjVuBRwm8hr9w/xP4oW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffzGbqZB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C31C32782;
+	Tue, 20 Aug 2024 00:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724113570;
+	bh=sRXxrYGsvqAwlJZMOO4J9ngwjq8KmLev6usREKg7EQM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ffzGbqZBjngJhcweA6YvS9YSLaj9CpiUbjbytOIb0KYYO1uQhRJRpWAHfg/Pu7Sdb
+	 NlTGceGnbVSOoqoosPZgnS/VNm6ZapJ8FkL8C66gxIpj5oDLDhil58q6XgBuOCk3O9
+	 xS7I+59LNBMURATvJ0Tbxh34Jorc5GymzxDnrWQRhLl3sPZ1aykGmLTY5car8ZvCi1
+	 CQzpdcGM0xp6U6WupcKHTeJQ8Ozd3J/E2bamphzZA5JnyvK1pqZyTtE3Mg26N+Zwus
+	 xQkn0sJxUKAiMnvRqzYUo1GaOkpDs+zdQOLbHNgQ/A3rVmggs37yMnMF0zMiowTKDs
+	 R0s4PjFJtpzNA==
+Date: Mon, 19 Aug 2024 17:26:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v1 1/3] ethtool: Extend cable testing interface
+ with result source information
+Message-ID: <20240819172608.2ca87928@kernel.org>
+In-Reply-To: <20240819141241.2711601-2-o.rempel@pengutronix.de>
+References: <20240819141241.2711601-1-o.rempel@pengutronix.de>
+	<20240819141241.2711601-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: - fix incorrect size when reading product ID
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Job Noorman <job@noorman.info>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZsPdmtfC54R7JVxR@google.com>
-Content-Language: en-US
-From: Felix Kaechele <felix@kaechele.ca>
-In-Reply-To: <ZsPdmtfC54R7JVxR@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Thanks for fixing my rookie mistakes ;-)
+On Mon, 19 Aug 2024 16:12:39 +0200 Oleksij Rempel wrote:
+> --- a/include/uapi/linux/ethtool_netlink.h
+> +++ b/include/uapi/linux/ethtool_netlink.h
+> @@ -573,15 +573,25 @@ enum {
+>  	ETHTOOL_A_CABLE_RESULT_UNSPEC,
+>  	ETHTOOL_A_CABLE_RESULT_PAIR,		/* u8 ETHTOOL_A_CABLE_PAIR_ */
+>  	ETHTOOL_A_CABLE_RESULT_CODE,		/* u8 ETHTOOL_A_CABLE_RESULT_CODE_ */
+> +	ETHTOOL_A_CABLE_RESULT_SRC,		/* u32 */
+>  
+>  	__ETHTOOL_A_CABLE_RESULT_CNT,
+>  	ETHTOOL_A_CABLE_RESULT_MAX = (__ETHTOOL_A_CABLE_RESULT_CNT - 1)
+>  };
+>  
+> +/* Information source for specific results. */
+> +enum {
+> +	/* Results provided by the Time Domain Reflectometry (TDR) */
+> +	ETHTOOL_A_CABLE_INF_SRC_TDR,
+> +	/* Results provided by the Active Link Cable Diagnostic (ALCD) */
+> +	ETHTOOL_A_CABLE_INF_SRC_ALCD,
+> +};
+> +
+>  enum {
+>  	ETHTOOL_A_CABLE_FAULT_LENGTH_UNSPEC,
+>  	ETHTOOL_A_CABLE_FAULT_LENGTH_PAIR,	/* u8 ETHTOOL_A_CABLE_PAIR_ */
+>  	ETHTOOL_A_CABLE_FAULT_LENGTH_CM,	/* u32 */
+> +	ETHTOOL_A_CABLE_FAULT_LENGTH_SRC,	/* u32 */
 
-Just tested it on my Lenovo ThinkSmart View and it works fine.
-
-Tested-by: Felix Kaechele <felix@kaechele.ca>
-
-Thanks,
-Felix
+Please keep Documentation/netlink/specs/ethtool.yaml up to date
 
