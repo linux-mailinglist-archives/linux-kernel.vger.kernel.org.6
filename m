@@ -1,215 +1,87 @@
-Return-Path: <linux-kernel+bounces-293401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F15A957ED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DD9957EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892451C23F47
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A333281B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE54214A0A8;
-	Tue, 20 Aug 2024 06:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4hco5p5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B401376F1;
-	Tue, 20 Aug 2024 06:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA03916BE23;
+	Tue, 20 Aug 2024 07:02:28 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09D318E367;
+	Tue, 20 Aug 2024 07:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724137153; cv=none; b=EIE1V89gAcV0ZFpGXfowPJ2j7L0uKSsGtKOLfYbWc7X6nt8WGhbBgwCDnZd97yJimwzd8hHHCYs7uB6K8wguWZv0DlXo54EGlhQPOs1ZXELtUuWocFM45laBlfMcOhx6c5sZzIdxhj3NO3w51AX9A08t8DM+/RIlrNwpzbkbTCQ=
+	t=1724137348; cv=none; b=A2jX7RmhaBKvmsTnohbwQ4W21xOg+raqB+3395bhQOmE+ltUpj9wp0j3Erpl8hRR7wKJiyLSoZJyntzKcUwTyQ66kklqyrL3YfkEJLZHJis9bPt5hUcz9Ix6wEBzPmY3gv498eEa/TGKuULBa413bX7ia9unJG2LyhsLf3R/5kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724137153; c=relaxed/simple;
-	bh=NcREdHOzn6eEuhanW6i690bjb9VwRs6u8txLft1j9/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLuvQOki/CYfZlxpOhBGw9KFkaJ8/AyAAEmvhqV009kI398JgxbeF9I2y5KV6gWUkSn0Yf8QU18vnjMpIsiX74kTZW5WI6tnjg7oFUnozzg4Fkq7e2pLkkQgBRg1BWWl6XO6Dc7ca1p5d4mF3iUaPlSucRj1Iskqb0Z18CtwcR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4hco5p5; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724137151; x=1755673151;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NcREdHOzn6eEuhanW6i690bjb9VwRs6u8txLft1j9/Q=;
-  b=f4hco5p5N58Yp65E8ogHNBNqDOOMy/FpEE5Zi6kH2gpWZ11ihUXBFn2+
-   ypVpwJrXFH55piL8RZNcxhJRRTDC/ixPzE4iyJmOYv7Wsce1bbJCwwytn
-   qHfHOEUeCRIsxzuWQssNqOlt2QMvtmnG4C4kNShqx8qrsNIJ0z95AJ6d8
-   CtiQ6KeetOlQ2ASG4ES4BPXLQPUXhaqCypa0oEGJMBe7QL3gtrytme9pX
-   es0A8hfbSMrGGHTHtR2A+5rFPmQQzSyAMowP9rWXRUhb1ohz0YXcClOt/
-   97lf1A2qyPL7nVPqVpxQxbFgn96vLxeCptwkbPfsu6UnCIy/4q+TjuauS
-   g==;
-X-CSE-ConnectionGUID: 0gnHGxVbTzylAv1U2ndF2A==
-X-CSE-MsgGUID: T+3/T0n0S5mpqyMAxWm9aQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="25317853"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="25317853"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 23:59:10 -0700
-X-CSE-ConnectionGUID: HkwFrFwHTIadBOLDMsLoOQ==
-X-CSE-MsgGUID: kQY+sT18QaiAKg8czy5lKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="61179403"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.176]) ([10.245.246.176])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 23:59:07 -0700
-Message-ID: <ceb54a27-144b-40ed-8de5-482f2b0664a0@linux.intel.com>
-Date: Tue, 20 Aug 2024 08:59:04 +0200
+	s=arc-20240116; t=1724137348; c=relaxed/simple;
+	bh=GC0e8f/SxLOKOHvdE3yJ93M1+xzh+1xcKQ7XKfCjAtI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=j27pY79RJOS/+rllD3QgZBfus+EhqZJTzOjXcZRg4fZ59LlbAW4n6PlN342JkUuwxLV5UW/4I2tGj6NpBqWiKzYr+kuG2FweuwdLj+wq+jcN5CJ7ed9C/teXjuOsFhOIiBT3ywGa4regQ7kYeJCdUWDa+sJK3l3bWBKQmI1Qz3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666c43f762fb-38bb6;
+	Tue, 20 Aug 2024 15:02:15 +0800 (CST)
+X-RM-TRANSID:2ee666c43f762fb-38bb6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66c43f76dab-fc091;
+	Tue, 20 Aug 2024 15:02:14 +0800 (CST)
+X-RM-TRANSID:2eea66c43f76dab-fc091
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: suzuki.poulose@arm.com
+Cc: mike.leach@linaro.org,
+	james.clark@linaro.org,
+	mark.rutland@arm.com,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhu Jun <zhujun2@cmss.chinamobile.com>
+Subject: [PATCH] tools/perf:Remove unnecessary assignment
+Date: Tue, 20 Aug 2024 00:02:12 -0700
+Message-Id: <20240820070212.4572-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory
- function
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, perex@perex.cz,
- tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
- linuxppc-dev@lists.ozlabs.org
-References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
- <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com>
- <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
- <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+
+In the function cs_etm_decoder__init_def_logger_printing(),
+the correct logic should be to return within the function
+when ret is not equal to 0.
+
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index e917985bbbe6..dc80576180d5 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -238,6 +238,7 @@ cs_etm_decoder__init_def_logger_printing(struct cs_etm_decoder_params *d_params,
+ 					      cs_etm_decoder__print_str_cb);
+ 	if (ret != 0)
+ 		ret = -1;
++		return -1;
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
 
-
-On 8/20/24 04:53, Shengjiu Wang wrote:
-> On Mon, Aug 19, 2024 at 3:42 PM Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
->>
->>
->>
->> On 8/16/24 12:42, Shengjiu Wang wrote:
->>> Implement the ASRC memory to memory function using
->>> the compress framework, user can use this function with
->>> compress ioctl interface.
->>>
->>> Define below private metadata key value for output
->>> format, output rate and ratio modifier configuration.
->>> ASRC_OUTPUT_FORMAT 0x80000001
->>> ASRC_OUTPUT_RATE   0x80000002
->>> ASRC_RATIO_MOD     0x80000003
->>
->> Can the output format/rate change at run-time?
-> 
-> Seldom I think.
-> 
->>
->> If no, then these parameters should be moved somewhere else - e.g.
->> hw_params or something.
-> 
-> This means I will do some changes in compress_params.h, add
-> output format and output rate definition, follow Jaroslav's example
-> right?
-
-yes, having parameters for the PCM case would make sense.
-
->> I am still not very clear on the expanding the SET_METADATA ioctl to
->> deal with the ratio changes. This isn't linked to the control layer as
->> suggested before, and there's no precedent of calling it multiple times
->> during streaming.
-> 
-> Which control layer? if you means the snd_kcontrol_new?  it is bound
-> with sound card,  but in my case,  I need to the control bind with
-> the snd_compr_stream to support multi streams/instances.
-
-I can only quote Jaroslav's previous answer:
-
-"
-This argument is not valid. The controls are bound to the card, but the
-element identifiers have already iface (interface), device and subdevice
-numbers. We are using controls for PCM devices for example. The binding
-is straight.
-
-Just add SNDRV_CTL_ELEM_IFACE_COMPRESS define and specify the compress
-device number in the 'struct snd_ctl_elem_id'.
-"
-
->> I also wonder how it was tested since tinycompress does not support this?
-> 
-> I wrote a unit test to test these ASRC M2M functions.
-
-This should be shared IMHO, usually when we add/extend a new interface
-it's best to have a userspace test program that can be used by others.
-
->>> +static int fsl_asrc_m2m_fill_codec_caps(struct fsl_asrc *asrc,
->>> +                                     struct snd_compr_codec_caps *codec)
->>> +{
->>> +     struct fsl_asrc_m2m_cap cap;
->>> +     __u32 rates[MAX_NUM_BITRATES];
->>> +     snd_pcm_format_t k;
->>> +     int i = 0, j = 0;
->>> +     int ret;
->>> +
->>> +     ret = asrc->m2m_get_cap(&cap);
->>> +     if (ret)
->>> +             return -EINVAL;
->>> +
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_5512)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_5512);
->>
->> this doesn't sound compatible with the patch2 definitions?
->>
->> cap->rate_in = SNDRV_PCM_RATE_8000_768000;
-> 
-> This ASRC M2M driver is designed for two kinds of hw ASRC modules.
-> 
-> one cap is : cap->rate_in = SNDRV_PCM_RATE_8000_192000 | SNDRV_PCM_RATE_5512;
-> another is : cap->rate_in = SNDRV_PCM_RATE_8000_768000;
-> they are in patch2 and patch3
-> 
-> 
->>
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_8000)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_8000);
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_11025)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_11025);
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_16000)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_16000);
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_22050)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_22050);
->>
->> missing 24 kHz
-> 
-> There is no SNDRV_PCM_RATE_24000 in ALSA.
-
-Right, but that doesn't mean 24kHz cannot be supported. We use
-constraints in those cases. see quote from Takashi found with a 2s
-Google search
-
-https://mailman.alsa-project.org/pipermail/alsa-devel/2013-November/069356.html
-
-"
-CONTINUOUS means that any rate between the specified min and max is
-fine, if no min or max is specified any rate is fine. KNOT means there
-are rates supported other than the standard rates defines by ALSA, but
-the other rates are enumerable. You'd typically specify them by
-explicitly listing them all and use a list constraint or you'd use one
-of the ratio constraints.
-"
-
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_32000)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_32000);
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_44100)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_44100);
->>> +     if (cap.rate_in & SNDRV_PCM_RATE_48000)
->>> +             rates[i++] = snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_48000);
->>
->> missing 64kHz
-> 
-> Yes, will add it.
 
 
