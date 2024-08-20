@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-293100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59AA957ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60458957ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9357B21DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34DC282D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4DD18E20;
-	Tue, 20 Aug 2024 01:11:47 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A84E17740;
+	Tue, 20 Aug 2024 01:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HhI4wTR/"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729F817BA4;
-	Tue, 20 Aug 2024 01:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C6212E71
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724116306; cv=none; b=eSU1eEgKPz19mnISbzVydsuXpRbOZIw879SXwRLpQTYwlUoB0CuKMN9GJ+LBKaIb7ZSVOs2pk7EZ/7pYruFjCz8Bh3nP7FTqVURqUpJC09EEoWlz0zz612TcH6Bb8r0YC4wUDdzTHLOl7mYti3Dd5jzo/TmvlvUE4PSLAjstqU0=
+	t=1724116367; cv=none; b=RSHGV+Sh+bgmV5/MXTXX9cJSjs2WZ8On5wcUwqfWiEO0h3J7ievchliPtOiKHqvx7/unD9Pp+SCXdKspgPmkxp0SbOCLG61WHsyazJVIfN8I4FFopkQzXCkvyeHO1YSX1/RqIOAh/W2cOsWFtKaGFkt/+dAqn3Yj/eLJl06JXZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724116306; c=relaxed/simple;
-	bh=PsuxMAX8J/7l3NI0wbCUoUCFs6y8KRCDwE0wk9yDH/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=trrkXrC7aTXTbtm+kg1jVf/vEgYm1hBCvUfkN2aNC8Wa1mMIRfeea1+snRCRLPXtrACQajn5eMR0V695HQlMlzu5UpfT9y331wZeigHbr9pMLUxu/a5elaZXzf1V397ebVaFJet4oQL4BxpEitFc+O3ZkyS9uimZz7rOcywCMcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wnrrx29Qxz2Cmnp;
-	Tue, 20 Aug 2024 09:06:41 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7D85B14022E;
-	Tue, 20 Aug 2024 09:11:40 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 09:11:39 +0800
-Message-ID: <7e2bea25-4e9a-49a4-adcd-3469cbdf33e7@huawei.com>
-Date: Tue, 20 Aug 2024 09:11:38 +0800
+	s=arc-20240116; t=1724116367; c=relaxed/simple;
+	bh=WwQoy1W42BcBNh9BniFKEqko+jEknkzHc1M1T0KFG8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WX7sOeOzkedQ5qgKNRrbjDzZTPPEo48Gi5d/Qx40RtXIFZP5xPA9cQ8frPuqilJfOn/EvD9yLlXl3emLYBFVAT3clt1r63x26CaGIKL3xJR+w4kD8i+1IWXsrobytXUVKzPjDVuCajHIzk2Zn0Z6zgF97cVCvLEfgyix4X1bPrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HhI4wTR/; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724116362; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=V55tWFOs2j/7hQOblUxqoNa9+AFP1aq2zN62h7AYCVM=;
+	b=HhI4wTR/p50MoykDoP8qn9oeAOxi+xmffx4cJAJLejuwKaguwFFdx3MzTPLe/DTkz0Q6P3QWv41nx38+hD0A55JWN3hj480OVhCX7VO3IMmzOy8ql2wGAUvgmKQLr3/r7FW4pB86evgVinwCr+kuoM3wMb+1GsDRBeNo0UDACt4=
+Received: from 30.221.128.199(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDGQC6S_1724116361)
+          by smtp.aliyun-inc.com;
+          Tue, 20 Aug 2024 09:12:42 +0800
+Message-ID: <d10a4f92-00f7-48a7-b6fd-e0fa5e8e3013@linux.alibaba.com>
+Date: Tue, 20 Aug 2024 09:12:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,159 +47,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] xfs: Fix missing interval for missing_owner in xfs
- fsmap
-To: "Darrick J. Wong" <djwong@kernel.org>
-CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
-	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <20240819005320.304211-3-wozizhi@huawei.com>
- <20240819184438.GR865349@frogsfrogsfrogs>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <20240819184438.GR865349@frogsfrogsfrogs>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v2] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+ ocfs2_verify_volume()
+To: qasdev <qasdev00@gmail.com>, Heming Zhao <heming.zhao@suse.com>,
+ mark@fasheh.com, jlbec@evilplan.org
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <Zr9XJJlZ+RzkLK/M@hostname>
+ <cbd30b80-d213-4997-b447-10e455f20196@suse.com>
+ <e5fb0013-ea4e-4da7-89e5-6b2b0879ecc9@linux.alibaba.com>
+ <ZsPrbmbnAgGRgqLw@hostname>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <ZsPrbmbnAgGRgqLw@hostname>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100017.china.huawei.com (7.202.181.16)
 
 
 
-在 2024/8/20 2:44, Darrick J. Wong 写道:
-> On Mon, Aug 19, 2024 at 08:53:20AM +0800, Zizhi Wo wrote:
->> In the fsmap query of xfs, there is an interval missing problem:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
->>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
->>     0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
->>     1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
->>     2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
->>     3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
->>     4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
->>     5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
->>     6: 253:16 [104..127]:           free space                          0  (104..127)               24
->>     ......
+On 8/20/24 9:03 AM, qasdev wrote:
+> On Mon, Aug 19, 2024 at 10:52:29AM +0800, Joseph Qi wrote:
 >>
->> BUG:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->> [root@fedora ~]#
->> Normally, we should be able to get [104, 107), but we got nothing.
 >>
->> The problem is caused by shifting. The query for the problem-triggered
->> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
->> unknown space in bnobt), which is obtained by subtraction (gap). For this
->> scenario, the interval is obtained by info->last. However, rec_daddr is
->> calculated based on the start_block recorded in key[1], which is converted
->> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
->> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
->> <= info->next_daddr, no records will be displayed. In the above example,
->> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
->> are reduced to 0 and the gap is ignored:
+>> On 8/18/24 7:43 PM, Heming Zhao wrote:
+>>> On 8/16/24 21:41, qasdev wrote:
+>>>>  From ad1ca2fd2ecf4eb7ec2c76fcbbf34639f0ad87ca Mon Sep 17 00:00:00 2001
+>>>> From: Qasim Ijaz <qasdev00@gmail.com>
+>>>> Date: Fri, 16 Aug 2024 02:30:25 +0100
+>>>> Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+>>>>   ocfs2_verify_volume()
+>>>>
 >>
->>   before calculate ----------------> after shifting
->>   104(st)  107(ed)		      12(st/ed)
->>    |---------|				  |
->>    sector size			      block size
+>> The above should be eliminated from patch body. 
 >>
->> Resolve this issue by introducing the "end_daddr" field in
->> xfs_getfsmap_info. This records key[1].fmr_physical at the granularity of
->> sector. If the current query is the last, the rec_daddr is end_daddr to
->> prevent missing interval problems caused by shifting. We only need to focus
->> on the last query, because xfs disks are internally aligned with disk
->> blocksize that are powers of two and minimum 512, so there is no problem
->> with shifting in previous queries.
+>>>> This patch addresses a shift-out-of-bounds error in the
+>>>> ocfs2_verify_volume() function, identified by UBSAN. The bug was triggered
+>>>> by an invalid s_clustersize_bits value (e.g., 1548), which caused the
+>>>> expression "1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits)"
+>>>> to exceed the limits of a 32-bit integer,
+>>>> leading to an out-of-bounds shift.
+>>>>
+>>>> Reported-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+>>>> Closes: https://syzkaller.appspot.com/bug?extid=f3fff775402751ebb471
+>>>> Tested-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+>>>> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+>>>> ---
+>>>>   fs/ocfs2/super.c | 8 ++++++--
+>>>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+>>>> index afee70125ae3..1e43cdca7f40 100644
+>>>> --- a/fs/ocfs2/super.c
+>>>> +++ b/fs/ocfs2/super.c
+>>>> @@ -2357,8 +2357,12 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
+>>>>                    (unsigned long long)bh->b_blocknr);
+>>>>           } else if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 12 ||
+>>>>                   le32_to_cpu(di->id2.i_super.s_clustersize_bits) > 20) {
+>>>> -            mlog(ML_ERROR, "bad cluster size found: %u\n",
+>>>> -                 1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+>>>> +            if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 32)
+>>>> +                mlog(ML_ERROR, "bad cluster size found: %u\n",
+>>>> +                     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+>>>> +            else
+>>>> +                mlog(ML_ERROR, "invalid cluster size bit value: %u\n",
+>>>> +                     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+>>>
+>>> I prefer to use concise code to fix the error.
+>>> Do you like below code?
+>>> -        mlog(ML_ERROR, "bad cluster size found: %u\n",
+>>> -                 1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+>>> +        mlog(ML_ERROR, "bad cluster size bit found: %u\n",
+>>> +                 le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+>>>
 >>
->> After applying this patch, the above problem have been solved:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:16 [104..106]:      free space                        0  (104..106)           3
+>> Agree. qasdev, Could you please update and send v2?
 >>
->> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
->> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
->> ---
->>   fs/xfs/xfs_fsmap.c | 19 ++++++++++++++++++-
->>   1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
->> index 3a30b36779db..4734f8d6303c 100644
->> --- a/fs/xfs/xfs_fsmap.c
->> +++ b/fs/xfs/xfs_fsmap.c
->> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
->>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
->>   	/* daddr of low fsmap key when we're using the rtbitmap */
->>   	xfs_daddr_t		low_daddr;
->> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
->>   	u64			missing_owner;	/* owner of holes */
->>   	u32			dev;		/* device id */
->>   	/*
->> @@ -294,6 +295,19 @@ xfs_getfsmap_helper(
->>   		return 0;
->>   	}
->>   
->> +	/*
->> +	 * For an info->last query, we're looking for a gap between the
->> +	 * last mapping emitted and the high key specified by userspace.
->> +	 * If the user's query spans less than 1 fsblock, then
->> +	 * info->high and info->low will have the same rm_startblock,
->> +	 * which causes rec_daddr and next_daddr to be the same.
->> +	 * Therefore, use the end_daddr that we calculated from
->> +	 * userspace's high key to synthesize the record.  Note that if
->> +	 * the btree query found a mapping, there won't be a gap.
->> +	 */
->> +	if (info->last && info->end_daddr != LLONG_MAX)
->> +		rec_daddr = info->end_daddr;
->> +
->>   	/* Are we just counting mappings? */
->>   	if (info->head->fmh_count == 0) {
->>   		if (info->head->fmh_entries == UINT_MAX)
->> @@ -946,6 +960,7 @@ xfs_getfsmap(
->>   
->>   	info.next_daddr = head->fmh_keys[0].fmr_physical +
->>   			  head->fmh_keys[0].fmr_length;
->> +	info.end_daddr = LLONG_MAX;
->>   	info.fsmap_recs = fsmap_recs;
->>   	info.head = head;
->>   
->> @@ -966,8 +981,10 @@ xfs_getfsmap(
->>   		 * low key, zero out the low key so that we get
->>   		 * everything from the beginning.
->>   		 */
->> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
->> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
->>   			dkeys[1] = head->fmh_keys[1];
->> +			info.end_daddr = dkeys[1].fmr_physical;
+>> Thanks,
+>> Joseph
 > 
-> Another problem that I found while testing this out is that if
-> dkeys[1].fmr_physical extends a little bit beyond the end of what the
-> filesystem thinks is the device size, this change results in fsmap
-> reporting an "unknown" extent between that end point and whatever the
-> user specified as fmr_physical.
+> Thanks for the feedback. After considering the input, I've refined the patch 
+> to make it more concise. I've updated the patch and included it below:
 > 
-> IOWs, let's say that the filesystem has 67G of space and 16G AGs.  This
-> results in 4x 16G AGs, and a runt AG 4 that is 3G long.  If you initiate
-> an fsmap query for [64G, 80G), it'll report "unknown" space between 67G
-> and 80G, whereas previously it did not report that.  I noticed this due
-> to a regression in xfs/566 with the rtgroups patchset applied, though it
-> also seems to happen with that same test if the underlying device has a
-> raid stripe configuration that causes runt AGs.
-> 
-> I think this can be fixed by constraining end_daddr to the minimum of
-> fmr_physical and XFS_FSB_TO_BB(dblocks/rblocks/logblocks).
-> 
-> --D
-> 
-
-Oh yeah, I missed that boundary condition. I will fix as soon as
-possible, and send the next version of the patch, thanks for reminding!
+Hi, please send v2 as a standalone thread.
 
 Thanks,
-Zizhi Wo
-
->> +		}
->>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
->>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
->>   
->> -- 
->> 2.39.2
->>
->>
+Joseph
 
