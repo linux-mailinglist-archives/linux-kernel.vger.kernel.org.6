@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-293704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF55958350
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:56:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E3F95835D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889291C20F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:56:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB515B2551D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D93218C32E;
-	Tue, 20 Aug 2024 09:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CD918C93B;
+	Tue, 20 Aug 2024 09:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VcGOLeqj"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/5wyE8S"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A103518C03D
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD4F18C348;
+	Tue, 20 Aug 2024 09:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147769; cv=none; b=I6OJ3tz17lYmQWOU6goXneHIVotaSTl9YnTC1OFEZy6g0Jp3BtMXX0q1cQQhT6Z8v3PX8exAPJxHBe8V8UHVBYdgroyfFdNCWHrKL1gCQ8bQHOpXTegLGe1ZfFKsnc4SBIi1MHbtKU3XUCGFF1v0OM1o/oK9dCLagEj+7MKEibc=
+	t=1724147800; cv=none; b=RMaIZ4Iy/Qbp5uBt5bwYUvCjI1pz/89UG1dknOjYyHfuqPDMK6BEIR7fkFbDyF6cpKpwXZqOA0jP/05G35aXg18RqVPEU1+cWauG4FRT3uNSrGGMecDFK2cgMyICyo5Wy3qc02rhAAtnEUJAWy6GIIQNMzbhkAF1YQgjl7QpHnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147769; c=relaxed/simple;
-	bh=gNL4Dc3BiNLMCXF5wQLxOo/XKPg/+gZAT6T2uBED9kk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RLhFu/ys7WskVcjlQfnfgX+RJkWxPyCBXEYtpcbzAmCJHeIeSro/GH8jxPB6Nx8sdxv9CTkRdLJT8XzoO8K2J75RO3e2tVXr75NrANFRcINvwvgfn9NRRg53O8RDo9qpgbypn1eqKLkJwxyqoQx5cbNS1tbl1tJ+ls5OAprPRDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VcGOLeqj; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9DaJJPiwUvlSFnUUActMVJXI0QVdEXy6fadv1aQUXnU=; b=VcGOLeqj9QdamuwLskHPEMNbax
-	l8hdih50g5UqDwP3fu97/B9G8nfu4okpEYhmSsKDOdvBfSl0qQ7OcwuK29YN9QUmDmZkdfnFJYqYz
-	h7aB8KQurLiAIEnI8QBOyID4x3v4b8gW5JgYCtmwFPQTXQOPE3LCfTpnMnv/fcObE8vSVwuCi4C3i
-	Q64D2VYtg8oHUIT9jWx0uGJWQyRW+ULmoCpaC/t5ZcdVgvecr8KZj4E+TM6YvV2j2u21My8d9EWbO
-	m9e5c71dFjp/qRlLXsJK4iGai4oQvJHfZjwLvr0HvW3zFMMWXQ5wfMeuC/D92a37HLe6LBYi5nuYU
-	ar8yAQcg==;
-Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sgLat-0006zG-AM; Tue, 20 Aug 2024 11:56:03 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kernel@collabora.com, Christopher Healy <healych@amazon.com>,
- Mary Guillemard <mary.guillemard@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org,
- Mary Guillemard <mary.guillemard@collabora.com>
-Subject: Re: [PATCH v3] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
-Date: Tue, 20 Aug 2024 11:56:25 +0200
-Message-ID: <4687763.CvnuH1ECHv@diego>
-In-Reply-To: <20240819112508.67988-2-mary.guillemard@collabora.com>
-References: <20240819112508.67988-2-mary.guillemard@collabora.com>
+	s=arc-20240116; t=1724147800; c=relaxed/simple;
+	bh=a7twMUtRFY0MSBU8qzSf94QDny5wAuarNSPlg2DyCpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VReY7GqscxRKzg26ZEqwnjl8ct9c69HgXC6JlOW3cRAq9HhcFxGYfiKe/Yh2JjNOucJaIzqV98ZJ0xJPGUzqv1cR5QsziBkrQ25g+zBnBKqDhQmvAytPmzp4hTR4EsJG55SUXtswaExlMNozvPQLTxNT3ttLKiIjtOSgkqd/NPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/5wyE8S; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7d26c2297eso607552266b.2;
+        Tue, 20 Aug 2024 02:56:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724147797; x=1724752597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c/NIrAB2SV5MwsEF/06Wpke0eOaZ94Do2IfzazTumNE=;
+        b=Y/5wyE8SWseLNBG5UH5qxLYz1BISM8NXckqlAwPCfab9P7xI2t2/CKLhp9T72KLV9j
+         FU681dihI4Xm5soKRHI0Kye31NbQriheVKGHvC7gCR1/g2Aieg17JfYeOPnjlAmx4Fq2
+         ykr454nA8+OEZlKhsAEvIZfvRZa1gXCxPvXHiklHMRG6pGxyuslwAsAwxN/k1uS3S1OB
+         MKJ23ty/RFqNobbWVxFGwKJgX/V29/ez4TZ7GJNZajWVhNvW7K9WZLrdSL59ar0L1pIV
+         V/73FREhQWp71f/MXDyHgyb2da+KydFm39aUTUGBc2WML4jldDydu68DbstBf5gOrvSu
+         eviA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147797; x=1724752597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c/NIrAB2SV5MwsEF/06Wpke0eOaZ94Do2IfzazTumNE=;
+        b=O9/BRRmNQxEpjPgRRKm4TTGQj4GPwNpjWNXyFiUifyPDg626a4hWCHU+zXW1kJ4lb7
+         OgbM0bV2RCfmkTbJyHhAqp9q6MsFJft94hwQC59mb118sA09qUs0nsS0sdfwGUJa4OPa
+         4jyUDYep2w/Th52s/YfTJ2dAlbMOy4RcJn9P2kga9L81MRwxHpj3w+vfV+o2fuAZ11sg
+         ww3tM5yvP2ileNaaa4rqzTVRCY98nrtLdTlaUKiL0cKBEGI5JQ3txHKyStpJtR3Qznyw
+         +jHHfj69G3LSzuVJUDA35kAXvttLXuCrcFxGIEk2cDGwMULVF1570ab9a9YPdp4roZMg
+         URsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwHsDuzft+rUfw+QRgzHGYj2/tLw5kbg/3xM31g/2BDCYZ/qJSc9uqlEk5tTsYGeVJ8rUkUDr@vger.kernel.org, AJvYcCXpmwgmBdzMQBfRJ/iM4SYdsrAFdyzbMgUUTe0TpsaSXpndN4Dm0t1GNM0kCZUFdKkRzwwHSVhsxIH6QfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziLxgD2mP8avosmN1sh31kcb8FOVLSwkIz2cN7CSBXlojOuFPY
+	uAoB4gucwGOogwcLOZWqQXGHiIDUcTI4DeE509lW3VZkfIVT252m
+X-Google-Smtp-Source: AGHT+IFWHx+VAD/A4mKL8+WTe1PuCUsQw6T0RzjJayT9ijFF56U9ZXHwSJnRiRbqZ6qYNlq9L9Dj6w==
+X-Received: by 2002:a17:906:c147:b0:a80:d683:4d23 with SMTP id a640c23a62f3a-a8392a46e45mr964146466b.62.1724147796275;
+        Tue, 20 Aug 2024 02:56:36 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839472basm746539166b.170.2024.08.20.02.56.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:56:35 -0700 (PDT)
+Date: Tue, 20 Aug 2024 12:56:32 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com
+Subject: Re: [PATCH net-next v4 2/7] net: stmmac: drop stmmac_fpe_handshake
+Message-ID: <20240820095632.3y6dwjpt5sy3raq7@skbuf>
+References: <cover.1724145786.git.0x1207@gmail.com>
+ <cover.1724145786.git.0x1207@gmail.com>
+ <4358074eebdfedf4d129ccce40434af5f6e2b3f9.1724145786.git.0x1207@gmail.com>
+ <4358074eebdfedf4d129ccce40434af5f6e2b3f9.1724145786.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4358074eebdfedf4d129ccce40434af5f6e2b3f9.1724145786.git.0x1207@gmail.com>
+ <4358074eebdfedf4d129ccce40434af5f6e2b3f9.1724145786.git.0x1207@gmail.com>
 
-Am Montag, 19. August 2024, 13:25:08 CEST schrieb Mary Guillemard:
-> Expose timestamp information supported by the GPU with a new device
-> query.
-> 
-> Mali uses an external timer as GPU system time. On ARM, this is wired to
-> the generic arch timer so we wire cntfrq_el0 as device frequency.
-> 
-> This new uAPI will be used in Mesa to implement timestamp queries and
-> VK_KHR_calibrated_timestamps.
-> 
-> Since this extends the uAPI and because userland needs a way to advertise
-> those features conditionally, this also bumps the driver minor version.
-> 
-> v2:
-> - Rewrote to use GPU timestamp register
-> - Added timestamp_offset to drm_panthor_timestamp_info
-> - Add missing include for arch_timer_get_cntfrq
-> - Rework commit message
-> 
-> v3:
-> - Add panthor_gpu_read_64bit_counter
-> - Change panthor_gpu_read_timestamp to use
->   panthor_gpu_read_64bit_counter
-> 
-> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+On Tue, Aug 20, 2024 at 05:38:30PM +0800, Furong Xu wrote:
+> ethtool --set-mm can trigger FPE verification processe by calling
 
-On a rk3588-tiger with matching MESA build and 
-"RUSTICL_ENABLE=panfrost clpeak"
+nitpick: process
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+> stmmac_fpe_send_mpacket, stmmac_fpe_handshake should be gone.
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
 
-
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
