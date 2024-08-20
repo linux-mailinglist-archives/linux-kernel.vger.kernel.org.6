@@ -1,91 +1,122 @@
-Return-Path: <linux-kernel+bounces-293110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED00E957AE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:24:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C34957AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32BAFB23497
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103D6B210D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946D31A702;
-	Tue, 20 Aug 2024 01:24:27 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BE917C67;
-	Tue, 20 Aug 2024 01:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E6D17BB7;
+	Tue, 20 Aug 2024 01:25:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868BD1B7F4;
+	Tue, 20 Aug 2024 01:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724117067; cv=none; b=nvyNKT4e8T60Ik2AjYZEb68ySjDfO5xHofYv80die9RUM1+Ju2SViK20Hp3UuiznPtPzEiBBcT6B7NeV5vj7z2f/RbJuc8xu5pMXDNnIqDte/QgRdsm71juARQXitb8fXDQ51eAU+wt8mDnvRWojmDChcMwotC6p9TzoZhPDk2E=
+	t=1724117125; cv=none; b=I7t7ouZ3wrZCLhadjesONq3b1viQNtSKyIVQ+qAsXaL25Dd64sDE6pZDnrqzZoJiDWAezNWjDBJGBSGIkeOIkXkgJH4uRa6fNMhQ3y9aYotWER/OI47BwAVOEx4QJGdFAlNlEpLxPuppr7+ARmZ5tIV04fCVU/IVHXOSu51aV98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724117067; c=relaxed/simple;
-	bh=PFhpBbGcqoFv9Ee+zZUeXGlY7AZl2F9JOryxrAQ354Q=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=s97bg0apVqDRcxYwGh9Yj2QY20/Y+TFHXl08i6vYULwAZY8cUssVtI+XtcWZg0r5kf7gBbegcAe0bMjfEi8NC8/eVQmiay7l5AmJQ1LruAwtVCFvVaNAw1tbtDBTYKX0hBystqP4zp7u+zK5xfnOT0jjt8ZM8eIpT0RlAo7hEJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnsC22hyvzfbd9;
-	Tue, 20 Aug 2024 09:22:22 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48822140135;
-	Tue, 20 Aug 2024 09:24:22 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 09:24:21 +0800
-Subject: Re: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in
- progress
-To: Bart Van Assche <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240819090934.2130592-1-liyihang9@huawei.com>
- <bfce098e-a070-40b1-95fc-951e2b3c1c22@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dlemoal@kernel.org>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
-	<stable@vger.kernel.org>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <fd8c091f-a777-6641-835e-397fa8b5de94@huawei.com>
-Date: Tue, 20 Aug 2024 09:24:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1724117125; c=relaxed/simple;
+	bh=NYpqG6MuyLP+uwqlcSvTaHZzQ56TalLVNSBSB5HjaDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7MMZhlZTb/z4EEBY7BUuGpEuvRDHkeCD3fUnz9gLrs2XtjfVC1q2Ihirx1M+OlqAJhI/DjNnPJTc3H2f18Z6YWOgizzrXN9oE/PwxybsOnWTGnnKGFzQM53QPKBFB9yI+ym0HX0TQuqZ0aHvSflsKvFwGDViZ7H4FCsU2Se3Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0657339;
+	Mon, 19 Aug 2024 18:25:47 -0700 (PDT)
+Received: from [10.163.58.147] (unknown [10.163.58.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 414F73F73B;
+	Mon, 19 Aug 2024 18:25:18 -0700 (PDT)
+Message-ID: <17020e56-b0a9-4705-8ee3-c675eca99490@arm.com>
+Date: Tue, 20 Aug 2024 06:55:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <bfce098e-a070-40b1-95fc-951e2b3c1c22@acm.org>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] uapi: Define GENMASK_U128
+To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Yury Norov
+ <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <20240801071646.682731-2-anshuman.khandual@arm.com>
+ <090eb237-10f4-4358-be07-1eb8d30c3ec1@arm.com>
+ <3b219e52-1d2a-4e6d-adff-efbab3e2282d@app.fastmail.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <3b219e52-1d2a-4e6d-adff-efbab3e2282d@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100013.china.huawei.com (7.185.36.179)
 
 
 
-On 2024/8/20 0:59, Bart Van Assche wrote:
-> On 8/19/24 2:09 AM, Yihang Li wrote:
->> +            if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
+On 8/19/24 12:43, Arnd Bergmann wrote:
+> On Fri, Aug 16, 2024, at 08:28, Anshuman Khandual wrote:
+>>
+>> This is caused by ((unsigned __int128)(1) << (128)) which is generated
+>> via (h + 1) element in __GENMASK_U128().
+>>
+>> #define _BIT128(x)	((unsigned __int128)(1) << (x))
+>> #define __GENMASK_U128(h, l) \
+>> 	((_BIT128((h) + 1)) - (_BIT128(l)))
 > 
-> Shouldn't symbolic names be introduced for these numeric constants?
-> Although there is more code in the SCSI core that compares ASC / ASCQ
-> values with numeric constants, I think we need symbolic names for these
-> constants to make code like the above easier to read. There is already
-> a header file for definitions that come directly from the SCSI standard
-> and that is used by both SCSI initiator and SCSI target code:
-> <scsi/scsi_proto.h>.
+> Right, makes sense.
 > 
+>>
+>> The most significant bit in the generate mask can be added separately
+>> , thus voiding that extra shift. The following patch solves the build
+>> problem.
+>>
+>> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+>> index 4d4b7b08003c..4e50f635c6d9 100644
+>> --- a/include/uapi/linux/bits.h
+>> +++ b/include/uapi/linux/bits.h
+>> @@ -13,6 +13,6 @@
+>>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+>>
+>>  #define __GENMASK_U128(h, l) \
+>> -       ((_BIT128((h) + 1)) - (_BIT128(l)))
+>> +       (((_BIT128(h)) - (_BIT128(l))) | (_BIT128(h)))
+> 
+> This could probably use a comment then, as it's less intuitive.
 
-My idea is to be consistent with the style of the code context.
-That's why I use numerical values.
+Right, a comment explaining the need for this additional bit to
+cover the corner 127 bit case could be added for reference.
 
-If we want to use symbolic names to replace all numeric constants,
-I think that would be another series of patches, and the changes would be more.
+> 
+> Another solution might be to use a double shift, as in
+> 
+> #define __GENMASK_U128(h, l) \
+>        ((_BIT128((h)) << 1) - (_BIT128(l)))
 
-Thanks,
+This looks much cleaner, passed all the tests without warning.
+But for the above 127 bit case, wondering how the bit position
+is managed after the second shift operation because it still
+goes beyond __int128 element's 128 bit representation.
 
-Yihang.
+(_BIT128((127)) << 1)
+(((unsigned __int128)(1) << (127)) << 1)
+
+Should not the second shift operation warn about the possible
+overflow scenario ? But actually it does not. Or the compiler
+is too smart in detecting what's happening next in the overall
+equation and do the needful while creating the mask below the
+highest bit.
+
+> 
+> but I have not checked if this is correct for all inputs
+> or if it avoids the warning. Your version looks fine to
+> me otherwise.
+
+This approach is much cleaner, passes all tests without warning,
+unless something else shows up, will fold this in instead.
 
