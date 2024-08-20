@@ -1,70 +1,86 @@
-Return-Path: <linux-kernel+bounces-293418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCFC957F06
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F68957F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBEB1C20BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D8F1F24043
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4292A16B753;
-	Tue, 20 Aug 2024 07:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053B16CD28;
+	Tue, 20 Aug 2024 07:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYMm+1BR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KY1MLtsf"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9FE4084E;
-	Tue, 20 Aug 2024 07:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419A618E344;
+	Tue, 20 Aug 2024 07:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724137632; cv=none; b=OxIj1oSCgejvw6TDQZnritcNyez8xaJvYzPujCdKqmwEL7tlcwzv6jGuxyatCelQEXfGaqqqJa4NjUL5J+ZoxkeG/bs1tlkBLupJo5j/sIJMpP5jOc6iGdpWq162g6nWJqcC7EsoSUkTt82JcEsRz0ya8KZr+yLX+eWh3pmAo4U=
+	t=1724137659; cv=none; b=f+jNCcw2EPxjddWQ5VELlwcT42FRXeUjaqERHQCV0g1v/1R2nfzbSiAnjMwMoFj8qR9wVGYRmgNy2ipHrEQBtppSK+qoFg7CxrkjPosl9jQlf/NKywWxSMZp9xAHJsnBiR0ec9fbUA+6mqNalIzeHDC2fslbcRIDuE5Z2TAf2CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724137632; c=relaxed/simple;
-	bh=Vh6MSMRStnW33q5+dD+Us/r1QXXTp4gSRyZS7k149cY=;
+	s=arc-20240116; t=1724137659; c=relaxed/simple;
+	bh=N4cZaTiD2TAnKc/GtGJvPcFsd+MoWbR0Bq08kXAMQQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pem/ESC78y4YXh0OVByHp8GCSXI8iG5Do/7+dZwnMKI3y3zAgyRx1+gqiJccCHC40c4blcrOUNdvD0Uqk5/ID+x8BRsswtlnHNS0a1vJ1vsqEgTorUYJGCuZeBDH+UdVTWSklZL3IytBNRq7LhjqoDTgkxNU4ZBJSmlkKEdBhZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYMm+1BR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C13C4AF10;
-	Tue, 20 Aug 2024 07:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724137632;
-	bh=Vh6MSMRStnW33q5+dD+Us/r1QXXTp4gSRyZS7k149cY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qYMm+1BREzRTVXtFN3XKXPxAN7VMeYrYc5xpmGBl8X2sK0zrMmER8Pq60YpDRzfGr
-	 Isk7MujL2y125VuDHL+yuJ00ztDg+Ry/zGf+F5U49lMH5zRgATfD1WEfydJATk+K7b
-	 tm4Kd+bHtAtV2RpU0TEo4xhMo4kvLBTSTMKC3sC62zQIBmPZpisewfZ+NLYWyL0Gpi
-	 GUSbcvoz1x1t+spqKidtx0+cNkRFXnlCc5l2tLAklbmAAiAbEwHGgk1N4CH3/Jujs8
-	 SwYgVyuK5SrIeGYG7G6SIAbSm9BroZ9WbzrLO1rWVMwKVhPXjxxKIOtjLbtm9ve2XV
-	 vcu0rVjQfGCTA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgIxR-000000002iP-2RXK;
-	Tue, 20 Aug 2024 09:07:10 +0200
-Date: Tue, 20 Aug 2024 09:07:09 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] soc: qcom: pmic_glink: Actually communicate with
- remote goes down
-Message-ID: <ZsRAnWgsoSHmrFE5@hovoldconsulting.com>
-References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
- <20240819-pmic-glink-v6-11-races-v2-3-88fe3ab1f0e2@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8iPiYG0dYVwqPTW+rz08Jd+ukyZ8nY7BtFRAe2taKljTm4AhsqbqlHSgBFox1NriNPxkgBEL3Odc8sgQX8Tsmrv7rmXkLfUiAWAmJP+cdrgcVgXjwvaTjKhb28MVaUphYza+LjIfjm/NMiqBE6bvWNwIs1gbSnNl+qlj6dKnDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KY1MLtsf; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so551367466b.1;
+        Tue, 20 Aug 2024 00:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724137656; x=1724742456; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NJq9e4lwDir8ymmK7BffSX8xHDk0ZjFLqMtAmgoT2DQ=;
+        b=KY1MLtsfPb09YcXD3AnkyeGRWBTHqjCMSGJlic0yLMCp+K646Dokx9WPC8VpI2ErvW
+         XLpOzGl0M9Ksci8eRhexFxEzluuDqFruzVV4LQYLXCA6I6BK8w+cbzWfJczQ11wamINJ
+         weeOM00uGw92J/I3clYDMAncRZ+mpgmgdZ3fmAIRTGAG0ZjuLwAiUSNzqqyW6mMkbltY
+         bwv/8b8z6VkkDGhswl3Idv4UDRfbbAjAcmx+9or1uKSh8vpXdosBxqxBrw70j3/bpYwD
+         r1FSBiDCA0v8c22+UC7QKuNSkvsZvNF/BOVlYSA41r1QPzviIbNQVbGDph2GBx4aEiui
+         CT/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724137656; x=1724742456;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJq9e4lwDir8ymmK7BffSX8xHDk0ZjFLqMtAmgoT2DQ=;
+        b=khL/jYNtqJNyRvZxfK1sbRaqOh2RDXN6tF1AR69zeIl0L03yrmjR51d8+2DgbKzQhe
+         prw5jm7GTqdoVChVAkzpWLOippt4syOkabv1gmrC97oahsxPPAm2QZsY8YRuEec00s2C
+         cSgtLJjCRy/na1MKHKkbnG3RCXcI/igZFCcBLk1GnCokX2JDELTyGPBLAWJ+dKy2i8+m
+         PDPveV+F26WdbRJos3PV30tcmIRiH6v+igNW0gr4YX2CSkWyDUH2nYlLmDDFpDKNUFNw
+         vRpe+pPZpa1FsZMTsl4981tHX2/HEyU15MyyZBrpCeQVe2Ms+ypjGKIjYzs3yHrjxYsQ
+         CuEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpc+LjRxk0YitEm4eHEGdKEHWkPL2FcTOi4WIfh3oksRIE6cJxzt0xWaV4UbHMrMV/VmpxYQAmKWNe7tk=@vger.kernel.org, AJvYcCWF4yLt8ZAs/vzBIv60Cf35FXHSqs1/JYdVgjem3hQSoK2uRxLt5GDo5WgBCmyHcfBCew217LvMn/RM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRAwoY1eplN3BfYuRmnFxQdvEulUraDQjnbesYZEFlH9smsM9i
+	ANFUNL7VpXDwfLCodaJlTsxK/RK7mPP2+QJ++Sjmgu+SnKkMfp/Y
+X-Google-Smtp-Source: AGHT+IHzHNJYjEadwnvrSG+CXQSDiM//fUFKgBI8g22Xkp6aRr+rR6REvWVZn4RKx65+5e1n1/4lCA==
+X-Received: by 2002:a17:907:c885:b0:a7d:a4d2:a2ba with SMTP id a640c23a62f3a-a83929d3666mr926201466b.49.1724137656270;
+        Tue, 20 Aug 2024 00:07:36 -0700 (PDT)
+Received: from eichest-laptop ([77.109.188.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c7444sm725952366b.6.2024.08.20.00.07.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 00:07:35 -0700 (PDT)
+Date: Tue, 20 Aug 2024 09:07:34 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, francesco.dolcini@toradex.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1 1/3] PCI: imx6: Add a function to deassert the reset
+ gpio
+Message-ID: <ZsRAtlTDtxMYi6ug@eichest-laptop>
+References: <20240819090428.17349-1-eichest@gmail.com>
+ <20240819090428.17349-2-eichest@gmail.com>
+ <ZsNbau03d5J0sLy/@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,37 +89,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819-pmic-glink-v6-11-races-v2-3-88fe3ab1f0e2@quicinc.com>
+In-Reply-To: <ZsNbau03d5J0sLy/@lizhi-Precision-Tower-5810>
 
-On Mon, Aug 19, 2024 at 01:07:47PM -0700, Bjorn Andersson wrote:
-> When the pmic_glink state is UP and we either receive a protection-
-> domain (PD) notification indicating that the PD is going down, or that
-> the whole remoteproc is going down, it's expected that the pmic_glink
-> client instances are notified that their function has gone DOWN.
+On Mon, Aug 19, 2024 at 10:49:14AM -0400, Frank Li wrote:
+> On Mon, Aug 19, 2024 at 11:03:17AM +0200, Stefan Eichenberger wrote:
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> >
+> > To avoid code duplication, move the code to disable the reset GPIO to a
+> > separate function.
 > 
-> This is not what the code does, which results in the client state either
-> not updating, or being wrong in many cases. So let's fix the conditions.
+> Add help function imx6_pcie_deassert_reset_gpio() to handle reset GPIO.
+> 
 
-> @@ -191,7 +191,7 @@ static void pmic_glink_state_notify_clients(struct pmic_glink *pg)
->  		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
->  			new_state = SERVREG_SERVICE_STATE_UP;
->  	} else {
-> -		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
-> +		if (pg->pdr_state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
->  			new_state = SERVREG_SERVICE_STATE_DOWN;
->  	}
-
-I guess you could drop the outer conditional
-
-	if (pg->client_state != SERVREG_SERVICE_STATE_UP) {
-
-	} else {
-
-	}
-
-here to make this a bit more readable, but that's for a separate patch.
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+Sounds good, thanks for the suggestion.
 
