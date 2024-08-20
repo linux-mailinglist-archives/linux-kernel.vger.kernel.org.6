@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-293369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B4A957E62
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2313957E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACF71F20FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB661C23F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F8C1E7A56;
-	Tue, 20 Aug 2024 06:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EF81EB48F;
+	Tue, 20 Aug 2024 06:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V86hWq6S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OKXbRiwX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pXEC8dOF"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C69B1E7A2F;
-	Tue, 20 Aug 2024 06:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87CA1741DC;
+	Tue, 20 Aug 2024 06:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135681; cv=none; b=o3+pFwjLu0XWJPRgceENIEYNBLrBOoKAQsIRN9a2N1Fx4C5aqlSh7M2mWHSG2Fvr2x/nGnXtIqbP2rqB9GfUQdLA8EsTvb+gEJ6o5XDNwYxPEof0xJQBIrfCVFFV41Xs7sHlRz1BUblb2SICm3Snqp33YppI+KEi7EDMq3rmJnk=
+	t=1724135761; cv=none; b=ZeEUtcCxtXxcexZtKiw7R3TDoEB9rRhib06zPVz9hg6h3UGTKIdBsCoStpvOWq5UhsXiJjKJ/fEZGDJmZ+DTuLV3EmePNJdEnNXqUpBHjkyO9/VSJurP2NItTE9YEKBb6xhop7684opofyr326YVlMbguBBdo62Id32MRos+oJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135681; c=relaxed/simple;
-	bh=VYm9fAL+Q+/V8SYgqp/PLQTB8NVxzo9tKEdJNZio6Sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMtoo31i8SKt6fw77bwqarrfaLXBTLBRMmCQ+PcjpkFg0YNez+IC+enh8oEMW+8XHWyqvAphB2OEe9ct7M1ndtVH5AfHKoD8xTO3d4cMPJ0Hg35FXmUhI0p165l1QOKO3ClTh1KRqfeCx7MHM89//WC79TFYPboKxXPS6pnPui0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V86hWq6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D66C4AF09;
-	Tue, 20 Aug 2024 06:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724135680;
-	bh=VYm9fAL+Q+/V8SYgqp/PLQTB8NVxzo9tKEdJNZio6Sw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V86hWq6SYbgFePOxGJc1NOOq+AOy+A7HPeQRr2JIaHo817TJAFqli3mIFEAFeGnLb
-	 KvNe2iOK6gZGR6td9Rzrkj9fSVlUAp7QdNT7CvMTRgmVXnBl2EtUCRAu6aF4TTKT6G
-	 6/rkLuxhdaI5oEoShiY3XBHkOHbdUy+JYAlTyvf8DuTAic79TvP7hR1agTfmf4KQAq
-	 Ij8FJnm/OqIeAgzyfBwgFhRTXF56ChXd/8xAAaxH5ELvGVEzSdph64gnXu8YPHDzom
-	 p9sGmyqvaOynyPDTqpM4DxUZhlCOH2fWy+21abTy+NH/BFHI7Cc2bl8i+mrCyPJdb/
-	 FKPwfvFc+7t5g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgIRy-000000002Fl-19mi;
-	Tue, 20 Aug 2024 08:34:38 +0200
-Date: Tue, 20 Aug 2024 08:34:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/3] usb: typec: ucsi: Move unregister out of atomic
- section
-Message-ID: <ZsQ4_viDxMVu3Mho@hovoldconsulting.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
- <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
- <ZsNfkuiRK9VqBSLT@hovoldconsulting.com>
- <ZsN2qR3tuXylb2qK@hu-bjorande-lv.qualcomm.com>
+	s=arc-20240116; t=1724135761; c=relaxed/simple;
+	bh=eIZBPiIt5zVdvAwtZhCOpzSYBNx2G8omnWVeneqoGgU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QkVwAH7mnePRQxgTjHORFmRxgN0jSYO4PXfqPNRrbUgUaYtuh8sTluliXUbg/iYqdO8EmmNikbQvWV2DvgZNoOOCh/OrjdIRE0DW+yBDUi6x32EqdiSa3YsMORSb8hMURPDP/+lGMsXeCJU8ybO7pvgObFi62gg5g9nScYtalXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OKXbRiwX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pXEC8dOF; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 796291151BE8;
+	Tue, 20 Aug 2024 02:35:58 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-01.internal (MEProxy); Tue, 20 Aug 2024 02:35:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724135758;
+	 x=1724222158; bh=0vDYNAbB+WPOrWtq2CTrXg2IiuXw5vXI+vIJEKJZWmk=; b=
+	OKXbRiwXpVJJCx4bX4GFgnZcQYliwB0hi29SUulPXgS5RNckJ/vZOVGPTUalwO9R
+	Qc+3Zu4KjcIEDF3b1lrAYrwnyKYiJp0Xny9CWLYJ8FGmCtGwdhrjJgJKayGWPLbO
+	A+ceAyTZ7p5V5e/ZudRH5MO4G2ryn4swJzEzzcxFOefc4nocFAFANXClNUT3xTBJ
+	rElpMSjQ60DwQwHR+2KjK7c4d4OzEXfnaYDa6Y6AiSUwcJwClYVOQt3ihhGNgvCg
+	OSiiDAOjCH49rcRm5rLf///YpTSvVC6y4BAvuQ0IeFZAoMlJLMPZKgBrcFNPRhMm
+	G2XKI/y1EkCfMw6c0e77fw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724135758; x=
+	1724222158; bh=0vDYNAbB+WPOrWtq2CTrXg2IiuXw5vXI+vIJEKJZWmk=; b=p
+	XEC8dOFtyoHLQpQbJEJkNxzJCA94u33rkIvGhvM6xgS2+gc7eAmFUdotuRn0uzuW
+	oNeIQqzLSTQ64PYp5aOVwhZvKtqUb6u0utY49tGwjvyYrSrwcNUupohXbwkOSz2i
+	2OA8cvr7rWpGB5lD0WiDjPhdNoin5gbcgaEOhfYrt9sJ4j4syuS0zrRMpqWMNWpG
+	5G8v232a3BVmDviirjxAPc/pRWInsNPMionWt+cVJ/miz2DcLkbDa/0EvOcIUq49
+	C86HZ1I85P2zmdEo/jF7YWC00oJu9WUw2ba04OK/lYHEVm/bsRraEOtR/XMVNav2
+	vlvP4SWXss4TrMCGwLPbw==
+X-ME-Sender: <xms:TjnEZmmPHf9C8Oe6UUmrgXxuvxb-nEaMDNwE3SwMIl2ALMp9aqfr2w>
+    <xme:TjnEZt2BMLm8htPnoCaDwQTze3_yIVqinJsSIRvzGNnBWWacMg5xEMh3ZyYv_Flci
+    UO3Pq9M6qnuYvL018A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduhedguddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhshhhumhgrnhdrkhhhrghnug
+    hurghlsegrrhhmrdgtohhmpdhrtghpthhtohephihurhihrdhnohhrohhvsehgmhgrihhl
+    rdgtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugiesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtoheplhhinhhugi
+    dqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:TjnEZkoxcMMvwMveTgw8HY9M80jw74AvtHnqW9i1fr0Lo_TV5j8Xaw>
+    <xmx:TjnEZqnkKOQ2333Jgug6eARcVqxZsJ6O58nBkSdbRVeZzZcGNZJ-Hw>
+    <xmx:TjnEZk326Hgm_wdYq2rnsethr0XVBPZM-tuwx9UvyvVXwtrx0xVhWA>
+    <xmx:TjnEZhupXB4OSFode3f7PmJ0ud_JoPifs0fEDCjSs06WSziUx4o9Gw>
+    <xmx:TjnEZuqgoQhTEAUlTvoW7DrzsMjIVc67lY-WCNfYiwNfv2MDUBlRnxlc>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 387C016005E; Tue, 20 Aug 2024 02:35:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsN2qR3tuXylb2qK@hu-bjorande-lv.qualcomm.com>
+Date: Tue, 20 Aug 2024 08:35:37 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
+ linux-kernel@vger.kernel.org
+Cc: "Ard Biesheuvel" <ardb@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <8b780eda-bb64-4baf-8e24-501baf8ed8db@app.fastmail.com>
+In-Reply-To: <17020e56-b0a9-4705-8ee3-c675eca99490@arm.com>
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <20240801071646.682731-2-anshuman.khandual@arm.com>
+ <090eb237-10f4-4358-be07-1eb8d30c3ec1@arm.com>
+ <3b219e52-1d2a-4e6d-adff-efbab3e2282d@app.fastmail.com>
+ <17020e56-b0a9-4705-8ee3-c675eca99490@arm.com>
+Subject: Re: [PATCH V3 1/2] uapi: Define GENMASK_U128
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 09:45:29AM -0700, Bjorn Andersson wrote:
-> On Mon, Aug 19, 2024 at 05:06:58PM +0200, Johan Hovold wrote:
-> > On Sun, Aug 18, 2024 at 04:17:38PM -0700, Bjorn Andersson wrote:
-> > > Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
-> > > initialization")' 
-> > 
-> > This commit does not exist, but I think you really meant to refer to
-> > 
-> > 	9329933699b3 ("soc: qcom: pmic_glink: Make client-lock non-sleeping")
-> > 
-> > and possibly also
-> > 
-> > 	635ce0db8956 ("soc: qcom: pmic_glink: don't traverse clients list without a lock")
-> > 
-> > here.
-> > 
-> 
-> Yeah, I copy-pasted the wrong SHA1. Prior to commit 9329933699b3 ("soc:
-> qcom: pmic_glink: Make client-lock non-sleeping") the PDR notification
-> happened from a worker with only mutexes held.
-> 
-> > > moved the pmic_glink client list under a spinlock, as
-> > > it is accessed by the rpmsg/glink callback, which in turn is invoked
-> > > from IRQ context.
-> > > 
-> > > This means that ucsi_unregister() is now called from IRQ context, which
-                                                           ^^^^^^^^^^^
+On Tue, Aug 20, 2024, at 03:25, Anshuman Khandual wrote:
+> On 8/19/24 12:43, Arnd Bergmann wrote:
+>
+> Should not the second shift operation warn about the possible
+> overflow scenario ? But actually it does not. Or the compiler
+> is too smart in detecting what's happening next in the overall
+> equation and do the needful while creating the mask below the
+> highest bit.
 
-> > > isn't feasible as it's expecting a sleepable context.
-> > 
-> > But this is not correct as you say above that the callback has always
-> > been made in IRQ context. Then this bug has been there since the
-> > introduction of the UCSI driver by commit
-> > 
-> 
-> No, I'm stating that commit 9329933699b3 ("soc: qcom: pmic_glink: Make
-> client-lock non-sleeping") was needed because the client list is
-> traversed under the separate glink callback, which has always been made
-> in IRQ context.
+Not sure about the reasoning behind the compiler warning for
+one but not the other, but I know that we rely on similar
+behavior in places like:
 
-Ok, got it. But then you meant "atomic context", not "IRQ context", in
-the paragraph above.
+#define upper_32_bits(n) ((u32)(((n) >> 16) >> 16))
 
-Johan
+which is intended to return a zero without a compiler
+warning when passing an 'unsigned long' input on 32-bit
+architectures.
+
+      Arnd
 
