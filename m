@@ -1,87 +1,125 @@
-Return-Path: <linux-kernel+bounces-293530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5139580F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92869580DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816631C241E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6E71F23C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472218A6C2;
-	Tue, 20 Aug 2024 08:28:54 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC3418A6C8;
+	Tue, 20 Aug 2024 08:27:29 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796F418A952;
-	Tue, 20 Aug 2024 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6C1B813;
+	Tue, 20 Aug 2024 08:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142534; cv=none; b=RmLQuU6m0fxjbMkrl+U41/QXtp0MPXJ5gQKyb6qX7CoUdmge5i1bkYZ9NQC5yURGoSAYxvNPq7W9abhg5qZlijcy7DAJ3XxtYRzTzl1Jbzv1J3TQIW7g5Mrm9YOEO9ZvbMIL44L5HT2JKwvwoA0oObbN7dUWT2bs/t1kDQYe1Oc=
+	t=1724142449; cv=none; b=jU2V4JUVX5MQBFRIoWrMpHx59QzA7DYR8dNkKQ5hNzOqW6H2oJ9txVGFB0xksFhulWScWwNxfptjBkRekBF1PYCExWRHC9N2/apoSlX4AfGeBie39bhp5py+L7PI1MzfcBvbPEp2l946MmfL82OXpwMw/O/ORieQEk4Gtz3gbqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142534; c=relaxed/simple;
-	bh=nrZZkpD8nwrB94I0EhpSnSVF4/Bo7frwfEnSpZvY5/0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CSHrDBnYpvoYa+rljsAvfDS13iEfOKdmhSpmkHl1YE7WD1rXzX3ugVKWKABYwhcN+oheRvVbRYYMuJbicLIv9TdM90PyeNjALDufhXV4KJL8Blk11538oT10ZP1pGlhxvSq4QSk4zjb6Ns3z3hK5ZqkXDiPkY52XVu/eGs0yM38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1724142449; c=relaxed/simple;
+	bh=DV9KMTsYabqmk2LNViG+DGz2QP3doDwplH0uUYXlNoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D0139CwdNY7iDVdxY97XLSD9A5DquWpDrtnQk8Cx3k40uxbjHNaZIqsewI6h2MazoQfE4QON11KKdmwAAJ8FyRPewUGg7VLlSHAd4u6wrfGV9PJOkWLYAAlB18d7dMmFCEKh6OIEhD4UAk+GW4+CV3iyas+8pYYovIzb55li4ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp2dN3bDjzpTSv;
-	Tue, 20 Aug 2024 16:27:20 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 37764180106;
-	Tue, 20 Aug 2024 16:28:50 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 16:28:49 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<clabbe@baylibre.com>, <linus.walleij@linaro.org>, <atenart@kernel.org>,
-	<arno@natisbad.org>, <bbrezillon@kernel.org>, <thomas.lendacky@amd.com>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH -next 6/6] crypto: crypto4xx - Remove unused declaration crypto4xx_free_ctx()
-Date: Tue, 20 Aug 2024 16:25:25 +0800
-Message-ID: <20240820082525.259337-7-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240820082525.259337-1-yuehaibing@huawei.com>
-References: <20240820082525.259337-1-yuehaibing@huawei.com>
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wp2Wd5MkWz1S8LQ;
+	Tue, 20 Aug 2024 16:22:21 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id A7F591A0188;
+	Tue, 20 Aug 2024 16:27:21 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 20 Aug
+ 2024 16:27:21 +0800
+Message-ID: <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com>
+Date: Tue, 20 Aug 2024 16:27:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 05/14] thermal: core: Move thermal zone locking out of
+ bind/unbind functions
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
+	<rui.zhang@intel.com>
+References: <2205737.irdbgypaU6@rjwysocki.net>
+ <3837835.kQq0lBPeGt@rjwysocki.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <3837835.kQq0lBPeGt@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-This function is never implemented and used since introduction in
-commit 049359d65527 ("crypto: amcc - Add crypt4xx driver").
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/crypto/amcc/crypto4xx_core.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/crypto/amcc/crypto4xx_core.h b/drivers/crypto/amcc/crypto4xx_core.h
-index 96355d463b04..3adcc5e65694 100644
---- a/drivers/crypto/amcc/crypto4xx_core.h
-+++ b/drivers/crypto/amcc/crypto4xx_core.h
-@@ -149,7 +149,6 @@ struct crypto4xx_alg {
- 
- int crypto4xx_alloc_sa(struct crypto4xx_ctx *ctx, u32 size);
- void crypto4xx_free_sa(struct crypto4xx_ctx *ctx);
--void crypto4xx_free_ctx(struct crypto4xx_ctx *ctx);
- int crypto4xx_build_pd(struct crypto_async_request *req,
- 		       struct crypto4xx_ctx *ctx,
- 		       struct scatterlist *src,
--- 
-2.34.1
-
+在 2024/8/19 23:58, Rafael J. Wysocki 写道:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
+> acquire the thermal zone lock, the locking rules for their callers get
+> complicated.  In particular, the thermal zone lock cannot be acquired
+> in any code path leading to one of these functions even though it might
+> be useful to do so.
+>
+> To address this, remove the thermal zone locking from both these
+> functions, add lockdep assertions for the thermal zone lock to both
+> of them and make their callers acquire the thermal zone lock instead.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> v2 -> v3: Rebase after dropping patches [04-05/17] from the series
+>
+> v1 -> v2: No changes
+>
+> ---
+>   drivers/acpi/thermal.c         |    2 +-
+>   drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++--------
+>   2 files changed, 23 insertions(+), 9 deletions(-)
+>
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -785,6 +785,7 @@ int thermal_bind_cdev_to_trip(struct the
+>   	int result;
+>   
+<snip>
+>   
+> Index: linux-pm/drivers/acpi/thermal.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/thermal.c
+> +++ linux-pm/drivers/acpi/thermal.c
+> @@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
+>   		.thermal = thermal, .cdev = cdev, .bind = bind
+>   	};
+>   
+> -	return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd);
+> +	return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
+If so, it seems that the for_each_thermal_trip() can be removed or no 
+need to export.
+>   }
+>   
+>   static int
+>
+>
+>
+>
+>
+> .
 
