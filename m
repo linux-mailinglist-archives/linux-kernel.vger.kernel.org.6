@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-293637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615DE95823F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:30:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8EF958243
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0742835E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731901F24760
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D279518C332;
-	Tue, 20 Aug 2024 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D64F18C004;
+	Tue, 20 Aug 2024 09:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsSDqzOD"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jqmqqkYo"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7409918B46D
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D05818E372;
+	Tue, 20 Aug 2024 09:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724146197; cv=none; b=RQzG3i2YqyNTmlpjdaIgAh4udAzrV8MbTppyAIu+qY/Qktd9AL/i9XrMnikKAAlWuN3VPzVdljOEBWbBJrTggGxrG55Suy3Gd/zwa2NF1J8lmTtWoJxkN4GT37QsJusIo5lUMeS32Bmp5xeiHWJfry1t7HpKaJ5N6c1mnSLKjNg=
+	t=1724146256; cv=none; b=UyqweZOAF6gBDzgaok0WFncOw6TdqZ2+dTv2JxwuAO3915zvSIiP4YDBIclZYiL4EePjPixIIv81FGieJqkqtnwz5aJGX5g7tu75WRNch3Z8dQKMid1SbgJlz1uNYm6zC4vOZ0Vlh5sWtWglZZjkdGpAVA4tHeXBSOs5SpCs0es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724146197; c=relaxed/simple;
-	bh=sb1jtCDxBid5WSwcFani2QSgicCBKLpqb69hGoPzbD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PunFDnMK7TJS5+sY4Nq9Ze/7IhCmd5Noygflnx328Uv1xAJK++HbPs32noYDjCHRETYjbZWoCT2dnPZ4SYDtZZ9/MKOjkxn3D8e8zlzt4sG6w4gxHMzSk++7B/DseHTwgzZH527DPwF3ExqlZF2gf8TKg4lVh+2rctVYwGB8Y1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jsSDqzOD; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4fce23b0e32so161658e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724146194; x=1724750994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1GU+ib55SwosTEGR00XVxXfPeAl62oZ32kSm5gFZVL0=;
-        b=jsSDqzODFCSIqJGYfzZX0k6te1EdRitj1zocz7HKQNhiEHVE/fJbyScnCWy7AjNrmw
-         d2b9FK0uOO98DOhhp0G73mfVNH0jBNlzacx7EzKdB/IB6FMcjU8M+6wQ5xV3wEZcaPM9
-         yH9fHxHPdWjQLWpOtgrWA1oRQGKKQqlK4mdNaY5Lei6i28FjU7Xyki9RHzXOHibJyNR1
-         o1BG5FVhe0rVMVh1MKAbtWMb/K78yG4YsaW9vDdY0tBe4cyTJ3fsCkg6TFJ179JsQbUT
-         gHv38yBVrWkgaAUJqUOVBMbuLU4H+lf/FlnM3E6bcIUE71EFtI6GHGCa9osdxGXfBwM0
-         dvgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724146194; x=1724750994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1GU+ib55SwosTEGR00XVxXfPeAl62oZ32kSm5gFZVL0=;
-        b=HMUli0Q5iItqJ2fGmONdjeoR6zL2B8fBqfsXzbEb9Ab1MmsegAX2Mze5er8rKxa+58
-         Nro6QRcwc0iLkY+a6UHchFf5H9ytVobW/0ZwX1oPVfUMYoFjsX7vs04pVPqA4kx94phE
-         eGjd6cOZT+QSFX+i6csFrWajjX+FeH5PesgNDXaPnHViCXww0GTIuJZv8QXGI+KWuDIt
-         O0VnX3TtkxGJ9hj5psE4z8qhX0083Et08vcctUJxztm4IX3lBPR50nSqhteGzSUzbaO4
-         UZWf0OyiwX4zGfp79opa+Y1tiS7RA1Vkls1vQXcktuBoA9a3TzoVWiZlaAhD3Wh9sjs4
-         aCjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtGXt1kHM4HRBDQyGCZYmT4Tji8HxA1p1D2kKvH/LT926ZazE5hUVdZlQvSixg7ycIZcAb3vjSWcGGGF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIeMs76epyv3kGvDOVT/NgWVNXMOaQcYBASr5H7k6T+IAq/6m/
-	EMXu+pxy0xwpr2/GBjQfmzdlgNSyAwYDjkQJvr7TtJMcSxOwb5PaVD2Jg3nDW0by3Hwy5duyObH
-	Yx/ySYp/dq+LuJpo04WXZl4sqKgCKLKTN
-X-Google-Smtp-Source: AGHT+IEIYbRgLp4w1V9OzdXHNdXr1RoUsCm776UbA94uFv0+YtzUMfvMszjilV4jsApA1uQBREkczS90OGqvv9AOBcc=
-X-Received: by 2002:a05:6122:c96:b0:4f5:1978:d226 with SMTP id
- 71dfb90a1353d-4fc6c5abfe1mr14790348e0c.3.1724146194017; Tue, 20 Aug 2024
- 02:29:54 -0700 (PDT)
+	s=arc-20240116; t=1724146256; c=relaxed/simple;
+	bh=6bp+iYpueMBdF700L9bS/lx+HmmUlKjsruFR4f+BAKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tUG0H8bl9GreQcipwK1fpceptw+PKNrN21FxS9WjZog6k5BckAYxoI7nyoZL352CaKhaijbWPftcyYZLQFq+x7JM7HcM8h5+0EKuCphsSq9qebYWV/bSbSL5oZm4nLQz2qPu7zv7hPAAnh++vXY/bncQJtoJjzoWZZmFsYK67Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jqmqqkYo; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47K9UZQg042341;
+	Tue, 20 Aug 2024 04:30:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724146235;
+	bh=8++oE0bsX868XtOLPImyjy0fi1D7M2jqIM4z6bE1vA8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jqmqqkYok6ZHjwnNTUEMGlSdstJppKgcFeIgsNLJoCmeeqqMzSLpddG9fiewrlHQ6
+	 dLhO+I4czV0biKDGJAjb974QxUFxpQ5DG1ILiBAAmHvVuUD4+6/vxdMV4uqQ1Elxdq
+	 FhO4r55/jgm9HkPTBuvRcwzo3ZCKVweiJ27n0JQg=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47K9UZZJ035373
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 20 Aug 2024 04:30:35 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
+ Aug 2024 04:30:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 20 Aug 2024 04:30:35 -0500
+Received: from [172.24.218.186] (ltpw0bk3z4.dhcp.ti.com [172.24.218.186])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47K9UWXg040112;
+	Tue, 20 Aug 2024 04:30:33 -0500
+Message-ID: <3e6075a6-20a9-42ee-8f10-377ba9b0291b@ti.com>
+Date: Tue, 20 Aug 2024 15:00:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819025207.3808649-1-hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240819025207.3808649-1-hsiangkao@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 20 Aug 2024 21:29:42 +1200
-Message-ID: <CAGsJ_4yQMN+j2UMWO3ycRqiwh16sOQoSQSMatNg667Qzr=QmPQ@mail.gmail.com>
-Subject: Re: [PATCH] erofs: allow large folios for compressed files
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix driver shutdown
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Apurva Nandan
+	<a-nandan@ti.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+References: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Aug 19, 2024 at 2:52=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
->
-> As commit 2e6506e1c4ee ("mm/migrate: fix deadlock in
-> migrate_pages_batch() on large folios") already landed upstream,
-> large folios can be safely enabled for compressed inodes since all
-> prerequisites already landed in 6.11-rc1.
->
-> Stress tests has been working on my fleet for > 20 days without any
-> regression.  Besides, users [1] has requested it for months.  Let's
-> allow large folios for EROFS full cases upstream now for wider testing.
->
-> [1] https://lore.kernel.org/r/CAGsJ_4wtE8OcpinuqVwG4jtdx6Qh5f+TON6wz+4HMC=
-q=3DA2qFcA@mail.gmail.com
-> Cc: Barry Song <21cnbao@gmail.com>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Hi Jan,
 
-Thank you, Xiang! We'll run some tests and update you with our findings.
+On 19-08-2024 22:17, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> When k3_r5_cluster_rproc_exit is run, core 1 is shutdown and removed
+> first. When core 0 should then be stopped before its removal, it will
+> find core1->rproc as NULL already and crashes. Happens on rmmod e.g.
 
+
+Did you check this on top of -next-20240820 tag? There was a series[0] 
+which was merged recently which fixed this condition. I don't see this 
+issue when trying on top of -next-20240820 tag.
+[0]: https://lore.kernel.org/all/20240808074127.2688131-1-b-padhi@ti.com/
+
+>
+> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
+> CC: stable@vger.kernel.org
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
->  Documentation/filesystems/erofs.rst |  2 +-
->  fs/erofs/inode.c                    | 18 ++++++++----------
->  2 files changed, 9 insertions(+), 11 deletions(-)
 >
-> diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesyst=
-ems/erofs.rst
-> index cc4626d6ee4f..c293f8e37468 100644
-> --- a/Documentation/filesystems/erofs.rst
-> +++ b/Documentation/filesystems/erofs.rst
-> @@ -75,7 +75,7 @@ Here are the main features of EROFS:
->
->   - Support merging tail-end data into a special inode as fragments.
->
-> - - Support large folios for uncompressed files.
-> + - Support large folios to make use of THPs (Transparent Hugepages);
->
->   - Support direct I/O on uncompressed files to avoid double caching for =
-loop
->     devices;
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index 43c09aae2afc..419432be3223 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -257,25 +257,23 @@ static int erofs_fill_inode(struct inode *inode)
->                 goto out_unlock;
->         }
->
-> +       mapping_set_large_folios(inode->i_mapping);
->         if (erofs_inode_is_data_compressed(vi->datalayout)) {
->  #ifdef CONFIG_EROFS_FS_ZIP
->                 DO_ONCE_LITE_IF(inode->i_blkbits !=3D PAGE_SHIFT,
->                           erofs_info, inode->i_sb,
->                           "EXPERIMENTAL EROFS subpage compressed block su=
-pport in use. Use at your own risk!");
->                 inode->i_mapping->a_ops =3D &z_erofs_aops;
-> -               err =3D 0;
-> -               goto out_unlock;
-> -#endif
-> +#else
->                 err =3D -EOPNOTSUPP;
-> -               goto out_unlock;
-> -       }
-> -       inode->i_mapping->a_ops =3D &erofs_raw_access_aops;
-> -       mapping_set_large_folios(inode->i_mapping);
-> +#endif
-> +       } else {
-> +               inode->i_mapping->a_ops =3D &erofs_raw_access_aops;
->  #ifdef CONFIG_EROFS_FS_ONDEMAND
-> -       if (erofs_is_fscache_mode(inode->i_sb))
-> -               inode->i_mapping->a_ops =3D &erofs_fscache_access_aops;
-> +               if (erofs_is_fscache_mode(inode->i_sb))
-> +                       inode->i_mapping->a_ops =3D &erofs_fscache_access=
-_aops;
->  #endif
-> -
-> +       }
->  out_unlock:
->         erofs_put_metabuf(&buf);
->         return err;
-> --
-> 2.43.5
->
+> There might be one more because I can still make this driver crash
+> after an operator error. Were error scenarios tested at all?
 
-Thanks
-Barry
+
+Can you point out what is this issue more specifically, and I can take 
+this up then.
+
+>
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index eb09d2e9b32a..9ebd7a34e638 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -646,7 +646,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   		/* do not allow core 0 to stop before core 1 */
+>   		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+>   					elem);
+> -		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+> +		if (core != core1 && core1->rproc &&
+> +		    core1->rproc->state != RPROC_OFFLINE) {
+>   			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+>   				__func__);
+>   			ret = -EPERM;
 
