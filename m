@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-293781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DDF958492
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:31:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F8B958498
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78F61F27A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:31:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 607DAB22666
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F2C18DF69;
-	Tue, 20 Aug 2024 10:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B6E18DF63;
+	Tue, 20 Aug 2024 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d246HLg6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMny8QmW"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A824818CC10;
-	Tue, 20 Aug 2024 10:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857D518CC1F;
+	Tue, 20 Aug 2024 10:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724149901; cv=none; b=SDJfLf0nmivtweixodCJECyb6XbOTKJ43ZrMwCxuKJAujZBs/jHv4XA4rKEaSa5psq/P/iGndDsqRaUeUvu1XLDyXjbvKfADqojYTAsE3xfF1YatNQeuChKOPCYeeptKoMQvynsWK783MVqkuvhZ8wnbhhTPfAd5yk+/Q7k6l4o=
+	t=1724149922; cv=none; b=pqAtirZoouJXMiNRGKVEXTvThZSQU1qKr1kI1PpASTsw8blgI/9C/Vqk8nO9JCks6TF6qQmv2MSTj5+/pRJGb4lzfSpKW2rYA+z8W7hHBeDnZhs8GcVHdk77z//ueHZC5a4OgLrPySHmu3CwAh8yCNBRnsHyzw30fCE69E6P6a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724149901; c=relaxed/simple;
-	bh=sJg2jrIRdzfU5ReseLLRt+fX0mWkpd3DRQr9famwnac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YkCDpw73pRAq/gd+uSInGTGv3EXHD0OpURF2DJCX3O+/k1W4a2qj8sGWCHGOHyoB6b2kAUwz4lFtobua0wFFvnB5h1QTmBlbeZi+DylUFAvesxnjAwcpVk+GVDmpJRiOA9JMcLvu/xSzZukMmoaZps99plG8ct76riOg65y9iwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d246HLg6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA74C4AF11;
-	Tue, 20 Aug 2024 10:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724149901;
-	bh=sJg2jrIRdzfU5ReseLLRt+fX0mWkpd3DRQr9famwnac=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d246HLg6uJSkavWPD6GW2i+EaG+eseJ6UXnlfJ5zmoNQH5WO/UEC+is4dKKXU/dVu
-	 OnPj0HbfDNKAeDjw511ps753M6IKSbBfGB/Jkf51Uu0gQsSs2Bj9L5jN2UAH4iP+rq
-	 K+HbeLwspfoYF3gY/jVBkMFYUVVAlg/BOz4ANe2xXU2JO2JL+NRaXh2h3F8gtqiyIT
-	 mUMqISWyQXTgFYhCWxg1sUQLrUDtJMoEBJ9DlEbWknK8y4eN5n+JWIbNbaC38zOg9Y
-	 GbshA7kwG3EqEgVfGhlsk28afWbni0rd/qezl2AsIVn/lXEcO08yPwGmtJ6Luaonk6
-	 /+VBQHE4BhQRA==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-26456710cfdso717181fac.0;
-        Tue, 20 Aug 2024 03:31:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2G8jGGGOiaEDZ8sRScaEMz1+b/aotvnDqM5ZMtD+Iq1dtMdC5NqB8dQuthQ0AML2ITo8LYCv0CW6VWmY=@vger.kernel.org, AJvYcCWeqal8FEBBCgVzd0WGLC1N1hHwZnoghqZOngB1VR4habGaqHUwEXVzHYM0Fn3m+sRgJ6fMHYx6Okk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLzqb6V+mltyJe7oMJks2RpFo0fRyOJz2Umpuu57ho8XXnrKm
-	Iii+Lga89CfUBJk4K4gI72CVQivZMGs0C26bLXZzHHuwDg/BMgGrK0QG5C8IAG0TBN2nzNwG3wM
-	rQHBgsA2/dpxjLNPoy42Zp5T6E/g=
-X-Google-Smtp-Source: AGHT+IH410LBce520Bj3qdO77LgvUxf1TwFNaa/kJ+Loveib+N92f7mFOvTLaT+uKVHwvb4FotpzFoMHDRr7D93YkBU=
-X-Received: by 2002:a05:6870:7b4b:b0:25e:14d9:da27 with SMTP id
- 586e51a60fabf-2701c0a0273mr7714116fac.0.1724149900394; Tue, 20 Aug 2024
- 03:31:40 -0700 (PDT)
+	s=arc-20240116; t=1724149922; c=relaxed/simple;
+	bh=duvv9iXl6bCaWXnoXdJU+2UgdcthjSXBUQp9V4nE5P0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=k2/Q4pQiobVwExhlInqO7Fe/YziwYgifrGEcVUiBOA/R+M/bzYQkQl+R5vKwQ0MpWO+gGJMCl9Vwkazh+ea3XEO9pFzOzaKXQpCmDrcryvjrox4TTj1HO+he+bvsDsrK6EizISZMxhQMVQJBIYWs87h4ALc+/DKgYOW2HQ0Rpew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMny8QmW; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso4361208b3a.0;
+        Tue, 20 Aug 2024 03:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724149921; x=1724754721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+LYknRxmxZhwkaY/3EByoVTqMfeWJl1Dz7XyYSW73hU=;
+        b=WMny8QmWbv2a6nuoGZxbdTFa5VS1BXCZ7gXkiBIeGDA1aRAIBMaUL5aEgoaudid7jx
+         XvbD+Wig8J1Z3chRosyBV/UtIACgXh6sUYZyEmtu2k9ArrPwdfmOGHkJArG+Oo+S9+i9
+         IEQu8OqHMLiMcMQ10DNqOvO51g6aoXmmrW7EVjzEXWToxQWmNJP5uDxX/YY4UuVMcq3P
+         3+2EUovcnqTsc1MQWTneOsI7H4n4R9QuvL+lc/pEr6BVQZN2IfO/pmC1TGa7/0jIaAzf
+         aXzuJysjuLvlrFRE6tA0SONQERORLPWxpHhOjXG+ZTI/RxYce2w4HcDygRvvnpW8NE/D
+         ZfRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724149921; x=1724754721;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+LYknRxmxZhwkaY/3EByoVTqMfeWJl1Dz7XyYSW73hU=;
+        b=ITpgdIOF/CghxWZxUclSlC4cZVnrxuMn+SSTAtuAvEJs1tC9ku3Y0dacTqchOqanvT
+         2liN1+MOOQl0MhzlxjFsZ90fxfip9jgwB3npBROeDWx7IMd6S7w28oOnOu1DcZTee7qK
+         sKUwR0R7Y8YE4BU0gqLWn1h66m2Y8ot9zCxDgiKVbD88MD+PF3KWBPiPEpTr+zmcHBQR
+         nJNhYhdnWW+Z+CMlLgMZE1/7vv3Fpj8ITyN39gBSmqGh/4AhzhgcqJVMIEv7u/sBxdXK
+         zfYko5fAM1QxbRTbk73c/iiWbtJcEVvXV3Q9YnAIuJbI8iDNpTyMSFaglDM0oeaHddXl
+         gudQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAfOWnM3bP6iesIx3kn7ivtqhJvtPJCh3+pLarOnZBDweFh+kdJS3jqCkhTe2QHSSIQ4hkCZTJDGwThX5WgUPi6n8qaMc6GkJeobHu15eXXq2xl6wK8HorJ24TTAFfzBLnPaiAaesHAWGgXSHMrgYKbA1yijMRUMO8Db9jR0FFXg==
+X-Gm-Message-State: AOJu0Yx0owF9/YwJz5D85ngkz4nyLILg6tmbck3PzY/NORNVQmr4vg2G
+	QsJNZD4t36I2w5NTj1F5g6oKgZz8NO5EEk+Iv7J3+tV5Nfjxtjgw
+X-Google-Smtp-Source: AGHT+IGnnPdxAw+Fi4Vu9kUTtkIaWdxJFr0nMLCwqPlwY5RQOvDfHfRPVq/sbngDpx5c7XLeXyQ5yg==
+X-Received: by 2002:a05:6a20:9c99:b0:1c0:e997:7081 with SMTP id adf61e73a8af0-1c904fb6619mr16269021637.29.1724149920673;
+        Tue, 20 Aug 2024 03:32:00 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2035040319dsm8575905ad.23.2024.08.20.03.31.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 03:32:00 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: aha310510@gmail.com
+Cc: alibuda@linux.alibaba.com,
+	davem@davemloft.net,
+	dust.li@linux.alibaba.com,
+	edumazet@google.com,
+	guwen@linux.alibaba.com,
+	jaka@linux.ibm.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	tonylu@linux.alibaba.com,
+	ubraun@linux.vnet.ibm.com,
+	utz.bacher@de.ibm.com,
+	wenjia@linux.ibm.com,
+	syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH net,v5,1/2] net/smc: initialize ipv6_pinfo_offset in smc_inet6_prot and add smc6_sock structure
+Date: Tue, 20 Aug 2024 19:31:52 +0900
+Message-Id: <20240820103152.337880-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240815043845.38871-1-aha310510@gmail.com>
+References: <20240815043845.38871-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820041128.102452-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20240820041128.102452-1-kai.heng.feng@canonical.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 12:31:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iDTLv7N6SZn7u13G05xrgAe4eHgykqwGSu8igyMd-xrA@mail.gmail.com>
-Message-ID: <CAJZ5v0iDTLv7N6SZn7u13G05xrgAe4eHgykqwGSu8igyMd-xrA@mail.gmail.com>
-Subject: Re: [PATCH v2] intel_idle: Disable C1E on Jasper Lake and Elkhart Lake
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: jacob.jun.pan@linux.intel.com, lenb@kernel.org, 
-	artem.bityutskiy@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 6:20=E2=80=AFAM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> PCIe ethernet throughut is sub-optimal on Jasper Lake and Elkhart Lake.
->
-> The CPU can take long time to exit to C0 to handle IRQ and perform DMA
-> when C1E is enabled.
->
-> So adjust intel_idle to use _CST when state_table is absent, and disable
-> C1E on those two platforms.
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D219023
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v2:
->  - Allow the driver to use _CST when state_table is absent.
->
->  drivers/idle/intel_idle.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 9aab7abc2ae9..ac1c6f4f9c7f 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1475,6 +1475,10 @@ static const struct idle_cpu idle_cpu_dnv __initco=
-nst =3D {
->         .use_acpi =3D true,
->  };
->
-> +static const struct idle_cpu idle_cpu_tmt __initconst =3D {
-> +       .disable_promotion_to_c1e =3D true,
-> +};
-> +
->  static const struct idle_cpu idle_cpu_snr __initconst =3D {
->         .state_table =3D snr_cstates,
->         .disable_promotion_to_c1e =3D true,
-> @@ -1538,6 +1542,8 @@ static const struct x86_cpu_id intel_idle_ids[] __i=
-nitconst =3D {
->         X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,      &idle_cpu_bxt),
->         X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS, &idle_cpu_bxt),
->         X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,    &idle_cpu_dnv),
-> +       X86_MATCH_VFM(INTEL_ATOM_TREMONT,       &idle_cpu_tmt),
-> +       X86_MATCH_VFM(INTEL_ATOM_TREMONT_L,     &idle_cpu_tmt),
->         X86_MATCH_VFM(INTEL_ATOM_TREMONT_D,     &idle_cpu_snr),
->         X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,     &idle_cpu_grr),
->         X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,   &idle_cpu_srf),
-> @@ -2075,7 +2081,7 @@ static void __init intel_idle_cpuidle_driver_init(s=
-truct cpuidle_driver *drv)
->
->         drv->state_count =3D 1;
->
-> -       if (icpu)
-> +       if (icpu && icpu->state_table)
->                 intel_idle_init_cstates_icpu(drv);
->         else
->                 intel_idle_init_cstates_acpi(drv);
-> @@ -2209,7 +2215,11 @@ static int __init intel_idle_init(void)
->
->         icpu =3D (const struct idle_cpu *)id->driver_data;
->         if (icpu) {
-> -               cpuidle_state_table =3D icpu->state_table;
-> +               if (icpu->state_table)
-> +                       cpuidle_state_table =3D icpu->state_table;
-> +               else if (!intel_idle_acpi_cst_extract())
-> +                       return -ENODEV;
-> +
->                 auto_demotion_disable_flags =3D icpu->auto_demotion_disab=
-le_flags;
->                 if (icpu->disable_promotion_to_c1e)
->                         c1e_promotion =3D C1E_PROMOTION_DISABLE;
-> --
+Jeongjun Park wrote:
+> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
+> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+> 
+> To solve this, we need to add code to smc_inet6_prot to initialize 
+> ipv6_pinfo_offset.
+> 
+> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 
-That's exactly what I wanted to do, thanks for taking care of this!
-
-I'll queue it up for 6.12 later today.
+Reported-by: syzkaller <syzkaller@googlegroups.com>
 
