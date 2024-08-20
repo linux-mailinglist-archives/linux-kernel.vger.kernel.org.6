@@ -1,275 +1,134 @@
-Return-Path: <linux-kernel+bounces-293521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142A09580D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C985E9580D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766EFB2312F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E12285D9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6649A18A6AD;
-	Tue, 20 Aug 2024 08:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99E218A920;
+	Tue, 20 Aug 2024 08:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wfr1kIRb";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lxdmpQlF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qTSiMalW"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DED18C018
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F267F12FB34
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142059; cv=none; b=UuMkZNPZ9eIGghl1ulfia/JftcsAiJFbztGXicTB61Uy9pZGETaf/X8Mt9N5yYwsYUYpx91Hnv79QIdK9D6M8RDJDm8wLDI65OApVDSB+z0bQA4WGAAHt7ru8pepHgP8YQfWFobui4h6uP8So0x9SlGQ0kGYS8eGPTxDWDCMHaA=
+	t=1724142077; cv=none; b=j0hSjlxPIh1QfbNi41wDtkhvrO3fSGdfOBFiHg6X/EsWQxcKKHs9wULjtUCrpq29FOp9qCvBAbYVJ3sC+Bh+6catiZRJC3Oc8VWxqiHCFBhZAFOpFbSVeHoWuiepctzpdorTCRNnY/7OEAJZDZ8f+dD0cSiRXn10gkL+yusd+n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142059; c=relaxed/simple;
-	bh=Y514wmYHtnRZjRk6vUzh2xb3kp7DDC9fVzDLx2BIAU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLTRwpjXjeyxuSRydldaza+BE0+w1LFscyD19KXKmVoq/WA8LTzrmUKs4RXDrlqHKxmIfaOiwi72PntWrkKOkxh6y2swLLnUqfeVVCzNEaE8r9ZZBuladZqyijGrxM53MvtALG2okJ8Mgh+8AV1qxssfO0/UIbS4PYgadHOR4tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wfr1kIRb; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lxdmpQlF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E5FEF1FFB4;
-	Tue, 20 Aug 2024 08:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1724142056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uhe1/Za2Rsc+OxMtgPmnbZH7qh+wHOykK24Zu10M3lw=;
-	b=Wfr1kIRbJaQ5CYghKSt4ap58FNWgVJdFxoK7j+XScPu3UcYpu+gku6jgbrS3lYhkEgKWCS
-	F0Dppshvt2v/wxC1DU3c46+adTiGoCKb/osYRJQKGKoIx8J8py7s2G/jFFk8/1Vt7nJvQt
-	DMZ9TnL3jErdWh0Ifj91Hcn0l3uKrMw=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=lxdmpQlF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1724142055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uhe1/Za2Rsc+OxMtgPmnbZH7qh+wHOykK24Zu10M3lw=;
-	b=lxdmpQlFs8jFGwiAHLsjDDuMc8HgOKwUptyIR9owTp/+pyEHSVWjSKmT8VgKaRpox8oq6d
-	GsetpjmO5vB1xvdy5p7QrMNTm53rOln/XW7ZCN7r24PjpkUjynrr7+pECMFYd1hRA+0Lbn
-	SPzt4Y7i2ZuizfoemRrtFeMJnN/Fp+Y=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 836BA13A17;
-	Tue, 20 Aug 2024 08:20:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3yl5HudRxGbTKwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 20 Aug 2024 08:20:55 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	xen-devel@lists.xenproject.org,
-	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-Subject: [PATCH v2 7/7] xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
-Date: Tue, 20 Aug 2024 10:20:12 +0200
-Message-ID: <20240820082012.31316-8-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240820082012.31316-1-jgross@suse.com>
-References: <20240820082012.31316-1-jgross@suse.com>
+	s=arc-20240116; t=1724142077; c=relaxed/simple;
+	bh=xcpY/uiy4l6GpTctbyXeeM7AYfjwYqjpPxciHS5CS84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EPIKKbNRjCwVQBQdSYSinjYbcL2GVeK+13s8hBCHDyPsbLZoCOgHeWyqHkVYl19LuWc3pKgxpH4UKvJGiYsJxd8ho0l0T2mq0Oe5YKlmJgwVbc7vb3oUoygGANYy1ar3cYDwwH+WNzYVGUkTwvxqf2ZdoU0az1dv/oOTeu9S3PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qTSiMalW; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47K8Krgo069727;
+	Tue, 20 Aug 2024 03:20:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724142053;
+	bh=u2z2eg6vf6HwqPTVUlaZOK6+0jw2RLgUcS9SUFRXL2Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qTSiMalWE4Syj0SfoCVUQdGsxyq4zzZYxDbxuTNwBknL4Ggs6gMwcjR0xS7LAh0jL
+	 D89hAbk1lOPUIuPKQMPr+nFHqq+yYatI5+rllMk7aVvMJxUlx+x+Wk0bLX06I2Gea2
+	 KJL4YjpnLJSABwbVhBPqc02kj8iF7VEitY2bC4fc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47K8Kr5v066990
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 20 Aug 2024 03:20:53 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
+ Aug 2024 03:20:52 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 20 Aug 2024 03:20:52 -0500
+Received: from [172.24.227.249] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.249])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47K8KnoE097409;
+	Tue, 20 Aug 2024 03:20:50 -0500
+Message-ID: <6cde0930-5296-4707-a4b3-3ef060206625@ti.com>
+Date: Tue, 20 Aug 2024 13:50:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/4] firmware: ti_sci: Introduce Power Management Ops
+To: Kevin Hilman <khilman@baylibre.com>, Nishanth Menon <nm@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
+        Markus
+ Schneider-Pargmann <msp@baylibre.com>
+References: <20240814-lpm-constraints-firmware-msp-v10-0-bee4314bbdc8@baylibre.com>
+ <20240814-lpm-constraints-firmware-msp-v10-3-bee4314bbdc8@baylibre.com>
+Content-Language: en-US
+From: Akashdeep Kaur <a-kaur@ti.com>
+In-Reply-To: <20240814-lpm-constraints-firmware-msp-v10-3-bee4314bbdc8@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: E5FEF1FFB4
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-In order to minimize required special handling for running as Xen PV
-dom0, the memory layout is modified to match that of the host. This
-requires to have only RAM at the locations where Xen allocated memory
-is living. Unfortunately there seem to be some machines, where ACPI
-NVS is located at 64 MB, resulting in a conflict with the loaded
-kernel or the initial page tables built by Xen.
+On 14/08/24 21:09, Kevin Hilman wrote:
+> From: Dave Gerlach <d-gerlach@ ti. com> Introduce power management ops 
+> supported by the TISCI Low Power Mode API [1]. 1) 
+> TISCI_MSG_LPM_WAKE_REASON Get which wake up source woke the SoC from Low 
+> Power Mode. The wake up source IDs will be
+> ZjQcmQRYFpfptBannerStart
+> This message was sent from outside of Texas Instruments.
+> Do not click links or open attachments unless you recognize the source 
+> of this email and know the content is safe.
+> Report Suspicious
+> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!tFdqXRfP9mwbCoXPtNggdrCuJ3bSsNDHabWG8s9g6Hh_v3tSab2OpTcpCeIxxvksAU_Fa5Zl41XmoQoqJiZdQtEck4kHNZot31hxXq-ZtaRCwdotcPeN9ST2tD8$>
+> ZjQcmQRYFpfptBannerEnd
+> 
+> From: Dave Gerlach <d-gerlach@ti.com>
+> 
+> Introduce power management ops supported by the TISCI
+> Low Power Mode API [1].
+> 
+> 1) TISCI_MSG_LPM_WAKE_REASON
+> Get which wake up source woke the SoC from Low Power Mode.
+> The wake up source IDs will be common for all K3 platforms.
+> 
+> 2) TISCI_MSG_LPM_SET_DEVICE_CONSTRAINT
+> Set LPM constraint on behalf of a device. By setting a constraint, the
+> device ensures that it will not be powered off or reset in the selected
+> mode.
+> 
+> 3) TISCI_MSG_LPM_SET_LATENCY_CONSTRAINT
+> Set LPM resume latency constraint. By setting a constraint, the host
+> ensures that the resume time from selected mode will be less than the
+> constraint value.
+> 
+> [1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html
+> 
+> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+> [g-vlaev@ti.com: LPM_WAKE_REASON and IO_ISOLATION support]
+> Signed-off-by: Georgi Vlaev <g-vlaev@ti.com>
+> [a-kaur@ti.com: SET_DEVICE_CONSTRAINT support]
+> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+> [vibhore@ti.com: SET_LATENCY_CONSTRAINT support]
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+[...]
 
-As ACPI NVS needs to be accessed by the kernel only for saving and
-restoring it across suspend operations, it can be relocated in the
-dom0's memory map by swapping it with unused RAM (this is possible
-via modification of the dom0 P2M map).
+My concerns are now addressed.
 
-While the E820 map can (and should) be modified right away, the P2M
-map can be updated only after memory allocation is working, as the P2M
-map might need to be extended.
-
-Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
----
-V2:
-- remap helpers split off into other patch
----
- arch/x86/xen/setup.c | 92 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 91 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index 88b2ebd23da3..5697f1cdd6a0 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -495,6 +495,8 @@ void __init xen_remap_memory(void)
- 	set_pte_mfn(buf, mfn_save, PAGE_KERNEL);
- 
- 	pr_info("Remapped %ld page(s)\n", remapped);
-+
-+	xen_do_remap_nonram();
- }
- 
- static unsigned long __init xen_get_pages_limit(void)
-@@ -625,14 +627,102 @@ phys_addr_t __init xen_find_free_area(phys_addr_t size)
- 	return 0;
- }
- 
-+/*
-+ * Swap a non-RAM E820 map entry with RAM above ini_nr_pages.
-+ * Note that the E820 map is modified accordingly, but the P2M map isn't yet.
-+ * The adaption of the P2M must be deferred until page allocation is possible.
-+ */
-+static void __init xen_e820_swap_entry_with_ram(struct e820_entry *swap_entry)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t mem_end = PFN_PHYS(ini_nr_pages);
-+	phys_addr_t swap_addr, swap_size, entry_end;
-+
-+	swap_addr = PAGE_ALIGN_DOWN(swap_entry->addr);
-+	swap_size = PAGE_ALIGN(swap_entry->addr - swap_addr + swap_entry->size);
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		entry_end = entry->addr + entry->size;
-+		if (entry->type == E820_TYPE_RAM && entry->size >= swap_size &&
-+		    entry_end - swap_size >= mem_end) {
-+			/* Reduce RAM entry by needed space (whole pages). */
-+			entry->size -= swap_size;
-+
-+			/* Add new entry at the end of E820 map. */
-+			entry = xen_e820_table.entries +
-+				xen_e820_table.nr_entries;
-+			xen_e820_table.nr_entries++;
-+
-+			/* Fill new entry (keep size and page offset). */
-+			entry->type = swap_entry->type;
-+			entry->addr = entry_end - swap_size +
-+				      swap_addr - swap_entry->addr;
-+			entry->size = swap_entry->size;
-+
-+			/* Convert old entry to RAM, align to pages. */
-+			swap_entry->type = E820_TYPE_RAM;
-+			swap_entry->addr = swap_addr;
-+			swap_entry->size = swap_size;
-+
-+			/* Remember PFN<->MFN relation for P2M update. */
-+			xen_add_remap_nonram(swap_addr, entry_end - swap_size,
-+					     swap_size);
-+
-+			/* Order E820 table and merge entries. */
-+			e820__update_table(&xen_e820_table);
-+
-+			return;
-+		}
-+
-+		entry++;
-+	}
-+
-+	xen_raw_console_write("No suitable area found for required E820 entry remapping action\n");
-+	BUG();
-+}
-+
-+/*
-+ * Look for non-RAM memory types in a specific guest physical area and move
-+ * those away if possible (ACPI NVS only for now).
-+ */
-+static void __init xen_e820_resolve_conflicts(phys_addr_t start,
-+					      phys_addr_t size)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t end;
-+
-+	if (!size)
-+		return;
-+
-+	end = start + size;
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		if (entry->addr >= end)
-+			return;
-+
-+		if (entry->addr + entry->size > start &&
-+		    entry->type == E820_TYPE_NVS)
-+			xen_e820_swap_entry_with_ram(entry);
-+
-+		entry++;
-+	}
-+}
-+
- /*
-  * Check for an area in physical memory to be usable for non-movable purposes.
-- * An area is considered to usable if the used E820 map lists it to be RAM.
-+ * An area is considered to usable if the used E820 map lists it to be RAM or
-+ * some other type which can be moved to higher PFNs while keeping the MFNs.
-  * In case the area is not usable, crash the system with an error message.
-  */
- void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
- 				   const char *component)
- {
-+	xen_e820_resolve_conflicts(start, size);
-+
- 	if (!xen_is_e820_reserved(start, size))
- 		return;
- 
--- 
-2.43.0
-
+Reviewed-by: Akashdeep Kaur <a-kaur@ti.com>
 
