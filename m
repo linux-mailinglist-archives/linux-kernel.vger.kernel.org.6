@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-293850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BBD9585BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6149585BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4386A2830D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF2428393F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A1018E742;
-	Tue, 20 Aug 2024 11:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B718E023;
+	Tue, 20 Aug 2024 11:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MfVB2p1f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EArfsFLY"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B7D18E351;
-	Tue, 20 Aug 2024 11:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF6CEEA5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724153006; cv=none; b=ohdS6wsZf+P//HJJFxNnOZ5TkILRB36HgZImtaLRNatNOJEaNztVJDfat5udOSEgYe2cIsE9tBjSM4nufv8hqrqZizCxdloPtq9+umUtTOXv6ATGibrcrDNcySd3zhOEAuW7n568sKsp7L6SPl0/lQdEUi1zk9khbpchkQa8iqc=
+	t=1724153083; cv=none; b=IKXMA7gOUlh14zg7xP5QZrKOjGbW3RdYY5LZplRO6icQD3lAY7CquCVdpIJQqT67yS8rObC4bpdvq+uFWTsCpNZqKreGog15eUIdAkcT3sO7sOOhLbQmNeohBh71Nm+6uRbmB3RhIvWMIn2+vqfuJXrzHoD1YSkHAnFBqZsvyv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724153006; c=relaxed/simple;
-	bh=vs4Ivr8mcleS9d+BMDNEetc09LxW39Zhw3a6BqOGr54=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=o/vwPYGQu4p7jCkusK/XHkSr1XVyk9HRQoSFoP+OdjxkRVZBrU3ciw38Aoxt9mBAyUGGgLvRJoJbEN+yshSwqWbdfxgIieIZYVhE/IGH0VETwkrLZ3UxfGod3SRVh5FxqwiL1yAfF+npUFKvzEhOJjgVgZBj19Sgx7k9A0tRXAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MfVB2p1f; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724153005; x=1755689005;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=vs4Ivr8mcleS9d+BMDNEetc09LxW39Zhw3a6BqOGr54=;
-  b=MfVB2p1f1TV1upLd3BcBFhWSMDmZdieXWeOuv6JEBHxlt7qKjDIK2LbW
-   NC/hWwXOGF0K3c/Zz7b14d/XNcvbHjUAPo9RVGMaq1VV3ipMzL+VQcDka
-   P1Hyw3uz8h4KkQ/cf/d6ROwz07+XWhfKPLsBKrrIvTYrQ2Ee8BHprsY2p
-   jNdOSOjjX7jflZWx0SZjzreS2xCRIit9iqZzEbzPT6EDHrqx6g1DB1coO
-   wkNluQ+ukoy+hNwLD8rEvr1LO6joFlqzRuWcLVjyExDFfcWuat8QShCGN
-   nXNcIc7KLbbwpT7PhEKUyfxu5k7hIjzaIZWi2EF5zChMY78l+x0qEnAe0
-   g==;
-X-CSE-ConnectionGUID: 42WmbfCVR6azzFLyFMk0Zw==
-X-CSE-MsgGUID: cHtoriJEQIC0OH+ccLXp8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22610067"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="22610067"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:23:24 -0700
-X-CSE-ConnectionGUID: 4IPbaCR1Sv2errOjvCyngw==
-X-CSE-MsgGUID: hKXnm7PmQoKN/hhm/ZsjQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="65059127"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.102])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:23:22 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 20 Aug 2024 14:23:18 +0300 (EEST)
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: ISST: Fix return value on last invalid
- resource
-In-Reply-To: <20240816163626.415762-1-srinivas.pandruvada@linux.intel.com>
-Message-ID: <e525b1ee-da15-a265-4e12-33c68e01b78f@linux.intel.com>
-References: <20240816163626.415762-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1724153083; c=relaxed/simple;
+	bh=NttOc7eczXOtQ0KVx7t0Zvy0JsxDTFF40ADG9Ulw65c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J3sfg0u1pPdzri05jkFOHmxG13m7xzftRO8TrjadKxfteowYgcl/euzIP76zk22kGYKa1XZS4bnZrxPB8W2hp25KZnrhM9IU6o4BssAQ7BNFtNs9fjD2W0oZDh+Aylv6/8WAFm5GdtHaGeau7gjXrHGS6nOaDnUmSqCDLwwLAH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EArfsFLY; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=50Coae5NR6FU87cPfowgVZGEde0sMWR7eCYkKTyNr38=; b=EArfsFLYn9Y3zmLBwGWAOPr/UX
+	hB+Ku2xynsxZhBJX6gVNmS7Mu/Rb2a0dDlh/s7pi6PZyJyDfQxTPQAUt5cHnCVaw9p7wAkk6N5+sU
+	8RQIlA1FbN/IPnPEQX+jD4y0nuQjpY4ExwmDercWEsp5m2KDdH8WsaGbNaaFR5sfMboPQcOfoz0xs
+	LixujdvcQiCq808Ils5Mmd7V52Z10NCfrB5Qq0vOLuWriFpWbyrvyYE7gNvrSNS/Uo/bqAbTyDuKq
+	yslY01GPsLNLDxHe6DBqcGKDBf3r9vjub5/NDCt+FVYSySDFO/Cn3c/fKYoRgRJXmR+ZV9ffS0BjR
+	CMmPPHDQ==;
+Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sgMyb-0007No-FO; Tue, 20 Aug 2024 13:24:37 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com,
+ Mary Guillemard <mary.guillemard@collabora.com>,
+ Steven Price <steven.price@arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Mary Guillemard <mary.guillemard@collabora.com>
+Subject: Re: [PATCH v3 2/2] drm/panfrost: Add cycle counter job requirement
+Date: Tue, 20 Aug 2024 13:24:59 +0200
+Message-ID: <2939807.SvYEEZNnvj@diego>
+In-Reply-To: <20240819080224.24914-3-mary.guillemard@collabora.com>
+References:
+ <20240819080224.24914-1-mary.guillemard@collabora.com>
+ <20240819080224.24914-3-mary.guillemard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, 16 Aug 2024, Srinivas Pandruvada wrote:
-
-> When only the last resource is invalid, tpmi_sst_dev_add() is returing
-> error even if there are other valid resources before. This function
-> should return error when there are no valid resources.
+Am Montag, 19. August 2024, 10:02:23 CEST schrieb Mary Guillemard:
+> Extend the uAPI with a new job requirement flag for cycle
+> counters. This requirement is used by userland to indicate that a job
+> requires cycle counters or system timestamp to be propagated. (for use
+> with write value timestamp jobs)
 > 
-> Here tpmi_sst_dev_add() is returning "ret" variable. But this "ret"
-> variable contains the failure status of last call to sst_main(), which
-> failed for the invalid resource. But there may be other valid resources
-> before the last entry.
+> We cannot enable cycle counters unconditionally as this would result in
+> an increase of GPU power consumption. As a result, they should be left
+> off unless required by the application.
 > 
-> To address this, do not update "ret" variable for sst_main() return
-> status.
->
-> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: <stable@vger.kernel.org> # 6.10+
-
-Thanks for the patch. Applied to review-ilpo.
-
-While applying, I added the answer to the obvious question: why no new 
-checks are needed for the no valid resources case (essentially, noting the 
-existing !inst check).
-
--- 
- i.
-
-> ---
->  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> If a job requires cycle counters or system timestamps propagation, we
+> must enable cycle counting before issuing a job and disable it right
+> after the job completes.
 > 
-> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 7fa360073f6e..404582307109 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1549,8 +1549,7 @@ int tpmi_sst_dev_add(struct auxiliary_device *auxdev)
->  			goto unlock_free;
->  		}
->  
-> -		ret = sst_main(auxdev, &pd_info[i]);
-> -		if (ret) {
-> +		if (sst_main(auxdev, &pd_info[i])) {
->  			/*
->  			 * This entry is not valid, hardware can partially
->  			 * populate dies. In this case MMIO will have 0xFFs.
+> Since this extends the uAPI and because userland needs a way to advertise
+> features like VK_KHR_shader_clock conditionally, we bumps the driver
+> minor version.
 > 
+> v2:
+> - Rework commit message
+> - Squash uAPI changes and implementation in this commit
+> - Simplify changes based on Steven Price comments
+> 
+> v3:
+> - Add Steven Price r-b
+> - Fix a codestyle issue
+> 
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
+On a rk3588-tiger with matching MESA build and 
+"RUSTICL_ENABLE=panfrost clpeak"
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+
+Without this change, clpeak fails with
+        clCreateCommandQueue (-35)
+
+I guess this is mainly applicable to the timestamp part, but that is
+partially in this commit too.
+
+
+Heiko
+
 
 
