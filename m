@@ -1,285 +1,159 @@
-Return-Path: <linux-kernel+bounces-294346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC267958C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:40:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03328958C71
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4862AB229E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:40:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C80FB2318A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDE11C57B4;
-	Tue, 20 Aug 2024 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584291C6894;
+	Tue, 20 Aug 2024 16:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAXys7ru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UrbWAU4M"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A217C1AE04F;
-	Tue, 20 Aug 2024 16:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB61C689F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171919; cv=none; b=iREbtoO6KtU3HC0TUk2ySqlnWDB4ArByKBBRdW+7BNzpyZuxEenZGM6WtsCths70axooBRt+qAihqyJw1gRgV0RoO+H4yyg3NnNQwom5L/1AzE2psrau0SykzcFFor4XD7yG/algzoMkJ9YYlT/htsjN31rowYy2OCCWbbyxms0=
+	t=1724171942; cv=none; b=enybFfcCG2dqPwDXVchZSozg0gRd2XMgWyh0ExfBmFUvrpA6bzwJoSdjG50b5FSZHuOl1twixyoAFLn15D7byXPsQe8tRtq7+9mYslAg0sbos3s4/wYeu8Njib4ppLoVYwPwJ9d72Tjf2IW5k38aifLDRYTC9hhIJSi/jyTNjZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171919; c=relaxed/simple;
-	bh=eTAFu5MDjrr3QkWwNJyutsTNYLYlsNqI67cfpl+Qv9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXHWWMCc5P0JeZioJTeC9epqrtjMhfv5vWUDeoMKF1JPwkGb3QpU6gZO9oxsRkmcBiOxFeuy1q9+qsr1d0GC3gp2dIklyiv2+gPX6PgQVSzJY9nfg4pls+mpUEMN+iSOPGQbp3PaNO7BIs5OprIcqx2/hQ/ccnwxmZWY6S3Uopo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAXys7ru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECDAC4AF0B;
-	Tue, 20 Aug 2024 16:38:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724171919;
-	bh=eTAFu5MDjrr3QkWwNJyutsTNYLYlsNqI67cfpl+Qv9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VAXys7rutrHrlW4Zyuz6HS3stTrofPuyIPs6AAcMEegfz062bJvYWe072vA5KIuy5
-	 R6VTDQaBlgVQpxTo/ofP99jNXx+3sr0g/0XGJG6q0mQWWYiooJ8ld2/mKVvwMEV0lP
-	 9Ylvt2UShnORRzCpuG/LQgyuGgh2uT1Z+q+RrfLPdToXo9yzvZ/yWCQx2tn1b8bbz5
-	 Wdt9Usx8eUEZqDk8WLsKaD3yIXFVBwd3oNsLtQulh6h8ga1OfuV0WD1chxa8V02vTt
-	 sm9ssfAiSBGjdTH+KgEE4e/mTy4Ocr/WJ/c51i/7b/Or1Yx8+Nyr3LjLS3cvLw2jMH
-	 gZ6YH/xorjDIg==
-Date: Tue, 20 Aug 2024 17:38:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo CV18XX SARADC binding
-Message-ID: <20240820-borough-latch-17d785301aef@spud>
-References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
- <20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
- <20240812-unwary-mongrel-9f6758bf624c@spud>
- <89aabfbe-79bf-4da7-be44-b6cbd92b72a9@bootlin.com>
+	s=arc-20240116; t=1724171942; c=relaxed/simple;
+	bh=ouBZJmIIWyzlEwtcA7FRf12ZdCEGayS+qwQL4CI9gs8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fp5YW0/kmSBL4h/ewXzq9gqm0XvZj4smdqFlEYDYHd7FYztUMKC+z4TnW2j1t+C4kJnWtXPc2Ra4nSKZ+6CbPE2rA6gB+PoajRgTM93Dz95H/4QUpJt5o/AC7RJIx+HqOn3xHobWxKErX5xB7gwPzQ5Uifa9aWcvcw35a8MiE3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UrbWAU4M; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso765655266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724171939; x=1724776739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zRCmyfsJfipKUStIwzuNn3CaXC7WIGQGA1adF+b+w+M=;
+        b=UrbWAU4MQEg1x6ngr/WhKxgplfGEehkOcZ7ExZUJMxYZMA1FKnujcC6R+HPQJ6iPIY
+         20kFFBmr4PaWsSpJcmsEWSf91tcEttaFbQQObEHJzGaWL5DVx7I2VZE/GXN8s8pRMYSm
+         OnPK3wM/aE3j2dN9vyue2vjbJi1OUI1KYeDY1GigPKn8DbD8/Kr4/ek2lRb17nE0PZsS
+         5ixZRuwiZ3uvMgj1fuDftb0cEtkH8oSOWlCFGPlRdcBC55lzN2E5AEkBXlwwt3T1ZQMV
+         5Ew3y22IUhYqclA5iVvcMrFAd+cwhi5VrT1izPGB6JMtmnNYq5ny2ZU5nbARoQcbYost
+         /xcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724171939; x=1724776739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zRCmyfsJfipKUStIwzuNn3CaXC7WIGQGA1adF+b+w+M=;
+        b=HEC7unblZMXc61NByj/7dOv3lTq3+gdugU0Ws7wS4FF0GXE1ibygzzTp6Rgu4byO7O
+         O3R+ygzFz5O9o7KA8IDiL2CpV2fUlji9Aji0BOz6Zi/Sh3NVRvto8doPQb8WNxoW9K9a
+         Rfe1pR5H1kKo5fEjOwGdrJAYxr8DnompHe00zkxvpDrcghSwvY/NwXKaIRcQYPJhofPh
+         nqs1lR/FpShMzuEkWxh5w+FArOaGQqfqYWaW5Z16vkQfBoOYkIEOdOBZGRjiMYUESj1s
+         hN5G+30QOu5THwk5Npa6MNaXbb9UknLTPj04I1XsBNJLb9EnzwSp8D/x/U+15Swq0zmI
+         /okw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsx8uOVxhiiVliqv/p90lOnPDel/n/QrjSqralR0aTSTbWfa+3lEmkCV4zfHcE2G8GHhYP7tXIbYEhIw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2op675DTqM2m6exsuxf8Ek+ZwabxgKRqfEZrbsWFAgE54muXw
+	tU5n3oGV3ckqpjbAsv9U1LLxgkp/F5xF6oMVMh29fv3taPhudzXVNld0tJqp2yoZb6onnXK4FsD
+	dtrE20DA8TmPnS8PVQpedoS0fiCg=
+X-Google-Smtp-Source: AGHT+IHG6w3sYGVsmqVqAoCdN4BiLWHhRRQ1j4Bw53D98oHKDQDeISbUZ0mC0nNznh5RdHU7dDR10H3G/Uaj4F6Pk+U=
+X-Received: by 2002:a17:906:d7d2:b0:a7a:97a9:ba23 with SMTP id
+ a640c23a62f3a-a839292f2afmr1045838966b.22.1724171938714; Tue, 20 Aug 2024
+ 09:38:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6ptQ2bA1w/WPJsRN"
-Content-Disposition: inline
-In-Reply-To: <89aabfbe-79bf-4da7-be44-b6cbd92b72a9@bootlin.com>
-
-
---6ptQ2bA1w/WPJsRN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240812230121.2658059-1-cmllamas@google.com> <20240816125046.GA24389@willie-the-truck>
+In-Reply-To: <20240816125046.GA24389@willie-the-truck>
+From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+Date: Tue, 20 Aug 2024 09:38:46 -0700
+Message-ID: <CAOZ5it0ih05MBMzQxKuD8LYTL-by5qppjj_YXqA6iuyikm0_6w@mail.gmail.com>
+Subject: Re: [PATCH] Revert "scripts/faddr2line: Check only two symbols when
+ calculating symbol size"
+To: Will Deacon <will@kernel.org>
+Cc: Carlos Llamas <cmllamas@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	John Stultz <jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 06:21:07PM +0200, Thomas Bonnefille wrote:
-> Hello Conor,
->=20
-> On 8/12/24 5:53 PM, Conor Dooley wrote:
-> > On Mon, Aug 12, 2024 at 05:00:55PM +0200, Thomas Bonnefille wrote:
-> > > The Sophgo SARADC is a Successive Approximation ADC that can be found=
- in
-> > > the Sophgo SoC.
-> > >=20
-> > > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > > ---
-> > >   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 85 +++++++++++=
-+++++++++++
-> > >   1 file changed, 85 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-=
-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-sarad=
-c.yaml
-> > > new file mode 100644
-> > > index 000000000000..846590808e5f
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.=
-yaml
-> > > @@ -0,0 +1,85 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
-> >=20
-> > Filename matching the compatible please.
-> >=20
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title:
-> > > +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analo=
-g to
-> > > +  Digital Converters
-> > > +
-> > > +maintainers:
-> > > +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > > +
-> > > +description:
-> > > +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: sophgo,cv1800b-saradc
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  '#address-cells':
-> > > +    const: 1
-> > > +
-> > > +  '#size-cells':
-> > > +    const: 0
-> > > +
-> > > +patternProperties:
-> > > +  "^channel@[0-3]+$":
-> > > +    $ref: adc.yaml
-> > > +
-> > > +    description: |
-> >=20
-> > This | is not required.
-> >=20
-> > > +      Represents the channels of the ADC.
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        description: |
-> > > +          The channel number. It can have up to 3 channels numbered =
-=66rom 0 to 2.
-> > > +        items:
-> > > +          - minimum: 0
-> > > +            maximum: 2
-> >=20
-> > Is this sufficient to limit the number of channels to 3? Aren't you rel=
-ying
-> > on the unique unit addresses warning in dtc to limit it, rather than
-> > actually limiting with min/maxItems?
-> >=20
-> It seems like I can't use min/maxItems on this property. I think that it =
-is
-> using size-cells + address-cells to deduce that the number of items should
-> be equal to 1.
+On Fri, Aug 16, 2024 at 5:50=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Mon, Aug 12, 2024 at 11:01:20PM +0000, Carlos Llamas wrote:
+> > This reverts commit c02904f05ff805d6c0631634d5751ebd338f75ec.
+> >
+> > Such commit assumed that only two symbols are relevant for the symbol
+> > size calculation. However, this can lead to an incorrect symbol size
+> > calculation when there are mapping symbols emitted by readelf.
+> >
+> > For instance, when feeding 'update_irq_load_avg+0x1c/0x1c4', faddr2line
+> > might need to processes the following readelf lines:
+> >
+> >  784284: ffffffc0081cca30   428 FUNC    GLOBAL DEFAULT     2 update_irq=
+_load_avg
+> >   87319: ffffffc0081ccb0c     0 NOTYPE  LOCAL  DEFAULT     2 $x.62522
+> >   87321: ffffffc0081ccbdc     0 NOTYPE  LOCAL  DEFAULT     2 $x.62524
+> >   87323: ffffffc0081ccbe0     0 NOTYPE  LOCAL  DEFAULT     2 $x.62526
+> >   87325: ffffffc0081ccbe4     0 NOTYPE  LOCAL  DEFAULT     2 $x.62528
+> >   87327: ffffffc0081ccbe8     0 NOTYPE  LOCAL  DEFAULT     2 $x.62530
+> >   87329: ffffffc0081ccbec     0 NOTYPE  LOCAL  DEFAULT     2 $x.62532
+> >   87331: ffffffc0081ccbf0     0 NOTYPE  LOCAL  DEFAULT     2 $x.62534
+> >   87332: ffffffc0081ccbf4     0 NOTYPE  LOCAL  DEFAULT     2 $x.62535
+> >  783403: ffffffc0081ccbf4   424 FUNC    GLOBAL DEFAULT     2 sched_pelt=
+_multiplier
+> >
+> > The symbol size of 'update_irq_load_avg' should be calculated with the
+> > address of 'sched_pelt_multiplier', after skipping the mapping symbols
+> > seen in between. However, the offending commit cuts the list short and
+> > faddr2line incorrectly assumes 'update_irq_load_avg' is the last symbol
+> > in the section, resulting in:
+> >
+> >   $ scripts/faddr2line vmlinux update_irq_load_avg+0x1c/0x1c4
+> >   skipping update_irq_load_avg address at 0xffffffc0081cca4c due to siz=
+e mismatch (0x1c4 !=3D 0x3ff9a59988)
+> >   no match for update_irq_load_avg+0x1c/0x1c4
+> >
+> > After reverting the commit the issue is resolved:
+> >
+> >   $ scripts/faddr2line vmlinux update_irq_load_avg+0x1c/0x1c4
+> >   update_irq_load_avg+0x1c/0x1c4:
+> >   cpu_of at kernel/sched/sched.h:1109
+> >   (inlined by) update_irq_load_avg at kernel/sched/pelt.c:481
+> >
+> > Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+> > Cc: John Stultz <jstultz@google.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > ---
+> >  scripts/faddr2line | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Acked-by: Will Deacon <will@kernel.org>
+>
+> I'm assuming that Josh will pick this up.
+>
+> Cheers,
+>
+> Will
 
-I think I was mistaken in talking about mix/max items here. I had the
-right idea, but mentioned an incorrect solution - sorry about that. I
-wasn't talking about the number of elements in the reg property, what I
-meant was limiting the number of channel nodes in the first place -
-something which min/maxItems cannot do. As examples of the problem I was
-thinking of, see the below two examples:
+Acked-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
 
-    adc@30f0000 {
-        compatible =3D "sophgo,cv1800b-saradc";
-        reg =3D <0x030f0000 0x1000>;
-        clocks =3D <&clk CLK_SARADC>;
-        interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
-        #address-cells =3D <1>;
-        #size-cells =3D <0>;
+Good catch. Thanks for the fix.
 
-        channel@0 {
-            reg =3D <0>;
-        };
-        channel@2 {
-            reg =3D <2>;
-        };
-        channel@22 {
-            reg =3D <2>;
-        };
-    };
+Just curious: What compiler did you use to build the kernel, where you
+hit this error with 'update_irq_load_avg'? I was unable to reproduce
+it with LLVM 14. Thanks!
 
-    adc@30f0000 {
-        compatible =3D "sophgo,cv1800b-saradc";
-        reg =3D <0x030f0000 0x1000>;
-        clocks =3D <&clk CLK_SARADC>;
-        interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
-        #address-cells =3D <1>;
-        #size-cells =3D <0>;
+-Brian
 
-        channel@0 {
-            reg =3D <0>;
-        };
-        channel@2 {
-            reg =3D <2>;
-        };
-        channel@22 {
-            reg =3D <2>;
-        };
-    };
 
-The solution is simple, remove the + from the regex. Sorry for sending
-you on the wrong track Thomas.
-
-Thanks,
-Conor.
-
-> Looking at the dtschema repository it seems to be the case in reg.yaml wi=
-th
-> address-cells/size-cells =3D 2/2, 1/1 and 2/1.
-> If I try to use maxItems here :
->=20
->     properties:
->       reg:
->         maxItems: 1
->         items:
->           - minimum: 0
->             maximum: 2
->=20
-> I get this strange error message from `make dt_binding_check`:
->=20
-> DTEX
-> Documentation/devicetree/bindings/iio/adc/sophgo,cv1800b-saradc.example.d=
-ts
-> /home/thomas/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv180=
-0b-saradc.yaml:
-> patternProperties:^channel@[0-2]+$:properties:reg: {'maxItems': 1, 'items=
-':
-> [{'minimum': 0, 'maximum': 2}]} should not be valid under {'required':
-> ['maxItems']}
-> 	hint: "maxItems" is not needed with an "items" list
-> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-> /home/thomas/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv180=
-0b-saradc.yaml:
-> patternProperties:^channel@[0-2]+$:properties:reg: 'anyOf' conditional
-> failed, one must be fixed:
-> 	'items' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no
-> constraints defined for the values.
-> 	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum',
-> 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	'items' is not one of ['description', 'deprecated', 'const', 'enum',
-> 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	1 is less than the minimum of 2
-> 		hint: Arrays must be described with a combination of
-> minItems/maxItems/items
-> 	hint: cell array properties must define how many entries and what the
-> entries are when there is more than one entry.
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
->=20
-> Isn't it okay to just use minimum and maximum and rely on
-> address-cells/size-cells for the number of items allowed ?
->=20
-
---6ptQ2bA1w/WPJsRN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsTGiQAKCRB4tDGHoIJi
-0lmMAQCp1+yBiaWxL3PTB/rJ5FazFWt3PM2XHDc3R2L8MtUWpwD/dkGI2qROY760
-7Swgkl94fpctemkgXSdKI98EEnnPEAE=
-=3s0l
------END PGP SIGNATURE-----
-
---6ptQ2bA1w/WPJsRN--
+-Brian
 
