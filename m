@@ -1,210 +1,133 @@
-Return-Path: <linux-kernel+bounces-294660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B6D959101
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:17:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85120959133
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F881F23194
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11B3BB238AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E65D1C8FA0;
-	Tue, 20 Aug 2024 23:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165E81C8FAF;
+	Tue, 20 Aug 2024 23:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="niLKJi3K"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="MGudtBeE"
+Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E6166F17
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D3F14AD2B;
+	Tue, 20 Aug 2024 23:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724195854; cv=none; b=rf9kVVQqifblvDXMGVkD2/eboQb/09xlvVJp5HQpWKebcoTtgXyzXBsLUXAIsebD60Lh1IBZdBJuvkEtklNEyYbrxoYU9dAs+9quF2YCZGfaHgtrmmXAfYz95cdcxzm0GMffapFY6a2l/IGQjrVwjeC6QIo9OK+8LnPyf7vHbOo=
+	t=1724196559; cv=none; b=D9zh8/oRtHz6Sw+3wunavMs70ZFPit5VY95xS3tXF4UdVUjq09vbClSS5irhjNx4kUCL/JeLboyLIeMG586NV0hIWPJVQJRbvJK5D2BcuTKJ7OhxYMTM+/lq3Q1x2MFkeLmlPHkOhL94Gqjy8manyyonaE5MhXJP8U1QgcKYgFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724195854; c=relaxed/simple;
-	bh=XIitAwc2m/XIDG0E+BXyhLhiDlqGkwDvEQ2KrtnoW/E=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BRtFERzeCe5b/B5/n5H0fzNfoQ4/CFKT8RYqxilkkYb/TazFwBQtwlMgZu3OybQ6J1Dc0ZGNXmYuQsnMVKTdQI5zv1RDcWHzAqgCAVGHwnX3U1TCH/6cmTtUCAr+8VUCh67PPnottcZiLx3Tc2o+T8tsXyGw2+xfCd6FrNVWvGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=niLKJi3K; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4280921baa2so8397145e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:17:32 -0700 (PDT)
+	s=arc-20240116; t=1724196559; c=relaxed/simple;
+	bh=0WCWP+oyVeqEVlXNjJOFlLyRPxyMA+1b22SxkKDp7XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSPJwe7udjQ/eYcWTbe0NNqtldM5vwMRhxwstRswc1Hyw1lQOjAC8mnongkSTd1eZ6+QdwWgHd+60Fzrjz1o/B6ISsmIz0tCp2v6Bki4nfj4wLd++7Rau+SGRRqitSL0DFokboFdbRKrvQK5OQK24SU7F+VzqrckfqnQzcqHz54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=MGudtBeE; arc=none smtp.client-ip=211.125.140.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724195851; x=1724800651; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oYTQ5x5CeStFc2/B521mMkl8hxPWD6L8NQAxmM43O7o=;
-        b=niLKJi3K+5o9O8d+KfDE/kS+J5Sr419ZOVKDZzRd1dKZ6sju9JW94g9zZb3pzXLbKA
-         WK2AikgFEayfsahRL6hdV8WwkR5erwra9ONYXfFSyfj+FkCwb8Wu99olxITT6PFabiUL
-         sCmGJ9Edcs/iYDZRkk+bH59coKWl90Sb4iYqASReUQDcgt7/aYket8X5jRI5aLaOVXDI
-         Rg8Zkca8btFOvXE70GMt/7EmLsbKgJp5Hzeqn/wPvsRS5K/YGaSzN/ZyQcDAAyIMYnaX
-         0CDnsx3CEIyzhbxDeQiyyLcTsr1ZtiljkRwJkIF+sVGK7exy/wZQ1otjuwWHeldlGCeN
-         77ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724195851; x=1724800651;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oYTQ5x5CeStFc2/B521mMkl8hxPWD6L8NQAxmM43O7o=;
-        b=j4djBwHe8OHWTp+AShg4+BH4mMHY1KWNxrtjga0wB6NCdwogOLBRZf3ZPezvvkLVt5
-         Mnc/SyClxGfO5AdL+DBSXCGUF7X3HfcJAEBMiw4qkv2d9zBEg4JId44RuwGYzhbOvyg9
-         HETTOlpEyVzyvhoL96m6tI72M/8O/eF/RWBuOjGGAa40RProOWG1cPfBAZ2myGDOQv/i
-         LrHAqLhz77tBr4wpSS3GK4z2p9RcXh8lJssedLyMQ3p1Rpb1g0vDNnpEou6MY4KhXBOH
-         v7KqFDoBRB2ksHJ1oGOQ9qNNbxQQ5QzPSycOB/IAq2xIFB7V4AUW3Hb4XNB02dyDGNQU
-         Ophg==
-X-Forwarded-Encrypted: i=1; AJvYcCWniN+rW7qcx+QdagaGZ1ZmCpYc1tTUjC9Ddk1vMMoQI0evfpe1JtcZZTdmUGfpnwSE+tp4NDFe/GJiDqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH/kTJoyydSOFbLm1mwyuoFIEfrISCr835Dxy76uwaRVqnhVNg
-	kmH/MkHAkdNtEHR+xWFzn3rBTT3YC8I/Ek5lVHuWNv9g/sXFiR2MurpQr17rth4=
-X-Google-Smtp-Source: AGHT+IF4mDjdThKSBPxP/wA2ZFRyHKOXq4oRI3+x/erbrgvHiqhkdibYDhdHRcvB60/WbdhWlJCuAg==
-X-Received: by 2002:a5d:59a9:0:b0:365:da7f:6c13 with SMTP id ffacd0b85a97d-372fd580272mr171785f8f.2.1724195850790;
-        Tue, 20 Aug 2024 16:17:30 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:1050:bb01:8164:778c:a10:dcfc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839359f7sm819139566b.131.2024.08.20.16.17.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2024 16:17:30 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+  d=sony.com; s=s1jp; t=1724196557; x=1755732557;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0WCWP+oyVeqEVlXNjJOFlLyRPxyMA+1b22SxkKDp7XY=;
+  b=MGudtBeEXYt18A0Efa5J8dr86Hek4bN4wds+VCVLtlsMAehiJUayJVFW
+   iXNhgiUligN2S3S7+XKTVrq0OOXSkJ8iWfCVEnHCJp9ft78up3W7uB7ZO
+   0oKNdeVOuj8AggJEFWU5USdrLZV+nSiY5cpFarSxm86Pfvjbli1HfQaFw
+   R5COPCj4TUrnJGZu9ir7gx4/YQwAJdH+lbh20Ir9lsZab0217EUfUkM5b
+   A6z2+mN+jh5gRo+fXuk/UKEj8C8lUt07J+6uLiuYvnaKHqDYs+Nk7wbJf
+   8RVfzS0SfYelvKD8/mdnDNo2ZVj2MerXHjTm0qIyeI01zxcxHwt2CP5WL
+   Q==;
+Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
+  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:19:07 +0900
+X-IronPort-AV: E=Sophos;i="6.10,163,1719846000"; 
+   d="scan'208";a="425268578"
+Received: from unknown (HELO LXJ00013846) ([IPv6:2001:cf8:1:1611:9e7b:efff:fe46:27de])
+  by jpmta-ob02.noc.sony.co.jp with ESMTP; 21 Aug 2024 08:19:07 +0900
+Date: Wed, 21 Aug 2024 08:18:58 +0900
+From: Keita Aihara <keita.aihara@sony.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jonathan Bell <jonathan@raspberrypi.com>, Tim.Bird@sony.com,
+	Shingo.Takeuchi@sony.com, Masaya.Takahashi@sony.com,
+	keita.aihara@sony.com, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: core: apply SD quirks earlier during probe
+Message-ID: <20240820231858.GA439714@sony.com>
+References: <20240802032121.GA4019194@sony.com>
+ <CAPDyKFoTdMpvuXR16OqY8G6t_4jCJDW9+wz=_fBc=kZSL1KbqQ@mail.gmail.com>
+ <20240806013610.GA3438728@sony.com>
+ <CAPDyKFqe2kGysPobXPKXpMhY8=nYRu9b9Om6uetrk9J858dEeg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RESEND PATCH v4] ext4: Annotate struct ext4_xattr_inode_array
- with __counted_by()
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <20240813070707.34203-1-thorsten.blum@toblux.com>
-Date: Wed, 21 Aug 2024 01:17:19 +0200
-Cc: linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <90467BBB-59F4-48C5-AD18-4FDDAE3CF321@toblux.com>
-References: <20240813070707.34203-1-thorsten.blum@toblux.com>
-To: tytso@mit.edu,
- adilger.kernel@dilger.ca,
- Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqe2kGysPobXPKXpMhY8=nYRu9b9Om6uetrk9J858dEeg@mail.gmail.com>
 
-On 13. Aug 2024, at 09:07, Thorsten Blum <thorsten.blum@toblux.com> =
-wrote:
->=20
-> Add the __counted_by compiler attribute to the flexible array member
-> inodes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
->=20
-> Remove the now obsolete comment on the count field.
->=20
-> In ext4_expand_inode_array(), use struct_size() instead of offsetof()
-> and remove the local variable count. Increment the count field before
-> adding a new inode to the inodes array.
->=20
-> Compile-tested only.
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
-> Changes in v2:
-> - Adjust ext4_expand_inode_array() as suggested by Gustavo A. R. Silva
-> - Use struct_size() and struct_size_t() instead of offsetof()
-> - Link to v1: =
-https://lore.kernel.org/linux-kernel/20240729110454.346918-3-thorsten.blum=
-@toblux.com/
->=20
-> Changes in v3:
-> - Use struct_size() instead of struct_size_t() as suggested by Kees =
-Cook
-> - Remove the local variable count as suggested by Gustavo A. R. Silva
-> - Increment count before adding a new inode as suggested by Gustavo
-> - Link to v2: =
-https://lore.kernel.org/linux-kernel/20240730172301.231867-4-thorsten.blum=
-@toblux.com/
->=20
-> Changes in v4:
-> - Remove unnecessary count assignment and adjust copying the whole
->  struct as suggested by Gustavo
-> - Link to v3: =
-https://lore.kernel.org/linux-kernel/20240730205509.323320-3-thorsten.blum=
-@toblux.com/
-> ---
-> fs/ext4/xattr.c | 22 ++++++++++------------
-> fs/ext4/xattr.h |  4 ++--
-> 2 files changed, 12 insertions(+), 14 deletions(-)
->=20
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 46ce2f21fef9..263567d4e13d 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -2879,33 +2879,31 @@ ext4_expand_inode_array(struct =
-ext4_xattr_inode_array **ea_inode_array,
-> if (*ea_inode_array =3D=3D NULL) {
-> /*
-> * Start with 15 inodes, so it fits into a power-of-two size.
-> - * If *ea_inode_array is NULL, this is essentially offsetof()
-> */
-> - (*ea_inode_array) =3D
-> - kmalloc(offsetof(struct ext4_xattr_inode_array,
-> - inodes[EIA_MASK]),
-> - GFP_NOFS);
-> + (*ea_inode_array) =3D kmalloc(
-> + struct_size(*ea_inode_array, inodes, EIA_MASK),
-> + GFP_NOFS);
-> if (*ea_inode_array =3D=3D NULL)
-> return -ENOMEM;
-> (*ea_inode_array)->count =3D 0;
-> } else if (((*ea_inode_array)->count & EIA_MASK) =3D=3D EIA_MASK) {
-> /* expand the array once all 15 + n * 16 slots are full */
-> struct ext4_xattr_inode_array *new_array =3D NULL;
-> - int count =3D (*ea_inode_array)->count;
->=20
-> - /* if new_array is NULL, this is essentially offsetof() */
-> new_array =3D kmalloc(
-> - offsetof(struct ext4_xattr_inode_array,
-> - inodes[count + EIA_INCR]),
-> - GFP_NOFS);
-> + struct_size(*ea_inode_array, inodes,
-> +    (*ea_inode_array)->count + EIA_INCR),
-> + GFP_NOFS);
-> if (new_array =3D=3D NULL)
-> return -ENOMEM;
-> memcpy(new_array, *ea_inode_array,
-> -       offsetof(struct ext4_xattr_inode_array, inodes[count]));
-> +       struct_size(*ea_inode_array, inodes,
-> +   (*ea_inode_array)->count));
-> kfree(*ea_inode_array);
-> *ea_inode_array =3D new_array;
-> }
-> - (*ea_inode_array)->inodes[(*ea_inode_array)->count++] =3D inode;
-> + (*ea_inode_array)->count++;
-> + (*ea_inode_array)->inodes[(*ea_inode_array)->count - 1] =3D inode;
-> return 0;
-> }
->=20
-> diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-> index bd97c4aa8177..e14fb19dc912 100644
-> --- a/fs/ext4/xattr.h
-> +++ b/fs/ext4/xattr.h
-> @@ -130,8 +130,8 @@ struct ext4_xattr_ibody_find {
-> };
->=20
-> struct ext4_xattr_inode_array {
-> - unsigned int count; /* # of used items in the array */
-> - struct inode *inodes[];
-> + unsigned int count;
-> + struct inode *inodes[] __counted_by(count);
-> };
->=20
-> extern const struct xattr_handler ext4_xattr_user_handler;
-> --=20
-> 2.46.0
->=20
+On Tue, Aug 20, 2024 at 12:10:36PM +0200, Ulf Hansson wrote:
+> On Tue, 6 Aug 2024 at 03:36, Keita Aihara <keita.aihara@sony.com> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 12:14:25PM +0200, Ulf Hansson wrote:
+> > > On Fri, 2 Aug 2024 at 05:21, Keita Aihara <keita.aihara@sony.com> wrote:
+> > > >
+> > > > Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's extended
+> > > > registers are parsed prior to the quirk being applied in mmc_blk.
+> > >
+> > > In what way is it a problem to read the extended registers first?
+> >
+> > SD quirks are referenced by mmc_card_broken_sd_cache() in
+> > sd_parse_ext_reg_perf(). If the quirk is set, SD_EXT_PERF_CACHE is not
+> > set to card->ext_perf.feature_support and the cache support will not be
+> > enabled.
+> >
+> > Therefore, SD quirks should be initialized before parsing the extension
+> > registers.
+>
+> Makes perfect sense! Please include some of this information in the
+> commit message to make this clear.
 
-Could someone take another look at this?
+Sure.
 
-Thanks,
-Thorsten=
+>
+> >
+> > >
+> > > >
+> > > > Split this out into an SD-specific list of quirks and apply in
+> > > > mmc_sd_init_card instead.
+> > > >
+> > > > Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston Canvas Go Plus from 11/2019")
+> > > > Authored-by: Jonathan Bell <jonathan@raspberrypi.com>
+>
+> This tag isn't normally what we use. I suggest you change the author
+> of the patch to Jonathan and keep his sob-tag.
+>
+> Then add yourself with a "Co-developed-by" tag and keep your sob-tag.
+
+Thank you for your suggestion.
+Removed "Authored-by" tag and added "Co-developed-by" tag to right after
+the first "Signed-off-by" tag by Jonathan.
+
+[PATCH v2] mmc: core: apply SD quirks earlier during probe
+
+I hope the v2 patch meets the format to treat Jonathan as the patch
+author.
+
+>
+> > > > Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+> > > > Signed-off-by: Keita Aihara <keita.aihara@sony.com>
+>
+> [...]
+>
+> Kind regards
+> Uffe
+
+Best regards,
+Keita Aihara
 
