@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-293147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B14B957B4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA36957B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857121F22E1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AD9F1F234EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A3022EF2;
-	Tue, 20 Aug 2024 02:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B311BC4E;
+	Tue, 20 Aug 2024 01:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKxxh74m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="arS5xy8q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28CC13FF6;
-	Tue, 20 Aug 2024 02:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3786D208D1
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724119594; cv=none; b=oKu2r+xq/ulcKWNbf1aaZ/AOE4EDiDp8PZRz9w4OzeLmNRx5X8mJpglzUwdZ8lyhQ2fAz1i+2vahKEQjPYwUk4djBOWUo9zAHoBUW8WeXLEQ1QS55rw+6PpVmP3uyazZywclvyUW6V5U/smNt0oWgNoD9lE6X9oow936MsaSncY=
+	t=1724118933; cv=none; b=fARZKDL4cGq6wsKurbhbUCLzwIDCOJMXvOuGPlycLiy9kQH9AlJFTur1f8Cj2jbuePPTTvtD7Wodp5HQ5E8IdAX2SRJk/+LSpIX++qH8Vadm9ajO5UD8WKJGdl8Pnf4voQh3mtiJtSmmSX6Uz6fvurva/8FqsLThiR/mPy2G95k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724119594; c=relaxed/simple;
-	bh=fh+LqKvQID3v99VQmiW+4H0iPdZXRRmdgmN34/NV/mQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZGFTA4BNZcP7SULZuZFhFRmaVDfmT4/8odVdY2nCoASsBpgsW5EyJGSKQgGEqcA2pzfqemnJYc988njbmrLiaCz/2M6nA5ddFQJiKCiFvYk/ZqklEUUBcnpya/nV4Dt9zwroP4pI3xBQIcPKZT2V08U5gRnKjG1zBvMFXA0ODpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKxxh74m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C097FC32782;
-	Tue, 20 Aug 2024 02:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724119592;
-	bh=fh+LqKvQID3v99VQmiW+4H0iPdZXRRmdgmN34/NV/mQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=eKxxh74mkEYhi3zrOJmqVDvgJ1FsNYgjoWznLeacI4HOheIm00rB/q8AMk5RmWlzR
-	 VBbR4ZXIeQ/+XpAdLp2AOfbfb0J0WW8tlcPc1u9bFhAOqnBPvCsIlDOozS8lYKKnOD
-	 l7rGTJPm27lU/HR7cYSFzTQngrrVWPWHrY3tXfY+W1RBa9iEnsDsZU3slSwiC65N1X
-	 TP7jfXtfKpy98S3+n5nLlsI1j8Nm8H7/I2V1/XQ9597eZwVuC/bJ20N1mwzldxNYqz
-	 dpWn1dJaznWda9LI7nFWLyJrD4gLyNni+PkvsRO7V8ByVQYw9aBE1jMvX8+JVIeOlo
-	 hGbD+ZhCmv+lA==
-Message-ID: <789f9bc0-45f4-4602-9f8c-c286fa7b922b@kernel.org>
-Date: Mon, 19 Aug 2024 21:06:29 -0500
+	s=arc-20240116; t=1724118933; c=relaxed/simple;
+	bh=Fs6hkqs4+nnM/y3MBMIDnu+N1GXOdKH7Gg1wV/jG0vM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mN/i8fLOjh7h2AAIImVwhOG1BPXsbqaGosIPMhb97UR+XkSLXPguPJZw+1va9h/Sx0L1Yd2N1nu+8KBH07gHpJHuoKY+rZ1a+oo1ieNpYTwL7mNcZpGeT1wFhxn518o41NP5EWYYSxZ5398S6e8SQPrl68Kitx0M3rXYGT03mec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=arS5xy8q; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724118933; x=1755654933;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Fs6hkqs4+nnM/y3MBMIDnu+N1GXOdKH7Gg1wV/jG0vM=;
+  b=arS5xy8qq5g5EYSYJ1bVaF6JueNzHkYdtOrJ4xrmHSuN9R564zNQ+3mf
+   gkZa160vUmXSju1gCiyJ0kShhD07GVz3W1a+DIrzjiOhE2vKXVkAna+e7
+   6/tvJsKmakSqrvPp6R8pujemRHVE8D55WEx9P2RFA1W/7vDBoqL2CRMQ1
+   IgVJN9vzdoG+rFOFgKJK3eX/WTrO4WnpzfaNHzJpWvszc2sTiSBEbi2M+
+   CWONp5mDBgjz+BZKvMscfy/YwgXYSZqT/P9aePcliKxqcKepcbBVZ2Nr9
+   bOJvrEsfLPoj+uE3dC6pE35o7hm49aSOPknVjDc1EdF3IGruoBhBpcTd3
+   A==;
+X-CSE-ConnectionGUID: puZdpvK1QRy1mH6clZHPtw==
+X-CSE-MsgGUID: Cn34mRU7SECNa0E31nuwJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26191770"
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="26191770"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 18:55:32 -0700
+X-CSE-ConnectionGUID: QO16maRRRdyvDAKhmK9b6A==
+X-CSE-MsgGUID: 8Gx4zTJ9RbGFSxmVhiM7Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="83759616"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by fmviesa002.fm.intel.com with ESMTP; 19 Aug 2024 18:55:28 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	Yongwei Ma <yongwei.ma@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v3 0/4] Enable PMU for ArrowLake-H
+Date: Tue, 20 Aug 2024 07:38:49 +0000
+Message-Id: <20240820073853.1974746-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Put XHCI controllers into D3 at S4/S5
-From: Mario Limonciello <superm1@kernel.org>
-To: Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- mika.westerberg@linux.intel.com,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20240712185418.937087-1-superm1@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240712185418.937087-1-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/12/24 13:54, superm1@kernel.org wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> When the system is put into S4 or S5 XHCI controllers remain in D0.  This
-> causes higher power consumption and may compromise energy certifications.
-> Consequently some systems consume more power in S5 than s0i3.
-> 
-> This affects all PCIe devices, but looking at breakdowns XHCI is the
-> biggest offender for power consumption.
-> 
-> This series checks if any wakeups are needed and puts controllers into D3
-> if no wakeup necessary.
-> 
-> This series is a spiritual successor to [1] which aimed to do this more
-> generally in PCI.  It also accomplishes similar goals as [2], but aims for
-> both S4 and S5.
-> 
-> [1] https://lore.kernel.org/linux-pci/20231213182656.6165-1-mario.limonciello@amd.com/#t
-> [2] https://lore.kernel.org/linux-pci/9d2f1619-1c61-4e8c-b28d-d4eddefa45c3@amd.com/T/
-> 
-> Mario Limonciello (2):
->    xhci: pci: If no ports have wakeup enabled then disable PCI device at
->      S4
->    xhci: pci: Put XHCI controllers into D3hot at shutdown
-> 
->   drivers/usb/host/xhci-pci.c | 17 +++++++++++------
->   1 file changed, 11 insertions(+), 6 deletions(-)
-> 
+No code changes comparing v2, just add back the missed reviewed-by.
 
-Hello,
+Changes:
+  v2 -> v3:
+    * Add Kan's review-by.
+  v1 -> v2:
+    * Change PMU name of 2nd atom uarch cores to "cpu_lowpower" (Peter)
+    * Rename "hybrid_small2" to "hybrid_tiny" (Peter)
+    * Rebase to 6.11-rc4
 
-Any feedback for this series?
+History:
+  * v2: https://lore.kernel.org/all/20240819145543.1833126-1-dapeng1.mi@linux.intel.com/
+  * v1: https://lore.kernel.org/all/20240808140210.1666783-1-dapeng1.mi@linux.intel.com/
 
-Thanks,
+Dapeng Mi (4):
+  perf/x86: Refine hybrid_pmu_type defination
+  x86/cpu/intel: Define helper to get CPU core native ID
+  perf/x86/intel: Support hybrid PMU with multiple atom uarchs
+  perf/x86/intel: Add PMU support for ArrowLake-H
+
+ arch/x86/events/intel/core.c | 129 ++++++++++++++++++++++++++++++++---
+ arch/x86/events/intel/ds.c   |  21 ++++++
+ arch/x86/events/perf_event.h |  34 ++++++---
+ arch/x86/include/asm/cpu.h   |   6 ++
+ arch/x86/kernel/cpu/intel.c  |  15 ++++
+ 5 files changed, 187 insertions(+), 18 deletions(-)
+
+
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+-- 
+2.40.1
+
 
