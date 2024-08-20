@@ -1,96 +1,142 @@
-Return-Path: <linux-kernel+bounces-293454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9E9957FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:36:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6429957FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9771F1C24575
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:36:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF94B22EAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A11189F27;
-	Tue, 20 Aug 2024 07:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6F8189F5D;
+	Tue, 20 Aug 2024 07:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLG8ZfDT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mu4JE11H"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225381667ED;
-	Tue, 20 Aug 2024 07:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AF3176249
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139318; cv=none; b=nc+4wyUzSsWJygVwJis4XPpNBemqnaZOXyk9K70TlLS8VKfYDs01E2S2OhZryPGn739Bi2yderjQW8AMuG/y17J7IH+tRTuoPJVK5xRh2s/COgNcgMjiEPlq8XwgKS7altt2dM4T9bmzleg45UCNrb4NKu/rMQD0ghsv5J/+CS8=
+	t=1724139346; cv=none; b=byU3FfGdzfdpfcREc3DV7vWijxXHPOw//kThi1TDt4+W8xZgmkWdMThMDlz9aVyZ12fWg5DA6kKPkovcbuAuwMjQpkGVcVDTC04dqEmmmtgH2TjwuS7Hr8T4zBWiGabB6s4nF0EAyDEy03aF1R1wvhaGgmryHUcKcLPGEz2A+8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139318; c=relaxed/simple;
-	bh=VlFp3AV+5ntIAXoC1p5XsTcSavlW4JGSdKmcfmgxiA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9jagB0+xeQvqzb1gaLpofObqSMjYRtDd/g4e9LDI4tqp7wCoHL/HjJtRHY9m+75VdCGc0DXhhyoBRMWKwfxwafGd+pDX/7bu65e4N1mEI98mSk7wqwwN3yVBW++A8I4DppCfalXPqHTcIAAF9Tc8R8/WmhMi6Y+xPgnkgDi3B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLG8ZfDT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21F6C4AF09;
-	Tue, 20 Aug 2024 07:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724139317;
-	bh=VlFp3AV+5ntIAXoC1p5XsTcSavlW4JGSdKmcfmgxiA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NLG8ZfDTt9MYyQTQ3bqC7GyppuVm23T4iHs6c/gwcMpKcxOdemVUGu26+W6mDF2bu
-	 E3siv6F9F1jTR7H9av0b7G5EfNueVKZWMuaCcz6FCAHjw3FqsfXGgO7DWu5jhfq+u3
-	 QIg4uoHC+L2wt4Pn7hPMg2qNw1vlE/qoeQk6oB6+M2RVEi2+EcO6OmMu33EcJXzUP1
-	 w4MuSHe84DnLpkoj2GMck3hWYZ7SQ2DGnSN8XG+iNfhHHylRfiKHBY+C2E8su092iT
-	 Cl70P842YearIv8oL1wKXb9zIOLSyY5/uraFBRFaZSz4A9Lm9FwrkC/rrwvzNfkstT
-	 w46TW2PzUzDxg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgJOe-000000005rZ-1Thw;
-	Tue, 20 Aug 2024 09:35:16 +0200
-Date: Tue, 20 Aug 2024 09:35:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] soc: qcom: pmic_glink: Actually communicate with
- remote goes down
-Message-ID: <ZsRHNIMy7KbCaE7x@hovoldconsulting.com>
-References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
- <20240819-pmic-glink-v6-11-races-v2-3-88fe3ab1f0e2@quicinc.com>
- <ZsRAnWgsoSHmrFE5@hovoldconsulting.com>
+	s=arc-20240116; t=1724139346; c=relaxed/simple;
+	bh=0qyYcTUUT+BcObMIlMH6dB1FjWgwXtRcksr81lpXz2Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sS2RHp9DMK4Ez9Ch/uw5NPE/Kuw9/UkyELsEGtoJ6rP7bqZzuVXoFXJsTPYDQpWkMf0EQY4i2+6UMPwLlrjp1yQhnwr71k3m5da5bX++reGztsf/MsWcq4NgLOIBa7VL949WuZJ7kU26PRnM6KixisHIKzmEKbV/WIUrEAQRQJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mu4JE11H; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724139342; x=1724398542;
+	bh=C8txRnFux4b0/vpsavCD5Pu2uOoF/f2dTOxzbv7GJaU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=mu4JE11H1Y2jJOB70OthEp0X9DEtOLvT83XHihNgCQUuWT9ZeRshAPZdPsCADpVBB
+	 WvjLLJ5Maz4Q3CH0X0Y9dMdlYzpgXDrgh4gNYMgqWENfd6yITHOM12azI+3F4Ai3vQ
+	 +QFgUYdCce8UcRX4YioZI9Tkn4Do6KtBB1hVuEfKHsLfm8HlbyY2XYpfrK0rT9SGmx
+	 +sq0BP7uY4ELRPLBIHoHp37JPNTbC6a1EM+2r8vFlTgn3i7tD6aojsBi4Lf9CyJs6g
+	 +Rc169TBFJm3oec1NLnP1Mr5WhZHWQE7hyQ7HaWrbtzeNhOCFYLnDjBsVd/u8pAgFK
+	 kpGDfrIYetkCA==
+Date: Tue, 20 Aug 2024 07:35:37 +0000
+To: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 3/5] rust: rbtree: add mutable iterator
+Message-ID: <dce117a2-3e07-4fd6-a2cf-e06db8306249@proton.me>
+In-Reply-To: <20240819-b4-rbtree-v10-3-3b3b2c4d73af@google.com>
+References: <20240819-b4-rbtree-v10-0-3b3b2c4d73af@google.com> <20240819-b4-rbtree-v10-3-3b3b2c4d73af@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 88e96e6948296bd321b2a9684232a81af62b7810
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsRAnWgsoSHmrFE5@hovoldconsulting.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 09:07:10AM +0200, Johan Hovold wrote:
-> On Mon, Aug 19, 2024 at 01:07:47PM -0700, Bjorn Andersson wrote:
-> > When the pmic_glink state is UP and we either receive a protection-
-> > domain (PD) notification indicating that the PD is going down, or that
-> > the whole remoteproc is going down, it's expected that the pmic_glink
-> > client instances are notified that their function has gone DOWN.
-> > 
-> > This is not what the code does, which results in the client state either
-> > not updating, or being wrong in many cases. So let's fix the conditions.
+On 19.08.24 17:07, Matt Gilbride wrote:
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+>=20
+> Add mutable Iterator implementation for `RBTree`,
+> allowing iteration over (key, value) pairs in key order. Only values are
+> mutable, as mutating keys implies modifying a node's position in the tree=
+.
+>=20
+> Mutable iteration is used by the binder driver during shutdown to
+> clean up the tree maintained by the "range allocator" [1].
+>=20
+> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-6-08=
+ba9197f637@google.com/ [1]
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Tested-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+> ---
 
-And I believe you meant
+I got one nit below, but it already looks good:
 
-	s/with/when/
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-in the patch Subject.
+>  rust/kernel/rbtree.rs | 104 +++++++++++++++++++++++++++++++++++++++++++-=
+------
+>  1 file changed, 90 insertions(+), 14 deletions(-)
 
-Johan
+[...]
+
+> +impl<K, V> Iterator for IterRaw<K, V> {
+> +    type Item =3D (*mut K, *mut V);
+> +
+>      fn next(&mut self) -> Option<Self::Item> {
+>          if self.next.is_null() {
+>              return None;
+>          }
+>=20
+> -        // SAFETY: By the type invariant of `Iter`, `self.next` is a val=
+id node in an `RBTree`,
+> +        // SAFETY: By the type invariant of `IterRaw`, `self.next` is a =
+valid node in an `RBTree`,
+>          // and by the type invariant of `RBTree`, all nodes point to the=
+ links field of `Node<K, V>` objects.
+> -        let cur =3D unsafe { container_of!(self.next, Node<K, V>, links)=
+ };
+> +        let cur: *mut Node<K, V> =3D
+
+Do you need to specify this type? If not then the line would fit on one.
+
+---
+Cheers,
+Benno
+
+> +            unsafe { container_of!(self.next, Node<K, V>, links) }.cast_=
+mut();
+>=20
+>          // SAFETY: `self.next` is a valid tree node by the type invarian=
+ts.
+>          self.next =3D unsafe { bindings::rb_next(self.next) };
+>=20
+> -        // SAFETY: By the same reasoning above, it is safe to dereferenc=
+e the node. Additionally,
+> -        // it is ok to return a reference to members because the iterato=
+r must outlive it.
+> -        Some(unsafe { (&(*cur).key, &(*cur).value) })
+> +        // SAFETY: By the same reasoning above, it is safe to dereferenc=
+e the node.
+> +        Some(unsafe { (addr_of_mut!((*cur).key), addr_of_mut!((*cur).val=
+ue)) })
+>      }
+>  }
+>=20
+>=20
+> --
+> 2.46.0.184.g6999bdac58-goog
+>=20
+
 
