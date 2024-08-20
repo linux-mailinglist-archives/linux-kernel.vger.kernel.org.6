@@ -1,117 +1,95 @@
-Return-Path: <linux-kernel+bounces-294644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD819590AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AF89590B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB070B22B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50ABA2853BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CD81C8243;
-	Tue, 20 Aug 2024 22:50:29 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C141C8FBB;
+	Tue, 20 Aug 2024 22:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2yCUJWN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC98C165EE1;
-	Tue, 20 Aug 2024 22:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9EE165EE1;
+	Tue, 20 Aug 2024 22:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724194229; cv=none; b=QoWaJLWiekQ9FhhLhd/IN6UwUaFpDTL1vfevlEUIy6ERGkxgNQpPhSIxbic6dTBZN1oUWwYenfql0YasGpIUAmu14yjC1G/7ivQ3s8mHpRxeSJi1KK730hdvUrT7YHhG289s/csDmHLoBMJIIVaxBbVeLDwURi9T4i112P+fjrA=
+	t=1724194232; cv=none; b=VvzECqyNUKeUD2XVesMrOGlrwgA669wy4/rW/bmeOp8sqlNI28zCBpTayHT+KA56TgAXLu9zW1TM43Qb16yrSNo4mfLOwBl6FRQrFrsmBRkav40NIXEtWZ4OHn20ra5x4j9nuUmYkv3uNyeFeN2Ywa4agQi1b548Q4tW1ebaKug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724194229; c=relaxed/simple;
-	bh=APy8qToyxt8ThXJZfeNg4biFZzMtXUuCvDtSbiEX9Z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gUlfo0/JfkuuW8/LKpXm9WyDOzHVa57vlaUCFj5LsAdSPjBvG6QbyU66iWCxdFIiR05dRQ9vQA61ysaQjJcRrJV5arqHlLHRkTQp7nsP0SBTSf5nt+ZVmZ7FIVSJ0r5JUqwfR0Ic3nHfWH5O29njfTTJjRxvld6/+F6i64Pqq/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso4508532b3a.1;
-        Tue, 20 Aug 2024 15:50:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724194227; x=1724799027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHN/wO8yVpctdkN+spahKaBSr6jjtGiy0TZ43tDVhlM=;
-        b=eocO2mRBRtEmxoGcVUViryWvurZ5rdxx7vTfEhjxR+GJYPd4aAbgghPH4rJwJFYsYZ
-         5HxyWCBcpudhQy6+RzO95EXNesM2Im6Z4FdXlMsc76dRDfHLfz6ObeU95aDo+vZw3Xou
-         9FMXjIpF0AQ/dwxoH2tSNOMdJNlgi5hQmmk4y1ehe7jq6yqQf36O5A8Ja3U7HQMjnWl7
-         dpObmVXDX9hVddEfoN16zVDJq7LvAvMjAUA/7l0THRSbnV+rwoO4m5TPtd6AZbLcklI0
-         NyxvwKwt94C6qdte5A2zalUKNhWR0GpNJ8RyrcR/yY38fwZ2Bfpz5BSKaqeFvj7iyVIh
-         TULg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXM/OPCKFOvkWbiM7vjCp2q62gRkoh9itoi+p7LK/YlZD7jxHcginY8JG8/O0rr/PKsfwNEksTx+TkLlaj@vger.kernel.org, AJvYcCXMIS0ixXKE+NC60W3G3Y08bcMdmEKRz2zeQSncVVSZFUfx/cMa7fsqZUWrgPWHbUo9lvo=@vger.kernel.org, AJvYcCXp3j1MoG5qBD4byHMmHkM5QNxLjbz20g5BkdyWorWdlfgi7sEfXeCoAjSu5kKpVFO77o0MKXc+w0BMsbUvoMmzsQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJHuRXi7sCX4QqYte+iPcxYTpXA5zlmPcKCQ8EyeT21B9oRR4F
-	+79KsAYiE+wZzUwWwzom/Lva439J5f1KxDdr6W/dy1iVOV5ZWIBt6LMf8isx9t/6ltwT5NNITrn
-	3/3e6+oO7icBWJGpxY0dE6rrz23hk9PWU
-X-Google-Smtp-Source: AGHT+IFlg9jmTJqy0i2BcV0X9kftC4OVTbIhwDRjACBejMC69qjCJhLtEU7pE+52PoOdniSd2sFpT9R4xHQpw2iPZ7Q=
-X-Received: by 2002:a05:6a20:ce4a:b0:1c4:c3a1:efbc with SMTP id
- adf61e73a8af0-1cad81a732amr944288637.39.1724194226651; Tue, 20 Aug 2024
- 15:50:26 -0700 (PDT)
+	s=arc-20240116; t=1724194232; c=relaxed/simple;
+	bh=pqvKM3YsTg0DCxYSvHYm+rcDIq5rfuDj/WdG2+04eBo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=a8qbHG4UG2kRMFBr4Qu0AtGaHlPzJfR4SeZhVuM8pliVqwY4vdedi7pnzVpDxoJ+pNDtscxtJaaGtTt3oSHpyGpyVervZatVX1vKuM7KiaGHurM1uW8n1NVoSOCU2kjQK5rbD2S3wdnLI6QVMwoaWbFx5YBgGKhhKkEdQjN7AbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2yCUJWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19F9C4AF13;
+	Tue, 20 Aug 2024 22:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724194231;
+	bh=pqvKM3YsTg0DCxYSvHYm+rcDIq5rfuDj/WdG2+04eBo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=l2yCUJWNTNwnKJShsgxrPzgMypuQ73UgxnzmNMLR7wSzo29Dga3x91TL2rQbVVf/p
+	 rewu1v27VkxP6igRLb3rB9jo5LCIL8ioA47RGmDhR9HvOvQwVcXApDmoYQozqmhnSm
+	 Y+aadu1zqPWfOJCLecM3HROsfFx6bqeoYpQ7Ahm8LV1VHDR6QDCTS/sD8g6GCjWMLS
+	 Sbuktv4/ff/4LVEWi/dIuj+TnoKnyi1AleImOsjwPH5YIzvr5cAAXJM2pf+QB8cYFY
+	 EfreGc4LC/KBrIn5BItZk8McNORajLXBFlhib6ehKGvAHXzDMM/u0T6rNtks64fs3j
+	 m8bHHS9ppvB8w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710323804CAE;
+	Tue, 20 Aug 2024 22:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820154504.128923-1-namhyung@kernel.org> <20240820154504.128923-2-namhyung@kernel.org>
- <ZsUB57VlFtdY0O0M@x1>
-In-Reply-To: <ZsUB57VlFtdY0O0M@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 20 Aug 2024 15:50:15 -0700
-Message-ID: <CAM9d7chUfoHgZ=uyVEua8XCi4HigzT6p0i7rsL6rZLU2N9r_ZA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] perf tools: Print lost samples due to BPF filter
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	KP Singh <kpsingh@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] cxgb4: add forgotten u64 ivlan cast before shift
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172419423128.1259589.15479208242990083277.git-patchwork-notify@kernel.org>
+Date: Tue, 20 Aug 2024 22:50:31 +0000
+References: <20240819075408.92378-1-kniv@yandex-team.ru>
+In-Reply-To: <20240819075408.92378-1-kniv@yandex-team.ru>
+To: Nikolay Kuratov <kniv@yandex-team.ru>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ stable@vger.kernel.org, lvc-project@linuxtesting.org, kumaras@chelsio.com,
+ bharat@chelsio.com, rahul.lakkireddy@chelsio.com, ganeshgr@chelsio.com,
+ davem@davemloft.net, horms@kernel.org
 
-On Tue, Aug 20, 2024 at 1:51=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Aug 20, 2024 at 08:45:03AM -0700, Namhyung Kim wrote:
-> > +++ b/tools/perf/builtin-report.c
-> > @@ -795,8 +795,13 @@ static int count_lost_samples_event(const struct p=
-erf_tool *tool,
-> >
-> >       evsel =3D evlist__id2evsel(rep->session->evlist, sample->id);
-> >       if (evsel) {
-> > -             hists__inc_nr_lost_samples(evsel__hists(evsel),
-> > -                                        event->lost_samples.lost);
-> > +             struct hists *hists =3D evsel__hists(evsel);
-> > +             u32 count =3D event->lost_samples.lost;
-> > +
-> > +             if (event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_BP=
-F)
-> > +                     hists__inc_nr_dropped_samples(hists, count);
->
-> So this is inconsistent, we call it sometimes "lost", sometines
-> "dropped", I think we should make it consistent and call it "dropped",
-> because its not like it was "lost" because we didn't have the required
-> resources, memory, ring buffer being full, etc, i.e. the semantic
-> associated with PERF_RECORD_LOST.
->
-> I.e. LOST is non intentional, not expected, DROPPED is the result of the
-> user _asking_ for something to be trown away, to be filtered, its
-> expected behaviour, there is value in differentiating one from the
-> other.
+Hello:
 
-Yep, that's because it's piggybacking on PERF_RECORD_LOST_SAMPLES.
-Do you want me to add a new (user) record format for dropped samples?
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks,
-Namhyung
+On Mon, 19 Aug 2024 10:54:08 +0300 you wrote:
+> It is done everywhere in cxgb4 code, e.g. in is_filter_exact_match()
+> There is no reason it should not be done here
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE
+> 
+> Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
+> Cc: stable@vger.kernel.org
+> Fixes: 12b276fbf6e0 ("cxgb4: add support to create hash filters")
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> [...]
 
->
-> > +             else
-> > +                     hists__inc_nr_lost_samples(hists, count);
-> >       }
-> >       return 0;
-> >  }
+Here is the summary with links:
+  - [v2] cxgb4: add forgotten u64 ivlan cast before shift
+    https://git.kernel.org/netdev/net/c/80a1e7b83bb1
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
