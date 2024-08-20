@@ -1,229 +1,214 @@
-Return-Path: <linux-kernel+bounces-294269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE068958B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A0958B7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318041F2288D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2371F23F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0F1940B0;
-	Tue, 20 Aug 2024 15:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D03719409C;
+	Tue, 20 Aug 2024 15:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tbm1oyua"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Tu1bGIu0"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2059.outbound.protection.outlook.com [40.107.96.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5874E125D5
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724168343; cv=none; b=NIVNTu2f94gG+a7tQd47UBAKuYVeNorw/FKgiOe6lv/cGWchVetMAQtog3crHLYKa6WiLNLpDBv9vg1iEeD81joTSh8ZSz9C52B5OQUwLIgL+3G348ax4EuZD4m4VYBOkidb8e5BcPExb1PnBIXEi4cdsdLIifvpd+r7yxlz5Qs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724168343; c=relaxed/simple;
-	bh=3F3rVSXCrKAuNTX6oBs3ahXRw610MZ40UBdmnu7Vx+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NGavJmjK02P5kdIxooQ20cyvyl2yKOHZHTjerUYDdDlPSPUNFmdM2dR49eqQUpakj66fQIh14Fj4+Jo7SdcxXNLpoYAnK85xdOaRDLLRHGSe1LG9gkneK9n89q+7466WBEPpnv3uB3dS0QRIwoyAMscBBi/LUlROAoTegBjDx2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tbm1oyua; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso46802305e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724168338; x=1724773138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmWrqfFuhQb126F6VuYJoB91tyorexZYrj4qScm7E4o=;
-        b=tbm1oyuaZe4q83S47IUWMq/Ny4SU8cFH3j5uIv86kQZwCjr3UW8Q+v5NntMms8IRKk
-         khadXoNeLHkciV0AosDOKSGtSte14vH+/9P8Ma0EcGx0Ofn7hPgv6ri3C5h5Re0KnNcc
-         aHi9ypkyTZj1bQYQLrgwIvIjMiLG2M+u73F3H/1hVftyvBjI/9jeKtUa9HYssP2d6cSu
-         YPmx6j8PlB61eXn/jAJlI6SoO9+1LN/4YWfyFD5RQsxYMftF2QvGekX9uPgRQ/TGGitf
-         07WEJgjUKM3dbKClOhSnK3IdL46ZIQfMbq0Hfw9XZIwWXjLANimXUufs32qBWHN3XPkK
-         /+gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724168338; x=1724773138;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pmWrqfFuhQb126F6VuYJoB91tyorexZYrj4qScm7E4o=;
-        b=cn9MNszN45+KxRhWD/fsJcXrp0JWSXgqmZmvHav9YBu6pM2CvRFtE6DBlVSM0sm3YR
-         dleT0b/Z1nsTL29fC1FmgldJQjcR3SZhSekJs1wu8gtqpMjGC5Vj33nYEKNbpZ8RgM52
-         rRCUHEzUpAhC7yq1wCatXf53EKiztUqcKY4ymWPwbQHeVAoeY8+71Y0dZpdxCBMVtwoX
-         gkNRGWflNlot1GLdhjI+M/Ookhif/+W3xkF37/KM/pBYftWafobL2jX6fBw0kj1E9A6u
-         L3wgsA+NeG4NwzNQYaKtyLkg8vzUSfXwpVs7RZAT5clNjMZtPnCXueg8BMH+Xzid2GGt
-         CBRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvhzn1PYuJ6+4MyXpZnOPEjwxWN+C9X/+4x85P7WTStEJb+Lgniw9laFaMJO9ObcJoy16RNxlHl3AOBOEXT5Cg0DhdCeKDEOhcypvM
-X-Gm-Message-State: AOJu0YyWviZNrY/vRU0HTO60Cjq/Weno43apcXoD8gSuGAgy2bxyC0fO
-	zJic9yrsEYhMbsMl3i+GS8F8hfLLpzdXibY6P5NDpohVk6va5iVxm8QPUSh5WME=
-X-Google-Smtp-Source: AGHT+IGWX7+eVKrGz832pmkLmKocdhlrcgIWlJERL2tWpVpaUuEH1ET2w4rlxwsOimDYeiDWDcI3yQ==
-X-Received: by 2002:a05:600c:138f:b0:428:2502:75b5 with SMTP id 5b1f17b1804b1-429ed7ba9c0mr92827645e9.11.1724168337929;
-        Tue, 20 Aug 2024 08:38:57 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ddce:8248:19a9:4bf6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed648f4asm146289025e9.5.2024.08.20.08.38.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 08:38:57 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] Documentation: add a driver API doc for the power sequencing subsystem
-Date: Tue, 20 Aug 2024 17:38:55 +0200
-Message-ID: <20240820153855.75412-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10A518E34B;
+	Tue, 20 Aug 2024 15:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724168454; cv=fail; b=fTEmPQJyZW/4/4pQFfLrZGJkHIfKeqQbWIvK/AK5qpVTNgjU4RNG+LYbIp4lRmeri7zjRX8SRG0RX4AF533m6xVA017dF1jSxRH0oDFESoG5/iGWeOJH+OZhXPgD02dGH2Y6IWSVEHSyTfur4HNa6wwp0G2/YFEX2sL+8+hfWRY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724168454; c=relaxed/simple;
+	bh=qBvdkgkeVgUW71hX85hn39afoPpQQQD08AurjvWmG08=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=r4Qe7At+JI9cYk5801EDKOMRVie5OBGWqqLHigcFfUbiSOTriwPYELXLyjoGNcr+BtTdiXqbaYUdHDpJUeOU2yXXKXK5vkDN89HLOKRin+tLJIJ32NspqWd8jTiOnYfFW2xDjrO3je2/UrmsRLEnBq0NYQkwfB6GNOzAgkJLkTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Tu1bGIu0; arc=fail smtp.client-ip=40.107.96.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SoighwkEXQeK6yBNBts6KPUFkG+OhDhZg4L0CQ74BMQRsgOWI7BbgwhDIlx19pMI9yxlNgBC7tIaGHyRWMWprcsQliwHKB/74GIl2wc6zrHmb48HSG2SwgvV0ItqTjw4mwhRK8bz1v4/INhNa83348RSxiIQAgSXsDFs/CgQu9hHiJguuiWKg4ArVKpeo/2owYMxAbbKwZxeET3IVut0Quj3voPa9200HTKxnXCosBLbI80IXCtwIN/4h7qKUd79RE2+VYfqvLTWB5JZwz9PgqRkJeX3o//4pFVhPIbZbOZsVtV4E2QHjMqXFpYbsXdBImNBhxjxYgcbGj/8iCnPHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=skJB22R2eek5klGaBdxjx4IA9EJLMnbhcQpB++VA914=;
+ b=Oe1rbSTzLKNZ6EVAll1KBs0nwjRDDf8jDmmPIzox96iCCXZpqAQZt1bXO5pFCEKKBY6Z4k1xrheNYSmtJnS2k5ZNDEmDBeEnyMH+sQXxwtHMsRTgwYfJb8Fo3L/cFnSUoUmA9dXTCgZQ4auxb5+lADLxy2c9PJuvfSyPRhHD57vrvlF1+2WEpv0xszHE87W9yihPZUK/zxR6trKeAXOMJM74QhZ0nZX+C3fjifS0FzoHrpEbqtRZQc38dNeP26M7a81dVqTZ3XV1FCkay/oker3e4UC5w5D97uDLdA/HyBdGpDXf6/1247cdhB3sCMzRi+CnVzFJ+AMzhrChriQ1FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=skJB22R2eek5klGaBdxjx4IA9EJLMnbhcQpB++VA914=;
+ b=Tu1bGIu0Wsz0POtyBogaZrBzh372oYALFmK1M31EOnj5/g5YTi0o+2Ecma/bYt8xoEB6ktQYDxuNwkXvEROfNNOMbyRihGKABq0sU+34rxUoF3EPI9YOohCMbbygNWaEpCEKznXf3H2OKmm1vw5xlDizfde3YG1RvA44i8717Js=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by IA0PR12MB8280.namprd12.prod.outlook.com (2603:10b6:208:3df::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 15:40:49 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%4]) with mapi id 15.20.7897.014; Tue, 20 Aug 2024
+ 15:40:49 +0000
+Message-ID: <0fa061f4-c82b-451b-a12d-e873d853e436@amd.com>
+Date: Tue, 20 Aug 2024 21:10:42 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ACPI: APD: Add AMDI0015 as platform device
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
+References: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com>
+ <ZrpFU6wFyQDykSlO@smile.fi.intel.com>
+ <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0193.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:be::22) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|IA0PR12MB8280:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97546188-cb7f-41dc-3f04-08dcc12e770c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VU5YajNySm53dWtXMi8zY0VIRzdOZXNQVHVOYkViSlNRci9FS3JxV0RCdkFr?=
+ =?utf-8?B?NzVrLzY1TjBBL0JuUVEwaUkwNUxBWEphMWRNOVhyRktmQkZjOHpjcDNwU3hY?=
+ =?utf-8?B?OVFiREtnOXVNdWN4RjdZSXlneWNTVmRLVnF3N2IzS3VuU0dxaWU0TEgwUWR6?=
+ =?utf-8?B?TWRFWGZvWWplZ1JJcE1CUmZ5UUZ1R0ZXaE5zWEFjWE5ZY0JLaHZvSDM3V3RE?=
+ =?utf-8?B?K2Y2anFUdlhnbmFCVjFkNmpRSGIvK1FJU2RXS2NsZmdWQ2l5NVhtb2F3OXh4?=
+ =?utf-8?B?N0ZVU3FDNGlKU3lFK3FZNGR4ODB2T3I0d3lGWUxZL0tZYU9wL1B2NGFCODJU?=
+ =?utf-8?B?bDRReW56dkZ3QW5LVGMxTERQaDdDNHhwMkNKZjgvcEpMc24xS1hwMjA5d0hu?=
+ =?utf-8?B?bmI2MExLNWg2TStQT0ZMN29wQmtqQXcvcE45Q0oyNmZYa1YyUnhPUUJCWkFW?=
+ =?utf-8?B?elJDMklMUFZoVkFRblZTUmg4QytTMjBhQ2NOTmthdHBoY1VIV2YzSTQzZVpq?=
+ =?utf-8?B?VUVNZlRTbnF2dW9pWlpzdzFwbVcxUWt0eE1VUnAwNERRcEcrd0xpL3NqcHBG?=
+ =?utf-8?B?OTNHR3BjM1NzWjY5K1VSYkZPTGRLYWh6M1lhR2llWWxVT01WVXNCclcxVFph?=
+ =?utf-8?B?bzJ6bUJEN1FOSHNZSkxUL1FqOFFaR0ViYTNpOVJKUkx4NExiRDVqd21uY0hl?=
+ =?utf-8?B?L05YMGVuM3RNbSszMjBCRXhFT29STkZLUytPMmNsTE5abGVEbFdObCtMQ001?=
+ =?utf-8?B?SUZaU2VFNDRlQ2lrTlRxTUI0SlBpY2lTb2pUeStNOWpqMExMazRnNFBJRi8z?=
+ =?utf-8?B?ZGpsL29nZ1ZGY1U2TVRxaVRDMjE0aDhFSlRUMEN6cllzcUpCZ0wrRkFSS0E5?=
+ =?utf-8?B?VlNGRFErcGFlRWo4QWVTQWhHUnBORHozL2FDR1hoWVZVZUltSDlTcmZBWjdp?=
+ =?utf-8?B?c0lkTFViY0RLa2N3V1ljZm8yMi9wd0tSMzFDNTNPZEFwU2lCaHpMRm1GUDJE?=
+ =?utf-8?B?dG9rMVBhdnN1bTNhVUtEWndibVJRSzBMVDZTRGFPdTJqaVpia3dqNFJNZ1kw?=
+ =?utf-8?B?KzBSZHBtMnNPQS92VFdydTE1QVpURDdjZUtHR1B4bjJFYWcxOFMvNUV0WFlr?=
+ =?utf-8?B?NFFtZnZuVzFmMVJweVErdVh0LzIrbitPYTdCTEExaTRVblVCbXNpOHlGYlJV?=
+ =?utf-8?B?ZWtnRHhPdXlBdkhLUGo4RktFN2JYa0xzdUNYM2ExdEpCYTlYTzloWnNtdTk4?=
+ =?utf-8?B?RHlVOGM2MmYydjd3S0hvU2pXamVzWENGTGFGZWFBcnpZblVFVnh3RENkS29N?=
+ =?utf-8?B?TjBpOEcwS0tEVHRpRXkybDlIejdERGFjSkdURGpGVEhlbjdHZERaQklGR3pl?=
+ =?utf-8?B?aUlVNzhQRG9rTkpsakJ5b1lpZE5TcmlwWnZNdmI5YjVxNjNLUzdNTFE5WlNi?=
+ =?utf-8?B?WURDcGR4dU1EM1NBNUdzTkY2cnc0QnBmRllwZ1dDYTJrdW1od3kycm91UnpK?=
+ =?utf-8?B?OHpnNVR6RWZuWVcxUWRQSURjVUpUYk1VZFRkSURPZWZLM2VvdE96Q3RKemU3?=
+ =?utf-8?B?U2xIMVdRWXVyczRqQ2xPTWRoRnozL3kzZlV6R056b2FpTHhGZEVHdGNQSU1m?=
+ =?utf-8?B?MUpHQlZXcVJDTkZWakFSbTJ1THdhd05OQzlCUk1mR2pKcmtHZHVyZlRteHVU?=
+ =?utf-8?B?d2dVU1hHQllMSzUyTWRrMmYvN0ZvNklJRFFOWlNrNE1WbWpuQ2toYXgwR0dL?=
+ =?utf-8?B?OTNCazJzQVR5OVdnMHFYOUVGZU9UVktqQ3FDcTVZZGU3UlJ0ZjBmZjAvSmsr?=
+ =?utf-8?B?QmkrVTZpU2xoS1RDY2ZRdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmFwVGxUTEtvQVZzVTlUMkJ1RzcxMmpKSEg3Z3Z3RGhNUFpKZmpFSU93M21j?=
+ =?utf-8?B?WmZFdUlYNExPSE81SmZRSXNoc09rZlkwVFF5R0c0WnJYeWVkVXhZTDl2cTha?=
+ =?utf-8?B?anRyRWZwdGxhZk96elBNT1ZmSEd5V2p4WExBZXpPZGsvSUdldFZFNzFiOEcz?=
+ =?utf-8?B?OFZ4b1BaQWlEZUh2enNNVmJwMzFtZDVQRW5EODFvYWZKVXJlN1hJdEtrcnlq?=
+ =?utf-8?B?MVRRUVhBODlERFVJMWhMbnN3NzFrNFZFeG13VkdKcnNCSWd1S0pzajB3N3pl?=
+ =?utf-8?B?R3Q3SFk3VnFkYnREMEpmUjRIckpmQ0QrQkdiNXZjWEtMYVZXenFHVnpyNjdB?=
+ =?utf-8?B?S0ExdExvU3FmK1JYRndXbUJ6RFdCeWlubkI1LzRtbi9CTVoxd1NsTFBidlNh?=
+ =?utf-8?B?THd5d2JqK21rcnpVc05zL0dOYkY0eHN0SG1xNzU2Yy9LSElFRW5iZHZCTGxw?=
+ =?utf-8?B?OWFZVHROSXhNeWtIYnd2N1dacTJWWGsxeXAweEdZbWZiQ1AxYzBlL3JjbUdk?=
+ =?utf-8?B?TEdtS09GQ1NqSWI5RnRucSszbEhSem1lZmNFSFdqdVdpSTdQdWkxY0xLazJY?=
+ =?utf-8?B?b01sUHlPNnVPN1ViKzQwMmJKK0lKbU1ieG1xTndYbkFGd1h6UDZCMzNsc2xn?=
+ =?utf-8?B?Z09uL3psL1JMWkdNc0UxenAveFJtV254emlCWHYvRUswVEhVVWc5aHVwODMx?=
+ =?utf-8?B?Q053WkJKL0NzcWhYamlKMWpYK052WlZFUmZoL24zQ3djSkNHRHI0ckpidWpj?=
+ =?utf-8?B?MzhrRVVlalRZYmExZXI2WDJwbmRPZHJVWUpUK2ZmZkJ1WEdScjg4NXYwMHZs?=
+ =?utf-8?B?UWNZRHd6WDR4MC83dkZJbC80WlRqZWd3RG1QWFliWStNbzFiLzhmV0lkVElE?=
+ =?utf-8?B?QktjZnVPTlRralRhR0ttSEh6MHQ3TEQ3TUd6Q282VWkwTUFWRHRGVEhqUjlH?=
+ =?utf-8?B?N0lqV3pQNm1NSDJ6dlhkTEFXdXdKa2UyZEpORVdLRXdSaUdVUWFiSzVlUWdG?=
+ =?utf-8?B?TDhDM3lpZU1mQndMcTJ4TVFjSHZ4dzdkMkF0QVJIZkEySGtZVlVvQlNKZTNT?=
+ =?utf-8?B?U3N0L2dXeDdkNE4xMDMzRENDVmZiZzBYRDV3M3hLUE5WNWtkVGIraUp3Vld1?=
+ =?utf-8?B?aW1DYjhpRmRCZ1FQbXRFMmFDTFAwK0h5aU9lbHF4SHpXTy9LMnhkd3RRYkIx?=
+ =?utf-8?B?NHNON1F4dElwa01pMXlhTTR1R3pBSDI1K25Mbk8vMzBaSks4VFovV0hVZWl3?=
+ =?utf-8?B?WkhXOFhCZnNPN2hVSWNTam9JOFlGSDM5MWtuaDZ5c3B1Vy9PSTNoU1lsV3Y3?=
+ =?utf-8?B?MHZVVUVudE9QYnZ5WU1Ja2xTdnJlQXlZbmVlNmczVXlQUnhpVEdrVzk5Tjdv?=
+ =?utf-8?B?eGs3eGJuZXBQVU1GdVMzQkErRm1jMGNTcUQ3TlF1OWhtYk9IRE5TOGNGckNz?=
+ =?utf-8?B?K2lLVEhaeVpUUmZ5VUNneDJFb2RUOTJwOWZLZ2ZreHk1bDNneGgzWlAxS3hu?=
+ =?utf-8?B?NkxWZnBBLzFxbmZiNit3Z25IcGNuSnBSSlp5MjROWFBhUVBEMFl6N2pQckhW?=
+ =?utf-8?B?VlJkMy9oNU81OGV0WDUxYzl5L0pDZyt6NElVMk5sUzRSVytGcG5nWkhrLy9q?=
+ =?utf-8?B?Zkwva3lTTUZFbVQzakI1UUdyMGk2ZE1taktjY1pZdEw2N1Z3azRqQ29wTW8w?=
+ =?utf-8?B?QjE3dVNST2oza3RPQVkzTFhkSDZreFVEbWZHRnRCMmtDbVhqcnM2Zms1YUk4?=
+ =?utf-8?B?azNTaWFJdU5zWFk3MlIzMzNiRzJoYkdIak5idmNkRlZROHBYcWVidFRYKzQ0?=
+ =?utf-8?B?TEhFNDlqcVV3ZEUwNkplcndDSU0zeUtpYytZcTJZWDRyMGhyZmlYQzZlNHVt?=
+ =?utf-8?B?QmxISHNITjJ5UGRMYXFieGtSalFoZnJ0VE9QUzhCd2VvYktHc2IzclBjVE5S?=
+ =?utf-8?B?QWlQSXNsYnFtOHBBdllSeXh3ZkwwUmtWWXdQRW92NUE1WGpUcW93eVVRRWZt?=
+ =?utf-8?B?RWtSRzUrZnVQWlhpVXJ3RkJvZDlmcEFQN2c4RWpaUTI0ejZ6ams4VzRSb3dJ?=
+ =?utf-8?B?NlFNSXF4aE5pWTFid1BYZ1RZbW12OVB6USs3dTZCWm5SamFGWGNtdXpvQzRa?=
+ =?utf-8?Q?jdfUJ7MsE/13m4paKIUj43kUC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97546188-cb7f-41dc-3f04-08dcc12e770c
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:40:49.3354
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SX7SnpYOW7J5vbTuchjHv46988jwn4L8BLYYdeJPmuJ5ipelb+mXb9Lu1oEwDUopdyy5yPEsO4Tii67A34IeJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8280
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Describe what the subsystem does, how the consumers and providers work
-and add API reference generated from kerneldocs.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- Documentation/driver-api/index.rst  |  1 +
- Documentation/driver-api/pwrseq.rst | 98 +++++++++++++++++++++++++++++
- MAINTAINERS                         |  1 +
- 3 files changed, 100 insertions(+)
- create mode 100644 Documentation/driver-api/pwrseq.rst
+On 8/20/2024 20:19, Rafael J. Wysocki wrote:
+> On Mon, Aug 12, 2024 at 7:24 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>>
+>> On Mon, Aug 12, 2024 at 08:10:18PM +0530, Shyam Sundar S K wrote:
+>>> Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
+>>> for the I3C device on the latest AMD platforms.
+>>
+>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> from the ACPI ID perspective.
+> 
+> I've replaced the v1 that has been applied for some time already with
+> this one, but please note that it still is not entirely clean.
+> 
+> Namely, if there are two S-o-b targs on a patch, 2 cases are possible:
+> 
+> (1) The person sending it is not its author and merely sends someone
+> else's work adding an S-o-b to document a "supply chain link".  In
+> this case, the From: header should point to the original author (it
+> can be added right before the changelog) and its value should match
+> the other S-o-b tag exactly.
+> 
+> (2) The person sending it is one of its authors.  In this case, a
+> Co-developed-by tag should be added to point to the other author and
+> its value should match the other S-o-b tag exactly.
+> 
+> I've assumed (2) and added "Co-developed-by: Sanket Goswami
+> <Sanket.Goswami@amd.com>" to the commit, but that's not something I
+> should be doing.
 
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index f10decc2c14b..7f83e05769b4 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -124,6 +124,7 @@ Subsystem-specific APIs
-    pps
-    ptp
-    pwm
-+   pwrseq
-    regulator
-    reset
-    rfkill
-diff --git a/Documentation/driver-api/pwrseq.rst b/Documentation/driver-api/pwrseq.rst
-new file mode 100644
-index 000000000000..bf82469fcd38
---- /dev/null
-+++ b/Documentation/driver-api/pwrseq.rst
-@@ -0,0 +1,98 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+.. Copyright 2024 Linaro Ltd.
-+
-+====================
-+Power Sequencing API
-+====================
-+
-+:Author: Bartosz Golaszewski
-+
-+Introduction
-+============
-+
-+This framework is designed to abstract complex power-up sequences that are
-+shared between multiple logical devices in the linux kernel.
-+
-+The intention is to allow consumers to obtain a power sequencing handle
-+exposed by the power sequence provider and delegate the actual requesting and
-+control of the underlying resources as well as to allow the provider to
-+mitigate any potential conflicts between multiple users behind the scenes.
-+
-+Glossary
-+--------
-+
-+The power sequencing API uses a number of terms specific to the subsystem:
-+
-+Unit
-+
-+    A unit is a discreet chunk of a power sequence. For instance one unit may
-+    enable a set of regulators, another may enable a specific GPIO. Units can
-+    define dependencies in the form of other units that must be enabled before
-+    it itself can be.
-+
-+Target
-+
-+    A target is a set of units (composed of the "final" unit and its
-+    dependencies) that a consumer selects by its name when requesting a handle
-+    to the power sequencer. Via the dependency system, multiple targets may
-+    share the same parts of a power sequence but ignore parts that are
-+    irrelevant.
-+
-+Descriptor
-+
-+    A handle passed by the pwrseq core to every consumer that serves as the
-+    entry point to the provider layer. It ensures coherence between different
-+    users and keeps reference counting consistent.
-+
-+Consumer interface
-+==================
-+
-+The consumer API is aimed to be as simple as possible. The driver interested in
-+getting a descriptor from the power sequencer should call :c:func:`pwrseq_get()`
-+and specify the name of the target it wants to reach in the sequence after
-+calling :c:func:`pwrseq_power_up()`. The descriptor can be released by calling
-+:c:func:`pwrseq_put()` and the consumer can request the powering down of its
-+target with :c:func:`pwrseq_power_off()`. Note that there is no guarantee that
-+:c:func:`pwrseq_power_off()` will have any effect as there may be multiple users
-+of the underlying resources who may keep them active.
-+
-+Provider interface
-+==================
-+
-+The provider API is admittedly not nearly as straightforward as the one for
-+consumers but it makes up for it in flexibility.
-+
-+Each provider can logically split the power-up sequence into descrete chunks
-+(units) and define their dependencies. They can then expose named targets that
-+consumers may use as the final point in the sequence that they wish to reach.
-+
-+To that end the providers fill out a set of configuration structures and
-+register with the pwrseq subsystem by calling :c:func:`pwrseq_device_register`.
-+
-+Dynamic consumer matching
-+-------------------------
-+
-+The main difference between pwrseq and other linux kernel providers is the
-+mechanism for dynamic matching of consumers and providers. Every power sequence
-+provider driver must implement the `match()` callback and pass it to the pwrseq
-+core when registering with the subsystems.
-+
-+When a client requests a sequencer handle, the core will call this callback for
-+every registered provider and let it flexibly figure out whether the proposed
-+client device is indeed its consumer. For example: if the provider binds to the
-+device-tree node representing a power management unit of a chipset and the
-+consumer driver controls one of its modules, the provider driver may parse the
-+relevant regulator supply properties in device tree and see if they lead from
-+the PMU to the consumer.
-+
-+API reference
-+=============
-+
-+.. kernel-doc:: include/linux/pwrseq/consumer.h
-+   :internal:
-+
-+.. kernel-doc:: include/linux/pwrseq/provider.h
-+   :internal:
-+
-+.. kernel-doc:: drivers/power/sequencing/core.c
-+   :export:
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..5a7500f048bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18204,6 +18204,7 @@ M:	Bartosz Golaszewski <brgl@bgdev.pl>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-+F:	Documentation/driver-api/pwrseq.rst
- F:	drivers/power/sequencing/
- F:	include/linux/pwrseq/
- 
--- 
-2.43.0
+Thanks! That was a miss.
 
+Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com> is the right tag.
+
+Thanks,
+Shyam
+
+> 
+> Thanks!
 
