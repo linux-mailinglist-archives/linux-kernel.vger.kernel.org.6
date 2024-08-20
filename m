@@ -1,96 +1,132 @@
-Return-Path: <linux-kernel+bounces-294669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0DA95912D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62F7959157
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87266B24224
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1961F2357B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56651C8FB5;
-	Tue, 20 Aug 2024 23:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gyJ36ngD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9541C8253;
+	Tue, 20 Aug 2024 23:45:48 +0000 (UTC)
+Received: from sxb1plsmtpa01-09.prod.sxb1.secureserver.net (sxb1plsmtpa01-09.prod.sxb1.secureserver.net [188.121.53.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D212A14AD2B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F6518E351
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724196281; cv=none; b=i4XLNdyQtcwkow06LlI2whxiqtDY8IkgswlYwz/PesjF+AFwxQQGkBXzKDS88VnR5SrBGATtQOlrfWUKk6pG1GakCPtmWpi05WW9KwQ+mFwfucXFy72wQdVtgdYUL+UsHcS0Cnd7hC28XZ6N/FOY140PlSGKLMyNeeUpRmRtVAA=
+	t=1724197547; cv=none; b=E4oOMdAf32gAil6IYxh9D8KHHunKFdVsElezC0ATSQX0g3EVDT72iCM407DUmkrlw6wv0+LoK4HnAMuVb+WByX86lW7o3gKCKUauNRFHJmrjPqqfGiegiO0qEthtp10hw7QfeVuYlA552Smj2piDBA33PNtrXluVy4tw9lLCQqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724196281; c=relaxed/simple;
-	bh=ktj3J694UJT11cdVq07iovQ6VNYIzh45Q7Ed964y7SU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=u8l6dVljqfd0THdwvCvFXV++Jbxqfww1kptYvGnrfFIzkufbBP0WcVD83dK4tc4A3C4BtE8xg9I7v8OE+C8FQqr2ywZP+s4aBSJpZSe4fXeJU3NzN69/DdEmgVnb+UBsvWX1QUEC7bMRpfgzoN87H+VAZ/WH+WHr2wsgSPqqhog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gyJ36ngD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724196279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wTO3rn8cai9pfp8/7PSJNm83ubFTKdJd8PEervFV6A=;
-	b=gyJ36ngD9QiLbvdyDKvQWjYH3AUBeFiS2/bd2PMHLvJEG8I/kUNl8Pj3RJTnvhuFfYBXmO
-	JFFhUBHtcrkL9s6YKJTKPPtBf/lGMFUcyPrtLPzKOhLSpa+JxqQ0IBCK3bOYddqfJeGtIM
-	euMNaOLpbGH67uR8b/isC00mUG6bGsM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-V0HWiyhqP0C_oN7kg_4XJA-1; Tue,
- 20 Aug 2024 19:24:34 -0400
-X-MC-Unique: V0HWiyhqP0C_oN7kg_4XJA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76A721955D47;
-	Tue, 20 Aug 2024 23:24:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA4AC19560AA;
-	Tue, 20 Aug 2024 23:24:25 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240818165124.7jrop5sgtv5pjd3g@quentin>
-References: <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
-    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
-    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
-    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    willy@infradead.org, john.g.garry@oracle.com,
-    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-    ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+	s=arc-20240116; t=1724197547; c=relaxed/simple;
+	bh=eJaeTVak1rt+uWU6m8O4EhDKO+Q3iCdDDptK1WJ+Kks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YKVINSk15Q/bhl5eThNIHI7VdcjvVygf87zjCgC6COib+Io23eSltVFjTkjS1UQPYmgCgSqtrTGtRdFaJYVNvwzdpVkNbR2Uyj91dvJYYfFb60J226CIU5C7fcZViHPACJdSYhDQYb5HEz5PZqBFzmX+ihtjdwdoc0f9/y0LH3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from phoenix.fritz.box ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPA
+	id gYEdsqtlu3WfYgYFNshvcb; Tue, 20 Aug 2024 16:26:42 -0700
+X-CMAE-Analysis: v=2.4 cv=JvU6r94C c=1 sm=1 tr=0 ts=66c52632
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=VwQbUJbxAAAA:8
+ a=FXvPX3liAAAA:8 a=6R2sW40mVC26G-UyxH8A:9 a=AjGcO6oz07-iQ99wixmX:22
+ a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+From: Phillip Lougher <phillip@squashfs.org.uk>
+To: akpm@linux-foundation.org,
+	brauner@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Phillip Lougher <phillip@squashfs.org.uk>
+Subject: [PATCH 5/4] Squashfs: Ensure all readahead pages have been used
+Date: Wed, 21 Aug 2024 00:26:22 +0100
+Message-Id: <20240820232622.19271-1-phillip@squashfs.org.uk>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3792764.1724196264.1@warthog.procyon.org.uk>
-Date: Wed, 21 Aug 2024 00:24:24 +0100
-Message-ID: <3792765.1724196264@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfG26RX2Z/qj8AIqoDmXkcgPabMADaY/QzpPxQrFw8jzfgUxug2x3Yrr4qy+kjlUzp1LLhM8ZXB0U90b0DsBUacWMJaMiMmbwBOnqevjLSPM2RStCxSxH
+ IoTQpENi0oFnAVooFhD+HI9nqbnDxXOPAtl6ubLsBADgyAq4lj/CWuBLLQmyTjGcZ10qdZyItO8vkptohwSCeYOxX4Q5RN0uoY2tKlI3s+POtNRwdN0HJywY
+ /bSuZv+3dkmsd9hAgsLaDILA70RR8ZJsfyoGIQLl4VHaEDdfZ+KpM5NdQoe8rYXVZ4CnSdub7Spm4yfV7by+zx9YXxpA7G1nCmGvTuunfHyyUsEDBhnCLR7O
+ YYuP4HTs
 
-Okay, I think I've found the bugs in my code and in truncate.  It appears
-they're affected by your code, but exist upstream.  You can add:
+In the recent work to remove page->index, a sanity check
+that ensured all the readhead pages were covered by the
+Squashfs data block was removed [1].
 
-	Tested-by: David Howells <dhowells@redhat.com>
+To avoid any regression, this commit adds the sanity check
+back in an equivalent way.  Namely the page actor will now
+return error if any pages are unused after completion.
 
-to patches 1-5 if you wish.
+[1] https://lore.kernel.org/all/20240818235847.170468-3-phillip@squashfs.org.uk/
 
-David
+Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
+---
+ fs/squashfs/file.c        | 4 ++--
+ fs/squashfs/file_direct.c | 2 +-
+ fs/squashfs/page_actor.h  | 6 +++++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+index 5a3745e52025..21aaa96856c1 100644
+--- a/fs/squashfs/file.c
++++ b/fs/squashfs/file.c
+@@ -535,7 +535,7 @@ static int squashfs_readahead_fragment(struct page **page,
+ 
+ 	last_page = squashfs_page_actor_free(actor);
+ 
+-	if (copied == expected) {
++	if (copied == expected && !IS_ERR(last_page)) {
+ 		/* Last page (if present) may have trailing bytes not filled */
+ 		bytes = copied % PAGE_SIZE;
+ 		if (bytes && last_page)
+@@ -625,7 +625,7 @@ static void squashfs_readahead(struct readahead_control *ractl)
+ 
+ 		last_page = squashfs_page_actor_free(actor);
+ 
+-		if (res == expected) {
++		if (res == expected && !IS_ERR(last_page)) {
+ 			int bytes;
+ 
+ 			/* Last page (if present) may have trailing bytes not filled */
+diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
+index 646d4d421f99..22251743fadf 100644
+--- a/fs/squashfs/file_direct.c
++++ b/fs/squashfs/file_direct.c
+@@ -80,7 +80,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
+ 	if (res < 0)
+ 		goto mark_errored;
+ 
+-	if (res != expected) {
++	if (res != expected || IS_ERR(last_page)) {
+ 		res = -EIO;
+ 		goto mark_errored;
+ 	}
+diff --git a/fs/squashfs/page_actor.h b/fs/squashfs/page_actor.h
+index c6d837f0e9ca..f770a906c2c6 100644
+--- a/fs/squashfs/page_actor.h
++++ b/fs/squashfs/page_actor.h
+@@ -37,7 +37,11 @@ static inline struct page *squashfs_page_actor_free(struct squashfs_page_actor *
+ 
+ 	kfree(actor->tmp_buffer);
+ 	kfree(actor);
+-	return last_page;
++
++	if (actor->next_page == actor->pages)
++		return last_page;
++	else
++		return ERR_PTR(-EIO);
+ }
+ static inline void *squashfs_first_page(struct squashfs_page_actor *actor)
+ {
+-- 
+2.39.2
 
 
