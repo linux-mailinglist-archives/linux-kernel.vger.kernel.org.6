@@ -1,64 +1,70 @@
-Return-Path: <linux-kernel+bounces-294489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7796958E43
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:49:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB7958E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2D91C22295
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F89428583A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664731C57B4;
-	Tue, 20 Aug 2024 18:48:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634131C463A;
-	Tue, 20 Aug 2024 18:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8377C15ADBB;
+	Tue, 20 Aug 2024 18:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="O8aqF6rL"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8D2130499;
+	Tue, 20 Aug 2024 18:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724179692; cv=none; b=YLmvpm9i4sQjKSWAnREcVJB9LANj665aSeEWr0fabrmGMO8LF5TtakVN4VByJ9V/AP1VHRPoZRMbm1q1F5iPZmomQdmYeXm7yDi9S7MRNI3T1h35NjmfVUiYxyLzqQlWh2gvOTjdFas4f9NFrM2Uxr+NQYIYHeYoqxJ3C185BHU=
+	t=1724179744; cv=none; b=rpEzDWkIyM3gA/+lOQMWTHjcXGeNDam4ky2Mge3BuFzTN0s94jQAmLQJxXvUcjiv4t0I9R73+h/PdK+cOWgHmvQPWAoITJ5HSBhrx+TI6VPWh9xun61Bj8gzsqUf1za0BeRse6Wu4id/KMqBD5Dt8TJOGnJ+ZrbqCbDIqCn6z2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724179692; c=relaxed/simple;
-	bh=PsmsiNMM6W3dwkXKoa0o6c3iaFttRor5AGmvT9BP9h8=;
+	s=arc-20240116; t=1724179744; c=relaxed/simple;
+	bh=C0r89rcEoDQ3h3tPnSyu9wf4bR9g6nPYmndJAE/Egl4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SWzbT6V1moj8F2b7cIQy3/N7P84px3zJ8WQPM1c17+f9Ukt/Uej/KP6CBJaMXMAejADfKm1IdqYeIxgGsBtH6pHILpIsD9s75COjn+0nSHK/426yfGSFKEhitBZoMkzhe59wk+Os3SpLpb0X8YG1gUUeCptM6VWCVb9OHeIo+OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5516DA7;
-	Tue, 20 Aug 2024 11:48:36 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0E5793F58B;
-	Tue, 20 Aug 2024 11:48:07 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	linux-perf-users@vger.kernel.org,
+	 MIME-Version; b=oocRUnteN7nY+KOOkudo83PFnsBF4EzPY95B/cn8wv2zuYlhtmFIBkNyKP4pCpnd0jgewuf/E1Ikc3o9lyhg9C5jsxFGKOQkvk8E+AQU4xPAzDALHXu9670IwqgiH57AOmxFMj1K3M4Jd0FJDU/kfRWKtGmkNfng4et998BieVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=O8aqF6rL; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id CCCF0C0000EC;
+	Tue, 20 Aug 2024 11:49:01 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com CCCF0C0000EC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1724179741;
+	bh=C0r89rcEoDQ3h3tPnSyu9wf4bR9g6nPYmndJAE/Egl4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O8aqF6rLMxj1zLN6ZsdcUrmO4YrGhS7E5Lal3WKh7985dn8BqgrawZjcI3TYPLO+F
+	 FkdeJfcSM5ChVvWK7gm8PEszO+MDlu03qOYhXALYWh7Qq1yTjysUAwj3mIVHf1Lvo/
+	 lRKUCiHJfiSDs0m27rKcukUqlEiyBGG6/PvJseiU=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 64B4518041CAE4;
+	Tue, 20 Aug 2024 11:49:01 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Artur Weber <aweber.kernel@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v5 8/8] perf arm-spe: Support multiple events in arm_spe_evsel_is_auxtrace()
-Date: Tue, 20 Aug 2024 19:47:31 +0100
-Message-Id: <20240820184731.2937551-9-leo.yan@arm.com>
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH] ARM: dts: broadcom: bcm2166x-common: Increase apps bus size to fit BCM21664 GIC
+Date: Tue, 20 Aug 2024 11:49:01 -0700
+Message-Id: <20240820184901.266866-1-florian.fainelli@broadcom.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240820184731.2937551-1-leo.yan@arm.com>
-References: <20240820184731.2937551-1-leo.yan@arm.com>
+In-Reply-To: <20240820-bcm2166x-apps-bus-fix-v1-1-0478a3227e86@gmail.com>
+References: <20240820-bcm2166x-apps-bus-fix-v1-1-0478a3227e86@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,71 +73,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 'pmu_type' field is an unique value and cannot support multiple PMU
-events.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-The arm_spe_evsel_is_auxtrace() function changes to compare PMU name to
-decide if it is a Arm SPE event. This leads to the 'pmu_type' field is
-no longer used, remove it.
+On Tue, 20 Aug 2024 16:38:14 +0200, Artur Weber <aweber.kernel@gmail.com> wrote:
+> The BCM21664 GIC sits at a higher address than the apps bus currently
+> allows. This is because the apps bus was inherited from the BCM23550
+> DTSI, where the GIC sits at an earlier address in memory, and the DTSI
+> wasn't updated to match.
+> 
+> Increase the size of the apps bus to allow the BCM21664 GIC to work.
+> 
+> Fixes: a5d0d4a7bab5 ("ARM: dts: bcm-mobile: Split out nodes used by both BCM21664 and BCM23550")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/arm-spe.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 138ffc71b32d..3f8695fe6a20 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -11,6 +11,7 @@
- #include <linux/bitops.h>
- #include <linux/kernel.h>
- #include <linux/log2.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <linux/zalloc.h>
- #include <stdlib.h>
-@@ -45,7 +46,6 @@ struct arm_spe {
- 	u32				auxtrace_type;
- 	struct perf_session		*session;
- 	struct machine			*machine;
--	u32				pmu_type;
- 	u64				midr;
- 
- 	struct perf_tsc_conversion	tc;
-@@ -1053,12 +1053,10 @@ static void arm_spe_free(struct perf_session *session)
- 	free(spe);
- }
- 
--static bool arm_spe_evsel_is_auxtrace(struct perf_session *session,
-+static bool arm_spe_evsel_is_auxtrace(struct perf_session *session __maybe_unused,
- 				      struct evsel *evsel)
- {
--	struct arm_spe *spe = container_of(session->auxtrace, struct arm_spe, auxtrace);
--
--	return evsel->core.attr.type == spe->pmu_type;
-+	return strstarts(evsel->name, ARM_SPE_PMU_NAME);
- }
- 
- static const char * const arm_spe_info_fmts[] = {
-@@ -1099,7 +1097,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
- 	int err;
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->core.attr.type == spe->pmu_type) {
-+		if (arm_spe_evsel_is_auxtrace(session, evsel)) {
- 			found = true;
- 			break;
- 		}
-@@ -1284,7 +1282,6 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	spe->session = session;
- 	spe->machine = &session->machines.host; /* No kvm support */
- 	spe->auxtrace_type = auxtrace_info->type;
--	spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
- 	spe->midr = midr;
- 
- 	spe->timeless_decoding = arm_spe__is_timeless_decoding(spe);
--- 
-2.34.1
-
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
+--
+Florian
 
