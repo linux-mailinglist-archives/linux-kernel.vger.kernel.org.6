@@ -1,172 +1,130 @@
-Return-Path: <linux-kernel+bounces-293741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35839583DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0C29583E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FF928644B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:15:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E811F20631
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916D018CC1F;
-	Tue, 20 Aug 2024 10:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212018CBE2;
+	Tue, 20 Aug 2024 10:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F7jftXz6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fCC8nAg3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B6618CBE2;
-	Tue, 20 Aug 2024 10:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FFA188CC5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148890; cv=none; b=IwbCEK/nDoefNIHGOUAy1ou+wFFjnKEXevjw9nx+U2Sfgi2R+4g120LuZGfNmqWEfy8swaNqR5tVYUOzTehqMdMG2iNS+evNxPRg+B9EC9lyDA9224IC6msyXTnY0JMy7TFpWhYFuF2U1iESLeBBfWxvU05RpGgILxmZemveK2M=
+	t=1724148926; cv=none; b=YnDjikMzBQoF9H+kCr4rcgQCVukE/SeYBwR5atjrNbyiVflPo6qwVl7GlaTLkuFgatPyv+towliMu0df57QJQhE9LuNc5Hf+01Xhfpg+aToQu3mNF5TBXczeL2WbegwvkoJKI9FRoorXvlKLd8nAbuuJKDJJLDvQNZmlEYeLDiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148890; c=relaxed/simple;
-	bh=1E1wWLNgbFlbQn0FQcNz4VO9i1PXCs1SyYJirR9y25U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wsxix5bKHq8wkAPYRwIZGj4Qc9BMfziPLf7pyhS7FGWOHX80J0Uu3q1r9RDmyOdt2/SR0plAhmbBD0VkHDcjv3humYXcG338GsqpqXLhkJ9bXMSWE4qDij660CPVk7wiLJvTvZF7+KtXsRZFEBUIRNaE/if/9EXIR2hXRFvWK94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F7jftXz6; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724148889; x=1755684889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1E1wWLNgbFlbQn0FQcNz4VO9i1PXCs1SyYJirR9y25U=;
-  b=F7jftXz6SSwZktN+LpAbOJonU1GaFttAeK2pZBG555eue2auQw9sIFoN
-   vfbMD2lZ1a6QpRYUBYnGN12w2yviLTyJiBPocF7gx6xlxtsBnUVLu/6lk
-   yjJxIkMtmBZWsC2H1S9EWs4ilQjpKG0GM/jG5thtMaAwUOUu/QbhCtfJY
-   U8aokB+d+RNoLPhqILN817xE48uU0B3E/rhx25sVLAQV8XQVDBenDcfnS
-   O0Hpd845+8C2r0JmgHLWlqABVrMa6TG8k7f3PWU/JjF5+DJBETkVTniNm
-   Wwaj0iVWTLmTzLUvIPr6IM2cxDJ7bQEygEWFJdonw470kFb7mWJYYcqXB
-   w==;
-X-CSE-ConnectionGUID: vPBdjXmtRXmJnGaarc07fQ==
-X-CSE-MsgGUID: SjA8/EQTRnCQgfagKcLp5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22574591"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="22574591"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:14:48 -0700
-X-CSE-ConnectionGUID: WVSUDWhsQh27s29v8SXEbQ==
-X-CSE-MsgGUID: yY7H00bUQRa7ybSXTdMr2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="60661938"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:14:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sgLsq-0000000HG9s-2zFi;
-	Tue, 20 Aug 2024 13:14:36 +0300
-Date: Tue, 20 Aug 2024 13:14:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v3 04/17] usb: typec: Add device managed
- typec_mux_register()
-Message-ID: <ZsRsjPwNQYWWGIXg@smile.fi.intel.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org>
- <20240819223834.2049862-5-swboyd@chromium.org>
+	s=arc-20240116; t=1724148926; c=relaxed/simple;
+	bh=MRYIGSOSbqWcGCpS7eeweY5sPDyQjSsVn9evAIxkLXE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ef0UmIQw+Ye4Z+AA2c5mwtkbtc6JW/PKct22qaW/Y2V5Bxz6VK2da0kcDq7zvap9vdbrUTUW0VRoi6+8fBOY0bgCujqX6XiwnxoX5TPtdGrEPPGQqjbALwZmtcaer1w+EQLpwffzriZ05gRRPb+OdDXPC71yg1d0cq+SfnKX3OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fCC8nAg3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724148924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AOG9ybdUE74HfT0xY/KZ29V4lJHlpnppytRZwc0Rs94=;
+	b=fCC8nAg3i9q4ZnlVwRgYc9nSiDCetpSeRyrPa2OhnOXaFHSJsN2NG9QH90iLPHYYsvlr6Q
+	16vWcuSN+OCWWU8Ax+aH/jFXHA4uEfqcCoGQCiDeMXZ7qw9keSALoT0/4UfOGMYU/bOYyi
+	eOAK/exXQdCshtbMQpCDA+/4p6ZlZy8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-XOwAy3wQPjSOtx9i8ixXTw-1; Tue, 20 Aug 2024 06:15:22 -0400
+X-MC-Unique: XOwAy3wQPjSOtx9i8ixXTw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428fb085cc3so10014685e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:15:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724148921; x=1724753721;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOG9ybdUE74HfT0xY/KZ29V4lJHlpnppytRZwc0Rs94=;
+        b=TLltFv2pO0DSyI73P2Sbw52AbyApb1tc0OCsCUoDkrGlk7+Zv3CkyRBE6jQN0jv2oU
+         GlONwqLab803sydApTr6pLo9heY5+H3kMbknoF4ffD82FHTShPXnTxYrocQHT5CZV3Ih
+         TtEMxLVzMGpg6uMLC4Gs0Dvt5lKwaQQ5hZmOLrLvhV2I9ENHU2nJIrSxxxk5R2tvuA9F
+         1TxpojF+e2tqY4ARqYImIFAFKeH4hpeiNvwjmvaEhk6VQF0vyMschtCDXlJ2klm8sSDf
+         QkK6GcUESyHHN091U9687omtpka71kJ2q+aXH4/rzzTRehoBgaBqgXD96AJmXnHGRd1l
+         mvaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXJIg4Q7AiKepeQExdlloRHtwYD6C6SKyCXYpb3vZdswClbgib9PAzDEyGNbFLM1nkOw4Z5kte7c27u8Qi02SGNg/3Pb/CDZQeUsyr
+X-Gm-Message-State: AOJu0YwiR/vTqVfGQs57J8y0RKfLEZbtLyX4AWD2i0l2dh3eM7kWj3Sq
+	nUO146sm+dsu/GutJLKuN2cwCbdXsJJG5Znc8evb/rwM2e8aBsDkj6KkKWj2lwvNbTsSPDYxSVh
+	YVfxQjje3vPY15SxFj6AH/NN+sX107BIM6zcDF+1Aut0zUF2hY1nQa6i8jmuStA==
+X-Received: by 2002:a05:6000:400f:b0:36d:1d66:554f with SMTP id ffacd0b85a97d-371943282f6mr5858748f8f.3.1724148921612;
+        Tue, 20 Aug 2024 03:15:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEYIGr0mleZL/s18kcq9OFPn2+MExIhTUkOVRIv8PYk+G6iWCJWI1P+1g+0WfYxZmzwoWWIw==
+X-Received: by 2002:a05:6000:400f:b0:36d:1d66:554f with SMTP id ffacd0b85a97d-371943282f6mr5858737f8f.3.1724148921161;
+        Tue, 20 Aug 2024 03:15:21 -0700 (PDT)
+Received: from [192.168.1.25] ([145.224.103.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a2e2sm12752383f8f.16.2024.08.20.03.15.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 03:15:20 -0700 (PDT)
+Message-ID: <584ce622-2acf-4b6f-94e0-17ed38a491b6@redhat.com>
+Date: Tue, 20 Aug 2024 12:15:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819223834.2049862-5-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 2/2] net: dsa: microchip: Add KSZ8895/KSZ8864
+ switch support
+From: Paolo Abeni <pabeni@redhat.com>
+To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
+ UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org,
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240815022014.55275-1-Tristram.Ha@microchip.com>
+ <20240815022014.55275-3-Tristram.Ha@microchip.com>
+ <9bd573ff-af83-4f93-a591-aab541d9faac@redhat.com>
+Content-Language: en-US
+In-Reply-To: <9bd573ff-af83-4f93-a591-aab541d9faac@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 03:38:18PM -0700, Stephen Boyd wrote:
-> Simplify driver error paths by adding devm_typec_mux_register() which
-> will unregister the typec mux when the parent device is unbound.
 
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: <linux-usb@vger.kernel.org>
-> Cc: Pin-yen Lin <treapking@chromium.org>
 
-As per previous comment, move these after --- line
-(hint: You may have it in your Git commit with --- line,
- it will be removed on the receiver side by `git am`)
+On 8/20/24 12:08, Paolo Abeni wrote:
+> On 8/15/24 04:20, Tristram.Ha@microchip.com wrote:
+>> From: Tristram Ha <tristram.ha@microchip.com>
+>>
+>> KSZ8895/KSZ8864 is a switch family between KSZ8863/73 and KSZ8795, so it
+>> shares some registers and functions in those switches already
+>> implemented in the KSZ DSA driver.
+>>
+>> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> 
+> I usually wait for an explicit ack from the DSA crew on this kind of
+> patches, but this one and it really looks really unlikely to indroduce
+> any regression for the already supported chips and it's lingering since
+> a bit, so I'm applying it now.
 
-...
+Unfortunatelly does not apply cleanly anymore since commit
+fd250fed1f8856c37caa7b9a5e6015ad6f5011e5.
 
-> +/** devm_typec_mux_register - resource managed typec_mux_register()
+Please rebase and re-send.
 
-Wrong comment style.
+Thanks,
 
-> + * @parent: Parent device
-> + * @desc: Multiplexer description
-> + *
-> + * Register a typec mux and automatically unregister the typec mux
-> + * when @parent is unbound from its driver.
-> + *
-> + * The arguments to this function are identical to typec_mux_register().
-> + *
-> + * Return: the typec_mux_dev structure on success, else an error pointer.
-> + */
-> +struct typec_mux_dev *
-> +devm_typec_mux_register(struct device *parent, const struct typec_mux_desc *desc)
-> +{
-> +	struct typec_mux_dev **ptr, *mux_dev;
-> +
-> +	ptr = devres_alloc(devm_typec_mux_unregister, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	mux_dev = typec_mux_register(parent ,desc);
-> +	if (!IS_ERR(mux_dev)) {
-> +		*ptr = mux_dev;
-> +		devres_add(parent, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-
-What does prevent you from using devm_add_action_or_reset()?
-
-> +	return mux_dev;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Paolo
 
 
