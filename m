@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-293775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FD495846D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:27:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC944958478
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654DC1C23D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C551C23CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D740818CC02;
-	Tue, 20 Aug 2024 10:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gn3ADgew"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1CA18D651;
+	Tue, 20 Aug 2024 10:28:34 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3497581F;
-	Tue, 20 Aug 2024 10:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0E7581F;
+	Tue, 20 Aug 2024 10:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724149662; cv=none; b=VjwZ5FMaiyL25q6uNe2/i5QlNApRJ5WirCrjnKWbkhGUvgE99F7XXnfTsTGZHbCpprevOkx/qLO7gW+DQG4ZIMj3RvQFHxzRM+CfHck3U5iZlyZn1KE002kBogAfjC+ayNFpWpgLFjkkzm1Io1OyeGPIRgaAXufL7geuzi1vMXQ=
+	t=1724149713; cv=none; b=qUwxUOO6YqmqE4zfVmiVrIfwl7sFLX5i4h/w+gWUuu8TuIo913vCVN+ArjS8LahKLkMYzsjNLKXoPC36n09FRUI1iGjLWISq4L+szMad3Zpy1n7XAy4ZGeTDZUWPTneHNzLsocPW5p4Li4336Zd/xY/Vf3SKjlnG1ziO7150m4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724149662; c=relaxed/simple;
-	bh=uj1mc9dma5D/TA0A5fG99E3lG/cctuHSADUVSQEHd5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tY81VyXHqotAOs551PwqIrFOVkUJ+Q0NVnIJCr8uC0z7C5w7CDBE2Hs7G4rmEgJ4C5nQqyMfYxP7mJ5Y1zcIUUA8uE5tvWbjqUuTm9Rt0ys6Bv867Gs+DsD3wt3LIV6YhY3RP4nk2eNn5R1xgS61mSqd/yMd4Pwch1wGdKNmW50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gn3ADgew; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99518C4AF11;
-	Tue, 20 Aug 2024 10:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724149661;
-	bh=uj1mc9dma5D/TA0A5fG99E3lG/cctuHSADUVSQEHd5o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gn3ADgewFupOlQBAvWw5ozANB+sC8JJJLZgRA44kGZc3L+Wf75Oo0eZZJMqlUeAGY
-	 Rh+x/GLK8xn0agNTlNL7hvF0qRczx4sf2J8iBtMPiFgWwuSn6Vl/RqpVqPglZzIGUA
-	 6qE02ZUeKVz9tc8rsa43HSeREbZ3wET3gC4UY7MAlGCYo2AeY7hyUe5DDo7O046v1v
-	 82vmyXb9SX8+1CK+hOrA6ZWE4sYzhyLIeAiIlm46hzfe5oCJ69kPBq9oFoZHIz/HkT
-	 wylNG/8r3bcxKZXdHC+5IW61nfNEGIC2/gyE/9AF2Figwx/b+skLcrvnL4tOZtH+nh
-	 XlrmDDYXW6U7g==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2702920904bso430497fac.0;
-        Tue, 20 Aug 2024 03:27:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU51J+Lup43RaNhdZY7JlhYgP6qFpVQfTNwiSFkpB+ShIWPF/My0gM958wlyVzjxZK4eW+VnMDJuug=@vger.kernel.org, AJvYcCVw8TjCn89ehJarafZzjRkec9kHNMivGFUAL3XSsDX6DfKwQjC+d+mPRss9nBhxXJsjGOdlRpfm6hn5+pU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Mz+MJ+BuYoGMJ5yaNxl1BcVVjmfVrzLr3218XWr3zxckI2I1
-	DJpHtuEPARfcax6w1YU8rdCiENF576dTgLXz4dTFU9uiMwabfEUtjDqd72vWviPARG7TUUdcKu5
-	jSop8sTSiELSN8L7AQGw07QjzBX4=
-X-Google-Smtp-Source: AGHT+IFb1UV/1ktn4Q8KJFeVM3iSif7xxRIdNFKgzotdso2YGeYOhGFLxhjbxA/laFg15SWubNOQiWTqHmjcy1aORM4=
-X-Received: by 2002:a05:6870:b253:b0:25f:401a:2ec3 with SMTP id
- 586e51a60fabf-2701c0a7b6fmr8310927fac.0.1724149660774; Tue, 20 Aug 2024
- 03:27:40 -0700 (PDT)
+	s=arc-20240116; t=1724149713; c=relaxed/simple;
+	bh=O5k60SiozUItOe57/Mfcp/M4CbNdahVcbyT/Wm67rEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9gDwZHGHVtGUPm/N0fKMwl7hnU+j24r5Gw4YaXnMV6KU/gEQ5xfC+caWQCH3xvJj9U2fDQffnw8iMofV4CbiAUuUoo4rN0eSGG/e2XRBb8tBs7rpBrY4U4l8oDVc9qD25/CzP4iE+eRZNAYIZ7g9Wo2+115J7VmMIDoA9fPmGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: SJHUM3mGQFGy0SMvf5/nCg==
+X-CSE-MsgGUID: kT+KZVUQR0W9gpqzwdmEBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26306108"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="26306108"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:28:31 -0700
+X-CSE-ConnectionGUID: i2TeOzYIRg25kacmae/h/Q==
+X-CSE-MsgGUID: FG1tjdHOT4uS3xW62Fnj5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="60664479"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:28:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1sgM65-0000000HGOZ-3tRE;
+	Tue, 20 Aug 2024 13:28:17 +0300
+Date: Tue, 20 Aug 2024 13:28:17 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH 4/9] block: mtip32xx: Replace deprecated PCI functions
+Message-ID: <ZsRvwVCzpLEQovmU@smile.fi.intel.com>
+References: <20240819165148.58201-2-pstanner@redhat.com>
+ <20240819165148.58201-6-pstanner@redhat.com>
+ <ZsOJONEA2x93bSpO@smile.fi.intel.com>
+ <e406ba06180571564b47872f090623b19e4ad87e.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2205737.irdbgypaU6@rjwysocki.net> <3837835.kQq0lBPeGt@rjwysocki.net>
- <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com>
-In-Reply-To: <6bf771b0-d57d-5a8c-ec36-6f8a041695d9@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 12:27:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
-Message-ID: <CAJZ5v0i_Z43bLWsa9gg_SZFBURi1XrZn4Cnxurm8KCawAWqtUA@mail.gmail.com>
-Subject: Re: [PATCH v3 05/14] thermal: core: Move thermal zone locking out of
- bind/unbind functions
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e406ba06180571564b47872f090623b19e4ad87e.camel@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 20, 2024 at 10:27=E2=80=AFAM lihuisong (C) <lihuisong@huawei.co=
-m> wrote:
->
->
-> =E5=9C=A8 2024/8/19 23:58, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-> > acquire the thermal zone lock, the locking rules for their callers get
-> > complicated.  In particular, the thermal zone lock cannot be acquired
-> > in any code path leading to one of these functions even though it might
-> > be useful to do so.
-> >
-> > To address this, remove the thermal zone locking from both these
-> > functions, add lockdep assertions for the thermal zone lock to both
-> > of them and make their callers acquire the thermal zone lock instead.
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v2 -> v3: Rebase after dropping patches [04-05/17] from the series
-> >
-> > v1 -> v2: No changes
-> >
-> > ---
-> >   drivers/acpi/thermal.c         |    2 +-
-> >   drivers/thermal/thermal_core.c |   30 ++++++++++++++++++++++--------
-> >   2 files changed, 23 insertions(+), 9 deletions(-)
-> >
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -785,6 +785,7 @@ int thermal_bind_cdev_to_trip(struct the
-> >       int result;
-> >
-> <snip>
-> >
-> > Index: linux-pm/drivers/acpi/thermal.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/acpi/thermal.c
-> > +++ linux-pm/drivers/acpi/thermal.c
-> > @@ -609,7 +609,7 @@ static int acpi_thermal_bind_unbind_cdev
-> >               .thermal =3D thermal, .cdev =3D cdev, .bind =3D bind
-> >       };
-> >
-> > -     return for_each_thermal_trip(thermal, bind_unbind_cdev_cb, &bd);
-> > +     return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &=
-bd);
-> If so, it seems that the for_each_thermal_trip() can be removed or no
-> need to export.
+On Tue, Aug 20, 2024 at 09:29:52AM +0200, Philipp Stanner wrote:
+> On Mon, 2024-08-19 at 21:04 +0300, Andy Shevchenko wrote:
+> > On Mon, Aug 19, 2024 at 06:51:44PM +0200, Philipp Stanner wrote:
 
-I beg to differ:
+...
 
-$ git grep for_each_thermal_trip | head -1
-drivers/net/wireless/intel/iwlwifi/mvm/tt.c:
-for_each_thermal_trip(mvm->tz_device.tzone, iwl_trip_temp_cb, &twd);
+> > int mtip_pci_probe()
+> > 
+> > >  setmask_err:
+> > > -	pcim_iounmap_regions(pdev, 1 << MTIP_ABAR);
+> > > +	pcim_release_region(pdev, MTIP_ABAR);
+> > 
+> > But why?
+> 
+> EMOREINFOREQUIRED
+> Why I replace it or why I don't remove it completely?
+
+The latter one: Why did you leave it and not remove?
+
+...
+
+> > mtip_pci_remove()
+> > 
+> > >  	pci_disable_msi(pdev);
+> > >  
+> > > -	pcim_iounmap_regions(pdev, 1 << MTIP_ABAR);
+> > 
+> > This is okay.
+> 
+> Removing it is okay, you mean.
+
+Yes!
+
+...
+
+> > >  	pci_set_drvdata(pdev, NULL);
+> > 
+> > Side note: This is done by driver core for the last 10+ years…
+> 
+> Ah you know Andy, kernel programmers be like: "When you're hunting you
+> better make sure the wild sow is really dead before you load it in your
+> trunk" ;p
+
+Indeed, I had been told many times myself to improve / cleanup things unrelated
+to the working area before actually considering my little work...
+
+But, I specifically mark it as a "Side note:", so it's up to you to address
+or not.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
