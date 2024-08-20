@@ -1,130 +1,93 @@
-Return-Path: <linux-kernel+bounces-293994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2041C958756
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4120895875D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A4E1F22ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EE728253A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB7B18FDD8;
-	Tue, 20 Aug 2024 12:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A366A190049;
+	Tue, 20 Aug 2024 12:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SogOe8+b"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzTeIKPn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEE918E039
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72EE18E039;
+	Tue, 20 Aug 2024 12:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724158153; cv=none; b=PZU3Ijde1W+pGumX1RfWaLpwyaevp8aYCJwOspxiJjKoRplbyidBGetx+olH+dDFKAeVMJUiMiyjA+GHyScPaEx9QJAtcrxklqAcvKM5aMocDS1Ux8CbxfSUrEkHR4Un5q86RUXoJzaEocSnprVxu5j0wFhWlMwrr7C6JmvyV1M=
+	t=1724158296; cv=none; b=sbYwY8iK9w+1gUs6HtRP68RZWlh2icUwyY/Ej23sk9uBPN9F6Wt6d8Q110egosm4fiNatLaCE1oB45bN5MQc9j+0hZYLTeS9l7Xq5h+1dUo9eASyddICZvEfDN1jaEcOcWsc3WpVc7NkHXzWukphD+Hvmcm3mjGWBZOqpN2EYDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724158153; c=relaxed/simple;
-	bh=1Sbs6eQl2iCqdSwxfE6pIQkD2Iw+7sq2JAkoE4cztJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SmiKckTkh2rqDWembT3POSAq0V0LaKmcaSRM+z0Gv9xAqN4Jt1fA4F/0zaCvLV91pMveBGyNGfQVwuwJvlTr0U4Lp8LAUBTOqPpPNjPVaTAU9NptdxWVFqpRaUkANCLVL24fZW7r//cM027KGjrhKzopZaVE4E8uRaSrIX2cQwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SogOe8+b; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so8276751a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 05:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724158150; x=1724762950; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hkcpd9YjkBve1E3v11AvpsRGi8t+U6b6eWmy9I0Lke0=;
-        b=SogOe8+bUgDZTYf9BvUKa7KPTiSa+CztO1ubgqTeWKggAI9HcT5HH24Jj6VGa8tfk1
-         meE3T0odp8D2A8UsnXOG6npQnK65nOVMERdHYOTLHHHAXQWLPP6Vss7vUeqhwFn5ywYf
-         hnOyC0OUmdBVDzEkbm1NgUxSRsiL48o9dAIOLeciZEpyPi+W0uTyGTGTATuEJXTE8Kii
-         dpadUT49x/Oj4i2IFMQvOHZ5ccqanfjuuqfDtogqRRnG6r7HSAb4gHfi6k447CeDjnPS
-         mggIzUxpr2WSpDi/S/dGYwi5eIkhBXvSzvW0O1+cwFz2OF4XrPU529hI4vUwllol4HRQ
-         yEYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724158150; x=1724762950;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hkcpd9YjkBve1E3v11AvpsRGi8t+U6b6eWmy9I0Lke0=;
-        b=jdpQekKY1Hs4AqCQi8188u8K1Jf6Ht9bWYuxQBttisU9aANcaYpYQEFGKj6BdBdBLy
-         9KyoSevbgtKzwGLY6oGM1vtcaQNIPSKzD/5GfXlKkbztvRF0qT2KWOt/YA/rS/cGxQj0
-         MmgW6FuLuPmEsuBwMtrX0IMasZy2BJ/YAMu/tUZqbYmDA/1QINx7sQDpA3JaIfrJzD7V
-         fjHHSpwWCKnETOcKxlVoTBaXNHQSK029UlSUP1fpCZ1s4Vc+Tj6NKABm7s4DlyJurCco
-         p39Um5U1TfvaFoEtbDVzmuJA6oe9y/ojAVLf9drSzwAtJ96/A9Z/HvAurwMddi4RzV1y
-         MnpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxwtHLvpl8OG0lbydOhTruy31FnC8xmT5ULf2RoVvR/EXiwukuaDEexX0X0wGHFZZ/DJfCv+YwWiuhHTKs4o5RIxYJ9IqD33jP8kix
-X-Gm-Message-State: AOJu0YwKWXqs1GX1Vsfe6Gyd1+C9I4tpFRRWtrCeVdZVsRyyjbBT3GYW
-	8mWS6Og4kjAj9XVEuk040pJQfDqxL09N+bWQwsHsRGyR5YR2sAkAG/8y6WCySoli8Q4loBUDp1x
-	5VNWGDp2TjEr5OZfjNBnlhznjx1A7ki0+l8Ys
-X-Google-Smtp-Source: AGHT+IEn9KaHhvgLkNx4C288H1MOvSj4VDl4aH4ZGXp6/aFM03ti3t2cri37LJzMl5DrhmRSLeoPKHKdyfVfGRIQBSo=
-X-Received: by 2002:a17:907:9285:b0:a7a:8284:c8d6 with SMTP id
- a640c23a62f3a-a8643fd84a0mr361818166b.24.1724158149039; Tue, 20 Aug 2024
- 05:49:09 -0700 (PDT)
+	s=arc-20240116; t=1724158296; c=relaxed/simple;
+	bh=p67qGnzj0hFV+rLece/SOAzVgxRPmFrPcwZF78eqbcw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cg+CQs0QfOiihvjkY0XKcm0tlufvT9/M/9gfVQsQTryOcKmYdXXJ6zFkB7U4x83Dz7NTJRgXEJvUCHuZRHG35yW0sYxwpuaZeua/IXffyGTVkBXfOhbbV+9gArOD76BHSX51ju9THgfv1uSqf7FL21jDVUeRa3YPpNsf5ZRqXeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzTeIKPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D42C4AF0B;
+	Tue, 20 Aug 2024 12:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724158295;
+	bh=p67qGnzj0hFV+rLece/SOAzVgxRPmFrPcwZF78eqbcw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EzTeIKPn5gLP0KVL8CPMKXD+sOpTDEXQRPogaEG9MNIYKtDLl1adtk1zh56HZ57kn
+	 0/6S5W1neYxcWPmPGRR8Jeb4KPhVKPGvIj2wxK80b/AOsT1v77I7Vu4hHFKVapujwu
+	 0W9891mgzUtx/mF86JTNoGUU8VjgyL9q+f/JDvstoWNv44Cg8JVZSMO5z3VHvIEtcZ
+	 NKUUV4fT2UU+HJCeKE3Af+I3ZaVUOKCOplPW78LqnogmJmZ4xzR1KvH55HQ92PUV5E
+	 lZmqga2YmL4SZElFBW/27CZwepW+E70q/f5OcTDcX9kAnC76pMP5EuuAJrAXkMQRZd
+	 oE3KtlyamENFw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EAF3804CA6;
+	Tue, 20 Aug 2024 12:51:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820121312.380126-1-aha310510@gmail.com> <20240820121526.380245-1-aha310510@gmail.com>
-In-Reply-To: <20240820121526.380245-1-aha310510@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 20 Aug 2024 14:48:58 +0200
-Message-ID: <CANn89iJrPpmHvidEdd7G7oPrm1+VWsdprvrzQiN4OwTKjU3KsQ@mail.gmail.com>
-Subject: Re: [PATCH net,v6,1/2] net/smc: modify smc_sock structure
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com, 
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, utz.bacher@de.ibm.com, 
-	dust.li@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] ip6_tunnel: Fix broken GRO
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172415829474.1131310.14083868521176252198.git-patchwork-notify@kernel.org>
+Date: Tue, 20 Aug 2024 12:51:34 +0000
+References: <20240815151419.109864-1-tbogendoerfer@suse.de>
+In-Reply-To: <20240815151419.109864-1-tbogendoerfer@suse.de>
+To: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2024 at 2:15=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> Since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
-> point to the same address, when smc_create_clcsk() stores the newly
-> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
-> into clcsock. This causes NULL pointer dereference and various other
-> memory corruptions.
->
-> To solve this, we need to modify the smc_sock structure.
->
-> Reported-by: syzkaller <syzkaller@googlegroups.com>
-> Fixes: ac7138746e14 ("smc: establish new socket family")
+Hello:
 
-Are you sure this Fixes: tag is correct ?
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Hint : This commit is from 2017, but IPPROTO_SMC was added in 2024.
+On Thu, 15 Aug 2024 17:14:16 +0200 you wrote:
+> GRO code checks for matching layer 2 headers to see, if packet belongs
+> to the same flow and because ip6 tunnel set dev->hard_header_len
+> this check fails in cases, where it shouldn't. To fix this don't
+> set hard_header_len, but use needed_headroom like ipv4/ip_tunnel.c
+> does.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net] ip6_tunnel: Fix broken GRO
+    https://git.kernel.org/netdev/net/c/4b3e33fcc38f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  net/smc/smc.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/net/smc/smc.h b/net/smc/smc.h
-> index 34b781e463c4..f23f76e94a66 100644
-> --- a/net/smc/smc.h
-> +++ b/net/smc/smc.h
-> @@ -283,7 +283,10 @@ struct smc_connection {
->  };
->
->  struct smc_sock {                              /* smc sock container */
-> -       struct sock             sk;
-> +       union {
-> +               struct sock             sk;     /* for AF_SMC */
-> +               struct inet_sock        inet;   /* for IPPROTO_SMC */
-> +       };
->         struct socket           *clcsock;       /* internal tcp socket */
->         void                    (*clcsk_state_change)(struct sock *sk);
->                                                 /* original stat_change f=
-ct. */
-> --
 
