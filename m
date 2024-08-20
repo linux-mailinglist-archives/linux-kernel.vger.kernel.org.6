@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-294481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3383C958E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0F7958E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E794B22BC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84B4285D32
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CDB1547D1;
-	Tue, 20 Aug 2024 18:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD0615C148;
+	Tue, 20 Aug 2024 18:47:55 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A6C148FEB;
-	Tue, 20 Aug 2024 18:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC8D1547F8;
+	Tue, 20 Aug 2024 18:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724179672; cv=none; b=rYpNpdBClFBOtULNl6QIz5kLzB3LmGbFggWy2HM2fVt4gyOmB1Ox22zmEQTswby0Ne0KqLoX7wmBLGgo3jUp9Z1eYOzU7pGUqfSgXoRLAfESinrK1iRvzbaw2Jze2ts2zYYRSDwvDerEsFgamN27Q9ijZgUd/Nh/+byWw1ySFHo=
+	t=1724179675; cv=none; b=QSq696ANjf7XGP1H5tYN5GhW/OyAzw336bZF4I5e+Rfce01ZSycMhZfRKpw8G9/ZD30l/jssXPhn2gdoUUaBjAkMFY4VdjXHV7fIWCi1T69Oj6yV0+9x1bmIrbAoVgxYi9e6vJxpI37PPp5/nvIg2rHmJXzEygVNMSS3YF5lx3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724179672; c=relaxed/simple;
-	bh=5rbaWl90Uj47ndUy3ZaQmzwKLrGiylTs/LIKcyJIsas=;
+	s=arc-20240116; t=1724179675; c=relaxed/simple;
+	bh=qC9uy8eM5i7tGdIPdUHWZAxuBI3GpsqejXPmdbCToUw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RTZemrv0WYVdjUexRohNzXslqFy87a6fKfRfWzxJHAldHV2iYuZHe5bEcF2um6rze8lKtiuxuHi9HMIz3AwoaonI2Mm0d9ECWrCd5QnPhzTMxVu+VKMY+Q4y7iAVXRRCFKXG8KDXYuydgYfe1DxjVFP6KwfGSeVamDrLEqqsUVE=
+	 MIME-Version; b=ZhBj2YvxnCd+p3h3zwQFG3hjMFawA5PCpxy3dxzpPO2MnBMTwaHx92Tnz6QDPXE7vogVOWRHxksL0eELgj7O/q5JbrtiuFolkpWOXTNPhUx2hC0QkNNSDLMU9U6RUc/hoqskQwA5Xca8MLpZumFnOI1DqoMub8vETin4QUzK5Y8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B678FEC;
-	Tue, 20 Aug 2024 11:48:15 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CC9D1480;
+	Tue, 20 Aug 2024 11:48:18 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B82AA3F58B;
-	Tue, 20 Aug 2024 11:47:46 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BFD1B3F58B;
+	Tue, 20 Aug 2024 11:47:49 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
@@ -53,9 +53,9 @@ To: Peter Zijlstra <peterz@infradead.org>,
 	coresight@lists.linaro.org,
 	linux-arm-kernel@lists.infradead.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v5 1/8] perf/core: Allow multiple AUX PMU events with the same module
-Date: Tue, 20 Aug 2024 19:47:24 +0100
-Message-Id: <20240820184731.2937551-2-leo.yan@arm.com>
+Subject: [PATCH v5 2/8] perf auxtrace: Use evsel__is_aux_event() for checking AUX event
+Date: Tue, 20 Aug 2024 19:47:25 +0100
+Message-Id: <20240820184731.2937551-3-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240820184731.2937551-1-leo.yan@arm.com>
 References: <20240820184731.2937551-1-leo.yan@arm.com>
@@ -67,41 +67,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit changes the condition from checking the same PMU instance to
-checking the same .setup_aux() callback pointer. If PMU events have the
-same callback pointer, it means they share the same PMU driver module.
-This allows support for multiple PMU events with the same driver module.
-
-As a result, more than one AUX event (e.g. arm_spe_0 and arm_spe_1)
-can record trace into the AUX ring buffer.
+Use evsel__is_aux_event() to decide if an event is a AUX event, this is
+a refactoring to replace comparing the PMU type.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- kernel/events/core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/perf/util/auxtrace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c973e3c11e03..883c457911a3 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12345,9 +12345,16 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index cbb773ed6f1a..ca8682966fae 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -671,11 +671,11 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+ {
+ 	struct evsel *evsel;
  
- 	/*
- 	 * If both events generate aux data, they must be on the same PMU
-+	 * module but can be with different PMU instances.
-+	 *
-+	 * For a built-in PMU module, the 'pmu->module' pointer is NULL,
-+	 * thus it is not feasible to compare the module pointers when
-+	 * AUX PMU drivers are built into the kernel image. Instead,
-+	 * comparing the .setup_aux() callback pointer can determine if
-+	 * the two PMU events come from the same PMU driver.
- 	 */
- 	if (has_aux(event) && has_aux(output_event) &&
--	    event->pmu != output_event->pmu)
-+	    event->pmu->setup_aux != output_event->pmu->setup_aux)
- 		goto out;
+-	if (!itr->evlist || !itr->pmu)
++	if (!itr->evlist)
+ 		return -EINVAL;
  
- 	/*
+ 	evlist__for_each_entry(itr->evlist, evsel) {
+-		if (evsel->core.attr.type == itr->pmu->type) {
++		if (evsel__is_aux_event(evsel)) {
+ 			if (evsel->disabled)
+ 				return 0;
+ 			return evlist__enable_event_idx(itr->evlist, evsel, idx);
 -- 
 2.34.1
 
