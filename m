@@ -1,144 +1,104 @@
-Return-Path: <linux-kernel+bounces-293373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB22957E71
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B6B957E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297D81C232C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1884285AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEE18E37A;
-	Tue, 20 Aug 2024 06:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D3B17836E;
+	Tue, 20 Aug 2024 06:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hzf3vvLa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMIZeLI6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC2518E35E;
-	Tue, 20 Aug 2024 06:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813D816D33C;
+	Tue, 20 Aug 2024 06:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724136008; cv=none; b=GQ00RxMesye1WD8Nzqwit5MOkCY2fMMNJwmLaqgf+vzcYz6kwNM2j1Qdw36f9Ad82yIta9F76nKe5V+7nBgufqrxs0IWQEwkL9npSyGnGdhXCkQ6674uVkxQ2JhuAnOwE9beoAqy3Cc0KZcHeCoe3ROV8FPRpOUfjuMw029bhQM=
+	t=1724136031; cv=none; b=JYuTJkWFAmZ4bdhgGFZhQLl0HhI9x9M88J9bOS6/Asd8SlskWH/0PqLV7Qc6ZbxjZxR2enkR/mDK3VRxwvabA1MZbRdgUKLJq7AZUdJPHaU9ySgB3oQuc0LtWAuKRSAXczxrVM3p+B3lZBpyh8pKUdB+KSFUOIunubXVqdGsXoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724136008; c=relaxed/simple;
-	bh=/hHiRcXgLHm4sUaUmn1kvv9aDZlbaGSXQTZLN7Klh8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yst4Zwsl5xppStn7ye34550ISEEr59VoeucJul4NMdl40p8g2q6Lm7T8SycuDjuzipTam2JhpDy/7RNK9NwH00o23aKgnifGOxEYUIjWYb13KY3x2fMVSFW1SvN6N+kxdIpoFwFhAFBJiy6UXjJtBQmChp2p1uSsdYRGhwq1WYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hzf3vvLa; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724136006; x=1755672006;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/hHiRcXgLHm4sUaUmn1kvv9aDZlbaGSXQTZLN7Klh8Q=;
-  b=hzf3vvLaPyT72YwlfpxPwBNxh6f5vZrIW/KUrDIwGZ0kkTCJoc+iSDVv
-   zMJGvEKw7fRKM8EwYJIom5a3vdB+rU4e+NelGupv1dvQsUfuh62O0B33C
-   KjAnTXzOVQDwxCheG9kWwCbU/mLyvg5Z2exg8yj/OEfZ9Q8o+/BR1orwb
-   qqhYd6UFSCGVLlMsbn9l5gq8lsQzUBudG864F5OwOY1f1RNZFTVGCAhVn
-   vBtHyO6LIKjE9RL9Nk7x29+G1HMXGJSg0XaMhHo9Gb/EqnzSywvqOOcF2
-   KEd7RxUmp/9MG+1jt6gKVYo5G3vhyOpFEqX/HfjyIHNfLeXcbhIR9W3oJ
-   g==;
-X-CSE-ConnectionGUID: CdxFjwjoTfKEp/1GMtWZ7g==
-X-CSE-MsgGUID: yBjM6gz2Q3Kvm1f76jU9Kw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22297503"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="22297503"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 23:40:05 -0700
-X-CSE-ConnectionGUID: BsfZeq6bQjGX4UIBe0hLfA==
-X-CSE-MsgGUID: efE7EHc2Sbe1ViKK24ig2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="91394800"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.176]) ([10.245.246.176])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 23:39:59 -0700
-Message-ID: <f507a228-4865-4df5-9215-bc59e330a82f@linux.intel.com>
-Date: Tue, 20 Aug 2024 08:39:56 +0200
+	s=arc-20240116; t=1724136031; c=relaxed/simple;
+	bh=DkfoFALPN2xD7HjJ/NjpcJQg9u8DPkmbjme03VAQ95w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d6dnPi3z328qKdtSJr0Y5yuUUYmv6zGHvaI0axalvqlsonG6R1YXmQ1usomd3hSMTD41RFVLKaa081xDBAyxmRwma+P2S2sXAzwRX0bBRyM+wGe7PQWwsejhUOVZK8vWiccyUkAx1v8a3SaeaYHFOdiKbye6jiCOvmbjmIQ5T/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMIZeLI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C13CC4AF0B;
+	Tue, 20 Aug 2024 06:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724136031;
+	bh=DkfoFALPN2xD7HjJ/NjpcJQg9u8DPkmbjme03VAQ95w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TMIZeLI6JZQ/KeiErTvIHzLY9Wk1PEruLYw4rKR4cBI8GpltVhh8xOq9C44ILt3fh
+	 6I9b265VRmgn2b4pF8bjNVRlUx3MgIL+zyWiC+DVWSMdlY5ZY4KwwnRzC2rcvi/UOA
+	 g91zN/T/xLW9+If4ma0poRnk+kDavoSRHzR9tO9cAR4jWXfq3jCJ68KGNFZR6ueXKG
+	 aCqWO4T49/GjMgfYoBFT8OrKNuwmOML5KYv2cqLb4KbTKSi+o5exvg7AZKeGwI9mia
+	 nlCyk6y0KI+Bs7V568AdhtMz2dcYsdi+ZivXo7I85BJTGmhfdvjB7qshV0A4oDjFbF
+	 ytUUSmkC5r6aw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgIXZ-005ASL-WC;
+	Tue, 20 Aug 2024 07:40:27 +0100
+Date: Tue, 20 Aug 2024 07:40:24 +0100
+Message-ID: <86wmkby9wn.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sean Christopherson <seanjc@google.com>, Oliver Upton <oliver.upton@linux.dev>
+Cc: 	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	kernel@collabora.com,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Anup Patel <anup@brainfault.org>
+Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for unsupported arch
+In-Reply-To: <ZsPEEFvoGYjW3vfx@linux.dev>
+References: <20240819093030.2864163-1-usama.anjum@collabora.com>
+	<ZsNzzajqBkmuu5Xm@google.com>
+	<ZsPEEFvoGYjW3vfx@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 29/34] ALSA: usb-audio: qcom: Add USB offload route
- kcontrol
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-30-quic_wcheng@quicinc.com>
- <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
- <58043166-c494-42db-b7d3-575991e43e8b@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <58043166-c494-42db-b7d3-575991e43e8b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: seanjc@google.com, oliver.upton@linux.dev, usama.anjum@collabora.com, pbonzini@redhat.com, shuah@kernel.org, kernel@collabora.com, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, anup@brainfault.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Mon, 19 Aug 2024 23:15:44 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> On Mon, Aug 19, 2024 at 09:33:17AM -0700, Sean Christopherson wrote:
+> > And other KVM maintainers, the big question is: if we do the above, would now be
+> > a decent time to bite the bullet and switch to the kernel's canonical arch paths,
+> > i.e. arm64, s390, and x86?  I feel like if we're ever going to get away from
+> > using aarch64, x86_64, and s390x, this is as about a good of an opportunity as
+> > we're going to get.
+> 
+> I'm pretty much indifferent on the matter, but I won't complain if you
+> send out a change for this.
 
->>> +/**
->>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
->>> + * @chip - USB SND chip device
->>> + *
->>> + * Creates a sound control for a USB audio device, so that applications can
->>> + * query for if there is an available USB audio offload path, and which
->>> + * card is managing it.
->>> + */
->>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
->>> +{
->>> +	struct usb_device *udev = chip->dev;
->>> +	struct snd_kcontrol_new *chip_kctl;
->>> +	struct snd_usb_stream *as;
->>> +	char ctl_name[37];
->>> +	int ret;
->>> +
->>> +	list_for_each_entry(as, &chip->pcm_list, list) {
->>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
->>> +		chip_kctl->count = 1;
->>> +		/*
->>> +		 * Store the associated USB SND card number and PCM index for
->>> +		 * the kctl.
->>> +		 */
->>> +		chip_kctl->private_value = as->pcm_index |
->>> +					  chip->card->number << 16;
->>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
->>> +			as->pcm_index);
->>> +		chip_kctl->name = ctl_name;
->>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
->>> +				  udev->bus->sysdev));
->>> +		if (ret < 0)
->>> +			break;
->>> +	}
->>> +
->>> +	return ret;
-> Hi Pierre,
->> None of this looks Qualcomm-specific, shouldn't this be part of the
->> soc_usb framework instead of being added in the qcom/ stuff?
-> 
-> Started working on this particular comment, and there are some things that needs to be considered if we moved this into SOC USB:
-> 
-> 1.  We do save the reference to the USB BE DAI link within the USB DT node, which can be fetched/referenced based on sysdev.  However, I'm not sure if everyone would potentially follow that way.
-> 
-> 2.  I tried a few implementations of adding a new SOC USB API, and the argument list was a bit long, because I didn't want to directly reference the usb_chip.
-> 
-> Sorry for the delay, but I wanted to give a good stab at implementing this before bringing up the implications.  It is possible, but definitely not as clean as how we have it now IMO.
+Same here. Call it arm64 or aargh64, same difference. Whatever we
+change, some people will moan anyway.
 
-My comment was only referring to the location of the code, it's now in
-sound/usb/qcom/mixer_usb_offload.c but does not contain anything
-specific to Qualcomm. I was not asking for any encapsulation inside of
-soc-usb, I was only suggesting a move of the code to a shared helper
-library so that this code can be reused as is and not duplicated if the
-QCOM parts are not compiled in.
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
