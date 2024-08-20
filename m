@@ -1,164 +1,195 @@
-Return-Path: <linux-kernel+bounces-293505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35709580A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:14:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2969580A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7C51F21DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5223F284449
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1E18A6D9;
-	Tue, 20 Aug 2024 08:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E41189B83;
+	Tue, 20 Aug 2024 08:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V+ZmSPrW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G5or6Ia1"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50F7189F3C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D2218E347
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724141629; cv=none; b=HX8O3sx231W33LxGAX4m3YoW9jwAV7JNJ6pUvSfX5kbactDimMEFJz05etRP7C86NKLWDcs/bx4ToBZvHs0GSFrB6w+GhugoQYxWI98qBEYsex06ICU1uhY/9CoBpZ7dY6fshB3LGM+ZXVu6dhV60048Em1Eq9v/YiYcjngmE54=
+	t=1724141735; cv=none; b=oz4q5l/mRqUgqNpYNxJUK+a3go8oaV7w18qEchK89CMhOLZZoicBTImRsPlSZP5W4cFSCOS3J1nhQTT4c4UU/3B9ZxORt7KE/UjMrZKee6C7iQMk/NyDsc9xwOunpsOxVj127ynTQd26auKfe8JPl1SG+wWiKcgSmNTb5790su0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724141629; c=relaxed/simple;
-	bh=5x2Zwvil69v7j2QTmo/ru3l3YhUvaf/XafPWpjOjfD8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l2eAgR5SxLD33q7F7pfbEgbK9I0tvzM0NkYmprQuvyJ9za9B09PNlkOsgwcGogEnKkQeeqwR2KNe6dOX6G4+scvg1NFgaryWJcHufY4q9w1iXKtsiiqhIIgEbJcwiQ4nZVa/hpo9cfe/V2BhIGF2/WKvUaCMVQ8+k5LcOWOUfb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V+ZmSPrW; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1724141735; c=relaxed/simple;
+	bh=51b5d59H7rz5qUAC29vRSYWAIedOK240x4dzC0V2boI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VpVujkTviklUZUV2kVmTCzkb+kmQ2RZxVPxd5bYQpw55BXxDVww/vUy6qp+cqC5e5mKX9vw3CMYgncB2lkFIGOpQ+Q05bGUVRROEKD5KEuKPKvYJnLCq00g+1XcolCtT/07JU2RsNeQlrrPowBui3+ZKx70rLaYWBzF3+y3OnXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G5or6Ia1; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724141626;
+	s=mimecast20190719; t=1724141733;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5x2Zwvil69v7j2QTmo/ru3l3YhUvaf/XafPWpjOjfD8=;
-	b=V+ZmSPrWuPW6iLzzX/1uzcNwn98hDSrf6VhFntnNxB76lX0aWT4ijx7J/jymC2ubpNZoSc
-	S+b3c5MZ348SKGP2k32ka4MpVzVZtZng0TyzFIh+Ta/wL9DolYpmYLiPrNL/2iNRMVE0dJ
-	RpN3S3RxZZugSzgnHCeCxk/5URbfDM4=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9amrvqS31P2ey+4yHRJ1V8LdGDFGb3mu9Q16JPVzu2A=;
+	b=G5or6Ia1WvEchLstaggFzUR6lnSU7XyrcKKYoY9DzxAexC/gblSKZuadfjAvXqbXgj+wgR
+	eTSyavf8wbYRm7H/oks5I3e7d3kRUUBX92wwBhI4Hk18z+IaMOGi5v8ZZ5Xz7O8qhVZbTq
+	Gc1mZiXoXPcw5hQ3GYvCV9bVrhZOIFY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-414-08DmdCm9O_i2bqHm-cPywQ-1; Tue, 20 Aug 2024 04:13:45 -0400
-X-MC-Unique: 08DmdCm9O_i2bqHm-cPywQ-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2f01b609ac9so4219901fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:13:44 -0700 (PDT)
+ us-mta-640-8_tvTnmPNjGDxrDpwuPuBQ-1; Tue, 20 Aug 2024 04:15:31 -0400
+X-MC-Unique: 8_tvTnmPNjGDxrDpwuPuBQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3719ee7c72eso2062400f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:15:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724141623; x=1724746423;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5x2Zwvil69v7j2QTmo/ru3l3YhUvaf/XafPWpjOjfD8=;
-        b=CCx24bpHrok2r5X04EqwxHwqKkF/dhsw955okLAFTl/sOr1H79ib/iuHy7b9p0FMoU
-         v7oghO6sYCQnhxOQ/JjJNuLBa3H9GTNpUULnt16ytvBnInd7s0iJECVU6+5dr0Ao4rJq
-         uOnHA4fnzXIbQjWriy4+wv0nY5fQmTZrQqgH1OsHvZsNYMy37UyzRdEjhKvnfn3NvRsE
-         yuOtj/gBomcDUUiaTxsp9LSeS07a+PH/X0UXzKDk7Phjh/dJhI3Kdxg2hHEIT+7Ysdct
-         fS5UeWdudsNecAGK2XiRtoWhCdvw0e+GSXdk9h5SfmsrLKsQqaKndeVxF2TEmebigAi3
-         4npg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR2WQkDXe/hSJNZUMJxk2NdsqZ2ewJyQVLIdt+bHAybHFp/e7xI46M7qmk24XbPXObXbevTATD+4pvWdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzewdhL6L5m2u2T5pJ9YkA6kJAwGNlZJq9jXjQQgiEaSzw/SPpk
-	2bZYxKdT+XO1bOnHM5NiTDlcwhMuBuvymguRoSWpkTZ2XUrfRD+dyYK38IqKOtrgEUb2bnC+Ld3
-	FMSPLW9t/IHAQMS2lvRxy3c5cspcerHwiCkuvynQ6lHEooVpFK5z0PgoyPMoZ5w==
-X-Received: by 2002:a05:6512:10c1:b0:530:e0fd:4a85 with SMTP id 2adb3069b0e04-5331c6d4a61mr5183713e87.4.1724141623045;
-        Tue, 20 Aug 2024 01:13:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZQZIXMi/Gkd3uNyVjKj7Xpsxjs4S0/m1lMVeXOF/ppQ1u+jlQhYOCzCKjOM9+Rw34AQB54A==
-X-Received: by 2002:a05:6512:10c1:b0:530:e0fd:4a85 with SMTP id 2adb3069b0e04-5331c6d4a61mr5183700e87.4.1724141622413;
-        Tue, 20 Aug 2024 01:13:42 -0700 (PDT)
-Received: from eisenberg.fritz.box ([2001:16b8:3dcc:1f00:bec1:681e:45eb:77e2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383935616sm724162966b.123.2024.08.20.01.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 01:13:42 -0700 (PDT)
-Message-ID: <419e91cb2b698a450497dfc1fb86f2c46eb7d8fb.camel@redhat.com>
-Subject: Re: [PATCH 8/9] vdap: solidrun: Replace deprecated PCI functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andy Shevchenko <andy@kernel.org>, Christophe JAILLET
-	 <christophe.jaillet@wanadoo.fr>
-Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, Wu Hao
- <hao.wu@intel.com>, Tom Rix <trix@redhat.com>, Moritz Fischer
- <mdf@kernel.org>,  Xu Yilun <yilun.xu@intel.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alvaro Karsz <alvaro.karsz@solid-run.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>,  Eugenio =?ISO-8859-1?Q?P=E9rez?=
- <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Mark
- Brown <broonie@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-block@vger.kernel.org,
- linux-fpga@vger.kernel.org,  linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org,  linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,  linux-pci@vger.kernel.org,
- virtualization@lists.linux.dev
-Date: Tue, 20 Aug 2024 10:13:40 +0200
-In-Reply-To: <ZsOQPbVGQFtUYSww@smile.fi.intel.com>
-References: <20240819165148.58201-2-pstanner@redhat.com>
-	 <20240819165148.58201-10-pstanner@redhat.com>
-	 <74e9109a-ac59-49e2-9b1d-d825c9c9f891@wanadoo.fr>
-	 <ZsOQPbVGQFtUYSww@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1724141730; x=1724746530;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9amrvqS31P2ey+4yHRJ1V8LdGDFGb3mu9Q16JPVzu2A=;
+        b=LJ+FBSqh1GvBlCAvAY9S0UK5NCoxzH6a+lXDMWVCD7GgKQfbP+H9z+7rdJFMoDDUNz
+         joXGDuIm+Pf6UCWA5tsRsUNgiaMxCQRUp2s2A1QJ3YYEmxz5Ox84ppUKjgaDMSaQbYZ2
+         a9YuUvdqzEJPWxpCIs0kJazulIYnKl1Z8MWkvgyb4hWXwUYeTqp4i7p7lonAC54NCuvd
+         LWVfq63rnuV1yHjB0IewJrF6QaiQaeHTlUpLM2IG4aRyooH7FzaWn/rER0moWq6VjObm
+         ug5NH8ViOm//uMxnZDpZM+RCT4cxeenz1llyfO97ylv+W+GSIcBEZVTv1qj7Che0dIRy
+         dcQA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ODqjoylEl79Iivp6AA9eipSyAIG2i+3bHCBSTSEabZam5HTsignSW1mktqe9ieaqsn4Trw/QKKN2MEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQtYWVhMGtOQXPr6CaNLBE+3BDKfC1adb4x1RbDlraWgG2hbrC
+	erKHgY0hwT90tWf3901ejkEvihNPJJx58EmldL/v0oV5dH5cTgU1oPjpFx09kl+491GzrKPUFms
+	Kjk0kms4TokXHeoYZhIT42OysZkBFB/uJ3guPc1yIkE3k+g/+Ub+7T0o3cykzJR9niiYIGA==
+X-Received: by 2002:a5d:484d:0:b0:371:7c68:7cf2 with SMTP id ffacd0b85a97d-371946be9efmr6916741f8f.50.1724141730695;
+        Tue, 20 Aug 2024 01:15:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG132/sePCwFNYLA9Dw+tXLfuZhVg26rpJdxruG5iN9lelpEYruL39IDbMxnWZsARoKdfVrgw==
+X-Received: by 2002:a5d:484d:0:b0:371:7c68:7cf2 with SMTP id ffacd0b85a97d-371946be9efmr6916721f8f.50.1724141729947;
+        Tue, 20 Aug 2024 01:15:29 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:e00:9c12:cdf2:bf1c:b8ed? (p200300cbc74b0e009c12cdf2bf1cb8ed.dip0.t-ipconnect.de. [2003:cb:c74b:e00:9c12:cdf2:bf1c:b8ed])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189897128sm12505656f8f.81.2024.08.20.01.15.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 01:15:29 -0700 (PDT)
+Message-ID: <f1fac65f-366b-4f8c-ae5a-20277a26aa60@redhat.com>
+Date: Tue, 20 Aug 2024 10:15:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] mm: override mTHP "enabled" defaults at kernel cmdline
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, corbet@lwn.net, ioworker0@gmail.com,
+ linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com
+References: <20240817045516.58037-1-21cnbao@gmail.com>
+ <e36e4157-ba42-432f-aebe-7c2c36917e57@redhat.com>
+ <CAGsJ_4xC+ixRB0n8yOQeQz_YndmtGcDcjjv8bLwcgmkj2XW+1w@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4xC+ixRB0n8yOQeQz_YndmtGcDcjjv8bLwcgmkj2XW+1w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-08-19 at 21:34 +0300, Andy Shevchenko wrote:
-> On Mon, Aug 19, 2024 at 08:19:28PM +0200, Christophe JAILLET wrote:
-> > Le 19/08/2024 =C3=A0 18:51, Philipp Stanner a =C3=A9crit=C2=A0:
->=20
->=20
-> ...
->=20
-> > Unrelated to the patch, but is is safe to have 'name' be on the
-> > stack?
-> >=20
-> > pcim_iomap_region()
-> > --> __pcim_request_region()
-> > --> __pcim_request_region_range()
-> > --> request_region() or __request_mem_region()
-> > --> __request_region()
-> > --> __request_region_locked()
-> > --> res->name =3D name;
-> >=20
-> > So an address on the stack ends in the 'name' field of a "struct
-> > resource".
-> >=20
-> > According to a few grep, it looks really unusual.
-> >=20
-> > I don't know if it is used, but it looks strange to me.
->=20
-> It might be used when printing /proc/iomem, but I don't remember by
-> heart.
->=20
-> > If it is an issue, it was apparently already there before this
-> > patch.
->=20
-> This series seems to reveal a lot of issues with the probe/remove in
-> many
-> drivers. I think it's better to make fixes of them before this series
-> for
-> the sake of easier backporting.
+  long __thp_vma_allowable_orders(struct vm_area_struct *vma,>>> 
+                                 unsigned long vm_flags,
+>>> @@ -756,7 +757,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+>>>         * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+>>>         * constant so we have to do this here.
+>>>         */
+>>> -     huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>> +     if (!anon_orders_configured) {
+>>> +             huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>> +             anon_orders_configured = true;
+> 
+> I realized this is redundant since anon_orders_configured won't be
+> accessed later.
+> so i would like to also drop  "anon_orders_configured = true" in v6.
 
-Just so we're in sync:
-I think the only real bug here so far is the one found by Christophe.
+Makes sense.
 
-The usages of pci_disable_device(), pcim_iounmap_regions() and the like
-in remove() and error unwind paths are not elegant and make devres kind
-of useless =E2=80=93 but they are not bugs. So I wouldn't backport them.
+>>> +static char str_dup[PAGE_SIZE] __initdata;
+>>> +static int __init setup_thp_anon(char *str)
+>>> +{
+>>> +     char *token, *range, *policy, *subtoken;
+>>> +     unsigned long always, inherit, madvise;
+>>> +     char *start_size, *end_size;
+>>> +     int start, end, nr;
+>>> +     char *p;
+>>> +
+>>> +     if (!str || strlen(str) + 1 > PAGE_SIZE)
+>>> +             goto err;
+>>> +     strcpy(str_dup, str);
+>>> +
+>>> +     always = huge_anon_orders_always;
+>>> +     madvise = huge_anon_orders_madvise;
+>>> +     inherit = huge_anon_orders_inherit;
+>>
+>> Should we only pickup these values if "anon_orders_configured",
+>> otherwise start with 0? Likely that's implicit right now.
+> 
+> My point is that, initially, those values are always 0, so copying
+> them won't cause any issues.
 
-P.
+Right, it's more a conceptual thing: on the first cmdline configuration, 
+we start from scratch. Afterwards we start with the state that the 
+previous configuration left behind.
 
->=20
-> If here is a problem, the devm_kasprintf() should be used.
->=20
+I'm fine with leaving it as is as well, whatever you prefer.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
