@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-293567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76B595816A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:54:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822F995816E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877B1281BFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:54:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C87E0B20B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3287D18A947;
-	Tue, 20 Aug 2024 08:54:44 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F41518A95B;
+	Tue, 20 Aug 2024 08:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HllBXZ2l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E494918E352;
-	Tue, 20 Aug 2024 08:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB4C18E352;
+	Tue, 20 Aug 2024 08:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724144083; cv=none; b=EJnBzuu9cWz4JAVPyNl2qjYcADFCBJ3EaGH84FiNlLDB+CdRddzROivGET6k1BxYJHbbx7c0YDWiwjvRAjEcHJkMGRThDEuN7gzXjI92lsbLZpKDimAP/UXtPd2MSVH4zg4XoqUrjgzDiTzfjtJC+x7HJpDMd+Bd72Oi//ZVnDQ=
+	t=1724144140; cv=none; b=VKi5ObQOrb3LW6S3EveUT5IY4wuLckHxvLlhT5Z+xgjKTuW7EVttAlOgz9WcimOMScrnJARzdFsZA86+awlOQuirOSKINuozbRr8ZH0TqfLG4q0qlT76bf+9dUYrLQdPjuFEqRZMRbMRALlQ7v1pzR3FNjuzpUcULXVNB1XpfPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724144083; c=relaxed/simple;
-	bh=288MkP3JqUQevQlkGrbOta9LibnOtTMr1XKPO1zHzE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MXHsHqR5+hTHVBqYWohgs47JBwOVuWm3e0VvHRApiF8j5dJapETbEOeKfMtXtNHEwkXPx8rxYhGIXYBgacOhNXUGGABHYIGSxekB5FwMGBlbEwa+gviMGrfLygiItaAlVF8pOhW8QHcJ8bXHEEHAaj9a2VIe2xkZF5SABov1av0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wp3725pvrz2Cn5v;
-	Tue, 20 Aug 2024 16:49:34 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A69F1401F2;
-	Tue, 20 Aug 2024 16:54:34 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+	s=arc-20240116; t=1724144140; c=relaxed/simple;
+	bh=l2XCm7pRRdLX5SKnPjAmLGFzo/lX8GaP2I6uUuzjPy8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i0LVsIj6hMaD+NaUuP0HMC9zVBywhD+fhluPvnnitSBB9xnONcW12JQ0Q15MzVgiFReOpnVF3KnPrNgaHX88hx4vHPjk+8qCmWZjCLa2pyb11cdlUxJ5+5WkX7JAzOXVLVjfBYq++ouWpvQTRcubHhfTWBmU2ovXfC1dFUibPEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HllBXZ2l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K20HAT019635;
+	Tue, 20 Aug 2024 08:55:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=YiP/zfX0G96G1enXnT3Wzq
+	YO522E4VQ68j3sddw0oto=; b=HllBXZ2lBXfcM88mK1cRl3udTIyxkWg/y49wVg
+	KZcnrB7UrxzVndKin8KonyAyAONebKUpB4r2jobr+KENKHgW2aYNOXELFsfXDe8b
+	9tslGXMa9tN5oAjh+fQ+a/7xd7IuVaFKoYI1+gLMWTn86VOaWdAyguSxxdGJhDGl
+	7U5JTEkttdreBdr1GoXneMhwrwYGZbk5g0SheUTUdYF+nVXfhQb5ySp36T+wALnh
+	FfcEkwwBs4QThTmMQLAnT9gIUvrlgahlylj/7tIbB4LrBME1bmQM3qK0sapco1MU
+	YZIoKjvKVOft5kqDsfxKWpv9foMMTG6leLmBVnbY05ah2daw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m32q3s9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 08:55:36 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K8tZ3P000945
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 08:55:35 GMT
+Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 16:54:33 +0800
-Message-ID: <ae6a4702-3225-620c-e83b-b8736ac486a8@huawei.com>
-Date: Tue, 20 Aug 2024 16:54:32 +0800
+ 15.2.1544.9; Tue, 20 Aug 2024 01:55:31 -0700
+From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+To: <andersson@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH 0/4] Add new driver for WCSS secure PIL loading
+Date: Tue, 20 Aug 2024 14:25:13 +0530
+Message-ID: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in
- probe()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>, Anup Patel
-	<apatel@ventanamicro.com>
-CC: Anup Patel <anup@brainfault.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MaIN7vwaKy9XDyQR9un5nRuo59Zh91TE
+X-Proofpoint-ORIG-GUID: MaIN7vwaKy9XDyQR9un5nRuo59Zh91TE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxlogscore=587
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200065
 
+This series depends on q6 clock removal series [1].
 
+- Secure PIL is signed, split firmware images which only TrustZone (TZ) can
+  authenticate and load. Linux kernel will send a request to TZ to
+  authenticate and load the PIL images.
 
-On 2024/8/20 16:42, Dan Carpenter wrote:
-> The devm_platform_ioremap_resource() function doesn't return NULL, it
-> returns error pointers.  Fix the error handling to match.
-> 
-> Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct-mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
-> index 28dd175b5764..981fad6fb8f7 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
-> @@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
->  
->  	/* Map the MMIO registers */
->  	regs = devm_platform_ioremap_resource(pdev, 0);
-> -	if (!regs) {
-> +	if (IS_ERR(regs)) {
->  		dev_err(dev, "failed map MMIO registers\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(regs);
+- When secure PIL support was added to the existing wcss PIL driver
+  earlier in [2], Bjorn suggested not to overload the existing WCSS
+  rproc driver [2], instead post a new driver for secure PIL alone.
+  This series adds a new secure PIL driver for the same. 
 
-LGTM
-Reviewed-by:  Jinjie Ruan <ruanjinjie@huawei.com>
+[1] https://patchwork.kernel.org/project/linux-arm-msm/cover/20240820055618.267554-1-quic_gokulsri@quicinc.com/
 
->  	}
->  
->  	/*
+[2] https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
+
+Manikanta Mylavarapu (3):
+  dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
+  arm64: dts: qcom: ipq5332: add nodes to bringup q6
+  arm64: dts: qcom: ipq9574: add nodes to bring up q6
+
+Vignesh Viswanathan (1):
+  remoteproc: qcom: add hexagon based WCSS secure PIL driver
+
+ .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 ++++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  62 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  58 +++
+ drivers/remoteproc/Kconfig                    |  22 ++
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 360 ++++++++++++++++++
+ 6 files changed, 628 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+ create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
+
+-- 
+2.34.1
+
 
