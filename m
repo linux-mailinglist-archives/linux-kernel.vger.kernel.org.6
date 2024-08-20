@@ -1,91 +1,77 @@
-Return-Path: <linux-kernel+bounces-293703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F87B95834F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA80D958357
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07381C242F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2792A1C23B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5B618C32E;
-	Tue, 20 Aug 2024 09:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CB418C93C;
+	Tue, 20 Aug 2024 09:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrCaPcGv"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PVwsR23G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6279B18E373;
-	Tue, 20 Aug 2024 09:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F33A18C018;
+	Tue, 20 Aug 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147740; cv=none; b=Hl3pK2EuhqhoIfUG28BEdYHcibbb7qpLrarB/19CS9j6golOf//RyBkhNAn3E020QqXqzViZfPr1YYB9SDtR3j3jJMBMWKpNPsIvK48xBrAbDqJsW2/jIUoyq8q5rcAr4kPdYqlNQ+iQoo5Fn9OUIWP8NldiPnJsTTB8qscqImo=
+	t=1724147772; cv=none; b=LklSFgn64axQsodIowfLE95/axqdWIiSqHMOwKwRBTxrIOYfuOGhZ9z7ICblL7+jZeenWPzOErWHEaLj+9+SjXZRSbKdUfsfYNRD0+86CkIkJk9ZYp/wJWdRViZ/q7pj50Qjj4pQPAoFaWaRjDIkGM0PaDr5dF98K43ADOhk9us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147740; c=relaxed/simple;
-	bh=kFr2YJvhs+zTyd7WllTTne0tbaKD/f5AEoSc3dDD4h8=;
+	s=arc-20240116; t=1724147772; c=relaxed/simple;
+	bh=pVrjcFsxgaTdd3PRo0Imnqd9L8GKquaiKB74IKdl3Bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6gB+eOLvILPk9jGAfg5hGucTXmKgzaGOTXnEJMB+L3CqOaoVv58x+1YxkN7Xv+RST2ie0zkv4yq/Zza1EyRQzhY2vOXBx7RPTD190FCeeKzJ7/MT+BGCiXvojLKFUoy6KwnnPJBAielH44gxEmoJItbLx0ys5Kyn/oUjfxgdog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrCaPcGv; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso1871615a12.1;
-        Tue, 20 Aug 2024 02:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724147737; x=1724752537; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uUSpPNWLulDMOHLV3kIAUbCGHrOEWNyLTeWcImUN1ec=;
-        b=NrCaPcGvGP+NlQ7wCiX0HtVeiWY2angyjKlpnEvpNuOT0Q6qLtrqBdIm+RAB6njD5R
-         udrx7SPy2MBC6M5wUM2aLHQMsT1+NeZblTB2J707G7KTasVMIo+E2zRUVOxsPbBRo/Ok
-         7Bc2Bi9HL5isgq4khtKwugqoGd217W0W8UWM0I7L6fSJtrogXDhUm5LgqXDFxXbtlOT+
-         OWUSpMvL1sJFZQxZhOl80W0cu6LOcjwu6ImJWP3Fm7X/y54VhSK+Nr4gefGl2I7n9TJG
-         XIrzgYnaJK2aX5QDlus5IB2QkJQxbp57huru8ulvROZ+HVsKQIXXjhMHz4BEtpdh2N1S
-         dSTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724147737; x=1724752537;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uUSpPNWLulDMOHLV3kIAUbCGHrOEWNyLTeWcImUN1ec=;
-        b=UmXFJ2xNkhvJSnLmX+scokUwOJNsSd1aALEVz2BrNW61qiUv2lj6AtFLwyS4d5PEiq
-         ZwmamIFwuK60Jm2WjHBHcg1HUxYTHP9BP9mjdJxSDEgTXpXkD9zhAjsNvskgJmGz4Wuy
-         nqplqdKTyzVuaIqGmToLmHAhDAyaX5ts9gmuS/g8UAL/U6d3prCK9F4yZiSQiaTo8g9k
-         QDTA4r6Ju2q/57gnAuAf4EWkIL/NrWJ4j7MKXsshUSshmKdQGdYpwCP9XeEMAtFFeFTS
-         KVYI6MI3AhBMc5v2ZGBPYRggPKJrULt+sFVq2GRsRdU5J4qG5SWVw/EtPet1otsrHoyu
-         48Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX14+CZJqAtVZAn4B0awE7HKKKW2OqlZ4R1Nj+ZewdEM75WP6Dm/obihdISMXi2llQ4eXdgPDSC@vger.kernel.org, AJvYcCXzR226tQq6WJsYWjY+v44iIOqZfzVOR2T/o3L3cqRpKCauIHJcbKMegiDKPhyobj2KylW8v8iUTXnUgkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9nxAByAjrIlzYw+Bduz0nX6TXOLb8CyEUe08DxUDS6XJDM25z
-	jYGV1EOglnTMSvz8LTxGaP5Clb81o+fW2ihFNWL7Qisak1YB/uhU
-X-Google-Smtp-Source: AGHT+IH5LTsYnL6x/hh2mXdZe+5zXyKYpPulCp9WMq2HFgFskdkQAa8jNKnhkWrXxaKseumfJVV8YQ==
-X-Received: by 2002:a05:6402:2802:b0:5be:fa76:55b4 with SMTP id 4fb4d7f45d1cf-5bf0ad6fbebmr2490826a12.16.1724147736212;
-        Tue, 20 Aug 2024 02:55:36 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7f3e0sm6561853a12.71.2024.08.20.02.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 02:55:35 -0700 (PDT)
-Date: Tue, 20 Aug 2024 12:55:32 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com
-Subject: Re: [PATCH net-next v4 1/7] net: stmmac: move stmmac_fpe_cfg to
- stmmac_priv data
-Message-ID: <20240820095532.tlwbogzhvpmejnvw@skbuf>
-References: <cover.1724145786.git.0x1207@gmail.com>
- <cover.1724145786.git.0x1207@gmail.com>
- <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
- <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fj+6LFkRBGr/B8ejeOBAhgr/C6W1iYbgSw4wikhex6im+GnXiUKY5Gb/m1hOWc7YXghBsHARabKXaqNbgCHCW7mdQLrnUrrsdJErq60lxdxn3VWW+TmJjQk3jiufNPaz/DTmwJXrzbhg9OhzCrJw28MiV3/91zbXRTtN8j0K3eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PVwsR23G; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724147769; x=1755683769;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pVrjcFsxgaTdd3PRo0Imnqd9L8GKquaiKB74IKdl3Bs=;
+  b=PVwsR23G8S9PrMUqLiH7m+T5ADlTon/LBV8J95H0Rns54V8RKzmFjTeq
+   IXMhxIP0cYTMflVybLtgDJ2YXaL/Y+Q9i2wf3BG3aGIkGdd46ft84c/xd
+   Xh6969eYGniXdSBTTHOvHQ1j18H0If/gBSqNPtIgS4ULphR/N2r32QYwh
+   0BLWUrlLXjj4l9pplVgHGg4VRxBFFkIwiC9owIPDuj4FIt2NDLfNJrCDn
+   93nO0kvGCsmqIi7dNo4ZzXZxDgmOSofUphpxr13IkQvlA+O5LCZ41bNiE
+   cvAWPRyKDTR4EL8VACOp7MkDGNKNcGF0trgfTP46Ig0MYXkh/oqrre2Hp
+   A==;
+X-CSE-ConnectionGUID: NogL9RMVQZexYQ8Wfb7aog==
+X-CSE-MsgGUID: Ag1jOoyaS0qH1W77rFrIHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22565428"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="22565428"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 02:56:09 -0700
+X-CSE-ConnectionGUID: saL7/3JhQM2Lf7qyjvSq3w==
+X-CSE-MsgGUID: MJZbJpKLTfeorvo+YeKFSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="65367956"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 02:56:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgLau-0000000HFqk-1uXG;
+	Tue, 20 Aug 2024 12:56:04 +0300
+Date: Tue, 20 Aug 2024 12:56:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: ukleinek@kernel.org, mika.westerberg@linux.intel.com,
+	jarkko.nikula@linux.intel.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] pwm: lpss: wait_for_update() before configuring pwm
+Message-ID: <ZsRoNHff5oDcMTcz@smile.fi.intel.com>
+References: <20240819080412.15115-1-raag.jadav@intel.com>
+ <ZsMAn3hQ4yDq-Gg6@smile.fi.intel.com>
+ <ZsQunMKglYdUwzqo@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,16 +80,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
- <2fc5d2d43b583f3e66b843783f067f5420a0c8da.1724145786.git.0x1207@gmail.com>
+In-Reply-To: <ZsQunMKglYdUwzqo@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 20, 2024 at 05:38:29PM +0800, Furong Xu wrote:
-> By moving the fpe_cfg field to the stmmac_priv data, stmmac_fpe_cfg
-> becomes platform-data eventually, instead of a run-time config.
+On Tue, Aug 20, 2024 at 08:50:20AM +0300, Raag Jadav wrote:
+> On Mon, Aug 19, 2024 at 11:21:51AM +0300, Andy Shevchenko wrote:
+> > On Mon, Aug 19, 2024 at 01:34:12PM +0530, Raag Jadav wrote:
+> > > Wait for SW_UPDATE bit to clear before configuring pwm channel instead of
+> > 
+> > PWM
+> > 
+> > > failing right away, which will reduce failure rates on early access.
+> > 
+> > So, what is the problem this patch solves (or is trying to solve)?
 > 
-> Suggested-by: Serge Semin <fancer.lancer@gmail.com>
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
+> Less failures with less code, so just a minor improvement.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+It's not an equivalent code as I mentioned below.
+So, if it's just a "cleanup", I do not think we want it as code works now and
+have no penalties.
+
+> > Second, there are two important behavioural changes:
+> > - error code change (it's visible to user space);
+> 
+> This function is already used in this path just a few lines below.
+
+Yes, I know, but it is used in a slightly different context.
+
+> > - an additional, quite a long by the way, timeout.
+> > 
+> > Second one does worry me a lot as it might add these 0.5s to the boot time
+> > or so per PWM in question.
+> 
+> On the contrary, having a working set of PWMs would be a relatively
+> rewarding experience IMHO.
+
+I'm not sure what this patch tries to fix. Was something not working before?
+Was something become different on real hardware that makes this patch worth to
+apply? None of these questions has been answered in the commit message.
+
+So, as long as this is considered a pure cleanup, here is formal NAK from me as
+this IP block is not stateless and may lead to freezes. Hence the rule of thumb
+"do not touch the working things".
+
+Otherwise, please make the commit message crystal clear about the improvements
+besides the code lines and answer the questions, e.g., why waiting for half
+a second is not an issue.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
