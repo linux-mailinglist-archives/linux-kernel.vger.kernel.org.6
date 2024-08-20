@@ -1,224 +1,148 @@
-Return-Path: <linux-kernel+bounces-293744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96ED19583E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F489583EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A641C247B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A311F2598F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D7B18CBE9;
-	Tue, 20 Aug 2024 10:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7B318CC0E;
+	Tue, 20 Aug 2024 10:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nZ5Aq8uj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nvl2RVmV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C67E18E374;
-	Tue, 20 Aug 2024 10:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593C158DC4;
+	Tue, 20 Aug 2024 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148961; cv=none; b=Zd0CWtr8YDvoHDzkHW6SsIiB0fK3wlf5Ex+NhDDw/3CWympimQ9JUOeoWmnot/ra6lsuWPcoBZhrNMZa+b++JNAJrGCH4Cx/Pxtrbhdlt5JadQSJ+KlB7WYhBBxqCdQoMbZJGRq0fF1c1w64ZhfQ93UqnV/sFZ+sEGHaW4BV0nM=
+	t=1724148984; cv=none; b=nVIZrroFlznyo1lw6uvwzFExjDbE9WOKfFLMY01zPZQyiyEa5xQV9xHcSgRP2wRmJOX+/U3LoFc67CMnUiUVr0DlzVXOha8+p5n14y+JcQyh8wC0r2OMnpw0OuyLVQYGV3RfbEL4VLxSrcpazv4DBplMiurUTqwl0QmTjC5lWRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148961; c=relaxed/simple;
-	bh=n6EpnwEQCDe4L7fXtQ9PDmiOKHb0n9V492GjwQhgZo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gRyRoukpDNgYHXJbpU393HW9lmV4UKOGNQjxqQVsXKNFNtKW07kfuk4jBJALYOHP+zxv60JkGHnMl/c+Z6eMeFNsD8qOi0Op0DUYfV9l+BlF8W1WUGXAYVvCfknJeiPAPa8TpTC+5s7reVgI6nOJLPjzQGGKod3Wp82sB+V50/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nZ5Aq8uj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K8En9e021350;
-	Tue, 20 Aug 2024 10:15:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vokHMK54LAaNGaBzaKgJf6ny8vA9LLUy1X3MPPWKDrs=; b=nZ5Aq8ujjfXQJAbJ
-	WUzN1WEHp5dSEgVSErFcYxZFLwZdyOgom7m8W9MzrHtIbrDY83/U1KcjkTFsJ2H5
-	3ZNDjp4PjrWzktk1T7YIp+0CVspLNWfzEUCkj8IICWcAkNxqjLHAtGB/TO7TYdx9
-	7FfvGJEi8+Oq/PKtZYw9+yv9jvJuSi5kpRka3f0qbtm+nf7nw+Ztm6TBgWV4ZLxm
-	6heIgxeesZS6+cv7OFpkHTGUc9Gf3H3jShY/94NdxEMizqWXEP3QEjXRbcNk64Ft
-	0HhN23+oUQPXVGe7EzKKUv9ZBtoyEftxfvSX2nTNLjUmC25y+c2Si+HXD9MjBDA2
-	lJqLVg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412hjdfgn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 10:15:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KAFhhH029656
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 10:15:43 GMT
-Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 03:15:40 -0700
-Message-ID: <1a81f498-f7dd-86e6-74fa-fdeefad6a7b4@quicinc.com>
-Date: Tue, 20 Aug 2024 15:45:37 +0530
+	s=arc-20240116; t=1724148984; c=relaxed/simple;
+	bh=WT51twTaR9ldXwxgDFR3gWRncIayJMQMu6eY6+ge2zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osT2K+7liSVHgPtJLOTwPr10ojOazFnxsr4ZKxxGdOb8IjGhyoxakmOd7uj4tqYTdyodt/12VeT/aqJoqziHxGhrpRPHozded5srelqqYjHNZ3SFL43tsH+T+Eam07ogHA7sVQv7mnp4KGFtkRNugAeO5yP8tF0I5OV6RZGtSA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nvl2RVmV; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724148983; x=1755684983;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WT51twTaR9ldXwxgDFR3gWRncIayJMQMu6eY6+ge2zQ=;
+  b=Nvl2RVmVsn5N0kahmq96uNkx710bxmdoVh96NXurNwYEX+fg+lFcLPFE
+   dFtJakC+UaJ58xSn/2k1RSuElJdt+A7q5fD0iMH3nXac7eeZxuSsuImqK
+   7AbMRnaGmonNNErQecZ9HS76q+z38ci/9uebrqN9mugpM/46SLI60g2LH
+   IOLKGYhjsg1KAbCRVMOGsWLjyoH2Wqa0kSkI8H3ZBH8BziEi8je+SAHsN
+   imUG2I6IK8Ow34Op3Vb+1TIsxjcRupnCMPUmB6s0nF1Ap3h/gtUOTH+67
+   VvapNzPvSbQeGLKOs4dRpfUB320sayia0QqJ7B+EKTZBMpuFdudMq1EbY
+   g==;
+X-CSE-ConnectionGUID: EsTXAV58TNm9P5c+4toUmg==
+X-CSE-MsgGUID: HRuXbNlKQ7GJTZzWCdkytQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="47833056"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="47833056"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:16:22 -0700
+X-CSE-ConnectionGUID: /kffWbRHSBaK1HncF991ag==
+X-CSE-MsgGUID: mDUg9YbGQk+CBo7MXYrpGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="91402041"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 03:16:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgLuL-0000000HGD8-4AYP;
+	Tue, 20 Aug 2024 13:16:09 +0300
+Date: Tue, 20 Aug 2024 13:16:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v3 05/17] usb: typec: Add device managed
+ typec_switch_register()
+Message-ID: <ZsRs6d6uOMb4DqQQ@smile.fi.intel.com>
+References: <20240819223834.2049862-1-swboyd@chromium.org>
+ <20240819223834.2049862-6-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2] usb: gadget: u_serial: check Null pointer in EP
- callback
-Content-Language: en-US
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        opensource.kernel <opensource.kernel@vivo.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        Michael Nazzareno Trimarchi
-	<michael@amarulasolutions.com>
-References: <PUZPR06MB62242AA2715789D100FA2E60D28D2@PUZPR06MB6224.apcprd06.prod.outlook.com>
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <PUZPR06MB62242AA2715789D100FA2E60D28D2@PUZPR06MB6224.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KZBsIUsPFNTVgWlIk6s5AFjs56YWSooS
-X-Proofpoint-ORIG-GUID: KZBsIUsPFNTVgWlIk6s5AFjs56YWSooS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 spamscore=0 clxscore=1011 bulkscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=713 adultscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408200076
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819223834.2049862-6-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Mon, Aug 19, 2024 at 03:38:19PM -0700, Stephen Boyd wrote:
+> Simplify driver error paths by adding devm_typec_switch_register() which
+> will unregister the typec switch when the parent device is unbound.
 
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: <linux-usb@vger.kernel.org>
+> Cc: Pin-yen Lin <treapking@chromium.org>
 
-On 20-08-24 02:59 pm, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
-> 
-> Added null pointer check to avoid system crash.
-Address whats becoming Null and why its happening
-> 
-> Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000000001a8
-> pc : gs_read_complete+0x58/0x240
-> lr : usb_gadget_giveback_request+0x40/0x160
-> sp : ffffffc00f1539c0
-> x29: ffffffc00f1539c0 x28: ffffff8002a30000 x27: 0000000000000000
-> x26: ffffff8002a30000 x25: 0000000000000000 x24: ffffff8002a30000
-> x23: ffffff8002ff9a70 x22: ffffff898e7a7b00 x21: ffffff803c9af9d8
-> x20: ffffff898e7a7b00 x19: 00000000000001a8 x18: ffffffc0099fd098
-> x17: 0000000000001000 x16: 0000000080000000 x15: 0000000ac1200000
-> x14: 0000000000000003 x13: 000000000000d5e8 x12: 0000000355c314ac
-> x11: 0000000000000015 x10: 0000000000000012 x9 : 0000000000000008
-> x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffffff887cd12000
-> x5 : 0000000000000002 x4 : ffffffc00f9b07f0 x3 : ffffffc00f1538d0
-> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 00000000000001a8
-> Call trace:
-> gs_read_complete+0x58/0x240
-> usb_gadget_giveback_request+0x40/0x160
-> dwc3_remove_requests+0x170/0x484
-> dwc3_ep0_out_start+0xb0/0x1d4
-> __dwc3_gadget_start+0x25c/0x720
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> udc_bind_to_driver+0x1d8/0x300
-> usb_gadget_probe_driver+0xa8/0x1dc
-> gadget_dev_desc_UDC_store+0x13c/0x188
-> configfs_write_iter+0x160/0x1f4
-> vfs_write+0x2d0/0x40c
-> ksys_write+0x7c/0xf0
-> __arm64_sys_write+0x20/0x30
-> invoke_syscall+0x60/0x150
-> el0_svc_common+0x8c/0xf8
-> do_el0_svc+0x28/0xa0
-> el0_svc+0x24/0x84
-> el0t_64_sync_handler+0x88/0xec
-> el0t_64_sync+0x1b4/0x1b8
-> Code: aa1f03e1 aa1303e0 52800022 2a0103e8 (88e87e62)
-> ---[ end trace 938847327a739172 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
-> 
-> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
-> ---
-> v2:
->   - Optimize code comments
->   - Delete log printing
-> ---
->  drivers/usb/gadget/function/u_serial.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-> index b394105e55d6..65637d53bf02
-> --- a/drivers/usb/gadget/function/u_serial.c
-> +++ b/drivers/usb/gadget/function/u_serial.c
-> @@ -454,6 +454,14 @@ static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
->  {
->  	struct gs_port	*port = ep->driver_data;
->  
-> +	/* When port is NULL, return to avoid panic. */
-> +	if (!port)
-> +		return;
+As per previous patches.
+
+...
+
+> +	ptr = devres_alloc(devm_typec_switch_unregister, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
 > +
+> +	switch_dev = typec_switch_register(parent ,desc);
+> +	if (!IS_ERR(switch_dev)) {
+> +		*ptr = switch_dev;
+> +		devres_add(parent, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
 
-This doesn't protect the port from going to NULL right after the above
-the check. Since you mentioned gser_disconnect is making port to NULL,
-add the serial_port_lock to protect port (just like its done on
-gser_disconnect/suspend/resume). Something like this would do.
+devm_add_action_or_reset() ?
 
-diff --git a/drivers/usb/gadget/function/u_serial.c
-b/drivers/usb/gadget/function/u_serial.c
-index f975dc03a190..a33f8cd871ac 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -451,10 +451,21 @@ static void gs_rx_push(struct work_struct *work)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
-{
--       struct gs_port  *port = ep->driver_data;
-+       struct gs_port  *port;
-+       unsigned long   flags;
-+
-+       spin_lock_irqsave(&serial_port_lock, flags);
-+       port = ep->driver_data;
-+
-+       if (!port) {
-+               spin_unlock_irqrestore(&serial_port_lock, flags);
-+               return;
-+       }
 
--       /* Queue all received data until the tty layer is ready for it. */
-       spin_lock(&port->port_lock);
-+       spin_unlock(&serial_port_lock);
-+
-+       /* Queue all received data until the tty layer is ready for it. */
-       list_add_tail(&req->list, &port->read_queue);
-       schedule_delayed_work(&port->push, 0);
-       spin_unlock(&port->port_lock);
-
->  	/* Queue all received data until the tty layer is ready for it. */
->  	spin_lock(&port->port_lock);
->  	list_add_tail(&req->list, &port->read_queue);
-> @@ -465,6 +473,14 @@ static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
->  {
->  	struct gs_port	*port = ep->driver_data;
->  
-> +   /* When port is NULL, return to avoid panic. */
-> +	if (!port)
-> +		return;
-> +
->  	spin_lock(&port->port_lock);
->  	list_add(&req->list, &port->write_pool);
->  	port->write_started--;
-Same here also
-
-Best Regards,
-Prashanth K
 
