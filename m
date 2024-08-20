@@ -1,162 +1,157 @@
-Return-Path: <linux-kernel+bounces-294359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F160B958C8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:44:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E915958C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE506284C4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FA21C21F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290CB1B8EAC;
-	Tue, 20 Aug 2024 16:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096C21B9B5C;
+	Tue, 20 Aug 2024 16:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HXVe7Xxb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z18LP1vt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6621D1BDAA7
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42BE1B8E8A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724172260; cv=none; b=NlxWW8PO7rf4tGHhM15wcE22loP0rMVePy9Cmm8tG2gCqw7opcS36B+sa5as/cVR+esLnSEjeqEUPmW2RfvQaGE2Rj5dUeUaNeImNC7PhA1dj/eMAoLMmTLtmKmYNfyMSSN7JvUENSQqugjoBHsHvYKCQH0iBa9Ozd8yXgzhy1I=
+	t=1724172193; cv=none; b=WV02mnbRNswbS1ZSuAWPy6dzQSmQLsd/Q11CtGzvpBFtPG/jMnX7ushv/F5zhAGItv+OsgYHQbdDjlk3EV7wxmhasMkjUK5xkMoFEgPjKihIKyv09BWtfV8b6/+nnyzdMbOuJdXXO3lJF39e3SB8fn7ZmoDAEX7NfS3nwb0w1oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724172260; c=relaxed/simple;
-	bh=tnHUA9vLeb9YhUlyKQ1ih3Wpqk8pAsPMwe+A6FTSN0c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8lLXJULLaqj/gtNeDusOhBsHKpoV6qu9kh4B8QFlqjzb8xVNyzd64RkcCnlng9wLwTZ3SVftjAfe0aUzWGPbw9k1hIc8VmdS8m026Lvg9ab3XJ+4w0BT7jtwrwZ+BTJrqRVVkiKMQMo2JeYxFQ0dr/mpdH9XjGLiiegMzvuOIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HXVe7Xxb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K96Tv6002613;
-	Tue, 20 Aug 2024 16:42:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=IzWzeWCHONUKgqcrVqblCetx
-	7UFnFX5M9HsJn5wSgEY=; b=HXVe7XxbiqWRvF7hfUQWtHbgIFA7iUoZz0XU/WZ3
-	DiqY7NPWfpxdqD0R9SWofcxwPfMqc/8p/GXUFunRwtYyaWQ+Ch9VhEBppBxcgrYH
-	7gQxPwlrA+TxjFYYWSOCaRsw8pQy/3fUs+XhrdWJMTE7Y/GIqJu8GoUC+tbLkW9t
-	7JO3Q3w80isoPVpjmaU9Izcpet2Zx9EH9JsA2IJosKBLUhdisVc64AJ7a8s1luxt
-	OrZ14mvSWpuRmMLHWblUD5QUysjCdWEmpx+il+yhHK4Ufo3rarpOk6Rn6gNRhb98
-	xLVeMtKwTkuuUBtg4iMrWi4w78k/3Iafz811J+4LJ1rb2A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 413qxg6457-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 16:42:57 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KGgugQ002149
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 16:42:56 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 20 Aug 2024 09:42:56 -0700
-Date: Tue, 20 Aug 2024 09:42:55 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Judith Mendez <jm@ti.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Bryan
- Brattlof <bb@ti.com>
-Subject: Re: [RFC PATCH] arm64: defconfig: Set MFD_TPS6594_I2C as built-in
-Message-ID: <ZsTHj/Fyffi2LxIu@hu-bjorande-lv.qualcomm.com>
-References: <20240819204352.1423727-1-jm@ti.com>
+	s=arc-20240116; t=1724172193; c=relaxed/simple;
+	bh=G9iVXUrP1plEOqNYFNeP/xq4IqrLWdLx9V7qQFPks8k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nXHOc6xF4gxSGHczGVsnsx+SGg7Ya2VG4Ic+nH2zyYAZyHOhQh3xGA/IvocpTgZdvhcXrS812+k64V0/nlN9WURoc/wJaLQiig/mSU2rNmzXumn5jLpCWAm2DidjayDp0Sofh6tuaSiUJ2tPPU19A52a8clqShK6yS8+0PyI/1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z18LP1vt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724172190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgy7TmShVNG2p9gTAoq5FNsNe4QpXaI0vELIMEnnvfU=;
+	b=Z18LP1vt3R9abV0bOzzbSEYHo042KDExsA+/9jD8LcM7L85Mg0uhNcDZmPVs0O/cQZmMql
+	G+rVRt73S03WR5reRDna0ZvJIqo7xB+GOMEwaZIcGTJ5+kxx3uzmHMN6f3Uq0hUrubuqiS
+	f2v7L9Zxe0LlW2rCKq0PG8I+isse7DY=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-479-mBir6NddPoWceKKvqSL3gg-1; Tue, 20 Aug 2024 12:43:08 -0400
+X-MC-Unique: mBir6NddPoWceKKvqSL3gg-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6bf7c3d382eso50707346d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:43:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724172187; x=1724776987;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pgy7TmShVNG2p9gTAoq5FNsNe4QpXaI0vELIMEnnvfU=;
+        b=szl3uwpeiMqoKh3OIdlCS+vAxl55bDkRzzb+Fbw6rBJ72aUSGZn3OgHHX/UXumN9h1
+         4+MnHUZiVhqx75P1NHEChAIK+ZHG5OfLPri+dlO3fi0TVlWgIzaWcB0OZS+UF+EFetuG
+         K6ZcnY7p5o3dz7mVqovzsJAcswH+gPHxEf7GZRJfMAdsvBLIvgqgGmnjPq47wbPLfuEu
+         woax//K7it1/etRvDvTcWxfnXvelmRiZIac/wI4iQ6m2JuE10iYfKK+fW7YzUExcXB36
+         ATaFE0+Bm2mlmKLPgKVmyJCljr/Km7iJxrrrT66UN11hM+iFMc72J8jbGLwAE3Jas7F8
+         bbBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCRguIg9JUhcBf5eqXM1NEUCvwK1Zmol0GL4vuA44DLHWBvc9OT8y302TQSWkzn7IkHDV9ws6KtR+8IHxDhQDlf/n95G/XXV8R8t98
+X-Gm-Message-State: AOJu0YzPa9JhaT8uTOMaonysUxrB9bHL+pf/fDoMdfPiZnqdYrCQzYrC
+	nwEbXE81szfscFT8QMnRbV/Cu4HP+QD5evhRGxTYqRIZrEJSZRcSlZAfdM5DfG9GjSZkEo3Pg4L
+	nL9iMKup4PjL1IJcfGyRPRRFEYlpHncbLkrJa7Cd3CpUiSnmrcnM6hIXnYg1DGjfsplB9gaSNby
+	Pvp29zXAMfJ3iTJEls4RPRBGkxaXciUKoKyhQR/2QI9cFZkQ==
+X-Received: by 2002:a05:6214:524a:b0:6bf:7799:bf1d with SMTP id 6a1803df08f44-6bf7ce5a68emr190083266d6.35.1724172186900;
+        Tue, 20 Aug 2024 09:43:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHC8gkFucZtS7Tu9TSq2EJ/6SaChCv2HyXG/oZQokDevLw/4hHdMaEs3MLK1sqfCIi5djGBzw==
+X-Received: by 2002:a05:6214:524a:b0:6bf:7799:bf1d with SMTP id 6a1803df08f44-6bf7ce5a68emr190082836d6.35.1724172186270;
+        Tue, 20 Aug 2024 09:43:06 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fec5cd0sm53753156d6.90.2024.08.20.09.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 09:43:05 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Daniel Vacek <neelx@redhat.com>, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
+ Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Cc: Daniel Vacek <neelx@redhat.com>, stable@vger.kernel.org, Bill Peters
+ <wpeters@atpco.net>, Ingo Molnar <mingo@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/core: handle affine_move_task failure case
+ gracefully
+In-Reply-To: <20240814153119.27681-1-neelx@redhat.com>
+References: <20240814153119.27681-1-neelx@redhat.com>
+Date: Tue, 20 Aug 2024 18:43:02 +0200
+Message-ID: <xhsmh5xrvcfhl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240819204352.1423727-1-jm@ti.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nJWyRN2JCUXQQQ33eMwfC15XufzIm3Fl
-X-Proofpoint-GUID: nJWyRN2JCUXQQQ33eMwfC15XufzIm3Fl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_12,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxlogscore=929 malwarescore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 bulkscore=0
- adultscore=0 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408200124
+Content-Type: text/plain
 
-On Mon, Aug 19, 2024 at 03:43:52PM -0500, Judith Mendez wrote:
-> SK-AM62A-LP is a device targeting automotive front-camera applications
-> among other use-cases. It utilizes the TPS6593x PMIC (interfaced over I2C)
-> to power the SoC and various other peripherals on the board [1].
-> 
-> MMCSD requires the PMIC to be setup correctly before setting the bus
-> pins to 1.8V using the TPS6594 driver interfaced over i2c.
-> 
-> Currently, the following could be seen when booting the am62ax platform:
-> 
-> "platform fa00000.mmc: deferred probe pending: platform: supplier regulator-5 not ready"
-> "vdd_mmc1: disabling"
-
-Is this the regulator framework disabling the "unused" vdd_mmc1 while
-you still have a probe deferred client?
-
-That's not right.
-
-> 
-> and a failure to boot the SK-AM62A-LP.
-> 
-> One solution is to use initramfs [2], but using initramfs increases the
-> boot time for this automotive solution which requires faster boot time
-> parameters.
-> 
-> Another solution is to change MFD_TPS6594_I2C to built-in, that way the
-> PMIC is setup and the regulators are ready before MMCSD switches to UHS
-> mode, this is the preferred solution since it does not increase boot time
-> like the initramfs solution does.
-> 
-> [1] https://www.ti.com/lit/zip/sprr459
-> [2] https://lore.kernel.org/linux-devicetree/5f03207b-c29b-4d16-92b0-d14eef77bf17@linaro.org/
-> Fixes: f9010eb938be ("arm64: defconfig: Enable TPS6593 PMIC for SK-AM62A")
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
+On 14/08/24 17:31, Daniel Vacek wrote:
+> CPU hangs were reported while offlining/onlining CPUs on s390.
+>
+> Analyzing the vmcore data shows `stop_one_cpu_nowait()` in `affine_move_task()`
+> can fail when racing with off-/on-lining resulting in a deadlock waiting for
+> the pending migration stop work completion which is never done.
+>
+> Fix this by gracefully handling such condition.
+>
+> Fixes: 9e81889c7648 ("sched: Fix affine_move_task() self-concurrency")
+> Cc: stable@vger.kernel.org
+> Reported-by: Bill Peters <wpeters@atpco.net>
+> Tested-by: Bill Peters <wpeters@atpco.net>
+> Signed-off-by: Daniel Vacek <neelx@redhat.com>
 > ---
->  arch/arm64/configs/defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 7d32fca649965..61f767246d3a5 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -756,7 +756,7 @@ CONFIG_RZ_MTU3=y
->  CONFIG_MFD_TI_AM335X_TSCADC=m
->  CONFIG_MFD_TI_LP873X=m
->  CONFIG_MFD_TPS65219=y
-> -CONFIG_MFD_TPS6594_I2C=m
-> +CONFIG_MFD_TPS6594_I2C=y
+>  kernel/sched/core.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index f3951e4a55e5b..40a3c9ff74077 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2871,8 +2871,25 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
+>               preempt_disable();
+>               task_rq_unlock(rq, p, rf);
+>               if (!stop_pending) {
+> -			stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
+> -					    &pending->arg, &pending->stop_work);
+> +			stop_pending =
+> +				stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
+> +						    &pending->arg, &pending->stop_work);
+> +			/*
+> +			 * The state resulting in this failure is not expected
+> +			 * at this point. At least report a WARNING to be able
+> +			 * to panic and further debug if reproduced.
+> +			 */
+> +			if (WARN_ON(!stop_pending)) {
 
-These things should work with =m, and then you can make them =y in your
-product config to avoid the probe deferral.
+I don't think it can happen when @p's CPU is being hot-unplugged, because
+takedown_cpu()->take_cpu_down() is done via stop_machine_cpuslocked(), so
+that task waking/running on that CPU implies the stopper is enabled.
 
-Regards,
-Bjorn
+I'm thinking there may be a window somewhere during hotplug, something like
+so?
 
->  CONFIG_MFD_ROHM_BD718XX=y
->  CONFIG_MFD_WCD934X=m
->  CONFIG_MFD_KHADAS_MCU=m
-> 
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> -- 
-> 2.46.0
-> 
+CPU0                       CPU1                       CPU2
+----                       ----                       ----
+                           secondary_start_kernel()
+                             set_cpu_online(true)
+wake_up_process(p)
+  WRITE_ONCE(p->__state, TASK_WAKING);
+  set_task_cpu(p, CPU1) // CPU1 is prev CPU
+  ttwu_queue_wakelist();
+                                                     affine_move_task(p)
+                                                       stop_one_cpu_nowait() // FAILS
+
+                             cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+                               cpuhp_online_idle()
+                                 stop_machine_unpark(); // <-- too late
+
 
