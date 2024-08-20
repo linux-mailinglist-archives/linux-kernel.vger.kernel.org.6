@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-293112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFECA957AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 269A9957AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AC11F22D30
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8E9E1F2398A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE0A1A702;
-	Tue, 20 Aug 2024 01:25:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8271A702;
+	Tue, 20 Aug 2024 01:26:31 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C33B1BC58;
-	Tue, 20 Aug 2024 01:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C9B657;
+	Tue, 20 Aug 2024 01:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724117152; cv=none; b=OtUg94z/+ewxPJ9zW3ZKipcP4pd+pI6lMRfsOfAAczghUWh9BHgyTwtNXTHUVgckSu8VfDTZMGTvEn9ux4ttgf6wIjRyyykvZxKFrx/mLmpUPhbvlX8A1N5OzXppeBK+Q+DOgzKEg1iT/imE8tQEnvhaliGFqOS2uWeunC4moMo=
+	t=1724117191; cv=none; b=RRJvktJhTMFW0FbUx9ABp+PpqLGwK0JSenQLepv3G6UnN81WPgM+2vXDE6HVkBbJ4dQq+uJcWvh/MDx7p5yjrR89zbgfAeLK7flRriI5gykCZO+XRhRR8PkkQpRQcgFZhyTzQGtRX+P8qOL9m9zr8A+8w7cLsZU75YkpYBUL8Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724117152; c=relaxed/simple;
-	bh=ltGNretTtu1vKis5Qr5JrJc1GRGPHP9zlVyAbsNYovg=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LKxI2+7WJRYs/4/ITOWF1T/1T0arezYoQcSVce7zqzf5Z1M5vLOxKzd7Ydt9h367iBtR2Kb0XTIZqIVC4kS6MLj/1p8Y8E9obxovb+E7UYhMo1i6RMnGbwwawmJALImJ3qICxVPvnaYt8wx7WHqoMocQUOvV+/6JGs7t7+vleYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnsDj2TPgzfbdL;
-	Tue, 20 Aug 2024 09:23:49 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4160A1402E0;
-	Tue, 20 Aug 2024 09:25:49 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 09:25:48 +0800
-Subject: Re: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in
- progress
-To: Bart Van Assche <bvanassche@acm.org>, Damien Le Moal <dlemoal@kernel.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240819090934.2130592-1-liyihang9@huawei.com>
- <c1552d1f-e147-44d9-8cc6-5ab2110b4703@kernel.org>
- <099752c2-9cc2-43ef-8b97-56d26c148c88@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <stable@vger.kernel.org>,
-	<liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <e11b6850-e793-7f73-25e5-c474ef758211@huawei.com>
-Date: Tue, 20 Aug 2024 09:25:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1724117191; c=relaxed/simple;
+	bh=Krr41LuZEs1S9h0U8XOYIzISY+b+qqiu7By+RBRoZA0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VJbV/W1oQKS+YBuKE3F8ksNQAdQJnGwTV/uH46+AtJLF2dOvatkVi2UMDFcgHPf18Re1P2rX0Tga+0y6XRYJsXaXTSiAUUuEXg+3espfl1mnQvONQFk22H4tRquecX+in17SzTuW6x6Jqe+E6Xv4tkR5PMS6cw26+QuJUIKm5SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4WnsDw3BbjzYlDgx;
+	Tue, 20 Aug 2024 09:24:00 +0800 (CST)
+Received: from a006.hihonor.com (10.68.23.242) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
+ 2024 09:26:20 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a006.hihonor.com
+ (10.68.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
+ 2024 09:26:19 +0800
+Received: from a007.hihonor.com ([fe80::4407:dd67:71d7:ea82]) by
+ a007.hihonor.com ([fe80::4407:dd67:71d7:ea82%10]) with mapi id
+ 15.02.1544.011; Tue, 20 Aug 2024 09:26:19 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Subject: =?utf-8?B?5Zue5aSNOiDlm57lpI06IGxpbnV4LW5leHQ6IFNpZ25lZC1vZmYtYnkgbWlz?=
+ =?utf-8?Q?sing_for_commit_in_the_mm_tree?=
+Thread-Topic: =?utf-8?B?5Zue5aSNOiBsaW51eC1uZXh0OiBTaWduZWQtb2ZmLWJ5IG1pc3NpbmcgZm9y?=
+ =?utf-8?Q?_commit_in_the_mm_tree?=
+Thread-Index: AQHa8bp8XrklAbKU0UC0hV42PTSzP7It83BwgADUR4CAAJRcoA==
+Date: Tue, 20 Aug 2024 01:26:19 +0000
+Message-ID: <5cc94991f4a14d56a6c9a19ec42a94cd@honor.com>
+References: <20240819080327.171fabbe@canb.auug.org.au>
+	<8097d6e2573246f089906db6633e7958@honor.com>
+ <20240819173357.425eef9ab459dd02f8d051d4@linux-foundation.org>
+In-Reply-To: <20240819173357.425eef9ab459dd02f8d051d4@linux-foundation.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <099752c2-9cc2-43ef-8b97-56d26c148c88@acm.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf100013.china.huawei.com (7.185.36.179)
 
-
-
-On 2024/8/20 0:54, Bart Van Assche wrote:
-> On 8/19/24 3:57 AM, Damien Le Moal wrote:
->> The patch changed significantly, so I do not think you can retain Bart's review
->> tag...
-> 
-> Agreed, my Reviewed-by definitely should have been removed.
-> 
-
-Sorry about that forgot remove your Reviewed-by tag.
+PiANCj4gT24gTW9uLCAxOSBBdWcgMjAyNCAwMzo1NjowNCArMDAwMCBnYW94dSA8Z2FveHUyQGhv
+bm9yLmNvbT4gd3JvdGU6DQo+IA0KPiA+ID4NCj4gPiA+IEhpIGFsbCwNCj4gPiA+DQo+ID4gPiBD
+b21taXQNCj4gPiA+DQo+ID4gPiAgIGNjYmIwN2IyYTNhNyAoIm1tOiBhZGQgbGF6eWZyZWUgZm9s
+aW8gdG8gbHJ1IHRhaWwiKQ0KPiA+ID4NCj4gPiA+IGlzIG1pc3NpbmcgYSBTaWduZWQtb2ZmLWJ5
+IGZyb20gaXRzIGF1dGhvci4NCj4gPiA+DQo+ID4gPiBBY3R1YWxseSB0aGUgQXV0aG9yIGlzICJn
+YW94dSA8Z2FveHUyQGhvbm9yLmNvbT4iIHdoaWxlIHRoZQ0KPiA+ID4gU2lnbmVkLW9mZi1ieSBp
+cyAiZ2FvIHh1IDxnYW94dTJAaGlob25vci5jb20+Ii4NCj4gPiBJIGFwb2xvZ2l6ZSBmb3IgdGhl
+IG1pc3Rha2UuIEFyZSB0aGVyZSBhbnkgcmVtZWRpYWwgbWVhc3VyZXM/DQo+ID4gSSB3aWxsIGJl
+IG1vcmUgY2FyZWZ1bCBuZXh0IHRpbWUuDQo+IA0KPiBXZWxsLCB3aGljaCBhZGRyZXNzIHNob3Vs
+ZCB3ZSB1c2U/DQpVc2UgZ2FveHUgPGdhb3h1MkBob25vci5jb20+DQo=
 
