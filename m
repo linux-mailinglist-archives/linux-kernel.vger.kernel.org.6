@@ -1,105 +1,301 @@
-Return-Path: <linux-kernel+bounces-294017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B88E9587D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:26:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD6E9587EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D56E2B21D0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE381F2363F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45835190664;
-	Tue, 20 Aug 2024 13:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="H6dgkpz6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CBC19067A;
+	Tue, 20 Aug 2024 13:26:59 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1079918E370;
-	Tue, 20 Aug 2024 13:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196DC18E35F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724160346; cv=none; b=FHW8WOtjY47+Sq0fmcgCvmIYJa78ZybMX0vmLdxIyb4s19BvkOEeuuaBpDB0xSpBEIrTjp/bAVk6ClmYavlkT8RLyn0kVy1rMxhX/y+5a4fsVYiAzgGBsBisZ+sw6sELMz2O4djTmiYRQu4fKmLMp6PtD7SmML59KeBUfwBO848=
+	t=1724160419; cv=none; b=RBaKEqqGD0EAKPNYR9mp+bK1k2k15/k+oZluJggZ2aHgJ7eRce6P11hLZhU3/zC0P/RLADypwpeGhWC56pNqqLM90s3GAe2lEhPg68FX87a9AO+rxrdP1s/maTjED7T6EdC70b+qUKHq/btwmx6Vk6BCIipZjVEOfQWKcygUIKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724160346; c=relaxed/simple;
-	bh=nXotEjWHRHqZNxB4azPS0pQFiOS7aFd8+CVjDMf0jBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UaSVYFHMVhouCeVV06XbJaHkMgjXLXBBGESxTGybOujAOjoQtcaSI+uV1MoqmQ6ZfQOtgsRBm4QzFAyXRG3+csONZ4P/iQ7pgAw24nwLDtJFrD2u4mkALnnC7jeSj3Pp1QugOb0Ro5fNrkCsdiPwjJz56k7tUlo76bfMDjc2Srs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=H6dgkpz6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vXkydQsIQwMnO+SDvyfUoarMlkGKie6DTsYruPcvW1A=; b=H6dgkpz6NYa1DroKKkNP7SfgUu
-	JtGJdpqLEmNVHbrvdv4FMYHshP05Ix+ZHsIawYlk53rE0uXH1biMbPQyiJAEki1o5Z6+puZOUWVkp
-	f455BdpOWB7qxY5g/2qL5OQb06vrkX8Q5X41/EUOFKgOGg5yEyuBUrMegq8KdKZ9mwfo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgOrY-005Dxl-KK; Tue, 20 Aug 2024 15:25:28 +0200
-Date: Tue, 20 Aug 2024 15:25:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"Andrei Botila (OSS)" <andrei.botila@oss.nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: tja11xx: use reverse-mode
- to instead of rmii-refclk-in
-Message-ID: <248b38f3-3cb6-4dd8-825b-e4d2083a99ef@lunn.ch>
-References: <20240815055126.137437-1-wei.fang@nxp.com>
- <20240815055126.137437-2-wei.fang@nxp.com>
- <7aabe196-6d5a-4207-ba75-20187f767cf9@lunn.ch>
- <PAXPR04MB85108770DAF2E69C969FD24288812@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <dba3139c-8224-4515-9147-6ba97c36909d@lunn.ch>
- <PAXPR04MB8510FBC63D4C924B13F26BD988812@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <718ad27e-ae17-4cb6-bb86-51d00a1b72df@lunn.ch>
- <PAXPR04MB851069B2ABDBBBC4C235336E88812@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <PAXPR04MB8510B51569571BA58243FEB0888D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1724160419; c=relaxed/simple;
+	bh=OxhsCow8GGJYEDNRwmfD0ol8ZRPvPYc+JSB+oTFTyrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SE9rkTee0Yzcc4LLp1qUw6hVLIzhgpejv/dHfkWq7nBNSIjPkYRLomusrQCeU/EaJvsitCk12fYF1/KcZg/fNcuvLMA6V/oCXsvRLMxfZiw3nz8i9ADjp79Rcht773jHWyE2vruKTkn3ZugLXZeyxwOkHudUpez7DdPUJrOfY/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp9Dg0B6HzhXpt;
+	Tue, 20 Aug 2024 21:24:51 +0800 (CST)
+Received: from kwepemm600017.china.huawei.com (unknown [7.193.23.234])
+	by mail.maildlp.com (Postfix) with ESMTPS id 25398140138;
+	Tue, 20 Aug 2024 21:26:51 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemm600017.china.huawei.com (7.193.23.234) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 21:26:49 +0800
+Message-ID: <269ec0b0-3385-fe11-a2c2-81ecfde6bf76@huawei.com>
+Date: Tue, 20 Aug 2024 21:26:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510B51569571BA58243FEB0888D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v12 2/6] arm64: add support for ARCH_HAS_COPY_MC
+To: Mark Rutland <mark.rutland@arm.com>, <dan.j.williams@intel.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, James Morse <james.morse@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
+	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
+	<guohanjun@huawei.com>
+References: <20240528085915.1955987-1-tongtiangen@huawei.com>
+ <20240528085915.1955987-3-tongtiangen@huawei.com>
+ <ZsOA8WD_5Sp0DJhS@J2N7QTR9R3.cambridge.arm.com>
+ <4436d172-c474-8ecd-b5e4-4c21088baf49@huawei.com>
+ <ZsReD722byCipuNm@J2N7QTR9R3>
+From: Tong Tiangen <tongtiangen@huawei.com>
+In-Reply-To: <ZsReD722byCipuNm@J2N7QTR9R3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600017.china.huawei.com (7.193.23.234)
 
-> > Sorry, I didn't find the correct PHY driver, could you point me to which PHY
-> > driver that I can refer to?
-> > The PHY drivers I searched for using the "clk" keyword all seem to set the
-> > clock via a vendor defined property. Such as,
-> > realtek: "realtek,clkout-disable"
-> > dp83867 and dp83869: "ti,clk-output-sel" and
-> > "ti,sgmii-ref-clock-output-enable"
-> > motorcomm: " motorcomm,tx-clk-1000-inverted"
-> > micrel: "rmii-ref"
+
+
+在 2024/8/20 17:12, Mark Rutland 写道:
+> On Tue, Aug 20, 2024 at 10:11:45AM +0800, Tong Tiangen wrote:
+>> 在 2024/8/20 1:29, Mark Rutland 写道:
+>>> Hi Tong,
+>>>
+>>> On Tue, May 28, 2024 at 04:59:11PM +0800, Tong Tiangen wrote:
+>>>> For the arm64 kernel, when it processes hardware memory errors for
+>>>> synchronize notifications(do_sea()), if the errors is consumed within the
+>>>> kernel, the current processing is panic. However, it is not optimal.
+>>>>
+>>>> Take copy_from/to_user for example, If ld* triggers a memory error, even in
+>>>> kernel mode, only the associated process is affected. Killing the user
+>>>> process and isolating the corrupt page is a better choice.
+>>>>
+>>>> New fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE is added to identify insn
+>>>> that can recover from memory errors triggered by access to kernel memory.
+>>>>
+>>>> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
 > 
-> Hi Andrew,
-> I still cannot find a generic method in other PHY drivers to provide
-> reference clock by PHY. So I think this patch is the best I could do, at
-> least it's more reasonable than the "nxp,rmii-refclk-in" property.
+> [...]
+> 
+>>>> diff --git a/arch/arm64/include/asm/asm-extable.h b/arch/arm64/include/asm/asm-extable.h
+>>>> index 980d1dd8e1a3..9c0664fe1eb1 100644
+>>>> --- a/arch/arm64/include/asm/asm-extable.h
+>>>> +++ b/arch/arm64/include/asm/asm-extable.h
+>>>> @@ -5,11 +5,13 @@
+>>>>    #include <linux/bits.h>
+>>>>    #include <asm/gpr-num.h>
+>>>> -#define EX_TYPE_NONE			0
+>>>> -#define EX_TYPE_BPF			1
+>>>> -#define EX_TYPE_UACCESS_ERR_ZERO	2
+>>>> -#define EX_TYPE_KACCESS_ERR_ZERO	3
+>>>> -#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD	4
+>>>> +#define EX_TYPE_NONE				0
+>>>> +#define EX_TYPE_BPF				1
+>>>> +#define EX_TYPE_UACCESS_ERR_ZERO		2
+>>>> +#define EX_TYPE_KACCESS_ERR_ZERO		3
+>>>> +#define EX_TYPE_LOAD_UNALIGNED_ZEROPAD		4
+>>>> +/* kernel access memory error safe */
+>>>> +#define EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE	5
+>>>
+>>> Could we please use 'MEM_ERR', and likewise for the macros below? That's
+>>> more obvious than 'ME_SAFE', and we wouldn't need the comment here.
+>>> Likewise elsewhere in this patch and the series.
+>>>
+>>> To Jonathan's comment, I do prefer these numbers are aligned, so aside
+>>> from the naming, the diff above looks good.
+>>
+>> OK, I also modified other locations to use 'MEM_ERR'.
+> 
+> Thanks!
+> 
+> [...]
+> 
+>>>> diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
+>>>> index 802231772608..2ac716c0d6d8 100644
+>>>> --- a/arch/arm64/lib/copy_to_user.S
+>>>> +++ b/arch/arm64/lib/copy_to_user.S
+>>>> @@ -20,7 +20,7 @@
+>>>>     *	x0 - bytes not copied
+>>>>     */
+>>>>    	.macro ldrb1 reg, ptr, val
+>>>> -	ldrb  \reg, [\ptr], \val
+>>>> +	KERNEL_ME_SAFE(9998f, ldrb  \reg, [\ptr], \val)
+>>>>    	.endm
+>>>>    	.macro strb1 reg, ptr, val
+>>>> @@ -28,7 +28,7 @@
+>>>>    	.endm
+>>>>    	.macro ldrh1 reg, ptr, val
+>>>> -	ldrh  \reg, [\ptr], \val
+>>>> +	KERNEL_ME_SAFE(9998f, ldrh  \reg, [\ptr], \val)
+>>>>    	.endm
+>>>>    	.macro strh1 reg, ptr, val
+>>>> @@ -36,7 +36,7 @@
+>>>>    	.endm
+>>>>    	.macro ldr1 reg, ptr, val
+>>>> -	ldr \reg, [\ptr], \val
+>>>> +	KERNEL_ME_SAFE(9998f, ldr \reg, [\ptr], \val)
+>>>>    	.endm
+>>>>    	.macro str1 reg, ptr, val
+>>>> @@ -44,7 +44,7 @@
+>>>>    	.endm
+>>>>    	.macro ldp1 reg1, reg2, ptr, val
+>>>> -	ldp \reg1, \reg2, [\ptr], \val
+>>>> +	KERNEL_ME_SAFE(9998f, ldp \reg1, \reg2, [\ptr], \val)
+>>>>    	.endm
+>>>>    	.macro stp1 reg1, reg2, ptr, val
+>>>
+>>> These changes mean that regular copy_to_user() will handle kernel memory
+>>> errors, rather than only doing that in copy_mc_to_user(). If that's
+>>> intentional, please call that out explicitly in the commit message.
+>>
+>> Yes. This is the purpose of the modification. If the copy_to_user()
+>> function encounters a memory error, this uaccess affects only the
+>> current process. and only need to kill the current process instead of
+>> the entire kernel panic. Do not add copy_mc_to_user() so that
+>> copy_to_user() can process memory errors.
+>>
+>> I'll add a description in the commit msg next version.
+> 
+> Ok; why do powerpc and x86 have separate copy_mc_to_user()
+> implementations, then?
 
-I did not say there was a generic method. I just said copy one. We
-have too many different ways of doing the same thing, so we should not
-add another one. Which of these is closest to what you want? You
-should use your own vendor part, but copy clk-output-sel, rmii-ref,
-etc, and implement the same behaviour in your driver.
+Taking x86 as an example:
 
-     Andrew
+unsigned long __must_check copy_mc_to_user(...)
+{
+	unsigned long ret;
+
+	if (copy_mc_fragile_enabled) {
+		instrument_copy_to_user(dst, src, len);
+		__uaccess_begin();
+		ret = copy_mc_fragile((__force void *)dst, src, len);
+		__uaccess_end();
+		return ret;
+	}
+
+	if (static_cpu_has(X86_FEATURE_ERMS)) {
+		instrument_copy_to_user(dst, src, len);
+		__uaccess_begin();
+		ret = copy_mc_enhanced_fast_string((__force void *)dst, src, len);
+		__uaccess_end();
+		return ret;
+	}
+
+	return copy_user_generic((__force void *)dst, src, len);
+}
+
+Through checking the source code, I found that "copy_mc_fragile_enabled"
+and "X86_FEATURE_ERMS" both rely on the hardware features of x86. I
+cannot explain the reasons for the details, but I feel that these are
+related to the hardware implementation.
+
+
+Dan Williams should be able to explain the reason.
+
+Hi Dan:
+
+We need your help:)
+
+Compared to copy_to_user(), copy_mc_to_user() added memory error
+handling. My question is why the error handling is not directly
+implemented on copy_to_user(), but instead the copy_mc_to_user()
+function is added?  Related to hardware features or performance
+considerations ?
+
+
+Thanks,
+Tong.
+
+> 
+> [...]
+> 
+>>>> +/*
+>>>> + * APEI claimed this as a firmware-first notification.
+>>>> + * Some processing deferred to task_work before ret_to_user().
+>>>> + */
+>>>> +static bool do_apei_claim_sea(struct pt_regs *regs)
+>>>> +{
+>>>> +	if (user_mode(regs)) {
+>>>> +		if (!apei_claim_sea(regs))
+>>>> +			return true;
+>>>> +	} else if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC)) {
+>>>> +		if (fixup_exception_me(regs) && !apei_claim_sea(regs))
+>>>> +			return true;
+>>>> +	}
+>>>> +
+>>>> +	return false;
+>>>> +}
+>>>
+>>> Hmm... that'll fixup the exception even if we don't manage to claim a
+>>> the SEA. I suspect this should probably be:
+>>>
+>>> static bool do_apei_claim_sea(struct pt_regs *regs)
+>>> {
+>>> 	if (apei_claim_sea(regs))
+>>> 		return false;
+>>> 	if (user_mode(regs))
+>>> 		return true;
+>>> 	if (IS_ENABLED(CONFIG_ARCH_HAS_COPY_MC))
+>>> 		return !fixup_excepton_mem_err(regs);
+>>> 	
+>>> 	return false;
+>>> }
+>>>
+>>> ... unless we *don't* want to claim the SEA in the case we don't have a
+>>> fixup?
+>>>
+>>> Mark.
+>>>
+>>
+>> Yes. My original meaning here is that if not have fixup, panic is
+>> performed in do_sea() according to the original logic, and claim sea is
+>> not required.
+> 
+> AFAICT my suggestion doesn't change that; if we don't have a fixup the
+> proprosed do_apei_claim_sea() would return false, and so do_sea() would
+> caryy on to arm64_notify_die(...).
+> 
+> I'm specifically asking if we need to avoid calling apei_claim_sea()
+> when we don't have a fixup handler, or if calling that would be fine.
+> 
+> One important thing is that if apei_claim_sea() fails to claim the SEA,
+> we'd like to panic(), and in that case it'd be good to have not applied
+> the fixup handler, so that the pt_regs::pc shows where the fault was
+> taken from.
+> 
+> Mark.
+
+I roughly understand what you mean. The prerequisite of fixup is sea 
+claimed succeed. But the fixup here actually just set the regs->pc, and 
+not applied the fixup handler here. If claim sea fails, it will directly 
+panic() here without applying the fixup handler.
+
+Thanks,
+Tong.
+
+> 
+> .
 
