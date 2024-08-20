@@ -1,210 +1,78 @@
-Return-Path: <linux-kernel+bounces-294667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8682959126
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D150F95912B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA621F21A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F9F283C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D101CB31F;
-	Tue, 20 Aug 2024 23:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3221A1C8FAF;
+	Tue, 20 Aug 2024 23:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/jhRGg7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxepoFmx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959AD1C8FDA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D21370;
+	Tue, 20 Aug 2024 23:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724196106; cv=none; b=dKOORSbwDW7KAyDfMGRr3mq4FfIk15u9kNcItDCHvoRzgwThwld7UN+XQwcxU9+QhmK7qAwW0izXPsPH5gZIg+gY8jgkAly7SyASqTPajQ4NvaJWoLjaCLY7eS4bEmsuFGEGSm/B5+k6KmKJXHW7IrEFG90v/SMsfjI4ljmfnoo=
+	t=1724196251; cv=none; b=hkH8HmlaYUqooDGGoLQa3cGdii3H3nnR1Xj2TXSYFhEnqeiqOMvGJjBBJBa/cKHpSZuXMZ/0TtSUUmAMCMh0pk1YsMbAC3orCzG5yJ8v83zDqTaP/c1QOrf25YD25DAqvpuwQIaAffFCkuq0jyQ9+1L7Lp5rOj63Sj18qHqjw1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724196106; c=relaxed/simple;
-	bh=tpadh5ijkCCOsa7M3OJjST6sL5scalK1OFyRewofsGo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bz2atbBy47C78aUBnCmJTUjd03igElXbqlQlQ9yryk5/SMuwq4lw2v7M2F2sev2z3iaAvq7MkuJG86mYQpDP8F2dlC2vmcrTYn8MEa4VQVtNhdRgS0l11rBIgaWSmv7GZXKldHFn3y3RD/I/LFq+6xP31S5wlAkmfnRgnHVDQzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/jhRGg7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724196103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9pcRiiH/lYTDVoni9WSyylXIzj+0iyqYBGBDYoCG5zI=;
-	b=g/jhRGg7g5ImQj1Zj4pSoVGD+Ff+CjxSdzCKtY7fERXqmxtQ1f4S0UQHtRWNT8e/9SetOT
-	49JbymHV+RZQp1RZmvxJjOP0lIEFjfzYSZSFShZRHeN5M16A+S36geiUyT+6pe7+kLRf7T
-	CVSsZlvxo6FxPc5MIXumwjjcMXLZRFk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-329-JolRJguvP_SguD5LijFaFg-1; Tue,
- 20 Aug 2024 19:21:39 -0400
-X-MC-Unique: JolRJguvP_SguD5LijFaFg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA9DE19560AD;
-	Tue, 20 Aug 2024 23:21:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A9E6F1955F54;
-	Tue, 20 Aug 2024 23:21:32 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: [PATCH 4/4] netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
-Date: Wed, 21 Aug 2024 00:20:58 +0100
-Message-ID: <20240820232105.3792638-5-dhowells@redhat.com>
-In-Reply-To: <20240820232105.3792638-1-dhowells@redhat.com>
-References: <20240820232105.3792638-1-dhowells@redhat.com>
+	s=arc-20240116; t=1724196251; c=relaxed/simple;
+	bh=Bgw5hU99derk7U1NmjbqkCmMgXck6gaGKiWqwznP96s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M/Q5xDo8d03CWlsto2WuUn93vfbWRTx8/5zuctKy/jOTcO5H/WDIuvxxMdrOUHKg+n4yZ/U7VG0DkoaTsX3MaBEn6ciMWiR/LAHMitoEvDfXDkgPWyw8n78wcUoQrNsz5JFwXOHvuWUCpJA5HPC1tsRyfrmxSRmgR67bl0Eenmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxepoFmx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09ACC4AF09;
+	Tue, 20 Aug 2024 23:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724196250;
+	bh=Bgw5hU99derk7U1NmjbqkCmMgXck6gaGKiWqwznP96s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BxepoFmxfQO0UydG0v3ZV5buhg0oSeHlHX+McfdpdT2wIONHMoOuk5UekC70aOqLu
+	 PRIdPa3JYBzVLWEeMQHuD+OYn2KtiCGJnZMYfNHD0zIQ+QPjId1vpPJSUP7vK2Cf5r
+	 g+k4BOa9v778e4sSRjGBFsq32605TUK3G/sP8F4W4ugKBe+ZKyD0F6zwV7x1j0fFaB
+	 WP91l6wdTihxqmMUGKdT4RsaAvNttX9Nay08ueScQbFFXj5XyRHy7Nx6Y9lOZ/oBf5
+	 A9qv7int+Rw6i+q3Dd1eCpNp4pRPA6hapanVoVOi9IMiQjx7hFCklMX3UF6tGg3aRn
+	 fATnsf0enV2og==
+Date: Tue, 20 Aug 2024 16:24:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] netconsole: pr_err() when netpoll_setup
+ fails
+Message-ID: <20240820162409.62a222a8@kernel.org>
+In-Reply-To: <20240819103616.2260006-3-leitao@debian.org>
+References: <20240819103616.2260006-1-leitao@debian.org>
+	<20240819103616.2260006-3-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When netfslib writes to a folio that it doesn't have data for, but that
-data exists on the server, it will make a 'streaming write' whereby it
-stores data in a folio that is marked dirty, but not uptodate.  When it
-does this, it attaches a record to folio->private to track the dirty
-region.
+On Mon, 19 Aug 2024 03:36:12 -0700 Breno Leitao wrote:
+> netpoll_setup() can fail in several ways, some of which print an error
+> message, while others simply return without any message. For example,
+> __netpoll_setup() returns in a few places without printing anything.
+> 
+> To address this issue, modify the code to print an error message on
+> netconsole if the target is not enabled. This will help us identify and
+> troubleshoot netcnsole issues related to netpoll setup failures
+> more easily.
 
-When truncate() or fallocate() wants to invalidate part of such a folio, it
-will call into ->invalidate_folio(), specifying the part of the folio that
-is to be invalidated.  netfs_invalidate_folio(), on behalf of the
-filesystem, must then determine how to trim the streaming write record.  In
-a couple of cases, however, it does this incorrectly (the reduce-length and
-move-start cases are switched over and don't, in any case, calculate the
-value correctly).
+Only if memory allocation fails, it seems, and memory allocation
+failures with GFP_KERNEL will be quite noisy.
 
-Fix this by making the logic tree more obvious and fixing the cases.
-
-Fixes: 9ebff83e6481 ("netfs: Prep to use folio->private for write grouping and streaming write")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: Pankaj Raghav <p.raghav@samsung.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: netfs@lists.linux.dev
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/misc.c | 50 ++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 35 insertions(+), 15 deletions(-)
-
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 69324761fcf7..c1f321cf5999 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -97,10 +97,20 @@ EXPORT_SYMBOL(netfs_clear_inode_writeback);
- void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
- {
- 	struct netfs_folio *finfo;
-+	struct netfs_inode *ctx = netfs_inode(folio_inode(folio));
- 	size_t flen = folio_size(folio);
- 
- 	_enter("{%lx},%zx,%zx", folio->index, offset, length);
- 
-+	if (offset == 0 && length == flen) {
-+		unsigned long long i_size = i_size_read(&ctx->inode);
-+		unsigned long long fpos = folio_pos(folio), end;
-+
-+		end = umin(fpos + flen, i_size);
-+		if (fpos < i_size && end > ctx->zero_point)
-+			ctx->zero_point = end;
-+	}
-+
- 	folio_wait_private_2(folio); /* [DEPRECATED] */
- 
- 	if (!folio_test_private(folio))
-@@ -115,18 +125,34 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
- 		/* We have a partially uptodate page from a streaming write. */
- 		unsigned int fstart = finfo->dirty_offset;
- 		unsigned int fend = fstart + finfo->dirty_len;
--		unsigned int end = offset + length;
-+		unsigned int iend = offset + length;
- 
- 		if (offset >= fend)
- 			return;
--		if (end <= fstart)
-+		if (iend <= fstart)
-+			return;
-+
-+		/* The invalidation region overlaps the data.  If the region
-+		 * covers the start of the data, we either move along the start
-+		 * or just erase the data entirely.
-+		 */
-+		if (offset <= fstart) {
-+			if (iend >= fend)
-+				goto erase_completely;
-+			/* Move the start of the data. */
-+			finfo->dirty_len = fend - iend;
-+			finfo->dirty_offset = offset;
-+			return;
-+		}
-+
-+		/* Reduce the length of the data if the invalidation region
-+		 * covers the tail part.
-+		 */
-+		if (iend >= fend) {
-+			finfo->dirty_len = offset - fstart;
- 			return;
--		if (offset <= fstart && end >= fend)
--			goto erase_completely;
--		if (offset <= fstart && end > fstart)
--			goto reduce_len;
--		if (offset > fstart && end >= fend)
--			goto move_start;
-+		}
-+
- 		/* A partial write was split.  The caller has already zeroed
- 		 * it, so just absorb the hole.
- 		 */
-@@ -139,12 +165,6 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
- 	folio_clear_uptodate(folio);
- 	kfree(finfo);
- 	return;
--reduce_len:
--	finfo->dirty_len = offset + length - finfo->dirty_offset;
--	return;
--move_start:
--	finfo->dirty_len -= offset - finfo->dirty_offset;
--	finfo->dirty_offset = offset;
- }
- EXPORT_SYMBOL(netfs_invalidate_folio);
- 
-@@ -164,7 +184,7 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
- 	if (folio_test_dirty(folio))
- 		return false;
- 
--	end = folio_pos(folio) + folio_size(folio);
-+	end = umin(folio_pos(folio) + folio_size(folio), i_size_read(&ctx->inode));
- 	if (end > ctx->zero_point)
- 		ctx->zero_point = end;
- 
-
+BTW I looked thru 4 random implementations of ndo_netpoll_setup
+and they look almost identical :S Perhaps they can be refactored?
 
