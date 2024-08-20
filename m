@@ -1,207 +1,228 @@
-Return-Path: <linux-kernel+bounces-294062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF7E958869
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821DC95886D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B5C281BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F021C20D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD9C191476;
-	Tue, 20 Aug 2024 14:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43051917E2;
+	Tue, 20 Aug 2024 14:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ZsTVHTcg"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="He9URwZL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A891917E4;
-	Tue, 20 Aug 2024 14:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A18918FDD0;
+	Tue, 20 Aug 2024 14:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724162544; cv=none; b=f0mcaWA9gsFNlq+VFqh3LSM0K/wDf8jFYkRMLUCs+Ze0SCOkUDQdoHPmh/RRhO+c3WlswsSZteFv0tm+hhVdIhPcGIOPjS3GzWHJsTm1QwnuU4PhGI7xEv9zERSjpj1Ovj4elPWmtEws0zXzXdoPD1HD5OmPu1qa7sP2RBtFQys=
+	t=1724162616; cv=none; b=RpV9HI29a59u7Ac2OJP8z+3IfC+vua+8CqWvf4n27WBk6yYz/xrt8lYSTX7wZlJzFSCNzStbdu6OaEsWFRZCMiuhLAay/lmuC7QTqMfFRRlwBfXhiP4xEWGtXhOVXquRr0wUpbdjB4qJDpTUbwRF5q3FE433TDsSqCPDjWW/LVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724162544; c=relaxed/simple;
-	bh=/RP+vchqEyeezYylnz8b10s5iJ9FMw2qzdebpR/Z78U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8nmQQ+Qm0IOfbeLLxk6QfRXeIel0cTAKo++wE5yNsA/aEs/Eb/KTSyqZbA8S5IRkDZo6pvSC/+dFYyu2LZHacI5+rPohZ68/Soi+ijpOcSPOGZ3AfdFLbULGaJOloq/vQY9l86bOXaM+qWS5W8+tHTFaeesRezsY1jzX8GMdOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ZsTVHTcg; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=sXowgNI7Ym7p4ze9gJRZD2DGLWRu4RKLL5qm9E1s/ns=; b=ZsTVHTcgNKZ2oRSChowadTFdMb
-	xGtRVwUHj4ySi0UkAO+GkGS5CVs4dvM8IwesectYlk/DvqtAxVVG0kbTwGZ11wRU/zrwZpyF9DeYG
-	e0XD53wQRhKa0cW+qXTxVJLfi+n0JdcPZWfQk3M2d9bsI/jElVx+YhuNBeOJXPn2YTU+MMPEznp2x
-	PJESkvzek2wHQ89abJ0qQOP7Zpsb7mLRkYUTu4eNrecW+kywS6gYL6GwU66LyhuKrRZ+txhjT2Gxx
-	4phuuIQ/Sy93a3tBu6YNVpkKM/BByvzzm22QaU6E2xqIiJiDzm2Su12xzr1uKxYr6T2PKs3BFd3Cc
-	n8It4SkQ==;
-Received: from 179-125-75-209-dinamico.pombonet.net.br ([179.125.75.209] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sgPRA-002duS-Pe; Tue, 20 Aug 2024 16:02:16 +0200
-Date: Tue, 20 Aug 2024 11:02:08 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: syzbot <syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_search_dir
- (2)
-Message-ID: <ZsSh4NUWT7MlvlSL@quatroqueijos.cascardo.eti.br>
-References: <00000000000062812a062004738b@google.com>
+	s=arc-20240116; t=1724162616; c=relaxed/simple;
+	bh=LZQvuhQ/UXkTqYZZ41BcYN6OxgJ7mqBZwv/v3P9hSO8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=IBJsQapkEbgKwuYHICXBdIgruUZp3ZHvYtl9QMEsGLckFfLC+eGhaaJZXVUkvABSGWK8Bde8PZtWsNg5z3CA4IzlGAVf5kd4ZAWlDNOOxQtOpPkUA+LaSTTzekLDBPWgomn7Gr1ufAjZJM2NytsjmmBKwqysnGN2yI8ZeKgXT6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=He9URwZL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K6e3eA032186;
+	Tue, 20 Aug 2024 14:03:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mb7qXV2yDfE8qIy3zBysGmGX3aKr4XWWhTIljgl7dyM=; b=He9URwZL1TKHS0wZ
+	pWNBBtRMUlo98okt5XEo3wS/NM/bJ05YckafTZxT7VdHF0Zk5MaCD0GziyI5zPZ2
+	fqHqktCjwyFM9klYHMgX1PGAazBTl1auH2hrlZ2K+xbO2zMaNIrb85Eo6aUlePcO
+	uhY8pqA4wUItZIebOjPZhfF5QG0pnRxik9XFyxU5OPu8QutVgUc5IxicB6xytDjh
+	Q31IO1xUTB7B4ScnbbQfsZdO0NOww0Vq18jmiABpMMNG0ijL54KsW0+jkdnvHc1B
+	sjaD8Nonx+/95KsT4fTjXNVw7eZ/85zEPgy01YUBQHgb0+Z7o05bgSILUxmwtZAN
+	m4qbZw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412hjdg49a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 14:03:22 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KE3L4k006221
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 14:03:21 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 20 Aug 2024 07:03:16 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Tue, 20 Aug 2024 22:02:42 +0800
+Subject: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000062812a062004738b@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724162591; l=3592;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=LZQvuhQ/UXkTqYZZ41BcYN6OxgJ7mqBZwv/v3P9hSO8=;
+ b=RCaqtMUpqZbot43gO3ilmyblvGAlkXAUDREqjKW6CQHLog27POoewY0s7qJZiCeXX+O7daTl2
+ ePQ2hrWcsn6BeuR4UOzy4WXyPDizZ/BfmKBpkc29/J0RCtz5szmYy01
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8OmEvbgGup_lI34R8RYsh7s2phYwWaY-
+X-Proofpoint-ORIG-GUID: 8OmEvbgGup_lI34R8RYsh7s2phYwWaY-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200104
 
-#syz test: upstream 47ac09b91befbb6a235ab620c32af719f8208399
+The CMN PLL controller provides clocks to networking hardware blocks
+on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
+and produces output clocks at fixed rates. These output rates are
+predetermined, and are unrelated to the input clock rate. The output
+clocks are supplied to the Ethernet hardware such as PPE (packet
+process engine) and the externally connected switch or PHY device.
 
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
+ 2 files changed, 85 insertions(+)
 
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index e7a09a99837b..44a5f6df59ec 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1664,24 +1664,36 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
- 					struct ext4_dir_entry_2 **res_dir,
- 					int *has_inline_data)
- {
-+	struct ext4_xattr_ibody_find is = {
-+		.s = { .not_found = -ENODATA, },
-+	};
-+	struct ext4_xattr_info i = {
-+		.name_index = EXT4_XATTR_INDEX_SYSTEM,
-+		.name = EXT4_XATTR_SYSTEM_DATA,
-+	};
- 	int ret;
--	struct ext4_iloc iloc;
- 	void *inline_start;
- 	int inline_size;
- 
--	if (ext4_get_inode_loc(dir, &iloc))
--		return NULL;
-+	ret = ext4_get_inode_loc(dir, &is.iloc);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	down_read(&EXT4_I(dir)->xattr_sem);
+diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+new file mode 100644
+index 000000000000..7ad04b58a698
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	ret = ext4_xattr_ibody_find(dir, &i, &is);
-+	if (ret)
-+		goto out;
++title: Qualcomm CMN PLL Clock Controller on IPQ SoC
 +
- 	if (!ext4_has_inline_data(dir)) {
- 		*has_inline_data = 0;
- 		goto out;
- 	}
- 
--	inline_start = (void *)ext4_raw_inode(&iloc)->i_block +
-+	inline_start = (void *)ext4_raw_inode(&is.iloc)->i_block +
- 						EXT4_INLINE_DOTDOT_SIZE;
- 	inline_size = EXT4_MIN_INLINE_DATA_SIZE - EXT4_INLINE_DOTDOT_SIZE;
--	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
-+	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
- 			      dir, fname, 0, res_dir);
- 	if (ret == 1)
- 		goto out_find;
-@@ -1691,20 +1703,23 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
- 	if (ext4_get_inline_size(dir) == EXT4_MIN_INLINE_DATA_SIZE)
- 		goto out;
- 
--	inline_start = ext4_get_inline_xattr_pos(dir, &iloc);
-+	inline_start = ext4_get_inline_xattr_pos(dir, &is.iloc);
- 	inline_size = ext4_get_inline_size(dir) - EXT4_MIN_INLINE_DATA_SIZE;
- 
--	ret = ext4_search_dir(iloc.bh, inline_start, inline_size,
-+	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
- 			      dir, fname, 0, res_dir);
- 	if (ret == 1)
- 		goto out_find;
- 
- out:
--	brelse(iloc.bh);
--	iloc.bh = NULL;
-+	brelse(is.iloc.bh);
-+	if (ret < 0)
-+		is.iloc.bh = ERR_PTR(ret);
-+	else
-+		is.iloc.bh = NULL;
- out_find:
- 	up_read(&EXT4_I(dir)->xattr_sem);
--	return iloc.bh;
-+	return is.iloc.bh;
- }
- 
- int ext4_delete_inline_entry(handle_t *handle,
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 6a95713f9193..14163b32eddb 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1482,7 +1482,7 @@ static bool ext4_match(struct inode *parent,
- }
- 
- /*
-- * Returns 0 if not found, -1 on failure, and 1 on success
-+ * Returns 0 if not found, -EFSCORRUPTED on failure, and 1 on success
-  */
- int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 		    struct inode *dir, struct ext4_filename *fname,
-@@ -1503,7 +1503,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 			 * a full check */
- 			if (ext4_check_dir_entry(dir, NULL, de, bh, search_buf,
- 						 buf_size, offset))
--				return -1;
-+				return -EFSCORRUPTED;
- 			*res_dir = de;
- 			return 1;
- 		}
-@@ -1511,7 +1511,7 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 		de_len = ext4_rec_len_from_disk(de->rec_len,
- 						dir->i_sb->s_blocksize);
- 		if (de_len <= 0)
--			return -1;
-+			return -EFSCORRUPTED;
- 		offset += de_len;
- 		de = (struct ext4_dir_entry_2 *) ((char *) de + de_len);
- 	}
-@@ -1574,7 +1574,7 @@ static struct buffer_head *__ext4_find_entry(struct inode *dir,
- 					     &has_inline_data);
- 		if (inlined)
- 			*inlined = has_inline_data;
--		if (has_inline_data)
-+		if (has_inline_data || IS_ERR(ret))
- 			goto cleanup_and_exit;
- 	}
- 
-@@ -1663,8 +1663,10 @@ static struct buffer_head *__ext4_find_entry(struct inode *dir,
- 			goto cleanup_and_exit;
- 		} else {
- 			brelse(bh);
--			if (i < 0)
-+			if (i < 0) {
-+				ret = ERR_PTR(i);
- 				goto cleanup_and_exit;
-+			}
- 		}
- 	next:
- 		if (++block >= nblocks)
-@@ -1758,7 +1760,7 @@ static struct buffer_head * ext4_dx_find_entry(struct inode *dir,
- 		if (retval == 1)
- 			goto success;
- 		brelse(bh);
--		if (retval == -1) {
-+		if (retval < 0) {
- 			bh = ERR_PTR(ERR_BAD_DX_DIR);
- 			goto errout;
- 		}
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Luo Jie <quic_luoj@quicinc.com>
++
++description:
++  The CMN PLL clock controller expects a reference input clock.
++  This reference clock is from the on-board Wi-Fi. The CMN PLL
++  supplies a number of fixed rate output clocks to the Ethernet
++  devices including PPE (packet process engine) and the connected
++  switch or PHY device.
++
++properties:
++  compatible:
++    enum:
++      - qcom,ipq9574-cmn-pll
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: The reference clock. The supported clock rates include
++          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
++      - description: The AHB clock
++      - description: The SYS clock
++    description:
++      The reference clock is the source clock of CMN PLL, which is from the
++      Wi-Fi. The AHB and SYS clocks must be enabled to access CMN PLL
++      clock registers.
++
++  clock-names:
++    items:
++      - const: ref
++      - const: ahb
++      - const: sys
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
++
++    clock-controller@9b000 {
++        compatible = "qcom,ipq9574-cmn-pll";
++        reg = <0x0009b000 0x800>;
++        clocks = <&cmn_pll_ref_clk>,
++                 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
++                 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
++        clock-names = "ref", "ahb", "sys";
++        #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+new file mode 100644
+index 000000000000..64b228659389
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++#define _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++
++/* The output clocks from CMN PLL of IPQ9574. */
++#define PPE_353MHZ_CLK			0
++#define ETH0_50MHZ_CLK			1
++#define ETH1_50MHZ_CLK			2
++#define ETH2_50MHZ_CLK			3
++#define ETH_25MHZ_CLK			4
++#endif
+
+-- 
+2.34.1
+
 
