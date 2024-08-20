@@ -1,204 +1,229 @@
-Return-Path: <linux-kernel+bounces-294268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65C8958B76
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE068958B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39111C21EAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:38:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318041F2288D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A9193081;
-	Tue, 20 Aug 2024 15:38:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0F1940B0;
+	Tue, 20 Aug 2024 15:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tbm1oyua"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6C718FDAB
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5874E125D5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724168303; cv=none; b=tYzMr7ZokvbrwZluQUI9Zep4FF+l+U3RUMsbofBeE0VmJdpeZVeXGYj37Lo4kxlxzqjo4JL9ytxos1SgRl+ai8NUQ0c4cPOKGJt3EA8LoqELpBOmDZ2xn9xcluun7KphpVOiRp95iQf01stY24utFyrTVB/4lPhH8slafTVxv2g=
+	t=1724168343; cv=none; b=NIVNTu2f94gG+a7tQd47UBAKuYVeNorw/FKgiOe6lv/cGWchVetMAQtog3crHLYKa6WiLNLpDBv9vg1iEeD81joTSh8ZSz9C52B5OQUwLIgL+3G348ax4EuZD4m4VYBOkidb8e5BcPExb1PnBIXEi4cdsdLIifvpd+r7yxlz5Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724168303; c=relaxed/simple;
-	bh=HFninlDYYxWEK0O7pWLELafox3vgaZU9uucGiyRHlg4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sAyy+n1Q7wC7xI2cVd/L1AbadPH0BVyCqaPI3fmtGpgp6yCrejIEGyUQMLDwvw49P28kyiibL66+TLeUyCCKeWv7gAN12I16pMGJkDck1WudcbKyw6xLdvzMAwA6idkjKopVP9NDjEkQio9a8osqke9LdxpA90HcB50YTYbtao4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-824e12631c3so503414739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:38:21 -0700 (PDT)
+	s=arc-20240116; t=1724168343; c=relaxed/simple;
+	bh=3F3rVSXCrKAuNTX6oBs3ahXRw610MZ40UBdmnu7Vx+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NGavJmjK02P5kdIxooQ20cyvyl2yKOHZHTjerUYDdDlPSPUNFmdM2dR49eqQUpakj66fQIh14Fj4+Jo7SdcxXNLpoYAnK85xdOaRDLLRHGSe1LG9gkneK9n89q+7466WBEPpnv3uB3dS0QRIwoyAMscBBi/LUlROAoTegBjDx2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tbm1oyua; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso46802305e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724168338; x=1724773138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pmWrqfFuhQb126F6VuYJoB91tyorexZYrj4qScm7E4o=;
+        b=tbm1oyuaZe4q83S47IUWMq/Ny4SU8cFH3j5uIv86kQZwCjr3UW8Q+v5NntMms8IRKk
+         khadXoNeLHkciV0AosDOKSGtSte14vH+/9P8Ma0EcGx0Ofn7hPgv6ri3C5h5Re0KnNcc
+         aHi9ypkyTZj1bQYQLrgwIvIjMiLG2M+u73F3H/1hVftyvBjI/9jeKtUa9HYssP2d6cSu
+         YPmx6j8PlB61eXn/jAJlI6SoO9+1LN/4YWfyFD5RQsxYMftF2QvGekX9uPgRQ/TGGitf
+         07WEJgjUKM3dbKClOhSnK3IdL46ZIQfMbq0Hfw9XZIwWXjLANimXUufs32qBWHN3XPkK
+         /+gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724168301; x=1724773101;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fmjhxlYv+6k0VIVTkSeuqdNA5u/e9VvDQXfjlhydIwg=;
-        b=aJbAgZ5jEh3h/91cMIvmHU8kcRAfEeCXZBHfiMf7qnhv+wsxGJtV90bYh59qNDVLBl
-         94w0BI0KciGjG7UUCbrF8/QJR/Rdwra5pkV7dsDEqnXV7FRgfMohZ/D/Q3LSV3DgMPkz
-         ezcKvJt3n9u6XmP23MdlOMsI76VibRDRoNlbw9mAVK0v3eiSbZwFH1JSnIv40x6BNDWc
-         DGc9f/KMB5VB1EV+hSObGjQ/lklxDvQ8XZqTVMii9AUftaYFB5szqn5iKpX5iClP4e0U
-         m+rRIByYP72NpmdfSbCghiM0gFTTcPFQMZovEraRfriiX4RJU4Kl4O6r+3VFFQJ+TIjV
-         z/4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAhNBxonxDe9VLlk9WeefO0Nc8aRl5FMr1V2VIveB/NVbCuAmzFeEFl10kEE2rILDvxh4nHGR8iHBlhpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlKyUX+BcSy+Cvh4p/UVB/F7Vw3Zr4UHibyebwsIx/qz4uEN+p
-	JqmVqu5KCI9G/QO05BYhFj3K0LQglNHUCI0g8ADImWCImztC1vJKsPwXiB1hEfTXAUSfzfQCf97
-	srNczq6N36Hj7OfLTDnE1vGybuTq8jl+E6hgO4HBECp7OaAKD/v3M/uo=
-X-Google-Smtp-Source: AGHT+IGiIwzuFWDslcsmkMmsM0MX793o3Xig61GdHTAuWbA0xHEFmnImsSZrEE3/DnjMZSIEi5KB2v5q63VSs0KHWDJGFgxJkzBL
+        d=1e100.net; s=20230601; t=1724168338; x=1724773138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pmWrqfFuhQb126F6VuYJoB91tyorexZYrj4qScm7E4o=;
+        b=cn9MNszN45+KxRhWD/fsJcXrp0JWSXgqmZmvHav9YBu6pM2CvRFtE6DBlVSM0sm3YR
+         dleT0b/Z1nsTL29fC1FmgldJQjcR3SZhSekJs1wu8gtqpMjGC5Vj33nYEKNbpZ8RgM52
+         rRCUHEzUpAhC7yq1wCatXf53EKiztUqcKY4ymWPwbQHeVAoeY8+71Y0dZpdxCBMVtwoX
+         gkNRGWflNlot1GLdhjI+M/Ookhif/+W3xkF37/KM/pBYftWafobL2jX6fBw0kj1E9A6u
+         L3wgsA+NeG4NwzNQYaKtyLkg8vzUSfXwpVs7RZAT5clNjMZtPnCXueg8BMH+Xzid2GGt
+         CBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvhzn1PYuJ6+4MyXpZnOPEjwxWN+C9X/+4x85P7WTStEJb+Lgniw9laFaMJO9ObcJoy16RNxlHl3AOBOEXT5Cg0DhdCeKDEOhcypvM
+X-Gm-Message-State: AOJu0YyWviZNrY/vRU0HTO60Cjq/Weno43apcXoD8gSuGAgy2bxyC0fO
+	zJic9yrsEYhMbsMl3i+GS8F8hfLLpzdXibY6P5NDpohVk6va5iVxm8QPUSh5WME=
+X-Google-Smtp-Source: AGHT+IGWX7+eVKrGz832pmkLmKocdhlrcgIWlJERL2tWpVpaUuEH1ET2w4rlxwsOimDYeiDWDcI3yQ==
+X-Received: by 2002:a05:600c:138f:b0:428:2502:75b5 with SMTP id 5b1f17b1804b1-429ed7ba9c0mr92827645e9.11.1724168337929;
+        Tue, 20 Aug 2024 08:38:57 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ddce:8248:19a9:4bf6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed648f4asm146289025e9.5.2024.08.20.08.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 08:38:57 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] Documentation: add a driver API doc for the power sequencing subsystem
+Date: Tue, 20 Aug 2024 17:38:55 +0200
+Message-ID: <20240820153855.75412-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9827:b0:4c2:31f5:3137 with SMTP id
- 8926c6da1cb9f-4ce519a18a1mr192043173.0.1724168300836; Tue, 20 Aug 2024
- 08:38:20 -0700 (PDT)
-Date: Tue, 20 Aug 2024 08:38:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001acac206201f3799@google.com>
-Subject: [syzbot] [bpf?] WARNING: bad unlock balance in search_bpf_extables
-From: syzbot <syzbot+474a2013b471c709388f@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-syzbot found the following issue on:
+Describe what the subsystem does, how the consumers and providers work
+and add API reference generated from kerneldocs.
 
-HEAD commit:    bb1b0acdcd66 Add linux-next specific files for 20240820
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=139e8bc5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=49406de25a441ccf
-dashboard link: https://syzkaller.appspot.com/bug?extid=474a2013b471c709388f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ebc2ae824293/disk-bb1b0acd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f62bd0c0e25/vmlinux-bb1b0acd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ddf6d0bc053d/bzImage-bb1b0acd.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+474a2013b471c709388f@syzkaller.appspotmail.com
-
-=====================================
-WARNING: bad unlock balance detected!
-6.11.0-rc4-next-20240820-syzkaller #0 Tainted: G        W         
--------------------------------------
-syz.0.777/8282 is trying to release lock (rcu_read_lock) at:
-[<ffffffff81a2bae6>] rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
-[<ffffffff81a2bae6>] rcu_read_lock include/linux/rcupdate.h:849 [inline]
-[<ffffffff81a2bae6>] search_bpf_extables+0x26/0x3f0 kernel/bpf/core.c:788
-but there are no more locks to release!
-
-other info that might help us debug this:
-1 lock held by syz.0.777/8282:
- #0: ffffffff8e7f6780 (sched_map-wait-type-override){+.+.}-{2:2}, at: sched_submit_work kernel/sched/core.c:6710 [inline]
- #0: ffffffff8e7f6780 (sched_map-wait-type-override){+.+.}-{2:2}, at: schedule+0x90/0x320 kernel/sched/core.c:6768
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 8282 Comm: syz.0.777 Tainted: G        W          6.11.0-rc4-next-20240820-syzkaller #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0x256/0x2c0 kernel/locking/lockdep.c:5202
- __lock_release kernel/locking/lockdep.c:5439 [inline]
- lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5783
- rcu_lock_release include/linux/rcupdate.h:347 [inline]
- rcu_read_unlock include/linux/rcupdate.h:880 [inline]
- search_bpf_extables+0x39b/0x3f0 kernel/bpf/core.c:797
- fixup_exception+0xaf/0x1cc0 arch/x86/mm/extable.c:320
- kernelmode_fixup_or_oops+0x66/0xf0 arch/x86/mm/fault.c:728
- __bad_area_nosemaphore+0x118/0x770 arch/x86/mm/fault.c:785
- </TASK>
-BUG: unable to handle page fault for address: fffff91f94aa1658
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 23ffe5067 P4D 23ffe5067 PUD 0 
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 8282 Comm: syz.0.777 Tainted: G        W          6.11.0-rc4-next-20240820-syzkaller #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 7380:vprintk_emit+0x387/0x7c0
-Code: 00 00 00 fa 41 bf 00 02 00 00 be 00 02 00 00 48 21 de 31 ff e8 1a f5 1f 00 49 21 df 75 27 e8 30 f0 1f 00 eb 2a e8 29 f0 1f 00 <48> 8b 5c 24 08 e9 d6 02 00 00 e8 1a f0 1f 00 c6 05 c3 5c 84 13 01
-RSP: 3e16:0000000000000000 EFLAGS: 1ffff92001342e48 ORIG_RAX: ffffc90009a17310
-RAX: ffffffff8e0428e9 RBX: ffffc90009a17320 RCX: ffffffff8e7d1aa0
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8173d087 R08: 0000000045e0360e R09: ffffffff8c051300
-R10: 0000000000000000 R11: 1ffff92001342e3c R12: ffffc90009a172b0
-R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00005555889b6500(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
-CS:  7380 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff91f94aa1658 CR3: 000000002f8fc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- </TASK>
-Modules linked in:
-CR2: fffff91f94aa1658
----[ end trace 0000000000000000 ]---
-RIP: 7380:vprintk_emit+0x387/0x7c0
-Code: 00 00 00 fa 41 bf 00 02 00 00 be 00 02 00 00 48 21 de 31 ff e8 1a f5 1f 00 49 21 df 75 27 e8 30 f0 1f 00 eb 2a e8 29 f0 1f 00 <48> 8b 5c 24 08 e9 d6 02 00 00 e8 1a f0 1f 00 c6 05 c3 5c 84 13 01
-RSP: 3e16:0000000000000000 EFLAGS: 1ffff92001342e48 ORIG_RAX: ffffc90009a17310
-RAX: ffffffff8e0428e9 RBX: ffffc90009a17320 RCX: ffffffff8e7d1aa0
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8173d087 R08: 0000000045e0360e R09: ffffffff8c051300
-R10: 0000000000000000 R11: 1ffff92001342e3c R12: ffffc90009a172b0
-R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00005555889b6500(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
-CS:  7380 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff91f94aa1658 CR3: 000000002f8fc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 fa                	add    %bh,%dl
-   4:	41 bf 00 02 00 00    	mov    $0x200,%r15d
-   a:	be 00 02 00 00       	mov    $0x200,%esi
-   f:	48 21 de             	and    %rbx,%rsi
-  12:	31 ff                	xor    %edi,%edi
-  14:	e8 1a f5 1f 00       	call   0x1ff533
-  19:	49 21 df             	and    %rbx,%r15
-  1c:	75 27                	jne    0x45
-  1e:	e8 30 f0 1f 00       	call   0x1ff053
-  23:	eb 2a                	jmp    0x4f
-  25:	e8 29 f0 1f 00       	call   0x1ff053
-* 2a:	48 8b 5c 24 08       	mov    0x8(%rsp),%rbx <-- trapping instruction
-  2f:	e9 d6 02 00 00       	jmp    0x30a
-  34:	e8 1a f0 1f 00       	call   0x1ff053
-  39:	c6 05 c3 5c 84 13 01 	movb   $0x1,0x13845cc3(%rip)        # 0x13845d03
-
-
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/driver-api/index.rst  |  1 +
+ Documentation/driver-api/pwrseq.rst | 98 +++++++++++++++++++++++++++++
+ MAINTAINERS                         |  1 +
+ 3 files changed, 100 insertions(+)
+ create mode 100644 Documentation/driver-api/pwrseq.rst
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index f10decc2c14b..7f83e05769b4 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -124,6 +124,7 @@ Subsystem-specific APIs
+    pps
+    ptp
+    pwm
++   pwrseq
+    regulator
+    reset
+    rfkill
+diff --git a/Documentation/driver-api/pwrseq.rst b/Documentation/driver-api/pwrseq.rst
+new file mode 100644
+index 000000000000..bf82469fcd38
+--- /dev/null
++++ b/Documentation/driver-api/pwrseq.rst
+@@ -0,0 +1,98 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++.. Copyright 2024 Linaro Ltd.
++
++====================
++Power Sequencing API
++====================
++
++:Author: Bartosz Golaszewski
++
++Introduction
++============
++
++This framework is designed to abstract complex power-up sequences that are
++shared between multiple logical devices in the linux kernel.
++
++The intention is to allow consumers to obtain a power sequencing handle
++exposed by the power sequence provider and delegate the actual requesting and
++control of the underlying resources as well as to allow the provider to
++mitigate any potential conflicts between multiple users behind the scenes.
++
++Glossary
++--------
++
++The power sequencing API uses a number of terms specific to the subsystem:
++
++Unit
++
++    A unit is a discreet chunk of a power sequence. For instance one unit may
++    enable a set of regulators, another may enable a specific GPIO. Units can
++    define dependencies in the form of other units that must be enabled before
++    it itself can be.
++
++Target
++
++    A target is a set of units (composed of the "final" unit and its
++    dependencies) that a consumer selects by its name when requesting a handle
++    to the power sequencer. Via the dependency system, multiple targets may
++    share the same parts of a power sequence but ignore parts that are
++    irrelevant.
++
++Descriptor
++
++    A handle passed by the pwrseq core to every consumer that serves as the
++    entry point to the provider layer. It ensures coherence between different
++    users and keeps reference counting consistent.
++
++Consumer interface
++==================
++
++The consumer API is aimed to be as simple as possible. The driver interested in
++getting a descriptor from the power sequencer should call :c:func:`pwrseq_get()`
++and specify the name of the target it wants to reach in the sequence after
++calling :c:func:`pwrseq_power_up()`. The descriptor can be released by calling
++:c:func:`pwrseq_put()` and the consumer can request the powering down of its
++target with :c:func:`pwrseq_power_off()`. Note that there is no guarantee that
++:c:func:`pwrseq_power_off()` will have any effect as there may be multiple users
++of the underlying resources who may keep them active.
++
++Provider interface
++==================
++
++The provider API is admittedly not nearly as straightforward as the one for
++consumers but it makes up for it in flexibility.
++
++Each provider can logically split the power-up sequence into descrete chunks
++(units) and define their dependencies. They can then expose named targets that
++consumers may use as the final point in the sequence that they wish to reach.
++
++To that end the providers fill out a set of configuration structures and
++register with the pwrseq subsystem by calling :c:func:`pwrseq_device_register`.
++
++Dynamic consumer matching
++-------------------------
++
++The main difference between pwrseq and other linux kernel providers is the
++mechanism for dynamic matching of consumers and providers. Every power sequence
++provider driver must implement the `match()` callback and pass it to the pwrseq
++core when registering with the subsystems.
++
++When a client requests a sequencer handle, the core will call this callback for
++every registered provider and let it flexibly figure out whether the proposed
++client device is indeed its consumer. For example: if the provider binds to the
++device-tree node representing a power management unit of a chipset and the
++consumer driver controls one of its modules, the provider driver may parse the
++relevant regulator supply properties in device tree and see if they lead from
++the PMU to the consumer.
++
++API reference
++=============
++
++.. kernel-doc:: include/linux/pwrseq/consumer.h
++   :internal:
++
++.. kernel-doc:: include/linux/pwrseq/provider.h
++   :internal:
++
++.. kernel-doc:: drivers/power/sequencing/core.c
++   :export:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f328373463b0..5a7500f048bb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18204,6 +18204,7 @@ M:	Bartosz Golaszewski <brgl@bgdev.pl>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
++F:	Documentation/driver-api/pwrseq.rst
+ F:	drivers/power/sequencing/
+ F:	include/linux/pwrseq/
+ 
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
