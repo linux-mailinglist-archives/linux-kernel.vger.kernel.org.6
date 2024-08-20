@@ -1,249 +1,321 @@
-Return-Path: <linux-kernel+bounces-293810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3734958530
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:52:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D406D958534
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F93D1C239A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24C76B25D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32DA18DF7C;
-	Tue, 20 Aug 2024 10:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531D518E035;
+	Tue, 20 Aug 2024 10:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iWwxaQfe"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GunIu2lp"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5334F178376;
-	Tue, 20 Aug 2024 10:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724151160; cv=fail; b=iqJHG+rftaFg9XqUbDyhCWgO/CECgpiM2DOoLIH/p6R9t6RQUCZoNAo9bA9xhPg+2aV6LjCdDt5yntum2SSJ17/6RawPOD8uwqQuj1E1ofGZEzXYm4GZ+rb8oCX8e7WErIgQ2c76ozvO0cgNo03shSvquchAeofd3bgDq/zhoRw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724151160; c=relaxed/simple;
-	bh=jtX4oNw1yG7EkJF8JOcCiq7tXI7jSdnG0kiAKanhwcw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FkWszrWEWa3gu5PNQTxbNHH755EF7OspuOhhSU382nzEw72wz/BZYUZbnEVwrvHxIQCKinPKzkzbxvBGPLw4E+AgDzBusd4XRAHJkVtMn4yJeFVRxmswkVyC4GDxZPLkSW2/hnp4AbG55nW8+bUISB7HuijjUneAg/Lj1KkKUeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iWwxaQfe; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zGAoJrJe1yS1GY6d3UTEjphrvYsCLXvStYy9UUTyJUYuS1UnNNz/kBVTwFnElvnU+cNIsVK6kZRoPSn+K/sWt0cBviqvvi03yxIKKyu+wXztEVEwKB73hZAilhDaB6Ed/YUUCieFiI0RuinUFylYKOKxldGjbjSVC+93+BikGJooAxRgUYpaCymFZxN4BwufoU97pz5oersT3Wrl7DIvf2RK3eUchmyyfa/p687yaFbPEdaFtsuGVNs8kJaXC6o58y0MqAPA8pjM9/Jq2iQM2siUQdfi9wI7KCsdhedTzsSIN1pavHVcwrC4MXapco1Y1SeEZb43IXomTotnd1UGuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1oKLKEiAxcreahO1cFou/nrFSunI5jWYFrgvv5RMo7U=;
- b=WbeBgaBagU/5wXtUPbH/N7OdDFUjEcshZRSVNs1sV8HZD50U+scVaxVEFuWXcvHKY5zJs87d2YJaMqPtiW8rufmWID85w/6wc7UwLo6g0kPbiOR1sFfLiTFnnCzMU2jMvxZCf5KdH65xt3IiY4KR5YJGs/5S6hIb2OVbbUIFcv4xabSmRnqabDWt7MIkb4VLWzRelWKfTB3OdHt1bbDeaajOTNE7qChqSogccvpJexL1bJZF22Lfac2oNujvtzGpWGqaJ5qG8+u8IWWM4365KKmJy0Ob8HLREFxrXAWT5H0YF/0Q+A29Z5J07ENvBlrVZjp8CfNQYCLIkchVlOfWDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1oKLKEiAxcreahO1cFou/nrFSunI5jWYFrgvv5RMo7U=;
- b=iWwxaQfeCfHhkT0ebLSKZRpmcdpztjiYgtK7ytLzzTtYGo3Ymskps6kLqsbQ+7ws3lk4ZBlwdabGbMbgvFlknY5cYEDEuLQ0aPEhkYA8z3msGLOxUsCQJb+82k25nZHGAiMcaL6X4GmKpnEHmfQoNcmqxrSjL4gpY2mItx2xQmo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by DM6PR12MB4252.namprd12.prod.outlook.com (2603:10b6:5:211::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 10:52:36 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%7]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 10:52:36 +0000
-Message-ID: <49849e0b-5ed6-44a4-94b3-1d5dd54b9a29@amd.com>
-Date: Tue, 20 Aug 2024 16:22:18 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 26/26] KVM: x86: asi: Add some mitigations on address
- space transitions
-To: Brendan Jackman <jackmanb@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Alexandre Chartre <alexandre.chartre@oracle.com>,
- Liran Alon <liran.alon@oracle.com>,
- Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
- Lorenzo Stoakes <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>,
- Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
- Khalid Aziz <khalid.aziz@oracle.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>,
- Reiji Watanabe <reijiw@google.com>, Junaid Shahid <junaids@google.com>,
- Ofir Weisse <oweisse@google.com>, Yosry Ahmed <yosryahmed@google.com>,
- Patrick Bellasi <derkling@google.com>, KP Singh <kpsingh@google.com>,
- Alexandra Sandulescu <aesa@google.com>, Matteo Rizzo
- <matteorizzo@google.com>, Jann Horn <jannh@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kvm@vger.kernel.org
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
- <20240712-asi-rfc-24-v1-26-144b319a40d8@google.com>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <20240712-asi-rfc-24-v1-26-144b319a40d8@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BMXPR01CA0090.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::30) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9A818E02C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724151184; cv=none; b=f1PYsVsxlPmtfiUlz+2aHB6KEEwggQO1aSqLXat/M9ZYoQMGzLtZYGLa42vyx/L6GCb+4HohzvdRHMfFQyaCNzeTjwg4qJCTh68NqfKLcbjmMbTxVG5HykPLNyHaytHUkDSn016oxIsIr2Q5Bm2s+dCvajuv1zcp3x4iqSiXFVo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724151184; c=relaxed/simple;
+	bh=77u6L3TA/5ECmrAhLZTcmaOEnUo+oh/Jh2kuPWIy798=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hqFiPYqN1BDWjSXK4n947uke+NiyaWG6f0ZRiSDIZn35jEgtdDC7ChPqkZlC9Qxh7cOSTv3N/exYlNueIJLcL/xYlgze//CpGGtc7wtt6TqBWErbM5r4oppGxBW3HC0OYiD8DK27iorR73DRqcKoJf9xsRYDKpOlBiD6Iy6625k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GunIu2lp; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d399da0b5so4523966b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724151182; x=1724755982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcW/bXC7hiuTbCcrDe23N8Cg3ZczxDN7qEUeTv5fisY=;
+        b=GunIu2lp/6fP85DWgr0JAoVuBxO58RwR6kTuGfcW1zbYgwEToOn6MYUk4xI2O58kLJ
+         5SRg5AM6SCplBfp8I8qG+iJnsvLwiSAsm3NLjvkhSCA04qS8QxrXrC+wqST3OVxUQb8M
+         ThCt4GHLo5ab58K1KMOH2v8mL+1N4ww/srxZrio1BGsZtMfDQY8i/Hpn7TvQS+f3oIV2
+         /UmJbHrU1Gy4KDgwPqbjQ6/+H7EChpNNKfY69Xrc+YRszwhVwCum3y2TtoQeLT/khu/F
+         mKH97OSm+5lwj/tTxu9nDP+GRUMr8wGA0UZch1Aaamxwcmy756V0E3+J/ELdliPJPgT9
+         u4Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724151182; x=1724755982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rcW/bXC7hiuTbCcrDe23N8Cg3ZczxDN7qEUeTv5fisY=;
+        b=a1pM5SXOVpP3lIE73s2JS9ZI0tKPJBqalsU6YzBLHCBefXkuQUjX1kIjbc3rrhmzYd
+         eoeDoiLX/5Ri4JEXlmPWAz/jq1nzBuBRSF+p1tZHOxEXVQdSIfQS3GJTu/XOivkt2dHi
+         iKyhRxRZrBBtBF5GQcRm40zGurNhHJwBtCXOx4U4fteYSSvmFjIv6IgobBsgydxN7QRS
+         yKCWG4uuPXNMt3PxOsZrF9z/j0Su3dyMHla0ot9XqxYL+2Qrm9argejuCmGOl7k2UJ5c
+         LX6QRwu+J13sxbcIHdWbbdsUWHdkBpcqtoOgX9mNX4YNYFGBMLpo6w5YAGyK4DZto97/
+         wa0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ3CrwhR2EqHrlrBF7QY8kLC36dcYUARrSD4c0GoKy2ndA6ayzpGAPiozfHn+/xUypYt75wefGl1nsrvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9yy3+2I+brxZLXC5L7VpOhEVvWS+xFv6LeOjzYPMPdL87ODDf
+	1JTRjihC+HANdv7nOKxvjXfOZYQdaHBvJcKbKi0IvwSjNwGM3iBX4AOt5kLf
+X-Google-Smtp-Source: AGHT+IF38pbSlDGIT7/HZwuM+owas8KMnZZ0O9atxXpxvjUqeDab00Pf4MaOZPDuvlR15sLjij9KDg==
+X-Received: by 2002:a05:6a20:2d29:b0:1c2:8cc4:9084 with SMTP id adf61e73a8af0-1c905025ed4mr19724289637.34.1724151181677;
+        Tue, 20 Aug 2024 03:53:01 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:9018:5cd2:579f:48d2])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3d97f2asm9051571a91.53.2024.08.20.03.52.57
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 20 Aug 2024 03:53:01 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	corbet@lwn.net,
+	david@redhat.com,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com
+Subject: [PATCH v6] mm: override mTHP "enabled" defaults at kernel cmdline
+Date: Tue, 20 Aug 2024 22:52:44 +1200
+Message-Id: <20240820105244.62703-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|DM6PR12MB4252:EE_
-X-MS-Office365-Filtering-Correlation-Id: 611419c0-21dc-4821-6a31-08dcc10633a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SDRBSjVtdjRvV3YwUUdJem1mbVpxQVltV25Jb1NFMW1JUW9KUTBaL3hnbHlY?=
- =?utf-8?B?alRYNXBPU1k5cGJNYzVMOVdOdUR4VCtHUFZkcGJoSks4blFxSDlkR2VjK1Zv?=
- =?utf-8?B?NkJsa28wNWEwSXlzVjdQeWoxZjVMUExjYktuZWNyUEdBeVFiVUwrRGRLNzBI?=
- =?utf-8?B?MmE1bkdpWXdpb2lmZHNGVFMrSDJMdjd6ZVhuNzFmd3Y3QUpBZDlPenBoUGZY?=
- =?utf-8?B?SEFsdU8vNVFEdjBZSG5LRnM4YjBaZ2s4TFhKc0pyTCtibHEvV2FWUGJzdnVj?=
- =?utf-8?B?cDNNWVVockVocTNGL3ZJSm1qSVpvRUpzeUpxWUZpUFVqWGJOVkNnWlRyTDQ5?=
- =?utf-8?B?UlZJMjBDVnUxYy8wN0ZKVXF6YmUrRGZVaVlCWktudzZHaE5vTmRyL2s1dHJl?=
- =?utf-8?B?ZXlybytnOGt3Wmd3ZnpRUEtOVVhiQm5RSG9iUmJhYmhSYVQ1MG9yOElkVEJW?=
- =?utf-8?B?d1puTFdpNld2bTFNc25DcnN6alcxTmpqdmVsVDU0VFJLK2tVMW9rT0RsNEpq?=
- =?utf-8?B?R1cxKzJFeHJ3aFdMY3M0cGF3ZkhKVFlJMVoveGw1TUpQV0RjTGlBWFl2OWk3?=
- =?utf-8?B?NjFQU1hiMExFdXo0UFU2K2xxMkM4RTB2UFN4czRKTnhEeU5YZlA4amdLRWVl?=
- =?utf-8?B?ai9IRGUxTGZRRGVtS3VodUtWL0g3MEtDazB5Y3VsUUNzMzdUUi90RisxRUxI?=
- =?utf-8?B?T3FWY0gwWDlhYWdsMXJZajNmN0lrZ2JvUEFrSTZ3dzBJakhuQVhKbHN2VWpL?=
- =?utf-8?B?eHA0aUZ3SUF4cHNwSlREU3Mzejl0ZTVQOXdLS0o0WVFZQUxDbTMvaHJsTzB4?=
- =?utf-8?B?b0RTRFhUR0tHR1BDVUJRYXduTFo5S2E3S0Iva3AyTEV3ZHhXT2dEOFRkUXlw?=
- =?utf-8?B?Z1hQcXVoMHdiUENjOTJCVTRUcVd6L0RmMG9aQWZtVmE5bG0rZ2t2NGgwUzd0?=
- =?utf-8?B?dktlVWpuaDYwT2p2MnNkMjgzazNXeTNQMVozTUJJNkFrVkY1ektCUFUvSytS?=
- =?utf-8?B?VndvTnN2bFhUaHFDWFNEaERnUHRrVWRTV2VjU2FjdnNtWmVNMEZMR0t1VnRw?=
- =?utf-8?B?eEt1S2FPUXBMaVJZeXBhUklVT2FVaXVncVZZOVNUTjg5Qm1NYW9BQisvM1hU?=
- =?utf-8?B?TmluWDVKWm8vdUptSVNGV3IrTmxGclJpVURhTzJXdjViTUlSdHo4cGhhOG1F?=
- =?utf-8?B?aGh6Z0d4VWFiK1hScThsaklvamlJbE9nbDNYOCs0UEhZZFUwWGQ2UkxqZXh3?=
- =?utf-8?B?Szdrc1NEVEZxQ0kyNkI1NVVhZ3dmQ2Ntd2VXcTA1MHZsV3JubnFxV1hkeGx4?=
- =?utf-8?B?MWQ0UkZodndZb3Rqc1duNmNoZDEyUlpBcHpzSDBZWmoyb2s2UC9MZnAyWTlU?=
- =?utf-8?B?RjhQU1pHaEpFMldqSmlmdVpTTTZVNHVWSi95R0praU5iRldaQjk0ZHNPYllk?=
- =?utf-8?B?NksvOWViT2F2SVpGbW1DWVZRMVZ3bUo3MmtVazN3UVdVZWUzcnEyZ1MwL1JH?=
- =?utf-8?B?ZWRqV0N0dHJobmE3WEttMHpLOXpmN2Z3VmR1emFiQk0zYmtxUnNNM3FXVXNU?=
- =?utf-8?B?MjlvU1hhTTdsVmNJSUh3bzhYNXZtN3NOOTFqcEpLdGZKM3ljc21kbllIdmhV?=
- =?utf-8?B?WUMwQ1JmZmErN0E3RjhIRC96Q0l0bStYL3hqeXRjVzJDNXBQOS9kY054b0da?=
- =?utf-8?B?YzhJeXc0bFp5S254UUQ1M2J4UFFZSUtPSVE3SE5BWjlXVzVPUEpWbjhyeVp6?=
- =?utf-8?B?VW9Rd1Jqb3dhZ3dUcU56a0ZSeWZqY2xnMzFtaS9wdDcwTkpSaCt3bE9NaVIx?=
- =?utf-8?B?L2ZKTVNJTEJlQTZLYnhDUnZ3OG5GRkxxbUxyNERLRzNpYk1sc0JFYkdURUFt?=
- =?utf-8?Q?2JM3gMnuTpEq7?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ckEwMENyL2hYYWt6RnJnaVV0dEJIcXB5RXg1NVBFRHVyNXF2dTVFTk1hdmRS?=
- =?utf-8?B?QXRseDVVS01xM0EwcGVzTDd0ZjMyRnhrWDRtWjBvcHNCWDJDcDdtZ0FiaVhp?=
- =?utf-8?B?ZGRFYWdtTm9qakZBREF6eFI5ZHYyRjNlWDg0dTNZU1FoTkRsQzE0QUdLMTFz?=
- =?utf-8?B?REdvTFc1VmZtTlVNNWVqK01aQjUyY1R0a3pWelhCVzdpTmkvb0dYcStQMFJX?=
- =?utf-8?B?eHZ2MUQzeFdvejdUSmsraDV0SHZHaXYvR2E3dFlTYTNlSUR3SVVUOTMvVW1E?=
- =?utf-8?B?dkM2bDM5cU9QcjBnZEJKdWpIRURQNlJPeHZBd1ZJNUR4aUt3YmRrWWZQWDB6?=
- =?utf-8?B?ZTJ6RURuTkhBM2lMTzdwYU1vQ2hteU1PZHdOalRER0loVTQydW5UWEE1bU9D?=
- =?utf-8?B?Yjd1dnpIU0lQNEZqbjU1cnVXNGNQaWl4WUdCVGF4MkRSZmxEUVpPRFQ0RnFX?=
- =?utf-8?B?K2pNamVyQkhZQ1M3Q1FEQnFTSnhuQU9pZzhIbHo0OFJQaGxFcUJVN1N1d3pp?=
- =?utf-8?B?MHJTL1kza1pLYnBjQmI2YUN5a05HMm9aa3J4L3MwL0tHeGcvbWNwRHBQclla?=
- =?utf-8?B?a2NmQkpzWUFnaDc3bGVGWmswRTZOUS8xRzdVSGxKYXllV2lDWUEzdnM4a2FY?=
- =?utf-8?B?RS9mU2w2aEdCamU4TWtXbk1pL1gvWjVodHR3MHJjalpvK2lSeWI4elBLQmdE?=
- =?utf-8?B?MGJwdmcwVU9DTkkxcHVCM0ZacG4yUEZnK0FJeXc3bVpqWkVrNVBxYmtOK2l3?=
- =?utf-8?B?dU96aUpuZWxrTE1PMWRtdExlbjFVQXNVOW5ZK3FpclNIVFB4M1VCeU5PM29k?=
- =?utf-8?B?dDhHa1o4OGdhWEJnNkRWZW1JMUk5RzJxZTU3MWpCS2FhRFAvZGtXN1R3dVhh?=
- =?utf-8?B?TDBHNnd4Uk9DVjZVc2R0WjFTcDVpalRnMlIxYU9sYndTNThhaGlJRHZpNkZB?=
- =?utf-8?B?ZitIcENaN2licldqeDRDYU9FbEQ2dWNRNmZ1QW5RSTJTZ2xvUVM4TVZhS2dl?=
- =?utf-8?B?UXVWdGtoMEZ6NlAzWldudXNjaUhLdGJmUzBwZDM5UW52RDZ3THNPSWZSTExM?=
- =?utf-8?B?bHNmUzErZ0kxdWpLdHBsVlY5TUNVdVkwc2x5TDVGeS9Ud1JjMTBSSkl6WXd2?=
- =?utf-8?B?TDZ4L3hHR25ZVFJUMzF3VkxkYkh0VTFBa1FSYW9YTkFIbFFoUkdhN0FlaWx0?=
- =?utf-8?B?cGhyQnhyMTJHdmRTRi96YkdGcTVSNjZ1R3hXaHpUWitiT0Z3T0taSnlHRE03?=
- =?utf-8?B?RWlsWlVoOU8vbTZjNFl4LzZaM0NFU2ZhL1BHaXIyam0xdytqcmpHZWlnYzE1?=
- =?utf-8?B?dDB3YkZBdHRoWG9IRUhZMnA3elpBbUJGT0xUcDBRVm9nc0dtZ2RsZ0M3eG9m?=
- =?utf-8?B?MzJkOUNLanZ4NVBaRWc1eDlWdVRVMFgzSXZUUGU0eXhvWVFQT2pDN2pmdTds?=
- =?utf-8?B?Z0xzcVkxZ1JFMHFrTFZmbHBLazk2RllKcG1NVHFJdjM3T2wzODlsMCtMMDlx?=
- =?utf-8?B?c3JSaVgzUXhaZVdKOFM2MHNVL0Z0T2pnZkpHT2dON0U0amFDL3J1YTEwZzk2?=
- =?utf-8?B?bVU4MHJaMTJibXNZeGRoTXNOOXRpWjJ4TnVmM2xObGVvRmRFTGtCR0FGcENS?=
- =?utf-8?B?YXByc2xHcWswYnVTbUJVaHM3UU0wSlNIYU9oSWw3OXBHakc3U0dyMXZWWXBH?=
- =?utf-8?B?aHJWdVgvY3FIMmVhYVVBcjB6TDBQc2ZOK1NnOWUwV1c0NGFxUDlML3duT0JV?=
- =?utf-8?B?SG5yRUJYZi9IUFU0cGhobHlkR3NHSDVydk5yQjZHd1RJZFBJN0lpaHpWdVVy?=
- =?utf-8?B?MHFqd29HSUhPS01sNUhkRjBiVDNQb0svZFQrTUJsY0pTc0J5cXVlSXFJcldm?=
- =?utf-8?B?Znl2WUJFNUhSQXZxbERST2pyaUhDV3lLNEJHUmZrSnNrWjJNNUdhNGFnV2tD?=
- =?utf-8?B?RUNvZ0E1K0ZKTkloMmQ3N1VURUtGVlIxNFFvVDdjN2Y1SFFWYytUVU4zaEc3?=
- =?utf-8?B?b0ZpMnVxZUtEUVJ3QzNlcXF6Q0U4UWZuQ0tJYUFWaW9mN1VoZ0tlMUNFcWsy?=
- =?utf-8?B?WURSeS9tZmNjZ0pWRHNxNllVWldFSkNweHFaa0FuT1VzQjBsb1lMZ21CM2Y3?=
- =?utf-8?Q?aHHrtdHKDJy1n+8mdBGTRcLMD?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 611419c0-21dc-4821-6a31-08dcc10633a6
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 10:52:36.5677
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: caN5tWD56bIOKVhcX/29MQj12ngse5aCApVsG0AiS3KXop2csyM99Ne0zUMUaRlLPtWXA3cSFZEeek+9h7DhgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4252
+Content-Transfer-Encoding: 8bit
 
-Hi Brendan,
+From: Ryan Roberts <ryan.roberts@arm.com>
 
-> .:: Minor issues
-> 
-> - fill_return_buffer() causes an “unreachable instruction” objtool
->  warning. I haven’t investigated this.
+Add thp_anon= cmdline parameter to allow specifying the default enablement
+of each supported anon THP size.  The parameter accepts the following
+format and can be provided multiple times to configure each size:
 
-> +
-> +.pushsection .noinstr.text, "ax"
-> +SYM_CODE_START(fill_return_buffer)
-> +	__FILL_RETURN_BUFFER(%_ASM_AX,RSB_CLEAR_LOOPS)
-> +	RET
-> +SYM_CODE_END(fill_return_buffer)
-> +.popsection
-> 
+thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
 
-I'm getting this error when buiding the ASI patchset:
+An example:
 
- OBJCOPY modules.builtin.modinfo
-  GEN     modules.builtin
-  GEN     .vmlinux.objs
-  MODPOST Module.symvers
-ERROR: modpost: "fill_return_buffer" [arch/x86/kvm/kvm.ko] undefined!
-make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-make[1]: *** [/home/shivank/linux/Makefile:1871: modpost] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
 
-I'm wondering if we need to annotate the asm code with 
-UNWIND_HINT_FUNC and EXPORT the fill_return_buffer and to avoid this?
+See Documentation/admin-guide/mm/transhuge.rst for more details.
 
+Configuring the defaults at boot time is useful to allow early user
+space to take advantage of mTHP before its been configured through
+sysfs.
+
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Lance Yang <ioworker0@gmail.com>
 ---
-diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-index db5b8ee01efe..4084ab49e2a7 100644
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -399,7 +399,9 @@ EXPORT_SYMBOL(__x86_return_thunk)
+ -v6:
+  * collect acked-by of David, thanks!
+  * some minor cleanup according to David's comments
 
- .pushsection .noinstr.text, "ax"
- SYM_CODE_START(fill_return_buffer)
-+       UNWIND_HINT_FUNC
-        __FILL_RETURN_BUFFER(%_ASM_AX,RSB_CLEAR_LOOPS)
-        RET
- SYM_CODE_END(fill_return_buffer)
-+__EXPORT_THUNK(fill_return_buffer)
- .popsection
----
+ .../admin-guide/kernel-parameters.txt         |  9 ++
+ Documentation/admin-guide/mm/transhuge.rst    | 38 +++++--
+ mm/huge_memory.c                              | 98 ++++++++++++++++++-
+ 3 files changed, 137 insertions(+), 8 deletions(-)
 
-This solved the issue for me.
-
-Thanks,
-Shivank
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f0057bac20fb..8dd0aefea01e 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6629,6 +6629,15 @@
+ 			<deci-seconds>: poll all this frequency
+ 			0: no polling (default)
+ 
++	thp_anon=	[KNL]
++			Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
++			state is one of "always", "madvise", "never" or "inherit".
++			Control the default behavior of the system with respect
++			to anonymous transparent hugepages.
++			Can be used multiple times for multiple anon THP sizes.
++			See Documentation/admin-guide/mm/transhuge.rst for more
++			details.
++
+ 	threadirqs	[KNL,EARLY]
+ 			Force threading of all interrupt handlers except those
+ 			marked explicitly IRQF_NO_THREAD.
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 058485daf186..79435c537e21 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -284,13 +284,37 @@ that THP is shared. Exceeding the number would block the collapse::
+ 
+ A higher value may increase memory footprint for some workloads.
+ 
+-Boot parameter
+-==============
+-
+-You can change the sysfs boot time defaults of Transparent Hugepage
+-Support by passing the parameter ``transparent_hugepage=always`` or
+-``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+-to the kernel command line.
++Boot parameters
++===============
++
++You can change the sysfs boot time default for the top-level "enabled"
++control by passing the parameter ``transparent_hugepage=always`` or
++``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
++kernel command line.
++
++Alternatively, each supported anonymous THP size can be controlled by
++passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
++where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
++supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
++``never`` or ``inherit``.
++
++For example, the following will set 16K, 32K, 64K THP to ``always``,
++set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
++to ``never``::
++
++	thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
++
++``thp_anon=`` may be specified multiple times to configure all THP sizes as
++required. If ``thp_anon=`` is specified at least once, any anon THP sizes
++not explicitly configured on the command line are implicitly set to
++``never``.
++
++``transparent_hugepage`` setting only affects the global toggle. If
++``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
++However, if a valid ``thp_anon`` setting is provided by the user, the
++PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
++is not defined within a valid ``thp_anon``, its policy will default to
++``never``.
+ 
+ Hugepages in tmpfs/shmem
+ ========================
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index d90d6e94a800..df3199e1715c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+ unsigned long huge_anon_orders_always __read_mostly;
+ unsigned long huge_anon_orders_madvise __read_mostly;
+ unsigned long huge_anon_orders_inherit __read_mostly;
++static bool anon_orders_configured __initdata;
+ 
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 					 unsigned long vm_flags,
+@@ -733,7 +734,8 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+ 	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+ 	 * constant so we have to do this here.
+ 	 */
+-	huge_anon_orders_inherit = BIT(PMD_ORDER);
++	if (!anon_orders_configured)
++		huge_anon_orders_inherit = BIT(PMD_ORDER);
+ 
+ 	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+ 	if (unlikely(!*hugepage_kobj)) {
+@@ -918,6 +920,100 @@ static int __init setup_transparent_hugepage(char *str)
+ }
+ __setup("transparent_hugepage=", setup_transparent_hugepage);
+ 
++static inline int get_order_from_str(const char *size_str)
++{
++	unsigned long size;
++	char *endptr;
++	int order;
++
++	size = memparse(size_str, &endptr);
++
++	if (!is_power_of_2(size))
++		goto err;
++	order = get_order(size);
++	if (BIT(order) & ~THP_ORDERS_ALL_ANON)
++		goto err;
++
++	return order;
++err:
++	pr_err("invalid size %s in thp_anon boot parameter\n", size_str);
++	return -EINVAL;
++}
++
++static char str_dup[PAGE_SIZE] __initdata;
++static int __init setup_thp_anon(char *str)
++{
++	char *token, *range, *policy, *subtoken;
++	unsigned long always, inherit, madvise;
++	char *start_size, *end_size;
++	int start, end, nr;
++	char *p;
++
++	if (!str || strlen(str) + 1 > PAGE_SIZE)
++		goto err;
++	strcpy(str_dup, str);
++
++	always = huge_anon_orders_always;
++	madvise = huge_anon_orders_madvise;
++	inherit = huge_anon_orders_inherit;
++	p = str_dup;
++	while ((token = strsep(&p, ";")) != NULL) {
++		range = strsep(&token, ":");
++		policy = token;
++
++		if (!policy)
++			goto err;
++
++		while ((subtoken = strsep(&range, ",")) != NULL) {
++			if (strchr(subtoken, '-')) {
++				start_size = strsep(&subtoken, "-");
++				end_size = subtoken;
++
++				start = get_order_from_str(start_size);
++				end = get_order_from_str(end_size);
++			} else {
++				start = end = get_order_from_str(subtoken);
++			}
++
++			if (start < 0 || end < 0 || start > end)
++				goto err;
++
++			nr = end - start + 1;
++			if (!strcmp(policy, "always")) {
++				bitmap_set(&always, start, nr);
++				bitmap_clear(&inherit, start, nr);
++				bitmap_clear(&madvise, start, nr);
++			} else if (!strcmp(policy, "madvise")) {
++				bitmap_set(&madvise, start, nr);
++				bitmap_clear(&inherit, start, nr);
++				bitmap_clear(&always, start, nr);
++			} else if (!strcmp(policy, "inherit")) {
++				bitmap_set(&inherit, start, nr);
++				bitmap_clear(&madvise, start, nr);
++				bitmap_clear(&always, start, nr);
++			} else if (!strcmp(policy, "never")) {
++				bitmap_clear(&inherit, start, nr);
++				bitmap_clear(&madvise, start, nr);
++				bitmap_clear(&always, start, nr);
++			} else {
++				pr_err("invalid policy %s in thp_anon boot parameter\n", policy);
++				goto err;
++			}
++		}
++	}
++
++	huge_anon_orders_always = always;
++	huge_anon_orders_madvise = madvise;
++	huge_anon_orders_inherit = inherit;
++	anon_orders_configured = true;
++	return 1;
++
++err:
++	pr_warn("thp_anon=%s: error parsing string, ignoring setting\n", str);
++	return 0;
++}
++__setup("thp_anon=", setup_thp_anon);
++
+ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+ {
+ 	if (likely(vma->vm_flags & VM_WRITE))
+-- 
+2.39.3 (Apple Git-146)
 
 
