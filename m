@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-294217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA24958ABF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:09:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC35958AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77354B21DA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D443B1C21A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2F51917FB;
-	Tue, 20 Aug 2024 15:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FF21917FB;
+	Tue, 20 Aug 2024 15:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Tu3HD1Ys"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQ5NuEF0"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC2C8F48;
-	Tue, 20 Aug 2024 15:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD30318E37F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166568; cv=none; b=jbmT12NWCS8OeQTR+bmtI1Ib4blaUUQK1Ynr31kfE+Nbecg3D4YDM7f1/iPShi6tX6qKctg+jGkbPmAyA8407U5D4vJuUfhHRr63t50qZd5XIRbjTE2pjC0Ez5f4qKAhR62CJsTZ5jZ9K8+tibqwXi/5xBl8RBepcX5GFrSpvxo=
+	t=1724166684; cv=none; b=FTIg+WLueetFZ2ugnTCpiJTytXhtu74SQcUscPsntEUrOegpSN6vXnSfWUhPohRQJqQfFtHn8fTGynwKTYdChMwUE63A+WLmQFasEfDRKwXvIzzSUqgLFb/7L5H+ed+V/GQx/1s5b/Sr0G948eVfdsGGLAipoVLzC7sw+kVBuZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166568; c=relaxed/simple;
-	bh=+9tqy8z/EvH53xMnv1QsxXC2sZRco3I8buXN96OAJrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ADPvQTTrejGzUnWl4wCZb+IuDVRXJkkxZGRdabh9oMuf+DpNLF3ArLjfq23fpTjQu6LWpqw7/SU0K9hCxbEwtuEOXOtAzyEQ62aZMNsunHNsOy0x+3iARnswy3WgrBESIQ0YXNzwqrDexSqkL0kVxdgZXSnzgAGJdVtrpLWRKCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Tu3HD1Ys; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KF9IiP048893;
-	Tue, 20 Aug 2024 10:09:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724166558;
-	bh=ytLIZJR+bT0mdJmSaZNxr9OjibdZmzCxEEv7uH4LDwA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Tu3HD1Ysx2hOIU8GX0c7KnMZFbKKKuLqY1Ladyxj/Hhg9454KdixGua5vFF96YpHY
-	 M1Dwg91C6bD0cPh5kAcUeahMuOJxpkSBEtti1stTDpFlNdS4iVJtLMVaZJXgNXQlik
-	 vOFa6z1zjYJeVvkRJbPfMD6iUpzruGT4cvOUL75I=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KF9Hq5093888
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 10:09:18 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 10:09:17 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 10:09:17 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KF9H9Y040616;
-	Tue, 20 Aug 2024 10:09:17 -0500
-Message-ID: <7bb9f490-aabb-4e79-8022-ef5fbfb77512@ti.com>
-Date: Tue, 20 Aug 2024 10:09:17 -0500
+	s=arc-20240116; t=1724166684; c=relaxed/simple;
+	bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MR3nxPd4AaHfOqRfmT7gnQtnSSpeZAIKOYt6vQwbFYY30qNyVsqRZ3RdwZoSoThtfjsM6T7YXL/uxU5Yk+U3Qz5FGgePWJSRjaLbUuc5+wcGZevKoOnQDH2So2HwymumblXy881ca9OoZEcscQd71hovqP5dkqAWcq6S7qbOg6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DQ5NuEF0; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4518d9fa2f4so199261cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724166682; x=1724771482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
+        b=DQ5NuEF07xkx0RtPCO8Q9h0cIe5x55eYVyU5HynuZZ8vTXbbzsDDR5BL7TVLHC+RQH
+         40QbLiMUB5iNXLBxOmnbt1YNhT1Qc/+Wd72BFvoSHh72MBVxFRBCy1X5ZR7LN3s/e2i1
+         RLk2UEk/Y1+cRbaV60UTpjHtn/b+acPSjZVjdf8C4MA44ae4ionKrgv94RtlgfsulD79
+         1pxrliE0dj7FaPTyfYTrloGiKr3xycutfu5zXanxgoabB9N09HjFS1K0swWdxC7MylzD
+         wim6ZbQKxYzxeG7o7m0ygS6LNJ9aHnjtK4GUnNLqTlq7CDl2MtqkZKLViakY2W8dsH/2
+         nyYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724166682; x=1724771482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
+        b=Zpk5B1lHFLg7oRx6A2T8djDnVNmTTu4lgmDVbzkIRZqKSL3XVcJ4k9alocp0jZX7GC
+         cwtN5zxb71XeBUePSSmQ5pOWFCWXlL4t5g/F/BIY90l/Vvc6IsI8J+DXXXeINprDKR7p
+         5moN3XF4I5DvurH6prg3kM4d2zuqbRKc6sYE7asL1wXw9UcKehW3mw7mCzZDXCyB1PaW
+         jgUBHvb92/Wi7DUmB0aiLQ8JZ5kUWuiQS0RbxVoRdE/9WqcMAFW5gvMTrK11LeYjYD+1
+         IgJlm0NwjcpG83gGyLR5lBiMv0esfM3XpZaErk7I4PqvZXpLDnEHUHI5A2PAZRzt9D1J
+         TyCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUpGbbOe59OHclOEqoI5SwIx/jxM/WXiQbrf7W4qdsc0NbBVQnqQRBGkY98xoPRq1rPtz6oXE42ZE+UVESVQWZDDcX3+kuJUz4DzRG
+X-Gm-Message-State: AOJu0YzzmAwk99E/islsN8X0DWx2Gd0IoZHBuj98IF7UKcqqFw6kwbnS
+	LHHD03nijpvQTBqhmxfIOhwFX9BUM8Gt4uVm8nAtPEvhM7EJD8cjdhMEKo4GWHc01AEVtBEy8pW
+	xCFO8pO7vBqpRqo450fGueUWpb6MLuCeQ676k
+X-Google-Smtp-Source: AGHT+IGxHrWvwxkET5G9KFHE2OTgjBHj0rFGE1objVdIM7lhI5d9VSUlLjMmyoZSbxU87Ybr//Q4mqrhQSjJsbsz524=
+X-Received: by 2002:a05:622a:245:b0:447:e728:d9b with SMTP id
+ d75a77b69052e-454e6ac44b5mr1928511cf.26.1724166681458; Tue, 20 Aug 2024
+ 08:11:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] arm64: dts: k3-am62a-mcu: Add R5F remote proc node
-To: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <nm@ti.com>, <bb@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-References: <20240820104034.15607-1-hnagalla@ti.com>
- <20240820104034.15607-3-hnagalla@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240820104034.15607-3-hnagalla@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+ <20240819112902.11451fe8@gandalf.local.home> <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+ <20240819120244.5657eb2f@gandalf.local.home> <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
+ <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+In-Reply-To: <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Tue, 20 Aug 2024 08:10:42 -0700
+Message-ID: <CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org, 
+	clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/20/24 5:40 AM, Hari Nagalla wrote:
-> AM62A SoCs have a single R5F core in the MCU voltage domain. The MCU
-> domain also has a 512KB sram memory, the R5F core can use for
-> applications needing fast memory access.
-> 
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi | 35 ++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-> index 8c36e56f4138..803da3cce336 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-> @@ -6,6 +6,17 @@
->    */
->   
->   &cbass_mcu {
-> +	mcu_ram: sram@79100000 {
+On Tue, Aug 20, 2024 at 3:48=E2=80=AFAM Mark Rutland <mark.rutland@arm.com>=
+ wrote:
+>
+> On Tue, Aug 20, 2024 at 10:03:30AM +0900, Masami Hiramatsu wrote:
+> > On Mon, 19 Aug 2024 12:02:44 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > > On Tue, 20 Aug 2024 00:56:49 +0900
+> > > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > >
+> > > > >
+> > > > > We may need to add "noinline" or something to make sure those fun=
+ctions
+> > > > > don't get inlined for LTO.
+> > > >
+> > > > Yeah, we need such option at least for function call test.
+> > >
+> > > Could you add the noinline, and if it fixes the issue send a patch?
+> >
+> > I found the target function already has "noinline". I tried to add noin=
+line
+> > to the testing function (callsite), but it also did not work.
+> > I think "noinline" is for the compiler, but LTO is done by the linker.
+>
+> If LTO is breaking noinline, then that has much larger implications for
+> noinstr code and similar, and means that LTO is unsound...
 
-This change doesn't belong to this patch, this memory can be
-used by other components in the system and is not exclusive
-to the R5F firmware.
+The noinline attribute is preserved in LLVM IR, so it should continue
+to work with LTO. Which function are we talking about here? Are you
+sure the function was inlined instead of being dropped completely?
+Does marking the function __used help?
 
-Let's add this node later so it can be discussed on its own
-and not block this otherwise correct series.
-
-> +		compatible = "mmio-sram";
-> +		reg = <0x00 0x79100000 0x00 0x80000>;
-> +		ranges = <0x00 0x00 0x79100000 0x80000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		mcu1-sram@0 {
-> +			reg = <0x0 0x80000>;
-> +		};
-> +	};
-
-Need newline here if you were going to keep this node..
-
->   	mcu_pmx0: pinctrl@4084000 {
->   		compatible = "pinctrl-single";
->   		reg = <0x00 0x04084000 0x00 0x88>;
-> @@ -167,4 +178,28 @@ mcu_mcan1: can@4e18000 {
->   		bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
->   		status = "disabled";
->   	};
-> +
-> +	mcu_r5fss0: r5fss@79000000 {
-> +		compatible = "ti,am62-r5fss";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x79000000 0x00 0x79000000 0x8000>,
-> +			 <0x79020000 0x00 0x79020000 0x8000>;
-> +		power-domains = <&k3_pds 7 TI_SCI_PD_EXCLUSIVE>;
-
-Newline here.
-
-Andrew
-
-> +		mcu_r5fss0_core0: r5f@79000000 {
-> +			compatible = "ti,am62-r5f";
-> +			reg = <0x79000000 0x00008000>,
-> +				<0x79020000 0x00008000>;
-> +			reg-names = "atcm", "btcm";
-> +			ti,sci = <&dmsc>;
-> +			ti,sci-dev-id = <9>;
-> +			ti,sci-proc-ids = <0x03 0xff>;
-> +			resets = <&k3_reset 9 1>;
-> +			firmware-name = "am62a-mcu-r5f0_0-fw";
-> +			ti,atcm-enable = <0>;
-> +			ti,btcm-enable = <1>;
-> +			ti,loczrama = <0>;
-> +			sram = <&mcu_ram>;
-> +		};
-> +	};
->   };
+Sami
 
