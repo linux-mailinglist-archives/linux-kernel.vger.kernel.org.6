@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-293725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295C99583A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE9D9583AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B081F246B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46748286F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A218CC10;
-	Tue, 20 Aug 2024 10:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5365518CBF5;
+	Tue, 20 Aug 2024 10:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WktwnWSl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ax/SXiHq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF93B18C924
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54CC18991B;
+	Tue, 20 Aug 2024 10:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148491; cv=none; b=jVHZm01WSad78wHrYiL9uJ/49ntLqwm2zxmQSBvtn4A0YK5+gG/qMoNvhf7MbuUYyaZxApvwjfm5dyLrr0SKbjR+pRbDjR59ET6Oqfnoil1VH38lhmN0Aew59oQrrmaTOYrFYZaZgP3eLONF+J0GU344GJ7yUzhp0nUaSXmBL1Y=
+	t=1724148542; cv=none; b=dOI78RxJIKk/sU/j1eSSTs/U5cFcyWujPdCYIkKCuNnA7Yyz1ip/0EHUrI5i9pMXNKtesTcgIPo4BDEeRxn+6plZkU9kb3BCAw/g42jsD6kbY1c0RWTHW10vGJ0GX2l0UuP1PWNaRc4IH6rr9EzowkjdhsLlF0c86PzC+xUW7lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148491; c=relaxed/simple;
-	bh=xUNoB3mnoowLOxfgP9COqnZISq2/PEpJliW8VCfKfAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBApmAUCYRBfH8mzAScauq5tBuhcR6XHg5WzKn5w0Eaof2qxB5IlXOjwdNWjl1lyhvLcrTsl+3fSBtxnaHSjAECXuahJgfBj98PzId/NL0hUlmZ5XP4yvn9f9eu6NTsgCCRRPcHVmkF4POUBLqs9JVbKJUzch4mmBUd8TX3NqbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WktwnWSl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724148487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg6MBJLuAz1F5H33Agwi+o2BMA7KI9dO6oIsDSYPZds=;
-	b=WktwnWSlfsBHUK3qB1pwPu8I/EiiWy1oZfaQZpC73GqNlaUyquV87qJDc1omdkIC7m0Pgt
-	82Pwqb6Fdm/TESYVbYj85nhAlyAaZHA+cLUm74P++gUHdhxWpt9yvCqoo05OhnFNg4vCuT
-	9g8UZISO1gCUumPLEiq11tfrEkVsJvc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-82-RgW3qhQpOjml4wiRGgFqQg-1; Tue, 20 Aug 2024 06:08:06 -0400
-X-MC-Unique: RgW3qhQpOjml4wiRGgFqQg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-428fb085cc3so10001915e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:08:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724148485; x=1724753285;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kg6MBJLuAz1F5H33Agwi+o2BMA7KI9dO6oIsDSYPZds=;
-        b=kBl1rsOcEYWSdHB6HfAciWeAdZ6QEccG+ze3r+2M2SauyOa3YR11SOB8WluUp53ssS
-         5B33oHMcezM0ORSuKDZRr1yn5VILkq7jkJHy9l+ClxMfKFJpNcdeI3+qraEZIs4RLLKH
-         HTB8L8H8kFrfVHq66CgvtcvsPYbN5xgYLmlK90+Wk7ZOHyL/L7VdoOGiyT1aP53x+S2K
-         V20K4bMYA3EVGgYhzC6XX+io5ZbAJH8L2sko0MRdDixGxPDgKcqzME05MDyqB+W8HS4p
-         ZX0kcwQen9ToRMmECxe8vzfui6tSv1cVSr/CKGZ5wmXjrDfY8D3uCjlKlJReusfCbV/2
-         er7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxabq80s3YW/bRJeuZQWwz3IpuwWXbLW2NEFymqF3OnXjcuXs0gqxgG0h+cliSvsb9BkJrOogPQw/MfUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuNlelnjYWslZ1el77FGackGn+YCYtKwAf5OBvr4DQSZFibRaC
-	CDUIl47cCk7JlyR9dtir4VrRxg3Es6L4wXlXd3n1NRJ8Yfz8Z4ssB40Fewv1gZnZeO5TBquG+pF
-	F538LvfapWlDltYCNrZcxn7UMcouQZM8PH7J4ykZPw+oYjZPwzJTk/q+wrIjDZg==
-X-Received: by 2002:a5d:5888:0:b0:368:4c5:b69 with SMTP id ffacd0b85a97d-371946cb74fmr4807591f8f.10.1724148485253;
-        Tue, 20 Aug 2024 03:08:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxNLeZFO1Uv/pPE3b9y321MUVwgdiGoYWbFgv6tEkAM4vtfLJhOrQdUw8dyfK8ViRkHxbB8g==
-X-Received: by 2002:a5d:5888:0:b0:368:4c5:b69 with SMTP id ffacd0b85a97d-371946cb74fmr4807580f8f.10.1724148484763;
-        Tue, 20 Aug 2024 03:08:04 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5? ([2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a6ddsm12723699f8f.58.2024.08.20.03.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 03:08:04 -0700 (PDT)
-Message-ID: <9bd573ff-af83-4f93-a591-aab541d9faac@redhat.com>
-Date: Tue, 20 Aug 2024 12:08:02 +0200
+	s=arc-20240116; t=1724148542; c=relaxed/simple;
+	bh=zCuDKISEuTSYPPxdlpzmxb4MF3C2Ea+rRQ6WMYegRdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mfPbrEn0NUW3mK5D2rl4XdQbRSQ4miUsDNm2Ze+Ml56RiMywBGmAfX/9EXwsm/Kp2uAkrkiBpIhJhRphR/BnAiy4ulHO9nIFK1QNNBeG4EIwJc1jOP8qBgZmDe9dkWS/db3i+1xXbONd1euefo3VsQ5UU4odFdB13YjRBp0TGlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ax/SXiHq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K8jYRL002694;
+	Tue, 20 Aug 2024 10:08:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pfqeuMR4ZiNsS8jVb+mTszMWZT6jY0QLN9+u+2xCLzU=; b=Ax/SXiHqwGkmha9x
+	hQS3vgCZaG5wCzRaSyf3Vscv7JDM1C99ebENCDmHUOQIyOtTjVdTQkdVYb2e3ajh
+	a0ardY8R2BQRh2bSd06/XB1yLCECXlk0D2gOWinPx3WD9q2pN2lHxc5Q8uxInI9e
+	UEA4sx0tNIJKFcgcySmh6WFmi7qsEYk7EB1Eo6BHEYx5Ud7mlSTdk/Z8JotUlGkS
+	EuRYomCaEyVzMewJRPOufda9rgpQc+bGbrGQ35Ghs79bovgl9zk1TvZH5MC0L7XV
+	DmiNxisdyt+zuanu50xsTkFMPoEZ7c8Fep574P6Je0kDqh68ncp15oj7sWmbOPrB
+	BP8rsw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 413qxg5132-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 10:08:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KA8sX9022206
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 10:08:54 GMT
+Received: from [10.216.8.12] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
+ 2024 03:08:49 -0700
+Message-ID: <5011eeb2-61e3-495a-85b3-e7c608340a82@quicinc.com>
+Date: Tue, 20 Aug 2024 15:38:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,41 +64,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 2/2] net: dsa: microchip: Add KSZ8895/KSZ8864
- switch support
-To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
- UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240815022014.55275-1-Tristram.Ha@microchip.com>
- <20240815022014.55275-3-Tristram.Ha@microchip.com>
+Subject: Re: [PATCH 0/2] clk: qcom: Add support for GCC on QCS8300
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com>
+ <c1dd239f-7b07-4a98-a346-2b6b525dafc4@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240815022014.55275-3-Tristram.Ha@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <c1dd239f-7b07-4a98-a346-2b6b525dafc4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JN9L4yNgMUbt7F5JxT8l4vOx-5xRc0I4
+X-Proofpoint-GUID: JN9L4yNgMUbt7F5JxT8l4vOx-5xRc0I4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=887 malwarescore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1011 bulkscore=0
+ adultscore=0 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408200075
 
-On 8/15/24 04:20, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ8895/KSZ8864 is a switch family between KSZ8863/73 and KSZ8795, so it
-> shares some registers and functions in those switches already
-> implemented in the KSZ DSA driver.
-> 
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 
-I usually wait for an explicit ack from the DSA crew on this kind of 
-patches, but this one and it really looks really unlikely to indroduce 
-any regression for the already supported chips and it's lingering since 
-a bit, so I'm applying it now.
+
+On 8/20/2024 3:27 PM, Krzysztof Kozlowski wrote:
+> On 20/08/2024 11:36, Imran Shaik wrote:
+>> This series adds the dt-bindings and driver support for GCC on QCS8300 platform.
+>>
+>> Please note that this series is dependent on [1] which adds support
+>> for QCS8275/QCS8300 SoC ID.
+>>
+>> [1] https://lore.kernel.org/all/20240814072806.4107079-1-quic_jingyw@quicinc.com/
+> 
+> How do the depend? What is exactly the dependency?
+> 
+> If so this cannot be merged...
+> 
+
+They are not functionally dependent, but we want to ensure the base 
+QCS8300 changes to merge first and then our GCC changes. Hence added the 
+dependency.
 
 Thanks,
+Imran
 
-Paolo
-
+> Best regards,
+> Krzysztof
+> 
 
