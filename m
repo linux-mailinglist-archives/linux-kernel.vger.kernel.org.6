@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-293837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3995695858E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:15:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D347B9585C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3631F24DED
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102ED1C2474E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3243818A95D;
-	Tue, 20 Aug 2024 11:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CA418E04E;
+	Tue, 20 Aug 2024 11:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCe3+yNn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="izX1EA8f"
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443484963C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602518E02C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152546; cv=none; b=Ygw7hmOm0HOaKH431bJZMdmNgutWnrF1gBTTZKvTbqToiqb+Qz5ywHaQ2DcLHs++SBF7F3BpmZTL5K6p4Fn+oEfPmoICkk7d+kV9OkYO58Nnr/AqTRMFGKDd3mYMMJv8ffVyDhxS3pORSxkkPJkEdNv8dQYYZUYq0YmxLTsSXvw=
+	t=1724153178; cv=none; b=DgLjB0vGVrb+Jepibo+zlGbcOD4S7tsObTyuiX81ZCKwbhvs+Ip186LnIbF1nmoi1smqY2xhg9yFcUwvVdJBdQkIafBr6YDG59Ay+tPUCrBmSKij+wwiXUTOcGapNhaGEeIMhzNa51PWjrKXvqJj+/13qZnHcLQ+h7v5uLlaZfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152546; c=relaxed/simple;
-	bh=oo+LPlstNx1XmSbdBKgl9rTzfmwSa7MIHwn71UM1RQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tu3naFEzvLGNHdHOOL4aB7bs8QfVfWJLBqpiNYtaOxUiXJpdtAahR1TY3HlJLvhcziPSBauY0db8Sdw8ZRmTPYDGiXDLuEtRQ85VZgOzXNscip+nfDaCnS/9gmhqNxvUvPrfG0WInJ+6XSgeilE6uc2pFcYPnvUh76pq8sLvyF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCe3+yNn; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724152545; x=1755688545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oo+LPlstNx1XmSbdBKgl9rTzfmwSa7MIHwn71UM1RQs=;
-  b=MCe3+yNnGJXsmmeuwb5rYuMvo0lrysKzbUPi7cWXxhfOgnVW30Gb4MQU
-   jb02r/YuhrN4AW/YAnT+y62yvJo+0co9JNz5f7dNzndhVqWuYkREOVKVR
-   tmK+KfJxvIixwW3kMS/9nTc31+Bx9rktXfjbJsp7WcQSAa6PJPDKvD+oT
-   QVOo/YuvDXIWdBURmMb9ksTOddHhsSVYGQSnEQolDKERDdM3PFWlMAMpb
-   BGyrxOe0an/MtoYtn/CXTnH7Hg7NZANl011acyplYniEsedwcvDZKXohG
-   KWkj4VvQk6u4zxhUzzaw5eNKKJHjKxDQ9gB85hJ3it52ayAfUbxX8jY9m
-   Q==;
-X-CSE-ConnectionGUID: Q6RliCBLS5uCciGRxuVVtA==
-X-CSE-MsgGUID: cUOwef2uQ/qeGYNwgSgz3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="47838602"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="47838602"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:15:34 -0700
-X-CSE-ConnectionGUID: zvvhrIbsTQO3XCw3GxMEag==
-X-CSE-MsgGUID: wVI1b9m9TcuP6XwLThELGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="60354625"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 20 Aug 2024 04:15:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9A5BD3C0; Tue, 20 Aug 2024 14:15:30 +0300 (EEST)
-Date: Tue, 20 Aug 2024 14:15:30 +0300
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"x86@kernel.org" <x86@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>
-Subject: Re: [PATCH 1/2] x86/kexec: Fix a comment of swap_pages() assembly
-Message-ID: <agqteql33qjf4cnun2ex6y7xulxo6yb4r3bx43rpobqs6hatqp@rbfam4g2nws5>
-References: <cover.1724068916.git.kai.huang@intel.com>
- <d4538576fc5eeab2e4f3ea4c5111dc9597369ed4.1724068916.git.kai.huang@intel.com>
- <q2y5vte3wwn5qde5p4nfmjfqtzxfen3nhjdyafc7nbirfidpvr@ro3djjz3pub4>
- <4c35dfdadff667ae5ea00dd6002b8cd73301dc22.camel@intel.com>
+	s=arc-20240116; t=1724153178; c=relaxed/simple;
+	bh=ip+CEKSaMxuYYC01SpBBkat6YpLzAuViN4pacIgc5Gc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mNvJGDnAhk4+xhuPDVwQCBkt3T0XZ/Lwrt85tpbO/TqNLu+KaV2pqaPbpzwD7/7OkmTNezkaVGVBILppr1FAiKee1tFZ/u8ilo8gV9aHN1nb3HdfwbtlPXf4o4Q3wuxg/2ogsp3S9s6DjR6Plc0EVPuNrPOExqylDnjqSsF3j+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=izX1EA8f; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724153172; bh=DwcKdhf2PDcRijKKZe7TlJjkkMfCvgeE2ej0FKdO3/4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=izX1EA8fyt7EkfYXPOp0lvfTerio7ZwUcWvRNhnC+e7bJ/g71aovJbvk3mrtgNtPK
+	 AIUExGu07xRjnS6vECxxms9+MY9vDCyVIo+nv5NZI3YGQcSggnFoirLP54c0KjEkZ0
+	 3cMCdtpaUgj0an4L6MC/QccY8FCmHl7inBjCIQzI=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 4F93F4D9; Tue, 20 Aug 2024 19:19:57 +0800
+X-QQ-mid: xmsmtpt1724152797t965gaeso
+Message-ID: <tencent_152025FEBA06BB5533C69ED71B124BA11B08@qq.com>
+X-QQ-XMAILINFO: MesT5uKpDagVQNTUsbvt8zRfPz4FVT0FJupFVoWdz6ecnseWJAK5L2QxkuykFr
+	 78WgG3TkL51c8jx4qcDTuqZfWQQOAUL6Y+TBH3+Hxm7S/wvgui5VMJlakDdnxFAydsqDq86XAmfn
+	 d1I9H4VtVMNSQDE/iZ4NDub37uvIxdkDiz4F2ZtYXXNje7bZFpehr+rswB905zgd+R8kF14lQG70
+	 qlr065petuxsBVyn6Ug9gqQLRo4ykY32LBgEnwHWhbb4V+OYsS+OG0IXvSoZ1Zi6cZDj1PyYLu00
+	 7/rJHPDUOXxqQo3rP+qADNsLC4w2k2jgibB30yf84Jp+L8TGhjekLb55Ns/BeFSPsWC6g4uC8H/x
+	 dKpHBCv/y3saeltlGpLsXo2iJX5I+A3nDFuk611/aq8y6fjCu5FStLZpEgC/ufY3Bpogi+QJ7b5a
+	 nS3Ip581GQ9Wyrv6cKvVl3lsNiFjILdmcZvfV0YdYr9o+ScN93Fb1at3b5UlX65+hzHwpovHYrv1
+	 BNZB6Pm0XSd5ZTwhPlmV7rVE8nhkG9OVKwt2iK2yedaBW/0fOtXxKib2eAvRJo6MAvVMK/q5a5z4
+	 APDpqC7gb4EJM6U0Xa0N60xqPUyrgE95dXbrpvpTLvgRFZWgeVy1rwGMqbwVPaDi1rQjXToMvQQG
+	 t7c+VYYrOaRKVI2M+1h0UandLM6jpWBefYdrnaCqBQclOKkHvZ28Pz8BZ21jIRPXO1Vp8ZZVFK3s
+	 gCxAMr7kAu9fn3/bnZCMwHVW9j9iyM7D/3MsJnSzEAT/YEDVNaTWl9d7RRUMhy16e1LnqIZz0osC
+	 7OuFafSpYkqdqk5duE06Siyuihw2lkorSpdf4Ff854qwp3EBbQfg6XYvmGBdJkZuisdLH8RMM4o0
+	 nOdjNdaNFF7RPMwdOvsSJk9Xp1R0zb62b8sdD6D9WVPU6uzFD71wQ=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+5a64828fcc4c2ad9b04f@syzkaller.appspotmail.com
+Cc: jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	linux-kernel@vger.kernel.org,
+	mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
+Date: Tue, 20 Aug 2024 19:19:57 +0800
+X-OQ-MSGID: <20240820111956.3905944-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <0000000000005894f3062018caf1@google.com>
+References: <0000000000005894f3062018caf1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c35dfdadff667ae5ea00dd6002b8cd73301dc22.camel@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 10:32:39AM +0000, Huang, Kai wrote:
-> But the two commits were introduced at 2004 and 2006, so I don't think it
-> worth any Fixes tag?
+i_size_read(dir) too big, make limit overflow, cause last_de uninit.
 
-Nah. It is a comment after all.
+#syz test: upstream b0da640826ba
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index d620d4c53c6f..c308dba6d213 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -3343,6 +3343,8 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 	unsigned long offset = 0;
+ 	unsigned int rec_len, new_rec_len, free_space;
+ 
++	if (i_size_read(dir) > OCFS2_MAX_BLOCKSIZE)
++		return -EINVAL;
+ 	/*
+ 	 * This calculates how many free bytes we'd have in block zero, should
+ 	 * this function force expansion to an extent tree.
+
 
