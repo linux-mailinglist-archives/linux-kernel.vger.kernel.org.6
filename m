@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-294685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC6D959158
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AB595915B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B79284366
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99CC284737
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3DD1C8FAD;
-	Tue, 20 Aug 2024 23:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBED1C8FD2;
+	Tue, 20 Aug 2024 23:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+Fj2QQw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C6818E351;
-	Tue, 20 Aug 2024 23:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FDA18E351;
+	Tue, 20 Aug 2024 23:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724197728; cv=none; b=POUTZg4nLl6SzGkxZr/krhp0wD0AdlfgCQdUoBTmD8l2DTQ/V524OAd+wkp/0CfNnCygNs5qWCBwjkj9ECSS4tS/KJ31ZCJGuB3NOxikyoKS0QKOKOss/7fOV1KUJtBo09gQf0GZvxGGJ+Q/5+1L/VzxY9mgH9kwtweUgYsjuKw=
+	t=1724197808; cv=none; b=pNgg0f9I5dssIeea4CdWt8E+jDdp49gCgXZfsEKFFG9pkJpxGnaEmBkkae+xTLpNpvfrNhUjrKSvPgZDog+14ac/NIV52rAMDFtsbHGDrKmSYKQNzUUzsCv3WTGnNT6ByH/TfvHDEUeVHlRBUtB/BBwGa2mA0uUU0zeZZyka9ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724197728; c=relaxed/simple;
-	bh=oCIIsNvmPIICxU6QNTqqfHLC5XBHenuWunM08Kcya60=;
+	s=arc-20240116; t=1724197808; c=relaxed/simple;
+	bh=1Y8VPSJPTcMjRrF5SWBm65dCgzJpNsJleTBgewKTYrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MvToPSbtf0cv9xZI7AAk97LnVGmBJZjJ4AZdCWSfPoJmf0/rRbklkU6iesK2geTpSMVNAU+Ogb9pmJym/BUTVG84Quq7S1Q/K2WdN9F5JVU6oBpvQScIILhAVe+tgUbZDapycBaln3J+PzKmDhim5TCeAt15fgUbx9oXRMPRwSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB53C4AF09;
-	Tue, 20 Aug 2024 23:48:46 +0000 (UTC)
-Date: Tue, 20 Aug 2024 19:49:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Mark Rutland
- <mark.rutland@arm.com>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org,
- clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor
- <nathan@kernel.org>
-Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
-Message-ID: <20240820194914.2352a914@gandalf.local.home>
-In-Reply-To: <20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
-	<20240819112902.11451fe8@gandalf.local.home>
-	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
-	<20240819120244.5657eb2f@gandalf.local.home>
-	<20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
-	<ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-	<CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
-	<20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
-	<20240820181109.4203158d@gandalf.local.home>
-	<20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=J+AE/oU488nnGaI+Fp0KhZxjxLvEoZWciY6aytvTPMZH/sZC8Sk+Fra+nuetwyPp/LBPSMV0jGHhg213Hce6WZ2pnsPuVViykgVISwk9N/oPTz9SU2NAFSixZ+L555v1NOvmcHgOadjIsAgeka1Sh6ooR7Kz6QRxLNdd1Zk7NhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+Fj2QQw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388E6C4AF09;
+	Tue, 20 Aug 2024 23:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724197807;
+	bh=1Y8VPSJPTcMjRrF5SWBm65dCgzJpNsJleTBgewKTYrI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y+Fj2QQwo7kFOyEwhd7cKgwnITNolAcC0kfAvrwJS/Ifi0EoQAFDFCMJxnEcPqWVY
+	 QZ0p8z7ve45ly4v6rXqAPp68tm8iFcnaxpCEOo9hiPy7g4sA1xWqC6e6iZYUiwl8wq
+	 d/DGcTqZcEqlOQs1DZ+0i+6zGoLYe7toyoH+s+56+vgXokoKr6bdMUx/VV9QK+M2rU
+	 0G3TQMpb/b096i6emh/J21ZmlybXFNgVK3biH7UqAUU1YiQdpAQjboR5ad2iwTTjPV
+	 znuz2+8j+R3XYQUjqbHB650PrqgYlDtNHo67MnvT2CrU2BsIXPBNzd13Qw0VZ3lL/i
+	 zmoWBLiUL6tUQ==
+Date: Tue, 20 Aug 2024 16:50:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH v8 net-next 1/3] selftests: net: Create veth pair for
+ testing in networkless kernel
+Message-ID: <20240820165006.4b6c8e44@kernel.org>
+In-Reply-To: <20240819121235.39514-2-jain.abhinav177@gmail.com>
+References: <20240819121235.39514-1-jain.abhinav177@gmail.com>
+	<20240819121235.39514-2-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,15 +62,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 21 Aug 2024 08:43:51 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Mon, 19 Aug 2024 17:42:33 +0530 Abhinav Jain wrote:
+> +	echo "veth0" > "$TMP_LIST_NETDEV"
+> +	echo "veth1" >> "$TMP_LIST_NETDEV"
 
-> > Can you add the __used and see if it fixes it?  
-> 
-> Adding __used to DYN_FTRACE_TEST_NAME() and DYN_FTRACE_TEST_NAME2() does
-> not change, the test still fails.
-
-OK, now that sounds like a bug in LTO itself.
-
--- Steve
+Why test both ends? 
+Aren't we going to do the same exact test twice?
 
