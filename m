@@ -1,276 +1,154 @@
-Return-Path: <linux-kernel+bounces-294097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8072958900
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:21:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC85958916
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3778F1F22763
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:21:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79749B2245F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC0D18E757;
-	Tue, 20 Aug 2024 14:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="dWeApOsA"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2069.outbound.protection.outlook.com [40.107.249.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA0018FC9E;
+	Tue, 20 Aug 2024 14:21:32 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA66E3D982;
-	Tue, 20 Aug 2024 14:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724163641; cv=fail; b=Kwh3dNW6rGcUOCmxo3/AeutmyLUOrVf9cv9B0KJtzUyEWcJvGlOMy2n2OPGOA0a2cUHmGHG8LcAVotdWycVptJiySM2lOMUrBK9SQjyzVXi8PMnJPsCoINT+tqhBsR8LRz+GaVnRdyyy39YZdVuQVkRnnaez8UA4jNqwW//zUG4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724163641; c=relaxed/simple;
-	bh=0o9kvKyh86z9jO8En686iA2ip/0NQ2dUrJYGUEkQAZc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kJIi0Fp3rZXNv9npU03yePZhTtIXaKWlSm/NCna1jL6D81Pes98XWQ7FEmTkbePWTDF/dVrs1hLV9eloRsk/cd4rbOOqTKwotzY1V2wTRBXUU4JwE05Hz8y3a4HL6nHX4uEKHcAOyWT+Z82ZuTDonAi+v9OmfE+aK53YDfhfGo0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=dWeApOsA; arc=fail smtp.client-ip=40.107.249.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SIuXz4bl+dfD/a/lA3Pzh6nCRMvb5d3nbllF1ZdjwdVzS9KHHOuerHn2uRfhNiATHB+HYU+ycsc1jfyoiyp1KzqxKEC3hXMBmNWy/SOWlH5dZHc0nwVcE2MQWW8YUXdcZk+ESK0Pf5yUNcvVMP35dJPNdxsslXn6YDKgVX720ageiLlVPWsHojAji2LaeM70amGpCWJ1I3els0xuDkxkrGPsUP7fp67lnOrfVgMCr4LRemseDbOU+WmsPhGM7gPc7C+4gwWmHnkpYkGJkHaR7D0O2ObY3AiggBoXaEuFiQMQL2bSEA3OS81MtpSAf2VVBbJFcRlRgutmZX8ik4dpKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qQKs713+hqUroCGQHv7YrxQo5R4ecQT+7XW2ycnZkHY=;
- b=VMaHd6aPpZxdfCTaCI+3JRSzFp/ljX2CLCUlNNcIf8zM/KmH1cfzOpObdEhAs+ZFeEB+TkvfF+dxEqllM32KRhSZGoddjGuZN4FDnG6RvRQQ10VDcT8HTislcMHdADtPQO0GIKqkmU5Tms5MA1A/ykdu2rGx1VkQSxL72ckkMilzilzTFbOj89lY9MpjlThDOii5VpjBuioXOUaMfm9WNIP6r8kTlYkxCApJw8O36nBtgkEeUTnxIIbdtwUIG9ype2pCmnk1Hrpz9L93S/8gCBUl5sQShbfZqKXazkR5pj/zuBwb6Yn+zVPKvIaWyNQBiLgSd8BM/mbVB6kJfuxVdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qQKs713+hqUroCGQHv7YrxQo5R4ecQT+7XW2ycnZkHY=;
- b=dWeApOsAGS63FP8iHTXwrx/HMOrmXOWuXLe0TLQ349k1ycLfZL/RIjuD/R8IrW+Ew3iHPyHsQmbXjuV4LKhxJxCsqty+G9+UwUTkBoerRJs/PSUT5qjOPqOi5PbFMndmN1A9RPpnd0f6sumW3QvBd2jCwX3bCLJqbUhz7Zr5KSP0Sr7u5sVClYZ/Dh+mKLGDuM/2LbEoZVIJGPpk3JCS6uc+LAw1AcYTHn8euPxe+A0kjftqbK8FUeyosOvOc6onLKBbrUuP5d+zsQ3ag/AxT2yzWDBpDo3PAaQ7OMbDZDJcGac8098ENtx/HNeekKXhbi9VdR3YWh3a2MIR7QK1bA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS4PR10MB5199.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4b2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
- 2024 14:20:36 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
- 14:20:36 +0000
-Message-ID: <7ffe0f80-d4a2-4d6f-8c45-5a407ac2e584@siemens.com>
-Date: Tue, 20 Aug 2024 16:20:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Fix driver shutdown
-To: Beleswar Prasad Padhi <b-padhi@ti.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- linux-remoteproc@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Apurva Nandan <a-nandan@ti.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>, Nishanth Menon <nm@ti.com>
-References: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
- <3e6075a6-20a9-42ee-8f10-377ba9b0291b@ti.com>
- <9ce9044c-085f-4eff-b142-ab36d39d90b4@siemens.com>
- <2bdd6000-82b4-4f57-a950-e9378c321154@ti.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
- uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
- xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
- I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
- 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
- L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
- +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
- roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
- oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
- VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
- IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
- QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
- zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
- K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
- pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
- 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
- 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
- gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
- ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
- 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
- VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
- ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
- aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
- Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
- QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
- tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
- txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
- XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
- v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
- Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
- TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
- FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
- +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
- bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
- MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
- gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
- uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
- lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
- T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
- qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
- 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
- ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <2bdd6000-82b4-4f57-a950-e9378c321154@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0137.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9e::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA917BB7
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724163691; cv=none; b=ozZ09MjaGBxQ6wLg1HJjfzFu9k65T4NYaYKUdHSABnABbG+6+ukT+bSQgPl9FTcjgxxoIhP8E3/E+deXq4v5SBLK6sKI3TLYoeZ63V+Z3JYzOY+unEyQDiyIoQnsMKaGYdTBNEXffZGvR7YR1bKJWr0Xqy1KkgFdE68K5p9tWt0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724163691; c=relaxed/simple;
+	bh=nz87iCNm/imYxmww6lrSQkmDcLF8hRPjqOR5QfSw3ZU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mTMd4EKcOO2f5EOGoKei4dYzigdIGQJ4mDR5N89iSc9dsyu+zj8mkYZ3wMl7yqDeYgRixQkTsVXUbFItQZ2EAsuZ3EnhJ0rdED8D3mT4rCFyM3wf3rTtsns1yZeRk32k56h8DrxGTutbn9qW8lZn0h+aDgkoXCtWlckg3BauMBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f968e53b0so518268839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:21:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724163689; x=1724768489;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gs4I+WnWS003nZVnMuAmREt59BcST7kRnGotym9SD1w=;
+        b=H/R8CJe/kHT66KvT532BU3bVBlfaC3XeRuqwB9POlqL18zNo7G+0Aa3jDRO9MldBQE
+         Q7XSMdc52MPgb0SpezkqE27gswr+EaSQEewPuzqK/uESWWTI0ZiB7Xun/Z2Ynf7Uiepp
+         ydiiu4uGYhEdmvoD/j4/HfHx3iKC6P71YNh14jzjVORaLAMinkVjPwKDa/g/IHfboXZ/
+         HMv39W4QsfPS2hrCeM/Smr13lkdOpy4ho89JGgZ2rui9SwypT+YTg7JqWacZRo9qiF3V
+         4tw4+53Cau+PN3heV9fPj7YUpzvH93Mns3c3vg/I0x9JyvjahtIeJf1wUws9CBZnl2v/
+         5o9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXD72LA/w97Ed4sRDHVnGGXgjEjLNIG5SP9lcasR90BZesuVTguE+B8SwfusT25ftEUivzGVVBqkrEboks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0oz2rcRtuBUiUnBE9hsiy3ZALWWzQBQDqNO3H5RQhD1UPWRQ/
+	ASkMRQSQFF61BMsSOpc9EIJ6BFMlXVE+Xym5VPtJXVqZr9l9jxBdeFBTox/XtRNomPyKqTd/KBi
+	C3ZmvRSthSuuBU5k0wshhxeJ9KeqdWD7xYzZNnCINko/1iYSIaZGzO5Q=
+X-Google-Smtp-Source: AGHT+IFrQvOpoNZRpN+O2+toWf++oN6LJ1BTTXXJVdRcqhkogTFlxrGc9PligSCCsq+tnEYjJgAo9S6KB+i0kLccArQV2ALqlNzC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS4PR10MB5199:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34a4bad8-0885-4a3f-d5a9-08dcc1234259
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWprVEtjNERwK2FoY1htNm5ndWgzbjF2eXFvdUF0dUxKYUxTR2IvUGtvbWxw?=
- =?utf-8?B?eE9HM1NHRG9YNzNkU1R6eEtuRzNwdnE0ZDliQlMzbEhBYXJMOG04Z2pNMEtV?=
- =?utf-8?B?Yms2VUozeFNpVFdLaElTdDBuSVJoUEwySXJmanNWZDhCRS9DUTVSQlF0OTFz?=
- =?utf-8?B?SHFMNGdzUCs4NEd4dk1McWpIUG0vb2VtQm1TWWtVbHRGS05PclltSmoyU2sv?=
- =?utf-8?B?NEhGTlNuZ0lWTW4wdWRieGc4ZGJBNXBQMWJoRkFVRE5qcGdlN1E0cmU0WVUw?=
- =?utf-8?B?OTZQQm4rYmxrV0ErdWZudjlBRVJGQ3E4dXF1SldZN20ybWFlTnREdzRZdzI4?=
- =?utf-8?B?NDNreUtzUDJTeThvMTFhNHZuQldjd1o3UElHek9CbnpoR09aejBhRCtiSVVy?=
- =?utf-8?B?d2ZmVUc5a3NpWVExeXV4TGp3OGtTQ2FJSW5rb0VYcGc1UjdEWXZHY0hsSkpQ?=
- =?utf-8?B?Z3I0RGltWDRYeHpROTN1bkFsR2RJa0FWWkhQSnFMeFl4eTBDRitDNzdtTjVP?=
- =?utf-8?B?KzM0NGJhNXlLYmQrUDRSMkk5UDhEeERYYXlOajlucjI0SUwzZS9IWU4wR25O?=
- =?utf-8?B?c3JaWU1oTUtybU9tdi9pajhkRmF3TnJPZkxqOFF3NXJUNVdnYlFsTWpPcFBI?=
- =?utf-8?B?dzlUZldLNjFyb3FoNGNWMWRyeWFRWDBva2hNTUhva01EQUVTQm5yVEZkRG10?=
- =?utf-8?B?TndOVFF6UDVjRmJ1WDFnSTBuRlNMNXorckxqakw4Q2VXbytrZUlZazMrOXdM?=
- =?utf-8?B?ekk2dnR0Ymp5Myt2bFpRZXlYNm1Gdmg2aVlYQVJZcFJMMzhKYUNKYmtIU3Zq?=
- =?utf-8?B?VHlyRVVQOUJIdjhCNnhwRUZiTFNtWm5VeDRnSUxVejVubnVjSENBTUd5N1Vi?=
- =?utf-8?B?c2xMSm9sbWxlRHBvZ0EyVjlhQnBhR2Y1QkhoVFBMVGJzNzNONHg5RU9FQTZH?=
- =?utf-8?B?Skd5UWVLR01wU25FR0RVdVZybnE3VHBYUElRVmdoNFBLMTRHcmlvVUtiZW90?=
- =?utf-8?B?WHB5OXJEM2t4T21NV01JYmhEazB1UnR1WHpHNjlWMUt5cGh6Y25sQlk3NmZw?=
- =?utf-8?B?QjZ5emwxZGNMZVVGbVF1SEN6eEVHNVpNbGdiRlphSXVHaFZLWnJJam44c2tS?=
- =?utf-8?B?RXB0OVBmVHg5SnRnU0RpNGtEeVEzalRTaEpUd21zSXpGTmZWOElkKzJNaG5X?=
- =?utf-8?B?K0FlMjRvR2VVbnAxU0d3MW9ldStNREpxS3Z3VlRXWUtkQ1JLekU3VzhFRTIy?=
- =?utf-8?B?TTZuSmE2NGpVajVhYStzT3FsVkZBOWFrZzYvQk5EOGNQTEdNZTFOSS9JMXlq?=
- =?utf-8?B?ZHhxVUdvRTMvOUwwQkRxQWJtZjhpUGlyYU1iaTJzT3VZQmxvY3J0eUxIaUJZ?=
- =?utf-8?B?Z3YrTUk2Rkx5ejhBUVpCeXU1dWYrZGFaYW1EcTF3S0lrUTI1ZkVRSWsrWEto?=
- =?utf-8?B?WXpqV216QTdUdUhrV1ZoS1lERkExTnpKWkZTREhsM3VsSGFqbDRkUUpWMW1s?=
- =?utf-8?B?UklKWFcxd1VjYW5qeU1Nd2hZcmpYc0w2RTN4ZlNTdExoUFhZWUY0d2M3UFBl?=
- =?utf-8?B?Nm5lRGlGRFFJd1IvSXFTYVN4NEJyWTgreWxXeEo3WTdzWWNnSlZySEFmS3NY?=
- =?utf-8?B?NU5ZTlRGdnZlNjBpUjl0SHQxS0xHWXkxVU9LTFFVY25leWptVnVDa2pIMjRW?=
- =?utf-8?B?ZmV0UFhQZytiSElaT1RlWTAyZXBzUHdqV2ZSL0ZwMTNnK0FRZm0xOWFKMWlJ?=
- =?utf-8?Q?JsqzwjX7EWXl6ehVow=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RmJaWm91MzBhSmJWclpHQXdGYytISWlEWkJBenNaUVJTVDgxT05PUEgxWHRZ?=
- =?utf-8?B?SEdhMjhzTEdqdlF4YllLQmJQT3VGNFZaUzFSWVluaWwvcDcwd0VrNXRFR0VZ?=
- =?utf-8?B?R2orOWdXREswVElkRjE4STlCdWVTbm9udDEwR3c4UzdaS0VkSnlBbXdVQi8w?=
- =?utf-8?B?TkRhQzVodnFUalc4SHJ0WnFGQ2xBTlRCWHlCK3ZxL3JzTWoyYXRmbFBwaHRh?=
- =?utf-8?B?eE0yZEVCWUZsT0VhaTY1Rzl0aWxMSlBJamNRUklPU3dxNGV4Z0N3RGZCTjF3?=
- =?utf-8?B?Q1N4YndxZG95WXQ5dW5jMnpoMi9BMUVqQ2FpYnZSR1JQSEFrT04xR3g3RVJU?=
- =?utf-8?B?eGdIVFU5STUycWh3T1UxVmVqa1ZTRHNKUjB4bWJUQ3hzOXU4N3VhYzBQWEpL?=
- =?utf-8?B?S2ptUEZDaVNmc2Rya1RkNzdCUDJFQkZrYWNkNlNlbWc2dnVaY0hlbk5ibVIw?=
- =?utf-8?B?VDdsWW1BazhORjc3M0dpOUJQSXhVTUlXcytYUzlTQ2xGcXNPMm1rYmRMVHhs?=
- =?utf-8?B?aHlWaXZNcGRqQ1ZYWEpYTm9XRzFyUC9RejNIdU9GNlpSc29yaEtNdDVhYUZ0?=
- =?utf-8?B?cFR6TEowazc3QXVzZ0NseXNkMlVCSFNxd0lxVHZWVE9nZGs4Umt2YUJzSERa?=
- =?utf-8?B?bm9WeFExSnBnQ05nWUMwUk5xbERWeXkrQm1PajRDNzZoZkhYdjZiYlczaG1K?=
- =?utf-8?B?bUNpSHJDM25XZC9UNUowSVdXTkNPeUVJN1dkMUcrdXNycklyOWdYVVZXOGFS?=
- =?utf-8?B?YVRMeEVmVWV5OXBKVENJT0s5RDN2Z3NDelVOR2xZOHRwMzRPeUlpVHFxcUNI?=
- =?utf-8?B?c0F3VUhhYW9tMW0vNXJCMUZ0TFZlMUJqNFllWXBJUm9wbVpUYldFMkg0ODBB?=
- =?utf-8?B?c2Z3a3R4TWtBTHdJQWFKcVFMS3l4VmpkcHZTc1VFWmRDMk5ucG1OaXcwODBh?=
- =?utf-8?B?NnJwNEJOdU5HbkxObTNGQ3ByWXI1V0NZWHlXdXpjd2F5MjAzbzI0YUp2QTdv?=
- =?utf-8?B?YmFBczJ2dGxFQjNrTXZOZFNZazBNNFNjaUV3SUtzaDBtQ3J6aERLcllqaUY4?=
- =?utf-8?B?dmVwMkloM1FzOGNZVVl6YTFERU9ucW5HU20wb3FUK1Z4aklTc1ZVd2E0d1RX?=
- =?utf-8?B?Q1ZkWmZuLzFZSnhkQmVHT0FRcS9FdmtCY0t2N2NicFhENVdmS2Y5RDNGRDNx?=
- =?utf-8?B?Sk5TMzBHQnZTSDdkY3NTRTZZMjRGZnBFN0k0L2VGZmVBTFN5d280MHFHeXFo?=
- =?utf-8?B?TXJRRThtcG9HOTA4L3JoclM0SkM0ZWRYdVF5NFFCMjdsaDNGd25XakJreUdF?=
- =?utf-8?B?ZVEwWFJ4a1I4Z1dHY3N6UTYzRStFUXRvRytiLzBCYWQyQS8za0ZvWHdIYmk3?=
- =?utf-8?B?WUxqdStYZ1pqcVdLbWtLMGxHc0FqTWM2VENpUFZvQndFcmFMQ3RONXNZOGND?=
- =?utf-8?B?QUQ3VlNOc3EvM2NDNlJwWGx6UUxwSnoraFFxcWluMFdBR0sxMlNQc1NCRU5C?=
- =?utf-8?B?R2NGa3o0Q093cEpvbmpacHplS1M1YWVZbU1DWHdqSGdGL1NlZjlWbGVNUjhV?=
- =?utf-8?B?Uy92N2ZuM2c1ZlFDN0RxSG10TVptSXQ5ZzByb0FpNjZxQmwvUDZMdUMyd1E0?=
- =?utf-8?B?YUI4UzA5T3BOdjRnRUdUUG5EcHQrTTB2SHlPTUN4WnlkRmZucDk4QVNqMEo2?=
- =?utf-8?B?UnA0NVFic1hLVU9xaXFSWWJCUUhvQWM2S2g2OUVzdi9hUmdrZkNvMWhzY1FW?=
- =?utf-8?B?bDgyU2twbkZHeDdvOTJxZGVjMFNUREkzZ0hqTEVSMWt2Q1RnOEsrVVBjMnNP?=
- =?utf-8?B?VWl2c3gydkk5WnJRcElGcnZuTUtNTEFvc1EvZ0FkL3o5ZXF5Tk5jb0RETG43?=
- =?utf-8?B?ZVAxWkpiTFRENHVQRytxTDhXazFOMWxMc2g4Nm9Md1RhbW9kL0NsZk9CaU5y?=
- =?utf-8?B?bE14SEpsU05ZK0VIRGUva2xlYTFqT2tPYzFzdU4xYzlyMis2RFREMlh1VXR0?=
- =?utf-8?B?alUzSUh6MjdwcWQrdUVLc1FOQWM3RzNtV2RQMHpvRWIrZVJ2SG1peC83T2I4?=
- =?utf-8?B?VXFVa3AzcGd6NVhIZkNCZmtzRTVSaUhFSnFvbXpJOGtpTUFLaGJ4allLbVl3?=
- =?utf-8?B?QnNXeEI0TGRrMGpMZWRZd0RJSlBtVWZhSjJtOGhCakg5K2tvaWNMeTNpZWxa?=
- =?utf-8?B?QlE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34a4bad8-0885-4a3f-d5a9-08dcc1234259
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 14:20:36.1855
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N4KEpQRZJuF0ZLgyMgAc8N2wup0F4x84TBmoyP/bW7ql+5TQlexdCFsSo3AMcZkMDQjILxRqMG6z6UAH4+XzcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5199
+X-Received: by 2002:a05:6602:3410:b0:7f6:1e9c:d6f4 with SMTP id
+ ca18e2360f4ac-824f271e077mr42411639f.3.1724163689422; Tue, 20 Aug 2024
+ 07:21:29 -0700 (PDT)
+Date: Tue, 20 Aug 2024 07:21:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e2f1306201e24d7@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in iov_iter_revert (5)
+From: syzbot <syzbot+1e5f71cac2c1db825478@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 20.08.24 11:48, Beleswar Prasad Padhi wrote:
-> 
-> On 20-08-2024 15:09, Jan Kiszka wrote:
->> On 20.08.24 11:30, Beleswar Prasad Padhi wrote:
->>> Hi Jan,
->>>
->>> On 19-08-2024 22:17, Jan Kiszka wrote:
->>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>
->>>> When k3_r5_cluster_rproc_exit is run, core 1 is shutdown and removed
->>>> first. When core 0 should then be stopped before its removal, it will
->>>> find core1->rproc as NULL already and crashes. Happens on rmmod e.g.
->>>
->>> Did you check this on top of -next-20240820 tag? There was a series[0]
->>> which was merged recently which fixed this condition. I don't see this
->>> issue when trying on top of -next-20240820 tag.
->>> [0]:
->>> https://lore.kernel.org/all/20240808074127.2688131-1-b-padhi@ti.com/
->>>
->> I didn't try those yet, I was on 6.11-rcX. But from reading them
->> quickly, I'm not seeing the two issues I found directly addressed there.
-> 
-> Check the comment by Andrew Davis[0], that addresses the above issue.
-> 
-> [0]:
-> https://lore.kernel.org/all/0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com/
-> 
+Hello,
 
-OK, then someone still needs to update his patch accordingly.
+syzbot found the following issue on:
 
->>
->>>> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power
->>>> up before core0 via sysfs")
->>>> CC: stable@vger.kernel.org
->>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>>> ---
->>>>
->>>> There might be one more because I can still make this driver crash
->>>> after an operator error. Were error scenarios tested at all?
->>>
->>> Can you point out what is this issue more specifically, and I can take
->>> this up then.
->> Try starting core1 before core0, and then again - system will hang or
-> If you are trying to stop and then start the cores from sysfs, that is
-> not yet supported. The hang is thus expected.
+HEAD commit:    d7a5aa4b3c00 Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ed77c9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=92c0312151c4e32e
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e5f71cac2c1db825478
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1380adf3980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e4d5f3980000
 
-What? Then the driver is broken, even more. Why wasn't it fully implemented?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/64022429061b/disk-d7a5aa4b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f4aba88f7db8/vmlinux-d7a5aa4b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/120456a2d9dc/bzImage-d7a5aa4b.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/8df834fb9381/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/af3cad97858b/mount_4.gz
 
-Jan
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1e5f71cac2c1db825478@syzkaller.appspotmail.com
 
--- 
-Siemens AG, Technology
-Linux Expert Center
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5875 at lib/iov_iter.c:552 iov_iter_revert+0x34d/0x390 lib/iov_iter.c:552
+Modules linked in:
+CPU: 0 UID: 0 PID: 5875 Comm: syz-executor332 Not tainted 6.11.0-rc3-syzkaller-00156-gd7a5aa4b3c00 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:iov_iter_revert+0x34d/0x390 lib/iov_iter.c:552
+Code: 48 89 df 48 89 cd e8 f2 ee 50 fd 48 89 e9 48 89 0b 48 83 c4 30 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 34 cd ec fc 90 <0f> 0b 90 eb e2 e8 29 cd ec fc eb db 44 89 e9 80 e1 07 38 c1 0f 8c
+RSP: 0018:ffffc90004d0fbe0 EFLAGS: 00010293
+RAX: ffffffff84a6bd2c RBX: ffffffffffffe00a RCX: ffff888023519e00
+RDX: 0000000000000000 RSI: ffffffffffffe00a RDI: 000000007ffff000
+RBP: 0000000000002000 R08: ffffffff84a6ba1d R09: 1ffffffff1fed4e5
+R10: dffffc0000000000 R11: fffffbfff1fed4e6 R12: 1ffff920009a1fb1
+R13: ffffc90004d0fd70 R14: ffffc90004d0fd70 R15: 0000000000000000
+FS:  00007f1d02fd56c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000000a CR3: 0000000064990000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ generic_file_read_iter+0x2d0/0x430 mm/filemap.c:2789
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x9bd/0xbc0 fs/read_write.c:476
+ ksys_read+0x1a0/0x2c0 fs/read_write.c:619
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1d0302c829
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f1d02fd5218 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f1d030cf728 RCX: 00007f1d0302c829
+RDX: 0000000000002000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00007f1d030cf720 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1d0309aaac
+R13: 00007f1d03099fe0 R14: 0031656c69662f2e R15: 0030656c69662f2e
+ </TASK>
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
