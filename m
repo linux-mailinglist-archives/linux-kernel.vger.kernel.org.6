@@ -1,59 +1,76 @@
-Return-Path: <linux-kernel+bounces-293070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407EB957A5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:15:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE5F957A5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0685D1F22D7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC96AB22C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656A1610B;
-	Tue, 20 Aug 2024 00:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1769979F0;
+	Tue, 20 Aug 2024 00:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XP2DqSav"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NkLVtR5x"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF4628FD;
-	Tue, 20 Aug 2024 00:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11563610B
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724112947; cv=none; b=NmXdIU8tcPEKRcKc5GQcrX2tw5kUvpqBJHZ5qggg3MvKn+cGXIG8yAlNEplg02qj/O0y/+bgMKdDekVFQjeJfrp6VtMcoGrmJtyHTC36yVy3VtDeX4CYbDtcucVsVsfRY6EACODeza/PhuHN5xlqynn/ft23qUVbOcr9D8FYU9c=
+	t=1724112985; cv=none; b=MgHxQHjwxML1vyEcKVh2rFvMbKZbGTqEDrhEkxszy1aOAiShqodtPeJq51kX9wNYYUP6Nu4omWbxUjX0eggrQ82gDz1XwNuVMOk9uNesbYLEKuOzpqqCyCfs/beu0wsLrzYXtkoO7f2QIKFSA8MjvkzGn7zcGXZ54/QYRwDOZW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724112947; c=relaxed/simple;
-	bh=ZhFtTfirgz3DC5PC/82DyClMEaRswpHr2PJJKZJnIdk=;
+	s=arc-20240116; t=1724112985; c=relaxed/simple;
+	bh=gWVNtklo/DT5OMxK4e8dh2MliUZqgR2m2cnOOfLqdCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAwWXoeQreknPGxHKpCxKuoxB50LhHAnoksVXowkxMim4MPKsiH9df8Y2AG7UQiMfeECxBvj6rjtWzZznYkjOdLwZvKWvwFD1U4EMkjaKv83cVcGDgYdSsDpXSVAMc6b74g/rMHmhOFl6OGBxVskRX4wnrhd3IqnNhgiYAF4Qy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XP2DqSav; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1Wa+cNo3cMGy3we7u2qdW4EcPbREpLmZxSIdLNPhDvo=; b=XP2DqSavIBXSg0MPLm1di5waiG
-	fuAb38umQ+rVmG6tvmTVq1AfxF6pG9vdmxnZ/iJtI9ggQ1wSWQ4+TQbBpf+9D0YiV0Y5ZsnAQ0uV6
-	dDZl++g1ZFbVlB7scMOD+wFnvzGg8+aVgpYEV0Gxd+pbynQyeDbxJcsxiMBjvGHD2rquc3N9N2ill
-	AlTUyQnBji9fHX4IVz61Iyp862m8MJuY8w5B1DVFD/o330O3mt8vIownJG4fItLtd+rTj28Q1Gsym
-	cKZjVr9+PkDaW7Ywl+lSBMcrnkbabFLHcsfRpWYPC70VhC5dHT/qabN03nyTcOn8KLp82dCKtQFnz
-	/qVvd4nQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgCXH-00000003IuO-36Or;
-	Tue, 20 Aug 2024 00:15:43 +0000
-Date: Mon, 19 Aug 2024 17:15:43 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Russ Weight <russ.weight@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] firmware_loader: Block path traversal
-Message-ID: <ZsPgLxDc7NiL7W8_@bombadil.infradead.org>
-References: <20240820-firmware-traversal-v1-1-8699ffaa9276@google.com>
- <ZsPf02GrdMiyZP8a@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXwXkf5Q44et0xSA1WSxIgUP1N9eMfR1NiGK6HAJTzCeEenyrZ3ZAWjgnTVXspmk9hsRlnXwGRvOokgpC14+pDRxAVbAjE/qDchpARCg3Qn5sGNwCsVHkt6FF85eiPmQ0rFVtyc3PIHS/xWEqwl6Q4pYUG4atKWjpjT/3Wx82r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NkLVtR5x; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2021537a8e6so28134695ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724112983; x=1724717783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K9N3cTfP/dg7onHPw5BVcBp+wX7BOvsjJXAFs30MUm8=;
+        b=NkLVtR5xkb9x50vJVqcRV+kOepem3C82Pvk4Fl5WlpWYS9HO1o6oICBiFHi+lTYgKn
+         ul+4XAAKvxybrhtkUzqGVbUCvUCnmSJ9jTFOUHilhlL4S6RqMalRzrOzT08Aeax0cGwj
+         WR1SB/4D0Y6DyQHd+JiT8rA/rEy/64dGg3R2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724112983; x=1724717783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K9N3cTfP/dg7onHPw5BVcBp+wX7BOvsjJXAFs30MUm8=;
+        b=igrxlWw2C1S7YCPfcLTvvSngdLfaNUMs5NIkszxz/XxVz/MeuwXfhXqiLQ+5PqW3wH
+         B6VkwSpJeTBT19N+VPJK1W4r8TOWs5pUdicx1hATQvS6fzg3XmWEeiGAauA7lqe/bJUI
+         Tk0hUP9kentbGijFoUOhV4tPjJgplxPrQ9IL+WT9FzumnKHe9FQjI66R1qawK8DGU94G
+         1fCBqggNdt3aXr8LEMo9OHNG3Sb5ZD4I9JU6/lmDdKd4Ks5DoZkDGWrr8X8XNxxSuLWZ
+         s8cuCG30bL9QZ0zU15Ww2bf2KwkKyxRQ77DKZAAsJy3lnW9n+xjTW1PBqKu5sxVZVJpk
+         vmUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxK4OZ3DKYfNz4t/57nI+z19uSG7caVsLXABccXLKjpWLm6++FmTIMqcIUiUat82Dg4hmsTzkQfEa1lN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmQFrxiUXghlxb4PvBn9ORIY7E1NdGki3Wv5MHMoOCf8VXi6VV
+	0QTD7m4p5rshdkNwZW7+KEpx7SVVSidgoBoG/v46BlMc4+82MdZomVdBwAMxHF0qwoaAsnbZXfA
+	=
+X-Google-Smtp-Source: AGHT+IGdXHDLYADLsciH2qFBjlWj6nZa2mOjwihgQjDQOFwiAOL8MYQVozk0LMShUHg2qILme+Y8vA==
+X-Received: by 2002:a17:902:f988:b0:201:ff75:fa3a with SMTP id d9443c01a7336-20203ea01c9mr106734875ad.23.1724112983346;
+        Mon, 19 Aug 2024 17:16:23 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:917:3d68:a539:4ba4])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2025f819db7sm3116295ad.257.2024.08.19.17.16.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 17:16:23 -0700 (PDT)
+Date: Mon, 19 Aug 2024 17:16:21 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: remove unnecessary checks for valid priv
+Message-ID: <ZsPgVTYDnN2VW4nf@google.com>
+References: <20240816-mwifiex-remove-priv-checks-v1-1-6dd6553e8ed9@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,81 +79,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsPf02GrdMiyZP8a@pollux>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240816-mwifiex-remove-priv-checks-v1-1-6dd6553e8ed9@pengutronix.de>
 
-On Tue, Aug 20, 2024 at 02:14:11AM +0200, Danilo Krummrich wrote:
-> On Tue, Aug 20, 2024 at 01:18:54AM +0200, Jann Horn wrote:
-> > Most firmware names are hardcoded strings, or are constructed from fairly
-> > constrained format strings where the dynamic parts are just some hex
-> > numbers or such.
-> > 
-> > However, there are a couple codepaths in the kernel where firmware file
-> > names contain string components that are passed through from a device or
-> > semi-privileged userspace; the ones I could find (not counting interfaces
-> > that require root privileges) are:
-> > 
-> >  - lpfc_sli4_request_firmware_update() seems to construct the firmware
-> >    filename from "ModelName", a string that was previously parsed out of
-> >    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
-> >  - nfp_net_fw_find() seems to construct a firmware filename from a model
-> >    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
-> >    think parses some descriptor that was read from the device.
-> >    (But this case likely isn't exploitable because the format string looks
-> >    like "netronome/nic_%s", and there shouldn't be any *folders* starting
-> >    with "netronome/nic_". The previous case was different because there,
-> >    the "%s" is *at the start* of the format string.)
-> >  - module_flash_fw_schedule() is reachable from the
-> >    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
-> >    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
-> >    enough to pass the privilege check), and takes a userspace-provided
-> >    firmware name.
-> >    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
-> >    network namespace that a special kind of ethernet device is mapped into,
-> >    so I think this is not a viable attack path in practice.)
-> > 
-> > For what it's worth, I went looking and haven't found any USB device
-> > drivers that use the firmware loader dangerously.
+On Fri, Aug 16, 2024 at 08:56:10AM +0200, Sascha Hauer wrote:
+> The pointers in adapter->priv[] are allocated in mwifiex_register().
+> With an allocation failed the function will return an error and
+> driver initialization is aborted. This makes all checks for valid
+> priv pointers unnecessary throughout the driver. In many places
+> the pointers are assumed to be valid without checks, this patch
+> removes the remaining checks.
 > 
-> Your commit message very well describes the status quo, but only implies the
-> problem, and skips how you intend to solve it.
-> 
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > I wasn't sure whether to mark this one for stable or not - but I think
-> > since there seems to be at least one PCI device model which could
-> > trigger firmware loading with directory traversal, we should probably
-> > backport the fix?
-> > ---
-> >  drivers/base/firmware_loader/main.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> > index a03ee4b11134..a32be64f3bf5 100644
-> > --- a/drivers/base/firmware_loader/main.c
-> > +++ b/drivers/base/firmware_loader/main.c
-> > @@ -864,7 +864,15 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
-> >  	if (!firmware_p)
-> >  		return -EINVAL;
-> >  
-> > -	if (!name || name[0] == '\0') {
-> > +	/*
-> > +	 * Reject firmware file names with "/../" sequences in them.
-> > +	 * There are drivers that construct firmware file names from
-> > +	 * device-supplied strings, and we don't want some device to be able
-> > +	 * to tell us "I would like to be sent my firmware from
-> > +	 * ../../../etc/shadow, please".
-> > +	 */
-> > +	if (!name || name[0] == '\0' ||
-> > +	    strstr(name, "/../") != NULL || strncmp(name, "../", 3) == 0) {
-> 
-> Seems reasonable, but are there any API users that rely on that?
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-If so, then those all need to be fixed otherwise you will get terrible
-user experiences by just upgrading the kernel.
-
-  Luis
+Acked-by: Brian Norris <briannorris@chromium.org>
 
