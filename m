@@ -1,108 +1,92 @@
-Return-Path: <linux-kernel+bounces-294053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0D695884D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:52:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47EB95884E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11C91C20DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDF9282CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6119067C;
-	Tue, 20 Aug 2024 13:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hFo8jADf"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1111917D8;
+	Tue, 20 Aug 2024 13:52:42 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DEA18FDC0
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B92191477;
+	Tue, 20 Aug 2024 13:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161954; cv=none; b=Luhpt2ylIzzgclW5uJr2CtYbCYQcDfjNJseXUHafGeCk8njz7qvrr5Usr+N0uoKQJv6AxWSVYc8ZAVDVjMzncCMGcwweMwgQu/5/yP3lsktzH17aHdrCgNv2sHTUHviHfB8jCyBtPz8494cMThbKhdgtsfLUNthQLOHn+vuIe74=
+	t=1724161962; cv=none; b=r+CWPyh6/dUvIZV5YBkuUryh02+AqYMnvW1YNc7GhgGjR/bzfpW5IH1DFR3zFWAIUQieI32jKMGQu71nubnlhkFyXFrUqCQRGCREzMlCTRW0at9EwVodf9NkKyh195M86dot/13And+T28Z70kq+4i4EUv/z8vtTyC92Hb441O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161954; c=relaxed/simple;
-	bh=f82abBbg9jguh/VDRR9fMf/RDo5qRnRxbSo6To1gBvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3KHiZX5vRSHL4qRqSFSnKqRePBCKAIBcomA0B8UvuHHSQjMMKyIbjuAO8hFThtrmbgJbJsOAgYSmmWBDRqLsXcsknCuhgMBsbmCSMK+NGxugBPhpReuCOjOWzWY43xz1AbDLeK+DRVI6EU18XoXGQsv/3WlPulpx+CXXY4Y0/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hFo8jADf; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a5074ebb9aso268031985a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1724161949; x=1724766749; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=67FW9uiQtDU02nDB/lzmQFYFhmPDEgPJ7AO31offMAw=;
-        b=hFo8jADfBOD+HifhJCt6ydFK56/UqChBwxwVvH7Zo7qJGyO0WfuVi7w2nQUishSRWs
-         Nnr7ilX8lVmv8c51hdwfYWVbC3l/oQc9xqyDHDn17vuuvLWzPD7k55qi+/6qfip03IyH
-         hTUvrDXNvDKn85A1K0LPXY1Eb074/AQIUaNYdv1bY94EmuoL9PtQQCtM4WrYX/jWXGlk
-         P9C3POc5bCvW/WRUxR6dwv8IJkVYoVPWedOOQJix1faInPE9KuAOi5qi4i7iB57DO9No
-         TxmYUZxAEBfmKPl2V87ziKC8v9LLcGXGT4lWThhPQ1v5vykun7Ciu1fb5odaCl9+bowK
-         39lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724161949; x=1724766749;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=67FW9uiQtDU02nDB/lzmQFYFhmPDEgPJ7AO31offMAw=;
-        b=LWue2bzqZlq229IxY5lIVazesZyBnPjP3sKfIK2sgmwZqqnEsa9599LeUFVCtLWXkv
-         Id4P7iS9ydxdOzxNxqpiPd1smGqYCX031O8+25gOX1xOhPbkzSw5jmnkrxpOaZna0vAQ
-         yOldxLkqr8XQqucFRKaobZa3cXg23tUZGbZ2Wi6b/J0ZZvZsfHyg3GJ5ZioQ+EflbiEg
-         wtmuh4ogyxp995D94CLk7YEXJ8qfrMMRE1AOzHkTo6/nuzwd1V2RKtOCHxkzPfvtauap
-         RifzmD5pD0Crbh67+MJeLzXvLHOR3rYsRMMR0NZU+apo1zFTVD6sDZSUy6vp74lYXnnM
-         7HFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlxA6CuJ1Tnc9UJdqTpjn9jZXS7rNqld/QwIFZsayHobsG2dMaRLR55BlHEZqr+noDaKmzmViEIKZm2Gzqf2YvkMDdtfabQYt1z7ds
-X-Gm-Message-State: AOJu0YzEdAo+gQY/fvB7PDPsO4Rapldmt+fN0ACos11y/bvBw1Q5vhVf
-	btA1zDEHX/avTCJh0gXiG+BkW+L3Trdks+486xWthhC+3WDEKA63GCCvPqAUSHM=
-X-Google-Smtp-Source: AGHT+IEhNIv0Ij2MIGvabq4gRCT+4B/5w3shoRSv5yF3X/yF+fiI0jyRZ5wjshZ3n7mQC+eePGdBkA==
-X-Received: by 2002:a05:620a:1a94:b0:79d:8153:57aa with SMTP id af79cd13be357-7a5069d48b7mr1515182485a.48.1724161949724;
-        Tue, 20 Aug 2024 06:52:29 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff02f89bsm530357085a.23.2024.08.20.06.52.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 06:52:29 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sgPHg-002W0g-35;
-	Tue, 20 Aug 2024 10:52:28 -0300
-Date: Tue, 20 Aug 2024 10:52:28 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Yi Liu <yi.l.liu@intel.com>
-Cc: Vasant Hegde <vasant.hegde@amd.com>,
-	Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-Message-ID: <20240820135228.GX3468552@ziepe.ca>
-References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
- <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
- <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
- <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
- <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
- <20240819123400.GU3468552@ziepe.ca>
- <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
- <72e59734-431e-4eb4-b27c-44eefab3dcb0@amd.com>
- <95473081-db0b-4802-b875-24605ab2ef37@intel.com>
+	s=arc-20240116; t=1724161962; c=relaxed/simple;
+	bh=aoGgvXxneXVWbzG5PcZX/RqdYS4kVM9UKC1ewzOZhP0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fPX9ZwnJEP2JtZhYBwWi5fkC6ud0tGavixJDZntRylH0UFYKdVkdo3C/SeWwVH62hXCVtnBvNrBs8Jb1rn6cYgbpTHsU2NHdPOT/K11m6KEjOk4qc5Xb/IfYtMFIC22oNECrrm1mfmVvYMIQz8S5pLvdaFkfVLG9HMo16EWeqlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wp9pV1vH6z1xvW2;
+	Tue, 20 Aug 2024 21:50:42 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65E611A0188;
+	Tue, 20 Aug 2024 21:52:36 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 20 Aug 2024 21:52:35 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] uprobe: fix comment of uprobe_apply()
+Date: Tue, 20 Aug 2024 21:52:31 +0800
+Message-ID: <20240820135232.1913-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95473081-db0b-4802-b875-24605ab2ef37@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Tue, Aug 20, 2024 at 04:55:26PM +0800, Yi Liu wrote:
+Depending on the argument 'add', uprobe_apply() may be registering or
+unregistering a probe. The current comment misses the description of the
+registration.
 
-> Are we sure that it is ok to enable PRI before enabling ATS?
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ kernel/events/uprobes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I did not see language in the spec prohibiting this order.
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 73cc47708679f0c..c9de255e56e777f 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1201,8 +1201,8 @@ int uprobe_register_refctr(struct inode *inode, loff_t offset,
+ EXPORT_SYMBOL_GPL(uprobe_register_refctr);
+ 
+ /*
+- * uprobe_apply - unregister an already registered probe.
+- * @inode: the file in which the probe has to be removed.
++ * uprobe_apply - register a probe or unregister an already registered probe.
++ * @inode: the file in which the probe has to be placed or removed.
+  * @offset: offset from the start of the file.
+  * @uc: consumer which wants to add more or remove some breakpoints
+  * @add: add or remove the breakpoints
+-- 
+2.34.1
 
-Jason 
 
