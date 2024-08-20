@@ -1,184 +1,189 @@
-Return-Path: <linux-kernel+bounces-294390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC691958D1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9775958D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94330285F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FBA28600B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E351C6880;
-	Tue, 20 Aug 2024 17:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2359719EEC9;
+	Tue, 20 Aug 2024 17:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="nPzowpGQ"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Cf/ZNmFT"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F11C4623
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091AF18C92C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174371; cv=none; b=Zk8OhqwOcwAuSSEUe67ItDOMVMYLpze0lSwKoaX2O/uTEzBxDadjGgcO+OUvP1nyV8lmSPXFsx1dcBSqt5as/P3PEAJnXknlADyzy0O6WvhZX1zcCKYWFkHM7/lana/VreqF1TR2nHN3eNFt2IWCh5Wjp8YIj6rfi+ew2qTSvIo=
+	t=1724174405; cv=none; b=NrLLZt0od6DaFHt1SVCRaMpyH09HG3o3E9fNscqWI2c2uHp84f3HczCXbnXNXa5l9NRMoKzRq3THBWrGiueZfMaHaXjVOhlhKCldPPS4BtB9keMv+bodYq5RBi7TWr1GTRx4bzuKZg5N5hVx6tAoeCVvAyUFqc9UF3/+SVt2Fjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174371; c=relaxed/simple;
-	bh=RPF2mQ37nvJ3f8062+c/Prugaw2ureejisesb3lQUkE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o73QTB85G9DTZ0+fGGuxNt3WkCqG6IX7F4ApoGW3lkhuSKf2uEjp4Mg6LKuirLq4Bd1nIU840V4pcpthUl7gi5UgSicPE2ItGAJLljsZxKzdJQSCy4009MEK4EEN7rNLOoP/kg5MmfM6MgIRYT/WrroQPkYSal3qcHqJdhSJ1xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=nPzowpGQ; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724174356; x=1726766356;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RPF2mQ37nvJ3f8062+c/Prugaw2ureejisesb3lQUkE=;
-	b=nPzowpGQTzm8rtQhaRrU4Uy0ZGAllmLTWuBVtft82YnQ+OCNsVe7TzVGYsFW1qwo
-	yUJdqNQm7qIJt6tzEyIb8fpxNBHk+GP3skQ/j+2f5+RCzJWBrkWU9/Ajqll9d4ZQ
-	mo7u7Y0vAhdvlgWKuVe3dxmq7lTVAaotJJNX584RqFk=;
-X-AuditID: ac14000a-03251700000021bc-18-66c4d014acc3
-Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D1.70.08636.410D4C66; Tue, 20 Aug 2024 19:19:16 +0200 (CEST)
-Received: from llp-varakala.phytec.de (172.25.0.11) by Florix.phytec.de
- (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Tue, 20 Aug
- 2024 19:19:15 +0200
-From: Yashwanth Varakala <y.varakala@phytec.de>
-To: <shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-	<festevam@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<upstream@lists.phytec.de>, <y.varakala@phytec.de>
-Subject: [PATCH v2 3/3] arm64: dts: Add phyBOARD-Pollux dtso for rpmsg
-Date: Tue, 20 Aug 2024 19:18:48 +0200
-Message-ID: <20240820171848.177926-4-y.varakala@phytec.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240820171848.177926-1-y.varakala@phytec.de>
-References: <20240820171848.177926-1-y.varakala@phytec.de>
+	s=arc-20240116; t=1724174405; c=relaxed/simple;
+	bh=ZBjM3oDbzYEB1m2KtRhu294y2K5/gwNRYjPLvCdzvSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hWQZ5U4yohMBTjLHqMTljhqEtVg531zMeweBdydhwod9NwDXgUj8O/fADXqKI7fV5/rcP8in5hJ+XRx470hEsYo1XX1wB1aGLQDzXpdAAbUi4pPovNt8HX9yLOQwv0No8+Z8nDKmIoUo1eVkuhXdCp91k4gM9lU0yZ01oRpynxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Cf/ZNmFT; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1724174395;
+	bh=ZBjM3oDbzYEB1m2KtRhu294y2K5/gwNRYjPLvCdzvSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cf/ZNmFTlf+AaeUWY6AQUeX1a/I4bhArk7ZD+qKF8dEttnoobwDZrAduBtla3W9+v
+	 Eq1CjOqmvPgV5iOWE6k0wVtiyK3JUO1FxpGdY2Lbt0FcY6fZgtltQ/WKM0uv4VGKt3
+	 wb20U4WUEANKeFrbQqM4zkxovpdlbHEWtO8U4tAr+7d4XDq88o22FX4Jwc4W88ZfzB
+	 aGqR4UMjNKL9Y11MNeCe2CCwODWeeFaNxklz6UkPtzGWSk5Ueq/OnlVZEAuzS4ILG6
+	 AUo/8Cr6z7Rel73W7b9wqN/CflwZih1IdniBiiJv2vAEY366PjRC2GjJgatfoCDwCK
+	 lGVM0UC4//AFg==
+Received: from [192.168.1.5] (109.56.13.38.mobile.3.dk [109.56.13.38])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WpGRs1Bgzz1HsD;
+	Tue, 20 Aug 2024 13:19:53 -0400 (EDT)
+Message-ID: <1207b505-0842-40cc-a581-44e595f67601@efficios.com>
+Date: Tue, 20 Aug 2024 19:19:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Florix.phytec.de
- (172.25.0.13)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42JZI8nAqyty4UiawYVHfBZr9p5jsph/5Byr
-	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
-	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CV0d31gbVg
-	hWTF/DWdTA2M+0W7GDk5JARMJP7c2cnUxcjFISSwhEmiu7OZHcJ5yijxq/EHM0gVm4C+xIp1
-	i1hBEiICyxglvp3uZgFxmAW2M0qcmPiOCaRKWMBN4vyuHewgNouAqsSc+1/BbF4BK4lN838y
-	QeyTl9h/8CzQVA4OTgFriVU/M0DCQkAl+1fvYIQoF5Q4OfMJC4jNDFTevHU2M4QtIXHwxQtm
-	iHpFifcPO9hhRk4795oZwg6VmL/mO/sERqFZSEbNQjJqFpJRCxiZVzEK5WYmZ6cWZWbrFWRU
-	lqQm66WkbmIExZMIA9cOxr45HocYmTgYDzFKcDArifB2vzyYJsSbklhZlVqUH19UmpNafIhR
-	moNFSZx3dUdwqpBAemJJanZqakFqEUyWiYNTqoHRwmXZprcXnm6/3lLg/0Lwd4bnx6pyL92S
-	mVn/X1xT3FNruCrejePFtzVaWQxHzUI7+K7F1gU9m7i71Pl1PotEl/nTwtigR9JS7f4iqfPz
-	axa2VfI/NjStq2GwUnom/LpAWcqzztsk9tCiXwL5DxPWftv0XWX/S9bZFnN+7l1w+626y3XF
-	MmMlluKMREMt5qLiRAAuPywalQIAAA==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/5] lib: Implement
+ find_{first,next,nth}_notandnot_bit, find_first_andnot_bit
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
+ Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
+ <20240819142406.339084-2-mathieu.desnoyers@efficios.com>
+ <ZsOatkpPqzMF6B_c@yury-ThinkPad>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <ZsOatkpPqzMF6B_c@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Adds a devicetree containing reserved memory regions used for intercore
-communication between A53 and M7 cores.
+On 2024-08-19 21:19, Yury Norov wrote:
+[...[> Can you split rewording of existing comments out to a separate patch
+> please?
 
-Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
----
-Changes in v2:
-- Updated license.
-- Updated devicetree properties.
-- Replaced imx8mp-cm7 with core-m7 node name.
-- Updated reserved-memory node unit addresses in ascending order.
+Will do.
 
- arch/arm64/boot/dts/freescale/Makefile        |  2 +
- .../dts/freescale/imx8mp-phycore-rpmsg.dtso   | 55 +++++++++++++++++++
- 2 files changed, 57 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
+> 
+>>    */
+>>   static inline
+>>   unsigned long find_next_andnot_bit(const unsigned long *addr1,
+>> @@ -131,6 +138,36 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
+>>   }
+>>   #endif
+>>   
+>> +#ifndef find_next_notandnot_bit
+> 
+> Don't protect new functions. This is only for those having arch
+> implementation, and it's only armv7 now.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index dedea4b5c319..80cc87d50301 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -177,9 +177,11 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
- imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
- imx8mp-phyboard-pollux-rdk-no-rtc-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-rtc.dtbo
- imx8mp-phyboard-pollux-rdk-no-spiflash-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-spiflash.dtbo
-+imx8mp-phyboard-pollux-rdk-rpmsg-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-rpmsg.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-rtc.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-spiflash.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-rpmsg.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
-new file mode 100644
-index 000000000000..f9fba558dcb0
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (C) 2024 PHYTEC Messtechnik GmbH
-+ * Author: Dominik Haller <d.haller@phytec.de>
-+ * 	   Cem Tenruh <c.tenruh@phytec.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+
-+&{/} {
-+	core-m7 {
-+		compatible = "fsl,imx8mn-cm7";
-+		clocks = <&clk IMX8MP_CLK_M7_DIV>;
-+		mboxes = <&mu 0 1>,
-+			<&mu 1 1>,
-+			<&mu 3 1>;
-+		mbox-names = "tx", "rx", "rxdb";
-+		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
-+	};
-+
-+	reserved-memory {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		vdev0vring0: vdev0vring0@55000000 {
-+			no-map;
-+			reg = <0 0x55000000 0 0x8000>;
-+		};
-+
-+		vdev0vring1: vdev0vring1@55008000 {
-+			no-map;
-+			reg = <0 0x55008000 0 0x8000>;
-+		};
-+
-+		rsc_table: rsc-table@550ff000 {
-+			no-map;
-+			reg = <0 0x550ff000 0 0x1000>;
-+		};
-+
-+		vdevbuffer: vdevbuffer@55400000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0 0x55400000 0 0x100000>;
-+		};
-+
-+		m7_reserved: m7@80000000 {
-+			no-map;
-+			reg = <0 0x80000000 0 0x1000000>;
-+		};
-+	};
-+};
+OK
+
+> 
+>> +/**
+>> + * find_next_notandnot_bit - find the next bit cleared in both *addr1 and *addr2
+>> + * @addr1: The first address to base the search on
+>> + * @addr2: The second address to base the search on
+>> + * @size: The bitmap size in bits
+>> + * @offset: The bitnumber to start searching at
+>> + *
+>> + * Returns the bit number for the next bit cleared in both *addr1 and *addr2.
+>> + * If no such bits are found, returns @size.
+>> + */
+>> +static inline
+>> +unsigned long find_next_notandnot_bit(const unsigned long *addr1,
+>> +		const unsigned long *addr2, unsigned long size,
+>> +		unsigned long offset)
+>> +{
+>> +	if (small_const_nbits(size)) {
+>> +		unsigned long val;
+>> +
+>> +		if (unlikely(offset >= size))
+>> +			return size;
+>> +
+>> +		val = (~*addr1) & (~*addr2) & GENMASK(size - 1, offset);
+>> +		return val ? __ffs(val) : size;
+>> +	}
+>> +
+>> +	return _find_next_notandnot_bit(addr1, addr2, size, offset);
+>> +}
+>> +#endif
+>> +
+> 
+> It's not said explicitly, but some naming conventions exist around bitmap
+> searching.
+> 
+> If you're looking for a clear (unset) bit in a mask, you'd use a 'zero'
+> modifier. We have only 2 such functions now: find_{first,next}_zero_bit,
+> both taking one bitmap. I think it's time to extend this rule for
+> many bitmaps and write down the naming rules.
+> 
+> With the following, the find_next_notandnot_bit() should be named
+> like; find_next_zero_and_bit(). It's not perfect, but still sounds
+> better to me than 'notandnot' thing.
+> 
+> If we search for a set bit in bitmap, we use find_first or find_next
+> prefixes:
+>   - find_first_bit;
+>   - find_next_bit.
+> 
+> If we'd like to pass an additional bitmap to AND, OR or XOR with the
+> 1st bitmap, we provide as corresponding logical operation as
+> suffix(es):
+>   - find_first_and_bit(b1, b2) : b1 & b2;
+>   - find _next_and_or_bit(b1, b2, b3) : b1 & b2 | b3.
+> 
+> If additional bitmap must be inverted, we provide a 'not' after the
+> corresponding logical operation:
+>   - find_first_andnot_bit(b1, b2) : b1 & ~b2;
+>   - find _next_and_ornot_bit(b1, b2, b3) : b1 & b2 | ~b3.
+> 
+> If all bitmaps have to be inverted, or in other words, we are looking
+> for an unset bit in a bitmap or a combination of bitmaps, we provide
+> a 'zero' prefix in the function name:
+>   - find_next_zero_bit;
+>   - find_next_zero_and_bit;
+>   - find_next_zero_and_or_bit;
+> 
+> Functions having 'zero' prefix should not negate bitmaps (should not
+> have 'not' in names) because of commutative property. For example,
+> find_next_zero_andnot_bit(), which is ~b1 & ~(~b2) is redundant
+> because it's the same as find_next_andnot_bit() : b2 & ~b1.
+> 
+> Iterators over unset bits in bitmap(s) (those based on 'zero' search
+> functions) should have a 'clear' prefix in the name:
+>   - for_each_clear_bit;
+>   - for_each_clear_bit_from;
+> 
+> I should probably put the above on top of the file...
+
+I'll do this for the next round. Yes, it would be good to add
+those explanations on top of the file.
+
+Thanks for the review !
+
+Mathieu
+
+> 
+> Thanks,
+> Yury
+
 -- 
-2.34.1
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
