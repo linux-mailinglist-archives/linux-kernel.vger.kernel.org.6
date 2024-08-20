@@ -1,103 +1,70 @@
-Return-Path: <linux-kernel+bounces-294441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7CF958DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE6B958DB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516EB1C21BA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCE01C21A85
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099771C5793;
-	Tue, 20 Aug 2024 17:59:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD181C2335;
+	Tue, 20 Aug 2024 17:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdPNo1mA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444AD1C2335
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1FE195985;
+	Tue, 20 Aug 2024 17:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724176764; cv=none; b=DMT1IYtUo4LpEuXhmdRG85i2VFXo6HjA0ZdxiYXtjT7RQoPd3+NSz4Ea9zSXkpnzILzyJbAUgLXCU5pgS68ISMIjlLr+GvdkwXyx7jP15OXy6MokP88VMvuH77QgzLgGrm89iPnL4WwEM2jQ0enjGlhUdnqOxeUPHI74SsxDWZM=
+	t=1724176787; cv=none; b=hXXZq8hr9D9b6djZ62+8C9h8QSBUbFh4y0Tz0EZ7lmZRiNRm+z7fkLTKHEGsl2jizpqQRP6XjJ3Re3jLTrQQrt9fYiX2z8q+xjCs9yRz+SG3fGFazHJAHKXmJUgGeMm19mjVevw+6ULYFe7CIiAQmi4S/NKeUgExI9R0eiHRQjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724176764; c=relaxed/simple;
-	bh=7Hac1aUiPKCXSTl46nGmc6RX478GnP3EynB21btfunA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUKzsmcFUF5v64sOxXbbdokCMVlcPdCHw45wFt6dH4rolnu68Q10XHavu7UD04UcPVcdMgKZ0mDeWL0/HSm7V2thiy4kWMgHqRuwNnyEd35hbw/Z/zMvqe+PnoHVpWkJCSyROa/TuisZs3Gwg8B6TQvdJcnf1psG6RV5wXUK+xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sgT8R-0006Uq-03; Tue, 20 Aug 2024 19:59:11 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sgT8N-001pCX-Ax; Tue, 20 Aug 2024 19:59:07 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sgT8N-00DiEr-0i;
-	Tue, 20 Aug 2024 19:59:07 +0200
-Date: Tue, 20 Aug 2024 19:59:07 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v2 3/3] phy: dp83td510: Utilize ALCD for cable
- length measurement when link is active
-Message-ID: <ZsTZa5EsK9y32Yl3@pengutronix.de>
-References: <20240820101256.1506460-1-o.rempel@pengutronix.de>
- <20240820101256.1506460-4-o.rempel@pengutronix.de>
- <a02698f3-94b6-4e6c-b13a-7fbeba2ce42f@lunn.ch>
+	s=arc-20240116; t=1724176787; c=relaxed/simple;
+	bh=nRPHNiD1RaX4VxeXm1tZPqPZgNEJBW4SmXzGIHPHDtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=V/jVlUge7cnBBEHF03wBDi0jEzcVStMbK5NkRQw8NWoXG+2PsXZ/x4WGYaspTjO/XJFLtt45yuKBajc/WlOvrsIMkVGH5pwXq5fFdoF+HVrVbMe6f2a936k5nTpBlW0gc+F0QLCEqm/L/zufvtyqo/vCwDWgCuRjHcmPfk2WYTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdPNo1mA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E89C4AF0C;
+	Tue, 20 Aug 2024 17:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724176786;
+	bh=nRPHNiD1RaX4VxeXm1tZPqPZgNEJBW4SmXzGIHPHDtU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IdPNo1mAFTLG0OkS+1GfXjT1csQO0BfcBqcxisZEXKxOyuXA4S1fdzwnzQs1RTXBK
+	 R01DT4zN1dcfYQKqoWdXXIMRBylFu3WWJjN2VvpKpPakbVoiuyKCltCqIiF73rLRTG
+	 V7fN3qqhB3G279cfmkUopTAQNUy1+rHNx0SoCB0RwCXaMFQhmAVT94moeKjonqO5i3
+	 QQ/IT78PGxfC3HicxV+5JHWSrktaBebu4BCp7JsMZb0t9eXZ9DRebzeccZeC5otyWv
+	 6yDpBDtwc118EgRblmFyAZpBNP4doPYfHwL+bpPgkr4EFdHhVzcamxvHf8UMjdOLbi
+	 V29+ujgMrJPKg==
+Date: Tue, 20 Aug 2024 10:59:44 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: conor@kernel.org, ojeda@kernel.org
+Subject: Prebuilt LLVM 19.1.0 uploaded
+Message-ID: <20240820175944.GA2015979@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a02698f3-94b6-4e6c-b13a-7fbeba2ce42f@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2024 at 06:49:00PM +0200, Andrew Lunn wrote:
-> > +static int dp83td510_cable_test_get_status(struct phy_device *phydev,
-> > +					   bool *finished)
-> > +{
-> > +	*finished = false;
-> > +
-> > +	if (!phydev->link)
-> > +		return dp83td510_cable_test_get_tdr_status(phydev, finished);
-> > +
-> > +	return dp83td510_cable_test_get_alcd_status(phydev, finished);
-> 
-> Sorry, missed this earlier. It seems like there is a race here. It
-> could be the cable test was started without link, but when phylib
-> polls a few seconds later link could of established. Will valid ALCD
-> results be returned?
+Hi all,
 
-Hm.. probably not. In this case the best option I have is to store
-results in the priv. Will it be acceptable?
+I have built and uploaded the third LLVM 19.1.0 release candidate to
+https://mirrors.edge.kernel.org/pub/tools/llvm/.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+If there are any issues found, please let us know via email or
+https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
+opportunity to get them fixed in main and backported before the initial
+19.1.0 release happens.
+
+Cheers,
+Nathan
 
