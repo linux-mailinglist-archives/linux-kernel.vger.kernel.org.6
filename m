@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-293202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F35957BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:44:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1112A957BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA111C22EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:44:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41E3283EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DB753368;
-	Tue, 20 Aug 2024 03:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a7KB7wgK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC13839AD6;
+	Tue, 20 Aug 2024 03:46:01 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4122E634;
-	Tue, 20 Aug 2024 03:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF672F2A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724125443; cv=none; b=mw+TCIPStKCLnsxZ8hK+8izolPAvdcGlQLTsvCZ/b+3+hmmfNRKt6rlZoCkGjDKTbCol3ta+edacqI7f7AlFGgv4VUQxUMmkAoL8E8audJem+Sl6xSUJb0vJDznFwT2vGkWGvE337Y++lLF1EzOwuDDLl8HakSTOnaghFtHZIx0=
+	t=1724125561; cv=none; b=IUurGm7tg6DppQDmdQ5ckkhAZJbpph3Hkyl1yIPGieQaBhVIEZY3CATXx6UUWtLurJxxcxpItNRYRsTQrnQlM1qlyz+f38ODwHJKoUmsJhPQ8y9NVNTbmnDMd8UcQqACGGwKG+EHA0GkBtJLOPPkwXiSb+/J01xvh0JXe//nTU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724125443; c=relaxed/simple;
-	bh=bX70gTcou+4R98xJ2Jin+VZVAqjyNeUIGBK2D/BWAso=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cQG6E88h8NLB5J2GCdN7KIz1+khzN8ze3zGv7t3PKpGwEX7lyta33f99Z2AP7Psl3IXHR+df7SOC7D+Y22xMPn9aHIAaqtqoBuZcAmGl+GNCK8gQl2MG9Sq7xtgUmpoI55Toat017n062lQfGyz0FE9s18P50o65tRo8R6DnbXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=a7KB7wgK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724125437;
-	bh=Q87pj78yQeYExoXr/H6wFYhMvlf6D47a1BXi7IpUE/4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=a7KB7wgKF8Q4Bcb59FpDmi5UZ93qjmJSewdUpRnep2ZYTqHkGVZlKi63knPmLZxE+
-	 UyOcIxBiUQ+bMZuz08f1c6G3G5iQhyM5OWcnQSlIQIWBuk9K6nR2bO3e4Ot+CxNe9l
-	 KuSWDnA/D/wYtCyNFIiRB1qklky6/udC2nSVTaP5zsPRRWUYJmdgH8bIMSgMKmJJ+T
-	 c7Mxm80BiAEziZFQK+sltdw0iIIDLQGoNMmRURqioLpHYql9PgoplPx/bxaZCwlbFx
-	 MdAMtQcL57ZaRPji5Nd4HetM2rleEtWPW+CCxwYiNrz9940lFdgPsEV2JS0L8HT4bX
-	 XFoR+41WnFp9Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnwLN0x60z4wcF;
-	Tue, 20 Aug 2024 13:43:55 +1000 (AEST)
-Date: Tue, 20 Aug 2024 13:43:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
-Cc: Jithu Joseph <jithu.joseph@intel.com>, Kuppuswamy Sathyanarayanan
- <sathyanarayanan.kuppuswamy@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drivers-x86 tree
-Message-ID: <20240820134354.2aec355d@canb.auug.org.au>
+	s=arc-20240116; t=1724125561; c=relaxed/simple;
+	bh=UlxGhSn46ff6+hU2dEmluyEWnh1+72+xDVfiYcpQETA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ml7PP8ZU2RBE/5vYzt0rPGiu+E3UK3OoE5akFDeriXTJpZA+iM2P9wtf/VyXQbVLlWxtyWdW4JUV3hFRTaH3xjRqHorkpqM4ObJTi+9HiqcWlGLbWRTCbL9ZJn9zW+kecvX3ET3SE0m94nEiaPNd+PHl+y7qTlWt1cPUkBs833o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WnwGt5vK8z1S8KR;
+	Tue, 20 Aug 2024 11:40:54 +0800 (CST)
+Received: from kwepemm600017.china.huawei.com (unknown [7.193.23.234])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7B09814035E;
+	Tue, 20 Aug 2024 11:45:54 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemm600017.china.huawei.com (7.193.23.234) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 11:45:52 +0800
+Message-ID: <9e27aeee-0e2d-7034-5afc-42f2f14eb02b@huawei.com>
+Date: Tue, 20 Aug 2024 11:45:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bYQ6iLeq2T6U=vjvAbTmm.m";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v12 6/6] arm64: send SIGBUS to user process for SEA
+ exception
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
+	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
+	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
+ Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
+	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
+	<guohanjun@huawei.com>
+References: <20240528085915.1955987-1-tongtiangen@huawei.com>
+ <20240528085915.1955987-7-tongtiangen@huawei.com>
+ <20240819130809.0000731c@Huawei.com>
+From: Tong Tiangen <tongtiangen@huawei.com>
+In-Reply-To: <20240819130809.0000731c@Huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600017.china.huawei.com (7.193.23.234)
 
---Sig_/bYQ6iLeq2T6U=vjvAbTmm.m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the drivers-x86 tree, today's linux-next build (htmldocs)
-produced this warning:
+在 2024/8/19 20:08, Jonathan Cameron 写道:
+> On Tue, 28 May 2024 16:59:15 +0800
+> Tong Tiangen <tongtiangen@huawei.com> wrote:
+> 
+>> For SEA exception, kernel require take some action to recover from memory
+>> error, such as isolate poison page adn kill failure thread, which are done
+>> in memory_failure().
+>>
+>> During our test, the failure thread cannot be killed due to this issue[1],
+>> Here, I temporarily workaround this issue by sending signals to user
+>> processes in do_sea(). After [1] is merged, this patch can be rolled back
+>> or the SIGBUS will be sent repeated.
+>>
+>> [1]https://lore.kernel.org/lkml/20240204080144.7977-1-xueshuai@linux.alibaba.com/
+> What's the status of that one?  Seems better to help get that in than
+> carry this.
+> 
+> Jonathan
+> .
 
-Documentation/arch/x86/ifs:2: /home/sfr/next/next/drivers/platform/x86/inte=
-l/ifs/ifs.h:131: WARNING: Title underline too short.
+That patch set has not been incorporated yet. The latest one is still
+v11.
 
-Structural Based Functional Test at Field (SBAF):
-------------------------------------------------
+The consideration here was to ensure the functional integrity of
+this feature. Considering that this may cause confusion, it is not
+appropriate to make this temporary modification here. Otherwise, this
+patch will not be included.  Related impacts are described in patch 0.
 
-Introduced by commit
+Thanks,
+Tong.
 
-  0a3e4e94d137 ("platform/x86/intel/ifs: Add SBAF test image loading suppor=
-t")
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bYQ6iLeq2T6U=vjvAbTmm.m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbEEPoACgkQAVBC80lX
-0Gy0TQgAkzyRvBJHvmOWnCSL0mhWa05J4va+uPlElKg+K27EzXRvfGAquI8eGKjJ
-/jU76W+4ysDqanh3ZPgfNs6sGkxOu0DcuIVL/xvrZSaEyI73ZJ5PjVRLmHYYWnW4
-cAP8a7N2RSLHuZJPqwDdcsLuUFY50Yf6uElAarTRCdvVH5sAx7TgcByuPzzNKo3B
-LiR+1JPXRzXXtAEqiSdorWfSOUlsahVUlkG44HsHBjAv+KAM2RqrivenR8dD0SX2
-wcnxHDJt/mJ6ua9/W7fzJbuS1y/NHyznQgl+sk/uoN4+6jDbur9kS5afQ4N4x/mE
-lwz24eyogMv7xAhbQA2GW5BSWFN+bw==
-=ZtWH
------END PGP SIGNATURE-----
-
---Sig_/bYQ6iLeq2T6U=vjvAbTmm.m--
 
