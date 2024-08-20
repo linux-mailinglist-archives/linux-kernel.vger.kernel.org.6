@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-294561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF95958F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:42:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8610A958F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FC02857EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4101F231C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976718A6B5;
-	Tue, 20 Aug 2024 20:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649C81C3F14;
+	Tue, 20 Aug 2024 20:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLa3fGY8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCkuD9mv"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0186165EE1;
-	Tue, 20 Aug 2024 20:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BA7165EE1;
+	Tue, 20 Aug 2024 20:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186552; cv=none; b=oAfuxl+cTULZFLS0bLYhFIPnZn7+LgVMWwx3fHzhoSV/opRgvV5FzBCTJtkMBxFk7qI5vkuy+I/5o/RTaiHBMXpoMmuJnP2lZqBFgpJqC5l4//M13A7/nlchP3KRPUZ/4BJ/L/BBPE07xErTyBuk/NTw6aFHb0wxqI30FAC3FjY=
+	t=1724186637; cv=none; b=LY8OpqRnp3OXE7lCbw4qjCqlADQi+ljc5Zmb0+wxnTYhKPmrJk3aLmLL3CqtDL+SZ1O2DVAT8LNG1ex4I0CYZLekhwj1k4BWTJqzQ0rM5UYBH5Wn5qf6sWsL4wPUTuIcmA/qJgDqtOanuEfBqhw9SEOoDh4nc5uhfW155l2GkcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186552; c=relaxed/simple;
-	bh=BVOerJkEHEr7Ozcu9FLEzXmnShEbjbpstZNKshq1GLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S/L3JFOrOVO8x4kVCW6V7YRtsStVvRA9CHKs9YVw5T53J++vBKoUycrM+L5RpMOrbkJbEYvKCu9/LaeKipZGpgZaW2+cJDIX8NUQisX0GWOXe8sLj385n5B7ptzGW1e0lPPrw00ZXeyT49aPEy1rgatWtjU7P2nJtVl0y9LMhQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLa3fGY8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05919C4AF0B;
-	Tue, 20 Aug 2024 20:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724186551;
-	bh=BVOerJkEHEr7Ozcu9FLEzXmnShEbjbpstZNKshq1GLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLa3fGY8hJ+aYG1aJjPl+JK9oAIVV9+fol053fCbnwxsDpkh/bEXOXNFly5dPo75c
-	 a6qkWhT1F+zUpwP8xeV1qaalQ5AOh+m+6Fk/4TwAJ7zNzi5qzSu3Ioqz5NOE4c4e/9
-	 Lq0I3yxBdvs7dXv8ZH3EwboIKX+91Jouf8QK7EOufgTHebdIV/VUDQuahbMVLnuuw9
-	 49Nlx06WP1z5EJWv1Xm+Bb7FWm4WlBIA9YKrdkiLjth6zlqJp1hjOrjHPH1ekbBjNN
-	 6L8iAY9LxBNB974kDrPkN3n0NPzX9Nw9/mgAyeDlUQmK6vlOuv/rnOcCwczXIarT/Y
-	 kRP4t2ctKKmNA==
-Date: Tue, 20 Aug 2024 17:42:28 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: Re: [PATCH] perf annotate-data: Set bitfield member offset and size
- properly
-Message-ID: <ZsT_tHyuwb8L3KVB@x1>
-References: <20240815223823.2402285-1-namhyung@kernel.org>
+	s=arc-20240116; t=1724186637; c=relaxed/simple;
+	bh=JLwJvZEJ4FQcJlsdkCdftpn7WlsfUPPZSu64ISMQJ9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lhaplR2hu0wF1MfXJuN7AKr+3p27AvGdEDERy7rIOVOUtfhhGjfIIQkmajzbKvxwn8tXgYhBwuj0ubc0uVgiJR5E+8ULuxOYFn5Hv8E8mALSo1PP+V5sh/k8ispJgykl4I241lSZXAv22+6FKQy6Oyg3jpxxq2Q0L76i7WISRCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCkuD9mv; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so761996966b.1;
+        Tue, 20 Aug 2024 13:43:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724186634; x=1724791434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yY4vNetXYvsnkw2DFC8H1kH4gA8u7ARIbqvnE6sG1Cc=;
+        b=QCkuD9mvMGQcd1nZbd1hiUOePP0tmmCEnlxlBVyjVbzY93fNI+g/0PZXKQkUEqOPZx
+         bDWgUAxwp6o5GuZNhrsQOT+dUs6Se+dIN8O4837dc/dW9mj6zRDx/y8FfS3tthm6Sa7I
+         mJQiF7SoNkn8X5bVj16Gqg1CBY47SbG7xbSiGxvk7KRlMumQmb9/0jSyo5Vc150wXHlb
+         eiwfVfhggXgLSXju0oh2ZvjT6GOMO54JSmz5yueUU40RTvkxXZ+7CkPw9pns3u2r1pyX
+         1iZGtTGCLqvYXN3mgWG8Qv2B9SBwc1QjTPC67nGZiwxOeiw0rlC7GxNVIUWYWFQSEESQ
+         n4PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724186634; x=1724791434;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yY4vNetXYvsnkw2DFC8H1kH4gA8u7ARIbqvnE6sG1Cc=;
+        b=Mq/Vjz5FCLiiFnGdH2cEe30Cpl1iTB6eYYkY9g6IPeg6sbcMaEp1R5lk6PakzNJh6+
+         I9tkF357Ej/a9uSzYXyJ9uESMzME6wiXf7cqXgBtg2WvmF/erItoeHcfdRkDYtaCD1dT
+         esF8FQPd4ITl91l6FlV3/h8jaK20UCdI50Rram5TWQYsTuqPPUO2FuinjdX7BxILp6pt
+         sfaDWpCKfA69QoYxUfz1TOQMjYU+cL7aBkufA1HN9NSPXUSo7tzL/g0x7/KqhQu04R5G
+         OyUXmYNvOKLmOfi4KmwEZO7WcpBkreSNN7l5SdeArRHAxSEREm1pxloTG5Pa9AghJG1+
+         GbLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1JvKTqD1DpntZoMJrcRxPlgHrAkzgdV6N7IiWHPzPATiAVWhfVQc3FKLQFwUl7mUPVZ4QUEnUZT7XCtc=@vger.kernel.org, AJvYcCUXvdYEb6Xj6RFviI33y9wXLOXBLyKc7qSo0ER6bK1o0kuzIQybJtRDIumRduI9ms3ZaY70BSMXmUrD2Qo1@vger.kernel.org, AJvYcCVg5VkpwPmoYzcmf4r+Vq5ZmmoWwa5KtUhHqZmgPw8OTA6ppLeFeIo4yaHAqXV7ajMdR8x2SazcZ1HvUm+a@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzni/+n3No/Au74o7WhgFbUEHUXEMcvn6681rU3IaGiFm6uzJVT
+	GorNR8iwLZ2EEhVROjjB3c3H8Kz+TJXZR66DSIjglJOyUlTZ/CAh
+X-Google-Smtp-Source: AGHT+IFT9OxSMHaf7wcsfNkvmOqHVu8Tc7SNr/lwJLFjb8ZxbaJb78dYme0DOGlzA7c3aDg+TR3IWQ==
+X-Received: by 2002:a17:907:944d:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a866f2c3804mr11419766b.21.1724186634040;
+        Tue, 20 Aug 2024 13:43:54 -0700 (PDT)
+Received: from [192.168.1.19] (79-100-234-73.ip.btc-net.bg. [79.100.234.73])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c689dsm805712166b.37.2024.08.20.13.43.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 13:43:53 -0700 (PDT)
+Message-ID: <c5141c18-3f7b-41ac-a064-9911873d0bf9@gmail.com>
+Date: Tue, 20 Aug 2024 23:43:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815223823.2402285-1-namhyung@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: venus: firmware: Use
+ iommu_paging_domain_alloc()
+To: Lu Baolu <baolu.lu@linux.intel.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+References: <20240812072105.9578-1-baolu.lu@linux.intel.com>
+ <20240812072105.9578-2-baolu.lu@linux.intel.com>
+Content-Language: en-US, bg-BG
+From: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+In-Reply-To: <20240812072105.9578-2-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 03:38:23PM -0700, Namhyung Kim wrote:
-> The bitfield members might not have DW_AT_data_member_location.  Let's
-> use DW_AT_data_bit_offset to set the member offset correct.  Also use
-> DW_AT_bit_size for the name like in a C program.
+Hi,
 
-Thanks, applied and added the series of steps to reproduce your results:
+Thank you for the patch!
 
-    Commiter notes:
-    
-    Collect some data:
-    
-      root@number:~# perf mem record -a --ldlat 5 -- ping -s 8193 -f 192.168.86.1
-      Memory events are enabled on a subset of CPUs: 16-27
-      PING 192.168.86.1 (192.168.86.1) 8193(8221) bytes of data.
-      .^C
-      --- 192.168.86.1 ping statistics ---
-      13881 packets transmitted, 13880 received, 0.00720409% packet loss, time 8664ms
-      rtt min/avg/max/mdev = 0.510/0.599/7.768/0.115 ms, ipg/ewma 0.624/0.593 ms
-      [ perf record: Woken up 8 times to write data ]
-      [ perf record: Captured and wrote 14.877 MB perf.data (46785 samples) ]
-    
-      root@number:~#
-      root@number:~# perf evlist
-      cpu_atom/mem-loads,ldlat=5/P
-      cpu_atom/mem-stores/P
-      dummy:u
-      root@number:~# perf evlist -v
-      cpu_atom/mem-loads,ldlat=5/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x7
-      cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-      dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-      root@number:~#
-    
-    Ok, now lets see what changes from before this patch to after it:
-    
-      root@number:~# perf annotate --data-type > /tmp/before
-    
-    Apply the patch, build:
-    
-      root@number:~# perf annotate --data-type > /tmp/after
-    
-    The first hunk of the diff, for a glib data structure, in userspace,
-    look at those bitfields:
-    
-      root@number:~# diff -u10 /tmp/before /tmp/after | head -20
-      --- /tmp/before       2024-08-20 17:29:58.306765780 -0300
-      +++ /tmp/after        2024-08-20 17:33:13.210582596 -0300
-      @@ -163,22 +163,22 @@
-    
-       Annotate type: 'GHashTable' in /usr/lib64/libglib-2.0.so.0.8000.3 (1 samples):
-       ============================================================================
-        Percent     offset       size  field
-         100.00          0         96  GHashTable    {
-           0.00          0          8      gsize    size;
-           0.00          8          4      gint     mod;
-         100.00         12          4      guint    mask;
-           0.00         16          4      guint    nnodes;
-           0.00         20          4      guint    noccupied;
-      -    0.00          0          4      guint    have_big_keys;
-      -    0.00          0          4      guint    have_big_values;
-      +    0.00         24          1      guint    have_big_keys:1;
-      +    0.00         24          1      guint    have_big_values:1;
-           0.00         32          8      gpointer keys;
-           0.00         40          8      guint*   hashes;
-           0.00         48          8      gpointer values;
-      root@number:~#
-    
-    As advertised :-)
-    
-    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+On 12.08.24 г. 10:21 ч., Lu Baolu wrote:
+> An iommu domain is allocated in venus_firmware_init() and is attached to
+> core->fw.dev in the same function. Use iommu_paging_domain_alloc() to
+> make it explicit.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-10-baolu.lu@linux.intel.com
+> ---
+>   drivers/media/platform/qcom/venus/firmware.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index fe7da2b30482..66a18830e66d 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.ced
 
+Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+
+I'll take the patch through linux-media tree.
+
+> @@ -316,10 +316,10 @@ int venus_firmware_init(struct venus_core *core)
+>   
+>   	core->fw.dev = &pdev->dev;
+>   
+> -	iommu_dom = iommu_domain_alloc(&platform_bus_type);
+> -	if (!iommu_dom) {
+> +	iommu_dom = iommu_paging_domain_alloc(core->fw.dev);
+> +	if (IS_ERR(iommu_dom)) {
+>   		dev_err(core->fw.dev, "Failed to allocate iommu domain\n");
+> -		ret = -ENOMEM;
+> +		ret = PTR_ERR(iommu_dom);
+>   		goto err_unregister;
+>   	}
+>   
+
+-- 
+regards,
+Stan
 
