@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-294407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C9C958D4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1DC958D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3AE1F25174
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA7E1C2292F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24FF1C824D;
-	Tue, 20 Aug 2024 17:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF21D1C579D;
+	Tue, 20 Aug 2024 17:25:16 +0000 (UTC)
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D937B1C0DCA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6991BDA8C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174712; cv=none; b=oQjs4QlVbzskbLcH5BMcMRKK4xmqPKiT93o8bdtIHICm20D9MoWu6oJDXGcHY/7HW/TDXiyBsBz/85W8snUTTIGK2Kj6I3gbZCmzPFMYRYuQQdMJEsD2lvpbA2EeeQjOl43CpcpUJDj/2/41RHfKHbSboihtGPR6TPbTqNYsaJg=
+	t=1724174716; cv=none; b=KmcKy7fWz8CIiRA6GBazJwFuiduHCEss2zYXLM+zKbBHB/qphS00eYh9VPYLl944eOpaBcHwmAR3EEYiqn+k/IBDFGwqXXESIlvMGDcHfth8mqiowYabhIiUcqklXrL8GX7YSDCcCgz0v+3egjT1gjipi/EOBCI9NMimuA/TApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174712; c=relaxed/simple;
-	bh=xWISBC+HZWeT+7sbGlnxkJbaWSL3lIRYp+GxGM24Vcg=;
+	s=arc-20240116; t=1724174716; c=relaxed/simple;
+	bh=GyFJyrOA257p/8jUZ/CSVQAGtRaML3IGhaLgOxyHLTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ByjB46VQpKz+qke5eRuOxZQePPC3HMKO0ZjQoWTKC3EoQlb4+7khnFSwl2+t3p6yrLbwh35aNchl8m2N2m2qeZxNWC6McPTUw8p8oT+VDBhTmbXsnsRrn5goLgwXFOW2NjMtq6oC+12xQG1XC90I3o9xJC3pnqhZJf+/KXLZc7Q=
+	 MIME-Version; b=Vh3j5yJg8j3H2mcMCIrPmDom+uflD1nsaTlYm64c5ltZgmtjHV6dgub2npgOw4+X4YViDdK1ZpnnXQWeNTJA5GaFksttO02UEQTw5VeOa+HRp2acAsF5nE5RGspRbsf5MOx4x49mQOVF8ZMnfvlldrrPXwKcwwc7vfqJMNS816g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WpGYJ5wD8z9sSN;
-	Tue, 20 Aug 2024 19:24:36 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4WpGYL0TBXz9sSR;
+	Tue, 20 Aug 2024 19:24:38 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id jYC3KazUz0SB; Tue, 20 Aug 2024 19:24:36 +0200 (CEST)
+	with ESMTP id Y7PUeo80Ixik; Tue, 20 Aug 2024 19:24:37 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WpGY93PQSz9sSR;
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WpGY95kKmz9sSZ;
 	Tue, 20 Aug 2024 19:24:29 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F28B8B779;
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B5A5B8B763;
 	Tue, 20 Aug 2024 19:24:29 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Vlae5TXNcBvg; Tue, 20 Aug 2024 19:24:29 +0200 (CEST)
+	with ESMTP id jByNRArc64YM; Tue, 20 Aug 2024 19:24:29 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.72])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id ED6048B763;
-	Tue, 20 Aug 2024 19:24:28 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 592298B778;
+	Tue, 20 Aug 2024 19:24:29 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>,
 	Michael Ellerman <mpe@ellerman.id.au>,
@@ -56,9 +56,9 @@ To: CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>,
 Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 10/14] powerpc/32s: Reduce default size of module/execmem area
-Date: Tue, 20 Aug 2024 19:23:54 +0200
-Message-ID: <c1f6a4e47f177d919561c6e97d31af5564923cf6.1724173828.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH 11/14] powerpc/603: Copy kernel PGD entries into all PGDIRs and preallocate execmem page tables
+Date: Tue, 20 Aug 2024 19:23:55 +0200
+Message-ID: <1a0d1feee07c4cf955f6a43a704c203e5c90fa53.1724173828.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1724173828.git.christophe.leroy@csgroup.eu>
 References: <cover.1724173828.git.christophe.leroy@csgroup.eu>
@@ -68,83 +68,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724174648; l=2777; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=xWISBC+HZWeT+7sbGlnxkJbaWSL3lIRYp+GxGM24Vcg=; b=kl41C2bw6SknVBYORtjtyT4TK5guk8amlM2kC6nD+cBMDdY5JPuMyrMx6uW/X1VTbQHkdYJqD MElanox8PKuBTBOwm2J9AAeiZQGs4MpOB9eRDFl+xikZxgGIAlThajr
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724174648; l=1632; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=GyFJyrOA257p/8jUZ/CSVQAGtRaML3IGhaLgOxyHLTI=; b=eSfDVkZKrCDgx+WGWZk9JTf5kOdejPL3Se5yUK2npB1SO1LhWBJoHK48EIMjGMPY7MwUO+z57 XwOp/Xxo3CeBS/NUWRdjfY4keOY3zq3hYRMj44Tiq7mqUtTpQXDEfFE
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-book3s/32 platforms have usually more memory than 8xx, but it is still
-not worth reserving a full segment (256 Mbytes) for module text.
-64Mbytes should be far enough.
+For the same reason as 8xx, copy kernel PGD entries into all
+PGDIRs in pgd_alloc() and preallocate execmem page tables before
+creating new PGDs so that all PGD entries related to execmem are
+copied by pgd_alloc().
 
-Also fix TASK_SIZE when EXECMEM is not selected, and add a build
-verification for overlap of module execmem space with user segments.
+This will help reduce the fast-path in TLBmiss handlers.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- arch/powerpc/Kconfig                         | 7 ++++---
- arch/powerpc/include/asm/book3s/32/pgtable.h | 3 ++-
- arch/powerpc/mm/book3s32/mmu.c               | 2 ++
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ arch/powerpc/include/asm/nohash/pgalloc.h | 2 +-
+ arch/powerpc/mm/mem.c                     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index f050a37aa857..b9f11c262582 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -1269,23 +1269,24 @@ config TASK_SIZE_BOOL
- config TASK_SIZE
- 	hex "Size of user task space" if TASK_SIZE_BOOL
- 	default "0x80000000" if PPC_8xx
--	default "0xb0000000" if PPC_BOOK3S_32
-+	default "0xb0000000" if PPC_BOOK3S_32 && EXECMEM
- 	default "0xc0000000"
+diff --git a/arch/powerpc/include/asm/nohash/pgalloc.h b/arch/powerpc/include/asm/nohash/pgalloc.h
+index 4ef780b291bc..bb5f3e8ea912 100644
+--- a/arch/powerpc/include/asm/nohash/pgalloc.h
++++ b/arch/powerpc/include/asm/nohash/pgalloc.h
+@@ -22,7 +22,7 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ 	pgd_t *pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+ 			pgtable_gfp_flags(mm, GFP_KERNEL));
  
- config MODULES_SIZE_BOOL
- 	bool "Set custom size for modules/execmem area"
- 	depends on EXECMEM && ADVANCED_OPTIONS
--	depends on PPC_8xx
- 	help
- 	  This option allows you to set the size of kernel virtual address
- 	  space dedicated for modules/execmem.
--	  For the time being it is only for 8xx.
-+	  For the time being it is only for 8xx and book3s/32. Other
-+	  platform share it with vmalloc space.
- 
- 	  Say N here unless you know what you are doing.
- 
- config MODULES_SIZE
- 	int "Size of modules/execmem area (In Mbytes)" if MODULES_SIZE_BOOL
- 	range 1 256 if EXECMEM
-+	default 64 if EXECMEM && PPC_BOOK3S_32
- 	default 32 if EXECMEM && PPC_8xx
- 	default 0
- 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 52971ee30717..42c3af90d1f0 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -196,7 +196,8 @@ void unmap_kernel_page(unsigned long va);
+-#ifdef CONFIG_PPC_8xx
++#if defined(CONFIG_PPC_8xx) || defined(CONFIG_PPC_BOOK3S_603)
+ 	memcpy(pgd + USER_PTRS_PER_PGD, swapper_pg_dir + USER_PTRS_PER_PGD,
+ 	       (MAX_PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
  #endif
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 5495572b42e6..da606ef18eae 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -410,7 +410,7 @@ EXPORT_SYMBOL_GPL(walk_system_ram_range);
+ #ifdef CONFIG_EXECMEM
+ static struct execmem_info execmem_info __ro_after_init;
  
- #define MODULES_END	ALIGN_DOWN(PAGE_OFFSET, SZ_256M)
--#define MODULES_VADDR	(MODULES_END - SZ_256M)
-+#define MODULES_SIZE	(CONFIG_MODULES_SIZE * SZ_1M)
-+#define MODULES_VADDR	(MODULES_END - MODULES_SIZE)
- 
- #ifndef __ASSEMBLY__
- #include <linux/sched.h>
-diff --git a/arch/powerpc/mm/book3s32/mmu.c b/arch/powerpc/mm/book3s32/mmu.c
-index 625fe7d08e06..2db167f4233f 100644
---- a/arch/powerpc/mm/book3s32/mmu.c
-+++ b/arch/powerpc/mm/book3s32/mmu.c
-@@ -223,6 +223,8 @@ int mmu_mark_initmem_nx(void)
- 
- 	update_bats();
- 
-+	BUILD_BUG_ON(ALIGN_DOWN(MODULES_VADDR, SZ_256M) < TASK_SIZE);
-+
- 	for (i = TASK_SIZE >> 28; i < 16; i++) {
- 		/* Do not set NX on VM space for modules */
- 		if (is_module_segment(i << 28))
+-#ifdef CONFIG_PPC_8xx
++#if defined(CONFIG_PPC_8xx) || defined(CONFIG_PPC_BOOK3S_603)
+ static void prealloc_execmem_pgtable(void)
+ {
+ 	unsigned long va;
 -- 
 2.44.0
 
