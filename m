@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-293164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E8E957B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A2B957B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7681F1F235CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B2D28404D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20083E49D;
-	Tue, 20 Aug 2024 02:38:20 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8607F446D1;
+	Tue, 20 Aug 2024 02:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="E2yfneeX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181FF1F5F6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6811C6B4;
+	Tue, 20 Aug 2024 02:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724121500; cv=none; b=rmwhJqp/ujr8Y3o8PSjIeQS5Y4fh16af+S9gRGW3dmLdAP2L6gt2k8CPNXKm9J/xyg3HRl/7ryHwKB5yRcvpIdJ8AP3t4nD/v7p/UwMt73EgaQsdcURGgUEnGcKV9wVKls+orVoo8nQ42CBfSF3AeQol1Cm/Zj0t96jxDLBtmAs=
+	t=1724121990; cv=none; b=PoPESEdJt+LiwTQlGpDKdqnWIO2/SV2evdrKxcQiI7TFX3qzT7qidTBWdEcdQ4VcaEKtjJFK/uldiUJWe23LUYT94GrDn2Y8o7Ao+WCzLMOKCzfk5a7mGXk3QppXvClbGi1lNRzoA7TDbh/ERkAuD5HP7JqzPaE3zi5QPEUeqeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724121500; c=relaxed/simple;
-	bh=5XK/S6t98Ogzv8H59JHW1xX6ZINBsHMMDZmTDahWc/o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cznw28B6nH1//eTU9gkjot6vjH8CvuRw2939ulq+c66Uyw3eT5FgXJV5Pvm9q52lRTN5QxoAA7pSTwKQSzZP1iHme6pwV4kNhYFV7s4VjJ0x2XJCkO/fyrSZhUG4jkZON5poKu89t7JMuAygck430wrBb342SrN1sGj3/EOjt2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wntmq5mbqz1S8Jg;
-	Tue, 20 Aug 2024 10:33:15 +0800 (CST)
-Received: from kwepemg200002.china.huawei.com (unknown [7.202.181.29])
-	by mail.maildlp.com (Postfix) with ESMTPS id 692121400FD;
-	Tue, 20 Aug 2024 10:38:15 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200002.china.huawei.com
- (7.202.181.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 10:38:14 +0800
-From: Yipeng Zou <zouyipeng@huawei.com>
-To: <tj@kernel.org>, <void@manifault.com>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>
-CC: <zouyipeng@huawei.com>
-Subject: [PATCH] sched_ext: Allow dequeue_task_scx to fail
-Date: Tue, 20 Aug 2024 10:45:31 +0800
-Message-ID: <20240820024531.12781-1-zouyipeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724121990; c=relaxed/simple;
+	bh=8TS0uracIC8varmqf+MaZ6AfHrQ8Ib61Fw/7CChwcgA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r5P9XRx30iF3c/be/9aHbmO4qYzclUcMKvdHtozDzWWtsDqpn3W1514DZSaqKzI/AZdtemwIPTGKqHGwCd5D1nb6hxayh6sn/OiVruMhEQTdv4/Hexh5AtYQcRpvL1qDN3b0dmwnHcN9iOWaq2ExprqLJaERSPakY/65WkHAdG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=E2yfneeX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1724121987;
+	bh=8TS0uracIC8varmqf+MaZ6AfHrQ8Ib61Fw/7CChwcgA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=E2yfneeXxrvfHg8GYHkTYxBdI76bEnuGlExoEN4PVHAvgR6CMMkbvD7QCW8Po51Ab
+	 W2y5WB7Hqk1J6y93pfiVYUUB16NzeGSbyX0B2lNaDJftTWeX1H0uBgqoJCQpuivsQ2
+	 1EMGYI3kVXsYz2ZoFL0SxPdjAzSrSrUgwT6B/zsBbVOQspL0vsMdZieYZhX9xkssfI
+	 tzlZ0aFoDfJMfxtLp0ef9W1B6iWrZHv/6N7PxpLzbqSERKQ0swCeAwcdszFVWSXSOi
+	 HNSvpapaGOjuGLer4braR93wtId1Y0g4ZRs4E9E/aX9q63XS2iNDYLk2xyzPCdq4lt
+	 BbAGROjV/nmwQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wnv410TKjz4w2F;
+	Tue, 20 Aug 2024 12:46:24 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
+ gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
+ rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
+ j@jannau.net, asahi@lists.linux.dev, Nicholas Piggin <npiggin@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-modules@vger.kernel.org
+Subject: Re: [PATCH v3 14/16] modules: Support extended MODVERSIONS info
+In-Reply-To: <CAGSQo02r3NhWnpBF--5nB2RJ=1Hh97VshtiZmasDfknnL+UjmA@mail.gmail.com>
+References: <20240806212106.617164-1-mmaurer@google.com>
+ <20240806212106.617164-15-mmaurer@google.com> <87le0w2hop.fsf@mail.lhotse>
+ <CAGSQo02r3NhWnpBF--5nB2RJ=1Hh97VshtiZmasDfknnL+UjmA@mail.gmail.com>
+Date: Tue, 20 Aug 2024 12:46:24 +1000
+Message-ID: <878qwrud1b.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200002.china.huawei.com (7.202.181.29)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Since dequeue_task() allowed to fail, there is a compile error:
+Matthew Maurer <mmaurer@google.com> writes:
+> On Fri, Aug 16, 2024 at 4:04=E2=80=AFPM Michael Ellerman <mpe@ellerman.id=
+.au> wrote:
+>> Matthew Maurer <mmaurer@google.com> writes:
+>> > Adds a new format for MODVERSIONS which stores each field in a separate
+>> > ELF section. This initially adds support for variable length names, but
+>> > could later be used to add additional fields to MODVERSIONS in a
+>> > backwards compatible way if needed. Any new fields will be ignored by
+>> > old user tooling, unlike the current format where user tooling cannot
+>> > tolerate adjustments to the format (for example making the name field
+>> > longer).
+>> >
+>> > Since PPC munges its version records to strip leading dots, we reprodu=
+ce
+>> > the munging for the new format.
+>>
+>> AFAICS the existing code only strips a single leading dot, not all
+>> leading dots?
+>
+> You appear to be correct, I'll update that in the next version, but
+> want to wait for more feedback on the rest of the patchset before
+> sending up another full series.
 
-kernel/sched/ext.c:3630:19: error: initialization of ‘bool (*)(struct rq*, struct task_struct *, int)’ {aka ‘_Bool (*)(struct rq *, struct task_struct *, int)’} from incompatible pointer type ‘void (*)(struct rq*, struct task_struct *, int)’
-  3630 |  .dequeue_task  = dequeue_task_scx,
-       |                   ^~~~~~~~~~~~~~~~
+Yep, no worries.
 
-Allow dequeue_task_scx to fail too.
-
-Fixes: 863ccdbb918a ("sched: Allow sched_class::dequeue_task() to fail")
-Signed-off-by: Yipeng Zou <zouyipeng@huawei.com>
----
- kernel/sched/ext.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 571a7ea0b5cb..b9bf9ee5ed01 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2033,11 +2033,11 @@ static void ops_dequeue(struct task_struct *p, u64 deq_flags)
- 	}
- }
- 
--static void dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags)
-+static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags)
- {
- 	if (!(p->scx.flags & SCX_TASK_QUEUED)) {
- 		WARN_ON_ONCE(task_runnable(p));
--		return;
-+		return true;
- 	}
- 
- 	ops_dequeue(p, deq_flags);
-@@ -2072,6 +2072,7 @@ static void dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
- 	sub_nr_running(rq, 1);
- 
- 	dispatch_dequeue(rq, p);
-+	return true;
- }
- 
- static void yield_task_scx(struct rq *rq)
--- 
-2.34.1
-
+cheers
 
