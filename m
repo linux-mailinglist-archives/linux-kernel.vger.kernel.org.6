@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-294280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02698958B98
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EA6958B99
 	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199DFB2200F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E5C287A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60119E83F;
-	Tue, 20 Aug 2024 15:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC9A1A706F;
+	Tue, 20 Aug 2024 15:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oJrRYWOV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pjLsvy/b"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nWD3XIxw";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bmATuNyd"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EF518FDA9;
-	Tue, 20 Aug 2024 15:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7564819D07A;
+	Tue, 20 Aug 2024 15:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724168734; cv=fail; b=dkXpmZN6CJCczykVm6pUjE5RCa46I7rjQjrTl5aK83s7Nkn/D/4fXN1WtERfDv5Q9VRImpSXKBqLQoptczKvjzk/SFXLqYEAHA2Zrgy3gb8MDXodw1wTcQWmWJDEY2FZJIAjkBXHle3vPkqQD6aNN1rHcGP6HkFlWtrb2Dde/ys=
+	t=1724168736; cv=fail; b=E2PbelQFuBr9KUMKAnOTfMplozriknYPr5pCOBB1TNySxzxSupwQG38cvJBgrAXowUz2fm+zMNXSnwa6Bl/1XTQuLUGt9+DM25+GwdsDemY1Ek+0JNEAzSdy6iZlu3UMxxGZa5mZ8Vfr6J4/ZutlTwzVkOkW6kwnNoY24yBXBUU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724168734; c=relaxed/simple;
-	bh=gXeGOiJsaH+f/OTMrO8pYdF21vGdLR5qkP5aTPpkM/w=;
+	s=arc-20240116; t=1724168736; c=relaxed/simple;
+	bh=6qrAioHwUoPcHGHj/hcLUlwLyhV5CGdOqp5pKkdPh7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y7hidzwZig7dcBkTEfHx6fXoJD7wzdGvUNbsv0WHnGtu1U3dD084pl8rwOxfwaE6+gj05Nq5UZ9seHbKFHtES6dDrl/6rdKZKRc7wQPwT/No70My1RLGGpyhO2SsA+JhZ4uy0TMv5FvLnwVvHBrlSBpvsXoSBb75jFpWGy/zE3Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=oJrRYWOV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pjLsvy/b; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NSC4SgeJNi7jhbkIS2eRyRMaX1fSsXzmYTfhDagYtX6kBpbRrIdx/VRrY2obdv6wv8cLvWQqdp7cAW+u8BsbSdwS0rGAfylN97BwiVmABFgIqgzuccNBp8iEbExt6yr+biXUvqjv6lHKu1qk30QmYcrhk7BQ1k8ovWO2k1Xlcuw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nWD3XIxw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bmATuNyd; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KFJ2fO019705;
-	Tue, 20 Aug 2024 15:45:17 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KF9lDV030700;
+	Tue, 20 Aug 2024 15:45:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=IXBtMdv8NwXltIx
-	9vj5y8eurKIru6XaMTQEZN6D14bU=; b=oJrRYWOVGMgfLVIFQjSMXfy3SumnhPS
-	Gp9naGexpHybG22tniyhjCZGAPihOgkSQojdLbFqwBXt+KY69dWP+5D6mCOn7y4T
-	Kna2wgIi5GvgpyQymzy/sPLUwgc74Ar7KMO9Rn6oID3C2LxVZSzABxhkUPzVwxx+
-	R5Qdsy3C9kuUNZPtp1xq+MnbbzS56l16hD9wrjSD9NKttt44ragFg3s5NNNVWKV6
-	1FQJLmkUamTHS0n8eyHhMTo9etz9+IrIZ1GwdXYn7ogLqsE8vbDU6k9dmK9Qyrjd
-	Dc8eLZpisYkKySWCrhStN2zeFCBFSAQifqb85AwNyJAzXcX/QhE8OGg==
+	:content-transfer-encoding:in-reply-to:mime-version; s=
+	corp-2023-11-20; bh=RJ7mUdo30RJJQ1YTMk9o1Uty5sBW6yWmmE9Sqinq+fY=; b=
+	nWD3XIxw63qNhx8NkZHGT//SUBCnnrGz3FN6yTWMAzSwxtNwmqfsI9vuGWmyuXuj
+	bTKzA5CyOiGdJtJM0JkV0zYtOgVGvB06KzU53PW86ZgJ4fHxBOHmvEO68lgtbdeh
+	vjchK6m/D6lA2wmAEXFb1nQgshIQEXNa8YTNoP/UEVZy7t65v86u7gTltupwZl0I
+	TPb0K5C0BhVu9RHe63mMaqrUrNzgi1qVkv0eGglUdA7aRjOxl6xdqnELfhQDf5np
+	Tt1BiKnoqeFmX1Oqn5HWbpoQz5zk8JCsHyzWz7mJwLKXP2lYxhCTLabjZDJmddmj
+	zgaXXzEBNaY1H5fN6BBjBQ==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m67dbsd-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412mdswcyg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Aug 2024 15:45:17 +0000 (GMT)
+	Tue, 20 Aug 2024 15:45:16 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47KFcGJ3033110;
-	Tue, 20 Aug 2024 15:45:15 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 414vtbkyvy-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47KFgL3e033756;
+	Tue, 20 Aug 2024 15:45:14 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2046.outbound.protection.outlook.com [104.47.56.46])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 414vtbkyvb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Aug 2024 15:45:15 +0000
+	Tue, 20 Aug 2024 15:45:14 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JuhgSVj7s1pI2dH25GPNdkg+mAMkdzmBEZaRMS8thlJyYQRHq7SGaa1i69My2WtNi8vIIdAeR+UCJup/vIna8TekUFoIknoDGuEhSiiNn6SUaM30CBBywyqiG6urChvqUsaKDWmEpNzReZDDCeOtH2SUgE8UmhFSUzFv1S75rnibusVMjqNUO4Il9sFyySfLk8hS3WE0GgqCGeP8hfBO03/mlj+8Nfx+P7wqvXKobASNwKGsnIljXe5yrD7abJd1WuVt27DUNCXS7Lkr6y5NkjVy/6BZrZ7l9YokD53784uC0Hm47pV5qEvQx8uJbnPHOQybwIU6kcX0SaALbufd3g==
+ b=RMAXRnGnGAZunAEe7mXIRieuD/4oZny+dBvk6dY9gEYt31yVRywCV2Qo6WFcj8C3AncwL2DxNVhJAWxibnOU1nfr7cWEvsMXduksE4kihUOvwzQ4VzHnn6clUGx5ztKifuSg0tLU0EnBPH/39GrvxUBBeUCfUrvjZZhzSXKtiSU5b639K+MsNWU1Wf3bcOl9G5sA08GTctWUKnBNyVm6xTl3jpa8hR6s35bmcaTuCV9XVnG402ZBVM+F0JL6BSnPuRfQFS3krONG4vztEuAWCZ71cG5O7tsL1RvDhuT5k9j5u72WACGzxg0eN9jN2Ssf/jVQHx5q57qbFx009f8kmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IXBtMdv8NwXltIx9vj5y8eurKIru6XaMTQEZN6D14bU=;
- b=MWCkqB4STG6VXDlrIEIQ9u2klUTj40BBbob//Z2uhlZJNO7nBpWzpqg0d32ra2fvzfQ4IyulBM4Pqln6bruguJlog+f2bxBkNKtVuLZ2VtKzMC7GJA8lfXy0vsH5TzJ1v3ICvj1rhAsII9tGM6/pSMA3qXn6GpDIO0GCLzaP71oqaJLPfsolaj50+VGjRr6tNNiRiIFMF5/Au//hK/L3zEcX8dHXLBRj96oJ06kvp1JOpHZ2tOG6l0J7v7UoFVlYwgaMpH86y2uO6kLZegJBWDQ5f6FH2gzUwjnbRDHCmfvVShqWtpzT9p9JhG/5s57t6l8floz/Q8cLMUUXXw+gWQ==
+ bh=RJ7mUdo30RJJQ1YTMk9o1Uty5sBW6yWmmE9Sqinq+fY=;
+ b=lru7PIToGAQKfBa7ljN5XuSvjwljsHIDJXm/bXxVGZ8jiOr6e0mcguYrVV/bMlriu4qbKF7PTYW9VMVX4jk7UORGeRt2DJjdWNt3fK/fa1C8KurqTxd+0KG7Q8M2hVx1GtTyWGzTfT4arDNYUayps+x1JJejjRr0HF6tyfrjTJap3RTcn1BHu5UARNM9X2uemI94d5TcYdoy8h305CJaKjO4OaWIN+JAAeLB8v6k9I5cu5H6gLhNlVBdCIVhVoKzV6fM8akdfSAxSHlDobJUfBiPIDV9m9mDxw+8g2XGrXvP74+OKVde6nTh1js596YnJ9BHfOQCry4qDcnJXeTVPw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IXBtMdv8NwXltIx9vj5y8eurKIru6XaMTQEZN6D14bU=;
- b=pjLsvy/bzUQ1n9kSpK/2/riD/gSz9ekbSZJhzoMlRVtQidOAGAmHvBgWL9RNSKgbmP54lgisx5o/JCCgjBjdTKy4gqbX5ojO6PKbPFBSBqJD+3W++RLcKAYSg1UjAXP1zsaPeev/wc0SDWoDMi93peK2DqwVnuOgwRlhXJYzWfM=
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
- by DM6PR10MB4380.namprd10.prod.outlook.com (2603:10b6:5:223::19) with
+ bh=RJ7mUdo30RJJQ1YTMk9o1Uty5sBW6yWmmE9Sqinq+fY=;
+ b=bmATuNydbJ5k6Lzc9W71nQCdyLyMG6peu6GO9C8wg4zzDCh4SkY+EFC7EqFtCmyQWmXJ4ZHmwneMn/TtC8Ice4jYY8cCOiR3GzdRrnrG0nNKgrcr/mrz/RoNCuf33SmG1aI8ArvJSap8ZskbXcXU7O7LuCnzl1CnibfFQ2O7akA=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by CH2PR10MB4277.namprd10.prod.outlook.com (2603:10b6:610:7b::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.10; Tue, 20 Aug
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
  2024 15:45:12 +0000
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29%3]) with mapi id 15.20.7897.007; Tue, 20 Aug 2024
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7897.010; Tue, 20 Aug 2024
  15:45:12 +0000
-Date: Tue, 20 Aug 2024 11:45:08 -0400
-From: Kris Van Hees <kris.van.hees@oracle.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v6 2/4] kbuild, kconfig: generate offset range data for
- builtin modules
-Message-ID: <ZsS6BNFRN58l9ppM@oracle.com>
-References: <20240815150339.1564769-1-kris.van.hees@oracle.com>
- <20240815150339.1564769-3-kris.van.hees@oracle.com>
- <CAK7LNARsJgcEsTdeKxe9MtBeCPp6dCNrOArJRBievo954p33LQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
+Date: Tue, 20 Aug 2024 11:45:10 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        jeffxu@chromium.org, oliver.sang@intel.com,
+        torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
+Message-ID: <nogvezta6maw4zv6pkd2rkyklhbeyfkjo6o7lsibgvwbuswvlx@2wufbiv6bn3h>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Pedro Falcato <pedro.falcato@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, jeffxu@chromium.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Kees Cook <kees@kernel.org>
+References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
+ <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
+ <CAKbZUD1dA2q9Yv_Z0S4SgvddHxnR9KZddYHAbMLsV+dt+bf8dg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK7LNARsJgcEsTdeKxe9MtBeCPp6dCNrOArJRBievo954p33LQ@mail.gmail.com>
-X-ClientProxiedBy: MN2PR10CA0023.namprd10.prod.outlook.com
- (2603:10b6:208:120::36) To SN7PR10MB6287.namprd10.prod.outlook.com
- (2603:10b6:806:26d::14)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAKbZUD1dA2q9Yv_Z0S4SgvddHxnR9KZddYHAbMLsV+dt+bf8dg@mail.gmail.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4PR01CA0139.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d5::6) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,82 +117,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|DM6PR10MB4380:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5b9133a-edb2-4b3e-7d65-08dcc12f13ba
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CH2PR10MB4277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f551b2b-04be-49e6-0004-08dcc12f1429
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9MRvN3mFKQrmWgJn8EIsvmgPk4mbhcDe47sargXM9fBX0c23DhdlpQwVZlCj?=
- =?us-ascii?Q?s7LYXQc4Pf8vdgFWtjiVNxhQxsmrmlkGtLbkqzSqNpVIoJK3g4CEBcrGX54y?=
- =?us-ascii?Q?o/Jag/KWrQeNkIamnC/zihIPacNPLSx0pd4wykvyuGJkAvJOGbTwnLtQ6hLL?=
- =?us-ascii?Q?cM7NaIIgiZM2tIeqELg1+n74CGY+L8Y/OnW28TOklBenMmtstjRKDYUXVYtV?=
- =?us-ascii?Q?wkbgboA4iwOczPLq78wufkB7JMjI0YfpEP5PdVpul4XCv8d1k3/vn2dK5EzE?=
- =?us-ascii?Q?bRKpTOEoDWbYFe0JiktObQci0cbypIKbFc+oHzuppW0BLJKA5zUr7oWwoc31?=
- =?us-ascii?Q?3T+pmL/FvTuTUBfezSMGSP8TwnOCLL6f43tG3W0hmODUKYvlF8WK5s5I9T5G?=
- =?us-ascii?Q?hQnypPq0Stu3S8s/EGh+3oiPMeM5bzCHivpJPfH4b6XkQUacNydQ5FpqD7E6?=
- =?us-ascii?Q?NfJ1Q8MqzzP9x12xfjdsjSff8dvVqsUs9KBkCtmRv7hhHHEIT56m7QL44KuE?=
- =?us-ascii?Q?Snpv3AEo2dy8HlMcfKhgTi2cudzF15h2oZRLkIHEw/VQPyVXzQCFRh/tCP60?=
- =?us-ascii?Q?T9DImHeR4FbifzC4Vh2da9OmqA2m/RNIZqpAAPM7uTqmcQHFFmeB9JvrsSCL?=
- =?us-ascii?Q?Vetbs/jrgzNM68USWCIpmtXgguCuSKrnV+IDXVBS3tRCLMmWqPrLFANqxXDr?=
- =?us-ascii?Q?mssbqNzkeIBG2b07gvFfpbijRJF4/E8ZRUiB1YboycLQTTMtWLYYekeJ15kf?=
- =?us-ascii?Q?OXM208yfiPXNiV1YAiTemDCunfK0QIofkWNdgegLWNAS52nD+/HnHjW4HMas?=
- =?us-ascii?Q?cxkEf7pozjTLGa4Af//Dvq3meIFwJgD+eJe1foQdk5mRy/f0EaTrvhjxHWJK?=
- =?us-ascii?Q?WiH1WqTz1F2Z4p7ZNnIOOZgvZ++n7HwieDCzhwSaNgfvWTh+b3CtH09tXj/L?=
- =?us-ascii?Q?vPlqrI1SBU/TVrVIQLCVo+lb3/Ej5NObNIFyjEu+E8ALNDwFJoOAP39PXF1k?=
- =?us-ascii?Q?SSj93oQQzlZUoA692atu23nJWgTk9NodvNPBK6gxvxfYQbTHz2RfAszgxFW0?=
- =?us-ascii?Q?FIvjeza5FgpeySLO3R7SEo8QjsU09m1wfsaCapYjM6Qv4bN3wBUlcDepNJpd?=
- =?us-ascii?Q?9CVc1unoayvFGT02LfYvnRXP1fOLBlM6LnaYMUgKXmxYxo5DbS1eW3gNQuZP?=
- =?us-ascii?Q?gS3ICOzxv7djyBOA16mbLMQA7B77K1itUsUf2XQBlA9Zl51q3KpIsGDu1BZw?=
- =?us-ascii?Q?zviIXyyCcAFLYk3f9eqTDkTW8uZg9w1uHQk32uMHTH+TaovTtaClmDg2HYew?=
- =?us-ascii?Q?bt7eBjrbB4WK7U2QZIl4sFVCZqFjaF8WqOhBDpioFObkQpB5/wp3X6OxbRzB?=
- =?us-ascii?Q?5x6CCm4=3D?=
+	=?utf-8?B?Zkg3WFFCS0VrWDNmblYyVzJ6d3FHVWlBcEtOYUZkcDc5MmNubHQxSmFtTFdz?=
+ =?utf-8?B?Q1B4RFI4L25wQ3dWNWUyMkF2MEJ1NUxtZmR5REo4ZGsxSGJXTExLdnNEUWpU?=
+ =?utf-8?B?NDBYR3o1M0F0NzlqKzhuMnhsbHEwTWdYaUZaWmtLeWlwZU1GS0Rva2kvOGVa?=
+ =?utf-8?B?cnNUTEF2NzViTEgxUFdjMTdRSmJzaTdadmcwZ25uVnFiT2NSSnlRQjB5bEpX?=
+ =?utf-8?B?SmJSckkySHFsaHJPaGlXdW9UZ2pMSGtadnc1RXRZY0pnbDI4ZmlhMVRjNkpD?=
+ =?utf-8?B?OGY4dEViRFExRWd3akN4Tit2ZytYTC9oTGlMSmxSdXN0b1g1NCsvMFJFOFV4?=
+ =?utf-8?B?REN0M3lrOEdrYktOcEVGeUV4RU42blIya0E5bVBJZW5QMlNhYkNDUTB3Q0h2?=
+ =?utf-8?B?WnlxazIrZHVnbFdZckc1akU5WUtzM1I3TzltbmNTUEU0Vjh0MkhtVnY5MUNw?=
+ =?utf-8?B?R083Ymx5YVJVNUMweWFuZUxjN2IzZHVNWHhIR3huQ2tPbnhiN0x2KzZzMjJG?=
+ =?utf-8?B?WWNqTXByVlcyUlJhbFJ1dTBKWTJTN0E0RGQ4eUFOdlBkL0x6THdnb3BGVUlG?=
+ =?utf-8?B?ck9hQVRqTktjTHZQVm9yVDVPWU5TcVlsWm9KTFFtckczZUdJQmpkVnN1UG1z?=
+ =?utf-8?B?SWxhVjMyVEl4b0taZzVEOE9HYlZZODh6bVkwcFJqRUEyY2lMMndPczFiRzhk?=
+ =?utf-8?B?VHZybkx2aUE3aWtUNG9JM3hTa2RDU0diUUJrL3BSS213aEt0Y3J5QXgzbEhj?=
+ =?utf-8?B?OEFiZllySHdTeXg0QWtKZi84TW5XbzNueS93UzNwdkFVOUV0cklwOEYrSzdD?=
+ =?utf-8?B?N25WV1J6LzJNVjB1L3pVaGtyZlJLNkpLNU5xbFBYaVowemYyVlNWdHR1c3pY?=
+ =?utf-8?B?eVlyZTg0bXBqRmg2OEYwN1hQT0Rib1VtQkhPb2UzMjFUWVpVUURpKytUWDB6?=
+ =?utf-8?B?dTFwNmJDaVJidVMzT0dWd3VYYVh2Zkt6VnpVYnhFeTZzR0EvWlo3eXpWdDQy?=
+ =?utf-8?B?Q1VGVzVyVDFibzU5NWQxcVN3b3RGY2tucHVUOTk2Q1BRdkxzYkRicnArTXRh?=
+ =?utf-8?B?OCs0cTdsRzJYTkdJd2Jra2xBVkRQTll0NFh1b2Y3M2JmellYZ3U0QTVlaTNn?=
+ =?utf-8?B?TVpEUjFxZlFkVkZkU2NIVVhzcENERXA1RnRET3ZoUHA0WWZZWi96Zml5d0Zy?=
+ =?utf-8?B?amFvV2NrclpDUmIzYTNydU1WYWNwMFVxT1JIcFdLNU5DMHhDVjV2NWRObHor?=
+ =?utf-8?B?M1NFdjNFcy81aU5PTXVOMDFuWjJIcDNrKy84cDJTTmZaLzlCcENUKzA1eWsw?=
+ =?utf-8?B?RnVZc1RrNEUxbFZldU5LaE5peG51WCtYYVc3dkUrWCs5Ynh1clc5bmxwL1NE?=
+ =?utf-8?B?QjNja2g0dzdmMWQ3K3Z1c0x4Q2R2SFY2NFQ1Tk55c2lScGhVV1VFeU5DWUt3?=
+ =?utf-8?B?dTBuRFo3RndyY2hZWStqMUZzVElhZDdNdGVhQlhDaUxaMU9sUSs4NkhqYmFW?=
+ =?utf-8?B?alk4UEc3Q3RmcVBROUFPMjJ0dFVVY1ZPY1Nkd3F0VmJGR050amlCbzFVL2t3?=
+ =?utf-8?B?bzhBaktoZU1QNnc2cEhaSUJtVVdQYmVqMDd1Z1d3Y1JPOGFUY0VyS2pLRDZr?=
+ =?utf-8?B?NGpWNUQ2WGJPMGFZMGVVKzZuYlRiZ3BKMXVTa05BbmJIdW10YXpqSE81UERM?=
+ =?utf-8?B?R1Nxck5XbFNyakxDVEU2dnBIZmw2N3Bzb1luVzQ3YjF2d25WRGZGWkpTbC9m?=
+ =?utf-8?B?aHcwc2NvVm9qQkh1K3ljLzdiS2VPay9DYnc0QVFOSTRBYkpsdmh0SG9vUVpG?=
+ =?utf-8?B?TnEyc3NxN2F1cno4QS9jUT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vIX5VqLVcpOr5eZMylxMwyg71quKguhbqd6+wwcHJ5w1hx90l+bY2ErXsPZn?=
- =?us-ascii?Q?QR4tFG6lmmDtkL0pYxSlV6QM1Bdr0dW8W3XtLgIC9gMthT1g76Gb3oTxLasc?=
- =?us-ascii?Q?ElqPUped4lGjAwhf3TuVs3lKQI0GA/2QhAw3FPsERqVmwHlVhJHoAoA4sy3v?=
- =?us-ascii?Q?nFaa8YLNhNIhPxeYFBobg9pDpXgD7RPgoG06ASwOLrV6eGTzYMoOUYjWNVdN?=
- =?us-ascii?Q?Hvg0jzTNAJSTaLKrHuPdFB3V4Mj8XEBIN5Mti2gGYFnbunKgtvCQyZNRtkY7?=
- =?us-ascii?Q?wLt44MK4t4QjnIqyU5KWU6MayO/1LqEU1D1ysEu3RuA0o72JJ7yb0QatWmaq?=
- =?us-ascii?Q?KGXD2PLquF2ZnrNUlV0g5mXQxTFD4la3rcGYbUQy93maHWcXJZkceEkpyKl3?=
- =?us-ascii?Q?qaUUYzKHhu9IfU8SmhoghPwyUBZ8Lo1OtCJZ75jvKZEXF0n6tIB/gwDK9DgF?=
- =?us-ascii?Q?+2vU96OU80lYbNdnUNsFU5VlAAFRmFj+qO0RuwzRI3CPhQrjqP70uM8FhpRO?=
- =?us-ascii?Q?p+iscJn2OuD0mnMxwriFApJcYOr3rlcu/IV6mFN9NEPuZOPZ8Ith8mGq6ljD?=
- =?us-ascii?Q?qc7/b03aqJjLAlqWSg7lknYmPpr/FK4FFwAjtUgPQ7PnEr5Uf452SJ2MChLn?=
- =?us-ascii?Q?StIQ9tnIT8wUnKiX/PPAAJg/9S7++xYUhlcMlumPMHl83i/MjmixmmoSxfWS?=
- =?us-ascii?Q?yqGwZZo71eU+dl4s7v444RwvFcgrNTVK9TxF59J/9OPA40c0y0Pk4bllfBCM?=
- =?us-ascii?Q?Lb5MYpmhGWv6QU4mQRa1P03enMroySubIMz4oDX1wReu8v3d7N1A7pLrWZO1?=
- =?us-ascii?Q?v3S2wyxy7kOp62+OlIj3ITXiDdCjT1jST9SBk/FquPaw4JnWHU8v4JnFeJYG?=
- =?us-ascii?Q?a859CSeaW5NIDxQV+w+w1kDFrsBRRP7wdvHJBVgmUB0i5Xk9UVRyfnWLtcih?=
- =?us-ascii?Q?cztDmpIJMXvYEthmjFTFYOtaPi/TRb67mQKlZKGw08LiFBir33Sz/ExRTE4C?=
- =?us-ascii?Q?aM4UmJYMvxhRih2TptpJKu5SeslEdneHYrQ2SkGxBiK+1kWvPajjZGif/5cv?=
- =?us-ascii?Q?S36FWwrQPp3gPyxu3udnEkDxgs7mMFHylCdj9YdHCBX/MgG6YfAWd89fBv4K?=
- =?us-ascii?Q?pFd1FwLSNyLdrHtkp0FM+ZpyJvDcWJalOEAM1+dxhKfndTAB1dCSlWpSSD0f?=
- =?us-ascii?Q?2wjTgdgZc7rCCKGqWPayMANmRyalT/QoS5FNBbeEK4njM29vbeK3XggufE0D?=
- =?us-ascii?Q?bi8G5AxbqlYo2Vrkhd4VUpn0rrLYpGs/fAQlhTzURNER7UK0aWcDTOSPJHug?=
- =?us-ascii?Q?WVEEVqkU8gr/sq3LqU5Zfz5sKtWm2Ebf7YenAg6Glt1ORLajEHDda333gF8I?=
- =?us-ascii?Q?76CR8mcp3AUC9QlwO4nxhVaKA4UY913BX0+88cpxCUceg3sthfo8FeYw/opX?=
- =?us-ascii?Q?jNpGcXLabaUb0XUYBKg99mHLaZk/MVI9O4LFxga5bixFTsLQzDQz9JKD42sa?=
- =?us-ascii?Q?IQU6coLxLoDW5xlqoHJTSOy/ADLM6KAVdZoYYGD/bHaaYLJDxYkUlJKHt3cO?=
- =?us-ascii?Q?Iq3g1tpBRhWP0JKnSl3hMllUVN9XvREwYg9+FdQQiD3spjgBnWu5wxDBNHfU?=
- =?us-ascii?Q?WA=3D=3D?=
+	=?utf-8?B?bUtUb3VWYzl6a21xemZNNFYxMXRTWVpqZjVXUDluNk9xbWJRZDZyNzliVHhh?=
+ =?utf-8?B?T1ovdExzZHQ0dVorRnVIRTlvWEhTeDNDVm8xaVR5YUNsN0FqNG9SSXRUVWY0?=
+ =?utf-8?B?T0pIZm9hMFZBUWVpK3pMNkZaMnc5bDI5cG9IUHBkZXp6bmZnYk5IbjNQT2p2?=
+ =?utf-8?B?MnVLQUViaENBTE13OENzb1R0eTc0YlNDNzQ3eXFrZ3VGQ28zSWx6d09Eb0ZV?=
+ =?utf-8?B?TzFUaVdaM1ZWSjBQc3lYcDhQVTFDYXA0dk81T0ZxYTZobnJMeHVpYVQ3S1Jz?=
+ =?utf-8?B?amZ3TkVUQSt1enJuTXIvZ0p5Sll2S1RCYjcxazNFQXQ2Tm5aRmJFUVFHOGx5?=
+ =?utf-8?B?L0FYT09VWVhUVXhlbXZ2aVZhSVJDTU50dklKWFQ4ZFlaRjhiNTNUeTV2US9V?=
+ =?utf-8?B?NjRWeGo3aG0xUW9yaEVZZTk2R1VTSFd3Z1pBQUk0SDJ2Sks1SUtjNHU4K0Fj?=
+ =?utf-8?B?SFV3b2xVOUhBV242U1N5UkNRMm8rLzFWRXg3STBoeVRVSHJCRFNJeVVocmFD?=
+ =?utf-8?B?a0VxRVBZbVRiN2dYNUFyMmVteUdhRWVTL0EzNnlSY3NLcVZNMDNFcDR1NTlt?=
+ =?utf-8?B?dy9xVDFWMzdjckwvREREMVY2cC9Tc3FmcG53ekFTcFpWWTRQNU9RNkdQNUFR?=
+ =?utf-8?B?OS9YTWJsTThyVzdJSWZ1dWh6TmliMTdxaTRtYmRjK2ZiVGo3TTJ5U29tNjFH?=
+ =?utf-8?B?bmxrUWdyTHNJVmRpM2NWTTZObHM0RExZcWxvV0Q1RWJteHQzUlIwU21PTVpy?=
+ =?utf-8?B?UWo2Nm9GQ2syY20wN0wzYTdLeUN3K0lIZUlKWHZIdVFwTDJRM2JmSmkvZlZ3?=
+ =?utf-8?B?WUFMMElwanhZSHBCZFBQMmRrU2RYWkE1WjlXejRwd1AvNmZnODdNRjdCNlJI?=
+ =?utf-8?B?clNFbXF4dTJOTzFEZjBKb3E3dDVuV1k2Y3ljSkVIbjVJaVhsZzBkemFtYjJq?=
+ =?utf-8?B?U0o5MEtIcDdTWE5TYjY4TjVaQ0lKWnlRaFErL01FN3RSM0J1cXEwRWVVVnd2?=
+ =?utf-8?B?ZUlEZXVTN2ZGZWZxalN2b3VjNkpJcnR2T3ZxNXpwQ3lGLzJvU21yWGJGSXp3?=
+ =?utf-8?B?amJHa1o4ZDdHQXU4ZEdrQnB1OWpJUm5qSFZOZm4wbHJYUlJPaWlvRndPeGx2?=
+ =?utf-8?B?VlJyT01UNzFVOERVSUk5dnpVR1BxLzZnZklVeG1BTEQvY1VnN0NkeWRJdmd6?=
+ =?utf-8?B?L0N3UnI5cWpPME9UT1JQVzRYbWtsbThsbldhY2xTYk11cHB1NUQyZ1NhQmFI?=
+ =?utf-8?B?aVozNHVLSHNMcVVHODVKOHZZd0dXWTVJRlNSSFhnSzM3aXNrc3VlTG95NkVm?=
+ =?utf-8?B?YkpOMHJrYXBiQTBDdTA4ZUdJYUw4UW0xaDFnaVNTYU1pa292cGEzN2JjZnQv?=
+ =?utf-8?B?WGQ4VUs0VVhFWG9NMkxjYXJGVDBTbWlpcmlwek1xelVSdnNNeVhiRWxkSTJN?=
+ =?utf-8?B?ajJVREo3OUN0RG4zSEJWTkNyRGJVRldCU0hpdDdLZTZYMmNKTktzeGxuNjd6?=
+ =?utf-8?B?eEhhbUwxSzlCaE5IMjJOcDY3dzZ2NW5wVTRqNWdZeEpSUm9iWGt3NmJsSTA0?=
+ =?utf-8?B?K0gzUkJQS0sydExBemp2eHF4eUZkTUIyV1RnZ0lnVjlkM1VlS3dVNUdDSjha?=
+ =?utf-8?B?anFUOFN0SjhsQjNBckJ6R3ozS3lwTm93ajVOdjV0SW9jQzc0UGV0RUxlcHky?=
+ =?utf-8?B?YXZKSlB2ZzFqTWdLMmtQMnlDeFdlTGZJaUIxV3o2eFkwUVRzWk16amM1cjE5?=
+ =?utf-8?B?dzkxMDNHSHJ5cTcxYUV6ZU1uQUJJelRQd0VHcFJmcWZVNVRiRmhFU1hpWlR6?=
+ =?utf-8?B?VWpxb3BFSnZtb0h4V3FSVkNxMGhKU08zT2FVVWk1djc4dkI3ZU5UM1M0aW5E?=
+ =?utf-8?B?VE14emRiOTVPNzZMa2haa2VZd0NYVVZxK0wyWWVxMkNxczd6WW1TcWNCV2pS?=
+ =?utf-8?B?NGdJanJ2eWtJV29NOHpZTk42am5OOGFOS0laT1ZTd0pkUCtrZXYxMHdLeGxV?=
+ =?utf-8?B?Q2MvK2hUU3AzUko2Q3JTNUtzOVBUaXFGK2xkUGhoQlpYUFBuRUVhQVNyNE5C?=
+ =?utf-8?B?bFlKdWtFZGN3LzlTRmgvMlMvSVY1TExodW84TDM4UnF3OHdRWURRNkY4cXRq?=
+ =?utf-8?Q?wIaP1hR/rpGBV2HpMpHfow4E0?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	5Pb+QDnjIktz+cjgZjdGI2PzcFTxXGipR/refvun0wGxrpjgc9141EW0m7PyaVIK0TkH1dMZ6BNNoq21ElqeaiYCDUVU6HXb+XVM8M5WQeWKn9FUb6z4uhmobLpFEFSHxUE9vGIqBpuHhES2bjs1k7b/c492r1xUZYgc2z40gx3Ls7aH3Gf0+Qr7MqFn6o1OkF17T65Lto1KMrV7kAx5t6FWxsPtPh9w2aiEi9JzuR6mlimuKEnxo7KHH9xuTygEeYq4Lign+NYjKbGn3s4DDJY33apMJHkn/fKlpKbQQ3SpMkkunWCdegJ2JDkMT/QhYnztKej8FhKJdocWvZwpSOvpIeq34U3Q+HXqpYbf2/kDnNE+a7gyaeinjTMFtnHcFXNZd/myKew+MRmEDnLGOQycn7IxjijwnFSnKukKau8j0UNW3qslkPYTyT+Udh6lGrUnpY3W4fx5gWXxi6Mm4CC/rxug1i/8760Fq5HllVG8vr3RJACkD6atBDVIqqj4kGh0OEQVVHAY5Vh+GXbfNU48d78HnUvxEvZrSKb2SC6QClgltUytPENnPr6qzNBktuAhbLpVIiODrl+vCCORIAtR/T7GBT0ucnxKav5hmb4=
+	iiSYcfRvKFTUPex43n8eZ0py79usnqCjoA7dxoVSPbwHTBZ/rJgGftuAu/LbOdYqLOpp143sU6fYmJgHHBB5UWHGnm+O4bD4hPjhaPYGwwnxqVFjPqZy3jfztNSAOM7mrU+k/IsLDIRtHg3jfbwY47CKH5lIN2+ZdvG4bIagthbvpzMDnUcOyfZ3/4+TBrLfpdAEI65bA5m3/4e+ttMe47wz3hVWyn/XSeP7o0IrrSTdGXqjE1AgrRzTnOoburBkciNoiRPgS8WUoQOTVfb3w/3JxD/SDym/Euh5MhR5luHjwJQsCZe24caya/QQ5U4V85ko6ZNEIfmUBMfSeGyJ9tZNuQGMzgYA8sHB+pShRPpcqru0Zkn0+zwqN8u5IowMjHNgolDd1+EQy/c3qnkUK5FSrb6BJTB3ashczqCTkIu/CCzxeZWcK8NRPOCE4pLHR8RpqL09m7aCF9Ti0WgSxcbnBpAtmd0BPzaQbYtT6aIMXdQ4P/oNmPaUjFnWxymbyNSc67+RE7JklETfbBmSDEhS98njF83my+fPfpPW7A7+y+9mgfa4zaOrZz2egKFfqhED766iAzbr45I+hGjHF/ET84pftHe4I0RSu3GjTVU=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5b9133a-edb2-4b3e-7d65-08dcc12f13ba
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f551b2b-04be-49e6-0004-08dcc12f1429
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:45:11.9878
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:45:12.7041
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pdAkAXGySRPQe69GnhEqJzJYYtcV4mqRlxcEcafYaudba+z9Ubl5NO78zmTUO9kB/G5i5YjE5hTRZA4Qq+lbwpvgVrTxJnaFrMwkZb145II=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4380
+X-MS-Exchange-CrossTenant-UserPrincipalName: vsYZwVil0QB0CuULHr1z9eLqY27EZ1gHNhtuBO0NEW+vp4P+0ELni1+q5qtvhApSnxQZ+PpNgGaSBeUVz8v/Gg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4277
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-20_11,2024-08-19_03,2024-05-17_01
@@ -194,508 +215,36 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 m
  malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
  phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2407110000 definitions=main-2408200117
-X-Proofpoint-ORIG-GUID: YsHs8nh1rfwgIMHX2slfvrf3wltL_9Yx
-X-Proofpoint-GUID: YsHs8nh1rfwgIMHX2slfvrf3wltL_9Yx
+X-Proofpoint-ORIG-GUID: efzD1C3_f0HvWzmT1m7lPrWXdClCAOjq
+X-Proofpoint-GUID: efzD1C3_f0HvWzmT1m7lPrWXdClCAOjq
 
-On Sun, Aug 18, 2024 at 03:19:36PM +0900, Masahiro Yamada wrote:
-> On Fri, Aug 16, 2024 at 12:04???AM Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> 
-> 
-> The subject should be:
-> "kbuild: generate offset range data for builtin modules"
-> 
-> 
-> (Drop ", kconfig")
-
-Thank you - applied.
-
+* Pedro Falcato <pedro.falcato@gmail.com> [240818 02:36]:
+> On Sat, Aug 17, 2024 at 1:18=E2=80=AFAM Pedro Falcato <pedro.falcato@gmai=
+l.com> wrote:
+> > @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(bool se=
+al)
+> >         REPORT_TEST_PASS();
+> >  }
 > >
-> > Create file module.builtin.ranges that can be used to find where
-> > built-in modules are located by their addresses. This will be useful for
-> > tracing tools to find what functions are for various built-in modules.
-> >
-> > The offset range data for builtin modules is generated using:
-> >  - modules.builtin: associates object files with module names
-> >  - vmlinux.map: provides load order of sections and offset of first member
-> >     per section
-> >  - vmlinux.o.map: provides offset of object file content per section
-> >  - .*.cmd: build cmd file with KBUILD_MODFILE and KBUILD_MODNAME
-> 
-> 
-> I do not see "KBUILD_MODNAME" in the code.
-> It only checks "KUILD_MODFILE".
-
-Ah yes, that was a leftover from the earlier implementation.  Updated.
-
-> >
-> > The generated data will look like:
-> >
-> > .text 00000000-00000000 = _text
-> > .text 0000baf0-0000cb10 amd_uncore
-> > .text 0009bd10-0009c8e0 iosf_mbi
-> > ...
-> > .text 008e6660-008e9630 snd_soc_wcd_mbhc
-> > .text 008e9630-008ea610 snd_soc_wcd9335 snd_soc_wcd934x snd_soc_wcd938x
-> 
-> 
-> 
-> It is good to note that multiple module names appear
-> in one line, but the instance (snd_soc_wcd933*) no longer
-> occurs since 11b0b802f8e38d48ca74d520028add81263f003e.
-> 
-> 
-> I recommend to replace the output snippet with:
-> 
-> 
-> .text 00b9f080-00ba011a intel_skl_int3472_discrete
-> .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_tps68470
-> .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
-> 
-> 
-> This still happens when CONFIG_INTEL_SKL_INT3472=y.
-
-Applied.  Thanks for pointing this out - I didn't noticed that the original
-case was no longer present.
-
-> > .text 008ea610-008ea780 snd_soc_wcd9335
-> > ...
-> > .data 00000000-00000000 = _sdata
-> > .data 0000f020-0000f680 amd_uncore
-> >
-> > For each ELF section, it lists the offset of the first symbol.  This can
-> > be used to determine the base address of the section at runtime.
-> >
-> > Next, it lists (in strict ascending order) offset ranges in that section
-> > that cover the symbols of one or more builtin modules.  Multiple ranges
-> > can apply to a single module, and ranges can be shared between modules.
-> >
-> > The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range data
-> > is generated for kernel modules that are built into the kernel image.
-> >
-> > How it works:
-> >
-> >   1. The modules.builtin file is parsed to obtain a list of built-in
-> >      module names and their associated object names (the .ko file that
-> >      the module would be in if it were a loadable module, hereafter
-> >      referred to as <kmodfile>).  This object name can be used to
-> >      identify objects in the kernel compile because any C or assembler
-> >      code that ends up into a built-in module will have the option
-> >      -DKBUILD_MODFILE=<kmodfile> present in its build command, and those
-> >      can be found in the .<obj>.cmd file in the kernel build tree.
-> >
-> >      If an object is part of multiple modules, they will all be listed
-> >      in the KBUILD_MODFILE option argument.
-> >
-> >      This allows us to conclusively determine whether an object in the
-> >      kernel build belong to any modules, and which.
-> >
-> >  2. The vmlinux.map is parsed next to determine the base address of each
-> >     top level section so that all addresses into the section can be
-> >     turned into offsets.  This makes it possible to handle sections
-> >     getting loaded at different addresses at system boot.
-> >
-> >     We also determine an 'anchor' symbol at the beginning of each
-> >     section to make it possible to calculate the true base address of
-> >     a section at runtime (i.e. symbol address - symbol offset).
-> >
-> >     We collect start addresses of sections that are included in the top
-> >     level section.  This is used when vmlinux is linked using vmlinux.o,
-> >     because in that case, we need to look at the vmlinux.o linker map to
-> >     know what object a symbol is found in.
-> >
-> >     And finally, we process each symbol that is listed in vmlinux.map
-> >     (or vmlinux.o.map) based on the following structure:
-> >
-> >     vmlinux linked from vmlinux.a:
-> >
-> >       vmlinux.map:
-> >         <top level section>
-> >           <included section>  -- might be same as top level section)
-> >             <object>          -- built-in association known
-> >               <symbol>        -- belongs to module(s) object belongs to
-> >               ...
-> >
-> >     vmlinux linked from vmlinux.o:
-> >
-> >       vmlinux.map:
-> >         <top level section>
-> >           <included section>  -- might be same as top level section)
-> >             vmlinux.o         -- need to use vmlinux.o.map
-> >               <symbol>        -- ignored
-> >               ...
-> >
-> >       vmlinux.o.map:
-> >         <section>
-> >             <object>          -- built-in association known
-> >               <symbol>        -- belongs to module(s) object belongs to
-> >               ...
-> >
-> >  3. As sections, objects, and symbols are processed, offset ranges are
-> >     constructed in a striaght-forward way:
-> >
-> >       - If the symbol belongs to one or more built-in modules:
-> >           - If we were working on the same module(s), extend the range
-> >             to include this object
-> >           - If we were working on another module(s), close that range,
-> >             and start the new one
-> >       - If the symbol does not belong to any built-in modules:
-> >           - If we were working on a module(s) range, close that range
-> >
-> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
-> > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-> > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > ---
-> >     Changes since v5:
-> >      - Removed unnecessary compatibility info from option description.
-> >
-> >     Changes since v4:
-> >      - Improved commit description to explain the why and how.
-> >      - Documented dependency on GNU AWK for CONFIG_BUILTIN_MODULE_RANGES.
-> >      - Improved comments in generate_builtin_ranges.awk
-> >      - Improved logic in generate_builtin_ranges.awk to handle incorrect
-> >        object size information in linker maps
-> >
-> >     Changes since v3:
-> >      - Consolidated patches 2 through 5 into a single patch
-> >      - Move CONFIG_BUILTIN_MODULE_RANGES to Kconfig.debug
-> >      - Make CONFIG_BUILTIN_MODULE_RANGES select CONFIG_VMLINUX_MAP
-> >      - Disable CONFIG_BUILTIN_MODULE_RANGES if CONFIG_LTO_CLANG_(FULL|THIN)=y
-> >      - Support LLVM (lld) compiles in generate_builtin_ranges.awk
-> >      - Support CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
-> >
-> >     Changes since v2:
-> >      - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
-> >      - 1st arg to generate_builtin_ranges.awk is now modules.builtin.modinfo
-> >      - Switched from using modules.builtin.objs to parsing .*.cmd files
-> >      - Parse data from .*.cmd in generate_builtin_ranges.awk
-> >      - Use $(real-prereqs) rather than $(filter-out ...)
-> > ---
-> 
-> >  System utilities
-> 
-> > index a30c03a66172..dcdf14ffe031 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -571,6 +571,22 @@ config VMLINUX_MAP
-> >           pieces of code get eliminated with
-> >           CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
-> >
-> > +config BUILTIN_MODULE_RANGES
-> > +       bool "Generate address range information for builtin modules"
-> > +       depends on !LTO_CLANG_FULL
-> > +       depends on !LTO_CLANG_THIN
-> > +       select VMLINUX_MAP
-> 
-> 
-> I still got
-> 
-> "WARNING: unmet direct dependencies detected for VMLINUX_MAP"
-> 
-> 
-> I suggested "depends on VMLINUX_MAP" instead of "select VMLINUX_MAP".
-> 
-> 
-> 
-> https://lore.kernel.org/linux-kbuild/202405150623.lmS5sVhM-lkp@intel.com/
-> 
-> https://lore.kernel.org/linux-kbuild/CAK7LNAST_SbaN9WQRM_k0xE1MUReJvn9AMSg4A1-9b9xotf67w@mail.gmail.com/
-
-Updated.  Sorry about that - it should have been "depend on".
-
-> > +       help
-> > +        When modules are built into the kernel, there will be no module name
-> > +        associated with its symbols in /proc/kallsyms.  Tracers may want to
-> > +        identify symbols by module name and symbol name regardless of whether
-> > +        the module is configured as loadable or not.
+> > +static void test_seal_munmap_partial_across_vmas(bool seal)
+> > +{
+> > +       void *ptr;
+> > +       unsigned long page_size =3D getpagesize();
+> > +       unsigned long size =3D 2 * page_size;
+> > +       int ret;
+> > +       int prot;
 > > +
-> > +        This option generates modules.builtin.ranges in the build tree with
-> > +        offset ranges (per ELF section) for the module(s) they belong to.
-> > +        It also records an anchor symbol to determine the load address of the
-> > +        section.
-> > +
-> >  config DEBUG_FORCE_WEAK_PER_CPU
-> >         bool "Force weak per-cpu definitions"
-> >         depends on DEBUG_KERNEL
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index 49946cb96844..7e21162e9de1 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -33,6 +33,22 @@ targets += vmlinux
-> >  vmlinux: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
-> >         +$(call if_changed_dep,link_vmlinux)
-> >
-> > +# module.builtin.ranges
-> > +# ---------------------------------------------------------------------------
-> > +ifdef CONFIG_BUILTIN_MODULE_RANGES
-> > +__default: modules.builtin.ranges
-> > +
-> > +quiet_cmd_modules_builtin_ranges = GEN     $@
-> > +      cmd_modules_builtin_ranges = \
-> > +       $(srctree)/scripts/generate_builtin_ranges.awk $(real-prereqs) > $@
-> > +
-> > +vmlinux.map: vmlinux
-> 
-> 
-> This should be:
-> 
-> 
-> vmlinux.map: vmlinux
->         @:
-> 
-> 
-> Otherwise, GNU Make would try to find a pattern rule
-> to update vmlinux.map.
+> > +       /*
+> > +        * Check if a partial mseal (that results in two vmas) works co=
+rrectly.
+> > +        * It might unmap the first, but it'll never unmap the second (=
+msealed) vma.
+> > +        */
+>=20
+> Bah, obviously this comment isn't true, munmap is never partial.
+> I'll change this locally for v4 if there ends up being one.
 
-Ah, I didn't realize that.  Thanks!
+Besides this comment, the patch looks good.
 
-> > +
-> > +targets += modules.builtin.ranges
-> > +modules.builtin.ranges: modules.builtin vmlinux.map vmlinux.o.map FORCE
-> > +       $(call if_changed,modules_builtin_ranges)
-> 
-> 
-> 
-> Presumably, modules.builtin.ranges should be regenerated when
-> scripts/generate_builtin_ranges.awk is changed.
-> 
-> 
-> Maybe, you can do this:
-> 
-> 
-> quiet_cmd_modules_builtin_ranges = GEN     $@
->       cmd_modules_builtin_ranges = $(real-prereqs) > $@
-> 
-> targets += modules.builtin.ranges
-> modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk \
->                         modules.builtin vmlinux.map vmlinux.o.map FORCE
->         $(call if_changed,modules_builtin_ranges)
-
-I had thought about that and didn't do it.  But I certainly agree that it
-can be a good idea, so yes, let's do it.  It certainly helps while doing
-more development work or debugging with the generator script.
-
-> > +endif
-> > +
-> >  # Add FORCE to the prequisites of a target to force it to be always rebuilt.
-> >  # ---------------------------------------------------------------------------
-> >
-> > diff --git a/scripts/Makefile.vmlinux_o b/scripts/Makefile.vmlinux_o
-> > index 6de297916ce6..252505505e0e 100644
-> > --- a/scripts/Makefile.vmlinux_o
-> > +++ b/scripts/Makefile.vmlinux_o
-> > @@ -45,9 +45,12 @@ objtool-args = $(vmlinux-objtool-args-y) --link
-> >  # Link of vmlinux.o used for section mismatch analysis
-> >  # ---------------------------------------------------------------------------
-> >
-> > +vmlinux-o-ld-args-$(CONFIG_BUILTIN_MODULE_RANGES)      += -Map=$@.map
-> > +
-> >  quiet_cmd_ld_vmlinux.o = LD      $@
-> >        cmd_ld_vmlinux.o = \
-> >         $(LD) ${KBUILD_LDFLAGS} -r -o $@ \
-> > +       $(vmlinux-o-ld-args-y) \
-> >         $(addprefix -T , $(initcalls-lds)) \
-> >         --whole-archive vmlinux.a --no-whole-archive \
-> >         --start-group $(KBUILD_VMLINUX_LIBS) --end-group \
-> > diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_builtin_ranges.awk
-> > new file mode 100755
-> > index 000000000000..9b647781d5fe
-> > --- /dev/null
-> > +++ b/scripts/generate_builtin_ranges.awk
-> > @@ -0,0 +1,515 @@
-> > +#!/usr/bin/gawk -f
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# generate_builtin_ranges.awk: Generate address range data for builtin modules
-> > +# Written by Kris Van Hees <kris.van.hees@oracle.com>
-> > +#
-> > +# Usage: generate_builtin_ranges.awk modules.builtin vmlinux.map \
-> > +#              vmlinux.o.map > modules.builtin.ranges
-> > +#
-> > +
-> > +# Return the module name(s) (if any) associated with the given object.
-> > +#
-> > +# If we have seen this object before, return information from the cache.
-> > +# Otherwise, retrieve it from the corresponding .cmd file.
-> > +#
-> > +function get_module_info(fn, mod, obj, mfn, s) {
-> > +       if (fn in omod)
-> > +               return omod[fn];
-> > +
-> > +       if (match(fn, /\/[^/]+$/) == 0)
-> > +               return "";
-> > +
-> > +       obj = fn;
-> > +       mod = "";
-> > +       mfn = "";
-> > +       fn = substr(fn, 1, RSTART) "." substr(fn, RSTART + 1) ".cmd";
-> > +       if (getline s <fn == 1) {
-> > +               if (match(s, /DKBUILD_MODFILE=['"]+[^'"]+/) > 0) {
-> > +                       mfn = substr(s, RSTART + 16, RLENGTH - 16);
-> > +                       gsub(/['"]/, "", mfn);
-> > +
-> > +                       mod = mfn;
-> > +                       gsub(/([^/ ]*\/)+/, "", mod);
-> > +                       gsub(/-/, "_", mod);
-> > +               }
-> > +       }
-> > +       close(fn);
-> > +
-> > +       # A single module (common case) also reflects objects that are not part
-> > +       # of a module.  Some of those objects have names that are also a module
-> > +       # name (e.g. core).  We check the associated module file name, and if
-> > +       # they do not match, the object is not part of a module.
-> > +       if (mod !~ / /) {
-> > +               if (!(mod in mods))
-> > +                       mod = "";
-> > +               if (mods[mod] != mfn)
-> > +                       mod = "";
-> > +       }
-> > +
-> > +       # At this point, mod is a single (valid) module name, or a list of
-> > +       # module names (that do not need validation).
-> > +       omod[obj] = mod;
-> > +       close(fn);
-> 
-> 
-> Is this "close(fn)" necessary?
-> I see it a few lines above too.
-
-Good catch - not needed.
-
-> The code became way simpler since my previous review, but
-> I think this is still redundant.
-> 
-> You do not need to check both of modname and its path.
-> 
-> I attached a patch for code refactoring.
-
-Thank you!  I didn't think of the approach to keep <dir>/<mod> as the key,
-but that is indeed simpler.
-
-I'll squash your patch into mine.  Thank you for the good suggestions.
-
-	Kris
-
-> From fcdc459ce4c7eb84549e45cf06a3a44f90aa3cf9 Mon Sep 17 00:00:00 2001
-> From: Masahiro Yamada <masahiroy@kernel.org>
-> Date: Fri, 16 Aug 2024 23:55:51 +0900
-> Subject: [PATCH] fixup modules.builtin.ranges
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->  lib/Kconfig.debug                   |  2 +-
->  scripts/Makefile.vmlinux            | 12 +++++++-----
->  scripts/generate_builtin_ranges.awk | 25 ++++++++-----------------
->  3 files changed, 16 insertions(+), 23 deletions(-)
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index dcdf14ffe031..f087dc3da321 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -575,7 +575,7 @@ config BUILTIN_MODULE_RANGES
->  	bool "Generate address range information for builtin modules"
->  	depends on !LTO_CLANG_FULL
->  	depends on !LTO_CLANG_THIN
-> -	select VMLINUX_MAP
-> +	depends on VMLINUX_MAP
->  	help
->  	 When modules are built into the kernel, there will be no module name
->  	 associated with its symbols in /proc/kallsyms.  Tracers may want to
-> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> index 7e21162e9de1..7e8b703799c8 100644
-> --- a/scripts/Makefile.vmlinux
-> +++ b/scripts/Makefile.vmlinux
-> @@ -39,14 +39,16 @@ ifdef CONFIG_BUILTIN_MODULE_RANGES
->  __default: modules.builtin.ranges
->  
->  quiet_cmd_modules_builtin_ranges = GEN     $@
-> -      cmd_modules_builtin_ranges = \
-> -	$(srctree)/scripts/generate_builtin_ranges.awk $(real-prereqs) > $@
-> -
-> -vmlinux.map: vmlinux
-> +      cmd_modules_builtin_ranges = $(real-prereqs) > $@
->  
->  targets += modules.builtin.ranges
-> -modules.builtin.ranges: modules.builtin vmlinux.map vmlinux.o.map FORCE
-> +modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk \
-> +			modules.builtin vmlinux.map vmlinux.o.map FORCE
->  	$(call if_changed,modules_builtin_ranges)
-> +
-> +vmlinux.map: vmlinux
-> +	@:
-> +
->  endif
->  
->  # Add FORCE to the prequisites of a target to force it to be always rebuilt.
-> diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_builtin_ranges.awk
-> index 9b647781d5fe..865cb7ac4970 100755
-> --- a/scripts/generate_builtin_ranges.awk
-> +++ b/scripts/generate_builtin_ranges.awk
-> @@ -12,7 +12,7 @@
->  # If we have seen this object before, return information from the cache.
->  # Otherwise, retrieve it from the corresponding .cmd file.
->  #
-> -function get_module_info(fn, mod, obj, mfn, s) {
-> +function get_module_info(fn, mod, obj, s) {
->  	if (fn in omod)
->  		return omod[fn];
->  
-> @@ -21,16 +21,11 @@ function get_module_info(fn, mod, obj, mfn, s) {
->  
->  	obj = fn;
->  	mod = "";
-> -	mfn = "";
->  	fn = substr(fn, 1, RSTART) "." substr(fn, RSTART + 1) ".cmd";
->  	if (getline s <fn == 1) {
->  		if (match(s, /DKBUILD_MODFILE=['"]+[^'"]+/) > 0) {
-> -			mfn = substr(s, RSTART + 16, RLENGTH - 16);
-> -			gsub(/['"]/, "", mfn);
-> -
-> -			mod = mfn;
-> -			gsub(/([^/ ]*\/)+/, "", mod);
-> -			gsub(/-/, "_", mod);
-> +			mod = substr(s, RSTART + 16, RLENGTH - 16);
-> +			gsub(/['"]/, "", mod);
->  		}
->  	}
->  	close(fn);
-> @@ -42,10 +37,11 @@ function get_module_info(fn, mod, obj, mfn, s) {
->  	if (mod !~ / /) {
->  		if (!(mod in mods))
->  			mod = "";
-> -		if (mods[mod] != mfn)
-> -			mod = "";
->  	}
->  
-> +	gsub(/([^/ ]*\/)+/, "", mod);
-> +	gsub(/-/, "_", mod);
-> +
->  	# At this point, mod is a single (valid) module name, or a list of
->  	# module names (that do not need validation).
->  	omod[obj] = mod;
-> @@ -76,18 +72,13 @@ function update_entry(osect, mod, soff, eoff, sect, idx) {
->  #
->  # Lines will be like:
->  #	kernel/crypto/lzo-rle.ko
-> -# and we derive the built-in module name from this as "lzo_rle" and associate
-> -# it with object name "crypto/lzo-rle".
-> +# and we record the object name "crypto/lzo-rle".
->  #
->  ARGIND == 1 {
->  	sub(/kernel\//, "");			# strip off "kernel/" prefix
->  	sub(/\.ko$/, "");			# strip off .ko suffix
->  
-> -	mod = $1;
-> -	sub(/([^/]*\/)+/, "", mod);		# mod = basename($1)
-> -	gsub(/-/, "_", mod);			# Convert - to _
-> -
-> -	mods[mod] = $1;
-> +	mods[$1] = 1;
->  	next;
->  }
->  
-> -- 
-> 2.43.0
-> 
-
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 
