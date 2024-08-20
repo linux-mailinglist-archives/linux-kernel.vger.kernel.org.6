@@ -1,196 +1,228 @@
-Return-Path: <linux-kernel+bounces-294067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FCF95887D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:05:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCAE958880
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6EE81F21FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639D428457E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413CC193073;
-	Tue, 20 Aug 2024 14:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C80543AB2;
+	Tue, 20 Aug 2024 14:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nWrhjDrn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C44z1zFQ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215C01917FE;
-	Tue, 20 Aug 2024 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394BC1917F1;
+	Tue, 20 Aug 2024 14:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724162628; cv=none; b=uHKJiZ+wrlVVKTweMY7g6FGyXyUCnLFfEObxJYrdALIdS1iWszHa1DvLgmUR8f51rWVsI5mrxOUbstnBJJ6qvwqSw+g9nYBx/IjqrzGIWv6T4F1ml5RJhz2iwXAXteerUBu6hXBsbP9sbrRzm5VLtrJH8IEvIjorK/vV6wT4LsI=
+	t=1724162709; cv=none; b=HyJfAstbVzMmxeb2W6PkcQt5G+7CBM2pohPsaUIPLF7u5Qs8YRlrtlLGLBjNSp/sgaK+pYilk8WNFQa+cwD7dLaq4og2faYC8LIpFRhoB+6xSD5l+iRBm+HKj24lN/ydgjl0yomOplqzthurNKu6ikMrJkf7EwQMUDScOqs4T+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724162628; c=relaxed/simple;
-	bh=iDYNmkH1rPO+EIARm3K+77l72Di1gKix5GvJkXPMc0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=guau+Ls2Y70HZwtzcNjHJ/BhbOJDI4dwkTqpi7v6enVNgmS7wUMSaJITEOxpR4f61vVCd9VO6qAzF9nltt62HhVLNbteWioybnwvH6mzLsH8O4fP9RVYVdsJ8XO+xLM907jkQRr9yKmp7XQ2aiKnYK4dnSlg2vAr+aSGolC31zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nWrhjDrn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KCppIq012019;
-	Tue, 20 Aug 2024 14:03:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ESduTgCKaYaSicTMZdeVrT3MA2TZqs7Q9YHb0gZCcVA=; b=nWrhjDrnB10bB4tC
-	vA5CMFoYEZiNlzd9fLiJX4xkErKEan/U88/Q/Tl/Ogvqus53h0wcbHsyU6EaXoAT
-	oA7RsTi+ta8Cr11NwLKZ5DMaVQeLova1UC5Q13pPHcCx4oysjT+BMusDBN2i7LjF
-	xKSSUHt03ZgUyKTjT7Z7ORiy4j8oGKqqvkWY5tXwdYTxnQNrpkAGQ9VVdtx6Ehys
-	4HBAAmmlkbQbIhPugxSHHtqTZfui7+eQScz6Kr3mhv/9qKhBJwFUdGSYvf2rvgwD
-	H0az7mCK2VhP9lnj6MALixLxOJYGUGMdhngskj76HzsNikJnMZw6FRT+I9WdR/JP
-	NIZ41w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414uh8r5mn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 14:03:36 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KE3a7C006463
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 14:03:36 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 20 Aug 2024 07:03:31 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 20 Aug 2024 22:02:45 +0800
-Subject: [PATCH v2 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+	s=arc-20240116; t=1724162709; c=relaxed/simple;
+	bh=GY1Zzrx7cTTeDwEgR46i0zevjI7E6ZV8mQxL73UdiPM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T8QbXC7nZhu8/qciZEKvK+oZQw2mIYYWQijTzig2TQr+cxhD5to0WFboyO6DmLoq4oBV+MH6ixbtU7qo5Ovgo0DtlmN4ktdk7yWZeySuuLriPPmuqyb3CnNimSTfvUc5aNsgn42ITvEiNTBsE/6DoaGao/wgKyLdX+WCKRvUBS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C44z1zFQ; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f3eabcd293so10682081fa.2;
+        Tue, 20 Aug 2024 07:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724162705; x=1724767505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpVsKFQ5NF4ow0WMsc/fFRx9SO54pTzDAAtSk8M82To=;
+        b=C44z1zFQH9yaDM+HCDJMLeduhx82OSuxd/9uq45ll57mED2k87IMhBB/LnyCYhyP2p
+         /H2Oz9j4Mc97AW36j2ceZvrFAQsW5bmizhSwWbuNOmk78WjaoJA/PwcRI/LrC5o3F2Ea
+         UONWBzTGf7KAjFnfYyqZI82VTmHtNtWhnqm2Hp84CKCk1kmP1r55QvWC724p0Q6bLRTS
+         35OtAyE6TVWD3YKJ0ar55nqebJccEis+13OwTilWCqoI8NtPyTfTHKA+yGMuKOICuDGk
+         gO1SWM0eGi3AA8+a9ZrH3HApi4Gqz7oZOzShHcYTbeajst39hNNX2ZHPmr0f48jIemOo
+         UlNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724162705; x=1724767505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EpVsKFQ5NF4ow0WMsc/fFRx9SO54pTzDAAtSk8M82To=;
+        b=mKm3PRPdrDbXvJ0uRLJcz7nb9sM/x2PF7GV9XRy2dtbHqDwLJEg0FrR60XH/bQp4Ua
+         TKvR1zuGLpDriqVwkyXTtBcsiGl7q4Qpm4U++diXEyT3XJjc87lex6+Rg2jVenvfQs07
+         MegT00ajvRfHo16FdaJU4RWMdyTekqxCexDVcKhRM7mqGm+632d60o/By7vJARWEf5RQ
+         P1QVXglb7bBDt6GqCYeA5rZZRM5NINqr5ZNG7x97OeFtbYy+cjnV7OBi+PX6gMUga2tL
+         n5ZlWdFArdKMVEtw5ShivVr9/BQdnYODtdY5s9KhJQ7LcFGe+KqTBN60YE8ufnDvNOvc
+         EsiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXV3KTuEdwFK1hDhOJL2WYvk+njDVmIzOR3qr8KoF0uwzpD0HLkbi5VKTs/SQsZsMbBuHXJJ1jNKLuK9ZgbkafxYcZA3Z/Gm+JI5iiBEw3Xe9wasIvCIcLagyi4V+86MSz0+h9+dNGz
+X-Gm-Message-State: AOJu0YxDMMpHN9Kg70RRd31z7Gf5DfbIEO1LGgGFoeUbfAVMc55o6/97
+	U06L7/Z+z7Md9bzjUGdaqavJtcISLj9R1GkD82rskeknau5nAy6Rb9ifLupf
+X-Google-Smtp-Source: AGHT+IFY1TsBmitACLqYyEqO/YS03tngiajm+rIfQ7sMYhGmY0hDJjdKGRTr8cL35/r6R0VF/c0Rgg==
+X-Received: by 2002:a05:651c:544:b0:2f1:a7f8:810f with SMTP id 38308e7fff4ca-2f3be5de18cmr100618031fa.36.1724162704707;
+        Tue, 20 Aug 2024 07:05:04 -0700 (PDT)
+Received: from SP-RaptorLake.dyn.int.numascale.com (fwa5c9b-54.bb.online.no. [88.92.155.54])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2f3b77039ffsm17908081fa.77.2024.08.20.07.05.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 07:05:04 -0700 (PDT)
+From: Steffen Persvold <spersvold@gmail.com>
+To: Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: spersvold@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: host-generic: Fix NULL pointer dereference on 32-bit CAM systems
+Date: Tue, 20 Aug 2024 16:04:23 +0200
+Message-Id: <20240820140423.29410-1-spersvold@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240820-qcom_ipq_cmnpll-v2-4-b000dd335280@quicinc.com>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
-In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724162592; l=2601;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=iDYNmkH1rPO+EIARm3K+77l72Di1gKix5GvJkXPMc0E=;
- b=VFKo6yYLMPXTK/JX9GiZMEv6vhBe41gSRQMxg4euxcnTgW0zTgVv9iVLnDA/Zw3/sRBSrlpG9
- yS5ZKC3gp0IAjlE5gC5h3JIPHnxCIq/hp5OkpLUGQ3eEkQ59bqvdsK0
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DadrWqkV7O5_5NvFaAaNMy9yUWK7tWGo
-X-Proofpoint-ORIG-GUID: DadrWqkV7O5_5NvFaAaNMy9yUWK7tWGo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408200104
+Content-Transfer-Encoding: 8bit
 
-The CMN PLL clock controller allows selection of an input
-clock rate from a defined set of input clock rates. It in-turn
-supplies fixed rate output clocks to the hardware blocks that
-provide ethernet functions, such as PPE (Packet Process Engine)
-and connected switch or PHY.
+CAM (legacy) host drivers also need to refer to pci_ecam_add_bus and
+pci_ecam_remove_bus functions to get mapped resources on 32-bit systems.
+This is because 32-bit systems have separate iomap resources per bus
+segment and pci_ecam_add_bus is the one that sets that up. Move the
+pci_ecam_ops for CAM mode to ecam.c so we can refer the static functions.
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+This fixes :
+
+[    1.356001] pci-host-generic 30000000.pci: host bridge /soc/pci@30000000 ranges:
+[    1.365324] pci-host-generic 30000000.pci:      MEM 0x0040000000..0x004fffffff -> 0x0040000000
+[    1.375556] pci-host-generic 30000000.pci:      MEM 0x0050000000..0x006fffffff -> 0x0050000000
+[    1.386132] pci-host-generic 30000000.pci: ECAM at [mem 0x30000000-0x30ffffff] for [bus 00-ff]
+[    1.399490] pci-host-generic 30000000.pci: PCI host bridge to bus 0000:00
+[    1.407073] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    1.413648] pci_bus 0000:00: root bus resource [mem 0x40000000-0x4fffffff]
+[    1.421718] pci_bus 0000:00: root bus resource [mem 0x50000000-0x6fffffff pref]
+[    1.430647] Unable to handle kernel NULL pointer dereference at virtual address 00000800
+[    1.439441] Oops [#1]
+[    1.442152] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.7+ #43
+[    1.448753] Hardware name: Digilent Nexys-Video-A7 RV32 (DT)
+[    1.454968] epc : pci_generic_config_read+0x40/0xb0
+[    1.460652]  ra : pci_generic_config_read+0x2c/0xb0
+[    1.466322] epc : c038db9c ra : c038db88 sp : c1c3bc20
+[    1.472095]  gp : c18726d0 tp : c1c5c000 t0 : 0000006e
+[    1.477859]  t1 : 00000063 t2 : 00000000 s0 : c1c3bc30
+[    1.483604]  s1 : 00000004 a0 : 00000800 a1 : 00000800
+[    1.489348]  a2 : 00000000 a3 : 00000008 a4 : c1d15800
+[    1.495090]  a5 : 00000002 a6 : 0000008a a7 : c1809ec0
+[    1.500844]  s2 : c1c3bc38 s3 : 0000ea60 s4 : 00000008
+[    1.506600]  s5 : c1ce4a00 s6 : 00000006 s7 : c11c7460
+[    1.512353]  s8 : 00000008 s9 : c0800108 s10: 00000000
+[    1.518095]  s11: 00000000 t3 : 3ffff7ff t4 : 00000000
+[    1.523833]  t5 : 00000001 t6 : 00000000
+[    1.528252] status: 00000100 badaddr: 00000800 cause: 0000000d
+[    1.534729] [<c038db9c>] pci_generic_config_read+0x40/0xb0
+[    1.541096] [<c038da04>] pci_bus_read_config_dword+0x50/0xb0
+[    1.547623] [<c0391e94>] pci_bus_generic_read_dev_vendor_id+0x3c/0x1ec
+[    1.555010] [<c039245c>] pci_scan_single_device+0xa4/0x11c
+[    1.561273] [<c0392570>] pci_scan_slot+0x9c/0x23c
+[    1.566716] [<c039388c>] pci_scan_child_bus_extend+0x58/0x2f4
+[    1.573275] [<c0393db0>] pci_scan_root_bus_bridge+0x64/0xe8
+[    1.579650] [<c0393e54>] pci_host_probe+0x20/0xc8
+[    1.585104] [<c03bc6f4>] pci_host_common_probe+0x144/0x1e4
+[    1.591396] [<c042ec20>] platform_probe+0x54/0x9c
+[    1.596957] [<c042b5c8>] really_probe+0xbc/0x418
+[    1.602367] [<c042bb0c>] __driver_probe_device+0x70/0xfc
+[    1.608507] [<c042bbe0>] driver_probe_device+0x48/0xf0
+[    1.614487] [<c042be98>] __driver_attach+0xbc/0x264
+[    1.620190] [<c0428d04>] bus_for_each_dev+0x84/0xf8
+[    1.625868] [<c042aeec>] driver_attach+0x28/0x38
+[    1.631269] [<c042a510>] bus_add_driver+0x140/0x278
+[    1.636956] [<c042cf48>] driver_register+0x70/0x15c
+[    1.642666] [<c042e8f8>] __platform_driver_register+0x28/0x38
+[    1.649332] [<c081b694>] gen_pci_driver_init+0x24/0x34
+[    1.655241] [<c0801424>] do_one_initcall+0x88/0x164
+[    1.660943] [<c0801768>] kernel_init_freeable+0x1dc/0x264
+[    1.667199] [<c0699f34>] kernel_init+0x28/0x138
+[    1.672578] [<c06a0b5c>] ret_from_fork+0x14/0x24
+[    1.678399] Code: 0463 0605 0793 0010 8663 04f4 0793 0020 8663 02f4 (2503) 0005
+[    1.686462] ---[ end trace 0000000000000000 ]---
+[    1.691591] Kernel panic - not syncing: Fatal exception
+
+Signed-off-by: Steffen Persvold <spersvold@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 17 ++++++++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pci-host-generic.c | 11 +----------
+ drivers/pci/ecam.c                        | 13 +++++++++++++
+ include/linux/pci-ecam.h                  |  3 +++
+ 3 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index 91e104b0f865..77e1e42083f3 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP board common device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
+diff --git a/drivers/pci/controller/pci-host-generic.c b/drivers/pci/controller/pci-host-generic.c
+index 41cb6a05..3b7da1c3 100644
+--- a/drivers/pci/controller/pci-host-generic.c
++++ b/drivers/pci/controller/pci-host-generic.c
+@@ -14,15 +14,6 @@
+ #include <linux/pci-ecam.h>
+ #include <linux/platform_device.h>
  
- /dts-v1/;
-@@ -164,6 +164,10 @@ &usb3 {
- 	status = "okay";
+-static const struct pci_ecam_ops gen_pci_cfg_cam_bus_ops = {
+-	.bus_shift	= 16,
+-	.pci_ops	= {
+-		.map_bus	= pci_ecam_map_bus,
+-		.read		= pci_generic_config_read,
+-		.write		= pci_generic_config_write,
+-	}
+-};
+-
+ static bool pci_dw_valid_device(struct pci_bus *bus, unsigned int devfn)
+ {
+ 	struct pci_config_window *cfg = bus->sysdata;
+@@ -58,7 +49,7 @@ static const struct pci_ecam_ops pci_dw_ecam_bus_ops = {
+ 
+ static const struct of_device_id gen_pci_of_match[] = {
+ 	{ .compatible = "pci-host-cam-generic",
+-	  .data = &gen_pci_cfg_cam_bus_ops },
++	  .data = &pci_generic_cam_ops },
+ 
+ 	{ .compatible = "pci-host-ecam-generic",
+ 	  .data = &pci_generic_ecam_ops },
+diff --git a/drivers/pci/ecam.c b/drivers/pci/ecam.c
+index 1c40d250..97430664 100644
+--- a/drivers/pci/ecam.c
++++ b/drivers/pci/ecam.c
+@@ -208,6 +208,19 @@ const struct pci_ecam_ops pci_generic_ecam_ops = {
  };
+ EXPORT_SYMBOL_GPL(pci_generic_ecam_ops);
  
-+&cmn_pll_ref_clk {
-+	clock-frequency = <48000000>;
++/* CAM ops */
++const struct pci_ecam_ops pci_generic_cam_ops = {
++	.bus_shift	= 16,
++	.pci_ops	= {
++		.add_bus	= pci_ecam_add_bus,
++		.remove_bus	= pci_ecam_remove_bus,
++		.map_bus	= pci_ecam_map_bus,
++		.read		= pci_generic_config_read,
++		.write		= pci_generic_config_write,
++	}
 +};
++EXPORT_SYMBOL_GPL(pci_generic_cam_ops);
 +
- &xo_board_clk {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..1d7c863018c0 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 SoC device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
+ #if defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS)
+ /* ECAM ops for 32-bit access only (non-compliant) */
+ const struct pci_ecam_ops pci_32b_ops = {
+diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
+index 3a4860bd..7ebec8ce 100644
+--- a/include/linux/pci-ecam.h
++++ b/include/linux/pci-ecam.h
+@@ -77,6 +77,9 @@ void __iomem *pci_ecam_map_bus(struct pci_bus *bus, unsigned int devfn,
+ /* default ECAM ops */
+ extern const struct pci_ecam_ops pci_generic_ecam_ops;
  
- #include <dt-bindings/clock/qcom,apss-ipq.h>
-@@ -19,6 +19,11 @@ / {
- 	#size-cells = <2>;
- 
- 	clocks {
-+		cmn_pll_ref_clk: cmn-pll-ref-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
++/* default CAM ops */
++extern const struct pci_ecam_ops pci_generic_cam_ops;
 +
- 		sleep_clk: sleep-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
-@@ -226,6 +231,16 @@ rpm_msg_ram: sram@60000 {
- 			reg = <0x00060000 0x6000>;
- 		};
- 
-+		clock-controller@9b000 {
-+			compatible = "qcom,ipq9574-cmn-pll";
-+			reg = <0x0009b000 0x800>;
-+			clocks = <&cmn_pll_ref_clk>,
-+				 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
-+				 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
-+			clock-names = "ref", "ahb", "sys";
-+			#clock-cells = <1>;
-+		};
-+
- 		rng: rng@e3000 {
- 			compatible = "qcom,prng-ee";
- 			reg = <0x000e3000 0x1000>;
-
+ #if defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS)
+ extern const struct pci_ecam_ops pci_32b_ops;	/* 32-bit accesses only */
+ extern const struct pci_ecam_ops pci_32b_read_ops; /* 32-bit read only */
 -- 
-2.34.1
+2.40.1
 
 
