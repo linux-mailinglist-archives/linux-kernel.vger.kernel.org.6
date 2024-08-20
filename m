@@ -1,150 +1,177 @@
-Return-Path: <linux-kernel+bounces-294626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0A95905C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:15:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9245995905E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB11F21D3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F042837A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A458E1C68BF;
-	Tue, 20 Aug 2024 22:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC181C68A7;
+	Tue, 20 Aug 2024 22:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+t6rd8t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JTDwi95G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kbRW5H1T";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E+dQBrmU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V8oHX71P"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D896929D19;
-	Tue, 20 Aug 2024 22:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C7129D19;
+	Tue, 20 Aug 2024 22:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724192132; cv=none; b=pKQBLL2YWg/yTVxgvigoaGDG34rYcrdKeawfuhXZGwWPyGLltGCvZzjCqy1laALlYZwcMoAmFlGLWllbe5EBY8cAbKAJdwfTI6jtiLJ+u6pJR8YchWEJ1IBFM7jENe1yoF2L/lotEOCz2gxkOh1vq2/fgui94NW4ArmzeTfvRZA=
+	t=1724192164; cv=none; b=t1kBdFTB7X7OtwUC0urXtkTKh4PaF4+O3bLt9npCzpCUaZKvnJF5f/yTVX0cEdh7k6w/PkDjhnaZtXIbTpC/24x4tJZ4HDiFlgWtqKV01FV6lCIH8Rixdy/KK/H+lNkmyPyUynEgqCB5gm71YYh4zP4bgsTfDzSvlPNkoH63q0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724192132; c=relaxed/simple;
-	bh=goPlmJcLq9q5J/ImjfipoY5mwvvKZvMhSe5xf5G422M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGL/ijcurcjVbq4BWb2HFn8UH0mtGDUsk8anuI4wbJbNka1wMWMw/9kiv6EC2vJBgxKbhuwoJe+OECe3I1KiwRJ3dXuZMMKWmCw4zQwTncoBqp5zR0CyAndrCFjz5ifrA7f60yTFnCL2yyUnXcqphlf+jv1+bjI8bwrkXMBIt2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+t6rd8t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1C9C4AF09;
-	Tue, 20 Aug 2024 22:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724192130;
-	bh=goPlmJcLq9q5J/ImjfipoY5mwvvKZvMhSe5xf5G422M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+t6rd8tAM5N9tkBqJCe3hG9rdTUZjXZX0jjEintBG7xQfasHV4kQAaLYeEOY8s4d
-	 hGCLyZt1vJYtQQ/+/vj5iM0UmU82f5L5MMnjv6iJsS40wru/iXD/eziUz9yv6mxiaF
-	 AHOteuZnkKeO9dUOOOsKjszZTHGhLo9Ym4VvnB1FZVsjKLbR7Ae5xlIl0KOuvDiG9r
-	 ThlWGZ1G1EpwP6wGrfVADr/GXc1GE8xDLfha5cnqKMegLcklIuqiUk7IMX2VWQzrne
-	 M1Aj8ouK1XgDsynU0mWDzUdxpFy0LnD2tMtMrPU6OrRnS1AWkG0QtENndG6LcDxcVF
-	 OZT5MGdgcToWA==
-Date: Tue, 20 Aug 2024 15:15:28 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH 1/1] Documentation: kbuild: explicitly document missing
- prompt
-Message-ID: <20240820221528.GC2335251@thelio-3990X>
-References: <20240820171000.1656021-1-stephen.s.brennan@oracle.com>
- <20240820171000.1656021-2-stephen.s.brennan@oracle.com>
+	s=arc-20240116; t=1724192164; c=relaxed/simple;
+	bh=xkny2TNAwXgAJM+V3pqXVwQ6tG479eGlCTbXjgQ54ys=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=efyTVG10OBvhEmdZTc8/d1YCGNrrBrWj11rGfrKl9auXri2Kny4DLQN6VqxmidjlCSDNHQVDplI+lWT0UnBomOjErJsmL+1Z34XgoN9DGkA1ovz0WQuqq3VokIlsZfng6BnyqEHAntUQM/pJP/tsN3fPPEx+CDzd05vDYjueHF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JTDwi95G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kbRW5H1T; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E+dQBrmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V8oHX71P; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AF1621FD4B;
+	Tue, 20 Aug 2024 22:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724192158; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
+	b=JTDwi95GZAZbfaqUEmMS0cQ+uZ3p6vz+O1ywWSPpc9s1EpNdmHw8ZUICNecNwliyt1Mlxv
+	u0iIRS77tOq2wHw1OQPehVntQxsGh52mRBDDj2gLy3ZZwU56xsn3Ya9PP6MK37hXObEYTp
+	QXgBP4GHBn4HGeQiHC70pOTaGKknjuw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724192158;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
+	b=kbRW5H1TRcJ9UVl9KwFQP+E4XfmORnJnX7VIeY3HYtqC9FiYCdmnaoVxFYbUoYqooCCAOM
+	XFtSZYdsoRcRI6Ag==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724192157; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
+	b=E+dQBrmUnu0TpXoI+XQ7DlLGPug0aWGCqnWdrbQhdtbFPHbavigAB4zBi4iKis80iCR0yB
+	Qdq8ZVBuOsByPv+ySNMZtsNIhP88z+hBYvOKxA0NEGEzBReJvOEeQqMKNIAuQ1uQ8LHqlA
+	UyqDgBySZYjKsf0/2/xIbYnO0s/+2PU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724192157;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
+	b=V8oHX71PGi+qMvLEe8npzf7p34vpPu6Zsxyl9otxLi5pSVy6uF5zcOCvck8CXjAvB9/bZy
+	R3b680enoBJoHCAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB40C13770;
+	Tue, 20 Aug 2024 22:15:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id X6JLI5sVxWbbIwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 20 Aug 2024 22:15:55 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820171000.1656021-2-stephen.s.brennan@oracle.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
+In-reply-to:
+ <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
+References:
+ <>, <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
+Date: Wed, 21 Aug 2024 08:15:44 +1000
+Message-id: <172419214486.6062.12815120063228775100@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid,suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Hi Stephen,
-
-On Tue, Aug 20, 2024 at 10:09:46AM -0700, Stephen Brennan wrote:
-> There are a few lines in the kbuild-language.rst document which
-> obliquely reference the behavior of config options without prompts.
-> But there is nothing in the obvious location that explicitly calls
-> out that users cannot edit config options unless they have a prompt.
-
-Sure, I think the mention of "non-visible symbols" plus "no prompts
-anywhere" in the select section is both a little cryptic to people who
-are not pretty familiar with Kconfig and slightly disjoint from the
-prompt section, so some clarification and expansion would not be a bad
-idea! I do have some suggestions for the wording below.
-
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> ---
->  Documentation/kbuild/kconfig-language.rst | 3 +++
->  1 file changed, 3 insertions(+)
+On Wed, 21 Aug 2024, Linus Torvalds wrote:
+> On Tue, 20 Aug 2024 at 14:47, NeilBrown <neilb@suse.de> wrote:
+> >
+> > I can definitely get behind the idea has having a few more helpers and
+> > using them more widely.  But unless we get rid of wake_up_bit(), people
+> > will still use and some will use it wrongly.
 > 
-> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
-> index 1fb3f5e6193c3..8e9306b599cd3 100644
-> --- a/Documentation/kbuild/kconfig-language.rst
-> +++ b/Documentation/kbuild/kconfig-language.rst
-> @@ -54,40 +54,43 @@ applicable everywhere (see syntax).
->  
->  - type definition: "bool"/"tristate"/"string"/"hex"/"int"
->  
->    Every config option must have a type. There are only two basic types:
->    tristate and string; the other types are based on these two. The type
->    definition optionally accepts an input prompt, so these two examples
->    are equivalent::
->  
->  	bool "Networking support"
->  
->    and::
->  
->  	bool
->  	prompt "Networking support"
->  
->  - input prompt: "prompt" <prompt> ["if" <expr>]
->  
->    Every menu entry can have at most one prompt, which is used to display
->    to the user. Optionally dependencies only for this prompt can be added
->    with "if".
-> +  If a prompt is not set, then the config option cannot be changed by the user.
-
-Would "not present" be cleared than "not set"? It might also be worth
-calling out here no prompt means a "non-visible" symbol since you
-brought up the document brings that term up and does not really tell you
-what it means.
-
-Perhaps something like this might be just as clear while being
-consistent with the terminology? Feel free to disagree though!
-
-  If a prompt is not present, the config option is a non-visible symbol,
-  meaning its value cannot be directly changed by the user (such as
-  altering the value in ``.config``) and the option will not appear in
-  any config menus. Its value can only be set via "default" and "select"
-  (see below).
-
-> +  It will not appear in any menu, and even edits to ``.config`` cannot alter it.
-> +  It can still be set via "default" and "select" (see below).
->  
->  - default value: "default" <expr> ["if" <expr>]
->  
->    A config option can have any number of default values. If multiple
->    default values are visible, only the first defined one is active.
->    Default values are not limited to the menu entry where they are
->    defined. This means the default can be defined somewhere else or be
->    overridden by an earlier definition.
->    The default value is only assigned to the config symbol if no other
->    value was set by the user (via the input prompt above). If an input
->    prompt is visible the default value is presented to the user and can
->    be overridden by him.
->    Optionally, dependencies only for this default value can be added with
->    "if".
->  
->   The default value deliberately defaults to 'n' in order to avoid bloating the
->   build. With few exceptions, new config options should not change this. The
->   intent is for "make oldconfig" to add as little as possible to the config from
->   release to release.
->  
-> -- 
-> 2.43.5
+> I do not believe this is a valid argument.
 > 
+> "We have interfaces that somebody can use wrongly" is a fact of life,
+> not an argument.
+
+The argument is more like "we have interfaces that are often used
+wrongly and the resulting bugs are hard to find through testing because
+they don't affect the more popular architectures".
+
+> 
+> The whole "wake_up_bit()" is a very special thing, and dammit, if
+> people don't know the rules, then they shouldn't be using it.
+> 
+> Anybody using that interface *ALREADY* has to have some model of
+> atomicity for the actual bit they are changing. And yes, they can get
+> that wrong too.
+> 
+> The only way to actually make it a simple interface is to do the bit
+> operation and the wakeup together. Which is why I think that
+> interfaces like clear_bit_and_wake() or set_bit_and_wake() are fine,
+> because at that point you actually have a valid rule for the whole
+> operation.
+> 
+> But wake_up_bit() on its own ALREADY depends on the user doing the
+> right thing for the bit itself. Putting a memory barrier in it will
+> only *HIDE* incompetence, it won't be fixing it.
+> 
+> So no. Don't add interfaces that hide the problem.
+
+Ok, thanks.  I'll focus my efforts on helper functions.
+
+NeilBrown
+
+
+> 
+>                   Linus
+> 
+
 
