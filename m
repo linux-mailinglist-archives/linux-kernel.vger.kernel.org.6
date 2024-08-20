@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-293475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7759695803E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:47:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896F595800F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97AD1C21239
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:47:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14468B20D95
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD618C022;
-	Tue, 20 Aug 2024 07:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DKRRP2/l"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEAA189916;
+	Tue, 20 Aug 2024 07:40:54 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CD3189F54
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE91188CBB;
+	Tue, 20 Aug 2024 07:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139950; cv=none; b=Ly8eJFN5JftmBRIOSUpGIdkxa+mPaNeVk4e8ozQIST32w3QuFPcSNdPf6wCJGjBxy6gzu2P4E8eUuxId1DL8gvwdALHiJJlRtbDS58ooRrcSSD6EzFo2BqSSKvrqzm8MVMseMOhcK3JXOR72/10PhZ87b+INgfwbqvLpYlS4Nxk=
+	t=1724139654; cv=none; b=NGRnqEwQY76MWHEUaBWZ6bHu1SdgD0zK/ZoknMpkfh7Err1Z4F/+nBSuK3WS9TPwE214vqrXZrvlAO59vX3lvvl8fEUUPnZVKfHvTPqjFi4QY4B5D6TmOhQKslBXyOkgISeBf/etJO14h3DJdMemPxn60JfYx32m57k8DfVupZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139950; c=relaxed/simple;
-	bh=IzqUJpOxWHIZLXuAxFpK1IY0UQNTFwHq2Cl7sGYmSNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6WJdV56CPmmdYYeesR0uhDZouS3+4Y6gzh2hDpCn5taARqm0kXkYM5UZLfXFBaZ4XItpSkqDJuIvgeChcyKr+N0IbQfoNWbPNZeyyfJo6eGkNggKnsKXJVMJs7JPqqLTiSWUUB7LZdXG/y8lDRy41SaXQx6VDcXzBPMql9Msag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=DKRRP2/l; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so545636566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724139946; x=1724744746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CMkxnD7tJSGVlFCxUXgz+W1GqsA8QnvZFdBKuBS4r0w=;
-        b=DKRRP2/lG/KD15SJCI0RqTxdmoTIm/1E5+2iADrz5OzuMLyqV+l+AHC44dDGjw2ban
-         Q7hbUL52oIvC4RtRXVcN0eeL7dsM/ZWZgC6aRt/1rIs9vomRhARUOCvK/2ZJNYViHAsn
-         Qbib/usuNUVAkpvj8WZ77HU0/rTfUyChnYKf0eGQ8ULu6lr2yg11CDeiH1m201vkpp5k
-         Kl/B5Z7TddWkr88Z3g/dYVKlCGWtYOimqS0qt1Ei1RjzpiQ+Pjez/jDC7P4AM0Hz5kYN
-         kaPPOxhOWh4yL0rRTJVR5g6W4cBVhe1rKxeyixFxhHDwEm2Bveii3R8be9OVTKKZvMW9
-         rISQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724139946; x=1724744746;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CMkxnD7tJSGVlFCxUXgz+W1GqsA8QnvZFdBKuBS4r0w=;
-        b=FuyiaxJX24ccbI51nFQkwRon8cnVvF509GlIXzSmdcVw565ajuzeiJiV8GQ7BOlkaD
-         IUwJD0R9W0r2FnLFSg1x8ZjKj7YaQ+DPMah3zlZXL6cnPyl5xLkX3vGolR3Xd2RvD/HM
-         catMsjj1vz4CKb6eiRCXikCoNPUB2Jm417XoYhux/XoKM3uL5+p92xc35UllAP2drhd4
-         S6/z2XnG0NE5LJJpycydebgMaj9HoezkChiJzY4bz5FeSJtW24cRvPV66rfD3aszmKYZ
-         AtJAMIldlU16E/nsPmYbNbcxeth/PF4utGRBqPQJ9Xvmi/YRxNuuxpMcN35GPSWetJvB
-         FU6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZGxsU3pkdIRXFRNJDJm7WtYguJbungGaG/0WX/N1JVSBSNDyQhxMfCzci4U+bzhW3iuGyDyWqMEdr0CIVKb3MOIdpsXKTbvqX1OF
-X-Gm-Message-State: AOJu0YxFQPJ35dGlgEs4i3w5nyrneyGfxBBV+Y5TG2TKxn1yvyWiM7Sl
-	tCh2PQ2vqSu8mUpPFVbYDlca+9qqOoShmef4xOaEYtK8NXZpZ/cmheD0QldxJOU=
-X-Google-Smtp-Source: AGHT+IGEB9b5o3lQUcpVrzOpOPM4TKWZrn6n4CB6Bt48ZfipcQPhnHGYi1zYToUDh19MHWDjV7QeBA==
-X-Received: by 2002:a17:907:6d02:b0:a77:da14:8403 with SMTP id a640c23a62f3a-a83928a64e3mr795678866b.2.1724139945917;
-        Tue, 20 Aug 2024 00:45:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83aeb6eb4dsm430535166b.35.2024.08.20.00.45.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 00:45:45 -0700 (PDT)
-Message-ID: <709ddcee-637d-49d3-915b-0872b3c67f30@tuxon.dev>
-Date: Tue, 20 Aug 2024 10:45:43 +0300
+	s=arc-20240116; t=1724139654; c=relaxed/simple;
+	bh=JdIQBI8pfCPEIloS9LRgdMusjlgJmiV9AUDWnZhVXSI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pwtQ5RFJG3BGByqc02hFjybj2yB/z2TRIfuiqXlFn3VXBbQ4KNHL2Pm1rleD4TbGUoMqOAAKm7PuXAsJ48G91Pm0S0xqQmeE2/myHrQKACMLTsCyisZvrVgE80d97/v9z3nL31MCTp+vArN36qafPWf4cawGs4CFpvKJQNzeb/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wp1VG4F6nz20m3L;
+	Tue, 20 Aug 2024 15:36:06 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 000BB18001B;
+	Tue, 20 Aug 2024 15:40:46 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
+ 2024 15:40:46 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <vladimir.oltean@nxp.com>, <claudiu.manoil@nxp.com>,
+	<alexandre.belloni@bootlin.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next] net: dsa: ocelot: Simplify with scoped for each OF child loop
+Date: Tue, 20 Aug 2024 15:48:05 +0800
+Message-ID: <20240820074805.680674-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
- <20240819102348.1592171-8-claudiu.beznea.uj@bp.renesas.com>
- <gxjlmdjicwzlexitsx673beyn7ijuf47637nao2luc5h6h6hvi@qstobttin7dw>
- <e6377448-9af3-4807-a8fd-197f5b2b4aa4@tuxon.dev>
- <56204f92-d1d4-4681-8a9d-f28925919ef4@kernel.org>
- <20240819-sizing-devouring-17b74473d1a1@spud>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240819-sizing-devouring-17b74473d1a1@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/net/dsa/ocelot/felix.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On 19.08.2024 19:39, Conor Dooley wrote:
-> On Mon, Aug 19, 2024 at 01:22:39PM +0200, Krzysztof Kozlowski wrote:
->> On 19/08/2024 13:10, claudiu beznea wrote:
->>>
->>>
->>> On 19.08.2024 14:05, Krzysztof Kozlowski wrote:
->>>> On Mon, Aug 19, 2024 at 01:23:44PM +0300, Claudiu wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
->>>>> the version available on Renesas RZ/V2H (R9A09G075).
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>> ---
->>>>>
->>>>> Changes in v4:
->>>>> - added comment near the fallback for RZ/G3S; because of this
->>>>>   dropped Conor's tag
->>>>
->>>> That's not a reason to request a re-review.
-> 
-> FWIW, I don't care about how many binding patches I do or do not get
-> credit for reviewing. 
+diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
+index e554699f06d4..800711c2b6cb 100644
+--- a/drivers/net/dsa/ocelot/felix.c
++++ b/drivers/net/dsa/ocelot/felix.c
+@@ -1265,9 +1265,8 @@ static int felix_parse_ports_node(struct felix *felix,
+ 				  phy_interface_t *port_phy_modes)
+ {
+ 	struct device *dev = felix->ocelot.dev;
+-	struct device_node *child;
+ 
+-	for_each_available_child_of_node(ports_node, child) {
++	for_each_available_child_of_node_scoped(ports_node, child) {
+ 		phy_interface_t phy_mode;
+ 		u32 port;
+ 		int err;
+@@ -1276,7 +1275,6 @@ static int felix_parse_ports_node(struct felix *felix,
+ 		if (of_property_read_u32(child, "reg", &port) < 0) {
+ 			dev_err(dev, "Port number not defined in device tree "
+ 				"(property \"reg\")\n");
+-			of_node_put(child);
+ 			return -ENODEV;
+ 		}
+ 
+@@ -1286,7 +1284,6 @@ static int felix_parse_ports_node(struct felix *felix,
+ 			dev_err(dev, "Failed to read phy-mode or "
+ 				"phy-interface-type property for port %d\n",
+ 				port);
+-			of_node_put(child);
+ 			return -ENODEV;
+ 		}
+ 
+-- 
+2.34.1
 
-I had no intention to drop your credit for reviewing this. In the past I
-went though situations where reviewer complained due to keeping the tag and
-doing very simple adjustment on the next version. I dropped your tag to
-avoid that situation here too and mentioned it in the change log.
-
-Thank you,
-Claudiu Beznea
-
-
-
-> Feel free to give a tag yourself Krzysztof in the
-> future if you come across these situations and I'll happily hit ctrl+d
-> and remove the thread from my mailbox rather than reply :)
-> 
->>>
->>> Sorry for that, I wasn't aware of the procedure for this on bindings.
->>
->> There is no difference. Please read carefully submitting patches,
->> including the chapter about tags.
-> 
-> Yeah, I don't think this patch is materially different on those
-> grounds...
-> 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Cheers,
-> Conor.
 
