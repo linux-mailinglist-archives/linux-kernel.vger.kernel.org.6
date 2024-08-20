@@ -1,205 +1,144 @@
-Return-Path: <linux-kernel+bounces-293661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9099582DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:39:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550019582E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6031F235F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AF71F21119
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF4218C342;
-	Tue, 20 Aug 2024 09:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3D018DF61;
+	Tue, 20 Aug 2024 09:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="qcW3ZZOe"
-Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ru4A8ABr"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A3E18A952;
-	Tue, 20 Aug 2024 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AE018C32B;
+	Tue, 20 Aug 2024 09:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724146714; cv=none; b=pcgJv/oBzM1gm1cXmra+5SA+phm59YXSDlFBhU+qmFkdYC7Et+YUHdshk3muOzP9QiIryGOotupluSp23prxbeoPDG29HVb3vR55M6E5c85/TLGjO0JKp6fvbfmFwaiGewTDpO8sJOb6h5N1lxDc+XfzRS+e/TvQqkDfXqdofu8=
+	t=1724146731; cv=none; b=LYK88GtZljNcCBRlziW05I5qErsIZD5ZIE9++WkVa0W8qxHdJOhvemb024CiMwdzbcZCvpCW0/XWD7TopaINseEVjzciyFhy5l09d1B8mDbOtVkBLgLKHwZ8/qfovww09/TtXv6IYtktD70S+CsBsN4sMpExi6rSDTyvUiJ3IQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724146714; c=relaxed/simple;
-	bh=aG8Is3bPBXGEjPmskOUz3pigaZCNCWXw8yXDoLVbfRI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fhKxY1kvsX2UeCgbWT+jrRifVpAFz01heR4XeeBqNBJboIojRe8SomTc9e5e3v+/rkqP0H9ycc2XMoReh4KwzmHKTzt6P3Et52+yHP/hRPsZZEwco4wUJcLGmorG6ryIs8JzNJNKSvoToYqlWrfuMTFVwjH3KnvdnVuYZR8remE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=qcW3ZZOe; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail; t=1724146702; x=1724405902;
-	bh=aG8Is3bPBXGEjPmskOUz3pigaZCNCWXw8yXDoLVbfRI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=qcW3ZZOeCYyr6Kighv5Ee2LVSQuu1oCHSNvPljlIRGCPACT70maY8uA+TgLntLey8
-	 ay5Dv3rREFmTdK1NATFjSlQxxvEdN+2tGkDkCBHVmoZlWwgtlneaDB3FD5w7h9RX37
-	 QivLLJ7HLEdCaq0FldgnAONUgFIN8LWCsOp/slvTDTNftSBejXhDEnEm+uhfMcBui/
-	 auKj4S8i1NZRYDdMzNmY2yxP3xB3wK6SLOa4aVFJ4i6r6U9eBuvanZ18ese/OS/AXL
-	 bvuaL9MVXtqWrgT9UGsSxM9Cko5aXnqhSzs2bjjhWxQ9QdZyb7hk0v4H+TMoMGfoSM
-	 BDWD8EZvzByMw==
-Date: Tue, 20 Aug 2024 09:38:14 +0000
-To: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>
-From: Mike Yuan <me@yhndnzj.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2 1/2] mm/memcontrol: respect zswap.writeback setting from parent cg too
-Message-ID: <45e2c372f59748262b6e4390dc5548f8ebf6c41a.camel@yhndnzj.com>
-In-Reply-To: <CAJD7tkajuiBDV9Hk8Z+f_-f4ZZf81o4CP3LFLVbfZbrvn4RrUA@mail.gmail.com>
-References: <20240816144344.18135-1-me@yhndnzj.com> <CAJD7tkajuiBDV9Hk8Z+f_-f4ZZf81o4CP3LFLVbfZbrvn4RrUA@mail.gmail.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: 40197622d762237332e9e1d1b626e89a528eff27
+	s=arc-20240116; t=1724146731; c=relaxed/simple;
+	bh=Rdad3okL7MNmaQlSj6sJja3bX3EWeW7LJlvGMZClMgk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P/tBzU2WhbIeEFsTdSe0HVOJwIZS7vJMvkzc2UwvEcGdq+0zB+0IfP8yhkiqk9mRYK4KJXoOTl3nq7vBftnw7pldw+hu0cXO9psOw/5ivOdsDxlyONpOoUpwruOSnyi0nrGdvrdpnPPS2uXPIrJ85umtw37K+cHgAMQlumHhQM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ru4A8ABr; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3b36f5366so3650333a91.0;
+        Tue, 20 Aug 2024 02:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724146730; x=1724751530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0WVdsLsmxYwgymE6I6XPZ0VOeJxb8k0ES72cD/kLQY8=;
+        b=Ru4A8ABr3AXn+MksU0DRvJYVPoIPEaatVzV4HGFQMpyB3w2JrHRBBnvUgYN6H/qwrs
+         A97uh9MXUPe5qAvTZ+tageMOQmbv6IX/5dnQZ74jBsJwfik6IbRTg7xNkP+FgFsBPbA1
+         bxrfyLlEW4c8RpnzPnAGIwkE8Id4vWH9j/3XC3pBjJARqnonnrvOmxHOSSDSf3rKD2gY
+         OH0A39QUaBoRhbJLqksKhSBgygTkuNfFB35nTkrvCyaBVyGA9vH56uCnvuAPZMYiLtPw
+         oeDODnEGFFR+sj/NYYIeCaffv2cAB4k9LGRm1atQc7hV+uYju0IaVOGbgq4dTbiI3FKY
+         vYmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724146730; x=1724751530;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0WVdsLsmxYwgymE6I6XPZ0VOeJxb8k0ES72cD/kLQY8=;
+        b=ssLj+ajCAlS0QTtLyJ9kQSlX0EmnoH5xxuaE/uMHNoclnwxMMDyNfxLfc+9oFUZ+sj
+         d+g02SEOlMp5t/S1l96pV+L1Gj4rhmeKUrGIBAp2f7TMC/uyohxwor7r3IxpTqwEKPmD
+         qM1JGphyjEV8eGfIZb8CbaHKHH49nEW5JioW6Vjhv2Jvm7FvTpGq/as2/nkXXggSgQEw
+         olRxkzWXkcTxXGXmjaqRDnsXVzPqhwhbgASN7O7uNn87wOpBCTUB5b4TnF+rlxPOWJXC
+         x2YW7oKCwBvV8n5YZpRcp8VkR5Jt3wtMaQwQ4+D6Q1mi6DFu2lx1wXXaezl83X5T6MX7
+         /T2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWIlwOgw0Bg3eKYltbEyqtaUcB9FxjqHNGydwPXQDcvboBD4dqKFHssNvmEFoCTYsYZtFAtobsmt5eAjLSG7OA6R1A9Hbj/XLZd+18e
+X-Gm-Message-State: AOJu0YwQSG69PYnNV7eyHMzx+/DPNf7m8of5JPEwpQawR285dLRSQNt8
+	FEqiEyAb69enCvRRp3fqZYX9nqeiws42igAk4VxfFeboH7oup4CL
+X-Google-Smtp-Source: AGHT+IHF9I9s+Fxk8vbHg0K2cB/yaA+g12OqwqsSEsnVkiEks2c7wO1DOmBk/9tSNMmJicERd3O47A==
+X-Received: by 2002:a17:90a:ff91:b0:2d3:d728:6ebb with SMTP id 98e67ed59e1d1-2d3dfc36bffmr12330038a91.5.1724146729285;
+        Tue, 20 Aug 2024 02:38:49 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d45246061dsm3230608a91.8.2024.08.20.02.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:38:48 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v4 0/7] net: stmmac: FPE via ethtool + tc
+Date: Tue, 20 Aug 2024 17:38:28 +0800
+Message-Id: <cover.1724145786.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-19 at 12:09 -0700, Yosry Ahmed wrote:
-> On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
-> >=20
-> > Currently, the behavior of zswap.writeback wrt.
-> > the cgroup hierarchy seems a bit odd. Unlike zswap.max,
-> > it doesn't honor the value from parent cgroups. This
-> > surfaced when people tried to globally disable zswap writeback,
-> > i.e. reserve physical swap space only for hibernation [1] -
-> > disabling zswap.writeback only for the root cgroup results
-> > in subcgroups with zswap.writeback=3D1 still performing writeback.
-> >=20
-> > The inconsistency became more noticeable after I introduced
-> > the MemoryZSwapWriteback=3D systemd unit setting [2] for
-> > controlling the knob. The patch assumed that the kernel would
-> > enforce the value of parent cgroups. It could probably be
-> > workarounded from systemd's side, by going up the slice unit
-> > tree and inheriting the value. Yet I think it's more sensible
-> > to make it behave consistently with zswap.max and friends.
-> >=20
-> > [1]
-> > https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate=
-#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
-> > [2] https://github.com/systemd/systemd/pull/31734
-> >=20
-> > Changes in v2:
-> > - Actually base on latest tree (is_zswap_enabled() ->
-> > zswap_is_enabled())
-> > - Updated Documentation/admin-guide/cgroup-v2.rst to reflect the
-> > change
-> >=20
-> > Link to v1:
-> > https://lore.kernel.org/linux-kernel/20240814171800.23558-1-me@yhndnzj.=
-com/
-> >=20
-> > Cc: Nhat Pham <nphamcs@gmail.com>
-> > Cc: Yosry Ahmed <yosryahmed@google.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> >=20
-> > Signed-off-by: Mike Yuan <me@yhndnzj.com>
-> > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
->=20
-> LGTM,
-> Acked-by: Yosry Ahmed <yosryahmed@google.com>
->=20
-> > ---
-> > =C2=A0Documentation/admin-guide/cgroup-v2.rst | 5 ++++-
-> > =C2=A0mm/memcontrol.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 9 ++++++++-
-> > =C2=A02 files changed, 12 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/admin-guide/cgroup-v2.rst
-> > b/Documentation/admin-guide/cgroup-v2.rst
-> > index 86311c2907cd..80906cea4264 100644
-> > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > @@ -1719,7 +1719,10 @@ The following nested keys are defined.
-> > =C2=A0=C2=A0 memory.zswap.writeback
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 A read-write single value fi=
-le. The default value is "1".
-> > The
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 initial value of the root cg=
-roup is 1, and when a new
-> > cgroup is
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 created, it inherits the current =
-value of its parent.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 created, it inherits the current =
-value of its parent. Note
-> > that
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 this setting is hierarchical, i.e=
-. the writeback would be
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 implicitly disabled for child cgr=
-oups if the upper
-> > hierarchy
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 does so.
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 When this is set to 0, all s=
-wapping attempts to swapping
-> > devices
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 are disabled. This included =
-both zswap writebacks, and
-> > swapping due
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index f29157288b7d..327b2b030639 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5320,7 +5320,14 @@ void obj_cgroup_uncharge_zswap(struct
-> > obj_cgroup *objcg, size_t size)
-> > =C2=A0bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
-> > =C2=A0{
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* if zswap is disabled, do =
-not block pages going to the
-> > swapping device */
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return !zswap_is_enabled() || !me=
-mcg || READ_ONCE(memcg-
-> > >zswap_writeback);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!zswap_is_enabled())
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return true;
->=20
-> This is orthogonal to this patch, but I just realized that we
-> completely ignore memory.zswap_writeback if zswap is disabled. This
-> means that if a cgroup has disabled writeback, then zswap is globally
-> disabled for some reason, we stop respecting the cgroup knob. I guess
-> the rationale could be that we want to help get pages out of zswap as
-> much as possible to honor zswap's disablement? Nhat, did I get that
-> right?
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
-Hmm, I think the current behavior makes more sense. If zswap is
-completely
-disabled, it seems intuitive that zswap-related knobs lose their
-effect.
+Changes in v4:
+  1. reorder FPE-related declarations and definitions into clean groups
+  2. move mm_lock to stmmac_fpe_cfg.lock
+  3. protect user configurations across NIC up/down
+  4. block stmmac_set_mm() when fpe_task is in progress to finish
+  5. convert to ethtool_dev_mm_supported() to check FPE capability in
+  tc-mqprio/tc-taprio
+  6. silence FPE workqueue start/stop logs
 
-> I feel like it's a little bit odd to be honest, but I don't have a
-> strong opinion on it. Maybe we should document this behavior better.
+Changes in v3:
+  1. avoid races among ISR, workqueue, link update and
+  register configuration.
+  2. update FPE verification retry logic, so it retries
+  and fails as expected.
 
-But clarify this in the documentation certainly sounds good :)
+Changes in v2:
+  1. refactor FPE verification processe
+  2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+  3. handle TC:TXQ remapping for DWMAC CORE4+
 
->=20
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (; memcg; memcg =3D parent_me=
-m_cgroup(memcg))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (!READ_ONCE(memcg->zswap_writeback))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return f=
-alse;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return true;
-> > =C2=A0}
-> >=20
-> > =C2=A0static u64 zswap_current_read(struct cgroup_subsys_state *css,
-> >=20
-> > base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
-> > --
-> > 2.46.0
-> >=20
-> >=20
+Furong Xu (7):
+  net: stmmac: move stmmac_fpe_cfg to stmmac_priv data
+  net: stmmac: drop stmmac_fpe_handshake
+  net: stmmac: refactor FPE verification process
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: silence FPE kernel logs
 
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  96 +++++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  11 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  20 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  27 ++-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 110 +++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 214 +++++++++---------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 124 +++++++---
+ include/linux/stmmac.h                        |  28 ---
+ 10 files changed, 463 insertions(+), 181 deletions(-)
+
+-- 
+2.34.1
 
 
