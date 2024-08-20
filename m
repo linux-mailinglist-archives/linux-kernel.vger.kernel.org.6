@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-293722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E609583A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:07:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E959583A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E92B2591A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A4C1C24189
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30BB18D620;
-	Tue, 20 Aug 2024 10:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pLQsqbCY"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B6418DF6B;
+	Tue, 20 Aug 2024 10:07:30 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA118CC0E;
-	Tue, 20 Aug 2024 10:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE53618C93C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148442; cv=none; b=s0vN0FGEeS1Qb2sAfSskFmdsIAVFjJJR8PkPnuTDGTBVkaoaN/hZZggQXyC55e/D3Q63AlQ8EeAxpOFyy92X3yDmiFLEXSWOj50iKz3n7rYhysD3g6m5glWJ8zAs18vRuA1RlTzj0knO72hWG10MMkOqAL7f1UF835MdeOA6gXY=
+	t=1724148450; cv=none; b=JCJb6ch4Ce4nA+oIqOO2IZYf1vg8kEpLQ35cpA8B/8ASC5CGHqvGu+6Br1ICGRHtqjPgBpe14pHGn/NyOe/FVjzre/7SNHqd3XP86iRXJ7QYstC/YtlCtcH8H/MwYLYr91uiPVdcRscG/Mx1xvcs6nLRtm8cjZpeIZdwJjHWfFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148442; c=relaxed/simple;
-	bh=dKlbevvebHQEcZGYVQfCE/AOvvg/xGoqpqQhEY0ng2c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EQtRyh+yifIztw4wmbH1qDl4UQTDqFWFvFk8ql7Hop3Kpxsm7IHyvnrjMJZMW2fk6WWc5mTS4wNJn5yHFgEIwuruAVZAy4RCCq4UPexVHf7gCzNkbXWBuHHbb9TI5FbvNAEzguEdKhEj1LnhfWvAfKOl6p+jX+fArGfArepi0Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pLQsqbCY; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KA7EG2017205;
-	Tue, 20 Aug 2024 05:07:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724148435;
-	bh=2bPALklH8qin/1uAmcLNSYEl5N8smNp6DkrdpWooo+4=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=pLQsqbCYQ4svyRluhQwKlwyPvQ70LqEnZ0IFBpeJALpbSpWLUZmo6wv6pF8wCBO9D
-	 POlcBKXyHOJObGOh1Xd4oGO0GaUCaciIY655fn76HO2hZMDWHLBpiND/OitJlnNllI
-	 4YaKzsvKncnOvRTuMtZkpoGGtLT+rXFwTby9Nxq0=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KA7Emm001209
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 05:07:14 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 05:07:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 05:07:14 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KA7DTw076275;
-	Tue, 20 Aug 2024 05:07:14 -0500
-Date: Tue, 20 Aug 2024 15:37:13 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Kevin Hilman <khilman@baylibre.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
-        Nishanth
- Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
-        Akashdeep Kaur
-	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] pmdomain: ti_sci: collect and send low-power mode
- constraints
-Message-ID: <20240820100713.2xbbyw726eymxr66@lcpd911>
-References: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
+	s=arc-20240116; t=1724148450; c=relaxed/simple;
+	bh=oVvF/McOdfU3iVgHtG/wOM7DdHIFGU5GzGnuR8IbQm8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=im7w6lE8bpy1+9Z5YDEmsZqiCoFZgnwgWe25Tea/IqY7cexyMTMznjzu0OG0zwNghRW0uTOrri3uhN8mB+wnfIKBsb5RLM1Zotl3LdKCStqJ4vRZua8vUwC+SPhwbbuPWg6pEelp9b2zqmU0d3vRz7WlyOo/tsipqnj0zaYaf8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-821dabd4625so529761039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:07:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724148448; x=1724753248;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CXqZnoT89tCdn/rZ++yqUb0Wgp+4J8NF/884jAwy3LI=;
+        b=RnLDqL0dDnCvWiSwSrZFTK+usDEioYUqUiRHGkAn1IX7wKBXLYKPpG4pVpo3R6Rt8o
+         NdnkcZiZMbj/fZU+20JxPk6fGCge5dJYrIJ+iQrTkjb2cHvHnWXH/N3/Rvs3oN/YDwHd
+         U6AcXAE1qHcC+LKrTYGW7G5kL+eWZ7YH75BCJ7uIsa3ULZX3JEvLJBbf7O4AIKoK1LtD
+         XSucEFmvCyQOK5GovvdIcp91T2NbC4N1kaR+irf+/v+bxKNvOjgK/6mjv/uEfdCeIqHf
+         rMI8HVdKN8AcTeyL6WMic1NlyhmXn9bjKAwuJw2N5jO0NEWp+9DP9iBISZIuODkMi9Wm
+         17oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl22+C69919Iu8ky+Lu+XS0rzUStveV+qLP7SMWs+HkcUfwukpX2lezYBcoN0gnVghEydL1rczmoKuX54SSndBmC9fjAY5iu+Yn/tY
+X-Gm-Message-State: AOJu0YzWDpJPl+HkKQUZaGcFficEO40PYESe312DEf2YOcOI1G1+SCtB
+	uKD3CgTEospSwM7X9eQCksh3qeSmKUyO6riWmBPOiZdCsbOPmpUGfPv7c53MJbET+q2eK0q5GG2
+	YOIS4Td9/qnTBET8Lv++7JFk1TAnU0U4emFV1cb/vTagHztTYPPT8O7g=
+X-Google-Smtp-Source: AGHT+IE+/wCasVpl47ORO2tjgymEJodaQWpR5MmKZBp9AwVnmG6q+EkS4QCsdEkhY3wj/3jLe4f+IwMtv13VSmnAIi3GMZyWjy98
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a05:6638:12d4:b0:4ca:7128:6c70 with SMTP id
+ 8926c6da1cb9f-4cce1747d52mr903259173.6.1724148447690; Tue, 20 Aug 2024
+ 03:07:27 -0700 (PDT)
+Date: Tue, 20 Aug 2024 03:07:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c3d5e806201a97ac@google.com>
+Subject: [syzbot] [exfat?] KCSAN: data-race in dio_bio_end_io / dio_new_bio (3)
+From: syzbot <syzbot+fed24898593bed518bec@syzkaller.appspotmail.com>
+To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Aug 19, 2024 at 17:00:10 -0700, Kevin Hilman wrote:
-> The latest (10.x) version of the firmware for the PM co-processor (aka
-> device manager, or DM) adds support for a "managed" mode, where the DM
-> firmware will select the specific low power state which is entered
-> when Linux requests a system-wide suspend.
-> 
-> In this mode, the DM will always attempt the deepest low-power state
-> available for the SoC.
-> 
-> However, Linux (or OSes running on other cores) may want to constrain
-> the DM for certain use cases.  For example, the deepest state may have
-> a wakeup/resume latency that is too long for certain use cases.  Or,
-> some wakeup-capable devices may potentially be powered off in deep
-> low-power states, but if one of those devices is enabled as a wakeup
-> source, it should not be powered off.
-> 
-> These kinds of constraints are are already known in Linux by the use
-> of existing APIs such as per-device PM QoS and device wakeup APIs, but
-> now we need to communicate these constraints to the DM.
-> 
-> For TI SoCs with TI SCI support, all DM-managed devices will be
-> connected to a TI SCI PM domain.  So the goal of this series is to use
-> the PM domain driver for TI SCI devices to collect constraints, and
-> communicate them to the DM via the new TI SCI APIs.
-> 
-> This is all managed by TI SCI PM domain code.  No new APIs are needed
-> by Linux drivers.  Any device that is managed by TI SCI will be
-> checked for QoS constraints or wakeup capability and the constraints
-> will be collected and sent to the DM.
-> 
-> This series depends on the support for the new TI SCI APIs (v10) and
-> was also tested with this series to update 8250_omap serial support
-> for AM62x[2].
-> 
-> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
-> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
-> 
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> ---
+Hello,
 
-Since I applied this series to the v10 TISCI series as well, and tested:
+syzbot found the following issue on:
 
-For the series,
-Tested-by: Dhruva Gole <d-gole@ti.com>
+HEAD commit:    6e4436539ae1 Merge tag 'hid-for-linus-2024081901' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110c8de5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3aa0f597417bf8c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=fed24898593bed518bec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Logs:
-https://gist.github.com/DhruvaG2000/658d0d4683b13ab41025df19a8eafc2f
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Tree with all the patches applied:
-https://github.com/DhruvaG2000/v-linux/tree/lpm-k3-next
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/72e87ae72e3c/disk-6e443653.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/226d5b10603c/vmlinux-6e443653.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/edaf634acf3f/bzImage-6e443653.xz
 
--- 
-Best regards,
-Dhruva Gole <d-gole@ti.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fed24898593bed518bec@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 8192
+==================================================================
+BUG: KCSAN: data-race in dio_bio_end_io / dio_new_bio
+
+read-write to 0xffff888114c1e058 of 8 bytes by interrupt on cpu 1:
+ dio_bio_end_io+0x53/0xd0 fs/direct-io.c:388
+ bio_endio+0x369/0x410 block/bio.c:1646
+ blk_update_request+0x382/0x880 block/blk-mq.c:925
+ blk_mq_end_request+0x26/0x50 block/blk-mq.c:1053
+ lo_complete_rq+0xce/0x180 drivers/block/loop.c:386
+ blk_complete_reqs block/blk-mq.c:1128 [inline]
+ blk_done_softirq+0x74/0xb0 block/blk-mq.c:1133
+ handle_softirqs+0xc3/0x280 kernel/softirq.c:554
+ run_ksoftirqd+0x1c/0x30 kernel/softirq.c:928
+ smpboot_thread_fn+0x31c/0x4c0 kernel/smpboot.c:164
+ kthread+0x1d1/0x210 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+read to 0xffff888114c1e058 of 8 bytes by task 3990 on cpu 0:
+ dio_bio_reap fs/direct-io.c:551 [inline]
+ dio_new_bio+0x249/0x460 fs/direct-io.c:670
+ dio_send_cur_page+0x1f2/0x7a0 fs/direct-io.c:751
+ submit_page_section+0x1a3/0x5b0 fs/direct-io.c:816
+ do_direct_IO fs/direct-io.c:1031 [inline]
+ __blockdev_direct_IO+0x11c1/0x1e90 fs/direct-io.c:1249
+ blockdev_direct_IO include/linux/fs.h:3217 [inline]
+ fat_direct_IO+0x110/0x1e0 fs/fat/inode.c:282
+ generic_file_direct_write+0xaf/0x200 mm/filemap.c:3941
+ __generic_file_write_iter+0xae/0x120 mm/filemap.c:4107
+ generic_file_write_iter+0x7d/0x1d0 mm/filemap.c:4147
+ do_iter_readv_writev+0x3b0/0x470
+ vfs_writev+0x2e0/0x880 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2+0x10c/0x1d0 fs/read_write.c:1122
+ __x64_sys_pwritev2+0x78/0x90 fs/read_write.c:1122
+ x64_sys_call+0x271f/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0xffff8881151e8e40 -> 0xffff888114d5bd80
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 3990 Comm: syz.0.161 Not tainted 6.11.0-rc4-syzkaller-00008-g6e4436539ae1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
