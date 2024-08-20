@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-293234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCA3957C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:16:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24D5957C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CFE28534A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CEC1C23C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7A050284;
-	Tue, 20 Aug 2024 04:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094B450285;
+	Tue, 20 Aug 2024 04:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ib9BUAFd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fq8opP0K"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101DD2F5E;
-	Tue, 20 Aug 2024 04:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2872F5E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724127365; cv=none; b=TVAl4QcWwRvVA7QpJ76jUUXN2kIR3lK2+sx18gRnE2IjgRPSsffdWuO7GVDy7zE7wJnVK4ht4LVPORBf7trlLgGFD5vUCmQbpHcuqLXjWzjG1VQvtdDN11byiB33+0euYbgrZaYLni113MrI2JPh5/ORF0cnNFcczuAdMhwvHlQ=
+	t=1724127382; cv=none; b=S2ht0P+9/+wJ6DRjqz5EW8orqjHLvPDPWBxvrp2Sfdj+vN3PfedglM6byiqMG5sMYazk7w8B24Le+k/395tsAdtGUtVsWARCi0PGVqUtDO4z1WlkF0LwNCQqyxDgHxBZKSbu62JoA4kelSgm1xl5f/cjnmM2Gkx3BgcEI3wSCm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724127365; c=relaxed/simple;
-	bh=AGa3YhfBqQHIC8r3pvSt8hZ1jUBw1AJBBqGQCs2wo98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsY8IDDm05Ru/HObBEad6Phnhon6PpgniNf9/BOHa98YQiabKluZi4dNQeoIVmgrzxhnyINM+iGRPpGf+IelplcBuPw2jdkLUZC34FLrT4qYjgg0Ujz12bZK9SIVfkiGi8Mklz8Noa+qQJ+qi6S9UiyNgNDPRh5TpX/QA22wL1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ib9BUAFd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C98C4AF09;
-	Tue, 20 Aug 2024 04:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724127364;
-	bh=AGa3YhfBqQHIC8r3pvSt8hZ1jUBw1AJBBqGQCs2wo98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ib9BUAFdVkVdBgf92ngVXaz9/zKAZE+WtXLpxOj5r/PuW0XRmqPX8rTqYGWkv0MC7
-	 sgk8KQo/vj6VGCdUkMkZfY3D7OVXThlaPhtqY4AM3Vv+hY4Cn15RpD6mhz8shSGIDb
-	 gi/nHa3aFCQwyI2yentY9SjEj4nIuSkYpkrfX/OQ=
-Date: Tue, 20 Aug 2024 06:15:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mark Pearson <markpearson@lenovo.com>, Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev, stable@vger.kernel.org,
-	John Rowley <lkml@johnrowley.me>
-Subject: Re: [PATCH] ACPI: platform-profile: Fix CFI violation when accessing
- sysfs files
-Message-ID: <2024082034-bullfight-pureness-3ada@gregkh>
-References: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
+	s=arc-20240116; t=1724127382; c=relaxed/simple;
+	bh=GAY/p2+RIFAj4DrueEbtoLyRE4CtY/yinwNuslLZZmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ea+c182WLRbkqzoDeDlNnk5AScHj2YfvRxT5qkmzsHCnhu1n7XItAO36Y81q88A6ozOA8PbTNKFkXBIeLiAa2mpzH1bXJj49J10sZofKlxvRoTR5H38Av7X2bqjYuYXZPpsMuxeIKOax4nYR7y2yJMvRPdd2kNZy0ADNDIRGy78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fq8opP0K; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0bbe834826so603228276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:16:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724127379; x=1724732179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=srakS6qJodiTLporsDBsy+02pc55aKhjRYvyA7MFvdA=;
+        b=fq8opP0Kw52zLIscF1QEQEQWZSJhUStV3d+fG9V/PhN5H76JGjt6tJIBSVDvCpMYd7
+         ZXfi2ChvJHuwGa2V/04p4SCDTcdrEpwcOXXU1VkyWMMgiRH5ejg1aBqmNmNLpFuxC3dG
+         PwhmajnUifIY1SyVEUnRae/TNFUNelxl7eLf4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724127379; x=1724732179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=srakS6qJodiTLporsDBsy+02pc55aKhjRYvyA7MFvdA=;
+        b=E1YBPBRA/ihCHK4Cs5twzjAGys99V2iuFIRT5EQALGwDipDbOqh3INiBWMfnHrZQ8W
+         ZsMy9mjT4NV07wBl1dNJ7CYX1cakLE6CuqEVL56sBziwunpMIXD8KoH5YVAFALTh0kf8
+         8Xk9M5F+ihAjr0fw3yVw8GpdGXYZev1PaMTNji5eixywpnTTmScMdW2WnY9f2myC33B5
+         JQQsIRUUFwxtBpGxltF96FoqhDH0fECGFAywPBsxVpQRfxUkvD7ODwKPUSyltgN0/v8p
+         MdPzBkW+6Z6uH54A2+/pQ3qlyEgdZbMFkvoUakb+J3TZIwu1gD307IwalRH44tyHUrWc
+         vvGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBKsGHec+t6DURGm1l09cDuQV9QcIIeca6hoKZRStz5MmiknrTenhrcW33k+C6/zrH4RDGva3sgOidNagRMlvAjIjrJ6NRuptuvLW2
+X-Gm-Message-State: AOJu0YzlYMrKy0BMAdXErsL0fSk48a5jwSu7h0Pjzm5DdJHnN6gmhBse
+	bWpNl9brtE8j9EuOK23cCiv1Exw92ofgZiaj3/Bkpn00KkQN4hCuw7cUByPrnJ8LVz0oMXfpN1s
+	H/tVtvwmbkNjmeDtY3tVDFYiKFNA40b+k1CvdOzbTknJImajw6oec
+X-Google-Smtp-Source: AGHT+IEYHD2iKPECcKUGr0P+D5te+97WTsQEPEOCLu0NNZ6JYhTtWhlwpuEYA4h/4Hgf62190NgXJBrA2NJRQNfxAjw=
+X-Received: by 2002:a05:6902:91b:b0:dfd:b41f:7f5c with SMTP id
+ 3f1490d57ef6-e1180f6c94emr6027691276.4.1724127379399; Mon, 19 Aug 2024
+ 21:16:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
+References: <20240815005704.2331005-1-philipchen@chromium.org> <66c3bf85b52e3_2ddc242941@iweiny-mobl.notmuch>
+In-Reply-To: <66c3bf85b52e3_2ddc242941@iweiny-mobl.notmuch>
+From: Philip Chen <philipchen@chromium.org>
+Date: Mon, 19 Aug 2024 21:16:08 -0700
+Message-ID: <CA+cxXhmg6y4xePSHO3+0V-Td4OarCS1e4qyOKUducFoETojqFw@mail.gmail.com>
+Subject: Re: [PATCH] virtio_pmem: Check device status before requesting flush
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Pankaj Gupta <pankaj.gupta.linux@gmail.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	virtualization@lists.linux.dev, nvdimm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 12:09:22PM -0700, Nathan Chancellor wrote:
-> When an attribute group is created with sysfs_create_group(), the
-> ->sysfs_ops() callback is set to kobj_sysfs_ops, which sets the ->show()
-> and ->store() callbacks to kobj_attr_show() and kobj_attr_store()
-> respectively. These functions use container_of() to get the respective
-> callback from the passed attribute, meaning that these callbacks need to
-> be the same type as the callbacks in 'struct kobj_attribute'.
-> 
-> However, the platform_profile sysfs functions have the type of the
-> ->show() and ->store() callbacks in 'struct device_attribute', which
-> results a CFI violation when accessing platform_profile or
-> platform_profile_choices under /sys/firmware/acpi because the types do
-> not match:
-> 
->   CFI failure at kobj_attr_show+0x19/0x30 (target: platform_profile_choices_show+0x0/0x140; expected type: 0x7a69590c)
-> 
-> This happens to work because the layout of 'struct kobj_attribute' and
-> 'struct device_attribute' are the same, so the container_of() cast
-> happens to allow the callbacks to still work.
-
-Please note that this was an explicit design decision all those years
-ago, it's not just "happening" to work by some accident.  It was just
-done way before anyone thought of CFI-like things.
-
-> 
-> Change the type of platform_profile_choices_show() and
-> platform_profile_{show,store}() to match the callbacks in
-> 'struct kobj_attribute' and update the attribute variables to match,
-> which resolves the CFI violation.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a2ff95e018f1 ("ACPI: platform: Add platform profile support")
-> Reported-by: John Rowley <lkml@johnrowley.me>
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/2047
-> Tested-by: John Rowley <lkml@johnrowley.me>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  drivers/acpi/platform_profile.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index d2f7fd7743a1..11278f785526 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -22,8 +22,8 @@ static const char * const profile_names[] = {
->  };
->  static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
->  
-> -static ssize_t platform_profile_choices_show(struct device *dev,
-> -					struct device_attribute *attr,
-> +static ssize_t platform_profile_choices_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr,
->  					char *buf)
->  {
->  	int len = 0;
-> @@ -49,8 +49,8 @@ static ssize_t platform_profile_choices_show(struct device *dev,
->  	return len;
->  }
->  
-> -static ssize_t platform_profile_show(struct device *dev,
-> -					struct device_attribute *attr,
-> +static ssize_t platform_profile_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr,
->  					char *buf)
->  {
->  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
-> @@ -77,8 +77,8 @@ static ssize_t platform_profile_show(struct device *dev,
->  	return sysfs_emit(buf, "%s\n", profile_names[profile]);
->  }
->  
-> -static ssize_t platform_profile_store(struct device *dev,
-> -			    struct device_attribute *attr,
-> +static ssize_t platform_profile_store(struct kobject *kobj,
-> +			    struct kobj_attribute *attr,
->  			    const char *buf, size_t count)
->  {
->  	int err, i;
-> @@ -115,12 +115,12 @@ static ssize_t platform_profile_store(struct device *dev,
->  	return count;
->  }
->  
-> -static DEVICE_ATTR_RO(platform_profile_choices);
-> -static DEVICE_ATTR_RW(platform_profile);
-> +static struct kobj_attribute attr_platform_profile_choices = __ATTR_RO(platform_profile_choices);
-> +static struct kobj_attribute attr_platform_profile = __ATTR_RW(platform_profile);
-
-I understand your need/want for this, but ick, is there any way to get
-back to using 'struct device' and not "raw" kobjects here?  That's what
-the code should be using really.
-
-thanks,
-
-greg k-h
+On Mon, Aug 19, 2024 at 2:56=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wro=
+te:
+>
+> Philip Chen wrote:
+> > If a pmem device is in a bad status, the driver side could wait for
+> > host ack forever in virtio_pmem_flush(), causing the system to hang.
+>
+> I assume this was supposed to be v2 and you resent this as a proper v2
+> with a change list from v1?
+Ah...yes, I'll fix it and re-send it as a v2 patch.
+>
+> Ira
+>
+> >
+> > Signed-off-by: Philip Chen <philipchen@chromium.org>
+> > ---
+> >  drivers/nvdimm/nd_virtio.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+> > index 35c8fbbba10e..3b4d07aa8447 100644
+> > --- a/drivers/nvdimm/nd_virtio.c
+> > +++ b/drivers/nvdimm/nd_virtio.c
+> > @@ -44,6 +44,15 @@ static int virtio_pmem_flush(struct nd_region *nd_re=
+gion)
+> >       unsigned long flags;
+> >       int err, err1;
+> >
+> > +     /*
+> > +      * Don't bother to send the request to the device if the device i=
+s not
+> > +      * acticated.
+> > +      */
+> > +     if (vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_NEEDS_RESET)=
+ {
+> > +             dev_info(&vdev->dev, "virtio pmem device needs a reset\n"=
+);
+> > +             return -EIO;
+> > +     }
+> > +
+> >       might_sleep();
+> >       req_data =3D kmalloc(sizeof(*req_data), GFP_KERNEL);
+> >       if (!req_data)
+> > --
+> > 2.46.0.76.ge559c4bf1a-goog
+> >
+>
+>
 
