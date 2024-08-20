@@ -1,327 +1,123 @@
-Return-Path: <linux-kernel+bounces-294559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D083B958F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:38:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C398958F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31ADDB21886
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310371F22DB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1248A1BF303;
-	Tue, 20 Aug 2024 20:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEBF1B8E9E;
+	Tue, 20 Aug 2024 20:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oJJ5lRvk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KgYHndSo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fzD0JyTn"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1589918E37E;
-	Tue, 20 Aug 2024 20:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C1018E37E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186302; cv=none; b=LJVe5khyV+OWcC5t1JFEU/rqAzLcyNXdOQ8P2ZAsvTmy6Be9ltI1TNsbXZglFIIeAnUhkEEVg8+X/ssg2gNpekxK/10xCdaENOgctolq91CIwPfq4HfieI062H87pQyCiPPt1WswcCOExNkC/MtrOLeCR8d8zaw0o3JHmBx89CM=
+	t=1724186545; cv=none; b=QbBVp9HVncDxq6ldxIv1L6jTOHD67yNy9F1wYxfa5Ww/Efn7YUbYmxwglYZd2eNxyCKrDTuAle2CGs4EqHHQ/pVv1xv/4VMnJL5hcHyLUfkW394b6upFaoC3wDa0xXHiiL3WS3zlPdmG0zPyu69t6ZjSHhLqj45ZR1/eqPMGsJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186302; c=relaxed/simple;
-	bh=z2NSTYohbl5yMpwnUSZ3/eUP+tZqxVOABVswy0Qs5Pc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=c8owYLq56az0nQ471vOQwZ8kw9Cp9aWZl+p+IU2K5rfQYq6NPK3xw2H4viDBJVrf/g+/8RILxtIrQn/HgjJIdtoLAcSIL06mQm2l1a/c+zHhQezs4GL/h+ygXNaZlcKATXa1Bllp28oxIDShXSkd1jqvjQuvOlMLW3vyOdrP8So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oJJ5lRvk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KgYHndSo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 20 Aug 2024 20:38:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724186298;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b5zNsM/2vqDYVr/xID+pmMS7r6uLjO/FlSyL3abxmYA=;
-	b=oJJ5lRvkPLgeS2bgSKXPCpMXxPzjGgHdMeXeg7jEmUXwpMsiGSdQXbKJwaxXaCh7Wum+on
-	4xh91Ole5s28HY7JxO2JjWqx+LiGWzV6xNjqnzhUCCSTPurATHXrrsbTPVb+FL0ui1zMyE
-	gGkhyUkhtnkZItwtGJ0ujBzi25YXgHMwj2B0Kb3KYRp0MWsvgmLSifs1ted8ZytUnAgw6K
-	ayPIFtCgmraPspNHnPQcyS0OIT4u15gIwfMaW8Oq1LSfzKpjCVuBpFh+yAWvOxVsbaP94t
-	BLK+rVuJcz9dQM63b+3a44Efi0zfxrGF6jQOEPA3uNk+904vWCYuueUgf0pwsg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724186298;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b5zNsM/2vqDYVr/xID+pmMS7r6uLjO/FlSyL3abxmYA=;
-	b=KgYHndSoCrZPbChTuvniloiXFB4I51sP9MZojQINlaJ7ZTXzmCcedSRMNEs7cHaQbXCcN7
-	jzHNAoJuqOYdkoCA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/kaslr: Expose and use the end of the physical
- memory address space
-Cc: Max Ramanouski <max8rr8@gmail.com>, Alistair Popple <apopple@nvidia.com>,
- Thomas Gleixner <tglx@linutronix.de>, Dan Williams <dan.j.williams@intel.com>,
- Kees Cook <kees@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <87ed6soy3z.ffs@tglx>
-References: <87ed6soy3z.ffs@tglx>
+	s=arc-20240116; t=1724186545; c=relaxed/simple;
+	bh=8XGUYMGE1OFUymXrkgfLYCdVIVigLdfqa86an2wYvDU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Li4Rvwaw8PXEWCwGVB4hFqT3tQZWQ3MWvnomOWiEt+sLzPtIqFW4TsKpkZ/NOcGTjouqTOpS0p8WTuR4l0J0/drZTisB99lwM99PRr9MLGf1rhVHy7kGNRfm3jUBtoSGQw1uwNueCAZiZK8PNOltY6W6F6+uwA8RqXz+bS56ovw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fzD0JyTn; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724186540; x=1724445740;
+	bh=8XGUYMGE1OFUymXrkgfLYCdVIVigLdfqa86an2wYvDU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fzD0JyTnDwHZgwT1ljsi7cob08ou3MNybOYEorWDsGhFvtSQYHc4SydOvBPab2UWo
+	 v+bUSDUGuumR4DyaAmVuXDbRZKCyOVc++jvwdyU5xlbrixWIpFbJMHZQSqEsCm3f2Y
+	 EU1S9pWsmHAwFExUirWMs4Kzr+7WcAwMn/b1Q6ZFilB7v9SLk303KC5z4imjz3etUS
+	 J12fK9Y6Fe0eyBKedI69Wy35IXQNrFG1CJ2g0GsgAFDPOWI+acSLzsKu8cRdH90a4G
+	 /2w8vzM/bLqdiNuXoqX+KX2qNKyIChsLg6p8MNS7JD4W2XAO+mZ41xd7OxXpUntIRz
+	 XuocDGIoEbzeQ==
+Date: Tue, 20 Aug 2024 20:42:15 +0000
+To: Andy Yan <andyshrk@163.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re:[PATCH v4] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <acvk_AR9o8iB8dRnYZrKp6ylhzAjl5oZyE6oBIKWQttckNesM1-5k9b71jDIRhoYRwx75xe-6_mM8a0p4e15NMapX1GjdDLqPPoKZDN8U1A=@proton.me>
+In-Reply-To: <22e2b803.cd8.1916d581b67.Coremail.andyshrk@163.com>
+References: <20240815124306.189282-2-pZ010001011111@proton.me> <22e2b803.cd8.1916d581b67.Coremail.andyshrk@163.com>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 7fe11dad4a52c85e539c6e124e57470cd51a72e2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172418629773.2215.4158024254077335422.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     ea72ce5da22806d5713f3ffb39a6d5ae73841f93
-Gitweb:        https://git.kernel.org/tip/ea72ce5da22806d5713f3ffb39a6d5ae73841f93
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 14 Aug 2024 00:29:36 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 20 Aug 2024 13:44:57 +02:00
 
-x86/kaslr: Expose and use the end of the physical memory address space
+On Tuesday, August 20th, 2024 at 3:12 AM, Andy Yan <andyshrk@163.com> wrote=
+:
 
-iounmap() on x86 occasionally fails to unmap because the provided valid
-ioremap address is not below high_memory. It turned out that this
-happens due to KASLR.
+>=20
+> Hi Piotr=EF=BC=8C
 
-KASLR uses the full address space between PAGE_OFFSET and vaddr_end to
-randomize the starting points of the direct map, vmalloc and vmemmap
-regions.  It thereby limits the size of the direct map by using the
-installed memory size plus an extra configurable margin for hot-plug
-memory.  This limitation is done to gain more randomization space
-because otherwise only the holes between the direct map, vmalloc,
-vmemmap and vaddr_end would be usable for randomizing.
+Hi Andy!
 
-The limited direct map size is not exposed to the rest of the kernel, so
-the memory hot-plug and resource management related code paths still
-operate under the assumption that the available address space can be
-determined with MAX_PHYSMEM_BITS.
+> > +static int vop2_crtc_atomic_check_gamma(struct vop2_video_port *vp,
+> > + struct drm_crtc *crtc,
+> > + struct drm_atomic_state *state,
+> > + struct drm_crtc_state *crtc_state)
+> > +{
+> > + struct vop2 *vop2 =3D vp->vop2;
+> > + unsigned int len;
+> > +
+> > + if (!vp->vop2->lut_regs || !crtc_state->color_mgmt_changed ||
+> > + !crtc_state->gamma_lut)
+> > + return 0;
+> > +
+> > + len =3D drm_color_lut_size(crtc_state->gamma_lut);
+> > + if (len !=3D crtc->gamma_size) {
+> > + DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
+> > + len, crtc->gamma_size);
+> > + return -EINVAL;
+> > + }
+> > +
+> > + // trigger full modeset only when SoC is 356x
+> > + if (!crtc_state->mode_changed && (vop2->data->soc_id =3D=3D 3566 ||
+> > + vop2->data->soc_id =3D=3D 3568)) {
+> > + int ret;
+> > +
+> > + crtc_state->mode_changed =3D true;
+> > + state->allow_modeset =3D true;
+>=20
+>=20
+>=20
+>=20
+> We don't need to trigger a modeset here. We just need to disable dsp_lut =
+befor we write gamma lut data for rk3566/8.
 
-request_free_mem_region() allocates from (1 << MAX_PHYSMEM_BITS) - 1
-downwards.  That means the first allocation happens past the end of the
-direct map and if unlucky this address is in the vmalloc space, which
-causes high_memory to become greater than VMALLOC_START and consequently
-causes iounmap() to fail for valid ioremap addresses.
+Formerly my patch didn't trigger a modeset. Though Daniel Stone in his=20
+reply to v3[1] suggested it as the clean way to handle RK356x case[2],=20
+quote, "it would probably be better to set mode_changed when the colour=20
+management configuration changes". Let's wait for his reply to this=20
+version of the patch, perhaps he meant something different or not exactly=
+=20
+what I did.
 
-MAX_PHYSMEM_BITS cannot be changed for that because the randomization
-does not align with address bit boundaries and there are other places
-which actually require to know the maximum number of address bits.  All
-remaining usage sites of MAX_PHYSMEM_BITS have been analyzed and found
-to be correct.
+[1] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xzPbJr=
+k=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com/
+[2] https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3iZo_8KF-daKdq=
+du-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=
+=3D@proton.me/
 
-Cure this by exposing the end of the direct map via PHYSMEM_END and use
-that for the memory hot-plug and resource management related places
-instead of relying on MAX_PHYSMEM_BITS. In the KASLR case PHYSMEM_END
-maps to a variable which is initialized by the KASLR initialization and
-otherwise it is based on MAX_PHYSMEM_BITS as before.
+Best Regards, Piotr Zalewski
 
-To prevent future hickups add a check into add_pages() to catch callers
-trying to add memory above PHYSMEM_END.
-
-Fixes: 0483e1fa6e09 ("x86/mm: Implement ASLR for kernel memory regions")
-Reported-by: Max Ramanouski <max8rr8@gmail.com>
-Reported-by: Alistair Popple <apopple@nvidia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-By: Max Ramanouski <max8rr8@gmail.com>
-Tested-by: Alistair Popple <apopple@nvidia.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/87ed6soy3z.ffs@tglx
----
- arch/x86/include/asm/page_64.h          |  1 +-
- arch/x86/include/asm/pgtable_64_types.h |  4 +++-
- arch/x86/mm/init_64.c                   |  4 +++-
- arch/x86/mm/kaslr.c                     | 32 +++++++++++++++++++-----
- include/linux/mm.h                      |  4 +++-
- kernel/resource.c                       |  6 +----
- mm/memory_hotplug.c                     |  2 +-
- mm/sparse.c                             |  2 +-
- 8 files changed, 43 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index af4302d..f3d257c 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -17,6 +17,7 @@ extern unsigned long phys_base;
- extern unsigned long page_offset_base;
- extern unsigned long vmalloc_base;
- extern unsigned long vmemmap_base;
-+extern unsigned long physmem_end;
- 
- static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
- {
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 9053dfe..a98e534 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -140,6 +140,10 @@ extern unsigned int ptrs_per_p4d;
- # define VMEMMAP_START		__VMEMMAP_BASE_L4
- #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
- 
-+#ifdef CONFIG_RANDOMIZE_MEMORY
-+# define PHYSMEM_END		physmem_end
-+#endif
-+
- /*
-  * End of the region for which vmalloc page tables are pre-allocated.
-  * For non-KMSAN builds, this is the same as VMALLOC_END.
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index d8dbeac..ff25364 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -958,8 +958,12 @@ static void update_end_of_memory_vars(u64 start, u64 size)
- int add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
- 	      struct mhp_params *params)
- {
-+	unsigned long end = ((start_pfn + nr_pages) << PAGE_SHIFT) - 1;
- 	int ret;
- 
-+	if (WARN_ON_ONCE(end > PHYSMEM_END))
-+		return -ERANGE;
-+
- 	ret = __add_pages(nid, start_pfn, nr_pages, params);
- 	WARN_ON_ONCE(ret);
- 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 37db264..230f1de 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -47,13 +47,24 @@ static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
-  */
- static __initdata struct kaslr_memory_region {
- 	unsigned long *base;
-+	unsigned long *end;
- 	unsigned long size_tb;
- } kaslr_regions[] = {
--	{ &page_offset_base, 0 },
--	{ &vmalloc_base, 0 },
--	{ &vmemmap_base, 0 },
-+	{
-+		.base	= &page_offset_base,
-+		.end	= &physmem_end,
-+	},
-+	{
-+		.base	= &vmalloc_base,
-+	},
-+	{
-+		.base	= &vmemmap_base,
-+	},
- };
- 
-+/* The end of the possible address space for physical memory */
-+unsigned long physmem_end __ro_after_init;
-+
- /* Get size in bytes used by the memory region */
- static inline unsigned long get_padding(struct kaslr_memory_region *region)
- {
-@@ -82,6 +93,8 @@ void __init kernel_randomize_memory(void)
- 	BUILD_BUG_ON(vaddr_end != CPU_ENTRY_AREA_BASE);
- 	BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
- 
-+	/* Preset the end of the possible address space for physical memory */
-+	physmem_end = ((1ULL << MAX_PHYSMEM_BITS) - 1);
- 	if (!kaslr_memory_enabled())
- 		return;
- 
-@@ -128,11 +141,18 @@ void __init kernel_randomize_memory(void)
- 		vaddr += entropy;
- 		*kaslr_regions[i].base = vaddr;
- 
-+		/* Calculate the end of the region */
-+		vaddr += get_padding(&kaslr_regions[i]);
- 		/*
--		 * Jump the region and add a minimum padding based on
--		 * randomization alignment.
-+		 * KASLR trims the maximum possible size of the
-+		 * direct-map. Update the physmem_end boundary.
-+		 * No rounding required as the region starts
-+		 * PUD aligned and size is in units of TB.
- 		 */
--		vaddr += get_padding(&kaslr_regions[i]);
-+		if (kaslr_regions[i].end)
-+			*kaslr_regions[i].end = __pa_nodebug(vaddr - 1);
-+
-+		/* Add a minimum padding based on randomization alignment. */
- 		vaddr = round_up(vaddr + 1, PUD_SIZE);
- 		remain_entropy -= entropy;
- 	}
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c4b238a..b386415 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -97,6 +97,10 @@ extern const int mmap_rnd_compat_bits_max;
- extern int mmap_rnd_compat_bits __read_mostly;
- #endif
- 
-+#ifndef PHYSMEM_END
-+# define PHYSMEM_END	((1ULL << MAX_PHYSMEM_BITS) - 1)
-+#endif
-+
- #include <asm/page.h>
- #include <asm/processor.h>
- 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 14777af..a83040f 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1826,8 +1826,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
- 	if (flags & GFR_DESCENDING) {
- 		resource_size_t end;
- 
--		end = min_t(resource_size_t, base->end,
--			    (1ULL << MAX_PHYSMEM_BITS) - 1);
-+		end = min_t(resource_size_t, base->end, PHYSMEM_END);
- 		return end - size + 1;
- 	}
- 
-@@ -1844,8 +1843,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
- 	 * @size did not wrap 0.
- 	 */
- 	return addr > addr - size &&
--	       addr <= min_t(resource_size_t, base->end,
--			     (1ULL << MAX_PHYSMEM_BITS) - 1);
-+	       addr <= min_t(resource_size_t, base->end, PHYSMEM_END);
- }
- 
- static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 66267c2..951878a 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1681,7 +1681,7 @@ struct range __weak arch_get_mappable_range(void)
- 
- struct range mhp_get_pluggable_range(bool need_mapping)
- {
--	const u64 max_phys = (1ULL << MAX_PHYSMEM_BITS) - 1;
-+	const u64 max_phys = PHYSMEM_END;
- 	struct range mhp_range;
- 
- 	if (need_mapping) {
-diff --git a/mm/sparse.c b/mm/sparse.c
-index e4b8300..0c3bff8 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -129,7 +129,7 @@ static inline int sparse_early_nid(struct mem_section *section)
- static void __meminit mminit_validate_memmodel_limits(unsigned long *start_pfn,
- 						unsigned long *end_pfn)
- {
--	unsigned long max_sparsemem_pfn = 1UL << (MAX_PHYSMEM_BITS-PAGE_SHIFT);
-+	unsigned long max_sparsemem_pfn = (PHYSMEM_END + 1) >> PAGE_SHIFT;
- 
- 	/*
- 	 * Sanity checks - do not allow an architecture to pass
 
