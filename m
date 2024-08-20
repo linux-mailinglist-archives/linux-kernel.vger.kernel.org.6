@@ -1,94 +1,51 @@
-Return-Path: <linux-kernel+bounces-293937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3E59586BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:17:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DBB9586D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38A2FB2679F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:17:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022D51F21C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1C018C32C;
-	Tue, 20 Aug 2024 12:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuSy3UiI"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C3E18FC9D;
+	Tue, 20 Aug 2024 12:24:37 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB4118FDBA;
-	Tue, 20 Aug 2024 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1932A18F2F9;
+	Tue, 20 Aug 2024 12:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156159; cv=none; b=lp2JCrNyd4gGnOq5V1FsYkzJrOhUmDjPgkDxAzcNmTFrdlvRTYNgpyBa2Eln+xdlgrcH9BUZFNpxy6DMQ0BtnQrrV+qiPZSVPZjr6UGvIQhqqaRrPlyeApawo+Io2mGqctjweMB0lfYp3gWtTg6WcWTrM7lsyka1zxqE9qkf2zo=
+	t=1724156676; cv=none; b=YfxjPXCFM/um1qOTkpqSYR2/oFLNSu+byeTVzC2bD6ds4ArvF+rbEsfaWW+e/tjyYl3aLSzHz9Bvs6gNZZjCumPA3L+VEzAe8M7GHGKbYl65iVWNMDVfoOIeWGmBCCouYP+9LfZ1XzI9Udbli4tX5vXiCaF3sgCnlB8S4LmHZ5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156159; c=relaxed/simple;
-	bh=xDBBSYV6Ptx6rKHiCplnxKfcjX5c3vcd1f7/FKM/Asc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D+iVBeqvkcHFsQX5WQY3zuny7U7ksewTaTuFDJOPdgzJifL0QaHw/G2aZ3BP/X5isLvwIUUl5xuHwkVbJbAyvYnhNai9Sv6lbDC7jyCFoXAwyeRX5V8iQiYBNKRHGdfXWsGPy/o+x++Ss+g61wgHgd5bMPSb+EujEpkCI3uhqkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuSy3UiI; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7104f93a20eso4450297b3a.1;
-        Tue, 20 Aug 2024 05:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724156156; x=1724760956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eD+EvjfAKeSYrZd9kcNbKChXbM1ZfpJxz800Ks1luhk=;
-        b=CuSy3UiIo0DcIrLtHnuPF4dlbt9oBIAmKUzJQk871oyawilGNLQypgiphOFKILj1Sr
-         +KxgTz7kOdWvBO+tALTEZeO0G6ODsGHAJTk9aQTHyJvODhhdhgBEAsPG4xrYDXQ4m3KL
-         NFh7R/+Fiydy4whEt6WXIzAe18vfSPTcfDXBLdWN9qus9KTSRge7j2k4BWaJTlFPu33C
-         6wBGccsOuM0UFfaylnG/bCkZ9DnqNpSbPmjUSLsx6eJgvN1QcK7DmCriT6ToWw2/g5BH
-         eUqduQjiTF2HcCD2Eq850fNxyYLnvqfpVIKje82aysNJoM5ppjY8vEIpGwXAcn3Y7kBM
-         tvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724156156; x=1724760956;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eD+EvjfAKeSYrZd9kcNbKChXbM1ZfpJxz800Ks1luhk=;
-        b=k4XWVbXV16KTKEXHMITPWo03rJVLgUnUU9tLHA1GSBhl8r5k6gAk4Ofm5hYKLVoTgS
-         6ev/ERw+C7zY7ggjUluDRTwJm8RvmvGYhCbwJZM6tmzyO3Qh400RJ8iTyCYaMhJP8MGQ
-         9WiihnPBenvt6rR6BcGTZvU1qbcO3VCvuw0rtq4er3iI9ARe0pG8F07X1D5QFz/Rt2ab
-         g0lut4eNtHQ33zmlDtGmpFRtX+WRQxNcqWFuSs2PTMvQd5SS4U0NA4Y6WF6Td+FOpCHx
-         Nn2BaEIvwBmf9TAYKbSY1dW2m/VZS5sOpHRE6odFaqclBemQ9b8rcNjpzelAAMpSmPhF
-         iYig==
-X-Forwarded-Encrypted: i=1; AJvYcCUp040ncEIcHMR8G2kQ0DhE1lY+gdhEZo1PwiuNTfs332sUW41/lI3ovqkTJMecMdRZAMwqP4RW@vger.kernel.org, AJvYcCWgwe8Z6C/l1rTbKflRJNmKuaSrA2YwU9vulROTWLzdPmXBajEXBNVVSSzV+nGm15OS9g197k5zOSHyLg==@vger.kernel.org, AJvYcCXnpGoXj7SgcU926G0/jXalzttPzfzz5MYLKgNvc0OXic4rxxnemLvSqCF5Szj4ITTyU4Z8ZifjQvrhca0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywAqXh/SRg/N4FOKuyfOFupziE4aPVhz9d7aJVhXFC9QljxUK6
-	8JF9JKO/MtsdiiK80r/SyMDwifgpW2hN8P7zQpLlfdw7j7il4j1J
-X-Google-Smtp-Source: AGHT+IGabRz64R3uyhBU7oGpUmjzA0HXnaEhvVJh/hSLEKv2/4s0S7VJvxiDK4GYi5T2vMe4Wm/2Iw==
-X-Received: by 2002:a05:6a00:2d16:b0:70d:87e0:9e7 with SMTP id d2e1a72fcca58-7140a1e7cb3mr2910803b3a.25.1724156156485;
-        Tue, 20 Aug 2024 05:15:56 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3c3e5sm8097934b3a.204.2024.08.20.05.15.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 05:15:56 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	utz.bacher@de.ibm.com,
-	dust.li@linux.alibaba.com,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller <syzkaller@googlegroups.com>,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net,v6,2/2] net/smc: initialize ipv6_pinfo_offset in smc_inet6_prot and add smc6_sock structure
-Date: Tue, 20 Aug 2024 21:15:48 +0900
-Message-Id: <20240820121548.380342-1-aha310510@gmail.com>
+	s=arc-20240116; t=1724156676; c=relaxed/simple;
+	bh=/gl7sUOyLfOV6tT0Fv5q8hQg44Sbm+6uyWEkL5X266Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z7m5+Kw+PLpo0b01lcP0WUiBt7xvTB4cvBVEnt6egEkVYn30aH/uD9XZce01E4aAROP2NZwFAjqnnKUl/bkY8CPB2LbSseJJPxWRgy/8UmxcnvTmi+vKp/W06OUitR8WbRptb8eu43n1jOpfn3HIiaNEit+LpE8TN6kaylXJ+BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wp7nc1KrmzQqDM;
+	Tue, 20 Aug 2024 20:19:48 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 423F2140133;
+	Tue, 20 Aug 2024 20:24:29 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 20 Aug
+ 2024 20:24:29 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <lujianhua000@gmail.com>,
+	<lee@kernel.org>, <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
+	<deller@gmx.de>
+Subject: [PATCH -next] backlight: ktz8866: fix module autoloading
+Date: Tue, 20 Aug 2024 12:16:28 +0000
+Message-ID: <20240820121628.42321-1-liaochen4@huawei.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240820121312.380126-1-aha310510@gmail.com>
-References: <20240820121312.380126-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,47 +53,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
-copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from of_device_id table.
 
-To solve this, you need to create a smc6_sock struct and add code to 
-smc_inet6_prot to initialize ipv6_pinfo_offset.
-
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
 ---
- net/smc/smc_inet.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/video/backlight/ktz8866.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-index bece346dd8e9..26587a1b8c56 100644
---- a/net/smc/smc_inet.c
-+++ b/net/smc/smc_inet.c
-@@ -60,6 +60,11 @@ static struct inet_protosw smc_inet_protosw = {
+diff --git a/drivers/video/backlight/ktz8866.c b/drivers/video/backlight/ktz8866.c
+index 2e508741c0af..351c2b4d63ed 100644
+--- a/drivers/video/backlight/ktz8866.c
++++ b/drivers/video/backlight/ktz8866.c
+@@ -190,6 +190,7 @@ static const struct of_device_id ktz8866_match_table[] = {
+ 	},
+ 	{},
  };
++MODULE_DEVICE_TABLE(of, ktz8866_match_table);
  
- #if IS_ENABLED(CONFIG_IPV6)
-+struct smc6_sock {
-+	struct smc_sock		smc;
-+	struct ipv6_pinfo	inet6;
-+};
-+
- static struct proto smc_inet6_prot = {
- 	.name		= "INET6_SMC",
- 	.owner		= THIS_MODULE,
-@@ -67,9 +72,10 @@ static struct proto smc_inet6_prot = {
- 	.hash		= smc_hash_sk,
- 	.unhash		= smc_unhash_sk,
- 	.release_cb	= smc_release_cb,
--	.obj_size	= sizeof(struct smc_sock),
-+	.obj_size	= sizeof(struct smc6_sock),
- 	.h.smc_hash	= &smc_v6_hashinfo,
- 	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
-+	.ipv6_pinfo_offset	= offsetof(struct smc6_sock, inet6);
- };
- 
- static const struct proto_ops smc_inet6_stream_ops = {
---
+ static struct i2c_driver ktz8866_driver = {
+ 	.driver = {
+-- 
+2.34.1
+
 
