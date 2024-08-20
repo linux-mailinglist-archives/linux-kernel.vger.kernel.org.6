@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-293619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E0695820B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F92E95820D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC441F217CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05121F21986
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076EA18C000;
-	Tue, 20 Aug 2024 09:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F1918C027;
+	Tue, 20 Aug 2024 09:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXOiHDgW"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dBFFp52l"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DDC18B493
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE1618B48A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145850; cv=none; b=G9ZhgBEpo7aUVsrI1zAPKM1tGSUtqCNDa0eCOnO6xUROTmONjeRvAoCungTxkhg8JEJXwQ6n5tyWYnepEfXGnmAGOXvz8KKXvfYxAQXWJAtYYp0zAd0pfsl6WV9vwtebeY+qYG8SVmn2pkHlHOXsFoYGljzI6jhERKSPqzIY4UM=
+	t=1724145856; cv=none; b=aqumskataq+LHWu+JyqwSXshShyRqdW+ZZPuU5DGktlbuhYLuCr64GfYtajQxpK0VhdL5/OT4gGqXwmaR2LGkSnAGxGa583990KIEaZ3e3JAvNl2451jRcp9e3DwvaGQ4GWBlthQ5N3R5Dm4NYeLVYLGrDo/X99TIdpIRwVep2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145850; c=relaxed/simple;
-	bh=FpZJOA0mQK1VicmRU0rcJ+nQ16ARUqQgndYmDsnqQr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PHl3Opbina3eFV4efC8ktuhtE5Neo+u4tHBs8BNnU6etsrCE7VyhRk/DCxAG4QF+O1jJkUc/4o/54ZedOzdMEMCCflqevpsvhXikQu+zFOYAYBP6kLAuQfIGbZNKtWpuu3N4DyN12prx8MAbRw9Wh94hMuFwS7KxmBReL86PIc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXOiHDgW; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d41b082ab8so1645515a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:24:08 -0700 (PDT)
+	s=arc-20240116; t=1724145856; c=relaxed/simple;
+	bh=3BYyusPDgoFfSQEtg04SVUKbUSu2M8fQcJrEAygKbHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGTssdX+sNHfQb4GPbsFYLjQhaDEwjpus66lUPJqG3qqCDCkRywePSl60LEhYR6uH26LOu750UcdwQ9kjb+71ZYwwgtyF5qbNZGMHeHDDwAefeCRz+zyW7w6TdYGAQTLVRh/Gl6hqkpFZnWsHT/exYl3Hw0YHKjBkrO1d/tS1PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dBFFp52l; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so3682600a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724145848; x=1724750648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nlt2ID8Y4L9Xxz1JWEnsQz5/O2GKGR4Bos/ESGDaD3o=;
-        b=PXOiHDgW+fA9VACiBfEnQT+ZM4xhRTgWtZuqcVz1oYcjDNKB3TzQqzilcupTxfWA+z
-         PEwnOl2jj0UKIZ72kj2rEFtjWBaZBbe6HD8+kxpY7WwLV8AYGD6N5qcSAWs12B2Hzb/o
-         vsKg0Wy6X9Dg+aXTNIkyp8HAisOZ/MiHW7MiHJ1kI3a7GZKa9QKSmYCUMV45ZrX/qvro
-         uNyoq0A1V7MetTZlbC4u14L1yNdmu3BtPq0szL8rHukAC4tTQYfpF36+BucBN65nhSb0
-         vT1/19XlEmYO7o4CG0kXZotmYiVxSJ4tC62miy4u20Mnk8ztow24bql5poRPdt3u3qOa
-         Eqgw==
+        d=linaro.org; s=google; t=1724145854; x=1724750654; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MPOcC1lW7loqVOPhtqIT0kpIc2SFofY/nFqcF9Tz/Ic=;
+        b=dBFFp52lHjFVZNkp3NNX0GCbcnphpbfhiRfTZ924oCyWLXkj+VEbHrAz+noscdaeEy
+         kH0o7tFon6MFIV1f3W4IjKQ8eXEGjNV1E8EpFUOV7hshhNisdkFICCJkU0FCvLpeU3kA
+         ytxO2PblgsCB4EA+iRCvT5LJzjD65NmkoyGH8iV8k+m2xEa+yQaUdtl38fiDTfV95wCa
+         053nYyK15aIuAYw8K0xduyEBstWYU5gtgZpt31SSe77YWoThSHVwR+TpsO60Q9q0JNa/
+         4y3h+I6gLFbJHTuQKTH1aFwQQRtGuDqzjWEsoJWK32og56WlT+/pYolgkvXE2pY0qDMj
+         baNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724145848; x=1724750648;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nlt2ID8Y4L9Xxz1JWEnsQz5/O2GKGR4Bos/ESGDaD3o=;
-        b=FnyZig9Kns9Wen+uLz2yK0UvEwAXS2Ees3acDVCsu3f7H7zUzXwKBi56LFBOSQRy9C
-         Opaw0gYguPwUrdc+h+0RRR3GHX+aVbx8SfSDP5m2xlSJepXTIP2iFpoq1AhxadGLpcZc
-         v3SarUJPxS3VSgC1h4JJow4d5S7T5BtsyJvzbmnTdUxGj6hHydUbTE9AcnRdZ1iKBTSo
-         9K5ijuXty/NeSSwNfCbCrN7iFtdpEct1N1l6jokBQPLwObguYyT2tkDqJF4qL/BLyBwr
-         9ZwENvpi1z61gqyZgKx2iYTNIYiSUEMU7CG/p9ky/CTKsEDenufWImZvz5VxTZcGOxFJ
-         zhZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY74a4LOjrmiHFbJqiNWlJ3ZOnq9A5yCKRtfroTpEuemgl6m6pwvcmKMyW4CATQtZbH/okdK2GVPm3wj3XWTod5dc9YxFv4LaGxZbC
-X-Gm-Message-State: AOJu0YziqpwdNxaK9ecSgs8EH7sMFiWCMqKie0MKWozpGD9bmHtYQ/8e
-	AFwwhrZ43AvrXWo4ReTaz6lriQLeu6hYY4qbMGhjVrYrQc7teXqD
-X-Google-Smtp-Source: AGHT+IEq+YodW+Yl15mct3wILrYBBnyd3h7kGqFktIhdOaThlqhTzQftr9fvvZau9+ysLUMgbdZB0Q==
-X-Received: by 2002:a17:90b:1107:b0:2c9:a3ca:cc98 with SMTP id 98e67ed59e1d1-2d3dfc377bamr12147223a91.7.1724145847913;
-        Tue, 20 Aug 2024 02:24:07 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e317181fsm8828676a91.25.2024.08.20.02.24.04
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Aug 2024 02:24:07 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Chris Li <chrisl@kernel.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH] mm/swap, workingset: make anon shadow nodes memcg aware
-Date: Tue, 20 Aug 2024 17:23:59 +0800
-Message-ID: <20240820092359.97782-1-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.45.2
-Reply-To: Kairui Song <kasong@tencent.com>
+        d=1e100.net; s=20230601; t=1724145854; x=1724750654;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPOcC1lW7loqVOPhtqIT0kpIc2SFofY/nFqcF9Tz/Ic=;
+        b=czAIzeSWKa8EqwUfCGoCpM2MZl7B3SEunHRt5oq2GOoa/DXmW/g5HCbqaPyHKVl4HE
+         mSQsRWQJ4PbGmgALmu1qlasTyHp/zaJeLJ3NlF/PcNTLssvf0NVLtcJ5Zy72Jjgj9H3Q
+         cIS2c+ubxQIi8TFtgQx/mdc99fpiObcK1QAwl3g+yNYGEnJjngg9wr3zkra1/MtHzs7z
+         85AR41CgaW87gvJNS1Chehsb07yuZH4IdT3GC13lLL5IuU3YGLaz/Mnjb6DLWp9Gxr/K
+         Ui72AQxwK0NNrc39gTFQAfpVWrSVH6h5hPa6ylEJlB/xj/+8bc0OUVggMzmSho5eyYTB
+         GCVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXg/LVuLhO0TGJhhAU3i2aXTMILncccExu3mBgx64zHWBRIOUK5EhNiGxZiXEoVCgFVJ39zPRYisiGeiOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA+MuF/EOEvT5Esedc9J22U6OkTAjUHNu9Rm7lU7oSkxCm3Bz7
+	MswR6oRc+AGyFAz6XX7FOa7TjCDcHOwXFVRIw5lV5DzipajSltt1w2Nxdv/bbg==
+X-Google-Smtp-Source: AGHT+IFpVDZP72BhMHlHtYBPJ0ZhbeTQpOyKrXPpzfAnOhUFxzMS6JGnfTyJ+QURUXwd2WtKhUKS6g==
+X-Received: by 2002:a05:6a20:d70b:b0:1c4:d4b2:ffe5 with SMTP id adf61e73a8af0-1c90507af96mr16175546637.54.1724145854425;
+        Tue, 20 Aug 2024 02:24:14 -0700 (PDT)
+Received: from thinkpad ([120.60.128.138])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20232a7f60fsm35534055ad.242.2024.08.20.02.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:24:14 -0700 (PDT)
+Date: Tue, 20 Aug 2024 14:53:59 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, rick.wertenbroek@heig-vd.ch,
+	alberto.dassatti@heig-vd.ch,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] PCI: endpoint: pci-epf-test: Call
+ pci_epf_test_raise_irq() on failed DMA check
+Message-ID: <20240820092359.tfvmjadm6tfxyqvm@thinkpad>
+References: <20240820071100.211622-1-rick.wertenbroek@gmail.com>
+ <20240820071100.211622-2-rick.wertenbroek@gmail.com>
+ <54451b81-b503-4072-807a-af2f0b914ec2@kernel.org>
+ <CAAEEuhpt_WnxOZeYsMxjwTGZm-FJKoj3at-qPgyAH6D76P9wOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAEEuhpt_WnxOZeYsMxjwTGZm-FJKoj3at-qPgyAH6D76P9wOA@mail.gmail.com>
 
-From: Kairui Song <kasong@tencent.com>
+On Tue, Aug 20, 2024 at 10:43:56AM +0200, Rick Wertenbroek wrote:
+> On Tue, Aug 20, 2024 at 10:18 AM Damien Le Moal <dlemoal@kernel.org> wrote:
+> >
+> > On 8/20/24 16:10, Rick Wertenbroek wrote:
+> > > The pci-epf-test PCI endpoint function /drivers/pci/endpoint/function/pci-epf_test.c
+> > > is meant to be used in a PCI endpoint device connected to a host computer
+> > > with the host side driver: /drivers/misc/pci_endpoint_test.c.
+> > >
+> > > The host side driver can request read/write/copy transactions from the
+> > > endpoint function and expects an IRQ from the endpoint function once
+> > > the read/write/copy transaction is finished. These can be issued with or
+> > > without DMA enabled. If the host side driver requests a read/write/copy
+> > > transaction with DMA enabled and the endpoint function does not support
+> > > DMA, the endpoint would only print an error message and wait for further
+> > > commands without sending an IRQ because pci_epf_test_raise_irq() is
+> > > skipped in pci_epf_test_cmd_handler(). This results in the host side
+> > > driver hanging indefinitely waiting for the IRQ.
+> > >
+> > > Call pci_epf_test_raise_irq() when a transfer with DMA is requested but
+> > > DMA is unsupported. The host side driver will no longer hang but report
+> > > an error on transfer (printing "NOT OKAY") thanks to the checksum because
+> > > no data was moved.
+> > >
+> > > Clarify the error message in the endpoint function as "Cannot ..." is
+> > > vague and does not state the reason why it cannot be done.
+> > >
+> > > Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> > > ---
+> > >  drivers/pci/endpoint/functions/pci-epf-test.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > index 7c2ed6eae53a..b02193cef06e 100644
+> > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > @@ -649,7 +649,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+> > >
+> > >       if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
+> > >           !epf_test->dma_supported) {
+> > > -             dev_err(dev, "Cannot transfer data using DMA\n");
+> > > +             dev_err(dev, "DMA transfer not supported\n");
+> >
+> > Should we set the FAIL status flag here ?
+> > E.g.:
+> >                  reg->status |= STATUS_READ_FAIL;
+> >
+> > Note: I have no idea why the status flags are different for the different
+> > operations. We should really have a single SUCCESS/FAIL flag common to all
+> > operations. So I think we could just do:
+> >
+> >                 reg->status |= STATUS_READ_FAIL | STATUS_WRITE_FAIL |
+> >                         STATUS_COPY_FAIL;
+> >
+> > here, or go back to your v1 and handle the failure in each operation function to
+> > set the correct flag.
+> >
+> 
+> Good catch, indeed with the check outside of the functions, the status
+> FAIL bits are not set. I think setting the status as a combined fail
+> flag makes sense, however, it conveys the idea that read/write/copy
+> failed whereas only one of them actually failed.
+> 
+> I agree that a single status SUCCESS/FAIL flag would be simpler. But
+> changing this would require changes on both sides (EP & RC) and will
+> reduce compatibility between EP and RC side driver versions, so I
+> would refrain from changing this.
+> 
 
-Currently, the workingset (shadow) nodes of the swap cache are not
-accounted to their corresponding memory cgroup, instead, they are
-all accounted to the root cgroup. This leads to inaccurate accounting
-and ineffective reclaiming. One cgroup could swap out a large amount
-of memory, take up a large amount of memory with shadow nodes without
-being accounted.
+I think it is OK to change the status flags and do the right thing. If someone
+reports a test failure, then we can ask them to upgrade their kernel. Given that
+this this just a test application, I don't think it is a big deal.
 
-This issue is similar to commit 7b785645e8f1 ("mm: fix page cache
-convergence regression"), where page cache shadow nodes were incorrectly
-accounted. That was due to the accidental dropping of the accounting
-flag during the XArray conversion in commit a28334862993
-("page cache: Finish XArray conversion").
+- Mani
 
-However, this fix has a different cause. Swap cache shadow nodes were
-never accounted even before the XArray conversion, since they did not
-exist until commit 3852f6768ede ("mm/swapcache: support to handle the
-shadow entries"), which was years after the XArray conversion.
+>  I think I still prefer the v1/v2 code because even as it has a little
+> bit of duplication it is clear and sets the correct FAIL bit without
+> extra logic whereas here we either set all FAIL bits or have to add
+> extra logic.
+> 
+> Thank you for spotting this.
+> 
+> > > +             pci_epf_test_raise_irq(epf_test, reg);
+> > >               goto reset_handler;
+> > >       }
+> > >
+> >
+> > --
+> > Damien Le Moal
+> > Western Digital Research
+> >
+> 
+> Best regards,
+> Rick
 
-It's worth noting that one anon shadow Xarray node may contain
-different entries from different cgroup, and it gets accounted at reclaim
-time, so it's arguable which cgroup it should be accounted to (as
-Shakeal Butt pointed out [1]). File pages may suffer similar issue
-but less common. Things like proactive memory reclaim could make thing
-more complex.
-
-So this commit still can't provide a 100% accurate accounting of anon
-shadows, but it covers the cases when one memory cgroup uses significant
-amount of swap, and in most cases memory pressure in one cgroup only
-suppose to reclaim this cgroup and children. Besides, this fix is clean and
-easy enough.
-
-Link: https://lore.kernel.org/all/7gzevefivueqtebzvikzbucnrnpurmh3scmfuiuo2tnrs37xso@haj7gzepjur2/ [1]
-Signed-off-by: Kairui Song <kasong@tencent.com>
-
----
-
-This patch was part of previous series:
-https://lore.kernel.org/all/20240624175313.47329-1-ryncsn@gmail.com/
-
-Split out as a fix as suggested by Muchun and Shakeal.
-
- mm/swap_state.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 4669f29cf555..b4ed2c664c67 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -97,6 +97,7 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
- 	void *old;
- 
- 	xas_set_update(&xas, workingset_update_node);
-+	xas_set_lru(&xas, &shadow_nodes);
- 
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
-@@ -718,7 +719,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
- 		return -ENOMEM;
- 	for (i = 0; i < nr; i++) {
- 		space = spaces + i;
--		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
-+		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
- 		atomic_set(&space->i_mmap_writable, 0);
- 		space->a_ops = &swap_aops;
- 		/* swap cache doesn't use writeback related tags */
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
