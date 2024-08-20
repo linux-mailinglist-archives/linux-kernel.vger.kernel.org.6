@@ -1,192 +1,215 @@
-Return-Path: <linux-kernel+bounces-293447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F21957F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C30957F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7391B1F22E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB221F228B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECA5189527;
-	Tue, 20 Aug 2024 07:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A85B186E2E;
+	Tue, 20 Aug 2024 07:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="FXsfGJ90"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4WDek1bp"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8F9132124;
-	Tue, 20 Aug 2024 07:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724138825; cv=pass; b=O7w7XL5VeJTIwroCZy56ShIn9hTC5x4GHNhfmYZeBMl/JEHURPenLVDP+AsR2U2UqmyTe/XM7d0zA3hbGIDdx5GqMT6ypuRC0ellLhcqBSe/IyLEct72LTfVg230YPVYMPSqL5F0wnO0UrsWFppA/s5QyVUe+8bc58fojCE1ua4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724138825; c=relaxed/simple;
-	bh=OAb3vC/Zkyg/SdJ1TD//avWUs8En4MbQVlb8+2cI4Ik=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Zb7nHTqanV+ttPYz5118Q9BYyY67CDpTqX+9Qtag6+xPJ3P6vCJEypy63bRR0d0P6R7vo4rd06Oha/nBeMM+wrAd1TRGyCV2v1ohQ12FRaUKUIjMp0Bh7k1nVQp2fe1O8aNygvSBGAAxcTHxOQESduJ5ZEU1jqnVsCtusYwHwVU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=FXsfGJ90; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: Usama.Anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724138796; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EXzAsN4bP2BCe2iQJANEH2sdLh3DN0xIyP/X76hyuuO1IhRNgdetegrZyYZ8ujk8c0PyyBRKFCnnQ+TBBEIwC1B2iy0rFvfNK3wFgZs/kBqjlbT8v4T+OpSmHZmwqiMMqmM3taEhk824PwIKbw9PhoVaVTXa/4UwU1WfguiYfBg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724138796; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M8D0uEeC8XYss0szLPUlb5Lps9IGtnYOrv/FK6gxMhI=; 
-	b=QuVLpv+XsnQUm+asJhqoBfNbgJmpn29JUQjPW4g8QeAA1q04zjkw3phmU6xX26DKIX3HTmd16yzcyQHMSeDDBS7VmdK476SgW6cGplRtkUqJ84Bz3DFSpLcAny6wtHGHSNdpvOzfDxrZcCHqn4JA81M/1fU/ThxdpMW9uPkr1PE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724138796;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=M8D0uEeC8XYss0szLPUlb5Lps9IGtnYOrv/FK6gxMhI=;
-	b=FXsfGJ90DaxKUyBr/7kjy5Vz6cA1IyTmA9Y8dR4dXL0JaUNqf3dGc7HYCcyGwZYC
-	eHbZGA98tPFCgfJUUwGdq/VzamRhzm1ew0bPhrYlBEcRg+AXIjMJ4gYDhfNkGrU0M2z
-	NOR4Qa10gQVAgX+tP2ZhVBHtX9Oj6F8huDjedKbo=
-Received: by mx.zohomail.com with SMTPS id 1724138794399675.3975600570174;
-	Tue, 20 Aug 2024 00:26:34 -0700 (PDT)
-Message-ID: <379673da-9f2f-484a-be04-a62d916fa25e@collabora.com>
-Date: Tue, 20 Aug 2024 12:26:23 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1155C16D314
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724138801; cv=none; b=Dwl7YmNQwZ86atdwksHSA7wL0tNqP6Ar6/Znp8Q2ikjcseVgVZfRX2n6LTgPkKG4QZ7kox1HPtuPSalhLHlmh1StcWjSoZZw9vZGFvvA2E0mpmN3elVRt0wCGCsnuGzNFfwdhtOHr6GH8kwXitkRhzAfM1ZL22DYyxgoJJKG3A0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724138801; c=relaxed/simple;
+	bh=oLKuSynS85DO7ibV0yy8WURwJPtLjlxiOsXpJhNgus4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QQ5a8drwFWwy06dh0l+omJcNr/+8xTE2iFT2+P3WDB6f61/FSUtSJH9VqjEGOiOKIOvs7vZ/Mrl2fQpcSG50jsOE09aavhAwdga6nPFaxgUHmXpoQBg/9x7B0CKunEyO1j6tgxlUWhZ3QJ4Mda3YxH/RzwZTFGmWM6pS7cX9950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4WDek1bp; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6b2e6e7ad28so25853037b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 00:26:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724138799; x=1724743599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LN564zYHb/q+BN0L0S3sLo0tgai+pv6UXeCiHGIBfXI=;
+        b=4WDek1bpkYZz4wk7Ije/jkly+YAODxU/PEs2vo7FhiDuGmyHdNm6FN/UTaz4CKbiLz
+         onG9HeoGhvceCp7E2mUtArDFMF2zgXFaCasY0HSxjMKTvBtTEMhyGCzmOGh7axH0+6u+
+         zrLOMCUzMSuPUdsEv4zSYuAAe4+xeUn5FSu+Irx7HNQrIG4/Pjof1YJk5EIvCO1ACejt
+         9Sv0cwtnYdd51tLiKNUyDl1f0JNQMq0bCTDWXHNo5Rlye1gWbyI6YowIjV64FqFGbty9
+         nPzIhwhdCsbJP/tfLnaCw6+VpJZZ6E12xrE06PND4ehgIxiLGIwqP6RrFc6JC8MkHmOT
+         SGzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724138799; x=1724743599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LN564zYHb/q+BN0L0S3sLo0tgai+pv6UXeCiHGIBfXI=;
+        b=IAEWKISl+vEQVk3oKCLgyrItoJdanCAfIN3gzUhOs2pR5ELPPzR2zKmKwiLJ2FgSRe
+         wDXQ5r0WLc981SRMwHCe4EOfiFaxuH5xCgNSlfOzbjIfZ0T8U+hVIgW1SLV4lanvIVU9
+         YqTwMXisPooYxMCoznoLqkKqYs2PBS34JJX8oom0P3Zy3cukCrPF0wnUYuQtsCvyc7Yq
+         GjYwP3+UjwVwjef4GU4RgWxvcLp8yAdHZNhK17+5hvewEFSLLgdPQ93vsxBwndZLvpCW
+         4sj/pqwhL2D6WhWdqUsJhfd4M4Z9bByknSATsbS8ulZLjnGLXslrkL3jZX+8+O55Zici
+         AyyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJQYxfhOTJooO8rwXWWVLMsh1+9W3cE9XLt+ss+0CMzEqMS6e1BmF89Rij2D7gQwc9q82VifEBCronHyDmfo7SmfYl6Kb2CYItkbJ8
+X-Gm-Message-State: AOJu0YyipVEZxKtPOsj9L2ZOjO6mMR35i/EypeshN360wipb6lZq3F47
+	WR2lGR6+/xLhrrXMqnwn87J9XFcrgty468uKU3Kk0tjZiHW6tNsmXUUZhZoUOWWs79XEohVBzg3
+	UHmCWyZ0sSm2PGjh2uB5tuAotsxF+5e0T6QoQ
+X-Google-Smtp-Source: AGHT+IEu4NsnZWpz9MZCaZucuLVy0UjltYOjyQoU56+siXBz2tCiizAdvhgvEd1X1U+P3/g9CXL7Rc8N12MGbs0TTZg=
+X-Received: by 2002:a05:690c:2c92:b0:64b:1eb2:3dd4 with SMTP id
+ 00721157ae682-6bdcf2e6c41mr15550867b3.8.1724138798431; Tue, 20 Aug 2024
+ 00:26:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, kernel@collabora.com, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Anup Patel <anup@brainfault.org>
-Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for
- unsupported arch
-To: Sean Christopherson <seanjc@google.com>
-References: <20240819093030.2864163-1-usama.anjum@collabora.com>
- <ZsNzzajqBkmuu5Xm@google.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <ZsNzzajqBkmuu5Xm@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20240819151512.2363698-1-surenb@google.com> <20240819151512.2363698-2-surenb@google.com>
+ <ZsRCAy5cCp0Ig3I/@kernel.org>
+In-Reply-To: <ZsRCAy5cCp0Ig3I/@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 20 Aug 2024 00:26:25 -0700
+Message-ID: <CAJuCfpHVxpEC4xCW1QkEkMS3A2SU3yVcm8sX_-CLa=x7uqXeTA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] alloc_tag: load module tags into separate continuous memory
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/24 9:33 PM, Sean Christopherson wrote:
-> +KVM arch maintainers
-> 
-> On Mon, Aug 19, 2024, Muhammad Usama Anjum wrote:
->> The tests are built on per architecture basis. When unsupported
->> architecture is specified, it has no tests and TEST_GEN_PROGS is empty.
->> The lib.mk has support for not building anything for such case. But KVM
->> makefile doesn't handle such case correctly. It doesn't check if
->> TEST_GEN_PROGS is empty or not and try to create directory by mkdir.
->> Hence mkdir generates the error.
->>
->> mkdir: missing operand
->> Try 'mkdir --help' for more information.
->>
->> This can be easily fixed by checking if TEST_GEN_PROGS isn't empty
->> before calling mkdir.
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Sean Christopherson <seanjc@google.com>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes since v1:
->> - Instead of ignoring error, check TEST_GEN_PROGS's validity first
->> ---
->>  tools/testing/selftests/kvm/Makefile | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
->> index 48d32c5aa3eb7..9f8ed82ff1d65 100644
->> --- a/tools/testing/selftests/kvm/Makefile
->> +++ b/tools/testing/selftests/kvm/Makefile
->> @@ -317,7 +317,9 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
->>  $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
->>  	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
->>  
->> +ifneq ($(strip $(TEST_GEN_PROGS)),)
->>  $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
->> +endif
-> This just suppresses an error, it doesn't fix the underlying problem.  E.g. there
-> are other weird side effects, such as an above mkdir creating the $(ARCH) directory
-> even though it shouldn't exist in the end.
-> 
-> It's also very opaque, e.g. without a comment or the context of the changelog,
-> I'd have no idea what purpose the above serves.
-> 
-> Rather than bury the effective "is this arch supported" check in the middle of
-> the Makefile, what if we wrap the "real" makefile and include it only for
-> supported architectures, and provide dummy targets for everything else?
-> 
-> E.g.
-> 
-> ---
-> # SPDX-License-Identifier: GPL-2.0-only
-> top_srcdir = ../../../..
-> include $(top_srcdir)/scripts/subarch.include
-> ARCH            ?= $(SUBARCH)
-> 
-> ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
-> ifeq ($(ARCH),x86)
->         ARCH_DIR := x86_64
-> else ifeq ($(ARCH),arm64)
->         ARCH_DIR := aarch64
-> else ifeq ($(ARCH),s390)
->         ARCH_DIR := s390x
-> else
->         ARCH_DIR := $(ARCH)
-> endif
-> 
-> include Makefile.kvm
-> else
-> all:
-> clean:
-> endif
-> ---
-> 
-> And other KVM maintainers, the big question is: if we do the above, would now be
-> a decent time to bite the bullet and switch to the kernel's canonical arch paths,
-> i.e. arm64, s390, and x86?  I feel like if we're ever going to get away from
-> using aarch64, x86_64, and s390x, this is as about a good of an opportunity as
-> we're going to get.
-> 
-> The annoying x86_64=>x86 alias still needs to be handled to avoid breaking explicit
-> ARCH=x86_64 builds (which apparently are allowed, *sigh*), but we can ditch ARCH_DIR
-> and the KVM selftests dirs match tools' include paths.
-> 
-> ---
-> # SPDX-License-Identifier: GPL-2.0-only
-> top_srcdir = ../../../..
-> include $(top_srcdir)/scripts/subarch.include
-> ARCH            ?= $(SUBARCH)
-> 
-> ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
-> # Top-level selftests allows ARCH=x86_64 🙁
-> ifeq ($(ARCH),x86_64)
-> 	ARCH := x86
-> endif
-> include Makefile.kvm
-> else
-> all:
-> clean:
-> endif
-> ---
-> 
-> If no one objects or has a better idea, I'll post a series to do the above.
-I didn't had enough knowledge to attempt a better fix. Thank you.
+On Tue, Aug 20, 2024 at 12:13=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
+ote:
+>
+> On Mon, Aug 19, 2024 at 08:15:07AM -0700, Suren Baghdasaryan wrote:
+> > When a module gets unloaded there is a possibility that some of the
+> > allocations it made are still used and therefore the allocation tags
+> > corresponding to these allocations are still referenced. As such, the
+> > memory for these tags can't be freed. This is currently handled as an
+> > abnormal situation and module's data section is not being unloaded.
+> > To handle this situation without keeping module's data in memory,
+> > allow codetags with longer lifespan than the module to be loaded into
+> > their own separate memory. The in-use memory areas and gaps after
+> > module unloading in this separate memory are tracked using maple trees.
+> > Allocation tags arrange their separate memory so that it is virtually
+> > contiguous and that will allow simple allocation tag indexing later on
+> > in this patchset. The size of this virtually contiguous memory is set
+> > to store up to 100000 allocation tags and max_module_alloc_tags kernel
+> > parameter is introduced to change this size.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |   4 +
+> >  include/asm-generic/codetag.lds.h             |  19 ++
+> >  include/linux/alloc_tag.h                     |  13 +-
+> >  include/linux/codetag.h                       |  35 ++-
+> >  kernel/module/main.c                          |  67 +++--
+> >  lib/alloc_tag.c                               | 245 ++++++++++++++++--
+> >  lib/codetag.c                                 | 101 +++++++-
+> >  scripts/module.lds.S                          |   5 +-
+> >  8 files changed, 429 insertions(+), 60 deletions(-)
+>
+> ...
+>
+> > diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+> > index c2a579ccd455..c4a3dd60205e 100644
+> > --- a/include/linux/codetag.h
+> > +++ b/include/linux/codetag.h
+> > @@ -35,8 +35,13 @@ struct codetag_type_desc {
+> >       size_t tag_size;
+> >       void (*module_load)(struct codetag_type *cttype,
+> >                           struct codetag_module *cmod);
+> > -     bool (*module_unload)(struct codetag_type *cttype,
+> > +     void (*module_unload)(struct codetag_type *cttype,
+> >                             struct codetag_module *cmod);
+> > +     void (*module_replaced)(struct module *mod, struct module *new_mo=
+d);
+> > +     bool (*needs_section_mem)(struct module *mod, unsigned long size)=
+;
+> > +     void *(*alloc_section_mem)(struct module *mod, unsigned long size=
+,
+> > +                                unsigned int prepend, unsigned long al=
+ign);
+> > +     void (*free_section_mem)(struct module *mod, bool unused);
+> >  };
+> >
+> >  struct codetag_iterator {
+> > @@ -71,11 +76,31 @@ struct codetag_type *
+> >  codetag_register_type(const struct codetag_type_desc *desc);
+> >
+> >  #if defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES)
+> > +
+> > +bool codetag_needs_module_section(struct module *mod, const char *name=
+,
+> > +                               unsigned long size);
+> > +void *codetag_alloc_module_section(struct module *mod, const char *nam=
+e,
+> > +                                unsigned long size, unsigned int prepe=
+nd,
+> > +                                unsigned long align);
+> > +void codetag_free_module_sections(struct module *mod);
+> > +void codetag_module_replaced(struct module *mod, struct module *new_mo=
+d);
+> >  void codetag_load_module(struct module *mod);
+> > -bool codetag_unload_module(struct module *mod);
+> > -#else
+> > +void codetag_unload_module(struct module *mod);
+> > +
+> > +#else /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+> > +
+> > +static inline bool
+> > +codetag_needs_module_section(struct module *mod, const char *name,
+> > +                          unsigned long size) { return false; }
+> > +static inline void *
+> > +codetag_alloc_module_section(struct module *mod, const char *name,
+> > +                          unsigned long size, unsigned int prepend,
+> > +                          unsigned long align) { return NULL; }
+> > +static inline void codetag_free_module_sections(struct module *mod) {}
+> > +static inline void codetag_module_replaced(struct module *mod, struct =
+module *new_mod) {}
+> >  static inline void codetag_load_module(struct module *mod) {}
+> > -static inline bool codetag_unload_module(struct module *mod) { return =
+true; }
+> > -#endif
+> > +static inline void codetag_unload_module(struct module *mod) {}
+> > +
+> > +#endif /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+>
+> Maybe I'm missing something, but can't alloc_tag::module_unload() just co=
+py
+> the tags that cannot be freed somewhere outside of module sections and th=
+en
+> free the module?
+>
+> The heavy lifting would be localized to alloc_tags rather than spread all
+> over.
 
--- 
-BR,
-Muhammad Usama Anjum
+Hi Mike,
+We can't copy those tags because allocations already have references
+to them. We would have to find and update those references to point to
+the new locations of these tags. That means potentially scanning all
+page extensions/pages in the system and updating their tag references
+in some race-less fashion. So, quite not trivial.
+Thanks,
+Suren.
 
+>
+> --
+> Sincerely yours,
+> Mike.
 
