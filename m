@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-294521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB100958EAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67874958EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619DB1F2330F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:38:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A4BB223DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497D514D6E1;
-	Tue, 20 Aug 2024 19:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4141D15B999;
+	Tue, 20 Aug 2024 19:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bI+NW17y"
-Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCrg++6R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9621C14B94A
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 19:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656D814B94B;
+	Tue, 20 Aug 2024 19:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724182716; cv=none; b=jiQs+m9EGBeLfrA4ZXLUMGNYvrXGBZS5aDcju3g8jNl5mTpZLhT0QyAcJXSVqKckmKUy9rsDo4Xk5rCUbdIIYgcJflLce/ChF2QIKFKYzKsFNveO+cCkn34YiXB0/SgKJE8lz4CkPrcyLbfX+rREd6oY9R251/EB6aXOV83DRgU=
+	t=1724182798; cv=none; b=Pw97sSr4ujbBpnm1fqUkKHpEwRUQShR6JTCavb4c0HT951gY+aWGkei+6C8TkOU6ie9+vhExoGXOFjZYCyXuethoJI3xbbAnANgAIsPVOJuBafGEmu6xkLlRsL9c9+3kSZVbzO7Lfljnxjd4gIj1EwcaQp8Br9at7pXj5iFYUAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724182716; c=relaxed/simple;
-	bh=i0CsVAVNg6mFCh0+dev4hO4WQyvGoe/wPJjjY5VtOk4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZoFLx88JNH2MOTPeeJHAP8mJoCRMRNGpnIZBVfRAuGZsmHgZ6d1CwCSF/+tGxFFBzlVkBENQ2XvrSYAs8HilsEpZ6JqEUTSVYY7xQTKi6HqjVyZpLzJ+qMd53wiSZ+upVi8EAGdhz3zUiKk2E7z6qJZw+/Zzl7dbJzlOVMVg3fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bI+NW17y; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gUgQsMRgMyTq2gUgQs5xkP; Tue, 20 Aug 2024 21:38:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724182704;
-	bh=NlO7mLF+NT33sRpCRl6DO3FkKqiceX8jbHbbMHO1dVk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To;
-	b=bI+NW17yUjQTIlOmVgdhuGiGsxyDADnPI4CkQaxmJlPyZPijVpOBcR2wtR1BYKO6x
-	 GkYgvcYhwowQ4XgPlw+x/pZME81XyOU+LBy6ai7kqsIO/+OuhmhW5rSNf/6kkj1EiX
-	 hOoaeIrZ6sR7r5NVnFyb+xMzvsCE3DvPpn3itzieZxoINMARcuBJD5Htb4HJOJfPJf
-	 TNg3cGhsTemICqAkkbAqSg54e7UoRJ2Gr2imPebcfR3vKRpnPNm/mWi9J651rRWxpt
-	 oY+GBk6JJRqbKnx2p/0AbvfLyKvdo46OJJ3GqsyX3frXsv59ULQRyDBPujQt8bQtiT
-	 hUa0obIJ8UmEw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 20 Aug 2024 21:38:24 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <2348e646-e1da-4deb-ab55-c438a42e25b3@wanadoo.fr>
-Date: Tue, 20 Aug 2024 21:38:22 +0200
+	s=arc-20240116; t=1724182798; c=relaxed/simple;
+	bh=eet258ZmfZhKKtJwJUN7C598plW54ADv5Xh+PzuuGlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lG1o4gYeBReUYtTATCLK9Xcqxd6WPEqUmrVQHRCrNjDiOB/9Nd3sxzi8W68ZoGxq9XTMw+wrX294Fo0nPMti7CGiF/xgxjymsFvEocLDEGiVhqlSe21tfslIvQmQ0LGkAlC36zyvK5fW02ElSDCKsj7YuK7HyueyQCOJ0v66IVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCrg++6R; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724182795; x=1755718795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eet258ZmfZhKKtJwJUN7C598plW54ADv5Xh+PzuuGlY=;
+  b=MCrg++6RBR1Pnr3JQzz/CNlb+or+of+6cQiw9tSCMbjbgnNDh3CGak3W
+   +s1p6fZFpdo25bbAomE3p9S9OBwV/lZQE361xy1PVoQq5mO82k0fmYaRz
+   Bq4+AC/hGZpZkwMPGLNSvkX76SrMdMhQe1+fSXIc2iLU/oH5SDZnWDQlX
+   LyLGyqdpPKNoW+Tr6QI9NVKVGsQtYajUPZCxkpVH/cOxtiuoDE5L4X5A6
+   v5DTw6mwhK2wg11FdZ0RVi8BjHo+ZlwsEXL1V3HTcMFN6L3fOO5LwgBkc
+   QRv99HZ07IwlnGgStK6s8aR+x8po2Za+YVsX9dY/dgSETgzYQclS6Bk1J
+   Q==;
+X-CSE-ConnectionGUID: TYGdOCngSCKwIupvm8xp1A==
+X-CSE-MsgGUID: yIjVp0fHRYOyZ4agwKoCPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22372641"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="22372641"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 12:39:55 -0700
+X-CSE-ConnectionGUID: E7KFSF83RlWgQgxLEKNz3A==
+X-CSE-MsgGUID: 8ngfMDiLTICNrsNrsKuyFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="98315039"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 20 Aug 2024 12:39:52 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgUhp-000AY8-19;
+	Tue, 20 Aug 2024 19:39:49 +0000
+Date: Wed, 21 Aug 2024 03:39:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, linux-acpi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 6/7] xen: allow mapping ACPI data using a different
+ physical address
+Message-ID: <202408210336.uafTZlvc-lkp@intel.com>
+References: <20240820082012.31316-7-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in
- rtl819x_translate_scan
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>, gregkh@linuxfoundation.org
-Cc: tdavies@darkphysics.net, philipp.g.hortmann@gmail.com,
- garyrookard@fastmail.org, linux-staging@lists.linux.dev,
- skhan@linuxfoundation.org, rbmarliere@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20240820184216.45390-1-abhishektamboli9@gmail.com>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20240820184216.45390-1-abhishektamboli9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820082012.31316-7-jgross@suse.com>
 
-Le 20/08/2024 à 20:42, Abhishek Tamboli a écrit :
-> Replace strcpy() with strscpy() in rtl819x_translate_scan()
-> function to ensure buffer safety.
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
->   drivers/staging/rtl8192e/rtllib_wx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
-> index fbd4ec824084..970b7fcb3f7e 100644
-> --- a/drivers/staging/rtl8192e/rtllib_wx.c
-> +++ b/drivers/staging/rtl8192e/rtllib_wx.c
-> @@ -61,7 +61,7 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
->   	iwe.cmd = SIOCGIWNAME;
->   	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
->   		if (network->mode & BIT(i)) {
-> -			strcpy(pname, rtllib_modes[i]);
-> +			strscpy(pname, rtllib_modes[i], sizeof(pname));
+Hi Juergen,
 
-This not correct.
+kernel test robot noticed the following build errors:
 
-sizeof(pname) is 4 here, but the buffer that is really used is "char 
-proto_name[6];"
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on rafael-pm/linux-next rafael-pm/bleeding-edge linus/master v6.11-rc4 next-20240820]
+[cannot apply to xen-tip/linux-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-6 chars are needed for storing "N-24G" (see rtllib_modes), so 5 chars + 
-ending \0.
+url:    https://github.com/intel-lab-lkp/linux/commits/Juergen-Gross/xen-use-correct-end-address-of-kernel-for-conflict-checking/20240820-162344
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20240820082012.31316-7-jgross%40suse.com
+patch subject: [PATCH v2 6/7] xen: allow mapping ACPI data using a different physical address
+config: x86_64-randconfig-004-20240820 (https://download.01.org/0day-ci/archive/20240821/202408210336.uafTZlvc-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240821/202408210336.uafTZlvc-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408210336.uafTZlvc-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
-When you will send a v2, here are a few others things you could give a 
-look at:
-    - is 'pname' really needed or is 'proto_name' enough?
-    - what about the "*pname = '\0';" after the loop?
-    - if a "mode" matches, do we need to iterate the whole rtllib_modes 
-array? (have a look at wireless_mode)
-
-CJ
+   In file included from arch/x86/kernel/smpboot.c:64:
+>> arch/x86/include/asm/acpi.h:179:42: error: unknown type name 'acpi_physical_address'
+     179 | extern void __iomem * (*acpi_os_ioremap)(acpi_physical_address phys,
+         |                                          ^~~~~~~~~~~~~~~~~~~~~
+>> arch/x86/include/asm/acpi.h:180:42: error: unknown type name 'acpi_size'
+     180 |                                          acpi_size size);
+         |                                          ^~~~~~~~~
+   arch/x86/include/asm/acpi.h:181:35: error: unknown type name 'acpi_physical_address'
+     181 | void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_size size);
+         |                                   ^~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/acpi.h:181:63: error: unknown type name 'acpi_size'
+     181 | void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_size size);
+         |                                                               ^~~~~~~~~
 
 
+vim +/acpi_physical_address +179 arch/x86/include/asm/acpi.h
 
+   176	
+   177	#ifdef CONFIG_XEN_PV_DOM0
+   178	/* A Xen PV dom0 needs a special acpi_os_ioremap() handling. */
+ > 179	extern void __iomem * (*acpi_os_ioremap)(acpi_physical_address phys,
+ > 180						 acpi_size size);
+   181	void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_size size);
+   182	#define acpi_os_ioremap acpi_os_ioremap
+   183	#endif
+   184	
 
->   			pname += strlen(rtllib_modes[i]);
->   		}
->   	}
-> --
-> 2.34.1
-> 
-> 
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
