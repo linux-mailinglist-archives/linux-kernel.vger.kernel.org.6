@@ -1,85 +1,201 @@
-Return-Path: <linux-kernel+bounces-293281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D4B957CE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BD7957CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F038281E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653821C23DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4474753368;
-	Tue, 20 Aug 2024 05:54:41 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D248C1BF2B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 05:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF5B1459F6;
+	Tue, 20 Aug 2024 05:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TilFGu0W"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B3123A9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 05:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724133280; cv=none; b=XfnKdVa831W0jsc1mfW0WJyTQYio6kqQr4p+PyIQ5BKl2PBGyUUfIxQAij+B0xbzaJcU657QtHshak8TpFyC4nbGXhkvd7cHKpucXPrEOUFJNgIuUhoVzUcuDpNPzwMZ8Wz7QduvdXRa1EBFTPr69qEg5crGs9kt6v03bK+pMAI=
+	t=1724133138; cv=none; b=Ec1rrOlZIf3f79PbyRlFR736KFYowXwUBIB1KD9KCabHWrLGElMYfTX2RIioN6RQ6USYJsWpW7wlXAm/UknMQoyc37P1wTNw2mBjpevY+pIk5F2VaqrR/P24pG31NpTYBxlhVS0FU9QmkXcXN2HJ5Z6hiJGD4IPjrzclikxdd3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724133280; c=relaxed/simple;
-	bh=3HeErADYDGIN4F+k/n48krz9TH9MCVLFuwmVLC3rRCY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OnnMIeUQqKdWeHGkzjgo/S/7hzfbGhAI1/T/cdpf78wcX4pzijblphnhcVWWjAXZPMsu5PTH+qjlkmWZpDM7D253edvKREvlaY2VfBzx6i/39yj+cKUxCHlTS6glhSewqM/79I3hpnXJt9JzGt0N3pGP8sH5CuzqMsbTlhbIzjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee866c42edb17c-a41ae;
-	Tue, 20 Aug 2024 13:51:24 +0800 (CST)
-X-RM-TRANSID:2ee866c42edb17c-a41ae
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[223.108.79.99])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766c42edc1ba-f7350;
-	Tue, 20 Aug 2024 13:51:24 +0800 (CST)
-X-RM-TRANSID:2ee766c42edc1ba-f7350
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: song@kernel.org
-Cc: yonghong.song@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	zhujun2@cmss.chinamobile.com,
-	jolsa@kernel.org,
+	s=arc-20240116; t=1724133138; c=relaxed/simple;
+	bh=DLK5ItQpzxghqBx4flWmDJes7nJFtU1awddB31t1t/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3LqHIbAd+RFf3GpIUIb3ZgdcysmsI39rMlKXlH8PpiF+veJyIMzfu6eRbrkLjUT2EOwqfSwmaRqqSkqdBtAB9B4YRvXfx93giroDx45SLJofsh+VUNFzybRYf433qqJyjjp1+0nm5nsrM0hMBLpqF4khEShOhi0CgIXCoaBkPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TilFGu0W; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso4213332b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:52:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724133136; x=1724737936; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=boJ5GhilqsNI0J+v1vrM4G45uO2RgryBQBYvfmNmTfE=;
+        b=TilFGu0WCCzRLw4uqCpcjYTiQQnlv3rY+YsTXrIYWSk8sthig2wzwIX1Xs3rtOrXOr
+         3msEFRKBCDYyALNbG4pMkKHSh83c1lE/dCah2avh22j7/pdFMt4tKVVLOY+q6Z6lZdm6
+         fllTCVK4d1KwYB7iMYMuLh6AhytjXXwRN1ES//TTPf36IOwQVhPvPOB25MaW0W16Ks0g
+         dnt2wQ5n6P2yH2cueA4nixhvmnxgyfaGFNr0ONO1vFa2GhJ0FYtdMH9lcmXTz8mujMc1
+         lDqIxZ6jiTKg6Zj1HP859reM2TFNtQqOsGfc6z0PveqPW4yO4qVMwUYspBPskYOSYBjx
+         z5Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724133136; x=1724737936;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=boJ5GhilqsNI0J+v1vrM4G45uO2RgryBQBYvfmNmTfE=;
+        b=MohvpkYvGYyVTAmZvjPeGSA2YDQe1kU/pExuSDizBEZVBewQ+k8GgYMbjEW8HnqLY5
+         yFzbhQfB5t4GiNRAxG2cC612uj3Dq5bA5YNknabypuLPftMxhyzl9hSp4KuGx00zJXjH
+         uq9Z4n9tiFGlzA8+jIate1j7qm+3QtAjR67Pb6WR6mP1QSwQ/666QBqbcj7bUeamcavf
+         xHCAXgz5Y7a4V8J29cM5KpX7kg9/uMbM7SgLy4xoXFB8bLwKS7XoGzjsljA0Tf6qC4Ze
+         ePDELETP1S5i7WThB0KJhGgS63CkzHHu9M6I0SaY7ata8/qTqleE47H65p79zAAHa1P/
+         mJpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuNqHoyP2P3Fv1zPSnQeKyiGGcQiHxlOqzhgY032zBBdH+xvG0fdjL0g86t+RHQ5b+e2sv6eiMINbceiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcLmLnURcJxjyyuN1/fGXCXgLWPHS7FJmEAsE+4/Uxfu+/ACDp
+	/mxh92V42FstLUk4Jr86vCDmLWgmkrCAmRqb9x6H7ZaHHTfkzDzHpM4L33BCQA==
+X-Google-Smtp-Source: AGHT+IExg7cB/Xy0vOL//UAkuMnPPxBv49gmpCMa8JbsqU5untaUwshPv3OFJbbDot/5OFyk9/K5YA==
+X-Received: by 2002:a05:6a20:2d22:b0:1bd:1e06:9db4 with SMTP id adf61e73a8af0-1c904f88a2emr17776636637.19.1724133135685;
+        Mon, 19 Aug 2024 22:52:15 -0700 (PDT)
+Received: from thinkpad ([120.60.128.138])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02faa03sm71137595ad.19.2024.08.19.22.52.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 22:52:15 -0700 (PDT)
+Date: Tue, 20 Aug 2024 11:22:08 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org,
+	alberto.dassatti@heig-vd.ch,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] tools/bpf: remove unused variable
-Date: Mon, 19 Aug 2024 22:51:22 -0700
-Message-Id: <20240820055122.3769-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: [PATCH v2] PCI: endpoint: pci-epf-test: Move DMA check into
+ read/write/copy functions
+Message-ID: <20240820055208.g6iorjl4uhl2jq45@thinkpad>
+References: <20240819120112.23563-1-rick.wertenbroek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240819120112.23563-1-rick.wertenbroek@gmail.com>
 
-The variable is never referenced in the code, just remove them.
+On Mon, Aug 19, 2024 at 02:01:10PM +0200, Rick Wertenbroek wrote:
+> The pci-epf-test PCI endpoint function /drivers/pci/endpoint/function/pci-epf_test.c
+> is meant to be used in a PCI endpoint device inside a host computer with
+> the host side driver: /drivers/misc/pci_endpoint_test.c.
+> 
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- tools/bpf/runqslower/runqslower.bpf.c | 1 -
- 1 file changed, 1 deletion(-)
+s/inside/connected to
 
-diff --git a/tools/bpf/runqslower/runqslower.bpf.c b/tools/bpf/runqslower/runqslower.bpf.c
-index 9a5c1f008fe6..fced54a3adf6 100644
---- a/tools/bpf/runqslower/runqslower.bpf.c
-+++ b/tools/bpf/runqslower/runqslower.bpf.c
-@@ -70,7 +70,6 @@ int handle__sched_switch(u64 *ctx)
- 	struct task_struct *next = (struct task_struct *)ctx[2];
- 	struct runq_event event = {};
- 	u64 *tsp, delta_us;
--	long state;
- 	u32 pid;
- 
- 	/* ivcsw: treat like an enqueue event and store timestamp */
+> The host side driver can request read/write/copy transactions from the
+> endpoint function and expects an IRQ from the endpoint function once
+> the read/write/copy transaction is finished. These can be issued with or
+> without DMA enabled. If the host side driver requests a read/write/copy
+> transaction with DMA enabled and the endpoint function does not support
+> DMA, the endpoint would only print an error message and wait for further
+> commands without sending an IRQ because pci_epf_test_raise_irq() is
+> skipped in pci_epf_test_cmd_handler(). This results in the host side
+> driver hanging indefinitely waiting for the IRQ.
+> 
+
+TBH, it doesn't make sense to control the endpoint DMA from host. Host should
+just issue the transfer command, and let the endpoint use DMA or memcpy based on
+its capability.
+
+> Move the DMA check into the pci_epf_test_read()/write()/copy() functions
+> so that they report a transfer (IO) error and that pci_epf_test_raise_irq()
+> is called when a transfer with DMA is requested, even if unsupported.
+> 
+> The host side driver will no longer hang but report an error on transfer
+> (printing "NOT OKAY") thanks to the checksum because no data was moved.
+> 
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 29 +++++++++++++++----
+>  1 file changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 7c2ed6eae53a..ec0f79383521 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -314,6 +314,17 @@ static void pci_epf_test_print_rate(struct pci_epf_test *epf_test,
+>  		 (u64)ts.tv_sec, (u32)ts.tv_nsec, rate);
+>  }
+>  
+> +static int pci_epf_test_check_dma(struct pci_epf_test *epf_test,
+> +				   struct pci_epf_test_reg *reg)
+> +{
+> +	if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
+> +	    !epf_test->dma_supported) {
+> +		dev_err(&epf_test->epf->dev, "DMA transfer not supported\n");
+> +		return -EIO;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static void pci_epf_test_copy(struct pci_epf_test *epf_test,
+>  			      struct pci_epf_test_reg *reg)
+>  {
+> @@ -327,6 +338,10 @@ static void pci_epf_test_copy(struct pci_epf_test *epf_test,
+>  	struct device *dev = &epf->dev;
+>  	struct pci_epc *epc = epf->epc;
+>  
+> +	ret = pci_epf_test_check_dma(epf_test, reg);
+> +	if (ret)
+> +		goto err;
+> +
+>  	src_addr = pci_epc_mem_alloc_addr(epc, &src_phys_addr, reg->size);
+>  	if (!src_addr) {
+>  		dev_err(dev, "Failed to allocate source address\n");
+> @@ -423,6 +438,10 @@ static void pci_epf_test_read(struct pci_epf_test *epf_test,
+>  	struct pci_epc *epc = epf->epc;
+>  	struct device *dma_dev = epf->epc->dev.parent;
+>  
+> +	ret = pci_epf_test_check_dma(epf_test, reg);
+> +	if (ret)
+> +		goto err;
+> +
+>  	src_addr = pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
+>  	if (!src_addr) {
+>  		dev_err(dev, "Failed to allocate address\n");
+> @@ -507,6 +526,10 @@ static void pci_epf_test_write(struct pci_epf_test *epf_test,
+>  	struct pci_epc *epc = epf->epc;
+>  	struct device *dma_dev = epf->epc->dev.parent;
+>  
+> +	ret = pci_epf_test_check_dma(epf_test, reg);
+> +	if (ret)
+> +		goto err;
+> +
+>  	dst_addr = pci_epc_mem_alloc_addr(epc, &phys_addr, reg->size);
+>  	if (!dst_addr) {
+>  		dev_err(dev, "Failed to allocate address\n");
+> @@ -647,12 +670,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+>  	WRITE_ONCE(reg->command, 0);
+>  	WRITE_ONCE(reg->status, 0);
+>  
+> -	if ((READ_ONCE(reg->flags) & FLAG_USE_DMA) &&
+> -	    !epf_test->dma_supported) {
+> -		dev_err(dev, "Cannot transfer data using DMA\n");
+> -		goto reset_handler;
+
+Why can't you just set the status and trigger the IRQ here itself? This avoids
+duplicating the check inside each command handler.
+
+- Mani
+
 -- 
-2.17.1
-
-
-
+மணிவண்ணன் சதாசிவம்
 
