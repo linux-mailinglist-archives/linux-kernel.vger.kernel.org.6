@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-293721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D620195839D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:07:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E609583A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950D1288768
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:07:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E92B2591A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0EF18CBEA;
-	Tue, 20 Aug 2024 10:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30BB18D620;
+	Tue, 20 Aug 2024 10:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fmfj+oZ6"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pLQsqbCY"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C1318E37C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA118CC0E;
+	Tue, 20 Aug 2024 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148405; cv=none; b=phYzrtojqykPmHTremKGT+AMXXGQrp1z/LIXdZaMxi/HiAVDKkDFkL6/InNzuA2qYZ0UtKtQ3/qjOU3IKUfHs0x4N9vimvD3uquI+ew4Y67m79Yj/8ovEMASLNn8tSpc5BRZ4HYpfyULJimKF9j6cSwJHfrAW23YVYGtsjB5JAg=
+	t=1724148442; cv=none; b=s0vN0FGEeS1Qb2sAfSskFmdsIAVFjJJR8PkPnuTDGTBVkaoaN/hZZggQXyC55e/D3Q63AlQ8EeAxpOFyy92X3yDmiFLEXSWOj50iKz3n7rYhysD3g6m5glWJ8zAs18vRuA1RlTzj0knO72hWG10MMkOqAL7f1UF835MdeOA6gXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148405; c=relaxed/simple;
-	bh=JUr70QEmTFFx9tlSrDy7lTKbTZeGSA1cMd3/UZTZzK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V7h+nZYBgBdNuCOSGHniM/rWWr1D04fw9pBqANnqt667mE+D6xD+iX3nJY5n9y3RbiGNL2ydd+16pTm+o3072gV638p9aIlKhQqSFmNvb+Y6BV9b9luSb9+Wd+A/wuBSsMmv1Qh6J7PuvhaR8fOWhQMzodlp3bs3mXChQriU5Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fmfj+oZ6; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c3e1081804so3467287a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724148403; x=1724753203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dT3naxXzpX+hovDe3WRsxAFnWg41LZ8s9Rrc3hrzTd0=;
-        b=Fmfj+oZ6z2MAQYI9jnvfK9MHKz1LJSgKBUflt3gfWD/t4qQ2wXZTz0oSvS4rcFiX3M
-         dnbFPn3yfnER+dKg8KEtNnbZ84h3jvMtX8SMLceDOPNVRzNeTntRmbkY4Ev64jhkadjh
-         +BrnupQb7zXHPizWb9P096M+Q3eQywLCH1HBlwy2Lu1sI3XCm3NhYxhhQHx2r+G2UIXZ
-         mhi5aqoOWVNgbrD+JYFjMqfa4KHaoRn4kiRctfDkHYbNxXVUFyW6TwPVjNAIPogZoxjz
-         gHU0ctZp2i5Z4yKdedC6eb+rPwrfs4PAJrmsWXA0BDBX7jkQi0Oq8vsYsPWI39TFSTyf
-         Sbcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724148403; x=1724753203;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dT3naxXzpX+hovDe3WRsxAFnWg41LZ8s9Rrc3hrzTd0=;
-        b=VvV1/KzJ3hpTxAj9wIMUBQYgrbdhq7w9oh2Rpn7FF9SptG3w0c9YsYd1dhgselFlIC
-         /2D/a+0EXSxF0s2jWDkLfDfr7vqy3r/uHKoNWfqIHplMYxZaaxPufGhZk+wqIWqmFXWq
-         urvIDD6nIj8kb1yUgSInBEsEC1WM7Lh3Adp7tXg77ZpWkqXikBwImbbvkDiUnIZXGpg3
-         5maPFAX4dFNvJbMR/M8IGeXiFyA9u2F+fqRCHszCNykZFr+f6qRZPife30xrmNWkYMzz
-         GoqvmdlsKHvgEw9gD7x9s336HqNjLp7RWZYSBESprZ8wSojoWXrh2HYssjw5QRFXMdTJ
-         OAjw==
-X-Gm-Message-State: AOJu0YzT4D2lg8XZmuF/R7J35Axl8u3yQ91kYi7qyhU8lpqCyWjYoPPp
-	7iwK1UlBn3YAs9qERyEBT+fniAdXPDAcsQynLtgX+gyGdLKJckt7i7sIOQ==
-X-Google-Smtp-Source: AGHT+IGJ2TEhCeQ4T6stmHuMptTexASfuExA2FNFId6sOB+IUIEs5Twh28uzGFa3MpzDMsWieKEUpw==
-X-Received: by 2002:a05:6a20:e608:b0:1c6:fad1:c20f with SMTP id adf61e73a8af0-1c904f742d4mr14595485637.5.1724148403270;
-        Tue, 20 Aug 2024 03:06:43 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3c8839392sm10484679a91.56.2024.08.20.03.06.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 03:06:42 -0700 (PDT)
-Message-ID: <f67df96a-206b-40ca-8d28-42715c907f64@gmail.com>
-Date: Tue, 20 Aug 2024 18:06:39 +0800
+	s=arc-20240116; t=1724148442; c=relaxed/simple;
+	bh=dKlbevvebHQEcZGYVQfCE/AOvvg/xGoqpqQhEY0ng2c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQtRyh+yifIztw4wmbH1qDl4UQTDqFWFvFk8ql7Hop3Kpxsm7IHyvnrjMJZMW2fk6WWc5mTS4wNJn5yHFgEIwuruAVZAy4RCCq4UPexVHf7gCzNkbXWBuHHbb9TI5FbvNAEzguEdKhEj1LnhfWvAfKOl6p+jX+fArGfArepi0Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pLQsqbCY; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KA7EG2017205;
+	Tue, 20 Aug 2024 05:07:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724148435;
+	bh=2bPALklH8qin/1uAmcLNSYEl5N8smNp6DkrdpWooo+4=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=pLQsqbCYQ4svyRluhQwKlwyPvQ70LqEnZ0IFBpeJALpbSpWLUZmo6wv6pF8wCBO9D
+	 POlcBKXyHOJObGOh1Xd4oGO0GaUCaciIY655fn76HO2hZMDWHLBpiND/OitJlnNllI
+	 4YaKzsvKncnOvRTuMtZkpoGGtLT+rXFwTby9Nxq0=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KA7Emm001209
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 20 Aug 2024 05:07:14 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
+ Aug 2024 05:07:14 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 20 Aug 2024 05:07:14 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KA7DTw076275;
+	Tue, 20 Aug 2024 05:07:14 -0500
+Date: Tue, 20 Aug 2024 15:37:13 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Kevin Hilman <khilman@baylibre.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
+        Akashdeep Kaur
+	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
+        Markus
+ Schneider-Pargmann <msp@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] pmdomain: ti_sci: collect and send low-power mode
+ constraints
+Message-ID: <20240820100713.2xbbyw726eymxr66@lcpd911>
+References: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: skip less than check for MAX_NR_ZONES
-To: Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org
-Cc: open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-References: <20240819112628.372883-1-alexs@kernel.org>
- <20240819214055.978b33eae88004d35b9ce634@linux-foundation.org>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240819214055.978b33eae88004d35b9ce634@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 8/20/24 12:40 PM, Andrew Morton wrote:
-> On Mon, 19 Aug 2024 19:26:28 +0800 alexs@kernel.org wrote:
+On Aug 19, 2024 at 17:00:10 -0700, Kevin Hilman wrote:
+> The latest (10.x) version of the firmware for the PM co-processor (aka
+> device manager, or DM) adds support for a "managed" mode, where the DM
+> firmware will select the specific low power state which is entered
+> when Linux requests a system-wide suspend.
 > 
->> From: Alex Shi <alexs@kernel.org>
->>
->> Remove unnecessary '<' check for ZONES_SHIFT assignment.
->>
->> ...
->>
->> --- a/include/linux/page-flags-layout.h
->> +++ b/include/linux/page-flags-layout.h
->> @@ -14,7 +14,7 @@
->>   */
->>  #if MAX_NR_ZONES < 2
->>  #define ZONES_SHIFT 0
->> -#elif MAX_NR_ZONES <= 2
->> +#elif MAX_NR_ZONES == 2
->>  #define ZONES_SHIFT 1
->>  #elif MAX_NR_ZONES <= 4
->>  #define ZONES_SHIFT 2
+> In this mode, the DM will always attempt the deepest low-power state
+> available for the SoC.
 > 
-> mmm, why.  I think it looks more logical (and certainly more
-> consistent) the way things are now.
+> However, Linux (or OSes running on other cores) may want to constrain
+> the DM for certain use cases.  For example, the deepest state may have
+> a wakeup/resume latency that is too long for certain use cases.  Or,
+> some wakeup-capable devices may potentially be powered off in deep
+> low-power states, but if one of those devices is enabled as a wakeup
+> source, it should not be powered off.
 > 
+> These kinds of constraints are are already known in Linux by the use
+> of existing APIs such as per-device PM QoS and device wakeup APIs, but
+> now we need to communicate these constraints to the DM.
+> 
+> For TI SoCs with TI SCI support, all DM-managed devices will be
+> connected to a TI SCI PM domain.  So the goal of this series is to use
+> the PM domain driver for TI SCI devices to collect constraints, and
+> communicate them to the DM via the new TI SCI APIs.
+> 
+> This is all managed by TI SCI PM domain code.  No new APIs are needed
+> by Linux drivers.  Any device that is managed by TI SCI will be
+> checked for QoS constraints or wakeup capability and the constraints
+> will be collected and sent to the DM.
+> 
+> This series depends on the support for the new TI SCI APIs (v10) and
+> was also tested with this series to update 8250_omap serial support
+> for AM62x[2].
+> 
+> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
+> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
+> 
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> ---
 
-Uh, then let's keep the current code if the logical looks better.
+Since I applied this series to the v10 TISCI series as well, and tested:
 
-In fact, the logical is in preprocess, has nothing change in the final object file.
+For the series,
+Tested-by: Dhruva Gole <d-gole@ti.com>
 
-Thanks for comments!
- 
+Logs:
+https://gist.github.com/DhruvaG2000/658d0d4683b13ab41025df19a8eafc2f
+
+Tree with all the patches applied:
+https://github.com/DhruvaG2000/v-linux/tree/lpm-k3-next
+
+-- 
+Best regards,
+Dhruva Gole <d-gole@ti.com>
 
