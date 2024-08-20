@@ -1,203 +1,139 @@
-Return-Path: <linux-kernel+bounces-293179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B7B957BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7551957BC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1825A1C23AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05F7B1C23B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA1D25763;
-	Tue, 20 Aug 2024 03:02:15 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83474502F;
+	Tue, 20 Aug 2024 03:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BOoI5B0e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BB64CDEC
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B82A25763
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724122935; cv=none; b=XHna63IPjAe3T3noFdZsXtAo3jS/tfecZknbfjcC5gdkyzLuQ8GU5dUEeZxV5E9gEcDtFT1ViJYUNn9IGPB9Xg75j6sKtmGKCPl+79Sn1Gq3KUiKtVEVW2ItTBsGHrN/ystswFLywBVuObZ5GmShTUT/h7Qt2PeMpGt/ob1/X1w=
+	t=1724123168; cv=none; b=oFHMRTBNqOTLNgHSsiYz5+ZnOAPrleup+xoAhXwTfPZvwElXXMGRiTAbQJsQpmIUfxSo/f3v+/CvtgTrXrWmcW49lmiKQ4rwBnoA0wUDAwcx1/yd4Imuwa/Nos4N5UzVo385745OuSIgEFzPEHlLYKyhl3xfUTNwjwLEUPd59F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724122935; c=relaxed/simple;
-	bh=I2n8n+cUD/R89NQTfYMTLq0B+5hbSqTuiQQv6HkunLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LitC53RFeKQmP9j2uZ4/OqA9i2srRDLwCNCZHIS6uwi0x//n2M1NMEEyUrRKeVIrWKXagOyKwKiXwTv2Lso5Cv9+0VGh+uDfUovl/qZt4rMJo2z/kVvqAfk2l7j+8sNaPC3iGoFAlOSKprH1AYPf98A21tbRR2dwLiZBXWDlFHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnvMr41ryzfbXX;
-	Tue, 20 Aug 2024 11:00:08 +0800 (CST)
-Received: from kwepemm600017.china.huawei.com (unknown [7.193.23.234])
-	by mail.maildlp.com (Postfix) with ESMTPS id 77715140138;
-	Tue, 20 Aug 2024 11:02:08 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemm600017.china.huawei.com (7.193.23.234) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 20 Aug 2024 11:02:06 +0800
-Message-ID: <8257d76b-c700-89a6-0e29-f194d2e1cd61@huawei.com>
-Date: Tue, 20 Aug 2024 11:02:05 +0800
+	s=arc-20240116; t=1724123168; c=relaxed/simple;
+	bh=D4NWc1ISe5L1Y95LSqKQcLDmDgdsikzzYZ3vCOvQJCI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=us3hzIn9gBeEGfbal+yOOdi0zesvAYcFOGyArbrm1SPLOXUcW9L9KPRoe6ewe/7hF7VttaJkQuKudbj6aBZ3iO3fdW4tmHsdODuXQ35mkTused7D8ByqXCQmm9WASMxMr8gJC4/ECQTeIINEtoqKf+yFLa6yDvWb2+Bx6FQOVO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BOoI5B0e; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724123167; x=1755659167;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=D4NWc1ISe5L1Y95LSqKQcLDmDgdsikzzYZ3vCOvQJCI=;
+  b=BOoI5B0eqT74GEcqjZTUIZacWZ+53rpS5RfqoNOtv9WpXG8rpz06a8Hy
+   bSg0M7cM3M7yE6gqkxQsckM7XcohrBFpBlvvbBEyKxa+vpX4SAisSO8PT
+   88VewOKZo6SvdtINA65uWxdapEvIUGMW+n+S2RIRymVyTB1+ovrMRBPLS
+   QreZot39ux5Wkh2eUF/Wymkje9xojhcFkAsiGwRjdMfozqptwmLAnOKwH
+   QNqMZY1eS7Me3xyegsN/LToUwkfC5LN3xkRNaLyapx/PUomsWANjd71fC
+   efI7U7Kq9ubY0pt8Jj5JWzx66BguAbGdqL71IccH0C4XwJP+1kQI4Qx36
+   A==;
+X-CSE-ConnectionGUID: sjPrTIvAQLSeucaHQZxhiA==
+X-CSE-MsgGUID: t3l+R9mxTTOpuvy9yAcXzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22542953"
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="22542953"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 20:05:50 -0700
+X-CSE-ConnectionGUID: UHCmsldzR7S+yyCbUDK9Zw==
+X-CSE-MsgGUID: H38gDz3ISSykmFz1pLykiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="65395406"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa003.jf.intel.com with ESMTP; 19 Aug 2024 20:05:48 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Unconditionally flush device TLB for pasid table updates
+Date: Tue, 20 Aug 2024 11:02:08 +0800
+Message-Id: <20240820030208.20020-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v12 4/6] arm64: support copy_mc_[user]_highpage()
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
-	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
- Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
-	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
- Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-References: <20240528085915.1955987-1-tongtiangen@huawei.com>
- <20240528085915.1955987-5-tongtiangen@huawei.com>
- <20240819125601.0000687b@Huawei.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <20240819125601.0000687b@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600017.china.huawei.com (7.193.23.234)
 
+The caching mode of an IOMMU is irrelevant to the behavior of the device
+TLB. Previously, commit <304b3bde24b5> ("iommu/vt-d: Remove caching mode
+check before device TLB flush") removed this redundant check in the
+domain unmap path.
 
+Checking the caching mode before flushing the device TLB after a pasid
+table entry is updated is unnecessary and can lead to inconsistent
+behavior.
 
-在 2024/8/19 19:56, Jonathan Cameron 写道:
-> On Tue, 28 May 2024 16:59:13 +0800
-> Tong Tiangen <tongtiangen@huawei.com> wrote:
-> 
->> Currently, many scenarios that can tolerate memory errors when copying page
->> have been supported in the kernel[1~5], all of which are implemented by
->> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
->>
->> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
->> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
->> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
->>
->> Add new helper copy_mc_page() which provide a page copy implementation with
->> hardware memory error safe. The code logic of copy_mc_page() is the same as
->> copy_page(), the main difference is that the ldp insn of copy_mc_page()
->> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_ME_SAFE, therefore, the
->> main logic is extracted to copy_page_template.S.
->>
->> [1] commit d302c2398ba2 ("mm, hwpoison: when copy-on-write hits poison, take page offline")
->> [2] commit 1cb9dc4b475c ("mm: hwpoison: support recovery from HugePage copy-on-write faults")
->> [3] commit 6b970599e807 ("mm: hwpoison: support recovery from ksm_might_need_to_copy()")
->> [4] commit 98c76c9f1ef7 ("mm/khugepaged: recover from poisoned anonymous memory")
->> [5] commit 12904d953364 ("mm/khugepaged: recover from poisoned file-backed memory")
->>
->> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
-> Trivial stuff inline.
-> 
-> Jonathan
+Extends this consistency by removing the caching mode check in the pasid
+table update path.
 
-I'm sorry, I may not have understood what you meant. Where is the better
-place to do inline? :)
+Suggested-by: Yi Liu <yi.l.liu@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/pasid.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Thanks,
-Tong.
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5792c817cefa..dc00eac6be31 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -264,9 +264,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
+ 	else
+ 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+ 
+-	/* Device IOTLB doesn't need to be flushed in caching mode. */
+-	if (!cap_caching_mode(iommu->cap))
+-		devtlb_invalidation_with_pasid(iommu, dev, pasid);
++	devtlb_invalidation_with_pasid(iommu, dev, pasid);
+ }
+ 
+ /*
+@@ -493,9 +491,7 @@ int intel_pasid_setup_dirty_tracking(struct intel_iommu *iommu,
+ 
+ 	iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+ 
+-	/* Device IOTLB doesn't need to be flushed in caching mode. */
+-	if (!cap_caching_mode(iommu->cap))
+-		devtlb_invalidation_with_pasid(iommu, dev, pasid);
++	devtlb_invalidation_with_pasid(iommu, dev, pasid);
+ 
+ 	return 0;
+ }
+@@ -572,9 +568,7 @@ void intel_pasid_setup_page_snoop_control(struct intel_iommu *iommu,
+ 	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+ 	qi_flush_piotlb(iommu, did, pasid, 0, -1, 0);
+ 
+-	/* Device IOTLB doesn't need to be flushed in caching mode. */
+-	if (!cap_caching_mode(iommu->cap))
+-		devtlb_invalidation_with_pasid(iommu, dev, pasid);
++	devtlb_invalidation_with_pasid(iommu, dev, pasid);
+ }
+ 
+ /**
+-- 
+2.34.1
 
-> 
-> 
->> diff --git a/arch/arm64/lib/mte.S b/arch/arm64/lib/mte.S
->> index 5018ac03b6bf..50ef24318281 100644
->> --- a/arch/arm64/lib/mte.S
->> +++ b/arch/arm64/lib/mte.S
->> @@ -80,6 +80,35 @@ SYM_FUNC_START(mte_copy_page_tags)
->>   	ret
->>   SYM_FUNC_END(mte_copy_page_tags)
->>   
->> +#ifdef CONFIG_ARCH_HAS_COPY_MC
->> +/*
->> + * Copy the tags from the source page to the destination one wiht machine check safe
-> Spell check.
-> with >
-> Also, maybe reword given machine check doesn't make sense on arm64.
-
-OK.
-
-> 
-> 
->> + *   x0 - address of the destination page
->> + *   x1 - address of the source page
->> + * Returns:
->> + *   x0 - Return 0 if copy success, or
->> + *        -EFAULT if anything goes wrong while copying.
->> + */
->> +SYM_FUNC_START(mte_copy_mc_page_tags)
->> +	mov	x2, x0
->> +	mov	x3, x1
->> +	multitag_transfer_size x5, x6
->> +1:
->> +KERNEL_ME_SAFE(2f, ldgm	x4, [x3])
->> +	stgm	x4, [x2]
->> +	add	x2, x2, x5
->> +	add	x3, x3, x5
->> +	tst	x2, #(PAGE_SIZE - 1)
->> +	b.ne	1b
->> +
->> +	mov x0, #0
->> +	ret
->> +
->> +2:	mov x0, #-EFAULT
->> +	ret
->> +SYM_FUNC_END(mte_copy_mc_page_tags)
->> +#endif
->> +
->>   /*
->>    * Read tags from a user buffer (one tag per byte) and set the corresponding
->>    * tags at the given kernel address. Used by PTRACE_POKEMTETAGS.
->> diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
->> index a7bb20055ce0..ff0d9ceea2a4 100644
->> --- a/arch/arm64/mm/copypage.c
->> +++ b/arch/arm64/mm/copypage.c
->> @@ -40,3 +40,48 @@ void copy_user_highpage(struct page *to, struct page *from,
-> 
->> +
->> +int copy_mc_user_highpage(struct page *to, struct page *from,
->> +			unsigned long vaddr, struct vm_area_struct *vma)
->> +{
->> +	int ret;
->> +
->> +	ret = copy_mc_highpage(to, from);
->> +	if (!ret)
->> +		flush_dcache_page(to);
-> Personally I'd always keep the error out of line as it tends to be
-> more readable when reviewing a lot of code.
-> 	if (ret)
-> 		return ret;
-> 
-> 	flush_dcache_page(to);
-> 
-> 	return 0;
-
-This is more reasonable, and it is more readable to eliminate errors in
-time.
-
-Thanks,
-Tong.
-
->> +
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(copy_mc_user_highpage);
->> +#endif
-> 
-> .
 
