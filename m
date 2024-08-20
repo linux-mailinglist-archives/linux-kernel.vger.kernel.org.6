@@ -1,201 +1,125 @@
-Return-Path: <linux-kernel+bounces-293363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F363957E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2EA957E4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA00282919
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8172B1C23C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DE11DD39D;
-	Tue, 20 Aug 2024 06:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8331E2108;
+	Tue, 20 Aug 2024 06:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sl+FcqZq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="etg93A3a"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFF116B391;
-	Tue, 20 Aug 2024 06:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B65F1E2107
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135479; cv=none; b=IcUjahGZSX94Z5bi17oGVWtXQgFLRJq978CQANXGgNWFN+ofBeSM8Zhz3t/cYdffYlBG14LoWUL0TLIpM7d3M0D4AVa8Hx2x6tr2EB4F04fK5Ko+/+SWV6O9igMfXBiQu05s1jocCNfLs3FE4nhezCdmKO/5XspAUdSy4d4iYkc=
+	t=1724135491; cv=none; b=sHk9w6RouFPsT4B1UNUhpUhjyrkF8GN3DMNClbkuYMxNzMFq/gsNSEX+6xf0LaRwti4EWUsJfSYjf/ukfmzGbzHPIdqPvOG2j+gyP6bXoxDiqJzyelkQ4KUC2mZHHeQ0yCi+eghuolTCwUudSifWBqQcYRtlx0FgHNux6XQpW04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135479; c=relaxed/simple;
-	bh=MGMSv63RgBSwL0d2+w0KmKdyp7OpMErP/z85PgKoX4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5rWxG7C1JIryMuE5rn34UdA/eJHoCe3QH2WqVPGgriJBvIavP9vwXhrZaz+JDS4EY6lHAPlFPdDV/wklIyIVat3mplRAgSnuMleDgbB152kVYj4wgNK17Pq9E4mXFEsvpCco4RW1g+8dp91rVNwc4oRYNuoIYJwqEvm7sjr4Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sl+FcqZq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JHT8XT031020;
-	Tue, 20 Aug 2024 06:31:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=BvVgybZp3Aak/RqXX2r4Y0PJ+/P
-	n2S/9BT+Ml05IGJQ=; b=Sl+FcqZqeC5DWahxjkEQF4pYUnHI7XUMFN6clhbBKRI
-	45MA7rjO+PykZ1nUktpKkRFE9hN3pRWctFfkuRBJpX95Hh6xwUN+W1hFmAlF2RGP
-	9+rHM0TauUsJM5nx18KGGlSjt0KUGMykAlSc70OJah+vLVoot8sbDTy9DDKtk7hO
-	d8iblXnXwtil9mpVJmWU4bQBVNO88nWLE7I0wPqhEjJ+UUVmu6boa4vNXLW+tyY3
-	r0ElVDZS1a9zWpX8p2zgo6j7SGMJ6pzNrDrvSZIRPgxqpjJ/Pvwtmj9301mOW6oF
-	p7pOEZfLYrfzbgsFCGuH1B7Y4X/XcDx8RMZccZYa6kQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb5ma12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 06:31:05 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47K6V45O014836;
-	Tue, 20 Aug 2024 06:31:05 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb5ma10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 06:31:04 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47K318lQ029237;
-	Tue, 20 Aug 2024 06:31:04 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138dm9d64-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 06:31:03 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47K6V0xa22544726
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Aug 2024 06:31:02 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 350B120043;
-	Tue, 20 Aug 2024 06:31:00 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E42B220040;
-	Tue, 20 Aug 2024 06:30:58 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.42.135])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 20 Aug 2024 06:30:58 +0000 (GMT)
-Date: Tue, 20 Aug 2024 12:00:56 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] ext4: Check stripe size compatibility on remount as
- well
-Message-ID: <ZsQ4IA84NCRcVJg5@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <957d29b85e06f415ee125de141809d2b9e084003.1723794770.git.ojaswin@linux.ibm.com>
- <2475f15a-d332-bef1-4ea6-70461f7ef3bb@huaweicloud.com>
+	s=arc-20240116; t=1724135491; c=relaxed/simple;
+	bh=sXqiiQ8My1UQHdF8XP8yxQIGVVpVwbUHO3wz0fBARec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxbUft6vL591Q853PSKG2HSBR9zwQQLHOkbaq4+XnvBJL5k+JdFSXL65aM/xmvme0PNQsxvL82oD+jHyNGONemvuFVAEQalFWLlaMy+F75jIviXA7vELV+8/WSadSYmq5jJAk9vCQZ1nvgx5wuB+vMl5HLsxxkKOxbqRKoUbuJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=etg93A3a; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3718706cf8aso3210122f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724135488; x=1724740288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uVW3Gyp1u8xh3tJP8cuhx0/w5djPTqbmXPb9/SDuAG8=;
+        b=etg93A3a59N3e2GmFSnmOCBeIR2G96/NFEOSx3wvjqVsFwlZEORs+sKn4rAGqtD0VZ
+         SzUwiX9fTAl0UFp8hYQXjioZDnmUcBosuKAA7EWg0KouIoUnG93GWGBmyp8IcXES9Efi
+         24YlJeJ0xxok3rZJDyLHXHqhntO7vEgxN3eRs6+ksnH8YS0A2PMpxIWFtn1Qs4DqP/g1
+         YA3VPdTz0UGI7fAii63r6oqvowRxAkhwgzb8jFUC2t/sVltSN3XyIxmQRIf7Ho6Mhph4
+         P8DzfV1+axwyt9Cq4tnRJiX+PisE3x3FMZb3gK7S4zbceW74IuOQ/sNUCyJVgtDZukFT
+         Td2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724135488; x=1724740288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uVW3Gyp1u8xh3tJP8cuhx0/w5djPTqbmXPb9/SDuAG8=;
+        b=P/wUykXYwT52Yp7lqk7eZB042ybORdP046KO3/291FZK8agu4eelwUi8jkPkfFDRMk
+         t4Vm8t8FiiDZQvyYfsIsmrNilqQ+B9xgNmBm+A0V+gKY1U0TGbVldhyqwNTwDV5yGJYe
+         klEn7X6r1/K3g24puogZHsji5kfCCBMm+42w3qtE26pwEeqXzgugQKguAZYKnkbOs+fl
+         vIkx9InWU6+Hdp88GKbfW2h6xpkm3O+dxfDn5gHGQE0RZIwaF/rGcj6oj8C1XueYP8V5
+         c6/HPaATbEApO6+9Ru3sHoFJzLJEFYwmUZPYWt2q5DQ4UHmvWr72EJgPMfvDG7yfd0Br
+         zGJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIRdEIPZsh78enUsIh/4NxdR983A3XbTcPxVq3JWB3fh4Bv/wo8FJKNuV+O/Y7HDCE8kA7W03IaUOyqJ7gQzGONZUoxiTlULTCzTV4
+X-Gm-Message-State: AOJu0YyfRhry4gxiyXHyCYfsS4U7gKx2beGgHcJbcUGYkASHfbDMwDIr
+	gadBSJ1Uhe4kwNTllYCHcEtbLMQxvCk1uI/4UpyUuZRaC7x2HsyhePTR+u8nctw=
+X-Google-Smtp-Source: AGHT+IGqSaOTtMAFkFfw+MY+BXXMyKz8R9RHIlqmZAA07Xvp7gk8CM/mI6HP1sjFsVSnwGZxMAECLg==
+X-Received: by 2002:a05:6000:186:b0:368:669c:3bd3 with SMTP id ffacd0b85a97d-371946b1166mr8512834f8f.48.1724135487564;
+        Mon, 19 Aug 2024 23:31:27 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371a937a694sm7959432f8f.65.2024.08.19.23.31.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 23:31:26 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Loic Poulain <loic.poulain@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Richard Acayan <mailingradian@gmail.com>
+Subject: [PATCH] dt-bindings: i2c: qcom,i2c-cci: add missing clocks constraint in if:then:
+Date: Tue, 20 Aug 2024 08:31:24 +0200
+Message-ID: <20240820063124.9242-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2475f15a-d332-bef1-4ea6-70461f7ef3bb@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: g2NJtrWAmfKf5Lfy8fIMjOKA3kvLTqE6
-X-Proofpoint-GUID: AxBb7LLMrtlu3lIQ0vM1QHbOIEDxiAnV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408200044
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 08:31:26PM +0800, Kemeng Shi wrote:
-> 
-> 
-> on 8/16/2024 3:57 PM, Ojaswin Mujoo wrote:
-> > We disable stripe size in __ext4_fill_super if it is not a multiple of
-> > the cluster ratio however this check is missed when trying to remount.
-> > This can leave us with cases where stripe < cluster_ratio after
-> > remount:set making EXT4_B2C(sbi->s_stripe) become 0 that can cause some
-> > unforeseen bugs like divide by 0.
-> > 
-> > Fix that by adding the check in remount path as well.
-> > 
-> > Additionally, change the users of EXT4_B2C(sbi->s_stripe) to
-> > EXT4_NUM_B2C() so that if we ever accidentally hit this again, we can
-> > avoid the value becoming 0. This should not change existing functionality.
-> It's better to mention this change is in following patch or simply remove
-> it from this patch.
+Top level defines clocks as variable from 3 to 6 items, so each clause
+in if:then: should narrow it further with explicit min and maxItems.
+Without minItems, the constrain from top-level is being applied, thus
+qcom,msm8996-cci allows between 3 and 4 clocks.
 
-Oh yes you are right, I accidentally left it here. I'll fix it.
-> 
-> Other than that, looks good to me. Feel free to add:
-> 
-> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks for the review!
+---
 
-Regards,
-Ojaswin
-> > 
-> > Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-> > Tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-> > Fixes: c3defd99d58c ("ext4: treat stripe in block unit")
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  fs/ext4/super.c | 29 ++++++++++++++++++++++-------
-> >  1 file changed, 22 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index e72145c4ae5a..9d495d78d262 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -5165,6 +5165,18 @@ static int ext4_block_group_meta_init(struct super_block *sb, int silent)
-> >  	return 0;
-> >  }
-> >  
-> > +/*
-> > + * It's hard to get stripe aligned blocks if stripe is not aligned with
-> > + * cluster, just disable stripe and alert user to simpfy code and avoid
-> > + * stripe aligned allocation which will rarely successes.
-> > + */
-> > +static bool ext4_is_stripe_incompatible(struct super_block *sb, unsigned long stripe)
-> > +{
-> > +	struct ext4_sb_info *sbi = EXT4_SB(sb);
-> > +	return (stripe > 0 && sbi->s_cluster_ratio > 1 &&
-> > +		stripe % sbi->s_cluster_ratio != 0);
-> > +}
-> > +
-> >  static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >  {
-> >  	struct ext4_super_block *es = NULL;
-> > @@ -5272,13 +5284,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >  		goto failed_mount3;
-> >  
-> >  	sbi->s_stripe = ext4_get_stripe_size(sbi);
-> > -	/*
-> > -	 * It's hard to get stripe aligned blocks if stripe is not aligned with
-> > -	 * cluster, just disable stripe and alert user to simpfy code and avoid
-> > -	 * stripe aligned allocation which will rarely successes.
-> > -	 */
-> > -	if (sbi->s_stripe > 0 && sbi->s_cluster_ratio > 1 &&
-> > -	    sbi->s_stripe % sbi->s_cluster_ratio != 0) {
-> > +	if (ext4_is_stripe_incompatible(sb, sbi->s_stripe)) {
-> >  		ext4_msg(sb, KERN_WARNING,
-> >  			 "stripe (%lu) is not aligned with cluster size (%u), "
-> >  			 "stripe is disabled",
-> > @@ -6441,6 +6447,15 @@ static int __ext4_remount(struct fs_context *fc, struct super_block *sb)
-> >  
-> >  	}
-> >  
-> > +	if ((ctx->spec & EXT4_SPEC_s_stripe) &&
-> > +	    ext4_is_stripe_incompatible(sb, ctx->s_stripe)) {
-> > +		ext4_msg(sb, KERN_WARNING,
-> > +			 "stripe (%lu) is not aligned with cluster size (%u), "
-> > +			 "stripe is disabled",
-> > +			 ctx->s_stripe, sbi->s_cluster_ratio);
-> > +		ctx->s_stripe = 0;
-> > +	}
-> > +
-> >  	/*
-> >  	 * Changing the DIOREAD_NOLOCK or DELALLOC mount options may cause
-> >  	 * two calls to ext4_should_dioread_nolock() to return inconsistent
-> > 
-> 
+Older dtschema behaved differently and missing minItems was implied in
+if:then:. However the preferred policy is to be explicit about such
+schema - define strict constraints in if:then:.
+
+Cc: Richard Acayan <mailingradian@gmail.com>
+---
+ Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+index c33ae7b63b84..7dab3852c7f8 100644
+--- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
++++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+@@ -130,6 +130,7 @@ allOf:
+     then:
+       properties:
+         clocks:
++          minItems: 4
+           maxItems: 4
+         clock-names:
+           items:
+-- 
+2.43.0
+
 
