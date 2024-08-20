@@ -1,260 +1,123 @@
-Return-Path: <linux-kernel+bounces-294006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E2C95879A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E409587A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58AD62837F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971FC283075
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E31190486;
-	Tue, 20 Aug 2024 13:08:10 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A58B19046E;
+	Tue, 20 Aug 2024 13:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMLGBITN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98FA17B4ED;
-	Tue, 20 Aug 2024 13:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387112745C;
+	Tue, 20 Aug 2024 13:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724159290; cv=none; b=iSED1bYoIb1dvuS4B5h9n4eEWAj20R/C5ibemoTyDDhzDKt4+rY0DFk6l/mKzRT5Ukf2vDEWcGSP5Zhzv2I2+ompxlCu5A1MxcU4hSjtF0yo1mORWkFqRXf5jvO1EgGlyJ7Ug72Ivb+jA/7cctXVeJtF4+cvhjUSfAxFCLdAqmk=
+	t=1724159576; cv=none; b=Ow1tCMxk3nyHRUuABapVyFq9Vk22HdT5zFqsXdYieTHRJ+3/jry/ucEPRusnhyplKvr3vym9nHCDoU8/HwlW6RKw8Mwcynu80raLRoDBw4Q2Kkp65Q4JbXk3xrnTzNariyPRZgzZOflKDf48xoPLllir15deWmFlpgxrrKnGRhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724159290; c=relaxed/simple;
-	bh=RpCKBDqMTsj/+QOE8XMbCFaxwEtCyitUh5A+Zn9qtLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RUnK8anCMAe8EuFDZpNTb9NG+BsrfVOgBdZAn0Q5/TRywSYCujYccaSRxDxU+fO2vStqMxxwbBhuhpQRreOOe+pDFKVvJrH3TD6s/wuWJF+xE6PtL/yi+AZBrhKYUoJv+Od2gXg3jysvL8WQkrx9YuyDDx3ovpNVTPC5KMK+8RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wp8lv5K1LzQq66;
-	Tue, 20 Aug 2024 21:03:23 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1AFE140133;
-	Tue, 20 Aug 2024 21:08:04 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 21:08:04 +0800
-Message-ID: <37fc4b01-43f1-4a2c-af35-96cf3f7fe3d5@huawei.com>
-Date: Tue, 20 Aug 2024 21:08:04 +0800
+	s=arc-20240116; t=1724159576; c=relaxed/simple;
+	bh=aPgexG4oE2c88za6mvKecAfXWDlnS7gQxWVON+Mpz8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrXlB1buAjng+ul6sQzkMThj/qUBuiFlzULXas6cQrHHT2P2cf6R8dsgadw+CRxp3HrJyeD2XCassKq9qduE8teYrKwqxqTgUQfjdb8ubU9DxmzJW9GOaX237CLHTvnLs/o2nFQs8YZIgirRZsSu6uU1mssgkVXe7BHoXh52CtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMLGBITN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724159575; x=1755695575;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aPgexG4oE2c88za6mvKecAfXWDlnS7gQxWVON+Mpz8I=;
+  b=VMLGBITNYNhEpODwcquorcmgFNCwY2oVj1Evh0E0WQTEYWMMfjabaGFx
+   D2WSNkGPl2fPsVu5+fQWjI6akoMi3FP6sycPaZp5SzIF1mq/+2/enE9O1
+   aPY07MNtnSnCkYKqkQb2K5pU5FVfO8eqA9yTt18qYE0DK7/cVA7WL1kBg
+   lLlnfbBxUw6II5XDTJAf99N5+usE08v0kit9ZlU6akFZtjtek6DmgKaOT
+   bhsAXf5yzDy64Cms4B1J/U6HPTVrKuiYySiOrw1wJMj7ovMIfhCNFNx+b
+   buP4MJv3Ta75YpLiAywh5ImWTDsd/MXetCMqgQ0fLz7DtDeye5cZmItDq
+   g==;
+X-CSE-ConnectionGUID: szylp3WCSca9h9J/3l6+Rw==
+X-CSE-MsgGUID: 9JvQBcGTSYKatUa4V5uPog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22427099"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="22427099"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:12:54 -0700
+X-CSE-ConnectionGUID: uwoDjRNUQfiy6bUNw6a57Q==
+X-CSE-MsgGUID: zqAYfGooTSqxBHkn9UdOog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="60411979"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:12:50 -0700
+Date: Tue, 20 Aug 2024 16:12:46 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v6] drm/i915/hwmon: expose fan speed
+Message-ID: <ZsSWTtew8nCYWrxF@black.fi.intel.com>
+References: <20240820062010.2000873-1-raag.jadav@intel.com>
+ <ZsRup8uKiqUvADFl@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 11/14] mm: page_frag: introduce
- prepare/probe/commit API
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
- <20240808123714.462740-12-linyunsheng@huawei.com>
- <d9814d6628599b7b28ed29c71d6fb6631123fdef.camel@gmail.com>
- <7f06fa30-fa7c-4cf2-bd8e-52ea1c78f8aa@huawei.com>
- <CAKgT0Uetu1HA4hCGvBLwRgsgX6Y95FDw0epVf5S+XSnezScQ_w@mail.gmail.com>
- <5905bad4-8a98-4f9d-9bd6-b9764e299ac7@huawei.com>
- <CAKgT0Ucz4R=xOCWgauDO_i6PX7=hgiohXngo2Mea5R8GC_s2qQ@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0Ucz4R=xOCWgauDO_i6PX7=hgiohXngo2Mea5R8GC_s2qQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsRup8uKiqUvADFl@smile.fi.intel.com>
 
-On 2024/8/19 23:52, Alexander Duyck wrote:
-
->>
->> Yes, the expectation is that somebody else didn't take an access to the
->> page/data to send it off somewhere else between page_frag_alloc_va()
->> and page_frag_alloc_abort(), did you see expectation was broken in that
->> patch? If yes, we should fix that by using page_frag_free_va() related
->> API instead of using page_frag_alloc_abort().
+On Tue, Aug 20, 2024 at 01:23:35PM +0300, Andy Shevchenko wrote:
+> On Tue, Aug 20, 2024 at 11:50:10AM +0530, Raag Jadav wrote:
+> > Add hwmon support for fan1_input attribute, which will expose fan speed
+> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
+> > 
+> > $ sensors
+> > i915-pci-0300
+> > Adapter: PCI adapter
+> > in0:         653.00 mV
+> > fan1:        3833 RPM
+> > power1:           N/A  (max =  43.00 W)
+> > energy1:      32.02 kJ
 > 
-> The problem is when you expose it to XDP there are a number of
-> different paths it can take. As such you shouldn't be expecting XDP to
-> not do something like that. Basically you have to check the reference
-
-Even if XDP operations like xdp_do_redirect() or tun_xdp_xmit() return
-failure, we still can not do that? It seems odd that happens.
-If not, can we use page_frag_alloc_abort() with fragsz being zero to avoid
-atomic operation?
-
-> count before you can rewind the page.
+> > v2: Handle overflow, add mutex protection and ABI documentation
+> >     Aesthetic adjustments (Riana)
+> > v3: Change rotations data type, ABI date and version
+> > v4: Fix wakeref leak
+> >     Drop switch case and simplify hwm_fan_xx() (Andi)
+> > v5: Rework time calculation, aesthetic adjustments (Andy)
+> > v6: Drop overflow logic (Andy)
+> >     Aesthetic adjustments (Badal)
 > 
->>>
->>>
->>>>
->>>>>> +static struct page *__page_frag_cache_reload(struct page_frag_cache *nc,
->>>>>> +                                         gfp_t gfp_mask)
->>>>>>  {
->>>>>> +    struct page *page;
->>>>>> +
->>>>>>      if (likely(nc->encoded_va)) {
->>>>>> -            if (__page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias))
->>>>>> +            page = __page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias);
->>>>>> +            if (page)
->>>>>>                      goto out;
->>>>>>      }
->>>>>>
->>>>>> -    if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
->>>>>> -            return false;
->>>>>> +    page = __page_frag_cache_refill(nc, gfp_mask);
->>>>>> +    if (unlikely(!page))
->>>>>> +            return NULL;
->>>>>>
->>>>>>  out:
->>>>>>      /* reset page count bias and remaining to start of new frag */
->>>>>>      nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->>>>>>      nc->remaining = page_frag_cache_page_size(nc->encoded_va);
->>>>>> -    return true;
->>>>>> +    return page;
->>>>>> +}
->>>>>> +
->>>>>
->>>>> None of the functions above need to be returning page.
->>>>
->>>> Are you still suggesting to always use virt_to_page() even when it is
->>>> not really necessary? why not return the page here to avoid the
->>>> virt_to_page()?
->>>
->>> Yes. The likelihood of you needing to pass this out as a page should
->>> be low as most cases will just be you using the virtual address
->>> anyway. You are essentially trading off branching for not having to
->>> use virt_to_page. It is unnecessary optimization.
->>
->> As my understanding, I am not trading off branching for not having to
->> use virt_to_page, the branching is already needed no matter we utilize
->> it to avoid calling virt_to_page() or not, please be more specific about
->> which branching is traded off for not having to use virt_to_page() here.
+> But it still has an issue with 64-bit division on 32-bit platforms, right?
 > 
-> The virt_to_page overhead isn't that high. It would be better to just
-> use a consistent path rather than try to optimize for an unlikely
-> branch in your datapath.
-
-I am not sure if I understand what do you mean by 'consistent path' here.
-If I understand your comment correctly, the path is already not consistent
-to avoid having to fetch size multiple times multiple ways as mentioned in
-[1]. As below, doesn't it seems nature to avoid virt_to_page() calling while
-avoiding page_frag_cache_page_size() calling, even if it is an unlikely case
-as you mentioned:
-
-struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
-                                unsigned int *offset, unsigned int fragsz,
-                                gfp_t gfp)
-{
-        unsigned int remaining = nc->remaining;
-        struct page *page;
-
-        VM_BUG_ON(!fragsz);
-        if (likely(remaining >= fragsz)) {
-                unsigned long encoded_va = nc->encoded_va;
-
-                *offset = page_frag_cache_page_size(encoded_va) -
-                                remaining;
-
-                return virt_to_page((void *)encoded_va);
-        }
-
-        if (unlikely(fragsz > PAGE_SIZE))
-                return NULL;
-
-        page = __page_frag_cache_reload(nc, gfp);
-        if (unlikely(!page))
-                return NULL;
-
-        *offset = 0;
-        nc->remaining -= fragsz;
-        nc->pagecnt_bias--;
-
-        return page;
-}
-
-1. https://lore.kernel.org/all/CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com/
-
+> ...
 > 
->>>
->>>
->>>>
->>>>>> +struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
->>>>>> +                            unsigned int *offset, unsigned int fragsz,
->>>>>> +                            gfp_t gfp)
->>>>>> +{
->>>>>> +    unsigned int remaining = nc->remaining;
->>>>>> +    struct page *page;
->>>>>> +
->>>>>> +    VM_BUG_ON(!fragsz);
->>>>>> +    if (likely(remaining >= fragsz)) {
->>>>>> +            unsigned long encoded_va = nc->encoded_va;
->>>>>> +
->>>>>> +            *offset = page_frag_cache_page_size(encoded_va) -
->>>>>> +                            remaining;
->>>>>> +
->>>>>> +            return virt_to_page((void *)encoded_va);
->>>>>> +    }
->>>>>> +
->>>>>> +    if (unlikely(fragsz > PAGE_SIZE))
->>>>>> +            return NULL;
->>>>>> +
->>>>>> +    page = __page_frag_cache_reload(nc, gfp);
->>>>>> +    if (unlikely(!page))
->>>>>> +            return NULL;
->>>>>> +
->>>>>> +    *offset = 0;
->>>>>> +    nc->remaining = remaining - fragsz;
->>>>>> +    nc->pagecnt_bias--;
->>>>>> +
->>>>>> +    return page;
->>>>>>  }
->>>>>> +EXPORT_SYMBOL(page_frag_alloc_pg);
->>>>>
->>>>> Again, this isn't returning a page. It is essentially returning a
->>>>> bio_vec without calling it as such. You might as well pass the bio_vec
->>>>> pointer as an argument and just have it populate it directly.
->>>>
->>>> I really don't think your bio_vec suggestion make much sense  for now as
->>>> the reason mentioned in below:
->>>>
->>>> "Through a quick look, there seems to be at least three structs which have
->>>> similar values: struct bio_vec & struct skb_frag & struct page_frag.
->>>>
->>>> As your above agrument about using bio_vec, it seems it is ok to use any
->>>> one of them as each one of them seems to have almost all the values we
->>>> are using?
->>>>
->>>> Personally, my preference over them: 'struct page_frag' > 'struct skb_frag'
->>>>> 'struct bio_vec', as the naming of 'struct page_frag' seems to best match
->>>> the page_frag API, 'struct skb_frag' is the second preference because we
->>>> mostly need to fill skb frag anyway, and 'struct bio_vec' is the last
->>>> preference because it just happen to have almost all the values needed.
->>>
->>> That is why I said I would be okay with us passing page_frag in patch
->>> 12 after looking closer at the code. The fact is it should make the
->>> review of that patch set much easier if you essentially just pass the
->>> page_frag back out of the call. Then it could be used in exactly the
->>> same way it was before and should reduce the total number of lines of
->>> code that need to be changed.
->>
->> So the your suggestion changed to something like below?
->>
->> int page_frag_alloc_pfrag(struct page_frag_cache *nc, struct page_frag *pfrag);
->>
->> The API naming of 'page_frag_alloc_pfrag' seems a little odd to me, any better
->> one in your mind?
+> > +	/*
+> > +	 * Calculate fan speed in RPM by time averaging two subsequent
+> > +	 * readings in minutes.
+> > +	 * RPM = number of rotations * msecs per minute / time in msecs
+> > +	 */
+> > +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
 > 
-> Well at this point we are populating/getting/pulling a page frag from
-> the page frag cache. Maybe look for a word other than alloc such as
-> populate. Essentially what you are doing is populating the pfrag from
-> the frag cache, although I thought there was a size value you passed
-> for that isn't there?
+> ...somewhere here?
 
-'struct page_frag' does have a size field, but I am not sure if I
-understand what do you mean by  'although I thought there was a size
-value you passed for that isn't there?‘ yet.
+Use div64_u64() instead? Or is there a better alternative?
+
+Raag
 
