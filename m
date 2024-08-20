@@ -1,127 +1,82 @@
-Return-Path: <linux-kernel+bounces-293731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CA29583BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:11:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866889583BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6697F28148A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70081C24529
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EB618CBE9;
-	Tue, 20 Aug 2024 10:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8CC18CBEA;
+	Tue, 20 Aug 2024 10:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbxfAV8X"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU4Bk/3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1B918E34B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0CE18E34B;
+	Tue, 20 Aug 2024 10:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148675; cv=none; b=L/uBD4Gr3T5tXJA7tSgbBnBxCgJ/tLB67G5wDrgXe5h5AS963pX15JFpPjj3UWHJpuZIyUghL64jq0vXvWqBgZ/0pkmZkcz8AH3xoFrWmSBaM4OyLJ73uth5C2/N9ZtzQp8RxssBWp3XvS/c/I+O5dJACR8g0u4c+KXnVY8Zz7g=
+	t=1724148666; cv=none; b=BN1trzZR5KK6mAvWcVMppZaDquFrR7DbK9gHcG6xtiKbxKG4YMK9cOuyVEVd6t9m3kQktEWQcyMBohClKQSyUkmoqbL2dz4OwHL4UXPiNZsVtsIQDyomDf7f8earT1NLloyuvW92eaO0pgcw+JB2EGz/TwcPujHGyaUpsZmkML8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148675; c=relaxed/simple;
-	bh=i5TYGfCUelMOBanhjpuPagP7cNtfb8cIXMZFAGteCyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tyy3AedFx58Krt6de+LbGxSkSRnubAHLQvfkzHYAyKubV/PCf0eVxpxnIi+8QPaY/SjXB0/sulK+4Hoe92fa9dyAR5bojNDOBAtIWzDhsWJR8tlE9AzNzRXuByO4XSNl8leZgo8weGbYzV7NdmVvyvjAm1WkFiDBV7DAUuLX55w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbxfAV8X; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e117059666eso4981506276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724148672; x=1724753472; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i5TYGfCUelMOBanhjpuPagP7cNtfb8cIXMZFAGteCyU=;
-        b=kbxfAV8X0dqS+AFl1cmgSlwAus8ZqPoGPmXsdaojAakQXAP8sAWvuYzQ/3csgJjjIM
-         OYZsTRjEHIlHBQRmrW8s6NxIbdo9KWSp2MSeLhOnFY5Gw9MmCUvTWh7m+FIgVCErCWUd
-         Jm4K9Irz6RI3uNqdb+094t5bJrV9CnwPDaciKdAB1j/8KsYCN3JeGeEcrB0HtLFj/fHw
-         tn+NFbog97/RlslYl8GH8lLtunFYtnmBT2BqVH72+nbXLH0vpJrIM6InCq5SZbjoehDa
-         tf+SVIjTzFz0QpKCQWjyfidSDILPc7Nt0ls3X2kgts/OqAiHFEe5MZhSmFsOshQ5zMzN
-         46xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724148672; x=1724753472;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i5TYGfCUelMOBanhjpuPagP7cNtfb8cIXMZFAGteCyU=;
-        b=OJaXj5BNfO1nztHRHSWiM7r74+FnXrL5gSRaXEpfWPPTgUFC32XPuabKK4Tm7dTMeX
-         Yt3SL3CiGABmFGnLr9pFRY8Ah6Go1p81maxqnZnOEOpuggCQfvCVhDbuxh+aTfRLggcu
-         KUUeq56wgXQHAuqOkmMzYiv1RQ/CGbx5Az+ih+v19IUdt0kWQS2ToRCH+i2RU8J+Cbvd
-         ZCGrDAxNqRtkdwRZ5tgnRprxdHcayYPStonh8ZPjF1ZGvwcCMDGO9twgw6chnS6JJ7hf
-         YA1Tcz76qZ9MjG+qan2sRXwxlNoQ4HPbqIYW5+vs3p0cLG1D2hrNiYsrvgjJZjELzs6M
-         o37A==
-X-Forwarded-Encrypted: i=1; AJvYcCXOLrQb+avgbI75qwdJG3/9tijkuRejDuK7OGUiAA8tWPZ3Y0kCkxRTkLoS2d2NauugfL0YYMkpKFmjW+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK/YXzdc1oSq4b+xBAC7gAawfrkgfpd29/32xIsWCWaWpd27P7
-	En4AMF+Ar9mAt38FM7zV0l9gAHMN9GtbLS21uJLAJJlAsQTQxkYD+GaeWEiztz4eqoxKSbQ0psg
-	p801S83Kct4SLp36WCp+R+1Jtu+W6Zjhn4JCGug==
-X-Google-Smtp-Source: AGHT+IErrxvxz6JT6SDgWWYPvPjCkpDVjkosUEitaQn1C0sbXlMxUXU/ZcYt+/OYNYmFQ0PXuxuRx2NWjfkW7hhPohM=
-X-Received: by 2002:a05:6902:2b8b:b0:e03:a6b3:9f28 with SMTP id
- 3f1490d57ef6-e1180ea3457mr17287703276.10.1724148672124; Tue, 20 Aug 2024
- 03:11:12 -0700 (PDT)
+	s=arc-20240116; t=1724148666; c=relaxed/simple;
+	bh=BpADP/Ry+du5JlYmwxVH1NvzPhRm4MYW1RLFt/IojHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7+4t+xTYUxw5NACLm/3hgFtJe1qdzT6xeW/Jbuy57q1SaJJkvzHQAZ0jIWhUZHgi5Vpb50m+8Z/7RTixfUeLcmY/i2Q0QQKSIZ+dVrVBxANXDrE6d2YB2VutgbbDLoPWDQlatV1wQNWocPWQh/P7a/plJmc23kmyQpTfJBwgjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU4Bk/3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94FF0C4AF10;
+	Tue, 20 Aug 2024 10:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724148665;
+	bh=BpADP/Ry+du5JlYmwxVH1NvzPhRm4MYW1RLFt/IojHs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hU4Bk/3Aal4bz2q6+NryubNg5s2KrRiris1kQSXYzNWeJo8w81o05sa/jaxEiveso
+	 4o2a4Z/TKZ0vhO31JWaqeYYxt9qGa/An72iwLhHNgsrgGWSRedRW0oUxfcjxwBdczI
+	 ltNirI+kDcvaGYxEPHhYnRb08FqvcZzd1YZRD1expivNJ0TNtjG6ztpN0Fi/UClkZq
+	 3nFF11w08x5crm5xFJcB//7tjpQHH6U8qo+FyP1bo2Qq1dCMJZOGOLNQET4vdRbte3
+	 ujVhXZfemrDLVw/KoMSMx00QBh6JRetEDxjcEUNR2elgSfYt/k66S8k8fltSR1qttK
+	 XGYcaVtiYLWhQ==
+Message-ID: <613c79a6-c32c-4c3f-b648-673529004e49@kernel.org>
+Date: Tue, 20 Aug 2024 12:10:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802032121.GA4019194@sony.com> <CAPDyKFoTdMpvuXR16OqY8G6t_4jCJDW9+wz=_fBc=kZSL1KbqQ@mail.gmail.com>
- <20240806013610.GA3438728@sony.com>
-In-Reply-To: <20240806013610.GA3438728@sony.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 20 Aug 2024 12:10:36 +0200
-Message-ID: <CAPDyKFqe2kGysPobXPKXpMhY8=nYRu9b9Om6uetrk9J858dEeg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: apply SD quirks earlier during probe
-To: Keita Aihara <keita.aihara@sony.com>
-Cc: Jonathan Bell <jonathan@raspberrypi.com>, Tim.Bird@sony.com, Shingo.Takeuchi@sony.com, 
-	Masaya.Takahashi@sony.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] drm/msm: Add submitqueue setup and close
+To: Antonino Maniscalco <antomani103@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-2-7bda26c34037@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240815-preemption-a750-t-v1-2-7bda26c34037@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 6 Aug 2024 at 03:36, Keita Aihara <keita.aihara@sony.com> wrote:
->
-> On Mon, Aug 05, 2024 at 12:14:25PM +0200, Ulf Hansson wrote:
-> > On Fri, 2 Aug 2024 at 05:21, Keita Aihara <keita.aihara@sony.com> wrote:
-> > >
-> > > Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's extended
-> > > registers are parsed prior to the quirk being applied in mmc_blk.
-> >
-> > In what way is it a problem to read the extended registers first?
->
-> SD quirks are referenced by mmc_card_broken_sd_cache() in
-> sd_parse_ext_reg_perf(). If the quirk is set, SD_EXT_PERF_CACHE is not
-> set to card->ext_perf.feature_support and the cache support will not be
-> enabled.
->
-> Therefore, SD quirks should be initialized before parsing the extension
-> registers.
+On 15.08.2024 8:26 PM, Antonino Maniscalco wrote:
+> This patch adds a bit of infrastructure to give the different Adreno
+> targets the flexibility to setup the submitqueues per their needs.
+> 
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+> ---
 
-Makes perfect sense! Please include some of this information in the
-commit message to make this clear.
+This email doesn't exist anymore and doesn't match yours
 
->
-> >
-> > >
-> > > Split this out into an SD-specific list of quirks and apply in
-> > > mmc_sd_init_card instead.
-> > >
-> > > Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston Canvas Go Plus from 11/2019")
-> > > Authored-by: Jonathan Bell <jonathan@raspberrypi.com>
-
-This tag isn't normally what we use. I suggest you change the author
-of the patch to Jonathan and keep his sob-tag.
-
-Then add yourself with a "Co-developed-by" tag and keep your sob-tag.
-
-> > > Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
-> > > Signed-off-by: Keita Aihara <keita.aihara@sony.com>
-
-[...]
-
-Kind regards
-Uffe
+Konrad
 
