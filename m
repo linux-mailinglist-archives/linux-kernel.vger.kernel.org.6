@@ -1,171 +1,115 @@
-Return-Path: <linux-kernel+bounces-294235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A98958B0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:21:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB23958B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A2E1C21CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:21:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AE21F21B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A6619408A;
-	Tue, 20 Aug 2024 15:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03A41922FF;
+	Tue, 20 Aug 2024 15:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="liAjFguZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0KAWR2KY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eFp4TtCi"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7FA192B6D;
-	Tue, 20 Aug 2024 15:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D1D18EFC9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167272; cv=none; b=DFO0LRec/eRVlCCZITfryts0OqnDE39iWHsqgCQAvR0Kb09ECkv4GdBt5Lelsj6vWo01yfaiSSHF0TE8N+uamMellkrJSIneGePSfXYE3gsbrH9YvW4JdQyEd0dAHeYGO69ALLt1eSYHJFLoXbtS+rHCwn66vqXq9iCDSsPUqW0=
+	t=1724167295; cv=none; b=FnGxzfcjq12eRCApe4gvKNkaz2ziVuFVu6wY4le+eK1/i4wGQRCgfP4PVdrgv8surkDIqX5PK8MWWJXfj73A9LoLceO8VR46nrWl3KMRMx5r8P3bavrjlyJDwvERNeaWu3+dFRcgelRHrJykZYOJldNxVq9A+rSyMtlfZlDJyPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167272; c=relaxed/simple;
-	bh=S/H9H0WfLJDs+JPvbnXZJoRhkJJ/7UJSreUcd1ENgWU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Hj0a2rI1WT33MrabxibwyMZtoiZztDYBDaKa5IzJ76FOd264XJp3xMlPDS8Bp7ATAxinQLPgl0Yok6K0it7pKbfFhogJcnJSkTH6zhC9X59LIlBYfKh09w2TPnMaR9uukkr8329IawHJvEP7dG7UKxJpI2FRTv3fpZDICu+qbCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=liAjFguZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0KAWR2KY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 20 Aug 2024 15:21:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724167268;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6P1syShkVDT1h/ntN9wYmw+nTYVqvJScS27YF5TqL8=;
-	b=liAjFguZrLQpLMFnSuxphUDRwn01CMEj2u5fYuD4lb/PxPkaIVBrCKw9zRoEmMNmNYjyxB
-	DBcbhPRGNXHONBP1fyEu0h0T3iceUWH+WMtzd0D4SRfQiEZP7tjAIjcSOmKFTRYUf4HnPI
-	xGkQtIY25vZiZUeA7N2zqwzuZROavf21oDJ9dB+PCfBobF3dFg73sTCeX0bc9tvkGJG49U
-	/YkVP/mhcl+KWJ97ly0cmx6sytdYgG94kprvfMBkmZTmZpWB5zZBslVP+tMwAXgXwvaal9
-	cDJMACy8+g5yZlJjT7+CRWzOSFsC1qYvMHxEfDyqyLVaygcm+neEiWA7TQIsIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724167268;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6P1syShkVDT1h/ntN9wYmw+nTYVqvJScS27YF5TqL8=;
-	b=0KAWR2KY2Ct0B8/EATDE3nHwIUEc0h3rBupswBXwVYLzJBOCzWV4ljQWlGydvLiBUHzrHL
-	5YaXETvS6f9BXWAQ==
-From: "tip-bot2 for Matti Vaittinen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqdomain: Always associate interrupts for legacy domains
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
-References: <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
+	s=arc-20240116; t=1724167295; c=relaxed/simple;
+	bh=PyXKtPn2qFPt3UUSSLIZ/J0nOLqOnhMdXopm1PD+uts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0ph4mSw7sd5JHv0MeFszuGY5D8ENlwunP3SO9+K8Q7wDICoH4V6BXyr+QEgMi1pzJgjX9rHw+0Jd7QxdSqSgE2p0hz0zOebxGzjGF22eHlSQdD+rhohpZF0ctFmQ8u4Jv1EC7jzreSjQWahNoTM3RM+BnKTF8QZdgCZLnKXjgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eFp4TtCi; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8666734767so9644566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724167291; x=1724772091; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ilUiBImFJ0xsgblnZ+mMLCQ1afu3IhnNmuVKDa1c/o=;
+        b=eFp4TtCi6/nI230NUD8X6oMfBcL4qEs+legpVI2GH3BD4tYBlgChqzgXENgJZyNPPg
+         L2wXLAW14HwruuTk76csJPF1ZavM6g5b/iDDRFXyImD1WQjM+fQKckEFwU4xueQj5PDB
+         rMtRDZWpKWzXJ3kylHqqZ6Qraj8xLbES6U11NYDb7xSJXN40CT8ky69HazaVCFMI+IBK
+         G6XfoMXdbmf0JzvJkLW8oamduky6MQ1fkTeB+Ix5CFXnNfEgk5LtoG5nONEypblXNA4z
+         nUTi3f9vMegg/I7+GqtP6VkIURJJ/7ZeHBX737e6jAXO6dqCl0qKVG9xBv6a7LrKeovb
+         TK3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724167291; x=1724772091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ilUiBImFJ0xsgblnZ+mMLCQ1afu3IhnNmuVKDa1c/o=;
+        b=tTqgnoChPcCYEciEd83jujiWyTyOrNZAK3ZYwafzSFKble3y9iHZvX12C3irFNNGU6
+         fOPsfpqdLvSiFwOhu2rdTxhUtDTpQrRimT5KegOAAm3vIjcsVzn5rCTlbs2O6eKEdDDh
+         1HTVnBmPn5SnLW3nS73GAHqN3xlpFI5xZ1mYHewi/eWwp0IU9CnFFY4rEguKwsgzA8jT
+         +zFQLfUXboaDmfIHo0vnQMUu6au9gJ1ZDVk1R9weK3sM3kwH/AbRNxLRRFPh7/uJE1js
+         QLPHb2yPdShw789SHXmrwLjLvab4S4bsrYexAPPmwNfQi26MK8aIgih7aCrwExSyj6Xz
+         fHSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEgiJ6dXFaGTNe4+NZA/ZJZwRpg8cheVtq5KwFVtj3Zg3Xandpzeg30/gYzFskKiwZoWk6UfA7o/Mmnn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkydH75XhE0rtH9CMb/+ICmMIXyiiCjptsjCK+76gbkChPxZFI
+	78ib9k33kqDFxVapdk6foaYO7xM+5IdJJmduvR15mBjentIreoSZdhy9LXL0/gU=
+X-Google-Smtp-Source: AGHT+IEzEYuFeTrOnBQQgneHGHZzq6FU1jXoJPZqKwBwK1um2wvYVLOW9stmuJfrnBeSXHt8NNKouw==
+X-Received: by 2002:a17:907:7d94:b0:a7a:bece:621d with SMTP id a640c23a62f3a-a83928a6071mr1080236566b.3.1724167291064;
+        Tue, 20 Aug 2024 08:21:31 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396d4b2sm769149766b.220.2024.08.20.08.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 08:21:30 -0700 (PDT)
+Date: Tue, 20 Aug 2024 17:21:29 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ryo Takakura <takakura@valinux.co.jp>,
+	Joel Granados <j.granados@samsung.com>,
+	Lukas Wunner <lukas@wunner.de>, Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH printk v8 29/35] printk: Coordinate direct printing in
+ panic
+Message-ID: <ZsS0efABGgFmXBwB@pathway.suse.cz>
+References: <20240820063001.36405-1-john.ogness@linutronix.de>
+ <20240820063001.36405-30-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172416726820.2215.8921397905891328952.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820063001.36405-30-john.ogness@linutronix.de>
 
-The following commit has been merged into the irq/core branch of tip:
+On Tue 2024-08-20 08:35:55, John Ogness wrote:
+> If legacy and nbcon consoles are registered and the nbcon
+> consoles are allowed to flush (i.e. no boot consoles
+> registered), the legacy consoles will no longer perform
+> direct printing on the panic CPU until after the backtrace
+> has been stored. This will give the safe nbcon consoles a
+> chance to print the panic messages before allowing the
+> unsafe legacy consoles to print.
+> 
+> If no nbcon consoles are registered or they are not allowed
+> to flush because boot consoles are registered, there is no
+> change in behavior (i.e. legacy consoles will always attempt
+> to print from the printk() caller context).
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Commit-ID:     24d02c4e53e2f02da16b2ae8a1bc92553110ca25
-Gitweb:        https://git.kernel.org/tip/24d02c4e53e2f02da16b2ae8a1bc92553110ca25
-Author:        Matti Vaittinen <mazziesaccount@gmail.com>
-AuthorDate:    Tue, 13 Aug 2024 14:34:27 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 20 Aug 2024 17:12:43 +02:00
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-irqdomain: Always associate interrupts for legacy domains
-
-The unification of irq_domain_create_legacy() missed the fact that
-interrupts must be associated even when the Linux interrupt number provided
-in the first_irq argument is 0.
-
-This breaks all call sites of irq_domain_create_legacy() which supply 0 as
-the first_irq argument.
-
-Enforce the association for legacy domains in __irq_domain_instantiate() to
-cure this.
-
-[ tglx: Massaged it slightly. ]
-
-Fixes: 70114e7f7585 ("irqdomain: Simplify simple and legacy domain creation")
-Reported-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by Matti Vaittinen <mazziesaccount@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Link: https://lore.kernel.org/all/c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com
----
- kernel/irq/irqdomain.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 1acc530..5df8780 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -306,7 +306,7 @@ static void irq_domain_instantiate_descs(const struct irq_domain_info *info)
- }
- 
- static struct irq_domain *__irq_domain_instantiate(const struct irq_domain_info *info,
--						   bool cond_alloc_descs)
-+						   bool cond_alloc_descs, bool force_associate)
- {
- 	struct irq_domain *domain;
- 	int err;
-@@ -342,8 +342,12 @@ static struct irq_domain *__irq_domain_instantiate(const struct irq_domain_info 
- 	if (cond_alloc_descs && info->virq_base > 0)
- 		irq_domain_instantiate_descs(info);
- 
--	/* Legacy interrupt domains have a fixed Linux interrupt number */
--	if (info->virq_base > 0) {
-+	/*
-+	 * Legacy interrupt domains have a fixed Linux interrupt number
-+	 * associated. Other interrupt domains can request association by
-+	 * providing a Linux interrupt number > 0.
-+	 */
-+	if (force_associate || info->virq_base > 0) {
- 		irq_domain_associate_many(domain, info->virq_base, info->hwirq_base,
- 					  info->size - info->hwirq_base);
- 	}
-@@ -366,7 +370,7 @@ err_domain_free:
-  */
- struct irq_domain *irq_domain_instantiate(const struct irq_domain_info *info)
- {
--	return __irq_domain_instantiate(info, false);
-+	return __irq_domain_instantiate(info, false, false);
- }
- EXPORT_SYMBOL_GPL(irq_domain_instantiate);
- 
-@@ -470,7 +474,7 @@ struct irq_domain *irq_domain_create_simple(struct fwnode_handle *fwnode,
- 		.ops		= ops,
- 		.host_data	= host_data,
- 	};
--	struct irq_domain *domain = __irq_domain_instantiate(&info, true);
-+	struct irq_domain *domain = __irq_domain_instantiate(&info, true, false);
- 
- 	return IS_ERR(domain) ? NULL : domain;
- }
-@@ -519,7 +523,7 @@ struct irq_domain *irq_domain_create_legacy(struct fwnode_handle *fwnode,
- 		.ops		= ops,
- 		.host_data	= host_data,
- 	};
--	struct irq_domain *domain = irq_domain_instantiate(&info);
-+	struct irq_domain *domain = __irq_domain_instantiate(&info, false, true);
- 
- 	return IS_ERR(domain) ? NULL : domain;
- }
+Best Regards,
+Petr
 
