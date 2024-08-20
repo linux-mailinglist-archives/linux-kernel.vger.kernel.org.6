@@ -1,230 +1,97 @@
-Return-Path: <linux-kernel+bounces-293133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593E4957B27
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B1A957B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB481C233F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4F6283C5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F911C2A3;
-	Tue, 20 Aug 2024 01:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HpQHkMV7"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0651C6B4;
+	Tue, 20 Aug 2024 01:51:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733601B963
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B86A17571
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724118617; cv=none; b=vD07mxmzfvkQGAHNlt9nXfNwbACXf0puNuMVNrNLG8WcKb4FLrBf8ROHFrlyRAxRVvmAGcd8zorY2XXMng5UNNmlGyk7mFtT5NdoGbWAdW+PBekDp1lpINiDVz8Y6Ax6NCAY6sdk41ZpcWXLmogPmAj24YrLFE/SvF1j5wquraE=
+	t=1724118664; cv=none; b=ISFoX+80F8CUHVhPxvJA3NHEsInwe7szmvJ1n+afX5yFduTb6/18qHGmbHqYIqCiDOaUhUKZ1Hf9yIWahfuWgXpfGC4iUEnqFt2l023pAIv8HOOVhVVMXnEcmrPn6SC2Y5LdIb8IKu8V3tLXOzu+NiZSzAoQKfY5bp26V0rsxrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724118617; c=relaxed/simple;
-	bh=EMVOrULx2hh4+PlolF/KTsTr/YQNW+EkOPNf9eljlRA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=KsdecNQd44phPRfLk/NhLfLpSR4qj6g/ux9KnbfGknXhobzsJgKLuV4lgu5DkgA7hu19Yv46durbw9W5zAe13xSzuLRtd2IcsWNp+OfsDARZWfcqQ28vFv5m/EegsSoR8j2+RenIaiMh0x6CMo3uq21cBBDI91OS7D1tvYNCNA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HpQHkMV7; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240820015013epoutp045e5442ad5ebd7a15862f16c69e757b66~tTL551Bvv1018710187epoutp04g
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:50:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240820015013epoutp045e5442ad5ebd7a15862f16c69e757b66~tTL551Bvv1018710187epoutp04g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724118613;
-	bh=/hiRHchz0sNhIF3Zb1DsDFpBv74YdyUyUThL08qbzg4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HpQHkMV7xI5yDYW9e6GzPb2XGgKG4Y3H00wKgD38gmS0Vjcws/0kPtt+teNClgsQD
-	 ccuLVBZncVgZd4CeP4DHuuoyxgs8AXjcZx8vcVUBB/Qs7Hnhir/cJOSVp/h4jTAzbS
-	 tYfqiEb7vcQBQKWj7mxDrMFVPGkCzAa777Yqucfw=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20240820015012epcas2p34cc61913fd67ba4c0b131fb121ec9503~tTL5b5OiW1556615566epcas2p38;
-	Tue, 20 Aug 2024 01:50:12 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.99]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Wnsq810htz4x9QG; Tue, 20 Aug
-	2024 01:50:12 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	15.7B.19039.356F3C66; Tue, 20 Aug 2024 10:50:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240820015011epcas2p15cf12bdf5cb3d13fffe8f8a0fa4390f0~tTL4QCZD82831628316epcas2p1q;
-	Tue, 20 Aug 2024 01:50:11 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240820015011epsmtrp1436eab7281fcc82b2aa13f86d6729277~tTL4O92it3102931029epsmtrp1d;
-	Tue, 20 Aug 2024 01:50:11 +0000 (GMT)
-X-AuditID: b6c32a4d-305ff70000004a5f-9e-66c3f653fa8b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4E.2B.07567.356F3C66; Tue, 20 Aug 2024 10:50:11 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240820015011epsmtip2e6c671ec87e9e410fa35e58eb58f598b~tTL4B5qIF0725207252epsmtip2T;
-	Tue, 20 Aug 2024 01:50:11 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Kwanghoon Son'" <k.son@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>, "'Michael	Turquette'" <mturquette@baylibre.com>,
-	"'Stephen Boyd'" <sboyd@kernel.org>, "'Rob	Herring'" <robh@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
-Subject: RE: [PATCH v6 4/4] clk: samsung: add top clock support for
- ExynosAuto v920 SoC
-Date: Tue, 20 Aug 2024 10:50:11 +0900
-Message-ID: <087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
+	s=arc-20240116; t=1724118664; c=relaxed/simple;
+	bh=gxwgkC4k7LhKrDiQCelOrocqVsr3XdMiu9issbRRE7U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RcJeuhYkCod+G/Z28duujW5brdOz7TNjoXcVHuolzuRdSz5z+lsewXQIF9/e1Rd4bUYkI/X76eMhFMk2K3/QAqkglcGZxAEoS3Z5Y81LzdJ5q6lfrzp1RNjzCUMJeTUMGPCAm4ksILJSdLogY5vD01ZF8pQWBJO/ePv0YKb1A30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8e43f0c1so512077139f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:51:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724118662; x=1724723462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lfXe1U4CqkltrMEzBmw/eZV29NzSNayMVkqz3VwUfPE=;
+        b=donudGXJi+GCa4cjQUsNOeSG3CKre22y97k9xMVBWdJ33ilUrwFbvellbG6Tja9T1f
+         6nghKPl1YEEuKrZTAhiywdr1h5mxcWmlBX22lkSIjQ2ovI5/TJ6fnXVd22bwOrgsgZwn
+         ozJdCEb0zJSqzALsWOG6kHkUMh390HTzCyN6Gl0dWex8HK2xyVjTHlJ5leMTPArH3bPl
+         Vq2sDSXTj5jJW4MqcFlNEbWTUUlY0IA87Tq7SMjOE2/9q7riyZM/uyUuXUM1qt5ZjdVg
+         IQyWf/mxKaCa70tBfPL1Yre6UrRXGAaqMUFay0lRctFi1vHRmpQAE0Muqeyu08TUOOYn
+         Ti7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWi0eZ+d3RGKINtIpKgSKNxVML02p24zhd10Tvf59YBJC2p2Ke6cZPh2FimXPWN2lQpdWgFRpxRuc0qVNNYGtdCVIGHQc6ETrX2IPs9
+X-Gm-Message-State: AOJu0Yx5M6WumV5L/hoAtM7ADZ++SkQIgN03tibn+JUMyW7CPaIZ++VY
+	sTVuqmQ0lB2EOeou9fjbbchxHK6vSCyeTwtzULM5Ij1qkQRdq6ioNp964McN0/IOLGRZR6ferZI
+	705wca3/dtuTJH1KtpaU+3qj2lsr2QBHBNvEJT3pGe1qLwEPHyM0a0kA=
+X-Google-Smtp-Source: AGHT+IHhvwkvDZCaadZdhsiSqjoOtcaRdE1CJ0o5t5ee6FqeceFHMiwVUdrM48dac9WFU/VpvbQqRQ1fJHNq+mYrNYueGDnokCDu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQLQL30DU0UysUOS1ES52gTWByyh0gCAc2uXAiz2ascBkCr+LrAi+mEw
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmuW7It8NpBu0bGC0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtWid81VJovz5zewW2x6fI3V4mPPPVaLy7vmsFnMOL+PyeLiKVeL/3t2sFsc
-	ftPOavHv2kYWBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
-	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-	pCpk5BeX2CqlFqTkFJgX6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfcv/SCqeCRVMW1OUUNjJfE
-	uhg5OCQETCRePbLtYuTiEBLYwyhx8M4jFgjnE6PErosdzF2MnEDON0aJcwvCYBqu39GEqNnL
-	KLHkz16ompeMEnOPeIHYbAL6Equ7b7OBFIkItDJLLHr7hR3EYRZYxyixeeYRdpBJnAKeElte
-	qIA0CAtESlzc38YIYrMIqErMXPgcbCivgKXE7klzoWxBiZMzn7CA2MwC2hLLFr4Gi0sIKEj8
-	fLqMFSIuIjG7sw0sLiLgJrH3w1NmkL0SAmc4JE5/fMQI8YGLxOU3vBC9whKvjm9hh7ClJF72
-	t0HZ+RKTr79lguhtYJS49q8bapm9xKIzP8HuZxbQlFi/Sx9ipLLEkVtQp/FJdBz+yw4R5pXo
-	aBOCaFST+HTlMtQQGYljJ54xT2BUmoXksVlIHpuF5JlZCLsWMLKsYpRKLSjOTU9NNiow1M1L
-	LYdHdnJ+7iZGcBLW8t3B+Hr9X71DjEwcjIcYJTiYlUR4u18eTBPiTUmsrEotyo8vKs1JLT7E
-	aAoM7onMUqLJ+cA8kFcSb2hiaWBiZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dU
-	A5MUT5PXhrm2aoJZDN63Yl79mtDAPSvL7b5lqGd24HwODYPEK4tW26XHPfDJFrpbxjTxydVZ
-	dScEuS/EmHZe0mQt0siN2Pjr+pno49+mzD70pWLFhZVHGIQCrhbLrRa3/bPVWCD76O7ed1vS
-	pRVPL9fMPxIz/UH9toLWA3MY7qxLWlxlf3NPubz0xkVratcGuy2xPfJUQNGkZd5x+73vG1t5
-	IrfGpfj/CjB9EpU/0eSYQa35b7mi3o3PFK9Z/pH0f/XGbd7MZmvfsHPf1zwriGHS7e5nSue7
-	Xty9JzR7oknC7naP6z7SGifev9ty0XXvxeAsPvbV70L7N/O2T+nX43rfcqyM91D/0X8ffS1u
-	9SqxFGckGmoxFxUnAgBgJskqSwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWy7bCSvG7wt8NpBl23pSwezNvGZrFm7zkm
-	i+tfnrNazD9yjtWid81VJovz5zewW2x6fI3V4mPPPVaLy7vmsFnMOL+PyeLiKVeL/3t2sFsc
-	ftPOavHv2kYWBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4MnZf
-	2ctWMEGq4s3UVWwNjA1iXYwcHBICJhLX72h2MXJxCAnsZpSYOP0TaxcjJ1BcRmJjw392CFtY
-	4n7LEVaIoueMEmvWH2UBSbAJ6Eus7r7NBpIQEehmllg9YzlYFbPAJkaJc7tvskG0NDFJTLp2
-	gAlkH6eAp8SWFyog3cIC4RKntxxlBrFZBFQlZi58DmbzClhK7J40F8oWlDg58wnYNmYBbYne
-	h62MMPayha+ZIc5TkPj5dBkrRFxEYnZnG1hcRMBNYu+Hp8wTGIVnIRk1C8moWUhGzULSvoCR
-	ZRWjZGpBcW56brJhgWFearlecWJucWleul5yfu4mRnBMamnsYLw3/5/eIUYmDsZDjBIczEoi
-	vN0vD6YJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1ILUIJsvEwSnVwHRD
-	Oe2Sw4ptx98+an+8VKdxwvRM2fc7bt5OkVp56sS9gzWLau2UbN5maAdr5rk7NS90uMXQEqR4
-	uuPJWwFH7+3rfa6VNsVMWvroP/vj2ULnhE2ijxv6zHgRefGcsp6WvdetjOOeWz+w3GSLYT3u
-	ItJ/uNj6PZ/lzpWVIa0rJQy993P0GbFlbVxSZXeA+3CsqDC3udnpLWs4H+jt37T+b9CT9es8
-	ORT5JqwXmvO59unJ7yX3d022e3D3YKDcwoYqPak1Cck7w5MyeE4ybmSP6zIrFzi7qlz7454P
-	11UTTz9gcU/TnHGtX4nlyAH3C62NWYUanUZHsy/safj++svcE23p2T9XXTB44125fqLOhXdK
-	LMUZiYZazEXFiQBU/GHKOAMAAA==
-X-CMS-MailID: 20240820015011epcas2p15cf12bdf5cb3d13fffe8f8a0fa4390f0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
-References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
-	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
-	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
-	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
+X-Received: by 2002:a05:6e02:1c26:b0:39d:20a4:f42 with SMTP id
+ e9e14a558f8ab-39d26ce4072mr5909245ab.2.1724118662649; Mon, 19 Aug 2024
+ 18:51:02 -0700 (PDT)
+Date: Mon, 19 Aug 2024 18:51:02 -0700
+In-Reply-To: <0000000000005b04fa05dd71e0e0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000703731062013a8cc@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: out-of-bounds Write in end_buffer_read_sync
+From: syzbot <syzbot+3f7f291a3d327486073c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
+	axboe@kernel.dk, brauner@kernel.org, cmllamas@google.com, elver@google.com, 
+	gautammenghani201@gmail.com, glider@google.com, guohui.study@gmail.com, 
+	jack@suse.cz, konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mark.rutland@arm.com, mingo@kernel.org, 
+	nogikh@google.com, ntfs3@lists.linux.dev, p.raghav@samsung.com, 
+	paulmck@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com, 
+	ubizjak@gmail.com, viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Kwanghoon,
+syzbot has bisected this issue to:
 
-> -----Original Message-----
-> From: Kwanghoon Son <k.son=40samsung.com>
-> Sent: Monday, August 19, 2024 6:32 PM
-> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Krzysztof Kozlowski
-> <krzk=40kernel.org>; Sylwester Nawrocki <s.nawrocki=40samsung.com>; Chanw=
-oo
-> Choi <cw00.choi=40samsung.com>; Alim Akhtar <alim.akhtar=40samsung.com>;
-> Michael Turquette <mturquette=40baylibre.com>; Stephen Boyd
-> <sboyd=40kernel.org>; Rob Herring <robh=40kernel.org>; Conor Dooley
-> <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
-> ExynosAuto v920 SoC
->=20
-> On Mon, 2024-08-19 at 14:24 +0900, Sunyeal Hong wrote:
-> > This adds support for CMU_TOP which generates clocks for all the
-> > function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
-> > CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
-> > and they will generate bus clocks.
-> >
-> > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > ---
-> >  drivers/clk/samsung/Makefile             =7C    1 +
-> >  drivers/clk/samsung/clk-exynosautov920.c =7C 1173
-> > ++++++++++++++++++++++
-> >  2 files changed, 1174 insertions(+)
-> >  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
-> >
-> > diff --git a/drivers/clk/samsung/Makefile
-> > b/drivers/clk/samsung/Makefile index 3056944a5a54..f1ba48758c78 100644
-> > --- a/drivers/clk/samsung/Makefile
-> > +++ b/drivers/clk/samsung/Makefile
-> > =40=40 -21,6 +21,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D =
-clk-
-> exynos7.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
-> > +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov920.o
-> >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
-> >  obj-=24(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
-> >  obj-=24(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-
-> audss.o
-> > diff --git a/drivers/clk/samsung/clk-exynosautov920.c
-> > b/drivers/clk/samsung/clk-exynosautov920.c
-> > new file mode 100644
-> > index 000000000000..c17d25e3c9a0
-> > --- /dev/null
-> > +++ b/drivers/clk/samsung/clk-exynosautov920.c
->=20
-> =5Bsnip=5D
->=20
-> > +=7D;
-> > +
-> > +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D =
-=7B
-> > +	.mux_clks		=3D peric0_mux_clks,
-> > +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
-> > +	.div_clks		=3D peric0_div_clks,
-> > +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
-> > +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
-> > +	.clk_regs		=3D peric0_clk_regs,
-> > +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
-> > +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
->=20
-> same question.
-> Isn't it =22noc=22?
-> https://lore.kernel.org/linux-samsung-
-> soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
->=20
-> In my case(autov9), if put wrong clk_name dmesg will show that,
-> exynos_arm64_register_cmu: could not enable bus clock ...; err =3D -2
->=20
-> Kwang.
->=20
->=20
+commit 6e5be40d32fb1907285277c02e74493ed43d77fe
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Fri Aug 13 14:21:30 2021 +0000
 
-clk_name follows the guide document provided by hw. v9 is bus, but v920 use=
-s noc.
+    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
 
-Best Regards,
-sunyeal
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11eaec05980000
+start commit:   cc8ed4d0a848 Merge tag 'drm-fixes-2024-06-01' of https://g..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13eaec05980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15eaec05980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14146f2c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12400be6980000
 
+Reported-by: syzbot+3f7f291a3d327486073c@syzkaller.appspotmail.com
+Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
