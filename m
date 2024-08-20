@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-294028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2D19587F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:28:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEA49587FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559B51F21788
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:28:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806A0B22506
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2FE191F6D;
-	Tue, 20 Aug 2024 13:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdlDxuty"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F2C19005A;
+	Tue, 20 Aug 2024 13:31:17 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D4219069B;
-	Tue, 20 Aug 2024 13:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538A71AACB;
+	Tue, 20 Aug 2024 13:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724160454; cv=none; b=iUznMTTMeJFQmDu9KW7+E1eqySwWGS41rxhFhJ6oNvd6Yg8eoEpZwy9a82KYw5TSdu9v4BnYG/T/pDZRYQf81xE4WS1W9sRnO40KSwk5f8J1MU3BMchlPjWJfUJfA3l06wPmfhtToFtQDugaBNyY4fGSTz0/8L1gvfjj1U5a06o=
+	t=1724160677; cv=none; b=fQX0ZrkD5qjZIfQhmRPX5H0wlhAqJUQe0K9Yf0b8H6QEli+TPvXc7SwapJslo4M7odYHKv+ytd4j5dQdBT3VAQ47dkZ2oyV9Gb76vqoOs11HEFOBA4qYM8+WVV35ivUJGTxDk28V+VzrOxW1Kjx53KLFvS3LnPG6v+Pf6jgLZtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724160454; c=relaxed/simple;
-	bh=TmL2MG6tmktlS4gazMIIYv83XVcxiJAI3n8m4T7qgtQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QAfBITkbiP354M6OW3EPDLkiaM3ySRzIarK5SXOVHEQa24xjK2hGpBoj9snj8yH2N+8Bl6rfTZpNDPxijRiuUWRhxsdTowtHOnYKbNdB3RuRFB9jGksxX01JVJeaSzB6x16t9hOnWoaIduQbtPoGMYnlCapNb48vklD8qyMsjLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdlDxuty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EAAC4AF11;
-	Tue, 20 Aug 2024 13:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724160453;
-	bh=TmL2MG6tmktlS4gazMIIYv83XVcxiJAI3n8m4T7qgtQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cdlDxutyjUdy1gXyrUez9ewxq1fj2UkFBChFSmKBYgpZzolck1GlPBwLYM+AWJNEW
-	 tRwc+lQUDwr10qYVv9NYflXImncTeXAmeFCXBGOWvdcnvpK/I76hOvPi/n27zM0ck8
-	 E+OTvDhlsYgKmUabDW+ZcflxSnE9kV39d3tJ4MVnEXEj0CdyYVsvxXfD0MpJSQ+str
-	 NaO9cH2tCJ0t8237uPyOYD8ydVWVV/zL6U2xTFACek+QYr3l3tl8dlxpEBpq9nuFOn
-	 4deiE+VzCy+WCow7xYBwZROZolpeNuwXFMIE4LUCHHAf4XHHBOiF1dIbGS/qsDkM7O
-	 7kyqtbFk3j4vQ==
-From: Mark Brown <broonie@kernel.org>
-To: carlos.song@nxp.com
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev
-In-Reply-To: <20240820070658.672127-1-carlos.song@nxp.com>
-References: <20240820070658.672127-1-carlos.song@nxp.com>
-Subject: Re: [PATCH] spi: spi-fsl-lpspi: limit PRESCALE bit in TCR register
-Message-Id: <172416045279.160388.12340685060459162773.b4-ty@kernel.org>
-Date: Tue, 20 Aug 2024 14:27:32 +0100
+	s=arc-20240116; t=1724160677; c=relaxed/simple;
+	bh=DJc9hc6gCqzJBBus8OoCrIRCsEW8p58OR+4+pW29R9I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TTmqjCJuO34+aOSi+6bIq2iNYCVudrdm19VHo/fLlLYEZ6Oy2HOMz/Qp5ENDOzNsDQardfmZy8sEE+KUFfAN3QCrhwkxE9J38b5LW5WeC1xzhzzyl1GAnDFfEkqW9zWL1ZkHQUtY8kluoFJomhSckrxDEwC0FaKALrqtxc4v+7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wp9GD1v8pz1j6q1;
+	Tue, 20 Aug 2024 21:26:12 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id EC1E51401F4;
+	Tue, 20 Aug 2024 21:31:11 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
+ 2024 21:31:11 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <lizhi.hou@amd.com>, <brian.xu@amd.com>, <raj.kumar.rampelli@amd.com>,
+	<vkoul@kernel.org>, <michal.simek@amd.com>, <sonal.santan@amd.com>,
+	<max.zhen@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: [PATCH -next] dmaengine: xilinx: xdma: Fix NULL vs IS_ERR() bug
+Date: Tue, 20 Aug 2024 21:28:27 +0800
+Message-ID: <20240820132827.52108-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Tue, 20 Aug 2024 15:06:58 +0800, carlos.song@nxp.com wrote:
-> Referring to the errata ERR051608 of I.MX93, LPSPI TCR[PRESCALE]
-> can only be configured to be 0 or 1, other values are not valid
-> and will cause LPSPI to not work.
-> 
-> Add the prescale limitation for LPSPI in I.MX93. Other platforms
-> are not affected.
-> 
-> [...]
+devm_regmap_init_mmio() never returns NULL pointer, it will
+return ERR_PTR() when it fails, so check it with IS_ERR().
 
-Applied to
+Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/dma/xilinx/xdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: spi-fsl-lpspi: limit PRESCALE bit in TCR register
-      commit: 783bf5d09f86b9736605f3e01a3472e55ef98ff8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 718842fdaf98..44fae351f0a0 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -1240,7 +1240,8 @@ static int xdma_probe(struct platform_device *pdev)
+ 
+ 	xdev->rmap = devm_regmap_init_mmio(&pdev->dev, reg_base,
+ 					   &xdma_regmap_config);
+-	if (!xdev->rmap) {
++	if (IS_ERR(xdev->rmap)) {
++		ret = PTR_ERR(xdev->rmap);
+ 		xdma_err(xdev, "config regmap failed: %d", ret);
+ 		goto failed;
+ 	}
+-- 
+2.34.1
 
 
