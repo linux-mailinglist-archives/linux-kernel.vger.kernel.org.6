@@ -1,267 +1,301 @@
-Return-Path: <linux-kernel+bounces-293699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96A1958341
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A10E958342
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 792331F23E90
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C21C24248
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B46318C91C;
-	Tue, 20 Aug 2024 09:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895C318C32F;
+	Tue, 20 Aug 2024 09:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FXiWg5gW"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNPAfwkz"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15C218B496
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BA118B473
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147631; cv=none; b=K6GuSrS8uJyPhDtNwnZx0Mtm48Kx6VEPeah7t7G0r8gkn2YkzJY/R9OVAMFitEEAFUYp3mlDGl/p+eLWu0HKlrjnkD8gGD5tzITYDc5K3JORbZGkdrvilzXOtziPadDHNhpEZFINY52SX8A+F2/RgOOql5oCuIDXMe2BqQp5cz8=
+	t=1724147646; cv=none; b=TG5c+TjHcsKMiOZC9QigGUWSV9yxzQVfuX6rpyc84Ymq7/tL/OQHcMor/xBRbk5os3a4Ssaij6Ow51r/S3T0c/SmaGIyfNAidtQ07Mhx8SWTXua8zj4/3ugfQUP4nJRPYATIl/kK6VLOl4uosgcrSxqwMgokkDb/ezWHgaHIsMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147631; c=relaxed/simple;
-	bh=GxrtDuKtTT6pJGqk4JbG235dT4xixJ7axY2q2KnwnpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRL5Uvtxaw0b+ZbgZeOpSgtsDrK32WgrerMuxEMsq0dBNz56pCDWw1vMqk8ZTUiTEOP9XKIZa2HB/khXcE9Ok/j3D5BKGXdUYSxdXtXMS77giftP3t3FEBkhH3gp1cMC2tFza52V+ey2IvcEdrQ+xoYMvk7+bQ72/zoLqGAewow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FXiWg5gW; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2021c03c13aso20125145ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:53:49 -0700 (PDT)
+	s=arc-20240116; t=1724147646; c=relaxed/simple;
+	bh=AHk7e1MSmuZy2Ok9JgBf0xmandGH6Yf2Nwj2XWydPpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yz9ef48GNo5iLEAUDqBvBgnzPHa3EJBEYCnneeM7ow+Wbmj84mO4iRqIJDFp9a06GLS9v1EvaQaPxvPfuWcyrKrvWie681c6J5XfZwRDlTDWJ2EAGxmwMHPN2BmIoea/kEgFEmWgpcftO6XJ9J5m4L5POtpbM3viOcBb3VhE/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNPAfwkz; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f89c9a1610so1868050e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724147629; x=1724752429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JrZv66ypySBbkjGBJqR1EJvhupMwP+pmcQpQ47+M+9Y=;
-        b=FXiWg5gW/G6UonZeCMGwDuZTKo4uEtKYmrIdfJuZboNsBI7nifKt33VvQokcBfOpyG
-         fucMUC0GngsnT6J4YpU4Dft9P3waH9K4FWVliAZhRRkcbpeqNZJFM4z6IXWfY8Z3v9ck
-         IHh3ElETgEY6yaLpu9khTs23L+qsJ010gqZ7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724147629; x=1724752429;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724147643; x=1724752443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JrZv66ypySBbkjGBJqR1EJvhupMwP+pmcQpQ47+M+9Y=;
-        b=FjZu6ppvMoWvG5b3SqEQndtJF4gHFmtW4Am7PazjZrsBu/k5EUM/g1AI4aH+C+YRoY
-         S8DUf+uT9uHIxgwBT4iZEuYcdb845HKBfLytyzBzGEyKSYXRJ5Sw7vclExp7PsZrwTqX
-         Hsds7yIjMPXAPTpJ/LqtRrghhHytmARAE+wlogs26ZA6YCNCJ9kas3Dk6653OyncMTuX
-         yfbaxui24O0njk6vOTgbvMcI5VuWPHXhzfsvCNM/smDkn5BY6td4Tzwj7eEGwMrpns34
-         nJmRkTjvc6LIADD1tnbAmxtBMoXVwcQquefCjpuCS/LImecP3oZYq3wDyb9r0CgWMDL+
-         1klw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQv294iGX9Ef9xb/VvwC53NvYofHQn7iYJ9AHRYXKnQ/yTJUOg5EZmRQrj/PcBYxIePe7RXElnFR6XejY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEYaAwttIgjD2sqApihuyPeEDebd6E/6q/9+h7SPmenXTqaw0m
-	en7jUUUuMKxiA/3ombEHTR/kgWNqgJqCFaGm60/5EK+yPsL6JyWbjjJWbytAug==
-X-Google-Smtp-Source: AGHT+IF9dVDhLgmVd2fwVFFWmxIJ70NtaZMWP9SUcwSh2q1d0OqobzkgL6YHM4o8P1aQbGHfymYCJA==
-X-Received: by 2002:a17:902:f68a:b0:1f9:e2c0:d962 with SMTP id d9443c01a7336-2025f1d09d3mr40897905ad.31.1724147628827;
-        Tue, 20 Aug 2024 02:53:48 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b63694a1sm8802517a12.92.2024.08.20.02.53.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 02:53:48 -0700 (PDT)
-Message-ID: <7c2c6d22-399b-42e7-8ac7-098f036e9e81@broadcom.com>
-Date: Tue, 20 Aug 2024 11:53:41 +0200
+        bh=xfXTNi+9KRHgqOjspdInTAKK9BT9wdv5JXOCg5Q+FcQ=;
+        b=YNPAfwkzaoDEqoCJfZH37q0OiHo9JftH/TkyPPQ7PeYiJAq0T5yyG/HhlfU3eOxAZ5
+         oftxJKYocAd/DdwiLRvXyBTNN/WptV2nVO+zed5D7UVZz+IToF32wjAUOs1xZJFcT9iB
+         3X25qMP09Vn6/ulF/bZV5wT9TJZEHq6kmA/FD9txYwdAVn0VJQqtkhWRS2cuBuFWVBgY
+         lUVcNJ9fmLr4TLKzl0v2zaXXipKMX1PzCFE8ScR5CePl0iq4IXdq8VyNsHrYjxZaql94
+         4AIDXl3LEKYFLBbcs6IbWFupPBMvB32ZaV4TZ52JGdW+ZlovB3g/98S0HobTm/QTrBbx
+         gKvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147643; x=1724752443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xfXTNi+9KRHgqOjspdInTAKK9BT9wdv5JXOCg5Q+FcQ=;
+        b=HlJodcAZmnb6zc878GICi/ZQHOxZHn3weRAn8b79GPjewA9LH63XCGL0gC6QZ0VPfv
+         y9PxmK+Ev4CkfqTF5vB+cRNSAsbTp8oq4CgH7C+ZeMJYJt9JXbAu+VEYj/a42GflIVh+
+         EMS5q9IzeubkzJaZitwQJ03e7IS8IswetPy4Ud5YvOVjYEvAU5VBs1rojwWN8DA9BYIg
+         sl6EUw473+visqyX1HR8NFQhvGeVOZOxShn80ryTKpSMclxZalcJgHDRF9w7DCV796uW
+         k3/0ZN9JCSb2aeDUpHvCdi28dWxXREne5zWW99h4ngzfeiO2Hjer+bXyFULRrg9uxBQN
+         FloQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqNTtwE/v4d94wCA7e9YOfzX9/QGqyE2a4FuA/A5SrGedIQ8Ol2ZvIavs2Ijv+I8+Bs2HRh8R/WPCmsM+Pys5n88bMzrbNpT0fdRAW
+X-Gm-Message-State: AOJu0YwxYfsw+CbfqYQv3kU+aF4QJazN/WqSxndqsNDNCcZn3cj8VaMO
+	MCQEXMXTMZ6ag5DpIuMjG5l367APNHBwJnV87LxUzboBRhw37Qy/6Xsjt6JFvcMM1T6MBiRXgUB
+	4O7Ljgde7RNJ8uSXw9/mgxvIuB9M=
+X-Google-Smtp-Source: AGHT+IF4ya3omDs6URedYhxTyQFSrIuUpYbw2wINvOku2uKp/ZyFSjecj3JE/wuOIBf8S90Fq1zoBUhT1t24rYk6cJQ=
+X-Received: by 2002:a05:6122:3293:b0:4ef:594a:a706 with SMTP id
+ 71dfb90a1353d-4fc6cc4a3ddmr15822499e0c.14.1724147643459; Tue, 20 Aug 2024
+ 02:54:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/4] Add AP6275P wireless support
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: jacobe.zang@wesion.com, bhelgaas@google.com,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- christophe.jaillet@wanadoo.fr, conor+dt@kernel.org, davem@davemloft.net,
- devicetree@vger.kernel.org, duoming@zju.edu.cn, edumazet@google.com,
- gregkh@linuxfoundation.org, krzk+dt@kernel.org, kuba@kernel.org,
- kvalo@kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, megi@xff.cz, minipli@grsecurity.net,
- netdev@vger.kernel.org, pabeni@redhat.com, robh@kernel.org,
- saikrishnag@marvell.com, stern@rowland.harvard.edu, yajun.deng@linux.dev
-References: <uzmj5w6byisfguatjyy2ibo6zbn7w52bg2abgf7egych7usv6j@ec4xdmaofach>
- <67d67f15-4631-44ba-bc05-c8da6a1af1bf@broadcom.com>
- <xc5226th2sifhop3gnwnziok4lfl5s6yqbxq6wx4vygnuf4via@4475aaonnmaz>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <xc5226th2sifhop3gnwnziok4lfl5s6yqbxq6wx4vygnuf4via@4475aaonnmaz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <00000000000060cf79061fd24ca8@google.com> <CAJD7tkYWMkcFeXKA2S71PoZAubS+0R29G5qbhTSLLCcd7DfqkQ@mail.gmail.com>
+ <CAMgjq7CaCEZN2hf5pPR4N6BLzUEiMAA7Ax+G_nv4CyHVukxCNw@mail.gmail.com>
+ <CAGsJ_4x3ekOw-BKVOm7-D-+z+F1urn74DLxpjxdJDr=wOwHHAA@mail.gmail.com> <CAMgjq7D9tfW626dki+cC_SjHK-Z=KnPvXmWmmSQO6xsyxokrfQ@mail.gmail.com>
+In-Reply-To: <CAMgjq7D9tfW626dki+cC_SjHK-Z=KnPvXmWmmSQO6xsyxokrfQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 20 Aug 2024 21:53:52 +1200
+Message-ID: <CAGsJ_4x=DEmHdQP+NuoaQ4db4PzOmRabcoxhK4iEBHL547Skdg@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING in zswap_swapoff
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, 
+	syzbot <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
+	syzkaller-bugs@googlegroups.com, Chris Li <chrisl@kernel.org>, 
+	Ying <ying.huang@intel.com>, Ryan Roberts <ryan.roberts@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/2024 10:33 PM, Sebastian Reichel wrote:
-> Hello,
-> 
-> On Mon, Aug 19, 2024 at 09:35:12PM GMT, Arend van Spriel wrote:
->> On 8/19/2024 6:42 PM, Sebastian Reichel wrote:
->>> I tested this on RK3588 EVB1 and the driver is working fine. The DT
->>> bindings are not correct, though:
->>>
->>> linux/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: wifi@0,0:
->>> compatible: 'oneOf' conditional failed, one must be fixed:
->>>
->>> ['pci14e4,449d', 'brcm,bcm4329-fmac'] is too long
->>> 'pci14e4,449d' is not one of ['brcm,bcm43143-fmac', 'brcm,bcm4341b0-fmac',
->>> 'brcm,bcm4341b4-fmac', 'brcm,bcm4341b5-fmac', 'brcm,bcm4329-fmac',
->>> 'brcm,bcm4330-fmac', 'brcm,bcm4334-fmac', 'brcm,bcm43340-fmac',
->>> 'brcm,bcm4335-fmac', 'brcm,bcm43362-fmac', 'brcm,bcm4339-fmac',
->>> 'brcm,bcm43430a0-fmac', 'brcm,bcm43430a1-fmac', 'brcm,bcm43455-fmac',
->>> 'brcm,bcm43456-fmac', 'brcm,bcm4354-fmac', 'brcm,bcm4356-fmac',
->>> 'brcm,bcm4359-fmac', 'brcm,bcm4366-fmac', 'cypress,cyw4373-fmac',
->>> 'cypress,cyw43012-fmac', 'infineon,cyw43439-fmac']
->>> from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
->>>
->>> It's easy to see the problem in the binding. It does not expect a
->>> fallback string after the PCI ID based compatible. Either the
->>> pci14e4,449d entry must be added to the first enum in the binding,
->>> which has the fallback compatible, or the fallback compatible
->>> should not be added to DTS.
->>
->> Never understood why we ended up with such a large list. When the binding
->> was introduced there was one compatible, ie. brcm,bcm4329-fmac. People
->> wanted all the other flavors because it described a specific wifi chip and
->> no other reason whatsoever. The PCI ID based compatible do obfuscate that
->> info so those are even less useful in my opinion.
->>
->>> If the fallback compatible is missing in DTS, the compatible check in
->>> brcmf_of_probe() fails and the lpo clock is not requested resulting
->>> in the firmware startup failing. So that would require further
->>> driver changes.
->>
->> Right. The text based bindings file in 5.12 kernel clearly says:
->>
->> Required properties:
->>
->>   - compatible : Should be "brcm,bcm4329-fmac".
->>
->> In 5.13 kernel this was replaced by the json-schema yaml file. The PCI ID
->> based enum which was added later does also list brcm,bcm4329-fmac so why
->> does that not work for the compatible list ['pci14e4,449d',
->> 'brcm,bcm4329-fmac']? Looking at the compatible property in yaml which I
->> stripped a bit for brevity:
->>
->> properties:
->>    compatible:
->>      oneOf:
->>        - items:
->>            - enum:
->>                - brcm,bcm43143-fmac
->>                - brcm,bcm4329-fmac
->>                - infineon,cyw43439-fmac
->>            - const: brcm,bcm4329-fmac
->>        - enum:
->>            - brcm,bcm4329-fmac
->>            - pci14e4,43dc  # BCM4355
->>            - pci14e4,4464  # BCM4364
->>            - pci14e4,4488  # BCM4377
->>            - pci14e4,4425  # BCM4378
->>            - pci14e4,4433  # BCM4387
->>
->> So how should I read this. Searching for some sort of syntax description I
->> found [1] which has an example schema with description that has a similarly
->> complicated compatible property. From that I think the above should be
->> changed to:
->>
->>   properties:
->>     compatible:
->>       oneOf:
->>         - items:
->>             - enum:
->>                 - brcm,bcm43143-fmac
->> -              - brcm,bcm4329-fmac
->>                 - infineon,cyw43439-fmac
->>             - const: brcm,bcm4329-fmac
->> +      - items:
->>             - enum:
->> -              - brcm,bcm4329-fmac
->>                 - pci14e4,43dc  # BCM4355
->>                 - pci14e4,4464  # BCM4364
->>                 - pci14e4,4488  # BCM4377
->>                 - pci14e4,4425  # BCM4378
->>                 - pci14e4,4433  # BCM4387
->> +          - const: brcm,bcm4329-fmac
->> +      - const: brcm,bcm4329-fmac
->>
->> This poses a constraint in which the last string in the compatible list is
->> always 'brcm,bcm4329-fmac' even if it is the only string. At least that is
->> my understanding so if my understanding is wrong feel free to correct me on
->> this.
->>
->> [1] https://docs.kernel.org/devicetree/bindings/writing-schema.html
-> 
-> Your proposed change should work as you describe. But it will result
-> in DT check errors for some Apple devices, which followed the
-> current binding and do not have the "brcm,bcm4329-fmac" fallback
-> compatible:
-> 
-> $ git grep -E "(pci14e4,43dc)|(pci14e4,4464)|(pci14e4,4488)|(pci14e4,4425)|(pci14e4,4433)" arch/
-> arch/arm64/boot/dts/apple/t8103-jxxx.dtsi:           compatible = "pci14e4,4425";
-> arch/arm64/boot/dts/apple/t8112-j413.dts:            compatible = "pci14e4,4433";
-> arch/arm64/boot/dts/apple/t8112-j493.dts:            compatible = "pci14e4,4425";
+On Tue, Aug 20, 2024 at 9:29=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> On Tue, Aug 20, 2024 at 5:22=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Tue, Aug 20, 2024 at 8:47=E2=80=AFPM Kairui Song <ryncsn@gmail.com> =
+wrote:
+> > >
+> > > On Tue, Aug 20, 2024 at 4:13=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
+e.com> wrote:
+> > > > On Fri, Aug 16, 2024 at 12:52=E2=80=AFPM syzbot
+> > > > <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com> wrote:
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following issue on:
+> > > > >
+> > > > > HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20=
+240816
+> > >
+> > > I can't find this commit, seems this commit is not in linux-next any =
+more?
+> > >
+> > > > > git tree:       linux-next
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12489=
+105980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ba6=
+f3b22ee5467
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dce60292=
+50d7fd4d0476d
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils=
+ for Debian) 2.40
+> > > > >
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > >
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3c=
+ad3c/disk-367b5c3d.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813=
+c/vmlinux-367b5c3d.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/6674cb=
+0709b1/bzImage-367b5c3d.xz
+> > > > >
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to =
+the commit:
+> > > > > Reported-by: syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.co=
+m
+> > > > >
+> > > > > ------------[ cut here ]------------
+> > > > > WARNING: CPU: 0 PID: 11298 at mm/zswap.c:1700 zswap_swapoff+0x11b=
+/0x2b0 mm/zswap.c:1700
+> > > > > Modules linked in:
+> > > > > CPU: 0 UID: 0 PID: 11298 Comm: swapoff Not tainted 6.11.0-rc3-nex=
+t-20240816-syzkaller #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine=
+, BIOS Google 06/27/2024
+> > > > > RIP: 0010:zswap_swapoff+0x11b/0x2b0 mm/zswap.c:1700
+> > > > > Code: 74 05 e8 78 73 07 00 4b 83 7c 35 00 00 75 15 e8 1b bd 9e ff=
+ 48 ff c5 49 83 c6 50 83 7c 24 0c 17 76 9b eb 24 e8 06 bd 9e ff 90 <0f> 0b =
+90 eb e5 48 8b 0c 24 80 e1 07 80 c1 03 38 c1 7c 90 48 8b 3c
+> > > > > RSP: 0018:ffffc9000302fa38 EFLAGS: 00010293
+> > > > > RAX: ffffffff81f4d66a RBX: dffffc0000000000 RCX: ffff88802c19bc00
+> > > > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888015986248
+> > > > > RBP: 0000000000000000 R08: ffffffff81f4d620 R09: 1ffffffff1d476ac
+> > > > > R10: dffffc0000000000 R11: fffffbfff1d476ad R12: dffffc0000000000
+> > > > > R13: ffff888015986200 R14: 0000000000000048 R15: 0000000000000002
+> > > > > FS:  00007f9e628a5380(0000) GS:ffff8880b9000000(0000) knlGS:00000=
+00000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 0000001b30f15ff8 CR3: 000000006c5f0000 CR4: 00000000003506f0
+> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > Call Trace:
+> > > > >  <TASK>
+> > > > >  __do_sys_swapoff mm/swapfile.c:2837 [inline]
+> > > > >  __se_sys_swapoff+0x4653/0x4cf0 mm/swapfile.c:2706
+> > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > RIP: 0033:0x7f9e629feb37
+> > > > > Code: 73 01 c3 48 8b 0d f1 52 0d 00 f7 d8 64 89 01 48 83 c8 ff c3=
+ 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a8 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 8b 0d c1 52 0d 00 f7 d8 64 89 01 48
+> > > > > RSP: 002b:00007fff17734f68 EFLAGS: 00000246 ORIG_RAX: 00000000000=
+000a8
+> > > > > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9e629feb37
+> > > > > RDX: 00007f9e62a9e7e8 RSI: 00007f9e62b9beed RDI: 0000563090942a20
+> > > > > RBP: 0000563090942a20 R08: 0000000000000000 R09: 77872e07ed164f94
+> > > > > R10: 000000000000001f R11: 0000000000000246 R12: 00007fff17735188
+> > > > > R13: 00005630909422a0 R14: 0000563073724169 R15: 00007f9e62bdda80
+> > > > >  </TASK>
+> > > >
+> > > > I am hoping syzbot would find a reproducer and bisect this for us.
+> > > > Meanwhile, from a high-level it looks to me like we are missing a
+> > > > zswap_invalidate() call in some paths.
+> > > >
+> > > > If I have to guess, I would say it's related to the latest mTHP swa=
+p
+> > > > changes, but I am not following closely. Perhaps one of the followi=
+ng
+> > > > things happened:
+> > > >
+> > > > (1) We are not calling zswap_invalidate() in some invalidation path=
+s.
+> > > > It used to not be called for the cluster freeing path, so maybe we =
+end
+> > > > up with some order-0 swap entries in a cluster? or maybe there is a=
+n
+> > > > entirely new invalidation path that does not go through
+> > > > free_swap_slot() for order-0 entries?
+> > > >
+> > > > (2) Some higher order swap entries (i.e. a cluster) end up in zswap
+> > > > somehow. zswap_store() has a warning to cover that though. Maybe
+> > > > somehow some swap entries are allocated as a cluster, but then page=
+s
+> > > > are swapped out one-by-one as order-0 (which can go to zswap), but
+> > > > then we still free the swap entries as a cluster?
+> > >
+> > > Hi Yosry, thanks for the report.
+> > >
+> > > There are many mTHP related optimizations recently, for this problem =
+I
+> > > can reproduce this locally. Can confirm the problem is gone for me
+> > > after reverting:
+> > >
+> > > "mm: attempt to batch free swap entries for zap_pte_range()"
+> > >
+> > > Hi Barry,
+> > >
+> > > If a set of continuous slots are having the same value, they are
+> > > considered a mTHP and freed, bypassing the slot cache, and causing
+> > > zswap leak.
+> > > This didn't happen in put_swap_folio because that function is
+> > > expecting an actual mTHP folio behind the slots but
+> > > free_swap_and_cache_nr is simply walking the slots.
+> >
+> > Hi Kairui,
+> >
+> > I don't understand, if anyone has a folio backend, the code will
+> > go fallback to __try_to_reclaim_swap(),  it won't call
+> > swap_entry_range_free().
+> >
+> >      ci =3D lock_cluster_or_swap_info(si, offset);
+> >         if (!swap_is_last_map(si, offset, nr, &has_cache)) {
+> >                 unlock_cluster_or_swap_info(si, ci);
+> >                 goto fallback;
+> >         }
+> >         for (i =3D 0; i < nr; i++)
+> >                 WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+> >         unlock_cluster_or_swap_info(si, ci);
+> >
+> >         if (!has_cache) {
+> >                 spin_lock(&si->lock);
+> >                 swap_entry_range_free(si, entry, nr);
+> >                 spin_unlock(&si->lock);
+> >         }
+> >         return has_cache;
+> >
+> > Am i missing something?
+>
+> Hi Barry,
+>
+> Per my understanding, ZSWAP invalidation could happen after the folio
+> is gone from the swap cache, especially in free_swap_and_cache_nr, it
+> will iterate and zap the swap slots without swapping them in.
+> So a slot doesn't have a folio backed doesn't mean it doesn't have ZSWAP =
+data.
 
-> I guess patch 3/4 from this series will also introduce some
-> regressions for these devices by moving the check. What is the
-> purpose of the compatible check in brcmf_of_probe() in the first
-> place? Can it just be dropped?
-> 
-> I see it was introduced 10 years ago in 61f663dfc1a09, probably to
-> avoid a spurious error message for systems not having the IRQ
-> described in DT? The current code exits quietly when none of the
-> optional resources are defined.
+well. thanks! the original non-batched code always has a zswap_invalidate()
+in free_swap_slot().
+void free_swap_slot(swp_entry_t entry)
 
-It was introduced simply because the compatible property has a meaning 
-that goes beyond informational. It is a claim that the properties of the 
-node comply to the bindings specification. I would really want to keep 
-the sanity check event though all properties are optional. The 
-constraint keeps the compatible matching in the driver relatively simple.
+{
+        struct swap_slots_cache *cache;
+        /* Large folio swap slot is not covered. */
+        zswap_invalidate(entry);
+        ...
+}
 
-Regards,
-Arend
+but the benefits of batched-free is huge(on phones, almost 100% PTEs have n=
+o
+swapcache as it uses sync io swap; on SSD cases, only a small part of PTEs =
+have
+folio backend in swapcache, so it will still benefit significantly
+from this batched-free).
+so let's try to find a proper fix for this before we have to do the
+below ugly (which will
+at least benefit phones who never use zswap):
+
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f947f4dd31a9..c8c70a9bf6d6 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1498,6 +1498,9 @@ static bool __swap_entries_free(struct
+swap_info_struct *si,
+        unsigned char count;
+        int i;
+
++       if (!zswap_never_enabled())
++               return fallback;
++
+        if (nr <=3D 1 || swap_count(data_race(si->swap_map[offset])) !=3D 1=
+)
+                goto fallback;
+        /* cross into another cluster */
+
+
+Thanks
+Barry
 
