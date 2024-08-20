@@ -1,63 +1,69 @@
-Return-Path: <linux-kernel+bounces-293218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD14957C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:58:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69086957C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF4B226F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9279E281E1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5FA4503A;
-	Tue, 20 Aug 2024 03:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0970A49626;
+	Tue, 20 Aug 2024 04:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XRXkUPy3"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="fuMncEdT"
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385F438FA6;
-	Tue, 20 Aug 2024 03:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54723156CF;
+	Tue, 20 Aug 2024 04:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724126284; cv=none; b=Xhq4WVAKP2Kxdt/d2xQJbChMyP4W6BGKCv9LGWTJQBRbN7SsTyxRbudZU3cCfRYCHN/q/rklqB1SmH5DIF6Nu+qinD/+AKUzP+0csTmgCdxgHAZ5u5VNirjsT2AvyNwH/D7qvh5OBXaHqL2IjyIBK6YlvX/p+JmFtTcw9RkjsQs=
+	t=1724126475; cv=none; b=GTgTPJFOTYalHP4g93/sFZvjYNYpMw690pceKl8NExi1PvpBwLVBUh4hGoldlGJ6nP/ivMiGwovN6SknAKtvpCi3aKfji4m3u/VYYwoXPF0+eRF1dletHs/abiN/nLwNUQqhBmAw+8op2foHmg/9Y+peAaVvPYzgGxAYn4BqZIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724126284; c=relaxed/simple;
-	bh=mmOgcyCfBFdErLrOLtV2GtGnZgs7oWhwWnSiOcOVecQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FzpI+39jI/C/5RvfnUEN4EnRqS7pFsb4xzbA/BtsWawUjOmAlye0Al8A4rqoZF1uzpPquesEIjsS+bGMoPx6LYyqp5xmiUKBgliuiX6S/R28fVzuhIcNce57dtYUl2ZdakFls3VqxKHpqrNYlG1j5tu/jxMa5sfCLubOpNFplhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XRXkUPy3; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724126281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6MSYoUFUlL53+l626iAN1HyCTu4sv54B1LG1QwOvN8A=;
-	b=XRXkUPy3TxEws0/uYt+fcDoMzNwxiFyLl66YfDYmFAb/pKznWzNjQ2LAwdldDWZQzcvCpU
-	NHWv08LKEhI2yRKhKvXixkOPaAwVV6UN1xuaavfeOCcULovhPItbYWzshpfamyj3xlB4Bu
-	dEyDcQcz1WaLm9KrunDD7Zd2G15GgnH2qBymHnPw6cU3XemvFpHBp/Y8LpBKpZ40Bf8htF
-	tF1v73qMC3y/GkFH/2wOO6BU/ns2+5m7eBQdGroxdQ4//vcnCV2vI+l7E1RkZ2xtNn4Gue
-	5xdUBbR2M4wsZJeopKm5kRCdCBpqTL6DX1OcD2lSpp3vCVHQxT+Hd7O9pOIxnA==
-To: linux-sunxi@lists.linux.dev
-Cc: wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
+	s=arc-20240116; t=1724126475; c=relaxed/simple;
+	bh=/fcTDhyfY/4OIdy7+1GXGjnZwj0jbSEXTVhs8GsELmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r6keYaRlX38z1POOnmTnAcIl0AOJ90jeciAGixInloS13cQf6mJYoOl7mCGXjZf30+jJv4WYeCziB5Qx87iCVTWvDq5dgy1y04NcTiTXCh+Cc4N9wD9aL0ZJBps4bzCJxkZCqd8eh4gvi/UELHs/iLIb1Hza/Nr28jFzeKPtTZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=fuMncEdT; arc=none smtp.client-ip=216.71.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1724126473; x=1755662473;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/fcTDhyfY/4OIdy7+1GXGjnZwj0jbSEXTVhs8GsELmI=;
+  b=fuMncEdTfJSkhBWhH+YH206DWBYuVdSccoaOu2WPO5E/EhL1jRJ1KpKT
+   INIAglOprBSiRM8WKlsYCVRgEybFbTy8+r4wnfPIcbzdVkEZy0poz1LsO
+   InWxUuGOZ2iLgeA8v5Zc9tvA2SuLYiPBDNjZDY9g72O5c9dmV+t4WSWbV
+   KunFWtpaXRBcnwDWvFHdJYKoMiaEss7+ooWcxNAR2efWEQs5iXZPOrimk
+   VUhJzCVvwQAfSlExsXwroo8lz/YeSD2mT4JUfh41SpvsXje2lDTGgMCOv
+   GnAOz+NJfCChAfF7gAzA2aCmb8+q+wNUWClE9UnlGj9uHSCwH3hmi+WQM
+   A==;
+X-CSE-ConnectionGUID: AiWK796YQEK4XMi2yPSDBw==
+X-CSE-MsgGUID: b4QSQE2VQ16kInRX0kCbTQ==
+X-IronPort-AV: E=Sophos;i="6.10,160,1719849600"; 
+   d="scan'208";a="24663340"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Aug 2024 12:00:04 +0800
+IronPort-SDR: 66c4080e_zwEAfga2bLbD5A5aWMfgQAAYvh9BqnEwRIiaCmh/WyYAxTy
+ UOZDaVRJNkvpTAWrPo5ijO9r8YPaA47BC3tTtQw==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Aug 2024 20:05:50 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Aug 2024 21:00:02 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	uwu@icenowy.me,
-	wenst@chromium.org,
-	broonie@kernel.org,
-	daniel.lezcano@linaro.org
-Subject: [PATCH v2] arm64: dts: allwinner: a64: Add GPU thermal trips to the SoC dtsi
-Date: Tue, 20 Aug 2024 05:57:47 +0200
-Message-Id: <0a6110a7b27a050bd58ab3663087eecd8e873ac0.1724126053.git.dsimic@manjaro.org>
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH] scsi: ufs: Move UFS trace events to private header
+Date: Tue, 20 Aug 2024 06:58:26 +0300
+Message-Id: <20240820035826.3124001-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,73 +71,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Add thermal trips for the two GPU thermal sensors found in the Allwinner A64.
-There's only one GPU OPP defined since the commit 1428f0c19f9c ("arm64: dts:
-allwinner: a64: Run GPU at 432 MHz"), so defining only the critical thermal
-trips makes sense for the A64's two GPU thermal zones.
+ufs trace events are called exclusively from the ufs core drivers.  Make
+those events privet to the core driver.
 
-Having these critical thermal trips defined ensures that no hot spots develop
-inside the SoC die that exceed the maximum junction temperature.  That might
-have been possible before, although quite unlikely, because the CPU and GPU
-portions of the SoC are packed closely inside the SoC, so the overheating GPU
-would inevitably result in the heat soaking into the CPU portion of the SoC,
-causing the CPU thermal sensor to return high readings and trigger the CPU
-critical thermal trips.  However, it's better not to rely on the heat soak
-and have the critical GPU thermal trips properly defined instead.
+The MAINTAINERS file does not need updating as the maintainership
+remains the same and the relevant directory is already covered.
 
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 ---
+ include/trace/events/ufs.h => drivers/ufs/core/ufs_trace.h | 6 ++++++
+ drivers/ufs/core/ufshcd.c                                  | 2 +-
+ include/ufs/ufs.h                                          | 4 ++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+ rename include/trace/events/ufs.h => drivers/ufs/core/ufs_trace.h (98%)
 
-Notes:
-    Changes in v2:
-      - Added "a64:" at the end of the patch subject prefix and adjusted the
-        patch subject a bit, to match the usual prefix better
-      - Dropped the removal of potentially redundant comments that describe
-        the units, as suggested by Icenowy [1] and Chen-Yu [2]
-    
-    Link to v1: https://lore.kernel.org/linux-sunxi/a17e0df64c5b976b47f19c5a29c02759cd9e5b8c.1723427375.git.dsimic@manjaro.org/T/#u
-    
-    [1] https://lore.kernel.org/linux-sunxi/24406e36f6facd93e798113303e22925b0a2dcc1.camel@icenowy.me/
-    [2] https://lore.kernel.org/linux-sunxi/662f2332efb1d6c21e722066562a72b9@manjaro.org/T/#mdd7b18962c1ae339141061af51b89cd68bc04d50
-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index e868ca5ae753..a5c3920e0f04 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -263,13 +263,29 @@ gpu0_thermal: gpu0-thermal {
- 			polling-delay-passive = <0>;
- 			polling-delay = <0>;
- 			thermal-sensors = <&ths 1>;
-+
-+			trips {
-+				gpu0_crit: gpu0-crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
- 		};
+diff --git a/include/trace/events/ufs.h b/drivers/ufs/core/ufs_trace.h
+similarity index 98%
+rename from include/trace/events/ufs.h
+rename to drivers/ufs/core/ufs_trace.h
+index c4e209fbdfbb..84deca2b841d 100644
+--- a/include/trace/events/ufs.h
++++ b/drivers/ufs/core/ufs_trace.h
+@@ -9,6 +9,7 @@
+ #if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ)
+ #define _TRACE_UFS_H
  
- 		gpu1_thermal: gpu1-thermal {
- 			/* milliseconds */
- 			polling-delay-passive = <0>;
- 			polling-delay = <0>;
- 			thermal-sensors = <&ths 2>;
-+
-+			trips {
-+				gpu1_crit: gpu1-crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
- 		};
- 	};
++#include <ufs/ufs.h>
+ #include <linux/tracepoint.h>
  
+ #define str_opcode(opcode)						\
+@@ -395,5 +396,10 @@ TRACE_EVENT(ufshcd_exception_event,
+ 
+ #endif /* if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ) */
+ 
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/ufs/core
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE ufs_trace
++
+ /* This part must be outside protection */
+ #include <trace/define_trace.h>
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0dd26059f5d7..db30d0c4d91e 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -39,7 +39,7 @@
+ #include <asm/unaligned.h>
+ 
+ #define CREATE_TRACE_POINTS
+-#include <trace/events/ufs.h>
++#include "ufs_trace.h"
+ 
+ #define UFSHCD_ENABLE_INTRS	(UTP_TRANSFER_REQ_COMPL |\
+ 				 UTP_TASK_REQ_COMPL |\
+diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
+index 853e95957c31..e594abe5d05f 100644
+--- a/include/ufs/ufs.h
++++ b/include/ufs/ufs.h
+@@ -597,7 +597,7 @@ struct ufs_dev_info {
+ };
+ 
+ /*
+- * This enum is used in string mapping in include/trace/events/ufs.h.
++ * This enum is used in string mapping in ufs_trace.h.
+  */
+ enum ufs_trace_str_t {
+ 	UFS_CMD_SEND, UFS_CMD_COMP, UFS_DEV_COMP,
+@@ -607,7 +607,7 @@ enum ufs_trace_str_t {
+ 
+ /*
+  * Transaction Specific Fields (TSF) type in the UPIU package, this enum is
+- * used in include/trace/events/ufs.h for UFS command trace.
++ * used in ufs_trace.h for UFS command trace.
+  */
+ enum ufs_trace_tsf_t {
+ 	UFS_TSF_CDB, UFS_TSF_OSF, UFS_TSF_TM_INPUT, UFS_TSF_TM_OUTPUT
+-- 
+2.25.1
+
 
