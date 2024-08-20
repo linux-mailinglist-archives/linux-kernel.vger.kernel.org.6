@@ -1,160 +1,196 @@
-Return-Path: <linux-kernel+bounces-294414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D65D958D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:29:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737C9958D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A501F2296D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A700C1C237DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C3B1C6891;
-	Tue, 20 Aug 2024 17:28:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19F01C7B6D;
+	Tue, 20 Aug 2024 17:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BUWxYGX1"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE2D1C4635;
-	Tue, 20 Aug 2024 17:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228121BD02F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174922; cv=none; b=i2JkiEzB+WU3mq1vPJWO4D2p29L1y7zIwRIGvpALhdwWIREGWTUJAwBcib9Fi2DbzAmpS/sbXg4pxo/yQcARdo4jLi2xpiFzcapBmnRzMBaTdvuxHv1w5vkDVWIXC+OSFYZyA71OLtMo/XS/al24GUXHrSmFMHzUjPNv4HWNUzs=
+	t=1724174933; cv=none; b=g4lt+7QbvAAPG6lIUQM5AgXZveDBc4KBpNQDxKrEIa52L9rrsZ4mMigMkaj4JZZJQEaPWveWqnXHOTuzcUzGs30dm9vphQzA80EPmL6xqJL9e/p/XCjfm36AKS3R70ihQuRvZlI5v+WnDuZjvgndYqC6qT1h42GmoG4KXwm/2TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174922; c=relaxed/simple;
-	bh=HqgIFw/MNbVJxTLj0yyv6f+URL447V9dt+D8R5sOaP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mE0u/yrlYZjeoFH/zAZMgQh3PAL+dfaLiIeiUd31BUx10w89WcnU29qdiolxdo5KNGM7VpqcB7qUIMdJtO0R8IzzT3hR0NxJJlXC/JVwrrzPq2CSMOs100RB7CUmXYC0VUFuG0sn39Xx34Eic84+sj5OQlBMulBuxvr/jUzoexw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1055C4AF0E;
-	Tue, 20 Aug 2024 17:28:36 +0000 (UTC)
-Date: Tue, 20 Aug 2024 18:28:34 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 20/40] arm64/gcs: Ensure that new threads have a GCS
-Message-ID: <ZsTSQmKV4zAEnara@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-20-699e2bd2190b@kernel.org>
- <ZsM0wkRRguMchecK@arm.com>
- <e1d40f17-2c03-4440-8d41-85368e138f03@sirena.org.uk>
+	s=arc-20240116; t=1724174933; c=relaxed/simple;
+	bh=Q5fYmKYULDka1ncQXVT9J1I9G53oKjobX1TMEDueu1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJTyG17picxp7sFwhldCYUaVOFgRUn+QqwAX/cQl5li0Kum2IPPU3Qd1G2/SDJGAGPCagRvgu+ku1IIkw3+OJ9YTlc3jbcAEzKx+D1vRamuOCGii2lmn5J1FxZFePsDCVKRQLZTQVoM3zYpgpJju6vf4SCs63osE2mlbh7RcR3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BUWxYGX1; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1724174929;
+	bh=Q5fYmKYULDka1ncQXVT9J1I9G53oKjobX1TMEDueu1s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BUWxYGX1TkD2MC1s7lyyPMpi+tLofjd5CaP0KPSLYVDYK0orviQh250R/oIDleyjE
+	 +XsH9c4cGxLQmul//d+EdIB9ZjlsySw5LU4UseSLnM/CQzEzyi69LeeV1t4u/nBPCE
+	 9s1LnRHMsL0jwJ0vocoJb5DuUhgiDmloRrox+XD5JoPCJq+WpQ3CBMF9HUC1Ysi60W
+	 WyxzzPshLQMEDlp4ZQ5MqXzQVOP8DV2lNCSAmp8xgrKSIF241RFnULJTCJNVP/obsr
+	 4lJxJi6AD1i+/1l7+a25rJVLiGjyyAtv5tcaQZrPC/DqEI4iZoeid+UCOWGvZY/aUV
+	 wzGZG09Cqqd1g==
+Received: from [192.168.1.5] (109.56.13.38.mobile.3.dk [109.56.13.38])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WpGf80Zmvz1Hk9;
+	Tue, 20 Aug 2024 13:28:47 -0400 (EDT)
+Message-ID: <95696d34-99ed-4911-a247-20ae42848451@efficios.com>
+Date: Tue, 20 Aug 2024 19:28:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1d40f17-2c03-4440-8d41-85368e138f03@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/5] cpumask: Implement
+ cpumask_{first,next}_{not,}andnot
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
+ Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
+ <20240819142406.339084-3-mathieu.desnoyers@efficios.com>
+ <ZsOcC_6S3_GviaIJ@yury-ThinkPad>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <ZsOcC_6S3_GviaIJ@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 04:57:08PM +0100, Mark Brown wrote:
-> On Mon, Aug 19, 2024 at 01:04:18PM +0100, Catalin Marinas wrote:
-> > On Thu, Aug 01, 2024 at 01:06:47PM +0100, Mark Brown wrote:
-> > > +static int copy_thread_gcs(struct task_struct *p,
-> > > +			   const struct kernel_clone_args *args)
-> > > +{
-> > > +	unsigned long gcs;
-> > > +
-> > > +	gcs = gcs_alloc_thread_stack(p, args);
-> > > +	if (IS_ERR_VALUE(gcs))
-> > > +		return PTR_ERR((void *)gcs);
+On 2024-08-19 21:24, Yury Norov wrote:
+> On Mon, Aug 19, 2024 at 04:24:03PM +0200, Mathieu Desnoyers wrote:
+>> Allow finding the first or next bit within two input cpumasks which is
+>> either:
 > 
-> > Is 0 an ok value here? I can see further down that
-> > gcs_alloc_thread_stack() may return 0.
+> "first or next CPU..." here.
+>   
+>> - both zero and zero,
+>> - respectively one and zero.
+>>
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Cc: Yury Norov <yury.norov@gmail.com>
+>> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> ---
+>>   include/linux/cpumask.h | 60 +++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 60 insertions(+)
+>>
+>> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+>> index 23686bed441d..57b7d99d6da1 100644
+>> --- a/include/linux/cpumask.h
+>> +++ b/include/linux/cpumask.h
+>> @@ -204,6 +204,32 @@ unsigned int cpumask_first_and_and(const struct cpumask *srcp1,
+>>   				      cpumask_bits(srcp3), small_cpumask_bits);
+>>   }
+>>   
+>> +/**
+>> + * cpumask_first_andnot - return the first cpu from *srcp1 & ~*srcp2
+>> + * @src1p: the first input
+>> + * @src2p: the second input
+>> + *
+>> + * Returns >= nr_cpu_ids if no cpus match in both.
+>> + */
+>> +static inline
+>> +unsigned int cpumask_first_andnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
 > 
-> Yes, it's fine for a thread not to have a GCS.
+> Please use __always_inline to enforce a compile-time optimizations.
+> Check for this series:
+> https://lore.kernel.org/lkml/20240719005127.2449328-4-briannorris@chromium.org/T/
 
-OK, so we only get a 0 here if the gcs_{base,size} has not be
-initialised. Looks fine.
+I'll use __always_inline in both bitmap and cpumask patches.
 
-> > > +	p->thread.gcs_el0_mode = current->thread.gcs_el0_mode;
-> > > +	p->thread.gcs_el0_locked = current->thread.gcs_el0_locked;
+I'll update this patch to rename notandnot to zero_and.
+
+Thanks,
+
+Mathieu
+
 > 
-> > > +	/* Ensure the current state of the GCS is seen by CoW */
-> > > +	gcsb_dsync();
+> It's already in -next.
 > 
-> > I don't get this barrier. What does it have to do with CoW, which memory
-> > effects is it trying to order?
+> Thanks,
+> Yury
 > 
-> Yeah, I can't remember what that's supposed to be protecting.
-
-The GCS memory writes in the parent must indeed be visible in the child
-that could start on a different CPU. So, in principle, we need some form
-of ordering similar to the context switch. However, in case of classic
-fork(), the child won't be started until the PTEs have been made
-read-only and a TLBI issued. This would ensure the completion of any GCS
-memory accesses in the parent (at least that's my reading of the Arm
-ARM).
-
-If we have normal thread creation without CoW, is the parent writing
-anything to the stack that the new thread needs to observe? The
-map_shadow_stack() call will cause a GCSSTTR and this wouldn't be
-ordered with subsequent memory writes. But we already have a GCSB DSYNC
-in map_shadow_stack() after put_user_gcs().
-
-My conclusion is that we don't need this barrier.
-
-> > > +	/* Allocate RLIMIT_STACK/2 with limits of PAGE_SIZE..2G */
-> > > +	size = PAGE_ALIGN(min_t(unsigned long long,
-> > > +				rlimit(RLIMIT_STACK) / 2, SZ_2G));
-> > > +	return max(PAGE_SIZE, size);
-> > > +}
-> 
-> > So we still have RLIMIT_STACK/2. I thought we got rid of that and just
-> > went with RLIMIT_STACK (or I misremember).
-> 
-> I honestly can't remember either way, it's quite possible it's changed
-> multiple times.  I don't have super strong feelings on the particular
-> value here.
-
-The half size looks a lot more arbitrary to me than picking the same
-size as the stack. So I'd go with RLIMIT_STACK.
-
-> > > +static bool gcs_consume_token(struct mm_struct *mm, unsigned long user_addr)
-> > > +{
-> 
-> > As per the clone3() thread, I think we should try to use
-> > get_user_page_vma_remote() and do a cmpxchg() directly.
-> 
-> I've left this as is for now, mainly because it keeps the code in line
-> with x86 and I can't directly test the x86 code. 
-
-I thought for the clone3() x86 code we'll need the remote vma, so we
-have to use the get_user_page_vma_remote() API anyway.
-
-> IIRC we can't just do
-> a standard userspace cmpxchg since that will access as though we were at
-> EL0 but EL0 doesn't have standard write permission for the page.
-
-Correct but GUP goes through the kernel mapping, not the user one. So
-get_user_page_vma_remote() returns a page and you just do a classic
-cmpxchg() at page_address() (plus some offset).
+>> +{
+>> +	return find_first_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
+>> +}
+>> +
+>> +/**
+>> + * cpumask_first_notandnot - return the first cpu from ~*srcp1 & ~*srcp2
+>> + * @src1p: the first input
+>> + * @src2p: the second input
+>> + *
+>> + * Returns >= nr_cpu_ids if no cpus match in both.
+>> + */
+>> +static inline
+>> +unsigned int cpumask_first_notandnot(const struct cpumask *srcp1, const struct cpumask *srcp2)
+>> +{
+>> +	return find_first_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits);
+>> +}
+>> +
+>>   /**
+>>    * cpumask_last - get the last CPU in a cpumask
+>>    * @srcp:	- the cpumask pointer
+>> @@ -246,6 +272,40 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
+>>   	return find_next_zero_bit(cpumask_bits(srcp), small_cpumask_bits, n+1);
+>>   }
+>>   
+>> +/**
+>> + * cpumask_next_andnot - return the next cpu from *srcp1 & ~*srcp2
+>> + * @n: the cpu prior to the place to search (ie. return will be > @n)
+>> + * @src1p: the first input
+>> + * @src2p: the second input
+>> + *
+>> + * Returns >= nr_cpu_ids if no cpus match in both.
+>> + */
+>> +static inline
+>> +unsigned int cpumask_next_andnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
+>> +{
+>> +	/* -1 is a legal arg here. */
+>> +	if (n != -1)
+>> +		cpumask_check(n);
+>> +	return find_next_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
+>> +}
+>> +
+>> +/**
+>> + * cpumask_next_notandnot - return the next cpu from ~*srcp1 & ~*srcp2
+>> + * @n: the cpu prior to the place to search (ie. return will be > @n)
+>> + * @src1p: the first input
+>> + * @src2p: the second input
+>> + *
+>> + * Returns >= nr_cpu_ids if no cpus match in both.
+>> + */
+>> +static inline
+>> +unsigned int cpumask_next_notandnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
+>> +{
+>> +	/* -1 is a legal arg here. */
+>> +	if (n != -1)
+>> +		cpumask_check(n);
+>> +	return find_next_notandnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), nr_cpumask_bits, n+1);
+>> +}
+>> +
+>>   #if NR_CPUS == 1
+>>   /* Uniprocessor: there is only one valid CPU */
+>>   static inline unsigned int cpumask_local_spread(unsigned int i, int node)
+>> -- 
+>> 2.39.2
 
 -- 
-Catalin
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
