@@ -1,133 +1,377 @@
-Return-Path: <linux-kernel+bounces-293904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E66595865B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E34958687
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817F61C20F76
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:00:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A6DB272DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271E518F2CC;
-	Tue, 20 Aug 2024 11:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NZg8fdQ2"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE82194C76;
+	Tue, 20 Aug 2024 12:00:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869F118EFC9
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19A18F2DF
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724155198; cv=none; b=C/Av75RuyzfFDBTBRFGZRLLZT8QXRmKApwnidivqSui3JBa3e8bg2x/0Hbt7OsN7XFDNiEurdbPlaHt6gAgrpv13pFrv4aeCIE7YdYiDDP/oF64RpSSV8q7Zjeys4FrwDELRoKJpbp2N995Me448p2nvccp+Ecc8ItAlj77oFp4=
+	t=1724155235; cv=none; b=rmX/YtgHWm74DxMsIydfFxea7kWfpWHSfHMjyiB8lBSfsuvlAGBAobXkSwo3UUNYa+mQaxxHM2+aGWDNofUVv6o44p6E34gm6wI8lFGbBTinxRK7IqUX8aJteSl8Bh+yCKc7qydkfl2C4rBQbhF3Fa5GY+ts8ZQgFC5CALK3Jng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724155198; c=relaxed/simple;
-	bh=Fq/xweB6DECDmKQbmytl29CTiLmUyRhS9q8ArnfiM8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dw7P6a31Q3G8D7KySupIaGUUNaW/GetTdlRmE2IdvcNCpcxiIA8o/G6m39O+DLN95Ycwe95PTjZqlokset37euZ1TvK9iuYgZYP9qM2QjSk69tTvY5SnleOtNeLfvinhg5mpF15D74gfn5SiXzrQ+KpoAzCFKo4mrGqkVx0HG24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NZg8fdQ2; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so4338633a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724155195; x=1724759995; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ok6dysghFHVigyRo3DH9cQOmyL3eWl3oXud5BKTx3k=;
-        b=NZg8fdQ2O1zYysygTWf8KGTp2mCvVZuwI2LRJiaBbhon6PLr9TopzwzgkYn0i0RauS
-         CJtN16fz1fCCyx4elGlGa28hG1TtZ/51CbdQrt2D7+Bl3m1yEjOsEuG/qvfC0B8rcZVh
-         7OQ57Nc2DuCRk1JJeorZyQk5q1k6C8CwvAB/MQhR7dkKDtdkvHAtYbqKYZ2dF6Spv414
-         f+mSUX7g9E6fm7RDnezJKopAMM54j8IVrozpl4Td8R+pvR38rn/ARup1dinYuvjBMfmD
-         4BiDr5K/W5o55ot/DS7DIYzPoKqDQeeMIAArpdgPj/Jwmw5t3xwMC0vLgUfvVqNCsxNM
-         W5QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724155195; x=1724759995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ok6dysghFHVigyRo3DH9cQOmyL3eWl3oXud5BKTx3k=;
-        b=irW4orKB8DL89RkkPDqB8tUgtXdyOxIHp6A0xuS0pPonIVecY8ZBbvWEChSbcnh5yn
-         mSIp6lsYyG/PKjkol2kDRLXzH7Y5K/lhhHMI9dXhrwbmXIIwsMP/cdgM5YPIXj0TZsZd
-         xvPDk8gZ13Ko2jdqRjZXx/3cW5teQTALGYlKeE5MbiGsSdP6bYJQoq8BekZ5NfI5yKP5
-         dQ3JAgwaqUEPk3BkGWgC8C+T3Kaeo0WceWfE8KHEqSbP8P3LYC35VwJNbUQw3KVkUlUb
-         drKtH0AbT4UNqSKcWvffIhpEP52afUwba3UYRhUupaCqVTk88JcnEtZttcidY0YOtEuD
-         ZBMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Gvmm9zmS1jprrPtuuma6gqREldSypnpl8+W5PyoIIeUs0GvDtSXxUPt3LVciOA9bGlnj1qZpktCNYws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOVyt/DcLi8FB6f61GN6QMuE6yT+Odw7o87gvfpe0g/c4tne7U
-	npFwFYC2EtkzdVol+IAfOksFCLeFgyWlIw7+HWDMcXgV2+Wnjqqr9DnPSDyEhg0=
-X-Google-Smtp-Source: AGHT+IHzpM00fkrHeTvxg9EkEg42LSJ/v4KOU5xgMNB21uMZaO/jkIpJj7Y+mXEKN1yBe+c3h8QkAQ==
-X-Received: by 2002:a17:906:d265:b0:a7d:3a85:7a3e with SMTP id a640c23a62f3a-a8392a494a3mr908782366b.59.1724155194593;
-        Tue, 20 Aug 2024 04:59:54 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839470ebsm755475766b.159.2024.08.20.04.59.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 04:59:53 -0700 (PDT)
-Date: Tue, 20 Aug 2024 13:59:52 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
-Subject: Re: [PATCH mm-unstable v2 4/5] mm: restart if multiple traversals
- raced
-Message-ID: <cjvz3rhv2wkoev3gwikb72x4ecwx76lpdvxvur3qdzpnykyvvb@k44wu2ec2htf>
-References: <20240813204716.842811-1-kinseyho@google.com>
- <20240813204716.842811-5-kinseyho@google.com>
- <zh4ccaje54qbi6a62rvlhclysyaymw76bona4qtd53k4ogjuv7@tppv2q4zgyjk>
- <CAF6N3nXmQ=+j5VNf16KL6Ma8RaO0o-Nv=C7reJKQOzdpHzWOsg@mail.gmail.com>
+	s=arc-20240116; t=1724155235; c=relaxed/simple;
+	bh=mhTrDaiebGDY7kRj4LaTKvbwTASM29CFZ/GNVUSNDr8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PKjKm5ucMvAixhIXAni5PrF/uNbIbmS/FUZxBNCvzCS/3yJr3i7Tww3EP1wCb7wcL6dI+WuTKiyY//nElOjPR+h0sqv9gtnO5fMAuPRYEEUek9repEIUHva9mDxpAQ7SIRtjoQiDRxaSZqwhBQPygGvwGVDUL89Q/DH9bc+xi6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sgNXG-0000ut-HR; Tue, 20 Aug 2024 14:00:26 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sgNXG-001lND-2P; Tue, 20 Aug 2024 14:00:26 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sgNSR-00GnIQ-1J;
+	Tue, 20 Aug 2024 13:55:27 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Tue, 20 Aug 2024 13:55:38 +0200
+Subject: [PATCH 13/31] wifi: mwifiex: drop driver internal AP/STA limit
+ counting
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ajk7qmdwnuv6drcb"
-Content-Disposition: inline
-In-Reply-To: <CAF6N3nXmQ=+j5VNf16KL6Ma8RaO0o-Nv=C7reJKQOzdpHzWOsg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240820-mwifiex-cleanup-v1-13-320d8de4a4b7@pengutronix.de>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=9634;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=mhTrDaiebGDY7kRj4LaTKvbwTASM29CFZ/GNVUSNDr8=;
+ b=1rubbqlPRBBzrzsXGZXHRmC94TFO7HtsOYz0K/jx6jJzlGr9Eovbk67SqCp6lFrFwjcWqPc/a
+ WYglYAAbeTHCTT4bi4GvFPDpGS2MNZL7FOvMp787q1kmmOAFr8hzQAQ
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+The mwifiex driver maintains internal counters to check if there
+are still enough resources to change a virtual interface to a certain
+type. This seems to be a remnant of old times and can be removed.
 
---ajk7qmdwnuv6drcb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We can currently create three virtual interfaces (could be expanded to
+16) and each of the interfaces can be configured to any type without
+further restrictions. The limits we actually have are already correctly
+described in wiphy->iface_combinations.
 
-On Fri, Aug 16, 2024 at 12:27:27PM GMT, Kinsey Ho <kinseyho@google.com> wro=
-te:
-> Hi Michal,
->=20
-> > I may be missing (literal) context but I'd suggest not moving the memcg
-> > assignment and leverage
-> >         if (memcg !=3D NULL)
-> >                 css_put(memcg->css)
-> > so that the is-root comparison needn't be repeated.
->=20
-> I might also be misunderstanding you with respect to the is-root
-> comparison =E2=80=93 the reason the memcg assignment is moved is because =
-it is
-> possible that on the restart added in this patch, css could be NULL.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 149 ------------------------
+ drivers/net/wireless/marvell/mwifiex/decl.h     |  10 --
+ drivers/net/wireless/marvell/mwifiex/init.c     |   3 -
+ drivers/net/wireless/marvell/mwifiex/main.h     |   2 -
+ 4 files changed, 164 deletions(-)
 
-I've played with this applied up to 4/5 and I see more changes would be
-needed to preserve the function. Please disregard my initial suggestion
-':-)
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 715d98b7ff550..4c63b849e3809 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -963,117 +963,6 @@ mwifiex_init_new_priv_params(struct mwifiex_private *priv,
+ 	return 0;
+ }
+ 
+-static bool
+-is_vif_type_change_allowed(struct mwifiex_adapter *adapter,
+-			   enum nl80211_iftype old_iftype,
+-			   enum nl80211_iftype new_iftype)
+-{
+-	switch (old_iftype) {
+-	case NL80211_IFTYPE_ADHOC:
+-		switch (new_iftype) {
+-		case NL80211_IFTYPE_STATION:
+-			return true;
+-		case NL80211_IFTYPE_P2P_CLIENT:
+-		case NL80211_IFTYPE_P2P_GO:
+-			return adapter->curr_iface_comb.p2p_intf !=
+-			       adapter->iface_limit.p2p_intf;
+-		case NL80211_IFTYPE_AP:
+-			return adapter->curr_iface_comb.uap_intf !=
+-			       adapter->iface_limit.uap_intf;
+-		default:
+-			return false;
+-		}
+-
+-	case NL80211_IFTYPE_STATION:
+-		switch (new_iftype) {
+-		case NL80211_IFTYPE_ADHOC:
+-			return true;
+-		case NL80211_IFTYPE_P2P_CLIENT:
+-		case NL80211_IFTYPE_P2P_GO:
+-			return adapter->curr_iface_comb.p2p_intf !=
+-			       adapter->iface_limit.p2p_intf;
+-		case NL80211_IFTYPE_AP:
+-			return adapter->curr_iface_comb.uap_intf !=
+-			       adapter->iface_limit.uap_intf;
+-		default:
+-			return false;
+-		}
+-
+-	case NL80211_IFTYPE_AP:
+-		switch (new_iftype) {
+-		case NL80211_IFTYPE_ADHOC:
+-		case NL80211_IFTYPE_STATION:
+-			return adapter->curr_iface_comb.sta_intf !=
+-			       adapter->iface_limit.sta_intf;
+-		case NL80211_IFTYPE_P2P_CLIENT:
+-		case NL80211_IFTYPE_P2P_GO:
+-			return adapter->curr_iface_comb.p2p_intf !=
+-			       adapter->iface_limit.p2p_intf;
+-		default:
+-			return false;
+-		}
+-
+-	case NL80211_IFTYPE_P2P_CLIENT:
+-		switch (new_iftype) {
+-		case NL80211_IFTYPE_ADHOC:
+-		case NL80211_IFTYPE_STATION:
+-			return true;
+-		case NL80211_IFTYPE_P2P_GO:
+-			return true;
+-		case NL80211_IFTYPE_AP:
+-			return adapter->curr_iface_comb.uap_intf !=
+-			       adapter->iface_limit.uap_intf;
+-		default:
+-			return false;
+-		}
+-
+-	case NL80211_IFTYPE_P2P_GO:
+-		switch (new_iftype) {
+-		case NL80211_IFTYPE_ADHOC:
+-		case NL80211_IFTYPE_STATION:
+-			return true;
+-		case NL80211_IFTYPE_P2P_CLIENT:
+-			return true;
+-		case NL80211_IFTYPE_AP:
+-			return adapter->curr_iface_comb.uap_intf !=
+-			       adapter->iface_limit.uap_intf;
+-		default:
+-			return false;
+-		}
+-
+-	default:
+-		break;
+-	}
+-
+-	return false;
+-}
+-
+-static void
+-update_vif_type_counter(struct mwifiex_adapter *adapter,
+-			enum nl80211_iftype iftype,
+-			int change)
+-{
+-	switch (iftype) {
+-	case NL80211_IFTYPE_UNSPECIFIED:
+-	case NL80211_IFTYPE_ADHOC:
+-	case NL80211_IFTYPE_STATION:
+-		adapter->curr_iface_comb.sta_intf += change;
+-		break;
+-	case NL80211_IFTYPE_AP:
+-		adapter->curr_iface_comb.uap_intf += change;
+-		break;
+-	case NL80211_IFTYPE_P2P_CLIENT:
+-	case NL80211_IFTYPE_P2P_GO:
+-		adapter->curr_iface_comb.p2p_intf += change;
+-		break;
+-	default:
+-		mwifiex_dbg(adapter, ERROR,
+-			    "%s: Unsupported iftype passed: %d\n",
+-			    __func__, iftype);
+-		break;
+-	}
+-}
+-
+ static int
+ mwifiex_change_vif_to_p2p(struct net_device *dev,
+ 			  enum nl80211_iftype curr_iftype,
+@@ -1098,8 +987,6 @@ mwifiex_change_vif_to_p2p(struct net_device *dev,
+ 	if (mwifiex_init_new_priv_params(priv, dev, type))
+ 		return -1;
+ 
+-	update_vif_type_counter(adapter, curr_iftype, -1);
+-	update_vif_type_counter(adapter, type, +1);
+ 	dev->ieee80211_ptr->iftype = type;
+ 
+ 	switch (type) {
+@@ -1156,8 +1043,6 @@ mwifiex_change_vif_to_sta_adhoc(struct net_device *dev,
+ 	if (mwifiex_init_new_priv_params(priv, dev, type))
+ 		return -1;
+ 
+-	update_vif_type_counter(adapter, curr_iftype, -1);
+-	update_vif_type_counter(adapter, type, +1);
+ 	dev->ieee80211_ptr->iftype = type;
+ 
+ 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
+@@ -1193,8 +1078,6 @@ mwifiex_change_vif_to_ap(struct net_device *dev,
+ 	if (mwifiex_init_new_priv_params(priv, dev, type))
+ 		return -1;
+ 
+-	update_vif_type_counter(adapter, curr_iftype, -1);
+-	update_vif_type_counter(adapter, type, +1);
+ 	dev->ieee80211_ptr->iftype = type;
+ 
+ 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
+@@ -1237,13 +1120,6 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ 		return 0;
+ 	}
+ 
+-	if (!is_vif_type_change_allowed(priv->adapter, curr_iftype, type)) {
+-		mwifiex_dbg(priv->adapter, ERROR,
+-			    "%s: change from type %d to %d is not allowed\n",
+-			    dev->name, curr_iftype, type);
+-		return -EOPNOTSUPP;
+-	}
+-
+ 	switch (curr_iftype) {
+ 	case NL80211_IFTYPE_ADHOC:
+ 		switch (type) {
+@@ -2988,13 +2864,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 	case NL80211_IFTYPE_UNSPECIFIED:
+ 	case NL80211_IFTYPE_STATION:
+ 	case NL80211_IFTYPE_ADHOC:
+-		if (adapter->curr_iface_comb.sta_intf ==
+-		    adapter->iface_limit.sta_intf) {
+-			mwifiex_dbg(adapter, ERROR,
+-				    "cannot create multiple sta/adhoc ifaces\n");
+-			return ERR_PTR(-EINVAL);
+-		}
+-
+ 		priv = mwifiex_get_unused_priv(adapter);
+ 		if (!priv) {
+ 			mwifiex_dbg(adapter, ERROR,
+@@ -3017,13 +2886,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 
+ 		break;
+ 	case NL80211_IFTYPE_AP:
+-		if (adapter->curr_iface_comb.uap_intf ==
+-		    adapter->iface_limit.uap_intf) {
+-			mwifiex_dbg(adapter, ERROR,
+-				    "cannot create multiple AP ifaces\n");
+-			return ERR_PTR(-EINVAL);
+-		}
+-
+ 		priv = mwifiex_get_unused_priv(adapter);
+ 		if (!priv) {
+ 			mwifiex_dbg(adapter, ERROR,
+@@ -3043,13 +2905,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 
+ 		break;
+ 	case NL80211_IFTYPE_P2P_CLIENT:
+-		if (adapter->curr_iface_comb.p2p_intf ==
+-		    adapter->iface_limit.p2p_intf) {
+-			mwifiex_dbg(adapter, ERROR,
+-				    "cannot create multiple P2P ifaces\n");
+-			return ERR_PTR(-EINVAL);
+-		}
+-
+ 		priv = mwifiex_get_unused_priv(adapter);
+ 		if (!priv) {
+ 			mwifiex_dbg(adapter, ERROR,
+@@ -3182,8 +3037,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 	mwifiex_dev_debugfs_init(priv);
+ #endif
+ 
+-	update_vif_type_counter(adapter, type, +1);
+-
+ 	return &priv->wdev;
+ 
+ err_reg_netdev:
+@@ -3246,8 +3099,6 @@ int mwifiex_del_virtual_intf(struct wiphy *wiphy, struct wireless_dev *wdev)
+ 	/* Clear the priv in adapter */
+ 	priv->netdev = NULL;
+ 
+-	update_vif_type_counter(adapter, priv->bss_mode, -1);
+-
+ 	priv->bss_mode = NL80211_IFTYPE_UNSPECIFIED;
+ 
+ 	if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA ||
+diff --git a/drivers/net/wireless/marvell/mwifiex/decl.h b/drivers/net/wireless/marvell/mwifiex/decl.h
+index 84603f1e7f6e0..d64f75119014c 100644
+--- a/drivers/net/wireless/marvell/mwifiex/decl.h
++++ b/drivers/net/wireless/marvell/mwifiex/decl.h
+@@ -122,10 +122,6 @@
+ /* Rate index for OFDM 0 */
+ #define MWIFIEX_RATE_INDEX_OFDM0   4
+ 
+-#define MWIFIEX_MAX_STA_NUM		3
+-#define MWIFIEX_MAX_UAP_NUM		3
+-#define MWIFIEX_MAX_P2P_NUM		3
+-
+ #define MWIFIEX_A_BAND_START_FREQ	5000
+ 
+ /* SDIO Aggr data packet special info */
+@@ -267,12 +263,6 @@ struct mwifiex_histogram_data {
+ 	atomic_t num_samples;
+ };
+ 
+-struct mwifiex_iface_comb {
+-	u8 sta_intf;
+-	u8 uap_intf;
+-	u8 p2p_intf;
+-};
+-
+ struct mwifiex_radar_params {
+ 	struct cfg80211_chan_def *chandef;
+ 	u32 cac_time_ms;
+diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
+index 0259c9f88486b..df89c9dc44b75 100644
+--- a/drivers/net/wireless/marvell/mwifiex/init.c
++++ b/drivers/net/wireless/marvell/mwifiex/init.c
+@@ -307,9 +307,6 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
+ 	adapter->key_api_major_ver = 0;
+ 	adapter->key_api_minor_ver = 0;
+ 	eth_broadcast_addr(adapter->perm_addr);
+-	adapter->iface_limit.sta_intf = MWIFIEX_MAX_STA_NUM;
+-	adapter->iface_limit.uap_intf = MWIFIEX_MAX_UAP_NUM;
+-	adapter->iface_limit.p2p_intf = MWIFIEX_MAX_P2P_NUM;
+ 	adapter->active_scan_triggered = false;
+ 	timer_setup(&adapter->wakeup_timer, wakeup_timer_fn, 0);
+ 	adapter->devdump_len = 0;
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+index 39f9bb49f83ff..60bdc6329d4a0 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -856,8 +856,6 @@ struct mwifiex_if_ops {
+ struct mwifiex_adapter {
+ 	u8 iface_type;
+ 	unsigned int debug_mask;
+-	struct mwifiex_iface_comb iface_limit;
+-	struct mwifiex_iface_comb curr_iface_comb;
+ 	struct mwifiex_private *priv[MWIFIEX_MAX_BSS_NUM];
+ 	u8 priv_num;
+ 	const struct firmware *firmware;
 
-Michal
+-- 
+2.39.2
 
---ajk7qmdwnuv6drcb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZsSFNQAKCRAt3Wney77B
-Sbe0AQCqKc678v6xKlFe6veLAdsc1gPRVpg9yKjZ3q02OmMDAAD+KpFdcpw2LANz
-Y88ecO/8A4H/9QQ8MQ4PqwfNql79bgA=
-=znwP
------END PGP SIGNATURE-----
-
---ajk7qmdwnuv6drcb--
 
