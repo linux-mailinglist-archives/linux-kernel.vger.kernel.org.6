@@ -1,158 +1,237 @@
-Return-Path: <linux-kernel+bounces-293158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EFD957B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:31:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC291957B77
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF241C239BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551A51F226FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A903BBE3;
-	Tue, 20 Aug 2024 02:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178345016;
+	Tue, 20 Aug 2024 02:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wvjQr1zw"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDiqdbHN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C74256D
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79749622;
+	Tue, 20 Aug 2024 02:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724121070; cv=none; b=dNq4H5gzZWSwZgmmCmwr1sDH2DL3foz/58i3xSGnaQYJfh8DQQmrp1NEcdCVPralSsTD1Q+obUZezyutDZhaMPkZCvEtjdbY5QKqGuROLdoj79dLRQBm1XQmoLSxIxXZMZXeLhy9ZGXG+1KiiShoXQ61M4ChEZevNW1xjjrnLkY=
+	t=1724121259; cv=none; b=tEviD8PJhSuJbokAq1eC0BLwsy2qDgOrzaEGEWUzhXWLdM3tTvHQnLEYxVOVp38h62RZ41SLK11TSos5i/OXXgFAWlQODUdSj8T0MQAAbuoyUY7c02nwiyn4PsS4YrhzA7OTU109YZ8arbMciZ/0MYR6JSig9cVOd+2r6dcV/tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724121070; c=relaxed/simple;
-	bh=X4pUZjFHh+atbmSEesDAN7m6L9U3ll3z6YtLoWj3i6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rp69RVCf1qrA/lUMsNuE4shuFfp5l5K19CRE7HRmWWpAJkgy+p5M3hz3XgBXRgFSSm4oDSt1GmQUjaK0JClrc4Hc/6JwZt6/0B5fgdYZUvptNbgayrH3ISjCnPRCVbqGYpK2SX+C1WYcXbGyxVomXb8eukr/diOqNVnmwhsxaHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wvjQr1zw; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4929540f38dso1622214137.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724121067; x=1724725867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7mqpoKCWyifK+ET7fuTv1wH7YXi6lhsgH+FAT7wqmTY=;
-        b=wvjQr1zwia54+m0+SqYPptO2s/VZkTgAG6o3VQ4AHp+aiIaZRgTH+bzd+wvlSXvb5I
-         htRzk9X/Z4+fZpAGMurIOXcA/ho5uDUQ1l1UhPENZA+LL2m0g85kqYoajkkJEfBclgCQ
-         DCXitIBTgI36WY6HyGHehWjrYevHzdAFFFAoVVMFEa+qMtLFY7bI+/GjyK21CIuevR1G
-         O+CNpPS0KzuIfw8HItl2gT6BJo5VGKEJHO9xKvsREaI4rW5Gq4RkO1dOk4OYOz89OSXk
-         qxdJdvqZ7vZBAu9ax7PHg0enfib9an0909skJopyfoJWzZEPmjU6dqi911PFujOYGb5t
-         TKGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724121067; x=1724725867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7mqpoKCWyifK+ET7fuTv1wH7YXi6lhsgH+FAT7wqmTY=;
-        b=JvZ3QAIuOqpkhiDZ8D586Gz7KV4tx57blcet6Ru7fcEINNwtilEcukaWWMUaulEtNT
-         /Alf7w1P66706LpxxmY03LEfQ8AVgUE3dVn5IHF/DcdiSawJ2LxdPB4YVMynle+os4tV
-         39wDhw3n9gVT8rv9kozVT8QwnnskCqPByRHBgsE+blR2ouMQnVfHdr7lN4G6BRoLdHgQ
-         CAT/WPkvyRQMMx2O/6KV3sHuEg3vii7uROLOENAOwDlEqNp4xQBgGJnFo2cO7pLbnBnC
-         1Y2sU74SOp1WFFppW5UuNElN1wQ43MpqZsZhMOoz+9ZQC7I+99v/WugQ3SnQDC7rmOHq
-         Iipg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcqBZJeAsqjMCRL7aNqTkQfblJNy38bvXfFFNd/uaL7AYZodCXo2JY5uNciMT+HNygW3N8xa3jbyrv3QBUealrE89+EhUYS9GaMpzr
-X-Gm-Message-State: AOJu0Yze65Qj1OB2c+KBcSxH5sTmcY1EMiQmoZkJ7mYKqJsUuGlhchlc
-	Fmr1Tt/VULUmV01A0RJczixB+WBySfBHQHuBJFf+KAuxa+yHgCcgxL/FfESoaA==
-X-Google-Smtp-Source: AGHT+IHWDxY8GbMwAR0OBZxPuRx2s09i/lQO0qS4xVPZvJ4y+H/lOztCfraZkvCHnXfID2a66CDHFg==
-X-Received: by 2002:a05:6102:6ce:b0:497:6bb5:3991 with SMTP id ada2fe7eead31-4977964b14bmr16623986137.0.1724121067302;
-        Mon, 19 Aug 2024 19:31:07 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::3ed1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fec5ea7sm48342336d6.88.2024.08.19.19.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 19:31:06 -0700 (PDT)
-Date: Mon, 19 Aug 2024 22:31:03 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	syzbot <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
-Message-ID: <9ff214a6-10be-414b-bf86-3757dd819243@rowland.harvard.edu>
-References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
- <0000000000009f6f85061e684e92@google.com>
- <51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
- <1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
- <2024081909-afar-trolling-2a67@gregkh>
- <20240819101358.77aea582@foz.lan>
- <54c7e42c-465b-42fc-9707-d848ae53a00c@rowland.harvard.edu>
- <20240819182456.5e13315a@foz.lan>
- <044260d2-4aa3-4937-9f5b-91e039a1df41@rowland.harvard.edu>
- <20240820011033.79312cb5@foz.lan>
+	s=arc-20240116; t=1724121259; c=relaxed/simple;
+	bh=EX7m7E4uVFpmQxuytLHn8Izj+uT6XzL1vKALGH1360A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=icS9o40H89OHJ8Bdd22Jg7d2hu8wLeja399HGNwS3MaUyEQVyWFMTjNKYZ+y4GJ+NV3nOIl68ZSNu99CtdUqVj3TnaJ4n0bQwGqg8AVixG4M37OGPnpSR81vZqBNGk0CajRHF0YMC13GXr9yNikIA7o+SrgYAjavrZbK8/xoc0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDiqdbHN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K2C282012421;
+	Tue, 20 Aug 2024 02:33:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NdvKqTI0IYHL1eLLYyhx4z9hi6k3a2+Z/kg0NhcHBQQ=; b=dDiqdbHNDfh0A2B2
+	7lcKjF3MXhfcotG6OaBzKeZoe7WZxVfzkm79PzCip8UaoCzPB9YLLlydhq7ZhFOU
+	xhgdFt8cipELYl7AaoRAT7wRs8y4xYjXdNmXVNzcfOK9d6evn2ejqfrfvj6ugDl8
+	jGiFdwxeNPgQs24oWUKuLRULkxucJDdBnJFub23pNnAuoSoa2h6eb0iTwflXrwlY
+	cpysxvpIFaGTZKiJZ06/YUekpzMq16Wq5CD43hniELuKbiuqKhd57R96+mQGr308
+	NYNy7RTmP4oAzOgpI4eMAtuIXsmOcIerUif6sdc/z5y8NguzGWc0RuoWojG/nozR
+	2/dpog==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414j5701bh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 02:33:50 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K2Xmw2030765
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 02:33:48 GMT
+Received: from [10.110.70.123] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 19:33:47 -0700
+Message-ID: <58043166-c494-42db-b7d3-575991e43e8b@quicinc.com>
+Date: Mon, 19 Aug 2024 19:33:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820011033.79312cb5@foz.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 29/34] ALSA: usb-audio: qcom: Add USB offload route
+ kcontrol
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-30-quic_wcheng@quicinc.com>
+ <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kHPYq0DIRqcezxG483IwCovOPnBE9jat
+X-Proofpoint-GUID: kHPYq0DIRqcezxG483IwCovOPnBE9jat
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 spamscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200018
 
-On Tue, Aug 20, 2024 at 01:10:33AM +0200, Mauro Carvalho Chehab wrote:
-> Em Mon, 19 Aug 2024 13:14:19 -0400
-> Alan Stern <stern@rowland.harvard.edu> escreveu:
-> > Currently the driver exports only bulk endpoints, even though it doesn't 
-> > check the endpoint type.  You can tell because the only routine in it 
-> > that calls usb_submit_urb() is smsusb_submit_urb(), and that routine 
-> > calls usb_fill_bulk_urb() before doing the submission.
-> > 
-> > Given this, I suggest merging the earlier patch submission from Nikita 
-> > Zhandarovich as-is.  If the driver ever evolves to include support for 
-> > isochronous endpoints, the probe function can be modified then.
-> 
-> I'll see if I can try his patch and see if device keeps working. The
-> logic indeed use endpoints in bulk mode, but I'm not sure if, for all the
-> BIOS files at drivers/media/common/siano/smscoreapi.[ch], the endpoints
-> are properly reported as bulk.
-> 
-> What happens if an endpoint is reported as ISOC, but the URB submit
-> is called without URB_ISO_ASAP? On a quick check, the code at usb_submit_urb()
-> seems to not complain about that.
+Hi Pierre,
 
-It _does_ complain if a driver submits a bulk URB to an isochronous 
-endpoint.  See the usb_pipe_type_check() function and the dev_WARN() on 
-line 503 of drivers/usb/core/urb.c.  (In any case, the URB_ISO_ASAP flag 
-is optional, so of course there is no complaint if the flag is missing.)
+On 8/1/2024 2:02 AM, Pierre-Louis Bossart wrote:
+>
+>> +ifneq ($(CONFIG_SND_USB_QC_OFFLOAD_MIXER),)
+>> +snd-usb-audio-qmi-objs += mixer_usb_offload.o
+>> +endif
+>> \ No newline at end of file
+> add one?
+>
+>> diff --git a/sound/usb/qcom/mixer_usb_offload.c b/sound/usb/qcom/mixer_usb_offload.c
+>> new file mode 100644
+>> index 000000000000..c00770400c67
+>> --- /dev/null
+>> +++ b/sound/usb/qcom/mixer_usb_offload.c
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/usb.h>
+>> +
+>> +#include <sound/core.h>
+>> +#include <sound/control.h>
+>> +#include <sound/soc-usb.h>
+>> +
+>> +#include "../card.h"
+>> +#include "../mixer.h"
+>> +#include "../usbaudio.h"
+>> +
+>> +#include "mixer_usb_offload.h"
+>> +
+>> +#define PCM_IDX(n)  (n & 0xffff)
+>> +#define CARD_IDX(n) (n >> 16)
+>> +
+>> +static int
+>> +snd_usb_offload_route_get(struct snd_kcontrol *kcontrol,
+>> +		      struct snd_ctl_elem_value *ucontrol)
+>> +{
+>> +	struct device *sysdev = snd_kcontrol_chip(kcontrol);
+>> +	int card;
+>> +	int pcm;
+>> +
+>> +	card = soc_usb_get_offload_device(sysdev, CARD_IDX(kcontrol->private_value),
+>> +					  PCM_IDX(kcontrol->private_value),
+>> +					  SND_SOC_USB_KCTL_CARD_ROUTE);
+>> +
+>> +	pcm = soc_usb_get_offload_device(sysdev, CARD_IDX(kcontrol->private_value),
+>> +					 PCM_IDX(kcontrol->private_value),
+>> +					 SND_SOC_USB_KCTL_PCM_ROUTE);
+>> +	if (card < 0 || pcm < 0) {
+>> +		card = -1;
+>> +		pcm = -1;
+>> +	}
+>> +
+>> +	ucontrol->value.integer.value[0] = card;
+>> +	ucontrol->value.integer.value[1] = pcm;
+>> +
+>> +	return 0;
+>> +}
+> see my earlier comment, should those two calls be collapsed to return
+> all the information in one shot?
+>
+>> +
+>> +static int snd_usb_offload_route_info(struct snd_kcontrol *kcontrol,
+>> +			      struct snd_ctl_elem_info *uinfo)
+>> +{
+>> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+>> +	uinfo->count = 2;
+>> +	uinfo->value.integer.min = -1;
+>> +	/* Arbitrary max value, as there is no 'limit' on number of PCM devices */
+>> +	uinfo->value.integer.max = 0xff;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct snd_kcontrol_new snd_usb_offload_mapped_ctl = {
+>> +	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+>> +	.access = SNDRV_CTL_ELEM_ACCESS_READ,
+>> +	.info = snd_usb_offload_route_info,
+>> +	.get = snd_usb_offload_route_get,
+>> +};
+>> +
+>> +/**
+>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
+>> + * @chip - USB SND chip device
+>> + *
+>> + * Creates a sound control for a USB audio device, so that applications can
+>> + * query for if there is an available USB audio offload path, and which
+>> + * card is managing it.
+>> + */
+>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+>> +{
+>> +	struct usb_device *udev = chip->dev;
+>> +	struct snd_kcontrol_new *chip_kctl;
+>> +	struct snd_usb_stream *as;
+>> +	char ctl_name[37];
+>> +	int ret;
+>> +
+>> +	list_for_each_entry(as, &chip->pcm_list, list) {
+>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
+>> +		chip_kctl->count = 1;
+>> +		/*
+>> +		 * Store the associated USB SND card number and PCM index for
+>> +		 * the kctl.
+>> +		 */
+>> +		chip_kctl->private_value = as->pcm_index |
+>> +					  chip->card->number << 16;
+>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
+>> +			as->pcm_index);
+>> +		chip_kctl->name = ctl_name;
+>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
+>> +				  udev->bus->sysdev));
+>> +		if (ret < 0)
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+Hi Pierre,
+> None of this looks Qualcomm-specific, shouldn't this be part of the
+> soc_usb framework instead of being added in the qcom/ stuff?
 
-Furthermore, if an endpoint really is isochronous but the driver uses 
-usb_fill_bulk_urb(), the transfer won't work at all.  URBs for those two 
-endpoint types use completely different ways of specifying their data 
-buffers and transfer lengths.  See the paragraph starting with 
-"Isochronous URBs have a different data transfer model" in the kerneldoc 
-for the definition of struct urb in include/linux/usb.h.
+Started working on this particular comment, and there are some things that needs to be considered if we moved this into SOC USB:
 
-> I would be a lot more comfortable if the patch were using just
-> 
-> 	if (usb_endpoint_dir_in(desc))
-> 	...
-> 	if (usb_endpoint_dir_out(desc))
-> 	...
-> 
-> or something like this (to accept both isoc and bulk):
-> 
-> 	if (!usb_endpoint_xfer_int(epd)) {
-> 		if (usb_endpoint_dir_in(desc))
-> 		...
-> 		if (usb_endpoint_dir_out(desc))
-> 		...
-> 	}
-> 
-> 
-> instead of calling usb_endpoint_xfer_bulk(desc) to check if type
-> is bulk.
-> 
-> I'll try to do some tests, but not sure when, as I'm traveling abroad
-> this week.
+1.  We do save the reference to the USB BE DAI link within the USB DT node, which can be fetched/referenced based on sysdev.  However, I'm not sure if everyone would potentially follow that way.
 
-Instead of going to the trouble of running a test, you could simply run 
-"lsusb -v" and check whether or not all the endpoints are bulk.
+2.  I tried a few implementations of adding a new SOC USB API, and the argument list was a bit long, because I didn't want to directly reference the usb_chip.
 
-Alan Stern
+Sorry for the delay, but I wanted to give a good stab at implementing this before bringing up the implications.  It is possible, but definitely not as clean as how we have it now IMO.
+
+Thanks
+
+Wesley Cheng
+
 
