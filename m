@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-294391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B391958D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79731958D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51771F24897
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:20:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6931C2256B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0F61C37BC;
-	Tue, 20 Aug 2024 17:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91DA1BE228;
+	Tue, 20 Aug 2024 17:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f05BM5sL"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R34Db0DX"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED90E1BE242
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7819EEC9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174391; cv=none; b=UuqqwnWGhP0ACObGGvtikKvpHP0S/76VG4UoFBGS4kwY0bjPx9I2RVVljmxnF6gqP8GZlgXlMjRg94U4iArfQHjh5tgUSko6dDmIk31d6zgI784xvABn6U6C/rmbAu4drqBo+65jU8Ckl+9JBddvlhIdhX9RB8XhIvBWWwdPKcs=
+	t=1724174575; cv=none; b=uSWqQXU/+oXtrahCCintSVtmduhE5kKUq4Q44mDeIHOQYtG5cjEviq20PmZmJD8FT5IfcWTT3gAYwW1/BuD/Ax0fQ13tmJUW546evBDgLDy339UKfyLCKuPpaoa3WaNZqJqbRwk/24xECY2/rA8amDh3hSNSXgxunSg8Va1dspI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174391; c=relaxed/simple;
-	bh=iDraRUjl5oL1xgN68Huw+NH/26MmOw5WLPqUrN6J8gU=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kwQdd0Umlg1IY+SM0WyId35jbXdTTaHCvU+k7m3RN0HxoYtZr0G2TR1kHcWADBBUxMmnHhDdCPvxpSD4zDd8RUU6hN102lj6dREcR6shY5D0dzQucOEJLx10O8y+NnSuvbmEgEZqPkHMY6u+Yc757XzwC6TxxxkWRa+fUkvZZRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=f05BM5sL; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a5074ebb9aso285046185a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:19:49 -0700 (PDT)
+	s=arc-20240116; t=1724174575; c=relaxed/simple;
+	bh=Yk067SnRDTB/yWZvQw5AoltCb9lkUfMXeEMYixaFhDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FEv8ciIJqOoG3noWWFLqeR47OeP8mz/j16OBe/HAjVWKAyidevOOk9Z+TsaazKnw85rTTqLZE6UW9RggwEESUK31EwwGr52b1ktKrz828fBUmQg9H2nhomAeHureF6w/EMcjce1fkViU7CjGT3NuzU108+k85OKBNjldmD+h3Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R34Db0DX; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bebb241fddso605a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724174389; x=1724779189; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TiyLbBScoOEAyh1b94eZlYoF11C+Y/bEKpA+kMzIp/4=;
-        b=f05BM5sLouj6DITyoyLhldpLXgcY/W5wtdqk33z9CH++3YW7A4x2V2GGDfVrioB6M2
-         EnkPgQAh09KIoZtD2Qiy/XCu1tFQ9qmmgwi+h+zZERCiowbCq14EqddOHAHEffWgWLHP
-         Hap23Jcnq9cQKrjjdpy3AdpUWVeMzLlmW5sws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724174389; x=1724779189;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1724174572; x=1724779372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TiyLbBScoOEAyh1b94eZlYoF11C+Y/bEKpA+kMzIp/4=;
-        b=EkQowdT4PVBTPL1JtxEpXUEtP4USEffnHVq+vVHE74CpSdMbD7k/s5zGd43wtFFzKs
-         L4e8/AjxuswnTFWhS5iPXg9eM6s+RpzXs5bUCHbV2Z1RSxzd1+TdusqO+H0tRLLZLVii
-         9ag1tt8TDzuQN8FdMPTpkKoqojEmpdkj0YnOiD1B+3Ap+crepxmVyyPe3VpzORPGlbxP
-         /wb9H0oaPCyzufVmEXt/8fakRss79acgKu5boOd6rvW8j0B+0RZ+x1wag9gBPUY+Eizt
-         tTlcDhB98Wt+eVS4+5eFW1HgtqbU04PsnQW2L1HRG6S/9gukIaWsdr12meb1HtG1FpIf
-         V8sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkMY5HLuZKpIudRtx0/ms/h3e7WVwf14VzVWdNwqEXFbwD3iis6wtQ8nb3oxOwRy4smu8atoDsi5+zbhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbkTKKcx8KCKWQeLKcSI+z6WnApJBrCJ/giOzyUv7iXTbCBozd
-	c+10PpvsGX/c1lq+bQdIGhbKlCzbISGBWRV3b2IAgnzSHNa3oEkSzKqpF+/Yynw2I85FyedfEzb
-	j6qnrKr91275I5u4+Wru++PYBK1968jk+efra
-X-Google-Smtp-Source: AGHT+IGvb1y8J9GbBVxSnRA9EXCz4Y2dTYC1BxL8SdlIGlM8BUVy3xXqhZZEkOLtGvt/v6Ls5degXKbKQR8XD+zhGss=
-X-Received: by 2002:a05:620a:2943:b0:7a3:49dd:2002 with SMTP id
- af79cd13be357-7a5069d5c63mr1695634285a.55.1724174388818; Tue, 20 Aug 2024
- 10:19:48 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Aug 2024 10:19:48 -0700
+        bh=T/1WG/9ldCtAUxEKSi+2OpNUvCL9Q6L1YzxrQLiosWY=;
+        b=R34Db0DXoE9il9XPwMR4eGxEgnmtotI7Eycc8RfswYB1hERV/3o6A9ziFSM6UEyGmC
+         kTwSHLUCfHtMHNjCX3TmRSOqOfp5Pf6akwc8Wn3rZZk2EwS8ccMbGmnDiTadTU1T48vA
+         74A3OgNo72Yw6lq28qaHKUc3lHE6VMGJrxDaLYXzKQ2EdfLr2V6pRuIDTuiPb5B70gwN
+         ltv2lAj/Yn+0k7OJX5YWsxL2EHhh0F/D5d8jCjAfpCNJlSY8+B7dxN5R0TFMdqNtJeKG
+         CiqXHzEv/a2lDqyEoNrjDH1ntftTaKZZk1yQNX8dUSxPZchvRyFTm8bsFcyK/jgphgfq
+         ZWgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724174572; x=1724779372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T/1WG/9ldCtAUxEKSi+2OpNUvCL9Q6L1YzxrQLiosWY=;
+        b=XkDb15nemo81a/iK8jv3kwulFt18DCw0mxWHh85Ro9tBJPVUlUHhdEdvf79hBoakJm
+         9hSMxJoqb5ZzFemjABr7SysjY56ahYM4Z2eDZI/6eBZZuJhOD5ZDnMWBr/dOOPpZQHZj
+         snHs/ixwcMrKcLe0wViSZ4xOqrbHHpMseX6nnZqJje2+1YCTErfBnlHSv97fML1Bk2u4
+         RC/+3I50pcc0m+7OrJSaDYTkT2f3Hq/j1eKhlHGF9oVYkkne97qrMjbk8p/pbum3qnNO
+         K9WVGtUsJCkaiP9SeqpkB/nv6wrse9cs8y0JbQneW73smRAUs8IcprqopCKtm/GNWT5a
+         wnYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvD+Je8P3I58ZCG2gfC+MB5penWLuJXSxCThT8/UAp1GAiiMjIDt1zpBfvLypanmy+gXXxhoBGbjMx5TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpvBxmeD2jNdMEyC29++6Bs6UzATAMDz3zUaT12HqqN8RSLA+8
+	duKeWZ7LTP/u+iggXQLYygVdT+faWS5wStI+rB6HIpFklvwMicvZ620t7hlc/lRKNpJk3M7HUlj
+	67ArkETeeQAupnTgORMTzCKTmfY0KiXf2leyv
+X-Google-Smtp-Source: AGHT+IHnzEjfKJoOP6zSpqnlVKYAp79gjJZtHxgxIKFwml3ILU+99PRFpoeiHBZGo2fYFeU5opRvNpd5SUSI7TMWSrI=
+X-Received: by 2002:a05:6402:35c4:b0:5be:9bb0:1189 with SMTP id
+ 4fb4d7f45d1cf-5bf0be0c727mr163175a12.2.1724174572142; Tue, 20 Aug 2024
+ 10:22:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZsTPeEsS1m4Y8imq@smile.fi.intel.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org> <20240819223834.2049862-6-swboyd@chromium.org>
- <ZsRs6d6uOMb4DqQQ@smile.fi.intel.com> <CAE-0n52O01UgrDT2=-JJpZj39BOJNyyQC4w_pgDUmKDmcN=8Yw@mail.gmail.com>
- <ZsTPeEsS1m4Y8imq@smile.fi.intel.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 20 Aug 2024 10:19:48 -0700
-Message-ID: <CAE-0n52FSUFictNQ9kotgFAZPYnJpy+3Ad__QeUN+EiJuBWGwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 05/17] usb: typec: Add device managed typec_switch_register()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>
+References: <20240819213534.4080408-1-mmaurer@google.com> <20240819213534.4080408-2-mmaurer@google.com>
+ <CANiq72k8UVa5py5Cg=1+NuVjV6DRqvN7Y-TNRkkzohAA=AdxmA@mail.gmail.com>
+In-Reply-To: <CANiq72k8UVa5py5Cg=1+NuVjV6DRqvN7Y-TNRkkzohAA=AdxmA@mail.gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 20 Aug 2024 10:22:39 -0700
+Message-ID: <CAGSQo03GVik5_yXFmCUnNUnPUwuwk-YFA0kqBd640PUjFOXcGA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] kbuild: rust: Define probing macros for rustc
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: dvyukov@google.com, ojeda@kernel.org, andreyknvl@gmail.com, 
+	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, aliceryhl@google.com, 
+	samitolvanen@google.com, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	glider@google.com, ryabinin.a.a@gmail.com, Nicolas Schier <nicolas@fjasle.eu>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Andy Shevchenko (2024-08-20 10:16:40)
-> On Tue, Aug 20, 2024 at 10:01:07AM -0700, Stephen Boyd wrote:
-> > Quoting Andy Shevchenko (2024-08-20 03:16:09)
-> > > On Mon, Aug 19, 2024 at 03:38:19PM -0700, Stephen Boyd wrote:
-> > > > +     ptr = devres_alloc(devm_typec_switch_unregister, sizeof(*ptr), GFP_KERNEL);
-> > > > +     if (!ptr)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     switch_dev = typec_switch_register(parent ,desc);
->
-> (Side note: wrong location of the white space)
-
-Thanks.
+On Tue, Aug 20, 2024 at 7:20=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 
 >
-> > > > +     if (!IS_ERR(switch_dev)) {
+> I had some feedback on v2 -- was it missed?
 >
-> (Side note: positive conditional is okay)
->
-> > > > +             *ptr = switch_dev;
-> > > > +             devres_add(parent, ptr);
-> > > > +     } else {
-> > > > +             devres_free(ptr);
-> > > > +     }
-> > >
-> > > devm_add_action_or_reset() ?
-> >
-> > No. We don't want to call the 'action' devm_typec_switch_unregister()
-> > when it fails because that would unregister a switch that has never been
-> > registered.
->
-> Hmm... With devm_add_action_or_reset() we first do things and then try to add
-> them to the managed resources. In that case it won't be like you described.
->
-> What do I miss?
->
+>     https://lore.kernel.org/rust-for-linux/CANiq72khUrha-a+59KYZgc63w-3P9=
+=3DDp_fs=3D+sgmV_A17q+PTA@mail.gmail.com/
 
-I believe you've missed that this is a wrapper around struct device and
-the error path is different (put_device() vs. device_unregister()).
+Sorry, I did miss that in the refresh. To respond to a few points
+before I send up a replacement for this patch:
+
+>>
+>> 1. `rustc` support will soon be a minimum rather than a pinned version.
+> In the meantime, this happened, so we should update this sentence.
+
+Will update.
+
+>> 2. We already support multiple LLVMs linked into `rustc`, and these are
+> I guess you mean `rustc` is able to use multiple major versions of
+> LLVM -- or what do you mean by "multiple LLVMs linked"?
+
+I meant that the `rustc` consumed by the kernel build may use a wide
+range of different LLVMs, including unreleased ones. This means that
+which options are valid fundamentally needs to be probed - there's not
+necessarily a clean "LLVM version" for us to use. I'll rephrase.
+
+>> +# $(rustc-option,<flag>)
+>> +# Return y if the Rust compiler supports <flag>, n otherwise
+>> +# Calls to this should be guarded so that they are not evaluated if
+>> +# CONFIG_HAVE_RUST is not set.
+
+>Hmm... why `HAVE_RUST`? Should that be `RUST_IS_AVAILABLE`? Or what is
+t>he intention? Perhaps a comment would help here -- e.g. something
+>like the comment I used in the original approach [1]. Otherwise we
+>will forget... :)
+
+Yes, this should be RUST_IS_AVAILABLE, will update.
+
+>Also, I guess you wanted to relax the precondition as much as
+>possible, which is great, just to double check, do we expect a case
+>outside `RUST=3Dy`?
+
+I expect this to be potentially used for whether you're *allowed* to
+set `RUST=3Dy` - for example, if a particular sanitizer is enabled, you
+may need to probe whether Rust+LLVM supports that sanitizer before
+allowing RUST to be set to y.
+
+>> rustc-option =3D $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(=
+RUSTC) $(1) --crate-type=3Drlib /dev/null -o .tmp_$$/tmp.rlib)
+
+>I also had `out-dir` [1] since, if I remember correctly, `rustc` may
+>create temporary files in a potentially read-only location even in
+>this case.
+
+OK, I will add that.
+
+>> Also, should we do `-Dwarnings` here?
+
+I don't think so - I can't think of a case where we'd want to error on
+a warning from an empty crate (though that may be a failure of
+imagination.) Do you have an example of a warning we might trip that
+we'd want to make the build reject an option's availability?
+
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
 
