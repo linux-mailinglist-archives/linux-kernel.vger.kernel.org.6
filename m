@@ -1,120 +1,205 @@
-Return-Path: <linux-kernel+bounces-293099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93FF957ACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:12:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59AA957ACB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C149B21E79
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9357B21DE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722451A29A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4DD18E20;
 	Tue, 20 Aug 2024 01:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cczUGS0P"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2E817BB7
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729F817BA4;
+	Tue, 20 Aug 2024 01:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724116306; cv=none; b=lf+NJDRPcVNXrQOiJAy5DgiUfXLYhjfMWTCMWtKievDIJKTnnNgFHW9HPdP2vVwQXLuf39oGQOxJUCeVXJRZ2zcNJ5EvnX8ZFVhO2y03vCWmiUqRptH+DW/RCBa+3UzILWdGdQAs1Wl1BbpFDuoVOcEd56Tss/4/93GAHNwDSHM=
+	t=1724116306; cv=none; b=eSU1eEgKPz19mnISbzVydsuXpRbOZIw879SXwRLpQTYwlUoB0CuKMN9GJ+LBKaIb7ZSVOs2pk7EZ/7pYruFjCz8Bh3nP7FTqVURqUpJC09EEoWlz0zz612TcH6Bb8r0YC4wUDdzTHLOl7mYti3Dd5jzo/TmvlvUE4PSLAjstqU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724116306; c=relaxed/simple;
-	bh=UwkZsnmFTogapUcvQLNdDygak09Kfc+DA1y61X4GWs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIcJ21TjhMkxSKV+4gyF48dB0SwuAAzkMGKgy9GIiGmqsxSTc0P8tf+zTEUIubl4LRkPPK987/8f/yrfxRPcKt4NQP22VgYwM/yjLNeX/mmcI+aQVjpvwkDb1ij1w1WxQmHpxmY3fXafYBPYEBARseP+zCJqo14UeeXBp9cuHoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cczUGS0P; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso41322725e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:11:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724116303; x=1724721103; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J5Wu1obaVVIh98VUfFJoSH8iTiA4TVMtHy8zZl6wgS4=;
-        b=cczUGS0PQ1YdekV7iQZDZrupLGd8gJ9vUdU+VlYz9RrJTiwOY9pQvBv1+pIfMZcExt
-         xf0Ruf54mw20BQMmtO/3WQyv7xzAcSv/uLlFJYD1F8K8bKIEmbfXTBy6vZurkxtKxxOM
-         Cq2uWazRamKZCwqiqRoUZaKvApZ2uK3nPlF5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724116303; x=1724721103;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J5Wu1obaVVIh98VUfFJoSH8iTiA4TVMtHy8zZl6wgS4=;
-        b=CnOWcVaibgrk493lGjUXq5I46RGeKhJOBracQCJ0a1YUlN1poBZ0VoA6u1WmHpKHqW
-         U+Ntl2DvQ4snCv/PCPruc8xOk7cOB80HNr+TfoPWVcFZz3KeSCGHCzEHUSeQWx5uxRFY
-         0OoXbC0NskpujKK1buJuo2/KueCy1KgRcQ/xwESvXNnEO2HRoloAeYVPasnzGqSloclb
-         XHFNj65IDUyl/v1ZlryqxMtd01isXnM+E0qUDI1mPl4F7XG+48AVTrUWKzlCTlg1aJEJ
-         IGHDju/Wwnm3fZJqPXIPHqUW+dlxKahg7drMvtMbs1SyfLW9OPFHN0Huq2a2psXbD9y8
-         NItA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCGFtgv8EfY+21JqS8m4yCn8NuUMR8nVOerRuVx1PhbEP2iRD5JKSxEW5xbn3fRoa0TDlDlejR0W1WWpexsll4SgcHhz0kQiKe0Ni5
-X-Gm-Message-State: AOJu0YwjV9KJx6mIfYR2IJ4bQ5xxbc/PWVUKQpwL9uADi/YXf3/S48JT
-	WXKwpdOBuC9m5s4BaumAMhqbdduxtRohkqRAxVPqBYnRE1Gx4omzKDQAmRuXWG3/EjPaPOzoanV
-	YyL9XzQ==
-X-Google-Smtp-Source: AGHT+IFVym/qXAQXDOTh2wZWa0k4JTrCHvw7ICpM9NdTFg3dfKRt7mktJDLs/+16+QibufOt6CV6vQ==
-X-Received: by 2002:a5d:6d05:0:b0:371:c51a:3b2a with SMTP id ffacd0b85a97d-371c5fa669cmr370498f8f.4.1724116302744;
-        Mon, 19 Aug 2024 18:11:42 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838393598fsm697076166b.133.2024.08.19.18.11.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 18:11:42 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so2300650a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:11:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJZeHphwTWxp61kdPp6pEs8YVVdYiTRCJ+XpFbc5krfLsV3OXtTfwZuXfMtixAjokqjC57oHthL5zU4QiIL71DkdWN4p4j8wFtpdDR
-X-Received: by 2002:a05:6402:1d50:b0:5b8:f69b:65e8 with SMTP id
- 4fb4d7f45d1cf-5bf0cfbca19mr536978a12.0.1724116301657; Mon, 19 Aug 2024
- 18:11:41 -0700 (PDT)
+	bh=PsuxMAX8J/7l3NI0wbCUoUCFs6y8KRCDwE0wk9yDH/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=trrkXrC7aTXTbtm+kg1jVf/vEgYm1hBCvUfkN2aNC8Wa1mMIRfeea1+snRCRLPXtrACQajn5eMR0V695HQlMlzu5UpfT9y331wZeigHbr9pMLUxu/a5elaZXzf1V397ebVaFJet4oQL4BxpEitFc+O3ZkyS9uimZz7rOcywCMcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wnrrx29Qxz2Cmnp;
+	Tue, 20 Aug 2024 09:06:41 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7D85B14022E;
+	Tue, 20 Aug 2024 09:11:40 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 20 Aug 2024 09:11:39 +0800
+Message-ID: <7e2bea25-4e9a-49a4-adcd-3469cbdf33e7@huawei.com>
+Date: Tue, 20 Aug 2024 09:11:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812082605.743814-1-mpe@ellerman.id.au> <20240819185253.GA2333884@thelio-3990X>
- <CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
- <20240819195120.GA1113263@thelio-3990X> <CAHk-=wgsDJ+sA1T01YT-z5TXs3zxJ54f0VDApkZ1pgcr8T=myQ@mail.gmail.com>
- <CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com> <20240819180548.9f5dac3ac0bd09a26c0d0948@linux-foundation.org>
-In-Reply-To: <20240819180548.9f5dac3ac0bd09a26c0d0948@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 19 Aug 2024 18:11:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiyxQMG7gK5d=_UEcHF2PV3EoCFrENEhRvJH9Qsk7cOeA@mail.gmail.com>
-Message-ID: <CAHk-=wiyxQMG7gK5d=_UEcHF2PV3EoCFrENEhRvJH9Qsk7cOeA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, 
-	linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu, jeffxu@google.com, 
-	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, npiggin@gmail.com, 
-	oliver.sang@intel.com, pedro.falcato@gmail.com, linux-um@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-hexagon <linux-hexagon@vger.kernel.org>, 
-	Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 2/2] xfs: Fix missing interval for missing_owner in xfs
+ fsmap
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
+	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
+References: <20240819005320.304211-1-wozizhi@huawei.com>
+ <20240819005320.304211-3-wozizhi@huawei.com>
+ <20240819184438.GR865349@frogsfrogsfrogs>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20240819184438.GR865349@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Mon, 19 Aug 2024 at 18:05, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> >
-> > I forgot to actually attach that "this". Here it is. For real, this time.
->
-> Thanks.  Do you think your one-liner remains desirable with this fix in
-> place?
 
-That patch actually removes the whole 'legacy_special_mapping_vmops'
-that my one-liner then removed the '.close' field from, so no - my
-one-liner just becomes a non-issue.
 
-NOTE! That patch of mine *will* conflict with Michael's patch series,
-since my patch to remove legacy_special_mapping_vmops was done on top
-of my current -git tree. But it should be an obvious conflict, in that
-it just means that the addition of .close never happens.
+在 2024/8/20 2:44, Darrick J. Wong 写道:
+> On Mon, Aug 19, 2024 at 08:53:20AM +0800, Zizhi Wo wrote:
+>> In the fsmap query of xfs, there is an interval missing problem:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+>>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
+>>     0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
+>>     1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
+>>     2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
+>>     3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
+>>     4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
+>>     5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
+>>     6: 253:16 [104..127]:           free space                          0  (104..127)               24
+>>     ......
+>>
+>> BUG:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+>> [root@fedora ~]#
+>> Normally, we should be able to get [104, 107), but we got nothing.
+>>
+>> The problem is caused by shifting. The query for the problem-triggered
+>> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
+>> unknown space in bnobt), which is obtained by subtraction (gap). For this
+>> scenario, the interval is obtained by info->last. However, rec_daddr is
+>> calculated based on the start_block recorded in key[1], which is converted
+>> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
+>> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
+>> <= info->next_daddr, no records will be displayed. In the above example,
+>> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
+>> are reduced to 0 and the gap is ignored:
+>>
+>>   before calculate ----------------> after shifting
+>>   104(st)  107(ed)		      12(st/ed)
+>>    |---------|				  |
+>>    sector size			      block size
+>>
+>> Resolve this issue by introducing the "end_daddr" field in
+>> xfs_getfsmap_info. This records key[1].fmr_physical at the granularity of
+>> sector. If the current query is the last, the rec_daddr is end_daddr to
+>> prevent missing interval problems caused by shifting. We only need to focus
+>> on the last query, because xfs disks are internally aligned with disk
+>> blocksize that are powers of two and minimum 512, so there is no problem
+>> with shifting in previous queries.
+>>
+>> After applying this patch, the above problem have been solved:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+>>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
+>>     0: 253:16 [104..106]:      free space                        0  (104..106)           3
+>>
+>> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
+>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+>> ---
+>>   fs/xfs/xfs_fsmap.c | 19 ++++++++++++++++++-
+>>   1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+>> index 3a30b36779db..4734f8d6303c 100644
+>> --- a/fs/xfs/xfs_fsmap.c
+>> +++ b/fs/xfs/xfs_fsmap.c
+>> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
+>>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
+>>   	/* daddr of low fsmap key when we're using the rtbitmap */
+>>   	xfs_daddr_t		low_daddr;
+>> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
+>>   	u64			missing_owner;	/* owner of holes */
+>>   	u32			dev;		/* device id */
+>>   	/*
+>> @@ -294,6 +295,19 @@ xfs_getfsmap_helper(
+>>   		return 0;
+>>   	}
+>>   
+>> +	/*
+>> +	 * For an info->last query, we're looking for a gap between the
+>> +	 * last mapping emitted and the high key specified by userspace.
+>> +	 * If the user's query spans less than 1 fsblock, then
+>> +	 * info->high and info->low will have the same rm_startblock,
+>> +	 * which causes rec_daddr and next_daddr to be the same.
+>> +	 * Therefore, use the end_daddr that we calculated from
+>> +	 * userspace's high key to synthesize the record.  Note that if
+>> +	 * the btree query found a mapping, there won't be a gap.
+>> +	 */
+>> +	if (info->last && info->end_daddr != LLONG_MAX)
+>> +		rec_daddr = info->end_daddr;
+>> +
+>>   	/* Are we just counting mappings? */
+>>   	if (info->head->fmh_count == 0) {
+>>   		if (info->head->fmh_entries == UINT_MAX)
+>> @@ -946,6 +960,7 @@ xfs_getfsmap(
+>>   
+>>   	info.next_daddr = head->fmh_keys[0].fmr_physical +
+>>   			  head->fmh_keys[0].fmr_length;
+>> +	info.end_daddr = LLONG_MAX;
+>>   	info.fsmap_recs = fsmap_recs;
+>>   	info.head = head;
+>>   
+>> @@ -966,8 +981,10 @@ xfs_getfsmap(
+>>   		 * low key, zero out the low key so that we get
+>>   		 * everything from the beginning.
+>>   		 */
+>> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
+>> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
+>>   			dkeys[1] = head->fmh_keys[1];
+>> +			info.end_daddr = dkeys[1].fmr_physical;
+> 
+> Another problem that I found while testing this out is that if
+> dkeys[1].fmr_physical extends a little bit beyond the end of what the
+> filesystem thinks is the device size, this change results in fsmap
+> reporting an "unknown" extent between that end point and whatever the
+> user specified as fmr_physical.
+> 
+> IOWs, let's say that the filesystem has 67G of space and 16G AGs.  This
+> results in 4x 16G AGs, and a runt AG 4 that is 3G long.  If you initiate
+> an fsmap query for [64G, 80G), it'll report "unknown" space between 67G
+> and 80G, whereas previously it did not report that.  I noticed this due
+> to a regression in xfs/566 with the rtgroups patchset applied, though it
+> also seems to happen with that same test if the underlying device has a
+> raid stripe configuration that causes runt AGs.
+> 
+> I think this can be fixed by constraining end_daddr to the minimum of
+> fmr_physical and XFS_FSB_TO_BB(dblocks/rblocks/logblocks).
+> 
+> --D
+> 
 
-               Linus
+Oh yeah, I missed that boundary condition. I will fix as soon as
+possible, and send the next version of the patch, thanks for reminding!
+
+Thanks,
+Zizhi Wo
+
+>> +		}
+>>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
+>>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
+>>   
+>> -- 
+>> 2.39.2
+>>
+>>
 
