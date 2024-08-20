@@ -1,197 +1,115 @@
-Return-Path: <linux-kernel+bounces-294112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A7E958959
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C959589D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA863B20F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:31:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F4C1F23472
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CE61917E1;
-	Tue, 20 Aug 2024 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DcN3D1xp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7195012E5B;
-	Tue, 20 Aug 2024 14:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD7191F94;
+	Tue, 20 Aug 2024 14:36:32 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FD7194AD5;
+	Tue, 20 Aug 2024 14:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724164272; cv=none; b=IS141ZKCurXKbLR+u7VIdxphYq/HZLesD4+alwOh3lxsBLHkbaIh0QPlzo88NpIeuI1CqV1ksC3FVLCIquTjTnERlP2u6Rnu5MaAXUcJbShsHRvCrGwcY+EJ9j2g44TabnqQlXW9bdCVh8O8kbC1ROOy9IIKfHxTY1mMFYEy4GY=
+	t=1724164591; cv=none; b=SJfjlwt2eFcrxTOJeTDHitF5KSgOmfF0Yjh+WRg/oC33X+VqfiZGWifr0QcXGca+vIEzSd/NR7TP8wZQPXB33gBPAQh/ZWbI3sGfg/B5eDTkcvA/uRg+CO/5zzKNesnzI7IshOgZKDmc4rdKMvW86vFYN9ntb+ULVIlaq2kDpVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724164272; c=relaxed/simple;
-	bh=Nx41brjKEDFFos0q0F3Oabrix0OEde0yAxnb5FLy4ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpQnLrkGzeqUfrbn929WXnpMOp399wUlmFSraS2wCalmC528kszZF+8MCMCSYK8zfIJMQTT2cGljtnc93Ri2p5qUt66lDJX1nsE6BAJZZbyW5IvlepkeguTusVr8t8JrRmG0t6dmF6jfYZRPI4aH9NPA2d9rPW5o2udlnYs6INw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=DcN3D1xp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id EA73A20B7165; Tue, 20 Aug 2024 07:31:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EA73A20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724164270;
-	bh=IoNKfxiL4MfdGcXY3hsvWv5FPlsBVMMfZLN/22/WZ6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DcN3D1xpI48X11un6qTVo2asl4kQHeOYsA7oaGwbBFl7ggX0G8pc7VD33oqTQAv+k
-	 IvwXBIgeEE8W9xSYPtnBcooJAMq7mqRfy8pFH3pNbQcGznv2w9fneF3fAH6ocg+86P
-	 keXJNAMOiGwPfCxJ8STlyuTO0taeLKTrc7kYs7yI=
-Date: Tue, 20 Aug 2024 07:31:10 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
-	yury.norov@gmail.com, leon@kernel.org, cai.huoqing@linux.dev,
-	ssengar@linux.microsoft.com, vkuznets@redhat.com,
-	tglx@linutronix.de, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, schakrabarti@microsoft.com
-Subject: Re: [PATCH net] net: mana: Fix error handling in
- mana_create_txq/rxq's NAPI cleanup
-Message-ID: <20240820143110.GA15699@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1724149347-14430-1-git-send-email-schakrabarti@linux.microsoft.com>
+	s=arc-20240116; t=1724164591; c=relaxed/simple;
+	bh=0GHqippeiQamqms57FKfMw79Fiop1ckSR5PqkLi4Obk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MODTIy8qifJ7RBZ0pgAesd/LTFtm+kw9CtBVPapXtewXdzCRJpU24UkaUsm1GkGBAoA7Ob5NkYlhzBRdvfGX7mpIzfo6E3ZxsWCStfkBzcGDje5rIoNmAfnTThvGaCdM5IfTXjQSQB8uPwtbBChttf86QN4SLkIa6VmZuCs6cc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: bizesmtpsz13t1724164420todr5a
+X-QQ-Originating-IP: 7Zwh8UpWNzORHh/2En8EIPPPOEnang4BltazsvZWHoc=
+Received: from localhost.localdomain ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 20 Aug 2024 22:33:38 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 18163658882374804807
+From: chenxiaosong@chenxiaosong.com
+To: linkinjeon@kernel.org,
+	sfrench@samba.org,
+	senozhatsky@chromium.org,
+	tom@talpey.com,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pc@manguebit.com,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	bharathsm@microsoft.com
+Cc: chenxiaosong@kylinos.cn,
+	liuzhengyuan@kylinos.cn,
+	huhai@kylinos.cn,
+	liuyun01@kylinos.cn
+Subject: [PATCH 0/8] smb: fix some bugs, move duplicate definitions to common header file, and some small cleanups
+Date: Tue, 20 Aug 2024 14:33:11 +0000
+Message-Id: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1724149347-14430-1-git-send-email-schakrabarti@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Tue, Aug 20, 2024 at 03:22:27AM -0700, Souradeep Chakrabarti wrote:
-> Currently napi_disable() gets called during rxq and txq cleanup,
-> even before napi is enabled and hrtimer is initialized. It causes
-> kernel panic.
-> 
-> ? page_fault_oops+0x136/0x2b0
->   ? page_counter_cancel+0x2e/0x80
->   ? do_user_addr_fault+0x2f2/0x640
->   ? refill_obj_stock+0xc4/0x110
->   ? exc_page_fault+0x71/0x160
->   ? asm_exc_page_fault+0x27/0x30
->   ? __mmdrop+0x10/0x180
->   ? __mmdrop+0xec/0x180
->   ? hrtimer_active+0xd/0x50
->   hrtimer_try_to_cancel+0x2c/0xf0
->   hrtimer_cancel+0x15/0x30
->   napi_disable+0x65/0x90
->   mana_destroy_rxq+0x4c/0x2f0
->   mana_create_rxq.isra.0+0x56c/0x6d0
->   ? mana_uncfg_vport+0x50/0x50
->   mana_alloc_queues+0x21b/0x320
->   ? skb_dequeue+0x5f/0x80
-> 
-> Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-> 
-> Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-> ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 41 +++++++++++++------
->  1 file changed, 28 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index 39f56973746d..882b05e087b9 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -1862,7 +1862,7 @@ static void mana_deinit_txq(struct mana_port_context *apc, struct mana_txq *txq)
->  	mana_gd_destroy_queue(gd->gdma_context, txq->gdma_sq);
->  }
->  
-> -static void mana_destroy_txq(struct mana_port_context *apc)
-> +static void mana_cleanup_napi_txq(struct mana_port_context *apc)
->  {
->  	struct napi_struct *napi;
->  	int i;
-> @@ -1875,7 +1875,17 @@ static void mana_destroy_txq(struct mana_port_context *apc)
->  		napi_synchronize(napi);
->  		napi_disable(napi);
->  		netif_napi_del(napi);
-> +	}
-> +}
-> +
-> +static void mana_destroy_txq(struct mana_port_context *apc)
-> +{
-> +	int i;
-> +
-> +	if (!apc->tx_qp)
-> +		return;
->  
-> +	for (i = 0; i < apc->num_queues; i++) {
->  		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
->  
->  		mana_deinit_cq(apc, &apc->tx_qp[i].tx_cq);
-> @@ -2007,6 +2017,21 @@ static int mana_create_txq(struct mana_port_context *apc,
->  	return err;
->  }
-I think the mana_cleanup_napi_txq() call should also be added in the out
-path of mana_create_txq(). Consider this, the napi enable for first few
-tx queue succeeds but if queue creation for any further SQ fails, we
-don't cleanup the napi's for previously successful ones.
->  
-> +static void mana_cleanup_napi_rxq(struct mana_port_context *apc,
-> +				  struct mana_rxq *rxq, bool validate_state)
-> +{
-> +	struct napi_struct *napi;
-> +
-> +	if (!rxq)
-> +		return;
-> +
-> +	napi = &rxq->rx_cq.napi;
-> +	if (validate_state)
-> +		napi_synchronize(napi);
-> +	napi_disable(napi);
-> +	netif_napi_del(napi);
-> +}
-> +
->  static void mana_destroy_rxq(struct mana_port_context *apc,
->  			     struct mana_rxq *rxq, bool validate_state)
->  
-> @@ -2014,24 +2039,14 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
->  	struct gdma_context *gc = apc->ac->gdma_dev->gdma_context;
->  	struct mana_recv_buf_oob *rx_oob;
->  	struct device *dev = gc->dev;
-> -	struct napi_struct *napi;
->  	struct page *page;
->  	int i;
->  
->  	if (!rxq)
->  		return;
->  
-> -	napi = &rxq->rx_cq.napi;
-> -
-> -	if (validate_state)
-> -		napi_synchronize(napi);
-> -
-> -	napi_disable(napi);
-> -
->  	xdp_rxq_info_unreg(&rxq->xdp_rxq);
->  
-> -	netif_napi_del(napi);
-> -
->  	mana_destroy_wq_obj(apc, GDMA_RQ, rxq->rxobj);
->  
->  	mana_deinit_cq(apc, &rxq->rx_cq);
-> @@ -2336,11 +2351,11 @@ static void mana_destroy_vport(struct mana_port_context *apc)
->  		rxq = apc->rxqs[rxq_idx];
->  		if (!rxq)
->  			continue;
-> -
-> +		mana_cleanup_napi_rxq(apc, rxq, true);
->  		mana_destroy_rxq(apc, rxq, true);
->  		apc->rxqs[rxq_idx] = NULL;
->  	}
-> -
-> +	mana_cleanup_napi_txq(apc);
->  	mana_destroy_txq(apc);
->  	mana_uncfg_vport(apc);
->  
-> -- 
-> 2.34.1
-> 
-> 
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+
+Fix some bugs in smb2_open() of smb server.
+
+In order to maintain the code more easily, move some duplicate
+definitions to common header file.
+
+By the way, add some small cleanups to the patchset.
+
+ChenXiaoSong (8):
+  smb/server: fix return value of smb2_open()
+  smb/server: fix potential null-ptr-deref of lease_ctx_info in
+    smb2_open()
+  smb/server: remove useless variable assignment in smb2_open()
+  smb/client: fix typo: GlobalMid_Sem -> GlobalMid_Lock
+  smb/server: update misguided comment of smb2_allocate_rsp_buf()
+  smb: move some duplicate definitions to common/smbacl.h
+  smb/client: fix typo: STATUS_MCA_OCCURED -> STATUS_MCA_OCCURRED
+  smb: move SMB2 Status code to common header file
+
+ fs/smb/client/cifsacl.h                |   58 +-
+ fs/smb/client/cifsfs.c                 |    6 +-
+ fs/smb/client/cifsglob.h               |    6 +-
+ fs/smb/client/smb2file.c               |    2 +-
+ fs/smb/client/smb2inode.c              |    2 +-
+ fs/smb/client/smb2maperror.c           |    4 +-
+ fs/smb/client/smb2misc.c               |    2 +-
+ fs/smb/client/smb2ops.c                |    2 +-
+ fs/smb/client/smb2pdu.c                |    2 +-
+ fs/smb/client/smb2transport.c          |    2 +-
+ fs/smb/{client => common}/smb2status.h |    4 +-
+ fs/smb/common/smbacl.h                 |   88 ++
+ fs/smb/server/oplock.c                 |   13 +-
+ fs/smb/server/server.c                 |    2 +-
+ fs/smb/server/smb2misc.c               |    2 +-
+ fs/smb/server/smb2pdu.c                |   24 +-
+ fs/smb/server/smb_common.c             |    2 +-
+ fs/smb/server/smbacl.h                 |   80 +-
+ fs/smb/server/smbstatus.h              | 1822 ------------------------
+ fs/smb/server/transport_rdma.c         |    2 +-
+ 20 files changed, 135 insertions(+), 1990 deletions(-)
+ rename fs/smb/{client => common}/smb2status.h (99%)
+ create mode 100644 fs/smb/common/smbacl.h
+ delete mode 100644 fs/smb/server/smbstatus.h
+
+-- 
+2.34.1
+
 
