@@ -1,112 +1,244 @@
-Return-Path: <linux-kernel+bounces-294254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBFA958B49
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:29:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C13958B4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 999D9B20F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3260A1F22268
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811121974FA;
-	Tue, 20 Aug 2024 15:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB59A19E7F5;
+	Tue, 20 Aug 2024 15:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoF2/Lbf"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdbVdOaY"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552BC194145;
-	Tue, 20 Aug 2024 15:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155C419599C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167714; cv=none; b=Z4F9RSme6OvXy1SMGA1ZnEPl69j7b5ZKrYy+6uvtmeICeNe5Vzrnu9bgkZKtoh/3IMRkwzw44VNbvBr2w74AGG9M/+3h58pcNVAa+H0X8eNyvg5mzDJA/FMDr8prK7TWeu71ycoU+UD/+dBxvv5tf0TWipjDYEkjhmkN5ccydY8=
+	t=1724167715; cv=none; b=FjKYKw60xafaJO+kjJrSyRmPCa3/VQA7L63ClACh0PMm7vf0EzDehYxEUdk0W6lahbqUUQtYfX64cpaQ68f2uTb3PU+NPGTzgkzNyEFZHOVRJkk1pAvjQ/WbZBXkdVtcgfDWFTqsPkvsc5rMRSfhfMsdZj6fyqc9USJgSR9FDEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167714; c=relaxed/simple;
-	bh=y5Ia15R1fE4O56YNp2nFk/C9bDA7ReCdChu+/M43J94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0cF85eyDsQOGJXJdhgFfkbDu+BcLgXT54DgZsvBZoQ5HwlHWBarKPlMeFC+2m33L8JfOtGEU5OC/sHFuK1IRgtOca1rNrMvNuTg6+gX7JUlL/i/1eE9srSfl1BGAN6CaUlvlmSdGQszv6ggNTKtTL91fWYa8xYQJAlaM15zRqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoF2/Lbf; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1724167715; c=relaxed/simple;
+	bh=9L6gWacdguIrHq4z9RfaKMaPlPWDG1RDwhNfkl3aRbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S+/nXkzXVFZxfVLWEgZlgP1IYgCstC1NnMKdlKKKOMkw1vGGUvt9eSSeNN1fVhuHK5sdfSUm7NFupiuPY4bmvZRRIdGUhydj5x781Vo1ectZtMZXxTqh3nYpT/ppy8LpJ1EGyxO9bp/0xpYX432E79EAGfKp5vYPkbJwl3XnFBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdbVdOaY; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bf784346b9so26116456d6.2;
-        Tue, 20 Aug 2024 08:28:33 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42808071810so45712105e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:28:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1724167712; x=1724772512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y5Ia15R1fE4O56YNp2nFk/C9bDA7ReCdChu+/M43J94=;
-        b=MoF2/LbfUBB9X2s7RCC42cs2uHIZYy3h4nk7t8Sn0S4ksMz/2AWFQKS/GE6oAxUA8c
-         ZhnUlyNRwwgfLFGaB5B7mYJtvXyqT01mDiyGD1Mowl5ZvXd/zSo97MGdcT1G0J2J+Lr1
-         rUAvHDZX9s3Yh9gQu/CvcSzrTrlvDIPrbHn9ZzTMky3vp840jnMF35QseKAF8SWNtrpr
-         lKav47U+x7cKCwrBODGwRtzT8Fxy/mi5TScnZlrUvjV741tookvQFBM8RemXZEqL68+Y
-         Cccj/40PPj9O9vnmeeBbWkEoIdhOD5V4ZxADxwmOkekCwrwAC4wGxGcs2fWt3XrkDyJI
-         UuIw==
+        bh=NIrlCuLTaxo8WrD54SgqcX7G7Cr01d8R61u5rpHn5/c=;
+        b=OdbVdOaYIYMPANRcJLn+PjWOSAVXBjBUkUtPiUasdZycISZb+cQEGfBwH/MJ6c/M/9
+         Qe3f7A40TAjn/Y8j5dpQ3B5QbsLB9IVYeAko75qANBpERq2dKbZzAyE6Xu9YPHkUWqNY
+         rTgtTPyImjuEEhxzfVY82NidXw9NHV/Ae+HnRHg481KZutkYlnQA3kEZqIVIGZ3vjQP9
+         oZIPCQA++gs3V9+9jj5CqGaiKC3p02b0JoS0i0LO9tl8qb0BmrliqdSAO2gCGbc8We5R
+         VCt+zq7DfCPUnp5UKyY/L0h+EL+vpCOpwmmHTZ3PwfCwEbBa5uZcLpv/or1lCC69C7mg
+         qG5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1724167712; x=1724772512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y5Ia15R1fE4O56YNp2nFk/C9bDA7ReCdChu+/M43J94=;
-        b=cJLJxbWd/J63ICbjN2mSTw+tTE1RBBXVy1VaQYonvKBS3esWLn4tmIOPKkxVEMzq6K
-         wxSG6JJ3BsmYsUQsfnakDrMCaPez2kP0NFJS6h6gxT/7xLNulourC8zzDMdGynfGSMuU
-         y2myQ+1bXUQ/M9nZarexs2AsQ/E1x+RPcp9PdcIBv50YijrUaqZ3PSNNW3S80r+xqCJE
-         fxWgYkcyUgiEYz6KMfJx3QYywUmMLpM8Q/3fV8vrVRZP+alttKoY+VKTRZadFjKMaqeC
-         NCiTzRiYQ6smyUwB7l+oYqEMWTzjOKETsuytFMyD5dgjq6m3Iuxb1iw9rTzKkZe+xv5C
-         v7Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAJ3lLqf/BGkj7NzAL2Ng1t06cYa1jk5fmd1xvVFC3cuJWdcHT1zCIrk6tT8ZszFcEUdhb+FtrxZyn2vRAYdKJpPqyx+R5LiHvVriVLW7UAQOGJuj4NuGPqUGamiqToRcBQAZGvg==
-X-Gm-Message-State: AOJu0Ywq+Oog27dEpd1fmUqfd+W7OqWkBQ09dZMk2pRUp27rC5qew5pO
-	LF7rHKOl28PbEmPLy5yzfd6fp8nrb2RYn1oY3xduif4+rLJsW11GXb6re+2kuzs9+gFaKUVGjG9
-	PWn4v/dAYo8uN1j24kwqFE7xMypg=
-X-Google-Smtp-Source: AGHT+IEqV9KEp2q8t9Yhwj+Novgkh6GlV2kQA5X+VhM+qBpbdD4m3xNHVA7TQ8IloKWoot40nDKdLpQ//xqy6n5FrqE=
-X-Received: by 2002:a05:6214:4608:b0:6bd:70ce:e413 with SMTP id
- 6a1803df08f44-6bf7cdef914mr179802206d6.30.1724167712113; Tue, 20 Aug 2024
- 08:28:32 -0700 (PDT)
+        bh=NIrlCuLTaxo8WrD54SgqcX7G7Cr01d8R61u5rpHn5/c=;
+        b=kzjnN98on6mlIfiYZKgvMAebZzqv/b1Ju4PAmfI2XRB+UqRdGKen6zqA73YWmI08Ra
+         XcsdFFmmrq/J3Lor7y+fXjNqD5VzveAT5lux3nZqWoejn2Crn3I4IY2wlrC9L3A0q8sR
+         RBvA6Zv39Mjsy+YZrp3hu3+SFLcLY/Aenw+Y+oAIgIH1bX8xR0o0YvmUy0y2ekdvds+S
+         YI/vUjQ5g/+EXGM1JMg7buzuwGsVRX8/dzGwUKcJgc0itTKurAHYTrr/Ilw05Lm36CfI
+         tHJZPBcm1WuN7ihTiHiegLBheICEEFD9mkK+YsvBQnEU4WYpesX9SbKin1s62t9QB+k5
+         CMBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKr4uD9cMFUwbqHTTx4VuoOmglZIZHNrikkqTRBHBHB2jgX4JZ8EGMfKpAu6Vtv65S3M35Nc/gORWLQJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsu5f6rn7I1Ah4oMrtwUDqaFCkfzIu0Ml2sR+5TWGRxgz0jIxd
+	KjwkjgLqYHqX7D4ZZ9CPb4ZJ3VpNjoJzmyDpnLDfejTj8ptZarQS
+X-Google-Smtp-Source: AGHT+IHO4jvxhy4/S0vM6+zR2P6ICxauJ/zzVFcxMqcuJAHZx/AE4Tk5M9bdXHdy1ayBxRFeUsewqg==
+X-Received: by 2002:a05:600c:4fc8:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-429ed7d1f39mr102340175e9.26.1724167711953;
+        Tue, 20 Aug 2024 08:28:31 -0700 (PDT)
+Received: from fedora.. ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded35744sm199720365e9.23.2024.08.20.08.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 08:28:31 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: airlied@gmail.com,
+	arthurgrillo@riseup.net,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	marcheu@google.com,
+	melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com,
+	mripard@kernel.org,
+	nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com,
+	thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH RFC 2/6] drm/vkms: Extract vkms_writeback header
+Date: Tue, 20 Aug 2024 17:28:28 +0200
+Message-ID: <20240820152829.2825-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240814-google-split-headers-v1-2-51712f088f5d@bootlin.com>
+References: <20240814-google-split-headers-v1-2-51712f088f5d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
- <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
- <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
- <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
- <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org>
- <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
- <CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
- <CAJD7tkaY3FsL-9YeDuVG=QtCK-dgm71EJ2L_T3KfGUa9VW_JkA@mail.gmail.com>
- <20240819180131.27b0ea66dd50b83c85102540@linux-foundation.org> <CAJD7tkY5u4vYRytMb+nuW3VhA9xHEPVux=vv_+k9oA1haFxa9A@mail.gmail.com>
-In-Reply-To: <CAJD7tkY5u4vYRytMb+nuW3VhA9xHEPVux=vv_+k9oA1haFxa9A@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 20 Aug 2024 11:28:21 -0400
-Message-ID: <CAKEwX=M-BDNNJo5-LXj3iR51BksH4t-fZhFDD4Kt_DvNqj7oUQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
- parent cg too
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Yuan <me@yhndnzj.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 9:07=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
->
-> It's commit 501a06fe8e4c ("zswap: memcontrol: implement zswap
-> writeback disabling"). It landed in v6.8.
->
-> I suspect there aren't many users that depend on the old behavior so
-> far, so I would prefer to get this backported so that it's less likely
-> that more (or any) users start depending on the old behavior.
+> The vkms writeback functions are defined in a different .c, so
+> make the same thing for the function declaration in the headers and create
+> vkms_writeback.h.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Agree - let's backport it then. In hindsight, I feel like this is
-already what users assume. We don't rely on the assumption internally,
-but at least one client of ours has asked for clarifications about
-this.
+Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+
+> ---
+>  drivers/gpu/drm/vkms/vkms_composer.c  |  1 +
+>  drivers/gpu/drm/vkms/vkms_drv.h       | 10 ----------
+>  drivers/gpu/drm/vkms/vkms_formats.c   |  2 +-
+>  drivers/gpu/drm/vkms/vkms_output.c    |  2 ++
+>  drivers/gpu/drm/vkms/vkms_writeback.c |  2 ++
+>  drivers/gpu/drm/vkms/vkms_writeback.h | 20 ++++++++++++++++++++
+>  6 files changed, 26 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index f0cae142ac22..825011f696ee 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/minmax.h>
+>  
+>  #include "vkms_drv.h"
+> +#include "vkms_writeback.h"
+>  
+>  static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
+>  {
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 0db443924a15..46daa2fab6e8 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -46,13 +46,6 @@ struct vkms_frame_info {
+>  };
+>  
+>  
+> -struct vkms_writeback_job {
+> -	struct iosys_map data[DRM_FORMAT_MAX_PLANES];
+> -	struct vkms_frame_info wb_frame_info;
+> -	pixel_write_line_t pixel_write;
+> -};
+> -
+> -
+>  struct vkms_plane_state;
+>  
+>  
+> @@ -225,7 +218,4 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
+>  void vkms_composer_worker(struct work_struct *work);
+>  void vkms_set_composer(struct vkms_output *out, bool enabled);
+>  
+> -/* Writeback */
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> -
+>  #endif /* _VKMS_DRV_H_ */
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 5ab84801d8da..cbfa7943e948 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -11,7 +11,7 @@
+>  
+>  #include <kunit/visibility.h>
+>  
+> -#include "vkms_drv.h"
+> +#include "vkms_writeback.h"
+>  #include "vkms_formats.h"
+
+Nit: Keep sorted alphabetically
+
+>  /**
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 36db2c8923cb..0c55682337a4 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -5,6 +5,8 @@
+>  #include <drm/drm_edid.h>
+>  #include <drm/drm_probe_helper.h>
+>  
+> +#include "vkms_writeback.h"
+> +
+>  static const struct drm_connector_funcs vkms_connector_funcs = {
+>  	.fill_modes = drm_helper_probe_single_connector_modes,
+>  	.destroy = drm_connector_cleanup,
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index 7e0302c0830c..4a830a4c4d64 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -10,8 +10,10 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_gem_framebuffer_helper.h>
+>  #include <drm/drm_gem_shmem_helper.h>
+> +#include <drm/drm_framebuffer.h>
+>  
+>  #include "vkms_drv.h"
+> +#include "vkms_writeback.h"
+>  #include "vkms_formats.h"
+
+The same here
+
+>  static const u32 vkms_wb_formats[] = {
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.h b/drivers/gpu/drm/vkms/vkms_writeback.h
+> new file mode 100644
+> index 000000000000..70f0c4c26c23
+> --- /dev/null
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +
+> +#ifndef _VKMS_WRITEBACK_H
+> +#define _VKMS_WRITEBACK_H
+
+The style for guards used in the other files is:
+
+#ifndef _VKMS_WRITEBACK_H_
+#define _VKMS_WRITEBACK_H_
+
+> +
+> +#include "vkms_drv.h"
+> +#include "vkms_formats.h"
+> +
+> +struct vkms_crtc;
+> +
+> +struct vkms_writeback_job {
+> +	struct iosys_map data[DRM_FORMAT_MAX_PLANES];
+> +	struct vkms_frame_info wb_frame_info;
+> +	pixel_write_line_t pixel_write;
+> +};
+> +
+> +/* Writeback */
+> +int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> +
+> +#endif //_VKMS_WRITEBACK_H
+
+And here a /* */ comment is used:
+
+#endif /* _VKMS_WRITEBACK_H_ */
+
+Best wishes,
+Jose
 
