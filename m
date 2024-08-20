@@ -1,89 +1,150 @@
-Return-Path: <linux-kernel+bounces-294619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD6895904A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:12:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0A95905C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B50CBB20F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB11F21D3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB761C7B78;
-	Tue, 20 Aug 2024 22:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A458E1C68BF;
+	Tue, 20 Aug 2024 22:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLgU1H7P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+t6rd8t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72E51E86E;
-	Tue, 20 Aug 2024 22:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D896929D19;
+	Tue, 20 Aug 2024 22:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724191934; cv=none; b=MJouwE1kx5X6dJfIaZNvbvOF72WUQf+DUqiWtI+Iqv5Kb1t6o4wa8vQQ8Ec0zrCBmquKdT2kZgoVF4uwWuxCGXd6BmZ/gZQlC3ZxMQRr5rxhEQzuW9yId5sA4tfA6v00x18s0++xZoyALoI8nJnP1CjpmGTSiwyEnN5z0wwh3oM=
+	t=1724192132; cv=none; b=pKQBLL2YWg/yTVxgvigoaGDG34rYcrdKeawfuhXZGwWPyGLltGCvZzjCqy1laALlYZwcMoAmFlGLWllbe5EBY8cAbKAJdwfTI6jtiLJ+u6pJR8YchWEJ1IBFM7jENe1yoF2L/lotEOCz2gxkOh1vq2/fgui94NW4ArmzeTfvRZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724191934; c=relaxed/simple;
-	bh=TzKsLBDdEU6d0Kd346qtlGqwFuT28InRvFRbMnitnVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NmN/ioBh6NAOKfNLye6f8Cd1ooIR4j0fdOVMijc8H7Z5IYRwu05jnCjrYWc0DQ2PphKpjNIWMCKJsa6Mu/rqDAdujpjZtUAPHvWdG8W6RA8+jlgEnmW1tehMajvgeDn6h0a1OI36Igj1KtbGDmVFa24aAG5rZvKbcyEz1Heejeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLgU1H7P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A127C4AF0B;
-	Tue, 20 Aug 2024 22:12:11 +0000 (UTC)
+	s=arc-20240116; t=1724192132; c=relaxed/simple;
+	bh=goPlmJcLq9q5J/ImjfipoY5mwvvKZvMhSe5xf5G422M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGL/ijcurcjVbq4BWb2HFn8UH0mtGDUsk8anuI4wbJbNka1wMWMw/9kiv6EC2vJBgxKbhuwoJe+OECe3I1KiwRJ3dXuZMMKWmCw4zQwTncoBqp5zR0CyAndrCFjz5ifrA7f60yTFnCL2yyUnXcqphlf+jv1+bjI8bwrkXMBIt2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+t6rd8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1C9C4AF09;
+	Tue, 20 Aug 2024 22:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724191933;
-	bh=TzKsLBDdEU6d0Kd346qtlGqwFuT28InRvFRbMnitnVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RLgU1H7PsO41ImQ+YvqiX2vvvzM2mB1um6vV8r06hG0l2lNYJVOfytShNjchPz+9v
-	 VUdueqTpCcFrzITeziKXnBCW4WFpk1c/pqzd8kQsb6Uxc+gAwtZUiln58rn8EfpkYG
-	 oE2SoZfrAlg02eH8d4mBjp5ajigbI9uM0L2E/rkfZlxbCVd5EynfMjNyDo5XdXt14r
-	 LoG9aNOWS72NR8hktt7sJpIv6FoK75sD5pppwn1YYNlX3nXXXOgfNhe1xqoW8SjHAz
-	 Ax+gd/AQAFEtKHqeh1tWSEWHJENXH7xJ4agbygPJNhjngUDfdwzHoeKCQu8mWjsUY7
-	 +jRIB+o5HInxw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Amol Maheshwari <amahesh@qti.qualcomm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Tengfei Fan <quic_tengfan@quicinc.com>,
-	Ling Xu <quic_lxu5@quicinc.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: (subset) [PATCH 1/2] dt-bindings: misc: qcom,fastrpc: document new domain ID
-Date: Tue, 20 Aug 2024 17:12:07 -0500
-Message-ID: <172419187794.1319438.12108857589542156264.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240816102345.16481-1-brgl@bgdev.pl>
-References: <20240816102345.16481-1-brgl@bgdev.pl>
+	s=k20201202; t=1724192130;
+	bh=goPlmJcLq9q5J/ImjfipoY5mwvvKZvMhSe5xf5G422M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p+t6rd8tAM5N9tkBqJCe3hG9rdTUZjXZX0jjEintBG7xQfasHV4kQAaLYeEOY8s4d
+	 hGCLyZt1vJYtQQ/+/vj5iM0UmU82f5L5MMnjv6iJsS40wru/iXD/eziUz9yv6mxiaF
+	 AHOteuZnkKeO9dUOOOsKjszZTHGhLo9Ym4VvnB1FZVsjKLbR7Ae5xlIl0KOuvDiG9r
+	 ThlWGZ1G1EpwP6wGrfVADr/GXc1GE8xDLfha5cnqKMegLcklIuqiUk7IMX2VWQzrne
+	 M1Aj8ouK1XgDsynU0mWDzUdxpFy0LnD2tMtMrPU6OrRnS1AWkG0QtENndG6LcDxcVF
+	 OZT5MGdgcToWA==
+Date: Tue, 20 Aug 2024 15:15:28 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH 1/1] Documentation: kbuild: explicitly document missing
+ prompt
+Message-ID: <20240820221528.GC2335251@thelio-3990X>
+References: <20240820171000.1656021-1-stephen.s.brennan@oracle.com>
+ <20240820171000.1656021-2-stephen.s.brennan@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820171000.1656021-2-stephen.s.brennan@oracle.com>
 
+Hi Stephen,
 
-On Fri, 16 Aug 2024 12:23:44 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Aug 20, 2024 at 10:09:46AM -0700, Stephen Brennan wrote:
+> There are a few lines in the kbuild-language.rst document which
+> obliquely reference the behavior of config options without prompts.
+> But there is nothing in the obvious location that explicitly calls
+> out that users cannot edit config options unless they have a prompt.
+
+Sure, I think the mention of "non-visible symbols" plus "no prompts
+anywhere" in the select section is both a little cryptic to people who
+are not pretty familiar with Kconfig and slightly disjoint from the
+prompt section, so some clarification and expansion would not be a bad
+idea! I do have some suggestions for the wording below.
+
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
+>  Documentation/kbuild/kconfig-language.rst | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Add "cdsp1" as the new supported label for the CDSP1 fastrpc domain.
+> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
+> index 1fb3f5e6193c3..8e9306b599cd3 100644
+> --- a/Documentation/kbuild/kconfig-language.rst
+> +++ b/Documentation/kbuild/kconfig-language.rst
+> @@ -54,40 +54,43 @@ applicable everywhere (see syntax).
+>  
+>  - type definition: "bool"/"tristate"/"string"/"hex"/"int"
+>  
+>    Every config option must have a type. There are only two basic types:
+>    tristate and string; the other types are based on these two. The type
+>    definition optionally accepts an input prompt, so these two examples
+>    are equivalent::
+>  
+>  	bool "Networking support"
+>  
+>    and::
+>  
+>  	bool
+>  	prompt "Networking support"
+>  
+>  - input prompt: "prompt" <prompt> ["if" <expr>]
+>  
+>    Every menu entry can have at most one prompt, which is used to display
+>    to the user. Optionally dependencies only for this prompt can be added
+>    with "if".
+> +  If a prompt is not set, then the config option cannot be changed by the user.
+
+Would "not present" be cleared than "not set"? It might also be worth
+calling out here no prompt means a "non-visible" symbol since you
+brought up the document brings that term up and does not really tell you
+what it means.
+
+Perhaps something like this might be just as clear while being
+consistent with the terminology? Feel free to disagree though!
+
+  If a prompt is not present, the config option is a non-visible symbol,
+  meaning its value cannot be directly changed by the user (such as
+  altering the value in ``.config``) and the option will not appear in
+  any config menus. Its value can only be set via "default" and "select"
+  (see below).
+
+> +  It will not appear in any menu, and even edits to ``.config`` cannot alter it.
+> +  It can still be set via "default" and "select" (see below).
+>  
+>  - default value: "default" <expr> ["if" <expr>]
+>  
+>    A config option can have any number of default values. If multiple
+>    default values are visible, only the first defined one is active.
+>    Default values are not limited to the menu entry where they are
+>    defined. This means the default can be defined somewhere else or be
+>    overridden by an earlier definition.
+>    The default value is only assigned to the config symbol if no other
+>    value was set by the user (via the input prompt above). If an input
+>    prompt is visible the default value is presented to the user and can
+>    be overridden by him.
+>    Optionally, dependencies only for this default value can be added with
+>    "if".
+>  
+>   The default value deliberately defaults to 'n' in order to avoid bloating the
+>   build. With few exceptions, new config options should not change this. The
+>   intent is for "make oldconfig" to add as little as possible to the config from
+>   release to release.
+>  
+> -- 
+> 2.43.5
 > 
-> 
-
-Applied, thanks!
-
-[2/2] arm64: dts: qcom: sa8775p: fix the fastrpc label
-      commit: b45af698d5114f9b666c7d8b58a9111d0526d7f7
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
 
