@@ -1,203 +1,406 @@
-Return-Path: <linux-kernel+bounces-293590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB20E9581B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:10:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F799581AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5851F22006
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:10:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D24FB2133D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E70916C68F;
-	Tue, 20 Aug 2024 09:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="XRomcEdr";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="RASWZ7OU"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBE218A95C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C351891A4;
 	Tue, 20 Aug 2024 09:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.154.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145022; cv=fail; b=WoFdJ3heW3mJ2CFFxNg8dKGwaZBY/oQupIK1lKhWtY/rLXkhJb8Ph9Feioa22+VcNvk9Bz1iBEpZshPxIwtLNkdRvg9R+OBIxszV+JezbvzOWA4/gbmfYslmPnuJnNKKV60MAD42digggAei+DELbte9LaHGTxWzJkULZUfE3HI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145022; c=relaxed/simple;
-	bh=bLEGcl+1h2lDOd8iwXce9GrYKYHQwrSsZj04CG+B1JE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ma+iup3dvtVXHG83D5gnd9xuD62SkM75ZZrtIzDd+dD6FHEmS1trRa+k66+wjzNnp3TkJye312TTVEJI8tgq20CLL+ljvfcpOECinf8DozQBuQf3n9tkeqdfUpcWxmvSzZG2rdVfIVcV+FnS+9Kt2y2x7lfuq83xHR9ggou+t4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=XRomcEdr; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=RASWZ7OU; arc=fail smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1724145020; x=1755681020;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bLEGcl+1h2lDOd8iwXce9GrYKYHQwrSsZj04CG+B1JE=;
-  b=XRomcEdreG3+CUK+aSIf2mgUTwo8QfhuGSy/I/sxpLEJvta5qNHmW7Eo
-   24AEYgT90bx8VmcKkKbI4STp9hvA9Ajizo5XM/CQMY8ylA1FtFlg90zZe
-   k2dHRaxf7H7cXj1yiy/RrAnMhtvz1AhK70d4KGbMyomPCyKVO0SXPawdO
-   nBpUPoDBrLybaJ0fkRBawcdXZOZ6izEKrh9lD/+gKK7v3ysz12fgLhKqL
-   ScZcrJh4L0dojSbsHuZvH3j7l97y71Ac3ajy7RfqQSFMs3u7h8RC1vWwB
-   NzAQB1Z7wWNbNjVFDElTagp+IxMeyQspd39tGRNHjHyYJoa4OtwUM0X6u
-   Q==;
-X-CSE-ConnectionGUID: +wQl8/DEQiK2O0++sDK69A==
-X-CSE-MsgGUID: Bqki65XcQWK57NB/D5NZaA==
-X-IronPort-AV: E=Sophos;i="6.10,161,1719849600"; 
-   d="scan'208";a="24088076"
-Received: from mail-northcentralusazlp17010004.outbound.protection.outlook.com (HELO CH1PR05CU001.outbound.protection.outlook.com) ([40.93.20.4])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Aug 2024 17:10:13 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eP2/dfRaLnAJD4ASy3w63pNcLosSPZ+87h2Q2jI9Ta85BTonXJw60vt16s2mOmrTj6LtLwEOKoDC3Q+ftoQO/Prd/Fgz+ZfnWcN1Z8QVozhyWObSe1l3Obya+D/sia9cN1JrzkuO0E5bqgWgObsTxy9/Pcl2VRtLSdSQKkmGqdFITT7hmYskoQsrK8kE+Y2k2quEB18CUI2SdDaJgQxrIzx4rTW6slFdmZsnohHTfHboHiFzIiC5wQ7vvuSodadQVtlgQWwf/nrzcQZDMMjtJRB8s3a2pltTQZw89B7is4/tC6Nm9cG/XqAtoaRP/7XmIqM4lkU3ISVQ+qqWQZhouA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bLEGcl+1h2lDOd8iwXce9GrYKYHQwrSsZj04CG+B1JE=;
- b=dGqyi9+11ifbr+YAp4quHl3TNPUVASYxnRE0S/xuGFlpnZ/unmpQkl8EqHxLoTIt6vnZVAcp8ChxSn99grrKYIPPleYEGbqXcQTVlQiEmN8TDX2/v+1iGTGilPLs4ARKLB86nz2kbWgAhN/kIHIZEwNYBHdR8UnqNf50igtg5+DGdhdNgWeAxGkC65dtrW/KbvD0Jj6HNz2u4b+hlORZwHSZi6nyasT4adBasHJthq8xtVGq5zBkgTxY8HhrMWwbM22iXOntpvcAVy/lTayNutyFaEcXU6/DK6yTejMyRZ9wcmfGnFYeFwe+bsmze5v+s17BGXYSyo53IxK7jNQRxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBCDTqYU"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBB218A948
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724145018; cv=none; b=dAXB1CsR/FNgxR1lrqS+4HXt9Kc0cJ2ApD4Re8KvazOr8gkl+nYJ/SRRY75gJjNR5iRuafUaIkT1HF4Bo3z1pYL8MAGA1Dw040qBWtH5fjQQJFTFKAkhRszCH3qsmPQoX+dYDTOaIJ6yKP03HIjGI4aqnd7I3WES6HkOl4S2fNY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724145018; c=relaxed/simple;
+	bh=MeAFzOudED/dB6xJk9oAfNPO9VFmDtdycOOtf0e39Vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OF/jx1kqtiWjdth26l+ifnOmH9tbjE69D7zQy9s7RGJeBpBrssorA6Ajek2zrzxrpx/PP0cfX2jeiC871LcYjJJJwcfb4xmjSqvkOFMWUqAIE1+sUbT3+sdXzDTfdsrpwPOzAAsr+KiKT2ZOAhFVDyN5xBxYn3hanww5vxFfp6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBCDTqYU; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42ab99fb45dso3254905e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bLEGcl+1h2lDOd8iwXce9GrYKYHQwrSsZj04CG+B1JE=;
- b=RASWZ7OUwNAmC3YWmgsAvY4gbrgUp5R7mrzQDW93/ONX3XHW7uiBu3V2vyfXy/X3p3Jz/JPCGoqYrbn+pqMkARUEfDgbLYpy9Ujh8NL/bs/iszDa7Hr5cCtRfuLYvPmErIgOrBrhpTf41I4k+u2DVJL20w1Tgkc5ic3fbUpUjn0=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- CH2PR04MB6759.namprd04.prod.outlook.com (2603:10b6:610:a2::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.21; Tue, 20 Aug 2024 09:10:08 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f%3]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 09:10:08 +0000
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: ufs: Move UFS trace events to private header
-Thread-Topic: [PATCH] scsi: ufs: Move UFS trace events to private header
-Thread-Index: AQHa8rV5h+ucFfkuyUCmQ2xlw2JJ0LIvr4CAgAAsfUA=
-Date: Tue, 20 Aug 2024 09:10:08 +0000
-Message-ID:
- <DM6PR04MB6575B2E4649561213A15C253FC8D2@DM6PR04MB6575.namprd04.prod.outlook.com>
-References: <20240820035826.3124001-1-avri.altman@wdc.com>
- <5f5d42a2-4c6f-4e8d-806b-c802c1881cde@wdc.com>
-In-Reply-To: <5f5d42a2-4c6f-4e8d-806b-c802c1881cde@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|CH2PR04MB6759:EE_
-x-ms-office365-filtering-correlation-id: 19927bb7-427f-4f5d-2e08-08dcc0f7e359
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Y0x2Z1BhcFNlbkVic2ZwL1NrUlVOZVhDMFRjK2JWRmcwM0EvMW9iS2N6RmVp?=
- =?utf-8?B?QXBhRk9uWUt0WXZJZEdncUpPVlNRR2txbVk4UitXOWlJTW54MG9aQXhxYis0?=
- =?utf-8?B?TDhNVEx5dHZHdXFzR2NWcUJoNFBpeWozWGdxc21ncG1qdjZtNFY2RWIrQ284?=
- =?utf-8?B?RUJ0K0tmcnlocGVHS1BWSGxqZmx6NlpXczNrSFd6VXFrN1NGYWUrT0ZFWTI0?=
- =?utf-8?B?aDA5NmZCYXVHQXdDOTk4aEZBaThITGlaRnRMQmFVUk1uR2o4akVjN21LVjJQ?=
- =?utf-8?B?OFIxdCtSbkJwL0NFei8vTFQ1RW1jTGpoMlJka01DRDg3RnY4R21sQnZsVUkz?=
- =?utf-8?B?cnpobFZrZjAzeTFXMDhhU2I3WElWcjJ5QnRuQmxqMnZGd0s5VEpQSkZ5N3l0?=
- =?utf-8?B?OTR0UGl2bjNRdTNpc2RBTnAwMUVydmd1dXN0QUYxQVdzWE15QkRrMzRNeHF1?=
- =?utf-8?B?QlI0QmROVmN1SHNkbTQvWmQ4Y05JdEU2VWthMTNpODBxOE5rY3RSc2ZtV3J6?=
- =?utf-8?B?ZmxQdDdqdmhRMU9XSFJ1a2NnVlpXMXpOeERxT1BvdFptdjdQYXlubHhPS3lQ?=
- =?utf-8?B?VEZNYWJGT2ZoS3JVTEZKS2dNM1p4VkVsNkhHL21xNk9DYUU3WTFJR01GQTZ5?=
- =?utf-8?B?SVlPeGUzbVB3bXkzTnNsem96ZDBVYlAyeGE1RDBBWDBGelgvcDFmMGprK29w?=
- =?utf-8?B?MjIrcmtXTGNTd0pKbksvcW1aSS9mKytpQ3ZFZHZtS1BncHUzTnBmc1pTbE5K?=
- =?utf-8?B?dVV4YmVXMFd5Z3BranYrbW1meE9yWXlab2RUMEl3YWhxVkp1Zm1LWmVYRUVR?=
- =?utf-8?B?aWY5VVRjTzVIK2RsUTRoWVFFSzJCNGEvb2h2aXpySllZWVM1K0V0cmU4U05Z?=
- =?utf-8?B?alRQVFYydEdBeTU1Z2VqczFUdmtDUjQyNG1xVHJwRTczU0gySUwrWStiKzZ4?=
- =?utf-8?B?ZWc2MGphamFwaUpuY2JGVmUxMWdQWEtwUWVRSHBndVZqMGYyWXpXc21rRzBT?=
- =?utf-8?B?WllBdUxaV0kzU1h2ZTVCc1F2aEQwb1J0U01SMkR0ZGtUT3NVWUZzdmpZNFJF?=
- =?utf-8?B?all4NDhFOWlrcjdoSVBqWGFwQ2RMQk82Rk4xek5rQ1lBTzY0V0w2aWJHeWhn?=
- =?utf-8?B?cHpISmpXaXBTN3hTcTc5MllYOWhSd0dXTExoYmZZY2plQzBma0UxcVBNbTVM?=
- =?utf-8?B?ZEZOQy9mMlBLRmJtRWk2TTdta0xpdXVjUUlEZnMvNG5mZFNvU2NFS2NQUElX?=
- =?utf-8?B?THpleUhjT2dpZjZ0VjQ4bVNhb0pHNmtkVHVYWWJHeUducGRNMnYzMytndGpo?=
- =?utf-8?B?UnBzV2prTHl6VWZFSThtN3RFOGpFdkdNU1JkT0lIeDVyYndhUWpFR2hETEc5?=
- =?utf-8?B?Ky9QMkE3Y1ZXQ001ZUR2cXhsa1c2cHo5V2JIUytvMkxpRWNHSnJmYUY2MXk5?=
- =?utf-8?B?NkNCYjlJUUxxVlhSM0cvZU5oczRqd1ZSYit4bE45TWlFQlV1MXFCcU5ibXRx?=
- =?utf-8?B?TFY4WnJlRmxGb2x3VzIwVDRoenR3YkF1ZGk3RXFER0FQRDg3eXl4MEFGa1Fn?=
- =?utf-8?B?Rmw0Rlk5cTdNYXFyZFlMQlFORVY0bjIvQnl1TW1qY1BMNXp3dFFncWptZGN5?=
- =?utf-8?B?aTlQZXFxVTV0eitWcjBzNTNFejZrb2EvZ1phcTRsK0owdUdIOUk3Yy81eFFh?=
- =?utf-8?B?VThMNlpEK1lxbFovY09Xclhqb3QvdFMrMFRQOGZxS2Q4bmg4VGEwdjZhNElx?=
- =?utf-8?B?ZjFQbWtOUzJlZkNzODYyM3BXb3lrb2s1RU5aUlpyVXQ0SHRqSzM0aTlHNmg3?=
- =?utf-8?B?Y1lKUXBmSEJwZFZqck13VU94Tm5FSzBicUozWGNoYmRRbWhoT1pIdVhhQXdz?=
- =?utf-8?B?ZFdCVG5rNWVVRHhhR281WFliaEROeHJiQ3dtZkZFVWJKUUE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZlhpcmMzU3czbjFHdW5zYzJDYzBST3hxcW1nc3Q1VE91Q0hGcFIxYWtNYWhz?=
- =?utf-8?B?akQzWEtMTjU2d1RBWk5EL0J1eEVzUXhaVjdhSUNuZStRUEphZjE2UHpIa3lJ?=
- =?utf-8?B?dTRqWDZ0RUJ1MURIcXRlejR4eDdobEJqd200S08rM3g0OFVXNk8rejd2L0FB?=
- =?utf-8?B?eDlxOWR4bmFLYTQxQ21wWUF6T3RYcC90Ry82d0FJQ21OTDlpK0JORmFBM3JS?=
- =?utf-8?B?U1NOL09VelFnc292NjRGYVdXcGR0R0MycTNjL2xRclAzUlNmNm53RGJEekts?=
- =?utf-8?B?UlM1M1JkVzVDQU95cy82QllEbUI4bm1iMVJpM1grSHBLTHJHd3FrOWk1THNX?=
- =?utf-8?B?ZS8xaTlXSktvaFEwWW1TcFp0bHFqRDZjOFJqVlFaMDQwYmp0d1MwNHpGVVB3?=
- =?utf-8?B?aTc3eDUvNkVib0RkSUlERm03Y1I1TS8xdTM1ZmFVYThLWndsS0E3RUowamN5?=
- =?utf-8?B?VXFENzB0V1FSVFJCQkU4UGVxQ3VUY21idU5jbUVLelBFTzZza3MzMW4rT3pM?=
- =?utf-8?B?cDdMeCs1N1pEcGhhL1hZc0ljSSt1S1JhSnJHZjdBRzF4L0svdGcxb29GeGFT?=
- =?utf-8?B?M2RwYjJTOVhVdG45WjhsU1VGRThscGV2bGJlOGV4M2Z2eXZTMWpWcVBpdTFv?=
- =?utf-8?B?RmZKRmQvK0Q5QTFyZGRLdFBNRzZpbDlTajU3MmFMTE8vRkIzV2Q1WTRuWnNP?=
- =?utf-8?B?bUtMUFNmSkJWYWE0dkVOT2VHSE5OcFJhV3ZLa3VRanVXMi9wOHNFQzhYL2Fy?=
- =?utf-8?B?YnNMc25zMHdJRmljOTBFZVhMcGtpRnpiajI4aFM3MENXY25SbTBKTnlTamE0?=
- =?utf-8?B?dVh1Um56M2syVjZ5WjNRK3ZMUFpTNnZxYXJvcUtscmg5ajhpR1FlRHdEVC9T?=
- =?utf-8?B?ZXpwY3hWSGhFQXRyVzVCcEZ2dWU3VkNJKzkyRDhpYWpJd1NUTHlwUW1aZHJ0?=
- =?utf-8?B?ZXhJV244cmhJNEVkalhkbVBiODlxRyszOENXdWRtcld2bnE2cGpwZG9mTHhE?=
- =?utf-8?B?QUVnUjlUSzdJNFFub0oyNGtyeXg0aDNPeE14ZGFzejZrbUwyalhTUUNyTWRp?=
- =?utf-8?B?Vk8vTS9vWkhobzdvcGd3ckc5bTErdHRwQzJnVnp4MFloeGZzZXpYUnZrQ1VQ?=
- =?utf-8?B?ZDFpd0tKcVlieDhobFhteGtMNk8ycWdTTDMvelJHTTlTWGZlM1AxUGxpb2ZY?=
- =?utf-8?B?T3YySUJWWitKci96WGhmaytkWTU3R3dJTzdoK1FxWXBMbmZQMW9uQmpoR3RP?=
- =?utf-8?B?cWVwZEVFOG5GNXpadmxxaDUyM3M4QWw1YXJPVEdZTGp2TzhrMXF0eTZ6bVpR?=
- =?utf-8?B?RlBzYzZ3Q21vSllPa2t6MW1Da2M3U0FKK2tTek95R2NTK1JRM2J6UmlWZzVH?=
- =?utf-8?B?dm1VSG5OeWF0MmVmclQydWhtYXVOZHBLaFNaTzJMV01BNlA2WTBwa2JtY3Np?=
- =?utf-8?B?dUlITVI1dmRKbEJjcUFtRUdyYXVtUEdlc3ZyQkVRSHJYc0tOVlR0ODEyNHpK?=
- =?utf-8?B?OVl4ZHR3eUhOQy93RHJ3eEgrVDVTbEpBYnZkY1pUM3MzUVVkOVQycHdObHkw?=
- =?utf-8?B?aGVLRFNsL053UGUrYldMR2h0Q09rR3Z4ZkY5ZlJuc0YvSkRvYXN1WHg0Q1Iy?=
- =?utf-8?B?aTBKVE5vODU1N0gyNjU4Ym1NSzM1QUdRdE9ycXlJTEI1NlZjeFprQVlncVFr?=
- =?utf-8?B?N2MzMWJoSXlKZUNiQmxjVnR4OVRaSUJwQUkxeUpDRjE4T1hQamloUHlOOVYr?=
- =?utf-8?B?ZVFxd2lsNXNhbVovMDNjTXhPTWpOUHpnM1lBL3Q4Vy9kZzR3Y3p6QWdaUlY3?=
- =?utf-8?B?Q2JWZjlhQVF5WldKTXN3VWcvUUhZcVRZNGVlSE1oZVAyWFZ2ZmlsUzRpNUx3?=
- =?utf-8?B?QmFieDRYcGRpdzJ5UWpvQWpOOXBDUytQc25kencrMmFDTXdmMldsNzVMUE41?=
- =?utf-8?B?TkdBWU5wWHc0S3h1dmZxSVBFVmlKbGhmTEY3WEcwdTVYMDEvWVRJSGhoMGVk?=
- =?utf-8?B?UDZNRDZDU25nallUK1hiQjlWcTczbUNoUmVLMnZJcmVXRmlKKzVsT25rTXdH?=
- =?utf-8?B?b09rdFQ5b09yRHlBRFJMbnVxR0hqbEJoWmo1WDNMRmtST2RGS1hyL0lUaGYv?=
- =?utf-8?Q?nIds9GDUu8bMvhkJC50siMg5/?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1724145014; x=1724749814; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/kP+Pn/ve3Xzcvi7IGxpbzFoLLoU6eeHP8e/HCwF1A=;
+        b=VBCDTqYURE1rnhCrK1rj7zgKfx40CWEQZNnnQf/gq4Hel6ltzRgGWYBqwNov+tSRti
+         LlCwGefrH8Z3+FHj2KggxyzVMmX9jq70FdHKLxL4a8EI7hSpD55PBQTfBD4bZ58N5vLe
+         TQP42cPDD+Dqr3Wie3w+TvRSAAcwOnGFqFpCYgcVJvnLBHR5T8NzbeXn29fbE6qwdX5e
+         qFiZaJkbn88SRK69xz3EXvGVNKOPka5TGOMEaz2XROiEmuXuadDliFLzfL1twrsT/ZyF
+         BefFNMeW4tGuF2wfW34AYu8APZkmmrhKVr1bt3HdQwYS/DVVeKuzn5SeYZc+A9lPeg1X
+         DNqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724145014; x=1724749814;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B/kP+Pn/ve3Xzcvi7IGxpbzFoLLoU6eeHP8e/HCwF1A=;
+        b=DyPatSu6WJyBWI5GjBXWTKM2zagCFMh0sbxNGl8VVZOVE7Zjexk0Guzo24DzQihceC
+         yUXNk+6VKC9damm4cCm1eicjDKaXw3MHudHn5V32e25mejeKc3KEjDOEdnBl43ccbtzq
+         gnViXTHeWiswwtJgtK8Uy74jU94NlbibUtjZm6+HGYRDghC6glBX03VRPCbX77uRpYEY
+         nOrO4J1TsR3Nn9rSh8evgjiOS78uj0ruj7EFWZKnow0WRgzRsXKqT+2TAZIGVvQg3Ok3
+         lDCsgqsMcBeJNGbskXYq5d29tZfs6L5FxmbW+Hzsq7f9DApqKIBZlDgtgNr15ndCm/yV
+         Hxfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpPaAvQNtmDLU9GNLf4EAm26hg+9pXbxslp56Sp5Tjx4y2wSScNLpbRzQ3vHytk/fjjxZZS5hv78UGt5aRKMsEPDkbs5rik3J0CXak
+X-Gm-Message-State: AOJu0YxpQmJ0W+SsErH54Bo1GAP77JGhXX5coyFM9dQPB0IFYqDZMCa0
+	r6+HVLrASG3OSBpyfpduvistzqlunZgA8F+9XEXC/oGIkUPQLHyA
+X-Google-Smtp-Source: AGHT+IGFcscPMmejyRM+y4ZQO1fHfMnAliSy42Tib1wvSX0sX9Z9EOly9qbkcR8wQGBSegThW9UlDg==
+X-Received: by 2002:a05:600c:208:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429ed7d6481mr110885585e9.26.1724145014355;
+        Tue, 20 Aug 2024 02:10:14 -0700 (PDT)
+Received: from fedora.. ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849a9asm12510676f8f.45.2024.08.20.02.10.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:10:14 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: airlied@gmail.com,
+	arthurgrillo@riseup.net,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com,
+	mripard@kernel.org,
+	nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com,
+	thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH RFC 4/4] drm/vkms: Rename all vkms_crtc instance to be
+Date: Tue, 20 Aug 2024 11:10:09 +0200
+Message-ID: <20240820091010.2902-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240814-google-vkms-managed-v1-4-7ab8b8921103@bootlin.com>
+References: <20240814-google-vkms-managed-v1-4-7ab8b8921103@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hB8FvQ3InfUDX/RlPOUUuHtc8aDQZQ+1F8/ezxk/SNmlWm4eUQWgo9ReyN4j65VPipFHGA3PyIkxqBTBI1nqUS4hBlaJYUJan+qeWKyi5TB1SAcpYdpGkLew+Gi62r3cS1H+QXCPRlRgdRMN5dadb97cINcb6g2cudv9gsxlq6B+BCcywVbi2Pj2dbnAgx7SzvnFR4Rv2BbcDPlKxmVZiIbvwNP5ie58S79IoWlkjM1rzCOoDtyKEY0IxrGOgYQHFSGCfeygtkqxDVBI+VByz2R6LnGynT4Q2te66NNFL1p1QSJ+s0kjMx6SxhrnqA2lHUlJjNMe7ebSmz5BiR2MK08UxlvVGwgwYfdDth1MsbP1CXrRpbJaUR6wEjVy8ipkRxd6saNfGHQbMUoNl23US1/GPn/sNCCos9GzDvcBTPBS1mC/9SyKRTJGae/njllpZWYM/pV832dh4UVjaeKIqBaNn8BllIzgxhq+x6uiyNokoH5rjzjxDWP+1DcCk7v/CrFmB3N41b+R8bePnvo782x0flJE8+TzGbhKZ+vrsr5tUzZ4/AHxoPjMKGbSLLXDOeVSXnamuvsOmPRMcAG+RrVfknaZ1doMRpuNrfraG8mcgFGolFFcGyzc+FwshYN6
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19927bb7-427f-4f5d-2e08-08dcc0f7e359
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2024 09:10:08.3432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CQwVupSU9PJKRQ7HLoKZdYL6tHQwhvPivauC09hYWa5NbBYuMy+J2PbSZtCDhLsWS6FVpuo/po8WT096O/mM+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR04MB6759
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-PiBPbiAyMC4wOC4yNCAwNjowMSwgQXZyaSBBbHRtYW4gd3JvdGU6DQo+ID4gdWZzIHRyYWNlIGV2
-ZW50cyBhcmUgY2FsbGVkIGV4Y2x1c2l2ZWx5IGZyb20gdGhlIHVmcyBjb3JlIGRyaXZlcnMuDQo+
-ID4gTWFrZSB0aG9zZSBldmVudHMgcHJpdmV0IHRvIHRoZSBjb3JlIGRyaXZlci4NCj4gcHJpdmF0
-ZQ0KVGhhbmtzLiAgRG9uZS4NCg0KVGhhbmtzLA0KQXZyaQ0K
+I love how you made this an extra patch. I should have done the same thing in my
+configfs series to reduce the diff :)
+
+> To avoid inconsistency in the VKMS code, rename all struct vkms_crtc
+> instances to vkms_crtc. This should not change the behavior of the driver.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+
+> ---
+>  drivers/gpu/drm/vkms/vkms_composer.c  | 30 ++++++++++----------
+>  drivers/gpu/drm/vkms/vkms_composer.h  |  2 +-
+>  drivers/gpu/drm/vkms/vkms_crtc.c      | 52 +++++++++++++++++------------------
+>  drivers/gpu/drm/vkms/vkms_writeback.c | 12 ++++----
+>  4 files changed, 48 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index 9b2f578c2eb1..4376900b4986 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -515,13 +515,13 @@ void vkms_composer_worker(struct work_struct *work)
+>  							  composer_work);
+>  	struct drm_crtc *crtc = crtc_state->base.crtc;
+>  	struct vkms_writeback_job *active_wb = crtc_state->active_writeback;
+> -	struct vkms_crtc *out = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  	bool crc_pending, wb_pending;
+>  	u64 frame_start, frame_end;
+>  	u32 crc32 = 0;
+>  	int ret;
+>  
+> -	spin_lock_irq(&out->composer_lock);
+> +	spin_lock_irq(&vkms_crtc->composer_lock);
+>  	frame_start = crtc_state->frame_start;
+>  	frame_end = crtc_state->frame_end;
+>  	crc_pending = crtc_state->crc_pending;
+> @@ -545,7 +545,7 @@ void vkms_composer_worker(struct work_struct *work)
+>  		crtc_state->gamma_lut.base = NULL;
+>  	}
+>  
+> -	spin_unlock_irq(&out->composer_lock);
+> +	spin_unlock_irq(&vkms_crtc->composer_lock);
+>  
+>  	/*
+>  	 * We raced with the vblank hrtimer and previous work already computed
+> @@ -563,10 +563,10 @@ void vkms_composer_worker(struct work_struct *work)
+>  		return;
+>  
+>  	if (wb_pending) {
+> -		drm_writeback_signal_completion(&out->wb_connector, 0);
+> -		spin_lock_irq(&out->composer_lock);
+> +		drm_writeback_signal_completion(&vkms_crtc->wb_connector, 0);
+> +		spin_lock_irq(&vkms_crtc->composer_lock);
+>  		crtc_state->wb_pending = false;
+> -		spin_unlock_irq(&out->composer_lock);
+> +		spin_unlock_irq(&vkms_crtc->composer_lock);
+>  	}
+>  
+>  	/*
+> @@ -616,31 +616,31 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *src_name,
+>  	return 0;
+>  }
+>  
+> -void vkms_set_composer(struct vkms_crtc *out, bool enabled)
+> +void vkms_set_composer(struct vkms_crtc *vkms_crtc, bool enabled)
+>  {
+>  	bool old_enabled;
+>  
+>  	if (enabled)
+> -		drm_crtc_vblank_get(&out->base);
+> +		drm_crtc_vblank_get(&vkms_crtc->base);
+>  
+> -	spin_lock_irq(&out->lock);
+> -	old_enabled = out->composer_enabled;
+> -	out->composer_enabled = enabled;
+> -	spin_unlock_irq(&out->lock);
+> +	spin_lock_irq(&vkms_crtc->lock);
+> +	old_enabled = vkms_crtc->composer_enabled;
+> +	vkms_crtc->composer_enabled = enabled;
+> +	spin_unlock_irq(&vkms_crtc->lock);
+>  
+>  	if (old_enabled)
+> -		drm_crtc_vblank_put(&out->base);
+> +		drm_crtc_vblank_put(&vkms_crtc->base);
+>  }
+>  
+>  int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name)
+>  {
+> -	struct vkms_crtc *out = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  	bool enabled = false;
+>  	int ret = 0;
+>  
+>  	ret = vkms_crc_parse_source(src_name, &enabled);
+>  
+> -	vkms_set_composer(out, enabled);
+> +	vkms_set_composer(vkms_crtc, enabled);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.h b/drivers/gpu/drm/vkms/vkms_composer.h
+> index 77efd2e3a63a..5a676b9960aa 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.h
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.h
+> @@ -7,7 +7,7 @@
+>  #include "vkms_crtc.h"
+>  
+>  void vkms_composer_worker(struct work_struct *work);
+> -void vkms_set_composer(struct vkms_crtc *out, bool enabled);
+> +void vkms_set_composer(struct vkms_crtc *vkms_crtc, bool enabled);
+>  
+>  /* CRC Support */
+>  const char *const *vkms_get_crc_sources(struct drm_crtc *crtc, size_t *count);
+> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> index 47e62fb3e404..6f6d3118b2f2 100644
+> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> @@ -16,34 +16,34 @@
+>  
+>  static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+>  {
+> -	struct vkms_crtc *output = hrtimer_to_vkms_crtc(timer);
+> -	struct drm_crtc *crtc = &output->base;
+> +	struct vkms_crtc *vkms_crtc = hrtimer_to_vkms_crtc(timer);
+> +	struct drm_crtc *crtc = &vkms_crtc->base;
+>  	struct vkms_crtc_state *state;
+>  	u64 ret_overrun;
+>  	bool ret, fence_cookie;
+>  
+>  	fence_cookie = dma_fence_begin_signalling();
+>  
+> -	ret_overrun = hrtimer_forward_now(&output->vblank_hrtimer,
+> -					  output->period_ns);
+> +	ret_overrun = hrtimer_forward_now(&vkms_crtc->vblank_hrtimer,
+> +					  vkms_crtc->period_ns);
+>  	if (ret_overrun != 1)
+>  		pr_warn("%s: vblank timer overrun\n", __func__);
+>  
+> -	spin_lock(&output->lock);
+> +	spin_lock(&vkms_crtc->lock);
+>  	ret = drm_crtc_handle_vblank(crtc);
+>  	if (!ret)
+>  		DRM_ERROR("vkms failure on handling vblank");
+>  
+> -	state = output->composer_state;
+> -	spin_unlock(&output->lock);
+> +	state = vkms_crtc->composer_state;
+> +	spin_unlock(&vkms_crtc->lock);
+>  
+> -	if (state && output->composer_enabled) {
+> +	if (state && vkms_crtc->composer_enabled) {
+>  		u64 frame = drm_crtc_accurate_vblank_count(crtc);
+>  
+>  		/* update frame_start only if a queued vkms_composer_worker()
+>  		 * has read the data
+>  		 */
+> -		spin_lock(&output->composer_lock);
+> +		spin_lock(&vkms_crtc->composer_lock);
+>  		if (!state->crc_pending)
+>  			state->frame_start = frame;
+>  		else
+> @@ -51,9 +51,9 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+>  					 state->frame_start, frame);
+>  		state->frame_end = frame;
+>  		state->crc_pending = true;
+> -		spin_unlock(&output->composer_lock);
+> +		spin_unlock(&vkms_crtc->composer_lock);
+>  
+> -		ret = queue_work(output->composer_workq, &state->composer_work);
+> +		ret = queue_work(vkms_crtc->composer_workq, &state->composer_work);
+>  		if (!ret)
+>  			DRM_DEBUG_DRIVER("Composer worker already queued\n");
+>  	}
+> @@ -67,23 +67,23 @@ static int vkms_enable_vblank(struct drm_crtc *crtc)
+>  {
+>  	struct drm_device *dev = crtc->dev;
+>  	struct drm_vblank_crtc *vblank = drm_crtc_vblank_crtc(crtc);
+> -	struct vkms_crtc *out = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  
+>  	drm_calc_timestamping_constants(crtc, &crtc->mode);
+>  
+> -	hrtimer_init(&out->vblank_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> -	out->vblank_hrtimer.function = &vkms_vblank_simulate;
+> -	out->period_ns = ktime_set(0, vblank->framedur_ns);
+> -	hrtimer_start(&out->vblank_hrtimer, out->period_ns, HRTIMER_MODE_REL);
+> +	hrtimer_init(&vkms_crtc->vblank_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +	vkms_crtc->vblank_hrtimer.function = &vkms_vblank_simulate;
+> +	vkms_crtc->period_ns = ktime_set(0, vblank->framedur_ns);
+> +	hrtimer_start(&vkms_crtc->vblank_hrtimer, vkms_crtc->period_ns, HRTIMER_MODE_REL);
+>  
+>  	return 0;
+>  }
+>  
+>  static void vkms_disable_vblank(struct drm_crtc *crtc)
+>  {
+> -	struct vkms_crtc *out = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  
+> -	hrtimer_cancel(&out->vblank_hrtimer);
+> +	hrtimer_cancel(&vkms_crtc->vblank_hrtimer);
+>  }
+>  
+>  static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+> @@ -91,7 +91,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+>  				      bool in_vblank_irq)
+>  {
+>  	struct drm_device *dev = crtc->dev;
+> -	struct vkms_crtc *output = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  	struct drm_vblank_crtc *vblank = drm_crtc_vblank_crtc(crtc);
+>  
+>  	if (!READ_ONCE(vblank->enabled)) {
+> @@ -99,7 +99,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+>  		return true;
+>  	}
+>  
+> -	*vblank_time = READ_ONCE(output->vblank_hrtimer.node.expires);
+> +	*vblank_time = READ_ONCE(vkms_crtc->vblank_hrtimer.node.expires);
+>  
+>  	if (WARN_ON(*vblank_time == vblank->time))
+>  		return true;
+> @@ -111,7 +111,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+>  	 * the vblank core expects. Therefore we need to always correct the
+>  	 * timestampe by one frame.
+>  	 */
+> -	*vblank_time -= output->period_ns;
+> +	*vblank_time -= vkms_crtc->period_ns;
+>  
+>  	return true;
+>  }
+> @@ -235,18 +235,18 @@ static void vkms_crtc_atomic_disable(struct drm_crtc *crtc,
+>  static void vkms_crtc_atomic_begin(struct drm_crtc *crtc,
+>  				   struct drm_atomic_state *state)
+>  {
+> -	struct vkms_crtc *vkms_output = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  
+>  	/* This lock is held across the atomic commit to block vblank timer
+>  	 * from scheduling vkms_composer_worker until the composer is updated
+>  	 */
+> -	spin_lock_irq(&vkms_output->lock);
+> +	spin_lock_irq(&vkms_crtc->lock);
+>  }
+>  
+>  static void vkms_crtc_atomic_flush(struct drm_crtc *crtc,
+>  				   struct drm_atomic_state *state)
+>  {
+> -	struct vkms_crtc *vkms_output = drm_crtc_to_vkms_crtc(crtc);
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(crtc);
+>  
+>  	if (crtc->state->event) {
+>  		spin_lock(&crtc->dev->event_lock);
+> @@ -261,9 +261,9 @@ static void vkms_crtc_atomic_flush(struct drm_crtc *crtc,
+>  		crtc->state->event = NULL;
+>  	}
+>  
+> -	vkms_output->composer_state = drm_crtc_state_to_vkms_crtc_state(crtc->state);
+> +	vkms_crtc->composer_state = drm_crtc_state_to_vkms_crtc_state(crtc->state);
+>  
+> -	spin_unlock_irq(&vkms_output->lock);
+> +	spin_unlock_irq(&vkms_crtc->lock);
+>  }
+>  
+>  static const struct drm_crtc_helper_funcs vkms_crtc_helper_funcs = {
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index 322e247979b2..69c710f21e57 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -128,9 +128,9 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  {
+>  	struct drm_connector_state *connector_state = drm_atomic_get_new_connector_state(state,
+>  											 conn);
+> -	struct vkms_crtc *output = drm_crtc_to_vkms_crtc(connector_state->crtc);
+> -	struct drm_writeback_connector *wb_conn = &output->wb_connector;
+> -	struct vkms_crtc_state *crtc_state = output->composer_state;
+> +	struct vkms_crtc *vkms_crtc = drm_crtc_to_vkms_crtc(connector_state->crtc);
+> +	struct drm_writeback_connector *wb_conn = &vkms_crtc->wb_connector;
+> +	struct vkms_crtc_state *crtc_state = vkms_crtc->composer_state;
+>  	struct drm_framebuffer *fb = connector_state->writeback_job->fb;
+>  	u16 crtc_height = crtc_state->base.crtc->mode.vdisplay;
+>  	u16 crtc_width = crtc_state->base.crtc->mode.hdisplay;
+> @@ -141,15 +141,15 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  	if (!connector_state)
+>  		return;
+>  
+> -	vkms_set_composer(output, true);
+> +	vkms_set_composer(vkms_crtc, true);
+>  
+>  	active_wb = connector_state->writeback_job->priv;
+>  	wb_frame_info = &active_wb->wb_frame_info;
+>  
+> -	spin_lock_irq(&output->composer_lock);
+> +	spin_lock_irq(&vkms_crtc->composer_lock);
+>  	crtc_state->active_writeback = active_wb;
+>  	crtc_state->wb_pending = true;
+> -	spin_unlock_irq(&output->composer_lock);
+> +	spin_unlock_irq(&vkms_crtc->composer_lock);
+>  	drm_writeback_queue_job(wb_conn, connector_state);
+>  	active_wb->pixel_write = get_pixel_write_line_function(wb_format);
+>  	drm_rect_init(&wb_frame_info->src, 0, 0, crtc_width, crtc_height);
 
