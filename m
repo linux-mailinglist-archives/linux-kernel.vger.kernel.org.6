@@ -1,137 +1,161 @@
-Return-Path: <linux-kernel+bounces-293771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B63958456
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:25:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81286958458
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8371287C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:25:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987751C2484A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FE018E037;
-	Tue, 20 Aug 2024 10:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC3018E751;
+	Tue, 20 Aug 2024 10:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="as5xlgJP"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RzOFhktJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D36E18CBFF
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D846618E05D
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724149426; cv=none; b=t6kug0QfI/ADuZ7Hr36Iul5HLH21gDVoL1v/9lMz6sQ/7lkFzMdOL/x5VmsS0PebpqQsv+9bboUxqIMk3tHqw64/hQkFqOiaJ+H5PpE7yb8nPg0ra7R8Gn/w23FtnEQAKuG6t3RGR2z2ssR80kYHqFrWIxLg7x6rqmd5MoJuZF4=
+	t=1724149437; cv=none; b=r6/w2oAbV1JWBgHhOGF6/KjLFNk2Ms45x5V0xtgARsQaK2afoHZcd/VRFErrvQ1tOTLLSjvXUhQ+lXk02Pkwp/O2F3/tSfKFKuznWZKj5NJEFxnciT2ApMs4TgwI3jX9hIovp7vzoDVatLoCCKn9j/hwlcgNnoM7I5936vI80hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724149426; c=relaxed/simple;
-	bh=7R95fIIPP1pmIvqdF19S5CT5HdRIDj0OLRSo1I91tOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFcDzbALU2A+u6YtjBTASucTvYewtHW9aDnnERn4ED6ic3bPQyhtbOplnFPw46Fw8y6YGb9hrJvs4L55ZCn8SuUFOXvUJQiAXjxvF8B/bpc+p+o67o8w1TohjXJfCzqKxup9SZftihXYm12J6+D7NLCQu6P/N2LTpZgJmHpzOuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=as5xlgJP; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so681180866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724149422; x=1724754222; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQbU+wmhc9okDK89belLs9mlxFgpOghZ2CbgXLEJ9V0=;
-        b=as5xlgJPRPlD4n+Vxidc4K3nlwWi0/gLEXWbG/V6EL8o12Vjgewjp7QTwhUAPJQQOL
-         /gJFHJ57M3zhG129Wvcw4Ok411yzvxWSQnUjKVcaPSOzMphFzzFMDT1I7cpsQGacDLcV
-         kyMA2CBc7jJtp3U68iywlm5FAYv5pBdQoUnLrUdcNCVhqPlvP3ZKBIDkQqA1feTsgFM6
-         a0Me21FVVA/Z9x8tWnoQxWK2zKj4CKJPyWrvbuj5BqjY2mt/DKIqdQHiPE3WY01DSlUU
-         VgOr1psgjsYpVRFm6sZZ787QUKdUtEVlPhbeMPseodQBcguHV+AfKYJ5zoTKub8ufu14
-         ZsrA==
+	s=arc-20240116; t=1724149437; c=relaxed/simple;
+	bh=sgjoWme/lDn+Q/8TVo3OKeWkzEm1yKNOHyGkJneQNEw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lxXc0Ji8tmb2QvrtUOws8cHu7CPosrIZFH1StWi4KLv+YTiMl53Y1P2zwISbhbIbEJnPxqxHQl0L0ppGSNhpHWy9QCULHzNsODnlcTQxBKxhsQ6gVoZl4aRSNx2wfSiQXpimRpbi5EO+ULk7QA6NAJEnnbMPboPEDsF/JF7dnOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RzOFhktJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724149434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d4c+7fu/VdEpjhH3XMlyk8gLAqXF7DZDZmgZbuAUUV0=;
+	b=RzOFhktJ/g8V7cn/1TNtPxqd4k+fuWMik8M4+6rjYUmJJI99kdmgp9aabjKzE4tON7rUKn
+	+WzNuX35ZmW/TwdcFhQc5m4WNWYbyyI5/8y5l6g9S0c88tZ+JRBMqx+G5N3rd8RUFPrbfy
+	GEOrddjvwJpLDx8Ld3mRw3kMrfV4ZPc=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-E2QJQRyxOZShXRfY5yGHYg-1; Tue, 20 Aug 2024 06:23:53 -0400
+X-MC-Unique: E2QJQRyxOZShXRfY5yGHYg-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f3f2bf2738so288331fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:23:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724149422; x=1724754222;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jQbU+wmhc9okDK89belLs9mlxFgpOghZ2CbgXLEJ9V0=;
-        b=h9FHaBGCVEPxoAgic3f/EHNi6ZckYRGVbWj0gUokzelbPBOWz5JKv2VYGLveLtDmrj
-         2mMF2SRYe5c8VJObX5NTwt+ozFRciiptwVsL8BHZgXVUZhZ4vd8PlzD0VxWux0TKcOCs
-         WBdld5VAHCKNC7O0NxHBql3QkkZs4MghSnsaXnO5C5fClbBylNv7PcBh2V2kV+rHcf4w
-         on/Qj7iaY2bvuPgnuE7+41QeJ9vaMA6TkNlBEEiuXljCJWSWFkBmxcZY0kR75JIzh1TI
-         lwN/oDrhTgXXAsziJ3D8nEg4aqTLyNAg4MAKtDpcLR0E4VBfiiyHKPVbaWrjl3vgdc1l
-         gD7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1gEXLGTq/B06db8z3JXs6QzuR+7B3c4b+aXgMx7SGkImzcSXojQPjDFSeadBKLR0EhArIQntpvUlwfbflS/k1i6dXWQJCmMFCdy4b
-X-Gm-Message-State: AOJu0YyeNyElbY8ZExIUGHVZNjXLq37LHAdmYurVH6GkMSxeh9+jscx7
-	En8jKLd3GP/ev3BKEh0sFOj6Ja84ddemostosocIFyxCNgJm0H4hBtsLMmXzbw==
-X-Google-Smtp-Source: AGHT+IGYY6+/3Hs0Q6u/L07obMsnlHRatKoHFLlhFa/E1FH4GJdX79IJomctjDvK3E1Sp8/0CJuvXg==
-X-Received: by 2002:a17:907:8691:b0:a77:c583:4f78 with SMTP id a640c23a62f3a-a8647a1a0eemr101756366b.39.1724149422397;
-        Tue, 20 Aug 2024 03:23:42 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344cdsm741874266b.114.2024.08.20.03.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 03:23:42 -0700 (PDT)
-Message-ID: <45a43d3c-35a5-49cd-a677-67fde3e5b56b@suse.com>
-Date: Tue, 20 Aug 2024 12:23:41 +0200
+        d=1e100.net; s=20230601; t=1724149432; x=1724754232;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d4c+7fu/VdEpjhH3XMlyk8gLAqXF7DZDZmgZbuAUUV0=;
+        b=Ch19W7vk0t25vKg1FzkHcxF3Io97WwdzYo4WeDI+8IxqQ33OC9yL2amHpwgs958OQO
+         NCg5PNFj+6OxAVafJ35YuhP8PBPqV0+dKgjJwvVUPrvbJqCEjfqQ+OxO0Wq9zV+icLYe
+         u7XUq1tzGun36aVszghFT9t6UHZhsK0l9c9HThk2Td6Ms/+bIwHquENXYO7xSI+EKl3z
+         /Adbkq4gIBOKyKVc/HLj3UF/ZtYkW6fJ2jHRXF7B/jjzxb0HRMdQCQb2RxvAuNbd2xaJ
+         FFb3wBwzLZI5unSTdvfJuIWPsBrEon+rtcraopBTFxup+SItNysdEM3cfmuq5Vp/XZuM
+         Klkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBKjC9SUo8D7gmHpCzAN8MjOwvw6QkQ0S49QMfSyrOrBc2OqF0x3oeWoNufqSYyMmqyKEtKL0Pq+NNFrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWsdK37nxkgXbxpgP4Aqaw5UpckOUF9D8N3M+m49eMAHLAyCdY
+	HV6JYdlwcftz4Gi4ZAYj6Rb8ySUYkyw09RN31p+1cU2KbtSbTX8UN464kBIRKN/Bb9xlPrvb/sv
+	2GKFpCU4auC/CjXVnGvDQynXurM70a4q8dca8/c1Bgw6JHoJvR0l1gDxoI1hIMg==
+X-Received: by 2002:a2e:bc20:0:b0:2f1:929b:af00 with SMTP id 38308e7fff4ca-2f3be5eaebbmr55822171fa.5.1724149431659;
+        Tue, 20 Aug 2024 03:23:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKOBhR4ojLfA+j+V5ryjxkELVaKf/dDRfbA6pDJgghg5Ap7oA8FDtLoCFdCUzkszAjQ4sRng==
+X-Received: by 2002:a2e:bc20:0:b0:2f1:929b:af00 with SMTP id 38308e7fff4ca-2f3be5eaebbmr55822061fa.5.1724149431052;
+        Tue, 20 Aug 2024 03:23:51 -0700 (PDT)
+Received: from eisenberg.fritz.box ([2001:16b8:3dcc:1f00:bec1:681e:45eb:77e2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c69easm747601766b.40.2024.08.20.03.23.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 03:23:50 -0700 (PDT)
+Message-ID: <46046055be8fcf29949d36778bdb4ee7a7b6ed67.camel@redhat.com>
+Subject: Re: [PATCH 1/2] drm/sched: memset() 'job' in drm_sched_job_init()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Luben Tuikov <ltuikov89@gmail.com>, Matthew Brost
+ <matthew.brost@intel.com>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 20 Aug 2024 12:23:49 +0200
+In-Reply-To: <20240806143855.29789-2-pstanner@redhat.com>
+References: <20240806143855.29789-2-pstanner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] xen: tolerate ACPI NVS memory overlapping with Xen
- allocated memory
-To: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
- =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-References: <20240820082012.31316-1-jgross@suse.com>
- <20240820082012.31316-8-jgross@suse.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20240820082012.31316-8-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 20.08.2024 10:20, Juergen Gross wrote:
-> In order to minimize required special handling for running as Xen PV
-> dom0, the memory layout is modified to match that of the host. This
-> requires to have only RAM at the locations where Xen allocated memory
-> is living. Unfortunately there seem to be some machines, where ACPI
-> NVS is located at 64 MB, resulting in a conflict with the loaded
-> kernel or the initial page tables built by Xen.
-> 
-> As ACPI NVS needs to be accessed by the kernel only for saving and
-> restoring it across suspend operations, it can be relocated in the
-> dom0's memory map by swapping it with unused RAM (this is possible
-> via modification of the dom0 P2M map).
+*PING*
 
-Shouldn't this paragraph be amended / re-written, as this was what made
-me ask for what is now patch 6?
 
-Jan
+On Tue, 2024-08-06 at 16:38 +0200, Philipp Stanner wrote:
+> drm_sched_job_init() has no control over how users allocate struct
+> drm_sched_job. Unfortunately, the function can also not set some
+> struct
+> members such as job->sched.
+>=20
+> This could theoretically lead to UB by users dereferencing the
+> struct's
+> pointer members too early.
+>=20
+> It is easier to debug such issues if these pointers are initialized
+> to
+> NULL, so dereferencing them causes a NULL pointer exception.
+> Accordingly, drm_sched_entity_init() does precisely that and
+> initializes
+> its struct with memset().
+>=20
+> Initialize parameter "job" to 0 in drm_sched_job_init().
+>=20
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+> Hi all,
+> I did some experiments with the scheduler recently and am trying to
+> make
+> the documentation and bits of the code more bullet proof.
+>=20
+> I tested the performance of v6.11-rc2 with and without this memset()
+> by
+> creating 1e6 jobs and found no performance regression.
+>=20
+> Cheers,
+> P.
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 8 ++++++++
+> =C2=A01 file changed, 8 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> b/drivers/gpu/drm/scheduler/sched_main.c
+> index 76969f9c59c2..1498ee3cbf39 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -936,6 +936,14 @@ int drm_sched_job_init(struct drm_sched_job
+> *job,
+> =C2=A0		return -EINVAL;
+> =C2=A0	}
+> =C2=A0
+> +	/*
+> +	 * We don't know for sure how the user has allocated. Thus,
+> zero the
+> +	 * struct so that unallowed (i.e., too early) usage of
+> pointers that
+> +	 * this function does not set is guaranteed to lead to a
+> NULL pointer
+> +	 * exception instead of UB.
+> +	 */
+> +	memset(job, 0, sizeof(*job));
+> +
+> =C2=A0	job->entity =3D entity;
+> =C2=A0	job->credits =3D credits;
+> =C2=A0	job->s_fence =3D drm_sched_fence_alloc(entity, owner);
+
 
