@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-293854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061DB9585C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBD69585CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CC71F27977
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD561F27E31
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882B418E768;
-	Tue, 20 Aug 2024 11:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDtb8Ig5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A39518E05C;
+	Tue, 20 Aug 2024 11:28:21 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F0A18E047;
-	Tue, 20 Aug 2024 11:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A836418CC00
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724153158; cv=none; b=CASovun0HzWrbVWHw1KfzhW4cVShzuhiNxqSfvOQOLTcrhAB16Pwbop0epA00l0CW/pfkmSyrNvFcsoyHUMNe7MnW1hcsnxC2zx01JsXRfXLTEd5IqAotgkgiOU1Ou1md61L7oBMZ/0bLYKEzQotACrMcB+du2XT080q1TAymlo=
+	t=1724153300; cv=none; b=dmsCpPX5/z9JS+QU1wAYY1v+cikiL1bAIt8BX2EZ3nBQ8lRtEvro8i1iIJ+cvyEjZIAWN3h8UYZ5ZWYGSMHBzfqTecF73TPgbCwpxbv/8NIqLsKNqLKlIKdwu4jocxC2b50hR/qxVinfqk54FwquC5IIrz3XDK9l7yxOrQQ0iHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724153158; c=relaxed/simple;
-	bh=GIZXc/5y+AL+26n0oIBGlAp3mH1MplpwRwBGavdxHQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lAKx9AcwjQ/GCujAN9vHwNwsvqeOpJKIBUEy4s6o1afhuy67m9hK8pcKJzek0zSwTfTUHBGPSNChXTdRabuymDwNGFAJfLc/043eCHISU9gqIMJhhpTQBMPjRxOdJD5Xs87KEfdoFSTgp8pE/eO24Gy+qVzDzHhI5yh1Fd91y+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDtb8Ig5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C6BC4AF0F;
-	Tue, 20 Aug 2024 11:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724153158;
-	bh=GIZXc/5y+AL+26n0oIBGlAp3mH1MplpwRwBGavdxHQE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IDtb8Ig5XNtIXemPUKdpOrUkMh1O1LOWj4GSqsWHAFX61EzP/vPqyEuw8F1GGWwxD
-	 5kpLMdDSgXvI5ONJki7p4rgL+Dx/UR8ZUEnnabAo309e1lMon5a+5Z9b/ciB/hFXE1
-	 uMuTFWd9iQLy8nU9tZ1vUtHyA0DVQA827EpXLodiPyY4xm1JZ72z72ODGUwBVN2Mga
-	 yonwxhFjkHgkahkVQyfJGIEJIJHI4vtkpilqDZGMP2NnayA5G98wshGP8okpDV3Aux
-	 LYXEgeRCp+AU3H+8RpRmyN8mEhETLPkb2FLrHyI4vpyHWsGYfox2ZKygBi4JNycoME
-	 V7Ua2Bhx1JECA==
-Message-ID: <f6258263-cea0-45ea-bee4-613b761fbff3@kernel.org>
-Date: Tue, 20 Aug 2024 13:25:50 +0200
+	s=arc-20240116; t=1724153300; c=relaxed/simple;
+	bh=7B8+M/Fb75kjCItR5+3I02za1jo5KRize8Lpna3H3iY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kXtm+cgEhCDCr6WBX7eSjuuxPHeU8RjeFS6FSJPfoxjXGq6IiPx/2W28Vqzh8IG2eCFgfSNPKdCWZzUld04SVhBWg/DaDGKbTQOGBN4m+MetbX+waYHziH9D+feZ/59Lrr2y1Nkudixj83EFsW7k2tHG4Ps0p3uk34jYPeAzaPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wp6f24sJjz9sSK;
+	Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id FMbKl540KsHO; Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wp6f243Xwz9sSH;
+	Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C6168B778;
+	Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id nbey0QpDfNSf; Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.72])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 275298B763;
+	Tue, 20 Aug 2024 13:28:10 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/vdso: Don't discard rela sections
+Date: Tue, 20 Aug 2024 13:28:07 +0200
+Message-ID: <45c3e6fc76cad05ad2cac0f5b5dfb4fae86dc9d6.1724153239.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/msm: Fix bv_fence being used as bv_rptr
-To: Connor Abbott <cwabbott0@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <20240815-preemption-a750-t-v1-1-7bda26c34037@gmail.com>
- <e8d1534b-d592-43c4-8a34-4c7c4a04181a@kernel.org>
- <CACu1E7H6g=8thZfoRh8-svjqhdTOPg5diKoj+ENa4F5==d5RxA@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <CACu1E7H6g=8thZfoRh8-svjqhdTOPg5diKoj+ENa4F5==d5RxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724153287; l=2140; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=7B8+M/Fb75kjCItR5+3I02za1jo5KRize8Lpna3H3iY=; b=1rZ7EVC/17O6gwXBouEqcHmQ7k3Lf6P8XwMTqcqXvN+N1nrKYKx7Q5v2URHH2+jgNG5XjW2CU lItGiILDyqtCwpsWl1eF8SHUM7KUkxOQ4VGA+wUNhUJpYe/J13G2v1E
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-On 20.08.2024 12:45 PM, Connor Abbott wrote:
-> On Tue, Aug 20, 2024 at 11:15 AM Konrad Dybcio <konradybcio@kernel.org> wrote:
->>
->> On 15.08.2024 8:26 PM, Antonino Maniscalco wrote:
->>> The bv_fence field of rbmemptrs was being used incorrectly as the BV
->>> rptr shadow pointer in some places.
->>>
->>> Add a bv_rptr field and change the code to use that instead.
->>>
->>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->>> ---
->>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 2 +-
->>>  drivers/gpu/drm/msm/msm_ringbuffer.h  | 1 +
->>>  2 files changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>> index bcaec86ac67a..32a4faa93d7f 100644
->>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>> @@ -1132,7 +1132,7 @@ static int hw_init(struct msm_gpu *gpu)
->>>       /* ..which means "always" on A7xx, also for BV shadow */
->>>       if (adreno_is_a7xx(adreno_gpu)) {
->>>               gpu_write64(gpu, REG_A7XX_CP_BV_RB_RPTR_ADDR,
->>> -                         rbmemptr(gpu->rb[0], bv_fence));
->>> +                         rbmemptr(gpu->rb[0], bv_rptr));
->>>       }
->>>
->>>       /* Always come up on rb 0 */
->>> diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.h b/drivers/gpu/drm/msm/msm_ringbuffer.h
->>> index 0d6beb8cd39a..40791b2ade46 100644
->>> --- a/drivers/gpu/drm/msm/msm_ringbuffer.h
->>> +++ b/drivers/gpu/drm/msm/msm_ringbuffer.h
->>> @@ -31,6 +31,7 @@ struct msm_rbmemptrs {
->>>       volatile uint32_t rptr;
->>>       volatile uint32_t fence;
->>>       /* Introduced on A7xx */
->>> +     volatile uint32_t bv_rptr;
->>
->> This is never initialized or assigned any value, no?
->>
->> Konrad
-> 
-> Neither is the original (retroactively BR) shadow RPTR, except
-> apparently on suspend (no idea why). It's written by the GPU as it
-> reads the ringbuffer, because CP_BV_RPTR_ADDR is set to its address.
-> For the BV shadow RPTR, we aren't really using it for anything (and
-> neither is kgsl) so we just need to point the register to a valid
-> "dummy" address that isn't used by anything else.
+After building the VDSO, there is a verification that it contains
+no dynamic relocation, see commit aff69273af61 ("vdso: Improve
+cmd_vdso_check to check all dynamic relocations").
 
-Alright, thanks
+This verification uses readelf -r and doesn't work if rela sections
+are discarded.
 
-Konrad
+Fixes: 8ad57add77d3 ("powerpc/build: vdso linker warning for orphan sections")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+Was part of series "Wire up getrandom() vDSO implementation on powerpc" but
+it is not directly related and should be fixed independantly as it may happen
+already, for instance if the compiler wants rest_gpr30 instead of rest_gpr31.
+---
+ arch/powerpc/kernel/vdso/vdso32.lds.S | 4 +++-
+ arch/powerpc/kernel/vdso/vdso64.lds.S | 4 ++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/kernel/vdso/vdso32.lds.S b/arch/powerpc/kernel/vdso/vdso32.lds.S
+index 426e1ccc6971..8f57107000a2 100644
+--- a/arch/powerpc/kernel/vdso/vdso32.lds.S
++++ b/arch/powerpc/kernel/vdso/vdso32.lds.S
+@@ -74,6 +74,8 @@ SECTIONS
+ 	.got		: { *(.got) }			:text
+ 	.plt		: { *(.plt) }
+ 
++	.rela.dyn	: { *(.rela .rela*) }
++
+ 	_end = .;
+ 	__end = .;
+ 	PROVIDE(end = .);
+@@ -87,7 +89,7 @@ SECTIONS
+ 		*(.branch_lt)
+ 		*(.data .data.* .gnu.linkonce.d.* .sdata*)
+ 		*(.bss .sbss .dynbss .dynsbss)
+-		*(.got1 .glink .iplt .rela*)
++		*(.got1 .glink .iplt)
+ 	}
+ }
+ 
+diff --git a/arch/powerpc/kernel/vdso/vdso64.lds.S b/arch/powerpc/kernel/vdso/vdso64.lds.S
+index bda6c8cdd459..400819258c06 100644
+--- a/arch/powerpc/kernel/vdso/vdso64.lds.S
++++ b/arch/powerpc/kernel/vdso/vdso64.lds.S
+@@ -69,7 +69,7 @@ SECTIONS
+ 	.eh_frame_hdr	: { *(.eh_frame_hdr) }		:text	:eh_frame_hdr
+ 	.eh_frame	: { KEEP (*(.eh_frame)) }	:text
+ 	.gcc_except_table : { *(.gcc_except_table) }
+-	.rela.dyn ALIGN(8) : { *(.rela.dyn) }
++	.rela.dyn ALIGN(8) : { *(.rela .rela*) }
+ 
+ 	.got ALIGN(8)	: { *(.got .toc) }
+ 
+@@ -86,7 +86,7 @@ SECTIONS
+ 		*(.data .data.* .gnu.linkonce.d.* .sdata*)
+ 		*(.bss .sbss .dynbss .dynsbss)
+ 		*(.opd)
+-		*(.glink .iplt .plt .rela*)
++		*(.glink .iplt .plt)
+ 	}
+ }
+ 
+-- 
+2.44.0
+
 
