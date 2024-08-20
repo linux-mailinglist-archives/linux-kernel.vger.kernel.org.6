@@ -1,165 +1,232 @@
-Return-Path: <linux-kernel+bounces-294426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEB9958D8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:39:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46B9958D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A357B242C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5220E1F21915
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2A01C2335;
-	Tue, 20 Aug 2024 17:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B720C1C0DCA;
+	Tue, 20 Aug 2024 17:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WjI7wo4B"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHS3qqhH"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288CB1C2325;
-	Tue, 20 Aug 2024 17:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C04482FF;
+	Tue, 20 Aug 2024 17:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724175509; cv=none; b=tCPQvhphk29tIXTqu/gpY/dzxV2ZWgEbxXFuVJghyPmKbP8MVJTbDpwias02KaQ+Jefp6MmTpV1nsSILXclhWSAJTqcwxiG4xKArqzGm2xoiIo434U0LJkXMsyP2kl4kVUvBJAHskNX514HaTzxfEDDL5EuRp5x1H9b3Sy8Ha1s=
+	t=1724175493; cv=none; b=gzYybspZA5v5Nqqo8lEw4pqfaVXEZEFtHPtcYX5y7U8HGJHCXeV/mjEath9gVFaiBJrRAjK+0B+DYN3Yzm8ovMeQMZMuxcKqmnmOOCygnz3xpf/Mz1zii7ijS6M5XE+Lhwz9nwrE+x5WIChx9zwFJQ3OeU6I8/fq0Xy/Ixr2mw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724175509; c=relaxed/simple;
-	bh=73ZZd1aR+uG/5gFkVloVfHgkK5o1HsdJzv0l9tqss74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MBtJ7VoYa0ZluUJeCEWGwMGtdbyadOfChJrvB2/9N0tMskyL9AOjF0bGffQyPqoApplGsEgZd32cH3Xe0j3CJ05gUnsxsVBhCRCKPrKZbPLNE3wWnNP0IVaJDGv5PDzGjnNtDd03dUhdopQUPW6QD94ToKBpIvhRJlPU0gfox7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WjI7wo4B; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KDZ3vR004724;
-	Tue, 20 Aug 2024 17:37:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AQEIRSDa39gdCwlCKq9JZIFIY0/NJ/3+eiPQAxdupj0=; b=WjI7wo4B5jTxrLVe
-	+T7HypxeirX+Cl025E8AZwBqQmc4mPVs9/j2/UUmxNhgois4pBkW5eHsuEXSFzkb
-	Dyl4xs+TrXB2sVS4lsnce9mP2JCY7gAi346q/TTgoYQ95lIw59jzZR3sFOpTP1cz
-	lUORyOvQrRdeZt6jeksmH71vWbQ31wEZVmZMkzANngdae2T5Qe1ES0y6V50jPBly
-	GnPj6my9LZYkvho6GkISvONC/qTPi22k11xxqbMaGDKI4g7VyqCt8WzhkC4t07AP
-	2FJjUluSk8Ymi4WKD0NoRP+sX5VBGryQo7bUpX9RdvlujoxWi8HF05jqti+WFny6
-	yTqbKg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414v5c8mqr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 17:37:17 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KHbGRp025682
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 17:37:16 GMT
-Received: from [10.110.70.123] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
- 2024 10:37:15 -0700
-Message-ID: <88d5ed6f-1429-4381-8014-d5824ec7866e@quicinc.com>
-Date: Tue, 20 Aug 2024 10:37:14 -0700
+	s=arc-20240116; t=1724175493; c=relaxed/simple;
+	bh=NCqWG1JkBau7+mxdyR2gMzXSeKbrP0JYv4ksDoS6+U0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CUIjWo4Qw4yNzFVS9VOtcLYa7gpSK5FOLb390qQaikIbrUtGG13euzXA8dE1TVg3I4Mj//+SHYhQsNcYMETd/ccVmSLT3J2Lg1EOxklpEZRgUy6REc4mX+WB0Y465i9Y3Hllv/mop0L0MhPcO/lo+tST/LYM5ofOn4BtCQQ7WfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHS3qqhH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso63655105e9.3;
+        Tue, 20 Aug 2024 10:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724175490; x=1724780290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uex0Zu5XeJjzbTzovpQP7F+VLtXX34oK2fmnyZ8I8+g=;
+        b=IHS3qqhHn9CC7HiVrdsOqkEHsfVW02LMGbfUM2V0eCcn1hrzpu7yAQE471a0ULAXGW
+         8vHcTQxAm+k9GQQOMjkOcDs2F+b0NtFJtOQYmJgDJErxamEwaFCtjsVFYn5O8bWA0j1I
+         C5BY1sLGnbBSL021U6sowE1kcL/LAyH4d902YhBxCSjWqgwmNX0cAjhIPjKJflfNPk/d
+         QRVaOeShaiXOcgJN8xZmUOaPVsQyLnuUCAo1bJRcjWaoJ/uy7RNWn+oTDP9WHb5lYmT5
+         nw5s97QFWyZ/cML6oJkwtcIGRA6RjYlm8CmWJ+ByqyJ9mwoMZCqmbkoBWziABgURddnD
+         VSuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724175490; x=1724780290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uex0Zu5XeJjzbTzovpQP7F+VLtXX34oK2fmnyZ8I8+g=;
+        b=t0ur3VSnTKfo+RY8Zrqbjp+yhBNbUAwep7iam686LZO/7SJFNdzj/2/CsJ0XoK2IbO
+         09pN0ZUwWrLhRKVfuS6d32grEb21+hKcWDIy3UmN7QMaZYhsejCtEdQ1Fyaf5yYXnWMM
+         JWUVH+/ZLxs6JFW52VvKi7JHdIgksTdXbAOBBRcYrDC4uy3Ja4MhspNZaTcVeg8TIg6r
+         Mr40zwFNLPyN4ZBej87KMor/RzZblMRgM5mQzMz9wiHE4YNl7rKzN5FfULZdbPBnfGUu
+         7pROI+oP8+NcukPy88IWzdF0HmJUtYSGcrOtz24yhF7CJOPzQnv1vWC122O6tcUXdmqb
+         Kpgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA3fFD/zF5Cyx7Hivdm77wQ2J473ab8NSk7nJN+h6idp54CKsDO7jsDcEok9pb1Re8elvByjwk3w2JneQwiLEJZ8euriS53Gx+MzGU+yDeInES8jiVuGZx238Bg7S5SO52rVYMrfmKlx1U8Tw=
+X-Gm-Message-State: AOJu0YwBmCE9u6WYHh8PVymsatkZBhpO+Hu/5NXBZbRttyUNkUhIZdwA
+	Xtftm7gx8oehI2bkasp11+vVatfRLNUf+cR0qZEAZx8U2liKl/WwNdMRJ61v7YIK59hu+amGwnN
+	Z04u5KG9PRRhkzQn9ORuPwWDVS1Y=
+X-Google-Smtp-Source: AGHT+IHYXYf11BLw6d9wcs7H10GmSDAckOfUEbQqIaMIQOUKiv8CPDwzbrDBMuodE7WHHyCVPpTutzPpNU7CP3ayV5k=
+X-Received: by 2002:adf:e907:0:b0:371:8e24:1191 with SMTP id
+ ffacd0b85a97d-371946a4455mr11698109f8f.53.1724175490194; Tue, 20 Aug 2024
+ 10:38:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 29/34] ALSA: usb-audio: qcom: Add USB offload route
- kcontrol
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-30-quic_wcheng@quicinc.com>
- <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
- <58043166-c494-42db-b7d3-575991e43e8b@quicinc.com>
- <f507a228-4865-4df5-9215-bc59e330a82f@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <f507a228-4865-4df5-9215-bc59e330a82f@linux.intel.com>
+References: <20240819213534.4080408-1-mmaurer@google.com> <20240819213534.4080408-5-mmaurer@google.com>
+In-Reply-To: <20240819213534.4080408-5-mmaurer@google.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Tue, 20 Aug 2024 19:37:59 +0200
+Message-ID: <CA+fCnZc9XeNTuD9nVVDqrF_1W1Vv26SVEwu1bCQ2usqfSPpiOw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] kasan: rust: Add KASAN smoke test via UAF
+To: Matthew Maurer <mmaurer@google.com>
+Cc: dvyukov@google.com, ojeda@kernel.org, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, aliceryhl@google.com, 
+	samitolvanen@google.com, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	glider@google.com, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gPOFw45hHTD_kkfGLRNEP9mvfNtZIqVH
-X-Proofpoint-ORIG-GUID: gPOFw45hHTD_kkfGLRNEP9mvfNtZIqVH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_13,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
- mlxlogscore=937 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408200131
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre,
+On Mon, Aug 19, 2024 at 11:35=E2=80=AFPM Matthew Maurer <mmaurer@google.com=
+> wrote:
+>
+> Adds a smoke test to ensure that KASAN in Rust is actually detecting a
+> Rust-native UAF. There is significant room to expand this test suite,
+> but this will at least ensure that flags are having the intended effect.
+>
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> ---
+>  mm/kasan/Makefile                         |  9 ++++++++-
+>  mm/kasan/kasan.h                          |  1 +
+>  mm/kasan/{kasan_test.c =3D> kasan_test_c.c} | 11 +++++++++++
+>  mm/kasan/kasan_test_rust.rs               | 19 +++++++++++++++++++
+>  4 files changed, 39 insertions(+), 1 deletion(-)
+>  rename mm/kasan/{kasan_test.c =3D> kasan_test_c.c} (99%)
+>  create mode 100644 mm/kasan/kasan_test_rust.rs
+>
+> diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+> index 7634dd2a6128..d718b0f72009 100644
+> --- a/mm/kasan/Makefile
+> +++ b/mm/kasan/Makefile
+> @@ -44,7 +44,8 @@ ifndef CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX
+>  CFLAGS_KASAN_TEST +=3D -fno-builtin
+>  endif
+>
+> -CFLAGS_kasan_test.o :=3D $(CFLAGS_KASAN_TEST)
+> +CFLAGS_kasan_test_c.o :=3D $(CFLAGS_KASAN_TEST)
+> +RUSTFLAGS_kasan_test_rust.o :=3D $(RUSTFLAGS_KASAN)
+>  CFLAGS_kasan_test_module.o :=3D $(CFLAGS_KASAN_TEST)
+>
+>  obj-y :=3D common.o report.o
+> @@ -54,3 +55,9 @@ obj-$(CONFIG_KASAN_SW_TAGS) +=3D init.o report_sw_tags.=
+o shadow.o sw_tags.o tags.o
+>
+>  obj-$(CONFIG_KASAN_KUNIT_TEST) +=3D kasan_test.o
+>  obj-$(CONFIG_KASAN_MODULE_TEST) +=3D kasan_test_module.o
+> +
+> +kasan_test-objs :=3D kasan_test_c.o
+> +
+> +ifdef CONFIG_RUST
+> +kasan_test-objs +=3D kasan_test_rust.o
+> +endif
 
-On 8/19/2024 11:39 PM, Pierre-Louis Bossart wrote:
->>>> +/**
->>>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
->>>> + * @chip - USB SND chip device
->>>> + *
->>>> + * Creates a sound control for a USB audio device, so that applications can
->>>> + * query for if there is an available USB audio offload path, and which
->>>> + * card is managing it.
->>>> + */
->>>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
->>>> +{
->>>> +	struct usb_device *udev = chip->dev;
->>>> +	struct snd_kcontrol_new *chip_kctl;
->>>> +	struct snd_usb_stream *as;
->>>> +	char ctl_name[37];
->>>> +	int ret;
->>>> +
->>>> +	list_for_each_entry(as, &chip->pcm_list, list) {
->>>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
->>>> +		chip_kctl->count = 1;
->>>> +		/*
->>>> +		 * Store the associated USB SND card number and PCM index for
->>>> +		 * the kctl.
->>>> +		 */
->>>> +		chip_kctl->private_value = as->pcm_index |
->>>> +					  chip->card->number << 16;
->>>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
->>>> +			as->pcm_index);
->>>> +		chip_kctl->name = ctl_name;
->>>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
->>>> +				  udev->bus->sysdev));
->>>> +		if (ret < 0)
->>>> +			break;
->>>> +	}
->>>> +
->>>> +	return ret;
->> Hi Pierre,
->>> None of this looks Qualcomm-specific, shouldn't this be part of the
->>> soc_usb framework instead of being added in the qcom/ stuff?
->> Started working on this particular comment, and there are some things that needs to be considered if we moved this into SOC USB:
->>
->> 1.  We do save the reference to the USB BE DAI link within the USB DT node, which can be fetched/referenced based on sysdev.  However, I'm not sure if everyone would potentially follow that way.
->>
->> 2.  I tried a few implementations of adding a new SOC USB API, and the argument list was a bit long, because I didn't want to directly reference the usb_chip.
->>
->> Sorry for the delay, but I wanted to give a good stab at implementing this before bringing up the implications.  It is possible, but definitely not as clean as how we have it now IMO.
-> My comment was only referring to the location of the code, it's now in
-> sound/usb/qcom/mixer_usb_offload.c but does not contain anything
-> specific to Qualcomm. I was not asking for any encapsulation inside of
-> soc-usb, I was only suggesting a move of the code to a shared helper
-> library so that this code can be reused as is and not duplicated if the
-> QCOM parts are not compiled in.
+Let's put the kasan_test-objs directives before
+obj-$(CONFIG_KASAN_KUNIT_TEST): they come first logically.
 
-Ah, great, thanks for the clarification.  Let me take a look with that perspective.
+Also, I wonder, if something like kasan_test-objs-$(CONFIG_RUST) +=3D
+kasan_test_rust.o would work to make this shorter?
 
-Thanks
+> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+> index fb2b9ac0659a..e5205746cc85 100644
+> --- a/mm/kasan/kasan.h
+> +++ b/mm/kasan/kasan.h
+> @@ -566,6 +566,7 @@ static inline void kasan_kunit_test_suite_end(void) {=
+ }
+>
+>  bool kasan_save_enable_multi_shot(void);
+>  void kasan_restore_multi_shot(bool enabled);
+> +char kasan_test_rust_uaf(void);
 
-Wesley Cheng
+You need ifdef CONFIG_RUST checks here and an empty definition when
+!CONFIG_RUST.
 
+Please build-test and run the KASAN test suite without CONFIG_RUST
+before sending the patches.
+
+Also, I think it's better to put this declaration next to
+kasan_kunit_test_suite_end: CONFIG_KASAN_MODULE_TEST is not tied to
+the added KASAN test.
+
+>
+>  #endif
+>
+> diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test_c.c
+> similarity index 99%
+> rename from mm/kasan/kasan_test.c
+> rename to mm/kasan/kasan_test_c.c
+> index 7b32be2a3cf0..3a81e85a083f 100644
+> --- a/mm/kasan/kasan_test.c
+> +++ b/mm/kasan/kasan_test_c.c
+> @@ -1899,6 +1899,16 @@ static void match_all_mem_tag(struct kunit *test)
+>         kfree(ptr);
+>  }
+>
+> +/*
+> + * Check that Rust performing a use-after-free using `unsafe` is detecte=
+d.
+> + * This is a smoke test to make sure that Rust is being sanitized proper=
+ly.
+> + */
+> +static void rust_uaf(struct kunit *test)
+> +{
+
+KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_RUST);
+
+
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
+> +}
+> +
+> +
+>  static struct kunit_case kasan_kunit_test_cases[] =3D {
+>         KUNIT_CASE(kmalloc_oob_right),
+>         KUNIT_CASE(kmalloc_oob_left),
+> @@ -1971,6 +1981,7 @@ static struct kunit_case kasan_kunit_test_cases[] =
+=3D {
+>         KUNIT_CASE(match_all_not_assigned),
+>         KUNIT_CASE(match_all_ptr_tag),
+>         KUNIT_CASE(match_all_mem_tag),
+> +       KUNIT_CASE(rust_uaf),
+>         {}
+>  };
+>
+> diff --git a/mm/kasan/kasan_test_rust.rs b/mm/kasan/kasan_test_rust.rs
+> new file mode 100644
+> index 000000000000..7239303b232c
+> --- /dev/null
+> +++ b/mm/kasan/kasan_test_rust.rs
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Helper crate for KASAN testing
+> +//! Provides behavior to check the sanitization of Rust code.
+> +use kernel::prelude::*;
+> +use core::ptr::addr_of_mut;
+> +
+> +/// Trivial UAF - allocate a big vector, grab a pointer partway through,
+> +/// drop the vector, and touch it.
+> +#[no_mangle]
+> +pub extern "C" fn kasan_test_rust_uaf() -> u8 {
+> +    let mut v: Vec<u8> =3D Vec::new();
+> +    for _ in 0..4096 {
+> +        v.push(0x42, GFP_KERNEL).unwrap();
+> +    }
+> +    let ptr: *mut u8 =3D addr_of_mut!(v[2048]);
+> +    drop(v);
+> +    unsafe { *ptr }
+> +}
+> --
+> 2.46.0.184.g6999bdac58-goog
+>
 
