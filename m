@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-293428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E10E957F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:12:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D063C957F29
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411A41C210B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:12:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51B44B2169B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5B16BE13;
-	Tue, 20 Aug 2024 07:12:00 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EBD17556C;
+	Tue, 20 Aug 2024 07:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Omx72tnu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955DC16A39E;
-	Tue, 20 Aug 2024 07:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A88152165;
+	Tue, 20 Aug 2024 07:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724137920; cv=none; b=KKX/SUMAZSWBztaEcR18x3uyPxzB7xe9e7MlDDFRy24z4bAk8ZOA4fhzWMsnje4mbTVOW/PcdaejXhvxV1Z8HYSnDAFk6sSiD5qeBb7b9cZIYAeRaw6jXyz00ou+vW42k2mTLlxE8BK834tW6wjheUc+xt9pitALejwkHCPz/Yw=
+	t=1724137971; cv=none; b=GkUtsPDvF2tyTd/+uZO/wAHjorB+PUszO0H70hMlDbUCFYBmoyDinQml2Nbb9KqQ5pi11yFlxLV8Am+wiaaKM10Exlnci6JGJgF9btmLunp66AAduGuJTwkfxtzS74ht2MbSO586yqztNlEvqIOc9TQxsg4GhxoH/J3kGf1lyZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724137920; c=relaxed/simple;
-	bh=nRMWipEt64KQKIGPBo1545mdc9+ppEaeptFgBeVL/6U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GfMTZJRIw92u7h1iRN9hy8uVviNB3N/p+QDHfSQN95MZJb6AvAARVmdCgHZQfFH7C/8eLHO+LdgzFCX7STj8kCHKiYg0fKbD6vukiA8sDrrj4WAIeF83aIuLXQHiLBnKm2E35fOub8yGNwCdxybUXZSikN1qBjKnEsb2vJcnIWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K51YED003789;
-	Tue, 20 Aug 2024 00:11:49 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412uck2c45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 20 Aug 2024 00:11:49 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 20 Aug 2024 00:11:48 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 00:11:46 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>,
-        <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V2] bcachefs: Add journal v2 entry nr value check
-Date: Tue, 20 Aug 2024 15:11:45 +0800
-Message-ID: <20240820071145.1109560-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <m5tgdpvt4bzaikdmhlxzwrceww5vh5b237qesdosf6nn4hyhan@4brk2v5w26u4>
-References: <m5tgdpvt4bzaikdmhlxzwrceww5vh5b237qesdosf6nn4hyhan@4brk2v5w26u4>
+	s=arc-20240116; t=1724137971; c=relaxed/simple;
+	bh=05juWIN/pOOlKh+0AWNVcA4j6ejO1nrcxfu3RKQyvM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6UUuGbYQc8YgvnP9Av65X+IGcE0usod0Kfz1nB1+5Pqw4hDet8FizCUR2tgydDmAIpeyorYet0qv2RPhMv/cP7mXqAueM76wA33qTor4HCdgIk/A1ZR6ZzPFPSFLFjvHwHJcqlx5TwXR0YNyGkL5VAlXWaPDxTIVTc/3vVDS7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Omx72tnu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03398C4AF0B;
+	Tue, 20 Aug 2024 07:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724137971;
+	bh=05juWIN/pOOlKh+0AWNVcA4j6ejO1nrcxfu3RKQyvM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Omx72tnu8bxN1JJKJ5zMkVpZLpyJrh/QDA+GUAMptshVynAl51/WGblFvcJC6IIUM
+	 vYa2RbvPHtthhJ78bTlcLNDlHg/rnNxL0orDQiPXyB7kqzGWsmNXQq3tc/5rVUXADp
+	 rOVEC+bBabF0VgivLprOVVPcPmDAsuecFZ/anURv4TLmKDioVPnkJIsXW/2Y9m3l7q
+	 GicxakTZod9ArkV13vuxFf+jYFSzLFH1zN1btw3KcXX9AEtgQ5iLD1qBrHQ4joTi36
+	 7OWebZCB2rMNNRDJQjoqNbB8S4R6h/FvOaoT5W/teIZxsD7S61Vjy9ksoWge4HzhqN
+	 DoPIEPZZvSJgQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sgJ2v-000000003f5-1Mye;
+	Tue, 20 Aug 2024 09:12:49 +0200
+Date: Tue, 20 Aug 2024 09:12:49 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
+Message-ID: <ZsRB8fk1_P7XPtQS@hovoldconsulting.com>
+References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=SIcQV/vH c=1 sm=1 tr=0 ts=66c441b5 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=yQR0iu-ZAwy6vDbhzTIA:9 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: 8uYMeEbOpqZd_DzlHHz7faIbaLclNZWT
-X-Proofpoint-GUID: 8uYMeEbOpqZd_DzlHHz7faIbaLclNZWT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408200051
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
 
-When journal v2 entry nr overflow, it will cause the value of ja->nr to
-be incorrect, this will result in the allocated memory to ja->buckets
-being too small, leading to out of bounds access in bch2_dev_journal_init.
+On Mon, Aug 19, 2024 at 01:07:44PM -0700, Bjorn Andersson wrote:
+> Amit and Johan both reported a NULL pointer dereference in the
+> pmic_glink client code during initialization, and Stephen Boyd pointed
+> out the problem (race condition).
+> 
+> While investigating, and writing the fix, I noticed that
+> ucsi_unregister() is called in atomic context but tries to sleep, and I
+> also noticed that the condition for when to inform the pmic_glink client
+> drivers when the remote has gone down is just wrong.
+> 
+> So, let's fix all three.
 
-Reported-by: syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/bcachefs/journal_sb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> Changes in v2:
+> - Refer to the correct commit in the ucsi_unregister() patch.
+> - Updated wording in the same commit message about the new error message
+>   in the log.
+> - Changed the data type of the introduced state variables, opted to go
+>   for a bool as we only represent two states (and I would like to
+>   further clean this up going forward)
+> - Initialized the spinlock
+> - Link to v1: https://lore.kernel.org/r/20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com
+> 
+> ---
+> Bjorn Andersson (3):
+>       soc: qcom: pmic_glink: Fix race during initialization
+>       usb: typec: ucsi: Move unregister out of atomic section
+>       soc: qcom: pmic_glink: Actually communicate with remote goes down
 
-diff --git a/fs/bcachefs/journal_sb.c b/fs/bcachefs/journal_sb.c
-index db80e506e3ab..db2b2100e4e5 100644
---- a/fs/bcachefs/journal_sb.c
-+++ b/fs/bcachefs/journal_sb.c
-@@ -119,6 +119,11 @@ static int bch2_sb_journal_v2_validate(struct bch_sb *sb, struct bch_sb_field *f
- 	for (i = 0; i < nr; i++) {
- 		b[i].start = le64_to_cpu(journal->d[i].start);
- 		b[i].end = b[i].start + le64_to_cpu(journal->d[i].nr);
-+		if (le64_to_cpu(journal->d[i].nr) > UINT_MAX) {
-+			prt_printf(err, "journal v2 entry d[%u].nr %llu overflow\n",
-+				i, le64_to_cpu(journal->d[i].nr));
-+			goto err;
-+		}
- 	}
- 
- 	sort(b, nr, sizeof(*b), u64_range_cmp, NULL);
--- 
-2.43.0
-
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
