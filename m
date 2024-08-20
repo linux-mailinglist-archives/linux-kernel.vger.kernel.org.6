@@ -1,133 +1,281 @@
-Return-Path: <linux-kernel+bounces-294298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0B3958BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:59:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F75958BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4332A2825CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029F21F23990
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F141A1BB6A2;
-	Tue, 20 Aug 2024 15:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C7019408E;
+	Tue, 20 Aug 2024 15:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="z3GAUfFB"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaxZzF4G"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B16196C7B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E5719148F;
+	Tue, 20 Aug 2024 15:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724169538; cv=none; b=IGesIM5+aGBM5AtUh/2Q12AE8iLRpuPklfY5oLvXpoSHMOS2WrKT/B0Yf3Mi32ZeWbeufyhgXM4sVomN4wtU0cpFPG/dOKrq2yGvNmhDu/NJzMK9QXq9vKwoiLW8JR9Qp2ZT5sI+T/yEe0CvEheohTZiJ9mjiJdhtmn7QfQ8oMQ=
+	t=1724169582; cv=none; b=S2KVkw2Wg2MzYL0UNho9fDrGHrz8Ec81z4nmzUIwqiYR6XRWbHSMjRHojBFt3ELpE5w5OFzkYKb7zEd4SKgj3KsH9GT8wteYxJT1IMyo7/sIi/t/Dfk54Of6dN4FbaFd/CrqWHrOUJZkFY0CFxpGmdaGvyCOWHPQLSBE1XRtnHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724169538; c=relaxed/simple;
-	bh=plzPScmSdjLox3OYdz9t2P7i8g4UtSg4NyCpXW7I1m4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tsgZFZM/BCR9UAmA5zEKWK0uOrvId2zuuFi5K8kVg4Ctz+O0/Xnu7s2VPt6Re0B082xEMX618f6J7soFIpKg91qnkl6lhC+ipCsAjRnGD1h3jBVXaWqb2Xu6/hxLy+ye8u9+4/PnaUcP6zVebKg9Q9Ah/ojcUzooBDnq5fbZ/e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=z3GAUfFB; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3db1bc36bc2so2773124b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:58:56 -0700 (PDT)
+	s=arc-20240116; t=1724169582; c=relaxed/simple;
+	bh=DR4NdoDmop9knrTbAlSlclRt8RahNtw9knSDCpq0byE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KKYY9PvO7qjdFWRe+WAnHMYYKC9F/hVFAD0sWBnHveliJ1R7/ha8OYR6AFFbEW7LVNnTKT/824IPt/eZsBPtufIe0L4t3PYxIK7X13fi4fMyoFaErU0yCeDwpcqZLPThleUE2C8e4kp2I+v+TqUDh63Bkp9L7rbjnsswt+3mUEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaxZzF4G; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52f00ad303aso7349401e87.2;
+        Tue, 20 Aug 2024 08:59:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724169536; x=1724774336; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rfB87M+ajklff9IR1StKsGavCV4e8E2kBLAYS9A+WSE=;
-        b=z3GAUfFBJb9Fr9y5ct6dqH57lQtBem4fP09z9PPB3juPZdXZ3vKuVq1cyArYpChE7s
-         ReuskLcI3i0+xiEqEjiPIS1Ko2dAzc3WQiF+ez993HRqzOWaWrSt1n4C/SGX/tQUSiWQ
-         VaRiIfewuTLRnWMPz+PGz/BBQ1qZisFx+rR6KtDBkyieUxYHH3lhC7xDmzJIhgwBROAa
-         jhxf5R8hmmYm828bakmtbL6OEiuT51mPyUXiF9j9qd7VAbyeLIxmkZrF0WrNzPJWDHNF
-         thM2DBmBwn6F7PPtAJvuHbAydhEzJ+n14yIbyLCj2sjqEyrXr3JovDl7w1p0Le8g4mGw
-         K4zA==
+        d=gmail.com; s=20230601; t=1724169579; x=1724774379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3uJH4RATQWUgqKfHPsSvsxb9nwM42H9IUEggYrsmmM=;
+        b=KaxZzF4GBOj64uhEv56jdgtIQ/+asXUvLkWnbq6TmIQQCVmlLefVMlHnSNTGqDIUh4
+         It60zG82i5xxtRiapHFsr5vIDHq3YAyYyv1n/H5H7mTVfNM93fCmcP6zKvmo1EVXmhax
+         QXBN0eJTEQkSaZksBAlqh6EOV48MX4PVJaWBzkXAHBtH/aU1D76P+JuGksmRzm2araFn
+         J1EFaLaTueM7yPyl4bc2lk86wWTEpvwuUWcojopVnmf5MuWXcZtIxDxn2xQR6jmKRk7S
+         hm8YckiUxcG4wURdn/x07D3TtEn5rE6OPYl2zotGDvulcHJZXNCgUGZ05ayGqlgsDHVU
+         lm0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724169536; x=1724774336;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rfB87M+ajklff9IR1StKsGavCV4e8E2kBLAYS9A+WSE=;
-        b=iHXu+4eQGi6ox+cSE83BLrsbrPJ+bi0not+/ws8H0wQ0rFuf6kr/iLAIpumdRFmyUW
-         FGV/NIF7hwRN7lrQWkhhsAX6uLHo8kjoSL0AAUcC3+j2Is2Tn0ojEGJYrb5wAIqdC6O9
-         P30omCpPmqaAL6xqFOibQfQKtU5095oyk8oIXNnyIThp0trONSPsy9fCXEzz9Abxykaf
-         XubOCWVVXmtgKLESSObCEWLO+ovq4tz26m+e9nT949HbJbPm7N/9e7Wp4mQvG8dHLe0l
-         rCw1YJ9auJdAQHJxFhWGcqjG8Q3jc7Ai9ECGPOvPEsv6SJaAI6uHP6YmdaxaQleBGVyr
-         v9ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk4G++OK7dUjOpAN/EYVRmnBAVELh61TMW7rbnlpqMmcikz2wAbZnHjtMCk7h0GtcnzIIppHKUx07cd32i8pucO/E2uh/inSJWHE0S
-X-Gm-Message-State: AOJu0YxqGjw9W/itQuYW7zITBy5pZ65ILkSM/q9QcBXgG1BzYG8JwUyw
-	PO3W3zFjuTV/Ri9n/BC3Oike8zffCZKrrYHKNd+a3s5sPJwdiphN1T+KXxNgvXw=
-X-Google-Smtp-Source: AGHT+IEeoSdOkv8tmbc7KwjQ9tuFv/ugArVpvf2FmLeUfmeuA5fXqNWShnl4Dr6Ie3etUsR24flJvw==
-X-Received: by 2002:a05:6808:15a3:b0:3d9:dbe9:7cee with SMTP id 5614622812f47-3ddb9cbf10emr1211638b6e.14.1724169535714;
-        Tue, 20 Aug 2024 08:58:55 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dd33d5a3efsm2872718b6e.17.2024.08.20.08.58.55
+        d=1e100.net; s=20230601; t=1724169579; x=1724774379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T3uJH4RATQWUgqKfHPsSvsxb9nwM42H9IUEggYrsmmM=;
+        b=fpV+4rOq+JsOdU5X30FxWqnfk5RpM3Trp5usHaGJt2PrAwGwjZ+/P5td26hfsMKlr0
+         dqlFxTfleQykkSpKA+Xsgix/1mBTGAbwHOhVRHpmVoe48WOF8k3Gtr+/wPFDIa+CFmO7
+         j58rNNgaWfoZFU6JSQprmaOERbbfbX/mLh28m9R7BjsH9AIoEMo7PeAPHdZ685oR2vYo
+         oEiCXyaGQM/bZw/vAQWF10jdQBItplLew8MxwN70hurzU+YOMgEVfJg0kyc0wnHpYKsZ
+         /LS646SWKtD+SvkjawLJo1jc3AsdQB05JFCa5fiZ+5GxCHyZ//ltkbNSD+lWjS9cjM1D
+         hL6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvKJTnn6qMrfESU8W+ev2Vj58YjCoFc1YU7Y+rBGWFyjYcfl1oHi9bDLvBzRLFQg3DR9/2KY+elkMveztUS6fVFPRIzprkh6jeKi4i
+X-Gm-Message-State: AOJu0YyS4Rfi9kmQSYT44LUnbvUejM0LpyzQaf+Kd71S62Wn8PEMUal6
+	1iQB07Szz7O7Qd8RLiA5SOk7YjxK5349f16N0CtMleYxrlg9PA4d
+X-Google-Smtp-Source: AGHT+IHRV5C746URYAjDOuuf9WTSLKJFUSw745L3izU3wv7VC2xgRrolwQo3owV8LwzfD399Rfsx/g==
+X-Received: by 2002:a05:6512:68c:b0:52e:d0f8:2d30 with SMTP id 2adb3069b0e04-5331c6ec41cmr9518037e87.59.1724169577827;
+        Tue, 20 Aug 2024 08:59:37 -0700 (PDT)
+Received: from pc638.lan (84-217-131-213.customers.ownit.se. [84.217.131.213])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3b8f0fsm1853833e87.94.2024.08.20.08.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 08:58:55 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 20 Aug 2024 10:58:38 -0500
-Subject: [PATCH 4/4] iio: ABI: document ad4695 new attributes
+        Tue, 20 Aug 2024 08:59:37 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+Date: Tue, 20 Aug 2024 17:59:35 +0200
+Message-Id: <20240820155935.1167988-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-ad4695-gain-offset-v1-4-c8f6e3b47551@baylibre.com>
-References: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
-In-Reply-To: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
-The ad4695 driver now supports calibration using the
-in_voltageY_calib{scale,bias}[_available] attributes.
+Add a kvfree_rcu_barrier() function. It waits until all
+in-flight pointers are freed over RCU machinery. It does
+not wait any GP completion and it is within its right to
+return immediately if there are no outstanding pointers.
 
-Only one of these was documented before. This adds rest.
+This function is useful when there is a need to guarantee
+that a memory is fully freed before destroying memory caches.
+For example, during unloading a kernel module.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- Documentation/ABI/testing/sysfs-bus-iio | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/rcutiny.h |   5 ++
+ include/linux/rcutree.h |   1 +
+ kernel/rcu/tree.c       | 109 +++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 107 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 345d58535dc9..89943c2d54e8 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -541,6 +541,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_proximity_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_proximity0_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_resistance_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_temp_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_calibbias
- KernelVersion:	2.6.35
-@@ -556,6 +557,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_accel_calibbias_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_calibbias_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_temp_calibbias_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_proximity_calibbias_available
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibbias_available
- What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_calibbias_available
- KernelVersion:  5.8
- Contact:        linux-iio@vger.kernel.org
-@@ -603,6 +605,7 @@ Description:
- What:		/sys/bus/iio/devices/iio:deviceX/in_illuminanceY_calibscale_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_intensityY_calibscale_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_proximityY_calibscale_available
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibscale_available
- KernelVersion:	4.8
- Contact:	linux-iio@vger.kernel.org
- Description:
-
+diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+index d9ac7b136aea..522123050ff8 100644
+--- a/include/linux/rcutiny.h
++++ b/include/linux/rcutiny.h
+@@ -111,6 +111,11 @@ static inline void __kvfree_call_rcu(struct rcu_head *head, void *ptr)
+ 	kvfree(ptr);
+ }
+ 
++static inline void kvfree_rcu_barrier(void)
++{
++	rcu_barrier();
++}
++
+ #ifdef CONFIG_KASAN_GENERIC
+ void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+ #else
+diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+index 254244202ea9..58e7db80f3a8 100644
+--- a/include/linux/rcutree.h
++++ b/include/linux/rcutree.h
+@@ -35,6 +35,7 @@ static inline void rcu_virt_note_context_switch(void)
+ 
+ void synchronize_rcu_expedited(void);
+ void kvfree_call_rcu(struct rcu_head *head, void *ptr);
++void kvfree_rcu_barrier(void);
+ 
+ void rcu_barrier(void);
+ void rcu_momentary_dyntick_idle(void);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e641cc681901..be00aac5f4e7 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3584,18 +3584,15 @@ kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
+ }
+ 
+ /*
+- * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
++ * Return: %true if a work is queued, %false otherwise.
+  */
+-static void kfree_rcu_monitor(struct work_struct *work)
++static bool
++kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+ {
+-	struct kfree_rcu_cpu *krcp = container_of(work,
+-		struct kfree_rcu_cpu, monitor_work.work);
+ 	unsigned long flags;
++	bool queued = false;
+ 	int i, j;
+ 
+-	// Drain ready for reclaim.
+-	kvfree_rcu_drain_ready(krcp);
+-
+ 	raw_spin_lock_irqsave(&krcp->lock, flags);
+ 
+ 	// Attempt to start a new batch.
+@@ -3634,11 +3631,27 @@ static void kfree_rcu_monitor(struct work_struct *work)
+ 			// be that the work is in the pending state when
+ 			// channels have been detached following by each
+ 			// other.
+-			queue_rcu_work(system_wq, &krwp->rcu_work);
++			queued = queue_rcu_work(system_wq, &krwp->rcu_work);
+ 		}
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(&krcp->lock, flags);
++	return queued;
++}
++
++/*
++ * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
++ */
++static void kfree_rcu_monitor(struct work_struct *work)
++{
++	struct kfree_rcu_cpu *krcp = container_of(work,
++		struct kfree_rcu_cpu, monitor_work.work);
++
++	// Drain ready for reclaim.
++	kvfree_rcu_drain_ready(krcp);
++
++	// Queue a batch for a rest.
++	kvfree_rcu_queue_batch(krcp);
+ 
+ 	// If there is nothing to detach, it means that our job is
+ 	// successfully done here. In case of having at least one
+@@ -3859,6 +3872,86 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+ }
+ EXPORT_SYMBOL_GPL(kvfree_call_rcu);
+ 
++/**
++ * kvfree_rcu_barrier - Wait until all in-flight kvfree_rcu() complete.
++ *
++ * Note that a single argument of kvfree_rcu() call has a slow path that
++ * triggers synchronize_rcu() following by freeing a pointer. It is done
++ * before the return from the function. Therefore for any single-argument
++ * call that will result in a kfree() to a cache that is to be destroyed
++ * during module exit, it is developer's responsibility to ensure that all
++ * such calls have returned before the call to kmem_cache_destroy().
++ */
++void kvfree_rcu_barrier(void)
++{
++	struct kfree_rcu_cpu_work *krwp;
++	struct kfree_rcu_cpu *krcp;
++	bool queued;
++	int i, cpu;
++
++	/*
++	 * Firstly we detach objects and queue them over an RCU-batch
++	 * for all CPUs. Finally queued works are flushed for each CPU.
++	 *
++	 * Please note. If there are outstanding batches for a particular
++	 * CPU, those have to be finished first following by queuing a new.
++	 */
++	for_each_possible_cpu(cpu) {
++		krcp = per_cpu_ptr(&krc, cpu);
++
++		/*
++		 * Check if this CPU has any objects which have been queued for a
++		 * new GP completion. If not(means nothing to detach), we are done
++		 * with it. If any batch is pending/running for this "krcp", below
++		 * per-cpu flush_rcu_work() waits its completion(see last step).
++		 */
++		if (!need_offload_krc(krcp))
++			continue;
++
++		while (1) {
++			/*
++			 * If we are not able to queue a new RCU work it means:
++			 * - batches for this CPU are still in flight which should
++			 *   be flushed first and then repeat;
++			 * - no objects to detach, because of concurrency.
++			 */
++			queued = kvfree_rcu_queue_batch(krcp);
++
++			/*
++			 * Bail out, if there is no need to offload this "krcp"
++			 * anymore. As noted earlier it can run concurrently.
++			 */
++			if (queued || !need_offload_krc(krcp))
++				break;
++
++			/* There are ongoing batches. */
++			for (i = 0; i < KFREE_N_BATCHES; i++) {
++				krwp = &(krcp->krw_arr[i]);
++				flush_rcu_work(&krwp->rcu_work);
++			}
++		}
++	}
++
++	/*
++	 * Now we guarantee that all objects are flushed.
++	 */
++	for_each_possible_cpu(cpu) {
++		krcp = per_cpu_ptr(&krc, cpu);
++
++		/*
++		 * A monitor work can drain ready to reclaim objects
++		 * directly. Wait its completion if running or pending.
++		 */
++		cancel_delayed_work_sync(&krcp->monitor_work);
++
++		for (i = 0; i < KFREE_N_BATCHES; i++) {
++			krwp = &(krcp->krw_arr[i]);
++			flush_rcu_work(&krwp->rcu_work);
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(kvfree_rcu_barrier);
++
+ static unsigned long
+ kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+ {
 -- 
-2.43.0
+2.39.2
 
 
