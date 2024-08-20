@@ -1,215 +1,234 @@
-Return-Path: <linux-kernel+bounces-294001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7D895877A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:01:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 997BD958783
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB1FB22913
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D36B1F223B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE172BAEB;
-	Tue, 20 Aug 2024 13:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE1B19066E;
+	Tue, 20 Aug 2024 13:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="laO+dyCv"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kl7HlhMf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604318E34F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724158855; cv=none; b=JF2iTV0ny5//SZ+mfF+FCaehWdAMl8TiIbLTegRdj9cjn4IrSdsVHSZeyb++zdzWKfq0RXCPKsB8WTuX25x197Yrye/FjorKsaQXOpiHDcQYfsltWRDamVwFs4N+xK8RYUmi0RUY85M35EHtxDWc1KfJz9/sxtpoAmarYYJI/zw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724158855; c=relaxed/simple;
-	bh=zhEVvf/8ae7zkCvJwHGZWYWO5HMcGw4uFVnrq5d2+M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rjdo4q6oWBZH4xUAqBJbbQExvxBUAjZEH0uJc7Os54qjVKg/ICcu63P1MkdUuULS7VEVvoeP+Voh6r/3cmU7FhYIxL9uZiEh+WlbmjXQ4lRNXSKfofoGktjO70u/9HwYlG/dVNEW+Ve48wh2dZJ5SZjpoYBlbi/ud7N5w7lc06M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=laO+dyCv; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44ff7cc5432so41755481cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1724158852; x=1724763652; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j52XYJE2ICKQlINPQl+zW5CQKy5fCOrlHtppgGWQcXM=;
-        b=laO+dyCv6CulVMqm4hlnC3CImpsfr6Tf9kaCF1hrQTwCMNCLQtTXPKK2/u3bACv3wb
-         2TFoKq4niLCq0V+0NNO44uZxFafCFhG890T3QOPOF5lQKLHWkcxzix2srJMaU48VsUxm
-         oSxl2WO5FwOV1UInXtjTYTyQTizgNrUO6QfVuviwGxGlMA0xOCr9KagPSTCRjw93c3EM
-         quLM2ijwxfXbt5fT12gaGgCLbQV3Y5LJJPykBOguVbOrMtkJWWthL+KwDcCe8LjsAzgL
-         zpCjrNo38Qo4d2Cy66+fc0frhw6uHBKkMFWxu/BPc2sgVM9skPUf81UH/x4RFDUea6Yb
-         Mq0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724158852; x=1724763652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j52XYJE2ICKQlINPQl+zW5CQKy5fCOrlHtppgGWQcXM=;
-        b=Q37+RKrp4x29HNw1uRd9EBlZv39QzDMY7L4Y7KJSIaKa3Po5c/RcONdMwC1G1FIb6O
-         VaAKNzbNfJL4LTq8cq+fHCRcC3TAWhBVCe9q9YUEXUugCr9QKRR7TRIn1Vf5CW5choc0
-         Ay0SS6fNJLVPrtWDXheaKmAv3MibQUR7qhYA62t/FJTHt3Zyyeag24ij3vc4VaBBo7mj
-         KAjFIWo9mjwXCHd5ivlTEKYlpThz+3yxZUsn37x2YAas5wycYo73zkM9FCOLpdcQqrby
-         liLYU6Uo4E8BSmExfVHlINc8PzjNeQS/BTKlbzbwA+H2JaRYYcc7yUgd12f2Ru282gYj
-         SlnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlcoDTRYN4UxeNd8E5aGDDRqAWpE3M6yrIH/9PWt/3Mcu9hc1vWAg1V8JS4yFKFenvDzsRjV8PeaBmE8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYSRVv4AiiZIO2WGg2mDWAP9Hne17tBCZGjbuz9S1eamGRH6qk
-	TS4SZtKrA2i6KobV1kgmiOKiZbAr/2OE8hp+3tO8XEzrsUL4CueQa1nHpImisbA=
-X-Google-Smtp-Source: AGHT+IFogz/OKodC6xvuV+JQ0O1UMwu8nhnZCifjPnotmW7jOJBTqcnoRS5m2elNnoCh4kakCFzN+Q==
-X-Received: by 2002:a05:622a:6186:b0:453:6cb2:c8d1 with SMTP id d75a77b69052e-45374310eaemr144853771cf.37.1724158852033;
-        Tue, 20 Aug 2024 06:00:52 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (ip-185-104-139-70.ptr.icomera.net. [185.104.139.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45369fd716csm50159141cf.4.2024.08.20.06.00.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 06:00:51 -0700 (PDT)
-Date: Tue, 20 Aug 2024 09:00:37 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Khalid Aziz <khalid.aziz@oracle.com>,
-	Henry Huang <henry.hj@antgroup.com>, Yu Zhao <yuzhao@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Gregory Price <gregory.price@memverge.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
-	David Rientjes <rientjes@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>,
-	Kairui Song <kasong@tencent.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Vasily Averin <vasily.averin@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] mm: workingset reporting
-Message-ID: <ZsSTdY5hsv05jcj-@PC2K9PVX.TheFacebook.com>
-References: <20240813165619.748102-1-yuanchu@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328B315749C;
+	Tue, 20 Aug 2024 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724158888; cv=fail; b=eJND3in+0vlb5uZYfKqhNatgeCWNOQPZNYiKv7aU40PzZ+NZ9l0D42sptyhDwn9QpyI6XIWHa1fFPdD9Ianz8UDahntZmAfSX+sg7s9lu0+qBhxmDR8jIaaIU7+60OXku6aseIIDqYboKJae+pUOmHhnEq2xEfi0sNmhd1XZR4I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724158888; c=relaxed/simple;
+	bh=e7Zoij0BorlPByRkXnCAREGS6YC4WaVeYhTsfWKbbLo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VlbgKKR48LJGCCY8l2MmA3VTitTY6CclLfgJXMrU5OLNQhkkKmG6sK3uBJl5qHJvx4rpMxAMAjUs0sE+ByUGo7tlzIYJZD6ZQ4KyfXUZRXHuvLvp5XzyQga6hqZXflGxjzV9OlcPX3MEseIFulZJWXpvTi5c8CURoatPT0ox8BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kl7HlhMf; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724158886; x=1755694886;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=e7Zoij0BorlPByRkXnCAREGS6YC4WaVeYhTsfWKbbLo=;
+  b=kl7HlhMfAUrMXg1dBLV7uo3bqam4qGJu5dAuFubx6DsVcjBHimw7dftV
+   3f7Xj6jTFGtlQytJSBiLiJb2KlyywWFKdLdF8nG23G57I2trdpan6I0vW
+   Uo3CzLj1RsC26CzVqFgALmKVT4i759Qs2kz9JguA7KwhZn+z3cfpFpITc
+   41SwZQ2eC52BPrJyz3VEpFxIhF9O+whnaExQvY1awUnsD1mDs4G5zGJIL
+   Rlw3+1vquwFURlWS51E5otAORdltOSgmXV1aPxmbX2U0ZhqoQaIFw4uj1
+   9AsmdQz8F2K6LvxDOIISc2PbAQ489k6cpA89l9qJN5ERH9hqBjXJXOr9+
+   Q==;
+X-CSE-ConnectionGUID: D6ny1TSUQ26/0jxBj8GSuw==
+X-CSE-MsgGUID: CciGcLRiTNSLLLAKRSoU/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="47849543"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="47849543"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:01:15 -0700
+X-CSE-ConnectionGUID: NnradvfNTeW9waAIXD0Y+g==
+X-CSE-MsgGUID: vLhTKaxETFGjPkJBapKSqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="61037064"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 06:01:15 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 06:01:14 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 06:01:14 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 06:01:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iwLlsQEF07B1nfCrwSQnMGGwQH53Hf2uQxubfuXT9ojWtKHsYI9LsMBFOWZLyQ+9XiXpFl+4QIf1B3fYInpFSvk92gvcVJbvmgteEFUwAVmdEAjXoX8Df11WVut1fKVnuJXatNMiIQLU2rVjKHgQXmX5tdDo5zlmtXpRvm9A7fvaMehbfWNgXJDmz90E1X4WePAzlRr2rzBD37E4KGKQ/PDmtsvedy6DOvzd3/c3y/UVzLXax8EhI6XycSELHSqFwrtJfnJDW9V0Ul0+WGtGKNk1kYsoMAWfvo0TDwGaH25HoCbg5KpUKGLKsYDD56b42etFe+WokhwVYzKZwt5tgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x3sAgd+HsYhCA1HxyH7OQNBnOHQUVpfjMElgC+WqqbM=;
+ b=mSD7bdkzUVtTWhlwVvuS5xWZZbYey+CMWfyaVOKFMvXes7dQS9Jc5vqhvwge9f4n9Iq5qZAfB90OBMxaxviWTtnVfvsxmbItHRGpf+IDNA+422MHxaIDi40ci3c6vtg5AcspYj8reiWGqZk0Q+7cYB0y/sXcZ3vecGwVYXJPD8k+wQmuXeTW4Ml01yUVr4fvvMBvt53zuvgvK7ok6iedcb8+pwXhnCRB3/MJMR0RlQ8g+WeFJXTJ3/fL8Fe9/kPnN1GiL4+jaBeFyBItPXJxEHkVL/muvoFrvCEWooBR50KJTmeIPpQSdwdAg5FHJPwS2QggJJWjR8CnV3zYseY9aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ CH3PR11MB7346.namprd11.prod.outlook.com (2603:10b6:610:152::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
+ 2024 13:01:10 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::1d5f:5927:4b71:853a]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::1d5f:5927:4b71:853a%4]) with mapi id 15.20.7897.014; Tue, 20 Aug 2024
+ 13:01:10 +0000
+From: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, "jiri@resnulli.us"
+	<jiri@resnulli.us>, "corbet@lwn.net" <corbet@lwn.net>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "donald.hunter@gmail.com"
+	<donald.hunter@gmail.com>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Loktionov,
+ Aleksandr" <aleksandr.loktionov@intel.com>
+Subject: RE: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a pin
+Thread-Topic: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a
+ pin
+Thread-Index: AQHa6YWetxpyQwER/kmdLN5gT7vM5rIf5OqAgBA6X6A=
+Date: Tue, 20 Aug 2024 13:01:10 +0000
+Message-ID: <DM6PR11MB46574D49F2601C4E3538FB779B8D2@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20240808112013.166621-1-arkadiusz.kubalewski@intel.com>
+	<20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
+ <20240809211549.28d651d7@kernel.org>
+In-Reply-To: <20240809211549.28d651d7@kernel.org>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|CH3PR11MB7346:EE_
+x-ms-office365-filtering-correlation-id: ba66a5f5-2baa-4c57-1474-08dcc11829c3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?/RIH7sHMaF7oiJ1qSiYmSf6kUtHJ6c/lyzOkDcyR53TU1ICOdeO6im/n+QtM?=
+ =?us-ascii?Q?ln7DbkeNnX3Bb4TfipAlq3mVq798CtPJLFQDbO/CdrVGPLTyN+ZOJVNbwYqR?=
+ =?us-ascii?Q?FFSDynEuEWyCpmglK+k4qq5ZuReVm22bSrxMOWqbnHrjtm2xV2vWLthp5squ?=
+ =?us-ascii?Q?3ZkYX5pzLHnm/PU7lBt4VhF6vJBgmJ0ShSz2xrdfT4UJl1Loowh5YAXp4ucD?=
+ =?us-ascii?Q?tpwiwNi7f/HR013esKEWUXIYzsFV8IKB5KWyZu4XkQcwa0sBF7aR6B9GVKGG?=
+ =?us-ascii?Q?zrEUtnjTuTVmWYE4QsYj7GmZuAybseDwDKSHKcyf2GoXXfHGhVQ0kdbSp840?=
+ =?us-ascii?Q?Du30xu5EAmXK3WOGNGMbZ31JB8pKbiGjTMvBqVr93y59rB+8F1EKTzhWjhfW?=
+ =?us-ascii?Q?zTbWTmJaeF6H5Se15ttDKVmrVsSkufMBqJh/CmDBO8UywIGg37DY22ZIanPy?=
+ =?us-ascii?Q?tDJt1M5zbUIKlz9beIQIvuJN0Z+r1UwVimgoZJ+o9XwVlkUNQzOXxqAuZGTg?=
+ =?us-ascii?Q?8lXP9ZQdOq7JCN2ilLT+CTU3L/ggpyF8P5RLyChwpxPMbAb+H9nNGW4Y0MlW?=
+ =?us-ascii?Q?Np8QVNeqHmJfc7BK3jpinyhR1IrmoQMn0LGNjnz9G8HTPbabD0agYJZDXTsH?=
+ =?us-ascii?Q?sunrpX4mmhgZnGl6AWLUdnmSXy5EWewXdgnm3h37WZYVtzyp+ZhBwfQZE3kw?=
+ =?us-ascii?Q?U4l1pGpXZKWx7yFRFE6dlMkRZQB1d+dpl99KymBnMeDaTNgWjZ7LXcG/j9DP?=
+ =?us-ascii?Q?3w82US8fJQ4IuAq9OST7wAJiXrZYss/TFdS/mOi3UaHU4MbQxuiEAjOm8VbL?=
+ =?us-ascii?Q?jwMPkeYPAapqCgxyZUVdbVJNE62i7DPu25bPeFa/L//cozbEBvIx5QYehn2w?=
+ =?us-ascii?Q?p5DxaKow3OjV36Z0Yh4cFSbPliZvm1GI7113wX2ndXUuQDfkQfSW0unS4DmB?=
+ =?us-ascii?Q?chvL4xuJdhCg2i2kJrsASCqfESP5euuqqCfWDxMIzTHGCGzq7zutlXt3eErl?=
+ =?us-ascii?Q?ZwSjuXJxEHm7+i5CqlI0oy6jVTe+uYCmAmcrqZ+rcDRR8A075iUUmgEF6BKg?=
+ =?us-ascii?Q?kk1RLAM01iZneRbgBxLgpFL4vyyU7pkepX7xhgRhVt7ArDBFTUd75cKz0Co7?=
+ =?us-ascii?Q?qe2wvKZm7Rf65ADbd0JfTDvMpkxaQYutbtTzEexzp3wnKFBajHz9pIZXYa46?=
+ =?us-ascii?Q?/NTzeqe/LfT2SYyHugu8Ltg7l9XAO+h+SmXId9R1ZgDIxIWXOi/KBDyNjypP?=
+ =?us-ascii?Q?J3QIonyV/JWj0AUNvus/BZ2p/6nUeFut4mfv3ljx4GBpXe3QPRYG8SIo/5H/?=
+ =?us-ascii?Q?3NNpjTeHXv/Va/ibRS4JLQa1scwy0q+vtYGeVRh02q86pyBLdieCT14dlyS7?=
+ =?us-ascii?Q?LX1qH5NIUxAzuIBZ/qAFHe5wzEZ69mrMJcTry0QPyD/XaR5giQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?STtKaCHQ45yYDs2OgZhTDNl4JZ1fz2ewDWh0aO8dr6mFMMlN0pa4rXJXSAvY?=
+ =?us-ascii?Q?I75hpSggrwDy3fs8obiYjsYFHMNuAQclPkMxnenuaqWdoPtLc7iDNWlyCuhB?=
+ =?us-ascii?Q?S+Fu/4s4mkMvlyOvu0IYmdHM4w3hzRVusNR7n8oSLbN73AZhxK7uTkFey2Xs?=
+ =?us-ascii?Q?ub4Y8lsJ43h4Vq1yFgjrEdxOmhY2h/VNzXKJaxKya0lCKd2ADPu5fHm3rdJK?=
+ =?us-ascii?Q?W4ZJiu64t3DtIr1Rle+68np4M5cyVKVMTHqo/DGg9pWae58O1B8WSQeRm1Hp?=
+ =?us-ascii?Q?S0IoiRYu/xcUyCjPyJ3DU+q+5GQAKkXVe8C9ssLK8yNgyHQNqfeSDhJe4DE+?=
+ =?us-ascii?Q?3NrWQ/mS6hDhOCHUKXh6bvsbk8XZGqm3hHPSdGF9tK2YqCpYV0pWAxeyHN6G?=
+ =?us-ascii?Q?dZwv+tNWG5vOH8mOFEHj+lBQO0io1japvfXb8UgVDatalwrXQI1qcxNemK71?=
+ =?us-ascii?Q?nz5ilc2L1LXT8NM0aCLLlp0Lr9ysgX/SE/+tuGtpFOhWt0nGrdt5jCGagI4P?=
+ =?us-ascii?Q?ens7GsCTQYox1prgaXQSn2WrFTO4c0UvR43AEWl/mhlzMBpWG9frM/j3u5mN?=
+ =?us-ascii?Q?58opdFPuaAQId0q7tJuoDBpT677omUTo5yKx2Qmcq2j9oVxXNEABnXjGDT0m?=
+ =?us-ascii?Q?1TNkvJkjyvEAznmMi05eMp7+e9LOF5/YpnCjF7vyiI1MnxHLfCvqc3oM5zAq?=
+ =?us-ascii?Q?th6YFT8KQmUq7ZrJRv1DlaiC3kqoVs/mAMU/9SNX9Lf5RAcB2bmiJM45neZN?=
+ =?us-ascii?Q?ZE6A3tv0CpQcOnj58HnV5WfqXAqoHlkqqsW1bJNQUroq514LwcLFQnut12Nt?=
+ =?us-ascii?Q?SQ2AdKKq7OzLjj61a2XpDiM6zL5AVJLX1WQCUv9dB72XGdQaZYzBh4rn21gN?=
+ =?us-ascii?Q?FiZPhBwrRa6QmVZBNHsBEen861lrWV3rinKRxCzTGqEfg0YnCYYPqaamFKuI?=
+ =?us-ascii?Q?2v1HvrVS3uFoNmLm/UTlVThBCtJ63qghbzpEgCFbn0LXKx41neoBDAjPNR0e?=
+ =?us-ascii?Q?6zQ3Qw983sG27wxGidrMilzqQ7l9iz4aTZILI2J9xP9sNqr3kRFBh6u7lSIe?=
+ =?us-ascii?Q?GWEuWLSBHxAwIih8BXPYbg+sjXafmhfFMlKlm5W2nqLlWSEmP1zxZgZVeBPb?=
+ =?us-ascii?Q?i0N9voY+jI+LX/bUCfq/apu+wejCGI3bpLYp9KKGHFz9xoLBQV2rdHY93bcq?=
+ =?us-ascii?Q?v/dX5YGUgWJ6AbFsfuVvOBc1ClsrMy55Jcbrg9KP9YuapE8/Ji9JlZwbGjDc?=
+ =?us-ascii?Q?s6hQv/fZul1hAyAPFq9yQmel54Evsrkp3Zn4lH3sU+NNruzgUYlendX3N0FG?=
+ =?us-ascii?Q?LY0ITiwXpsT1lk6Ds4DqFQclX1+/TyqMh9p0CiW+9F7d3ZHXEYVnixvCcuKa?=
+ =?us-ascii?Q?cwdA5j8flnN/9SE5BnSNMryQ91QzXxO1E7PIiZVgEpaQJfbjTa0EbvLKk/c7?=
+ =?us-ascii?Q?e9ZV5W6zlka/vQszFV6aHaWV1rUboajoo7FI4fTbYr43ZEUgY79pguR+l1G0?=
+ =?us-ascii?Q?julcNdD8sjnM3OT/SGqUexDmFNNc1LR/83XZziNIBzNEz2uUmfC3tkij73Cw?=
+ =?us-ascii?Q?mGaCTafBMIVh2Qgod70A5m42T84ZVFU9NGVttWBhdXJiD2tICA2ogTd4J2C0?=
+ =?us-ascii?Q?1g=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813165619.748102-1-yuanchu@google.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba66a5f5-2baa-4c57-1474-08dcc11829c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2024 13:01:10.3680
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tf+0K7dDmq+6exnuGrbQlQMrb1YgjvvgVaQ1y+xBi/+RxqYnstzuSer81h9WBkbVWImguwIgQOdLCqT1IPZ+6p4LSu4IzF8ZLN/KBgDoOSo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7346
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 13, 2024 at 09:56:11AM -0700, Yuanchu Xie wrote:
-> This patch series provides workingset reporting of user pages in
-> lruvecs, of which coldness can be tracked by accessed bits and fd
-> references. However, the concept of workingset applies generically to
-> all types of memory, which could be kernel slab caches, discardable
-> userspace caches (databases), or CXL.mem. Therefore, data sources might
-> come from slab shrinkers, device drivers, or the userspace. IMO, the
-> kernel should provide a set of workingset interfaces that should be
-> generic enough to accommodate the various use cases, and be extensible
-> to potential future use cases. The current proposed interfaces are not
-> sufficient in that regard, but I would like to start somewhere, solicit
-> feedback, and iterate.
+>From: Jakub Kicinski <kuba@kernel.org>
+>Sent: Saturday, August 10, 2024 6:16 AM
 >
-... snip ... 
-> Use cases
-> ==========
-> Promotion/Demotion
-> If different mechanisms are used for promition and demotion, workingset
-> information can help connect the two and avoid pages being migrated back
-> and forth.
-> For example, given a promotion hot page threshold defined in reaccess
-> distance of N seconds (promote pages accessed more often than every N
-> seconds). The threshold N should be set so that ~80% (e.g.) of pages on
-> the fast memory node passes the threshold. This calculation can be done
-> with workingset reports.
-> To be directly useful for promotion policies, the workingset report
-> interfaces need to be extended to report hotness and gather hotness
-> information from the devices[1].
-> 
-> [1]
-> https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirements-white-paper-pdf-1
-> 
-> Sysfs and Cgroup Interfaces
-> ==========
-> The interfaces are detailed in the patches that introduce them. The main
-> idea here is we break down the workingset per-node per-memcg into time
-> intervals (ms), e.g.
-> 
-> 1000 anon=137368 file=24530
-> 20000 anon=34342 file=0
-> 30000 anon=353232 file=333608
-> 40000 anon=407198 file=206052
-> 9223372036854775807 anon=4925624 file=892892
-> 
-> I realize this does not generalize well to hotness information, but I
-> lack the intuition for an abstraction that presents hotness in a useful
-> way. Based on a recent proposal for move_phys_pages[2], it seems like
-> userspace tiering software would like to move specific physical pages,
-> instead of informing the kernel "move x number of hot pages to y
-> device". Please advise.
-> 
-> [2]
-> https://lore.kernel.org/lkml/20240319172609.332900-1-gregory.price@memverge.com/
-> 
+>On Thu,  8 Aug 2024 13:20:12 +0200 Arkadiusz Kubalewski wrote:
+>> +Device may provide ability to use Embedded SYNC feature. It allows
+>> +to embed additional SYNC signal into the base frequency of a pin - a on=
+e
+>> +special pulse of base frequency signal every time SYNC signal pulse
+>> +happens. The user can configure the frequency of Embedded SYNC.
+>> +The Embedded SYNC capability is always related to a given base frequenc=
+y
+>> +and HW capabilities. The user is provided a range of embedded sync
+>> +frequencies supported, depending on current base frequency configured f=
+or
+>> +the pin.
+>
+>Interesting, noob question perhaps, is the signal somehow well
+>known or the implementation is vendor specific so both ends have
+>to be from the same vendor? May be worth calling that out, either way.
 
-Just as a note on this work, this is really a testing interface.  The
-end-goal is not to merge such an interface that is user-facing like
-move_phys_pages, but instead to have something like a triggered kernel
-task that has a directive of "Promote X pages from Device A".
+Unfortunately, I don't have good answer for your question. I went over docs
+from 4 vendors of Network Synchronizer Integrated Circuits and only one
+supported it.
 
-This work is more of an open collaboration for prototyping such that we
-don't have to plumb it through the kernel from the start and assess the
-usefulness of the hardware hotness collection mechanism.
+I also haven't heard anything about standardized way for this, but I believ=
+e it
+is hard to call it vendor specific solution - IMHO there is nothing fancy t=
+hat
+would make it hard for different vendors to implement/use. The "special"
+pulse-ratio and embedded sync frequency seems to be all the info needed to
+configure both ends.
 
----
-
-More generally on promotion, I have been considering recently a problem
-with promoting unmapped pagecache pages - since they are not subject to
-NUMA hint faults.  I started looking at PG_accessed and PG_workingset as
-a potential mechanism to trigger promotion - but i'm starting to see a
-pattern of competing priorities between reclaim (LRU/MGLRU) logic and
-promotion logic.
-
-Reclaim is triggered largely under memory pressure - which means co-opting
-reclaim logic for promotion is at best logically confusing, and at worst
-likely to introduce regressions.  The LRU/MGLRU logic is written largely
-for reclaim, not promotion.  This makes hacking promotion in after the
-fact rather dubious - the design choices don't match.
-
-One example: if a page moves from inactive->active (or old->young), we
-could treat this as a page "becoming hot" and mark it for promotion, but
-this potentially punishes pages on the "active/younger" lists which are
-themselves hotter.
-
-I'm starting to think separate demotion/reclaim and promotion components
-are warranted. This could take the form of a separate kernel worker that
-occasionally gets scheduled to manage a promotion list, or even the
-addition of a PG_promote flag to decouple reclaim and promotion logic
-completely.  Separating the structures entirely would be good to allow
-both demotion/reclaim and promotion to occur concurrently (although this
-seems problematic under memory pressure).
-
-Would like to know your thoughts here.  If we can decide to segregate
-promotion and demotion logic, it might go a long way to simplify the
-existing interfaces and formalize transactions between the two.
-
-(also if you're going to LPC, might be worth a chat in person)
-
-~Gregory
+Thank you!
+Arkadiusz
 
