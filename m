@@ -1,150 +1,133 @@
-Return-Path: <linux-kernel+bounces-293233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C669D957C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D4957C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C3E284F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A571F215B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF08E132103;
-	Tue, 20 Aug 2024 04:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CC150284;
+	Tue, 20 Aug 2024 04:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tvh/uBq9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pb5GP14V"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00F54C3D0
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149E52F5E;
+	Tue, 20 Aug 2024 04:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724127033; cv=none; b=p+nwX6s6kFbqu6dAbcyHWU7Uw128W/7wlJj3EoXhZfeVyjNGx4jDPSMoRSHPl2ALPwEOAFY5RiMp3YU/y3pTt3y6imTN7Q03RDwmSWVC4Ok4gnBHUNgjRLgpxxHQs2Lt07UZrBOatLPc7A/zKvymiE6Hl/7Dlb04MK8GVrTw14c=
+	t=1724127607; cv=none; b=q6yhQJ7NPyt2llVoP2m0/QoWpQLo3EalG7EXDGmp2QD/GqfTQNI+aHPUOX3CJ2mw/PFQHR/th1zUnEzHIE3JRn6m1Jcv5QxqQ51raDWpKBXh1YgeOtecLqRdUvBxe0fh9DguR4JwmqlivFRBHIrgmLPQG9pQqZXogr9MYyvlriM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724127033; c=relaxed/simple;
-	bh=QgBhNuA+/yVA9gSejlEjFSLZYb0KO+WdfemUy1Z5vD0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q5A197witWF+Q1Ybcl+EETmc0c/NMMAsXLbzE6w8C6USOSRqlhyMbdU+Rn+spNzQ7hsSynVAoN3jG2AmJpCN0NAgnISxxE1CMmjdvQ9680bUrKf/Ox7GfyQLGI3ylqliJLlU3dwHMXJcggdJ6LGcZxZ9FPnf2FE3g0/5S58VZTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tvh/uBq9; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724127032; x=1755663032;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QgBhNuA+/yVA9gSejlEjFSLZYb0KO+WdfemUy1Z5vD0=;
-  b=Tvh/uBq9j1eI5XWTTAieOgjbs6e3Tn666a7+XU4vo5cPTCWSowBjeFND
-   C1Mr3dSUejaJFGAi4c3p9RULAN2MqYKxOaAz1cZoFfty/A2nZFqbRIooi
-   UN11UqcZ9svIEfd1MZeq2aqrV4CqmS/mRSN3PmdBBYb6wznqEzDhV/fpB
-   Ui6IMJRWRtQBj0xY0FTK8rIpjxfR//1By04XRgeoaQ/BBzIZQj1vuT7MK
-   6YQuNh96aqpsfSlXyaHEGlJ2nSgKOm7kYXPgZey75VEAadiz1TByj8YCU
-   7+Nm7cI3vxgDmVdfF7rIM5rTm6KxuBk77uafxb1y1My0HFnVYmnb4tj2X
-   g==;
-X-CSE-ConnectionGUID: zaU1VdBUQEGgLa685vzWNg==
-X-CSE-MsgGUID: jBwKY9g/TGy4p2ITg5tE2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33788391"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="33788391"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 21:10:32 -0700
-X-CSE-ConnectionGUID: jBem+RASQNi1pkn2tOViww==
-X-CSE-MsgGUID: 4Fl2vCyKTcKoLb/7GstDwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="65456369"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 21:10:28 -0700
-Message-ID: <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
-Date: Tue, 20 Aug 2024 12:10:26 +0800
+	s=arc-20240116; t=1724127607; c=relaxed/simple;
+	bh=ZudlhkBfQ0BwjRqg6u+viifztToroejZY1NZzXHOP20=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VSVJwEctZADQ09kobp+1+FRxWWYgw+OEQkDyMVkKLwIN1Our+i8TaPgBzhxDp6DsDL13D/LIesY3+HCBUUpClqubyAoFU6nU5QZ0J4sWuavERchs4OXHzbtWvVLrldp2OA7kECP9eWSBl9yZHb0HdCEpz7hdCm/1ng4TjwS5mLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pb5GP14V; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (unknown [10.101.196.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A22153F215;
+	Tue, 20 Aug 2024 04:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724127110;
+	bh=NPnIDwRkzJjOEruOcZJb3i9Ia0ap8ihLS7L3WjqbHZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=pb5GP14VL3QJlo0x60EcQTjFzHzksA5Hp4AlqHquAOoVjywLlsscHlmpWBSoQsFK7
+	 1IBwkCprvBZtRZhFEBzwJL6ZMhlV8vpnCFPH5+g61cx+YV2nVVaZrSDGICJwwxPW8H
+	 EYbhm/fjhQz3B2ef9ox2+4OkkItvjjymRsosSZmHOKLhsf0UUv25jUK3HnIqS93zz0
+	 W7JNOAW3Vw2suTKTJM/2gwU0iP6plnrOgoYag/xLEJDmVxdExWykO5DdidwPAkTchI
+	 Zs1rY5un2vipuw6UZtSnQgNTz1lSGmwxcsv1dgV0jr6UMJKeiuTHN8svP+JpsruOc9
+	 TZgNLfNtAI9YA==
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: jacob.jun.pan@linux.intel.com,
+	lenb@kernel.org
+Cc: artem.bityutskiy@linux.intel.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH v2] intel_idle: Disable C1E on Jasper Lake and Elkhart Lake
+Date: Tue, 20 Aug 2024 12:11:28 +0800
+Message-ID: <20240820041128.102452-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Vasant Hegde <vasant.hegde@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Yi Liu <yi.l.liu@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
- <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
- <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
- <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
- <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
- <20240819123400.GU3468552@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240819123400.GU3468552@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/19 20:34, Jason Gunthorpe wrote:
-> On Mon, Aug 19, 2024 at 03:09:00PM +0800, Baolu Lu wrote:
->> On 2024/8/19 14:34, Vasant Hegde wrote:
->>> On 8/16/2024 6:39 PM, Baolu Lu wrote:
->>>> On 2024/8/16 20:16, Vasant Hegde wrote:
->>>>> On 8/16/2024 4:19 PM, Lu Baolu wrote:
->>>>>> Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
->>>>>> attached to the device and disabled when the device transitions to block
->>>>>> translation mode. This approach is inappropriate as PCI PASID is a device
->>>>>> feature independent of the type of the attached domain.
->>>>> Reading through other thread, I thought we want to enable both PASID and PRI in
->>>>> device probe path. Did I miss something?
->>>> PRI is different. PRI should be enabled when the first iopf-capable
->>>> domain is attached to device or its PASID, and disabled when the last
->>>> such domain is detached.
->>> Right. That's what AMD driver also does (We enable it when we attach IOPF
->>> capable domain). But looking into pci_enable_pri() :
->>>
->>>
->>> 202         /*
->>> 203          * VFs must not implement the PRI Capability.  If their PF
->>> 204          * implements PRI, it is shared by the VFs, so if the PF PRI is
->>> 205          * enabled, it is also enabled for the VF.
->>> 206          */
->>> 207         if (pdev->is_virtfn) {
->>> 208                 if (pci_physfn(pdev)->pri_enabled)
->>> 209                         return 0;
->>> 210                 return -EINVAL;
->>> 211         }
->>> 212
->>>
->>>
->>> If we try to enable PRI for VF without first enabling it in PF it will fail right?
->>>
->>> Now if PF is attached to non-IOPF capable domain (like in AMD case attaching to
->>> domain with V1 page table) and we try to attach VF to IOPF capable domain  (say
->>> AMD v2 page table -OR- nested domain) it will fail right?
->> Yeah! So, the iommu driver should basically control the PRI switch on
->> the PF whenever someone wants to use it on a VF.
-> PRI enable sounds like PASID enable to me.
-> 
-> The ATS control is per VF/PF, and PRI does nothing unless ATS returns
-> a non-present indication.
-> 
-> Like PASID, it seems the purpose of PRI caps is to negotiate if the
-> CPU can process PRI TLPs globally.
-> 
-> So, I'd guess that just like PASID we should turn it on at PF probe
-> time if the IOMMU can globall handle PRI.
-> 
-> Enabling ATS will cause PRI TLPs to be sent.
-> 
-> Probably more of this code should be lifted out of the iommu drivers..
+PCIe ethernet throughut is sub-optimal on Jasper Lake and Elkhart Lake.
 
-Some architectures, including VT-d non-scalable mode, doesn't support
-ATS translation and translated requests when it is working in the
-IDENTITY domain mode. In that case, probably PCI ATS still need to be
-disabled when such domain is attached and re-enabled when the domain is
-detached.
+The CPU can take long time to exit to C0 to handle IRQ and perform DMA
+when C1E is enabled.
 
-Thanks,
-baolu
+So adjust intel_idle to use _CST when state_table is absent, and disable
+C1E on those two platforms.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219023
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2:
+ - Allow the driver to use _CST when state_table is absent.
+
+ drivers/idle/intel_idle.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index 9aab7abc2ae9..ac1c6f4f9c7f 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -1475,6 +1475,10 @@ static const struct idle_cpu idle_cpu_dnv __initconst = {
+ 	.use_acpi = true,
+ };
+ 
++static const struct idle_cpu idle_cpu_tmt __initconst = {
++	.disable_promotion_to_c1e = true,
++};
++
+ static const struct idle_cpu idle_cpu_snr __initconst = {
+ 	.state_table = snr_cstates,
+ 	.disable_promotion_to_c1e = true,
+@@ -1538,6 +1542,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&idle_cpu_bxt),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&idle_cpu_bxt),
+ 	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&idle_cpu_dnv),
++	X86_MATCH_VFM(INTEL_ATOM_TREMONT,       &idle_cpu_tmt),
++	X86_MATCH_VFM(INTEL_ATOM_TREMONT_L,     &idle_cpu_tmt),
+ 	X86_MATCH_VFM(INTEL_ATOM_TREMONT_D,	&idle_cpu_snr),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&idle_cpu_grr),
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&idle_cpu_srf),
+@@ -2075,7 +2081,7 @@ static void __init intel_idle_cpuidle_driver_init(struct cpuidle_driver *drv)
+ 
+ 	drv->state_count = 1;
+ 
+-	if (icpu)
++	if (icpu && icpu->state_table)
+ 		intel_idle_init_cstates_icpu(drv);
+ 	else
+ 		intel_idle_init_cstates_acpi(drv);
+@@ -2209,7 +2215,11 @@ static int __init intel_idle_init(void)
+ 
+ 	icpu = (const struct idle_cpu *)id->driver_data;
+ 	if (icpu) {
+-		cpuidle_state_table = icpu->state_table;
++		if (icpu->state_table)
++			cpuidle_state_table = icpu->state_table;
++		else if (!intel_idle_acpi_cst_extract())
++			return -ENODEV;
++
+ 		auto_demotion_disable_flags = icpu->auto_demotion_disable_flags;
+ 		if (icpu->disable_promotion_to_c1e)
+ 			c1e_promotion = C1E_PROMOTION_DISABLE;
+-- 
+2.43.0
+
 
