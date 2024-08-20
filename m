@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-293081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4175D957A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C398C957A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2AFB216DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F732840AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD06A94F;
-	Tue, 20 Aug 2024 00:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16EAAD23;
+	Tue, 20 Aug 2024 00:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtarLXAY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N+1tvxOM"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F395D522A;
-	Tue, 20 Aug 2024 00:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B36A927;
+	Tue, 20 Aug 2024 00:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724114585; cv=none; b=G+ufmZuzXpWLK3HDKQQ/mbcCFE1UGTIKuPs9YYh8dof4ksDe/C+OYPArEbC75i1lZsNL1JQn4sViNdQYr5AGtdfW67w3ZN6vFPmZ9dWzgmK8dGPZj+gF21UbkjQDf/S04XjRE9Lc1UOEeagIeW0+OruD0nMcmCcPeADWvAbG0hU=
+	t=1724114688; cv=none; b=busmnXU+7zyD0SVEHnljb+yz1BBChSX+k3bIGABHpLQ2WcDLXdAtoov3umJuL3XFWst6bozVqLRxdLleMK2mMc6XuAug6DlyByDRsKjw+q0/+AeVT4Ra31pSot5M8btPvUfihpHo5qgNZPK7uSL9kESVl2fwXviu20fdztIZMOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724114585; c=relaxed/simple;
-	bh=PLQFyNjW7jIBUFjnKWDB4RyobC0CXckPPAD1eWgsz8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=je+oMYT6aZ9PvexQ0HYn+UPDRKoAAioJGWCyozbrK574bHiNqGLu8bVnn4qljnvWKQaRgm0oTXaKl7mVJJTMTBr+mBicUVnuLEztiwUv/4LdfJX2JzwMuufMB3/nuej3D99UbO6KcYZB3puM6xTelolGtjW4eA5sLzvJQ3xxBpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtarLXAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01525C32782;
-	Tue, 20 Aug 2024 00:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724114584;
-	bh=PLQFyNjW7jIBUFjnKWDB4RyobC0CXckPPAD1eWgsz8Q=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WtarLXAY6veUBhhLosPazxNWJaaJ8qB+KAWFYN2JczPdqw7Z50dQfJg92gleLaWwn
-	 uWx+r9BquP/qGjyj2f6jDVNimnwBL0pu3GxghAs72Sl7A2FBtK5M6W5WiQLw0uM1RM
-	 kh+O+T3Y8UGPQ61bm1tKa/DxZd2wR7JCVCSLaMrwHf/0qZ4uZhxHmOaxEIYkrjgXAc
-	 SwdMwwDKfpwv5exV2pSDZ5QXz4viHS03AIckQF8fQZnKZtoxNA3vdzVOryEjvBstUE
-	 4viWl981u1OxDXVaaPPoe4L5ZNiwSQAHryk+9vpDkat58mJpb8xktADJvIS6e9g6oX
-	 WQspFsT2DmjiQ==
-Date: Mon, 19 Aug 2024 21:43:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] perf daemon: Fix the build on more 32-bit architectures
-Message-ID: <ZsPmldtJ0D9Cua9_@x1>
+	s=arc-20240116; t=1724114688; c=relaxed/simple;
+	bh=SbiisiIvxEcOi5m79B5jAzNtkKLrvWHvBdoUL5vr+4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FZ3a8x+Mr4czZyWpatthnJ92EiTlH/lzFokBDfJTWGMeZjLaucmAAAdUOpArutV+Jdfj8AFfiFZ7C/hy993/p6Y5cCDU2lQX0ZFbgTtAIl3t7crEw2lTqbcsrrtHpHXqMDSIJktb/gDMmITj9n2cuQ0CM7e6KK80uSIGTZPMiBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N+1tvxOM; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id CB187C0000EC;
+	Mon, 19 Aug 2024 17:44:38 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com CB187C0000EC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1724114678;
+	bh=SbiisiIvxEcOi5m79B5jAzNtkKLrvWHvBdoUL5vr+4o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N+1tvxOMiLFwlf/e00X4vjlUT694Yuroeqo4sUCF3vM7BESHTXDQ8GaOBvLJGCvNU
+	 jkpQg5wm+EC64zamK409Ee7zFuvg05jWBt2B/GErVRJPR2xxD/FLqN5JcZetJnDw4I
+	 q3BltZkKFOMWvqLqOp9spKxzQICz3yQlJDGfztC8=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 6890418041CAE1;
+	Mon, 19 Aug 2024 17:44:38 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: robimarko@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dsa: b53: Use dev_err_probe()
+Date: Mon, 19 Aug 2024 17:44:35 -0700
+Message-Id: <20240820004436.224603-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-FYI: I'm carrying this on perf-tools-next.
+Rather than print an error even when we get -EPROBE_DEFER, use
+dev_err_probe() to filter out those messages.
 
-The previous attempt fixed the build on debian:experimental-x-mipsel,
-but when building on a larger set of containers I noticed it broke the
-build on some other 32-bit architectures such as:
-
-  42     7.87 ubuntu:18.04-x-arm            : FAIL gcc version 7.5.0 (Ubuntu/Linaro 7.5.0-3ubuntu1~18.04)
-    builtin-daemon.c: In function 'cmd_session_list':
-    builtin-daemon.c:692:16: error: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'long int' [-Werror=format=]
-       fprintf(out, "%c%" PRIu64,
-                    ^~~~~
-    builtin-daemon.c:694:13:
-        csv_sep, (curr - daemon->start) / 60);
-                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    In file included from builtin-daemon.c:3:0:
-    /usr/arm-linux-gnueabihf/include/inttypes.h:105:34: note: format string is defined here
-     # define PRIu64  __PRI64_PREFIX "u"
-
-So lets cast that time_t (32-bit/64-bit) to uint64_t to make sure it
-builds everywhere.
-
-Fixes: 4bbe6002931954bb ("perf daemon: Fix the build on 32-bit architectures")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://github.com/openwrt/openwrt/pull/11680
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
- tools/perf/builtin-daemon.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/dsa/b53/b53_mdio.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
-index 7dca39c4314b6fff..f0568431fbd51981 100644
---- a/tools/perf/builtin-daemon.c
-+++ b/tools/perf/builtin-daemon.c
-@@ -691,7 +691,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
+diff --git a/drivers/net/dsa/b53/b53_mdio.c b/drivers/net/dsa/b53/b53_mdio.c
+index 897e5e8b3d69..31d070bf161a 100644
+--- a/drivers/net/dsa/b53/b53_mdio.c
++++ b/drivers/net/dsa/b53/b53_mdio.c
+@@ -343,10 +343,9 @@ static int b53_mdio_probe(struct mdio_device *mdiodev)
+ 	dev_set_drvdata(&mdiodev->dev, dev);
  
- 		fprintf(out, "%c%" PRIu64,
- 			/* session up time */
--			csv_sep, (curr - daemon->start) / 60);
-+			csv_sep, (uint64_t)((curr - daemon->start) / 60));
+ 	ret = b53_switch_register(dev);
+-	if (ret) {
+-		dev_err(&mdiodev->dev, "failed to register switch: %i\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&mdiodev->dev, ret,
++				     "failed to register switch\n");
  
- 		fprintf(out, "\n");
- 	} else {
-@@ -702,7 +702,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 			fprintf(out, "  lock:    %s/lock\n",
- 				daemon->base);
- 			fprintf(out, "  up:      %" PRIu64 " minutes\n",
--				(curr - daemon->start) / 60);
-+				(uint64_t)((curr - daemon->start) / 60));
- 		}
- 	}
- 
-@@ -730,7 +730,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 
- 			fprintf(out, "%c%" PRIu64,
- 				/* session up time */
--				csv_sep, (curr - session->start) / 60);
-+				csv_sep, (uint64_t)((curr - session->start) / 60));
- 
- 			fprintf(out, "\n");
- 		} else {
-@@ -747,7 +747,7 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
- 			fprintf(out, "  ack:     %s/%s\n",
- 				session->base, SESSION_ACK);
- 			fprintf(out, "  up:      %" PRIu64 " minutes\n",
--				(curr - session->start) / 60);
-+				(uint64_t)((curr - session->start) / 60));
- 		}
- 	}
- 
+ 	return ret;
+ }
 -- 
-2.45.2
+2.34.1
 
 
