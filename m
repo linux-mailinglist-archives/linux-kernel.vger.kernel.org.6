@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-294427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0011958D8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:39:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1A958D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F512B22422
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F591F219D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67751C0DF8;
-	Tue, 20 Aug 2024 17:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A231BF303;
+	Tue, 20 Aug 2024 17:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGcgX5J5"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7dfw2U5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854601BD51E;
-	Tue, 20 Aug 2024 17:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90654195985;
+	Tue, 20 Aug 2024 17:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724175580; cv=none; b=AQ0m4+Ms+vJYLnsLKa7qy2w87Wot7IVoyXk0mcEqWZK/u69JmjAzCWE4y86qxEZ6zY23hEzu2fO7mhAP1nluguYJShrdwLUCjqNMTMUIdTW+kjXtTAfFDK+yRVmzwPoLcizHkuivtPlT2bsCjka0J4nI9w9AU7ucFMRD6d1tkAY=
+	t=1724175762; cv=none; b=O0k6Igl4a7fGw7/lY2revgLcKGeDk+KmdnWiPqvPNvBpopVQeITrhxdO2oNTM5qZdRzca2GW3GNwOJVvfpsWm05gpa6slvXuMKoLF3clXgSGYKRoBdVYh0o4Cpc/oNJCDzOFwobSkjPWqE+LZB78ZU2aiLDEDQhZ58WQq0xQ2fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724175580; c=relaxed/simple;
-	bh=mhaQrQ5YKGvk0q+jxM2o6eHojffWLeEEv3eMgl4mTNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PawfnFROl8fXZY9u8lRtdTqVvA1HnyEtXuBsP6Hzo8LEcw98qKGePZQh4D+Ytf2jaNVm/AkwFXOKK6nP53JruvZkNVyL3pXM48DFuSUHr0Jo3bdSCeE7LSkDftESkjwJHar+9bFoTYKjFovNGbIvv35BpqDer4OZPeCSjKamtGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGcgX5J5; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3718c176ed7so2760326f8f.2;
-        Tue, 20 Aug 2024 10:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724175577; x=1724780377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w6yCMNIP5ljDsCWLfC1SuiiZdpEuw853pQHmtNZCILY=;
-        b=nGcgX5J5RPsCWoSYhFPQ936AT4MDXj99KoREW4BOQWC5n+NlMOC1xP6Xd50rscn7IH
-         mHBd4iO6H+c+rhPuOPF9CamFm9KL86cWiiBmdQuPPSXlPyt4D4OK2iV+VJ72+5xMocup
-         akxTWgje/qfqh7jKcuA5+6buQXdIYdAOE9MVgRQwuBFDUwgJvUYWZg/dDcfeUthYBGEn
-         iICQYgqyjIlYSRYhOGXKloeJ6lxEmddnJ7xS2bQfh2/gfD32S4EeDoW/+cYqnHQOOye/
-         vusvOK+1zTEXdzeL08oteBQitLb631TTBEOy5CMnFGT8kSCbGsTp5Nv6lYyLJABvMH0I
-         YuqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724175577; x=1724780377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w6yCMNIP5ljDsCWLfC1SuiiZdpEuw853pQHmtNZCILY=;
-        b=EVqBRv0Lrz/yShEUg1O+P3Q1lDWzIPT78DqBPAzT1DF6gBWb6/fD6iP1acdtXOAA8o
-         ADVay5rcrUqU20ZiCpEKa2vgt83Q9xlrU1lCyMGeQ0Ju3KXjyPaBk/Bl7Yjci+NRiS1Q
-         N3kN+/LoUbJdAyt3GdreY8YbCBvi7tgSUZWUWrRR3W8XJgr9IzV8d6GJKggyLIQPGyL8
-         ljW+r4Vzy/py1cUA+IJZksPZ1hTdiBO/t2jJJr4G5zEmTAVvGozr36Jh5ue6TqEfjYpN
-         s/EW2qtQORKTB02/K1VkbqOfk88/CGu3S7l1WqTc/P+MCQe1E+DMKClKE/JD+DMvlquG
-         kT0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNpX0jeZ1HybSUWy8jeGmkgcgGEKHj1SwKur/ZLHKeEEQUNlPXfBbMUCB2uLcOgaAjUTa2Z+W/PVlGBoc/Zw3UKnBw5Lyg1MvwQ3sV
-X-Gm-Message-State: AOJu0YxgYLmCzBNcvupiScjWiiqRksvacltLdjIfFuV0P5U8L/L3zK6j
-	saF2D6ip+hUid3un338Op8Mby4gST/J1OCr+t9reGuGyOOjeuqt1unnODnnRibWQo5NhLzCOWdQ
-	h94BXKGut70oFkN/97ygzr/15gW8=
-X-Google-Smtp-Source: AGHT+IFAeGhIrWnkhDUgQipH0lqCqAB/UfzSf8jTdPmiY+9pUBtFnuqR+VZIal73B6Y+nvKPfP+xVRz4wr5FGLbFe40=
-X-Received: by 2002:adf:f3c5:0:b0:367:980a:6af with SMTP id
- ffacd0b85a97d-371946cf569mr9464956f8f.59.1724175576036; Tue, 20 Aug 2024
- 10:39:36 -0700 (PDT)
+	s=arc-20240116; t=1724175762; c=relaxed/simple;
+	bh=kRc8TDwgNgxYTHTbusur//r527eCmFsN8vdqOg42e6Q=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Rc8Q8FnmPN+wwHQ9SFOQIT7u0Dck03oVWIIW0LbBpVyuS4E/5sag9TGRciMVImJ/9yz7jL0ScSrGwEwKfqADX2S13WbLV40AcuP30oPIdP3li2l/jH/o2yfeg2QTnQcS+yMrLi4T3a0s6/SuSg/Ln9ZI5PiQP6kSOBAI8El7LFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7dfw2U5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F04C4AF0B;
+	Tue, 20 Aug 2024 17:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724175762;
+	bh=kRc8TDwgNgxYTHTbusur//r527eCmFsN8vdqOg42e6Q=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=F7dfw2U5hfK9i6/Qwm9JmbMtZjCGU8doxrw5GBmEr1of+PYs/rqV1mPoqI9g3PYdv
+	 E/VJfv0OgiQsuc3I5jU7E8chqTPS+pDJ+sbW14qUpag6tM0+aNlq9aYetdEqarkX3y
+	 eMmEWtunTJmwgBrh1xu3pEBI0pynlzh+HvHHdMnGyNhZPuoAYdz7DzmjLs7sZuAaq+
+	 mOswRzuzV1pMlPybv3qJgYNo6r7N46LouFuqLgN8f2OqDakNc+eg4EQY/CsMFK97p+
+	 Jwda7rGJnYJWxTE4OUGXvbi55twbANNvVQQBBwzJKcbr89mYSVHwKjr83V+Y8+j6QH
+	 q3vtgGeuN/Y8A==
+From: Kalle Valo <kvalo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,  Francesco Dolcini
+ <francesco@dolcini.it>,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@pengutronix.de
+Subject: Re: [PATCH 00/31] wifi: mwifiex: cleanup driver
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+Date: Tue, 20 Aug 2024 20:42:38 +0300
+In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+	(Sascha Hauer's message of "Tue, 20 Aug 2024 13:55:25 +0200")
+Message-ID: <87o75nw0oh.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com> <64039307-fcfc-4e08-8727-c805964f7386@web.de>
-In-Reply-To: <64039307-fcfc-4e08-8727-c805964f7386@web.de>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Tue, 20 Aug 2024 18:39:24 +0100
-Message-ID: <CALTg27nNxjicXCGZMAqbebmUWraRqyqDm2hrTk5WZ=igJerX5g@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family driver
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-> Would you like to return the value directly (without an intermediate loca=
-l variable)?
-Done, thanks
+Sascha Hauer <s.hauer@pengutronix.de> writes:
 
-Stuart
+> This series has a bunch of cleanup and bugfix patches for the mwifiex
+> driver.
+>
 
-On Tue, Aug 20, 2024 at 10:17=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
->
-> =E2=80=A6
-> > +++ b/drivers/hid/hid-corsair-void.c
-> > @@ -0,0 +1,842 @@
-> =E2=80=A6
-> > +static int corsair_void_set_sidetone_wireless(struct device *dev, cons=
-t char *buf,
-> > +                                           unsigned char sidetone)
-> > +{
-> =E2=80=A6
-> > +     int ret =3D 0;
-> =E2=80=A6
-> > +     ret =3D hid_hw_raw_request(hid_dev, CORSAIR_VOID_SIDETONE_REQUEST=
-_ID,
-> > +                              send_buf, 12, HID_FEATURE_REPORT,
-> > +                              HID_REQ_SET_REPORT);
-> > +
-> > +     return ret;
-> > +}
->
-> Would you like to return the value directly (without an intermediate loca=
-l variable)?
->
-> Regards,
-> Markus
+[...]
+
+> ---
+> Sascha Hauer (31):
+
+BTW 30 patches is a lot to review. A good rule of thumb is to have max
+12 patches per patchset, maybe a bit more if the patches are small.
+Splitting this into two patchsets would make it a lot more pleasent for
+the reviewers.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
