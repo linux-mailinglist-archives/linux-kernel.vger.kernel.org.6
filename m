@@ -1,103 +1,152 @@
-Return-Path: <linux-kernel+bounces-293239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF531957C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2436C957C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8360B1F23F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD350284EFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2094D8C8;
-	Tue, 20 Aug 2024 04:19:16 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43A252F88;
+	Tue, 20 Aug 2024 04:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="io4Pjkj7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEB92F5E
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCC728371;
+	Tue, 20 Aug 2024 04:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724127555; cv=none; b=JdtI8HQ7966X3g748AS42bQwfWX7/W51Eimj1T380P8geWtXHzvXVq7tx3Nb6AIjxJlz0QSV5oJNFqDbUMhoRQWiI+XQEF9faV3GyBAclT4v8hqHo3c9TCxMdmFezXVCVcKQKqssLGRFrWbgHddFBgfiZtZzif4rUSSwa6NhI10=
+	t=1724128270; cv=none; b=GYcoiz+ssaSb9DQqMZNFWUgDnp2thjA5wcm4h+GefvLLxoCFyBbvnqPp+BCebVJaP3c3Nfn67wgVslPDsEo8JufQc1xGhcvbM/cOBuAkPph+/0GhTZk9eFyEPH982uOUIYSbIlHma//WcBbKbDeA4A1YnMWGDgw1WUAuKQl6DBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724127555; c=relaxed/simple;
-	bh=sh9LGBRjcIzsBHmnEb17Y4QMpv16xq1odAtJBr8Dvgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BOO3EUnPlM3aXVLFRU9U+tYRLoS/2CKMEnk1RvB09ee1R7oKlW62244WF266p5WTBax5I7eDOTmC4TMJyQkdDHdB2dsTelm/2VpoWfBxS9j14YSntxtLVnzxmMOWDiRuWZJOpJcTsU0YnNdjjD2oYp+225t56y0CfjP7mbEcwZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DE8661A20C3;
-	Tue, 20 Aug 2024 06:19:06 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A62BE1A20BC;
-	Tue, 20 Aug 2024 06:19:06 +0200 (CEST)
-Received: from lsv031045.swis.in-blr01.nxp.com (lsv031045.swis.in-blr01.nxp.com [10.12.176.65])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ABC8A1802200;
-	Tue, 20 Aug 2024 12:19:05 +0800 (+08)
-From: nxf24178 <ravindra.yashvant.shinde@nxp.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org (moderated list:I3C SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev,
-	nxf24178 <ravindra.yashvant.shinde@nxp.com>
-Subject: [PATCH] i3c: master: Remove i3c_dev_disable_ibi_locked(olddev) on  device hotjoin
-Date: Tue, 20 Aug 2024 09:48:42 +0530
-Message-ID: <20240820041842.3291130-1-ravindra.yashvant.shinde@nxp.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724128270; c=relaxed/simple;
+	bh=NOSlRAL1yuwrHw9PV+RTLu/A0aEeVBu7qRpRzXys8+E=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=tXgJQzkw6LREetbyGva12R0owGC2ePvxqlSlFCk+Z6NxsHQk6K0QiLvvKLCnhsliYjpginRptraHG0VR0NUcR31vudRQ8BAB+v/a2P7dYx6EVRMyiTWHknNIeK/a8OSMnTJeE3plEB/bTHsiPiLxXBQMOE8M1z/RLSI7DtMXFn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=io4Pjkj7; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724128268; x=1755664268;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=NOSlRAL1yuwrHw9PV+RTLu/A0aEeVBu7qRpRzXys8+E=;
+  b=io4Pjkj7jUygwOefvjx6f16d4q8dDvG1yH3lZCd352ZqIlXxltyF+sni
+   voihcvDMJ4IM0TN+8w6SnB8BPE3uaM1zGHqV/UhuUI8nPxsAOhuNwXtYF
+   bLM5JxKMTlzpafJwh3yRHIaU+GvEKMKSybmgeksOT7mvs0uiRGDDfGWKW
+   2lmOrvV3Thb4Ym+LLE+8fLw5gIg/YgjPWvRfee/sYGwF8O8V+Cb7Y6IDI
+   IkCbREw0CTmzk7trS+LM9p3Jbk0B4HK8LTYIM6qYsRSff6x8a11RRtQLb
+   wfWJnXp3KrrGChnAw0jswJUwxgz06R1Hp0iJjEEvG7FZLgt2UL0xf/Yz/
+   g==;
+X-CSE-ConnectionGUID: Rk3pBy7nTpadcmonnt//vQ==
+X-CSE-MsgGUID: F38r7Ve4Q6u6BI4CbTi6KA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26158391"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208,223";a="26158391"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 21:31:08 -0700
+X-CSE-ConnectionGUID: P+hrhqm3SXOvaBO4vqx32Q==
+X-CSE-MsgGUID: xpzECGM1SQeoPZWMyhkjtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208,223";a="91319454"
+Received: from mesiment-mobl2.amr.corp.intel.com (HELO [10.125.108.3]) ([10.125.108.3])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 21:31:07 -0700
+Content-Type: multipart/mixed; boundary="------------EXKrPxQ0ebN9oAkkBL43Jvc1"
+Message-ID: <1000902c-96f5-44f9-bad7-9fb8b5e607a4@linux.intel.com>
+Date: Mon, 19 Aug 2024 21:31:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+Cc: Jithu Joseph <jithu.joseph@intel.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240820134354.2aec355d@canb.auug.org.au>
+Content-Language: en-US
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20240820134354.2aec355d@canb.auug.org.au>
 
-When a new device hotjoins, a new dynamic address is assigned.
-i3c_master_add_i3c_dev_locked() identifies that the device was previously
-attached to the bus and locates the olddev.
+This is a multi-part message in MIME format.
+--------------EXKrPxQ0ebN9oAkkBL43Jvc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-i3c_master_add_i3c_dev_locked()
-{
-    ...
-    olddev = i3c_master_search_i3c_dev_duplicate(newdev);
-    ...
-    if (olddev) {
-        enable_ibi = true;
-        ...
-    }
-    i3c_dev_free_ibi_locked(olddev);
-    ^^^^^^^^
-    This function internally calls i3c_dev_disable_ibi_locked(addr)
-    function causing to send DISEC command with old Address.
+Hi Hans,
 
-    The olddev should not receive any commands on the i3c bus as it
-    does not exist and has been assigned a new address. This will
-    result in NACK or timeout. So, update the olddev->ibi->enabled
-    flag to false to avoid DISEC with OldAddr.
-    ...
-}
+On 8/19/24 8:43 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the drivers-x86 tree, today's linux-next build (htmldocs)
+> produced this warning:
+>
+> Documentation/arch/x86/ifs:2: /home/sfr/next/next/drivers/platform/x86/intel/ifs/ifs.h:131: WARNING: Title underline too short.
+>
+> Structural Based Functional Test at Field (SBAF):
+> ------------------------------------------------
+>
+> Introduced by commit
+>
+>   0a3e4e94d137 ("platform/x86/intel/ifs: Add SBAF test image loading support")
 
-Signed-off-by: Ravindra Yashvant Shinde <ravindra.yashvant.shinde@nxp.com>
----
- drivers/i3c/master.c | 1 +
- 1 file changed, 1 insertion(+)
+Attached patch fixes the issue. Do you want to me send it to the mailing list or
+you can take the attached patch?
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 7028f03c2c42..07ccb2c00074 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -2042,6 +2042,7 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
- 			if (olddev->ibi->enabled) {
- 				enable_ibi = true;
- 				i3c_dev_disable_ibi_locked(olddev);
-+				olddev->ibi->enabled = false;
- 			}
- 
- 			i3c_dev_free_ibi_locked(olddev);
+>
 -- 
-2.46.0
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
+--------------EXKrPxQ0ebN9oAkkBL43Jvc1
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-platform-x86-intel-ifs-Fix-SBAF-title-underline-leng.patch"
+Content-Disposition: attachment;
+ filename*0="0001-platform-x86-intel-ifs-Fix-SBAF-title-underline-leng.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
+
+RnJvbSA3NmY2YTQzZWVhZmQ4OTJkZGU1M2I5ZmIzYzY3YWFkOTBlZmY4MWE2IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBLdXBwdXN3YW15IFNhdGh5YW5hcmF5YW5hbiA8c2F0
+aHlhbmFyYXlhbmFuLmt1cHB1c3dhbXlAbGludXguaW50ZWwuY29tPgpEYXRlOiBUdWUsIDIw
+IEF1ZyAyMDI0IDA0OjAyOjU1ICswMDAwClN1YmplY3Q6IFtQQVRDSCB2MV0gcGxhdGZvcm0v
+eDg2L2ludGVsL2lmczogRml4IFNCQUYgdGl0bGUgdW5kZXJsaW5lIGxlbmd0aAoKSW4gY29t
+bWl0ICMgMGEzZTRlOTRkMTM3ICgicGxhdGZvcm0veDg2L2ludGVsL2lmczogQWRkIFNCQUYg
+dGVzdCBpbWFnZQpsb2FkaW5nIHN1cHBvcnQiKSwgdGhlIGRvY3VtZW50YXRpb24gZm9yICJT
+dHJ1Y3R1cmFsIEJhc2VkIEZ1bmN0aW9uYWwKVGVzdCBhdCBGaWVsZCAoU0JBRikiIGhhZCBh
+biBpbmNvbXBsZXRlIHVuZGVybGluZS4gVGhpcyByZXN1bHRlZCBpbiB0aGUKZm9sbG93aW5n
+IGJ1aWxkIHdhcm5pbmc6CgpEb2N1bWVudGF0aW9uL2FyY2gveDg2L2lmczoyOiBkcml2ZXJz
+L3BsYXRmb3JtL3g4Ni9pbnRlbC9pZnMvaWZzLmg6MTMxOiBXQVJOSU5HOiBUaXRsZSB1bmRl
+cmxpbmUgdG9vIHNob3J0LgoKRml4IGl0IGJ5IGV4dGVuZGluZyB0aGUgZG90dGVkIGxpbmVz
+IHRvIG1hdGNoIHRoZSBsZW5ndGggb2YgdGhlIHRpdGxlLgoKRml4ZXM6IDBhM2U0ZTk0ZDEz
+NyAoInBsYXRmb3JtL3g4Ni9pbnRlbC9pZnM6IEFkZCBTQkFGIHRlc3QgaW1hZ2UgbG9hZGlu
+ZyBzdXBwb3J0IikKUmVwb3J0ZWQtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1
+dWcub3JnLmF1PgpDbG9zZXM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNDA4
+MjAxMzQzNTQuMmFlYzM1NWRAY2FuYi5hdXVnLm9yZy5hdS9ULyN1ClNpZ25lZC1vZmYtYnk6
+IEt1cHB1c3dhbXkgU2F0aHlhbmFyYXlhbmFuIDxzYXRoeWFuYXJheWFuYW4ua3VwcHVzd2Ft
+eUBsaW51eC5pbnRlbC5jb20+Ci0tLQogZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwvaWZz
+L2lmcy5oIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
+aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwvaWZzL2lm
+cy5oIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwvaWZzL2lmcy5oCmluZGV4IGIyNjFi
+ZTQ2YmNlOC4uNWMzYzBkZmExYmY4IDEwMDY0NAotLS0gYS9kcml2ZXJzL3BsYXRmb3JtL3g4
+Ni9pbnRlbC9pZnMvaWZzLmgKKysrIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwvaWZz
+L2lmcy5oCkBAIC0xMjksNyArMTI5LDcgQEAKICAqCiAgKgogICogU3RydWN0dXJhbCBCYXNl
+ZCBGdW5jdGlvbmFsIFRlc3QgYXQgRmllbGQgKFNCQUYpOgotICogLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisgKiAtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgKgogICogU0JBRiBpcyBhIG5l
+dyB0eXBlIG9mIHRlc3RpbmcgdGhhdCBwcm92aWRlcyBjb21wcmVoZW5zaXZlIGNvcmUgdGVz
+dAogICogY292ZXJhZ2UgY29tcGxlbWVudGluZyBTY2FuIGF0IEZpZWxkIChTQUYpIHRlc3Rp
+bmcuIFNCQUYgbWltaWNzIHRoZQotLSAKMi4yNS4xCgo=
+
+--------------EXKrPxQ0ebN9oAkkBL43Jvc1--
 
