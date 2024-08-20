@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-294219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9B8958AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C3F958AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF98D1C21629
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:12:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B331C20F55
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13B8191F7E;
-	Tue, 20 Aug 2024 15:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E3A1922C9;
+	Tue, 20 Aug 2024 15:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4BOzB7m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="febEKZ63"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wRrcgFek";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i6MrGbcf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590D618E37F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC31B6088F;
 	Tue, 20 Aug 2024 15:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166738; cv=none; b=GxHIcN68IbllYYzAzfkmDzOOcH80XFgSZzjsOunvyx4o1r1H4WDSCm/5SlqNwwFmUAzfviCmB+ej4JFmQgklu/W6NiZ3GesAceT06BQjKU4bxzDim1yxm+ywfLdPHKxTCprYZw+cr86pttFY38tC0dHynF86n06WxTuq2Rabg0c=
+	t=1724166738; cv=none; b=kwthyiK+rwhMdh22PM/Rjbqldk2yvGab3kbUxgjeph8QJTvCuRQX17kBkIHq44fY83A1T+CrJ4gLT6r7/lIwBjpaTyD/hvJ3swAV6CANoIjYZDfEGr4jAmTwrCVN0RgZ+Z1PP4rofLW/YU/VQ+VXEkrZJZQcWakV/iQaWVDKuo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724166738; c=relaxed/simple;
-	bh=WU4sn7n5evf6t5QHCKTquiAEUr02737lN7Up1e6S6hQ=;
+	bh=FhagCugxyffpHVTVwvsh1BtJGvW1RGFCc+TAY1sxRB0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LEv8M/6RfiDXoDdhc69rp6jMbd5hYSSCdsKV5RLQFFTxshkswppbWpxeWvFEzvCeJRJBfKwhzAxgL4uTlz2kLQQVrKb/fMl8FNcnDbxgfCCpQDeLLl1ukMHaKDLw/2vknE4QLuegN3yww3zEapfCDJzR9+S7l9x2HGUo7vJu60c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4BOzB7m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=febEKZ63; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=YZuqfJw5eMmSqtUCDxjuysiGG4rTaVvaDXNp3ABcliGXFx7QsmJDvt+tnHc+T74na+YqnWDCiBQPoMjCWPAgrBkEtmP2vF29667him+OXZ6+sqmO5LsTktCiuLL3DmweADOQF6yjVFM01hlDqsqM2gEX1H8mC7ab87r3/mRfukk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wRrcgFek; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i6MrGbcf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 20 Aug 2024 15:12:14 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724166734;
+	s=2020; t=1724166735;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iednjl+XWJ1tntTvPRGJxB0VlyMF9f1Yc+xpGnZrYDc=;
-	b=f4BOzB7mO+bAgliIDkWJ8rMhChUUnvFBP4aRsGcJ9x1uCk1Po0eaBohuYfKzIqERnK5mX2
-	zgrgBOgkgZiOdIfve7oVf/+wUG3rWemz/5UrJFlQGGhmKGfF3bpeVkjOYGa7tadzirG8X2
-	7rqHqpqAMpB0VA743wBLMR3F3nGCw66RbI81h5+zTB+DUhoy8k+NbupeoTGfXEfBx8RFc5
-	mKnVvqNoz0ucBO+J9DA0aARtdcpAvSqfDAqia64mBb8UH1eXhqGxGjCJUGzb5uvGDArF0k
-	9demyCQK8nyqgC0AVtoR7skzeF09bBEruemVvY4zRTSHATab1kT0eUe1rF4s8w==
+	bh=Ti0Smyy/OmXK0JngAPePRZVnbcldBdBviQ0czHDUyHQ=;
+	b=wRrcgFekRjfFQDFxvYps+MmqJpeDoPKSRNMESgFYYSfqLPaYZRf5skDaoU8b0gmWikXbFb
+	PkDG7KqGRYizO4Eh+eSqnjSY9XMGl9N3yg3PguHHN40LpQ31pQrgyQmew294DUSWQd2Wzx
+	ZGw0yK7dxfa2JxMf+5i37tmCwLZg3YjrNEtQs7PZKH2mNc+YgsyUEJ0qC/kEH3eI2/HWpP
+	pZC6QNL2Yr3XYKd/NIFWZ80+rsir6A0h4NkGNsBMXGOnOKx5wxiIVHPtjadEKBSweZgTvl
+	jTa3KxbrN0gLDaHcC9AwCwNBQZR69pwciSjSfL7GgEnMlnjQpMW76+HfNxW/qg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724166734;
+	s=2020e; t=1724166735;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iednjl+XWJ1tntTvPRGJxB0VlyMF9f1Yc+xpGnZrYDc=;
-	b=febEKZ63lcrvUtDxdQyldUV92Qx7uxiKL4Q0qjjCFLyZmuhNIqV84AEH0RF/jjNnTyNRbf
-	TCYnZASTUlU+9TDw==
-From: "tip-bot2 for Ma Ke" <tip-bot2@linutronix.de>
+	bh=Ti0Smyy/OmXK0JngAPePRZVnbcldBdBviQ0czHDUyHQ=;
+	b=i6MrGbcfmJkersUuSKvL8n/vU6xXFHJTzcLHcMBCNSiyiWIEGfcq8aXOYj5oKsg3z8dF87
+	mHwx167RfdSQtICw==
+From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: irq/urgent] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init()
-Cc: Ma Ke <make24@iscas.ac.cn>, Thomas Gleixner <tglx@linutronix.de>,
- Marc Zyngier <maz@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240820092843.1219933-1-make24@iscas.ac.cn>
-References: <20240820092843.1219933-1-make24@iscas.ac.cn>
+ [tip: irq/urgent] irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in probe()
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Anup Patel <anup@brainfault.org>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
+References: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172416673413.2215.9983587782024044954.tip-bot2@tip-bot2>
+Message-ID: <172416673470.2215.10498834230452989571.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,49 +83,44 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     c5af2c90ba5629f0424a8d315f75fb8d91713c3c
-Gitweb:        https://git.kernel.org/tip/c5af2c90ba5629f0424a8d315f75fb8d91713c3c
-Author:        Ma Ke <make24@iscas.ac.cn>
-AuthorDate:    Tue, 20 Aug 2024 17:28:43 +08:00
+Commit-ID:     efe81b7bdf7d882d0ce3d183f1571321046da8f1
+Gitweb:        https://git.kernel.org/tip/efe81b7bdf7d882d0ce3d183f1571321046da8f1
+Author:        Dan Carpenter <dan.carpenter@linaro.org>
+AuthorDate:    Tue, 20 Aug 2024 11:42:40 +03:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 20 Aug 2024 17:05:32 +02:00
 
-irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init()
+irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in probe()
 
-gicv2m_of_init() fails to perform an of_node_put() when
-of_address_to_resource() fails, leading to a refcount leak.
+The devm_platform_ioremap_resource() function doesn't return NULL, it
+returns error pointers.  Fix the error handling to match.
 
-Address this by moving the error handling path outside of the loop and
-making it common to all failure modes.
-
-Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct-mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240820092843.1219933-1-make24@iscas.ac.cn
----
- drivers/irqchip/irq-gic-v2m.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Link: https://lore.kernel.org/all/a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain
 
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index 51af63c..be35c53 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -407,12 +407,12 @@ static int __init gicv2m_of_init(struct fwnode_handle *parent_handle,
+---
+ drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
+index 28dd175..981fad6 100644
+--- a/drivers/irqchip/irq-riscv-aplic-main.c
++++ b/drivers/irqchip/irq-riscv-aplic-main.c
+@@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
  
- 		ret = gicv2m_init_one(&child->fwnode, spi_start, nr_spis,
- 				      &res, 0);
--		if (ret) {
--			of_node_put(child);
-+		if (ret)
- 			break;
--		}
+ 	/* Map the MMIO registers */
+ 	regs = devm_platform_ioremap_resource(pdev, 0);
+-	if (!regs) {
++	if (IS_ERR(regs)) {
+ 		dev_err(dev, "failed map MMIO registers\n");
+-		return -ENOMEM;
++		return PTR_ERR(regs);
  	}
  
-+	if (ret && child)
-+		of_node_put(child);
- 	if (!ret)
- 		ret = gicv2m_allocate_domains(parent);
- 	if (ret)
+ 	/*
 
