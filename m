@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-294351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA79958C7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63412958C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1FD28475D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A03281C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8379D1B9B41;
-	Tue, 20 Aug 2024 16:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D0B1B8EA7;
+	Tue, 20 Aug 2024 16:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y1tj7PLG"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d7D6BxcO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zrO8ccSA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F3E1B8E8A;
-	Tue, 20 Aug 2024 16:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B3918C92C;
+	Tue, 20 Aug 2024 16:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724172045; cv=none; b=gvGsRvWp+ryefYU5auEulXQX6qp16S2FgdExj5n4fJyj9YQA0uj5REI4y09CBVHv/OCvdNbmoptinE+6j4vWzXfHXkJk11TthSJVoYlP9ptYOMpzRAJThhYFmDFX01xF30x11F8mBoLXUR7q/XNDKuWb0/oYxAByVOR4MFiWSOY=
+	t=1724172079; cv=none; b=dhapTev5nfKBcUR8/2WHLsAl55taMBB2FLhQR2158eNWDPaR6eNcu6Ii5Kwgl2+Xwsj7T5tKn1TzQN3viPq8D89miZtMusl8Qs2a4MSz4EvSWuS/ipxfi4+GvfmM+41XGCBCALCfcYh6WIofIyHDNpClQBe3g5CmW7MbWfz8TZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724172045; c=relaxed/simple;
-	bh=Vm5Ge2JmOVZFdgB+Av1offVLZxFbvPNBA1bzvmB5kb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDC1vcUqnlcoU2PRf04jberKUMbuuNCcbyOhxMvI/yHjmbXxzN+mGsl/A6gEvhVI+bq/Kv+hH2tSmRrE+8eg3A7LR5IMrkZT5sOxgvOXV7ItJ5+a3Zbmtq65JShncNQJH6rfxSqpRz4M3WqvtWoiVZmiqYRl1wbU5rtwd0U/qEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y1tj7PLG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uCLZhCQLKjHVpAoqfjqeQmq4SB+Wb5+K0+Z6S7owAe0=; b=y1tj7PLG69NheAqc5qK9IKPmzd
-	wM0SzJzPQIiKxzLz5zifpaCKfiqcTlvwVoRAWDgZt7HR9FU68L8NcCsUi4BNUlJe/8HDJegIZ3mRj
-	0xpYfIrFs8uv4XFMnD7ziOoHKZZSAVyRqDKbXheO+ughv/sGDx4vAoKh8zPXt+ZowTo0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgRuA-005FPJ-2L; Tue, 20 Aug 2024 18:40:22 +0200
-Date: Tue, 20 Aug 2024 18:40:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v2 1/3] ethtool: Extend cable testing interface
- with result source information
-Message-ID: <726c54ef-0a1b-4307-be1c-dee8b578b50c@lunn.ch>
-References: <20240820101256.1506460-1-o.rempel@pengutronix.de>
- <20240820101256.1506460-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1724172079; c=relaxed/simple;
+	bh=2BgMQWnE6AnFzThtFk+y0zPJsHWZhJh+IjfNq9ifaXU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n4ZbF4yDZ7250bkox6p4ToYlIjbDCD4FJ4eMz4Gzbpna3hnqZXVg1wfl86DRs52EDYGZ2/7b+Gpe7RRNu1ROVDp9OHg5Mxx8LHXV0FHRvNPIJgeYYoHnTo3tR9/T1Ql1RJXtXWyFpqa1OCSFxaetPRMz3vAmlRm4e5Ug3IGGYBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d7D6BxcO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zrO8ccSA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724172076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p44GcnqNmnAYJCHzPD7nfC5avisxQIOEdIVIsvuCwRw=;
+	b=d7D6BxcOL8bVWUtg8IUw6cbOMgqV2z6nrsTODWCnQdy8iDfWsjpLVWzpACvcRXOLAoDXtd
+	pT7dAyr0VQoNExMSTXtheQXfjZVbaKt3z59+Rdbr1mthByfS0gJFLF5zqgRAHGeRVQH4eS
+	3fU9hlzZ8uiJKkkAVvHoWqwdW96B2k0TZ45mYbcm+uviZh7IVG0SDzKMzenmQtlovKt6eU
+	Tu9JPfC39oKuyHUwoSgYPSsLLs+BDQAvEseGqOcN/AIBu0bAbXgBknz4j2Gfw9eRIkmbeV
+	QKuqwLG/XV/T0gL/E8Ju9hABQ7ieO/mgR80mIVT3CBXeoXY5C3Wat+3mqfHGMQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724172076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p44GcnqNmnAYJCHzPD7nfC5avisxQIOEdIVIsvuCwRw=;
+	b=zrO8ccSAX3LwHDbsWKms7xFb6GSiFdmYs5mL3lVbLn/XlC3tvClZMXox0DE0KsfANaLaoD
+	SJWJGUuemsLPlaCw==
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the tip tree
+In-Reply-To: <20240819080923.39087b2e@canb.auug.org.au>
+References: <20240819080923.39087b2e@canb.auug.org.au>
+Date: Tue, 20 Aug 2024 18:41:16 +0200
+Message-ID: <87h6bfjger.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820101256.1506460-2-o.rempel@pengutronix.de>
+Content-Type: text/plain
 
-On Tue, Aug 20, 2024 at 12:12:54PM +0200, Oleksij Rempel wrote:
-> Extend the ethtool netlink cable testing interface by adding support for
-> specifying the source of cable testing results. This allows users to
-> differentiate between results obtained through different diagnostic
-> methods.
-> 
-> For example, some TI 10BaseT1L PHYs provide two variants of cable
-> diagnostics: Time Domain Reflectometry (TDR) and Active Link Cable
-> Diagnostic (ALCD). By introducing `ETHTOOL_A_CABLE_RESULT_SRC` and
-> `ETHTOOL_A_CABLE_FAULT_LENGTH_SRC` attributes, this update enables
-> drivers to indicate whether the result was derived from TDR or ALCD,
-> improving the clarity and utility of diagnostic information.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+On Mon, Aug 19 2024 at 08:09, Stephen Rothwell wrote:
+>   50059ccaa3c9 ("irqdomain: Always associate interrupts for legacy domains")
+>
+> is missing a Signed-off-by from its committer.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixed it up.
 
-    Andrew
+Thanks for noticing.
+
+       tglx
 
