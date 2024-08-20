@@ -1,184 +1,113 @@
-Return-Path: <linux-kernel+bounces-294386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B85958D10
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E4A958D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4281C22570
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38F01F20FCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D418A928;
-	Tue, 20 Aug 2024 17:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057F51BD515;
+	Tue, 20 Aug 2024 17:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+9Ng/g4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="TnrEFjCC"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABED11BA87C;
-	Tue, 20 Aug 2024 17:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086394085D
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174290; cv=none; b=qdqHOCI0SlJwscZWW4GnTXLjAnVYBgQr8r7hOQB03DB6nUtcbrZXAycIgVhSPqSGi51K/rNEeVpXNuORZ/bnAU8CualQpT/5GGXZXxOZCjBRbX1RZmLS5NHSA/sUavgqPthOXRSBQZ7q34SGTu+BeR7pNXJdHhz/rTn7ifuFsD0=
+	t=1724174365; cv=none; b=WfAr3VgMps1IWVn5r2Gvigfs+srX6n1xk3QsjPIQlW5vUgwQxiLuXt1xxKt0iNVs1r1SqSItZhpd6DXVuK1R7WhY5R/O2+YFtb4qWFCasOi8x/2DWyEMa3p9Z/H0l4ZGjRoiUbq4yNd6rvl//2Y1WbAK/jreHnK0HdG6x5F1No0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174290; c=relaxed/simple;
-	bh=slz9l2RX+N0FmQXjCf6NH6EUr44XL+MqY2t/iaXXVa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpXHC8oMoWvBaDUD9i5s+cZQgtPoM/NXMa6BTIY6uRnlp3zPnZS3aDKZrDknigqxmUdisUdtA8ZLLsO/R534K0FJN/hlXRRg7v/93p+ejE6HwIEKj6aNHgsbZvFwL/eAEnIdKTPL3aT7V8Wk1CTq5NAE0d5D9YvlCcsa0/YapWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+9Ng/g4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5AFC4AF0E;
-	Tue, 20 Aug 2024 17:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724174289;
-	bh=slz9l2RX+N0FmQXjCf6NH6EUr44XL+MqY2t/iaXXVa4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H+9Ng/g4B4rsICd68chNTDeL5s7L1YFbZ/Fd/tCMJVQHCM8wN0AAMSIC9qH1yBAt5
-	 +J5HcY0lntOU4Ea4jTTpVPWeo6h9+Of3J78Zz9mSqWiQszVjLFGtAspjN5ZpiXgD05
-	 r+0sitG/UC+gvt22Ommdtae8oDXSdhp2adT5o6kgUDvsQaEJuu4MhhPIAqet5nqssR
-	 CIvp8+vDMLrYPr9Zz/Vz6gO2FTrnEQNvtqJraR9yhb4Dt6adBkbUXEcXLXCn/Txiu1
-	 55snEzTBLR8afBJwT88ibIZzwW1w3iKjjYJWgfYAkJjok3kEOhMGFQ3uPtvv5MzPcZ
-	 Tvx6v6p1kzaOQ==
-Date: Tue, 20 Aug 2024 10:18:06 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mark Pearson <markpearson@lenovo.com>, Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev, stable@vger.kernel.org,
-	John Rowley <lkml@johnrowley.me>
-Subject: Re: [PATCH] ACPI: platform-profile: Fix CFI violation when accessing
- sysfs files
-Message-ID: <20240820171806.GA4065547@thelio-3990X>
-References: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
- <2024082034-bullfight-pureness-3ada@gregkh>
+	s=arc-20240116; t=1724174365; c=relaxed/simple;
+	bh=f2BbHSTTA7R5FuseVuUWZQUx64iouUehZmPyL6EwSss=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BGAyOHo4ZtgIKostoxvXk/hPVx2puO1+r8zCTS8Op1gqc8v/Rzf/jl8NWCk8EsFTIBTa1vWkDyQH9oTnFhyvTlFY4tXfAZQur15N8M487NmlqliHWdZ4WtDzcrdx5gqqNPdsvbyAwlcgvi/FMFHtDkjnnfBYYnbGbbLqxTdbH70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=TnrEFjCC; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1724174355; x=1726766355;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=f2BbHSTTA7R5FuseVuUWZQUx64iouUehZmPyL6EwSss=;
+	b=TnrEFjCCye0wIEqJbxlmBzfrglroa5tMhkJ4dLvGxsBQPPnOjt7UOWIX8cMQZcrO
+	lUUp+Ue1/4SKCdKE2aiafdNJWyphWNYfep4y/9U1uTARofjBVfk50wOJUcKkNpVI
+	9jz9ofMof9Vfs7SgedgWznLffrzLV7dnRUQmYOGHHNY=;
+X-AuditID: ac14000a-03e52700000021bc-15-66c4d0138a9a
+Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 6F.60.08636.310D4C66; Tue, 20 Aug 2024 19:19:15 +0200 (CEST)
+Received: from llp-varakala.phytec.de (172.25.0.11) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Tue, 20 Aug
+ 2024 19:19:15 +0200
+From: Yashwanth Varakala <y.varakala@phytec.de>
+To: <shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+	<festevam@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<upstream@lists.phytec.de>, <y.varakala@phytec.de>
+Subject: [PATCH v2 0/3] Add overlays for imx8mp
+Date: Tue, 20 Aug 2024 19:18:45 +0200
+Message-ID: <20240820171848.177926-1-y.varakala@phytec.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024082034-bullfight-pureness-3ada@gregkh>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Florix.phytec.de
+ (172.25.0.13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWyRpKBV1f4wpE0g0NrdCzW7D3HZDH/yDlW
+	i4dX/S1m3mtls1g1dSeLxctZ99gsNj2+xmpxedccNov/e3awW/zdvonF4sUWcYvud+oOPB47
+	Z91l99i0qpPNY/OSeo8Xm2cyevR3t7B69P818Pi8SS6APYrLJiU1J7MstUjfLoErY8+z0oIt
+	HBWnZ5xmbGCcx97FyMkhIWAi8XfbUiCbi0NIYAmTxOUfnawQzlNGiV+NP5hBqtgE9CVWrFsE
+	lhARWMYo8e10NwuIwyywnVHixMR3TCBVwkBVG6+9BbNZBFQlbn47CNbNK2Al8fAbRFxCQF5i
+	/8GzUHFBiZMzn7CA2MxA8eats5khbAmJgy9egNlCAooS7x92sMP0Tjv3mhnCDpWYv+Y7+wRG
+	gVlIRs1CMmoWklELGJlXMQrlZiZnpxZlZusVZFSWpCbrpaRuYgTFhwgD1w7GvjkehxiZOBgP
+	MUpwMCuJ8Ha/PJgmxJuSWFmVWpQfX1Sak1p8iFGag0VJnHd1R3CqkEB6YklqdmpqQWoRTJaJ
+	g1OqgdFqntvXkLMluvMv9rKrTNrFUV0baLNB/Dlr2uu/m2sX/n/NP2Vb2t1e667zSw2Vve06
+	Lyy69+Z6iPvpO7l+nPfPCZudcXX8znLEqI7dw+sJ196n5fd/HVje8Gzu0VMJNjsTnl245Py7
+	WVmykWnOHYablrN374+smpyh8feX6ozolOKomYt3bRFUYinOSDTUYi4qTgQAo+GUDn0CAAA=
 
-Hi Greg,
+Add no-rtc, no-spi flash, remoteproc overlays for the imx8mp
+and Update Makefile.
 
-On Tue, Aug 20, 2024 at 06:15:52AM +0200, Greg KH wrote:
-> On Mon, Aug 19, 2024 at 12:09:22PM -0700, Nathan Chancellor wrote:
-> > When an attribute group is created with sysfs_create_group(), the
-> > ->sysfs_ops() callback is set to kobj_sysfs_ops, which sets the ->show()
-> > and ->store() callbacks to kobj_attr_show() and kobj_attr_store()
-> > respectively. These functions use container_of() to get the respective
-> > callback from the passed attribute, meaning that these callbacks need to
-> > be the same type as the callbacks in 'struct kobj_attribute'.
-> > 
-> > However, the platform_profile sysfs functions have the type of the
-> > ->show() and ->store() callbacks in 'struct device_attribute', which
-> > results a CFI violation when accessing platform_profile or
-> > platform_profile_choices under /sys/firmware/acpi because the types do
-> > not match:
-> > 
-> >   CFI failure at kobj_attr_show+0x19/0x30 (target: platform_profile_choices_show+0x0/0x140; expected type: 0x7a69590c)
-> > 
-> > This happens to work because the layout of 'struct kobj_attribute' and
-> > 'struct device_attribute' are the same, so the container_of() cast
-> > happens to allow the callbacks to still work.
-> 
-> Please note that this was an explicit design decision all those years
-> ago, it's not just "happening" to work by some accident.  It was just
-> done way before anyone thought of CFI-like things.
+Link to v1:
+https://lore.kernel.org/all/20240725094457.37739-2-y.varakala@phytec.de/
 
-Ack, thanks for the additional context! I can shore up this block with
-something like (wording improvements welcome):
+This patch series is dependent on this no-eth overlay patch:
+https://lore.kernel.org/all/20240710-bspimx8m-3180-v3-1-8ef55381172c@phytec.de/
 
-  There is no functional issue from the type mismatch because the layout
-  of 'struct kobj_attribute' and 'struct device_attribute' are the same,
-  so the container_of() cast does not break anything aside from CFI.
+Regards,
+yashwanth.
 
-which might sound less accusatory (not my intention). I just remember
-getting feedback on a patch similar to this a long time ago (perhaps
-from Kees?) around "why does this even work as is if the types are
-wrong?".
+Yashwanth Varakala (3):
+  arm64: dts: freescale: imx8mp-phycore: Add no-rtc overlay
+  arm64: boot: dts: freescale: Add no-spiflash overlay
+  arm64: dts: Add phyBOARD-Pollux dtso for rpmsg
 
-> > 
-> > Change the type of platform_profile_choices_show() and
-> > platform_profile_{show,store}() to match the callbacks in
-> > 'struct kobj_attribute' and update the attribute variables to match,
-> > which resolves the CFI violation.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: a2ff95e018f1 ("ACPI: platform: Add platform profile support")
-> > Reported-by: John Rowley <lkml@johnrowley.me>
-> > Closes: https://github.com/ClangBuiltLinux/linux/issues/2047
-> > Tested-by: John Rowley <lkml@johnrowley.me>
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> >  drivers/acpi/platform_profile.c | 20 ++++++++++----------
-> >  1 file changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> > index d2f7fd7743a1..11278f785526 100644
-> > --- a/drivers/acpi/platform_profile.c
-> > +++ b/drivers/acpi/platform_profile.c
-> > @@ -22,8 +22,8 @@ static const char * const profile_names[] = {
-> >  };
-> >  static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
-> >  
-> > -static ssize_t platform_profile_choices_show(struct device *dev,
-> > -					struct device_attribute *attr,
-> > +static ssize_t platform_profile_choices_show(struct kobject *kobj,
-> > +					struct kobj_attribute *attr,
-> >  					char *buf)
-> >  {
-> >  	int len = 0;
-> > @@ -49,8 +49,8 @@ static ssize_t platform_profile_choices_show(struct device *dev,
-> >  	return len;
-> >  }
-> >  
-> > -static ssize_t platform_profile_show(struct device *dev,
-> > -					struct device_attribute *attr,
-> > +static ssize_t platform_profile_show(struct kobject *kobj,
-> > +					struct kobj_attribute *attr,
-> >  					char *buf)
-> >  {
-> >  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
-> > @@ -77,8 +77,8 @@ static ssize_t platform_profile_show(struct device *dev,
-> >  	return sysfs_emit(buf, "%s\n", profile_names[profile]);
-> >  }
-> >  
-> > -static ssize_t platform_profile_store(struct device *dev,
-> > -			    struct device_attribute *attr,
-> > +static ssize_t platform_profile_store(struct kobject *kobj,
-> > +			    struct kobj_attribute *attr,
-> >  			    const char *buf, size_t count)
-> >  {
-> >  	int err, i;
-> > @@ -115,12 +115,12 @@ static ssize_t platform_profile_store(struct device *dev,
-> >  	return count;
-> >  }
-> >  
-> > -static DEVICE_ATTR_RO(platform_profile_choices);
-> > -static DEVICE_ATTR_RW(platform_profile);
-> > +static struct kobj_attribute attr_platform_profile_choices = __ATTR_RO(platform_profile_choices);
-> > +static struct kobj_attribute attr_platform_profile = __ATTR_RW(platform_profile);
-> 
-> I understand your need/want for this, but ick, is there any way to get
-> back to using 'struct device' and not "raw" kobjects here?  That's what
-> the code should be using really.
+ arch/arm64/boot/dts/freescale/Makefile        |  6 ++
+ .../dts/freescale/imx8mp-phycore-no-rtc.dtso  | 12 ++++
+ .../freescale/imx8mp-phycore-no-spiflash.dtso | 16 ++++++
+ .../dts/freescale/imx8mp-phycore-rpmsg.dtso   | 55 +++++++++++++++++++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-no-rtc.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-no-spiflash.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-phycore-rpmsg.dtso
 
-Not sure, I did not write this driver and I am unfamiliar with the
-'struct device' infrastructure. I see some other drivers in drivers/acpi
-and drivers/firmware that use raw kobjects due to sysfs_create_group()
-under firmware_kobj, so this does not necessarily feel out of place. If
-I got some hints, I could potentially try to do that conversion and have
-John test it with CFI (since I do not have this hardware) but I would
-think this could still be necessary for stable depending on how that
-conversion turns out.
+-- 
+2.34.1
 
-Cheers,
-Nathan
 
