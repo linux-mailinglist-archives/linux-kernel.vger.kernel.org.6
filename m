@@ -1,94 +1,74 @@
-Return-Path: <linux-kernel+bounces-294633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EBE95907C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7145E95908B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D801C222EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E741F23B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6331C8235;
-	Tue, 20 Aug 2024 22:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285591C8233;
+	Tue, 20 Aug 2024 22:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGlCPsuE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXMonYl5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760CE3A8D2;
-	Tue, 20 Aug 2024 22:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE043A8D2;
+	Tue, 20 Aug 2024 22:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724193030; cv=none; b=CwY22HmSP0eeVtgu21oF5YCz17sSckii1O9ZLsOXm3PBHdW9ubarmE453W/iv79frVhs4qsdyNpIwNz0ZWdiaE2cmQXSex4nuC6zOe/15LmIoN1b7WiFr87+K8RrXpumR7AEWHRU6pkJkau9/UB1fmyr8lqALE/7+UGRvXhSlrw=
+	t=1724193351; cv=none; b=hzi5PyzKu7VOzOgbvo/5FPl8+zJd/rFcTJXP+cTVd2txK8nhIFPhsN641omoeuKKrh89lF1u1n13m2PB3sYv1//0GlrMt/DlqYkD3xe8968B/0r6UQplygOEHnqsgJQr9Afxy3tCvw7ijP9RTa1xw1/+wmgwubUBk/S5zYJsdVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724193030; c=relaxed/simple;
-	bh=QIvy4TO9GSD5doYUaryT1LCKdL1T8Hc0PAdoyn5yFrc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Y1SSdeuKcWKMnkh9IhzgBjiMjnHihtIXV1T/xCOOxaA9aslQuwyqjbbT36OnJ1UgDhyhpdt+C0dDhhjDun2OqJ/M41WP6omqlgwbrO2Kk5OTAz1EbdmC4B+f0pXxoHzWeXirHbKYAIzTCwchvfRYewrTf04QimVR1nvUviBYqHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGlCPsuE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB510C4AF0B;
-	Tue, 20 Aug 2024 22:30:29 +0000 (UTC)
+	s=arc-20240116; t=1724193351; c=relaxed/simple;
+	bh=kk804djJ8UfkY1GYJR19YRqoPjl2bxSclvtq/wtzXDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lF+uby4DR7jAVf98VNpFHvu1RmQ2+QcgTqTqRHqsOm/tZAdV2EKDsQCW7cOrZj2H89lnKs3UObatG9SoaygClO/WFD7WX1dNyBAhPKn4W8vgZOUPjSq00pFd231pKS5oswYiSX5aJXYjTx02vDYQD6l2cMKjCRZTTdiiuh0b7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXMonYl5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50572C4AF0E;
+	Tue, 20 Aug 2024 22:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724193029;
-	bh=QIvy4TO9GSD5doYUaryT1LCKdL1T8Hc0PAdoyn5yFrc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UGlCPsuEk3q1g7Z/NPG0kgWw6vFChi2HcUSKu4hBcV5gYOaAvfAZBNhp6BvaeltpN
-	 Ie768J42dqWFdE2b1J80g5SSKUxEYKoP1g8DdmcYdpNpohgGFjobaW1PDip7YOFSZQ
-	 RBlLl/7Wt8BQCHauK7HlIC7kaHTm9ete55GmGB+1P+A4PD/OIFtpFQWxzaCNM6h95b
-	 fUtEJIpgsC+Mi6UJEN6WrUBBuAUqV2ZMblTzoPa7mc9mcdLepTg0YqDkTT0Meyv+cR
-	 yOoCcUW5CwAN9I7184i+GPQHZpS2xTtUVoN+QMWnVof3kHA8Cyic0uyAk1TFDqDFHV
-	 oeOTr9LUOEugQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342A53804CAE;
-	Tue, 20 Aug 2024 22:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724193350;
+	bh=kk804djJ8UfkY1GYJR19YRqoPjl2bxSclvtq/wtzXDo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UXMonYl509s4ZT+I2jLNvCb5RZao1bUZ83/bG6UVuo/kwTkqtb8XvF9UWmO8g4JEy
+	 /iIBqLx8G8Pads83qDrCk2oEbSB5kLqj8dGpj7bYk/auBoIbrBUf/ABjFk2ebmppwh
+	 JS/1BNMtmDn/j16nxNcpfvnyY31YGXOjj2lhDGwRYWajeOwUXERcti8n3IOx87Vgn4
+	 xqmSpMjLEHmaQB9VNmMhvfz+mVmYK0uWN6GLCRDr59l+2BVLM9iryR8k93FsOav7Xe
+	 5BRU20wuOiCZ+EpnEwiDk+Qvgm6ATyooZotHoDUNYSw+CCOeaOTrWZZFHEdc6q1+pW
+	 2E2jV8dWu0uHg==
+Date: Tue, 20 Aug 2024 15:35:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+ <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
+ <richardcochran@gmail.com>, b@mx0a-0016f401.pphosted.com
+Subject: Re: [net-next,v6 1/8] octeontx2-pf: map skb data as device
+ writeable
+Message-ID: <20240820153549.732594b2@kernel.org>
+In-Reply-To: <20240819122348.490445-2-bbhushan2@marvell.com>
+References: <20240819122348.490445-1-bbhushan2@marvell.com>
+	<20240819122348.490445-2-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] dpaa2-switch: Fix error checking in
- dpaa2_switch_seed_bp()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172419302902.1256151.15717439778691554579.git-patchwork-notify@kernel.org>
-Date: Tue, 20 Aug 2024 22:30:29 +0000
-References: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
-In-Reply-To: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: ioana.ciornei@nxp.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, vladimir.oltean@nxp.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Mon, 19 Aug 2024 17:53:41 +0530 Bharat Bhushan wrote:
+> Crypto hardware need write permission for in-place encrypt
+> or decrypt operation on skb-data to support IPsec crypto
+> offload. So map this memory as device read-write.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+How do you know the fragments are not read only?
 
-On Sat, 17 Aug 2024 09:52:46 +0300 you wrote:
-> The dpaa2_switch_add_bufs() function returns the number of bufs that it
-> was able to add.  It returns BUFS_PER_CMD (7) for complete success or a
-> smaller number if there are not enough pages available.  However, the
-> error checking is looking at the total number of bufs instead of the
-> number which were added on this iteration.  Thus the error checking
-> only works correctly for the first iteration through the loop and
-> subsequent iterations are always counted as a success.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] dpaa2-switch: Fix error checking in dpaa2_switch_seed_bp()
-    https://git.kernel.org/netdev/net/c/c50e7475961c
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+(Whatever the answer is it should be part of the commit msg)
 
