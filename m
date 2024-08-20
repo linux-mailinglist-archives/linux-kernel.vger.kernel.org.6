@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-294630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE59959072
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF8B959075
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51601F2308B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:25:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF381F230DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779981C7B7D;
-	Tue, 20 Aug 2024 22:25:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D461C8221;
+	Tue, 20 Aug 2024 22:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OxBB/1CM"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669721BE238
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45D71C7B78
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724192730; cv=none; b=MAxpzOGDkJlmzgCEWmQv8mz88ipgel5AD6H/Kv7mhV0Vee1Xeds07B3eHUKnHYi7v1JUXE4oPuEuFzoIsnudq6HGVseEz/xICLVr/1Lqf8bQbRcZVIiAStab9A4QAYM4Ftu8wBOBA/T0JOKy/YCfhNy2mXw05LqCjvn09u9DOzw=
+	t=1724192842; cv=none; b=okU9wyOwgqlH1bd+elEKspzW8OnU/yR57csNtSYJyy/UGWy8LkZDYGyMX52f54/tYRBFTFudMoDa4cHUcmwBePrZnbocLAIfPFd11h++MwuozoDRvondqdbAn5Cn0dYjmzPECPu+FLfiDerhujk2mS1vvaariRa1BKTfKpR3/X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724192730; c=relaxed/simple;
-	bh=OoCUnET1V1k1lYliFSls4bJBSea8tdq56I1z+x/ggag=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f4MVPeO39MyIAjy3kng8m2yOutxT0ymle2WCzodhw+ZadkmZZkOxPBFL162bL0iUinkETYJovBtpYQe+U5r5/BbWMHJrlfAtkidW3TilyApSd+2PeVqSNoSSKFb98uiL1sRifBUA23f3GO3NKACid9kWWNDwp9zzefuNlKAcOzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d28a70743so1973245ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:25:28 -0700 (PDT)
+	s=arc-20240116; t=1724192842; c=relaxed/simple;
+	bh=3wLsl2ZHoJzQIpDGbh/f6Cmbvg8iijyYfOI55rR0ciA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qV2E4FN/7CdgYPxCx+IgrilFAYPtOuUirwxLIFbEjT2a4PF+mZ55tOtFP+7TKdxGRsyt+rAz5cHhOftZAbSCmwJ2RBlW+FLJBmE9IjsWycNEy6kjA+9MKUlflF1gFvsLqNgaYvNPxfHZnvtzBW+Gxzt3CuvxlRTiSPwpFvW4rcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OxBB/1CM; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-713eeb4e4a9so2093122b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1724192840; x=1724797640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/7PBdgCtKdBDSQVRqHsAp4nX8OMVMTx7HQRmu7c+ziA=;
+        b=OxBB/1CMOKHXIJ0SWg/rSFmASo5Co43yiLSYe+5ODAlNNrR+b9I16j+vQSKNHg824/
+         vRByy0DmQDV7pOoliFgh03bpZdNlc3MBAJXn0oOk5rHK6oAjBFGa2Ubt2Nn0re/jkFL4
+         shMDGspmjRBwWZJsHk6q7JLv70l9k0YLklDk0VX1gyfpKCTgRSxy83CXvHliyj3xUASF
+         9lYHbu8i4QRutuJI8fCtRxxm+ap8J4AU5bRO97t7EY4EVb99bM5K9Ht3e7duVmv6nak5
+         SjtAwEkw0zU48x8yxXcgiNCZ6QWuyrb9//KwkZ1/R/G7I52SrFBQ9omZZNYt08Phk4Cd
+         jVGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724192727; x=1724797527;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dd0HEMDsZIeGcEfRD0xkJ9xU/HNc0cJLhCZLRTxGPV0=;
-        b=PKjcw2FvsK1Cxu+ao+zbp/o/dY5c+HwtnOYtFjwpmz1o0lCtBVqbRvRrDCgE1R9dL+
-         uHiMzadOraXO3YkUcI22QfP0gjG8qFP+V1S1+JjEHvwPAlgcjMYOOIAyE9NmG2NpwfJK
-         F16sVXky4118BMuzFqnUNNYeewMAWJN5trLZ6yw2zufVd+JH04zFGs+S85dFO+q2f8dM
-         Nrra1MjCOnjhx4mIE/pexj/lUhnAnJsY//VM70sH3bSGHzXibwqszG1S1BM6L/I+UmeL
-         3mBRFy4lFloM/wujWeEyt8vz40LP2FAB6ma8jqj/LyOrECOQTJEXknoY9tHdRtDYIV9c
-         BhoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeP1Z2ggg9LRCt/QXYsSH3l72ZxC9oO4/Y8RtPw+99Dk8Lh35fIzD2SxSfbgZ/MCgIppxwg8UNumxtSnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx48c7QnSv6zoh0tCjprthHB3qyRv+hmswSMlitwBffyP1PfjYb
-	qHCxyL5goBIhmyzqW1++KvXCtzyWmnAGyV/aiuRBTYuQzzj9W2CPuSCkLxCkLqGixSqSFlsJEqv
-	Z7+xt7DOxf0lQkHK4/eyAtLTW7M//zLexoAtnALZkKyVTgzyW6nWeg50=
-X-Google-Smtp-Source: AGHT+IEtLv4i5fZ4aJiVdm3kqCLGpdh8HFo8coaATgIkdnz9x/nnUaNurdlUIXeB6GXevELYvVEAjn9ArMzpoXqgMnNA4ee0pPEP
+        d=1e100.net; s=20230601; t=1724192840; x=1724797640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/7PBdgCtKdBDSQVRqHsAp4nX8OMVMTx7HQRmu7c+ziA=;
+        b=vdrK58d3ZdE1/G7UAguC2uZEmIe+P4WqOfx7LgEdN7MbyjlC9vqJdXEQQUFsEBlNz4
+         5X/bFByjOATsguQhwVXBu2R0BppUaRD/q2KTu/I2arZoGmNf5kR33ddTIF4s/GraIZVB
+         o5NSCRRbQCWtqivwa9uCKj/JcrzhsJuPPczf6OOkaHsZtLr3aZT3nz8fN1v4Fw9Rqdum
+         E16j/fU5ar7hTunZ8Vy99qCWgJFljS/H7mhCKJCIvjQ7qqURps1Uxk9P+zCc0XlGRvbY
+         dglQAaKZrua6FHDb2ixFmkEPkZFYboNoervgVG3nwzE/KcRIPIUH2lSeSDNSqESSvrtC
+         tA6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXIp/xN25m52tH85ffUhZuFXnK484E68gLrD2qu9ekWcqWZbpGoo9Ztna2wgKkDg5evwl17mq2htZ9DNzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKe+o6fJU5ygBb8BexF8WHol72fG4vzx1hJkLD3ki0WZIsI7B+
+	/NXTKuQQjSkWYKSzPosbuJYmso6OCG9YT3nonwo+iSzy2Yt667srtNDIPPhwWwA=
+X-Google-Smtp-Source: AGHT+IFWMD5F4SH16dywqQbMV8rHePgqcq9oQeCHks+FITqauivG5roMZKIICdQlMRQ5xlVuRGYS5A==
+X-Received: by 2002:a05:6a00:4fc4:b0:70d:3337:782b with SMTP id d2e1a72fcca58-714234b3aeamr612621b3a.18.1724192839732;
+        Tue, 20 Aug 2024 15:27:19 -0700 (PDT)
+Received: from medusa.lab.kspace.sh ([208.88.152.253])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7127af3cd84sm8642793b3a.209.2024.08.20.15.27.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 15:27:19 -0700 (PDT)
+Date: Tue, 20 Aug 2024 15:27:17 -0700
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Yuanyuan Zhong <yzhong@purestorage.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shay Drori <shayd@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: Added cond_resched() to crdump collection
+Message-ID: <ZsUYRRaKLmM5S5K9@apollo.purestorage.com>
+References: <20240819214259.38259-1-mkhalfella@purestorage.com>
+ <ea1c88ea-7583-4cfe-b0ef-a224806c96b1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d2cb:0:b0:376:3fad:bb7c with SMTP id
- e9e14a558f8ab-39d56dd9357mr1402495ab.1.1724192727449; Tue, 20 Aug 2024
- 15:25:27 -0700 (PDT)
-Date: Tue, 20 Aug 2024 15:25:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b533e062024e702@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in bch2_write_super
-From: syzbot <syzbot+7e9efdfec27fbde0141d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea1c88ea-7583-4cfe-b0ef-a224806c96b1@intel.com>
 
-Hello,
+On 2024-08-20 12:09:37 +0200, Przemek Kitszel wrote:
+> On 8/19/24 23:42, Mohamed Khalfella wrote:
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> > index d0b595ba6110..377cc39643b4 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> > @@ -191,6 +191,7 @@ static int mlx5_vsc_wait_on_flag(struct mlx5_core_dev *dev, u8 expected_val)
+> >   		if ((retries & 0xf) == 0)
+> >   			usleep_range(1000, 2000);
+> >   
+> > +		cond_resched();
+> 
+> the sleeping logic above (including what is out of git diff context) is
+> a bit weird (tight loop with a sleep after each 16 attempts, with an
+> upper bound of 2k attempts!)
+> 
+> My understanding of usleep_range() is that it puts process to sleep
+> (and even leads to sched() call).
+> So cond_resched() looks redundant here.
 
-syzbot found the following issue on:
+This matches my understanding too. usleep_range() should put the thread
+to sleep, effectively releasing the cpu to do other work. The reason I
+put cond_resched() here is that pci_read_config_dword() might take long
+time when that card sees fatal errors. I was not able to reproduce this
+so I am okay with removing this cond_resched().
 
-HEAD commit:    e5fa841af679 Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15295e05980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=7e9efdfec27fbde0141d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> >   	} while (flag != expected_val);
+> >   
+> >   	return 0;
+> > @@ -280,6 +281,7 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
+> >   			return read_addr;
+> >   
+> >   		read_addr = next_read_addr;
+> > +		cond_resched();
+> 
+> Would be great to see how many registers there are/how long it takes to
+> dump them in commit message.
+> My guess is that a single mlx5_vsc_gw_read_fast() call is very short and
+> there are many. With that cond_resched() should be rather under some
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I did some testing on ConnectX-5 Ex MCX516A-CDAT and here is what I saw:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e5fa841a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/de8799afd5d0/vmlinux-e5fa841a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/70cd1d84fb4b/bzImage-e5fa841a.xz
+- mlx5_vsc_gw_read_block_fast() was called with length = 1310716
+- mlx5_vsc_gw_read_fast() does 4 bytes at a time but the did not read
+  full 1310716 bytes. Instead it was called 53813 times only. There are
+  jumps in read_addr.
+- On average mlx5_vsc_gw_read_fast() took 35284.4ns
+- In total mlx5_vsc_wait_on_flag() called vsc_read() 54707 times with
+  average runtime of 17548.3ns for each call. In some instances vsc_read()
+  was called more than once until mlx5_vsc_wait_on_flag() returned. Mostly
+  one time, but I saw 5, 8, and in one instance 16 times. As expected,
+  the thread released the cpu after 16 iterations.
+- Total time to read the dump was 35284.4ns * 53813 ~= 1.898s
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7e9efdfec27fbde0141d@syzkaller.appspotmail.com
+> if (iterator % XXX == 0) condition.
 
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=none,compression=lz4,metadata_target=invalid device 255,noshard_inode_numbers,noinodes_use_key_cache,journal_flush_delay=1001,nojournal_transaction_names
-bcachefs (loop0): recovering from clean shutdown, journal seq 10
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): journal_replay... done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): going read-write
-bcachefs (loop0): done starting filesystem
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5104 at fs/bcachefs/super-io.c:939 bch2_write_super+0x364c/0x3c50 fs/bcachefs/super-io.c:939
-Modules linked in:
-CPU: 0 UID: 0 PID: 5104 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00279-ge5fa841af679 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_write_super+0x364c/0x3c50 fs/bcachefs/super-io.c:939
-Code: ff ff 48 89 44 24 10 49 be 00 00 00 00 00 fc ff df e9 79 dd ff ff e8 83 61 4f fd 90 0f 0b 90 e9 73 cb ff ff e8 75 61 4f fd 90 <0f> 0b 90 e9 82 cc ff ff 48 89 5c 24 10 e8 62 61 4f fd 48 8b 5c 24
-RSP: 0018:ffffc9000b58f620 EFLAGS: 00010283
-RAX: ffffffff8444297b RBX: 0000000000000000 RCX: 0000000000040000
-RDX: ffffc9000b0e1000 RSI: 0000000000000c1e RDI: 0000000000000c1f
-RBP: ffffc9000b58f910 R08: ffffffff8443f5f2 R09: 1ffffffff202fab5
-R10: dffffc0000000000 R11: fffffbfff202fab6 R12: ffffc9000b58f770
-R13: 1ffff920016b1eee R14: dffffc0000000000 R15: ffff888045f80000
-FS:  00007faf648136c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007faf63a886c0 CR3: 0000000045c5c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_ioc_setlabel fs/bcachefs/fs-ioctl.c:333 [inline]
- bch2_fs_file_ioctl+0x1e5b/0x2960 fs/bcachefs/fs-ioctl.c:578
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faf639799b9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faf64813038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007faf63b15f80 RCX: 00007faf639799b9
-RDX: 00000000200006c0 RSI: 0000000041009432 RDI: 0000000000000008
-RBP: 00007faf639e78d8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007faf63b15f80 R15: 00007ffe84e1c088
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Putting a cond_resched() every 16 register reads, similar to
+mlx5_vsc_wait_on_flag(), should be okay. With the numbers above, this
+will result in cond_resched() every ~0.56ms, which is okay IMO.
 
