@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-293535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ABE958104
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:31:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFEB95810A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B6D1F252CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B15481C23D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D63F18A92F;
-	Tue, 20 Aug 2024 08:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E266618A6CA;
+	Tue, 20 Aug 2024 08:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ug+iSR6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MGvDWWeH"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F11518A6BC;
-	Tue, 20 Aug 2024 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431C234CE5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142657; cv=none; b=Lr9Jhim03sUnzjDs+hRm/MXnfovTFHPU5uvsRI2YyBv1+nqDfEB9LvtbtdpXQkzSJuR160VQf8PkafRH5+I7dBJtEmUwcQ1KCpUevz19jAeS2fo0qelwbxtLE67tC5XoQeQQpKKZ7xlNQPhoVMAcTwr6YBaNH54N5INuTm6omlY=
+	t=1724142758; cv=none; b=RK6fZA7vSQVR4nihMBNvoFzUoNEV7/cujWSRwlhCeI+8sq4aEOZ6Vq4Gtwomk5L6dxNa93w+Uje/QyBkOmpIJuzxGPrukGwR5Fgmj1TQrFRnO0BPX4G1DiaBeqQD7czruUzjRkfD9kfQqiz16LgIVAZqc5qmKM4DfRj65k/Skj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142657; c=relaxed/simple;
-	bh=BmInGksExZlBWkn/07xLCLQVvYFAfRl0PNPyW6MxqbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klhdvM+97wsG6RWWCa4L0SMhfj4iuxawYAqVUJrWWllH+g0V+JTkCM1dZiH8AivS0Dj7B/l/COhKU7MwMVck4tJaFcXEdx68O6/eQiz8mrSB18lcGsyA4Pe75ZXc3SagHSxKs0vkU2oKhrF4s/TGVteHqKgJeh/0Oh3iWaOAeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ug+iSR6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9921C4AF0F;
-	Tue, 20 Aug 2024 08:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724142656;
-	bh=BmInGksExZlBWkn/07xLCLQVvYFAfRl0PNPyW6MxqbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ug+iSR6CN9Cx6AdKo3T2Z4aOuprJDe79l4wOJkPZe6TzyzBDKIJRYNVGM2vjOuzut
-	 BdNbeSfqTPPHXcxYWx03I8eT817/xpq7oTbq5BsbGOfG5ywPHvmuTzhT5YHiVL25Js
-	 CFK3gsCdwK05HOArVVNrmissVuO2lB9AxzzkExum+yIJKXlzPxPajAlrsWS5vnpsxc
-	 qcmIxRJIgio3Fuvu2UhbUOBHCPWU1oMB2Fx314R6rTOEJbHYdvmr5k+gm9mcZ8nuXl
-	 RM/G3YOSR/WmauKmGoSLhQp7AJIvfGcgCOJp3XMtbZNYwsDHeHM6VYg9LXuW2+I/lY
-	 9H1E9mnKxYymw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgKGV-000000000hj-2hYk;
-	Tue, 20 Aug 2024 10:30:55 +0200
-Date: Tue, 20 Aug 2024 10:30:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZsRUP7ZcKvcUBL4t@hovoldconsulting.com>
-References: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
- <ZofajSjhaaZsFRro@hovoldconsulting.com>
- <108d8399-9b09-4a1d-8424-a6fa69b63d77@quicinc.com>
+	s=arc-20240116; t=1724142758; c=relaxed/simple;
+	bh=PgAAwi3ABtUV2uBhW15Onu0kh0z8ocEuwBZ2+wxVxVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUL9Uawkqtf0FHJ1MNz+IH7SDIL7WSSpOzlloqrA0gkj2CIwcJP8CRSpO1K2NW08BqEwHa6KcuDGiNqN83kJqVdKOLupAOSzSSKWKXAdrZ9xZsJAcTCh10HJwzsoNNdLSQuXc8WnMgIBK1+Qpjo5DEEVeErT0GgyWTYkl+n2iXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MGvDWWeH; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f15e48f35bso51257651fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724142754; x=1724747554; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wlH8CopQ7GW3XFywQZo01UHpbUpx8ne/x30K0676QQ0=;
+        b=MGvDWWeHx1axk/XLfV3ZBU9xGPNG/Gk3ZqVAwXDPsJmQPjzAePdTMpvmaaCubWOF0M
+         PLj+IercryFWchNR4xnL+YzsBzeJSeaqdebDgmgrGKEeIiG2Vfy2LLCxt3EKvTwkoaSq
+         fYaNsQpSO2o+/XzyUA0wyglAHlmOeY/YlmqG9/nVblnmxprukohwBjhAfZzkOPX57HUq
+         tG3ende2xz/Hh3YFXHuu4y6asRfBTxgOewCLjqZlE9/aG3YDNZU5z6eO3tRlwn6hWFL8
+         Ld/raiMEnXyEqp3brzG6P1Li7T7LLho7MhUIdrdsIbDw1FWmp6hczIZpehEBuyzIV/s6
+         hqyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724142754; x=1724747554;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlH8CopQ7GW3XFywQZo01UHpbUpx8ne/x30K0676QQ0=;
+        b=cwyMAiC+PQXvf8KtT5Fa2WThgZzuJneV/l8p0guKJl6n23UZOOO5JZIEX/oMXqSWYm
+         QdO239cvi3I6ULI3iuEqEAo+Zp7cwuHGU7uz0+Sqj2Uz8anpbey8WlatbiI0eidqWtcF
+         k7ZTv+LqYb6ikKmQCzViZxfdszIJywo44LPcJS51H2ijrRKNeRI24P04YiTlJrvXuqLx
+         hGNeDW+HT6ijJxLerXlVz/C3eXBCR54W92oHJpHxe5CBf4vF4Fm8qoNS3ORHJ+albXnB
+         9prZVC+R9lAUQW/UTWjUnIlBI+5D8h/wKAcnXKmOZBRlkQvrRYxFRnzmWbd5xb1Tk7Qx
+         ltUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4lUI41+qLfHW4acVOu9o/c8Lq7+zR9kKZHFGMPCB9TGJ6qSDxnMTma33qQJdyANrwZorbjJfWVlph1ZUq+iw1C/AoXrEiFH8e88G/
+X-Gm-Message-State: AOJu0YzMk1rbl5zJTTGdjFbQBipeHFArA6pUgUKZrKruihmYls5m87mz
+	jVNIUV8mc7LXAsZDXF3bxLhLSOe+G4UUv0xO5ngaKNiIG2EqAiLc/b4LEeH+q4SjU1SGlVq+d71
+	F
+X-Google-Smtp-Source: AGHT+IElV8FXU9Q6EEmABmhvrh+lahp6xj2LFEIEf1QhrKDweKz1u5w5NdpW4uS1wZNhYW+l1Xol9w==
+X-Received: by 2002:a2e:3515:0:b0:2f1:a337:958d with SMTP id 38308e7fff4ca-2f3be597903mr82730551fa.24.1724142753616;
+        Tue, 20 Aug 2024 01:32:33 -0700 (PDT)
+Received: from [10.202.0.23] ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e2b65a9csm8678000a91.3.2024.08.20.01.32.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 01:32:33 -0700 (PDT)
+Message-ID: <980b3f4d-f265-4eb4-96a3-8f1a75588193@suse.com>
+Date: Tue, 20 Aug 2024 16:32:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <108d8399-9b09-4a1d-8424-a6fa69b63d77@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] ocfs2: Fix uaf in ocfs2_set_buffer_uptodate
+Content-Language: en-US
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+ linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+ syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <2d6499d6-fd03-43d8-9595-5babfd82481d@suse.com>
+ <20240820073739.1289567-1-lizhi.xu@windriver.com>
+From: Heming Zhao <heming.zhao@suse.com>
+In-Reply-To: <20240820073739.1289567-1-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 23, 2024 at 11:44:05AM -0700, Jeff Johnson wrote:
-> On 7/5/2024 4:35 AM, Johan Hovold wrote:
-> > On Tue, Jun 11, 2024 at 10:52:54AM -0700, Jeff Johnson wrote:
-> >> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-> >>
-> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > 
-> > I amended the commit message with the (recent) commit that added this
-> > W=1 warning (and dropped C=1). I also tweaked three descriptions
-> > slightly. End result is here:
-> > 
-> > 	https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-next&id=9f4dc05107a6db3743e6b9ea4014cbdc3795682d
+Could you resend v3 with both patches?
+And add my "Reviewed-by" tag to another patch.
 
-> I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
-> Will you be able to have this pulled during the merge window?
-> I'm trying to eradicate all of these warnings before 6.11 rc-final.
+btw, you miss change log area from v2.
 
-This one is now in Linus' tree.
+-Heming
 
-Johan
+On 8/20/24 15:37, Lizhi Xu wrote:
+> In the for-loop after the 'read_failure' label, the condition
+> '(bh == NULL) && flags includes OCFS2_BH_READAHEAD' is missing.
+> When this contidion is true, this for-loop will call ocfs2_set_buffer
+> _uptodate(ci, bh), which then triggers a NULL pointer access error.
+> 
+> Reported-and-suggested-by: Heming Zhao <heming.zhao@suse.com>
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>   fs/ocfs2/buffer_head_io.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+> index e62c7e1de4eb..8f714406528d 100644
+> --- a/fs/ocfs2/buffer_head_io.c
+> +++ b/fs/ocfs2/buffer_head_io.c
+> @@ -388,7 +388,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+>   		/* Always set the buffer in the cache, even if it was
+>   		 * a forced read, or read-ahead which hasn't yet
+>   		 * completed. */
+> -		ocfs2_set_buffer_uptodate(ci, bh);
+> +		if (bh)
+> +			ocfs2_set_buffer_uptodate(ci, bh);
+>   	}
+>   	ocfs2_metadata_cache_io_unlock(ci);
+>   
+
 
