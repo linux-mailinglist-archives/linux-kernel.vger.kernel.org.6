@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-294467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCB4958E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C91D9958E19
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE682814C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851582845F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30C21494BB;
-	Tue, 20 Aug 2024 18:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78E314A0A9;
+	Tue, 20 Aug 2024 18:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Orm8RUUX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz+iFhM8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D9EEAC5;
-	Tue, 20 Aug 2024 18:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD23EAC5;
+	Tue, 20 Aug 2024 18:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178691; cv=none; b=eitLMMOT8s4oOr5OARopTzkwHhyktrnW+1dN//nOtmRePS3BCqNGFqaSHHHEY81C9dZ6casGbqip+zmba9tBFekW0l5Td5XI3xmbRdZYxY7UMlpF1geGyRNjFhmPonh18t7X5Q8WyG3Oo7qYMEkzPTP8dU8fi8G4lU4w1Q1eXp4=
+	t=1724178821; cv=none; b=ICWW4MGNHShHyrcli2BabMGFdRyVNHWydSsvu1GtRjfFOaQ7d9GmexhGpLn83Pd1EseXoRBA3aOc0ZN9YCQbAm2JprJGZVOXgq5FGIo0Lwxb9CsgAE44STCgEUFh4EhBKt+hcahgZWfmwAoUP4Mo2pNIp8BeIOrDYfbMIZMY3Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178691; c=relaxed/simple;
-	bh=liGTDXoscxLcCROjnOLpYkcFAv6EbxOlUytlw+YakPw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePIQbszzwaLpQh6IM8X0YnJ3DEwa9GJjol4/ZnmAn6kZOwEUNdpYrrPcT00Q2/ZebFFQGD/4TzBKFM9WzdY7ea5y6VVWeYp3NaYpMVc2r/2ibutzZ9A2qvMdIZQdlCDQYHY7jusVBkfd+2OrtHVazViNmVFsojhxvOYz95EjmVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Orm8RUUX; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724178689; x=1755714689;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=liGTDXoscxLcCROjnOLpYkcFAv6EbxOlUytlw+YakPw=;
-  b=Orm8RUUXrQ5JZ28mCvtaLe62wrBNHWcKCTS51g4Uv50w6MDiHGgyRBX/
-   xKPLYXWgrprdXDp+ledjItq4qzeqvFUtFa2UoTaHq1G533G4CyIXWtd5Y
-   Pt+vDAPrZfBHp5cWdu3m+aXLXPVojEbbRt9CQ/pe47M4Eddqde8TflSsF
-   H6GpdqlxmpEIfQzyMJjB7tfXk+bScFdxbT9DjBaitLIvxi0O6gM4/3K5y
-   WYwNhzu9lFfgWT/EXFM6q0JIHgOrMpHM3ixfdN9EQqme123dDRcso+edv
-   E3AD6tP4c47UAj99Hev4AGIQ6HvvxeIdxQ19VXOHIrbdY9uiKYyHeqIjF
-   w==;
-X-CSE-ConnectionGUID: iBNf1kUgS7OKcOU81MAfXQ==
-X-CSE-MsgGUID: x8RG1vswS8y7+PhiMa4PWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33164131"
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="33164131"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 11:31:28 -0700
-X-CSE-ConnectionGUID: GT3sWMfNRtOHB08T3IEVlw==
-X-CSE-MsgGUID: mZjCh3r/SbSazfChsvVoVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="60458133"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa006.fm.intel.com with ESMTP; 20 Aug 2024 11:31:28 -0700
-From: kan.liang@linux.intel.com
-To: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	peterz@infradead.org,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf hist: Don't set hpp_fmt_value for members in --no-group
-Date: Tue, 20 Aug 2024 11:32:02 -0700
-Message-Id: <20240820183202.3174323-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1724178821; c=relaxed/simple;
+	bh=HOynmsngE3UkqL88UINGscqF08HnLAab0FpdwkbJdlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYVtwRElz5AhE+zIG0D9jRksjDMG3IPyTCrwMKuQnbCOAbC9yzPQPkzYEGfmCTyzh6hVCM/0qnKifX0aOtXfr4kce3BSDkePLZhiVp74VYIzU7WHiW2zFUpcbXoAEc1V1U4kEAi4s4UCwbnFKQbiSjsW0o1ovz2HTz1kZZqW4Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz+iFhM8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DA1C4AF0B;
+	Tue, 20 Aug 2024 18:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724178820;
+	bh=HOynmsngE3UkqL88UINGscqF08HnLAab0FpdwkbJdlw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mz+iFhM8jJT+4IW7O3cA6zMJ1cHj8l7TGeCiHBo8qbua4eIeDYc+V7r/2mExZfX5Q
+	 z9gy7iQyvQ5DSRLBL0Ewt2S4aXzTINFNLLgwa1/IsDoZkzyrHrLaqwl9pnpfn99YwZ
+	 iJsTtzOflQ6VpSnPJTQZn0wwXAfY5+i10xA3sXRZELtPo2JOSX4uh0fAB5mzmsdHTm
+	 2d4OlV30rqIRIMmWLLiVEytmquHXzCV8NQKsQGHaT9w5uinAVtUm1MCzNd+O0tCPJI
+	 oIFBf5+zzaZTr+71VXmyANwxecilwZDz2rWHxu5EEEHJGxWDPNIATjLtGvtgZ3DjPB
+	 bQHgLFozhPa+g==
+Date: Tue, 20 Aug 2024 19:33:35 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bharat Bhushan <bharatb.linux@gmail.com>
+Cc: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
+	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jerinj@marvell.com, lcherian@marvell.com,
+	ndabilpuram@marvell.com
+Subject: Re: [net PATCH v2] octeontx2-af: Fix CPT AF register offset
+ calculation
+Message-ID: <20240820183335.GB2898@kernel.org>
+References: <20240819123237.490603-1-bbhushan2@marvell.com>
+ <20240819152744.GA543198@kernel.org>
+ <CAAeCc_ngtvx7LNWB2CMgfA6Vyitx8BTZbahJby+ZDgTEC5JYbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAeCc_ngtvx7LNWB2CMgfA6Vyitx8BTZbahJby+ZDgTEC5JYbA@mail.gmail.com>
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Aug 20, 2024 at 04:37:02PM +0530, Bharat Bhushan wrote:
+> On Mon, Aug 19, 2024 at 8:57 PM Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Mon, Aug 19, 2024 at 06:02:37PM +0530, Bharat Bhushan wrote:
+> > > Some CPT AF registers are per LF and others are global.
+> > > Translation of PF/VF local LF slot number to actual LF slot
+> > > number is required only for accessing perf LF registers.
+> > > CPT AF global registers access do not require any LF
+> > > slot number.
+> > >
+> > > Also there is no reason CPT PF/VF to know actual lf's register
+> > > offset.
+> > >
+> > > Fixes: bc35e28af789 ("octeontx2-af: replace cpt slot with lf id on reg write")
+> > > Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+> > > ---
+> >
+> > Hi Bharat,
+> >
+> > It would be very nice to have links (to lore) to earlier version and
+> > descriptions of what has changed between versions here.
+> 
+> Hi Simon,
+> 
+> Will add below in next version of this patch
 
-Perf crashes as below when applying --no-group
+Thanks, much appreciated.
 
-perf record -e "{cache-misses,branches"} -b sleep 1
-perf report --stdio --no-group
-free(): invalid next size (fast)
-Aborted (core dumped)
-
-In the __hpp__fmt(), only 1 hpp_fmt_value is allocated for the current
-event when --no-group is applied. However, the current implementation
-tries to assign the hists from all members to the hpp_fmt_value, which
-exceeds the allocated memory.
-
-Fixes: 8f6071a3dce4 ("perf hist: Simplify __hpp_fmt() using hpp_fmt_data")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/ui/hist.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
-index 5d1f04f66a5a..e5491995adf0 100644
---- a/tools/perf/ui/hist.c
-+++ b/tools/perf/ui/hist.c
-@@ -62,7 +62,7 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
- 	struct evsel *pos;
- 	char *buf = hpp->buf;
- 	size_t size = hpp->size;
--	int i, nr_members = 1;
-+	int i = 0, nr_members = 1;
- 	struct hpp_fmt_value *values;
- 
- 	if (evsel__is_group_event(evsel))
-@@ -72,16 +72,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
- 	if (values == NULL)
- 		return 0;
- 
--	i = 0;
--	for_each_group_evsel(pos, evsel)
--		values[i++].hists = evsel__hists(pos);
--
-+	values[0].hists = evsel__hists(evsel);
- 	values[0].val = get_field(he);
- 	values[0].samples = he->stat.nr_events;
- 
- 	if (evsel__is_group_event(evsel)) {
- 		struct hist_entry *pair;
- 
-+		for_each_group_member(pos, evsel)
-+			values[++i].hists = evsel__hists(pos);
-+
- 		list_for_each_entry(pair, &he->pairs.head, pairs.node) {
- 			for (i = 0; i < nr_members; i++) {
- 				if (values[i].hists != pair->hists)
--- 
-2.38.1
-
+> v3:
+>   - Updated patch description about what's broken without this fix
+>   - Added patch history
+> 
+> v2: https://lore.kernel.org/netdev/20240819152744.GA543198@kernel.org/T/
+>   - Spelling fixes in patch description
+> 
+> v1: https://lore.kernel.org/lkml/CAAeCc_nJtR2ryzoaXop8-bbw_0RGciZsniiUqS+NVMg7dHahiQ@mail.gmail.com/T/
+>   - Added "net" in patch subject prefix, missed in previous patch:
+>     https://lore.kernel.org/lkml/20240806070239.1541623-1-bbhushan2@marvell.com/
+> 
+> 
+> Thanks
+> -Bharat
+> 
+> >
+> > Using b4 to manage patch submissions will help with this.
+> >
+> 
 
