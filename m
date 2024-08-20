@@ -1,193 +1,118 @@
-Return-Path: <linux-kernel+bounces-294049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0941958840
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:49:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525DF958844
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425C4283D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852C81C2193E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75283190670;
-	Tue, 20 Aug 2024 13:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0FF190679;
+	Tue, 20 Aug 2024 13:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evk4h2E1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxywgFtQ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C4189F3F;
-	Tue, 20 Aug 2024 13:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E4A189F3F;
+	Tue, 20 Aug 2024 13:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724161747; cv=none; b=cVtiTzK4o1J9icWjYzNj90fuQdNhfaaXzy8USznFn3TOP+fZX+r6kH1IJJxqr19SCsciFFf5KbY4SlcU/GVxEQp6F8Ti82Yha2z9tFkiBiOCY+znAgrUuzoS8HsWgFKFR+4tDyOhFHiT0dcXs7i16Q3QeERJEome8iTlFJaQTuM=
+	t=1724161793; cv=none; b=X8WeFVXRb+uvxnzchWTO5ejKR/HN74UY6tbe9FvaEZfBo1jeSGvcACunm6hfnADMRzm6Ytx1TDizxYqpbQx+X1/L6vwzbUYQXGhGgmKTTGL4jg41xpZraoHMH0rJDQYUV8cDG7c3urH3ahyPz8VOwHzlbomQld+8jiLyLQYu3cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724161747; c=relaxed/simple;
-	bh=bhRwn+mVa1bt+TlSFVqIGGL3160ePN1rMaL5tku4pr0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YVa0IiqpX8E3K4kjFjaydhBGgoSZT6PChgARnMsBnAMB6makSDqboc0Z2F4e60FgrckJwK9jM6PyPYaKGN8FTKLnpBnpilSesX/7Z1jdv7+weHuu3fAlIwACj4jScAadHnNxr9JilRl82Og/etzExtytieMc7lfaFOkSG3NbyEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evk4h2E1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D767C4AF0E;
-	Tue, 20 Aug 2024 13:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724161747;
-	bh=bhRwn+mVa1bt+TlSFVqIGGL3160ePN1rMaL5tku4pr0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=evk4h2E1nkNef2/bTxkH/5JMSYGg6VWdjgJKeMbMaEdaivq7L6N9i6SzQvDzfsT4k
-	 S603bEwXO2pLPUWy3li5pE3fDcTyNarc6t9465yvDNDRGleiEs2HT7gjCb+wwNwFsX
-	 KpwMxYbIoqO2Y0j4doscuk6dpWE0K2BfUrJkWeXUEh20CTPt0PjnQSBb0X8Htr6dnJ
-	 aNkYd6OGL/QrUYns3ADV9Qci+vCzwOFCkWBLnCrYyUx2VQEYjMibSMARxg/Fr+KsAH
-	 lFBrwCMmhjUNy8RlvUawRl8J/DKJ5P11GO9NYV/23fBUC8AGPeGA6EpOd/0nH4T9wf
-	 eIxuanOzE8vxA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sgPEP-005Hv4-2L;
-	Tue, 20 Aug 2024 14:49:05 +0100
-Date: Tue, 20 Aug 2024 14:49:04 +0100
-Message-ID: <86seuzxq27.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	ankita@nvidia.com,
-	ardb@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	james.morse@arm.com,
-	vdonnefort@google.com,
-	mark.rutland@arm.com,
-	oliver.upton@linux.dev,
-	rananta@google.com,
-	ryan.roberts@arm.com,
-	shahuang@redhat.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v8 3/6] arm64: ptdump: Use the mask from the state structure
-In-Reply-To: <20240816123906.3683425-4-sebastianene@google.com>
-References: <20240816123906.3683425-1-sebastianene@google.com>
-	<20240816123906.3683425-4-sebastianene@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724161793; c=relaxed/simple;
+	bh=mq326+oxJPr30Y8cLcAldCHG2SBJ9NCNUB1ptLzX3QU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BhTZ+Ypz74uowe5RSILYPqnH+u+Unh9kJfCW8tb7RvFU5LTrslJabjs2oXuOp719l9vbu2PKyzZe+CCn4Pq/zxy5y0dz3gZeOZf92T+uUB6TSU8Cqdi96v9oGMH84Vy86Gjg19iFN7N8fRkD5kqOhnybBu6QJjdG5xXZ7oLW2X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxywgFtQ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bed0a2ae0fso4593932a12.1;
+        Tue, 20 Aug 2024 06:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724161790; x=1724766590; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mi6P0KgyJuOg2DIv54r5lv9DcqvreKk8Q0moUstK6LI=;
+        b=KxywgFtQvN+eiPky5IauhHhJbN5XWKlamoPc8jkzjYCoHLH+ul3xRFyKczK4gHaiLb
+         Os4kJ4O2OABgTFEwB6+PZrBNc0H/OiV7L+bpGgn5nV44ey8K4HIL9VSKh9lC6oUmHCl/
+         ozcGWrkvjhCu/bU4Iw0a9nzP/gtOUtCb22m9bWVcfuzoGvznKsAt1Mj+LA9AxS11LG8D
+         RrCz9cQJnlWeMFEhuwPitti+BesyabF3NGA+LSaMEouaB5Gw6ZAIz4hgVX1aM6DC4Scd
+         cgumkvTgd0AMXElmcu3rj4wL7TbjPtcuvDBIB/OmPcD/kb3PC/wymZuVQfb+5i8KXJI2
+         lz6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724161790; x=1724766590;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mi6P0KgyJuOg2DIv54r5lv9DcqvreKk8Q0moUstK6LI=;
+        b=O/lBB15IUf2OD40+2bI0uWQeJqU+Q/nScNrMVCTVG0VHYpyLd7YhkMV8A+aPzQ2ndi
+         dWDUflwrjUFvSM883cIPM1NiHM6sA9VPvEFT136Q7+SLsSlcRQB1cR8Ezm70P9qusk8y
+         ZjTQQk8TGwFXhjFUDdv3ti4pE7hvaQd+OQv7MloH6wLaq/MSZvjL3vbKQJowcjcefXYA
+         Qs8S5ENbr7eWKn+GNGrToMfpMui4i4r1UMkKgbegp0333er+9pSigPLh+izrgG5lasUZ
+         jM50t4z/Fw3LDMLiZwp7dYguifUGLSfHZR/U1XgvHSe6QFhS7l/w1Q5uYTlbDGhtgsmT
+         bkhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWw27gbWpS5uTVy8p7UhzU/lVwQfkhoQNzTJIJPOzw5DsG7jhWWa4ZjSG9owPCcn0BzBs80sB6URaCstxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc5DiRuKBAVu9lq/mKJc66VBEoi474iXQ3LFq5gOskrTatuY/4
+	Z/iTwq1P1h9ocLi0D6xtk1rpLb4k5KlGLFrhlxWdBIeSijsixm1s
+X-Google-Smtp-Source: AGHT+IEXvQEyjaLUUTKVUVXyC1PuVlUVxioiqu3aSU26ykNG9MQuXj9MG1IeuWH1QcCO0RHfQJinRg==
+X-Received: by 2002:a17:907:3e1a:b0:a7d:a031:7bad with SMTP id a640c23a62f3a-a86479ae76dmr141428466b.16.1724161790082;
+        Tue, 20 Aug 2024 06:49:50 -0700 (PDT)
+Received: from [192.168.1.14] (host-80-104-252-9.retail.telecomitalia.it. [80.104.252.9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfa0dsm762254566b.69.2024.08.20.06.49.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 06:49:49 -0700 (PDT)
+Message-ID: <e0ec6c9f-898e-4bd1-9b32-d291ec716788@gmail.com>
+Date: Tue, 20 Aug 2024 15:49:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] drm/msm: Add submitqueue setup and close
+To: Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-2-7bda26c34037@gmail.com>
+ <613c79a6-c32c-4c3f-b648-673529004e49@kernel.org>
+Content-Language: en-US
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <613c79a6-c32c-4c3f-b648-673529004e49@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 16 Aug 2024 13:39:03 +0100,
-Sebastian Ene <sebastianene@google.com> wrote:
+On 8/20/24 12:10 PM, Konrad Dybcio wrote:
+> On 15.08.2024 8:26 PM, Antonino Maniscalco wrote:
+>> This patch adds a bit of infrastructure to give the different Adreno
+>> targets the flexibility to setup the submitqueues per their needs.
+>>
+>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>> ---
 > 
-> Printing the descriptor attributes requires accessing a mask which has a
-> different set of attributes for stage-2. In preparation for adding support
-> for the stage-2 pagetables dumping, use the mask from the local context
-> and not from the globally defined pg_level array. Store a pointer to
-> the pg_level array in the ptdump state structure. This will allow us to
-> extract the mask which is wrapped in the pg_level array and use it for
-> descriptor parsing in the note_page.
+> This email doesn't exist anymore and doesn't match yours
 > 
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> ---
->  arch/arm64/include/asm/ptdump.h |  1 +
->  arch/arm64/mm/ptdump.c          | 13 ++++++++-----
->  2 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> index bd5d3ee3e8dc..71a7ed01153a 100644
-> --- a/arch/arm64/include/asm/ptdump.h
-> +++ b/arch/arm64/include/asm/ptdump.h
-> @@ -44,6 +44,7 @@ struct ptdump_pg_level {
->   */
->  struct ptdump_pg_state {
->  	struct ptdump_state ptdump;
-> +	struct ptdump_pg_level *pg_level;
->  	struct seq_file *seq;
->  	const struct addr_marker *marker;
->  	const struct mm_struct *mm;
-> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-> index 404751fd30fe..ca53ef274a8b 100644
-> --- a/arch/arm64/mm/ptdump.c
-> +++ b/arch/arm64/mm/ptdump.c
-> @@ -117,7 +117,7 @@ static const struct ptdump_prot_bits pte_bits[] = {
->  	}
->  };
->  
-> -static struct ptdump_pg_level pg_level[] __ro_after_init = {
-> +static struct ptdump_pg_level kernel_pg_levels[] __ro_after_init = {
+> Konrad
 
-Do you actually need this sort of renaming? Given that it is static,
-this looks like some slightly abusive repainting which isn't warranted
-here.
+I hadn't added mine since this commit is from the previous patch without 
+modifications, I will add my Signed-off-by to it since this address is 
+no longer valid.
 
-I also didn't understand the commit message: you're not tracking any
-mask here, but a page table level. You are also not using it for
-anything yet, see below.
-
-
->  	{ /* pgd */
->  		.name	= "PGD",
->  		.bits	= pte_bits,
-> @@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
->  	       u64 val)
->  {
->  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
-> +	struct ptdump_pg_level *pg_level = st->pg_level;
-
-This is what I mean. What is this pg_level used for?
-
->  	static const char units[] = "KMGTPE";
->  	u64 prot = 0;
->  
-> @@ -262,6 +263,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
->  		.seq = s,
->  		.marker = info->markers,
->  		.mm = info->mm,
-> +		.pg_level = &kernel_pg_levels[0],
->  		.level = -1,
->  		.ptdump = {
->  			.note_page = note_page,
-> @@ -279,10 +281,10 @@ static void __init ptdump_initialize(void)
->  {
->  	unsigned i, j;
->  
-> -	for (i = 0; i < ARRAY_SIZE(pg_level); i++)
-> -		if (pg_level[i].bits)
-> -			for (j = 0; j < pg_level[i].num; j++)
-> -				pg_level[i].mask |= pg_level[i].bits[j].mask;
-> +	for (i = 0; i < ARRAY_SIZE(kernel_pg_levels); i++)
-> +		if (kernel_pg_levels[i].bits)
-> +			for (j = 0; j < kernel_pg_levels[i].num; j++)
-> +				kernel_pg_levels[i].mask |= kernel_pg_levels[i].bits[j].mask;
->  }
->  
->  static struct ptdump_info kernel_ptdump_info __ro_after_init = {
-> @@ -297,6 +299,7 @@ bool ptdump_check_wx(void)
->  			{ 0, NULL},
->  			{ -1, NULL},
->  		},
-> +		.pg_level = &kernel_pg_levels[0],
->  		.level = -1,
->  		.check_wx = true,
->  		.ptdump = {
-
-Thanks,
-
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Antonino Maniscalco <antomani103@gmail.com>
+
 
