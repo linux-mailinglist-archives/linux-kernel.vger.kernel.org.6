@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-293462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727BF95800D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:40:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF83958014
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED641C23EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603E11C23CFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8085189F4B;
-	Tue, 20 Aug 2024 07:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2598C18952F;
+	Tue, 20 Aug 2024 07:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frH76/Tv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="vnUqSiOp"
+Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D02F17C204;
-	Tue, 20 Aug 2024 07:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE61E86E;
+	Tue, 20 Aug 2024 07:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724139629; cv=none; b=KIsm/Rd7NYk+tn0AVj5+zatkS8P7l0NB7GrQxBa8VkEBkfcOAdGU2Ibv3uTV5TGB0gBBFTtkMGdWe2j5iv+8YrwrsRgdNVyrYGipqpO9oZlnny1rNa1ThOQaBP3LWdoOx+yMIiyFzVS6TtxPV5G6JQ8LXTj00OU7HbI6Uy3ReLI=
+	t=1724139788; cv=none; b=s9GeNVWJcseUMRrv5QW3p8HSkeLOPXHiBhYv69xHq/sF5Rj8MH4uGiacK3gReJI8u1qNPMmMp7m19vOJMeXeHGoDRn5TbUnTyp21QdoCjcytMf1GMwrqhtbWCBAIcLOywXEVZmrwDX1b3VxWtbrIS9B0Wbrxc7wwm9wXuAPxQXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724139629; c=relaxed/simple;
-	bh=hawFFnGsZ8QIvUfjOYbiKz9xBDXapD08x6QGiLvAwPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUwQKV4o0S770zQ72NcHcQUKsdouCZBAhYeabV+NYjmU/RDi73sfEZvFS3RDCY9pudDaNQP03KFc+saDvDCL/l68s6UKMdQWKi3YwrAsyl6wUe0RwZ+K+YrunzpIooHV0opeJ6z9HICduIgPmZe0SPsOnMLwwOltbm1isSX9Uog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frH76/Tv; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724139627; x=1755675627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hawFFnGsZ8QIvUfjOYbiKz9xBDXapD08x6QGiLvAwPs=;
-  b=frH76/Tv+9ifIDSxpBY3VH9ps0y884t7IF5Ex8vS36mYiIv2KrTqe5Ak
-   a68PyDpHcufaHPlMTPcQX3Cgl0T/DeDmKMLNTovUNz503NMPSqwzB3JFw
-   +3PAlVG20arGqaehpl1fqE0KaZgC/FjbXJutzb7iJ/sebRYb9QAX4lNmJ
-   0a1875KkqgGUs1CpgyYtUxbkQQJhPgxGHCyEMnthvX/HFP8snkBXIK03L
-   oMaymjYIkHQTJk08dOndFwDGlCeahbaNbAd/oc4Jcbv51mrKnMiuG8aU7
-   MRgy3gxvSHrUcf/P0EpZx0XNsJQLYqyohYQFJ44TYAzl+CRTlqknh2p+1
-   g==;
-X-CSE-ConnectionGUID: cJuFwCDUSvSsuj5U8wUp4g==
-X-CSE-MsgGUID: J28V70cRSy6BmsJtGdwlLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="39926457"
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="39926457"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 00:40:25 -0700
-X-CSE-ConnectionGUID: u+Uf2G9mTouWtcLGx/72Lw==
-X-CSE-MsgGUID: Ni+zAIHISxyEEUBu7A5x+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="91406661"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Aug 2024 00:40:21 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgJTW-0009r2-39;
-	Tue, 20 Aug 2024 07:40:18 +0000
-Date: Tue, 20 Aug 2024 15:40:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Aring <aahringo@redhat.com>, teigland@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	gfs2@lists.linux.dev, song@kernel.org, yukuai3@huawei.com,
-	agruenba@redhat.com, mark@fasheh.com, jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev, netdev@vger.kernel.org,
-	vvidic@valentin-vidic.from.hr, heming.zhao@suse.com,
-	lucien.xin@gmail.com, aahringo@redhat.com
-Subject: Re: [PATCH dlm/next 11/12] dlm: add nldlm net-namespace aware UAPI
-Message-ID: <202408201509.g1VKeeOl-lkp@intel.com>
-References: <20240819183742.2263895-12-aahringo@redhat.com>
+	s=arc-20240116; t=1724139788; c=relaxed/simple;
+	bh=XH9LvcunWRYcHXxGZAnxEA5uFBtgW4DOX7tZ//VLSHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nR5LCTyqVJ0ezD1gkmiZHx7W58gu5/vURR6CoJtC8kiml3z1U/TorXL+q0yK27FXEMvb+xl3QFxeTADgOqV+ILHJbrqPYRsZxtiD+WWUYs+70J+uBzOoZRXG3KaPhOlEBqj0ilvl+XFTPrW+wZX2UFbk2YV7iPCjTjaG5x5m2Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=vnUqSiOp; arc=none smtp.client-ip=77.48.224.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 76A5B2E9A;
+	Tue, 20 Aug 2024 09:42:54 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 76A5B2E9A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+	t=1724139774; bh=51ONq13TN8pRD7uff4GRkUMpKhlnkaubIa5w9z/leck=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vnUqSiOppbEY8BitfnNFv7MWnFPxjSKp/n157Lor5cwl4SMOTwA2kRsVyVH6EZtNB
+	 NlvQWW+3tyhhtbsFiUF9TttRbu0hhMu3PK7SbSfcni8Z+8DHpJrRyNYWmgyqguYTdz
+	 4Mmo2SriXfkzw68+GrjMrZI93i/hiJcQgBLASqg8=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: perex)
+	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+	Tue, 20 Aug 2024 09:42:40 +0200 (CEST)
+Message-ID: <eceafeef-2dba-48aa-b8b3-198b9bb39fb6@perex.cz>
+Date: Tue, 20 Aug 2024 09:42:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819183742.2263895-12-aahringo@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory
+ function
+To: Shengjiu Wang <shengjiu.wang@gmail.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
+ <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com>
+ <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
+ <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
+ <ceb54a27-144b-40ed-8de5-482f2b0664a0@linux.intel.com>
+ <CAA+D8ANqb89UavAXTiHvcHyv9uMt8_MYR9hfBaxEJDPNy5C=-g@mail.gmail.com>
+From: Jaroslav Kysela <perex@perex.cz>
+Content-Language: en-US
+Autocrypt: addr=perex@perex.cz; keydata=
+ xsFNBFvNeCsBEACUu2ZgwoGXmVFGukNPWjA68/7eMWI7AvNHpekSGv3z42Iy4DGZabs2Jtvk
+ ZeWulJmMOh9ktP9rVWYKL9H54gH5LSdxjYYTQpSCPzM37nisJaksC8XCwD4yTDR+VFCtB5z/
+ E7U0qujGhU5jDTne3dZpVv1QnYHlVHk4noKxLjvEQIdJWzsF6e2EMp4SLG/OXhdC9ZeNt5IU
+ HQpcKgyIOUdq+44B4VCzAMniaNLKNAZkTQ6Hc0sz0jXdq+8ZpaoPEgLlt7IlztT/MUcH3ABD
+ LwcFvCsuPLLmiczk6/38iIjqMtrN7/gP8nvZuvCValLyzlArtbHFH8v7qO8o/5KXX62acCZ4
+ aHXaUHk7ahr15VbOsaqUIFfNxpthxYFuWDu9u0lhvEef5tDWb/FX+TOa8iSLjNoe69vMCj1F
+ srZ9x2gjbqS2NgGfpQPwwoBxG0YRf6ierZK3I6A15N0RY5/KSFCQvJOX0aW8TztisbmJvX54
+ GNGzWurrztj690XLp/clewmfIUS3CYFqKLErT4761BpiK5XWUB4oxYVwc+L8btk1GOCOBVsp
+ 4xAVD2m7M+9YKitNiYM4RtFiXwqfLk1uUTEvsaFkC1vu3C9aVDn3KQrZ9M8MBh/f2c8VcKbN
+ njxs6x6tOdF5IhUc2E+janDLPZIfWDjYJ6syHadicPiATruKvwARAQABzSBKYXJvc2xhdiBL
+ eXNlbGEgPHBlcmV4QHBlcmV4LmN6PsLBjgQTAQgAOBYhBF7f7LZepM3UTvmsRTCsxHw/elMJ
+ BQJbzXgrAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEDCsxHw/elMJDGAP/ReIRiRw
+ lSzijpsGF/AslLEljncG5tvb/xHwCxK5JawIpViwwyJss06/IAvdY5vn5AdfUfCl2J+OakaR
+ VM/hdHjCYNu4bdBYZQBmEiKsPccZG2YFDRudEmiaoaJ1e8ZsiA3rSf4SiWWsbcBOYHr/unTf
+ 4KQsdUHzPUt8Ffi9HrAFzI2wjjiyV5yUGp3x58ZypAIMcKFtA1aDwhA6YmQ6lb8/bC0LTC6l
+ cAAS1tj7YF5nFfXsodCOKK5rKf5/QOF0OCD2Gy+mGLNQnq6S+kD+ujQfOLaUHeyfcNBEBxda
+ nZID7gzd65bHUMAeWttZr3m5ESrlt2SaNBddbN7NVpVa/292cuwDCLw2j+fAZbiVOYyqMSY4
+ LaNqmfa0wJAv30BMKeRAovozJy62j0AnntqrvtDqqvuXgYirj2BEDxx0OhZVqlI8o5qB6rA5
+ Pfp2xKRE8Fw3mASYRDNad08JDhJgsR/N5JDGbh4+6sznOA5J63TJ+vCFGM37M5WXInrZJBM3
+ ABicmpClXn42zX3Gdf/GMM3SQBrIriBtB9iEHQcRG/F+kkGOY4QDi4BZxo45KraANGmCkDk0
+ +xLZVfWh8YOBep+x2Sf83up5IMmIZAtYnxr77VlMYHDWjnpFnfuja+fcnkuzvvy7AHJZUO1A
+ aKexwcBjfTxtlX4BiNoK+MgrjYywzsFNBFvNeCsBEACb8FXFMOw1g+IGVicWVB+9AvOLOhqI
+ FMhUuDWmlsnT8B/aLxcRVUTXoNgJpt0y0SpWD3eEJOkqjHuvHfk+VhKWDsg6vlNUmF1Ttvob
+ 18rce0UH1s+wlE8YX8zFgODbtRx8h/BpykwnuWNTiotu9itlE83yOUbv/kHOPUz4Ul1+LoCf
+ V2xXssYSEnNr+uUG6/xPnaTvKj+pC7YCl38Jd5PgxsP3omW2Pi9T3rDO6cztu6VvR9/vlQ8Z
+ t0p+eeiGqQV3I+7k+S0J6TxMEHI8xmfYFcaVDlKeA5asxkqu5PDZm3Dzgb0XmFbVeakI0be8
+ +mS6s0Y4ATtn/D84PQo4bvYqTsqAAJkApEbHEIHPwRyaXjI7fq5BTXfUO+++UXlBCkiH8Sle
+ 2a8IGI1aBzuL7G9suORQUlBCxy+0H7ugr2uku1e0S/3LhdfAQRUAQm+K7NfSljtGuL8RjXWQ
+ f3B6Vs7vo+17jOU7tzviahgeRTcYBss3e264RkL62zdZyyArbVbK7uIU6utvv0eYqG9cni+o
+ z7CAe7vMbb5KfNOAJ16+znlOFTieKGyFQBtByHkhh86BQNQn77aESJRQdXvo5YCGX3BuRUaQ
+ zydmrgwauQTSnIhgLZPv5pphuKOmkzvlCDX+tmaCrNdNc+0geSAXNe4CqYQlSnJv6odbrQlD
+ Qotm9QARAQABwsF2BBgBCAAgFiEEXt/stl6kzdRO+axFMKzEfD96UwkFAlvNeCsCGwwACgkQ
+ MKzEfD96Uwlkjg/+MZVS4M/vBbIkH3byGId/MWPy13QdDzBvV0WBqfnr6n99lf7tKKp85bpB
+ y7KRAPtXu+9WBzbbIe42sxmWJtDFIeT0HJxPn64l9a1btPnaILblE1mrfZYAxIOMk3UZA3PH
+ uFdyhQDJbDGi3LklDhsJFTAhBZI5xMSnqhaMmWCL99OWwfyJn2omp8R+lBfAJZR31vW6wzsj
+ ssOvKIbgBpV/o3oGyAofIXPYzhY+jhWgOYtiPw9bknu748K+kK3fk0OeEG6doO4leB7LuWig
+ dmLZkcLlJzSE6UhEwHZ8WREOMIGJnMF51WcF0A3JUeKpYYEvSJNDEm7dRtpb0x/Y5HIfrg5/
+ qAKutAYPY7ClQLu5RHv5uqshiwyfGPaiE8Coyphvd5YbOlMm3mC/DbEstHG7zA89fN9gAzsJ
+ 0TFL5lNz1s/fo+//ktlG9H28EHD8WOwkpibsngpvY+FKUGfJgIxpmdXVOkiORWQpndWyRIqw
+ k8vz1gDNeG7HOIh46GnKIrQiUXVzAuUvM5vI9YaW3YRNTcn3pguQRt+Tl9Y6G+j+yvuLL173
+ m4zRUU6DOygmpQAVYSOJvKAJ07AhQGaWAAi5msM6BcTU4YGcpW7FHr6+xaFDlRHzf1lkvavX
+ WoxP1IA1DFuBMeYMzfyi4qDWjXc+C51ZaQd39EulYMh+JVaWRoY=
+In-Reply-To: <CAA+D8ANqb89UavAXTiHvcHyv9uMt8_MYR9hfBaxEJDPNy5C=-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Alexander,
+On 20. 08. 24 9:37, Shengjiu Wang wrote:
+> On Tue, Aug 20, 2024 at 2:59 PM Pierre-Louis Bossart
+> <pierre-louis.bossart@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 8/20/24 04:53, Shengjiu Wang wrote:
+>>> On Mon, Aug 19, 2024 at 3:42 PM Pierre-Louis Bossart
+>>> <pierre-louis.bossart@linux.intel.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 8/16/24 12:42, Shengjiu Wang wrote:
+>>>>> Implement the ASRC memory to memory function using
+>>>>> the compress framework, user can use this function with
+>>>>> compress ioctl interface.
+>>>>>
+>>>>> Define below private metadata key value for output
+>>>>> format, output rate and ratio modifier configuration.
+>>>>> ASRC_OUTPUT_FORMAT 0x80000001
+>>>>> ASRC_OUTPUT_RATE   0x80000002
+>>>>> ASRC_RATIO_MOD     0x80000003
+>>>>
+>>>> Can the output format/rate change at run-time?
+>>>
+>>> Seldom I think.
+>>>
+>>>>
+>>>> If no, then these parameters should be moved somewhere else - e.g.
+>>>> hw_params or something.
+>>>
+>>> This means I will do some changes in compress_params.h, add
+>>> output format and output rate definition, follow Jaroslav's example
+>>> right?
+>>
+>> yes, having parameters for the PCM case would make sense.
+>>
+>>>> I am still not very clear on the expanding the SET_METADATA ioctl to
+>>>> deal with the ratio changes. This isn't linked to the control layer as
+>>>> suggested before, and there's no precedent of calling it multiple times
+>>>> during streaming.
+>>>
+>>> Which control layer? if you means the snd_kcontrol_new?  it is bound
+>>> with sound card,  but in my case,  I need to the control bind with
+>>> the snd_compr_stream to support multi streams/instances.
+>>
+>> I can only quote Jaroslav's previous answer:
+>>
+>> "
+>> This argument is not valid. The controls are bound to the card, but the
+>> element identifiers have already iface (interface), device and subdevice
+>> numbers. We are using controls for PCM devices for example. The binding
+>> is straight.
+>>
+>> Just add SNDRV_CTL_ELEM_IFACE_COMPRESS define and specify the compress
+>> device number in the 'struct snd_ctl_elem_id'.
+>> "
+> 
+> I don't think it is doable,  or at least I don't know how to do it.
+> 
+> My case is just one card/one device/one subdevice.  can't use it to
+> distinguish multi streams.
 
-kernel test robot noticed the following build warnings:
+I already wrote that the compress core code should be extended to support 
+subdevices like other ALSA APIs. I'll work on it. For now, just add support 
+for one converter.
 
-[auto build test WARNING on teigland-dlm/next]
-[also build test WARNING on next-20240820]
-[cannot apply to gfs2/for-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.11-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Aring/dlm-introduce-dlm_find_lockspace_name/20240820-024440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git next
-patch link:    https://lore.kernel.org/r/20240819183742.2263895-12-aahringo%40redhat.com
-patch subject: [PATCH dlm/next 11/12] dlm: add nldlm net-namespace aware UAPI
-config: x86_64-buildonly-randconfig-001-20240820 (https://download.01.org/0day-ci/archive/20240820/202408201509.g1VKeeOl-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240820/202408201509.g1VKeeOl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408201509.g1VKeeOl-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/dlm/nldlm.c:195:2: warning: variable 'ls' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
-     195 |         list_for_each_entry(ls_iter, &dn->lockspaces, list) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/list.h:779:7: note: expanded from macro 'list_for_each_entry'
-     779 |              !list_entry_is_head(pos, head, member);                    \
-         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   fs/dlm/nldlm.c:202:7: note: uninitialized use occurs here
-     202 |         if (!ls) {
-         |              ^~
-   fs/dlm/nldlm.c:195:2: note: remove the condition if it is always true
-     195 |         list_for_each_entry(ls_iter, &dn->lockspaces, list) {
-         |         ^
-   include/linux/list.h:779:7: note: expanded from macro 'list_for_each_entry'
-     779 |              !list_entry_is_head(pos, head, member);                    \
-         |              ^
-   fs/dlm/nldlm.c:185:23: note: initialize the variable 'ls' to silence this warning
-     185 |         struct dlm_cfg_ls *ls, *ls_iter = NULL;
-         |                              ^
-         |                               = NULL
->> fs/dlm/nldlm.c:918:11: warning: variable 'log_level' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     918 |         else if (dn->config.ci_log_debug)
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-   fs/dlm/nldlm.c:921:50: note: uninitialized use occurs here
-     921 |         rv = nla_put_u32(skb, NLDLM_CFG_ATTR_LOG_LEVEL, log_level);
-         |                                                         ^~~~~~~~~
-   fs/dlm/nldlm.c:918:7: note: remove the 'if' if its condition is always true
-     918 |         else if (dn->config.ci_log_debug)
-         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     919 |                 log_level = NLDLM_LOG_LEVEL_DEBUG;
-   fs/dlm/nldlm.c:868:20: note: initialize the variable 'log_level' to silence this warning
-     868 |         uint32_t log_level;
-         |                           ^
-         |                            = 0
-   2 warnings generated.
-
-
-vim +195 fs/dlm/nldlm.c
-
-   181	
-   182	static int nldlm_get_ls(struct sk_buff *msg, struct genl_info *info)
-   183	{
-   184		struct dlm_net *dn = dlm_pernet(sock_net(msg->sk));
- > 185		struct dlm_cfg_ls *ls, *ls_iter = NULL;
-   186		char lsname[DLM_LOCKSPACE_LEN];
-   187		struct sk_buff *skb;
-   188		int rv;
-   189	
-   190		rv = nldlm_parse_ls(info->attrs[NLDLM_ATTR_LS], lsname);
-   191		if (rv < 0)
-   192			return rv;
-   193	
-   194		mutex_lock(&dn->cfg_lock);
- > 195		list_for_each_entry(ls_iter, &dn->lockspaces, list) {
-   196			if (!strncmp(ls_iter->name, lsname, DLM_LOCKSPACE_LEN)) {
-   197				ls = ls_iter;
-   198				break;
-   199			}
-   200		}
-   201	
-   202		if (!ls) {
-   203			rv = -ENOENT;
-   204			goto err;
-   205		}
-   206	
-   207		skb = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_ATOMIC);
-   208		if (!skb) {
-   209			rv = -ENOMEM;
-   210			goto err;
-   211		}
-   212	
-   213		rv = __nldlm_get_ls(skb, ls, info->snd_portid,
-   214				    info->snd_seq, NULL, 0);
-   215		if (rv < 0) {
-   216			nlmsg_free(skb);
-   217			goto err;
-   218		}
-   219	
-   220		rv = genlmsg_reply(skb, info);
-   221	
-   222	err:
-   223		mutex_unlock(&dn->cfg_lock);
-   224		return rv;
-   225	}
-   226	
+					Jaroslav
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+
 
