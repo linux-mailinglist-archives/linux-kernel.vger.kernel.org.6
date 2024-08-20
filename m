@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-294221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBEB958AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:13:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E347958AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B87282C98
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFEF1C21E97
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ED61917D6;
-	Tue, 20 Aug 2024 15:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53DA192B9F;
+	Tue, 20 Aug 2024 15:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FvkDKqSZ"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hs3bidrT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DFC18E77E;
-	Tue, 20 Aug 2024 15:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9D318EFC9;
+	Tue, 20 Aug 2024 15:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166809; cv=none; b=UYTtyZxh1CniaaaPU6xO11+L9aTV9ZB0vKp9seKmBWASO/qmjM3/+Ui4Lyl1HyXVYTNnzmQJI75mMPdDrnZYh5z9TDEvNv7VDLOyU9I1Lm17BZJCy41SjXiwUDCZ058Dn/bbMF+tkyelavotqis7s5WtVVxSSvGvYEYuuZVt42I=
+	t=1724166861; cv=none; b=Q76dH/mz/52KHB2icfxxVP0lapQjT97WH5x07363QZrt6tbwUFV0SBS5fdP1xJJUtxqP40AcA3K7jTc8LxraA+hTrtQ2bOyhQ7Yj6j2ERwh2yTBy969cdR0E5I2+CfbE/OKr3zB67sBK3JfrV6s2l6yaxJyNgb/xVN2SkhJhTVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166809; c=relaxed/simple;
-	bh=nx9vrFwlguPTFdqzU9bhEKj89KFYe5EAZmmSAToxOts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TburPOSpv30XdEVR6SyDLem/gDJ3zBV3476MuyDypYDz+KuX/d+aWoXDXcZlgrGPZ2pkAheHEMJuw6So9G3Djq+pjc44NoalV4UeUcJxc5RQ7cn3lcXqDcBPCIohZwTMBJGKlPNMaEW+LSaMVyF/qkOEf9yXLrDf54rM4BAW5os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FvkDKqSZ; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFDL2S012088;
-	Tue, 20 Aug 2024 10:13:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724166801;
-	bh=A3/76qLgq/8QK9n1BPUq/kYGt62Cg6kwN2Elf5HOzG4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FvkDKqSZ4s/jh7Qbm+cDsVx/GwNOrQdkvDnVDwLOMqv3AmKXa/kjUesv/gcMCjUoS
-	 0hXjrClVQrb2YXWi3aIAO5Ipbll9unGWh5b4tohZ5DY5l7WTiGTMjP2il4bVhpdTzT
-	 Wv9wlpCZnIXwd2eDU1DoCY1Q5PEhxWeXWNQa/6kc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFDLJn014437
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 10:13:21 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 10:13:20 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 10:13:20 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFDKx7047995;
-	Tue, 20 Aug 2024 10:13:20 -0500
-Message-ID: <b6b341a7-5ee2-4a89-82c6-e863a9556654@ti.com>
-Date: Tue, 20 Aug 2024 10:13:20 -0500
+	s=arc-20240116; t=1724166861; c=relaxed/simple;
+	bh=HEp2O9Yg+xFVobpRrcPzfJ17tFgUBl3wrHGCOvMurYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9Cia/EwPmrCFVj+7/pqRPoP5eFSjUmhLO+agMKXLAcCVzbnBpsZFSPSSqDpDWFtHeFnB25CyyI7dRXv0YDWoPjnAzZxRa++4DIiyCK9whqhyzMqtvNuxTyDxFn1wNqyMVaeMmk45hfqoEkYGUIBGnF/VTX+7AVIn2udtjXcWzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hs3bidrT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Mj0xb+mKKtlxydaY/lPIxOqJwc7T/yLIdICGlctTCsA=; b=hs3bidrTIdT3d9wsjsAk5IF+tP
+	EhBSP23m2Zp5+ctd2b+yclSD9n2h/JqDGHeXAjvdLUnhRbi15qMm5yNb7m8b6ZCEdDQQpZD1TnIm0
+	3KVPjhWYJFxfsO+eljPP2JOZVPYWTGDDYrMFFJRrPcq24qC9f4TtL8K0Ypiqj9MRIjBg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sgQYY-005Ew0-6K; Tue, 20 Aug 2024 17:13:58 +0200
+Date: Tue, 20 Aug 2024 17:13:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
+Message-ID: <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] arm64: dts: k3-am62a-wakeup: Add R5F device node
-To: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <nm@ti.com>, <bb@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-References: <20240820104034.15607-1-hnagalla@ti.com>
- <20240820104034.15607-4-hnagalla@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240820104034.15607-4-hnagalla@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
 
-On 8/20/24 5:40 AM, Hari Nagalla wrote:
-> From: Devarsh Thakkar <devarsht@ti.com>
-> 
-> AM62A SoCs have a single R5F core in waekup domain. This core is also
-> used as a device manager for the SoC.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi | 23 +++++++++++++++++++++
->   1 file changed, 23 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> index f5ac101a04df..c4319986e660 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-> @@ -76,6 +76,29 @@ wkup_rti0: watchdog@2b000000 {
->   		status = "reserved";
->   	};
->   
-> +	wkup_r5fss0: r5fss@78000000 {
-> +		compatible = "ti,am62-r5fss";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x78000000 0x00 0x78000000 0x8000>,
-> +			 <0x78100000 0x00 0x78100000 0x8000>;
-> +		power-domains = <&k3_pds 119 TI_SCI_PD_EXCLUSIVE>;
+> +static unsigned int txdelay = 35;
+> +module_param(txdelay, uint, 0644);
 
-Need newline here.
+Networking does not like module parameters.
 
-> +		wkup_r5fss0_core0: r5f@78000000 {
-> +			compatible = "ti,am62-r5f";
-> +			reg = <0x78000000 0x00008000>,
-> +				<0x78100000 0x00008000>;
-> +			reg-names = "atcm", "btcm";
-> +			ti,sci = <&dmsc>;
-> +			ti,sci-dev-id = <121>;
-> +			ti,sci-proc-ids = <0x01 0xff>;
-> +			resets = <&k3_reset 121 1>;
-> +			firmware-name = "am62-wkup-r5f0_0-fw";
+This is also unused in this patch! So i suggest you just delete it.
 
-resets and firmware-name should go before vendor specific properties.
-
-Andrew
-
-> +			ti,atcm-enable = <1>;
-> +			ti,btcm-enable = <1>;
-> +			ti,loczrama = <1>;
-> +		};
-> +	};
 > +
->   	wkup_vtm0: temperature-sensor@b00000 {
->   		compatible = "ti,j7200-vtm";
->   		reg = <0x00 0xb00000 0x00 0x400>,
+>  /* This structure is only used for MACB on SiFive FU540 devices */
+>  struct sifive_fu540_macb_mgmt {
+>  	void __iomem *reg;
+> @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
+>  	u32 val;
+>  
+>  	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
+> -				  1, MACB_MDIO_TIMEOUT);
+> +				  100, MACB_MDIO_TIMEOUT);
+>  }
+  
+Please take this patch out of the series, and break it up. This is one
+patch, with a good explanation why you need 1->100.
+
+>  static int macb_mdio_read_c22(struct mii_bus *bus, int mii_id, int regnum)
+> @@ -493,6 +496,19 @@ static int macb_mdio_write_c45(struct mii_bus *bus, int mii_id,
+>  	return status;
+>  }
+>  
+> +static int macb_mdio_reset(struct mii_bus *bus)
+> +{
+> +	struct macb *bp = bus->priv;
+> +
+> +	if (bp->phy_reset_gpio) {
+> +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 1);
+> +		msleep(bp->phy_reset_ms);
+> +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static void macb_init_buffers(struct macb *bp)
+>  {
+>  	struct macb_queue *queue;
+> @@ -969,6 +985,7 @@ static int macb_mii_init(struct macb *bp)
+>  	bp->mii_bus->write = &macb_mdio_write_c22;
+>  	bp->mii_bus->read_c45 = &macb_mdio_read_c45;
+>  	bp->mii_bus->write_c45 = &macb_mdio_write_c45;
+> +	bp->mii_bus->reset = &macb_mdio_reset;
+
+This is one patch.
+
+>  	snprintf(bp->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
+>  		 bp->pdev->name, bp->pdev->id);
+>  	bp->mii_bus->priv = bp;
+> @@ -1640,6 +1657,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
+>  
+>  		macb_init_rx_ring(queue);
+>  		queue_writel(queue, RBQP, queue->rx_ring_dma);
+> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> +		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+> +			macb_writel(bp, RBQPH,
+> +				    upper_32_bits(queue->rx_ring_dma));
+> +#endif
+
+How does this affect a disto kernel? Do you actually need the #ifdef?
+What does bp->hw_dma_cap contain when CONFIG_ARCH_DMA_ADDR_T_64BIT is
+not defined?
+
+Again, this should be a patch of its own, with a good commit message.
+
+Interrupt coalescing should be a patch of its own, etc.
+
+    Andrew
+
+---
+pw-bot: cr
 
