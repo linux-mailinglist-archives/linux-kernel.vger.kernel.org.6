@@ -1,186 +1,156 @@
-Return-Path: <linux-kernel+bounces-294496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC878958E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:00:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3625C958E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D21F1F2444D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76FD1F2347E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E6A156228;
-	Tue, 20 Aug 2024 19:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0051586D0;
+	Tue, 20 Aug 2024 19:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZVAxr0jN"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2059.outbound.protection.outlook.com [40.107.22.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGDxCg32"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8454618E359;
-	Tue, 20 Aug 2024 19:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724180435; cv=fail; b=a53+GWFPc+XPIahTCZGfhclivldn+3VDPQhYREsBYXj6Nco4TnLUIgoaPqxVxVl8vAd4FB/jgbEuD1/fPPwmVIXtEhbBMyUW6i60fSSjSvYh31NDr1At8kYxwizDVZSGMf9r1iG7SqzTjXe/Sd/aM4ijLZCg3vAC+wKfOEZ6awc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724180435; c=relaxed/simple;
-	bh=f2x8DE1elpHQpMXDAcorj9SKa91MDmsokH+pRbFJrUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NrmVPg+nYP3ZCrnGijLfkP/DhLPbwZzUxTjjzil95Tf1Wt/MU/JAj+VWflPnt3h4NZGsuKWHTHtqL3SBzX73+YdvwJmCCGC83axfsoJX4371JmnGdgigPnSVBMgFS2gC837AMNaBhh8+u5gaHwb3FCATwH1TOZuc8mjRXqkDTOo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZVAxr0jN; arc=fail smtp.client-ip=40.107.22.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=okusF7X8OvfU6axhFEorzFw0soHrmTZmer9b9kdVWGt0mYGUMk//s3GrAGjpPk7lv/FdovjMToY6hPaixu3wAju577ZTwWvlk5ZZYH00W46OtgEXp+tOvLcAhtAiVTzXPDha9S8vaolY+QhvzaejW1qsYzleyB+JoxIlq3oyGyTXBbqMu1vAjWMhkl//UBTfIeRgvmacHTPKTn/Rs6urytZwPrNFF2FDkxJDWed+cLVe6kmxQ18ctcQUVw3YIdSLtGgCY3WnPHL41MZo343VWfXGtLDkL294UH8lpXiAhjCo/7sz3xnVwJTrajZqf1WLyW5B252kJsPV5RRLKB3elg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8zELuV6Eg056v2Jzypry+neHQTEiWCA/yZftqWA54dE=;
- b=p3tHl9doIjrMc3b0mZoEfzTYMYOshtbo9GYhVxRvzidujLzVicn3keUoUWygWLL/n0iMfCIBUHbsY5fO+utD8CSfF23ogpn+ZbiRUlHj3y05viiVx20vs0/COddXdaI1hLT0xeLpqPyyLuTUXLZAQZquXUlZyyUsKlBW0eYWl/fHcXwnY+DVJOLMME1QeHlyUPhm+PAZ3oEM2X4LB8keaBn7KzrAKpcZ90YH3S3+K0OL0EVLHdnNX0QbsgRSBKZ/HH1hdkDaRrTtsb8/MvwDQPS/80f5ZvrEVj5dc1iVFjyxRdkrfprYIVCucKxtFS8fX8YJ9Pq5ENs9YewJVKOKRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8zELuV6Eg056v2Jzypry+neHQTEiWCA/yZftqWA54dE=;
- b=ZVAxr0jN9IZP/5yFL22tbDwKCkqUmBIuWV9rfxZRPYXdMx9k+uj+V0oXHodA75qPKJK+5wNpCcW/EAYHAN82s4EMlGscEglzV/XKgxAf8CpW4X2Jc/sJY9RLRaOIqRvk7Lum+BmzOjwyMM7VeRv1lah3KVZ8O3o8wr9Zl5r1A4ucFA7Rr5oCRhZ62AyQIL4XFJd6p6N/t70t2A97R9Ee1VFfzps2qJgQGVDhILpUw459JxIliNUxjDfyFU/Sr3P+YKdENJ5AkwzruROWWKZ/cxloisIih3jhof0M1+bRZUGcmnKdvtMF3cQ8tOn8F/TTPaLqTUX+TRbL6VEUsWyqXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA1PR04MB10844.eurprd04.prod.outlook.com (2603:10a6:102:493::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 19:00:30 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 19:00:30 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: robh@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	laurentiu.tudor@nxp.com,
-	linux-kernel@vger.kernel.org,
-	stuyoder@gmail.com
-Subject: [PATCH 1/1] MAINTAINERS: misc: update fsl,qoriq-mc.txt to fsl,qoriq-mc.yaml
-Date: Tue, 20 Aug 2024 15:00:15 -0400
-Message-Id: <20240820190015.499641-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0040.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A880A7BB14;
+	Tue, 20 Aug 2024 19:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724180556; cv=none; b=EVWX7HUm45cR/6O5Tbdc1H2cTZS79/FCqz8B3JZa4N7yPe/OYgGE7zfCCfFE1pA3rIqdmCUlFU6tqbEAOL1waNxLbJmz38DpPbwLqsWyP+fKE4gkpv0ClDmdWD3ew6fdkD6L2ig5WVw1H9Ups32ucrgvFx7PgYEUCVMpyh6xNNQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724180556; c=relaxed/simple;
+	bh=6GZ6ktaBDlFlf5xXqnMkB8d+NP0luaR3DCxSIB4FI7c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J+1CHx96RJeCzD/Texm8PCW3QSfBhnSF1m/rKcShEze3czMSi5Ls9pF74LwpUmcE5N0MY+BF6sxHDgB+L+1v3grRXtH1JuwctAM9xW7aeHQFr4VxI4GbNboI6rFx0w2D37jAt86MHuufN/t9W4J2lSATn35W2v4GvpQzfRbP/nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGDxCg32; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so47385575e9.2;
+        Tue, 20 Aug 2024 12:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724180553; x=1724785353; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3q0QmZjXATABQCpiFauAPddapHrIJAKoBzSHmYfFnM=;
+        b=BGDxCg32p0Jl2FLOuw2DNDvWFI8U/Ffc0UPvcjzg5mqNP5caRkgpmobHRwIxGds/S/
+         kQ+Ny8Mq01YPP3HVhDq7/HYePs1mqnrZuuoE/5HMjzR0i+yjt/QmM2tr9HtCG1q0efHx
+         U8vPv+NgDeVcL0Ekry35ieRezv4U+/rS1QqScFthHOjcdeSSiXuHZ8xoFyTEwT6+azPb
+         3euMvXCpLQHQg/p5Iqy/+1ZK3k3YYAdyOBaZ0h0FsTi1L+xRReOR+vRTU55jX84fnqLx
+         p9g1yLMCPHap91qSKVxB1FZ7qwBlOru1y1fEobieMaxkmNs8L/tuD1Tus4IAQ8YISunY
+         NZ0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724180553; x=1724785353;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A3q0QmZjXATABQCpiFauAPddapHrIJAKoBzSHmYfFnM=;
+        b=WBmB+xFt1DZh0GoZl1I+CguqfUQwM7fVIwDcy8Odvj5MkLvqeKrj2wTCDpMUtcaCyz
+         Ntk9VKF5AI4/XI0su2w9v9wxjRGI4G5p1SSDi51IQ19RnasHlLIuY6MVyU/CBdEEPmn8
+         yuiz2xRXt4yti2ZYZQ3//IAieDgAXHnts5SOJzfouWTDpyRIuVgYzuk71V9Z68JSuIrc
+         ILV6w0+TDywSGDivMfrSHCt5coILBUTJ66grCTRE5TDFswRbLgxFI9fkNOmGw/Pug/ll
+         Fbfij2W9qpP5wh1+UJ+3gLWiCtO2S6+Qo9ptLES3GAZ8fC1jdwfhYgPQoM11fTlMaeDb
+         VKLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHepA1ZbFKdiC3VasEzqJtZoSvYH+RSxf4nFSpOeOQZBvSr0Vh9X8G521qpKxlWgFJQcFZW2subVU=@vger.kernel.org, AJvYcCVMWks+qV+iqv8jjzX/zZ2dWSdKGDXr59PMhqDslsbyURSoTYjZpRWoHQ+sX/J/9kwCHNjrKTpN3OJhJR70@vger.kernel.org, AJvYcCWtvYe9xMmYPkBs6k/RuLlpx6V7y6sG1XWUTN2Nl0jTGBzE2iVw2CiU5u3bmmmeijJrutPZOHxk1av0Bw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdFddReUAiWH8PUT/9Q/Xpqk/qXu/zP8o9qid40i6bPNZgp8GN
+	gupvSqw829W23Vve+BpSxqrClG27+ATOZ6PUTNUrzwE8bjY/Q2ql
+X-Google-Smtp-Source: AGHT+IG4q8fUhcsVqTdr2NMP7R1QVeLtXLBHIx2DA5voz9952t/GK1TXQt4v/b247do24i7TpJIkvA==
+X-Received: by 2002:a05:600c:34c5:b0:426:60b8:d8ba with SMTP id 5b1f17b1804b1-42abd24578amr2080735e9.28.1724180552559;
+        Tue, 20 Aug 2024 12:02:32 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497ffsm13685375f8f.27.2024.08.20.12.02.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 12:02:32 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v3 0/2] use device_for_each_child_node_scoped to access
+ device child nodes
+Date: Tue, 20 Aug 2024 21:02:25 +0200
+Message-Id: <20240820-device_child_node_access-v3-0-1ee09bdedb9e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10844:EE_
-X-MS-Office365-Filtering-Correlation-Id: eac89d25-ab3c-439d-1866-08dcc14a5ca7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CwfEkFF4sqr+xIitdU3XGXx0ZOHL6WRuTiEM4AUESPd9LL3pY44vMzb2JyOD?=
- =?us-ascii?Q?+fBn4R9UXtNUSUDSOpjhqWUuNiXumkY6OXEwuj/Jv46ZtENi7z2g7ytSc18b?=
- =?us-ascii?Q?wgM27pnAqiXtu/5xyNUtxGWsI5ytJ5nxb2KVHMUk30vNTIakCja0CrUwaGpM?=
- =?us-ascii?Q?DYe88KiUJz07Kab+XHt2QrKbYiiFUPnUFFYRCqs3TtPUEosPjjOhEjHlqtrh?=
- =?us-ascii?Q?7jCcxDrQfNiCC0guAIpXJ2uWkNsfGhBWGoQfu4fDxEWCNSjMPKY0Fnx0FJwc?=
- =?us-ascii?Q?/bZkTG2xe5n+MvSA1DhoqteqBbTNI8W2YeLRmui2H4LFA4dx8jGwcoFvsuSL?=
- =?us-ascii?Q?TchK3j+Uotwn6xmFczndQcCe6LpRQjtPAQgT1r9eGtcNACr0tYIzlXEKdZaw?=
- =?us-ascii?Q?Hr+e5jGDpxvBHgMAHNMa8tg69wPP9spaL0s0UZUtyfD8p/c1x/jZEV9+yzcE?=
- =?us-ascii?Q?BH3gW8tRuO1T7io5NvjDoVMe3+IumRLhNXjDAOWI5BiLzzULQ8olAdvm6+UN?=
- =?us-ascii?Q?2P8ukl9uQ9tszC8kxqZvoRVkUL0SRqknGOzVF2YwwHHEyISww2oyE1O0ghEI?=
- =?us-ascii?Q?bwCATb8xkJWBLZrrXieybWrKXcs4qoHbb2l6acKmDYy4DPkZiMq17tHcwTph?=
- =?us-ascii?Q?P5r+JXsCkbRYpYwWr95UQ6UFhZ/JXZKOwuxGwVeBtPuVgxZ/swvtxUejIRBV?=
- =?us-ascii?Q?XLZA/UoaQnlQUko+TLqr40LPuEGtOSukcasxvMR7+M2PX5rxXr7wZX68wG58?=
- =?us-ascii?Q?4WFPQ5vMKY/QtsHD0kD3DFo61jM+3kpCHTM2H0JtdmT9R5gY0xg5dTJBkptN?=
- =?us-ascii?Q?W+/eGiood4AS0V9ayJn0nzO7WxE3vSV2rYV7fOhJ85iUjBhi9FrC8JKlwSaL?=
- =?us-ascii?Q?romqYqyjWgG54YaLasMZ6IxbaPJYVW6BGlD8x1Pn7mLv/LtQQUSXBxY9eJpA?=
- =?us-ascii?Q?i1U4Cs0DOadRxnro3bkPYUAmvA9Uh1jc6ivqpjW4L279czCwyz9HF7WdEpXM?=
- =?us-ascii?Q?0BfC0T7svr0D4MCh6dH6LwSiEfnmGpfZhL8fgJifYiq8N1O8V8QcPOg1vV35?=
- =?us-ascii?Q?dO9DArXV7bTVgiAeH9GRkw0s0fiVF4zfPApl4ciT4eV6lnBxzGctRDF+bute?=
- =?us-ascii?Q?l57FSme2bO+FT/hhO03F4uMEu7P5Y5fk4uoQ9hnkwbF5ugggaC3IXcM2fVw5?=
- =?us-ascii?Q?GSoC+rQ+iVRaLRJA3f0NhXsNbOfUa8bCIQbzQdjnhqvQMyp19mrYfzwQASPh?=
- =?us-ascii?Q?uBTGUG0HxOoGRCaVJyWGM1s0kGsLLg7OCwFUlZvHdGSgW35vwno80bXMrn6L?=
- =?us-ascii?Q?8rlqRKX5lb8igQ5DejHQSYj+/aJO+c56gU+LopD21lVL8LxsjMmDJXMWWDhh?=
- =?us-ascii?Q?u02sXf35eRuXqjwk43i0RLjEzrnlips9j1Sz/wcLUbMSt5l22Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bzF1eap7Rq9DeutnvGwvHuZQmKJc1jgAk8DimegenzJOCEuo7b/ma3OARQNP?=
- =?us-ascii?Q?ECU4zeN1wAPrdmZ9cE/SywcyZC+j3htzzNEa3ugiXMdceaNBnWkFmrmCwWXs?=
- =?us-ascii?Q?VSaU+y5j/vRSY8/NAI7g+1nxEWUwbUvq4dzmQFOHgf3UDlaN6SVTTxdFVE7S?=
- =?us-ascii?Q?ePaMJO2LhBhhw00h9a14SiQ6KQOdr1L3whp/0YkpNf3TMyFLL8lZX7Bc2D3A?=
- =?us-ascii?Q?YnpzGjPYb56zrVcE68uafhRAu9mSJiEYxJMFvGYl0h7RPk39gp03sCSGrr+F?=
- =?us-ascii?Q?1xooPTH59eKW0WdeOuc/gKOOU4MltKXbyaDyxTBvHsmOdh/5/4xK7Byh0wud?=
- =?us-ascii?Q?zge+KlyElJDKhz6E0gJ8Tv7WPeYT9npurRYD/7GfPx0LQEkGBiJgK5DQZ+Bv?=
- =?us-ascii?Q?vKM+jtJqSqOZrgT5AOrqKHQeoWx8XjM5BaattIXy78Ob7Jt39B8j88Ke1d/T?=
- =?us-ascii?Q?DOPEsWXfWLoyC5xJvI7JD13PVw5Eifv6+QPDTgBEx2tNLqvBtvwTd3Yp6AHZ?=
- =?us-ascii?Q?6B+n0vryvvOAMAYmTTBBTj3bPVjG0KTqRMeJrFEZNllYJOJl261ECUDak6sP?=
- =?us-ascii?Q?Wy6huAmi/vBAL++9RVfyAPJfpuT1aGFBPLiwZo0qbFtXt2zhEY2gCaMGPuKB?=
- =?us-ascii?Q?GCwypUiDdxR5T0aLjSejaiQUqDlfFMx5DGOCYtwHWcIo3IDKIp/hLKV25dX4?=
- =?us-ascii?Q?yjunCYc59L+vOR5f6r0ZnJK28VWyZsYG0oVDDOEZWA7rFZCk133Ox/HwruMQ?=
- =?us-ascii?Q?YV9mfl+aSmfNoT9TbFY1T+X2FIf4f7VaXhnvt+y0u2padUSyMzhHeqNkm3Fe?=
- =?us-ascii?Q?P0O8LzNi0DIlhNVMgbaSjwPd27fcOx8K2kyE+RvpY97N/KuUiLBtsucHYXs8?=
- =?us-ascii?Q?2F8EeuzFxrpvm5A7Hj8G3ZVeg5lQ5HNXdvgqcLVxHmneiwoPmX2FxWyhPPab?=
- =?us-ascii?Q?V5ju2V/so+ydQPw+WCZTmF27whoAF74SVcPCz3R8TLEufH55wzbvfDych2ih?=
- =?us-ascii?Q?D+rD0KwMdlQ34k9J0uijOgRRDHFTqHFLAw4P5fREmx4+czY0s0BZ3LtIPRtK?=
- =?us-ascii?Q?hI2K7hmrfEai0p1fY4QCt0pLfzFYIqHfXZHOa9KPL1EPo5FpkOJRNJ+3UB3q?=
- =?us-ascii?Q?7KkCVib0EQ+z2gJUcqvCGbfAh5+5k+BBMMvwZ2JQpVieXOPfu2GmvlGTn8fK?=
- =?us-ascii?Q?OTF+04Pzz/SEx3Jg5ieIA+QRtIJ1P6GVKBQWHSsYbYwiI4Tg4ZYF7l1gTbC/?=
- =?us-ascii?Q?WYLZC+AFYkGzt5xnHIc+cbeMOUsDRp7OGTj48kF/ovqDUTQqMTay8qu0Kjke?=
- =?us-ascii?Q?dyR63Yut54mA1fXLnquG3Wf/MrZd3ICfN6a/Mk5dXU9Hwko4gKG4WrR9hAyu?=
- =?us-ascii?Q?643VBAPJWsYLTxr/ozSA2p5sNZDlOMCOVQNZwZ8nNdPTCZTOpn05n4YTLFU0?=
- =?us-ascii?Q?/TUUU2OUZUPAMEozFX0DYm1NX0Mc3I4AParPpXSCAbqRBdl3GYCVwzof1YO+?=
- =?us-ascii?Q?OXWHIdWIrSuwTWKVHoZP5pvMWKXpIkzgXEGA8TG/qdWBff6ipeZ8eeo0Fye8?=
- =?us-ascii?Q?mCH7ycWe8+axkyuCDvigyn090AxwN2JWp7BLCjFo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eac89d25-ab3c-439d-1866-08dcc14a5ca7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 19:00:30.8687
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hW3+SjOENg8dacd/A+0qIc4kT8r/73Tw0On9H9gRAbubFoxddOyq98whloRfY3+ErQL5ITBhLHQWS+oXfJKItg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10844
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEHoxGYC/33NwQ6CMAyA4VchOzuzDbahJ9/DGDK7DpYAM5shG
+ sK7O/DCRY9/036dScLoMZFzMZOIk08+jDnKQ0GgM2OL1NvcRDBRMS0ktXkJsIHO97YZg8XGAGB
+ KtKqELMsTZ0Y5ks8fEZ1/bfT1lrvz6Rnie/s08XX6RWvGf6MTp4xa64zgd3TKiUs7GN8fIQxkR
+ Sexh+o/kMiQAy01gFZKsj20LMsHJzHXSwkBAAA=
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+ Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-leds@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724180551; l=2203;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=6GZ6ktaBDlFlf5xXqnMkB8d+NP0luaR3DCxSIB4FI7c=;
+ b=Qpdn3Bzh98qlDzUycuq/wUsMzo820/JbaAFsA/3fKYUZGkvqWixj2+h/ZSIJNcNOLkr53+22e
+ Lv7Ufadm3YIA2UzK47RtOYw1lCDc0eCZ15BViPuso1BoPF/zbwhdqry
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Fix below refcheckdocs check error
-  MAINTAINERS: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+This series removes accesses to the device `fwnode` to iterate over its
+own child nodes. Using the `device_for_each_child_node` macro provides
+direct access to the device child nodes, and given that in all cases
+they are only required within the loop, the scoped variant of the macro
+can be used.
 
-Add nxp mailist: imx@lists.linux.dev.
+It has been stated in previous discussions [1] that `device_for_each_*`
+should be used to access device child nodes, removing the need to access
+its internal fwnode, and restricting `fwnode_for_each_*` to traversing
+subnodes when required.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Note that `device_for_each_*` implies availability, which means that
+after this conversion, unavailable nodes will not be accessible within
+the loop. The affected drivers does not seem to have any reason to
+iterate over unavailable nodes, though. But if someone has a case where
+the affected drivers might require accessing unavailable nodes, please
+let me know.
+
+Link: https://lore.kernel.org/linux-hwmon/cffb5885-3cbc-480c-ab6d-4a442d1afb8a@gmail.com/ [1]
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in v3:
+- leds-as3645a: swap the parameters in as3645a_parse_node() to have dev
+  at the beginning.
+- Rebase onto next-20240820, drop upstreamed patches (changes for
+  coresight-cti-platform).
+- Link to v2: https://lore.kernel.org/r/20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3fbee89eaecf6..d174cc3ae4347 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18765,9 +18765,10 @@ QORIQ DPAA2 FSL-MC BUS DRIVER
- M:	Stuart Yoder <stuyoder@gmail.com>
- M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
- L:	linux-kernel@vger.kernel.org
-+L:	imx@lists.linux.dev
- S:	Maintained
- F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
--F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-+F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
- F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
- F:	drivers/bus/fsl-mc/
- F:	include/uapi/linux/fsl_mc.h
+Changes in v2:
+- Rebase onto next-20240808, drop upstreamed patches (changes for ad7768-1)
+- xilinx-ams.c: drop fwnode_device_is_available(child) (implicit in the
+  loop).
+- Link to v1: https://lore.kernel.org/r/20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com
+
+---
+Javier Carrasco (2):
+      iio: adc: xilinx-ams: use device_* to iterate over device child nodes
+      leds: as3645a: use device_* to iterate over device child nodes
+
+ drivers/iio/adc/xilinx-ams.c      | 15 +++++----------
+ drivers/leds/flash/leds-as3645a.c |  8 +++-----
+ 2 files changed, 8 insertions(+), 15 deletions(-)
+---
+base-commit: bb1b0acdcd66e0d8eedee3570d249e076b89ab32
+change-id: 20240725-device_child_node_access-442533910a6f
+
+Best regards,
 -- 
-2.34.1
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
