@@ -1,165 +1,125 @@
-Return-Path: <linux-kernel+bounces-294393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79731958D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:23:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E029C958D28
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6931C2256B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:23:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44284B23961
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91DA1BE228;
-	Tue, 20 Aug 2024 17:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EC41C37A3;
+	Tue, 20 Aug 2024 17:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R34Db0DX"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kff/CVt0"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7819EEC9
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D079D1C378A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174575; cv=none; b=uSWqQXU/+oXtrahCCintSVtmduhE5kKUq4Q44mDeIHOQYtG5cjEviq20PmZmJD8FT5IfcWTT3gAYwW1/BuD/Ax0fQ13tmJUW546evBDgLDy339UKfyLCKuPpaoa3WaNZqJqbRwk/24xECY2/rA8amDh3hSNSXgxunSg8Va1dspI=
+	t=1724174583; cv=none; b=Ze6VYIrZn+acNEskGIPhigmJ4GDo4Vg2zSycfcvO6mojVqVfWjN2WzFw9avNnhqXTZccntukn3frhtmycy1S1MqwzLoDGnJwvHCzBznc62XhobduavHytCSM3OEj0WAKRYK3wHg+7/ml8edkX4nR6INw2S2+kMgIX3SORzWhYTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174575; c=relaxed/simple;
-	bh=Yk067SnRDTB/yWZvQw5AoltCb9lkUfMXeEMYixaFhDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FEv8ciIJqOoG3noWWFLqeR47OeP8mz/j16OBe/HAjVWKAyidevOOk9Z+TsaazKnw85rTTqLZE6UW9RggwEESUK31EwwGr52b1ktKrz828fBUmQg9H2nhomAeHureF6w/EMcjce1fkViU7CjGT3NuzU108+k85OKBNjldmD+h3Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R34Db0DX; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bebb241fddso605a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:22:53 -0700 (PDT)
+	s=arc-20240116; t=1724174583; c=relaxed/simple;
+	bh=WoePu1j9VOd2T7GWO2R+V03LjT4GKPVJ+35Dd/6RTPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MGR6LeEEwkxRlQ2yRofZsqM3SZ1hkJOv7wkDvBUqaShDIPHrOd7Py9JzQhjLZoS3W5EeYPTAV1IKX8hiRlPrwv+GxO0jcfs2W8N3vWLJQRMa8l+r/ltGoo4lpdSSgnu3DHJh/Qn8Fsu5x3uS3qCc6Yfh1qGqfnDvOGCyPa79MWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kff/CVt0; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1d6f47112so406258385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724174572; x=1724779372; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T/1WG/9ldCtAUxEKSi+2OpNUvCL9Q6L1YzxrQLiosWY=;
-        b=R34Db0DXoE9il9XPwMR4eGxEgnmtotI7Eycc8RfswYB1hERV/3o6A9ziFSM6UEyGmC
-         kTwSHLUCfHtMHNjCX3TmRSOqOfp5Pf6akwc8Wn3rZZk2EwS8ccMbGmnDiTadTU1T48vA
-         74A3OgNo72Yw6lq28qaHKUc3lHE6VMGJrxDaLYXzKQ2EdfLr2V6pRuIDTuiPb5B70gwN
-         ltv2lAj/Yn+0k7OJX5YWsxL2EHhh0F/D5d8jCjAfpCNJlSY8+B7dxN5R0TFMdqNtJeKG
-         CiqXHzEv/a2lDqyEoNrjDH1ntftTaKZZk1yQNX8dUSxPZchvRyFTm8bsFcyK/jgphgfq
-         ZWgw==
+        d=chromium.org; s=google; t=1724174581; x=1724779381; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nG3sk+SGqgopURDWRpSLqodBy9lchgvdy2diDegZ/Gw=;
+        b=Kff/CVt0KTooh+u6P4CjIVPWQv2+BFdT901XMi5DIa5LjMAOrnyFGVQcGdv+jJCorW
+         BM2JZpKg2+kuaw+6p7wNKHJvOp/3UFdtHhwh4sHbAWeP0AE1feWF7v/hSibvGJBUQ6fy
+         kVbe6EnpDs93BaHrRvFLcXtYNZiZXB7jcKvaM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724174572; x=1724779372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T/1WG/9ldCtAUxEKSi+2OpNUvCL9Q6L1YzxrQLiosWY=;
-        b=XkDb15nemo81a/iK8jv3kwulFt18DCw0mxWHh85Ro9tBJPVUlUHhdEdvf79hBoakJm
-         9hSMxJoqb5ZzFemjABr7SysjY56ahYM4Z2eDZI/6eBZZuJhOD5ZDnMWBr/dOOPpZQHZj
-         snHs/ixwcMrKcLe0wViSZ4xOqrbHHpMseX6nnZqJje2+1YCTErfBnlHSv97fML1Bk2u4
-         RC/+3I50pcc0m+7OrJSaDYTkT2f3Hq/j1eKhlHGF9oVYkkne97qrMjbk8p/pbum3qnNO
-         K9WVGtUsJCkaiP9SeqpkB/nv6wrse9cs8y0JbQneW73smRAUs8IcprqopCKtm/GNWT5a
-         wnYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvD+Je8P3I58ZCG2gfC+MB5penWLuJXSxCThT8/UAp1GAiiMjIDt1zpBfvLypanmy+gXXxhoBGbjMx5TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpvBxmeD2jNdMEyC29++6Bs6UzATAMDz3zUaT12HqqN8RSLA+8
-	duKeWZ7LTP/u+iggXQLYygVdT+faWS5wStI+rB6HIpFklvwMicvZ620t7hlc/lRKNpJk3M7HUlj
-	67ArkETeeQAupnTgORMTzCKTmfY0KiXf2leyv
-X-Google-Smtp-Source: AGHT+IHnzEjfKJoOP6zSpqnlVKYAp79gjJZtHxgxIKFwml3ILU+99PRFpoeiHBZGo2fYFeU5opRvNpd5SUSI7TMWSrI=
-X-Received: by 2002:a05:6402:35c4:b0:5be:9bb0:1189 with SMTP id
- 4fb4d7f45d1cf-5bf0be0c727mr163175a12.2.1724174572142; Tue, 20 Aug 2024
- 10:22:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724174581; x=1724779381;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nG3sk+SGqgopURDWRpSLqodBy9lchgvdy2diDegZ/Gw=;
+        b=DDdQyLncbxT1ulXa63MFa4Ee/BHEWx96VQARvikwidjxFr9j74qyEGZtKzg5DeVHen
+         QYEI8n2LQ/w9QaLgMvZCz7qDRN/LKGsdSUEzvG+2w8ry0vUjHNigrY2ZYQ279sxg86Ei
+         Yp1r1+JhkU0X4huJjhdVpzEvVxC/Cu5PZdAhBHLuOD6AMh7m0tx4CM2jkgGWBTO8MGG2
+         WBKaes7RU8VZrbvTCwPplqyg9Hj997U/HSlhjQ3WevE/2ayFbNsHmpLNT9Wu4c2bzd1N
+         aWPAPsqgleXjE6kk3QA+lLY7U3fVE0ApS/tYIlNQkz3iaIQy+lqvWNd+KtgQwnQboB7m
+         Giwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbiql9m8SEYs6VUSdtgmi0OWNZ2rfNG9OpRt56X1NGchTsvdelZmeuMMEvJXglD4GH/ccy+Ctfrz4SDe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkX89xAPmuSCLUZmO47t/NfFQBilm8hkElh4ivyXJf6c8ehQqm
+	BEyngJGGfU1f7SUwwjeQemwTAHpHi882IIslAjL8/H6uphHpmz8bLCdNTgBdvQ==
+X-Google-Smtp-Source: AGHT+IGLC0VAnx3ACOqPL6vui1/41GTnaKvRUKl8IQ/H2tHfiWeItGJfBZfdI5j/ZjUY1Sk7SMbEsg==
+X-Received: by 2002:a05:620a:370e:b0:79d:7ae3:4560 with SMTP id af79cd13be357-7a5069af85bmr1549222885a.55.1724174580540;
+        Tue, 20 Aug 2024 10:23:00 -0700 (PDT)
+Received: from philipchen.c.googlers.com.com (140.248.236.35.bc.googleusercontent.com. [35.236.248.140])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff0e42e9sm545390885a.88.2024.08.20.10.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 10:23:00 -0700 (PDT)
+From: Philip Chen <philipchen@chromium.org>
+To: Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Cc: virtualization@lists.linux.dev,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Philip Chen <philipchen@chromium.org>
+Subject: [PATCH v2] virtio_pmem: Check device status before requesting flush
+Date: Tue, 20 Aug 2024 17:22:56 +0000
+Message-ID: <20240820172256.903251-1-philipchen@chromium.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819213534.4080408-1-mmaurer@google.com> <20240819213534.4080408-2-mmaurer@google.com>
- <CANiq72k8UVa5py5Cg=1+NuVjV6DRqvN7Y-TNRkkzohAA=AdxmA@mail.gmail.com>
-In-Reply-To: <CANiq72k8UVa5py5Cg=1+NuVjV6DRqvN7Y-TNRkkzohAA=AdxmA@mail.gmail.com>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Tue, 20 Aug 2024 10:22:39 -0700
-Message-ID: <CAGSQo03GVik5_yXFmCUnNUnPUwuwk-YFA0kqBd640PUjFOXcGA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] kbuild: rust: Define probing macros for rustc
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: dvyukov@google.com, ojeda@kernel.org, andreyknvl@gmail.com, 
-	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, aliceryhl@google.com, 
-	samitolvanen@google.com, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	glider@google.com, ryabinin.a.a@gmail.com, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 7:20=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+If a pmem device is in a bad status, the driver side could wait for
+host ack forever in virtio_pmem_flush(), causing the system to hang.
 
->
-> I had some feedback on v2 -- was it missed?
->
->     https://lore.kernel.org/rust-for-linux/CANiq72khUrha-a+59KYZgc63w-3P9=
-=3DDp_fs=3D+sgmV_A17q+PTA@mail.gmail.com/
+So add a status check in the beginning of virtio_pmem_flush() to return
+early if the device is not activated.
 
-Sorry, I did miss that in the refresh. To respond to a few points
-before I send up a replacement for this patch:
+Signed-off-by: Philip Chen <philipchen@chromium.org>
+---
 
->>
->> 1. `rustc` support will soon be a minimum rather than a pinned version.
-> In the meantime, this happened, so we should update this sentence.
+v2:
+- Remove change id from the patch description
+- Add more details to the patch description
 
-Will update.
+ drivers/nvdimm/nd_virtio.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->> 2. We already support multiple LLVMs linked into `rustc`, and these are
-> I guess you mean `rustc` is able to use multiple major versions of
-> LLVM -- or what do you mean by "multiple LLVMs linked"?
+diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+index 35c8fbbba10e..97addba06539 100644
+--- a/drivers/nvdimm/nd_virtio.c
++++ b/drivers/nvdimm/nd_virtio.c
+@@ -44,6 +44,15 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
+ 	unsigned long flags;
+ 	int err, err1;
+ 
++	/*
++	 * Don't bother to submit the request to the device if the device is
++	 * not acticated.
++	 */
++	if (vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_NEEDS_RESET) {
++		dev_info(&vdev->dev, "virtio pmem device needs a reset\n");
++		return -EIO;
++	}
++
+ 	might_sleep();
+ 	req_data = kmalloc(sizeof(*req_data), GFP_KERNEL);
+ 	if (!req_data)
+-- 
+2.46.0.184.g6999bdac58-goog
 
-I meant that the `rustc` consumed by the kernel build may use a wide
-range of different LLVMs, including unreleased ones. This means that
-which options are valid fundamentally needs to be probed - there's not
-necessarily a clean "LLVM version" for us to use. I'll rephrase.
-
->> +# $(rustc-option,<flag>)
->> +# Return y if the Rust compiler supports <flag>, n otherwise
->> +# Calls to this should be guarded so that they are not evaluated if
->> +# CONFIG_HAVE_RUST is not set.
-
->Hmm... why `HAVE_RUST`? Should that be `RUST_IS_AVAILABLE`? Or what is
-t>he intention? Perhaps a comment would help here -- e.g. something
->like the comment I used in the original approach [1]. Otherwise we
->will forget... :)
-
-Yes, this should be RUST_IS_AVAILABLE, will update.
-
->Also, I guess you wanted to relax the precondition as much as
->possible, which is great, just to double check, do we expect a case
->outside `RUST=3Dy`?
-
-I expect this to be potentially used for whether you're *allowed* to
-set `RUST=3Dy` - for example, if a particular sanitizer is enabled, you
-may need to probe whether Rust+LLVM supports that sanitizer before
-allowing RUST to be set to y.
-
->> rustc-option =3D $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(=
-RUSTC) $(1) --crate-type=3Drlib /dev/null -o .tmp_$$/tmp.rlib)
-
->I also had `out-dir` [1] since, if I remember correctly, `rustc` may
->create temporary files in a potentially read-only location even in
->this case.
-
-OK, I will add that.
-
->> Also, should we do `-Dwarnings` here?
-
-I don't think so - I can't think of a case where we'd want to error on
-a warning from an empty crate (though that may be a failure of
-imagination.) Do you have an example of a warning we might trip that
-we'd want to make the build reject an option's availability?
-
->
-> Thanks!
->
-> Cheers,
-> Miguel
 
