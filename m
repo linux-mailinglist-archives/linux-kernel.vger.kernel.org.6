@@ -1,69 +1,94 @@
-Return-Path: <linux-kernel+bounces-293936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD94E9586B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:16:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A3A9586B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E449281D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43141F21DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79036190675;
-	Tue, 20 Aug 2024 12:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C13190054;
+	Tue, 20 Aug 2024 12:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XWRDMqKH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwEPLKBC"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD2318FC9D;
-	Tue, 20 Aug 2024 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFD218FC72;
+	Tue, 20 Aug 2024 12:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156149; cv=none; b=ShF1DMNzMagF8sK5I0lxO7j7IeG6sRFvI/t3DokASlqGFSlJC9tIuUVNORP1pY7yvT8G472LpUTn8G1ALorRTsWK9CgE+g7EBoP+pmIIxPSf/J0ooCY0bGD8OHH/9+FA+k33xbT+io81fCnzTzBaIHGKb7GHmgnahUGnZZ3qZ50=
+	t=1724156135; cv=none; b=QT+TZcjvu60Rc8Pu8nGkmB/+fuXgsSEiUyjDJIkB66AxfMqCZNIS1X6NmOyv4yg0hlYc6BZD0eLusc2KLXb4QZcoEBWYePW8AwmWTfPnVAjabZkENl6iOHXqW5d+iVT4u/NwLvcLnvdi8cMC6yju5QJo48t37v2mtAGUnpHCNCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156149; c=relaxed/simple;
-	bh=E8GL/aqCh5O1CsiCNm6aKgAsh+4+sSOKXFJjkFpdfrw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nztXC+W8/+klTmmyhISow70cY0NsebnxCneNqXg5JUCD03Qpwk6QuPY4dblxZRqXEEqRAj5kxeWvSMFc8V1togcLec+iDMvqUM8Bkvs1sjC+eDihkjJPWrAsDqnduKgn2WXlY/h5qvqV4GMF6+tJkFK3EbVGu7RhEqVF22dJS7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XWRDMqKH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K9EHap019635;
-	Tue, 20 Aug 2024 12:15:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ZFLDc/m7PT3C3d+KxaBTQK
-	APMhFH4U00e8Mb6tWMps4=; b=XWRDMqKHovkuGWdrQSC8QGHmuZz8VSovXD55sa
-	/o6VcuItEUIxqocTLIXvtRjuhyn6jtDrZbUK1EeZQsjT3RX0/38SaP/Ep6dHd5nK
-	eKB2eCiaLlrhd/lTkLGdjJ4qu9t80wyZ4aRLnLR0cRCdQhm4TRPt9NYPPAZ744Xs
-	QHENNOn8pLJCxZQUaDdmbnZ99CwG3lUj1zvtMNsc5xIJVYP+Xk3x4m+4w/iuDCqm
-	6QZf75lruLU0WPMDPJxvLkDodEIVbUsFUU1cRWJKZM7J1Xdp0rq1PoscrW9orYIX
-	w44LynB/uM4E39znxws2n871U5mBbOZp5+tp/gLBQyrGZplw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m32qqg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 12:15:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KCFhSi000797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 12:15:43 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 20 Aug 2024 05:15:41 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [v3] usb: dwc3: Avoid waking up gadget during startxfer
-Date: Tue, 20 Aug 2024 17:45:24 +0530
-Message-ID: <20240820121524.1084983-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724156135; c=relaxed/simple;
+	bh=3Rsxurh3oebSOC9CSdQymFF5A6WyB1+tnn6Om+aTABk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eS26qke8/uBdbqMkKQ9PNGCMiGfbcUC1OxsXD3fOJulD+CmslqbXW8coj2y5ahjmvNgP1p/tX8tQTHY1Airjk3Zi8DqXAvNSjEJZLb+rIBUPFFdO58HOszcpWL27/f28bVds6OxMBz5czgZjCPvg4GNNy0qd734jTo11nwv9j/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwEPLKBC; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so3601234b3a.1;
+        Tue, 20 Aug 2024 05:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724156133; x=1724760933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jnzctouXAZ5Z924Ba3lV0yqN0741CnCOlYB+XyAgYVQ=;
+        b=iwEPLKBCljTNTXxie/jcLMf8Zs+1eViOz5ru8RGsbCR9dqzoDx32pylbXQ7H6ces8E
+         sOxA3BM1PwhQH1+pnx5DDI9WSM9GNZseFJWyIRNFac/14kaoJi76vsaMalyg1PN1tSsH
+         GyFj+oA25Lh9aMttDcDtxP1VtxWO2mP0Aa6KnbkE6TWE81NbabB8WGG0h1UESdR5JBTU
+         tSN8cUTgXOR2GAhU/kkPonKMOHRc71k3TJrh5J5ji+mhSivzTjBCYx1332hNYxyE+4nL
+         JA3OBMnHWDMmiK+3AExe3MirnAOY+wOqtslkWMA4qYSijMVPxHMk8yACNL8Tcxsv8JSF
+         n3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724156133; x=1724760933;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jnzctouXAZ5Z924Ba3lV0yqN0741CnCOlYB+XyAgYVQ=;
+        b=W9DGDoX+wMNlesM/2iV7gdXKJgdN/gjqZy4jr10JwFKMjBgaJNy6ocLKsMeN574K2k
+         +U3rQRIgAX5rho5xjgpypz7OzkmlF0I6D+btbkgCTb9Oltu/KiuJ+Zk49Z9UA/gV4y10
+         UHCVjrxcH2j8FdQb5ZfL1iu3xmrIm0/H7oBu4jMpHRPJwk95wlWTbLQqajauoxSjxIib
+         XlAzRa8jw+Jbti9P/EjvSyxA9NC8ucmSEyQ/xg7ZXRbehoVKNpNfwKWUBmoXtW5M3dct
+         B2BfSBl/Slz7iaVyAUH8goj4t2DsUCI5kSnx+zQPpYTn6GuGDjHggCWLfxGOID37Ehbr
+         EvFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSeHzJrd38nkOtsjOpWYvz6F7Xp8TW94gmLykhdaxuDjUz6HEPcu8I+omP9XCc+9oTMZNLv03GJT0QcFKX/MQyZVXVMV4OgkAFaF+acnJjAbnMwx0/jeWDy62WDJeJ6aP+fe+F01fP0txCeYuH5HI7P5ruCedCvf+xe4vN4S9USA==
+X-Gm-Message-State: AOJu0YxA3CV2FygeoDfojN/rSMX1NGXRbEEBVeV469xx+O0zmsNl+P9y
+	ZBRbgck1hT5Rafx+tpsPSUAPKf9xlK41dT+p9RgRY9GokZjcUFqg
+X-Google-Smtp-Source: AGHT+IE5LBNad2gqtiOKBmKFO3vibqCB1+pQr1HohVNt326OKWBqpfpCdRt+RrkUoAH8cqj5zWgsHg==
+X-Received: by 2002:aa7:8886:0:b0:70b:cf1:8dc9 with SMTP id d2e1a72fcca58-713c525114amr18450202b3a.25.1724156133015;
+        Tue, 20 Aug 2024 05:15:33 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add72a1sm8068518b3a.27.2024.08.20.05.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 05:15:32 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	utz.bacher@de.ibm.com,
+	dust.li@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller <syzkaller@googlegroups.com>,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net,v6,1/2] net/smc: modify smc_sock structure
+Date: Tue, 20 Aug 2024 21:15:26 +0900
+Message-Id: <20240820121526.380245-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240820121312.380126-1-aha310510@gmail.com>
+References: <20240820121312.380126-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,92 +96,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jgTIpnwW84HZFp_fK_rUHGNczyWr2Hcb
-X-Proofpoint-ORIG-GUID: jgTIpnwW84HZFp_fK_rUHGNczyWr2Hcb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxlogscore=534
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408200091
 
-When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
-update link state immediately after receiving the wakeup interrupt. Since
-wakeup event handler calls the resume callbacks, there is a chance that
-function drivers can perform an ep queue, which in turn tries to perform
-remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
-DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
-DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
-during startxfer to prevent unnecessarily issuing remote wakeup to host.
+Since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
+point to the same address, when smc_create_clcsk() stores the newly
+created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
+into clcsock. This causes NULL pointer dereference and various other
+memory corruptions.
 
-Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
-Cc: <stable@vger.kernel.org>
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+To solve this, we need to modify the smc_sock structure.
+
+Reported-by: syzkaller <syzkaller@googlegroups.com>
+Fixes: ac7138746e14 ("smc: establish new socket family")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
-v3: Added notes on top the function definition.
-v2: Refactored the patch as suggested in v1 discussion.
+ net/smc/smc.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- drivers/usb/dwc3/gadget.c | 31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..d4f2f0e1f031 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -287,6 +287,13 @@ static int __dwc3_gadget_wakeup(struct dwc3 *dwc, bool async);
-  *
-  * Caller should handle locking. This function will issue @cmd with given
-  * @params to @dep and wait for its completion.
-+ *
-+ * According to databook, if the link is in L1/L2/U3 while issuing StartXfer command,
-+ * software must bring the link back to L0/U0 by performing remote wakeup. But we don't
-+ * expect ep_queue to trigger a remote wakeup; instead it should be done by wakeup ops.
-+ *
-+ * After receiving wakeup event, device should no longer be in U3, and any link
-+ * transition afterwards needs to be adressed with wakeup ops.
-  */
- int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 		struct dwc3_gadget_ep_cmd_params *params)
-@@ -327,30 +334,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
+diff --git a/net/smc/smc.h b/net/smc/smc.h
+index 34b781e463c4..f23f76e94a66 100644
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -283,7 +283,10 @@ struct smc_connection {
+ };
  
--	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
--		int link_state;
--
--		/*
--		 * Initiate remote wakeup if the link state is in U3 when
--		 * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
--		 * link state is in U1/U2, no remote wakeup is needed. The Start
--		 * Transfer command will initiate the link recovery.
--		 */
--		link_state = dwc3_gadget_get_link_state(dwc);
--		switch (link_state) {
--		case DWC3_LINK_STATE_U2:
--			if (dwc->gadget->speed >= USB_SPEED_SUPER)
--				break;
--
--			fallthrough;
--		case DWC3_LINK_STATE_U3:
--			ret = __dwc3_gadget_wakeup(dwc, false);
--			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
--					ret);
--			break;
--		}
--	}
--
- 	/*
- 	 * For some commands such as Update Transfer command, DEPCMDPARn
- 	 * registers are reserved. Since the driver often sends Update Transfer
--- 
-2.25.1
-
+ struct smc_sock {				/* smc sock container */
+-	struct sock		sk;
++	union {
++		struct sock		sk;	/* for AF_SMC */
++		struct inet_sock	inet;	/* for IPPROTO_SMC */
++	};
+ 	struct socket		*clcsock;	/* internal tcp socket */
+ 	void			(*clcsk_state_change)(struct sock *sk);
+ 						/* original stat_change fct. */
+--
 
