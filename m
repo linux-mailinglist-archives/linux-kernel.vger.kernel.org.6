@@ -1,402 +1,271 @@
-Return-Path: <linux-kernel+bounces-293214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79294957C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0A9957C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051541F23B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E0528205A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7544D8AD;
-	Tue, 20 Aug 2024 03:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AC341C71;
+	Tue, 20 Aug 2024 03:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WVE4CkOu"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MEcK4nkv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22E39AD6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724125741; cv=none; b=fq3N/3RdbWfkpA5Zt4kkTuJ8xYySYgVXKDkL2/C0fj2msz6EWHz77oudPyLMbiQIjlgZ0aYegSrV7yqQ8NMvTquiqS+1hnEJFbaN2eRy51WnDznVfEPViZML/Gdm9GYYBjIYmK+tCdplcDHlm3Xy5kV6abyqQL93HMpExy1pf50=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724125741; c=relaxed/simple;
-	bh=Xjfy1yyx42zoMBXi41lXDKKzXmKit+IpFcAnZYns4UQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ryw5k9s6+309zFvgbkJxYa/DaQD9GpDBGUCBjz+bIB1kXp97q9kRLsgrSByGLFnRJaBOjkVVwoLEZ3MwOAAspnUAGWtS/KJum0DFCmFPwYCNtSd9fvRV4GC96JKk/oAg4ApS0yi1ge6cSzcfLdVF3njDVjw6cz7fCVY9UTKdn+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WVE4CkOu; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-201fae21398so28905855ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1724125739; x=1724730539; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zXio7EK5HntiEszQP2Jhk3OXhbsQjLydHBM0J7GAI/U=;
-        b=WVE4CkOuVb4qx4xjfhc9YvrbxToL9IIRJgDsU7vE53jf4/Isb/KCV5F2jUHRhCN1c6
-         2iNHqlESnsv2+FeSr0Ry9OObzUz4eC0Kng4iOpOVmwcSrtWn8k91MrA+p8qMYuXxWxHG
-         iCWbqMR09um5pZEkJ+qqyDlMGmCZV2bYP54nXP86UR0Vfispne0aDxkO7AagbR0mdqw8
-         UZENfDpjl94IhTE9HoSnNaSrkDwfEjTGnWGh8QYSittj+yABb3AKRcGNrU5B7/xj8dBx
-         XHnOo2+ou1I0RPVMr4cZBMwqHr7UIIbPauEnIaSreO7OZZnPN5tddsNrCrIO91X5wgRc
-         qyow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724125739; x=1724730539;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zXio7EK5HntiEszQP2Jhk3OXhbsQjLydHBM0J7GAI/U=;
-        b=dQN138vFwXmXZhIIHB8banRcD92Owk/635rb0vGDgpzxZTkif6YXqg8pYdlRjYkWWT
-         0sW1b87dRfsPkxWd5qwvvGOfp5/XTVD4KsMByXRCny20yezYScUVQJItfTVKQa4zaO8I
-         nCgxmHAjuLidYoJB78MRMmumB33a+9iMV8neSDry+JUull7rhyk4Q+AmMwJIWQZhTwsF
-         Y+4S8NCEy5OIEZTJyKFQggGBDX+jQlmQueWudf3HU+1KXrv7inCWytvpkCcBEiGo6+fq
-         WX+q0T3I4AIy3zB7gAeg/YPwIfXaJBj3MKUWBZZzq0yhK/5Rj98KGOXig14qZH8InsqU
-         7LcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqFacux8eMoqq5K0AH43zCLy5Rn8oMqfkhru1Xd28EzdlZXw17Xg36VtxiZ8Vol6kB502wZncfGlLPtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrhIv4XARfG5I8DX9n51EMaqwBkUfcZ+yXTMwLMLx2iu67/UDJ
-	L1tAToUWbKYc4u7la5VOdfMk9xC3erXdKBzZ8HtdetU508WjZmHDVcvwhlW7Wf4=
-X-Google-Smtp-Source: AGHT+IHjongBjNcIxrS0J+fWK7pBgTQAi0+fmVa4nE66btSPYZ7NHijUmPa3HYDh8tutbCiryaoFyA==
-X-Received: by 2002:a17:902:ce81:b0:202:2ed:b3a2 with SMTP id d9443c01a7336-20203e4f493mr125240195ad.8.1724125738649;
-        Mon, 19 Aug 2024 20:48:58 -0700 (PDT)
-Received: from anup-ubuntu-vm.localdomain ([223.185.128.68])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0394718sm68806485ad.226.2024.08.19.20.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 20:48:58 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>,
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: [PATCH v3] irqchip/sifive-plic: Probe plic driver early for Allwinner D1 platform
-Date: Tue, 20 Aug 2024 09:18:50 +0530
-Message-Id: <20240820034850.3189912-1-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C61798C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724125970; cv=fail; b=Nmg13SvZeLFF1Qo/QQrQGDBzpXbds1ywm4DH2bSJsE6jI5HOAdRufSHDdEcwbPc0Ww1aU+thXOwS7tZprWiJUd84JBbKiydWlUT9mCx5diwDFfCPSnWnTTxTHdhGHTkr0IIpL+owB8F013gkwXotGu8jEw/SWJ5H9N2U9DrDeE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724125970; c=relaxed/simple;
+	bh=IVJFox61YOU04wnlDvY/tBbrKFYY3HBLcxRsx2K89NM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NSouuVKF9NmmEvYLiuRGZAKcgs5aJki+QQgfXNebdYzQfqriYd96dbeD8E7Q7qnV9u6ogRxLaHJZNQkbJOnx996LPM7snWeZNwqVDfri6rVTEOEKuRRf2m4eWy9h6r432Rhejb9dSK0PwYwomdM1ru2qdLGUOv9b49/pgkEVf4A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MEcK4nkv; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724125968; x=1755661968;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=IVJFox61YOU04wnlDvY/tBbrKFYY3HBLcxRsx2K89NM=;
+  b=MEcK4nkv7i8vlCU4/xMDa9xrk+4fYpDrAuSSm08nACTkRDDScYcWXgrr
+   uurbwFjGn9bthHwYSMAZyLJldjEQ7jVbayNmFVCDeTbGMMKunNAElQqJS
+   kRYddo7rAv7vXvZxX6AI3NelDDBx9b1xcO1Mu63tLQjSfp/UZFvQ0Gd02
+   yJ7TUlagm30ZsL0waOBwVzuAWRff6j5f9Fn7v3waGl4nE5prTZ8klLjsh
+   dm4P+icVrCkJPk+bZDz6yy0ZlP5moItvkEEXaG+KKsG/UaMfQ37k+/7jA
+   MFs/1HUDXV1WMlGlwj8zpUovPXh9SMMWiLZTkrsnQDyunBuCXquMCNWUe
+   g==;
+X-CSE-ConnectionGUID: VnoK8PTaRYmF9+8CqvjN3w==
+X-CSE-MsgGUID: cT4UqYr/RkuSg4yGUdOheQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33787181"
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="33787181"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 20:52:47 -0700
+X-CSE-ConnectionGUID: J/J7KvMzQXiWSvZ7sBtN2w==
+X-CSE-MsgGUID: dwOXbM6GTASQtbcdgUirXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
+   d="scan'208";a="60558962"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Aug 2024 20:52:46 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 19 Aug 2024 20:52:45 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 19 Aug 2024 20:52:45 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 19 Aug 2024 20:52:45 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 19 Aug 2024 20:52:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mw118WjAFj2Nx5MbL4dh28/xdoUzHIYvqV4k0VujVtzXZbX+due6H9FMV7SeoZlvpIPxpQCLvoVnFZijBwcb96ibCCxDOD8wpMVr6x9wtnETWaNHpbELoExc3UWZH2Lqkr3dLKNuMQjylQHjuHUMz4xiuU+r6cDzexkgojj97hvtsVrCdyYXmXwArk79HPBgpYDhIdiZLPj2NeB1Jgz6Laza6EBXx+XKtpDK1Bc4UDE8imYRooan5JIr15Cm/SkplViTu08ETE7LqtPuzeMKJhEvZ76MEo9Jl4rySpe3vy07/UtZSq/f+cPRMF+W48KZAxhhkLrO7UnhBdtUt6aZUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3bDP9bDahUJUo3/0qgulT6J+nxt1dSSDbwabnfrWSuM=;
+ b=I27KXmoA5MjHGhPYvoPS2i8RkuKIpkiRozxQJgWlxgOBhS94hwv7+Mp1lJ05tbT95uX+0t6H69kjyPIJ7/XUirp62AOgIkBsv+mVPKGTFIQh2Y7rKCJpFE3/cTQsWMBFjC87UQIN6wT6faMgOlRhmdMjxXL3+Wf8TfYqM+woWQd/AKLMgM590j8zrQoQsJb6nGO5ivBu5oSy/m496GrYnAH838GHzmcjZDai2QaXk/k1EtQ7z1dFrlAcUhQX8OaPsd2AnnG3pjPqusZMq0TCpygHxz+W57ccoKmhqaH6910Xhl9E5RcoR+wYneo6rK3r3+wl7YzyIpNB+1dSz2kFTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ SJ2PR11MB8513.namprd11.prod.outlook.com (2603:10b6:a03:56e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 03:52:38 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 03:52:38 +0000
+Date: Tue, 20 Aug 2024 11:52:29 +0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Peter Zijlstra <peterz@infradead.org>, Andreas Gruenbacher
+	<agruenba@redhat.com>, Tejun Heo <tj@kernel.org>, Shuah Khan
+	<skhan@linuxfoundation.org>, Mickael Salaun <mic@digikod.net>,
+	<linux-kernel@vger.kernel.org>, Chen Yu <yu.chen.surf@gmail.com>, "kernel
+ test robot" <oliver.sang@intel.com>
+Subject: Re: [PATCH] kthread: fix task state in kthread worker if being frozen
+Message-ID: <ZsQS/cRhRH4MOof8@chenyu5-mobl2>
+References: <20240819141551.111610-1-yu.c.chen@intel.com>
+ <20240819185807.ff5004ade2661c46740fc459@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240819185807.ff5004ade2661c46740fc459@linux-foundation.org>
+X-ClientProxiedBy: SI2PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:195::23) To DM4PR11MB6020.namprd11.prod.outlook.com
+ (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|SJ2PR11MB8513:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1b666fd-54fd-47ea-5e3d-08dcc0cb8892
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GTt+cZPQkm5XvSsmAU3XiYRcm7qmy6ENTGd39afwVxilolQpzII1p49WgwsM?=
+ =?us-ascii?Q?kpSpBOdXFklNgWsPx2MK2zw7Njcj04TLxhav/BMcQWmZmFv/lpqDXQNDKs7G?=
+ =?us-ascii?Q?CxyJWKcx855nYM32tqk5/TX+aMbLWVzsXrFhYh/2UFQ2dnHQG/CeBx2Kv+6R?=
+ =?us-ascii?Q?oh4GENzAfLTKQip6qvWluWi7Cdr5XbZuYBr6CtPG9C6/E2jKDAbmofjyfKgh?=
+ =?us-ascii?Q?K+NNFjltOWF+UBgx3skVJzUGlR55Qn5s/3aNvlG3cg/hE7mlJbWvsmShQ11V?=
+ =?us-ascii?Q?6RXFiOb+Wl+MWDrxHkVBDEDrSnEIaPFAnDe/RkbUqPuMe4SPf2+UOTnsKOYF?=
+ =?us-ascii?Q?yjuR++BKaCnReKzYrb52DvnOTiSo4BZIB5kmByc7Iu/Smoza8ALtB+BR2pj1?=
+ =?us-ascii?Q?XoQ5ODT+9JXDQoRcTyBmwzUNb6rvO8lz7EjHo3mmBI09nXuIG9pYrUE7GH9F?=
+ =?us-ascii?Q?E+JJJMFtpRpL7RZEePqTUKDr1KZJrysngo/uvLcKgSwn3F2knbLYqyebkTng?=
+ =?us-ascii?Q?mMy+F4jYYTILVChf0W5B5LAe5rLwODckeetaAGHDu8zgajT/q69PsxxYCLxG?=
+ =?us-ascii?Q?bnFmWB51/Cua5gAZyR9oWVBtrA7ADbBgK837eHfB8vpCl3Cx9tePeo+fUHt8?=
+ =?us-ascii?Q?36p7uTkPO2CBDD5bwxBQ+PtfmkqTinuejdnrfgovLwt1VHuAuucqDYYmCv//?=
+ =?us-ascii?Q?jpjSvmhsufzhiPbUWwsLd0f58WJFsO+clhdRCQgQTHBGwI16Ct3NAeSjI3/s?=
+ =?us-ascii?Q?a6CME4Bm0glg/Jf0IAb/iEKWuUVgaUgmFj4MRDZ09x715UQBmc6Hwxcuq4wL?=
+ =?us-ascii?Q?Z3tdnSzZyFnX0Fw3hAZr3x2uNfVwyN+ckdcN4qQsor/pZr0Q8TROWryWLzz0?=
+ =?us-ascii?Q?ecOmFB/VrKEGnz+y6g5FuetdRUjMyft9lJOdev83WwnaaEk8prK35t86pw0D?=
+ =?us-ascii?Q?/rqKO0CFjGf2RnSNd8EtiBtdJKcqOsc9kYV+ntmAdSPdjumUXTAAVeQBkmLK?=
+ =?us-ascii?Q?ZKvODveXOPIQRv/rtLkCCfArbSHiWiRqbYYc59Bl+xbdZ73GeJi9t64URF2N?=
+ =?us-ascii?Q?5UlDn+R8AiEr+a6T0Y5xgZPimEVIhc/dfA1j/2snMBlA86tT9kEF2aCALTbW?=
+ =?us-ascii?Q?kmQuE0JqIf08HJt39IV/IiBsy0B/9tmXV5GeWW+WLXxd9zisnD4lHbCcak97?=
+ =?us-ascii?Q?KqzOFTdA8yiUQi7qfP8gUHoWFMMaMYF98ongnmASTpEER6/z0HBvjU/vrpEm?=
+ =?us-ascii?Q?4YXW0esT501F1zY3DuI9KFsPMJy8S1im1jZaZR7gY0L/yTw1SbVaDinYL4Zp?=
+ =?us-ascii?Q?xn4YScMlqXbdTvFmMnO5m1y1wrAqeng1i8AHXnPWrveuZQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1/BnYI4TIVl799t/rDiKdneJJKNhfWl7ECfHejJW/MrGy2NACNI3QZCeM5su?=
+ =?us-ascii?Q?xN7Yxxli9opMr0va4P01sTnlGVhOqP6MFOT3tH0TULe1BiBjeJF28pwegSbd?=
+ =?us-ascii?Q?QFaM1jfRADknMVf5dFSoTmwnbu6cLANMFRUfTW7/SUm9QsVlGhEYrMdox73p?=
+ =?us-ascii?Q?my5OGmxRyXKAhCyI6TnrF6RRlOqN4/ZmfKJtBnnyKBKmWcmrkuvjPwwPTxoB?=
+ =?us-ascii?Q?X4bxNAbfE6881t8IISoiyFWrYV8zoxqPghkCOb/y5iAtF3ptAgQO1hwx+OVZ?=
+ =?us-ascii?Q?T7qmUZylJe9100Na4HN8TbxSWSpYkVw9g489c4W1NAVpwc5Cz5mjx6lyAgMV?=
+ =?us-ascii?Q?8t4hgK40TqESNYhZF5JD5U6+WJGeH1eKfmnAd9kd5YzUIw7p1C7ycJUjgkIH?=
+ =?us-ascii?Q?Pf0anl43VbOauLZQ53yY0Gp+H1t0kwFAv9JUkjl5PlicM7n45OWjJ0WSx46i?=
+ =?us-ascii?Q?bN+xX7un0ok6pFPEBkwQPfHlMrA7CRdZBdJJIJ6M5BFThbE1UPlxRrka8Cy4?=
+ =?us-ascii?Q?jBw63muljLiwOWWCFYHEQ1MHsbt7/YkYbqvTmEMmtwrbUw4sOwJl6zp7Dasl?=
+ =?us-ascii?Q?81SVWq6a9vBI2vHUaGrIeadncu/l/vc7NKdCYfxYBhtXtRT5Yq8/iCMgPzNi?=
+ =?us-ascii?Q?Z9jDI7tAint4hP8VJBO7zZ8XnQt1WmT4Dow4nIZefjWacofSEXUZUfTy7qeg?=
+ =?us-ascii?Q?wqU/gAyn1i3h2EUpmxYqbWPIojyNafnws38SbTEeCHSQw+SO/vPmoXQrwrY9?=
+ =?us-ascii?Q?QWON/KBLD3nj+AT+0lMY6tRI5kjAKTeQNsQfnVk2nE0KZ0WNEFSiqja+9diX?=
+ =?us-ascii?Q?/+y/nxXJdso44k5oRH/DrvAnCyhPYdObon75cnDGUwx3/Yu8l0+zltwg46ZH?=
+ =?us-ascii?Q?8Y/s7oq8ITd0XXzK9f0t3KKSKBWSL4qXGKDWQMPbI3+FBruVuRZZ8aW9kogo?=
+ =?us-ascii?Q?nM0+AgTD4Ux9F14LZM7V7GY87p3UU7NiqQ9/2VYJ6Pouv4zt2InHcmrX/ii6?=
+ =?us-ascii?Q?hManaoeWMmmVMHL8l07VNamo+VYsvEDKdM79vT17txeu5fQKepWyg2u6KEck?=
+ =?us-ascii?Q?/RiM3/3+DYLk1U+RACr3DrkQlaUdIzf5uj82SSgRAII30eBMQEOMn99GOXPg?=
+ =?us-ascii?Q?HPzwNDPHb2EVIOaCLtbvX1D8xJkf2/4UpKcFdHgYNeVRUTbbCY5nSxjcQVyd?=
+ =?us-ascii?Q?KqI8LncLGj/yYaVequiu4NxLGfBGaX67SGW5/DxF0ATVuOluVKJGNP3qwBx6?=
+ =?us-ascii?Q?n1s6qF6jv8EwIIHF6NKAirRjM2Zfshacn3zmpggpM3mupsoybcCSEIxVxCqY?=
+ =?us-ascii?Q?pO8bi6A1sm6oIlRbd1zaItHUinLFteH/iwalZ4fyshe8A8myFhsuU0SIuYom?=
+ =?us-ascii?Q?s8Es2aVQ8dLC3srWZqi2EP/ZJfPnJ3iTrMJJXGRXb+5sHZjOEvsxAu6ejFBd?=
+ =?us-ascii?Q?36j5XmVvtIUnpKddBpZKFBSm8K1A7g9cWA3umL/huc0+6L2xZWI7QY6OpHS2?=
+ =?us-ascii?Q?w12HVdNYIJl07sJw7FVgtR4Eiscl5268GqrFLmS6zbrjmm9sx/PJC33zbDtD?=
+ =?us-ascii?Q?58SNFhc+sVCbxMjk7nyENkPJHhDgexcIV+hoHpMQ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1b666fd-54fd-47ea-5e3d-08dcc0cb8892
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 03:52:38.2979
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V3Vj9htqmM0K4S38dJmq1y/mludyTVfVov3C7ZUvECn3MRLt+8e6zrkm67MZqYWPazJJARB318n4JZQKsXRRVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8513
+X-OriginatorOrg: intel.com
 
-The latest Linux RISC-V no longer boots on the Allwinner D1 platform
-because the sun4i_timer driver fails to get an interrupt from PLIC.
+Hi Andrew,
 
-The real fix requires enabling the SBI time extension in the platform
-firmware (OpenSBI) and convert sun4i_timer into platform driver.
-Unfortunately, the real fix involves changing multiple places and
-can't be achieved in a short duration.
+On 2024-08-19 at 18:58:07 -0700, Andrew Morton wrote:
+> On Mon, 19 Aug 2024 22:15:51 +0800 Chen Yu <yu.c.chen@intel.com> wrote:
+> 
+> > It was reported that during cpu hotplug test, the following
+> > error was triggered:
+> > 
+> >  do not call blocking ops when !TASK_RUNNING; state=1 set at kthread_worker_fn (kernel/kthread.c:?)
+> >  WARNING: CPU: 1 PID: 674 at kernel/sched/core.c:8469 __might_sleep
+> > 
+> >  handle_bug
+> >  exc_invalid_op
+> >  asm_exc_invalid_op
+> >  __might_sleep
+> >  __might_sleep
+> >  kthread_worker_fn
+> >  kthread_worker_fn
+> >  kthread
+> >  __cfi_kthread_worker_fn
+> >  ret_from_fork
+> >  __cfi_kthread
+> >  ret_from_fork_asm
+> > 
+> > Peter pointed out that there is a race condition when the kworker is being
+> > frozen and falls into try_to_freeze() with TASK_INTERRUPTIBLE, which
+> > triggeres the warning.
+> 
+> OK.  A full description of this race would be better than simply
+> asserting that it exists, please.
+>
 
-As a work-around, retrofit plic probing such that plic is probed
-early only for the Allwinner D1 platform and probed as a regular
-platform driver for rest of the RISC-V platforms. In the process,
-partially revert some of the previous patches because PLIC device
-pointer is not available in all probing paths.
+OK, will write a description for this.
+ 
+> > Fix this by explicitly set the TASK_RUNNING before entering try_to_freeze().
+> 
+> OK.
+> 
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -848,6 +848,12 @@ int kthread_worker_fn(void *worker_ptr)
+> >  	} else if (!freezing(current))
+> >  		schedule();
+> >  
+> > +	/*
+> > +	 * Explicitly set the running state in case we are being
+> > +	 * frozen and skip the schedule() above. try_to_freeze()
+> > +	 * expects the current task to be in the running state.
+> > +	 */
+> > +	__set_current_state(TASK_RUNNING);
+> >  	try_to_freeze();
+> >  	cond_resched();
+> >  	goto repeat;
+> 
+> Comment is helpful, but why express in a comment that which can be
+> expressed in code?
+>
 
-More detailed discussion can found here:
-https://lore.kernel.org/lkml/20240814145642.344485-1-emil.renner.berthing@canonical.com/
+OK, will do in next version.
 
-Fixes: e306a894bd51 ("irqchip/sifive-plic: Chain to parent IRQ after handlers are ready")
-Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a platform driver")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-Tested-by: Samuel Holland <samuel.holland@sifive.com>
-Tested-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
-Changes since v2:
- - Use SoC specific PLIC compatible string for Allwinner D1
-Changes since v1:
- - Set suppress_bind_attrs for PLIC platform driver
----
- drivers/irqchip/irq-sifive-plic.c | 115 ++++++++++++++++++------------
- 1 file changed, 71 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 9e22f7e378f5..4d9ea718086d 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2017 SiFive
-  * Copyright (C) 2018 Christoph Hellwig
-  */
-+#define pr_fmt(fmt) "riscv-plic: " fmt
- #include <linux/cpu.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -63,7 +64,7 @@
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
+thanks,
+Chenyu
  
- struct plic_priv {
--	struct device *dev;
-+	struct fwnode_handle *fwnode;
- 	struct cpumask lmask;
- 	struct irq_domain *irqdomain;
- 	void __iomem *regs;
-@@ -378,8 +379,8 @@ static void plic_handle_irq(struct irq_desc *desc)
- 		int err = generic_handle_domain_irq(handler->priv->irqdomain,
- 						    hwirq);
- 		if (unlikely(err)) {
--			dev_warn_ratelimited(handler->priv->dev,
--					     "can't find mapping for hwirq %lu\n", hwirq);
-+			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
-+					    handler->priv->fwnode, hwirq);
- 		}
- 	}
- 
-@@ -408,7 +409,8 @@ static int plic_starting_cpu(unsigned int cpu)
- 		enable_percpu_irq(plic_parent_irq,
- 				  irq_get_trigger_type(plic_parent_irq));
- 	else
--		dev_warn(handler->priv->dev, "cpu%d: parent irq not available\n", cpu);
-+		pr_warn("%pfwP: cpu%d: parent irq not available\n",
-+			handler->priv->fwnode, cpu);
- 	plic_set_threshold(handler, PLIC_ENABLE_THRESHOLD);
- 
- 	return 0;
-@@ -424,38 +426,36 @@ static const struct of_device_id plic_match[] = {
- 	{}
- };
- 
--static int plic_parse_nr_irqs_and_contexts(struct platform_device *pdev,
-+static int plic_parse_nr_irqs_and_contexts(struct fwnode_handle *fwnode,
- 					   u32 *nr_irqs, u32 *nr_contexts)
- {
--	struct device *dev = &pdev->dev;
- 	int rc;
- 
- 	/*
- 	 * Currently, only OF fwnode is supported so extend this
- 	 * function for ACPI support.
- 	 */
--	if (!is_of_node(dev->fwnode))
-+	if (!is_of_node(fwnode))
- 		return -EINVAL;
- 
--	rc = of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", nr_irqs);
-+	rc = of_property_read_u32(to_of_node(fwnode), "riscv,ndev", nr_irqs);
- 	if (rc) {
--		dev_err(dev, "riscv,ndev property not available\n");
-+		pr_err("%pfwP: riscv,ndev property not available\n", fwnode);
- 		return rc;
- 	}
- 
--	*nr_contexts = of_irq_count(to_of_node(dev->fwnode));
-+	*nr_contexts = of_irq_count(to_of_node(fwnode));
- 	if (WARN_ON(!(*nr_contexts))) {
--		dev_err(dev, "no PLIC context available\n");
-+		pr_err("%pfwP: no PLIC context available\n", fwnode);
- 		return -EINVAL;
- 	}
- 
- 	return 0;
- }
- 
--static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
-+static int plic_parse_context_parent(struct fwnode_handle *fwnode, u32 context,
- 				     u32 *parent_hwirq, int *parent_cpu)
- {
--	struct device *dev = &pdev->dev;
- 	struct of_phandle_args parent;
- 	unsigned long hartid;
- 	int rc;
-@@ -464,10 +464,10 @@ static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
- 	 * Currently, only OF fwnode is supported so extend this
- 	 * function for ACPI support.
- 	 */
--	if (!is_of_node(dev->fwnode))
-+	if (!is_of_node(fwnode))
- 		return -EINVAL;
- 
--	rc = of_irq_parse_one(to_of_node(dev->fwnode), context, &parent);
-+	rc = of_irq_parse_one(to_of_node(fwnode), context, &parent);
- 	if (rc)
- 		return rc;
- 
-@@ -480,48 +480,55 @@ static int plic_parse_context_parent(struct platform_device *pdev, u32 context,
- 	return 0;
- }
- 
--static int plic_probe(struct platform_device *pdev)
-+static int plic_probe(struct fwnode_handle *fwnode)
- {
- 	int error = 0, nr_contexts, nr_handlers = 0, cpu, i;
--	struct device *dev = &pdev->dev;
- 	unsigned long plic_quirks = 0;
- 	struct plic_handler *handler;
- 	u32 nr_irqs, parent_hwirq;
- 	struct plic_priv *priv;
- 	irq_hw_number_t hwirq;
-+	void __iomem *regs;
- 
--	if (is_of_node(dev->fwnode)) {
-+	if (is_of_node(fwnode)) {
- 		const struct of_device_id *id;
- 
--		id = of_match_node(plic_match, to_of_node(dev->fwnode));
-+		id = of_match_node(plic_match, to_of_node(fwnode));
- 		if (id)
- 			plic_quirks = (unsigned long)id->data;
-+
-+		regs = of_iomap(to_of_node(fwnode), 0);
-+		if (!regs)
-+			return -ENOMEM;
-+	} else {
-+		return -ENODEV;
- 	}
- 
--	error = plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_contexts);
-+	error = plic_parse_nr_irqs_and_contexts(fwnode, &nr_irqs, &nr_contexts);
- 	if (error)
--		return error;
-+		goto fail_free_regs;
- 
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv) {
-+		error = -ENOMEM;
-+		goto fail_free_regs;
-+	}
- 
--	priv->dev = dev;
-+	priv->fwnode = fwnode;
- 	priv->plic_quirks = plic_quirks;
- 	priv->nr_irqs = nr_irqs;
-+	priv->regs = regs;
- 
--	priv->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (WARN_ON(!priv->regs))
--		return -EIO;
--
--	priv->prio_save = devm_bitmap_zalloc(dev, nr_irqs, GFP_KERNEL);
--	if (!priv->prio_save)
--		return -ENOMEM;
-+	priv->prio_save = bitmap_zalloc(nr_irqs, GFP_KERNEL);
-+	if (!priv->prio_save) {
-+		error = -ENOMEM;
-+		goto fail_free_priv;
-+	}
- 
- 	for (i = 0; i < nr_contexts; i++) {
--		error = plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu);
-+		error = plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu);
- 		if (error) {
--			dev_warn(dev, "hwirq for context%d not found\n", i);
-+			pr_warn("%pfwP: hwirq for context%d not found\n", fwnode, i);
- 			continue;
- 		}
- 
-@@ -543,7 +550,7 @@ static int plic_probe(struct platform_device *pdev)
- 		}
- 
- 		if (cpu < 0) {
--			dev_warn(dev, "Invalid cpuid for context %d\n", i);
-+			pr_warn("%pfwP: Invalid cpuid for context %d\n", fwnode, i);
- 			continue;
- 		}
- 
-@@ -554,7 +561,7 @@ static int plic_probe(struct platform_device *pdev)
- 		 */
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
- 		if (handler->present) {
--			dev_warn(dev, "handler already present for context %d.\n", i);
-+			pr_warn("%pfwP: handler already present for context %d.\n", fwnode, i);
- 			plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
- 			goto done;
- 		}
-@@ -568,8 +575,8 @@ static int plic_probe(struct platform_device *pdev)
- 			i * CONTEXT_ENABLE_SIZE;
- 		handler->priv = priv;
- 
--		handler->enable_save = devm_kcalloc(dev, DIV_ROUND_UP(nr_irqs, 32),
--						    sizeof(*handler->enable_save), GFP_KERNEL);
-+		handler->enable_save = kcalloc(DIV_ROUND_UP(nr_irqs, 32),
-+					       sizeof(*handler->enable_save), GFP_KERNEL);
- 		if (!handler->enable_save)
- 			goto fail_cleanup_contexts;
- done:
-@@ -581,7 +588,7 @@ static int plic_probe(struct platform_device *pdev)
- 		nr_handlers++;
- 	}
- 
--	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
-+	priv->irqdomain = irq_domain_add_linear(to_of_node(fwnode), nr_irqs + 1,
- 						&plic_irqdomain_ops, priv);
- 	if (WARN_ON(!priv->irqdomain))
- 		goto fail_cleanup_contexts;
-@@ -619,13 +626,13 @@ static int plic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	dev_info(dev, "mapped %d interrupts with %d handlers for %d contexts.\n",
--		 nr_irqs, nr_handlers, nr_contexts);
-+	pr_info("%pfwP: mapped %d interrupts with %d handlers for %d contexts.\n",
-+		fwnode, nr_irqs, nr_handlers, nr_contexts);
- 	return 0;
- 
- fail_cleanup_contexts:
- 	for (i = 0; i < nr_contexts; i++) {
--		if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cpu))
-+		if (plic_parse_context_parent(fwnode, i, &parent_hwirq, &cpu))
- 			continue;
- 		if (parent_hwirq != RV_IRQ_EXT || cpu < 0)
- 			continue;
-@@ -634,17 +641,37 @@ static int plic_probe(struct platform_device *pdev)
- 		handler->present = false;
- 		handler->hart_base = NULL;
- 		handler->enable_base = NULL;
-+		kfree(handler->enable_save);
- 		handler->enable_save = NULL;
- 		handler->priv = NULL;
- 	}
--	return -ENOMEM;
-+	bitmap_free(priv->prio_save);
-+fail_free_priv:
-+	kfree(priv);
-+fail_free_regs:
-+	iounmap(regs);
-+	return error;
-+}
-+
-+static int plic_platform_probe(struct platform_device *pdev)
-+{
-+	return plic_probe(pdev->dev.fwnode);
- }
- 
- static struct platform_driver plic_driver = {
- 	.driver = {
- 		.name		= "riscv-plic",
- 		.of_match_table	= plic_match,
-+		.suppress_bind_attrs = true,
- 	},
--	.probe = plic_probe,
-+	.probe = plic_platform_probe,
- };
- builtin_platform_driver(plic_driver);
-+
-+static int __init plic_early_probe(struct device_node *node,
-+				   struct device_node *parent)
-+{
-+	return plic_probe(&node->fwnode);
-+}
-+
-+IRQCHIP_DECLARE(riscv, "allwinner,sun20i-d1-plic", plic_early_probe);
--- 
-2.34.1
-
+> --- a/kernel/kthread.c~kthread-fix-task-state-in-kthread-worker-if-being-frozen
+> +++ a/kernel/kthread.c
+> @@ -847,6 +847,12 @@ repeat:
+>  		trace_sched_kthread_work_execute_end(work, func);
+>  	} else if (!freezing(current))
+>  		schedule();
+> +	} else {
+> +		/*
+> +		 * Handle the case where X happens
+> +		 */
+> +		__set_current_state(TASK_RUNNING);
+> +	}
+>  
+>  	try_to_freeze();
+>  	cond_resched();
+> _
+> 
 
