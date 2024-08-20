@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-293860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943699585D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:29:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3409585DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F69B269F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7318282801
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C6D18E04E;
-	Tue, 20 Aug 2024 11:29:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDA818E04E;
+	Tue, 20 Aug 2024 11:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UMm5b3Gt"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DED718E05E
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD9118CBF3
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724153378; cv=none; b=k3RuEpjdT209ocupqBPWaFCutJ1ORCANd5nJ4yVcyKfOiZcU46IskXRKuebCsPY+/Uy1M1CjULacKqHgNU7eJJ8MI77kVv3lVUTXX88VshdwX2OdFn4PxEqIBJI3dVeQmcs0vH8TK0s9L+JNwaF+WMRbiTEvquQJm1umYLIsKAE=
+	t=1724153532; cv=none; b=DemW2Bx+c9Ue/tIXd/Fj2FIJmEb9Vkbn99xrPSsR0zgSIwpNV2sOtVErVBGrLQQ+7sB+AwqDVbn3vn4PaXDWt6J40JTVmCouhoaJrlXe5qRbqtKQcgrlp/MIknbseicnOEgB4VfH/+sUmvfepyO98IJXiCsFUClocrLg4p3jFZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724153378; c=relaxed/simple;
-	bh=c0emP5AnuWUNCjldEyQ/AyyFq9iE703od3heeSMBWjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5uP7q1oLLMgVzEYKjlB9jMvOmhNXmROEdWfhLcKwif1mX5JNWEvuSooGMXQ9U4/R/quyIB9hqe4zya0Xcis2CkwngNWISCbl1qEqUzt6AVRyQHAhPSlKIBJ2gvuq1nNVDsRQUBWOdToGiPm2QhWtGjiLDezkXBcEQ2yJKf/9XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wp6gf1NNXz9sSK;
-	Tue, 20 Aug 2024 13:29:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Uw0Vjelo8sGw; Tue, 20 Aug 2024 13:29:34 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wp6gf0gT9z9sSH;
-	Tue, 20 Aug 2024 13:29:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 07F0A8B778;
-	Tue, 20 Aug 2024 13:29:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Y2Z32C1pNq0Z; Tue, 20 Aug 2024 13:29:33 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.72])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A4EA78B763;
-	Tue, 20 Aug 2024 13:29:33 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/32: Implement validation of emergency stack
-Date: Tue, 20 Aug 2024 13:29:30 +0200
-Message-ID: <d7409df92b315e950f7837f7f86614c46360842a.1724153301.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1724153532; c=relaxed/simple;
+	bh=/NEEXoU7cN84Cc0lPoORDgJ/bZuFQM/jQxKs3CTG6BU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=seeDXM9nAwbx/xdhIoFfNm/ZggHIOxjjdUGZ5oEgkF0fp/e8V2uUGGm+8WuR3UfEAwuT3GCp4MUyOrm/RjZ+1c9S9HHLsycIYQ0HCBvfsOC/n9ToAtK5I56T5aiW4fQZ5Upcf/UhAmSQLseI0X3BXXSEqT3k8HkFVdbgzwnIx9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UMm5b3Gt; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-368633ca4ffso646138f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724153529; x=1724758329; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=klUHlM+lvRCjI1JDvDMDWuADlMNeKPhZGgQeek32rrE=;
+        b=UMm5b3GtzWBdbWX3ENHeZBkoty6dSe5FioOJeMfFT+wT5f/Jn8Qo1waQxAnhIy3OgB
+         /j8fx8brz7KNrxxZ8e/Ku+biuPNdk4ZaW2qkGUBVdv7E3L2MzDtNX6cLoNdv3G0WaYO8
+         mg4ZbhTw9JXeAtOq7jvwl4OONRCHgl89RZWDyeBpt7ALc4TOTOQIH6H6fxN7JTHEU1le
+         aHKMC/r7lz5LopSOaFC7IOpaJdpT6cn8mLZITVE8GALgJkhWP3bvNJUqPATiSjOAULQY
+         Djje7d0SQ28ObV6tim4B6IeqAdywjmU6KwVclh6zzlvOClCL6RzyyCp1d+oodSSdveXk
+         1NlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724153529; x=1724758329;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=klUHlM+lvRCjI1JDvDMDWuADlMNeKPhZGgQeek32rrE=;
+        b=HX/7672wlucXsF4ydUZYq5tscSv329GEZ5tvMKrIWMIlgzX06RLgpwRxhwuDnfgAKl
+         bjRL1NzUC0cyaVu4KlGSWUdrUkPvYW/WFUF1AT4r6A0yKVAAA3GChms+oShnKAu9MG4G
+         QhoMl0QQe/dvA+gf1pXbjYHtElTH+MMPuqsfcqxdAVJUaUxcmu9lNHmxvJvy2yATudYN
+         9zTm9c5WSLSt6S1f6gb0e1DReyzV44rXfRgqgQxvTR3QY4zgX7VTtnxYO3zos32m60eb
+         kgWAiVt1RMWEBPTjOpP2yiT0DEg9pXTtXGyaOJmiQ2UA8fb5LcVS1XsPlnADqVTJpx0J
+         BbrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfDZTQ8jXnFrdtBbQ9YSqgRZ6PjEIcWl8zla9IG3BBar/aH09OW1HFe1Qo45NfYGxsmsJGGAi6Ui8qWLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI93pHC6nm5xNqCJpKQtNf7hUeesC0wQuWEOy7TS2qU26mBCys
+	hNaR1i6IqoSDKndjNY+ATyLywDii/zkTQ8JUWXAeqjjDQszPmf1Vz8kZWdetxDZef6eWD++7X8k
+	h
+X-Google-Smtp-Source: AGHT+IFe6UqPkZ/6faH/rOIEKAsRbPKV+z7PDLxqzU4epWauYJ+IjaWsJm8efnmozk5MbJ6Th4zkkA==
+X-Received: by 2002:a5d:5f8b:0:b0:368:4c5:12ec with SMTP id ffacd0b85a97d-3719468bb8emr5637683f8f.8.1724153528257;
+        Tue, 20 Aug 2024 04:32:08 -0700 (PDT)
+Received: from [10.202.0.23] ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0319a74sm76412785ad.92.2024.08.20.04.32.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 04:32:07 -0700 (PDT)
+Message-ID: <e6f16317-6d11-4f14-ba88-6c7b33276285@suse.com>
+Date: Tue, 20 Aug 2024 19:32:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724153371; l=2220; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=c0emP5AnuWUNCjldEyQ/AyyFq9iE703od3heeSMBWjU=; b=wSh1XI/C90bVl5Hk3irgOmsQixgqOezR0tDiNdlkWt+qUyUhBlXHH4EyS5TIk58fRhHcu4Jet 3r9K+HdeYYaDUS8H2fPWzAOEm71XpnQAoMSI5mfoYfMF/2OIwyCqrje
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] ocfs2: Fix uaf in ocfs2_set_buffer_uptodate
+Content-Language: en-US
+To: Lizhi Xu <lizhi.xu@windriver.com>, joseph.qi@linux.alibaba.com
+Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev,
+ syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <980b3f4d-f265-4eb4-96a3-8f1a75588193@suse.com>
+ <20240820094512.2228159-1-lizhi.xu@windriver.com>
+ <20240820094512.2228159-2-lizhi.xu@windriver.com>
+From: Heming Zhao <heming.zhao@suse.com>
+In-Reply-To: <20240820094512.2228159-2-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-VMAP stack added an emergency stack on powerpc/32 for when there is
-a stack overflow, but failed to add stack validation for that
-emergency stack. That validation is required for show stack.
+On 8/20/24 17:45, Lizhi Xu wrote:
+> In the for-loop after the 'read_failure' label, the condition
+> '(bh == NULL) && flags includes OCFS2_BH_READAHEAD' is missing.
+> When this contidion is true, this for-loop will call ocfs2_set_buffer
+> _uptodate(ci, bh), which then triggers a NULL pointer access error.
+> 
+> Changes from V2:
+> * Make the code more concise
+> 
+> Reported-and-suggested-by: Heming Zhao <heming.zhao@suse.com>
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> Reviewed-by: Heming Zhao <heming.zhao@suse.com>
 
-Implement it.
+I didn't give you my "Reviewed-by" tag for this patch, and you
+can add my tag only after I send it to you.
+(take easy, you can get my "Reviewed-by" tag now.)
+Please remember this rule for next time.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/include/asm/thread_info.h |  4 ++++
- arch/powerpc/kernel/process.c          | 20 ++++++++++++++++++--
- 2 files changed, 22 insertions(+), 2 deletions(-)
+Another issue with this mail is that the change log should be
+placed before the file list, not in the commit message section.
 
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 15c5691dd218..d2f356e57387 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -226,6 +226,10 @@ static inline int arch_within_stack_frames(const void * const stack,
- 	return BAD_STACK;
- }
- 
-+#ifdef CONFIG_VMAP_STACK
-+extern void *emergency_ctx[];
-+#endif
-+
- #endif	/* !__ASSEMBLY__ */
- 
- #endif /* __KERNEL__ */
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 3b506d4c55f3..b27e2f69930c 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -2177,10 +2177,10 @@ static inline int valid_irq_stack(unsigned long sp, struct task_struct *p,
- 	return 0;
- }
- 
-+#ifdef CONFIG_PPC64
- static inline int valid_emergency_stack(unsigned long sp, struct task_struct *p,
- 					unsigned long nbytes)
- {
--#ifdef CONFIG_PPC64
- 	unsigned long stack_page;
- 	unsigned long cpu = task_cpu(p);
- 
-@@ -2208,10 +2208,26 @@ static inline int valid_emergency_stack(unsigned long sp, struct task_struct *p,
- 	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
- 		return 1;
- # endif
--#endif
- 
- 	return 0;
- }
-+#else
-+static inline int valid_emergency_stack(unsigned long sp, struct task_struct *p,
-+					unsigned long nbytes)
-+{
-+	unsigned long stack_page;
-+	unsigned long cpu = task_cpu(p);
-+
-+	if (!IS_ENABLED(CONFIG_VMAP_STACK))
-+		return 0;
-+
-+	stack_page = (unsigned long)emergency_ctx[cpu] - THREAD_SIZE;
-+	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
-+		return 1;
-+
-+	return 0;
-+}
-+#endif
- 
- /*
-  * validate the stack frame of a particular minimum size, used for when we are
--- 
-2.44.0
+ref: Documentation/process/submitting-patches.rst
+
+Thanks,
+Heming
+
+> ---
+>   fs/ocfs2/buffer_head_io.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+> index e62c7e1de4eb..8f714406528d 100644
+> --- a/fs/ocfs2/buffer_head_io.c
+> +++ b/fs/ocfs2/buffer_head_io.c
+> @@ -388,7 +388,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+>   		/* Always set the buffer in the cache, even if it was
+>   		 * a forced read, or read-ahead which hasn't yet
+>   		 * completed. */
+> -		ocfs2_set_buffer_uptodate(ci, bh);
+> +		if (bh)
+> +			ocfs2_set_buffer_uptodate(ci, bh);
+>   	}
+>   	ocfs2_metadata_cache_io_unlock(ci);
+>   
 
 
