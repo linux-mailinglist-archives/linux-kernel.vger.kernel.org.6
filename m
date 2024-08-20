@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-294357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE68958C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D47C958C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84191F245B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6C92851CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8C81BDA80;
-	Tue, 20 Aug 2024 16:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CE11C0DFE;
+	Tue, 20 Aug 2024 16:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DS30kPZC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iXg327zj"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBD818F2C1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C2F1B9B41;
 	Tue, 20 Aug 2024 16:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724172257; cv=none; b=aMrTO0Si8M5fl/dAUuYX+SBN70wWKD3po2ZjAjpUiX+H2+KNQyj3vo+ZC5heZeiRmZGsZcW7VoBBaBocARY5G003zdkcl0ogkH9I6FkAvQWhei/piHTTec/jPzANAlNYYkdriMS1HV1U43TEgBUhoM6nLc1nvayMNTh68GF8zts=
+	t=1724172258; cv=none; b=bMgZViuaXf+zohz8aDJbAJ3Zj8vZxSr2uzmdr5NIDPw1zA+vc7wRgGxXRHI9M65RTJ+ojaSTZMrnb5UQQwwWQB1j+F1HS3LwFfsHjiAjN4IbRL0x+AWWI66WnvknJJEkFhUNgcwI1V5oj5HXe8GFyOIXYK6YuJCTAp5oN1ezDts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724172257; c=relaxed/simple;
-	bh=Qjj+9izp25TvBwBsTDLF/yJMu6CH193oiwUSa0qDnBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kBZGT8BRf+Y6wpBkkPXigM9kVxfC9MFDYlMYrxKkajydpCvDKuK9vxI58Rv6LE1wWJkIUcwYm3BU0c+lNGJxyKwe3AibeYzps3HtiaaPaDPBl1QoiFLaEevf8Vv6hig8Z7jy5u7iXlNHD21H4/rJpOXOL+C6XnHV06Lvvotze/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DS30kPZC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uNp8JfQZ/CsGVg0YHtSg5nn6B5Br8vXTZ9T6ZhVYxEw=; b=DS30kPZC3xo53vrpQGvXLsHWnw
-	JHMLtMLZDlSaA43KSh3pf4DF/Ey80GLTNE6q7ELV2MarWQMFtAvNZFJ9/8exNeocFPs6vNhnLoFfJ
-	kv1uNTi2RwR7sp3cl49p4OXuEeg/N3QoVWeJnlf0obVPIzbD6e6lae1/mkd6GNaay8Cg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgRxj-005FQU-OC; Tue, 20 Aug 2024 18:44:03 +0200
-Date: Tue, 20 Aug 2024 18:44:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v2 2/3] ethtool: Add support for specifying
- information source in cable test results
-Message-ID: <426c06ae-90f7-4a58-84e1-aa9389578c60@lunn.ch>
-References: <20240820101256.1506460-1-o.rempel@pengutronix.de>
- <20240820101256.1506460-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1724172258; c=relaxed/simple;
+	bh=O1p9LvQGbtFvwMLibvEBtjINbWw270uIIfhcM7eBuCY=;
+	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jnfn0jtM+rpcdJKfdf767TuY6gd1aoOcg9oNyeTGzYGRt5cjBic4sNCCKizu6S4F9steX+EY0ValBFfp+L0tdOnLCitIrA7yj9h+x1/LQn4jHekOw2NeLc6MuR/HF/Wfw/NAHdRirX8UDnfw0BBX8xKW1Q21iDtXVY5gmYpW4Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iXg327zj; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C64D36000B;
+	Tue, 20 Aug 2024 16:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724172248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9OoHq23PmUaSOSpacyNRfCHF/KEU3ZyZZHMK0w8D/0=;
+	b=iXg327zjs7JVMT4dPtalpS42ZT+hjXK4STku+FH207yNyRKAabT6QDoKWPawgoSbcu2JLz
+	1bI71B9sWpan0OPM2um4cLl8OOViR795sg/GhlKlDTXNUcoFrukEx/vjMHOnXebdXsdHt8
+	rZ4SLNf4PkQztScEaRyqrLUv5tT0LNUtEsQWg07BrnPY70/F8Xt79WyHif2NuMsesJ6vgr
+	Cb1OESY+36QG0yx/P9U7fdxqL2qOUCP2L9IPx1pV/539oORezdeIRu0W2cl/Iov/AimZFl
+	w/PNxz34jJB1mSG8vvhYfPV8JfBmjCxxy3hn2toDE3ir/tPiHTsdDLVM0sUA+Q==
+Date: Tue, 20 Aug 2024 18:44:06 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/3] ASoC: dapm-graph: add component on/off and route
+ names to graph
+Message-ID: <20240820184406.6ff2654e@booty>
+In-Reply-To: <20240607-dapm-graph-v1-0-bb302970d055@bootlin.com>
+References: <20240607-dapm-graph-v1-0-bb302970d055@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820101256.1506460-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Tue, Aug 20, 2024 at 12:12:55PM +0200, Oleksij Rempel wrote:
-> Enhance the ethtool cable test interface by introducing the ability to
-> specify the source of the diagnostic information for cable test results.
-> This is particularly useful for PHYs that offer multiple diagnostic
-> methods, such as Time Domain Reflectometry (TDR) and Active Link Cable
-> Diagnostic (ALCD).
+Hi Mark, All,
+
+On Fri, 07 Jun 2024 09:41:50 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+
+> This small series adds some improvements to dapm-graph in order to produce
+> a more correct and informative graph.
 > 
-> Key changes:
-> - Added `ethnl_cable_test_result_with_src` and
->   `ethnl_cable_test_fault_length_with_src` functions to allow specifying
->   the information source when reporting cable test results.
-> - Updated existing `ethnl_cable_test_result` and
->   `ethnl_cable_test_fault_length` functions to use TDR as the default
->   source, ensuring backward compatibility.
-> - Modified the UAPI to support these new attributes, enabling drivers to
->   provide more detailed diagnostic information.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Gentle ping about this series.
 
-    Andrew
+It applies and works fine on current master.
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
