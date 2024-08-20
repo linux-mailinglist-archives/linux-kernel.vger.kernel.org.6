@@ -1,243 +1,188 @@
-Return-Path: <linux-kernel+bounces-293176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA99B957BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07BF957BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B16DB22E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05EBB1F22C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78442A99;
-	Tue, 20 Aug 2024 02:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7579A4502F;
+	Tue, 20 Aug 2024 02:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esl8aNOw"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KMhOoO/1"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2052.outbound.protection.outlook.com [40.107.117.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21914175A6;
-	Tue, 20 Aug 2024 02:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724122403; cv=none; b=SKjMyCiI3taSYTXVvMTT7QVDiMDLa6VsA9rw+o1oSoD+hc3mr5H8Ac98RjzFvkfM8E47s6N1hUj0bSIpnEWG1EylhDRFMVx5qiq37VZTcNaHRIzhIvkhlzojlnFbvGGP51EzLGpRXy6oh3WoiOcgMWKNZvQjZuVlHEpXkadS3sk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724122403; c=relaxed/simple;
-	bh=nG26NZ3S/KuNQ2SHcuxORshAwbQgT5QZdIv23N6ZCqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEXrynw7GopujN4xcwekAwBit7C9AKZBaKFGJnJjHlExOcQMRuvQVqL1QttfDk5hrjh+fXgZ+JQJzK/SzFdN5YAHEROXHLbns/vvLMHiy5qUQS54RWfWVsV1lWKYYqsvN1uZ/CEcskkV8KNk9c+zLAWwjviY6KHyaZmLRWt0O/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=esl8aNOw; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d3cd4fa49so7023375ab.1;
-        Mon, 19 Aug 2024 19:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724122401; x=1724727201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fT6vSqFxRxEeg2TyE8vAmieBZnT3qlYo8e/6USKHH/E=;
-        b=esl8aNOwrM9/pGSUK3mT/ImiWMOiKHes5qBFF72189Jvea5obBuc5y9FwLKywxtsm1
-         k86UNLuHMEqAOXQ6vlL4FSqiEnCDpgtfyMOphrIA67pXKkscnwmmOUyQJIVvbVn7OnqW
-         p039d4Iw3qqUHDIimRmTayuOjyoVBzrpq/k48epoZTzT5DBFm8vovQlaRMFlNyvT+RtJ
-         LQVEtSkO2ZHjNX7igCYI7pnH+QAIC/ZI58I1k3AKvted9RlirRjpsPwRJMDyy12z81g+
-         JDV793Gm4Jzj3HmGMzR/HpqAHXRNrsaz2MmZ9ShP3i4Nhv/z4536R5AQWY/VnBjt/cUG
-         8c8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724122401; x=1724727201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fT6vSqFxRxEeg2TyE8vAmieBZnT3qlYo8e/6USKHH/E=;
-        b=uWUtjTkGf69loTx5zBn43IGJ+Q/dZogyJoQjFDUL5C+Z8HaxJj2tE7vGQuPuATtt+C
-         MUPU86L1J/eLegRy9TfiIiA7ZCScEC3RAviyD6G7/1uqAz6yPsxgalF/7B/mG8vEwKUa
-         loIRcdSy3IXZ7J7wl5ZY/sDDHsdJzOzk40MpvQYTxix0xIcf8aZ7KzORIey4NfbKfdYz
-         T0Xphj3jJfv+0OfgxSwRceR4bxy39a01u4Z8PCJ7kjcnEaqAFYDpHzyZeSdQXBJSxxWf
-         59ejV+VyefzrK+9kKc87B4YGrM2pxYGNt2mb0eseBqZpCOEhVX0V4+7cuCakfZA7kPeH
-         MNpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEi1OzzzSGdGeAVQc0NsUfXjVNShlftsMeq+jVtCccuiXAzToFJDrB4+YUrEKu5s1fxawCkNCKbc5jCjE=@vger.kernel.org, AJvYcCWMFwHpiDvQeQmL261cifx/FzHbl+HHpOigokys+MZ14BBIrdUGgTSMeyK79+52uApIsWCveA3wVJYPqpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDsNsyIMd2wiCZmCql+ch8aMmrcZtJxC+Q9jSjb5Lym03wGam6
-	XaV1OL1/xGLcfYIQUaFRD1ztEoln0984qZsEYqq/NmkSQDDrRZUFwjctqu89azL7waz7K8iYztx
-	lhA7jfV8PF9Y9mOm2c1FbUCGLGlw=
-X-Google-Smtp-Source: AGHT+IGl4gRPN5RAOxKXugMK43Dh6VHASCDS5Twf9YsdPNqPWrRzvf3PhVgc7lqQMpYhRDm7MWOvnuVY3lUtLNY/Lo4=
-X-Received: by 2002:a05:6e02:20cb:b0:39d:4d2d:d0de with SMTP id
- e9e14a558f8ab-39d56dd773emr21812545ab.3.1724122401038; Mon, 19 Aug 2024
- 19:53:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA52E57D;
+	Tue, 20 Aug 2024 02:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724122776; cv=fail; b=ts1F2wpT4MCpg6La+L6T1fjiYOy8CUD+x9jQilmhj/6cRVhbfSrGC7M+KhaeJE12+4iA4MveS8OZn6PmFwh0idaauYRKuoqmD+wbi3NUyMI14erWkiXGHuvyuyLnb2kpYdX5msHlGfskS017HuIk+4PjP1H8n54BQKf/xBMPaf8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724122776; c=relaxed/simple;
+	bh=IBOoBaVNx9AKYPKA86p9a+Wl++9+ND1ueObtTsMBoUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RsnAehOx4mYzjOAM6QOXr5ajcpXRnS3Js7rLsvWy2+Fpc3ZZS4UlIUj8uj2RbhjuWMfbsImNPOQfoKgR3QktccAppPXFs1AM0IE8ucn2aLgOPRr6GbpWsqdtw0GGTBaAeOfc7zZuSnmpA/NQyvwmWK5Bl+MbMWqY3Wa9zk0LuBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KMhOoO/1; arc=fail smtp.client-ip=40.107.117.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ksoNfIGQ+iORrBWGgOd5GjA42apEJxhuQnTSBob2PmULngH5X6gqvvQsv8obJNAchj+z/HbSjO+Fd4U92D/AT7XI9ILuIVzbCXO7QsPruBDZN/804ouxfgECKuByUB8FfOY0jcdC5kmTaL14FOpErfGNOvwdegTrlTFN3Kp45aLyypjga4Q5Ryp0gKC6sqxhLBFewkzXk/aSi0M3RCM4jHx+y2II1dzhoqNRS8R3JliXsfkTa90F6DHvddlBf0s7mrmWlG9ouXeEuDFkCj99rFRheCIxkTvzT2GibFUaaE0AUiKT1bRBuljcdL997zX2rkKbmxVJEALTVMsrIeVBcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7IhBHtjhViEJCXGGxvgJMrhPHotzBLw8UYtdsZzBkN4=;
+ b=RESGObqVcI3n+gmsXorKRHPYQ9TBQzfZXBmSLHpWnprFwXdE8roKoGPN8MlhqId0jFdh4SdnqAj2P/0w9RQ5bYlpTtz/jg2XPEr951lPWGs+Xze0jjknGix1DpJlnqZjfu98wnKxRgm+6ZdvVVMJnoqNwqVN2iNs9WQ+tnCxLioe6H/yFSgWf6awV7g8aXmUgkEBadVCpWPVonqkDsU3Axg8bJC6x1X3ILsAolOogtHjJbuylaegLZggO/FGN3qiy7R+RLmGWTmXcRemvi4aACTXkhspPz+fDCnZM+aVHy4872p1vg+XK8uOXwrn+JQ4xqtaRTuYGcR2fsWll1SviQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7IhBHtjhViEJCXGGxvgJMrhPHotzBLw8UYtdsZzBkN4=;
+ b=KMhOoO/1eYjq7bsZcWZIGDhiOUBTs0NpTkGa9HVwJQRgSgc8uA8OdX9ZOWOOWi2Gt+Pr3fX4d2/7Wb16Kh06kj9a9sJxbgGJtWoEJxb6D+5RacJN6zZ5O98oUuQDmCv42syacyOb0osUaKMSCaYilnDanmvIpei99ey6zWqcJ1rlvZ0IBKaHG++qWz9YxBj5RfSE0G9jYtYqbLhFnAQ2NdQIGnL3+k4XPT6tCEyGEUE9GR+ik00KNxnCEy8lIJ6w13gFqLs66YvShnSafoNaZtCEB8Y0zra2pA0RYf4If/pRswEHhOSbaw4D+UG8eNtG1hroRlsOFC9u9Jfr4/lQMg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
+ by SEYPR06MB5858.apcprd06.prod.outlook.com (2603:1096:101:c1::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 02:59:29 +0000
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a%7]) with mapi id 15.20.7849.021; Tue, 20 Aug 2024
+ 02:59:29 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: abelvesa@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	sboyd@kernel.org
+Cc: peng.fan@nxp.com,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	shengjiu.wang@nxp.com,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH v1] clk:clk-imx8-acm:fix wrong pointer check in clk_imx_acm_attach_pm_domains()
+Date: Tue, 20 Aug 2024 10:59:02 +0800
+Message-Id: <20240820025902.2355565-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0188.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b0::20) To TYZPR06MB5709.apcprd06.prod.outlook.com
+ (2603:1096:400:283::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1723804959-31921-1-git-send-email-shengjiu.wang@nxp.com>
- <1723804959-31921-5-git-send-email-shengjiu.wang@nxp.com> <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
-In-Reply-To: <6d83cd58-5f02-414b-b627-a0022e071052@linux.intel.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 20 Aug 2024 10:53:10 +0800
-Message-ID: <CAA+D8ANDAxS42=9zOLQY_h_ihvJCmaXzE+_iZyxbSuikqt1CBw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/6] ASoC: fsl_asrc_m2m: Add memory to memory function
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|SEYPR06MB5858:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36a6034f-1b03-4b96-66df-08dcc0c41b81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qomo7WYBbQJw1fSYGQFOrylWMeRMj3SQhf7oO83EM++sP23criWnwA4pGKjf?=
+ =?us-ascii?Q?PLpJESxnmRZfo3szFrkToFS2jQzDqQGkTavZobPow1NZiUPrK/D4UIjq4oEk?=
+ =?us-ascii?Q?ermNTk058nY6yx2hBf6H7hS4wF0AdX3DqJBT7mTuZJk1MADB2CmFAuzJlayA?=
+ =?us-ascii?Q?T5TXnZt0dE2l5hnWh/Lvr1OTJNTtglDLME/KmrXccFljmrfWswZ1YBGFPVYT?=
+ =?us-ascii?Q?t1YS7MJ301Z0NWkE1KCUB+tCuNWOjQHiAjRHhYMJg6mrfmLbcENunV4wtyVT?=
+ =?us-ascii?Q?KttoL4P8XJx3wzHY0sOUGncJhW9URcqPQU0CgFPrOrM/NznY6q1aWMatIS2M?=
+ =?us-ascii?Q?ZbygmZiicC6zkgn6xqMn+XNw+GI9zhM1BXbdl8mYwvTl/KerOXIjJ+tvMLZ1?=
+ =?us-ascii?Q?lwfq8WEMM78d/BYZ/XYLqISm9dcoltuZgEpm7FMLAQJor8MER9PyyLdvdoQy?=
+ =?us-ascii?Q?b5Ss0LCABn+TLR7z9+Bs54pTyZOoi3xCy9klWpF+CZdTZb4nGt/VrfkDb/wV?=
+ =?us-ascii?Q?0mXZGIBMxOOCaqF6pOmgAbTXFezf0MS/h5cEy/8woBfxroTmWGqY7PsTcFOW?=
+ =?us-ascii?Q?/x5HWm3RDOXFqAKC+bgGv0w+rZhRbaNK+hZfikYbdeJPcIPLqXdQ0CRyKCSl?=
+ =?us-ascii?Q?IpAlVTnLSYoOgJC3tjtUMlDwqfgtcENlCs5nQo6RP9rRngR2fYqsaChySqzw?=
+ =?us-ascii?Q?zDNry6K7N8xk9aH30/Z0TO9dM5YPCysiWZO+zPtvx5oNHGaw93DuZLKsQkyy?=
+ =?us-ascii?Q?JioDGHavdB7tKAZlCVLdAL5VDPplC52eS9J1GaO/DdK5YfGIpENeQOLlq/No?=
+ =?us-ascii?Q?kylTCn6UkxOqcxLbGuBIadAWoMpwsECyxSmSx4fP2Ptlc36+2GzbLosObXSu?=
+ =?us-ascii?Q?L30dSV+hF9V7KaeLgKqgwdyp3EacRUYltX78HfXS6rRxoGXSDrxauDbTAdW3?=
+ =?us-ascii?Q?7MNO7Zx+na6f15uySZmrjk1pitU0sP3AafKk/Bgge2DgwqecfCkPodveIN8s?=
+ =?us-ascii?Q?0bsZSOIu0g596i7Iw+4hWByf03kjIpf1iwHd/4dIyUNgsxEGDgQEfc5KYdZW?=
+ =?us-ascii?Q?lfsRlg0VMim+dqrhnRQczyfmbIIEhsxWN40olX8UfkuRu98l6IaHEF14/Dm0?=
+ =?us-ascii?Q?6qXJ9y+ieJHbBqeagxkv7s0rEMFxpT+yjsPEVDiVHjnGAFAxneeW4SHe4oS7?=
+ =?us-ascii?Q?DhvyYH83+O/8QHmGnKMrXxKgg6JV6ZY5XIh4Kd3bVxt10heUCL4EPh60ItDC?=
+ =?us-ascii?Q?795g4k88Lub4L2KyhNFHnf3K1xgff4hjQH8kip9s1J2MtEEmQR/nAtC9GuHg?=
+ =?us-ascii?Q?ukyMvmgiaMgKJ152VoiMaDbWXwSAaKBq6kaoW0S0pdl0lWgrASjy5KQ2LGAm?=
+ =?us-ascii?Q?xnG322aoBxtWpS8jAsf5rwL/1MJpheN1sZI5lB6r3rsL2Nqkiw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b64ZQM9tKEPlyr/F/iD5NmugMAGq7x3EQXHNCsfr975WsOMb7/Pdj5dXmQpV?=
+ =?us-ascii?Q?QXN1HuDCmVLDVvwjXv6HHJre53ZdGx5OMkAUsMpAOzbCG4Z4u6HFtDWhYoUu?=
+ =?us-ascii?Q?jzTNk+go/FJYWO7bz4bpLWjbi7xe/L0krHammQZRVN6wsKCHJ+skgQwJi8PN?=
+ =?us-ascii?Q?j3I/gznppr8S1g6wgHcMmUnAxhwuDFQZyRnbx0hqHrqvwj3vTpsLbbOkMaIe?=
+ =?us-ascii?Q?ocOVYFkVOHlc4kB3KpvBQ74RtBJ1rgpyWOjJHb0T7sISW4BPO6KxTstXiQA1?=
+ =?us-ascii?Q?1ujS1PDV8RKYmyx0FJfHw3PYPYXJG9coI2OG4T7cKC7EQB85tkPl5wizyD+4?=
+ =?us-ascii?Q?WWudjoPB74hOklLdqe5KWMwS6rUSlfOZEAczVgkF8WRyTWQZQgc+sRikfOF1?=
+ =?us-ascii?Q?q7ijuSmqgGGCU2SMROoZrTrIxTTkxHBWXR662NO+ruWW5Fqii/+3677JPpfT?=
+ =?us-ascii?Q?0Ez476Jm3SGmhGiiGKPG9PUMf76TkVquxZLc7y4CqgU9NpRAaMnWzV2SyHFR?=
+ =?us-ascii?Q?LwUpkEpa/KAwbNjtLcn+z/5cp04hUFDBC8BvO1r+fdsoq8I5tf78xnHg1Wtg?=
+ =?us-ascii?Q?2B92gUpOypWYlAhfuHlrqBhcb07Pg0qFuiQ8h4XfW9s8bqYv0P+ynv2AzF+a?=
+ =?us-ascii?Q?xGyDfQc9E1ccV7/beu+qtsDkDK2/UwxPaqrD/T5YoICtx0bXOoqINeI7b7vq?=
+ =?us-ascii?Q?MdIWkIb44furOs00Kn45e9hgCKD9+Chd0o9oxLBxUBD9DrWmCSdyE6q1r/la?=
+ =?us-ascii?Q?GwsAAm4bUSRGZi/Bpo2DgEEvaB1VxOawPlr0FYoD9l6mE5oNAVwuNQuWOS57?=
+ =?us-ascii?Q?ONVTYB+jSXN/7P+Wssy8Q1tGi1g/sm+8z3RQYidSKtadoNzK0HiblxE7n4ky?=
+ =?us-ascii?Q?hdCnMZH9d3tOmoxHYwqnNYwVdsomNIHhaauOBGRcu3XLSPsPhLMS/7Jgs1Mz?=
+ =?us-ascii?Q?ItnxnfhuzSnxC7Y9tuGpysqKgkrwxvBPuJxMbHTNT/kyNDANL02ZmWsj9spz?=
+ =?us-ascii?Q?b1N9hM9WwqrMaBugLFJdsOZBGvDMhlr3tmni91FbpvG9Kf7xRvXVqDiJuTwA?=
+ =?us-ascii?Q?r1Pq4LuPdnMn0cDI/PZa5tNqWsuB5yswKGvUnuoFF0OZYJQCo6OOFs46VRn2?=
+ =?us-ascii?Q?2Sozv3s94sAI6m5cK36E9czdNnTr+ytdld+SLm8KiJSG7gSN1OgwXAM7kiDP?=
+ =?us-ascii?Q?P1g6RPdF9HjbodxNz7Cy5rDlwK4CfX97vuGAgeHR4Pa40vpCxeEvQpDCj4Wn?=
+ =?us-ascii?Q?k2ODq9gzDkuUK+jcrSYYC7WW9L05qRiQi6dncSqHB+OiJuFoJC5TPIOXsB6t?=
+ =?us-ascii?Q?qvvScsUfgz3EeFnkj1Y7ex+Nn/M8oyqnYHE9uPPAWd4WhdFvKqNe0j5UTYQf?=
+ =?us-ascii?Q?SgxZiwWcmn8xe45GxSPIlQcKdbnJ/2A8XfpdsEP2ZPbxqFAgQKY1fDh2wDFB?=
+ =?us-ascii?Q?rFOePyOwEXlZnloSjR1FLCZAKBKE7NLSWwtSQy4terEiPIVASCL/hMWz1yNj?=
+ =?us-ascii?Q?xjtCcB3l076YcQbbAgpJ+/+TIxyLPYAO1xVNKPiBjdhw68qZNKGtU91VhdxE?=
+ =?us-ascii?Q?MJVj7tz5bLnvaeE6EjE+9ge/oueq4zoFfkAI+rOe?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36a6034f-1b03-4b96-66df-08dcc0c41b81
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 02:59:28.9321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qYkAQAvY0IVkXlX7ZpN/WJnwQ7eieX7fv/A2GPlKPBK7CWcBM0Jqo1zF9lfZ4cxcf92Sb1MkoJVGO59sgDAHcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5858
 
-On Mon, Aug 19, 2024 at 3:42=E2=80=AFPM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
->
-> On 8/16/24 12:42, Shengjiu Wang wrote:
-> > Implement the ASRC memory to memory function using
-> > the compress framework, user can use this function with
-> > compress ioctl interface.
-> >
-> > Define below private metadata key value for output
-> > format, output rate and ratio modifier configuration.
-> > ASRC_OUTPUT_FORMAT 0x80000001
-> > ASRC_OUTPUT_RATE   0x80000002
-> > ASRC_RATIO_MOD     0x80000003
->
-> Can the output format/rate change at run-time?
+device_link_add() returns NULL pointer not PTR_ERR() when it fails,so
+replace the IS_ERR() check with NULL pointer check.
 
-Seldom I think.
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+---
+ drivers/clk/imx/clk-imx8-acm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> If no, then these parameters should be moved somewhere else - e.g.
-> hw_params or something.
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index 1bdb480cc96c..ed8cad8d6a57 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -289,7 +289,7 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+ 							 DL_FLAG_STATELESS |
+ 							 DL_FLAG_PM_RUNTIME |
+ 							 DL_FLAG_RPM_ACTIVE);
+-		if (IS_ERR(dev_pm->pd_dev_link[i])) {
++		if (!dev_pm->pd_dev_link[i]) {
+ 			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+ 			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
+ 			goto detach_pm;
+-- 
+2.34.1
 
-This means I will do some changes in compress_params.h, add
-output format and output rate definition, follow Jaroslav's example
-right?
-
-
->
-> I am still not very clear on the expanding the SET_METADATA ioctl to
-> deal with the ratio changes. This isn't linked to the control layer as
-> suggested before, and there's no precedent of calling it multiple times
-> during streaming.
-
-Which control layer? if you means the snd_kcontrol_new?  it is bound
-with sound card,  but in my case,  I need to the control bind with
-the snd_compr_stream to support multi streams/instances.
-
->
-> I also wonder how it was tested since tinycompress does not support this?
-
-I wrote a unit test to test these ASRC M2M functions.
-
->
->
-> > +static int fsl_asrc_m2m_fill_codec_caps(struct fsl_asrc *asrc,
-> > +                                     struct snd_compr_codec_caps *code=
-c)
-> > +{
-> > +     struct fsl_asrc_m2m_cap cap;
-> > +     __u32 rates[MAX_NUM_BITRATES];
-> > +     snd_pcm_format_t k;
-> > +     int i =3D 0, j =3D 0;
-> > +     int ret;
-> > +
-> > +     ret =3D asrc->m2m_get_cap(&cap);
-> > +     if (ret)
-> > +             return -EINVAL;
-> > +
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_5512)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_55=
-12);
->
-> this doesn't sound compatible with the patch2 definitions?
->
-> cap->rate_in =3D SNDRV_PCM_RATE_8000_768000;
-
-This ASRC M2M driver is designed for two kinds of hw ASRC modules.
-
-one cap is : cap->rate_in =3D SNDRV_PCM_RATE_8000_192000 | SNDRV_PCM_RATE_5=
-512;
-another is : cap->rate_in =3D SNDRV_PCM_RATE_8000_768000;
-they are in patch2 and patch3
-
-
->
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_8000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_80=
-00);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_11025)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_11=
-025);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_16000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_16=
-000);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_22050)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_22=
-050);
->
-> missing 24 kHz
-
-There is no SNDRV_PCM_RATE_24000 in ALSA.
-
->
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_32000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_32=
-000);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_44100)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_44=
-100);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_48000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_48=
-000);
->
-> missing 64kHz
-
-Yes, will add it.
-
-Best regards
-Shengjiu Wang
-
->
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_88200)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_88=
-200);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_96000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_96=
-000);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_176400)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_17=
-6400);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_192000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_19=
-2000);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_352800)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_35=
-2800);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_384000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_38=
-4000);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_705600)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_70=
-5600);
-> > +     if (cap.rate_in & SNDRV_PCM_RATE_768000)
-> > +             rates[i++] =3D snd_pcm_rate_bit_to_rate(SNDRV_PCM_RATE_76=
-8000);
-> > +
-> > +     pcm_for_each_format(k) {
-> > +             if (pcm_format_to_bits(k) & cap.fmt_in) {
-> > +                     codec->descriptor[j].max_ch =3D cap.chan_max;
-> > +                     memcpy(codec->descriptor[j].sample_rates, rates, =
-i * sizeof(__u32));
-> > +                     codec->descriptor[j].num_sample_rates =3D i;
-> > +                     codec->descriptor[j].formats =3D k;
-> > +                     j++;
-> > +             }
-> > +     }
-> > +
-> > +     codec->codec =3D SND_AUDIOCODEC_PCM;
-> > +     codec->num_descriptors =3D j;
-> > +     return 0;
->
->
 
