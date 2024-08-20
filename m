@@ -1,152 +1,101 @@
-Return-Path: <linux-kernel+bounces-294451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F2D958DCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045DA958DD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196601F2358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4361F22F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA771A7048;
-	Tue, 20 Aug 2024 18:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CAF1C3797;
+	Tue, 20 Aug 2024 18:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8k2MJlh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O1xMtfsB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07201BDA8C;
-	Tue, 20 Aug 2024 18:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FD12F5E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 18:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724177395; cv=none; b=bnAWjmZqBJPKvCYmG2VpdKlRVa+xgZou8IfjsSXPVDvcfJ5OVggSbEIrk1KL07JjSPgFfqsJYjsjgLWpENBpA0OHU5rK8ACYn1tdqir4/SG29hKOhjGP2IenuyOaKW8NzvdEiFMT9Mq9cVq7pIWV6sBL14mEmbtUhqVUtt80KRk=
+	t=1724177487; cv=none; b=AnMr0DeFu1D/EKyapML30Epdrzg/0wtNPBSVvDg3J17hdJBQOXAqiSd1fndfDtUZEJzk4fXQGKHBpDxwit/uhhUhaiEwTZM9S8rFpRHfSG+b35DCWjO6ea1iqmuZRwLhnzKPhjbfGaO9NRQv3fTgDiapububZfGzmFmDEOmUrCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724177395; c=relaxed/simple;
-	bh=dsZSsTHCSmyV6T/HkBCcmiJ+V5vOuti6g8kY5++amGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kWV0takNxTnMzVIG1qJ3ZfQubQ/8XSm432GdVQvEE5b0rfjG1rK+uZF6E+jlqp/dHOvDBdlwWx7uyxIQ/l7VRsTDmKvu/Q1qYKAajPI1MgGYHcu9dUf8VEnMGJmxEhFHr5cr3A/zkhh99v6JB7pDQB+dq6i3FkL0yEJ2EeXLNVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8k2MJlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28E8C4AF0E;
-	Tue, 20 Aug 2024 18:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724177395;
-	bh=dsZSsTHCSmyV6T/HkBCcmiJ+V5vOuti6g8kY5++amGs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=N8k2MJlhET5rv+1jo4tv5ZBudM9YrFu2mVRe1/LgB+1ZvMGY7Tm1DKNSLR86DGiJI
-	 OA9J8eSiF4/nNO9B0H6aHsFnB+Ce/UFCW8euHssufXCYACgvv5tBHVT8W/t32DRb5s
-	 XD2yMMoXTj4Rgyyq1hd8WsnbkXQBSSsQm9TnPTwK5V4Phc31W/07qpC0bC2AkSKTFF
-	 dRnboBz7W2gG4JjxazgocTmpEkRR1/aQvmKk2/FI7eie4JNNPNRS4CH8t+aN6cj03d
-	 +Mkmh1IPiApyuZ/YRWny2G21MAfw21XaMb9ebvk299nyPknhYRYHid689O+LehIfWW
-	 IJRU//hL1vIPA==
-Date: Tue, 20 Aug 2024 13:09:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>, Petr Valenta <petr@jevklidu.cz>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	przemyslaw.kitszel@intel.com, intel-wired-lan@lists.osuosl.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: ACPI IRQ storm with 6.10
-Message-ID: <20240820180952.GA217979@bhelgaas>
+	s=arc-20240116; t=1724177487; c=relaxed/simple;
+	bh=XneMk5AB/Ld/0ua5fEq1d5ZamL6PKW09l/gnJDxRGI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XcMkwYAk8XFnrFjzYm0MPRMJqk5UMBnXePY0u6NYZlVvXibe+Nw7yXo675QdfahZcD7dv7z8p7vPazc6xW+lmWMY4x5u0UIbNEfPr4YCMpZGNSYiojlBkdM0CHHJSOyvGKabOjrbdq5h8RGhBkAQHWaU35EqtGIl6zvzwx0C0Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O1xMtfsB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724177483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=31k+mAE770tGzqnLjWcSobz9pBP+AeP9eCIK52t8r5E=;
+	b=O1xMtfsBXPtBX0RCMPyt17+LcRz/mhTCQGm6mVLky4IK040XWl9tcxQQ68cO8cbLY8Bqwg
+	pnFDY0GClfZ3620ezCNsTNmRjgRVfEJoXBGo1oi8gVMkHgK/61rtXmARheudWzkLBf7bbi
+	+pRFl2B1bWQuYtNhOfIZ9XgwpIjvkZ0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-575-M1tRIWW5MJKJtlo0oKE-zw-1; Tue,
+ 20 Aug 2024 14:11:19 -0400
+X-MC-Unique: M1tRIWW5MJKJtlo0oKE-zw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F3781872552;
+	Tue, 20 Aug 2024 18:10:25 +0000 (UTC)
+Received: from [10.2.17.12] (unknown [10.2.17.12])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4BB131955BE1;
+	Tue, 20 Aug 2024 18:10:22 +0000 (UTC)
+Message-ID: <ed6c0892-459a-4af0-96fe-a22b6252b49a@redhat.com>
+Date: Tue, 20 Aug 2024 14:10:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <782b7159-076a-4064-8333-69c454972b29@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 0/3] Some optimizations about cpuset
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
+ sergeh@kernel.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240820030126.236997-1-chenridong@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240820030126.236997-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-[+to Petr, -cc Jesse, bouncing]
+On 8/19/24 23:01, Chen Ridong wrote:
+> The first patch changes from v1:
+> 	Rename PERR_PMT to PERR_ACCESS, and update comments.
+> 	Move 'xcpus_empty() check' up for local and remote partition.
+>
+> The follow patches have been reviewed by Longman.
+> cgroup/cpuset: remove fetch_xcpus
+> cgroup/cpuset: remove use_parent_ecpus of cpuset
+>
+> Chen Ridong (3):
+>    cgroup/cpuset: Correct invalid remote parition prs
+>    cgroup/cpuset: remove fetch_xcpus
+>    cgroup/cpuset: remove use_parent_ecpus of cpuset
+>
+>   kernel/cgroup/cpuset.c | 71 ++++++++++++++----------------------------
+>   1 file changed, 23 insertions(+), 48 deletions(-)
+>
+For the series,
 
-On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
-> On 19. 08. 24, 6:50, Jiri Slaby wrote:
-> > CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to b2c289415b2b)
-> 
-> Bjorn,
-> 
-> I am confused by these changes:
-> ==========================================
-> @@ -291,16 +288,13 @@ static int e1000_set_link_ksettings(struct net_device
-> *net
-> dev,
->          * duplex is forced.
->          */
->         if (cmd->base.eth_tp_mdix_ctrl) {
-> -               if (hw->phy.media_type != e1000_media_type_copper) {
-> -                       ret_val = -EOPNOTSUPP;
-> -                       goto out;
-> -               }
-> +               if (hw->phy.media_type != e1000_media_type_copper)
-> +                       return -EOPNOTSUPP;
-> 
->                 if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
->                     (cmd->base.autoneg != AUTONEG_ENABLE)) {
->                         e_err("forcing MDI/MDI-X state is not supported when
-> lin
-> k speed and/or duplex are forced\n");
-> -                       ret_val = -EINVAL;
-> -                       goto out;
-> +                       return -EINVAL;
->                 }
->         }
-> 
-> @@ -347,7 +341,6 @@ static int e1000_set_link_ksettings(struct net_device
-> *netde
-> v,
->         }
-> 
->  out:
-> -       pm_runtime_put_sync(netdev->dev.parent);
->         clear_bit(__E1000_RESETTING, &adapter->state);
->         return ret_val;
->  }
-> ==========================================
-> 
-> So no more clear_bit(__E1000_RESETTING in the above fail paths. Is that
-> intentional?
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-Not intentional.  Petr, do you have the ability to test the patch
-below?  I'm not sure it's the correct fix, but it reverts the pieces
-of b2c289415b2b that Jiri pointed out.
-
-diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/net/ethernet/intel/e1000e/ethtool.c
-index 9364bc2b4eb1..9db36ee71684 100644
---- a/drivers/net/ethernet/intel/e1000e/ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
-@@ -280,7 +280,8 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
- 	if (hw->phy.ops.check_reset_block &&
- 	    hw->phy.ops.check_reset_block(hw)) {
- 		e_err("Cannot change link characteristics when SoL/IDER is active.\n");
--		return -EINVAL;
-+		ret_val = -EINVAL;
-+		goto out;
- 	}
- 
- 	/* MDI setting is only allowed when autoneg enabled because
-@@ -288,13 +289,16 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
- 	 * duplex is forced.
- 	 */
- 	if (cmd->base.eth_tp_mdix_ctrl) {
--		if (hw->phy.media_type != e1000_media_type_copper)
--			return -EOPNOTSUPP;
-+		if (hw->phy.media_type != e1000_media_type_copper) {
-+			ret_val = -EOPNOTSUPP;
-+			goto out;
-+		}
- 
- 		if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
- 		    (cmd->base.autoneg != AUTONEG_ENABLE)) {
- 			e_err("forcing MDI/MDI-X state is not supported when link speed and/or duplex are forced\n");
--			return -EINVAL;
-+			ret_val = -EINVAL;
-+			goto out;
- 		}
- 	}
- 
 
