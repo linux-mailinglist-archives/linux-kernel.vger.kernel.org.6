@@ -1,168 +1,95 @@
-Return-Path: <linux-kernel+bounces-293829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C09958573
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:10:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442C9958576
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2650B284568
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:10:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F53B254EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2B18E031;
-	Tue, 20 Aug 2024 11:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NP8bQsKX"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305018E746;
+	Tue, 20 Aug 2024 11:10:26 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD5918DF75
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383118D63E;
+	Tue, 20 Aug 2024 11:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152223; cv=none; b=mUb9Ia3vbHIqEj+MHZjbHDc95sEG5YzoM6se/ITVacSwy0AOQBhyPb6qPdt1AyNABUoXyaD09URztK/dtm3Z9WmqgOtdTuIwWF66zhUoTuA1dqE7zHxHOtKg1BHjay6Y0O1IA2fs4pHYwxr7xi1wywmbJZIu9tN87+SB0NQOnP8=
+	t=1724152226; cv=none; b=VWdsvrAgYYB6m92ksA+VZGKIfJpMhSKbzASKEllNn1gTtZQdkjXuMqBHhaur+g5waUbow60l5FfFRGeJl7lAJhiFsjmUGsmZIJTt7ZR8CHKcEqa643MxRhk1iNfiUoMNt5UI9tYy4Ly1Scmzx/XJo0R9umjR3B/CU9jgHUjaT/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152223; c=relaxed/simple;
-	bh=P+vTiQNfxpFCjYYg0es8JH75oId7BoY89LGYmb3nA18=;
+	s=arc-20240116; t=1724152226; c=relaxed/simple;
+	bh=hjQhT/qUKcPqbMV1YGAkqUAI41RaU4lOS+ZPTQ/daVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYzpr09PqtvSvb72FDsdBcWZQogFmfv4IH35ej/yu/G5JL6AhTTbT6IFMZcwF72ZpWrtzbi2gGeIw9qBmj4Qj5+2F1RKU1kH8Y3dK2V+gkhcNxQBtuQMdcKpmarfLv3VL2Sz3T4c7n7ONl1EBNjD6dB7TI40yiBoOtGVwaJY2lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NP8bQsKX; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 20 Aug 2024 07:10:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724152217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UrvRMz+I1gRJfeA35OXeWpHMimIWlbjsoNl2/JOsDPI=;
-	b=NP8bQsKXUU0lsovxuRtz0Ny98VqZ6sb3M0pF7We+DamT+Nkxzg+jEfcz/+so+XoYucaCwl
-	HyHe1BH61bKKin9KYl5it34q73DaQAIAISB/XzkwT6U1NBU4njeT6fpwDxpd4AvPofWpZ/
-	OMZcGIne2AwXUUICsUeUxK7QRHF+ObM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
-	corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org, 
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	keescook@chromium.org, dennis@kernel.org, jhubbard@nvidia.com, yuzhao@google.com, 
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/5] alloc_tag: load module tags into separate continuous
- memory
-Message-ID: <sf7siu4vxwnz2lrcspxetmzabajfvebb47htjsrh7mmdoed73i@wivswoh55dfv>
-References: <20240819151512.2363698-1-surenb@google.com>
- <20240819151512.2363698-2-surenb@google.com>
- <ZsRCAy5cCp0Ig3I/@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHbACf0r04dWmsz67olRLT7akuRdvrTMvxR0RmGlFyT23HxHUreqC91iS8s2WrtW0fQBDrBkB4CmU9OdIbWv5IxjBLqgwo27SLpIR135nJWgJUqAULtlUKnvthgUPiiWtiIHkiqtTpfh6MmEkqQoK7CywvCQGPdQf+gH6fcddYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42816ca797fso43936855e9.2;
+        Tue, 20 Aug 2024 04:10:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724152219; x=1724757019;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fInxDh63lUo1pJrQRWGa0VqFjDqKSYMTvciu7osvTj0=;
+        b=eZcWgK6VHPaiEC+B7URewa9o1nH1drFdl38t9iEUSRME0aIplEaXV551SgT1dAvCdp
+         PpcVxQZCVoaGpayRDeZR2swySezWpoR1zlt1rUaG6ZPt+jkL4TWos2rG/4EqXEQic1O7
+         nDoAvnjkEufSMICjisKjbiha42p6n+QbWUffml40C5lOwO3A9zSFsOUtXgQhQzn/bGjP
+         EXQUcHnfyiRXAwIQ9idgyX43YZNUjcxfI3QUL2xwjZOr8n+wle+fDoyd9XFzAD7N9SS5
+         H3bv9w9FTrkJnwSgYSsKHVFIbC2nIz9/IpKmrn2MpH/yqwctnNFxe5caKuFIiZELEk2E
+         AYfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzkBHcsSzbPN5CDsSWYlnEV90pIDXS9u/lzZrXCUriYeKuHUfC5CmpLnvPvDG33Yc3QFU694Wo7hCF@vger.kernel.org, AJvYcCXRZ0eC+ReyPS1V6MohwwKESgfEeWhI1y7KeSV/YvIPNesIptSm/8PUvSrSegCsvWy0+NqojniCa5AVns3e@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpUyN1r1g7F6w72X04gq5Vz68z6g4dxRLmEstemVVJEZWdSYLL
+	kuKkXEQEr/CYvXFVEt6TYwqeGu2exHyfTcczGycSGTYbFFN1soy7
+X-Google-Smtp-Source: AGHT+IFKueD4kujwz2iAYYiHm0x6pXa7zOH0dqc0XttMsjnIJ4KVsIzJEoUzeluMlqGg4HQjTlqfbg==
+X-Received: by 2002:a05:600c:1d07:b0:426:5f02:7b05 with SMTP id 5b1f17b1804b1-429ed7a6156mr84932665e9.2.1724152218409;
+        Tue, 20 Aug 2024 04:10:18 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ed784726sm139348495e9.35.2024.08.20.04.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 04:10:17 -0700 (PDT)
+Date: Tue, 20 Aug 2024 13:10:14 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rohit Agarwal <rohiagar@chromium.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com, 
+	jitao.shi@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] dt-bindings: display: mediatek: dpi: Add power
+ domains
+Message-ID: <b5wtwpkwgg3tbwya6zllmymaaf2qvnyfbspkynr2ruzncej2ql@qloslxfinvos>
+References: <20240820080659.2136906-1-rohiagar@chromium.org>
+ <20240820080659.2136906-2-rohiagar@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZsRCAy5cCp0Ig3I/@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240820080659.2136906-2-rohiagar@chromium.org>
 
-On Tue, Aug 20, 2024 at 10:13:07AM GMT, Mike Rapoport wrote:
-> On Mon, Aug 19, 2024 at 08:15:07AM -0700, Suren Baghdasaryan wrote:
-> > When a module gets unloaded there is a possibility that some of the
-> > allocations it made are still used and therefore the allocation tags
-> > corresponding to these allocations are still referenced. As such, the
-> > memory for these tags can't be freed. This is currently handled as an
-> > abnormal situation and module's data section is not being unloaded.
-> > To handle this situation without keeping module's data in memory,
-> > allow codetags with longer lifespan than the module to be loaded into
-> > their own separate memory. The in-use memory areas and gaps after
-> > module unloading in this separate memory are tracked using maple trees.
-> > Allocation tags arrange their separate memory so that it is virtually
-> > contiguous and that will allow simple allocation tag indexing later on
-> > in this patchset. The size of this virtually contiguous memory is set
-> > to store up to 100000 allocation tags and max_module_alloc_tags kernel
-> > parameter is introduced to change this size.
-> > 
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |   4 +
-> >  include/asm-generic/codetag.lds.h             |  19 ++
-> >  include/linux/alloc_tag.h                     |  13 +-
-> >  include/linux/codetag.h                       |  35 ++-
-> >  kernel/module/main.c                          |  67 +++--
-> >  lib/alloc_tag.c                               | 245 ++++++++++++++++--
-> >  lib/codetag.c                                 | 101 +++++++-
-> >  scripts/module.lds.S                          |   5 +-
-> >  8 files changed, 429 insertions(+), 60 deletions(-)
->  
-> ...
-> 
-> > diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-> > index c2a579ccd455..c4a3dd60205e 100644
-> > --- a/include/linux/codetag.h
-> > +++ b/include/linux/codetag.h
-> > @@ -35,8 +35,13 @@ struct codetag_type_desc {
-> >  	size_t tag_size;
-> >  	void (*module_load)(struct codetag_type *cttype,
-> >  			    struct codetag_module *cmod);
-> > -	bool (*module_unload)(struct codetag_type *cttype,
-> > +	void (*module_unload)(struct codetag_type *cttype,
-> >  			      struct codetag_module *cmod);
-> > +	void (*module_replaced)(struct module *mod, struct module *new_mod);
-> > +	bool (*needs_section_mem)(struct module *mod, unsigned long size);
-> > +	void *(*alloc_section_mem)(struct module *mod, unsigned long size,
-> > +				   unsigned int prepend, unsigned long align);
-> > +	void (*free_section_mem)(struct module *mod, bool unused);
-> >  };
-> >  
-> >  struct codetag_iterator {
-> > @@ -71,11 +76,31 @@ struct codetag_type *
-> >  codetag_register_type(const struct codetag_type_desc *desc);
-> >  
-> >  #if defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES)
-> > +
-> > +bool codetag_needs_module_section(struct module *mod, const char *name,
-> > +				  unsigned long size);
-> > +void *codetag_alloc_module_section(struct module *mod, const char *name,
-> > +				   unsigned long size, unsigned int prepend,
-> > +				   unsigned long align);
-> > +void codetag_free_module_sections(struct module *mod);
-> > +void codetag_module_replaced(struct module *mod, struct module *new_mod);
-> >  void codetag_load_module(struct module *mod);
-> > -bool codetag_unload_module(struct module *mod);
-> > -#else
-> > +void codetag_unload_module(struct module *mod);
-> > +
-> > +#else /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
-> > +
-> > +static inline bool
-> > +codetag_needs_module_section(struct module *mod, const char *name,
-> > +			     unsigned long size) { return false; }
-> > +static inline void *
-> > +codetag_alloc_module_section(struct module *mod, const char *name,
-> > +			     unsigned long size, unsigned int prepend,
-> > +			     unsigned long align) { return NULL; }
-> > +static inline void codetag_free_module_sections(struct module *mod) {}
-> > +static inline void codetag_module_replaced(struct module *mod, struct module *new_mod) {}
-> >  static inline void codetag_load_module(struct module *mod) {}
-> > -static inline bool codetag_unload_module(struct module *mod) { return true; }
-> > -#endif
-> > +static inline void codetag_unload_module(struct module *mod) {}
-> > +
-> > +#endif /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
-> 
-> Maybe I'm missing something, but can't alloc_tag::module_unload() just copy
-> the tags that cannot be freed somewhere outside of module sections and then
-> free the module?
-> 
-> The heavy lifting would be localized to alloc_tags rather than spread all
-> over.
+On Tue, Aug 20, 2024 at 08:06:57AM +0000, Rohit Agarwal wrote:
+> Add power domain binding to the mediatek DPI controller.
 
-The reason they can't be freed is because they're referenced by
-slab/page allocatons - can't move them either.
+Why? Who needs it? Why all devices suddenly have it (IOW, why is it not
+constrained anyhow per variant)?
+
+> 
+> Signed-off-by: Rohit Agarwal <rohiagar@chromium.org>
+> ---
+>  .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml     | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Best regards,
+Krzysztof
+
 
