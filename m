@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-293835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F2895858B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:15:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3C595858D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7F2837A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9276A1C23B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D610018E023;
-	Tue, 20 Aug 2024 11:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06DE18DF9E;
+	Tue, 20 Aug 2024 11:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N5UKICDc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VauGGiMr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF7D18A6BC;
-	Tue, 20 Aug 2024 11:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A611B15956C;
+	Tue, 20 Aug 2024 11:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152495; cv=none; b=RseVxiy+gLoWgkBJEiW+5s7i7mhb4Iyuh/tBD4ZLk9MvahfGqMLh4FtxvbHw8NiqyAonXZ6wQbm2NrSO9G8x7D/N9BPGD4p77Kje2CyI8RC85erCCg/8Nn+5jlRsXF1I98JkV2O068kKgwnmdszfFhW0gGLcpGbhn8r14mBb/jA=
+	t=1724152520; cv=none; b=LSrhF9RdfK3C7SdYQYkVuQLS9MTRvS3/WfV4/PswFkJWwj7gUZ1KzJCeBqvwnZNVtrH0js7JXXHr1oAogdue5fntC0rfiWklr6yNKCD8pFp2MFooofJU9aYkBwU6jdlg6a1cd7kEfNRywTZ+vl8gc8SG5iD2ieApdR05SOeFzkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152495; c=relaxed/simple;
-	bh=m6RXcpM9BA6bId8/mRtxdjVsZYXBaatKRdN++kTTHNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ET6SEF/nEbkdRqUfFrdsdvuL+pn1aMhsI51HdIS44iuRiMfdwuoWS3tdpxkC/wZFa4CAgDMT+qe1/keHqV8mOX1Iy+3LQTvTkyv6UnDcAkveose5DtoUB+VADW7sgdlMgctTSOIqEaZFy0T0F3J7ozzA2vYhU5QU1fzVO8VoJpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N5UKICDc; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1724152520; c=relaxed/simple;
+	bh=s9Giacz+Jhd88BbipHDuVSmKAmt6k6HUGj1SMH2Zf1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bqNrgcX1dSFGkiCjLFS3t7Zm4GCZjo4RC7X9FjzFRyap4JPHQZKSIjqDHFHfSNeNXX/XPmKOIbPiKnlJMSIxVQG+7ija1Pt4VWS18vq03cuNEIh5p+VGJVIF9p6hTIjFn89RmCaZNkDboYzAK2/W09o4ZqSKAV+DxaNP+shd1OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VauGGiMr; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724152493; x=1755688493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=m6RXcpM9BA6bId8/mRtxdjVsZYXBaatKRdN++kTTHNg=;
-  b=N5UKICDcS/l9bRmTId82tU4S6N5gzHKuKf2b95atvUtNJw3nLM8F5PG0
-   eKAmCngufvr5ZdEoHyegKxseYrffFZlZ7vA8713scSN2Wkb7BD6DOYeNn
-   x5xyMO/W9PpqkBHNnlxLbLWkiaAY8vz5Fm/7UsUK3N9tUPZTME2R5kdYv
-   yVIinn0t1yCGKmSM1d82YjPW3RnD1at9mb5ncYrts36imFF7BYGXq2D9C
-   eH7Wck9i36Ho+8Ra+LwBksC6dJbL7fjIftUWINeeYTD/N8yxtYQWG5IQJ
-   5T0+IS918yd7yuQ0Ut4NfmaMsNG6spSSDLvMW3hmrVft86aRHTHwCYE6D
-   w==;
-X-CSE-ConnectionGUID: QMqR6Z7eSvuZ3IRK3LlpNQ==
-X-CSE-MsgGUID: JYJ0F3C/RFCWbZrMhb7JuQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22609389"
+  t=1724152519; x=1755688519;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s9Giacz+Jhd88BbipHDuVSmKAmt6k6HUGj1SMH2Zf1A=;
+  b=VauGGiMryXddRkzgNJvBsHX43fQOu25lFRdbjVZVhqpzVd1Rn2Szmrsj
+   uHyRB93mzun2wYJv1JAl3RwuUNbfoogRwljmMXkd/ZnmjI37e/H4xdRGd
+   Z5WGleGLa7tlnguWF3kFxrpUY3/1wzf1zf5g3ZaysaOsIpaPr1oEjRYeZ
+   chc4p5G504OZBKlcVdu+4rMX8nZ7ktcNTYL1nP9LBOJQMyDptjMJxL3E+
+   Qqfy6bvAc+/z2jXVMQQCIuTESulJeOCck/WtPfOsH0IP7JUohua6VbaiL
+   SoLl28lH5Vb1d8Hwx4vz6NfcMZenzVVcS3/cgNYyRf6mG65zzeKcruQpB
+   g==;
+X-CSE-ConnectionGUID: qhsrH6QJTpOjqTE4MhvQnw==
+X-CSE-MsgGUID: TMuEJljGR9qqzctPpSHt1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33106421"
 X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="22609389"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:14:53 -0700
-X-CSE-ConnectionGUID: 4LLJGHzMTuufgfoKa0H+Og==
-X-CSE-MsgGUID: XwQfv2LnTgCJ0nTXvtxNVA==
+   d="scan'208";a="33106421"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 04:15:18 -0700
+X-CSE-ConnectionGUID: HEogvhjzRSSdNVRUXZUt7w==
+X-CSE-MsgGUID: 3yRf33G+Sk6O1B3aVbBcyw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
-   d="scan'208";a="65056087"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 20 Aug 2024 04:14:48 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8164B3C0; Tue, 20 Aug 2024 14:14:47 +0300 (EEST)
-Date: Tue, 20 Aug 2024 14:14:47 +0300
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "ardb@kernel.org" <ardb@kernel.org>, 
-	"luto@kernel.org" <luto@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "bhe@redhat.com" <bhe@redhat.com>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"bp@alien8.de" <bp@alien8.de>, "rafael@kernel.org" <rafael@kernel.org>, 
-	"Huang, Ying" <ying.huang@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCHv3 3/4] x86/64/kexec: Map original relocate_kernel() in
- init_transition_pgtable()
-Message-ID: <hxw67ecixuf5mkj3ucwhsobvd6dyjhwjo32fu4jiwoxgrgk7rd@dklvwlnrewil>
-References: <20240819070827.3620020-1-kirill.shutemov@linux.intel.com>
- <20240819070827.3620020-4-kirill.shutemov@linux.intel.com>
- <4c140a8e0154504e9c645b9f78b0b164dc25a461.camel@intel.com>
- <hr7kym77uhbtj32eymcdp5mcbpid7euoiiszhx6yhkrbw5riag@lcozqjayilbo>
- <d97a17a53cb7550134ec521e3d22177d6a6ad05e.camel@intel.com>
- <jzqh5j4w4w23xuigqj5bggbmx2hgte4u5tvbss3hqi3vjeodhl@rnmirwt6biol>
- <6464ab0f43f51f4526666f8924921262e8144027.camel@intel.com>
+   d="scan'208";a="60386424"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by fmviesa007.fm.intel.com with ESMTP; 20 Aug 2024 04:15:16 -0700
+Message-ID: <7e3e71aa-cc07-44a0-963d-8965a7fffd7e@linux.intel.com>
+Date: Tue, 20 Aug 2024 14:15:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6464ab0f43f51f4526666f8924921262e8144027.camel@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] i2c: designware: Let PCI core to take care about
+ interrupt vectors
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
+ Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>
+References: <20240819184600.2256658-1-andriy.shevchenko@linux.intel.com>
+ <20240819184600.2256658-3-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240819184600.2256658-3-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 11:06:34AM +0000, Huang, Kai wrote:
-> At later time:
+On 8/19/24 9:45 PM, Andy Shevchenko wrote:
+> PCI core, after pcim_enable_device(), takes care about the allocated
+> IRQ vectors, no need to do it explicitly and break the cleaning up
+> order.
 > 
->         call    swap_pages                                                   
->         movq    $virtual_mapped, %rax  	<---- (1)                            
->         pushq   %rax
->         ANNOTATE_UNRET_SAFE
->         ret  				<---- (2)
+> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>   drivers/i2c/busses/i2c-designware-pcidrv.c | 14 +++-----------
+>   1 file changed, 3 insertions(+), 11 deletions(-)
 > 
-> (1) will load the VA which has __START_KERNEL_map to %rax, and after (2) the
-> kernel will run at VA of the original relocate_kernel() which maps to the PA
-> of the original relcoate_kernel().  But I think the memory page of the
-> original relocate_kernel() won't get corrupted after returning from the second
-> kernel, so should be safe to use?
+I wanted to test this due to earlier 9be8bc4dd617 ("i2c: designware-pci: 
+Fix BUG_ON during device removal").
 
-Yes.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
