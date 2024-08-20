@@ -1,169 +1,116 @@
-Return-Path: <linux-kernel+bounces-293430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A529957F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AE7957F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06974285602
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72F0282A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B8B171E70;
-	Tue, 20 Aug 2024 07:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz+4Mc8a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B041E173336;
+	Tue, 20 Aug 2024 07:13:51 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4B152165;
-	Tue, 20 Aug 2024 07:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BAB1667ED;
+	Tue, 20 Aug 2024 07:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724138011; cv=none; b=jHy2MQdHKcTY6C78okmBUsyJ2bshsEtf0iDLGxUqk8FM+KVvKoHQrH4rBvcZZPGaHXieKR3eliQCoqE852mKjG8UAyC+c2VG2lR5pJya57wtUi7ezLzdoM2vMjHKp4FDdUNlUzj6AXGX/dfhTpzQzmwWTrqwIAjcctSaA+sYbfA=
+	t=1724138031; cv=none; b=Z8wi98xbcNgMNXEDvfFmObR6gQQwwlC8PWhxQ6KYwzgXbTeDzKxCSmxncX6DaIXANG+nZM2S4hfOfBMBPXpyzkE3R6dF37NSwUa/y+raRza9RxM1jSpOlMYBglsWOxOOQR+mXowMtVzOi3n5dd6oqhL5Xg2DQpn1e1ZsLGpv6KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724138011; c=relaxed/simple;
-	bh=P4Xoto1kb9GxBJ4mRYqIpsziqZnk0OuzLbdWEFfVZxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOsgOHzJf4Y9RKab8NWfzx65+o6g/pAqOUtGqLyn6IwbAdUtm2y/BxTNMyQHHsR6qhIV4ahNeZsFzTmg3SmrcAHDEV71oOyFNGunYAlybuAO3+QtNzsgWbm6d9o51TxaYmf0w6OFBF7fTgFnsGym0+ct2ss0oqiCNl/ymPY9/84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz+4Mc8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD46C4AF09;
-	Tue, 20 Aug 2024 07:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724138010;
-	bh=P4Xoto1kb9GxBJ4mRYqIpsziqZnk0OuzLbdWEFfVZxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gz+4Mc8a6bR73MyttJH1WKF45lDJDtOwWsfsUBDrK6xUysURbUJcwEvyW17ferVr5
-	 b8xWmLKE7Hw4lwwchPrCzinppb3/s7DNzQ56UV9asRxSibNosq/tQewjQ3NGlt8BHu
-	 E6TvIE+cC6ndzeFv7iv4yn4hz/XWioUueUZubt9uGQyeRDQbWlHPl3xI778KnsjJVL
-	 oNalnsafluqag/HrQfU/xgw9mSUC1vUKX0nZFB5Ej0ZbSGOOkLPNT02Hw9OSAe/CRR
-	 3Jb8vTiQ1oDNQjqzfk4bqcsSrAHxtXvU2dsPRiqgjmvF7bsdLFIanOAfCPEx5gavMS
-	 asTEvBA/nwoLg==
-Date: Tue, 20 Aug 2024 10:13:07 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net,
-	arnd@arndb.de, mcgrof@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com,
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org,
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
-	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/5] alloc_tag: load module tags into separate continuous
- memory
-Message-ID: <ZsRCAy5cCp0Ig3I/@kernel.org>
-References: <20240819151512.2363698-1-surenb@google.com>
- <20240819151512.2363698-2-surenb@google.com>
+	s=arc-20240116; t=1724138031; c=relaxed/simple;
+	bh=XCoTEaNpEo9WksCi1jc/+c3zlnEhaEoqy/tDH8Z3w8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UNbe+ZgqHjzXzKDqseh4ON/m5Kzr3RnpDOPjYgC50xc2t49LVLCHEX2gQVf/KSbLRr+YuJ0vI8jzgrXMdA1sAmHiAehb/PyyqGxHA8WtflkhQcMBqp8dQivzaUZ/Z46G8NVg6B91cW1HHXpwJs6Vo/8VtvY0gTell9GxgHkBcQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wp1093Nzcz4f3jk0;
+	Tue, 20 Aug 2024 15:13:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 14E471A018D;
+	Tue, 20 Aug 2024 15:13:39 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP4 (Coremail) with SMTP id gCh0CgB37IIhQsRmPw_NCA--.30967S3;
+	Tue, 20 Aug 2024 15:13:38 +0800 (CST)
+Message-ID: <028f4d78-ebf6-c9cf-a8d8-718779cbe419@huaweicloud.com>
+Date: Tue, 20 Aug 2024 15:13:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819151512.2363698-2-surenb@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [PATCH v3] block: flush all throttled bios when deleting the
+ cgroup
+To: Tejun Heo <tj@kernel.org>
+Cc: josef@toxicpanda.com, hch@lst.de, mkoutny@suse.com, axboe@kernel.dk,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com,
+ lilingfeng3@huawei.com
+References: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
+ <ZsO4ArRKhZrtDoey@slm.duckdns.org>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <ZsO4ArRKhZrtDoey@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB37IIhQsRmPw_NCA--.30967S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr13CrWUJrW5Aw4kJryxKrg_yoWkKFg_ur
+	Waqr1kAw18Xa4kCay3Ga9xWFZIgr48Gry7Xan5tryqgryrJa1DZFZrGrW3ZFy3Za4xKr9x
+	JrnrX3W3uwn7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-On Mon, Aug 19, 2024 at 08:15:07AM -0700, Suren Baghdasaryan wrote:
-> When a module gets unloaded there is a possibility that some of the
-> allocations it made are still used and therefore the allocation tags
-> corresponding to these allocations are still referenced. As such, the
-> memory for these tags can't be freed. This is currently handled as an
-> abnormal situation and module's data section is not being unloaded.
-> To handle this situation without keeping module's data in memory,
-> allow codetags with longer lifespan than the module to be loaded into
-> their own separate memory. The in-use memory areas and gaps after
-> module unloading in this separate memory are tracked using maple trees.
-> Allocation tags arrange their separate memory so that it is virtually
-> contiguous and that will allow simple allocation tag indexing later on
-> in this patchset. The size of this virtually contiguous memory is set
-> to store up to 100000 allocation tags and max_module_alloc_tags kernel
-> parameter is introduced to change this size.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |   4 +
->  include/asm-generic/codetag.lds.h             |  19 ++
->  include/linux/alloc_tag.h                     |  13 +-
->  include/linux/codetag.h                       |  35 ++-
->  kernel/module/main.c                          |  67 +++--
->  lib/alloc_tag.c                               | 245 ++++++++++++++++--
->  lib/codetag.c                                 | 101 +++++++-
->  scripts/module.lds.S                          |   5 +-
->  8 files changed, 429 insertions(+), 60 deletions(-)
- 
-...
 
-> diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-> index c2a579ccd455..c4a3dd60205e 100644
-> --- a/include/linux/codetag.h
-> +++ b/include/linux/codetag.h
-> @@ -35,8 +35,13 @@ struct codetag_type_desc {
->  	size_t tag_size;
->  	void (*module_load)(struct codetag_type *cttype,
->  			    struct codetag_module *cmod);
-> -	bool (*module_unload)(struct codetag_type *cttype,
-> +	void (*module_unload)(struct codetag_type *cttype,
->  			      struct codetag_module *cmod);
-> +	void (*module_replaced)(struct module *mod, struct module *new_mod);
-> +	bool (*needs_section_mem)(struct module *mod, unsigned long size);
-> +	void *(*alloc_section_mem)(struct module *mod, unsigned long size,
-> +				   unsigned int prepend, unsigned long align);
-> +	void (*free_section_mem)(struct module *mod, bool unused);
->  };
->  
->  struct codetag_iterator {
-> @@ -71,11 +76,31 @@ struct codetag_type *
->  codetag_register_type(const struct codetag_type_desc *desc);
->  
->  #if defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES)
-> +
-> +bool codetag_needs_module_section(struct module *mod, const char *name,
-> +				  unsigned long size);
-> +void *codetag_alloc_module_section(struct module *mod, const char *name,
-> +				   unsigned long size, unsigned int prepend,
-> +				   unsigned long align);
-> +void codetag_free_module_sections(struct module *mod);
-> +void codetag_module_replaced(struct module *mod, struct module *new_mod);
->  void codetag_load_module(struct module *mod);
-> -bool codetag_unload_module(struct module *mod);
-> -#else
-> +void codetag_unload_module(struct module *mod);
-> +
-> +#else /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
-> +
-> +static inline bool
-> +codetag_needs_module_section(struct module *mod, const char *name,
-> +			     unsigned long size) { return false; }
-> +static inline void *
-> +codetag_alloc_module_section(struct module *mod, const char *name,
-> +			     unsigned long size, unsigned int prepend,
-> +			     unsigned long align) { return NULL; }
-> +static inline void codetag_free_module_sections(struct module *mod) {}
-> +static inline void codetag_module_replaced(struct module *mod, struct module *new_mod) {}
->  static inline void codetag_load_module(struct module *mod) {}
-> -static inline bool codetag_unload_module(struct module *mod) { return true; }
-> -#endif
-> +static inline void codetag_unload_module(struct module *mod) {}
-> +
-> +#endif /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+在 2024/8/20 5:24, Tejun Heo 写道:
+> Hello,
+>
+> On Sat, Aug 17, 2024 at 03:11:08PM +0800, Li Lingfeng wrote:
+>> From: Li Lingfeng <lilingfeng3@huawei.com>
+>>
+>> When a process migrates to another cgroup and the original cgroup is deleted,
+>> the restrictions of throttled bios cannot be removed. If the restrictions
+>> are set too low, it will take a long time to complete these bios.
+>>
+>> Refer to the process of deleting a disk to remove the restrictions and
+>> issue bios when deleting the cgroup.
+>>
+>> This makes difference on the behavior of throttled bios:
+>> Before: the limit of the throttled bios can't be changed and the bios will
+>> complete under this limit;
+>> Now: the limit will be canceled and the throttled bios will be flushed
+>> immediately.
+> I still don't see why this behavior is better. Wouldn't this make it easy to
+> escape IO limits by creating cgroups, doing a bunch of IOs and then deleting
+> them?
+>
+> Thanks.
+Yes, this actually would make it easy to escape IO limits.
 
-Maybe I'm missing something, but can't alloc_tag::module_unload() just copy
-the tags that cannot be freed somewhere outside of module sections and then
-free the module?
+As described by Yu Kuai in v2, I changed this to prevent IO hang.
+And I think it may be more appropriate to remove the limits in this
+scenario since the limits were set by cgroup and the cgroup has been
+deleted.
 
-The heavy lifting would be localized to alloc_tags rather than spread all
-over.
+Thanks.
 
--- 
-Sincerely yours,
-Mike.
 
