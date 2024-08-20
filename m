@@ -1,233 +1,148 @@
-Return-Path: <linux-kernel+bounces-293840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A33C958597
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:20:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179B795859C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998451C24237
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40EA81C241E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554D18E74E;
-	Tue, 20 Aug 2024 11:20:41 +0000 (UTC)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F818E02F;
+	Tue, 20 Aug 2024 11:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T31tIMe8"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E17155C80;
-	Tue, 20 Aug 2024 11:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341A18E351;
+	Tue, 20 Aug 2024 11:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152840; cv=none; b=lrglayZsaUuW/7tB6SlHmBxCf8wzuyK/A9drTNv/yOk2jdb/Yw/uK4LnHTAHTjKv+cAxjCFB9zhQKNFght4tnPPJVNp2BnAbuSwM9skQL/lluRftvcwApzeoTPh4/6tlFtv9u0F6ZgMESyx/MVtirXe6SIi1N6d4oJYd6faMx+Q=
+	t=1724152883; cv=none; b=coKDp08QoOKxYcjatAj70tdk0cq19L/H6HD+m4//LIv26/+LzNhof5lzijuwvV8LzwRaBZXDrIJlQ3bPoLlL5YufJROWT1UYFs/V8UdftffipR0N/BqNw/zAvCqm1iPFBGFWQ2wZCgJaWE61HwNGmlJ8KfEpHyrAcPT69yTisPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152840; c=relaxed/simple;
-	bh=Au1yckoSCUXUgrrdigjhuQ0Zp4yrP2RtTGZIxjsiu3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYRFemVxGqWyczjfZxtdONun0D6ICuO6p6v1x5doZz6mc3cvCNy57v+YY2ns6+53ez9ATkLTvf5nViz5b/18vPGN1UZP3d3Fbu06eB9yIHK+LeDHzEAsca+rv1tGXXb87IsTo/wiZkMwVUZBE3TlZWRsunqfbs5IwwS7x0zY8k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1724152883; c=relaxed/simple;
+	bh=QWn3brooeiHVfcyF/vvUkq4KqOQeevKpNAslvGKTuQQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QQkejjA3mQuBwWTik9dmYi83vWGcn/L1eO5l27B2LjWv14h8qgIaiW35HWJDt0wU3quxIVV+W8yJjKPWznhvlZPg3n/k9Iuv15uMUBaCyWzY1FAII61Pxs7RNbfn8o9WF0H/F8J+lceyxvtABQsgCFYHaxm/j0u+0bpuHbZCQv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T31tIMe8; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37189d8e637so3225012f8f.3;
-        Tue, 20 Aug 2024 04:20:38 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201fae21398so31381485ad.1;
+        Tue, 20 Aug 2024 04:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724152881; x=1724757681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbDMo5MbDihkl8ZyjdgPltbmTW4XyoUcFA+9KEyX+yo=;
+        b=T31tIMe8QMDoO504CBlCJ6hZ3LxOkS2lLpUqzWk4M3IaYWa5ZkkiFZKnT45VKhBfjL
+         GoA+MHIsnxsRzV5342EpKukdZxOFs3+ZwpCTxjlrg/7zQ2lCl7cdpB6zXmg9ZHlx0qpa
+         3FN+5HPhHVcgCBJlXDZO+L+dhtBHFe+AybVoYqYNFPotFDT/GFm4bE/CIIbe+HRCivpE
+         liNAYyxlRy0vKyTbOqJn3+wlsvS1uRK49iV6ebjx50P+W4596OIZFnft5K/POqQBF+ax
+         Cd6Meyuiw6Q8BPy6GiCUCTwCtdA15w5mQMUu+5IBIli6gaNNNHBTEycVHyGCh3lmCrEU
+         WxAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724152837; x=1724757637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8YqNonoW+AXT4DFqG0cqXTVS5fYaya45lKpoOnLhQQI=;
-        b=qSitCzkWnoYeho7x5swAUPc4Zy31XbPYXrDuGA370/BLuX2cL+Kk3SPLAo8VtOdujM
-         4WKOADcQ/hmI2w9C8GqNfJPNlOIa1TOfPk/W7xd3r/yZyViYRTiSUNaJ7CB2lIs6onEG
-         zEcVm9TTJd7TkhkEtVoYEVv1iT/XcP1rSqhjb9LoUp7eAZRKAGs/7oe/Ltg9X45I100j
-         rL2oI3+EEgnHtFoxKy4K+JNohjW98IGxbxEmzF5hCFz0oHAz74bMyxJGthV0OiZSqLfh
-         e5ASgxkiAKPKjFdyI6MQ5jmPh7O5AmPyf9etjz5wJazikrlqmkF7uWq14iKCIQO0uHVF
-         57cg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ii4E36dZiN+hcXiBGKm84R6X4irE+IJeEgplPHhU/fNYlgh0nQmtm/WeHs/oydgY0wOKRffAJhBZ1zmliQ==@vger.kernel.org, AJvYcCVZ+qu/1IrHEANxJ34cbFLnflya2QYTwNA8adgL7QY4DdmU4/LT+ANYBWya2jgRPdbWdYJW90LuEm9rZ9nU1HxfRw==@vger.kernel.org, AJvYcCW94vpjtpC6jI8euBrMoscUFe2Z2yd5TGSr3TY648+XmJ2uROUudPL+syo3UgFhnqQ8fSSaf4YFe0u5fOvA@vger.kernel.org, AJvYcCXZ9HIve6Pjjy3ip4lUAJv8XCQ596pr0+p0hytTkuqvBPeD17HsfRtNdCGSxQmhI0g1/7a8DUWTNkwO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSeb9sp3015KUNzg7jK5LC3aJ1JxpGFZYnTsYx3SAHXgoyDJIM
-	nOwPNQdAT9RD9mUbevd95+ZnFmxlPP/1WmQ2WmBoYSFbHBRtJMYm
-X-Google-Smtp-Source: AGHT+IHEr21C0aY1t6Xf8SNHDmzvuwEc3DtDIQzCLlmVHlaBE3Cae0i7JJpirzSyu0Kq3f+wv+GIkg==
-X-Received: by 2002:adf:e255:0:b0:371:9395:9c2d with SMTP id ffacd0b85a97d-371946a5ac4mr9567018f8f.55.1724152836890;
-        Tue, 20 Aug 2024 04:20:36 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-371898b8ad6sm12890025f8f.114.2024.08.20.04.20.35
+        d=1e100.net; s=20230601; t=1724152881; x=1724757681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zbDMo5MbDihkl8ZyjdgPltbmTW4XyoUcFA+9KEyX+yo=;
+        b=l0Bl7S6VwTcHBZ+/L7bzDa5Y/Q+qdgooqsLgStFYhtiz9T3mYD32ScfT86xdLMmtaP
+         FbYVbByZhBcjvutbshTK/eTbfOrrFnXAl16TRPIAj1qELhfQ2YFzsI5+2YWcFuJrXvbe
+         6xFap6XDgQ1UKmaxqqG29+jJTFQH7ut64BO4eToiqVYQGuboRdVOFIRsMbuvyv1ZYIRJ
+         ZsR3OcG8JKhQWJMqIZSPX/DdO3B9CBzoNaQQULv4ArOQH9DrQA5GV6bmKZevffe7FHGA
+         vWRC307eqdoArEi6mjl0aG6ihaF8SoXZG6smg6S0B1gJIwX9fFbebYTdIdTd2yjvYgse
+         bEQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkI4DRcorW7aT6jIGnFfeRpHYaitnRUuSvnb3qX1ggozP3OL6YQITJvLQGv8Pv2+aoBzByqq92C6ovgHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxigTW1kSjcaZRn3PzWCKvzrG6FbVdNsp/CaHbpeb0OUfSOO9Ws
+	JpkpKPD+gM7aYq9Ot5YML07tF4vQ5CWXprTfC77A3lQbkp0XvxKf
+X-Google-Smtp-Source: AGHT+IGJyPKgTlfpaaVO2Q89NFOvgDCYB02I5tKaJmY5LED7+9l9qf1xzzx6B/7gPkW4vruDFFPBYg==
+X-Received: by 2002:a17:903:2303:b0:1fd:93d2:fba4 with SMTP id d9443c01a7336-20203f321efmr127662545ad.48.1724152880582;
+        Tue, 20 Aug 2024 04:21:20 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201f03756f6sm76465355ad.172.2024.08.20.04.21.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 04:20:36 -0700 (PDT)
-Date: Tue, 20 Aug 2024 13:20:33 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-	q@krzk-bin.smtp.subspace.kernel.org
-Cc: andersson@kernel.org, krzk+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com, 
-	quic_varada@quicinc.com, quic_srichara@quicinc.com
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-Message-ID: <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
-References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <20240820085517.435566-2-quic_gokulsri@quicinc.com>
+        Tue, 20 Aug 2024 04:21:19 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v5 0/7] net: stmmac: FPE via ethtool + tc
+Date: Tue, 20 Aug 2024 19:20:34 +0800
+Message-Id: <cover.1724152528.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820085517.435566-2-quic_gokulsri@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 02:25:14PM +0530, Gokul Sriram Palanisamy wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> 
-> Add new binding document for hexagon based WCSS secure PIL remoteproc.
-> IPQ5332, IPQ9574 follows secure PIL remoteproc.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> ---
->  .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 ++++++++++++++++++
->  1 file changed, 125 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
-> new file mode 100644
-> index 000000000000..c69401b6cec1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
-> @@ -0,0 +1,125 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,wcss-sec-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm WCSS Secure Peripheral Image Loader
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
-...
+Changes in v5:
+  1. fix typo in commit message
+  2. drop FPE capability check in tc-mqprio/tc-taprio
 
-> +
-> +maintainers:
-> +  - Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> +
-> +description:
-> +  WCSS Secure Peripheral Image Loader loads firmware and power up QDSP6
+Changes in v4:
+  1. reorder FPE-related declarations and definitions into clean groups
+  2. move mm_lock to stmmac_fpe_cfg.lock
+  3. protect user configurations across NIC up/down
+  4. block stmmac_set_mm() when fpe_task is in progress to finish
+  5. convert to ethtool_dev_mm_supported() to check FPE capability in
+  tc-mqprio/tc-taprio
+  6. silence FPE workqueue start/stop logs
 
-What is WCSS? Don't add random acronyms without any explanation.
+Changes in v3:
+  1. avoid races among ISR, workqueue, link update and
+  register configuration.
+  2. update FPE verification retry logic, so it retries
+  and fails as expected.
 
-> +  remoteproc's on the Qualcomm IPQ9574, IPQ5332 SoC.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,ipq5332-wcss-sec-pil
-> +      - qcom,ipq9574-wcss-sec-pil
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: Firmware name for the Hexagon core
+Changes in v2:
+  1. refactor FPE verification process
+  2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+  3. handle TC:TXQ remapping for DWMAC CORE4+
 
-No, look how other bindings are doing it.
+Furong Xu (7):
+  net: stmmac: move stmmac_fpe_cfg to stmmac_priv data
+  net: stmmac: drop stmmac_fpe_handshake
+  net: stmmac: refactor FPE verification process
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: silence FPE kernel logs
 
-It looks like you develop patches on some old kernel, so please start
-from scratch on newest kernel.
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  96 +++++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  11 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  20 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  27 ++-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 110 +++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 214 +++++++++---------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 120 ++++++----
+ include/linux/stmmac.h                        |  28 ---
+ 10 files changed, 455 insertions(+), 185 deletions(-)
 
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +
-> +  clocks:
-> +    items:
-> +      - description: IM SLEEP clock
-
-What is IM? Explain all acronyms.
-
-What is SLEEP?
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: im_sleep
-
-sleep? Are there different sleep clocks here?
-
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the remote processor
-> +    items:
-> +      - description: Shutdown Q6
-> +      - description: Stop Q6
-> +
-
-Do not introduce other order. First stop, then shutdown.
-
-> +  qcom,smem-state-names:
-> +    description:
-> +      Names of the states used by the AP to signal the remote processor
-> +    items:
-> +      - const: shutdown
-> +      - const: stop
-
-The same.
-
-> +
-> +  memory-region:
-> +    items:
-> +      - description: Q6 reserved region
-> +
-> +  glink-edge:
-> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
-> +    description:
-> +      Qualcomm G-Link subnode which represents communication edge, channels
-> +      and devices related to the Modem.
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - firmware-name
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - qcom,smem-states
-> +  - qcom,smem-state-names
-> +  - memory-region
-
-Keep the same order as in properties.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
-> +    q6v5_wcss: remoteproc@d100000 {
-
-Drop unused label.
-
-> +      compatible = "qcom,ipq5332-wcss-sec-pil";
-> +      reg = <0xd100000 0x4040>;
-> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
-> +      interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
-> +                            <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
-> +                            <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-
-Best regards,
-Krzysztof
+-- 
+2.34.1
 
 
