@@ -1,91 +1,181 @@
-Return-Path: <linux-kernel+bounces-293197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E819B957BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFF9957BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 05:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18C8C1C2382A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E361F23818
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 03:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409B64D8BF;
-	Tue, 20 Aug 2024 03:35:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B94120B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2265025E;
+	Tue, 20 Aug 2024 03:36:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8122E3FE;
+	Tue, 20 Aug 2024 03:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724124904; cv=none; b=T06wZexn8Z7+ccchoptT6h4dxKqgkbQD1EZW/61N/cJAC2GMthTUYBY+sz7l55j+HIM+n7meBbdB2JpNVp8nsct7lsWr5qv+NvY49zF4EfQ/XblD5IDndzsLZTQxFyr2yWqae+lDelkN1j35ZZkZCjPnzrClyZrBQeT+NnbMslI=
+	t=1724124985; cv=none; b=tz/L6dmJiI91ne3i23bvdUQVw/sYuCUX4ny5DUKq+CRZcBPbKoKKEUBhRtlpPBNwjLPIINvxLP9LTJSWpYSTZP2beyPDNOOgNwJFLu51/FyfrQiWfJatgoAFTEZLEwMW2F1/+PLNKqLb1idYXOk/lKyk4wNkNZODBQMZpzyDONg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724124904; c=relaxed/simple;
-	bh=y5kYLtAXf+RlfsnoS8e176zZVIsWbvn2ptvXBGCsSzA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R9JoRG8iLzv4HGaflI5bAzN0W94ah5zcUk/ZsHvZU2YMupo7pM1ehbhzRuL4VubJj+5WxDh2Ah1h5eew9jtxc0Yt+KVmzhKBBTUnamzF4hiX3FbrQ0W2gj1BB4gLlb97iCremjMphM6imvG2NsUueeYK1Q46IhkTi96iZq4d2i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso518844339f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724124902; x=1724729702;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/szJs6BoRGzdYBJbNBrmgpisVXSz4Pmj1YRvwy99puk=;
-        b=qmS1MD7NTj3vkD8grR06ZaIUfA6RZp51KPiICGzr9TnKrQ8qju24+aoBC73bz56S61
-         228TTbQf3faZo6U40oQ367JOIzLXpaOkpURyuUkMxG0mZtlFRSyQUnFenEMP3OX1VXbP
-         3BmOkXUQLWYXN9Yt09zYdmFewigtAiXD1CTXu492CKDxMA7yVROr22RlkKzAzFY/UZHR
-         lb7C2aDnr3f8r78e1QeAGmiDmHytbrnUSLxyLqPG0gMh9ktWyWn8oPuGvoqMzXy7oz5O
-         S+Zgzm/AHDtpNUVP7fg4OM9njEo35L71VboHlfHr4vq+Q6gcFvMH/qYmV6uMXRRpm88B
-         +LdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnvWV76VGrTMUnbKUVc0JGq9d2VFOzreFWbrQOanK9HxWlolBTmGudjxx/K5rTe+A26iXiRPV/bSUwYn2aKsskHV4hBxPIYJqOnJve
-X-Gm-Message-State: AOJu0YwdTj7v3I2rkJwttsATdYEasMAV05vX5YcNc+hP6dSCpjWMxWs7
-	bgc/62NFa8Z8N2HfHMnMDRapsImzqsGNMdCAounoJvGNZ4vY2xLZDmMAJrJ7r8bCgHPCjPdgm0G
-	7QENBhcX9FSdaZUf+oU/p6YTlrodtphGR1FBkaBw9fbv9iLFQ43+EhRE=
-X-Google-Smtp-Source: AGHT+IFAzfh5u9rnDgZSyp28jQLeKvgtkrbnO3MFuyCAlcjGdo7+9j4Cip3O8ALNq2lhaC17t5oGvZKsIUBswygEzIVZJvdJMfmf
+	s=arc-20240116; t=1724124985; c=relaxed/simple;
+	bh=gCyc87iUvhgXGQNxBVQ7W1PV+msAIbDuV9bl+be86/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P0h/cZR8PgN08VQO/b4OE+Br0nGu5/sJudW47E/J8n2qy9F27qpt8awktRC+7fYMyCQ+O+hd5VpGjqwbD1FuOQMMzEPK2D01Zr6B+4lUSMZDP83blDVCewnXd2wSaYKWF6oMSFQDf/+iUjB2Ni17MPNn4AmnXdOQlZ+mKXIQW00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 191F0339;
+	Mon, 19 Aug 2024 20:36:42 -0700 (PDT)
+Received: from [10.163.58.147] (unknown [10.163.58.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B63873F58B;
+	Mon, 19 Aug 2024 20:36:13 -0700 (PDT)
+Message-ID: <e452648d-fbbd-475d-b8e5-a199f56dfd98@arm.com>
+Date: Tue, 20 Aug 2024 09:06:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3fcf:b0:808:f0f7:c8d9 with SMTP id
- ca18e2360f4ac-824f26f185dmr34746139f.4.1724124902409; Mon, 19 Aug 2024
- 20:35:02 -0700 (PDT)
-Date: Mon, 19 Aug 2024 20:35:02 -0700
-In-Reply-To: <0000000000002ec51a061cea9292@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005b56630620151ca4@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_bio_compress
-From: syzbot <syzbot+cf190b6276e5bd33a108@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] lib/test_bits.c: Add tests for GENMASK_U128()
+To: linux-kernel@vger.kernel.org
+Cc: ardb@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <20240801071646.682731-3-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240801071646.682731-3-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
 
-commit 2744e5c9eb1a1090b5f61c955e934c70bfe6b04c
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Dec 27 23:31:46 2023 +0000
 
-    bcachefs: KEY_TYPE_accounting
+On 8/1/24 12:46, Anshuman Khandual wrote:
+> This adds GENMASK_U128() tests although currently only 64 bit wide masks
+> are being tested.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  lib/test_bits.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/lib/test_bits.c b/lib/test_bits.c
+> index 01313980f175..d3d858b24e02 100644
+> --- a/lib/test_bits.c
+> +++ b/lib/test_bits.c
+> @@ -39,6 +39,26 @@ static void genmask_ull_test(struct kunit *test)
+>  #endif
+>  }
+>  
+> +static void genmask_u128_test(struct kunit *test)
+> +{
+> +#ifdef CONFIG_ARCH_SUPPORTS_INT128
+> +	/* Tests mask generation only when the mask width is within 64 bits */
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000ffffffULL, GENMASK_U128(87, 64) >> 64);
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000000001ULL, GENMASK_U128(0, 0));
+> +	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(63, 0));
+> +	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(64, 0) >> 1);
+> +	KUNIT_EXPECT_EQ(test, 0x00000000ffffffffULL, GENMASK_U128(81, 50) >> 50);
+> +
+> +#ifdef TEST_GENMASK_FAILURES
+> +	/* these should fail compilation */
+> +	GENMASK_U128(0, 1);
+> +	GENMASK_U128(0, 10);
+> +	GENMASK_U128(9, 10);
+> +#endif /* TEST_GENMASK_FAILURES */
+> +#endif /* CONFIG_ARCH_SUPPORTS_INT128 */
+> +}
+> +
+>  static void genmask_input_check_test(struct kunit *test)
+>  {
+>  	unsigned int x, y;
+> @@ -56,12 +76,15 @@ static void genmask_input_check_test(struct kunit *test)
+>  	/* Valid input */
+>  	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(1, 1));
+>  	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(39, 21));
+> +	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(100, 80));
+> +	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(110, 65));
+>  }
+>  
+>  
+>  static struct kunit_case bits_test_cases[] = {
+>  	KUNIT_CASE(genmask_test),
+>  	KUNIT_CASE(genmask_ull_test),
+> +	KUNIT_CASE(genmask_u128_test),
+>  	KUNIT_CASE(genmask_input_check_test),
+>  	{}
+>  };
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1120e9f5980000
-start commit:   34afb82a3c67 Merge tag '6.10-rc6-smb3-server-fixes' of git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf190b6276e5bd33a108
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14109821980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1235f47e980000
+Here is the updated test case to cover some more corner cases. Please
+do let me know if something more can be added here to the list.
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: bcachefs: KEY_TYPE_accounting
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--- a/lib/test_bits.c
++++ b/lib/test_bits.c
+@@ -39,6 +39,36 @@ static void genmask_ull_test(struct kunit *test)
+ #endif
+ }
+ 
++static void genmask_u128_test(struct kunit *test)
++{
++#ifdef CONFIG_ARCH_SUPPORTS_INT128
++       /* Below 64 bit masks */
++       KUNIT_EXPECT_EQ(test, 0x0000000000000001ull, GENMASK_U128(0, 0));
++       KUNIT_EXPECT_EQ(test, 0x0000000000000003ull, GENMASK_U128(1, 0));
++       KUNIT_EXPECT_EQ(test, 0x0000000000000006ull, GENMASK_U128(2, 1));
++       KUNIT_EXPECT_EQ(test, 0x00000000ffffffffull, GENMASK_U128(31, 0));
++       KUNIT_EXPECT_EQ(test, 0x000000ffffe00000ull, GENMASK_U128(39, 21));
++       KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, GENMASK_U128(63, 0));
++
++       /* Above 64 bit masks - only 64 bit portion can be validated once */
++       KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, GENMASK_U128(64, 0) >> 1);
++       KUNIT_EXPECT_EQ(test, 0x00000000ffffffffull, GENMASK_U128(81, 50) >> 50);
++       KUNIT_EXPECT_EQ(test, 0x0000000000ffffffull, GENMASK_U128(87, 64) >> 64);
++       KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ull, GENMASK_U128(87, 80) >> 64);
++
++       KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, GENMASK_U128(127, 0) >> 64);
++       KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, (u64)GENMASK_U128(127, 0));
++       KUNIT_EXPECT_EQ(test, 0x0000000000000003ull, GENMASK_U128(127, 126) >> 126);
++       KUNIT_EXPECT_EQ(test, 0x0000000000000001ull, GENMASK_U128(127, 127) >> 127);
++#ifdef TEST_GENMASK_FAILURES
++       /* these should fail compilation */
++       GENMASK_U128(0, 1);
++       GENMASK_U128(0, 10);
++       GENMASK_U128(9, 10);
++#endif /* TEST_GENMASK_FAILURES */
++#endif /* CONFIG_ARCH_SUPPORTS_INT128 */
++}
++
+ static void genmask_input_check_test(struct kunit *test)
+ {
+        unsigned int x, y;
+@@ -56,12 +86,16 @@ static void genmask_input_check_test(struct kunit *test)
+        /* Valid input */
+        KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(1, 1));
+        KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(39, 21));
++       KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(100, 80));
++       KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(110, 65));
++       KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(127, 0));
+ }
+ 
+ 
+ static struct kunit_case bits_test_cases[] = {
+        KUNIT_CASE(genmask_test),
+        KUNIT_CASE(genmask_ull_test),
++       KUNIT_CASE(genmask_u128_test),
+        KUNIT_CASE(genmask_input_check_test),
+        {}
+ };
+(END)
+ 
 
