@@ -1,194 +1,178 @@
-Return-Path: <linux-kernel+bounces-293968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE2A95870D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:34:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F59958712
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D95C4B24C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4EBB1F22E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FC019004A;
-	Tue, 20 Aug 2024 12:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wrlf7E9Z"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0094F18F2D2;
+	Tue, 20 Aug 2024 12:33:57 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B94E28FC;
-	Tue, 20 Aug 2024 12:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724157222; cv=fail; b=AeTfBPWuOxr5GP6XaexqIz4IP3TGvnoCzdbHF0tqUkVSswKPw+5+39/gFYaXWiiuz7/mQ9Acmy7/py9UOlAZ2lyylKDl8L6e1snRL60R2NLDNsrqtaQItwQoA/gjChS1dc076NBb3wFlcy3aIjvl0a6PW04LFZGs2+OZ6K4ZriY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724157222; c=relaxed/simple;
-	bh=49yfkp6ZOdhP48GFzVBKpFy7k4axh0Pd9+KynJO6aUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DMIe2W0vJutUrSdxo43lobN9UwA0d7zBjGUoPqbn5KKNHWc4hFHdXxw4sohVMSJckAf6dAtKf6ZebokRQlI+ytmhkKPl/iLVyOuxbtLADyw2eOhnA/cxUnJvUaio5/73PF8AVxRqy4gQETogHWiQksEzLZc2o8SCWbEAu8ZIQs0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wrlf7E9Z; arc=fail smtp.client-ip=40.107.220.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wZT6hU6kquj0xiWhYztSi/e2dvvbfukyyhUqcsnd3OyjwN6nm0hrnOhZ3EpZT/DLIBQgJwg8qQzSTWpeTOrHDN5tWR+4L1rsFKzRh/peOPGMahd7AaTSNGuHied68A0Rz9ix2B+in4Us99Fi8IY87DGjkVylFnzhdeHSH2Doum55rsQcMmtXsHgKvZvER96osXEFeOfRtE9sj1+sriHqQ+gmz94UgQz1a5jSnXVVntbjHTaWycoHoALr0ilMRnlYtQXHzvrpEfFMVLpy5DumsCdVKWzRG92QWkr+p/6fpUSNNWUxtUyLYbnczswyDCpMRfGUS9cRTsp2TWl0bL8Z0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iTmwRm4ejkd/w8RlHPESCvraKAsPhEWCHaV6vw0G7Ck=;
- b=mF8AAsOKHVu0TmKxKZQGV+UTyKuMfEq/4hZMAQ+mZe15y6pbE2PzNeVsLVKfSDNkJ8jw+22dApQUixfjEKDFzm7ESC2uMk6OQVrFKJXAtOBo3eiXxcliK+sSAgmBxEc/gjvWw7wwN1XkhQnOYJmKDuEAcfCcNIscmJHkoC1ao8JMUnJ7HjZ+eNqBweGbBdvX2VOt7W54TOfKhorVQQktZCuk/j/6lkqObq4WomgDgn+nNexgL7SP7YX2FSu78EjrMqM5/ZpntX8UIkhUjQqp2fYWEpuzJGMqLgz2NE0DdfJW+bWmBNYQvmltxgqNfMuJ2qny0jS5kVTnjQjYOfVoZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iTmwRm4ejkd/w8RlHPESCvraKAsPhEWCHaV6vw0G7Ck=;
- b=Wrlf7E9ZGYc81T7cI3UySfGVrFcny4BIN8wdlIZz7RTdSSppoie21J+SobdYsP0R+mZfJV7y/5VpzfpvZ1u8PwWogGBIiyrOdPpcHh1IfKZLHd1T388PhYBt5ZJ8Q5ZHzJwVSsxbVA9Yv89pKOEAh20YR1rxg0lW+63fx4J4n7aiPbs07NFd52g6MdK8VcvspRN618DnxOZBoV/PU3A+mgp8znROKY8NWBI/FNFgiDEZ3eyZH/mS3BEnCn4N+oyE6eJ9FwU+cIb30mW8DuggTNg4pJVG27s+TZaoc286T3e4LpVDVbXApIyiUYEAtm1FuHVuTpgdpiFlhM4p9CCKiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6179.namprd12.prod.outlook.com (2603:10b6:930:24::22)
- by MN2PR12MB4173.namprd12.prod.outlook.com (2603:10b6:208:1d8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
- 2024 12:33:36 +0000
-Received: from CY5PR12MB6179.namprd12.prod.outlook.com
- ([fe80::9ec8:2099:689a:b41f]) by CY5PR12MB6179.namprd12.prod.outlook.com
- ([fe80::9ec8:2099:689a:b41f%5]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
- 12:33:36 +0000
-Date: Tue, 20 Aug 2024 15:33:24 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, dsahern@kernel.org, dongml2@chinatelecom.cn,
-	amcohen@nvidia.com, gnault@redhat.com, bpoirier@nvidia.com,
-	b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 08/10] net: vxlan: add drop reasons support to
- vxlan_xmit_one()
-Message-ID: <ZsSNFMyN-MivgkKU@shredder.mtl.com>
-References: <20240815124302.982711-1-dongml2@chinatelecom.cn>
- <20240815124302.982711-9-dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815124302.982711-9-dongml2@chinatelecom.cn>
-X-ClientProxiedBy: TL2P290CA0027.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::11) To CY5PR12MB6179.namprd12.prod.outlook.com
- (2603:10b6:930:24::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCE818C921;
+	Tue, 20 Aug 2024 12:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724157236; cv=none; b=TxdH1JLR169nB0LOzZlw7oeaZLlkbtVJih+67Bol3oqSmUqco1Mi82LziWuC7//K70JGPuoJumgyafO5J3hWcn8CUabM57Ewf+iEp4hzoxtYphL9wJadBpa6OaRMrSUoHyC7tFWoUV+ndzFmBUYScrcCVih8qEvVHBCcUEc0RiE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724157236; c=relaxed/simple;
+	bh=gof5U+smSv99mAUfIV33b/sToNhuaisFU5st2WkDzgk=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=jbDOGj/EMGb2Mx4Wq28kDbeK1Em0YhPnx51FdsYIuwGhaLQo+VJwRIXkHu3ppN4m5yQloYO23aFSj2gxaTDZYWEryLy3eDM9jgEHDb9y59xt8urpS4HsygjFzxSkrb8VjQ9NSkur2IOufE5Bq8syD4HVoWHJDTX1d779KqxmIYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wp8036GsCz1j6Hr;
+	Tue, 20 Aug 2024 20:28:51 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7BC521401F4;
+	Tue, 20 Aug 2024 20:33:51 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 20 Aug 2024 20:33:50 +0800
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
+	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
+	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
+Subject: Re: [PATCH v2 1/4] perf/dwc_pcie: Fix registration issue in multi
+ PCIe controller instances
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>, Shuai Xue
+	<xueshuai@linux.alibaba.com>, Jing Zhang <renyu.zj@linux.alibaba.com>, Will
+ Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Jonathan Corbet
+	<corbet@lwn.net>
+References: <20240816-dwc_pmu_fix-v2-0-198b8ab1077c@quicinc.com>
+ <20240816-dwc_pmu_fix-v2-1-198b8ab1077c@quicinc.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <3a7264d8-5f23-92b6-d364-066cdc83ef8e@huawei.com>
+Date: Tue, 20 Aug 2024 20:33:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6179:EE_|MN2PR12MB4173:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39100336-ba19-4b71-9c7e-08dcc114501a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FHxeJkh1m+Sn2f/ELBkjhTs3iKzK4xf8UujAQTg9wvkPPm0sPEewjcm/1Fui?=
- =?us-ascii?Q?1PrPf5jalTlzYKTGeBrpa/eMhTve8CmAu6i4x6FQs1V2Is9oporMXX1SQrf7?=
- =?us-ascii?Q?Ar8tBllnaNRFw2ubl7OrWI9FMEYQm8aW2JT3UVH2iZJlJc4auoohRcvg9Ups?=
- =?us-ascii?Q?67Ba0ZBb/NTQBzQKXrPJWy6bqlzc59UOlFL8ZVOOKSXp67Sz5EjrspUgXX3O?=
- =?us-ascii?Q?A0rjnBnhzR9IuCRAtvL+FUv0P0AAu1LpR0NHd3BVMm6aLrXG8cVNbEK7tnza?=
- =?us-ascii?Q?st2hLQ3l1+UcbMIeh95faLRc8qOFRUY64+4IQ1dMXQo590c/uYn1L/Akeh5J?=
- =?us-ascii?Q?/eZOKn5y630kL72b1CkEKbbXSWXi5YwCmwKc1E57CyOyyjadbq/vSxbiQn3t?=
- =?us-ascii?Q?5oEA5yl7KKxiCYQwFBFLjIItYUIjtSHF//xUmjQzd1joxE5qfy6IOidR6Wmh?=
- =?us-ascii?Q?ktb4S15TeX8yUpraGJSaiMOkqVDFcqoaw3VJgl+x9LB7B5+EzUhp7P0EF8JK?=
- =?us-ascii?Q?vl+oOJR3KsvuSl9GjfSa8iqqEjlk9+Zmsn9eVvzVO0SrsVN+RlkTnesaPba6?=
- =?us-ascii?Q?uGgLQdAnvBHskDr4ZSfNLfZQsNM+z3gVQRT3OrcWVk+2pnA04edsgXUonAev?=
- =?us-ascii?Q?aQBRU1UBHiN5bqzRkEdTKGJ/UYOeyL8NRQxFZ49r+4IV4raIVZol9QIHky9Z?=
- =?us-ascii?Q?8dziE9A81dACJl546ex+YQOuBX77wo2XzwFR+ERAWg2SYFgN+CWHyRtmLkMJ?=
- =?us-ascii?Q?Q4/zZHaGXgOiHKOX/DgiHQFN/7VzP4oECYZpGUVdlbjsslZBwIAx27CazDaj?=
- =?us-ascii?Q?ZkaVLr+fEWX5iaZFu/fsfTPZArMxit17ctaK72GR7iRAXwqmB/cg8O0Gb+GT?=
- =?us-ascii?Q?uo37VveHu14tBBR2uKIwmUEmXM2KSB6jVmdXicLUrGnq/JpjqTvdIP6Cmfcb?=
- =?us-ascii?Q?kck5CQq7dCKIhqWObgi9+/Gvgr2vuh/JUTbP+7fakNtBtk3+6mEz4dMxUGHj?=
- =?us-ascii?Q?CIIQdUzZ9Rmy0y31RpssOzRATSxCFy67zbjF4dfwQF4DkykzaHnRcJBi6hiA?=
- =?us-ascii?Q?+FzLElh2lImYY3IPr5ImFcbeGhy3WwW27enf4IkBL8CG8FOFSOQuioj7urG4?=
- =?us-ascii?Q?jhvSjatEXyigQOWBuNDUCaXg6Z42g2EMH5vWVnRt3T31v8x64owQei/kbT6N?=
- =?us-ascii?Q?cQSx970ct9SbnFil8d7wIec53sUAOQb4BGuTnu9rSP5yi10DhyGZZgoz/ZKm?=
- =?us-ascii?Q?gVgt6OVKqX9B1cPqXJ1kw4SMDSpI3Y8kOpzVLQRQrzfrMJr8mgyYZDQwL90v?=
- =?us-ascii?Q?cIWY7cAf0jZp1hRNlltb6Y04MQKdHleKRti/1S8UCDfg3Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sYP4mIGAHoFYS1fu8gQLuPaIpGjXB7ACgb/TOJd+hlRO3XPPZQJJzvgYTUeu?=
- =?us-ascii?Q?Hm54N/ydGkCnL12zJdU2Nt0efW9PazbDjQPuf0Uxsz/a65MbDXdeG9pzhTZj?=
- =?us-ascii?Q?axRE8xPNJ40ssu4RXEPcgJ/zQAx2DLngOsFNgfoUOIWsN0cTmaFEyAiZyUjZ?=
- =?us-ascii?Q?mgWC1Oqk2MR8QeDFyGAWvTWOwSvzFev04YQHdgCxrDzZP5/ozuMCYuNwPXIR?=
- =?us-ascii?Q?koQeesz1fl9zTz7Sqwmm9UROKR/XULgrfN4IYCyLcF1+0aHF6ty/Er/6frRL?=
- =?us-ascii?Q?PGEoCwuju9E4dBfg9XA/7B/RIBFmlV724Z7b8cJZ4/e82JxH46EVVGlvmH2G?=
- =?us-ascii?Q?9gGZWtIve5iwob0HKfA0gOB50FD7KGa5zd4odXVDM11WTQHVVem1lsysyYFa?=
- =?us-ascii?Q?OMlzCG11nAKp5Q5oOvsh67CON74soNMGWeMijZ01fgi4QPz4jXAzs7KHdbOW?=
- =?us-ascii?Q?/Yf8zgW8xXQ7v/UIhFsNyjZap+EtZwaR3S3UMGBbwPx11VFBn4zPEG5Pjseh?=
- =?us-ascii?Q?h6q4mVOHx8UIYrki/6ZD30BfSu38VjakEIxw0IUl69AZ93PbEKUfGq5X7rDz?=
- =?us-ascii?Q?m8qUAs9dEFGMH5sIWQP3SkCWttD7zOC+X5eaAoj9uaK+wn+F/6Jk8de636A0?=
- =?us-ascii?Q?7nmWb9XMrf20xWlJdY+binnEezv5MYlSDxies8zzUY2VLSInb1qYizL5gTp3?=
- =?us-ascii?Q?Wf1b+WdJUQM/PMod1RBuUS2jumfBezCvLFQrc6VQL012fWFcdaJF7vblz1S5?=
- =?us-ascii?Q?t/kJeENI71noIXY8psBT7wUDBFzM2tImXTbda5BwYn7No6SyuIboXODkfx8D?=
- =?us-ascii?Q?RHI3rQCboi4LMz8mZ9vQaYuhVFtX7fUGBIfWM+dp7g7pfm+ghL3eFVwaxGLi?=
- =?us-ascii?Q?e9XQV5PrOqEBMrb0zGwKsSUwHFdMsDy78n8hK99XoEVvNtekQ/oKmArthp4L?=
- =?us-ascii?Q?1tvkB/MQNVV26Twc1e5xqKb6CT+p/w1ysWVPu1z4cV/vEJSn36khBnz5z3E1?=
- =?us-ascii?Q?QO912Ukskin8CQDsitzVIWphpGzNlNZzcuj+z7QL7NS9gqQcqJTVU6bSQF/l?=
- =?us-ascii?Q?UPbb+1KO8FQ4ykekLVg2M4bH3CrBDnRgW6gZWSThrEMhakY67CjRahcHM0FH?=
- =?us-ascii?Q?Vt1zPKXxbdBF4g1/THx3Rc1wXfzxfoTDeb3NqzNtfHqbT92qFnpsHG6Co28j?=
- =?us-ascii?Q?80yeF09bjj4CRHJK72LnjJJZrel8PS25Kj8dMMmaa887VzQqQNiLdSUs0fw4?=
- =?us-ascii?Q?yWwwibaECICNuwUfwILnz0Q4kJWfpdgVJKpd7Sep2odSORC+EWzU84WGOSna?=
- =?us-ascii?Q?PHx1smlLuWBMAYpsgcHgB8b/IzKrEEPs3VT57+4Kf6zmzr4HnCT12wen6aJI?=
- =?us-ascii?Q?8MQPbdxhYVIRauQtaGLI5sLksUft4YM3cT8UTwUzQoLCx2oa9mCo8E3dBZYk?=
- =?us-ascii?Q?FV7xFL9xeW6k2RLDG4jkoc3+MYyA6ziNoEPCfXA3aFeSHXzzOcn0VUjKZ+FR?=
- =?us-ascii?Q?w8bUBr4HwjDIn7jsaLmR9PlIvgIPWlJIeOAECj/vLdWzCnBtViT3OVZiCihL?=
- =?us-ascii?Q?3AlOWYIvVd3KWRevA4ADTpRrSUetDglU0IshdPOf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39100336-ba19-4b71-9c7e-08dcc114501a
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 12:33:36.8121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5xJ1N1FQQeB3hRCW/U1/ZS31YoL8MTFosCjIIEcIoOhK3YEQWvT6PgVCzMtrT3BFA2D0z+rDVeSMMhvdNVI0bQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4173
+In-Reply-To: <20240816-dwc_pmu_fix-v2-1-198b8ab1077c@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Thu, Aug 15, 2024 at 08:43:00PM +0800, Menglong Dong wrote:
-> diff --git a/drivers/net/vxlan/drop.h b/drivers/net/vxlan/drop.h
-> index da30cb4a9ed9..542f391b1273 100644
-> --- a/drivers/net/vxlan/drop.h
-> +++ b/drivers/net/vxlan/drop.h
-> @@ -14,6 +14,7 @@
->  	R(VXLAN_DROP_MAC)			\
->  	R(VXLAN_DROP_TXINFO)			\
->  	R(VXLAN_DROP_REMOTE)			\
-> +	R(VXLAN_DROP_REMOTE_IP)			\
->  	/* deliberate comment for trailing \ */
+On 2024/8/16 23:17, Krishna chaitanya chundru wrote:
+> When there are multiple of instances of PCIe controllers, registration
+> to perf driver fails with this error.
+> sysfs: cannot create duplicate filename '/devices/platform/dwc_pcie_pmu.0'
+> CPU: 0 PID: 166 Comm: modprobe Not tainted 6.10.0-rc2-next-20240607-dirty
+> Hardware name: Qualcomm SA8775P Ride (DT)
+> Call trace:
+>  dump_backtrace.part.8+0x98/0xf0
+>  show_stack+0x14/0x1c
+>  dump_stack_lvl+0x74/0x88
+>  dump_stack+0x14/0x1c
+>  sysfs_warn_dup+0x60/0x78
+>  sysfs_create_dir_ns+0xe8/0x100
+>  kobject_add_internal+0x94/0x224
+>  kobject_add+0xa8/0x118
+>  device_add+0x298/0x7b4
+>  platform_device_add+0x1a0/0x228
+>  platform_device_register_full+0x11c/0x148
+>  dwc_pcie_register_dev+0x74/0xf0 [dwc_pcie_pmu]
+>  dwc_pcie_pmu_init+0x7c/0x1000 [dwc_pcie_pmu]
+>  do_one_initcall+0x58/0x1c0
+>  do_init_module+0x58/0x208
+>  load_module+0x1804/0x188c
+>  __do_sys_init_module+0x18c/0x1f0
+>  __arm64_sys_init_module+0x14/0x1c
+>  invoke_syscall+0x40/0xf8
+>  el0_svc_common.constprop.1+0x70/0xf4
+>  do_el0_svc+0x18/0x20
+>  el0_svc+0x28/0xb0
+>  el0t_64_sync_handler+0x9c/0xc0
+>  el0t_64_sync+0x160/0x164
+> kobject: kobject_add_internal failed for dwc_pcie_pmu.0 with -EEXIST,
+> don't try to register things with the same name in the same directory.
+> 
+> This is because of having same bdf value for devices under two different
+> controllers.
+> 
+> Update the logic to use sbdf which is a unique number in case of
+> multi instance also.
+> 
+> Fixes: af9597adc2f1 ("drivers/perf: add DesignWare PCIe PMU driver")
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+
+Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
+
+> ---
+>  drivers/perf/dwc_pcie_pmu.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index c5e328f23841..85a5155d6018 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -556,10 +556,10 @@ static int dwc_pcie_register_dev(struct pci_dev *pdev)
+>  {
+>  	struct platform_device *plat_dev;
+>  	struct dwc_pcie_dev_info *dev_info;
+> -	u32 bdf;
+> +	u32 sbdf;
 >  
->  enum vxlan_drop_reason {
-> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-> index 22e2bf532ac3..c1bae120727f 100644
-> --- a/drivers/net/vxlan/vxlan_core.c
-> +++ b/drivers/net/vxlan/vxlan_core.c
-> @@ -2375,6 +2375,7 @@ void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
->  	bool xnet = !net_eq(vxlan->net, dev_net(vxlan->dev));
->  	bool no_eth_encap;
->  	__be32 vni = 0;
-> +	SKB_DR(reason);
+> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
+> -	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", bdf,
+> +	sbdf = (pci_domain_nr(pdev->bus) << 16) | PCI_DEVID(pdev->bus->number, pdev->devfn);
+> +	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", sbdf,
+>  						 pdev, sizeof(*pdev));
 >  
->  	no_eth_encap = flags & VXLAN_F_GPE && skb->protocol != htons(ETH_P_TEB);
->  	if (!skb_vlan_inet_prepare(skb, no_eth_encap))
-> @@ -2396,6 +2397,7 @@ void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
->  						   default_vni, true);
->  				return;
->  			}
-> +			reason = (u32)VXLAN_DROP_REMOTE_IP;
-
-This looks quite obscure to me. I didn't know you can add 0.0.0.0 as
-remote and I'm not sure what is the use case. Personally I wouldn't
-bother with this reason.
-
->  			goto drop;
->  		}
+>  	if (IS_ERR(plat_dev))
+> @@ -611,15 +611,15 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  	struct pci_dev *pdev = plat_dev->dev.platform_data;
+>  	struct dwc_pcie_pmu *pcie_pmu;
+>  	char *name;
+> -	u32 bdf, val;
+> +	u32 sbdf, val;
+>  	u16 vsec;
+>  	int ret;
+>  
+>  	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
+>  					DWC_PCIE_VSEC_RAS_DES_ID);
+>  	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
+> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
+> -	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", bdf);
+> +	sbdf = plat_dev->id;
+> +	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", sbdf);
+>  	if (!name)
+>  		return -ENOMEM;
+>  
+> @@ -650,7 +650,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  	ret = cpuhp_state_add_instance(dwc_pcie_pmu_hp_state,
+>  				       &pcie_pmu->cpuhp_node);
+>  	if (ret) {
+> -		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, bdf);
+> +		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, sbdf);
+>  		return ret;
+>  	}
+>  
+> @@ -663,7 +663,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  
+>  	ret = perf_pmu_register(&pcie_pmu->pmu, name, -1);
+>  	if (ret) {
+> -		pci_err(pdev, "Error %d registering PMU @%x\n", ret, bdf);
+> +		pci_err(pdev, "Error %d registering PMU @%x\n", ret, sbdf);
+>  		return ret;
+>  	}
+>  	ret = devm_add_action_or_reset(&plat_dev->dev, dwc_pcie_unregister_pmu,
+> 
 
