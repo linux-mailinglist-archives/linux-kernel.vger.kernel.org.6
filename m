@@ -1,104 +1,241 @@
-Return-Path: <linux-kernel+bounces-293374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B6B957E83
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:41:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6D957E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1884285AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57B31B23778
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D3B17836E;
-	Tue, 20 Aug 2024 06:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AD918E37D;
+	Tue, 20 Aug 2024 06:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMIZeLI6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XUBn7GHb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813D816D33C;
-	Tue, 20 Aug 2024 06:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88E516BE12
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724136031; cv=none; b=JYuTJkWFAmZ4bdhgGFZhQLl0HhI9x9M88J9bOS6/Asd8SlskWH/0PqLV7Qc6ZbxjZxR2enkR/mDK3VRxwvabA1MZbRdgUKLJq7AZUdJPHaU9ySgB3oQuc0LtWAuKRSAXczxrVM3p+B3lZBpyh8pKUdB+KSFUOIunubXVqdGsXoM=
+	t=1724136078; cv=none; b=c5U5lhga5jXAjzpXZJQ1ZkUPpQT86xigPIUvHADrEOJk1N1YSPMtCeLTcabBvuqyww+NihSV/jD30NfPpXwhT8Ue/yWgz/SKSprPCoXmqNGtI6/Fq3H4FTwgkwN+eJ/eVOpJ0MDMIW6y47DcBpYjNACUmJEdJr7zZX5K9bhsDvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724136031; c=relaxed/simple;
-	bh=DkfoFALPN2xD7HjJ/NjpcJQg9u8DPkmbjme03VAQ95w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d6dnPi3z328qKdtSJr0Y5yuUUYmv6zGHvaI0axalvqlsonG6R1YXmQ1usomd3hSMTD41RFVLKaa081xDBAyxmRwma+P2S2sXAzwRX0bBRyM+wGe7PQWwsejhUOVZK8vWiccyUkAx1v8a3SaeaYHFOdiKbye6jiCOvmbjmIQ5T/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMIZeLI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C13CC4AF0B;
-	Tue, 20 Aug 2024 06:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724136031;
-	bh=DkfoFALPN2xD7HjJ/NjpcJQg9u8DPkmbjme03VAQ95w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TMIZeLI6JZQ/KeiErTvIHzLY9Wk1PEruLYw4rKR4cBI8GpltVhh8xOq9C44ILt3fh
-	 6I9b265VRmgn2b4pF8bjNVRlUx3MgIL+zyWiC+DVWSMdlY5ZY4KwwnRzC2rcvi/UOA
-	 g91zN/T/xLW9+If4ma0poRnk+kDavoSRHzR9tO9cAR4jWXfq3jCJ68KGNFZR6ueXKG
-	 aCqWO4T49/GjMgfYoBFT8OrKNuwmOML5KYv2cqLb4KbTKSi+o5exvg7AZKeGwI9mia
-	 nlCyk6y0KI+Bs7V568AdhtMz2dcYsdi+ZivXo7I85BJTGmhfdvjB7qshV0A4oDjFbF
-	 ytUUSmkC5r6aw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sgIXZ-005ASL-WC;
-	Tue, 20 Aug 2024 07:40:27 +0100
-Date: Tue, 20 Aug 2024 07:40:24 +0100
-Message-ID: <86wmkby9wn.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sean Christopherson <seanjc@google.com>, Oliver Upton <oliver.upton@linux.dev>
-Cc: 	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kernel@collabora.com,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Anup Patel <anup@brainfault.org>
-Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for unsupported arch
-In-Reply-To: <ZsPEEFvoGYjW3vfx@linux.dev>
-References: <20240819093030.2864163-1-usama.anjum@collabora.com>
-	<ZsNzzajqBkmuu5Xm@google.com>
-	<ZsPEEFvoGYjW3vfx@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724136078; c=relaxed/simple;
+	bh=Co5N4fb66tbdMy6eOlkayE07M//5WCSZZ9M8yOP+hQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BX16vLFb7KcN8NPyWg05V5xUcZzRRqeGF5iqswxeXQVTBJEgxl/5fMz1OQumo1ARqvvFENCpPIS+46TDxZVFCxFaWQivyDTFCGFhxBgzQPmGjQMQpEusA3/KkZ3Lbn/tTlQ4YRzKHAUzcF8X62eEnBD5g/oQDlmCqjXpA4KokyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XUBn7GHb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JNRTTp011313;
+	Tue, 20 Aug 2024 06:40:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=E
+	YAWZyzQ0FYJZPEoFW49YgYvz17cDNcnXjq4cw3edVk=; b=XUBn7GHbQilsKaSHo
+	DVEiY2XypahRzHGDjr8h1Mos4ntN6mgu81HisO8jP7Xsu+EfGmhcqEsrqg+zGa6R
+	89rLazQ/FjF5+91vgKkFzOARyYXue0uh4oLVbhNF/jgGyH0nwRAhNMhOXoM3meAH
+	3Jgwzi2l9109cq7eK3FE9NbD8Z724y27uxdSlGbSHcEWl6OLCqdtd33prueaLmqW
+	IiOh9xSl3/OoMQbBDeZtkamGU4euhJ1bw6NRdUnZHtySaRZVZF50rDzU4jtX3wzG
+	jRiDTLCOvCzxH4NDW1mVPifxGKd+RPnFD4vlpq0DqQjdZjpm4WoQ3gNSpj9LT75o
+	gx7qA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma04cka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:40:46 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47K6ejLl016167;
+	Tue, 20 Aug 2024 06:40:45 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412ma04ck7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:40:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47K1xGKY018973;
+	Tue, 20 Aug 2024 06:40:44 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376psn0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 06:40:44 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47K6ee2K56099110
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 Aug 2024 06:40:42 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 427AD20043;
+	Tue, 20 Aug 2024 06:40:37 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E1F420040;
+	Tue, 20 Aug 2024 06:40:34 +0000 (GMT)
+Received: from [9.43.1.80] (unknown [9.43.1.80])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 20 Aug 2024 06:40:34 +0000 (GMT)
+Message-ID: <1e4a8e18-cda9-45f5-a842-8ffcd725efc9@linux.ibm.com>
+Date: Tue, 20 Aug 2024 12:10:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: seanjc@google.com, oliver.upton@linux.dev, usama.anjum@collabora.com, pbonzini@redhat.com, shuah@kernel.org, kernel@collabora.com, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, anup@brainfault.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
+To: Baoquan He <bhe@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
+ <87v80lnf8d.fsf@mail.lhotse>
+ <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
+ <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
+ <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MeARZ9ZfxA25mP6cIm7xMSv65SI-14Jd
+X-Proofpoint-ORIG-GUID: 1fNEByVcExy7KUsVWapOtrVhkkRpMBj4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408200048
 
-On Mon, 19 Aug 2024 23:15:44 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> On Mon, Aug 19, 2024 at 09:33:17AM -0700, Sean Christopherson wrote:
-> > And other KVM maintainers, the big question is: if we do the above, would now be
-> > a decent time to bite the bullet and switch to the kernel's canonical arch paths,
-> > i.e. arm64, s390, and x86?  I feel like if we're ever going to get away from
-> > using aarch64, x86_64, and s390x, this is as about a good of an opportunity as
-> > we're going to get.
-> 
-> I'm pretty much indifferent on the matter, but I won't complain if you
-> send out a change for this.
+Hello Baoquan,
 
-Same here. Call it arm64 or aargh64, same difference. Whatever we
-change, some people will moan anyway.
+On 19/08/24 11:45, Baoquan He wrote:
+> On 08/19/24 at 09:45am, Sourabh Jain wrote:
+>> Hello Michael and Boaquan
+>>
+>> On 01/08/24 12:21, Sourabh Jain wrote:
+>>> Hello Michael,
+>>>
+>>> On 01/08/24 08:04, Michael Ellerman wrote:
+>>>> Sourabh Jain <sourabhjain@linux.ibm.com> writes:
+>>>>> The following errors are observed when kexec is done with SMT=off on
+>>>>> powerpc.
+>>>>>
+>>>>> [  358.458385] Removing IBM Power 842 compression device
+>>>>> [  374.795734] kexec_core: Starting new kernel
+>>>>> [  374.795748] kexec: Waking offline cpu 1.
+>>>>> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may
+>>>>> be inaccurate
+>>>>> [  374.935833] kexec: Waking offline cpu 2.
+>>>>> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may
+>>>>> be inaccurate
+>>>>> snip..
+>>>>> [  375.515823] kexec: Waking offline cpu 6.
+>>>>> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may
+>>>>> be inaccurate
+>>>>> [  375.695836] kexec: Waking offline cpu 7.
+>>>> Are they actually errors though? Do they block the actual kexec from
+>>>> happening? Or are they just warnings in dmesg?
+>>> The kexec kernel boots fine.
+>>>
+>>> This warning appears regardless of whether the kdump kernel is loaded.
+>>>
+>>> However, when the kdump kernel is loaded, we will not be able to update
+>>> the kdump image (FDT).
+>>> I think this should be fine given that kexec is in progress.
+>>>
+>>> Please let me know your opinion.
+>>>
+>>>> Because the fix looks like it could be racy.
+>>> It seems like it is racy, but given that kexec takes the lock first and
+>>> then
+>>> brings the CPU up, which triggers the kdump image, which always fails to
+>>> update the kdump image because it could not take the same lock.
+>>>
+>>> Note: the kexec lock is not released unless kexec boot fails.
+>> Any comments or suggestions on this fix?
+> Is this a little better?
+>
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index 63cf89393c6e..0355ffb712f4 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -504,7 +504,7 @@ int crash_check_hotplug_support(void)
+>   
+>   	crash_hotplug_lock();
+>   	/* Obtain lock while reading crash information */
+> -	if (!kexec_trylock()) {
+> +	if (!kexec_trylock() && kexec_in_progress) {
+>   		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>   		crash_hotplug_unlock();
+>   		return 0;
+> @@ -539,7 +539,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+>   
+>   	crash_hotplug_lock();
+>   	/* Obtain lock while changing crash information */
+> -	if (!kexec_trylock()) {
+> +	if (!kexec_trylock() && kexec_in_progress) {
+>   		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>   		crash_hotplug_unlock();
+>   		return;
 
-	M.
+Ideally, when `kexec_in_progress` is True, there should be no way to 
+acquire the kexec lock.
+Therefore, calling `kexec_trylock()` before checking `kexec_in_progress` 
+is not helpful.
+The kernel will print the error message "kexec_trylock() failed, 
+elfcorehdr may be inaccurate."
+So, with the above changes, the original problem remains unsolved.
 
--- 
-Without deviation from the norm, progress is not possible.
+However, after closely inspecting the 
+`kernel/kexec_core.c:kernel_kexec()` function, I discovered
+an exceptional case where my patch needs an update. The issue arises 
+when the system returns
+from the `machine_kexec()` function, which indicates that kexec has failed.
+
+In this scenario, the kexec lock is released, but `kexec_in_progress` 
+remains True.
+
+I am unsure why `kexec_in_progress` is NOT set to False when kexec 
+fails. Was this by design,
+or was it an oversight because returning from the `machine_kexec()` 
+function is highly unlikely?
+
+Here is my proposal to address the original problem along with the 
+exceptional case I described
+above.
+
+Let's implement two patches:
+
+1. A patch that sets `kexec_in_progress` to False if the system returns 
+from `machine_kexec()` before
+    unlocking the kexec lock in the `kernel_kexec()` function.
+
+    ```
+    diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+    index c0caa14880c3..b41277183455 100644
+    --- a/kernel/kexec_core.c
+    +++ b/kernel/kexec_core.c
+    @@ -1069,6 +1069,7 @@ int kernel_kexec(void)
+    #endif
+
+     Unlock:
+    +      kexec_in_progress = false;
+            kexec_unlock();
+            return error;
+     ```
+
+2. A patch to return early from the `crash_handle_hotplug_event()` 
+function if `kexec_in_progress` is
+    set to True. This is essentially my original patch.
+
+Please share your comments on the new approach.
+
+Thank you for review.
+
+- Sourabh Jain
 
