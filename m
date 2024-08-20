@@ -1,100 +1,308 @@
-Return-Path: <linux-kernel+bounces-293562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390AA95815D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:50:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACE5958163
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342B81C23D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:50:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C8FB2434C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFE018A93A;
-	Tue, 20 Aug 2024 08:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EBB18B46B;
+	Tue, 20 Aug 2024 08:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf0NewzO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qPyDdws7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1CB18E352;
-	Tue, 20 Aug 2024 08:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484C277F01;
+	Tue, 20 Aug 2024 08:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724143831; cv=none; b=jUEFr8I4t8PE82wqEifBJ+Yl+NQrhbWww5BN3X+6ic8SVfYRDtbXywUvcGhIjlLC5EP4xV1r2xpbF1osPwp7WobH0jOtO3Wgz9WP+3xVHPfcXRAx1olTbzjgR4PeLHbhDMKYY9QlTj3skU0JBaNWsE4frBHJGY5Qz5leUmPoYgo=
+	t=1724143914; cv=none; b=Fiy20TyGrHoYIDM94Nc20j79Jp9vCGbpGLXYMtmRN0KoCu5fJah01+mAiOFOR+zRDXZL79uWM9qK5x7iKROp5UejTDJc8kSh8XHqgRa8LqFvIJ7DRUbBeoj4w2B0tD4A/Fv4hgzNLdFkv1mlaKUQZHER9KgvKIjoBmTuY+g09fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724143831; c=relaxed/simple;
-	bh=tcAL/DKKMYEH6sgIONYpEHFf928x+8OcIG6Of0r3HaU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pRBaBznv1lfoqmhFNyeGciwvHXMO4bwANJQhc4imqRT8XKJmuKgPZz0qgHRuPX5Eu3jPGii1y/MsAgHKWVZOtHhRkkwJdhJ5sLIzuelIh4p2T55xR3xLBQpKVg/NxntyMS9G6uM5Yu6emL6V1QRX+dezWeYjQtoHSK1svF9K5g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf0NewzO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD29C4AF0B;
-	Tue, 20 Aug 2024 08:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724143830;
-	bh=tcAL/DKKMYEH6sgIONYpEHFf928x+8OcIG6Of0r3HaU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Wf0NewzOa4AqK793Zsy/0Cdg1bxtXHzLeD3U+bpWJ98xqPuMnJRxAcYf0B3cIqFfv
-	 cs3V1A3BfaUnpKP8CDHwJRb+RMSxYKgu1KKzilDX7Pid6ttZEsyWkgOMrD3f974qb8
-	 u+vd4qqYLoJaIAd+h/mgw6ojWtrRJQflirDoKMs+9Da9TK7F66mIwxrYBWP0+deAO9
-	 qW80+w9EWVq1yGQW9vkuUzBNeL2h++Z7p2WUFlsIeR0AL7XU/c6olXZ9IK4X+Deq7Z
-	 eemmro7dfyxFJsFjJsDqrLUL8ix7N/S0eYJDFo5ZwD33d3eAOGBK+yrL83b8uzCWph
-	 Tmf66obmasQEw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sgKZP-005CPB-Sw;
-	Tue, 20 Aug 2024 09:50:27 +0100
-Date: Tue, 20 Aug 2024 09:50:27 +0100
-Message-ID: <86v7zvy3vw.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: tglx@linutronix.de,
-	Suravee.Suthikulpanit@amd.com,
-	akpm@linux-foundation.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init
-In-Reply-To: <20240820075401.1206522-1-make24@iscas.ac.cn>
-References: <20240820075401.1206522-1-make24@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724143914; c=relaxed/simple;
+	bh=mNILr8Pdls+TeURy3XmDnjOuSLT2Jf1WUkkMCewepMs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q2s2NVeswd/QQVLzozcjGRnENhXXJrr20VTOzry7M65B1p5zs05GDZwAsk4MM2UXujMLxIXUFehAF6+JTS5eBVJgB1ZspEelW0UM8AVe+Tlbn1D6d0QWyvkC5rxZfQvjLzlR8Yf3ESdfUdPyCbhewTQ/xnVtZZl2oJkA4T00GUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qPyDdws7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JI0QWZ027831;
+	Tue, 20 Aug 2024 08:51:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	FxaRGyeY0qiUYRkyliaFWbt0eNy3WsJw6YkRsvCb6GI=; b=qPyDdws7hU6JVKRI
+	Nf/femsaqIhhdLNlD5VOoSGFDb0+pxE+1qB7alBk39+6oJ60jNTfpeikAOOcrlRM
+	c9HIFOyideVpeqd0V+nVBLprvlhqqIq+Y/a8cKCW9zMtQ7QITzegjZKvZdPS/fqo
+	IJVwvF6gVVcjPCjA7VMhWlH4zlywI4fP1XCdJH/NUq3v4e7kqtDBbFJedRfRrpfz
+	CQH4MD5WqIYWQGmM1xc4NFb6456LthBSM3L+lRHKuflxwNhg3AlRulchAqSOEhWx
+	2j2Njg1tlRZ1MY/FJoKfwMYSPog9AUOLJZ9yWuwCwyEawFxeaXO34pZhltmpoYiL
+	KVpXIw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mbfv9j0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 08:51:45 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47K5aRa9013103;
+	Tue, 20 Aug 2024 08:51:44 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41366u2aka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 08:51:44 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47K8peQQ24117880
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 Aug 2024 08:51:43 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B36965805D;
+	Tue, 20 Aug 2024 08:51:40 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3559B58055;
+	Tue, 20 Aug 2024 08:51:38 +0000 (GMT)
+Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com (unknown [9.43.62.216])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 20 Aug 2024 08:51:37 +0000 (GMT)
+Message-ID: <9e5ef8ab0f0f3e7cb128291cd60591e3d07b33e4.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/1] cpuidle/menu: Address performance drop from
+ favoring physical over polling cpuidle state
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Christian Loehle <christian.loehle@arm.com>, rafael@kernel.org,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: gautam@linux.ibm.com, aboorvad@linux.ibm.com
+Date: Tue, 20 Aug 2024 14:21:36 +0530
+In-Reply-To: <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
+References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+	 <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-26.el8_10) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: a9Jp-FI6R0vi1mlmCPUR9glTI9v4p4xe
+X-Proofpoint-ORIG-GUID: a9Jp-FI6R0vi1mlmCPUR9glTI9v4p4xe
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: make24@iscas.ac.cn, tglx@linutronix.de, Suravee.Suthikulpanit@amd.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200058
 
-On Tue, 20 Aug 2024 08:54:01 +0100,
-Ma Ke <make24@iscas.ac.cn> wrote:
+On Tue, 2024-08-13 at 13:56 +0100, Christian Loehle wrote:
+
+Hi Christian,
+
+Thanks a lot for your comments.
+...
+> On 8/9/24 08:31, Aboorva Devarajan wrote:
+> > This patch aims to discuss a potential performance degradation that can occur
+> > in certain workloads when the menu governor prioritizes selecting a physical
+> > idle state over a polling state for short idle durations. 
+> > 
+> > Note: This patch is intended to showcase a performance degradation, applying
+> > this patch could lead to increased power consumption due to the trade-off between
+> > performance and power efficiency, potentially causing a higher preference for
+> > performance at the expense of power usage.
+> > 
 > 
-> Add the missing of_node_put() to release the refcount incremented
-> by of_find_matching_node().
+> Not really a menu expert, but at this point I don't know who dares call
+> themselves one.
+> The elephant in the room would be: Does teo work better for you?
+> 
 
-This doesn't reflect the patch anymore. Something like this should be
-closer to reality:
+I ran some tests with the teo governor enabled, but it didn’t make a
+lot of difference. The results are presented below.
 
-"We fail to perform an of_node_put() when of_address_to_resource()
-fails, leading to a refcount leak.
+> > ==================================================
+> > System details in which the degradation is observed:
+> > 
+> > $ uname -r
+> > 6.10.0+
+> > 
+> > $ lscpu
+> > Architecture:             ppc64le
+> >   Byte Order:             Little Endian
+> > CPU(s):                   160
+> >   On-line CPU(s) list:    0-159
+> > Model name:               POWER10 (architected), altivec supported
+> >   Model:                  2.0 (pvr 0080 0200)
+> >   Thread(s) per core:     8
+> >   Core(s) per socket:     3
+> >   Socket(s):              6
+> >   Physical sockets:       4
+> >   Physical chips:         2
+> >   Physical cores/chip:    6
+> > Virtualization features:
+> >   Hypervisor vendor:      pHyp
+> >   Virtualization type:    para
+> > Caches (sum of all):
+> >   L1d:                    1.3 MiB (40 instances)
+> >   L1i:                    1.9 MiB (40 instances)
+> >   L2:                     40 MiB (40 instances)
+> >   L3:                     160 MiB (40 instances)
+> > NUMA:
+> >   NUMA node(s):           6
+> >   NUMA node0 CPU(s):      0-31
+> >   NUMA node1 CPU(s):      32-71
+> >   NUMA node2 CPU(s):      72-79
+> >   NUMA node3 CPU(s):      80-87
+> >   NUMA node4 CPU(s):      88-119
+> >   NUMA node5 CPU(s):      120-159
+> > 
+> > 
+> > $ cpupower idle-info
+> > CPUidle driver: pseries_idle
+> > CPUidle governor: menu
+> > analyzing CPU 0:
+> > 
+> > Number of idle states: 2
+> > Available idle states: snooze CEDE
+> > snooze:
+> > Flags/Description: snooze
+> > Latency: 0
+> > Residency: 0
+> > Usage: 6229
+> > Duration: 402142
+> > CEDE:
+> > Flags/Description: CEDE
+> > Latency: 12
+> > Residency: 120
+> > Usage: 191411
+> > Duration: 36329999037
+> > 
+> > ==================================================
+> > 
+> > The menu governor contains a condition that selects physical idle states over,
+> > such as the CEDE state over polling state, by checking if their exit latency meets
+> > the latency requirements. This can lead to performance drops in workloads with
+> > frequent short idle periods.
+> > 
+> > The specific condition which causes degradation is as below (menu governor):
+> > 
+> > ```
+> > if (s->target_residency_ns > predicted_ns) {
+> >     ...
+> >     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> >         s->exit_latency_ns <= latency_req &&
+> >         s->target_residency_ns <= data->next_timer_ns) {
+> >         predicted_ns = s->target_residency_ns;
+> >         idx = i;
+> >         break;
+> >     }
+> >     ...
+> > }
+> > ```
+> > 
+> > This condition can cause the menu governor to choose the CEDE state on Power
+> > Systems (residency: 120 us, exit latency: 12 us) over a polling state, even
+> > when the predicted idle duration is much shorter than the target residency
+> > of the physical state. This misprediction leads to performance degradation
+> > in certain workloads.
+> > 
+> 
+> So clearly the condition
+> s->target_residency_ns <= data->next_timer_ns)
+> is supposed to prevent this, but data->next_timer_ns isn't accurate,
+> have you got any idea what it's set to in your workload usually?
+> Seems like your workload is timer-based, so the idle duration should be
+> predicted accurately.
+> 
 
-Address this by moving the error handling path outside of the loop and
-making it common to all failure modes."
+Yes, that's right ideally this condition should have prevented this,
+but `data->next_timer_ns` is almost always greater than the actual
+idle duration which seems inaccurate.
 
-With the commit message fixed:
+> 
+> > ==================================================
+> > Test Results
+> > ==================================================
+> > 
+> > This issue can be clearly observed with the below test.
+> > 
+> > A test with multiple wakee threads and a single waker thread was run to
+> > demonstrate this issue. The waker thread periodically wakes up the wakee
+> > threads after a specific sleep duration, creating a repeating of sleep -> wake
+> > pattern. The test was run for a stipulated period, and cpuidle statistics are
+> > collected.
+> > 
+> > ./cpuidle-test -a 0 -b 10 -b 20 -b 30 -b 40 -b 50 -b 60 -b 70 -r 20 -t 60
+> > 
+> > ==================================================
+> > Results (Baseline Kernel):
+> > ==================================================
+> > Wakee 0[PID 8295] affined to CPUs: 10,
+> > Wakee 2[PID 8297] affined to CPUs: 30,
+> > Wakee 3[PID 8298] affined to CPUs: 40,
+> > Wakee 1[PID 8296] affined to CPUs: 20,
+> > Wakee 4[PID 8299] affined to CPUs: 50,
+> > Wakee 5[PID 8300] affined to CPUs: 60,
+> > Wakee 6[PID 8301] affined to CPUs: 70,
+> > Waker[PID 8302] affined to CPUs: 0,
+> > 
+> > > -----------------------------------|-------------------------|-----------------------------|
+> > > Metric                            | snooze                  | CEDE                        |
+> > > -----------------------------------|-------------------------|-----------------------------|
+> > > Usage                             | 47815                   | 2030160                     |
+> > > Above                             | 0                       | 2030043                     |
+> > > Below                             | 0                       | 0                           |
+> > > Time Spent (us)                   | 976317 (1.63%)          | 51046474 (85.08%)           |
+> > > Overall average sleep duration    | 28.721 us               |                             |
+> > > Overall average wakeup latency    | 6.858 us                |                             |
+> > > -----------------------------------|-------------------------|-----------------------------|
+> > 
+> > In this test, without the patch, the CPU often enters the CEDE state for
+> > sleep durations of around 20-30 microseconds, even though the CEDE state's
+> > residency time is 120 microseconds. This happens because the menu governor
+> > prioritizes the physical idle state (CEDE) if its exit latency is within
+> > the latency limits. It also uses next_timer_ns for comparison, which can
+> > be farther off than the actual idle duration as it is more predictable,
+> > instead of using predicted idle duration as a comparision point with the
+> > target residency.
+> 
+> Ideally that shouldn't be the case though (next_timer_ns be farther off thactual idle duration)
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+I ran some experiments based on your suggestions. Below are the
+relative average runtimes and percentage differences compared to
+the base version:
 
-	M.
+Picked a single representative workload for simplicity:
 
--- 
-Without deviation from the norm, progress is not possible.
+Note: Lower (% Difference) the better.
+|---------------------------|-----------------|--------------|
+| Configuration             | Average Runtime | % Difference |
+|---------------------------|-----------------|--------------|
+| Base (menu)               | 1.00            | 0.00%        |
+| Base + Patch 1 (menu)     | 0.92            | -8.00%       |
+| Base + Patch 2 (menu)     | 0.98            | -2.00%       |
+| Base (teo)                | 1.01            | +1.00%       |
+|---------------------------|-----------------|--------------|
+Patch 1: https://lore.kernel.org/all/20240809073120.250974-2-aboorvad@linux.ibm.com/  
+Patch 2: https://lore.kernel.org/all/c20a07e4-b9e6-4a66-80f5-63d679b17c3b@arm.com/
+
+It seems that Patch 2 does provide a slight improvement in runtime, but
+not significantly like Patch 1. Additionally, teo does not seem
+to help in this case.
+
+Regarding the condition `s->target_residency_ns <= data->next_timer_ns`,
+it appears that `data->next_timer_ns` is consistently greater than
+both actual idle duration and `s->target_residency_ns` so this condition
+nearly always holds true, indicating some inaccuracy. I'll investigate
+this further and follow up with more details.
+
+Regards,
+Aboorva
+
 
