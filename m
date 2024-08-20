@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-294224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E9E958AE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA804958AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96128281EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE2F1F25D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4001922EF;
-	Tue, 20 Aug 2024 15:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7161922F3;
+	Tue, 20 Aug 2024 15:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BK4ZBdPs"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y0gU7KF0"
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F299E28FA;
-	Tue, 20 Aug 2024 15:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10482190473;
+	Tue, 20 Aug 2024 15:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166949; cv=none; b=NanRKvxkQQ+HplIaDb602MrGDAY4zNSdVXuzEIP9/t+VMmZZEyNrQfBEJ8YslgJo2qyBRwAND97EgQ0LDaDRMYe8KLqP9iyit5XrRFrBgdMvCQ3CnQqF+91cdZcOxgeNe7wcwa29GgCaczT1KW/RAKh/AQtLZG5C6jvJbeuyTsY=
+	t=1724166970; cv=none; b=S5Qy5M6P+FTjDrDaTl01Cb09UAIN7LKGtLCUFHhKGt6LFqqV1NGQN2N4Qh7VXOUFYE/rFAhS7yevJsMjln0QE/ko9uQ12A7B11+wTAJBOJWu7fyI6dk3L9TfAHdYfl1kgcK2Aj/cdOJPE5aRAMIF14PAY8pnSO7ZUdZ9odFvdrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166949; c=relaxed/simple;
-	bh=Czkch0QZhrBqNyJDK3eZz7h/cbxIvAw7XyBBjXxkk5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=c8JS8IRJYBwhviN+sgl1BVqKyj4dtTjS2cnpd95lP/L8Fvu2Hfalg8S1GWv5w2kxwCy0a+UTHp1Fla82ASmuatZ9u/VPPhYlomi0OHoqRteskpzHPMdEn8Ai6LDD7CXTCgElPuKzCMTlQ7aVinEDfJWl+XM2bpDLqGV7x5aOaCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BK4ZBdPs; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1724166970; c=relaxed/simple;
+	bh=2htDYgQvswGaU/wI5VetYbAFBjE4OAfABWe3crGFcQk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=bzfKgD876yklxMn3eUk7dyB/v7eeZRO9T7UkHQkoe84dS3r5WwgtR9cHxxhmi4qrg8AtSQaZQUQwjvvChsO/VtaVRG30SW4JXBSYDf9OfyhaLKeCtdz7f7OWe12fBnRbKSoi2zR9gwCagsiKI0JERChq4ZnixFpOPKjjAziP7mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y0gU7KF0; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFFedL012733;
-	Tue, 20 Aug 2024 10:15:40 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFG2Bv012791;
+	Tue, 20 Aug 2024 10:16:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724166940;
-	bh=CxhzBf5ybGwVcXuCz/a38jlcbZPaO/ysMzhyekGIWLc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BK4ZBdPsHeMLIYURstzM5Z3RfWTKff+TLfvD445wm/ACLyeBzWtGy2uz0PmdeDlkU
-	 NYmvEa6+G+Y0Lcq7LhdZVy5bPj9KuV1v2fAbs8Q3AAnkBYWfa1x5YLeB/o5Q8I5mb+
-	 4tJ+2V4WGGRkeMT+s6QTjtQCyFVN6FTYNpUJIX9g=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFFeWb016067
+	s=ti-com-17Q1; t=1724166962;
+	bh=o0ex5f/T4fe5xibAfgsBjL2cdHLLg0oekkZAeaRrtYw=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=y0gU7KF0O8ubQ8gGeAOeqEbUEMr6J17SCWOSuBXoKbeVV462pZ0yW+mI7szU2fLO3
+	 AX4eQe9yTxJyyad5qiUQ8txtk8XXIjGv1GcNQy4cxrWX9XDPEPS+Ax8NusJh0mLjBA
+	 vw4bQpqISIYjv683zgM4xJX2Kgnyd9qehm1nntBI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFG2NR047072
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 10:15:40 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 20 Aug 2024 10:16:02 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 10:15:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 10:16:02 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 10:15:40 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFFdll050707;
-	Tue, 20 Aug 2024 10:15:39 -0500
-Message-ID: <1809eef3-7308-4ec5-9a31-6ae8ca1c8a57@ti.com>
-Date: Tue, 20 Aug 2024 10:15:39 -0500
+ Frontend Transport; Tue, 20 Aug 2024 10:16:02 -0500
+Received: from [10.249.130.61] ([10.249.130.61])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFFwnx027038;
+	Tue, 20 Aug 2024 10:15:59 -0500
+Message-ID: <3274bdec-e9a3-4c2d-ba8e-58caa033d451@ti.com>
+Date: Tue, 20 Aug 2024 20:45:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,141 +64,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with
- remote proc nodes
-To: Hari Nagalla <hnagalla@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <nm@ti.com>, <bb@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-References: <20240820104034.15607-1-hnagalla@ti.com>
- <20240820104034.15607-5-hnagalla@ti.com>
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix driver shutdown
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Apurva Nandan
+	<a-nandan@ti.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+References: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
+ <3e6075a6-20a9-42ee-8f10-377ba9b0291b@ti.com>
+ <9ce9044c-085f-4eff-b142-ab36d39d90b4@siemens.com>
+ <2bdd6000-82b4-4f57-a950-e9378c321154@ti.com>
+ <7ffe0f80-d4a2-4d6f-8c45-5a407ac2e584@siemens.com>
+ <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240820104034.15607-5-hnagalla@ti.com>
+In-Reply-To: <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 8/20/24 5:40 AM, Hari Nagalla wrote:
-> From: Devarsh Thakkar <devarsht@ti.com>
-> 
-> Reserve memory for remote rpoc IPC and bind the mailbox assignments
 
-s/remote rpoc/Remoteproc
+On 20-08-2024 20:29, Beleswar Prasad Padhi wrote:
+>
+> On 20-08-2024 19:50, Jan Kiszka wrote:
+>> On 20.08.24 11:48, Beleswar Prasad Padhi wrote:
+>>> On 20-08-2024 15:09, Jan Kiszka wrote:
+>>>> On 20.08.24 11:30, Beleswar Prasad Padhi wrote:
+>>>>> Hi Jan,
+>>>>>
+>>>>> On 19-08-2024 22:17, Jan Kiszka wrote:
+>>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>>
+>>>>>> When k3_r5_cluster_rproc_exit is run, core 1 is shutdown and removed
+>>>>>> first. When core 0 should then be stopped before its removal, it 
+>>>>>> will
+>>>>>> find core1->rproc as NULL already and crashes. Happens on rmmod e.g.
+>>>>> Did you check this on top of -next-20240820 tag? There was a 
+>>>>> series[0]
+>>>>> which was merged recently which fixed this condition. I don't see 
+>>>>> this
+>>>>> issue when trying on top of -next-20240820 tag.
+>>>>> [0]:
+>>>>> https://lore.kernel.org/all/20240808074127.2688131-1-b-padhi@ti.com/
+>>>>>
+>>>> I didn't try those yet, I was on 6.11-rcX. But from reading them
+>>>> quickly, I'm not seeing the two issues I found directly addressed 
+>>>> there.
+>>> Check the comment by Andrew Davis[0], that addresses the above issue.
+>>>
+>>> [0]:
+>>> https://lore.kernel.org/all/0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com/ 
+>>>
+>>>
+>> OK, then someone still needs to update his patch accordingly.
+> That comment was addressed in the v4 series revision[1] and was merged 
+> to linux-next, available with tag -next-20240820. Request you to 
+> please check if the issue persists with -next-20240820 tag. I checked 
+> myself, and was not able to reproduce.
+> [1]: https://lore.kernel.org/all/Zr9nbWnADDB+ZOlg@p14s/
+>>
+>>>>>> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power
+>>>>>> up before core0 via sysfs")
+>>>>>> CC: stable@vger.kernel.org
+>>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>> ---
+>>>>>>
+>>>>>> There might be one more because I can still make this driver crash
+>>>>>> after an operator error. Were error scenarios tested at all?
+>>>>> Can you point out what is this issue more specifically, and I can 
+>>>>> take
+>>>>> this up then.
+>>>> Try starting core1 before core0, and then again - system will hang or
+>>> If you are trying to stop and then start the cores from sysfs, that is
+>>> not yet supported. The hang is thus expected.
+>> What? Then the driver is broken, even more. Why wasn't it fully 
+>> implemented?
 
-> for each remote proc. Two memory regions are reserved for each
-> remote processor. The first region of 1MB of memory is used for Vring
-> shared buffers and the second region is used as external memory to the
-> remote processor, resource table and as tracebuffer.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 68 +++++++++++++++++++++++++
->   1 file changed, 68 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> index 67faf46d7a35..fb350b578899 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> @@ -61,11 +61,40 @@ secure_ddr: optee@9e800000 {
->   			no-map;
->   		};
->   
-> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9c800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
->   		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->   			compatible = "shared-dma-pool";
->   			reg = <0x00 0x9c900000 0x00 0x01e00000>;
->   			no-map;
->   		};
 
-newline
+Just wanted to point out that this "graceful shutdown" feature is 
+majorly dependent on the Device Manager Firmware(point 3) and minimal 
+changes to the remoteproc driver (point 2 and 4). Thus, as soon as 
+Firmware is capable, we will send out the patches for this feature.
 
-> +		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b900000 0x00 0x0f00000>;
-> +			no-map;
-> +		};
-> +
-> +		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x99800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		c7x_0_memory_region: c7x-memory@99900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x99900000 0x00 0x01f00000>;
-> +			no-map;
-> +		};
->   	};
->   
->   	vmain_pd: regulator-0 {
-> @@ -728,3 +757,42 @@ dpi1_out: endpoint {
->   		};
->   	};
->   };
-> +
-> +&mailbox0_cluster0 {
-> +	mbox_r5_0: mbox-r5-0 {
-> +		ti,mbox-rx = <0 0 0>;
-> +		ti,mbox-tx = <1 0 0>;
-> +	};
-> +};
-> +
-> +&mailbox0_cluster1 {
-> +	mbox_c7x_0: mbox-c7x-0 {
-> +		ti,mbox-rx = <0 0 0>;
-> +		ti,mbox-tx = <1 0 0>;
-> +	};
-> +};
-> +
-> +&mailbox0_cluster2 {
-> +	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-> +		ti,mbox-rx = <0 0 0>;
-> +		ti,mbox-tx = <1 0 0>;
-> +	};
-> +};
-> +
-> +&c7x_0 {
-
-These nodes are incomplete before this point and should have
-been disabled when you added them in the dtsi, set their status
-to "okay" here.
-
-> +	mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
-
-Should be one item:
-
-mboxes = <&mailbox0_cluster1 &mbox_c7x_0>;
-
-Andrew
-
-> +	memory-region = <&c7x_0_dma_memory_region>,
-> +			<&c7x_0_memory_region>;
-> +};
-> +
-> +&wkup_r5fss0_core0 {
-> +	mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
-> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-> +		<&wkup_r5fss0_core0_memory_region>;
-> +};
-> +
-> +&mcu_r5fss0_core0 {
-> +	mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
-> +	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-> +			<&mcu_r5fss0_core0_memory_region>;
-> +};
+> The driver is capable of starting a core and stopping it all well. The 
+> problem is, when we stop a core from sysfs (without resetting the SoC 
+> itself), the remotecore is powered off, but its resources are not 
+> relinquished. So when we start it back, there could be some memory 
+> corruptions. This feature of "graceful shutdown" of remotecores is 
+> almost implemented and will be posted to this driver soon. Request you 
+> to try out after that.
+>
+> With graceful shutdown feature, this will be the flow:
+> 1. We issue a core stop operation from sysfs.
+> 2. The remoteproc driver sends a special "SHUTDOWN" mailbox message to 
+> the remotecore.
+> 3. The remotecore relinquishes all of its acquired resources through 
+> Device Manager Firmware and sends an ACK back.
+> 4. The remotecore enters WFI state and then is resetted through Host 
+> core.
+> 5. Then, if we try to do the core start operation from sysfs, core 
+> should be up as expected.
+>
+> Thanks,
+> Beleswar
+>>
+>> Jan
+>>
 
