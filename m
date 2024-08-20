@@ -1,118 +1,189 @@
-Return-Path: <linux-kernel+bounces-294095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6BF9588ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A929588FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E4A1F2247B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8982D1F226D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB5718CBEF;
-	Tue, 20 Aug 2024 14:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383021917F3;
+	Tue, 20 Aug 2024 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chKKq00Z"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXFCjpy2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DBE29D19;
-	Tue, 20 Aug 2024 14:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9731917CB;
+	Tue, 20 Aug 2024 14:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724163627; cv=none; b=nRCJCau4rk9vEUZ4ZOxpHInHP/bQvd/lr92nSoUtti2VOLgzfBbfPdi+zzAQHmyYvaCJk2/ylkE5JB+ve9KgPmrox9y3gy4gnOqJNDjOM9wk9XEwsgxCC6whEZUDA9tGdpwEJaQiMwfZjdIxsfYouvSryzK7sT6lkm0PvayG9F0=
+	t=1724163629; cv=none; b=Bxz4mbdJlOi/Grd/njkyHw4nJrPelbgc3/J/NK/9wsdcHKV09OW7s2kxU6M1pG4qf5cMfO2O9LbSiHnJZXtReoFViMuGV1pj1hP6aCEdQ20I4ZIrlMsgwUIT1AdAJdTrdCSMS13sgsA8oxE88r7MXiRzQSqLTBctXRNHBluRlFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724163627; c=relaxed/simple;
-	bh=GBVk/hGzblmCoSDe2TbxWbPRIZfoDYNoIyTDzuwIC6Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ujVGUQWVQbYQU0eNPXEW6J+LaktE9wr+h66tM41UDSjPLYSnrPvEdi04V7zLUmkfd1SFwOniF2m9MPnMC+3ZWHNJofVPWDYfD96baQYCh82IqFn+0O+Y9tjZV/xFDwZWcuy+T6KZc4tsrd7MBZ12VhMOyT4lmSsl5JTd3xSgJOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chKKq00Z; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d3e6fd744fso758383a91.3;
-        Tue, 20 Aug 2024 07:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724163624; x=1724768424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wswv5PurLM6P5IjETHMLu6CnN+eBPmZTsMYIqJvimvQ=;
-        b=chKKq00ZNgB6P5Fetd2GtWUD8zh+Rs+qxWuMecapLcM80nAItp/BuDM1EP06woHdda
-         D3sc455GwALi6JsrpcLPIhS5+Od2tFaWSCyIDte5l9gunaH/9230clfEmEczkgwO/4FN
-         +ycm/cgWhsuAqaCJuu4TJ7gYcIJQWuTEyB8iWSySwqdqzr1xH2vVPm/1e7p2ChA7ADfe
-         qesjI4+wwX6JjLi/bkzCGl2ex+rIf4Skcqmls2MWXLJl4YDJUqh3BwoLX/GBpwCgNw/Q
-         SiD0MU9iBYhq5YWNtdHoAYRMzQWGPi9SlSwFBZA//fWf5ukHNyLH/rddd7hDpIyscA+K
-         syHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724163624; x=1724768424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wswv5PurLM6P5IjETHMLu6CnN+eBPmZTsMYIqJvimvQ=;
-        b=oz0gHdwHPeyKndchvJKP1i3drc9YGtK2B2ATTrN6MRyu/RaJAV/a/tLY4H2a1q9mNs
-         jhQ01grk1jQ5Xbe68ZmV9fv0fpHYfn3GsM2Xdh+XIw6cOkyl+8iTWx1o54d3c0qvPgjI
-         TjCHrUWYaDH5c6W0AMHjbat7d7djXSHEcx4+tghjjVkzk1Wx/WkPB6QHW2YeKeIVHOx7
-         3lY1m9jOC1k2p4G9yyLqPo1DlHpFWSoUXHXw2+Jav7covMbX89vHe18ORlMsrV4mm++D
-         9eg0VZn4LMxE8xBp2PY9KF8QPb0EZZxopYaHPOoCAxILOAsz+vkzm9ta5EcjCM1KLLwz
-         LYCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVM/zPBVVHUq6GNHGN82gtzCA8EpFqAM5FueSIWhGCqveuFFNHY1R5eKLT1NqZEXRpaK/X37UwxliZfNz30jnQ9vloolcNVRElBts+Oq9X5JHzuPlDXw9sK52U+noIhMExf/QQ605cla+WZnmHgP0fwlyCo8do/n4sFe2slgqVh7i/NZDjQog2o/Jc=
-X-Gm-Message-State: AOJu0YwHcPK0KYkKicyenHQPu3zEpaWgo+DGk3IsZ6r2WMYMzwXZvOJW
-	8pYmI5wcQcKRpkR/Y4ihRg3r7I8IZHFFjqEw2jnJNjQ5YO2LnBuXnVRBk9VsETRMa2kBpLcSYm1
-	4FuK+MjdoIFFDPQQrDAS9JxsxNXw=
-X-Google-Smtp-Source: AGHT+IF5iZvjFecygopv3tUhYCm+cRSOvD49UmMopVX0LjUh6PHHcP2By59cm37l0E634tMo+WI4IO/ZFx3Zyl/v7RE=
-X-Received: by 2002:a17:90b:3d7:b0:2d3:c2a3:2383 with SMTP id
- 98e67ed59e1d1-2d3e1733fe9mr9282006a91.0.1724163624163; Tue, 20 Aug 2024
- 07:20:24 -0700 (PDT)
+	s=arc-20240116; t=1724163629; c=relaxed/simple;
+	bh=jLmS7ohTOSAWa2soE+qMWOBr23PjYPa2lNX0FZyp8G0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PJQHGwyiD2DcKDV0G3j3LYokeBLmU3nDd+hNX+M7lEf98wr5GQDt30x94nWGMUDbHwZnEd3/+SQQiO5JNmNbF2itjpeHpmBra6bWgfPRMQO/3uM1gh8vZhOnm9rPHkQD4WJoD2N6NayYdi0CmJBqMFTluYvQE8rro75G27Ut7Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXFCjpy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96F9C4AF16;
+	Tue, 20 Aug 2024 14:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724163628;
+	bh=jLmS7ohTOSAWa2soE+qMWOBr23PjYPa2lNX0FZyp8G0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lXFCjpy2GiUdevqsx7W7agmPpKKhyMR0duAbP0372lVmjzhppTF7Rx4q3hznIYqWF
+	 42fvcVQhhHgo264sBuxSHQtaaqGbnjtgeCX00ERoPWGolMnzU0yUPJXkegXC5+ecgO
+	 GkgSaK7mQ4ubngiR1gwimOKqgdFilrG8vbbZh58HhVe+KdetPaV53fBX3J2VvK1hJ0
+	 I2kHVbNM14nANajm6iRzeCYvmWDpHGyMTpCeRPFr9Msk8dTnwO7bUgi6BRDnCQTkwg
+	 RgGBiLAHawP8w54BkyCAQcti7T1iHZx/GWnu07j7DfFdOfy+1/B+Sb2aVHxJq3ria3
+	 MG/ga5YWB6fug==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sgPij-005IQi-Ol;
+	Tue, 20 Aug 2024 15:20:26 +0100
+Date: Tue, 20 Aug 2024 15:20:25 +0100
+Message-ID: <86plq3xoly.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v8 5/6] KVM: arm64: Initialize the ptdump parser with stage-2 attributes
+In-Reply-To: <20240816123906.3683425-6-sebastianene@google.com>
+References: <20240816123906.3683425-1-sebastianene@google.com>
+	<20240816123906.3683425-6-sebastianene@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240819213534.4080408-1-mmaurer@google.com> <20240819213534.4080408-2-mmaurer@google.com>
-In-Reply-To: <20240819213534.4080408-2-mmaurer@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 20 Aug 2024 16:20:11 +0200
-Message-ID: <CANiq72k8UVa5py5Cg=1+NuVjV6DRqvN7Y-TNRkkzohAA=AdxmA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] kbuild: rust: Define probing macros for rustc
-To: Matthew Maurer <mmaurer@google.com>
-Cc: dvyukov@google.com, ojeda@kernel.org, andreyknvl@gmail.com, 
-	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, aliceryhl@google.com, 
-	samitolvanen@google.com, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	glider@google.com, ryabinin.a.a@gmail.com, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Matthew,
+On Fri, 16 Aug 2024 13:39:05 +0100,
+Sebastian Ene <sebastianene@google.com> wrote:
+> 
+> Define a set of attributes used by the ptdump parser to display the
+> properties of a guest memory region covered by a pagetable descriptor.
+> Build a description of the pagetable levels and initialize the parser
+> with this configuration.
+> 
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/kvm/ptdump.c | 135 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 129 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> index 52483d56be2e..79be07ec3c3c 100644
+> --- a/arch/arm64/kvm/ptdump.c
+> +++ b/arch/arm64/kvm/ptdump.c
+> @@ -14,6 +14,51 @@
+>  #include <kvm_ptdump.h>
+>  
+>  
+> +#define MARKERS_LEN		(2)
+> +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
+> +
+> +struct kvm_ptdump_guest_state {
+> +	struct kvm		*kvm;
+> +	struct ptdump_pg_state	parser_state;
+> +	struct addr_marker	ipa_marker[MARKERS_LEN];
+> +	struct ptdump_pg_level	level[KVM_PGTABLE_MAX_LEVELS];
+> +	struct ptdump_range	range[MARKERS_LEN];
+> +};
+> +
+> +static const struct ptdump_prot_bits stage2_pte_bits[] = {
+> +	{
+> +		.mask	= PTE_VALID,
+> +		.val	= PTE_VALID,
+> +		.set	= " ",
+> +		.clear	= "F",
+> +	}, {
+> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> +		.set	= "R",
+> +		.clear	= " ",
+> +	}, {
+> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> +		.set	= "W",
+> +		.clear	= " ",
+> +	}, {
+> +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> +		.val	= PTE_VALID,
+> +		.set	= " ",
+> +		.clear	= "X",
+> +	}, {
+> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> +		.set	= "AF",
+> +		.clear	= "  ",
+> +	}, {
+> +		.mask	= PTE_TABLE_BIT | PTE_VALID,
+> +		.val	= PTE_VALID,
+> +		.set	= "BLK",
+> +		.clear	= "   ",
+> +	},
+> +};
+> +
+>  static int kvm_ptdump_visitor(const struct kvm_pgtable_visit_ctx *ctx,
+>  			      enum kvm_pgtable_walk_flags visit)
+>  {
+> @@ -40,15 +85,81 @@ static int kvm_ptdump_show_common(struct seq_file *m,
+>  	return kvm_pgtable_walk(pgtable, 0, BIT(pgtable->ia_bits), &walker);
+>  }
+>  
+> +static int kvm_ptdump_build_levels(struct ptdump_pg_level *level, u32 start_lvl)
+> +{
+> +	static const char * const level_names[] = {"PGD", "PUD", "PMD", "PTE"};
 
-On Mon, Aug 19, 2024 at 11:35=E2=80=AFPM Matthew Maurer <mmaurer@google.com=
-> wrote:
->
-> Creates flag probe macro variants for `rustc`. These are helpful
-> because:
->
-> 1. `rustc` support will soon be a minimum rather than a pinned version.
-> 2. We already support multiple LLVMs linked into `rustc`, and these are
->    needed to probe what LLVM parameters `rustc` will accept.
->
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+How about 5 level page tables, which we support since v6.8? The
+architecture uses a SL=-1 in this case, and I have the feeling this is
+going to expose in a lovely way, given that you use a u32 for
+start_level... :-/
 
-I had some feedback on v2 -- was it missed?
+I also question the use of these names, which have no relation with
+what the architecture describes (news flash, arm64 isn't just another
+x86 implementation ;-).
 
-    https://lore.kernel.org/rust-for-linux/CANiq72khUrha-a+59KYZgc63w-3P9=
-=3DDp_fs=3D+sgmV_A17q+PTA@mail.gmail.com/
+I'd rather this displays the actual level, which is something anyone
+can understand.
 
-Thanks!
+I think this needs some surgery to handle FEAT_LVA2 properly.
 
-Cheers,
-Miguel
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
