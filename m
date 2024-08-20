@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-294565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECCD958F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDB3958F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395D8285794
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9029C1C21109
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903FC1C3798;
-	Tue, 20 Aug 2024 20:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650C1C463F;
+	Tue, 20 Aug 2024 20:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4uKlvE8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGIjS5jV"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB5449651;
-	Tue, 20 Aug 2024 20:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D50125D5;
+	Tue, 20 Aug 2024 20:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186761; cv=none; b=Mpm5SAKsHOxRRnUQXbN9fYj3AfdHqnR5Z6UsZRJhjq/S4dUUdwKXhyzkNRY3LgAIakHUH1HVIdrw5j603VN5yfVfleEa3te1485v7tVxcS8VAofMj4wPqSXEkMM2FgiJz9eCntLhDsUu7VH1M93PqqKftd2zIuj7M7lIbxi35Y4=
+	t=1724186900; cv=none; b=bHRZAoMEcKqLQ1w7kRl0Yu0SJv4U2wslBeXRA2mU0DRJTeyR+Aubm2uRP99ZekwAzqlQ53nNswrVTxGJrdHA9LJbgiodPwp/NaTH0KtRKjV+/0cj9U4r0SawMPvnWPh+85IEXHPMIErS4oQlSIBOrjHSvjdr3YTH5laLqIfedsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186761; c=relaxed/simple;
-	bh=DzEEW1HlHBTo8rcN75ILvfm4kL9YGDtUrluz9TCmyyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b6ABZPotO7m1kgpYPYQKb1Ja9ZTaICEvkBNekwfXOM57Kku9XTJL4PGM3yGnagmmgfaEj1U8FEJIkwD5TJzIyQF7/Te6svjxosoqxrvCvhjvCN4EvmtjdYMWNw9g5X7uytOIksyT1pNjXlljbgc691iCGn4YUFnZRjrBHgatbu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4uKlvE8; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724186760; x=1755722760;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DzEEW1HlHBTo8rcN75ILvfm4kL9YGDtUrluz9TCmyyw=;
-  b=d4uKlvE8dUBl/BgktjAxEttLtMTRe8qs0YHsfaOb8GT2HWa2Nuyc40rF
-   LHnKgqA4HnwuR9QBF6qV17qdXa74Iwtv8fwr2o/ztz8OHSozqZ6OpFg5O
-   OTY204NVcUGv4OIE2a1ntTlFvchnPmIWtXZyDZv5/0tlNlRRLwzsnhvNN
-   a6p4AjqgI4nqGEHC65R/+0gSsQUS7DvPkKbx5nahdNy7m6pkx2YXL4dCt
-   a/v1qu59tEMnSq3WSuh3nEjzgpcBVFRnJY3bt5q24c6ntOmj2xKU5f9r7
-   U0XTHMQejU1kmWB9hbjr1JBd/c8YRJTJG9fXV2ubvd7HT+KWGIcmFJXRS
-   g==;
-X-CSE-ConnectionGUID: Cq+vW8dXQCm2UnyBwTscuA==
-X-CSE-MsgGUID: cXnBuBLgSdyyn9ZyhaVadA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33905234"
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="33905234"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 13:46:00 -0700
-X-CSE-ConnectionGUID: cKZ2PoXHQ36L5o69uLwCjQ==
-X-CSE-MsgGUID: dm5Is9j3QcKBCOKrUVCNEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="65743106"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa005.jf.intel.com with ESMTP; 20 Aug 2024 13:46:00 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2] platform/x86/intel-uncore-freq: Do not present separate package-die domain
-Date: Tue, 20 Aug 2024 13:45:58 -0700
-Message-ID: <20240820204558.1296319-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1724186900; c=relaxed/simple;
+	bh=YHZKIU/By4p6MXtfCFWkiNIv/NvyHyQzbsI9IEvKDas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JIfrSKs92rhlx4KXRnJcVDyWcaZVysJuaTmCygXNYXCP/Lgu35wSVtK+cMoQsTgvs5Kk4vCjLea0Wl15fG9F5q7nQ8sZTgSBSTLJFCLOEWTHl+IbJYmyJA0MmfUtnyE/MwvgN1RNiQR4QOR3unnci3cQK4nPC6uJ2jOf3lvBGu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGIjS5jV; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so2642622a12.3;
+        Tue, 20 Aug 2024 13:48:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724186897; x=1724791697; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=so5U4dRsxPkkX00TiAViSu+tVxm9yDMG95NIiH1QnPs=;
+        b=QGIjS5jV/f+wmBC5DzBtoRLDl9cOOPuPu2ZZe2ReBWXXh/wmIke2zPp8mMqwaOqSyZ
+         ez5wyfpDDMRHhJ2q83Cr8/9GTnZTRsQl87yimi9d/rnRXos5MfvlxTWAxkTurmGqGQuZ
+         arqfaesgl4aqdYp3UtJVF1CVm/63gieynRwjMZ7HO3Zrsq9u1OfwjdX7BpuuneH2ileQ
+         g2Kxmkaqq9gw10UP6OXd4NKvAzQjo65mXbIwfoVaLoqeWVv/njaQkFB1FZ33222/wpge
+         rRANw8WqqoCpJDw9DDkZ4bZ4qFD4dJ0PydWmUgfNFqte50eKIM5wpaYieV49yqeAdu24
+         02Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724186897; x=1724791697;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=so5U4dRsxPkkX00TiAViSu+tVxm9yDMG95NIiH1QnPs=;
+        b=G2mwD5T6S2D7G9Kueo1NT6jFfjNsLX6dnOtUqHJ3SSgRSApLyMpLsqCLJXJYxckV/L
+         oCRp8zbxJOMQiHi5SHvG5UqqLRN9EcbAVK5S9aSzomOz8as0kGMpdq8mHnp0pw2Q7d6S
+         y1x3BSiKu/adzBj8K7L0A0BotrPDpW/nK+y9wP+WhQjrDWlybHneHhHvNAGFLOPCv+o+
+         Tjwp+q1ScsRm0RZWd8xEexwvddb1mQ5j01GPWlRlyGGEc9SGMpHQPTX5nESARhWta3ng
+         6tLC8ont898nKr/gJVD6t/1s9BvXF8HwGhH561X13H9hEk325FZ0OhdbPp8k/2+7WnCN
+         rBjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDnND9fgqg4To9BeHAhYsFeUOfAofm75qlxQOiyofckpfxaJdwqU0Pz33eRfE0yEcIBcvBZMBCMLC2tTQ=@vger.kernel.org, AJvYcCVM+2Myxt7Disy52x/83bGKfnVr488Oen+/tFtM7rozbHDkF19TfyDP9QOk8RXGFlaCReVEZyScWULET66D@vger.kernel.org, AJvYcCVuPsknWYA6g8FARe8qa0OU/uljLwWynxjmB7bFsoWXzeuHalBdG0GtfFlX0y6eWLeP4ZYYo/DDr2s=@vger.kernel.org, AJvYcCW6WwXqiiJ+c0T9Lb5aC61xDdeR2xbtbVHtbTPgkSlHujVaSTFQqwbZ0jwdXKHGM4mHVyLXO5lqDlz/wmq1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe7HUzX/7+5+aRcSdeuMCvNHCYfMtb++sK42AJ1XsVPOmk0/Bb
+	MWcZGO8gfL8LIamrTtPoxbRVh34oMJtxorQU8ywkvdZ4ajlV3eLZ
+X-Google-Smtp-Source: AGHT+IE8OvIlzyLozb80N9u9uEvUjTzp8MzB6n+B3MKdIYKYNHYOwSrQchP3hlfbZVtxOUrw/Y3N1g==
+X-Received: by 2002:a17:907:e6c3:b0:a7a:8e0f:aaed with SMTP id a640c23a62f3a-a866f7308d6mr19603266b.50.1724186896605;
+        Tue, 20 Aug 2024 13:48:16 -0700 (PDT)
+Received: from [192.168.1.19] (79-100-234-73.ip.btc-net.bg. [79.100.234.73])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838393457asm799398366b.117.2024.08.20.13.48.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 13:48:16 -0700 (PDT)
+Message-ID: <0af670ae-8c8f-4e78-b1e0-e9ccb4fba2c9@gmail.com>
+Date: Tue, 20 Aug 2024 23:48:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] media: venus: Use dev_pm_domain_attach|detach_list()
+ for OPP PM domain
+To: Ulf Hansson <ulf.hansson@linaro.org>, Viresh Kumar <vireshk@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240723144610.564273-1-ulf.hansson@linaro.org>
+ <20240723144610.564273-3-ulf.hansson@linaro.org>
+Content-Language: en-US, bg-BG
+From: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+In-Reply-To: <20240723144610.564273-3-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The scope of uncore control is per power domain with TPMI.
+Hi Ulf,
 
-There are two types of processor topologies can be presented by CPUID
-extended topology leaf irrespective of the hardware architecture:
+Thank you for the patch!
 
-1. A die is not enumerated in CPUID. In this case there is only one die
-in a package is visible. In this case there can be multiple power domains
-in a single die.
-2. A power domain in a package is enumerated as a die in CPUID. So
-there is one power domain per die.
+On 23.07.24 г. 17:46 ч., Ulf Hansson wrote:
+> Rather than hooking up the PM domains through devm_pm_opp_attach_genpd()
+> and manage the device-link, let's avoid the boilerplate-code by converting
+> into dev_pm_domain_attach|detach_list.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>   drivers/media/platform/qcom/venus/core.c      |  8 ++---
+>   drivers/media/platform/qcom/venus/core.h      |  6 +---
+>   .../media/platform/qcom/venus/pm_helpers.c    | 31 ++++++-------------
+>   3 files changed, 14 insertions(+), 31 deletions(-)
+> 
 
-To allow die level controls, the current implementation creates a root
-domain and aggregates all information from power domains in it. This
-is well suited for configuration 1 above.
+Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
 
-But for configuration 2 above, the root domain will present the same
-information as present by power domain. So, no use of aggregating. To
-check the configuration, call topology_max_dies_per_package(). If it is
-more than one, avoid creating root domain.
+I'll pick it through linux-media.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
-This is a forward looking change as TPMI is architectural and should
-support all topologies.
-
-v2
-Updated commit description as suggested.
-
- .../x86/intel/uncore-frequency/uncore-frequency-tpmi.c     | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-index 2016acf44f6a..e6047fbbea76 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-@@ -557,6 +557,9 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
- 
- 	auxiliary_set_drvdata(auxdev, tpmi_uncore);
- 
-+	if (topology_max_dies_per_package() > 1)
-+		return 0;
-+
- 	tpmi_uncore->root_cluster.root_domain = true;
- 	tpmi_uncore->root_cluster.uncore_root = tpmi_uncore;
- 
-@@ -580,7 +583,9 @@ static void uncore_remove(struct auxiliary_device *auxdev)
- {
- 	struct tpmi_uncore_struct *tpmi_uncore = auxiliary_get_drvdata(auxdev);
- 
--	uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
-+	if (tpmi_uncore->root_cluster.root_domain)
-+		uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
-+
- 	remove_cluster_entries(tpmi_uncore);
- 
- 	uncore_freq_common_exit();
 -- 
-2.45.0
-
+regards,
+Stan
 
