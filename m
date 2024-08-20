@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-293817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4396E958549
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0553C95854D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD801C24454
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:59:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372C61C2439E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA8418DF80;
-	Tue, 20 Aug 2024 10:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5509D18E02D;
+	Tue, 20 Aug 2024 11:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWyQqVwv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="tYTRN81v"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE5D18E375;
-	Tue, 20 Aug 2024 10:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B7B188CB3
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724151551; cv=none; b=M1f0GoWPPOyqEilAw5ev018lNvdPTF3P47b9Q9H54KHlpQIStTH7aYEtor/VQSOKLhzEv8WyjLF/QERl8stZf+9WwiEWpuVG0pwaIup1h7n4tXDdJxwfVdy/x9D8A+rVYdwoJXnozU6VkTLm+tHWiTxHxfUWXaVFwrx46zELcBg=
+	t=1724151601; cv=none; b=n2JLIlZd95WnWUugdwcljDKdPBfJx+NdyD1OewZ/72k9UHhBtbn2Tg5eJaXe6qfnhp1q+nQUNl/0nmUvw1fMHeaeY37WcDWr6OrLu2eVr1rrhAnjdHxIqkPd2aF8ClpzTlidJ/O8VNVK5AuCNH6pfkPaFpPEWc0lYZW9Q38huyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724151551; c=relaxed/simple;
-	bh=3Og+tiSfir93LZrEHOVhD/etjKB31Cdx407jfgvkUKg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mZjn/xPgE2BXjZwSUTYilsU+HUssm6V1mUMZ2k/kmbpOR7310lkl/NQFqEQXsjOoy2YKfpWcPUGt8Roj4CN9eAF2qsnKjfgGBsJL5IFX0KDL8+Gta302mgPv9YL13r2cJdpXrd/kowRbFOTH/fU4tnI8MG2O5DvKRQWQb7JaLT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWyQqVwv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 48C49C4AF0F;
-	Tue, 20 Aug 2024 10:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724151551;
-	bh=3Og+tiSfir93LZrEHOVhD/etjKB31Cdx407jfgvkUKg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=uWyQqVwvsZrmGbxN+Umg87Dp787H89goQln7q65Yh0SQsGE0bXmhyPNZRT/siyiAW
-	 SBJfACvQ8f1DBpIKwKP86LdxgIdQnuXzy8Egb/6zhCPLb9SnzHNF+fLi6EsI7bbryT
-	 OasP0hdSbNpczmBtSm1Zp7kuhUt+CwUpN+6pNvL2VYbphiN5K81pjpf+SCwzJbWZXg
-	 Q/A/8n3UczTA5QcfGBpYjvGhgo7xrGVp0drMlv+G4UAEZYuXjqcTpGgrpVHjScQ7gO
-	 aZcgeCh/RmiFJZmvMCX4ZKWlJe4RLbp4dnFPNWSWseGLXDhM/6zAolvSDg4Vkl1CED
-	 mjx0lZECPf1Mg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346BAC531DF;
-	Tue, 20 Aug 2024 10:59:11 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Tue, 20 Aug 2024 16:28:59 +0530
-Subject: [PATCH] Fix missing description in struct member for journal_s
+	s=arc-20240116; t=1724151601; c=relaxed/simple;
+	bh=x+cc/NQ4+B/XG1Vu9ua+mQPNBaWEIBcAOi8YcjrS8nI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vu/l08Fsmr0BBSVsf2+pf3rYWyPPem6Y23ALc0GnObt+Jad2+JYVvv0zcVOPQWnlkY6CANVuWAPcgdPRpHM7NzpdSKfkqc588tTXt6xvHEXUamLehGQmZmmFDF6isCoooC8YaQuZnq7NSyjZTpyVwTsCIrjdfHwMXb98Gzn/kLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=tYTRN81v; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d3c8bc608so10468815ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724151599; x=1724756399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GN+EIjpNUUx5GfQqCYudQRJbl+lPpTDJG3imDxVORnA=;
+        b=tYTRN81vaEB3nbuA1VJ8bg4jU37PWWJMAdUoQfCSaHbYaiJFXUHb0tHPmy9QcbCVCu
+         M7lfmQjdukyX2ttggi58Xqv0WYirWW/LsFYFF01ioS2Fb72fPfpKRRFgW+RbygZqDnZJ
+         dTeGZCq04+9FQ3sd2PIskOMEDqfel7MG+cAg2K8U9PPS9YBEyVSvxmPsQW4tmBGq2L3y
+         rg8Vc84SNInlZxTKVD4oj838Ypa3asbd3SbpnAYzP2X6kifMic7P3r97aTILreoRwVcW
+         zkcZ8Aw1TFuEtd4UKU13GsiLixN7ON/Pj673KkDv/5sLI/yi/2+tmDlZ598I8qTRv96f
+         27+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724151599; x=1724756399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GN+EIjpNUUx5GfQqCYudQRJbl+lPpTDJG3imDxVORnA=;
+        b=fekunvlnPTChFMgCWmks9bYjjgaKj2cR9aWX5SUJoP+noEWqxBNe7FkrDMs6wBj1bB
+         JgyFj+tfzrzY6oHAwkuC01HO0qU6D3UkGoApg3X6bz1bC9EatV3ZiHFs9XD4u6vfmdTf
+         lVhltD6NYdy2tQi0zBLO03zkKE87kMJ1PD//LzOU8dXFYEazyRDc8qqix5hegf5cynzd
+         RteInTAcPjydfz2nLRznhZd62cd4TvkrAqLs+trnNUY181VdYlpM29LsnhHasjl6r72M
+         Ma5kXuiSnIfZRHXoAElG8dut/WVYZlm27Z0CfbS3gKhGqOPZyVjwaKwUzLrocDbPR8mY
+         bxoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8oKtcrR0DjDPUaYetI5QSqCvTnsyXeaT9nOzqoJpVK3I7yDDzayrzIOd6TQzahdPxYjKlPWxlrQz5rKQ9FQuNsce7hM5tlwkrSi+g
+X-Gm-Message-State: AOJu0YzhUf5X3Gv/onZPPRjM+8aIhslt1bDEmd4ygvp7Wb/W5db1hB4D
+	dnFQbkM1rpqtijgn/2gTNELkwwPlQk8Nj4AbjcrauAV8C8StSfMLKTlJgf7Hbknud18Tt/12sqs
+	2UvqlZ7YPiDECpEuutfQmR4AGhUXaqhvL6WV3Fo9jnDtyoLh6
+X-Google-Smtp-Source: AGHT+IHqjjn2UapHpnmuaFhmYQPyeSNmej7VILcZMgUpLXZilMbqo1VtVFSgCamg32GBi9wtyoqu+sC1TyQmb5Inz4w=
+X-Received: by 2002:a05:6e02:152b:b0:39b:2ceb:1a23 with SMTP id
+ e9e14a558f8ab-39d26ce6283mr152753085ab.3.1724151599259; Tue, 20 Aug 2024
+ 03:59:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-journal_s-missing-description-fix-v1-1-578b218e646d@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAPJ2xGYC/x2N0QrCMAxFf2Xk2UAXZBZ/RURmG2tEu5HoGJT9+
- 4KP58K5p4GxChucuwbKi5hM1aE/dJCeYy2Mkp2BAh1DpICv6ad1fN8MP2ImtWBmSyrz1018yIp
- 87ymmMOR4IvCfWdnnf+Ny3bYd+nV2xXMAAAA=
-To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>, 
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724151549; l=849;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=w1+MRLpQlqWk+mrt0yJy8pQkb3cf8RgO7noQOxVKLCA=;
- b=nWb0FIVRoU7+fyLBkHM9tXMnfqm6Flnn2gHKxXt0krC45Pm5HUIqkb9w/Dc/PB/96rkrQ8ukC
- Xknx9ml/9kdAUdUZYkVn23a4SGYGVDZCfNXM7snM2cVA0QRXZqbO14A
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+References: <20240820094023.61155-1-krzysztof.kozlowski@linaro.org> <20240820094023.61155-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240820094023.61155-2-krzysztof.kozlowski@linaro.org>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 20 Aug 2024 16:29:48 +0530
+Message-ID: <CAAhSdy00N62pZfMrBTMASaZUqW6L-zEe_BqNZ4ZsOWdEvxHDZA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpuidle: riscv-sbi: Simplify with scoped for each
+ OF child loop
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Atish Patra <atishp@rivosinc.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Manas <manas18244@iiitd.ac.in>
+On Tue, Aug 20, 2024 at 3:10=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Use scoped for_each_child_of_node_scoped() when iterating over device
+> nodes to make code a bit simpler.
+>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The struct member 'j_transaction_overhead_buffers' in 'journal_s' was
-commented with partial name. 'make htmldocs' warned about this.
+LGTM.
 
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
- include/linux/jbd2.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 5157d92b6f23..17662eae408f 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1086,7 +1086,7 @@ struct journal_s
- 	int			j_revoke_records_per_block;
- 
- 	/**
--	 * @j_transaction_overhead:
-+	 * @j_transaction_overhead_buffers:
- 	 *
- 	 * Number of blocks each transaction needs for its own bookkeeping
- 	 */
+Regards,
+Anup
 
----
-base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-change-id: 20240820-journal_s-missing-description-fix-eb128c06d872
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
-
-
+>
+> ---
+>
+> Changes in v2:
+> 1. None, only Rb tag.
+>
+> Other patches from the set were applied.
+> ---
+>  drivers/cpuidle/cpuidle-riscv-sbi.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
+e-riscv-sbi.c
+> index 5bb3401220d2..d228b4d18d56 100644
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -448,7 +448,6 @@ static void sbi_pd_remove(void)
+>
+>  static int sbi_genpd_probe(struct device_node *np)
+>  {
+> -       struct device_node *node;
+>         int ret =3D 0, pd_count =3D 0;
+>
+>         if (!np)
+> @@ -458,13 +457,13 @@ static int sbi_genpd_probe(struct device_node *np)
+>          * Parse child nodes for the "#power-domain-cells" property and
+>          * initialize a genpd/genpd-of-provider pair when it's found.
+>          */
+> -       for_each_child_of_node(np, node) {
+> +       for_each_child_of_node_scoped(np, node) {
+>                 if (!of_property_present(node, "#power-domain-cells"))
+>                         continue;
+>
+>                 ret =3D sbi_pd_init(node);
+>                 if (ret)
+> -                       goto put_node;
+> +                       goto remove_pd;
+>
+>                 pd_count++;
+>         }
+> @@ -480,8 +479,6 @@ static int sbi_genpd_probe(struct device_node *np)
+>
+>         return 0;
+>
+> -put_node:
+> -       of_node_put(node);
+>  remove_pd:
+>         sbi_pd_remove();
+>         pr_err("failed to create CPU PM domains ret=3D%d\n", ret);
+> --
+> 2.43.0
+>
 
