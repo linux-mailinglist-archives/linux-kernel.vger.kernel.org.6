@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-294326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7070F958C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B38958C49
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFFAB22F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975151F24F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F221BBBE0;
-	Tue, 20 Aug 2024 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FABD1BD512;
+	Tue, 20 Aug 2024 16:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="V6TR+HEk"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="I8RXwI2m"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A718B1B3F08
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7951B3F33
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171722; cv=none; b=pJKnh70EkdNMhoro8nJs2qgYxaoVZsyIEZYq/PcvGvmBu+0FOc1CKAWBl6EIynSPdR3FcmVsI2iY85OBE7RuUdtFTPDyCyTXA42df/4jr3d5S0pWc0TNnsfrsxpAEqeeJrdqHYk//5wvbHRzNtkZaqL1QzQkk8AqFUE14wkTKM8=
+	t=1724171723; cv=none; b=Ya+qCtRwPf8NZT4s4PHMvX/JzQ0kyIOQXWIQIatDOmGoQ7Gvmi3AX5Swzjs4QLGS/dkXmfEfisDnExiRQiB3Nid6+DZeD8SMy0ydlhpmo1Zl3SG1Tbie+A/p8kxgdoaSbEnKqosKK/Uf0iOnttlUKzo8CL55+9wQ+cUL31l9OoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171722; c=relaxed/simple;
-	bh=x61t08722IA9HiK/FzMTCXQkBhUf938GZOXU6aQsSSk=;
+	s=arc-20240116; t=1724171723; c=relaxed/simple;
+	bh=FF4nQxBM0nS1lqakhr4Q+sUzCZDVAFySaog/xxInf3M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yn9+Yv1L4MrSlF4unn8EEv9Fsx4LNfpzaEGSJ8Pc2N9cp1Zc3z14Mm39TLJvORKDS+E81funCEwTGEuHjobGp0ZE8ZKrK8vgPW2H/R8e9Gxzf2EIHujB6fX9mpTLQ6U4+vdNiW/RRTN5oLUnXmfr0lz82gETagZkoXTND5L0JNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=V6TR+HEk; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=Ok+lExfqimQJetY1Y223sgogUU07DNUORaRnXZtBWCzT2GFgzSNKqJ20D8pZmqgzv8dbo3u2hyelgqD7NCxdyUeWNRFuZxjoxmD7nCcwy/Ly9Nne2Y3IZRifDWjddYakch2euBsqRPVDKZ0YUVTMZh0hZECHKXlsAU3PU7Dc01w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=I8RXwI2m; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso8653171a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:35:20 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so2907819e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1724171719; x=1724776519; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P4GvNZ2q2vkKbUvc/NgCLEzCheBxpfsamb4EXfBM/Og=;
-        b=V6TR+HEk6ch4QlU0saqGNMJ5DhHPrFkh0qnwkkIkhf/0rInDOAi1ajEM91s4akYkIR
-         oCv9yClD3OTbLl8kyOeWbTIsGihOBFlKn6E4j2/q3BCrcVkcCnaUaQWkcTnfhCQ4Bb22
-         tAh3+7g+dIphmESa6y1cVQCKCRcsnnf14Vno3QKL5826xuLylVi2ErstQCLz/7+pMjwI
-         mHaBz9VYiHsBHaMqUlvhhRc3hmcfFU/MG6BjizdwMowafdQfVNq+R1p8jot7WqQXmX6I
-         MHw3IfTHV2sRUlUYcKN7fidLgJfpaWVgU3mbg5JzZ7KmIOi5NwgFAHSz4AASMOf6bcDZ
-         0UVw==
+        bh=/BSe4KOyJw2YEYF8rnu6mjIl7u9y+oNGIQ3Hg6lKPvk=;
+        b=I8RXwI2menTRCf+yMfWW84ydKaVgC8EaI0+dk0M56EXo1MH5w5kGeC4s2aOpnqQWZQ
+         VK9w+FqoOQlkqcCO7ngOn4KWGi7Dk9rcqopIwm3NbpFrHtPkSMIjFLhpvgtwR11sl0n3
+         9uONdTjNa87gXkR4Z8g883SQgjTwYZorQuGWz/LvC9IWbmw2KUxkvsZzFZLpE3zmgh4d
+         JQ20QBJlGdjA0uCPNyh5vaEAXt7DZzaeYNgAC81/il4bqs1+1d7qGzDuKrcaq7ySaRf1
+         9JTFsbjojBZvIOii/Uzl36hdwPQfw+PHkl4iIcRTkr5UutahNW9NWZk6uFpXt7Dn7GVc
+         gWPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1724171719; x=1724776519;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P4GvNZ2q2vkKbUvc/NgCLEzCheBxpfsamb4EXfBM/Og=;
-        b=RUENz0qtB1Ff4Zpbb0BuI5oR7BTg4A4mJmdH0e1tHg1ThFG4An7v9Pm64aDoByeLmi
-         W7bAEE4VhfEty+I0PC4DuI1UAGlXTbiFLM8PhCyWenM5iMGqToLOm8FW2/LPuGsQTexW
-         4R4FdJerVg+s2OI0cLL4B0J19junmT5FrzVTS13pZE2WBantoxQKu+BM2e+KWx0GiIYM
-         zidR7q1hErV7b5YJUwHPgKTQgDOly96vuBKUWukrQynTWOiOLUlfC//WPHwEz50b6CBJ
-         PgEd1LY4XON6HxBeJhHJCBgAzJpKvknkE0iIqkNdzbhb0h9YA50IbLpD73QDQzmYTkbo
-         j44Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVHcHXmrBCu+8SI+A4NFM/xYcyGNtYTdRzef28BMY1KQpS5fnMRKqj0FgTnnjYF0O8Yc4YhKlH5b1rbpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+wNCEbniJnjDyGrPRqvVj77S/RPbdO8uJj5dpFwzIcWzdjY+x
-	RFtu5l7pcx9n+FnewmwDtxkcwbs2xHpaBKFa0v2sMyqfsCVDxzzazb62xDzRmaM=
-X-Google-Smtp-Source: AGHT+IGANk0JtgzuFnotXZ6oaaNXX0v0ntO5GyaujzzJT2sPsn/z/iWuqqA4+lqIPu3rUA7Z15IshQ==
-X-Received: by 2002:a17:907:1c22:b0:a80:f6f2:e070 with SMTP id a640c23a62f3a-a83928a3333mr1164972466b.3.1724171718395;
-        Tue, 20 Aug 2024 09:35:18 -0700 (PDT)
+        bh=/BSe4KOyJw2YEYF8rnu6mjIl7u9y+oNGIQ3Hg6lKPvk=;
+        b=Q14D2RETVLuKLTnjInlzJbgZmyroMLJG7R6WILgKaEqAF+CeQc+14APpN0mjExAdPO
+         gkk9SrBcmtQuLW+MyJ4FNAlTzkDTz5gZvLKvuiDVYIYd1zSvwXAvUlaZ2pICC5x01rm+
+         VTcrE2SQEorjrtpcbeh3IDow2dWXjoAN4F7MrED5/dl0vsCyk5xSAZZMpn23EWYsNSKR
+         xlCkXLnJ3jjRWRNVWjW/VqrhN01QRQ3umVgE6wUotogYBSJ/aiCMVMc/39CBYr2BPYmp
+         KenuLLhpta9tUXW9Ts/xmqQ1bw4OwqYnncNY8NC7X5xAEouypFmgPlqkOWhpAjqZpjUm
+         TQLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXanHBR2HTy+jakdcDJ5Uk7P02EO/B+ltTkdKjtFype512LaRwlq/CgNqCiAJYjUqw0Zo2be9aICJqr5+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7zu+9wdipO6hoRAYoaxQb89P1Zc/yg++4RKSWJQSyOsr1vzL4
+	nuu4EoMPSHCUV5SIpDMLheEQ7kn5TA2QFzO8r6ep3i9riP9zCI3trMPOE2bADyE=
+X-Google-Smtp-Source: AGHT+IFsK5sSF4zn+iA0VCf5c4osiSUBkZLZkTq8PaWwmO8mR0g9hawJ9xoV1658/XBy+x9/4qSzfw==
+X-Received: by 2002:a05:6512:3d28:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-5331c6e4088mr12083886e87.55.1724171719232;
+        Tue, 20 Aug 2024 09:35:19 -0700 (PDT)
 Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfb5esm780728766b.59.2024.08.20.09.35.17
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfb5esm780728766b.59.2024.08.20.09.35.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2024 09:35:18 -0700 (PDT)
 From: Qais Yousef <qyousef@layalina.io>
@@ -79,9 +79,9 @@ Cc: Juri Lelli <juri.lelli@redhat.com>,
 	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Qais Yousef <qyousef@layalina.io>
-Subject: [RFC PATCH 02/16] sched/pelt: Add a new function to approximate the future util_avg value
-Date: Tue, 20 Aug 2024 17:34:58 +0100
-Message-Id: <20240820163512.1096301-3-qyousef@layalina.io>
+Subject: [RFC PATCH 03/16] sched/pelt: Add a new function to approximate runtime to reach given util
+Date: Tue, 20 Aug 2024 17:34:59 +0100
+Message-Id: <20240820163512.1096301-4-qyousef@layalina.io>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240820163512.1096301-1-qyousef@layalina.io>
 References: <20240820163512.1096301-1-qyousef@layalina.io>
@@ -93,57 +93,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Given a util_avg value, the new function will return the future one
-given a runtime delta.
-
-This will be useful in later patches to help replace some magic margins
-with more deterministic behavior.
+It is basically the ramp-up time from 0 to a given value. Will be used
+later to implement new tunable to control response time  for schedutil.
 
 Signed-off-by: Qais Yousef <qyousef@layalina.io>
 ---
- kernel/sched/pelt.c  | 22 +++++++++++++++++++++-
+ kernel/sched/pelt.c  | 21 +++++++++++++++++++++
  kernel/sched/sched.h |  1 +
- 2 files changed, 22 insertions(+), 1 deletion(-)
+ 2 files changed, 22 insertions(+)
 
 diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index fa52906a4478..2ce83e880bd5 100644
+index 2ce83e880bd5..06cb881ba582 100644
 --- a/kernel/sched/pelt.c
 +++ b/kernel/sched/pelt.c
-@@ -466,4 +466,24 @@ int update_irq_load_avg(struct rq *rq, u64 running)
+@@ -487,3 +487,24 @@ unsigned long approximate_util_avg(unsigned long util, u64 delta)
  
- 	return ret;
+ 	return sa.util_avg;
  }
--#endif
-+#endif /* CONFIG_HAVE_SCHED_AVG_IRQ */
 +
 +/*
-+ * Approximate the new util_avg value assuming an entity has continued to run
-+ * for @delta us.
++ * Approximate the required amount of runtime in ms required to reach @util.
 + */
-+unsigned long approximate_util_avg(unsigned long util, u64 delta)
++u64 approximate_runtime(unsigned long util)
 +{
-+	struct sched_avg sa = {
-+		.util_sum = util * PELT_MIN_DIVIDER,
-+		.util_avg = util,
-+	};
++	struct sched_avg sa = {};
++	u64 delta = 1024; // period = 1024 = ~1ms
++	u64 runtime = 0;
 +
-+	if (unlikely(!delta))
-+		return util;
++	if (unlikely(!util))
++		return runtime;
 +
-+	accumulate_sum(delta, &sa, 1, 0, 1);
-+	___update_load_avg(&sa, 0);
++	while (sa.util_avg < util) {
++		accumulate_sum(delta, &sa, 1, 0, 1);
++		___update_load_avg(&sa, 0);
++		runtime++;
++	}
 +
-+	return sa.util_avg;
++	return runtime;
 +}
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4c36cc680361..294c6769e330 100644
+index 294c6769e330..47f158b2cdc2 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -3064,6 +3064,7 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
- 				 unsigned long min,
+@@ -3065,6 +3065,7 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  				 unsigned long max);
  
-+unsigned long approximate_util_avg(unsigned long util, u64 delta);
+ unsigned long approximate_util_avg(unsigned long util, u64 delta);
++u64 approximate_runtime(unsigned long util);
  
  /*
   * Verify the fitness of task @p to run on @cpu taking into account the
