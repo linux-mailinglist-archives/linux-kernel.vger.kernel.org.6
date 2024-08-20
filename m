@@ -1,200 +1,120 @@
-Return-Path: <linux-kernel+bounces-294369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9C4958CBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:06:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9193F958CC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18A91F241FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DD41C21B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91901BBBE8;
-	Tue, 20 Aug 2024 17:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0351BD4F7;
+	Tue, 20 Aug 2024 17:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="flXUSKdM"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBxTDU83"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B44C1B86C3
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108231922D3;
+	Tue, 20 Aug 2024 17:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724173564; cv=none; b=TCgMo44+3tlnPoGko+kWBY8kGKnyDbU1PcM0DARLWmHaAR9OonwIEmRAyZKNrk27eEYrzQLVjYTYUY3o0NmA9NH6x9AItFNt9w34H3pZ1Xdc3bicZuxvYVqJk77dMdYx3mlv+mzRt/PaX45UTZEuIbgB2nUUlt4DbrlnFs+Ib2E=
+	t=1724173618; cv=none; b=oeq7sqI47lTm4IvWWD7g+/lZ+hWqpUFf0KDLPfmp/450yEoPcg3pZzwz/qGAWzTig6CDjDQ4uzN2pl/HHASlsP3h/kAjZL1OIXS7HrWRtps+LmAjW7JLO2VWhLSF9cnnqtTof5eQiihlAN3On1EOriViuAoICxCCIkhpAzo+SHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724173564; c=relaxed/simple;
-	bh=EuNvhjGdxLOn8Y7aFVLHEiHc6QDNELr4w8qUxZScPAs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hSXP0Jr4TFXyiLYDYV2VlEiejAqB+Zj2toUMkUJRbGL/5UttvjsI66C8VKa8ORFanMiWDgK6/FNGoBB2VkBfcG7IJMFw75BDBtIaaefBhXnSZkThkZzQrBJ/NBd5+9G5SFx3LxOtITtyu9MdaMpZmedfuVtWvsSQeOKve6ICpcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=flXUSKdM; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7106fcb5543so3705658b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:06:02 -0700 (PDT)
+	s=arc-20240116; t=1724173618; c=relaxed/simple;
+	bh=54shCYsL8YfYX+WHefs2opAhdifYsoSBgiNhfTTnphg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2yDz0yymf/x49vwMjRg1vqmLWMzXac9KJexp2eGqgPhCZRZUQNNJiPxahzbJZM7k3503A+nixtmWIoRSb62tBnHMXjOBcu1EqXsBfVgoNGXrnQp1UYCJgYPBL0B0SANAprCmAdVy/eXANbyZMxSDLtuTgCURUIDmZER7x9j7+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBxTDU83; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20208830de8so34561515ad.1;
+        Tue, 20 Aug 2024 10:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724173562; x=1724778362; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnfPRtkJtWGuNOam4xWRBqpUc7C9ZTAOrKLGKcWYgso=;
-        b=flXUSKdMuj9aBvzk9ESeVcMqdWNKVSvZ1vkyWuRfuNCS4i2T4b/jvpZK6gnjBmFir+
-         s+lgIs8J3191NGshE//UqpYLptfqvyeYaa6+YK+JZyD0/XBQlX1aCdoBOyyewGBh61+r
-         K1HPFnLrQlwsOhd+aAPfqo+qOsYq3MYaByE0Bn/UvwsWFalvKgHmxuneiGWW5lK6fctE
-         uOlKaE/SSMG0QIo0GAdYCeUMrnBndf7R+8RV6V97YtE5275Vsuxq+h5y2oAdOTpMqWm2
-         ZiO/wsz4uVU5Sh0eEjP9ZyqhNMzGlP3LhbD6g7WGKMYD/e++GkWoyrhFjKBfyrl8htiF
-         SE1A==
+        d=gmail.com; s=20230601; t=1724173616; x=1724778416; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=alquEjzt3pV+GF2ki+CPGlhnJrvecsAgoJSLznrwbU8=;
+        b=UBxTDU83d5muAqIaKURFs92gsc531c0S4m/TOp5PwD4xD0ZCPfEUt8Skf4R0kcYuLH
+         Hw75Ig9W1VyGwHDaBwi7MIlFZE91R+cSS5KrpkkjDzNEIwL5f5FnBd5nJCK264M5HhtV
+         CraWuO17wy2/jFkRGIg8Z8jkNFYM3vNPbsrItoAk843yWZGvN2a8tEJwRfns8so0GwBI
+         0SxFIYXXN9YYd6CabtPwhZU5/eBjjeDPvuBDS7qcmfLWdOijGKM62xbSfzngnklzArdC
+         WOI2s5bYoLJl4zDENB5alK70beJK7pqQxrp6nhdGWqVxCZ+Oih6+tNl6zVwDsqQaLnyo
+         Gj/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724173562; x=1724778362;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnfPRtkJtWGuNOam4xWRBqpUc7C9ZTAOrKLGKcWYgso=;
-        b=pL60Lj7FixJ0TLozwiKqEJ2hJ5VK8l+IUX6jGlJudmxUnwMwhRQ6Dv7KkBpskeIZWO
-         93LOPPbW1/qFjDJfYPHqz8g8TpNat1j/Gw1NnWTc7eDLtUGlgixStGcQB/iPn7t8bPVr
-         NZvuhsrtvsgDfia2r5jLsY1tOXzuHnU4V239jNut8DdE+8yxMDHO3pA7dL4uREQZZ0mh
-         0PmvNFBRdLuQHfvfCkGEtHVCBZUscVxw7qg/vShg201H4j4FIshEU6Rte+1CZ4QJHwv0
-         b4LUx8KEm4bqCpHYQ1KTlt818m5sz23HXKRfVpt0t8cKzpR5gnpeaFFhPToMvWzxe+BR
-         eusg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHvodwzU6Zu4ltxs6qc3jstboh5+CZ9utaf9XQ1RpOo0H8YifECETUCM3St1IfSZV42Nz5RrY1YJAv5hw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0fiumd4HeiuFlZHNBBpjgBtl46xY9mPgCEXk0dLkgN+nRJtSa
-	JVg/I19H2djXkcACJjZafWs0uyVpB/Hp8F5IZ7/JO0vqXlDxdcqNclsXl+9cB4mumpiNmKIeyx4
-	FaQ==
-X-Google-Smtp-Source: AGHT+IG9Fct7a82/pANZsrBLxffOf52NxCKBO7eUULMtkjcylX54yi0AFF867FTtAGlClqIDZ8YKA/hqqj8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:7c7:b0:70e:9e1e:e6ed with SMTP id
- d2e1a72fcca58-713c4e0c407mr46988b3a.2.1724173561608; Tue, 20 Aug 2024
- 10:06:01 -0700 (PDT)
-Date: Tue, 20 Aug 2024 10:06:00 -0700
-In-Reply-To: <20240820163213.GD28750@willie-the-truck>
+        d=1e100.net; s=20230601; t=1724173616; x=1724778416;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=alquEjzt3pV+GF2ki+CPGlhnJrvecsAgoJSLznrwbU8=;
+        b=UOFadAbb6NEWVZGfOoWgkageP04bJS4sJGJ8chxScu5JYXDLTiQZWbduJ/P2DQOIs4
+         OXxE5DcHdoya/xSPG11AVp6AlUiFRpSehaxXj8QC5Jd69gwFazo2pbnW80KBHZIb4ypB
+         /5Q3C4aBrM3BJXGQOiM1vyeCkcReTGiWWC/NK5CNIfEVwYEJ17X7R1rC+acze9aNdeNj
+         kAezKkcrYjOx0oiUTLBN86hdekpPrIpfHXWFokQQsEv6BY0sfylXqe+Kg8T1yYvm7xhA
+         Blzd72zQmKAiCOJ8ln2gLjW6wbnY2gih8WOVOPGiB92umTz7QN9nXJdhLIaB4mQTdf9f
+         paKA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+wItVQa2xosAjocDG7qtWglc3GZkDZAwhWlNFMJzN1XWQe9lAoJ+t8nFY+2ph+9ZYpPE+09zB0s3YPfk84Tyx4ZvViSio+sXe7EEo7wV3debSUQLoF8q1E/2DAbmZL4d42jxudsPrrgttMaUP5DSQGHYY2Ox3fopy3HjMnKllQc53
+X-Gm-Message-State: AOJu0Yw4VpJ7hAhWuA8Rtp65S42gXUrDXVOuyJPpzQTHX/A9cm3qb5nf
+	k1kHZ3/h/O2JjkY2tWkkbH/AFXjlFSrQJnDEd1IYe4wpsbVKPozRVWKodw==
+X-Google-Smtp-Source: AGHT+IG0ZJ3QnQNSFMIEj2D5KZRJp7M8hlmcBNA0ELfAoeqxfCY3D5JUeqlYGGLA68f5YTVJI2Koiw==
+X-Received: by 2002:a17:902:dace:b0:1fd:93d2:fb67 with SMTP id d9443c01a7336-2031517e689mr34277165ad.52.1724173616231;
+        Tue, 20 Aug 2024 10:06:56 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-202592bdf7fsm21652645ad.181.2024.08.20.10.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 10:06:55 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 20 Aug 2024 07:06:54 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Li Lingfeng <lilingfeng@huaweicloud.com>
+Cc: josef@toxicpanda.com, hch@lst.de, mkoutny@suse.com, axboe@kernel.dk,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com,
+	houtao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	yukuai3@huawei.com, lilingfeng3@huawei.com
+Subject: Re: [PATCH v3] block: flush all throttled bios when deleting the
+ cgroup
+Message-ID: <ZsTNLor7XoJ9dOVx@slm.duckdns.org>
+References: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802191617.312752-1-seanjc@google.com> <20240820154150.GA28750@willie-the-truck>
- <ZsS_OmxwFzrqDcfY@google.com> <20240820163213.GD28750@willie-the-truck>
-Message-ID: <ZsTM-Olv8aT2rql6@google.com>
-Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
- when possible
-From: Sean Christopherson <seanjc@google.com>
-To: Will Deacon <will@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
 
-On Tue, Aug 20, 2024, Will Deacon wrote:
-> On Tue, Aug 20, 2024 at 09:07:22AM -0700, Sean Christopherson wrote:
-> > On Tue, Aug 20, 2024, Will Deacon wrote:
-> > > On Fri, Aug 02, 2024 at 12:16:17PM -0700, Sean Christopherson wrote:
-> > > > Do arch-specific range-based TLB flushes (if they're supported) when
-> > > > flushing in response to mmu_notifier events, as a single range-based flush
-> > > > is almost always more performant.  This is especially true in the case of
-> > > > mmu_notifier events, as the majority of events that hit a running VM
-> > > > operate on a relatively small range of memory.
-> > > > 
-> > > > Cc: Marc Zyngier <maz@kernel.org>
-> > > > Cc: Will Deacon <will@kernel.org>
-> > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > > ---
-> > > > 
-> > > > This is *very* lightly tested, a thumbs up from the ARM world would be much
-> > > > appreciated.
-> > > > 
-> > > >  virt/kvm/kvm_main.c | 15 ++++++++++++++-
-> > > >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > > index d0788d0a72cc..46bb95d58d53 100644
-> > > > --- a/virt/kvm/kvm_main.c
-> > > > +++ b/virt/kvm/kvm_main.c
-> > > > @@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
-> > > >  	struct kvm_gfn_range gfn_range;
-> > > >  	struct kvm_memory_slot *slot;
-> > > >  	struct kvm_memslots *slots;
-> > > > +	bool need_flush = false;
-> > > >  	int i, idx;
-> > > >  
-> > > >  	if (WARN_ON_ONCE(range->end <= range->start))
-> > > > @@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
-> > > >  					goto mmu_unlock;
-> > > >  			}
-> > > >  			r.ret |= range->handler(kvm, &gfn_range);
-> > > > +
-> > > > +			/*
-> > > > +			 * Use a precise gfn-based TLB flush when possible, as
-> > > > +			 * most mmu_notifier events affect a small-ish range.
-> > > > +			 * Fall back to a full TLB flush if the gfn-based flush
-> > > > +			 * fails, and don't bother trying the gfn-based flush
-> > > > +			 * if a full flush is already pending.
-> > > > +			 */
-> > > > +			if (range->flush_on_ret && !need_flush && r.ret &&
-> > > > +			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
-> > > > +							     gfn_range.end - gfn_range.start))
-> > > > +				need_flush = true;
-> > > 
-> > > Thanks for having a crack at this.
-> > > 
-> > > We could still do better in the ->clear_flush_young() case if the
-> > 
-> > For clear_flush_young(), I 100% think we should let architectures opt out of the
-> > flush.  For architectures where it's safe, the primary MMU doesn't do a TLB flush,
-> > and hasn't for years.  Sending patches for this (for at least x86 and arm64) is
-> > on my todo list.
+On Sat, Aug 17, 2024 at 03:11:08PM +0800, Li Lingfeng wrote:
+> From: Li Lingfeng <lilingfeng3@huawei.com>
 > 
-> I can see the appeal of dropping the invalidation altogether, although
-> with the zoo of different micro-architectures we have on arm64 I do
-> worry that it could potentially make the AF information a lot useful on
-> some parts. Does x86 make any guarantees about when an old pte becomes
-> visible to the CPU in the absence of explicit TLB invalidation? (e.g.
-> I'm wondering if it's bounded by the next context switch or something
-> like that).
+> When a process migrates to another cgroup and the original cgroup is deleted,
+> the restrictions of throttled bios cannot be removed. If the restrictions
+> are set too low, it will take a long time to complete these bios.
+> 
+> Refer to the process of deleting a disk to remove the restrictions and
+> issue bios when deleting the cgroup.
+> 
+> This makes difference on the behavior of throttled bios:
+> Before: the limit of the throttled bios can't be changed and the bios will
+> complete under this limit;
+> Now: the limit will be canceled and the throttled bios will be flushed
+> immediately.
+> 
+> References:
+> [1] https://lore.kernel.org/r/20220318130144.1066064-4-ming.lei@redhat.com
+> [2] https://lore.kernel.org/all/da861d63-58c6-3ca0-2535-9089993e9e28@huaweicloud.com/
+> 
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 
-Nope.  As pointed out by Yu in the MGLRU series[*], the main argument is that if
-there is memory pressure, i.e. a need for reclaim, then it's all but guaranteed
-that there will be even more TLB pressure.  And while false negatives are certainly
-possible, nr_scanned >> nr_reclaimed >> nr_bad_reclaims, i.e. the total cost of
-false negatives is less than the total cost of the flushes because there are
-orders of magnitude more pages scanned than there are pages that are incorrectly
-reclaimed.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-https://lore.kernel.org/all/CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com
+Thanks.
 
-> 
-> > Even better would be to kill off mmu_notifier_clear_flush_young() entirely, e.g.
-> > if all KVM architectures can elide the flush.
-> 
-> I, for one, would love to see fewer MMU notifiers :)
-> 
-> > And even better than that would be to kill pxxx_clear_flush_young_notify() in
-> > the kernel, but I suspect that's not feasible as there are architectures that
-> > require a TLB flush for correctness.
-> 
-> I think you might want it for IOMMUs as well.
-> 
-> > > handler could do the invalidation as part of its page-table walk (for
-> > > example, it could use information about the page-table structure such
-> > > as the level of the leaves to optimise the invalidation further), but
-> > > this does at least avoid zapping the whole VMID on CPUs with range
-> > > support.
-> > > 
-> > > My only slight concern is that, should clear_flush_young() be extended
-> > > to operate on more than a single page-at-a-time in future, this will
-> > > silently end up invalidating the entire VMID for each memslot unless we
-> > > teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
-> > 
-> > I'm not sure I follow the "entire VMID for each memslot" concern.  Are you
-> > worried about kvm_arch_flush_remote_tlbs_range() failing and triggering a VM-wide
-> > flush?
-> 
-> The arm64 implementation of kvm_arch_flush_remote_tlbs_range()
-> unconditionally returns 0, so we could end up over-invalidating pretty
-> badly if that doesn't change. It should be straightforward to fix, but
-> I just wanted to point it out because it would be easy to miss too!
-
-Sorry, I'm still not following.  0==success, and gfn_range.{start,end} is scoped
-precisely to the overlap between the memslot and hva range.  Regardless of the
-number of pages that are passed into clear_flush_young(), KVM should naturally
-flush only the exact range being aged.  The only hiccup would be if the hva range
-straddles multiple memslots, but if userspace creates multiple memslots for a
-single vma, then that's a userspace problem.
+-- 
+tejun
 
