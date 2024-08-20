@@ -1,225 +1,160 @@
-Return-Path: <linux-kernel+bounces-294323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046C9958C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E256E958C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6E283828
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:34:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0777283519
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336EF1B86E4;
-	Tue, 20 Aug 2024 16:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC0818CC1D;
+	Tue, 20 Aug 2024 16:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LSoMR42Z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WmELDH8r"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="e/BZaEaf"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AE74409;
-	Tue, 20 Aug 2024 16:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5EB4409
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171643; cv=none; b=MBLTbAEvKwo3OF4aaaVVQlgwPJ9ONP6ra0i94ltO81+1K4tc/M3e2EXNMMVF+/4gUjQ4zNdyjvLveG9EDrisd9h5cB5aPMlE5zIHfNBAb7OGjRhtCBQUvyf258NmFVBaiaixYLtMiDMBtRyt+KSMh+vO2dQ5BCdWUl0yY8+iX4E=
+	t=1724171623; cv=none; b=Tx6hBd3PIw1sO0hMvI38UywVC05e70IWxSkOzYCqquWvz/oGIyFJvlc6K7Vmg2hqsprmOGkxenBIcQ0/LZ/OKjh5UHA9Osl/xRyC2nmSmvvNoXYuGB06NVPkt6Crhle52QhKYci9Q6K3wvzYfaQXcYx4G4lS5SE1Yra831irlEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171643; c=relaxed/simple;
-	bh=/XoyeLhJOMdiV+fck/gfdRhWNFn3uUSCiXd8QjDtXkY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jKGEZ0DTgQUI4wQIWG1zRI+7ZMZtMjlZfkEJvL35/d3/OgjJruWHNjht2H/kKDy2iRgLErszK+zdqhcOGixvgQVG4gFMW5NQa/oiNf5N8oYUZvRTzFk1ZkYzEQh7Ii2DacWkhc2xSM8s1iDjl61khuwfEodwFWZ1LhcOG9mzOww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LSoMR42Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WmELDH8r; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C921A114C014;
-	Tue, 20 Aug 2024 12:33:59 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-01.internal (MEProxy); Tue, 20 Aug 2024 12:33:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724171639;
-	 x=1724258039; bh=8tm+zjOSeS2e198Z0q8BGjvR8eFaaeCScshlT6M34Ho=; b=
-	LSoMR42ZnljNCZWUuf7Ica3R0rDI6eRJhXUvyFRyDuBYFeicQnpQanK996a3ISjd
-	4VhlX5YOedVagec2Sr7ez8ceJrUkfhz7Mqan3WAw6s0FVLDGCGUxS/vhuNrO4IUB
-	6I4mNa7P+qlGqGaS7NjRXktBVC7hmrMjNgNgvjaZj5dHhfI18xQYSNLEbriNpXQI
-	c37VkY96s4q3lvce4SLlzTAuHqaHdxcwmzIPn1foqxYcrpb0AOKNicV85iAJ1ZOI
-	a6n+2EhuSqG7ElMk0iurDxyLUfTClZFCwXf4ixVVcdGKfFjS0MXPgRaoo7ATgmHb
-	hF5WYYMqAQKaCSJEYUl8Bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724171639; x=
-	1724258039; bh=8tm+zjOSeS2e198Z0q8BGjvR8eFaaeCScshlT6M34Ho=; b=W
-	mELDH8rysxjw5IYDfLIY+0HilcaqCfRCPxflKRMP1anRUl5RY/H9jdQ++kzVnMDD
-	+DxYTILmuM/A7jUsDx1n5vLx+REXq8hGJPFM4HIrDnG1F8bJcUqZr0Sf4bpyD4aa
-	usaEk/0AwucMYQrY+yJvOzUlFqZ2V+j3o4FtWmhYMlmHzigVxNJ6sI6PY1XS0gMR
-	qmUg/tvKiEDwl72ZfFjH4SIHrlf4fV/YRWTGm+CYdLew8oxY9kV9TyW3EnBrEyhj
-	2trh7VXrc4hnAfb2TmrytSbAwOV7TyP5I/HNq36iQIEybdGhVGls89J9acC0pFCD
-	NvHiBtVCVK6dirEkNGS5g==
-X-ME-Sender: <xms:dsXEZoOC7cAle-HVCC7Dw2WLLhPQ5_bj9i9fMLE6b_eXdOgyuxP7Bg>
-    <xme:dsXEZu9fHLuPDfxnJcx3T_i4I35s0yKjkISESzhdIwqKZWDsuAuzk1M_yRBvCDylK
-    dhB9jcQ_-Fokk87vv0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduiedguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnsh
-    hhrgifsegrrhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhr
-    ugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrgh
-    druhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohep
-    ghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
-    hnihgtohesfhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdht
-    ohhrghhuvgesfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrh
-    iimhhikhesfhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhv
-    sehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:dsXEZvTq-dKl0lHys-_p-n7a9nMxhxbzi4iAWVPcngckaFzZilkNMQ>
-    <xmx:dsXEZguuU9O6deysSeuR5eh-pGeZ0niR4EO71DH1rKczmXtrRvOjmw>
-    <xmx:dsXEZgfBZmEnkWq5T4Z0mzs84wxYiqDwevvMkiRQS1oXaXUVJEfdzg>
-    <xmx:dsXEZk0Wh0_Pts4MK2CoQ3Ud9neqA7_jVdYlEq89y1k1F5hzP0ZEww>
-    <xmx:d8XEZhtXFSrnVvDvhy8nN-Jczcl9jszmuXz26pvi1AtXyeeSZ2XQx5ba>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CB64F16005F; Tue, 20 Aug 2024 12:33:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724171623; c=relaxed/simple;
+	bh=8IUmNoZ2LJs/D02xDzhAIKyPjOG9w7KqiGiDPMEZnb0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=XnZiGNBAvf4Yq/DQcpQFRn876BdhOB3TtcZrLWA+CNGbSRlf82Qdsif+3xaWxpnOkzzCygsDcUeEZDi0X7xZPuDT39M4kEvT4Hov/de9c6JZH2HjWxNcim+QTnKDZNUI6G/wYaa1M1mUpe5hNPvPTZKZSaXyecGQVahX29PRqNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=e/BZaEaf; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530ad984f2dso953043e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724171620; x=1724776420; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=biPyWwHKsPSI9hwI1NGCkM/td/JJyPTqnLUN9w0DGw0=;
+        b=e/BZaEafvmEuRz4bgLthW+pm5Bkkfnk2ekujPQCNsDr0RSHgygBQpMVf4WJlmraQco
+         nCIh9JkWIoEqCltzWne6tJxEmddGbTyelV8MTjQr6ZkgzAt9NqnEBi/BIgREoCE8srQ/
+         C4zBwcp4pFNLTHe0FbqkQJzWi0rcNgGhTh4kwqScgUd8Kbb5f17q3tPlSDuTgGp/qXBh
+         m0CWuxav/4nP6Gg2+nuha0i9eJ2Jt+fya6pYUjzM8vGxO8ZFmwUK7YnkRQQqprwdCqlU
+         VDAnrDReBwrn0s1Q5w2CZK4nTKgeSHy4zz8ihIx+jhYdZNvvtBINrbfLbjyyCpp6V/Hf
+         p1sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724171620; x=1724776420;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=biPyWwHKsPSI9hwI1NGCkM/td/JJyPTqnLUN9w0DGw0=;
+        b=TYywIdOKFAVfvLh+BEi0iagw0zbgaVnEBL2hiHSayraxPBCHJVgkhqZreyJZnJ9TfJ
+         OjJXvfkVbJzCvf+/+/qX579Lrv5lbMlTj/mjetFP0wVQVVynuJ0rSPoJnhTZWDXGd69O
+         lv8w9TMF3WdqdVnthsgoE0CU7PlLxRL+44GljprhgmTgx4FOCf7HoA0NSmOJCUY9AtdN
+         wcgUyiIjBBjh5mA/wCKbBqdG4uXnt/IFc+OIyQG3/jO1RPEuBEnooA7dGAp/dxNyJJCf
+         8JEVTDcP4+YU+oqiTpgNDynXMyf0shes9w4JDNTEg7XOe/TMT32qOy0psWR+HiRgWVzm
+         agGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvAgZ3vYXVZFOsas9F1iHEBmRD+l8DjrLc4P2VsBtiEU90u4ovMAsbc6W8nZnJGa7P/1fK8RnD6Ym/QI8Ja2R2wlt+7vBYkQRQLrqB
+X-Gm-Message-State: AOJu0YwP6Y/PGZFrPBsAXe1chbiQXNW2q2uidyDxxYr5nPSa4erS4EJy
+	t6pG16gH0LG7YKu89Tztg34QWMU05nVN3xM4vMIjU+IxImEiG20AtNlIV83QXPE=
+X-Google-Smtp-Source: AGHT+IFJ0EkS4Si8mnRKbGimFnHHXb9uxbbTNcEVpKkFeoNxOaYbItrqrNcNmDbkUzRLo8NcVRHEUw==
+X-Received: by 2002:a05:6512:401c:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-5331c6d4bcfmr6106461e87.5.1724171619972;
+        Tue, 20 Aug 2024 09:33:39 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:1050:bb01:8164:778c:a10:dcfc])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c65e7sm781546266b.20.2024.08.20.09.33.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2024 09:33:39 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Tue, 20 Aug 2024 16:33:27 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Richard Earnshaw" <Richard.Earnshaw@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Message-Id: <80c0dd7d-6b4b-40ae-a4f4-09bb890ba26b@app.fastmail.com>
-In-Reply-To: <5c7f9469-78ad-4092-8e93-bfb41028ca34@arm.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <e19821dc-01b8-4801-88ce-4c33d1a9fd63@arm.com>
- <8f8c07c6-d138-491c-9ca0-72f82779b2d2@app.fastmail.com>
- <5c7f9469-78ad-4092-8e93-bfb41028ca34@arm.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] ksmbd: Replace one-element arrays with flexible-array
+ members
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <d7a30cff-e08f-453e-84f2-4584031e3d29@talpey.com>
+Date: Tue, 20 Aug 2024 18:33:28 +0200
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+ sfrench@samba.org,
+ senozhatsky@chromium.org,
+ linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <05A23230-C800-4693-AB69-273A0B10C822@toblux.com>
+References: <20240818162136.268325-2-thorsten.blum@toblux.com>
+ <CAKYAXd-pm01ietA1+Z4J8tDcLM6fUkAwQ69j9XZs9uhrBbdDQQ@mail.gmail.com>
+ <d7a30cff-e08f-453e-84f2-4584031e3d29@talpey.com>
+To: Tom Talpey <tom@talpey.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Tue, Aug 20, 2024, at 16:58, Richard Earnshaw wrote:
-> On 02/08/2024 16:12, Arnd Bergmann wrote:
->>>> === iWMMXt ===
->>>>
->>>> I'm not aware of any remaining users for iWMMXt, and we dropped
->>>> support for ARMv7 PJ4 CPUs (MMP2, Berlin) already, so the
->>>> only supported hardware that even has this is Intel/Marvell
->>>> PXA and MMP1.
->>>>
->>>> Dropping support from gcc is probably a good idea now,
->>>> it is already unsupported in clang.
->>>
->>> We marked iWMMXt as deprecated in gcc-14 and will likely remove support 
->>> in GCC-15.  We expect to continue supporting these as Armv5T cores, but 
->>> not the iwmmxt (or other XScale) extensions.  
->> 
->> Ok, good to know. The kernel doesn't actually have a build
->> time dependency on gcc's xscale or iwmmxt support aside from the
->> one assembly file we build with gcc -march=xscale.
->
-> I think you mean -mcpu=xscale (-march=xscale isn't recognized), or 
-> perhaps you mean -march=iwmmxt? 
+On 20. Aug 2024, at 16:52, Tom Talpey <tom@talpey.com> wrote:
+> On 8/20/2024 10:11 AM, Namjae Jeon wrote:
+>> On Mon, Aug 19, 2024 at 1:22=E2=80=AFAM Thorsten Blum =
+<thorsten.blum@toblux.com> wrote:
+>>>=20
+>>> Replace the deprecated one-element arrays with flexible-array =
+members
+>>> in the structs copychunk_ioctl_req and smb2_ea_info_req.
+>>>=20
+>>> There are no binary differences after this conversion.
+>>>=20
+>>> Link: https://github.com/KSPP/linux/issues/79
+>>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>>> ---
+>>>  fs/smb/server/smb2pdu.c | 4 ++--
+>>>  fs/smb/server/smb2pdu.h | 4 ++--
+>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>=20
+>>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+>>> index 2df1354288e6..83667cb78fa6 100644
+>>> --- a/fs/smb/server/smb2pdu.c
+>>> +++ b/fs/smb/server/smb2pdu.c
+>>> @@ -4580,7 +4580,7 @@ static int smb2_get_ea(struct ksmbd_work =
+*work, struct ksmbd_file *fp,
+>>>         /* single EA entry is requested with given user.* name */
+>>>         if (req->InputBufferLength) {
+>>>                 if (le32_to_cpu(req->InputBufferLength) <
+>>> -                   sizeof(struct smb2_ea_info_req))
+>>> +                   sizeof(struct smb2_ea_info_req) + 1)
+>> We can use <=3D instead of +1.
+>=20
+> This is better, but maybe this test was actually not right in
+> the first place.
+>=20
+> I think a strict "<" is correct here, because the ea name
+> field is a counted array of length EaNameLength. So, it's
+> a layering issue to fail with EINVAL this early in the
+> processing. All that should be checked up front is
+> that a complete smb2_ea_info_req header is present.
 
-We currently use "-Wa,-mcpu=iwmmxt", sorry for the mixup.
+Just to clarify before I submit a v2: Is a strict "<" and without "+1"=20=
 
->>>> === big-endian ARMv7 (BE8) kernel ===
->>>>
->>>> This is very different from BE32 mode in making more sense
->>>> from a kernel point of view. In theory any ARMv7 hardware
->>>> should work, though a lot of drivers are buggy. I am not
->>>> aware of any actual use cases, though in theory it can be
->>>> helpful for testing big-endian userspace when one has
->>>> access to Arm hardware but no other big-endian machine.
->>>>
->>>> We should probably keep this a few more years in both
->>>> toolchain and kernel, unless it starts causing actual
->>>> problems. I don't think anyone is testing it any more
->>>> though.
->>>>
->>>> Side-note: netbsd has a armv7+be8 variant, so clang will
->>>> likely keep supporting be8 even if gcc ends up dropping it
->>>> in the future.
->> 
->> Do you have any comments on BE8 support? I would imagine
->> that having two (mostly) unused big-endian targets in
->> the compiler still complicates things a bit.
->
-> The compiler/assembler largely treat BE8 and BE32 the same; the linker 
-> then byte-swaps the BE8 instructions during linking to generate BE8 
-> images (this is mostly why we need mapping symbols).  That won't really 
-> change if we drop BE32 support.  So I don't think we gain much from 
-> this.
+correct?
 
-Right, makes sense. I can never remember the way this is
-actually implemented
+>>>                         return -EINVAL;
+>>>=20
+>>>                 ea_req =3D (struct smb2_ea_info_req *)((char *)req +
+>>> @@ -8083,7 +8083,7 @@ int smb2_ioctl(struct ksmbd_work *work)
+>>>                         goto out;
+>>>                 }
+>>>=20
+>>> -               if (in_buf_len < sizeof(struct copychunk_ioctl_req)) =
+{
+>>> +               if (in_buf_len < sizeof(struct copychunk_ioctl_req) =
++ 1) {
+>> Ditto.
+>=20
+> And ditto.
 
->> Ok. I can certainly confirm that we regularly run into
->> build problems with -mabi=apcs in the kernel, usually
->> because of the incompatible structure alignment rules.
->> If binutils are dropping support, that also means we will
->> eventually stop supporting it in the kernel.
->
-> This is primarily about the arm-elf (as opposed to arm-eabi) object 
-> file format, -mabi=apcs doesn't change that.  There are some options in 
-> gcc relating to the old APCS that I'd really like to get rid of (in 
-> particular -mapcs-frame (aka -mapcs)), but that's a separate issue.
+Same here, strict "<" and without "+ 1"? Or just a refactor to "<=3D"=20
+without changing the condition?
 
-I think I mixed this up as well, what we use for OABI kernels
-is "-mabi=apcs-gnu", which creates an "ELF 32-bit LSB relocatable,
-ARM, version 1 (ARM)" OABI  file instead of "ELF 32-bit LSB
-relocatable, ARM, EABI5 version 1 (SYSV)".
-
-We still use "-mapcs-frame" whenever we enable CONFIG_FRAME_POINTER
-(aka -fno-omit-frame-pointer). Frame pointers used to be required
-for a number of things in the kernel, now there are only two
-places that don't work with the modern unwinder:
-
-- CONFIG_ARCH_CORRECT_STACKTRACE_ON_KRETPROBE -- this should
-  be on someone's TODO list, no idea why the implementation was
-  never completed for this.
-
-- OABI (-mabi=apcs-gnu) kernels, for the in-kernel stack unwinder
-
-Neither of those is particularly important I think, so deprecating
--mapcs-frame along with -mabi=apcs-gnu for new gcc versions should
-be from the kernel perspective.
-
-I'll also send a patch to make both OABI and OABI_COMPAT support
-depend on StrongARM, based on the earlier discussion. That way
-dropping StrongARM (but not armv4 or fa526) in the future will also
-eliminate OABI and nwfpe.
-
-       Arnd
+Thanks,
+Thorsten=
 
