@@ -1,172 +1,100 @@
-Return-Path: <linux-kernel+bounces-294374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D321E958CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C4A958CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041451C20B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A00D1C216B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794421C3797;
-	Tue, 20 Aug 2024 17:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAC71BBBE0;
+	Tue, 20 Aug 2024 17:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JWmOKv5y"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKxgbDMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8841BE222
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F1D40870;
+	Tue, 20 Aug 2024 17:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724173897; cv=none; b=V7uauZluN3QdxDuknQrkhhC6SpY54yLAPdpFt1ShCrhHKmBOQ2NGuX/G+LX9rO4jm8XRfwqrXJBdiYlgxIjMIinbTTQfOVwsZYbphisCUzdDNEMNOV2g9UaaJWq4vKhT4+Y3Vou5xzeYcfxnuJswuWTcO5+dR8QwvoTAu8ctC+8=
+	t=1724173892; cv=none; b=N6nanV33D8SLv0cRyzP6SXqXJ+5Z/Z3EyGUromtdUrsDZOFcWIVY5oK5HbHUR2geH0y9UZ0oRFAkjA+twrHIupsnr+jfVO4VmT/J2t7etI0yDugid+0Jnaz8pQnmpAZl1srOHi2YdwoAfMc+U7tU2UQo7DH1qN3E90IVE7zustY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724173897; c=relaxed/simple;
-	bh=ikTvvm8hy1BF7FARpr0gNXmT5GHf2xyQyuwgTHN+X+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A0itFdT0ARSwGbhg27RxSG7sFOPwRMw2113hC4gLa2jTotczz5EnvqPbdrhzGkGq/c/+WU7dFzi527UTGlaOj/SQiaOmmjM64CCMX6Kd8PcutKNhqPy4Vz4iv9hDWqihRDH+tuEiGOQVldJhIa1ycZZWWgfEZ1v5l6HM+A+ix4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JWmOKv5y; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-44fee2bfd28so12751cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724173894; x=1724778694; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BnG3mTCoiILr908gRTdf9mnBK5WkLmZC0rD5sCvrluY=;
-        b=JWmOKv5yFFrJYd0LYbJtplkPK52qutozBVpTDlR6h+LSHVOjhg/2SljhLQIvJ2HEQT
-         +NNa8SD7+iSJfKA9KL+U2Ogypc/RK9UMZq2bPTXyrSme/uujKl349EEvAT3ITGGZBK62
-         tBlrIe9SgCjTtx9JmA8eROKqjtV5WeB5KjOZsjtoGmWTinqVuLhTv5O601XQi4aeYVYg
-         T70IWupGYoYP44H5SD6gORN8+FMaJIM+CJWXJF38Vk1zIF6sWECLdX9yGsOKELtiPcVX
-         chxzwT2WtIBUY2XO36g+aSgU5ewta39r0aoyRdar4rChdI6kBTc1HGotditr/kHFXPni
-         x9Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724173894; x=1724778694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnG3mTCoiILr908gRTdf9mnBK5WkLmZC0rD5sCvrluY=;
-        b=lKKvAslv5eBmF9E5mreFt7ExKqYZAKsEushahEgELS+uksJP1k0L1clcbDQ3WxivdC
-         v1RuALxcJwFGbVPrdEZZnPYf61y6lBg/kk3a1lqjZDgqVW0qiJ7hvKqAv0jjvOC8AeaR
-         ib1e4EGBtzAOK17mRIyY0/5UjufaOiEyQY52HbRc3wgkwSwatHqaMOGi39ScN/h+pJ2t
-         IT6pgzKYFkr5BHsBHj5l7/zXPcM1iGcunk4wThe6PKb4+Y0sfs8JqtYKAWGZAPPzTi+U
-         UvLVoR0N/qCu4YGSAz1SIyK0zGIkeEMqJ09eirFHY3bqEDNrqYl9dl1BjhmA3RnaDp7X
-         tBzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWS0oGnDDSUtxUOgQKD6qPGfscFhD0mYVlvi74jwsEKFptyY57RKiIEFVynHTx4DAMvai/dk5pCAlnWssk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXVWvy28s/pm8YUIIDM2DULxDAU+B7EtA6gVZwJwStx59FTQfA
-	2WlnibrHKYZqs0gEykuw+1d0rHOcGJ95LAf18X0Cxlflp9EvNgh1b2JurqWhaKvhO2sQiBtGAkE
-	v1DWNU8Ea+G46JmlBQvMw81O67Vs5qs5rZgRq
-X-Google-Smtp-Source: AGHT+IEBYChI7KLbhDnxhptDasxvi66SSRGAyIIecU3g/9eHhycAcmIuoWtzgGhG2Nmu+KCELaheAYpAv+Ak2asKVEA=
-X-Received: by 2002:a05:622a:5297:b0:453:5f2f:d5d2 with SMTP id
- d75a77b69052e-454e852f800mr2224121cf.1.1724173894153; Tue, 20 Aug 2024
- 10:11:34 -0700 (PDT)
+	s=arc-20240116; t=1724173892; c=relaxed/simple;
+	bh=Au4hUTJTbCkKhr2LcUkV/0HjRXHSnr2Ik0R6LASt558=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6KQkfVB7T+69J96KXwRyEp9zf32iTrRJRUCSTpGKrD4p/KfuBXXvCrI0IwWuB3XAwiJoooOjp6FA+OQxff9A6nQvmGqE+nmvjOVrfMGXjepkrULaV9nPEUAps4L5x+iz1lstPrvgWjh+YHCTEdJ6NX4w2XZFKiE4Xa5Lq4RrrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKxgbDMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8700DC4AF0C;
+	Tue, 20 Aug 2024 17:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724173890;
+	bh=Au4hUTJTbCkKhr2LcUkV/0HjRXHSnr2Ik0R6LASt558=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SKxgbDMYZvHenHNuhV2sHVslcSPWiP+KbNqCQGz1lsLW+nQYDMv9pYwd8GZnIVYBk
+	 Ei22cJTQrDpYJMWmwDn4/EV/x970SsPl8PGYlwcAuwcfruNNLsm+xiAoBsWnCAvTkz
+	 yGUIqehoI/aEdZvCku0Y9wtJAt/TytOLs2oYKGKR3Xu8BK0Ry9w2Ph5KiyFt4xXdSq
+	 9dQhbAeZcxjJfrvN00KyQQK+BVq5R4QrIAd0tnM0lCq5t8vfEdW9zcjvS7yEqIXnYC
+	 BV+cO9vCdLO2cchZn2O7rJE1y14le64EBtzO2s3JheCsx9VZQz2dnnbwJIFX6CPU9r
+	 H60NZs2UuOcFQ==
+Date: Tue, 20 Aug 2024 18:11:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] Revert "spi: ppc4xx: handle
+ irq_of_parse_and_map() errors"
+Message-ID: <f00bd6e2-19f1-45dd-8899-0f178196079e@sirena.org.uk>
+References: <20240819195029.2388397-1-andriy.shevchenko@linux.intel.com>
+ <f71823fb-4b9a-430a-92cc-0b9df446ce3f@sirena.org.uk>
+ <ZsTH2cTcWQG9ltub@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-4-almasrymina@google.com>
- <CAMArcTWWxjsg_zwS6waWkLpyHhwdXDm_NJeVGm_dr+eT5QDZiA@mail.gmail.com>
- <20240819155257.1148e869@kernel.org> <CAHS8izPL4YdqFjkTpYavdxQn816=kkUv0xravQJF4Uno7Bn3ZQ@mail.gmail.com>
- <20240820081920.6630a73f@kernel.org>
-In-Reply-To: <20240820081920.6630a73f@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 20 Aug 2024 13:11:20 -0400
-Message-ID: <CAHS8izO-F2qwbEEtYONOYgNFsP3jxpv0etgSKknnAQ8itA5Cdw@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 03/13] netdev: support binding dma-buf to netdevice
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Taehee Yoo <ap420073@gmail.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w13DfFbMqo5gdab4"
+Content-Disposition: inline
+In-Reply-To: <ZsTH2cTcWQG9ltub@smile.fi.intel.com>
+X-Cookie: You are false data.
 
-On Tue, Aug 20, 2024 at 11:19=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
-rote:
->
-> On Tue, 20 Aug 2024 00:01:02 -0400 Mina Almasry wrote:
-> > Took a bit of a look here. Forgive me, I'm not that familiar with XDP
-> > and virtual interfaces, so I'm a bit unsure what to do here.
-> >
-> > For veth, it seems, the device behind the veth is stored in
-> > veth_priv->peer, so it seems maybe a dev_get_max_mp_channel() check on
-> > veth_priv->peer is the way to go to disable this for veth? I think we
-> > need to do this check on creation of the veth and on the ndo_bpf of
-> > veth.
->
-> veth is a SW device pair, it can't reasonably support netmem.
-> Given all the unreasonable features it grew over time we can't
-> rule out that someone will try, but that's not our problem now.
->
-> > For bonding, it seems we need to add mp channel check in bond_xdp_set,
-> > and bond_enslave?
->
-> Sort of, I'd factor out that logic into the core first, as some
-> sort of "xdp propagate" helper. Then we can add that check once.
-> I don't see anything bond specific in the logic.
->
-> > There are a few other drivers that define ndo_add_slave, seems a check
-> > in br_add_slave is needed as well.
->
-> I don't think it's that broad. Not many drivers propagate XDP:
->
-> $ git grep -C 200 '\.ndo_add_slave' | grep '\.ndo_bpf'
-> drivers/net/bonding/bond_main.c-        .ndo_bpf                =3D bond_=
-xdp,
->
-> $ git grep --files-with-matches  'ops->ndo_bpf' -- drivers/
-> drivers/net/bonding/bond_main.c
-> drivers/net/hyperv/netvsc_bpf.c
->
 
-OK, got it, I'll take a deeper look and hopefully figure out something
-reasonable here.
+--w13DfFbMqo5gdab4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > This seems like a potentially deep rabbit hole with a few checks to
-> > add all of the place. Is this blocking the series?
->
-> Protecting the stack from unreadable memory is *the* challenge
-> in this series. The rest is a fairly straightforward.
+On Tue, Aug 20, 2024 at 07:44:09PM +0300, Andy Shevchenko wrote:
+> On Tue, Aug 20, 2024 at 12:20:30PM +0100, Mark Brown wrote:
 
-Understandable. I pulled the trigger on v21 with the build fix last
-night after reading your response on the other thread. If you manage
-to review that and let me know of any other issues I'm going to run
-into down the road, that would be great. But I read in some other
-thread that you're overloaded. Sorry if I'm piling on. Feel free to cr
-it if necessary, of course.
+> > Please submit patches using subject lines reflecting the style for the
+> > subsystem, this makes it easier for people to identify relevant patches.
+> > Look at what existing commits in the area you're changing are doing and
+> > make sure your subject lines visually resemble what they're doing.
+> > There's no need to resubmit to fix this alone.
 
---
-Thanks,
-Mina
+> This is a pure and clean revert, not sure if we need to hide that fact.
+
+This is not an issue with the word "revert", it is an issue with the
+formatting of the subject line.
+
+--w13DfFbMqo5gdab4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbEzj0ACgkQJNaLcl1U
+h9CNFgf/TRGJNzvLsK5GRz/0EI+BuYg7LOZ+N+kfNMBQa7V/xCnUeAll5X8ti4tQ
+XIxCARwLLarAEgxBMLeRqqLHSwfGjQIKd5nZGk6rkqLM535PV2IyJ5yP3gJb8TpT
+WlvpJT8+mP4zjj6Ilu/baZ9zV3EZSwesppJL3Vk6DiRRmGoHcvKXkMVSMuRDWcTw
+747OvCfIQbxh2o3YtzS5RamPtfF4LpaqISMRGT9js6w/+/lu9TTf27vaoT1NJkfx
+w0u7buTWSbNI8zm92w3hYuF9+PPXhaYpfLRVi+VUv5Fz7StpE6MjxOnPZ34gXBSf
+An3JzLmfOZz3ZXkQ9264T6k/HtE6aA==
+=jmIJ
+-----END PGP SIGNATURE-----
+
+--w13DfFbMqo5gdab4--
 
