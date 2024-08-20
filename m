@@ -1,104 +1,137 @@
-Return-Path: <linux-kernel+bounces-294469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA163958E17
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCB4958E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E0D285223
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE682814C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E814A4DC;
-	Tue, 20 Aug 2024 18:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30C21494BB;
+	Tue, 20 Aug 2024 18:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcWrMyYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Orm8RUUX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15A9146D6B;
-	Tue, 20 Aug 2024 18:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D9EEAC5;
+	Tue, 20 Aug 2024 18:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178726; cv=none; b=RyCH9qm7rMLyhfAPmu3G1bqAtpB4UdQq8aRdgSZODMxgL+DoJYZiDtG3Wu7Q3Eq15LaofpoJPTfiSxN30XcW/l/C/poFkrCDVpvMnD0fT5eiB77DFoTPuvW8tH32aM1g2cP+r15bwDBiRJe/2Qq5wVzn+P75B2wlR6nCxIma9WA=
+	t=1724178691; cv=none; b=eitLMMOT8s4oOr5OARopTzkwHhyktrnW+1dN//nOtmRePS3BCqNGFqaSHHHEY81C9dZ6casGbqip+zmba9tBFekW0l5Td5XI3xmbRdZYxY7UMlpF1geGyRNjFhmPonh18t7X5Q8WyG3Oo7qYMEkzPTP8dU8fi8G4lU4w1Q1eXp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178726; c=relaxed/simple;
-	bh=TKArvj95GKzIUhpxrYU7tygE4hNlR5jO9uS9RfXTQF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RO6wpyePtgdfOQFDhfLFIbMczT45ZPHUFzkhjqQuOPLjIAzGG9f7xzrN9qZQDhuM1xwUaOU5+nBvxOfgbJITUJkElSlIRqXPIG1Ny0s+MGqtMFJ9wTvMv++hrz2gTjn6wUxGFMNJO/nr8WD25uC6FO/hK9vWR/MfKJVDgFsZmNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcWrMyYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35706C4AF0B;
-	Tue, 20 Aug 2024 18:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724178726;
-	bh=TKArvj95GKzIUhpxrYU7tygE4hNlR5jO9uS9RfXTQF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FcWrMyYsCe+s5Uff9GVKmUw3tYDP/0mZVZHo6SNfaSymM66kHa9I5r1vzrVcLw8Hi
-	 uIiKFH+Llz6X1hSyEq83cAZYSzqw9RYlsOz0EyO53qPOaFYwix5Ip/PIIS8X62O9zT
-	 4NOJLctbd32dhCn+Ambvw9ERVwUaS599skt/4IX0mJxsMzhBcWYCjlHz9Kb4z4vF2v
-	 vgaV9ykzAgo260xXLpO6pOb5BVFeu8M1/MImh5rAGWwz3/s5ZHF+zrTIeASZzPO7jC
-	 dqywvtJhz3Y6ZXhWp9/sBDeui4EnOyndn4kO1TJdcrW1r8oRRP8GJosM/RuqkzcVd+
-	 +P06HxV1hrqEA==
-Date: Tue, 20 Aug 2024 19:32:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net: dsa: mv88e6xxx: Fix out-of-bound access
-Message-ID: <20240820183202.GA2898@kernel.org>
-References: <20240819222641.1292308-1-Joseph.Huang@garmin.com>
- <72e02a72-ab98-4a64-99ac-769d28cfd758@lunn.ch>
+	s=arc-20240116; t=1724178691; c=relaxed/simple;
+	bh=liGTDXoscxLcCROjnOLpYkcFAv6EbxOlUytlw+YakPw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePIQbszzwaLpQh6IM8X0YnJ3DEwa9GJjol4/ZnmAn6kZOwEUNdpYrrPcT00Q2/ZebFFQGD/4TzBKFM9WzdY7ea5y6VVWeYp3NaYpMVc2r/2ibutzZ9A2qvMdIZQdlCDQYHY7jusVBkfd+2OrtHVazViNmVFsojhxvOYz95EjmVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Orm8RUUX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724178689; x=1755714689;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=liGTDXoscxLcCROjnOLpYkcFAv6EbxOlUytlw+YakPw=;
+  b=Orm8RUUXrQ5JZ28mCvtaLe62wrBNHWcKCTS51g4Uv50w6MDiHGgyRBX/
+   xKPLYXWgrprdXDp+ledjItq4qzeqvFUtFa2UoTaHq1G533G4CyIXWtd5Y
+   Pt+vDAPrZfBHp5cWdu3m+aXLXPVojEbbRt9CQ/pe47M4Eddqde8TflSsF
+   H6GpdqlxmpEIfQzyMJjB7tfXk+bScFdxbT9DjBaitLIvxi0O6gM4/3K5y
+   WYwNhzu9lFfgWT/EXFM6q0JIHgOrMpHM3ixfdN9EQqme123dDRcso+edv
+   E3AD6tP4c47UAj99Hev4AGIQ6HvvxeIdxQ19VXOHIrbdY9uiKYyHeqIjF
+   w==;
+X-CSE-ConnectionGUID: iBNf1kUgS7OKcOU81MAfXQ==
+X-CSE-MsgGUID: x8RG1vswS8y7+PhiMa4PWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33164131"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="33164131"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 11:31:28 -0700
+X-CSE-ConnectionGUID: GT3sWMfNRtOHB08T3IEVlw==
+X-CSE-MsgGUID: mZjCh3r/SbSazfChsvVoVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="60458133"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa006.fm.intel.com with ESMTP; 20 Aug 2024 11:31:28 -0700
+From: kan.liang@linux.intel.com
+To: acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf hist: Don't set hpp_fmt_value for members in --no-group
+Date: Tue, 20 Aug 2024 11:32:02 -0700
+Message-Id: <20240820183202.3174323-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72e02a72-ab98-4a64-99ac-769d28cfd758@lunn.ch>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 12:58:05AM +0200, Andrew Lunn wrote:
-> On Mon, Aug 19, 2024 at 06:26:40PM -0400, Joseph Huang wrote:
-> > If an ATU violation was caused by a CPU Load operation, the SPID is 0xf,
-> > which is larger than DSA_MAX_PORTS (the size of mv88e6xxx_chip.ports[]
-> > array).
-> 
-> The 6390X datasheet says "IF SPID = 0x1f the source of the violation
-> was the CPU's registers interface."
-> 
-> > +#define MV88E6XXX_G1_ATU_DATA_SPID_CPU				0x000f
-> 
-> So it seems to depend on the family.
-> 
-> >  
-> >  /* Offset 0x0D: ATU MAC Address Register Bytes 0 & 1
-> >   * Offset 0x0E: ATU MAC Address Register Bytes 2 & 3
-> > diff --git a/drivers/net/dsa/mv88e6xxx/global1_atu.c b/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > index ce3b3690c3c0..b6f15ae22c20 100644
-> > --- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > +++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
-> > @@ -457,7 +457,8 @@ static irqreturn_t mv88e6xxx_g1_atu_prob_irq_thread_fn(int irq, void *dev_id)
-> >  		trace_mv88e6xxx_atu_full_violation(chip->dev, spid,
-> >  						   entry.portvec, entry.mac,
-> >  						   fid);
-> > -		chip->ports[spid].atu_full_violation++;
-> > +		if (spid != MV88E6XXX_G1_ATU_DATA_SPID_CPU)
-> > +			chip->ports[spid].atu_full_violation++;
-> 
-> So i think it would be better to do something like:
-> 
-> 		if (spid < ARRAY_SIZE(chip->ports))
-> 			chip->ports[spid].atu_full_violation++;
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi Joseph,
+Perf crashes as below when applying --no-group
 
-I am curious to know if bounds checking should also
-be added to other accesses to chip->ports[spid] within this function.
+perf record -e "{cache-misses,branches"} -b sleep 1
+perf report --stdio --no-group
+free(): invalid next size (fast)
+Aborted (core dumped)
+
+In the __hpp__fmt(), only 1 hpp_fmt_value is allocated for the current
+event when --no-group is applied. However, the current implementation
+tries to assign the hists from all members to the hpp_fmt_value, which
+exceeds the allocated memory.
+
+Fixes: 8f6071a3dce4 ("perf hist: Simplify __hpp_fmt() using hpp_fmt_data")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ tools/perf/ui/hist.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
+index 5d1f04f66a5a..e5491995adf0 100644
+--- a/tools/perf/ui/hist.c
++++ b/tools/perf/ui/hist.c
+@@ -62,7 +62,7 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+ 	struct evsel *pos;
+ 	char *buf = hpp->buf;
+ 	size_t size = hpp->size;
+-	int i, nr_members = 1;
++	int i = 0, nr_members = 1;
+ 	struct hpp_fmt_value *values;
+ 
+ 	if (evsel__is_group_event(evsel))
+@@ -72,16 +72,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+ 	if (values == NULL)
+ 		return 0;
+ 
+-	i = 0;
+-	for_each_group_evsel(pos, evsel)
+-		values[i++].hists = evsel__hists(pos);
+-
++	values[0].hists = evsel__hists(evsel);
+ 	values[0].val = get_field(he);
+ 	values[0].samples = he->stat.nr_events;
+ 
+ 	if (evsel__is_group_event(evsel)) {
+ 		struct hist_entry *pair;
+ 
++		for_each_group_member(pos, evsel)
++			values[++i].hists = evsel__hists(pos);
++
+ 		list_for_each_entry(pair, &he->pairs.head, pairs.node) {
+ 			for (i = 0; i < nr_members; i++) {
+ 				if (values[i].hists != pair->hists)
+-- 
+2.38.1
+
 
