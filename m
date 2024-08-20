@@ -1,177 +1,305 @@
-Return-Path: <linux-kernel+bounces-294627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9245995905E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9A595906D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F042837A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:16:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96C80B20F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC181C68A7;
-	Tue, 20 Aug 2024 22:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896C71BE238;
+	Tue, 20 Aug 2024 22:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JTDwi95G";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kbRW5H1T";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E+dQBrmU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V8oHX71P"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i5oAHiB3"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C7129D19;
-	Tue, 20 Aug 2024 22:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB8318C01C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724192164; cv=none; b=t1kBdFTB7X7OtwUC0urXtkTKh4PaF4+O3bLt9npCzpCUaZKvnJF5f/yTVX0cEdh7k6w/PkDjhnaZtXIbTpC/24x4tJZ4HDiFlgWtqKV01FV6lCIH8Rixdy/KK/H+lNkmyPyUynEgqCB5gm71YYh4zP4bgsTfDzSvlPNkoH63q0c=
+	t=1724192501; cv=none; b=fgfMaICAze0bZI2DfvS33es7P4kiIKgYdtR3RYd1k9STqhNdAlQ2I69ZvixrpRtwMjg2AXdG/kDEexkDGD6pM5i90e8Y56qOi1R54ddb8a7HVPJ5LvNr06PxckYoNV99rM6ZrPoCADcc0d12auMmDAr+lU6HQXbDW/lAfLLEBc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724192164; c=relaxed/simple;
-	bh=xkny2TNAwXgAJM+V3pqXVwQ6tG479eGlCTbXjgQ54ys=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=efyTVG10OBvhEmdZTc8/d1YCGNrrBrWj11rGfrKl9auXri2Kny4DLQN6VqxmidjlCSDNHQVDplI+lWT0UnBomOjErJsmL+1Z34XgoN9DGkA1ovz0WQuqq3VokIlsZfng6BnyqEHAntUQM/pJP/tsN3fPPEx+CDzd05vDYjueHF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JTDwi95G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kbRW5H1T; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E+dQBrmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V8oHX71P; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF1621FD4B;
-	Tue, 20 Aug 2024 22:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724192158; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
-	b=JTDwi95GZAZbfaqUEmMS0cQ+uZ3p6vz+O1ywWSPpc9s1EpNdmHw8ZUICNecNwliyt1Mlxv
-	u0iIRS77tOq2wHw1OQPehVntQxsGh52mRBDDj2gLy3ZZwU56xsn3Ya9PP6MK37hXObEYTp
-	QXgBP4GHBn4HGeQiHC70pOTaGKknjuw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724192158;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
-	b=kbRW5H1TRcJ9UVl9KwFQP+E4XfmORnJnX7VIeY3HYtqC9FiYCdmnaoVxFYbUoYqooCCAOM
-	XFtSZYdsoRcRI6Ag==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724192157; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
-	b=E+dQBrmUnu0TpXoI+XQ7DlLGPug0aWGCqnWdrbQhdtbFPHbavigAB4zBi4iKis80iCR0yB
-	Qdq8ZVBuOsByPv+ySNMZtsNIhP88z+hBYvOKxA0NEGEzBReJvOEeQqMKNIAuQ1uQ8LHqlA
-	UyqDgBySZYjKsf0/2/xIbYnO0s/+2PU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724192157;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6OsG0kvR+6DSslimwhBgoFra0p0jbTOvG12ygRSKGY=;
-	b=V8oHX71PGi+qMvLEe8npzf7p34vpPu6Zsxyl9otxLi5pSVy6uF5zcOCvck8CXjAvB9/bZy
-	R3b680enoBJoHCAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB40C13770;
-	Tue, 20 Aug 2024 22:15:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X6JLI5sVxWbbIwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 20 Aug 2024 22:15:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1724192501; c=relaxed/simple;
+	bh=p7WMjsO7B1VjuFRAm4/Vm/H7wsOWMxCoTuIyR8ZbIec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nm944KWLZiVZQm6Sb20tTui1SjeheL+7xbYXw5rn2lZHWjdLjjXy+XE3pYQEqjXhB6o2II9eG8N6jdSjN3iN30f/ynQESADr6eZd5aeTI+HBw0CfEN6AbE/LqQKuS2sWjsbjMpQ2SUVdIf+oSUA8bKOUfZHfSZQlAebUUiVeS38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i5oAHiB3; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-498d587c13bso35037137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724192499; x=1724797299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6hv871P/o1MS7poPvy1dF3jHOd59twZpXpXgf3p5JXE=;
+        b=i5oAHiB3GsNclrmWUzAoJaS5jInM0T3mOH72sE99lDq6XK0FscuYHf+4NxFc0OjK/c
+         hKi24qOAssYBXMmzyjj932vv1QAdRNrpR3gM9TMgn7sm9sSvvujwMRXmwfi6noF1N2dW
+         jZeczZtGSwPJy3xnFapDKR1AtsLuyvcChgyEsiDq6vZ26xqu/nIfZ6zegpNENdn05sw7
+         GWxMfZOhWuMQTIssk1rCQsg9q3JK0+c6wz6X+7PZHGadNHyi/BlULXfSPs8fmV53rA7J
+         PmDPCdizTSd6XN2GBLy7Lk3kGZp+jW20jwRzSjyI08GOgolw6IoSzYspitYV0XGsraiM
+         sDrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724192499; x=1724797299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6hv871P/o1MS7poPvy1dF3jHOd59twZpXpXgf3p5JXE=;
+        b=GawKkyMH1ty5gWaQJ/xdbIzT5HUqf7/KGlaMR8jrdX/wLGANSCTYSZqh27ol44JsXX
+         J8/rvvdv0u3UcjAKEq/qC2A29dLGLOrqnxfJmJ+Gxl1LA2/DBsiPMV1Xwq6wEFC2KVPo
+         rRItc5pMyAA/7Oo6WCe1YEz/kFyw9ZmHWYHjbrk0FouYRBmaKeTQpnx8u/x59Et6JQoF
+         1eFfDfqZf/6eBSVDhhoqISuqHzNBSsOCBr04DK4qtIw73y6p6Rpa+xES2DQclorLB4XI
+         GcZm5SgCoGN14Nn5dp02r0IOucnJ5mbUJeCbfES2J204YIfR8yB2g2NabtJiHfJM7qX+
+         Ay7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWlnYFd2r5bTrKskQ8a367V7e8Z3BC0+PI+1hIJbl6GWM2+1Zuocx+y28e7JqwiLMLoA5JSj0Cb1XacSRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBMjAokosD9yM0Mc9XjrXdG/PCpb3m9YbJOZRycI12EDvEfwDj
+	s4pFdvSEpRSbFp/EYV4SwSoWtLTEB2BSwl/CVErNyZjYlgJ4jY8od1F5B9tJ4lT3gxhSCgmznF2
+	/DEMdOlo9qIpdsgApWcsPgqWheF9+xJRfaqc1
+X-Google-Smtp-Source: AGHT+IFlTf+UAiD0W71XbG/Kv80aODrewkNQc9rz19st1IWj0E6Vu2TgKDRn94RSifgv1S0d68uT2mD58XiJs4gAu+k=
+X-Received: by 2002:a05:6102:4190:b0:493:c81c:3148 with SMTP id
+ ada2fe7eead31-498d3a160b8mr837695137.0.1724192498479; Tue, 20 Aug 2024
+ 15:21:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
-In-reply-to:
- <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
-References:
- <>, <CAHk-=whxS9qM36w5jmf-F32LSC=+m3opufAdgfOBCoTDaS1_Ag@mail.gmail.com>
-Date: Wed, 21 Aug 2024 08:15:44 +1000
-Message-id: <172419214486.6062.12815120063228775100@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid,suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20240816045123.1934387-2-davidgow@google.com>
+In-Reply-To: <20240816045123.1934387-2-davidgow@google.com>
+From: Rae Moar <rmoar@google.com>
+Date: Tue, 20 Aug 2024 18:21:25 -0400
+Message-ID: <CA+GJov6AcP3u59jYTJq5hiYeSgMaYRTDMUV7mbL62Ru4=xM4Xg@mail.gmail.com>
+Subject: Re: [PATCH v2] kunit: Device wrappers should also manage driver name
+To: David Gow <davidgow@google.com>
+Cc: Kees Cook <kees@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Nico Pache <npache@redhat.com>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, Erhard Furtner <erhard_f@mailbox.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maxime Ripard <mripard@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Aug 2024, Linus Torvalds wrote:
-> On Tue, 20 Aug 2024 at 14:47, NeilBrown <neilb@suse.de> wrote:
-> >
-> > I can definitely get behind the idea has having a few more helpers and
-> > using them more widely.  But unless we get rid of wake_up_bit(), people
-> > will still use and some will use it wrongly.
-> 
-> I do not believe this is a valid argument.
-> 
-> "We have interfaces that somebody can use wrongly" is a fact of life,
-> not an argument.
+On Fri, Aug 16, 2024 at 12:51=E2=80=AFAM David Gow <davidgow@google.com> wr=
+ote:
+>
+> kunit_driver_create() accepts a name for the driver, but does not copy
+> it, so if that name is either on the stack, or otherwise freed, we end
+> up with a use-after-free when the driver is cleaned up.
+>
+> Instead, strdup() the name, and manage it as another KUnit allocation.
+> As there was no existing kunit_kstrdup(), we add one. Further, add a
+> kunit_ variant of strdup_const() and kfree_const(), so we don't need to
+> allocate and manage the string in the majority of cases where it's a
+> constant.
+>
+> However, these are inline functions, and is_kernel_rodata() only works
+> for built-in code. This causes problems in two cases:
+> - If kunit is built as a module, __{start,end}_rodata is not defined.
+> - If a kunit test using these functions is built as a module, it will
+>   suffer the same fate.
+>
+> This fixes a KASAN splat with overflow.overflow_allocation_test, when
+> built as a module.
+>
+> Restrict the is_kernel_rodata() case to when KUnit is built as a module,
+> which fixes the first case, at the cost of losing the optimisation.
+>
+> Also, make kunit_{kstrdup,kfree}_const non-inline, so that other modules
+> using them will not accidentally depend on is_kernel_rodata(). If KUnit
+> is built-in, they'll benefit from the optimisation, if KUnit is not,
+> they won't, but the string will be properly duplicated.
+>
+> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
+> Reported-by: Nico Pache <npache@redhat.com>
+> Closes: https://groups.google.com/g/kunit-dev/c/81V9b9QYON0
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Reviewed-by: Rae Moar <rmoar@google.com>
+> Signed-off-by: David Gow <davidgow@google.com>
+> ---
+>
+> This is a combination of the previous version of this patch with the
+> follow-up fix "kunit: Fix kunit_kstrdup_const() with modules".
+>
+> kunit_kstrdup_const() now falls back to kstrdup() if KUnit is built as a
+> module, and is no longer inlined. This should fix the issues we'd seen
+> before.
+>
+> I've not tried doing something fancy by looking at module rodata
+> sections: it might be a possible optimisation, but it seems like it'd
+> overcomplicate things for this initial change. If we hit a KUnit test
+> where this is a bottleneck (or if I have some more spare time), we can
+> look into it.
+>
+> The overflow_kunit test has been fixed independently to not rely on this
+> anyway, so there shouldn't be any current cases of this causing issues,
+> but it's worth making the API robust regardless.
+>
+> Changes since previous version:
+> https://lore.kernel.org/linux-kselftest/20240731070207.3918687-1-davidgow=
+@google.com/
+> - Fix module support by integrating:
+>   https://lore.kernel.org/linux-kselftest/20240806020136.3481593-1-davidg=
+ow@google.com/
+>
 
-The argument is more like "we have interfaces that are often used
-wrongly and the resulting bugs are hard to find through testing because
-they don't affect the more popular architectures".
+Hello!
 
-> 
-> The whole "wake_up_bit()" is a very special thing, and dammit, if
-> people don't know the rules, then they shouldn't be using it.
-> 
-> Anybody using that interface *ALREADY* has to have some model of
-> atomicity for the actual bit they are changing. And yes, they can get
-> that wrong too.
-> 
-> The only way to actually make it a simple interface is to do the bit
-> operation and the wakeup together. Which is why I think that
-> interfaces like clear_bit_and_wake() or set_bit_and_wake() are fine,
-> because at that point you actually have a valid rule for the whole
-> operation.
-> 
-> But wake_up_bit() on its own ALREADY depends on the user doing the
-> right thing for the bit itself. Putting a memory barrier in it will
-> only *HIDE* incompetence, it won't be fixing it.
-> 
-> So no. Don't add interfaces that hide the problem.
+I tested this new patch with modules, particularly the device tests
+and the overflow_kunit test. And it seems to be working well.
 
-Ok, thanks.  I'll focus my efforts on helper functions.
+Tested-by: Rae Moar <rmoar@google.com>
 
-NeilBrown
+Thanks!
+-Rae
 
-
-> 
->                   Linus
-> 
-
+> ---
+>  include/kunit/test.h | 48 ++++++++++++++++++++++++++++++++++++++++++++
+>  lib/kunit/device.c   |  7 +++++--
+>  lib/kunit/test.c     | 19 ++++++++++++++++++
+>  3 files changed, 72 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index e2a1f0928e8b..5ac237c949a0 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -28,6 +28,7 @@
+>  #include <linux/types.h>
+>
+>  #include <asm/rwonce.h>
+> +#include <asm/sections.h>
+>
+>  /* Static key: true if any KUnit tests are currently running */
+>  DECLARE_STATIC_KEY_FALSE(kunit_running);
+> @@ -480,6 +481,53 @@ static inline void *kunit_kcalloc(struct kunit *test=
+, size_t n, size_t size, gfp
+>         return kunit_kmalloc_array(test, n, size, gfp | __GFP_ZERO);
+>  }
+>
+> +
+> +/**
+> + * kunit_kfree_const() - conditionally free test managed memory
+> + * @x: pointer to the memory
+> + *
+> + * Calls kunit_kfree() only if @x is not in .rodata section.
+> + * See kunit_kstrdup_const() for more information.
+> + */
+> +void kunit_kfree_const(struct kunit *test, const void *x);
+> +
+> +/**
+> + * kunit_kstrdup() - Duplicates a string into a test managed allocation.
+> + *
+> + * @test: The test context object.
+> + * @str: The NULL-terminated string to duplicate.
+> + * @gfp: flags passed to underlying kmalloc().
+> + *
+> + * See kstrdup() and kunit_kmalloc_array() for more information.
+> + */
+> +static inline char *kunit_kstrdup(struct kunit *test, const char *str, g=
+fp_t gfp)
+> +{
+> +       size_t len;
+> +       char *buf;
+> +
+> +       if (!str)
+> +               return NULL;
+> +
+> +       len =3D strlen(str) + 1;
+> +       buf =3D kunit_kmalloc(test, len, gfp);
+> +       if (buf)
+> +               memcpy(buf, str, len);
+> +       return buf;
+> +}
+> +
+> +/**
+> + * kunit_kstrdup_const() - Conditionally duplicates a string into a test=
+ managed allocation.
+> + *
+> + * @test: The test context object.
+> + * @str: The NULL-terminated string to duplicate.
+> + * @gfp: flags passed to underlying kmalloc().
+> + *
+> + * Calls kunit_kstrdup() only if @str is not in the rodata section. Must=
+ be freed with
+> + * kunit_kfree_const() -- not kunit_kfree().
+> + * See kstrdup_const() and kunit_kmalloc_array() for more information.
+> + */
+> +const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp=
+_t gfp);
+> +
+>  /**
+>   * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+>   * @test: The test context object.
+> diff --git a/lib/kunit/device.c b/lib/kunit/device.c
+> index 25c81ed465fb..520c1fccee8a 100644
+> --- a/lib/kunit/device.c
+> +++ b/lib/kunit/device.c
+> @@ -89,7 +89,7 @@ struct device_driver *kunit_driver_create(struct kunit =
+*test, const char *name)
+>         if (!driver)
+>                 return ERR_PTR(err);
+>
+> -       driver->name =3D name;
+> +       driver->name =3D kunit_kstrdup_const(test, name, GFP_KERNEL);
+>         driver->bus =3D &kunit_bus_type;
+>         driver->owner =3D THIS_MODULE;
+>
+> @@ -192,8 +192,11 @@ void kunit_device_unregister(struct kunit *test, str=
+uct device *dev)
+>         const struct device_driver *driver =3D to_kunit_device(dev)->driv=
+er;
+>
+>         kunit_release_action(test, device_unregister_wrapper, dev);
+> -       if (driver)
+> +       if (driver) {
+> +               const char *driver_name =3D driver->name;
+>                 kunit_release_action(test, driver_unregister_wrapper, (vo=
+id *)driver);
+> +               kunit_kfree_const(test, driver_name);
+> +       }
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_device_unregister);
+>
+> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> index e8b1b52a19ab..089c832e3cdb 100644
+> --- a/lib/kunit/test.c
+> +++ b/lib/kunit/test.c
+> @@ -874,6 +874,25 @@ void kunit_kfree(struct kunit *test, const void *ptr=
+)
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_kfree);
+>
+> +void kunit_kfree_const(struct kunit *test, const void *x)
+> +{
+> +#if !IS_MODULE(CONFIG_KUNIT)
+> +       if (!is_kernel_rodata((unsigned long)x))
+> +#endif
+> +               kunit_kfree(test, x);
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_kfree_const);
+> +
+> +const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp=
+_t gfp)
+> +{
+> +#if !IS_MODULE(CONFIG_KUNIT)
+> +       if (is_kernel_rodata((unsigned long)str))
+> +               return str;
+> +#endif
+> +       return kunit_kstrdup(test, str, gfp);
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_kstrdup_const);
+> +
+>  void kunit_cleanup(struct kunit *test)
+>  {
+>         struct kunit_resource *res;
+> --
+> 2.46.0.184.g6999bdac58-goog
+>
 
