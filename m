@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-293898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF4995864A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8275895867D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFDB1C24CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4DDF1C24E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DB8190671;
-	Tue, 20 Aug 2024 11:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED991922F2;
+	Tue, 20 Aug 2024 12:00:38 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6266718F2C0
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF4B18FC69
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154955; cv=none; b=QzdszjGxwsnROEFAvKLtCME0AkKeO8hOXY6HRBdp4qY6a0p0tg7g/xnoloDqh2yJUKYmF4kJN4mLmPQozit+T++2NNk2I7y5lQAXRJY2d7UVWVBfkxauhW1exCVxMJuUsboCU+dGqxlGuuELXYFfpL7sfN7Q5HtlTxFDlm4910A=
+	t=1724155234; cv=none; b=p4hZtadWL51JF+3jc6hkmaKnytvwBC/WsRjquMzA3kJujnWpxTZE6o0sQ7UozyR5lHbyuCwfCAjcmFykrdOLipKOF9ktcAM4UJtdIcz4nuIch4rni76xPvAiJzmDXAh5Q2ZYSW0hXh6ICskCBLakKnG/aBiEyE0YDXKRKqRvNLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154955; c=relaxed/simple;
-	bh=ub6bLaPuTHcCZMiXbWB6JhIgGt2owL18udvenP083fo=;
+	s=arc-20240116; t=1724155234; c=relaxed/simple;
+	bh=fQ6OtQihTMtbJNSqAs/DTisQPMxfV34M4V7bfNcV97g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X/aK7yEUuHaDQJoxwc6bILO96MGhfdxhcqPJUF09iUYH6mB8JgOe0P6LcAJs93Fp4SnmhQFHS+93u2sEtm1ClQE3rdTLLbPh80TUhxa3hXOeXqAVGSqVly1bC3PvGrf6zNKF5sapCkq3IpmfhRIH0IDNZ/4F9CXaUHcXT7CijY4=
+	 In-Reply-To:To:Cc; b=bCSh1+bVcSzSIR2TO3K65A9HWBZNcXbDj8rbob5qvMDMijpUD2si7nCQD99+VWYeNiaxUPiA/LBmRXuYVRb5KoWAp0fXciYfjpdu1vJKlV0XasQMWbFnLDafDzlRxCxsU7nPj5lvwI39IbcutP7JkSN+FyOQ4GyLzJ1aFtD7hvs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,20 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSS-0000Am-5W; Tue, 20 Aug 2024 13:55:28 +0200
+	id 1sgNXH-0000yc-N4; Tue, 20 Aug 2024 14:00:27 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-001lLn-FN; Tue, 20 Aug 2024 13:55:27 +0200
+	id 1sgNXH-001lO3-75; Tue, 20 Aug 2024 14:00:27 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-00GnIQ-1E;
+	id 1sgNSR-00GnIQ-1G;
 	Tue, 20 Aug 2024 13:55:27 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 20 Aug 2024 13:55:34 +0200
-Subject: [PATCH 09/31] wifi: mwifiex: deduplicate code in
- mwifiex_cmd_tx_rate_cfg()
+Date: Tue, 20 Aug 2024 13:55:35 +0200
+Subject: [PATCH 10/31] wifi: mwifiex: fix indention
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-mwifiex-cleanup-v1-9-320d8de4a4b7@pengutronix.de>
+Message-Id: <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
 References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
@@ -63,11 +62,11 @@ To: Brian Norris <briannorris@chromium.org>,
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=3107;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=1186;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=ub6bLaPuTHcCZMiXbWB6JhIgGt2owL18udvenP083fo=;
- b=+PIhpDmqELJBEkl3fyKxfeXdRDT+iSAeqXvKKlf9BHbbmYFR5IJONNEl+Cs/aJb0ZgeQnXQCv
- kzcW4BFT6ffDrauypw3y/RGNBwHdJh/0iOMSHf4hUudkzsEFJ09JSkp
+ bh=fQ6OtQihTMtbJNSqAs/DTisQPMxfV34M4V7bfNcV97g=;
+ b=HYmKYDzN8i8IPm0HaQa+sMb1m2RkaaV0HBoUpR3cFvct8K4FqXMYtrVJdidDSUuw+4xp1EpyP
+ 9DD3gy72gxrCaEBS2UoYMUw/gSz3KiLdlNTzZ4XLCNd2a0/mDEUEYoB
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -75,77 +74,37 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The code block inside the if/else is the same with just using
-pbitmap_rates if non NULL or priv->bitmap_rates otherwise. Deduplicate
-the code by picking the correct pointer first and then using it
-unconditionally.
+Align multiline if() under the opening brace.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/net/wireless/marvell/mwifiex/sta_cmd.c | 43 +++++++++-----------------
- 1 file changed, 14 insertions(+), 29 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/wmm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-index e2800a831c8ed..30dd4e58e2b1d 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-@@ -157,7 +157,7 @@ mwifiex_cmd_802_11_get_log(struct host_cmd_ds_command *cmd)
-  */
- static int mwifiex_cmd_tx_rate_cfg(struct mwifiex_private *priv,
- 				   struct host_cmd_ds_command *cmd,
--				   u16 cmd_action, u16 *pbitmap_rates)
-+				   u16 cmd_action, const u16 *pbitmap_rates)
- {
- 	struct host_cmd_ds_tx_rate_cfg *rate_cfg = &cmd->params.tx_rate_cfg;
- 	struct mwifiex_rate_scope *rate_scope;
-@@ -174,34 +174,19 @@ static int mwifiex_cmd_tx_rate_cfg(struct mwifiex_private *priv,
- 	rate_scope->type = cpu_to_le16(TLV_TYPE_RATE_SCOPE);
- 	rate_scope->length = cpu_to_le16
- 		(sizeof(*rate_scope) - sizeof(struct mwifiex_ie_types_header));
--	if (pbitmap_rates != NULL) {
--		rate_scope->hr_dsss_rate_bitmap = cpu_to_le16(pbitmap_rates[0]);
--		rate_scope->ofdm_rate_bitmap = cpu_to_le16(pbitmap_rates[1]);
--		for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
--			rate_scope->ht_mcs_rate_bitmap[i] =
--				cpu_to_le16(pbitmap_rates[2 + i]);
--		if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
--			for (i = 0;
--			     i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap);
--			     i++)
--				rate_scope->vht_mcs_rate_bitmap[i] =
--					cpu_to_le16(pbitmap_rates[10 + i]);
--		}
--	} else {
--		rate_scope->hr_dsss_rate_bitmap =
--			cpu_to_le16(priv->bitmap_rates[0]);
--		rate_scope->ofdm_rate_bitmap =
--			cpu_to_le16(priv->bitmap_rates[1]);
--		for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
--			rate_scope->ht_mcs_rate_bitmap[i] =
--				cpu_to_le16(priv->bitmap_rates[2 + i]);
--		if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
--			for (i = 0;
--			     i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap);
--			     i++)
--				rate_scope->vht_mcs_rate_bitmap[i] =
--					cpu_to_le16(priv->bitmap_rates[10 + i]);
--		}
-+	if (!pbitmap_rates)
-+		pbitmap_rates = priv->bitmap_rates;
-+
-+	rate_scope->hr_dsss_rate_bitmap = cpu_to_le16(pbitmap_rates[0]);
-+	rate_scope->ofdm_rate_bitmap = cpu_to_le16(pbitmap_rates[1]);
-+
-+	for (i = 0; i < ARRAY_SIZE(rate_scope->ht_mcs_rate_bitmap); i++)
-+		rate_scope->ht_mcs_rate_bitmap[i] = cpu_to_le16(pbitmap_rates[2 + i]);
-+
-+	if (priv->adapter->fw_api_ver == MWIFIEX_FW_V15) {
-+		for (i = 0; i < ARRAY_SIZE(rate_scope->vht_mcs_rate_bitmap); i++)
-+			rate_scope->vht_mcs_rate_bitmap[i] =
-+				cpu_to_le16(pbitmap_rates[10 + i]);
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
+index bcb61dab7dc86..1b1222c73728f 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -1428,13 +1428,13 @@ mwifiex_dequeue_tx_packet(struct mwifiex_adapter *adapter)
  	}
  
- 	rate_drop = (struct mwifiex_rate_drop_pattern *) ((u8 *) rate_scope +
+ 	if (!ptr->is_11n_enabled ||
+-		ptr->ba_status ||
+-		priv->wps.session_enable) {
++	    ptr->ba_status ||
++	    priv->wps.session_enable) {
+ 		if (ptr->is_11n_enabled &&
+-			ptr->ba_status &&
+-			ptr->amsdu_in_ampdu &&
+-			mwifiex_is_amsdu_allowed(priv, tid) &&
+-			mwifiex_is_11n_aggragation_possible(priv, ptr,
++		    ptr->ba_status &&
++		    ptr->amsdu_in_ampdu &&
++		    mwifiex_is_amsdu_allowed(priv, tid) &&
++		    mwifiex_is_11n_aggragation_possible(priv, ptr,
+ 							adapter->tx_buf_size))
+ 			mwifiex_11n_aggregate_pkt(priv, ptr, ptr_index);
+ 			/* ra_list_spinlock has been freed in
 
 -- 
 2.39.2
