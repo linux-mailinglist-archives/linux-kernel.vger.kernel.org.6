@@ -1,119 +1,88 @@
-Return-Path: <linux-kernel+bounces-294681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A33F959150
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:44:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5594959153
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 898B0B23989
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908E22840B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F91C1C8FC2;
-	Tue, 20 Aug 2024 23:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6318E751;
+	Tue, 20 Aug 2024 23:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqMSduQo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrZjgQ9R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580AA1370;
-	Tue, 20 Aug 2024 23:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D24918C023;
+	Tue, 20 Aug 2024 23:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724197436; cv=none; b=pSH8R/zEHeKSMUsNyMdCLUVnll1OQ9KL6WCu4QZslz4fBBpVHOu+GJHKAKb2iN3YE97+emFIMKRBPEXzeXZalxwy3v5d4y+cW6KHHpYmfcY+oNfRa73420zmLo3brk+eLuskdN0Yb1xrKFf1ad080nYI6gXKO07VIIYeKIn1eWo=
+	t=1724197507; cv=none; b=NMdi6dWAm/9fobj08l4Y7VHPkqircTUHVN1cpknJj07TcQvBJP8kXunyxvc9mDGxTx+cCBB4LxtBOkKSy4lLaXqeiMst9sN7qqqhIRKizd8fGds9fb76+rAELXxqY1WzP1iN4ZInOZ54qRtdUZeonZ7e/Z18moUC05g0wuY4jLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724197436; c=relaxed/simple;
-	bh=rznuTR1pqbYxKs1HdN8k/Aw0Ws/gZWqUO9JIi2Ea0/8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=pklzqiOVEl2yRZqj8irjAGNMwtsfrB6n4a/pNp6ABdBXGbsRTKhdt8rbjI/oDJN0KZGR62yEzP3uMs/pD7zU280Ns/YLYm8QdK3xEyP5g3LGquTtuPnFbsm8mUU09gmdUaxlHtpKj4CeSEmIV9Iuzd99EOROrjKSrCB7ONBsbMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqMSduQo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16703C4AF14;
-	Tue, 20 Aug 2024 23:43:53 +0000 (UTC)
+	s=arc-20240116; t=1724197507; c=relaxed/simple;
+	bh=SpJoirkkmSDcZsSbOfsxFos23kDULLjat3l6C9qejSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=reBdf5RoKKBxvDNYalzLpJ0ZfXxQKWx7ZoJ6sQSIQdTTQhmWZQ2HdJu+JZAXHjSalyS4feHMj60aUdGnjIIIki+5shHCq0KL/J3O1L71uXrFMwtqxHRXUXpaOoETMYoC/eJetvrNd5UbR+lTZ7vLEM0/N3wZaF3sX+mg3NJtZy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrZjgQ9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78263C4AF1B;
+	Tue, 20 Aug 2024 23:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724197436;
-	bh=rznuTR1pqbYxKs1HdN8k/Aw0Ws/gZWqUO9JIi2Ea0/8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NqMSduQo4/ABdSbtKdAD3zRPsRLmFyND+TSngNFGrR3bM0pJ7N9CbdVjbl9oIcDG5
-	 xzPXCxraQpQJHuGRDkEYy15LI463YXkQmP8V/m+Y6yslg8WlqTe+TOOonFgLOP17A8
-	 or13YUkEjrcfeVtXeynytwFTr3MtCy0u/gtxTcin9z+Af3JtChEVvgfYXjVs2OMljZ
-	 /MlS8JJQhOaA6iu+kZROuZqUynTw0unZepcf/mmN99XebWDTZJ2DCKEbMhK0SF3YxD
-	 FsLHAC3dCPRnZc5xb4pxDT0crDYcfR7gYCh6mwao1qtvdt/HZ0OHNyz7Da74wFHu+k
-	 dD/RsKEQgMtMA==
-Date: Wed, 21 Aug 2024 08:43:51 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Mark Rutland
- <mark.rutland@arm.com>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org,
- clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor
- <nathan@kernel.org>
-Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
-Message-Id: <20240821084351.4b1c9d4d52b5aa7e07681d69@kernel.org>
-In-Reply-To: <20240820181109.4203158d@gandalf.local.home>
-References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
-	<20240819112902.11451fe8@gandalf.local.home>
-	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
-	<20240819120244.5657eb2f@gandalf.local.home>
-	<20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
-	<ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-	<CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
-	<20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
-	<20240820181109.4203158d@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1724197506;
+	bh=SpJoirkkmSDcZsSbOfsxFos23kDULLjat3l6C9qejSo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jrZjgQ9RK+LxQK2xDIPZEMamp3KWKa0EF4kLONoUo7pg15OWZxSyRHR+KDGf1E5Mf
+	 7FmITa6sUh1lz5vYSCxcRuZoJ3d6KY1XP6dNl+kwX4PCCVhQySqXOX/NclVTeY0Fa0
+	 af3UalFYU3iYg6Bd4nYVEtaG0889wevvcxsxook3lBF/84NWWTEkKobDonPkppzJHq
+	 PjgZygJqvv7CWLW/H91SGBL5qg5DjmuYtB+DsvwsNWSvP6eavlA8a8KIV0RXxn4kxx
+	 yEAXm1MCwQG64rSuT5PsW+GRSk1cdrrizSc5kdyR99Kr74bRmwwyNJxcfU2Eq75vYq
+	 4L+PT4YbOT5sQ==
+Date: Tue, 20 Aug 2024 18:45:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Oliver Neukum <oneukum@suse.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
+ bridges
+Message-ID: <20240820234504.GA231828@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820060008.jbghpqibbohbemfz@thinkpad>
 
-On Tue, 20 Aug 2024 18:11:09 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Wed, 21 Aug 2024 07:05:39 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
-> 
-> > Does the noinline attribute prevent embedding callsite too? I mean
+On Tue, Aug 20, 2024 at 11:30:08AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Aug 19, 2024 at 02:44:43PM +0200, Oliver Neukum wrote:
+> > On 02.08.24 07:55, Manivannan Sadhasivam via B4 Relay wrote:
 > > 
-> > extern callee()
+> > > --- a/drivers/pci/pci-acpi.c
+> > > +++ b/drivers/pci/pci-acpi.c
+> > > @@ -1434,7 +1434,7 @@ void pci_acpi_setup(struct device *dev, struct acpi_device *adev)
+> > >   	 * reason is that the bridge may have additional methods such as
+> > >   	 * _DSW that need to be called.
+> > >   	 */
+> > > -	if (pci_dev->bridge_d3_allowed)
+> > > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
 > > 
-> > noinline callee()
-> > {
-> > ...
-> > }
-> > 
-> > caller()
-> > {
-> > 	callee() // (*)
-> > }
-> > 
-> > In this case, does noinline prevent LTO to embed the callee at the callsite(*)
-> > or prevent LTO remove the callee() symbol?
-> >
+> > Are you sure you want to require both capabilities here?
 > 
-> Even though we have it passed as a parameter, I think the compiler and
-> linker is smart enough to see that and notice its use, and that the
-> function passed in is a nop, which doesn't break the flow.
-> 
-> Can you add the __used and see if it fixes it?
+> Wakeup is common for both D3Hot and D3Cold, isn't it?
 
-Adding __used to DYN_FTRACE_TEST_NAME() and DYN_FTRACE_TEST_NAME2() does
-not change, the test still fails. Hmm, what about makes the caller
-(trace_selftest_startup_dynamic_tracing()) called via a function pointer?
-In that case, wouldn't it be subject to constant propagetion?
+From a spec point of view, moving device from D3hot to D0 is a config
+space write that the OS knows how to do, but moving a device from
+D3cold to D0 requires some platform-specific magic.  If that's what
+you mean by wakeup, they don't look common to me.
 
-Let me try.
-
-Thanks,
-
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Bjorn
 
