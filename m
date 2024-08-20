@@ -1,216 +1,229 @@
-Return-Path: <linux-kernel+bounces-294180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B4B958A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:57:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9E4958AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FC628B59E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:57:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007541C224C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F881922CB;
-	Tue, 20 Aug 2024 14:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC7195381;
+	Tue, 20 Aug 2024 15:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgK1iQh4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="MD/4Gnrv"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351A2190477;
-	Tue, 20 Aug 2024 14:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D39191F60;
+	Tue, 20 Aug 2024 15:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165753; cv=none; b=fnrzFbQDA7bmSWjZJc+FztsquCLtEVAT/958OwI4QpmmppGTWRrKFbhH6jMQxh5uXArM8LCXaF4Bsuc9YWGNyGD4dPsa1MupzO9U7dlqIEwLtd2BQPmb/ixSW/OXMSPreRIFHqKAFilHdYgVB7al5lkRf2RBiPaq/MnNyOh9DJY=
+	t=1724166150; cv=none; b=FiiFU4ZAQB0FM/xAcRREGgOWz9OYz6Y+OQ757jFYH5iJcvXd7ahWZbGur4rqRzNjkybkpTRXfVd0Off+4gnvZTgAklMERqI7f1tDVTIjP3B6yGsWjOK+iIPFpx9JqqzRugpjOjCXNy10T7dnDee42yRa02jlqkkUTpFbLfr7L5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165753; c=relaxed/simple;
-	bh=0ZOu3inMv6TGg0c6P8Xpu2xNmZ613jQlAGBpZEN8z08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srw/aj9W21t1OCqdPrHL0J7sTgYr12E7jzfGyNB2LOz9u1oqjlt+CwC78nQ7On7LyS/toLVQZxgGvbPLObqix0v5aEwfaMlLF5pyPmza2NgFeQk32Xy2ar7zHvvyjR7SBca0ia0hqpKAhgOsdOhdUsAvuO8xYGQZHwwbnNGc6h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgK1iQh4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DD2C4AF13;
-	Tue, 20 Aug 2024 14:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724165753;
-	bh=0ZOu3inMv6TGg0c6P8Xpu2xNmZ613jQlAGBpZEN8z08=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FgK1iQh4RWOwOelEdQ9jeGUfZx+WnxkwYkczIBVkqVFn+rL0ri4YWp2O6ORwfc1ea
-	 CL5XwX3vt8+v1vt9XBn/xqqX5AhV/lYdYFYW/MhJV1YakNKndJoR7TAzRpelgDBMjk
-	 xIb4elNsp7Zs+v2W0bs4IaEoIPXsP1iDO3HYsulZIyRhKqmvTFxmgEutE0c3dc3Ulz
-	 /R2zGjFVEbGOYJlQ8VEU7kvDApqiGy0WgE7DdcXNvpK28+WdjUnFADogi1IQNJwp6T
-	 es6qiLQTaBjLi2C1nJiI7pWy8bn23WbY7CIF1qccAK0hWshPl4i2ncl0NH9sSBvsTs
-	 pUVuhK1V/UkXg==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d5c324267aso3280473eaf.0;
-        Tue, 20 Aug 2024 07:55:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHg866YW+kMQRwYzxlduzvqYY2VnHjkJY5odGpyI6dasqtsDAABSXkJHwaaU+WGFgUkPYY5WDfuUfex3Hb@vger.kernel.org, AJvYcCVHBjMs9xkQ7xElXPsivEQqmbdKXpd0dN5ewkW31/HaZXyxfYG1w0fRjbGN6fI0EPyehkISCHEByKCe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxcd3O/mrVBxDRoZdsR2cfC4wXTq2MfHZ2IULlwo2PgzJ0wRtN
-	G0UTvrbnI5t28pLPzfEBell4dJvAL8eim/wLNNgc8pOkZw2qSLNYotIQaORkdin8sja58TZ/mD5
-	6Kf1OMZEAJm50VXxygTR0hjzzWnE=
-X-Google-Smtp-Source: AGHT+IERmvMStpESs9VrqArXN+cb5EeE1Fq/0gAmtGZ11naWDvaXrGCSH5qncYXRCTOyrCOPzq+Yoeo8p8V7jLtU6NI=
-X-Received: by 2002:a05:6820:1a0d:b0:5c4:e8d:58be with SMTP id
- 006d021491bc7-5da98896595mr14771765eaf.3.1724165752262; Tue, 20 Aug 2024
- 07:55:52 -0700 (PDT)
+	s=arc-20240116; t=1724166150; c=relaxed/simple;
+	bh=Pn5Be2dh0+czNJ0r2kXuL6VCoqseYLZz15AvC634pGY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gPEloUCZ6m5cO5faiLdPR5U+Ex5ksdPPvUYhTvM3Z8RFk+0OmEfjhJi6CrypGMH2wEj8WrXTg8UmbwJzl/a6ryQfGDzdDZ22GBPT5Ka2jShSyAiqTuwFZHF5Xd1gUTHV5JRbQL5tzM6RtkhECNa7EX3joInALN/NPRlhwrtho5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=s2b.tech; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=MD/4Gnrv; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=s2b.tech
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id E4D3E120013;
+	Tue, 20 Aug 2024 17:56:48 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E4D3E120013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1724165808;
+	bh=MrVtz0e/hcb5PS4asT0CJG1SO1SVV/nNa9m/pnKuUpU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=MD/4GnrvAamoZR3TkwORfL5p2owAfIhFf/wQ/Z1/hP2LHcTP67awyEXx6v8NCnWpW
+	 Gbd74JTRYL7trfSfHpOmaO2NOluAURy4uWmukpNnaN7mQlyVPotn03smq7TmsSA4Cx
+	 qnyEZLjmLGQoRI8vpjfj66WC0rEB8vALu2nclKKFW+/otu31UdH89KdXJA5n2EUzWe
+	 3c/TGcE40xarTKFDauz8QkNHrXRuu/fccwzWftQ0DFthwhA1QtajCtGYlF6eE0XnIO
+	 pP419djA87fuLzchSX8RTGKy4h8uuPUt0ZX8CDoQDic7moZawmYBSxQw6GCZfVoIWE
+	 ettpPiSO2D4Dg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 20 Aug 2024 17:56:48 +0300 (MSK)
+From: Alexey Romanov <avromanov@salutedevices.com>
+To: <neil.armstrong@linaro.org>, <clabbe@baylibre.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <vadim.fedorenko@linux.dev>
+CC: <linux-crypto@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kernel@salutedevices.com>, Alexey
+ Romanov <avromanov@salutedevices.com>
+Subject: [PATCH v9 00/23] Support more Amlogic SoC families in crypto driver
+Date: Tue, 20 Aug 2024 17:56:00 +0300
+Message-ID: <20240820145623.3500864-1-avromanov@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812054647.1194716-1-jiaqing.zhao@linux.intel.com> <20240812054647.1194716-2-jiaqing.zhao@linux.intel.com>
-In-Reply-To: <20240812054647.1194716-2-jiaqing.zhao@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 16:55:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hPtvVRM=Te2oPzCvE3tOy_rXYGJwaoQOfNc71z+pmkvA@mail.gmail.com>
-Message-ID: <CAJZ5v0hPtvVRM=Te2oPzCvE3tOy_rXYGJwaoQOfNc71z+pmkvA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ACPICA: Detect FACS in reduced hardware build
-To: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
-Cc: Robert Moore <robert.moore@intel.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187181 [Aug 20 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avromanov@s2b.tech
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;s2b.tech:7.1.1;gist.github.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;lore.kernel.org:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/20 14:24:00
+X-KSMG-LinksScanning: Clean, bases: 2024/08/20 14:24:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/08/20 03:45:00 #26365304
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Mon, Aug 12, 2024 at 7:47=E2=80=AFAM Jiaqing Zhao
-<jiaqing.zhao@linux.intel.com> wrote:
->
-> According to Section 5.2.10 of ACPI Specification, FACS is optional
-> in reduced hardware model. Enable the detection for "Hardware-reduced
-> ACPI support only" build (CONFIG_ACPI_REDUCED_HARDWARE_ONLY=3Dy) also.
->
-> Link: https://github.com/acpica/acpica/commit/ee53ed6b5452612bb44af542b68=
-d605f8b2b1104
-> Signed-off-by: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
-> ---
->  drivers/acpi/acpica/acglobal.h |  6 +-----
->  drivers/acpi/acpica/tbutils.c  |  5 +----
->  drivers/acpi/acpica/utxfinit.c | 24 ++++++++++++------------
->  include/acpi/acconfig.h        |  1 -
->  4 files changed, 14 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/acpi/acpica/acglobal.h b/drivers/acpi/acpica/acgloba=
-l.h
-> index f4c90fc99be2..309ce8efb4f6 100644
-> --- a/drivers/acpi/acpica/acglobal.h
-> +++ b/drivers/acpi/acpica/acglobal.h
-> @@ -29,11 +29,7 @@ ACPI_INIT_GLOBAL(u32, acpi_gbl_dsdt_index, ACPI_INVALI=
-D_TABLE_INDEX);
->  ACPI_INIT_GLOBAL(u32, acpi_gbl_facs_index, ACPI_INVALID_TABLE_INDEX);
->  ACPI_INIT_GLOBAL(u32, acpi_gbl_xfacs_index, ACPI_INVALID_TABLE_INDEX);
->  ACPI_INIT_GLOBAL(u32, acpi_gbl_fadt_index, ACPI_INVALID_TABLE_INDEX);
-> -
-> -#if (!ACPI_REDUCED_HARDWARE)
-> -ACPI_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS);
-> -
-> -#endif                         /* !ACPI_REDUCED_HARDWARE */
-> +ACPI_INIT_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS, NULL);
->
->  /* These addresses are calculated from the FADT Event Block addresses */
->
-> diff --git a/drivers/acpi/acpica/tbutils.c b/drivers/acpi/acpica/tbutils.=
-c
-> index 15fa68a5ea6e..356700349b45 100644
-> --- a/drivers/acpi/acpica/tbutils.c
-> +++ b/drivers/acpi/acpica/tbutils.c
-> @@ -18,7 +18,6 @@ ACPI_MODULE_NAME("tbutils")
->  static acpi_physical_address
->  acpi_tb_get_root_table_entry(u8 *table_entry, u32 table_entry_size);
->
-> -#if (!ACPI_REDUCED_HARDWARE)
->  /***********************************************************************=
-********
->   *
->   * FUNCTION:    acpi_tb_initialize_facs
-> @@ -37,8 +36,7 @@ acpi_status acpi_tb_initialize_facs(void)
->         struct acpi_table_facs *facs;
->
->         if (acpi_gbl_FADT.Xfacs &&
-> -                  (!acpi_gbl_FADT.facs
-> -                   || !acpi_gbl_use32_bit_facs_addresses)) {
-> +           (!acpi_gbl_FADT.facs || !acpi_gbl_use32_bit_facs_addresses)) =
-{
->                 (void)acpi_get_table_by_index(acpi_gbl_xfacs_index,
->                                               ACPI_CAST_INDIRECT_PTR(stru=
-ct
->                                                                      acpi=
-_table_header,
+Hello!
 
-I'm not sure how this change is related to the rest of the patch.
+This patchset expand the funcionality of the Amlogic
+crypto driver by adding support for more SoC families:
+AXG, G12A, G12B, SM1, A1, S4.
 
-It doesn't appear to be present in the original commit pointed to by
-the Link tag.
+Also specify and enable crypto node in device tree
+for reference Amlogic devices.
 
-> @@ -56,7 +54,6 @@ acpi_status acpi_tb_initialize_facs(void)
->
->         return (AE_OK);
->  }
-> -#endif                         /* !ACPI_REDUCED_HARDWARE */
->
->  /***********************************************************************=
-********
->   *
-> diff --git a/drivers/acpi/acpica/utxfinit.c b/drivers/acpi/acpica/utxfini=
-t.c
-> index 1915bec2b279..70ae0afa7939 100644
-> --- a/drivers/acpi/acpica/utxfinit.c
-> +++ b/drivers/acpi/acpica/utxfinit.c
-> @@ -120,6 +120,18 @@ acpi_status ACPI_INIT_FUNCTION acpi_enable_subsystem=
-(u32 flags)
->          */
->         acpi_gbl_early_initialization =3D FALSE;
->
-> +       /*
-> +        * Obtain a permanent mapping for the FACS. This is required for =
-the
-> +        * Global Lock and the Firmware Waking Vector
-> +        */
-> +       if (!(flags & ACPI_NO_FACS_INIT)) {
-> +               status =3D acpi_tb_initialize_facs();
-> +               if (ACPI_FAILURE(status)) {
-> +                       ACPI_WARNING((AE_INFO, "Could not map the FACS ta=
-ble"));
-> +                       return_ACPI_STATUS(status);
-> +               }
-> +       }
-> +
->  #if (!ACPI_REDUCED_HARDWARE)
->
->         /* Enable ACPI mode */
-> @@ -137,18 +149,6 @@ acpi_status ACPI_INIT_FUNCTION acpi_enable_subsystem=
-(u32 flags)
->                 }
->         }
->
-> -       /*
-> -        * Obtain a permanent mapping for the FACS. This is required for =
-the
-> -        * Global Lock and the Firmware Waking Vector
-> -        */
-> -       if (!(flags & ACPI_NO_FACS_INIT)) {
-> -               status =3D acpi_tb_initialize_facs();
-> -               if (ACPI_FAILURE(status)) {
-> -                       ACPI_WARNING((AE_INFO, "Could not map the FACS ta=
-ble"));
-> -                       return_ACPI_STATUS(status);
-> -               }
-> -       }
-> -
->         /*
->          * Initialize ACPI Event handling (Fixed and General Purpose)
->          *
-> diff --git a/include/acpi/acconfig.h b/include/acpi/acconfig.h
-> index d768d9c568cf..2da5f4a6e814 100644
-> --- a/include/acpi/acconfig.h
-> +++ b/include/acpi/acconfig.h
-> @@ -67,7 +67,6 @@
->   *      General Purpose Events (GPEs)
->   *      Global Lock
->   *      ACPI PM timer
-> - *      FACS table (Waking vectors and Global Lock)
->   */
->  #ifndef ACPI_REDUCED_HARDWARE
->  #define ACPI_REDUCED_HARDWARE           FALSE
-> --
-> 2.43.0
->
->
+Tested on GXL, AXG, G12A/B, SM1, A1 and S4 devices via
+custom tests [1] and tcrypt module.
+
+---
+
+Changes V1 -> V2 [2]:
+
+- Rebased over linux-next.
+- Adjusted device tree bindings description.
+- A1 and S4 dts use their own compatible, which is a G12 fallback.
+
+Changes V2 -> V3 [3]:
+
+- Fix errors in dt-bindings and device tree.
+- Add new field in platform data, which determines
+whether clock controller should be used for crypto IP.
+- Place back MODULE_DEVICE_TABLE.
+- Correct commit messages.
+
+Changes V3 -> V4 [4]:
+
+- Update dt-bindings as per Krzysztof Kozlowski comments.
+- Fix bisection: get rid of compiler errors in some patches.
+
+Changes V4 -> V5 [5]:
+
+- Tested on GXL board:
+  1. Fix panic detected by Corentin Labbe [6].
+  2. Disable hasher backend for GXL: in its current realization
+     is doesn't work. And there are no examples or docs in the
+     vendor SDK.
+- Fix AES-CTR realization: legacy boards (gxl, g12, axg) requires
+  inversion of the keyiv at keys setup stage.
+- A1 now uses its own compatible string.
+- S4 uses A1 compatible as fallback.
+- Code fixes based on comments Neil Atrmstrong and Rob Herring.
+- Style fixes (set correct indentations)
+
+Changes V5 -> V6 [7]:
+
+- Fix DMA sync warning reported by Corentin Labbe [8].
+- Remove CLK input from driver. Remove clk definition
+  and second interrput line from crypto node inside GXL dtsi.
+
+Changes V6 -> V7 [9]:
+
+- Fix dt-schema: power domain now required only for A1.
+- Use crypto_skcipher_ctx_dma() helper for cipher instead of
+  ____cacheline_aligned.
+- Add import/export functions for hasher.
+- Fix commit message for patch 17, acorrding to discussion [10].
+
+Changes V7 -> V8 [11]:
+
+- Test patchset with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS: fix some bugs
+  in hasher logic.
+- Use crypto crypto_ahash_ctx_dma in hasher code.
+- Correct clock definition: clk81 is required for all SoC's.
+- Add fixed-clock (clk81) definition for A1/S4.
+- Add information (in commit messages) why different compatibles are used.
+
+Changes V8 -> V9 [12]:
+
+- Remove required field clk-names from dt-schema according to Rob Herring
+recommendation [13].
+- Fix commit order: all dt-bindings schema commits now located earlier
+than any changes in device tree.
+- Fix typos and add more clarifications in dt-schema patches.
+
+Links:
+  - [1] https://gist.github.com/mRrvz/3fb8943a7487ab7b943ec140706995e7
+  - [2] https://lore.kernel.org/all/20240110201216.18016-1-avromanov@salutedevices.com/
+  - [3] https://lore.kernel.org/all/20240123165831.970023-1-avromanov@salutedevices.com/
+  - [4] https://lore.kernel.org/all/20240205155521.1795552-1-avromanov@salutedevices.com/
+  - [5] https://lore.kernel.org/all/20240212135108.549755-1-avromanov@salutedevices.com/
+  - [6] https://lore.kernel.org/all/ZcsYaPIUrBSg8iXu@Red/
+  - [7] https://lore.kernel.org/all/20240301132936.621238-1-avromanov@salutedevices.com/
+  - [8] https://lore.kernel.org/all/Zf1BAlYtiwPOG-Os@Red/
+  - [9] https://lore.kernel.org/all/20240326153219.2915080-1-avromanov@salutedevices.com/
+  - [10] https://lore.kernel.org/all/20240329-dotted-illusive-9f0593805a05@wendy/
+  - [11] https://lore.kernel.org/all/20240411133832.2896463-1-avromanov@salutedevices.com/
+  - [12] https://lore.kernel.org/all/20240607141242.2616580-1-avromanov@salutedevices.com/
+  - [13] https://lore.kernel.org/all/20240610222827.GA3166929-robh@kernel.org/
+
+Alexey Romanov (23):
+  drivers: crypto: meson: don't hardcode IRQ count
+  drviers: crypto: meson: add platform data
+  drivers: crypto: meson: remove clock input
+  drivers: crypto: meson: add MMIO helpers
+  drivers: crypto: meson: move get_engine_number()
+  drivers: crypto: meson: drop status field from meson_flow
+  drivers: crypto: meson: move algs definition and cipher API to
+    cipher.c
+  drivers: crypto: meson: cleanup defines
+  drivers: crypto: meson: process more than MAXDESCS descriptors
+  drivers: crypto: meson: avoid kzalloc in engine thread
+  drivers: crypto: meson: introduce hasher
+  drivers: crypto: meson: add support for AES-CTR
+  drivers: crypto: meson: use fallback for 192-bit keys
+  drivers: crypto: meson: add support for G12-series
+  drivers: crypto: meson: add support for AXG-series
+  drivers: crypto: meson: add support for A1-series
+  dt-bindings: crypto: meson: correct clk and remove second interrupt
+    line
+  dt-bindings: crypto: meson: support new SoC's
+  arch: arm64: dts: meson: gxl: correct crypto node definition
+  arch: arm64: dts: meson: a1: add crypto node
+  arch: arm64: dts: meson: s4: add crypto node
+  arch: arm64: dts: meson: g12: add crypto node
+  arch: arm64: dts: meson: axg: add crypto node
+
+ .../bindings/crypto/amlogic,gxl-crypto.yaml   |  32 +-
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  14 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   7 +
+ .../boot/dts/amlogic/meson-g12-common.dtsi    |   7 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi    |   6 +-
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |  13 +
+ drivers/crypto/amlogic/Makefile               |   2 +-
+ drivers/crypto/amlogic/amlogic-gxl-cipher.c   | 632 ++++++++++++------
+ drivers/crypto/amlogic/amlogic-gxl-core.c     | 292 ++++----
+ drivers/crypto/amlogic/amlogic-gxl-hasher.c   | 507 ++++++++++++++
+ drivers/crypto/amlogic/amlogic-gxl.h          | 118 +++-
+ 11 files changed, 1269 insertions(+), 361 deletions(-)
+ create mode 100644 drivers/crypto/amlogic/amlogic-gxl-hasher.c
+
+-- 
+2.34.1
+
 
