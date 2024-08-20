@@ -1,246 +1,248 @@
-Return-Path: <linux-kernel+bounces-294156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23882958A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8588958A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D85FB248BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2991F21A25
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FD2192B84;
-	Tue, 20 Aug 2024 14:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3713B1922F9;
+	Tue, 20 Aug 2024 14:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CYj9lVJW"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013059.outbound.protection.outlook.com [52.101.67.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xS19oGSe"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FE718E756
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165127; cv=fail; b=el8i4IIR3sovsCwzUnXah0GRzZQaeErZTKPtGXIFUQQWMbaTKAdzBPGxgf0TlnNmvX7413AI7zNCWD+/g+u4MSrpksIsuIBhiuOZgEU3NFPdDPaeBRRrUCFm4+Z6+G40te+Z/+t38Ow2mf47PVDeG9olxZHapRZkbhievPr2Vlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165127; c=relaxed/simple;
-	bh=Tki3c5zCV14v2vEg8RkKCBdHdCh8vjjMGdjcF58CQgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PEJ3vFSXsYEpeaZ6dzmLO68kz7UnvSmt7YAzNBeuhDYArblYHKYK+0uB2izJv7jkRpPoJAvpFH7usXNPHBotXefALkS5pu3INegN1zX66eO43Z7om0rO+ROheYIFJhXM71VIrQ2WQRH8aKBV0RO/Kyh22BO2rsoYqoThlzHEjHs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CYj9lVJW; arc=fail smtp.client-ip=52.101.67.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EKBo52IyajZPlDQsihZMxkYnW33z2tWQMJEuae8OWc7fMiMLwQNP3VLrPn+NZOWoErhqsa0xvj+i1WuFOIFWhY3cBhr25VUutnDgdLAvFJBTcRh98jnH0YQd3gXLTqPhHMRwgzc4SrrTQXCrvBlzAusbEPNpDPbGDuXaoFM6OFbdflxfUGDQ7FPsWa3/LvA7w/O0z/XsZFu3zHrqWXqqvNbioc4H4mIrCR3OBd05JxLcft9ShonYDlys0IZEdWMEpVwkHXPWZdDnLB7SGiDPSQKoO8/TwnfLfqBf3H2KD+EDCND+hdySg3RzCUhTM6AoSN/7yiVQ01NXFd/E5hLF8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OnHzpp4NZPSUYSiQttUzH+ovjxYq3H9S4wJNgxhHmJI=;
- b=h2ZQ1tEriiqoCgw18G7Q429e+LuD15izhd1Sj8Nnlpqsk0d4q5UrLiRoaKHvPDGrzlnW9nFbNKrm9hWURQpEbudNsIPhcxs8Ow3B9a9l2bm8OlSPLG27OxJg2270IIyEWUXx35QG2SMhy9D90NPDw9WLczdMP71nFiIH5g7YyXwJuPdJ2rakHdAawsJjDdkmTIAOrN+1zuwQFyiKfxSgGmybYr+NL27KVJbR3hjVGKIDJh85I7y3H46pSx4uvHdzZ7L2ZQ5Up2V7GGFoMy0dThgedrVHywjSVHJsOwNADkUUkm4XgoIkaLbbyIXqAIosxJVhEBwWxqZpcWRT2WWHuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OnHzpp4NZPSUYSiQttUzH+ovjxYq3H9S4wJNgxhHmJI=;
- b=CYj9lVJW1KBp1QFKtwsSLrF2bPpCfhQoR1lsc7uNvjrWJBFR4q6vMI84t/1NQoejaeXZTr6TYzM/EfBEN24KY2QTsm0eeWa0/b3QqYEqjIo2rZjeDVFmcMiBsgYH5dkS7rVIMTNHvwcKKa6NrEf2v97DUZ4lRGcDZUEWsfsMktkPKPLVrPUqTlaOBKc0jY6Mo4hHiOr0CmibnFu1vlKM+vhQoNPO9jWiIhbKYy6KH2lvdXfGRCHJwshOeiprqR1JowFxY8J5k9rXDsXVBU5wLF4B4DSNT3dfxFBuEtKQIGmN0GRLl/875QqbQZn8/k3s3mUTi1mniAceZ2zY0z++Lg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB6916.eurprd04.prod.outlook.com (2603:10a6:208:185::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
- 2024 14:45:22 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
- 14:45:22 +0000
-Date: Tue, 20 Aug 2024 10:45:14 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Stanley Chu <stanley.chuys@gmail.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Parshuram Thombare <pthombar@cadence.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Conor Culhane <conor.culhane@silvaco.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v3 01/11] i3c: master: Remove
- i3c_dev_disable_ibi_locked(olddev) on device hotjoin
-Message-ID: <ZsSr+vmyzcmQIN3e@lizhi-Precision-Tower-5810>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
- <20240819-i3c_fix-v3-1-7d69f7b0a05e@nxp.com>
- <CAPwEoQOXme+GofEhpXaBBmsyGJP-QQtLMJG45PTdNsSqFn391w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPwEoQOXme+GofEhpXaBBmsyGJP-QQtLMJG45PTdNsSqFn391w@mail.gmail.com>
-X-ClientProxiedBy: BY5PR17CA0044.namprd17.prod.outlook.com
- (2603:10b6:a03:167::21) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816FF1922EA
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724165275; cv=none; b=CdPepUqq0oTH8LxEXf2pjB0OmCjwUgegTryhkS1Jp3+KmMiFnYCozAI5sEzXlh+RvVSytMpo8oJqEY9gaDOJkfLaUJpQafQBwkFna5EEpQ1x8DilC+TUFSYoWLYOGq/q7ZI2MTiEg2Fa1LEfkFIz8sX8AGr6yoEDkssljxYj1+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724165275; c=relaxed/simple;
+	bh=IXcYOmV5hvPnY8iDlrXzSqwkCSMDQ/hhHntQ4if1F6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fSvMT4OCeGRY/sHk28evsOHYC2tJFsczEwex3WjSEazEYbGMrlDHcSV4A1qIpCoQ1GxXu4DAmv3/pGjRhB9C3EiasPR+K5NlgL60BuRN7g+ocvpuN6qJH/00ybLmnbl/kx+yVSonsKs8FP8n1VJeWaaXoOn+NYwU1eZAyZM0KuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xS19oGSe; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e162df8bab4so2204173276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724165272; x=1724770072; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IUOLV3nrydguHU1qvPpgc0NsJ90ZCkVLHRrZwycCbs=;
+        b=xS19oGSecofzR3n1kNyf4hvjqFvxh1DLUF/PlnT+P/9RUhjwoLNVK2Wt1E1tw3Ehuc
+         E11b+FwzkUsUzt85shOgzFvv5cehFGvZK+ZBHcEcnZWIDzOPCAxuZJ4a97Je2MdCKKCA
+         zuXRpQSfvYneflUYlz2z76TJuItbZqddpwuicvIZEwbwd9x9yYRPSbZWDymZW/vIMSTH
+         0lXZnQMlvJ8mVBnXpr0B0cZJuo7wsdLgSVI/6vn1HfeBuLVoIhGa/SOjamwZBKy1eJNX
+         t0fPqLdAdY21jjRL+zZMwK7VEmW+m3b2gh646uLHJJLL+IBS/rqYLmuJroROMl19ApoF
+         Uerw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724165272; x=1724770072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4IUOLV3nrydguHU1qvPpgc0NsJ90ZCkVLHRrZwycCbs=;
+        b=Drhv5DBsg3n4Fw4ljeDeV+yqEuemyobeREnB22ZumqZMjcPWEktM9YOvVcjaD6JIQJ
+         NwA5SutL+x5u/cncEEKliSghV5j8sadsOjd5QIhUC8mkSFYzdVd3qHw1Dmeg3XZUKdXU
+         2yJ6zwyyfhZl3UzIeDqVUPYKhrWZoB8oVtd2sINTSASC3LXkNc/yMSWNaxdLm/4fWKxc
+         9Ky3oBcMt1RuWjBSvQNSNvreVW1rargiB1Gf6lO8zpvbFCekZh2lWZ6JShBSqkrmZh1+
+         e2Y1cLvI8x/fzzv0KNSjtAwk44kC2V4NXH52d6yDqXNHfDaD9yI4c3c7HsXaEzERdEzC
+         Gd8w==
+X-Gm-Message-State: AOJu0YzR3+F+StfPXyuPpDek+F7oz6yB7+sZ4r72CWlNLYPS0QfrnMx2
+	QwV2djKNCPcvrOquysQIu4dE98TOITZHdnNQfkS56uQP4PVPjTqsNykQIMIDd5FW+D9/FnrMhQu
+	iCXP3dfq/LLrb0JZ2grcWKZJyAtPi4dJ/gIiunV1E59Y8qjirvy0=
+X-Google-Smtp-Source: AGHT+IEagz0VyWYkn5A9+jZQvXGnQ1ruWhwKyO56i80HjABaxtFw/72bqxIzy0jpSc08iiMA+j3DnR1GDV0fP5e2kjw=
+X-Received: by 2002:a05:6902:2508:b0:e13:d0db:308f with SMTP id
+ 3f1490d57ef6-e13d0db320amr13470570276.30.1724165272352; Tue, 20 Aug 2024
+ 07:47:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB6916:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc76302a-9459-4f04-dbb1-08dcc126b834
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?Z3RvZUU1aUlBMHlUUk1PTHhCNmtDWTczU3ZPSkxsMmJDcW5qbmZHL3MvN2tJ?=
- =?utf-8?B?Zkw4ZlFnaDFjRWxUazRpMHhCNlVwVXpwUno3OTZDR0N0bDYyTkpJenFta2F1?=
- =?utf-8?B?Q0piVXFFbW1La1BkR1QrclZlZnJpS210L1gyV1NFWXZMRGgwNWxidWNiTVJi?=
- =?utf-8?B?eGdMTTBuVytOSzVMYW40ZEs1aHZHSmRJeFdISlJBdlpiZmtDL2JzNE0xbEpX?=
- =?utf-8?B?M21WWTVXc1dMdVBLUVRuWXJUV2o1QnJ5TkRGRmF4Z2F5K0JFTnM2T1U2WDJB?=
- =?utf-8?B?L3N5bTVYUWJYZDRFMklXdXhXVzA2VlpZMVVhUkpDMFJ4SlJQN2pHUklVVDYx?=
- =?utf-8?B?d21IRTREekNTQWJwbmdPeEVTRUJpK3F3anQxNWF5dkdjazZOeGtoQWs1Y2p5?=
- =?utf-8?B?RklEYjFmcTVMQXEyU2t5Z041ZGZvQUJodWErMDdwVG01bFhGa1NqbktkaDBT?=
- =?utf-8?B?S2hEd2JkVHdVUnFjQTR0RkYvVkJMcTYrdE0zazlldFl0aXc1WHJ6UUFodGpZ?=
- =?utf-8?B?MEhRUUQwdmlhdnRNcktZME0rRlp6ZERVc0gydE5OaE5WWEJ1dVlOTy9PWit1?=
- =?utf-8?B?WDVzWTQxVnk1WDl1MU5BWU50dmNHQ1YwS0syQ2Y3Yk9nQTV1QXZoMFBCNUZa?=
- =?utf-8?B?bmx2STZKZkpUKzNsN3NLa1lrTFM0T1ZheHZkQkRyM0JmeUV4QjZxd2M2V3l3?=
- =?utf-8?B?eG5nZzhLT0dHbTBGdlBOSFIycHlneUZvQUFVVEltMXp6VHZWWUQ0LzVMTDZW?=
- =?utf-8?B?eGlrTXJ2dEdQZDh1UGMxcVNONzg0OE9yTTZxY0NSRldmNVJrZkoraHM3OUU4?=
- =?utf-8?B?bFJQNWlaMjliRkh6MytRK3RUSlNQSlZGSTNKTzkyWTFGeU9RRE5Hek1OWkxy?=
- =?utf-8?B?S2JpclBqY1BQdk9UdUJicFVzaFFZYkluNkwzc0pMZnRoTjhrbXNRTC9wTFZx?=
- =?utf-8?B?VjNBS1RCUnFQVmU3bkNUcnMvZUFlRElTcmFvZUNuWGlkbVB2Si9iUjZ2UzIv?=
- =?utf-8?B?VE9weVpERUczbzRlajFEZmtzREdaeE1XYmpDSzd6amVicUZ0ZGwybVVGY1FC?=
- =?utf-8?B?SXFjRWNFTngrRndPTXh6bkJrZ1l1RVJGQzVLZklMZ284aGtQNjZHbkNmV1Nn?=
- =?utf-8?B?TkpYYytNdDAwRnFudVhZa2REZnNYZ1owRjJ1SDNRMEtCZGl2ZGdPYkNlY0ZB?=
- =?utf-8?B?SFgvOVl6b0x2aVhJYVpRTDdhQUVUWDZCV1ZhTGVXay9TWnRlK2doTkJQNmJr?=
- =?utf-8?B?VzJzOFBFZHBUTE9xM0QrSEtCbFJCdjV4UGZocGVUZ0hSd29MT1dQZFQxMmlL?=
- =?utf-8?B?MjBiOUtRTStseXhQNkFBTVh6V1A0R3BVaTRXQzM5SkdVRExDdTAzL2FIY1pw?=
- =?utf-8?B?WEtSUHRuZEdqMHhNOVNyWEYzTDdIekVzaCt0enA1czh5cVNnVTRRYTdsQ2Vh?=
- =?utf-8?B?KzNyMVkyYUxQVGUzQlY4cTlMOXRtaEwwanNVcGVzcmRVWUczc25PUTNkaUVI?=
- =?utf-8?B?RHc4VUcwMGsyQ2oweGtEZzVWTDRGTVN5NVZ0cnQ1dlZHMGIzSlVhblhLUlRD?=
- =?utf-8?B?dCtyM1l0ZUR3Q2VTY01aV1FGejd6bGNJekF2QzNhMWE5UGpSL1VIWWpVT3dG?=
- =?utf-8?B?M0RJL0lGMmhYQ2dxcTJxaXhEUlh4NXBNeVNxNW1lV3pCU0xjNnZZZzhJQ3Rh?=
- =?utf-8?B?RmVqQXNhNVJmODlXdld0cFFvRVdkMDNlb0trS2sxcXd0d25Sd0NLV1MrbVJQ?=
- =?utf-8?B?eEtkdWhVcG5sbUhYUk96bDdodDBhVW8zVnNlalF0b1hiQ0RubURsQzNFTlAy?=
- =?utf-8?Q?MkBT9okRB2Z/HZ3KRQaP/22gt7ktzSKofNoIM=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?bUFtL0JpYmwvTENkUWNOMDRnaklLUUdJQUYyTXpQYzdOTTM0akdZM1B4ZWZ3?=
- =?utf-8?B?eGdQQUdjeGhFMHRlWmQwMW1OYkJzMm1qeTVHOHR5OHJKZ21TSUVLdW9icWJn?=
- =?utf-8?B?VWRxaHFvS1lwMHhnU09aZUNVUDVRbzY4R0Uzak11VVplWUJseXo1NEhwdHgr?=
- =?utf-8?B?Qi8zTjVyZDU4Z3JmaEhCOGl6bGJpeWUxblJPUUFIREZhWjdhZm9FTktUSU1F?=
- =?utf-8?B?cWRxLy94OGZvdkIzOHRkQlkvVkhRTm9wS2tFNEdwUUVBNmN1S3pHTjFKRG9J?=
- =?utf-8?B?d1llSWFSdys2YTF5ZlIwN1llM1RiMG42VWNxaGV4M0ZSdkJLRGt0ZVhyZTZv?=
- =?utf-8?B?NThjRTArVVZaNGVUQWtwOTFmZDVZY0lQUnhaR3VCajJjUE1qZFlsSnN4NWtF?=
- =?utf-8?B?d2g4dEQ0cTkwWjlTWjhDSjN2WEZ2RExxYWFTUWdMUWttdFhKTkwxcEVCU2JJ?=
- =?utf-8?B?bHNTTkF4QVVOT2Z2WnE1OXhOUUxlRStpaW5xV1loWmxwR3ZQWUxIWkhwVzdO?=
- =?utf-8?B?TUdrczJqT3JTVks3N2pzcm05QUJZUGRZNzM4b2tGdjQ1cGMrUUhTUW00Q1N4?=
- =?utf-8?B?dndpT1FlcWNEcWU1MzlsOThBUXlINE1FVzZteldQWFNUdVVzVldNT3BFS0Jq?=
- =?utf-8?B?c3Zna05MQVdJdDBzeFViMmlTdFQ1ZG95NHFqd3lOWjYxS1VhbEsvUW5HeW5N?=
- =?utf-8?B?RnZrV2gvbWZkSXhpV3JwMUo4K2VTTlBDVzlSa2VRTWgyR3VkSUdPRHJVQ1dE?=
- =?utf-8?B?MGI5SWlkdzJkQ2dRRzZVUXV5NkF2SDIxekExS3VCS01zMDdaS2syV0FlMER4?=
- =?utf-8?B?eUdxZmNMK0ZtWFZGR1Q3ZEM5REpTMk1hUFFRR3EvcnI3S1V5UkZ6czZFN3g3?=
- =?utf-8?B?cjhCMmpXUGNKV3grRlorVGFQem9Zc0xSbyt6eFpsY25OR0tLSDN5VmRVeE0v?=
- =?utf-8?B?bk9NdUg0WmlGcjJKU1dQb0lRSFVNODh1T0xmbmJPbVRSZm83UVAxZVhYS0d3?=
- =?utf-8?B?cnk3RjBwTjdWMzJYaWh2ZS9CSmZWRDZNWDdlQjQvQ3V2K3RtU3VNRmlJZVB0?=
- =?utf-8?B?ZnZYdXRoK0V0UHUrdlJkb1htR3YzaExwNXVBRlNaSmxSczhvMUV0R1lnR09l?=
- =?utf-8?B?d0h2MVNwTUxCUmFGZGtGU3lrRFZVb20wV2NBVkl6WU9ueVUwajVicDdweDc5?=
- =?utf-8?B?L0x3SXdBTngyVzV5UHVzUDhEUHFKQStPM1ZReE5ENjZBeHd4S3B0WjFwOVRK?=
- =?utf-8?B?cmJBV2pZZDZiMWdCM1VhZUZNRGpjR200MUt1MkFOODNwemo4QXZpeXBKeEhM?=
- =?utf-8?B?ZzlLS3k5UHIydDV6ZnpjL05FbTVPM245VnRsNmVEQnVLeXdHVVI2WWQvNjIz?=
- =?utf-8?B?S2owcTV1ZXZ2YkRaUjAvVjBDWEtBaVNKR2NKcXFOQ0M0cmdGSnhqcG5naDB5?=
- =?utf-8?B?OTRXOFJ3UXE3VEpUUUdhZG41KzNkTndMOTNmcVRkL0MrcWxJTXhNVTRpcEg5?=
- =?utf-8?B?MXZndTJ2UFIycmVMdEEyWitGR0dPbWxhWFRRSmI3Z1F2MVR0azk1NENEak1I?=
- =?utf-8?B?RiswV095dmJndG5OaUtLblpGZzZPcVdCOTZQUG9wVXVMWWtXT1BzOGExNENu?=
- =?utf-8?B?M0FRT2Y0bjJBaFlmM1lCd2wxRHAzdEI0MUFSSlhJbHd5eGUrL2diUnFYSGk0?=
- =?utf-8?B?MC9XYzRONDgzOUY2cXpJZFlCL1FscDl3L0VJZE1uU0hVRnh6ZG1QTzNyVDFm?=
- =?utf-8?B?T2JxemRzdm5nWmI1c1dla2M3Q3Z2Y3FmVlhtcVRUUlZtbnAvMGRqbmFGOTQv?=
- =?utf-8?B?ZDU1VFo1cldURHBCMExhUmE5WFc5cTBadjFySTlNUVpnUms0TGsyM3hkVXBW?=
- =?utf-8?B?c1U0ZHQraVhQNkNvdDBoK1N2cEJId0l3Q0FuZkxFdHM4czVJQVRKLzd5STVk?=
- =?utf-8?B?VUVmbzAwT213OFN6bGpJQTJzd2x5N05JU0I1bk5GTnVYRFJDbGZXeWxRbVVF?=
- =?utf-8?B?NXJSU1BoQ3V5SjJObHIyRHorVUR5bjNERlZrNldtRktWZEFkVHJ2VnFUcDI0?=
- =?utf-8?B?QkIyQlFqS1JRRGtCM1N4SmRLTkVXamoyR1VMS0xKN21WaTg2NFJOVmk2UkEz?=
- =?utf-8?Q?OW5ToYchpg2F04xXek2bu+zDZ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc76302a-9459-4f04-dbb1-08dcc126b834
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 14:45:22.4410
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: npPSB/ECdng3zrP7n0RwyWr5HcGcQ+RrRw/iah3RgH3d/4Vd93q+slIx/4X9/QDf/muQMYBAhIu/tc6CGfenPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6916
+References: <20240814153558.708365-1-jens.wiklander@linaro.org> <20240814153558.708365-3-jens.wiklander@linaro.org>
+In-Reply-To: <20240814153558.708365-3-jens.wiklander@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 20 Aug 2024 16:47:15 +0200
+Message-ID: <CAPDyKFprUeK2UiqAmLvMvZMhtOZa0zmCZ-Gbh_2n1kKF0iOXSA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] mmc: block: register RPMB partition with the RPMB subsystem
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shyam Saini <shyamsaini@linux.microsoft.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
+	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Manuel Traut <manut@mecka.net>, 
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Tomas Winkler <tomas.winkler@intel.com>, 
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 20, 2024 at 09:34:11AM +0800, Stanley Chu wrote:
-> On Tue, Aug 20, 2024 at 12:02 AM Frank Li <Frank.Li@nxp.com> wrote:
-> >
-> > When a new device hotjoins, a new dynamic address is assigned.
-> > i3c_master_add_i3c_dev_locked() identifies that the device was previously
-> > attached to the bus and locates the olddev.
-> >
-> > i3c_master_add_i3c_dev_locked()
-> > {
-> >     ...
-> >     olddev = i3c_master_search_i3c_dev_duplicate(newdev);
-> >     ...
-> >     if (olddev) {
-> >         ...
-> >         i3c_dev_disable_ibi_locked(olddev);
-> >         ^^^^^^
-> >         The olddev should not receive any commands on the i3c bus as it
-> >         does not exist and has been assigned a new address. This will
-> >         result in NACK or timeout. So remove it.
-> >     }
-> > }
-> >
-> > Fixes: 317bacf960a4 ("i3c: master: add enable(disable) hot join in sys entry")
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  drivers/i3c/master.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > index 7028f03c2c42e..852b32178b722 100644
-> > --- a/drivers/i3c/master.c
-> > +++ b/drivers/i3c/master.c
-> > @@ -2039,10 +2039,8 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
-> >                         ibireq.max_payload_len = olddev->ibi->max_payload_len;
-> >                         ibireq.num_slots = olddev->ibi->num_slots;
-> >
-> > -                       if (olddev->ibi->enabled) {
-> > +                       if (olddev->ibi->enabled)
-> >                                 enable_ibi = true;
-> > -                               i3c_dev_disable_ibi_locked(olddev);
-> > -                       }
-> >
-> >                         i3c_dev_free_ibi_locked(olddev);
+On Wed, 14 Aug 2024 at 17:36, Jens Wiklander <jens.wiklander@linaro.org> wrote:
 >
-> i3c_dev_free_ibi_locked will still encounter WARN_ON(dev->ibi->enabled).
+> Register eMMC RPMB partition with the RPMB subsystem and provide
+> an implementation for the RPMB access operations abstracting
+> the actual multi step process.
+>
+> Add a callback to extract the needed device information at registration
+> to avoid accessing the struct mmc_card at a later stage as we're not
+> holding a reference counter for this struct.
+>
+> Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+> instead of in mmc_rpmb_chrdev_open(). This is needed by the
+> route_frames() function pointer in struct rpmb_ops.
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> Tested-by: Manuel Traut <manut@mecka.net>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thank you test it. The below patch should fix this problem.
+First of all, sorry for the long delay! Besides only one comment, see
+more below, this looks good to me.
 
-https://lore.kernel.org/imx/20240820043818.3352614-1-ravindra.yashvant.shinde@nxp.com/T/#u
+> ---
+>  drivers/mmc/core/block.c | 242 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 240 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 2c9963248fcb..cc7318089cf2 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/mutex.h>
+>  #include <linux/scatterlist.h>
+> +#include <linux/string.h>
+>  #include <linux/string_helpers.h>
+>  #include <linux/delay.h>
+>  #include <linux/capability.h>
+> @@ -40,6 +41,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/idr.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/rpmb.h>
+>
+>  #include <linux/mmc/ioctl.h>
+>  #include <linux/mmc/card.h>
+> @@ -76,6 +78,48 @@ MODULE_ALIAS("mmc:block");
+>  #define MMC_EXTRACT_INDEX_FROM_ARG(x) ((x & 0x00FF0000) >> 16)
+>  #define MMC_EXTRACT_VALUE_FROM_ARG(x) ((x & 0x0000FF00) >> 8)
+>
+> +/**
+> + * struct rpmb_frame - rpmb frame as defined by eMMC 5.1 (JESD84-B51)
+> + *
+> + * @stuff        : stuff bytes
+> + * @key_mac      : The authentication key or the message authentication
+> + *                 code (MAC) depending on the request/response type.
+> + *                 The MAC will be delivered in the last (or the only)
+> + *                 block of data.
+> + * @data         : Data to be written or read by signed access.
+> + * @nonce        : Random number generated by the host for the requests
+> + *                 and copied to the response by the RPMB engine.
+> + * @write_counter: Counter value for the total amount of the successful
+> + *                 authenticated data write requests made by the host.
+> + * @addr         : Address of the data to be programmed to or read
+> + *                 from the RPMB. Address is the serial number of
+> + *                 the accessed block (half sector 256B).
+> + * @block_count  : Number of blocks (half sectors, 256B) requested to be
+> + *                 read/programmed.
+> + * @result       : Includes information about the status of the write counter
+> + *                 (valid, expired) and result of the access made to the RPMB.
+> + * @req_resp     : Defines the type of request and response to/from the memory.
+> + *
+> + * The stuff bytes and big-endian properties are modeled to fit to the spec.
+> + */
+> +struct rpmb_frame {
+> +       u8     stuff[196];
+> +       u8     key_mac[32];
+> +       u8     data[256];
+> +       u8     nonce[16];
+> +       __be32 write_counter;
+> +       __be16 addr;
+> +       __be16 block_count;
+> +       __be16 result;
+> +       __be16 req_resp;
+> +} __packed;
+> +
+> +#define RPMB_PROGRAM_KEY       0x1    /* Program RPMB Authentication Key */
+> +#define RPMB_GET_WRITE_COUNTER 0x2    /* Read RPMB write counter */
+> +#define RPMB_WRITE_DATA        0x3    /* Write data to RPMB partition */
+> +#define RPMB_READ_DATA         0x4    /* Read data from RPMB partition */
+> +#define RPMB_RESULT_READ       0x5    /* Read result request  (Internal) */
+> +
+>  static DEFINE_MUTEX(block_mutex);
+>
+>  /*
+> @@ -155,6 +199,7 @@ static const struct bus_type mmc_rpmb_bus_type = {
+>   * @id: unique device ID number
+>   * @part_index: partition index (0 on first)
+>   * @md: parent MMC block device
+> + * @rdev: registered RPMB device
+>   * @node: list item, so we can put this device on a list
+>   */
+>  struct mmc_rpmb_data {
+> @@ -163,6 +208,7 @@ struct mmc_rpmb_data {
+>         int id;
+>         unsigned int part_index;
+>         struct mmc_blk_data *md;
+> +       struct rpmb_dev *rdev;
+>         struct list_head node;
+>  };
+>
+> @@ -2670,7 +2716,6 @@ static int mmc_rpmb_chrdev_open(struct inode *inode, struct file *filp)
+>
+>         get_device(&rpmb->dev);
+>         filp->private_data = rpmb;
+> -       mmc_blk_get(rpmb->md->disk);
+
+If I understand correctly, the call to mmc_blk_get() is here to
+reference count the usage of the md->disk. So when a user decides to
+open the chrdev, we are keeping a reference to the corresponding data
+around, until the corresponding file descriptor is closed and
+mmc_rpmb_chrdev_release() is called. We do the similar thing if the
+regular mmc block device is opened.
+
+If we change to increase/decrease the reference count from
+mmc_blk_alloc_rpmb_part()/mmc_blk_rpmb_device_release() instead - are
+you certain that we are still taking care of the above scenario
+correctly?
+
+I guess a test that opens the chrdev and then unbinding the mmc host
+driver should tell us. :-)
 
 >
-> Thanks,
-> Stanley
+>         return nonseekable_open(inode, filp);
+>  }
+> @@ -2680,7 +2725,6 @@ static int mmc_rpmb_chrdev_release(struct inode *inode, struct file *filp)
+>         struct mmc_rpmb_data *rpmb = container_of(inode->i_cdev,
+>                                                   struct mmc_rpmb_data, chrdev);
 >
-> >                 }
-> >
-> > --
-> > 2.34.1
-> >
-> >
-> > --
-> > linux-i3c mailing list
-> > linux-i3c@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-i3c
+> -       mmc_blk_put(rpmb->md);
+>         put_device(&rpmb->dev);
+>
+>         return 0;
+> @@ -2701,10 +2745,165 @@ static void mmc_blk_rpmb_device_release(struct device *dev)
+>  {
+>         struct mmc_rpmb_data *rpmb = dev_get_drvdata(dev);
+>
+> +       rpmb_dev_unregister(rpmb->rdev);
+> +       mmc_blk_put(rpmb->md);
+>         ida_free(&mmc_rpmb_ida, rpmb->id);
+>         kfree(rpmb);
+>  }
+>
+
+[...]
+
+Kind regards
+Uffe
 
