@@ -1,213 +1,136 @@
-Return-Path: <linux-kernel+bounces-294647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D8B9590BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 00:55:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350899590CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6616C1F23D3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3B241F22B7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657531C824A;
-	Tue, 20 Aug 2024 22:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4181C3F1A;
+	Tue, 20 Aug 2024 23:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyFqM2fV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Zqyqb2Yp"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033FB1C7B87;
-	Tue, 20 Aug 2024 22:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243B118DF94
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724194500; cv=none; b=hDcWctcga+HqyJ+IOX5yjoa84K5s3qjrNZkNMOGv4Aw/u0KAWfpWZWk1xCt5VRDw3eLQGl3M0+JMsnwJmjCopgDgNFhEYur5Oi6pECHvRaJ6U2R++yDs5yDmoir8OkLFQhHREsi6Krqo3/UIO4RarDtJHhD+Y8YkyHRKWvYEVLg=
+	t=1724194808; cv=none; b=ilXSUZmiUM49HPC3RtAyLsb2jIDyBtrTEdCvFzhaAa6H434+guXzZNLgyCVeL7GJy4OXKgYFI/JIMJqVgnlF5KXJ4L6ppt3kwzDr6sfyL06jlFAh4CGevnZJxJLBDiALw3HSb2yLzASAPKI6fXcGsSucjjtJK2X29/p27e1KgLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724194500; c=relaxed/simple;
-	bh=dU6nQ8TY5l1rX9hZsmWtmyHFl8oEKuHNgg1ALh/Gwro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kc2wqGv1uVnP1Mm3/cQP8kYUqpVyB2ArkIHMQmMsujYTD5BOClfB8D6IN7+vEZaCrVBMshVWkPeYwEjPbBUqYeENy7jmXgXrkfFpa0xh0YTOZ5QZ+GzjAcy/sC74IBgO3VQa5YOFdyl/djY1AvonEjB4NYTYlPZxKUqARVoNZF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyFqM2fV; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724194499; x=1755730499;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dU6nQ8TY5l1rX9hZsmWtmyHFl8oEKuHNgg1ALh/Gwro=;
-  b=cyFqM2fV2OURL+vgUOmwNRzSiookBFeNHuSf8ahSfp53Gv0MczEbJM9P
-   r3TiFeX/bd4kDaC24zelskw+aj6hJ6GP19U+IegAAl9glfjQ9CM9B65M9
-   J2G4ajtemlb2DCPjqO5VuoBHkSLe2Pty+IR2I4pEcB9wQC2QJCZ4qjnM1
-   uFgRPsDsaQc5rwk2upH3mZfAr2FD1tq7/MFZCTF7uWyZ5b9tl4B5PGu1l
-   p+pbIaS6ElN5qSPrZRXp/FE2B9HQz9vQJYusROZy5n9mBoWUwYcfF1hOH
-   JnjvsNAYRNcf51GzZpwR217nFddYRn0rY7vieLq2bsGvdt0GsZJ2xwySS
-   g==;
-X-CSE-ConnectionGUID: ATf9kBMtS9iwz4UW+jjS+Q==
-X-CSE-MsgGUID: dAOLQbYFRqytybCnmJoqTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="13121063"
-X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
-   d="scan'208";a="13121063"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 15:54:58 -0700
-X-CSE-ConnectionGUID: rmN5inLhSwi8lZYaQhwu+w==
-X-CSE-MsgGUID: 932EUzlISGKWywfB2tsobg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
-   d="scan'208";a="60593833"
-Received: from cdpresto-mobl2.amr.corp.intel.com.amr.corp.intel.com (HELO [10.125.108.88]) ([10.125.108.88])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 15:54:57 -0700
-Message-ID: <725ff759-c49c-4f72-b39c-530822963ff6@intel.com>
-Date: Tue, 20 Aug 2024 15:54:55 -0700
+	s=arc-20240116; t=1724194808; c=relaxed/simple;
+	bh=4ezca/HbuzIwMSXgMe2LRyvA8up1CSnzxc4yOt6pysQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UJhcM44GvFqmRWv2tsRsmzdZcDngleUjOfbEzu9P/sUolG/DUDJNdHgpEv3bt6mUzB/sUlQ42eHi/P4z0yP8eB6EJ6K09i+txqM7NvqwJ6OMYk+2re+sxTK2u455bMAf0KQJayYn/yWxVX/N9ttrV9Ww6X2tfx+mFvQGsBD/Yh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Zqyqb2Yp; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a86681cd0d2so230866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 16:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724194805; x=1724799605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Job/uX2MYzjKTJ++ttBnOuppDpxmyaGi0fl4BcognWk=;
+        b=Zqyqb2YpnPRmqJVUG7dbMpWUAO28p79ka8VPs7uxt00EWu1yBMZG1Ve5OQeooFSh87
+         js9Hgb+Nzu/TGFMtpjj2WLVtgEKxlE9VIwBgypAR0gjk6SoqBHc0QalUNSKgeQto96+n
+         sFEkFwdxzp/AJ6IXxXHpOpjEYFdDhjXcDNGCmjmdxZ+Fg/Jvn3PZDPHpq6OqFjaGZ1tw
+         zI0wEtcZQVyupshNcwHAv90zRBst8CrgCRpenbAWPXUp45Hq7zbvILflNIuLsY+A7ZZ0
+         FjQezWpD7lupHY2utOVDv8UfmJD3tPAewdSxFwTk+7wz1kuO792dYRnBelAWA6GyyD08
+         7xMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724194805; x=1724799605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Job/uX2MYzjKTJ++ttBnOuppDpxmyaGi0fl4BcognWk=;
+        b=BjK70E0crWprDcPa7FERgpNohI0LizaynQB/yhS8IwRs4phlhthmt7sQKsMuIR5IZ9
+         YVBnthQ7lfUcDKpZKiEE+H4mkOsv6zWJXUl+3vlhvKgw8EX4Zz62SNoTNBsnAL+jUoid
+         +q1/JMcei2o0N2pZIOythXHnOu3kdSyapfnxYvST4HGk36rtMWh/u26cfst9ejM3xXxg
+         M0kZGpHX9lPATxCzOmjsgyz1erAH13bpzmxrNhoD0Lyl2NJeXdx69nZu2vbHssN4c+sc
+         qItOpgivpzPQdn6jwEiS7Nj8/5ViAF1asuJ6Rwd4LP9Smz6Oyd9Mn49Ql5vWV8bZPi0F
+         NTVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcPv7qMc7UDdrYT46x3yTehAmjYlzw7On2SaHjJTMERd3smEjMYS3weWm/VXpKp5f2gOE8S1R/k7fsUtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygd/Z0+r5jJRQoN01f9Jpi/wWkIKN2Kv5usqsd2k2IqsN2CDOb
+	O5hIBO/VyxImkATF8qd7yB1xoopBG/utfXw00WC5VXzIIbb3MfzS7W7uGoN7gCw=
+X-Google-Smtp-Source: AGHT+IGqlEEXsKqpcS5s1O+/2//UMr4x9harZHJcj+McT1D6iUWdMCWzBCLr14d0F+fhlfTlzbQ8Bw==
+X-Received: by 2002:a17:907:94d4:b0:a7a:9d1e:3b28 with SMTP id a640c23a62f3a-a866f8b3545mr10983666b.5.1724194805029;
+        Tue, 20 Aug 2024 16:00:05 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8667cb4ae8sm48779866b.192.2024.08.20.16.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 16:00:04 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: geert@linux-m68k.org
+Cc: linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [RESEND PATCH] m68k: cmpxchg: Use swap() to improve __arch_xchg()
+Date: Wed, 21 Aug 2024 00:59:02 +0200
+Message-ID: <20240820225901.135628-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 23/25] cxl/mem: Trace Dynamic capacity Event Record
-To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-23-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-23-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Remove the local variable tmp and use the swap() macro.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ arch/m68k/include/asm/cmpxchg.h | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> CXL rev 3.1 section 8.2.9.2.1 adds the Dynamic Capacity Event Records.
-> User space can use trace events for debugging of DC capacity changes.
-> 
-> Add DC trace points to the trace log.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+diff --git a/arch/m68k/include/asm/cmpxchg.h b/arch/m68k/include/asm/cmpxchg.h
+index 4ba14f3535fc..71fbe5c5c564 100644
+--- a/arch/m68k/include/asm/cmpxchg.h
++++ b/arch/m68k/include/asm/cmpxchg.h
+@@ -3,6 +3,7 @@
+ #define __ARCH_M68K_CMPXCHG__
+ 
+ #include <linux/irqflags.h>
++#include <linux/minmax.h>
+ 
+ #define __xg(type, x) ((volatile type *)(x))
+ 
+@@ -11,25 +12,19 @@ extern unsigned long __invalid_xchg_size(unsigned long, volatile void *, int);
+ #ifndef CONFIG_RMW_INSNS
+ static inline unsigned long __arch_xchg(unsigned long x, volatile void * ptr, int size)
+ {
+-	unsigned long flags, tmp;
++	unsigned long flags;
+ 
+ 	local_irq_save(flags);
+ 
+ 	switch (size) {
+ 	case 1:
+-		tmp = *(u8 *)ptr;
+-		*(u8 *)ptr = x;
+-		x = tmp;
++		swap(*(u8 *)ptr, x);
+ 		break;
+ 	case 2:
+-		tmp = *(u16 *)ptr;
+-		*(u16 *)ptr = x;
+-		x = tmp;
++		swap(*(u16 *)ptr, x);
+ 		break;
+ 	case 4:
+-		tmp = *(u32 *)ptr;
+-		*(u32 *)ptr = x;
+-		x = tmp;
++		swap(*(u32 *)ptr, x);
+ 		break;
+ 	default:
+ 		x = __invalid_xchg_size(x, ptr, size);
+-- 
+2.46.0
 
-small nit below
-
-> 
-> ---
-> Changes:
-> [Alison: Update commit message]
-> ---
->  drivers/cxl/core/mbox.c  |  4 +++
->  drivers/cxl/core/trace.h | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 69 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index d43ac8eabf56..8202fc6c111d 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -977,6 +977,10 @@ static void __cxl_event_trace_record(const struct cxl_memdev *cxlmd,
->  		ev_type = CXL_CPER_EVENT_DRAM;
->  	else if (uuid_equal(uuid, &CXL_EVENT_MEM_MODULE_UUID))
->  		ev_type = CXL_CPER_EVENT_MEM_MODULE;
-> +	else if (uuid_equal(uuid, &CXL_EVENT_DC_EVENT_UUID)) {
-> +		trace_cxl_dynamic_capacity(cxlmd, type, &record->event.dcd);
-> +		return;
-> +	}
->  
->  	cxl_event_trace_record(cxlmd, type, ev_type, uuid, &record->event);
->  }
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index 9167cfba7f59..a3a5269311ee 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -731,6 +731,71 @@ TRACE_EVENT(cxl_poison,
->  	)
->  );
->  
-> +/*
-> + * DYNAMIC CAPACITY Event Record - DER
-> + *
-> + * CXL rev 3.0 section 8.2.9.2.1.5 Table 8-47
-
-Should we just use 3.1 since it's the latest?
-
-> + */
-> +
-> +#define CXL_DC_ADD_CAPACITY			0x00
-> +#define CXL_DC_REL_CAPACITY			0x01
-> +#define CXL_DC_FORCED_REL_CAPACITY		0x02
-> +#define CXL_DC_REG_CONF_UPDATED			0x03
-> +#define show_dc_evt_type(type)	__print_symbolic(type,		\
-> +	{ CXL_DC_ADD_CAPACITY,	"Add capacity"},		\
-> +	{ CXL_DC_REL_CAPACITY,	"Release capacity"},		\
-> +	{ CXL_DC_FORCED_REL_CAPACITY,	"Forced capacity release"},	\
-> +	{ CXL_DC_REG_CONF_UPDATED,	"Region Configuration Updated"	} \
-> +)
-> +
-> +TRACE_EVENT(cxl_dynamic_capacity,
-> +
-> +	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
-> +		 struct cxl_event_dcd *rec),
-> +
-> +	TP_ARGS(cxlmd, log, rec),
-> +
-> +	TP_STRUCT__entry(
-> +		CXL_EVT_TP_entry
-> +
-> +		/* Dynamic capacity Event */
-> +		__field(u8, event_type)
-> +		__field(u16, hostid)
-> +		__field(u8, region_id)
-> +		__field(u64, dpa_start)
-> +		__field(u64, length)
-> +		__array(u8, tag, CXL_EXTENT_TAG_LEN)
-> +		__field(u16, sh_extent_seq)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		CXL_EVT_TP_fast_assign(cxlmd, log, rec->hdr);
-> +
-> +		/* Dynamic_capacity Event */
-> +		__entry->event_type = rec->event_type;
-> +
-> +		/* DCD event record data */
-> +		__entry->hostid = le16_to_cpu(rec->host_id);
-> +		__entry->region_id = rec->region_index;
-> +		__entry->dpa_start = le64_to_cpu(rec->extent.start_dpa);
-> +		__entry->length = le64_to_cpu(rec->extent.length);
-> +		memcpy(__entry->tag, &rec->extent.tag, CXL_EXTENT_TAG_LEN);
-> +		__entry->sh_extent_seq = le16_to_cpu(rec->extent.shared_extn_seq);
-> +	),
-> +
-> +	CXL_EVT_TP_printk("event_type='%s' host_id='%d' region_id='%d' " \
-> +		"starting_dpa=%llx length=%llx tag=%s " \
-> +		"shared_extent_sequence=%d",
-> +		show_dc_evt_type(__entry->event_type),
-> +		__entry->hostid,
-> +		__entry->region_id,
-> +		__entry->dpa_start,
-> +		__entry->length,
-> +		__print_hex(__entry->tag, CXL_EXTENT_TAG_LEN),
-> +		__entry->sh_extent_seq
-> +	)
-> +);
-> +
->  #endif /* _CXL_EVENTS_H */
->  
->  #define TRACE_INCLUDE_FILE trace
-> 
 
