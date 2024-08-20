@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-293875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDC6958611
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:50:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D132C958613
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D90C1C23CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE7F1F23205
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B2018EFFF;
-	Tue, 20 Aug 2024 11:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9FF18EFC7;
+	Tue, 20 Aug 2024 11:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCGi1SFi"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p34sWvix"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A9E18EFE7
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828A518EFFE
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724154625; cv=none; b=AvsI3hP2/PDywfOHDYJ++lWUWDJeapnkJGNt0wpmF7EkFE/wWpi+XnQvKORZOIU3jLw2f5OzA+AgnFGKpelyr1Wj92bC5Yr5oPiDhFlceTvs7es2B5ODJhN5eJxjd7SfgHzlHGHZzjTtP/wrN8Q/+xO7p53nrV0rEl2m0V23fao=
+	t=1724154628; cv=none; b=pPIZRE7+PNmsd2rGpOx/q6yJvKB4rgufdqXQs3FhCTGrG71eXCcCHVmkTmonYundEpeEUfnUV9f3V/a69RK/zOCrD4SeNhtBVHsbJ2ll9y5efxotnGBa3vdS+oqIRcMKoLIOQ1EKFldKIMLJCV0xqM8BEJgSx0cqzr03vcrJakY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724154625; c=relaxed/simple;
-	bh=IcBYd0In6vCgACRZeqarugL/3ETP63zXXDTjjizj93c=;
+	s=arc-20240116; t=1724154628; c=relaxed/simple;
+	bh=jc4YbaPRYJlRTbIr8emUt1zth9qkb8yubEiCcaAbw6Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PULMXZckoXnLI6+4y1tezw0FlU3ztkuFLI4wNNebqCw+JEYjU3FB2yexsdK4rYuqk8oTKruXymE7rYiWmPJGCz7nhsNg5haa5dLtdjhMa2QcRwoO50vQ1q9NPKoWSm6P2MFoxT+e5the45ttVBkp0yoo7AuCezc9RqOCHRVSkBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KCGi1SFi; arc=none smtp.client-ip=209.85.219.172
+	 To:Cc:Content-Type; b=mocTsOZSZT6jr5cIIlFPfk8CWNaCXF9epkGlE6kV/FfKIZg3jFfODliPaudWFj2kHpUh5ZE/yllRPKpzy1TW3IWyOPLTZ2yKLgdccTNRy0zLkKLszEld191P09ivp9ccEuXpQbqv553M2QUoGQ1eEvdfnRv8YIkH8d+FDDyM9Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p34sWvix; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1633202008so2014351276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:50:22 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0e76380433so5556690276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724154622; x=1724759422; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724154625; x=1724759425; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iriHVArMljQdLri/Yu9Nfjv59wYq9jCnrGoMZhIUOa0=;
-        b=KCGi1SFiJ+3w1MLpuIhbz5lmHKZL+HNiVtKiGg4tm/da3N6F+sg10bCogMd88YJomD
-         0OtbyAdwUwGWVXciNS7P2P97+MuHHbAFWHWkYskIPtk2Yl0qV2l5bViuBqKxC8QbtfP3
-         dArWs5lo6OQ3wL36dDJL57DnPtROUIudoSBwvUoLAI4UmoiKYBNZxFGXsRaZDfvABliT
-         +918bA4t/NOaW/GEHno87+yKIwU1kEpIm8OnCpkMIgsnhOp+RFvqCm3gtjiz+TZP1Zm4
-         idkoT1Moib1AWWZFCjnUjRFbIjNOoLxHKTqeFTGV/B0AqPjig+h1BaN9YQhoNGzK83HM
-         EVdw==
+        bh=TCaQiWU5R51EtsPQihcu+5p2olyuei5P9S0S0wyS3fU=;
+        b=p34sWvixS3VPAMKJMuwGILNfhseG4bDA/e8rC2LogE6lZXZl4GFjrT1wmLmyR6EYYP
+         ZFLgmd0AR6qrrMqcNV+MiF1cgNWeLedRwSt9rOeMtkHvH8FLZO4JxJCCjdxYVoPCV6IL
+         SBJAgdBfys6Pzg3P58hpqFov7nUNrY4Y1nyjlZamOHKxMH/XNOGHzni1TuT7zcrAFMYz
+         1SxiX7kkXpT+UPj1OEqtluN053vioW4coesu/WeWznuDM/uVcL/81yZZ9qDTPqE8rEuY
+         oeDH9iNP7CITUOdh1Y+TLCxaHY9T8i2E+mnTWiVcy47nZ01tr5y21hAvXXfg9ZjeIuPF
+         c4JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724154622; x=1724759422;
+        d=1e100.net; s=20230601; t=1724154625; x=1724759425;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iriHVArMljQdLri/Yu9Nfjv59wYq9jCnrGoMZhIUOa0=;
-        b=wdOp2qie1MkhboU4lLrZJssBJUXpM05K5uvqDZ6obYGea44+FdHvnoLm/Uo3jvr1x3
-         JUIfDPqt+9veAKdBFcQVCRIzVS+qtJ0K8FlVGeSkXHSja/W8r5twHm//nNqCGkhnvxHg
-         6+B7EsB56whRNrgr8ih4YpbZ0KH68Rz3CKRs7RNjH+NwPDPjRuUIJ0YkS5pyO3i7n9KB
-         Ii5hvxI/MjQJBIlcfqe0v1+lky6YIp5Pw77DXP0hFExjr+AFdoP0TMyWyCBD4OAyJciw
-         lllqQXPXVmj+/kW+F2R8o9aNpGVCD7B6dJxw4szRNOomwyxeTdo2BU7k7lvminclA9aq
-         M3cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEdac6q3UHB1LnzwawtW6yGpKAHl+VuriU5PQpqCGRADWd0GkUnBMo6foJUkvWexGtHygV5I3uNhp9ipk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDrZpC1q69FEQvjbeqy+VpalMM6EGjz4g5E7AEka+k1ZLAnbPY
-	GwukS9GK99Pe2ON/53fXn45/apmsQn08F9sfsZG6zHwvzSw+yMWqzh4RCjyZ4wpT2qm40qtOZUb
-	Y/V2uRf4EFuOR7B+YRiN9oacBEng1cUhVoArjfA==
-X-Google-Smtp-Source: AGHT+IHILDmUK5uFVRkWb7tEwNy3ZYRn0EpoNsn7I5jbZKxJiXulmWZhkFYJDUbPgBs4x/qBekzrkEKkNeDXT0K8pi0=
-X-Received: by 2002:a05:6902:2b8b:b0:e03:a227:6476 with SMTP id
- 3f1490d57ef6-e1180eb123amr15095660276.17.1724154621761; Tue, 20 Aug 2024
- 04:50:21 -0700 (PDT)
+        bh=TCaQiWU5R51EtsPQihcu+5p2olyuei5P9S0S0wyS3fU=;
+        b=oIRt8BLydP6yXOkevK87crLJ/DgcRYUIzyq/0Z/OkiEdy/aEyWvpewy8nBHkd8SjL8
+         JQPCmRzfR2C7HYKxtPkewOXWGpp4IN0zNDAWZG5daEGymIHj+Ev6klXn/xsk3U5PSgym
+         ZhToz7/9QWlUVDTArhXeznzTppjEfeWGhxLFkc2vkomG8WzkWhYhf+UrIn/EX4VvbBfv
+         RJQkzF6NYXNUxZ9OdCx9U/wJ9H7Q4E7iVvQgAAjnQLha29S4hu65fQsT8TngXyZ9gHnC
+         Y8O8WH3Z0sQhAQBDksrFRtZDJ7rpJugHHCZc1GTIrypOUd4LYWklwqH/FX7NYLaU81ZG
+         iPtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWL34K9pvtIJy3bTFnwUu1QpHi2rNBb22bXrJb0ZjpEooTqVwG/4dHS40dnRQFwxDa8XsXg9j6kIhG6tC7FmiCzpKMpDjBrinybkAMC
+X-Gm-Message-State: AOJu0YwPSTAWACL9DQ+uspRPUg1QP81IqAWy79JGhcRAyXRj/+Dj3J3b
+	G+eyEitH4seBjmo8NW3qSWDcRE0/X4hQU+267QvzHl/u1nJGKs2k2UKIOEBYLUoi9MSorRgAM/n
+	ly1P5KFoDF2gaI2bmFj6B5ODmHRJZmxshB0G3Mw==
+X-Google-Smtp-Source: AGHT+IEka4PQNOEQmCKqMTvhJ9/pQoM0AhHYZChG82pN+Q9gnQ5GIfCWaEK++BDwrG/zXoovAAiy4jJe/GkM5ZNmT/E=
+X-Received: by 2002:a05:6902:70d:b0:e0b:eb79:d49 with SMTP id
+ 3f1490d57ef6-e1180edeb7fmr18992461276.18.1724154625483; Tue, 20 Aug 2024
+ 04:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805211257.61099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240805211257.61099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240811212212.123255-1-ben.whitten@gmail.com>
+In-Reply-To: <20240811212212.123255-1-ben.whitten@gmail.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 20 Aug 2024 13:49:46 +0200
-Message-ID: <CAPDyKFqdv=Gb=JMDvUD8Cy99B-uyo6gdRwpupmhddb6Fi=7SjQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: mmc: renesas,sdhi: Remove duplicate
- compatible and add clock checks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Aug 2024 13:49:49 +0200
+Message-ID: <CAPDyKFpibjfVuSyuYzkkxxHRoabyZTAbgJJ01TdquC2EeTZ7Kw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: allow biu and ciu clocks to defer
+To: Ben Whitten <ben.whitten@gmail.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Will Newton <will.newton@imgtec.com>, 
+	Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, 
+	Chris Ball <cjb@laptop.org>, Hauke Mehrtens <hauke@hauke-m.de>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 5 Aug 2024 at 23:13, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+On Sun, 11 Aug 2024 at 23:23, Ben Whitten <ben.whitten@gmail.com> wrote:
 >
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Fix a race condition if the clock provider comes up after mmc is probed,
+> this causes mmc to fail without retrying.
+> When given the DEFER error from the clk source, pass it on up the chain.
 >
-> Remove the duplicate compatible entry `renesas,sdhi-r9a09g057` and add a
-> restriction for clocks and clock-names for the RZ/V2H(P) SoC, which has
-> four clocks similar to the RZ/G2L SoC.
+> Fixes: f90a0612f0e1 ("mmc: dw_mmc: lookup for optional biu and ciu clocks")
 >
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: 32842af74abc ("dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
 
-Applied for next, thanks!
+Applied for fixes and by adding a stable tag, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
->  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/mmc/host/dw_mmc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> index 1155b1d79df5..92622d65f12f 100644
-> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> @@ -67,7 +67,6 @@ properties:
->                - renesas,sdhi-r9a07g054 # RZ/V2L
->                - renesas,sdhi-r9a08g045 # RZ/G3S
->                - renesas,sdhi-r9a09g011 # RZ/V2M
-> -              - renesas,sdhi-r9a09g057 # RZ/V2H(P)
->            - const: renesas,rzg2l-sdhi
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 2333ef4893ee..e9f6e4e62290 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -3299,6 +3299,10 @@ int dw_mci_probe(struct dw_mci *host)
+>         host->biu_clk = devm_clk_get(host->dev, "biu");
+>         if (IS_ERR(host->biu_clk)) {
+>                 dev_dbg(host->dev, "biu clock not available\n");
+> +               ret = PTR_ERR(host->biu_clk);
+> +               if (ret == -EPROBE_DEFER)
+> +                       return ret;
+> +
+>         } else {
+>                 ret = clk_prepare_enable(host->biu_clk);
+>                 if (ret) {
+> @@ -3310,6 +3314,10 @@ int dw_mci_probe(struct dw_mci *host)
+>         host->ciu_clk = devm_clk_get(host->dev, "ciu");
+>         if (IS_ERR(host->ciu_clk)) {
+>                 dev_dbg(host->dev, "ciu clock not available\n");
+> +               ret = PTR_ERR(host->ciu_clk);
+> +               if (ret == -EPROBE_DEFER)
+> +                       goto err_clk_biu;
+> +
+>                 host->bus_hz = host->pdata->bus_hz;
+>         } else {
+>                 ret = clk_prepare_enable(host->ciu_clk);
 >
->    reg:
-> @@ -120,7 +119,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: renesas,rzg2l-sdhi
-> +            enum:
-> +              - renesas,sdhi-r9a09g057
-> +              - renesas,rzg2l-sdhi
->      then:
->        properties:
->          clocks:
+> base-commit: 5189dafa4cf950e675f02ee04b577dfbbad0d9b1
 > --
-> 2.34.1
+> 2.43.0
 >
 
