@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-294218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC35958AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9B8958AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D443B1C21A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF98D1C21629
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FF21917FB;
-	Tue, 20 Aug 2024 15:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13B8191F7E;
+	Tue, 20 Aug 2024 15:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQ5NuEF0"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4BOzB7m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="febEKZ63"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD30318E37F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590D618E37F;
+	Tue, 20 Aug 2024 15:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166684; cv=none; b=FTIg+WLueetFZ2ugnTCpiJTytXhtu74SQcUscPsntEUrOegpSN6vXnSfWUhPohRQJqQfFtHn8fTGynwKTYdChMwUE63A+WLmQFasEfDRKwXvIzzSUqgLFb/7L5H+ed+V/GQx/1s5b/Sr0G948eVfdsGGLAipoVLzC7sw+kVBuZo=
+	t=1724166738; cv=none; b=GxHIcN68IbllYYzAzfkmDzOOcH80XFgSZzjsOunvyx4o1r1H4WDSCm/5SlqNwwFmUAzfviCmB+ej4JFmQgklu/W6NiZ3GesAceT06BQjKU4bxzDim1yxm+ywfLdPHKxTCprYZw+cr86pttFY38tC0dHynF86n06WxTuq2Rabg0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166684; c=relaxed/simple;
-	bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MR3nxPd4AaHfOqRfmT7gnQtnSSpeZAIKOYt6vQwbFYY30qNyVsqRZ3RdwZoSoThtfjsM6T7YXL/uxU5Yk+U3Qz5FGgePWJSRjaLbUuc5+wcGZevKoOnQDH2So2HwymumblXy881ca9OoZEcscQd71hovqP5dkqAWcq6S7qbOg6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DQ5NuEF0; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4518d9fa2f4so199261cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724166682; x=1724771482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
-        b=DQ5NuEF07xkx0RtPCO8Q9h0cIe5x55eYVyU5HynuZZ8vTXbbzsDDR5BL7TVLHC+RQH
-         40QbLiMUB5iNXLBxOmnbt1YNhT1Qc/+Wd72BFvoSHh72MBVxFRBCy1X5ZR7LN3s/e2i1
-         RLk2UEk/Y1+cRbaV60UTpjHtn/b+acPSjZVjdf8C4MA44ae4ionKrgv94RtlgfsulD79
-         1pxrliE0dj7FaPTyfYTrloGiKr3xycutfu5zXanxgoabB9N09HjFS1K0swWdxC7MylzD
-         wim6ZbQKxYzxeG7o7m0ygS6LNJ9aHnjtK4GUnNLqTlq7CDl2MtqkZKLViakY2W8dsH/2
-         nyYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724166682; x=1724771482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M98b0uho/6L9HJYyuZo8mAFH2lRRpS/KAZXa09S69zo=;
-        b=Zpk5B1lHFLg7oRx6A2T8djDnVNmTTu4lgmDVbzkIRZqKSL3XVcJ4k9alocp0jZX7GC
-         cwtN5zxb71XeBUePSSmQ5pOWFCWXlL4t5g/F/BIY90l/Vvc6IsI8J+DXXXeINprDKR7p
-         5moN3XF4I5DvurH6prg3kM4d2zuqbRKc6sYE7asL1wXw9UcKehW3mw7mCzZDXCyB1PaW
-         jgUBHvb92/Wi7DUmB0aiLQ8JZ5kUWuiQS0RbxVoRdE/9WqcMAFW5gvMTrK11LeYjYD+1
-         IgJlm0NwjcpG83gGyLR5lBiMv0esfM3XpZaErk7I4PqvZXpLDnEHUHI5A2PAZRzt9D1J
-         TyCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUpGbbOe59OHclOEqoI5SwIx/jxM/WXiQbrf7W4qdsc0NbBVQnqQRBGkY98xoPRq1rPtz6oXE42ZE+UVESVQWZDDcX3+kuJUz4DzRG
-X-Gm-Message-State: AOJu0YzzmAwk99E/islsN8X0DWx2Gd0IoZHBuj98IF7UKcqqFw6kwbnS
-	LHHD03nijpvQTBqhmxfIOhwFX9BUM8Gt4uVm8nAtPEvhM7EJD8cjdhMEKo4GWHc01AEVtBEy8pW
-	xCFO8pO7vBqpRqo450fGueUWpb6MLuCeQ676k
-X-Google-Smtp-Source: AGHT+IGxHrWvwxkET5G9KFHE2OTgjBHj0rFGE1objVdIM7lhI5d9VSUlLjMmyoZSbxU87Ybr//Q4mqrhQSjJsbsz524=
-X-Received: by 2002:a05:622a:245:b0:447:e728:d9b with SMTP id
- d75a77b69052e-454e6ac44b5mr1928511cf.26.1724166681458; Tue, 20 Aug 2024
- 08:11:21 -0700 (PDT)
+	s=arc-20240116; t=1724166738; c=relaxed/simple;
+	bh=WU4sn7n5evf6t5QHCKTquiAEUr02737lN7Up1e6S6hQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=LEv8M/6RfiDXoDdhc69rp6jMbd5hYSSCdsKV5RLQFFTxshkswppbWpxeWvFEzvCeJRJBfKwhzAxgL4uTlz2kLQQVrKb/fMl8FNcnDbxgfCCpQDeLLl1ukMHaKDLw/2vknE4QLuegN3yww3zEapfCDJzR9+S7l9x2HGUo7vJu60c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4BOzB7m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=febEKZ63; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 20 Aug 2024 15:12:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724166734;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iednjl+XWJ1tntTvPRGJxB0VlyMF9f1Yc+xpGnZrYDc=;
+	b=f4BOzB7mO+bAgliIDkWJ8rMhChUUnvFBP4aRsGcJ9x1uCk1Po0eaBohuYfKzIqERnK5mX2
+	zgrgBOgkgZiOdIfve7oVf/+wUG3rWemz/5UrJFlQGGhmKGfF3bpeVkjOYGa7tadzirG8X2
+	7rqHqpqAMpB0VA743wBLMR3F3nGCw66RbI81h5+zTB+DUhoy8k+NbupeoTGfXEfBx8RFc5
+	mKnVvqNoz0ucBO+J9DA0aARtdcpAvSqfDAqia64mBb8UH1eXhqGxGjCJUGzb5uvGDArF0k
+	9demyCQK8nyqgC0AVtoR7skzeF09bBEruemVvY4zRTSHATab1kT0eUe1rF4s8w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724166734;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iednjl+XWJ1tntTvPRGJxB0VlyMF9f1Yc+xpGnZrYDc=;
+	b=febEKZ63lcrvUtDxdQyldUV92Qx7uxiKL4Q0qjjCFLyZmuhNIqV84AEH0RF/jjNnTyNRbf
+	TCYnZASTUlU+9TDw==
+From: "tip-bot2 for Ma Ke" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/urgent] irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init()
+Cc: Ma Ke <make24@iscas.ac.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ Marc Zyngier <maz@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240820092843.1219933-1-make24@iscas.ac.cn>
+References: <20240820092843.1219933-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
- <20240819112902.11451fe8@gandalf.local.home> <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
- <20240819120244.5657eb2f@gandalf.local.home> <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
- <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-In-Reply-To: <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 20 Aug 2024 08:10:42 -0700
-Message-ID: <CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
-Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org, 
-	clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172416673413.2215.9983587782024044954.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 3:48=E2=80=AFAM Mark Rutland <mark.rutland@arm.com>=
- wrote:
->
-> On Tue, Aug 20, 2024 at 10:03:30AM +0900, Masami Hiramatsu wrote:
-> > On Mon, 19 Aug 2024 12:02:44 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > > On Tue, 20 Aug 2024 00:56:49 +0900
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > > >
-> > > > >
-> > > > > We may need to add "noinline" or something to make sure those fun=
-ctions
-> > > > > don't get inlined for LTO.
-> > > >
-> > > > Yeah, we need such option at least for function call test.
-> > >
-> > > Could you add the noinline, and if it fixes the issue send a patch?
-> >
-> > I found the target function already has "noinline". I tried to add noin=
-line
-> > to the testing function (callsite), but it also did not work.
-> > I think "noinline" is for the compiler, but LTO is done by the linker.
->
-> If LTO is breaking noinline, then that has much larger implications for
-> noinstr code and similar, and means that LTO is unsound...
+The following commit has been merged into the irq/urgent branch of tip:
 
-The noinline attribute is preserved in LLVM IR, so it should continue
-to work with LTO. Which function are we talking about here? Are you
-sure the function was inlined instead of being dropped completely?
-Does marking the function __used help?
+Commit-ID:     c5af2c90ba5629f0424a8d315f75fb8d91713c3c
+Gitweb:        https://git.kernel.org/tip/c5af2c90ba5629f0424a8d315f75fb8d91713c3c
+Author:        Ma Ke <make24@iscas.ac.cn>
+AuthorDate:    Tue, 20 Aug 2024 17:28:43 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 20 Aug 2024 17:05:32 +02:00
 
-Sami
+irqchip/gic-v2m: Fix refcount leak in gicv2m_of_init()
+
+gicv2m_of_init() fails to perform an of_node_put() when
+of_address_to_resource() fails, leading to a refcount leak.
+
+Address this by moving the error handling path outside of the loop and
+making it common to all failure modes.
+
+Fixes: 4266ab1a8ff5 ("irqchip/gic-v2m: Refactor to prepare for ACPI support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20240820092843.1219933-1-make24@iscas.ac.cn
+---
+ drivers/irqchip/irq-gic-v2m.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index 51af63c..be35c53 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -407,12 +407,12 @@ static int __init gicv2m_of_init(struct fwnode_handle *parent_handle,
+ 
+ 		ret = gicv2m_init_one(&child->fwnode, spi_start, nr_spis,
+ 				      &res, 0);
+-		if (ret) {
+-			of_node_put(child);
++		if (ret)
+ 			break;
+-		}
+ 	}
+ 
++	if (ret && child)
++		of_node_put(child);
+ 	if (!ret)
+ 		ret = gicv2m_allocate_domains(parent);
+ 	if (ret)
 
