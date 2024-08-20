@@ -1,272 +1,157 @@
-Return-Path: <linux-kernel+bounces-294512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9795958E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:24:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F406958E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DBB1F23065
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829C0B21634
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D68A15C136;
-	Tue, 20 Aug 2024 19:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CE015AAB6;
+	Tue, 20 Aug 2024 19:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="g04M+uYG"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONbvTHCr"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBC619478;
-	Tue, 20 Aug 2024 19:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724181848; cv=pass; b=jtO7v0QEwZoYtM2Bcqo88RdxW9o4GUqZoS1zOj7N1Ch7GkNUyuVhupqWIrJfQIMQ/EHbVTuyYx1xkjnE8I0I3r6B2lltiC3SjHcv0aJFat5xDCN6W+ISYtXkzlTfkdArdTvksi5fumiu/AK0vsPxeShFJSTK2z22f6LSCnI36GQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724181848; c=relaxed/simple;
-	bh=z3GuI3y4MsMq2tzsuXHVTmg5sDQk0xPIA4ZUAtiO+ps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HMEMV9LIFQYBeMxWWoxe5DtHHVUVViMUt1gx3gUVnspOQ/rPqI3ru0RB8T1YDC62aKsVNyRjuJlEmtWruZL93R5DgklpqCtqfsarj8qE74iE43zUj47SiVUdgWfMukINwI8bt9Wd6vo0CHtbdxLpLkGbCAflGMkQql4H7S9G1HI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=g04M+uYG; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: sebastian.reichel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724181757; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jk3LVacixiOG0aJjhPGszugbAOO81rVHA7Y1Sr9RyHG7ZFdP9IcEh7umfkvxEfiV3Wo3H+EMNFFQU8eSXaUEGxi8ycBbbCNlug9GYWpp9DfoIw5AAQh/Tku3vTk7csJN2Eatq11UCYNqmz1ONPgrfqKaUXqXsi+eQrdklOhUXhQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724181757; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AfJrCQJKAavx21ngm+ZjM4R3GCjrEmAM7/Ae1wSjgGM=; 
-	b=SaUutyxDt7d4a8CkGfmYPK+GL104NlYaVCMLror7rUoKoLvGBcrtOBzFwej6XZtXeMMDVzhX2ht6oQrPO/WXYEsSRhq9/upWFVGuLPAcjZcJ3NPH7HLV5Ddc9Cs93oqsIlh5Y4PkG563E0v09YpuLyAU9/sy8HMjNvGWqxSr3aE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724181757;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=AfJrCQJKAavx21ngm+ZjM4R3GCjrEmAM7/Ae1wSjgGM=;
-	b=g04M+uYGBCTVj6Yq5/Aw/6DayBdPVt7+gQn4SWjQtwOdh9Z1So9dgkBVLoIUnRSd
-	clqOLIgORf9rkgaZWkoWnguTbOLXk3CV2b72uF2b4jCGfs7QVkyrUf2S7jhByEDLPl+
-	mxGT0gNSUQLearVZUxw+Yb9f4hf+sUeInfsnETK0=
-Received: by mx.zohomail.com with SMTPS id 1724181754738255.10140579420602;
-	Tue, 20 Aug 2024 12:22:34 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org, Johan Jonker <jbx6244@yandex.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-Date: Tue, 20 Aug 2024 15:22:30 -0400
-Message-ID: <3785092.MHq7AAxBmi@bootstrap>
-In-Reply-To: <1d7ffd09-99b9-43d8-a2f5-6e5455b4e5a1@yandex.com>
-References:
- <20240802214612.434179-1-detlev.casanova@collabora.com>
- <1944590.atdPhlSkOF@trenzalore>
- <1d7ffd09-99b9-43d8-a2f5-6e5455b4e5a1@yandex.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E7119478
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 19:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724181860; cv=none; b=sDfA4SOrX97VRqCF4AL+71PjBTAnAs6oDEEAMJKWVKEy0jlTNs5qyI2UV/Nr6Y0UCm7JRQNIt9oeOJYWr206fsJ1H50dAzP1ZulIVXECBpNQ32O5jq7/3/GZ21DQyNCuMHDe7mBLQVv8vNavkTvEon3c2W6bV/I2cWl0I4Kd+8I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724181860; c=relaxed/simple;
+	bh=t299G4wo/LSPzgYyloGPTadap2yC1DGA8zL2zSBsoTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BfD8hLCLJM2wOGFiw9U2DjXNcSoPyPerKMKw3IPzBkDzt7XsjLPx2tlqicvX9KsY1JbChV2GU2Kfl6VzRxC83O7dwyfiE3WfNBb3jFGILiq/x6xPyFywWQ9fXAoqkHY8fvlXkTvAWfFlkHPtYELrS45DHYCa8avtxsdIleWXhoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ONbvTHCr; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-494556dfa3aso1754001137.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724181857; x=1724786657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z1tmc8256vAJgUbRussYJhC9pRhaSG2mZOYaopGSWZw=;
+        b=ONbvTHCrF9CuWf/0w7LibPO0Z1AjX0/v7wLEW99pDejp4dAy/ginGDeXxEMIytdYa9
+         RNbahDrzxeKutOk3dlCTpQL6ThuUGdPyn9VpJ818S9dZ7sYUHqW5owIeXpvxgWCwLXT1
+         hO/ktF/dh183moiB0VMLf0LCkj4GxAC7/1lmWCRdeli2reZwjcnYqUxzVjKxjB7Wfxty
+         EtKUTVALpu9W99aIjRqKboZFgNIQF/8sB+opAHwhKAbWz38HiwxotUyDWPNeQ0e0adxr
+         oeD22RCL0vDAXNxYZJc2X4auVpdp9ma2S1Q1pRkqxhbnClldXe7Rth4B/U0TZXaHOKgH
+         I5xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724181857; x=1724786657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z1tmc8256vAJgUbRussYJhC9pRhaSG2mZOYaopGSWZw=;
+        b=XSWZsFc1LkRSc9QrdNCVB3YExecvYFqW7PYTrfTQ3NnouTQ8nPcjUpR7y93bCqK8La
+         5tIRxS/ZY4w4V1323t7rB6TAj6OdYtEs+hmMqL3O2EfaJl6IQ/TwbGwXsAT2jHEcvyVi
+         pF8xfiz3R3iji0qOPn6OdA7a3XH2znxBTKX9e9uGhfLNkSXtoXG5OaVSipU2ZY97As3t
+         dooURd0hDJMGOLK+nscSYVgljdNoyPMiVG5ozkk/4PHadTHPKT9tSu7Qhd+qvImRrK1s
+         ctzHZLBySWVa16+fxZmpHqqFfXpalE6i1G4pS/iAeV+ycDVR114oKoDFlqxdu8b+UML0
+         irgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWKF6ggHTu5svrKSvLDwQ3mVE/VkiZgSP/w3yJJnS2QwgQMBwM/7d5NNpY/umpyCUmfB3JHWnuW0Qfetg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD6QEdHvGRKE18mCVHWBY+XnVJITKzWHaEv/QFHQJ95ccSiKGP
+	3HK/jxlMyJhh7Y9plGDe3shh4M04Mks4J2H2YnpIFhsBzAVAfktMprpdgHW3pz8FC6U9EwnsntQ
+	OVMT7qxj5wzkAxMSYe4YO8u8au1g=
+X-Google-Smtp-Source: AGHT+IFY2u+n2n/e06BscZuEAQwIezb1O2o7j3+4kMxl1BnN3srbwIJ5I/Lxw2uojzdORefUqRGnSPfHUc9eN4WlX04=
+X-Received: by 2002:a05:6102:38cd:b0:498:d1b0:210f with SMTP id
+ ada2fe7eead31-498d3deec3cmr135794137.11.1724181857571; Tue, 20 Aug 2024
+ 12:24:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+References: <20240819-numa_policy-v1-1-f096cff543ee@gentwo.org>
+In-Reply-To: <20240819-numa_policy-v1-1-f096cff543ee@gentwo.org>
+From: Yang Shi <shy828301@gmail.com>
+Date: Tue, 20 Aug 2024 12:24:05 -0700
+Message-ID: <CAHbLzkqH6TtRb4dX0mhDuO-MBk6P9L5pOprYFQ-jjgPFnA7CPg@mail.gmail.com>
+Subject: Re: [PATCH] Reenable NUMA policy support in the slab allocator
+To: cl@gentwo.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Johan,
-
-On Tuesday, 20 August 2024 09:34:58 EDT Johan Jonker wrote:
-> On 8/19/24 22:06, Detlev Casanova wrote:
-> > Hi Johan,
-> > 
-> > On Thursday, 15 August 2024 05:30:25 EDT Johan Jonker wrote:
-> >> Some comments below. Whenever useful.
-> >> 
-> >> On 8/2/24 23:45, Detlev Casanova wrote:
-> >>> This device tree contains all devices necessary for booting from network
-> >>> or SD Card.
-> >>> 
-> >>> It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> >>> SDHCI (everything necessary to boot Linux on this system on chip) as
-> >>> well as Ethernet, I2C, SPI and OTP.
-> >>> 
-> >>> Also add the necessary DT bindings for the SoC.
-> >>> 
-> >>> Signed-off-by: Liang Chen <cl@rock-chips.com>
-> >>> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> >>> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> >>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> >>> [rebase, squash and reword commit message]
-> >>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >>> ---
-> >> 
-> >> [..]
-> >> 
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> >>> b/arch/arm64/boot/dts/rockchip/rk3576.dtsi new file mode 100644
-> >>> index 0000000000000..00c4d2a153ced
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> >> 
-> >> [..]
-> >> 
-> >> For uart0..uart11:
-> >>> +
-> >>> +	uart1: serial@27310000 {
-> >>> +		compatible = "rockchip,rk3576-uart", "snps,dw-apb-
-> > 
-> > uart";
-> > 
-> >>> +		reg = <0x0 0x27310000 0x0 0x100>;
-> >>> 
-> >>> +		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-> >> 
-> >> "interrupts" are sort just like other properties. A mix of sort styles
-> >> exists, so check all nodes.
-> > 
-> > Ok, so it should be sorted alphabetically with the following exceptions:
-> > - 'compatible' and 'reg.*' on top
-> > - "#.*" at the end, sorted
-> > - "status" last.
-> > 
-> > Is that right ?
-> 
-> The dts-coding-style.rst does not say much about things with "#",
-> so below a property they refer to or at the end looks nicer.
-> No strict rule, but do it in a consistent style in file.
-> 
-> Original comment by robh for things with "reg":
-> "It makes more sense to keep reg-io-width together with reg."
-> https://lore.kernel.org/all/20240131135955.GA966672-robh@kernel.org/
-
-Ok, I'll fix the consistency in the file then, thanks for the clarification.
-
-> >>> +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
-> >>> +		clock-names = "baudclk", "apb_pclk";
-> >>> 
-> >>> +		reg-shift = <2>;
-> >>> +		reg-io-width = <4>;
-> >> 
-> >> Move below "reg".
-> >> 
-> >>> +		dmas = <&dmac0 8>, <&dmac0 9>;
-> >>> +		pinctrl-names = "default";
-> >>> +		pinctrl-0 = <&uart1m0_xfer>;
-> >>> +		status = "disabled";
-> >>> +	};
-> >>> +
-> >>> +	pmu: power-management@27380000 {
-> > 
-> > [...]
-> > 
-> >>> +				#address-cells = <1>;
-> >>> +				#size-cells = <0>;
-> >>> +				clocks = <&cru ACLK_VOP>,
-> >>> +					 <&cru HCLK_VOP>,
-> >>> +					 <&cru HCLK_VOP_ROOT>;
-> >>> +				pm_qos = <&qos_vop_m0>,
-> >>> +					 <&qos_vop_m1ro>;
-> >>> +
-> >>> +				power-domain@RK3576_PD_USB {
-> >> 
-> >> Since when is USB part of VOP?
-> >> Recheck?
-> > 
-> > The TRM doesn't tell me anything, but If I don't put it as a child of VOP,
-> > it just hangs when the kernel tries to shut it down.
-> 
-> Could the people from Rockchip disclose the USB PD location?
-> 
-> > [...]
-> > 
-> >>> +
-> >>> +	pinctrl: pinctrl {
-> >>> +		compatible = "rockchip,rk3576-pinctrl";
-> >>> +		rockchip,grf = <&ioc_grf>;
-> >>> +		rockchip,sys-grf = <&sys_grf>;
-> >>> +		#address-cells = <2>;
-> >>> +		#size-cells = <2>;
-> >>> +		ranges;
-> >>> +
-> >>> 
-> >>> +		gpio0: gpio@27320000 {
-> >> 
-> >> The use of gpio nodes as subnode of pinctrl is deprecated.
-> >> 
-> >> patternProperties:
-> >>   "gpio@[0-9a-f]+$":
-> >>     type: object
-> >>     
-> >>     $ref: /schemas/gpio/rockchip,gpio-bank.yaml#
-> >>     deprecated: true
-> >>     
-> >>     unevaluatedProperties: false
-> > 
-> > I tried putting the gpio nodes out of the pinctrl node, they should work
-> > because they already have a gpio-ranges field.
-> > But unfortunately, that seem to break the pinctrl driver which hangs at
-> > some point. Maybe some adaptations are needed to support this, or am I
-> > missing something ?
-> 
-> The aliases that we added to the DT files are a work around to prevent
-> damage when we moved to generic gpio node names. There just happened to be
-> some code for it in the driver...
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dri
-> vers/gpio/gpio-rockchip.c#n719
-
-Just above that, it tries to get the pinctrl_dev from the parent node. So the 
-rockchip,gpio-bank nodes have to be children of the pinctrl node or the gpio 
-driver will just return -EPROBE_DEFER. 
-
-> Comment by robh:
-> "GPIO shouldn't really have an alias either IMO."
-> https://lore.kernel.org/linux-arm-kernel/20230118153236.GA33699-robh@kernel.
-> org/
+On Mon, Aug 19, 2024 at 11:54=E2=80=AFAM Christoph Lameter via B4 Relay
+<devnull+cl.gentwo.org@kernel.org> wrote:
 >
-> Mainline Rockchip gpio driver is not so to the standard.
-> The file gpio-rockchip.c currently does nothing with "gpio-ranges" vs. bank
-> and node relation. My simple patch was acked, but never applied. There's no
-> public maintainer response of what to improve. Guess, probably something
-> more complicated idiot prove "gpio-ranges" parsing/bank linking is needed?
-> https://lore.kernel.org/linux-arm-kernel/890be9a0-8e82-a8f4-bc15-d5d1597343
-> c2@gmail.com/
+> From: Christoph Lameter <cl@gentwo.org>
+>
+> Revert commit 8014c46ad991 ("slub: use alloc_pages_node() in alloc_slab_p=
+age()").
+>
+> The patch disabled the numa policy support in the slab allocator. It
+> did not consider that alloc_pages() uses memory policies but
+> alloc_pages_node() does not.
+>
+> As a result of this patch slab memory allocations are no longer spread vi=
+a
+> interleave policy across all available NUMA nodes on bootup. Instead
+> all slab memory is allocated close to the boot processor. This leads to
+> an imbalance of memory accesses on NUMA systems.
+>
+> Also applications using MPOL_INTERLEAVE as a memory policy will no longer
+> spread slab allocations over all nodes in the interleave set but allocate
+> memory locally. This may also result in unbalanced allocations
+> on a single numa node.
+>
+> SLUB does not apply memory policies to individual object allocations.
+> However, it relies on the page allocators support of memory policies
+> through alloc_pages() to do the NUMA memory allocations on a per
+> folio or page level. SLUB also applies memory policies when retrieving
+> partial allocated slab pages from the partial list.
+>
+> Fixes: 8014c46ad991 ("slub: use alloc_pages_node() in alloc_slab_page()")
+> Cc: stable@kernel.org
+> Signed-off-by: Christoph Lameter <cl@gentwo.org>
 
-Indeed, the driver could use the gpio-ranges to determine the node's bank 
-number. Currently it uses the aliases or falls back to the order of parsing 
-nodes.
- 
-> I leave this subject up to the experts to find out what is needed to
-> improve. Don't ask me.
+Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-My opinion on this is that the rockchip driver needs to be adapted if we want 
-the gpio nodes out of the pinctrl. I'm willing to have a look at this, but I 
-don't think it is in the scope for this patch set and don't think it should be 
-a blocker.
-
-> Johan
-> 
-
-Regards,
-Detlev.
-
-
-
+> ---
+>  mm/slub.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index c9d8a2497fd6..4dea3c7df5ad 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2318,7 +2318,11 @@ static inline struct slab *alloc_slab_page(gfp_t f=
+lags, int node,
+>         struct slab *slab;
+>         unsigned int order =3D oo_order(oo);
+>
+> -       folio =3D (struct folio *)alloc_pages_node(node, flags, order);
+> +       if (node =3D=3D NUMA_NO_NODE)
+> +               folio =3D (struct folio *)alloc_pages(flags, order);
+> +       else
+> +               folio =3D (struct folio *)__alloc_pages_node(node, flags,=
+ order);
+> +
+>         if (!folio)
+>                 return NULL;
+>
+>
+> ---
+> base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
+> change-id: 20240806-numa_policy-5188f44ba0d8
+>
+> Best regards,
+> --
+> Christoph Lameter <cl@gentwo.org>
+>
+>
 
