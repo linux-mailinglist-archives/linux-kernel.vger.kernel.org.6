@@ -1,192 +1,124 @@
-Return-Path: <linux-kernel+bounces-293947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA2D9586CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F01F9586D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2859B27444
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4FC5B2179A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4118FC72;
-	Tue, 20 Aug 2024 12:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393DE18F2FC;
+	Tue, 20 Aug 2024 12:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SCXL+pYI"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Go6N2olY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DE218A6BC;
-	Tue, 20 Aug 2024 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D7C18637
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156428; cv=none; b=hyr/CpMFgGe/NBflvLWcKFpcKbcjb7B2txk6EBFphZVq1fppO5rqMFZJucFDw2P7GP1LL4w3tKucPr+S+YMjgKhWweLuPQiATXBJITC7msAoIAyDRVQfT2J03J3kCTPTqb5R2cxhlu+7Wl6ceWOXShqref4xmbpKTb8QeIEyYV8=
+	t=1724156541; cv=none; b=lNcFWDCJxzcEv1zYex/sNTiyGBGayBBBdUsmgcpDlk9UtNYaE8styrjUcsNPaR+TeZ8nBrJWDq88k4z3hcPFH9VlkCaS3g2OfjBSE9IVGNZgwyXQjwkVG2Vh/q16yStHjFfEL3kOZqPJgGEtu5T4UWhapOaPysmgD96vOaCsQsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156428; c=relaxed/simple;
-	bh=cmH8LeB3XQV3FWrWLmPQQortO5BwjzrvyvSS30/UKLA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTFqbDF3uNBCkbnuUcCDz/Zr1vHZ7pRh5HflJx+cDVYx4BnPFvpvo0snLXZtUi3SbK+Ff5NUXpSlSKwqlKKP2CCTMpwqLThwpXhufMTgm1dgrRs/Bgz5FvZBNo+nFoJY0WD/RxPabF40VD7ijJs00skgQAUYflmIkTzFrk7eIK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SCXL+pYI; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F37D148330C;
-	Tue, 20 Aug 2024 14:20:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724156423;
-	h=from:subject:date:message-id:to:mime-version:content-type:in-reply-to:
-	 references; bh=6lsGEQXfU/2msmfbLV6xAW1tGi05xaQSNBIo8l41vSc=;
-	b=SCXL+pYIULWut8pttHq+yiF+DLNqkn1yYpHLDFgHaR84kXLDpS1/mA7yqwBYvjvLYN+690
-	1FwXAFpjUH0uoAhp/a4dgXbzfYZ7oSmBP4Tr1UxWOLORh7j4lJqo8iVo6N0q/Es53Jd7K0
-	17PDCSmVENaypIHr7i+WopIv0ACs4uFB/6Ao/gIDKCwBFrTpB2lULFjoB/MWcsP6LcI8WQ
-	iu5D8F0K+09jG92e0BbMMp5zUj6+vq+uDNyjXLrrNb7d+Dd+3j7cjc+/sqa9GRXs6DDHP8
-	OnmbCmMZ7Zg9tnL1YSzSKAwyVuQ/d+Q156nbMc1MO5FvZbN0P56WOeO0e70Drw==
-Date: Tue, 20 Aug 2024 14:20:21 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: get, prepare, enable a clock not in DT?
-Message-ID: <20240820-stinging-altitude-d1186a067824@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
+	s=arc-20240116; t=1724156541; c=relaxed/simple;
+	bh=/1jHvDeO9ZZesnfUhKu8wSQUk5SU12En7h6Awon5ijo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QG0jhsYz8brKT5rIhMRYHjlBH8rDfe22VMoFO8fUZBdHtsc1leB2NoUpDbAPlVaMw64wwZIxgO+VjEI5s/J63h0kX7bJS6evQDcafopYQv4EbnH0IaXhDgrGrqbrsHlyzqvT5wdZsU/MjUS+E+19I7die+ZgakztjNNzmuAY/1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Go6N2olY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724156538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VjujtiGU7dij70tk/CDjYPdobVrS/ZRJontXr8mA6JU=;
+	b=Go6N2olYHiDMRjnVKdmbegFrRMJFtik9cKWm80v00f3TysSbM8o3xGHQ0QrzaLQVyEbT71
+	yYyjBn56B23gqQzspDIYD/NrIw73vj5ivOLP/oui+PpHJrw1xum1mw9OEBLsoqA8Jkypag
+	9tHza+Q5THQuUsYPIsxADVP+hKpYF+o=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-2RViYE6yP1qSqPNUHQwTbA-1; Tue,
+ 20 Aug 2024 08:22:17 -0400
+X-MC-Unique: 2RViYE6yP1qSqPNUHQwTbA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A703E19560BF;
+	Tue, 20 Aug 2024 12:22:15 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.22.16.200])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8D9CD1956053;
+	Tue, 20 Aug 2024 12:22:12 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>
+Subject: [PATCH v1] mm: always inline _compound_head() with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP=y
+Date: Tue, 20 Aug 2024 14:22:10 +0200
+Message-ID: <20240820122210.660140-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-grandpa-down-fec4231f971c@thorsis.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+We already force-inline page_fixed_fake_head(), page_is_fake_head()
+and PageTail(), however the compiler might decide that _compound_head()
+is not worthy to be inlined, because of page_fixed_fake_head().
 
-Am Tue, Aug 20, 2024 at 02:17:58PM +0200 schrieb Alexander Dahl:
-> Hello Claudiu,
-> 
-> Am Tue, Aug 20, 2024 at 02:54:59PM +0300 schrieb claudiu beznea:
-> > Hi, Alexander,
-> > 
-> > On 16.08.2024 17:34, Alexander Dahl wrote:
-> > > Hello everyone,
-> > > 
-> > > while further investigating timeout issues with the at91 otpc
-> > > controller on sam9x60 [1] I came to the conclusion the main RC
-> > > oscillator on that SoC must be enabled for that driver to work.
-> > 
-> > Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
-> > Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
-> 
-> It can feed the main clock and you're right from Clock Generator POV.
-> However it is not completely undocumented.  Section "23.4 Product
-> Dependencies" of the SAM9X60 datasheet (DS60001579G) says:
-> 
->     "The OTPC is clocked through the Power Management Controller (PMC).
->     The user must power on the main RC oscillator and enable the
->     peripheral clock of the OTPC prior to reading or writing the OTP
->     memory."
-> 
-> Apparently this also applies to reading, at least according to my
-> tests on sam9x60-curiosity.
-> 
-> btw, the last public release of the atmel-software-package, source for
-> the sam-ba applets, also enables that clock, although the reasoning
-> was for writing. [1]
+The result is that, for example, PageAnonExclusive() now might involve
+a function call when checking PageHuge(), which performs a
+page_folio()->_compound_head() call. This can lead to a slight regression
+of the stress-ng.clone benchmark.
 
-Sorry, forgot that reference, FWIW:
+This is not super-urgent to fix, but always inlining _compound_head()
+seems like the obvious thing to do for this primitive, similar to the
+other ones.
 
-[1] https://github.com/atmelcorp/atmel-software-package/blob/master/drivers/nvm/otp/otpc.c#L99
+This change restores the slight regression and a compilation with
+CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP=y shows no relevant bloat [2]:
 
-Greets
-Alex
+	add/remove: 15/14 grow/shrink: 79/87 up/down: 12836/-13917 (-1081)
+	...
+	Total: Before=32786363, After=32785282, chg -0.00%
 
-> 
-> > Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
-> > control for OTCP on the PMC side.
-> > 
-> > [1]
-> > https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
-> 
-> You're right from the datasheet POV.  Not sure if the datasheet is
-> right here?  It's not complete in some register contents anyway, maybe
-> some things are kept confidential, and OTPC is part of that?
-> 
-> Maybe someone can confirm my findings on sam9x60-curiosity, e.g.
-> after I sent a patch series with what I consider fixes for this topic?
-> 
-> > > (Verified that by poking single bits in registers through devmem
-> > > already.)
-> > > 
-> > > Fortunately the necessary clk is already registered from the SoC code
-> > > in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
-> > > summary:
-> > > 
-> > >     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
-> > >                                      enable  prepare  protect                                duty  hardware                            connection
-> > >        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
-> > >     ---------------------------------------------------------------------------------------------------------------------------------------------
-> > >      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
-> > > 
-> > > That clock has no parent and is not found anywhere in devicetree, nor
-> > > is it handled by the two clock-producers on that platform, so
-> > > from within mchp_otpc_probe() I just tried this:
-> > > 
-> > >     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
-> > 
-> > > 
-> > > However that returns with -ENOENT, so I assume I can not reference the
-> > > clock just by name?  Same result with this:
-> > > 
-> > >     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
-> > > 
-> > > How do I get a pointer to that clk then to enable it?  Docs [3] where
-> > 
-> > To expose it though DT you may want to save its hw object to one array
-> > entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
-> 
-> Great to see I came to the same conclusion.  I have a proof-of-concept
-> working meanwhile, will send a patch series later this week I guess.
-> 
-> Thanks for your support.
-> 
-> > Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
-> > simple trials.
-> 
-> Don't think that is necessary anymore. :-)
-> 
-> By chance: I don't have a sama7g5 based board at hand for testing.
-> The datasheet says the same as for sam9x60.
-> Does the nvmem_microchip_otpc driver actually work without timeout on
-> sama7g5?
-> 
-> Greets
-> Alex
-> 
-> > 
-> > Thank you,
-> > Claudiu Beznea
-> > 
-> > > not as useful as I hoped for, neither was clk.h header docs. :-/
-> > > 
-> > > From what I understood from header docs reading 'device for clock
-> > > "consumer"' I must pass the device from which I call that clk_get() as
-> > > first parameter, so this would be the otpc device then, right?  What's
-> > > that second parameter clock consumer id then?  Are these terms
-> > > explained somewhere?
-> > > 
-> > > Greets
-> > > Alex
-> > > 
-> > > [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
-> > > [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
-> > > [3] https://kernel.org/doc/html/latest/driver-api/clk.html
-> > > 
-> > 
-> 
+[1] https://lkml.kernel.org/r/817150f2-abf7-430f-9973-540bd6cdd26f@intel.com
+[2] https://lore.kernel.org/all/116e117c-2821-401d-8e62-b85cdec37f4a@redhat.com/
+
+Fixes: c0bff412e67b ("mm: allow anon exclusive check over hugetlb tail pages")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202407301049.5051dc19-oliver.sang@intel.com
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ include/linux/page-flags.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index b753d158762fc..af58b2ad854c3 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -233,7 +233,7 @@ static __always_inline int page_is_fake_head(const struct page *page)
+ 	return page_fixed_fake_head(page) != page;
+ }
+ 
+-static inline unsigned long _compound_head(const struct page *page)
++static __always_inline unsigned long _compound_head(const struct page *page)
+ {
+ 	unsigned long head = READ_ONCE(page->compound_head);
+ 
+-- 
+2.46.0
+
 
