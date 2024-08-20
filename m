@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-293537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33211958109
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE5C9580FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1211F2543D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12478286D58
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F418A6C8;
-	Tue, 20 Aug 2024 08:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173118A93E;
+	Tue, 20 Aug 2024 08:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rdc1sli/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DPqW3Rg9"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D0E2D627;
-	Tue, 20 Aug 2024 08:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAD418A930
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142737; cv=none; b=Ewn+n36h5R8r4ljCEjGxZAMxviqfsPf3rrnOlV09f4CUQsticsPKWFOcwRwsMqkA8/f/xeezPgWtsOLgfA1rulhURLP/LvESadM5tNT/TRVnNDNWxxY/pBmddP/P26L+2q4BQ1twSYCuT4UCyBYtxFKX0ad94ZjpwwLKMOAXRfc=
+	t=1724142545; cv=none; b=BRvV6c6CNxzRItOV3x4zuCrozax0XQZbdS36nCBQxiB6ueUR/Gja0c6VxOCRGq4DpDQNY1rf3iv9TjiVTYAGk+Jof90NhY1XiBlX92heSUXvwXERNwvv8U69XzjMBgSh9UiVSq/w5iAfqQv40IebrEFU+bf+WoysUSQDZunTl/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142737; c=relaxed/simple;
-	bh=2deCrDuw0r01uQuwAdmcC6xhSLUlOEOsXXxICuJbXdY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=Lsg3vix0UJNNfHfeTHvL2pSVnT7PpGuGrwhNVfYHvCJWVNe6wWeNo4AwYvJutqkNDZektQwsykXdEDID0Mf5bi8MPt6abV1aFFpsimDMWEnP0gEl9eb/qHWV1eKBokO1PORZ0HOQU2n/5WV/UE1s47WtK9nNv9UFMSpWhmD9Gzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rdc1sli/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4570C4AF0B;
-	Tue, 20 Aug 2024 08:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724142737;
-	bh=2deCrDuw0r01uQuwAdmcC6xhSLUlOEOsXXxICuJbXdY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=Rdc1sli/lqq59tFlvLT8M28+d80WOQmJtUrMWnP9p9gg8f7zBLUJ1AY6ini5vLmQN
-	 5lwv5pI4MWSyt2eFbSFZR0d2XoPOQ1IYD72c/RPcBbJDxXjUgs8zEHIaA3wYh8sStc
-	 oSDe5iZdbZ3OMUrSqET+P+V1VwmUZMQUN6Z8GZDwng7O+LNaSlgiT+03IjLqc8ZfLI
-	 p4pqkzMInpeQ3S/94OL53ffXIUL8UWdRHT+4RRWFKxGROYAmjw1NNdkm2Xe+OeiWvK
-	 irw864Ybnv9vQJzl39AzPLiGiIhE5zopqLgcUmXZjfFBdRSD+whXuz9VS9tXokUOPo
-	 dQrT27UEiNHVQ==
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <875xrvenzf.fsf@debian-BULLSEYE-live-builder-AMD64>
- <04118984-4c10-4d25-9547-0e3cd5d9fb03@huawei.com>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, osandov@fb.com,
- john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH V4 0/2] Some bugfix for xfs fsmap
-Date: Tue, 20 Aug 2024 13:57:46 +0530
-In-reply-to: <04118984-4c10-4d25-9547-0e3cd5d9fb03@huawei.com>
-Message-ID: <871q2jegs1.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1724142545; c=relaxed/simple;
+	bh=n8I3vFl1DJYwJdr3S9W/L7zYT0Jg/gdY+fx5Eyx6ZCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OPhK6zm9mBHgVkOEpEg1zSCbqQQ4StJjZj/KmRstnpspH3JqJSmZF7GAEKPtfbxBxcLSURPhsdq+/qUvVbYaFniyCxP01Hex/XwhL3oMYxTHR9ShaPogvXqHtFOfkwdARk0J4tGsdiRjfuDBAo9vBgn0zOrruCYL7fmbXQ4muY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DPqW3Rg9; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so1843673a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724142542; x=1724747342; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pWmTRf+lqqwdFlkN10eJYZT7w32zxJLaePIz0o/Lf70=;
+        b=DPqW3Rg9yX6fsy4JZo0YkMAoCEX3OoasR9HfxkoOCSMSsnelGD19D3mUfa4b/tffmm
+         NrqUcK/COD0fB3Bqgl+Ny3hpmSTH5abQe4UMgWRBka5vcfwCIPNoQDHsv9NNXRVKw7hE
+         YMgf+yAppUAjI/VxIzQqhmu5Sxrg+qDPAqaOBfMs/W0WZvUfelW/UzQxNqYvliBl/e7t
+         6AgmHf2FiqLTMsWx1MF01/doJltmuaSOp7O4CN0JZFvdaOm2rPmjzBeCcSSTFYT5/KtA
+         EKNVsW9v7eItwLi6HpI/oAaTWX2p8ntrVLwMRwMcsQKciPLUhMFzc2GmZB25HyH7siwF
+         ++vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724142542; x=1724747342;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pWmTRf+lqqwdFlkN10eJYZT7w32zxJLaePIz0o/Lf70=;
+        b=LIyGn77nJLJ7qHLmrUw5+CpEF4EzZNsSYA4lRJ2kQNYBjsazinKrYHICeZiiH7QNbC
+         QkvPak8OZj7pHj3pjcAet//0cA0FW5zPtqwOTl4NOkSdHBWH+ftwlI/p+Dr8xw0DNU31
+         8p+lH21EbGy+QCXsTrQzG/eV3EmuP59b+q4IFaGvHKtQwxj6lQaz9vuw8/O1kv6JjFWn
+         aJNKjpuyXZJRo3fYKpJlREvO+14p17W0BAywWfp+0wo7D74gJh4MA5RxPRPVvW0XHEE/
+         oFktI8Cl5dkuhtbNahoiaD4Wd+dhQg7PzRbBp+f0bvCmXWvKhTvWbpLPsKQPSt9a+5dT
+         qY3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVi/htWpPiWKBSTrae/b5xU9oX77S6ivrN+hxjDkhgIbfeEcLlQOaswij2zMb/BEW/BFHiBLJuwRLkuwX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWDvm+ITnAzbieZtDPNrJQfllxYbiX4qhm0p/VB/DC1QN/y9SE
+	dCG8m+hN+pJJbzgaDpktpTuR/j6NsGdrj50yB1fiykqeq4v22Ne5Hl6lWzKvsw==
+X-Google-Smtp-Source: AGHT+IE6Q+yumPSaA4yB4wRaKEuNPBZP7rH5pqH/ZrgNa5ZaBHo+1ykUeQjOd02FSeuoP+so/JiYyg==
+X-Received: by 2002:a17:907:3fa6:b0:a7a:ba59:3164 with SMTP id a640c23a62f3a-a8392a160d8mr944638266b.53.1724142542132;
+        Tue, 20 Aug 2024 01:29:02 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6760sm728733766b.23.2024.08.20.01.29.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 01:29:01 -0700 (PDT)
+Message-ID: <41837bb1-0251-4250-8f00-23d60cb1d664@suse.com>
+Date: Tue, 20 Aug 2024 10:29:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] xen: use correct end address of kernel for
+ conflict checking
+To: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
+ <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <20240820082012.31316-1-jgross@suse.com>
+ <20240820082012.31316-2-jgross@suse.com>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <20240820082012.31316-2-jgross@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 03:51:23 PM +0800, Zizhi Wo wrote:
-> =E5=9C=A8 2024/8/20 13:53, Chandan Babu R =E5=86=99=E9=81=93:
->> On Mon, Aug 19, 2024 at 08:53:18 AM +0800, Zizhi Wo wrote:
->>> Changes since V3[1]:
->>>   - For the first patch, simply place the modification logic in the
->>>     xfs_fsmap_owner_to_rmap() function.
->>>   - For the second patch, more detailed comments were added and related
->>>     changes were made to the initialization of the end_daddr field.
->>>
->>> This patch set contains two patches to repair fsmap. Although they are =
-both
->>> problems of missing query intervals, the root causes of the two are
->>> inconsistent, so two patches are proposed.
->>>
->>> Patch 1: The fix addresses the interval omission issue caused by the
->>> incorrect setting of "rm_owner" in the high_key during rmap queries. In
->>> this scenario, fsmap finds the record on the rmapbt, but due to the
->>> incorrect setting of the "rm_owner", the key of the record is larger th=
-an
->>> the high_key, causing the query result to be incorrect. This issue is
->>> resolved by fixing the "rm_owner" setup logic.
->>>
->>> Patch 2: The fix addresses the interval omission issue caused by bit
->>> shifting during gap queries in fsmap. In this scenario, fsmap does not
->>> find the record on the rmapbt, so it needs to locate it by the gap of t=
-he
->>> info->next_daddr and high_key address. However, due to the shift, the t=
-wo
->>> are reduced to 0, so the query error is caused. The issue is resolved by
->>> introducing the "end_daddr" field in the xfs_getfsmap_info structure to
->>> store the high_key at the sector granularity.
->>>
->>> [1] https://lore.kernel.org/all/20240812011505.1414130-1-wozizhi@huawei=
-.com/
->>>
->> The two patches in this series cause xfs_scrub to execute
->> indefinitely
->> immediately after xfs/556 is executed.
->> The fstest configuration used is provided below,
->> FSTYP=3Dxfs
->> TEST_DIR=3D/media/test
->> SCRATCH_MNT=3D/media/scratch
->> TEST_DEV=3D/dev/loop16
->> TEST_LOGDEV=3D/dev/loop13
->> TEST_RTDEV=3D/dev/loop12
->> TEST_FS_MOUNT_OPTS=3D"-o rtdev=3D/dev/loop12 -o logdev=3D/dev/loop13"
->> SCRATCH_DEV_POOL=3D"/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8
->> /dev/loop9 /dev/loop10 /dev/loop11"
->> MKFS_OPTIONS=3D"-f -m reflink=3D0,rmapbt=3D0, -d rtinherit=3D1 -lsize=3D=
-1g"
->> SCRATCH_LOGDEV=3D/dev/loop15
->> SCRATCH_RTDEV=3D/dev/loop14
->> USE_EXTERNAL=3Dyes
->>=20
->
-> Sorry, running xfs/556 with this configuration was successful in my
-> environment, and my mkfs.xfs version is 6.8.0:
->
-> xfs/556
-> FSTYP         -- xfs (debug)
-> PLATFORM      -- Linux/x86_64 fedora 6.11.0-rc3-00015-g1a9f212eb19f #42
-> SMP PREEMPT_DYNAMIC Fri Aug 16 10:19:47 CST 2024
-> VMIP          -- 192.168.240.11
-> MKFS_OPTIONS  -- -f -f -m reflink=3D0,rmapbt=3D0 -d rtinherit=3D1 -l size=
-=3D1g
-> /dev/vde
-> MOUNT_OPTIONS -- /dev/vde /tmp/scratch
->
-> xfs/556 4s ...  5s
-> Ran: xfs/556
-> Passed all 1 tests
->
-> I am not sure if it is because of the specific user mode tools or other
-> environment configuration differences caused?
->
+On 20.08.2024 10:20, Juergen Gross wrote:
+> When running as a Xen PV dom0 the kernel is loaded by the hypervisor
+> using a different memory map than that of the host. In order to
+> minimize the required changes in the kernel, the kernel adapts its
+> memory map to that of the host. In order to do that it is checking
+> for conflicts of its load address with the host memory map.
+> 
+> Unfortunately the tested memory range does not include the .brk
+> area, which might result in crashes or memory corruption when this
+> area does conflict withe the memory map of the host.
+> 
+> Fix the test by using the _end label instead of __bss_stop.
+> 
+> Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
+> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 
-My Linux kernel is based on v6.11-rc4. The sources can be found at
-https://github.com/chandanr/linux/commits/xfs-6.11-fixesC-without-jump-labe=
-l-fixes/.
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
 
-Please note that I have reverted commits modifying kernel/jump_label.c. This
-is to work around
-https://lore.kernel.org/linux-xfs/20240730033849.GH6352@frogsfrogsfrogs/.
 
-Also, I am running xfsprogs v6.9.0. The sources can be found at
-https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/log/?qt=3Drange&q=3D=
-v6.9.0
-
---=20
-Chandan
 
