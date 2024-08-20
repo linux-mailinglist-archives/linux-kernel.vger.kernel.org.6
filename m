@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-293714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3608F958377
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA7B95837B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A731C24379
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AC5287BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C18418CBE6;
-	Tue, 20 Aug 2024 10:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CD818C904;
+	Tue, 20 Aug 2024 10:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dhhcYPD7"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VGvCfN+v"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E117518C904
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73A118C932
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724148059; cv=none; b=e+nTMrm9wwZ1OSkVjNOQKooi+tPm0UzBZpq/GpDybd/zYsMr86LauFEHrOlENx24H/U6kvK6T6SBK+uVAcyqzr2UJkz8CWna6LT6UWW5je1fd+psDhLnZkSfaOetoeaIdKcI56M3nVE065/GZlZk/t9PqQ/jliRSdKYJwInk4jY=
+	t=1724148085; cv=none; b=AJn0dsQRaZVRrmq4bvEP5FqW+JEsCPkYH2BqU+KQhyzmEfuA/O1vrux5cJEIpL+WpfLzQoD/qqg4J0Q6EGls1WPsXjeM82Pvtf2djyhr0XLc2r2pFP1HhfmQtreeh2Sm8SbCR5aqEwhZNC7yfXfRVfht3GJmo9kcRS7+YsWIynY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724148059; c=relaxed/simple;
-	bh=bWtnqhRI/JuTkpJ+WLDRzhJVDXOqPx+pGUcrSL2lqYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BhJeAMfnmR6u1Px85OHsE77M0Y53gKko9CHKsnZ5Gerk2djTyL2S4CteE7pCLTznnx8QylsKVRP9UztoRgcHkFggNueWvX/D9Rm8ZiXv3HxifiwABaqcFs+/1czmMm013VwkLqt/Gw1UxGKQPkNaF8D92QHQAzgmzba8T5Ipfys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dhhcYPD7; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7aa086b077so552157866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 03:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724148056; x=1724752856; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bWtnqhRI/JuTkpJ+WLDRzhJVDXOqPx+pGUcrSL2lqYQ=;
-        b=dhhcYPD7+cDdZL7SIMO7+5ihYrd4Gm0BoT3zJNglQ96hnaes/aWJYkDw1vAGJmZ+bm
-         XTEOPfsgVybNkFp+WBcX4f5cihutEuhAQz7bP38vLiTBRtgR7DUnxvSRQzc2XbejT6IZ
-         pNmy63Sj5VD0KxXNiQqAkFvkVndhB3Xbf9S1lSh4mQVLrIuydQJN3XoOuT/qOmyM4eKS
-         PqIJJ/XalAGcciQNE/9d5mSEV7RgCmAuVcqFPkg7srIGmCOq4/xSvZsEmrQDFjRJLWm/
-         ivwk3IZKEmFh/xEzkJ06o0BR+sj2z6OPuozMY0SgsiwMTO3lOsEsvZFG1gOuCjJe/UIC
-         x+Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724148056; x=1724752856;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bWtnqhRI/JuTkpJ+WLDRzhJVDXOqPx+pGUcrSL2lqYQ=;
-        b=ocOYPpNRieJXhRhJYjU4etG+n+nvEjJMO+XXmN2J+ryl8Dc1cF9Qm0CfkzUIacKAfc
-         +jvuxsW8wMRzPPt+xvGcF9nsZyM44ZO6ceBqwVb6tmxGP9JbzIex9LMCvibTRFaaZiyG
-         1eqn1+UUzEKXNzk4ZZc5vZAzX97GL8WTVf2b8NBlDKLFZ3IlzK1qd3SB9H8jJYEsDoVs
-         X+7lKEyPDcaiLlQ0hfCrJLW3DlguCKbeoKWcAB0XYQNLsyb1x97dprGbQiIpTbdqe6N0
-         VblvK+qLijtq6TaOcCy9KsP1QlbmPM0BbYOM88+FntA3XDwWc1Dga5o7/IDMa/yLEtqm
-         HN3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVLrFF7Xu8ARPtuara7imz7F7Pa5qvWPO8pJnWrOZ++xXrNQJop7OiO4T/56Yvtlrraa9X97EJWD6tyBi9i/Geu57oCp2OqGUDognlx
-X-Gm-Message-State: AOJu0YxIbJYhBQ0ZBOdP8vccrf9uHObREATd9IHSC3czavJf1zGQdiEa
-	TGvDkMMo8MPNiRURw4ek8t9/n81mKYoWEG1hatMEvM/ae0l/a7dLvm/Plu4bpz0=
-X-Google-Smtp-Source: AGHT+IGE3PxS/8B9eIPrX7NxB0OYZw1vG3KBe6ZRFywGBUkcNdU+qDHyI4oW4rHxkVwksuQSpJI//A==
-X-Received: by 2002:a17:907:1c9e:b0:a77:cd51:3b32 with SMTP id a640c23a62f3a-a8647b6ec91mr119130366b.62.1724148055852;
-        Tue, 20 Aug 2024 03:00:55 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934508sm744346266b.101.2024.08.20.03.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 03:00:55 -0700 (PDT)
-Date: Tue, 20 Aug 2024 12:00:53 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Li Lingfeng <lilingfeng@huaweicloud.com>, josef@toxicpanda.com, 
-	hch@lst.de, axboe@kernel.dk, cgroups@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, 
-	houtao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com, 
-	lilingfeng3@huawei.com
-Subject: Re: [PATCH v3] block: flush all throttled bios when deleting the
- cgroup
-Message-ID: <k56cnz7q5hxzh6hqmw4gnxobr2wlo6xryf4jqlky3mylcs4px4@zrhciaca2asy>
-References: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
- <ZsO4ArRKhZrtDoey@slm.duckdns.org>
+	s=arc-20240116; t=1724148085; c=relaxed/simple;
+	bh=ZY+2LmGq7kSsDU4/bgcmGnxVdIgzfJLp0UtF3d9Jboo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ey92rexFlWrQRZzChBiTJrZxYnH2qrmoluJYimLSD6P/BwMQavKgMbeN7Lb9ibeaREnJCRK1QeSiQydqaUfVksOvdtc7RRZuMYpOvPcIDSOKRRY7ln7FsndQxF3IL36nJo9p3bhdORJ5Pap0Y7Hx5kI7neU4qcYNzcouFJx46hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VGvCfN+v; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yHeSzm7/HHCH2jDaxOZ9inBw36886zNHiUb2ixdrSZE=; b=VGvCfN+vRQgkiRyJfQl2ec5B6v
+	dc5TNo8fOgYHiJA/07D5L5owqToc/eMtF9m69QgtZAldyeoaYTd6uP4OoIk5DAU4bs+ZKZgzsYPyT
+	yKaDzlaiqvQazEX3RPTu9ooud7HiH+ud6xkyNuhZIt66jU2EgR0Z59S8YYdxtdK7gkO28EABhmNrp
+	PCLdUivx8knLTGFij8QQfiMuHl5aCgBiqk9H1B1aFNe9CxxtHf1+EDqXYwtxHMVRd2ApR5AyIaVhY
+	HukcMXeXyuIQpo2MujbnaojIftu5skGBtIWW9+PbR0CZtLAPu8foyk+beecR8iBrBjnYaoLrgHi8H
+	ZI9eq5kA==;
+Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sgLg1-000717-2I; Tue, 20 Aug 2024 12:01:21 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com,
+ Mary Guillemard <mary.guillemard@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Mary Guillemard <mary.guillemard@collabora.com>
+Subject:
+ Re: [PATCH v3 1/2] drm/panfrost: Add SYSTEM_TIMESTAMP and
+ SYSTEM_TIMESTAMP_FREQUENCY parameters
+Date: Tue, 20 Aug 2024 12:01:42 +0200
+Message-ID: <7068759.18pcnM708K@diego>
+In-Reply-To: <20240819080224.24914-2-mary.guillemard@collabora.com>
+References:
+ <20240819080224.24914-1-mary.guillemard@collabora.com>
+ <20240819080224.24914-2-mary.guillemard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3hqaf5xszdcakr5n"
-Content-Disposition: inline
-In-Reply-To: <ZsO4ArRKhZrtDoey@slm.duckdns.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Am Montag, 19. August 2024, 10:02:22 CEST schrieb Mary Guillemard:
+> Expose system timestamp and frequency supported by the GPU.
+> 
+> Mali uses an external timer as GPU system time. On ARM, this is wired to
+> the generic arch timer so we wire cntfrq_el0 as device frequency.
+> 
+> This new uAPI will be used in Mesa to implement timestamp queries and
+> VK_KHR_calibrated_timestamps.
+> 
+> v2:
+> - Rewrote to use GPU timestamp register
+> - Add missing include for arch_timer_get_cntfrq
+> - Rework commit message
+> 
+> v3:
+> - Move panfrost_cycle_counter_get and panfrost_cycle_counter_put to
+>   panfrost_ioctl_query_timestamp
+> - Handle possible overflow in panfrost_timestamp_read
+> 
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
 
 
---3hqaf5xszdcakr5n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On a rk3588-tiger with matching MESA build and 
+"RUSTICL_ENABLE=panfrost clpeak"
 
-On Mon, Aug 19, 2024 at 11:24:18AM GMT, Tejun Heo <tj@kernel.org> wrote:
-> I still don't see why this behavior is better. Wouldn't this make it easy to
-> escape IO limits by creating cgroups, doing a bunch of IOs and then deleting
-> them?
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-IIUC, bios are flushed to parent throttl group, so if there's an
-ancestral limit, it should be honored. (I find this similar to memcg
-reparenting.)
+Without this change, clpeak fails with
+	clCreateCommandQueue (-35)
 
-Mere create + set limit + delete falls under the same delegation scope,
-so if that limit is bypassed, it is only self-shooting in the leg.
-Shortening the lifetime of offlined structures is benefitial, no?
 
-Michal
-
---3hqaf5xszdcakr5n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZsRpUwAKCRAt3Wney77B
-SWVkAP4rVAcf8/rGbwJarR3fhhbeDC6WwPUzDJ8CX8Vedw6MJQEAlc4hWQw2q8ZX
-K+DRgWzsjRm2cS6gEPunEX4GMP+/xwI=
-=ck8I
------END PGP SIGNATURE-----
-
---3hqaf5xszdcakr5n--
 
