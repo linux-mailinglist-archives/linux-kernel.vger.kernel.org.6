@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-293606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6109581E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:17:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D279581E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975CD1C2411B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8670BB22448
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6563A18B49E;
-	Tue, 20 Aug 2024 09:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C1318B46E;
+	Tue, 20 Aug 2024 09:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isTGbhnk"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PVY4QD1/"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D74018C357
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38A318A924;
+	Tue, 20 Aug 2024 09:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145373; cv=none; b=etg//MNRaxqkWXkU1QSh+GAuZNcPJRsa9NP7e7fDGyfwJbB2gnJoksP/KxMCwxbudknSe8tnr1do1fYRKN78IOwxe64Ia0j2Ze+dyeA7uiymy6T21ADaX10LUm1tUbJtiEW4tn2nxe+lhPl3wliIVHLZnpzlNtsOemHfizPI9YM=
+	t=1724145439; cv=none; b=uEtM+vz4RV6wPnOpy2kCDNaUXbJKS6OwTGwm7Oa88BtmFtADtwPl0OKJdf0BIZfU7cav3scfukIEaZJshSeuVkt5LrF/mdSZaNv1KRj2HR8KZ3m18TfM/4xt51DOGiIVmZ5btiFJg1zeTgDrPuq4VkrDC6/RzQ0uoBlXltQ6tUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145373; c=relaxed/simple;
-	bh=JP6ycWIyFf5oZnrrWUruhTrcwbcT8MN0vawnvH+k0O0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OFxA2yR3MsrHKXXfSw1cePmR9X50oQTeG6HFBQ7V8yaJlp70B0UUFlOVlD6C7ZcPPxkYEkOHyT3+jE3bmmpzgSGMTxEOuMi/tJH6la68uIBqU705YkIqyNxrTP5RtdkG0ZzHh78DeapN+mt205kzZwcamuRGT2p9IFAGxpUpvCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isTGbhnk; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db16a98d16so3177490b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724145371; x=1724750171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZnaHK4EX6IXmSa9S9DVv4ypDChh4Hz7REiF4MLYT2E=;
-        b=isTGbhnk4+RTYMGYtukhhHCyT3PJWbFzxE8+j6XT9Jj/3t91cz8ATYj8UROGQvZuc9
-         RADiwuLhQr4c8AqPBQXESe4bU28SBhy6niJXw9Sd69+uMz6xV5zCYR+cF0X71MzaG5Ki
-         6blFCxkO0JWngQe6V9ZnPccaog8/DJLNlkZn1ZhPOWumL5gLAiGBwogmukd2jIWcg7sH
-         NxNoRLi2n02vZAvmWOnAkPVfrYxZiLDjQR1uJh6vn6fcMva7LnHSo/GpD1laWPh9+lVA
-         6Mfr0AyWjUxa8Soy1w9AUxMCcJsi7cfOo06VAevqj9rzjO92zZ/0d6Spmgpaknz2lSn8
-         KOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724145371; x=1724750171;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KZnaHK4EX6IXmSa9S9DVv4ypDChh4Hz7REiF4MLYT2E=;
-        b=QBJGVDmIxpJxmQHjTlR1sGqUVxo7l5mrzKqROFzDuwO2XYUvWRoSWpJhjBF996cKzr
-         wfWE+dM+fLim6kE+IpBOgryNhAfaKqYr1W2xAI2jeDXGn8v0a4rBPsJZXe58Z7L0PaCH
-         +NnMmsC1SXZmDt5rMGMwFwWxgrnexj3HEpUhBfIoGwfr/EXOOnwPhkUNStiydH72SxlH
-         DJ57irza320EjWqEHh3/0HRRw3lwUXGBy27hdfhmsCEUmUF6r1VSEAwxIXvdnA2UmjIf
-         V7Gg+MnX7FUgPLzWCycKmqeLB36CKNzTLpdFRrCvftdez8nKAs+RsO+bkrLRPwi/sfIP
-         CvGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDiPN/qjhpywleOyhHJzHC/lk7Uh6CYOy37WJIJ0Cti/9PLF8NP7Z02b614zW48zUGRh5CA0fyGXE+MqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFGt004xvvlb2lXA/ErMq66+Uc28jaMKsPKW2oO4aWVYDAUL9
-	z/068FeaRYVm6Dp+teDx2BrkdCOk8xsZN2bDAHC31RX0uk48SZMp
-X-Google-Smtp-Source: AGHT+IElZDUwhMSDH0FDHumsr9AKfUYm79jWusnz6NH1EUP4PLg/jLaGdGff1MfL5CxZm62Q+HYkWQ==
-X-Received: by 2002:a54:4e8d:0:b0:3d9:3f51:f351 with SMTP id 5614622812f47-3dd3acec2ecmr12843378b6e.11.1724145371166;
-        Tue, 20 Aug 2024 02:16:11 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([59.152.80.69])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61c6f12sm8998575a12.35.2024.08.20.02.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 02:16:10 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: agx@sigxcpu.org,
-	kernel@puri.sm,
-	neil.armstrong@linaro.org
-Cc: dianders@chromium.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v2 2/2] drm/panel: mantix-mlaf057we51: write hex in lowercase
-Date: Tue, 20 Aug 2024 14:45:54 +0530
-Message-ID: <20240820091556.1032726-3-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240820091556.1032726-1-tejasvipin76@gmail.com>
-References: <20240820091556.1032726-1-tejasvipin76@gmail.com>
+	s=arc-20240116; t=1724145439; c=relaxed/simple;
+	bh=qsNrPekQyQCOG+RQSjVa2R71A/PmhgjNGcRM9kFUy3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P0E7I9TpzCgrTgPe439qhZB59mI7y2sddwYEqbevBdKWptwWB8/LYrkS6nsOjuEiFAo6nhnTOnTRAwe56YQ1rbpYigsD+lR8UWCEoUSw5w9NLOD+e2d4EdsfXp6Pxfo8cooBTn0VfuMUDeTICwGUyQKfGte8mU7Vr3wdWf6L+cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PVY4QD1/; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724145422; x=1724750222; i=markus.elfring@web.de;
+	bh=oP+H1RPG9Zck7KLM0vu6hKBk5Z175xOHYoYt+ovcV/Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=PVY4QD1/oUuZTDaWl+2WIz4bJa8nmkBroUhiCsaGEkSFZqKDXiA3BEPHDBUr1Oxc
+	 AiTLVfGi2MGleYN/4tJbmBBT1UUbgTzw9/ddl4enecIwUtiBqvUcgEHK9Pw+kkUCk
+	 uDG4FbAeaNMWKET+rBF1daNUEyvCquULedttmBwpz4auYkHl97U7Ca/6fODy32AWu
+	 t4aFREIdiVq7A7s13fEMJdmwdsoHzUORmKWh9nShu9vqp0nGibiXeV7P2X8JZiSHJ
+	 1EvyRA+9TjDuh9gvEiKyx1LicCj0XrgIWvyXicxf89GXKLqAu0FL3FUBafPSf7VFe
+	 Hfc9OqXD2OCfW+Y7fw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIki-1s8Mfy0nFc-00dR4i; Tue, 20
+ Aug 2024 11:17:02 +0200
+Message-ID: <64039307-fcfc-4e08-8727-c805964f7386@web.de>
+Date: Tue, 20 Aug 2024 11:16:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family
+ driver
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:r8To4IboEVhNbAeJuHFIVLHKX0+p6733RoBIxz/bcd6hycS7pS7
+ 54VSXtRAVUJJAbmQEvRxA9qCuhrm2X9QKNN5twTb/mar0CE+Suk4rWo0R7LQGYKFq41JI6P
+ ue76uDlEcZlSVDcPDuNZKlZOvMVWbqaUEoSOWiTOpxRgaAmewp5OPqFRN3/odQs9eMI5elY
+ 66g6oty9UQHrMJ83E4OSg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yIaeqTHerJk=;RekuxpkpkNM2GXs8mA8YQlM3M6t
+ SjLx/2peVlvgyMR049CWrY3UAGDdXY6zECU/qdRbhoYgHUeF1tN1YxjvqQWjxDSbQ3AmHygHe
+ hoG76qKWPN/yuDQbjsXuVsnyN7sK5eQ2bpxjaQK3dc4gquaF5JiuA925eMILqh2IONH2D3Tqk
+ qFuxKwa4kPB94YwJgd0JO4FM4GcsqYcLB+LYd9iPoZ1Yqh0HA5zZkh6vgCpYgdnB+IRyW06Ya
+ DVT83jbJrzVSSPu+nwCpwjKAqT5yf2okb0vWeXJO9+2EfeJM0eTUNcYGmQSyXMy5RQUvhOBo0
+ A9TOXiFqe8V1B/atDYRVCAblG7IRJPW51A2IkJkxYc9Cvv4gnrCZSUNANI16Ev8SGRwP7szhL
+ rnysLGU3WnwVYr0I24bku3gYpUD0nYntW18BG88wYGHLHSc+ikd+1e23RpS1guAzIy4AETgz+
+ HqQhrjX2g0rYN9b2wW3M0KxUOSyz3TULY0ExngMA5ZHuAImW1VgCNMH6JWq4WfAFxuOfnaaMQ
+ pz3Yyr2jkRrZsBxfAGM7PwaqmS9AkBIImjyk/mMIjSgFTATps2D71/tg1Vu2jlQUsbdLp6IW+
+ yEeTI1r2q6DNP+LzZDCqE5WJuwlDVmqpUU/3+GSfI2Tq4H9BWJkeFJB6zARG/oV3hmkmiNzOq
+ q2qpo/8VWqQoSEFKbZdVWwgMZA0XFhmYFrjCHxzD+BuFGy2p55jZ/YAQMbmCj8RFvRs1eREmN
+ nvCMLaD5lVM8S/5UsC8Z0+1H97WYi6ZQLHSxQFsV3Noc4kpMhOwC7TmePyAbHImIZZZjLAWcG
+ ApaBzQpzSoAB2zQ7T3UT79vQ==
 
-Converts uppercase hex to lowercase hex for cleanup.
+=E2=80=A6
+> +++ b/drivers/hid/hid-corsair-void.c
+> @@ -0,0 +1,842 @@
+=E2=80=A6
+> +static int corsair_void_set_sidetone_wireless(struct device *dev, const=
+ char *buf,
+> +					      unsigned char sidetone)
+> +{
+=E2=80=A6
+> +	int ret =3D 0;
+=E2=80=A6
+> +	ret =3D hid_hw_raw_request(hid_dev, CORSAIR_VOID_SIDETONE_REQUEST_ID,
+> +				 send_buf, 12, HID_FEATURE_REPORT,
+> +				 HID_REQ_SET_REPORT);
+> +
+> +	return ret;
+> +}
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Would you like to return the value directly (without an intermediate local=
+ variable)?
 
-diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-index 2a365eaa4ad4..4db852ffb0f6 100644
---- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-+++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-@@ -23,7 +23,7 @@
- 
- /* Manufacturer specific Commands send via DSI */
- #define MANTIX_CMD_OTP_STOP_RELOAD_MIPI 0x41
--#define MANTIX_CMD_INT_CANCEL           0x4C
-+#define MANTIX_CMD_INT_CANCEL           0x4c
- #define MANTIX_CMD_SPI_FINISH           0x90
- 
- struct mantix {
-@@ -50,18 +50,18 @@ static void mantix_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
- 	/*
- 	 * Init sequence was supplied by the panel vendor.
- 	 */
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a);
- 
- 	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_INT_CANCEL, 0x03);
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x80, 0xA9, 0x00);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a, 0x03);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x80, 0xa9, 0x00);
- 
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a, 0x09);
- 	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
- 	mipi_dsi_msleep(dsi_ctx, 20);
- 
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xA5);
--	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xa5);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2f);
- 	mipi_dsi_msleep(dsi_ctx, 20);
- }
- 
--- 
-2.46.0
-
+Regards,
+Markus
 
