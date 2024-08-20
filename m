@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-293429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D063C957F29
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A529957F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51B44B2169B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06974285602
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EBD17556C;
-	Tue, 20 Aug 2024 07:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B8B171E70;
+	Tue, 20 Aug 2024 07:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Omx72tnu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz+4Mc8a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A88152165;
-	Tue, 20 Aug 2024 07:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4B152165;
+	Tue, 20 Aug 2024 07:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724137971; cv=none; b=GkUtsPDvF2tyTd/+uZO/wAHjorB+PUszO0H70hMlDbUCFYBmoyDinQml2Nbb9KqQ5pi11yFlxLV8Am+wiaaKM10Exlnci6JGJgF9btmLunp66AAduGuJTwkfxtzS74ht2MbSO586yqztNlEvqIOc9TQxsg4GhxoH/J3kGf1lyZQ=
+	t=1724138011; cv=none; b=jHy2MQdHKcTY6C78okmBUsyJ2bshsEtf0iDLGxUqk8FM+KVvKoHQrH4rBvcZZPGaHXieKR3eliQCoqE852mKjG8UAyC+c2VG2lR5pJya57wtUi7ezLzdoM2vMjHKp4FDdUNlUzj6AXGX/dfhTpzQzmwWTrqwIAjcctSaA+sYbfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724137971; c=relaxed/simple;
-	bh=05juWIN/pOOlKh+0AWNVcA4j6ejO1nrcxfu3RKQyvM0=;
+	s=arc-20240116; t=1724138011; c=relaxed/simple;
+	bh=P4Xoto1kb9GxBJ4mRYqIpsziqZnk0OuzLbdWEFfVZxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6UUuGbYQc8YgvnP9Av65X+IGcE0usod0Kfz1nB1+5Pqw4hDet8FizCUR2tgydDmAIpeyorYet0qv2RPhMv/cP7mXqAueM76wA33qTor4HCdgIk/A1ZR6ZzPFPSFLFjvHwHJcqlx5TwXR0YNyGkL5VAlXWaPDxTIVTc/3vVDS7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Omx72tnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03398C4AF0B;
-	Tue, 20 Aug 2024 07:12:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOsgOHzJf4Y9RKab8NWfzx65+o6g/pAqOUtGqLyn6IwbAdUtm2y/BxTNMyQHHsR6qhIV4ahNeZsFzTmg3SmrcAHDEV71oOyFNGunYAlybuAO3+QtNzsgWbm6d9o51TxaYmf0w6OFBF7fTgFnsGym0+ct2ss0oqiCNl/ymPY9/84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz+4Mc8a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD46C4AF09;
+	Tue, 20 Aug 2024 07:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724137971;
-	bh=05juWIN/pOOlKh+0AWNVcA4j6ejO1nrcxfu3RKQyvM0=;
+	s=k20201202; t=1724138010;
+	bh=P4Xoto1kb9GxBJ4mRYqIpsziqZnk0OuzLbdWEFfVZxw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Omx72tnu8bxN1JJKJ5zMkVpZLpyJrh/QDA+GUAMptshVynAl51/WGblFvcJC6IIUM
-	 vYa2RbvPHtthhJ78bTlcLNDlHg/rnNxL0orDQiPXyB7kqzGWsmNXQq3tc/5rVUXADp
-	 rOVEC+bBabF0VgivLprOVVPcPmDAsuecFZ/anURv4TLmKDioVPnkJIsXW/2Y9m3l7q
-	 GicxakTZod9ArkV13vuxFf+jYFSzLFH1zN1btw3KcXX9AEtgQ5iLD1qBrHQ4joTi36
-	 7OWebZCB2rMNNRDJQjoqNbB8S4R6h/FvOaoT5W/teIZxsD7S61Vjy9ksoWge4HzhqN
-	 DoPIEPZZvSJgQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgJ2v-000000003f5-1Mye;
-	Tue, 20 Aug 2024 09:12:49 +0200
-Date: Tue, 20 Aug 2024 09:12:49 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
-Message-ID: <ZsRB8fk1_P7XPtQS@hovoldconsulting.com>
-References: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
+	b=Gz+4Mc8a6bR73MyttJH1WKF45lDJDtOwWsfsUBDrK6xUysURbUJcwEvyW17ferVr5
+	 b8xWmLKE7Hw4lwwchPrCzinppb3/s7DNzQ56UV9asRxSibNosq/tQewjQ3NGlt8BHu
+	 E6TvIE+cC6ndzeFv7iv4yn4hz/XWioUueUZubt9uGQyeRDQbWlHPl3xI778KnsjJVL
+	 oNalnsafluqag/HrQfU/xgw9mSUC1vUKX0nZFB5Ej0ZbSGOOkLPNT02Hw9OSAe/CRR
+	 3Jb8vTiQ1oDNQjqzfk4bqcsSrAHxtXvU2dsPRiqgjmvF7bsdLFIanOAfCPEx5gavMS
+	 asTEvBA/nwoLg==
+Date: Tue, 20 Aug 2024 10:13:07 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net,
+	arnd@arndb.de, mcgrof@kernel.org, paulmck@kernel.org,
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com,
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org,
+	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
+	minchan@google.com, kaleshsingh@google.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 1/5] alloc_tag: load module tags into separate continuous
+ memory
+Message-ID: <ZsRCAy5cCp0Ig3I/@kernel.org>
+References: <20240819151512.2363698-1-surenb@google.com>
+ <20240819151512.2363698-2-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,35 +70,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819-pmic-glink-v6-11-races-v2-0-88fe3ab1f0e2@quicinc.com>
+In-Reply-To: <20240819151512.2363698-2-surenb@google.com>
 
-On Mon, Aug 19, 2024 at 01:07:44PM -0700, Bjorn Andersson wrote:
-> Amit and Johan both reported a NULL pointer dereference in the
-> pmic_glink client code during initialization, and Stephen Boyd pointed
-> out the problem (race condition).
+On Mon, Aug 19, 2024 at 08:15:07AM -0700, Suren Baghdasaryan wrote:
+> When a module gets unloaded there is a possibility that some of the
+> allocations it made are still used and therefore the allocation tags
+> corresponding to these allocations are still referenced. As such, the
+> memory for these tags can't be freed. This is currently handled as an
+> abnormal situation and module's data section is not being unloaded.
+> To handle this situation without keeping module's data in memory,
+> allow codetags with longer lifespan than the module to be loaded into
+> their own separate memory. The in-use memory areas and gaps after
+> module unloading in this separate memory are tracked using maple trees.
+> Allocation tags arrange their separate memory so that it is virtually
+> contiguous and that will allow simple allocation tag indexing later on
+> in this patchset. The size of this virtually contiguous memory is set
+> to store up to 100000 allocation tags and max_module_alloc_tags kernel
+> parameter is introduced to change this size.
 > 
-> While investigating, and writing the fix, I noticed that
-> ucsi_unregister() is called in atomic context but tries to sleep, and I
-> also noticed that the condition for when to inform the pmic_glink client
-> drivers when the remote has gone down is just wrong.
-> 
-> So, let's fix all three.
-
-> Changes in v2:
-> - Refer to the correct commit in the ucsi_unregister() patch.
-> - Updated wording in the same commit message about the new error message
->   in the log.
-> - Changed the data type of the introduced state variables, opted to go
->   for a bool as we only represent two states (and I would like to
->   further clean this up going forward)
-> - Initialized the spinlock
-> - Link to v1: https://lore.kernel.org/r/20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com
-> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > ---
-> Bjorn Andersson (3):
->       soc: qcom: pmic_glink: Fix race during initialization
->       usb: typec: ucsi: Move unregister out of atomic section
->       soc: qcom: pmic_glink: Actually communicate with remote goes down
+>  .../admin-guide/kernel-parameters.txt         |   4 +
+>  include/asm-generic/codetag.lds.h             |  19 ++
+>  include/linux/alloc_tag.h                     |  13 +-
+>  include/linux/codetag.h                       |  35 ++-
+>  kernel/module/main.c                          |  67 +++--
+>  lib/alloc_tag.c                               | 245 ++++++++++++++++--
+>  lib/codetag.c                                 | 101 +++++++-
+>  scripts/module.lds.S                          |   5 +-
+>  8 files changed, 429 insertions(+), 60 deletions(-)
+ 
+...
 
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+> index c2a579ccd455..c4a3dd60205e 100644
+> --- a/include/linux/codetag.h
+> +++ b/include/linux/codetag.h
+> @@ -35,8 +35,13 @@ struct codetag_type_desc {
+>  	size_t tag_size;
+>  	void (*module_load)(struct codetag_type *cttype,
+>  			    struct codetag_module *cmod);
+> -	bool (*module_unload)(struct codetag_type *cttype,
+> +	void (*module_unload)(struct codetag_type *cttype,
+>  			      struct codetag_module *cmod);
+> +	void (*module_replaced)(struct module *mod, struct module *new_mod);
+> +	bool (*needs_section_mem)(struct module *mod, unsigned long size);
+> +	void *(*alloc_section_mem)(struct module *mod, unsigned long size,
+> +				   unsigned int prepend, unsigned long align);
+> +	void (*free_section_mem)(struct module *mod, bool unused);
+>  };
+>  
+>  struct codetag_iterator {
+> @@ -71,11 +76,31 @@ struct codetag_type *
+>  codetag_register_type(const struct codetag_type_desc *desc);
+>  
+>  #if defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES)
+> +
+> +bool codetag_needs_module_section(struct module *mod, const char *name,
+> +				  unsigned long size);
+> +void *codetag_alloc_module_section(struct module *mod, const char *name,
+> +				   unsigned long size, unsigned int prepend,
+> +				   unsigned long align);
+> +void codetag_free_module_sections(struct module *mod);
+> +void codetag_module_replaced(struct module *mod, struct module *new_mod);
+>  void codetag_load_module(struct module *mod);
+> -bool codetag_unload_module(struct module *mod);
+> -#else
+> +void codetag_unload_module(struct module *mod);
+> +
+> +#else /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+> +
+> +static inline bool
+> +codetag_needs_module_section(struct module *mod, const char *name,
+> +			     unsigned long size) { return false; }
+> +static inline void *
+> +codetag_alloc_module_section(struct module *mod, const char *name,
+> +			     unsigned long size, unsigned int prepend,
+> +			     unsigned long align) { return NULL; }
+> +static inline void codetag_free_module_sections(struct module *mod) {}
+> +static inline void codetag_module_replaced(struct module *mod, struct module *new_mod) {}
+>  static inline void codetag_load_module(struct module *mod) {}
+> -static inline bool codetag_unload_module(struct module *mod) { return true; }
+> -#endif
+> +static inline void codetag_unload_module(struct module *mod) {}
+> +
+> +#endif /* defined(CONFIG_CODE_TAGGING) && defined(CONFIG_MODULES) */
+
+Maybe I'm missing something, but can't alloc_tag::module_unload() just copy
+the tags that cannot be freed somewhere outside of module sections and then
+free the module?
+
+The heavy lifting would be localized to alloc_tags rather than spread all
+over.
+
+-- 
+Sincerely yours,
+Mike.
 
