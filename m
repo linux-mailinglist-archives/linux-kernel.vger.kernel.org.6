@@ -1,113 +1,76 @@
-Return-Path: <linux-kernel+bounces-294477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D67958E2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:42:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346D8958E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7881C21DD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8568428563A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA2814A4DC;
-	Tue, 20 Aug 2024 18:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DA514B097;
+	Tue, 20 Aug 2024 18:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g11v2uMC"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3hXKug7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075A8145336
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 18:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC88148FEB;
+	Tue, 20 Aug 2024 18:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724179354; cv=none; b=cVDIOfddlQE24eAjQrskdJgartFcRNMIII/7kTi3zIlCNCyi0pTjOn2s9Oxp/Irz+kflECCIh5Fkmw+MEjzyXRxV1XuTHUVDU47PyxgT7wAoIOuxeXcwmsqW5sDT6gfjNm9IjH4RieFG9B1C4tVxwHKBk3/Heq5lQcZYsARDN3s=
+	t=1724179372; cv=none; b=dAa84HM+enuZJt1CKRY5PfMLSHaCAHB8EVB89IKUEncA8IhCc/r0jLmPDgsXcBi/jVctwKVuv4olSuR8NQp458xGdhX1w+RxGC4qYGs/JS8V1gLGNtqqa+bbukHVRP41YCJw0xb4rENl5+urDw4EdrKbkwkTwiEaC3st+gUP610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724179354; c=relaxed/simple;
-	bh=YPwnmjDLK+YVf0WyuqFgoPNXU4jhy1NiR/p0IqzQHyo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pBRaCvw6nCZH6RHS87N44+L6dZvXDZT9mAGbcbxHHOD59RRKyPCyY9RtRE0AU9dU8wObnTzGyDQYjFr7duRG1KwaL590Gh2XW6x1kzdru8DacDd9CCOliLbZYRhaTGHuK/Vuo8HkVr0NKTPTsRT273Mw/ar1XgF3nbWJOF1OCWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g11v2uMC; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso4533466a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724179352; x=1724784152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6qvU2I/kFY0fRRBFMo/OPhj2YEvUyZhHs3rYMJMfKI=;
-        b=g11v2uMCLTFcyTWyr+x8CQMDEdFhQ8d3FKI50+QGIPU7IZ8YD7HJFZ7pHwTZjKc+y+
-         RC8I2niVtex5MaGNBXf0tuc9/GsuAsDVP9dGKddUNzyh7HkP9Rd2W1usQQS7sIC9MGdC
-         W4Rae7oIoxkfEsSOU5fSjnttO10OqOox6yyAn3kFMKIlMZxjWg1uMwxQkeAQRAhAv6Cb
-         Z0FYGLDW15XbJYoTSwQQYZYuj88t9ARBMmIoG2TZRseapiCuGbb48Cb/FfmukJZ5/wfv
-         /twv6BiZxK0LdBvJc9zqaV21cVkHFwGlfJ4DEB9cSp+A9V3Lg+dZI4tcwIDBYDOGR30x
-         ZMgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724179352; x=1724784152;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d6qvU2I/kFY0fRRBFMo/OPhj2YEvUyZhHs3rYMJMfKI=;
-        b=TYzdmsDQKoE61wd7VIaaoie+2LeOzmD+fZYmK3jySTto4Khttqj1NL4e5G5BYKnsoV
-         qeW2m47rivHvICEO8ou8YO+8E69NUy+6a8U/IVmaXQq7QLXsVKzyR3v3rcFznnN7ac3F
-         FOWg+z8V5NLzsTIYmsYKepaizWaujeyZu4uZQYcg3O1Zwd6Vlfo3otetpuhlVIQJNOSN
-         3lUfH5gARFpAd0lBmZyR9C5pTV4EdeTSUvqSFzgWEdG2eTTEQudY02enKb+hpZOyxtF2
-         D0OnijaEcICVZySlpM31/1GBzDj5KO16uY70M3EHitd+NY7pEQRVTjcTP/wR9mz4voAL
-         aDog==
-X-Forwarded-Encrypted: i=1; AJvYcCV2euiBIFmwVUaiuQtk123yK//ClWW0SQWI58+scSgDwA38VVd7kbJ6O162/YmZOnlF7tgeHaEfQNRxpKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbwgmSpM+c7E2NIIkXHEAya1ygT9w3kDn7u5zodb7DJBKpUtdd
-	Id+0Fs1O6HY/0mz2uK+wzc+Fi7J7SUu/Z9LjaVUyrZf8aBdKte00GONns3/u
-X-Google-Smtp-Source: AGHT+IFxlJrjQAQKZg0A12JTqiKvjdykV//J1dgiLVqq1WbyaFiL56N6kPECxFc5tIIGDKmeX/UNoQ==
-X-Received: by 2002:a05:6a21:1788:b0:1c6:a57a:159c with SMTP id adf61e73a8af0-1cad81814e4mr388450637.52.1724179352220;
-        Tue, 20 Aug 2024 11:42:32 -0700 (PDT)
-Received: from embed-PC.. ([106.222.232.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae0e246sm8541159b3a.70.2024.08.20.11.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 11:42:31 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: tdavies@darkphysics.net,
-	philipp.g.hortmann@gmail.com,
-	garyrookard@fastmail.org,
-	linux-staging@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in rtl819x_translate_scan
-Date: Wed, 21 Aug 2024 00:12:16 +0530
-Message-Id: <20240820184216.45390-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724179372; c=relaxed/simple;
+	bh=Bu4c9AqD93+rYGRI4s9S5LuYTm/5wtsdqfTovtuNV1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeryDgc6zvbI+o2MEjD5p1cMYRbWpRng9+7H66EaL7/L8s6fGAAtHGt2C55tlI/rBnLbuhZwsZrpcGlKYxuOi5PMdzzD2owyJIQ9n0BonWG77OkYmAq5Hvrrzw3fwNktCZMnGndSV/c0eJ8eaHaFnGQ1JhTCOUz8smZXjFGIKQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3hXKug7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02970C4AF0E;
+	Tue, 20 Aug 2024 18:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724179370;
+	bh=Bu4c9AqD93+rYGRI4s9S5LuYTm/5wtsdqfTovtuNV1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t3hXKug7xsadqgVNVvvkeBIzhdEviDNhhcXFIKs5rt95v4dxGE6kk2d0QWIXJaT4T
+	 MRkRAvNfp41mrIIphsIr291EejkAXrU3qaDOWs5t0UVyYKLacnWR+RkPGc5Hdz7sxI
+	 2dY62zBRNw3DS/s/p1hbVxXhLEdR1+q39/2GIGh5iwtoZXNXVUYszbTfOtNpcpwZdR
+	 MtDpTw9zp2mAlTAY3A9i03Ue6fduZzFKvBEATiUs+rkpsynSPIfmRrNAQn49Bj6H9w
+	 Tt6LuokNzskLimrNibjgR800+LuoWrwMghLMIWgMS1qgQz+ReH/RaUa1Wt9jJ1dubF
+	 nLlRPX6O49CnQ==
+Date: Tue, 20 Aug 2024 19:42:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] nfc: pn533: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <20240820184246.GC2898@kernel.org>
+References: <ZsPw7+6vNoS651Cb@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsPw7+6vNoS651Cb@elsanto>
 
-Replace strcpy() with strscpy() in rtl819x_translate_scan() 
-function to ensure buffer safety.
+On Mon, Aug 19, 2024 at 07:27:11PM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Remove unnecessary flex-array member `data[]`, and with this fix
+> the following warnings:
+> 
+> drivers/nfc/pn533/usb.c:268:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/nfc/pn533/usb.c:275:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_wx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
-index fbd4ec824084..970b7fcb3f7e 100644
---- a/drivers/staging/rtl8192e/rtllib_wx.c
-+++ b/drivers/staging/rtl8192e/rtllib_wx.c
-@@ -61,7 +61,7 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
- 	iwe.cmd = SIOCGIWNAME;
- 	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
- 		if (network->mode & BIT(i)) {
--			strcpy(pname, rtllib_modes[i]);
-+			strscpy(pname, rtllib_modes[i], sizeof(pname));
- 			pname += strlen(rtllib_modes[i]);
- 		}
- 	}
---
-2.34.1
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
