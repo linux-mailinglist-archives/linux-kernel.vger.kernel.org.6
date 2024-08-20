@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-294395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE88958D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:23:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D09958D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5377C285BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:23:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693E5B21ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49B81C463A;
-	Tue, 20 Aug 2024 17:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LzvhdOeg"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3573C1BC080;
+	Tue, 20 Aug 2024 17:24:31 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C75E1C3F3C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6380B18C92C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 17:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174590; cv=none; b=Be5NwJtQuFC4G49dmTmwLN8mMzgQvSNFWcMu2D8f5f495P6XFdojln2Jhhg5EgVKsKOy+Qxo+/yskP6y70fMxhIXMaGO+C5AUbgBS19a7EKYzZCspFAGobRiJQR+hD1Bt6K+5D9Me1fZz2Zpnk5pu1ujbWwIUqk/25YiwhOy1b4=
+	t=1724174670; cv=none; b=rO/iYVF3Ge2d5S/8y0tEnuu/LKvdmHJk4ALmzDOERDVi8FNugsA5kVj2OmKLXrJpQWxPwKc6cWdmVmvi3cg0V52KHlJXqJAccAKCuyyA31g1CR8wj3uFoTbCNynZjlMKCIGCm/96H41Pp/L2jBwaiE1prtPKNvJUhvbEPwb2fkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174590; c=relaxed/simple;
-	bh=J/J+/+oGhoE+/tah11bxsaeUZE1I08hXwOLSwZwosUI=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Re/3mv4b7MZgs1BRRnmicknw8oNZ74fGS1exVDqov7dwm9wdx6PCdl4GnLRWclrVDRFoajsvYLTpKjrT/A3cM+Q0RLV8xChndOAOv/BPVki3JH4Tqraotu755A+kqa2q9XW+A7C1V+X8luVCwoZ9vYqFOV2K1e1I4P6FUZbUnlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LzvhdOeg; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-84310fb76f1so951518241.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 10:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724174587; x=1724779387; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jjiHfu5pkFzqUOsx+SOY2D+4odBwVmyecYJTsluInAs=;
-        b=LzvhdOeg4SfcgEc2zOatYBXkMsajX2m3lS+Hu1dONIi9/CmN17VU404HV2w9nNq+NX
-         1uSMv+2MSv2C4A8BPdxipvoP7s2qTcX7AQI9kDdt/pmhb72tawComUKZy1MN633uLNT8
-         mD9tB3LAWsX2hw/tInNhKzkiXatDRTQd4CnA0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724174587; x=1724779387;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jjiHfu5pkFzqUOsx+SOY2D+4odBwVmyecYJTsluInAs=;
-        b=uaGLzoEtQLxeh/F6UL9LAzZHvbn4hDsDmHKvFLccLON+l4g8x45o4FmWbXFJzZ9UE9
-         EMTslZRRoJlPAMpQoB5afvqTUmbUG0CQUjEPFmSMVXn4dKrkKMOOHqKm4qt2Ljqdps08
-         qYonc1FwECDoY/O8ZsOR9Tjo2wskeX+qLKGRmHJTmzCpXVoyejGmoKoL2NAdWrKX94Zs
-         E5qjBbv0Y241iFNRDOF4cHwetHHWI1etDaZqI1Ouyd2ocp8bPVaM2ld6rfXG6dGCfmI4
-         QQnWr9HiSynk6FA/tTdetZzQY1+/i6jtf32lUBTheKA/mGtrDJVHKMOU5mhpNtn50w4r
-         YJng==
-X-Forwarded-Encrypted: i=1; AJvYcCWH2d1huoK1SSRWILD4WwTnbgrLjNHPmjZI2NJ5xLwqyW0O1ds11BGafnPE33QW0LeIVR6via4kTmnVZpYXWnifhxABImG6Cr6O6dr1
-X-Gm-Message-State: AOJu0YytyN06eKwJmOzOX1SwIyTk0HmzwE/IRJwxMwliBhhP3IOnA4qi
-	GIrJBj7kYgOz+oroDhAxIuTX6dOjL1q2fzlQs5jrwOvE4OXlrOFqbEJxuJTDCOMftP8vEEtrxRZ
-	PtBT4xWPsak2QrlCsGTwBmKhrE6+IhfpuDaIg
-X-Google-Smtp-Source: AGHT+IGfqseqp4mRIKADD9bykOeA01y+4F/62kKEBLZLbbbLI1oVDw9K0JgFNuY/9j8342Q36vrpqnXZCv1APwGTLdw=
-X-Received: by 2002:a05:6102:f13:b0:493:d1c3:1aef with SMTP id
- ada2fe7eead31-4977990c46fmr12594753137.14.1724174586925; Tue, 20 Aug 2024
- 10:23:06 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Aug 2024 10:23:06 -0700
+	s=arc-20240116; t=1724174670; c=relaxed/simple;
+	bh=gTta4f3jaT+jWY0auhaD//hXnmuziWuUHy3TgHHYXUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dibwwKc7STegRfDxu596M5Wj+2ZBELPHJNMJisCZ/Qlswsp2bRR3k/EsV/FIFlnAhv6noY3n1Y6NC2INajslFJrTM1IMtwdNqITmryw1qkLOkdMyu8Awr5CvPqM87XFdx9//StP5WwesIRiF4rSSxNMqD8rAwEwBYEKlrCUJrm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WpGY54F2Sz9sSK;
+	Tue, 20 Aug 2024 19:24:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id EhOvV_YNy5du; Tue, 20 Aug 2024 19:24:25 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WpGY537Y7z9sSH;
+	Tue, 20 Aug 2024 19:24:25 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 555D48B779;
+	Tue, 20 Aug 2024 19:24:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Fciq5aS0IFe3; Tue, 20 Aug 2024 19:24:25 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.72])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E39AA8B763;
+	Tue, 20 Aug 2024 19:24:24 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 00/14] Reduce alignment constraint on STRICT_KERNEL_RWX and speed-up TLB misses on 8xx and 603
+Date: Tue, 20 Aug 2024 19:23:44 +0200
+Message-ID: <cover.1724173828.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAE-0n52FSUFictNQ9kotgFAZPYnJpy+3Ad__QeUN+EiJuBWGwQ@mail.gmail.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org> <20240819223834.2049862-6-swboyd@chromium.org>
- <ZsRs6d6uOMb4DqQQ@smile.fi.intel.com> <CAE-0n52O01UgrDT2=-JJpZj39BOJNyyQC4w_pgDUmKDmcN=8Yw@mail.gmail.com>
- <ZsTPeEsS1m4Y8imq@smile.fi.intel.com> <CAE-0n52FSUFictNQ9kotgFAZPYnJpy+3Ad__QeUN+EiJuBWGwQ@mail.gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 20 Aug 2024 10:23:06 -0700
-Message-ID: <CAE-0n50uOcCHHaw=opEY089ymPBER2H7QLtORFzD6ypwHEKUJw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/17] usb: typec: Add device managed typec_switch_register()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724174647; l=2698; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=gTta4f3jaT+jWY0auhaD//hXnmuziWuUHy3TgHHYXUg=; b=xC7dWx5C6HJGMCqgWXUtATxKUvFEOaQv/VtHA77ieLJUgUz1UbvI+S472+R14TnuWw/CpSgUk CVzgx3Kru4mBjSNVMlkQDPWVSh7zDDp/LhgkOUbPAF6POyiffaQveR0
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-Quoting Stephen Boyd (2024-08-20 10:19:48)
-> Quoting Andy Shevchenko (2024-08-20 10:16:40)
-> > On Tue, Aug 20, 2024 at 10:01:07AM -0700, Stephen Boyd wrote:
-> > > Quoting Andy Shevchenko (2024-08-20 03:16:09)
-> > > > On Mon, Aug 19, 2024 at 03:38:19PM -0700, Stephen Boyd wrote:
-> > > > > +     ptr = devres_alloc(devm_typec_switch_unregister, sizeof(*ptr), GFP_KERNEL);
-> > > > > +     if (!ptr)
-> > > > > +             return ERR_PTR(-ENOMEM);
-> > > > > +
-> > > > > +     switch_dev = typec_switch_register(parent ,desc);
-> >
-> > (Side note: wrong location of the white space)
->
-> Thanks.
->
-> >
-> > > > > +     if (!IS_ERR(switch_dev)) {
-> >
-> > (Side note: positive conditional is okay)
-> >
-> > > > > +             *ptr = switch_dev;
-> > > > > +             devres_add(parent, ptr);
-> > > > > +     } else {
-> > > > > +             devres_free(ptr);
-> > > > > +     }
-> > > >
-> > > > devm_add_action_or_reset() ?
-> > >
-> > > No. We don't want to call the 'action' devm_typec_switch_unregister()
-> > > when it fails because that would unregister a switch that has never been
-> > > registered.
-> >
-> > Hmm... With devm_add_action_or_reset() we first do things and then try to add
-> > them to the managed resources. In that case it won't be like you described.
-> >
-> > What do I miss?
-> >
->
-> I believe you've missed that this is a wrapper around struct device and
-> the error path is different (put_device() vs. device_unregister()).
+This series does mainly two things:
+- Remove the 8M alignment constraint on STRICT_KERNEL_RWX on 8xx to
+avoid wasting memory.
+- Speed-up TLB misses by duplicating kernel PGD entries into each
+task's PGDIRs to avoid the address comparison in TLB miss handler.
 
-Or you're suggesting devm_add_action_or_reset() after registering the
-switch? Sorry it wasn't clear to me.
+On 8xx, the address comparison takes a significant part of CPU cycles
+as it requires saving/restoring CR, and because a taken branch
+requires 2 cycles.
+On 603 it is less significant because CR is saved automatically and
+has to be restored anyway but it is still worth it.
+
+For ITLB misses:
+- Kernel PGD entries are setup for once during init, before creation
+of new PGDIRs.
+- Module PGD entries are setup also at init by preallocating page
+tables for a very few number of pages
+
+For DTLB misses:
+- Some handling is added in 8xx DATA TLB error interrupt and in
+603 DATA read and store TLB miss interrupts to copy missing PGD
+entries into child.
+
+The cost of that additional handling on error paths is worth the gain
+on hot TLB miss pathes.
+
+Because 8xx and 603 don't use leaf kernel pages at PGD level, there is
+no need to care about PGD entries cleanup, page tables are never freed.
+
+Christophe Leroy (14):
+  powerpc/8xx: Fix initial memory mapping
+  powerpc/8xx: Fix kernel vs user address comparison
+  powerpc/8xx: Copy kernel PGD entries into all PGDIRs
+  Revert "powerpc/8xx: Always pin kernel text TLB"
+  powerpc/8xx: Allow setting DATA alignment even with STRICT_KERNEL_RWX
+  powerpc/8xx: Reduce default size of module/execmem area
+  powerpc/8xx: Preallocate execmem page tables
+  powerpc/8xx: Inconditionally use task PGDIR in ITLB misses
+  powerpc/8xx: Inconditionally use task PGDIR in DTLB misses
+  powerpc/32s: Reduce default size of module/execmem area
+  powerpc/603: Copy kernel PGD entries into all PGDIRs and preallocate
+    execmem page tables
+  powerpc/603: Switch r0 and r3 in TLB miss handlers
+  powerpc/603: Inconditionally use task PGDIR in ITLB misses
+  powerpc/603: Inconditionally use task PGDIR in DTLB misses
+
+ arch/powerpc/Kconfig                         |  31 +++-
+ arch/powerpc/include/asm/book3s/32/pgtable.h |   3 +-
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h |   3 +-
+ arch/powerpc/include/asm/nohash/pgalloc.h    |   8 +-
+ arch/powerpc/kernel/head_8xx.S               |  78 +++++-----
+ arch/powerpc/kernel/head_book3s_32.S         | 144 +++++++++----------
+ arch/powerpc/mm/book3s32/mmu.c               |   2 +
+ arch/powerpc/mm/mem.c                        |  14 ++
+ arch/powerpc/mm/nohash/8xx.c                 |   9 +-
+ arch/powerpc/platforms/8xx/Kconfig           |   7 +
+ 10 files changed, 173 insertions(+), 126 deletions(-)
+
+-- 
+2.44.0
+
 
