@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-294576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD44D958F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D08A958F8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39723B21AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:13:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6360EB22210
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 21:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E258D1C579E;
-	Tue, 20 Aug 2024 21:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930D1BD023;
+	Tue, 20 Aug 2024 21:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fm0TUVRu"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b="gfjM65wv"
+Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com [136.143.188.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9C41BD023
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 21:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724188433; cv=none; b=sg4Lp3UVixhOTLRmIevAUdb/TfxuEPsd4ZfCKYFBWX20q1HdTptt3GvtiyyG3ApwB4G7fYUZEFBxJ3gvImJlqFdfqVvxFhEJfQx4Hm8pWZGdy64pGPZIF8ILhtP/epyEKI02/9yEXK2vw0k+WrHAx6kkoSboGnZhh9guAnBbYzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724188433; c=relaxed/simple;
-	bh=i4+1sMo/j3rHCjOJU20qLIIqTCnbIeNYA9x+rgF1IqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BwpQOlZyr59VdM6c6p+3Jy68//ansEATFOTOhSPlUjPKjnNDYipIdTtQQE8WXEFDPiOxz843Lt6vsiQQHwO/78GLElXW3F2Qb+1RnRkEtbPQM78GmdWzmeinDNLI2A0XxIyN/uvN86iRjrynMUgzk8Wnqia/zrsPIjgiukrkfOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fm0TUVRu; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bf90d52e79so20339216d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724188431; x=1724793231; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4+1sMo/j3rHCjOJU20qLIIqTCnbIeNYA9x+rgF1IqI=;
-        b=Fm0TUVRuPovpquyWTwkcu4Q6VWFCPpUrQW1+RioQC7kJ7V6pzmcyAf7GRwi8VCKwqF
-         XalcZHqBNNyD2dh65UQtopRnoRcosYG5lr1kmgDTyW6AGZblTr3fZNnVgU5bIYmS97Td
-         18F8j5q5FLc3ACRq4TDD3ui5Od2T9ksr1hA+Q6/ZNSpX91uo8OAmwo0GBBodwCE8DTJL
-         JFG3tbb0lHvKMQkp2f/kC+uNW1xwixz8rBvSNS123PndpTNt5Njzy9BwMhHe3xXHtHF/
-         g+0OKaYOHqIrrGvWzic0p7KUxyMxzJ+VsUKNETU7/ZEJ4hMBjfzKpVI3MY0M0k7DCHoy
-         /DTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724188431; x=1724793231;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i4+1sMo/j3rHCjOJU20qLIIqTCnbIeNYA9x+rgF1IqI=;
-        b=SGs3mFzjn5E7GoW3Q0ObizrYeRLs3SsJpkY0rbPQBBTtG4Ml6HIbyWB4+LWqV2wfDv
-         UrO0LmGV1/Mi+vYed6hgDfQI6Sp7GKT06fSjHdb08bgZre2d6Jb/WzFeJHoVBVjSGTX0
-         3qlqUPKk65CUbVTy5cCXBpCZN8RNMBhW+PO8e0qZ92kJZosCplt8Lz0BkzrVIfWWMn2V
-         KMo/Glo2nP8wjeLBK0/J11CK4zln2e2ai/v3z0g+vlR+6Gtxsf3JGMVm9UUuzg7L8EO1
-         yBO47qPOhn7HHCI02BCXZfSizufDXnFnM3otGTHldIOzZzjTvqG64DaRtpMbxXxTlfuP
-         icgg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4tCCMu2xaKmUpuuaH96gEWcllrX6uOLHVYXMoeD96v2xBolgHByTUMenB67yFbG+tq99yccldYEuReGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh6vqx2kpD4fJmym+ZVi0Gl/FmNKZNohsFt2Gud2wilOyTrCHd
-	K+BvJgfZC32JV8FrsaX7VCcYKB38XNv9Cf1/ZcnGQfs/yfF+rnQzsN9tX3/K3TlmzVpXDxmzHbU
-	mqcqDpjJAy1tLKsOTRFmxAyvabRU=
-X-Google-Smtp-Source: AGHT+IH5LhCqlcHaogryi3OZO09ag2TddBUFxoqxmseS7pQXzwm+Jyi+88iMYqUV1l9R1Y2dgvvRWwpJkm+8mjWrLIE=
-X-Received: by 2002:a05:6214:4602:b0:6bf:6604:c867 with SMTP id
- 6a1803df08f44-6c155d77ad4mr7442546d6.28.1724188430547; Tue, 20 Aug 2024
- 14:13:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300101C57A7;
+	Tue, 20 Aug 2024 21:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724188457; cv=pass; b=AHtkVMOLm202ow3KyWL/c5s6XOZK1MsGAAvUh7WqW5HvyLJMPx/8A591hQk+MXdLmAde55s0ZFOAefYecCRkBRtcHdUxhJZ3eE+6Y8Q0C3+KyUJtKITI+gmpUztcgNeCuiityeajPtXym3M6xZ6bJ8HHsdxAAKeXn8tAfY7o1k8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724188457; c=relaxed/simple;
+	bh=iQcZCIQuE7z+MWtObJKVOdi8N46uoOEHZoUaAeS2o5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N9UKhHiXxbHK3LdcImSq2w65AtRNWuwP0AI/vE/1W9SR8zA4LWNh9uRH/S6fiYwMLGbymPGMBDgaoms/TOmFpyERHyTYVx17nO5bjCyJbcEWPZKy7B7J8zKhKdw5/8LgpLPJM+HcwyihbL2RMv2Vvn9hBs/Sijfm43Ij2YzcWcE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz; spf=pass smtp.mailfrom=jevklidu.cz; dkim=pass (1024-bit key) header.d=jevklidu.cz header.i=petr@jevklidu.cz header.b=gfjM65wv; arc=pass smtp.client-ip=136.143.188.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jevklidu.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jevklidu.cz
+ARC-Seal: i=1; a=rsa-sha256; t=1724188442; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XgwUiGPDQfkbe7/DE86c/wlUPudOjaYrTgsQwmHvJP8W1kX0j+BfuXJB9uCSkH7dLgN9KUjbhgnhn1S0mcIIakKDG7n3lqNFYzMKpWNWoegoJKgsum4c4I4PaXJJ4OqP2qmSySDAu3/Bg48kWE5NJAKwpnJc3b0+F5YeQWDbaQo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724188442; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ELfzGSU85Ube/i21ISp5VK7kSe9amSr2lKEG2/Vg88Q=; 
+	b=AvaVi8ioUWKvYFBKSzbvBEiIRFIUzlMWTDRqdbB8RXtplHbcPMt0ZCBkyThQ3nBx0L98qra81TXMltVqKypAUXXewupbyZRpBPdIHEaI9jf1HtPxJB5Cf98YKcYgcGB7P1oxY27qdbrblyUnQF+/mpscHqRazKkc6KHnQvNnQAM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=jevklidu.cz;
+	spf=pass  smtp.mailfrom=petr@jevklidu.cz;
+	dmarc=pass header.from=<petr@jevklidu.cz>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724188442;
+	s=zoho; d=jevklidu.cz; i=petr@jevklidu.cz;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ELfzGSU85Ube/i21ISp5VK7kSe9amSr2lKEG2/Vg88Q=;
+	b=gfjM65wvvqAxR8k4L1ciKz1ZZUbT1MRfaVvxZcdd2EloJ8lm8nPTY+6K4HryPGw6
+	3FLGI/Bl/vxcVE8llS785UAggco7b+kQyWtdSW4vfH2u6jdVCtr+Lwgjh4Qrezy5tio
+	TDQ5UxZACk4zfL0IJ4jy8tBm3XXh/LF7Nw93+Aew=
+Received: by mx.zohomail.com with SMTPS id 1724188440687689.5836446683727;
+	Tue, 20 Aug 2024 14:14:00 -0700 (PDT)
+Message-ID: <7ec28d20-c729-496a-b8bf-2bf88bbb4d70@jevklidu.cz>
+Date: Tue, 20 Aug 2024 23:13:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
- <87msl9i4lw.fsf@yhuang6-desk2.ccr.corp.intel.com> <SJ0PR11MB5678BFAA984BEEBBFC2FC351C98C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <87ikvxhxfm.fsf@yhuang6-desk2.ccr.corp.intel.com> <SJ0PR11MB56784DD616B595FC707E5133C98D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB56784DD616B595FC707E5133C98D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 20 Aug 2024 17:13:39 -0400
-Message-ID: <CAKEwX=P8o+hLsdQw_xKymgteLXsBPfDf4kGVKdgE=PNj=b0cMw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: ACPI IRQ storm with 6.10
+To: Bjorn Helgaas <helgaas@kernel.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, przemyslaw.kitszel@intel.com,
+ intel-wired-lan@lists.osuosl.org, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20240820180952.GA217979@bhelgaas>
+Content-Language: cs-CZ
+From: Petr Valenta <petr@jevklidu.cz>
+In-Reply-To: <20240820180952.GA217979@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Mon, Aug 19, 2024 at 11:01=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Hi Ying,
->
-> I confirmed that in the case of usemem, all calls to [1] occur from the c=
-ode path in [3].
-> However, my takeaway from this is that the more reclaim that results in z=
-swap_store(),
-> for e.g., from mTHP folios, there is higher likelihood of overage recorde=
-d per-process in
-> current->memcg_nr_pages_over_high, which could potentially be causing eac=
-h
-> process to reclaim memory, even if it is possible that the swapout from a=
- few of
-> the 70 processes could have brought the parent cgroup under the limit.
 
-Yeah IIUC, the memory increase from zswap store happens
-immediately/synchronously (swap_writepage() -> zswap_store() ->
-obj_cgroup_charge_zswap()), before the memory saving kicks in. This is
-a non-issue for swap - the memory saving doesn't happen right away,
-but it also doesn't increase memory usage (well, as you pointed out,
-obj_cgroup_charge_zswap() doesn't even happen).
 
-And yes, this is compounded a) if you're in a high concurrency regime,
-where all tasks in the same cgroup, under memory pressure, all go into
-reclaim. and b) for larger folios, where we compress multiple pages
-before the saving happens. I wonder how bad the effect is tho - could
-you quantify the reclamation amount that happens per zswap store
-somehow with tracing magic?
+Dne 20. 08. 24 v 20:09 Bjorn Helgaas napsal(a):
+> [+to Petr, -cc Jesse, bouncing]
+> 
+> On Mon, Aug 19, 2024 at 07:23:42AM +0200, Jiri Slaby wrote:
+>> On 19. 08. 24, 6:50, Jiri Slaby wrote:
+>>> CC e1000e guys + Jesse (due to 75a3f93b5383) + Bjorn (due to b2c289415b2b)
+>>
+>> Bjorn,
+>>
+>> I am confused by these changes:
+>> ==========================================
+>> @@ -291,16 +288,13 @@ static int e1000_set_link_ksettings(struct net_device
+>> *net
+>> dev,
+>>           * duplex is forced.
+>>           */
+>>          if (cmd->base.eth_tp_mdix_ctrl) {
+>> -               if (hw->phy.media_type != e1000_media_type_copper) {
+>> -                       ret_val = -EOPNOTSUPP;
+>> -                       goto out;
+>> -               }
+>> +               if (hw->phy.media_type != e1000_media_type_copper)
+>> +                       return -EOPNOTSUPP;
+>>
+>>                  if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
+>>                      (cmd->base.autoneg != AUTONEG_ENABLE)) {
+>>                          e_err("forcing MDI/MDI-X state is not supported when
+>> lin
+>> k speed and/or duplex are forced\n");
+>> -                       ret_val = -EINVAL;
+>> -                       goto out;
+>> +                       return -EINVAL;
+>>                  }
+>>          }
+>>
+>> @@ -347,7 +341,6 @@ static int e1000_set_link_ksettings(struct net_device
+>> *netde
+>> v,
+>>          }
+>>
+>>   out:
+>> -       pm_runtime_put_sync(netdev->dev.parent);
+>>          clear_bit(__E1000_RESETTING, &adapter->state);
+>>          return ret_val;
+>>   }
+>> ==========================================
+>>
+>> So no more clear_bit(__E1000_RESETTING in the above fail paths. Is that
+>> intentional?
+> 
+> Not intentional.  Petr, do you have the ability to test the patch
+> below?  I'm not sure it's the correct fix, but it reverts the pieces
+> of b2c289415b2b that Jiri pointed out.
+> 
 
-Also, I wonder if there is a "charge delta" mechanism, where we
-directly uncharge by (page size - zswap object size), to avoid the
-temporary double charging... Sort of like what folio migration is
-doing now v.s what it used to do. Seems complicated - not even sure if
-it's possible TBH.
+I tested the patch below but it didn't help. After the first boot with 
+new kernel it looked promising as the irq storm only appeared for a few 
+seconds, but with subsequent reboots it was the same as without the patch.
 
->
-> Please do let me know if you have any other questions. Appreciate your fe=
-edback
-> and comments.
->
-> Thanks,
-> Kanchana
+To be sure, I also send the md5sum of ethtool.c after applying the patch:
+
+a25c003257538f16994b4d7c4260e894 ethtool.c
+
+> diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/net/ethernet/intel/e1000e/ethtool.c
+> index 9364bc2b4eb1..9db36ee71684 100644
+> --- a/drivers/net/ethernet/intel/e1000e/ethtool.c
+> +++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
+> @@ -280,7 +280,8 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
+>   	if (hw->phy.ops.check_reset_block &&
+>   	    hw->phy.ops.check_reset_block(hw)) {
+>   		e_err("Cannot change link characteristics when SoL/IDER is active.\n");
+> -		return -EINVAL;
+> +		ret_val = -EINVAL;
+> +		goto out;
+>   	}
+>   
+>   	/* MDI setting is only allowed when autoneg enabled because
+> @@ -288,13 +289,16 @@ static int e1000_set_link_ksettings(struct net_device *netdev,
+>   	 * duplex is forced.
+>   	 */
+>   	if (cmd->base.eth_tp_mdix_ctrl) {
+> -		if (hw->phy.media_type != e1000_media_type_copper)
+> -			return -EOPNOTSUPP;
+> +		if (hw->phy.media_type != e1000_media_type_copper) {
+> +			ret_val = -EOPNOTSUPP;
+> +			goto out;
+> +		}
+>   
+>   		if ((cmd->base.eth_tp_mdix_ctrl != ETH_TP_MDI_AUTO) &&
+>   		    (cmd->base.autoneg != AUTONEG_ENABLE)) {
+>   			e_err("forcing MDI/MDI-X state is not supported when link speed and/or duplex are forced\n");
+> -			return -EINVAL;
+> +			ret_val = -EINVAL;
+> +			goto out;
+>   		}
+>   	}
+>   
 
