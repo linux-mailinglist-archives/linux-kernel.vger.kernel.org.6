@@ -1,183 +1,232 @@
-Return-Path: <linux-kernel+bounces-294466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E271D958E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:30:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEBC958E12
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E1728517B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35571C21ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 18:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E77D149C55;
-	Tue, 20 Aug 2024 18:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11414D6E1;
+	Tue, 20 Aug 2024 18:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="WhzRiwtq"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XG/5LE3T"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849A28F0;
-	Tue, 20 Aug 2024 18:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD0614B94A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 18:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178640; cv=none; b=SX5AF+UT2WKqBXBgHRsFCnEN/lDaEAGkAdF2JkzWGoyWuDgURA9XyxUV0hOOdst87yN7ZeMdXnbzM/+sfmbkX2Nstrn2jbYXzuZG0okvwCBHJ8Kru43mUQha8snK7VqbKnpAkJHZLREc+dcEiqip6oryhEyl1OzKIr08iCiCX2U=
+	t=1724178697; cv=none; b=eHEhWbztSNeB6WQ0pnH7Fi148L8AlZ4O/Hpf2w7NkL56eWNQg6se0Xm8lhZK85wYlbZD1sbO+VyIIo8CtRZWj0YojuTcgfRRTbdSQVklUBnxhChhY0ic1nqPpCYs2uDtZozhovfKF8LwfCm/87dOivhykwZnfMwAxJoPaTntztc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178640; c=relaxed/simple;
-	bh=lyONSAiHnO9A/uyqc2x+1bYbhIG90BN4LG/4mceQZUM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q/wyBNdxNn/D0Wn9nCLV7O6zjxF0PhF3fKRFqXiaUmXar1/e5Bd4EZjKWhw+mHOCeiyo3JsG1b4Xd54Z+oE8C0agyBgzH+p8bCU1vRSKU70jXba0gnJgZ/UE+3kGA15sXjwgkRxlZe4R4uSoRC16slMonfIcg8mIXkpK5ocVYA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=WhzRiwtq; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1724178636; x=1724437836;
-	bh=0n/oSaJkqjOdH7gRxT0hT5ott8K5LJiZdcjWBrNUqNM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=WhzRiwtqoS4C6FaUcPPZ8IyWNnRtLxl5vmwaTnY7odY+cthgli2kZn19Q/MZ+GUDX
-	 q9RzuxhCIXzDfPRC3fSS4zgtC6S/jv4xW7uFXQ/EcRR0PuJ8J8GrE0CPZMFfdXeGpe
-	 +mlqKbfOeMNZyATSDD3ssTbL8nC+G8+qSXeyyS+v8LyccvVFTxx6z87FzTUVwtpBPg
-	 fOqQwODxsTtOGib9bLVtK4L8dvNavnuEtbafi6JXPPp36qGSgsM/TtVKjYmRkQ7+6w
-	 PDcfmu7CG5yeKr81qVwMDB2nZTOeOUvnyAKCtpS4ZLiCCx7WVIF5HHMrsrv/77HLxq
-	 gNc2LY3LSHIVA==
-Date: Tue, 20 Aug 2024 18:30:33 +0000
-To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Harry Austen <hpausten@protonmail.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 6/9] clk: clocking-wizard: add user clock monitor support
-Message-ID: <D3KYBAJXSWWV.3S8LKAX01TCAM@protonmail.com>
-In-Reply-To: <SA1PR12MB89477EFB7053170705AB6591818C2@SA1PR12MB8947.namprd12.prod.outlook.com>
-References: <20240803105702.9621-1-hpausten@protonmail.com> <20240803105702.9621-7-hpausten@protonmail.com> <SA1PR12MB89477EFB7053170705AB6591818C2@SA1PR12MB8947.namprd12.prod.outlook.com>
-Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 863b9df8a71802357742bf0467ff6b097a9960fe
+	s=arc-20240116; t=1724178697; c=relaxed/simple;
+	bh=XSYdjKiKvyThLATmIh9N2JQAPLRS7wiEijXbWwiDs/M=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BN3gZVO9cn+XayOX7rbNVywE3scuCXwkNCP4JtyB7tRwnoBtsI4jCKjRqMmJfwWvT2UqTvH2xYzoeWaWlUX4VhjLoTNRlyruDaoD/o5hn96I0h1pFuJ+mSX/9gwcw4VO/f9lYVdLL0JDtnNWErX2wZgY9QS++KoadYU6/ekAHT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XG/5LE3T; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a94478a4eso1183910966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 11:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724178693; x=1724783493; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C07kwkQPZHrXmRCk/7LVIjuwNmyBogh+obKLGkkmYFE=;
+        b=XG/5LE3T3o+gzqyCCzm34nba+qmCfXalrQDA360AoPJk3mlkvXoCh6/QfeZvip7m88
+         mjk3ucHDwb1pAgb+EPb5v+NwSsgFfp+LTToHWPRvGmwFGhvSKgH6uKsBqTSHIcq7ayfe
+         igGCVo7l+Anll1eM0oRtiUphZEDoR+Sfvkjr7iCAN4UCUx7MlAUSS1Ogur2VJ3W9YkXg
+         rtoaO1gBhVsVxBa3dMTKrMgQ7EwAJDPFJPhjFa5I97vK/G9xcmb35+CrJ9aJ/gqkTBWF
+         O6g9ox9cp3GKkztqS2IAN3YAPU5DLU1qODsl1PoGrL1fZ+bCdUMj0TPUOTv3TRdDIgx9
+         CLKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724178693; x=1724783493;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C07kwkQPZHrXmRCk/7LVIjuwNmyBogh+obKLGkkmYFE=;
+        b=cVFTMwYAi5T2wXjKpUVRdhWFAqLm/qvi31Z6qsBmAlXjnFXh25fP0XoBSmTVLIZLL6
+         XUGdpY03Qt5tXSomnzWibAI/eFY00NI7+wgP+oJPbO+YmOVDAVeFjhbJsw6s2JAWMMwl
+         JF6I19KXk4Z7SWhcnhY+jNjRclRtTZjwAU1lIdvahG1KBwSVq26g6YYF0z+YxBlCkMtv
+         rCehHM/IRIera4lkezXV8QzhzqsgR17AutTaCSd8vKpLsBax9AT4Jih9TTHNTv/07tcJ
+         d+BVd6uPAAEcDC4mp60R7nR/WtyneT1r98diHDviWguyAUzhJYpOshHY8W8gmgSUrYMg
+         s3rg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1cRZ4H3VYh/Md5dQyIfEnqMSut90LGodRSvpc9Hn2TncErfTuTsf0z/PSh36YXI8eYOWkwEQdISemFnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfrRJHSFY0yi2Jlkwz+j84WsmV1oA2LHYEakyGB/ZXmYjt7cKi
+	WUhjRM8rgDSsYeidhM5VvplQlkUQSDYkKeJg0GZm/SKPspN2iyAQvKhTeLaIP54=
+X-Google-Smtp-Source: AGHT+IGOs6VYvfV4LBlh3n6XPG9LIKhdxKViotPxcCB+fUrUkrU6+w914efXSB1ZJv8NT+vGMTojLg==
+X-Received: by 2002:a17:907:1b13:b0:a86:6a9a:d719 with SMTP id a640c23a62f3a-a866a9adcddmr29207866b.29.1724178693023;
+        Tue, 20 Aug 2024 11:31:33 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396940fsm796113566b.189.2024.08.20.11.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 11:31:32 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 20 Aug 2024 20:31:38 +0200
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
+Message-ID: <ZsThCh45-WX_TDmP@apocalypse>
+Mail-Followup-To: Andrew Lunn <andrew@lunn.ch>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+ <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
 
-On Mon Aug 19, 2024 at 1:39 PM BST, Datta, Shubhrajyoti wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> > -----Original Message-----
-...
-> >
-> > -static const struct versal_clk_data versal_data =3D {
-> > -       .is_versal      =3D true,
-> > +static const struct clk_wzrd_data version_6_0_data =3D {
-> > +       .is_versal              =3D false,
-> > +       .supports_monitor       =3D true,
-> >  };
->
-> The clocking wizard monitor support is a design choice.
-> This will enable it for all the designs.
+Hi Andrew,
 
-But the interrupt still has to be described in devicetree for the auxiliary=
-/UIO
-device to be registered. The interrupt is only used by the core for the clo=
-ck
-monitor functionality, so if that functionality is not built into the hardw=
-are,
-then the interrupt description should be omitted. Does that not sound sensi=
-ble
-to you?
-
->
-> >
-> > +static const struct clk_wzrd_data versal_data =3D {
-> > +       .is_versal              =3D true,
-> > +       .supports_monitor       =3D true,
-> > +};
->
->
-> Same here.
-
-Same reasoning as above.
-
-Thanks for the review!
-Harry
-
->
+On 17:13 Tue 20 Aug     , Andrew Lunn wrote:
+> > +static unsigned int txdelay = 35;
+> > +module_param(txdelay, uint, 0644);
+> 
+> Networking does not like module parameters.
+> 
+> This is also unused in this patch! So i suggest you just delete it.
+> 
 > > +
-> > +static void clk_wzrd_unregister_adev(void *_adev) {
-> > +       struct auxiliary_device *adev =3D _adev;
+> >  /* This structure is only used for MACB on SiFive FU540 devices */
+> >  struct sifive_fu540_macb_mgmt {
+> >  	void __iomem *reg;
+> > @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
+> >  	u32 val;
+> >  
+> >  	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
+> > -				  1, MACB_MDIO_TIMEOUT);
+> > +				  100, MACB_MDIO_TIMEOUT);
+> >  }
+>   
+> Please take this patch out of the series, and break it up. This is one
+> patch, with a good explanation why you need 1->100.
+> 
+> >  static int macb_mdio_read_c22(struct mii_bus *bus, int mii_id, int regnum)
+> > @@ -493,6 +496,19 @@ static int macb_mdio_write_c45(struct mii_bus *bus, int mii_id,
+> >  	return status;
+> >  }
+> >  
+> > +static int macb_mdio_reset(struct mii_bus *bus)
+> > +{
+> > +	struct macb *bp = bus->priv;
 > > +
-> > +       auxiliary_device_delete(adev);
-> > +       auxiliary_device_uninit(adev);
+> > +	if (bp->phy_reset_gpio) {
+> > +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 1);
+> > +		msleep(bp->phy_reset_ms);
+> > +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 0);
+> > +	}
+> > +
+> > +	return 0;
 > > +}
 > > +
-> > +static int clk_wzrd_setup_monitor(struct platform_device *pdev) {
-> > +       struct device *dev =3D &pdev->dev;
-> > +       const struct clk_wzrd_data *data =3D device_get_match_data(dev)=
-;
-> > +       struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
-> > +       struct auxiliary_device *adev =3D &clk_wzrd->adev;
-> > +       int ret;
-> > +
-> > +       if (!data || !data->supports_monitor)
-> > +               return 0;
-> > +
-> > +       adev->name =3D "clk-mon";
-> > +       adev->dev.parent =3D dev;
-> > +       adev->dev.platform_data =3D (__force void *)clk_wzrd->base;
-> > +
-> > +       ret =3D auxiliary_device_init(adev);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       ret =3D auxiliary_device_add(adev);
-> > +       if (ret) {
-> > +               auxiliary_device_uninit(adev);
-> > +               return ret;
-> > +       }
-> > +
-> > +       return devm_add_action_or_reset(dev, clk_wzrd_unregister_adev,
-> > +adev); }
-> > +
-> >  static int clk_wzrd_register_output_clocks(struct device *dev, int
-> > nr_outputs)  {
-> >         const char *clkout_name, *clk_name, *clk_mul_name;
-> >         struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
-> >         u32 regl, regh, edge, regld, reghd, edged, div;
-> > -       const struct versal_clk_data *data;
-> > +       const struct clk_wzrd_data *data;
-> >         unsigned long flags =3D 0;
-> >         bool is_versal =3D false;
-> >         void __iomem *ctrl_reg;
-> > @@ -1170,6 +1216,10 @@ static int clk_wzrd_probe(struct platform_device
-> > *pdev)
-> >                 return -EINVAL;
-> >         }
-> >
-> > +       ret =3D clk_wzrd_setup_monitor(pdev);
-> > +       if (ret)
-> > +               return dev_err_probe(&pdev->dev, ret, "failed to setup
-> > + monitor\n");
-> > +
-> >         ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs)=
-;
-> >         if (ret)
-> >                 return ret;
-> > @@ -1204,7 +1254,7 @@ static const struct of_device_id clk_wzrd_ids[] =
-=3D {
-> >         { .compatible =3D "xlnx,versal-clk-wizard", .data =3D &versal_d=
-ata },
-> >         { .compatible =3D "xlnx,clocking-wizard"   },
-> >         { .compatible =3D "xlnx,clocking-wizard-v5.2"   },
-> > -       { .compatible =3D "xlnx,clocking-wizard-v6.0"  },
-> > +       { .compatible =3D "xlnx,clocking-wizard-v6.0", .data =3D
-> > + &version_6_0_data },
-> >         { },
-> >  };
-> >  MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
-> > --
-> > 2.46.0
-> >
+> >  static void macb_init_buffers(struct macb *bp)
+> >  {
+> >  	struct macb_queue *queue;
+> > @@ -969,6 +985,7 @@ static int macb_mii_init(struct macb *bp)
+> >  	bp->mii_bus->write = &macb_mdio_write_c22;
+> >  	bp->mii_bus->read_c45 = &macb_mdio_read_c45;
+> >  	bp->mii_bus->write_c45 = &macb_mdio_write_c45;
+> > +	bp->mii_bus->reset = &macb_mdio_reset;
+> 
+> This is one patch.
+> 
+> >  	snprintf(bp->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
+> >  		 bp->pdev->name, bp->pdev->id);
+> >  	bp->mii_bus->priv = bp;
+> > @@ -1640,6 +1657,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
+> >  
+> >  		macb_init_rx_ring(queue);
+> >  		queue_writel(queue, RBQP, queue->rx_ring_dma);
+> > +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> > +		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+> > +			macb_writel(bp, RBQPH,
+> > +				    upper_32_bits(queue->rx_ring_dma));
+> > +#endif
+> 
+> How does this affect a disto kernel? Do you actually need the #ifdef?
+> What does bp->hw_dma_cap contain when CONFIG_ARCH_DMA_ADDR_T_64BIT is
+> not defined?
+> 
+> Again, this should be a patch of its own, with a good commit message.
+> 
+> Interrupt coalescing should be a patch of its own, etc.
+> 
+>     Andrew
+>
 
+Thanks for the feedback, I agree on all the observations. Please do note
+however that, as mentioned in the cover letter, this patch is not intended
+to be included upstream and is provided just as a quick way for anyone
+interested in testing the RP1 functionality using the Ethernet MAC. 
+As such, this patch has not been polished nor splitted into manageable bits.
+Ii'm taknge note of your comments however and will come back to them in a
+future patch that deals specifically with macb.
 
+Many thanks,
+Andrea
+ 
+> ---
+> pw-bot: cr
 
