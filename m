@@ -1,252 +1,305 @@
-Return-Path: <linux-kernel+bounces-293434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D18E957F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:16:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4FA957F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F316E1F21608
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:16:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 866EBB21825
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0CB14EC50;
-	Tue, 20 Aug 2024 07:16:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B98BE56A;
-	Tue, 20 Aug 2024 07:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724138204; cv=none; b=fwNADmG8S1j1koDSB5q21SFXdcK6vuy4zwfHWyhDqJY5IP6ln+GGFAlT1iepzdBShQU9JvoRd2xESW+bc5gnwymRVIwcNxCOMKA/KcrsIZtCfkX+Gu6E0gR05efPNBWxIeeVypMaqmXTBF7vhnYOWE4ZFfPoqLd1BI71Ybm65/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724138204; c=relaxed/simple;
-	bh=Wy7PeXvS2DkMCINbXnH9uYYNn5l3PC7queX0oiopSBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gLySipSGB1OsqJAHBXV19BgTezKgzjmyMN+kQONJSnXNjR9zYVAt/PRkUZW4371QTG5KSLSuSlnBVE61+HWerifzpU2qqw9SAosYalKHWUz94dG3ik9/wrPliyKeodeWJK+fEb+tj+Ud2cTUpIrZxTtzKOX7m24q0R/EiTndCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71C60339;
-	Tue, 20 Aug 2024 00:17:06 -0700 (PDT)
-Received: from [10.163.86.112] (unknown [10.163.86.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EE643F73B;
-	Tue, 20 Aug 2024 00:16:29 -0700 (PDT)
-Message-ID: <c2ca1845-7eec-4119-b7b6-f6694e4a7799@arm.com>
-Date: Tue, 20 Aug 2024 12:46:22 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A229188CBC;
+	Tue, 20 Aug 2024 07:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EJF78yg0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB85D40BE5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724138210; cv=fail; b=E0CgxUMKg/QINRWcT4E4bJu2Fr6QB5XVPszBZcmwX+vubbTgIR5rRs2E9dVfbwjwqXjXe9qKQ8Yz38Y0ptbjnQlBuWfkmLfQfEg5ng2TMLQ3BtVSOvIjFdJRzk01gK8qfvXHjdFL4+/B3N5CCpi7y6gOdot4xitOzkutHxm88p8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724138210; c=relaxed/simple;
+	bh=Wba1Lyykoky6DkHsMXep94MC6bAlfoNl9xnHmgEDB1o=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=mIfW3rgsoL8C9NA4oyz/D9kA+OwgFqoI2TYJ4JtCvKPfN5Pdx3J/NOU7nyZdHH0s0wXafkdMs0WI55tSVuDhzC2eJN9TH0r5ETFJcBhSCuTPoKw3ymA3IV/OVQGPOKuNRWwZt/cvjZUgRizsNhkCZete0NYf41mfMHBkX21mF5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EJF78yg0; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724138208; x=1755674208;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Wba1Lyykoky6DkHsMXep94MC6bAlfoNl9xnHmgEDB1o=;
+  b=EJF78yg0xkEZFw+7CKJrTZJ/pFMF5p2Bp1Rx5CVM8OtSPBYkKx24jos/
+   4xiHWHNxEkrx3pkB70Mw3RLDuM6yUmZwgWA/cQ/aoDkh4FV62rwFhx3mS
+   ypnqEPgdChxz0b6kZdPHgOCvmrn4kfdun1FcI9AyzSatD4VINLXLj0XKB
+   OE0zWWouy9stDLLSTZLphxeeXnKJLKGUIFM+i+EolgXMYsrqT9A5gdchs
+   CIzDAM0lDQc9c7jFt+U6ZIbrtyIBWkhfmFu7I+/yxCb4hVgi1jQNeQ/J8
+   VI/0qsbu2T8uwUk8buJS6dlwekAOe+rJzQLL+V1ZZBhaGbJ0iBzZjkHXA
+   A==;
+X-CSE-ConnectionGUID: FjQDXAYFSPStpzQf7WGc1g==
+X-CSE-MsgGUID: xPtRz6hBQJOoYFdDpSAhpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33573467"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="33573467"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 00:16:36 -0700
+X-CSE-ConnectionGUID: a7x+iBsHSRuj+dyDNsXRQw==
+X-CSE-MsgGUID: eiPaACs9S7+XkDAw/HGcrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="91353655"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 00:16:36 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 00:16:36 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 00:16:36 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 00:16:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oFq5eqo9OFfV2u2q09eafzBaDCYb3iAXemH4sXDdczi19oUl6ePfvVqVJ6Is4oulu1+VB1hTIGrPKFJMxKWHvXE/oSay2aER0kXWoKP7R/PTJk3nvhQU1Ohk2ldhgXcnCL2mLA87l8+Yf5Iy/qN0eb85yQoRv89qTIiZAvxrItbi24Yf0ulRRWVNJFufuWbQ+etyM3rLmnO23QXVPxM9YpoN3MsvwpV1KKBTS7wWJRkmfeMPG4B/FbUSJTxgX72tNEb++Zc2gzSBMFBkIHnSsPxjK+IVuLpVgQu9/cvQglMSTlGSvsgYCFEec+EKm3aNrSe7gvhiFy3P16/ysoYRaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VlZCmtUnqD2RdbL9wG/KUSDpsMqe8sBe1FUKaIKjt3g=;
+ b=s7rt6wk32/xZwzjAuTJu1gEJPGnwf9A7M3rC6WHeoaSTSfpD2N/WpicCMUXqAGX7xY4/MMJ6wu8gE74uXQ7H0ghk7e/vdSto+wOq84ejWQOFYxbri2cf4NB/PqMUU6a+Y7WXEqe8FXOlyvENnnMiZaGqgLDw8G6UzTb2pIVaZW9N9yhmLJMH42I5M7zphVti0SDo8d0nzHafAjEa4pebjO9WcUTRLIWP23tIo+TY5pEQMH8U03Ls5P/A1SsXuikGw7DhHG5NWMoBgslp8N6kCMP7LFaeSqBOR++AITt4cIrJzMUN2Cqoh+ig+Smzl0VifzsxN1bgG+DhM00P4irPMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SA0PR11MB7159.namprd11.prod.outlook.com (2603:10b6:806:24b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 07:16:34 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 07:16:33 +0000
+Date: Tue, 20 Aug 2024 15:16:24 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, Max Ramanouski <max8rr8@gmail.com>, Alistair Popple
+	<apopple@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook
+	<kees@kernel.org>, <linux-mm@kvack.org>, <oliver.sang@intel.com>
+Subject: [tip:x86/urgent] [x86/kaslr]  dfb3911c36:
+ kernel_BUG_at_arch/x86/mm/physaddr.c
+Message-ID: <202408201529.498d4d4d-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI2PR01CA0048.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::17) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, david@redhat.com,
- willy@infradead.org, ryan.roberts@arm.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
- apopple@nvidia.com, osalvador@suse.de, baolin.wang@linux.alibaba.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
- kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
- mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20240809103129.365029-1-dev.jain@arm.com>
- <20240809103129.365029-2-dev.jain@arm.com>
- <87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <15dbe4ac-a036-4029-ba08-e12a236f448a@arm.com>
- <87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <95b72817-5444-4ced-998a-1cb90f42bf49@arm.com>
- <8734naurhm.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <9d84e4e8-ac54-4eb1-a113-3f32aea864c9@arm.com>
- <fe76204d-4cef-4f06-a5bc-e016a513f783@arm.com>
- <391d4f4f-e642-4c11-a36b-190874963f8a@arm.com>
- <c40de4d7-e37e-4d2f-bd7a-a2a5497a2419@arm.com>
- <87a5h9hud7.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <87a5h9hud7.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA0PR11MB7159:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28091e5f-2398-4302-154c-08dcc0e8053f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bEzSWnQmWxKHcmBbwDLLdzM+BmLgSVST5lXk8fZKLk43BRuPy5a/u8pDngVw?=
+ =?us-ascii?Q?Z1HfXkn2pU15gryMiy9yWi/yIs7/3VZq2jewpmj2/kwfZO9aCbx/akFbOBAt?=
+ =?us-ascii?Q?L0hv070i9wiC0T1Tx3HKfjrwfBsMYm44p9kT9Yp+SfpQSZQuYWMHIolnxRix?=
+ =?us-ascii?Q?zuzi/dTe54goJ6BE2gjgVYiEcQ0Ru30YpHFJUdaRcyANse+k/vpZkKVaiy5t?=
+ =?us-ascii?Q?BZnipl3QnTw6DJUpSsBV+QJmhiKRv2xbs37UXEYONTcQXOIgKs5b8DK8jVwR?=
+ =?us-ascii?Q?KbIAwZ/gH8HJfqmSjT3/QmKHnT1MV9ka7Y8owl9H0dQa2S6JxNoklRXmVEd+?=
+ =?us-ascii?Q?jsf5sn28s/eR4BR9ih7uJRkozchwEGS9GIoMukNDspI7emvyWykwIFgB9nNU?=
+ =?us-ascii?Q?wIEbPcvDQE5EyWeQk7CWVN6wLU6CmF9eSopmWkPER0bJ9jCsh66Bd+dQLhRO?=
+ =?us-ascii?Q?DpCLuW/mmun2Q3+fBJ1iNMBHHIK0tpI4tTCxE69R+m7PW5wUSh74wv5K13Np?=
+ =?us-ascii?Q?PZKcRGQqDZRcILH5j0mvV58SRck7ZqEwJHQm76nRfq2kmpmGOhjaeZPsTDE5?=
+ =?us-ascii?Q?CvCxVzAZOGv4vYX2x3fFy9DK96Vr9TrWgNadFKNV/QRsL9qLD6E7GbBdltoK?=
+ =?us-ascii?Q?R53/mv7OcekSVqS0mhu/qrX2mvJdCUiSluV4+iHU2dGJ7jxolTDvbdvGKIxx?=
+ =?us-ascii?Q?Rw7XNoZHyCVO07F5pMZO7rJo/dwWP3QwaYLGpFCG1DFJ68meDe1FdMFZ74o5?=
+ =?us-ascii?Q?nMZYAMgoRZQCuUA7CFYSdPYUNJCWHko1Zv5WkSdEH2a9bkz0o9lLyxho6gCE?=
+ =?us-ascii?Q?PfzeDpyUQxnB4IEUIvJ62lcoGJRnNtcJEyGEmrqPXWTjjiZcLl3U+YHCL1Nm?=
+ =?us-ascii?Q?ldp74mBt6JW6nOti3tbRFwYk0k8+TTvyXYWTEjdjOnZYcIcwixS/diYu8Ymt?=
+ =?us-ascii?Q?5BwAXfBgeGZMdIf+NzdmEk5AX6xoxC1VZI1PO179PnVamFVdpC9iewa7PZJw?=
+ =?us-ascii?Q?jmh3tLe1sYGIovnDcNNBlG1BrVtw5Z7l+rjOTRBvER1Qz48HzfyNphf8LZIX?=
+ =?us-ascii?Q?azJKzB6fX4IVgfw2PB3lfbaq1j/B7r5NJGEqMvENDcnKEC/6w0Rxe8tbPaUY?=
+ =?us-ascii?Q?hIy6+j1+24GfVe5hmQUE1+j1Sm0HQplOMmPOgD36m0tezD2tfXOykT4pL+sQ?=
+ =?us-ascii?Q?tYcj0dFjvBLMcBFR7uFy7ybX4J6igAijpbNmdb4fvS7iMNOBT3xVVTZSWj9c?=
+ =?us-ascii?Q?1F0E1ZSgNEIxOh8St5DW1AzR0fOsNm8BSBKmwgGSg8YWQjE9k0nxU5tOVXgR?=
+ =?us-ascii?Q?sNkT7YgSnNcE/VERKsdXLMQB?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?l16XP0O4+hKSOiopRIK35byKBHDodfWX7gU4gXtTJzX0lQy+ppswi+9jcWdo?=
+ =?us-ascii?Q?vlVOawmELvsFoFUQjKZ15gDL30SLdCusg7lXq91eNb2ey3sEUsYrSxmtbkzD?=
+ =?us-ascii?Q?E9+qpAvh3WqswJniKBghS0DkOFhnHb93Xvbb+Yh0ewWVTwtLN2fZ61Avd927?=
+ =?us-ascii?Q?qMZS5Tdu2ENcjajmDPrX08AYA7kXGbNUDtEOutA6I09R+61ae4liqpc/xQgW?=
+ =?us-ascii?Q?KHJKUBsg3T+nrWn3rhgY375GT2vTkrhWZsKSmdv86d2NpXlvnq+/Z4qVLMes?=
+ =?us-ascii?Q?Ah7o/UtH5/Xv+J/VewukY2EHrCoWvepCuZoMlXOh4abE0FJT1kJAtGnhMTKj?=
+ =?us-ascii?Q?2+mPuc8ao3EhkZg03k6khWpqQ1u9oXy2263lY/CUAL94UPjEQD+EisGI1Rv6?=
+ =?us-ascii?Q?Obio9/OR1bUUPfMBRihygdQGyJcI/EIazk9pTu3XuEEuOOcs1NEEyc5cqCIZ?=
+ =?us-ascii?Q?K8vQfhh3N96tPgfxJcaRlMCNCbuA6vaJUo677agvpKrb1pR64hUoJfOreVyl?=
+ =?us-ascii?Q?rTw+rXMjDk6wjT9DmdoX/LzOp6ntEuXDelkVnUdMaWtFHJb8JEb/ulzxIzfB?=
+ =?us-ascii?Q?+NH9OYt2szRdegCAP08abTSZ/qagFeVNr2cXIgnOg/y81PUB4LX7dKwmgx62?=
+ =?us-ascii?Q?ZixbL7V13qmKI4UwY+B3AKnExcLmpHY5Tta11nDWohI8OWPl0hR3IqGNbDxq?=
+ =?us-ascii?Q?oCKrPVa3egdEi87hcbhwdN7tUHTpJhzMyHWsX0Ql/y8XwgLV/F9JfaQINSZK?=
+ =?us-ascii?Q?48w0XuzTzTLaq0kBmDksLNdqVRWMkHTc48QhSXvAlEy7MFiF8vbJK7RPSRgn?=
+ =?us-ascii?Q?dLLgScMTw3nlg1/BCKn5vZeiwrgS8eoRMxNd4sBG1C4/QYgVv6sCQJJXobQM?=
+ =?us-ascii?Q?zHESFPqD2i+E5xpvI9ZFKsMlBwJzln2XXyngBzPNdS2o24TfvQZmh6OlsYGn?=
+ =?us-ascii?Q?DhaAP07ysglySwIfCxyoKBkgJj4UlkotNdQvM/UJ5SWDfxUjmcmsYatdW6R9?=
+ =?us-ascii?Q?fRqJIOYCfz4CWpTPjZtSnEAs2oYVuy7Um/JWJHTOxFHeAkxcwJDDrkW+chbz?=
+ =?us-ascii?Q?e0YFMGBQht1MkuvbRybN/n+eD/0w2hhksKOGXqbhbNUqjXczZpex+5lHqzJ5?=
+ =?us-ascii?Q?6GjW/IFGxVT9zP2wWDuCCuUEGd4FSaDzwqPJJbG1juwAz36bOAL8avtYw8cA?=
+ =?us-ascii?Q?d09l2Gqcgo885BlNNY9b3EZb2cjnnLzzyDyjd9y8oWH8PPOYs1nW6Zwm04mQ?=
+ =?us-ascii?Q?x1LaLORYwjsSNeiu/QKkqinl0qVW6Uvut7YGLoAsRQMrpvp5Cdwxdcegq2hi?=
+ =?us-ascii?Q?nRbLEqEWk5B5P6byf9UFjDVkMkXk//6stwaHG6Lj7cxw+hWtVwgY/VPGHAJ0?=
+ =?us-ascii?Q?vAQryl1s1xEwS6Jz9MZ5779UZxbmMnHNi57GTPnN01lMQTfirDvQ6IxySyvq?=
+ =?us-ascii?Q?tDCAKpixSaB/RDn2NXQ17mWzOvA1SpFYeI5HoYFM/xm/GEkg4DgE0Ci8g9NC?=
+ =?us-ascii?Q?VObN+7FqatIz0QqRjaan9EqYA/RgivklMjofVsZcCnInJ2xmNu4Mz7kDSxKw?=
+ =?us-ascii?Q?wDIRWpubHasdOVP+tTBOPFR+dk5cHOUnI/GGRefFliBvHEkHLvRGPIdELh+M?=
+ =?us-ascii?Q?BQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28091e5f-2398-4302-154c-08dcc0e8053f
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 07:16:33.5743
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PJB2RY4L6urW5syAeqv/bAZFsG8sIPvXqf2Wqsx4NLHcVWUhvo/hPjXBToe1nQpcl8mo+/c9jiE6k6HBnZt9Fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB7159
+X-OriginatorOrg: intel.com
 
 
-On 8/19/24 12:28, Huang, Ying wrote:
-> Dev Jain <dev.jain@arm.com> writes:
->
->> On 8/13/24 12:52, Dev Jain wrote:
->>> On 8/13/24 10:30, Dev Jain wrote:
->>>> On 8/12/24 17:38, Dev Jain wrote:
->>>>> On 8/12/24 13:01, Huang, Ying wrote:
->>>>>> Dev Jain <dev.jain@arm.com> writes:
->>>>>>
->>>>>>> On 8/12/24 11:45, Huang, Ying wrote:
->>>>>>>> Dev Jain <dev.jain@arm.com> writes:
->>>>>>>>
->>>>>>>>> On 8/12/24 11:04, Huang, Ying wrote:
->>>>>>>>>> Hi, Dev,
->>>>>>>>>>
->>>>>>>>>> Dev Jain <dev.jain@arm.com> writes:
->>>>>>>>>>
->>>>>>>>>>> As already being done in __migrate_folio(), wherein we
->>>>>>>>>>> backoff if the
->>>>>>>>>>> folio refcount is wrong, make this check during the
->>>>>>>>>>> unmapping phase, upon
->>>>>>>>>>> the failure of which, the original state of the PTEs will be
->>>>>>>>>>> restored and
->>>>>>>>>>> the folio lock will be dropped via migrate_folio_undo_src(),
->>>>>>>>>>> any racing
->>>>>>>>>>> thread will make progress and migration will be retried.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>>>>>>>> ---
->>>>>>>>>>>      mm/migrate.c | 9 +++++++++
->>>>>>>>>>>      1 file changed, 9 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>>>>>>>> index e7296c0fb5d5..477acf996951 100644
->>>>>>>>>>> --- a/mm/migrate.c
->>>>>>>>>>> +++ b/mm/migrate.c
->>>>>>>>>>> @@ -1250,6 +1250,15 @@ static int
->>>>>>>>>>> migrate_folio_unmap(new_folio_t get_new_folio,
->>>>>>>>>>>          }
->>>>>>>>>>>            if (!folio_mapped(src)) {
->>>>>>>>>>> +        /*
->>>>>>>>>>> +         * Someone may have changed the refcount and maybe
->>>>>>>>>>> sleeping
->>>>>>>>>>> +         * on the folio lock. In case of refcount mismatch,
->>>>>>>>>>> bail out,
->>>>>>>>>>> +         * let the system make progress and retry.
->>>>>>>>>>> +         */
->>>>>>>>>>> +        struct address_space *mapping = folio_mapping(src);
->>>>>>>>>>> +
->>>>>>>>>>> +        if (folio_ref_count(src) !=
->>>>>>>>>>> folio_expected_refs(mapping, src))
->>>>>>>>>>> +            goto out;
->>>>>>>>>>>              __migrate_folio_record(dst, old_page_state,
->>>>>>>>>>> anon_vma);
->>>>>>>>>>>              return MIGRATEPAGE_UNMAP;
->>>>>>>>>>>          }
->>>>>>>>>> Do you have some test results for this?  For example, after
->>>>>>>>>> applying the
->>>>>>>>>> patch, the migration success rate increased XX%, etc.
->>>>>>>>> I'll get back to you on this.
->>>>>>>>>
->>>>>>>>>> My understanding for this issue is that the migration success
->>>>>>>>>> rate can
->>>>>>>>>> increase if we undo all changes before retrying. This is the
->>>>>>>>>> current
->>>>>>>>>> behavior for sync migration, but not for async migration.  If
->>>>>>>>>> so, we can
->>>>>>>>>> use migrate_pages_sync() for async migration too to increase
->>>>>>>>>> success
->>>>>>>>>> rate?  Of course, we need to change the function name and
->>>>>>>>>> comments.
->>>>>>>>> As per my understanding, this is not the current behaviour for sync
->>>>>>>>> migration. After successful unmapping, we fail in
->>>>>>>>> migrate_folio_move()
->>>>>>>>> with -EAGAIN, we do not call undo src+dst (rendering the loop
->>>>>>>>> around
->>>>>>>>> migrate_folio_move() futile), we do not push the failed folio
->>>>>>>>> onto the
->>>>>>>>> ret_folios list, therefore, in _sync(), _batch() is never
->>>>>>>>> tried again.
->>>>>>>> In migrate_pages_sync(), migrate_pages_batch(,MIGRATE_ASYNC) will be
->>>>>>>> called first, if failed, the folio will be restored to the original
->>>>>>>> state (unlocked).  Then migrate_pages_batch(,_SYNC*) is called
->>>>>>>> again.
->>>>>>>> So, we unlock once.  If it's necessary, we can unlock more times via
->>>>>>>> another level of loop.
->>>>>>> Yes, that's my point. We need to undo src+dst and retry.
->>>>>> For sync migration, we undo src+dst and retry now, but only once.  You
->>>>>> have shown that more retrying increases success rate.
->>>>>>
->>>>>>> We will have
->>>>>>> to decide where we want this retrying to be; do we want to change the
->>>>>>> return value, end up in the while loop wrapped around _sync(),
->>>>>>> and retry
->>>>>>> there by adding another level of loop, or do we want to make use
->>>>>>> of the
->>>>>>> existing retry loops, one of which is wrapped around _unmap();
->>>>>>> the latter
->>>>>>> is my approach. The utility I see for the former approach is
->>>>>>> that, in case
->>>>>>> of a large number of page migrations (which should usually be
->>>>>>> the case),
->>>>>>> we are giving more time for the folio to get retried. The latter
->>>>>>> does not
->>>>>>> give much time and discards the folio if it did not succeed
->>>>>>> under 7 times.
->>>>>> Because it's a race, I guess that most folios will be migrated
->>>>>> successfully in the first pass.
->>>>>>
->>>>>> My concerns of your method are that it deal with just one case
->>>>>> specially.  While retrying after undoing all appears more general.
->>>>>
->>>>> Makes sense. Also, please ignore my "change the return value"
->>>>> thing, I got confused between unmap_folios, ret_folios, etc.
->>>>> Now I think I understood what the lists are doing :)
->>>>>
->>>>>> If it's really important to retry after undoing all, we can either
->>>>>> convert two retying loops of migrate_pages_batch() into one loop, or
->>>>>> remove retry loop in migrate_pages_batch() and retry in its caller
->>>>>> instead.
->>>>> And if I implemented this correctly, the following makes the test
->>>>> pass always:
->>>>> https://www.codedump.xyz/diff/Zrn7EdxzNXmXyNXe
->>>>
->>>> Okay, I did mess up with the implementation, leading to a false
->>>> positive. Let me try again :)
->>>
->>> Hopefully this should do the job:
->>> https://www.codedump.xyz/diff/ZrsIV8JSOPYx5V_u
->>>
->>> But the result is worse than the patch proposed; I rarely hit
->>> a 3 digit number of successes of move_pages(). But, on a
->>> base kernel without any changes, when I apply David's
->>> suggestion to change the test, if I choose 7 as the number
->>> of retries (= NR_MAX_MIGRATE_SYNC_RETRY) in the test, I
->>> can touch even 4 digits. I am puzzled.
->>> We can also try merging the for loops of unmap and move...
->>
->> If people are okay with this change, I guess I can send it as
->> a v2? I concur with your assessment that my initial approach
->> is solving a specific case; the above approach does give me
->> a slight improvement on arm64 and should be an improvement
->> in general, since it makes sense to defer retrying the failed folio
->> as much as we can.
-> We need to deal with something else before a formal v2,
->
-> - stats need to be fixed, please check result processing for the first
->    loop of migrate_pages_sync().
 
-Sorry, can you point out where do they need to be fixed exactly?
-The change I did is inside the while(!list_empty(from)) block,
-and there is no stat computation being done there already.
+Hello,
 
->
-> - Do we need something similar for async migration.
->
-> - Can we add another level of explicit loop for the second loop of
->    migrate_pages_sync()?  That is to improve code readability.  Or, add a
->    function to dot that?
->
-> - Is it good to remove retry loop in migrate_pages_batch()?  And do
->    retry in the caller?
+kernel test robot noticed "kernel_BUG_at_arch/x86/mm/physaddr.c" on:
 
-I am personally in favour of leaving the retry loop, and async
-migration, as it is. Since async version is basically minimal-effort
-migration, it won't make sense to "optimize" it, given the code churn
-it would create, including the change we will have to then do in
-"if (mode == MIGRATE_ASYNC) => migrate_pages_batch(ASYNC)" inside
-migrate_pages().
+commit: dfb3911c3692e45b027f13c7dca3230921533953 ("x86/kaslr: Expose and use the end of the physical memory address space")
+https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/urgent
 
-Sorry, what do you mean by "another level of explicit loop"?
+[test failed on linux-next/master 469f1bad3c1c6e268059f78c0eec7e9552b3894c]
 
->
-> --
-> Best Regards,
-> Huang, Ying
+in testcase: boot
+
+compiler: clang-18
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++--------------------------------------+------------+------------+
+|                                      | 2848ff28d1 | dfb3911c36 |
++--------------------------------------+------------+------------+
+| boot_successes                       | 21         | 0          |
+| boot_failures                        | 0          | 21         |
+| kernel_BUG_at_arch/x86/mm/physaddr.c | 0          | 21         |
+| PANIC:early_exception                | 0          | 21         |
+| RIP:__phys_addr                      | 0          | 21         |
++--------------------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202408201529.498d4d4d-lkp@intel.com
+
+
+[    0.010309][    T0] ------------[ cut here ]------------
+[    0.011020][    T0] kernel BUG at arch/x86/mm/physaddr.c:28!
+PANIC: early exception 0x06 IP 10:ffffffffb08e3511 error 0 cr2 0xffff888038627ff8
+[    0.012655][    T0] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc3-00003-gdfb3911c3692 #1
+[    0.013805][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[ 0.015203][ T0] RIP: 0010:__phys_addr (ld-temp.o:?) 
+[ 0.015856][ T0] Code: c3 48 3d 00 00 00 40 73 23 48 03 05 19 8b d4 02 48 89 c3 eb dd 48 c7 c7 d0 02 81 b3 48 89 de 4c 89 f2 e8 c2 26 45 00 eb bb 90 <0f> 0b 90 0f 0b cc cc cc cc cc cc cc cc cc cc 48 8b 05 59 a2 64 03
+All code
+========
+   0:	c3                   	ret
+   1:	48 3d 00 00 00 40    	cmp    $0x40000000,%rax
+   7:	73 23                	jae    0x2c
+   9:	48 03 05 19 8b d4 02 	add    0x2d48b19(%rip),%rax        # 0x2d48b29
+  10:	48 89 c3             	mov    %rax,%rbx
+  13:	eb dd                	jmp    0xfffffffffffffff2
+  15:	48 c7 c7 d0 02 81 b3 	mov    $0xffffffffb38102d0,%rdi
+  1c:	48 89 de             	mov    %rbx,%rsi
+  1f:	4c 89 f2             	mov    %r14,%rdx
+  22:	e8 c2 26 45 00       	call   0x4526e9
+  27:	eb bb                	jmp    0xffffffffffffffe4
+  29:	90                   	nop
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	90                   	nop
+  2d:	0f 0b                	ud2
+  2f:	cc                   	int3
+  30:	cc                   	int3
+  31:	cc                   	int3
+  32:	cc                   	int3
+  33:	cc                   	int3
+  34:	cc                   	int3
+  35:	cc                   	int3
+  36:	cc                   	int3
+  37:	cc                   	int3
+  38:	cc                   	int3
+  39:	48 8b 05 59 a2 64 03 	mov    0x364a259(%rip),%rax        # 0x364a299
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	90                   	nop
+   3:	0f 0b                	ud2
+   5:	cc                   	int3
+   6:	cc                   	int3
+   7:	cc                   	int3
+   8:	cc                   	int3
+   9:	cc                   	int3
+   a:	cc                   	int3
+   b:	cc                   	int3
+   c:	cc                   	int3
+   d:	cc                   	int3
+   e:	cc                   	int3
+   f:	48 8b 05 59 a2 64 03 	mov    0x364a259(%rip),%rax        # 0x364a26f
+[    0.018297][    T0] RSP: 0000:ffffffffb3603e80 EFLAGS: 00010002 ORIG_RAX: 0000000000000000
+[    0.019380][    T0] RAX: 0000000000000001 RBX: 0000010040000000 RCX: 0000000000000028
+[    0.020378][    T0] RDX: 000017562bdbd039 RSI: 0000000000000000 RDI: ffffa0d640000000
+[    0.021374][    T0] RBP: ffffffffb4808710 R08: 0000000000000000 R09: 0000000000000000
+[    0.022382][    T0] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffb3603ea8
+[    0.023182][    T0] R13: 0000175600000000 R14: 0000000000000028 R15: 0000000000000000
+[    0.023800][    T0] FS:  0000000000000000(0000) GS:ffffffffb362f000(0000) knlGS:0000000000000000
+[    0.024489][    T0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.024995][    T0] CR2: ffff888038627ff8 CR3: 00000000397c0000 CR4: 00000000000000b0
+[    0.025613][    T0] Call Trace:
+[    0.025863][    T0]  <TASK>
+[ 0.026089][ T0] ? early_fixup_exception (ld-temp.o:?) 
+[ 0.026502][ T0] ? early_idt_handler_common (arch/x86/kernel/head_64.S:542) 
+[ 0.026951][ T0] ? __phys_addr (ld-temp.o:?) 
+[ 0.027298][ T0] ? kernel_randomize_memory (ld-temp.o:?) 
+[ 0.027735][ T0] ? setup_arch (ld-temp.o:?) 
+[ 0.028082][ T0] ? start_kernel (init/main.c:927) 
+[ 0.028433][ T0] ? x86_64_start_reservations (ld-temp.o:?) 
+[ 0.028866][ T0] ? x86_64_start_kernel (ld-temp.o:?) 
+[ 0.029268][ T0] ? common_startup_64 (arch/x86/kernel/head_64.S:421) 
+[    0.029658][    T0]  </TASK>
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240820/202408201529.498d4d4d-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
