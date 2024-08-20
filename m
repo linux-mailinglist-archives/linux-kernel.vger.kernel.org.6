@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-293921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E34958687
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21938958682
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A6DB272DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07151F21C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE82194C76;
-	Tue, 20 Aug 2024 12:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4E0193082;
+	Tue, 20 Aug 2024 12:00:39 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19A18F2DF
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DAE18F2C0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724155235; cv=none; b=rmX/YtgHWm74DxMsIydfFxea7kWfpWHSfHMjyiB8lBSfsuvlAGBAobXkSwo3UUNYa+mQaxxHM2+aGWDNofUVv6o44p6E34gm6wI8lFGbBTinxRK7IqUX8aJteSl8Bh+yCKc7qydkfl2C4rBQbhF3Fa5GY+ts8ZQgFC5CALK3Jng=
+	t=1724155234; cv=none; b=ANP5OC4gL72PsZNFlEWVWADoczVp5XWJOAxK7zv1r1Hg8VnqDySG2N5SjsqePqSQGfKwURO/JK2L3AlC3MwtS9iutt+SGyza2Dj+rkeCGCPxaYQExpjc10n9MJ15i//1Z55XcENPyu/rWtDbXnq1N/n0o94Spd7o8R/mH+DPi8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724155235; c=relaxed/simple;
-	bh=mhTrDaiebGDY7kRj4LaTKvbwTASM29CFZ/GNVUSNDr8=;
+	s=arc-20240116; t=1724155234; c=relaxed/simple;
+	bh=813Z8f7kVRykMfTiH/TEg9N5o+7rH3yWTypXr1KkaKc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PKjKm5ucMvAixhIXAni5PrF/uNbIbmS/FUZxBNCvzCS/3yJr3i7Tww3EP1wCb7wcL6dI+WuTKiyY//nElOjPR+h0sqv9gtnO5fMAuPRYEEUek9repEIUHva9mDxpAQ7SIRtjoQiDRxaSZqwhBQPygGvwGVDUL89Q/DH9bc+xi6U=
+	 In-Reply-To:To:Cc; b=shJXcGDEd6CnJUYzCQ1rz0OCSBBbPgCHd9WkiaAsKF7rodu7LcqFjAjdqco8cbOl7RfhTL1K+BaWAMlK69xNp5pimh64lTQ9uHO/+TEUOi3XTnsFomsVgq2fP4X0iZvpbK9v5puroIcyNLSW2oINkMbkHhL1YbGk4iH4akFUDUY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNXG-0000ut-HR; Tue, 20 Aug 2024 14:00:26 +0200
+	id 1sgNXH-0000xK-Bb; Tue, 20 Aug 2024 14:00:27 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNXG-001lND-2P; Tue, 20 Aug 2024 14:00:26 +0200
+	id 1sgNXG-001lNo-Rl; Tue, 20 Aug 2024 14:00:26 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1sgNSR-00GnIQ-1J;
+	id 1sgNSR-00GnIQ-1P;
 	Tue, 20 Aug 2024 13:55:27 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 20 Aug 2024 13:55:38 +0200
-Subject: [PATCH 13/31] wifi: mwifiex: drop driver internal AP/STA limit
- counting
+Date: Tue, 20 Aug 2024 13:55:44 +0200
+Subject: [PATCH 19/31] wifi: mwifiex: add function to send command specific
+ to the adapter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-mwifiex-cleanup-v1-13-320d8de4a4b7@pengutronix.de>
+Message-Id: <20240820-mwifiex-cleanup-v1-19-320d8de4a4b7@pengutronix.de>
 References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 In-Reply-To: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
@@ -63,11 +63,11 @@ To: Brian Norris <briannorris@chromium.org>,
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=9634;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724154927; l=6556;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=mhTrDaiebGDY7kRj4LaTKvbwTASM29CFZ/GNVUSNDr8=;
- b=1rubbqlPRBBzrzsXGZXHRmC94TFO7HtsOYz0K/jx6jJzlGr9Eovbk67SqCp6lFrFwjcWqPc/a
- WYglYAAbeTHCTT4bi4GvFPDpGS2MNZL7FOvMp787q1kmmOAFr8hzQAQ
+ bh=813Z8f7kVRykMfTiH/TEg9N5o+7rH3yWTypXr1KkaKc=;
+ b=cilVeq2sFDwvN7oKYrqmQQ7Q2izS4hlBcXGp/Ajj4cY1PeDKPuB+WgRLxeENdqjBIXBq0UqT7
+ dFg4omWrDgaCNBueHMAY/QapUUi+CLQGbrt9bEhAvS8sX/+iT7H+7YX
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -75,301 +75,157 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The mwifiex driver maintains internal counters to check if there
-are still enough resources to change a virtual interface to a certain
-type. This seems to be a remnant of old times and can be removed.
-
-We can currently create three virtual interfaces (could be expanded to
-16) and each of the interfaces can be configured to any type without
-further restrictions. The limits we actually have are already correctly
-described in wiphy->iface_combinations.
+Current mwifiex_send_command() takes a struct mwifiex_private * as
+context pointer. There are several commands though that are specific
+to the whole adapter and not to priv *. For these commands introduce
+a mwifiex_adapter_send_command() function that takes the adapter as
+context pointer. Some users are updated to use this function, more
+will be converted in followup patches.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 149 ------------------------
- drivers/net/wireless/marvell/mwifiex/decl.h     |  10 --
- drivers/net/wireless/marvell/mwifiex/init.c     |   3 -
- drivers/net/wireless/marvell/mwifiex/main.h     |   2 -
- 4 files changed, 164 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 13 ++++---------
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c   | 14 ++++++++++++++
+ drivers/net/wireless/marvell/mwifiex/main.c     | 11 ++++-------
+ drivers/net/wireless/marvell/mwifiex/main.h     |  4 ++++
+ 4 files changed, 26 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index 715d98b7ff550..4c63b849e3809 100644
+index 4c63b849e3809..8efb3b444cabc 100644
 --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
 +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -963,117 +963,6 @@ mwifiex_init_new_priv_params(struct mwifiex_private *priv,
- 	return 0;
+@@ -562,7 +562,6 @@ int mwifiex_send_domain_info_cmd_fw(struct wiphy *wiphy)
+ 	struct ieee80211_supported_band *sband;
+ 	struct ieee80211_channel *ch;
+ 	struct mwifiex_adapter *adapter = mwifiex_cfg80211_get_adapter(wiphy);
+-	struct mwifiex_private *priv;
+ 	struct mwifiex_802_11d_domain_reg *domain_info = &adapter->domain_reg;
+ 
+ 	/* Set country code */
+@@ -620,9 +619,7 @@ int mwifiex_send_domain_info_cmd_fw(struct wiphy *wiphy)
+ 
+ 	domain_info->no_of_triplet = no_of_triplet;
+ 
+-	priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+-
+-	if (mwifiex_send_cmd(priv, HostCmd_CMD_802_11D_DOMAIN_INFO,
++	if (mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_802_11D_DOMAIN_INFO,
+ 			     HostCmd_ACT_GEN_SET, 0, NULL, false)) {
+ 		mwifiex_dbg(adapter, INFO,
+ 			    "11D: setting domain info in FW\n");
+@@ -1814,8 +1811,6 @@ static int
+ mwifiex_cfg80211_set_antenna(struct wiphy *wiphy, u32 tx_ant, u32 rx_ant)
+ {
+ 	struct mwifiex_adapter *adapter = mwifiex_cfg80211_get_adapter(wiphy);
+-	struct mwifiex_private *priv = mwifiex_get_priv(adapter,
+-							MWIFIEX_BSS_ROLE_ANY);
+ 	struct mwifiex_ds_ant_cfg ant_cfg;
+ 
+ 	if (!tx_ant || !rx_ant)
+@@ -1833,7 +1828,7 @@ mwifiex_cfg80211_set_antenna(struct wiphy *wiphy, u32 tx_ant, u32 rx_ant)
+ 			return -EOPNOTSUPP;
+ 
+ 		if ((tx_ant == BIT(adapter->number_of_antenna) - 1) &&
+-		    (priv->adapter->number_of_antenna > 1)) {
++		    (adapter->number_of_antenna > 1)) {
+ 			tx_ant = RF_ANTENNA_AUTO;
+ 			rx_ant = RF_ANTENNA_AUTO;
+ 		}
+@@ -1869,8 +1864,8 @@ mwifiex_cfg80211_set_antenna(struct wiphy *wiphy, u32 tx_ant, u32 rx_ant)
+ 	ant_cfg.tx_ant = tx_ant;
+ 	ant_cfg.rx_ant = rx_ant;
+ 
+-	return mwifiex_send_cmd(priv, HostCmd_CMD_RF_ANTENNA,
+-				HostCmd_ACT_GEN_SET, 0, &ant_cfg, true);
++	return mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_RF_ANTENNA,
++					HostCmd_ACT_GEN_SET, 0, &ant_cfg, true);
  }
  
--static bool
--is_vif_type_change_allowed(struct mwifiex_adapter *adapter,
--			   enum nl80211_iftype old_iftype,
--			   enum nl80211_iftype new_iftype)
--{
--	switch (old_iftype) {
--	case NL80211_IFTYPE_ADHOC:
--		switch (new_iftype) {
--		case NL80211_IFTYPE_STATION:
--			return true;
--		case NL80211_IFTYPE_P2P_CLIENT:
--		case NL80211_IFTYPE_P2P_GO:
--			return adapter->curr_iface_comb.p2p_intf !=
--			       adapter->iface_limit.p2p_intf;
--		case NL80211_IFTYPE_AP:
--			return adapter->curr_iface_comb.uap_intf !=
--			       adapter->iface_limit.uap_intf;
--		default:
--			return false;
--		}
--
--	case NL80211_IFTYPE_STATION:
--		switch (new_iftype) {
--		case NL80211_IFTYPE_ADHOC:
--			return true;
--		case NL80211_IFTYPE_P2P_CLIENT:
--		case NL80211_IFTYPE_P2P_GO:
--			return adapter->curr_iface_comb.p2p_intf !=
--			       adapter->iface_limit.p2p_intf;
--		case NL80211_IFTYPE_AP:
--			return adapter->curr_iface_comb.uap_intf !=
--			       adapter->iface_limit.uap_intf;
--		default:
--			return false;
--		}
--
--	case NL80211_IFTYPE_AP:
--		switch (new_iftype) {
--		case NL80211_IFTYPE_ADHOC:
--		case NL80211_IFTYPE_STATION:
--			return adapter->curr_iface_comb.sta_intf !=
--			       adapter->iface_limit.sta_intf;
--		case NL80211_IFTYPE_P2P_CLIENT:
--		case NL80211_IFTYPE_P2P_GO:
--			return adapter->curr_iface_comb.p2p_intf !=
--			       adapter->iface_limit.p2p_intf;
--		default:
--			return false;
--		}
--
--	case NL80211_IFTYPE_P2P_CLIENT:
--		switch (new_iftype) {
--		case NL80211_IFTYPE_ADHOC:
--		case NL80211_IFTYPE_STATION:
--			return true;
--		case NL80211_IFTYPE_P2P_GO:
--			return true;
--		case NL80211_IFTYPE_AP:
--			return adapter->curr_iface_comb.uap_intf !=
--			       adapter->iface_limit.uap_intf;
--		default:
--			return false;
--		}
--
--	case NL80211_IFTYPE_P2P_GO:
--		switch (new_iftype) {
--		case NL80211_IFTYPE_ADHOC:
--		case NL80211_IFTYPE_STATION:
--			return true;
--		case NL80211_IFTYPE_P2P_CLIENT:
--			return true;
--		case NL80211_IFTYPE_AP:
--			return adapter->curr_iface_comb.uap_intf !=
--			       adapter->iface_limit.uap_intf;
--		default:
--			return false;
--		}
--
--	default:
--		break;
--	}
--
--	return false;
--}
--
--static void
--update_vif_type_counter(struct mwifiex_adapter *adapter,
--			enum nl80211_iftype iftype,
--			int change)
--{
--	switch (iftype) {
--	case NL80211_IFTYPE_UNSPECIFIED:
--	case NL80211_IFTYPE_ADHOC:
--	case NL80211_IFTYPE_STATION:
--		adapter->curr_iface_comb.sta_intf += change;
--		break;
--	case NL80211_IFTYPE_AP:
--		adapter->curr_iface_comb.uap_intf += change;
--		break;
--	case NL80211_IFTYPE_P2P_CLIENT:
--	case NL80211_IFTYPE_P2P_GO:
--		adapter->curr_iface_comb.p2p_intf += change;
--		break;
--	default:
--		mwifiex_dbg(adapter, ERROR,
--			    "%s: Unsupported iftype passed: %d\n",
--			    __func__, iftype);
--		break;
--	}
--}
--
  static int
- mwifiex_change_vif_to_p2p(struct net_device *dev,
- 			  enum nl80211_iftype curr_iftype,
-@@ -1098,8 +987,6 @@ mwifiex_change_vif_to_p2p(struct net_device *dev,
- 	if (mwifiex_init_new_priv_params(priv, dev, type))
- 		return -1;
+diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+index 34e2dcb77c14d..445fca5c43a6c 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
++++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+@@ -670,6 +670,20 @@ int mwifiex_send_cmd(struct mwifiex_private *priv, u16 cmd_no,
+ 	return ret;
+ }
  
--	update_vif_type_counter(adapter, curr_iftype, -1);
--	update_vif_type_counter(adapter, type, +1);
- 	dev->ieee80211_ptr->iftype = type;
++/*
++ * This function prepares a command and send it to the firmware.
++ *
++ * This function is meant to be used when a command is not specific
++ * to a struct mwifiex_private *priv, but globally to the adapter.
++ */
++int mwifiex_adapter_send_cmd(struct mwifiex_adapter *adapter, u16 cmd_no,
++			     u16 cmd_action, u32 cmd_oid, void *data_buf, bool sync)
++{
++	struct mwifiex_private *priv = adapter->priv[0];
++
++	return mwifiex_send_cmd(priv, cmd_no, cmd_action, cmd_oid, data_buf, sync);
++}
++
+ /*
+  * This function queues a command to the command pending queue.
+  *
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+index c1f9b483cb5da..6f4815f83af84 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.c
++++ b/drivers/net/wireless/marvell/mwifiex/main.c
+@@ -215,7 +215,6 @@ static int mwifiex_process_rx(struct mwifiex_adapter *adapter)
  
- 	switch (type) {
-@@ -1156,8 +1043,6 @@ mwifiex_change_vif_to_sta_adhoc(struct net_device *dev,
- 	if (mwifiex_init_new_priv_params(priv, dev, type))
- 		return -1;
+ static void maybe_quirk_fw_disable_ds(struct mwifiex_adapter *adapter)
+ {
+-	struct mwifiex_private *priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_STA);
+ 	struct mwifiex_ver_ext ver_ext;
  
--	update_vif_type_counter(adapter, curr_iftype, -1);
--	update_vif_type_counter(adapter, type, +1);
- 	dev->ieee80211_ptr->iftype = type;
+ 	if (test_and_set_bit(MWIFIEX_IS_REQUESTING_FW_VEREXT, &adapter->work_flags))
+@@ -223,9 +222,9 @@ static void maybe_quirk_fw_disable_ds(struct mwifiex_adapter *adapter)
  
- 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
-@@ -1193,8 +1078,6 @@ mwifiex_change_vif_to_ap(struct net_device *dev,
- 	if (mwifiex_init_new_priv_params(priv, dev, type))
- 		return -1;
- 
--	update_vif_type_counter(adapter, curr_iftype, -1);
--	update_vif_type_counter(adapter, type, +1);
- 	dev->ieee80211_ptr->iftype = type;
- 
- 	if (mwifiex_send_cmd(priv, HostCmd_CMD_SET_BSS_MODE,
-@@ -1237,13 +1120,6 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
- 		return 0;
+ 	memset(&ver_ext, 0, sizeof(ver_ext));
+ 	ver_ext.version_str_sel = 1;
+-	if (mwifiex_send_cmd(priv, HostCmd_CMD_VERSION_EXT,
++	if (mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_VERSION_EXT,
+ 			     HostCmd_ACT_GEN_GET, 0, &ver_ext, false)) {
+-		mwifiex_dbg(priv->adapter, MSG,
++		mwifiex_dbg(adapter, MSG,
+ 			    "Checking hardware revision failed.\n");
  	}
+ }
+@@ -1054,7 +1053,6 @@ mwifiex_tx_timeout(struct net_device *dev, unsigned int txqueue)
+ void mwifiex_multi_chan_resync(struct mwifiex_adapter *adapter)
+ {
+ 	struct usb_card_rec *card = adapter->card;
+-	struct mwifiex_private *priv;
+ 	u16 tx_buf_size;
+ 	int i, ret;
  
--	if (!is_vif_type_change_allowed(priv->adapter, curr_iftype, type)) {
--		mwifiex_dbg(priv->adapter, ERROR,
--			    "%s: change from type %d to %d is not allowed\n",
--			    dev->name, curr_iftype, type);
--		return -EOPNOTSUPP;
--	}
--
- 	switch (curr_iftype) {
- 	case NL80211_IFTYPE_ADHOC:
- 		switch (type) {
-@@ -2988,13 +2864,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
- 	case NL80211_IFTYPE_UNSPECIFIED:
- 	case NL80211_IFTYPE_STATION:
- 	case NL80211_IFTYPE_ADHOC:
--		if (adapter->curr_iface_comb.sta_intf ==
--		    adapter->iface_limit.sta_intf) {
--			mwifiex_dbg(adapter, ERROR,
--				    "cannot create multiple sta/adhoc ifaces\n");
--			return ERR_PTR(-EINVAL);
--		}
--
- 		priv = mwifiex_get_unused_priv(adapter);
- 		if (!priv) {
- 			mwifiex_dbg(adapter, ERROR,
-@@ -3017,13 +2886,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+@@ -1068,9 +1066,8 @@ void mwifiex_multi_chan_resync(struct mwifiex_adapter *adapter)
  
- 		break;
- 	case NL80211_IFTYPE_AP:
--		if (adapter->curr_iface_comb.uap_intf ==
--		    adapter->iface_limit.uap_intf) {
--			mwifiex_dbg(adapter, ERROR,
--				    "cannot create multiple AP ifaces\n");
--			return ERR_PTR(-EINVAL);
--		}
--
- 		priv = mwifiex_get_unused_priv(adapter);
- 		if (!priv) {
- 			mwifiex_dbg(adapter, ERROR,
-@@ -3043,13 +2905,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
- 
- 		break;
- 	case NL80211_IFTYPE_P2P_CLIENT:
--		if (adapter->curr_iface_comb.p2p_intf ==
--		    adapter->iface_limit.p2p_intf) {
--			mwifiex_dbg(adapter, ERROR,
--				    "cannot create multiple P2P ifaces\n");
--			return ERR_PTR(-EINVAL);
--		}
--
- 		priv = mwifiex_get_unused_priv(adapter);
- 		if (!priv) {
- 			mwifiex_dbg(adapter, ERROR,
-@@ -3182,8 +3037,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
- 	mwifiex_dev_debugfs_init(priv);
- #endif
- 
--	update_vif_type_counter(adapter, type, +1);
--
- 	return &priv->wdev;
- 
- err_reg_netdev:
-@@ -3246,8 +3099,6 @@ int mwifiex_del_virtual_intf(struct wiphy *wiphy, struct wireless_dev *wdev)
- 	/* Clear the priv in adapter */
- 	priv->netdev = NULL;
- 
--	update_vif_type_counter(adapter, priv->bss_mode, -1);
--
- 	priv->bss_mode = NL80211_IFTYPE_UNSPECIFIED;
- 
- 	if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA ||
-diff --git a/drivers/net/wireless/marvell/mwifiex/decl.h b/drivers/net/wireless/marvell/mwifiex/decl.h
-index 84603f1e7f6e0..d64f75119014c 100644
---- a/drivers/net/wireless/marvell/mwifiex/decl.h
-+++ b/drivers/net/wireless/marvell/mwifiex/decl.h
-@@ -122,10 +122,6 @@
- /* Rate index for OFDM 0 */
- #define MWIFIEX_RATE_INDEX_OFDM0   4
- 
--#define MWIFIEX_MAX_STA_NUM		3
--#define MWIFIEX_MAX_UAP_NUM		3
--#define MWIFIEX_MAX_P2P_NUM		3
--
- #define MWIFIEX_A_BAND_START_FREQ	5000
- 
- /* SDIO Aggr data packet special info */
-@@ -267,12 +263,6 @@ struct mwifiex_histogram_data {
- 	atomic_t num_samples;
- };
- 
--struct mwifiex_iface_comb {
--	u8 sta_intf;
--	u8 uap_intf;
--	u8 p2p_intf;
--};
--
- struct mwifiex_radar_params {
- 	struct cfg80211_chan_def *chandef;
- 	u32 cac_time_ms;
-diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
-index 0259c9f88486b..df89c9dc44b75 100644
---- a/drivers/net/wireless/marvell/mwifiex/init.c
-+++ b/drivers/net/wireless/marvell/mwifiex/init.c
-@@ -307,9 +307,6 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
- 	adapter->key_api_major_ver = 0;
- 	adapter->key_api_minor_ver = 0;
- 	eth_broadcast_addr(adapter->perm_addr);
--	adapter->iface_limit.sta_intf = MWIFIEX_MAX_STA_NUM;
--	adapter->iface_limit.uap_intf = MWIFIEX_MAX_UAP_NUM;
--	adapter->iface_limit.p2p_intf = MWIFIEX_MAX_P2P_NUM;
- 	adapter->active_scan_triggered = false;
- 	timer_setup(&adapter->wakeup_timer, wakeup_timer_fn, 0);
- 	adapter->devdump_len = 0;
+ 	card->mc_resync_flag = false;
+ 	tx_buf_size = 0xffff;
+-	priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+-	ret = mwifiex_send_cmd(priv, HostCmd_CMD_RECONFIGURE_TX_BUFF,
+-			       HostCmd_ACT_GEN_SET, 0, &tx_buf_size, false);
++	ret = mwifiex_adapter_send_cmd(adapter, HostCmd_CMD_RECONFIGURE_TX_BUFF,
++				       HostCmd_ACT_GEN_SET, 0, &tx_buf_size, false);
+ 	if (ret)
+ 		mwifiex_dbg(adapter, ERROR,
+ 			    "send reconfig tx buf size cmd err\n");
 diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 39f9bb49f83ff..60bdc6329d4a0 100644
+index d3c04402a4f22..bd8bf1f5e2653 100644
 --- a/drivers/net/wireless/marvell/mwifiex/main.h
 +++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -856,8 +856,6 @@ struct mwifiex_if_ops {
- struct mwifiex_adapter {
- 	u8 iface_type;
- 	unsigned int debug_mask;
--	struct mwifiex_iface_comb iface_limit;
--	struct mwifiex_iface_comb curr_iface_comb;
- 	struct mwifiex_private *priv[MWIFIEX_MAX_BSS_NUM];
- 	u8 priv_num;
- 	const struct firmware *firmware;
+@@ -1086,6 +1086,10 @@ int mwifiex_complete_cmd(struct mwifiex_adapter *adapter,
+ int mwifiex_send_cmd(struct mwifiex_private *priv, u16 cmd_no,
+ 		     u16 cmd_action, u32 cmd_oid, void *data_buf, bool sync);
+ 
++int mwifiex_adapter_send_cmd(struct mwifiex_adapter *adapter, u16 cmd_no,
++			     u16 cmd_action, u32 cmd_oid, void *data_buf,
++			     bool sync);
++
+ void mwifiex_cmd_timeout_func(struct timer_list *t);
+ 
+ int mwifiex_get_debug_info(struct mwifiex_private *,
 
 -- 
 2.39.2
