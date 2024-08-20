@@ -1,100 +1,233 @@
-Return-Path: <linux-kernel+bounces-293839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DC0958593
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A33C958597
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E333F1C24460
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:20:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998451C24237
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F3A18DF9F;
-	Tue, 20 Aug 2024 11:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBTZoY1x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554D18E74E;
+	Tue, 20 Aug 2024 11:20:41 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3300718E375;
-	Tue, 20 Aug 2024 11:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E17155C80;
+	Tue, 20 Aug 2024 11:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152835; cv=none; b=kNrKgRwEBUoOiJZ8R0TJYw7OE5k2mzQ9eWMr6yIGh22O5OirjYh49sXPlJ5gLcqFSfjRlZVAy2QK4ISYALA9KzZyL63kuQLPRX/xkJvbv34nVmdH8AMUy23GzRi7WXd5hTEaLo6auW70hc34L2BXkIj5h7dgmFhk0WmtNf5h+Fc=
+	t=1724152840; cv=none; b=lrglayZsaUuW/7tB6SlHmBxCf8wzuyK/A9drTNv/yOk2jdb/Yw/uK4LnHTAHTjKv+cAxjCFB9zhQKNFght4tnPPJVNp2BnAbuSwM9skQL/lluRftvcwApzeoTPh4/6tlFtv9u0F6ZgMESyx/MVtirXe6SIi1N6d4oJYd6faMx+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152835; c=relaxed/simple;
-	bh=lHJ6+oDfDRSRF3HdZB+PSLXyMSQohkcnytX/69jL0Lc=;
+	s=arc-20240116; t=1724152840; c=relaxed/simple;
+	bh=Au1yckoSCUXUgrrdigjhuQ0Zp4yrP2RtTGZIxjsiu3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgNNLzIg7pr/r4WnOQhdrgWldJGiDDK6e5D3edtHGRK/1HXXbhvWWPkeiQ2HqU/z7H0ieG5cRqf11ashfh0nhbDI8k/NkfqWBcOrq2tYbAgXpjzyRMQI17plJ6dnSZtKkCxU9eDvdG8EAzfrurj4JgYA4eBd6IxuuiNuyl6lroU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBTZoY1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6970C4AF09;
-	Tue, 20 Aug 2024 11:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724152834;
-	bh=lHJ6+oDfDRSRF3HdZB+PSLXyMSQohkcnytX/69jL0Lc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RBTZoY1xQKLKD7jcmmkMKA2u2+GDBIV3A/ayuK0q7Xb9PSq/Krd+J+MrCjZsAJMS7
-	 dAu2u+fL8d+yL0twNL4wW5Q7fxLUzXkEVRjfk7wfU4Fdej77ZFretGPpfafJ8cUuZl
-	 gOUqqcOX/QK/U52CTQ9ipXIZh3tHuqvyiM9hoPSMgPE8/1ksO/rR5biKG+r+LLahng
-	 joOgiB8INIBAJOMnJVDZTNSMv4uza61QpmLQqAobvRy1cY8ewoccTc8ulnz6FGP94k
-	 7Bvn47s4VPwPDFuaWkBjtDoo+OJ/yxU8SFbOjl/rhFcSXHdVmYsXgGudxx8c23zvts
-	 9GS1G1Symi8PA==
-Date: Tue, 20 Aug 2024 12:20:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] Revert "spi: ppc4xx: handle
- irq_of_parse_and_map() errors"
-Message-ID: <f71823fb-4b9a-430a-92cc-0b9df446ce3f@sirena.org.uk>
-References: <20240819195029.2388397-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gYRFemVxGqWyczjfZxtdONun0D6ICuO6p6v1x5doZz6mc3cvCNy57v+YY2ns6+53ez9ATkLTvf5nViz5b/18vPGN1UZP3d3Fbu06eB9yIHK+LeDHzEAsca+rv1tGXXb87IsTo/wiZkMwVUZBE3TlZWRsunqfbs5IwwS7x0zY8k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37189d8e637so3225012f8f.3;
+        Tue, 20 Aug 2024 04:20:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724152837; x=1724757637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YqNonoW+AXT4DFqG0cqXTVS5fYaya45lKpoOnLhQQI=;
+        b=qSitCzkWnoYeho7x5swAUPc4Zy31XbPYXrDuGA370/BLuX2cL+Kk3SPLAo8VtOdujM
+         4WKOADcQ/hmI2w9C8GqNfJPNlOIa1TOfPk/W7xd3r/yZyViYRTiSUNaJ7CB2lIs6onEG
+         zEcVm9TTJd7TkhkEtVoYEVv1iT/XcP1rSqhjb9LoUp7eAZRKAGs/7oe/Ltg9X45I100j
+         rL2oI3+EEgnHtFoxKy4K+JNohjW98IGxbxEmzF5hCFz0oHAz74bMyxJGthV0OiZSqLfh
+         e5ASgxkiAKPKjFdyI6MQ5jmPh7O5AmPyf9etjz5wJazikrlqmkF7uWq14iKCIQO0uHVF
+         57cg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ii4E36dZiN+hcXiBGKm84R6X4irE+IJeEgplPHhU/fNYlgh0nQmtm/WeHs/oydgY0wOKRffAJhBZ1zmliQ==@vger.kernel.org, AJvYcCVZ+qu/1IrHEANxJ34cbFLnflya2QYTwNA8adgL7QY4DdmU4/LT+ANYBWya2jgRPdbWdYJW90LuEm9rZ9nU1HxfRw==@vger.kernel.org, AJvYcCW94vpjtpC6jI8euBrMoscUFe2Z2yd5TGSr3TY648+XmJ2uROUudPL+syo3UgFhnqQ8fSSaf4YFe0u5fOvA@vger.kernel.org, AJvYcCXZ9HIve6Pjjy3ip4lUAJv8XCQ596pr0+p0hytTkuqvBPeD17HsfRtNdCGSxQmhI0g1/7a8DUWTNkwO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSeb9sp3015KUNzg7jK5LC3aJ1JxpGFZYnTsYx3SAHXgoyDJIM
+	nOwPNQdAT9RD9mUbevd95+ZnFmxlPP/1WmQ2WmBoYSFbHBRtJMYm
+X-Google-Smtp-Source: AGHT+IHEr21C0aY1t6Xf8SNHDmzvuwEc3DtDIQzCLlmVHlaBE3Cae0i7JJpirzSyu0Kq3f+wv+GIkg==
+X-Received: by 2002:adf:e255:0:b0:371:9395:9c2d with SMTP id ffacd0b85a97d-371946a5ac4mr9567018f8f.55.1724152836890;
+        Tue, 20 Aug 2024 04:20:36 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-371898b8ad6sm12890025f8f.114.2024.08.20.04.20.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 04:20:36 -0700 (PDT)
+Date: Tue, 20 Aug 2024 13:20:33 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+	q@krzk-bin.smtp.subspace.kernel.org
+Cc: andersson@kernel.org, krzk+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com, 
+	quic_varada@quicinc.com, quic_srichara@quicinc.com
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
+Message-ID: <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
+References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
+ <20240820085517.435566-2-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rhZcKsJxdzR4Ma/z"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240819195029.2388397-1-andriy.shevchenko@linux.intel.com>
-X-Cookie: You are false data.
+In-Reply-To: <20240820085517.435566-2-quic_gokulsri@quicinc.com>
 
+On Tue, Aug 20, 2024 at 02:25:14PM +0530, Gokul Sriram Palanisamy wrote:
+> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> 
+> Add new binding document for hexagon based WCSS secure PIL remoteproc.
+> IPQ5332, IPQ9574 follows secure PIL remoteproc.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> ---
+>  .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 ++++++++++++++++++
+>  1 file changed, 125 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+> new file mode 100644
+> index 000000000000..c69401b6cec1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,wcss-sec-pil.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm WCSS Secure Peripheral Image Loader
 
---rhZcKsJxdzR4Ma/z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+...
 
-On Mon, Aug 19, 2024 at 10:50:29PM +0300, Andy Shevchenko wrote:
-> This reverts commit f1011ba20b83da3ee70dcb4a6d9d282a718916fa.
+> +
+> +maintainers:
+> +  - Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> +
+> +description:
+> +  WCSS Secure Peripheral Image Loader loads firmware and power up QDSP6
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
+What is WCSS? Don't add random acronyms without any explanation.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+> +  remoteproc's on the Qualcomm IPQ9574, IPQ5332 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq5332-wcss-sec-pil
+> +      - qcom,ipq9574-wcss-sec-pil
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: Firmware name for the Hexagon core
 
---rhZcKsJxdzR4Ma/z
-Content-Type: application/pgp-signature; name="signature.asc"
+No, look how other bindings are doing it.
 
------BEGIN PGP SIGNATURE-----
+It looks like you develop patches on some old kernel, so please start
+from scratch on newest kernel.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbEe/4ACgkQJNaLcl1U
-h9D0GQf9HGeed5R0Aj2k9VcNoS/Retxwv8y/tRt6Z0jueGUj/LnrM9zoCLo6bTfs
-iTEyRpNA9uvVvGBBcBqgJqCbUs9vbNlMeJJ9AgMc8it9Wnhaew7PCx2CAayrvEQx
-uMisz27zjLRJUOOr7DlKKR8s6XD8YvmM0L2jvk/VxKYojtrWvnCxRmNpz6qS1gYo
-PEj3FSli0suQaiyQCD+vZeGyabPNxZ8l9GsiOIM7UZEiuUF49zmPSJ9wcxr6/Gfb
-dYSGsFAIgf02cLBzcaBwkoTFcYvyP9XWulN9rMX6gkXu0PaLefT9D7mK1y4gKxOA
-iB5RZRQuuIS4ohbGI83EZ2C7TT1EaA==
-=EWKb
------END PGP SIGNATURE-----
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +
+> +  clocks:
+> +    items:
+> +      - description: IM SLEEP clock
 
---rhZcKsJxdzR4Ma/z--
+What is IM? Explain all acronyms.
+
+What is SLEEP?
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: im_sleep
+
+sleep? Are there different sleep clocks here?
+
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the remote processor
+> +    items:
+> +      - description: Shutdown Q6
+> +      - description: Stop Q6
+> +
+
+Do not introduce other order. First stop, then shutdown.
+
+> +  qcom,smem-state-names:
+> +    description:
+> +      Names of the states used by the AP to signal the remote processor
+> +    items:
+> +      - const: shutdown
+> +      - const: stop
+
+The same.
+
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Q6 reserved region
+> +
+> +  glink-edge:
+> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+> +    description:
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the Modem.
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - firmware-name
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - qcom,smem-states
+> +  - qcom,smem-state-names
+> +  - memory-region
+
+Keep the same order as in properties.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
+> +    q6v5_wcss: remoteproc@d100000 {
+
+Drop unused label.
+
+> +      compatible = "qcom,ipq5332-wcss-sec-pil";
+> +      reg = <0xd100000 0x4040>;
+> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
+> +      interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
+> +                            <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
+> +                            <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
+
+Best regards,
+Krzysztof
+
 
