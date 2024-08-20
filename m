@@ -1,301 +1,245 @@
-Return-Path: <linux-kernel+bounces-293700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A10E958342
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 630B3958346
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C21C24248
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87CF81C24337
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895C318C32F;
-	Tue, 20 Aug 2024 09:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270D718B473;
+	Tue, 20 Aug 2024 09:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNPAfwkz"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TH9hBdqM"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BA118B473
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD2714A0A8
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147646; cv=none; b=TG5c+TjHcsKMiOZC9QigGUWSV9yxzQVfuX6rpyc84Ymq7/tL/OQHcMor/xBRbk5os3a4Ssaij6Ow51r/S3T0c/SmaGIyfNAidtQ07Mhx8SWTXua8zj4/3ugfQUP4nJRPYATIl/kK6VLOl4uosgcrSxqwMgokkDb/ezWHgaHIsMI=
+	t=1724147675; cv=none; b=S9xSf06KqaXH53+mBf9+EAMMq1X5fMvpREO957pOetq3KRJlAC4Uc3j5YhEzw947hMj3wCoKAnFWEGJ08dQ2B7ZtiHisvpJyCeQaIUfDXaT7EO8ROBCpsKweErAeffpBakQhKo/PY3bRtCeTZ7dxuaU0NAR+e4hPpZcncEsujPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147646; c=relaxed/simple;
-	bh=AHk7e1MSmuZy2Ok9JgBf0xmandGH6Yf2Nwj2XWydPpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yz9ef48GNo5iLEAUDqBvBgnzPHa3EJBEYCnneeM7ow+Wbmj84mO4iRqIJDFp9a06GLS9v1EvaQaPxvPfuWcyrKrvWie681c6J5XfZwRDlTDWJ2EAGxmwMHPN2BmIoea/kEgFEmWgpcftO6XJ9J5m4L5POtpbM3viOcBb3VhE/zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNPAfwkz; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f89c9a1610so1868050e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724147643; x=1724752443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xfXTNi+9KRHgqOjspdInTAKK9BT9wdv5JXOCg5Q+FcQ=;
-        b=YNPAfwkzaoDEqoCJfZH37q0OiHo9JftH/TkyPPQ7PeYiJAq0T5yyG/HhlfU3eOxAZ5
-         oftxJKYocAd/DdwiLRvXyBTNN/WptV2nVO+zed5D7UVZz+IToF32wjAUOs1xZJFcT9iB
-         3X25qMP09Vn6/ulF/bZV5wT9TJZEHq6kmA/FD9txYwdAVn0VJQqtkhWRS2cuBuFWVBgY
-         lUVcNJ9fmLr4TLKzl0v2zaXXipKMX1PzCFE8ScR5CePl0iq4IXdq8VyNsHrYjxZaql94
-         4AIDXl3LEKYFLBbcs6IbWFupPBMvB32ZaV4TZ52JGdW+ZlovB3g/98S0HobTm/QTrBbx
-         gKvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724147643; x=1724752443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xfXTNi+9KRHgqOjspdInTAKK9BT9wdv5JXOCg5Q+FcQ=;
-        b=HlJodcAZmnb6zc878GICi/ZQHOxZHn3weRAn8b79GPjewA9LH63XCGL0gC6QZ0VPfv
-         y9PxmK+Ev4CkfqTF5vB+cRNSAsbTp8oq4CgH7C+ZeMJYJt9JXbAu+VEYj/a42GflIVh+
-         EMS5q9IzeubkzJaZitwQJ03e7IS8IswetPy4Ud5YvOVjYEvAU5VBs1rojwWN8DA9BYIg
-         sl6EUw473+visqyX1HR8NFQhvGeVOZOxShn80ryTKpSMclxZalcJgHDRF9w7DCV796uW
-         k3/0ZN9JCSb2aeDUpHvCdi28dWxXREne5zWW99h4ngzfeiO2Hjer+bXyFULRrg9uxBQN
-         FloQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqNTtwE/v4d94wCA7e9YOfzX9/QGqyE2a4FuA/A5SrGedIQ8Ol2ZvIavs2Ijv+I8+Bs2HRh8R/WPCmsM+Pys5n88bMzrbNpT0fdRAW
-X-Gm-Message-State: AOJu0YwxYfsw+CbfqYQv3kU+aF4QJazN/WqSxndqsNDNCcZn3cj8VaMO
-	MCQEXMXTMZ6ag5DpIuMjG5l367APNHBwJnV87LxUzboBRhw37Qy/6Xsjt6JFvcMM1T6MBiRXgUB
-	4O7Ljgde7RNJ8uSXw9/mgxvIuB9M=
-X-Google-Smtp-Source: AGHT+IF4ya3omDs6URedYhxTyQFSrIuUpYbw2wINvOku2uKp/ZyFSjecj3JE/wuOIBf8S90Fq1zoBUhT1t24rYk6cJQ=
-X-Received: by 2002:a05:6122:3293:b0:4ef:594a:a706 with SMTP id
- 71dfb90a1353d-4fc6cc4a3ddmr15822499e0c.14.1724147643459; Tue, 20 Aug 2024
- 02:54:03 -0700 (PDT)
+	s=arc-20240116; t=1724147675; c=relaxed/simple;
+	bh=rsAFr7H/IgzWK005p8Im9Bg0e7SRSmrhtoNnVFssAAs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=gQSqAnGIsLvPkkCZ3cIwvlQ7i6PBXoSC1Igcd2k2fXKjUlN44luoMUecfShTPYEeTZWoBYHtCifiMWWd/2QSq5DBYASTiSVo/JUVqh7NyTsyKOrV7Uc+SLWE2t8sXXGFnb4M870SyizDL3uO7KhEQekET0NPROLR4iDuwf2WFpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TH9hBdqM; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240820095430epoutp01da17e0ca17f37f85c6d9b8d03a104e43~tZyvCrHQZ0756907569epoutp012
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240820095430epoutp01da17e0ca17f37f85c6d9b8d03a104e43~tZyvCrHQZ0756907569epoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724147670;
+	bh=AFLXNiVwSlYr3aTYFcpsOpXcL/LT46RkPbGiq8ZtSDc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=TH9hBdqM1nsH9XeApvz8B11n2nJq9PifiE09HgBULRDUb6OVDW1p3L8QB6edHwnnL
+	 ToZNH4eVtxUEB5vOjO8iEOL4If6oH+xmBbR33Tz4ysCWcRuEmaslkHenzJMYR3SXyo
+	 tCcl9TXt8l7XjXH4wWmsnJDB1y99xACKdfPQhndc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240820095429epcas1p3074a30dfec74590d4890ae1aefad0ff2~tZyumP3CH0244302443epcas1p3I;
+	Tue, 20 Aug 2024 09:54:29 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.236]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wp4Yw3pqQz4x9Pp; Tue, 20 Aug
+	2024 09:54:28 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	14.46.19509.4D764C66; Tue, 20 Aug 2024 18:54:28 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240820095428epcas1p316c9a28149258d0681423e5c60b0f4d1~tZytR_cHK2288622886epcas1p3m;
+	Tue, 20 Aug 2024 09:54:28 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240820095428epsmtrp292e56f1500bda6727c3feccb317c3d30~tZytQ-FKh1423114231epsmtrp2Y;
+	Tue, 20 Aug 2024 09:54:28 +0000 (GMT)
+X-AuditID: b6c32a4c-10bff70000004c35-2d-66c467d4fb98
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.80.08456.3D764C66; Tue, 20 Aug 2024 18:54:27 +0900 (KST)
+Received: from [10.113.111.204] (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240820095427epsmtip1be4bb3580c5be0cdad9e09c1388fa0b6~tZys7v3Au2079020790epsmtip1M;
+	Tue, 20 Aug 2024 09:54:27 +0000 (GMT)
+Message-ID: <9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
+Subject: Re: [PATCH v6 4/4] clk: samsung: add top clock support for
+ ExynosAuto v920 SoC
+From: Kwanghoon Son <k.son@samsung.com>
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>, 'Krzysztof Kozlowski'
+	<krzk@kernel.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Chanwoo
+	Choi' <cw00.choi@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>, 'Stephen Boyd'
+	<sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>, 'Conor Dooley'
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 20 Aug 2024 18:54:27 +0900
+In-Reply-To: <087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000060cf79061fd24ca8@google.com> <CAJD7tkYWMkcFeXKA2S71PoZAubS+0R29G5qbhTSLLCcd7DfqkQ@mail.gmail.com>
- <CAMgjq7CaCEZN2hf5pPR4N6BLzUEiMAA7Ax+G_nv4CyHVukxCNw@mail.gmail.com>
- <CAGsJ_4x3ekOw-BKVOm7-D-+z+F1urn74DLxpjxdJDr=wOwHHAA@mail.gmail.com> <CAMgjq7D9tfW626dki+cC_SjHK-Z=KnPvXmWmmSQO6xsyxokrfQ@mail.gmail.com>
-In-Reply-To: <CAMgjq7D9tfW626dki+cC_SjHK-Z=KnPvXmWmmSQO6xsyxokrfQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 20 Aug 2024 21:53:52 +1200
-Message-ID: <CAGsJ_4x=DEmHdQP+NuoaQ4db4PzOmRabcoxhK4iEBHL547Skdg@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] WARNING in zswap_swapoff
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, 
-	syzbot <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
-	syzkaller-bugs@googlegroups.com, Chris Li <chrisl@kernel.org>, 
-	Ying <ying.huang@intel.com>, Ryan Roberts <ryan.roberts@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmru6V9CNpBuuPSVo8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5YNXsia8E3uYpr+xtYGxgv
+	SnYxcnJICJhI7F3YzdrFyMUhJLCHUaL533so5xOjxKIrJ5ggnG+MEk33m9hhWma1XWKGSOxl
+	lDje9oMZJCEk8J5RYlVLKojNK+Ah0X3sCBOILSwQKfF0wQ2wGjYBdYklbWvZQZpFBH4ySTza
+	dxxsH7PAUkaJSVeusYFUsQioSiy/tIcVxOYUsJJY19cAFmcW0JZYtvA12CRRAXmJhocnmCG2
+	CUqcnPmEBWSQhMAWDol1LeugbnWRONixlgnCFpZ4dXwLVFxK4vO7vWwQdrbE0Y8wdonE9VmL
+	WCFsY4n9SycD9XIALdaUWL9LH+IGPol3X3tYQcISArwSHW1CEKa8xK3OcohGUYkzTz+yQYQ9
+	JG6shIboDiaJy69vMU1glJ+F5JlZSB6YhbBrASPzKkap1ILi3PTUZMMCQ9281HJ4zCbn525i
+	BKdXLZ8djN/X/9U7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc1OJDjKbAYJ3ILCWa
+	nA9M8Hkl8YYmlgYmZkbGJhaGZoZK4rxnrpSlCgmkJ5akZqemFqQWwfQxcXBKNTA1ZKX8+WRX
+	fmnf7JjyL+Ky3WsUjy3zDr4Z//akWxmz7Es+J3Hjss/sNRcZjhjWvClY2MlbfOH8TI9Lu097
+	7I+J/fvqScmaeNU4Rht9KT7d31Ydz0T5gxuWCbDoeu8NKXddy2dzv9C1rvNUvMzrL66Hb19Z
+	XZrM7se2vEGzewaz08+ofw6FLY4dXr0s2Yz/fW7c7fx+Q0YlJ3SlTILKOZYU5ZjuXecC6noW
+	RJT/UFFxX8fvtutSNWPxA/4ysfX81y9a3nka86w2OD6hgOHDN/HnGzwupe/L5Npu/+jns28x
+	0gUpy58w3at8yrZua2Q9t2jGAb4XftV2DTvtNUQnv/j45mKDwo9PKbcnFJyeqsRSnJFoqMVc
+	VJwIAOXV1t44BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJTvdy+pE0g+d/LCwezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mq6+
+	vsNY0C9XMXvyHdYGxg8SXYycHBICJhKz2i4xdzFycQgJ7GaUeLT0JRtEQlSi43IjYxcjB5At
+	LHH4cDFEzVtGiaZX68FqeAU8JLqPHWECsYUFIiWeLrjBDGKzCahLLGlbyw7SICLwk0li66E2
+	sCJmgWWMEovvs4DYLAKqEssv7WEFsTkFrCTW9TWwQWzYwySxafcGVogGTYnW7b/ZIWxtiWUL
+	X4NtEBWQl2h4eIIZ4gpBiZMzn7BMYBSchaRlFpKWWUjKFjAyr2KUTC0ozk3PLTYsMMpLLdcr
+	TswtLs1L10vOz93ECI4lLa0djHtWfdA7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc
+	1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamE6LvuZamfaxYt2KLMFUg1y/fqM4
+	Xa9NCVvmB0sxXm9hTs6Z1s30OPHFS6EbAlO7JQOKdq8pYnppNHX7YvflGs8i/MNyKxfpz/iX
+	mzF5Lv+RsJf/3t2qrVoy6/3JQ99MxbbVfv29mNH3RF58QNrnxYk3H/R49965cOnwLqdcXxP7
+	vY+amb8f7bvy5Zrn8yPrBKY4uwuVRDQkyhx5Gms/M1Cpe8VqrdCoD9+O7Jy/pUysluvbjov9
+	W6fsyX81/6bWp491pgJLvec6r3zj6Kt/wvTrE//pFi3dLKfrKorU49ONC4XWrLaySNn/snLK
+	YSXuZOVLLbdYHgZkODzzfr/da5Xhzid5LEaJV3MFt6zaGKDEUpyRaKjFXFScCAC+KVHWFAMA
+	AA==
+X-CMS-MailID: 20240820095428epcas1p316c9a28149258d0681423e5c60b0f4d1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
+	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
+	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
+	<087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
 
-On Tue, Aug 20, 2024 at 9:29=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Tue, Aug 20, 2024 at 5:22=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
-ote:
-> >
-> > On Tue, Aug 20, 2024 at 8:47=E2=80=AFPM Kairui Song <ryncsn@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Aug 20, 2024 at 4:13=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
-e.com> wrote:
-> > > > On Fri, Aug 16, 2024 at 12:52=E2=80=AFPM syzbot
-> > > > <syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.com> wrote:
-> > > > >
-> > > > > Hello,
-> > > > >
-> > > > > syzbot found the following issue on:
-> > > > >
-> > > > > HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20=
-240816
-> > >
-> > > I can't find this commit, seems this commit is not in linux-next any =
-more?
-> > >
-> > > > > git tree:       linux-next
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12489=
-105980000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ba6=
-f3b22ee5467
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dce60292=
-50d7fd4d0476d
-> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils=
- for Debian) 2.40
-> > > > >
-> > > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > > >
-> > > > > Downloadable assets:
-> > > > > disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3c=
-ad3c/disk-367b5c3d.raw.xz
-> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813=
-c/vmlinux-367b5c3d.xz
-> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/6674cb=
-0709b1/bzImage-367b5c3d.xz
-> > > > >
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to =
-the commit:
-> > > > > Reported-by: syzbot+ce6029250d7fd4d0476d@syzkaller.appspotmail.co=
-m
-> > > > >
-> > > > > ------------[ cut here ]------------
-> > > > > WARNING: CPU: 0 PID: 11298 at mm/zswap.c:1700 zswap_swapoff+0x11b=
-/0x2b0 mm/zswap.c:1700
-> > > > > Modules linked in:
-> > > > > CPU: 0 UID: 0 PID: 11298 Comm: swapoff Not tainted 6.11.0-rc3-nex=
-t-20240816-syzkaller #0
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine=
-, BIOS Google 06/27/2024
-> > > > > RIP: 0010:zswap_swapoff+0x11b/0x2b0 mm/zswap.c:1700
-> > > > > Code: 74 05 e8 78 73 07 00 4b 83 7c 35 00 00 75 15 e8 1b bd 9e ff=
- 48 ff c5 49 83 c6 50 83 7c 24 0c 17 76 9b eb 24 e8 06 bd 9e ff 90 <0f> 0b =
-90 eb e5 48 8b 0c 24 80 e1 07 80 c1 03 38 c1 7c 90 48 8b 3c
-> > > > > RSP: 0018:ffffc9000302fa38 EFLAGS: 00010293
-> > > > > RAX: ffffffff81f4d66a RBX: dffffc0000000000 RCX: ffff88802c19bc00
-> > > > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888015986248
-> > > > > RBP: 0000000000000000 R08: ffffffff81f4d620 R09: 1ffffffff1d476ac
-> > > > > R10: dffffc0000000000 R11: fffffbfff1d476ad R12: dffffc0000000000
-> > > > > R13: ffff888015986200 R14: 0000000000000048 R15: 0000000000000002
-> > > > > FS:  00007f9e628a5380(0000) GS:ffff8880b9000000(0000) knlGS:00000=
-00000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 0000001b30f15ff8 CR3: 000000006c5f0000 CR4: 00000000003506f0
-> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > Call Trace:
-> > > > >  <TASK>
-> > > > >  __do_sys_swapoff mm/swapfile.c:2837 [inline]
-> > > > >  __se_sys_swapoff+0x4653/0x4cf0 mm/swapfile.c:2706
-> > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > > > RIP: 0033:0x7f9e629feb37
-> > > > > Code: 73 01 c3 48 8b 0d f1 52 0d 00 f7 d8 64 89 01 48 83 c8 ff c3=
- 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a8 00 00 00 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 8b 0d c1 52 0d 00 f7 d8 64 89 01 48
-> > > > > RSP: 002b:00007fff17734f68 EFLAGS: 00000246 ORIG_RAX: 00000000000=
-000a8
-> > > > > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9e629feb37
-> > > > > RDX: 00007f9e62a9e7e8 RSI: 00007f9e62b9beed RDI: 0000563090942a20
-> > > > > RBP: 0000563090942a20 R08: 0000000000000000 R09: 77872e07ed164f94
-> > > > > R10: 000000000000001f R11: 0000000000000246 R12: 00007fff17735188
-> > > > > R13: 00005630909422a0 R14: 0000563073724169 R15: 00007f9e62bdda80
-> > > > >  </TASK>
-> > > >
-> > > > I am hoping syzbot would find a reproducer and bisect this for us.
-> > > > Meanwhile, from a high-level it looks to me like we are missing a
-> > > > zswap_invalidate() call in some paths.
-> > > >
-> > > > If I have to guess, I would say it's related to the latest mTHP swa=
-p
-> > > > changes, but I am not following closely. Perhaps one of the followi=
-ng
-> > > > things happened:
-> > > >
-> > > > (1) We are not calling zswap_invalidate() in some invalidation path=
-s.
-> > > > It used to not be called for the cluster freeing path, so maybe we =
-end
-> > > > up with some order-0 swap entries in a cluster? or maybe there is a=
-n
-> > > > entirely new invalidation path that does not go through
-> > > > free_swap_slot() for order-0 entries?
-> > > >
-> > > > (2) Some higher order swap entries (i.e. a cluster) end up in zswap
-> > > > somehow. zswap_store() has a warning to cover that though. Maybe
-> > > > somehow some swap entries are allocated as a cluster, but then page=
-s
-> > > > are swapped out one-by-one as order-0 (which can go to zswap), but
-> > > > then we still free the swap entries as a cluster?
-> > >
-> > > Hi Yosry, thanks for the report.
-> > >
-> > > There are many mTHP related optimizations recently, for this problem =
-I
-> > > can reproduce this locally. Can confirm the problem is gone for me
-> > > after reverting:
-> > >
-> > > "mm: attempt to batch free swap entries for zap_pte_range()"
-> > >
-> > > Hi Barry,
-> > >
-> > > If a set of continuous slots are having the same value, they are
-> > > considered a mTHP and freed, bypassing the slot cache, and causing
-> > > zswap leak.
-> > > This didn't happen in put_swap_folio because that function is
-> > > expecting an actual mTHP folio behind the slots but
-> > > free_swap_and_cache_nr is simply walking the slots.
-> >
-> > Hi Kairui,
-> >
-> > I don't understand, if anyone has a folio backend, the code will
-> > go fallback to __try_to_reclaim_swap(),  it won't call
-> > swap_entry_range_free().
-> >
-> >      ci =3D lock_cluster_or_swap_info(si, offset);
-> >         if (!swap_is_last_map(si, offset, nr, &has_cache)) {
-> >                 unlock_cluster_or_swap_info(si, ci);
-> >                 goto fallback;
-> >         }
-> >         for (i =3D 0; i < nr; i++)
-> >                 WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
-> >         unlock_cluster_or_swap_info(si, ci);
-> >
-> >         if (!has_cache) {
-> >                 spin_lock(&si->lock);
-> >                 swap_entry_range_free(si, entry, nr);
-> >                 spin_unlock(&si->lock);
-> >         }
-> >         return has_cache;
-> >
-> > Am i missing something?
->
-> Hi Barry,
->
-> Per my understanding, ZSWAP invalidation could happen after the folio
-> is gone from the swap cache, especially in free_swap_and_cache_nr, it
-> will iterate and zap the swap slots without swapping them in.
-> So a slot doesn't have a folio backed doesn't mean it doesn't have ZSWAP =
-data.
+On Tue, 2024-08-20 at 10:50 +0900, sunyeal.hong wrote:
+> Hello Kwanghoon,
+>=20
+> > -----Original Message-----
+> > From: Kwanghoon Son <k.son=40samsung.com>
+> > Sent: Monday, August 19, 2024 6:32 PM
+> > To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Krzysztof Kozlowski
+> > <krzk=40kernel.org>; Sylwester Nawrocki <s.nawrocki=40samsung.com>; Cha=
+nwoo
+> > Choi <cw00.choi=40samsung.com>; Alim Akhtar <alim.akhtar=40samsung.com>=
+;
+> > Michael Turquette <mturquette=40baylibre.com>; Stephen Boyd
+> > <sboyd=40kernel.org>; Rob Herring <robh=40kernel.org>; Conor Dooley
+> > <conor+dt=40kernel.org>
+> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; l=
+inux-
+> > kernel=40vger.kernel.org
+> > Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
+> > ExynosAuto v920 SoC
+> >=20
+> > On Mon, 2024-08-19 at 14:24 +0900, Sunyeal Hong wrote:
+> > > This adds support for CMU_TOP which generates clocks for all the
+> > > function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
+> > > CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
+> > > and they will generate bus clocks.
+> > >=20
+> > > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > > ---
+> > >  drivers/clk/samsung/Makefile             =7C    1 +
+> > >  drivers/clk/samsung/clk-exynosautov920.c =7C 1173
+> > > ++++++++++++++++++++++
+> > >  2 files changed, 1174 insertions(+)
+> > >  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
+> > >=20
+> > > diff --git a/drivers/clk/samsung/Makefile
+> > > b/drivers/clk/samsung/Makefile index 3056944a5a54..f1ba48758c78 10064=
+4
+> > > --- a/drivers/clk/samsung/Makefile
+> > > +++ b/drivers/clk/samsung/Makefile
+> > > =40=40 -21,6 +21,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=
+=3D clk-
+> > exynos7.o
+> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
+> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
+> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
+> > > +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov920.o
+> > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
+> > >  obj-=24(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
+> > >  obj-=24(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-
+> > audss.o
+> > > diff --git a/drivers/clk/samsung/clk-exynosautov920.c
+> > > b/drivers/clk/samsung/clk-exynosautov920.c
+> > > new file mode 100644
+> > > index 000000000000..c17d25e3c9a0
+> > > --- /dev/null
+> > > +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> >=20
+> > =5Bsnip=5D
+> >=20
+> > > +=7D;
+> > > +
+> > > +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D=
+ =7B
+> > > +	.mux_clks		=3D peric0_mux_clks,
+> > > +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
+> > > +	.div_clks		=3D peric0_div_clks,
+> > > +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
+> > > +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
+> > > +	.clk_regs		=3D peric0_clk_regs,
+> > > +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
+> > > +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
+> >=20
+> > same question.
+> > Isn't it =22noc=22?
+> > https://lore.kernel.org/linux-samsung-
+> > soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
+> >=20
+> > In my case(autov9), if put wrong clk_name dmesg will show that,
+> > exynos_arm64_register_cmu: could not enable bus clock ...; err =3D -2
+> >=20
+> > Kwang.
+> >=20
+> >=20
+>=20
+> clk_name follows the guide document provided by hw. v9 is bus, but v920 u=
+ses noc.
 
-well. thanks! the original non-batched code always has a zswap_invalidate()
-in free_swap_slot().
-void free_swap_slot(swp_entry_t entry)
+What I mean,
 
-{
-        struct swap_slots_cache *cache;
-        /* Large folio swap slot is not covered. */
-        zswap_invalidate(entry);
-        ...
-}
+.clk_name		=3D =22dout_clkcmu_peric0_noc=22, // wrong
+.clk_name		=3D =22noc=22, // correct
 
-but the benefits of batched-free is huge(on phones, almost 100% PTEs have n=
-o
-swapcache as it uses sync io swap; on SSD cases, only a small part of PTEs =
-have
-folio backend in swapcache, so it will still benefit significantly
-from this batched-free).
-so let's try to find a proper fix for this before we have to do the
-below ugly (which will
-at least benefit phones who never use zswap):
+Because there is no clock-names =22dout_clkcmu_peric0_noc=22 in
+exynos/exynosautov920.dtsi.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f947f4dd31a9..c8c70a9bf6d6 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1498,6 +1498,9 @@ static bool __swap_entries_free(struct
-swap_info_struct *si,
-        unsigned char count;
-        int i;
+But if you tested your patch and working fine, ignore my comment.
 
-+       if (!zswap_never_enabled())
-+               return fallback;
-+
-        if (nr <=3D 1 || swap_count(data_race(si->swap_map[offset])) !=3D 1=
-)
-                goto fallback;
-        /* cross into another cluster */
+Kwang.
 
+>=20
+> Best Regards,
+> sunyeal
+>=20
 
-Thanks
-Barry
 
