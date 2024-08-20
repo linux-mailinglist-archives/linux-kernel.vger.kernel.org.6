@@ -1,188 +1,296 @@
-Return-Path: <linux-kernel+bounces-293539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2725195810E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE695958110
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 10:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C613A1F2544A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EB1E1C244C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1B418A926;
-	Tue, 20 Aug 2024 08:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9685D18A6D3;
+	Tue, 20 Aug 2024 08:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VG8ajf6B"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="igo8G/7k"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2056.outbound.protection.outlook.com [40.107.255.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9AB18A6BC
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142787; cv=none; b=LbJiKJCfXnXNfPzTVIOuv3dQniRxNLPfZAuDXzCq9Kt4s0egQEQMDxBsGPD61uhUC/io2sQajylC9tqLep71k8sAMLgEnDPuTle6I0IZC1WxJwx0A+VYyXeo8txuLlUxhS3EwHaERF+GczKGBmh2pppH4y9okEaCbPlGkM9vsaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142787; c=relaxed/simple;
-	bh=sSUYkM8HYmaJN7xqG+tfsAHvEYV5RAq6szVJelU+X+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5JRV1hap3wL3btXHOzAKEeC6t+Al7n02haYDVEeJFzB7KzesL3eNWsEoD6Ebth5ezTRoq074vSsBbbKSLYWFn2ZVMwS5nR7IjM1e8CElCnaJvk7d1KfQN8/ZkTlvcnZtP0Gxg3KylyyxcR8LcWpdLbegbRvpEicxPWldCS3DzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VG8ajf6B; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7d26c2297eso598942566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 01:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724142784; x=1724747584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XNQ9tyNfl4ljX/BPGLUOjjoGD0Ou+TIYM+qPExssLvc=;
-        b=VG8ajf6BuTNmkSG0citgtyRIslAki+3nxKaQreOE/2Jt+XtQq867Hbt6IZQKqYcZIy
-         Jah6u7gnrTVuJMlWiAlwcqZxMRsbpB8G9sGpIMHVAIwMhDn6Chc2+I4tonuf1y1MhNdL
-         F8BFC3GhlV619NSvDG4KxYAMFyyT5dW/57ES4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724142784; x=1724747584;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNQ9tyNfl4ljX/BPGLUOjjoGD0Ou+TIYM+qPExssLvc=;
-        b=fO105jgJ1oXtAVjdp+NJ9AVKyap+BnqtdkyIuS/YKHDV6ParLL3YS8L2s+E6uqCDSc
-         3it5dNS/rIpDlQ1z9NYGDOknSq8o9tcRlBqpsaG2fn1b4nCcU/6FIvC7fy1A511yEjXA
-         hlCDq1nV6PxXHy5gQeGqzkJIFPjfseXPvOsY4GdCeoUIkYFZISdfcD55MKhSasLmpH3v
-         zIPBYgh3TJImDjE7EyKqMqR75BHdhAtLsss9JdXe5WQs0sJ1RhpJ9bqW87UxN8fTHHkN
-         LyfElyZAVhoWwqDvXM7Jlr51yPfy9TcaN6uaSaZpCd2Mx7iFs19WgAvNql/zCr/7w5x9
-         /h0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLd27LFIYwR+q4WRgSmSDj4GaReEQ5/W1vrbcS9hZn3CZdmC2OwPIz4/VuuFo2kGXGpj6dKNJ1E2wn1RaKcI5cwtflqiLxU0BSAwX/
-X-Gm-Message-State: AOJu0Yz3S/I/H2sWciLEdkBQ3TtGcWLIs1HjUX4qkYGTihZMy+9dId9Y
-	UK8qROh9i6GycHs5vzhWgT2jlbbWluGfgwRY0uZnLuB5o75CNnJhYCVR+rDcMMY=
-X-Google-Smtp-Source: AGHT+IHdCu1gJlayHwi4drLhhfQxyfMUzMC+JYbFPtj9dlU1JF6GxmGI/OuqVO5LTmVnsfb9hkmppA==
-X-Received: by 2002:a17:907:97cf:b0:a6f:59dc:4ece with SMTP id a640c23a62f3a-a83928a4023mr845774466b.2.1724142783295;
-        Tue, 20 Aug 2024 01:33:03 -0700 (PDT)
-Received: from LQ3V64L9R2.home ([2a02:c7c:f016:fc00:3906:31c:255a:bf09])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83aeb6eb4dsm435559766b.35.2024.08.20.01.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 01:33:03 -0700 (PDT)
-Date: Tue, 20 Aug 2024 09:33:01 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Shay Drori <shayd@nvidia.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Shailend Chand <shailend@google.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Ziwei Xiao <ziweixiao@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC net-next 0/6] Cleanup IRQ affinity checks in several drivers
-Message-ID: <ZsRUvcOKLnTw16wD@LQ3V64L9R2.home>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Shay Drori <shayd@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Shailend Chand <shailend@google.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Ziwei Xiao <ziweixiao@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-References: <20240813171710.599d3f01@kernel.org>
- <ZrxZaHGDTO3ohHFH@LQ3V64L9R2.home>
- <ZryfGDU9wHE0IrvZ@LQ3V64L9R2.home>
- <20240814080915.005cb9ac@kernel.org>
- <ZrzLEZs01KVkvBjw@LQ3V64L9R2>
- <701eb84c-8d26-4945-8af3-55a70e05b09c@nvidia.com>
- <ZrzxBAWwA7EuRB24@LQ3V64L9R2>
- <20240814172046.7753a62c@kernel.org>
- <Zr3XA-VIE_pAu_k0@LQ3V64L9R2>
- <fe5c6b4b-6c78-402b-b454-837e3760c668@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EC318E34B;
+	Tue, 20 Aug 2024 08:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724142820; cv=fail; b=HNXKuXzpv0oaq/f1vAFfSugcRS6AzZBlOwxYNsUjVMB6ZsjUCOFpFjtrXyhWeJV6nFa/bJqrrcDLrD3eGJhGMYUli7/nfUZ3JSU+VZevSsS6p9UTZh6tbP+nntaD4e6C2qNDctJhAvpr/qDpW3XBLa5obM3yLNJwMSxKVmoPB10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724142820; c=relaxed/simple;
+	bh=hgxdO9bQWs8wdjSsrOwNOgxQPKX6k/AAkkZdngQbmj8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gjTVlTj9F/msxKrg3PEdlF8m9DlPna7RcnLss9iO5PzWIymPnnHRIdQnTLHGqfuJG2V+S4Z8/7gPVQaEXU1P/X9KbGPFb7qNnda6IhkkBruJ/eWIgzwswuqsZmbe4mL3M1+7FIwXzjXEUCqOfPqJ8XA4bGP7vRzX1KWr3TCL6aM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=igo8G/7k; arc=fail smtp.client-ip=40.107.255.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bhe0UTWkFwaRRemnkcFPCo1HGO6DRTHa2r8hI2bDRF6Fa/nRh+oAr5yuLPIQu4YZkj5uyqqFOxnOasKAfFW5ONSrbVR9jZcfefja3phhIvN6qrkALH/vyriyID61+FZYnaNl81AwPc93sR41A1qvayJfu6DkP4nhkKuQ/fwFUqYpjrXDqjzUIU1PmHS8Q3j8qqk3FpBI6qMzlK078izV1SiDSRton4Ov3uYZOyCiEdv23uDmB4eatdpyj2B6WD5glg3yNbiL/UbKLZ0J90EdCh3VkF8HWfPA0gFvR3YLUm9uvnvVQ5BLr59UBJa43/7ubiBkArDIrncAo1agokYxeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bJPBsIq7YAA3ML9oLOc5aRgZBJ40VC9m1eTjT84QemY=;
+ b=fn/h61S38zMkVIUN8JvNw3uKymEKjScvOPvMDcGklG8boKZfpWRqX05MHgKJQuO88MNbeyuDXJpo6d3E9Oj9PM15xFN2koIG/7wE5RyIyZkqjlagWayITNybIBKUWSI3n6JiInSdroW7/Il3jkWs0oSymOh9QZhd7lbB4eYTjHJikLORmkrkWwtQiZ3mJY7OEhaqfV47PmkOWighNRHbr++1FCWjYJQqxLOFsN5PIc1rDIrcgYv2u4GnOVku+FbdxT+Gr94uMLRDS02hdWzvBDzccgthQ1P7tbNB1AImO0DTE4bxMbNcVzh8whVPTDZMdNnZcXrlOcPzmnzCNs2NIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bJPBsIq7YAA3ML9oLOc5aRgZBJ40VC9m1eTjT84QemY=;
+ b=igo8G/7kPGPKaU+OmM9qUJuEHxFCZ50friiD1xgx0/mSR3OYAN+uwH0kvHPBv+oy4tMMcgABzWCq7nDOBGt5N4PZPOrPV22OEYc+NwY61vZR3qWujtCYCwy8DuvX12wiDHpDUpm3FP0hn6sDD20/7Qkn8quIzanOjD5qxNP3rLCFTtkZKqusXkp0fPjJD/qIG/dnnKwvTHnd+dgVt/JOiKhtGIYU5kLWoeONh4Dt2R+QPYZe03z4/A4NY+Y3VLxJAeg+9I5RIqWHfHsqw9+/5VxbOQ8qD+gKl0KwXdw1dc/eApCRDBwQVj+OUxA0EQF26k51N9zHYs/hxn0xrhqNBA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYZPR06MB6467.apcprd06.prod.outlook.com (2603:1096:400:464::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.21; Tue, 20 Aug 2024 08:33:33 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 08:33:33 +0000
+From: Rong Qianfeng <rongqianfeng@vivo.com>
+To: Keerthy <j-keerthy@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: opensource.kernel@vivo.com,
+	Rong Qianfeng <rongqianfeng@vivo.com>
+Subject: [PATCH] gpio: Simplify using devm_clk_get_enabled()
+Date: Tue, 20 Aug 2024 16:33:22 +0800
+Message-Id: <20240820083323.62485-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0036.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::11) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe5c6b4b-6c78-402b-b454-837e3760c668@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB6467:EE_
+X-MS-Office365-Filtering-Correlation-Id: da99ac3f-8e4d-4b06-e365-08dcc0f2c6db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5j6cncrKBZiVseEUjeHI6iBLIGV35KAgkTDMOEg9glg5RMhu0pDiJPgfRph4?=
+ =?us-ascii?Q?hYqGPf6aoxIgkGJK7MKbmgBG7616vafSig7R8eLeHAFeoJwo6rwfnuTu8iPE?=
+ =?us-ascii?Q?TqbYIN5gJDv7RvbLBTZtoFZIvc+7vdinZoYbpT2hYtIlU/7tU/viAp/0Cunl?=
+ =?us-ascii?Q?BuZY1BV8gDP5AXwudUHHAc8XNBk8i5UsgDpxKl91xsMwixjDHgxb8yqiOpqZ?=
+ =?us-ascii?Q?qqWx8VWtOSEjGDG7hHwXlrAGOC3wMfp8XC0ZTI+eZr3/nsdq5xY+4ljNveWw?=
+ =?us-ascii?Q?TiSQP9UJvBJGSC6tIGpM48YUJ+Albjmn3BdE8W23vo7p6tpGX7tkycX10lK5?=
+ =?us-ascii?Q?bMRsS1yyfJ0pvF+qnWhnNAFbB0MLMezFXsaY89wjqyZVzLhGI30sX386KY2q?=
+ =?us-ascii?Q?FAf7KaD49K0BT+iZFVx2lkzSyTzWtfKYtWUR9INlysdtebopgaNltK4sTxH9?=
+ =?us-ascii?Q?fobJQPflGbdom4jUfVxW+6qpVZiHtigZ7P2G7P1LcYTgW3/aQ9SDovUemM2t?=
+ =?us-ascii?Q?9TVHCzLr5m6j5WMx4vQtAWOgYDOzxZQQrsZB+8wviTUVdy3oN601LxYaQrAT?=
+ =?us-ascii?Q?yN49g6kTxtfuf6nrhpw08+oB05o8DGL/MQ0l/ODqa6ZZiMhBuuQowRVy27Hi?=
+ =?us-ascii?Q?qdRiMEurxkkcHBrwWccUrJNGFr12dlIyGu+eLWHb+2DsTttJ7IBv/O5LYoh9?=
+ =?us-ascii?Q?SJQkrwNslAbIo02QKrE6vEhYzPFc0obEPELON5jJGfgc+OYP374tKRHgjTNK?=
+ =?us-ascii?Q?Kpx9AmpFR6K66egvuZsN1bMOrY2RAwMx+r0tX+9FuCO9cy9UeTAajEkk02Gz?=
+ =?us-ascii?Q?ngB1rTPr14FBCSKg4kOHpPp3avbIPZU9XyqkXiX2UvYHERt6SO72HnVzOeZh?=
+ =?us-ascii?Q?TgJ6ccpoABbTu2oaO3K6i09nmPVVwjmsqQpFdv8qUSDoD/U4zDYRC8v+mS4U?=
+ =?us-ascii?Q?jOAucQOS0cgDhLH/bENetC1MVSgltWEB3GOyk/CvSRt2gNbhUeS+B8Y9mZib?=
+ =?us-ascii?Q?r2p63cFa2no8y86oLA8+cq/GW90D8nKxsuhZ4uoJns6Uu1QCfRZxl1lwn+x2?=
+ =?us-ascii?Q?ucoMc/aqA9vLhTanyY4AJppLR3R8SxD1SUqJ8zTWQduK9KQ6lDOq3dsslPWR?=
+ =?us-ascii?Q?WCz6SuKL2mGM7rTi3EpFtTMw94e3s8gW2iH4/223POYitiwAzXjanp/f9fpQ?=
+ =?us-ascii?Q?7qzOFcMxVRsIICYOuTXtoy6P3XsuYObxkzXnMolSdfhbODEgZSIQkQd0DhzQ?=
+ =?us-ascii?Q?anwuLpUA8OP7+mMv7qJxdETeqkSYeafoHjAYQdv48ENnHyeY6GCbSoeIi2p0?=
+ =?us-ascii?Q?gw76TM16LcIbmCJlLjkA+RYEry/68uqK2GelH33coAejsOjpoLxHgaa0u0uC?=
+ =?us-ascii?Q?QrDvoC+8ojkEPSyra03U8wZhNyPUpHbRLhqB/rxdPCxRDZe1Uw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JFpjUzonyBDxaaWDAYhFlPYCKC5AZT+UoHx9tDbqXmHfkjPhBih+S662fZ9d?=
+ =?us-ascii?Q?EXpRR9UnC0/W6Ol0c+kwEZRu/7g22yZacjzZPwG8ClMr3PadFQXvBb0iEG01?=
+ =?us-ascii?Q?ggyMKBKi9wQkTjhkV50oIylBixN37ulVup8QFrGUrv3abecsDTsfHpRm7g/f?=
+ =?us-ascii?Q?8Ar89DWVPnDZGHtDSprnbfETwJdtrX1xmL/Nq95FP6tuoY+ewGYhh2+fFKhk?=
+ =?us-ascii?Q?QdAKpbdccRjLYVLmWQw3Ephbc28mDxKP/HwzTuqVyxhfmYhtf2pSeVwE3kM5?=
+ =?us-ascii?Q?oB65gAuM69hAAUpW9iu9mChkheIyQaX3ORqAPCcrCLkLpuh2LXosnRcgWxpg?=
+ =?us-ascii?Q?CLzi5HIDBUpZr1VqbDg1jG6REiEg/9pHFGFey0X7eaL/fUcSrSuTLZ4ZWe9P?=
+ =?us-ascii?Q?Tndak/fqva+yUKovG8J2kUbSpqZJB565us5gzYokJr5v5foCb5ajLn9zfExT?=
+ =?us-ascii?Q?yIj5rzqId5VoQ70yjG7rkiDouIhvVhuXDmbIZtgTRDm5yZXfT334lrHUlQ6n?=
+ =?us-ascii?Q?bl1oiV1V/TyhsddU9xUCCBgJSGCaRo0LKSZBrafAhetPw1Vu2JUSkiIRYJHQ?=
+ =?us-ascii?Q?OOO58v4qww2J1DeYKsvcW/QV51Q1muXw1ay0JDPM1AOkRdKmbqy5Q93ReRAp?=
+ =?us-ascii?Q?HN0g+EtVMH7ABwSVYNzLjzmYGp9rPVOBDKxK7W2ntfYGrSun7f2kdxx1hTQF?=
+ =?us-ascii?Q?XF6et+LZLlXwy+RtUpa0gG1SuTG+2Kw4IkuAYDF0Y66Hf3NzBNojFy5aWqGL?=
+ =?us-ascii?Q?Yktv0vN/bJXRUX+k3wLKvYajGzUQj2jsYNderTKa0JZ8HEGp6T7uNH7oP6gZ?=
+ =?us-ascii?Q?nsK4K5l18sxZ57zCvLPOKS2WcMEmg1a4rxzOwhWKUVvQoweo+leLWrbwliH/?=
+ =?us-ascii?Q?Ds+1s2zWSZeJ00sLPSP79DVArQnCIVlviduOBvPzvKCiQudIdcMXsJPlVYrG?=
+ =?us-ascii?Q?uzrwOb6hJ1ZboHPYyOlfdS07CuqMCOrmR+cndjMWrwkDoNrW0lnIXLQlOlGn?=
+ =?us-ascii?Q?XtcESHGRfeuBnOVleVOgDCXMOhA9KQ79+1n16/j7e+cJzAOv4FRaz/v6NKQN?=
+ =?us-ascii?Q?AMixul653p6O13BF3kxYoI9PgIU+AhZeqlB+0UWAM9GZJNOxUEbqQwOM+8PV?=
+ =?us-ascii?Q?1LbI094G2pywukXu1YYeDzd+8t5vSb2NbQ40GRnDXAkLirDPCZwJ9UeJsmjp?=
+ =?us-ascii?Q?bzKbTqHpsoIq/5/50jKEhzBuCyOCkZtJffXznRAOj5mXNUxRCpeHLmN2+DHV?=
+ =?us-ascii?Q?j6V7yjVN1gJixfLdFbDgdP7mqrd8k2RR9unVL8OtV8KhKcBqVT+pYhDIfRAS?=
+ =?us-ascii?Q?XiAj6H1w9AV9E5eoE2W40rUIfHmoDmMgjH4fFI0kzWl0jYVH9mQDRrLumC+5?=
+ =?us-ascii?Q?TMQ2M1KMAdI+RHIMWwwFewR7Yy4ODSXpcwj/dglUb4vISfqEi0laKIe7HCZM?=
+ =?us-ascii?Q?DhRKhksrZuua0cqybPbnMc+rXzpb4iRhcZLBGlx4XegwnZCzJniYbGOJWcFi?=
+ =?us-ascii?Q?A4Ax8mVAD2N7EnyQnegMxpOCrhg6RH/SkuzX8ym42YQ9CFjDgrUYZa6cyBTe?=
+ =?us-ascii?Q?cty+ZuEybuVYm0xyIxxE4SxPih2y+4bghugNmEvI?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da99ac3f-8e4d-4b06-e365-08dcc0f2c6db
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 08:33:33.2908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DFrxIv1HSjM1/+whGW1fOuJHr5Q8juRoYT07mPifHmV7XHeLWzIwoQYwRMHIooPOpZWJnK2fKeTP8msVLFbFUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6467
 
-On Tue, Aug 20, 2024 at 09:40:31AM +0300, Shay Drori wrote:
-> 
-> 
-> On 15/08/2024 13:22, Joe Damato wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Wed, Aug 14, 2024 at 05:20:46PM -0700, Jakub Kicinski wrote:
-> > > On Wed, 14 Aug 2024 19:01:40 +0100 Joe Damato wrote:
-> > > > If it is, then the only option is to have the drivers pass in their
-> > > > IRQ affinity masks, as Stanislav suggested, to avoid adding that
-> > > > call to the hot path.
-> > > > 
-> > > > If not, then the IRQ from napi_struct can be used and the affinity
-> > > > mask can be generated on every napi poll. i40e/gve/iavf would need
-> > > > calls to netif_napi_set_irq to set the IRQ mapping, which seems to
-> > > > be straightforward.
-> > > 
-> > > It's a bit sad to have the generic solution blocked.
-> > > cpu_rmap_update() is exported. Maybe we can call it from our notifier?
-> > > rmap lives in struct net_device
-> > 
-> > I agree on the sadness. I will take a look today.
-> > 
-> > I guess if we were being really ambitious, we'd try to move ARFS
-> > stuff into the core (as RSS was moved into the core).
-> 
-> 
-> Sorry for the late reply. Maybe we can modify affinity notifier infra to
-> support more than a single notifier per IRQ.
-> @Thomas, do you know why only a single notifier per IRQ is supported?
+devm_clk_get_enabled() will call devm_clk_get() + clk_prepare_enable()
+and the clock will automatically be disabled, unprepared and freed when
+the device is unbound from the bus. So simplify .probe() and .remove()
+accordingly.
 
-Sorry for the delayed response as well on my side; I've been in
-between lots of different kernel RFCs :)
+Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+---
+ drivers/gpio/gpio-davinci.c  | 13 ++-----------
+ drivers/gpio/gpio-stp-xway.c | 10 ++--------
+ drivers/gpio/gpio-zynq.c     | 10 +---------
+ 3 files changed, 5 insertions(+), 28 deletions(-)
 
-Jakub: the issue seems to be that the internals in lib/cpu_rmap.c
-are needed to call cpu_rmap_update. It's probably possible to expose
-them somehow so that a generic IRQ notifier could call
-cpu_rmap_update, as you mentioned, but some rewiring is going to be
-needed, I think.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 1d0175d6350b..945832d54ac3
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -482,7 +482,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ {
+ 	unsigned	gpio, bank;
+ 	int		irq;
+-	int		ret;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+ 	unsigned	ngpio;
+@@ -504,21 +503,16 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 
+ 	ngpio = pdata->ngpio;
+ 
+-	clk = devm_clk_get(dev, "gpio");
++	clk = devm_clk_get_enabled(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+ 		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(clk);
+-	if (ret)
+-		return ret;
+-
+ 	if (!pdata->gpio_unbanked) {
+ 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
+ 		if (irq < 0) {
+ 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+-			clk_disable_unprepare(clk);
+ 			return irq;
+ 		}
+ 
+@@ -527,7 +521,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 							chips);
+ 		if (!irq_domain) {
+ 			dev_err(dev, "Couldn't register an IRQ domain\n");
+-			clk_disable_unprepare(clk);
+ 			return -ENODEV;
+ 		}
+ 	}
+@@ -596,10 +589,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 				       sizeof(struct
+ 					      davinci_gpio_irq_data),
+ 					      GFP_KERNEL);
+-		if (!irqdata) {
+-			clk_disable_unprepare(clk);
++		if (!irqdata)
+ 			return -ENOMEM;
+-		}
+ 
+ 		irqdata->regs = g;
+ 		irqdata->bank_num = bank;
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index 053d616f2e02..5a6406d1f03a
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -296,23 +296,17 @@ static int xway_stp_probe(struct platform_device *pdev)
+ 	if (!of_property_read_bool(pdev->dev.of_node, "lantiq,rising"))
+ 		chip->edge = XWAY_STP_FALLING;
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
++	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "Failed to get clock\n");
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(clk);
+-	if (ret)
+-		return ret;
+-
+ 	xway_stp_hw_init(chip);
+ 
+ 	ret = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
+-	if (ret) {
+-		clk_disable_unprepare(clk);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	dev_info(&pdev->dev, "Init done\n");
+ 
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 466e23031afc..1a42336dfc1d
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -940,16 +940,10 @@ static int zynq_gpio_probe(struct platform_device *pdev)
+ 	chip->ngpio = gpio->p_data->ngpio;
+ 
+ 	/* Retrieve GPIO clock */
+-	gpio->clk = devm_clk_get(&pdev->dev, NULL);
++	gpio->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(gpio->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(gpio->clk), "input clock not found.\n");
+ 
+-	ret = clk_prepare_enable(gpio->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Unable to enable clock.\n");
+-		return ret;
+-	}
+-
+ 	spin_lock_init(&gpio->dirlock);
+ 
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -999,7 +993,6 @@ static int zynq_gpio_probe(struct platform_device *pdev)
+ 	pm_runtime_put(&pdev->dev);
+ err_pm_dis:
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_disable_unprepare(gpio->clk);
+ 
+ 	return ret;
+ }
+@@ -1019,7 +1012,6 @@ static void zynq_gpio_remove(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		dev_warn(&pdev->dev, "pm_runtime_get_sync() Failed\n");
+ 	gpiochip_remove(&gpio->chip);
+-	clk_disable_unprepare(gpio->clk);
+ 	device_set_wakeup_capable(&pdev->dev, 0);
+ 	pm_runtime_disable(&pdev->dev);
+ }
+-- 
+2.39.0
 
-I had a couple ideas for rewiring stuff, but I haven't had time to
-context switch back on to this work as I've been busy with a few
-other things (the IRQ suspension stuff and another mlx5 thing I have
-yet to send upstream).
-
-I hope to take another look at it this week, but I welcome any
-suggestions from Shay/Thomas in the meantime.
-
-- Joe
 
