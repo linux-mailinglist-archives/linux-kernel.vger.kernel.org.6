@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-294283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB05958B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:47:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C493295889A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FB428853E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453141F233B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C305194094;
-	Tue, 20 Aug 2024 15:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VEvZny5t"
-Received: from mail-m49245.qiye.163.com (mail-m49245.qiye.163.com [45.254.49.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FF51922E1;
+	Tue, 20 Aug 2024 14:08:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DE7179A7
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C16D1917CC;
+	Tue, 20 Aug 2024 14:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724168865; cv=none; b=coOfupDLRyLOI4jzJJucJhRX/BuYkCm2FElkAwZ4/jgj5pNKm1VylPK5UzAWsftV1dVl0xAYLLv8eVdSHVdywDXnu/79B87L+RA82KHRhylzTPHiV4ll9cNvnv1k2vSdu1tEWfsYzx6AFPZOikOEDcg+PLHtCeH5UHGbK4YtxsE=
+	t=1724162915; cv=none; b=HJMrx6tvQHPRVUvHwGfqBSyCuwoIHILvHwgd3OOQirzgMaByvqJ73v7xWLv/mw48ZvaOOF+ueYEckBvPeNci60AB0a6tsaPi2hnxkWuNqAZjumUeayULxMAQ94P+5a07iAyd3S90sAxEas6/Ck3FOI1sQyUUaraJyf7YawKu1yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724168865; c=relaxed/simple;
-	bh=NFixkqEq5u9J3OZGZyFpT1sem5zAhhhtcMXvrK77k4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rMcYBk34ggyT36TP9L0wy+Xi9BqUGC4jJfzoQmE44IwTixQFbIx7mdRUDAYXokmyHpK/Xz4SYAFa1U14XlUCvPeWv2iMEmqCdZkp6i0+akNVBtgHUANAq+idMzmZgJSMV/zn6NLSN/wNh+KQEs01C3y9FwH9h5nG6T3DztIQyME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VEvZny5t; arc=none smtp.client-ip=45.254.49.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=VEvZny5t2PFktgZagkfz73Qca0BvjD6zl5bmc8dYduh8R8WFwSp8rL7MRn+GNcapmQFgmqN2KSFxWrJU7zfVn14rnAUPsbGk0XDAtnkKPDvuee7NiLRN6epAx52+KqQVYVpBuj084kVSdjMA1B6TwGq4dwnqHG1Z3QJfNcB2LLk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=jRtqTMqqfKD8sE4muKg4BLmPLxPC5az11Nkd+ZieOS4=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.69] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 43705840A33;
-	Tue, 20 Aug 2024 14:20:05 +0800 (CST)
-Message-ID: <c5b252a7-4b39-4a93-9e2b-e79c7598b2ee@rock-chips.com>
-Date: Tue, 20 Aug 2024 14:19:55 +0800
+	s=arc-20240116; t=1724162915; c=relaxed/simple;
+	bh=z9QFsxjKYFVFA+nNjuob/yF/7tvvZYNP9DC4DI49cG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WosN0FvohBeWhx7KIqMMrgQ1aqOeJNoeWKu+f2JQjHPptl8cQMUBXss0Y6rJULg6lzInSQMIHk1DqdBITNSz3Yx3u5uFMuDwVoMnGqF6OUI6vW63BmYP3nqYVz3UkGaSv20+8s1HIXIQzQ7wSh1ZaNpVHKZehv3jkQ8f4/1WVeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WpB9F6lpwzpTPl;
+	Tue, 20 Aug 2024 22:06:57 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 027FE180101;
+	Tue, 20 Aug 2024 22:08:28 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 22:08:27 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <shaojijie@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 net-next 00/11] Add support of HIBMCGE Ethernet Driver
+Date: Tue, 20 Aug 2024 22:01:43 +0800
+Message-ID: <20240820140154.137876-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] regmap: maple: Switch to use irq-safe locking
-To: Mark Brown <broonie@kernel.org>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>
-References: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
- <4a8c9f85-3785-4cbd-be9b-dc6da9bd7324@sirena.org.uk>
-Content-Language: en-US
-From: Andy Yan <andy.yan@rock-chips.com>
-In-Reply-To: <4a8c9f85-3785-4cbd-be9b-dc6da9bd7324@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU9KS1YZGkNNSUJJGk4YGUxWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	xVSktLVUpCS0tZBg++
-X-HM-Tid: 0a916e7150e403a4kunm43705840a33
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KxA6Ayo*TjI8NDYCHAM9Di0o
-	Gj8KCkNVSlVKTElPSkhPQ0tNT09IVTMWGhIXVRoVHwJVAhoVOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBTk9MTDcG
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-Hi Mark and Cristian,
-also cc Sasha,
+This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
 
-On 8/15/24 03:04, Mark Brown wrote:
-> On Wed, Aug 14, 2024 at 01:20:21AM +0300, Cristian Ciocaltea wrote:
-> 
->> Commit 3d59c22bbb8d ("drm/rockchip: vop2: Convert to use maple tree
->> register cache") enabled the use of maple tree register cache in
->> Rockchip VOP2 driver.  However, building the kernel with lockdep support
->> indicates locking rules violation when trying to unload the rockchipdrm
->> module:
-> 
->> [ 48.360258] ========================================================
->> [ 48.360829] WARNING: possible irq lock inversion dependency detected
->> [ 48.361400] 6.11.0-rc1 #40 Not tainted
->> [ 48.361743] --------------------------------------------------------
->> [ 48.362311] modprobe/685 just changed the state of lock:
->> [ 48.362790] ffff0000087fa798 (&mt->ma_lock){+...}-{2:2}, at: regcache_maple_exit+0x6c/0xe0
-> 
-> Please think hard before including complete backtraces in upstream
-> reports, they are very large and contain almost no useful information
-> relative to their size so often obscure the relevant content in your
-> message. If part of the backtrace is usefully illustrative (it often is
-> for search engines if nothing else) then it's usually better to pull out
-> the relevant sections.
-> 
->> The problem is that the regmap lock could be taken by an IRQ context,
->> interrupting the irq-unsafe maple tree lock, which may result in a lock
->> inversion deadlock scenario.
-> 
->> Switch to use irq-safe locking in the maple tree register cache.
-> 
-> I'd have a bigger question here which is why the driver is using a
-> dynamically allocated register cache in a hardirq context, especially
-> with no defaults provided?  Anything except the flat cache might do
+This patch set includes basic Rx/Tx functionality. It also includes
+the registration and interrupt codes.
 
-Do you mean the current code we call devm_regmap_init_mmio in vop2_bind function ?
+This work provides the initial support to the HIBMCGE and
+would incrementally add features or enhancements.
 
-> allocations at runtime which might include in interrupt context unless
-> the caller is very careful and since the lockdep warning triggered it's
-> clear that this driver isn't.  The core will be doing atomic allocations
-> for MMIO but that's not something we want to be doing as a matter of
-> course...  I would generally expect drivers to try to ensure that any
-> registers are cached outside of the interrupt handler, usually by
-> specifying defaults or touching all registers during setup.
-> 
-> Without having done a full analysis it also looks like the marking of
-> volatile registers isn't right, it's not immediately clear that the
-> interrupt status and clear registers are volatile and they ought to be.
-> None of the registers accessed in interrupt context look like they
-> should be cached at all unless there's something triggered via the DRM
-> vblank calls.
-> 
+---
+ChangeLog:
+v1 -> v2:
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
+  v1: https://lore.kernel.org/all/20240819071229.2489506-1-shaojijie@huawei.com/
+RFC v2 -> v1:
+  - Use FIELD_PREP/FIELD_GET instead of union, suggested by Andrew.
+  - Delete unnecessary defensive code, suggested by Andrew.
+  - A few other minor changes.
+  RFC v2: https://lore.kernel.org/all/20240813135640.1694993-1-shaojijie@huawei.com/
+RFC v1 -> RFC v2:
+  - Replace linkmode_copy() with phy_remove_link_mode() to
+    simplify the PHY configuration process, suggested by Andrew.
+  - Delete hbg_get_link_status() from the scheduled task, suggested by Andrew.
+  - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andrew.
+  - Delete validation for mac address in hbg_net_set_mac_address(),
+    suggested by Andrew.
+  - Use napi_complete_done() to simplify the process, suggested by Joe Damato.
+  - Use ethtool_op_get_link(), phy_ethtool_get_link_ksettings(),
+    and phy_ethtool_set_link_ksettings() to simplify the code, suggested by Andrew.
+  - Add the null pointer check on the return value of pcim_iomap_table(),
+    suggested by Jonathan.
+  - Add the check on the return value of phy_connect_direct(),
+    suggested by Jonathan.
+  - Adjusted the layout to place the fields and register definitions
+    in one place, suggested by Jonathan.
+  - Replace request_irq with devm_request_irq, suggested by Jonathan.
+  - Replace BIT_MASK() with BIT(), suggested by Jonathan.
+  - Introduce irq_handle in struct hbg_irq_info in advance to reduce code changes,
+    suggested by Jonathan.
+  - Delete workqueue for this patch set, suggested by Jonathan.
+  - Support to compile this driver on all arch in Kconfig,
+    suggested by Andrew and Jonathan.
+  - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
+    suggested by Andrew.
+  - Use macro instead of inline to fix the warning about compile-time constant
+    in FIELD_PREP(), reported by Simon Horman.
+  - A few other minor changes.
+  RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@huawei.com/
+---
 
-I think the interrupt status and clear registers should also be marked as volatile.
-But this is not releated to the current issue, right?
-> It might be safer to fall back to the rbtree cache for this device since
-> rbtree doesn't force an extra level of locking on us, though like I say
+Jijie Shao (11):
+  net: hibmcge: Add pci table supported in this module
+  net: hibmcge: Add read/write registers supported through the bar space
+  net: hibmcge: Add mdio and hardware configuration supported in this
+    module
+  net: hibmcge: Add interrupt supported in this module
+  net: hibmcge: Implement some .ndo functions
+  net: hibmcge: Implement .ndo_start_xmit function
+  net: hibmcge: Implement rx_poll function to receive packets
+  net: hibmcge: Implement some ethtool_ops functions
+  net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+  net: hibmcge: Add maintainer for hibmcge
+  net: add is_valid_ether_addr check in dev_set_mac_address
 
-I also think fall back to rbtree would work. I had a similar thought the first
-time I encountered this issue[0]. But i try to  keep maple tree as is based
-on a much more modern data structure.
+ MAINTAINERS                                   |   7 +
+ drivers/net/ethernet/hisilicon/Kconfig        |  16 +-
+ drivers/net/ethernet/hisilicon/Makefile       |   1 +
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |  10 +
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 138 ++++++
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  17 +
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 285 ++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  57 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  | 123 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 232 ++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 251 +++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |  13 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 143 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 418 ++++++++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  37 ++
+ net/core/dev.c                                |   2 +
+ 18 files changed, 1771 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h
 
-> I'm not convinced that what the driver is doing with caching is a super
-> good idea.  Though probably what the driver is doing should work.
-The registers of VOP are quite special: Each write operation to the register
-does not take effect immediately, it only take effect after the next VBLANK if
-we write the CFGONE register.
-So we need a cache to record what we wrote to register before.
+-- 
+2.33.0
 
-> 
-
-
-[0]https://patchwork.kernel.org/project/linux-rockchip/patch/20231217084415.2373043-1-andyshrk@163.com/
 
