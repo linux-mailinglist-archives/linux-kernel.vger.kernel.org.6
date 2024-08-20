@@ -1,134 +1,266 @@
-Return-Path: <linux-kernel+bounces-294228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35500958AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:19:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7181958B01
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6768B1C21049
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26788B22A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6860D193070;
-	Tue, 20 Aug 2024 15:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D251946B8;
+	Tue, 20 Aug 2024 15:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhV8y6cZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7Ep+/UP"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7563F43AB2;
-	Tue, 20 Aug 2024 15:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F4A1940B7
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167164; cv=none; b=GAgZ1fcQJjyce0xijztQpkh11TlYhyUfjFMI613gfr9YGwU24fHcRDqKKZcYRUc/AvGrG4qcb2JTnafUMqlurvBUrEUMeFV33t+HZ0mqcNtH/hw4EQ20d0GThF5Z8zpsdyIjSIr0JmF8bwoTPeokG31VTGhWoJoKrkzzpb+lq28=
+	t=1724167173; cv=none; b=c/I0T6mgsiDB3DvUzTjlklPRQQAjR0UnxNN0kvCKgdZNVkYNrEtNXUcU8t7/gUe2Qw51mzO8tRGhfhOE45T7DMJgJtzzmnQT4GGEYs91h6LZAN9LxZVdvsh0eBZu3t++WGUPWVEzgCJr6q3o9pIZJccs5A79Mqy/Vg37zP10h5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167164; c=relaxed/simple;
-	bh=/OXYNA076GPRELh0pHtb1LqJyPMWNb0FBe4CzjTGaQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rARUwhGbhgokb/StUb2LFnp/qnlFJVzcsT3458/D9g+/I7+QdgLTYnNHR0AEBZINYC4dN/8+7NQSoN6tlVmIwFQ/M1WNV4lxGYwbJ/mhHhaQSYO2Hfq2zEOEBGx7OfWWcb1F4SA3pJh4jb5TdGQpRIZPlNjek8rC6GFvo6Rv7Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhV8y6cZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899F1C4AF0B;
-	Tue, 20 Aug 2024 15:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724167164;
-	bh=/OXYNA076GPRELh0pHtb1LqJyPMWNb0FBe4CzjTGaQs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XhV8y6cZBCxHcRXtyBXg5fkxQ0emSjT4auJjQk+246Tw8eD3OUCE057w6/vUhGK+Q
-	 RBjicnT8mi2sKTBuq0JANhVJTDhMvdUqDUjecxktxoY+vMrnz4MGVdsNOpaqcNAw9I
-	 8huEtnENFiJFKoN9IcbUvsltqlewOPHIwnN9eFpsuawwCJvXkDlHhiXl7L7Wur0fpu
-	 tpAX/YFnzoaY+ZA/9o5gRvZTPhKxlmy+9Auiz50bY1SO6+EAmVeqJQ3ehrBxhx64mc
-	 3Inbdd0jxjd2cxDx/Af/1fV60ySoP0m+sl/9zoj0NBHNWDP6FteTyA3BOpW4xPB0UC
-	 8Lpljm3h/QgEQ==
-Date: Tue, 20 Aug 2024 08:19:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Taehee Yoo <ap420073@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Richard Henderson
- <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
- Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Sumit
- Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason
- Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
- Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>,
- Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH net-next v19 03/13] netdev: support binding dma-buf to
- netdevice
-Message-ID: <20240820081920.6630a73f@kernel.org>
-In-Reply-To: <CAHS8izPL4YdqFjkTpYavdxQn816=kkUv0xravQJF4Uno7Bn3ZQ@mail.gmail.com>
-References: <20240813211317.3381180-4-almasrymina@google.com>
-	<CAMArcTWWxjsg_zwS6waWkLpyHhwdXDm_NJeVGm_dr+eT5QDZiA@mail.gmail.com>
-	<20240819155257.1148e869@kernel.org>
-	<CAHS8izPL4YdqFjkTpYavdxQn816=kkUv0xravQJF4Uno7Bn3ZQ@mail.gmail.com>
+	s=arc-20240116; t=1724167173; c=relaxed/simple;
+	bh=M0lZ2DP22jfNN/C5aYt03sGQdVfogxyFNLx82l+fY0c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qpS7VhRzhKc9GfHNUCpZArr3KICocD/gNgAE3HxqoRiZ4v+IK+Bi9nEJvG64Qi7U7+fLLgawJ8afEnlpEKLFvSuMMxeWCczTQEiIIELebKNOjc23Yi2PhF2zh34WYSLpn10e6LG/S/ej0WI5cZjB5nyxtxcrcmS9JF9HfbtTKRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7Ep+/UP; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso44640115e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724167169; x=1724771969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CO8k7gPS3ah2eo5Hppz8CJu9bMQrSC7MJe+A3wiVe2c=;
+        b=G7Ep+/UPqFGChHWe5R/+Lv9j0L7cTLk+AaknRoV0IuiCBrc9rDkv+hmm/HlqLcMZ/U
+         0IE7EMcTezUxzXD7jCvQSH3F9BUOBAuS0x0tqp1424IFYXa++G405jD5dSKX/1TOxtct
+         o3jARo4739hgpCQE4eS8wv1kcWOJEufpNGQNyEl3JUZn/KOBnhStJZWP80YgBHZlcAk5
+         hmtz43BomHh2TYJLV2S7sj1rcs9DUqk3OfoVrITt2k2+AS+52FYjushq/cFfhEiF4DiO
+         RJSsvMI+0wrrY9Qy8RgGnuq4uZyutJyp4ybOxSNzOr6xRpLNokLDKxQ9HktSwU+M8O+e
+         5VjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724167169; x=1724771969;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CO8k7gPS3ah2eo5Hppz8CJu9bMQrSC7MJe+A3wiVe2c=;
+        b=vyCS9dIlvfqlJHlN4D7qGqpKbnrxAKCBu5jAGJNVr53UplhOo1MBFXFXRg7FmjlS1B
+         hiBcZTqjPccyICPbV+i6+MkH+FTI5fsr5at2SGUDykVHIY8SbjZCfJhgYXiCFOWQP5eZ
+         kOLhjE8zzG3+wbrFmLFaW1eOxuA9r02fKb5M4v6G83xLCbcwU2CEUrgCxO0z0FmQE8qh
+         XwS0ptCj6lMHtgbY0CZ34afA5bm06IhlNfx9NPHJahCwMsK2OmxJCcSenWUpFwyUkX6a
+         bDMs2YE7sXKK7ExKAqejGn9a0JadRnxviIiLHDdYRxfuTA8eluyxWLBIKficTgeq5ggJ
+         yYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQvsxIlNXHtHqsdtS5xqpacZodsuGrunUJ7KIrSfNoAFw/ho/0ssebTcuU4rEuRbpjqoGY02qt5d5ViTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMLlaxBFlwrnr+1GiOp3fXBUkmuITgX2PqN8gszdhpmo9lEu/2
+	H68x3L/JT9cTgxnVaMutwAbC0vptRM9ZHOqgujkVvCw8VH6i4//2/i4fGLkdqqA=
+X-Google-Smtp-Source: AGHT+IFZv8g2osJqh6CIrgVGdxVcFJ776Ad1FAr/yJHw+toA0eOs6k0PzTFvoLjLqRM1QHuSjRpBag==
+X-Received: by 2002:adf:a39a:0:b0:368:c6ff:dc94 with SMTP id ffacd0b85a97d-3719465a9fdmr8495859f8f.32.1724167168984;
+        Tue, 20 Aug 2024 08:19:28 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ebdf:8de4:37af:6aad? ([2a01:e0a:982:cbb0:ebdf:8de4:37af:6aad])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed785708sm145468595e9.37.2024.08.20.08.19.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 08:19:28 -0700 (PDT)
+Message-ID: <6e535895-6a06-42f8-abf3-e3b7472c97e0@linaro.org>
+Date: Tue, 20 Aug 2024 17:19:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v9 00/23] Support more Amlogic SoC families in crypto
+ driver
+To: Alexey Romanov <avromanov@salutedevices.com>, clabbe@baylibre.com,
+ herbert@gondor.apana.org.au, davem@davemloft.net, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com, vadim.fedorenko@linux.dev
+Cc: linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com
+References: <20240820145623.3500864-1-avromanov@salutedevices.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240820145623.3500864-1-avromanov@salutedevices.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Aug 2024 00:01:02 -0400 Mina Almasry wrote:
-> Took a bit of a look here. Forgive me, I'm not that familiar with XDP
-> and virtual interfaces, so I'm a bit unsure what to do here.
+Hi,
+
+On 20/08/2024 16:56, Alexey Romanov wrote:
+> Hello!
 > 
-> For veth, it seems, the device behind the veth is stored in
-> veth_priv->peer, so it seems maybe a dev_get_max_mp_channel() check on
-> veth_priv->peer is the way to go to disable this for veth? I think we
-> need to do this check on creation of the veth and on the ndo_bpf of
-> veth.
+> This patchset expand the funcionality of the Amlogic
+> crypto driver by adding support for more SoC families:
+> AXG, G12A, G12B, SM1, A1, S4.
+> 
+> Also specify and enable crypto node in device tree
+> for reference Amlogic devices.
+> 
+> Tested on GXL, AXG, G12A/B, SM1, A1 and S4 devices via
+> custom tests [1] and tcrypt module.
 
-veth is a SW device pair, it can't reasonably support netmem.
-Given all the unreasonable features it grew over time we can't
-rule out that someone will try, but that's not our problem now.
+On which tree did you base yourself ? It fails to apply patch 20 on next-20240820 and 6.11-rc4
 
-> For bonding, it seems we need to add mp channel check in bond_xdp_set,
-> and bond_enslave?
+Neil
 
-Sort of, I'd factor out that logic into the core first, as some
-sort of "xdp propagate" helper. Then we can add that check once.
-I don't see anything bond specific in the logic.
+> 
+> ---
+> 
+> Changes V1 -> V2 [2]:
+> 
+> - Rebased over linux-next.
+> - Adjusted device tree bindings description.
+> - A1 and S4 dts use their own compatible, which is a G12 fallback.
+> 
+> Changes V2 -> V3 [3]:
+> 
+> - Fix errors in dt-bindings and device tree.
+> - Add new field in platform data, which determines
+> whether clock controller should be used for crypto IP.
+> - Place back MODULE_DEVICE_TABLE.
+> - Correct commit messages.
+> 
+> Changes V3 -> V4 [4]:
+> 
+> - Update dt-bindings as per Krzysztof Kozlowski comments.
+> - Fix bisection: get rid of compiler errors in some patches.
+> 
+> Changes V4 -> V5 [5]:
+> 
+> - Tested on GXL board:
+>    1. Fix panic detected by Corentin Labbe [6].
+>    2. Disable hasher backend for GXL: in its current realization
+>       is doesn't work. And there are no examples or docs in the
+>       vendor SDK.
+> - Fix AES-CTR realization: legacy boards (gxl, g12, axg) requires
+>    inversion of the keyiv at keys setup stage.
+> - A1 now uses its own compatible string.
+> - S4 uses A1 compatible as fallback.
+> - Code fixes based on comments Neil Atrmstrong and Rob Herring.
+> - Style fixes (set correct indentations)
+> 
+> Changes V5 -> V6 [7]:
+> 
+> - Fix DMA sync warning reported by Corentin Labbe [8].
+> - Remove CLK input from driver. Remove clk definition
+>    and second interrput line from crypto node inside GXL dtsi.
+> 
+> Changes V6 -> V7 [9]:
+> 
+> - Fix dt-schema: power domain now required only for A1.
+> - Use crypto_skcipher_ctx_dma() helper for cipher instead of
+>    ____cacheline_aligned.
+> - Add import/export functions for hasher.
+> - Fix commit message for patch 17, acorrding to discussion [10].
+> 
+> Changes V7 -> V8 [11]:
+> 
+> - Test patchset with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS: fix some bugs
+>    in hasher logic.
+> - Use crypto crypto_ahash_ctx_dma in hasher code.
+> - Correct clock definition: clk81 is required for all SoC's.
+> - Add fixed-clock (clk81) definition for A1/S4.
+> - Add information (in commit messages) why different compatibles are used.
+> 
+> Changes V8 -> V9 [12]:
+> 
+> - Remove required field clk-names from dt-schema according to Rob Herring
+> recommendation [13].
+> - Fix commit order: all dt-bindings schema commits now located earlier
+> than any changes in device tree.
+> - Fix typos and add more clarifications in dt-schema patches.
+> 
+> Links:
+>    - [1] https://gist.github.com/mRrvz/3fb8943a7487ab7b943ec140706995e7
+>    - [2] https://lore.kernel.org/all/20240110201216.18016-1-avromanov@salutedevices.com/
+>    - [3] https://lore.kernel.org/all/20240123165831.970023-1-avromanov@salutedevices.com/
+>    - [4] https://lore.kernel.org/all/20240205155521.1795552-1-avromanov@salutedevices.com/
+>    - [5] https://lore.kernel.org/all/20240212135108.549755-1-avromanov@salutedevices.com/
+>    - [6] https://lore.kernel.org/all/ZcsYaPIUrBSg8iXu@Red/
+>    - [7] https://lore.kernel.org/all/20240301132936.621238-1-avromanov@salutedevices.com/
+>    - [8] https://lore.kernel.org/all/Zf1BAlYtiwPOG-Os@Red/
+>    - [9] https://lore.kernel.org/all/20240326153219.2915080-1-avromanov@salutedevices.com/
+>    - [10] https://lore.kernel.org/all/20240329-dotted-illusive-9f0593805a05@wendy/
+>    - [11] https://lore.kernel.org/all/20240411133832.2896463-1-avromanov@salutedevices.com/
+>    - [12] https://lore.kernel.org/all/20240607141242.2616580-1-avromanov@salutedevices.com/
+>    - [13] https://lore.kernel.org/all/20240610222827.GA3166929-robh@kernel.org/
+> 
+> Alexey Romanov (23):
+>    drivers: crypto: meson: don't hardcode IRQ count
+>    drviers: crypto: meson: add platform data
+>    drivers: crypto: meson: remove clock input
+>    drivers: crypto: meson: add MMIO helpers
+>    drivers: crypto: meson: move get_engine_number()
+>    drivers: crypto: meson: drop status field from meson_flow
+>    drivers: crypto: meson: move algs definition and cipher API to
+>      cipher.c
+>    drivers: crypto: meson: cleanup defines
+>    drivers: crypto: meson: process more than MAXDESCS descriptors
+>    drivers: crypto: meson: avoid kzalloc in engine thread
+>    drivers: crypto: meson: introduce hasher
+>    drivers: crypto: meson: add support for AES-CTR
+>    drivers: crypto: meson: use fallback for 192-bit keys
+>    drivers: crypto: meson: add support for G12-series
+>    drivers: crypto: meson: add support for AXG-series
+>    drivers: crypto: meson: add support for A1-series
+>    dt-bindings: crypto: meson: correct clk and remove second interrupt
+>      line
+>    dt-bindings: crypto: meson: support new SoC's
+>    arch: arm64: dts: meson: gxl: correct crypto node definition
+>    arch: arm64: dts: meson: a1: add crypto node
+>    arch: arm64: dts: meson: s4: add crypto node
+>    arch: arm64: dts: meson: g12: add crypto node
+>    arch: arm64: dts: meson: axg: add crypto node
+> 
+>   .../bindings/crypto/amlogic,gxl-crypto.yaml   |  32 +-
+>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  14 +
+>   arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   7 +
+>   .../boot/dts/amlogic/meson-g12-common.dtsi    |   7 +
+>   arch/arm64/boot/dts/amlogic/meson-gxl.dtsi    |   6 +-
+>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |  13 +
+>   drivers/crypto/amlogic/Makefile               |   2 +-
+>   drivers/crypto/amlogic/amlogic-gxl-cipher.c   | 632 ++++++++++++------
+>   drivers/crypto/amlogic/amlogic-gxl-core.c     | 292 ++++----
+>   drivers/crypto/amlogic/amlogic-gxl-hasher.c   | 507 ++++++++++++++
+>   drivers/crypto/amlogic/amlogic-gxl.h          | 118 +++-
+>   11 files changed, 1269 insertions(+), 361 deletions(-)
+>   create mode 100644 drivers/crypto/amlogic/amlogic-gxl-hasher.c
+> 
 
-> There are a few other drivers that define ndo_add_slave, seems a check
-> in br_add_slave is needed as well.
-
-I don't think it's that broad. Not many drivers propagate XDP:
-
-$ git grep -C 200 '\.ndo_add_slave' | grep '\.ndo_bpf'
-drivers/net/bonding/bond_main.c-	.ndo_bpf		= bond_xdp,
-
-$ git grep --files-with-matches  'ops->ndo_bpf' -- drivers/
-drivers/net/bonding/bond_main.c
-drivers/net/hyperv/netvsc_bpf.c
-
-> This seems like a potentially deep rabbit hole with a few checks to
-> add all of the place. Is this blocking the series?
-
-Protecting the stack from unreadable memory is *the* challenge
-in this series. The rest is a fairly straightforward.
 
