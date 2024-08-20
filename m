@@ -1,523 +1,192 @@
-Return-Path: <linux-kernel+bounces-293946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E79586CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA2D9586CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5662DB29441
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:19:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2859B27444
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 12:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7D818FDA3;
-	Tue, 20 Aug 2024 12:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4118FC72;
+	Tue, 20 Aug 2024 12:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EqSnnqjw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SCXL+pYI"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4C018E76E
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 12:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DE218A6BC;
+	Tue, 20 Aug 2024 12:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156353; cv=none; b=aHDWCB6UzmCtf9V7RRJnEG0Byg+U4lMKvLxcDAfwC8hlyLCYqRDJUGK5xo52vFvCZCXGcVs3/4licIfY2bQ3mbaEXzYogTLIHX9rqFGs6tPeZk74W/XZ6Z7aUEGYS6cxiXg0y+JUDqd7JYufzUp3RAKuoJ0vgX4MIYMZGFjF8Es=
+	t=1724156428; cv=none; b=hyr/CpMFgGe/NBflvLWcKFpcKbcjb7B2txk6EBFphZVq1fppO5rqMFZJucFDw2P7GP1LL4w3tKucPr+S+YMjgKhWweLuPQiATXBJITC7msAoIAyDRVQfT2J03J3kCTPTqb5R2cxhlu+7Wl6ceWOXShqref4xmbpKTb8QeIEyYV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156353; c=relaxed/simple;
-	bh=Septe+OOLYMFpRUi4bu4Hpw2PRoU61r3zQSUBeaXVEA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ETUFLRAbARd4FvOn/Uk53A/3bQrkq8iJgSE6RX3UEdhlmD4hM8c3wj0wJXQnPFiHB6OKUaa9XAMkhSt5MsjrqdwGN33WdDDHA/KVN0ZNQatAPA3tjZ0eQcyggNWvxpn0lCoO9Rsy+R9RP1q0LIlKYaHEICA/E6+9TSo0KkzFHUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EqSnnqjw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724156350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bvXzkTtAKVrZEFV//MYOBb6hKuWqDYdht9x0ns/xxrQ=;
-	b=EqSnnqjwW4EzJ+rIE0eNkweIGfL1t59/IfBSGyiYhRBKWvU0mYc2vGOFFRgAe06wDAmOX0
-	Czp82j8EAFJ4V8ViZbXQ+tr1U1TclC/3Iog21ioHDCQjWQm1WGoPaxEIkG3/0uSn3FUSrd
-	RG2/cY+NJvP+6vVQUIR2Vamf1mGrYQw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-659--HA8j5o5PbmlObgx0k2UbQ-1; Tue, 20 Aug 2024 08:19:07 -0400
-X-MC-Unique: -HA8j5o5PbmlObgx0k2UbQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3719559c51dso2436022f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 05:19:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724156346; x=1724761146;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bvXzkTtAKVrZEFV//MYOBb6hKuWqDYdht9x0ns/xxrQ=;
-        b=Hw8I+CZ+Vd3k12xc+k6TVhCDhHJBhOSuQIOLgb0BanoQPmt5Fsw06Tf0AWaWtdvy0P
-         lvYeOBy21NyMl3Z04QePRrmZsJ1hYrFSKYAFKxjL5CiXan0i3ULNZlGH6hVXvRhl7aMi
-         pTJI8NkbnBdYFYr4I/HFhjhhTtd2CFl3F3/8+heDPuc7xuVJ/hw0k4SZ5z2lscLfNfTj
-         FqJCPI4az8uRpTZ4aoTP8ovsLhBSbMFEk/xXr1dcrsUmA94DGyFY+eh6WxzE2YXK/d+e
-         4Tp4dZ04zHdpGGngnERmYcN6H3FG6MPe67qh77RfdDnjP3IDOVoGgJ6u6Bj36WAFQfQ9
-         XuVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmqtFvoUQH0v24WHD1+W1U9vE8/a0EVI+VkZH5eDB2+foWm1NW+CsRtXo7xhuUyslizh7r9/ulwvB+Xa3eh3MwWhFZJgT79X9vPaIn
-X-Gm-Message-State: AOJu0YzKQObnW53pJwH3HwhfvWpnGqhZSM8mEhYxFCbIeSvEWRiA9sQz
-	zmOLFRDnuUsk4TZlE47VoDTyGDGhd2c7WlZqjnL9D/sEHaawQ82dxZB01Bs/HY8ChmRprqjO4jv
-	rMyLl0wsrM2pQbU1SjJ3bjLg4PbHjkopFpe104g4vbWkFFA51cVlJ8B64/4fFGQ==
-X-Received: by 2002:a5d:670d:0:b0:367:9903:a81 with SMTP id ffacd0b85a97d-3719469fac2mr8042883f8f.43.1724156346417;
-        Tue, 20 Aug 2024 05:19:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA31JPkbb8POJ5dx59RG8GFkciMGPCsYCQzRMV/vhoX6fmi6//yVvDy8+0ghSMXTmNRVou1Q==
-X-Received: by 2002:a5d:670d:0:b0:367:9903:a81 with SMTP id ffacd0b85a97d-3719469fac2mr8042860f8f.43.1724156345775;
-        Tue, 20 Aug 2024 05:19:05 -0700 (PDT)
-Received: from intellaptop.lan ([2a06:c701:77ab:3101:d6e6:2b8f:46b:7344])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7bb5fsm199154565e9.40.2024.08.20.05.19.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 05:19:05 -0700 (PDT)
-Message-ID: <6f111fb46c003cd88dd3e2e3a66d903b9df4d2b4.camel@redhat.com>
-Subject: Re: [PATCH v3 3/4] KVM: nVMX: relax canonical checks on some x86
- registers in vmx host state
-From: mlevitsk@redhat.com
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
- linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Date: Tue, 20 Aug 2024 15:19:03 +0300
-In-Reply-To: <Zr_Ms-7IpzINzmc7@google.com>
-References: <20240815123349.729017-1-mlevitsk@redhat.com>
-	 <20240815123349.729017-4-mlevitsk@redhat.com>
-	 <4d292a92016c65ae7521edec2cc0e9842c033e26.camel@redhat.com>
-	 <Zr_Ms-7IpzINzmc7@google.com>
-Content-Type: multipart/mixed; boundary="=-owDS2/HMysC5GQlSjSbA"
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1724156428; c=relaxed/simple;
+	bh=cmH8LeB3XQV3FWrWLmPQQortO5BwjzrvyvSS30/UKLA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTFqbDF3uNBCkbnuUcCDz/Zr1vHZ7pRh5HflJx+cDVYx4BnPFvpvo0snLXZtUi3SbK+Ff5NUXpSlSKwqlKKP2CCTMpwqLThwpXhufMTgm1dgrRs/Bgz5FvZBNo+nFoJY0WD/RxPabF40VD7ijJs00skgQAUYflmIkTzFrk7eIK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SCXL+pYI; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F37D148330C;
+	Tue, 20 Aug 2024 14:20:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724156423;
+	h=from:subject:date:message-id:to:mime-version:content-type:in-reply-to:
+	 references; bh=6lsGEQXfU/2msmfbLV6xAW1tGi05xaQSNBIo8l41vSc=;
+	b=SCXL+pYIULWut8pttHq+yiF+DLNqkn1yYpHLDFgHaR84kXLDpS1/mA7yqwBYvjvLYN+690
+	1FwXAFpjUH0uoAhp/a4dgXbzfYZ7oSmBP4Tr1UxWOLORh7j4lJqo8iVo6N0q/Es53Jd7K0
+	17PDCSmVENaypIHr7i+WopIv0ACs4uFB/6Ao/gIDKCwBFrTpB2lULFjoB/MWcsP6LcI8WQ
+	iu5D8F0K+09jG92e0BbMMp5zUj6+vq+uDNyjXLrrNb7d+Dd+3j7cjc+/sqa9GRXs6DDHP8
+	OnmbCmMZ7Zg9tnL1YSzSKAwyVuQ/d+Q156nbMc1MO5FvZbN0P56WOeO0e70Drw==
+Date: Tue, 20 Aug 2024 14:20:21 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: get, prepare, enable a clock not in DT?
+Message-ID: <20240820-stinging-altitude-d1186a067824@thorsis.com>
+Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+ <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
+ <20240820-grandpa-down-fec4231f971c@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820-grandpa-down-fec4231f971c@thorsis.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
---=-owDS2/HMysC5GQlSjSbA
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-=D0=A3 =D0=BF=D1=82, 2024-08-16 =D1=83 15:03 -0700, Sean Christopherson =D0=
-=BF=D0=B8=D1=88=D0=B5:
-> On Fri, Aug 16, 2024, mlevitsk@redhat.com=C2=A0wrote:
-> > > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> > > ---
-> > > =C2=A0arch/x86/kvm/vmx/nested.c | 30 +++++++++++++++++++++++-------
-> > > =C2=A01 file changed, 23 insertions(+), 7 deletions(-)
-> > >=20
-> > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > > index 2392a7ef254d..3f18edff80ac 100644
-> > > --- a/arch/x86/kvm/vmx/nested.c
-> > > +++ b/arch/x86/kvm/vmx/nested.c
-> > > @@ -2969,6 +2969,22 @@ static int nested_vmx_check_address_space_size=
-(struct kvm_vcpu *vcpu,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> > > =C2=A0}
-> > > =C2=A0
-> > > +static bool is_l1_noncanonical_address_static(u64 la, struct kvm_vcp=
-u *vcpu)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 max_guest_address_bits =
-=3D guest_can_use(vcpu, X86_FEATURE_LA57) ? 57 : 48;
->=20
-> I don't see any reason to use LA57 support from guest CPUID for the VMCS =
-checks.
-> The virtualization hole exists can't be safely plugged for all cases, so =
-why
-> bother trying to plug it only for some cases?
+Am Tue, Aug 20, 2024 at 02:17:58PM +0200 schrieb Alexander Dahl:
+> Hello Claudiu,
+> 
+> Am Tue, Aug 20, 2024 at 02:54:59PM +0300 schrieb claudiu beznea:
+> > Hi, Alexander,
+> > 
+> > On 16.08.2024 17:34, Alexander Dahl wrote:
+> > > Hello everyone,
+> > > 
+> > > while further investigating timeout issues with the at91 otpc
+> > > controller on sam9x60 [1] I came to the conclusion the main RC
+> > > oscillator on that SoC must be enabled for that driver to work.
+> > 
+> > Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
+> > Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
+> 
+> It can feed the main clock and you're right from Clock Generator POV.
+> However it is not completely undocumented.  Section "23.4 Product
+> Dependencies" of the SAM9X60 datasheet (DS60001579G) says:
+> 
+>     "The OTPC is clocked through the Power Management Controller (PMC).
+>     The user must power on the main RC oscillator and enable the
+>     peripheral clock of the OTPC prior to reading or writing the OTP
+>     memory."
+> 
+> Apparently this also applies to reading, at least according to my
+> tests on sam9x60-curiosity.
+> 
+> btw, the last public release of the atmel-software-package, source for
+> the sam-ba applets, also enables that clock, although the reasoning
+> was for writing. [1]
 
-I also thought like that but then there is another argument:
+Sorry, forgot that reference, FWIW:
 
-My idea was that the guest really ought to not put non canonical values if =
-its CPUID doesn't
-support 5 level paging. There is absolutely no reason for doing so.
+[1] https://github.com/atmelcorp/atmel-software-package/blob/master/drivers/nvm/otp/otpc.c#L99
 
-If the guest does this though via WRMSR, most of the time the MSR is not in=
-tercepted, thus
-it makes sense to allow this in emulation patch as well, as we discussed to=
- be consistent.
+Greets
+Alex
 
-But when VMRESUME/VMLAUNCH instruction, which is *always* emulated, writes =
-those MSRS on VM exit,
-then I don't see a reason to allow a virtualization hole.
-
-But then as it turns out (I didn't expect that) that instructions like LGDT=
- also don't check CR4.LA57,
-and these are also passed through, then I guess singling out the VMX instru=
-ctions is no longer better.
-
->=20
-> It'd be very odd that an L1 could set a "bad" value via WRMSR, but then c=
-ouldn't
-> load that same value on VM-Exit, e.g. if L1 gets the VMCS value by doing =
-RDMSR.
->=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Most x86 arch registers=
- which contain linear addresses like
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * segment bases, addresse=
-s that are used in instructions (e.g SYSENTER),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * have static canonicalit=
-y checks,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * size of whose depends o=
-nly on CPU's support for 5-level
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * paging, rather than sta=
-te of CR4.LA57.
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * In other words the chec=
-k only depends on the CPU model,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * rather than on runtime =
-state.
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return !__is_canonical_add=
-ress(la, max_guest_address_bits);
-> > > +}
-> > > +
-> > > =C2=A0static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 struct vmcs12 *vmcs12)
-> > > =C2=A0{
-> > > @@ -2979,8 +2995,8 @@ static int nested_vmx_check_host_state(struct k=
-vm_vcpu *vcpu,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC=
-(!kvm_vcpu_is_legal_cr3(vcpu, vmcs12->host_cr3)))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > =C2=A0
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (CC(is_noncanonical_add=
-ress(vmcs12->host_ia32_sysenter_esp, vcpu)) ||
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_n=
-oncanonical_address(vmcs12->host_ia32_sysenter_eip, vcpu)))
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (CC(is_l1_noncanonical_=
-address_static(vmcs12->host_ia32_sysenter_esp, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_l=
-1_noncanonical_address_static(vmcs12->host_ia32_sysenter_eip, vcpu)))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > =C2=A0
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if ((vmcs12->vm_exit_=
-controls & VM_EXIT_LOAD_IA32_PAT) &&
-> > > @@ -3014,11 +3030,11 @@ static int nested_vmx_check_host_state(struct=
- kvm_vcpu *vcpu,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC=
-(vmcs12->host_ss_selector =3D=3D 0 && !ia32e))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > =C2=A0
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (CC(is_noncanonical_add=
-ress(vmcs12->host_fs_base, vcpu)) ||
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_n=
-oncanonical_address(vmcs12->host_gs_base, vcpu)) ||
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_n=
-oncanonical_address(vmcs12->host_gdtr_base, vcpu)) ||
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_n=
-oncanonical_address(vmcs12->host_idtr_base, vcpu)) ||
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_n=
-oncanonical_address(vmcs12->host_tr_base, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (CC(is_l1_noncanonical_=
-address_static(vmcs12->host_fs_base, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_l=
-1_noncanonical_address_static(vmcs12->host_gs_base, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_l=
-1_noncanonical_address_static(vmcs12->host_gdtr_base, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_l=
-1_noncanonical_address_static(vmcs12->host_idtr_base, vcpu)) ||
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC(is_l=
-1_noncanonical_address_static(vmcs12->host_tr_base, vcpu)) ||
->=20
-> If loads via LTR, LLDT, and LGDT are indeed exempt, then we need to updat=
-e
-> emul_is_noncanonical_address() too.
-
-Sadly the answer to this is yes, at least on Intel. I will test on AMD soon=
-, as soon as I grab
-a Zen4 machine again.
-
-And since these instructions are also all unintercepted, it also makes sens=
-e to use host cpuid
-for them as well.
-
-I attached two kvm unit tests, which I will hopefully polish for publishing=
- soon, which pass
-with flying colors with this patch series, and unless I made a mistake prov=
-e most of my
-research.
-
-The HOST_RIP field I checked separately by patching the L0 kernel, and obse=
-rving it
-either hang/crash or fail VM entry of the first guest.
-
-Best regards,
-	Maxim Levitsky
-
->=20
-> The best idea I have is to have a separate flow for system registers (not=
- a great
-> name, but I can't think of anything better), and the
->=20
-> E.g. s/is_host_noncanonical_msr_value/is_non_canonical_system_reg, and th=
-en
-> wire that up to the emulator.
->=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC=
-(is_noncanonical_address(vmcs12->host_rip, vcpu)))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > =C2=A0
-
-
-
->=20
-
-
---=-owDS2/HMysC5GQlSjSbA
-Content-Disposition: attachment;
-	filename*0=0001-Add-test-for-writing-canonical-values-to-various-msr.pat;
-	filename*1=ch
-Content-Type: text/x-patch;
-	name="0001-Add-test-for-writing-canonical-values-to-various-msr.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-RnJvbSBlNmQ3YmQyYWE0ZjE4NTg4MTcxNGE2MTAzZTllNjcyYjBkYmQxMmFiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXhpbSBMZXZpdHNreSA8bWxldml0c2tAcmVkaGF0LmNvbT4K
-RGF0ZTogRnJpLCAxNiBBdWcgMjAyNCAxMjo0MDoyMCArMDMwMApTdWJqZWN0OiBbUEFUQ0ggMS8y
-XSBBZGQgdGVzdCBmb3Igd3JpdGluZyBjYW5vbmljYWwgdmFsdWVzIHRvIHZhcmlvdXMgbXNycwog
-U2lnbmVkLW9mZi1ieTogTWF4aW0gTGV2aXRza3kgPG1sZXZpdHNrQHJlZGhhdC5jb20+CgotLS0K
-IGxpYi94ODYvYXNtL3NldHVwLmggfCAgIDEgKwogbGliL3g4Ni9wcm9jZXNzb3IuaCB8ICAgNSAr
-CiBsaWIveDg2L3ZtLmggICAgICAgIHwgICAxICsKIHg4Ni9NYWtlZmlsZS54ODZfNjQgfCAgIDEg
-KwogeDg2L2NzdGFydDY0LlMgICAgICB8ICAzNSArKysrKysrCiB4ODYvbXNyX2Nhbm9uaWNhbC5j
-IHwgMjM2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiA2IGZp
-bGVzIGNoYW5nZWQsIDI3OSBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgeDg2L21z
-cl9jYW5vbmljYWwuYwoKZGlmZiAtLWdpdCBhL2xpYi94ODYvYXNtL3NldHVwLmggYi9saWIveDg2
-L2FzbS9zZXR1cC5oCmluZGV4IDQ1OGVhYzg1OC4uMzk5Y2VkMWY5IDEwMDY0NAotLS0gYS9saWIv
-eDg2L2FzbS9zZXR1cC5oCisrKyBiL2xpYi94ODYvYXNtL3NldHVwLmgKQEAgLTE0LDYgKzE0LDcg
-QEAgdW5zaWduZWQgbG9uZyBzZXR1cF90c3ModTggKnN0YWNrdG9wKTsKIAogZWZpX3N0YXR1c190
-IHNldHVwX2VmaShlZmlfYm9vdGluZm9fdCAqZWZpX2Jvb3RpbmZvKTsKIHZvaWQgc2V0dXBfNWxl
-dmVsX3BhZ2VfdGFibGUodm9pZCk7Cit2b2lkIHNldHVwXzRsZXZlbF9wYWdlX3RhYmxlKHZvaWQp
-OwogI2VuZGlmIC8qIENPTkZJR19FRkkgKi8KIAogdm9pZCBzYXZlX2lkKHZvaWQpOwpkaWZmIC0t
-Z2l0IGEvbGliL3g4Ni9wcm9jZXNzb3IuaCBiL2xpYi94ODYvcHJvY2Vzc29yLmgKaW5kZXggZGEx
-ZWQ2NjI4Li5kNDc4ZWZmOTEgMTAwNjQ0Ci0tLSBhL2xpYi94ODYvcHJvY2Vzc29yLmgKKysrIGIv
-bGliL3g4Ni9wcm9jZXNzb3IuaApAQCAtNDY4LDYgKzQ2OCwxMSBAQCBzdGF0aWMgaW5saW5lIGlu
-dCByZG1zcl9zYWZlKHUzMiBpbmRleCwgdWludDY0X3QgKnZhbCkKIAlyZXR1cm4gcmRyZWc2NF9z
-YWZlKCJyZG1zciIsIGluZGV4LCB2YWwpOwogfQogCitzdGF0aWMgaW5saW5lIGludCByZG1zcl9m
-ZXBfc2FmZSh1MzIgaW5kZXgsIHVpbnQ2NF90ICp2YWwpCit7CisJcmV0dXJuIF9fcmRyZWc2NF9z
-YWZlKEtWTV9GRVAsICJyZG1zciIsIGluZGV4LCB2YWwpOworfQorCiBzdGF0aWMgaW5saW5lIGlu
-dCB3cm1zcl9zYWZlKHUzMiBpbmRleCwgdTY0IHZhbCkKIHsKIAlyZXR1cm4gd3JyZWc2NF9zYWZl
-KCJ3cm1zciIsIGluZGV4LCB2YWwpOwpkaWZmIC0tZ2l0IGEvbGliL3g4Ni92bS5oIGIvbGliL3g4
-Ni92bS5oCmluZGV4IGNmMzk3ODdhYS4uNjBhY2UxYTg0IDEwMDY0NAotLS0gYS9saWIveDg2L3Zt
-LmgKKysrIGIvbGliL3g4Ni92bS5oCkBAIC04LDYgKzgsNyBAQAogI2luY2x1ZGUgImFzbS9iaXRv
-cHMuaCIKIAogdm9pZCBzZXR1cF81bGV2ZWxfcGFnZV90YWJsZSh2b2lkKTsKK3ZvaWQgc2V0dXBf
-NGxldmVsX3BhZ2VfdGFibGUodm9pZCk7CiAKIHN0cnVjdCBwdGVfc2VhcmNoIHsKIAlpbnQgbGV2
-ZWw7CmRpZmYgLS1naXQgYS94ODYvTWFrZWZpbGUueDg2XzY0IGIveDg2L01ha2VmaWxlLng4Nl82
-NAppbmRleCAyNzcxYTZmYWQuLjFiYzFjMTBiMCAxMDA2NDQKLS0tIGEveDg2L01ha2VmaWxlLng4
-Nl82NAorKysgYi94ODYvTWFrZWZpbGUueDg2XzY0CkBAIC0zOCw2ICszOCw3IEBAIHRlc3RzICs9
-ICQoVEVTVF9ESVIpL3JkcHJ1LiQoZXhlKQogdGVzdHMgKz0gJChURVNUX0RJUikvcGtzLiQoZXhl
-KQogdGVzdHMgKz0gJChURVNUX0RJUikvcG11X2xici4kKGV4ZSkKIHRlc3RzICs9ICQoVEVTVF9E
-SVIpL3BtdV9wZWJzLiQoZXhlKQordGVzdHMgKz0gJChURVNUX0RJUikvbXNyX2Nhbm9uaWNhbC4k
-KGV4ZSkKIAogaWZlcSAoJChDT05GSUdfRUZJKSx5KQogdGVzdHMgKz0gJChURVNUX0RJUikvYW1k
-X3Nldi4kKGV4ZSkKZGlmZiAtLWdpdCBhL3g4Ni9jc3RhcnQ2NC5TIGIveDg2L2NzdGFydDY0LlMK
-aW5kZXggNGRmZjExMDI3Li5hOTFkNTVkMDAgMTAwNjQ0Ci0tLSBhL3g4Ni9jc3RhcnQ2NC5TCisr
-KyBiL3g4Ni9jc3RhcnQ2NC5TCkBAIC05Miw2ICs5MiwyNyBAQCBzd2l0Y2hfdG9fNWxldmVsOgog
-CWNhbGwgZW50ZXJfbG9uZ19tb2RlCiAJam1wbCAkOCwgJGx2bDUKIAorCitzd2l0Y2hfdG9fNGxl
-dmVsOgorCW1vdiAlY3IwLCAlZWF4CisJYnRyICQzMSwgJWVheAorCW1vdiAlZWF4LCAlY3IwCisK
-Kwltb3YgJHB0bDQsICVlYXgKKwltb3YgJWVheCwgcHRfcm9vdAorCisJLyogRGlzYWJsZSBDUjQu
-TEE1NyAqLworCW1vdiAlY3I0LCAlZWF4CisJYnRyICQxMiwgJWVheAorCW1vdiAlZWF4LCAlY3I0
-CisKKwltb3YgJDB4MTAsICVheAorCW1vdiAlYXgsICVzcworCisJY2FsbCBlbnRlcl9sb25nX21v
-ZGUKKwlqbXBsICQ4LCAkbHZsNQorCisKIHNtcF9zdGFja3RvcDoJLmxvbmcgc3RhY2t0b3AgLSA0
-MDk2CiAKIC5hbGlnbiAxNgpAQCAtMTM5LDMgKzE2MCwxNyBAQCBzZXR1cF81bGV2ZWxfcGFnZV90
-YWJsZToKIAlscmV0cQogbHZsNToKIAlyZXRxCisKKworLmdsb2JsIHNldHVwXzRsZXZlbF9wYWdl
-X3RhYmxlCitzZXR1cF80bGV2ZWxfcGFnZV90YWJsZToKKwkvKiBDaGVjayBpZiA0LWxldmVsIHBh
-Z2luZyBoYXMgYWxyZWFkeSBlbmFibGVkICovCisJbW92ICVjcjQsICVyYXgKKwl0ZXN0ICQweDEw
-MDAsICVlYXgKKwlqeiBsdmw0CisKKwlwdXNocSAkMzIKKwlwdXNocSAkc3dpdGNoX3RvXzRsZXZl
-bAorCWxyZXRxCitsdmw0OgorCXJldHEKZGlmZiAtLWdpdCBhL3g4Ni9tc3JfY2Fub25pY2FsLmMg
-Yi94ODYvbXNyX2Nhbm9uaWNhbC5jCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAw
-MC4uODllODA5ZDkwCi0tLSAvZGV2L251bGwKKysrIGIveDg2L21zcl9jYW5vbmljYWwuYwpAQCAt
-MCwwICsxLDIzNiBAQAorI2luY2x1ZGUgImxpYmNmbGF0LmgiCisKKyNpbmNsdWRlICJhcGljLmgi
-CisjaW5jbHVkZSAicHJvY2Vzc29yLmgiCisjaW5jbHVkZSAibXNyLmgiCisjaW5jbHVkZSAieDg2
-L3ZtLmgiCisjaW5jbHVkZSAiYXNtL3NldHVwLmgiCisKK3N0YXRpYyB1bG9uZyBtc3JfbGlzdFtd
-ID0geworCS8qTVNSX0dTX0JBU0UgLSB0ZXN0cyBuZWVkcyB0aGlzIG1zciBmb3IgX3NhZmUgbWFj
-cm9zICovCisJTVNSX0lBMzJfU1lTRU5URVJfRVNQLAorCU1TUl9JQTMyX1NZU0VOVEVSX0VJUCwK
-KwlNU1JfRlNfQkFTRSwKKwlNU1JfS0VSTkVMX0dTX0JBU0UsCisJTVNSX0xTVEFSLAorCU1TUl9D
-U1RBUgorfTsKKworI2RlZmluZSBURVNUX1ZBTFVFMCAweGZmZmZmZmNlYjE2MDAwMDAKKyNkZWZp
-bmUgVEVTVF9WQUxVRTEgMHhmZjQ1NDdjZWIxNjAwMDAwCisjZGVmaW5lIFRFU1RfVkFMVUUyIDB4
-ZmE0NTQ3Y2ViMTYwMDAwMAorCisKK3N0YXRpYyB2b2lkIHRlc3RfbXNyczAodm9pZCkKK3sKKwlp
-bnQgaTsKKworCWZvciAoaSA9IDAgOyBpIDwgQVJSQVlfU0laRShtc3JfbGlzdCkgOyBpKyspIHsK
-KworCQl1NjQgdmFsdWUgPSByZG1zcihtc3JfbGlzdFtpXSk7CisJCXU2NCB2YWx1ZTE7CisJCWlu
-dCB2ZWN0b3I7CisKKwkJLy8gd3JpdGUgdGVzdCB2YWx1ZSB2aWEga3ZtCisJCXZlY3RvciA9IHdy
-bXNyX2ZlcF9zYWZlKG1zcl9saXN0W2ldLCBURVNUX1ZBTFVFMCk7CisKKwkJaWYgKHZlY3RvcikK
-KwkJCXJlcG9ydF9mYWlsKCIlZCBGYWlsIHRvIHdyaXRlIG1zciB2aWEgZW11bGF0aW9uIiwgaSk7
-CisJCWVsc2UgeworCQkJLy8gcmVhZCB0ZXN0IHZhbHVlIHZpYSBoYXJkd2FyZQorCQkJaWYgKHJk
-bXNyKG1zcl9saXN0W2ldKSAhPSBURVNUX1ZBTFVFMCkKKwkJCQlyZXBvcnRfZmFpbCgiJWQ6IFdy
-b25nIG1zciB2YWx1ZSBzZXQgdmlhIGVtdWxhdGlvbiIsIGkpOworCQl9CisKKwkJLy8gcmVzdG9y
-ZSB0aGUgb3JpZ2luYWwgdmFsdWUKKwkJd3Jtc3IobXNyX2xpc3RbaV0sIHZhbHVlKTsKKworCQkv
-LyBub3cgd3JpdGUgdGVzdCB2YWx1ZSB2aWEgaGFyZHdhcmUKKwkJd3Jtc3IobXNyX2xpc3RbaV0s
-IFRFU1RfVkFMVUUwKTsKKworCQkvLyBub3cgcmVhZCB0ZXN0IHZhbHVlIHZpYSBrdm0KKwkJdmVj
-dG9yID0gcmRtc3JfZmVwX3NhZmUobXNyX2xpc3RbaV0sICZ2YWx1ZTEpOworCisJCWlmICh2ZWN0
-b3IpCisJCQlyZXBvcnRfZmFpbCgiJWQgRmFpbCB0byByZWFkIG1zciB2aWEgZW11bGF0aW9uXG4i
-LCBpKTsKKwkJZWxzZSB7CisJCQlpZiggdmFsdWUxICE9IFRFU1RfVkFMVUUwKQorCQkJCXJlcG9y
-dF9mYWlsKCIlZDogV3JvbmcgdmFsdWUgcmVhZCB2aWEgZW11bGF0aW9uIiwgaSk7CisJCX0KKwor
-CisJCS8vIHJlc3RvcmUgdGhlIG9yaWdpbmFsIHZhbHVlCisJCXdybXNyKG1zcl9saXN0W2ldLCB2
-YWx1ZSk7CisJfQorfQorCisKKworCisvKgorICogd3JpdGUgbm9uIGNhbm9uaWNhbCBmb3IgNCBs
-ZXZlbCBidXQgY2Fub25pY2FsIGZvciA1IGxldmVsIHBhZ2luZworICogdmFsdWUgdG8gdGhlIHNl
-dCBvZiB0ZXN0ZWQgbXNycworICovCitzdGF0aWMgdm9pZCB0ZXN0X21zcnMxKHU2NCB0ZXN0X3Zh
-bHVlKQoreworCWludCBpLCB2ZWN0b3IxLCB2ZWN0b3IyOworCisJZm9yIChpID0gMCA7IGkgPCBB
-UlJBWV9TSVpFKG1zcl9saXN0KSA7IGkrKykgeworCisJCXU2NCB2YWx1ZSA9IHJkbXNyKG1zcl9s
-aXN0W2ldKTsKKworCQl2ZWN0b3IxID0gd3Jtc3Jfc2FmZShtc3JfbGlzdFtpXSwgdGVzdF92YWx1
-ZSk7CisJCXdybXNyKG1zcl9saXN0W2ldLCB2YWx1ZSk7CisKKwkJdmVjdG9yMiA9IHdybXNyX2Zl
-cF9zYWZlKG1zcl9saXN0W2ldLCB0ZXN0X3ZhbHVlKTsKKwkJd3Jtc3IobXNyX2xpc3RbaV0sIHZh
-bHVlKTsKKworCQlwcmludGYoIiVkOiBodyBleGNlcHRpb246ICVkIGt2bSBleGNlcHRpb24gJWRc
-biIsIGksIHZlY3RvcjEsIHZlY3RvcjIpOworCisJfQorfQorCisKKy8qCisgKiB3cml0ZSBub24g
-Y2Fub25pY2FsIGZvciA0IGxldmVsIGJ1dCBjYW5vbmljYWwgZm9yIDUgbGV2ZWwgcGFnaW5nCisg
-KiB2YWx1ZSB0byB0aGUgc2V0IG9mIHRlc3RlZCBtc3JzIHdoaWxlIHVzaW5nIDUgbGV2ZWwgcGFn
-aW5nLAorICogYW5kIHRoZW4gc3dpdGNoIHRvIDQgbGV2ZWwgcGFnaW5nCisgKgorICoKKyAqLwor
-c3RhdGljIHZvaWQgdGVzdF9tc3JzMih2b2lkKQoreworCWludCBpOworCisJc2V0dXBfNWxldmVs
-X3BhZ2VfdGFibGUoKTsKKworCWZvciAoaSA9IDAgOyBpIDwgQVJSQVlfU0laRShtc3JfbGlzdCkg
-OyBpKyspIHsKKwkJd3Jtc3IobXNyX2xpc3RbaV0sIFRFU1RfVkFMVUUxKTsKKwl9CisKKwlzZXR1
-cF80bGV2ZWxfcGFnZV90YWJsZSgpOworCisJZm9yIChpID0gMCA7IGkgPCBBUlJBWV9TSVpFKG1z
-cl9saXN0KSA7IGkrKykKKwkJaWYgKHJkbXNyKG1zcl9saXN0W2ldKSAhPSBURVNUX1ZBTFVFMSkK
-KwkJCXJlcG9ydF9mYWlsKCJNU1IgJWkgZGlkbid0IHByZXNlcnZlIHZhbHVlIHdoZW4gc3dpdGNo
-aW5nIGJhY2sgdG8gNCBsZXZlbCBwYWdpbmciLCBpKTsKKworfQorCisKK3N0YXRpYyB2b2lkIHRl
-c3RfbGxkdF9ob3N0KHU2NCB2YWx1ZSkKK3sKKwl1MTYgb3JpZ25hbF9sZHQgPSBzbGR0KCk7CisK
-KwlzZXRfZ2R0X2VudHJ5KEZJUlNUX1NQQVJFX1NFTCwgdmFsdWUsIDB4MTAwLCAweDgyLCAwKTsK
-KwlsbGR0KEZJUlNUX1NQQVJFX1NFTCk7CisJbGxkdChvcmlnbmFsX2xkdCk7Cit9CisKK3N0YXRp
-YyB2b2lkIHRlc3RfbHRyX2hvc3QodTY0IHZhbHVlKQoreworCXNpemVfdCB0c3Nfb2Zmc2V0Owor
-CisJc2V0X2dkdF9lbnRyeShGSVJTVF9TUEFSRV9TRUwsIHZhbHVlLCAweDEwMCwgMHg4OSwgMCk7
-CisJbHRyKEZJUlNUX1NQQVJFX1NFTCk7CisKKwkvKiByZXN0b3JlIFRTUyovCisJdHNzX29mZnNl
-dCA9IHNldHVwX3RzcyhOVUxMKTsKKwlsb2FkX2dkdF90c3ModHNzX29mZnNldCk7Cit9CisKK3N0
-YXRpYyB2b2lkIHRlc3RfbGdkdF9ob3N0KHU2NCB2YWx1ZSkKK3sKKwlzdHJ1Y3QgZGVzY3JpcHRv
-cl90YWJsZV9wdHIgZHRfcHRyOworCXU2NCBvcmlnX2Jhc2U7CisKKwlzZ2R0KCZkdF9wdHIpOwor
-CW9yaWdfYmFzZSA9IGR0X3B0ci5iYXNlOworCisJZHRfcHRyLmJhc2UgPSB2YWx1ZTsKKwlsZ2R0
-KCZkdF9wdHIpOworCisJZHRfcHRyLmJhc2UgPSBvcmlnX2Jhc2U7CisJbGdkdCgmZHRfcHRyKTsK
-K30KKworc3RhdGljIHZvaWQgdGVzdF9saWR0X2hvc3QodTY0IHZhbHVlKQoreworCXN0cnVjdCBk
-ZXNjcmlwdG9yX3RhYmxlX3B0ciBkdF9wdHI7CisJdTY0IG9yaWdfYmFzZTsKKworCXNpZHQoJmR0
-X3B0cik7CisJb3JpZ19iYXNlID0gZHRfcHRyLmJhc2U7CisKKwlkdF9wdHIuYmFzZSA9IHZhbHVl
-OworCWxpZHQoJmR0X3B0cik7CisKKwlkdF9wdHIuYmFzZSA9IG9yaWdfYmFzZTsKKwlsaWR0KCZk
-dF9wdHIpOworfQorCisKK3N0YXRpYyB2b2lkIHRlc3Rfc3BlY2lhbF9iYXNlcyh1NjQgdmFsdWUp
-Cit7CisJdGVzdF9sZ2R0X2hvc3QodmFsdWUpOworCXRlc3RfbGlkdF9ob3N0KHZhbHVlKTsKKwor
-CXRlc3RfbGxkdF9ob3N0KHZhbHVlKTsKKwl0ZXN0X2x0cl9ob3N0KHZhbHVlKTsKKworCXByaW50
-ZigiU3BlY2lhbCBiYXNlcyB0ZXN0IGRvbmUgZm9yICVseFxuIiwgdmFsdWUpOworfQorCisKK2lu
-dCBtYWluKGludCBhcmdjLCBjaGFyICoqYXJndikKK3sKKyNpZm5kZWYgQ09ORklHX0VGSQorCisJ
-cHJpbnRmKCJCYXNpYyBtc3IgdGVzdFxuIik7CisJdGVzdF9tc3JzMCgpOworCisJcHJpbnRmKCJ0
-ZXN0aW5nIG1zcnMgd2l0aCA0IGxldmVsIHBhZ2luZ1xuIik7CisJdGVzdF9tc3JzMShURVNUX1ZB
-TFVFMCk7CisJcHJpbnRmKCJcbiIpOworCisJcHJpbnRmKCJ0ZXN0aW5nIG1zcnMgd2l0aCA0IGxl
-dmVsIHBhZ2luZyAoNCBsZXZlbCBub24gY2Fub25pY2FsIHZhbHVlKVxuIik7CisJdGVzdF9tc3Jz
-MShURVNUX1ZBTFVFMSk7CisJcHJpbnRmKCJcbiIpOworCisJcHJpbnRmKCJ0ZXN0aW5nIG1zcnMg
-d2l0aCA0IGxldmVsIHBhZ2luZyAoZnVsbHkgbm9uIGNhbm9uaWNhbCB2YWx1ZSlcbiIpOworCXRl
-c3RfbXNyczEoVEVTVF9WQUxVRTIpOworCXByaW50ZigiXG4iKTsKKworCisJc2V0dXBfNWxldmVs
-X3BhZ2VfdGFibGUoKTsKKworCXByaW50ZigidGVzdGluZyBtc3JzIHdpdGggNSBsZXZlbCBwYWdp
-bmdcbiIpOworCXRlc3RfbXNyczEoVEVTVF9WQUxVRTApOworCXByaW50ZigiXG4iKTsKKworCisJ
-cHJpbnRmKCJ0ZXN0aW5nIG1zcnMgd2l0aCA1IGxldmVsIHBhZ2luZyAoNCBsZXZlbCBub24gY2Fu
-b25pY2FsIHZhbHVlKVxuIik7CisJdGVzdF9tc3JzMShURVNUX1ZBTFVFMSk7CisJcHJpbnRmKCJc
-biIpOworCisJcHJpbnRmKCJ0ZXN0aW5nIG1zcnMgd2l0aCA1IGxldmVsIHBhZ2luZyAoZnVsbHkg
-bm9uIGNhbm9uaWNhbCB2YWx1ZSlcbiIpOworCXRlc3RfbXNyczEoVEVTVF9WQUxVRTIpOworCXBy
-aW50ZigiXG4iKTsKKworCisJcHJpbnRmKCJ0ZXN0aW5nIHRoYXQgbXNycyByZW1haW4gd2l0aCBu
-b24gY2Fub25pY2FsIHZhbHVlcyBhZnRlciBzd2l0Y2ggdG8gNCBsZXZlbCBwYWdpbmdcbiIpOwor
-CXRlc3RfbXNyczIoKTsKKworCXNldHVwXzVsZXZlbF9wYWdlX3RhYmxlKCk7CisKKwl0ZXN0X3Nw
-ZWNpYWxfYmFzZXMoVEVTVF9WQUxVRTApOworCXRlc3Rfc3BlY2lhbF9iYXNlcyhURVNUX1ZBTFVF
-MSk7CisKKwlzZXR1cF80bGV2ZWxfcGFnZV90YWJsZSgpOworCisJdGVzdF9zcGVjaWFsX2Jhc2Vz
-KFRFU1RfVkFMVUUwKTsKKwl0ZXN0X3NwZWNpYWxfYmFzZXMoVEVTVF9WQUxVRTEpOworCisjZW5k
-aWYKKwlyZXR1cm4gcmVwb3J0X3N1bW1hcnkoKTsKK30KKwotLSAKMi40MC4xCgo=
-
-
---=-owDS2/HMysC5GQlSjSbA
-Content-Disposition: attachment;
-	filename*0=0002-vmx-add-test-for-canonical-checks-on-various-fields.patc;
-	filename*1=h
-Content-Type: text/x-patch;
-	name="0002-vmx-add-test-for-canonical-checks-on-various-fields.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-RnJvbSBlMTQyODhmNTA4OTZjYWFhZmJkZDhlNjZkNThmZTc1N2YyMzdiMTNjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXhpbSBMZXZpdHNreSA8bWxldml0c2tAcmVkaGF0LmNvbT4K
-RGF0ZTogTW9uLCAyMiBKdWwgMjAyNCAxMTowOTo0MCAtMDQwMApTdWJqZWN0OiBbUEFUQ0ggMi8y
-XSB2bXg6IGFkZCB0ZXN0IGZvciBjYW5vbmljYWwgY2hlY2tzIG9uIHZhcmlvdXMgZmllbGRzCgpT
-aWduZWQtb2ZmLWJ5OiBNYXhpbSBMZXZpdHNreSA8bWxldml0c2tAcmVkaGF0LmNvbT4KLS0tCiB4
-ODYvdm14X3Rlc3RzLmMgfCAxNTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTUxIGluc2VydGlvbnMoKykKCmRpZmYgLS1n
-aXQgYS94ODYvdm14X3Rlc3RzLmMgYi94ODYvdm14X3Rlc3RzLmMKaW5kZXggZmZlNzA2NGM5Li44
-Zjk3ODQzNjAgMTAwNjQ0Ci0tLSBhL3g4Ni92bXhfdGVzdHMuYworKysgYi94ODYvdm14X3Rlc3Rz
-LmMKQEAgLTEwNzMyLDYgKzEwNzMyLDcgQEAgc3RhdGljIHZvaWQgaGFuZGxlX2V4Y2VwdGlvbl9p
-bl9sMSh1MzIgdmVjdG9yKQogCXZtY3Nfd3JpdGUoRVhDX0JJVE1BUCwgb2xkX2ViKTsKIH0KIAor
-CiBzdGF0aWMgdm9pZCB2bXhfZXhjZXB0aW9uX3Rlc3Qodm9pZCkKIHsKIAlzdHJ1Y3Qgdm14X2V4
-Y2VwdGlvbl90ZXN0ICp0OwpAQCAtMTA3NTQsNiArMTA3NTUsMTU1IEBAIHN0YXRpYyB2b2lkIHZt
-eF9leGNlcHRpb25fdGVzdCh2b2lkKQogCXRlc3Rfc2V0X2d1ZXN0X2ZpbmlzaGVkKCk7CiB9CiAK
-KworI2RlZmluZSBURVNUX1ZBTFVFX0NBTk9OSUNBTCAgMHhmZmZmZmZjZWIxNjAwMDAwCisjZGVm
-aW5lIFRFU1RfVkFMVUVfNUNBTk9OSUNBTCAweGZmNDU0N2NlYjE2MDAwMDAKKworc3RhdGljIHZv
-aWQgdm14X2Nhbm9uaWNhbF90ZXN0X2d1ZXN0KHZvaWQpCit7CisJd2hpbGUgKHRydWUpIHsKKwkJ
-dm1jYWxsKCk7CisJfQorfQorCitzdGF0aWMgaW50IGdldF9ob3N0X3ZhbHVlKHU2NCB2bWNzX2Zp
-ZWxkLCB1NjQgKnZhbHVlKQoreworCXN0cnVjdCBkZXNjcmlwdG9yX3RhYmxlX3B0ciBkdF9wdHI7
-CisKKwlzd2l0Y2godm1jc19maWVsZCkgeworCWNhc2UgSE9TVF9TWVNFTlRFUl9FU1A6CisJCSp2
-YWx1ZSA9IHJkbXNyKE1TUl9JQTMyX1NZU0VOVEVSX0VTUCk7CisJCWJyZWFrOworCWNhc2UgSE9T
-VF9TWVNFTlRFUl9FSVA6CisJCSp2YWx1ZSA9ICByZG1zcihNU1JfSUEzMl9TWVNFTlRFUl9FSVAp
-OworCQlicmVhazsKKwljYXNlIEhPU1RfQkFTRV9GUzoKKwkJKnZhbHVlID0gIHJkbXNyKE1TUl9G
-U19CQVNFKTsKKwkJYnJlYWs7CisJY2FzZSBIT1NUX0JBU0VfR1M6CisJCSp2YWx1ZSA9ICByZG1z
-cihNU1JfR1NfQkFTRSk7CisJCWJyZWFrOworCWNhc2UgSE9TVF9CQVNFX0dEVFI6CisJCXNnZHQo
-JmR0X3B0cik7CisJCSp2YWx1ZSA9ICBkdF9wdHIuYmFzZTsKKwkJYnJlYWs7CisJY2FzZSBIT1NU
-X0JBU0VfSURUUjoKKwkJc2lkdCgmZHRfcHRyKTsKKwkJKnZhbHVlID0gIGR0X3B0ci5iYXNlOwor
-CQlicmVhazsKKwljYXNlIEhPU1RfQkFTRV9UUjoKKwkJKnZhbHVlID0gZ2V0X2dkdF9lbnRyeV9i
-YXNlKGdldF90c3NfZGVzY3IoKSk7CisJCS8qIHZhbHVlIG1pZ2h0IG5vdCByZWZsZWN0IHRoZSBh
-Y3R1YWwgYmFzZSBpZiBjaGFuZ2VkIGJ5IFZNWCAqLworCQlyZXR1cm4gMTsKKwlkZWZhdWx0Ogor
-CQlhc3NlcnQoMCk7CisJfQorCXJldHVybiAwOworfQorCitzdGF0aWMgdm9pZCBzZXRfaG9zdF92
-YWx1ZSh1NjQgdm1jc19maWVsZCwgdTY0IHZhbHVlKQoreworCXN0cnVjdCBkZXNjcmlwdG9yX3Rh
-YmxlX3B0ciBkdF9wdHI7CisKKwlzd2l0Y2godm1jc19maWVsZCkgeworCWNhc2UgSE9TVF9TWVNF
-TlRFUl9FU1A6CisJCXdybXNyKE1TUl9JQTMyX1NZU0VOVEVSX0VTUCwgdmFsdWUpOworCQlicmVh
-azsKKwljYXNlIEhPU1RfU1lTRU5URVJfRUlQOgorCQl3cm1zcihNU1JfSUEzMl9TWVNFTlRFUl9F
-SVAsIHZhbHVlKTsKKwkJYnJlYWs7CisJY2FzZSBIT1NUX0JBU0VfRlM6CisJCXdybXNyKE1TUl9G
-U19CQVNFLCB2YWx1ZSk7CisJCWJyZWFrOworCWNhc2UgSE9TVF9CQVNFX0dTOgorCQl3cm1zcihN
-U1JfR1NfQkFTRSwgdmFsdWUpOworCQlicmVhazsKKwljYXNlIEhPU1RfQkFTRV9HRFRSOgorCQlz
-Z2R0KCZkdF9wdHIpOworCQlkdF9wdHIuYmFzZSA9IHZhbHVlOworCQlsZ2R0KCZkdF9wdHIpOwor
-CQlicmVhazsKKwljYXNlIEhPU1RfQkFTRV9JRFRSOgorCQlzaWR0KCZkdF9wdHIpOworCQlkdF9w
-dHIuYmFzZSA9IHZhbHVlOworCQlsaWR0KCZkdF9wdHIpOworCQlicmVhazsKKwljYXNlIEhPU1Rf
-QkFTRV9UUjoKKwkJLyogc2V0IHRoZSBiYXNlIGFuZCBjbGVhciB0aGUgYnVzeSBiaXQgKi8KKwkJ
-c2V0X2dkdF9lbnRyeShGSVJTVF9TUEFSRV9TRUwsIHZhbHVlLCAweDIwMCwgMHg4OSwgMCk7CisJ
-CWx0cihGSVJTVF9TUEFSRV9TRUwpOworCQlicmVhazsKKwl9Cit9CisKK3N0YXRpYyB2b2lkIGRv
-X3ZteF9jYW5vbmljYWxfdGVzdF9vbmVfZmllbGQoY29uc3QgY2hhciogbmFtZSwgdTY0IGZpZWxk
-KQoreworCS8qIGJhY2t1cCB0aGUgbXNyIGFuZCBmaWVsZCB2YWx1ZXMgKi8KKwl1NjQgaG9zdF9v
-cmdfdmFsdWUsIHRlc3RfdmFsdWU7CisJdTY0IGZpZWxkX29yZ192YWx1ZSA9IHZtY3NfcmVhZChm
-aWVsZCk7CisKKwlnZXRfaG9zdF92YWx1ZShmaWVsZCwgJmhvc3Rfb3JnX3ZhbHVlKTsKKworCS8q
-IHdyaXRlIDU3LWNhbm9uaWNhbCB2YWx1ZSBvbiB0aGUgaG9zdCBhbmQgY2hlY2sgdGhhdCBpdCB3
-YXMgd3JpdHRlbiAqLworCXNldF9ob3N0X3ZhbHVlKGZpZWxkLCBURVNUX1ZBTFVFXzVDQU5PTklD
-QUwpOworCWlmICghZ2V0X2hvc3RfdmFsdWUoZmllbGQsICZ0ZXN0X3ZhbHVlKSkgeworCQlyZXBv
-cnQodGVzdF92YWx1ZSA9PSBURVNUX1ZBTFVFXzVDQU5PTklDQUwsICIlczogSE9TVCB2YWx1ZSBp
-cyBzZXQgdG8gdGVzdCB2YWx1ZSBkaXJlY3RseSIsIG5hbWUpOworCX0KKworCS8qIHdyaXRlIDU3
-LWNhbm9uaWNhbCB2YWx1ZSB2aWEgVk1MQU5VQ0gvVk1SRVNVTUUgaW5zdHJ1Y3Rpb24qLworCXNl
-dF9ob3N0X3ZhbHVlKGZpZWxkLCBURVNUX1ZBTFVFX0NBTk9OSUNBTCk7CisJdm1jc193cml0ZShm
-aWVsZCwgVEVTVF9WQUxVRV81Q0FOT05JQ0FMKTsKKworCWVudGVyX2d1ZXN0KCk7CisJc2tpcF9l
-eGl0X3ZtY2FsbCgpOworCisJaWYgKCFnZXRfaG9zdF92YWx1ZShmaWVsZCwgJnRlc3RfdmFsdWUp
-KSB7CisJCS8qIGNoZWNrIHRoYXQgbm93IG1zciB2YWx1ZSBpcyB0aGUgc2FtZSBhcyB0aGUgZmll
-bGQgdmFsdWUqLworCQlyZXBvcnQodGVzdF92YWx1ZSA9PSBURVNUX1ZBTFVFXzVDQU5PTklDQUws
-ICIlczogSE9TVCB2YWx1ZSBpcyBzZXQgdG8gdGVzdCB2YWx1ZSB2aWEgVk1MQVVOQ0gvVk1SRVNV
-TUUiLCBuYW1lKTsKKwl9CisKKwkvKiBSZXN0b3JlIG9yaWdpbmFsIHZhbHVlcyAqLworCXZtY3Nf
-d3JpdGUoZmllbGQsIGZpZWxkX29yZ192YWx1ZSk7CisJc2V0X2hvc3RfdmFsdWUoZmllbGQsIGhv
-c3Rfb3JnX3ZhbHVlKTsKK30KKworI2RlZmluZSB2bXhfY2Fub25pY2FsX3Rlc3Rfb25lX2ZpZWxk
-KGZpZWxkKSBcCisJZG9fdm14X2Nhbm9uaWNhbF90ZXN0X29uZV9maWVsZCgjZmllbGQsIGZpZWxk
-KTsKKworCisKK3N0YXRpYyB2b2lkIHRlc3RfbGxkdF9ob3N0KHU2NCB2YWx1ZSkKK3sKKwl1MTYg
-b3JpZ25hbF9sZHQgPSBzbGR0KCk7CisKKwlzZXRfZ2R0X2VudHJ5KEZJUlNUX1NQQVJFX1NFTCwg
-dmFsdWUsIDB4MTAwLCAweDgyLCAwKTsKKwlsbGR0KEZJUlNUX1NQQVJFX1NFTCk7CisJbGxkdChv
-cmlnbmFsX2xkdCk7Cit9CisKK3N0YXRpYyB2b2lkIHZteF9jYW5vbmljYWxfdGVzdCh2b2lkKQor
-eworCXJlcG9ydCghKHJlYWRfY3I0KCkgJiBYODZfQ1I0X0xBNTcpLCAiNCBsZXZlbCBwYWdpbmci
-KTsKKworCXRlc3Rfc2V0X2d1ZXN0KHZteF9jYW5vbmljYWxfdGVzdF9ndWVzdCk7CisKKwl0ZXN0
-X2xsZHRfaG9zdChURVNUX1ZBTFVFXzVDQU5PTklDQUwpOworCisJdm14X2Nhbm9uaWNhbF90ZXN0
-X29uZV9maWVsZChIT1NUX1NZU0VOVEVSX0VTUCk7CisJdm14X2Nhbm9uaWNhbF90ZXN0X29uZV9m
-aWVsZChIT1NUX1NZU0VOVEVSX0VJUCk7CisKKwl2bXhfY2Fub25pY2FsX3Rlc3Rfb25lX2ZpZWxk
-KEhPU1RfQkFTRV9GUyk7CisJdm14X2Nhbm9uaWNhbF90ZXN0X29uZV9maWVsZChIT1NUX0JBU0Vf
-R1MpOworCisJdm14X2Nhbm9uaWNhbF90ZXN0X29uZV9maWVsZChIT1NUX0JBU0VfR0RUUik7CisJ
-dm14X2Nhbm9uaWNhbF90ZXN0X29uZV9maWVsZChIT1NUX0JBU0VfSURUUik7CisKKwl2bXhfY2Fu
-b25pY2FsX3Rlc3Rfb25lX2ZpZWxkKEhPU1RfQkFTRV9UUik7CisKKworCXRlc3Rfc2V0X2d1ZXN0
-X2ZpbmlzaGVkKCk7Cit9CisKIGVudW0gVmlkX29wIHsKIAlWSURfT1BfU0VUX0lTUiwKIAlWSURf
-T1BfTk9QLApAQCAtMTEyNjIsNSArMTE0MTIsNiBAQCBzdHJ1Y3Qgdm14X3Rlc3Qgdm14X3Rlc3Rz
-W10gPSB7CiAJVEVTVCh2bXhfcGZfaW52dnBpZF90ZXN0KSwKIAlURVNUKHZteF9wZl92cGlkX3Rl
-c3QpLAogCVRFU1Qodm14X2V4Y2VwdGlvbl90ZXN0KSwKKwlURVNUKHZteF9jYW5vbmljYWxfdGVz
-dCksCiAJeyBOVUxMLCBOVUxMLCBOVUxMLCBOVUxMLCBOVUxMLCB7MH0gfSwKIH07Ci0tIAoyLjQw
-LjEKCg==
-
-
---=-owDS2/HMysC5GQlSjSbA--
-
+> 
+> > Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
+> > control for OTCP on the PMC side.
+> > 
+> > [1]
+> > https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
+> 
+> You're right from the datasheet POV.  Not sure if the datasheet is
+> right here?  It's not complete in some register contents anyway, maybe
+> some things are kept confidential, and OTPC is part of that?
+> 
+> Maybe someone can confirm my findings on sam9x60-curiosity, e.g.
+> after I sent a patch series with what I consider fixes for this topic?
+> 
+> > > (Verified that by poking single bits in registers through devmem
+> > > already.)
+> > > 
+> > > Fortunately the necessary clk is already registered from the SoC code
+> > > in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
+> > > summary:
+> > > 
+> > >     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
+> > >                                      enable  prepare  protect                                duty  hardware                            connection
+> > >        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+> > >     ---------------------------------------------------------------------------------------------------------------------------------------------
+> > >      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
+> > > 
+> > > That clock has no parent and is not found anywhere in devicetree, nor
+> > > is it handled by the two clock-producers on that platform, so
+> > > from within mchp_otpc_probe() I just tried this:
+> > > 
+> > >     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
+> > 
+> > > 
+> > > However that returns with -ENOENT, so I assume I can not reference the
+> > > clock just by name?  Same result with this:
+> > > 
+> > >     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
+> > > 
+> > > How do I get a pointer to that clk then to enable it?  Docs [3] where
+> > 
+> > To expose it though DT you may want to save its hw object to one array
+> > entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
+> 
+> Great to see I came to the same conclusion.  I have a proof-of-concept
+> working meanwhile, will send a patch series later this week I guess.
+> 
+> Thanks for your support.
+> 
+> > Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
+> > simple trials.
+> 
+> Don't think that is necessary anymore. :-)
+> 
+> By chance: I don't have a sama7g5 based board at hand for testing.
+> The datasheet says the same as for sam9x60.
+> Does the nvmem_microchip_otpc driver actually work without timeout on
+> sama7g5?
+> 
+> Greets
+> Alex
+> 
+> > 
+> > Thank you,
+> > Claudiu Beznea
+> > 
+> > > not as useful as I hoped for, neither was clk.h header docs. :-/
+> > > 
+> > > From what I understood from header docs reading 'device for clock
+> > > "consumer"' I must pass the device from which I call that clk_get() as
+> > > first parameter, so this would be the otpc device then, right?  What's
+> > > that second parameter clock consumer id then?  Are these terms
+> > > explained somewhere?
+> > > 
+> > > Greets
+> > > Alex
+> > > 
+> > > [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
+> > > [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
+> > > [3] https://kernel.org/doc/html/latest/driver-api/clk.html
+> > > 
+> > 
+> 
 
