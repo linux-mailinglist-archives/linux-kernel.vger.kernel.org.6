@@ -1,162 +1,195 @@
-Return-Path: <linux-kernel+bounces-294222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E347958AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD54958AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFEF1C21E97
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F01B1F259B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53DA192B9F;
-	Tue, 20 Aug 2024 15:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C23193082;
+	Tue, 20 Aug 2024 15:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hs3bidrT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cRAQVplP"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9D318EFC9;
-	Tue, 20 Aug 2024 15:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BCA191F60
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 15:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166861; cv=none; b=Q76dH/mz/52KHB2icfxxVP0lapQjT97WH5x07363QZrt6tbwUFV0SBS5fdP1xJJUtxqP40AcA3K7jTc8LxraA+hTrtQ2bOyhQ7Yj6j2ERwh2yTBy969cdR0E5I2+CfbE/OKr3zB67sBK3JfrV6s2l6yaxJyNgb/xVN2SkhJhTVc=
+	t=1724166861; cv=none; b=bxifNS3hw03Avi9Zb5JydzMb8SojHknsLYYU/mxWtsq3BeXlz5mgiQ7YdDOWC5SxUAUXPrfJ2SRVIqgIjSBRDc1vyL8FDviJTJybfxkRSJxaD9ayaH2p9EHQOCuqbIu+bh8nSEXtB8x5SPkCbxKoXWGJSmdYatDqjY/U8ObCc1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724166861; c=relaxed/simple;
-	bh=HEp2O9Yg+xFVobpRrcPzfJ17tFgUBl3wrHGCOvMurYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9Cia/EwPmrCFVj+7/pqRPoP5eFSjUmhLO+agMKXLAcCVzbnBpsZFSPSSqDpDWFtHeFnB25CyyI7dRXv0YDWoPjnAzZxRa++4DIiyCK9whqhyzMqtvNuxTyDxFn1wNqyMVaeMmk45hfqoEkYGUIBGnF/VTX+7AVIn2udtjXcWzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hs3bidrT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Mj0xb+mKKtlxydaY/lPIxOqJwc7T/yLIdICGlctTCsA=; b=hs3bidrTIdT3d9wsjsAk5IF+tP
-	EhBSP23m2Zp5+ctd2b+yclSD9n2h/JqDGHeXAjvdLUnhRbi15qMm5yNb7m8b6ZCEdDQQpZD1TnIm0
-	3KVPjhWYJFxfsO+eljPP2JOZVPYWTGDDYrMFFJRrPcq24qC9f4TtL8K0Ypiqj9MRIjBg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgQYY-005Ew0-6K; Tue, 20 Aug 2024 17:13:58 +0200
-Date: Tue, 20 Aug 2024 17:13:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
-Message-ID: <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+	bh=832L9RAL1FMXwX98A3L0bhT3XoHmndT7GcmEs0XolO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K8wowSoPE3P4IjZ+0TITBgnfksK5eCW5gESkN8FSLOKmNUYSDQnGDIvqAnm8DaCTl9868vK8aNgbPUxiEcs7rSC5N2NdP//l+pgrXKS0aLZUvneLgp4/PpjIXUsc22R2yZGvYDhCAwi+AQmOEdqK6AWM2lKxEjGQYoZ6yNmIcY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cRAQVplP; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-713eeb4e4a9so1774878b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 08:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724166858; x=1724771658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UpstZLxLvvCxhJ98XGrC+vpfpfqpgjo/Q8CsUGqUwLs=;
+        b=cRAQVplPzEWe7ZNgHXSaudI43YJgUXGdjacV1nXDaUtrUMuP6zIi96TqyumH2g1kRc
+         EeM3lCGG7XkYFisqClTR27imFxIBonmvhUexuGiR5PFqMlYnm55aTOmqh/rMcIo1lOqS
+         ehK8xMJfJwaWlHk166GMj+a4a/SK/g22Lvxigz3RtaQR3+G5rDCy8v4ks9SNBwpYXQl/
+         enbpTQzGxZqOfApCJMg4IZulm1lpOxt0ajLww1e76SOkV92VEFHFaZopjbZKT+3qwSF1
+         6TZ6bkPnmtTekUqoylL1vzm9J4ADysbV6UvXYxKpt85hdT6QhMY+Z/Id58XrouRU2EyU
+         2R6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724166858; x=1724771658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UpstZLxLvvCxhJ98XGrC+vpfpfqpgjo/Q8CsUGqUwLs=;
+        b=pCdImCsvx/fWJzYIIL2oqnQasb1HnwkGfRVhcoZouXKATpwgHOF7rHOWTwtJ4vmDFN
+         uuvrLf0TnIeOKZHW8uAaGqTJ3j1fvkd79fFdV0nyjZZar6yXWd/4tQo3petevIsgtRTq
+         2BUkkexBboY9YFFsWUtUXIBuXEdj+5sG1a3/JkYaH2CoG7766gAFeDiUKk8BOqdJgmMX
+         wgguKrplt4vRHZqYP/Km/+7cSeHhRA0LHvzfy62Gn3KmMRqLMIUpm5jT0lIvH4WtrRe9
+         LD5I0HmFQZESokk+wZcKNm8jfKjI5CChOXAgRcXczBXf27PUOwxh6sRAYDMTB3Q9xz6j
+         QcjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA1T0Vzvw9AoPPYgCarbG4JWAuO1A7GBw9n1bYmIi7h2x3I6sSo3F+iwLmX//FY3xk5m6zlNi9gS3UF3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsKfEeEyYog8l36nIenI+HyPw8EWsyzg8xEW/RN0Gcr76sE7Vh
+	2zr01QrMwoEk1Y2d8ZpHWZe+oFenEingzeR2PYYFvkV+iBX/9UAv3fO26V8/8i+3104XIfbcU+A
+	Ng9UIrWAEc3V1UQF6XDd3WSIXoBJm/EcHEt1h
+X-Google-Smtp-Source: AGHT+IHIbq54w/gJ26ek/JkmDP2J2YfGIU9c5HYcM5Rn3TkyC0U4tJbcw3J6LNUFOQjWKYDux11Qj3/qzxtUKBF/NN4=
+X-Received: by 2002:a05:6a00:cd1:b0:714:1ac3:3f49 with SMTP id
+ d2e1a72fcca58-7141ac357d2mr1100989b3a.3.1724166857750; Tue, 20 Aug 2024
+ 08:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com> <20240820143503.GD28338@willie-the-truck>
+In-Reply-To: <20240820143503.GD28338@willie-the-truck>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 20 Aug 2024 17:13:58 +0200
+Message-ID: <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +static unsigned int txdelay = 35;
-> +module_param(txdelay, uint, 0644);
+On Tue, Aug 20, 2024 at 4:35=E2=80=AFPM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
+> > This patch adds all of the flags that are needed to support the shadow
+> > call stack (SCS) sanitizer with Rust, and updates Kconfig to allow
+> > configurations that work.
+>
+> Minor nit, but some folks have allergic reactions to "This patch".
+> See:
+>
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-cha=
+nges
+>
+> I think the commit message is much better now, though, so thank you for
+> adding so much more detail for v5. If you end up respinning anyway, you
+> could move this all to the imperative.
 
-Networking does not like module parameters.
+Ah, yeah, I keep forgetting about this. I'll change it to imperative
+if I send another version.
 
-This is also unused in this patch! So i suggest you just delete it.
+> >  Makefile            | 1 +
+> >  arch/arm64/Makefile | 3 +++
+> >  init/Kconfig        | 2 +-
+> >  3 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 44c02a6f60a1..eb01a26d8354 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -927,6 +927,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+> >  ifndef CONFIG_DYNAMIC_SCS
+> >  CC_FLAGS_SCS :=3D -fsanitize=3Dshadow-call-stack
+> >  KBUILD_CFLAGS        +=3D $(CC_FLAGS_SCS)
+> > +KBUILD_RUSTFLAGS +=3D -Zsanitizer=3Dshadow-call-stack
+> >  endif
+> >  export CC_FLAGS_SCS
+> >  endif
+> > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> > index f6bc3da1ef11..b058c4803efb 100644
+> > --- a/arch/arm64/Makefile
+> > +++ b/arch/arm64/Makefile
+> > @@ -57,9 +57,11 @@ KBUILD_AFLAGS      +=3D $(call cc-option,-mabi=3Dlp6=
+4)
+> >  ifneq ($(CONFIG_UNWIND_TABLES),y)
+> >  KBUILD_CFLAGS        +=3D -fno-asynchronous-unwind-tables -fno-unwind-=
+tables
+> >  KBUILD_AFLAGS        +=3D -fno-asynchronous-unwind-tables -fno-unwind-=
+tables
+> > +KBUILD_RUSTFLAGS +=3D -Cforce-unwind-tables=3Dn
+> >  else
+> >  KBUILD_CFLAGS        +=3D -fasynchronous-unwind-tables
+> >  KBUILD_AFLAGS        +=3D -fasynchronous-unwind-tables
+> > +KBUILD_RUSTFLAGS +=3D -Cforce-unwind-tables=3Dy -Zuse-sync-unwind=3Dn
+> >  endif
+> >
+> >  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
+> > @@ -114,6 +116,7 @@ endif
+> >
+> >  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
+> >  KBUILD_CFLAGS        +=3D -ffixed-x18
+> > +KBUILD_RUSTFLAGS +=3D -Zfixed-x18
+> >  endif
+> >
+> >  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index fe76c5d0a72e..d857f6f90885 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1909,7 +1909,7 @@ config RUST
+> >       depends on !MODVERSIONS
+> >       depends on !GCC_PLUGINS
+> >       depends on !RANDSTRUCT
+> > -     depends on !SHADOW_CALL_STACK
+> > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 108000 && UNW=
+IND_PATCH_PAC_INTO_SCS
+>
+> Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_SCS is
+> specific to arm64 and the only other architecture selecting
+> ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel it would
+> be cleaner to move this logic into the arch code selecting HAVE_RUST.
+>
+> That is, it's up to the architecture to make sure that it has whatever
+> it needs for SCS to work with Rust if it claims to support Rust.
+>
+> What do you think?
 
-> +
->  /* This structure is only used for MACB on SiFive FU540 devices */
->  struct sifive_fu540_macb_mgmt {
->  	void __iomem *reg;
-> @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
->  	u32 val;
->  
->  	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
-> -				  1, MACB_MDIO_TIMEOUT);
-> +				  100, MACB_MDIO_TIMEOUT);
->  }
-  
-Please take this patch out of the series, and break it up. This is one
-patch, with a good explanation why you need 1->100.
+The `select RUST if ...` is going to get really complicated if we
+apply that rule in general. Having options here allows us to split
+them across several `depends on` clauses. I'm not sure it will even
+work, I had issues with cyclic Kconfig errors previously. I also don't
+think it's unreasonable for the architecture to say it supports both
+options when it really does support both; they are just mutually
+exclusive. I also think there is value in having all of the options
+that Rust doesn't work with in one place.
 
->  static int macb_mdio_read_c22(struct mii_bus *bus, int mii_id, int regnum)
-> @@ -493,6 +496,19 @@ static int macb_mdio_write_c45(struct mii_bus *bus, int mii_id,
->  	return status;
->  }
->  
-> +static int macb_mdio_reset(struct mii_bus *bus)
-> +{
-> +	struct macb *bp = bus->priv;
-> +
-> +	if (bp->phy_reset_gpio) {
-> +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 1);
-> +		msleep(bp->phy_reset_ms);
-> +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 0);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void macb_init_buffers(struct macb *bp)
->  {
->  	struct macb_queue *queue;
-> @@ -969,6 +985,7 @@ static int macb_mii_init(struct macb *bp)
->  	bp->mii_bus->write = &macb_mdio_write_c22;
->  	bp->mii_bus->read_c45 = &macb_mdio_read_c45;
->  	bp->mii_bus->write_c45 = &macb_mdio_write_c45;
-> +	bp->mii_bus->reset = &macb_mdio_reset;
+So I'd like to keep it as-is.
 
-This is one patch.
-
->  	snprintf(bp->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
->  		 bp->pdev->name, bp->pdev->id);
->  	bp->mii_bus->priv = bp;
-> @@ -1640,6 +1657,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
->  
->  		macb_init_rx_ring(queue);
->  		queue_writel(queue, RBQP, queue->rx_ring_dma);
-> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> +		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> +			macb_writel(bp, RBQPH,
-> +				    upper_32_bits(queue->rx_ring_dma));
-> +#endif
-
-How does this affect a disto kernel? Do you actually need the #ifdef?
-What does bp->hw_dma_cap contain when CONFIG_ARCH_DMA_ADDR_T_64BIT is
-not defined?
-
-Again, this should be a patch of its own, with a good commit message.
-
-Interrupt coalescing should be a patch of its own, etc.
-
-    Andrew
-
----
-pw-bot: cr
+Alice
 
