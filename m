@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-294439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761B5958DAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312B0958DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 19:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 029C5B2279F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635C91C21A85
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 17:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975631BE225;
-	Tue, 20 Aug 2024 17:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA9B1C0DF8;
+	Tue, 20 Aug 2024 17:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rv99k3kz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhTQ91UU"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60BF482FF;
-	Tue, 20 Aug 2024 17:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8F1482FF;
+	Tue, 20 Aug 2024 17:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724176669; cv=none; b=BVQSkTjNLfG9QforR8BRo6n9T0iQVSPJqNVWQQ7jnRD5iCYVNvmsLtmutEgrd0jBhzR5GBmsHhkvrAD2VxNGz80YBlFs2lw7wicYnDsFJ26IPVa4NmHIgUvA0rvj/5TOIx7SY3KacOTM8t/j+5xP2ET7gd1M3G+hyrokpu0lZ54=
+	t=1724176761; cv=none; b=OBpwV9ozsUSXSWVyTDnu9kW+/PM+tizwDPyb9a82fASd8noJa9FU9xjH4H0sVM/Krb98XyFIxVnSG4RuB21KalLboW/ehlB5DqjKxkoGp2NhJD0Iv7jdLWGxnFr+x3tLWVeEVCrfJL5qQIhCVThB/zMcc1+AgPzIkJPIRSNxezs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724176669; c=relaxed/simple;
-	bh=/snmJz0/53y57+k2K0s7WgCOZoqAqvhpoUcgRgDZwuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtYA/rCXxspiDJQxG98S8vpQaiW1bl30x5qC0Y7cSvPMbSV5MdG/hBdDoSShSDfoejIvvkaLgntKjfvz97H4kkmeGhbV/q7WXJM2bfWizJWpP/Sc7XlwxuAjmUWryq2rQ68uKSj1Y32N7ZEDCcP+Dgsc51/ClRppqXzIeC5VSgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rv99k3kz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC507C4AF10;
-	Tue, 20 Aug 2024 17:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724176669;
-	bh=/snmJz0/53y57+k2K0s7WgCOZoqAqvhpoUcgRgDZwuM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rv99k3kzvTnrVzoXtNLwDl+o+N3KTPkBhR0YnAilKuJZ5gVDtRWBZfbn9NoSL4dPH
-	 5+puw0LKOaoAb4n3WhF+W5Z+XHSsqGgwmkfiCO5v8juEJcCzifgp/959wvbN1SD+WS
-	 3/IjsUMcCyvp4yY1W8RBfWE1hfOilZpZr21QC8IEySzYHNulBzJQWvuVCTbh4gmcBu
-	 FRLwX/m13mCCEjVAIpc6u5DPyURzlnxdRfKsdQlAsRkbSI2oB45vG33lOOSBAEzBxc
-	 vhsvYi0ir0x85FXWktV1yKqKdLiURBoEU2D2bdlYoDymW7qUJ4i6OxuCnIXwdNMxVm
-	 troSv+cB28B6A==
-Date: Tue, 20 Aug 2024 10:57:47 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: David Lechner <dlechner@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kbuild@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/get_abi.pl: more strict matching of [XYZ]
-Message-ID: <20240820175747.GA1741066@thelio-3990X>
-References: <20240820-scripts-fix-get_abi-xyz-v1-1-6f6aea9b638b@baylibre.com>
+	s=arc-20240116; t=1724176761; c=relaxed/simple;
+	bh=KI9EYm6/jv4gaUt8hmpPSwl7gpvW3l8AVlfC5P0cpZo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jQEues0YaLJHdEu1qpjFxFXbfXnpigfVwG2BWkxBrT2QNA6hukZneUt7T3u3xhoCdubXVLD6OxNkzthPUhHCz1/XVjbaNfKMA0CXSVx+yd1pPYZA0GCHMZr57Vy5C6soEjhREJj0468vJNtlPJAjLGkFq//294AXcA5zZkjTgqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZhTQ91UU; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37182eee02dso3122778f8f.1;
+        Tue, 20 Aug 2024 10:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724176758; x=1724781558; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KI9EYm6/jv4gaUt8hmpPSwl7gpvW3l8AVlfC5P0cpZo=;
+        b=ZhTQ91UUhP00e/F2oqG/rnUVn/EM55L09Rczfl1BTBOG5/LkGeJvBEfGnpwIOnw2eZ
+         AWy0Gqob1n9/9SVz7Xs3k8HheWzFGBiStKQPUS2mYdg9koDZ3MMHRa3fSw8/3aId7Be1
+         tU767WPnZptl7U3Be6vfk+9FPZ1sh0gwUV0DdomoH5qH9YiKXfmKO3BX3njyClQA2Fvm
+         +Q+JxTWQ63oLwUNqgfHxsoEFnDk4ledjpJ3LjT7BEXFOkiwB1p8nJQXKgNg4NDVY083j
+         Y0st4D/QAcZ3GdZuyjwmzc9ywFp4lDQWbCgFRz+ZIWd1aHq0bza5Qz0ypa07eRxtZHnE
+         OFZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724176758; x=1724781558;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KI9EYm6/jv4gaUt8hmpPSwl7gpvW3l8AVlfC5P0cpZo=;
+        b=GFczgtHmRn+yCwvOKtUwUAVGsf8LXvhmdTRPzFVMKqPHkNscvVcXs7N7LFCMsnxTFp
+         rjaCegcbwlX5n/1i1DtVlpnc+MEBpAWS0mOrpvA1JksTwl3mDcXBsC6QH5PZxsIq435G
+         vkDM3jPswRWu10Z9bHS000VSxvwekLBDrsA0t2BBX5vg8eFQ0NqJjOFhkx3QlfCStMMj
+         6TquYN0P15BTMltertTPSYplKewKEZ62Xrpeiz/1nm758EUkDyY0cd8DuRUeviAzcY6O
+         2wXZ8Z6xzcnkrqOM9SG5gQHTCYXr9kB55ghEPrC17kaVX51cIOZJUEx3tQNMVJlO9Lkl
+         s8wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWh/or5yItp5KRUTEEN+3xUbwAZYz7j17xMFnf9IWHww3QIXldbfZFy1MAPF3kKLmSb9aDiyxbwAmGZfCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMFlRsjd8AMnSa6t+bW6hfb1xxrXRseG+KcJQadh+Wvd2IgWAI
+	/nu3IsR3I2tkZO+fGTELNVS2JypwQEMtLZbx85QSlZ3mG2FeFJLAC3RWeQP2hYFkricJm/Yj+cl
+	heSjjDpoEJBMp8SY96z71FxZ3wmc=
+X-Google-Smtp-Source: AGHT+IEQvJ5V0dB7gX//2smouFJnDe/h5dcDAIBrCHBFILgx2dzd1BK4S0GjXt3Ros2WvQhQBmfbqIr60VRdL/0Dto0=
+X-Received: by 2002:a5d:6d43:0:b0:368:4488:66f8 with SMTP id
+ ffacd0b85a97d-371c4ab1d8dmr2148623f8f.23.1724176757422; Tue, 20 Aug 2024
+ 10:59:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-scripts-fix-get_abi-xyz-v1-1-6f6aea9b638b@baylibre.com>
+References: <20240820002210.54014-3-stuart.a.hayhurst@gmail.com> <577e96df-5535-4530-ac62-edc53881a443@web.de>
+In-Reply-To: <577e96df-5535-4530-ac62-edc53881a443@web.de>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Tue, 20 Aug 2024 18:59:06 +0100
+Message-ID: <CALTg27mK9wPC_1sRzk-Z-NCm7a+25KrEYwB8=JQN62RrCASOOw@mail.gmail.com>
+Subject: Re: [PATCH v3] HID: corsair-void: Add Corsair Void headset family driver
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+> Would you like to choose a corresponding name for such an enumeration?
 
-On Tue, Aug 20, 2024 at 11:40:18AM -0500, David Lechner wrote:
-> When using `scripts/get_abi.pl undefined --search-string=iio` to try to
-> find undocumented ABI's in the IIO subsystem, no matches were found.
-> 
-> This was due to the fact that we have documented a directory naming
-> pattern:
-> 
-> 	What: /sys/bus/iio/devices/iio:deviceX
-> 
-> which gets translated to the regex
-> 
-> 	/sys/.*/iio\:device.*
-> 
-> which matches everything under every iio:device directory, causing any
-> attributes below this directory to incorrectly be filtered out as
-> already documented.
-> 
-> This patch makes the matching more strict by changing the replacement
-> for [XYZ] from .* to [^/]* so that we don't match the directory
-> separator. This way documenting directories won't filter out everything
-> contained in the directory as already being documented.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> get_maintainers.pl didn't pick up any matches for this patch, so I guess
-> this would go through the kbuild tree? (Since MAINTAINERS says:
-> "KERNEL BUILD + files below scripts/ (unless maintained elsewhere)")
+I'm not entirely convinced it needs one, as the value names are fairly
+descriptive
 
-I don't have any comments on the patch itself since I am unfamiliar with
-this script and its purpose but looking at the git history, it seems
-like Greg has merged the vast majority of the patches to this script in
-the past:
+> Can any other data type be reused for this purpose?
 
-$ git log --format='%cn' --no-merges scripts/get_abi.pl | sort | uniq -c
-     53 Greg Kroah-Hartman
-      9 Jonathan Corbet
-      1 Masahiro Yamada
+I'm not sure what you're asking
 
-So adding him to take a look.
+> Would you like to omit curly brackets here?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc4#n197
 
-> ---
->  scripts/get_abi.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-> index de1c0354b50c..f65158694852 100755
-> --- a/scripts/get_abi.pl
-> +++ b/scripts/get_abi.pl
-> @@ -867,7 +867,7 @@ sub undefined_symbols {
->  			$what =~ s/\{[^\}]+\}/.*/g;
->  			$what =~ s/\[[^\]]+\]/.*/g;
->  
-> -			$what =~ s/[XYZ]/.*/g;
-> +			$what =~ s/[XYZ]/[^\/]*/g;
->  
->  			# Recover [0-9] type of patterns
->  			$what =~ s/\xf4/[/g;
-> 
-> ---
-> base-commit: 521b1e7f4cf0b05a47995b103596978224b380a8
-> change-id: 20240820-scripts-fix-get_abi-xyz-0ab0b9b62719
-> 
-> Best regards,
-> -- 
-> David Lechner <dlechner@baylibre.com>
-> 
+Done, thanks
+
+Stuart
 
