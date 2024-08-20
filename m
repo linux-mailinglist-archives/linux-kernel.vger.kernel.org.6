@@ -1,179 +1,166 @@
-Return-Path: <linux-kernel+bounces-293618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EB4958206
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E0695820B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 11:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD874284182
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC441F217CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E4C18C032;
-	Tue, 20 Aug 2024 09:23:33 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076EA18C000;
+	Tue, 20 Aug 2024 09:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXOiHDgW"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B6218B468;
-	Tue, 20 Aug 2024 09:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DDC18B493
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 09:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145813; cv=none; b=oSzM0Jdwj4xsO9bvjQYOXu5mQRJ1Si6DUUUi3gwCo07ZKDvuZwqS1S/ShaKhsq24SXRYD96o6xug/c9WRoIDMLcsNC59lrvuVMqiWPIJmPyAEDuGboIc2G2VH70OQWGgJc6u0Vmm1pq6nC2hyYZsJkmfmv+QjzcRGSoHvYHRvUk=
+	t=1724145850; cv=none; b=G9ZhgBEpo7aUVsrI1zAPKM1tGSUtqCNDa0eCOnO6xUROTmONjeRvAoCungTxkhg8JEJXwQ6n5tyWYnepEfXGnmAGOXvz8KKXvfYxAQXWJAtYYp0zAd0pfsl6WV9vwtebeY+qYG8SVmn2pkHlHOXsFoYGljzI6jhERKSPqzIY4UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145813; c=relaxed/simple;
-	bh=G7ZgOWdruX5aHmZd5xkeb8whK51X54ptM22wTDCFRbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D9Y2KsOKK9JvTTh6zzycSFste7EltH0yAdey2FzW5gZktaX+y9QPaL10NKXxsQWbau5nKZtDAwLP8floSGwSzRHeXMG4+NEyBGzQrYGtwDGte48bvEfItCQtnqwwC59to0qWS6L/mOrhJMyVxEFGvKQDVUY6dWgkeXyO3dX1RGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wp3qx0snPz1xvcm;
-	Tue, 20 Aug 2024 17:21:33 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 292EF18001B;
-	Tue, 20 Aug 2024 17:23:27 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 17:23:26 +0800
-Message-ID: <06289b8b-7623-4691-afad-34724742176c@huawei.com>
-Date: Tue, 20 Aug 2024 17:23:25 +0800
+	s=arc-20240116; t=1724145850; c=relaxed/simple;
+	bh=FpZJOA0mQK1VicmRU0rcJ+nQ16ARUqQgndYmDsnqQr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PHl3Opbina3eFV4efC8ktuhtE5Neo+u4tHBs8BNnU6etsrCE7VyhRk/DCxAG4QF+O1jJkUc/4o/54ZedOzdMEMCCflqevpsvhXikQu+zFOYAYBP6kLAuQfIGbZNKtWpuu3N4DyN12prx8MAbRw9Wh94hMuFwS7KxmBReL86PIc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXOiHDgW; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d41b082ab8so1645515a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724145848; x=1724750648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nlt2ID8Y4L9Xxz1JWEnsQz5/O2GKGR4Bos/ESGDaD3o=;
+        b=PXOiHDgW+fA9VACiBfEnQT+ZM4xhRTgWtZuqcVz1oYcjDNKB3TzQqzilcupTxfWA+z
+         PEwnOl2jj0UKIZ72kj2rEFtjWBaZBbe6HD8+kxpY7WwLV8AYGD6N5qcSAWs12B2Hzb/o
+         vsKg0Wy6X9Dg+aXTNIkyp8HAisOZ/MiHW7MiHJ1kI3a7GZKa9QKSmYCUMV45ZrX/qvro
+         uNyoq0A1V7MetTZlbC4u14L1yNdmu3BtPq0szL8rHukAC4tTQYfpF36+BucBN65nhSb0
+         vT1/19XlEmYO7o4CG0kXZotmYiVxSJ4tC62miy4u20Mnk8ztow24bql5poRPdt3u3qOa
+         Eqgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724145848; x=1724750648;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nlt2ID8Y4L9Xxz1JWEnsQz5/O2GKGR4Bos/ESGDaD3o=;
+        b=FnyZig9Kns9Wen+uLz2yK0UvEwAXS2Ees3acDVCsu3f7H7zUzXwKBi56LFBOSQRy9C
+         Opaw0gYguPwUrdc+h+0RRR3GHX+aVbx8SfSDP5m2xlSJepXTIP2iFpoq1AhxadGLpcZc
+         v3SarUJPxS3VSgC1h4JJow4d5S7T5BtsyJvzbmnTdUxGj6hHydUbTE9AcnRdZ1iKBTSo
+         9K5ijuXty/NeSSwNfCbCrN7iFtdpEct1N1l6jokBQPLwObguYyT2tkDqJF4qL/BLyBwr
+         9ZwENvpi1z61gqyZgKx2iYTNIYiSUEMU7CG/p9ky/CTKsEDenufWImZvz5VxTZcGOxFJ
+         zhZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUY74a4LOjrmiHFbJqiNWlJ3ZOnq9A5yCKRtfroTpEuemgl6m6pwvcmKMyW4CATQtZbH/okdK2GVPm3wj3XWTod5dc9YxFv4LaGxZbC
+X-Gm-Message-State: AOJu0YziqpwdNxaK9ecSgs8EH7sMFiWCMqKie0MKWozpGD9bmHtYQ/8e
+	AFwwhrZ43AvrXWo4ReTaz6lriQLeu6hYY4qbMGhjVrYrQc7teXqD
+X-Google-Smtp-Source: AGHT+IEq+YodW+Yl15mct3wILrYBBnyd3h7kGqFktIhdOaThlqhTzQftr9fvvZau9+ysLUMgbdZB0Q==
+X-Received: by 2002:a17:90b:1107:b0:2c9:a3ca:cc98 with SMTP id 98e67ed59e1d1-2d3dfc377bamr12147223a91.7.1724145847913;
+        Tue, 20 Aug 2024 02:24:07 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([43.132.141.21])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e317181fsm8828676a91.25.2024.08.20.02.24.04
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 20 Aug 2024 02:24:07 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Chengming Zhou <zhouchengming@bytedance.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Chris Li <chrisl@kernel.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH] mm/swap, workingset: make anon shadow nodes memcg aware
+Date: Tue, 20 Aug 2024 17:23:59 +0800
+Message-ID: <20240820092359.97782-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.45.2
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 0/2] Some bugfix for xfs fsmap
-To: Chandan Babu R <chandanbabu@kernel.org>
-CC: <djwong@kernel.org>, <dchinner@redhat.com>, <osandov@fb.com>,
-	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240819005320.304211-1-wozizhi@huawei.com>
- <875xrvenzf.fsf@debian-BULLSEYE-live-builder-AMD64>
- <04118984-4c10-4d25-9547-0e3cd5d9fb03@huawei.com>
- <871q2jegs1.fsf@debian-BULLSEYE-live-builder-AMD64>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <871q2jegs1.fsf@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100017.china.huawei.com (7.202.181.16)
 
+From: Kairui Song <kasong@tencent.com>
 
+Currently, the workingset (shadow) nodes of the swap cache are not
+accounted to their corresponding memory cgroup, instead, they are
+all accounted to the root cgroup. This leads to inaccurate accounting
+and ineffective reclaiming. One cgroup could swap out a large amount
+of memory, take up a large amount of memory with shadow nodes without
+being accounted.
 
-在 2024/8/20 16:27, Chandan Babu R 写道:
-> On Tue, Aug 20, 2024 at 03:51:23 PM +0800, Zizhi Wo wrote:
->> 在 2024/8/20 13:53, Chandan Babu R 写道:
->>> On Mon, Aug 19, 2024 at 08:53:18 AM +0800, Zizhi Wo wrote:
->>>> Changes since V3[1]:
->>>>    - For the first patch, simply place the modification logic in the
->>>>      xfs_fsmap_owner_to_rmap() function.
->>>>    - For the second patch, more detailed comments were added and related
->>>>      changes were made to the initialization of the end_daddr field.
->>>>
->>>> This patch set contains two patches to repair fsmap. Although they are both
->>>> problems of missing query intervals, the root causes of the two are
->>>> inconsistent, so two patches are proposed.
->>>>
->>>> Patch 1: The fix addresses the interval omission issue caused by the
->>>> incorrect setting of "rm_owner" in the high_key during rmap queries. In
->>>> this scenario, fsmap finds the record on the rmapbt, but due to the
->>>> incorrect setting of the "rm_owner", the key of the record is larger than
->>>> the high_key, causing the query result to be incorrect. This issue is
->>>> resolved by fixing the "rm_owner" setup logic.
->>>>
->>>> Patch 2: The fix addresses the interval omission issue caused by bit
->>>> shifting during gap queries in fsmap. In this scenario, fsmap does not
->>>> find the record on the rmapbt, so it needs to locate it by the gap of the
->>>> info->next_daddr and high_key address. However, due to the shift, the two
->>>> are reduced to 0, so the query error is caused. The issue is resolved by
->>>> introducing the "end_daddr" field in the xfs_getfsmap_info structure to
->>>> store the high_key at the sector granularity.
->>>>
->>>> [1] https://lore.kernel.org/all/20240812011505.1414130-1-wozizhi@huawei.com/
->>>>
->>> The two patches in this series cause xfs_scrub to execute
->>> indefinitely
->>> immediately after xfs/556 is executed.
->>> The fstest configuration used is provided below,
->>> FSTYP=xfs
->>> TEST_DIR=/media/test
->>> SCRATCH_MNT=/media/scratch
->>> TEST_DEV=/dev/loop16
->>> TEST_LOGDEV=/dev/loop13
->>> TEST_RTDEV=/dev/loop12
->>> TEST_FS_MOUNT_OPTS="-o rtdev=/dev/loop12 -o logdev=/dev/loop13"
->>> SCRATCH_DEV_POOL="/dev/loop5 /dev/loop6 /dev/loop7 /dev/loop8
->>> /dev/loop9 /dev/loop10 /dev/loop11"
->>> MKFS_OPTIONS="-f -m reflink=0,rmapbt=0, -d rtinherit=1 -lsize=1g"
->>> SCRATCH_LOGDEV=/dev/loop15
->>> SCRATCH_RTDEV=/dev/loop14
->>> USE_EXTERNAL=yes
->>>
->>
->> Sorry, running xfs/556 with this configuration was successful in my
->> environment, and my mkfs.xfs version is 6.8.0:
->>
->> xfs/556
->> FSTYP         -- xfs (debug)
->> PLATFORM      -- Linux/x86_64 fedora 6.11.0-rc3-00015-g1a9f212eb19f #42
->> SMP PREEMPT_DYNAMIC Fri Aug 16 10:19:47 CST 2024
->> VMIP          -- 192.168.240.11
->> MKFS_OPTIONS  -- -f -f -m reflink=0,rmapbt=0 -d rtinherit=1 -l size=1g
->> /dev/vde
->> MOUNT_OPTIONS -- /dev/vde /tmp/scratch
->>
->> xfs/556 4s ...  5s
->> Ran: xfs/556
->> Passed all 1 tests
->>
->> I am not sure if it is because of the specific user mode tools or other
->> environment configuration differences caused?
->>
-> 
-> My Linux kernel is based on v6.11-rc4. The sources can be found at
-> https://github.com/chandanr/linux/commits/xfs-6.11-fixesC-without-jump-label-fixes/.
-> 
-> Please note that I have reverted commits modifying kernel/jump_label.c. This
-> is to work around
-> https://lore.kernel.org/linux-xfs/20240730033849.GH6352@frogsfrogsfrogs/.
-> 
-> Also, I am running xfsprogs v6.9.0. The sources can be found at
-> https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/log/?qt=range&q=v6.9.0
-> 
+This issue is similar to commit 7b785645e8f1 ("mm: fix page cache
+convergence regression"), where page cache shadow nodes were incorrectly
+accounted. That was due to the accidental dropping of the accounting
+flag during the XArray conversion in commit a28334862993
+("page cache: Finish XArray conversion").
 
-Hello! I upgraded xfsprogs to 6.9.0, and tested the latest code
-(reverted jump_label.c related code), but still no problems with the
-test, maybe there is a problem with my other environment configuration?
-Here is my configuration:
+However, this fix has a different cause. Swap cache shadow nodes were
+never accounted even before the XArray conversion, since they did not
+exist until commit 3852f6768ede ("mm/swapcache: support to handle the
+shadow entries"), which was years after the XArray conversion.
 
-export FSTYP=xfs
-export TEST_DEV=/dev/vdb
-export TEST_DIR=/tmp/test
-mkdir /tmp/test -p
-export SCRATCH_DEV=/dev/vde
-export SCRATCH_MNT=/tmp/scratch
-mkdir /tmp/scratch -p
-export TEST_LOGDEV=/dev/vdc
-export TEST_RTDEV=/dev/vdd
-export TEST_FS_MOUNT_OPTS="-o rtdev=/dev/vdd -o logdev=/dev/vdc"
-export MKFS_OPTIONS="-f -m reflink=0,rmapbt=0 -d rtinherit=1 -l size=1g"
-export USE_EXTERNAL=yes
-echo xfs/556
-./check xfs/556
+It's worth noting that one anon shadow Xarray node may contain
+different entries from different cgroup, and it gets accounted at reclaim
+time, so it's arguable which cgroup it should be accounted to (as
+Shakeal Butt pointed out [1]). File pages may suffer similar issue
+but less common. Things like proactive memory reclaim could make thing
+more complex.
 
+So this commit still can't provide a 100% accurate accounting of anon
+shadows, but it covers the cases when one memory cgroup uses significant
+amount of swap, and in most cases memory pressure in one cgroup only
+suppose to reclaim this cgroup and children. Besides, this fix is clean and
+easy enough.
 
-However, this patch is not the final version, and I found another
-statistical issue with fsmap locally. In addition, Darrick also found a
-boundary-case bug in the patch, which may be responsible for the scrub 
-indefinitely? I'm not sure. Anyway, I'll fix it again and test it, and
-hopefully pass the test next time.
+Link: https://lore.kernel.org/all/7gzevefivueqtebzvikzbucnrnpurmh3scmfuiuo2tnrs37xso@haj7gzepjur2/ [1]
+Signed-off-by: Kairui Song <kasong@tencent.com>
 
-Thanks,
-Zizhi Wo
+---
+
+This patch was part of previous series:
+https://lore.kernel.org/all/20240624175313.47329-1-ryncsn@gmail.com/
+
+Split out as a fix as suggested by Muchun and Shakeal.
+
+ mm/swap_state.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 4669f29cf555..b4ed2c664c67 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -97,6 +97,7 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
+ 	void *old;
+ 
+ 	xas_set_update(&xas, workingset_update_node);
++	xas_set_lru(&xas, &shadow_nodes);
+ 
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 	VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
+@@ -718,7 +719,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
+ 		return -ENOMEM;
+ 	for (i = 0; i < nr; i++) {
+ 		space = spaces + i;
+-		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
++		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
+ 		atomic_set(&space->i_mmap_writable, 0);
+ 		space->a_ops = &swap_aops;
+ 		/* swap cache doesn't use writeback related tags */
+-- 
+2.45.2
 
 
