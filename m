@@ -1,172 +1,178 @@
-Return-Path: <linux-kernel+bounces-293436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D31A957F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:18:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6DB957F40
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 09:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9C11F217BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:18:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C789EB21581
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 07:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A398D16D314;
-	Tue, 20 Aug 2024 07:18:29 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5D8184549;
+	Tue, 20 Aug 2024 07:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="co/4brcW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9B2179A7;
-	Tue, 20 Aug 2024 07:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9739B16B391;
+	Tue, 20 Aug 2024 07:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724138309; cv=none; b=AkXZ2mEzVYkZXEQiYOHubPHx0EgyFnUUJDYsO2etS28gkqpQfInpbx6aQTWRpM4sCWRrMwankapJ2oUhSEKsemJkbLJnRiCi/kr+5tEd7getJD73IrC7mhhFP/cy4Fb/nh03ILxjvdf1ByPooFZEbb/X0ZDsO4otTD0tqYsFF4k=
+	t=1724138427; cv=none; b=JPULxgGtiPxCkxoSRg66v7BvhkJVrH1ia+vZe60R+ZbuH9rtZoqQctlDCsSFdyb0dmIls9HUxhFjc6kPH9n1npKG8YiGhMGAm5DMgLbv5+MYPXK+AT7TNgU5L/jq7kqGco/wFD8DEnkknSeNQjaJ4lN9nOgfd5Kl5gPPTVumPzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724138309; c=relaxed/simple;
-	bh=9bplCARZ+J/ETs6+wk14S8Wh1vJdJFxm/J7KEV3c2NM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NN1AQXthLvucVWY0XjU9OI+d/B8SCQXsbvH8iSFjjQJyPhb4PcJRrIQ7ndsDvGhYmg8kRNxH+fsZsAjwOCBTMd4w/p4RMBs6SygRCqpk+d5f6KB5QCpOedD4Y+tTFLcXkW5fNwlMFJP0i43+GjKPVNyB49OiUh8HcN61bY5eWdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wp15106g1z13Spy;
-	Tue, 20 Aug 2024 15:17:41 +0800 (CST)
-Received: from kwepemf200007.china.huawei.com (unknown [7.202.181.233])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E48C1400FD;
-	Tue, 20 Aug 2024 15:18:18 +0800 (CST)
-Received: from [10.67.121.184] (10.67.121.184) by
- kwepemf200007.china.huawei.com (7.202.181.233) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 20 Aug 2024 15:18:17 +0800
-Message-ID: <775234bc-84a2-458b-b047-ff6ab2607989@huawei.com>
-Date: Tue, 20 Aug 2024 15:18:16 +0800
+	s=arc-20240116; t=1724138427; c=relaxed/simple;
+	bh=glSoSr9Tbk75LSg/tAu/FUEqzBhmne/ozkkwbAinyf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYFar4XM1hp0KY/lKzluwUG7We/rDkEi3d3JBvrxPEX6O8MsCG9L0GfWESxdXGlkrbXxESNbcuYmdaRMcKFqJVy9uZkplNbxuHU2+6nugQ1/ZOhn9yVJ35qrfMVlWpiLNNPindp6XwD0zn+aKIwS28RURBc3+VnjBlXpY2XYWQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=co/4brcW; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724138426; x=1755674426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=glSoSr9Tbk75LSg/tAu/FUEqzBhmne/ozkkwbAinyf8=;
+  b=co/4brcWXYsggOAu0GvotVTt/ldKgv2yZPb24y95oYTngrYanezawbJ4
+   i2SEOP2bE1EgbMUagp75u2WqNoitzmGhKzAeWX5UijxcJ/Ncgyh/CUE5m
+   t2MPWQ7gh8zws8zY3GkZgI2fHs7UVKMJmCDTJYdIKJoogl6g4UgL+GzSR
+   /ScKiR5Ovp3tPc5mKjOW8w5CIMGlyR0wamlXI76oCxd4S07TuAHfT28VM
+   LS4nD/LORRyXV1Oh4SdwYSuKCjimjQ6L7+g2RVsInZLfy4KWnlRiYQD+8
+   uiwRcykKwXjhFWjr+xF9+m8gge6Ah8A9iBpoCfIPap9Cj8E4JKDX/g3aF
+   Q==;
+X-CSE-ConnectionGUID: LS0/4hiGQpqKsY/l8U9EQA==
+X-CSE-MsgGUID: uM8dzDQcRQ+wRioEhuJ8xw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="21959435"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="21959435"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 00:20:25 -0700
+X-CSE-ConnectionGUID: G3BqePshRN6O0pokLE5trg==
+X-CSE-MsgGUID: 4xIVrBGcRKGl8FyWoZMX6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="61400408"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 20 Aug 2024 00:20:20 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sgJAA-0009q6-1M;
+	Tue, 20 Aug 2024 07:20:18 +0000
+Date: Tue, 20 Aug 2024 15:19:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Trevor Gamblin <tgamblin@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	David Lechner <dlechner@baylibre.com>,
+	Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, Trevor Gamblin <tgamblin@baylibre.com>
+Subject: Re: [PATCH v3 2/3] iio: adc: ad7625: add driver
+Message-ID: <202408201520.lFtco3eF-lkp@intel.com>
+References: <20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Robin Murphy <robin.murphy@arm.com>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<iommu@lists.linux.dev>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
- <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
- <ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
- <190d5a15-d6bf-47d6-be86-991853b7b51d@arm.com>
- <5b0415ff-9bbe-4553-89d6-17d12fd44b47@huawei.com>
- <ae995d55-daa9-4060-85fa-31b4f725a17d@arm.com>
-Content-Language: en-US
-From: Yonglong Liu <liuyonglong@huawei.com>
-In-Reply-To: <ae995d55-daa9-4060-85fa-31b4f725a17d@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf200007.china.huawei.com (7.202.181.233)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819-ad7625_r1-v3-2-75d5217c76b5@baylibre.com>
+
+Hi Trevor,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on ac6a258892793f0a255fe7084ec2b612131c67fc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Trevor-Gamblin/dt-bindings-iio-adc-add-AD762x-AD796x-ADCs/20240819-221425
+base:   ac6a258892793f0a255fe7084ec2b612131c67fc
+patch link:    https://lore.kernel.org/r/20240819-ad7625_r1-v3-2-75d5217c76b5%40baylibre.com
+patch subject: [PATCH v3 2/3] iio: adc: ad7625: add driver
+config: alpha-randconfig-r132-20240820 (https://download.01.org/0day-ci/archive/20240820/202408201520.lFtco3eF-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20240820/202408201520.lFtco3eF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408201520.lFtco3eF-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/adc/ad7625.c: In function 'ad7625_set_sampling_freq':
+>> drivers/iio/adc/ad7625.c:191:15: error: implicit declaration of function 'pwm_round_waveform_might_sleep' [-Werror=implicit-function-declaration]
+     191 |         ret = pwm_round_waveform_might_sleep(st->cnv_pwm, &cnv_wf);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad7625.c: In function 'ad7625_buffer_preenable':
+>> drivers/iio/adc/ad7625.c:420:15: error: implicit declaration of function 'pwm_set_waveform_might_sleep' [-Werror=implicit-function-declaration]
+     420 |         ret = pwm_set_waveform_might_sleep(st->cnv_pwm, &st->cnv_wf, false);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
-On 2024/8/6 20:50, Robin Murphy wrote:
-> On 06/08/2024 12:54 pm, Yunsheng Lin wrote:
->> On 2024/8/5 20:53, Robin Murphy wrote:
->>>>>>
->>>>>> The page_pool bumps refcnt via get_device() + put_device() on the 
->>>>>> DMA
->>>>>> 'struct device', to avoid it going away, but I guess there is 
->>>>>> also some
->>>>>> IOMMU code that we need to make sure doesn't go away (until all 
->>>>>> inflight
->>>>>> pages are returned) ???
->>>>
->>>> I guess the above is why thing went wrong here, the question is which
->>>> IOMMU code need to be called here to stop them from going away.
->>>
->>> This looks like the wrong device is being passed to dma_unmap_page() 
->>> - if a device had an IOMMU DMA domain at the point when the DMA 
->>> mapping was create, then neither that domain nor its group can 
->>> legitimately have disappeared while that device still had a driver 
->>> bound. Or if it *was* the right device, but it's already had 
->>> device_del() called on it, then you have a fundamental lifecycle 
->>> problem - a device with no driver bound should not be passed to the 
->>> DMA API, much less a dead device that's already been removed from 
->>> its parent bus.
->>
->> Yes, the device *was* the right device, And it's already had 
->> device_del()
->> called on it.
->> page_pool tries to call get_device() on the DMA 'struct device' to 
->> avoid the
->> above lifecycle problem, it seems get_device() does not stop 
->> device_del()
->> from being called, and that is where we have the problem here:
->> https://elixir.bootlin.com/linux/v6.11-rc2/source/net/core/page_pool.c#L269 
->>
->>
->> The above happens because driver with page_pool support may hand over
->> page still with dma mapping to network stack and try to reuse that page
->> after network stack is done with it and passes it back to page_pool 
->> to avoid
->> the penalty of dma mapping/unmapping. With all the caching in the 
->> network
->> stack, some pages may be held in the network stack without returning 
->> to the
->> page_pool soon enough, and with VF disable causing the driver 
->> unbound, the
->> page_pool does not stop the driver from doing it's unbounding work, 
->> instead
->> page_pool uses workqueue to check if there is some pages coming back 
->> from the
->> network stack periodically, if there is any, it will do the dma 
->> unmmapping
->> related cleanup work.
->
-> OK, that sounds like a more insidious problem - it's not just IOMMU 
-> stuff, in general the page pool should not be holding and using the 
-> device pointer after the device has already been destroyed. Even 
-> without an IOMMU, attempting DMA unmaps after the driver has already 
-> unbound may leak resources or at worst corrupt memory. Fundamentally, 
-> the page pool code cannot allow DMA mappings to outlive the driver 
-> they belong to.
->
-> Thanks,
-> Robin.
->
-I found a easier way to reproduce the problem:
-1. enable a vf
-2. use mz to send only one of the multiple fragments
-3. disable the vf in 30 seconds
+vim +/pwm_round_waveform_might_sleep +191 drivers/iio/adc/ad7625.c
 
-Jakub's patch:
-https://lore.kernel.org/netdev/20240809205717.0c966bad@kernel.org/T/
-can solve this case, but can not solve the origin case.
+   175	
+   176	static int ad7625_set_sampling_freq(struct ad7625_state *st, int freq)
+   177	{
+   178		u64 target;
+   179		struct pwm_waveform clk_gate_wf = { }, cnv_wf = { };
+   180		int ret;
+   181	
+   182		target = DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
+   183		cnv_wf.period_length_ns = clamp(target, 100, 10 * KILO);
+   184	
+   185		/*
+   186		 * Use the maximum conversion time t_CNVH from the datasheet as
+   187		 * the duty_cycle for ref_clk, cnv, and clk_gate
+   188		 */
+   189		cnv_wf.duty_length_ns = st->info->timing_spec->conv_high_ns;
+   190	
+ > 191		ret = pwm_round_waveform_might_sleep(st->cnv_pwm, &cnv_wf);
+   192		if (ret)
+   193			return ret;
+   194	
+   195		/*
+   196		 * Set up the burst signal for transferring data. period and
+   197		 * offset should mirror the CNV signal
+   198		 */
+   199		clk_gate_wf.period_length_ns = cnv_wf.period_length_ns;
+   200	
+   201		clk_gate_wf.duty_length_ns = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC *
+   202			st->info->chan_spec.scan_type.realbits,
+   203			st->ref_clk_rate_hz);
+   204	
+   205		/* max t_MSB from datasheet */
+   206		clk_gate_wf.duty_offset_ns = st->info->timing_spec->conv_msb_ns;
+   207	
+   208		ret = pwm_round_waveform_might_sleep(st->clk_gate_pwm, &clk_gate_wf);
+   209		if (ret)
+   210			return ret;
+   211	
+   212		st->cnv_wf = cnv_wf;
+   213		st->clk_gate_wf = clk_gate_wf;
+   214	
+   215		/* TODO: Add a rounding API for PWMs that can simplify this */
+   216		target = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz, freq);
+   217		st->sampling_freq_hz = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz,
+   218							     target);
+   219	
+   220		return 0;
+   221	}
+   222	
 
-Base on the simple case, I found that v6.9 has no problem, v6.10-rc1 
-introduce the problem.
-And I trace the differences between the two version:
-v6.9: 
-page_pool_return_page()->dma_unmap_page_attrs()->*dma_direct_unmap_page()*
-v6.10-rc1: 
-page_pool_return_page()->dma_unmap_page_attrs()->*iommu_dma_unmap_page()*
-That's because in v6.9 dev->dma_ops is NULL and v6.10-rc1 doesn't. (The 
-driver has already unbound, but the device is still there)
-
-I revert the patch:
-https://lore.kernel.org/linux-arm-kernel/4a4482a0-4408-4d86-9f61-6589ab78686b@somainline.org/T/
-then the bug I report can not reproduce.
-
-So maybe this problem is introduced by this patch or the following patch 
-set?
-https://lore.kernel.org/linux-iommu/cover.1713523152.git.robin.murphy@arm.com/
-or the page pool always has the problem: In the version before v6.9, and 
-in this case, page pool use iommu_dma_map_page() and 
-dma_direct_unmap_page(), not pair?
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
