@@ -1,159 +1,233 @@
-Return-Path: <linux-kernel+bounces-294119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C8295897B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:35:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E00695898C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DB11C21791
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F80B21502
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20721922D3;
-	Tue, 20 Aug 2024 14:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CD31922F9;
+	Tue, 20 Aug 2024 14:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qg+7baI9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KKXDE6+V"
+Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382601917F0;
-	Tue, 20 Aug 2024 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666E219146E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 14:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724164513; cv=none; b=LZSzFN1TLMbmALLN29Z+bjsjRBWxKxdkkmLsXhK66/zUwq2veZz1L7xgQkEFMTsT/cYIvr0MFQC1kQCnLLFYsuFv1tFSzEpMgzN++kx/ADPcnxf9Nsl9uYhEYqejCDxyZE4hUSMevCbTIieI1D05f1x1FPxLf2x0IquE6BxFwXU=
+	t=1724164576; cv=none; b=fjsini+W/ap376urBCar4/bYZy/exfq5K70vWJOQ/GdB7kpk6NmV49dMwHdKIEvcVoiPbOral5RHNuvW7hmOacvE0/OHBREtVggaFGVqRWOxmuhhm+wMmtepTqR+plJ1nL1j/3nA92Hd2Lhdc+KEZg7iXdqju0+ApNbZhBbM2Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724164513; c=relaxed/simple;
-	bh=r5UcAyWfcjLB0PGZ0XNrk1RX83pspyrEnY6LgqT8Dx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ldc2u4nBHZVR/bJwWOMrt/8ehzasfuVnbYvMsFMi6jCI6iQld8fwy0+SpDVR/amC2cwBiG+BpWVPaKHllzzNVAJFzmFrNpOg3ro1Zuq5Tfph6dDQsNNDkLrGiKknPOm2k4GtvEWSE/CnDLkWNFedIiZm2XjuXoOokc3sKZ2IvpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qg+7baI9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E152BC4AF17;
-	Tue, 20 Aug 2024 14:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724164512;
-	bh=r5UcAyWfcjLB0PGZ0XNrk1RX83pspyrEnY6LgqT8Dx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qg+7baI9EQhBFuxIyiOJ/ikRP9AiBmAKZad91cEPtSXOohqzvBbdl8OXYLPJO2cY7
-	 LoqitX+EZMRNKqWciz4Eia3c1cCMtibWWQEF1egcwQV8EJ/9y/MDsb6KNBXEKNvPbw
-	 ZFDVRoBeAN1AGsVmdeG5LLFN2nE7XI7jU+ltAPUGHeXSgvE94/o8WRU7pnyljllNa6
-	 e1fB9EWgNbffKjreANu34SDkkLWIhlRBXaNEyThRqeDKNUlW7PqGXvNsrCI8K/3iu2
-	 7JfoSCBsJjzta2V0pmHNs8KjDwf70GmduHkpHjfv7MPgbfmCx/nlZojA5ZMPZ7I4lR
-	 /4XOYBgr0cTRQ==
-Date: Tue, 20 Aug 2024 15:35:04 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1724164576; c=relaxed/simple;
+	bh=nbes6SGqdEbR+eyIYqDvar9JyRtfpfTelp/Kn/mm0qE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=E1XTuqBr2p3MwxE7GZBa/z+3y1wW2UolhD0/uU6NxYhMSIylE0C138F9fcCFnaPnoHZPzIeZId9da/9y/oN7/l0KJR/qwbgZQrV5cETdNSUjSwLGqb8M4Bosupy+hwEzDNu79IKSzvjhToNN72D5ZL0hxg3lKQ+eVc4lBhlWbNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KKXDE6+V; arc=none smtp.client-ip=209.85.167.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-52efdf02d13so7406975e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 07:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724164572; x=1724769372; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfyTQeSSkPZ+QzWWZU+FNyyT4+itZMzr8DmOygd/33U=;
+        b=KKXDE6+VlWxMwU68/tuVqlu9RQlRNHMaF6Z34J4PJ43FtC60HeUzBrXTUP7Q4DIfeS
+         PWxXfLORCxZm0LrljfFDH5dyMGxyQTOL/SVSxyfYROYqimYM7f4F1eWtgXa3Fbiaxelw
+         8Y40wOmM+3QUMM5gVacy+l5unwQ5urO4uvVAniDP81If5tIfVU00Fw+X6GDF2nxALs4O
+         9c15gcz4VvGTG+a8mv3n2xTM73n9H0v73rwnNhKVZB+gE1snnUKU6iEtX3A8y5Ujenxj
+         zgdWfDihJHN8JpMj/C3S8WhSZ99tTeJcP/ry6D4+0WIb4YdiGbG1JdCnDK6TWgtahFyz
+         ecAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724164572; x=1724769372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfyTQeSSkPZ+QzWWZU+FNyyT4+itZMzr8DmOygd/33U=;
+        b=u10Gu6koWAxTZSszeBfSE+JO+k9RZhrBckeogL372FKWHHE0v6kDUtCllFSy4fxIWN
+         kef+Js/TPJDUH3Zl0dyqgu8ozqngI4vVhKxFI2of6dGogNKrtW2jtch5LkKf7aiuPFgE
+         NGpxmUQCWN3KnOwsVXBLUnHsuaYd1uTcMMOtJXe+XMHk1DlI+AKjSmoRGh1fsmlLNiN1
+         0JI2iyPzBavJtu1qOsoBIBqmOgrwlxs5tj6mFGeQOCCTYC4x8Cam1ud18GOXJqG7cE5+
+         g63YT782Ukk4TXnCkcbh/P2ggFT98RDDppp9moMxdmUMfD4H2pOoj5GSm1i1hPQnH6n7
+         rQcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWVpD0D4H0PBH5Jxln1D0qZWtGG7I/ahNbaC91olanCTMZVT5moRFHjQnVg1fX9QVWaiRbJS0mSS3q5Nfiw3g1K0RudA6InvYkKzCA
+X-Gm-Message-State: AOJu0YylIX1hykCb6hLSsJezkTvy8YysMAdj9+18oceWFaimzRHtWZNg
+	Otg5pDIEfzCsY+9cS55zT2TWvO0auqzWAjO3XgWduLls2+v1fSyAawS52ev5GVw=
+X-Google-Smtp-Source: AGHT+IFLUQVFBJiZPnU1UIStc9VMSRLEpQuaGd1PxEKJ/fpKdzW6906wlGxbUZmW87C0ek7drDgHNg==
+X-Received: by 2002:a05:6512:3b8b:b0:52e:fa5f:b6a7 with SMTP id 2adb3069b0e04-5331c6a0569mr10710062e87.13.1724164571458;
+        Tue, 20 Aug 2024 07:36:11 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396940fsm772692466b.189.2024.08.20.07.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 07:36:11 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-Message-ID: <20240820143503.GD28338@willie-the-truck>
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Tue, 20 Aug 2024 16:36:02 +0200
+Message-ID: <cover.1724159867.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> This patch adds all of the flags that are needed to support the shadow
-> call stack (SCS) sanitizer with Rust, and updates Kconfig to allow
-> configurations that work.
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, 
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
 
-Minor nit, but some folks have allergic reactions to "This patch".
-See:
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration.
+Followup patches should add support for the several peripherals contained
+in RP1.
 
-https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
 
-I think the commit message is much better now, though, so thank you for
-adding so much more detail for v5. If you end up respinning anyway, you
-could move this all to the imperative.
+The patches are ordered as follows:
 
->  Makefile            | 1 +
->  arch/arm64/Makefile | 3 +++
->  init/Kconfig        | 2 +-
->  3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 44c02a6f60a1..eb01a26d8354 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -927,6 +927,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
->  ifndef CONFIG_DYNAMIC_SCS
->  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
->  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
-> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
->  endif
->  export CC_FLAGS_SCS
->  endif
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index f6bc3da1ef11..b058c4803efb 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
->  ifneq ($(CONFIG_UNWIND_TABLES),y)
->  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
->  KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
->  else
->  KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
->  KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
->  endif
->  
->  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
-> @@ -114,6 +116,7 @@ endif
->  
->  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
->  KBUILD_CFLAGS	+= -ffixed-x18
-> +KBUILD_RUSTFLAGS += -Zfixed-x18
->  endif
->  
->  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
-> diff --git a/init/Kconfig b/init/Kconfig
-> index fe76c5d0a72e..d857f6f90885 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1909,7 +1909,7 @@ config RUST
->  	depends on !MODVERSIONS
->  	depends on !GCC_PLUGINS
->  	depends on !RANDSTRUCT
-> -	depends on !SHADOW_CALL_STACK
-> +	depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
+-PATCHES 1 and 2: add binding schemas for clock and gpio peripherals 
+ found in RP1. They are needed to support the other peripherals, e.g.
+ the ethernet mac depends on a clock generated by RP1 and the phy is
+ reset though the on-board gpio controller.
 
-Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_SCS is
-specific to arm64 and the only other architecture selecting
-ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel it would
-be cleaner to move this logic into the arch code selecting HAVE_RUST.
+-PATCHES 3, 4 and 5: preparatory patches that fix the address mapping
+ translation (especially wrt dma-ranges) and permit to place the dtbo
+ binary blob to be put in non transient section.
 
-That is, it's up to the architecture to make sure that it has whatever
-it needs for SCS to work with Rust if it claims to support Rust.
+-PATCH 6 and 7: add clock and gpio device drivers.
 
-What do you think?
+-PATCH 8: this is the main patch to support RP1 chipset and peripherals
+ enabling through dtb overlay. It contains the dtso since its intimately
+ coupled with the driver and will be linked in as binary blob in the driver
+ obj, but of course it can be easily split in a separate patch if the
+ maintainer feels it so. The real dtso is in devicetree folder while
+ the dtso in driver folder is just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
 
-Will
+-PATCH 9: add the relevant kernel CONFIG_ options to defconfig.
+
+-PATCHES 10 and 11: these (still unpolished) patches are not intended to
+ be upstreamed (yet), they serve just as a test reference to be able to
+ use the ethernet MAC contained in RP1.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been alredy promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Please note that albeit this patchset has no prerequisites in order to
+be applied cleanly, it still depends on Stanimir's WIP patchset for BCM2712
+PCIe controller (see [5]) in order to work at runtime.
+
+Many thanks,
+Andrea della Porta
+
+Link:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+
+Andrea della Porta (11):
+  dt-bindings: clock: Add RaspberryPi RP1 clock bindings
+  dt-bindings: pinctrl: Add RaspberryPi RP1 gpio/pinctrl/pinmux bindings
+  PCI: of_property: Sanitize 32 bit PCI address parsed from DT
+  of: address: Preserve the flags portion on 1:1 dma-ranges mapping
+  vmlinux.lds.h: Preserve DTB sections from being discarded after init
+  clk: rp1: Add support for clocks provided by RP1
+  pinctrl: rp1: Implement RaspberryPi RP1 gpio support
+  misc: rp1: RaspberryPi RP1 misc driver
+  arm64: defconfig: Enable RP1 misc/clock/gpio drivers as built-in
+  net: macb: Add support for RP1's MACB variant
+  arm64: dts: rp1: Add support for MACB contained in RP1
+
+ .../clock/raspberrypi,rp1-clocks.yaml         |   87 +
+ .../pinctrl/raspberrypi,rp1-gpio.yaml         |  177 ++
+ MAINTAINERS                                   |   12 +
+ arch/arm64/boot/dts/broadcom/rp1.dtso         |  175 ++
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/clk/Kconfig                           |    9 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-rp1.c                         | 1655 +++++++++++++++++
+ drivers/misc/Kconfig                          |    1 +
+ drivers/misc/Makefile                         |    1 +
+ drivers/misc/rp1/Kconfig                      |   20 +
+ drivers/misc/rp1/Makefile                     |    3 +
+ drivers/misc/rp1/rp1-pci.c                    |  333 ++++
+ drivers/misc/rp1/rp1-pci.dtso                 |    8 +
+ drivers/net/ethernet/cadence/macb.h           |   25 +
+ drivers/net/ethernet/cadence/macb_main.c      |  152 +-
+ drivers/of/address.c                          |    3 +-
+ drivers/pci/of_property.c                     |    5 +-
+ drivers/pci/quirks.c                          |    1 +
+ drivers/pinctrl/Kconfig                       |   10 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-rp1.c                 |  719 +++++++
+ include/asm-generic/vmlinux.lds.h             |    2 +-
+ include/dt-bindings/clock/rp1.h               |   56 +
+ include/dt-bindings/misc/rp1.h                |  235 +++
+ include/linux/pci_ids.h                       |    3 +
+ 26 files changed, 3692 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+ create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+ create mode 100644 drivers/clk/clk-rp1.c
+ create mode 100644 drivers/misc/rp1/Kconfig
+ create mode 100644 drivers/misc/rp1/Makefile
+ create mode 100644 drivers/misc/rp1/rp1-pci.c
+ create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+ create mode 100644 drivers/pinctrl/pinctrl-rp1.c
+ create mode 100644 include/dt-bindings/clock/rp1.h
+ create mode 100644 include/dt-bindings/misc/rp1.h
+
+-- 
+2.35.3
+
 
