@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-294008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E409587A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:13:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF459587A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 15:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971FC283075
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702E21C21C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 13:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A58B19046E;
-	Tue, 20 Aug 2024 13:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC12D19007D;
+	Tue, 20 Aug 2024 13:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMLGBITN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cXXsbLgr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387112745C;
-	Tue, 20 Aug 2024 13:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932B22745C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 13:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724159576; cv=none; b=Ow1tCMxk3nyHRUuABapVyFq9Vk22HdT5zFqsXdYieTHRJ+3/jry/ucEPRusnhyplKvr3vym9nHCDoU8/HwlW6RKw8Mwcynu80raLRoDBw4Q2Kkp65Q4JbXk3xrnTzNariyPRZgzZOflKDf48xoPLllir15deWmFlpgxrrKnGRhE=
+	t=1724159632; cv=none; b=Dkpzn/1qiOdG5ek4M4qUp7wSLgFfPen95vxDjkwwyuYfSPTRT1VEXAWcSP1i1dXIgwmQaiHFMZZWiBhZee1612LcJ2EebyLTPmbbrKGyHmobwCq6WcZ7WKelKL/QQI36GU92977XWVTS3NLIFs4wLzefZaFYqH0BMdF7Hd3qh5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724159576; c=relaxed/simple;
-	bh=aPgexG4oE2c88za6mvKecAfXWDlnS7gQxWVON+Mpz8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrXlB1buAjng+ul6sQzkMThj/qUBuiFlzULXas6cQrHHT2P2cf6R8dsgadw+CRxp3HrJyeD2XCassKq9qduE8teYrKwqxqTgUQfjdb8ubU9DxmzJW9GOaX237CLHTvnLs/o2nFQs8YZIgirRZsSu6uU1mssgkVXe7BHoXh52CtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMLGBITN; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724159575; x=1755695575;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aPgexG4oE2c88za6mvKecAfXWDlnS7gQxWVON+Mpz8I=;
-  b=VMLGBITNYNhEpODwcquorcmgFNCwY2oVj1Evh0E0WQTEYWMMfjabaGFx
-   D2WSNkGPl2fPsVu5+fQWjI6akoMi3FP6sycPaZp5SzIF1mq/+2/enE9O1
-   aPY07MNtnSnCkYKqkQb2K5pU5FVfO8eqA9yTt18qYE0DK7/cVA7WL1kBg
-   lLlnfbBxUw6II5XDTJAf99N5+usE08v0kit9ZlU6akFZtjtek6DmgKaOT
-   bhsAXf5yzDy64Cms4B1J/U6HPTVrKuiYySiOrw1wJMj7ovMIfhCNFNx+b
-   buP4MJv3Ta75YpLiAywh5ImWTDsd/MXetCMqgQ0fLz7DtDeye5cZmItDq
-   g==;
-X-CSE-ConnectionGUID: szylp3WCSca9h9J/3l6+Rw==
-X-CSE-MsgGUID: 9JvQBcGTSYKatUa4V5uPog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="22427099"
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="22427099"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:12:54 -0700
-X-CSE-ConnectionGUID: uwoDjRNUQfiy6bUNw6a57Q==
-X-CSE-MsgGUID: zqAYfGooTSqxBHkn9UdOog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="60411979"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 06:12:50 -0700
-Date: Tue, 20 Aug 2024 16:12:46 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v6] drm/i915/hwmon: expose fan speed
-Message-ID: <ZsSWTtew8nCYWrxF@black.fi.intel.com>
-References: <20240820062010.2000873-1-raag.jadav@intel.com>
- <ZsRup8uKiqUvADFl@smile.fi.intel.com>
+	s=arc-20240116; t=1724159632; c=relaxed/simple;
+	bh=uhrLadRMTglIPn3Zn3SZWPzmTNTTKZiHQxUwnCdahcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EedybdqjvF06TtmS2XlYl+KpFDFSxObAUngZuNHVRPbMB8RdQ68X2BJGRyfiQ3ftqJh+LgGhW89VNv2aceJ/Gq/EmGVQYiZ64eB8mSV5/itebFWq1iohSm/q8LrbCZDkweVuJpgzLus/Ujz57MtddcGo8vfKPvtICam30kqQFp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cXXsbLgr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724159629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vZA9NsmYfHqlh7uFA5Iq6DDdHEhytABPy8E65xYTnnY=;
+	b=cXXsbLgrlFzNk2GyF4pelZoEq+VRF+RJ1djtc6dIZNIZQ/eat1wof28I/G3/2E1FVd+HRy
+	ps98x7oBDDuOXhlc3/y4PQnMx3doETOBHp/bDOT6jTIUecOZ72A2yo5DHnYZ/lLDKtUQE+
+	4OdEz7XA0m570AX2S1kIaaSnVOWiCFI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-108-tDwa5Kz2MxGkPtGZrrcEkg-1; Tue, 20 Aug 2024 09:13:48 -0400
+X-MC-Unique: tDwa5Kz2MxGkPtGZrrcEkg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3718a4d3a82so3111462f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 06:13:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724159626; x=1724764426;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vZA9NsmYfHqlh7uFA5Iq6DDdHEhytABPy8E65xYTnnY=;
+        b=D4kc1hhAWDmF5E+egO8Atb50/rGcc+EatCvYOSWMXIOweBNJ1iS9rlV3PZ4cv11Hnj
+         wO3rQ2bNJpGes2kYT+DRyhGZ1Ga69qs0ba3RJ0yrhY+qywdIHbe+LG8ps1wzf260dVth
+         E3uo88UrVZJKllEilIuPDpBDMc0aU6yVik8yRuLtWmmH3IYYgXTrR3huBWbQ0PRscq68
+         8NzdKijnYcAwfSIoBDQW8mZ1VB8CdS4yMGO+WqwsQX/VemO/zsLNl6FwIsnq/qFhT1oy
+         fAboFPYn3XXcAN0t0FGJkmLZzeZ7//9kxBzIUOTH7lx/JLiXSFZmjr9FRX96bD9MBO7N
+         ajFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkhvaStG1x95FVgx2uvpsA6TB8hdM4UKYon/WtZGj/rwFhNUgC7uG9AiKYN4MRnwnLDknBqvgGO4ftrjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+r1Og5y4sdFnuBOh9/t0Gy9n5iQ6+pYvufbopOfCdIAbqc8Fe
+	h3M5QSr6fG589JN6ZFEtZAmE1xuIJBRX1jJSd5L1MaFacMdNXWZc7LcNT1AlxSOcr7AIbLi+gh2
+	CQP/O2VYOECW+MggzwOSoWcvhwVgTwdxq/oLyTYOyDfCJqyCGLhRa+sR8ew788Q==
+X-Received: by 2002:a5d:4e4e:0:b0:368:327c:372b with SMTP id ffacd0b85a97d-3719444bfa6mr9305625f8f.19.1724159626054;
+        Tue, 20 Aug 2024 06:13:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzI6GnucFTXbBS1llruGpj59nWY1C+0+wKIAAyQncc21XjuGko7iEFzA9mv0ekZasAiQdM5A==
+X-Received: by 2002:a5d:4e4e:0:b0:368:327c:372b with SMTP id ffacd0b85a97d-3719444bfa6mr9305594f8f.19.1724159625543;
+        Tue, 20 Aug 2024 06:13:45 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5? ([2a0d:3344:1b51:3b10:b0e7:ba61:49af:e2d5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898abf2csm13028775f8f.107.2024.08.20.06.13.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 06:13:45 -0700 (PDT)
+Message-ID: <a95f1211-0f1b-4957-8e31-1b53af888cb5@redhat.com>
+Date: Tue, 20 Aug 2024 15:13:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsRup8uKiqUvADFl@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: ip6: ndisc: fix incorrect forwarding of proxied
+ ns packets
+To: Nils Fuhler <nils@nilsfuhler.de>, davem@davemloft.net,
+ dsahern@kernel.org, edumazet@google.com, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240815151809.16820-2-nils@nilsfuhler.de>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240815151809.16820-2-nils@nilsfuhler.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 01:23:35PM +0300, Andy Shevchenko wrote:
-> On Tue, Aug 20, 2024 at 11:50:10AM +0530, Raag Jadav wrote:
-> > Add hwmon support for fan1_input attribute, which will expose fan speed
-> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
-> > 
-> > $ sensors
-> > i915-pci-0300
-> > Adapter: PCI adapter
-> > in0:         653.00 mV
-> > fan1:        3833 RPM
-> > power1:           N/A  (max =  43.00 W)
-> > energy1:      32.02 kJ
-> 
-> > v2: Handle overflow, add mutex protection and ABI documentation
-> >     Aesthetic adjustments (Riana)
-> > v3: Change rotations data type, ABI date and version
-> > v4: Fix wakeref leak
-> >     Drop switch case and simplify hwm_fan_xx() (Andi)
-> > v5: Rework time calculation, aesthetic adjustments (Andy)
-> > v6: Drop overflow logic (Andy)
-> >     Aesthetic adjustments (Badal)
-> 
-> But it still has an issue with 64-bit division on 32-bit platforms, right?
-> 
-> ...
-> 
-> > +	/*
-> > +	 * Calculate fan speed in RPM by time averaging two subsequent
-> > +	 * readings in minutes.
-> > +	 * RPM = number of rotations * msecs per minute / time in msecs
-> > +	 */
-> > +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
-> 
-> ...somewhere here?
 
-Use div64_u64() instead? Or is there a better alternative?
 
-Raag
+On 8/15/24 17:18, Nils Fuhler wrote:
+> When enabling proxy_ndp per interface instead of globally, neighbor
+> solicitation packets sent to proxied global unicast addresses are
+> forwarded instead of generating a neighbor advertisement. When
+> proxy_ndp is enabled globally, these packets generate na responses as
+> expected.
+> 
+> This patch fixes this behaviour. When an ns packet is sent to a
+> proxied unicast address, it generates an na response regardless
+> whether proxy_ndp is enabled per interface or globally.
+> 
+> Signed-off-by: Nils Fuhler <nils@nilsfuhler.de>
+
+I have mixed feeling WRT this patch. It looks like a fix, but it's 
+changing an established behaviour that is there since a lot of time.
+
+I think it could go via the net-next tree, without fixes
+tag to avoid stable backports. As such I guess it deserves a self-test 
+script validating the new behavior.
+
+> ---
+> v1 -> v2: ensure that idev is not NULL
+> 
+>   net/ipv6/ip6_output.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+> index ab504d31f0cd..0356c8189e21 100644
+> --- a/net/ipv6/ip6_output.c
+> +++ b/net/ipv6/ip6_output.c
+> @@ -551,8 +551,8 @@ int ip6_forward(struct sk_buff *skb)
+>   		return -ETIMEDOUT;
+>   	}
+>   
+> -	/* XXX: idev->cnf.proxy_ndp? */
+> -	if (READ_ONCE(net->ipv6.devconf_all->proxy_ndp) &&
+> +	if ((READ_ONCE(net->ipv6.devconf_all->proxy_ndp) ||
+> +	     (idev && READ_ONCE(idev->cnf.proxy_ndp))) &&
+>   	    pneigh_lookup(&nd_tbl, net, &hdr->daddr, skb->dev, 0)) {
+>   		int proxied = ip6_forward_proxy_check(skb);
+>   		if (proxied > 0) {
+
+Note that there is similar chunk in ndisc_recv_na() that also ignores 
+idev->cnf.proxy_ndp, why don't you need to such function, too?
+
+Thanks,
+
+Paolo
+
 
