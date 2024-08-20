@@ -1,104 +1,141 @@
-Return-Path: <linux-kernel+bounces-294162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53424958A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:50:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D13958A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 16:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858261C21F11
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D641F205A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 14:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E721917E4;
-	Tue, 20 Aug 2024 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1aJM0H/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5071917FC;
+	Tue, 20 Aug 2024 14:50:13 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338BE8F48;
-	Tue, 20 Aug 2024 14:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA5C190477;
+	Tue, 20 Aug 2024 14:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165387; cv=none; b=H5gTKVScNEpHF9X5APCrRCTsIophg0nbXxN3tNw2OVQZr+RTkl1htLu+OaGu5S+KRZtm9cTTwSA5D/baWUxq+8jVfuwibD3ro5bLrW+OVp0BozmdMNJwEgpimGhgcHiakWe+t8ghg6CDRkq0vrBiMlJTO8/752XfI0RRa7qjRaU=
+	t=1724165412; cv=none; b=caNI8UD4V4g08JdvkgLfhZH8kiRDTD1yeD/LtEseMtkpfQ57zaXKUrjrIrohNhQail5ysuV5xp8RgX4JJzso799fwXbpCaXN6+kk6FmcFp+tHEa7IoRLmdUTBm0HhJpHJoPB0OkFyu4sKYixBxgc9VT8l1fND2I2bHPs7LKLjfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165387; c=relaxed/simple;
-	bh=qw/VEcxqQoM2pDnSP3JcQLIhSICMUM5FGT0h9VOAXxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=po8VLqZ+ljYzCkj0+5qM0Kkpuaax6jSTVZx7VnCfdq8Gijl574XD6okp0ufI2SRbrfOuzib0P0Cs2xvNkIbqa9yVsC/X3GbWkUwY1HufLKvbn5pkuolZEWgwJbBEZTyG8SSeuURAXAzz9IaIJuXKIcT5DHt8AqhCmZKrF+ywS1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1aJM0H/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15D1C4AF0F;
-	Tue, 20 Aug 2024 14:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724165386;
-	bh=qw/VEcxqQoM2pDnSP3JcQLIhSICMUM5FGT0h9VOAXxM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i1aJM0H/fSWupgC4LGQeqSDwrCiY/BQsHFj6YkriQnyksvFEl3oMtwHz0iMvCHul9
-	 AH3Nxt+6UW4XewpmY2pGw1UoqRujGdfA4v5jCMu+WrMvLgCrwtr02wSgU6Xa6bdNTf
-	 vu7WzGD7wChwCqmZwZsh36zisOewsOiba2piWAv6oLQUtHUeeNDGccoif4sF3CFFUW
-	 ff0Pce9xYf9I4fyMdmart/tir+HJocVzb96ls6qHBOmSD/rtO3hHKjM3EJU0n/SZpH
-	 FeLmmJzdsfg/fKF32Ebn9Bquh95bCkp/q+gocNd26OAWGCL2Gj86dNuz1Kt3qcBqFV
-	 Q/am38P6xrxxw==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5bcccb372so713310eaf.3;
-        Tue, 20 Aug 2024 07:49:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1N1LHLkL18BoewffQyCIHOU5b3wEQE+4NveiVe61rFxsDZGeN2Gli2ff0lCFkjw1CX4bL96hbs3XL@vger.kernel.org, AJvYcCV5h/E/vlEEbu2bfaD0PhvcVNLVjo0ZRhE/b6tUdVA+2ZYY0F2RZvh2j7Rx4nOYMwburF1FEgF3A6o7+xKm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1khp7iRy/vbbF4kG/c/QvpYvoylm5GqzzqVtCZdu50I9BH+4Y
-	gV/fd+tf3FIeybh3fvWw3mTOoX1SfoIAaU8qBwJsk3LlAfLDDZkGiwG7IxbGcvY9TZWdRGFtv1q
-	cJmih6vMn0bRLpI1x6pxU+napHS8=
-X-Google-Smtp-Source: AGHT+IGy2wBSezc9HPxiTT41EngIzAclBa/MhtCJTWWZ2xuKGJ97wqhtM+7EtEqYq+0/FwTMZs4fqV3AhjBRUVTKaxI=
-X-Received: by 2002:a4a:ba09:0:b0:5cd:8f2:5c8d with SMTP id
- 006d021491bc7-5da980087a5mr8507628eaf.2.1724165386100; Tue, 20 Aug 2024
- 07:49:46 -0700 (PDT)
+	s=arc-20240116; t=1724165412; c=relaxed/simple;
+	bh=82LJkXlSbH+fHpgZIEvWlPvqHiGtoTbNnNyWI2Qavdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YifdCaDXlTFEDoWWmBo6nEBdMI14k03nK9apJACZLAZ1zbN2d2fw/nQ+haOokqXdbyALI95Iex/cWEH5/WyKbOFR1/BhO8vh4JCCaoAFFa/kRCrZaPAsP5xS3fsavsMp0DA0DxwFzl8pN7pglOci8j6sYHgd4l+ZlLYpzxnFva4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D34C4AF0C;
+	Tue, 20 Aug 2024 14:50:09 +0000 (UTC)
+Date: Tue, 20 Aug 2024 10:50:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Srikar Dronamraju <srikar@linux.ibm.com>
+Cc: Suleiman Souhlal <suleiman@google.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, joelaf@google.com, vineethrp@google.com,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, ssouhlal@freebsd.org
+Subject: Re: [PATCH] sched: Don't try to catch up excess steal time.
+Message-ID: <20240820105036.39fb9bb7@gandalf.local.home>
+In-Reply-To: <20240820094555.7gdb5ado35syu5me@linux.ibm.com>
+References: <20240806111157.1336532-1-suleiman@google.com>
+	<20240820094555.7gdb5ado35syu5me@linux.ibm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com> <ZrpFU6wFyQDykSlO@smile.fi.intel.com>
-In-Reply-To: <ZrpFU6wFyQDykSlO@smile.fi.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 16:49:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
-Message-ID: <CAJZ5v0guWb4fK0DB1t2MMGvYXBrVoq52Fo_ZgzEqyF_OndqsLQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: APD: Add AMDI0015 as platform device
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sanket Goswami <Sanket.Goswami@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 7:24=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Aug 12, 2024 at 08:10:18PM +0530, Shyam Sundar S K wrote:
-> > Add AMDI0015 to the ACPI APD support list to ensure correct clock setti=
-ngs
-> > for the I3C device on the latest AMD platforms.
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> from the ACPI ID perspective.
+On Tue, 20 Aug 2024 15:15:55 +0530
+Srikar Dronamraju <srikar@linux.ibm.com> wrote:
 
-I've replaced the v1 that has been applied for some time already with
-this one, but please note that it still is not entirely clean.
+> * Suleiman Souhlal <suleiman@google.com> [2024-08-06 20:11:57]:
+> 
+> > When steal time exceeds the measured delta when updating clock_task, we
+> > currently try to catch up the excess in future updates.
+> > However, this results in inaccurate run times for the future clock_task
+> > measurements, as they end up getting additional steal time that did not
+> > actually happen, from the previous excess steal time being paid back.
+> > 
+> > For example, suppose a task in a VM runs for 10ms and had 15ms of steal
+> > time reported while it ran. clock_task rightly doesn't advance. Then, a
+> > different task runs on the same rq for 10ms without any time stolen.
+> > Because of the current catch up mechanism, clock_sched inaccurately ends
+> > up advancing by only 5ms instead of 10ms even though there wasn't any
+> > actual time stolen. The second task is getting charged for less time
+> > than it ran, even though it didn't deserve it.
+> > In other words, tasks can end up getting more run time than they should
+> > actually get.
+> > 
+> > So, we instead don't make future updates pay back past excess stolen time.
 
-Namely, if there are two S-o-b targs on a patch, 2 cases are possible:
+In other words, If one task had more time stolen from it than it had run,
+the excess time is removed from the next task even though it ran for its
+entire slot?
 
-(1) The person sending it is not its author and merely sends someone
-else's work adding an S-o-b to document a "supply chain link".  In
-this case, the From: header should point to the original author (it
-can be added right before the changelog) and its value should match
-the other S-o-b tag exactly.
+I'm curious, how does a task get queued on the run queue if 100% of it's
+time was stolen? That is, how did it get queued if the vCPU wasn't running?
 
-(2) The person sending it is one of its authors.  In this case, a
-Co-developed-by tag should be added to point to the other author and
-its value should match the other S-o-b tag exactly.
 
-I've assumed (2) and added "Co-developed-by: Sanket Goswami
-<Sanket.Goswami@amd.com>" to the commit, but that's not something I
-should be doing.
+> > 
+> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> > ---
+> >  kernel/sched/core.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index bcf2c4cc0522..42b37da2bda6 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -728,13 +728,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+> >  #endif
+> >  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> >  	if (static_key_false((&paravirt_steal_rq_enabled))) {
+> > -		steal = paravirt_steal_clock(cpu_of(rq));
+> > +		u64 prev_steal;
+> > +
+> > +		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
+> >  		steal -= rq->prev_steal_time_rq;
+> >  
+> >  		if (unlikely(steal > delta))
+> >  			steal = delta;
+> >  
+> > -		rq->prev_steal_time_rq += steal;
+> > +		rq->prev_steal_time_rq = prev_steal;
+> >  		delta -= steal;
+> >  	}
+> >  #endif  
+> 
+> 
+> Agree with the change.
+> 
+> Probably, we could have achieved by just moving a line above
+> Something like this?
+> 
+> #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> 	if (static_key_false((&paravirt_steal_rq_enabled))) {
+> 		steal = paravirt_steal_clock(cpu_of(rq));
+> 		steal -= rq->prev_steal_time_rq;
+> 		rq->prev_steal_time_rq += steal;
+> 
+> 		if (unlikely(steal > delta))
+> 			steal = delta;
+> 
+> 		delta -= steal;
+> 	}
+> #endif
 
-Thanks!
+Yeah, that is probably a nicer way of doing the same thing.
+
+Suleiman, care to send a v2?
+
+-- Steve
+
 
