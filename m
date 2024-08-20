@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-293320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D639D957E0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:26:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09EF957E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 08:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071F61C22ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70ECD1F2386A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0003116BE33;
-	Tue, 20 Aug 2024 06:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CCF16BE33;
+	Tue, 20 Aug 2024 06:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=zytor.com header.i=@zytor.com header.b="D/6Y8OiT"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ZDNcrElU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EEA2A1B2;
-	Tue, 20 Aug 2024 06:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF3D16B723;
+	Tue, 20 Aug 2024 06:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135183; cv=none; b=Def0CwwfjonbI0fYWnTR+vTSJ162hFcqpRNR6QIuuRGoSQ3rRX7y3+tWIyHyYbD5kELuNDsDaHT/Ukz75RA9ue+s5eB+MsLaEDAk58ZpWMUpklNz75ReKFOr9zsFPLI4HEYI4P/aP8gGxn+H/iFC5GU1JlGbmBClD8jxK6HB6ss=
+	t=1724135214; cv=none; b=UZmFFL83umJuRQvixUUbyYQj5BpjTdVT//3mRt9XdLV1w7MtzuIPi7BJNEV9BcPTo3KbrZXqC043+yfBkVPausSJuF0ZRB2c9sU4sk1D8nI2uas/mYuikrddxOWLFKutq24U1FL4lar5ku3moNMaOHWZJeCrNwc3OigqIsMyga4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135183; c=relaxed/simple;
-	bh=EZqc+00fgRRrEC4Xf7joFqSZzq2p9IEziTklnKWVHQU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ezzobHz57/lRMfjCLaQNSoL8nNlOZ03/XJw/fmh5CuK83nrpknlqwgg6TPlqAkyVu3ARgoBFiMO7ytfvupIPc4FUAmzQN7TqluhrCTf88uxRNxzN+aGGeI6cj+khq/OmM63bkUThhNf7xuVdMaP8/dJJBpUBAVHEnjv+quTwefY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=D/6Y8OiT; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47K6PI6O1345101
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 19 Aug 2024 23:25:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47K6PI6O1345101
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024081601; t=1724135119;
-	bh=0XPUli4E+h8MfiBpjbCNlGzGqEZNzuKAKWqIuKRJBpg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=D/6Y8OiTNzjIp70nymc7pWQduoyXtY2bHPbNJeqx8lvge9gWjETD+Mwu/DuE42R8g
-	 d5nFb4civvTUK8rLi/4pj9m8MzKy15KeqtfSDJv1lw3Mw4xBLQQu+fqHl6z1GL6jpt
-	 5JmSJTnwfEL/IB1cl9n8h7kILxXE25p4Z4ERPSHBfDGeKHUZ0ZgIRqvDJH4PVWbpPW
-	 1c8N8v99xolCQfBmoBmPnEgocHzVV4dKxFm2y6myIpIGsBQP0vgy7TANSSQT1Gcyr9
-	 tNuCPnuTjoSHDesMmEGpnFSqGGiWJjiMl16po9QDiU7waq90RUPlfnZmfAAbMEcn7V
-	 UC2tEeG/wsleQ==
-Message-ID: <23b9e88b-9d3b-4c34-a243-232ca2f53527@zytor.com>
-Date: Mon, 19 Aug 2024 23:25:17 -0700
+	s=arc-20240116; t=1724135214; c=relaxed/simple;
+	bh=0nB4vt5mVf9gQd39iI+jKGpfL7Lv4UpO0haxePtZXEE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ah90aMgeVI+WAtqjeMvV/dHjS5B/CnGtYPc1+SSOGN4G/WPbn/UXrAWkX1S5l3W92PTFMOL/0QhzItU8aet4dw2Us0KjgRDaot1pp+jtnGkMvOkT7rR2xwqH6b4AaPpEBxrRyuRndbqhAQvqD/oHE4dIKI1X7/ibrSAk9pXa1+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ZDNcrElU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1724135209;
+	bh=EFXLGZEJkQUFQN28krLsjRFbPfS1YdUIsO6keM3oM8o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ZDNcrElUZ2xY3s8w2eLhoYpi2YViK/FMkN+ADmqFd+TanHYCabHsCvxKxJDrMJmQ3
+	 PALcnEi8+N6YuFVo/NT9ULv1COUzAljpcuypZ5EsiRuQHXj0Y4ejCBMJvxI3/YPw22
+	 Cx1ZzVd1bkUvMnEHpxzGLiv+yEvYtXyS5Oje/tUckPFLL9zIPpyvzxzVgz2GUBwZ3N
+	 6mpBsvhBFEiLa9uIceT/jTftvX4piUfkdT2doVoBbq3BLaEwDAGmCQLSZo7ixVG2WD
+	 U/UKzAas2jHBiOPL5qaZxuF4uBCF+93ttNCAf/R7WStVDr/gZVSeIwEjWOctOtHn7y
+	 lqUl+TYJ99dZA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnzyD15rhz4wd6;
+	Tue, 20 Aug 2024 16:26:44 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Nathan Chancellor
+ <nathan@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain
+ <bcain@quicinc.com>, Dinh Nguyen <dinguyen@kernel.org>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Richard Weinberger
+ <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes
+ Berg <johannes@sipsolutions.net>
+Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+ akpm@linux-foundation.org, christophe.leroy@csgroup.eu, jeffxu@google.com,
+ Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, npiggin@gmail.com,
+ oliver.sang@intel.com, pedro.falcato@gmail.com,
+ linux-um@lists.infradead.org, linux-csky@vger.kernel.org, linux-hexagon
+ <linux-hexagon@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct
+ vm_special_mapping
+In-Reply-To: <CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com>
+References: <20240812082605.743814-1-mpe@ellerman.id.au>
+ <20240819185253.GA2333884@thelio-3990X>
+ <CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
+ <20240819195120.GA1113263@thelio-3990X>
+ <CAHk-=wgsDJ+sA1T01YT-z5TXs3zxJ54f0VDApkZ1pgcr8T=myQ@mail.gmail.com>
+ <CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com>
+Date: Tue, 20 Aug 2024 16:26:43 +1000
+Message-ID: <87y14rso9o.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] x86/cpufeatures: Automatically generate required
- and disabled feature masks
-From: Xin Li <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
-        andrew.cooper3@citrix.com, nik.borisov@suse.com
-References: <20240628174544.3118826-1-xin@zytor.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240628174544.3118826-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 6/28/2024 10:45 AM, Xin Li (Intel) wrote:
-> The x86 build process first generates required and disabled feature
-> masks based on current build config, and then uses these generated
-> masks to compile the source code. When a CPU feature is not enabled
-> in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
-> flag, i.e., DISABLE_FRED, needs to be properly defined and added to
-> a specific disabled CPU features mask in <asm/disabled-features.h>,
-> as the following patch does:
-> https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
-> As a result, the FRED feature bit is surely cleared in the generated
-> kernel binary when CONFIG_X86_FRED=n.
-> 
-> Recently there is another case to repeat the same exercise for the
-> AMD SEV-SNP CPU feature:
-> https://lore.kernel.org/all/20240126041126.1927228-2-michael.roth@amd.com/.
-> https://lore.kernel.org/all/20240126041126.1927228-23-michael.roth@amd.com/.
-> 
-> It was one thing when there were four of CPU feature masks, but with
-> over 20 it is going to cause mistakes, e.g.,
-> https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1-b33c8d6db618@suse.com/.
-> 
-> We want to eliminate the stupidly repeated exercise to manually assign
-> features to CPU feature words through introducing an AWK script to
-> automatically generate a header with required and disabled CPU feature
-> masks based on current build config, and this patch set does that.
-> 
-> Link to v3:
-> https://lore.kernel.org/lkml/20240622171435.3725548-1-xin@zytor.com/
-> 
-> Changes since v3:
-> * Add a few high-level comments to the AWK script (Nikolay Borisov).
-> * Use '1U' instead of '1' in feature mask shifting (Andrew Cooper).
-> * Checking NCAPINTS isn't necessary anymore.  It was needed when these
->    macros had to be manually updated, but now if cpufeatures.h changes
->    this header will be regenerated (Brian Gerst).
-> * Enforce CPU feature mask values to be unsigned.
-> 
-> Changes since v2:
-> * Remove AWK code that generates extra debugging comments (Brian Gerst).
-> * Move SSE_MASK to verify_cpu.S, the only place it is used (Brian Gerst).
-> * Add a patch to generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the
->    new AWK script (Brian Gerst).
-> 
-> Changes since v1:
-> * Keep the X86_{REQUIRED,DISABLED}_FEATURE_ prefixes solely in
->    arch/x86/Kconfig.cpufeatures (Borislav Petkov).
-> * Explain how config option names X86_{REQUIRED,DISABLED}_FEATURE_<name>
->    are formed (Borislav Petkov).
-> * Remove code generating unused macros {REQUIRED,DISABLED}_FEATURE(x)
->    to tell if a CPU feature, e.g., X86_FEATURE_FRED, is a required or
->    disabled feature for this particular compile-time configuration.
-> 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Mon, 19 Aug 2024 at 13:15, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Ok, I did a quick hack-job to remove that disgusting
+>> install_special_mapping() legacy case.
+>>
+>> With this [..]
+>
+> I forgot to actually attach that "this". Here it is. For real, this time.
+>
+>                    Linus
+>  arch/csky/kernel/vdso.c            | 28 +++++++++++++++++++++-------
+>  arch/hexagon/kernel/vdso.c         | 14 ++++++++++----
+>  arch/nios2/mm/init.c               | 12 ++++++++----
+>  arch/sh/kernel/vsyscall/vsyscall.c | 14 +++++++++++---
+>  arch/x86/um/vdso/vma.c             | 12 ++++++++----
+>  include/linux/mm.h                 |  4 ----
+>  mm/mmap.c                          | 32 +++++---------------------------
+>  7 files changed, 63 insertions(+), 53 deletions(-)
+>
+...
+> index 1bd85a6949c4..5e68ab7a8898 100644
+> --- a/arch/sh/kernel/vsyscall/vsyscall.c
+> +++ b/arch/sh/kernel/vsyscall/vsyscall.c
+> @@ -36,6 +36,10 @@ __setup("vdso=", vdso_setup);
+>   */
+>  extern const char vsyscall_trapa_start, vsyscall_trapa_end;
+>  static struct page *syscall_pages[1];
+> +static struct vm_special_mapping vdso_mapping = {
+> +	.name = "[vdso]",
+> +	.pages = syscall_pages;
+                              ^
+                              should be ,
+> +};
 
-A gentle ping...
-
+cheers
 
