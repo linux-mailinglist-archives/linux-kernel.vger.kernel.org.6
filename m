@@ -1,126 +1,174 @@
-Return-Path: <linux-kernel+bounces-294541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F21958EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:01:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA6C958EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4B01C21A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66D4AB225E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F18415FA7A;
-	Tue, 20 Aug 2024 20:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0D316190B;
+	Tue, 20 Aug 2024 20:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jy2cD4IT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X3JANH2n"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C88B18E37A
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0EE18E37A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724184069; cv=none; b=FJPdeD2hakybXr3SrdJBYSW+rujWjwHjMQrFJFWE7hYC29TuzSpwh46B1NEonmiom8n1HmH6kycskifiRZH0GYg9pdje4B6XuzsRKAasDbEmyn2TjMMgWnFNQNoaK1PDGHxYgS+WzGtCps+CHUIiaeYqS4qPu4Dc/AG391F1gKM=
+	t=1724184175; cv=none; b=YIpZw/PYZFbc0+6XMvBUzFFd7P2cwiv6sct0VjNs/5SCaCnmZkhwTMHtgkUj4FcNOBurHqNh/J/7fYb4UunssMquPhKpo1AgfwIPEkeXnmr7IC171G3E5XzuciG74TCyHB39CqDwbXdGqlSeLbD2IphlY/jCber5kwU0IsmxDPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724184069; c=relaxed/simple;
-	bh=G3RNvrfn/rmdf00KPduS38lywE22do+er0WoH4g8YbA=;
+	s=arc-20240116; t=1724184175; c=relaxed/simple;
+	bh=GNtqUA7xiKx52NKreqjOI2Wa3/fykoaR+q4UKI0lZUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NO9oVlaZK2PVA6IXoza0ypHIujEJKNB5Wt8HmxJ19hMeH009cx2xfY/FL6QRE8kNYFXGQoVduWpnbvAPt8xc/rqSWu8dMz86eEcqoLDmFICQu/CDBUKvD24Ikr5Ui2E+LvCV9HJKR8t/0ea5RCNcAR/ARO3/TV021wCYfoxIhh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jy2cD4IT; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724184068; x=1755720068;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G3RNvrfn/rmdf00KPduS38lywE22do+er0WoH4g8YbA=;
-  b=Jy2cD4ITsJtMdzU/Kw7aEP+0I/KAqLBSd+TVVGAz7SuUCXYJefDetfA0
-   tvYQh9JDJVhgBUEyzstRcxjRccYLKiARFUgRdev/yVwyDUsp5dZMcTfvy
-   jHOm6SIvPC+55nKLNy7wmcEcYdg0eiBxnhgIbG6+btBhNAS+EPIJm4DXh
-   FGHbcEJzh7hLaEIVzd+9PDxCL83LK7BcjNcFZ1dKELQZrBtiIOEGjxhTP
-   na8ch89pVzNdpZX70W4RUkSUGIws8dyiKSmmJy+jqGHnqZzR1TytR1n/C
-   f8U/IXIUN1eo8H+SugR65fe9tpdVSSJv5gvJrlJa3Zt9S2VbAY6n63yTP
-   g==;
-X-CSE-ConnectionGUID: NM3zk9PWTb6Ick2dhPP4dA==
-X-CSE-MsgGUID: xLYHFhjqSVeDMhVm/GtDpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="40024038"
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="40024038"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 13:01:08 -0700
-X-CSE-ConnectionGUID: MGtc9+LvRqKOvSc+fMRBOA==
-X-CSE-MsgGUID: 8XHodfx9TNWZxV2ZJK5PSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
-   d="scan'208";a="65199824"
-Received: from cdpresto-mobl2.amr.corp.intel.com.amr.corp.intel.com (HELO [10.125.108.88]) ([10.125.108.88])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 13:01:07 -0700
-Message-ID: <46eacc01-7b23-4f83-af3c-8c5897e44c90@intel.com>
-Date: Tue, 20 Aug 2024 13:01:06 -0700
+	 In-Reply-To:Content-Type; b=c3q+yu/oAh1it3J0ncgtkZXDW5rU12omCCMElVnOb1wwjCbRn8j+unSh0QDpIpAOv1w0FImdZvWQ8GBfwuez902ngnvFQbC55Mm2nim0RpPdHwKAv98FNRsRtHJh0WEi7/5He84xnQ9H3j1Qea38USCl+J07owaNHGxHSVDOxFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X3JANH2n; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b7f66966-f97a-4890-b452-2a8a5e20b953@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724184170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x+Xnac8NFnrgWa0w+0I5z9TRviIwR6516HIJjJX2blg=;
+	b=X3JANH2niWLsnw+n9r57hQETNGwH4SMKfpkCKDR9GwL/wwRNW1n+SmZTS5AFKhSQFWJkqb
+	VozSK/e6POx05Q1RdVGjqjIZK0fcqa7bYCwmlebB0pV8MmBtE81PwTb5NoeOQCB8TS7Hox
+	D8LgaGNzJHek9Gr9WqghmJlApUBgQhg=
+Date: Tue, 20 Aug 2024 16:02:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] virtio_pmem: Check device status before requesting
- flush
-To: Philip Chen <philipchen@chromium.org>,
- Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
-Cc: virtualization@lists.linux.dev, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240820172256.903251-1-philipchen@chromium.org>
+Subject: Re: [PATCH net-next v4 2/2] net: xilinx: axienet: Add statistics
+ support
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+ Andrew Lunn <andrew@lunn.ch>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>
+Cc: "Simek, Michal" <michal.simek@amd.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Russell King <linux@armlinux.org.uk>, "David S . Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "Katakam, Harini" <harini.katakam@amd.com>
+References: <20240820175343.760389-1-sean.anderson@linux.dev>
+ <20240820175343.760389-3-sean.anderson@linux.dev>
+ <MN0PR12MB5953C46BA150B0382F222534B78D2@MN0PR12MB5953.namprd12.prod.outlook.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240820172256.903251-1-philipchen@chromium.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <MN0PR12MB5953C46BA150B0382F222534B78D2@MN0PR12MB5953.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+On 8/20/24 15:04, Pandey, Radhey Shyam wrote:
+>> -----Original Message-----
+>> From: Sean Anderson <sean.anderson@linux.dev>
+>> Sent: Tuesday, August 20, 2024 11:24 PM
+>> To: Andrew Lunn <andrew@lunn.ch>; Pandey, Radhey Shyam
+>> <radhey.shyam.pandey@amd.com>; netdev@vger.kernel.org
+>> Cc: Simek, Michal <michal.simek@amd.com>; linux-kernel@vger.kernel.org;
+>> Russell King <linux@armlinux.org.uk>; David S . Miller
+>> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+>> <pabeni@redhat.com>; Eric Dumazet <edumazet@google.com>; Simon
+>> Horman <horms@kernel.org>; linux-arm-kernel@lists.infradead.org; Sean
+>> Anderson <sean.anderson@linux.dev>
+>> Subject: [PATCH net-next v4 2/2] net: xilinx: axienet: Add statistics support
+>> 
+>> Add support for reading the statistics counters, if they are enabled.
+>> The counters may be 64-bit, but we can't detect this statically as
+>> there's no ability bit for it and the counters are read-only. Therefore,
+>> we assume the counters are 32-bits by default. To ensure we don't miss
+> 
+> Any reason why we can't have DT property to detect if stats counter
+> are configured as 32-bit /64bit? The IP export CONFIG.Statistics_Width
+> and device tree generator can read this IP block property and populate 
+> stats width property.
 
+Mainly simplicity:
 
-On 8/20/24 10:22 AM, Philip Chen wrote:
-> If a pmem device is in a bad status, the driver side could wait for
-> host ack forever in virtio_pmem_flush(), causing the system to hang.
-> 
-> So add a status check in the beginning of virtio_pmem_flush() to return
-> early if the device is not activated.
-> 
-> Signed-off-by: Philip Chen <philipchen@chromium.org>
-> ---
-> 
-> v2:
-> - Remove change id from the patch description
-> - Add more details to the patch description
-> 
->  drivers/nvdimm/nd_virtio.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
-> index 35c8fbbba10e..97addba06539 100644
-> --- a/drivers/nvdimm/nd_virtio.c
-> +++ b/drivers/nvdimm/nd_virtio.c
-> @@ -44,6 +44,15 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
->  	unsigned long flags;
->  	int err, err1;
->  
-> +	/*
-> +	 * Don't bother to submit the request to the device if the device is
-> +	 * not acticated.
+- We need the functions to work with 32-bit counters anyway
+- We can always treat 64-bit counters are 32-bit counters
+- The reset issue below necessitates keeping track of a "base"
+  anyway.
 
-s/acticated/activated/
+And for my devicetrees (generated with 2022.2) all I get is 
 
-> +	 */
-> +	if (vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_NEEDS_RESET) {
-> +		dev_info(&vdev->dev, "virtio pmem device needs a reset\n");
-> +		return -EIO;
-> +	}
-> +
->  	might_sleep();
->  	req_data = kmalloc(sizeof(*req_data), GFP_KERNEL);
->  	if (!req_data)
+xlnx,stats = <0x1>;
+
+regardless of whether I select 32- or 64-bit counters. So this wouldn't
+be something we could reuse from existing devictrees.
+
+>> an overflow, we read all counters at 13-second intervals. This should be
+>> often enough to ensure the bytes counters don't wrap at 2.5 Gbit/s.
+>> 
+>> Another complication is that the counters may be reset when the device
+>> is reset (depending on configuration). To ensure the counters persist
+>> across link up/down (including suspend/resume), we maintain our own
+>> versions along with the last counter value we saw. Because we might wait
+> 
+> Is that a standard convention to retain/persist counter values across 
+> link up/down?
+
+IEEE 802.3 section 30.2.1 says
+
+| All counters defined in this specification are assumed to be
+| wrap-around counters. Wrap-around counters are those that
+| automatically go from their maximum value (or final value) to zero and
+| continue to operate. These unsigned counters do not provide for any
+| explicit means to return them to their minimum (zero), i.e., reset.
+
+And get_eth_mac_stats implements these counters for Linux. So I would
+say that resetting the counters on link up/down would be non-conformant.
+
+Other drivers also preserve stats across link up/down. For example,
+MACB/GEM doesn't reset it stats either. And keeping the stats is also
+more friendly for users and monitoring tools.
+
+---
+
+If you happen to have an ear with the RTL designers, I would say that
+saturating, clear-on-read counters would be much easier to work with in
+software.
+
+--Sean
+
+>> up to 100 ms for the reset to complete, we use a mutex to protect
+>> writing hw_stats. We can't sleep in ndo_get_stats64, so we use a seqlock
+>> to protect readers.
+>> 
+>> We don't bother disabling the refresh work when we detect 64-bit
+>> counters. This is because the reset issue requires us to read
+>> hw_stat_base and reset_in_progress anyway, which would still require the
+>> seqcount. And I don't think skipping the task is worth the extra
+>> bookkeeping.
+>> 
+>> We can't use the byte counters for either get_stats64 or
+>> get_eth_mac_stats. This is because the byte counters include everything
+>> in the frame (destination address to FCS, inclusive). But
+>> rtnl_link_stats64 wants bytes excluding the FCS, and
+>> ethtool_eth_mac_stats wants to exclude the L2 overhead (addresses and
+>> length/type). It might be possible to calculate the byte values Linux
+>> expects based on the frame counters, but I think it is simpler to use
+>> the existing software counters.
+>> 
+>> get_ethtool_stats is implemented for nonstandard statistics. This
+>> includes the aforementioned byte counters, VLAN and PFC frame
+>> counters, and user-defined (e.g. with custom RTL) counters.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+
+--Sean
 
