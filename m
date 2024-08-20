@@ -1,160 +1,240 @@
-Return-Path: <linux-kernel+bounces-293251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3F0957C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:48:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BDE957C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 06:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7676F1C23469
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF2EFB21107
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC19446D1;
-	Tue, 20 Aug 2024 04:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748AA62171;
+	Tue, 20 Aug 2024 04:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UU9d/e59"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZLHZl2WJ"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D20E541
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76F82C1AE
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 04:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724129321; cv=none; b=NHGcdq+CEccfE3Yv0lNeVOUgF+SFEDcp6V8Dwvn78RR3tm5mUvOu1lqZ4VCl407P1r6cM/VUQqyWI+Bl8GOWjEQuuoQlLKeoG6PoS2wtumel3jDq5N818EH+S4wFF5DMJK7kAYje+Obo+yLB4IEg7nr5+L3U6+5WC1Gx5gEA0/E=
+	t=1724129526; cv=none; b=UlS4P7CHT8ciXqKmxRrcRdGfIPkHmXpcVxI7fQUq3AaNkwsxjQOwthyIdTQrs/r7x8CFoqXqnssCbZIfUOKhlZCNQ3eYvVr8e+CI8eS90IDN9KUlqd6l/1d8M1mZ9pbCdG8pXcrGf8lvRUknmkZAPwnzqPMTnfK1mGL9CF1ak7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724129321; c=relaxed/simple;
-	bh=vo0PQxsgFLeIZ/uP4YKfB4xBpxc1LMwJL4fn4rI7d4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IRGa/PzUfLRsZbRi2h2mzaA6MEvT23TUPJmBiaU6lyX3qsbaHXoIugmy5a9nwSEvGLyr2gS4/nWqQAlmQYXr8np3E9LTsF/lR3VmOglz9dRDd+OPASsqNGrdt0lK3kcH51OlBltSqiGtxeOxbPjDsoAbo9kYwn+vVqmuJ+G3g7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UU9d/e59; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281faefea9so39594445e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:48:39 -0700 (PDT)
+	s=arc-20240116; t=1724129526; c=relaxed/simple;
+	bh=vgJixcmKlQG9wiiDjOIwc6NXFfh6n3GbjwmB9KxV4tw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jNusq3TLTz0dpBg3fITMHHThyYTT6YMnUK0yRmpsfK2Y8R5o1/W0WBQGubbDl4BLSkSzh8eyR6KW3cTYsZfra42eXeG+y2hhijpYZNtThdMk/UE6hfGDpoNktgNyktlu5By5QHdY1erpdf11gDxDGTRHMN0+AXU7D3dSx7XWXmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZLHZl2WJ; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f51a601cd6so302118e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 21:52:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724129318; x=1724734118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724129522; x=1724734322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fye/jS5o+GEq4JZRP+A1JuHLRGwmKc6iHbcdO7MuGDM=;
-        b=UU9d/e595UQC5X1TPjEOcTsQQV3B1YfmxF4B3iAuVqKlDAroJuxXzFS7uPwJNPYsMs
-         Y9cf6CR0mWRNh33jxHIHPx16ACtYE/QyjiVuB9G53zu3cHKrUYNHT7A0Z3DAnBtQkr/j
-         Q4ikmGgTj3HVnU5/IZLuodI/DsH9YcfY37TwL1+qjEVrZmEk/ofcCn9zoNegaqOqZURj
-         +seoGoDEsBqqBJIIUlxTFrEaXejSgU7pizVothvpW38qaXR7KzS5KkpS6utwTurGLMDY
-         6eI+4P0WC5JcHXMdCFKrJFFwfOiptfSel3uQT3HyJXHT/1g2+SZPZMMJu6NU0fV9Kouj
-         a28A==
+        bh=B8BpmzVy7XYFzXeTAR5DMGDZBV2YBdqr31NxhMlCmgg=;
+        b=ZLHZl2WJfIoE68VDUbEjQaM3g1skcmW15swN6OMwAHQoE+fQlZIC60yJLAlHnBlgVW
+         Z5y+6KB4o371eRFs8gfFvtqYXfwg9+UD4Ui1axdbQbRCHSjcsCmdLKkUFB/GBTVHE9Lh
+         ZONtwRHfQi4n/i5SaNZFx2esQBLMvtZUo4+s3lNSrvU2bHDku/ZuMGjCdwMtqz9kKplA
+         hQ4qLryfzxag9HNwp4qUdJJ2kT9T0yeMANeR7s2mEib38dwfq82+vGjV1IlZmeLoahwH
+         rcBdVnP2Zx7/8hzbsQyXYYp6GuwhP5guWM48x2JlEef1rv70BrXXf3WPOw7bTEGlC4K1
+         Z4yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724129318; x=1724734118;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724129522; x=1724734322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Fye/jS5o+GEq4JZRP+A1JuHLRGwmKc6iHbcdO7MuGDM=;
-        b=vl3dFOV+6gFdaWr00/8PxL7YvZZ1vgHhTsG8OCyhQB5QegNoNGuVRfADatcV6YDNlM
-         2aDT6fG6B42xJihS0oW1OJ2Yt50pyUhF3hx0pTj5tJJ4sOmd9R9GBuG1nLrWW0npDHOK
-         BDein9wSH8QBO960ycyeO3SxlEBjPE8oqFG+iuTCE8vsfAzxEegsnOg/aiKFs6nXo0Do
-         qi1zqY8d6IPYj2LsxS5i0JmVeOvYyZhBVHOYsL4RMvEUoHY5ksIg8O6yZqRMLq/YlJuK
-         Nz7tBKQPLPPPWGtIfIIToVsMIQVnlnHyRyIjRDyLXSqPjKndZV+HvtRMGLQnLmd8eSzH
-         sbGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAu7L/lBy41UmkbxfB4p1grMZpfEARwA/atLXY/+p1drijEhAdWI3tCzHANXu7Wgg5BFv7nnXb7DfluBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1xe1V2R98f7hO9aKARMDJCgJ0WzoRp2JvrAyNswX8tsK2yU/F
-	LCvPxkf5bwO22kgM9wCbhU+5liLUyZx8BLIythHJVSN4y/n7Za1F
-X-Google-Smtp-Source: AGHT+IGepWIntETFS0+Xa90Hiu+rMqViuMxhxVMaVXC8MjFst8jt6k0gXZCZcKMX7zUqHRGOXDvJgw==
-X-Received: by 2002:a05:600c:458b:b0:428:1663:2c2e with SMTP id 5b1f17b1804b1-429ed7a6b76mr80365795e9.17.1724129317734;
-        Mon, 19 Aug 2024 21:48:37 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:57a0:1620:4000::1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded299a9sm180852875e9.18.2024.08.19.21.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 21:48:37 -0700 (PDT)
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-To: paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jesse@rivosinc.com,
-	conor@kernel.org,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-Subject: [PATCH v2] riscv: hwprobe: export Zicntr and Zihpm extensions
-Date: Tue, 20 Aug 2024 06:47:49 +0200
-Message-ID: <20240820044749.557349-1-mikisabate@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240817075629.262318-1-mikisabate@gmail.com>
-References: <20240817075629.262318-1-mikisabate@gmail.com>
+        bh=B8BpmzVy7XYFzXeTAR5DMGDZBV2YBdqr31NxhMlCmgg=;
+        b=XJgZO8ij+loLY3/coIJ8yoUW8O9Gnk1Fds1xgTwI/g7LxHbQjRnuaZxfvQfqUZAJ+3
+         GaIllwDfPHV/znfDRqCIFMKHvfxPZtMyZgWsgPHgAFBFurV6bPUAmGiFu3oU0aadSN+5
+         EVuhSchB2vMTaOZ6sSf+d3c/NGu+iiHB9q2HHW7NZHTuCNHLsJmB8WtOMgfkotpRC1D9
+         EC5v1/LB4+FG0nmy111hsp9BLKu2jtedvwbm2NTW+EF2sSS2AHOZrJHhemUYP/jL4app
+         sEcaCApKDgAsCUdNEAM+8RNWpeeMvXvCRK4U5HJFqFwjVBQE9ZWqxAiFLCDsVyY19PbY
+         d6TA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+LOWd4VaCw4pA6Rd04+IWq4tHs/usV9bXX3iT4PLkWweiwrdZIwfBCCVGVBESNhdm8eYFdQKa8vuixVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymhmqx4frgDlPM6SjWzObttKG2WNJk9Y20MKNZlC+f59tL+6Zt
+	jkh3Q1fhsxuJ719WnoVip4LY2fDCUdlqb+4C6gjuSwxReM80409QlF4xIDfDePrA/GDQTDyw3X5
+	ACZjR12rF5yTMzepRyBiIM9CyWXad6y61nNBFBw==
+X-Google-Smtp-Source: AGHT+IHRNMlAc+3b2zOEVl0CWenlMGtMA9VWeNmdCt1kdoHU/yqUSWTUPZ59MH32P7fA5l6lPhdus9TRxDF1NIn3WdU=
+X-Received: by 2002:a05:6122:2502:b0:4f6:b094:8095 with SMTP id
+ 71dfb90a1353d-4fc6c9e122emr9052758e0c.2.1724129522360; Mon, 19 Aug 2024
+ 21:52:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240819064721.91494-1-aardelean@baylibre.com>
+ <20240819064721.91494-7-aardelean@baylibre.com> <zuvwoy5wtdel7qgkz6wa6valwjwajpwoqnizyoooiawghrxvc3@cuoswu32h4fl>
+In-Reply-To: <zuvwoy5wtdel7qgkz6wa6valwjwajpwoqnizyoooiawghrxvc3@cuoswu32h4fl>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Tue, 20 Aug 2024 07:51:50 +0300
+Message-ID: <CA+GgBR_V8r0Vz1PeKxwD6ovwHXxGM6=Z6XVd03ehokT5C3zjnQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
+ compatible strings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Export Zicntr and Zihpm ISA extensions through the hwprobe syscall.
+On Mon, Aug 19, 2024 at 4:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On Mon, Aug 19, 2024 at 09:47:16AM +0300, Alexandru Ardelean wrote:
+> > The driver will support the AD7606C-16 and AD7606C-18.
+> > This change adds the compatible strings for these devices.
+> >
+> > The AD7606C-16,18 channels also support these (individually configurabl=
+e)
+> > types of channels:
+> >  - bipolar single-ended
+> >  - unipolar single-ended
+> >  - bipolar differential
+> >
+> > This DT adds support for 'channel@X' nodes'
+>
+> I don't understand this sentence, suggest to drop it.
 
-Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
----
- Documentation/arch/riscv/hwprobe.rst  | 6 ++++++
- arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
- arch/riscv/kernel/sys_hwprobe.c       | 2 ++
- 3 files changed, 10 insertions(+)
+Huh?
+I guess I'm developing more ADHD, where I forget to finish sentences(?)
 
-diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-index 3db60a0911df..cfd2929d0562 100644
---- a/Documentation/arch/riscv/hwprobe.rst
-+++ b/Documentation/arch/riscv/hwprobe.rst
-@@ -183,6 +183,9 @@ The following keys are defined:
-        defined in the Atomic Compare-and-Swap (CAS) instructions manual starting
-        from commit 5059e0ca641c ("update to ratified").
- 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZICNTR`: The Zicntr extension version 2.0
-+       is supported as defined in the RISC-V ISA manual.
-+
-   * :c:macro:`RISCV_HWPROBE_EXT_ZICOND`: The Zicond extension is supported as
-        defined in the RISC-V Integer Conditional (Zicond) operations extension
-        manual starting from commit 95cf1f9 ("Add changes requested by Ved
-@@ -192,6 +195,9 @@ The following keys are defined:
-        supported as defined in the RISC-V ISA manual starting from commit
-        d8ab5c78c207 ("Zihintpause is ratified").
- 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZIHPM`: The Zihpm extension version 2.0
-+       is supported as defined in the RISC-V ISA manual.
-+
-   * :c:macro:`RISCV_HWPROBE_EXT_ZVE32X`: The Vector sub-extension Zve32x is
-     supported, as defined by version 1.0 of the RISC-V Vector extension manual.
- 
-diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-index b706c8e47b02..098a815b3fd4 100644
---- a/arch/riscv/include/uapi/asm/hwprobe.h
-+++ b/arch/riscv/include/uapi/asm/hwprobe.h
-@@ -72,6 +72,8 @@ struct riscv_hwprobe {
- #define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
- #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
- #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
-+#define		RISCV_HWPROBE_EXT_ZICNTR	(1ULL << 49)
-+#define		RISCV_HWPROBE_EXT_ZIHPM		(1ULL << 50)
- #define RISCV_HWPROBE_KEY_CPUPERF_0	5
- #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
- #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-index 8d1b5c35d2a7..910b41b6a7ab 100644
---- a/arch/riscv/kernel/sys_hwprobe.c
-+++ b/arch/riscv/kernel/sys_hwprobe.c
-@@ -107,9 +107,11 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
- 		EXT_KEY(ZCB);
- 		EXT_KEY(ZCMOP);
- 		EXT_KEY(ZICBOZ);
-+		EXT_KEY(ZICNTR);
- 		EXT_KEY(ZICOND);
- 		EXT_KEY(ZIHINTNTL);
- 		EXT_KEY(ZIHINTPAUSE);
-+		EXT_KEY(ZIHPM);
- 		EXT_KEY(ZIMOP);
- 		EXT_KEY(ZKND);
- 		EXT_KEY(ZKNE);
+>
+>
+> >
+> > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+> > ---
+> >  .../bindings/iio/adc/adi,ad7606.yaml          | 83 +++++++++++++++++++
+> >  1 file changed, 83 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml =
+b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > index 69408cae3db9..f9e177de3f8c 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > @@ -14,6 +14,8 @@ description: |
+> >    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7605-4.pdf
+> >    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+ad7606_7606-6_7606-4.pdf
+> >    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7606B.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/=
+ad7606c-16.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/=
+ad7606c-18.pdf
+> >    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7616.pdf
+> >
+> >  properties:
+> > @@ -24,6 +26,8 @@ properties:
+> >        - adi,ad7606-6
+> >        - adi,ad7606-8  # Referred to as AD7606 (without -8) in the data=
+sheet
+> >        - adi,ad7606b
+> > +      - adi,ad7606c-16
+> > +      - adi,ad7606c-18
+> >        - adi,ad7616
+> >
+> >    reg:
+> > @@ -114,6 +118,30 @@ properties:
+> >        assumed that the pins are hardwired to VDD.
+> >      type: boolean
+> >
+> > +patternProperties:
+> > +  "^channel@([0-9a-f])$":
+>
+> [0-7]
+>
+> > +    type: object
+> > +    $ref: adc.yaml
+> > +    unevaluatedProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: The channel number.
+> > +        minimum: 0
+> > +        maximum: 7
+> > +
+> > +      diff-channel:
+> > +        description: Channel is bipolar differential.
+>
+> There is diff-channels property, why do we need one more?
 
-base-commit: dc1c8034e31b14a2e5e212104ec508aec44ce1b9
--- 
-2.46.0
+Yeah, I wanted to use that.
+Maybe I will try another spin at that.
+The thing with "diff-channels" is that it requires 2 ints.
+So,  diff-channels =3D <0 0>.
+To use it here, a rule would need to be put in place where  "reg =3D=3D
+diff-channels[0] && reg =3D=3D diff-channels[1]".
+That also works from my side.
+Part of the reason for this patchset, was to also get some feedback
+(if this is the correct direction).
 
+>
+> > +        type: boolean
+> > +
+> > +      bipolar:
+> > +        description: |
+> > +          Channel is bipolar single-ended. If 'diff-channel' is set, t=
+hen
+> > +          the value of this property will be ignored.
+>
+> Then provide here allOf:if:then which makes it false if diff-channel(s)
+> is present. And then drop entire property, because you duplicate what's
+> in adc.yaml.
+
+Ack.
+
+>
+>
+> > +        type: boolean
+>
+> Blank line.
+>
+> > +    required:
+> > +      - reg
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -170,6 +198,21 @@ allOf:
+> >          adi,conversion-start-gpios:
+> >            maxItems: 1
+> >
+> > +  - if:
+> > +      not:
+> > +        properties:
+> > +          compatible:
+> > +            contains:
+> > +              enum:
+> > +                - adi,ad7606c-16
+> > +                - adi,ad7606c-18
+> > +    then:
+> > +      patternProperties:
+> > +        "^channel@([0-9a-f])$":
+> > +          properties:
+> > +            diff-channels: false
+> > +            bipolar: true
+>
+> ? Drop, no clue what you want to say here. But more important, you are
+> now adding channels to other variants. Split your commit between new
+> device and new properties for existing devices.
+
+Ack.
+Will do that.
+
+>
+>
+> Best regards,
+> Krzysztof
+>
 
