@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-294564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374A9958F47
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECCD958F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 22:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B282856F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395D8285794
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 20:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5E81BB6A3;
-	Tue, 20 Aug 2024 20:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903FC1C3798;
+	Tue, 20 Aug 2024 20:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Efi/Nfdy"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4uKlvE8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5201A450E2
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 20:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB5449651;
+	Tue, 20 Aug 2024 20:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724186735; cv=none; b=iTW01vPqlcP7WREurn2q2XCWKU4FJYAoFtxURQCAOOgF1PzuuZvHxEe2gu4B27VRZRIczM8W1D/mRE3Yb4913nXP8/e2fofobPxhsBvUWFVOXx7f9tEiebw/zxdjkiYWpikVymCPzzOn6WVtgjlzm3WGEi01Jfjboyfn7u5wRC0=
+	t=1724186761; cv=none; b=Mpm5SAKsHOxRRnUQXbN9fYj3AfdHqnR5Z6UsZRJhjq/S4dUUdwKXhyzkNRY3LgAIakHUH1HVIdrw5j603VN5yfVfleEa3te1485v7tVxcS8VAofMj4wPqSXEkMM2FgiJz9eCntLhDsUu7VH1M93PqqKftd2zIuj7M7lIbxi35Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724186735; c=relaxed/simple;
-	bh=WhQc0HaHmJ9fverjUpscIOx+j5ESzLExjWwfzXBzNJo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jij+FLeT6sUNqa62zThVXhlDXDp+nKLuty/lgjAW2sNeFoZiIB7TXiYILodlm/YnbmplL5lMDFxDh2VujsBKdW/c6jzNp1xYtxIaYtZtMTyAGCWfLHXL2eTyxGkO13ygzsbjozDBxSctyF1RoQvCfUxVz4T6N6wxe44/ejxInAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Efi/Nfdy; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1724186729;
-	bh=WhQc0HaHmJ9fverjUpscIOx+j5ESzLExjWwfzXBzNJo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Efi/NfdyoNnmYpn2qa4nDm2rsdq7rPc9yqf3L5uj2hTc83p3BpzQj2Qw2GB1gw1GU
-	 K8NP0NHbAwZj/WbDecA8zVGE9k6fra1mOqGVRDEcG4Ju+PCF//VnQGrCP7IVjq1kzg
-	 YSVQ/3mwiEOCYN6xhtq/sxunpDAfcyRtkKn5/C8mIOHiZhQxV2Chfywm1NMrOvMj+D
-	 Wjz2LDUozmC/CVR9A3iTWyQvRiVOii0jEgAyDGxsk6ovpS56uiOvrzeWWnzUfangUM
-	 lOu7zm3hXx0IqA9KM2eFy+m34y/8zYKBarkxXerfpBvpqXIr12plqJ2SENnmj7bQAg
-	 xwvFhiy0TnnOQ==
-Received: from [192.168.1.5] (109.56.13.38.mobile.3.dk [109.56.13.38])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WpM140lW9z1J1r;
-	Tue, 20 Aug 2024 16:45:27 -0400 (EDT)
-Message-ID: <df068816-7269-4275-a673-d9ed5c050365@efficios.com>
-Date: Tue, 20 Aug 2024 22:45:17 +0200
+	s=arc-20240116; t=1724186761; c=relaxed/simple;
+	bh=DzEEW1HlHBTo8rcN75ILvfm4kL9YGDtUrluz9TCmyyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b6ABZPotO7m1kgpYPYQKb1Ja9ZTaICEvkBNekwfXOM57Kku9XTJL4PGM3yGnagmmgfaEj1U8FEJIkwD5TJzIyQF7/Te6svjxosoqxrvCvhjvCN4EvmtjdYMWNw9g5X7uytOIksyT1pNjXlljbgc691iCGn4YUFnZRjrBHgatbu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4uKlvE8; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724186760; x=1755722760;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DzEEW1HlHBTo8rcN75ILvfm4kL9YGDtUrluz9TCmyyw=;
+  b=d4uKlvE8dUBl/BgktjAxEttLtMTRe8qs0YHsfaOb8GT2HWa2Nuyc40rF
+   LHnKgqA4HnwuR9QBF6qV17qdXa74Iwtv8fwr2o/ztz8OHSozqZ6OpFg5O
+   OTY204NVcUGv4OIE2a1ntTlFvchnPmIWtXZyDZv5/0tlNlRRLwzsnhvNN
+   a6p4AjqgI4nqGEHC65R/+0gSsQUS7DvPkKbx5nahdNy7m6pkx2YXL4dCt
+   a/v1qu59tEMnSq3WSuh3nEjzgpcBVFRnJY3bt5q24c6ntOmj2xKU5f9r7
+   U0XTHMQejU1kmWB9hbjr1JBd/c8YRJTJG9fXV2ubvd7HT+KWGIcmFJXRS
+   g==;
+X-CSE-ConnectionGUID: Cq+vW8dXQCm2UnyBwTscuA==
+X-CSE-MsgGUID: cXnBuBLgSdyyn9ZyhaVadA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33905234"
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="33905234"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 13:46:00 -0700
+X-CSE-ConnectionGUID: cKZ2PoXHQ36L5o69uLwCjQ==
+X-CSE-MsgGUID: dm5Is9j3QcKBCOKrUVCNEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,162,1719903600"; 
+   d="scan'208";a="65743106"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa005.jf.intel.com with ESMTP; 20 Aug 2024 13:46:00 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2] platform/x86/intel-uncore-freq: Do not present separate package-die domain
+Date: Tue, 20 Aug 2024 13:45:58 -0700
+Message-ID: <20240820204558.1296319-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/5] lib: Implement
- find_{first,next,nth}_notandnot_bit, find_first_andnot_bit
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240819142406.339084-1-mathieu.desnoyers@efficios.com>
- <20240819142406.339084-2-mathieu.desnoyers@efficios.com>
- <ZsOatkpPqzMF6B_c@yury-ThinkPad>
- <1207b505-0842-40cc-a581-44e595f67601@efficios.com>
-Content-Language: en-US
-In-Reply-To: <1207b505-0842-40cc-a581-44e595f67601@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-08-20 19:19, Mathieu Desnoyers wrote:
-> On 2024-08-19 21:19, Yury Norov wrote:
-[...]
->>> +/**
->>> + * find_next_notandnot_bit - find the next bit cleared in both 
->>> *addr1 and *addr2
->>> + * @addr1: The first address to base the search on
->>> + * @addr2: The second address to base the search on
->>> + * @size: The bitmap size in bits
->>> + * @offset: The bitnumber to start searching at
->>> + *
->>> + * Returns the bit number for the next bit cleared in both *addr1 
->>> and *addr2.
->>> + * If no such bits are found, returns @size.
->>> + */
->>> +static inline
->>> +unsigned long find_next_notandnot_bit(const unsigned long *addr1,
->>> +        const unsigned long *addr2, unsigned long size,
->>> +        unsigned long offset)
->>> +{
->>> +    if (small_const_nbits(size)) {
->>> +        unsigned long val;
->>> +
->>> +        if (unlikely(offset >= size))
->>> +            return size;
->>> +
->>> +        val = (~*addr1) & (~*addr2) & GENMASK(size - 1, offset);
->>> +        return val ? __ffs(val) : size;
->>> +    }
->>> +
->>> +    return _find_next_notandnot_bit(addr1, addr2, size, offset);
->>> +}
->>> +#endif
->>> +
->>
->> It's not said explicitly, but some naming conventions exist around bitmap
->> searching.
->>
->> If you're looking for a clear (unset) bit in a mask, you'd use a 'zero'
->> modifier. We have only 2 such functions now: find_{first,next}_zero_bit,
->> both taking one bitmap. I think it's time to extend this rule for
->> many bitmaps and write down the naming rules.
->>
->> With the following, the find_next_notandnot_bit() should be named
->> like; find_next_zero_and_bit(). It's not perfect, but still sounds
->> better to me than 'notandnot' thing.
+The scope of uncore control is per power domain with TPMI.
 
-Actually, now that I come to think of it in terms of logic gates:
+There are two types of processor topologies can be presented by CPUID
+extended topology leaf irrespective of the hardware architecture:
 
-~A & ~B == ~(A | B)
+1. A die is not enumerated in CPUID. In this case there is only one die
+in a package is visible. In this case there can be multiple power domains
+in a single die.
+2. A power domain in a package is enumerated as a die in CPUID. So
+there is one power domain per die.
 
-So this "notandnot" is simply a "NOR" gate.
+To allow die level controls, the current implementation creates a root
+domain and aggregates all information from power domains in it. This
+is well suited for configuration 1 above.
 
-I therefore intend to name it "find_next_nor_bit" if that's OK with
-you.
+But for configuration 2 above, the root domain will present the same
+information as present by power domain. So, no use of aggregating. To
+check the configuration, call topology_max_dies_per_package(). If it is
+more than one, avoid creating root domain.
 
-Thanks,
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+This is a forward looking change as TPMI is architectural and should
+support all topologies.
 
-Mathieu
+v2
+Updated commit description as suggested.
 
+ .../x86/intel/uncore-frequency/uncore-frequency-tpmi.c     | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+index 2016acf44f6a..e6047fbbea76 100644
+--- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
++++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+@@ -557,6 +557,9 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+ 
+ 	auxiliary_set_drvdata(auxdev, tpmi_uncore);
+ 
++	if (topology_max_dies_per_package() > 1)
++		return 0;
++
+ 	tpmi_uncore->root_cluster.root_domain = true;
+ 	tpmi_uncore->root_cluster.uncore_root = tpmi_uncore;
+ 
+@@ -580,7 +583,9 @@ static void uncore_remove(struct auxiliary_device *auxdev)
+ {
+ 	struct tpmi_uncore_struct *tpmi_uncore = auxiliary_get_drvdata(auxdev);
+ 
+-	uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
++	if (tpmi_uncore->root_cluster.root_domain)
++		uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
++
+ 	remove_cluster_entries(tpmi_uncore);
+ 
+ 	uncore_freq_common_exit();
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.45.0
 
 
