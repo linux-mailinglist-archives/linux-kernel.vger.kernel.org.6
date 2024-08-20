@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-293172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A2B957B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:46:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551A3957B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 04:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B2D28404D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8201C23BEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 02:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8607F446D1;
-	Tue, 20 Aug 2024 02:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589D344C77;
+	Tue, 20 Aug 2024 02:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="E2yfneeX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UFSC/uEo"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6811C6B4;
-	Tue, 20 Aug 2024 02:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6080F208CA
+	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 02:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724121990; cv=none; b=PoPESEdJt+LiwTQlGpDKdqnWIO2/SV2evdrKxcQiI7TFX3qzT7qidTBWdEcdQ4VcaEKtjJFK/uldiUJWe23LUYT94GrDn2Y8o7Ao+WCzLMOKCzfk5a7mGXk3QppXvClbGi1lNRzoA7TDbh/ERkAuD5HP7JqzPaE3zi5QPEUeqeM=
+	t=1724122081; cv=none; b=UZVgacTwnUclLsAz7nw9msdNXyMKj9mkevrl7ApwWJhrPikC0X1PEROybfIHkFpZknMZe1ovBWVKshNe9XHjckkLsDKOaRFDpJchdn4goQn1kipS8vDuoQiFtWr8IZCLL3RFTnv2j2EV8tgzOKR1NRBv74TrmHYyvmf0VVr3BN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724121990; c=relaxed/simple;
-	bh=8TS0uracIC8varmqf+MaZ6AfHrQ8Ib61Fw/7CChwcgA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r5P9XRx30iF3c/be/9aHbmO4qYzclUcMKvdHtozDzWWtsDqpn3W1514DZSaqKzI/AZdtemwIPTGKqHGwCd5D1nb6hxayh6sn/OiVruMhEQTdv4/Hexh5AtYQcRpvL1qDN3b0dmwnHcN9iOWaq2ExprqLJaERSPakY/65WkHAdG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=E2yfneeX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1724121987;
-	bh=8TS0uracIC8varmqf+MaZ6AfHrQ8Ib61Fw/7CChwcgA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=E2yfneeXxrvfHg8GYHkTYxBdI76bEnuGlExoEN4PVHAvgR6CMMkbvD7QCW8Po51Ab
-	 W2y5WB7Hqk1J6y93pfiVYUUB16NzeGSbyX0B2lNaDJftTWeX1H0uBgqoJCQpuivsQ2
-	 1EMGYI3kVXsYz2ZoFL0SxPdjAzSrSrUgwT6B/zsBbVOQspL0vsMdZieYZhX9xkssfI
-	 tzlZ0aFoDfJMfxtLp0ef9W1B6iWrZHv/6N7PxpLzbqSERKQ0swCeAwcdszFVWSXSOi
-	 HNSvpapaGOjuGLer4braR93wtId1Y0g4ZRs4E9E/aX9q63XS2iNDYLk2xyzPCdq4lt
-	 BbAGROjV/nmwQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wnv410TKjz4w2F;
-	Tue, 20 Aug 2024 12:46:24 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
- gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
- j@jannau.net, asahi@lists.linux.dev, Nicholas Piggin <npiggin@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- linuxppc-dev@lists.ozlabs.org, linux-modules@vger.kernel.org
-Subject: Re: [PATCH v3 14/16] modules: Support extended MODVERSIONS info
-In-Reply-To: <CAGSQo02r3NhWnpBF--5nB2RJ=1Hh97VshtiZmasDfknnL+UjmA@mail.gmail.com>
-References: <20240806212106.617164-1-mmaurer@google.com>
- <20240806212106.617164-15-mmaurer@google.com> <87le0w2hop.fsf@mail.lhotse>
- <CAGSQo02r3NhWnpBF--5nB2RJ=1Hh97VshtiZmasDfknnL+UjmA@mail.gmail.com>
-Date: Tue, 20 Aug 2024 12:46:24 +1000
-Message-ID: <878qwrud1b.fsf@mail.lhotse>
+	s=arc-20240116; t=1724122081; c=relaxed/simple;
+	bh=rduHVECQBMUm0FaieuznQk/9x6ta6bIhQsY86ZpLIYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJCCc0uOP8q5J415tzUDO8SsIU6oL+E2fAaZca2JvvG56S04lT94q2ohnLXs3MQpqY08Uqqj1b+uSAAiAg54nO+CXz7npYeAa6rE4GtH9cjWqIxEwsnhw0i1YPxZuYVsqnhT/TZyi39f/xvcFgGBFmRh/ys+g84AwA5QI4j55yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UFSC/uEo; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b6e8187c-c0d0-08d0-ad6f-472155e8b8e9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724122077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZZzpONHvdRTZ1cYQQuR/ToMgSyAjZPT3fZDdgfv8Wg=;
+	b=UFSC/uEoryvHjGtyLepXmDKlsdpWfeL26Ltuym5x8xeyumkWP1I2tKvj6G7Rf5MWuQfhg2
+	jyx3Nad1eONw+JvKguyHUoOOfs9VVuEBKk8JjUW8P3tJDBYtDDv7jXwIVk5RdSH8+7qyNi
+	Hj+PNVnMD9LCBiPqDnSnSU8qymkFf2E=
+Date: Tue, 20 Aug 2024 10:47:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer
+ checking
+To: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240820023622.29190-1-hao.ge@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <20240820023622.29190-1-hao.ge@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Matthew Maurer <mmaurer@google.com> writes:
-> On Fri, Aug 16, 2024 at 4:04=E2=80=AFPM Michael Ellerman <mpe@ellerman.id=
-.au> wrote:
->> Matthew Maurer <mmaurer@google.com> writes:
->> > Adds a new format for MODVERSIONS which stores each field in a separate
->> > ELF section. This initially adds support for variable length names, but
->> > could later be used to add additional fields to MODVERSIONS in a
->> > backwards compatible way if needed. Any new fields will be ignored by
->> > old user tooling, unlike the current format where user tooling cannot
->> > tolerate adjustments to the format (for example making the name field
->> > longer).
->> >
->> > Since PPC munges its version records to strip leading dots, we reprodu=
-ce
->> > the munging for the new format.
->>
->> AFAICS the existing code only strips a single leading dot, not all
->> leading dots?
+Hi
+
+I apologize for the confusion.
+
+  I mistakenly thought that my previous email 
+(https://lore.kernel.org/all/20240820023447.29002-1-hao.ge@linux.dev/)
+
+didn't send due to network issues on my computer, so I resent it.
+
+However, it seems that was not the case.
+
+Please kindly disregard this patch as it is identical to the previous one.
+
+I sincerely apologize for wasting everyone's time
+
+On 8/20/24 10:36, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
 >
-> You appear to be correct, I'll update that in the next version, but
-> want to wait for more feedback on the rest of the patchset before
-> sending up another full series.
+> Smatch reported the following warning:
+>      ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_program()
+>      warn: variable dereferenced before check 'buf' (see line 454)
+>
+> It seems correct,so let's modify it based on it's suggestion.
+>
+> Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
+> check in get_xlated_program()") fixed an issue in the test_verifier.c
+> once,but it was reverted this time.
+>
+> Let's solve this issue with the minimal changes possible.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cbf91@stanley.mountain/
+> Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() helper")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> ---
+>   tools/testing/selftests/bpf/testing_helpers.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/testing_helpers.c b/tools/testing/selftests/bpf/testing_helpers.c
+> index d5379a0e6da8..34dfea295c8e 100644
+> --- a/tools/testing/selftests/bpf/testing_helpers.c
+> +++ b/tools/testing/selftests/bpf/testing_helpers.c
+> @@ -451,7 +451,7 @@ int get_xlated_program(int fd_prog, struct bpf_insn **buf, __u32 *cnt)
+>   
+>   	*cnt = xlated_prog_len / buf_element_size;
+>   	*buf = calloc(*cnt, buf_element_size);
+> -	if (!buf) {
+> +	if (!*buf) {
+>   		perror("can't allocate xlated program buffer");
+>   		return -ENOMEM;
+>   	}
+Thanks
 
-Yep, no worries.
+Best regards
 
-cheers
+Hao
 
