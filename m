@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-294653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D999590DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272E49590FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 01:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72252B2309F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7E51C22517
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 23:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69451C824A;
-	Tue, 20 Aug 2024 23:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C5D1C8254;
+	Tue, 20 Aug 2024 23:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kvSjZdu6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE46B18C906
-	for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 23:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Nmzpv2e+"
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6192C18C;
+	Tue, 20 Aug 2024 23:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724195081; cv=none; b=RYYV1oXyDggZ1aLeiLRFCM5JPCg96cS2TnOlXdesAScmu2K03zZBnn2vmHbyAQvmeVNYIWFHnf0ppUouS6HeCblOVqaMl9rxafXNxqcueCW5qA6Gy1Y/azybbLgDCw4QV1V+8EqTGnhVhWov1vkiGeKH2tnnOQH6B9Y3+n8UqQs=
+	t=1724195811; cv=none; b=QJdny/+7XBZvoMwKGn96zAJkKtBbOjWQ28M0OE7wi++a2gXmZjuzMatzMHKkcgXHJahjTFG7z6fXEK65jNP8pGrUtIFZeP/f+OUuDSm1W3w22AXiq50BTzHhIWILF9NY5Qps+Ix6ELmm0AVw4W0gG6JAa8aBUTfbg39AObT6PSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724195081; c=relaxed/simple;
-	bh=EATt0tCRzljWphvcXmBRRwS+xNaSSQAgbXjkkdb157Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GfesGcqg7IZg99ESDS60rOrSYjb8gGIGJWnIh8ykDJRSqFzB/M/nCqKwd7cGMXUzOCSj66jiD3Hosf2NQzDKMJzhR580DVuGODevFw2rWz8Llfq5sweHdLaysyqrdJ0JYm9YCViuAPL+upFE3/lYnfdSLQ+MoldVm3//ZUYD7BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kvSjZdu6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [20.236.11.102])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3D1FD20B7165;
-	Tue, 20 Aug 2024 16:04:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3D1FD20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724195079;
-	bh=D6zEqy376/OShhmuon6epP+P07be+GAy/DybGw8HGwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kvSjZdu6M9XzNBlSR6m94fselW1qjr/8b0WSC6V/u1vt/uOsovMsZcooYzlptpFoK
-	 0tEP7km3aLaqGRNw8N6murAFH2xzyC+U8aosBGMiomFiXbZcq4tYRO+ss+HM+rWG7s
-	 Lp5kXYovmMTwmatOF2DkNYTNzCRN94dIuGs6qTdY=
-Date: Tue, 20 Aug 2024 16:04:37 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Tina Zhang <tina.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] iommu/vt-d: Introduce batched cache invalidation
-Message-ID: <20240820160437.76fb4d34@DESKTOP-0403QTC.>
-In-Reply-To: <8da6a9b6-01f4-4c4f-9619-148fdb3828d0@linux.intel.com>
-References: <20240815065221.50328-1-tina.zhang@intel.com>
-	<20240815065221.50328-5-tina.zhang@intel.com>
-	<20240816093846.40dbd623@DESKTOP-0403QTC.>
-	<afec1d30-4bb3-4d39-9ff1-eb8ecb26bed3@linux.intel.com>
-	<20240819084056.298a9924@DESKTOP-0403QTC.>
-	<8da6a9b6-01f4-4c4f-9619-148fdb3828d0@linux.intel.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724195811; c=relaxed/simple;
+	bh=zeU4HrFafNLYsq2SivKsBE9YqKJ+AS//oehwW6doPHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oakSwpCvnTIIbHr2KbJz/VS3a7DDMqkoVSLXGGqsh8RR1rNA43yWHd7dGnYRS9mp5JSUF1CztNjOvrPG7n4Mg188uFQhry+am9htI/CC2A0kyMqbQl/IJEDHmcuCUkSRy7T1FcFBlz79AcTRhcMMBZ0osoA+LgRSa5CMGmkvPlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Nmzpv2e+; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1724195809; x=1755731809;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=L3lUyrPnTOOQ769Uhh4sneNYG63qlS/SqSYwEuVsHA8=;
+  b=Nmzpv2e+PQXCxQVcsBEwwdGBXbm6rhkHxs+UtGAVafRCS5jkHzuoBsSH
+   zTjJZFXmRwcxFu7CSqcG0KN/Z5XPTU4ZHIfWOm5VWFus91Bx3J6ybOdQH
+   Af6FpkeslJV72qFH0YEeKV+kglRuInuqga5mECv9UOvegAk+SHdej4U5m
+   MeQYddCxb8a3jmCSVXtIam3Lx3V86kTAeOGO0vdk64911cpXEwbvTD0JW
+   fZlnBtgoTvjcvTCzbn+zmhj6cqJSwwiv6SCUfzV060fVeY8k+pa16DwR0
+   EJWezgDan4T4erqFy0kN1NfbMj8S5a6sbVzNT75cEpuFMlGfkbno+mqn7
+   Q==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:06:39 +0900
+X-IronPort-AV: E=Sophos;i="6.10,163,1719846000"; 
+   d="scan'208";a="448857791"
+Received: from unknown (HELO LXJ00013846) ([IPv6:2001:cf8:1:1611:9e7b:efff:fe46:27de])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 21 Aug 2024 08:06:39 +0900
+Date: Wed, 21 Aug 2024 08:06:31 +0900
+From: Keita Aihara <keita.aihara@sony.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jonathan Bell <jonathan@raspberrypi.com>, Tim.Bird@sony.com,
+	Shingo.Takeuchi@sony.com, Masaya.Takahashi@sony.com,
+	keita.aihara@sony.com, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mmc: core: apply SD quirks earlier during probe
+Message-ID: <20240820230631.GA436523@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Baolu,
+From: Jonathan Bell <jonathan@raspberrypi.com>
 
-On Tue, 20 Aug 2024 10:06:05 +0800
-Baolu Lu <baolu.lu@linux.intel.com> wrote:
+Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's SD quirks
+are referenced in sd_parse_ext_reg_perf() prior to the quirks being
+initialized in mmc_blk_probe().
 
-> On 8/19/24 11:40 PM, Jacob Pan wrote:
-> > On Sat, 17 Aug 2024 11:28:21 +0800
-> > Baolu Lu<baolu.lu@linux.intel.com>  wrote:
-> >   
-> >> On 2024/8/17 0:38, Jacob Pan wrote:  
-> >>> On Thu, 15 Aug 2024 14:52:21 +0800
-> >>> Tina Zhang<tina.zhang@intel.com>  wrote:
-> >>>      
-> >>>> @@ -270,7 +343,8 @@ static void cache_tag_flush_iotlb(struct
-> >>>> dmar_domain *domain, struct cache_tag * u64 type =
-> >>>> DMA_TLB_PSI_FLUSH;
-> >>>>    	if (domain->use_first_level) {
-> >>>> -		qi_flush_piotlb(iommu, tag->domain_id,
-> >>>> tag->pasid, addr, pages, ih);
-> >>>> +		qi_batch_add_piotlb(iommu, tag->domain_id,
-> >>>> tag->pasid, addr,
-> >>>> +				    pages, ih,
-> >>>> domain->qi_batch); return;
-> >>>>    	}
-> >>>>    
-> >>>> @@ -287,7 +361,8 @@ static void cache_tag_flush_iotlb(struct
-> >>>> dmar_domain *domain, struct cache_tag * }
-> >>>>    
-> >>>>    	if (ecap_qis(iommu->ecap))
-> >>>> -		qi_flush_iotlb(iommu, tag->domain_id, addr | ih,
-> >>>> mask, type);
-> >>>> +		qi_batch_add_iotlb(iommu, tag->domain_id, addr |
-> >>>> ih, mask, type,
-> >>>> +				   domain->qi_batch);
-> >>>>        
-> >>> If I understand this correctly, IOTLB flush maybe deferred until
-> >>> the batch array is full, right? If so, is there a security gap
-> >>> where callers think the mapping is gone after the call returns?  
-> >> No. All related caches are flushed before function return. A domain
-> >> can have multiple cache tags. Previously, we sent individual cache
-> >> invalidation requests to hardware. This change combines all
-> >> necessary invalidation requests into a single batch and raise them
-> >> to hardware together to make it more efficient.  
-> > I was looking at the code below, if the index does not reach
-> > QI_MAX_BATCHED_DESC_COUNT. There will be no flush after
-> > cache_tag_flush_iotlb() returns, right?  
-> 
-> No. qi_batch_flush_descs() is called explicitly before return.
-I see, cache_tag_flush_iotlb() is really just adding descriptors to the
-batch. Not doing any flush for most cases. IMHO, the name is a little
-confusing.
+Split this out into a SD-specific list of quirks and apply in
+mmc_sd_init_card() instead.
 
-Thanks,
+Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston Canvas Go Plus from 11/2019")
+Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+Co-developed-by: Keita Aihara <keita.aihara@sony.com>
+Signed-off-by: Keita Aihara <keita.aihara@sony.com>
+---
+ drivers/mmc/core/quirks.h | 22 +++++++++++++---------
+ drivers/mmc/core/sd.c     |  4 ++++
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
-Jacob
+diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+index cca71867bc4a..92905fc46436 100644
+--- a/drivers/mmc/core/quirks.h
++++ b/drivers/mmc/core/quirks.h
+@@ -15,6 +15,19 @@
+
+ #include "card.h"
+
++static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
++	/*
++	 * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
++	 * This has so far only been observed on cards from 11/2019, while new
++	 * cards from 2023/05 do not exhibit this behavior.
++	 */
++	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
++		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
++		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
++
++	END_FIXUP
++};
++
+ static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
+ #define INAND_CMD38_ARG_EXT_CSD  113
+ #define INAND_CMD38_ARG_ERASE    0x00
+@@ -53,15 +66,6 @@ static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
+ 	MMC_FIXUP("MMC32G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, add_quirk_mmc,
+ 		  MMC_QUIRK_BLK_NO_CMD23),
+
+-	/*
+-	 * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
+-	 * This has so far only been observed on cards from 11/2019, while new
+-	 * cards from 2023/05 do not exhibit this behavior.
+-	 */
+-	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
+-		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
+-		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
+-
+ 	/*
+ 	 * Some SD cards lockup while using CMD23 multiblock transfers.
+ 	 */
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index 1c8148cdda50..ee37ad14e79e 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -26,6 +26,7 @@
+ #include "host.h"
+ #include "bus.h"
+ #include "mmc_ops.h"
++#include "quirks.h"
+ #include "sd.h"
+ #include "sd_ops.h"
+
+@@ -1475,6 +1476,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
+ 			goto free_card;
+ 	}
+
++	/* Apply quirks prior to card setup */
++	mmc_fixup_device(card, mmc_sd_fixups);
++
+ 	err = mmc_sd_setup_card(host, card, oldcard != NULL);
+ 	if (err)
+ 		goto free_card;
+--
+2.43.2
+
 
