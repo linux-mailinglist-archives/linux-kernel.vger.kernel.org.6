@@ -1,137 +1,164 @@
-Return-Path: <linux-kernel+bounces-296221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FDA95A7D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:32:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0569C95A7EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B2E1C21D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:32:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51235B218AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0EB17C232;
-	Wed, 21 Aug 2024 22:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E715917B500;
+	Wed, 21 Aug 2024 22:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pi3Pxaz1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=uni-stuttgart.de header.i=@isd.uni-stuttgart.de header.b="xjrjKFy2"
+Received: from mxex2.tik.uni-stuttgart.de (mxex2.tik.uni-stuttgart.de [129.69.192.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC190176FAC;
-	Wed, 21 Aug 2024 22:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3028A1509A2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.69.192.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724279518; cv=none; b=RdlmEOOu+8VwEkzVXNoY8SqzXnSBNYP1LpTrWzoAxcntOGiYFOxdR3wRUcCHDFCaPDO8nK/vDPzt+rc3ze9HtO3D+aAZLf8yjE/BywyQjlt0YqY2TuWHZ0qiaj3nhRlEcNonpehsoJkvZpnkF2EXjRL0TAuGJ6fjPFQDv3gXW80=
+	t=1724280541; cv=none; b=n34qJBs5n/DkGB+Viyx5HjccZ7eevt5SseScHV/CJHM7Se/Maw/As5q1KBOrG8tKqw9HQkJ3sNegGFeOequYIsMV2HOEcEecBsZzDNRbvwmDA6dTf7XX8i96qwNqHBUL9my9sEENIN/QqIn25D0M1MDKCb+dAN70OuTVM8mIdH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724279518; c=relaxed/simple;
-	bh=ceYKa9Fo2UqkhS6Q7NCDDpDLpaW9SLoPxqmcrFgYv9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4K6+YmuE4jhouzhcZ9lpJoPJ9Mvxdee2oaFtHR4fEGj3XwkxzKl70yoeHVPhaG2T76vwO2q9vDGWwR0AZM1smFIn9sKre53oyzNVHqb3QDGFI5UFEQUkbUHV+1MuqiVUmQXjavcAJ/Gml3bayWjVNNG4WqrPLDLyWRRBwU/BJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pi3Pxaz1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54163C32781;
-	Wed, 21 Aug 2024 22:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724279517;
-	bh=ceYKa9Fo2UqkhS6Q7NCDDpDLpaW9SLoPxqmcrFgYv9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pi3Pxaz1r2VFHsEdTYQOU0Droi2ntt7POTr8WrhjTM+uwhK5wqQmC4gwiKc2yp3kn
-	 H1yUGY/4FdBJ/OStVnth6v4KdrmXUZvy0tZblJSnT9IeFPp5vOsAs/PvHPhMFat47U
-	 Wu6+7Ah8IeSWFYbg/s4Nk0JwuHpJnLami93tgeaELbF6BlNmRQEDZC4U8biT7rxLU6
-	 +E8tCcf3alrT6DSm/XSQEynfK8WBMRBiF/Vtfdj1OJhciX9x473mjriJXhMt+WDz3N
-	 KXXlqkxDz/caD2SPigWQklyaBaUKCIF421RZi2pIx8ZpGmHB/2Msl9t9GubNTwVe1Y
-	 AXCy2t1d8ZwWg==
-Date: Thu, 22 Aug 2024 00:31:53 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, Frank.Li@nxp.com, francesco.dolcini@toradex.com, 
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <i5fkv3gx5mmegefc6ttydrwmsebozc6dcjzg7doc6vozjvekuv@hsn3mzobjggm>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
- <ZsX8KzkQw0wJUCbc@pengutronix.de>
- <ZsYGbN36jwxyMAvE@eichest-laptop>
+	s=arc-20240116; t=1724280541; c=relaxed/simple;
+	bh=xvpm5tK7Hbzpx8Ccqp+FMRyvOeIZxInDJfgeWPRoVvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ulEDrrV2lxRQlbF9le7dKtmhrSig1e7X0ZSW8GqkMYuAJyImC+qsT3oGXTCyEQSPi8E5I8Y5YUTyTvstV7c8VkWENz528yZ6izQhQzZG7X0P+1aIlyMHEX/rFofly40X97/wwQs/oTzPH1IHHczeUYri/AD6PzBQEYgZGSKWkQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isd.uni-stuttgart.de; spf=none smtp.mailfrom=isd.uni-stuttgart.de; dkim=pass (2048-bit key) header.d=uni-stuttgart.de header.i=@isd.uni-stuttgart.de header.b=xjrjKFy2; arc=none smtp.client-ip=129.69.192.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isd.uni-stuttgart.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=isd.uni-stuttgart.de
+Received: from localhost (localhost [127.0.0.1])
+	by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTP id 0FCB860ABE;
+	Thu, 22 Aug 2024 00:39:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=uni-stuttgart.de;
+	 h=content-transfer-encoding:content-type:content-type
+	:in-reply-to:organization:from:from:content-language:references
+	:subject:subject:user-agent:mime-version:date:date:message-id;
+	 s=dkim; i=@isd.uni-stuttgart.de; t=1724279967; x=1726018768;
+	 bh=xvpm5tK7Hbzpx8Ccqp+FMRyvOeIZxInDJfgeWPRoVvM=; b=xjrjKFy2/B/S
+	4Ew9o8lpsFz3m0I2eW2wqdUIK1YMbzCA09hQxJjNRdqUvT3KPWXJg0ZRMz3NtDRf
+	/f0HYWjq/vfm/lpH8hvid7XieDxeqaFDOHbzy4cflDdRJnXj0BkR22Jv5V+4t+pU
+	AHU/cj9P50egdNf5HdrkY5/1A6fQJa6PT/hw4shqY8UDAkTwyJCSBz6POKuySq1q
+	fphhV5UXKav38pE/CjXo70SpYaNxeB5wJIoPb5m/ssjtlIZCTjrL+oPOI0YIc0Mr
+	KuLmVHFFxpA+FdvRP30kLEchEMkTxpxU/YoovlAC+XoM+u8ld8MG1tllz6Dqc/pr
+	m6qQhCad9g==
+X-Virus-Scanned: USTUTT mailrelay AV services at mxex2.tik.uni-stuttgart.de
+Received: from mxex2.tik.uni-stuttgart.de ([127.0.0.1])
+ by localhost (mxex2.tik.uni-stuttgart.de [127.0.0.1]) (amavis, port 10031)
+ with ESMTP id ZbqlQzcPLs53; Thu, 22 Aug 2024 00:39:27 +0200 (CEST)
+Received: from authenticated client
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTPSA
+Message-ID: <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de>
+Date: Thu, 22 Aug 2024 00:39:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsYGbN36jwxyMAvE@eichest-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
+ kernel mode
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
+References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
+Content-Language: en-US
+From: Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>
+Organization: Universitaet Stuttgart - ISD
+In-Reply-To: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Stefan,
+Sorry to write a reply to this old mail. But after years, I finally
+decided to tackle an "old" problem that has come up...
+And unfortunately it is related to this patch. But let me explain.
 
-On Wed, Aug 21, 2024 at 05:23:24PM GMT, Stefan Eichenberger wrote:
-> On Wed, Aug 21, 2024 at 04:39:39PM +0200, Oleksij Rempel wrote:
-> > On Wed, Aug 21, 2024 at 08:01:20AM -0300, Fabio Estevam wrote:
-> > > On Mon, Aug 19, 2024 at 4:20 AM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > > > According to the i.MX8M Mini reference manual chapter "16.1.4.2
-> > > > Generation of Start" it is only necessary to poll for bus busy and
-> > > > arbitration lost in multi master mode. This helps to avoid rescheduling
-> > > > while the i2c bus is busy and avoids SMBus devices to timeout.
-> > > >
-> > > > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > 
-> > > This fixes a pca953x probe error on an imx8mp board running linux-stable 6.6:
-> > > 
-> > > [    1.893260] pca953x 2-0020: failed writing register
-> > > [    1.898258] pca953x 2-0020: probe with driver pca953x failed with error -11
-> > > 
-> > > Could you please add a Fixes tag and Cc stable so that this can reach
-> > > the stable kernels?
-> > > 
-> > > Tested-by: Fabio Estevam <festevam@denx.de>
-> 
-> Thanks a lot for testing. Are the other patches required as well or did
-> only introducing the master mode flag solve the issue?
+On 9/16/21 4:52 PM, Christophe Leroy wrote:
+> dcbz instruction shouldn't be used on non-cached memory. Using
+> it on non-cached memory can result in alignment exception and
+> implies a heavy handling.
+>
+> Instead of silentely emulating the instruction and resulting in high
+> performance degradation, warn whenever an alignment exception is
+> taken in kernel mode due to dcbz, so that the user is made aware that
+> dcbz instruction has been used unexpectedly by the kernel.
 
-The other patches don't need the Fix tag.
 
-One question, does the issue happen with atomic transfers or any
-transfers?
 
-> > It looks like with this patch, the I2SR_IAL interrupt is not cleared.
-> > I would expect some kind of interrupt storm. Can you confirm it?
-> 
-> This is a good question. i2c_imx_trx_complete was never called in the
-> interrupt handler. So that would mean the storm would already be there
-> before just for a shorter time. We only clear the IFF flag in the isr.
-> 
-> > This causes a processor interrupt request (if the interrupt enable is
-> > asserted [IIEN = 1]). The interrupt is set when one of the following
-> > occurs:
-> > - One byte transfer is completed (the interrupt is set at the falling
-> >   edge of the ninth clock).
-> > - An address is received that matches its own specific address in
-> >   Slave Receive mode.
-> > - Arbitration is lost.
-> 
-> Unfortunately, I don't have a device that uses multi master mode and we
-> would only see it on such a device. However, also from the reference
-> manual:
-> 
-> > IAL must be cleared by software by writing a "0" to it at the start of
-> > the interrupt service routine
-> 
-> So most likely it was wrong the whole the time we just didn't see it
-> before, could that be? I think a fix would be relatively easy we have to
-> clear it at the beginning of the isr but after we read the status. I
-> could add this to the series if you agree.
+The devices that are affected are APM821xx: MyBook Live, Meraki MX60, Netgear WNDR4700, ...
+All these have this "splat" during boot:
 
-Please, if you can't test the patch don't send it.
+|[ 8.777686] PPC 4xx OCP EMAC driver, version 3.54 [ 8.782961] ------------[ cut here ]------------ [ 8.787565] WARNING: CPU: 0 PID: 1 at fix_alignment+0x144/0x16c [ 8.793474] Modules linked in: [ 8.796527] CPU: 0 PID: 1 Comm: swapper Not tainted 6.6.47 #0 [ 8.802253] Hardware name: Meraki MX60/MX60W Security Appliance APM821XX 0x12c41c83 PowerPC 44x Platform [ 8.811688] NIP: c0003158 LR: c0003070 CTR: c001471c [ 8.816725] REGS: c10319d0 TRAP: 0700 Not tainted (6.6.47) [ 8.822453] MSR: 00029000 <CE,EE,ME> CR: 24000442 XER: 20000000 [ 8.828630] [ 8.828630] GPR00: c000855c c1031ac0 c1051c00 00000000 3e039bf6 00000018 01f01cdf 00000004 [ 8.828630] GPR08: 0000000f 00000000 00000510 c1031b30 c0013a94 00000000 c0002518 00000000 [ 8.828630] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 [ 8.828630] GPR24: 00000000 dfb953ac c00790c8 c104e120 c10f5610 00001000 
+c0d30000 c1031b40 [ 8.863432] NIP [c0003158] fix_alignment+0x144/0x16c [ 8.868384] LR [c0003070] fix_alignment+0x5c/0x16c [ 8.873162] Call Trace: [ 8.875598] [c1031ac0] [c0186efc] get_page_from_freelist+0x208/0xdac (unreliable) [ 8.883063] [c1031b10] [c000855c] alignment_exception+0xf0/0x164 [ 8.889058] [c1031b30] [c0000a30] Alignment+0x130/0x180 [ 8.894269] --- interrupt: 600 at memset+0x60/0xc0 [ 8.899063] NIP: c0013a94 LR: c007a1ac CTR: 0000007f [ 8.904092] REGS: c1031b40 TRAP: 0600 Not tainted (6.6.47) [ 8.909812] MSR: 00029000 <CE,EE,ME> CR: 44000442 XER: 20000000 [ 8.915989] DEAR: e1168020 ESR: 00000000 [ 8.915989] GPR00: 00000007 c1031c30 c1051c00 e1168000 00000000 00001000 e116801c 00000004 [ 8.915989] GPR08: 00001000 0000007f 00000a3a 00000000 24000848 00000000 c0002518 00000000 [ 8.915989] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 [ 
+8.915989] GPR24: 00000000 dfb953ac c00790c8 c104e120 c10f5610 00001000 c0d30000 e1168000 [ 8.953306] NIP [c0013a94] memset+0x60/0xc0 [ 8.957478] LR [c007a1ac] dma_direct_alloc+0x1e4/0x290 [ 8.962620] --- interrupt: 600 [ 8.965661] [c1031c30] [c007a130] dma_direct_alloc+0x168/0x290 (unreliable) [ 8.972608] [c1031c70] [c00790c8] dma_alloc_attrs+0xa8/0xf8 [ 8.978163] [c1031cb0] [c04d419c] mal_probe+0x26c/0x664 [ 8.983390] [c1031ce0] [c04326d8] platform_probe+0x60/0xb0 [ 8.988867] [c1031d00] [c042f6f0] really_probe+0xd8/0x3b4 [ 8.994251] [c1031d30] [c042fbdc] driver_probe_device+0x48/0x104 [ 9.000238] [c1031d60] [c042fe7c] __driver_attach+0xb4/0x1a4 [ 9.005880] [c1031d80] [c042cdc8] bus_for_each_dev+0x7c/0xc8 [ 9.011548] [c1031db0] [c042e708] bus_add_driver+0x170/0x25c [ 9.017199] [c1031de0] [c0430cec] driver_register+0x8c/0x164 [ 9.022840] [c1031e00] [c0902de0] emac_init+0x17c/0x1ec [ 
+9.028067] [c1031e40] [c0002680] do_one_initcall+0x50/0x2ac [ 9.033709] [c1031eb0] [c08e60f8] kernel_init_freeable+0x1b0/0x230 [ 9.039870] [c1031ee0] [c0002538] kernel_init+0x20/0x118 [ 9.045166] [c1031f00] [c000d1f8] ret_from_kernel_user_thread+0x10/0x18 [ 9.051758] --- interrupt: 0 at 0x0 [ 9.055241] Code: 39400000 7d500ba6 4c00012c 2c090000 41a2fefc 83e1004c 3860fff2 38210050 4e800020 38a00000 3920fff2 4bffffd4 <0fe00000> 4bffff8c 80010054 7c0803a6 [ 9.069929] ---[ end trace 0000000000000000 ]---|
 
-Oleksij, I need your ack to apply this patch. What do you think
-here?
+what happens is that the EMAC (ethernet driver) uses a dma_alloc_coherent here:
+<https://elixir.bootlin.com/linux/v6.6.47/source/drivers/net/ethernet/ibm/emac/mal.c#L636>
 
-Thanks,
-Andi
+| bd_size <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_size>=sizeof(structmal_descriptor <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal_descriptor>)*
+| (NUM_TX_BUFF <https://elixir.bootlin.com/linux/v6.6.47/C/ident/NUM_TX_BUFF>*mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->num_tx_chans <https://elixir.bootlin.com/linux/v6.6.47/C/ident/num_tx_chans>+
+| NUM_RX_BUFF <https://elixir.bootlin.com/linux/v6.6.47/C/ident/NUM_RX_BUFF>*mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->num_rx_chans <https://elixir.bootlin.com/linux/v6.6.47/C/ident/num_rx_chans>);
+| mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->bd_virt <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_virt>=dma_alloc_coherent <https://elixir.bootlin.com/linux/v6.6.47/C/ident/dma_alloc_coherent>(&ofdev <https://elixir.bootlin.com/linux/v6.6.47/C/ident/ofdev>->dev,bd_size <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_size>,&mal <https://elixir.bootlin.com/linux/v6.6.47/C/ident/mal>->bd_dma <https://elixir.bootlin.com/linux/v6.6.47/C/ident/bd_dma>,
+| GFP_KERNEL <https://elixir.bootlin.com/linux/v6.6.47/C/ident/GFP_KERNEL>);
+|
+
+(bd_size is 2x1024 = 2048)
+and this results in a call to dma_direct_allocation(), which has one
+innocent looking memset():
+<https://elixir.bootlin.com/linux/v6.6.47/source/kernel/dma/direct.c#L301>
+which zeros out the area before returning it back...
+
+And of course, this triggers the WARNING above. As for why memset uses
+that dcbz... this is explained in:
+<https://elixir.bootlin.com/linux/v6.6.47/source/arch/powerpc/lib/copy_32.S#L86>
+
+| * Use dcbz on the complete cache lines in the destination
+| * to set them to zero. This requires that the destination
+| * area is cacheable. -- paulus
+| *
+| * During early init, cache might not be active yet, so dcbz cannot be used.
+| * We therefore skip the optimised bloc that uses dcbz. This jump is
+| * replaced by a nop once cache is active. This is done in machine_init()
+
+could this WARN_ON_ONCE maybe be downgraded to a single pr_info_once?
+I don't see how to tackle this "neatly" in a better way.
+
+BugLink: <https://github.com/openwrt/openwrt/pull/14037#issuecomment-2302485414>
+
+Best Regards,
+Christian
+
+>
+> Reported-by: Stan Johnson <userm57@yahoo.com>
+> Cc: Finn Thain <fthain@linux-m68k.org>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+> v2: Warn only when emulating kernel mode
+> ---
+>   arch/powerpc/kernel/align.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/powerpc/kernel/align.c b/arch/powerpc/kernel/align.c
+> index bbb4181621dd..bf96b954a4eb 100644
+> --- a/arch/powerpc/kernel/align.c
+> +++ b/arch/powerpc/kernel/align.c
+> @@ -349,6 +349,7 @@ int fix_alignment(struct pt_regs *regs)
+>   		if (op.type != CACHEOP + DCBZ)
+>   			return -EINVAL;
+>   		PPC_WARN_ALIGNMENT(dcbz, regs);
+> +		WARN_ON_ONCE(!user_mode(regs));
+>   		r = emulate_dcbz(op.ea, regs);
+>   	} else {
+>   		if (type == LARX || type == STCX)
+
 
