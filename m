@@ -1,160 +1,131 @@
-Return-Path: <linux-kernel+bounces-295821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB9295A1D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE8895A1EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05790287610
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463A11F26F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D201C86FA;
-	Wed, 21 Aug 2024 15:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHQsrtmd"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278D51C6F5B;
-	Wed, 21 Aug 2024 15:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1C1B3B17;
+	Wed, 21 Aug 2024 15:42:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0472B14F9C5;
+	Wed, 21 Aug 2024 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254867; cv=none; b=mTxrHdfZkX2/cfDOH1+DF5nG5fnuxAc3ydSrlalBF7foJOAGqNs+Ku4r+DDyKGMn8apujPBadX53jf0TdGKztymQCVXa7OZV0FuPeoibE/SoT4zg7q0OtOnAYURYDDXuEJLMyJx1WR7mFjQXD6eXxtL8ugndw5psehuazqGCkOM=
+	t=1724254933; cv=none; b=uFtpdNuKg7lKcoyQd2My4T+p/GzPkMgy1tWQNjadzjEe5jBcX/dRzX9U2TYCNTYPixCvc8/5Gp4SDDMQ9QWYDSV8pFoNl7TGUI9K0OSGVtteoYNF4eKahUfdcorZl+NoY4ajfRdGgFOj894ROxoKGs8zDiJblY5uJNP8CiTWLGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254867; c=relaxed/simple;
-	bh=vzRjhS7+octK36jnSe580srSV99gX3ihUMa3REwO3yo=;
+	s=arc-20240116; t=1724254933; c=relaxed/simple;
+	bh=jegzxbbiB+UZX2v3Bp9jNKjbmv+Bhs7rh5DY+VeeNII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MYU+rMko3klTN28Idim+TQvqKGmX61fW2nPJDHgKPdDwfHuGSzyg8eb4dtyTJ4YrNZY+tI2JQNORoEv2EcbILU7P+AiHyPmbqMTsedckIn4oPmoPFJxa7gtRAQ7ARyQDa1h+7em5ih3fmdya7mrWLGFCJHEo8IWw28EhwBZkGMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHQsrtmd; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428163f7635so59899875e9.2;
-        Wed, 21 Aug 2024 08:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724254863; x=1724859663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnCSiun9t/RJbFPil7xi9PoRJLxM8vFSfSVVmmvO+8g=;
-        b=jHQsrtmd2fYKoxHwVglckexH8VMLonuVgxF2B+D5jv3i8/ZJSwHwF5fOFP8VZHU21R
-         2jxQ44t2wTk+exvQiBRgkbQiwf+1C1KaOIJfhArdlgILZ5wJ8baM7qLh051rhQ88+F0+
-         vhpPROEZ/d2NZOwr3Y/vjfmCuX/9e4CTkuP0VIesXKbmqsE/dKvu4FJ59u6ZOduM4CX4
-         CJMDXsWLOfDyOnyT5bGh7bgKMw0lPpITm3yA2lY7HcXCaCyXayb5fFK/JtIY8ififwSE
-         1LMlUo4N2FBaE/07+gE1DhME0zjtq2eaoqmi1QQ+3wwtni/3c8Vp6fiMTLmnbz4OraEq
-         y2XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724254863; x=1724859663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gnCSiun9t/RJbFPil7xi9PoRJLxM8vFSfSVVmmvO+8g=;
-        b=cWyiOqFgoHtlupSf6ErTFZzSiKhQY0ZggC8T85/oCfDG9Nz3PVN6kuJGoCT4SwWYv4
-         xOzlX+yifAOR06fHED2riZlq67ZdY6RsKBQbYCM0TTi1O3lLPMIYTYi/EJDbha2JGjxO
-         SNe9NvyHvc+AQ21drqIQtTmri0CVirj+ypCFy/LmaW/x0YGkF2oWnLgHKodHVbNPYCT0
-         bPK4WVp2XZHlqOyenB2NJEjTT1RFePGq6ASUg7faYVvlJC+ftylwJbX6aA3OzKJkuqbB
-         +/FfmeKSoV4+y+F3Qoq4Yyd5jNZ0hLhpuHI5vBIenC6tTsG+ulgzIb4ljG318n6gtcwT
-         1vBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPFcjbUE7aMwaHAcC3QQxmVQ8RPVD71cOH3R6q1UYDPtXbCSWMlpaiG6RrRhOHH/gExKcruigWY9iiJUQ=@vger.kernel.org, AJvYcCVjgb4cxK5FQjye+qCeMHYiWZDJH/7sY7SgdFHbwpGFmQBk9o8OFLN1tBUqQpW/NFYAKx3xMzZm8x5B@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbfLpC/XZYADJ8ARkl11399BAsF/6EGKoUgW663HftYfMA4Swk
-	/9A/EremAM5HVLRje1JgzDXUe0cau6rRt3w6RsOfbh0Hnqh2SEg+
-X-Google-Smtp-Source: AGHT+IEhSjD1LCYAF1BY6Yws5oSCUl4XcCH6YisKu0nEYXjpoTyvoA5zAhxtl6MA01Q3OJCdSh2Z5A==
-X-Received: by 2002:a5d:650b:0:b0:371:9362:c286 with SMTP id ffacd0b85a97d-372fd577056mr1685838f8f.4.1724254862883;
-        Wed, 21 Aug 2024 08:41:02 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:ce3a:abb4:426f:fe4a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371a937a5f4sm11682371f8f.51.2024.08.21.08.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 08:41:02 -0700 (PDT)
-Date: Wed, 21 Aug 2024 17:41:00 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, francesco.dolcini@toradex.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] PCI: imx6: reset link after suspend/resume
-Message-ID: <ZsYKjFXHDVr8tz9K@eichest-laptop>
-References: <20240819090428.17349-1-eichest@gmail.com>
- <ZsNXDq/kidZdyhvD@lizhi-Precision-Tower-5810>
- <ZsQ9OWdCS5o96VN2@eichest-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OCIQ8Bi4FI8auAD8ssFlHThRY6tN34BeEtyGKqYBTd9DesnfWiwwCObmUzd4jNSq1BQIIcmtOIOKUT5+3ZNzzwMlJss5FUdVMpxl5/FLZ2/PklPKEQRnbiOkzJJM7IIOL61/bxVJj++2a/nmdpY9/NK4v3HvuIsMvC8ZaQqZTr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95578152B;
+	Wed, 21 Aug 2024 08:42:37 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 587AB3F73B;
+	Wed, 21 Aug 2024 08:42:10 -0700 (PDT)
+Date: Wed, 21 Aug 2024 16:42:07 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-ID: <ZsYKz6ycI8fiQbdh@J2N7QTR9R3.cambridge.arm.com>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+ <20240819112902.11451fe8@gandalf.local.home>
+ <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+ <20240819120244.5657eb2f@gandalf.local.home>
+ <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
+ <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+ <CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
+ <20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
+ <ZsYInqSc-WS4UldP@J2N7QTR9R3.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZsQ9OWdCS5o96VN2@eichest-laptop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZsYInqSc-WS4UldP@J2N7QTR9R3.cambridge.arm.com>
 
-Hi Frank,
-
-On Tue, Aug 20, 2024 at 08:52:41AM +0200, Stefan Eichenberger wrote:
-> On Mon, Aug 19, 2024 at 10:30:38AM -0400, Frank Li wrote:
-> > On Mon, Aug 19, 2024 at 11:03:16AM +0200, Stefan Eichenberger wrote:
-> > > On the i.MX6Quad (not QuadPlus), the PCIe link does not work after a
-> > > suspend/resume cycle. Worse, the PCIe memory mapped I/O isn't accessible
-> > > at all, so the system freezes when a PCIe driver tries to access its I/O
-> > > space. The only way to get resume working again is to reset the PCIe
-> > > link, similar to what is done on devices that support suspend/resume.
-> > > Through trial and error, we found that something about the PCIe
-> > > reference clock does not work as expected after a resume. We could not
-> > > figure out if it is disabled (even though the registers still say it is
-> > > enabled), or if it is somehow unstable or has some hiccups. With the
-> > > workaround introduced in this patch series, we were able to fully resume
-> > > a Compex WLE900VX (ath10k) miniPCIe Wifi module and an Intel AX200 M.2
-> > > Wifi module. If there is a better way or other ideas on how to fix this
-> > > problem, please let us know. We are aware that resetting the link should
-> > > not be necessary, but we could not find a better solution. More
-> > > interestingly, even the SoCs that support suspend/resume according to
-> > > the i.MX erratas seem to reset the link on resume in
-> > > imx6_pcie_host_init, so we hope this might be a valid workaround.
-> > >
-> > > Stefan Eichenberger (3):
-> > >   PCI: imx6: Add a function to deassert the reset gpio
-> > >   PCI: imx6: move the wait for clock stabilization to enable ref clk
-> > >   PCI: imx6: reset link on resume
+On Wed, Aug 21, 2024 at 04:32:46PM +0100, Mark Rutland wrote:
+> On Wed, Aug 21, 2024 at 07:05:39AM +0900, Masami Hiramatsu wrote:
+> > On Tue, 20 Aug 2024 08:10:42 -0700
+> > Sami Tolvanen <samitolvanen@google.com> wrote:
 > > 
-> > Thanks you for your patch, but it may have conflict with
-> > https://lore.kernel.org/linux-pci/Zr4XG6r+HnbIlu8S@lizhi-Precision-Tower-5810/T/#t
+> > > On Tue, Aug 20, 2024 at 3:48 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > >
+> > > > On Tue, Aug 20, 2024 at 10:03:30AM +0900, Masami Hiramatsu wrote:
+> > > > > On Mon, 19 Aug 2024 12:02:44 -0400
+> > > > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > > >
+> > > > > > On Tue, 20 Aug 2024 00:56:49 +0900
+> > > > > > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > > > > >
+> > > > > > > >
+> > > > > > > > We may need to add "noinline" or something to make sure those functions
+> > > > > > > > don't get inlined for LTO.
+> > > > > > >
+> > > > > > > Yeah, we need such option at least for function call test.
+> > > > > >
+> > > > > > Could you add the noinline, and if it fixes the issue send a patch?
+> > > > >
+> > > > > I found the target function already has "noinline". I tried to add noinline
+> > > > > to the testing function (callsite), but it also did not work.
+> > > > > I think "noinline" is for the compiler, but LTO is done by the linker.
+> > > >
+> > > > If LTO is breaking noinline, then that has much larger implications for
+> > > > noinstr code and similar, and means that LTO is unsound...
+> > > 
+> > > The noinline attribute is preserved in LLVM IR, so it should continue
+> > > to work with LTO. Which function are we talking about here? Are you
+> > > sure the function was inlined instead of being dropped completely?
+> > > Does marking the function __used help?
 > > 
+> > We are talking about trace_selftest_startup_dynamic_tracing() in
+> > kernel/trace/trace_selftest.c. The callee is func() which is actually
+> > DYN_FTRACE_TEST_NAME() in kernel/trace/trace_selftest_dynamic.c.
+> > That function passed as pointer (but the compiler can embed it by constant
+> > propagation.)
 > 
-> Thanks a lot for the hint. I will have a look at the series and see if I
-> can adapt my changes including your suggestions.
+> Ah, so IIUC the function isn't being inlined; the call is being
+> optimized away becase callee() has no side-effects.
+> 
+> That can happen without LTO if the caller is in the same compilation
+> unit, and I have worked around that in the past by adding a barrier()
+> into the callee.
 
-I did some more tests with your series applied. Everything works as
-expected on an i.MX8M Plus. However, the i.MX6Quad PCIe link still does
-not work after a resume. I could trace the issues back to the following
-functions, besides that we could use the same suspend/resume function as
-for the other i.MX SoCs.
+FWIW, that was in samples/ftrace/ftrace-ops.c, where tracee_relevant() and
+tracee_irrelevant() have the barrier():
 
-In suspend the follwoing function is causing issues:
-imx_pcie_stop_link(imx_pcie->pci);
+| /*
+|  * Marked as noinline to ensure that an out-of-line traceable copy is
+|  * generated by the compiler.
+|  *
+|  * The barrier() ensures the compiler won't elide calls by determining there
+|  * are no side-effects.
+|  */
+| static noinline void tracee_relevant(void)
+| {
+|         barrier();
+| }
 
-In resume the following functions are causing issues:
-imx_pcie->drvdata->init_phy(imx_pcie); // in imx_pcie_host_init
-imx_pcie_start_link(imx_pcie->pci);
+... so we already have precedent for that in tracing code.
 
-I think the second one makes sense because I could not stop the link I
-should not start it again. But why is also the init_phy function
-failing? Are they required to setup the link? 
-
-The messages I get when the system resumes are:
-[   50.176212] Enabling non-boot CPUs ...
-[   50.194446] CPU1 is up
-[   50.198087] CPU2 is up
-[   50.201746] CPU3 is up
-[   50.563710] imx6q-pcie 1ffc000.pcie: Read DBI address failed
-
-After the last message the system hangs. It seems this happens because
-the PCIe I/O mem is not accessible anymore.
-
-Do you have an idea what could cause imx_pcie_stop_link to break the
-link on resume? Without calling them the link is working fine after
-resuming and the drivers can access the PCIe I/O mem.
-
-Thanks,
-Stefan
+Mark.
 
