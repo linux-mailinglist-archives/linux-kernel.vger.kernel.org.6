@@ -1,443 +1,272 @@
-Return-Path: <linux-kernel+bounces-295153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0239597C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABE79597D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D341F1C212A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586D91C20E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB61D3180;
-	Wed, 21 Aug 2024 08:42:31 +0000 (UTC)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411DF19ABCD;
+	Wed, 21 Aug 2024 08:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G6tFuZDf";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="AiZ5tSKg"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9B71531E2;
-	Wed, 21 Aug 2024 08:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229750; cv=none; b=U9tz4TzxFB69bFLPOuDUkEAZqwzOSLnt4Xk/7tJ8jYhpqo6hvoWLhuTiE9HB0dpSO3Oe92ZyF15GQBWy2jXZ//IsW93R73Rb2J/+lqynwCiJIcFnozXEyim7wTM+0kpNVydP49it8v4awiOfo1rszZXIxc301KHgWXRWRiYRC2Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229750; c=relaxed/simple;
-	bh=GTJLcDJElIHm1tlUkVDlTiWrHhM/DFYXqdDHfY4j/tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdesQnG0hjRDvQBdXpzowpTS/HPscmAJCMM6mGY14+ztxf+Ft1Zk3ba6T+1LYso2V40Fk9Mfx77vwfWQjDY3q/wp2sP/X3V1dZFrtWp0P8sZChkCme+UyTCnmktdw9Ndi51EKHVOgAsHbv5FI32rE7tj0v6ye4MIEjUaFWhRFro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so4020134f8f.1;
-        Wed, 21 Aug 2024 01:42:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229747; x=1724834547;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/tl/vo8wzWrW91EXOsCzc+JW9EP+tpI4TkxXDUIWo9A=;
-        b=rmu5OJGtXxFoUOkanTa+9nLAuhpX0nRYUNnak4GgIzRipi4Ego7rUgTq+KynGfsjUo
-         Iyl8L7TYEAEO+jMYV4lilPOnQkiMvY2AIBSIsHJKt1qo1MFcKtuf2cV0vXwPzK0SmK3f
-         OdfBmAYdU/3HT9MHIZzlOdgFms6iWgF9IrNsTVJxDSsI0lGD1GTvCSoRjIxrbwDPGLx4
-         4H9x37uaEhT7laI+Sbe6N5Jr7nLxfbtm9zjcBnS3bHN7b6NpbxdcFrs37/6RIllzUdOc
-         YTe4oG4hPa6BV6yni75XKqdIjqaVlg9i2ktDTxXD4G6XPQ43QH75/np3Z8gNq+f828rP
-         y2WA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0KdBFW23X1PpYubJTpAfruZp6BNvVtuzHw901E5caSfAH5h2DmrIpgyARQCrOMDzXhrY0enZuRRLOyA==@vger.kernel.org, AJvYcCU0waFj2rcIzGgS6Hs1DXjgR18blaOAu6PUPdayK4N4lc4J6Rg/ppGu2MLMxu9O6OqzR5bjY2Ew8RA8@vger.kernel.org, AJvYcCUYUM34xM8D9uu7ycRuivSzSsRN8PuxpEx+7Wqyeg1S+meKJAkhnEKmXNMIceWqbDOQAGkMIC/Ah6DiMg==@vger.kernel.org, AJvYcCUi070e3JZoo0lp1DxY1qVWOJ4DhEI61+uB0kLkhwYojBjaZFC1QzSQG3Rd5PVIwKqAcR8zJ4RYFj+rvMm2@vger.kernel.org, AJvYcCVrvkNF35ahk0pn3WcIclbdGhNJvEGX3arAUv1NBnCjQSCafc/DBb72sfRQoKLllXWyQ+r/rztQ@vger.kernel.org, AJvYcCW8ev/bY5sVIj9Tl88Nqi/P35neu2PTp4UVECIe3re3v2dfRI2oAPF8OsPNaXPw5RnTNXlOThBX0wWQ@vger.kernel.org, AJvYcCX+vmM41/M2IRHP/5CVc6hjyMmSzsXjss+Ei0CA7PsQLtCMY0pB7JBaHopB0X/ouJ9Zj7flU9zHfMdh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4V83Lpd/QlnXUWUKJ+ka9JhxhUaOEkrA+5E1bRhOztZyLVWj4
-	2G9wzoCp0u3Sv9M07U9og2Z/aFbcRIDySSJVeftaMf2VQXsvtYBX
-X-Google-Smtp-Source: AGHT+IHbH7zbHUOGKRgGP+HXFBI28H0F3q7e4QjC6QDUb83LRbu2GeW/xYN9VTx2mpAjepeaVsBWeA==
-X-Received: by 2002:adf:9788:0:b0:368:48b2:95ec with SMTP id ffacd0b85a97d-372fd57f032mr1083871f8f.1.1724229746365;
-        Wed, 21 Aug 2024 01:42:26 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37189897008sm15039650f8f.84.2024.08.21.01.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:42:25 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:42:22 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 02/11] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <5zlaxts46utk66k2n2uxeqr6umppfasnqoxhwdzah44hcmyfnp@euwjda6zk5rh>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <82d57814075ed1bc76bf17bde124c5c83925ac59.1724159867.git.andrea.porta@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51639193420;
+	Wed, 21 Aug 2024 08:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724229801; cv=fail; b=cp3Pm0kmhrURhsBFcW/X2q5XN1gJyBo3qK6Jdz1AVsioTKHydbV099wa0G4QXQF7GhdqgepTDfHglnkJXrd0xkTL2tYmpgNblh7CYdkgnSDaGjkB67AAIf/OqsdYfXJ8gqAKOV1eR0UGufeVvETBHjRej/IteMyrbz+ZGs+veII=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724229801; c=relaxed/simple;
+	bh=IfLSPsE22ArbQHA2QLVY7/WRlxQXldgJT2bT3MJssv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=P7LjFo3nN2qXP7/lcOWF/uwDHUBYnYXW6N6ps0zOmVBdRYSlIY3dfTKteZ9gQ9Y5Y2XJqmz0LG3dY1VYbJZVIOL3Ctf9/nz906DUOxufoavE2L14M3ZAwX9Di91vVruWRhjlcjDPYgDXFo+0OYMzdTS8RNcu89afQCrU51yZByY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=G6tFuZDf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=AiZ5tSKg; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47L7tYuk011021;
+	Wed, 21 Aug 2024 08:42:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=BdYynufT42FT/En
+	drkzdaXdRaxovWMhHWwTQ4SHqDF0=; b=G6tFuZDftpdRhZ1lIaxQPf9sWZCSmO0
+	Uk2UrTPUXwT6cvR1PS/zACmGwYxezE6Xhz2kjJy03KXwvmMptnsoqx8liFst712A
+	cJapY1p8OZV7MAwgkmfiy8W/qwJdqY6+JO2pOMAs1UHWWdG2Frpr/p4oeAnMsbyl
+	jHG6qyLeVv67DdgkUz5sjraBGTrgxP7aJvYSioVBJZpPZ047WbxEoeFvydV/iCsX
+	1aScC1Asgo+RuecwXqhrGWEqiM+ECsDxpOicZOyrJvzeUlTEj3OL/Mhzm9KClqOA
+	daJ9CAsKnUolujVd0S4YvVC8cOu77ux3wLLLT4hqLVkMve61GuNlL9A==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m4uy01w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 08:42:51 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47L8dGkD035910;
+	Wed, 21 Aug 2024 08:42:49 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 415cwsr5wv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 08:42:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SZYhyS9O82opyZ2GkFlIBJ3P3BCQOW+Ckek0IcM+e5YxgYxiYDegpkIzTJ9FPdNiu3Ag8tvRXSHCauKtfuFmy+zsslbxd8ebN5kG3MoaRmy/OClg5VWF4qdSO79DuVBDlCm+rNqZCNhD55EtNitA1bsj7/clYl931MlpoYd3pf0dBB7UzEvPfqetRjw0NuduMT7j+HYjwqw/xns0HN1fnKg7NGTPm5ST4/CAlbuKmJE3Hf1QmU7Qt/eT3fJ6awdILHb+lHETMa0GtKmeDalq8HfUrajdNlgLkkK76g7Mi7RASAcMronCtMGVcIa0tNY0pBVRtu6t6vwavjKnfimc4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BdYynufT42FT/EndrkzdaXdRaxovWMhHWwTQ4SHqDF0=;
+ b=Z1fAlRWA4Yh4cInc0DWmCxKT3CHMS1GhKh5BxOO+hc2+iuo4Z61yWdw6wlISeN434hIzmP1r8nsIXkGQsCq8SQ9wKEXvHnXeExijFdPmvhX5EtI/1nlw6UZKnz9aaTxXZahChAIb4dyA52R2nXT4flqyeZYWulnwB1xcvIH3Ku/IRsdovoqUcIuVfQg+3yX3ATTWEjZs5ZFhXkVQhw7wPMDnlpa09GTpjp8lFMI5CoIVAY8iWk1rBhPG0emfxGLI2eEvEbWmeCF0Vqjd38i4Gy+ESJCJ42wFMUQKCq8+XyWBS51zVVxzF7IUWYmiG95FE3wqhqVHheS1t2ze2UBuFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BdYynufT42FT/EndrkzdaXdRaxovWMhHWwTQ4SHqDF0=;
+ b=AiZ5tSKgK+K/Us2hrqUjXIa9Yek98xMqFNqgG+qxncHKK5RMPWLw0GNaOAd8YDL3TOQfWyHmIItHM/tpUgFcPnun9qeie8YIsdzChtevPcWDoRtS1iJWTjU/IzqsqMloinSYKDBRad6Cd4zokll27t7GfmO1P7etKL2sxRBdig8=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SA2PR10MB4764.namprd10.prod.outlook.com (2603:10b6:806:115::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Wed, 21 Aug
+ 2024 08:42:47 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 08:42:47 +0000
+Date: Wed, 21 Aug 2024 09:42:44 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, jeffxu@chromium.org,
+        oliver.sang@intel.com, torvalds@linux-foundation.org,
+        Michael Ellerman <mpe@ellerman.id.au>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 6/7] mm: Remove can_modify_mm()
+Message-ID: <06f5e205-4b5e-4945-890b-0aa29828947a@lucifer.local>
+References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com>
+ <20240817-mseal-depessimize-v3-6-d8d2e037df30@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817-mseal-depessimize-v3-6-d8d2e037df30@gmail.com>
+X-ClientProxiedBy: LO4P123CA0467.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1aa::22) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <82d57814075ed1bc76bf17bde124c5c83925ac59.1724159867.git.andrea.porta@suse.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SA2PR10MB4764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5748e9f7-3441-49ae-cf84-08dcc1bd3b64
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+pVY5LPu2WJ/3jPPeJg5Uc4xnbc8kd+yYTOCGG35JZ/AEd4OITZFPzL1wFKQ?=
+ =?us-ascii?Q?arHXFv7u9FHeoofTYJCODWudamgUs4+ZLoago+QsYwNelKZC6HNXr6xkwyp7?=
+ =?us-ascii?Q?9/bz0xkH+/xmJX4HJE/1fgEcT3Ap28fDjwnjgCZKCOD6gmhrSr9KCo+aYFo2?=
+ =?us-ascii?Q?5ehWTnz6urIzAiZ8rAV0ye+as5mEE6e/Rqry+tZStrCySlQVnnDZ87tY/blk?=
+ =?us-ascii?Q?3XTIZfGi8222Fh0Mv6C/ijJVD2yZAcbMGfGan4OxwbznKP//tV8aQ3n4SCHJ?=
+ =?us-ascii?Q?0+ZeMAlZuFM+wY10omD93FK6lzCjonXjAy6qtnXHGKG8jhV7SgkOuoOToZQ7?=
+ =?us-ascii?Q?B3Hl1d6v+FKmNwM6n0RiuMZJORKefbiTP0xh98NdO9oCBg1E1a+uZCjVi4s1?=
+ =?us-ascii?Q?uFAYt5cROhv8n1ebXzMmbvgzb+A8gBg/jH5D+UMfhPxhBSxggR8nerts+iJp?=
+ =?us-ascii?Q?joz7sqVl9jLLtptuRxFVqI7891lnKXQR/7rVTCkePrPyZkypJA8TXgc1IJq6?=
+ =?us-ascii?Q?HTJOxnyMeLDhfukKx3nheZGsQ8JRbsPwGPc1NJIGy+nC8A9xajKIC1LOoaN9?=
+ =?us-ascii?Q?MWKHBlluI2ESEWGTahHXiyHsn/uTMrb7OOBUPehcH75DBiG8NCbK8lOB1i2/?=
+ =?us-ascii?Q?VnfWnIwF4lV2vG2SqtjczQBW/6keX6d55BD7fKm7XB0Co/FbtUVaD9G16gM/?=
+ =?us-ascii?Q?dVqVPnzFf9pLB6Pm3eck0Y9KXTjDJQjTLGnp5X/fh6ovGJUXJ24WrP5YfyUY?=
+ =?us-ascii?Q?B3RRQst97RaxWtgmZsz2yQzA2TUAFTuv2hEjMzXoHGOQQRrzRGKZwKfJrsuH?=
+ =?us-ascii?Q?MieBw/r6RfCU1PphxKrbv/SnXOCldgrehkFFDegFMBX2dGaZwmfHpgD04fYw?=
+ =?us-ascii?Q?DL0TIXuVs+FKeeahJ0P8xd2br6TVn2to68IqkrTe1ql+ASXPHkQbTWAh7JQr?=
+ =?us-ascii?Q?EQRx6NaDhQuhuz5jsDn59WaL3eVx+xLPuDaJydC34UsrL7ADyQCfcztykhvM?=
+ =?us-ascii?Q?W5E189FQinmwiVg+dsD2Fs6oACvQtqtwGislr5OBA7sRbP791B7CELUDp8H8?=
+ =?us-ascii?Q?/2UT36tqf36XT07KpnINzlr6JtNatC8lO0X1B4kc8k4uK/RJgeyEIVUfUfEU?=
+ =?us-ascii?Q?FmVrZ++zs0P3fQShcdZtwvcIhwwyfGWHSKFC0iq3oTf0+wdT7fhbDkxYaA2V?=
+ =?us-ascii?Q?qO0QOijUvBCUbE0llZgWkMRl+7J+2coBdTArKs5hk+bCsRJpbjzEH53lljrI?=
+ =?us-ascii?Q?GXsTXiHazWfbVM4RQLxhmBCLLpaN/j7g9nz/QDBkibHwaS7PdNVZRKE8Oc2W?=
+ =?us-ascii?Q?1GzvrdtIrb5rHKk39atMKiAEStfksowOK48HzRXEDoDDwQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?T9+O/6n47acdVLNvaAiHRUG+INLHxhg1DsrzrU4WIa5Uzysz2XkiJ5qEpJdJ?=
+ =?us-ascii?Q?qddPVhsm9slesJN/JPEsYm3N05As2cUOMnmtVp35enzZay1d5hn69Jkm4dvL?=
+ =?us-ascii?Q?6SfjmGUgKnIlRzuBk9/G2laNUFtaAtkxp2ndJWynr9bR/A3jaoH7QvjSQefI?=
+ =?us-ascii?Q?HqlXfXIO9wCDHGN+zYGYT73MakymTq4HM5muEwCZwSkk3odJuDqOpgCOVcQJ?=
+ =?us-ascii?Q?IKCYHBF/dDsUgMGTz/lR1HOhL67/ao1qacIF/yOzeaDxHth69N0Iq/KSxuM2?=
+ =?us-ascii?Q?5RwUu9wVarGvcrUvrCZBWDrXuvm82CgKo+hgTGHClAdI++YmUH3s0KTXsNql?=
+ =?us-ascii?Q?5kIHbWdLjY0ksWqXANjDBzYNiF/zDobfE8SxM8+/73scsg+Kqwtizo2/0CYJ?=
+ =?us-ascii?Q?heZHkTHQMFdMpA1wNGSC2AiNXqg41puc29cVKYxh//JIneGQPj87xEC7ky6Z?=
+ =?us-ascii?Q?V1KSyhhy2+BzzGOu2s/NGebbYZZSiBm6wRKBPXQVx/91Lv4cegcMacnQ1Wl4?=
+ =?us-ascii?Q?0g5o5ZotwMrCwOTTnr8uXGRJ2XegEuzts1Hpkj4CASrhniS7UVvuArZAg/yu?=
+ =?us-ascii?Q?WMOiL6PQ5vFEHyFhUnLgD/QS0OUyatIh5gLBCZEpBksqeHR/mNjyzPr4Q2S+?=
+ =?us-ascii?Q?m49gpqrrPY+fM5yQ9IUJuzn3Cqg3umVK8cPSSrzY32d0ZPi0keyCAvkOVBWc?=
+ =?us-ascii?Q?ZqoIKtSUqYuL2cW0oL2abvTCHAU3UouB+1EKGs7WDZc2dtgTqxEW2e7y+Cwy?=
+ =?us-ascii?Q?IweckqR2NVdSZog3xYC0Hn0AXmNHJ0I2AB5FX+SXxKgvGSnzEojFWwaVgO32?=
+ =?us-ascii?Q?nsx6BERoU++bf13H7RvTlPxQskGiyjTDHf/BXmxMFgCtYJCqZoIinf2Z6kEX?=
+ =?us-ascii?Q?0u418Kf7BODr0uC03Nug51Flgw2DGfX9BR+D4ZShNTkYc3hbJNTDwsAD6QkZ?=
+ =?us-ascii?Q?VVyv9shtR1vG8RYrL0CwJsDLzGzwYLbM4otziau7ND/HkYoSu28GAmrbt7yk?=
+ =?us-ascii?Q?UnqXpFDEPRMCoV7hf7VpAiqz9jTc+7dBem5s9L3IlRpO92LOBOLPdrJ02HqR?=
+ =?us-ascii?Q?JO5UfkVzxBqvzcI5aXHZoFYRu8ORKvKK/saDPmKVPS4o8QpGEl5JyNb8vl19?=
+ =?us-ascii?Q?F0gNp38zdVPEH7HyU18+GAQaXL3nCPE3m3ccV1noePGg9i4E6xMj6ci0PYNs?=
+ =?us-ascii?Q?A0ewMi9jNpmQmT+czJY/0DmRds2qeG4MD7pdR91QoHgEMM2Fi0E7EehPd+U4?=
+ =?us-ascii?Q?v3r4XJ9njuXTdCw7td2fiLcEZat6x3NXHNUxRdonkxwrWEfNQ3/JRBkvWvuT?=
+ =?us-ascii?Q?mhAS+FhtCwRlcOL2yk6rmJqTc73iWnLeNOS/cS7dk3du8O3CerCCNN77mAtf?=
+ =?us-ascii?Q?IofF8eLXXkMnCvKTBlRdqxi+zA1SNt06som8mmRZT7MB6uFZseCmckHvwDR3?=
+ =?us-ascii?Q?/4HdBlw6WVWIVdcYeiOk8QJtHlj/pSRWZ2xYy7dNCRW9pGN09nPMno8Mvu9R?=
+ =?us-ascii?Q?V5YVfiszbh4nGvewCTg3f0oKk+EePxPdliHOOwSIjSCX2j/KOIAyD0pYwRPA?=
+ =?us-ascii?Q?lOdLmWRkPWWPHxVasVXsxzLdteQkNqXv9PV4zJa29JwzKhAtGEoHyZH6VPav?=
+ =?us-ascii?Q?cZHCw+ge1yqsUzay9D3D//APqmbBIVBGdiop6YDUCwgm/+5U82Ms7CDtzOu5?=
+ =?us-ascii?Q?0ssyYQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	v7p76A7VH/kzETRclbKdG3x7kkDi2JIk7Zgugc9KcmXi4p3lHu/FH1JLu+LrJIaPbGweLdlLYDC3Bd9escrkwSijJuQqQYLaACCeSIYWtm6/FQpehyee6HdZCQ5hi3UtHVdxApMEDBt1XR4SfCfioF/4opFgGNUaittKEexRQNLiamrEJB9bkbvGWfH3YKSDbecthBfy8/fUXEgIAhiAhS88kW2U7C4nOK555bzqdr9RFFHSXaPx7NcZaluGCoWhIJ2NeuoyX9jsuQGt84lJjzYOse2phuAKCSMNTN6NhtY5jhbhlGH/48W/otlj19CZBZ3q6rOhrOYMOeNNojJi0vyEJKV07TJlvMANyVguHq+q0P3IwssPyqhsBaqD4FHXgFodg0etTE37+tZG3A+LO98Q2hFEXChu5IiUG1KuCJ8kSuqCu4pKf8nDP0kCgeKKYcDa7PPe1fYXRW2KVpY625NIXGelLRfjHnF6KVj58Xvng4F8lAR47e0F22iPGZhx8L4WNug+AxSgq6soq35B+gTHewzR/rKVaaPx4LKDpQOK/Dl3jmdK+eqVR1omjZlT/BQeBqwHILl0Y1I2eT9SF+qrXEtzfFVbOMkt66e2iKw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5748e9f7-3441-49ae-cf84-08dcc1bd3b64
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 08:42:46.9803
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oNG5p7U3BgiiLVKhrWY9bH7PJlQ01NuzWr8l/EVD/JAY2uQvbxXIG3e0G0iqpeWMO0qqpFTjMRD9tXeyvr27DMktVGVH/zBSoQ0OCKi0GkM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4764
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_07,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ adultscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408210057
+X-Proofpoint-ORIG-GUID: MorktbNbgDVHvgydAigiyO9ZiI1jM6LM
+X-Proofpoint-GUID: MorktbNbgDVHvgydAigiyO9ZiI1jM6LM
 
-On Tue, Aug 20, 2024 at 04:36:04PM +0200, Andrea della Porta wrote:
-> Add device tree bindings for the gpio/pin/mux controller that is part of
-> the RP1 multi function device, and relative entries in MAINTAINERS file.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+On Sat, Aug 17, 2024 at 01:18:33AM GMT, Pedro Falcato wrote:
+> With no more users in the tree, we can finally remove can_modify_mm().
+>
+> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
 > ---
->  .../pinctrl/raspberrypi,rp1-gpio.yaml         | 177 +++++++++++++
->  MAINTAINERS                                   |   2 +
->  include/dt-bindings/misc/rp1.h                | 235 ++++++++++++++++++
->  3 files changed, 414 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->  create mode 100644 include/dt-bindings/misc/rp1.h
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> new file mode 100644
-> index 000000000000..7011fa258363
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> @@ -0,0 +1,177 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
-> +
-> +maintainers:
-> +  - Andrea della Porta <andrea.porta@suse.com>
-> +
-> +description:
-> +  The RP1 chipset is a Multi Function Device containing, among other sub-peripherals,
-> +  a gpio/pinconf/mux controller whose 54 pins are grouped into 3 banks. It works also
-> +  as an interrupt controller for those gpios.
-> +
-> +  Each pin configuration node lists the pin(s) to which it applies, and one or
-> +  more of the mux function to select on those pin(s), and their configuration.
-> +  The pin configuration and multiplexing supports the generic bindings.
-> +  For details on each properties (including the meaning of "pin configuration node"),
-> +  you can refer to ./pinctrl-bindings.txt.
-> +
-> +properties:
-> +  compatible:
-> +    const: raspberrypi,rp1-gpio
-> +
-> +  reg:
-> +    minItems: 3
-
-You can drop minItems.
-
-> +    maxItems: 3
-> +    description: One reg specifier for each one of the 3 pin banks.
-> +
-> +  '#gpio-cells':
-> +    description: The first cell is the pin number and the second cell is used
-> +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  gpio-ranges:
-> +    maxItems: 1
-> +
-> +  gpio-line-names:
-> +    maxItems: 54
-> +
-> +  interrupts:
-> +    minItems: 3
-
-Ditto
-
-> +    maxItems: 3
-> +    description: One interrupt specifier for each one of the 3 pin banks.
-> +
-> +  '#interrupt-cells':
-> +    description:
-> +      Specifies the Bank number (as specified in include/dt-bindings/misc/rp1.h)
-> +      and Flags (as defined in (include/dt-bindings/interrupt-controller/irq.h).
-> +      Possible values for the Bank number are
-> +          RP1_INT_IO_BANK0
-> +          RP1_INT_IO_BANK1
-> +          RP1_INT_IO_BANK2
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +additionalProperties:
-> +  anyOf:
-> +    - type: object
-> +      additionalProperties: false
-> +      allOf:
-> +        - $ref: pincfg-node.yaml#
-> +        - $ref: pinmux-node.yaml#
-> +
-> +      description:
-> +        Pin controller client devices use pin configuration subnodes (children
-> +        and grandchildren) for desired pin configuration.
-> +        Client device subnodes use below standard properties.
-> +
-> +      properties:
-> +        pins:
-> +          description:
-> +            A string (or list of strings) adhering to the pattern "gpio[0-5][0-9]"
-> +        function: true
-> +        bias-disable: true
-> +        bias-pull-down: true
-> +        bias-pull-up: true
-> +        slew-rate:
-> +          description: 0 is slow slew rate, 1 is fast slew rate
-> +          enum: [ 0, 1 ]
-> +        drive-strength:
-> +          description: 0 -> 2mA, 1 -> 4mA, 2 -> 8mA, 3 -> 12mA
-> +          enum: [ 0, 1, 2, 3 ]
-
-No, that's [ 2, 4, 8 and 12 ]
-
-Read description of the field - it is in specific units.
-
-> +
-> +    - type: object
-> +      additionalProperties:
-> +        $ref: "#/additionalProperties/anyOf/0"
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +required:
-> +  - reg
-> +  - compatible
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +  - interrupts
-> +  - "#interrupt-cells"
-> +  - interrupt-controller
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/misc/rp1.h>
-> +
-> +    rp1 {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        rp1_gpio: pinctrl@c0400d0000 {
-> +            reg = <0xc0 0x400d0000  0x0 0xc000>,
-> +                  <0xc0 0x400e0000  0x0 0xc000>,
-> +                  <0xc0 0x400f0000  0x0 0xc000>;
-> +            compatible = "raspberrypi,rp1-gpio";
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +            interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
-> +            gpio-line-names =
-> +                   "ID_SDA", // GPIO0
-> +                   "ID_SCL", // GPIO1
-> +                   "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6",
-> +                   "GPIO7", "GPIO8", "GPIO9", "GPIO10", "GPIO11",
-> +                   "GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16",
-> +                   "GPIO17", "GPIO18", "GPIO19", "GPIO20", "GPIO21",
-> +                   "GPIO22", "GPIO23", "GPIO24", "GPIO25", "GPIO26",
-> +                   "GPIO27",
-> +                   "PCIE_RP1_WAKE", // GPIO28
-> +                   "FAN_TACH", // GPIO29
-> +                   "HOST_SDA", // GPIO30
-> +                   "HOST_SCL", // GPIO31
-> +                   "ETH_RST_N", // GPIO32
-> +                   "", // GPIO33
-> +                   "CD0_IO0_MICCLK", // GPIO34
-> +                   "CD0_IO0_MICDAT0", // GPIO35
-> +                   "RP1_PCIE_CLKREQ_N", // GPIO36
-> +                   "", // GPIO37
-> +                   "CD0_SDA", // GPIO38
-> +                   "CD0_SCL", // GPIO39
-> +                   "CD1_SDA", // GPIO40
-> +                   "CD1_SCL", // GPIO41
-> +                   "USB_VBUS_EN", // GPIO42
-> +                   "USB_OC_N", // GPIO43
-> +                   "RP1_STAT_LED", // GPIO44
-> +                   "FAN_PWM", // GPIO45
-> +                   "CD1_IO0_MICCLK", // GPIO46
-> +                   "2712_WAKE", // GPIO47
-> +                   "CD1_IO1_MICDAT1", // GPIO48
-> +                   "EN_MAX_USB_CUR", // GPIO49
-> +                   "", // GPIO50
-> +                   "", // GPIO51
-> +                   "", // GPIO52
-> +                   ""; // GPIO53
-> +
-> +            rp1_uart0_14_15: rp1_uart0_14_15 {
-> +                pin_txd {
-> +                    function = "uart0";
-> +                    pins = "gpio14";
-> +                    bias-disable;
-> +                };
-> +
-> +                pin_rxd {
-> +                    function = "uart0";
-> +                    pins = "gpio15";
-> +                    bias-pull-up;
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6e7db9bce278..c5018232c251 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19120,7 +19120,9 @@ RASPBERRY PI RP1 PCI DRIVER
->  M:	Andrea della Porta <andrea.porta@suse.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> +F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->  F:	include/dt-bindings/clock/rp1.h
-> +F:	include/dt-bindings/misc/rp1.h
->  
->  RC-CORE / LIRC FRAMEWORK
->  M:	Sean Young <sean@mess.org>
-> diff --git a/include/dt-bindings/misc/rp1.h b/include/dt-bindings/misc/rp1.h
-
-Filename should base on the compatible.
-
-The same applies to clocks bindings.
-
-> new file mode 100644
-> index 000000000000..6dd5e23870c2
-> --- /dev/null
-> +++ b/include/dt-bindings/misc/rp1.h
-> @@ -0,0 +1,235 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> +/*
-> + * This header provides constants for the PY MFD.
-> + */
-> +
-> +#ifndef _RP1_H
-> +#define _RP1_H
-
-That's very poor header guard...
-
-> +
-> +/* Address map */
-> +#define RP1_SYSINFO_BASE 0x000000
-> +#define RP1_TBMAN_BASE 0x004000
-
-Nope, addresses are not bindings. Drop entire header.
-
-
-> +#define RP1_SYSCFG_BASE 0x008000
-> +#define RP1_OTP_BASE 0x00c000
-> +#define RP1_POWER_BASE 0x010000
-> +#define RP1_RESETS_BASE 0x014000
-> +#define RP1_CLOCKS_BANK_DEFAULT_BASE 0x018000
-> +#define RP1_CLOCKS_BANK_VIDEO_BASE 0x01c000
-> +#define RP1_PLL_SYS_BASE 0x020000
-> +#define RP1_PLL_AUDIO_BASE 0x024000
-> +#define RP1_PLL_VIDEO_BASE 0x028000
-> +#define RP1_UART0_BASE 0x030000
-> +#define RP1_UART1_BASE 0x034000
-> +#define RP1_UART2_BASE 0x038000
-> +#define RP1_UART3_BASE 0x03c000
-> +#define RP1_UART4_BASE 0x040000
-> +#define RP1_UART5_BASE 0x044000
-> +#define RP1_SPI8_BASE 0x04c000
-> +#define RP1_SPI0_BASE 0x050000
-> +#define RP1_SPI1_BASE 0x054000
-> +#define RP1_SPI2_BASE 0x058000
-> +#define RP1_SPI3_BASE 0x05c000
-> +#define RP1_SPI4_BASE 0x060000
-> +#define RP1_SPI5_BASE 0x064000
-> +#define RP1_SPI6_BASE 0x068000
-> +#define RP1_SPI7_BASE 0x06c000
-> +#define RP1_I2C0_BASE 0x070000
-> +#define RP1_I2C1_BASE 0x074000
-> +#define RP1_I2C2_BASE 0x078000
-> +#define RP1_I2C3_BASE 0x07c000
-> +#define RP1_I2C4_BASE 0x080000
-> +#define RP1_I2C5_BASE 0x084000
-> +#define RP1_I2C6_BASE 0x088000
-> +#define RP1_AUDIO_IN_BASE 0x090000
-> +#define RP1_AUDIO_OUT_BASE 0x094000
-> +#define RP1_PWM0_BASE 0x098000
-> +#define RP1_PWM1_BASE 0x09c000
-> +#define RP1_I2S0_BASE 0x0a0000
-> +#define RP1_I2S1_BASE 0x0a4000
-> +#define RP1_I2S2_BASE 0x0a8000
-> +#define RP1_TIMER_BASE 0x0ac000
-> +#define RP1_SDIO0_APBS_BASE 0x0b0000
-> +#define RP1_SDIO1_APBS_BASE 0x0b4000
-> +#define RP1_BUSFABRIC_MONITOR_BASE 0x0c0000
-> +#define RP1_BUSFABRIC_AXISHIM_BASE 0x0c4000
-> +#define RP1_ADC_BASE 0x0c8000
-> +#define RP1_IO_BANK0_BASE 0x0d0000
-> +#define RP1_IO_BANK1_BASE 0x0d4000
-> +#define RP1_IO_BANK2_BASE 0x0d8000
-> +#define RP1_SYS_RIO0_BASE 0x0e0000
-> +#define RP1_SYS_RIO1_BASE 0x0e4000
-> +#define RP1_SYS_RIO2_BASE 0x0e8000
-> +#define RP1_PADS_BANK0_BASE 0x0f0000
-> +#define RP1_PADS_BANK1_BASE 0x0f4000
-> +#define RP1_PADS_BANK2_BASE 0x0f8000
-> +#define RP1_PADS_ETH_BASE 0x0fc000
-> +#define RP1_ETH_IP_BASE 0x100000
-> +#define RP1_ETH_CFG_BASE 0x104000
-> +#define RP1_PCIE_APBS_BASE 0x108000
-> +#define RP1_MIPI0_CSIDMA_BASE 0x110000
-> +#define RP1_MIPI0_CSIHOST_BASE 0x114000
-> +#define RP1_MIPI0_DSIDMA_BASE 0x118000
-> +#define RP1_MIPI0_DSIHOST_BASE 0x11c000
-> +#define RP1_MIPI0_MIPICFG_BASE 0x120000
-> +#define RP1_MIPI0_ISP_BASE 0x124000
-> +#define RP1_MIPI1_CSIDMA_BASE 0x128000
-> +#define RP1_MIPI1_CSIHOST_BASE 0x12c000
-> +#define RP1_MIPI1_DSIDMA_BASE 0x130000
-> +#define RP1_MIPI1_DSIHOST_BASE 0x134000
-> +#define RP1_MIPI1_MIPICFG_BASE 0x138000
-> +#define RP1_MIPI1_ISP_BASE 0x13c000
-> +#define RP1_VIDEO_OUT_CFG_BASE 0x140000
-> +#define RP1_VIDEO_OUT_VEC_BASE 0x144000
-> +#define RP1_VIDEO_OUT_DPI_BASE 0x148000
-> +#define RP1_XOSC_BASE 0x150000
-> +#define RP1_WATCHDOG_BASE 0x154000
-> +#define RP1_DMA_TICK_BASE 0x158000
-> +#define RP1_SDIO_CLOCKS_BASE 0x15c000
-> +#define RP1_USBHOST0_APBS_BASE 0x160000
-> +#define RP1_USBHOST1_APBS_BASE 0x164000
-> +#define RP1_ROSC0_BASE 0x168000
-> +#define RP1_ROSC1_BASE 0x16c000
-> +#define RP1_VBUSCTRL_BASE 0x170000
-> +#define RP1_TICKS_BASE 0x174000
-> +#define RP1_PIO_APBS_BASE 0x178000
-> +#define RP1_SDIO0_AHBLS_BASE 0x180000
-> +#define RP1_SDIO1_AHBLS_BASE 0x184000
-> +#define RP1_DMA_BASE 0x188000
-> +#define RP1_RAM_BASE 0x1c0000
-> +#define RP1_RAM_SIZE 0x020000
-> +#define RP1_USBHOST0_AXIS_BASE 0x200000
-> +#define RP1_USBHOST1_AXIS_BASE 0x300000
-> +#define RP1_EXAC_BASE 0x400000
-> +
-> +/* Interrupts */
-> +
-> +#define RP1_INT_IO_BANK0 0
-> +#define RP1_INT_IO_BANK1 1
-
-Also no, interrupt numbers are not considered bindings. That's too much
-churn. Otherwise, please point me to driver code using the define
-(directly! that's the requirement).
-
-Best regards,
-Krzysztof
-
+>  mm/internal.h | 14 --------------
+>  mm/mseal.c    | 21 ---------------------
+>  2 files changed, 35 deletions(-)
+>
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 1db320650539..3b738b0ad893 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1361,25 +1361,11 @@ static inline int can_do_mseal(unsigned long flags)
+>  	return 0;
+>  }
+>
+> -bool can_modify_mm(struct mm_struct *mm, unsigned long start,
+> -		unsigned long end);
+>  #else
+>  static inline int can_do_mseal(unsigned long flags)
+>  {
+>  	return -EPERM;
+>  }
+> -
+> -static inline bool can_modify_mm(struct mm_struct *mm, unsigned long start,
+> -		unsigned long end)
+> -{
+> -	return true;
+> -}
+> -
+> -static inline bool can_modify_mm_madv(struct mm_struct *mm, unsigned long start,
+> -		unsigned long end, int behavior)
+> -{
+> -	return true;
+> -}
+>  #endif
+>
+>  #ifdef CONFIG_SHRINKER_DEBUG
+> diff --git a/mm/mseal.c b/mm/mseal.c
+> index fdd1666344fa..28cd17d7aaf2 100644
+> --- a/mm/mseal.c
+> +++ b/mm/mseal.c
+> @@ -53,27 +53,6 @@ static bool is_ro_anon(struct vm_area_struct *vma)
+>  	return false;
+>  }
+>
+> -/*
+> - * Check if the vmas of a memory range are allowed to be modified.
+> - * the memory ranger can have a gap (unallocated memory).
+> - * return true, if it is allowed.
+> - */
+> -bool can_modify_mm(struct mm_struct *mm, unsigned long start, unsigned long end)
+> -{
+> -	struct vm_area_struct *vma;
+> -
+> -	VMA_ITERATOR(vmi, mm, start);
+> -
+> -	/* going through each vma to check. */
+> -	for_each_vma_range(vmi, vma, end) {
+> -		if (unlikely(!can_modify_vma(vma)))
+> -			return false;
+> -	}
+> -
+> -	/* Allow by default. */
+> -	return true;
+> -}
+> -
+>  /*
+>   * Check if a vma is allowed to be modified by madvise.
+>   */
+>
+> --
+> 2.46.0
+>
 
