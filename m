@@ -1,330 +1,98 @@
-Return-Path: <linux-kernel+bounces-295708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0704D95A055
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F5F95A05D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CDB71C229E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F301284B52
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16041199958;
-	Wed, 21 Aug 2024 14:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849011B1D73;
+	Wed, 21 Aug 2024 14:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eWLucg1D"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHtZXUF6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278777406D
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6B2364D6;
+	Wed, 21 Aug 2024 14:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724251699; cv=none; b=ccdSy+9wOGozzSh+VZdAZs/PwF10mha/pDPdmJh9L1MBQvd/msnbc8ST2RyJUxf2WgJPZDYz7JE61xzhnJjAEpmUEzI2vHg5A0BIOzF/bi/d3vYoK+8Jxb9XepxvQzYXb4jh6dxT7RzheXM6PMkUaoSoBiXD380AExu2fwiq9Es=
+	t=1724251831; cv=none; b=JI3IPuKlmD11V2z7e2AIRrruWqXTM/5FPB8au7HVqaTFcr2cHwAfWgWmkqcBCvqoabZJGj18AcvssyG2m48mIkcO8+AZ8y6Xo+kcjutkYJjW7uf638dSMllWhoD6o42BnNjpwFkowTVvqIlCTai58Acv27relK5G+KLvLUidVfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724251699; c=relaxed/simple;
-	bh=zWrHCaVup3n8XQ4yop49AQ3cj66LhXmM1MQLav2+/x8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=umLyqgmsJmwqCVaXOIwPWueb4GhvZ/uslQjIQAfWrwbqPcttxNKO3DZPxtBObsnPUtvtOW6mkqk7LwE/9fHtA4KO+65V0bLPE1lkgH59kYlWWrnIbWV6ifvYVuvbD5pZuI6agBCh+Od69su/BMpeKrlHFPmKyM3QpGU9P+V/s0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eWLucg1D; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso622187e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724251694; x=1724856494; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFLQUWXSg4dcutUdtEDF8foh9qFfPJp0Zipui9TJRNk=;
-        b=eWLucg1DlwZ0gPgSCug6SvHLLt0VzTSYl0nVa2qt2AXwiC/eTzolWEyLCFTK16lf/g
-         Izh/72D56YnXEdyxmC2EaIWRDdPLmGogxi96LBcSrmWekWHkLMpEdkVT9xk+q7Xj/xFU
-         PFlgQw0nncTyNI3OgtEyHghtiOiDbAyx+kJwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724251694; x=1724856494;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AFLQUWXSg4dcutUdtEDF8foh9qFfPJp0Zipui9TJRNk=;
-        b=pRgbCFYfr2LLg7ZU42FV+s7wb/7MQsGYZK36troQeBzgiYWpC78YPz/QdaB1QQypsQ
-         0lh+FvfD4+oCxNgEpNahG0T/2p9/Ih8IvPJJPrpA6LFRmWbyW6ClEo5KQQTcieOZkIrX
-         B4Qn+FyEW2DrY1DBeCbZRVkrZRowGmml1QZpSB/LIvHLV1yMzXpq0Gvhml5yjVKKMMdM
-         la8Hm0QxGNQ1x1B1ka9hHMeDFPkemZ3H7Uadtdpe7nThfl5mOqSyPfFwvRUd6OlvkUkf
-         nZhyWdlg2mDwHf04jONpEK61HNDx6PbC2Rh1TZMyzr9Dqb5rbffCU2P/Qz+72VgZukrh
-         JwBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOQJMhi7gvn+Hsk5xGSCWQDYMHHjEhwAHEqbf55WS/apCJarudz+jlwqEHxJnaNudJZOPt8U7n/Hp8R4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+dc88VbmWZW7mdgSP2eYUbKsPbTw68/vG6zHmPzQrNJTSnivp
-	yNHZz+ViNW5gY8WpRPk4Ukw1JIU4oy9j9T3KoQxxbFEoMt2iiYSwqUH5md2QhWiXIKpWoPNDIpL
-	YX4+v09IsMdDf9MpyhgDjH8pdI6W8Angmfd3n
-X-Google-Smtp-Source: AGHT+IG1y2MmAccCkm0s+lM9ZdlKEskPGKqtpfAB1ceK0gIt3IJDL4uT2HvRETWefkTvKhmUsfsdDGT/meplTcZMZQo=
-X-Received: by 2002:a05:6512:3b0a:b0:52c:dbc6:8eb0 with SMTP id
- 2adb3069b0e04-533485575e5mr1931720e87.21.1724251693555; Wed, 21 Aug 2024
- 07:48:13 -0700 (PDT)
+	s=arc-20240116; t=1724251831; c=relaxed/simple;
+	bh=DOn+l7VijRoQ0qf3XpvX93tTLR74QrEEGQ4BtmKSlDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1z82iuNKO+nBNlulZaB0NbbTsfNZW3gr9NZsDdxntAxdSrhH7XvPE0O4Lrcd1tPrZCQz/0DwyMegbXQ/kML7PgTcdNaHWBfJodH2H0fFGcLVpyk5/UC+TIEMophTMLdg8Q2jab6hGpKIJomW0Jp8AKkqOsGRFEXr9uXFP/XxnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHtZXUF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E6DC4AF09;
+	Wed, 21 Aug 2024 14:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724251830;
+	bh=DOn+l7VijRoQ0qf3XpvX93tTLR74QrEEGQ4BtmKSlDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PHtZXUF6aY8uuzdzlC/nehYxpXwf1+Vri257L2u9J+46BBETHc/1LSOI5bf3lVyxE
+	 HuapqepRW9B9qTaRxeFOUGDKvDs6BSIn28vsBfIMo5/9i+QtHK5Px+8Y2cGXq7Tkx7
+	 QSmwKv8zmOxX7+eKw+x0GqHl2PRILupM1FUPlAbfAO6Vb8jEXknKJOXRUVzhd2wfjl
+	 /ibkexLAF22k5FZnhdCuYFtVcdaEMQ7uMxRavmxqJ3SX4cD96/OfWOg9CrhwzIMzd6
+	 7WWVfuvfOnDi/rWGxbaTeezQ3DxSielSIJi8G2nM9VazcpqUtK6+rDLfvqGhMpCfua
+	 mb9zzlJ8IxKbg==
+Date: Wed, 21 Aug 2024 09:50:27 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: vkoul@kernel.org, kishon@kernel.org, agross@codeaurora.org, 
+	ansuelsmth@gmail.com, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] phy: qualcomm: Check NULL ptr on lvts_data in
+ qcom_ipq806x_usb_phy_probe()
+Message-ID: <4kpmkjp6pp6r34v7se24rscnk2t7g2pjcrqm6l7nt7h3lgsu3v@rauqrchifqjj>
+References: <20240821131042.1464529-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
- <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
- <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de> <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
- <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de>
-In-Reply-To: <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Wed, 21 Aug 2024 10:48:01 -0400
-Message-ID: <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
-Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000c27c78062032a192"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821131042.1464529-1-make24@iscas.ac.cn>
 
---000000000000c27c78062032a192
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 21, 2024 at 09:10:42PM GMT, Ma Ke wrote:
+> of_device_get_match_data() can return NULL if of_match_device failed, and
+> the pointer 'data' was dereferenced without checking against NULL. Add
+> checking of pointer 'data' in qcom_ipq806x_usb_phy_probe().
 
-On Tue, Aug 20, 2024 at 7:42=E2=80=AFPM Stanimir Varbanov <svarbanov@suse.d=
-e> wrote:
->
-> Hi Jim,
->
-> On 8/20/24 00:49, Jim Quinlan wrote:
-> > On Mon, Aug 19, 2024 at 3:39=E2=80=AFPM Stanimir Varbanov <svarbanov@su=
-se.de> wrote:
-> >>
-> >> Hi Jim,
-> >>
-> >> On 8/19/24 21:09, Jim Quinlan wrote:
-> >>> On Sat, Aug 17, 2024 at 1:41=E2=80=AFPM Stanimir Varbanov <svarbanov@=
-suse.de> wrote:
-> >>>>
-> >>>> Hi Jim,
-> >>>>
-> >>>> On 8/16/24 01:57, Jim Quinlan wrote:
-> >>>>> The 7712 SOC has a bridge reset which can be described in the devic=
-e tree.
-> >>>>> Use it if present.  Otherwise, continue to use the legacy method to=
- reset
-> >>>>> the bridge.
-> >>>>>
-> >>>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> >>>>> ---
-> >>>>>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++----=
--
-> >>>>>  1 file changed, 19 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> >>>>
-> >>>> One problem though on RPi5 (bcm2712).
-> >>>>
-> >>>> With this series applied + my WIP patches for enablement of PCIe on
-> >>>> bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see ker=
-nel
-> >>>> boot stuck on pcie2 enumeration and I have to add this [1] to make i=
-t
-> >>>> work again.
-> >>>>
-> >>>> Some more info about resets used:
-> >>>>
-> >>>> pcie0 @ 100000:
-> >>>>         resets =3D <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
-> >>>>         reset-names =3D "swinit", "bridge", "rescal";
-> >>>>
-> >>>> pcie1 @ 110000:
-> >>>>         resets =3D <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
-> >>>>         reset-names =3D "swinit", "bridge", "rescal";
-> >>>>
-> >>>> pcie2 @ 120000:
-> >>>>         resets =3D <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
-> >>>>         reset-names =3D "swinit", "bridge", "rescal";
-> >>>>
-> >>>>
-> >>>> I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
-> >>>> downstream rpi kernel) because otherwise I'm unable to enumerate RP1
-> >>>> south bridge at all.
-> >>>>
-> >>>> Any help will be appreciated.
-> >>>
-> >>> Hi Stan,
-> >>> Let me look into this.  Why is one of the controllers turning off --
-> >>> is it not populated with a device?
-> >>
-> >> Yes, I enabled pcie1 but no PCI endpoint devices attached on the
-> >> expansion connector.
-> >
-> > Hi Stan,
-> >
-> > I looked at our similar STB chip that has a rescal controller and
-> > multiple PCIe controllers and it doesn't have this problem.  Our 7712
-> > doesn't  have this problem either, only because it only has one PCIe
-> > controller.
-> >
-> > However, using my 7712 and unbinding the device (invokes
-> > brcm_pcie_remove()) shows me behavior similar to yours (2712).  What I
-> > do is read the rescal registers after the unbind, and they will either
-> > be dead or alive.  If I comment out the
-> > "pcie->bridge_sw_init_set(pcie, 1);" call, the rescal is still dead
-> > after unbind.  However if I comment out that AND the
-> > "clk_disable_unprepare(pcie->clk);" call,  the rescal registers remain
-> > alive after unbind.
->
-> Thank you. No idea why the clock is not used on 2712 (or at least it is
-> not populated on RPi downstream kernel.
-
-Hi Stan,
-
-Most of the clocks on the STB chips come up active so one does not
-have to turn them on and off to have the device function.  It helps
-power savings to do this although I'm not sure it is significant.
->
-> >
-> > Perhaps you don't see the dependence on the PCIe clocks if the 2712
-> > does not give the PCIe node a clock property and instead keeps its
-> > clocks on all of the time.  In that case I would think that your
-> > solution would be fine.
->
-> What you mean by my solution? The one where avoiding assert of
-> bridge_reset at link [1] bellow?
-
-Yes.
->
-> If so, I still cannot understand the relation between bridge_reset and
-> rescal as the comment mentions:
->
-> "Shutting down this bridge on pcie1 means accesses to rescal block will
-> hang the chip if another RC wants to assert/deassert rescal".
-
-I was just describing my observations; this should not be happening.
-I would say it is a HW bug for the 2712.  I can file a bug against the
-2712 but that will not help us right now.  From what I was told by HW,
-asserting the PCIe1 bridge reset does not affect the rescal settings,
-but it does freeze access to the rescal registers, and that is game
-over for the other PCIe controllers accessing the rescal registers.
+How do you create the platform_device such that this happens?
 
 Regards,
-Jim Quinlan
-Broadcom STB/CM
+Bjorn
 
->
-> ~Stan
-> you
-> > Regards,
-> > Jim Quinlan
-> > Broadcom STB/CM
-> >
-> >
-> >
-> >>
-> >>>
-> >>> As you probably know the 7712 only has access to PCIe1.  But we do
-> >>> have another chip with two controllers and I will try to reproduce
-> >>> your failure and get to the bottom of it.
-> >>
-> >> Thank you for the help.
-> >>
-> >> ~Stan
-> >>
-> >>>
-> >>> Regards,
-> >>> Jim Quinlan
-> >>> Broadcom STB/CM
-> >>>>
-> >>>> ~Stan
-> >>>>
-> >>>> [1]
-> >>>> https://github.com/raspberrypi/linux/blob/rpi-6.11.y/drivers/pci/con=
-troller/pcie-brcmstb.c#L1711
-
---000000000000c27c78062032a192
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDH5ke2d8fZQRgRsQWQxHpKsXJvAUM0
-hKazEBMNGD+f8DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MjExNDQ4MTRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAVGyFKvocvZeS5bcu/xW6W8B6Ujroy3GQ7vXJHu6ZkjWsY9GQ
-B1HQccghcbYFl2C44+PyxcCQJTfF4A01sdj4TV5HwuYl9NpFAEqbxQfjf25RzNSn6966EGNNMiit
-KHQdYNNiy13c5DClb8UP9YQdVxm7IJtDIcXlsxGtnZIN0YkIi448Y4nYX19/o7zPO9bc5jgQhkvl
-KfVc0JsAr/M0Mscz8i0pHpHHDXjei57oMt0F/3rEWMHK3KjoZWxMmP1pIs4ojaLibcvGIUsMHBb4
-90ezwa5Qkwx+yTWefk7Uk2SFFykPhfnc4Tniydt/3byhAhCqBm1Te27ncW5tKuriWA==
---000000000000c27c78062032a192--
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: ef19b117b834 ("phy: qualcomm: add qcom ipq806x dwc usb phy driver")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+> index 06392ed7c91b..9b9fd9c1b1f7 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+> @@ -492,6 +492,8 @@ static int qcom_ipq806x_usb_phy_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	data = of_device_get_match_data(&pdev->dev);
+> +	if (!data)
+> +		return -ENODEV;
+>  
+>  	phy_dwc3->dev = &pdev->dev;
+>  
+> -- 
+> 2.25.1
+> 
+> 
 
