@@ -1,180 +1,126 @@
-Return-Path: <linux-kernel+bounces-296233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC7B95A801
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D2095A805
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C33F281E20
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2373282575
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4449917C9EA;
-	Wed, 21 Aug 2024 23:00:39 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3B139597;
+	Wed, 21 Aug 2024 23:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="llX0/Ebs"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411A49622
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4769176FA0
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724281238; cv=none; b=pnpqzOkM+2CveybaB3e8otaoqyO+CpWueifDtQzHD2n1aK2xcfGKngFjymSvTHR22lrLL38eNuVn0Eou3uzONmhaUcEummlz6T2WEnw6paHN9lEyz+LYUT4BezyuXGfWTCNUcdHy7mi2/8Yph3C8v6moULFZLYbFUL5P8lV7v6U=
+	t=1724281307; cv=none; b=TfeoTyu0UtpuUYBxtpAxfgtmBtwTzojcfCQckjk0wf5B0vLRCi2GTSCxjTy5oqfYItp0NXbOOcoeFRUULc1a3r+gyTWPgqQJCG1VJdqNIIAYaSRoU9DhaobWnbGzX1VFvzg0it7tJR2xXATcRyNm+Mx6ILZLVwN9D0iQKnl/Zuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724281238; c=relaxed/simple;
-	bh=nK7WBNJU17yLVWvP6m9kWvc6ZL5VUUgZBG/DpAUucZQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=L2prV4fyyVjt4blO8XucFn/QB0WOQsm1XMJWfHOkwE1WB97+XCuji68ajM+CEFQKFjRFGN9A1N8RJbBk37Mz8v1grYSwIRjUyA37RkMXF46YyihhMNjceCF+A2SCHSUd7MregtlxLihCT6/E1MIXOMhcOhLgC067f9UMEXdg8Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d47fe875cso2420375ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:00:36 -0700 (PDT)
+	s=arc-20240116; t=1724281307; c=relaxed/simple;
+	bh=aWbQKsoO/3O0Lnp0a6MfXVSMRVMVZaRxC4kpSF7nsAM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElBnFA+Mv1403bvdKi+J+4SzSCvVC0RWTCqimI14boAyA5y3BWiHcMMnNaArSTIN+vEYTcD40u5cyDOjt+t6+IAAckh3+ffIRm/DVj8zA4/KA8yPzSzLZ61NCxgFhPLr1teIuRSZ0wzk2gw0s54+IZcxhhJQ5uUP3XsXzCFVysg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=llX0/Ebs; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-45029af1408so57441cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724281305; x=1724886105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eYqlc+O3M1PAGsmUtdwrYwO0p9/AGmcfM5YGYrhFe/U=;
+        b=llX0/EbsQWgvdxkuMG03M4wna6v5q5zCeCqz7SqNw5lp/bqWGLMeWiFQS5I+AOppAz
+         yRD1BXQvCMXbl1fexId6GidUm3kwklzprBlBeOMxUMhUUvqIXyK8gqZpafLYPEQzFgo5
+         8pHYYgSB0MHgHKyTgKzZAZ94AHAceSyIrrnRVNBuPhWr5wiiwqP1AwBTM/9dnHufGi/D
+         5oCqwQvSSzDpp0jyYBiPoZyDSJM2RhN6RoOzm8Oe65yz7leKjEdvwSxP38R4U8+bGzZq
+         PtdkEFAW5GDSbWEJLcSX2gLaKPxFw0i+grH1YWORFdvw2Ma3lXOqUVckvan5dJzDiSSf
+         c8Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724281236; x=1724886036;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=advimBipANCqCePLOk2BiN6GsDFv17GpuVUDDfjL++k=;
-        b=SruYv+xcnBQnA6MHdjRLW0uz6GDAflSguTbKnnmAEbdLgfZUP6XKHcohGTPGHToJwP
-         9ndCfbpEnIxTHprrs/2q0MOEMIr9xXhMaLubzcBVJtTVh9cM4sCGpP563Of2nEjNe637
-         kYHLmcUDWaSQxamKc4EMAUpceqfo6dvA2EeBfgzf1T1a4HrI7X8kffxvnoWoP5CA4/be
-         uCOaQ1ybzi0X2o1HS4QdgDI7H4BzuC1FkvDVU9FlU3S+tUtmmxuCikXghMJaVUwd2bez
-         GhcSlvsgGsoUE3ce4J8lJkQNxSkyljl9Kd0fyU1/OlHd2ofsBpbW0nZa7LgaFSYrsLM+
-         vV9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXCIX4zufptHeJ/o5uquuPlAbypXGQU9+Jj8V/fyHgnk+NgrT2M7VVePVTxjPIgSD+E6hIw9Z1J6y/vkgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0q5IlFPDMfPB5jv5FNZM9QVkWZvcHt1nX87gmtpvboXiETf4H
-	YnRf1QLDy55vr38FJec1B59CEHpPnYskXbp8STa3ja6kgKtEcmrIhevyVbVJQyw5NMdH3oOiwfk
-	fQO1378PkjLyIUi9qG5Oa0A9GVMQIUzmdVYyY7m7ov0SVwcnbC8p7AZA=
-X-Google-Smtp-Source: AGHT+IERpDLmPFAJpJ8+6JKcLbHcXtZBNujYlqliN8siKmzcxZgt9d88fNgZeQYdyjNZx0VSeQIdBysFv5KwHz4ZoYwl2qFGUmih
+        d=1e100.net; s=20230601; t=1724281305; x=1724886105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eYqlc+O3M1PAGsmUtdwrYwO0p9/AGmcfM5YGYrhFe/U=;
+        b=sKkF6bymiL7cATExBJX0HYjRgkvGUZf3aNU422HbyHGPLuUSiR4p9ZsyMKMQb77fUG
+         YJQyB+zRkp1LmvoCA/B5Fg0jyUvc7JT5Zq2Xp6ScN2mqU9mY9g/F9sz7umhfpT+eD5rH
+         hLNShcqck1EFWl2JjxSBHxuLilWpchjS3BO+3ywTOhpPsFeyvyTV50BcBeWprKTf3+oS
+         RXvsTSieIu0GNX7bsitEihhLSu+s7vTZLzipKFEF3YyoZvab9rM/yUzO2Rm5DXuKIZl+
+         CW8IRBopjyK2DKBWSF5KwK56SAuIu4EBNj/W2zmJN3FIvFFCjSUOY/XsyH3flYvsfRvB
+         LTdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg4dqFDrdBdgA7aucY9DPxw9bJ/VBKrEoOtXOeJO7LereOptTpkxe5f2RRZmPs2zslmb9GaxPyRSKlgs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+gBuyYX4yZ4zqM7akStQTpLkZQimJmt9a20SUq35wp0HJDCfr
+	VyXQ3WvkSolKfD1rL7m/wVROHEoQwdvf2X11APFPOrmS/dOSAqe2WihtU7U9POz4ftEjAtlfZwp
+	Yn38HH7CdJyVnUkmT3nhVqqxRxxtDVt8JwPZ9
+X-Google-Smtp-Source: AGHT+IHr6GY8qz9jDAmwr42+hMsnH5B+DA3xc3h3v+2emTPxckOukoEGDbPDha957SRPhSwjOBNcOQFJ2vjqfFpTJfg=
+X-Received: by 2002:ac8:5708:0:b0:450:47a5:2203 with SMTP id
+ d75a77b69052e-454fd778a28mr587521cf.11.1724281304543; Wed, 21 Aug 2024
+ 16:01:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22ca:b0:4bd:4861:d7f8 with SMTP id
- 8926c6da1cb9f-4ce62fd0173mr105869173.4.1724281235997; Wed, 21 Aug 2024
- 16:00:35 -0700 (PDT)
-Date: Wed, 21 Aug 2024 16:00:35 -0700
-In-Reply-To: <0000000000006bc6d20620023a14@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000090974a0620398254@google.com>
-Subject: Re: [syzbot] [ppp?] inconsistent lock state in valid_state (4)
-From: syzbot <syzbot+d43eb079c2addf2439c3@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
-	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <2024081600-grub-deskwork-4bae@gregkh>
+ <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+ <2024081705-overarch-deceptive-6689@gregkh> <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+ <20240819193851.GA4809@google.com> <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me>
+ <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com>
+ <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com> <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me>
+In-Reply-To: <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 21 Aug 2024 16:01:08 -0700
+Message-ID: <CABCJKudN7vGB1gfGDuEArdkH9DL4iPFw3DXMPrX1ZLzPRp8+3w@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Matthew Maurer <mmaurer@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Aug 21, 2024 at 4:31=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On 20.08.24 22:03, Matthew Maurer wrote:
+> >>> The way `KAbiReserved` is implemented is via a `union` (maybe a bit
+> >>> ironic, considering what I said in my other replies, but in this case=
+,
+> >>> we would provide a safe abstraction over this `union`, thus avoiding
+> >>> exposing users of this type to `unsafe`):
+> >>>
+> >>>     #[repr(C)]
+> >>>     pub union KAbiReserved<T, R> {
+> >>>         value: T,
+> >>>         _reserved: R,
+> >>>     }
+> >>
+> >> I like this approach even better, assuming any remaining issues with
+> >> ownership etc. can be sorted out. This would also look identical to
+> >> the C version in DWARF if you rename _reserved in the union to
+> >> __kabi_reserved. Of course, we can always change gendwarfksyms to
+> >> support a different scheme for Rust code if a better solution comes
+> >> along later.
+>
+> Yeah sure, that should also then work directly with this patch, right?
 
-HEAD commit:    b311c1b497e5 Merge tag '6.11-rc4-server-fixes' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dccc7b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=d43eb079c2addf2439c3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf93d5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101bb693980000
+Yes, this would work without changes.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b311c1b4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1c99fa48192f/vmlinux-b311c1b4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16d5710a012a/bzImage-b311c1b4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d43eb079c2addf2439c3@syzkaller.appspotmail.com
-
-================================
-WARNING: inconsistent lock state
-6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-ksoftirqd/0/16 [HC0[0]:SC1[1]:HE1:SE0] takes:
-ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
-ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
-ffff888039c531e0 (&pch->downl){+.?.}-{2:2}, at: ppp_input+0x18b/0xa10 drivers/net/ppp/ppp_generic.c:2304
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-  spin_lock include/linux/spinlock.h:351 [inline]
-  ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
-  ppp_input+0x18b/0xa10 drivers/net/ppp/ppp_generic.c:2304
-  pppoe_rcv_core+0x117/0x310 drivers/net/ppp/pppoe.c:379
-  sk_backlog_rcv include/net/sock.h:1111 [inline]
-  __release_sock+0x243/0x350 net/core/sock.c:3004
-  release_sock+0x61/0x1f0 net/core/sock.c:3558
-  pppoe_sendmsg+0xd5/0x750 drivers/net/ppp/pppoe.c:903
-  sock_sendmsg_nosec net/socket.c:730 [inline]
-  __sock_sendmsg+0x221/0x270 net/socket.c:745
-  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
-  ___sys_sendmsg net/socket.c:2651 [inline]
-  __sys_sendmmsg+0x3b2/0x740 net/socket.c:2737
-  __do_sys_sendmmsg net/socket.c:2766 [inline]
-  __se_sys_sendmmsg net/socket.c:2763 [inline]
-  __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2763
-  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-irq event stamp: 1309336
-hardirqs last  enabled at (1309336): [<ffffffff8bc0d5ff>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (1309336): [<ffffffff8bc0d5ff>] _raw_spin_unlock_irqrestore+0x8f/0x140 kernel/locking/spinlock.c:194
-hardirqs last disabled at (1309335): [<ffffffff8bc0d300>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (1309335): [<ffffffff8bc0d300>] _raw_spin_lock_irqsave+0xb0/0x120 kernel/locking/spinlock.c:162
-softirqs last  enabled at (1309326): [<ffffffff81578ffa>] run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
-softirqs last disabled at (1309331): [<ffffffff81578ffa>] run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&pch->downl);
-  <Interrupt>
-    lock(&pch->downl);
-
- *** DEADLOCK ***
-
-1 lock held by ksoftirqd/0/16:
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2267 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ppp_input+0x55/0xa10 drivers/net/ppp/ppp_generic.c:2304
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- valid_state+0x13a/0x1c0 kernel/locking/lockdep.c:4012
- mark_lock_irq+0xbb/0xc20 kernel/locking/lockdep.c:4215
- mark_lock+0x223/0x350 kernel/locking/lockdep.c:4677
- __lock_acquire+0xbf9/0x2040 kernel/locking/lockdep.c:5096
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
- ppp_input+0x18b/0xa10 drivers/net/ppp/ppp_generic.c:2304
- ppp_sync_process+0x71/0x160 drivers/net/ppp/ppp_synctty.c:490
- tasklet_action_common+0x321/0x4d0 kernel/softirq.c:785
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Sami
 
