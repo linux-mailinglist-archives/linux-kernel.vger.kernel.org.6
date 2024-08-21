@@ -1,147 +1,192 @@
-Return-Path: <linux-kernel+bounces-295674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2992959FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99B9959FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0792DB22FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6121C22259
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4C51B2536;
-	Wed, 21 Aug 2024 14:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39F613633B;
+	Wed, 21 Aug 2024 14:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="GcT3GiWT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M6jgqntJ"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="srumyX4z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dItHffqA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0832A1B2522
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703EB364D6;
+	Wed, 21 Aug 2024 14:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250567; cv=none; b=mZ+O9JcYXXczMh4r9iyzQj82Ku+yQ16OfP6zGDHJHKN4+9A9fJ6uEFiyl6n2bEY+4GNv27Xq3pxNPCgNMk0jh4RSQyKRJMHtb07HjnYR4+xKm6iES1O6hmDp6VcttsHNOpJtoO8EwE8sd8Cknx5JnAWx9g+WJo5RJLwXDiBnGns=
+	t=1724250696; cv=none; b=aIXOEOEZvtBvv58c1RIvri5k1u/AwBumbSOJec1GdVqakJUzlLmMMCFF8vJj5eSgcYpNStVSFwllDdN1e2AjFkqy2xMXIIHNaZ+speWdYs3dSqSTmgeWgWiwunUfbB3Gidy9qaV9HuX7i5h8g2HLxtRLPtmsx+i99X1Jqofkehg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250567; c=relaxed/simple;
-	bh=TNRz++CAXpZTrQ+rDNgu/qHAFygHO1FeBVjKw/UuqVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aV3jjWOV4NF5v2N1ParVAPu5uBJLwdv8dKRW7y/oRlSvRWRl0vMwuOo62ruhtZkqGbQ0tu6QhCthxJ5F6H2xC6z03hzaEHAKlV40RmMVozMWa7Y7gmvMTH101fR+iQjkUUOrADpwcJdnFOPTRySC2NLSzyD1PnU953SErOgbOUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=GcT3GiWT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M6jgqntJ; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 16E47138FEBB;
-	Wed, 21 Aug 2024 10:29:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 21 Aug 2024 10:29:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1724250564; x=
-	1724336964; bh=KjMAVAcSGnfZBXM47hogT6pOxUn239BFkFX3wckyOlU=; b=G
-	cT3GiWTC7Yi+d9iN2CIMzd5qiDYwKM6oRIhBMN5KMJmHVEov1ur/+Un2IJiDx5xl
-	BhKsg9z65d7N6YXP/79cZeVB1U5Vhc5bUhoXYb+x+jb/xoFsNAUWFDQCyfgobPvp
-	6IeVCLk6vgw1bp+vdKKqIciNz5A6lX9edWA4f5Yt5aBvopE826k5ysLuF4xTcjXY
-	lArH48j3znArJTgMlA/DFn0/jlutGrt0oPqiYSMAdtDxIP3i6a9ldY7eaOqpTbiN
-	em01updDc0Cfc2KQJPoyM0LFZSHkAQswotuq1DweG2WDGD5szvmC1QsNgcQMYyht
-	wN9ndDlZ1UoEdYWBeIxuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724250564; x=1724336964; bh=KjMAVAcSGnfZBXM47hogT6pOxUn2
-	39BFkFX3wckyOlU=; b=M6jgqntJrns2iOEYOiIQmoVudHIeOXMio/xIEH4l4dIo
-	AQ2HbTy3wmZggKB5jHpFKpC9X+wP7YVkm/iPJl+RvHHis5hByFxR6hE2SlZRYZJe
-	7tIAOQZtdHMjB4aY99SSwbxrqkVmdnkw/Wm2BucA/WjHjL9T2lTGwql1RsoM4AN5
-	ut5ve9n1dRhIFWKoiQAIT1pBlTVzPeNUUo6EkJJf51IRRfzeAjOlLGo/U/jc9EP0
-	zktojJIguoi+BkQa+Xsa6gJ6h11wPtmrL3WNGiOFUQApZqaFMMJX/6NwMOYbU12v
-	Xkcfmh9YsYSlTUs43qz70Tfc9HnAHggG6nY9NVHG4Q==
-X-ME-Sender: <xms:w_nFZiGDFi5l0IA-jMps3FdZQyJ34M0yzlvZFW7bj4exrZTVerfBcw>
-    <xme:w_nFZjWXx6GDAVNeLhmLbwLNPoXERZE5IPweZCqhtqz_dMOXUHg4N3zPygVNaKWjX
-    BB_Jyj-_B7g5EQlvmc>
-X-ME-Received: <xmr:w_nFZsJXEYZbHC7O3rNwvLbXevtsPdu4kldutezou54ub7a58tXdCYUzmVXfZC82deQrFYcAEdnGNPe2Zf5mlbJ2MzSrMbNthg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddukedgjeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhudekffehkeff
-    udduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhnpehkvghrnh
-    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtth
-    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeiiihhjuhhnpghhuhesihgt
-    lhhouhgurdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrth
-    hiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhish
-    htshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthhopehquhhitggpiihijhhu
-    hhhusehquhhitghinhgtrdgtohhm
-X-ME-Proxy: <xmx:w_nFZsEV9hGT29NSd3GTszkMnbeY_p-VkBdZq4W8FW6Beyv0Yf4Zag>
-    <xmx:w_nFZoVtgmVLpU-DIwoT4WPHH0SGMIa_w-YzyA6LOeq4dGvVnhspkQ>
-    <xmx:w_nFZvO7cDQ9kaXvQgt3tu0Yldah_-UbOeedohmTCsEivo6DeHbYzg>
-    <xmx:w_nFZv3pfQ3VXWv0tv_p3BW01BzNeUZ9sAckDGj6GuuKeRqB9Czfvw>
-    <xmx:xPnFZidrllUSAVrqmNu5iz32rfTVBLTTRW5iYAXPjFF7KCntB0GGSWx0>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Aug 2024 10:29:22 -0400 (EDT)
-Date: Wed, 21 Aug 2024 23:29:20 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 3/4] firewire: core: Prevent device_find_child() from
- modifying caller's match data
-Message-ID: <20240821142920.GB48808@workstation.local>
-Mail-Followup-To: Zijun Hu <zijun_hu@icloud.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
- <20240815-const_dfc_prepare-v2-3-8316b87b8ff9@quicinc.com>
+	s=arc-20240116; t=1724250696; c=relaxed/simple;
+	bh=c0OW0cW5hDmc6K2btWRZo5y8jLnJfEFGaMlukrhO9Gg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CVNrWdffvGqXPyvepkSy5rL10pGi6/zBLTabb3NuhAsA3L1TUhBIk2/p/tnov2McT5wIvbq9Qhv7XAj8omFuKvHk4F74V0uhJHW1i0OIorS2B5RAng0fVeZAlQrOstqI4N/5s0E7xqLb2CYtJOOcw24Guy+yM9C0qEQwvKEi08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=srumyX4z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dItHffqA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724250692;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IJy4vBugzlwV92hnkKNfRqFL+RejFHcSLWidbn/Vn6s=;
+	b=srumyX4zQUqos1L0K89Vdf/MJloYV7pVVe4yQW430ylXuWIOpIccTKNbFvy5LixpaiLh6L
+	7srFRtK1Ocl0WFj+N6FTMJlDUOfFo5JuIXHyA7ZDgKdV5T+O7wEnbgGAmc2CSNSWiC8Ml2
+	wO5mKu8o3JW4ZQ9I0BT4AjIaQBQiWRhXUJjbHAS+Yznw0/YusZUV90uOnhyl5QnYd+GlD9
+	nl/1BPyhlh5MW7xPLdsyYztyQG/IxEXe/PhV1/egC5nfmMMLNQpS6oJ5OdMLIjsmve/0Rz
+	bZG6Y4uhGnPZxo7OsLSrB+NQelD1S4TJa7YZWbzmyCkOjQ47GJKE2W3OJPHolw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724250692;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IJy4vBugzlwV92hnkKNfRqFL+RejFHcSLWidbn/Vn6s=;
+	b=dItHffqAzaM1p8KLS+JddMr7adq306CddspxgX5Oq1CjYG4EKIroOn23mxzSP8638UWdUO
+	OP7poBHK+SoHtaBg==
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianyang Zhang <zhangtianyang@loongson.cn>, corbet@lwn.net,
+ alexs@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com,
+ gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn,
+ yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org,
+ dianders@chromium.org, maobibo@loongson.cn, xry111@xry111.site,
+ zhaotianrui@loongson.cn, nathan@kernel.org, yangtiezhu@loongson.cn,
+ zhoubinbin@loongson.cn, loongarch@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen
+ <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v10 2/2] irqchip/loongarch-avec: Add AVEC irqchip support
+In-Reply-To: <CAAhV-H424SB_Ff6y4m4Cb7Cx9eWTLbK08Wycwa803y08qWVoOA@mail.gmail.com>
+References: <20240815112608.26925-1-zhangtianyang@loongson.cn>
+ <20240815112608.26925-3-zhangtianyang@loongson.cn> <87msl7jgye.ffs@tglx>
+ <CAAhV-H424SB_Ff6y4m4Cb7Cx9eWTLbK08Wycwa803y08qWVoOA@mail.gmail.com>
+Date: Wed, 21 Aug 2024 16:31:32 +0200
+Message-ID: <87cym2hrqz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815-const_dfc_prepare-v2-3-8316b87b8ff9@quicinc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Aug 21 2024 at 21:14, Huacai Chen wrote:
+> On Wed, Aug 21, 2024 at 12:29=E2=80=AFAM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+>> This patch is doing too many things at once and is absolutely not
+>> reviewable.
+>>
+>> Please split it up into the obvious bits and pieces:
+> Splitting may cause another problem: some patches will get upstream
+> via the arch tree and others via the irq tree. These dependencies may
+> cause build errors in a certain tree. But anyway, we will try our best
+> to do this.
 
-On Thu, Aug 15, 2024 at 10:58:04PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> To prepare for constifying the following old driver core API:
-> 
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> to new:
-> struct device *device_find_child(struct device *dev, const void *data,
-> 		int (*match)(struct device *dev, const void *data));
-> 
-> The new API does not allow its match function (*match)() to modify
-> caller's match data @*data, but lookup_existing_device() as the old
-> API's match function indeed modifies relevant match data, so it is not
-> suitable for the new API any more, fixed by implementing a equivalent
-> fw_device_find_child() instead of the old API usage.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/firewire/core-device.c | 37 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
+That's not a problem at all. The trivial way to solve this is to apply
+the architecture changes to the loongarch tree in a separate branch
+which is based of some -rcX tag and only contains those dependencies.
+That branch is then merged into the main loongarch branch and I can pull
+it in to my tree for adding the irqchip changes. No conflicts, no merge
+dependencies, nothing.
 
-Please drop this patch from your series since I applied another patch[1] to
-for-next branch.
+>>       #ifdef CONFIG_IRQ_LOONGARCH_AVEC
+>>       # define SMP_CLEAR_VECTOR         BIT(ACTION_CLEAR_VECTOR)
+>>       #else
+>>       # define SMP_CLEAR_VECTOR         (0)
+>>       #endif
+>>
+>>       That way the compiler will optimize out stuff like the
+>>       SMP_CLEAR_VECTOR handling and you only need the prototype of
+>>       complete_irq_moving(), but no implementation.
+> These macros are not in hot-path, and we have already tried our best
+> to avoid using #ifdefs for cpu_has_xxx, so I suggest not introduce a
+> new Kconfig option. Moreover, the new option should always be selected
+> due to the deep coupling among loongson's irqchips, which makes the
+> #ifdefs useless.
 
+They are removed in step 8 again. It's for having a sanely split up and
+structured patch series instead of one big lump.
 
-[1] https://lore.kernel.org/r/20240820132132.28839-1-o-takashi@sakamocchi.jp
+>> > +static void clear_free_vector(struct irq_data *irqd)
+>> > +{
+>> > +     struct avecintc_data *adata =3D irq_data_get_irq_chip_data(irqd);
+>> > +     bool managed =3D irqd_affinity_is_managed(irqd);
+>>
+>> Don't even try. Your managed support is broken at the allocation side
+>> and at several other places.
+> I'm a bit confused here, irq_create_affinity_masks() marks some
+> interrupts "managed". So if we completely ignore "managed" here, then
+> can irq_create_affinity_masks() still work? Or the two has nothing to
+> do with each other?
 
-Thanks
+Managed interrupts have the property that the core and irqchip code
+guarantees the interrupts to be affinable to the CPU masks which are
+handed in to the allocator for them.
 
-Takashi Sakamoto
+So the requirement for architectures which have a limited number of
+vectors per CPU (x86, loongarch) is that you have to reserve the managed
+vectors right at allocation time.
+
+x86_vector_alloc_irqs()
+    assign_irq_vector_policy()
+        if (managed)
+            reserve_managed_vector()
+               irq_matrix_reserve_managed(mask)
+
+irq_matrix_reserve_managed() then reserves a vector on all CPUs which
+are in the affinity mask.
+
+On activation:
+
+x86_vector_activate()
+   if (managed)
+      activate_managed()
+        assign_managed_vector(mask)
+           irq_matrix_alloc_managed(mask)
+
+irq_matrix_alloc_managed() then picks an unassigned vector out of the
+managed vector space. Similar mechanism when the affinity is set.
+
+Why is this important for x86 (and loongarch)?
+
+Because both have a limited vector space of 256 vectors per CPU, where
+some of the vectors might be reserved for exceptions and OS purposes or
+the legacy space.
+
+The managed mechanism guarantees at allocation time that the interrupt
+will have a reserved vector on all CPUs in the mask. That ensures that
+on CPU hotplug the interrupt can be migrated over to a still online CPU
+in the mask. If the last CPU goes offline the interrupt is shut down.
+
+You might not yet have run into the situation of vector exhaustion, but
+once your number of CPUs gets big enough that is guaranteed to happen.
+
+That's why x86 also uses the concept of reserved (not guaranteed)
+regular vectors for non-managed interrupts. x86 uses the spurious vector
+for that. That's important because there are enough device drivers out
+there which allocate a gazillion of interrupts at probe time, but only
+request a few of them.
+
+If you allocate all vectors for them right upfront, then you exhaust
+your vector space quickly for no reason. Only when the interrupt is
+requested then a usable vector is allocated - or the allocation fails
+and request_irq() fails. That's better than exhausting the vector space
+for nothing.
+
+The complexity of the x86 allocation/activate/set_affinity mechanisms
+is there for a reason and not just because we did not have anything
+better to do. :)
+
+Thanks,
+
+        tglx
 
