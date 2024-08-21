@@ -1,131 +1,165 @@
-Return-Path: <linux-kernel+bounces-295898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC7A95A2B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E62695A2B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092F12817C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE445282ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DC91509A8;
-	Wed, 21 Aug 2024 16:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D71509A2;
+	Wed, 21 Aug 2024 16:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYS8+k14"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP81BOLu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D0D14EC40;
-	Wed, 21 Aug 2024 16:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B522D14E2EF;
+	Wed, 21 Aug 2024 16:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724257292; cv=none; b=UpjaYazLXZjdBb9JYcR7fY2aSFwRw6FJyZIR/bdojmVmhp5llsZTnpx9KiBKPky00V0aaa8lruuIG9RYTxBq1M7x0CySYPFMzjRgHEepV0u45MOKUTXg/9chkFmszCuzZ+FTBgwFb1lhi1+8BV6zze9FRYHv/F7UDyLmGCdiPKQ=
+	t=1724257325; cv=none; b=HBsh2HjhZNDlloieqbgnTLCpLvUOm1K2GiO1Vc2YGZwtSAWGjyMtWC7hzWfyCqpiF6ozKgwUnCpQXPAfJEySMIfERWFWSpOPxD9RcEt0zaIJV3rJ11CvgLDOVh7rHrX7enMuzCUXIidkaUmw9/OSHc0ON8Fu25XvaZ9RX68WAwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724257292; c=relaxed/simple;
-	bh=6EzKrh9xTJAqw1p4LarRmhy2aDvY433YcuIp31GWd8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DxAPw48T5Hi64W+JmGW4NQLDyvyBBRYOnYZUjGyeBmuKkvWYvDUxDk0pxKy63DVIf01bd6bXp3m7VmvQe8gRnAnOg6d24V3N88fwH+Bdkr8hqjJXlWWVzFLzuHx76zwLg9D9qHG21zGhFNiJPWzhOzmsfgXfTlbSYXWxv+njvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYS8+k14; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E79AFC4AF11;
-	Wed, 21 Aug 2024 16:21:29 +0000 (UTC)
+	s=arc-20240116; t=1724257325; c=relaxed/simple;
+	bh=4/aPe8isJuO27fYjkz3nd2ULL9gylCH9DC56i1v8taE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSVk5AI6nuHQZ8lcLFs6PG6ZWKgORuRwZEnmmXUZ8WTvx+qoP1yGDDKZeSXZUfdEtqnDlPWEI5vlARA2YxDoEU7tEmfnx/qGMFB0k3QPkRiyxBhyh+73IJmu8uTzEFNnzRRV5p/98Qsm+YXXORrxDozCldLQZXIAHI3mAGSe5Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP81BOLu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41B99C32781;
+	Wed, 21 Aug 2024 16:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724257289;
-	bh=6EzKrh9xTJAqw1p4LarRmhy2aDvY433YcuIp31GWd8w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BYS8+k14eiSKhb0BXa0NnT5arowAi6qLXrStKXzLxSuSRoPWGBE57omq1w27+pmf2
-	 fJNO+mXc7glfkWXNA2el1+o/JN1MxrF506Ld5sv5Ou4RRErrKezSgDPibRN/nHcksv
-	 FYgEEX7P9zaTU2sQwb96xmW+FBLJzQxsAJHPMuGhO2+PmKi9QMHTsm0BEeVbf75brV
-	 /tF5NK0UUNBBXL+N03Ix76D91AzpVz2J+ktUUHGLOvNoOKooYmDFFJMF9xAsQtc8S0
-	 JJSPcTQ4SKkoVpy6KvQmPC0GHPGPdbtzpNABqdV0psoYxzUYJN0g18w6IeXd6k++VB
-	 I7DXaWVf2L5nA==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7092ea69218so484513a34.1;
-        Wed, 21 Aug 2024 09:21:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+5XneMSbohutpo5csaAYDz9y2+PYzorK2tbAKJ+xx3gT/3maLf5/tNbIURqUyj4yB+a6w3aWh+V2xx9g=@vger.kernel.org, AJvYcCXc6BmdDIoTDFm52h18JfntmpWMxvXLEiV2UQlNNF1mNndof9SmG0dfkntQ3N+dTiczihc3zizM1ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGDQacYPM8PGTUA9hu4pE6tV2OqAaIc3LyeRgiexPvNkMYLZDK
-	IzK9CCw02+kyfNSpoV/1JrsAdOEnbNjqa/2Pme/2E+IXa61Eqoivg32Qu8MraDTGMSOOSVffFyl
-	PYWB37FO6zB81TtnobvzJrPtROVo=
-X-Google-Smtp-Source: AGHT+IHEPSJUrDi7NXBKzTprX86klVkgctzvPM1bepinLD2ox6jfWp1dhWfRyX97UPsFz+l0m7PZcfjs7CW6If6MDFs=
-X-Received: by 2002:a05:6808:13c5:b0:3dc:1afd:6688 with SMTP id
- 5614622812f47-3de20f9b180mr54871b6e.20.1724257289222; Wed, 21 Aug 2024
- 09:21:29 -0700 (PDT)
+	s=k20201202; t=1724257325;
+	bh=4/aPe8isJuO27fYjkz3nd2ULL9gylCH9DC56i1v8taE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CP81BOLunHUqSlArmkevUKobouXpFJVWICAC9qWpytbiPFJ8lMk6/tYQFf/I4MQJT
+	 ytloY7bE5hD2cN+30lcg/CUOdUUMsN9zlatHDSyfDkSaoDF0XxPFAZx2e9MwIueQBw
+	 7/4Hb5CHM9e2kUqAGWWiPjWMga88ERCgIlSWQwFCpTGNi84WNxoVZGgyAzMJHJ+1rq
+	 m1K8pGZ9Ytjk1Xka+UQN5bpDxTAeBG5zP42GdlvFvYkVLlV9i1Vk3Z17BDuj6RxHG6
+	 FsfPw/7ggVIEEHMeuScZBm334l/SlRe+u7TrwkcXcMv/Bo6b6T+UUj43eWvugaObp/
+	 HoIu4DnvTs+CA==
+Date: Wed, 21 Aug 2024 09:22:04 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] xfs: use xas_for_each_marked in
+ xfs_reclaim_inodes_count
+Message-ID: <20240821162204.GE865349@frogsfrogsfrogs>
+References: <20240821063901.650776-1-hch@lst.de>
+ <20240821063901.650776-6-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2205737.irdbgypaU6@rjwysocki.net> <1831773.TLkxdtWsSY@rjwysocki.net>
- <ae0bec37-f800-4824-914c-34bf41d2a775@linaro.org>
-In-Reply-To: <ae0bec37-f800-4824-914c-34bf41d2a775@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Aug 2024 18:21:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0guBixLgaATkUwznf4UmjFomu_b-i_NxGDV-4-g9D4YSQ@mail.gmail.com>
-Message-ID: <CAJZ5v0guBixLgaATkUwznf4UmjFomu_b-i_NxGDV-4-g9D4YSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 14/14] thermal: core: Clean up trip bind/unbind functions
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821063901.650776-6-hch@lst.de>
 
-On Wed, Aug 21, 2024 at 4:29=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 19/08/2024 18:33, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Make thermal_bind_cdev_to_trip() take a struct cooling_spec pointer
-> > to reduce the number of its arguments, change the return type of
-> > thermal_unbind_cdev_from_trip() to void and rearrange the code in
-> > thermal_zone_cdev_binding() to reduce the indentation level.
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v2 -> v3: Subject fix
-> >
-> > v1-> v2: No changes
-> >
-> > ---
-> >   drivers/thermal/thermal_core.c |   54 +++++++++++++++----------------=
-----------
-> >   1 file changed, 21 insertions(+), 33 deletions(-)
-> >
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -757,15 +757,7 @@ struct thermal_zone_device *thermal_zone
-> >    * @tz:             pointer to struct thermal_zone_device
-> >    * @trip:   trip point the cooling devices is associated with in this=
- zone.
-> >    * @cdev:   pointer to struct thermal_cooling_device
-> > - * @upper:   the Maximum cooling state for this trip point.
-> > - *           THERMAL_NO_LIMIT means no upper limit,
-> > - *           and the cooling device can be in max_state.
-> > - * @lower:   the Minimum cooling state can be used for this trip point=
-.
-> > - *           THERMAL_NO_LIMIT means no lower limit,
-> > - *           and the cooling device can be in cooling state 0.
-> > - * @weight:  The weight of the cooling device to be bound to the
-> > - *           thermal zone. Use THERMAL_WEIGHT_DEFAULT for the
-> > - *           default value
-> > + * @c:               cooling specification for @trip and @cdev
->
-> s/c/cspec/ at least :)
+On Wed, Aug 21, 2024 at 08:38:32AM +0200, Christoph Hellwig wrote:
+> xfs_reclaim_inodes_count iterates over all AGs to sum up the reclaimable
+> inodes counts.  There is no point in grabbing a reference to the them or
+> unlock the RCU critical section for each iteration, so switch to the
+> more efficient xas_for_each_marked iterator.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I have settled on cool_spec here.
+Clever!
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-> Other than that
->
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+--D
 
-Thank you for all of the reviews!
+> ---
+>  fs/xfs/xfs_icache.c | 36 ++++++++----------------------------
+>  fs/xfs/xfs_trace.h  |  2 +-
+>  2 files changed, 9 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index 5bca845e702f1d..d36dbaba660013 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -300,32 +300,6 @@ xfs_perag_clear_inode_tag(
+>  	trace_xfs_perag_clear_inode_tag(pag, _RET_IP_);
+>  }
+>  
+> -/*
+> - * Search from @first to find the next perag with the given tag set.
+> - */
+> -static struct xfs_perag *
+> -xfs_perag_get_next_tag(
+> -	struct xfs_mount	*mp,
+> -	struct xfs_perag	*pag,
+> -	unsigned int		tag)
+> -{
+> -	unsigned long		index = 0;
+> -
+> -	if (pag) {
+> -		index = pag->pag_agno + 1;
+> -		xfs_perag_rele(pag);
+> -	}
+> -
+> -	rcu_read_lock();
+> -	pag = xa_find(&mp->m_perags, &index, ULONG_MAX, ici_tag_to_mark(tag));
+> -	if (pag) {
+> -		trace_xfs_perag_get_next_tag(pag, _RET_IP_);
+> -		atomic_inc(&pag->pag_ref);
+> -	}
+> -	rcu_read_unlock();
+> -	return pag;
+> -}
+> -
+>  /*
+>   * Find the next AG after @pag, or the first AG if @pag is NULL.
+>   */
+> @@ -1080,11 +1054,17 @@ long
+>  xfs_reclaim_inodes_count(
+>  	struct xfs_mount	*mp)
+>  {
+> -	struct xfs_perag	*pag = NULL;
+> +	XA_STATE		(xas, &mp->m_perags, 0);
+>  	long			reclaimable = 0;
+> +	struct xfs_perag	*pag;
+>  
+> -	while ((pag = xfs_perag_get_next_tag(mp, pag, XFS_ICI_RECLAIM_TAG)))
+> +	rcu_read_lock();
+> +	xas_for_each_marked(&xas, pag, ULONG_MAX, XFS_PERAG_RECLAIM_MARK) {
+> +		trace_xfs_reclaim_inodes_count(pag, _THIS_IP_);
+>  		reclaimable += pag->pag_ici_reclaimable;
+> +	}
+> +	rcu_read_unlock();
+> +
+>  	return reclaimable;
+>  }
+>  
+> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+> index 002d012ebd83cb..d73c0a49d9dc29 100644
+> --- a/fs/xfs/xfs_trace.h
+> +++ b/fs/xfs/xfs_trace.h
+> @@ -210,7 +210,6 @@ DEFINE_EVENT(xfs_perag_class, name,	\
+>  	TP_PROTO(struct xfs_perag *pag, unsigned long caller_ip), \
+>  	TP_ARGS(pag, caller_ip))
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_get);
+> -DEFINE_PERAG_REF_EVENT(xfs_perag_get_next_tag);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_hold);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_put);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_grab);
+> @@ -218,6 +217,7 @@ DEFINE_PERAG_REF_EVENT(xfs_perag_grab_next_tag);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_rele);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_set_inode_tag);
+>  DEFINE_PERAG_REF_EVENT(xfs_perag_clear_inode_tag);
+> +DEFINE_PERAG_REF_EVENT(xfs_reclaim_inodes_count);
+>  
+>  TRACE_EVENT(xfs_inodegc_worker,
+>  	TP_PROTO(struct xfs_mount *mp, unsigned int shrinker_hits),
+> -- 
+> 2.43.0
+> 
+> 
 
