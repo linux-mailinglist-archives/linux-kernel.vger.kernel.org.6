@@ -1,74 +1,49 @@
-Return-Path: <linux-kernel+bounces-295564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBAE959E5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:14:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3029A959E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27637B25C9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D888A2826EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E5E1A2873;
-	Wed, 21 Aug 2024 13:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="erFiIpgN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D791199943;
+	Wed, 21 Aug 2024 13:11:06 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E2119ABCA;
-	Wed, 21 Aug 2024 13:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6C1192D9C;
+	Wed, 21 Aug 2024 13:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724246025; cv=none; b=eqzibwfVQPdX8xEdChHj+wNbZEeNb6l+qTKz0I8Wo/uQhHU6DjTwgcAx7O+KoiLXmjBybkqIZQoloJJ1l7ISizKMCdd3NWY/hHPBU6ZZyQuv1fQb0lWO9Czc/tapEMiTLO637z03HnfNSQEMcy2SH0RcunYt/ofo+a5IbW1OK7g=
+	t=1724245865; cv=none; b=OUFukn8dfYLPvHZaaBlu2YO4DWElTrzvcwC/QYvzAQTztUz0arL24S2X4mlOE1Rj3mn8XaBn7Jz0dkPoFrYaS7wA3hosi/es7t1ANYWGn0rSa2wmlKT2TK5GL85dlsI9UKN2lM9K6Ipt9QvMUXlxGqiNfG39VqC6w+aZieNsXv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724246025; c=relaxed/simple;
-	bh=NzNw6q5V7hr4qHyg6nI8oqQKW+bPNraqmhWgFaJ16dw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DDqFX9zWcV7p+/+ty9UwI1JJdJEU2C6iKbVKX/qkCurFRD68bwMdIkdrwAETFc1wo7sg4ZwTMO35b+WOiAg4DIEERvRWwWHrw4CRv//gArQPYIBGMD7X+WKsfxLvOVLkLcLcOE+MVnnTiolq8Y0ovkS6xUUxMYnBHqmSKfsp5Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=erFiIpgN; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724246023; x=1755782023;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NzNw6q5V7hr4qHyg6nI8oqQKW+bPNraqmhWgFaJ16dw=;
-  b=erFiIpgN6YtntAqO5YPU2ltfD8iY72narsrES8nn7zs0u71L/tOAKQYX
-   8KC2ZW717yE30dAFw8EDk+0vvK5R9ZmuDTPwx05G6vCRCXH6CaCCwkMCN
-   nV21eM/QHPo8oJJRBrTbxGmLjOwe/DAybkmDKjc4Sz2hzzLEUmkVAbklr
-   R1okTgFf7q3tTwGXjNk4QSqDVo8dR+AQTXjwIAj2yFqTQMgvSFO58wehY
-   leQ6FStdpOxZU73r7ImfcDcshdxMsgWSSYaOvoo5qlnsWasXtAZF+66Jm
-   p46FxdyNE5tYztylukdaeVgj7i5wSeB4952f67X/wqswuD0mDCjC5hRPQ
-   g==;
-X-CSE-ConnectionGUID: 4uogTFFCS/+1npbW7lhirA==
-X-CSE-MsgGUID: lnvefS/XQmG4K4KwRj+/KA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26399026"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="26399026"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:13:40 -0700
-X-CSE-ConnectionGUID: Z1qmEUhMSfaHIOFcYpLDCA==
-X-CSE-MsgGUID: hO1ScID2RWK46XPpb6cjOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="66047797"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.10])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 06:13:39 -0700
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: srinivas.pandruvada@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency latency control to sysfs interface
-Date: Wed, 21 Aug 2024 16:10:30 +0300
-Message-ID: <20240821131321.824326-4-tero.kristo@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240821131321.824326-1-tero.kristo@linux.intel.com>
-References: <20240821131321.824326-1-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1724245865; c=relaxed/simple;
+	bh=IXNh5XLies2Zu+d70075n+GhEUYfdwWx9D38TKDaRHo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FWSxxW3jjgHpiyWGXB4R+gNF8sDFaTko4DU/HXXR9GU3uM0572KhXVNCu/Pwh3oRVElefcEUYbCOthSDQtHPvJKGU2n9OmuxnRpPaEMYKRBLafJxhvvNLnbEwpTUME55G9atvhrsMS9F1D9tTdQsy+pjgAQgbIIuNu0Oa37NuzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAC3vzNT58VmLeC2CA--.16735S2;
+	Wed, 21 Aug 2024 21:10:50 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	make24@iscas.ac.cn,
+	agross@codeaurora.org,
+	ansuelsmth@gmail.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] phy: qualcomm: Check NULL ptr on lvts_data in qcom_ipq806x_usb_phy_probe()
+Date: Wed, 21 Aug 2024 21:10:42 +0800
+Message-Id: <20240821131042.1464529-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,129 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC3vzNT58VmLeC2CA--.16735S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr13try3AFW8tr17CrW3Wrg_yoWDGrbEga
+	4UZr47urn7JF1rKr1UtrnIvryvka4qqrW8Xa1IgFyfCrWrAF1aqFyDJrs8ZrZxu3WIvr1D
+	J34YvFZ5Zr1jqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
+	Gr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Add the TPMI efficiency latency control fields to the sysfs interface.
-The sysfs files are mapped to the TPMI uncore driver via the registered
-uncore_read and uncore_write driver callbacks. These fields are not
-populated on older non TPMI hardware.
+of_device_get_match_data() can return NULL if of_match_device failed, and
+the pointer 'data' was dereferenced without checking against NULL. Add
+checking of pointer 'data' in qcom_ipq806x_usb_phy_probe().
 
-Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: ef19b117b834 ("phy: qualcomm: add qcom ipq806x dwc usb phy driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- .../uncore-frequency-common.c                 | 42 ++++++++++++++++---
- .../uncore-frequency-common.h                 | 13 +++++-
- 2 files changed, 49 insertions(+), 6 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
-index 4e880585cbe4..e22b683a7a43 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
-@@ -60,11 +60,16 @@ static ssize_t show_attr(struct uncore_data *data, char *buf, enum uncore_index
- static ssize_t store_attr(struct uncore_data *data, const char *buf, ssize_t count,
- 			  enum uncore_index index)
- {
--	unsigned int input;
-+	unsigned int input = 0;
- 	int ret;
+diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+index 06392ed7c91b..9b9fd9c1b1f7 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
++++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+@@ -492,6 +492,8 @@ static int qcom_ipq806x_usb_phy_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
--	if (kstrtouint(buf, 10, &input))
--		return -EINVAL;
-+	if (index == UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE) {
-+		if (kstrtobool(buf, (bool *)&input))
-+			return -EINVAL;
-+	} else {
-+		if (kstrtouint(buf, 10, &input))
-+			return -EINVAL;
-+	}
+ 	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
  
- 	mutex_lock(&uncore_lock);
- 	ret = uncore_write(data, input, index);
-@@ -103,6 +108,18 @@ show_uncore_attr(max_freq_khz, UNCORE_INDEX_MAX_FREQ);
+ 	phy_dwc3->dev = &pdev->dev;
  
- show_uncore_attr(current_freq_khz, UNCORE_INDEX_CURRENT_FREQ);
- 
-+store_uncore_attr(elc_low_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-+store_uncore_attr(elc_high_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
-+store_uncore_attr(elc_high_threshold_enable,
-+		  UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-+store_uncore_attr(elc_floor_freq_khz, UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-+
-+show_uncore_attr(elc_low_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-+show_uncore_attr(elc_high_threshold_percent, UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
-+show_uncore_attr(elc_high_threshold_enable,
-+		 UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-+show_uncore_attr(elc_floor_freq_khz, UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-+
- #define show_uncore_data(member_name)					\
- 	static ssize_t show_##member_name(struct kobject *kobj,	\
- 					   struct kobj_attribute *attr, char *buf)\
-@@ -146,7 +163,8 @@ show_uncore_data(initial_max_freq_khz);
- 
- static int create_attr_group(struct uncore_data *data, char *name)
- {
--	int ret, freq, index = 0;
-+	int ret, index = 0;
-+	unsigned int val;
- 
- 	init_attribute_rw(max_freq_khz);
- 	init_attribute_rw(min_freq_khz);
-@@ -168,10 +186,24 @@ static int create_attr_group(struct uncore_data *data, char *name)
- 	data->uncore_attrs[index++] = &data->initial_min_freq_khz_kobj_attr.attr;
- 	data->uncore_attrs[index++] = &data->initial_max_freq_khz_kobj_attr.attr;
- 
--	ret = uncore_read(data, &freq, UNCORE_INDEX_CURRENT_FREQ);
-+	ret = uncore_read(data, &val, UNCORE_INDEX_CURRENT_FREQ);
- 	if (!ret)
- 		data->uncore_attrs[index++] = &data->current_freq_khz_kobj_attr.attr;
- 
-+	ret = uncore_read(data, &val, UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-+	if (!ret) {
-+		init_attribute_rw(elc_low_threshold_percent);
-+		init_attribute_rw(elc_high_threshold_percent);
-+		init_attribute_rw(elc_high_threshold_enable);
-+		init_attribute_rw(elc_floor_freq_khz);
-+
-+		data->uncore_attrs[index++] = &data->elc_low_threshold_percent_kobj_attr.attr;
-+		data->uncore_attrs[index++] = &data->elc_high_threshold_percent_kobj_attr.attr;
-+		data->uncore_attrs[index++] =
-+			&data->elc_high_threshold_enable_kobj_attr.attr;
-+		data->uncore_attrs[index++] = &data->elc_floor_freq_khz_kobj_attr.attr;
-+	}
-+
- 	data->uncore_attrs[index] = NULL;
- 
- 	data->uncore_attr_group.name = name;
-diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
-index b5c7311bfa05..26c854cd5d97 100644
---- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
-+++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
-@@ -34,6 +34,13 @@
-  * @domain_id_kobj_attr: Storage for kobject attribute domain_id
-  * @fabric_cluster_id_kobj_attr: Storage for kobject attribute fabric_cluster_id
-  * @package_id_kobj_attr: Storage for kobject attribute package_id
-+ * @elc_low_threshold_percent_kobj_attr:
-+		Storage for kobject attribute elc_low_threshold_percent
-+ * @elc_high_threshold_percent_kobj_attr:
-+		Storage for kobject attribute elc_high_threshold_percent
-+ * @elc_high_threshold_enable_kobj_attr:
-+		Storage for kobject attribute elc_high_threshold_enable
-+ * @elc_floor_freq_khz_kobj_attr: Storage for kobject attribute elc_floor_freq_khz
-  * @uncore_attrs:	Attribute storage for group creation
-  *
-  * This structure is used to encapsulate all data related to uncore sysfs
-@@ -61,7 +68,11 @@ struct uncore_data {
- 	struct kobj_attribute domain_id_kobj_attr;
- 	struct kobj_attribute fabric_cluster_id_kobj_attr;
- 	struct kobj_attribute package_id_kobj_attr;
--	struct attribute *uncore_attrs[9];
-+	struct kobj_attribute elc_low_threshold_percent_kobj_attr;
-+	struct kobj_attribute elc_high_threshold_percent_kobj_attr;
-+	struct kobj_attribute elc_high_threshold_enable_kobj_attr;
-+	struct kobj_attribute elc_floor_freq_khz_kobj_attr;
-+	struct attribute *uncore_attrs[13];
- };
- 
- #define UNCORE_DOMAIN_ID_INVALID	-1
 -- 
-2.43.1
+2.25.1
 
 
