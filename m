@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-295829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC5195A1E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CBA95A1E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFFC1C25969
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25A528CA77
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C261CBEB8;
-	Wed, 21 Aug 2024 15:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8B61CC17A;
+	Wed, 21 Aug 2024 15:41:43 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF801B3B0D;
-	Wed, 21 Aug 2024 15:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96801CC170;
+	Wed, 21 Aug 2024 15:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254895; cv=none; b=jMtk2C+N/DjRA5+AAEUwJJa0fXUCDffxPelyfTUFMpV6nBiAHlRT3C2VxH4Ggg7G3jlWugtMAJkWLgCyzQKTZ+Eby1pBdGgFhpXt7D0aZ2KkB4kIfSgJH5h8WKyr15foPR26VxJTSQOlahPP0TKWFUYOUrrUQPq1TS/+1ZUJaqE=
+	t=1724254903; cv=none; b=LtajuxCsMR4FGmM+Ly7jngSSNTt+HXAfnZT94lMJD+ttxsdphnbp2qZuI/PFwRVxhdRi8GusDu3tU7hbT4c+/HnkuPnyI07OJwmWxiytmJZq1uEVqO6ChWDq9adABj1VAUawGidVZeujpdv9ThkxGTWpXeMOcHHSUbO72GkEyy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254895; c=relaxed/simple;
-	bh=nZPcRjWloYEgiSPwmpN4Ipt++TFArXygZXfACNgCinE=;
+	s=arc-20240116; t=1724254903; c=relaxed/simple;
+	bh=F+fJre0vkzk/Pxm4i7v/F9bV2FxvSW4+ss0wcm/IOk0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vgp2mZlvy6ko3beCIN/Z/9fq1isDvZw6uPQE0hJxs+J04560+rwXkk4+DdW7F0bIcV0qHbtiuIE0aWvMEujlsn181QWKEhWRBBHyhgeBRQq+/KRIEDW415y3VcciWX7lVPQz3f0AvWZIHgJo4YiwLjfvV70NUP1f3yXxr7s+yPY=
+	 MIME-Version; b=o6BvrgwTI0xJpw3wZzSbv0ft4DYQAH4d0H0DSHPZbNfwpoc0EHcgBzm/EWmJ4dnjT/xcV6XifCf4gDu+iF+aU0Y7d8mmktZAbv+ovUEU+V1g/kQpYJdv98SpWG7w/2QaK5oKbA7ju9zag3yxRIxFNQY/q222K09qq95CwhOJaHw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88264DA7;
-	Wed, 21 Aug 2024 08:41:59 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27415152B;
+	Wed, 21 Aug 2024 08:42:07 -0700 (PDT)
 Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.37.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B6343F73B;
-	Wed, 21 Aug 2024 08:41:29 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9108C3F73B;
+	Wed, 21 Aug 2024 08:41:37 -0700 (PDT)
 From: Steven Price <steven.price@arm.com>
 To: kvm@vger.kernel.org,
 	kvmarm@lists.linux.dev
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>,
+Cc: Steven Price <steven.price@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Marc Zyngier <maz@kernel.org>,
 	Will Deacon <will@kernel.org>,
@@ -53,11 +53,10 @@ Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>,
 	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
 	Gavin Shan <gshan@redhat.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	Steven Price <steven.price@arm.com>
-Subject: [PATCH v4 40/43] arm64: RME: Provide register list for unfinalized RME RECs
-Date: Wed, 21 Aug 2024 16:38:41 +0100
-Message-Id: <20240821153844.60084-41-steven.price@arm.com>
+	Alper Gun <alpergun@google.com>
+Subject: [PATCH v4 42/43] arm64: kvm: Expose support for private memory
+Date: Wed, 21 Aug 2024 16:38:43 +0100
+Message-Id: <20240821153844.60084-43-steven.price@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240821153844.60084-1-steven.price@arm.com>
 References: <20240821153844.60084-1-steven.price@arm.com>
@@ -69,71 +68,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Select KVM_GENERIC_PRIVATE_MEM and provide the necessary support
+functions.
 
-KVM_GET_REG_LIST should not be called before SVE is finalized. The ioctl
-handler currently returns -EPERM in this case. But because it uses
-kvm_arm_vcpu_is_finalized(), it now also rejects the call for
-unfinalized REC even though finalizing the REC can only be done late,
-after Realm descriptor creation.
-
-Move the check to copy_sve_reg_indices(). One adverse side effect of
-this change is that a KVM_GET_REG_LIST call that only probes for the
-array size will now succeed even if SVE is not finalized, but that seems
-harmless since the following KVM_GET_REG_LIST with the full array will
-fail.
-
-Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/arm64/kvm/arm.c   | 4 ----
- arch/arm64/kvm/guest.c | 9 +++------
- 2 files changed, 3 insertions(+), 10 deletions(-)
+Changes since v2:
+ * Switch kvm_arch_has_private_mem() to a macro to avoid overhead of a
+   function call.
+ * Guard definitions of kvm_arch_{pre,post}_set_memory_attributes() with
+   #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES.
+ * Early out in kvm_arch_post_set_memory_attributes() if the WARN_ON
+   should trigger.
+---
+ arch/arm64/include/asm/kvm_host.h |  6 ++++++
+ arch/arm64/kvm/Kconfig            |  1 +
+ arch/arm64/kvm/mmu.c              | 22 ++++++++++++++++++++++
+ 3 files changed, 29 insertions(+)
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index bd79a928d036..05d9062470c2 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -1843,10 +1843,6 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 		if (unlikely(!kvm_vcpu_initialized(vcpu)))
- 			break;
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 178e02dc4927..a669ff7b0958 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -1367,6 +1367,12 @@ struct kvm *kvm_arch_alloc_vm(void);
  
--		r = -EPERM;
--		if (!kvm_arm_vcpu_is_finalized(vcpu))
--			break;
--
- 		r = -EFAULT;
- 		if (copy_from_user(&reg_list, user_list, sizeof(reg_list)))
- 			break;
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-index e00b72fba33d..b12b5e4ddd8c 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -653,12 +653,9 @@ static unsigned long num_sve_regs(const struct kvm_vcpu *vcpu)
- {
- 	const unsigned int slices = vcpu_sve_slices(vcpu);
+ #define vcpu_is_protected(vcpu)		kvm_vm_is_protected((vcpu)->kvm)
  
--	if (!vcpu_has_sve(vcpu))
-+	if (!vcpu_has_sve(vcpu) || !kvm_arm_vcpu_sve_finalized(vcpu))
- 		return 0;
++#ifdef CONFIG_KVM_PRIVATE_MEM
++#define kvm_arch_has_private_mem(kvm) ((kvm)->arch.is_realm)
++#else
++#define kvm_arch_has_private_mem(kvm) false
++#endif
++
+ int kvm_arm_vcpu_finalize(struct kvm_vcpu *vcpu, int feature);
+ bool kvm_arm_vcpu_is_finalized(struct kvm_vcpu *vcpu);
  
--	/* Policed by KVM_GET_REG_LIST: */
--	WARN_ON(!kvm_arm_vcpu_sve_finalized(vcpu));
--
- 	return slices * (SVE_NUM_PREGS + SVE_NUM_ZREGS + 1 /* FFR */)
- 		+ 1; /* KVM_REG_ARM64_SVE_VLS */
+diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+index 58f09370d17e..8da57e74c86a 100644
+--- a/arch/arm64/kvm/Kconfig
++++ b/arch/arm64/kvm/Kconfig
+@@ -37,6 +37,7 @@ menuconfig KVM
+ 	select HAVE_KVM_VCPU_RUN_PID_CHANGE
+ 	select SCHED_INFO
+ 	select GUEST_PERF_EVENTS if PERF_EVENTS
++	select KVM_GENERIC_PRIVATE_MEM
+ 	help
+ 	  Support hosting virtualized guest machines.
+ 
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 2110dd4c18db..c8bfeda9e1e6 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -2284,6 +2284,28 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 	return ret;
  }
-@@ -674,8 +671,8 @@ static int copy_sve_reg_indices(const struct kvm_vcpu *vcpu,
- 	if (!vcpu_has_sve(vcpu))
- 		return 0;
  
--	/* Policed by KVM_GET_REG_LIST: */
--	WARN_ON(!kvm_arm_vcpu_sve_finalized(vcpu));
-+	if (!kvm_arm_vcpu_sve_finalized(vcpu))
-+		return -EPERM;
- 
- 	/*
- 	 * Enumerate this first, so that userspace can save/restore in
++#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
++bool kvm_arch_pre_set_memory_attributes(struct kvm *kvm,
++					struct kvm_gfn_range *range)
++{
++	WARN_ON_ONCE(!kvm_arch_has_private_mem(kvm));
++	return false;
++}
++
++bool kvm_arch_post_set_memory_attributes(struct kvm *kvm,
++					 struct kvm_gfn_range *range)
++{
++	if (WARN_ON_ONCE(!kvm_arch_has_private_mem(kvm)))
++		return false;
++
++	if (range->arg.attributes & KVM_MEMORY_ATTRIBUTE_PRIVATE)
++		range->only_shared = true;
++	kvm_unmap_gfn_range(kvm, range);
++
++	return false;
++}
++#endif
++
+ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+ {
+ }
 -- 
 2.34.1
 
