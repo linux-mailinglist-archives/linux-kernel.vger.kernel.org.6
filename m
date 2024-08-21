@@ -1,425 +1,427 @@
-Return-Path: <linux-kernel+bounces-296092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B4095A585
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:52:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C160795A587
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BCE1F22E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D3F1F22F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6970178387;
-	Wed, 21 Aug 2024 19:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC3516FF5F;
+	Wed, 21 Aug 2024 19:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bO76IR4x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzkFwFLg"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBF516F907;
-	Wed, 21 Aug 2024 19:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F39171066;
+	Wed, 21 Aug 2024 19:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724269880; cv=none; b=ahZ3e+MU1VKxQoGemzWBDxdgHrH+ZuPXxbz2FUqMSRmwndtoUGLiV6AVOQm2+fuqfCJqWcbMKNBzwqeAps3RjUK+cWqOgqCa4cj6w4Umgu/7OovbljLuqWVmVizGEKC8Co3D6ims8sTtesYddPdGXrDEWJa8pj4UqDHE9tClT5Y=
+	t=1724269889; cv=none; b=YRGGoL2Kb/WBMaEbJxSZN86OH5a24yplT+JI8J+CLBGQvEpm1NrpVtjF1jn6yookOrzTgGLGDuHY0J/aqE9iuw71wKUjBwhy8LlKjCmfAk8MaNeRrqVVdFEWNisOUGT9KLl67Lp9sHA4xOHjzEmiXQRYeBHJO53DiMmhzHKQC48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724269880; c=relaxed/simple;
-	bh=5yH/d7BOwvCKepANKQGaHVNcRaNRmrS4M7rZQdZpQ9I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JT6vv77vH6EdBKAqiqUFQ9waQR6iv2lzc7RpRcYNqIS6WWbHD3EnqhkKVWwo+RBu6YmyWiG/a14DSYqQIRdTB0NNy3CKZDvSYKaG6+5+UfNlrz84em/bHlPUaSYjtVrSz7eU9z4W+gSkLsSRGJ7BxzYdgwQSZG4wVor/PyeSpK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bO76IR4x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDFFC32786;
-	Wed, 21 Aug 2024 19:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724269880;
-	bh=5yH/d7BOwvCKepANKQGaHVNcRaNRmrS4M7rZQdZpQ9I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bO76IR4xkVDTdbV58zfmkn/RnbX2mE0qFHCuzUS8FIi0wgKomSjKmjRcetqZzltxr
-	 UxM56Rh94VQsu+dd1+PMSn49PykuqqUrhaKLQdGe2dz3ns+GVGLtMn4bOw7IPZTaTd
-	 YuXb4brXIT9HvIhngvRbxhbsPVDf28bq94x0klM1pH0RQlKMnbtQWYTQTmGbvLggup
-	 o56nIHy08FO/rZeUb5qtQrnTPct8mhSWDETQwiCGzwWzKxOaN8Vjo6V/6EC4+ZKtyu
-	 ACEeWFSWUwaGgnS4REB3Yc1I83kt21uDe/GhGu6M6sAIdFkAGmVbEEvw+15KeJKn2c
-	 /zukYuwgHYxEg==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 21 Aug 2024 20:49:54 +0100
-Subject: [PATCH RFT v10 8/8] selftests/clone3: Test shadow stack support
+	s=arc-20240116; t=1724269889; c=relaxed/simple;
+	bh=RV79pZyAk89wV7IZyPRZ3c+JwWNAY79LO4tqoiruEt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yuaa0vVLADIsaq0ue6jm4MG98h4GXQSGhEAT27YQG1j6GwA3sIVoXQlJ2FzjzlupmP0kkpf86V5JQtZAn51FjNYlp/sxpXU4XMmkv9cimm0NRuFMySOoUAcymHS35ggctuPb3d6Zshbdn1G9usqTD2+GP8Qu5HVbcw5ug7CXb2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzkFwFLg; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-530e062217eso88522e87.1;
+        Wed, 21 Aug 2024 12:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724269885; x=1724874685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NLhmbmyjy8hjjCX4hi+KvgP62vWsvB01yymrRQ6wR8U=;
+        b=OzkFwFLgCi9UuNvNF39tKPBx5EvXKilh5DN+QKKQUmV/i+2SwHvF/dmivEOYAeNhRi
+         clxV/mPidhkfp/XpKCfThMbOHz2r4RTN9Sl6BjePTn5BRgVuBkj/jijIy04Mh6W0MEZI
+         3Djy/tJoDuSXwZNfn7y05P954Xfg87F6+NBCdC3gRVINWZTZPw8MpZuiEz4MgoSIhHah
+         1ENZDX+CC9eKuSJQGLAmBk7scDpzjZ1OBJW9llycltaoV1ETzjeTHiQfs0bakVaI9/RN
+         OoiLQZewxb9MoDf86GpqN6bGEGUZzdtn2uY//PhFkO2amg6ZHIn83j+N/de8qbGcZO7p
+         Pidw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724269885; x=1724874685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NLhmbmyjy8hjjCX4hi+KvgP62vWsvB01yymrRQ6wR8U=;
+        b=P/kD6OYCu1OY4Qp6Oiq70v/lUC3VIABGLd1ExDE+oysinincqQlrRLZ3sp+ClrMYy7
+         MNPSNGAq8VGSfnH/dFh7JxFgrmAFJTDkY6oy/tbQhS57Npn/O6qqroVBDNWG8DRWZOl/
+         e5Dgv7KXAJiqyZCKqSZSN0SsI+npPi3SBVxgtOIyE3M7AQANtdVF8aMv9UFUAudjyp39
+         /fKsPdUTJnimAHbYdNB7o4tY1v9CV6PU7fBuzfWwv1fcZMZUm9kXIPU0EbwQxwy6pp1M
+         VDQE7zO/wFZ2DnqNMDtsL8scHHNTDFSaoFEN/2VboUGmXZz5baqoICPQJrsZuZNwvBUJ
+         3Yqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBP5B+iqx8xNSlxt2H40HrnvGHTyN2gY7EWFMu3iln5ol6eneHKApoprhxD5HN2rlYE+hVdz2msPA/EExm@vger.kernel.org, AJvYcCXtKyN5LT2ICcDTeFTCGbCHDCuunu+ZX0vaVNgvo+Nr8jWIhOx2ltC4OuPXwxSWZ5hw91r23uTC6TO1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze3JCy6cbWrRmWCy+rPpD7rHiRp8YiwgP0ZDK3vp5OvxqRreSv
+	CvOA77SgyGP+dztlso8SXVd311XXlwnCdBHpXT+TcYEFNzvFDtxSIrWrc5fBLW7nM6uDASPULPr
+	vy09iHBViPwUrA+BF3WuulcBkLYc=
+X-Google-Smtp-Source: AGHT+IEMrbeSwRdWjgmxAGOa3TjA1C7uJECxwBInD7Fo+ycURP+9D3FjDzGHtsh+R8OBdkZKKO9/5zUY+TqrbeE4d0E=
+X-Received: by 2002:a05:6512:118f:b0:530:b871:eb9a with SMTP id
+ 2adb3069b0e04-533485efb26mr2437461e87.47.1724269885056; Wed, 21 Aug 2024
+ 12:51:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240821-clone3-shadow-stack-v10-8-06e8797b9445@kernel.org>
-References: <20240821-clone3-shadow-stack-v10-0-06e8797b9445@kernel.org>
-In-Reply-To: <20240821-clone3-shadow-stack-v10-0-06e8797b9445@kernel.org>
-To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
- "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
- linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10217; i=broonie@kernel.org;
- h=from:subject:message-id; bh=5yH/d7BOwvCKepANKQGaHVNcRaNRmrS4M7rZQdZpQ9I=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxkT5lEPDkHO+kI0AYWEGJW68V/Z2+99uCn37h2iU
- 7NF7e5uJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsZE+QAKCRAk1otyXVSH0DGhB/
- 41437f4Z9w91qjmY7Y6wP8BqyTB5hZ/18M52syUYRGlKumZk8JmxoyUjN03v1PuJ4B4VxiBkjd7j0G
- nf8w8zDADmwgDFS32jTeQ+ETBewEE9vbe1cIMnIvl+Wz3mFtSddqVvDw0rJU3brE3+47LiHyWrCzsE
- Rq1ukwpb9FFT0k1KlTb7VPd0cGabyPj6v7EcGzi6rHDOPFYdLi2vhGAo1at33OtP+4a3iLo7CYxX/V
- fMyrGsXwYcmGq4RfcWMsHAeMsYU20mD6btNmwjqOdth40hktVFIQyrGAEbiIz96/Y5/8iYeDHJ0Kqf
- YCgcZJtl0jM7F1J2xJYwMqWoEThmD5
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20240820143319.274033-1-chenxiaosong@chenxiaosong.com> <20240820143319.274033-7-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240820143319.274033-7-chenxiaosong@chenxiaosong.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 21 Aug 2024 14:51:13 -0500
+Message-ID: <CAH2r5mt37quVDJsjqpKsaFi8PhT0PBeKyjn8x6CMowZr5GvAyA@mail.gmail.com>
+Subject: Re: [PATCH 6/8] smb: move some duplicate definitions to common/smbacl.h
+To: chenxiaosong@chenxiaosong.com
+Cc: linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	bharathsm@microsoft.com, chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, 
+	huhai@kylinos.cn, liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add basic test coverage for specifying the shadow stack for a newly
-created thread via clone3(), including coverage of the newly extended
-argument structure.  We check that a user specified shadow stack can be
-provided, and that invalid combinations of parameters are rejected.
+merged into cifs-2.6.git for-next-next (target for 6.12-rc1) but fixed
+the typo in author !=3D Signed-off-by
 
-In order to facilitate testing on systems without userspace shadow stack
-support we manually enable shadow stacks on startup, this is architecture
-specific due to the use of an arch_prctl() on x86. Due to interactions with
-potential userspace locking of features we actually detect support for
-shadow stacks on the running system by attempting to allocate a shadow
-stack page during initialisation using map_shadow_stack(), warning if this
-succeeds when the enable failed.
+On Tue, Aug 20, 2024 at 9:43=E2=80=AFAM <chenxiaosong@chenxiaosong.com> wro=
+te:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> In order to maintain the code more easily, move duplicate acl
+> definitions to new common header file.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+> ---
+>  fs/smb/client/cifsacl.h | 58 +--------------------------
+>  fs/smb/common/smbacl.h  | 88 +++++++++++++++++++++++++++++++++++++++++
+>  fs/smb/server/smbacl.h  | 80 +------------------------------------
+>  3 files changed, 91 insertions(+), 135 deletions(-)
+>  create mode 100644 fs/smb/common/smbacl.h
+>
+> diff --git a/fs/smb/client/cifsacl.h b/fs/smb/client/cifsacl.h
+> index ccbfc754bd3c..74cff8a121e5 100644
+> --- a/fs/smb/client/cifsacl.h
+> +++ b/fs/smb/client/cifsacl.h
+> @@ -9,8 +9,7 @@
+>  #ifndef _CIFSACL_H
+>  #define _CIFSACL_H
+>
+> -#define NUM_AUTHS (6)  /* number of authority fields */
+> -#define SID_MAX_SUB_AUTHORITIES (15) /* max number of sub authority fiel=
+ds */
+> +#include "../common/smbacl.h"
+>
+>  #define READ_BIT        0x4
+>  #define WRITE_BIT       0x2
+> @@ -23,12 +22,6 @@
+>  #define UBITSHIFT      6
+>  #define GBITSHIFT      3
+>
+> -#define ACCESS_ALLOWED 0
+> -#define ACCESS_DENIED  1
+> -
+> -#define SIDOWNER 1
+> -#define SIDGROUP 2
+> -
+>  /*
+>   * Security Descriptor length containing DACL with 3 ACEs (one each for
+>   * owner, group and world).
+> @@ -37,24 +30,6 @@
+>                               sizeof(struct cifs_acl) + \
+>                               (sizeof(struct cifs_ace) * 4))
+>
+> -/*
+> - * Maximum size of a string representation of a SID:
+> - *
+> - * The fields are unsigned values in decimal. So:
+> - *
+> - * u8:  max 3 bytes in decimal
+> - * u32: max 10 bytes in decimal
+> - *
+> - * "S-" + 3 bytes for version field + 15 for authority field + NULL term=
+inator
+> - *
+> - * For authority field, max is when all 6 values are non-zero and it mus=
+t be
+> - * represented in hex. So "-0x" + 12 hex digits.
+> - *
+> - * Add 11 bytes for each subauthority field (10 bytes each + 1 for '-')
+> - */
+> -#define SID_STRING_BASE_SIZE (2 + 3 + 15 + 1)
+> -#define SID_STRING_SUBAUTH_SIZE (11) /* size of a single subauth string =
+*/
+> -
+>  struct cifs_ntsd {
+>         __le16 revision; /* revision level */
+>         __le16 type;
+> @@ -80,37 +55,6 @@ struct cifs_acl {
+>         __le32 num_aces;
+>  } __attribute__((packed));
+>
+> -/* ACE types - see MS-DTYP 2.4.4.1 */
+> -#define ACCESS_ALLOWED_ACE_TYPE        0x00
+> -#define ACCESS_DENIED_ACE_TYPE 0x01
+> -#define SYSTEM_AUDIT_ACE_TYPE  0x02
+> -#define SYSTEM_ALARM_ACE_TYPE  0x03
+> -#define ACCESS_ALLOWED_COMPOUND_ACE_TYPE 0x04
+> -#define ACCESS_ALLOWED_OBJECT_ACE_TYPE 0x05
+> -#define ACCESS_DENIED_OBJECT_ACE_TYPE  0x06
+> -#define SYSTEM_AUDIT_OBJECT_ACE_TYPE   0x07
+> -#define SYSTEM_ALARM_OBJECT_ACE_TYPE   0x08
+> -#define ACCESS_ALLOWED_CALLBACK_ACE_TYPE 0x09
+> -#define ACCESS_DENIED_CALLBACK_ACE_TYPE        0x0A
+> -#define ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE 0x0B
+> -#define ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE  0x0C
+> -#define SYSTEM_AUDIT_CALLBACK_ACE_TYPE 0x0D
+> -#define SYSTEM_ALARM_CALLBACK_ACE_TYPE 0x0E /* Reserved */
+> -#define SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE 0x0F
+> -#define SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE 0x10 /* reserved */
+> -#define SYSTEM_MANDATORY_LABEL_ACE_TYPE        0x11
+> -#define SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE 0x12
+> -#define SYSTEM_SCOPED_POLICY_ID_ACE_TYPE 0x13
+> -
+> -/* ACE flags */
+> -#define OBJECT_INHERIT_ACE     0x01
+> -#define CONTAINER_INHERIT_ACE  0x02
+> -#define NO_PROPAGATE_INHERIT_ACE 0x04
+> -#define INHERIT_ONLY_ACE       0x08
+> -#define INHERITED_ACE          0x10
+> -#define SUCCESSFUL_ACCESS_ACE_FLAG 0x40
+> -#define FAILED_ACCESS_ACE_FLAG 0x80
+> -
+>  struct cifs_ace {
+>         __u8 type; /* see above and MS-DTYP 2.4.4.1 */
+>         __u8 flags;
+> diff --git a/fs/smb/common/smbacl.h b/fs/smb/common/smbacl.h
+> new file mode 100644
+> index 000000000000..b46341d56e6a
+> --- /dev/null
+> +++ b/fs/smb/common/smbacl.h
+> @@ -0,0 +1,88 @@
+> +/* SPDX-License-Identifier: LGPL-2.1+ */
+> +/*
+> + *   Copyright (c) International Business Machines  Corp., 2007
+> + *   Author(s): Steve French (sfrench@us.ibm.com)
+> + *   Modified by Namjae Jeon (linkinjeon@kernel.org)
+> + */
+> +
+> +#ifndef _COMMON_SMBACL_H
+> +#define _COMMON_SMBACL_H
+> +
+> +#define NUM_AUTHS (6)  /* number of authority fields */
+> +#define SID_MAX_SUB_AUTHORITIES (15) /* max number of sub authority fiel=
+ds */
+> +
+> +/*
+> + * ACE types - see MS-DTYP 2.4.4.1
+> + */
+> +enum {
+> +       ACCESS_ALLOWED,
+> +       ACCESS_DENIED,
+> +};
+> +
+> +/*
+> + * Security ID types
+> + */
+> +enum {
+> +       SIDOWNER =3D 1,
+> +       SIDGROUP,
+> +       SIDCREATOR_OWNER,
+> +       SIDCREATOR_GROUP,
+> +       SIDUNIX_USER,
+> +       SIDUNIX_GROUP,
+> +       SIDNFS_USER,
+> +       SIDNFS_GROUP,
+> +       SIDNFS_MODE,
+> +};
+> +
+> +/* ACE types - see MS-DTYP 2.4.4.1 */
+> +#define ACCESS_ALLOWED_ACE_TYPE 0x00
+> +#define ACCESS_DENIED_ACE_TYPE  0x01
+> +#define SYSTEM_AUDIT_ACE_TYPE   0x02
+> +#define SYSTEM_ALARM_ACE_TYPE   0x03
+> +#define ACCESS_ALLOWED_COMPOUND_ACE_TYPE 0x04
+> +#define ACCESS_ALLOWED_OBJECT_ACE_TYPE  0x05
+> +#define ACCESS_DENIED_OBJECT_ACE_TYPE   0x06
+> +#define SYSTEM_AUDIT_OBJECT_ACE_TYPE    0x07
+> +#define SYSTEM_ALARM_OBJECT_ACE_TYPE    0x08
+> +#define ACCESS_ALLOWED_CALLBACK_ACE_TYPE 0x09
+> +#define ACCESS_DENIED_CALLBACK_ACE_TYPE 0x0A
+> +#define ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE 0x0B
+> +#define ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE  0x0C
+> +#define SYSTEM_AUDIT_CALLBACK_ACE_TYPE  0x0D
+> +#define SYSTEM_ALARM_CALLBACK_ACE_TYPE  0x0E /* Reserved */
+> +#define SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE 0x0F
+> +#define SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE 0x10 /* reserved */
+> +#define SYSTEM_MANDATORY_LABEL_ACE_TYPE 0x11
+> +#define SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE 0x12
+> +#define SYSTEM_SCOPED_POLICY_ID_ACE_TYPE 0x13
+> +
+> +/* ACE flags */
+> +#define OBJECT_INHERIT_ACE             0x01
+> +#define CONTAINER_INHERIT_ACE          0x02
+> +#define NO_PROPAGATE_INHERIT_ACE       0x04
+> +#define INHERIT_ONLY_ACE               0x08
+> +#define INHERITED_ACE                  0x10
+> +#define SUCCESSFUL_ACCESS_ACE_FLAG     0x40
+> +#define FAILED_ACCESS_ACE_FLAG         0x80
+> +
+> +/*
+> + * Maximum size of a string representation of a SID:
+> + *
+> + * The fields are unsigned values in decimal. So:
+> + *
+> + * u8:  max 3 bytes in decimal
+> + * u32: max 10 bytes in decimal
+> + *
+> + * "S-" + 3 bytes for version field + 15 for authority field + NULL term=
+inator
+> + *
+> + * For authority field, max is when all 6 values are non-zero and it mus=
+t be
+> + * represented in hex. So "-0x" + 12 hex digits.
+> + *
+> + * Add 11 bytes for each subauthority field (10 bytes each + 1 for '-')
+> + */
+> +#define SID_STRING_BASE_SIZE (2 + 3 + 15 + 1)
+> +#define SID_STRING_SUBAUTH_SIZE (11) /* size of a single subauth string =
+*/
+> +
+> +#define DOMAIN_USER_RID_LE     cpu_to_le32(513)
+> +
+> +#endif /* _COMMON_SMBACL_H */
+> diff --git a/fs/smb/server/smbacl.h b/fs/smb/server/smbacl.h
+> index 2b52861707d8..3e44bb77d6b0 100644
+> --- a/fs/smb/server/smbacl.h
+> +++ b/fs/smb/server/smbacl.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _SMBACL_H
+>  #define _SMBACL_H
+>
+> +#include "../common/smbacl.h"
+>  #include <linux/fs.h>
+>  #include <linux/namei.h>
+>  #include <linux/posix_acl.h>
+> @@ -15,32 +16,6 @@
+>
+>  #include "mgmt/tree_connect.h"
+>
+> -#define NUM_AUTHS (6)  /* number of authority fields */
+> -#define SID_MAX_SUB_AUTHORITIES (15) /* max number of sub authority fiel=
+ds */
+> -
+> -/*
+> - * ACE types - see MS-DTYP 2.4.4.1
+> - */
+> -enum {
+> -       ACCESS_ALLOWED,
+> -       ACCESS_DENIED,
+> -};
+> -
+> -/*
+> - * Security ID types
+> - */
+> -enum {
+> -       SIDOWNER =3D 1,
+> -       SIDGROUP,
+> -       SIDCREATOR_OWNER,
+> -       SIDCREATOR_GROUP,
+> -       SIDUNIX_USER,
+> -       SIDUNIX_GROUP,
+> -       SIDNFS_USER,
+> -       SIDNFS_GROUP,
+> -       SIDNFS_MODE,
+> -};
+> -
+>  /* Revision for ACLs */
+>  #define SD_REVISION    1
+>
+> @@ -62,57 +37,6 @@ enum {
+>  #define RM_CONTROL_VALID       0x4000
+>  #define SELF_RELATIVE          0x8000
+>
+> -/* ACE types - see MS-DTYP 2.4.4.1 */
+> -#define ACCESS_ALLOWED_ACE_TYPE 0x00
+> -#define ACCESS_DENIED_ACE_TYPE  0x01
+> -#define SYSTEM_AUDIT_ACE_TYPE   0x02
+> -#define SYSTEM_ALARM_ACE_TYPE   0x03
+> -#define ACCESS_ALLOWED_COMPOUND_ACE_TYPE 0x04
+> -#define ACCESS_ALLOWED_OBJECT_ACE_TYPE  0x05
+> -#define ACCESS_DENIED_OBJECT_ACE_TYPE   0x06
+> -#define SYSTEM_AUDIT_OBJECT_ACE_TYPE    0x07
+> -#define SYSTEM_ALARM_OBJECT_ACE_TYPE    0x08
+> -#define ACCESS_ALLOWED_CALLBACK_ACE_TYPE 0x09
+> -#define ACCESS_DENIED_CALLBACK_ACE_TYPE 0x0A
+> -#define ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE 0x0B
+> -#define ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE  0x0C
+> -#define SYSTEM_AUDIT_CALLBACK_ACE_TYPE  0x0D
+> -#define SYSTEM_ALARM_CALLBACK_ACE_TYPE  0x0E /* Reserved */
+> -#define SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE 0x0F
+> -#define SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE 0x10 /* reserved */
+> -#define SYSTEM_MANDATORY_LABEL_ACE_TYPE 0x11
+> -#define SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE 0x12
+> -#define SYSTEM_SCOPED_POLICY_ID_ACE_TYPE 0x13
+> -
+> -/* ACE flags */
+> -#define OBJECT_INHERIT_ACE             0x01
+> -#define CONTAINER_INHERIT_ACE          0x02
+> -#define NO_PROPAGATE_INHERIT_ACE       0x04
+> -#define INHERIT_ONLY_ACE               0x08
+> -#define INHERITED_ACE                  0x10
+> -#define SUCCESSFUL_ACCESS_ACE_FLAG     0x40
+> -#define FAILED_ACCESS_ACE_FLAG         0x80
+> -
+> -/*
+> - * Maximum size of a string representation of a SID:
+> - *
+> - * The fields are unsigned values in decimal. So:
+> - *
+> - * u8:  max 3 bytes in decimal
+> - * u32: max 10 bytes in decimal
+> - *
+> - * "S-" + 3 bytes for version field + 15 for authority field + NULL term=
+inator
+> - *
+> - * For authority field, max is when all 6 values are non-zero and it mus=
+t be
+> - * represented in hex. So "-0x" + 12 hex digits.
+> - *
+> - * Add 11 bytes for each subauthority field (10 bytes each + 1 for '-')
+> - */
+> -#define SID_STRING_BASE_SIZE (2 + 3 + 15 + 1)
+> -#define SID_STRING_SUBAUTH_SIZE (11) /* size of a single subauth string =
+*/
+> -
+> -#define DOMAIN_USER_RID_LE     cpu_to_le32(513)
+> -
+>  struct ksmbd_conn;
+>
+>  struct smb_ntsd {
+> @@ -131,7 +55,7 @@ struct smb_sid {
+>         __le32 sub_auth[SID_MAX_SUB_AUTHORITIES]; /* sub_auth[num_subauth=
+] */
+>  } __packed;
+>
+> -/* size of a struct cifs_sid, sans sub_auth array */
+> +/* size of a struct smb_sid, sans sub_auth array */
+>  #define CIFS_SID_BASE_SIZE (1 + 1 + NUM_AUTHS)
+>
+>  struct smb_acl {
+> --
+> 2.34.1
+>
+>
+>
 
-In order to allow testing of user configured shadow stacks on
-architectures with that feature we need to ensure that we do not return
-from the function where the clone3() syscall is called in the child
-process, doing so would trigger a shadow stack underflow.  To do this we
-use inline assembly rather than the standard syscall wrapper to call
-clone3().  In order to avoid surprises we also use a syscall rather than
-the libc exit() function., this should be overly cautious.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/clone3/clone3.c           | 171 +++++++++++++++++++++-
- tools/testing/selftests/clone3/clone3_selftests.h |  38 +++++
- 2 files changed, 208 insertions(+), 1 deletion(-)
+--=20
+Thanks,
 
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-index 5b8b7d640e70..534a9ea98cb1 100644
---- a/tools/testing/selftests/clone3/clone3.c
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -3,6 +3,7 @@
- /* Based on Christian Brauner's clone3() example */
- 
- #define _GNU_SOURCE
-+#include <asm/mman.h>
- #include <errno.h>
- #include <inttypes.h>
- #include <linux/types.h>
-@@ -11,6 +12,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <sys/mman.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <sys/un.h>
-@@ -19,8 +21,12 @@
- #include <sched.h>
- 
- #include "../kselftest.h"
-+#include "../ksft_shstk.h"
- #include "clone3_selftests.h"
- 
-+static bool shadow_stack_supported;
-+static size_t max_supported_args_size;
-+
- enum test_mode {
- 	CLONE3_ARGS_NO_TEST,
- 	CLONE3_ARGS_ALL_0,
-@@ -28,6 +34,13 @@ enum test_mode {
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
-+	CLONE3_ARGS_SHADOW_STACK,
-+	CLONE3_ARGS_SHADOW_STACK_BAD_BASE,
-+	CLONE3_ARGS_SHADOW_STACK_BAD_SIZE,
-+	CLONE3_ARGS_SHADOW_STACK_NO_SIZE,
-+	CLONE3_ARGS_SHADOW_STACK_NO_POINTER,
-+	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+	CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
- };
- 
- typedef bool (*filter_function)(void);
-@@ -44,6 +57,44 @@ struct test {
- 	filter_function filter;
- };
- 
-+
-+/*
-+ * We check for shadow stack support by attempting to use
-+ * map_shadow_stack() since features may have been locked by the
-+ * dynamic linker resulting in spurious errors when we attempt to
-+ * enable on startup.  We warn if the enable failed.
-+ */
-+static void test_shadow_stack_supported(void)
-+{
-+	long ret;
-+
-+	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
-+	if (ret == -1) {
-+		ksft_print_msg("map_shadow_stack() not supported\n");
-+	} else if ((void *)ret == MAP_FAILED) {
-+		ksft_print_msg("Failed to map shadow stack\n");
-+	} else {
-+		ksft_print_msg("Shadow stack supportd\n");
-+		shadow_stack_supported = true;
-+
-+		if (!shadow_stack_enabled)
-+			ksft_print_msg("Mapped but did not enable shadow stack\n");
-+	}
-+}
-+
-+static unsigned long long get_shadow_stack_page(unsigned long flags)
-+{
-+	unsigned long long page;
-+
-+	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
-+	if ((void *)page == MAP_FAILED) {
-+		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
-+		return 0;
-+	}
-+
-+	return page;
-+}
-+
- static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- {
- 	struct __clone_args args = {
-@@ -89,6 +140,32 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
- 		args.exit_signal = 0x00000000000000f0ULL;
- 		break;
-+	case CLONE3_ARGS_SHADOW_STACK:
-+		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		args.shadow_stack_size = getpagesize();
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_BAD_BASE:
-+		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN) + 1;
-+		args.shadow_stack_size = getpagesize();
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_BAD_SIZE:
-+		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		args.shadow_stack_size = getpagesize() - 1;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NO_POINTER:
-+		args.shadow_stack_size = getpagesize();
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NO_SIZE:
-+		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY:
-+		args.shadow_stack = (unsigned long long)malloc(getpagesize());
-+		args.shadow_stack_size = getpagesize();
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
-+		args.shadow_stack = get_shadow_stack_page(0);
-+		args.shadow_stack_size = getpagesize();
-+		break;
- 	}
- 
- 	memcpy(&args_ext.args, &args, sizeof(struct __clone_args));
-@@ -102,7 +179,12 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 
- 	if (pid == 0) {
- 		ksft_print_msg("I am the child, my PID is %d\n", getpid());
--		_exit(EXIT_SUCCESS);
-+		/*
-+		 * Use a raw syscall to ensure we don't get issues
-+		 * with manually specified shadow stack and exit handlers.
-+		 */
-+		syscall(__NR_exit, EXIT_SUCCESS);
-+		ksft_print_msg("CHILD FAILED TO EXIT PID is %d\n", getpid());
- 	}
- 
- 	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-@@ -184,6 +266,26 @@ static bool no_timenamespace(void)
- 	return true;
- }
- 
-+static bool have_shadow_stack(void)
-+{
-+	if (shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool no_shadow_stack(void)
-+{
-+	if (!shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack not supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static size_t page_size_plus_8(void)
- {
- 	return getpagesize() + 8;
-@@ -327,6 +429,70 @@ static const struct test tests[] = {
- 		.expected = -EINVAL,
- 		.test_mode = CLONE3_ARGS_NO_TEST,
- 	},
-+	{
-+		.name = "Shadow stack on system with shadow stack",
-+		.size = 0,
-+		.expected = 0,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with misaligned base address",
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_BAD_BASE,
-+	},
-+	{
-+		.name = "Shadow stack with misaligned size",
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_BAD_SIZE,
-+	},
-+	{
-+		.name = "Shadow stack with no pointer",
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_POINTER,
-+	},
-+	{
-+		.name = "Shadow stack with no size",
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_SIZE,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with no token",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with normal memory",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EFAULT,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack on system without shadow stack",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK,
-+		.filter = have_shadow_stack,
-+	},
- };
- 
- int main(int argc, char *argv[])
-@@ -334,9 +500,12 @@ int main(int argc, char *argv[])
- 	size_t size;
- 	int i;
- 
-+	enable_shadow_stack();
-+
- 	ksft_print_header();
- 	ksft_set_plan(ARRAY_SIZE(tests));
- 	test_clone3_supported();
-+	test_shadow_stack_supported();
- 
- 	for (i = 0; i < ARRAY_SIZE(tests); i++)
- 		test_clone3(&tests[i]);
-diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
-index 39b5dcba663c..38d82934668a 100644
---- a/tools/testing/selftests/clone3/clone3_selftests.h
-+++ b/tools/testing/selftests/clone3/clone3_selftests.h
-@@ -31,12 +31,50 @@ struct __clone_args {
- 	__aligned_u64 set_tid;
- 	__aligned_u64 set_tid_size;
- 	__aligned_u64 cgroup;
-+#ifndef CLONE_ARGS_SIZE_VER2
-+#define CLONE_ARGS_SIZE_VER2 88	/* sizeof third published struct */
-+#endif
-+	__aligned_u64 shadow_stack;
-+	__aligned_u64 shadow_stack_size;
-+#ifndef CLONE_ARGS_SIZE_VER3
-+#define CLONE_ARGS_SIZE_VER3 104 /* sizeof fourth published struct */
-+#endif
- };
- 
-+/*
-+ * For architectures with shadow stack support we need to be
-+ * absolutely sure that the clone3() syscall will be inline and not a
-+ * function call so we open code.
-+ */
-+#ifdef __x86_64__
-+static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
-+{
-+	long ret;
-+	register long _num  __asm__ ("rax") = __NR_clone3;
-+	register long _args __asm__ ("rdi") = (long)(args);
-+	register long _size __asm__ ("rsi") = (long)(size);
-+
-+	__asm__ volatile (
-+		"syscall\n"
-+		: "=a"(ret)
-+		: "r"(_args), "r"(_size),
-+		  "0"(_num)
-+		: "rcx", "r11", "memory", "cc"
-+	);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		return -1;
-+	}
-+
-+	return ret;
-+}
-+#else
- static pid_t sys_clone3(struct __clone_args *args, size_t size)
- {
- 	return syscall(__NR_clone3, args, size);
- }
-+#endif
- 
- static inline void test_clone3_supported(void)
- {
-
--- 
-2.39.2
-
+Steve
 
