@@ -1,75 +1,115 @@
-Return-Path: <linux-kernel+bounces-295780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D018095A16B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035B795A16C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF78283D54
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6902820F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA914B948;
-	Wed, 21 Aug 2024 15:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQn7mTu4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503ED14831C
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37E514B948;
+	Wed, 21 Aug 2024 15:32:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBADB13633F;
+	Wed, 21 Aug 2024 15:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254265; cv=none; b=Y6UtJ30AiwIgvtRYAzj75NeTM3IXQp+TY5nbZy8EPc4ncKaguFNe7lc4j0N1x4DGiXicllJqcNtYmwRoA0LH4uufa2CxovAplmwUcjPKzb90ihbFHWhdtN2WNYj6B/uxH0/szoejFnlsMe8n8arMJ33KQNlOjmlRakuRS7Lv9xY=
+	t=1724254374; cv=none; b=BzHcppj7yz8zUTDJmk55raEKcYjvMqGTGNJptjRhZjtndRw4HAJS6SCl5M4iovylZfZgkaJYiPJkde923jKIIK2No7V4uRDSzocUOT5j05FgZrr592FDzis5cSz3WWJDrf+jIunMjBu+TBRoEO03yfZrT/64ihaBwszBgEprgIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254265; c=relaxed/simple;
-	bh=gnwn+Az7wzgwX58lMi3e3c9b5h1hVOgScvEruijfLrM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=J3n5JQJLLZSGLsVZXHtYNXhHSIWvc/j7BC/YJGCycnZeNXdWCfe4FubYBUWNsiQxT8cU+QfpZtfAefwn+BjdY73/mTu6LpUMndgPX24y6t9uIZYrqNAkNoA7BFqNJwN0343g5TdzltOfvFq/TjSga1diww2boPWuVLezVyF1H/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQn7mTu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4903DC32781;
-	Wed, 21 Aug 2024 15:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724254264;
-	bh=gnwn+Az7wzgwX58lMi3e3c9b5h1hVOgScvEruijfLrM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=aQn7mTu4SlJKPdNyaaXDnW1W5SLBg2q4hLHaWO8QHJ7Xx/FK5AFL4ed4QPLTTPcn1
-	 MX+UAmaBBjdLVYs6uR3mZK/RGW1voj6xqfjZX+Thj0rQw7Qi5rk0GbpDccgimOAgz+
-	 wtDNqBHEXICfYvBNbXDu7imGdy1gGbz+BDk8WO0qrAogj84nq3PjfCklF/iHTIeafs
-	 z4eycL2S+Micht2OEhGN0J0y1ZWMM25i17sdJVcLkmD2M7tRddA4HfL+oz8y0rAW2Q
-	 S5bqhP3FRkt6XaikIFHxucMotTKcqOOyk9D+WJ1lALchBNngpOZA0z5ajj6Y8SFE6T
-	 A2l+vGCFTKKpw==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Lee Jones <lee@kernel.org>
-In-Reply-To: <20240802134736.283851-1-detlev.casanova@collabora.com>
-References: <20240802134736.283851-1-detlev.casanova@collabora.com>
-Subject: Re: (subset) [PATCH] mfd: rk8xx: Add support for rk806 on i2c bus
-Message-Id: <172425426403.1030290.447306304625489078.b4-ty@kernel.org>
-Date: Wed, 21 Aug 2024 16:31:04 +0100
+	s=arc-20240116; t=1724254374; c=relaxed/simple;
+	bh=p08qfXx88+C2uK3at4V8AcuVG2KeujrJ8pmJ0PzvQuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OA19awHLemoKzThL0xrdTuYeEc8KWTALg8pxuRnDiLGMpAbn8xBJ0txx+zlALxvq88dxfKIPTTCE8o8NE24EzAL2DlIzZlG8DH50ZXj9QxrF0uTTFe2O0IMXr+NXK7wNNgawo29f27lb+tIWs5QSX5PLKW3Si/MdUz7MTEFTIwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F5BEDA7;
+	Wed, 21 Aug 2024 08:33:18 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44BF43F73B;
+	Wed, 21 Aug 2024 08:32:51 -0700 (PDT)
+Date: Wed, 21 Aug 2024 16:32:46 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-ID: <ZsYInqSc-WS4UldP@J2N7QTR9R3.cambridge.arm.com>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+ <20240819112902.11451fe8@gandalf.local.home>
+ <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+ <20240819120244.5657eb2f@gandalf.local.home>
+ <20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
+ <ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+ <CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
+ <20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+In-Reply-To: <20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
 
-On Fri, 02 Aug 2024 09:47:36 -0400, Detlev Casanova wrote:
-> The ArmSoM Sige 5 board connects the rk806 PMIC on an i2c bus.
+On Wed, Aug 21, 2024 at 07:05:39AM +0900, Masami Hiramatsu wrote:
+> On Tue, 20 Aug 2024 08:10:42 -0700
+> Sami Tolvanen <samitolvanen@google.com> wrote:
 > 
+> > On Tue, Aug 20, 2024 at 3:48 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > >
+> > > On Tue, Aug 20, 2024 at 10:03:30AM +0900, Masami Hiramatsu wrote:
+> > > > On Mon, 19 Aug 2024 12:02:44 -0400
+> > > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >
+> > > > > On Tue, 20 Aug 2024 00:56:49 +0900
+> > > > > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > > > >
+> > > > > > >
+> > > > > > > We may need to add "noinline" or something to make sure those functions
+> > > > > > > don't get inlined for LTO.
+> > > > > >
+> > > > > > Yeah, we need such option at least for function call test.
+> > > > >
+> > > > > Could you add the noinline, and if it fixes the issue send a patch?
+> > > >
+> > > > I found the target function already has "noinline". I tried to add noinline
+> > > > to the testing function (callsite), but it also did not work.
+> > > > I think "noinline" is for the compiler, but LTO is done by the linker.
+> > >
+> > > If LTO is breaking noinline, then that has much larger implications for
+> > > noinstr code and similar, and means that LTO is unsound...
+> > 
+> > The noinline attribute is preserved in LLVM IR, so it should continue
+> > to work with LTO. Which function are we talking about here? Are you
+> > sure the function was inlined instead of being dropped completely?
+> > Does marking the function __used help?
 > 
+> We are talking about trace_selftest_startup_dynamic_tracing() in
+> kernel/trace/trace_selftest.c. The callee is func() which is actually
+> DYN_FTRACE_TEST_NAME() in kernel/trace/trace_selftest_dynamic.c.
+> That function passed as pointer (but the compiler can embed it by constant
+> propagation.)
 
-Applied, thanks!
+Ah, so IIUC the function isn't being inlined; the call is being
+optimized away becase callee() has no side-effects.
 
-[1/1] mfd: rk8xx: Add support for rk806 on i2c bus
-      commit: 2dc90423dd5c1b7df569555a5bfdf81634982c05
+That can happen without LTO if the caller is in the same compilation
+unit, and I have worked around that in the past by adding a barrier()
+into the callee.
 
---
-Lee Jones [李琼斯]
+If you add a barrier() into the callee, does it work? I suspect that's a
+reasonable workaround.
 
+Mark.
 
