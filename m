@@ -1,717 +1,248 @@
-Return-Path: <linux-kernel+bounces-295069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54CD959648
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:07:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D22E959650
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A605AB20C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774051F23805
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9018F188A3E;
-	Wed, 21 Aug 2024 07:43:26 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD87F19ABB9;
+	Wed, 21 Aug 2024 07:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="c+Pj7Txo"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2042.outbound.protection.outlook.com [40.107.255.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439AF1B81CB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724226204; cv=none; b=gZ8YwyPR8TRffBQoyEX55tfrYTDsCGYTqZlN1sCGZi67tqdxBY7VPkeG58ErFNBYN8mfszgKcsQs39NaDn8UgL9QIbde1sC+CXott82UGe7dAH8RwMJniI4EFtTU+db7T39cAXQb6zNyKDpRdhgLW9Xyn07CIM6f0ejDnCbJXVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724226204; c=relaxed/simple;
-	bh=JzaePTA/tlvrizEitO5y/Idwr0RDdfR9f1qPkpQ/xrg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S+cZryRktLVlT5ofEsFWc04UYFEQaT26wtZgdKcBAv5Bo/hHIshCGMsh4/KVaCaCwcc5t/hRAIWdr9cM7dOj1Im0tdh7IIn+R/dLUI6ZXjUe9+W7ebSrZbjs+ytevNoObyXBC/g3SHl4qjdFSrrkb91NiQieQzEeTUlhoTZS5vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d470803edso42930455ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 00:43:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724226201; x=1724831001;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2cZiwRe09hRYFUZZAhx5xPyOEst5/A+5yWmvX/xi9TA=;
-        b=T/crDjIfMiJMT+1MDz+avYOACkni33TMMZUqClmZC1X0PC9YirbfTKptSxk59nmI1k
-         HsjKw2xk2YN/5FrgfPXqgp0VMD/ohlCKC0FLy19+qZGscDDF3sn2LvfyMw/EXSkqjwbc
-         ai/8iE0HPsKU53rByBMQ8gbFalQLHm010738VjETHr3oN5r4O+6EWbshjo0W4Tkeal4w
-         X1XKUw8JdKCOZCqXvVfufo7vL7eW6V9nzj6J3NU4QuR5XecyFigc76uZbNyJWBqzmB/6
-         C2rXIOaX5dENoV4BsXW5itRK7FYq9ao6rS+idatR6PxYIenZ7TJjeEka1AmtjAPCZ5BM
-         Ks2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWOQ0m/8izHxujVoSqmn+angqGkCIVoaWhIZn2oSBdEacV988uhjCatJ7n22I7kyYH+LlutbaY66rNmNmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSUEygZkKJfL7xroxQVwDCHh3gvTSVrT3J9LOzJOiVInYe4Awo
-	5CfhOt3UlY0VOqqOa51lLC1B2sRo2v5zkiDjBxlZTHH4tH6JqqhFsCHyyRIyt4wtjSDNop0UkFE
-	17P5E+r5WRl4SxnZGgT+URwau8E6yhQwLKiv2krsmOVEAhnsPeZgkGRY=
-X-Google-Smtp-Source: AGHT+IHv++quIVVjc6zGOLENIdVbh2tusRP5N60PsE6LUjPXifHuUqgbdfCLzl8+Bqp2CY+JMcXEVMIzG2aQt8TKT+R+KHy3UDUJ
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17432192D85
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724226397; cv=fail; b=dgJKJeDI9Y/VxeBhqL6ofthKjtiLVbmLAVLUaE6pgSGmHNflnT06r42gK9rnm7SWe79GiSS4xUag5qg8TtkS2xXkL/s6OswcvgcgVikcsstGECC+putsiTFoAtPzDAyMH1qGG5tLTlICWLub5ODf0WErUHF63aC+N4g4hJn50NM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724226397; c=relaxed/simple;
+	bh=UibxDN7S42btV2XRAgxY35AN0FgZW4Rm3q4+U+HObmY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tS/5NEHKrFUPFO7Z1A4PlIMHpxBazKDN3sUl/CCD3g0BtacAE3+5H6UKWBZKO9YlFtkqH4UFFdjuZ+HTloPaYlFZpG4KY8fX6Cgcgj2EafGeNWuKtIfbyGW0IJEzHrEYilnodFY95mFP4Ewr77QyOlpabKYuHHTfuIm5mHDu3eA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=c+Pj7Txo; arc=fail smtp.client-ip=40.107.255.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oBq5rZLwAA4fEcQwTmerlrpz+qpeux3xt7/RCf8RsfK+TljpzF6ZgVHCUDLR2GYRkqkb8+IgCqA3/4YyBaPcEDWBC68/Bjf7ZxVXdJg7yN5tjeCLIvSXqlfnYLwC+zXk6cjsqf+MzJ3nk8yaTgyilpY1ecKjTjA80Uhk3z5bo1y4GzivNOqMledtGN3YuZ+6hvL09DhXiE651meiUEDmeTju642B/z6GWATl6SPOXlCpe60+pgVH37fVAI0opiXWdfpXfjEwbMXYaK8JSCt2SJHKvkiRhJ4M3sPEdoYyg3ZiV6s9rkSXrYTS7TwhmSXe9VYiU6RANl++79UvP5ZSoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HHaBFw9+bIi2qBKwhuz2U99Ei1sm+X/y2E7KaDyiOMQ=;
+ b=MtxC0m7omG1gLWeqmH4IaQ8hRpHaf8Z/FwLYeTVU0NhpraqhF0CbPm7D2BG2mrjTu/PDUTDdlGtD7OgW+/ZaMBm5AgOejJsKsiDy+vsMwIRkjLeDLS9BOyK9Vo/NkTd30X2dMTz8yhUOTnDYVF4UlT4XegNEUfFPp/a4LncMP6DoDYNAw9nsBR7eCMH1XF+53vNCuy2ZE79l1uAnhwukn2ooid4eX7XhIIzVchWshhLgck51Yt15hC7uHMXJgx0uAdrk1KW1HeLCpocTqXtjgjDBcs7Xg2GYfmmB9YXivuOhtDw9DqblYf43wqNh9dJ/xF/Pf6DoFe58C/Nthnn5XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=oppo.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HHaBFw9+bIi2qBKwhuz2U99Ei1sm+X/y2E7KaDyiOMQ=;
+ b=c+Pj7TxobHuCrsLstzFyrGDnDB8r6JDDDmPfz6f53ByqMAmBOq6eXpFXPligvec07e35sBgYIrjuA70MxuSrOLpFnagsgDukq3jUJGOHJ0aYRLPSISRukvxDFNCo7q6LbzD1zbE5olmMOYDYzruK7dpT+i5eKFPFAw1maLdNQr8=
+Received: from SI2PR02CA0037.apcprd02.prod.outlook.com (2603:1096:4:196::8) by
+ TYZPR02MB7986.apcprd02.prod.outlook.com (2603:1096:405:b9::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.20; Wed, 21 Aug 2024 07:46:23 +0000
+Received: from HK3PEPF0000021A.apcprd03.prod.outlook.com
+ (2603:1096:4:196:cafe::20) by SI2PR02CA0037.outlook.office365.com
+ (2603:1096:4:196::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25 via Frontend
+ Transport; Wed, 21 Aug 2024 07:46:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021A.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7897.11 via Frontend Transport; Wed, 21 Aug 2024 07:46:21 +0000
+Received: from localhost.localdomain (172.16.40.118) by mailappw30.adc.com
+ (172.16.56.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 Aug
+ 2024 15:46:20 +0800
+From: <hanchuanhua@oppo.com>
+To: <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+CC: <baolin.wang@linux.alibaba.com>, <chrisl@kernel.org>, <david@redhat.com>,
+	<hannes@cmpxchg.org>, <hughd@google.com>, <kaleshsingh@google.com>,
+	<kasong@tencent.com>, <linux-kernel@vger.kernel.org>, <mhocko@suse.com>,
+	<minchan@kernel.org>, <nphamcs@gmail.com>, <ryan.roberts@arm.com>,
+	<senozhatsky@chromium.org>, <shakeel.butt@linux.dev>, <shy828301@gmail.com>,
+	<surenb@google.com>, <v-songbaohua@oppo.com>, <willy@infradead.org>,
+	<xiang@kernel.org>, <ying.huang@intel.com>, <yosryahmed@google.com>,
+	<hch@infradead.org>, <ryncsn@gmail.com>, Chuanhua Han <hanchuanhua@oppo.com>
+Subject: [PATCH v7 0/2] mm: Ignite large folios swap-in support
+Date: Wed, 21 Aug 2024 15:45:38 +0800
+Message-ID: <20240821074541.516249-1-hanchuanhua@oppo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26f:0:b0:397:9426:e7fc with SMTP id
- e9e14a558f8ab-39d6c2bd24emr1190665ab.0.1724226201338; Wed, 21 Aug 2024
- 00:43:21 -0700 (PDT)
-Date: Wed, 21 Aug 2024 00:43:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003e572006202cb2ce@google.com>
-Subject: [syzbot] [udf?] KASAN: use-after-free Read in udf_update_tag
-From: syzbot <syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw30.adc.com
+ (172.16.56.197)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021A:EE_|TYZPR02MB7986:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09db3271-3e79-4fbd-8d9c-08dcc1b55a68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?allmSGFIZGRsOTVLRXlJV3ZDakZhbnVVcnlhc1VJQXA5K3NUWVMrb2JOL2VT?=
+ =?utf-8?B?WHNEMFBBRGZnV1hGLzJQWHZrSlNWaW1HZWkrc1ZaVVZKaVZrSlhUT2Q2ZHVl?=
+ =?utf-8?B?WlI0NXNpTTdXcXp5cGlKSmYzMHFKNlRDdWdySHRyZU45V3NSQzgwL1JzMWZt?=
+ =?utf-8?B?d3lhZW5DV0lFRDNvZzBPbDdjK3hkekVFd0FGK05qTks1RGY2RmtpMWV1M3RS?=
+ =?utf-8?B?UzM5MHJyZGRDeXFBV0x3blFCUVNTZUNNM1ZUSGpZMWJ3OUFEMUlUMTA2MGhB?=
+ =?utf-8?B?VWZob0lHSHdaWDFOL2FZOTFlckJwdUZKMEEyUnF0eGpzK24vclBSMms1eUgv?=
+ =?utf-8?B?enVXTG1wSHBuT3N1ZHJ0OUVuTjJhWTZJS2dhT1IxOHFyZjFvQndmdUZvZkhp?=
+ =?utf-8?B?cGRkN2dSdTVadGdxZ0lJeGJQZVFhRE9mUWkxem96Z1d3bDlVY3ZoTlRSM2w5?=
+ =?utf-8?B?SmRQeHFXL2xCYk1jUE1hd2NhMTdSNHMvUVhocGdKNUthQjhHRzNqc0NlSUpJ?=
+ =?utf-8?B?T2Rqa3huU3hBUGd2R05CRWxjKzF2aDZxRzJNZzU2RnVSak9kbXBKbTZHUklo?=
+ =?utf-8?B?UlI2bDJDaTljU1JBSjdjOFNJV2NjV2daUVRMUFo2RFpoWXpCTzNyeEdTTnZH?=
+ =?utf-8?B?clZCa3c2cG9Tb1ErcUVKczFybXVnenZ2eC81a0lEL3NYK1RJdXFUa2tPUU5s?=
+ =?utf-8?B?NkNZeDRXQVJjL1JMcjhuRklOQ0l0WnA0RzRCRGNybUtvOG94dEU2SjNleXAy?=
+ =?utf-8?B?OThzRFZXV1dzdXNVbzljeWt2R1JyckxlR2lnOHFKbWRCNXVVUmhxRHBRcWtr?=
+ =?utf-8?B?djE2cDh2cHVQemhoUjhQS3BwdGp5UWNqMmI3R3ROOFlvSjhKeDlBRW9tQ1lC?=
+ =?utf-8?B?QUNybGRzUUNGcUtsUzJOVEppZlEzeU9aY3VWYXdGOE1KUVpiaVNHU2ltWkFs?=
+ =?utf-8?B?cXZWcSszUmtrYzRRZWNwRURjeFA3aUhNblJoeVJMbnpoUjNJeEhOTm9WVkRs?=
+ =?utf-8?B?NFZiZ2hVcktKS3IvQWRKL0RmUEQxOHZWMTZ4M1k1dUJsbFFmeSt6b1pyQlc2?=
+ =?utf-8?B?ZEFzL0ZUWndvTjZORE5Gc1d6bjdsUXoxck5wRmF1ZG5zWTV5RVE1Ujl3N0Iw?=
+ =?utf-8?B?MERrUnlqVFcwU2tUTWpKYXU4ajZHbXY5YXhRUVo5aEtTdUxrenBST3AzOHdE?=
+ =?utf-8?B?cG1rYkJrTmx5YmltYzZpOHpxeU0zV1FNc2xESnNjVk9LYVBtalFmc2hmdUZp?=
+ =?utf-8?B?ZkpUL0tXeXZNSFJ3ZzNHRkJqZldnb0MvaWRoa3doSzM3cFE2VFRBaU5yVEhQ?=
+ =?utf-8?B?cDgweVY0dWI0ZTZpV3hubjduejhkbmpRb2VTUk1xeFc2dWJBNHViVHNlcjNz?=
+ =?utf-8?B?c0UwVVJmczBvK3lETFhaSXpxbk93TStxdmRxZVF4OVhkMDBOMHN6MWQydVVM?=
+ =?utf-8?B?UytZaWt2YjVnNWNaQnB3VXhFR1llU0syMmRiU1Y5OFpWRVhHcENsaFNzanAy?=
+ =?utf-8?B?TUF5VW5ZZkw0emlTUXVrMDY2aVI4aWtiMlpOS3Z6RzFicUNPMDdLSm9BTEN1?=
+ =?utf-8?B?bWZ1dVlEeHNwNHNjM3lSVE1wZ1l4Z3gwcXFEVFpsQ2xMSFE4YVA4U2hQVzZG?=
+ =?utf-8?B?anc5dnl2T2E4U09yajM0Y1lEdzhadUJYbG9tSGNzN25TSi9LTC9rWU5rL1BB?=
+ =?utf-8?B?bEVxc2JVTGxHWDJSOUo1b3hTL0ZIc05MNE5ON01NWk05WUxCUkRNREw5ajd1?=
+ =?utf-8?B?Ulo4ZlBVQ1hvd0F2MU55QUtNWkVtelFjS2o4aWxldVRqeER2ZTBuVE94OFVP?=
+ =?utf-8?B?cmYwV1IvTndXeUxhUklmZmNRcnNpdGkrQ0MwOUZFbzVJWXVsUlJVUTN0cWFz?=
+ =?utf-8?B?dFNGTFRGOXRhVk1Ka2kxSEszWjlqWDEvdkVRK0FFc0tPK3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 07:46:21.2779
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09db3271-3e79-4fbd-8d9c-08dcc1b55a68
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021A.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB7986
 
-Hello,
+From: Chuanhua Han <hanchuanhua@oppo.com>
 
-syzbot found the following issue on:
+Currently, we support mTHP swapout but not swapin. This means that once mTHP
+is swapped out, it will come back as small folios when swapped in. This is
+particularly detrimental for devices like Android, where more than half of
+the memory is in swap.
 
-HEAD commit:    5c43d43bad35 Merge branches 'for-next/acpi', 'for-next/mis..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12558bf3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c91f83ae59feaa1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=8743fca924afed42f93e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+The lack of mTHP swapin functionality makes mTHP a showstopper in scenarios
+that heavily rely on swap. This patchset introduces mTHP swap-in support.
+It starts with synchronous devices similar to zRAM, aiming to benefit as
+many users as possible with minimal changes.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-v7:
+ * collect Chris's ack tags, thanks!
+ * adjust the comment and subject，pointed by Christoph. 
+ * make alloc_swap_folio() always charge the folio to fix the problem of charge
+   failure in memcg when the memory limit is reached(reported and pointed by
+   Kairui), pointed by Kefeng, Matthew.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cc2dd4be620e/disk-5c43d43b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/81d40d99ddbf/vmlinux-5c43d43b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bc6aed0f2bc5/Image-5c43d43b.gz.xz
+-v6:
+ * remove the swapin control added in v5, per Willy, Christoph;
+   The original reason for adding the swpin_enabled control was primarily
+   to address concerns for slower devices. Currently, since we only support
+   fast sync devices, swap-in size is less of a concern.
+   We’ll gain a clearer understanding of the next steps while more devices
+   begin to support mTHP swap-in.
+ * add nr argument in mem_cgroup_swapin_uncharge_swap() instead of adding
+   new API, Willy;
+ * swapcache_prepare() and swapcache_clear() large folios support is also
+   removed as it has been separated per Baolin's request, right now has
+   been in mm-unstable.
+ * provide more data in changelog.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com
+-v5:
+ https://lore.kernel.org/linux-mm/20240726094618.401593-1-21cnbao@gmail.com/
 
-==================================================================
-BUG: KASAN: use-after-free in crc_itu_t+0xc4/0x108 lib/crc-itu-t.c:60
-Read of size 1 at addr ffff0000fbdb0000 by task syz.0.397/8678
+ * Add swap-in control policy according to Ying's proposal. Right now only
+   "always" and "never" are supported, later we can extend to "auto";
+ * Fix the comment regarding zswap_never_enabled() according to Yosry;
+ * Filter out unaligned swp entries earlier;
+ * add mem_cgroup_swapin_uncharge_swap_nr() helper
 
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Not tainted 6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x198/0x538 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- __asan_report_load1_noabort+0x20/0x2c mm/kasan/report_generic.c:378
- crc_itu_t+0xc4/0x108 lib/crc-itu-t.c:60
- udf_update_tag+0x74/0x54c fs/udf/misc.c:261
- udf_write_aext+0x37c/0x668 fs/udf/inode.c:2146
- udf_update_extents fs/udf/inode.c:1200 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x30ec/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+-v4:
+ https://lore.kernel.org/linux-mm/20240629111010.230484-1-21cnbao@gmail.com/
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x4d9 pfn:0x13bdb0
-flags: 0x5ffc00000000000(node=0|zone=2|lastcpupid=0x7ff)
-page_type: 0xbfffffff(buddy)
-raw: 05ffc00000000000 fffffdffc3e9b008 fffffdffc37da408 0000000000000000
-raw: 00000000000004d9 0000000000000004 00000000bfffffff 0000000000000000
-page dumped because: kasan: bad access detected
+ Many parts of v3 have been merged into the mm tree with the help on reviewing
+ from Ryan, David, Ying and Chris etc. Thank you very much!
+ This is the final part to allocate large folios and map them.
 
-Memory state around the buggy address:
- ffff0000fbdaff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff0000fbdaff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff0000fbdb0000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff0000fbdb0080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff0000fbdb0100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B              6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000010 x25: 0000000000000200 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff8000809c68b0
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000200 x0 : 0000000000000010
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000020 x25: 0000000000000210 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff8000809c68b0
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000210 x0 : 0000000000000020
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000030 x25: 0000000000000220 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000220 x0 : 0000000000000030
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000040 x25: 0000000000000230 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000230 x0 : 0000000000000040
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000050 x25: 0000000000000240 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000240 x0 : 0000000000000050
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000060 x25: 0000000000000250 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000250 x0 : 0000000000000060
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000070 x25: 0000000000000260 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002
- x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000
- x7 : 0000000000000000
- x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000260 x0 : 0000000000000070
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000080 x25: 0000000000000270 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000270 x0 : 0000000000000080
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8678 at fs/udf/inode.c:2047 __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-Modules linked in:
-CPU: 0 UID: 0 PID: 8678 Comm: syz.0.397 Tainted: G    B   W          6.11.0-rc3-syzkaller-g5c43d43bad35 #0
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-lr : __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
-sp : ffff800098c56d80
-x29: ffff800098c56da0 x28: 1ffff0001318ae16 x27: dfff800000000000
-x26: 0000000000000090 x25: 0000000000000280 x24: ffff800098c570b8
-x23: ffff800098c56ff0 x22: 0000000000000040 x21: 1ffff0001318ae17
-x20: ffff800098c570b0 x19: ffff0000db608e18 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff800083014574 x15: 0000000000000001
-x14: 0000000000000002 x13: 0000000000000001 x12: ffff0000daa50000
-x11: 0000000000040000 x10: 000000000003ffff x9 : ffff800099be8000
-x8 : 0000000000040000 x7 : 0000000000000000 x6 : ffff0000dd053488
-x5 : ffff800098c570c8 x4 : 0000000000000001 x3 : 0000000000000040
-x2 : ffff800098c56ff0 x1 : 0000000000000280 x0 : 0000000000000090
-Call trace:
- __udf_add_aext+0x488/0x614 fs/udf/inode.c:2046
- udf_add_aext fs/udf/inode.c:2104 [inline]
- udf_insert_aext fs/udf/inode.c:2266 [inline]
- udf_update_extents fs/udf/inode.c:1182 [inline]
- inode_getblk fs/udf/inode.c:897 [inline]
- udf_map_block+0x2e4c/0x3efc fs/udf/inode.c:443
- __udf_get_block+0xf8/0x39c fs/udf/inode.c:457
- udf_get_block+0x84/0xb8 fs/udf/inode.c:481
- __block_write_begin_int+0x580/0x166c fs/buffer.c:2125
- __block_write_begin fs/buffer.c:2174 [inline]
- block_write_begin+0x98/0x11c fs/buffer.c:2235
- udf_write_begin+0xf8/0x218 fs/udf/inode.c:256
- generic_perform_write+0x2e8/0x8e0 mm/filemap.c:4019
- __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4121
- udf_file_write_iter+0x25c/0x568 fs/udf/file.c:111
- do_iter_readv_writev+0x4a4/0x6ec
- vfs_writev+0x410/0xb80 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2 fs/read_write.c:1122 [inline]
- __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 42591
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1427 [inline]
-hardirqs last  enabled at (42591): [<ffff8000802b5d48>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:4942
-hardirqs last disabled at (42590): [<ffff80008b3cafa4>] __schedule+0x2b4/0x2418 kernel/sched/core.c:6416
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (40096): [<ffff8000801f6dfc>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (40063): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2048, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2048, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2048, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2048, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2048, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2048, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2048, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2048, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2048, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2048, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2049, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2049, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2049, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2049, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2049, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2049, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2049, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2049, lost async page write
-syz.0.397: attempt to access beyond end of device
-loop0: rw=2049, sector=2049, nr_sectors = 1 limit=2048
-Buffer I/O error on dev loop0, logical block 2049, lost async page write
+ * Use Yosry's zswap_never_enabled(), notice there is a bug. I put the bug fix
+   in this v4 RFC though it should be fixed in Yosry's patch
+ * lots of code improvement (drop large stack, hold ptl etc) according
+   to Yosry's and Ryan's feedback
+ * rebased on top of the latest mm-unstable and utilized some new helpers
+   introduced recently.
 
+-v3:
+ https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
+ * avoid over-writing err in __swap_duplicate_nr, pointed out by Yosry,
+   thanks!
+ * fix the issue folio is charged twice for do_swap_page, separating
+   alloc_anon_folio and alloc_swap_folio as they have many differences
+   now on
+   * memcg charing
+   * clearing allocated folio or not
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-v2:
+ https://lore.kernel.org/linux-mm/20240229003753.134193-1-21cnbao@gmail.com/
+ * lots of code cleanup according to Chris's comments, thanks!
+ * collect Chris's ack tags, thanks!
+ * address David's comment on moving to use folio_add_new_anon_rmap
+   for !folio_test_anon in do_swap_page, thanks!
+ * remove the MADV_PAGEOUT patch from this series as Ryan will
+   intergrate it into swap-out series
+ * Apply Kairui's work of "mm/swap: fix race when skipping swapcache"
+   on large folios swap-in as well
+ * fixed corrupted data(zero-filled data) in two races: zswap and
+   a part of entries are in swapcache while some others are not
+   in by checking SWAP_HAS_CACHE while swapping in a large folio
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-v1:
+ https://lore.kernel.org/all/20240118111036.72641-1-21cnbao@gmail.com/#t
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Barry Song (1):
+  mm: add nr argument in mem_cgroup_swapin_uncharge_swap() helper to
+    support large folios
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Chuanhua Han (1):
+  mm: support large folios swap-in for sync io devices
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+ include/linux/memcontrol.h |   5 +-
+ mm/memcontrol.c            |   7 +-
+ mm/memory.c                | 250 +++++++++++++++++++++++++++++++++----
+ mm/swap_state.c            |   2 +-
+ 4 files changed, 231 insertions(+), 33 deletions(-)
 
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+2.43.0
+
 
