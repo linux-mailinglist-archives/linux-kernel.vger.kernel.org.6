@@ -1,136 +1,154 @@
-Return-Path: <linux-kernel+bounces-295738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1EB95A0F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:08:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449FA95A0FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89240285D24
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7822A1C225AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747A7153565;
-	Wed, 21 Aug 2024 15:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE8A13E022;
+	Wed, 21 Aug 2024 15:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nivJkfJR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9ce13Ep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4003C14F9F3;
-	Wed, 21 Aug 2024 15:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FE84E1C;
+	Wed, 21 Aug 2024 15:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724252845; cv=none; b=qkSQ8Al3dCC+25MKuw7dXfXPYQEep9+UFTFKyi8WKssRrQ3e7rBZ6hnLCVoc5H3nwdAi9FTWEAULmWNLCgaocPnGfD+ZFUWvaxH+RJjwbA56LpzRQrlFH2jAJ4h+7DtBcyd106emafvHeKq4fCDYvbij7q0UdqBS84z9jqj/fk0=
+	t=1724252881; cv=none; b=EhO5FXjPtQxcSAKCsycaL/zT+T8wcleoHBy4cmSA4QGong0PV4Ui5lV0Ur3FToZ8E2sC2vWnEKbc3HbsL9xGisyN4bdOwnBxVLHULDtrUk2H8IwQRM9Xbgzf9mL1KcaGOoQeeHkegBI0ksm8tmIetvd4LNKuFR9J0kyQKaIRZmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724252845; c=relaxed/simple;
-	bh=RoRCl78B5Ks92FPLjbrr4f1STYis5azWa+kZVz2AHyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j/7y4m0mBh/wBpjVwSIabJU+bK/PbOrHONLBnbce+JuIBrgl4S50eXuqFPXexLXRBWV1Et8vY04x5VoJKnZC2G7/zxeka+koahmbUtDACXZxsbposMp8tO7Whye4yuvws26LzaZMu6XetqENFIH8p1PwXctR4Ejaif+GW6tsGvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nivJkfJR; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724252844; x=1755788844;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RoRCl78B5Ks92FPLjbrr4f1STYis5azWa+kZVz2AHyQ=;
-  b=nivJkfJRwKxvOpBNeJciEte10F6tXECzw6wHiu94Fh2BpciokbO7/tou
-   2E3veDiJ1WF3yBdBnyZvdDYYNhKQI0zNwcEGbxVzHO2WwauWO+PlrseKI
-   fHSjd44PMsZTZ9PpUmO5T0zq6Mj19QszOb3bH44jlngWJBWhxjBRUIGSh
-   QAjfz5dGXqza+EbhKReJnPuUcIYyOCZm+7lZjGcwyIXvNA5I27sbRhcay
-   UUwKU9nql59kn08Ma30F1TRPE5n5Psxchz7l3h5iUZj70jHrxxzpRmyVB
-   /1bdgb07Kj+Zb8/wiEIx08IW6QyjdbZTxbuG2BlIiyApwj4hV8bASyAc7
-   g==;
-X-CSE-ConnectionGUID: guTCYLZlS+q4WKGL4O9Oww==
-X-CSE-MsgGUID: 1v9HumtmT2iPo3Q3AvpsYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22769286"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="22769286"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:07:24 -0700
-X-CSE-ConnectionGUID: E2x1m2CUTxyWF0MvSS4K8Q==
-X-CSE-MsgGUID: 19n4qB/FQ7+A2mSJrZFEfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="84291280"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa002.fm.intel.com with ESMTP; 21 Aug 2024 08:07:21 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	David Ahern <dsahern@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 6/6] netdev_features: remove NETIF_F_ALL_FCOE
-Date: Wed, 21 Aug 2024 17:07:00 +0200
-Message-ID: <20240821150700.1760518-7-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
-References: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1724252881; c=relaxed/simple;
+	bh=BmuSPqL3do4aQAU03Wh1Ei296IH0Aok8vWYlYeXbHII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pD3ByU8BFGVbpPmsCqNIczEyCoWlI6JIKYUXSPiF3YMEna/sk/xL7HwOdGOlb5LTZhY42/XI16Mj2w6NAa6iVRMRXRk6WGk+7LMpUu+d02JhBSwR6F0mgEUsbm0rc3c+KZEAwVSkjGTc7apKna/hrUTpjYvse5VA2wJdny3kDgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9ce13Ep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27247C32781;
+	Wed, 21 Aug 2024 15:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724252881;
+	bh=BmuSPqL3do4aQAU03Wh1Ei296IH0Aok8vWYlYeXbHII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E9ce13EpwGJfNj/fz3ek0H9T6tqfzB2Ang4VBOW3wXpl3SNY56ugAkcScdpvW2mYq
+	 pRGIpCkIm4Js0Nl1dFSO928N+kkfOqYD4mSc6mUyjW1ORGtmC+Tu0ujQ4GOjwMuxWI
+	 5n+aHpbO2N/M/0f6Lf/rnWBjGY4xq2Q1hfqpH8p9BTAb8Yv3Ol1D2AfosnGjMY3T6p
+	 26Azakecgn5Oj0LzRFL0QDOJQzZJ9wrwApBr2QlPWhyK3WKTAaomkPhdRcL4LGMxXg
+	 7HN6TlatXlE/NiT7yCYl2XfS0M0lWkgfCcPkmCA5OFaDCgvpzNc5Iu9gJIDnNY3vJ8
+	 SrcPlvCQfZ92g==
+Date: Wed, 21 Aug 2024 16:07:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Yao <markyao0591@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+	Luis de Arquer <ldearquer@gmail.com>
+Subject: Re: [PATCH v4 3/4] dt-bindings: display: rockchip: Add schema for
+ RK3588 HDMI TX Controller
+Message-ID: <20240821-evoke-mop-fb09ceef3597@spud>
+References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
+ <20240819-b4-rk3588-bridge-upstream-v4-3-6417c72a2749@collabora.com>
+ <20240819-bobbing-purplish-99e48baa2304@spud>
+ <ec84bc0b-c4c2-4735-9f34-52bc3a852aaf@collabora.com>
+ <20240820-tropics-hunchback-6fdcd0b37f91@spud>
+ <038073d0-d4b9-4938-9a51-ea2aeb4530f6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZZq5NLhTZdZIQco9"
+Content-Disposition: inline
+In-Reply-To: <038073d0-d4b9-4938-9a51-ea2aeb4530f6@collabora.com>
 
-NETIF_F_ALL_FCOE is used only in vlan_dev.c, 2 times. Now that it's only
-2 bits, open-code it and remove the definition from netdev_features.h.
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/linux/netdev_features.h | 2 --
- net/8021q/vlan_dev.c            | 5 +++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+--ZZq5NLhTZdZIQco9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 1e9c4da181af..e41cd8af2a72 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -205,8 +205,6 @@ static inline int find_next_netdev_feature(u64 feature, unsigned long start)
- #define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | \
- 				 NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID)
- 
--#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FSO)
--
- /* List of features with software fallbacks. */
- #define NETIF_F_GSO_SOFTWARE	(NETIF_F_ALL_TSO | NETIF_F_GSO_SCTP |	     \
- 				 NETIF_F_GSO_UDP_L4 | NETIF_F_GSO_FRAGLIST)
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index 09b46b057ab2..458040e8a0e0 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -564,7 +564,7 @@ static int vlan_dev_init(struct net_device *dev)
- 			   NETIF_F_FRAGLIST | NETIF_F_GSO_SOFTWARE |
- 			   NETIF_F_GSO_ENCAP_ALL |
- 			   NETIF_F_HIGHDMA | NETIF_F_SCTP_CRC |
--			   NETIF_F_ALL_FCOE;
-+			   NETIF_F_FCOE_CRC | NETIF_F_FSO;
- 
- 	if (real_dev->vlan_features & NETIF_F_HW_MACSEC)
- 		dev->hw_features |= NETIF_F_HW_MACSEC;
-@@ -576,7 +576,8 @@ static int vlan_dev_init(struct net_device *dev)
- 	if (dev->features & NETIF_F_VLAN_FEATURES)
- 		netdev_warn(real_dev, "VLAN features are set incorrectly.  Q-in-Q configurations may not work correctly.\n");
- 
--	dev->vlan_features = real_dev->vlan_features & ~NETIF_F_ALL_FCOE;
-+	dev->vlan_features = real_dev->vlan_features &
-+			     ~(NETIF_F_FCOE_CRC | NETIF_F_FSO);
- 	dev->hw_enc_features = vlan_tnl_features(real_dev);
- 	dev->mpls_features = real_dev->mpls_features;
- 
--- 
-2.46.0
+On Tue, Aug 20, 2024 at 11:12:45PM +0300, Cristian Ciocaltea wrote:
+> On 8/20/24 7:14 PM, Conor Dooley wrote:
+> > On Tue, Aug 20, 2024 at 03:37:44PM +0300, Cristian Ciocaltea wrote:
+> >> On 8/19/24 7:53 PM, Conor Dooley wrote:
+> >>> On Mon, Aug 19, 2024 at 01:29:30AM +0300, Cristian Ciocaltea wrote:
+> >>>> +  rockchip,grf:
+> >>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>>> +    description:
+> >>>> +      Most HDMI QP related data is accessed through SYS GRF regs.
+> >>>> +
+> >>>> +  rockchip,vo1-grf:
+> >>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>>> +    description:
+> >>>> +      Additional HDMI QP related data is accessed through VO1 GRF r=
+egs.
+> >>>
+> >>> Why are these required? What prevents you looking up the syscons by
+> >>> compatible?
+> >>
+> >> That is for getting the proper instance:
+> >=20
+> > Ah, that makes sense. I am, however, curious why these have the same
+> > compatible when they have different sized regions allocated to them.
+>=20
+> Good question, didn't notice.  I've just checked the TRM and, in both
+> cases, the maximum register offset is within the 0x100 range.  Presumably
+> this is nothing but an inconsistency, as the syscons have been added in
+> separate commits.
 
+Is that TRM publicly available? I do find it curious that devices sound
+like they have different contents have the same compatible. In my view,
+that is incorrect and they should have unique compatibles if the
+contents (and therefore the programming model) differs.
+
+>=20
+> >> 	vo0_grf: syscon@fd5a6000 {
+> >> 		compatible =3D "rockchip,rk3588-vo-grf", "syscon";
+> >> 		reg =3D <0x0 0xfd5a6000 0x0 0x2000>;
+> >> 		clocks =3D <&cru PCLK_VO0GRF>;
+> >> 	};
+> >>
+> >> 	vo1_grf: syscon@fd5a8000 {
+> >> 		compatible =3D "rockchip,rk3588-vo-grf", "syscon";
+> >> 		reg =3D <0x0 0xfd5a8000 0x0 0x100>;
+> >> 		clocks =3D <&cru PCLK_VO1GRF>;
+> >> 	};
+
+
+--ZZq5NLhTZdZIQco9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYCyQAKCRB4tDGHoIJi
+0hCkAQDkrev2VngE+toZCyW7CBqkBdnhvbudk6uduFmusUQTeQD9E7e4awSNcV4K
+3sLyRNFdK2Rcc/ulk7eGAuyO21QDmAM=
+=e4n+
+-----END PGP SIGNATURE-----
+
+--ZZq5NLhTZdZIQco9--
 
