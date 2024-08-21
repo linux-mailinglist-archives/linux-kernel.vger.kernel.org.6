@@ -1,107 +1,278 @@
-Return-Path: <linux-kernel+bounces-295929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6718E95A316
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580D495A31E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056D6B241B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF21B1F23274
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C3716A925;
-	Wed, 21 Aug 2024 16:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A7D1AF4E0;
+	Wed, 21 Aug 2024 16:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFQw42YW"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OI5nBATW"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0631537DD;
-	Wed, 21 Aug 2024 16:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7331613635E;
+	Wed, 21 Aug 2024 16:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258644; cv=none; b=eXR/MP0eloQswHndJA9auX+lFq4HCe3VQ/N2EZhBeH6kxfFGL2+GM5yVwIITr6uGZOdDmDXzqInO6Cn+VcZ+O8zK2Oyl31KuvfjWrr4dywOpbr6sBAjfURuyhlaS/Vsr3CQSbsCmiEQr73R8TEK2hTOKzqTla0+kSPdmTmTQn8E=
+	t=1724258803; cv=none; b=Zh4JfbICRib7lMupYwzOQLcg/VYUEg+N8U2Ba1kBfv1eT7VyxDvIiW17NHxTVwJeC0NQpS4hTLNyxn+ZYGXgngMI/cI/agX+Uv5LKaNMIohBNgK6miyzSUo9fi0/QaaWocMs/tJDAfmr93QPPP7DrSc5t//vj7WI2Qj16vjiatY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724258644; c=relaxed/simple;
-	bh=sEnyaVCxeTo7fogPBKiKimrrhQPVr0UrqigxywBdCqE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Peeeaf2dsQrEs+5/Zz7tDvGbaQ9HpKrVN/VL2LbRlkAn/p8KI2+57yCdFoui0OM636xGUZqN43LIa+NEA4OfKNmgXoAcVtz28xLVPuJr4BXXbmaUjb/FOc83xIbk/0SG1rnPzP001FxY9AnCEH6JC5D0hKZIwByI9FsiBdE6Dvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFQw42YW; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533488ffaddso1318679e87.1;
-        Wed, 21 Aug 2024 09:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724258641; x=1724863441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sEnyaVCxeTo7fogPBKiKimrrhQPVr0UrqigxywBdCqE=;
-        b=cFQw42YW/Ab0xA1EFASfV3kG0jrOE+xt3NfUPR51xpQLYhOJbK+VyRWEQ42yQM9NVk
-         mZ+Du9CyClH9CjwZjYUEWTeXjpqsgUjMByOB5Dmvjq2t7dSrk8sEeosBYW0cjsjan9dg
-         SpFAN6T7DPRT4zqMxuPU0nqXHmCVGcYWD2b8YptMwAfNlNgdll6YNEU4Qf6UWp2ZeVTM
-         CCSlVDxRqTDItaFthu1M8tcIjQW+fC2ueKTIAIXdnCc0051FnB64Ujv0+OtCT2olrcg6
-         /MdD130mVNZIpsoe4PULnr9LmS3IzQdZKE3shhd0gm2TZfBtPe7749RnQEungH5QKM6p
-         L7aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724258641; x=1724863441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sEnyaVCxeTo7fogPBKiKimrrhQPVr0UrqigxywBdCqE=;
-        b=SILlxy/ONaHIXlykvTYzpUVYtM3flDA3PVpiakZx+haFEwSFOOVDuFmMY4ciYRSjFl
-         Id9R8sOkHg8kiou4n3hbeKVnr1TPoJxSqb71h4/7lTOBN16Ztzt29T6vko/GQltzDd5S
-         4PPMNFTmq3zh6aibxmb/rE5vMov5qiFH1RcwLVpEMIqC/PcWF6oZ4/UUxOlj+KrLamt2
-         woVUhRyXCwLcIVEmKuD/BABQSdXxh1J7U19CUuZF1aHNZd/t9Mgehnk1WvSSJkCgkB8P
-         /Xn5dbKbrRYUg5oj/ogysMQhF5q0ETs1zG8whX0dEWNj6KGHPHKvILRud3A/sni0VyzL
-         bN9w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7qhNaZjQPD9vh6U1ZvQ8QqeqG+0hOavWeiZKw0gL4s7xF2NMZF1xiCmxZkb+dQgRlN2o97bH0FZk=@vger.kernel.org, AJvYcCWUGpONUGwoNVmQ86/NGGUL9L+KswMbGays6D/qYXKvRXkcqrN0wLm7jmhUiwcgn20zvESpuDZmCruuyNNa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCZylwXbth3E9zDVM4n4cNhU8CL0ct2RxnmL1zaz6MoIC4RRWq
-	X84JIYnIe5F5D9d5Czird5KxjsFUwbs+U4mpHDCdFtiILTtNggQPvciC8wax04A1SZTV8B6BUf1
-	vrqNER+fOJxf6su90Gos2MuWjpF2KqA==
-X-Google-Smtp-Source: AGHT+IGc8rj17D69zG/VL5kmvymbTbJEZ+tI2QgUHXTXpBZk+e3xvP9nOTqIPmeJUEePvoo5TEkBh4VQJE2KqOlRF10=
-X-Received: by 2002:a05:6512:3d09:b0:530:e228:7799 with SMTP id
- 2adb3069b0e04-533485bcd97mr2196989e87.58.1724258640875; Wed, 21 Aug 2024
- 09:44:00 -0700 (PDT)
+	s=arc-20240116; t=1724258803; c=relaxed/simple;
+	bh=iMZObZERm4fJJ8crxvfeNEVv8zkTt+E2Sabqsr00by8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m7mjvJpFavxkqdInBedkbBWANT1C0FmPsDOUdmo3B6N0jYxf4yoRNKpb53yzuDGzgIrzkaTEV3J3y8BA9wcgy2hnEP316ABSyjGG067UwPxVuteRofm5E+y9lQHvozokEipXPyxroziP3GUHLEcJsBHypyox+1d5+Z/OCrf3Ml8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OI5nBATW; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id goTksgXNgS3tRgoTlsOuWT; Wed, 21 Aug 2024 18:46:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724258797;
+	bh=VF5cX0senQLhld6HFUuwDuqB5R9U72LTGbLDKI77h1g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=OI5nBATW1v1jnqi+ktVbRB12xo0MTD2GhllHXDWyLFIKAqeSArMoZ4OgeosnA2Mm3
+	 H/a0JTA+6xxLhgYN6RACPNCx9l9U18mw7wKg9d4vS01nFEN94sELtvO1iz7k4XIB7M
+	 pcuFoJqi2oFaEQmMlWnN6gPeyoTsGWUAHQH4sdaiHEnhTdsPZbOLRsZCUNllXWp+Gg
+	 L8UGYWKQN6Wdq3MNgxpssNlO6oat9132SIQQtySxRYkLsBMxfT2nH5aM5BdWqpVBIS
+	 qijCOf907gOmUxvad33VtvM4L0cYeH+H17KSP/nbLyswqaw9yhang9zcfolJWjyC9d
+	 GaWieot2Aj8QQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 21 Aug 2024 18:46:37 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH] dma: ipu: Remove include/linux/dma/ipu-dma.h
+Date: Wed, 21 Aug 2024 18:46:33 +0200
+Message-ID: <532e7e2816ccf226f3ab1fa76ec7873bc09299d0.1724258714.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819072052.8722-1-eichest@gmail.com> <20240819072052.8722-2-eichest@gmail.com>
- <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
- <ZsX8KzkQw0wJUCbc@pengutronix.de> <ZsYGbN36jwxyMAvE@eichest-laptop>
-In-Reply-To: <ZsYGbN36jwxyMAvE@eichest-laptop>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 21 Aug 2024 13:43:49 -0300
-Message-ID: <CAOMZO5DW+Wz7AWPJCBXkdaMf3NRcZTAmj2Wo9rvwnH9pDGbSGg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master mode
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de, andi.shyti@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, Frank.Li@nxp.com, 
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Stefan and Oleksij,
+When this file was renamed in commit b8a6d9980f75 ("dma: ipu: rename
+mach/ipu.h to include/linux/dma/ipu-dma.h"), 4 .c files have been modified
+accordingly:
 
-On Wed, Aug 21, 2024 at 12:23=E2=80=AFPM Stefan Eichenberger <eichest@gmail=
-.com> wrote:
+  drivers/dma/ipu/ipu_idmac.c
+  drivers/dma/ipu/ipu_irq.c
+  --> removed in commit f1de55ff7c70 ("dmaengine: ipu: Remove the driver")
+      in 2023-08
 
-> Thanks a lot for testing. Are the other patches required as well or did
-> only introducing the master mode flag solve the issue?
+  drivers/media/platform/soc_camera/mx3_camera.c
+  --> removed in commit c93cc61475eb ("[media] staging/media: remove
+      deprecated mx3 driver") in 2016-06
 
-Only applying this one fixed the problem.
+  drivers/video/mx3fb.c
+  --> removed in commit bfac19e239a7 ("fbdev: mx3fb: Remove the driver")
+      in 2023-08
 
-> > It looks like with this patch, the I2SR_IAL interrupt is not cleared.
-> > I would expect some kind of interrupt storm. Can you confirm it?
+Now include/linux/dma/ipu-dma.h is unused and can be removed as-well.
 
-I have just inspected 'cat /proc/interrupts' and no interrupt storm is seen=
-.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+$ git grep ipu-dma
+returns nothing
+---
+ include/linux/dma/ipu-dma.h | 174 ------------------------------------
+ 1 file changed, 174 deletions(-)
+ delete mode 100644 include/linux/dma/ipu-dma.h
 
-Thanks
+diff --git a/include/linux/dma/ipu-dma.h b/include/linux/dma/ipu-dma.h
+deleted file mode 100644
+index 6969391580d2..000000000000
+--- a/include/linux/dma/ipu-dma.h
++++ /dev/null
+@@ -1,174 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Copyright (C) 2008
+- * Guennadi Liakhovetski, DENX Software Engineering, <lg@denx.de>
+- *
+- * Copyright (C) 2005-2007 Freescale Semiconductor, Inc.
+- */
+-
+-#ifndef __LINUX_DMA_IPU_DMA_H
+-#define __LINUX_DMA_IPU_DMA_H
+-
+-#include <linux/types.h>
+-#include <linux/dmaengine.h>
+-
+-/* IPU DMA Controller channel definitions. */
+-enum ipu_channel {
+-	IDMAC_IC_0 = 0,		/* IC (encoding task) to memory */
+-	IDMAC_IC_1 = 1,		/* IC (viewfinder task) to memory */
+-	IDMAC_ADC_0 = 1,
+-	IDMAC_IC_2 = 2,
+-	IDMAC_ADC_1 = 2,
+-	IDMAC_IC_3 = 3,
+-	IDMAC_IC_4 = 4,
+-	IDMAC_IC_5 = 5,
+-	IDMAC_IC_6 = 6,
+-	IDMAC_IC_7 = 7,		/* IC (sensor data) to memory */
+-	IDMAC_IC_8 = 8,
+-	IDMAC_IC_9 = 9,
+-	IDMAC_IC_10 = 10,
+-	IDMAC_IC_11 = 11,
+-	IDMAC_IC_12 = 12,
+-	IDMAC_IC_13 = 13,
+-	IDMAC_SDC_0 = 14,	/* Background synchronous display data */
+-	IDMAC_SDC_1 = 15,	/* Foreground data (overlay) */
+-	IDMAC_SDC_2 = 16,
+-	IDMAC_SDC_3 = 17,
+-	IDMAC_ADC_2 = 18,
+-	IDMAC_ADC_3 = 19,
+-	IDMAC_ADC_4 = 20,
+-	IDMAC_ADC_5 = 21,
+-	IDMAC_ADC_6 = 22,
+-	IDMAC_ADC_7 = 23,
+-	IDMAC_PF_0 = 24,
+-	IDMAC_PF_1 = 25,
+-	IDMAC_PF_2 = 26,
+-	IDMAC_PF_3 = 27,
+-	IDMAC_PF_4 = 28,
+-	IDMAC_PF_5 = 29,
+-	IDMAC_PF_6 = 30,
+-	IDMAC_PF_7 = 31,
+-};
+-
+-/* Order significant! */
+-enum ipu_channel_status {
+-	IPU_CHANNEL_FREE,
+-	IPU_CHANNEL_INITIALIZED,
+-	IPU_CHANNEL_READY,
+-	IPU_CHANNEL_ENABLED,
+-};
+-
+-#define IPU_CHANNELS_NUM 32
+-
+-enum pixel_fmt {
+-	/* 1 byte */
+-	IPU_PIX_FMT_GENERIC,
+-	IPU_PIX_FMT_RGB332,
+-	IPU_PIX_FMT_YUV420P,
+-	IPU_PIX_FMT_YUV422P,
+-	IPU_PIX_FMT_YUV420P2,
+-	IPU_PIX_FMT_YVU422P,
+-	/* 2 bytes */
+-	IPU_PIX_FMT_RGB565,
+-	IPU_PIX_FMT_RGB666,
+-	IPU_PIX_FMT_BGR666,
+-	IPU_PIX_FMT_YUYV,
+-	IPU_PIX_FMT_UYVY,
+-	/* 3 bytes */
+-	IPU_PIX_FMT_RGB24,
+-	IPU_PIX_FMT_BGR24,
+-	/* 4 bytes */
+-	IPU_PIX_FMT_GENERIC_32,
+-	IPU_PIX_FMT_RGB32,
+-	IPU_PIX_FMT_BGR32,
+-	IPU_PIX_FMT_ABGR32,
+-	IPU_PIX_FMT_BGRA32,
+-	IPU_PIX_FMT_RGBA32,
+-};
+-
+-enum ipu_color_space {
+-	IPU_COLORSPACE_RGB,
+-	IPU_COLORSPACE_YCBCR,
+-	IPU_COLORSPACE_YUV
+-};
+-
+-/*
+- * Enumeration of IPU rotation modes
+- */
+-enum ipu_rotate_mode {
+-	/* Note the enum values correspond to BAM value */
+-	IPU_ROTATE_NONE = 0,
+-	IPU_ROTATE_VERT_FLIP = 1,
+-	IPU_ROTATE_HORIZ_FLIP = 2,
+-	IPU_ROTATE_180 = 3,
+-	IPU_ROTATE_90_RIGHT = 4,
+-	IPU_ROTATE_90_RIGHT_VFLIP = 5,
+-	IPU_ROTATE_90_RIGHT_HFLIP = 6,
+-	IPU_ROTATE_90_LEFT = 7,
+-};
+-
+-/*
+- * Enumeration of DI ports for ADC.
+- */
+-enum display_port {
+-	DISP0,
+-	DISP1,
+-	DISP2,
+-	DISP3
+-};
+-
+-struct idmac_video_param {
+-	unsigned short		in_width;
+-	unsigned short		in_height;
+-	uint32_t		in_pixel_fmt;
+-	unsigned short		out_width;
+-	unsigned short		out_height;
+-	uint32_t		out_pixel_fmt;
+-	unsigned short		out_stride;
+-	bool			graphics_combine_en;
+-	bool			global_alpha_en;
+-	bool			key_color_en;
+-	enum display_port	disp;
+-	unsigned short		out_left;
+-	unsigned short		out_top;
+-};
+-
+-/*
+- * Union of initialization parameters for a logical channel. So far only video
+- * parameters are used.
+- */
+-union ipu_channel_param {
+-	struct idmac_video_param video;
+-};
+-
+-struct idmac_tx_desc {
+-	struct dma_async_tx_descriptor	txd;
+-	struct scatterlist		*sg;	/* scatterlist for this */
+-	unsigned int			sg_len;	/* tx-descriptor. */
+-	struct list_head		list;
+-};
+-
+-struct idmac_channel {
+-	struct dma_chan		dma_chan;
+-	dma_cookie_t		completed;	/* last completed cookie	   */
+-	union ipu_channel_param	params;
+-	enum ipu_channel	link;	/* input channel, linked to the output	   */
+-	enum ipu_channel_status	status;
+-	void			*client;	/* Only one client per channel	   */
+-	unsigned int		n_tx_desc;
+-	struct idmac_tx_desc	*desc;		/* allocated tx-descriptors	   */
+-	struct scatterlist	*sg[2];	/* scatterlist elements in buffer-0 and -1 */
+-	struct list_head	free_list;	/* free tx-descriptors		   */
+-	struct list_head	queue;		/* queued tx-descriptors	   */
+-	spinlock_t		lock;		/* protects sg[0,1], queue	   */
+-	struct mutex		chan_mutex; /* protects status, cookie, free_list  */
+-	bool			sec_chan_en;
+-	int			active_buffer;
+-	unsigned int		eof_irq;
+-	char			eof_name[16];	/* EOF IRQ name for request_irq()  */
+-};
+-
+-#define to_tx_desc(tx) container_of(tx, struct idmac_tx_desc, txd)
+-#define to_idmac_chan(c) container_of(c, struct idmac_channel, dma_chan)
+-
+-#endif /* __LINUX_DMA_IPU_DMA_H */
+-- 
+2.46.0
+
 
