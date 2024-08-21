@@ -1,219 +1,236 @@
-Return-Path: <linux-kernel+bounces-295231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554889598DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D189598DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C799E1F22FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D66E1F22EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2618A1CC89F;
-	Wed, 21 Aug 2024 09:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD481F374B;
+	Wed, 21 Aug 2024 09:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dY4mfA5S"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lufqcsL1"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA731EED07;
-	Wed, 21 Aug 2024 09:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1341F3742
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724232642; cv=none; b=QrdwBXnu3t3+bfGLkV8KpgZ0UEt6H+RtTkZZMjtlexX295OFoG8/07n9SyB41E0lVjMK3C2Zj9yIL8h6UJXvKaiyhWqdye7GcRoKjgZepTcl1SBSLy/cjEf6KsnbmfCQUJEkCGyO/1n7dk+DY1E84m3at9ukR2ieuvIm6mfExdE=
+	t=1724232650; cv=none; b=VzquhbrBaVVajWMPPn4NFFZEy2cqloMWobFGLpWoPOTuTkqKEv2GHMrsULckMF9cXpkUEcfMwpiVQZ8MDEMrT+lqqQS3sSNggfMWTeBxDxSdgMeZ+PgqEVEoW5umxHMENjg0CCVzxwyToMm41zFCOJwBzG5KpOliCV3n8npq8fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724232642; c=relaxed/simple;
-	bh=SdO128jSaf+sYa64CYea8M0yL/ZkVkv914YMWqYQWc4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jJekv3ut2Y2AGrxPNU/f4dJRpdszXIeIupLJH43Paq3ZSheOCKLbv7R+VG6CmxsFK9ykBRenEFMrvzjMVP48xDQnOWdlgI/P+PgJ5vS4ycesoIaeQ0WTSP9jYc8/fQREnyOZ4COa7gqQE4wz6S72P5+Ng0YvzWqAFWO0NBK+o7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dY4mfA5S; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 01494d905fa011ef8593d301e5c8a9c0-20240821
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=7E84GIHXbOx7jBLbf+I8NSxdpVEuRrIuEkSs5jTJbGg=;
-	b=dY4mfA5SAWAH1wA7HHE+KmF880YigIByq+AX4F1np4lfA3bpf+gSbf11fNcfx215c6vJxHdoC8uv5eFPA1j4MzA+/WvrYxq4SBAm2wdgYZ1Zs+gVr/fFwRu++q6EjAEXG/cl6etgXNI089BuaSd2jEO6qso88nUFKgUh2NeMn+U=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:3e2c2a9e-953b-4784-a01d-20cce319686e,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6dc6a47,CLOUDID:74eeb3be-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 01494d905fa011ef8593d301e5c8a9c0-20240821
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <tze-nan.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1073799371; Wed, 21 Aug 2024 17:30:29 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 21 Aug 2024 02:30:31 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 21 Aug 2024 17:30:31 +0800
-From: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
-To: <netdev@vger.kernel.org>, <bpf@vger.kernel.org>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Stanislav Fomichev
-	<sdf@fomichev.me>
-CC: <bobule.chang@mediatek.com>, <wsd_upstream@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Tze-nan Wu <Tze-nan.Wu@mediatek.com>,
-	Yanghui Li <yanghui.li@mediatek.com>, Cheng-Jui Wang
-	<cheng-jui.wang@mediatek.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong
- Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo
-	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH net v4] bpf, net: Check cgroup_bpf_enabled() only once in do_sock_getsockopt()
-Date: Wed, 21 Aug 2024 17:30:16 +0800
-Message-ID: <20240821093016.2533-1-Tze-nan.Wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1724232650; c=relaxed/simple;
+	bh=2PuRZJKFX+8h0wsjkRdFM+YPsqggo8jMLYDszFQP/bc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=nT9Ymzh1ThJyATLF3QYCvRuuh8k1aLO/wAi450FAWW1+xxzJVTQPlWvwX5Hc8c+T8VEtjrtbdW+85esvOWvlk8FZeX2YXwwxNdRyhwuVCmiAQXgbHawSbvMHc7VmyKIKPm8zphv65fCK52ryZMwUneYZJ2Jr0ltVgoNDX7J5UwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lufqcsL1; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240821093040epoutp03e91b9645ea9353c1d10fcccb72f055ed~ttHOIxAzp1559715597epoutp03Q
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:30:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240821093040epoutp03e91b9645ea9353c1d10fcccb72f055ed~ttHOIxAzp1559715597epoutp03Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724232640;
+	bh=CxHZ2IhgFN32ZaNM/qm3PeYWoU6m4YH2ghNdcMmsBoA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lufqcsL17OHpldqG8bD85whP1L2G6GFvjQR9g6qb36N3S4gHNrzkbVovRrAZ5OG89
+	 5X8JY5wCieY3qPQx/5ovWmuZhdajOyrd99oWeL6LkNAgSk7RHs9/Ew961fK2lWE346
+	 9W3/EtABNRrMeuVdcrEdeMhhqHm3X1QBWU2j7ptg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240821093040epcas2p245fb6cafe86a41e66bc39e4b00f42d7c~ttHNw_NZL2681226812epcas2p2P;
+	Wed, 21 Aug 2024 09:30:40 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wpgzz59MTz4x9Pp; Wed, 21 Aug
+	2024 09:30:39 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	39.C9.10431.FB3B5C66; Wed, 21 Aug 2024 18:30:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240821093039epcas2p390bf443819db218a0a94b424fece7961~ttHMxiScs1394613946epcas2p3q;
+	Wed, 21 Aug 2024 09:30:39 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240821093039epsmtrp28b101ad940a3d663af57ea05db3a209b~ttHMwixhX0970509705epsmtrp2J;
+	Wed, 21 Aug 2024 09:30:39 +0000 (GMT)
+X-AuditID: b6c32a45-da1ff700000028bf-d7-66c5b3bf6441
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	89.D2.08964.EB3B5C66; Wed, 21 Aug 2024 18:30:38 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240821093038epsmtip201075943f081dfbd771ba19e1ed25993~ttHMehQTc2427824278epsmtip2U;
+	Wed, 21 Aug 2024 09:30:38 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Kwanghoon Son'"
+	<k.son@samsung.com>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo	Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <8a729db0-f587-42b6-8003-789091986324@kernel.org>
+Subject: RE: [PATCH v6 4/4] clk: samsung: add top clock support for
+ ExynosAuto v920 SoC
+Date: Wed, 21 Aug 2024 18:30:38 +0900
+Message-ID: <0aa001daf3ac$c8a5bb40$59f131c0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQLQL30DU0UysUOS1ES52gTWByyh0gCAc2uXAiz2ascBkCr+LgIuZJbKAN2O2QABhTlqKwKclZoJAbQXYwQCPTKgC6/ME8mA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmhe7+zUfTDJ71q1s8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKtF75qrTBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
+	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM64ufgxS8E/kYqna64wNjD2
+	CHYxcnJICJhIvL3yjBXEFhLYwSjx5WF4FyMXkP2JUeLa0xVMEM43RokZ7SuZYDp+ndzDCJHY
+	yyjRMmsZM4TzklGi5/s9dpAqNgF9idXdt9lAEiICrcwSB588ZwFxmAXWMUpsnnkErIpTwE6i
+	bW8bI4gtLBApcXE/hM0ioCrR9+8fmM0rYClxZ0sfC4QtKHFy5hMwm1lAW2LZwtfMEDcpSPx8
+	uowVIi4iMbuzDSwuIpAn8WfxDbAnJAROcEjM3nsNKMEB5LhI/NorCtErLPHq+BZ2CFtK4vO7
+	vWwQdr7E5OtvoXobgKHxrxtqmb3EojM/2UHmMAtoSqzfpQ8xUlniyC2o0/gkOg7/ZYcI80p0
+	tAlBNKpJfLpyGWqIjMSxE8+YJzAqzULy2Cwkj81C8swshF0LGFlWMYqlFhTnpqcWGxUYwmM7
+	OT93EyM4DWu57mCc/PaD3iFGJg7GQ4wSHMxKIrzdLw+mCfGmJFZWpRblxxeV5qQWH2I0BQb1
+	RGYp0eR8YCbIK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBSa3D
+	yue2YnGv/bfnKi0CG29MOvXq2ZfOG6+fzFPlX8oUHBlaFxnQbcPme7CR58Jv++9vK7vefnx1
+	2yuv2X7at9U9mcePTpqy0+ngSWXzixfyddR7ftUw/vixImfuXav28rakt+HrVPx8Z6oLCx34
+	kPdApn/x+2mrjMpWNUj/L2fYt+ahRdzx1syq7sMXNbkm7GWq+lV39L9QK+/ej5t2LKx4fuGt
+	3Sk5jb/Hkp8u9H64OOIoy8vsNtczRyS2dZdf3LC5RbHszvmK+08PrZJtmz7xRbGaTyD3hFNV
+	YW6Ni9do19g92LRNXtSjKU2j7M+Cv593rGU5+1NN7LRXYJDpjb2X93xRZcjWiVU0u3V82QQl
+	luKMREMt5qLiRAB29iPoTAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvO7+zUfTDCYqWTyYt43NYs3ec0wW
+	1788Z7WYf+Qcq0XvmqtMFufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhb/9+xgtzj8
+	pp3V4t+1jSwOfB7vb7Sye2xa1cnmsXlJvUffllWMHp83yQWwRnHZpKTmZJalFunbJXBlLH25
+	mbHgkkjFpVOz2BsYbwh0MXJySAiYSPw6uYexi5GLQ0hgN6PE6ed/GCESMhIbG/6zQ9jCEvdb
+	jrBCFD1nlGjqesMKkmAT0JdY3X2bDSQhItDNLPFo7S4mEIdZYBOjxLndN9kgWtaySPy4sZYN
+	pIVTwE6ibW8b2A5hgXCJ01uOMoPYLAKqEn3//oHFeQUsJe5s6WOBsAUlTs58AmYzC2hL9D5s
+	ZYSxly18zQxxn4LEz6fLWCHiIhKzO9vA4iICeRJ/Ft9gmsAoPAvJqFlIRs1CMmoWkvYFjCyr
+	GCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1JLcwfj9lUf9A4xMnEwHmKU4GBWEuHt
+	fnkwTYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv+IveFCGB9MSS1OzU1ILUIpgsEwenVAPTtLWF
+	G6RDNLdOU56hXHlikkeI27KA85b7arb0B60zX5X0NKFZV8A+89qD4/ITJZYKuN2c1KHlXzfD
+	+oytxZxpCjtZlgpmKcevErFlrv9udjWOs+mkXWne8Qur/poy3rpstGda7Af9vtbefQ6iRvNO
+	H798Zcvetaf7nx+xebX0Ww+PWbfSprp2+0Jz3oh0l5wIzXVKwm8X7ve+EV/8XnHKJTeTawvk
+	ch9Kl/dlTGlI8c9RNbppc3fyudhX7/W+r19Q9MPj6Kk/Hs83dM7eq2E8wfEZU/H5fyLZb2Nf
+	bJyzs5avyMtw5yzZ98LPL8z73eJrbRK/ti763MJU3lXvdu7KOzS1SepoXM6lFWu1S689UmIp
+	zkg01GIuKk4EALsYRJQ5AwAA
+X-CMS-MailID: 20240821093039epcas2p390bf443819db218a0a94b424fece7961
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
+	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
+	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
+	<087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
+	<9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
+	<0a0101daf371$0f2025b0$2d607110$@samsung.com>
+	<76a46e34-fc22-477d-a2e6-4767e65a73c4@kernel.org>
+	<0a7b01daf398$9465d090$bd3171b0$@samsung.com>
+	<8a729db0-f587-42b6-8003-789091986324@kernel.org>
 
-The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
-between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-`BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
+Hello Krzysztof,
 
-If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
-"true" between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-`BPF_CGROUP_RUN_PROG_GETSOCKOPT`, `BPF_CGROUP_RUN_PROG_GETSOCKOPT` will
-receive an -EFAULT from `__cgroup_bpf_run_filter_getsockopt(max_optlen=0)`
-due to `get_user()` was not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Wednesday, August 21, 2024 5:02 PM
+> To: sunyeal.hong <sunyeal.hong=40samsung.com>; 'Kwanghoon Son'
+> <k.son=40samsung.com>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
+> 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Alim Akhtar'
+> <alim.akhtar=40samsung.com>; 'Michael Turquette' <mturquette=40baylibre.c=
+om>;
+> 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob Herring' <robh=40kernel.org>; '=
+Conor
+> Dooley' <conor+dt=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
+> ExynosAuto v920 SoC
+>=20
+> On 21/08/2024 09:06, sunyeal.hong wrote:
+> >>>>>>> +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
+> >>>>>>
+> >>>>>> same question.
+> >>>>>> Isn't it =22noc=22?
+> >>>>>> https://lore.kernel.org/linux-samsung-
+> >>>>>> soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
+> >>>>>>
+> >>>>>> In my case(autov9), if put wrong clk_name dmesg will show that,
+> >>>>>> exynos_arm64_register_cmu: could not enable bus clock ...; err =3D
+> >>>>>> -2
+> >>>>>>
+> >>>>>> Kwang.
+> >>>>>>
+> >>>>>>
+> >>>>>
+> >>>>> clk_name follows the guide document provided by hw. v9 is bus, but
+> >>>>> v920
+> >>>> uses noc.
+> >>>>
+> >>>> What I mean,
+> >>>>
+> >>>> .clk_name		=3D =22dout_clkcmu_peric0_noc=22, // wrong
+> >>>> .clk_name		=3D =22noc=22, // correct
+> >>>>
+> >>>> Because there is no clock-names =22dout_clkcmu_peric0_noc=22 in
+> >>>> exynos/exynosautov920.dtsi.
+> >>>>
+> >>>
+> >>> The clk_name written here has nothing to do with the device tree.
+> >>> Please
+> >> look at the code carefully.
+> >>
+> >> Hm? I see in the code clearly:
+> >>
+> >> 	clk_get(dev, cmu->clk_name);
+> >>
+> >> Where cmu is the discussed struct.
+> >>
+> >> If you claim it does not have anything to do with DT, then what is it
+> for?
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >
+> > In general, clk_get is used via the clk_name declared in the DT.
+> >
+> > However, the question asked here is the parent clock name of peric0_noc=
+,
+> so it is unrelated to the device tree.
+>=20
+> No. The question was about clk_name entry in cmu info used directly for
+> clk_get.
+>=20
 
-Scenario shown as below:
+I have verified that peric0 has a dev parameter and that it should use a cl=
+k_name that matches the clock-names declared in the device tree. I will upd=
+ate the patch with a fix.
 
-           `process A`                      `process B`
-           -----------                      ------------
-  BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
-                                            enable CGROUP_GETSOCKOPT
-  BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
+Best Regards,
+sunyeal
 
-To prevent this, invoke `cgroup_bpf_enabled()` only once and cache the
-result in a newly added local variable `enabled`.
-Both `BPF_CGROUP_*` macros in `do_sock_getsockopt` will then check their
-condition using the same `enabled` variable as the condition variable,
-instead of using the return values from `cgroup_bpf_enabled` called by
-themselves as the condition variable(which could yield different results).
-This ensures that either both `BPF_CGROUP_*` macros pass the condition
-or neither does.
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
-Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
-Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
-Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
----
-
-Chagnes from v1 to v2: https://lore.kernel.org/all/20240819082513.27176-1-Tze-nan.Wu@mediatek.com/
-  Instead of using cgroup_lock in the fastpath, invoke cgroup_bpf_enabled
-  only once and cache the value in the newly added variable `enabled`.
-  `BPF_CGROUP_*` macros in do_sock_getsockopt can then both check their
-  condition with the new variable `enable`, ensuring that either they both
-  passing the condition or both do not.
-
-Chagnes from v2 to v3: https://lore.kernel.org/all/20240819155627.1367-1-Tze-nan.Wu@mediatek.com/
-  Hide cgroup_bpf_enabled in the macro, and some modifications to adapt
-  the coding style.
-
-Chagnes from v3 to v4: https://lore.kernel.org/all/20240820092942.16654-1-Tze-nan.Wu@mediatek.com/
-  Add bpf tag to subject, and Fixes tag in body.
-
----
- include/linux/bpf-cgroup.h | 15 ++++++++-------
- net/socket.c               |  5 +++--
- 2 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index fb3c3e7181e6..5afa2ac76aae 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -390,20 +390,20 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
- 	__ret;								       \
- })
- 
--#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)			       \
-+#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled)		       \
- ({									       \
- 	int __ret = 0;							       \
--	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))			       \
-+	enabled = cgroup_bpf_enabled(CGROUP_GETSOCKOPT);		       \
-+	if (enabled)							       \
- 		copy_from_sockptr(&__ret, optlen, sizeof(int));		       \
- 	__ret;								       \
- })
- 
- #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, optlen,   \
--				       max_optlen, retval)		       \
-+				       max_optlen, retval, enabled)	       \
- ({									       \
- 	int __ret = retval;						       \
--	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT) &&			       \
--	    cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))		       \
-+	if (enabled && cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))       \
- 		if (!(sock)->sk_prot->bpf_bypass_getsockopt ||		       \
- 		    !INDIRECT_CALL_INET_1((sock)->sk_prot->bpf_bypass_getsockopt, \
- 					tcp_bpf_bypass_getsockopt,	       \
-@@ -518,9 +518,10 @@ static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
- #define BPF_CGROUP_RUN_PROG_SOCK_OPS(sock_ops) ({ 0; })
- #define BPF_CGROUP_RUN_PROG_DEVICE_CGROUP(atype, major, minor, access) ({ 0; })
- #define BPF_CGROUP_RUN_PROG_SYSCTL(head,table,write,buf,count,pos) ({ 0; })
--#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen) ({ 0; })
-+#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled) ({ 0; })
- #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname, optval, \
--				       optlen, max_optlen, retval) ({ retval; })
-+				       optlen, max_optlen, retval, \
-+				       enabled) ({ retval; })
- #define BPF_CGROUP_RUN_PROG_GETSOCKOPT_KERN(sock, level, optname, optval, \
- 					    optlen, retval) ({ retval; })
- #define BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock, level, optname, optval, optlen, \
-diff --git a/net/socket.c b/net/socket.c
-index fcbdd5bc47ac..0b465dc8a789 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2363,6 +2363,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
- 		       int optname, sockptr_t optval, sockptr_t optlen)
- {
- 	int max_optlen __maybe_unused;
-+	bool enabled __maybe_unused;
- 	const struct proto_ops *ops;
- 	int err;
- 
-@@ -2371,7 +2372,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
- 		return err;
- 
- 	if (!compat)
--		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-+		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, enabled);
- 
- 	ops = READ_ONCE(sock->ops);
- 	if (level == SOL_SOCKET) {
-@@ -2390,7 +2391,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
- 	if (!compat)
- 		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
- 						     optval, optlen, max_optlen,
--						     err);
-+						     err, enabled);
- 
- 	return err;
- }
--- 
-2.45.2
 
 
