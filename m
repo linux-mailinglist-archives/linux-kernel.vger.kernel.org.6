@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-295047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BF595960F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D6A959611
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 09:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE4B2899AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17DA1C20D55
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6067B1B81DD;
-	Wed, 21 Aug 2024 07:26:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA021B81BF;
+	Wed, 21 Aug 2024 07:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="q3X+JJ8v"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDD21B81D6
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7511B81AA;
+	Wed, 21 Aug 2024 07:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724225172; cv=none; b=RCS5IHMDUKEc3a5DPoeCOoYfkQhOMPDDDW4SVYtXE086UtutyC7xw/zkjLim3eLZQNWBRJDUGDPLn9rUmNcCXQ9zgnn8g4Kv0bILsvdnb9EZsyD1O4px3+FRcha2hxS3McfSwLfnrBR68jd6rTY5RmZLnMh7YM0b+6SAZQNF1uc=
+	t=1724225211; cv=none; b=cMEnmKdbSz1FNiAFFW80UFEibFA/+YUoip7oBKUfycyCmPwIcsc2UDR++QOPcV1Iths31ck0eImzF7Pr2wFwcRCnFIH9jTsvHfSp97InTAUucjrVrXEoA9eysuTBiOQR74N2a4a8R2KAU2K6fOzHoJaiOARpAXJimSiCkxHPwIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724225172; c=relaxed/simple;
-	bh=i4givOFpoIFYH4oJJeUES8CCDV6YYBw1Dn8HLriMbKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iuq23Nd2grDKe0xEc6mX/y1Y56yOJkqsIefTrrYSTu1r4LUGb9Rjq7qujzFfwvrqZruyrgN0+B03BsEpW8tNfe5Ns89YRhb9T9dmi9W1TLgj3MNjIxJKY03buJIaV+E1uWzJRV/vXaI0GceYK1/DWzq7iDRbts3zE+yobhxvnzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sgfjD-0007np-PK; Wed, 21 Aug 2024 09:25:59 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sgfjD-001xSa-9d; Wed, 21 Aug 2024 09:25:59 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sgfjD-00FPfV-0b;
-	Wed, 21 Aug 2024 09:25:59 +0200
-Date: Wed, 21 Aug 2024 09:25:59 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
-Message-ID: <20240821072559.lh5lt3mnhrit5gmp@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <20240807-v6-10-topic-usb-serial-serdev-v1-1-ed2cc5da591f@pengutronix.de>
- <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
+	s=arc-20240116; t=1724225211; c=relaxed/simple;
+	bh=zN5Lycw+dgrekFEQsQ6siY9VlS6x3DrGarsjuS8WSn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hl/ZvI0Zi232jk1qXFEPRTrCF9bxh9Pz+pd0VxQVzqcAF1UEYeIcW+j5uSNylxPX3HIl+O7NpzWz2UBhGKFH4AGZiuFJxIsMVcTuDeBmng9S5guctyjSlPplTCqo5oZwvoQ9jIdB10GpU0e6Y40sFl2ijhJcUncEhIctlpewMuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=q3X+JJ8v; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724225196; x=1724829996; i=markus.elfring@web.de;
+	bh=zN5Lycw+dgrekFEQsQ6siY9VlS6x3DrGarsjuS8WSn0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=q3X+JJ8vldSCOiZlaqR1dEMNynfOD0bE/SVlvBOPeBDMpB8MSEiTxrGUdsYLGtpQ
+	 HR0Dedc5mRLy7CIA/ma3WSYrLu9eRon9XZIc+W3d207MPC70Q0lTLx6E2dZlRAWlE
+	 R8hT248hbCVviN7NTyjf3zb7YQbzjOulUunlYEBNzCf96SMZzt0iRhqaeDbE3cc/9
+	 fT2yuDjnOnW2QGelRxVIW8GXhvk557qEpyDTMfKrPyxkBA32SObmdVH/hgZOrdA6R
+	 Nqel7A5gYHVuzIhEvDkN/1KVJUrF919W5eFS54r77ig5VBIzstquEfr8Tu35PDlAB
+	 t/SD2VGH2L66nHZ6DQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mpl0p-1sLNo648Nh-00ZzrV; Wed, 21
+ Aug 2024 09:26:36 +0200
+Message-ID: <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de>
+Date: Wed, 21 Aug 2024 09:26:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7a710ec-f391-4726-910e-d7bedbfc6a6f@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+ linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
+ <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de>
+ <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
+ <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
+ <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mqJBc/Xemdod8Z1hM6L0jq0cC9IFRhjY/X6HI1Z5myxaGnkA2Em
+ wSHZB3JcSY5VzqELBzNX56/bB9CC2v9FDOqD6/5NHnsPIaFkQzVfdxd7ZgzBDJPkJiYp0mK
+ wP31c77j/Arvudma45+YJayiCldkBXxKOebef+54PIPfy8g5KEmhUnRu0e099TzeEhpa+C7
+ EuFOdo0B57OEzIhieVNQA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jxdJMJsCaZg=;mjOlX4fUl9AIutJj9ILGCh1IsBu
+ eHQ+kF7BJ2I5AbJu3Y7HddmDyJYnMe7zw299hoEAF1184XgEpwdgzzkr2WPrHmgKe3N0bzVRm
+ dlT84jaB6wc5UyJaU4pSp9JgCPMkA2sSfsINpxOfiUgn0MUhZZPlMruUeTFPXNwXyM2WMdIhv
+ 7O+8oMjDHZVIc/mRpULftNZFukvPDHQq8JcvHSioVhCqUDqVoYghKLG6iPwN5Gy/eLdIPp/1x
+ i7wBlV+9XvmhEkoJxPKlEd7ZPyaRU+wBelij6NIdc0RFvoGRTMdmSOKu8ZAm2Jh2rkT0XPCK0
+ OQe4+nTczjuZquiZQdJIQ5/D9+qp5SQJiYmP3+a1oMkcC+84Ek5R4sbQzzvIfT5uM4ttWlFAh
+ yXFOfz1YTkxV70dZ6HlyhTD/YJJ/Dq2TRZ+my/GSjo1PPk1K8/F7vYQy2t4pn05CrnTpJVDwY
+ B2gRa1gojSeDByFj23DZM3knB9OfUzAVQFmyyTJZ0i5D3a1tYMGEpnZ6S/HOv/2FozQRnDPR6
+ 4fLxLswixYze9fiJ/jkrgCRmVsgGEENd2Vm9eV+T5UQ5RejpidBFgZALtBIhMWAFq5RltenbR
+ QB1vyPQd25bPXSzZaFCrXhPWnNHln/Tr21OeDUA1MukZZLxinCB9/4WNNuaTUqVipYWz+7CyZ
+ /ofDrOCKIcolK90nBLfA0wchX1qi3sZpmAXnvtOZ8A+ZD71g8lZFnp33Nnr4eJ4/Sema9BvTs
+ LWQXsMkniZxWZGuX4zrFp0XJlaOE+SsHHVepDKLhQ3l0zH0GIUY1Hv330Bj/1B4UhqqrGW+cY
+ RLxLG1LWUorX56bTXQQMgmxw==
 
-On 24-08-08, Jiri Slaby wrote:
-> On 07. 08. 24, 16:08, Marco Felsch wrote:
-> > The purpose of serdev is to provide kernel drivers for particular serial
-> > device, serdev-ttyport is no exception here. Make use of the
-> > tty_kopen_exclusive() funciton to mark this tty device as kernel
-> > internal device.
-> > 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >   drivers/tty/serdev/serdev-ttyport.c | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-> > index 3d7ae7fa5018..94c43d25ddbe 100644
-> > --- a/drivers/tty/serdev/serdev-ttyport.c
-> > +++ b/drivers/tty/serdev/serdev-ttyport.c
-> > @@ -103,11 +103,14 @@ static int ttyport_write_room(struct serdev_controller *ctrl)
-> >   static int ttyport_open(struct serdev_controller *ctrl)
-> >   {
-> >   	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-> > +	struct tty_driver *tty_drv = serport->tty_drv;
-> >   	struct tty_struct *tty;
-> >   	struct ktermios ktermios;
-> > +	dev_t dev;
-> >   	int ret;
-> > -	tty = tty_init_dev(serport->tty_drv, serport->tty_idx);
-> > +	dev = MKDEV(tty_drv->major, tty_drv->minor_start + serport->tty_idx);
-> > +	tty = tty_kopen_exclusive(dev);
-> 
-> I believe that the now added tty_lookup_driver() has negligible impact in
-> this anyway slow path, right?
+>> This was the case for a while.
+>>
+>> Increasing applications of scope-based resource management provide
+>> further opportunities for smaller scopes according to some local variab=
+les,
+>> don't they?
+>
+> Personally I'd rather it just fits in with the rest of the kernel,
+> but if the general consensus is that new drivers should use tighter
+> scopes, I can do that instead.
 
-Any other comments, suggestions apart this one?
+There are the usual communication challenges to consider also especially
+with collateral evolution in such software areas.
+
+
+>> How do you think about to collaborate with other data structures
+>> than character arrays?
+>>
+>> See also:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/coding-style.rst?h=3Dv6.11-rc4#n953
+>
+> Hm, I picked a character array since all it's doing is sending a
+> buffer to the device.
+> There's no published specification to follow, only "Well the Windows
+> driver sends these bytes and this happens".
+> So there isn't really a structure that really comes naturally,
+> especially with all the magic numbers.
+
+I imagine that further development concerns can be adjusted accordingly.
+
+
+> Unless you're suggesting I just do `unsigned char send_buf[3] =3D {...}`=
+?
+
+Such a programming approach might also look promising.
+
+
+> I checked the docs, apparently I misread somewhere that
+> `hid_hw_raw_request` couldn't use stack allocated memory safely,
+> whoops.
+
+Will safer API usage be clarified further?
+
+Can applications of advanced data structures become more appealing?
 
 Regards,
-  Marco
-
-> 
-> thanks,
-> -- 
-> js
-> suse labs
-> 
-> 
+Markus
 
