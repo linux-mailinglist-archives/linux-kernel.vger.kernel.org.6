@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-295973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A2495A3CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C8195A3D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5419E1C22D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96781B249B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AB71B2EE6;
-	Wed, 21 Aug 2024 17:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668671B253C;
+	Wed, 21 Aug 2024 17:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3vscH4WL"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bi3QKZrS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533741B2ECB;
-	Wed, 21 Aug 2024 17:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE71494D1;
+	Wed, 21 Aug 2024 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724260945; cv=none; b=utcuq3z5KndaItPQiS/dWS8jk5+xDLaWRwe7SB2Yq08ZL7hWkS0itvsAkeQgLdYo+T3A1mu+gyVy9wVq66V50jYdYdJXMtKHrLbl2h7oHm0ptNYDOVN90XVvt0ddBghH5uEe/2AbiWa0xNSwg+mNRm/2n7rDEuD77vyju/la3CA=
+	t=1724261007; cv=none; b=nkRorurncDjRZ+yhuybgkW8k7ePCDL6DW4ZahXwaK7C7cP3+zdHpXLGuac1OryKc+OSOlK/ixUatm9siQvAkmqqN8fVASGUEJWiLz/F5tKjw4DrkXdCczJg3qa2y/Vra32t0YlTDR+9moIskVZaiwSQwHdLQj/47r+GRdQeZXE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724260945; c=relaxed/simple;
-	bh=cPKhKjCfXw5NriblyHFI6LS7D3mSl5KBqmxtO7Riqlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thqIzZNCrzx123Vg8wHU9ymklp07MBCguKsC8qozLBERQQht3J1TDvapEYoFzzIyM58b55SmR68K1BvMrPC23gZxIy78ANuIQpfzq97+CXxqhkBCudRdKRBrE1oPfvpxU0FIZJjkrGPWlAIYIWUgiEL0q6uR+2f9F+N0VLL3GXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3vscH4WL; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WptSH46wNz6ClY94;
-	Wed, 21 Aug 2024 17:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1724260936; x=1726852937; bh=LsLhp/nKl8LLQGr/s+FRk976
-	QwSdFieNKd0jtpK3vaI=; b=3vscH4WLDGDKHIeivd1AC+s05PNMiX/pUuDYs8Lw
-	7v1+n5KWCKQ6w+jbgdWCRlh5oJdJoCL4+oalMLK2v8e4Xkx9aoJ+ohR+CuU7PHjW
-	/xRBSi8DDc2aMELWWNGtx8JowLL4yuzRECjKavx7PuANmqUKRxPixYWlYLQHaBvC
-	aCNsKxrzSi8vH7MKocsz1F4jYgh0otmXauSy76W+BmpOOWu/yAjWSrcvCfxxLrA6
-	mTqx83/usY6HE1w8wuJ4T0rJahDkjxDm1VikySSA0Md97LtlDe1XKtkmCkXYOWNF
-	tfyAVYdwIqyamwqwMW68++6zmeNbqt7wD5XftjSNhMFK7w==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id DO6XEusydHF2; Wed, 21 Aug 2024 17:22:16 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WptS351dYz6CmLxT;
-	Wed, 21 Aug 2024 17:22:11 +0000 (UTC)
-Message-ID: <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
-Date: Wed, 21 Aug 2024 10:22:09 -0700
+	s=arc-20240116; t=1724261007; c=relaxed/simple;
+	bh=IphY4+kHIie7jEzz5vW5+DOoafboWztbY8zIGCvr5V4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+f5p5Ue6hacFSnRBPr4qIC1P9hEaR4Nsl2e0vjHNWqmhl9OAcjr+Wcs3TNhIWl/x7wqPzvzd2ie1zGZ6KxloOyYfPIgO7WU2Hgtp3U/Jxo5Pbl0yNwxozz6W1Q4GCO4ZUsmkPG/04jVFekQXrjqIMJ5G1MSBtYxf3dpOCiT6Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bi3QKZrS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C88C32781;
+	Wed, 21 Aug 2024 17:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724261007;
+	bh=IphY4+kHIie7jEzz5vW5+DOoafboWztbY8zIGCvr5V4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bi3QKZrSmr2YIEap/NV50J//OgRWwRS/aU7kSMwbQLaMQWqOIvRhnzttqB8TL4jcy
+	 EjsBPTqAXJqBZ5DwEocYdOVLgZ61spLg1t6lwxL/nwMRcxUHERjgb7AC//CCJ6Qxm6
+	 SeF+WV13tLHiFYQf8STSep/LkuwflygctUSwrBMTgoUSE/TwuegoJabXFIkI9ZUYY3
+	 YPzKispDHwpI9pJFVKLrbfC0cxVL4LY5D1Hw26vvWgHeSlm8bVnmiV3NqrR52pOrrK
+	 5cNKKEUcjHVnlXH3ozuwNRC+9lKw2g/NeKO9PWNz1fYs9t2B7mq8jW65eGcLsXFdLJ
+	 zRgYsdMhUCbeQ==
+Date: Wed, 21 Aug 2024 18:23:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"brauner@kernel.org" <brauner@kernel.org>
+Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"jannh@google.com" <jannh@google.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH RFT v9 4/8] fork: Add shadow stack support to clone3()
+Message-ID: <158190d9-a4a6-4647-84e8-f4ae036d984b@sirena.org.uk>
+References: <20240819-clone3-shadow-stack-v9-0-962d74f99464@kernel.org>
+ <20240819-clone3-shadow-stack-v9-4-962d74f99464@kernel.org>
+ <dc8328dbaa01ca7443eeb75024752c673904e3a4.camel@intel.com>
+ <cc2e7d86-c890-4cb1-8cad-1cfaa9f53dc8@sirena.org.uk>
+ <82be9ec6e43a018add8d9bbc6ba67feee676f32e.camel@intel.com>
+ <5643761f-cc38-4e41-9ddd-f0a1934f8724@sirena.org.uk>
+ <9f022aa4cd3e2dc82d0c963e9d2bf5c7ddd5b92a.camel@intel.com>
+ <77bc051d-b2c9-4e3a-b956-be8879048e20@sirena.org.uk>
+ <5464b915b52bf3b91ec70201736479a5347838af.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-To: MANISH PANDEY <quic_mapa@quicinc.com>,
- Sandeep Dhavale <dhavale@google.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
- Christian Loehle <christian.loehle@arm.com>, axboe@kernel.dk,
- mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
- linux-block@vger.kernel.org, sudeep.holla@arm.com,
- Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>,
- kailash@google.com, tkjos@google.com, bvanassche@google.com,
- quic_nitirawa@quicinc.com, quic_cang@quicinc.com, quic_rampraka@quicinc.com,
- quic_narepall@quicinc.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <3feb5226-7872-432b-9781-29903979d34a@arm.com>
- <20240805020748.d2tvt7c757hi24na@airbuntu>
- <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
- <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
- <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
- <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
- <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
- <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
- <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IjUWVOJ38MVk6Iyg"
+Content-Disposition: inline
+In-Reply-To: <5464b915b52bf3b91ec70201736479a5347838af.camel@intel.com>
+X-Cookie: You are false data.
+
+
+--IjUWVOJ38MVk6Iyg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 8/21/24 5:29 AM, MANISH PANDEY wrote:
-> How about introducing a new rq_affinity ( may be rq_affinity =3D 3) for=
-=20
-> using cpus_equal_capacity() using new flag QUEUE_FLAG_SAME_CAPACITY.
->=20
-> if (cpu =3D=3D rq->mq_ctx->cpu ||
->  =C2=A0=C2=A0=C2=A0=C2=A0(!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queu=
-e_flags) &&
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpus_share_cache(cpu, rq->mq_ctx->cpu) =
-&&
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (test_bit(QUEUE_FLAG_CPU_CAPACITY, &rq-=
->q->queue_flags))
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 && cpus_equal_capacity(cpu, rq->m=
-q_ctx->cpu)))
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return false;
->=20
-> Could you please consider raising similar change, if this seems fine fo=
-r=20
-> all.
+On Wed, Aug 21, 2024 at 03:54:49PM +0000, Edgecombe, Rick P wrote:
+> On Wed, 2024-08-21 at 13:45 +0100, Mark Brown wrote:
 
-I'm not sure that a change like the above would be acceptable.
+> > It's entirely possible it just leaked.=A0 My own attempts to dig through
+> > the archives haven't turned up anything on the subjecti either, it seems
+> > to have been there from the get go and just gone in without comment.
+> > Equally it could just be that people felt that this was a more tasteful
+> > way of specifying stacks, or that some future use was envisioned.
 
-What is the performance impact of the above change? Redirecting
-completion interrupts from a slow core to a fast core causes additional
-cache misses if the I/O was submitted from a slow core. Are there
-perhaps use cases for which the above change slows down I/O?
+> Ok, well I'm suspicious, but won't object over it. The rest seems settled=
+ from
+> my side. I may try to attract some other x86 attention to that CMPXCHG he=
+lper,
+> but otherwise.
 
-Thanks,
+OK, I'll post what I've got (with the current ABI) today, incorporating
+your x86 fixes and the tighter validation and we can see what people
+think.  Perhaps Christian remembers what's going on there?
 
-Bart.
+> > > Sorry for that. I looked through all the old threads expecting to find
+> > > discussion, but couldn't find an answer. Is clone3 support a dependen=
+cy for
+> > > arm
+> > > shadow stacks?
+
+> > Catalin didn't want to merge the arm64 support without clone3(), and
+> > there's code dependencies as a result.=A0 I could unpick it and reverse
+> > the ordering so long as the arm64 maintainers are OK with that since the
+> > overlap is in the implementation of copy_thread() and some of the
+> > dependency patches.
+
+Actually in an off-list discussion today Catalin indicated that he's
+fine with relaxing that a little so I'm in the process of picking the
+dependency apart.
+
+--IjUWVOJ38MVk6Iyg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbGIoUACgkQJNaLcl1U
+h9DFfAf+OzTGKCg7J4IIOd/eFMUWBcVyGpBEBAM2TCfPeCvemloWt7HhJ4xnjyjP
+L3I8Zh+LcMh8NspUGwghleR+i+o12E+g2/VISH8FHUlD2Wzd3JOeIH2IA6eYo1QT
+h1LlZfDAa8RJd0sJW1ToQWNmDGVzPyQxShCd7P56VwCC/NvN4TulMqiX3h8tJgc7
+ExNQ4kuK4iI1c0AUZcMDxkrFFEZ/JlgCevFCEluNCpX3DzP8ng29DHQQdOLdfWne
+bTPX5hqp/ziLiDKyguBNwyTkqcpXquZTf0KSRkNVP78KNBnbtbJm0Qzr4Vjaol+5
+tFLPcB66vbMI6tV0e7yfeWKAX7NlVg==
+=F/Cr
+-----END PGP SIGNATURE-----
+
+--IjUWVOJ38MVk6Iyg--
 
