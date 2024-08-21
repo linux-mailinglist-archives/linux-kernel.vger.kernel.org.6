@@ -1,239 +1,236 @@
-Return-Path: <linux-kernel+bounces-295282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEE295994A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:14:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F99795994C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6063E1C233E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:14:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76E32B26210
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FF6205A88;
-	Wed, 21 Aug 2024 09:48:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5D11C331A;
+	Wed, 21 Aug 2024 09:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="O5pTScXy";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="KO25TvNz"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C26205A82
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724233684; cv=none; b=DP8MGV2MnfSa1qXF6vXOsy43YwIJixEYeIOp1PMU+jujUc0QVA3I106pwi2FCLgFbqgagsJgmBdZC5QSByzJQnK0JU5r/rY+0EV/3icoApj0UQeCF24eAFttY+gWgPIA0EEbLPdTPNa4GYxabatjqSOF1RwqOPJMjxAdu16B9Xg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724233684; c=relaxed/simple;
-	bh=uHQIt+5n7BGWifdO30D3Rrir/LBlY/LG8DjtaPKk/9c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bGhLEZ6xgczg431GfzDffbqoB/OiXmZn2DL/zkzLurMf4WlDdiZb8dvsvLjCP+jYNJnoyZc5RFYSgex/+xHnvZVoDaA+tBSq/gQ9lxUg+KHkHfPObeOMLtOAPbkOc+wvASgvI4PnIOwbfEcr5zpJPM/E+4O+0xYrmzUeoAW5Sgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f968e53b0so604959839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724233682; x=1724838482;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRKUWVoZ20Z2BmemCfk5yHKSZO93Ftw7487KRucYk0I=;
-        b=plTYuPOfc0HLJ+wSUy/o8H3cy0yHkl9DHosGP3lQd8E/1gY6QTnNmgpICEHLO03uy/
-         S+7ahohhYsxemksUrOZc/rtw8P8/yvOVabNQ7CZQONkDcA3muZdiNfgiw7wMVvbzA8N4
-         7s+V81MgppS+HN3o2BJsXNPm+bMZG49CuaqTLA7xeeL3kO1TterQ3o4mgIsMYPpU9BVz
-         zvV88jm7oPHa3s+C57CamGBCxxPUom6gg8Dk6bGRR0Tvzb/nM4VFV5pn1WP6FwK9mryF
-         m8qrrH01vFV7j0+jXPa9UkKZBCUNcaAeBa4ZSTeK4d6cuLyZ3+9U+MeGhIZ45jOgoQvF
-         raZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSq7DpmPW7W1VGFUzuJmZoIb0ogXMqDP7I7ZDX1NJLE5XPXkMirJs20vp9K+sq5oA17fCTWu9+7+kf6hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqsfpaw+KLYeP2stwErRoeBtKC0JJ8Ps1KN9/qhQ6k1LavGtnk
-	s+QsjZ0oXc7ryAIq1Wo6ROt8Bz98bCfr+DE/bySnEOZdo/xVlZe9Ui4t69L4PCQg4TMhCtRhmXq
-	U49e2n+RnGMU8mueHJuRXO65H5c3ckTR7B2ossSZWW7qOfqcV/J+LxW4=
-X-Google-Smtp-Source: AGHT+IGP7JeamJ9EiMo1eeZrDluS9kudANA3KPcBKMJRdGKi4/4jSjESQGOo1Tev5Ogrj4q74doPfDWzZeZ2bJxqJbaaj9fv6sNK
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F7F205A9F;
+	Wed, 21 Aug 2024 09:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724233790; cv=fail; b=YUrnHSaP4ciDemG7jC7wlCOXT5QKOJ80aKYJ9b3YqgAsMV0YWrn58HepUPpEF/xbu3Tk5y5BPQeLjlJIBdnl9M0MuoaNxkdYzKhOw7j64MsNBmsIY/OyggXqCUermJKzGji3mqWk+9JvbpJW8+qVPGLYGbW+U/LIdtA8nie+tew=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724233790; c=relaxed/simple;
+	bh=oRmGREjEbzQK1f/MDP7KOYDdNxkYzZ6YDo5GBv7VPi0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OfOMt7I+jBUb8L7iK/KkdZc/vYEapRlQvfI9m7Kh/sJOXutPnzWTRnHz3AqCUVeF/Yi1IhSMCYvsgiDrijj1DE2LzeRDIRnSLOoDP3ulivCKUpgMYq7AO+/4v0+Fu/b8w+2/9yn4gceFxuwOHSSkUsz0ZMCcgllaNidv945q4Pg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=O5pTScXy; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=KO25TvNz; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: af2b4e3e5fa211ef8593d301e5c8a9c0-20240821
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=oRmGREjEbzQK1f/MDP7KOYDdNxkYzZ6YDo5GBv7VPi0=;
+	b=O5pTScXyIoXxOhP4Whn9oTZ5HQwrszsNkdxDPgRbhs1JiVvmyfiDsAMCYEzSLVdtM2j76dwQXiy0zbk4XG3ycUXGd29QQL7HngTFHQBGOmNP0ctBMInILTXg2uZnf0hCLzAKCZT1JAKqv3fmLXpECYElBXEUfNQQ5QeBzjck8wQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:ddc21ca5-06ab-4f13-a616-b340f64a1b1d,IP:0,U
+	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:6dc6a47,CLOUDID:7c3bb4be-d7af-4351-93aa-42531abf0c7b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: af2b4e3e5fa211ef8593d301e5c8a9c0-20240821
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1829273608; Wed, 21 Aug 2024 17:49:39 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 21 Aug 2024 02:49:41 -0700
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 21 Aug 2024 17:49:41 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J0ZuDxclyXIou6OqmVBR/J8WkdTNvGGAUrHTyFsKzOFM2U+qeIWaf9dZZvLgKaWlFACx5AQ+skHdIQ07swvfZVRusvIWAcR1YkjAyTrq+NZm8qqIX5pEOj4tWa/K86Wyw818VdGYgaqp74afduLEiTit1a9l9Rsa5/2hgS7IX3hHNe6Bh0YD71XTMiQ6JwfySneVYv6ZRtLeoZjIDj0dCrnnOVLQyP7w5+5GcnYu9eRTLj5uVzoVs+cs9EcY84VGiQEh9VgiCvYyILKI7BmsNmdM1itjBxgupJphE73+GBZKIigR+rlyaSBBi8aTecQahpXGl5oPrFEwIdM+yjoAoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oRmGREjEbzQK1f/MDP7KOYDdNxkYzZ6YDo5GBv7VPi0=;
+ b=kXD+1RoLIfmMdNQJpNuEiGyV8eVcvxxCWRZOLHD1GaozR61dgsYGug/ZrL85ZHTuWx+p/GcC14bZ1LVc3ywadZYuqGPttmJiEI1A9Y7CFj93rFGxs3mgx5rs+54wC9phcyRZFVseDyGBLsdUMxWC3Wns0F7nljPs7xUGURXZKtiI86VX8q7Kuah5QktM2rJIhM5r/stI8AJnLIhJpZ1zb91u0XsGtg1IMma169CM+IKvVP45Oy+iAbZXWAMqx9cw8ZhqrvOwUrLkjMlhB9WPg409kiXAdm+HSKwpyO+pusKmQTJnYOI24NQjv4Ugfy1D4g730hmM+uAcCwykOJguUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oRmGREjEbzQK1f/MDP7KOYDdNxkYzZ6YDo5GBv7VPi0=;
+ b=KO25TvNz89q9/oJ0Slms2ZBIvuSmGc7MziBjF/xdIz8TRA5Y+Kkfc7bBF/XphU9mtzLS4IrBIvaU9XiybgdNbdLPcv2Pcbe3JC6Lz8ncQp6e35f1epim+/j6YrxIRtOnBNiOeAW3p/a7an/ly6TCcbFe/bOfykE3bofSNy1I44Q=
+Received: from KL1PR03MB6226.apcprd03.prod.outlook.com (2603:1096:820:8c::14)
+ by SEZPR03MB6992.apcprd03.prod.outlook.com (2603:1096:101:9d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Wed, 21 Aug
+ 2024 09:49:38 +0000
+Received: from KL1PR03MB6226.apcprd03.prod.outlook.com
+ ([fe80::f3:c11:8422:7ce3]) by KL1PR03MB6226.apcprd03.prod.outlook.com
+ ([fe80::f3:c11:8422:7ce3%4]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 09:49:38 +0000
+From: =?utf-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
+	<SkyLake.Huang@mediatek.com>
+To: "andrew@lunn.ch" <andrew@lunn.ch>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "edumazet@google.com"
+	<edumazet@google.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	=?utf-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v10 11/13] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Thread-Topic: [PATCH net-next v10 11/13] net: phy: add driver for built-in
+ 2.5G ethernet PHY on MT7988
+Thread-Index: AQHay6W85idQ8hnfk0ODpiyAitmPOLIfNosAgBKRBgA=
+Date: Wed, 21 Aug 2024 09:49:38 +0000
+Message-ID: <c21fe0db83dd665d4725ffedc51db9063dbe2f3d.camel@mediatek.com>
+References: <20240701105417.19941-1-SkyLake.Huang@mediatek.com>
+	 <20240701105417.19941-12-SkyLake.Huang@mediatek.com>
+	 <ebeb75a3-a6b1-46b3-b1e8-7d8448eb23f6@lunn.ch>
+In-Reply-To: <ebeb75a3-a6b1-46b3-b1e8-7d8448eb23f6@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KL1PR03MB6226:EE_|SEZPR03MB6992:EE_
+x-ms-office365-filtering-correlation-id: e3ce3934-e770-449b-b98a-08dcc1c6925a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?aEN5Z3I4eEhVU093WloxNjAyaDZTbTlFWE9oZmJTOGdrN1l5WWlsMXIxL2pZ?=
+ =?utf-8?B?elU3UjJCbE5WeVpZdXR5T1pCTHdLaDQzMVA0eWJuYm1ISm0ySk9YU3JOR2dB?=
+ =?utf-8?B?MmFOcGs3SFJBd05OVEpGSmdCQ3oxRFI3S1BMRmttU2JRbENZNldSWGNHNnJk?=
+ =?utf-8?B?b1BxS3hwVXo1aVFJRzFpa3liYUdRNTFnVGlVcEFGZkxCZElSc3Q2YVViUkF6?=
+ =?utf-8?B?eUxBL0FSWGN1UmFBazFHcHdTRzJ0S3JvUlk5R3IxVTV1eWNGOGFQZXRLY3c3?=
+ =?utf-8?B?TDRiN25tTDBuZmlnaVFCM3M3T005c1R2Y0Iwd28xdGs3MDdFbksvQ2E3dDR4?=
+ =?utf-8?B?RXEwckx3YWRYbVpHdDBLOG5VZ1NCS3ZkcU1ZSnlOR0U4QUJZY3lFbmUxa0tv?=
+ =?utf-8?B?RGxJWEdmZVlrT2djdVJXSUtxYk5pN0JiT01ZNHE1T2FBbG96ZWRBeUNicWJi?=
+ =?utf-8?B?Z2UxUVYxa2NGRnBGZmF2Q1RjVWc4QWJscWlHNjhoNkFQNHZiK3NIMkg5b056?=
+ =?utf-8?B?ZzVYSC9nOVY1TFQzNUhUcGdhNGpEMVhDaTdPUy9QQjdVYTR4V2VtZzVUU05l?=
+ =?utf-8?B?TS95TFJCMUNteEZmM0laSUxzNHRvbWwrVnJyS1pKQXZxY0NXQ1lrSkk1Zitk?=
+ =?utf-8?B?akZ5aEtiOVNUZjhrUnRoamFoVjFBSUJYMytxZEtiL2tsTEw1dS9UR3JKVmtZ?=
+ =?utf-8?B?OUsxeVk5RDhrWnJQR0RXd0M1Z2hKdHBFeFhXSUVtcll1NndPbFdBd011Tmkx?=
+ =?utf-8?B?eGg4bW4yRVlnak9jUkdUYkRMN1VpNWtlS0VjaFc3Z3BCUTFTRjNGbktPdEFE?=
+ =?utf-8?B?R3lCbnVWZDZNMzhZb2hGbUkwTC95aTZzKzlKK1p2RHQyUkpRMDNaandmMzVh?=
+ =?utf-8?B?c1pER09PYmdoMDlIMHAwRCtURlNmZEFjdXZHMjJ0VXh1OEVnUzg2UVNseGRt?=
+ =?utf-8?B?WFNWTUNTQ0dxa2NmSG1ZNXcwRmVuSkVZSU5Sdnl5dlI4SE84SGNvT3RzTXZn?=
+ =?utf-8?B?VUduRDZ2cTExVDJGRkVsQzdOK0NtSk51YkQ0cXp3SmlKTGt4OXlYdzdpbWI4?=
+ =?utf-8?B?c3U2MVY3TndUUnBUaUlremh1SnduVnlwbjlWeWJtc1dHZ00rcktlMUwyV2tS?=
+ =?utf-8?B?VmVWY3hmWWRnRWQ3bmFZQW1GZjZJY0lwQ1c3S1ZlWnZYRVZHeWhDUTdqdTk3?=
+ =?utf-8?B?NWZhT29yblJrN01pK1pOVm9qMmJnb0VxbDFOcXVFbFZQRW5MUCtHVW9KdklK?=
+ =?utf-8?B?VlcyNmFFVXNydWNJemlONDhlbjJCUDV1bVUxYlFMS0dWd2ladlFiampnQkx1?=
+ =?utf-8?B?YTdRSVVyajF2cUsyM1UySkZJNk9Lbk1MQ04ySzlJZkhwWDV2cFF0em1NcE9q?=
+ =?utf-8?B?MldPL1QyZ25Yb3ZuUFdEemxQY0IvRG9RMW5CNklkL1FINWM0RTRRS3dSQWlE?=
+ =?utf-8?B?MWZsU0U3aEdiTlE5cDhHb3ZOODhvMjQ2bmpmWmhZU3E4WUt4cXQ0VklkTGJr?=
+ =?utf-8?B?S1p5QkdCM2pUVzFDTzk5aS9UcjZGZ0hGK1YzV1cyKzZ0TXVCUThNUm15MU81?=
+ =?utf-8?B?U3JpaXBkRzVneTd0YndhdVQ5MTFhdXFNcG84cVphMVVVL0E4bGRFaGlFdGQz?=
+ =?utf-8?B?MzFJUkYvWFBxaXJxcVpyU3p3a3Y5ZEswczFPcE1ZOFBjdVJ4QUs3VGtJckZ0?=
+ =?utf-8?B?cHV5THhmQW1MUzdQbUhMVmxPekIxZ2dLRDZIUDlVSUtOVzNDWitIOHFteklW?=
+ =?utf-8?B?aHp2Z1pabjBDQ2NydHNkc1NBNm01MWRqZll1OHJ3U084aW1sb1BNdFZrWVBG?=
+ =?utf-8?B?MGR2eUZDSUEzWVhDc1dwOWJVdXkzcFVVTFZOVEYzZXlsQ3pGbkJ5bkJqTGp6?=
+ =?utf-8?B?U2V3Sk9OcHpIaDhpa3NFZTBadGd4V01LYlpEd1l1aS9ZdUE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB6226.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bUxjZURVdWNTMFI4WXcrakFVeUFYaGpIcXVKNENUNXFub0ZCVGhZUy9rNWRI?=
+ =?utf-8?B?UUtCRXNObEVTY2x5eTZ6dlRFZ2Q2eHBKaU5VeENqby8vTG5ybjZSVUNkeita?=
+ =?utf-8?B?cFpNN0I1M0dFeXBlL1lzWHhyKy9aTVpIZ0toaW9yOHo0MGZpcGdpWEF3UUNN?=
+ =?utf-8?B?VWlMSTBMYXBJSjJBU2ptYS9vYWhGNU9CLzUvNXQrSktCY1c1ZEpVWG5mOWNO?=
+ =?utf-8?B?QmFMdTdBdVJINTNYc2NlL0JaQ2txNnJoMGM3Q05GSU0wY2JENUM5Lzg0Z0xk?=
+ =?utf-8?B?dmdCbk1DUVRKWWM5RTJJV3VuVVlwcCtNdC9sR042MVNmektZTEJIVnRRWGxQ?=
+ =?utf-8?B?V1cxdkZpNGE1K1hrd2tPREdOTnBEaDVNaFBEY04xV0tXaHNxSjlSK2piOVM0?=
+ =?utf-8?B?Q3JPSVlxT3VUbnhSOVlia0FhWnZ3UUNOUENwSVFXYk80aEF5KzZzb0JFM3Jh?=
+ =?utf-8?B?K1hSSUtYb2xKQWVOZ3BUS1BlVmdqdi9aSURUdCtJSk5qcUZIYzdKMytTOEpr?=
+ =?utf-8?B?RDR6ZU5XWXA1VnB1OG9oUVE4VUd4RWNhZkZQeC8vdXFJZVZKekJURytYRGwx?=
+ =?utf-8?B?Nk1WZEJkd3JxQlZuWEVpdWcwSTA1TTBuRXZXcDZ1czBFdnhFQWRYdnZQL04v?=
+ =?utf-8?B?eHlrTjJyamI5d3BJYlhneXlQdXhzV0pDUWcrMnZ6dTlPemhJVU1aREVyRVQ5?=
+ =?utf-8?B?L1huemlUQzVxaHNoSWRla3dXTitzS1dHVTYyWXI1elk0RUJNWTl6ZjdlYVVp?=
+ =?utf-8?B?SXp2cHp3aGpmT09zR2dlYmxQODZHajRyenFVcFdOS0p6aTFQZmF2RGJSLy82?=
+ =?utf-8?B?RnNvdkUwalUyUURLVVhmTm9acWRMZjZXK0xTNGEyR2VyNEVEdFlwNkZkbm1Q?=
+ =?utf-8?B?Zk9wVWJYSEFSYVF4MzN2VFlqZXA5RHJQVEVQR2xTWGpMbVk5cktxUUpqVjB0?=
+ =?utf-8?B?RDErUit1emZQVEt4MXRnYjEvcnFXbWZWMUpwUlZkVU5mKzZFZzJYdUpIWnQ5?=
+ =?utf-8?B?SHkrejFYVnVWa29vUlFNQ1RRM3JjOFB2QkYyRnArcGRQZTJKcWYwajNPdzds?=
+ =?utf-8?B?UklDMzRzcnNpa1YxdUxGbVdjMUpVdG00clFzZW1uVHVQdGdLVXdEbWh0WDBj?=
+ =?utf-8?B?VGM0YzhwYUJUSldRM3Y1NDdJcWwrK2FrMXR3MDJkRDgwdUt3bWREWjdGdVJV?=
+ =?utf-8?B?c05HVVJtbW1ra0FXTDN6dWlmc25EOFhTSjg3eW44VkpRZ3c4VmwwcXA3bWdT?=
+ =?utf-8?B?WGt4Tld2LzVNV3hCRm0zdG5lN2ZJUHBhTlZ1YU1nenNIUEtHSCtDSmJiK1E4?=
+ =?utf-8?B?aUVRVUxEWTlZK2RxTDZzR21Lb05yLzhlUE9EekRDcFRJTzhaZTlQMkR0RTA5?=
+ =?utf-8?B?SlVPUlVHZDZnR3JFSWRiQXAybW8rUkc4Q0xvb2hIaUM3bjN1VWFZN0FkeUJz?=
+ =?utf-8?B?YWU3NzBUZ1ZKVEN6OUh0SzRvaGZTbXlyUTF6QVJVVmpqMDF4bW8rVkd1TVl6?=
+ =?utf-8?B?Z1hvdnBjeVFLeVNySUxDaENpNGVNZUsxaFJQalk2cWN1V3E2c2s0TTVkeEFh?=
+ =?utf-8?B?QkU0Rmh2eDNTeS9LSTlGK0dweDVhMHZJMS9ia01ia0FOMit5NlFZbU9nclR2?=
+ =?utf-8?B?Q2xteFJMZTdFNEl0Y3Z3NkQ5ajByTzJqaGFVTUdQRHVQczVtakl5Wm4zSi9D?=
+ =?utf-8?B?OWhnOFN0K3VXdWxlSWdPeVBhOUZ4UmZIOUx2L1ZGOTg2SmV5ZjR6a1RBSGh4?=
+ =?utf-8?B?ZHNsR081K0xURmJSdVc3d2VOSTUxSis2cnNVNkRucnAwaUVlN1VsbDgyZHpt?=
+ =?utf-8?B?NEJkU1hMODgwcURML0pWb0VBbWIyZkZhZjhIR29NajY1bVI2azdJZitJbUts?=
+ =?utf-8?B?RjRmUzlFOFJoOXpMc0ltcVd4S1Y0WnNaRTJTTHZTYkJjdHB3WmVkZ1RPT284?=
+ =?utf-8?B?eGZZd0lpejc2MGllYU9JeDRlbHJkenZKWTYwd2E2QmVkTHZYWElPTUtQVStx?=
+ =?utf-8?B?cGM0MzExbVQrc3VYcnNBWlRBVzM1Z1pqbjNhYUtNWFAxSDNoaXRiamUrSm1P?=
+ =?utf-8?B?cUNaR2gyT2p2QzhILzRJZXZKanBNZkxlckF1VGt1WEdGZU9QWkQ1VFVhKzEv?=
+ =?utf-8?B?WHpsYkcxSGI0OUQ5ajRVTU53M2cydm5wL3RwUVl2amkzRk1ReUY4N1dIeHFD?=
+ =?utf-8?B?dmc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <573EA5D62DD5534782CF3413223A40FB@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:410b:b0:4c2:2ad5:bfd0 with SMTP id
- 8926c6da1cb9f-4ce626bc407mr69472173.0.1724233682002; Wed, 21 Aug 2024
- 02:48:02 -0700 (PDT)
-Date: Wed, 21 Aug 2024 02:48:01 -0700
-In-Reply-To: <tencent_3BC9CCA2E7ED86CB52D9C66449BE2EC72E06@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020382906202e7042@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_try_remove_refcount_tree
-From: syzbot <syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB6226.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3ce3934-e770-449b-b98a-08dcc1c6925a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2024 09:49:38.2801
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4kpL8c/Z2TKKr9+Mx53lg8IjMz7lvsW5Wc3WbBmr6BSZVjhkASFc6wxQBNVj3+oJUrIUpqsAZKOR0VGjhqkJjb+R/VWF25NLNdZAgodEePo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB6992
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in ocfs2_get_system_file_inode
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc3-syzkaller-00066-g1fb918967b56-dirty #0 Not tainted
-------------------------------------------------------
-syz.0.18/5710 is trying to acquire lock:
-ffff88804e4b95a8 (&osb->system_file_mutex){+.+.}-{3:3}, at: ocfs2_get_system_file_inode+0x18f/0x7b0 fs/ocfs2/sysfile.c:101
-
-but task is already holding lock:
-ffff888011b74da0 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_write_begin+0x1d1/0x3a0 fs/ocfs2/aops.c:1901
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
-       ocfs2_read_virt_blocks+0x2ca/0xa50 fs/ocfs2/extent_map.c:976
-       ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
-       ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
-       ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
-       ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1980
-       ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2002
-       _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
-       ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
-       ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
-       ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
-       ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
-       mount_bdev+0x20a/0x2d0 fs/super.c:1679
-       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
-       vfs_get_tree+0x90/0x2a0 fs/super.c:1800
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3472
-       do_mount fs/namespace.c:3812 [inline]
-       __do_sys_mount fs/namespace.c:4020 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&osb->system_file_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ocfs2_get_system_file_inode+0x18f/0x7b0 fs/ocfs2/sysfile.c:101
-       ocfs2_reserve_local_alloc_bits+0x107/0x2870 fs/ocfs2/localalloc.c:627
-       ocfs2_reserve_clusters_with_limit+0x1b8/0xb60 fs/ocfs2/suballoc.c:1166
-       ocfs2_convert_inline_data_to_extents+0x29d/0x17f0 fs/ocfs2/alloc.c:7078
-       ocfs2_try_to_write_inline_data fs/ocfs2/aops.c:1562 [inline]
-       ocfs2_write_begin_nolock+0x1c79/0x4d30 fs/ocfs2/aops.c:1669
-       ocfs2_write_begin+0x205/0x3a0 fs/ocfs2/aops.c:1903
-       generic_perform_write+0x399/0x840 mm/filemap.c:4019
-       ocfs2_file_write_iter+0x17b4/0x1f60 fs/ocfs2/file.c:2455
-       __kernel_write_iter+0x40d/0x900 fs/read_write.c:523
-       __kernel_write+0x120/0x180 fs/read_write.c:543
-       __dump_emit+0x237/0x360 fs/coredump.c:816
-       elf_core_dump+0x35e0/0x4720 fs/binfmt_elf.c:2095
-       do_coredump+0x1b04/0x2a30 fs/coredump.c:767
-       get_signal+0x13fa/0x1740 kernel/signal.c:2902
-       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-       irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
-       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_file_ip_alloc_sem_key);
-                               lock(&osb->system_file_mutex);
-                               lock(&ocfs2_file_ip_alloc_sem_key);
-  lock(&osb->system_file_mutex);
-
- *** DEADLOCK ***
-
-3 locks held by syz.0.18/5710:
- #0: ffff88804e4fc420 (sb_writers#12){.+.+}-{0:0}, at: do_coredump+0x1adc/0x2a30 fs/coredump.c:766
- #1: ffff888011b75100 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
- #1: ffff888011b75100 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}, at: ocfs2_file_write_iter+0x46a/0x1f60 fs/ocfs2/file.c:2387
- #2: ffff888011b74da0 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_write_begin+0x1d1/0x3a0 fs/ocfs2/aops.c:1901
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5710 Comm: syz.0.18 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- ocfs2_get_system_file_inode+0x18f/0x7b0 fs/ocfs2/sysfile.c:101
- ocfs2_reserve_local_alloc_bits+0x107/0x2870 fs/ocfs2/localalloc.c:627
- ocfs2_reserve_clusters_with_limit+0x1b8/0xb60 fs/ocfs2/suballoc.c:1166
- ocfs2_convert_inline_data_to_extents+0x29d/0x17f0 fs/ocfs2/alloc.c:7078
- ocfs2_try_to_write_inline_data fs/ocfs2/aops.c:1562 [inline]
- ocfs2_write_begin_nolock+0x1c79/0x4d30 fs/ocfs2/aops.c:1669
- ocfs2_write_begin+0x205/0x3a0 fs/ocfs2/aops.c:1903
- generic_perform_write+0x399/0x840 mm/filemap.c:4019
- ocfs2_file_write_iter+0x17b4/0x1f60 fs/ocfs2/file.c:2455
- __kernel_write_iter+0x40d/0x900 fs/read_write.c:523
- __kernel_write+0x120/0x180 fs/read_write.c:543
- __dump_emit+0x237/0x360 fs/coredump.c:816
- elf_core_dump+0x35e0/0x4720 fs/binfmt_elf.c:2095
- do_coredump+0x1b04/0x2a30 fs/coredump.c:767
- get_signal+0x13fa/0x1740 kernel/signal.c:2902
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
- exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f9a89b799c1
-Code: 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
-RSP: 002b:ffffffffffffffe0 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 00007f9a89d15f80 RCX: 00007f9a89b799b9
-RDX: 0000000000000000 RSI: ffffffffffffffe0 RDI: 0000000004008011
-RBP: 00007f9a89be78d8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9a89d15f80 R15: 00007fff4ea50e98
- </TASK>
-OCFS2: ERROR (device loop0): int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *, handle_t *, u32, u32, struct ocfs2_suballoc_result *): Chain allocator dinode 23 has 4294967295 used bits but only 16777215 total
-On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
-OCFS2: Returning error to the calling process.
-(syz.0.18,5710,0):ocfs2_claim_suballoc_bits:2038 ERROR: status = -5
-(syz.0.18,5710,0):__ocfs2_claim_clusters:2412 ERROR: status = -5
-(syz.0.18,5710,0):__ocfs2_claim_clusters:2420 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_local_alloc_new_window:1197 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_local_alloc_new_window:1222 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_local_alloc_slide_window:1296 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_local_alloc_slide_window:1315 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_reserve_local_alloc_bits:672 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_reserve_local_alloc_bits:710 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_reserve_clusters_with_limit:1170 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_reserve_clusters_with_limit:1219 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_convert_inline_data_to_extents:7080 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_try_to_write_inline_data:1564 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_write_begin_nolock:1676 ERROR: status = -5
-(syz.0.18,5710,0):ocfs2_write_begin:1906 ERROR: status = -5
-ocfs2: Unmounting device (7,0) on (node local)
-
-
-Tested on:
-
-commit:         1fb91896 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=129badf3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e96ea3980000
-
+T24gRnJpLCAyMDI0LTA4LTA5IGF0IDE2OjE3ICswMjAwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
+IAkgDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVu
+IGF0dGFjaG1lbnRzIHVudGlsDQo+IHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhl
+IGNvbnRlbnQuDQo+ICA+ICtzdGF0aWMgaW50IG10Nzk4eF8ycDVnZV9waHlfY29uZmlnX2FuZWco
+c3RydWN0IHBoeV9kZXZpY2UNCj4gKnBoeWRldikNCj4gPiArew0KPiA+ICtib29sIGNoYW5nZWQg
+PSBmYWxzZTsNCj4gPiArdTMyIGFkdjsNCj4gPiAraW50IHJldDsNCj4gPiArDQo+ID4gKy8qIElu
+IGZhY3QsIGlmIHdlIGRpc2FibGUgYXV0b25lZywgd2UgY2FuJ3QgbGluayB1cCBjb3JyZWN0bHk6
+DQo+ID4gKyAqIDIuNUcvMUc6IE5lZWQgQU4gdG8gZXhjaGFuZ2UgbWFzdGVyL3NsYXZlIGluZm9y
+bWF0aW9uLg0KPiA+ICsgKiAxMDBNLzEwTTogV2l0aG91dCBBTiwgbGluayBzdGFydHMgYXQgaGFs
+ZiBkdXBsZXggKEFjY29yZGluZyB0bw0KPiA+ICsgKiAgICAgICAgICAgSUVFRSA4MDIuMy0yMDE4
+KSwgd2hpY2ggdGhpcyBwaHkgZG9lc24ndCBzdXBwb3J0Lg0KPiA+ICsgKi8NCj4gPiAraWYgKHBo
+eWRldi0+YXV0b25lZyA9PSBBVVRPTkVHX0RJU0FCTEUpDQo+ID4gK3JldHVybiAtRU9QTk9UU1VQ
+UDsNCj4gDQo+IEkgYXNzdW1lIHlvdSBoYXZlIHNlZW4gUnVzc2VsbHMgcGF0Y2hlcyBpbiB0aGlz
+IGFyZWEuIFBsZWFzZSBjb3VsZA0KPiB5b3UNCj4gdGVzdCBhbmQgcmV2aWV3IHRoZW0uIERlcGVu
+ZGluZyBvbiB3aGljaCBnZXRzIG1lcmdlZCwgeW91IG1pZ2h0IG5lZWQNCj4gdG8gY29tZSBiYWNr
+IGFuZCBjbGVhbiB0aGlzIHVwIGxhdGVyLg0KPiANCj4gICAgQW5kcmV3DQoNClllcyBJJ3ZlIHNl
+ZW4gUnVzc2VsbHMnIHBhdGNoIHdoaWNoIGZvcmNlcyBBTiBvbiBmb3Igc3BlZWQgPj0gMUcuDQpD
+b3VsZCBJIHNlbmQgYW5vdGhlciBwYXRjaCB0byBjbGVhbiB0aGlzIHVwPyBUaGlzIHBhdGNoc2V0
+IGlzIHNlbnQgYQ0KbW9udGggYWdvLiBJIG5lZWQgc29tZSB0aW1lIHRvIHJlYnVpbGQgbXkgdGVz
+dGluZyBlbnZpcm9ubWVudC4NCg0KQlJzLA0KU2t5DQo=
 
