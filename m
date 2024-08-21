@@ -1,189 +1,298 @@
-Return-Path: <linux-kernel+bounces-295603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2549C959EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:39:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9537B959EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499731C2280A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA11282B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C03D1B1D6B;
-	Wed, 21 Aug 2024 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F761A4AB7;
+	Wed, 21 Aug 2024 13:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McBu0BRv"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mAeZURDQ"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221FE1AD5C5;
-	Wed, 21 Aug 2024 13:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724247481; cv=none; b=BV9mb1EUWI31IRT/ShMEsSfWOonvBHak93feU+A5GbRHFI0Nak6L3cPacy55k2GMlAqkjDB0qcMScPPg471Y24Fic7nALXGV15FJHmnLCkqBPLQ1tWcFUrGoZxf6r5Db5jKSkdvLhHR+S2eSYSzn+XZfvsh7j+vewYI/PJDTARU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724247481; c=relaxed/simple;
-	bh=A5QbkoOwlSYI3M3Xde9fHEwHLHky4MZ1H6h1uSCdf+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQm+3ngKebPH4D6ebVXTlEtMzlTS89uW5en2J7htmlli5HoYyCeKkAeZ+Qbx0EyEn7qcirjFKSgkjTgve3kxFFjO8uph8tm9BpPRl4zv0avNmbbf/dkUJlWEess+gugck2xnGKtMImBKbD2xFHdAiTynxyYoFbJvhcO2USMGXEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McBu0BRv; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso3105672a12.1;
-        Wed, 21 Aug 2024 06:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724247479; x=1724852279; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IOtzgRB9yrFrJMnqCSca7u16T835Q1JRuh51Yi9FmO0=;
-        b=McBu0BRvMp5yh4aSH7mLbmYfwU5M/ceDlYFOcMDV22P8EPaQ1m8Tmq481G5E7/3Yug
-         ysSonF/Zgaf+xxID82OJJj0Uk3JjEx+D9rGe+PAIDenxkda4zJ7RoH47UwR72XB0Wdz3
-         wimDqP5OkGiBr6JZkZ48vUQzxDGDfXBLJpo7C+bcDMqbLucVyV/+7rbQd95dXJZFJqLA
-         wuulucbK2wFNcJB6NspNomIOk9dZxVen+nWwDDgKUVkUN/LQVTmQxkiTSvJeNQwGhuAb
-         GaLTHT+MkHL7Tm0DWEtz6i1KXrCL5g0clWs2TZyG2tPIDNDivtKch83rA5Kx0QCpA8sj
-         B+6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724247479; x=1724852279;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IOtzgRB9yrFrJMnqCSca7u16T835Q1JRuh51Yi9FmO0=;
-        b=D33icokp8+YCOxdk4ggqIPhjShnLwroI66E7W5XsuO0cdsWYNFUCceWxVp3Q9N5DJr
-         kVtSo8MJz5FPGDsOuFK2mfq5ABU3tpesQfAtzA4s+kVrC4Kk9r9lopge9aJaYAqmr9qT
-         NMtKQyqjey/p6ZRACbQhsUyo72UoXo9FpLMR0Tn8pl5Pv8bf+K1mVgV6EZl7oPF0POR3
-         PETujHIAGb7umMDSNQegUcz/nVK+UhViri7NxlC8nzzknaoCGa0YsbdP92jOMdusVgHj
-         5NkMeHe8gn4j5OFsPVMA/GQeR06F6hT7PqE0sZJuznXxTWIq2ciL84MONSgsRx3T+gWU
-         n2LA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7mYVsQUUskyFx0dVL5EBQgOmjv8Yhv3g1odnDVl8QaWdA3EAju4c8c/WkdkafNJEJmLes7KD/Cx8LgKA=@vger.kernel.org, AJvYcCWAqLcZn9Kcl5daUnzPMbBmTikUtFFqnDTvBsxkhR3tCl4jp+To19s7sST5Fm8i5vUu6XvT4aYS/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYIBEDHNFz1T3OWX07JCrx238WUq+yoNwvUsLWggZYlNtncpUb
-	+UpYWGNO5Ax7MLXDbal5W8zLggZrevtmYibKnManlGFtwn1MVUUmqBfe6IhV9D0RYIVctN17EEK
-	8vVpjcP0E4gP7mZiVV0LGDn7QgaD9gGJs
-X-Google-Smtp-Source: AGHT+IFHWpO7TaNhM0sQnbPZQWO63t8FCYLwVvfCZ3E38rCrTUEoAhATUJyRslp9ciKv8jN9sH46BQ1s0fmRr3mITdg=
-X-Received: by 2002:a17:90b:3e84:b0:2d3:cb16:c8e with SMTP id
- 98e67ed59e1d1-2d5eacbc625mr2075091a91.43.1724247479135; Wed, 21 Aug 2024
- 06:37:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6D91A4B98;
+	Wed, 21 Aug 2024 13:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724247656; cv=fail; b=Sm26O+nN1rwcJlVd/oAw2rBM+MPH3TjVfaaJcCorqv70g6nODFFZTZNiGI5KJEtK9KdLRdcXEqJwCGu2fWNVctvHTBlCmhHquusmMu2yUR2Hype7zboixNq+KiiI5i7weiDTasGXmcvUmjLzbOs8RKRbUHmRwDNExWhUwvfbjsk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724247656; c=relaxed/simple;
+	bh=/ree/yEnVNNDnz82YfhRbvfe7o67yEWnDw3JFDFL+Vc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y42b5hXnK69ONBYVXmDegU2gs9yC8lsXQJpbp/OWWClyM1Jjd+Yha6XjwxmjjmzQyzn+wjs+/0awFB9kQEr+yqdwsnb2RvJ0V12V3CscI5lU1fvE8rc1VVs1uT8R09Xc+BmWDhHzlLo1NXIw6M9L3+AYeEVH/MEDjwCLmopqONs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mAeZURDQ; arc=fail smtp.client-ip=40.107.220.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y3zhpCiUGBY3lxMbeHMhiynLJyvbQk70CyM6O4bR3iFpzxu0gnfSNIKCHQY9nDy++yW9qAs1ptLmqg032YzV0NBbMfxePzURIxkXatlwLhk5rluuDbt11R5UZuX5wkHMNpH1RWBj5+EUWvroxxdByGpjomioU50y5T74lvwNDpCfcinXhv/wufHUiA2kw0epzx2S1gN+bDqM85rs9GkOl4LaXRMqmGx6rVZHQU+yTTrhQIy9iIHldS/FDNVHIWGOCVjqmv0JHk3NGsR+UEa8U1J8dr2sw0KAWV7uGfVJovFMwa26t9qDUK7JGSivX4v8rKsct9nmwU3C2pmKLP0QIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pkq60Vswh5YghXxNNO/NyBf/0xieb+q0DRK6whcAT/Y=;
+ b=xNYFLr2cBMIUyiCTo3ei+awSfl3B7XK3cEFJvtAgHt1kvT8rVOiomiUsw6yeLzCiAE/VYLB0LnwvB3TQhXrYcy1jPeWB9z25aT22KW4kzw0z5nz15RI6KTSdRXaxB0bs7Jb80rusPxMIlBm2Ns5eKtWJG7kPpnyr6MgbC7BmHtNkbZpGLmTJPmTrkjYGNtJBfE/mfgkmCwGDsgyfULi5gk/kIsyTTxqfQ9K4dqx5ZZTT8Ev8UKiin5StzQSnefzHVBOuSPO+h27xvV4knugIJ4IHevdWDulvEEa03vM9CoXKy4xwx0b1+K8OPDu42QisLErBLGDBKvcsnGh7jxuzcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pkq60Vswh5YghXxNNO/NyBf/0xieb+q0DRK6whcAT/Y=;
+ b=mAeZURDQOtwlC1TeFe3DJPrvc2jWFPyjH9P3vgtok5MHOa2u0xACcEMrkcX9Jnj7UQx66yEKno0pJYeNggMr92FFCDv07MBTEyAc5t3aikXihqrhheHYJ2nvj0yyjMuwZM3X5Lhr05/+QI7Orj9UPsOCksEfY+awWmcWtjQ0WqQ=
+Received: from SJ0PR13CA0239.namprd13.prod.outlook.com (2603:10b6:a03:2c1::34)
+ by PH7PR12MB9204.namprd12.prod.outlook.com (2603:10b6:510:2e7::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Wed, 21 Aug
+ 2024 13:40:49 +0000
+Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c1:cafe::88) by SJ0PR13CA0239.outlook.office365.com
+ (2603:10b6:a03:2c1::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13 via Frontend
+ Transport; Wed, 21 Aug 2024 13:40:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7897.11 via Frontend Transport; Wed, 21 Aug 2024 13:40:49 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 Aug
+ 2024 08:40:45 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 Aug
+ 2024 08:40:44 -0500
+Received: from xsjssw-mmedia3.xilinx.com (10.180.168.240) by
+ SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
+ via Frontend Transport; Wed, 21 Aug 2024 08:40:44 -0500
+From: Vishal Sagar <vishal.sagar@amd.com>
+To: <laurent.pinchart@ideasonboard.com>, <tomi.valkeinen@ideasonboard.com>,
+	<vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<varunkumar.allagadapa@amd.com>
+Subject: [PATCH v3] dmaengine: xilinx: dpdma: Add support for cyclic dma mode
+Date: Wed, 21 Aug 2024 06:40:43 -0700
+Message-ID: <20240821134043.2885506-1-vishal.sagar@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815083229.42778-1-aha310510@gmail.com> <CAFqZXNvXJY4Bh5k6DZ3yoLFuHo2bQRk3Q5Lv25ms6oOGyN5ZAA@mail.gmail.com>
- <CAEjxPJ4TMk3AoAd++nHQUyTHd_7vbOHC1Veq1ZSSyjH3v0kJ7A@mail.gmail.com> <CAHC9VhRV4j9i7YuKFJkNe9RYnKvCMLHHOi0LrRvwaFWbGJTbHA@mail.gmail.com>
-In-Reply-To: <CAHC9VhRV4j9i7YuKFJkNe9RYnKvCMLHHOi0LrRvwaFWbGJTbHA@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 21 Aug 2024 09:37:47 -0400
-Message-ID: <CAEjxPJ4ObSaEG98jHhDtOssD1mF1fEAioJODa4bHKhZO=7KDGw@mail.gmail.com>
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-To: Paul Moore <paul@paul-moore.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>, Jeongjun Park <aha310510@gmail.com>, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|PH7PR12MB9204:EE_
+X-MS-Office365-Filtering-Correlation-Id: 45aaf7d0-6fe3-4e7d-849f-08dcc1e6de2d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CFqOStvKSWU8WOw0mWYRaAzLdNB8k66+CEhbpY+3T/rSSIPjLOjP2fGy/pRP?=
+ =?us-ascii?Q?PDg3TAvMV4CI0uGYwOPsJQgdtH8TL2OEL1CYFsLscJXTn25iyxlKPUQ6Y8JQ?=
+ =?us-ascii?Q?VRQ7xW5J/14IgE+xxTbF42haamyLFhek5C9LfpG27Iiby68oqZdnoNA8C+Tk?=
+ =?us-ascii?Q?CpNxuGKS39nWwaKDunWiUUxdxOpkGaQWUO9BCqmBlYNRUokgATKbYdunTNAE?=
+ =?us-ascii?Q?yIw6bLLDCFjBlW/PgyHmgukgf4PTltuLdyPRpqOh6LCvxItN8khXdM1JwS20?=
+ =?us-ascii?Q?tDinCUVynptPUivpFZhFPC6x+vt/2IBm9nu9socgBOy4dmVLZwVXsVQcb190?=
+ =?us-ascii?Q?c4FMO2aDNk/EANaFiq4paL2gXfdfmwPomG24icFVnJkkQKA1EqxshDYJZiYf?=
+ =?us-ascii?Q?HI35ictqMZRHUjxn/NJiTvF9wKXeVj2fy9jyUsEj1CMNf08JcXiTDLz0wcUw?=
+ =?us-ascii?Q?jMejP+U4OCfmkxcZ0AsalUPsN1E1pV45mxi/bQtuz1bg0RP+7OLbBHwtA2rM?=
+ =?us-ascii?Q?B25WbG4BgSWgWYxSlSOk4w8OXfT7UbnhIJ1I5NOVoIvX+fdXi5gJLBXwtVQa?=
+ =?us-ascii?Q?5tnV+m3Jad0zRxgPiqaELnVIEtIuDi/2yx2fcJWIl+m6SPpuyOaXHZKlu9i9?=
+ =?us-ascii?Q?epIogfpFap5gzuFsg/wtYvvk6xMky2xQ2l1HQRW/bmqdil1n3D6zp3+IvAWc?=
+ =?us-ascii?Q?RaZV9hbXFRub7i5y6Dq+t/JOLvcBBYi/AOxr3YVt5ZIyNs5PHX2ec6xsR9Lu?=
+ =?us-ascii?Q?69Ffy8cgSI7teY8dBUOa/iBD833igvM8n/noJAD0u0spgg5R1xNVCtkQMuky?=
+ =?us-ascii?Q?afSH+wO0zcY2Bv3/sDyoJMAGix6xPqYJ26WmSUlRJq0UkHHlGuFbdNrn6i+2?=
+ =?us-ascii?Q?Ri0pBwqoU9TA/HJCzx4sdx6ruaKP1bp2f713pUA86FCom/TBaTnjVK+LoixD?=
+ =?us-ascii?Q?o23NvUqu60f/oWzMOGIYmjk+1ZPTFH8WI5x06wFFSiYi4KkBAXOi2plhivtj?=
+ =?us-ascii?Q?nzQuQAflW95Af0sKhM3UR9zEn7Ow2wwLLKOjws38pD6QDZwP1hDa8Zp7tT1u?=
+ =?us-ascii?Q?Uq3PYZ5QyfcdvjzWhsbdUY9zQkrBP64S8WtFixaNeQOVfjaZml8JbMVG+xQu?=
+ =?us-ascii?Q?bnv4FwpatujdSwkro2+bqmaevN2eAAsreCbcJRzqaqFlyPJaZu1hqxd/j6au?=
+ =?us-ascii?Q?UkYy518xRPx/G3BqtrBf5y/ZCkfUImHGTmBPx0HeFNz+feuTkTKY2OpC2S3R?=
+ =?us-ascii?Q?Ep6rmy3iOhCi5YlIkIIcMC6aIz/0cwQK6nSW8cGeoUO8JW4S37APbjaTeqSO?=
+ =?us-ascii?Q?JQJ98Xv2I3c5SUoa+80H3rNVRfQEXdRnSMxhj7Do5urV6XrszcsCe7j1fRLP?=
+ =?us-ascii?Q?dYlj+iM7ATHcqc2ZO79U4OR9PIMLbw4iidIW3nnhR12sCVvG1Y0wv/vghEEA?=
+ =?us-ascii?Q?Ews7tfjfNsM9aAJt2ChnizH2aigB8yJq?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 13:40:49.2525
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45aaf7d0-6fe3-4e7d-849f-08dcc1e6de2d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9204
 
-On Tue, Aug 20, 2024 at 3:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Tue, Aug 20, 2024 at 2:24=E2=80=AFPM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> > On Mon, Aug 19, 2024 at 5:46=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
-t.com> wrote:
-> > > I'm not sure if this is the solution we want to go with... Consider
-> > > the following from af_smc(7):
-> > >
-> > > >   Usage modes
-> > > >      Two usage modes are possible:
-> > > >
-> > > >      AF_SMC native usage
-> > > >             uses the socket domain AF_SMC instead of AF_INET and AF=
-_INET6.  Specify SMCPROTO_SMC for AF_INET compatible socket semantics, and =
-SMC_PROTO_SMC6 for AF_INET6 respectively.
-> > > >
-> > > >      Usage of AF_INET socket applications with SMC preload library
-> > > >             converts AF_INET and AF_INET6 sockets to AF_SMC sockets=
-.  The SMC preload library is part of the SMC tools package.
-> > > >
-> > > >      SMC socket capabilities are negotiated at connection setup. If=
- one peer is not SMC capable, further socket processing falls back to TCP u=
-sage automatically.
-> > >
-> > > This means that the SMC sockets are intended to be used (also) as a
-> > > drop-in compatible replacement for normal TCP sockets in applications
-> > > and they even fall back to TCP when the endpoints fail to negotiate
-> > > communication via SMC. That's a situation similar to MPTCP, where we
-> > > just mapped MPTCP sockets to the tcp_socket SELinux class, so that
-> > > MPTCP can be swapped in place of TCP transparently without having to
-> > > do extensive policy changes. We may want to consider the same/similar
-> > > approach here.
-> > >
-> > > I briefly played with this idea a couple of months ago, when I was
-> > > asked by someone at Red Hat about SMC sockets and their integration
-> > > with SELinux. IIRC, when I tried to implement the MPTCP approach and
-> > > adjusted the selinux-testsuite to test SMC similarly as TCP and MPTCP=
-,
-> > > I saw that the netlabel-related tests (may have been more, I don't
-> > > remember) weren't passing out of the box like with MPTCP. However, th=
-e
-> > > person then didn't follow up on my questions, so I didn't look into i=
-t
-> > > further...
-> > >
-> > > I'm attaching the WIP patches I worked with, in case someone would
-> > > like to continue the experiments.
-> >
-> > I am not in favor of your approach, for the following reasons:
-> > 1. It would be backward-incompatible with any current code using
-> > AF_SMC (although this could be addressed by making it conditional on a
-> > new policy capability, so this is not too difficult to overcome),
-> > 2. It would not allow any distinction to ever be made in policy
-> > between SMC sockets and TCP sockets, so we could never allow one
-> > without the other.
-> >
-> > Hence, I am still in favor of Jeongjun's patch to consistently treat
-> > AF_SMC and (AF_INET, SOCK_STREAM, IPPROTO_SMC) sockets, and then if
-> > someone wants to extend that support to also provide more complete
-> > access controls and/or networking labeling, defer that to a future
-> > patch.
->
-> Without passing any judgement on the patches Ondrej submitted (I tend
-> to ignore patches as attachments for various reasons), I do share
-> Ondrej's concerns that this may not be as simple as suggested in the
-> original patch in this thread.  I saw the same thing as Ondrej
-> regarding the TCP fallback and that immediately raised a number of
-> questions that I don't believe have been properly addressed yet.
->
-> Someone needs to dig into how the standard SMC protocol works first to
-> ensure we have the necessary access controls for the current code; my
-> guess is that we are probably okay since the socket-level controls are
-> fairly generic, but I'm not sure we've actually seen proper
-> confirmation that everything is good from a conceptual standpoint.
-> Once that is done, we need to examine how the TCP fallback works,
-> specifically how are connections managed and are the existing TCP
-> hooks sufficient for SMC (the early connection state stuff can be
-> tricky) and how to distinguish between normal-TCP and SMC-TCP.
->
-> Basically I'm looking for some basic design concepts and not simply a
-> passing test without any understanding of why/how it passed.
+From: Rohit Visavalia <rohit.visavalia@xilinx.com>
 
-At present, we are already applying the general socket layer access
-controls to AF_SMC sockets; hence, existing policies can prevent or
-allow use of AF_SMC sockets through that mechanism. This is useful for
-reducing kernel attack surface, e.g. prevent all use of AF_SMC by
-untrusted code, or to limit use of AF_SMC to specific
-processes/programs.
+This patch adds support for DPDMA cyclic dma mode,
+DMA cyclic transfers are required by audio streaming.
 
-Since kernel commit d25a92ccae6bed02327b63d138e12e7806830f78
-("net/smc: Introduce IPPROTO_SMC"), there is a way to bypass such
-controls by creating such sockets via (AF_INET, SOCK_STREAM,
-IPPROTO_SMC) instead of AF_SMC. In that situation, any process that is
-allowed the socket layer permissions to the generic socket class would
-be allowed to create/use SMC sockets.
+Signed-off-by: Rohit Visavalia <rohit.visavalia@amd.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Signed-off-by: Vishal Sagar <vishal.sagar@amd.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-Jeongjun's patch closes this bypass and ensures consistent application
-of the general socket layer access controls for SMC sockets. Given
-that, I don't see why we would defer merging it until someone figures
-out a more complete solution for SMC sockets. It's more of a bug fix
-than an enhancement.
+---
+
+Change in [v3]
+- Fixed cosmetic changes as suggested by Tomi
+- Added Reviewed-by Tomi
+
+Previous version is 2/2
+https://lore.kernel.org/linux-kernel/20240228042124.3074044-3-vishal.sagar@amd.com/
+
+ drivers/dma/xilinx/xilinx_dpdma.c | 97 +++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+
+diff --git a/drivers/dma/xilinx/xilinx_dpdma.c b/drivers/dma/xilinx/xilinx_dpdma.c
+index 36bd4825d389..77b5f7da7f1d 100644
+--- a/drivers/dma/xilinx/xilinx_dpdma.c
++++ b/drivers/dma/xilinx/xilinx_dpdma.c
+@@ -670,6 +670,84 @@ static void xilinx_dpdma_chan_free_tx_desc(struct virt_dma_desc *vdesc)
+ 	kfree(desc);
+ }
+ 
++/**
++ * xilinx_dpdma_chan_prep_cyclic - Prepare a cyclic dma descriptor
++ * @chan: DPDMA channel
++ * @buf_addr: buffer address
++ * @buf_len: buffer length
++ * @period_len: number of periods
++ * @flags: tx flags argument passed in to prepare function
++ *
++ * Prepare a tx descriptor incudling internal software/hardware descriptors
++ * for the given cyclic transaction.
++ *
++ * Return: A dma async tx descriptor on success, or NULL.
++ */
++static struct dma_async_tx_descriptor *
++xilinx_dpdma_chan_prep_cyclic(struct xilinx_dpdma_chan *chan,
++			      dma_addr_t buf_addr, size_t buf_len,
++			      size_t period_len, unsigned long flags)
++{
++	struct xilinx_dpdma_tx_desc *tx_desc;
++	struct xilinx_dpdma_sw_desc *sw_desc, *last = NULL;
++	unsigned int periods = buf_len / period_len;
++	unsigned int i;
++
++	tx_desc = xilinx_dpdma_chan_alloc_tx_desc(chan);
++	if (!tx_desc)
++		return NULL;
++
++	for (i = 0; i < periods; i++) {
++		struct xilinx_dpdma_hw_desc *hw_desc;
++
++		if (!IS_ALIGNED(buf_addr, XILINX_DPDMA_ALIGN_BYTES)) {
++			dev_err(chan->xdev->dev,
++				"buffer should be aligned at %d B\n",
++				XILINX_DPDMA_ALIGN_BYTES);
++			goto error;
++		}
++
++		sw_desc = xilinx_dpdma_chan_alloc_sw_desc(chan);
++		if (!sw_desc)
++			goto error;
++
++		xilinx_dpdma_sw_desc_set_dma_addrs(chan->xdev, sw_desc, last,
++						   &buf_addr, 1);
++		hw_desc = &sw_desc->hw;
++		hw_desc->xfer_size = period_len;
++		hw_desc->hsize_stride =
++			FIELD_PREP(XILINX_DPDMA_DESC_HSIZE_STRIDE_HSIZE_MASK,
++				   period_len) |
++			FIELD_PREP(XILINX_DPDMA_DESC_HSIZE_STRIDE_STRIDE_MASK,
++				   period_len);
++		hw_desc->control = XILINX_DPDMA_DESC_CONTROL_PREEMBLE |
++				   XILINX_DPDMA_DESC_CONTROL_IGNORE_DONE |
++				   XILINX_DPDMA_DESC_CONTROL_COMPLETE_INTR;
++
++		list_add_tail(&sw_desc->node, &tx_desc->descriptors);
++
++		buf_addr += period_len;
++		last = sw_desc;
++	}
++
++	sw_desc = list_first_entry(&tx_desc->descriptors,
++				   struct xilinx_dpdma_sw_desc, node);
++	last->hw.next_desc = lower_32_bits(sw_desc->dma_addr);
++	if (chan->xdev->ext_addr)
++		last->hw.addr_ext |=
++			FIELD_PREP(XILINX_DPDMA_DESC_ADDR_EXT_NEXT_ADDR_MASK,
++				   upper_32_bits(sw_desc->dma_addr));
++
++	last->hw.control |= XILINX_DPDMA_DESC_CONTROL_LAST_OF_FRAME;
++
++	return vchan_tx_prep(&chan->vchan, &tx_desc->vdesc, flags);
++
++error:
++	xilinx_dpdma_chan_free_tx_desc(&tx_desc->vdesc);
++
++	return NULL;
++}
++
+ /**
+  * xilinx_dpdma_chan_prep_interleaved_dma - Prepare an interleaved dma
+  *					    descriptor
+@@ -1189,6 +1267,23 @@ static void xilinx_dpdma_chan_handle_err(struct xilinx_dpdma_chan *chan)
+ /* -----------------------------------------------------------------------------
+  * DMA Engine Operations
+  */
++static struct dma_async_tx_descriptor *
++xilinx_dpdma_prep_dma_cyclic(struct dma_chan *dchan, dma_addr_t buf_addr,
++			     size_t buf_len, size_t period_len,
++			     enum dma_transfer_direction direction,
++			     unsigned long flags)
++{
++	struct xilinx_dpdma_chan *chan = to_xilinx_chan(dchan);
++
++	if (direction != DMA_MEM_TO_DEV)
++		return NULL;
++
++	if (buf_len % period_len)
++		return NULL;
++
++	return xilinx_dpdma_chan_prep_cyclic(chan, buf_addr, buf_len,
++					     period_len, flags);
++}
+ 
+ static struct dma_async_tx_descriptor *
+ xilinx_dpdma_prep_interleaved_dma(struct dma_chan *dchan,
+@@ -1672,6 +1767,7 @@ static int xilinx_dpdma_probe(struct platform_device *pdev)
+ 
+ 	dma_cap_set(DMA_SLAVE, ddev->cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, ddev->cap_mask);
++	dma_cap_set(DMA_CYCLIC, ddev->cap_mask);
+ 	dma_cap_set(DMA_INTERLEAVE, ddev->cap_mask);
+ 	dma_cap_set(DMA_REPEAT, ddev->cap_mask);
+ 	dma_cap_set(DMA_LOAD_EOT, ddev->cap_mask);
+@@ -1679,6 +1775,7 @@ static int xilinx_dpdma_probe(struct platform_device *pdev)
+ 
+ 	ddev->device_alloc_chan_resources = xilinx_dpdma_alloc_chan_resources;
+ 	ddev->device_free_chan_resources = xilinx_dpdma_free_chan_resources;
++	ddev->device_prep_dma_cyclic = xilinx_dpdma_prep_dma_cyclic;
+ 	ddev->device_prep_interleaved_dma = xilinx_dpdma_prep_interleaved_dma;
+ 	/* TODO: Can we achieve better granularity ? */
+ 	ddev->device_tx_status = dma_cookie_status;
+-- 
+2.25.1
+
 
