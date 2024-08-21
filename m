@@ -1,189 +1,166 @@
-Return-Path: <linux-kernel+bounces-296202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929FC95A768
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2048195A786
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 00:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113C81F23B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:58:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD02E281624
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3975717BB31;
-	Wed, 21 Aug 2024 21:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A28176FAC;
+	Wed, 21 Aug 2024 22:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcUzpznG"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7b4frfv"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7317107F;
-	Wed, 21 Aug 2024 21:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FFB2B9AF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 22:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724277487; cv=none; b=Iwrnt82/8F5iRXHXHD/38L2VZPfv1pet1AjmnAz2ZWGTD0xzvXBFqgPsfmwWN2XjM3neg5ltfmG1ijY4FVmus5ar1FHNyuWGHONdqfpZVEFgSSkFnxICwnQvDQR3TOO7APR8UcazFTvTNSVp+9RmETeQAu45OaGiNH/l+XqEgsU=
+	t=1724277693; cv=none; b=VpCl/zEFrKjeewYzmgt1N5ZVgO21r1XmPSX4fPtWlryScKS/cXfqX3eYdCKXRSg/HDhpaXWTx/LkaIjkeHJsYtUcVdY9/YYT/fDGi85DNUuZrSU8dFdgNjunQlFFKDNbRioM2qYMpat83c5cx3i//OVM4Hv8JhB4jMOpflqsLNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724277487; c=relaxed/simple;
-	bh=+SBnayt8I9POGC6Z4kUZdlldRPzdI4LiFSzkUVieduA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0smSrb7pE6RaeUrj1yClcgE286eVYUlWAJSRzjtaZPu5rkfBpTRPkFEa5DMOfe12dURaXB0J5MhFJczVRxJFxZ+qn18exJx8cQ4k6cOJlpADzUXwCdogsegos+CRHxuSVXIENdC9x+l/SwtRCk1kgeefZdrMR2BoTdoD7QhGTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VcUzpznG; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1724277693; c=relaxed/simple;
+	bh=bXm/m9iOBvNenEQp2YgLjG2WHpwSnrGrk3UlJYlTHQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aj2f9eTV7ZHfsj2bjzfGnkPWIb/fTqsrZQM47z4X49E/wh027j3xL9ZRYS3lzDKMipDJXIDVoRmqGAkuT59WOhqBs+ondT61DVHWthPLgTGB6bsPxUC5diZt6Ww7NiEfIWKFv9QxYMLfj0wHA9M1Sr+Rd8Udn602Jtdjbs3Vgr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7b4frfv; arc=none smtp.client-ip=209.85.222.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so263082a12.1;
-        Wed, 21 Aug 2024 14:58:05 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-842f95b73daso65414241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:01:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724277484; x=1724882284; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4JxLJ3yCZeyzGMpvIB3lGyUgpd8ODQ55Z0OhMRCK9A=;
-        b=VcUzpznGcdV/l7EkHnL3riGUjpocmYldGhusVFN8gmsZm9oD6tsP4uEZoqwP1s/ufl
-         goEUSamab5BDi4wDlQ1Xslu0NRlL7AvNMhoWC9evy+25WSTdNB8VgJnp+tEu8yVlVyAO
-         Iim+h7L3bsAGCGv1V6R66h/xktio7xgv3Ic/f7/98FJXwbV3cb95E7dotgnf7+QdbTAp
-         F4ow5VJoSVNj1w0Rf2iEN1ggASgXlgqZ/7yHynkNThik5+PqUR7X0Ja4nZBJbUSEwHIB
-         dUt86Fewg0+RZT1HGqMZuc7QluvwRv6cRT7skgihPh+/JHMQM2Su5DkBui2x8ucJrYNl
-         2C9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724277484; x=1724882284;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724277690; x=1724882490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X4JxLJ3yCZeyzGMpvIB3lGyUgpd8ODQ55Z0OhMRCK9A=;
-        b=FCzhRWT7aEWUyfbzGqM0WJ8FFPjLAXSrjMCiwe9kBmsLkp+3aX7gXtSfNi3+Y90jvp
-         uxBIXx39qyNGIWFN6t3bQZdyDHzm5kQwTz984jgfyumMSudcQgjIjJT8vf46d5sr4nMp
-         fKXpzca5FtejDS/mYRJGvbFcV1f6jwO2YNpW9NKz2cHS6scDH5ETBIWTdwl/ooEApCRS
-         1CTGuewKHD00KX+1sNT8dj6UUDmTY2TJuyiPdIMh9Qaf+2bdHDZujge85kYFIm0hSpPx
-         YbZmsSCJvRpwkOvuFcIInVRUvDwaOSe1kA2PLU630tQhpwhsZofhmSVEQ+SHzEMRoGoN
-         zPyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUg74IJuAsYv0O5WpiE/6UXG+8d8RvRl1s5OE3FnFUsNFPnV5AKI4/sBUwPG4xX+if4cqNSXoL43iHu@vger.kernel.org, AJvYcCVTBiujqCNDtmcMSTipWIPDgEgIzq4wWgvyO6j30W/coDAxIk3wI5OnCtldcj+UB2Ga/f2F+IZWofrXjOzv@vger.kernel.org, AJvYcCWPt3jB0NdcxCP4a7dUlJbmRuK+wLmYnB+F54YALQo5drAOzju60NG4kbMRq2GWQRRNCSKZWJtVr2D4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUkHBOR+Ecri1tbkE5Log+UQdT1cwAwHlzsXMk87jRk+2u40kd
-	DEIM3SCZ9pOvdxlV6aXejwTP3VOGBj32KV6Ma5KJNljz3bPcLQspbEm2MOdu
-X-Google-Smtp-Source: AGHT+IEaTOzPVxPeOj3quhh16rDx3tH8v0cmgQK+NTc6aeD46cYno0HY4pq5o9h6w8RDWfFkHcgG+A==
-X-Received: by 2002:a17:907:96aa:b0:a86:6a26:fec7 with SMTP id a640c23a62f3a-a866f35f3a2mr259475266b.30.1724277483695;
-        Wed, 21 Aug 2024 14:58:03 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:1594:887e:30dd:c59e])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddc0d0sm83597a12.10.2024.08.21.14.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 14:58:03 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 21 Aug 2024 23:58:01 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] iio: pressure bmp280: Move bmp085 interrupt to
- new configuration
-Message-ID: <20240821215801.GB478206@vamoiridPC>
-References: <20240725231039.614536-1-vassilisamir@gmail.com>
- <20240725231039.614536-8-vassilisamir@gmail.com>
- <20240728170915.26b4a01d@jic23-huawei>
+        bh=5xiDXoQEA5WD8m2OrzH2w9aiIuJAwD4Zi8v/UbhlaFY=;
+        b=c7b4frfv4IAb1N39Db0H7MDa+GFcEnhgkH+R1OGi4+8bChRjT3MNa+rUsYJ5T6zDJs
+         xK8U1OzUDGZpn70VkO99AkyEb41Ntd1Uc7+awnxWJEXpm8ZNusBJ3Sb3cVn2IfxZZkLR
+         59ccXhJJyaYGlyqPuIoR9j4kZ+8xigx/pMxqqbdXCji036e/LwQ/7itqEpzRpqhWG9Zm
+         NhVmrElgsjqrleMf9FsLTfpQOfgh0u/ECYlCCehyZtn//K7+f47DILPXJDvxd/zRgK9G
+         GJLUDmY6ZG2+vKoJT7t93BPLTIrRoyPgTTUP5fQFaLPzpnEjbCxlz8+7DkwpWODn0d6K
+         7q6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724277690; x=1724882490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5xiDXoQEA5WD8m2OrzH2w9aiIuJAwD4Zi8v/UbhlaFY=;
+        b=FXL1lCKkVOt1XEDELboPHsQxMVrEUmvgCvUvYDJb3fhMUv+jUGvW9AHi01mZTrOL9Z
+         Nim8e6UpmCKaOf4QkMFd4sDAo42adHS3voWX6CBM17891NXPUwgU4MEB+azfhjSswx2b
+         +4CAiNkY8KkZSxK4aGU7wsZo3hCZsHSsbE0XBlEMEsn6MnrfetOmAhSdvswflIUaGiNM
+         057Jm1mMD2FRBGOkc/xIfwtS/PPBWVUB7pfkxL13xmiPFunWgyLwIsZ4r2oqSzFEV9RI
+         b50W1bnbn/RhXSRMXMvcDJhLe5p2SQqIfEkZW+pkLd46OwYtGtW//Dc+px1qvUOecTBP
+         6Y0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVjgcYrrMGR63zm1PJi2CFYmGmwyqFxMBsV5i06+r0vlx0KYXeF2o2ml952mOMln+TZ5nYCXalAFlTKNJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxTasofiXMjh4XIow/hsqhA8ZstQBdsH62bohPgWvrUNDQuInv
+	EHOYiGwkrW4agZwZkQ8wHGwSGpn6SQAF8C/A9FuvMr5Na6fDG1NvM0FPmhtl+0epxKsHOakPxLX
+	HRKTqti5e9rXXNV6w3kob7tst/s0E/GpY
+X-Google-Smtp-Source: AGHT+IFl8/Nb4/OFNkFzwnNqwpdgtU6aBk7AbiBON0n9ZJpFmcLJSZBOlkh2SIwm32Xg/4M/9Vjj7Hd1sF1x64Fe0GU=
+X-Received: by 2002:a05:6122:1806:b0:4f5:12d3:799a with SMTP id
+ 71dfb90a1353d-4fcf359a7b0mr5076941e0c.2.1724277690161; Wed, 21 Aug 2024
+ 15:01:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240728170915.26b4a01d@jic23-huawei>
+References: <20240811224940.39876-1-21cnbao@gmail.com> <20240811224940.39876-3-21cnbao@gmail.com>
+ <6c01b794-7c51-4d90-a215-210ac21401d2@redhat.com>
+In-Reply-To: <6c01b794-7c51-4d90-a215-210ac21401d2@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 22 Aug 2024 06:01:17 +0800
+Message-ID: <CAGsJ_4x4ngLS4kW-e7_DTykZSAmk3DeQ6CuZ4zGEiGBd99fbrw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: collect the number of anon large folios on
+ split_deferred list
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
+	ioworker0@gmail.com, kaleshsingh@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
+	ziy@nvidia.com, yuanshuai@oppo.com, Usama Arif <usamaarif642@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 28, 2024 at 05:09:15PM +0100, Jonathan Cameron wrote:
-> On Fri, 26 Jul 2024 01:10:39 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > This commit intends to add the old BMP085 sensor to the new IRQ interface
-> > of the sensor consistence. No functional changes intended.
-> > 
-> > The BMP085 sensor is equivalent with the BMP180 with the only difference of
-> > BMP085 having an extra interrupt pin to inform about an End of Conversion.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> Trivial comments inline + as the build bot pointed out you can't use data from
-> one array to fill the other.
-> 
-> Jonathan
-> 
+On Thu, Aug 22, 2024 at 5:39=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 12.08.24 00:49, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > When an mTHP is added to the deferred_list, its partial pages
+> > are unused, leading to wasted memory and potentially increasing
+> > memory reclamation pressure.
+> >
+> > Detailing the specifics of how unmapping occurs is quite difficult
+> > and not that useful, so we adopt a simple approach: each time an
+> > mTHP enters the deferred_list, we increment the count by 1; whenever
+> > it leaves for any reason, we decrement the count by 1.
+> >
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > > ---
-> >  drivers/iio/pressure/bmp280-core.c | 72 +++++++++++++++++++++++-------
-> >  drivers/iio/pressure/bmp280-i2c.c  |  4 +-
-> >  drivers/iio/pressure/bmp280-spi.c  |  4 +-
-> >  drivers/iio/pressure/bmp280.h      |  1 +
-> >  4 files changed, 60 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index 4238f37b7805..e4d017358b68 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -3104,13 +3104,19 @@ static irqreturn_t bmp085_eoc_irq(int irq, void *d)
-> >  	return IRQ_HANDLED;
-> >  }
-> >  
-> > -static int bmp085_fetch_eoc_irq(struct device *dev,
-> > -				const char *name,
-> > -				int irq,
-> > -				struct bmp280_data *data)
-> > +static int bmp085_trigger_probe(struct iio_dev *indio_dev)
-> >  {
-> > +	struct bmp280_data *data = iio_priv(indio_dev);
-> > +	struct device *dev = data->dev;
-> > +	struct fwnode_handle *fwnode;
-> >  	unsigned long irq_trig;
-> > -	int ret;
-> > +	int ret, irq;
-> > +
-> > +	fwnode = dev_fwnode(data->dev);
-> > +	if (!fwnode)
-> > +		return -ENODEV;
-> > +
-> > +	irq = fwnode_irq_get(fwnode, 0);
-> >  
-> >  	irq_trig = irqd_get_trigger_type(irq_get_irq_data(irq));
-> >  	if (irq_trig != IRQF_TRIGGER_RISING) {
-> > @@ -3120,13 +3126,12 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
-> >  
-> >  	init_completion(&data->done);
-> >  
-> > -	ret = devm_request_threaded_irq(dev,
-> > -			irq,
-> > -			bmp085_eoc_irq,
-> > -			NULL,
-> > -			irq_trig,
-> > -			name,
-> > -			data);
-> > +	ret = devm_request_irq(dev,
-> > +			       irq,
-> > +			       bmp085_eoc_irq,
-> > +			       irq_trig,
-> > +			       indio_dev->name,
-> > +			       data);
-> Whilst here, put some of those parameters on the same line (staying below
-> 80 chars).
-> 
+> >   Documentation/admin-guide/mm/transhuge.rst | 5 +++++
+> >   include/linux/huge_mm.h                    | 1 +
+> >   mm/huge_memory.c                           | 6 ++++++
+> >   3 files changed, 12 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> > index 9fdfb46e4560..7072469de8a8 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -532,6 +532,11 @@ nr_anon
+> >          These huge pages could be entirely mapped or have partially
+> >          unmapped/unused subpages.
+> >
+> > +nr_split_deferred
+> > +       the number of anon huge pages which have been partially unmappe=
+d
+> > +       and put onto split queue. Those unmapped subpages are also unus=
+ed
+> > +       and temporarily wasting memory.
+>
+> The name suggests something else ... like a counter of how many have
+> been deferred split :)
+>
+> Would "nr_anon_partially_mapped" "nr_anon_split_pending" (or something
+> less mouthful) be clearer?
+>
+> (likely "anon" really should be part of the name in any case)
+>
+> The name we chose (and the implied semantics) will likely have
+> implications on the handling of Usamas series.
+>
 
-Ack. I was aiming for as less intrusive change as possible.
+Hi David,
 
-> >  	if (ret) {
-> >  		/* Bail out without IRQ but keep the driver in place */
-> >  		dev_err(dev, "unable to request DRDY IRQ\n");
-> > @@ -3137,6 +3142,44 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
-> >  	return 0;
-> >  }
-> >  
-> > +const struct bmp280_chip_info bmp085_chip_info = {
-> > +	.id_reg = bmp180_chip_info.id_reg,
-> As the build bot has pointed out you can't do this.
-> Annoying but just duplicate the original structure with whatever
-> changes you need.
-> 
+Your point is quite similar to my V1, though not exactly the same. I aimed =
+to
+make the name more meaningful for users.
+https://lore.kernel.org/all/20240808010457.228753-3-21cnbao@gmail.com/
 
-Extremely annoying because it is litteraly just one addition in the
-new array and everything else stays the same...
+Ryan felt that the name should be consistent with the existing split_deferr=
+ed.
+https://lore.kernel.org/all/36e8f1be-868d-4bce-8f32-e2d96b8b7af3@arm.com/#t
 
-Cheers,
-Vasilis
+It seems that the existing split_deferred may now be less optimal with
+Usama's series, as entirely_mapped folios might also be on the list.
+
+Ryan is out right now, but I suppose he will be convinced that
+"nr_anon_partially_mapped" is probably a better name once
+he returns and reviews Usama's series. :-)
+
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
