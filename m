@@ -1,128 +1,230 @@
-Return-Path: <linux-kernel+bounces-295777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0347995A15F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2731695A161
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229541F2159D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7840283C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DF314B940;
-	Wed, 21 Aug 2024 15:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316DC14D28E;
+	Wed, 21 Aug 2024 15:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aCQJOvK/"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="o3bYRDsh"
+Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2120.outbound.protection.outlook.com [40.107.122.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A1413BC39
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724254117; cv=none; b=tb/qdCoEMelwo3hTlHIhZhQ6lWFwiqiyFTkJK4TPOAlZpvczCfYOJr7ibThihg+QKkN15H6EUuDNZKs7cfvnFNobEXZw7fBnwvcfnemFk50vKUdI6o45Gpohbfqjf/ON33tSfhSKxDjl43/hYKsPpw/ndKSx8dlKFSqc8J22BVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724254117; c=relaxed/simple;
-	bh=aHJwu22mGm0vHo0z8Wvt6XloaFk3GnDOjYuqvNlu4HM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LY/mHuZBKtBgZFkxQQ+ZMOghSRHuXTd4G1P3+u1QJM6Ifwdc4saGheXAksDwNXzNORfwiHAdVs0i/hn8rXOR64gEHGu6RTVkDkgg/Sjjrp1QSj5RUKibXsPK2iYptQD0a7uE8OF7N9+FhHihS2D+J0PZw4ZuAjMynZipQk1RQlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aCQJOvK/; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8647056026so254604566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724254113; x=1724858913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iHzZjfhtaTyCCMfXsIKS9YsrGPPreAS4gjZt5OgSCf0=;
-        b=aCQJOvK/91GD+9KrS2w8kP3UYNsq6cHFndNuPOSWcYgKU+nJdsK1StmULb7kSI9wtb
-         UfPdDJ/b968sLD5y9UdA6SIGEyv0S1/8WYPJrZV2zdPJavuVMeHbV0lW8CNOHQu1bvzb
-         Qke8QQhlRiA+y1IxdoxUMFn2oiYRhmwH2gniKe/68Z51LZk/oFVfk262UTFncRcrOMHG
-         f/3Vod6SyP1kXBUUqFFMiz4ft4XTKQIBXFdlFsEtH8gM7tJz5t9SzLTCCiY+RjBOXIc5
-         jR42ansn6asv4rKqG1GcLcBaHFGvmfi+x7d+r1qlfpgmupWDOBoRlDC4hhOObiDtn+eC
-         wGzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724254113; x=1724858913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iHzZjfhtaTyCCMfXsIKS9YsrGPPreAS4gjZt5OgSCf0=;
-        b=RfbYtH0GvV0YsG3kXuU5SKS1LQHhqhLvnvgwOVTa1vUOqH5AKA7tyCKbZmam8JXT9u
-         B49coGIMMgewIAv5wlh1sdseDFnAB25CZzX043lFgwvC7NIkG/KKp+F7mDEacdY9im/J
-         uF2InH/Mvskm8x4AkRdLaHns+iLq6IPfXGO21+fWSX+LQxI1PT2Rj97OcMCfe9hpaxty
-         9YnRmYC0JCPJ0YRX3N+ykWQhdSUDPjf7MAiH2owVJVtvMnlIE0/+jNYgAKEwXJcYCLBr
-         LPARcmNqM/O3QD4IaXRKgYpr6PYYKjEFtt0DDPCwTSF2OJE6ItM6ss3VlEhlYk8oOrNd
-         pZuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9+hSr09WgroZNw0Q2Ll+XCDNRhP1IGUsQNB7uyvixTQGAVDBpoWeFB9+l79gUHoJeIFxHDpBsgSE169E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2ylzKhYKvs5FZ0xxtTvweHDoF/pw28W1807eXPXJSesjcm/Mt
-	OIuvTtk0mhDQzdzAWPxsaghFnYPEfRdw0XFrZwOHLWf2habJL8F1OqrE+fnkkf4=
-X-Google-Smtp-Source: AGHT+IHQsAAjCMIiRKfgwLUDYiG7yQAKuvlMLtEcOUrNyQw2LRfT1jPFsKvx8/MDzjdSYst1M/WopQ==
-X-Received: by 2002:a17:907:3f11:b0:a86:880e:eb7c with SMTP id a640c23a62f3a-a86880eec92mr34460366b.60.1724254113115;
-        Wed, 21 Aug 2024 08:28:33 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86876f62a4sm15905466b.129.2024.08.21.08.28.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 08:28:32 -0700 (PDT)
-Date: Wed, 21 Aug 2024 17:28:31 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Nicolai Stange <nstange@suse.de>
-Cc: Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [POC 0/7] livepatch: Make livepatch states, callbacks, and
- shadow variables work together
-Message-ID: <ZsYHn3XoJu3npb0E@pathway.suse.cz>
-References: <20231110170428.6664-1-pmladek@suse.com>
- <alpine.LSU.2.21.2407251619500.21729@pobox.suse.cz>
- <66a263d5.170a0220.b2c84.1870SMTPIN_ADDED_BROKEN@mx.google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484D213BC39;
+	Wed, 21 Aug 2024 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724254134; cv=fail; b=GNh9oafZSEAHvnNBlkjCn6qBR7vsCU7qzjXm5tBGbZ3xpvHCvxzpAJIwgfoVySoVjp8Hy7TrSabGY3RlwE6aKN7JfzT5evpwvI7F/GsYcY+PuvqO+akqPFDWkp5pO+2xHJEo4XTvT6RgmtAieD9xaSEaIXcsuon9t2dg9QU+w/k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724254134; c=relaxed/simple;
+	bh=Lh1TJSX+heedhZtKLaG18g6jb3FQsx0Rt7WTJikzO7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UjArxFrBrVn+P9ehVOPqYIDW2FFi0azk24wDg9BOOmpA+sBpfJfOIGqMpzrNZyzv57w4BZWJTfQHIrzBYoIvPDPLfxSdDfcTFoB2sqsh+vPYHzVcubfAOiykOqXaRSVZFSVV4jXfb010hmSVWlM8rvsP3XgkQyUH116DgdBAaK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=o3bYRDsh; arc=fail smtp.client-ip=40.107.122.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WGiJQ3CGBEiRbsQV+tVv/DQYwl+8moNZlvsTxpulQOHY7TLcklGE3JvMHiObZ4XRC498dxjItP00d29Mu4sVV+fF3eads65+oh7J5Y7q90n/CQIgCd5If/wNu3ofTxQ1LlBbsmLMlTvdxS8bTCFvoY9LzU4J3acEVG1laySrrv+xspDq1k+DcrOrhDEXQiz0deW5AzRZT48+MxvgDPQTo/alJNXoPsyBgAhmhmFTYsQvPJZ2LQH9NC5RNRr44pZP/6l43H2YGV5S2yCyG2d1At6pXUex2rm4MdxtQA/khiHIysbMithz4kcHeZBxTvv7+bTAWXIw0glAIu/Q+JT/Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dTawsLwrHQjuLS9JuyRYrV+uQahpEvpFD23ifVUGdNI=;
+ b=LwaGA/fcb81CA+yudBBvC+wfA8RfHUTu6FeV2KCDCv7q2k+3n5sl2GqPvDJIFbZ6zbif8WovD9CRhZqIjRdhrUtEDjCHeETZY41iKOhvXU1gj9W91OAMMXRna6hESm0TvZ2rG095XNVe5WbHOcpEYDjdca+A6HBVGIZ6v45X0wbkbJlc8TRujrBRHYuyjf4X7jz4CvmqwzRNFvs6SxN3K6u5FhDESF0S2U9gfVUwgJYugOR0Z4NrCTX3p6+ZMneHWuw2wlMMFbf4M9UGaPhkCgChc8q0i/DWyQ1LqBwuul+q0Lcwb5CloG/2kY/i/uH1Ajjr5Ovk54xNYuOgaUCIsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dTawsLwrHQjuLS9JuyRYrV+uQahpEvpFD23ifVUGdNI=;
+ b=o3bYRDsh+v5gtzonV7QMGKgB9XE9N6hiNoi+rATbxecqcFUqR0AAiEQTFKOySEe+SajWC/0sbb7WefnCKt42EdkOUIjy4q/RDNhdcnPV5tY3E+UgVDrTmdryMTwubCsqe/TgO8t5c1kQ+0M9/CU/jg9vFoUf2n3YfsBOHPfJLEQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO0P265MB5957.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:289::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Wed, 21 Aug
+ 2024 15:28:49 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 15:28:49 +0000
+Date: Wed, 21 Aug 2024 16:28:46 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+ <nicolas@fjasle.eu>, Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice
+ Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v2 5/6] objtool: list `noreturn` Rust functions
+Message-ID: <20240821162846.5f9ead69@eugeo>
+In-Reply-To: <20240725083355.GD13387@noisy.programming.kicks-ass.net>
+References: <20240724161501.1319115-1-ojeda@kernel.org>
+	<20240724161501.1319115-6-ojeda@kernel.org>
+	<20240724203549.2db3e36f.gary@garyguo.net>
+	<20240725083355.GD13387@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0258.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37c::13) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66a263d5.170a0220.b2c84.1870SMTPIN_ADDED_BROKEN@mx.google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB5957:EE_
+X-MS-Office365-Filtering-Correlation-Id: 768fba38-a5c8-4e0a-d00a-08dcc1f5f45b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7vgXb/dSgm1yaK1kzRUFOs425ZIdLXzbTfyia/fF4TXsu0oodYC5B/Ffmwlr?=
+ =?us-ascii?Q?/ZUZUw4OQ+wC+Z7JqQEtPkrEm8VQzalWEJHCRrAQLQgu0P2Ct3nG0dm8k6W6?=
+ =?us-ascii?Q?bmcQB0HxGTL7lRcHp3JeoTg4kLfyj7XxNzD6y99jFTGv7ZMcHULm73lx8auE?=
+ =?us-ascii?Q?A2szb/iR3liaMlz2CstqPu5aK34qQgAAaN2sEiJMe2G38pNDnLuXvmIAFHaG?=
+ =?us-ascii?Q?ECPsYGxSrLMraumJCoxHUoq2zDYwl+1Gx1uinPKlU3Mijwlgsm1I6s5loDTv?=
+ =?us-ascii?Q?DoIsYm0lb5ppcmeCPhTD3AMnXWnoeogBY+m+VxVSAdeQyQYJM9rnuMRj2F0v?=
+ =?us-ascii?Q?3qO0tOzp+QAbeqVPVZ33vMkxXxF2BWuEKquswjUv2zayLifhob0IZ+u8y5RI?=
+ =?us-ascii?Q?wQG/Ebhyio+jl/xir7x/WyczDWlj4DpL+3UbVvo+JHGNSK4lfZP3d5+/IcDb?=
+ =?us-ascii?Q?9gSVLjM2B+RJc//1VJwMjtA2MvFwUFA/4jbYd9B7WhlqWPhlSsnbUqzQhif9?=
+ =?us-ascii?Q?wWOQ609qxN/ryyG2QEjZ6+vPNy0BcEAo5ZWHdqCEdjkdF9ec4s2vdmprCKOB?=
+ =?us-ascii?Q?2ERP4DF27fulKl3VBqcSuMEZFXVzVZm2zXaWIgIvQ2Al3gY1vH9NaEWqKQLD?=
+ =?us-ascii?Q?QLKZvJArdc4vK2BvInRAOY95X0MqfvyRPiyfRJ5qwx7Il1mDs7+sWowhbmRw?=
+ =?us-ascii?Q?DAM0PuXPtQRAuGHKs5kSlsUjvwz4u0pxLyqCCuiM3zlqtZtKvaoOY4NmKnBt?=
+ =?us-ascii?Q?ApQIycm+tDpKrDLQJvh6HAiwpzgwdkrAvzmVKOOSfS3urV7Wl6lYkGYWxZYN?=
+ =?us-ascii?Q?Ta5EIg5sa2MTya/8J+zDa+58b3pUCV+hzVGKYPtdP9nUV9naoagu2cv/PCt2?=
+ =?us-ascii?Q?NksuEn4xJeg4xQIARFN3lkJntQhFIPzWLTxwh+cN+q0M/Y+B/4yBfSDEPFi3?=
+ =?us-ascii?Q?v6Xu8rbl0VKznn2QLI6x7m38A/jQR7gmeITwj2DWYUeKWXgN8UTdkPTGJcVR?=
+ =?us-ascii?Q?LXfW+3habpj8qhMcs1Uo1LK3V9KIdcC1W2k2MJjP1NGEF6MKWrWoqM6OjH8M?=
+ =?us-ascii?Q?sp4I+5EqXcdb+x0QjEiJ54nkoWPZ09YQGTj2xd/2VKOJj2uhoKvUI8u6nWsn?=
+ =?us-ascii?Q?bZmMUBr1DBZfBvNgDoudIqAsC5rlWHCBvWa0ruu4RGm/0YlEF2KZhCJg7wGT?=
+ =?us-ascii?Q?KnpJv5UfZC6/VRtYr3WaHW73kX6sOQ6a0AvsfN8OjWa0odpI/VYULNa7By/x?=
+ =?us-ascii?Q?UaL1ppl03re2g1PrK9NHWGR/1BrDsjq0iZAO93zM9MkAdH4fNwkQAVgxKxUR?=
+ =?us-ascii?Q?NcA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gdeMwS+jlBimXlIpI072w0xCv7MGlL2+/Zfu/sXHbGqbbo/TOKtaH1U+9q/U?=
+ =?us-ascii?Q?4jmTmU1kSgd0uhEDgAZ8+RSYvv3Xu6FIokprVXILLJiHK99Pko/IiF2/ctKv?=
+ =?us-ascii?Q?KyTrTwR4hdgFgh0HMxWqddm4zwMqHjbmWGm2F7sF9zLpYBBpZn4B8AzO31Ch?=
+ =?us-ascii?Q?fbzVVRV9E1Yx+giNuY7DfGLc+uDVtYAIIuL2Uqglu8/UYH3Cy+qHVN8Rt0F6?=
+ =?us-ascii?Q?nUQQHlejhWBR7XqJxACLunc23rnAuFUbBcGDVcb37OjaCp/d9OhHUfRJlYq9?=
+ =?us-ascii?Q?MEedvqC5i5G82JASyuW7ZxGKSFJDpuvtfovsrmxWGm5y0Uecba6fogfm5duK?=
+ =?us-ascii?Q?QBihiG/GVyVK+NniLRKq+095Etxm04Euney0GBMM8y9oalfeD3CuAq9WQlwm?=
+ =?us-ascii?Q?QM0Ab7q0C/gznjrjkDJOBSRflDiUo8ul8W8ZUSZ7DKK1BwiMIt7yVuYneXzJ?=
+ =?us-ascii?Q?CwLAJk1C2QAKvh3u1RL/jwirsYL7Jr/BoX8tuFX//ArxQifZ0zwFJ5Tv8wh1?=
+ =?us-ascii?Q?+N/p1zCH40/n38Obbwsrvwh1cFH64Ha4ol6dCM4euGGroOQgW5KBj30G/nQu?=
+ =?us-ascii?Q?CZ9oR/AakzExAwEZVx6qjfmDUuiOZmOdK6FkiaGvvNeQGemAx8+8cQ2T9OPX?=
+ =?us-ascii?Q?6wlICn9T+fn33PqlAa4w0L2/bOqfiVa7b3S7cBA91WWVc4EQ0x6wU3/gSBeI?=
+ =?us-ascii?Q?OSUdgfoj8ZyxjkPjRVXYhy9AQWQuRFvaG1rTnFyTrZAJK4baWbFd3kC7HnMB?=
+ =?us-ascii?Q?cYGEpa5vFH17+e6zquqXTK2mY9/qKACPom7aV9mRBeaXRTzaEyKMfAUp5M+Q?=
+ =?us-ascii?Q?0463Bacq9hhqPwtn7gHpOyzMtr0rnMoYDSWYQrPuWibSC1lSVI8fOH7K0mNm?=
+ =?us-ascii?Q?S2TJPxsbAg3bG3m94KyWqVA2JlDRX++xjQ14TCanQKjIUFQqu7+uga1XUq/u?=
+ =?us-ascii?Q?61jrJARqBepmkiaq9nJRRnCNSWen4EnKFPUx3PUNKV5OQGsB6TicInB4vYfT?=
+ =?us-ascii?Q?JmR9RePQ6IGrDlW8icVvaXIGLz5yyf5XIU2KoOIJDhYTrGE/++cNWN0Vmk/7?=
+ =?us-ascii?Q?RvLntqxf2eGvyxjCPrZ5tW0wVK1lhqlw6r2mCUahR0GBNzX7DnH8WONXgqQR?=
+ =?us-ascii?Q?IMsCDXzvci81nfpPMWkVFb5jOETVIdgNvhTtV/Jtl21pKokNlMEaNTE6rl0w?=
+ =?us-ascii?Q?sg/+OSMC/mqs7NEaB9ns5wkIAUlMtLFI5W4Yno5grIpWLt2jJYockToAOf6x?=
+ =?us-ascii?Q?ItIdDOd27YcYEOlQ0/NZdBHy+z9el9UHCWSr+Zp8EWsdIX6bbMB+2j8n28SC?=
+ =?us-ascii?Q?sUMU46kz2od8sKlRxSRqhXm//lV6Qz0j+rpQPSg3n0o7zveH5V2XCOm8gXpG?=
+ =?us-ascii?Q?r9cMd7R0kQeERIa4w2FGTYJpHuEIK2BjWXDJAhfHK9eOq8QltgJhsAG5u4MG?=
+ =?us-ascii?Q?HK4fmucXh2R7ywsSL+a4CHTrd3aRH34Qg8rDnTQBouurW7sq0/F8xxBLN29q?=
+ =?us-ascii?Q?T3FpWAgzkDgo4a0NtUxmv/U5qguxwHnWZ5PPuSVaeR2q4DbjGjiFlDznrZXk?=
+ =?us-ascii?Q?rozXy1LIk6v+Cll7WVMoqVIBuqQIPIwymjG1+3/s9T0Cvpjqstro18sqnxs6?=
+ =?us-ascii?Q?ye2a7SXNpXZ5dXkvqKom5Yj1xldi+DiVS0t38PmCyUDB?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 768fba38-a5c8-4e0a-d00a-08dcc1f5f45b
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 15:28:49.2175
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c1SmsP2bko5iH9XTAv8okJhsDqAN51nfkTG5o0GSDzwqT+VzdzAb2Lx1Axhtsyn2BiOjj2GKgvHiyCx/l9/hmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB5957
 
-On Thu 2024-07-25 16:40:20, Nicolai Stange wrote:
-> Miroslav Benes <mbenes@suse.cz> writes:
+On Thu, 25 Jul 2024 10:33:55 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Wed, Jul 24, 2024 at 08:35:49PM +0100, Gary Guo wrote:
+> > > @@ -202,10 +216,30 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
+> > >  	if (!func)
+> > >  		return false;
+> > > 
+> > > -	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK)
+> > > +	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK) {
+> > > +		/*
+> > > +		 * Rust standard library functions.
+> > > +		 *
+> > > +		 * These are just heuristics -- we do not control the precise symbol
+> > > +		 * name, due to the crate disambiguators (which depend on the compiler)
+> > > +		 * as well as changes to the source code itself between versions.
+> > > +		 */
+> > > +		if (!strncmp(func->name, "_R", 2) &&
+> > > +		    (str_ends_with(func->name, "_4core6option13unwrap_failed")			||
+> > > +		     str_ends_with(func->name, "_4core6result13unwrap_failed")			||
+> > > +		     str_ends_with(func->name, "_4core9panicking5panic")			||
+> > > +		     str_ends_with(func->name, "_4core9panicking9panic_fmt")			||
+> > > +		     str_ends_with(func->name, "_4core9panicking14panic_explicit")		||
+> > > +		     str_ends_with(func->name, "_4core9panicking18panic_bounds_check")		||
+> > > +		     strstr(func->name, "_4core9panicking11panic_const24panic_const_")		||
+> > > +		     (strstr(func->name, "_4core5slice5index24slice_") &&
+> > > +		      str_ends_with(func->name, "_fail"))))
+> > > +			return true;
+> > > +  
 > 
-> >
-> > Do we still need klp_state->data member? Now that it can be easily coupled 
-> > with shadow variables, is there a reason to preserve it?
+> Perhaps add a helper function: is_rust_noreturn() or somesuch.
+> 
+> > I wonder if we should use dwarf for this. There's DW_AT_noreturn which
+> > tells us exactly what we want. This would also remove the need for the
+> > hardcoded C symbol list. I do recognise that debug info is not required
+> > for objtool though...  
+> 
+> I think the slightly longer term plan here was to have noreturn.h
+> generated from a DWARF build but still included verbatim in the objtool
+> source, such that it works even on regular builds.
+> 
+> (and can be augmented where the compilers are being 'funny')
+> 
+> It's just that nobody has had time to implement this... you fancy giving
+> this a stab?
 
-Good point. I have actually forgot the pointer completely.
+The information extraction from dwarf is quite easy: I produced a tiny
+cargo script that would be able to extract the info from an object file
+(Miguel mentioned it in one of the replies):
 
-> I would say yes, it could point to e.g. some lock protecting an
-> associated shadow variable's usage. Or be used to conveniently pass on
-> any kind of data between subsequent livepatches.
+https://gist.github.com/nbdd0121/449692570622c2f46a29ad9f47c3379a
 
-Honestly, I would prefer to remove the klp_state->data member. I can't
-find a safe way how to maintain it.
+I think the issue is that the list of noreturn symbols changes
+depending on the configuration, so it's kind of difficult to
+pregenerate this information.
 
-The pointer is in struct klp_state. It means that any livepatch
-supporting the state has its own copy of the pointer. We could copy
-the value in __klp_enable_patch() but where?
-Before calling klp_states_pre_patch() or after?
+Do you think it makes sense to have Rust object files always have DWARF
+enabled, and we check Rust noreturn symbols using DWARF, while keep the
+hardcoded C symbol list?
 
-It might somehow work when the value is set only once (in a pre_patch
-callback). But what if anyone tries to modify the pointer.
-What if there are more livepatches using the state at the same time
-(not using the atomic replace) and each livepatch has different
-value.
+Best,
+Gary
 
-From my POV, the klp_state->data pointer is a potentially dangerous
-thing with not well defined semantic. IMHO, it is not worth it.
 
-It the livepatches need a new synchronization mechanism, they
-might allocate the lock in yet another shadow variable.
-
-Do I miss anything, please?
-Could you come up with a reasonable semantic, please?
-
-Best Regards,
-Petr
 
