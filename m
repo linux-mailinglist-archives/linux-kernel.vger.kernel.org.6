@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-296243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B227A95A80F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:08:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA7D95A813
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534031F232EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75C71F230CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7117417C230;
-	Wed, 21 Aug 2024 23:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A410717C9EA;
+	Wed, 21 Aug 2024 23:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMlgJcY3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKiFdI6X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92F91494AD
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14441494AD;
+	Wed, 21 Aug 2024 23:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724281700; cv=none; b=rV8Xg979kEmhNarMj/Sms/wPBxgFdTHlUeMcN5c8lBhzGQSU3LUZe1d28L3mriebCZs4CiOpMdc78wsr3r626eDGXtFcqR6BNXbI2PwzGjaG/priqn7nhYqqP13lmIZ21yq2TXwZLGgC9DeOMsLakoH1gsdVK1sDJT4Z/xk7k6s=
+	t=1724282051; cv=none; b=TXXzSdFVPDKLtsX7MwbDVvNVaCt+2IwLxiPT2GitLvy0QFtyIbnLnfMcMwEAMPpwQrtswMW1gNlRuELDCi/Q6czsJVchljHKwYSgLqzr7IJiAxrIz3EtV5Z651EiDO/qZ05vJM42mku2inVEer3Z1X4Z5nhYAu1hsL4J0FZyxyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724281700; c=relaxed/simple;
-	bh=AgqgAdjB403q9kHL1IbkP1Vw7tIpC5lcxs9Gbhb4S2c=;
+	s=arc-20240116; t=1724282051; c=relaxed/simple;
+	bh=5jrbVAdo6wAYvsEzV739oZ/MNr2YMBA+5HAAwIrmh+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaUcO1TY3naEridec1sHX0kN+eS43dphoOkiGSZnWRZ20y4v7gj6DLoeqYUc4AwgIu9ZS/nDYx4FPBOINyhPliVT7CiHZq3b7+5tA7aRD5XphXtzxSvcWiIZgUcJ2FlJ+AQA8vzu1eYvxjIx8zEP/88afDToh8+DiruRPTjivUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMlgJcY3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28508C32781;
-	Wed, 21 Aug 2024 23:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724281700;
-	bh=AgqgAdjB403q9kHL1IbkP1Vw7tIpC5lcxs9Gbhb4S2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GMlgJcY3SpoS0v9p+CbHlBgtWJYDrqeRBv4OVtTpGaZXM5rPLDfzKZ/wpFaJ9Pvyc
-	 Pl60a4KkjoYiWQ+nsunG6X4V1tAmm7JZRNZtartlPpHguGCyY5GhKS24jlpWf0Hp+6
-	 q11wOsI79wSaA4BsdHYirdcwm7SvFF4smdB/c9y9LkI0UDg82YdPYO6/lN4qL6EfPX
-	 Gx6NvrZBMcAK4TN86WfmiUOBFYcdpTdWxNfbkBwbQaxmdUrzhK1sZdJvyOgjlmgdYq
-	 XfmPiM2zttHDynGuBtU+5W6g6IK+QS+0bUp9PuEEJpnsIkbV0RKpjyAmxEGPT//3b0
-	 7xahAc3IFkIQQ==
-Date: Wed, 21 Aug 2024 13:08:19 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <ZsZzY0v8xxtzV7_L@slm.duckdns.org>
-References: <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
- <20240806211002.GA37996@noisy.programming.kicks-ass.net>
- <ZrKW2wZTT3myBI0d@slm.duckdns.org>
- <20240806215535.GA36996@noisy.programming.kicks-ass.net>
- <ZrKfK1BCOARiWRr0@slm.duckdns.org>
- <20240810204542.GA11646@noisy.programming.kicks-ass.net>
- <Zruwioj86jQz8Oq6@slm.duckdns.org>
- <20240813225307.GC10328@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7Xnt+zLDdmFlNdS6p6WbLe7Q4nC5FgpIy3xvxoo7yJHYzZyC2wPXodeEATWTw2KoaryH+BrGriZXEANnw3cfv84sq9qq77ieM4+9RY/34CcY+rRoc35+BH35f8tUPpljji+zHpIYjeIAiwh/m4M09vdOcvk0+2sb1HePLA0TSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKiFdI6X; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724282049; x=1755818049;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5jrbVAdo6wAYvsEzV739oZ/MNr2YMBA+5HAAwIrmh+I=;
+  b=OKiFdI6XwImVVyCo0/WEqk8PsPfph9ky+BggGF7xB7aKdtTlnpZq5zTL
+   7KjCWIYd87v1ed/9DJk5lx3upcHgiwhk7f9ieMoXu8ENKYDFx1pMtExJs
+   RFQ+I5o29o+3YEtvnvo/huxWz77Ao6pvTh1irjEz5TDnx34cEoGUAlpJT
+   uBCArattqBTgnJa6ozdH7gi9wpo6zaM/fjW2iBJPjWYa2xXLGW/F+tWiA
+   G19OgXRx5O1skQuSzPTw6a1TM1wRsLfJAH2Lmz2mEdqgNdRC7T5D5QNKZ
+   H39ni93XiOPJptSlODwZxOMx8guCopsrAYnaztHvZEPKJNITDcPmheF9I
+   Q==;
+X-CSE-ConnectionGUID: Mf//EcDZSqOasYCao1N7Lw==
+X-CSE-MsgGUID: 3NcqAnf3QlCnLPhwTv/NMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="48066171"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="48066171"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 16:14:08 -0700
+X-CSE-ConnectionGUID: 3IVNMZUQSgeppVVPDSfDxw==
+X-CSE-MsgGUID: 1sJH8KpESnyRhMvJMrQQyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="66126930"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 21 Aug 2024 16:14:04 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sguWf-000C2W-2C;
+	Wed, 21 Aug 2024 23:14:01 +0000
+Date: Thu, 22 Aug 2024 07:13:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+Message-ID: <202408220503.hxIARcuf-lkp@intel.com>
+References: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,49 +81,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813225307.GC10328@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
 
-Hello,
+Hi Billy,
 
-On Wed, Aug 14, 2024 at 12:53:07AM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 13, 2024 at 09:14:18AM -1000, Tejun Heo wrote:
-> > Hello, Peter.
-> > 
-> > On Sat, Aug 10, 2024 at 10:45:42PM +0200, Peter Zijlstra wrote:
-> > ...
-> > > > It is tricky because the kernel part can't make assumptions about whether
-> > > > two tasks are even on the same timeline. In the usual scheduling path, this
-> > > > isn't a problem as the decision is made by the BPF scheduler from balance()
-> > > > - if it wants to keep running the current task, it doesn't dispatch a new
-> > > > one. Otherwise, it dispatches the next task.
-> > > 
-> > > But I have a question.. don't you clear scx.slice when a task needs to
-> > > be preempted? That is, why isn't that condition sufficient to determine
-> > > if curr has precedence over the first queued? If curr and it is still
-> > > queued and its slice is non-zero, take curr.
-> > 
-> > scx.slice is used a bit different from other sched classes mostly because
-> > there are two layers - the SCX core and the BPF scheduler itself. The BPF
-> > scheduler uses scx.slice to tell the SCX core to "don't bother asking about
-> > it until the current slice has been exhausted" - ie. it's a way to offload
-> > things like tick handling and preemption by higher priority sched classes to
-> > SCX core. When scx.slice expires, the BPF scheduler's dispatch() is called
-> > which can then decide whether to replenish the slice of the current task or
-> > something else should run and so on.
-> 
-> Right, but can't we flip that on its head and state that when scx.slice
-> is non-zero, we should pick current and not bother asking for what's
-> next?
+kernel test robot noticed the following build errors:
 
-I ended up resolving this differently. The existing code distinguishes the
-regular and core-sched paths because the current task gets enqueued when
-balance_scx() decides to keep running it. With the pending put_prev_task
-update, it becomes a lot more straightforward to not queue current when
-deciding to keep running it, which makes regular and core-sched paths
-identical.
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240821-150951
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240821070740.2378602-3-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20240822/202408220503.hxIARcuf-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408220503.hxIARcuf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408220503.hxIARcuf-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
+>> drivers/gpio/gpio-aspeed-g7.c:474:48: error: passing argument 1 of 'pinctrl_gpio_request' makes pointer from integer without a cast [-Wint-conversion]
+     474 |         return pinctrl_gpio_request(chip->base + offset);
+         |                                     ~~~~~~~~~~~^~~~~~~~
+         |                                                |
+         |                                                unsigned int
+   In file included from drivers/gpio/gpio-aspeed-g7.c:16:
+   include/linux/pinctrl/consumer.h:30:44: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+         |                          ~~~~~~~~~~~~~~~~~~^~
+>> drivers/gpio/gpio-aspeed-g7.c:474:16: error: too few arguments to function 'pinctrl_gpio_request'
+     474 |         return pinctrl_gpio_request(chip->base + offset);
+         |                ^~~~~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:30:5: note: declared here
+      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+         |     ^~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_free':
+>> drivers/gpio/gpio-aspeed-g7.c:479:38: error: passing argument 1 of 'pinctrl_gpio_free' makes pointer from integer without a cast [-Wint-conversion]
+     479 |         pinctrl_gpio_free(chip->base + offset);
+         |                           ~~~~~~~~~~~^~~~~~~~
+         |                                      |
+         |                                      unsigned int
+   include/linux/pinctrl/consumer.h:31:42: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+         |                        ~~~~~~~~~~~~~~~~~~^~
+>> drivers/gpio/gpio-aspeed-g7.c:479:9: error: too few arguments to function 'pinctrl_gpio_free'
+     479 |         pinctrl_gpio_free(chip->base + offset);
+         |         ^~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:31:6: note: declared here
+      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+         |      ^~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_set_config':
+>> drivers/gpio/gpio-aspeed-g7.c:676:48: error: passing argument 1 of 'pinctrl_gpio_set_config' makes pointer from integer without a cast [-Wint-conversion]
+     676 |                 return pinctrl_gpio_set_config(offset, config);
+         |                                                ^~~~~~
+         |                                                |
+         |                                                unsigned int
+   include/linux/pinctrl/consumer.h:36:47: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
+      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+         |                             ~~~~~~~~~~~~~~~~~~^~
+>> drivers/gpio/gpio-aspeed-g7.c:676:24: error: too few arguments to function 'pinctrl_gpio_set_config'
+     676 |                 return pinctrl_gpio_set_config(offset, config);
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/pinctrl/consumer.h:36:5: note: declared here
+      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
+>> drivers/gpio/gpio-aspeed-g7.c:475:1: warning: control reaches end of non-void function [-Wreturn-type]
+     475 | }
+         | ^
+
+
+vim +/pinctrl_gpio_request +474 drivers/gpio/gpio-aspeed-g7.c
+
+   468	
+   469	static int aspeed_gpio_g7_request(struct gpio_chip *chip, unsigned int offset)
+   470	{
+   471		if (!have_gpio(gpiochip_get_data(chip), offset))
+   472			return -ENODEV;
+   473	
+ > 474		return pinctrl_gpio_request(chip->base + offset);
+ > 475	}
+   476	
+   477	static void aspeed_gpio_g7_free(struct gpio_chip *chip, unsigned int offset)
+   478	{
+ > 479		pinctrl_gpio_free(chip->base + offset);
+   480	}
+   481	
 
 -- 
-tejun
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
