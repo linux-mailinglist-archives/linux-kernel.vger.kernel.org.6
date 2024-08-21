@@ -1,150 +1,186 @@
-Return-Path: <linux-kernel+bounces-296262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A563B95A84D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B3095A84E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1399AB23785
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D6428237A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ACF17D377;
-	Wed, 21 Aug 2024 23:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7892F176FAC;
+	Wed, 21 Aug 2024 23:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FXaiMujx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KYnhPRYb"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E94B168497;
-	Wed, 21 Aug 2024 23:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D045826ACB
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724282991; cv=none; b=W9qVYrxvSU6erzZvqzDQHxTV5yzcCdVDKxAPeZTE+U4cl5uC8uFykVnLFnbLEp1bBxynUSHwdiMNLpuisl2m3xPmKBOTAtDnlaxYVpI127O/24vLBs2rVbgu6MJfXNoTR8bZcAWmgaFNEFNN3GQMDBusEzKt4RdwzS4JKIEBpzk=
+	t=1724283057; cv=none; b=qn/NwBoDJxdvJYbSkGdRF3OffEnR0q1iAlwK1cz+++iIZO8EoQi+BV13fsrOTl3NpljAMus91ezN1zRGsndgwuflbUC0kpdZEVR8m9P947UavyJD0GTYZCw/W8s+zR6o5Q1Q0R1jQ9msRxv13/ioYFjSaBxSpZ4LVew/rULL6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724282991; c=relaxed/simple;
-	bh=N/k9pIkt02mMen0MtDKHy/0oKLv8iaeYOQQ6JCBQ9RI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tU7Ehta14AQ9Tcsa8sRhceUEvsvb0UaIlT7QrDL84lF69+EgUSzC84STL2IFTiihqhCCbd64syeLXtRIlIS6KiKVsBzXodXvIFX8hceS/vmh5clPSleybIewAMwgwq6uvbr6Ak74CapsiFdYq2Eh4ii5FKT9kpu/uiyRwnXVKV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FXaiMujx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC20C32781;
-	Wed, 21 Aug 2024 23:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724282991;
-	bh=N/k9pIkt02mMen0MtDKHy/0oKLv8iaeYOQQ6JCBQ9RI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FXaiMujxKGsbWGwRkg8O548AIYvSH0D28zmJwv2c1WT509PvJCr/c4UnMYE1IgVo4
-	 xEjbNXDJUQdhu4/E4vqD7hveigHTCZgkKp19UZNZKGE0Xh4U8OvSRrl85Xt57QK1Ra
-	 6doO7pqsGv3JnmHOFCbXpJYj740iY15CzYk/J0Js=
-Date: Thu, 22 Aug 2024 07:29:48 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Matthew Maurer <mmaurer@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-Message-ID: <2024082229-elevation-emporium-8118@gregkh>
-References: <20240815173903.4172139-37-samitolvanen@google.com>
- <2024081600-grub-deskwork-4bae@gregkh>
- <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
- <2024081705-overarch-deceptive-6689@gregkh>
- <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
- <20240819193851.GA4809@google.com>
- <a76f9422-4001-416a-a31b-37ab7dcb17f4@proton.me>
- <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com>
- <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com>
- <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me>
+	s=arc-20240116; t=1724283057; c=relaxed/simple;
+	bh=hSPFWkbleapwLpN1BRkiPikR+p6dqOEqdJ+vNeKRGhk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=la8L3C5RpoNkztGozEiOx8coO1RA7EykssLcr09MrBsOjViEvJgLS5o4BZhISyCGT/P1DEYzR0jUjFX+o7mVTFbc6T9aoB2KFzQZWapoIR8tVRyxeN26quwTE9kJ8wnvbw/4VwNAp/eQopCm5axyJXjSQNd6WGGZzUuzg8lCyr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KYnhPRYb; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724283052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8fGX8MYAy6DkBNWKTzTkMmR/It722mAyKkHXHLYbIFQ=;
+	b=KYnhPRYbKL5yTSAtVWVY+42Xj65hD1o2wfUQmN3FBuIdyGwSllSOWM75SJYXLcPp8g95U5
+	avdnqLLNWMi+MXT3OrIGqOcUa7SwajNjq9jHA9YMRtVG96Q84FXq33AN/+warPM7qetf5n
+	GOQPqovtG6/pUJ1jypn0HOmi06jN62Y=
+From: Jeff Xie <jeff.xie@linux.dev>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiehuan09@gmail.com,
+	Jeff Xie <jeff.xie@linux.dev>
+Subject: [PATCH v2] ftrace: Get the true parent ip for function tracer
+Date: Thu, 22 Aug 2024 07:30:21 +0800
+Message-Id: <20240821233021.2785584-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 21, 2024 at 11:31:25AM +0000, Benno Lossin wrote:
-> On 20.08.24 22:03, Matthew Maurer wrote:
-> >>> The way `KAbiReserved` is implemented is via a `union` (maybe a bit
-> >>> ironic, considering what I said in my other replies, but in this case,
-> >>> we would provide a safe abstraction over this `union`, thus avoiding
-> >>> exposing users of this type to `unsafe`):
-> >>>
-> >>>     #[repr(C)]
-> >>>     pub union KAbiReserved<T, R> {
-> >>>         value: T,
-> >>>         _reserved: R,
-> >>>     }
-> >>
-> >> I like this approach even better, assuming any remaining issues with
-> >> ownership etc. can be sorted out. This would also look identical to
-> >> the C version in DWARF if you rename _reserved in the union to
-> >> __kabi_reserved. Of course, we can always change gendwarfksyms to
-> >> support a different scheme for Rust code if a better solution comes
-> >> along later.
-> 
-> Yeah sure, that should also then work directly with this patch, right?
-> 
-> >> Sami
-> > 
-> > Agreement here - this seems like a good approach to representing
-> > reserved in Rust code. A few minor adjustments we discussed off-list
-> > which aren't required for gendwarfksyms to know about:
-> > 1. Types being added to reserved fields have to be `Copy`, e.g. they
-> > must be `!Drop`.
-> > 2. Types being added to reserved fields must be legal to be
-> > represented by all zeroes.
-> > 3. Reserved fields need to be initialized to zero before having their
-> > union set to the provided value when constructing them.
-> > 4. It may be helpful to have delegating trait implementations to avoid
-> > the couple places where autoderef won't handle the conversion.
-> > 
-> > While I think this is the right solution, esp. since it can share a
-> > representation with C, I wanted to call out one minor shortfall - a
-> > reserved field can only be replaced by one type. We could still
-> > indicate a replacement by two fields the same as in C, by using a
-> > tuple which will look like an anonymous struct. The limitation will be
-> > that if two or more new fields were introduced, we'd need to edit the
-> > patches accessing them to do foo.x.y and foo.x.z for their accesses
-> > instead of simply foo.y and foo.z - the autoref trick only works for a
-> > single type.
-> 
-> We will have to see how often multiple fields are added to a struct. If
-> they are infrequent and it's fine for those patches to then touch the
-> field accesses, then I think we can just stick with this approach.
-> If there are problems with that, we can also try the following:
-> all fields of kABI structs must be private and must only be accessed
-> through setters/getters. We can then modify the body the setters/getters
-> to handle the additional indirection.
+Currently, when using both function tracer and function graph simultaneously,
+it is found that function tracer sometimes captures a fake parent ip(return_to_handler)
+instead of the true parent ip.
 
-That's just not going to work, sorry.  Remember, the goal here is to
-keep the code that comes from kernel.org identical to what you have in
-your "enterprise" kernel tree, with the exception of the few extra
-"padding" fields you have added to allow for changes in the future in
-the kernel.org versions.
+This issue is easy to reproduce. Below are my reproduction steps:
 
-Requiring all kernel.org changes that add a new field to a structure to
-only do so with a settter/getter is going to just not fly at all as they
-will not care one bit.
+jeff-labs:~/bin # ./trace-net.sh
 
-Or, we can just forget about "abi stability" for rust code entirely,
-which I am totally fine with.  It's something that managers seem to like
-for a "check box" but in reality, no one really needs it (hint, vendors
-rebuild their code anyway.)
+jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
+    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
+    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
+    [...]
 
-thanks,
+The following is my simple trace script:
 
-greg k-h
+<snip>
+jeff-labs:~/bin # cat ./trace-net.sh
+TRACE_PATH="/sys/kernel/debug/tracing"
+
+set_events() {
+        echo 1 > $1/events/net/enable
+        echo 1 > $1/events/tcp/enable
+        echo 1 > $1/events/sock/enable
+        echo 1 > $1/events/napi/enable
+        echo 1 > $1/events/fib/enable
+        echo 1 > $1/events/neigh/enable
+}
+
+set_events ${TRACE_PATH}
+echo 1 > ${TRACE_PATH}/options/sym-offset
+echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+
+echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+echo function_graph > ${TRACE_PATH}/current_tracer
+
+INSTANCE_FOO=${TRACE_PATH}/instances/foo
+if [ ! -e $INSTANCE_FOO ]; then
+        mkdir ${INSTANCE_FOO}
+fi
+set_events ${INSTANCE_FOO}
+echo 1 > ${INSTANCE_FOO}/options/sym-offset
+echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+echo function > ${INSTANCE_FOO}/current_tracer
+
+echo 1 > ${TRACE_PATH}/tracing_on
+echo 1 > ${INSTANCE_FOO}/tracing_on
+
+echo > ${TRACE_PATH}/trace
+echo > ${INSTANCE_FOO}/trace
+</snip>
+
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+---
+v2:
+- Adding __always_inline to function_get_true_parent_ip suggested by Steve
+
+ kernel/trace/trace_functions.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..d989e927c898 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,6 +176,19 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
++static __always_inline unsigned long
++function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
++{
++	unsigned long true_parent_ip;
++	int idx = 0;
++
++	true_parent_ip = parent_ip;
++	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
++		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
++				(unsigned long *)fregs->regs.sp);
++	return true_parent_ip;
++}
++
+ static void
+ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
+@@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
++
+ 	trace_ctx = tracing_gen_ctx();
+ 
+ 	cpu = smp_processor_id();
+@@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+@@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (bit < 0)
+ 		return;
+ 
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	if (atomic_read(&data->disabled))
+@@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	 * recursive protection is performed.
+ 	 */
+ 	local_irq_save(flags);
++	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	disabled = atomic_inc_return(&data->disabled);
+-- 
+2.34.1
+
 
