@@ -1,109 +1,144 @@
-Return-Path: <linux-kernel+bounces-295360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D046C959A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:34:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E5C959A14
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0A01C21E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:34:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB398B2484C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34631AF4CF;
-	Wed, 21 Aug 2024 10:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004531AF4EF;
+	Wed, 21 Aug 2024 10:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkuoNDjX"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAwXHFj0"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AC31A7ACE;
-	Wed, 21 Aug 2024 10:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A391AF4E1;
+	Wed, 21 Aug 2024 10:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724237578; cv=none; b=YsSDUqt1nHMl3PQNcWoOUsWQl9eK9fisBNrlrGPqVaa4qiDCB8gOFprN5b1UwOI9Y4ZMzSa7CMF5S0ISJI3sY1pse+COxVxUhjmIBczb+HUdGya+vXTW46SKbe8czD8tmoX4H8teH0miAQCeFfmytk6c+Br9OJb0Yz+2W4WsDvs=
+	t=1724237602; cv=none; b=W8WPZdp2bb7VRtsvE3WEBV4jd8b/pIVeLFEBwKTknV0B8xU/KQXaHgAZhfrs3Zsu0wyHfT62NWH2KWGuBrebB87DoQ5vyDu2p4GL8mttTnadQa9WO7nDlRFgahNO5BgcPGa3KAF94L+8x7yzULM3nq63ikd0XQddS+MTRjtVHkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724237578; c=relaxed/simple;
-	bh=cWo+had6U4TTZ/AMZ/4Dea/i+TbACyjARzDSe/o3lsQ=;
+	s=arc-20240116; t=1724237602; c=relaxed/simple;
+	bh=mA0adj883xXJeQ+aUyZEE9rMNJjjfthxo2uEk/V8c+Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ixeCeFPrWIvhRO6I6S3kRk+ZakV27NM5N4wNyzy+SXHCc9Ms5t0B7pKnfqK0xjNYaFWWREgiRxUhwTQO56KJbj9E8Se/D/r5hvM2mR52CyCuE3DYYpbd96iH/7YbV9rVjWbjxLIQYtYJ2CZ3p+W8jYlk4xcFDa0VCOdazpWLl+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkuoNDjX; arc=none smtp.client-ip=209.85.216.49
+	 To:Cc:Content-Type; b=cuNm2RfJISKo5Qc59MS/AnW+0UeU8qflgBonbdjVfWCLi8Fn+OaWfDTUfywzUJd5eilgRbJNrEQUeWDSm5IAwsbkfgZ434E9yLQV4wET88dUuqzLzQFl1DWPtTUfBiJRwsHRHkEW4x80eLWRjoJW3tiElEDzhlF9Qn5R8YbgjrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAwXHFj0; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3c4d47c65so79132a91.3;
-        Wed, 21 Aug 2024 03:52:56 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f3bfcc2727so45360291fa.0;
+        Wed, 21 Aug 2024 03:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724237576; x=1724842376; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724237599; x=1724842399; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vMSPdG7KQxNI6Tub4YCHXu5EFWuA68mvqjrG9XCAkDM=;
-        b=EkuoNDjXvonMQGxbxagcMxRpbWFAmKHXUPgUZ7DiJW5wu1IuBsTnlzVLZCOZOYAO1N
-         BO/3hzZMqqcdkf3ix3htGgyJU8pQaZA8EYl0m6H/yGw2FVebw5s7r73ABD9XSbMR/tL3
-         +bIbueHM+ihEB3rtaSN0QZLyhmuDY2Jpf4jIcDXUZvFHt8XLUUiCnprOeumJRkGGNzul
-         aQqN9l76gnZHhoxaXed4PIGAgUAsTq466SI3tvcGS7mZ0f5CDuTnt3O/fxL+6q41A5pA
-         3y5psOFRPYVVaOWxy517P2lunPc8CHsn2u2Nc3MXJbtmkWNRLR3LIQSJORnv9CjfFGL3
-         RE+A==
+        bh=IwrhvYn9IYVNLiK3zBjH9it7CSXvTZVRRNnHjqyFWC4=;
+        b=MAwXHFj0GDqT3mFb2HCFPxPPEcvmjdc8eQHn2GasinX6BJZVH/YngQWaLmCG3R2fVw
+         DjwpzPCeVtDV6dKADgAe4jyKXI3+9MNSeM8HhdXi0knKmwCMJyh1q1Q7tvpK1j0kllun
+         3vgkS2IDyqYzP/ScjR8n6+SLi9jJAFGIQAx4Dd25inxutHJ8ekWgn/Sl6bvaz0Cv9H5a
+         wNkjkFQCIWk6MdN4bdTcH2N2lhxjSH8Njb6hsgoEDj9WTHDukm27hxpg5TuH1kiGWofX
+         rdUvjM2SHJEphO5Hqxo7jjmqBJpJ+Krz3ioJ4qOx+D3Ae2XgsWyGxpFKbyOPo6cd6RNd
+         X6Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724237576; x=1724842376;
+        d=1e100.net; s=20230601; t=1724237599; x=1724842399;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vMSPdG7KQxNI6Tub4YCHXu5EFWuA68mvqjrG9XCAkDM=;
-        b=Ae0AfmczpIzjv0QueBGdWrGj1cN8DdjzomF793XOgYsf2zvu/u8sy/YJSNg+/+IB3s
-         ioKNKyOF/vzKYfCUMWUmMpeP38YyUBKOrsbGXTFBIc7Fp4bRZBGp9JcdxyblL+Mtg/8D
-         R6yXFkgh5PLDMRBuIOU1gKlzVcmk6uFuOsD2/ZH1cbPzUQR6VhYHrkLeL6GNfOdykW/7
-         yRctlNKdKLiiem3g6rWn33FjGYEW4z5Qp/bz7JL/jTOuB6fS/oTLI3+pxA/Eg7vDv3ls
-         kuP9Nl/tGlXgfPbahWSpAiILAHaceaRthR8uodbVRePbmm3+2Oel+dsoBhBBRSCsZpKi
-         77oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTiV6pooPAj551M0AN4fIFjk+M0xcq8f8+akBqtBIxD3ju/RhAK0GHt/L0zzYQ13Id6PYVYIpnY23V4VZ7@vger.kernel.org, AJvYcCXRY9mriO1nCwQHWztQZi8QwLDSnI2F/1skveS2NH/jDTZFkGTTdfsBl2qugRHqND9ujzpLEJlIc8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXL2ormAjdGuaEEqUnHHScNhrFL6bdCb2RBM193pvxkHo7WA7c
-	sTxivDFqnjWW8eTwrrzrRTdphEvbNOAukxeA/goHjE7EJhFvPvfQx805zZla9JDr2Ppd+9K6O3i
-	o/wNtyl5BZo0WMKxuHdOYdR1UPU0=
-X-Google-Smtp-Source: AGHT+IEM50af18jvodT26Md3wOz97ZtT9CJBlxg+Xx6A1jFeZU38tmY3hI/5RyIzTN7uI12qNNlI25a70Thlm1tYbc4=
-X-Received: by 2002:a17:90a:6888:b0:2c8:e8ed:8a33 with SMTP id
- 98e67ed59e1d1-2d5eaaa746cmr1138454a91.4.1724237576095; Wed, 21 Aug 2024
- 03:52:56 -0700 (PDT)
+        bh=IwrhvYn9IYVNLiK3zBjH9it7CSXvTZVRRNnHjqyFWC4=;
+        b=dXwTW0aG4Ud1hnFsUbEDGhzcXoD0bZl881GoSU66rhAwH9UrnsS3z1CRBv5wERi4Wp
+         cQG631BCxcLuPbwAOLXr8sMLiKC/S7xvzUToZNGoPFdAxwypj666d6tS7aXC/Bk5VQry
+         D58uVq0TVyGBaez5NuA2FuYKczBSB3MPIINRiYk/2C2DSE4uhYjvtiPqgdIu5UCBi/BZ
+         QSU6f81ivstmcAQUsihqKZMfXhz7yVw4/AYe3dLo66+vSevcT/fGtYlilt2ZdhuzR6G7
+         YkJjn2pSvDmUFu5/OxwY7UQlJBxAyWJIfzZs71lLffhrel8MV/dJbwgDHYvTT7v+nkWj
+         pf0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZwjmeqgKBQg/YbyqKIIN0P4j393caxPdCUQOBtWI6rHw+Btb+AdXQDuqGTGEeuyI5HVk=@vger.kernel.org, AJvYcCVD86E+rKxFy5fTcVcUetNn3/+7rcyjQkg9SOA8e6Q8aagecQjK5tG6rV8YnsTbVfqNizxZSbWT27n+uquT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuSEQ0Ws+5PNYl8z9RbG6xlb5SkRdMwjxl86EwDpBOc5qrZKnV
+	u+XCOZN/FpBQ7hZImzfzn3AGIgRpvJRYMJBophPg4Y6TMz6vD9eFfXD5SlxUOriLXUKoENgm09R
+	GWcaQBpBcYgfiStl8UYYwq3MqseE=
+X-Google-Smtp-Source: AGHT+IECWcn8Uo67Cg+Q2ui9lNvRZZC4chMa38kqPfI4/6bbV1tH5ZSipAy9ZcBD7Id60gd6jnBxLOlJypovB4cedY8=
+X-Received: by 2002:a05:651c:1508:b0:2ef:c8a1:ff4 with SMTP id
+ 38308e7fff4ca-2f3f87ec71cmr14949941fa.7.1724237598094; Wed, 21 Aug 2024
+ 03:53:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816200339.2495875-1-vincent@woltmann.art>
-In-Reply-To: <20240816200339.2495875-1-vincent@woltmann.art>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 21 Aug 2024 12:52:43 +0200
-Message-ID: <CANiq72=kdZW5KYUVedJ=5LoxnU1s9UFog_vUS39cT=DLaQY00g@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: Remove erronous blockquote in coding guidelines
-To: Vincent Woltmann <vincent@woltmann.art>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Jonathan Corbet <corbet@lwn.net>, Wei Liu <wei.liu@kernel.org>, 
-	Yuki Okushi <jtitor@2k36.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240821064632.38716-3-soma.nakata01@gmail.com>
+ <66d4df96-3493-4b12-8bd8-e26c42cd342d@wanadoo.fr> <CAOpe7Sc8_ie97RXG2Wzw=0COOpKzRmThZA_W6RCuvVe7iC-C9Q@mail.gmail.com>
+In-Reply-To: <CAOpe7Sc8_ie97RXG2Wzw=0COOpKzRmThZA_W6RCuvVe7iC-C9Q@mail.gmail.com>
+From: Soma Nakata <soma.nakata01@gmail.com>
+Date: Wed, 21 Aug 2024 19:53:06 +0900
+Message-ID: <CAOpe7ScEK4PZ=43QhMSeJnh4PpJ67T1R5m45pFhkeD3EiQzUKQ@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Initialize st_ops->tname with strdup()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 10:04=E2=80=AFPM Vincent Woltmann <vincent@woltmann=
-.art> wrote:
+`type` field is supposed to directly point to the btf in functions
+like `btf_members()`. So I will make change only to `tname` field
+in this patch.
+
+On Wed, Aug 21, 2024 at 6:04=E2=80=AFPM Soma Nakata <soma.nakata01@gmail.co=
+m> wrote:
 >
-> An unordered list in coding-guidelines.rst was indented, producing
-> a blockquote around it and making it look more indented than expected.
-> Remove the indentation to only output an unordered list.
+> Hi,
 >
-> Reported-by: Miguel Ojeda <ojeda@kernel.org>
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1063
-> Fixes: d07479b211b7 ("docs: add Rust documentation")
-> Signed-off-by: Vincent Woltmann <vincent@woltmann.art>
-
-Applied to `rust-fixes` -- thanks!
-
-    [ Reworded title. - Miguel ]
-
-Cheers,
-Miguel
+> You're correct, I should add a NULL check.
+>
+> zfree(&map->st_ops->tname) causes error because tname has
+> `const` qualifier.
+> Also, I found st_ops->type has the same issue.
+> Therefore, I propose removing `const` from `tname` and `type`
+> fields of `struct bpf_struct_ops`, and duplicating them from btf.
+>
+> >
+> > Le 21/08/2024 =C3=A0 08:46, Soma Nakata a =C3=A9crit :
+> > > `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
+> > > and these addresses point to strings in the btf. Since their location=
+s
+> > > may change while loading the bpf program, using `strdup()` ensures
+> > > `tname` is safely stored.
+> > >
+> > > Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
+> > > ---
+> > >   tools/lib/bpf/libbpf.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > > index a3be6f8fac09..ece1f1af2cd4 100644
+> > > --- a/tools/lib/bpf/libbpf.c
+> > > +++ b/tools/lib/bpf/libbpf.c
+> > > @@ -1423,7 +1423,7 @@ static int init_struct_ops_maps(struct bpf_obje=
+ct *obj, const char *sec_name,
+> > >               memcpy(st_ops->data,
+> > >                      data->d_buf + vsi->offset,
+> > >                      type->size);
+> > > -             st_ops->tname =3D tname;
+> > > +             st_ops->tname =3D strdup(tname);
+> >
+> > Hi,
+> >
+> > Should a NULL check be added (as done a few lines above for the
+> > [cm]alloc()) and bpf_map__destroy() updated with a
+> > zfree(&map->st_ops->tname) ?
+> >
+> > CJ
+> >
+> > >               st_ops->type =3D type;
+> > >               st_ops->type_id =3D type_id;
+> > >
+> >
 
