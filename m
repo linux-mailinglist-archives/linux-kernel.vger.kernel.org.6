@@ -1,98 +1,63 @@
-Return-Path: <linux-kernel+bounces-295661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FDC959FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9985B959FE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8311F2453B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3AE1C20A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4161B1D50;
-	Wed, 21 Aug 2024 14:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D833C1B3B29;
+	Wed, 21 Aug 2024 14:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="FdUspjj7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XnNvnt6g"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfAawSWT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46E11B2518
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53CB1B1D73;
+	Wed, 21 Aug 2024 14:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250354; cv=none; b=icVjzt2G9XPnkPqyf/ZDn+pwvvqfn++MsxbFtkDKNiNOKN8W8jHrepPWnlOcKwm7MFBcMSAnqWZcZ7bcabjYAZu6PQlBenD7aNmyOOPkEnscLHTFARhROdFlxosKOXZZ4m058+LLJzGWTSupuZT8nOcLmVPQ4UTQCw82EA4pvJs=
+	t=1724250519; cv=none; b=lQmKrqDE5vFOJKYiQEXnNHKT/FiSe25jo+OAS4KO5PR8jK3XOI3bCqW4kUP+ZoRv+4BAr6usvFNGRtMEMZAIg4E/zKLX/nPRBVvDg4Z4CCP3WvNq3deTlwnrmVEa7iTeqYaOFW39xY6k+CT7VxC0Dt9+sNXiSz/T4pQoGbh6Ejc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250354; c=relaxed/simple;
-	bh=uInoj18fxpsP5BIPt90J7Wa1ZwSUV8Lg6KaGsyPqvXg=;
+	s=arc-20240116; t=1724250519; c=relaxed/simple;
+	bh=4j/xNgP1vGlnOe8f12JqGPfxZdJhHY5ZsFrNsEs2y3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irTVdirjiqa8kGd8SFBW6y5BZyiVB9NroQi2fudMa75aZITnW6CWzrtxnhtDkIOaaERxk7x612ix0oNeB0VYuIddQO7wP2PnHFvh7XqIr8QNf4Xv80wsuuf99bDmEXshLsiA8z5EaQVVbsGLFD28yGHAfKp0mZrsZi7tsDApgp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=FdUspjj7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XnNvnt6g; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 9E225138FF42;
-	Wed, 21 Aug 2024 10:25:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 21 Aug 2024 10:25:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1724250350; x=
-	1724336750; bh=z5hmVB1UaluQWMIWgCRGfRfSmwBjFSaGxlbnQm46kVI=; b=F
-	dUspjj71mFgkp71yMyJmaNBf2sZc/DOIO22J8CywXwDYb/ibX4EhcFcnj2Vg2arz
-	NW9JW0NxGKY2qN5PYK8atXzpbloVfZRr9zDPcDFT2RYOFJtGzQ+KKGe03vg64vY6
-	TgrQAvthnHSag62uANGago7cAHRQfSXw1QVcuQBMnPGkakhF2oTAA8zE9pd6Ryrf
-	YeQoqDvCvgMYeRRn9TbuP4S8/Rc95XNBrWlfIvtx/mRyPt6XXR6kP+2t2ZZT41mO
-	DXy4+K8iiAlFFz9wMi48H7wuYVO1yUJUGmEj5zLl/RiDwesp3GJy8vwpJsIUqFnr
-	TRMZLF2/IGhvaaj4u7QiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724250350; x=1724336750; bh=z5hmVB1UaluQWMIWgCRGfRfSmwBj
-	FSaGxlbnQm46kVI=; b=XnNvnt6gomwBEuHM2fRninJMHuasSml99lB/Q6Cz+AKT
-	Wa8JqpeF8SbY7KMBtRyJJ50TwQ23LmUx9zlDiVN4+r0c9eo6e2yTTYfWDTJq9h+L
-	9DMt8JN+ZsQ8ZF65L/VrulZf4TluVVufYyhnNhMORSnC0xy1fkGxznu8dC2gS5qM
-	lDcYZmUENhM4uTV/xzrXmSWlV8NGNYqX5DHkdarUSb8Uw7xLWO5tAxEgKmLs5f3D
-	VcxsJPxmawn9CLienZbNPJGRjKUoBobIhRLQMRwtLWDHl2hYxBilxMpT9/GoNtIt
-	P5YgEt4sJeNTmGUzCtJU6p5VCedmJdCHOQasxrQXZw==
-X-ME-Sender: <xms:7vjFZu9FCwZaJ-y9xYQEw2yIJMbusC9JGteh5u-tyxxHc3QNo1EPRg>
-    <xme:7vjFZuuc67XqPkG3iCdFc3qNzcKRyyScXa2lcRWTFUADUhI5mNGDuhZdubnnVx5ab
-    Hakvjf3lGNcwUezeSk>
-X-ME-Received: <xmr:7vjFZkBKUY60thNjM-EUKkgcl3gc6WXGXMdMvi0XKQOt64w87mCRH5fyLTEZUpz2htRX1DJqzglYwAIfAt6S-Va04eub-0KhMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddukedgjeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeu
-    ffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhho
-    tggthhhirdhjphdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfhho
-    rhhgvgdrnhgvthdprhgtphhtthhopeiiihhjuhhnpghhuhesihgtlhhouhgurdgtohhmpd
-    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:7vjFZmeJNdmiJEnPhVCc7L-Yh0pV2-QJBTX6lUqgnXsPMU3Ms7vyPQ>
-    <xmx:7vjFZjPPdc65QJ1HGLf7kzstW2t74S4K7hoVQ6Aq_7hnNjUpw2Jt7g>
-    <xmx:7vjFZgmnO35moMLOwDVkiL_CEK5iDvMycdcVCKtfKeUuDLQDW482rA>
-    <xmx:7vjFZlvGYZQzKuuh-ppb4ugHpruxf9pIzMzFTDsm-Lotz2HBdGRFoQ>
-    <xmx:7vjFZsqEZPMs0rB5LbnWB0zsSefRJWoc83pOiQUO8s_NbnrNTNJJoViZ>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Aug 2024 10:25:49 -0400 (EDT)
-Date: Wed, 21 Aug 2024 23:25:46 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firewire: core: update fw_device outside of
- device_find_child()
-Message-ID: <20240821142546.GA48808@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org
-References: <20240820132132.28839-1-o-takashi@sakamocchi.jp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPY/+uDFw6IlvlNYvjOsJr5Go7PMY6hFyxfi4/DZxZkP/mzPQiVdMrLGEuv/vCVlyoQUbe7NQdaYBjh1KbG0XQmq5VMPJgINnTquhJiJibphlaUJXkw/QPvolP4euOgihS8Y9mQyPzzo6DWYkWQXGuNa9hEJvxz+PwgBsb7d7/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfAawSWT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00F4C32781;
+	Wed, 21 Aug 2024 14:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724250518;
+	bh=4j/xNgP1vGlnOe8f12JqGPfxZdJhHY5ZsFrNsEs2y3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RfAawSWTfoKXWAbO1ubaMfLCuFzfKiZcKRuJ93wChVgh5vH8nFow+yTPgYblIAaxo
+	 TQg1RLAEzqXry4clPa2b0JAtssoCdl60VttoYB+JTbg1Jr380Bpk2kJ8qLus3WUB1y
+	 5bXNVmFkumx0/4/1HPFdjAODdHkye78vqNT6rmG0Ls0O5J6EOL0IVgQVcSXYEDhvSj
+	 pDlHFXCoF+RqjuOjikbzHHcOhwAM+SMTekZD/puddRWDYK9YHrcaLGb6BeUHEDmTC/
+	 2Mqop+D3bC4tvzn1NX2brBZfqTEQ1UE82m7DVyHN31u8+SmRiizsC24Q9nVnDziCY+
+	 gnYK/36zK9eiQ==
+Date: Wed, 21 Aug 2024 17:26:07 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Fuad Tabba <tabba@google.com>, David Hildenbrand <david@redhat.com>,
+	Patrick Roy <roypat@amazon.co.uk>, qperret@google.com,
+	Ackerley Tng <ackerleytng@google.com>, linux-coco@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kvm@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] mm: guest_memfd: Add option to remove guest
+ private memory from direct map
+Message-ID: <ZsX4_1TlIu6WNo7r@kernel.org>
+References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
+ <20240805-guest-memfd-lib-v1-3-e5a29a4ff5d7@quicinc.com>
+ <ZsMZ8C2lnpMW+BT5@kernel.org>
+ <20240820094213541-0700.eberman@hu-eberman-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,31 +66,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820132132.28839-1-o-takashi@sakamocchi.jp>
+In-Reply-To: <20240820094213541-0700.eberman@hu-eberman-lv.qualcomm.com>
 
-On Tue, Aug 20, 2024 at 10:21:32PM +0900, Takashi Sakamoto wrote:
-> When detecting updates of bus topology, the data of fw_device is newly
-> allocated and caches the content of configuration ROM from the
-> corresponding node. Then, the tree of device is sought to find the
-> previous data of fw_device corresponding to the node. If found, the
-> previous data is updated and reused and the data of fw_device newly
-> allocated is going to be released.
+On Tue, Aug 20, 2024 at 09:56:10AM -0700, Elliot Berman wrote:
+> On Mon, Aug 19, 2024 at 01:09:52PM +0300, Mike Rapoport wrote:
+> > On Mon, Aug 05, 2024 at 11:34:49AM -0700, Elliot Berman wrote:
+> > > This patch was reworked from Patrick's patch:
+> > > https://lore.kernel.org/all/20240709132041.3625501-6-roypat@amazon.co.uk/
+> > > 
+> > > While guest_memfd is not available to be mapped by userspace, it is
+> > > still accessible through the kernel's direct map. This means that in
+> > > scenarios where guest-private memory is not hardware protected, it can
+> > > be speculatively read and its contents potentially leaked through
+> > > hardware side-channels. Removing guest-private memory from the direct
+> > > map, thus mitigates a large class of speculative execution issues
+> > > [1, Table 1].
+> > > 
+> > > Direct map removal do not reuse the `.prepare` machinery, since
+> > > `prepare` can be called multiple time, and it is the responsibility of
+> > > the preparation routine to not "prepare" the same folio twice [2]. Thus,
+> > > instead explicitly check if `filemap_grab_folio` allocated a new folio,
+> > > and remove the returned folio from the direct map only if this was the
+> > > case.
+> > > 
+> > > The patch uses release_folio instead of free_folio to reinsert pages
+> > > back into the direct map as by the time free_folio is called,
+> > > folio->mapping can already be NULL. This means that a call to
+> > > folio_inode inside free_folio might deference a NULL pointer, leaving no
+> > > way to access the inode which stores the flags that allow determining
+> > > whether the page was removed from the direct map in the first place.
+> > > 
+> > > [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
+> > > 
+> > > Cc: Patrick Roy <roypat@amazon.co.uk>
+> > > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > > ---
+> > >  include/linux/guest_memfd.h |  8 ++++++
+> > >  mm/guest_memfd.c            | 65 ++++++++++++++++++++++++++++++++++++++++++++-
+> > >  2 files changed, 72 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
+> > > index be56d9d53067..f9e4a27aed67 100644
+> > > --- a/include/linux/guest_memfd.h
+> > > +++ b/include/linux/guest_memfd.h
+> > > @@ -25,6 +25,14 @@ struct guest_memfd_operations {
+> > >  	int (*release)(struct inode *inode);
+> > >  };
+> > >  
+> > > +/**
+> > > + * @GUEST_MEMFD_FLAG_NO_DIRECT_MAP: When making folios inaccessible by host, also
+> > > + *                                  remove them from the kernel's direct map.
+> > > + */
+> > > +enum {
+> > 
+> > please name this enum, otherwise kernel-doc wont' be happy
+> > 
+> > > +	GUEST_MEMFD_FLAG_NO_DIRECT_MAP		= BIT(0),
+> > > +};
+> > > +
+> > >  /**
+> > >   * @GUEST_MEMFD_GRAB_UPTODATE: Ensure pages are zeroed/up to date.
+> > >   *                             If trusted hyp will do it, can ommit this flag
+> > > diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
+> > > index 580138b0f9d4..e9d8cab72b28 100644
+> > > --- a/mm/guest_memfd.c
+> > > +++ b/mm/guest_memfd.c
+> > > @@ -7,9 +7,55 @@
+> > >  #include <linux/falloc.h>
+> > >  #include <linux/guest_memfd.h>
+> > >  #include <linux/pagemap.h>
+> > > +#include <linux/set_memory.h>
+> > > +
+> > > +static inline int guest_memfd_folio_private(struct folio *folio)
+> > > +{
+> > > +	unsigned long nr_pages = folio_nr_pages(folio);
+> > > +	unsigned long i;
+> > > +	int r;
+> > > +
+> > > +	for (i = 0; i < nr_pages; i++) {
+> > > +		struct page *page = folio_page(folio, i);
+> > > +
+> > > +		r = set_direct_map_invalid_noflush(page);
+> > > +		if (r < 0)
+> > > +			goto out_remap;
+> > > +	}
+> > > +
+> > > +	folio_set_private(folio);
+> > > +	return 0;
+> > > +out_remap:
+> > > +	for (; i > 0; i--) {
+> > > +		struct page *page = folio_page(folio, i - 1);
+> > > +
+> > > +		BUG_ON(set_direct_map_default_noflush(page));
+> > > +	}
+> > > +	return r;
+> > > +}
+> > > +
+> > > +static inline void guest_memfd_folio_clear_private(struct folio *folio)
+> > > +{
+> > > +	unsigned long start = (unsigned long)folio_address(folio);
+> > > +	unsigned long nr = folio_nr_pages(folio);
+> > > +	unsigned long i;
+> > > +
+> > > +	if (!folio_test_private(folio))
+> > > +		return;
+> > > +
+> > > +	for (i = 0; i < nr; i++) {
+> > > +		struct page *page = folio_page(folio, i);
+> > > +
+> > > +		BUG_ON(set_direct_map_default_noflush(page));
+> > > +	}
+> > > +	flush_tlb_kernel_range(start, start + folio_size(folio));
+> > 
+> > I think that TLB flush should come after removing pages from the direct map
+> > rather than after adding them back.
+> > 
 > 
-> The above procedure is done in the call of device_find_child(), however it
-> is a bit abusing against the intention of the helper function, since it is
-> preferable to find only without updating.
-> 
-> This commit splits the update outside of the call.
-> 
-> Cc: Zijun Hu <zijun_hu@icloud.com>
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> ---
->  drivers/firewire/core-device.c | 116 +++++++++++++++++----------------
->  1 file changed, 59 insertions(+), 57 deletions(-)
+> Gunyah flushes the tlb when it removes the stage 2 mapping, so we
+> skipped it on removal as a performance optimization. I remember seeing
+> that pKVM does the same (tlb flush for the stage 2 unmap & the
+> equivalent for x86). Patrick had also done the same in their patches.
 
-Applied to for-next branch.
+Strictly from the API perspective, unmapping the pages from the direct map
+would imply removing potentially stale TLB entries.
+If all currently anticipated users do it elsewhere, at the very least there
+should be a huge bold comment.
 
-Regards
+And what's the point of tlb flush after setting the direct map to default?
+There should not be stale tlb entries for the unmapped pages.
+ 
+> Thanks,
+> Elliot
 
-Takashi Sakamoto
+-- 
+Sincerely yours,
+Mike.
 
