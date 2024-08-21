@@ -1,257 +1,175 @@
-Return-Path: <linux-kernel+bounces-296041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AE195A4BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:34:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E071795A4BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFA21F23878
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:34:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25344B211A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46581B5315;
-	Wed, 21 Aug 2024 18:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1BD1AF4D3;
+	Wed, 21 Aug 2024 18:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ugv7E7X+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+DmIQvA"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FFB1B3B39
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AED14EC66
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 18:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724265236; cv=none; b=nusLesuzEyGSUOBuZ/o+udlDPfOuvolrsYAmvwHI1Gvmgebcp8f1+qXD+hYv6C/OfrcKIar4Q18pAexpyLRkjtiJrRimLhmFw4BcLgbpcuKdb1CPaxTDlI6tTIYH5ENoEIpZYFFoQNqnoOO4gj/DVMitPjYMTA3t1Ow4deUx3Y4=
+	t=1724265232; cv=none; b=r658iKk6oNTAAKNEOu0yU3pfImXDyp7EwVgJ1FriOFlj7QPbhIh0jFZpqnJWqdtMHESZUTDpN+NXSmT+LfVz1ZGpC6ucmdNF0Wn1o8M03zLOE7sa/kBaJWo7LQAO7FNKxt0R3eCeiPFVWVc+7eDiiNMLVz/IhuOHCUCQpVRhUE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724265236; c=relaxed/simple;
-	bh=D8dzEsvdxlbV7gLN9MICyDGMpRQDlFDDgipzWQLybUo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Zm6/Lq/85JUvoODMlDnoEo5Bf8uAKAk0AW2MkZWGpS7ece2rgXwqefKiWyQbQzNy1uenX1PKZq15Lb+15oM45bxg8xaWdjVk7fnMlIZ5ZT7diYU3HpfdUO/wGe5wJcOriJQYoxQqHWBB8p2TXh2y9DC6t0B0vlFAFl0PvhOKajg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ugv7E7X+; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724265235; x=1755801235;
-  h=date:from:to:cc:subject:message-id;
-  bh=D8dzEsvdxlbV7gLN9MICyDGMpRQDlFDDgipzWQLybUo=;
-  b=Ugv7E7X+IDMncRv4XkIGY2x8+gDzxKhz7TyPDjzH9DydLO2arZn8wNRy
-   A7O8IUdE35Hnka7SO6Xajp39MN8rU7cl2tersVpBCZwe3irqib+OV81in
-   7M5vpctZyp+CsGmiNRDqfaTuFXMxnO3Uz3maODglJq71VdYQthVOmv2bM
-   KTidr1lU14hgOMI97pPh6rivt/atZS0pWGeVRazEP9sYBg5hkiKg3GOpJ
-   mMrcj2XB0qe9MCmgczz+8twq/cLqolE5vUcCvIu1c6qKixmqdkQ5GTNSu
-   lA/C2d4SWc2BWR2OhxqQZMIOVzryQLi7OFUfzfDzUidpSk/yQ1D4fnh3v
-   Q==;
-X-CSE-ConnectionGUID: sZVRFYOeTSSe1lndasI5NA==
-X-CSE-MsgGUID: tv5WkIodTb+30oOe26I/EQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="13140215"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="13140215"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 11:33:54 -0700
-X-CSE-ConnectionGUID: d/Cc7BFURjGsWFV/wOiGrA==
-X-CSE-MsgGUID: OTCukt/9SHejNfAwAQWMSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61924889"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 21 Aug 2024 11:33:53 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgq9W-000Bma-2T;
-	Wed, 21 Aug 2024 18:33:50 +0000
-Date: Thu, 22 Aug 2024 02:33:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- ea72ce5da22806d5713f3ffb39a6d5ae73841f93
-Message-ID: <202408220245.5Dkp8KRm-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1724265232; c=relaxed/simple;
+	bh=ejBW706/fxpfVahIdA3apLNioyS53P3ulVN0iIYtl58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inaQnLKEZANfpy6TgDeutO1uCUe0OHOEeN2EUSiJAl+XOTSTMDJsEzMlBFDLCet0M9fM6tn76cmxggQBLuBCu9tVp4pkCYdTFvAJtgcj5k4fvsTfFgX1xq7UuPrQ830iJSKi71PJU+HQhSOZ3PNI5kAlJXKV3MyS3FOqQMNC1/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+DmIQvA; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-498d7a1f734so344475137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724265230; x=1724870030; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tkPLy1f+u1P9VM8tUYo55oFGiMqeB60eu+E98u0669Q=;
+        b=Q+DmIQvAKlZTsxao/inIqvlkVASK6hJlEQuKNDGJIqDrhU+HF1EzHUnh6NqZec7K9Z
+         g2j+btOEpcXk+iqiGuvZDHRYAukBPh6odCYMo8gewHja8qI+L+dv4+g33nsuTeRft6f1
+         mREDJ/7Hhbmkt0RJTucHNN6wKNaMbD/aBlP8irZuQx0TyalIz2rXxNQMuz+tyEQQjSz6
+         7O9H+bcGgIQKefbMojXZogajNJGtdKO9U7LOJEld6aW+wRuHltVwOL/pshg9FoT890V2
+         7bwneAEIFPmTmpYWq9aE6gvrDlN8Sl2e1dPkH55JbOasE+dzEdNnKIKv71jj1JZ989Wn
+         CRaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724265230; x=1724870030;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tkPLy1f+u1P9VM8tUYo55oFGiMqeB60eu+E98u0669Q=;
+        b=T9KkPXwSgmtUAl9kDmLPCpVPQ3wnhCTRtKOmN3v9oGSk+japTPSKxldgOW/Qyidut7
+         9vbp2dbuEzQaimuM73y5bfs035A2muDm00TPPt3svRy0JiExh9zrXzHV3G8oJGQFAODs
+         /jJpj7x3eamaD1a78N0HzOlKNHlR9Qv7doonZVYbTJ0Jbg8PP0QlRNIUweTheN/pwDV2
+         IHIweHDhuOYcTVrcS/zmgoin4ytO2JwZ/Ikctg9QmIRGKXoQlLVkqK4XvKKTbOG12Vp0
+         +vfoq3JqL9vqOebAZIlFb3eYCroS81dfuLY14soy0Z6D/KWrEMOvAGpt2IRFjA2ajfF7
+         Ehlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5nFG/r2wIVdsRoOQwC4DnsMLQzZyPAbYKXxWuaCWpILHy8Rul7IMfzdVcDpup5oNXe2qmwn57ZIzOW5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6QlLFoouZ5U5Vl4VnEoTv3SYSTlqbLABo7aZDfO1Cs9xNOS2e
+	8f64psDtBAh7ACdk6Kpf87EKsQRSFEH6R0hU5lNuvUZ101xFvpP1
+X-Google-Smtp-Source: AGHT+IGjveudB+Kg2dz5OMk2f9JaWyFZ8Dz9cqlG0M1Yidau7P0ija0blJs15KkCG2h6Lym0ajd5fQ==
+X-Received: by 2002:a05:6102:3ec2:b0:492:a16e:c83 with SMTP id ada2fe7eead31-498d2f527a6mr4485894137.18.1724265229821;
+        Wed, 21 Aug 2024 11:33:49 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1145:4:1409:786c:cb1d:c3fb? ([2620:10d:c091:500::4:d08d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe4b00bsm63331256d6.65.2024.08.21.11.33.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Aug 2024 11:33:49 -0700 (PDT)
+Message-ID: <0b8e22e0-7ba0-49ac-9e05-8f473b3c8ee3@gmail.com>
+Date: Wed, 21 Aug 2024 14:33:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] mm: drop lruvec->lru_lock if contended when
+ skipping folio
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, yuzhao@google.com,
+ david@redhat.com, leitao@debian.org, bharata@amd.com, willy@infradead.org,
+ vbabka@suse.cz, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Johannes Weiner <hannes@cmpxchg.org>, zhaoyang.huang@unisoc.com,
+ Rik van Riel <riel@surriel.com>
+References: <20240819184648.2175883-1-usamaarif642@gmail.com>
+ <20240819181743.926f37da3b155215c088c809@linux-foundation.org>
+ <29e481af-b5e1-4320-a672-8251f5099595@gmail.com>
+ <CAGWkznFLUcyyqW9yGA-Sy6+Y22yqt0C5cWkxZnpq9VarPiH7gQ@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGWkznFLUcyyqW9yGA-Sy6+Y22yqt0C5cWkxZnpq9VarPiH7gQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: ea72ce5da22806d5713f3ffb39a6d5ae73841f93  x86/kaslr: Expose and use the end of the physical memory address space
 
-elapsed time: 1255m
 
-configs tested: 165
-configs skipped: 8
+On 21/08/2024 01:51, Zhaoyang Huang wrote:
+> On Tue, Aug 20, 2024 at 11:45 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>>
+>>
+>> On 20/08/2024 02:17, Andrew Morton wrote:
+>>> On Mon, 19 Aug 2024 19:46:48 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+>>>
+>>>> lruvec->lru_lock is highly contended and is held when calling
+>>>> isolate_lru_folios. If the lru has a large number of CMA folios
+>>>> consecutively, while the allocation type requested is not MIGRATE_MOVABLE,
+>>>> isolate_lru_folios can hold the lock for a very long time while it
+>>>> skips those. vmscan_lru_isolate tracepoint showed that skipped can go
+>>>> above 70k in production and lockstat shows that waittime-max is x1000
+>>>> higher without this patch.
+>>>> This can cause lockups [1] and high memory pressure for extended periods of
+>>>> time [2]. Hence release the lock if its contended when skipping a folio to
+>>>> give other tasks a chance to acquire it and not stall.
+>>>>
+>>>> ...
+>>>>
+>>>> --- a/mm/vmscan.c
+>>>> +++ b/mm/vmscan.c
+>>>> @@ -1695,8 +1695,14 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+>>>>              if (folio_zonenum(folio) > sc->reclaim_idx ||
+>>>>                              skip_cma(folio, sc)) {
+>>>>                      nr_skipped[folio_zonenum(folio)] += nr_pages;
+>>>> -                    move_to = &folios_skipped;
+>>>> -                    goto move;
+>>>> +                    list_move(&folio->lru, &folios_skipped);
+>>>> +                    if (!spin_is_contended(&lruvec->lru_lock))
+>>>> +                            continue;
+>>>> +                    if (!list_empty(dst))
+>>>> +                            break;
+>>>> +                    spin_unlock_irq(&lruvec->lru_lock);
+>>>> +                    cond_resched();
+>>>> +                    spin_lock_irq(&lruvec->lru_lock);
+>>>>              }
+>>>
+>>> Oh geeze ugly thing.  Must we do this?
+>>>
+>>> The games that function plays with src, dst and move_to are a bit hard
+>>> to follow.  Some tasteful comments explaining what's going on would
+>>> help.
+>>>
+>>> Also that test of !list_empty(dst).  It would be helpful to comment the
+>>> dynamics which are happening in this case - why we're testing dst here.
+>>>
+>>>
+>>
+>> So Johannes pointed out to me that this is not going to properly fix the problem of holding the lru_lock for a long time introduced in [1] because of 2 reasons:
+>> - the task that is doing lock break is hoarding folios on folios_skipped and making the lru shorter, I didn't see it in the usecase I was trying, but it could be that yielding the lock to the other task is not of much use as it is going to go through a much shorter lru list or even an empty lru list and would OOM, while the folio it is looking for is on folios_skipped. We would be substituting one OOM problem for another with this patch.
+> Other tasks can not get folios either if they can not use CMA after
+> the reclaiming even without the original patch. I am ok with your fix
+> patch except the 'if (!list_empty(dst))' puzzled me.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The 'if (!list_empty(dst))' was there so that if the spinlock is contended and we are still skipping, then the shrink_active/inactive_list can still use the ones that are in destination, rather then continue skipping.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240821   gcc-13.2.0
-arc                   randconfig-002-20240821   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                                 defconfig   gcc-13.2.0
-arm                   randconfig-001-20240821   gcc-13.2.0
-arm                   randconfig-002-20240821   gcc-13.2.0
-arm                   randconfig-003-20240821   gcc-13.2.0
-arm                   randconfig-004-20240821   gcc-13.2.0
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240821   gcc-13.2.0
-arm64                 randconfig-002-20240821   gcc-13.2.0
-arm64                 randconfig-003-20240821   gcc-13.2.0
-arm64                 randconfig-004-20240821   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240821   gcc-13.2.0
-csky                  randconfig-002-20240821   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240821   gcc-12
-i386         buildonly-randconfig-002-20240821   clang-18
-i386         buildonly-randconfig-002-20240821   gcc-12
-i386         buildonly-randconfig-003-20240821   clang-18
-i386         buildonly-randconfig-003-20240821   gcc-12
-i386         buildonly-randconfig-004-20240821   gcc-12
-i386         buildonly-randconfig-005-20240821   gcc-12
-i386         buildonly-randconfig-006-20240821   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240821   clang-18
-i386                  randconfig-001-20240821   gcc-12
-i386                  randconfig-002-20240821   gcc-12
-i386                  randconfig-003-20240821   clang-18
-i386                  randconfig-003-20240821   gcc-12
-i386                  randconfig-004-20240821   gcc-12
-i386                  randconfig-005-20240821   clang-18
-i386                  randconfig-005-20240821   gcc-12
-i386                  randconfig-006-20240821   gcc-12
-i386                  randconfig-011-20240821   gcc-11
-i386                  randconfig-011-20240821   gcc-12
-i386                  randconfig-012-20240821   gcc-12
-i386                  randconfig-013-20240821   clang-18
-i386                  randconfig-013-20240821   gcc-12
-i386                  randconfig-014-20240821   clang-18
-i386                  randconfig-014-20240821   gcc-12
-i386                  randconfig-015-20240821   gcc-12
-i386                  randconfig-016-20240821   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240821   gcc-13.2.0
-loongarch             randconfig-002-20240821   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240821   gcc-13.2.0
-nios2                 randconfig-002-20240821   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240821   gcc-13.2.0
-parisc                randconfig-002-20240821   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc               randconfig-001-20240821   gcc-13.2.0
-powerpc               randconfig-002-20240821   gcc-13.2.0
-powerpc64             randconfig-001-20240821   gcc-13.2.0
-powerpc64             randconfig-002-20240821   gcc-13.2.0
-powerpc64             randconfig-003-20240821   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240821   gcc-13.2.0
-riscv                 randconfig-002-20240821   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240821   gcc-13.2.0
-s390                  randconfig-002-20240821   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240821   gcc-13.2.0
-sh                    randconfig-002-20240821   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240821   gcc-13.2.0
-sparc64               randconfig-002-20240821   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240821   gcc-13.2.0
-um                    randconfig-002-20240821   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240821   gcc-12
-x86_64       buildonly-randconfig-003-20240821   gcc-12
-x86_64       buildonly-randconfig-004-20240821   gcc-12
-x86_64       buildonly-randconfig-005-20240821   gcc-12
-x86_64       buildonly-randconfig-006-20240821   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240821   gcc-12
-x86_64                randconfig-002-20240821   gcc-12
-x86_64                randconfig-003-20240821   gcc-12
-x86_64                randconfig-004-20240821   gcc-12
-x86_64                randconfig-005-20240821   gcc-12
-x86_64                randconfig-006-20240821   gcc-12
-x86_64                randconfig-011-20240821   gcc-12
-x86_64                randconfig-012-20240821   gcc-12
-x86_64                randconfig-013-20240821   gcc-12
-x86_64                randconfig-014-20240821   gcc-12
-x86_64                randconfig-015-20240821   gcc-12
-x86_64                randconfig-016-20240821   gcc-12
-x86_64                randconfig-071-20240821   gcc-12
-x86_64                randconfig-072-20240821   gcc-12
-x86_64                randconfig-073-20240821   gcc-12
-x86_64                randconfig-074-20240821   gcc-12
-x86_64                randconfig-075-20240821   gcc-12
-x86_64                randconfig-076-20240821   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240821   gcc-13.2.0
-xtensa                randconfig-002-20240821   gcc-13.2.0
+Both the original patch and this fix substitute one OOM problem for another one.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> - Compaction code goes through pages by pfn and not using the list, as this patch does not clear lru flag, compaction could claim this folio.
+>>
+>> The patch in [1] is severely breaking production at Meta and its not a proper fix to the problem that the commit was trying to be solved. It results in holding the lru_lock for a very significant amount of time, stalling all other processes trying to claim memory, creating very high memory pressure for large periods of time and causing OOM.
+>>
+>> The way forward would be to revert it and try to come up with a longer term solution that the original commit tried to solve. If no one is opposed to it, I will wait a couple of days for comments and send a revert patch.
+> I mainly focus on android systems which have no such scenarios as
+> server encountered. I agree with reverting it if this fix can not be
+> accepted.
+>>
+Yeah I think the 2nd point about compaction is a bigger issue, we can try fixing the 2nd point by clearing lru, but the first point will remain. I will send a revert for the original.
+
+Thanks
+
+>> [1] https://lore.kernel.org/all/1685501461-19290-1-git-send-email-zhaoyang.huang@unisoc.com/
+>>
+>> Thanks,
+>> Usama
 
