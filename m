@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-295156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371A89597D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8D89597DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D711C209C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:41:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2341C20A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAB41D45F5;
-	Wed, 21 Aug 2024 08:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QcoTYbVa"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5365F19ABA8;
+	Wed, 21 Aug 2024 08:44:32 +0000 (UTC)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1034B1D45F2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4958E1D45EC;
+	Wed, 21 Aug 2024 08:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229831; cv=none; b=plrdNgCUSZL1IFYwPq6LysbYNfKQjKlXFv4QNjFKXligvn/XbrNjwj/nzbeDfaW+UsMxex3yH+ly3+GZZK2RPY6sVT1+hD93ZOWJl0Fb4Gju5Tv5z/wRnLjwXC2IzGqRp4LltiTqn4ylwSudObPKcp2ivxdhMybCtcvUncmsSbw=
+	t=1724229871; cv=none; b=K1eDCQopp8KeXtLdzLZrf7Rt4lb+qSTtNUrOtemo32HOIl0IgxuXJgEOmrIYW8Mf8U4VSO4FPQCBbRJVzI3A811gaFnW+2OvV0u+1Ean/+gQQyiFdmy8lyXl8l1E+SZhloXk47tMXBTDUw9OqXdBwPGUU43hzQya1uK3Xc2d3ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229831; c=relaxed/simple;
-	bh=18iOuPQ2oz3eJXc26U9q2i0XK//JIVBl/QmiREyK5bQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CY6XIoQldprLGLU7bpzWwipZiycMDqHZ299x8163nIWyAdITeuxi8MM1vH6qt5oRS0PxgsRt/cdbkZlLDydAE2kl/JneW5NoK2dSaIWUOtmkMiO0y0vUvrE5pER1uisUZC65ufnwX9q9g6YpWk5xjPTmTbyzKEsP7ZrykypN3JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QcoTYbVa; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=b+eB73GrPccCdLU6CWfc1pg5yiGEbiwTbUmoc3zvXNA=; b=QcoTYbVaABv8lmTWg5EUXU9zOc
-	fHDmF8VR5HyWsQh0p/qGZ+G/gQTSU181Vygyx0Wxen1cuH+j3E5rUPIu2PSLBFlABKu7TSi0OfDh1
-	zFXCUqXNkXlDhB10krdXIqltXmqyD4BmujaVN1nFDWalNBwSSkd/BMHxh3yR4fYdY5hIz3I5/O/xr
-	NIHN2kh5Fbbg1fZyACF+VHp1kEDdRNHwbsv6BPODxUFsz7KPOQRLwsRaLjF0YGahPeyRY49r6sqo2
-	ibZQIZTK4bLF49hr2KsKx27Iboatt212jDpMVj6UIneynrCsytrfD0IiRKaFoGPfhHPyvlgqXw8wa
-	otCc+P4g==;
-Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sggwG-0004yi-VV; Wed, 21 Aug 2024 10:43:33 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org,
- Dragan Simic <dsimic@manjaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 3/3] phy: phy-rockchip-inno-usb2: Improve error handling while
- probing
-Date: Wed, 21 Aug 2024 10:44:00 +0200
-Message-ID: <12869965.VsHLxoZxqI@diego>
-In-Reply-To:
- <866445027a4f41165c872f494b04c218b6e67b09.1724225528.git.dsimic@manjaro.org>
-References:
- <cover.1724225528.git.dsimic@manjaro.org>
- <866445027a4f41165c872f494b04c218b6e67b09.1724225528.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1724229871; c=relaxed/simple;
+	bh=MzbJQMhdHxMEZLqfAWfHBeIliiLFphSOkPs8Xk/x3Lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvPruQ58fRXbMMojT55oovLZrr8KU6I6TOGT67D9zUOPm3yMDtJInZrswuWBPgvMP6nLEyJcdGaHNrXlyoYRN/UpNmPhnhaJ7LU3csgamxgnVZXzJF2voC8rKKZq7gvGPeOTnB4nd8c5amxVPDYtasuujpJlZsWNE7OLgWNClrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53349ee42a9so378164e87.3;
+        Wed, 21 Aug 2024 01:44:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724229868; x=1724834668;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ycs+3o+17AbjjdX8MMOnXXW6/O0lw1yJAwUwvxTlASI=;
+        b=WKDwlNpNuFOw9np8LKkiMvRQ1u0mv7ObDd9HC7DI3o8J1Rf8eDhFewGsE9BBxcmLqy
+         lqk6Ie7a9/seQm4n7jtEeC1bYVg2F4OsJNgP8hiJOEjd8eRDvhZkVbR4J7xd6J+7/xtY
+         NKjirDjDbu/fl3nDjntKM4ncTNaiEQXzBDiWDfdqc7HTlV/yMTM7SjLcBFxpINas12DX
+         O6WzZ6E1T6D0mVVWn1jRGHs0qAO8UAc1vksQv8PfuF9jiI32cHUzkz7VtBa7uUdpa8tE
+         /BeEpNDeF/yjjOCLwVKMjqC/nqasLELNq/wKlL6Oujstcs7KLiSnNi2zo54o6sOa0VQq
+         gdAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURHFMr+NXMsk6w0/I5qyFIGD0X/X4v2vTV3GVOVB2+MeYZRm+IryNJ4kVRj2S37mvTXeO6pC3RPqt/Bh0=@vger.kernel.org, AJvYcCXZifmLdtoP+EFiWRIT738mSA9dYuw7ku2hhi8Bakr8pTsI1KnwR/p1cOhnU+y24wDcyih/9yom@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbRPuB7OpASa6ONtOPOWHbT1Gy9Cw2ZzR7YhHh2dw9h/Fd+4qp
+	OfU1DR2F4ingz0ydZnkLqCpf5fWXgvKc97eYLSkORsGiBlwMoy+R
+X-Google-Smtp-Source: AGHT+IHMeY9I+w91+AZ0kSAEH+L7sAqulqxd5iLx/yQAb/XNduF09Zo1DBTrJWWhPch1DKwcWaNVBA==
+X-Received: by 2002:a05:6512:3992:b0:533:77d:116f with SMTP id 2adb3069b0e04-5334854a579mr857790e87.9.1724229867572;
+        Wed, 21 Aug 2024 01:44:27 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-010.fbsv.net. [2a03:2880:30ff:a::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a867eeab2b1sm23410266b.114.2024.08.21.01.44.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 01:44:27 -0700 (PDT)
+Date: Wed, 21 Aug 2024 01:44:25 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH net-next v2 1/3] netpoll: Ensure clean state on setup
+ failures
+Message-ID: <ZsWo6Vestqw0fFAO@gmail.com>
+References: <20240819103616.2260006-1-leitao@debian.org>
+ <20240819103616.2260006-2-leitao@debian.org>
+ <20240820162010.1e89b641@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820162010.1e89b641@kernel.org>
 
-Am Mittwoch, 21. August 2024, 09:37:55 CEST schrieb Dragan Simic:
-> Improve error handling in the probe path by using function dev_err_probe()
-> where appropriate, and by no longer using it rather pointlessly in one place
-> that actually produces a single, hardcoded error code.
+Hello Jakub,
+
+On Tue, Aug 20, 2024 at 04:20:10PM -0700, Jakub Kicinski wrote:
+> On Mon, 19 Aug 2024 03:36:11 -0700 Breno Leitao wrote:
+> > +	DEBUG_NET_WARN_ON_ONCE(np->dev);
+> >  	if (ndev->priv_flags & IFF_DISABLE_NETPOLL) {
+> >  		np_err(np, "%s doesn't support polling, aborting\n",
+> > -		       np->dev_name);
+> > +		       ndev->name);
+> >  		err = -ENOTSUPP;
+> >  		goto out;
+> >  	}
 > 
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> >  put:
+> > +	DEBUG_NET_WARN_ON_ONCE(np->dev);
+> 
+> nit: having two warnings feels a bit excessive, let's pick one location?
 
-> @@ -1375,8 +1372,10 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->  	rphy->irq = platform_get_irq_optional(pdev, 0);
->  	platform_set_drvdata(pdev, rphy);
->  
-> -	if (!phy_cfgs)
-> -		return dev_err_probe(dev, -EINVAL, "phy configs are not assigned!\n");
-> +	if (!phy_cfgs) {
-> +		dev_err(dev, "phy configs are not assigned\n");
-> +		return -EINVAL;
-> +	}
->  
->  	ret = rockchip_usb2phy_extcon_register(rphy);
->  	if (ret)
+Sure, I think it might be better to keep it in the fail (put:) case, so,
+we make sure that netpoll is in a clear state in the failure path.
 
-I really don't understand the rationale here. Using dev_err_probe here 
-is just fine and with that change you just introduce more lines of code
-for exactly the same functionality?
-
-
+Thanks
+--breno
 
