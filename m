@@ -1,62 +1,85 @@
-Return-Path: <linux-kernel+bounces-296252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221F895A82D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA6B95A837
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73189B21927
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1F51C220D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F334D17E01C;
-	Wed, 21 Aug 2024 23:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F181D17DFE4;
+	Wed, 21 Aug 2024 23:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLgekLp8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZcsiOPCq"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED90117DFEC;
-	Wed, 21 Aug 2024 23:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989AE1836ED
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724282792; cv=none; b=pnx/diQ05KaiYE/AOwSeSGY0eOALFLoc/Mxm4q/S/lgI7pqjpZflQBSKdmK2wX3yq8GqP1K5u9jMbl3xkTmiZQjMUrmWH6WVqVvT/OMpHl+RxTdkaALw0arAFQ782YRMQ2ZrXaQ2xglUQg4VUb4VyQIzAp1N7fjbKyAr6GMkyDQ=
+	t=1724282823; cv=none; b=dsnQjl0HKB/pxtQDxLGeR5hFSfaxE7etT8R3bDfiGfR5mJjN/8sxxMUAxvKoZ6rCzxv6Q2r3wnUTqtSGspHu2dXvNlT8Z8w+ZvwQH/6h1SK6ONW2972rszojI9XK1DmW4KD3O7o3rX7ip/ARu+BsO5lpWM/J9SDMiFy9thojHnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724282792; c=relaxed/simple;
-	bh=YetaJCsMe1jW2DeFg6AkdVEOqTo94MXBhxk32FnOM8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kvf7x87k1xJuMPyyMsZ7ZdcVjKSkUZ3Pd3VoHClsNs5+c+zOe6Pt/QkY/BauCVGa8zbf01zFG/2+XZ0OMmagJgl2NxU3vavIuxXAAqRlV4HXTwIoKUNoeoz5TsPkKry5e/mcVhSsurGs0VWXSYN6cpT920gDixPIUU/sHsGxUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLgekLp8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DA7C32782;
-	Wed, 21 Aug 2024 23:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724282791;
-	bh=YetaJCsMe1jW2DeFg6AkdVEOqTo94MXBhxk32FnOM8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sLgekLp8NYawdzslIQeQm+3resmqR2T6RqOX7gXDnaWiIRmF5/VLWbE6P5DpkXF93
-	 DKK0T6HWZWawcVkXIprbwMtjK3I01vlSylzYCa44Wh1ZSy5Ojm+CJOz8xLfzY7Ebpz
-	 LFcl1o3BpZT6pealC9D/C5fk7BEiEm/5qz7svCT6BbMnzbd8b3nVCyUpo8A24SJxDc
-	 IUQF3umGli6Oz46G3fqpdEsrDcLHQgMOr58Hrpnx7Xz1qetn9ZcYyGJ8bGU4MZ4oSC
-	 l1Xg+y6cJ0/yaKsxXmbbKp0RGvOl3FcVllZw0ljFrzQVsc8ZRw29MIZwjmBIDSFn0l
-	 e3HvfJxWkHgBA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: [PATCH 4/4] perf annotate-data: Copy back variable types after move
-Date: Wed, 21 Aug 2024 16:26:28 -0700
-Message-ID: <20240821232628.353177-5-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240821232628.353177-1-namhyung@kernel.org>
-References: <20240821232628.353177-1-namhyung@kernel.org>
+	s=arc-20240116; t=1724282823; c=relaxed/simple;
+	bh=V6EfJdV8XY0qKgNr+X/hW0XUTNebiXWJsSp8YPMg6Fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=fzVyGSq78Pm26yKSdTQUN4FWaa9ozd51kbSE0DMz5Nej96T5kbhKnCxcsCQ3RHuSLduzEneDBMNPlcFIMs7e/ajgcNHrFAbVWK7501riwiSD49GGVqpTZ7Ybe/l24wU11X5kWnBJHXTLe4D5ABWZuwO7DtzUQwAgT/HF2QwAKOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZcsiOPCq; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240821232657epoutp04f83f6adefbb0c7e10c13b1a81b7c8e67~t4hY_bj-X1797017970epoutp042
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:26:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240821232657epoutp04f83f6adefbb0c7e10c13b1a81b7c8e67~t4hY_bj-X1797017970epoutp042
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724282817;
+	bh=5KJLYwAJevQB/2Q++XZPLB1XPTDUsIWY7J6aokkLmow=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZcsiOPCqaoPWLswEMMAK21dVsyJof2pjqq+OvRRPrmqs8LXZnJQpJqjRtuTOFytaa
+	 /n1Et/M39MuEUbYwOllyMkr5zqHKJTQd7dIZeD0fw6/n+R/C8MSBbPIJb5nyKgkK67
+	 KElPutneFz/lBXw0pskiNbGV0JjPLFkQOsShj0y8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240821232656epcas2p1926b9ded936e2b0fe31d23c1b08ccfab~t4hYaz4bh2086820868epcas2p1Y;
+	Wed, 21 Aug 2024 23:26:56 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wq2Xw44Gfz4x9Pw; Wed, 21 Aug
+	2024 23:26:56 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DF.85.08901.0C776C66; Thu, 22 Aug 2024 08:26:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821232656epcas2p2596e2a1f31bf02084d9e4cd0fc80ce14~t4hXorD6X1271312713epcas2p2O;
+	Wed, 21 Aug 2024 23:26:56 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240821232656epsmtrp2ab74761ca3e6afbadc73b940dca89e8f~t4hXm6ZPg2801228012epsmtrp2Q;
+	Wed, 21 Aug 2024 23:26:56 +0000 (GMT)
+X-AuditID: b6c32a43-a61b8700000022c5-17-66c677c017ff
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E2.85.08964.FB776C66; Thu, 22 Aug 2024 08:26:55 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821232655epsmtip20fff5940c20a57b135d2ea2cb6cd1078~t4hXXWSgE2250822508epsmtip2Q;
+	Wed, 21 Aug 2024 23:26:55 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH v9 0/4] initial clock support for exynosauto v920 SoC
+Date: Thu, 22 Aug 2024 08:26:48 +0900
+Message-ID: <20240821232652.1077701-1-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,225 +87,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmqe6B8mNpBr8PyFo8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7Yt8ig4IRAxbH2rawNjN94
+	uhg5OSQETCRezb/B0sXIxSEksINRYuXVn8wgCSGBT4wSnZOkIOxvjBLrm0VhGv6d3MIM0bCX
+	UWJDy3pGCOcjo8SBeQeAHA4ONgFdiT//HEDiIgJ7mCS2nF/CBOIwC5xllLg7ZwE7yChhAVeJ
+	82fmsILYLAKqEhPv3mcBsXkF7CU2NPxmg1gnL3FxzXM2iLigxMmZT8BqmIHizVtng50hIdDK
+	ITHh9AkmiAYXiZurP7BC2MISr45vYYewpSQ+v9sLNTRfYvL1t0wQzQ2MEtf+dTNDJOwlFp35
+	yQ7yArOApsT6XfogpoSAssSRW1B7+SQ6Dv9lhwjzSnS0CUE0qkl8unIZaoiMxLETz6BsD4mV
+	fcugIRorcaD7NesERvlZSL6ZheSbWQh7FzAyr2IUSy0ozk1PTTYqMITHaXJ+7iZGcErVct7B
+	eGX+P71DjEwcjIcYJTiYlUR4k+4dTRPiTUmsrEotyo8vKs1JLT7EaAoM34nMUqLJ+cCknlcS
+	b2hiaWBiZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA9Nl03o7+Ql/vT/Mf7Fo
+	xUnVY49mv5uWmapgmhy93jrERWFmS+aH8vlzmERO3q01a9qy9HfuURfV9oVKHg/l+x+aLT0Q
+	9cbI8lDzw46N7OtDJsucEbnWVfGJp6vulcXZp2HsKleyVUJOfAw0i3lxN2Bt3J+wuG+XLq44
+	dttANICv9YyTuNG/hmwpactpSyQd6oIkZIpUtlxd9/dYsUKq8ew3W69vFhWdLd8i7L6164bR
+	y4ki8pyVf2YvfnZNaJk9F+v+jADumCe3Etu+vKyc1HjEseVp0Yycb1VdyR/rXSYmrrbIVJI4
+	WX3hn6d2+rrQR03Fb6IDHzrMcj8uJVTupq/itPTK/ZKy39vdeBhDNiixFGckGmoxFxUnAgD+
+	Ip3iMgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSvO7+8mNpBj+vWlo8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZexb
+	ZFBwQqDiWPtW1gbGbzxdjJwcEgImEv9ObmHuYuTiEBLYzSgxcfdnRoiEjMTGhv/sELawxP2W
+	I6wQRe8ZJf52fGbpYuTgYBPQlfjzzwEkLiJwiEli4uenLCAOs8BlRoljdyczg3QLC7hKnD8z
+	hxXEZhFQlZh49z4LiM0rYC+xoeE3G8QGeYmLa56zQcQFJU7OfAJWwwwUb946m3kCI98sJKlZ
+	SFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEB7qW5g7G7as+6B1iZOJgPMQo
+	wcGsJMKbdO9omhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWpRTBZJg5O
+	qQYmxrj0xFlPW/UO2auXrG5f+92uIPZRqlFOzZxzm29PSJJPSjR5HtMUFande9L+7wRLtpLM
+	uvufpF+FlNsHR1XdTTtf32/PIq92TJ/v09LwBW6qC/pTLmtP3n5u3bO3+k9/XkzaZHwo78gj
+	qXU746838L4UfTnXX2XDIzepF8qWr1JXTj/SP/Hoh4yznb21E7Y9fKRwo0hnpdLCjqyI+Ws3
+	7H9bqptmn7yXM658q8y+N8H35i95pftpPzcDe9K8D03MNSWOziI/GiW707IaEv6WRFmxSwpt
+	m/puYd/UlRqX5G3mzvuR9YTzInPMzMl/81vvPAjU+WseKTfxBselGQ8nis3epR5xnLF44Sf/
+	NVnFSizFGYmGWsxFxYkASz73ieMCAAA=
+X-CMS-MailID: 20240821232656epcas2p2596e2a1f31bf02084d9e4cd0fc80ce14
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240821232656epcas2p2596e2a1f31bf02084d9e4cd0fc80ce14
+References: <CGME20240821232656epcas2p2596e2a1f31bf02084d9e4cd0fc80ce14@epcas2p2.samsung.com>
 
-In some cases, compilers don't set the location expression in DWARF
-precisely.  For instance, it may assign a variable to a register after
-copying it from a different register.  Then it should use the register
-for the new type but still uses the old register.  This makes hard to
-track the type information properly.
+This patchset adds initial clock driver support for Exynos Auto v920 SoC.
+This driver uses HW Auto Clock gating. So all gate clocks did not register.
 
-This is an example I found in __tcp_transmit_skb().  The first argument
-(sk) of this function is a pointer to sock and there's a variable (tp)
-for tcp_sock.
+Below CMU blocks are supported in this patchset and remains will be implemented later.
 
-  static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
-  				int clone_it, gfp_t gfp_mask, u32 rcv_nxt)
-  {
-  	...
-  	struct tcp_sock *tp;
+- CMU_TOP
+- CMU_PERIC0/1
+- CMU_MISC
+- CMU_HSI0/1
 
-  	BUG_ON(!skb || !tcp_skb_pcount(skb));
-  	tp = tcp_sk(sk);
-  	prior_wstamp = tp->tcp_wstamp_ns;
-  	tp->tcp_wstamp_ns = max(tp->tcp_wstamp_ns, tp->tcp_clock_cache);
-  	...
+Changes in v9:
+ - Modify the parent clock name of peric0_cmu to match the device tree
 
-So it basically calls tcp_sk(sk) to get the tcp_sock pointer from sk.
-But it turned out to be the same value because tcp_sock embeds sock as
-the first member.  The sk is located in reg5 (RDI) and tp is in reg3
-(RBX).  The offset of tcp_wstamp_ns is 0x748 and tcp_clock_cache is
-0x750.  So you need to use RBX (reg3) to access the fields in the
-tcp_sock.  But the code used RDI (reg5) as it has the same value.
+Changes in v8:
+ - Resend it because v7 includes other SoC patches
 
-  $ pahole --hex -C tcp_sock vmlinux | grep -e 748 -e 750
-	u64                tcp_wstamp_ns;        /* 0x748   0x8 */
-	u64                tcp_clock_cache;      /* 0x750   0x8 */
+Changes in v7:
+ - Combine duplicate clock description
 
-And this is the disassembly of the part of the function.
+Changes in v6:
+ - Add peric1, mis and hsi0/1 in the bindings document
 
-  <__tcp_transmit_skb>:
-  ...
-  44:  mov    %rdi, %rbx
-  47:  mov    0x748(%rdi), %rsi
-  4e:  mov    0x750(%rdi), %rax
-  55:  cmp    %rax, %rsi
+Changes in v5:
+ - Change CMU_TOP odd numbering
+ - Move the descriptions and names common clocks properties
 
-Because compiler put the debug info to RBX, it only knows RDI is a
-pointer to sock and accessing those two fields resulted in error
-due to offset being beyond the type size.
+Changes in v4:
+ - Change PLL_531x fdiv type and mask bit
+ - Change PLL_531x mdiv type
 
-  -----------------------------------------------------------
-  find data type for 0x748(reg5) at __tcp_transmit_skb+0x63
-  CU for net/ipv4/tcp_output.c (die:0x817f543)
-  frame base: cfa=0 fbreg=6
-  scope: [1/1] (die:81aac3e)
-  bb: [0 - 30]
-  var [0] -0x98(stack) type='struct tcp_out_options' size=0x28 (die:0x81af3df)
-  var [5] reg8 type='unsigned int' size=0x4 (die:0x8180ed6)
-  var [5] reg2 type='unsigned int' size=0x4 (die:0x8180ed6)
-  var [5] reg1 type='int' size=0x4 (die:0x818059e)
-  var [5] reg4 type='struct sk_buff*' size=0x8 (die:0x8181360)
-  var [5] reg5 type='struct sock*' size=0x8 (die:0x8181a0c)                   <<<--- the first argument ('sk' at %RDI)
-  mov [19] reg8 -> -0xa8(stack) type='unsigned int' size=0x4 (die:0x8180ed6)
-  mov [20] stack canary -> reg0
-  mov [29] reg0 -> -0x30(stack) stack canary
-  bb: [36 - 3e]
-  mov [36] reg4 -> reg15 type='struct sk_buff*' size=0x8 (die:0x8181360)
-  bb: [44 - 63]
-  mov [44] reg5 -> reg3 type='struct sock*' size=0x8 (die:0x8181a0c)          <<<--- calling tcp_sk()
-  var [47] reg3 type='struct tcp_sock*' size=0x8 (die:0x819eead)              <<<--- new variable ('tp' at %RBX)
-  var [4e] reg4 type='unsigned long long' size=0x8 (die:0x8180edd)
-  mov [58] reg4 -> -0xc0(stack) type='unsigned long long' size=0x8 (die:0x8180edd)
-  chk [63] reg5 offset=0x748 ok=1 kind=1 (struct sock*) : offset bigger than size    <<<--- access with old variable
-  final result: offset bigger than size
+Changes in v3:
+ - Change SoC name from Exynos Auto to ExynosAuto
+ - Change the makefile order to the bottom of exynosautov9
+ - Add PLL_531x formula for integer PLL
 
-While it's a fault in the compiler, we could work around this issue by
-using the type of new variable when it's copied directly.  So I've added
-copied_from field in the register state to track those direct register
-to register copies.  After that new register gets a new type and the old
-register still has the same type, it'll update (copy it back) the type
-of the old register.
+Changes in v2:
+ - Fix typo from v209 to v920
+ - Change USI clock to appropriate
+ - Merge headers into binding patches
+ - Change clock-name to the recommended name
 
-For example, if we can update type of reg5 at __tcp_transmit_skb+0x47,
-we can find the target type of the instruction at 0x63 like below:
+Sunyeal Hong (4):
+  dt-bindings: clock: add ExynosAuto v920 SoC CMU bindings
+  arm64: dts: exynos: add initial CMU clock nodes in ExynosAuto v920
+  clk: samsung: clk-pll: Add support for pll_531x
+  clk: samsung: add top clock support for ExynosAuto v920 SoC
 
-  -----------------------------------------------------------
-  find data type for 0x748(reg5) at __tcp_transmit_skb+0x63
-  ...
-  bb: [44 - 63]
-  mov [44] reg5 -> reg3 type='struct sock*' size=0x8 (die:0x8181a0c)
-  var [47] reg3 type='struct tcp_sock*' size=0x8 (die:0x819eead)
-  var [47] copyback reg5 type='struct tcp_sock*' size=0x8 (die:0x819eead)     <<<--- here
-  mov [47] 0x748(reg5) -> reg4 type='unsigned long long' size=0x8 (die:0x8180edd)
-  mov [4e] 0x750(reg5) -> reg0 type='unsigned long long' size=0x8 (die:0x8180edd)
-  mov [58] reg4 -> -0xc0(stack) type='unsigned long long' size=0x8 (die:0x8180edd)
-  chk [63] reg5 offset=0x748 ok=1 kind=1 (struct tcp_sock*) : Good!           <<<--- new type
-  found by insn track: 0x748(reg5) type-offset=0x748
-  final result:  type='struct tcp_sock' size=0xa98 (die:0x819eeb2)
+ .../clock/samsung,exynosautov920-clock.yaml   |  162 +++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |   40 +-
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynosautov920.c      | 1173 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   44 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../clock/samsung,exynosautov920.h            |  191 +++
+ 7 files changed, 1599 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/arch/x86/annotate/instructions.c |  8 ++++++
- tools/perf/util/annotate-data.c             | 31 +++++++++++++++++++++
- tools/perf/util/annotate-data.h             |  1 +
- 3 files changed, 40 insertions(+)
-
-diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
-index 15dfc2988e24..5caf5a17f03d 100644
---- a/tools/perf/arch/x86/annotate/instructions.c
-+++ b/tools/perf/arch/x86/annotate/instructions.c
-@@ -267,6 +267,7 @@ static void update_insn_state_x86(struct type_state *state,
- 			return;
- 
- 		tsr = &state->regs[dst->reg1];
-+		tsr->copied_from = -1;
- 
- 		if (src->imm)
- 			imm_value = src->offset;
-@@ -326,6 +327,8 @@ static void update_insn_state_x86(struct type_state *state,
- 			return;
- 
- 		tsr = &state->regs[dst->reg1];
-+		tsr->copied_from = -1;
-+
- 		if (dso__kernel(map__dso(dloc->ms->map)) &&
- 		    src->segment == INSN_SEG_X86_GS && src->imm) {
- 			u64 ip = dloc->ms->sym->start + dl->al.offset;
-@@ -386,6 +389,10 @@ static void update_insn_state_x86(struct type_state *state,
- 		tsr->imm_value = state->regs[src->reg1].imm_value;
- 		tsr->ok = true;
- 
-+		/* To copy back the variable type later (hopefully) */
-+		if (tsr->kind == TSR_KIND_TYPE)
-+			tsr->copied_from = src->reg1;
-+
- 		pr_debug_dtp("mov [%x] reg%d -> reg%d",
- 			     insn_offset, src->reg1, dst->reg1);
- 		pr_debug_type_name(&tsr->type, tsr->kind);
-@@ -398,6 +405,7 @@ static void update_insn_state_x86(struct type_state *state,
- 			return;
- 
- 		tsr = &state->regs[dst->reg1];
-+		tsr->copied_from = -1;
- 
- retry:
- 		/* Check stack variables with offset */
-diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-index b33089caccbc..81efd5bdb93b 100644
---- a/tools/perf/util/annotate-data.c
-+++ b/tools/perf/util/annotate-data.c
-@@ -774,6 +774,11 @@ bool get_global_var_type(Dwarf_Die *cu_die, struct data_loc_info *dloc,
- 	return true;
- }
- 
-+static bool die_is_same(Dwarf_Die *die_a, Dwarf_Die *die_b)
-+{
-+	return (die_a->cu == die_b->cu) && (die_a->addr == die_b->addr);
-+}
-+
- /**
-  * update_var_state - Update type state using given variables
-  * @state: type state table
-@@ -825,6 +830,7 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
- 			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
- 		} else if (has_reg_type(state, var->reg) && var->offset == 0) {
- 			struct type_state_reg *reg;
-+			Dwarf_Die orig_type;
- 
- 			reg = &state->regs[var->reg];
- 
-@@ -832,6 +838,8 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
- 			    !is_better_type(&reg->type, &mem_die))
- 				continue;
- 
-+			orig_type = reg->type;
-+
- 			reg->type = mem_die;
- 			reg->kind = TSR_KIND_TYPE;
- 			reg->ok = true;
-@@ -839,6 +847,29 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
- 			pr_debug_dtp("var [%"PRIx64"] reg%d",
- 				     insn_offset, var->reg);
- 			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
-+
-+			/*
-+			 * If this register is directly copied from another and it gets a
-+			 * better type, also update the type of the source register.  This
-+			 * is usually the case of container_of() macro with offset of 0.
-+			 */
-+			if (has_reg_type(state, reg->copied_from)) {
-+				struct type_state_reg *copy_reg;
-+
-+				copy_reg = &state->regs[reg->copied_from];
-+
-+				/* TODO: check if type is compatible or embedded */
-+				if (!copy_reg->ok || (copy_reg->kind != TSR_KIND_TYPE) ||
-+				    !die_is_same(&copy_reg->type, &orig_type) ||
-+				    !is_better_type(&copy_reg->type, &mem_die))
-+					continue;
-+
-+				copy_reg->type = mem_die;
-+
-+				pr_debug_dtp("var [%"PRIx64"] copyback reg%d",
-+					     insn_offset, reg->copied_from);
-+				pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
-+			}
- 		}
- 	}
- }
-diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
-index 37a1a3b68e0b..8ac0fd94a0ba 100644
---- a/tools/perf/util/annotate-data.h
-+++ b/tools/perf/util/annotate-data.h
-@@ -176,6 +176,7 @@ struct type_state_reg {
- 	bool ok;
- 	bool caller_saved;
- 	u8 kind;
-+	u8 copied_from;
- };
- 
- /* Type information in a stack location, dynamically allocated */
 -- 
-2.46.0.184.g6999bdac58-goog
+2.45.2
 
 
