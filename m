@@ -1,127 +1,335 @@
-Return-Path: <linux-kernel+bounces-295501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE8B959BE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E52B959BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAB21F22A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E063286B19
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842B6175D5F;
-	Wed, 21 Aug 2024 12:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DF818C915;
+	Wed, 21 Aug 2024 12:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F6mOy0Iz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7WyhCRf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C81531C1;
-	Wed, 21 Aug 2024 12:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4DA1D12E1;
+	Wed, 21 Aug 2024 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243611; cv=none; b=d5vF8WETzjh9b6Sgr+Sl8q95PpPvWywC3DZLIg2GiuiRC//Wsx3fGxITxNRt82cMJDEaaC7mdy4vKV7zQftNeneQ8/xeBsgOBHoDHtmzpJlUfgOh8/kg/JFuhVQJlsmaRTgkckBN/ChYVI4PPUym+GmJjHFvDXHY3d9QxirDnxA=
+	t=1724243722; cv=none; b=WsO1BAN1cSxTS7hoswXgD5BBCFzuLsutW6B/Nh16wIYe6lNExyqAVxMhhOtiNM4GzUTpz22zbRJIwv6BhKgXael+BbhjTKdOQl8Ov98KIrsxf+OSDaJghvVDm4mrResEicpxtzvl0YitIS/1e5t/MDgS0BU6+i/B9aYGZrvgHZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243611; c=relaxed/simple;
-	bh=hMAfE4Mvtcd5ET79hcKgW6u+1u5ZmeBbuFtoZqUj0dM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=I8fwxOsf8wxb97mHwHRzDOJ4l2hTVuKlbq0ftnNVb6c0YPqbNuPXPGGauit62+F2IC70WuxLlq2sCdl3qhwx0BJKEGcbV4wNW7jJmrQEBfznN3DAgrVwSpKgtbp+uva+OXys6wG39yGKpNzN1QkvUntpUx7jBmFhHWuZ6yi0BUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F6mOy0Iz; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724243611; x=1755779611;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=hMAfE4Mvtcd5ET79hcKgW6u+1u5ZmeBbuFtoZqUj0dM=;
-  b=F6mOy0IzjaK7WDCh6ZKS/UHRGItqdgCvwFdrtcUwromXhFwGP8A2Cvhp
-   x2MH2M4JIyY3X4r9I8PBjYK3x3maDcuXYtykE4m5eqKMJrHeb2YTq0SSk
-   hiqe7aUBmuvXaBH8BndqyKx9vGU5wU1bPvRucS+FaThvvsCcrZ/Rz7WCy
-   hZbhPchoA657blzqQYCJh12o+V/KbWELPN7KM1yoYvoSXMF+ffg8zBde7
-   NAj0BVe8R+VzTJMd3LkQhkEx3IRh1J0xWGdwKgfyJRKajXggwQfZYSd7b
-   c81jXv44JMzttoGXkyeCf5QdWOLZwxL9MR1aMJ3xzAQ9U71ZhKsOSkja1
-   g==;
-X-CSE-ConnectionGUID: Xhjaz9rYRgifbYXkuFv0UA==
-X-CSE-MsgGUID: kqe68YzLROmPKIak/tQy7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="40058595"
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="40058595"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:33:30 -0700
-X-CSE-ConnectionGUID: VyMruX/VQHO/0dlqvnfAYw==
-X-CSE-MsgGUID: uWgx089eQ6qN6IlCox75Lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
-   d="scan'208";a="61050388"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.181])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 05:33:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 21 Aug 2024 15:33:23 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v1 4/4] platform/x86: int3472: Use str_high_low()
-In-Reply-To: <20240821122233.3761645-5-andriy.shevchenko@linux.intel.com>
-Message-ID: <5b38a2d2-4cad-e34a-899a-6dad4e26346a@linux.intel.com>
-References: <20240821122233.3761645-1-andriy.shevchenko@linux.intel.com> <20240821122233.3761645-5-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724243722; c=relaxed/simple;
+	bh=miv0rvFftW/AS9f1C/rBSx/gdO7CHhCC72/bDUY8++4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hU14cfG4hMbf6B1rdkncnY1g84e6OXGDoQoOkyU7b19o8gi+sdXbqLX/wZHW9GSYwb8/oICEscLgkZpoVDWIF3c594RMzzAFgritlxTExnEYO7oceRL+DE8mXJWk81lIhZaSQxIYHjV4pf7mHL2Qx+HihTczXxc1EU7XS5QoNiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7WyhCRf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3A3C32782;
+	Wed, 21 Aug 2024 12:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724243722;
+	bh=miv0rvFftW/AS9f1C/rBSx/gdO7CHhCC72/bDUY8++4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S7WyhCRfxCYSk5Wpi+qwpeZSUv7abt/E6Bgw8S8AeED2asGNEDlOkolg2KKsH3YNP
+	 kidEPGwg2sKEy2nIKtdgiLq4a2YXO5puvuaZujadfp+w3UgKcJxz+2P/mREFg/Qfor
+	 b8qC2PuBsnPruA2xFXM2I0ceZx+YE42xGggWvNEqBwIKxzSgYt2XgvY44PV/ny5svf
+	 qV9BfLN9Tm6lgjgK+yDyKSoHM8DqRp4buk9Ij5P/4d8fSu4udKDDF36972yJ0Q0lhO
+	 YYyIv6QcLjtPsffz5UO4D0rjNl/HZ4Ai33CjVMZRtqSdeRHzd5X4JSOk1vnFjzpus2
+	 yI2erJDFNTtQA==
+Message-ID: <03172556-8661-4804-8a3b-0252d91fdf46@kernel.org>
+Date: Wed, 21 Aug 2024 15:35:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1771321182-1724243603=:5260"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 2/2] net: ti: icssg-prueth: Add support for PA
+ Stats
+To: MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
+ Sai Krishna <saikrishnag@marvell.com>, Jan Kiszka <jan.kiszka@siemens.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240820091657.4068304-1-danishanwar@ti.com>
+ <20240820091657.4068304-3-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240820091657.4068304-3-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1771321182-1724243603=:5260
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Wed, 21 Aug 2024, Andy Shevchenko wrote:
-
-> Use str_high_low() rather than open coding.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 20/08/2024 12:16, MD Danish Anwar wrote:
+> Add support for dumping PA stats registers via ethtool.
+> Firmware maintained stats are stored at PA Stats registers.
+> Also modify emac_get_strings() API to use ethtool_puts().
+> 
+> This commit also renames the array icssg_all_stats to icssg_mii_g_rt_stats
+> and creates a new array named icssg_all_pa_stats for PA Stats.
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 > ---
->  drivers/platform/x86/intel/int3472/discrete.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/plat=
-form/x86/intel/int3472/discrete.c
-> index 96a9673a0165..b5f6f71bb1dd 100644
-> --- a/drivers/platform/x86/intel/int3472/discrete.c
-> +++ b/drivers/platform/x86/intel/int3472/discrete.c
+>  drivers/net/ethernet/ti/icssg/icssg_ethtool.c | 19 ++++++-----
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  6 ++++
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  9 +++--
+>  drivers/net/ethernet/ti/icssg/icssg_stats.c   | 31 ++++++++++++-----
+>  drivers/net/ethernet/ti/icssg/icssg_stats.h   | 34 ++++++++++++++++++-
+>  5 files changed, 78 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> index 5688f054cec5..25832dcbada2 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> @@ -83,13 +83,11 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
+>  
+>  	switch (stringset) {
+>  	case ETH_SS_STATS:
+> -		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
+> -			if (!icssg_all_stats[i].standard_stats) {
+> -				memcpy(p, icssg_all_stats[i].name,
+> -				       ETH_GSTRING_LEN);
+> -				p += ETH_GSTRING_LEN;
+> -			}
+> -		}
+> +		for (i = 0; i < ARRAY_SIZE(icssg_mii_g_rt_stats); i++)
+> +			if (!icssg_mii_g_rt_stats[i].standard_stats)
+> +				ethtool_puts(&p, icssg_mii_g_rt_stats[i].name);
+> +		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
+> +			ethtool_puts(&p, icssg_all_pa_stats[i].name);
+>  		break;
+>  	default:
+>  		break;
+> @@ -104,9 +102,12 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+>  
+>  	emac_update_hardware_stats(emac);
+>  
+> -	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
+> -		if (!icssg_all_stats[i].standard_stats)
+> +	for (i = 0; i < ARRAY_SIZE(icssg_mii_g_rt_stats); i++)
+> +		if (!icssg_mii_g_rt_stats[i].standard_stats)
+>  			*(data++) = emac->stats[i];
+> +
+> +	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
+> +		*(data++) = emac->pa_stats[i];
+>  }
+>  
+>  static int emac_get_ts_info(struct net_device *ndev,
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index 53a3e44b99a2..f623a0f603fc 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -1182,6 +1182,12 @@ static int prueth_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> +	prueth->pa_stats = syscon_regmap_lookup_by_phandle(np, "ti,pa-stats");
+> +	if (IS_ERR(prueth->pa_stats)) {
+> +		dev_err(dev, "couldn't get ti,pa-stats syscon regmap\n");
+> +		return -ENODEV;
+> +	}
+> +
+>  	if (eth0_node) {
+>  		ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
+>  		if (ret)
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> index f678d656a3ed..996f6f8a194c 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> @@ -50,8 +50,10 @@
+>  
+>  #define ICSSG_MAX_RFLOWS	8	/* per slice */
+>  
+> +#define ICSSG_NUM_PA_STATS 4
+> +#define ICSSG_NUM_MII_G_RT_STATS 60
+>  /* Number of ICSSG related stats */
+> -#define ICSSG_NUM_STATS 60
+> +#define ICSSG_NUM_STATS (ICSSG_NUM_MII_G_RT_STATS + ICSSG_NUM_PA_STATS)
+>  #define ICSSG_NUM_STANDARD_STATS 31
+>  #define ICSSG_NUM_ETHTOOL_STATS (ICSSG_NUM_STATS - ICSSG_NUM_STANDARD_STATS)
+>  
+> @@ -190,7 +192,8 @@ struct prueth_emac {
+>  	int port_vlan;
+>  
+>  	struct delayed_work stats_work;
+> -	u64 stats[ICSSG_NUM_STATS];
+> +	u64 stats[ICSSG_NUM_MII_G_RT_STATS];
+> +	u64 pa_stats[ICSSG_NUM_PA_STATS];
+>  
+>  	/* RX IRQ Coalescing Related */
+>  	struct hrtimer rx_hrtimer;
+> @@ -230,6 +233,7 @@ struct icssg_firmwares {
+>   * @registered_netdevs: list of registered netdevs
+>   * @miig_rt: regmap to mii_g_rt block
+>   * @mii_rt: regmap to mii_rt block
+> + * @pa_stats: regmap to pa_stats block
+>   * @pru_id: ID for each of the PRUs
+>   * @pdev: pointer to ICSSG platform device
+>   * @pdata: pointer to platform data for ICSSG driver
+> @@ -263,6 +267,7 @@ struct prueth {
+>  	struct net_device *registered_netdevs[PRUETH_NUM_MACS];
+>  	struct regmap *miig_rt;
+>  	struct regmap *mii_rt;
+> +	struct regmap *pa_stats;
+>  
+>  	enum pruss_pru_id pru_id[PRUSS_NUM_PRUS];
+>  	struct platform_device *pdev;
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.c b/drivers/net/ethernet/ti/icssg/icssg_stats.c
+> index 2fb150c13078..857bb956e935 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_stats.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_stats.c
 > @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/overflow.h>
->  #include <linux/platform_device.h>
-> +#include <linux/string_choices.h>
->  #include <linux/uuid.h>
-> =20
->  #include "common.h"
-> @@ -230,7 +231,7 @@ static int skl_int3472_handle_gpio_resources(struct a=
-cpi_resource *ares,
-> =20
->  =09dev_dbg(int3472->dev, "%s %s pin %d active-%s\n", func,
->  =09=09agpio->resource_source.string_ptr, agpio->pin_table[0],
-> -=09=09(polarity =3D=3D GPIO_ACTIVE_HIGH) ? "high" : "low");
-> +=09=09str_high_low(polarity =3D=3D GPIO_ACTIVE_HIGH));
-> =20
->  =09switch (type) {
->  =09case INT3472_GPIO_TYPE_RESET:
->=20
+>  
+>  #define ICSSG_TX_PACKET_OFFSET	0xA0
+>  #define ICSSG_TX_BYTE_OFFSET	0xEC
+> +#define ICSSG_FW_STATS_BASE	0x0248
+>  
+>  static u32 stats_base[] = {	0x54c,	/* Slice 0 stats start */
+>  				0xb18,	/* Slice 1 stats start */
+> @@ -22,24 +23,31 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
+>  	int slice = prueth_emac_slice(emac);
+>  	u32 base = stats_base[slice];
+>  	u32 tx_pkt_cnt = 0;
+> -	u32 val;
+> +	u32 val, reg;
+>  	int i;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
+> +	for (i = 0; i < ARRAY_SIZE(icssg_mii_g_rt_stats); i++) {
+>  		regmap_read(prueth->miig_rt,
+> -			    base + icssg_all_stats[i].offset,
+> +			    base + icssg_mii_g_rt_stats[i].offset,
+>  			    &val);
+>  		regmap_write(prueth->miig_rt,
+> -			     base + icssg_all_stats[i].offset,
+> +			     base + icssg_mii_g_rt_stats[i].offset,
+>  			     val);
+>  
+> -		if (icssg_all_stats[i].offset == ICSSG_TX_PACKET_OFFSET)
+> +		if (icssg_mii_g_rt_stats[i].offset == ICSSG_TX_PACKET_OFFSET)
+>  			tx_pkt_cnt = val;
+>  
+>  		emac->stats[i] += val;
+> -		if (icssg_all_stats[i].offset == ICSSG_TX_BYTE_OFFSET)
+> +		if (icssg_mii_g_rt_stats[i].offset == ICSSG_TX_BYTE_OFFSET)
+>  			emac->stats[i] -= tx_pkt_cnt * 8;
+>  	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
+> +		reg = ICSSG_FW_STATS_BASE + icssg_all_pa_stats[i].offset *
+> +		      PRUETH_NUM_MACS + slice * sizeof(u32);
+> +		regmap_read(prueth->pa_stats, reg, &val);
+> +		emac->pa_stats[i] += val;
+> +	}
+>  }
+>  
+>  void icssg_stats_work_handler(struct work_struct *work)
+> @@ -57,9 +65,14 @@ int emac_get_stat_by_name(struct prueth_emac *emac, char *stat_name)
+>  {
+>  	int i;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
+> -		if (!strcmp(icssg_all_stats[i].name, stat_name))
+> -			return emac->stats[icssg_all_stats[i].offset / sizeof(u32)];
+> +	for (i = 0; i < ARRAY_SIZE(icssg_mii_g_rt_stats); i++) {
+> +		if (!strcmp(icssg_mii_g_rt_stats[i].name, stat_name))
+> +			return emac->stats[icssg_mii_g_rt_stats[i].offset / sizeof(u32)];
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
+> +		if (!strcmp(icssg_all_pa_stats[i].name, stat_name))
+> +			return emac->pa_stats[icssg_all_pa_stats[i].offset / sizeof(u32)];
+>  	}
+>  
+>  	netdev_err(emac->ndev, "Invalid stats %s\n", stat_name);
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.h b/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> index 999a4a91276c..2a1edbc55214 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> @@ -77,6 +77,20 @@ struct miig_stats_regs {
+>  	u32 tx_bytes;
+>  };
+>  
+> +/**
+> + * struct pa_stats_regs - ICSSG Firmware maintained PA Stats register
+> + * @fw_rx_cnt: Number of valid packets sent by Rx PRU to Host on PSI
+> + * @fw_tx_cnt: Number of valid packets copied by RTU0 to Tx queues
+> + * @fw_tx_pre_overflow: Host Egress Q (Pre-emptible) Overflow Counter
+> + * @fw_tx_exp_overflow: Host Egress Q (Express) Overflow Counter
+> + */
+> +struct pa_stats_regs {
+> +	u32 fw_rx_cnt;
+> +	u32 fw_tx_cnt;
+> +	u32 fw_tx_pre_overflow;
+> +	u32 fw_tx_exp_overflow;
+> +};
+> +
+>  #define ICSSG_STATS(field, stats_type)			\
+>  {							\
+>  	#field,						\
+> @@ -84,13 +98,24 @@ struct miig_stats_regs {
+>  	stats_type					\
+>  }
+>  
+> +#define ICSSG_PA_STATS(field)			\
+> +{						\
+> +	#field,					\
+> +	offsetof(struct pa_stats_regs, field),	\
+> +}
+> +
+>  struct icssg_stats {
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+icssg_mii_stats?
 
---=20
- i.
+>  	char name[ETH_GSTRING_LEN];
+>  	u32 offset;
+>  	bool standard_stats;
+>  };
+>  
+> -static const struct icssg_stats icssg_all_stats[] = {
+> +struct icssg_pa_stats {
+> +	char name[ETH_GSTRING_LEN];
+> +	u32 offset;
+> +};
+> +
+> +static const struct icssg_stats icssg_mii_g_rt_stats[] = {
 
---8323328-1771321182-1724243603=:5260--
+icssg_all_mii_stats? to be consistend with the newly added
+icssg_pa_stats and icssg_all_pa_stats.
+
+Could you please group all mii_stats data strucutres and arrays together
+followed by pa_stats data structures and arrays?
+
+>  	/* Rx */
+>  	ICSSG_STATS(rx_packets, true),
+>  	ICSSG_STATS(rx_broadcast_frames, false),
+> @@ -155,4 +180,11 @@ static const struct icssg_stats icssg_all_stats[] = {
+>  	ICSSG_STATS(tx_bytes, true),t
+>  };
+>  
+> +static const struct icssg_pa_stats icssg_all_pa_stats[] = > +	ICSSG_PA_STATS(fw_rx_cnt),
+> +	ICSSG_PA_STATS(fw_tx_cnt),
+> +	ICSSG_PA_STATS(fw_tx_pre_overflow),
+> +	ICSSG_PA_STATS(fw_tx_exp_overflow),
+> +};
+> +
+>  #endif /* __NET_TI_ICSSG_STATS_H */
+
+-- 
+cheers,
+-roger
 
