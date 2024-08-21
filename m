@@ -1,160 +1,191 @@
-Return-Path: <linux-kernel+bounces-295167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1011B959811
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11B19599CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4521C21C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC042849FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C660C1AF4D8;
-	Wed, 21 Aug 2024 08:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41101C1734;
+	Wed, 21 Aug 2024 10:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eXtOxnJs"
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OUzK94bQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jtNyDz+w"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836B1AF4CF
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC31B2ECB;
+	Wed, 21 Aug 2024 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230383; cv=none; b=n7XLbgzrYAgjV8V6J98alNp9Ajy3w5y3giwIt3rYOBE1nuRKDViWMKlWQrHUOfelXirRKpniidqbXqWjJl2zQPL6zvlPudQbjeZXwSmFPJzd+iS+5N+UwbI8EsBiTPKIQtVPO4+/RvVtdz7eh7JKIfAC7Gf2OkSIzGGGh3je6Wc=
+	t=1724235829; cv=none; b=S0Ou1E00Jd31Gm6Gv0V/QiKOaAKOfVIt88H8sRb4w55biTal8uyNjw7DWsrc/dhLcnmT0s6FbDwt+ZYy9RzQSxNSQTOLaJvWV2BWdziZ+TWDCUdmYtLveG7GPN4zYZyDFdAzGBjcQNgvOKDzfZSq97chgYmaEEeP3g0f1+OnPXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230383; c=relaxed/simple;
-	bh=eQ0lRGmxhBKrmsCrYIZnXk1EPkKYAJq+d1QdFzwIHSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t9LH77fr/yKZCQh0nCajS7VRsSnG3dGku1aHORCzBh5RsC/Kt3StSTTk4Zd7SEil/B2r4j96uH0y2XIKe4TiBbMT+VrrYakC48mG7b0yL/FxHChScQojpXhgWp3YJcu/XuZcSE4I0UCtmzFTy18yGHl8KbJh0WUMZj6wkWFLuFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eXtOxnJs; arc=none smtp.client-ip=80.12.242.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gfK9so4gXJokxgfK9sTirb; Wed, 21 Aug 2024 09:00:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724223607;
-	bh=MBvRzI7GXsEtw0mfN/60SlpupZEWydInYQb9ZLdmiBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=eXtOxnJsqgRJOJEFbTiw62RbgtPG7xp5y1ELk8NQPZuAWwTAZs8Myg9DKmsGrdG3K
-	 UC4RBjEp0EMRDIJyrRF9KOIIO5PXDw3ZME2qsW6pFiMDoTzzOPfePhmNsfhYxEEQ7Q
-	 oRVPnf4BDBa8dUSjhGlaULqYWAcWqXW/2BAA/D0oFy8X1fYnAQIYJxxmcFlquTb8lG
-	 o4iHDPF2qht2ICBBfriuhPJ82v8ccgujJy/GpoOdmHhHWvsHiW3P8Z9P1SPdF1QnuU
-	 DixooiYw6A4g/ncSTYwzYTNH6fxpc7LwDRlyE6SgfvLLvxG2OzgkoYSQNeZ2dGlIvV
-	 cVvUio0zWXJTg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 21 Aug 2024 09:00:07 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <8f577565-69b7-4da0-a7fe-2e94bf37948c@wanadoo.fr>
-Date: Wed, 21 Aug 2024 09:00:05 +0200
+	s=arc-20240116; t=1724235829; c=relaxed/simple;
+	bh=Z2O1BIwzKLfp9MUBsaV5TLSLjRVX0FvhU8f2ETMverc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PQ/lSQs4+N8imt0SYJEbVLYF/DSbp2aJGl5Oi/rogiJQwKsFu6OO7TUCIEL6n/1Zgr6/VgGSLMkSC+2NQeUy5YhsDQGEATlw0mslDDkyIRCCJdc9PxDaGdVbQ+QdqxADRIHDM6+D+xGoiUWVOByayzlem7i5a9HhpWbe+/eb04w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OUzK94bQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jtNyDz+w; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F011114FDA5;
+	Wed, 21 Aug 2024 03:51:26 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 21 Aug 2024 03:51:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724226686;
+	 x=1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=
+	OUzK94bQrq9+v8zOLVgNxlaKTtJpdmBKbSz8E+uYJ0YY2JfmxFJLFLyc6zFpNMfy
+	+ADFTlnI6ykBkXlj2/hOSnzIlRoHReSyxkeTNgAASVtJ7+pPL0LUlRcu4AS8Za5e
+	6SXVH7/4No7ls2O84v+PeWcKP19IX+tzAZ3V84wysy7fao06abA6A0NLqQQIdBFE
+	+naKXMIp0qwkXmCjt4qk8hJCoQo4weh7BMuGcX/o0ucvToE+k9/OdjzbjDVz8yHV
+	qWfpubICrE4vbArsMfSXE8z/0mTARnU8NJGZzBXvwsnYCp/EoEzGI5gfk57UVP9n
+	LSh+OFAbX8sPNv1dqGooLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724226686; x=
+	1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=j
+	tNyDz+wPtAostZuntuLXDs5T7GTb3odXchCsJVgeJ+xFFgMBM6tv0hpDCiyxKJBa
+	KcyjM7zPcC8vyBTqCanWsV8AgwJH1LDwWPp0onkuxSzzMgOggPmlCpmzYX2DLER1
+	hj69NfnVKCcVqAs2caQyp5NAUkcMbIKeCkJHhh5/4v7TEikdOyyJAnIqa+Zf1hkB
+	/6pnpDjXOX/9uya4e5z6XgVWpwuubS8iaWY5fVJr3vFRZZ3AqZDNfKbpkpjeZWZY
+	FgAVS871ofaccQd1ypTeRSk++axCxZdQYmH3ILMOMwNHYkAfNY3/j7B7NeQxcylx
+	u5ULWyzIuNLEEFTTTEndA==
+X-ME-Sender: <xms:fJzFZnodR2Dw668YZfsk2Kxehyr0XVUgPruqra8MBK2WwZT5yRDtlg>
+    <xme:fJzFZhpFMSPvfotX9MuEc0Vh44ZnzyVXDIP-bmOkwjHRYijROy1Xl29aP83D-NyYl
+    BnBiktZsGrBDQI1cJg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddujedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
+    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnsh
+    hhrgifsegrrhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhr
+    ugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrgh
+    druhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohep
+    ghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
+    hnihgtohesfhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdht
+    ohhrghhuvgesfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrh
+    iimhhikhesfhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhv
+    sehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:fJzFZkMgaHdX5CaTgdpf7JLneO-JB21RhtWNhan8nMSBi1u5CPlYZA>
+    <xmx:fJzFZq5a-YC4clj9TZOqXmYjyAcjbNT1klLxNCwje15lSJefSwiarA>
+    <xmx:fJzFZm60T6pUcCOS3JNIZge1G01eCXNvs435xawZrro9AKWWd753cg>
+    <xmx:fJzFZihDWVrNFzpIyuCZIZZS0T5sZA4oKYmsTDDvKCARS7fZcoji9Q>
+    <xmx:fpzFZiPnh3MyPtpJ7DvIwFXXNejSccFI0J2ChBj6HpPdJ9080GryxsJ8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6008B16005E; Wed, 21 Aug 2024 03:51:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: sprd: Use devm_clk_get_enabled() helpers
-To: Huan Yang <link@vivo.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240821013901.787555-1-link@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240821013901.787555-1-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Wed, 21 Aug 2024 07:51:04 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alexander Dahl" <ada@thorsis.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Richard Earnshaw" <richard.earnshaw@arm.com>,
+ "Richard Sandiford" <richard.sandiford@arm.com>,
+ "Ramana Radhakrishnan" <ramanara@nvidia.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+ "Tony Lindgren" <tony@atomide.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>
+Message-Id: <96558a17-8c90-4092-a0b0-e128574f3d89@app.fastmail.com>
+In-Reply-To: <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Le 21/08/2024 à 03:39, Huan Yang a écrit :
-> The devm_clk_get_enabled() helpers:
->       - call devm_clk_get()
->       - call clk_prepare_enable() and register what is needed in order to
->        call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> Due to clk only used in probe, not in suspend\resume, this pointer can
-> remove from sprd_mbox_priv to save a little memory.
-> 
-> Signed-off-by: Huan Yang <link@vivo.com>
-> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, Aug 21, 2024, at 06:15, Alexander Dahl wrote:
+> Am Wed, Jul 31, 2024 at 07:29:29PM +0200 schrieb Arnd Bergmann:
+>> === ARMv5 ===
+>> 
+>> About one third of all supported platforms use ARMv5,
+>> but most of these are near their end of support. Notably
+>> there are still new SAM9 variants from Microchip that are
+>> meant as backward-compatible replacements for their
+>> older variants.
+>> 
+>> Debian still supports these, but the lack of FPU and
+>> atomics makes this harder, so I expect this to become
+>> an unofficial port in the future.
+>
+> FWIW, these are not only replacements, but actually new boards are
+> designed with SAM9X60 for example.
 
+Right, but I would assume that most of those board
+designs using it are done because someone needs an
+ARMv5 design in order to run a certain piece of
+software, or because they are already invested in
+Microchip's SAM9 ecosystem in other products.
 
-Nitpick: no need to add this S-b. I just made a comment when looking at 
-your patch in order to improve it. I'm not the one that suggested the 
-initial change. All merit is yours.
+For someone starting from scratch, there would be few
+reasons to pick a SAM9 over e.g. an STM32MP1 with a
+Cortex-A7 that is more capable in most ways but half
+the cost.
 
-Also, I think that, if used, it should be above your Signed-off.
+> Not all have .dts files in mainline kernel, though.  Would that
+> improve or change things with regard to long term platform support, if
+> the .dts files were upstream?
 
+I think upstreaming the dts files is mostly an advantage for
+maintaining the specific boards, as it allows easier
+integration into CI test environments and lets developers
+see which drivers are used by a platform. Having at
+least a couple of products with full dts files in addition
+to the reference boards does help though.
 
-Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+For the at91 platform support itself in the kernel,
+I don't see a real risk at the moment. There are a few
+areas that make ARMv5 support risky in the long run:
 
-> ---
-> v1 -> v2: remove clk pointer from sprd_mbox_priv
-> 
->   drivers/mailbox/sprd-mailbox.c | 25 ++++---------------------
->   1 file changed, 4 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbox.c
-> index 9ae57de77d4d..ee8539dfcef5 100644
-> --- a/drivers/mailbox/sprd-mailbox.c
-> +++ b/drivers/mailbox/sprd-mailbox.c
-> @@ -62,7 +62,6 @@ struct sprd_mbox_priv {
->   	void __iomem		*outbox_base;
->   	/*  Base register address for supplementary outbox */
->   	void __iomem		*supp_base;
-> -	struct clk		*clk;
->   	u32			outbox_fifo_depth;
->   
->   	struct mutex		lock;
-> @@ -291,19 +290,13 @@ static const struct mbox_chan_ops sprd_mbox_ops = {
->   	.shutdown	= sprd_mbox_shutdown,
->   };
->   
-> -static void sprd_mbox_disable(void *data)
-> -{
-> -	struct sprd_mbox_priv *priv = data;
-> -
-> -	clk_disable_unprepare(priv->clk);
-> -}
-> -
->   static int sprd_mbox_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct sprd_mbox_priv *priv;
->   	int ret, inbox_irq, outbox_irq, supp_irq;
->   	unsigned long id, supp;
-> +	struct clk *clk;
->   
->   	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->   	if (!priv)
-> @@ -331,20 +324,10 @@ static int sprd_mbox_probe(struct platform_device *pdev)
->   	if (IS_ERR(priv->outbox_base))
->   		return PTR_ERR(priv->outbox_base);
->   
-> -	priv->clk = devm_clk_get(dev, "enable");
-> -	if (IS_ERR(priv->clk)) {
-> +	clk = devm_clk_get_enabled(dev, "enable");
-> +	if (IS_ERR(clk)) {
->   		dev_err(dev, "failed to get mailbox clock\n");
-> -		return PTR_ERR(priv->clk);
-> -	}
-> -
-> -	ret = clk_prepare_enable(priv->clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(dev, sprd_mbox_disable, priv);
-> -	if (ret) {
-> -		dev_err(dev, "failed to add mailbox disable action\n");
-> -		return ret;
-> +		return PTR_ERR(clk);
->   	}
->   
->   	inbox_irq = platform_get_irq_byname(pdev, "inbox");
+- Debian support for the softfloat "armel" port will
+  likely be moved into an inofficial port in the future,
+  which in turn makes it harder for average kernel
+  developers to test things. 
 
+- There are discussions about making SMP support
+  mandatory for all architectures in the kernel.
+  If it gets to this, ARMv4T and ARMv5 support may
+  need to end, unlike ARMv6K and up.
+
+- Even longer in the future, all 32-bit kernel
+  support will end. I don't expect this to happen
+  for another 15 years, but the writing is on the
+  wall.
+
+      Arnd
 
