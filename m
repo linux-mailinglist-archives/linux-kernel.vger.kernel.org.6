@@ -1,185 +1,187 @@
-Return-Path: <linux-kernel+bounces-295404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3202959A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:47:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623B7959A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046D01C21365
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16449280291
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B0D1CDFD7;
-	Wed, 21 Aug 2024 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753A51B5EA0;
+	Wed, 21 Aug 2024 11:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2WHV8eX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="EbAZ41TZ"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010056.outbound.protection.outlook.com [52.101.128.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E31B5EB3;
-	Wed, 21 Aug 2024 11:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239543; cv=none; b=UBSVw/YXGoFCXYnmmComx7p2P1NFuaytdg0D3oPOVx3BJIfr+D4aoMXoY+G+hMD448GEHiv6mk+y/eoDuFPXzptichT5rQ/rNh3A5T5oraWxhyweHYXT0plFe7tKvYbUIr+0t2eauKoDeHXnlkLt5W7moUc925EHNdw7eUsLRvc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239543; c=relaxed/simple;
-	bh=Kvnq32RuIPSuDttZFxycxxFwGZsj2tN0L7uucROnTsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJlz811GqyG/BQ8MR5xIJ6aDcqRnExv3WAKmYGy6ImOReOLVu4m1WjzlS0E4qpZBZynmilOJf13CFs53cxqoa7UjUDgGsaaOHV49vtoGFY+Yk7J525o6NrTPHZTEUR0UyKjjrhMGnLJVxSL9OotcGxKJKsk/D+fdQq/YOxqKACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2WHV8eX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBE1FC4AF0E;
-	Wed, 21 Aug 2024 11:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724239542;
-	bh=Kvnq32RuIPSuDttZFxycxxFwGZsj2tN0L7uucROnTsU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P2WHV8eXl40ui6SvNMnSJ8zOyqgVlR3PFHvEFOdA9bX27iABpk6Jbuo6Iv/WnWVrR
-	 7FIbSap6O0WGxgTBZ9eMmw1MkrepM5YKiis+IVzbVUrIH5m4N/SnlOF9JAPg9o8DI2
-	 bHtrpyiINgyw8aKmFVsWKoBc7G+zPbOtR43jy/fxIePORpTW976lsGl11dlAmVK16I
-	 qRWF8QdJ13sNnAHDOcQyQ3LjMaorodzsdD9u4+fRujqqn7V0OHH2uSieYoTS8tqAFv
-	 KSTkZujNwPrdJyCUDuTB01XTvaGY3wsqL6ndIOnbXKYkKhcK7cvOgNRsBfAX25SRU3
-	 h08RNlza0caKw==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-26fde6117cfso3803860fac.1;
-        Wed, 21 Aug 2024 04:25:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+2yC03Pvi8mHhgvP1YRrT4W6cm/95g5Sw9p0/UKAe1hsVSyt9x1FpjIQiS9IGFoDey8u+1ZVGtgpohQs=@vger.kernel.org, AJvYcCUuGQSAx6cMKkV5KWB4aKaQHJQfrANLStkunyp/J/pPLXZXQMZUO4qbLcLYIWpMaoo0jNctygb9rjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJWIwExju1AL91UvmlRjnj9jQlV1qCIpzF1kxa7JJ5HiSerHob
-	OUyujawyX1xD608up2IDmydBuu6jF3s7K3zP+X3yla/JBDFjJvYjlY/yaGMUoQdloDDA+nXl+AN
-	iiugGydDnIGSTnjIzz/EP+4ez45w=
-X-Google-Smtp-Source: AGHT+IFVdFpMCmhvEZl2SiUCUpvAzShvYrajztdIQqWdUOBjADmD3QfBXRYsCx5Wxvqm+EPkiAE/26vAZQZCFMBa/rU=
-X-Received: by 2002:a05:6871:5824:b0:254:a811:6c75 with SMTP id
- 586e51a60fabf-2737eeb0c79mr2009436fac.7.1724239542021; Wed, 21 Aug 2024
- 04:25:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0A81ACDEC
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 11:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724239610; cv=fail; b=aq2N39LsW/qRFqSoT4IiLxf//wvi3LNoaQW68DQREQxHU7ZdfMqkpnMcAob6aTorbYR6O3llB1IQh6OH2ky0bnX40lTEJ7HN+U9EBCyg/NibY+Tz50sg+q8KUSFEFEk1rtH91lIFgVQW+Htqq7Xwd/z1HHubBQEr7pRR6HWmLK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724239610; c=relaxed/simple;
+	bh=kjNnuds+JoMYsSGxiPDr3mEE0PBomxyiLlASTkObUlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TcqVjYMaPAtWHqeS9RLTmsyi23zF1L4a/ZWt9IdZaJdZHbwWfBhPoLn9pDM5Dxls8SGL0jdsEz1nQSzmqsfXkwYbdf48r2GmdzqJ84Z9MGUn2fuxePYNrTvJrA9Z7JJutTq+G2Brw30GCOnVMlb+9b8ZnDHaWYti2TMDlR0qq7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=EbAZ41TZ; arc=fail smtp.client-ip=52.101.128.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=frds6RhpNklm3en6elygyA3bSso9enaVO3JcEkLP8UjHsLYHuzHfZKe4ARhuryUFQPxD8KjK7OZG8IVufUIQn3X4dh9KHuf0VBjd0gVRIl86gkPtVqqUusKfa0vX9IywPx0hjwhOdW47j950nFVL6wHjXjeET04+MuaSdcSAO7/JAf2nxdnVV4o29IcTQFNzNCWJNygIpkSPK0UPhBp405HFLSF7KrlTinATfKwGrERCA5FEHpDkrwSf+bOydP6jZQzX12vMZNwXTv6My2K0UQOmqmQKXuoHzcpbCjt5OV6nkZsFOpWWeXQEeI1sypXH7bMFYvjzD0q89r3ITgnPGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JLMbB3OFIk060plPKR0e4ikCwI4iLwwQStE+homhY9I=;
+ b=sIScQYIqSt1ByrHpB4TqRYAv68L4eiMNvHajjBGG+ItVzphQSjnOJ6p45nBWedDqjf6OkV5SbhT2Ds9aUBFp4Q3KP1GjJYjzCseUcCaNE1lxEsZaqzX4RB7ofJotxvZBS+rLGqCbWGKsoqv2V5C44v/H4R5r1FtrNrA7ESl/BbDR2q2jIyNq692mLkYOHakFfWI6SyyrpZo3eDm389V8x6ZrVHZLi3muuyVw/bXWMWhOkXLaZ8m/6QRUE82vUWBIL/ixVA3RuWIdVA68B2PcQvTp6QIYrmizvni8McrwhbbwC4D4E2Phs+NMKJhbAlZWSke9w1h2S6H6cwTM8u59Aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JLMbB3OFIk060plPKR0e4ikCwI4iLwwQStE+homhY9I=;
+ b=EbAZ41TZpGQgVaWC6WTQHSfzKlBAe5AKWbMV9i7/1pNurIyE/xgAvtC8Hi/tQQpVqtIqRggraxDjAuGduM64kbvFwPjbCVV7FhHOzfBfgvTbvaCB6R9uZRAHyXgqhW3xmey9NdUH+ecEtUptXIpp5ZV8EfLx2HSNfwQv4+X5ZXi2JECh8XriEEH2AfdVChbVVxZ0SMTj1gjxtg0kEcHssSCsgj98LzD9SIOdlQLp+wbMlx4fHUJ7FPoiyr8KEc7xflqGpWbyXraHPOzF3q5R5ri0z3FHWIvpaWVW+2CB8Ai7JGCrSyZn4WrRVnz71xku1H4qUfY0dKjguVX9GGp0hA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by TYZPR06MB5028.apcprd06.prod.outlook.com (2603:1096:400:1c8::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 11:26:46 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%6]) with mapi id 15.20.7875.023; Wed, 21 Aug 2024
+ 11:26:45 +0000
+From: Yu Jiaoliang <yujiaoliang@vivo.com>
+To: Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v2] platform/chrome: chromeos_laptop: Use kmemdup_array instead of kmemdup for multiple allocation
+Date: Wed, 21 Aug 2024 19:26:29 +0800
+Message-Id: <20240821112629.596298-1-yujiaoliang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0273.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c9::12) To TYZPR06MB4461.apcprd06.prod.outlook.com
+ (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20150508073418.28491.4150.stgit@preeti.in.ibm.com>
- <3161640.llJtBoKCBr@vostro.rjw.lan> <8965830.CMQzZzsqm0@vostro.rjw.lan>
- <4652506.tkuQIhnkdH@vostro.rjw.lan> <20240821095105.xuf2a5xe3yxqqewj@lcpd911>
-In-Reply-To: <20240821095105.xuf2a5xe3yxqqewj@lcpd911>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Aug 2024 13:25:31 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0goEQC3xF11wOm7q3TA51WfaM_g1zBV+nKpVYyvH5fmag@mail.gmail.com>
-Message-ID: <CAJZ5v0goEQC3xF11wOm7q3TA51WfaM_g1zBV+nKpVYyvH5fmag@mail.gmail.com>
-Subject: Re: [PATCH 3/3] cpuidle: Select a different state on
- tick_broadcast_enter() failures
-To: Dhruva Gole <d-gole@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Preeti U Murthy <preeti@linux.vnet.ibm.com>, peterz@infradead.org, 
-	rlippert@google.com, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
-	linus.walleij@linaro.org, rafael.j.wysocki@intel.com, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, sudeep.holla@arm.com, 
-	tglx@linutronix.de, linuxppc-dev@lists.ozlabs.org, khilman@ti.com, 
-	Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TYZPR06MB5028:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f675e3e-e296-4c82-2a50-08dcc1d4237f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lrAMQoiYgx/p06QidSkCexVduNeMTTvAD6AC3SMaOCKqmIHpB9WkA7KGwDfH?=
+ =?us-ascii?Q?kM+XleuqDr9TF8vVwILf7j/+m3WOoLysPfrwCKd1eKoMhtb/ie3xZRJUsp6P?=
+ =?us-ascii?Q?XF5rnjeZhPGJiz2xslbFMcHn8YR6MCkEQ/I5BvBttmmefY3sVRcBZmhwzfG0?=
+ =?us-ascii?Q?dHXaGNhtCMXOjgWZRY9fMOa9V9eR1gjRRAWJz9EP+dxKmB3MzYfjJAKjKQox?=
+ =?us-ascii?Q?SSFRRHhmEjW0vMp4HQOUsJFl/M7hXR2CaxrrXLcCcEwV068OZ3jvS42S/sKz?=
+ =?us-ascii?Q?oQkxSYQQPGh4x6aDu4+ZPOACjLBdqOeMXKlx4/44K6gjc8tWtX5j9pt/RjxL?=
+ =?us-ascii?Q?Hve2tVV6zfTwdgyMMoz3s1yWav+mG09ncTHoa4Pe8u6PzXJ5ZpMMYjN4sl92?=
+ =?us-ascii?Q?UipOIOIu1wc4WozcywQ1foKSd7koFw/qmFtL5dvSz+glu40oublHluVb1ZZa?=
+ =?us-ascii?Q?ZvFsL8F+Y3Wml3/1RmzJY3XQA7yIMJYslNFiDIfwYC6wFhwYVHb/PIsZs8At?=
+ =?us-ascii?Q?Bq391qpaaBbZJCPY/rkXDMi70vbn6agtLZigYOOot8V1spLgwoJMwr3elXga?=
+ =?us-ascii?Q?97hTCYpapG+dZ28vpWhh26HGo9fp8nST3+gdB9FRAAmBaO8qG3shZ1iL6Zfg?=
+ =?us-ascii?Q?nPLaJWfzodncTUNCO/wSR1ebJUuZUi8zL+3Z/9YeQY8K6WGGSwLZv5BfIscU?=
+ =?us-ascii?Q?TQ0qbyqLDEccKbZrfGZVmjWF7agI5M8Aes04Hdp8ZfrP5ZjXFTVXRR8U+2Bh?=
+ =?us-ascii?Q?1yL+7CBkyrs1k9y4AWrlzLOs3PPa/TG1uzNA0p65De5L2UgOMQ0cyz0z42Q/?=
+ =?us-ascii?Q?CzVZsjsIDLqW3TdF98bpPGVmCL324PUJhOx7Qb/jS+6h161Z3G/nLVCv3r9U?=
+ =?us-ascii?Q?/KPvJkSC6OD2EWJ4OK6/lQOHoNy/9OOF5ygrhl3kQ/1rr5DMu+JbLVAD9dhU?=
+ =?us-ascii?Q?YwNT/Pkwr+pFQHhoIksQx9esXtQC3XihaHPohx2xHSw/oFRJe+1/WsCoTC2h?=
+ =?us-ascii?Q?alB8qczcKnT4jmcTGYBSpqrI+k33yz2JNGSKvocHxfRWDEI8PEE3bsC1jYlx?=
+ =?us-ascii?Q?H2sZhXu/UYmopBzegn+4z2SIUzGegHPgWacFUR9S8UelPK8GOewV5+pMhog6?=
+ =?us-ascii?Q?UPlMA0rkyG/5nAJKbQgYsjMi67Jsm4hDYt1xS0BlTrE7s91ohf9zYYiO8yq+?=
+ =?us-ascii?Q?RHwwxIh/sCx5sGDZTtrKBnLeQXW28U0imzL9PNyrbH96Sxioui0XZ3Qtdjl0?=
+ =?us-ascii?Q?V2x3IQkKyRalRPgOp7ho73DlPgWfvo04NtQGnRZI1XRqfRoYd5HLsKn38T3N?=
+ =?us-ascii?Q?REgS08Xt2uC8qdXn1iN53kOoHuv9KAIY/0zL21IeVJf8Dh7N/0JGsckFBE9d?=
+ =?us-ascii?Q?f6RGtrytlz4QjELv12IjXrOsW9zQB8ypc9h3C1LUL1l3HFk6pg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OUpSPglj3shKt01NLYZGA5cV4Ll7XhAAs8H69ctv0AOH0YZRpHI86l/TuROS?=
+ =?us-ascii?Q?iZRts3adIYhQIbS00vfedveYdjEjcpSC1JZB02WQY133vDzv6Y7NTvVNL+d6?=
+ =?us-ascii?Q?1ADRD3qU96RHXGda+efUeoDLXCAPmyp5BTANK238PivZaTBbnu3Ac0Uqu8bm?=
+ =?us-ascii?Q?+2MWBSFykfipF7YmbV97cNwO+GGG3TlUa0G3+7ZmX00qG3at3Vskw9WCVzUq?=
+ =?us-ascii?Q?To5hMBcDZsPHb7XFEROxpTE1InsfBdbt/Rpfd8Ir0hP7JT3FbENm6wvjj4v4?=
+ =?us-ascii?Q?NMvMeV13oQUTB5hQBnY3tqPQsyvu4F0ho9+DmhOvB1WSy3PFojUrJ9h3c0CY?=
+ =?us-ascii?Q?QqoJX2eq42uzpBhfYu2nxnlQ4Q+KbxE732xEEgXXgbUoRiAAMhO2OOnsjNb0?=
+ =?us-ascii?Q?7Up2mqqpLS3kE4Sq3wdj/zWx7qcrcMibE2w4RltFRLjwblJFshktUwU4JWpK?=
+ =?us-ascii?Q?0yot6arbNImdhcJmZ1FSFvBuBOTILuFRt+0db4YkrXzDAC/wKzU+JWlHoDAv?=
+ =?us-ascii?Q?y9ES4VItZf8Z5Km+xLF+II8STuDkL1MuNK5U4k2hkaNfRtFtmfO+bUfKvSgM?=
+ =?us-ascii?Q?7bHAOf1F9YOeS5vm5LKRTjwlNiZyf97c8pBwRBW7EMNoog9ytn0kW2rDGqIQ?=
+ =?us-ascii?Q?P90ZzTYrk6k3CqYIo8TBOdLfk7d2wHVOi4cMeZYORPEILJ4b8YL1y9DE/n78?=
+ =?us-ascii?Q?3wz7GOI8tS+OAnncfbMJTULA3rZxVsxn5ELV4trR6D9Nk6cRMvSBfI6V9dxu?=
+ =?us-ascii?Q?CxjqiNE3zX7CT1beXJjVYGglSNpqsh4cvQkkI0Pr25Z6TRWgJdZrmu3rv40n?=
+ =?us-ascii?Q?WPaoPKUzJWwDrT3uBtsdADJvk/3N6ggyXf1twk65G1+Q+Irx6bBsSHRO2UPH?=
+ =?us-ascii?Q?fMopSkaFi63BmSOVblqQ9JTtCGZvYl0QpOoqSUz5+LClr6BM1FNXRLO0ibF5?=
+ =?us-ascii?Q?1P8eaVfcf9e0GFUNJ+pX/2ZqgcqSHstsZsMNYxm7RYThVDlasZRS8tcDT4XK?=
+ =?us-ascii?Q?BqYlb/BCJWzWiBd1+RFbzCXgpiDFVRbDx2x6BYw2kQrSEGPYTAnTUB7C6CDb?=
+ =?us-ascii?Q?8z9zQiEgtASFa/58qbDmwD7e3D58BAPxtF6A4uLFILnUixB26RUtyxvZlozQ?=
+ =?us-ascii?Q?/NgaG0X5xKKfc7FZO/uZzMk/1k/YsYVJvBJxMyPmGs+wZpinEkLgkJtzi4An?=
+ =?us-ascii?Q?EsvB/1Z1WfxbtUw0uSKqQBqlyPctSSYmtMEstImRLXd1yhzTotea9smjGQBx?=
+ =?us-ascii?Q?7yPVJRu1rqm4CFLzZA9Ck8yD9NjBkd7pN2EcusoyA4FnjelXUyT+A5zPByjY?=
+ =?us-ascii?Q?13z1D8pho0XEr6rzzWioRSTWyvfpNkNvycsnehIxM/4uMfJr9hYAaepLFzpz?=
+ =?us-ascii?Q?vL56iIWyB+/oXHpPvnd7QLypO/yH/5qReQBFx2Dsz5vGYUe+w5f1bO0esc0x?=
+ =?us-ascii?Q?B0NpbfWVXqMzJgsEuTeI9Cu7NUpihVyAMP1ksUVH2s+NSjeuiNBdStGJ9lDs?=
+ =?us-ascii?Q?sKamqDB/5kmTlRzogsjRo8yiOtt0wWw/fegYYS6N33ToDIAXKvL3iVSL3Bj8?=
+ =?us-ascii?Q?UbsX5/nH56MgYoWjAirqWMIPFDo8+hnU5EbAk0jp?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f675e3e-e296-4c82-2a50-08dcc1d4237f
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 11:26:45.3986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I/6wCj+BRs17ed3KZDz3IoeYaQApelgkGWnp0nHzSv7TuKHsQPylHa9RBfaCbTz/e/Z6o+wT1rmXziEzZsWEWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5028
 
-On Wed, Aug 21, 2024 at 1:15=E2=80=AFPM Dhruva Gole <d-gole@ti.com> wrote:
->
-> Hi,
->
-> On May 10, 2015 at 01:19:52 +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > If tick_broadcast_enter() fails in cpuidle_enter_state(),
-> > try to find another idle state to enter instead of invoking
-> > default_idle_call() immediately and returning -EBUSY which
-> > should increase the chances of saving some energy in those
-> > cases.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
->
-> Found this during code review, hence dug up this old thread again,
->
-> >  drivers/cpuidle/cpuidle.c |   20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> >
-> > Index: linux-pm/drivers/cpuidle/cpuidle.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/cpuidle/cpuidle.c
-> > +++ linux-pm/drivers/cpuidle/cpuidle.c
-> > @@ -73,7 +73,10 @@ int cpuidle_play_dead(void)
-> >  }
-> >
-> >  static int find_deepest_state(struct cpuidle_driver *drv,
-> > -                           struct cpuidle_device *dev, bool freeze)
-> > +                           struct cpuidle_device *dev,
-> > +                           unsigned int max_latency,
-> > +                           unsigned int forbidden_flags,
-> > +                           bool freeze)
-> >  {
-> >       unsigned int latency_req =3D 0;
-> >       int i, ret =3D freeze ? -1 : CPUIDLE_DRIVER_STATE_START - 1;
-> > @@ -83,6 +86,8 @@ static int find_deepest_state(struct cpu
-> >               struct cpuidle_state_usage *su =3D &dev->states_usage[i];
-> >
-> >               if (s->disabled || su->disable || s->exit_latency <=3D la=
-tency_req
-> > +                 || s->exit_latency > max_latency
-> > +                 || (s->flags & forbidden_flags)
-> >                   || (freeze && !s->enter_freeze))
-> >                       continue;
-> >
-> > @@ -100,7 +105,7 @@ static int find_deepest_state(struct cpu
-> >  int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> >                              struct cpuidle_device *dev)
-> >  {
-> > -     return find_deepest_state(drv, dev, false);
-> > +     return find_deepest_state(drv, dev, UINT_MAX, 0, false);
-> >  }
-> >
-> >  static void enter_freeze_proper(struct cpuidle_driver *drv,
-> > @@ -139,7 +144,7 @@ int cpuidle_enter_freeze(struct cpuidle_
-> >        * that interrupts won't be enabled when it exits and allows the =
-tick to
-> >        * be frozen safely.
-> >        */
-> > -     index =3D find_deepest_state(drv, dev, true);
-> > +     index =3D find_deepest_state(drv, dev, UINT_MAX, 0, true);
-> >       if (index >=3D 0)
-> >               enter_freeze_proper(drv, dev, index);
-> >
-> > @@ -168,8 +173,13 @@ int cpuidle_enter_state(struct cpuidle_d
-> >        * CPU as a broadcast timer, this call may fail if it is not avai=
-lable.
-> >        */
-> >       if (broadcast && tick_broadcast_enter()) {
-> > -             default_idle_call();
-> > -             return -EBUSY;
-> > +             index =3D find_deepest_state(drv, dev, target_state->exit=
-_latency,
-> > +                                        CPUIDLE_FLAG_TIMER_STOP, false=
-);
-> > +             if (index < 0) {
->
-> Would this condition ever meet?
-> If you see, the ret inside find_deepest_state is always starting with a 0=
- and
-> then nobody is ever really making it negative again. So the func either
-> returns a 0 or some positive value right?
->
-> Since nobody has probably raised an issue about this in 9 years, is this
-> basically dead code inside the if?
+Let the kememdup_array() take care about multiplication and possible
+overflows.
 
-Yes, it is dead code now.
+v2:
+-Use sizeof(*i2c_peripherals) instead of sizeof(*src->i2c_peripherals)
+-Format code
 
-> Let me know what needs to be done here, I'd be happy to patch this up.
+Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/platform/chrome/chromeos_laptop.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Please feel free to send a patch removing the redundant check.
+diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform/chrome/chromeos_laptop.c
+index a2cdbfbaeae6..3ab668764383 100644
+--- a/drivers/platform/chrome/chromeos_laptop.c
++++ b/drivers/platform/chrome/chromeos_laptop.c
+@@ -749,10 +749,9 @@ chromeos_laptop_prepare_i2c_peripherals(struct chromeos_laptop *cros_laptop,
+ 	if (!src->num_i2c_peripherals)
+ 		return 0;
+ 
+-	i2c_peripherals = kmemdup(src->i2c_peripherals,
+-					      src->num_i2c_peripherals *
+-					  sizeof(*src->i2c_peripherals),
+-					  GFP_KERNEL);
++	i2c_peripherals = kmemdup_array(src->i2c_peripherals,
++					src->num_i2c_peripherals,
++					sizeof(*i2c_peripherals), GFP_KERNEL);
+ 	if (!i2c_peripherals)
+ 		return -ENOMEM;
+ 
+-- 
+2.34.1
 
-> > +                     default_idle_call();
-> > +                     return -EBUSY;
-> > +             }
-> > +             target_state =3D &drv->states[index];
-> >       }
-> >
-> >       /* Take note of the planned idle state. */
-> >
->
-> --
 
