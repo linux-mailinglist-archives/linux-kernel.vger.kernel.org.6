@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-295987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FBD95A3FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:37:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E484195A401
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E82282978
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06BA282B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407CC1B2EC7;
-	Wed, 21 Aug 2024 17:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3781B3B07;
+	Wed, 21 Aug 2024 17:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTwSBBq6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZenRI8m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702EE1A7AC6;
-	Wed, 21 Aug 2024 17:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17EB1B2EC1;
+	Wed, 21 Aug 2024 17:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724261842; cv=none; b=HKC/YoXCa2t/8U8qaQ3sLujrXzYPww7oIEkmHI9IcUtkOAkRjE+7iak9cGEzCIfF1+VyHaaxibBux3GlIhudZxdJdiiULUUWvo/e/+31CHJO/ZF5/j1E3+QuI0wLsCclFTAwHcondU60QuevwEAWz6E1xcPSa73cXZRam5d7hHg=
+	t=1724261856; cv=none; b=gwzjacILDnSF2DY+60i7A9ao2quzT2Cdx0a2SHwpu8KYSHCWG8COBbdTjEdURwA9WlSs2iwooZ6BGfHHhOr2BJ48oGKS6A3rWtLsAcJk+C9227qTlidAZJGL2Sh+lVMQMUTsDRi7GQRjA86g0sAWdHwi0XZFqEBes7X6PuUBKKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724261842; c=relaxed/simple;
-	bh=FwT6ip7DTV6D/qkbEgoSZIrqLc3hcnxzAkZm20vLJKA=;
+	s=arc-20240116; t=1724261856; c=relaxed/simple;
+	bh=yzoAlBa7Gq7XplWHcp/NwfAfAm8mhCyPIfBsErv0xas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ap3rJbYxY+DIpigXZU/CaX6Y9ICZ5Tpez1A2+UUpjASdCw3gZOBNT99DgQjAJGEc0zWaPBPCzuC7aixLrG4fPg/9m8V15bY5OpOCm+TBQONRvOrwkxYbK3fftYwJx+BNCQnrt9SKYSUNjh6fd7UnT8bwXnoEk2zHWKTxnS3g9sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTwSBBq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DE6C32781;
-	Wed, 21 Aug 2024 17:37:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nn0ZRkTOgy2jssR4n2CXDpq2gsevgv0WtFgfbFkzbhvx2eO0Fv2Ye6AaARkep8u1vj3wxX6T+Q9f6GXQiud7P25H3zxQeAlZeB2yUao7K7BLJI1Ajy+obQmy90cQD0E1rkJhqFvqXYJnehu+N9vCht+E7N/FURHsQ5kP6YI0oKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZenRI8m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E72C4AF11;
+	Wed, 21 Aug 2024 17:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724261841;
-	bh=FwT6ip7DTV6D/qkbEgoSZIrqLc3hcnxzAkZm20vLJKA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=rTwSBBq6tlCagc5ow72AnB+BsmkmOdgDCE7/Xs6tO1snMhXlF77XXmx8331DdJBZe
-	 zGcnIpsomQiN0F1/jgSQJf4Wn62oLFBbMzVOVM/hh58vuPZ5+t8n5DpD2gtm2klMhd
-	 NhlSiEoqnfeCOid3eT9xiyztL8MGJYjdzv/DZH7xp7EXh/ydOyF6XMfiusdOj72L71
-	 l575elP4W19ZF/GL5iMOnM/MQ96E/silPHZxiNWBybXPNCgPSloXvh+Wt1oiKAi+oA
-	 x8uBvpZhc7fOiLequMBPWHIxrlLHTN6epyFF7ZCG9a/CUR0cvdQibFSq2b209y2Wri
-	 hB9eYPM7UkpSQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 81DF0CE160F; Wed, 21 Aug 2024 10:37:21 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:37:21 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: matthew.brost@intel.com, jiangshanlai@gmail.com, sfr@canb.auug.org.au,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: [BUG bisected] sysfs: cannot create duplicate filename
- '/devices/virtual/workqueue/scsi_tmf_1073822488'
-Message-ID: <d5912536-ecc0-411e-b837-4822a9d00e8c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <8d443293-2020-42d9-b5b1-1348f551648f@paulmck-laptop>
- <ZsYTZTEbtMuVyp1o@slm.duckdns.org>
- <ZsYXXd6tQAlFwkg8@slm.duckdns.org>
+	s=k20201202; t=1724261855;
+	bh=yzoAlBa7Gq7XplWHcp/NwfAfAm8mhCyPIfBsErv0xas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gZenRI8mrXmGOdE9wLzBrPC+GIuS/3NZMFBvcmYPDFXxRoeT0TMhEltitILBTWbF8
+	 gHAy4bAW6cCCFArl1qPgYVxLpwlWnE3zvUh9Gn7dWfwXja1Tzz4u+fgMmkuSRV13zO
+	 1sCnbUXxnr6sSH5tuulEutbHp61rWkLkqEyRz0W65MCIHkDdsjLuSLlWpU0UApnnmB
+	 GCZYmuMu1/CKMNeAd437EZ0a6ltMJlVn9TE5qzAJMJ0Z6RuBZoTvTfyzmapUrtiH4h
+	 n6e8ym0Zr45wayTUMeVfcb26aqaeNqHCZuh0NV//nuFXVCdJ7ov3AJafbi/raXkKYi
+	 avf0T5uLR8sRQ==
+Date: Wed, 21 Aug 2024 18:37:30 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: vkoul@kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	niklas.cassel@linaro.org, netdev@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: Check NULL ptr on lvts_data in
+ qcom_ethqos_probe()
+Message-ID: <20240821173730.GD2164@kernel.org>
+References: <20240821131949.1465949-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,100 +63,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsYXXd6tQAlFwkg8@slm.duckdns.org>
+In-Reply-To: <20240821131949.1465949-1-make24@iscas.ac.cn>
 
-On Wed, Aug 21, 2024 at 06:35:41AM -1000, Tejun Heo wrote:
-> On Wed, Aug 21, 2024 at 06:18:45AM -1000, Tejun Heo wrote:
-> ...
-> > > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
-> ...
-> > Hmmm... I have a hard time imagining that change causing that error. My bet
-> > is unreliable reproducer. I'll try the repro.
-
-I am glad that it was not just me being blind, then.  ;-)
-
-And thank you for trying this out!
-
-> I'm probably doing something wrong but all the tests say that init
-> segfaulted in the log file:
+On Wed, Aug 21, 2024 at 09:19:49PM +0800, Ma Ke wrote:
+> of_device_get_match_data() can return NULL if of_match_device failed, and
+> the pointer 'data' was dereferenced without checking against NULL. Add
+> checking of pointer 'data' in qcom_ethqos_probe().
 > 
->   [    5.505986] init[1]: segfault at 28 ip 000000000040101f sp 00007fff1bbf6fc0 error 4 in init[101f,401000+1000] likely on CPU 12 (core 12, socket 0)
->   [    5.509949] Code: Unable to access opcode bytes at 0x400ff5.
->   [    5.512314] coredump: 1(init): over coredump resource limit, skipping core dump
->   [    5.514976] coredump: 1(init): coredump has not been created, error -7
->   [    5.516911] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+> Cc: stable@vger.kernel.org
+> Fixes: a7c30e62d4b8 ("net: stmmac: Add driver for Qualcomm ethqos")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-You are right, that is not the expected result.
+Hi Ma Ke,
 
-> Pasting the command output:
+There is probably no need to repost just because of this.
+But as a fix for Networking code it should be targeted at the net tree.
+
+	Subject: [PATCH net] ...
+
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->   $ tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "2*TREE01" --trust-make
->   tools/testing/selftests/rcutorture/initrd/init already exists, no need to create it
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index 901a3c1959fa..f18393fe58a4 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -838,6 +838,9 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+>  	ethqos->mac_base = stmmac_res.addr;
+>  
+>  	data = of_device_get_match_data(dev);
+> +	if (!data)
+> +		return -ENODEV;
+> +
 
-There was already an "init" program, so one thing to try is to remove it
-and re-run.  The kvm.sh script will then rebuild it.
+In this function dev_err_probe() is used, I assume in cases
+where a function that returns an error does not emit any logs.
 
-I just tried that in case some recent change made this fail to work, and
-it "worked for me":
+For consistency, perhaps that is appropriate here too?
 
-Creating a statically linked C-language initrd
-Done creating a statically linked C-language initrd
-
-I will also be testing next-20240821 in case it magically got better.
-Stranger things have happened...
-
-							Thanx, Paul
-
->   Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
->   tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
->   ----Start batch 1: Wed Aug 21 06:31:03 AM HST 2024
->   TREE01 8: Starting build. Wed Aug 21 06:31:03 AM HST 2024
->   TREE01 8: Waiting for build to complete. Wed Aug 21 06:31:03 AM HST 2024
->   TREE01 8: Build complete. Wed Aug 21 06:31:30 AM HST 2024
->   TREE01.2 8: Starting build. Wed Aug 21 06:31:30 AM HST 2024
->   TREE01.2 8: Waiting for build to complete. Wed Aug 21 06:31:30 AM HST 2024
->   TREE01.2 8: Build complete. Wed Aug 21 06:31:31 AM HST 2024
->   ---- TREE01 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
->   ---- TREE01.2 8: Kernel present. Wed Aug 21 06:31:31 AM HST 2024
->   ---- Starting kernels. Wed Aug 21 06:31:31 AM HST 2024
->   ---- All kernel runs complete. Wed Aug 21 06:31:42 AM HST 2024
->   ---- TREE01 8: Build/run results:
->    --- Wed Aug 21 06:31:03 AM HST 2024: Starting build, PID 456070
->    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
->   CPU-hotplug kernel, adding rcutorture onoff.
->    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483593
->   Monitoring qemu job at pid 483623 Wed Aug 21 06:31:41 AM HST 2024
->   TREE01 no success message, 0 successful version messages
->   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
->   WARNING: Summary: Call Traces: 1
->   ---- TREE01.2 8: Build/run results:
->    --- Wed Aug 21 06:31:30 AM HST 2024: Starting build, PID 482122
->    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel
->   CPU-hotplug kernel, adding rcutorture onoff.
->    --- Wed Aug 21 06:31:31 AM HST 2024: Starting kernel, PID 483619
->   Monitoring qemu job at pid 483648 Wed Aug 21 06:31:41 AM HST 2024
->   TREE01 no success message, 0 successful version messages
->   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01
->   WARNING: Summary: Call Traces: 1
-> 
-> 
->    --- Wed Aug 21 06:31:42 AM HST 2024 Test summary:
->   Results directory: /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03
->   tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 2*TREE01 --trust-make
->   TREE01 ------- 
->   TREE01 no success message, 0 successful version messages
->   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01/console.log TREE01
->   WARNING: Summary: Call Traces: 1
->   Completed in 10 vs. 60
->   TREE01.2 ------- 
->   TREE01.2 no success message, 0 successful version messages
->   WARNING: Assertion failure in /home/htejun/os/linux-next/tools/testing/selftests/rcutorture/res/2024.08.21-06.31.03/TREE01.2/console.log TREE01.2
->   WARNING: Summary: Call Traces: 1
->   Completed in 10 vs. 60
->   2 runs with build errors.
->   2 runs with runtime errors.
->    --- Done at Wed Aug 21 06:31:42 AM HST 2024 (39 seconds) exitcode 3
-> 
-> --
-> tejun
+>  	ethqos->por = data->por;
+>  	ethqos->num_por = data->num_por;
+>  	ethqos->rgmii_config_loopback_en = data->rgmii_config_loopback_en;
+> -- 
+> 2.25.1
 
