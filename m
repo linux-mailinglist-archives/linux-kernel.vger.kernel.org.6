@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-295775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D769795A15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F3895A15B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA712860D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EE41F237CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E23615099B;
-	Wed, 21 Aug 2024 15:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845291531DE;
+	Wed, 21 Aug 2024 15:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVXmxd1e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8zD01d1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEC714F13A;
-	Wed, 21 Aug 2024 15:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B02152E17;
+	Wed, 21 Aug 2024 15:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724253890; cv=none; b=cNJQq1Jr3rxjVsYGO+fDqh1S0cKFZBgywwLYeDpbp5/dIC7IDs2OJuGlo3LkuhA5OxHbob5sflCQPmhkqTOBJFUHU90oXXvQnqTKfCWDtgJrz/gCgyxG9rLsMFininqCevTj67i92g20qBogyAYWMCWj3UnKf9n0PxajmFEtdSA=
+	t=1724253893; cv=none; b=exVZHm9r4PPIx6RUdP5Ffg8GWXWgZ2rcEGsT8lQh1FurmTIogCKC49FMn/a2vyQObpA2XE3R5c9cIqhsRlGqy3Ogya9liplYj62Nr8CimHYwXvcMJKgjrGFZjLi5sTdeYgNNuhbCLTIShTj/P3Tenpablc8p0hmfeXmWWbgySp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724253890; c=relaxed/simple;
-	bh=W6Dm+pw4jKVI1NoMBaeLuQYMNAlSSIuKPuzkfQBk0wU=;
+	s=arc-20240116; t=1724253893; c=relaxed/simple;
+	bh=KtFrt9WfErChRtcLn7HkhtzBOi0BwJCKu2TQs5yEJko=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=C6wBhOgx4hX/1nPuA3ydjCCkbGfg+diyp2SropG+IE3ttuzq6iIIV/m7et6/F3IQ3DhG2LZzZTQwUiwcyPskhG9zUbDs4SchI8VgBY5YUcT8ihcN9LzGUngj/dMt8lFdF3zgYyqshq25PCN1WSHIoA6qzpzegP0iAPmD7dUxYq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVXmxd1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D56EC32781;
-	Wed, 21 Aug 2024 15:24:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aKvzm6Kx6ox/jLsxZYbzDwCxiPpaY8GF75E+VkvPEDw3adAmfq8nhonAt4xI0SD8/yMYJJGE6j8ujLgL18thbXKOOsZsh7Wc0V+KOVXpETzXk42++37U47EZzNzYAX4voiYdncngLSjjJVKw0ZYKZX8GqSWaWKSiDHKUep4Ogdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8zD01d1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE18C32786;
+	Wed, 21 Aug 2024 15:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724253890;
-	bh=W6Dm+pw4jKVI1NoMBaeLuQYMNAlSSIuKPuzkfQBk0wU=;
+	s=k20201202; t=1724253893;
+	bh=KtFrt9WfErChRtcLn7HkhtzBOi0BwJCKu2TQs5yEJko=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YVXmxd1eK1rsVkqeL1K3kB85wpV5tsEhKpBR7XuGnOPqUwBOqNEcxhL0cvCXR9l2J
-	 QkixuXmAmzleeGVMTlAAaW4PUhlGy2Ik+eP7EMqc5LQEaJL70m+kAlousN44o2lNoN
-	 6YLvZyb2iBqgwccb0ckkq5bCwef5FpwNqbLZGqyEnAFWYZOAV4VI72XWiJY7seFnnc
-	 pLW1Yzr5Mbcn85sx9TVhsaEzBlYue48aXHMyBEeuqd8d2nMH6lBN7R8JC2M93an0HO
-	 ur93a+PHoXdbrVZ+3jNjYoDtSO7myjqO7NHoug1uxh8uWcUswhgwZNbdAYSZPRs5t7
-	 kc0HkwI38pC4Q==
+	b=t8zD01d1WE1dJSFTPtWnx3Sh5orii5BzZcFXYPPXB5EtmUSilq7J5IxQIygEq/Che
+	 FI9mU+4bqHUmrW+mXUxOBYPoLmOGN62Ggtfyg9gQUoADX4c5Ft2lK6mIOZ/NHhsowJ
+	 FG6/DEFJGmue9CUI3qBpKsVqXel35YVN2kbq5vPDHJaG+J7qqrZg6rAJ6kDrXtJTrF
+	 EXI+yxclGVLxt7enY2/caw1wCCWMH9YPCzaOp6+MV4IAzufZjtZx6puv6BJBYqw3I7
+	 qP5r+g6eKE1Zwoy14LE3tpNmhi6sY4yJ2gQTEf5XRQ9eJwb8RxHD7vYcObJCqiqrQW
+	 9EJgUvNiL5Ldg==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240821114927.520193-1-colin.i.king@gmail.com>
-References: <20240821114927.520193-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: codecs: wcd934x: make read-only array
- minCode_param static const
-Message-Id: <172425388817.1704682.13476563163594836442.b4-ty@kernel.org>
-Date: Wed, 21 Aug 2024 16:24:48 +0100
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, pierre-louis.bossart@linux.intel.com, 
+ yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
+ lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ venkataprasad.potturu@amd.com, cristian.ciocaltea@collabora.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240821064650.2850310-1-Vijendar.Mukunda@amd.com>
+References: <20240821064650.2850310-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH] ASoC: SOF: amd: remove unused variable from
+ sof_amd_acp_desc structure
+Message-Id: <172425389056.1704682.17614913530491434962.b4-ty@kernel.org>
+Date: Wed, 21 Aug 2024 16:24:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,9 +64,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 21 Aug 2024 12:49:27 +0100, Colin Ian King wrote:
-> Don't populate the read-only array minCode_param on the stack at
-> run time, instead make it static const.
+On Wed, 21 Aug 2024 12:16:50 +0530, Vijendar Mukunda wrote:
+> Remove unused structure member 'rev' from sof_amd_acp_desc structure.
 > 
 > 
 
@@ -75,8 +75,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: wcd934x: make read-only array minCode_param static const
-      commit: 6f6d8b2d49299492e704030632ab79257685e5d3
+[1/1] ASoC: SOF: amd: remove unused variable from sof_amd_acp_desc structure
+      commit: 61c80c77b4f35e229347551d13e265752f067151
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
