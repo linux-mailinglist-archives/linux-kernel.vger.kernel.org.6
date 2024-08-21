@@ -1,70 +1,53 @@
-Return-Path: <linux-kernel+bounces-295885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8D795A290
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EFB95A28D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7B1B24844
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDC1B235FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188441509BF;
-	Wed, 21 Aug 2024 16:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1506E14E2DE;
+	Wed, 21 Aug 2024 16:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ciTN5uQ/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9BVfte1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0F814F9E1;
-	Wed, 21 Aug 2024 16:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6AE13B28D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724256851; cv=none; b=URQDbpjzoCMmSXkrKxgzPOXyKnpXOViyH5ZODIlj3tepgF3J7wx1qTKkeDbp7ms8RNfItKkg3ydMRA9RyMyeoV8TbWbATbgah+WPElv2iihITFUTMv6lsSvVCsxD86WoB8wGmNoRGhgrdFKN1LEgSCxOWjo9lI7jWy7y4Lx4iqY=
+	t=1724256845; cv=none; b=tw29GuIwSYMZjSUBrfsfSqIJEGhscvPm2A2h5biXhageiXujKxtJsPn2/BdbUOR2IGVv/6gsP7uuxqyDX0lOSkGu60uUl6NDPTXaZDmpuUN+nNqD5dN39Q5DAU4B4Fb1dhfLJYE8hpfPYQmkWV9sgo6kNI1riGMJxeHXe5JiwLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724256851; c=relaxed/simple;
-	bh=S5Yj0vGb5fCP5I/rslesLN4v6D0QJdf+JBcc9/hBrrs=;
+	s=arc-20240116; t=1724256845; c=relaxed/simple;
+	bh=pDN+szbBGjXEAYzF+z89k/J+jvjnlEYJHIMA7TqGcKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OVzBMmwPhXvmlsxBt99snR30v0O0zdDaKeuMBQwr7l6bEXwHW40Bzg9ENKzADGS/j36c4CBtAq4mIMmrf1jdWi3Eg1f0kYFMmOMlD7HcaN+8pIjw9EQTPoEagAQ1WPnkuZhJ1jyZN1NDri+OgCMMw6LkcM5Jbxa18lDAVOiMbiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ciTN5uQ/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FrWrrx+C7Q18TcUo6GOge+v9NwsexFUCl+eyKzUnLnQ=; b=ciTN5uQ/Sz4nzJV91y4WwA1HE/
-	KPVOnJB1ifV6dbmI6+aKRg6rNvvK4C0p/7pcLMtCi9aXeN2pxWFZSJX9DgIc02SH1QyKiyVyNYj71
-	2TIKUKoqtLDfCYwFywPviQ5I/E8T6GmiSERumAKufpTHaauAx5onRS7ZfxGOgwA7q720=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sgny8-005LX9-7N; Wed, 21 Aug 2024 18:13:56 +0200
-Date: Wed, 21 Aug 2024 18:13:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Chad Monroe <chad.monroe@adtran.com>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: marvell,aquantia: add
- properties to override MDI_CFG
-Message-ID: <6e018572-0a74-40af-bf5d-74aed60853a6@lunn.ch>
-References: <5173302f9f1a52d7487e1fb54966673c448d6928.1724244281.git.daniel@makrotopia.org>
- <2c4e03e9-6965-4e81-a986-e169eaea9e4b@lunn.ch>
- <ZsYRB54U5XPNZxiT@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0Q8kca2ZuV7aknm8G4OQVxuQqx1ntPXZanK2bEJq6Hvo9lCQ9a4v7fP6bAUjb+qOD+Z7+vkYe0r85RcjdVNa5prnyUVZTCOPW3WfpMRtyjDZlRLgzAZ2dQvgCJ1G2Wu/vqLDeaIa8lmrE5MhkGOWRq0EZLORqaMJBb26D8FzqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9BVfte1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3585C32786;
+	Wed, 21 Aug 2024 16:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724256845;
+	bh=pDN+szbBGjXEAYzF+z89k/J+jvjnlEYJHIMA7TqGcKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M9BVfte1p176HCiE9vqYa67eERB1h2PAzpmf177/RMbuaSR7mj9obxlKhcTM7Ug35
+	 AMR0L0aVEXZn7RUX+A3kL7cSK1Y4Dq8pM4vdSU5VYABeHO+A+H7KIgnosoW/dIdo79
+	 LuifFiABrh92xZdG0EuRURfDDJln82CB7PXmBwoBFkbQCAgcVXnIR2Dfe6N7QoUYYY
+	 LYJ/iKF8RdcwkUgjwvsVjJQoDMJnHyxVVDExnnGXYoHFleb4NlNekEu5SHOy6QPs1d
+	 mgy/+xyRfQ6l+TcyNXr63iAeYJCNmUuV/C2cOOHnmyHHnlm6tvxuM715gIf6D6ZaI5
+	 hTAxF2v7YwdTQ==
+Date: Wed, 21 Aug 2024 06:14:03 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] workqueue: fix null-ptr-deref on __alloc_workqueue()
+ error
+Message-ID: <ZsYSS6FXFNi9W5Wx@slm.duckdns.org>
+References: <20240815070339.346160-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,33 +56,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsYRB54U5XPNZxiT@makrotopia.org>
+In-Reply-To: <20240815070339.346160-1-senozhatsky@chromium.org>
 
-On Wed, Aug 21, 2024 at 05:08:39PM +0100, Daniel Golle wrote:
-> On Wed, Aug 21, 2024 at 06:00:36PM +0200, Andrew Lunn wrote:
-> > On Wed, Aug 21, 2024 at 01:46:30PM +0100, Daniel Golle wrote:
-> > > Usually the MDI pair order reversal configuration is defined by
-> > > bootstrap pin MDI_CFG. Some designs, however, require overriding the MDI
-> > > pair order and force either normal or reverse order.
-> > 
-> > Could you explain that in a bit more detail. Are you talking about
-> > changing the order of the 4 pairs? Or reversing the polarity within
-> > pairs?
+On Thu, Aug 15, 2024 at 04:02:58PM +0900, Sergey Senozhatsky wrote:
+> wq->lockdep_map is set only after __alloc_workqueue()
+> successfully returns. However, on its error path
+> __alloc_workqueue() may call destroy_workqueue() which
+> expects wq->lockdep_map to be already set, which results
+> in a null-ptr-deref in touch_wq_lockdep_map().
 > 
-> It's about changing the order of the 4 pairs, either ABCD or DCBA.
-> Polarity of each pair is not affected by this.
+> Add a simple NULL-check to touch_wq_lockdep_map().
+> 
+> Oops: general protection fault, probably for non-canonical address
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> RIP: 0010:__lock_acquire+0x81/0x7800
+> [..]
+> Call Trace:
+>  <TASK>
+>  ? __die_body+0x66/0xb0
+>  ? die_addr+0xb2/0xe0
+>  ? exc_general_protection+0x300/0x470
+>  ? asm_exc_general_protection+0x22/0x30
+>  ? __lock_acquire+0x81/0x7800
+>  ? mark_lock+0x94/0x330
+>  ? __lock_acquire+0x12fd/0x7800
+>  ? __lock_acquire+0x3439/0x7800
+>  lock_acquire+0x14c/0x3e0
+>  ? __flush_workqueue+0x167/0x13a0
+>  ? __init_swait_queue_head+0xaf/0x150
+>  ? __flush_workqueue+0x167/0x13a0
+>  __flush_workqueue+0x17d/0x13a0
+>  ? __flush_workqueue+0x167/0x13a0
+>  ? lock_release+0x50f/0x830
+>  ? drain_workqueue+0x94/0x300
+>  drain_workqueue+0xe3/0x300
+>  destroy_workqueue+0xac/0xc40
+>  ? workqueue_sysfs_register+0x159/0x2f0
+>  __alloc_workqueue+0x1506/0x1760
+>  alloc_workqueue+0x61/0x150
+> ...
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-So when i do
+Applied to wq/for-6.12.
 
-ethtool -s 42 mdix off
+Thanks.
 
-to enable straight through, are you saying the PHY actually does
-crossover, because the pull-up tells it the wrong thing about how the
-cable is wired? And `mdix on` for crossover gives straight?
-
-'mdix auto' just works as expected, since it tried all the
-combinations until it works?
-
-      Andrew
-
+-- 
+tejun
 
