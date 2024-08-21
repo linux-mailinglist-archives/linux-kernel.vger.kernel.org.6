@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-296006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEDF95A439
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:57:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEEF95A43C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8371F22594
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:57:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5A0B22B56
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD4E1B3B0E;
-	Wed, 21 Aug 2024 17:57:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE371B3B0C;
+	Wed, 21 Aug 2024 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kUUIh8sV"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394F213E40F;
-	Wed, 21 Aug 2024 17:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F871B2EF6
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 17:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724263046; cv=none; b=fXPCSI2enwFCXxCjZ7T7Lxh7zi8yS4uvHHtNkmnoNB5+d5oO7YuqidxUJGwJ8cVt5udIEoHuPA2okjTKrgeSrOGh2ctvbRtlmYylIbcnCYimw2lZEIGKKxc5paIWmVaXhJriEUhN9qC4CUZX5nQHdc37BL137p+3PALM9JD26B4=
+	t=1724263072; cv=none; b=JDpucKTp+IjLwZc+Ja0KbfkywU4h5Rq1ZPd5HKfqqAUN+v0RFKk0zmTvmy7SGULZPx7L/htslqY4w5enCOavqecKSy8NBoD85g7I40XJSmTqEKYn8ZWARUAjYv4TeYEac0iOjnaJBndup+CZxoeLIrQs1MYaB4tPfmBFmC2ahwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724263046; c=relaxed/simple;
-	bh=D/wIqNw4CLqTc5dUKCk/dq15kZD/1Hlf5p4tRDggHiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHiP8ovAWAdHc2PzV4FR3qL52+2fSxMzBCryc6kM7fbTSsq3kgXh47MLbWLXbnBLu4yIbu5xD7+kcY9JSnjgvkDX65c/gKYkgOBkB3DFZQ9rGEjedqowDP4i9XOk+akm3D44KV8QSgiQAn8tG9oHZP3i+KLPHxagoiesHahv7GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F22C32781;
-	Wed, 21 Aug 2024 17:57:18 +0000 (UTC)
-Date: Wed, 21 Aug 2024 18:57:16 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 25/40] arm64/ptrace: Expose GCS via ptrace and core
- files
-Message-ID: <ZsYqfJ3V_-ljqlwq@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-25-699e2bd2190b@kernel.org>
+	s=arc-20240116; t=1724263072; c=relaxed/simple;
+	bh=NvR7oT3zr3C4ZD5rcoKziVSJ6A0Ygns8X6MvpZlOnng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZFh7hwmM1u2zCaoe7/ZItOC454fb50U5XInKluTZuYd8Lha50cIzauOM3aVendSK1Oe6y8uxGo1WEVShhA6UJnKw3vhMXszQeu81dBSEc8BxyzZxQGQGuUc/MP9VdBz3rCHXAOLTD1ZuOfR6xpgHcFDVPVH5Z6tfqnqIQneLb10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kUUIh8sV; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dab1feb1-446d-46c7-a8b1-f0483cc149ea@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724263067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exaGamvClAfEMBZ3mXvHDSEbyNjLuT+5dVdNlgYhTAo=;
+	b=kUUIh8sVO8fJk7PSghH29hp29QO/StTElaQhOn42ScWPsBHSt5QmWAwfcj1dmfRpxagPb6
+	oTjy23t8RZhJNczETlYEAb5c/rqChrJocP+Ym7RjKMd7vJLEGWmBeAp/bQy+idd1v3QVoA
+	wtRvIQMu3UF+xJZV1Gv9JR5xqqigWjI=
+Date: Wed, 21 Aug 2024 10:57:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-25-699e2bd2190b@kernel.org>
+Subject: Re: [PATCH] bpftool: check for NULL ptr of btf in
+ codegen_subskel_datasecs
+Content-Language: en-GB
+To: Ma Ke <make24@iscas.ac.cn>, qmo@kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ delyank@fb.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240821133112.1467721-1-make24@iscas.ac.cn>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20240821133112.1467721-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 01, 2024 at 01:06:52PM +0100, Mark Brown wrote:
-> @@ -1440,6 +1441,51 @@ static int tagged_addr_ctrl_set(struct task_struct *target, const struct
->  }
->  #endif
->  
-> +#ifdef CONFIG_ARM64_GCS
-> +static int gcs_get(struct task_struct *target,
-> +		   const struct user_regset *regset,
-> +		   struct membuf to)
-> +{
-> +	struct user_gcs user_gcs;
-> +
-> +	if (target == current)
-> +		gcs_preserve_current_state();
-> +
-> +	user_gcs.features_enabled = target->thread.gcs_el0_mode;
-> +	user_gcs.features_locked = target->thread.gcs_el0_locked;
-> +	user_gcs.gcspr_el0 = target->thread.gcspr_el0;
 
-If it's not the current thread, I guess the task was interrupted,
-scheduled out (potentially on another CPU) and its GCSPR_EL0 saved.
+On 8/21/24 6:31 AM, Ma Ke wrote:
+> bpf_object__btf() can return NULL value.  If bpf_object__btf returns null,
+> do not progress through codegen_subskel_datasecs(). This avoids a null ptr
+> dereference.
+>
+> Found by code review, complie tested only.
 
-> +
-> +	return membuf_write(&to, &user_gcs, sizeof(user_gcs));
-> +}
-> +
-> +static int gcs_set(struct task_struct *target, const struct
-> +		   user_regset *regset, unsigned int pos,
-> +		   unsigned int count, const void *kbuf, const
-> +		   void __user *ubuf)
-> +{
-> +	int ret;
-> +	struct user_gcs user_gcs;
-> +
-> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &user_gcs, 0, -1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (user_gcs.features_enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
+Do you have a real case to show null ptr reference here?
+Code review and compile test are not enough. You should have
+a real reproducible case before you send the patch.
+
+For this particular case, we have check
+
+         btf = bpf_object__btf(obj);
+         if (!btf) {
+                 err = -1;
+                 p_err("need btf type information for %s", obj_name);
+                 goto out;
+         }
+
+which ensures that btf is available before codegen for subskeleton,
+so what you described won't happen in practice.
+  
+
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 00389c58ffe9 ("bpftool: Add support for subskeletons")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>   tools/bpf/bpftool/gen.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+> index 5a4d3240689e..7ce62f280310 100644
+> --- a/tools/bpf/bpftool/gen.c
+> +++ b/tools/bpf/bpftool/gen.c
+> @@ -334,6 +334,9 @@ static int codegen_subskel_datasecs(struct bpf_object *obj, const char *obj_name
+>   	const char *sec_name, *var_name;
+>   	__u32 var_type_id;
+>   
+> +	if (!btf)
 > +		return -EINVAL;
 > +
-> +	/* Do not allow enable via ptrace */
-> +	if ((user_gcs.features_enabled & PR_SHADOW_STACK_ENABLE) &&
-> +	    !(target->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE))
-> +		return -EBUSY;
-> +
-> +	target->thread.gcs_el0_mode = user_gcs.features_enabled;
-> +	target->thread.gcs_el0_locked = user_gcs.features_locked;
-> +	target->thread.gcspr_el0 = user_gcs.gcspr_el0;
-
-As in the previous thread, I thought we need to restore GCSPR_EL0
-unconditionally.
-
-I don't particularly like that this register becomes some scrap one that
-threads can use regardless of GCS. Not sure we have a simple solution.
-We could track three states: GCS never enabled, GCS enabled and GCS
-disabled after being enabled. It's probably not worth it.
-
-On ptrace() access to the shadow stack, we rely on the barrier in the
-context switch code if stopping a thread. If other threads are running
-on other CPUs, it's racy anyway even for normal accesses, so I don't
-think we need to do anything more for ptrace.
-
--- 
-Catalin
+>   	d = btf_dump__new(btf, codegen_btf_dump_printf, NULL, NULL);
+>   	if (!d)
+>   		return -errno;
 
