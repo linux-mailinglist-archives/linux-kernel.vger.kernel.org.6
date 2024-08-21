@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-295440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3AF959B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2899B959B39
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93260B23120
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:57:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E61B277BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351371B7915;
-	Wed, 21 Aug 2024 11:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346C1199950;
+	Wed, 21 Aug 2024 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K4AT/enS"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpeJivBb"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BF61B7903;
-	Wed, 21 Aug 2024 11:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F6A192D66;
+	Wed, 21 Aug 2024 11:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724240624; cv=none; b=rUvowvp3yJAwtszy120WLN+YHY8tYevFSJgiHH0qjka1Uua55zJapkn0Fc+xO+kG76FKmscDL00pivm6rcU4NqC/Ck1dH+HLLMh/uFqDYSVUMikYgt04e/13/OJ4CciKKeZaB/XtjM9y5sMlvuKwMq8zDWKa+cDn24SXivtXWSc=
+	t=1724241291; cv=none; b=H2DDxmM8xbzu6v8EQ8MfmPVq0o5tJa8ZllC5zDn3J2ZFmw/DATPCiM+SFzWp41eMSuG9XEEI0uBGNO1TRqYNfAevBs6q2o9sRUrnM1v1F+BL/HKodRVfgHR1lzHXjhG/Ie5OQWkxFwRgxX5QsFgOh9bJ3Xsuz0aO3ngTA5Lbl9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724240624; c=relaxed/simple;
-	bh=bsw35sWFxwfXUbsfrVrmQzI4hOlh95GIVDem8rGh9EI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MdiH10Y8YkSST/uZEhMAMQDJytlFy5p34WAFSsrPAXD7/dUY6lSg5ZlnZiFP7EAXBkFwZxh3NzrLTtB4vudSuZ8fmtEnwcgNDA8c5xEcaYCt4C/stuTkXBQacsKHFjzM/ZUSpbpCdsLaHYMjaGiiQH3g/3EZ8uFqm3EkdmN5rOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=K4AT/enS; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47LBhcjf036956;
-	Wed, 21 Aug 2024 06:43:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724240618;
-	bh=FAFFeDTLUC+SlZtqLcU0vN05qtHka4e5KwhNhbs7JOU=;
-	h=From:To:CC:Subject:Date;
-	b=K4AT/enShGszP1m163n2x5zpmU9erpPw9j5ksmISE15HdqSEq/R+JPXvZVspK1eKi
-	 86hMrvPXkRd4Qt6wVvx8puG4rsvwk0/aWduiQr7Vkrg7J8NrJEC+SfkWm98iY7YZC7
-	 XBQXRPbJ+DKD9nLyC2gAGMTO7/aEXZtAYFjrGwm0=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47LBhctL025017
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 21 Aug 2024 06:43:38 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
- Aug 2024 06:43:37 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 21 Aug 2024 06:43:38 -0500
-Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47LBhZ2B033647;
-	Wed, 21 Aug 2024 06:43:35 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano
-	<daniel.lezcano@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Kevin Hilman
-	<khilman@baylibre.com>,
-        Markus Schneider-Pargmann <msp@baylibre.com>,
-        Dhruva
- Gole <d-gole@ti.com>
-Subject: [PATCH] cpuidle: remove dead code in cpuidle_enter_state
-Date: Wed, 21 Aug 2024 17:12:50 +0530
-Message-ID: <20240821114250.1416421-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724241291; c=relaxed/simple;
+	bh=JBtWbazJKUA6/dJ6r9f034nEMDUsTMqHc2oC7nYIFtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JYKHS3v8TQKa4llle4mm5014r7VBJmHyxYCFYqO+qwj0JzpSA5jf5t4eoC8a363J1TQ03MUAk+N6oWOMa02GbQCPpMNUPCAfYplMtMFyFRsdaz2d7mGU2flUC/yafCegeLrL7fFw31jUTXAu6RgZ9kt2AwwLJNovitmrpXHfO8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpeJivBb; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d3ba497224so88682a91.0;
+        Wed, 21 Aug 2024 04:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724241289; x=1724846089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1YX2miHAUi0+/dGV7pb1+2w+ezV83KYwxdEEwMmR18=;
+        b=BpeJivBbt9W7dcFlaHjEGwOzJnLBRz9HI2ZQMS0fwWAlo4ZyzUvAvDXXOjjH4YQNtU
+         ug9tNWmRm7qp7QICQG/NNESfmJPEI9J+Mna/36wxmoadc8fP7syCjvlBARGfvvi/T53g
+         vhwv3xGUOhr3wDBqlLN+LxQGGN4s6uB+BT84R0gTFM2bOkkutowrwAqjIY+WckFeWfQY
+         jdJG7aefb98GaXOIbPlUFGDQtTBHx0BWwjnYWGClsoVCiRV38OROTNVjyM0lAosWQa2Q
+         T9Yfge9QVQiIP5ZwjOS2fozkKrjMO7hzBWZGZ0KwvcNtnm0sala7qCeODRkM6AisC2dF
+         oUzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724241289; x=1724846089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A1YX2miHAUi0+/dGV7pb1+2w+ezV83KYwxdEEwMmR18=;
+        b=i8peSddl1E4an0b3BmhuNF/iRq9DOgdbRJbzMQ7bhNYE4RiBUVhyGolPKw7KT1uI8J
+         lgE4Z8yJkrx3C26F11gWa5HDCVhuM4fAFNJRfCEyYHcelbtTpnsu4aZv+fVOKcVF3kzo
+         4u3HhUVdikB0Kn894yFz4Jym23FkYnaL/G8JFwnrGgQDX7kV8HB3RF5pQD7tq3Fg0uxe
+         mOodArpvUer+RWWtzgkym4+SARhfvTCiW/WLXGvszkrTxBQpSWMrfUWCv/BeKYg+AUKo
+         yb3leMoB2dGwCVu9AgQ6Wz2sqyAVq8jstODpJuG5dvPSCUieLxwzmCFmnZZlJd2C+zYc
+         5UGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNL3FaDyYRxRIEYnhMzU21EeeUdr+kbsUfoS4UILZDgjHQlRn0yjn12lRRVmC6iyXrIQv9inqgvFafxTgQ@vger.kernel.org, AJvYcCWxh8imdEBhkidyyojED98PzhdNHjzq0kYegL6si3DL09A8TyLS8UTKm1f0XXsMAAzWnAEpBkNai1RMgQ==@vger.kernel.org, AJvYcCXs2GYqD8ZLGHAYMq9WP9s4Ki0s0HwCPQdUsugADX8OOWGK5W+mGQZPtWEqihxauYrA5Ba02DlHnteLjbOuJ8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaV+9hrmuqeMRdGWljL3ks//VeTcZ0qCByv6OHBYFy15C5tjhw
+	Ggf8gTOAxA/3h54FXc5iHWvw7sjgijYYDQV/IhP5imm3lBo8XO50Jt8y1nNOQS9klG3EF71PHg+
+	8qFPp5tkrXaibmVkiwjkIaQbgLFk=
+X-Google-Smtp-Source: AGHT+IFHrNgx7Mk0k6i86ljxev3co52Px3UGqMq0OFJcxXsGwjnWhDqw7fIp0dTObjIm3aRC6xk0+3wBT5j4CIvDW70=
+X-Received: by 2002:a17:90b:2d4f:b0:2c2:d11b:14dd with SMTP id
+ 98e67ed59e1d1-2d5e98c2845mr1267711a91.0.1724241289195; Wed, 21 Aug 2024
+ 04:54:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <CANiq72mCsBO01FHbf4D0h0yvTV=TbpgO-jeTHLL39ae-JpMLZg@mail.gmail.com>
+ <CANiq72mrwBs_YTcBvge4ME5bwSLKbNaoFU+KZw3EfCTyGjiJ9w@mail.gmail.com>
+In-Reply-To: <CANiq72mrwBs_YTcBvge4ME5bwSLKbNaoFU+KZw3EfCTyGjiJ9w@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 21 Aug 2024 13:54:36 +0200
+Message-ID: <CANiq72mBonwX43d4y5VpZH+1ZWTnJxMfX889Aa3HHmY0_m5Mvg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rust: fix erranous use of lock class key in rust
+ block device bindings
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+	Andreas Hindborg <nmi@metaspace.dk>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	"Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Checking for index < 0 is useless because the find_deepest_state
-function never really returns a negative value. Since this code hasn't
-been reported in over 9 years it's dead code. Hence, remove it.
+On Wed, Aug 21, 2024 at 1:36=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Dirk noticed the Zulip link was broken due to a rename of the topic.
+> Normally I try to remember to convert them into message links (which
+> are permalinks) and to shorten them when they are too long too -- done
+> now.
+>
+> For context, Zulip is gaining the ability to get topic permalinks (see
+> https://github.com/zulip/zulip/issues/21505 -- we gave them feedback a
+> year ago that it would be useful for kernel commits), though I think
+> it is not exposed through the UI yet.
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
+It could be a good idea to warn about non-permalinks to Zulip in
+`checkpatch.pl` -- Cc'ing Andy and Joe and created an issue:
 
-Discussions on the original series that added this code:
-https://lore.kernel.org/linux-pm/20240821095105.xuf2a5xe3yxqqewj@lcpd911/T/#u
+    https://github.com/Rust-for-Linux/linux/issues/1104
 
- drivers/cpuidle/cpuidle.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-index 02e40fd7d948..9e418aec1755 100644
---- a/drivers/cpuidle/cpuidle.c
-+++ b/drivers/cpuidle/cpuidle.c
-@@ -228,10 +228,7 @@ noinstr int cpuidle_enter_state(struct cpuidle_device *dev,
- 	if (broadcast && tick_broadcast_enter()) {
- 		index = find_deepest_state(drv, dev, target_state->exit_latency_ns,
- 					   CPUIDLE_FLAG_TIMER_STOP, false);
--		if (index < 0) {
--			default_idle_call();
--			return -EBUSY;
--		}
-+
- 		target_state = &drv->states[index];
- 		broadcast = false;
- 	}
-
-base-commit: bb1b0acdcd66e0d8eedee3570d249e076b89ab32
--- 
-2.34.1
-
+Cheers,
+Miguel
 
