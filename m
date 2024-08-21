@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-295990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C91895A40E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5B695A411
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4E11C224B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:40:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C371C225A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBDB1B2EDD;
-	Wed, 21 Aug 2024 17:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d6xroles"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B548E1B5305;
+	Wed, 21 Aug 2024 17:40:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE0514E2CB;
-	Wed, 21 Aug 2024 17:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4090E14E2CB;
+	Wed, 21 Aug 2024 17:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724262027; cv=none; b=J7mvbeaI5ZAT5gyI33bhqzpjaPpt3FfMrLR+djHUpanVMN67JZCm2e9DvPOUwevCRprFwgC0CGbVgzLB1YHdbFrF9n7I2ModkrsCDGrM8PGpwQvECZySfLqBjC+S/TGViCsy9RSvGfOgRXxcGHDILPXCIu4u45Ou2L8FSuF2mNo=
+	t=1724262032; cv=none; b=Y/sxlSS+ppz3dTvSg8849lJjoOeT4Ygnr8/7+/AVe6Q2F5knd3qqxwKJjSKPS2pIPQq8vVPA6bHEx0iteF1QnaEjDfngYxEtwmGBlDDzxPKaNHAW0UtNPSxcUuVwiPtaDrr7Ey/TZaqRBUPaI1DR1/oUXCv+/cKlGlGAkXCSdhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724262027; c=relaxed/simple;
-	bh=5J7/T6yzl7KCInG4L9BPvu6uhru8cLsFwgiVNh3iKAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dxByxKGAet3XyAxCdPmDxRD7kqH8Jsa4jflrU33xaAzn3iPB/hKiaKia6h8EYY7LiaLX1hQ3yYSZ9bNfHDejak3qVIQ8yh+LjWVwbuQTFu4xB+0z0Z2mf48+GcsjmMUVcEJCaS1/DI1MfNQ4umvREnKPyH9ZUwIUzkmu7yxRoqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d6xroles; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=n3kDBkbvNGmhRIVwjhz1rAD3YtvE4/bk7VBRCSiZg/M=; b=d6xroles2VNGsSw7Cuev4NyOrr
-	2Sg+zDDW7Ifm9RlFgF6mphephl+Lun2ZuwywRq6I8r3jvJm0CqFucjw39BlYxiCbIk7IZGH/rUTzn
-	vFl7Z9yo7i/2QlhYv2pEx9ESI6hvsh8YUCczk9ZGA1Os0PGiwyphFjVh9uy1ahVa9NVFAU4/uj+PF
-	Yi44P+wK0fH4tgiK+OerTuvH0TNU2IP19ZiWq7uXZ/yUkAJ49jJwDTgQSQFbb7GHthcWburZ3Yogl
-	pBH0w6jDfAT3J8+GyQEhIh6Oyx9o6vJzpUuw8ChHSnBuO2M4XrXUSYFpq+iqpiESahLJdSiaJV052
-	Rw4xoyng==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgpJm-00000009wwx-1HtP;
-	Wed, 21 Aug 2024 17:40:22 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	petr.pavlu@suse.com,
-	samitolvanen@google.com,
-	da.gomez@samsung.com
-Cc: mcgrof@kernel.org,
-	kris.van.hees@oracle.com
-Subject: [PATCH] MAINTAINERS: scale modules with more reviewers
-Date: Wed, 21 Aug 2024 10:40:21 -0700
-Message-ID: <20240821174021.2371547-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1724262032; c=relaxed/simple;
+	bh=jTHolsPXS8wT18MlchshV3tM0629BPB8suiDRw/qZks=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tXoXh3SxK4rcyrwxa3AoyOTZj1cMAYpIVW7vf4yM0XiAVfqjpEAwFJPnpqOU0kuCtXe+HvFoA2ocMhJmWFXOFccjy2gh6BKqhYcTD1eShIGL58xzOj6wAyX9A1byePt7qVvKpM/zYYcg6KIeQ7EA+oLK+CBqkFoousFD2D/fsHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC791C32781;
+	Wed, 21 Aug 2024 17:40:28 +0000 (UTC)
+Date: Wed, 21 Aug 2024 13:40:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: <x86@kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ <linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+ <rafael@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+ <lenb@kernel.org>, <mchehab@kernel.org>, <james.morse@arm.com>,
+ <airlied@gmail.com>, <yazen.ghannam@amd.com>, <john.allen@amd.com>,
+ <avadnaik@amd.com>
+Subject: Re: [PATCH v4 2/4] x86/mce, EDAC/mce_amd: Add support for new
+ MCA_SYND{1,2} registers
+Message-ID: <20240821134057.6fc50940@gandalf.local.home>
+In-Reply-To: <20240815211635.1336721-3-avadhut.naik@amd.com>
+References: <20240815211635.1336721-1-avadhut.naik@amd.com>
+	<20240815211635.1336721-3-avadhut.naik@amd.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-We're looking to add Rust module support, and I don't speak
-Rust yet. The compromise was reached that in order to scale we'd
-get volunteers committed from the Rust community willing to review
-both Rust and C code for modules so we can ensure we get proper
-reviews for both parts of the code and so that we can scale.
+On Thu, 15 Aug 2024 16:16:33 -0500
+Avadhut Naik <avadhut.naik@amd.com> wrote:
 
-Add those who have stepped up to help.
+> diff --git a/include/trace/events/mce.h b/include/trace/events/mce.h
+> index 65aba1afcd07..1e7d5696b3ba 100644
+> --- a/include/trace/events/mce.h
+> +++ b/include/trace/events/mce.h
+> @@ -43,6 +43,8 @@ TRACE_EVENT(mce_record,
+>  		__field(	u8,		bank		)
+>  		__field(	u8,		cpuvendor	)
+>  		__field(	u32,		microcode	)
+> +		__field(	u8,		len	)
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
+You don't need to save the length. It's already saved in the
+__dynamic_array meta data.
 
-First order of business, please help review Kris Van Hees's patches with
-Rust in mind!
+> +		__dynamic_array(u8, v_data, sizeof(err->vendor))
+>  	),
+>  
+>  	TP_fast_assign(
+> @@ -65,9 +67,11 @@ TRACE_EVENT(mce_record,
+>  		__entry->bank		= err->m.bank;
+>  		__entry->cpuvendor	= err->m.cpuvendor;
+>  		__entry->microcode	= err->m.microcode;
+> +		__entry->len		= sizeof(err->vendor);
+> +		memcpy(__get_dynamic_array(v_data), &err->vendor, sizeof(err->vendor));
+>  	),
+>  
+> -	TP_printk("CPU: %d, MCGc/s: %llx/%llx, MC%d: %016Lx, IPID: %016Lx, ADDR: %016Lx, MISC: %016Lx, SYND: %016Lx, RIP: %02x:<%016Lx>, TSC: %llx, PPIN: %llx, vendor: %u, CPUID: %x, time: %llu, socket: %u, APIC: %x, microcode: %x",
+> +	TP_printk("CPU: %d, MCGc/s: %llx/%llx, MC%d: %016llx, IPID: %016llx, ADDR: %016llx, MISC: %016llx, SYND: %016llx, RIP: %02x:<%016llx>, TSC: %llx, PPIN: %llx, vendor: %u, CPUID: %x, time: %llu, socket: %u, APIC: %x, microcode: %x, vendor data: %s",
+>  		__entry->cpu,
+>  		__entry->mcgcap, __entry->mcgstatus,
+>  		__entry->bank, __entry->status,
+> @@ -83,7 +87,8 @@ TRACE_EVENT(mce_record,
+>  		__entry->walltime,
+>  		__entry->socketid,
+>  		__entry->apicid,
+> -		__entry->microcode)
+> +		__entry->microcode,
+> +		__print_array(__get_dynamic_array(v_data), __entry->len / 8, 8))
 
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+You can replace the __entry->len with:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..7e2cf251427d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15454,6 +15454,9 @@ F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
- 
- MODULE SUPPORT
- M:	Luis Chamberlain <mcgrof@kernel.org>
-+R:	Petr Pavlu <petr.pavlu@suse.com>
-+R:	Sami Tolvanen <samitolvanen@google.com>
-+R:	Daniel Gomez <da.gomez@samsung.com>
- L:	linux-modules@vger.kernel.org
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
--- 
-2.43.0
+		__print_array(__get_dynamic_array(v_data), __get_dynamic_array_len(v_data) / 8, 8))
+
+Hmm, I should add a helper function that would do the same with just:
+
+		__print_dynamic_array(vdata, 8);
+
+Where it will have __print_dynamic_array(array-name, el-size)
+
+-- Steve
+
+>  );
+>  
+>  #endif /* _TRACE_MCE_H */
 
 
