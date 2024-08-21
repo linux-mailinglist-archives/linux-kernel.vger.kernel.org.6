@@ -1,181 +1,118 @@
-Return-Path: <linux-kernel+bounces-296245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5029595A818
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:23:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FD295A81F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059562816C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:23:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B0A2B2193E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE5D17C9EB;
-	Wed, 21 Aug 2024 23:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816A017C9E9;
+	Wed, 21 Aug 2024 23:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fRMZjeEA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NFD2bP1d";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fRMZjeEA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NFD2bP1d"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lm6SfiSe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66A1494AD;
-	Wed, 21 Aug 2024 23:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CE61494AD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 23:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724282568; cv=none; b=IaELEqmNfjSYwKiagmmFr1hWkJCTzBMaLuwtlD1R3CAATZ+/9AG9a0TXYFKVmeAtlcHJ+lNf1qH+WwgNbrjmLRtpi260+QYo1dGPt2FHh6RQsIXvnDPBS2Bb4oZGkSFPTF59DBP/BMP74K0ghsa2bBEVd8uzxtLBJ7pNEWl94Lk=
+	t=1724282708; cv=none; b=Ga2lwsaD1dNG4RLBjTu+7sppRLLJljTpM+L8UOtbQhiEm5Gxs9k/BwjDMtaTCak56CafHQXTbYqoVaFDxXuAA7AXnZTcmO/LXtWpOCvmYFNn6/zbk/pv4BMhWJFCmE047mvEmZFaI0Ap2Wg8tsNx0n+lS+4udtJMqBavb190AeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724282568; c=relaxed/simple;
-	bh=kVhZqRkVV1bjvD670JLB8X4z7NTopasXuAIDVCcygdY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ety+K8pVZ+UMecN5MSrBR7aww8Sbriwa846k22K1Vfgn/H9+GJCiDJzJU+Bw5GBSQ/k37d5m9P1uPad+GKrDUca5bcZ6L8tBFtsag5L8rpa6J3X3RUj55vPfEfy/FE0Avwu6g9mygg3I2W70EyJfwmHqpbD0KDNuciGothb1gNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fRMZjeEA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NFD2bP1d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fRMZjeEA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NFD2bP1d; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BB2FD200FF;
-	Wed, 21 Aug 2024 23:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724282564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VqUrt7TEVe2jgA3XFvg/WNbxDZE9ihhU0buJlSZ4FU=;
-	b=fRMZjeEAPiwU8kAOxk7iq8G87VobLct+Y43y5nF1ZRhgBh0qsoJ2/Lz4YHFmhYOtW5OewE
-	Oxpv/saQVKxe0fG5jG057HqMGIJPy8UgiINT1hA2t3R82t+i2sqsnupm9Pg+IBxxsqR407
-	r+86/jGo4jJtOaHngXebdPvsv3CcuK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724282564;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VqUrt7TEVe2jgA3XFvg/WNbxDZE9ihhU0buJlSZ4FU=;
-	b=NFD2bP1dhXmZyOe4jau1both/UEfeSxP44nftleYUtpcrvTKbxSCVFeDrwFQwVfVZWGuX7
-	Ck+qdVCPKLd7OZBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724282564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VqUrt7TEVe2jgA3XFvg/WNbxDZE9ihhU0buJlSZ4FU=;
-	b=fRMZjeEAPiwU8kAOxk7iq8G87VobLct+Y43y5nF1ZRhgBh0qsoJ2/Lz4YHFmhYOtW5OewE
-	Oxpv/saQVKxe0fG5jG057HqMGIJPy8UgiINT1hA2t3R82t+i2sqsnupm9Pg+IBxxsqR407
-	r+86/jGo4jJtOaHngXebdPvsv3CcuK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724282564;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VqUrt7TEVe2jgA3XFvg/WNbxDZE9ihhU0buJlSZ4FU=;
-	b=NFD2bP1dhXmZyOe4jau1both/UEfeSxP44nftleYUtpcrvTKbxSCVFeDrwFQwVfVZWGuX7
-	Ck+qdVCPKLd7OZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7727513770;
-	Wed, 21 Aug 2024 23:22:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Sj3PFsR2xmaRUAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 21 Aug 2024 23:22:44 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: viro@zeniv.linux.org.uk,  brauner@kernel.org,  tytso@mit.edu,
-  linux-ext4@vger.kernel.org,  jack@suse.cz,  adilger.kernel@dilger.ca,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  kernel@collabora.com,  shreeya.patel@collabora.com
-Subject: Re: [PATCH 1/2] fs/dcache: introduce d_alloc_parallel_check_existing
-In-Reply-To: <2df894de-8fa9-40c2-ba2c-f9ae65520656@collabora.com> (Eugen
-	Hristev's message of "Wed, 21 Aug 2024 12:10:23 +0300")
-Organization: SUSE
-References: <20240705062621.630604-1-eugen.hristev@collabora.com>
-	<20240705062621.630604-2-eugen.hristev@collabora.com>
-	<87zfp7rltx.fsf@mailhost.krisman.be>
-	<2df894de-8fa9-40c2-ba2c-f9ae65520656@collabora.com>
-Date: Wed, 21 Aug 2024 19:22:39 -0400
-Message-ID: <87jzg9wjeo.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724282708; c=relaxed/simple;
+	bh=2raBv8nu1Lb3plRPHtPzM8gQRb7u60QiDwXZTGO85fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oA4S9kE0IKBrhK+hgTPBCNNpwdE0xOYOZCK5ucIAPZhL8g16L1ClbM4md/VpkcQakzVCxpTXue6okNh1DSePVmlcCiKWNoYiusgzWg2v/M1yyBHySpQaEP37MONhab7ldkxJ6MZAKWawP/7FfBgF9GZWGeABwNUXw2Czpeb+tpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lm6SfiSe; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724282707; x=1755818707;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=2raBv8nu1Lb3plRPHtPzM8gQRb7u60QiDwXZTGO85fg=;
+  b=Lm6SfiSes43FYxO0Z8scvrucQMtVsxnrFBoD9QXc2cNhT0ozM/J7mDR5
+   /WgCByKEYSKAnwhL7UAdoAAZlblr+GfFdWVNJhL2H64vbZ/if4EiajaL7
+   K98s03sdW2F50JAzZ1N5EBcDT0VLjyPNp+HHpBcAbt4/nF1HOCZ3+GU8a
+   3C4ptQMBJlIGVPWiGiCueCycuab+vB45M2IX/1WJFJodb/JADvfrJrDR0
+   qxlxs/UCv5nQKPzwfiFcqibihRO5eW/OvWSsoifxu0B9hD2zKsampSCJ1
+   lYSyxy+I7Zq9DU6sRt2oX8prNv45MtutbZ6WFpQyo1VRdI+cxMbPuvCHt
+   g==;
+X-CSE-ConnectionGUID: 4laujNjTTJS07Ok89IJ8SA==
+X-CSE-MsgGUID: qJeopnxTSECsuuQtZA/Oxw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="48067166"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="48067166"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 16:25:06 -0700
+X-CSE-ConnectionGUID: bWxU4KWrQI+x0EccHeUwVQ==
+X-CSE-MsgGUID: eD+l1axjRzayP5hh/PXonw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="66129107"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 21 Aug 2024 16:25:04 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sguhK-000C2q-0G;
+	Wed, 21 Aug 2024 23:25:02 +0000
+Date: Thu, 22 Aug 2024 07:24:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pawel Chmielewski <pawel.chmielewski@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Paul Greenwalt <paul.greenwalt@intel.com>,
+	Simon Horman <horms@kernel.org>
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ ice_adv_lnk_speed_maps+0x14 (section: .data) ->
+ __setup_str_initcall_blacklist (section: .init.rodata)
+Message-ID: <202408220755.LlaA10C6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.986];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+Hi Pawel,
 
-> Yes, but we cannot add another dentry for the same file with a different case.
-> That would break everything about dentry lookups, etc.
-> We need to have the one dentry in the cache which use the right case. Regardless of
-> the case of the lookup.
->
-> As Al Viro said here :
-> https://lore.kernel.org/lkml/YVmyYP25kgGq9uEy@zeniv-ca.linux.org.uk/
-> we cannot have parallel lookups for names that would compare as equals (two
-> different dentries for the same file with different case).
->
-> So yes, I return the same dentry-under-lookup, because that's the purpose of that
-> search, return it, have it use the right case, and then splice it to the cache.
+FYI, the error/warning still remains.
 
-It is not changing the case of the returned dentry.  The patch simply
-returns the same dentry you sent to d_alloc_parallel, which is then
-spliced into the cache. Exactly as if you had issued d_splice_alias
-directly.  You are just doing a hop in d_alloc_parallel and finding the
-same dentry.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b311c1b497e51a628aa89e7cb954481e5f9dced2
+commit: 982b0192db455d288fc1deb06632f529c35daa15 ice: Refactor finding advertised link speed
+date:   10 months ago
+config: xtensa-randconfig-r123-20240821 (https://download.01.org/0day-ci/archive/20240822/202408220755.LlaA10C6-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240822/202408220755.LlaA10C6-lkp@intel.com/reproduce)
 
-A quick test case below. You can print the ->d_name through
-several methods. I'm doing it by reading /proc/self/cwd.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408220755.LlaA10C6-lkp@intel.com/
 
-$ # In a case-insensitive filesystem
-$ mkdir cf &&  chattr +F cf
-$ mkdir cf/hello
-$ echo 3 > /proc/sys/vm/drop_caches    # drop the dentry created above
-$ cd cf/HELLO                          # provoke a case-inexact lookup.
-$ readlink /proc/self/cwd
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-If we replaced the dentry with the disk name, it should
-print <mnt>/cf/hello.  With your patch, it still prints <mnt>/cf/HELLO
-
-Al,
-
-Would it be acceptable to just change the dentry->d_name here in a new
-flavor of d_add_ci used only by these filesystems? We are inside the
-creation path, so the dentry has never been hashed.  Concurrent lookups
-will be stuck in d_wait_lookup() until we are done and will never become
-invalid after the change because the lookup was already done
-case-insensitively, so they all match the same dentry, per-definition,
-and we know there is no other matching dentries in the directory.  We'd
-only need to be careful not to expose partial names to concurrent
-parallel lookups.
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: vmlinux: section mismatch in reference: put_page+0x78 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
+>> WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0x14 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0x30 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0x4c (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0x68 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0x84 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0xa0 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0xbc (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0xd8 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
+WARNING: modpost: vmlinux: section mismatch in reference: ice_adv_lnk_speed_maps+0xf4 (section: .data) -> __setup_str_initcall_blacklist (section: .init.rodata)
 
 -- 
-Gabriel Krisman Bertazi
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
