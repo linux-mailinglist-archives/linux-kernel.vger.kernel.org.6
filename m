@@ -1,44 +1,63 @@
-Return-Path: <linux-kernel+bounces-296102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C76295A59A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:02:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C64995A5A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C648D1F22E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:02:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9BE7B21656
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D673016EBF2;
-	Wed, 21 Aug 2024 20:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D6116F830;
+	Wed, 21 Aug 2024 20:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfZvrrYl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4AF1D12F4;
-	Wed, 21 Aug 2024 20:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407C11D12F4;
+	Wed, 21 Aug 2024 20:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724270568; cv=none; b=YseLbovTga8VwE79ecxIAqQVnksFV1ALNdSi+bK0wvjKx+gYT/hlGcpCeRfE1Tya9oQN7NXEToPXr3ysPeyuWeDNPCS3IjKifFHAhHgM80epW6oKOfycP8p16685pJFX2GHOKdwYCN5aMYM23aF8x0iht4GXmyKj4ALnJjxrNH8=
+	t=1724270801; cv=none; b=eoMz8a76DgSfqHq60NaNTYLNcBJtnAmlpG9Y7+J0JPdnv++IqpDd550foV0BHKaTfDCIfu+ljniscmOSUSd10KqYXowRSvw7yvPJRPuLJ4gWweBAkDsEb/2WAx5bTf6y6XkJgscAmkpVY2LRdrETy1XBF7eKbxKPmtJcYOX52f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724270568; c=relaxed/simple;
-	bh=tI5ZaN2q9beYFxeyC9+OeG4IAqlbIBMFtwZqiRU4IRw=;
+	s=arc-20240116; t=1724270801; c=relaxed/simple;
+	bh=vq4i41ddTv1QbpXx1GaVqVWySCl8p9LHMx5IMZcoRA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AAU6neCKzEttI/JCeBObKOLmFQkupADqRtS+O00ewOTHz3J2tvyOv+P19OcU/k6stVZkbvmtVLUmmnTL+G65UMwBbD4upCNS/c2D06PLtObu4tvv3STot+7di+kSjaiMCLpaRvHwYoYgfvifLv8uruCoye/SYla43Be0VcOGyG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 632CBC32781;
-	Wed, 21 Aug 2024 20:02:47 +0000 (UTC)
-Date: Wed, 21 Aug 2024 16:03:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: tglozar@redhat.com
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
- timerlat_fd_release
-Message-ID: <20240821160316.02c03c44@gandalf.local.home>
-In-Reply-To: <20240820130001.124768-1-tglozar@redhat.com>
-References: <20240820130001.124768-1-tglozar@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=FzlZqTF597TaNuaTZMVK3QH6HjTIRR7fAfGyRgBLAf2u1ze1Guw77LxsUUHKDAgez5B5EAALpef4SUBz4rdAiyKxeOWRoZh5t88zsQbJMlqU3QyVlqzm2QTU0EttZ+ghM5LywwgzuhJC+jxflS7gLRi7/5DRTSqfeHLAszUjGeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfZvrrYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEC7C32781;
+	Wed, 21 Aug 2024 20:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724270801;
+	bh=vq4i41ddTv1QbpXx1GaVqVWySCl8p9LHMx5IMZcoRA0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NfZvrrYluhBrsNSyj1NmLmqNgSKWZZojn8EyfObCElZtGO/IYitPjFE3VlwZxNjoa
+	 KwmEnU/ibMt7cA84u3Kg3NGsz+flkPv9PHU1dF2tuJ2diL+Ln2KAVrAUr5HEPSm5Sp
+	 27qURFqAMTgpvXrIs47qBl5ee0CRAoNfZh1zgcvC6mNDVmwGKHyL7SYsJiKWJl4Au5
+	 bHvumvdpW6eM0u7RIeu8w7R6jrmxoF8UWY9uBgajCKlx/01oXUSOMP88GaHu3HZ+FE
+	 foxUYl+1wTLMXXQz6dPIhejZ46sNGyj0ERg69wSvPmd/hN2A0cseqhg9HAnRZmEdJy
+	 iI+2HkX5zkxOQ==
+Date: Wed, 21 Aug 2024 21:06:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Fabrice Gasnier
+ <fabrice.gasnier@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: st,stm32-adc: add top-level
+ constraints
+Message-ID: <20240821210633.3741bf8f@jic23-huawei>
+In-Reply-To: <20240819-outflank-variety-3fcb7ca0338a@spud>
+References: <20240818172951.121983-1-krzysztof.kozlowski@linaro.org>
+	<20240819-outflank-variety-3fcb7ca0338a@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,34 +67,46 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Aug 2024 15:00:01 +0200
-tglozar@redhat.com wrote:
+On Mon, 19 Aug 2024 18:13:22 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-> From: Tomas Glozar <tglozar@redhat.com>
+> On Sun, Aug 18, 2024 at 07:29:51PM +0200, Krzysztof Kozlowski wrote:
+> > Properties with variable number of items per each device are expected to
+> > have widest constraints in top-level "properties:" block and further
+> > customized (narrowed) in "if:then:".  Add missing top-level constraints
+> > for clock-names.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---  
 > 
-> When running timerlat with a userspace workload (NO_OSNOISE_WORKLOAD),
-> NULL pointer dereference can be triggered by sending consequent SIGINT
-> and SIGTERM signals to the workload process. That then causes
-> timerlat_fd_release to be called twice in a row, and the second time,
-> hrtimer_cancel is called on a zeroed hrtimer struct, causing the NULL
-> dereference.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Applied,
+
+Thanks,
+
+Jonathan
+
 > 
-> This can be reproduced using rtla:
-> ```
-> $ while true; do rtla timerlat top -u -q & PID=$!; sleep 5; \
->  kill -INT $PID; sleep 0.001; kill -TERM $PID; wait $PID; done
-> [1] 1675
-> [1]+  Aborted (SIGTERM)      rtla timerlat top -u -q
-> [1] 1688
-> client_loop: send disconnect: Broken pipe
-> ```
-> triggering the bug:
+> >  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> > index ec34c48d4878..ef9dcc365eab 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> > @@ -54,7 +54,9 @@ properties:
+> >            It's not present on stm32f4.
+> >            It's required on stm32h7 and stm32mp1.
+> >  
+> > -  clock-names: true
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 2
+> >  
+> >    st,max-clk-rate-hz:
+> >      description:
+> > -- 
+> > 2.43.0
+> >   
 
-I'm able to reproduce this with the above. Unfortunately, I can still
-reproduce it after applying this patch :-(
-
-Looking at the code, the logic for handling the kthread seems off. I'll
-spend a little time to see if I can figure it out.
-
--- Steve
 
