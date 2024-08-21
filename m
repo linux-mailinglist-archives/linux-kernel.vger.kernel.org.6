@@ -1,183 +1,208 @@
-Return-Path: <linux-kernel+bounces-296244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA7D95A813
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BFE95A81C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75C71F230CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B01281B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A410717C9EA;
-	Wed, 21 Aug 2024 23:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B2717A5B5;
+	Wed, 21 Aug 2024 23:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKiFdI6X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="altrLWij"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14441494AD;
-	Wed, 21 Aug 2024 23:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724282051; cv=none; b=TXXzSdFVPDKLtsX7MwbDVvNVaCt+2IwLxiPT2GitLvy0QFtyIbnLnfMcMwEAMPpwQrtswMW1gNlRuELDCi/Q6czsJVchljHKwYSgLqzr7IJiAxrIz3EtV5Z651EiDO/qZ05vJM42mku2inVEer3Z1X4Z5nhYAu1hsL4J0FZyxyA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724282051; c=relaxed/simple;
-	bh=5jrbVAdo6wAYvsEzV739oZ/MNr2YMBA+5HAAwIrmh+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7Xnt+zLDdmFlNdS6p6WbLe7Q4nC5FgpIy3xvxoo7yJHYzZyC2wPXodeEATWTw2KoaryH+BrGriZXEANnw3cfv84sq9qq77ieM4+9RY/34CcY+rRoc35+BH35f8tUPpljji+zHpIYjeIAiwh/m4M09vdOcvk0+2sb1HePLA0TSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKiFdI6X; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724282049; x=1755818049;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5jrbVAdo6wAYvsEzV739oZ/MNr2YMBA+5HAAwIrmh+I=;
-  b=OKiFdI6XwImVVyCo0/WEqk8PsPfph9ky+BggGF7xB7aKdtTlnpZq5zTL
-   7KjCWIYd87v1ed/9DJk5lx3upcHgiwhk7f9ieMoXu8ENKYDFx1pMtExJs
-   RFQ+I5o29o+3YEtvnvo/huxWz77Ao6pvTh1irjEz5TDnx34cEoGUAlpJT
-   uBCArattqBTgnJa6ozdH7gi9wpo6zaM/fjW2iBJPjWYa2xXLGW/F+tWiA
-   G19OgXRx5O1skQuSzPTw6a1TM1wRsLfJAH2Lmz2mEdqgNdRC7T5D5QNKZ
-   H39ni93XiOPJptSlODwZxOMx8guCopsrAYnaztHvZEPKJNITDcPmheF9I
-   Q==;
-X-CSE-ConnectionGUID: Mf//EcDZSqOasYCao1N7Lw==
-X-CSE-MsgGUID: 3NcqAnf3QlCnLPhwTv/NMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="48066171"
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="48066171"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 16:14:08 -0700
-X-CSE-ConnectionGUID: 3IVNMZUQSgeppVVPDSfDxw==
-X-CSE-MsgGUID: 1sJH8KpESnyRhMvJMrQQyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="66126930"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 21 Aug 2024 16:14:04 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sguWf-000C2W-2C;
-	Wed, 21 Aug 2024 23:14:01 +0000
-Date: Thu, 22 Aug 2024 07:13:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
-	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
-Message-ID: <202408220503.hxIARcuf-lkp@intel.com>
-References: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7D31494AD;
+	Wed, 21 Aug 2024 23:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724282594; cv=pass; b=VWHEqgzMZfboIQ4AwrchKJujQdjoNe+OLviUNFqqeIB0x+G8EC23ftY6Yw6vuFW23M3FlscNVX+dXRJmCg0gNABTJPGVJZugh+6fKw02wBsoPFGeXuw8LiHBAbhTrzH+OPuCh45Jm/QixWdv51gnSTxSoqVS3zhl9cAOao8NMGs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724282594; c=relaxed/simple;
+	bh=iKpiD52l3KlHflPkTDvBVBMOZo7fhbwgZ0OAJKfV2F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNtRkuXT8SoCxPakgouPw7suytL2jy+P73KEQY79ojE/f0jCGVS/lh1n45gARKPIIbMIt2wAMRhFZitA/SFGs7olD0LSd21hM/X8dJfAMmqnhBijaMqR9HlvrTN3pysxrdtp+kUhiB5fJaWNrG65YlPeUdKCZeinph+83CplxVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=altrLWij; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724282547; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z1kZ70M4AQmqO7ocFJ25E+U8KlGI+1YGZQuOSHbE+herSdaGkz/f7z4/tC0fl0o39rhCteScmhgD7aUvAtKwNB1ANnoewVtYnDkg6YatHgzcCMr+LRIvsa1TMYSYNTXacAfOTpfOiMILUqnPK/+dpje8ZSHKw5+mB97nlHaxb68=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724282547; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+ZBYReoU+D/75zzzqj2C41bM7dDfvJWCGG/dMUABDks=; 
+	b=Z8xZ7vC82HSlrjbUdckzLb5Eo4EQr/TrWO1AjJlThgkyVRdWPK2koaU8j0UY8lfQamXDs1pdJJY9Z6cM6a39jxaP2M5qhmJ1pvkMUFAhh6ifAU/fa5whmVCEbA/O/PHehiunIfBpDHn2L02X7ibO6weWaQz/c/gQ9tGM3o4sYVs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
+	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724282547;
+	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=+ZBYReoU+D/75zzzqj2C41bM7dDfvJWCGG/dMUABDks=;
+	b=altrLWijDDpGZiuNratl8pK6bSmLCgb+5lDP011AAJS5Y88O4stCpBrk6zFZ5Pqo
+	8w5SyYzOeXGSrGzG3CeqWtE8pmhKp9azUpZPp4pdcnC3KuGcExyokfhR5L1GFPF1tb3
+	/xD2fMYdnontTLWsU+iQlBpCnXh5WKBHpB6cbheY=
+Received: by mx.zohomail.com with SMTPS id 1724282544339506.061756257801;
+	Wed, 21 Aug 2024 16:22:24 -0700 (PDT)
+Message-ID: <2085e998-a453-4893-9e80-3be68b0fb13d@collabora.com>
+Date: Thu, 22 Aug 2024 02:22:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] dt-bindings: display: rockchip: Add schema for
+ RK3588 HDMI TX Controller
+To: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>
+References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
+ <20240819-b4-rk3588-bridge-upstream-v4-3-6417c72a2749@collabora.com>
+ <20240819-bobbing-purplish-99e48baa2304@spud>
+ <ec84bc0b-c4c2-4735-9f34-52bc3a852aaf@collabora.com>
+ <20240820-tropics-hunchback-6fdcd0b37f91@spud>
+ <038073d0-d4b9-4938-9a51-ea2aeb4530f6@collabora.com>
+ <20240821-evoke-mop-fb09ceef3597@spud>
+ <5813cea2-4890-4fa9-8826-19be5bf3e161@collabora.com>
+ <20240821-stretch-scam-09d7adc08a4c@spud>
+ <7E8109D4-A353-4FE3-9152-3C3C6CB7D634@sntech.de>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <7E8109D4-A353-4FE3-9152-3C3C6CB7D634@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Billy,
+On 8/22/24 12:38 AM, Heiko Stuebner wrote:
+> 
+> 
+> Am 21. August 2024 23:28:55 MESZ schrieb Conor Dooley <conor@kernel.org>:
+>> Cristian, Heiko,
+>>
+>> On Wed, Aug 21, 2024 at 11:38:01PM +0300, Cristian Ciocaltea wrote:
+>>> On 8/21/24 6:07 PM, Conor Dooley wrote:
+>>>> On Tue, Aug 20, 2024 at 11:12:45PM +0300, Cristian Ciocaltea wrote:
+>>>>> On 8/20/24 7:14 PM, Conor Dooley wrote:
+>>>>>> On Tue, Aug 20, 2024 at 03:37:44PM +0300, Cristian Ciocaltea wrote:
+>>>>>>> On 8/19/24 7:53 PM, Conor Dooley wrote:
+>>>>>>>> On Mon, Aug 19, 2024 at 01:29:30AM +0300, Cristian Ciocaltea wrote:
+>>>>>>>>> +  rockchip,grf:
+>>>>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>>>>>> +    description:
+>>>>>>>>> +      Most HDMI QP related data is accessed through SYS GRF regs.
+>>>>>>>>> +
+>>>>>>>>> +  rockchip,vo1-grf:
+>>>>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>>>>>> +    description:
+>>>>>>>>> +      Additional HDMI QP related data is accessed through VO1 GRF regs.
+>>>>>>>>
+>>>>>>>> Why are these required? What prevents you looking up the syscons by
+>>>>>>>> compatible?
+>>>>>>>
+>>>>>>> That is for getting the proper instance:
+>>>>>>
+>>>>>> Ah, that makes sense. I am, however, curious why these have the same
+>>>>>> compatible when they have different sized regions allocated to them.
+>>>>>
+>>>>> Good question, didn't notice.  I've just checked the TRM and, in both
+>>>>> cases, the maximum register offset is within the 0x100 range.  Presumably
+>>>>> this is nothing but an inconsistency, as the syscons have been added in
+>>>>> separate commits.
+>>>>
+>>>> Is that TRM publicly available? I do find it curious that devices sound
+>>>> like they have different contents have the same compatible. In my view,
+>>>> that is incorrect and they should have unique compatibles if the
+>>>> contents (and therefore the programming model) differs.
+>>>
+>>> Don't know if there's an official location to get it from, but a quick
+>>> search on internet shows a few repos providing them, e.g. [1].
+>>>
+>>> Comparing "6.14 VO0_GRF Register Description" at pg. 777 with "6.15 VO1_GRF
+>>> Register Description" at pg. 786 (from Part1) reveals the layout is mostly
+>>> similar, with a few variations though.
+>>
+>> Page references and everything, thank you very much. I don't think those
+>> two GRFs should have the same compatibles, they're, as you say, similar
+>> but not identical. Seems like a bug to me!
+>>
+>> Heiko, what do you think?
+> 
+> Yes, while the register names sound similar, looking at the bit
+> definitions this evening revealed that they handle vastly different
+> settings.
+> 
+> So I guess we should fix the compatibles. They are all about graphics
+> stuff and HDMI actually is the first output, so right now WE can at least
+> still claim the no-users joker ;-)
 
-kernel test robot noticed the following build errors:
+I couldn't find any driver doing a lookup for them by compatible, so I
+think it's fine to fix them - should we go for "rockchip,rk3588-vo0-grf" and
+"rockchip,rk3588-vo1-grf", respectively?
 
-[auto build test ERROR on brgl/gpio/for-next]
-[also build test ERROR on linus/master v6.11-rc4 next-20240821]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+vo0_grf seems to be used by the usbdp phy nodes:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240821-150951
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240821070740.2378602-3-billy_tsai%40aspeedtech.com
-patch subject: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
-config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20240822/202408220503.hxIARcuf-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408220503.hxIARcuf-lkp@intel.com/reproduce)
+    usbdp_phy0: phy@fed80000 {
+        compatible = "rockchip,rk3588-usbdp-phy";
+        [...]
+        rockchip,vo-grf = <&vo0_grf>;
+        [...]
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408220503.hxIARcuf-lkp@intel.com/
+Same for "usbdp_phy1: phy@fed90000".
 
-All error/warnings (new ones prefixed by >>):
+While vo1_grf is present in:
 
-   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
->> drivers/gpio/gpio-aspeed-g7.c:474:48: error: passing argument 1 of 'pinctrl_gpio_request' makes pointer from integer without a cast [-Wint-conversion]
-     474 |         return pinctrl_gpio_request(chip->base + offset);
-         |                                     ~~~~~~~~~~~^~~~~~~~
-         |                                                |
-         |                                                unsigned int
-   In file included from drivers/gpio/gpio-aspeed-g7.c:16:
-   include/linux/pinctrl/consumer.h:30:44: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
-      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
-         |                          ~~~~~~~~~~~~~~~~~~^~
->> drivers/gpio/gpio-aspeed-g7.c:474:16: error: too few arguments to function 'pinctrl_gpio_request'
-     474 |         return pinctrl_gpio_request(chip->base + offset);
-         |                ^~~~~~~~~~~~~~~~~~~~
-   include/linux/pinctrl/consumer.h:30:5: note: declared here
-      30 | int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
-         |     ^~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_free':
->> drivers/gpio/gpio-aspeed-g7.c:479:38: error: passing argument 1 of 'pinctrl_gpio_free' makes pointer from integer without a cast [-Wint-conversion]
-     479 |         pinctrl_gpio_free(chip->base + offset);
-         |                           ~~~~~~~~~~~^~~~~~~~
-         |                                      |
-         |                                      unsigned int
-   include/linux/pinctrl/consumer.h:31:42: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
-      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
-         |                        ~~~~~~~~~~~~~~~~~~^~
->> drivers/gpio/gpio-aspeed-g7.c:479:9: error: too few arguments to function 'pinctrl_gpio_free'
-     479 |         pinctrl_gpio_free(chip->base + offset);
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/pinctrl/consumer.h:31:6: note: declared here
-      31 | void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
-         |      ^~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_set_config':
->> drivers/gpio/gpio-aspeed-g7.c:676:48: error: passing argument 1 of 'pinctrl_gpio_set_config' makes pointer from integer without a cast [-Wint-conversion]
-     676 |                 return pinctrl_gpio_set_config(offset, config);
-         |                                                ^~~~~~
-         |                                                |
-         |                                                unsigned int
-   include/linux/pinctrl/consumer.h:36:47: note: expected 'struct gpio_chip *' but argument is of type 'unsigned int'
-      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-         |                             ~~~~~~~~~~~~~~~~~~^~
->> drivers/gpio/gpio-aspeed-g7.c:676:24: error: too few arguments to function 'pinctrl_gpio_set_config'
-     676 |                 return pinctrl_gpio_set_config(offset, config);
-         |                        ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pinctrl/consumer.h:36:5: note: declared here
-      36 | int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-         |     ^~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed-g7.c: In function 'aspeed_gpio_g7_request':
->> drivers/gpio/gpio-aspeed-g7.c:475:1: warning: control reaches end of non-void function [-Wreturn-type]
-     475 | }
-         | ^
+    vop: vop@fdd90000 {
+        compatible = "rockchip,rk3588-vop";
+        [...]
+        rockchip,vo1-grf = <&vo1_grf>;
+        [...]
 
+I guess it's too late to drop them while updating the related drivers
+accordingly, hence I wonder if we should keep using the phandles for this
+HDMI thing as well, for consistency reasons.
 
-vim +/pinctrl_gpio_request +474 drivers/gpio/gpio-aspeed-g7.c
+Thanks,
+Cristian
 
-   468	
-   469	static int aspeed_gpio_g7_request(struct gpio_chip *chip, unsigned int offset)
-   470	{
-   471		if (!have_gpio(gpiochip_get_data(chip), offset))
-   472			return -ENODEV;
-   473	
- > 474		return pinctrl_gpio_request(chip->base + offset);
- > 475	}
-   476	
-   477	static void aspeed_gpio_g7_free(struct gpio_chip *chip, unsigned int offset)
-   478	{
- > 479		pinctrl_gpio_free(chip->base + offset);
-   480	}
-   481	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Heiko
+> 
+>>
+>>> [1] https://github.com/FanX-Tek/rk3588-TRM-and-Datasheet
+>>>
+>>>>>
+>>>>>>> 	vo0_grf: syscon@fd5a6000 {
+>>>>>>> 		compatible = "rockchip,rk3588-vo-grf", "syscon";
+>>>>>>> 		reg = <0x0 0xfd5a6000 0x0 0x2000>;
+>>>>>>> 		clocks = <&cru PCLK_VO0GRF>;
+>>>>>>> 	};
+>>>>>>>
+>>>>>>> 	vo1_grf: syscon@fd5a8000 {
+>>>>>>> 		compatible = "rockchip,rk3588-vo-grf", "syscon";
+>>>>>>> 		reg = <0x0 0xfd5a8000 0x0 0x100>;
+>>>>>>> 		clocks = <&cru PCLK_VO1GRF>;
+>>>>>>> 	};
+>>>>
+> 
 
