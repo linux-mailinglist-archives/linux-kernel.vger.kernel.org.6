@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-295464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888D0959B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD56959B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42879283293
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954E11C226CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E2C17A590;
-	Wed, 21 Aug 2024 12:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDCE1D130C;
+	Wed, 21 Aug 2024 12:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="el4ac9Ch"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lL7c/10f"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F5A1514E2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7621D1305;
+	Wed, 21 Aug 2024 12:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724242141; cv=none; b=plsmy6342mbu9s+DDT3D7l/DGWhdbFkEj9+Mj+HOiqwkJR6cNRzucWpD0Fjkkdtv4Mu3w8Je7CoWV+rcBgjmXSsP/bwkCp3e7COeaaDmuQOykuT2J4bxpBc3xgVkcyWUqow1mExCZrj+tBkOxb75nn+0+dSwz+rm4EOQ6Hb94Xg=
+	t=1724242132; cv=none; b=WQJUyVPbN4VcaYl458gjEypZtmzyEQAKtdC+maaW7zOHiX//prvMiUwHb+S+4nce/LsC8ar/QjmV+dci1fgYES3dOzkHr7RB1h9XGgHjnV/OHPrpueuU4O3OTRWtyLJzv6CVrA1oWmO5SVxc7KEEUa3vBmSCKCinVrGhObw7WHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724242141; c=relaxed/simple;
-	bh=DA1X9Ve0Vn6diqrYfPjFkkduWMPJiWV9pT4xIJEPvqY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7l+a6nWBATCZoEy6CPcWbRXG8zMw51w/i/KbEvLC34I3fLcBhyu1iRvO//xR+Zsz/4Ludakq7Xbl8dZo1nBW7Xke00MFAw49Aap1LPk7mFTYu1puAJWSVedoCWdRtYHTuusDYk+kmK2RClKFqpVc+ky2gjXwMAiE4REPNL/40k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=el4ac9Ch; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37182eee02dso432314f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724242137; x=1724846937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mDwqhRHhMBQJ/+TLyoRpyJFlfsxxIUrIdKu8FSn6JKQ=;
-        b=el4ac9ChIdU3dbBwOzt1Ipwcxb58MCdsiuKZO3aBWpLg7jNbUs066ybdpBPeCYXCTn
-         7gicQIB1zld37AXYhH5LqLi5QzYsaMWDfWln8mU8FGHaTmcwg4plNC7FxPOCOVr1WoeM
-         YJZOMOBMehuGPWIDYYukie6A1j0LoQbimC9sEqdsljqKu2F987/mcxABHlMHETQXW/6z
-         2PlpI3gKBbvHJPY3tna82klmpc1iFjRXYV7Gg3MfHccFrdUy+/skUWRs5xU34Y+v9IL/
-         xCOcuZhEAYb1Wk5NB3832Z2tKroexKQrUsZfhTf+V0Zy/o9NLuwfCAnn6Vdx9huXTllR
-         ODPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724242137; x=1724846937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mDwqhRHhMBQJ/+TLyoRpyJFlfsxxIUrIdKu8FSn6JKQ=;
-        b=amGDy3yiFHwVjbTJFAx5OqllYYCdb41LaYe7gSCJq+GfB64iJKEZyFxq+ZhkbDDGBd
-         78p+R1ZDjLrqiyWyqdKjrDvNGi5UjHcyywofwZfH+thwZN+umKPgzLGMBbpiTBQ8vaTv
-         is/lOz20Nao/+S9YYSvXKAwmjmTh0V0iUfbI1CL67YJ7UZyWAiPMoMU99Bzd3LdgwsIe
-         m19S+WEUWuJyroEzpF2yv6FnaWtYIsNmHxRodn3rlksL80shF6b3EfznJcIK53+WQ20F
-         aG3sNNW41KuyxhaAkMZoakonPxVeNmAkJwu5WwyVkB0oQzagveQlsxc+PqYB5mn9+Mt3
-         Ov8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVo5OBR3wY7MeV82tH41WfUdI5JjJ1CM/kvgyDXDPyklw6mkPMGf5xQE6rMNAigddXd7/SX2jsXfupZXE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgKv0mDiEp4l0EG9TiukiMiALgla1+RINOxom2tZVAvGNsAeFR
-	ADDpPp3wEUzlT0tee8SyU98cZymrNnOq42yXSMNWgH9JJ93EQGuT1juev0kfLcCwI8ElmcdCklW
-	HLYqdvD6R0HdBmmbT+dFlA5Mpw57ssZ3EmXNY
-X-Google-Smtp-Source: AGHT+IF/+B4e2rOwDucRvS4kWT6EeKo58j00U+Ub/62J14Eex9C5zjjnxt5zAjMaLCrIZo2JrYvwnhV20MJ6wjBJhW4=
-X-Received: by 2002:a05:6000:b01:b0:366:dfc4:3790 with SMTP id
- ffacd0b85a97d-372fd98d681mr1189198f8f.0.1724242136775; Wed, 21 Aug 2024
- 05:08:56 -0700 (PDT)
+	s=arc-20240116; t=1724242132; c=relaxed/simple;
+	bh=dbe4R2RH0+1sKJgg7eyP6A1jmv60YMmn98/QNoWzjVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uEn45CizjVQJURp2RAemy7j/J/nfHrfMXL46LKYDleMHolFfF8EtvNcPjQkjonNnXInVPTxLRAmw9Wuv+wFzr7hKZu8z/1FTv025C9vGkrbDsLgANlNEJHeGilwwsVSTFyzKwlHde86zFzwER8DlxDKMD7RpJvGwk7yV0D+glT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lL7c/10f; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id gk8rsJdOxbNNsgk8rslcHN; Wed, 21 Aug 2024 14:08:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724242128;
+	bh=8d0PHFEsYGqdYcAk4Zd+FDA5jBt+ta/EhSh+bgONbM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=lL7c/10fbRpVHzqiq3ccePD1+sBQ+u0AjUfgzfq+XD11F0fKwDwKnuoX9Xwmd4vIS
+	 hiUEg725rc6Dgb1xlGcpCjHFDbfP0MzkZt4L7AZNnKurA2ZKpPDuwUIyJ1k4G/oRTE
+	 OZiwDFrvoXywlTpKs9hngJa+hgwMkcRue+1Hv2+vJsYiTJsqWAR1r7ZxMrDxNUuZ4+
+	 TVwS7t8HhkVPcwp2hcuqNd6OOr43YrQMEnC+rQehK2DSktBvQ60QZ7Dg+x+iP6/Hkj
+	 yQAJpL3RmkyRpJFPqBUQaJkhvgLv0Rrea/KNCHU4CyHsUreFHvSW2RQDM/WIzzbNPD
+	 pGkJ4Ov0RvILg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 14:08:48 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <9a5de847-0913-420d-8cb0-35d95376ae5b@wanadoo.fr>
+Date: Wed, 21 Aug 2024 14:08:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819153656.28807-2-vadorovsky@protonmail.com>
-In-Reply-To: <20240819153656.28807-2-vadorovsky@protonmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 21 Aug 2024 14:08:44 +0200
-Message-ID: <CAH5fLghOFYxwCOGrk8NYX0V9rgrJJ70YOa+dY1O0pbNB-CoK=w@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5] rust: str: Use `core::CStr`, remove the custom
- `CStr` implementation
-To: Michal Rostecki <vadorovsky@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, 
-	Valentin Obst <kernel@valentinobst.de>, Yutaro Ohno <yutaro.ono.418@gmail.com>, 
-	Asahi Lina <lina@asahilina.net>, Danilo Krummrich <dakr@redhat.com>, Tiago Lam <tiagolam@gmail.com>, 
-	Charalampos Mitrodimas <charmitro@posteo.net>, Tejun Heo <tj@kernel.org>, Roland Xu <mu001999@outlook.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	netdev@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] wifi: cfg80211: Use kmemdup_array instead of kmemdup
+ for multiple allocation
+To: Yu Jiaoliang <yujiaoliang@vivo.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240821111250.591558-1-yujiaoliang@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240821111250.591558-1-yujiaoliang@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 5:39=E2=80=AFPM Michal Rostecki <vadorovsky@gmail.c=
-om> wrote:
->
-> From: Michal Rostecki <vadorovsky@gmail.com>
->
-> `CStr` became a part of `core` library in Rust 1.75. This change replaces
-> the custom `CStr` implementation with the one from `core`.
->
-> `core::CStr` behaves generally the same as the removed implementation,
-> with the following differences:
->
-> - It does not implement `Display`.
-> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
-> - It has `as_ptr()` method instead of `as_char_ptr()`, which also returns
->   `*const c_char`.
->
-> The first two differences are handled by providing the `CStrExt` trait,
-> with `display()` and `from_bytes_with_nul_unchecked_mut()` methods.
-> `display()` returns a `CStrDisplay` wrapper, with a custom `Display`
-> implementation.
->
-> `DerefMut` implementation for `CString` is removed here, as it's not
-> being used anywhere.
->
-> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
+Le 21/08/2024 à 13:12, Yu Jiaoliang a écrit :
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> v2:
+> -Change sizeof(limits[0]) to sizeof(*limits)
+> -Fix title prefix
 
-A few comments:
+Hi,
 
-* I would probably add CStrExt to the kernel prelude.
-* I would probably remove `from_bytes_with_nul_unchecked_mut` and keep
-`DerefMut for CString` instead of the other way around.
-* Perhaps we should remove the `c_str!` macro and use c"" instead?
+this kind of information about differences between versions is usually 
+below the ---.
 
-Alice
+> 
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+It is not because someone makes a comment on a patch that you should 
+automatically add a R-b tag.
+
+> Reviewed-by: Kalle Valo <kvalo@kernel.org>
+> ---
+>   net/wireless/util.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/wireless/util.c b/net/wireless/util.c
+> index 9a7c3adc8a3b..e7c1ac2a0f2d 100644
+> --- a/net/wireless/util.c
+> +++ b/net/wireless/util.c
+> @@ -2435,8 +2435,8 @@ int cfg80211_iter_combinations(struct wiphy *wiphy,
+>   		if (params->num_different_channels > c->num_different_channels)
+>   			continue;
+>   
+> -		limits = kmemdup(c->limits, sizeof(limits[0]) * c->n_limits,
+> -				 GFP_KERNEL);
+> +		limits = kmemdup_array(c->limits, c->n_limits, sizeof(*limits),
+> +				       GFP_KERNEL);
+>   		if (!limits)
+>   			return -ENOMEM;
+>   
+
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Now you can add my R-b :).
+
+CJ
 
