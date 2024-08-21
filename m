@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-296079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D1695A55C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8DF95A55D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D371E1F22DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6757E1F22DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 19:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2A16EB58;
-	Wed, 21 Aug 2024 19:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCDE16EBEC;
+	Wed, 21 Aug 2024 19:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWexFVzF"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMoop9ov"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D737A31
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 19:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8B5A31;
+	Wed, 21 Aug 2024 19:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268955; cv=none; b=m7u2FfWq0jnVTJIqtGgjmeRuqBbx13LxHVnnFiY6U12B9M6Fwoonpb53NrBC4mNPvcGN1BLxhFH9jnmOGSN+iqk3ZifsM+EAExkG6ZJFhqEmyzadqRGvCsCISiY7OpeT3EDjD09pUKW7FsvVbQdRlblPE6DUxaHAUHdwYnqh68g=
+	t=1724269079; cv=none; b=gYVdvZd5cSo9+xCeUc40iUUXwm2ORu5BixvtQRX9Nx/Ke46vavo19HvhjDKZ7STe1RRKbaM/01aeDDBZVT0vZ9plFKPti+BPfidBKERcmAR7BmfXJH0LoXyGDcKl/RjXEbWVDy3BHKFlVGPh4EkmT85sHM58mCcPwybvL26+HqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724268955; c=relaxed/simple;
-	bh=rXwFpnKz1CFuln/TKZw7P+Uk7tNaAbZUFoquGGJ1htw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TGdYgqRTLvwmZgQMnIvZ4+WBezrXZQfnuIP8jemifAp3ugNbIcyNREdB4ZGFZq6rqWVBpL7a7z+XHTNFFdS3CR30DlDnl/fsh4ZOrNg2y6JPm3wjt9NnxTEzw0oAZKNaVod5cpWrHBsrq+jp9T0QY1SYcIMcZExK6FUs7iQll7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWexFVzF; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1724269079; c=relaxed/simple;
+	bh=FbLXW2BKGI60XIr21LRoMBa8fyx8CsWz1aIa6Hk9b0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UoqLVCL8VWpfBT1aqlYNJ2YkHt9Qgam42wiqOaol23DxD9PuZCGcWPbzzHsFJQb5ucL755o+ImKZtWyp3BWHSl7iBr9SN4pyD6DqawyvXTXCJoMOTQQWLJrstwwl8VV12Oa385QOD0bFd5INXsL8eh4v3dg+5+dYzRAC7UcJYJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMoop9ov; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6bf999ac52bso20951846d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 12:35:53 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53349ee42a9so69162e87.3;
+        Wed, 21 Aug 2024 12:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724268952; x=1724873752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aAlsd1JHvdhK5Hz0/hi6Hu9e2FXd9VK6pKbxR5UtnGw=;
-        b=AWexFVzFRQN/Mh1PLTldpsdFBYFFLQANOByFW4JfuOURVmyAkqbO67K7iBF1KfZcPI
-         Kin3PgNENGEd7wIGz/jLAMWLgNSGUZjQT3JBpV1ZhamMHG7KDJqKtjhzW70PAp2jM3ad
-         NAbiqNZHxd2iJ+DRyYW4gxtGgb+G/6V3lBVmDnNt/UgQCjkMp7ObXSI+fJ6N7jQtgMLS
-         nZJc5akbVNw4g5n/6FC4S4Y4YUefEpknqJ/53RlYOBpMDIGbrFay6Lp4JPiU4l0sRzFF
-         cRZseNsqbi+PBLv45jhixSrWDWiW1WAXznhlmG2WS5Bjh7RssxfyRNTKmU/IPGJYLeA1
-         /kag==
+        d=gmail.com; s=20230601; t=1724269076; x=1724873876; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNHqUTf8i9ol4B3IrSLnYHaoPISGRnl8F+WN3lSimFI=;
+        b=hMoop9ovdTO+GqD/JO+TN1IMC60CF+5YkgAgmnGxdlwlKN5x1fJtXUBiFKOWtbabcv
+         q5KLHuJwJZcI35QDMLgSod4hiLPSbSnLI3W3ZvERqzKEW6O7Q9QDSy8oofkO+9g3hf6K
+         K+POamihsYZIx2rCNYvBx4X1Gig/PZOyyQioILOdtGFuFXJQ65pk4tYp5qvcNbJ7niT5
+         PHGn0Yb5FuFIkT4xJtYEBCzzWBWyJOALtt7RJ0kQ1uRskZi1QyYj4pGe1V/h7YQn9+gn
+         iAk2iyRf0aaVKjXQGuHZF0j1PKpDkt1qqSNUw9ow4KQfnBoyXpegNgPsgLTjX7BOWDYX
+         pdQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724268952; x=1724873752;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724269076; x=1724873876;
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aAlsd1JHvdhK5Hz0/hi6Hu9e2FXd9VK6pKbxR5UtnGw=;
-        b=OjBjtk+zz3R3RyLbLQGMcShi5v1CS94uMWrK4RxvgdKuBPmowK+vECiHC3Xp9UKuA5
-         LPeKaB6MPHuVy5+CA9kVOuirkaUINuxEDWgTrFAO9+lYTaTIN3avcsDlC0nkLmX5zOVp
-         nNBaYcpKFEubuKFrLDtiuoJAGzG2I7rWLHC2PtDkRZMkKb5yKru0Igg33tQ2ykExeXKp
-         0nbVSMifo62zYtDIrq63U/ryKLludw2Q0Umrs77zH71coMYuggmItE8JKMLOCtqNjRjs
-         il7VL5t67B/u2R2a/JpTvi57oxfjEsk2ExnvO08OJK3Q1uV0zsURCHDCkz3ide2QOiou
-         lYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLSReX6b9357gHGd4YbkntSpcLdja0TU1SPgWXNW5n950t3d2Mt1lgJsAUU5CINRZhJD73qBBjY1WUGV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTZOPATDhQzVCTPtatqeCOGrWFpVfHypsFNc1RkSioToAmZetV
-	IINgBPY1Yb71P7TIYjdIFRMB3sMyMm1Wz7twHUXS/hR6jXRg2Tt+
-X-Google-Smtp-Source: AGHT+IFPZE+Jff2sgvSYZBsIe6gdmnstfGArL49uu6MQk4I8eTSFrt+0eYBlfcaYlOmfu7guMgEigA==
-X-Received: by 2002:a05:6214:578a:b0:6bf:7f5b:1d3 with SMTP id 6a1803df08f44-6c155d5de39mr43397716d6.16.1724268952272;
-        Wed, 21 Aug 2024 12:35:52 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-017.fbsv.net. [2a03:2880:20ff:11::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db0b30sm111696d6.77.2024.08.21.12.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 12:35:51 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	riel@surriel.com,
-	zhaoyang.huang@unisoc.com,
-	yuzhao@google.com,
-	david@redhat.com,
-	leitao@debian.org,
-	huangzhaoyang@gmail.com,
-	bharata@amd.com,
-	willy@infradead.org,
-	vbabka@suse.cz,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH] Revert "mm: skip CMA pages when they are not available"
-Date: Wed, 21 Aug 2024 20:35:06 +0100
-Message-ID: <20240821193506.1525996-1-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.43.5
+        bh=HNHqUTf8i9ol4B3IrSLnYHaoPISGRnl8F+WN3lSimFI=;
+        b=lX0v2eExSsgv5CYvK7iLVVlxN3KGrqk8/dsQg5ObB2E1P7HM8/xmY1juwQ//i2VvtE
+         mSk2OXuAVpZfkzkprBh324+iAma+gU+Wjxmcqmx2XIhDIGn57q3ExyuBNCNa0XgZKcSe
+         +PrdIBTwmHXlykCO4UJDLM5g7xTRQIrd3+7/uz7CHWHA6wvYBRGlHyiOExQYvnN6hGXt
+         RkegpUN7uuYZ3qE7mm+sMaYa5KPxv23TxZSeFpKvi9SkmHRRe7tH7MLiVDm+ViqXWHb3
+         bWFpHnGWmpmdYryXuw+62HLBPsX4+rz78y1UjylyfXsqPvoLNxgMbE/gtHW8opEkbheD
+         9lbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp3BhMfhawkIxhoifYvqRG8UpSXlN3zzH48Pj7C9Yy6Blcxfbfs3qGQpHW8z+PWk8en6sZjMFwOdQ7nDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNGPmIqxJAtSebOLs0XnGlInSMoYk0ZbfxYfWp0xnuod//8V6N
+	lX6Rd3w+Jg6Y5UnbB8MvSLJhyWfrv9oZGSNW8n65M/BRN9uZxp9UcneyRBLS1RtEQEWKJJYH+ua
+	bZcfifH+RqdGnBRC6doo0FgTUSkU=
+X-Google-Smtp-Source: AGHT+IERby/L6uviOiiPjYEJ069B5XI0jNWltAS8ubs5V2qmEIdcwcj9HA2UXawOjOr39yFoWwed4zqh1M6aXD33EPs=
+X-Received: by 2002:a05:6512:4004:b0:533:4327:b4b5 with SMTP id
+ 2adb3069b0e04-533485932fcmr1978258e87.46.1724269075363; Wed, 21 Aug 2024
+ 12:37:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+In-Reply-To: <CA+icZUXoJ6BS3GMhJHV3aZWyb5Cz2haFneX0C5pUMUUhG-UVKQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Wed, 21 Aug 2024 21:37:19 +0200
+Message-ID: <CA+icZUXpB4KMiRek3MkgCapwoW5TC31L4-TffrV=jdhM1k8=Sg@mail.gmail.com>
+Subject: Re: [Linux-6.11-rc4] perf BROKEN with LLVM/Clang 19.1.0-rc3
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit 5da226dbfce3a2f44978c2c7cf88166e69a6788b.
+As a workaround:
 
-lruvec->lru_lock is highly contended and is held when calling
-isolate_lru_folios. If the lru has a large number of CMA folios
-consecutively, while the allocation type requested is not
-MIGRATE_MOVABLE, isolate_lru_folios can hold the lock for a very long
-time while it skips those. For FIO workload, ~150million order=0
-folios were skipped to isolate a few ZONE_DMA folios [1].
-This can cause lockups [1] and high memory pressure for extended periods
-of time [2].
+dileks@iniza:~/src/linux/git$ git diff
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 142e9d447ce7..db45e6fe7a21 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -63,6 +63,8 @@ cflags = getenv('CFLAGS', '').split()
+cflags += ['-fno-strict-aliasing', '-Wno-write-strings',
+'-Wno-unused-parameter', '-Wno-redundant-decls' ]
+if cc_is_clang:
+    cflags += ["-Wno-unused-command-line-argument" ]
++    cflags += ["-Wno-cast-function-type-mismatch" ]
++
+else:
+    cflags += ['-Wno-cast-function-type' ]
 
-[1] https://lore.kernel.org/all/CAOUHufbkhMZYz20aM_3rHZ3OcK4m2puji2FGpUpn_-DevGk3Kg@mail.gmail.com/
-[2] https://lore.kernel.org/all/ZrssOrcJIDy8hacI@gmail.com/
+dileks@iniza:~/src/linux/git$ ~/bin/perf -vv
+perf version 6.11.0-rc4
+                dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+   dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+        syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+               libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+           debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+               libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+              libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+              libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+            libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+             libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+            libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+            libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+   libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+          libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+                 zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                 lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+            get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                  bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+                  aio: [ on  ]  # HAVE_AIO_SUPPORT
+                 zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+              libpfm4: [ on  ]  # HAVE_LIBPFM
+        libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+        bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+ dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+           libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- mm/vmscan.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 5dc96a843466..78ad4a141409 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1690,8 +1690,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
- 		nr_pages = folio_nr_pages(folio);
- 		total_scan += nr_pages;
- 
--		if (folio_zonenum(folio) > sc->reclaim_idx ||
--				skip_cma(folio, sc)) {
-+		if (folio_zonenum(folio) > sc->reclaim_idx) {
- 			nr_skipped[folio_zonenum(folio)] += nr_pages;
- 			move_to = &folios_skipped;
- 			goto move;
--- 
-2.43.5
-
+-Sedat-
 
