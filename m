@@ -1,88 +1,231 @@
-Return-Path: <linux-kernel+bounces-295313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA189959993
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09756959997
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84CD2825FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B560B283B68
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D1C20527C;
-	Wed, 21 Aug 2024 10:08:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D3F20DB6E;
+	Wed, 21 Aug 2024 10:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="acjE0Evw"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6235205252
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5A720DB6C
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234886; cv=none; b=bNQrE2KjT4zDxl+pK7umW65e3dSbt62K/gd6LJONBALI7Xzr+XVVHevDgbmsJA0Cr4PhkNXphNzFeAtlDVlFI1sknoOlUzQU6gQWPYqLV8nAf84a4LCD/WzBGdzDXUlgD/6JiNQOOykCqJTXQOjdLEh9rKbEcjSaMHwwKT45Kkw=
+	t=1724234906; cv=none; b=tp+J21VBvGDJu3uhaTL5esNrMhRwoUXDqlZJqK4I2IYg6/iP0soEzz6bEunlHbbIvuLOzlSjAIBE/PmAwVToq2u0Efr0MEEMeT4wbJ5WW3JemCHmP1agjIQEmYeZSXY1hYyfAmcwkG1uzqIvCQe/CWbWX3p+BuB548K3hVviNfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234886; c=relaxed/simple;
-	bh=bcZTltfrN96IpyEwZ5ov0EAIPhOEfYKK/v9DQ75hgls=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OfVWCcYXtqmPnYGHSIAnenVo+9CfBX08SC6JLD5TdbWdWU9B4eAIKe6/wBTfFlQHI3NjDvyPmenRvVYxwTpNAFJOihIqHo64yNPgTDBATJvIKJNaeAtfdBOqoGxQX97Yz+DJbnu+X2x6jrzkseeZfX0E0w1E7hzZv6heZx+asAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9612b44fso653846539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:08:04 -0700 (PDT)
+	s=arc-20240116; t=1724234906; c=relaxed/simple;
+	bh=e/cSTFrVwMB05MYJMAq6GAYYFmQpuxJbbbVHPAj6IrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pxs+ymIK02w4syzBQ+1YQ0o9jiTo8sLZ6ixLMvztDt+90nNKHo0wr0ktKJn0SmGUicapw0sWmBjHy+jILBhuXW0ZV9DZXF4jhzbNoNl54UeBBfgJ1A8Bx4N5g6N5BJMCYTwrUm6xw13x80d1cCgMljWvnnc+yPa/htxf8H9gVDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=acjE0Evw; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4281c164408so51659195e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724234902; x=1724839702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUeIsnerQaorjXQFndw9qkOG9GKtYwp+MnhzTNyNwl4=;
+        b=acjE0EvwzM5+1yxYQTd84dpl4lpXPpSEyzqcZ0snBm0CPTCV5NrVqJTydwsMI4FJuQ
+         f84oWYL1j4oqv4fUpoWo0ancM22tgxMHW2+esUH00ARQ5a5SWTH1iVb/Tu+Ax4AYU+Sg
+         tJezid5O5YQQe3VaEDjdsnpJe3kadjVlUX4WEugZzGxcKEn7lmWM+SDpVU6cz5KrTniR
+         mvlJNg3dZSNlRlmib9MgeGEWUN4wVURAlfqkz8ooJ3qcjnGApmvXTCs91FYFFbclyyAs
+         3eHEhVMvItPTVlYHTV0dULqa8cmBK/F0/b6bjUGRaN8isb/qzPY3UrXzzRLyrxJ9LCof
+         dQIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724234884; x=1724839684;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ltq4NN1gtmsJ84XbCNBVAWHYj2I60jKYTteZrBL53oY=;
-        b=M98prxD4FZV9YU+ukBPDgb6zrL11L01f66e15YNW34kddWNa0IwwxDxfeVENiUPXwn
-         K2doSNpaLpqbIB4LGyHPekIi5IXFLD7SU55PGbS7ZERhwTmItXotpbMj4NWf7gQkqLVb
-         jzQPw+gCG9s4diT+WMR3lhO6OOZcAMqCPjraIGBWiW6E3aLaduAsGVJN0VQlEIBxlB9+
-         Ua6KdvAuvbJKERf4duAcjnr7QOaXhk7PxSsyUnIxqj+P2HFSE1U85cifI1t/Zicy86sA
-         qDf6eMgoM06vR37cO6ieQtjIQS2gj42fv6K+0BqfJzUWepDQsddfd/pa2qer5nilgMd9
-         7yuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8F3ELOSqxzl3U92SYm6qkgAcFnU8+hPcWgh3k+bRTJss4xLsGz5AFLQV6pXjFV4ROaPmgN3nf1Tc+Y8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1UoeaX36L6youxIqtKZ9xN+k3+iTt6MtRH45e+xuAuvIypXZc
-	hE7GPwX6zec1ACW0Og+5evPQkrpPQqgqM9iVY3lGzMTZTTGty5PE9F4gfsCtZHhaIh07E2b3Jh6
-	DtNbc4ZvYVR1TwNWZ7sx7MyyYM5CSouMDcREebHNQMIfAoFg4jidnSNE=
-X-Google-Smtp-Source: AGHT+IEmB9UKevzYR0v8ZXvKnJsY7QyO14fBNAwZNyW12v4IM2oSwrprNKl2vkG2DtSDkY01BRFROBWdEcBatPLKYZqmXfKlaPwb
+        d=1e100.net; s=20230601; t=1724234902; x=1724839702;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUeIsnerQaorjXQFndw9qkOG9GKtYwp+MnhzTNyNwl4=;
+        b=f9kD3+54abkqD4/jBDxrhgqa5co9cAajq6hhC/6GqJF9sVPYUek2emoOKz8B/Zgs3s
+         It094cMAVQXuMUguNZ21iLoql2R1+boRziHUC6cPjimg6VdOv5KBkcBm5/60VvRYrwUR
+         9SHDvMRh8Uwf/yhqEdCkdTQFNSEkxy8u78C4LX8tp70ho4VgEXgPrmm7FdhMxpwDaDaO
+         dMZ6Zk0MpJIY/6yl3JPWhCz3vbqm9Dk+bMvqHhPCaLeZMKqwuPsJmvpfey3xTxrAA/+i
+         zeG6UlXzVe74qDqXOxYLSoIn2AMb45d3qS9JO1hp9mae2xa7fi4mJTwnklt+HVVUHe2s
+         TZXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4b2i5laHd1mYDKXemjBX9sJ9h9tMJZtSSgxj/ehPPuyOeIyXOG1JtHDaSKzPHxA0QL5vt8jF/6nZ1pbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSHctdpliUXf7iXZ8ledx7jyqG7icIXXaoSJTf+z+8Pvg5Lekq
+	iODSVjqVFMID35psXGnv2ROjM89N22OKISPz0m+wj9WjkpoT776CDEqljo/NFqA=
+X-Google-Smtp-Source: AGHT+IFhpK1sg/ss/0bIG2NwKsTNlLwTZWTvRAOXwus/YZwPLyDrzYlLym6NHPi/7TO58UNUO/Wduw==
+X-Received: by 2002:a5d:4e45:0:b0:371:8e3c:59 with SMTP id ffacd0b85a97d-372fd5ba7a9mr992553f8f.5.1724234900998;
+        Wed, 21 Aug 2024 03:08:20 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:42a6:b34f:6c18:3851])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefc626fsm20071325e9.31.2024.08.21.03.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 03:08:20 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2] Documentation: add a driver API doc for the power sequencing subsystem
+Date: Wed, 21 Aug 2024 12:08:18 +0200
+Message-ID: <20240821100818.13763-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1603:b0:824:d658:396 with SMTP id
- ca18e2360f4ac-8252f4bd9ffmr9836239f.3.1724234883914; Wed, 21 Aug 2024
- 03:08:03 -0700 (PDT)
-Date: Wed, 21 Aug 2024 03:08:03 -0700
-In-Reply-To: <9343ba32a457acc4f536120e904a3d7fa9ed0adb.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c3eba306202eb72d@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Describe what the subsystem does, how the consumers and providers work
+and add API reference generated from kerneldocs.
 
-Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
-Tested-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes since v1:
+- drop unneeded :c:func: directives
+- don't include linux/pwrseq/consumer.h as there are no kerneldocs in it
+  which results in a sphinx warning
 
-Tested on:
+ Documentation/driver-api/index.rst  |  1 +
+ Documentation/driver-api/pwrseq.rst | 95 +++++++++++++++++++++++++++++
+ MAINTAINERS                         |  1 +
+ 3 files changed, 97 insertions(+)
+ create mode 100644 Documentation/driver-api/pwrseq.rst
 
-commit:         d30d0e49 Merge tag 'net-6.10-rc3' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fbfe05980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
-dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b31fbb980000
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index f10decc2c14b6..7f83e05769b4a 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -124,6 +124,7 @@ Subsystem-specific APIs
+    pps
+    ptp
+    pwm
++   pwrseq
+    regulator
+    reset
+    rfkill
+diff --git a/Documentation/driver-api/pwrseq.rst b/Documentation/driver-api/pwrseq.rst
+new file mode 100644
+index 0000000000000..a644084ded17a
+--- /dev/null
++++ b/Documentation/driver-api/pwrseq.rst
+@@ -0,0 +1,95 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++.. Copyright 2024 Linaro Ltd.
++
++====================
++Power Sequencing API
++====================
++
++:Author: Bartosz Golaszewski
++
++Introduction
++============
++
++This framework is designed to abstract complex power-up sequences that are
++shared between multiple logical devices in the linux kernel.
++
++The intention is to allow consumers to obtain a power sequencing handle
++exposed by the power sequence provider and delegate the actual requesting and
++control of the underlying resources as well as to allow the provider to
++mitigate any potential conflicts between multiple users behind the scenes.
++
++Glossary
++--------
++
++The power sequencing API uses a number of terms specific to the subsystem:
++
++Unit
++
++    A unit is a discreet chunk of a power sequence. For instance one unit may
++    enable a set of regulators, another may enable a specific GPIO. Units can
++    define dependencies in the form of other units that must be enabled before
++    it itself can be.
++
++Target
++
++    A target is a set of units (composed of the "final" unit and its
++    dependencies) that a consumer selects by its name when requesting a handle
++    to the power sequencer. Via the dependency system, multiple targets may
++    share the same parts of a power sequence but ignore parts that are
++    irrelevant.
++
++Descriptor
++
++    A handle passed by the pwrseq core to every consumer that serves as the
++    entry point to the provider layer. It ensures coherence between different
++    users and keeps reference counting consistent.
++
++Consumer interface
++==================
++
++The consumer API is aimed to be as simple as possible. The driver interested in
++getting a descriptor from the power sequencer should call pwrseq_get() and
++specify the name of the target it wants to reach in the sequence after calling
++pwrseq_power_up(). The descriptor can be released by calling pwrseq_put() and
++the consumer can request the powering down of its target with
++pwrseq_power_off(). Note that there is no guarantee that pwrseq_power_off()
++will have any effect as there may be multiple users of the underlying resources
++who may keep them active.
++
++Provider interface
++==================
++
++The provider API is admittedly not nearly as straightforward as the one for
++consumers but it makes up for it in flexibility.
++
++Each provider can logically split the power-up sequence into descrete chunks
++(units) and define their dependencies. They can then expose named targets that
++consumers may use as the final point in the sequence that they wish to reach.
++
++To that end the providers fill out a set of configuration structures and
++register with the pwrseq subsystem by calling pwrseq_device_register().
++
++Dynamic consumer matching
++-------------------------
++
++The main difference between pwrseq and other linux kernel providers is the
++mechanism for dynamic matching of consumers and providers. Every power sequence
++provider driver must implement the `match()` callback and pass it to the pwrseq
++core when registering with the subsystems.
++
++When a client requests a sequencer handle, the core will call this callback for
++every registered provider and let it flexibly figure out whether the proposed
++client device is indeed its consumer. For example: if the provider binds to the
++device-tree node representing a power management unit of a chipset and the
++consumer driver controls one of its modules, the provider driver may parse the
++relevant regulator supply properties in device tree and see if they lead from
++the PMU to the consumer.
++
++API reference
++=============
++
++.. kernel-doc:: include/linux/pwrseq/provider.h
++   :internal:
++
++.. kernel-doc:: drivers/power/sequencing/core.c
++   :export:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a7cb909ffa1d6..6da6d8ae951a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18315,6 +18315,7 @@ M:	Bartosz Golaszewski <brgl@bgdev.pl>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
++F:	Documentation/driver-api/pwrseq.rst
+ F:	drivers/power/sequencing/
+ F:	include/linux/pwrseq/
+ 
+-- 
+2.43.0
 
-Note: testing is done by a robot and is best-effort only.
 
