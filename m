@@ -1,110 +1,162 @@
-Return-Path: <linux-kernel+bounces-295835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADEB95A1ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED1D95A1EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81751F2701B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:52:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4FE1F26FC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B585F1531D7;
-	Wed, 21 Aug 2024 15:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9501537D0;
+	Wed, 21 Aug 2024 15:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fvhxToZB"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jxvsjjSG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C10E14F9DA
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031571537DD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 15:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255015; cv=none; b=RBQVmBm83adY/8u1zU5Pj6+o2u0Or1tUgA+H35+JlpvYCQLY8QCqQnKCxxX+PkhLnReJTlu/ZH3vGDjTNcK9uAv5x4ho3qKkvWHcnk8Lyvs6mgIf6SDZlCHa4JF3kgLb4ukjscfCeZfzbOh9srSQri0pYZ8PIJR40UMzNKkoJ8U=
+	t=1724255023; cv=none; b=id4kdfV0L0EJyvgUkLWnFDBDAJd+G9aFRDbqTc19hQYk9feS/fV68jxr5mM2ZW0VPi/ruNzhwHKrifevFNg7gSW7/xxdkb9TzjxXDiaaogmDTczTIJF3sThR6a30vdcRgzhxXBz/ZPmZNSfYxTeBBT5iOyBtkCF7fLr0Vhb0tlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255015; c=relaxed/simple;
-	bh=FE4aY/q5CVtWooWDCyJ3ysUxrUcqnG1S++u6HwB/bVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eiVHCrKkikYAqMva9OwEAiPYEcGg4eklsmjOG9v9u9MCc2qe6kHwUwufPKz6Ok/VJ/eT/ipGSBb25CEuqby0v4FBxvDkIFI9Kpa5+Dc2DfBHQkGrYDTdaaCwet4M0HVlyGVEMUJS8DjoAvgPkCMorlHKNSiESw4mAK/dUo1WtTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fvhxToZB; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86859e2fc0so33806766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 08:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724255012; x=1724859812; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FE4aY/q5CVtWooWDCyJ3ysUxrUcqnG1S++u6HwB/bVY=;
-        b=fvhxToZBeFVduwXh5P1sqnp/H0MBFjS8mLvyAwEqiHLl3ig0HhoKGlNgjhCq0djQZG
-         9B8K4IXWhN69uLuPZmh+CgrMbrIbf42bA00oMpIJTjg47YFWCsflLs7K/Ppe7vHmgC0/
-         TB8aimcd+/8f0v4KRZXgLbFugXpEoPBL4K5EDQq6O7WdxLTYAy6Q1m5rCz5ura/Idpui
-         FAisZiT2EwcpV6BC3O6xNwvz3fFFPbO4SQGJcwP/glU3bxeKrujpMynwOy+hbdZauFGI
-         qlefeMIs8RxSUaLNMmLBWKGVGzqKN7A8CEq9BnuFWU0l0vE9Vlu26PSgX/Pgnbyn0ItT
-         8RDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724255012; x=1724859812;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FE4aY/q5CVtWooWDCyJ3ysUxrUcqnG1S++u6HwB/bVY=;
-        b=SsCOCOwBOdk+aofpOG9y/LZUZF+4p8O61XuspUgfGq7SaMQZLRvG+3dKP6q5+yEWUc
-         Gj3WdxMqJUNJA7nRGmK6ePg5KrW9i8gy32IMmoGA/3BP3/Io/kyUMDqA0cmMvd7o315p
-         Gudw3Aber9RvnHqqmhJmymAIv2LvyLj7fkmX2UuegzqVlSB4+aiPaaXEWvI1noGeO/T1
-         k6okjuFqHIIM+v/jlJpZkvnpi59BPHBS27KlohdFZdzf7YsbKP9pxpBWoBq4spmIjoYm
-         cDIsNTrLADncPdEK5AncWbTFj8ivEC2swKBN/7RC+dnkrRWEVzPzoQYQ5Ze513uheQV+
-         fM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtyHnxXvva9RqGcQ0Ht7XCKpdbysJAPMZU3iyb7KWnoyURewPxtmAdZqeAnEI5gEbODeUVHnKT7jzdf/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsnejoeTdnSY5ykG4DHQ60gaD1lgcHJKag0qymS+M8HXrmtkoW
-	FqGo7G2JZYY0LNLfqyW/3WSAHGMDGahygbbfFpuTWD1ajnlZZVTzUH62coVHyxnhdUaJ5rdjDgp
-	F8/ehjEEDIirr9Xzc0TdQlrYVEKi5JiRHAfo+
-X-Google-Smtp-Source: AGHT+IFXM1haTH3Tft82GioemDeMyJeWgfsUvV1Z0FDSHL0znQ9kGlTog6+S/Takg6dPBnQDSWoR4E6wLJW9Oj0YiHI=
-X-Received: by 2002:a17:907:c7c9:b0:a7a:81b6:ea55 with SMTP id
- a640c23a62f3a-a866f9d2804mr249205766b.56.1724255010853; Wed, 21 Aug 2024
- 08:43:30 -0700 (PDT)
+	s=arc-20240116; t=1724255023; c=relaxed/simple;
+	bh=QC2ayoHYMlUTm5CleMwtaB464LNdcjG+nZPAt67rWLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9phDGf9aIr+1r7MCUuFweCjimYzCzzpoDIRuqej4KjfVv59Q+lJIS5ht5Cc2p7avaFZep5e7VObHfe4QdkP/W5d0opd7XrxMsi/yynojHvXTLrfOIFqvQdWIYnVCSwy+53UZ4bBDxCnJbyAnqBXEKdM148yeRqedCPjZLtsGpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jxvsjjSG; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724255022; x=1755791022;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QC2ayoHYMlUTm5CleMwtaB464LNdcjG+nZPAt67rWLY=;
+  b=jxvsjjSG4C9HiDBb/nOHFz6IQG1xMXRAZMtoDoTIFs33jgIlQLcI/8+I
+   06spwXnrrp/lLW+AqFmqMoTOyTNc8Eq6SnKvRyO3+GuAGEbZe602rTUrt
+   VUMc+HFgImp48SDjNtLgVYI+ePadU8fVpuNLPzOJAG+rxEGmjH5bUhEf9
+   eswj0vrXEWsw7mnq76P4t20ustVLgkRfM7APYd8WIzQRJah9XHuqnMM51
+   EeCY8MXytOdSsnmb5W/eh1XLnhJ9PoCZAr7JcBRL8WOa+KN9A3dt0gVGa
+   kTRHWlQPhwCOYRozzHJNiKj+Wc0ll1TuTHHaTHOx5N8KNy8yPziq/ngO+
+   w==;
+X-CSE-ConnectionGUID: MwhLlKNsQ1CsfeB2fLwGgw==
+X-CSE-MsgGUID: cgRc9jopSzm5YF+rTJ4tng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22506034"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="22506034"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:43:41 -0700
+X-CSE-ConnectionGUID: T2g6NdRQQnKbrp0/UZHS1A==
+X-CSE-MsgGUID: Td9q+1Z1RY6SrUs78a4f2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="65820145"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 08:43:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sgnUm-000000008C3-2111;
+	Wed, 21 Aug 2024 18:43:36 +0300
+Date: Wed, 21 Aug 2024 18:43:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the
+ I3C Support List
+Message-ID: <ZsYLKFCvLdMn5FM3@smile.fi.intel.com>
+References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
+ <20240821133554.391937-2-Shyam-sundar.S-k@amd.com>
+ <9584ddb0-6e39-4d04-9242-a68eb4b86eba@amd.com>
+ <ZsXyHfLJ8SJOW0RF@smile.fi.intel.com>
+ <236aa6d9-bb5d-4854-86e3-5473f5ea6337@amd.com>
+ <ZsYKGOLN3_2VU6Ld@smile.fi.intel.com>
+ <ZsYK1P5nW5e1U1mJ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821150700.1760518-1-aleksander.lobakin@intel.com> <20240821150700.1760518-3-aleksander.lobakin@intel.com>
-In-Reply-To: <20240821150700.1760518-3-aleksander.lobakin@intel.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 21 Aug 2024 17:43:16 +0200
-Message-ID: <CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 2/6] netdev_features: remove unused __UNUSED_NETIF_F_1
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsYK1P5nW5e1U1mJ@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Aug 21, 2024 at 5:07=E2=80=AFPM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
->
-> NETIF_F_NO_CSUM was removed in 3.2-rc2 by commit 34324dc2bf27
-> ("net: remove NETIF_F_NO_CSUM feature bit") and became
-> __UNUSED_NETIF_F_1. It's not used anywhere in the code.
-> Remove this bit waste.
->
-> It wasn't needed to rename the flag instead of removing it as
-> netdev features are not uAPI/ABI. Ethtool passes their names
-> and values separately with no fixed positions and the userspace
-> Ethtool code doesn't have any hardcoded feature names/bits, so
-> that new Ethtool will work on older kernels and vice versa.
+On Wed, Aug 21, 2024 at 06:42:13PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 21, 2024 at 06:39:04PM +0300, Andy Shevchenko wrote:
+> > On Wed, Aug 21, 2024 at 08:42:12PM +0530, Shyam Sundar S K wrote:
+> > > On 8/21/2024 19:26, Andy Shevchenko wrote:
+> > > > On Wed, Aug 21, 2024 at 07:07:45PM +0530, Shyam Sundar S K wrote:
+> > > >> On 8/21/2024 19:05, Shyam Sundar S K wrote:
 
-This is only true for recent enough ethtool (>=3D 3.4)
+...
 
-You might refine the changelog to not claim this "was not needed".
+> > > >>> This update adds the AMDI5017 ACPI ID to the list of supported IDs.
+> > 
+> > s/This update adds/Add/
+> > 
+> > > > Please, provide a DSDT excerpt to show how it will look like in the ACPI
+> > > > tables.
+> > > 
+> > >     Scope (_SB)
+> > >     {
+> > > 	...
+> > > 
+> > >         Name (HCID, "AMDI5017")
+> > >         Device (I3CA)
+> > >         {
+> > >             Method (_HID, 0, Serialized)  // _HID: Hardware ID
+> > >             {
+> > >                 If ((I30M == Zero))
+> > >                 {
+> > >                     If (CondRefOf (HCIB))
+> > >                     {
+> > >                         Return (HCID) /* \_SB_.HCID */
+> > >                     }
+> > >                     Else
+> > >                     {
+> > >                         Return (I3ID) /* \_SB_.I3ID */
+> > 
+> > Do I understand correctly that I3ID is the old one (as per another path I have
+> > seen last week or so), i.o.w. *not* a MIPI allocated one?
+> > 
+> > If it's the case, feel free to add
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > from ACPI ID perspective.
+> 
+> Regarding MIPI ID and using it as a _CID is kinda unsolved now, in any case
+> _CID *requires* _HID to be present, and hence _HID has a priority in
+> enumeration. It doesn't matter if it's absent now (it's even more flexible in
 
-Back in 2011 (and linux-2.6.39) , this was needed for sure.
+Just to be crystal clear
 
-I am not sure we have a documented requirement about ethtool versions.
+ "It doesn't matter if _CID is absent now..."
+
+> case MIPI decides to use _another_ ID for _CID) as long as software uses
+> _HID for enumeration.
+> 
+> > >                     }
+> > >                 }
+> > >                 Else
+> > >                 {
+> > >                     Return (I2ID) /* \_SB_.I2ID */
+> > >                 }
+> > >             }
+> > > 	
+> > > 	...
+> > >     }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
