@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-294907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FF595942B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:38:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374DC95942E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 07:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824341F23601
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E919B2848B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 05:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7132166F28;
-	Wed, 21 Aug 2024 05:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B31684AB;
+	Wed, 21 Aug 2024 05:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="catZ45pv"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n0TzNegA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791B79D1
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 05:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1598121B;
+	Wed, 21 Aug 2024 05:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724218720; cv=none; b=EyEGWHHYZ1BiE/s94+BOEsmGn05WKr/q8uKBJcrrMZftBrSHLkkjRQNJzrvs81Sxt6NDL497EVZqKxw+8JgAzgVus5XVoWWCRGgxLfuBG5HSFJTH/6wg8ON3ckDDASbnvWZFl0j8hBrN2y6m4H04pxtIIq4735ynboxMDvqGJcY=
+	t=1724218805; cv=none; b=lkLw8Q1qvGze+vX/1Wj0sQa+Pk4KXmrQ/9A4RNHFaGJxSGEzCVfNlzRRmArFTBXz+RwxOPznR8CCa53umVi7GGzoPNYSLLePeQUB8ptRhv6eQooiVljYt1460++IQwDcPeWvJZ/5XD1iMcD8ji+KIY15x2lhWJ819Dpadmzh+KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724218720; c=relaxed/simple;
-	bh=qcwRerGhMNHH5bFLcgO3c9q9hSt41Jyxu1bfZMPsyGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8KHmkT4xKpyW/1nht0cV7XZjPJu8pjuKJqax8pse1++WFIYTcjleajrQ/tj//ItyPyHuY+bZJI9Jho3iFG9JV/K+7pr9l3CYitYZkcbpl6n0MwYFCShTWXrG/F6SmxX2PwhcJC7g0Z5BxU7QVTMJigfNlj07YcxV5vnFzdmhFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=catZ45pv; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so5509934a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2024 22:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724218717; x=1724823517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fEVnSr8C5YchSU5ywJyrXPgyuO/IkLhd8eUlHXSN9/k=;
-        b=catZ45pvQsqFf+Vdc5cAmUdUfriR0HEF2kOgh1+FnI7DANmPVRgfeyhvLmefI4ICGs
-         Rw+52LC+QiGuInl6qdsAvgfQEZf2EXpjor+OnX/KOq/uTenCdNGHlDQh9vTPv5/PtjG/
-         twkBj2Q2vs/nqvteVqQlLUiJ11MHL7BG08ZuZie98tP4FgU0jfxRWVM9uITQdw5TtyY+
-         kOV9toStgSaKMa8yACvsH0GUFMD2xhYgDNqz4gaEPOmq3EMG2vbEiQMLQ6+iROKbEWPr
-         XOJUjkssKOW00xyaeYNJKfUPtN5DOVNpPwGHd72Kxb1SabPFup0B/w+FqkI427zVfjwK
-         yxaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724218717; x=1724823517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fEVnSr8C5YchSU5ywJyrXPgyuO/IkLhd8eUlHXSN9/k=;
-        b=vKQnPJ+WN1VgpmGcRYKDvyPP/yDGvMuuJA0g37iru5e4znxSkvvuU8HyfJaAfRP6Bo
-         wusaydmSBnTk5pcy8zqMUHIP/CIXOMYrIK4jpnNS47TGCmCbeY8i+TtGBjs56O4/cgNL
-         TTIyoFMPsCl0Cs5RqLBseP3RhGcL5U4gb4GPWTFTnkJK2FQA2D8Qsb/CWNur9Zgn7Fqv
-         pmx/K+Dv6q5zRY90mbbY24EyGJ7Ztk8RDoAYzO6/7MzFSdTFIj0NBg/gBuTUQzHmIHAq
-         grxrCAuWlh3R4rsv+cite13Knu2N2fAA1GByBG/ehi2B+dSYV5jyK6zMf3MraZwBX/A1
-         7/zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmz9efP0uMrZvCYGsRqV6pcfTRRB5SkMvOv8XxDUr74Jc7v6mTxU1014LkJx6EoX3+GaxCWzKFfjiuejI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIMsadWWVpIiLX8nYOl4bFsqpLSA5pMxXZkzSgNcJx7Sae4ZLI
-	JUYaLo8El00xkr9GJtRHAEH+G8jilwamIuaq0NuRlp2Ot3s622MBFSwyc8naKFWc3uaDsktrauH
-	7Zr1jGC/KY/deT7o7hYCzJNGUuF0=
-X-Google-Smtp-Source: AGHT+IE8LhyhcVGn/pjElzMk5GRcBkIsTmKs5R1UnyoaWBNwJcbGKJamF6lGxMJDxSUPo3YdXl+Xi1sbe/MkRU8oUWg=
-X-Received: by 2002:a05:6402:40c8:b0:5be:d704:e724 with SMTP id
- 4fb4d7f45d1cf-5bf1f0d2be5mr624335a12.10.1724218715891; Tue, 20 Aug 2024
- 22:38:35 -0700 (PDT)
+	s=arc-20240116; t=1724218805; c=relaxed/simple;
+	bh=De6AjGkAhC9DVqZmF1odUmvxMgPuH+4GPvpY4OK0sk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2v/Rkm/e+mx5YqMXhAnayBLePkcArqwqgbA+o/3SLAbtdk84CfOhWL8d9YDRvthlDYKXEfO/riVsTbIag+ZbJc3VQe7IBlD3FYzFPDPEmCrbLPIRU8p3jI2fUGRSC1SNAYcCNcB9KIFu9Tzlph7PJSc0rkm8NLk+3cOakf8MCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n0TzNegA; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724218804; x=1755754804;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=De6AjGkAhC9DVqZmF1odUmvxMgPuH+4GPvpY4OK0sk4=;
+  b=n0TzNegAxl3efgVPfkyNNRi37q6B4vTyhpumh+xVBPXqNlTPd6RMCe7Z
+   1sFig6GCn5aPgEoFARaeqTkmhxB+fbYx3UnMcsFg7NOP5yd929AQW7nPc
+   7fZfVBu/QlubOEZCUEglTcTUQS05DP6gfT4iBNkum0Ktn+aQQRugX2f/G
+   xWkR8bkR9713QKhTOYdK6xYMCGA4ZbNXWIokITncO9CUOHpgHl/M5KSxx
+   PubITQZSIPcccJsAKd5xt4XW/jq1q+fBQ4QTlUl3jw+dHrzuL9LEalEUh
+   xwRQ+MxuJ1ZNzJYkdAzXVIHThD4f71KvTo5RiOvy1JoyTKoYQU09o8rHe
+   g==;
+X-CSE-ConnectionGUID: i1YB6ATSTKeK87XJRDEIHw==
+X-CSE-MsgGUID: hqx5C6ZcTh+W3nWll6cRWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33124164"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="33124164"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 22:40:03 -0700
+X-CSE-ConnectionGUID: dTk6yVbzQZyT3QD43+YQ7g==
+X-CSE-MsgGUID: gV98WCn1TLu+eP8xLy2Q0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="60690108"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.248])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 22:39:58 -0700
+Date: Wed, 21 Aug 2024 08:39:54 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"nik.borisov@suse.com" <nik.borisov@suse.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"Wang, Wei W" <wei.w.wang@intel.com>
+Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
+Message-ID: <ZsV9qouTem-ynGJA@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-14-rick.p.edgecombe@intel.com>
+ <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
+ <850ef710eac95a5c36863c94e1b31a8090eb8a2a.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821033239.2233508-1-lihongbo22@huawei.com>
-In-Reply-To: <20240821033239.2233508-1-lihongbo22@huawei.com>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Wed, 21 Aug 2024 13:38:24 +0800
-Message-ID: <CAHB1NajVYd-_aXy49aBe=zuJmGgWWBGkaGp31zJ3PnEiV9GJCw@mail.gmail.com>
-Subject: Re: [PATCH -next] scripts: make macro_checker.py executable
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <850ef710eac95a5c36863c94e1b31a8090eb8a2a.camel@intel.com>
 
-Looks good to me, Thanks.
+On Wed, Aug 21, 2024 at 12:23:42AM +0000, Edgecombe, Rick P wrote:
+> On Mon, 2024-08-19 at 18:09 +0300, Nikolay Borisov wrote:
+> > > +/*
+> > > + * Some SEAMCALLs acquire the TDX module globally, and can fail with
+> > > + * TDX_OPERAND_BUSY.  Use a global mutex to serialize these SEAMCALLs.
+> > > + */
+> > > +static DEFINE_MUTEX(tdx_lock);
+> > 
+> > The way this lock is used is very ugly. So it essentially mimics a lock 
+> > which already lives in the tdx module. So why not simply gracefully 
+> > handle the TDX_OPERAND_BUSY return value or change the interface of the 
+> > module (yeah, it's probably late for this now) so expose the lock. This 
+> > lock breaks one of the main rules of locking - "Lock data and not code"
+> 
+> Hmm, we would have to make SEAMCALLs to spin on that lock, where as mutexes can
+> sleep. I suspect that is where it came from. But we are trying to make the code
+> simple and obviously correct and add optimizations later. This might fit that
+> pattern, especially since it is just used during VM creation and teardown.
 
-Hongbo Li <lihongbo22@huawei.com> =E4=BA=8E2024=E5=B9=B48=E6=9C=8821=E6=97=
-=A5=E5=91=A8=E4=B8=89 11:25=E5=86=99=E9=81=93=EF=BC=9A
->
-> Set 755 for script macro_checker.py as other scripts.
->
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  scripts/macro_checker.py | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  mode change 100644 =3D> 100755 scripts/macro_checker.py
->
->
-> > diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
-> > old mode 100644
-> > new mode 100755
-Reviewed-by: Julian Sun <sunjunchao2870@gmail.com>
+For handling the busy retries for SEAMCALL callers, we could just use
+iopoll.h read_poll_timeout(). I think it can handle toggling the resume
+bit while looping, need to test that though. See for example the
+smp_func_do_phymem_cache_wb() for toggling the resume variable.
 
-> --
-> 2.34.1
->
+The overhead of a SEAMCALL may not be that bad in the retry case.
 
-Thanks,
+Regards,
 
-
-Hongbo Li <lihongbo22@huawei.com> =E4=BA=8E2024=E5=B9=B48=E6=9C=8821=E6=97=
-=A5=E5=91=A8=E4=B8=89 11:25=E5=86=99=E9=81=93=EF=BC=9A
->
-> Set 755 for script macro_checker.py as other scripts.
->
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  scripts/macro_checker.py | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  mode change 100644 =3D> 100755 scripts/macro_checker.py
->
-> diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
-> old mode 100644
-> new mode 100755
-> --
-> 2.34.1
->
-
-
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+Tony
 
