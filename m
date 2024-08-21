@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-296266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A834595A855
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BE995A861
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2024 01:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607411F23660
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B618B2833A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FA717C7C4;
-	Wed, 21 Aug 2024 23:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD90217D354;
+	Wed, 21 Aug 2024 23:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZQXLyIBx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hdy8/RKS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B2D26ACB;
-	Wed, 21 Aug 2024 23:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE15716A94F;
+	Wed, 21 Aug 2024 23:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724283157; cv=none; b=JKrbUSiG4GIUCwXjP0BV3G0waELZLfyxn23hw4F80DXYsN6sxJoKWiI7s9FTuVAB0U+sW3rOXPoeYT/m1lV+rCVRWme61XkuRjTOH0AGmb/UyxGrlU5Yghnkyr94nT7DTq2LhsFTOW6rmcin0/uYL0ZDYzHte2kv6SM1Ia6dfV8=
+	t=1724283377; cv=none; b=m8DPoCwTMOcIzlCdDiCpOsSOH8wp4w8hzAopgw4tgu9hmPZ64jXdcUtGokse34sdGJupRqZ1+ejEEnW5ZYMQKZwA1z0/9Sz5YR7LIV48srX+ELa/4cgMSP4UaSq1uQrPHSYGgICu60r5/q2pye0ncJ6Yh/cFx8vpkLtARRxivBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724283157; c=relaxed/simple;
-	bh=9/kcCF94IymkHF4aMeWQBbvOSWBfpRt6oYxd9GzLtWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZ298poCWsQcAhj1mYQqIeDVuMkYN97T5urI1HjsJPh77yHTkBfluTX0ArtFZbGN1NrRnvTQj5ER0Luy4LekGomiIksoopWM2PrvcvdnAH624ZLeyrjxYrR5mq5tKvzWMwIlD3tXt6w/VxrfbX4oswqlMbTc3IQty/Rm0haAODc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZQXLyIBx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13607C32781;
-	Wed, 21 Aug 2024 23:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724283156;
-	bh=9/kcCF94IymkHF4aMeWQBbvOSWBfpRt6oYxd9GzLtWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQXLyIBxM8/2JsjLAr2QNmYAp1J5BfP2XxdxMWN/IUIzXah27bJHIzGMRWAcPtdxp
-	 jpgpsWlkQMu1D34jW/zMaD6s2Y5eqP/phYF/h5Abg1O5ec2rvX3qi8NnnTk5oOPdUK
-	 co6vqyHnNQ1G1tQUtqZNnPknjfz2lC93PDL0OyFA=
-Date: Thu, 22 Aug 2024 07:32:33 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v1 1/4] driver core: Ignore 0 in dev_err_probe()
-Message-ID: <2024082213-yogurt-kerosene-92e6@gregkh>
-References: <20240821122233.3761645-1-andriy.shevchenko@linux.intel.com>
- <20240821122233.3761645-2-andriy.shevchenko@linux.intel.com>
- <1dde296b-045e-d56a-1734-a1333a84060b@linux.intel.com>
- <ZsXntvP6eBB_092w@smile.fi.intel.com>
+	s=arc-20240116; t=1724283377; c=relaxed/simple;
+	bh=brdzSmFxxU9/yqU24WmdMPuHbC0JPXjGsAbpj8ZmrZ4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jgaH1/p/KtSrpn3VPFRAd4Yy73CYaWH+lNeBRw/kAQ9RquE7ILC/+BxS5PmOiUZBMBshkI+BW4HjjIFzUdDokYcwsqQ1IwCY1OyZGduhUR7lzlQ3mEiDQaWP+hV7Od4VHPcdmM1W/QTnN4Eehf7X1fhbEgkcz+yI0LTIvYVdoYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hdy8/RKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4E9C32781;
+	Wed, 21 Aug 2024 23:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724283376;
+	bh=brdzSmFxxU9/yqU24WmdMPuHbC0JPXjGsAbpj8ZmrZ4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Hdy8/RKS7vtZnQzBzb4jZ4FB6deBgkOouQHpXgvGb6g0R5Pde7NL93mHcJd9ASBCJ
+	 03P+oOPLKKIUoKNBJvvmRNzgy897zDxBLqkjo2yy2rj1Ftp045/+mZ6tnLMN9kOjQm
+	 h+fFVkKzuLnVfcLmOeLuw3hcgayMF5IJJpiJG8qY/I6vggavl0l3QBNFX9zwTpxnIP
+	 vTdROTdec7Z4tZUY5veVLz358vr8N7eOKjIABZ8ZgJmLFAuxMGDDKqdMGUPkndglCL
+	 XN49lQeM3Pbxm/UXYEPAQrCvTmkb1R5soqGYPmXS7V1Cyo1NlwDAw9m+COFNmUcW1U
+	 x9Ld+rWGHt2MQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/3] KVM: arm64: Control visibility of S1PIE related
+ sysregs to userspace
+Date: Thu, 22 Aug 2024 00:35:35 +0100
+Message-Id: <20240822-kvm-arm64-hide-pie-regs-v2-0-376624fa829c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsXntvP6eBB_092w@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMh5xmYC/3WPyw6CMBBFf8V07ZjpQ4uu/A/DouAAjfJwikQl/
+ LsV4sKFy3uTOefOKAKxpyAOq1EwDT74tolBrVcir1xTEvhzzEKhMpgohMtQg+N6Z6DyZ4LOEzC
+ VAZTSu8KiRe0yEa87psI/ZvIpjbnyoW/5OYsG+Wm/TPmXOUhAwCTPdG73eba1xwtxQ9dNy6VIp
+ 8XCdLvH2f2iEjWF4ObZ8YtZILU0xupko9AkGhVIqN3rFzW9AUZ88gQJAQAA
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ 20240813144738.2048302-1-maz@kernel.org
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1995; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=brdzSmFxxU9/yqU24WmdMPuHbC0JPXjGsAbpj8ZmrZ4=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxnnoOWysVLhxSWycGXZ8N9XZwL9wb3sAprSecenR
+ +uMKq8SJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsZ56AAKCRAk1otyXVSH0O6hB/
+ 0RJ5zr+dhVm9vjv5mbW+0pOYknpegjpcfRrhn1XOua8/+PO9lekL0bw7bijwe7Foyi9eFn7Z0x5I5K
+ Z6+QXKM1IrNJdFhBUUO1ygJhedI/6wuELWDM65Xu2xNfb4zrZdrbjcc2xmLMFDUFhI3dreO/xlTqrG
+ XuBTHRRWe/Mo0DGcfXrUpFHakrJ0UngN3FvYi8hKcB6o/U/U8WIldRs5nFCqrs/p5kdK2ooc7q6gHQ
+ l7CIm/7vFXf8JF88TiRYvlNp1KrRVZyb9wBY1C247HGMNvAHPL5k2LH55S6/oUlD+1Dm0S+Com+Z2y
+ exi9UuWwqyUgMA3nsT+RHYfiR/S03Z
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Aug 21, 2024 at 04:12:22PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 21, 2024 at 03:38:15PM +0300, Ilpo Järvinen wrote:
-> > On Wed, 21 Aug 2024, Andy Shevchenko wrote:
-> > 
-> > > In the similar way, ignore 0 error code (AKA "success") in
-> > > dev_err_probe(). This helps to simplify a code such as
-> > > 
-> > >   if (ret < 0)
-> > >     return dev_err_probe(int3472->dev, ret, err_msg);
-> > > 
-> > >   return ret;
-> > > 
-> > > to
-> > > 
-> > >   return dev_err_probe(int3472->dev, ret, err_msg);
-> 
-> ...
-> 
-> > This seems generally useful,
-> > 
-> > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> Thanks!
-> 
-> > A nit, the code sequence that dev_err_probe() is documented to replace is 
-> > no longer matches with the behavior (the else would need if (err < 0) 
-> > added).
-> 
-> Okay, let's wait what Greg says about it, if he is okay with the proposal,
-> I'll amend documentation as well in v2.
+While looking at the KVM system register code I noticed that we do not
+have visibility operations for TCR2 or the S1PIE registers, I may be
+missing some reason why they are not required but in case I'm not I
+figured the most direct way to ask was to propose adding the operations.
 
-I like it, and will be glad to take it if you update the documentation :)
+This is based on Marc Zyngier's series:
 
-thanks,
+   https://lore.kernel.org/all/20240813144738.2048302-4-maz@kernel.org/
 
-greg k-h
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Rebase on top of Marc's series adding EL2 S1PIE support.
+- Handle EL2 versions of registers.
+- Link to v1: https://lore.kernel.org/r/20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org
+
+---
+Mark Brown (3):
+      KVM: arm64: Define helper for EL2 registers with custom visibility
+      KVM: arm64: Hide TCR2_EL1 from userspace when disabled for guests
+      KVM: arm64: Hide S1PIE registers from userspace when disabled for guests
+
+ arch/arm64/include/asm/kvm_host.h |  6 +++
+ arch/arm64/kvm/sys_regs.c         | 77 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 73 insertions(+), 10 deletions(-)
+---
+base-commit: 6998fa93fbbf237b518bf921f8c21e71514e5aed
+change-id: 20240820-kvm-arm64-hide-pie-regs-2236f70703ab
+prerequisite-message-id: 20240813144738.2048302-1-maz@kernel.org
+prerequisite-patch-id: 7e65cb84e9a1ac67ec6174bc2c8e6f8a3cd7a2b8
+prerequisite-patch-id: 0e79993ba049d517f676a461104379fa0c34f963
+prerequisite-patch-id: 075ad9eb54d31d099a9e30ad914e29e927156ee9
+prerequisite-patch-id: d61f24087c8e4c6c650969ed2db55681aa0a5562
+prerequisite-patch-id: abb476d6ac155c9060656eb383e4f42cf3465c10
+prerequisite-patch-id: f0cace2aabf2385d74514a3733ddbbdb1e6d575d
+prerequisite-patch-id: 62ce04c9f054610b9a992a2c65d30c6cb0a0c23b
+prerequisite-patch-id: efc96c4b2c999e86de8e8cbd2e5a66a3640ee187
+prerequisite-patch-id: df53b3c1bc3339de587651f1f884f2bcad11a36f
+prerequisite-patch-id: 58095341c1baa606c91dac8b2fc1446f5d5178de
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
