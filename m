@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-295481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E6959B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317C5959B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ADE61F24618
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:16:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FBDDB2325D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340DC166F28;
-	Wed, 21 Aug 2024 12:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D9916BE03;
+	Wed, 21 Aug 2024 12:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FAFpyTk8"
-Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUJtzSbY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5588B1D131E;
-	Wed, 21 Aug 2024 12:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331711D131E;
+	Wed, 21 Aug 2024 12:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724242572; cv=none; b=hu/JQprJbEYpGHuYfiuQXfRCvTSAToKweCwwm7uE1K4O5M0LtQUE6Lna2ne8EBfKAysOIkSAvykmT6WtlM2ccgQF13Zaky40LHRJ5s6kFIGosbM9AX5kuVI2ctWIes6tASo/UFXElNSwmDMER3FlJtVile9P+/YnRl4JqMW/nXA=
+	t=1724242593; cv=none; b=o4V493Dx2aUggMXedFNAQzAF/xQXva6nFsjTovgAfnkP75Uru9y503jCyN2lo2yWPm99NnNFpSGgS+7UHM9+7c4fpI9brNiRRGYFsRoreV7RnTuOwyo5kblNIAopMedwmIFJqa6jyT/RmA8YgC/62ZMESXIwz+GnkyIiIP3JISI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724242572; c=relaxed/simple;
-	bh=7lPuFfHMXp0hkrYlhavQSxS6hoTLy3WgWRovN3zc2DQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Msv+3xJxLwH1GvhFWeE2FQIILFfIg/Zh6aRu6qkj9sVFdRdYsw5FdzetQXWO8nPu2Q2PwsEZCtwD8VG4fw9F9uP0QA/W53QXb/MychoLPLALwph2h7Sn/h/FQIX5HPbx0TYNZ74s5s/997fPOMWRisyj0BfrNpAi6xg6ktIHeVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FAFpyTk8; arc=none smtp.client-ip=80.12.242.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gkFssFypPLYfJgkFssP5R2; Wed, 21 Aug 2024 14:16:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724242561;
-	bh=Idh38J2a1UCLTfNYHMg5bSYi31mRdS8Tw6sXGnh7NjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=FAFpyTk8vTTilpyz3n+4+3WUGFu0yzWmk+FXQ6jDcVNsIO4CFd6rBubil+EQ5h3Z0
-	 EwKsF6A46PqI8zHk4zEOJt2ArGyCaFuEHRkdg3+s6fr/varfdHtNCkrfXBew7LlDrm
-	 X5zZWY+snFS5GZkv2jgm6nOhhiuH+kpLUmp70hB8xMv5nmmh7mZOypYF2RW0ktcNTy
-	 LGChGvheu1HeWiob1+pxsI+MIDOFWiHc5/EDR4sGpR07g5MZRGTm67lcN8n3RGOsCt
-	 2MBCJADQmUmhfGTpzpFZC4yL+Fh0Euv7cEfpYPwKWmTWcJJO/X8iNlrRwnVuUOnZyE
-	 dr8t1OagmSARQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 21 Aug 2024 14:16:01 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <ecd1af32-8e6b-45d3-8434-0e981fd198ea@wanadoo.fr>
-Date: Wed, 21 Aug 2024 14:15:59 +0200
+	s=arc-20240116; t=1724242593; c=relaxed/simple;
+	bh=2mU8ioxVN/5wGjGdS99fbZED3sKqLT8/LSb5k5ZqHnA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FEn70/DO//bxdhOZQU8IQahtLt7B8NrbPYIlUlAwYy9lP5pyVBtdYMqyCeDtG60dHyCFOsqC3B2+7gZSHG7Czay6nitUHho7w5KgKi4WP2q0N42aXPXyrol5zSXLKoNsR2tZkvNr/wG0lcH621AfTOpdjmWFFqJk5iBRX6leNAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUJtzSbY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25113C32782;
+	Wed, 21 Aug 2024 12:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724242592;
+	bh=2mU8ioxVN/5wGjGdS99fbZED3sKqLT8/LSb5k5ZqHnA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=sUJtzSbYTQCCYDq/EPfUshAiZ9CzdW2MnkI3kl4YparDktsa3wOAYYrU7bN82WN81
+	 BsIph4PlpT6ONxeTutO5nyxEPy/35mm1/Gq+kkNa/mxx2tP4Cw3ac/qmeK7QsBZz3W
+	 BFzrAoNzp4CRGtUbNKbLcNrqJIzrcOpc+lNPFgw+agrGu9RkkUY1mxJ3s7MVodNRh3
+	 tKTRjJzdewuwIu7MHboqJsEPevguI5k1Q23+zms2xsTSbj3XpJK5zXp1b8CdXfbqGi
+	 DFt5QiYyOFBaaAXeVff4boFgdgAhgEzE0xqNlxQSp+sHCZkxRhv/9gB6ecRYEIcnwn
+	 p8FFyh6vhSbKg==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 21 Aug 2024 08:16:16 -0400
+Subject: [PATCH] nfs: fix bitmap decoder to handle a 3rd word
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] libbpf: Initialize st_ops->tname with strdup()
-To: Soma Nakata <soma.nakata01@gmail.com>, Andrii Nakryiko
- <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240821112344.54299-3-soma.nakata01@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240821112344.54299-3-soma.nakata01@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240821-nfs-6-11-v1-1-ce61f5fc7587@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAI/axWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyND3by0Yl0zXUNDXUMLi6Qkk1TDNMOUFCWg8oKi1LTMCrBR0bG1tQA
+ OSpSSWgAAAA==
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Lance Shelton <lance.shelton@hammerspace.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=2mU8ioxVN/5wGjGdS99fbZED3sKqLT8/LSb5k5ZqHnA=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmxdqZGZFnWcvfNESeb2efxuFh+7bVAj1gXg4I+
+ T1jFRDDXGiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsXamQAKCRAADmhBGVaC
+ Fe2HD/0aKPevZVsgbuTceWeJL7hTWSodMeAQNtJS8WGGl26wep1IddzsP0DS4qxf2U8KkU4FWFR
+ LVbF4ABjB6RMcFiM20mg03M8AuhyALLrlDG/2FOgOWy+upLBSdzeCU+FM+YjhZXLskXXKGSXHdI
+ XEWBv3Nj2Ct+AvP2BFmZoq7+gWKvBQoIrl6FMHflL/C5kLLIIGkjJGKJ6nYQ2Y11rmD+/anHvqj
+ QyxUlDjPqSojn7r2D39LTHxniOfaB6Zq2LQuqfqhCBEqZsFuPi3fSIRxUtGtYwD5eeL9aaKdgJi
+ Mccd2MlsIls3lGyjeGeUUB8gLKzSnoUJ38+RqW67foVWmxLgzOJWEdOHDY5+O178g7Qc7gP6jCK
+ UvD/kC2ZGfc7eGcvW/xRDykly7NHMC94RGWnrwoZKYEgc5zdw/Wb8U7jHH/V/pHG0sTnIOnnZlI
+ SQWxtdg2XV/vfTZt4DANB+hxn1wqQQ7GkysTCELb/CNiMRlsOAB+EmR6CeIp3IA/OoSWrwNQfxL
+ tahIsRJMWtYvmd7Yq/qgeDlMM5mvo9SYWOuMbaSFIoy3brTofM24Q3HHGMeoDbUNlLw08z84ADq
+ HnBpmoFCK49DLtNL+AHycQqP363YBFR117tb8m/hwF2IvpmgRDjweV4jGVFE1QA+as/+B0huvBT
+ L+Md2ABT8yVpHwA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Le 21/08/2024 à 13:23, Soma Nakata a écrit :
-> `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
-> and these addresses point to strings in the btf. Since their locations
-> may change while loading the bpf program, using `strdup()` ensures
-> `tname` is safely stored.
-> 
-> Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
-> ---
->   tools/lib/bpf/libbpf.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index a3be6f8fac09..f4ad1b993ec5 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -496,7 +496,7 @@ struct bpf_program {
->   };
->   
->   struct bpf_struct_ops {
-> -	const char *tname;
-> +	char *tname;
->   	const struct btf_type *type;
->   	struct bpf_program **progs;
->   	__u32 *kern_func_off;
-> @@ -1423,7 +1423,9 @@ static int init_struct_ops_maps(struct bpf_object *obj, const char *sec_name,
->   		memcpy(st_ops->data,
->   		       data->d_buf + vsi->offset,
->   		       type->size);
-> -		st_ops->tname = tname;
-> +		st_ops->tname = strdup(tname);
-> +		if (!st_ops->tname)
-> +			return -ENOMEM;
+It only decodes the first two words at this point. Have it decode the
+third word as well. Without this, the client doesn't send delegated
+timestamps in the CB_GETATTR response.
 
-Certainly a matter of taste, but I would personally move it just after 
-"st_ops->kern_func_off = malloc()" and add the NULL check with the 
-existing ones.
+Fixes: 43df7110f4a9 ("NFSv4: Add CB_GETATTR support for delegated attributes")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Found this while working on the delstid patches for nfsd.
+---
+ fs/nfs/callback_xdr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-BTW, there are some memory leaks if 1 or more allocations fail in this 
-function.
-Not sure if it is an issue or not, and what should be done in this case.
+diff --git a/fs/nfs/callback_xdr.c b/fs/nfs/callback_xdr.c
+index 29c49a7e5fe1..246470306172 100644
+--- a/fs/nfs/callback_xdr.c
++++ b/fs/nfs/callback_xdr.c
+@@ -118,7 +118,9 @@ static __be32 decode_bitmap(struct xdr_stream *xdr, uint32_t *bitmap)
+ 	if (likely(attrlen > 0))
+ 		bitmap[0] = ntohl(*p++);
+ 	if (attrlen > 1)
+-		bitmap[1] = ntohl(*p);
++		bitmap[1] = ntohl(*p++);
++	if (attrlen > 2)
++		bitmap[2] = ntohl(*p);
+ 	return 0;
+ }
+ 
 
-CJ
+---
+base-commit: b311c1b497e51a628aa89e7cb954481e5f9dced2
+change-id: 20240821-nfs-6-11-188bb4e1f1dd
 
-
->   		st_ops->type = type;
->   		st_ops->type_id = type_id;
->   
-> @@ -8984,6 +8986,7 @@ static void bpf_map__destroy(struct bpf_map *map)
->   	map->mmaped = NULL;
->   
->   	if (map->st_ops) {
-> +		zfree(&map->st_ops->tname);
->   		zfree(&map->st_ops->data);
->   		zfree(&map->st_ops->progs);
->   		zfree(&map->st_ops->kern_func_off);
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
