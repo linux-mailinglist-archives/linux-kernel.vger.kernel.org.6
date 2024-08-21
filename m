@@ -1,162 +1,230 @@
-Return-Path: <linux-kernel+bounces-294798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EAB95929F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D209592A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762D71F251A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4E0281B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 02:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E752476036;
-	Wed, 21 Aug 2024 02:12:39 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615127D3E2;
+	Wed, 21 Aug 2024 02:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="gLPrRRGH";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="XFKN49DC"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753A41E504;
-	Wed, 21 Aug 2024 02:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724206359; cv=none; b=qBcAXAjmTYaGNViFGjbL5tM4G2pL+lWWPaUZZDCRkYTaCcdmIgPac/VzYomPI4Xm+E1JIu3fj+cAzV6jJZoNo55UfYyilhqUcG5uiKx4HQKV+xhYL7/NeQ3WocVI/VbMHsEUn38xEtMV+biOcSs6ST3fy5Odi46qOa2c+0X8TGU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724206359; c=relaxed/simple;
-	bh=MjpTp1ZODTdGKNSpjCNCTSun6lOzgM7szJ2wdA4i85s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NwQmoA3W3kTNBjjM1GCQp+2IKkict2kV2acf9ytIUOLf5NNFywZeN3q/pt+FdpI6feb9dVpDZ8JJLe9N0klHJfCTuKpinsMz940/YCF8TnC03YJ+U62Nw8SsZI8A3Jevi12Pz/3mL34tpmecdpx1fPj5QLDTxuIAfdUmfWD6qw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WpVGC05dJz4f3jMX;
-	Wed, 21 Aug 2024 10:12:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2B2F11A198F;
-	Wed, 21 Aug 2024 10:12:33 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UPTcVmjacWCQ--.62842S4;
-	Wed, 21 Aug 2024 10:12:32 +0800 (CST)
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-To: tj@kernel.org,
-	josef@toxicpanda.com,
-	hch@lst.de,
-	axboe@kernel.dk,
-	longman@redhat.com,
-	ming.lei@redhat.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	houtao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	yukuai3@huawei.com,
-	lilingfeng@huaweicloud.com,
-	lilingfeng3@huawei.com
-Subject: [PATCH v2] blk-cgroup: don't clear stat in blkcg_reset_stats()
-Date: Wed, 21 Aug 2024 10:07:56 +0800
-Message-Id: <20240821020756.786000-1-lilingfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E106A357
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 02:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724206501; cv=fail; b=nMIFHzY6AmSjefNSTBAK9A1S5MjEvrODc5QdPFbyD2+uWPUX4bXyXt1vRqpa3+IPNqjcTqNCTs4No5PDzbP93j1wjtjlMfFNGZzvKGmO1gMCf+CouwaX6uk7A1p1LSv00vZSm4ltxuJStMzHs7FG1QDgo9jdaHd6+os8zeYvxsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724206501; c=relaxed/simple;
+	bh=+4K34xbP1saMiRmzgO6F+WCcnMIZ+K3X2xv05HIdNgs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=apnPbaCbuSDy9Gj12Rq3vwQFBzUr2XGLGfbYCMlxew1JZdnIMlyGMozYZHrTsVRFGl/1J4prMVSLLjdyXrd4TeMqVYmVEcFw9FmcJ1v1Huzlm6TbxXVFtN8fg19/nt3+yKMzUWrk9AIPConjmtuzlWJdrcKrITtXur8y3pyswSw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=gLPrRRGH; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=XFKN49DC; arc=fail smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 27991f265f6311ef8b96093e013ec31c-20240821
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=+4K34xbP1saMiRmzgO6F+WCcnMIZ+K3X2xv05HIdNgs=;
+	b=gLPrRRGH7vqfno6sporQP+pb08PnnQK2CCGn99Gtq3bDX5LfRFIZHpL4pL4YL9eq8U5NuvaN7acUUh/lq36BKTRHnmukn5wrpuPE5B8gy/e+TW4L1eJVjTO3rwD2X81DNGYKU0xlOFHSGEeYu15bnRGhwyT12NUoIiGjwMiHa4Q=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:ae09f4b7-496f-44a1-bf81-bb27044a5ab5,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:fdb4ebce-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 27991f265f6311ef8b96093e013ec31c-20240821
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 713384904; Wed, 21 Aug 2024 10:14:54 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 21 Aug 2024 10:14:53 +0800
+Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 21 Aug 2024 10:14:53 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zEzipHtGC9dq5Uw9lYfkGXjKlI7tJSM2PuluLbJUbcPURwRM7irToMNAQ7dxCnWZqNX4OnOYKszdtr277gXh1OSt2nQ+eyfZrQ/lNP7ta4lzmtNC0vnce9Hs+WpjOu+0S3rDXJJ1yUo7xDwGki6ir6lf6EdlRo7TisPl4uhex+GFSR26umzXbpPTnLBmXKzNFsaxbvAPMFH6j6pqC5vPa69t5q4GM6ByL0aQiEtKeaiysUEAEDPUmqSiAoQ6vIMidvq9ZQU5eRNE+ScRfSocMnqsPUK5FGG/squmCe+KZOihEOAK3LjkCg2cY4ynWNBwKxfUTcid1zhNAocmU2r0Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+4K34xbP1saMiRmzgO6F+WCcnMIZ+K3X2xv05HIdNgs=;
+ b=fr953JsV475pj3pl0f7xw64P4UuBb3TPnW6GDtPeBBvlY2YOn4fNGNv71YlbXt3liDdNPz3BJ80TjmyFav7P9+LUZd4L7JQtBWcCJpgLPzRFClb9G6oNuXe25v1CGcICGAt58KkJrg4EDeU+vCJEHcyEYgZ2Ktl8v7aShf7l2J2E0Ob3pygUbfrXOjhMHcGLZRj6bOjvx3wMB9SuZMt34dAPolyQH2R/mWrJGhtoxkRQ6qPNRmnULXxH1YnNr11Vr144gl078DQG0UUGNhN/7JZmyLZExCCoTdA1tjZ+Bc5XsXSrwOe/W4bycQ5YUPTwdrVrjrMzn/ejDjehKlmrDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+4K34xbP1saMiRmzgO6F+WCcnMIZ+K3X2xv05HIdNgs=;
+ b=XFKN49DCg+FYfGnkA1LRhrWt5WIVuHjrkZUKWRBiNpUuAqnnSflQODgtvqOTOJodgzQNS1s+4HiZfTpwQNdQV3knOzUxpLSlfnVqDAsZsl9+kEx/z7GV3sVFJWywE8rTfeFqdFzNEpsiBjFvA1stYfdwBjD2VZqRpP/4gexFuuA=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TY0PR03MB8299.apcprd03.prod.outlook.com (2603:1096:405:13::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 21 Aug
+ 2024 02:14:51 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.7875.023; Wed, 21 Aug 2024
+ 02:14:51 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "daniel@ffwll.ch"
+	<daniel@ffwll.ch>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "kdipendra88@gmail.com"
+	<kdipendra88@gmail.com>, "airlied@linux.ie" <airlied@linux.ie>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: drivers: gpu: drm: mediatek: Fix warning: Using
+ plain integer as NULL pointer in mtk_drm_gem.c
+Thread-Topic: [PATCH] staging: drivers: gpu: drm: mediatek: Fix warning: Using
+ plain integer as NULL pointer in mtk_drm_gem.c
+Thread-Index: AQHa6xWlAeU8ccMBQke7Te6UfEbf+LIxCaIA
+Date: Wed, 21 Aug 2024 02:14:51 +0000
+Message-ID: <952d3e1711e873d95e25ed8f08c330e803b9b5f9.camel@mediatek.com>
+References: <20240810110724.174338-1-kdipendra88@gmail.com>
+In-Reply-To: <20240810110724.174338-1-kdipendra88@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TY0PR03MB8299:EE_
+x-ms-office365-filtering-correlation-id: 682e1d9d-7f07-4df0-74de-08dcc1870a47
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?cEd6cW9QV0lkdTFDNW5xTzExUENCbEg5M21NSGJTM1U4bkorTURHUlloL3NK?=
+ =?utf-8?B?a3FiR25sZnltdDlIOEFkcFdZRXhnTTBBditEQjJSVHFKZlVlcjhPMjh1Ym9R?=
+ =?utf-8?B?MW9oUVdKNVFRWFFhaHU4YVZvN3E1bklQV3QvNXZxYTJWTU9laXZ2eWt6K0d5?=
+ =?utf-8?B?bnE5NlZmTDNHUnVKQStNbU81Z1RUOGU3OEdBU3JhU3hOZ3FPWlpudUhVU2JE?=
+ =?utf-8?B?WDBpL2NNUURjMnltZSs1dHhpdWdGaDB0b0daakU5MUl2TTBVQmRySUdiSWhW?=
+ =?utf-8?B?djB5VVB2bkdVQUNGaDQ3Y0Nna3d5M0pxemhpWmszSHEwd0NmQWNiUnpoNndv?=
+ =?utf-8?B?K2xtNGJYQzZWdWF6QWNOT0ZzQ1p4dkw5aFp4ekRoRWcxVytSWjkrVVNTTzNv?=
+ =?utf-8?B?c2RDbDBtYlVQdU1vbjRUOUYxelVPTGpWYWdiZ0Z6b2VhdldVdWw0TEJ2Vnkw?=
+ =?utf-8?B?NmJJN0pkRTNaZFRwZE4rT0ZVeFFRb1pOd3VtdXlqcFJmRFZNV2ZXNy8zM3Y3?=
+ =?utf-8?B?cFZIM0JwWS9JRFl1c1dsbTZHb2ZPcU9IWVYrR1M0VFdVdDFtckUwN2dvTjhX?=
+ =?utf-8?B?TnRRUS85TGJ1WEEybWIyS0s0SFdzYWNNSW5CZFhDZS81VVAzT2VUMnFkZXNr?=
+ =?utf-8?B?cGFRT0pJMys5blZJRktyNzY1b1ZTQTZJaW4wZEcrWXdGNE4xMUMrUzNQdTFN?=
+ =?utf-8?B?YVZrbzJtai9lS1ZwK3h4VDRTY01ONU9BWFJOY2E5UUJPYzhmZUhqVXp5RWJ5?=
+ =?utf-8?B?bFFEWnUzL1BsUEg5ZXNwMTcxa3BLa0IrU2loQW5UdWM3bmtsL0RTT0llN1N4?=
+ =?utf-8?B?Q1JHU2Uxb1YvbHdCMnY2dFFzRmpLL29GUHR6R09paC9yNlZyMW5od3BaZ2Zh?=
+ =?utf-8?B?L0wzV1Zlc2FMMTZRN3A1TExTR3JHK01oblE3eTN1OU54VzhvcC9PUUdBdHgz?=
+ =?utf-8?B?REdqN1pzTlR4YlBTWlVFa1hLT0dlQ2dtZ3Y1c011R2ttTzFMeE13bEl0N1Vk?=
+ =?utf-8?B?TEN2TkxpSEFnTCtlM0RSOStobEpnUUtaa29sUnJZVmNRazZNK2VuM2E5c2Ix?=
+ =?utf-8?B?a3RuazcxMzl2dEh5VUNsSnlKSTJsYlpzNGQ2WWVWRk1WekNHL1N1SzM0Rng1?=
+ =?utf-8?B?RWIyWE02aS80VWlmd2ozR1RmeklEV21CV1pxMERaZFhQdzVWWEJSYmU1aWlT?=
+ =?utf-8?B?bG9tbkdrUnZHS1BMUG4vZzRnSURNS044Z0YwaFkwNkIzY2s0UXVhSW56SXJC?=
+ =?utf-8?B?U05oWUZDWlNyZnRTMFQxSzJRZGpodDd3OStHdnN0byt1ei9UL2xVM051ZzlP?=
+ =?utf-8?B?SGFYR3FvdFY5c0dUV3pYbm4xOFZPeVpBOE5QQ2hGZFNjdmF2UFpxemh1MVgz?=
+ =?utf-8?B?b0t4WCt3eFJta2Rsd1BqMlRYSE5rYmREYkpPVFk5S0dZeEdVakFTKzFINm16?=
+ =?utf-8?B?WGFTSW1rQ1F0NjVVK0x0NHk5UW5hb1hQakRGai82S3RYQmJWNDIzYWM1RGFu?=
+ =?utf-8?B?bTRJWmZrL3lreUtkNlFKZkVIVG9NL0VQcUNoZVFzaTNFZ2J5WXdzUWNNYXlM?=
+ =?utf-8?B?d1ZYaVlOTTJRaDNrTWpKRTlGaFpYd3g1SlVxUGNWODNIbE9lZDg4ZlY5dXBV?=
+ =?utf-8?B?WldReklDMzN0L3ZFWDdvajd4aDBxSTdkdCtwYVZuREJvcnJPVWsyemhTNXlt?=
+ =?utf-8?B?cUQ2eVZ5QjV2TWpVb0E5V0VJK0tya25OM1ZhVW1LMVBwRU8rcDhaaFRNK3I2?=
+ =?utf-8?B?KzgyaWpKamF0cldVQm1qUlRCZFNNT3Nldms1bFRRd0E2WFk4ZjhTVWEzYTI5?=
+ =?utf-8?B?Z0RnS3ZVTUMxckFZb0Q3U1dTMnRkQUU3bXJYZVRJUEVQZ0pRTVZRRDI1UEhw?=
+ =?utf-8?B?b1BZOWd6Q0x0Q3BMMUdycW1zU1lHbGpXNElRbTdpbTRJQWc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UU0zTFRHd01NQUdGYlhML0xTUnR5WDlkeFlxZXdZSzJsU2MwMW5uQzB5MmNO?=
+ =?utf-8?B?eUlzdS8rSkxmU1ZRd1FPc1R5b0ZhbmR5TWh1UlowZVVjZnQ0S29JaHNvdU9n?=
+ =?utf-8?B?Q0ZScFBUViszWUNLUVVleFJSMjVQUGJmWnhMRnVnNUFaU3RGY2h6RVFMcDU2?=
+ =?utf-8?B?SDRCSVQxZHoxbW1EZGpqMTg1eHUyRlIyR3RnZ01Oem1NenZnYlpZUS9jL3R4?=
+ =?utf-8?B?RStIbDR1Y1MyMTkxL1dFQW93Wm12L2tNM3JPWnA2VnY2UUFUUGVNMWdOSWt0?=
+ =?utf-8?B?Ty9IbHUvTFltdkdMZ0Z3OURpbDJ5NVdtbDdUVzlxQldQQnBYNlB1UXVPbWt3?=
+ =?utf-8?B?ZTl4aVlIMVBPL2VhSWhyWmJDcFZBNFRhNHFWM1hLaWNseVJWMVI4QVhoTmpj?=
+ =?utf-8?B?aXpEN2h0YTB5bWEyZ1dDNmJ6WCtjd3VDZUZscHUxV3ZEbnEvckFQQ1lWVDVx?=
+ =?utf-8?B?d0REOFZIMktyTlpDdFEyWXl5WDdINkNvVk9wTWxzRU1sQ085dGR4b0xqcDBX?=
+ =?utf-8?B?cHlRLzJYaHN5RWhMeGxkUjRtazd6a2lLOEFhQ2VFNFpnMEUvVzRIa1plY01Y?=
+ =?utf-8?B?a0RFdXhxK3c0QkdJa1NDK3NWM2NJU3lMeHN5OWxURzlzZUg1T2hNSzhxV2Jz?=
+ =?utf-8?B?QkVMMFdIc0t6eDdnSkNQWEpsc2Myc1JQSGJwc2ttbFpwNGlpU3R0RW13VFZh?=
+ =?utf-8?B?UEtBSDZKaWZtUlhXV2VKVEIzbjRoZTd4OVVXdUNuMGxQUk1JMHZlNFQ1d0xQ?=
+ =?utf-8?B?YlJQbC9vOUZVbS94MTlHYnkyQy96c0U3SEFZMUE2VjVZVUZodEdqdktBUFJp?=
+ =?utf-8?B?dWIrdnQ2RTVjdmZjcC9aRklMeDBOeU9xRjQwWXFhN1ExUWRybWJVYjBMeFpi?=
+ =?utf-8?B?YW9rVEtiUXpyZnUxbHM5ajJuSG9BOWFPbHhPdURFUXkwMGxVTVF3L1p6Mm42?=
+ =?utf-8?B?TGY1akVUcUhibnlNNkwvdkFOd0w5eGhQMTVzcUhKSUo4S1ZMeGo2YzJvbTha?=
+ =?utf-8?B?ZGxBSm5vUkZWWHQ4KzBKM3V1bzdFQzYrN1NnVXVjN2RGZlVDUlpOWEpFdExU?=
+ =?utf-8?B?ZWVqcUI0Mkxha2s3UU4yM1FOT0ZKKytiMjZLRERjSTVaTkU3NjJCN0dmdkdS?=
+ =?utf-8?B?bzlVVUtFREJ2N2RZYzdFcENPZ2ovSTZEYm9IZTdQM09hTzhuMUFaVm9PTyth?=
+ =?utf-8?B?RmhFY09iUmRxMkxrZ0ZYT3ZsU3Awa3N3czVSeXRzVUl5NlhRSHQ4VDJJcXZ3?=
+ =?utf-8?B?aGVJNHJpQkFIMUlkTkovcEVrMkNKbmd1aXBKRzRtZzVMbnFGVnpvMmh3enlP?=
+ =?utf-8?B?ZDRyMjR3dzNVcEhXakJpUVMwcDVrSmtHRWpaV3NiclBwdGI0K0NScEN5bllz?=
+ =?utf-8?B?Z2U0VjVJYnVrS0J3d0RjaWkwUW1hSmtSZFJNbUpEQTNBSkdBVHUrUmxsVXMw?=
+ =?utf-8?B?SzYrQlNmLzZhREFWbHMzSXVFbld3amhiek9vVWlQbEtGOE14Y0dINklyelFV?=
+ =?utf-8?B?N3VqMXJ2d0FlZ2RCdUo3QW16NW9LaExmZDlpNW00NC9KSWhEMTBaeFhvSE5o?=
+ =?utf-8?B?NHgwL1ZaengxV1dwOVNEQndLYW1hZG9jajduVXhBRHRId2Y5LzZ0MGVzVDlZ?=
+ =?utf-8?B?YjkxeDl2SFN6cVpZOExyd2crMVZnWHY5aWFsTU9ucHRVR2Q2MkZ5MXlyUWI4?=
+ =?utf-8?B?WGhCbXRuOHQvVGRFL2o4K3JEaHdmUkVqVldud1RaUmlZZS9WMkdMSVpyNzNL?=
+ =?utf-8?B?N1hTMFpzdTEweW54MGoxU0NSaUdjUFNPN3FNVURoZGRKWVdyUDdRMnYxOWtx?=
+ =?utf-8?B?ekNFY29QaTVPZFp0ZXFWY0FsVlBpcWpHb1ltQmRVdHNaaXZua045ZUhDY1V0?=
+ =?utf-8?B?cGJmbkpPcXI1N200R29nRFVZN2tUTDJ0Y1h3cWNyRzI3ZU9vOUVaUlg2bVdk?=
+ =?utf-8?B?SGs3RFdtN3ozVnZYUzRoWUhwSmRvTWNxZFNxSVBkVXRiOGJCZUZicnY5M28y?=
+ =?utf-8?B?OUZGN2h2cmJIOUZrRTZHS1JVQWx2M0Z5dUhXN0VPZktpa1FlU1k4eHVWWll4?=
+ =?utf-8?B?Rnp3U3JrWTZkbVZ6d29LaTdldkU5R1JqaHlyYklvQitBdTlYWWk3QjV2Q3ht?=
+ =?utf-8?Q?1QBG+LC/B3VkLBIXrYEi3inVm?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <923E79C930D28040AE335373494AF705@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4UPTcVmjacWCQ--.62842S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWxZr4DGr17try7uF17KFg_yoW5JFW7pr
-	WYkwnIk3yDKF4kZF1Ygay2qryF9w4vyry5JrWDW3yrKF1jyrySvF1qy395AFW5CFyIvr45
-	Xr4YvrWDGw4jk3JanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiNtx3UU
-	UUU==
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 682e1d9d-7f07-4df0-74de-08dcc1870a47
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2024 02:14:51.6643
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oNRUr+kXFzq+ijIQOtJZZAS0jhhfny2gXUjrcs91klVR56dTTf80XK369nqXrQd/C78nyVuCAyeSfAVI8eJb2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB8299
 
-From: Li Lingfeng <lilingfeng3@huawei.com>
-
-The list corruption described in commit 6da668063279 ("blk-cgroup: fix
-list corruption from resetting io stat") has no effect. It's unnecessary
-to fix it.
-
-As for cgroup v1, it does not use iostat any more after commit
-ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup v1"), so using
-memset to clear iostat has no real effect.
-As for cgroup v2, it will not call blkcg_reset_stats() to corrupt the
-list.
-
-The list of root cgroup can be used by both cgroup v1 and v2 while
-non-root cgroup can't since it must be removed before switch between
-cgroup v1 and v2.
-So it may has effect if the list of root used by cgroup v2 was corrupted
-after switching to cgroup v1, and switch back to cgroup v2 to use the
-corrupted list again.
-However, the root cgroup will not use the list any more after commit
-ef45fe470e1e("blk-cgroup: show global disk stats in root cgroup io.stat").
-
-Although this has no negative effect, it is not necessary. Remove the
-related code for cleanup. No function change.
-
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
-  v1->v2: remove the fix tag and mark this as cleanup.
- block/blk-cgroup.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
-
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 69e70964398c..6d091fa55b8c 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -629,29 +629,6 @@ static void blkg_iostat_set(struct blkg_iostat *dst, struct blkg_iostat *src)
- 	}
- }
- 
--static void __blkg_clear_stat(struct blkg_iostat_set *bis)
--{
--	struct blkg_iostat cur = {0};
--	unsigned long flags;
--
--	flags = u64_stats_update_begin_irqsave(&bis->sync);
--	blkg_iostat_set(&bis->cur, &cur);
--	blkg_iostat_set(&bis->last, &cur);
--	u64_stats_update_end_irqrestore(&bis->sync, flags);
--}
--
--static void blkg_clear_stat(struct blkcg_gq *blkg)
--{
--	int cpu;
--
--	for_each_possible_cpu(cpu) {
--		struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
--
--		__blkg_clear_stat(s);
--	}
--	__blkg_clear_stat(&blkg->iostat);
--}
--
- static int blkcg_reset_stats(struct cgroup_subsys_state *css,
- 			     struct cftype *cftype, u64 val)
- {
-@@ -668,7 +645,6 @@ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
- 	 * anyway.  If you get hit by a race, retry.
- 	 */
- 	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
--		blkg_clear_stat(blkg);
- 		for (i = 0; i < BLKCG_MAX_POLS; i++) {
- 			struct blkcg_policy *pol = blkcg_policy[i];
- 
--- 
-2.39.2
-
+SGksIERpcGVuZHJhOg0KDQpPbiBTYXQsIDIwMjQtMDgtMTAgYXQgMTE6MDcgKzAwMDAsIERpcGVu
+ZHJhIEtoYWRrYSB3cm90ZToNCj4gIAkgDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5v
+dCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVudGlsIHlvdSBoYXZlIHZlcmlmaWVk
+IHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+ICBzcGFyc2UgcmVwb3J0ZWQgZm9sbG93aW5n
+IHdhcmtpbmc6DQo+IA0KPiAnJycNCj4gZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
+Z2VtLmM6MjkwOjI3OiB3YXJuaW5nOiBVc2luZyBwbGFpbiBpbnRlZ2VyIGFzIE5VTEwgcG9pbnRl
+cg0KPiAnJycNCj4gDQo+IFRoaXMgcGF0Y2ggY2hhbmdlcyBpbnRlZ2VyIDAgdG8gTlVMTC4NCg0K
+SW4gbGF0ZXN0IGtlcm5lbCBbMV0sIHRoaXMgaGFzIGJlZW4gZml4ZWQuDQoNClsxXSBodHRwczov
+L2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5n
+aXQvdHJlZS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2dlbS5jP2g9djYuMTEtcmM0I24y
+ODYNCg0KQW5kIGl0J3MgZml4ZWQgaW4gbGFzdCB5ZWFyLiBTbyByZW1lbWJlciB0byBzZW5kIHBh
+dGNoIGJhc2VkIG9uIGxhdGVzdCBrZXJuZWwuDQoNClJlZ2FyZHMsDQpDSw0KDQo+IA0KPiBTaWdu
+ZWQtb2ZmLWJ5OiBEaXBlbmRyYSBLaGFka2EgPGtkaXBlbmRyYTg4QGdtYWlsLmNvbT4NCj4gLS0t
+DQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9nZW0uYyB8IDIgKy0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2dlbS5jIGIvZHJpdmVycy9n
+cHUvZHJtL21lZGlhdGVrL210a19kcm1fZ2VtLmMNCj4gaW5kZXggZjhmZDhiOThjMzBlLi44ODVj
+ZTZhYzdiYWQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJt
+X2dlbS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2dlbS5jDQo+
+IEBAIC0yODcsNiArMjg3LDYgQEAgdm9pZCBtdGtfZHJtX2dlbV9wcmltZV92dW5tYXAoc3RydWN0
+IGRybV9nZW1fb2JqZWN0ICpvYmosIHZvaWQgKnZhZGRyKQ0KPiAgCQlyZXR1cm47DQo+ICANCj4g
+IAl2dW5tYXAodmFkZHIpOw0KPiAtCW10a19nZW0tPmt2YWRkciA9IDA7DQo+ICsJbXRrX2dlbS0+
+a3ZhZGRyID0gTlVMTDsNCj4gIAlrZnJlZShtdGtfZ2VtLT5wYWdlcyk7DQo+ICB9DQo+IC0tIA0K
+PiAyLjQzLjANCj4gDQo=
 
