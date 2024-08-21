@@ -1,95 +1,146 @@
-Return-Path: <linux-kernel+bounces-295912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C6795A2E3
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F4695A2E4
 	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB4F28217E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE991C21D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB7D15886A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9E9158A23;
 	Wed, 21 Aug 2024 16:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Q+aKMcOj"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4513C14F9F3
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 16:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46275D8F0;
+	Wed, 21 Aug 2024 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724258041; cv=none; b=B/CWi9k0q9sHLV3XlNis/cqMA9fabAZqPkG3mOuBRTMbFeCyJ1eUw6E59CVJArr8t4A/DV+xsjhGDxYjmsvXdyLmo4TwK9+BMCf69A1ypDMCf3mMJLifDJ6nW8E8luALdV2tSVVp74dfcoysxEhiq9n3Rj/MuAOb1qi5wTpSBfc=
+	t=1724258041; cv=none; b=XgQ32VsJYr1Xg/Gk96HhSNxCeSOiRsYFoYNI/vMSNAQ/chBWgx68EKaRyLeFYvABUR3yMlM4Y1rqs17b+E/gNMKg2yV1jMiFMGR0GGdbDk+VCUAe4fBMYkBIVsjTCiMBs+/+vEUMyMSsbD/NlScsobQBXkzXi+DQT5K1eMARZJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724258041; c=relaxed/simple;
-	bh=sVgg3XEZ8t6920CMtY3WUo0BXNqLQRfIMdIh/d8tUDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gSru+0uY1fZeBdX5ezwr5uvs0ShmjTuqrwTItdk5J6Aj0E/6legEDmzuWO/GJYZtu7/LMQeaAc/c/6XaHVh9pWUeFPE+5q5VC2oWgEfAzLcsTWIDxjLO9fw4FnEYZoEqZAX649CYC9d9Y3IjfaBatBOximpOeYdY77X0CLBmDRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Q+aKMcOj; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a81bd549eso577559966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 09:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724258038; x=1724862838; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVgg3XEZ8t6920CMtY3WUo0BXNqLQRfIMdIh/d8tUDE=;
-        b=Q+aKMcOj7olrk26tcg3l21UCz3percFAwRNW7qT+jaVcugvqCaDHsM/+SQDpE0Aw18
-         O6a/mP2n6/YxwQtUx9mUa5K1uuJQ6RCVD2A+8IC5/ydxqLj/TqXVlSEVVxgDysaVu2YN
-         iLVmiY5whRLIQX9nvi/+YMNy/wcxcsh4uuplw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724258038; x=1724862838;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sVgg3XEZ8t6920CMtY3WUo0BXNqLQRfIMdIh/d8tUDE=;
-        b=TDO6MS90Nuez+udsQRAlHgGJxX6pD5lrcUrWgOgyoBIAK9k2K6ks95w5kPniBdNtuC
-         PQ/5eZV8r3glpi959kbQBddMnLHbcYkskFrrxawYTBTietio5pges4BQ7S5MumEYoOuz
-         HohAEgADOp9yVYAn5GaTc24S2BarFhnzWo/agXrW0kLf20eJdp1OuhXRI6mKPv/cuHby
-         BZu2ujpUUkcNJrbVcTn4XBpkn56oIJbgmydmSCRO86nQzLEuhAsi8Xfmh1HimgBVXIDm
-         yTQOn3CE8mnYNe0uHL58gRFBSfrSFWopPslI0eWNMKByfvIOx90FLWsuPmyu0ij8pBy/
-         h9mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEHikXJwaD7L9FD9q/CrR2B5lOXvSKIeP8gWQQTmur44E7Da4LfL/R8csQ97sqclc+cS5ZCPRdPALyvh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPmC/zJaR+O4u0eiI5npqOkAEmWVzC3u9Rh6rePGaox6hCnOKk
-	PfTFK3JtjTuEKMo1pu/meCXABTukgk4JInaBYOfmBpqaKqYFpIzyKhfAfjWp3ZFJZlRNlTErqNT
-	VSVDtHb0LYmAMAecphWQvrODM3cQyVjY9IXGMHw==
-X-Google-Smtp-Source: AGHT+IGDayd7xuAjuOBPzNSKAAgetzBjuj+Vul4/WCcTjqLvTO4EBhzQwJUfxXdLsV7UiBI1uJ93BDSvM19wz5RFwBY=
-X-Received: by 2002:a17:907:96a3:b0:a86:78ef:d4ad with SMTP id
- a640c23a62f3a-a8678efd649mr202521966b.20.1724258037501; Wed, 21 Aug 2024
- 09:33:57 -0700 (PDT)
+	bh=pVLVC7RFMjEJt7SU0a6Zj0TKVkL+KpleH3S4AM1LVtI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ELUMtmA3ubAgH0wSd0Gi1tPXjQXVt9+xayaGnpBZiKEj6sKXaaZYmsf8uUjs8KLB/XavxGBJE99nG8KNeR3NOJkE3s8ZoQKSE5tr4bpZjtIc2W0Zi0RJP7e9qtAfqorFosAqufb/gmZcQldmU4hvuj9unvAMIeI+FaW0EcMFREU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WpsJl6P0kz6J7sn;
+	Thu, 22 Aug 2024 00:30:47 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0F9DF140A36;
+	Thu, 22 Aug 2024 00:33:54 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 17:33:53 +0100
+Date: Wed, 21 Aug 2024 17:33:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 2/4] iio: adc: ad4695: implement calibration support
+Message-ID: <20240821173352.000000b6@Huawei.com>
+In-Reply-To: <e2401290-5504-4a17-93bd-af8684a82a7a@baylibre.com>
+References: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
+	<20240820-ad4695-gain-offset-v1-2-c8f6e3b47551@baylibre.com>
+	<20240821141615.00006ebe@Huawei.com>
+	<e2401290-5504-4a17-93bd-af8684a82a7a@baylibre.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819-fuse-oob-error-fix-v1-1-9af04eeb4833@google.com>
-In-Reply-To: <20240819-fuse-oob-error-fix-v1-1-9af04eeb4833@google.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 21 Aug 2024 18:33:46 +0200
-Message-ID: <CAJfpegtOnAfAzz9-OcnXqMvwDeAO5a_j356Zi9eoRH_viMOj4w@mail.gmail.com>
-Subject: Re: [PATCH] fuse: use unsigned type for getxattr/listxattr size truncation
-To: Jann Horn <jannh@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, 19 Aug 2024 at 19:52, Jann Horn <jannh@google.com> wrote:
->
-> The existing code uses min_t(ssize_t, outarg.size, XATTR_LIST_MAX) when
-> parsing the FUSE daemon's response to a zero-length getxattr/listxattr
-> request.
-> On 32-bit kernels, where ssize_t and outarg.size are the same size, this is
-> wrong: The min_t() will pass through any size values that are negative when
-> interpreted as signed.
-> fuse_listxattr() will then return this userspace-supplied negative value,
-> which callers will treat as an error value.
->
+On Wed, 21 Aug 2024 11:12:12 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Applied, thanks.
+> On 8/21/24 8:16 AM, Jonathan Cameron wrote:
+> > On Tue, 20 Aug 2024 10:58:36 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> The AD4695 has a calibration feature that allows the user to compensate
+> >> for variations in the analog front end. This implements this feature in
+> >> the driver using the standard `calibgain` and `calibbias` attributes.
+> >>
+> >> Signed-off-by: David Lechner <dlechner@baylibre.com>  
+> > Hi David,
+> > 
+> > Whilst some of the messy value manipulation is unavoidable
+> > (oh for signed integer zero!), I wonder if we can at least
+> > move one case into the core.
+> > 
+> > See below.
+> >   
+> >> +
+> >> +static int ad4695_write_raw(struct iio_dev *indio_dev,
+> >> +			    struct iio_chan_spec const *chan,
+> >> +			    int val, int val2, long mask)
+> >> +{
+> >> +	struct ad4695_state *st = iio_priv(indio_dev);
+> >> +	unsigned int reg_val;
+> >> +	int ret;
+> >> +
+> >> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> >> +		switch (mask) {
+> >> +		case IIO_CHAN_INFO_CALIBSCALE:
+> >> +			switch (chan->type) {
+> >> +			case IIO_VOLTAGE:
+> >> +				if (val < 0 || val2 < 0)
+> >> +					reg_val = 0;
+> >> +				else if (val > 1)
+> >> +					reg_val = U16_MAX;
+> >> +				else
+> >> +					reg_val = (val * (1 << 16) +
+> >> +						   mul_u64_u32_div(val2, 1 << 16,
+> >> +								   MICRO)) / 2;  
+> > Maybe worth extending iio_write_channel_info() to handle
+> > IIO_VAL_FRACTIONAL_LOG2()?
+> > It'll look much like this and you'll need to provide write_raw_get_fmt()
+> > so the core know what to do with the value formatting.
+> > 
+> > I don't really like the mixture here between the read path being able
+> > to rely on the core code to deal with the /2^X and the write path not.  
+> 
+> Sounds like a good idea to me.
+> 
+> It seems like we would need to add an extra out parameter to 
+> write_raw_get_fmt to say what we want the X in 2^X to be. For
+> example, we would want to make sure the val2 we get in write_raw
+> for this driver is 15.
+Yes.  (I tried to reply to say I'd neglected this but managed to
+just email myself. oops.)
 
-Miklos
+Maybe it's too complex to bother given that.  Definitely a job
+for another day rather than something to block this series on.
+
+
+Jonathan
+
+> 
+> >> +
+> >> +				return regmap_write(st->regmap16,
+> >> +					AD4695_REG_GAIN_IN(chan->scan_index),
+> >> +					reg_val);
+> >> +			default:
+> >> +				return -EINVAL;  
+> > 
+> > 
+> >   
+> 
+
 
