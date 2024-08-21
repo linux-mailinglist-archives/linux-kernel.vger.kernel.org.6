@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-296164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523B295A670
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:22:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A850D95A683
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 23:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854241C21155
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FED21F23CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 21:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863FE174EFC;
-	Wed, 21 Aug 2024 21:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1480175D34;
+	Wed, 21 Aug 2024 21:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGvLYxjb"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MxRHrxwH"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A8616EBE7;
-	Wed, 21 Aug 2024 21:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B2116EBE7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 21:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724275313; cv=none; b=htCEsmnAuwa9VZYpYNTvnRCrE6OHvllP0X7fiSDYNc0bt7XO74P9Q3tjaxPW7CuWaDrjYg/2Kmmn4JOGPVkOk5g4VTuN/gsYSltYI6baaRMNedXDmAtHbiQzawTg0y3ugYGKIQMrE10Q03AXVUMTt6T2OKotAihzeW4C0Lt7NYQ=
+	t=1724275422; cv=none; b=qBwIuG/7TFGZ1p3m7cbdZmt1wh+wKl2QKPzih0nK8yvQTc/ExKP4QBGqmw21nYv8V4vDlSMyRTn+wg7DZ64UQN5YeVQyY7vD+m3WgxFkNnRwHC9oH2kiHWYItxtO38WyGnXWG7VeyIQ6otomd8jropovmET3FVJqxfR4d59SdHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724275313; c=relaxed/simple;
-	bh=3HZ4TSqjuK68zk7TuNaGzjlojp3FpCsb2NnbH+5J9po=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TTZFB9yHjD0YNtaXLtmLAdSexCXXTP89CvjZspKvJM3JPcbzmH/AXy9+tAHCaTdW80N6+O2RAnRenIWyXOblJJpOkcMus1Rs92SO6391sAM9gKBCdzt5smjyI1Ics8Kdw8zbaFrugwhk+TrKHSd5B/o96lu9repOHYJI7jvrE8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGvLYxjb; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bec50de782so21309a12.1;
-        Wed, 21 Aug 2024 14:21:51 -0700 (PDT)
+	s=arc-20240116; t=1724275422; c=relaxed/simple;
+	bh=06XfuB6+MpXx4jW/NwCvJBpc8sUCcEjxtgVv5Fem5ss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kKWR+US5uzEAyMxBWwFrjE6Q5e7Gtw9RCBIbujwAhPCynSBrxzc4WKeaKpIcfsG+kmLp6M53TGIIGtNu+YFcj2iES3GBCDMLkNx6Qr/KbzVicx1MoZsLtbxERwMrfRegiiomCUKgRDryBMBoGdGI/zlK32jvSVLhJEwTuthr7IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MxRHrxwH; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso185773276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724275310; x=1724880110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3HZ4TSqjuK68zk7TuNaGzjlojp3FpCsb2NnbH+5J9po=;
-        b=CGvLYxjbbeqkWvnqBxPafxA/h7xuFSyW0YrlRugSPCow1PwSWn1sdVX/kk8faNPXye
-         UbVzfdMnDZskbXtnIjS1c2Q4ai+CmoxOzGX+pQcb/EmAL0lUHQ8nUjoIwsLbB0QlT+IM
-         7UM8LF/Q1gqWwyVCGeZCZi0cDwQZO0A86um6KoCnI+1cEqTu0v+dOsppUHIg3ZFeUfbW
-         D1EmZ3FcHrTL46EFVC/BPbv307AZoeFh+dKT/JO4ilbUdjZp2ez2fTjJe5g92s7FY1A5
-         fYT4nEP4Oj3cjEQNwj/lWQo8u3o2UM6uHI46bUR4ODefURCWzsg+ac0iyUmqJlqm9DKK
-         Ec0g==
+        d=linaro.org; s=google; t=1724275419; x=1724880219; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=06XfuB6+MpXx4jW/NwCvJBpc8sUCcEjxtgVv5Fem5ss=;
+        b=MxRHrxwHiuINOa3zOQVfoBRGLTCiFIwOKotd5QJmnMRxoVS3Mf3ZkzadGNUeSRhpv5
+         KEEDt42VQEFx0r2isFm2P6aK8UEnsvrM5w/j5xG76FamNW9gU8kE38FfzPisjyAI9saK
+         M99FqA3GcZPdDyB/yCBO5ETqO+Yx6XbjmExTesmrPR0t+YFG90iF/odwbpEw5VXWuN0q
+         XR3zKYlMpz1ijjq1dkbXEwjVOLRG/zqpY6N+dauzev2FKD/jXLXmA0sBhmqKOSrNVBAZ
+         MaGrBLDU/5UP5jWIOdTn/cKfw6pqaq4RCg5D41sHReNiv7+gOE79Dmwxds/XyIaZPGlm
+         HcQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724275310; x=1724880110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3HZ4TSqjuK68zk7TuNaGzjlojp3FpCsb2NnbH+5J9po=;
-        b=rTBeqlsUhGf9YYolDDYk5Qa1mHFG+eSyxrmOHpHQmeUMvwk283ipEGFClfZ84e199f
-         W6JOHH05szdkpi63tiWwsvwM/J9TZfIeyUTWqzhzdhyCaCXCz9nGBLYRJv51RgaE0Q6+
-         RDg9Or7Xuk6Cq95XKhb9iI2rlWKc2RoWoUmTysV8JVOEMImrCxSF715owXTnco+seLCk
-         HypL950ZkIl3LMk09Shlhac4IOeuw/OmDAL+uV9C//I54T9d2M2psZmbLasTXLGycKQm
-         oICHfuBRYay0sbdcHXk3PnPcyMvO95YH7WUHZG/b6wOhXHDFyXg5/siuXj/3exPd2tke
-         +K/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9z8U6kToS197eIs5sQ7mApnAzsdU+NdKKJ7RGQZnrd2YBJZ6zrOie8VXxx+CwkBkP0MgpgaI1uGWQwmqkrylsvko=@vger.kernel.org, AJvYcCUtI8B7I40iYR++CHnjjh/74CFiwVnfN7Gcb0jl3H16sbLkvnMzcM9PJj16V9obo+fmcLyD7jSqwlPAuKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz580I7H1vnWT4t9ncvWGj0V8lA5By2RBWw8YCIVY7WyU+rytMe
-	6jSbZED6jClTbAPC6g5xdvIhZXxk76t0uON3chqdGCapPaHQSEPsDFzhkX8D1og=
-X-Google-Smtp-Source: AGHT+IEyALFncJPq++dIHMqI7aP2pxRPueTQWabTB3Rb4Jsn2qFkrnwUMweWFN424CfM+WmR5h8ymg==
-X-Received: by 2002:a17:907:9406:b0:a7a:a33e:47cd with SMTP id a640c23a62f3a-a866fa43199mr146731266b.8.1724275310155;
-        Wed, 21 Aug 2024 14:21:50 -0700 (PDT)
-Received: from max8rr8pad.localnet ([46.53.247.255])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f507facsm11757566b.225.2024.08.21.14.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 14:21:49 -0700 (PDT)
-From: Max Ramanouski <max8rr8@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: tip-bot2 for Max Ramanouski <tip-bot2@linutronix.de>,
- linux-tip-commits@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- Alistair Popple <apopple@nvidia.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/ioremap: Use is_ioremap_addr() in iounmap()
-Date: Thu, 22 Aug 2024 00:21:49 +0300
-Message-ID: <6013396.DvuYhMxLoT@max8rr8pad>
-In-Reply-To: <875xrujkeu.ffs@tglx>
-References:
- <20240815205606.16051-2-max8rr8@gmail.com>
- <CAJrpu5n5ReFCWrtAYsWpneAb+g6hAs4E-NeFh40chJfArEsioQ@mail.gmail.com>
- <875xrujkeu.ffs@tglx>
+        d=1e100.net; s=20230601; t=1724275419; x=1724880219;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=06XfuB6+MpXx4jW/NwCvJBpc8sUCcEjxtgVv5Fem5ss=;
+        b=lCfQceCsjvPPjkeEQcEF2jlr+bempNmjZcHjO2ln1mCB1ye8byh4W4bKzT3fjSA5ka
+         bvw944ZaybXGliMO7LePpkZy91mMxdJXUk2BwrdYTlR0f0stwcTyVbfagjeBPvtmhAZK
+         JwGzKa6Kaa2ods6sQahQTyV7s4eAqH9JZWN68rA9xh0WY3MZLSNB/ix+4o/XviDgKP/Q
+         Ff188HBdhpPnOo0TeFDeGcIu4ZhcU5HaMr5fi5AQ9USXC5CWOELdTyCs012cJNsRj1RF
+         k4jqIkaaXdEuFzhQERpxs4ozbpbzY1/XIe/YcaKpjoPlgHJHxs3UymIRJlnxkBjIRyW5
+         ZULw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnjsj7RXFZLsr9lTxyhxvZCRgbNmN844dr7VuZAGKaURwOvmYdTAG0pYgU+Ku5ZgZrF7Vsibb3HRPDQcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo27ntyhwTtbofHz6Dl+W/28ZJwH+4X4/IDiXEGoMiIrrPJ21j
+	DgevEOodWo76CRPsnnCiyquVXg6J/dl/G3DNeRrAu4leaRAZ24IIlo9AFMI/gW+eVmYR7pfuEcU
+	CEl/MhrkESkLs92Up11aeIRHXNTrGZXibAoi68A==
+X-Google-Smtp-Source: AGHT+IEXbBfasg0L51VJ+s3QV0pg6W35UDhcXMQ7PYnH1YM/7uO/Ba/XJW9qtnapmhmS6B3z3oGMVg81ulRaSmD1W7I=
+X-Received: by 2002:a05:6902:1583:b0:e13:c4c5:89ed with SMTP id
+ 3f1490d57ef6-e1666400ee0mr4317516276.17.1724275419451; Wed, 21 Aug 2024
+ 14:23:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20240814153558.708365-1-jens.wiklander@linaro.org>
+In-Reply-To: <20240814153558.708365-1-jens.wiklander@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Aug 2024 23:23:03 +0200
+Message-ID: <CAPDyKFqBuQ8uUdeThRaJtd2CYNWMmpLCEDxfO+znhwjPamH+Gg@mail.gmail.com>
+Subject: Re: [PATCH v9 0/4] Replay Protected Memory Block (RPMB) subsystem
+To: Jens Wiklander <jens.wiklander@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Jerome Forissier <jerome.forissier@linaro.org>, Sumit Garg <sumit.garg@linaro.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Manuel Traut <manut@mecka.net>, 
+	Mikko Rapeli <mikko.rapeli@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> Please do not top-post and trim your replies.
+On Wed, 14 Aug 2024 at 17:36, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Hi,
+>
+> This patch set is getting ready to be queued for the next merge window. The
+> issues reported by Mikka in the v7 patch set has been resolved, the issues
+> turned out to be outside of the v7 patch set relating to configuration in
+> the secure world. I'm planning a pull request to arm-soc, but before that
+> I'd rather have acks or at least an OK for:
+> - "rpmb: add Replay Protected Memory Block (RPMB) subsystem" by Greg
+> - "mmc: block: register RPMB partition with the RPMB subsystem" by Ulf
+>
+> Arnd, please let me know if anything else is missing.
 
-Sorry, got a bit distracted and forgot to remove the default gmail
-reply text. Will try to be more careful in future with better email
-client.
+Greg, Jens,
 
-> Careful, this might end up with other issues vs. the kernel header
-> inclusion hell.
-> If i386 is the only one which does not have VMALLOC start in
-> asm/pgtable.h, then curing this might be the easier fix, no?
+To help out with the merging strategy, I don't mind queuing this whole
+series via my mmc tree. It would also be nice to let it cook in
+linux-next for while, via my next branch.
 
-I thought about that initially, but then found out that apparently
-it is like that for a reason. In commit:
+ From my point of view this looks good to me now, but please let me
+know if you prefer a different route or if you have any further
+comments.
 
-186525bd6b8 ("mm, x86/mm: Untangle address space layout definitions from basic pgtable type definitions")
+[...]
 
-VMALLOC_START definition was specifically moved out of pgtable
-related headers. But for some reason only for 32 bit arch. Plus
-I think asm/vmalloc.h is more semantically correct to get
-VMALLOC_START. Although on most arches (everywhere except x86,
-arm64, powerpc and riscv) asm/vmalloc.h is an empty header. And
-on riscv it doesn't actually provide VMALLOC_START... Probably
-that is worth a separate fix later.
-
-Best regards,
-Max
-
-
-
+Kind regards
+Uffe
 
