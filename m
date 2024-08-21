@@ -1,237 +1,215 @@
-Return-Path: <linux-kernel+bounces-295742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E75995A102
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:10:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B4E95A107
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28EBB1C224B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CFE1C21998
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B5B13B29B;
-	Wed, 21 Aug 2024 15:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC101494D1;
+	Wed, 21 Aug 2024 15:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="n/uK00pT"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="irN2ze3r"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A93B7405A;
-	Wed, 21 Aug 2024 15:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C045C139D1E;
+	Wed, 21 Aug 2024 15:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724252975; cv=none; b=Jj95YgemmeN94Y04RER09aY24KYzT85c69atX+7xYpWAdPmQ+MELEEaQ+xFVREnD3ha4QKIeuOdMdYcR4nZH51sLQaA1F2JyFtHze37uzcE+v2wgThI3Kuv4nkLj0bSQqE41bE3anMjh97PEeL7xANXPKs/pbQ8D4E9Hjy6an+U=
+	t=1724253026; cv=none; b=gKAJsQZF+zxcu/6pH/tVmKOFumog/5bM50aCtqRIDhmEYIT3xOeAm9W0lYu3gkO0qrvue2o+IkL+15/x3/mdcJLj0xS22eBQ6C9cHJIQTJ5AUZOGXVSJ5hC2e+o2cqVd//ufEiDPHOeUdboC+7fuoDSxty3xNNgkAEHq/Nu8JkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724252975; c=relaxed/simple;
-	bh=GUlIDUcNfa9EyDWZ/1osaC7lz47mPjkSNCh73IG4kSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d/7Qm9D39HWjyXmxHgki9h9q+wu1JWn9lG3WGG4LdqGDHJBlcLKFrpoMUZZklqZZ857OwG9vI7VE1PVzpdXJ7zuVEpNRYtRF+98o4BntWzUXqlRu1wZd9qimE8CKT1WYil+Z4pldR06THHoZgZibWKWWSFI8eXazrSyU5bWJlaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=n/uK00pT; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id DE9562E86;
-	Wed, 21 Aug 2024 17:09:29 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz DE9562E86
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1724252969; bh=VorIg4ES3p0Xk3QBd+Ln5vx/jV9hmSDow/djADsWGVg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n/uK00pTEJOQAQgbHSN5Xwl25p6TPBb9gNHrEJE/d3TPYkrAwrFoOgD6cZleUE2hP
-	 rEh0XHONHa/DNET5ZSC6ESoscMLtO3H2Mygy4eIIpi4IaAh8QyRAEVST/fI7UFhvbQ
-	 HMlPTYujYqCIo62delpaoCfmn93XWkew3QlUeP6o=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Wed, 21 Aug 2024 17:09:13 +0200 (CEST)
-Message-ID: <fb6f7631-06a4-4e93-bf74-8482ff082d65@perex.cz>
-Date: Wed, 21 Aug 2024 17:09:12 +0200
+	s=arc-20240116; t=1724253026; c=relaxed/simple;
+	bh=5tHOmgKf7i1uO29wrxhz0NWK1c1/vHXC1MI0liIkna8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CiTmaci/qPzISOSE6kChOyB/75e6XqzPRWQ20lTyTu5g7bffjwCCmqZKrCRiuab7DolEYROgEJfEf1LSMORAThShpKQz3AT2NO/VD/GdRmjH7tE+attNZ+8cU+VyEiYT99W1rH7kAcxFJicWNW+R6+jQxipQ5tFqtMIRDa4bDHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=irN2ze3r; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4920340004;
+	Wed, 21 Aug 2024 15:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724253015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AToNTO8xYFLGG7Mhqo9PQIDjjcAX6MVbCZPK+rg6NpM=;
+	b=irN2ze3rAD+uxFxi8NwRq3LV7IY1dNJvfzUwmYGbNsYfS5zWvRH33QzpxKQs73enxwC4SV
+	Sqt9oYzhR2MGWecg4EKbh4zUJ0S3AsrNV+PnFbXQEV7xjTiUvQGLGr2Ci9T5WSzOhsLEFc
+	VSFMGH3S1V5F+4097NecEuyRs5DqW1YEub0lm8NQitOzRWOuBjvEZ3+xZr7F+NTOefvZyS
+	dD0uG/kTNJbzSZgNKn6HKzl5iqscJHea4RjIvpVcHiUFKwPKQhjMcKY9ZM4aJg7XRb8KC2
+	Uc43bgn9r4cVasdqo/ASIMu2N0XxCk77LxjPY2l9+Sh1pnA+jrheyMT+IhPEYw==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v18 00/13] Introduce PHY listing and link_topology tracking
+Date: Wed, 21 Aug 2024 17:09:54 +0200
+Message-ID: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: core: Remove trigger_tstamp_latched
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Zeno Endemann <zeno.endemann@mailbox.org>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- Takashi Iwai <tiwai@suse.com>, Cezary Rojewski <cezary.rojewski@intel.com>,
- Christian Brauner <brauner@kernel.org>, Mark Brown <broonie@kernel.org>,
- Pavel Hofman <pavel.hofman@ivitera.com>, David Howells
- <dhowells@redhat.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>
-References: <20240812142029.46608-1-zeno.endemann@mailbox.org>
- <dec71400-81f1-4ca6-9010-94b55ecdaafa@linux.intel.com>
- <3e9cd14b-7355-4fde-b0c1-39d40467e63c@mailbox.org>
- <8c71ea3d-5c97-423e-a270-3184c16e1603@linux.intel.com>
- <c2a46079-b9fa-46fb-8d2d-e01e5d620ea7@mailbox.org>
- <878qx0mtfe.wl-tiwai@suse.de>
- <f41762a1-048c-4ab6-86ae-f364753210c7@mailbox.org>
- <874j7omsap.wl-tiwai@suse.de>
- <aa308e18-f9e0-4b1a-b548-fcc61e641c6f@mailbox.org>
- <87frqyorzi.wl-tiwai@suse.de> <cea341dc-bcc2-49f2-a641-af365bfd213a@perex.cz>
- <878qwpq5lf.wl-tiwai@suse.de>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <878qwpq5lf.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 21. 08. 24 17:05, Takashi Iwai wrote:
-> On Wed, 21 Aug 2024 16:59:41 +0200,
-> Jaroslav Kysela wrote:
->>
->> On 21. 08. 24 16:44, Takashi Iwai wrote:
->>> On Wed, 21 Aug 2024 16:27:43 +0200,
->>> Zeno Endemann wrote:
->>>>
->>>> Takashi Iwai wrote on 13.08.24 16:05:
->>>>> On Tue, 13 Aug 2024 15:58:13 +0200,
->>>>> Zeno Endemann wrote:
->>>>>>
->>>>>> Takashi Iwai wrote on 13.08.24 15:41:
->>>>>>> On Tue, 13 Aug 2024 14:54:42 +0200,
->>>>>>> Zeno Endemann wrote:
->>>>>>>>
->>>>>>>> Pierre-Louis Bossart wrote on 13.08.24 10:04:
->>>>>>>>> by focusing on the trigger timestamp I think you're looking at the wrong
->>>>>>>>> side of the problem. The timestamping is improved by using the same
->>>>>>>>> hardware counter for the trigger AND regular timestamp during
->>>>>>>>> playback/capture. If you look at a hardware counter during
->>>>>>>>> playback/capture but the start position is recorded with another method,
->>>>>>>>> would you agree that there's a systematic non-reproducible offset at
->>>>>>>>> each run? You want the trigger and regular timestamps to be measured in
->>>>>>>>> the same way to avoid measurement differences.
->>>>>>>>
->>>>>>>> I am not sure what you are talking about. I have not seen any place in the
->>>>>>>> code where the trigger timestamp is taken in any other more sophisticated
->>>>>>>> way than what the default is doing, i.e. calling snd_pcm_gettime. So I do
->>>>>>>> not see how your custom *trigger* timestamps are done "with another method".
->>>>>>>>
->>>>>>>>> I will not disagree that most applications do not need precise
->>>>>>>>> timestamping, but if you want to try to enable time-of-flight
->>>>>>>>> measurements for presence or gesture detection you will need higher
->>>>>>>>> sampling rates and micro-second level accuracy.
->>>>>>>>
->>>>>>>> I don't know, this sounds very theoretical at best to me. However I do not
->>>>>>>> have the desire to try to further argue and convince you otherwise.
->>>>>>>>
->>>>>>>> Do you want to propose a different solution for the stop trigger timestamp
->>>>>>>> bug? That is my main goal after all.
->>>>>>>
->>>>>>> Ah, I guess that the discussion drifted because of misunderstanding.
->>>>>>>
->>>>>>> This isn't about the accuracy of the audio timestamp, but rather the
->>>>>>> timing of trigger tstamp.  The commit 2b79d7a6bf34 ("ALSA: pcm: allow
->>>>>>> for trigger_tstamp snapshot in .trigger") allowed the trigger_tstamp
->>>>>>> taken in the driver's trigger callback.  But, the effectiveness of
->>>>>>> this change is dubious, because the timestamp taken in the usual code
->>>>>>> path in PCM core is right after the trigger callback, hence the
->>>>>>> difference should be negligible -- that's the argument.
->>>>>>
->>>>>> Exactly. Sorry if my communication was not clear on that.
->>>>>>
->>>>>>>
->>>>>>> No matter how the fix will be, could you put the Fixes tag pointing to
->>>>>>> the culprit commit(s) at the next submission?
->>>>>>
->>>>>> Will do. I guess I'll have to look up which commit actually enabled the
->>>>>> trigger_tstamp_latched in hda, as 2b79d7a6bf34 has no driver using that
->>>>>> yet, so is not technically the culprit?
->>>>>
->>>>> You can take the HD-audio side, the commit ed610af86a71 ("ALSA: hda:
->>>>> read trigger_timestamp immediately after starting DMA") instead, too.
->>>>> Maybe it doesn't matter much which commit is chosen; both should
->>>>> appear in the same kernel version.
->>>>
->>>> Well, I think I've waited a decent amount of time now for more comments.
->>>> How do we proceed?
->>>>
->>>> I'm still of the opinion that the removal is the most sensible solution,
->>>> so if we agree I could prepare a V2 where I just improve the commit message
->>>> a bit further.
->>>>
->>>> But if we don't have a good enough consensus on this, I'd need some guidance
->>>> which alternate path should be taken to at least fix the bug of bad stop
->>>> trigger timestamps for hda devices (e.g. should I try to fix it also for
->>>> soc/intel/skylake without any testing? That seems to me the only other place
->>>> that should be affected, apart from the generic pci hda code).
->>>
->>> IIUC, the achievement of the timestamp at the exact timing was the
->>> goal of that change (which caused a regression unfortunately), so
->>> keeping that feature may still make sense.  I'd rather try to fix in
->>> HD-audio side at first.
->>>
->>> If Pierre agrees with the removal of the local timestamp call, we can
->>> revert to there afterwards, too.
->>
->> What about a patch bellow. I'll send it with proper formatting, when we decide to go with it. Perhaps, the latched flag may be reset when start is false, too.
-> 
-> It's similar like what I had in mind, too.
-> (My version was to drop the call of snd_pcm_gettime() from
->   snd_hdac_stream_timecounter_init() but call it at each place,
->   instead.)
+Hello everyone,
 
-It would be probably better to change snd_hdac_stream_timecounter_init() 
-arguments to catch all callers even for random backports. Also bonus is to 
-have the timestamping in one place. But both ways are fine.
+This is V18 of the phy_link_topology series, aiming at improving support
+for multiple PHYs being attached to the same MAC.
 
-				Jaroslav
+V18 is a simple rebase of the V17 on top of net-next, gathering the
+tested-by and reviewed-by tags from Christophe (thanks !).
+
+This iteration is also one patch shorter than V17 (patch 12/14 in V17 is gone),
+as one of the patches used to fix an issue that has now been resolved by
+Simon Horman in 
+
+743ff02152bc ethtool: Don't check for NULL info in prepare_data callbacks
+
+As a remainder, here's what the PHY listings would look like :
+ - eth0 has a 88x3310 acting as media converter, and an SFP module with
+   an embedded 88e1111 PHY
+ - eth2 has a 88e1510 PHY
+
+# ethtool --show-phys *
+
+PHY for eth0:
+PHY index: 1
+Driver name: mv88x3310
+PHY device name: f212a600.mdio-mii:00
+Downstream SFP bus name: sfp-eth0
+Upstream type: MAC
+
+PHY for eth0:
+PHY index: 2
+Driver name: Marvell 88E1111
+PHY device name: i2c:sfp-eth0:16
+Upstream type: PHY
+Upstream PHY index: 1
+Upstream SFP name: sfp-eth0
+
+PHY for eth2:
+PHY index: 1
+Driver name: Marvell 88E1510
+PHY device name: f212a200.mdio-mii:00
+Upstream type: MAC
+
+Ethtool patches : https://github.com/minimaxwell/ethtool/tree/mc/topo-v16
+(this branch is compatible with this V18 series)
+
+Link to V17: https://lore.kernel.org/netdev/20240709063039.2909536-1-maxime.chevallier@bootlin.com/
+Link to V16: https://lore.kernel.org/netdev/20240705132706.13588-1-maxime.chevallier@bootlin.com/
+Link to V15: https://lore.kernel.org/netdev/20240703140806.271938-1-maxime.chevallier@bootlin.com/
+Link to V14: https://lore.kernel.org/netdev/20240701131801.1227740-1-maxime.chevallier@bootlin.com/
+Link to V13: https://lore.kernel.org/netdev/20240607071836.911403-1-maxime.chevallier@bootlin.com/
+Link to v12: https://lore.kernel.org/netdev/20240605124920.720690-1-maxime.chevallier@bootlin.com/
+Link to v11: https://lore.kernel.org/netdev/20240404093004.2552221-1-maxime.chevallier@bootlin.com/
+Link to V10: https://lore.kernel.org/netdev/20240304151011.1610175-1-maxime.chevallier@bootlin.com/
+Link to V9: https://lore.kernel.org/netdev/20240228114728.51861-1-maxime.chevallier@bootlin.com/
+Link to V8: https://lore.kernel.org/netdev/20240220184217.3689988-1-maxime.chevallier@bootlin.com/
+Link to V7: https://lore.kernel.org/netdev/20240213150431.1796171-1-maxime.chevallier@bootlin.com/
+Link to V6: https://lore.kernel.org/netdev/20240126183851.2081418-1-maxime.chevallier@bootlin.com/
+Link to V5: https://lore.kernel.org/netdev/20231221180047.1924733-1-maxime.chevallier@bootlin.com/
+Link to V4: https://lore.kernel.org/netdev/20231215171237.1152563-1-maxime.chevallier@bootlin.com/
+Link to V3: https://lore.kernel.org/netdev/20231201163704.1306431-1-maxime.chevallier@bootlin.com/
+Link to V2: https://lore.kernel.org/netdev/20231117162323.626979-1-maxime.chevallier@bootlin.com/
+Link to V1: https://lore.kernel.org/netdev/20230907092407.647139-1-maxime.chevallier@bootlin.com/
+
+More discussions on specific issues that happened in 6.9-rc:
+
+https://lore.kernel.org/netdev/20240412104615.3779632-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240429131008.439231-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240507102822.2023826-1-maxime.chevallier@bootlin.com/
+
+Thanks,
+
+Maxime
+
+Maxime Chevallier (13):
+  net: phy: Introduce ethernet link topology representation
+  net: sfp: pass the phy_device when disconnecting an sfp module's PHY
+  net: phy: add helpers to handle sfp phy connect/disconnect
+  net: sfp: Add helper to return the SFP bus name
+  net: ethtool: Allow passing a phy index for some commands
+  netlink: specs: add phy-index as a header parameter
+  net: ethtool: Introduce a command to list PHYs on an interface
+  netlink: specs: add ethnl PHY_GET command set
+  net: ethtool: plca: Target the command to the requested PHY
+  net: ethtool: pse-pd: Target the command to the requested PHY
+  net: ethtool: cable-test: Target the command to the requested PHY
+  net: ethtool: strset: Allow querying phy stats by index
+  Documentation: networking: document phy_link_topology
+
+ Documentation/netlink/specs/ethtool.yaml      |  58 ++++
+ Documentation/networking/ethtool-netlink.rst  |  51 +++
+ Documentation/networking/index.rst            |   1 +
+ .../networking/phy-link-topology.rst          | 121 +++++++
+ MAINTAINERS                                   |   1 +
+ drivers/net/phy/Makefile                      |   2 +-
+ drivers/net/phy/marvell-88x2222.c             |   2 +
+ drivers/net/phy/marvell.c                     |   2 +
+ drivers/net/phy/marvell10g.c                  |   2 +
+ drivers/net/phy/phy_device.c                  |  48 +++
+ drivers/net/phy/phy_link_topology.c           | 105 ++++++
+ drivers/net/phy/phylink.c                     |   3 +-
+ drivers/net/phy/qcom/at803x.c                 |   2 +
+ drivers/net/phy/qcom/qca807x.c                |   2 +
+ drivers/net/phy/sfp-bus.c                     |  26 +-
+ include/linux/netdevice.h                     |   4 +-
+ include/linux/phy.h                           |   6 +
+ include/linux/phy_link_topology.h             |  82 +++++
+ include/linux/sfp.h                           |   8 +-
+ include/uapi/linux/ethtool.h                  |  16 +
+ include/uapi/linux/ethtool_netlink.h          |  20 ++
+ net/core/dev.c                                |  15 +
+ net/ethtool/Makefile                          |   3 +-
+ net/ethtool/cabletest.c                       |  35 +-
+ net/ethtool/netlink.c                         |  66 +++-
+ net/ethtool/netlink.h                         |  33 ++
+ net/ethtool/phy.c                             | 308 ++++++++++++++++++
+ net/ethtool/plca.c                            |  30 +-
+ net/ethtool/pse-pd.c                          |  31 +-
+ net/ethtool/strset.c                          |  24 +-
+ 30 files changed, 1056 insertions(+), 51 deletions(-)
+ create mode 100644 Documentation/networking/phy-link-topology.rst
+ create mode 100644 drivers/net/phy/phy_link_topology.c
+ create mode 100644 include/linux/phy_link_topology.h
+ create mode 100644 net/ethtool/phy.c
 
 -- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+2.45.2
 
 
