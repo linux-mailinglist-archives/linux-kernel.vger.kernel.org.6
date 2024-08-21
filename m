@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-296044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EED95A4D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEED95A4D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A561F2374D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73F81F21FCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 18:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053191B530D;
-	Wed, 21 Aug 2024 18:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050DE1B5301;
+	Wed, 21 Aug 2024 18:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1Z5wNq7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMTru04H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280211D131A;
-	Wed, 21 Aug 2024 18:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458771D131A;
+	Wed, 21 Aug 2024 18:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724265683; cv=none; b=dhic1eK8jYKaKm/ByW0RqFFgHU8ZiwR/T3+lA8ZB0oMUoqdyaBeiPqUIcLZ7aTD8SLW/aIaFQpQo4RssdYi2nLEU4mxi7+U697VwDyYziRy1V2KavM48RgBeENSM5OuGhqdz0j+ZgSPNzbO5VRn2u6X97tWlke02by64Eo8u3wE=
+	t=1724265726; cv=none; b=qKRwvzsO2mVYGGuy1MQI4NC0lhjJzEKpdviQndyKWQW7L57iGtjDXjCmJTM3uEV8V3Yp/inTz/4n/ZNcCEM2tt/8pcZ2z7s6tN5gyGAAay1pdGaefUJbHAJQVCCwMvh5IYWeJN/+HCNYvo1PPqPgF2D+Ca3A6xc4F4YHqSssYeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724265683; c=relaxed/simple;
-	bh=E8dXxpdarfv5CApG/ySDW3eYs88clE31dyTXCgdIj+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOp74YnADgHcGCnsE8tNqSE1zjuxzlA2iMeHTx+T2n+L4PKuqu2+i05l6aWanXmpJAhNlxjc7eq0MJ/KMOA0xHdN11aqyGeuo5ZpkjR9r4TXRpgeMF4j2YOX3mWQhRTNCPGCgcjXfwwB6/xUyx3dT33xXNYPDYHiy95zvWNR4/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1Z5wNq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160FEC32781;
-	Wed, 21 Aug 2024 18:41:15 +0000 (UTC)
+	s=arc-20240116; t=1724265726; c=relaxed/simple;
+	bh=PCzwycnQ68FnAihEnpURA+cP62Lf4j+4rNmVTJmIjzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fBpFVhTAAdw1Lm48GrxM2Z4LYihpMZkY10/9veAsexJ3wkwnjA86vtsabT8w4L4ecmOD2gnAYnkNyHUW4/ndvfg845FOz/uMahFF5Lh2ibyYUKc/MC1YTCb6/fwvDZMayv3gE1a7mV8iQ0g/0Wkswi2SA1jAZHGEioA8Of218n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMTru04H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3799C4AF0E;
+	Wed, 21 Aug 2024 18:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724265682;
-	bh=E8dXxpdarfv5CApG/ySDW3eYs88clE31dyTXCgdIj+o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1Z5wNq7V+GasD5vLMXFUN5I8quGoeaPeU/IOn49bO8otYh4m4+pEPuD02+LjkIpu
-	 1InGS8UBGdn07hLYwr9lczN0PpJKUZda3+PUnVYGPIHPz37YiW/rlBT39Wu3Z6waXl
-	 yFHS8eRfeRov6xX2PfirQ7yEoiX+M7qPnRSKDkpLB7DgHumi3WXwPKLN/zebkWiSh5
-	 BVgWHhEMq7jh8WLHQBofBwINPODDw2R/uDRfRihMjYS5SRen4JvJhmC1N9DkEtYC28
-	 UbCdbUMMqjuH/078spkgiUnjLrN7q0REvfVwOvY+hgphHs8YYEHun383qhkKCWENa0
-	 +x6JMwgsjOsOA==
-Date: Wed, 21 Aug 2024 19:41:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 25/40] arm64/ptrace: Expose GCS via ptrace and core
- files
-Message-ID: <79d5dad9-3194-45dd-8c2e-663cea2e5f4f@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-25-699e2bd2190b@kernel.org>
- <ZsYqfJ3V_-ljqlwq@arm.com>
- <58ee01de-88a6-4d0c-845a-3d5bebc0c55c@sirena.org.uk>
+	s=k20201202; t=1724265725;
+	bh=PCzwycnQ68FnAihEnpURA+cP62Lf4j+4rNmVTJmIjzY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iMTru04Hh9bmSxfYycLcitK89VnZw7FwF+aOGrDjyUP3OZTk67uc8Fjje7iFru/qf
+	 gr/uqCPceHKigAxBJXGUl6ZrD+Ty+5JVmqdSPmTEYsWAmcidQoaRUL9hVejwHGKZzz
+	 VIoL0HMolbaJ5jKP9Dw4mjTat+aWB6CkIt9OJxgI9cJXYTPrse4dHq1sFtegrbNlCe
+	 XnXYBfY1IRnApi8t1tdP0WFUukgnIOVf/dd07biUlqg54YI+VGTCC2qJHH1QqYRGP0
+	 zNu077cWAg/2G0wIuBAD2z4ZXTWh0hu7uz94fqKqkQx0Gnw8g/3OxFwHpkYJLAx4yy
+	 hWYJcUh8IkxHw==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2704d461058so2506331fac.0;
+        Wed, 21 Aug 2024 11:42:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYNL8n9I897/+Hy/ctH/kc7YJSo3hASf0LRHnAr6jwp+ApPyWL+Nl6VxxUTC8noPgQg8W+z7pA/SxnFGQ=@vger.kernel.org, AJvYcCUtJjupyZ23PIF38klrBJIOH7tM2bcNs3d8J/8u9QVqt693gsatwiJl0eO5nDups9mGjBYhd/S1+Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFiyDKxn+naomccf7IvzV/3Vok0f8QgZT4iWCTn/OFzNZr0uyE
+	JJgSM9cbEAH0u/a4SpD8k6WhD13uAkyxjaBGzkfGgDg7YU3+uh8+/Rijx4B4Wq35zCQ51rjui3l
+	KVqnogG08Ur2y/y8pGLBU3Hex8A4=
+X-Google-Smtp-Source: AGHT+IEW4+QE6jrLQfnnAK8xiews+yZgmyZbloPzgNPMruNN0gbTIxN27K0jnMMaCJdrg6m9IzsJwkIVaBFLM3L+2/Q=
+X-Received: by 2002:a05:6870:b52a:b0:270:2691:5ad5 with SMTP id
+ 586e51a60fabf-2737eeaa528mr3732322fac.7.1724265725130; Wed, 21 Aug 2024
+ 11:42:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BMJnA8eFDlPmLXSS"
-Content-Disposition: inline
-In-Reply-To: <58ee01de-88a6-4d0c-845a-3d5bebc0c55c@sirena.org.uk>
-X-Cookie: Are you a turtle?
+References: <20240821075934.12145-1-11162571@vivo.com>
+In-Reply-To: <20240821075934.12145-1-11162571@vivo.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 Aug 2024 20:41:54 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jLaZqbJw-DXjFD983sW0j_adrGjK5U97h49+9bh28e=w@mail.gmail.com>
+Message-ID: <CAJZ5v0jLaZqbJw-DXjFD983sW0j_adrGjK5U97h49+9bh28e=w@mail.gmail.com>
+Subject: Re: [PATCH v1] drivers:thermal:Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+To: Yang Ruibin <11162571@vivo.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 21, 2024 at 9:59=E2=80=AFAM Yang Ruibin <11162571@vivo.com> wro=
+te:
+>
+> The debugfs_create_dir() function returns error pointers.
+> It never returns NULL. So use IS_ERR() to check it.
+>
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
+> ---
+>  drivers/thermal/thermal_debugfs.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_=
+debugfs.c
+> index 7dd67bf48571..939d3e5f1817 100644
+> --- a/drivers/thermal/thermal_debugfs.c
+> +++ b/drivers/thermal/thermal_debugfs.c
+> @@ -178,11 +178,11 @@ struct thermal_debugfs {
+>  void thermal_debug_init(void)
+>  {
+>         d_root =3D debugfs_create_dir("thermal", NULL);
+> -       if (!d_root)
+> +       if (IS_ERR(d_root))
+>                 return;
+>
+>         d_cdev =3D debugfs_create_dir("cooling_devices", d_root);
+> -       if (!d_cdev)
+> +       if (IS_ERR(d_cdev))
+>                 return;
+>
+>         d_tz =3D debugfs_create_dir("thermal_zones", d_root);
+> @@ -202,7 +202,7 @@ static struct thermal_debugfs *thermal_debugfs_add_id=
+(struct dentry *d, int id)
+>         snprintf(ids, IDSLENGTH, "%d", id);
+>
+>         thermal_dbg->d_top =3D debugfs_create_dir(ids, d);
+> -       if (!thermal_dbg->d_top) {
+> +       if (IS_ERR(thermal_dbg->d_top)) {
+>                 kfree(thermal_dbg);
+>                 return NULL;
+>         }
+> --
 
---BMJnA8eFDlPmLXSS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Good catch!
 
-On Wed, Aug 21, 2024 at 07:28:08PM +0100, Mark Brown wrote:
+Applied as 6.11-rc material with some edits in the subject and changelog.
 
-> part of an otherwise invalid write.  The validation is checking for
-> unknown features and enables.  With clone3() we could relax the enable
-> check, but I've just pulled that out of the series for the time being.
-
-Actually thinking about it some more I'll just remove the check for
-enable, the support for threads with GCS enabled and no kernel allocated
-GCS is already there and I didn't pull that bit out.
-
---BMJnA8eFDlPmLXSS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbGNMgACgkQJNaLcl1U
-h9Cs9gf/faFn4ZIWAD0ObkgYSu2MFgvuc0/TxhjIvIwyaRcVoqWhCLuxFx6tDyf7
-R003D+EGEn6M1h6zfEPXV/PKOBUV1KMnZcpTgESMJyUVa4HSREWmw7nMQZmiifDl
-xICPAzUBzqlPsIcc5S1eQlR7ecwt80Hs0WM5cWjh4YmQikjGU4LZse2eCrrVQ+8E
-hrLM84hndTamAlUtO9oREDCdZ8BZc+wxpQSRpRuufSMIdD/Ujv26ikmoRDOvGSbW
-h8v2pgOb1hekEEesgevZoE1YbJ76Z5GfQO4HdJKSh/iB4vz5mbmj324y6K0oL4Ej
-dsCLfFizij3MQaU6gmwwgHzolx6UWg==
-=MjH1
------END PGP SIGNATURE-----
-
---BMJnA8eFDlPmLXSS--
+Thanks!
 
