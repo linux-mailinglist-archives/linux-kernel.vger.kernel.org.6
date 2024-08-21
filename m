@@ -1,265 +1,184 @@
-Return-Path: <linux-kernel+bounces-294878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-294879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7B99593C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE7A9593C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 06:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9D81C21049
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916B51F23361
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 04:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAA5165EF7;
-	Wed, 21 Aug 2024 04:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A545166305;
+	Wed, 21 Aug 2024 04:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="E6hkHJtu"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2070.outbound.protection.outlook.com [40.107.102.70])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OWWviUqP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0EA175A6;
-	Wed, 21 Aug 2024 04:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724216241; cv=fail; b=H53JL5iY+gsjjPUlKRcLWhw4W+4Z2/i/03Y86YlFvy5V6aqolDg27YcpJXuLWBK/+D2kMkSDXKdEzLyLSxvSA/ywvLu9RB/dNUxFf2GoGb5JFOBDxnmfQd2Ch5yWwqLxnJwQgVDyV0ennkVr+GYodqOPd4ehYeGZZnNu/6FzAcc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724216241; c=relaxed/simple;
-	bh=2daLoqu64NughYDmM06NbWuZOJRqtjLZ1/W+2/wmYTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Iuy7SlCkxslCjla369f7IlBl0NPM/3vW63qR28TLNANp1aM/+q8rxGIpThQwQrOT/leKFe6hULZ0tyI3pB1NgE6ygA/gszTFPlAVqaeIjsrgRKhim1gh2fFZDVxSqv8kr4byc+2YyJqQLdqYZB4D2nM8mmtAAQ5hTzISuduPYDI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=E6hkHJtu; arc=fail smtp.client-ip=40.107.102.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VCiVqxcIo1pG1ah4DnQAQhH+bolmRqGq+JZblCp79rRNfuMigMTqv2j2w7M3KAphd/WEoJjt9mjVKLBmYr/5orkdLHgFjvJseM62tqnbO8jKOkVCq/NhyxfPR9b89viLOPbOMdGT1iL/wUOzkhw2nJ8UtKmoduvqeUb4yr5jzCh/aQynYV75DSlB/gl3YT+QqNFMOAlmpOHMESlbkB3yAmN6ivf3R8uqcG/x1O5ozHQXTkrhV+LKkxIlLe8jUlf9xEgBt+URJdnHBWmWTX1krLz1exWCV4Gs598J/kj1nvegdqhZUOhvD70az8EKT8h0aXEu8y3z+QURr5Ay4kyunw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5Fp3h28TUG86ZqADVZTQ+RM61W/UiY2yK8F6qXumGPY=;
- b=su2PsCLMxOBMf+oyLNDWZdLHA+hcI9r0Nd1uIAdRj4rpk9S4Ucs/IYP44U+GPyitgYTRWv3BWB+b8WNRGnkWZEp8jTZL69l0q7LbllQZCdqGOFJ7tOqGlmgw1d+giqASjw0S7oPoUDMe7IVdrvJ9uATcWTvuLpMyOJPowhznmGE/9ReF6I9BieGPtiBgcfb4AaqxYh/BNdiiOzdz74aqtlFZKwygPOr8c0RKGTADgRYEjSpDsOXXE5fYalwWeoFHtSdHpsNhVz7x54WdLemYsYf0vTte/iQEy3ws9w0+5PGOxvJcKi9QFTrgbb7nfd+invUxUtE0lYmYklNfLaIM9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5Fp3h28TUG86ZqADVZTQ+RM61W/UiY2yK8F6qXumGPY=;
- b=E6hkHJtuX2J7Vx69NxXnB2g8nbD3/ivnnnnSDRqEyWnK9iBR7C5Sr2pDJjvettyqjmscz8vbdnj+YHkjaOPSowDXNW5FdCg/ULp3dq1N8zOZSa0+i61heHJUc6dtRWwOdEWDtzg3ChetmLC/uRUH1n67jCBejwjg1Zx5/QagmPU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- SA1PR12MB7224.namprd12.prod.outlook.com (2603:10b6:806:2bb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Wed, 21 Aug
- 2024 04:57:17 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 04:57:17 +0000
-Date: Wed, 21 Aug 2024 10:27:05 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, rui.zhang@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, ananth.narayan@amd.com,
-	kprateek.nayak@amd.com, ravi.bangoria@amd.com,
-	Michael Larabel <michael@michaellarabel.com>
-Subject: Re: [PATCH v2 2/2] powercap/intel_rapl: Fix the energy-pkg event for
- AMD CPUs
-Message-ID: <ZsVzoRrkrfCZ3ncM@BLRRASHENOY1.amd.com>
-References: <20240730044917.4680-1-Dhananjay.Ugwekar@amd.com>
- <20240730044917.4680-3-Dhananjay.Ugwekar@amd.com>
- <CAJZ5v0h4GAVCpUnbCMHMophsSZ522kkReAbUMdfFgRJfd0vHkw@mail.gmail.com>
- <3c6e2fb3-4b51-4cda-a5ca-71bed94d47b9@amd.com>
- <CAJZ5v0gxD_nUabYLKoO2NoQ-TTYd5-4mocyri6M4g0xZ+4sd2A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gxD_nUabYLKoO2NoQ-TTYd5-4mocyri6M4g0xZ+4sd2A@mail.gmail.com>
-X-ClientProxiedBy: PN3PR01CA0042.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:98::7) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6318175A6;
+	Wed, 21 Aug 2024 04:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724216290; cv=none; b=dc9UWfUqpDS3n32eMrmIGfOgpVa3ttZpI5iu+hJdeJNHtZnDQK1yYUPWycLSBVeiF/tsjmIL7cpwHtjvh3fp0XvjoGmjcamLrP6+NrYP0d7Dhs6T1cadI905B0JPNSxNXqkGjxXSAO5AVKJUSfiXh/2bo/gJyTsbLfkE3NXMacc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724216290; c=relaxed/simple;
+	bh=QOSx7fzMAFJxsGhKJlneRo5ceyJtesGSUYDO2VYaPKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bfFJMQib4pFDE4MF2wyKopIkbyVzlmY5Pd75DvU7F8cvCsZAT4oOc6CLPuwQ21Bqi2JPpeRUe13nKy+MzNP+QKz5ra0B8LeMVv5qodk60tYQOF+akObfOfxuzohywkeJw/D4t7BS3j3A/xBi6+wOTuO0A2631GBLovpOCC927S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OWWviUqP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47KJ0lgv013804;
+	Wed, 21 Aug 2024 04:57:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I9McFpZaIgeSy/Ye7hu1bUSfrysCm35rQyEmbFsAmUc=; b=OWWviUqPCjPep+tb
+	EXn4V6F/v29yKRDDKOmJi4z9DaJBF0XZlFXVzzDpDNEccuWkUmo8ciV6V0r1Xwvd
+	kjQ66kNCLwBn1DJ7snYXGYBj5yrMk99oQOs1hEN/oP5Z8XbQapXTm+IT7jsPW42d
+	aLPEOF6YaP7hSsXK62DljVuWCe78LvI73/n9u5vgXlC61mxa3Vn2i+kXFSs+Rypw
+	X3YqWBfjjpzS+yt4az/2nmAwhxIhAghUEY3MMAuTPUGR6en4zPja/kWfgQDZ4KzR
+	s2HqLiSNHI6Iy/2cevIjhPdv8Lmytm1JDaRRw5K+QPPdjWDrt4sN5TcnTrZh+jet
+	cWnZTw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 413qxg7fcy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 04:57:57 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47L4vuKb001961
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 04:57:56 GMT
+Received: from [10.151.37.94] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 20 Aug
+ 2024 21:57:49 -0700
+Message-ID: <183d4f5e-e00a-8ef6-a589-f5704bc83d4a@quicinc.com>
+Date: Wed, 21 Aug 2024 10:27:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|SA1PR12MB7224:EE_
-X-MS-Office365-Filtering-Correlation-Id: 912e08cc-bc43-46ee-26a9-08dcc19dbb1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eGNEVlNGak5SZTBhNzNvOUNOM01FWHI4MlErMi94RnJPQklkUUJSLzkzR2tj?=
- =?utf-8?B?RDhXbElIWXo2TkFwVWxIZ1ZEWUNuMlNGR0VMaWZpSEo5OXh5bnNUNVJ4ZFI2?=
- =?utf-8?B?ditubnVJQTFRdU5IaXo4QkRSZWNqQ0p1UldOUEFDUkhobEQ4TEtPSFppM3BS?=
- =?utf-8?B?L3l6TlU0bk9KdzBNUnZFN1FaNVU2SDJYUjJBN0srdHlzRjJDRXJzTnJtTFAx?=
- =?utf-8?B?c2oxRE1kSXd6SWppTHBXZXpVK25PVk4wZjZ6by9SN1h2OTFDTHVOS2hvcUVF?=
- =?utf-8?B?VGdjeFFnYWZiclNFRS8wcjRKa0xYWnkwTy9Pd0I0cit2NnVMV2hJOWtOUndW?=
- =?utf-8?B?YkdRdXNQQTdMR2J4TDh4MnFBeGJGRjQ5T1lwU0ttbkZGRmVTcUZRU0gvbEtZ?=
- =?utf-8?B?KzRmY2svUktNeUhEUW43WXREYkdQemljYys3TUdkTmJnVnl4UE1Nbkp1WHVr?=
- =?utf-8?B?OWd0RzJOblZXQlFWRGVraC9qcG9mbUl5dEhndU95ZDVxSjQwSXl1ejh3WHUr?=
- =?utf-8?B?RzMwT01TcHNIbmlDcHgzSjhDSERyS0c1Ni9VK3MvdGhZMmtkZTNJdXlqZ0pV?=
- =?utf-8?B?cHU5V0VUeXQ4NDNVbFpvTTVTZUloMVp5U1NWOEhibmVBN1FuSGJid1MwNTZP?=
- =?utf-8?B?RklIb0MxU3g4ZkhjTEJHeGZPRVgwY1BhcW5LdUVLazcvVGlZS1J5NkVTempD?=
- =?utf-8?B?UFdYa0lpY1NwaDRlWFlEMWtOVmxmaWZuN0QwLzZYdFJjc3FVN2ZxRzY2dE5j?=
- =?utf-8?B?WnJ3OTBYMWRKZW92ZjB6bkdtNkhuVTk3RWFzaGQ2N0Q3cGRJa0syTURFTUpp?=
- =?utf-8?B?OUdJWUx3eGx2U0lLTHdBcXc5SWVQN054QXd0Wnc5SHRsL2pvNUZZZGtaNTJ4?=
- =?utf-8?B?Zmt1NlVNLzduenlkUVZRRmxSVmVIdnhLU2kxeTFSYlZPelF5cDhmVUxVTFFR?=
- =?utf-8?B?aGh1eVRISWY4L0JXVUFRYkNPTkZQZ1RVc2FoOG9yQlFCZmwxeFB3c2lGYzls?=
- =?utf-8?B?Y2FVT0pWek0yc2pWaFNHdUxQMHFjWUtuZnZKdjFWVjUyRjgydEJGOXgzaFNU?=
- =?utf-8?B?NVU5RVlMcjN1dGZkQTJCUFNSUVd5aTNjL292Y2kvRTJCZ0Q3bVdCWDJpOEMy?=
- =?utf-8?B?MHFQSGg1a1daQWtRdWZtWDNoVVcwU09rTlhTNlBMOW5qR3FNM0tYVWdnVEtW?=
- =?utf-8?B?WVVobFhSLzFyNEVremx1QTl5SHFnSHlzUDlzTG83c2tZaUlORVFOUU04WUwv?=
- =?utf-8?B?SE4rRFFiY25ZVzNTZTVJTStvc2pzT2gxTlFLWUszb3pMV0cwRk91eG9mNVBB?=
- =?utf-8?B?cW80NXFjWlRMeGdtYlNUUVpiY25SclNITjVSYTRBeXJGLys5Qm51aXhjR3pi?=
- =?utf-8?B?ZmNja2MzcUxrTkdUU0ZwUEN3YWp3SHJBNno1UENqanU3QUc2ekdGWW5hUVIr?=
- =?utf-8?B?Q3RLSVhVTEo0aDYvZ3F1MkI3STZVMEFvd1YvNmsyeDlSMllpYUxacjhsL0xy?=
- =?utf-8?B?L2UvQWt0NzhCZlVxd2ZKUWJaNnNvRFZxNjFHZFIvZnJJZURDbzFFb3o2c3B2?=
- =?utf-8?B?a2tGaVlVRjhRa0tnVTkzZnhNLzlWOUxjdDc3U3ZUTmhNQ3JYeEtPY1lVUFo0?=
- =?utf-8?B?UUFtZXdFWnk1SUdOTkp5SjBRV3BvQms0RWsyYWxmT3lFQ1hiMmJuUU5HWGtu?=
- =?utf-8?B?YWlJSnhBU1g1SXphYmR5VWhYOFIwTWhGOHcycjBsZFVUbC9YMzBFR1FoTDJk?=
- =?utf-8?B?THdCTmc2Yml4UERWbGJXQStJVGtJU3JwYTA5dzIrMktZMDF6YlhlV2gzN3h5?=
- =?utf-8?B?aHNLeUFiY0RYdktTeW1yQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K0lpSmsrT0NYSmdWN0xMZEZIRmdnaklXY25NN1Q4RVdjM1ViYVVQd2U3N3Zy?=
- =?utf-8?B?dWNUSGUrdTlyZHFzSWQwZVBQTDJCQXYxUXllOHRRS3RVYUJJb3E2QzVudktm?=
- =?utf-8?B?NW5YQnp3eWFuTTlwRi9Cd0RqZHJFK1JFWnIwcWk4SkJYMy9JYkxtUktZMjVm?=
- =?utf-8?B?T1VYVEVKWlVsK3ZBMmZ1UEtiekVGRVYvUjV3VGVJajFpZ3pKRWRHMyt3MXNt?=
- =?utf-8?B?TzN3QWpqSjVxSHROMzBJNTJvNzhSQzRvYklnOVl3NHpxUzEvZzJRc2IxeTJk?=
- =?utf-8?B?NSt5bkUwR0JNcUc1TG9lS0llN2lGZkgvcDcvYU1DUmp4OTRPZVF3NVVwSzN5?=
- =?utf-8?B?c2Z0RjB4TXFCUG1yeXY2YlBXQWMzci9rOEZKc0xZaFFYOGxMM2VzVkJ5MTBk?=
- =?utf-8?B?N2ExSXNWL2NpcTdaTzlHdVpoTG9MM2RsVnFLdlo5L1NRd1VzVUhZSnRXMkR2?=
- =?utf-8?B?ajFiZzlWSUt2NWhJTjJyZmxmOEpZYkNESFhpNmFRMGthSUU1aEl3TGFuSHVw?=
- =?utf-8?B?M1BhNENibFBWTHpkeXdKdXhRZ3d4SnkwamtBbnlpSVJTK0VnS1JCUHg0Rzl0?=
- =?utf-8?B?M05LejJSaitBNk9SWi9oVS9qZENEblI0ZTJFTURxQkwzOWt1ZlNPdlp4MlAw?=
- =?utf-8?B?dkRtSjdiZm9DK2NySXBGejJKTnFKVFJOWXFTT0EwekQwZmdPNm51d1IrL1Iz?=
- =?utf-8?B?L04zZG9sb0RTdnlSOEl0dEdpTVJacEJEOTJkRDBsTFdxWkQ5eHVQMDZtTnZQ?=
- =?utf-8?B?enNRUGNUNUZrM2Z1Z1RZY1RmNjB3TkFvQ3dzZi9kNHVNVVEwTjdQaXluOVlq?=
- =?utf-8?B?Q3lYZzBuYnovZjVOVGxGZVdpQmlUUUlsSlh6eUJlaXAreEpRemdwRTlDME0y?=
- =?utf-8?B?NGhEbXV6T0h4cStkTVlxVGkveTdWNXVBald6a0pqRVhoN3R3ZDUxUGVYL05H?=
- =?utf-8?B?WGd4RjR2RmhrQWNBMXJzM1BwMlVtMTZ2a2JrejVRM05XcHBYUW9JYVBCelRE?=
- =?utf-8?B?MmFCVlVCTEtFWDByVXljaEJROXB1M1Qya1htTXlQTWN3S1c3QkEydlBuTUVG?=
- =?utf-8?B?cldNTDFnN0dPWkpScEtISzBhNWdDaWhCTkI3Y0xoeGJnNlRZOVR5L2o0amQx?=
- =?utf-8?B?c0UzRVB4R0dGZFIvemxKS2tLSjEra3IxTlk5UkxmbFc4YW12dTBVZkE4LzVH?=
- =?utf-8?B?TUtqdDV1NTZZcW15a2Q4WkhNd2ZlUHVGV01VRkpYQzZZOHdTSGZiT2pBQTJa?=
- =?utf-8?B?d1d6S21IMUtkMGRLcU0vRkJkaXdqM2tyRFgrYmJWMGlyRU45a2h6TzEwbm1F?=
- =?utf-8?B?REwxcXhzWitLd3J4dnlZZFpSQk1IYU5MbUQwcytwajltSHJwU3RTNGMyVFNY?=
- =?utf-8?B?bWc0cG1UMUhOUGFGempxVDNBS2JXVkdnYktqY0oxS3l0Qzk4bWdCZGZYTys1?=
- =?utf-8?B?emozaUhZa0FPL0xmNlJNVjRYUlo2ODRCWERSN3VHcllqY2hHSjNOaW00bUt3?=
- =?utf-8?B?OS90ODdIU29oanBPZ2oyc0hKUzc0NUJUVWJQd1ZjSzV0ekY0UnA1RGhRTDNL?=
- =?utf-8?B?VEZSMGhyemlUY21QR1VicXROeHBWaElNcjVRZGxpRFNOSlBQVjZPU2kzWTM3?=
- =?utf-8?B?MDNIMFFZVHU4a2FyOWdXcDF0S2ZjdjlSMUxXZnNXZHM1SXBBTkllNFh6TG1B?=
- =?utf-8?B?YUFvem8yeENpanh4N3FXbloxTms2NkRtS1RTVy95Qi9sUUJRN2dPNytEaUpZ?=
- =?utf-8?B?b3cxZFFrQ1BFUE5MN0lIQWw3WDZkak5xUDlFckFNMXpPQ3hVa3NGTWpvRjBx?=
- =?utf-8?B?T0k5WE1mY0NQNVlEcHVnMGNTK2dpWklNZlpvbW52cVAzS2twNHhSUE5GNTZj?=
- =?utf-8?B?QjRFTGFYdk9rbk9hbVpvcXVwSjIxKzlEODhMOGNOaXdCZ1RqZ1l6dlV5MWo0?=
- =?utf-8?B?cUxTWnpyRmc4b2Q2a0JuODJIM3BBdVdqeml4MExwdVJHV2JwbFFnaDhCNXVO?=
- =?utf-8?B?eXIycnlaTTBBVnBUWTdMMjBVbjZYVlJhQzZqbmhpYjU1RnJGalU0aWVza2p4?=
- =?utf-8?B?dlhyVEZ3Zm80TG9xT1gxdkk1a2sxUWJRUHAyMUVRS3dxajltZUhHb0l5Y25G?=
- =?utf-8?Q?aI5E/XcRUR6JGsq6peccr1P6p?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 912e08cc-bc43-46ee-26a9-08dcc19dbb1a
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 04:57:17.4481
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BjrWIxaZEvGw6bV7hwa0SX18z6F5c0TI43gaSWSZx3mTQIdCACAW2MoGfO6cAyR+A05IJRTUq8VtiSjEDZnDzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7224
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2 00/16] Add cmd descriptor support
+Content-Language: en-US
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <gustavoars@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
+        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_utiwari@quicinc.com>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <3p43hay67bofcddnar7wm2bsods5zqbylnjhnd22gcbniztymn@2zziltxxbaiv>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <3p43hay67bofcddnar7wm2bsods5zqbylnjhnd22gcbniztymn@2zziltxxbaiv>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: T91SLxe_KVoBv10Mh3y9vibqgqy0K1Sj
+X-Proofpoint-GUID: T91SLxe_KVoBv10Mh3y9vibqgqy0K1Sj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_05,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=992 malwarescore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408210033
 
-Hello Rafael,
 
-On Mon, Aug 19, 2024 at 03:34:09PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Aug 8, 2024 at 1:18 PM Dhananjay Ugwekar
-> <Dhananjay.Ugwekar@amd.com> wrote:
-> >
-> > Hello Rafael,
-> >
-> > On 8/2/2024 6:05 PM, Rafael J. Wysocki wrote:
-> > > On Tue, Jul 30, 2024 at 6:53 AM Dhananjay Ugwekar
-> > > <Dhananjay.Ugwekar@amd.com> wrote:
-> > >>
-> > >> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
-> > >> on AMD processors that support extended CPUID leaf 0x80000026, the
-> > >> topology_logical_die_id() macros, no longer returns package id, instead it
-> > >> returns the CCD (Core Complex Die) id. This leads to the energy-pkg
-> > >> event scope to be modified to CCD instead of package.
-> > >>
-> > >> For more historical context, please refer to commit 32fb480e0a2c
-> > >> ("powercap/intel_rapl: Support multi-die/package"), which initially changed
-> > >> the RAPL scope from package to die for all systems, as Intel systems
-> > >> with Die enumeration have RAPL scope as die, and those without die
-> > >> enumeration are not affected. So, all systems(Intel, AMD, Hygon), worked
-> > >> correctly with topology_logical_die_id() until recently, but this changed
-> > >> after the "0x80000026 leaf" commit mentioned above.
-> > >>
-> > >> Future multi-die Intel systems will have package scope RAPL counters,
-> > >> but they will be using TPMI RAPL interface, which is not affected by
-> > >> this change.
-> > >>
-> > >> Replacing topology_logical_die_id() with topology_physical_package_id()
-> > >> conditionally only for AMD and Hygon fixes the energy-pkg event.
-> > >>
-> > >> On an AMD 2 socket 8 CCD Zen4 server:
-> > >>
-> > >> Before:
-> > >>
-> > >> linux$ ls /sys/class/powercap/
-> > >> intel-rapl      intel-rapl:4    intel-rapl:8:0  intel-rapl:d
-> > >> intel-rapl:0    intel-rapl:4:0  intel-rapl:9    intel-rapl:d:0
-> > >> intel-rapl:0:0  intel-rapl:5    intel-rapl:9:0  intel-rapl:e
-> > >> intel-rapl:1    intel-rapl:5:0  intel-rapl:a    intel-rapl:e:0
-> > >> intel-rapl:1:0  intel-rapl:6    intel-rapl:a:0  intel-rapl:f
-> > >> intel-rapl:2    intel-rapl:6:0  intel-rapl:b    intel-rapl:f:0
-> > >> intel-rapl:2:0  intel-rapl:7    intel-rapl:b:0
-> > >> intel-rapl:3    intel-rapl:7:0  intel-rapl:c
-> > >> intel-rapl:3:0  intel-rapl:8    intel-rapl:c:0
-> > >>
-> > >> After:
-> > >>
-> > >> linux$ ls /sys/class/powercap/
-> > >> intel-rapl  intel-rapl:0  intel-rapl:0:0  intel-rapl:1  intel-rapl:1:0
-> > >>
-> > >> Only one sysfs entry per-event per-package is created after this change.
-> > >>
-> > >> Fixes: 63edbaa48a57 ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf")
-> > >> Reported-by: Michael Larabel <michael@michaellarabel.com>
-> > >> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-> > >> Reviewed-by: Zhang Rui <rui.zhang@intel.com>
-> > >> ---
-> > >> Changes in v2:
-> > >> * Updated scope description comment, commit log
-> > >> * Rename rapl_pmu_is_pkg_scope() to rapl_msrs_are_pkg_scope()
-> > >> * Check topology_logical_(die/package)_id return value
-> > >
-> > > This patch does not depend on the first one in the series if I'm not
-> > > mistaken, in which case I can pick it up separately if you want me to
-> > > do that, so please let me know.
-> >
-> > Sorry for the late reply, was out sick,
-> >
-> > Yes, please pick this patch separately, it is independent from the first one.
+
+On 8/16/2024 9:31 PM, Bjorn Andersson wrote:
+> On Thu, Aug 15, 2024 at 02:27:09PM GMT, Md Sadre Alam wrote:
+>> This series of patches will add command descriptor
+>> support to read/write crypto engine register via
+>> BAM/DMA
+>>
+>> We need this support because if there is multiple EE's
+>> (Execution Environment) accessing the same CE then there
+>> will be race condition. To avoid this race condition
+>> BAM HW hsving LOC/UNLOCK feature on BAM pipes and this
+>> LOCK/UNLOCK will be set via command descriptor only.
+>>
+>> Since each EE's having their dedicated BAM pipe, BAM allows
+>> Locking and Unlocking on BAM pipe. So if one EE's requesting
+>> for CE5 access then that EE's first has to LOCK the BAM pipe
+>> while setting LOCK bit on command descriptor and then access
+>> it. After finishing the request EE's has to UNLOCK the BAM pipe
+>> so in this way we race condition will not happen.
+>>
+>> tested with "tcrypt.ko" and "kcapi" tool.
+>>
+>> Need help to test these all the patches on msm platform
+>>
+>> v2:
+>>   * Addressed all the comments from v1
 > 
-> OK, applied as 6.12 material.
-
-Can this go into 6.11 fixes?
-
-It fixes the commit 63edbaa48a57 ("x86/cpu/topology: Add support for
-the AMD 0x80000026 leaf") which got merged in 6.10.
-
---
-Thanks and Regards
-gautham.
+> Please describe the actual changes you're making between your versions.
+   Sure , will update in next patch.
+> 
+>>   * Added the dt-binding
+>>   * Added locking/unlocking mechanism in bam driver
+> 
+> Seems to me that this was already part of v1, as patch 6/11?
+   Sorry, by mistake I have added this line in v2.
+> 
+> Regards,
+> Bjorn
+> 
+>>
+>> v1:
+>>   * https://lore.kernel.org/lkml/20231214114239.2635325-1-quic_mdalam@quicinc.com/
+>>   * Initial set of patches for cmd descriptor support
+>>
+>> Md Sadre Alam (16):
+>>    dt-bindings: dma: qcom,bam: Add bam pipe lock
+>>    dmaengine: qcom: bam_dma: add bam_pipe_lock dt property
+>>    dmaengine: qcom: bam_dma: add LOCK & UNLOCK flag support
+>>    crypto: qce - Add support for crypto address read
+>>    crypto: qce - Add bam dma support for crypto register r/w
+>>    crypto: qce - Convert register r/w for skcipher via BAM/DMA
+>>    crypto: qce - Convert register r/w for sha via BAM/DMA
+>>    crypto: qce - Convert register r/w for aead via BAM/DMA
+>>    crypto: qce - Add LOCK and UNLOCK flag support
+>>    crypto: qce - Add support for lock aquire,lock release api.
+>>    crypto: qce - Add support for lock/unlock in skcipher
+>>    crypto: qce - Add support for lock/unlock in sha
+>>    crypto: qce - Add support for lock/unlock in aead
+>>    arm64: dts: qcom: ipq9574: enable bam pipe locking/unlocking
+>>    arm64: dts: qcom: ipq8074: enable bam pipe locking/unlocking
+>>    arm64: dts: qcom: ipq6018: enable bam pipe locking/unlocking
+>>
+>>   .../devicetree/bindings/dma/qcom,bam-dma.yaml |   8 +
+>>   arch/arm64/boot/dts/qcom/ipq6018.dtsi         |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   1 +
+>>   drivers/crypto/qce/aead.c                     |   4 +
+>>   drivers/crypto/qce/common.c                   | 142 +++++++----
+>>   drivers/crypto/qce/core.c                     |  13 +-
+>>   drivers/crypto/qce/core.h                     |  12 +
+>>   drivers/crypto/qce/dma.c                      | 232 ++++++++++++++++++
+>>   drivers/crypto/qce/dma.h                      |  26 +-
+>>   drivers/crypto/qce/sha.c                      |   4 +
+>>   drivers/crypto/qce/skcipher.c                 |   4 +
+>>   drivers/dma/qcom/bam_dma.c                    |  14 +-
+>>   include/linux/dmaengine.h                     |   6 +
+>>   14 files changed, 424 insertions(+), 44 deletions(-)
+>>
+>> -- 
+>> 2.34.1
+>>
 
