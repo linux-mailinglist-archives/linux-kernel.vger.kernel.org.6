@@ -1,106 +1,137 @@
-Return-Path: <linux-kernel+bounces-296121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-296122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27E795A5E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7105195A5E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 22:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156001C23228
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0108C286055
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 20:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840F81741C6;
-	Wed, 21 Aug 2024 20:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A60170A12;
+	Wed, 21 Aug 2024 20:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5jaUs2I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="byGyzjGp"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20A3171658;
-	Wed, 21 Aug 2024 20:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B88416EC1A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 20:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724272132; cv=none; b=mmx27DWuSupm1dJVNHfPixbwnczB/73bLnfxY8Ue7VRbpJmA49eHaSbLJD0lKurvclfBszHJE25QUgomvvr4yn1PXmVf2PzrG9voLmviTw/93dGfdbRQ1xq12uKJTdTwXVtSnza4NETAysoI81VRVzAa+SvQWQtLeKWB5Rg4kws=
+	t=1724272191; cv=none; b=OQ1uYuE8pxAoe7t5IklGFwgJuIfq8hnq7/8luOchL6WAfBb47FHFDbpvR+D14NfLklGbA/FeXjh/dv8OUqCujtPUt7ceFga0M0tB7cdsZUlu2q7843EML+U5dujUzEEAKKg3E86aYgX/swJbKwErMkK+w1X9q9xzDF33apQARjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724272132; c=relaxed/simple;
-	bh=pAJ3vsnTquZn4zyqJdU4qiDeSYiNUoJM1TTdLseJYvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MYiqHJn3byAMXp57GfZW9Ur/9mk5kBapi9E+Uvbeuggbpuv89LQ0+1+HXltrW1sBht/lY7iWOrh+pMAldeuPri7LUetHzP9DF07npxTRf+jY2ZkmYTWFSN77QAjinNCIGGMYVGZMCtaH7WHRz5RgW/GFhcIU3HtjNkBIYYEoCcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5jaUs2I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FCAC32781;
-	Wed, 21 Aug 2024 20:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724272132;
-	bh=pAJ3vsnTquZn4zyqJdU4qiDeSYiNUoJM1TTdLseJYvk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p5jaUs2IWd3Oh5igPiseu1z1Ihx9JjoZa7C+J1c5fnRMqvaTpNMXi6+DBRnhP5cZe
-	 rsWT447JdLLORvnq2c86T2vVae8NikS9nRxXWhRpUBijKE3tkwobVbUEEszaxo3jN+
-	 m7ziQakZy64wyIdIfIcJiaM/qLxOLp63+n+waC45abC/4PL4vZ4kBn2HvzZB303Wwp
-	 qbKgJa2P2nvXIOtFagN6zxlmI9s5tKRD4O9EgY6v7BbUX7YrqrePCFdk8tDRA5PUtP
-	 SleSB4Za2bJJotcn/38Q8mCuF5xaF4QA0scOpOIfIv02CV70H0064Qlbe8P/j5z8E/
-	 c4q77ia4sAhgA==
-Date: Wed, 21 Aug 2024 21:28:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: David Lechner <dlechner@baylibre.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: sgp40: retain documentation in driver
-Message-ID: <20240821212827.1d5e85ad@jic23-huawei>
-In-Reply-To: <ZsWdFOIkDtEB9WGO@mail.your-server.de>
-References: <ZsWdFOIkDtEB9WGO@mail.your-server.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724272191; c=relaxed/simple;
+	bh=PKg6HUqEfOZSHRWfNlLpcUkRtzmLqhG524k4BHThR/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m17jw7rcT+9zareb9k3HYJwSNtG+yY7rnexDdqaw5Vzi8YfJeUstHMt98diUAeX10egkpvZwWTd4OFFKSqV3+cwSmoouVcZnNdxRZUvJ1J/AwUWukHMJO0z6JFC6kwQipWqI0yCmkNpYh3PRxJF80XmaFm0c3JoTVw1P++uP5ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=byGyzjGp; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20201433461so101085ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 13:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724272189; x=1724876989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zMGohLZNT4tHT1s57E5AexVYMwxNXCTuB+5zOwYpqCg=;
+        b=byGyzjGp3ukAXVsmubyJ7UwBKKfR/V0IS8ECQizIVb8tSf3uMG7HQnzv9tCefmHdAM
+         J95br9bQ8HwHgcrs4YIHE+MgUCqE0oge2EuJ9x64guFx3Ta1gf3PHGgsSv+oEb4sdrxr
+         F63gBww5OW1U9LazcrxYRjmyb6Ee0tdeZcJecRJ07ArlCUoFccITcPZVxqw5H2iPPY9+
+         KAHtYSM9I5ViksrbAQDbHk54Pe4rncyCm8c59fvx7Hx1wCwHTDNxUN/1rN+2yod64boT
+         Z7npWOlLWaaR6e8bAmYKRyrOlOL2fQ6vULELFvmxuB9TDKzi/9qLMqp1hNw0ySp3/V8v
+         4TQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724272189; x=1724876989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zMGohLZNT4tHT1s57E5AexVYMwxNXCTuB+5zOwYpqCg=;
+        b=guFyuN7NIwZqKlPi0Q8aRAc/N6PUkGcjHATLRKBNBCkWIvRVPcI9g0npP8WlTbu02y
+         3NIb9UuNQYkul7PZqdud+vPxAH9jVP/ByqUFn7x2N/Urluu41+mzfk1d2GmUu8mC8VRQ
+         sMMn9X955q/Vq8ckPgWAauK/MKcwm9oferEvksMdXirRS3EJDziPgD0Lq4CRTLG1X6Qq
+         PE+J9O8IQSLEEFL1UVxyFSVHNZdnB7Rou0xKJ/SdK40fM/igS2V9847JE3YEhvrDnfxl
+         Uy6v1qSSf0y09LZg7giavd8TfdX3qG+Nk03ZtyHeZ7ppB9QPqYhVVL5M1mGAaymHjp1N
+         xu3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXii6vEhc+C/DIqsnqRJwY1AmNvNtljAjk1jUQ7paD+21D3Hrm5WF49LbNZ9f5Bn9Tg0HpkM6CbPG0GhaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtvAG1GgJ2LRxtlaZjnyXpG0icD2uVegLvdQmpQeJeP2MYEqlk
+	rJtW/b0ouvowBftPV/y9ylHUxYJ03SLFLMyhzpKkB7i2F5a2RW77QJSYAtqsDPsIDunBhGp14UR
+	kF7V1KSBRu+7jkCV3njEuZvfgeRc=
+X-Google-Smtp-Source: AGHT+IEGtRum4QK+JxKr9jk5NtZWt1CaZw4I976Kw9lJP8I79xKG8phiOLq5jxX3q5+12eU8Oir2efYnr8pC3NwDzvQ=
+X-Received: by 2002:a17:902:d4c8:b0:202:3e06:818d with SMTP id
+ d9443c01a7336-2036819c4ecmr21669775ad.10.1724272189272; Wed, 21 Aug 2024
+ 13:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240821064040.2292969-1-ruanjinjie@huawei.com> <20240821064040.2292969-2-ruanjinjie@huawei.com>
+In-Reply-To: <20240821064040.2292969-2-ruanjinjie@huawei.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 21 Aug 2024 16:29:37 -0400
+Message-ID: <CADnq5_Of6Up9PinPKrJP9m2LgUUNaFgaJ214DR=09AgSCdeiWg@mail.gmail.com>
+Subject: Re: [PATCH -next 1/5] drm/amd/display: Make core_dcn4_g6_temp_read_blackout_table
+ static
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: chaitanya.dhere@amd.com, jun.lei@amd.com, harry.wentland@amd.com, 
+	sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com, 
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
+	daniel@ffwll.ch, alex.hung@amd.com, aurabindo.pillai@amd.com, 
+	colin.i.king@gmail.com, dillon.varone@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Aug 2024 09:53:56 +0200
-Andreas Klinger <ak@it-klinger.de> wrote:
+Applied 1-4.
 
-> Retain documentation on how the voc index is actually calculated in
-> driver code as it'll be removed in Documentation.
-> 
-> This is a follow up on patch "[PATCH] iio: ABI: remove duplicate
-> in_resistance_calibbias" from David.
-Applied both patches.  Thanks to you both for sorting this.
+Alex
 
-Jonathan
-
-> 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+On Wed, Aug 21, 2024 at 2:33=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
+>
+> The sparse tool complains as follows:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_co=
+re_dcn4_calcs.c:6853:56: warning:
+>         symbol 'core_dcn4_g6_temp_read_blackout_table' was not declared. =
+Should it be static?
+>
+> This symbol is not used outside of dml2_core_dcn4_calcs.c, so marks it st=
+atic.
+>
+> And not want to change it, so mark it const.
+>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  drivers/iio/chemical/sgp40.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/chemical/sgp40.c b/drivers/iio/chemical/sgp40.c
-> index 7f0de14a1956..07d8ab830211 100644
-> --- a/drivers/iio/chemical/sgp40.c
-> +++ b/drivers/iio/chemical/sgp40.c
-> @@ -14,11 +14,16 @@
->   * 1) read raw logarithmic resistance value from sensor
->   *    --> useful to pass it to the algorithm of the sensor vendor for
->   *    measuring deteriorations and improvements of air quality.
-> + *    It can be read from the attribute in_resistance_raw.
->   *
-> - * 2) calculate an estimated absolute voc index (0 - 500 index points) for
-> - *    measuring the air quality.
-> + * 2) calculate an estimated absolute voc index (in_concentration_input)
-> + *    with 0 - 500 index points) for measuring the air quality.
->   *    For this purpose the value of the resistance for which the voc index
-> - *    will be 250 can be set up using calibbias.
-> + *    will be 250 can be set up using in_resistance_calibbias (default 30000).
-> + *
-> + *    The voc index is calculated as:
-> + *      x = (in_resistance_raw - in_resistance_calibbias) * 0.65
-> + *      in_concentration_input = 500 / (1 + e^x)
->   *
->   * Compensation values of relative humidity and temperature can be set up
->   * by writing to the out values of temp and humidityrelative.
-
+>  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
+e/dml2_core_dcn4_calcs.c
+> index c3c4d8d9525c..0c24f15d5067 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> @@ -6850,7 +6850,8 @@ struct dml2_core_internal_g6_temp_read_blackouts_ta=
+ble {
+>         } entries[DML_MAX_CLK_TABLE_SIZE];
+>  };
+>
+> -struct dml2_core_internal_g6_temp_read_blackouts_table core_dcn4_g6_temp=
+_read_blackout_table =3D {
+> +static const struct dml2_core_internal_g6_temp_read_blackouts_table
+> +       core_dcn4_g6_temp_read_blackout_table =3D {
+>         .entries =3D {
+>                 {
+>                         .uclk_khz =3D 96000,
+> --
+> 2.34.1
+>
 
