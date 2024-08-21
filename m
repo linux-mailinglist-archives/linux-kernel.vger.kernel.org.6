@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-295138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D216E95977C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:09:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75016959779
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 12:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1784F1C212AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11AE1C20F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559F1B5EBE;
-	Wed, 21 Aug 2024 08:33:28 +0000 (UTC)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C291B2518;
+	Wed, 21 Aug 2024 08:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDWghZmP"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476491ACE12;
-	Wed, 21 Aug 2024 08:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6B15C152;
+	Wed, 21 Aug 2024 08:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724229207; cv=none; b=njIl4COATwRK+blV8/E7VPGYcRY+Z9GVFBLY6q6OE3JdWkVIsvUS9msWQhwlRjOYNUU8g39QMrIKN4CysWxvFEv2Looj1I3NXRtks7+SlSAWB37ZQ5dOT/5Gvrux5G++hcC+ELw7Gv8TGmXgn1EzbRTuHP9s4bJRfF5FUeOsMj0=
+	t=1724229181; cv=none; b=GEqd4BT4UTscDr+acZaRSLaT/CLWKWYoLI8iqLiRswbH0014gFQ+w9sx5d2rBMuskOMzsyqxKXQCzMP8zIVsHAeMzP0mSMUIUzU/jAiCqX2E/oQ9cddN7g9ll6TiaUbuBYtJHx6fWBexM/CErq4QxCt4uCk8dwIkAjDkDekVAts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724229207; c=relaxed/simple;
-	bh=bPsU7ZXJDVjEN0/X77OOy5U+xlpyZ0HoOyMDMarI9IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PoVDt6vK/U5fBB7gIhUTi4LvzOFVc7sNlqMDo1rV0ov3Z5SE0OW9MzLXPI1Yr9cTKEDK0tQSV5tsPvH98OqPxqTioBImA92J/h7J/MmjH5tWP7mPf9dO9N+kRztL+Gm3ObgobDI6XANql4fx4NhQUhTs8wF4Rzl5ZcIyeP9OFdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1724229181; c=relaxed/simple;
+	bh=NV+tOA1UOz/iTe4bNktGSFNe352KUkNmwar1CDbpCSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ktEKzJunJsS6NTzT699DhHWcert0ptaVbnDgBSl8//qth+x6iRNiPE1rND/aS4A9n83TYCgfZixGh8+7d7eJzyYaH4psgIV3ZscPklEgCWf2gQC9Ab4w3If+cwDrAIg5qs38q8AgkHlC2hjzdkSWId9MBGOgsfmLOq1WzKQgLi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDWghZmP; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so49539175e9.2;
-        Wed, 21 Aug 2024 01:33:25 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bf0261f162so3092242a12.0;
+        Wed, 21 Aug 2024 01:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724229178; x=1724833978; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TiK+7G6dPv+jiLpJYq4uvWBTS2IB+9YYcX0z6+IsEsU=;
+        b=GDWghZmPdjo/5HZQbBO63UGsx+mQK1sOTTwC/uVrJCP9rrKAd4c2k3LFEcZOcbUksO
+         FKAKDlve9L6RCqgwa1gOrHowx3UP8ckDeBmIA6GhVnVgH2Py++/p9kUVw7dp+ClqLmQP
+         kYJyfHetY8kPd1ltzi0gNsQ6Gu8dBqvD13qqLoIQDn7JqOU1K8+ZcL8MRcCRaNgbh/Oi
+         lblw7o1n8L6f0eV+nSnCSQqwcTLhwstGI4PNZ4qmy3Broxp8tnqvc7BTNKwycadQQSb9
+         GYZa1B9y9COX9FZAcKt5/JwpoRzcz6/5tVPWJQMz7pQi7q5jg83pWzx59EUV8tQwaiUU
+         cb+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724229203; x=1724834003;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=shNn0P28pz/AiG6lziQ1M6jTDXawzKEkDhjq3toOIpg=;
-        b=MCuhr+3sx5kX0tGaFsD78qT+uStXW5wJSRle5VRfq6gLeQ7dGi8Ukv0YHOJKblEYnM
-         MRm5x1tEN0FDJKHwyfQPaybFv6QJz3rdXAmfuAAk0CncFLU/quIhFuc32bRe7abyqNqf
-         Cuc4E8IcKSM6FvH5NSt+YNg5Fl+JFWrIZktP5thewPZVxTKGbM93HWHzIIUQr/bkEdKj
-         RHHElvvFugR14r+lcli0xpCwyk8ar/wApIxMvZrfSvQAUzMRG2A3TW29Zy2zhNqbLr+0
-         ELJJMfmwL1Ls8md6onC1jj/LroTGSCvN35VaVV2FWADggizlg/coBNZQGyIqlMNJu5Mh
-         AaYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsL1KjGy0VQy+O/O6EMoskkXqfZFNuoqThcfXcy7P+irOv4/DDqqgrilubXEm6tLNGlzU0w7bFlNDvkkMInQ==@vger.kernel.org, AJvYcCW2xj9xY4sZF3kSH9I2cKtlJCR+eLGsvphjYWZyIpoexYFRXb+4PG/qnB+zsCFELk3zz4jKCoRef+lI@vger.kernel.org, AJvYcCW5NlsAdtpg3Bxv9mafmSczc/p3eE7ZbbwUz4hZRD7w2fafScEH2cI6x5QD7Yz3dggxC+Qn8qoVRP/D@vger.kernel.org, AJvYcCXIVnvEDFIG3XoKDhJOXL/37ETbE5i8el6vDcA0rFOxPxJJvAjEz5i+7Qgu5WKK4GQ0bsoTRV9vh7vQHpBv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM0smzE5ZVmntnAqVV2MaCYD/4h+/vO+UUl7OTTcRAHJOneqXT
-	pxORq5/DbHN2zpWJ7kl0wCNmPff+flEJOOS1bKFDWYErNqv18PEN
-X-Google-Smtp-Source: AGHT+IH95BHoxJWhlM+gqtaeqzWmQeH2LSFfrrv8VetEKIZZY+2KaVtVEDMpDLODC9IfPV8Nto/yEw==
-X-Received: by 2002:a05:600c:45cd:b0:425:649b:60e8 with SMTP id 5b1f17b1804b1-42abd21c8fbmr12936265e9.18.1724229203128;
-        Wed, 21 Aug 2024 01:33:23 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abed8b91dsm17368495e9.10.2024.08.21.01.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:33:22 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:33:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
- controller for IPQ SoC
-Message-ID: <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
- <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+        d=1e100.net; s=20230601; t=1724229178; x=1724833978;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TiK+7G6dPv+jiLpJYq4uvWBTS2IB+9YYcX0z6+IsEsU=;
+        b=B0qNRAQsqzaEz0acPa9Usb1VKK+bgUveTQWN65fzuGMRZR322oMGuk7v6bmW+MdSMx
+         NwkQE+Clz0NVsFsKTJ7rz+9XtQQNnyBCkB83Yx42uksqU0RYnwDFmyYwkcGGL29OrQaa
+         Z9esc/eYouu1eXMLPTk0mN9un5CSbsIHufhMjdnuHytK21tQmeG0HgWwQKwIMiNZN79d
+         +yIaC9SFvURK4HzbTUoIdMeMF76bqxrBIuCxJghzx06vfS9/WqyPOtZECGOIioWR+Smh
+         Io6GVdVgNZqtYNiGZ2vg73O9hgDQy+ma/LmIY9z/9tc74MlqfE0ki10G7CE6Fp0GzJlQ
+         p1Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUw9U1hX5QkZHRmZuc2WEUGg+uZEz1mZwwS3H6dZaLZ/qQrDDpqkLvEnr4udHwxMoef2h6/h2holwEE5Dd1omYMNA==@vger.kernel.org, AJvYcCWylevT8q7xc8L/YKIPt/iQdE1/+WWwOD4uo3ppZyKnYIMNN4MIXdtt6Xpu+ylNLy2SDo4ySD1F8B2dKQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC9a/bDeTyTVsARCTRDieVLC0fy1xyztNPVoLpZ3BEvALqroba
+	1xfd+ypnbfL7h7R8c0bgblEuIsqdaLXuQO31s7QIgYgAx9OwKSbnAZdzaQ1axUhBgyKcO27ScUF
+	byTYlTqOLPX2TZFWHIf1B+aKThQ0=
+X-Google-Smtp-Source: AGHT+IEpcPNclRlC8I8790mt0FWDo7p4bR9P71fXfJsWTMYcIsLtsjdEOLM3CNSH63KzkDld3TlrqtCK7Lo2s633mdQ=
+X-Received: by 2002:a05:6402:190c:b0:5be:c73e:26e1 with SMTP id
+ 4fb4d7f45d1cf-5bf1f1666e6mr899972a12.22.1724229177227; Wed, 21 Aug 2024
+ 01:32:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com> <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com>
+ <Zqe23DlboRPSXiQO@p14s>
+In-Reply-To: <Zqe23DlboRPSXiQO@p14s>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 21 Aug 2024 11:33:47 +0300
+Message-ID: <CAEnQRZC4Oqyks+ok0vdoFxW1v1s5hfbM8EtdP8nUqxTXRZsRLA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for i.MX7ULP
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
+	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
-> The CMN PLL controller provides clocks to networking hardware blocks
-> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
-> and produces output clocks at fixed rates. These output rates are
-> predetermined, and are unrelated to the input clock rate. The output
-> clocks are supplied to the Ethernet hardware such as PPE (packet
-> process engine) and the externally connected switch or PHY device.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
->  2 files changed, 85 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> new file mode 100644
-> index 000000000000..7ad04b58a698
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +  - Luo Jie <quic_luoj@quicinc.com>
-> +
-> +description:
-> +  The CMN PLL clock controller expects a reference input clock.
+Hello Mathieu,
 
-You did not explain what is CMN. Is this some sort of acronym?
+I've talked to Peng and if my understanding is correct I think the patch is OK.
+Maybe we can split the patch in two:
+* first, adding the power off callback with explanations.
+* second, adding the restart callback with explanations.
 
-Best regards,
-Krzysztof
+And also add a more detailed explanation.
 
+Power off and restart are totally different operations and are not complementary
+as I thought in the beginning. There are not like suspend/resume for example.
+
+> >  static int imx_rproc_probe(struct platform_device *pdev)
+> >  {
+> >       struct device *dev = &pdev->dev;
+> > @@ -1104,6 +1122,24 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> >       if (rproc->state != RPROC_DETACHED)
+> >               rproc->auto_boot = of_property_read_bool(np, "fsl,auto-boot");
+> >
+> > +     if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4")) {
+> > +             ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_POWER_OFF_PREPARE,
+> > +                                                 SYS_OFF_PRIO_DEFAULT,
+> > +                                                 imx_rproc_sys_off_handler, rproc);
+>
+> Why does the mailbox needs to be set up again when the system is going down...
+
+Scenario: We call Linux *shutdown -P * command to power off the machine.
+
+At this point mailbox TX operation is configured as *blocking*. Power
+off is done via
+an atomic notifier call which doesn't allow blocking. If we do so we
+will endup in a kernel crash.
+
+So, at this moment we setup again the mailboxes configuring them with
+*non-blocking* option.
+
+>
+> > +             if (ret) {
+> > +                     dev_err(dev, "register power off handler failure\n");
+> > +                     goto err_put_clk;
+> > +             }
+> > +
+> > +             ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART_PREPARE,
+> > +                                                 SYS_OFF_PRIO_DEFAULT,
+> > +                                                 imx_rproc_sys_off_handler, rproc);
+>
+> ... and why does it need to be free'd when the system is going up?
+
+System is not going up here. System is running and we do a reboot.
+
+Scenario: We call Linux *shutdown -r* command to reboot the machine.
+
+Similarly, mailboxes are already set and configured as *blocking*. We
+cannot use the mailboxes
+as they are because reboot is done via an atomic notifier which if we
+call a blocking function it will endup in crash.
+
+So, we need to free the existing mailbox and create new ones with the
+*non-blocking* options.
+
+I think this is really fair to me. The one thing, I admit we must work
+on, create a better commit message.
+
+What do you say? Does this work for you?
+
+Thanks a lot for your help!
 
