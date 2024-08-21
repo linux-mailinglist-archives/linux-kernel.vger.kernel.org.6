@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-295605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBFC959EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:41:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34061959EEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 15:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7471F22629
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 562231C227C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE5D1ACE14;
-	Wed, 21 Aug 2024 13:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48321ACE1A;
+	Wed, 21 Aug 2024 13:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA0XHROX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZQnb2QcV"
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDBB1ABEB2;
-	Wed, 21 Aug 2024 13:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712621A4AB7;
+	Wed, 21 Aug 2024 13:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724247688; cv=none; b=JHC8lToQmJoNNxmsbpu4hU1KG261M6NgCEhGn6Bokbtlryixt8XB6auILt0HChvougM8ShBlr4ugzg8BfuCECCN8fhWfG6nNdx4B3bN79V6sMOMSm6OyrjU28IET1Y3miLo4CGTcbp2BU1B0TB9s5I4ky7EDD8TFxEOb6kxVpKk=
+	t=1724247710; cv=none; b=MVhyw8eBXq9aQNR19I57nq8hhEVQvXTRbB0YRg5Xhvkgr0zm8LpSU409WvxOGx3UiWkCg6F8iuOJ7IjqPD23gdi+ipOyG4ckchTBL4/EGE1Z5uCcDpL5b3Nw/PMI5Ck5FZIn+gci6MWXv/WjvSgYsP1UQrUQAI32A3rnYjxyD2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724247688; c=relaxed/simple;
-	bh=eTD2Cb24CybXMxpAV7IV6bVikyFp8ac2v7wmurkqCBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFl+UUsuunfJPr62OJPu2RC7Gm/n25949XKx1ka25wCgaisLx5pwNpMOx7QU6s3Q0eJuSGEnDBVh3CHayAVPkjbXx+hsK5awyyz/eszkdHw0E3AXEk7bOIcCdld4Pn++/BbSse5Ezg9/Ia5FxOU1rWqy3Zg33bo0qb6KY0DNrUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA0XHROX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E120EC32782;
-	Wed, 21 Aug 2024 13:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724247688;
-	bh=eTD2Cb24CybXMxpAV7IV6bVikyFp8ac2v7wmurkqCBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YA0XHROXOcQsdivO+elHDRjUSAQW6gMvqksgn9sJYx6HIQqgOSqBWvwYAKEoAudJ6
-	 jpQFknVrYgPzVDOARVuSc6ndK09miMBS/01QDO3m/u8EM9AE7JMF5GhbKwPzkFwqnw
-	 y4RvjlX8hCT1cWOdz2s5B5Hg+habrQnztB9Vn3DjTJKQfLxzs9VNsSM74lIHD/r5pY
-	 m8AgYIe8mNkTYx8Rh64Z2A5FYg/IGH8Rmd/TeKBCchC+7HTnea+t4Vt/fEOjItOCaD
-	 P8WifT5qdMaqyT/W50EYvaoxCO/vst1XsHX+DsxGESHgI2BbyBJq/FsYuxD4uzQtP/
-	 bmJqgBU9LV9bQ==
-Date: Wed, 21 Aug 2024 14:41:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 21/40] arm64/gcs: Implement shadow stack prctl()
- interface
-Message-ID: <ba752f63-6a6b-4353-b2c2-0531d943cfd6@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-21-699e2bd2190b@kernel.org>
- <ZsXjiTlfLE61-jJC@arm.com>
+	s=arc-20240116; t=1724247710; c=relaxed/simple;
+	bh=MkfPcGdJrcxhSmK6B/Ca4Kz1Ej9DyIDDHbI8AzWw4ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fWa6G+OSHBQT7cQCFah3iFt6vG3M2YTIKmwDDNgA46c6C2jabtoJP+x/xCdSGSVBGm7iPPaEwrkUJo1cxqLta7g5WuDhNS5olWMDNi3Xj0ttH5mwrT3MmF9nRLg4Wii6cOAXpsL/4HoZaUpSlPXhdfgGVAFIkbQznYmRmifUirw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZQnb2QcV; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id glakslxBOiKc3glaksEN2E; Wed, 21 Aug 2024 15:41:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724247699;
+	bh=2BLgy7t94FX8U1WXUO0ibqyOoeto3YzwBOvxbxYnA9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ZQnb2QcV7APkpv1qZ2L8cgmcvcpMQ0UaoNdIOKRrHdFTarRnGmFhJ9J9jEpRu19uU
+	 heVDFT92sJdNn+Lr2n869ryVnbqpsY4lrBH+aYNd4V8Vg3oppQGlBhZo7Mtknd3bHR
+	 OmXT4UZ+l12AYOFG/hjMh9rPGFgBKT1aFao6Wy5ChUMt2A/nzAmRC8A7Gl7rBJSs/o
+	 +tAHqzrSXR+jMUoAkw1S6E0yMlZugLo3lPKHFXLs+gFM8Dmrb6EX2k71CtXJmYIitI
+	 oJzfIXL18LdHKgTfBQienBJqUQo7UFsi+GcX8d3mwFRMvTYT66Lq3O8k2igsdcjYoU
+	 kyf+6C6bJEPeA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 21 Aug 2024 15:41:39 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <0bcbff49-1d0a-4e59-83ea-f5c568f736a9@wanadoo.fr>
+Date: Wed, 21 Aug 2024 15:41:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Si11auRToJrS8sAl"
-Content-Disposition: inline
-In-Reply-To: <ZsXjiTlfLE61-jJC@arm.com>
-X-Cookie: You are false data.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] libbpf: Initialize st_ops->tname with strdup()
+To: Soma Nakata <soma.nakata01@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240821112344.54299-3-soma.nakata01@gmail.com>
+ <ecd1af32-8e6b-45d3-8434-0e981fd198ea@wanadoo.fr>
+ <CAOpe7SdG_Y0M5dJJ-C3NJ6-bfjHAshz+Ok-MzcBiGuaiYyTeRw@mail.gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAOpe7SdG_Y0M5dJJ-C3NJ6-bfjHAshz+Ok-MzcBiGuaiYyTeRw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Le 21/08/2024 à 15:30, Soma Nakata a écrit :
+> On Wed, Aug 21, 2024 at 9:16 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> Le 21/08/2024 à 13:23, Soma Nakata a écrit :
+>>> `tname` is returned by `btf__name_by_offset()` as well as `var_name`,
+>>> and these addresses point to strings in the btf. Since their locations
+>>> may change while loading the bpf program, using `strdup()` ensures
+>>> `tname` is safely stored.
+>>>
+>>> Signed-off-by: Soma Nakata <soma.nakata01@gmail.com>
+>>> ---
+>>>    tools/lib/bpf/libbpf.c | 7 +++++--
+>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>>> index a3be6f8fac09..f4ad1b993ec5 100644
+>>> --- a/tools/lib/bpf/libbpf.c
+>>> +++ b/tools/lib/bpf/libbpf.c
+>>> @@ -496,7 +496,7 @@ struct bpf_program {
+>>>    };
+>>>
+>>>    struct bpf_struct_ops {
+>>> -     const char *tname;
+>>> +     char *tname;
+>>>        const struct btf_type *type;
+>>>        struct bpf_program **progs;
+>>>        __u32 *kern_func_off;
+>>> @@ -1423,7 +1423,9 @@ static int init_struct_ops_maps(struct bpf_object *obj, const char *sec_name,
+>>>                memcpy(st_ops->data,
+>>>                       data->d_buf + vsi->offset,
+>>>                       type->size);
+>>> -             st_ops->tname = tname;
+>>> +             st_ops->tname = strdup(tname);
+>>> +             if (!st_ops->tname)
+>>> +                     return -ENOMEM;
+>>
+>> Certainly a matter of taste, but I would personally move it just after
+>> "st_ops->kern_func_off = malloc()" and add the NULL check with the
+>> existing ones.
+>>
+>> BTW, there are some memory leaks if 1 or more allocations fail in this
+>> function.
+>> Not sure if it is an issue or not, and what should be done in this case.
+> 
+> You mean the line below?
+> if (!st_ops->data || !st_ops->progs || !st_ops->kern_func_off)
 
---Si11auRToJrS8sAl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes.
 
-On Wed, Aug 21, 2024 at 01:54:33PM +0100, Catalin Marinas wrote:
+> seems it says the size of them are in descending order or something.
+> But regardless, this looks like a memory leak.
+> I will send another patch on this.
+> 
+> thanks,
+> 
+>>
+>> CJ
+>>
+>>
+>>>                st_ops->type = type;
+>>>                st_ops->type_id = type_id;
+>>>
+>>> @@ -8984,6 +8986,7 @@ static void bpf_map__destroy(struct bpf_map *map)
+>>>        map->mmaped = NULL;
+>>>
+>>>        if (map->st_ops) {
+>>> +             zfree(&map->st_ops->tname);
+>>>                zfree(&map->st_ops->data);
+>>>                zfree(&map->st_ops->progs);
+>>>                zfree(&map->st_ops->kern_func_off);
+>>
+> 
+> 
 
-> Otherwise it looks fine.
-
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-I've also added:
-
-+
-+       /* Ensure we remember GCSPR_EL0 if we're disabling. */
-+       if (task_gcs_el0_enabled(current))
-+               current->thread.gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
-
-to handle the disable case.
-
---Si11auRToJrS8sAl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF7n4ACgkQJNaLcl1U
-h9Bergf+Lr+93qbWZ/k9ZOtInPd8jxasSRO+qC6wGQEBNiup/wbDIYe/v8WZVn5Z
-w4bw2cz7o7ojaKCFrw6eAoto2EKZQXDc2r5UsFegjSdYsFudCg/L7odHSXP1ac2l
-J8b/gmDEioJaw8kwgKsABb/7c2Knjpz7HxgzNTBhEV+DJ3ngHp81A7ehdvXyDLT5
-C11CbLBC6dWDVxAlFPBR+WUwuIfQLjIfbbZfCl7L0sbtkPQZUTrRN7UhC4e+Ll7x
-N01ynknfyTCaCqyfpyfuGxfi7+OKJeKZbGAcLiUvTRikhEIblv9PXLFW+FiUfNWw
-SgJ1gyR8bJSUZHgN4w2DFsl0xhPcKg==
-=tt95
------END PGP SIGNATURE-----
-
---Si11auRToJrS8sAl--
 
