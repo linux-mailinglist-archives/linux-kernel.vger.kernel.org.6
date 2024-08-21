@@ -1,204 +1,153 @@
-Return-Path: <linux-kernel+bounces-295656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC11959FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C72959FB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 16:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9543E1F24369
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E75F1F241D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44911B1D7B;
-	Wed, 21 Aug 2024 14:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8551B2536;
+	Wed, 21 Aug 2024 14:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i8iw/I6B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mnuo5ldv"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6840A1B2515
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 14:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810CF1B250C;
+	Wed, 21 Aug 2024 14:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250260; cv=none; b=AubQ2/zYRHBpPtO5AIw4GX8EvILsr7rXG6mnVAUUhzucn7ghOfxqeYQgr2csAUBZFBPAnuPcJ6cCD+EKVRiMMU7ONj+6cLaQoriIBheMKB2oXhpgkNsRLerRimmMyBiuP+oY7gwJpUnzroKPCQ5ng7heX/DhIGcQu2hqJw+Xp+U=
+	t=1724250259; cv=none; b=J0kNhAN+bCkoz691HgfGumnEG4sPjiUnWm6zezIPSUzAmwVSHkGJy1tNAqLQZfj6h/HxPVNZjPMnPms3JC1HgL/FFvqB6qekxVql4Vu/00Nl+1akRwna0+kh6/V+maiL1CKmlB2L1F2pERd69D77jJcajXxZzxx1QHxac71mMm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250260; c=relaxed/simple;
-	bh=SbaKy7M3iE/iWGnMcfHyAGQhs+86ELqmpXUKEJwfOsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nYeXF55FwMViVIKLAnTyBT4PvCPwmvJgKRQgmRmVAqkNFssrvICRDLaeM/7mLlFCp3ftHiKkYsneq8G8HYYDOa5MqyxMCdE2c/utIKANJ1sxcRv+W5tRMHX8NZi2GFYhabuuPxkARyN/dhz+Kk/VZz2EZcky698LdZVDn47qQGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i8iw/I6B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724250257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BJv1xpOkewDzgnM873vJ2OOFBXS4HrZ11ebZ2D3bLl8=;
-	b=i8iw/I6BnaFxGPDm+jQgqPk0CLYqyNqSf5dzomGQADwh2c/SWc2IknpIUeGgbyRmKvkC8a
-	kKaBOXvSU/6nFwrTv0PlRW7so7ON+9QVKFmsx4GHDXEzk0qFW6mDUwpIdSoHcbntPbOsWt
-	wfirWMRzoErABsqcLjL2zL+OszVV514=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-247-MJswKancPfOAfp4rZEyvCQ-1; Wed,
- 21 Aug 2024 10:24:11 -0400
-X-MC-Unique: MJswKancPfOAfp4rZEyvCQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C3F11955BFE;
-	Wed, 21 Aug 2024 14:24:03 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.124])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D1BB71955BF7;
-	Wed, 21 Aug 2024 14:23:50 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Zefan Li <lizefan.x@bytedance.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Costa Shulyupin <cshulyup@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 2/2] cgroup/cpuset: Exclude isolated CPUs from housekeeping CPU masks
-Date: Wed, 21 Aug 2024 10:23:12 -0400
-Message-ID: <20240821142312.236970-3-longman@redhat.com>
-In-Reply-To: <20240821142312.236970-1-longman@redhat.com>
-References: <20240821142312.236970-1-longman@redhat.com>
+	s=arc-20240116; t=1724250259; c=relaxed/simple;
+	bh=LQi6n4yMSVAfqtfuPS2JswfGIu0Wscw3/kexTT4Dk+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jRVjf6vztxDW+rzsGWZVB+jGdMlppPnWnSzl7LYrg65x9RgDF3ryD45HgMpvRXdXLA0SvbWHkh6B6ap6BbtjQ33jzr13DMBZ5ahO4sKAAZ/7pkE+rUmwU+EUb0Vb4B8id8qKfKGj2W7eSE4R+lyZtCys5dxkiI/I2yh1hXkv8ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mnuo5ldv; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53345dcd377so2276465e87.2;
+        Wed, 21 Aug 2024 07:24:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724250256; x=1724855056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LlbE1ZVUp8r5d/u+xc6LD6T9os/TKYS6UASL1EJLs8Q=;
+        b=mnuo5ldvgoQJcmp8ljqZ8LS5bjJKhyfc+O71UxR2sziahMOjg5RmBe8U03S/ZUBhdQ
+         AHPbBlhM0UIbAVi3gFUON7CWTnPgMlGYTFa72k4Glyu3H5iN9c6VpBRSZBA/RZNo50O0
+         tu4qmGiBSWUhq/8kg0RH7pwFXbGPg2CCYYvXDMZmEHRny6qHf8va3BVysVzTagbUZPYt
+         gA1NU4O0y7rGathp2pfJ4dkT4WlJF9NCbLwphsDBYLQtfE94q6WPvu3Z70Kib01DlZbY
+         wFxOBVmkfpshBhp0XXvJwKgImD7p4vKY7YmRhubd9YSr8H9uI2c6U1bqrq+PHUZK4VRr
+         QF3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724250256; x=1724855056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LlbE1ZVUp8r5d/u+xc6LD6T9os/TKYS6UASL1EJLs8Q=;
+        b=cO2FbcZrppz2TEv/3dueOosq5uJOrKeTLXE0/ZJ+PBUSDeJL8UTnDeaCEaOmaEFXAb
+         CIF2pi7MsGlP1Fz8L4UPq/FTQOZCynV1ftWjGGI0JqlpYmIIzHTyeYxdFcgalVXP4EH0
+         XxuwRkelfQFucJKQE/1ydnrLDHERsu9UGWzh+693Pa1tesxTSeX4TjjV705AIdtZXNeQ
+         2KffL55rQfMPBVmWI99XcIwHSz8z60EBdIS2+XJrh1x3E7XySkUGm93oWQFgorahNFY2
+         HsmC5Jwt6NWDglKgq9E00O0j7P+4C29VlkNnxwo6yNJ2TQdcL83DizpgA0FNEN1oQIyG
+         v1ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVMRR7fiSp0vBxGHvaPV3ynBZKN9ejqN2kGb0/6pBms/xIIl+C+klY+Z1rZf+w8rbShkI70++Kld5Xr@vger.kernel.org, AJvYcCWF8Lt11g6baiqPz6zOWsh7naevLgPMTcmlZy+8TA/ThWaofXyq+i+JSzQgdAK2xlQRsClChGm/N1FhJbO0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwebmZdYBuMcwmVmwLopfwwG5nlS/ILUVwSuYU0WfNPiJ4NdK/o
+	2RPpn7KAdxvSkgD0hm7ZKWWXBrJjNkskg4Ldy7WhxfLKueIPlQ437UcFyUKChGU8QTi37hNnUTY
+	jOjzUTFcR2BfeBJz2xwOLqQ1bEL0=
+X-Google-Smtp-Source: AGHT+IEo2C4tLGErKbN36oFT83s+fOENUqZMA6ZnvUMnZOe6yCITNZ+3R77DMVBR+1CUyo7ZuXGHZL17izwR69jEvVo=
+X-Received: by 2002:a05:6512:1103:b0:533:47ca:9773 with SMTP id
+ 2adb3069b0e04-533485fe302mr1783670e87.57.1724250255178; Wed, 21 Aug 2024
+ 07:24:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240821135817.56393-1-tarang.raval@siliconsignals.io>
+In-Reply-To: <20240821135817.56393-1-tarang.raval@siliconsignals.io>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 21 Aug 2024 11:24:03 -0300
+Message-ID: <CAOMZO5BJQ4RVRqvpcdAdXqhcfP6b7NbN-0VQZB7sBfYGKr8phw@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals Support
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: krzk+dt@kernel.org, shawnguo@kernel.org, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Call the newly introduced housekeeping_exlude_isolcpus() function to
-exclude isolated CPUs from the selected housekeeping CPU masks. This
-is in addition to the exclusion of isolated CPUs from the workqueue
-unbound CPU mask.
+Hi Tarang,
 
-Almost all the existing housekeeping cpumasks can be referenced at run
-time. Right now all of them except HK_TYPE_TICK and HK_TYPE_MANAGED_IRQ
-will be updated in the creation, deletion and modification of isolated
-partitions. More investigation will be done on the other two types.
+On Wed, Aug 21, 2024 at 10:58=E2=80=AFAM Tarang Raval
+<tarang.raval@siliconsignals.io> wrote:
 
-Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- kernel/cgroup/cpuset.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+> +       can-control {
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&pinctrl_cancontrol>;
+> +               reset-gpios =3D <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> +       };
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 8b40df89c3c1..d3cf4b2e44c7 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -233,6 +233,15 @@ static bool		have_boot_isolcpus;
- /* List of remote partition root children */
- static struct list_head remote_children;
- 
-+/*
-+ * The following sets of housekeeping cpumasks can be referenced at run time
-+ * and hence should be updated for CPU isolation.
-+ */
-+#define HOUSEKEEPING_FLAGS	(BIT(HK_TYPE_TIMER)  | BIT(HK_TYPE_RCU)  |\
-+				 BIT(HK_TYPE_SCHED)  | BIT(HK_TYPE_MISC) |\
-+				 BIT(HK_TYPE_DOMAIN) | BIT(HK_TYPE_WQ)   |\
-+				 BIT(HK_TYPE_KTHREAD))
-+
- /*
-  * A flag to force sched domain rebuild at the end of an operation while
-  * inhibiting it in the intermediate stages when set. Currently it is only
-@@ -1588,7 +1597,15 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
- 	return isolcpus_updated;
- }
- 
--static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
-+/**
-+ * update_isolation_cpumasks - Update external isolation CPU masks
-+ * @isolcpus_updated - @true if isolation CPU masks update needed
-+ *
-+ * The following external CPU masks will be updated if necessary:
-+ * - workqueue unbound cpumask
-+ * - housekeeping cpumasks
-+ */
-+static void update_isolation_cpumasks(bool isolcpus_updated)
- {
- 	int ret;
- 
-@@ -1598,7 +1615,10 @@ static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
- 		return;
- 
- 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
--	WARN_ON_ONCE(ret < 0);
-+	if (WARN_ON_ONCE(ret < 0))
-+		return;
-+	ret = housekeeping_exlude_isolcpus(isolated_cpus, HOUSEKEEPING_FLAGS);
-+	WARN_ON_ONCE((ret < 0) && (ret != -EOPNOTSUPP));
- }
- 
- /**
-@@ -1681,7 +1701,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
- 	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
- 	list_add(&cs->remote_sibling, &remote_children);
- 	spin_unlock_irq(&callback_lock);
--	update_unbound_workqueue_cpumask(isolcpus_updated);
-+	update_isolation_cpumasks(isolcpus_updated);
- 
- 	/*
- 	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
-@@ -1717,7 +1737,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
- 		cs->prs_err = PERR_INVCPUS;
- 	reset_partition_data(cs);
- 	spin_unlock_irq(&callback_lock);
--	update_unbound_workqueue_cpumask(isolcpus_updated);
-+	update_isolation_cpumasks(isolcpus_updated);
- 
- 	/*
- 	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
-@@ -1769,7 +1789,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *newmask,
- 	if (deleting)
- 		isolcpus_updated += partition_xcpus_del(prs, NULL, tmp->delmask);
- 	spin_unlock_irq(&callback_lock);
--	update_unbound_workqueue_cpumask(isolcpus_updated);
-+	update_isolation_cpumasks(isolcpus_updated);
- 
- 	/*
- 	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
-@@ -2140,7 +2160,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 		WARN_ON_ONCE(parent->nr_subparts < 0);
- 	}
- 	spin_unlock_irq(&callback_lock);
--	update_unbound_workqueue_cpumask(isolcpus_updated);
-+	update_isolation_cpumasks(isolcpus_updated);
- 
- 	if ((old_prs != new_prs) && (cmd == partcmd_update))
- 		update_partition_exclusive(cs, new_prs);
-@@ -3193,7 +3213,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 	else if (new_xcpus_state)
- 		partition_xcpus_newstate(old_prs, new_prs, cs->effective_xcpus);
- 	spin_unlock_irq(&callback_lock);
--	update_unbound_workqueue_cpumask(new_xcpus_state);
-+	update_isolation_cpumasks(new_xcpus_state);
- 
- 	/* Force update if switching back to member */
- 	update_cpumasks_hier(cs, &tmpmask, !new_prs ? HIER_CHECKALL : 0);
--- 
-2.43.5
+This does not have any compatible string, so this can-control block
+should be removed.
 
+> +        can: can@0 {
+> +                compatible =3D "microchip,mcp2515";
+> +                pinctrl-names =3D "default";
+> +                pinctrl-0 =3D <&pinctrl_canbus>;
+> +                reg =3D <0>;
+
+reg should come right after compatible.
+
+> +       rtc@32 {
+> +               compatible =3D "rx8025";
+
+This gives a warning as rx8025 does not exist.
+
+It should be "epson,rx8025" instead.
+
+> +/* Wifi */
+> +&usdhc1 {
+> +       pinctrl-names =3D "default", "state_100mhz", "state_200mhz";
+> +       pinctrl-0 =3D <&pinctrl_usdhc1>, <&pinctrl_usdhc1_gpio>;
+> +       pinctrl-1 =3D <&pinctrl_usdhc1_100mhz>, <&pinctrl_usdhc1_gpio>;
+> +       pinctrl-2 =3D <&pinctrl_usdhc1_200mhz>, <&pinctrl_usdhc1_gpio>;
+
+pinctrl_usdhc1_gpio is not being used as you only pass pinctrl-names =3D
+"default". Remove pinctrl_usdhc1_gpio.
+
+> +/* SD-card */
+> +&usdhc2 {
+> +        pinctrl-names =3D "default";
+> +        pinctrl-0 =3D <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+> +        pinctrl-1 =3D <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
+> +        pinctrl-2 =3D <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
+
+pinctrl_usdhc2_gpio is not being used as you only pass pinctrl-names =3D
+"default". Remove pinctrl_usdhc2_gpio.
+
+> +        cd-gpios =3D <&gpio2 12 GPIO_ACTIVE_LOW>;
+> +        bus-width =3D <4>;
+> +        status =3D "okay";
+> +};
+> +
+>  &iomuxc {
+> +
+> +       pinctrl_canbus: canbusgrp {
+> +               fsl,pins =3D <
+> +                       MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14              0=
+x14
+> +               >;
+> +       };
+
+Please add blank lines to separate the pinctrl groups.
+
+> +       pinctrl_cancontrol: cancontrolgrp {
 
