@@ -1,166 +1,93 @@
-Return-Path: <linux-kernel+bounces-295079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2E0959664
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9FB959665
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 10:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595ED285165
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90D92866B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 08:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679901C32E3;
-	Wed, 21 Aug 2024 07:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="U+CVY6NX"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD21C3301;
+	Wed, 21 Aug 2024 07:54:53 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580681ACDFD
-	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405781C32F9
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 07:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724226757; cv=none; b=keUgrYvbGaQcd6A80mQdte97KNdR8EWsBLJjoR/qIkfHeUM4JraqWAo2F71xQPSooE0wdrdRX7Uo1LZrYZmS/gAWauH2KVqJV+0qOOlz7NPnVnP78ksreOUgLXLKc5iviKluxoEKxIc0B3aySB1rvQURR1DrLeiglqwJ6QweaoA=
+	t=1724226893; cv=none; b=IwPj/dL1UP6k6Gd3xZWVTPRDs/AWvwE4QhyP7ZBz2cBkESEDFPc4EtM6p8wqcK9glTd6jGcu5rqLsCxlm99KVzCljNR3IQBBSBRyvcLfbqoiat058d0Hcx5uKvK9/IueIctMDIvB9j2WLh7spMYgMddvgaum0iQlRqfvz4NNqOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724226757; c=relaxed/simple;
-	bh=rWbfdO/najgX+NclvzhAae3qpVHyvWxSPaRx6iJwxfU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K4Q23dtCxgP5EOfObNg1jNqRxx1sMGDMyuAczYsG2Mu6oltikrJUmoY3BK5r8EKaZLdRlByLYi0RhY9llgb1juzBrRUJr7I2eMjB/3BrDIr089S7QQCmOS0nhSotcVdlLf+w4NSbAwgHV5B4OnIdT7jclQdz/ULJdGp6ue4ZQ9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=U+CVY6NX; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1724226754;
-	bh=rWbfdO/najgX+NclvzhAae3qpVHyvWxSPaRx6iJwxfU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=U+CVY6NXtjA9ATlzGmfTizRexZlBxEzhme+an1MMa1zlN7QaITYrOoRHP2DHbheLw
-	 ifNlDoI0kk85jmF7YpvSVjz8NdOsa0orTkMYrL3/AvEl9WL4nomVhj+xVg8QLCVkNi
-	 JvH2K80iYvsjq7Fq9iGPbdtiolVAC+T1UmCek4gE=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 06B7666F26;
-	Wed, 21 Aug 2024 03:52:32 -0400 (EDT)
-Message-ID: <dab9357bd21d257f66a9f6a145570d0de61c4595.camel@xry111.site>
-Subject: Re: [PATCH v1 1/2] LoongArch: Define barrier_before_unreachable()
- as empty
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, Tiezhu Yang
- <yangtiezhu@loongson.cn>,  Jinyang He <hejinyang@loongson.cn>
-Cc: Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 21 Aug 2024 15:52:31 +0800
-In-Reply-To: <CAAhV-H6Mh3didzHnKJiEsMP4yVgggnBBuDS1U6yDzEvdVEbGRg@mail.gmail.com>
-References: <20240820123731.31568-1-yangtiezhu@loongson.cn>
-	 <20240820123731.31568-2-yangtiezhu@loongson.cn>
-	 <CAAhV-H6Mh3didzHnKJiEsMP4yVgggnBBuDS1U6yDzEvdVEbGRg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1724226893; c=relaxed/simple;
+	bh=ehnzRacGYsLSTMSoBRgaj4cdsfx2PZHPLztzOSDIcw4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EGq5god/BIfylmwkI/zscphodunwI55tBo8/QT9QBZYB4O9lCTCFIS1M55+YWkvQVo9A+0SbYuegibh+zymuJnnxYCdSQVYwsm97uU8vkXkQp3RKqljytrBy+pejrAQYijQvuTuDNrKLCaDSvFke7D9PhNWPD8u4j1W4I4WvSl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wpdq3022DzhY1k;
+	Wed, 21 Aug 2024 15:52:47 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 81A0618009B;
+	Wed, 21 Aug 2024 15:54:47 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Aug 2024 15:54:47 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] mm/page_poison: slightly optimize check_poison_mem()
+Date: Wed, 21 Aug 2024 15:53:11 +0800
+Message-ID: <20240821075311.1953-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Wed, 2024-08-21 at 15:37 +0800, Huacai Chen wrote:
-> > I am not sure whether the GCC bug has been fixed, I can not find the
-> > fixup in the link https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D82365
-> > and in the GCC repo. So I am not sure whether it is time and proper
-> > to remove this workaround in the common header totally, just remove
-> > it in the arch specified header when compiling kernel with a newer
-> > GCC version (for example GCC 12.1 or higher on LoongArch) at least.
+When the debug information needs to be suppressed due to ratelimit,
+it is unnecessary to determine the end of the corrupted memory.
 
-> What's your opinion? From my point of view, this GCC bug hasn't been
-> fixed. So there may still be potential problems.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ mm/page_poison.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I'm pretty sure it isn't fixed.  Using the test case from the bug
-report:
+diff --git a/mm/page_poison.c b/mm/page_poison.c
+index 3e9037363cf9d85..23fa799214720f1 100644
+--- a/mm/page_poison.c
++++ b/mm/page_poison.c
+@@ -55,14 +55,15 @@ static void check_poison_mem(struct page *page, unsigned char *mem, size_t bytes
+ 	if (!start)
+ 		return;
+ 
++	if (!__ratelimit(&ratelimit))
++		return;
++
+ 	for (end = mem + bytes - 1; end > start; end--) {
+ 		if (*end != PAGE_POISON)
+ 			break;
+ 	}
+ 
+-	if (!__ratelimit(&ratelimit))
+-		return;
+-	else if (start == end && single_bit_flip(*start, PAGE_POISON))
++	if (start == end && single_bit_flip(*start, PAGE_POISON))
+ 		pr_err("pagealloc: single bit error\n");
+ 	else
+ 		pr_err("pagealloc: memory corruption\n");
+-- 
+2.34.1
 
-struct i2c_board_info {
-        char type[20];
-        char pad[100];
-};
-
-#ifdef NONORETURN
-void fortify_panic();
-#else
-void fortify_panic() __attribute__((noreturn));
-#endif
-
-
-int f(int a)
-{
-  if (a)
-    fortify_panic();
-}
-
-
-void i2c_new_device(struct i2c_board_info *);
-int em28xx_dvb_init(int model, int a, int b, int c, int d)
-{
-        switch (model) {
-        case 1:{
-                        struct i2c_board_info info =3D {};
-                        f(a);
-                        i2c_new_device(&info);
-                        break;
-                }
-        case 2:{
-                        struct i2c_board_info info =3D {};
-                        f(b);
-                        i2c_new_device(&info);
-                        break;
-                }
-        case 3:{
-                        struct i2c_board_info info =3D { };
-                        f(c);
-                        i2c_new_device(&info);
-                        break;
-                }
-        case 4:{
-                        struct i2c_board_info info =3D { };
-                        f(d);
-                        i2c_new_device(&info);
-                        break;
-                }
-        }
-        return 0;
-}
-
-$ cc -v
-Using built-in specs.
-COLLECT_GCC=3Dcc
-COLLECT_LTO_WRAPPER=3D/usr/libexec/gcc/loongarch64-unknown-linux-gnu/14.2.0=
-/lto-wrapper
-Target: loongarch64-unknown-linux-gnu
-Configured with: ../configure --prefix=3D/usr LD=3Dld --enable-languages=3D=
-c,c++ --enable-default-pie --enable-default-ssp --disable-multilib --with-b=
-uild-config=3Dbootstrap-lto --disable-fixincludes --with-system-zlib --enab=
-le-host-pie
-Thread model: posix
-Supported LTO compression algorithms: zlib zstd
-gcc version 14.2.0 (GCC)=20
-$ cc t.c -S -Wframe-larger-than=3D1 -DNONORETURN -O2
-t.c: In function 'em28xx_dvb_init':
-t.c:50:1: warning: the frame size of 144 bytes is larger than 1 bytes [-Wfr=
-ame-larger-than=3D]
-   50 | }
-      | ^
-$ cc t.c -S -Wframe-larger-than=3D1 -O2           =20
-t.c: In function 'em28xx_dvb_init':
-t.c:50:1: warning: the frame size of 512 bytes is larger than 1 bytes [-Wfr=
-ame-larger-than=3D]
-   50 | }
-      | ^
-
-And I'm puzzled why "unreachable instruction" is not a problem on x86?
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
