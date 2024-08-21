@@ -1,217 +1,206 @@
-Return-Path: <linux-kernel+bounces-295327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-295328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802739599B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:26:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06649599B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 13:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A585E1C2074C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F3DB25B6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2024 11:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB7A2111B8;
-	Wed, 21 Aug 2024 10:12:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6AA210974;
-	Wed, 21 Aug 2024 10:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41B12111DF;
+	Wed, 21 Aug 2024 10:13:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F922111D6
+	for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 10:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724235119; cv=none; b=Q8b+kPWzXNs+0z/E9U9cNzd6nLaagDTu0zTIM6J1bOSQcTmhDJ12fDZGPbwAFSlLLNZcibU1o2pEyuDjyapO0aL1/FZRJDbmutiinzPscrof+5tyw8fnpLCm6LeL5SMeaPfPlHly4Ey2NEaryB0+JFbJz0WQuDR4zZ46uykgUn8=
+	t=1724235208; cv=none; b=SNmgqcTVf6ytTC3/eJaM3hCjxkVTY6bH5ZX+5IdBOHrZdcGOybYIvVCfbrrfhKTSqtiH26znbTqwkJ+mMXLj8PJcCLS0k3ZZE+ro3E+h0RjtWVFdrkBRGiGTT8CzZH1NVDwjr5p7WiSdbFd0UAEixigaCL1FHvRtxTWFm7O/Lxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724235119; c=relaxed/simple;
-	bh=ovymmF68da7TqQigEtmE9W3qmpv8KpzF4Q0QqhP7Ub4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=agoym9dnFf1oxFyx74tsWXVr8NvGVsHiWXsZGgQ02ZUGJ60wVFnksLhNxpKjKBvc+H+5og5W4J84584gIPGjAHRqXnuVjmvzntcdvYfpdyoHREa7N5n8W9dNQiJSFMr0K2ewXh6DNrx7Ev8YOTaFp9DyXRdL7GINgbW7wI6vmQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8DxfZtrvcVm5xAbAA--.32332S3;
-	Wed, 21 Aug 2024 18:11:55 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMAxouFqvcVm_oIcAA--.60915S4;
-	Wed, 21 Aug 2024 18:11:54 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Subject: [RFC 2/2] irqchip/loongson-eiointc: Add multiple interrupt pin routing support
-Date: Wed, 21 Aug 2024 18:11:53 +0800
-Message-Id: <20240821101153.2262290-3-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240821101153.2262290-1-maobibo@loongson.cn>
-References: <20240821101153.2262290-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1724235208; c=relaxed/simple;
+	bh=zY5TOXEgvtf2zi8J8kXF6gXJJNMn+u/6nf4N6ZTyMJ8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rgNpUuDFoZBN2LolvNu7gHpFqQ/K8LcuwDhSXr0QkEDPlp4G0RTjXMoxyXtECclEr3knS0ZLp0BZnGgnZOc7BUOCxLq+QapqA1n+u4D2MPO3jHo78Y/rFKVtgy3bC9iV+zpz9c+rSbkelve/FP95+FutWQGl2nXY6pG+aISTwM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f959826ccso614729539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2024 03:13:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724235206; x=1724840006;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0UiFh2H3TQ9L0VhczgP+bvB+S7XEAVjt7rCWOHhajjM=;
+        b=AtEAtA9no/PBHglPdJmbzWg93PRipFKhbXflczWZiPDthevorDU5mJZh+heMK/TaH2
+         IFe/TDnYLuNQTxG7v4p8PW44q84CfhG280uWfOzilHuoqYvUsegfxpnpxLGUFoVYunlF
+         LmfF71UnHyJCz4WqydYFFcW1Z9cOHvwRLHAyLtUa/49P4IWqYGtFOHpjz20L2ONHaok+
+         Po6+rHInRH9//oYldyybVMrNz6o6GYGIE4Dz+FI+htydbJFmX8kcvdsbsNuZj2YPQxmP
+         O1U6gp/Y85Gf/oi12lttNmZ1lqJRTNv9c2XdqatIO6+lmS1T8TBoQUv9HPI9Jef6HoR1
+         NZgw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1H3+GkPT4rsQCfY50/lkUBSN+0iS3kfHsddd9NYmBI1t15kZbOQOeRyTtuvW0TlFTNOzDXUWTk9jqnt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV7oUD01Hd8GxUrc6urH/tcCByS46pfovYJj0RaqVBRl7ir7a8
+	4iDdIQ9jHxA1b7S3Zz5RO63DEfVD/CIcAXt1G8JoxCkWcAgvJgB9o/5dy+l4IClgNAayJ/09zUk
+	4xAMyAm08fnSXOXSJnKDXz82cWneiuTGsu58DzUNg4MetGr9NFHTmfo8=
+X-Google-Smtp-Source: AGHT+IFfslfwRpzim82Y34UtM9j2TMDsKhPHkFZ+7frZREw42nfeE/6PM+qpr41N+JKn19pdqjnMt1ReULvJH8lpY1qB4euKWSeI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxouFqvcVm_oIcAA--.60915S4
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-Received: by 2002:a05:6638:210b:b0:4c0:9a3e:c264 with SMTP id
+ 8926c6da1cb9f-4ce62da86bemr66384173.2.1724235205847; Wed, 21 Aug 2024
+ 03:13:25 -0700 (PDT)
+Date: Wed, 21 Aug 2024 03:13:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f4447f06202eca5f@google.com>
+Subject: [syzbot] [fbdev?] KASAN: vmalloc-out-of-bounds Write in imageblit (4)
+From: syzbot <syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com>
+To: daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Eiointc interrupt controller support 256 interrupt vectors at most,
-and irq handler gets interrupt status from base register group
-EIOINTC_REG_ISR plus specific offset. It needs to read register group
-EIOINTC_REG_ISR four times to get all 256 interrupt vectors status.
+Hello,
 
-Eiointc registers including EIOINTC_REG_ISR is software emulation for
-VMs, there will be VM-exits when accessing eiointc registers. Here one
-method is introduced so that eiointc interrupt controller can route
-to different cpu interrupt pins for every 64 interrupt vectors. So
-irq handler needs read only relative 64 interrupt vector, it will
-reduce VM-exits.
+syzbot found the following issue on:
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+HEAD commit:    670c12ce09a8 Merge tag 'for-6.11/dm-fixes' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d41cdd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4b7aa0513823e2ea880
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-670c12ce.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fdc54e331300/vmlinux-670c12ce.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e69f58032670/bzImage-670c12ce.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com
+
+FAULT_INJECTION: forcing a failure.
+name fail_page_alloc, interval 1, probability 0, space 0, times 1
+CPU: 0 UID: 0 PID: 5106 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00221-g670c12ce09a8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ fail_dump lib/fault-inject.c:52 [inline]
+ should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
+ prepare_alloc_pages+0x1da/0x5d0 mm/page_alloc.c:4473
+ __alloc_pages_noprof+0x166/0x6c0 mm/page_alloc.c:4689
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ ___kmalloc_large_node+0x8b/0x1d0 mm/slub.c:4103
+ __kmalloc_large_node_noprof+0x1a/0x80 mm/slub.c:4130
+ __do_kmalloc_node mm/slub.c:4146 [inline]
+ __kmalloc_noprof+0x2ae/0x400 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ vc_do_resize+0x31b/0x17f0 drivers/tty/vt/vt.c:1174
+ vc_resize include/linux/vt_kern.h:49 [inline]
+ fbcon_set_disp+0xac9/0x11d0 drivers/video/fbdev/core/fbcon.c:1389
+ con2fb_init_display drivers/video/fbdev/core/fbcon.c:794 [inline]
+ set_con2fb_map+0xa6c/0x10a0 drivers/video/fbdev/core/fbcon.c:865
+ fbcon_set_con2fb_map_ioctl+0x207/0x320 drivers/video/fbdev/core/fbcon.c:3092
+ do_fb_ioctl+0x38f/0x7b0 drivers/video/fbdev/core/fb_chrdev.c:138
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f76311799b9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7631f9d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f7631315f80 RCX: 00007f76311799b9
+RDX: 00000000200000c0 RSI: 0000000000004610 RDI: 0000000000000003
+RBP: 00007f7631f9d090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f7631315f80 R15: 00007ffcf9b0e3e8
+ </TASK>
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in fast_imageblit drivers/video/fbdev/core/sysimgblt.c:257 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in sys_imageblit+0x1ec6/0x2b00 drivers/video/fbdev/core/sysimgblt.c:326
+Write of size 4 at addr ffffc90001c19000 by task syz.0.0/5106
+
+CPU: 0 UID: 0 PID: 5106 Comm: syz.0.0 Not tainted 6.11.0-rc3-syzkaller-00221-g670c12ce09a8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ fast_imageblit drivers/video/fbdev/core/sysimgblt.c:257 [inline]
+ sys_imageblit+0x1ec6/0x2b00 drivers/video/fbdev/core/sysimgblt.c:326
+ drm_fbdev_shmem_defio_imageblit+0x2e/0x100 drivers/gpu/drm/drm_fbdev_shmem.c:39
+ bit_putcs+0x18ba/0x1db0
+ fbcon_putcs+0x255/0x390 drivers/video/fbdev/core/fbcon.c:1288
+ do_update_region+0x396/0x450 drivers/tty/vt/vt.c:619
+ redraw_screen+0x902/0xe90 drivers/tty/vt/vt.c:971
+ con2fb_init_display drivers/video/fbdev/core/fbcon.c:794 [inline]
+ set_con2fb_map+0xa6c/0x10a0 drivers/video/fbdev/core/fbcon.c:865
+ fbcon_set_con2fb_map_ioctl+0x207/0x320 drivers/video/fbdev/core/fbcon.c:3092
+ do_fb_ioctl+0x38f/0x7b0 drivers/video/fbdev/core/fb_chrdev.c:138
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f76311799b9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7631f9d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f7631315f80 RCX: 00007f76311799b9
+RDX: 00000000200000c0 RSI: 0000000000004610 RDI: 0000000000000003
+RBP: 00007f7631f9d090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f7631315f80 R15: 00007ffcf9b0e3e8
+ </TASK>
+
+The buggy address belongs to the virtual mapping at
+ [ffffc90001919000, ffffc90001c1a000) created by:
+ drm_gem_shmem_vmap+0x3ac/0x630 drivers/gpu/drm/drm_gem_shmem_helper.c:343
+
+Memory state around the buggy address:
+ ffffc90001c18f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90001c18f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90001c19000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                   ^
+ ffffc90001c19080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc90001c19100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
+
+
 ---
- arch/loongarch/kernel/irq.c            |  3 +-
- arch/loongarch/kernel/smp.c            |  2 +-
- drivers/irqchip/irq-loongson-eiointc.c | 49 +++++++++++++++++++++++---
- 3 files changed, 47 insertions(+), 7 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/loongarch/kernel/irq.c b/arch/loongarch/kernel/irq.c
-index f4991c03514f..3268188881ee 100644
---- a/arch/loongarch/kernel/irq.c
-+++ b/arch/loongarch/kernel/irq.c
-@@ -113,5 +113,6 @@ void __init init_IRQ(void)
- 			per_cpu(irq_stack, i), per_cpu(irq_stack, i) + IRQ_STACK_SIZE);
- 	}
- 
--	set_csr_ecfg(ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | ECFGF_IPI | ECFGF_PMC);
-+	set_csr_ecfg(ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 |
-+			ECFGF_IP3 | ECFGF_IPI | ECFGF_PMC);
- }
-diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-index ca405ab86aae..557cb69bb81e 100644
---- a/arch/loongarch/kernel/smp.c
-+++ b/arch/loongarch/kernel/smp.c
-@@ -359,7 +359,7 @@ void loongson_boot_secondary(int cpu, struct task_struct *idle)
- void loongson_init_secondary(void)
- {
- 	unsigned int cpu = smp_processor_id();
--	unsigned int imask = ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 |
-+	unsigned int imask = ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | ECFGF_IP3 |
- 			     ECFGF_IPI | ECFGF_PMC | ECFGF_TIMER | ECFGF_SIP0;
- 
- 	change_csr_ecfg(ECFG0_IM, imask);
-diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-index e9ec63d85ee8..63ba7e462cdf 100644
---- a/drivers/irqchip/irq-loongson-eiointc.c
-+++ b/drivers/irqchip/irq-loongson-eiointc.c
-@@ -30,6 +30,7 @@
- #define VEC_REG_IDX(irq_id)	((irq_id) / VEC_COUNT_PER_REG)
- #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
- #define EIOINTC_ALL_ENABLE	0xffffffff
-+#define EIOINTC_ROUTE_MULTIPLE_IP	BIT(0)
- 
- #define MAX_EIO_NODES		(NR_CPUS / CORES_PER_EIO_NODE)
- 
-@@ -43,6 +44,7 @@ struct eiointc_priv {
- 	struct fwnode_handle	*domain_handle;
- 	struct irq_domain	*eiointc_domain;
- 	int			parent_hwirq;
-+	int			flags;
- };
- 
- static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
-@@ -145,6 +147,7 @@ static int eiointc_router_init(unsigned int cpu)
- 	uint32_t data;
- 	uint32_t node = cpu_to_eio_node(cpu);
- 	int index = eiointc_index(node);
-+	int hwirq;
- 
- 	if (index < 0) {
- 		pr_err("Error: invalid nodemap!\n");
-@@ -159,14 +162,22 @@ static int eiointc_router_init(unsigned int cpu)
- 			iocsr_write32(data, EIOINTC_REG_NODEMAP + i * 4);
- 		}
- 
-+		hwirq = eiointc_priv[index]->parent_hwirq;
- 		for (i = 0; i < eiointc_priv[0]->vec_count / 32 / 4; i++) {
- 			/*
- 			 * Route to interrupt pin, using offset minus INT_HWI0
- 			 * Offset 0 means IP0 and so on
- 			 * Every 32 vector routing to one interrupt pin
- 			 */
--			bit = BIT(eiointc_priv[index]->parent_hwirq - INT_HWI0);
--			data = bit | (bit << 8) | (bit << 16) | (bit << 24);
-+			if (eiointc_priv[index]->flags & EIOINTC_ROUTE_MULTIPLE_IP) {
-+				bit = BIT(hwirq++ - INT_HWI0);
-+				data = bit | (bit << 8);
-+				bit = BIT(hwirq++ - INT_HWI0);
-+				data |= (bit << 16) | (bit << 24);
-+			} else	{
-+				bit = BIT(hwirq - INT_HWI0);
-+				data = bit | (bit << 8) | (bit << 16) | (bit << 24);
-+			}
- 			iocsr_write32(data, EIOINTC_REG_IPMAP + i * 4);
- 		}
- 
-@@ -193,15 +204,33 @@ static int eiointc_router_init(unsigned int cpu)
- 
- static void eiointc_irq_dispatch(struct irq_desc *desc)
- {
--	int i;
-+	int i, hwirq, offset, vec_count;
- 	u64 pending;
- 	bool handled = false;
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct eiointc_priv *priv = irq_desc_get_handler_data(desc);
-+	struct irq_data *irq_data;
- 
- 	chained_irq_enter(chip, desc);
- 
--	for (i = 0; i < eiointc_priv[0]->vec_count / VEC_COUNT_PER_REG; i++) {
-+	/*
-+	 * If EIOINTC_ROUTE_MULTIPLE_IP is set, every 64 interrupt vectors in
-+	 * eiointc interrupt controller routes to different cpu interrupt pins
-+	 *
-+	 * Every cpu interrupt pin has its own irq handler, it is ok to
-+	 * read ISR for these 64 interrupt vectors rather than all vectors
-+	 */
-+	if (priv->flags & EIOINTC_ROUTE_MULTIPLE_IP) {
-+		irq_data = irq_desc_get_irq_data(desc);
-+		hwirq = irqd_to_hwirq(irq_data);
-+		offset = hwirq - priv->parent_hwirq;
-+		vec_count = VEC_COUNT_PER_REG;
-+	} else {
-+		vec_count = priv->vec_count;
-+		offset = 0;
-+	}
-+
-+	for (i = offset; i < (vec_count / VEC_COUNT_PER_REG + offset); i++) {
- 		pending = iocsr_read64(EIOINTC_REG_ISR + (i << 3));
- 
- 		/* Skip handling if pending bitmap is zero */
-@@ -397,8 +426,18 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
- 	}
- 
- 	eiointc_priv[nr_pics++] = priv;
-+	if (cpu_has_hypervisor) {
-+		for (i = 0; i < priv->vec_count / VEC_COUNT_PER_REG; i++) {
-+			parent_irq = get_percpu_irq(INT_HWI0 + i);
-+			irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
-+		}
-+
-+		priv->flags |= EIOINTC_ROUTE_MULTIPLE_IP;
-+		priv->parent_hwirq = INT_HWI0;
-+	} else {
-+		irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
-+	}
- 	eiointc_router_init(0);
--	irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
- 
- 	if (nr_pics == 1) {
- 		register_syscore_ops(&eiointc_syscore_ops);
--- 
-2.39.3
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
